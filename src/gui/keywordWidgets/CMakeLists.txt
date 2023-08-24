@@ -30,6 +30,7 @@ set(keywordWidgets_MOC_HDRS
     vec3Integer.h
     vec3NodeValue.h
     weightedModuleVector.h
+    rangeVector.h
     bool.hui
     double.hui
     dropWidget.hui
@@ -72,6 +73,7 @@ set(keywordWidgets_UIS
     vec3Integer.ui
     vec3NodeValue.ui
     weightedModuleVector.ui
+    rangeVector.ui
 )
 qt6_wrap_ui(keywordWidgets_UIS_H ${keywordWidgets_UIS})
 
@@ -117,6 +119,7 @@ set(keywordWidgets_SRCS
     vec3Labels.cpp
     vec3NodeValueFuncs.cpp
     weightedModuleVectorFuncs.cpp
+    rangeVectorFuncs.cpp
     base.h
     vec3Labels.h
     producers.h

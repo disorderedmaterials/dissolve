@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+	<class>RangeVectorWidget</class>
+	<widget class="QWidget" name="RangeVectorWidget">
+		<property name="geometry">
+			<rect>
+				<x>0</x>
+				<y>0</y>
+				<width>320</width>
+				<height>162</height>
+			</rect>
+		</property>
+		<property name="font">
+			<font>
+				<pointsize>10</pointsize>
+			</font>
+		</property>
+		<property name="windowTitle">
+			<string>Form</string>
+		</property>
+		<layout class="QGridLayout" name="gridLayout">
+			<property name="leftMargin">
+				<number>0</number>
+			</property>
+			<property name="topMargin">
+				<number>0</number>
+			</property>
+			<property name="rightMargin">
+				<number>0</number>
+			</property>
+			<property name="bottomMargin">
+				<number>0</number>
+			</property>
+			<property name="spacing">
+				<number>4</number>
+			</property>
+			<item row="0" column="0">
+				<widget class="QTableView" name="RangeVectorTable">
+                   <property name="minimumSize">
+                        <size>
+                            <width>0</width>
+                            <height>140</height>
+                        </size>
+                    </property>
+                </widget>
+			</item>
+			<item row="1" column="0">
+				<layout class="QHBoxLayout" name="horizontalLayout">
+                    <property name="leftMargin">
+                    <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                    <number>140</number>
+                    </property>					
+                    <item>
+						<widget class="QPushButton" name="RangeAddButton">
+							<property name="text">
+								<string>Add</string>
+							</property>
+                                <property name="icon">
+                                <iconset resource="main.qrc">
+                                <normaloff>:/general/icons/add.svg</normaloff>:/general/icons/add.svg</iconset>
+                                </property>
+						</widget>
+					</item>
+					<item>
+						<widget class="QPushButton" name="RangeRemoveButton">
+							<property name="text">
+								<string>Remove</string>
+							</property>
+                                <property name="icon">
+                                <iconset resource="main.qrc">
+                                <normaloff>:/general/icons/remove.svg</normaloff>:/general/icons/remove.svg</iconset>
+                                </property>
+						</widget>
+					</item>
+				</layout>
+			</item>
+		</layout>
+	</widget>
+	<resources />
+	<connections />
+</ui>

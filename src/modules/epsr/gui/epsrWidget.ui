@@ -48,7 +48,7 @@
      <item>
       <widget class="QPushButton" name="TotalFQButton">
        <property name="toolTip">
-        <string>Show the calculated vs experimental F(Q</string>
+        <string>Show the calculated vs experimental F(Q)</string>
        </property>
        <property name="text">
         <string>F(Q)</string>

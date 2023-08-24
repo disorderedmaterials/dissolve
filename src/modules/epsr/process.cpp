@@ -10,6 +10,7 @@
 #include "data/isotopes.h"
 #include "io/export/data1D.h"
 #include "keywords/module.h"
+#include "keywords/rangeVector.h"
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/filters.h"
@@ -229,6 +230,9 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
     // Loop over target data
     auto rFacTot = 0.0;
+    std::vector<double> rangedRFacTots(ranges_.size());
+
+    // Loop over target data
     for (auto *module : targets_)
     {
         /*
@@ -293,10 +297,24 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         // Calculate r-factor over fit range and store
         auto tempRefData = originalReferenceData;
         Filters::trim(tempRefData, qMin_, qMax_);
-        auto rFactor = Error::rFactor(tempRefData, weightedSQ.total()).error;
-        rFacTot += rFactor;
-        errors.addPoint(moduleContext.dissolve().iteration(), rFactor);
-        Messenger::print("Current R-Factor for reference data '{}' is {:.5f}.\n", module->name(), rFactor);
+        const auto rFactorReport = Error::rFactor(tempRefData, weightedSQ.total());
+        rFacTot += rFactorReport.error;
+        errors.addPoint(moduleContext.dissolve().iteration(), rFactorReport.error);
+        Messenger::print("Current R-Factor for reference data '{}' is {:.5f}.\n", module->name(), rFactorReport.error);
+        // Calculate r-factor over specified ranges_
+        for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
+        {
+            if (range.minimum() < rFactorReport.firstX || range.maximum() > rFactorReport.lastX)
+            {
+                Messenger::warn("The specified range '{:.5f} to {:.5f}' is outside of the range of data '{}', which exists "
+                                "between {:.5f} and {:.5f}",
+                                range.minimum(), range.maximum(), module->name(), rFactorReport.firstX, rFactorReport.lastX);
+            }
+            const auto rangedRFactorError = Error::rFactor(tempRefData, weightedSQ.total(), range).error;
+            rangeTot += rangedRFactorError;
+            Messenger::print("Current R-Factor for reference data '{}' over range {:.5f} to {:.5f} is {:.5f}.\n",
+                             module->name(), range.minimum(), range.maximum(), rangedRFactorError);
+        }
 
         /*
          * Generate difference function for fitting, spanning (maximally) only the range requested
@@ -315,7 +333,8 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
             if (x < qMin_ || x > qMax_)
                 y = 0.0;
 
-        // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from those.
+        // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from
+        // those.
         auto [fitCoefficients, status] = moduleContext.dissolve().processingModuleData().realiseIf<std::vector<double>>(
             fmt::format("FitCoefficients_{}", module->name()), name_, GenericItem::InRestartFileFlag);
 
@@ -431,9 +450,9 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
             auto &weights =
                 moduleContext.dissolve().processingModuleData().retrieve<XRayWeights>("FullWeights", module->name());
 
-            // For X-ray data we always add the reference data normalised to AverageOfSquares in order to give consistency in
-            // terms of magnitude with any neutron data. If the calculated data have not been normalised, or were normalised to
-            // something else, we correct it before adding.
+            // For X-ray data we always add the reference data normalised to AverageOfSquares in order to give consistency
+            // in terms of magnitude with any neutron data. If the calculated data have not been normalised, or were
+            // normalised to something else, we correct it before adding.
             auto refMinusIntra = originalReferenceData;
             Interpolator::addInterpolated(weightedSQ.boundTotal(), refMinusIntra, -1.0);
 
@@ -560,6 +579,13 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         moduleContext.dissolve().processingModuleData().realise<Data1D>("RFactor", name_, GenericItem::InRestartFileFlag);
     totalRFactor.addPoint(moduleContext.dissolve().iteration(), rFacTot);
     Messenger::print("Current total R-Factor is {:.5f}.\n", rFacTot);
+    for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
+    {
+        Messenger::print("Current total R-Factor over range {:.5f} to {:.5f} is {:.5f}.\n", range.minimum(), range.maximum(),
+                         rangeTot /= targets_.size());
+    }
+
+    Messenger::print("\n");
 
     /*
      * Augment the Scattering Matrix
