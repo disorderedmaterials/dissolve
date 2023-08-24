@@ -10,7 +10,6 @@
 #include <set>
 
 // Forward Declarations
-class Element;
 class Molecule;
 class SiteStack;
 class Species;

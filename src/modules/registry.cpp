@@ -30,6 +30,7 @@
 #include "modules/md/md.h"
 #include "modules/molShake/molShake.h"
 #include "modules/neutronSQ/neutronSQ.h"
+#include "modules/orientedSDF/orientedSDF.h"
 #include "modules/sdf/sdf.h"
 #include "modules/siteRDF/siteRDF.h"
 #include "modules/sq/sq.h"
@@ -80,6 +81,9 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<MDModule>(ModuleTypes::MD, "Evolve a Configuration using molecular dynamics", "Evolution");
     registerProducer<MolShakeModule>(ModuleTypes::MolShake, "Perform molecular Monte Carlo moves", "Evolution");
     registerProducer<NeutronSQModule>(ModuleTypes::NeutronSQ, "Calculate neutron-weighted S(Q)", "Correlation Functions");
+    registerProducer<OrientedSDFModule>(
+        ModuleTypes::OrientedSDF,
+        "Calculate spatial density functions around oriented sites, restricted by relative molecule orientation", "Analysis");
     registerProducer<SDFModule>(ModuleTypes::SDF, "Calculate spatial density functions around oriented sites", "Analysis");
     registerProducer<SiteRDFModule>(ModuleTypes::SiteRDF, "Calculate radial distribution functions between sites", "Analysis");
     registerProducer<SQModule>(ModuleTypes::SQ, "Transform g(r) into unweighted S(Q)", "Correlation Functions");
