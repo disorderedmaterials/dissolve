@@ -153,7 +153,7 @@ Module  ImportTrajectory
   Configuration  'Bulk'
 
   # Trajectory file contains 80 frames
-  Format  xyz  '../_data/dlpoly/benzene181/benzene181.xyz'
+  Format  xyz  'dlpoly/benzene181/benzene181.xyz'
   EndFormat
 EndModule
 
@@ -161,8 +161,6 @@ Module  AvgMol  'AvgMol01'
   Frequency  1
   Configuration  'Bulk'
   Site  Benzene  'Ring'
-  ExportCoordinates  xyz  'benzene.avg.xyz'
-  EndExportCoordinates
 EndModule
 
 # Spatial distribution of O atoms around central molecule
@@ -229,19 +227,8 @@ Module  Analyse  'OrientedSDF(R-R)_Analyser'
         OperateGridNormalise
         EndOperateGridNormalise
       EndNormalisation
-      Export  pdens  'analyser.pdens'
-      EndExport
     EndProcess3D
   EndAnalyser
-EndModule
-
-Module DataTest
-  Frequency  80
-  Threshold  0.09
-  Data3D  'OrientedSDF(R-R)_Analyser//Process3D//SDF'  pdens  '../_data/dlpoly/benzene181/benzene181.11.pdens.zOrient0_10'
-  EndData3D
-  Data3D  'OrientedSDF(R-R)//Process3D//SDF'  pdens  '../_data/dlpoly/benzene181/benzene181.11.pdens.zOrient0_10'
-  EndData3D
 EndModule
 
 EndLayer
