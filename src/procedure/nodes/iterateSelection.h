@@ -23,13 +23,6 @@ class IterateSelectionProcedureNode : public ProcedureNode
         ProcedureNode::NodeContext forEachContext = ProcedureNode::NodeContext::AnalysisContext);
 
     /*
-     * Identity
-     */
-    public:
-    // Set node name
-    void setName(std::string_view name) override;
-
-    /*
      * Parameters
      */
     private:

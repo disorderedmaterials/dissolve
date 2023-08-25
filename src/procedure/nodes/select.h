@@ -24,13 +24,6 @@ class SelectProcedureNode : public ProcedureNode
                                  bool axesRequired = false);
 
     /*
-     * Identity
-     */
-    public:
-    // Set node name
-    void setName(std::string_view name) override;
-
-    /*
      * Parameters
      */
     private:

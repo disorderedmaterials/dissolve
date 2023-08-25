@@ -132,7 +132,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     // Return whether a name for the node must be provided
     virtual bool mustBeNamed() const;
     // Set node name
-    virtual void setName(std::string_view name);
+    void setName(std::string_view name);
     // Return node name
     std::string_view name() const;
 

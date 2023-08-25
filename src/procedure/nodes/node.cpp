@@ -135,7 +135,15 @@ ProcedureNode::NodeClass ProcedureNode::nodeClass() const { return class_; }
 bool ProcedureNode::mustBeNamed() const { return true; }
 
 // Set node name
-void ProcedureNode::setName(std::string_view name) { name_ = DissolveSys::niceName(name); }
+void ProcedureNode::setName(std::string_view name)
+{
+    name_ = DissolveSys::niceName(name);
+
+    // Re-set prefixes with the new node name, except if this is a Parameters-type node
+    if (type_ != ProcedureNode::NodeType::Parameters)
+        for (auto &par : parameters_)
+            par->setNamePrefix(name_);
+}
 
 // Return node name
 std::string_view ProcedureNode::name() const { return name_; }
@@ -240,7 +248,10 @@ OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::branch() { return
 // Add new parameter
 std::shared_ptr<ExpressionVariable> ProcedureNode::addParameter(std::string_view name, const ExpressionValue &initialValue)
 {
-    return parameters_.emplace_back(std::make_shared<ExpressionVariable>(name, initialValue));
+    auto &newVar = parameters_.emplace_back(std::make_shared<ExpressionVariable>(name, initialValue));
+    if (type_ != ProcedureNode::NodeType::Parameters)
+        newVar->setNamePrefix(name_);
+    return newVar;
 }
 
 // Set named parameter in supplied vector

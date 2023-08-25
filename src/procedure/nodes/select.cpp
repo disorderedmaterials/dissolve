@@ -47,26 +47,12 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 
     keywords_.addHidden<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_);
 
-    nSelectedParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("nSelected"));
-    siteIndexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("siteIndex"));
-    stackIndexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("stackIndex"));
-    indexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("index"));
-}
-
-/*
- * Identity
- */
-
-// Set node name
-void SelectProcedureNode::setName(std::string_view name)
-{
-    name_ = DissolveSys::niceName(name);
-
-    // Update parameter names to match
-    nSelectedParameter_->setBaseName(fmt::format("{}.nSelected", name_));
-    siteIndexParameter_->setBaseName(fmt::format("{}.siteIndex", name_));
-    stackIndexParameter_->setBaseName(fmt::format("{}.stackIndex", name_));
-    indexParameter_->setBaseName(fmt::format("{}.index", name_));
+    // Need to make parameters_ private as a next step, to prevent direct initialisation like this... (use addParameter()
+    // instead)
+    nSelectedParameter_ = addParameter("nSelected");
+    siteIndexParameter_ = addParameter("siteIndex");
+    stackIndexParameter_ = addParameter("stackIndex");
+    indexParameter_ = addParameter("index");
 }
 
 /*

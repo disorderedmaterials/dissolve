@@ -20,13 +20,6 @@ class CalculateAxisAngleProcedureNode : public CalculateProcedureNodeBase
     ~CalculateAxisAngleProcedureNode() override = default;
 
     /*
-     * Identity
-     */
-    public:
-    // Set node name
-    void setName(std::string_view name) override;
-
-    /*
      * Parameters
      */
     private:
