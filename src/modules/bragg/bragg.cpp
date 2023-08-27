@@ -37,8 +37,4 @@ BraggModule::BraggModule() : Module(ModuleTypes::Bragg)
 
     keywords_.setOrganisation("Export");
     keywords_.add<BoolKeyword>("SaveReflections", "Whether to save Bragg reflection data to disk", saveReflections_);
-
-    keywords_.setOrganisation("Advanced");
-    keywords_.addHidden<StringKeyword>(
-        "TestReflections", "Whether to test calculated reflection data against that in specified file", testReflectionsFile_);
 }
