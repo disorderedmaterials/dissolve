@@ -199,44 +199,6 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
     return absEnergyEP;
 }
 
-// Test absolute energy of empirical potentials
-bool EPSRModule::testAbsEnergyEP(Dissolve &dissolve)
-{
-    auto &coefficients = potentialCoefficients(dissolve, dissolve.coreData().nAtomTypes());
-    if (coefficients.empty())
-        return false;
-
-    auto result = true;
-    dissolve::for_each_pair(
-        ParallelPolicies::seq, dissolve.coreData().atomTypes().begin(), dissolve.coreData().atomTypes().end(),
-        [&](int i, auto at1, int j, auto at2)
-        {
-            auto id1 = fmt::format("{}-{}", at1->name(), at2->name());
-            auto id2 = fmt::format("{}-{}", at2->name(), at1->name());
-            auto it = std::find_if(testAbsEnergyEP_.begin(), testAbsEnergyEP_.end(),
-                                   [id1, id2](const auto &pair) { return pair.first == id1 || pair.first == id2; });
-
-            if (it != testAbsEnergyEP_.end())
-            {
-                auto &potCoeff = coefficients[{i, j}];
-
-                auto cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());
-                auto cMax = potCoeff.empty() ? 0.0 : *std::max_element(potCoeff.begin(), potCoeff.end());
-                auto range = cMax - cMin;
-
-                auto error = fabs(it->second - range);
-                Messenger::print("Absolute EP magnitude for '{}' has error of {} with reference data "
-                                 "and is {} (threshold is {})\n\n",
-                                 it->first, error, error <= testAbsEnergyEPThreshold_ ? "OK" : "NOT OK",
-                                 testAbsEnergyEPThreshold_);
-                if (error > testAbsEnergyEPThreshold_)
-                    result = false;
-            }
-        });
-
-    return result;
-}
-
 // Truncate the supplied data
 void EPSRModule::truncate(Data1D &data, double rMin, double rMax)
 {

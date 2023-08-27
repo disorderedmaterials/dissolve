@@ -66,13 +66,6 @@ EPSRModule::EPSRModule() : Module(ModuleTypes::EPSR)
                                           fluctuationSmoothing_, 0, std::nullopt, 1, "Off");
 
     keywords_.setOrganisation("Advanced", "Test");
-    keywords_.add<BoolKeyword>("Test", "Test against supplied reference data", test_);
-    keywords_.add<StringDoubleVectorKeyword>("TestAbsEnergyEP", "Specify test absolute EP energy values for pair potentials",
-                                             testAbsEnergyEP_);
-    keywords_.add<DoubleKeyword>("TestAbsEnergyEPThreshold", "Test threshold above which absolute EP energy test fails",
-                                 testAbsEnergyEPThreshold_, 1.0e-8);
-    keywords_.add<Data1DStoreKeyword>("TestReference", "Specify test reference data", testReferenceData_);
-    keywords_.add<DoubleKeyword>("TestThreshold", "Test threshold (%error) above which test fails", testThreshold_, 1.0e-5);
     keywords_.add<BoolKeyword>("OverwritePotentials", "Overwrite potentials each time rather than summing them",
                                overwritePotentials_);
 
