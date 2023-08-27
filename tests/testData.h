@@ -279,6 +279,66 @@ class DissolveSystemTest
         ASSERT_TRUE(externalForces.importData(B));
         checkVec3Vector(vec, B, tolerance);
     }
+    // Test species atom type
+    void checkSpeciesAtomType(const Species *sp, int atomIndex, std::string_view atomTypeName)
+    {
+        ASSERT_TRUE(atomIndex >= 0 && atomIndex < sp->nAtoms());
+        auto &spAtom = sp->atom(atomIndex);
+        auto at = spAtom.atomType();
+        ASSERT_TRUE(at);
+        EXPECT_EQ(at->name(), atomTypeName);
+    }
+    // Test interaction parameters
+    template <class Intra>
+    void checkIntramolecularTerms(std::string termInfo, const InteractionPotential<Intra> &expectedParams,
+                                  const InteractionPotential<Intra> &actualParams)
+    {
+        Messenger::print("Testing interaction {}...\n", termInfo);
+        EXPECT_EQ(actualParams.form(), expectedParams.form());
+        EXPECT_EQ(actualParams.nParameters(), expectedParams.nParameters());
+        for (auto &&[current, expected] : zip(actualParams.parameters(), expectedParams.parameters()))
+            EXPECT_NEAR(current, expected, 1.0e-6);
+    }
+    // Test species bond term
+    void checkSpeciesIntramolecular(const Species *sp, std::vector<int> atoms,
+                                    const InteractionPotential<BondFunctions> &expectedParams)
+    {
+        ASSERT_TRUE(atoms.size() == 2);
+        const auto &b = sp->getBond(atoms[0], atoms[1]);
+        if (!b)
+            throw(std::runtime_error(fmt::format("No bond {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
+        checkIntramolecularTerms(fmt::format("bond {}", joinStrings(atoms, "-")), expectedParams,
+                                 b->get().interactionPotential());
+    }
+    // Test species angle term
+    void checkSpeciesIntramolecular(const Species *sp, std::vector<int> atoms,
+                                    const InteractionPotential<AngleFunctions> &expectedParams)
+    {
+        ASSERT_TRUE(atoms.size() == 3);
+        const auto &a = sp->getAngle(atoms[0], atoms[1], atoms[2]);
+        if (!a)
+            throw(
+                std::runtime_error(fmt::format("No angle {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
+        checkIntramolecularTerms(fmt::format("angle {}", joinStrings(atoms, "-")), expectedParams,
+                                 a->get().interactionPotential());
+    }
+    // Test species torsion / improper term
+    void checkSpeciesIntramolecular(const Species *sp, std::vector<int> atoms,
+                                    const InteractionPotential<TorsionFunctions> &expectedParams)
+    {
+        ASSERT_TRUE(atoms.size() == 4);
+        const auto &t = sp->getTorsion(atoms[0], atoms[1], atoms[2], atoms[3]);
+        const auto &i = sp->getImproper(atoms[0], atoms[1], atoms[2], atoms[3]);
+        if (!t && !i)
+            throw(std::runtime_error(
+                fmt::format("No torsion or improper {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
+        else if (t)
+            checkIntramolecularTerms(fmt::format("torsion {}", joinStrings(atoms, "-")), expectedParams,
+                                     t->get().interactionPotential());
+        else
+            checkIntramolecularTerms(fmt::format("improper {}", joinStrings(atoms, "-")), expectedParams,
+                                     i->get().interactionPotential());
+    }
 };
 
 // Return argon test species

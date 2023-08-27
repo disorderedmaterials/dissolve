@@ -68,6 +68,7 @@ endfunction()
 # Add unit test subdirectories
 add_subdirectory(algorithms)
 add_subdirectory(classes)
+add_subdirectory(ff)
 if(GUI)
   add_subdirectory(gui)
 endif(GUI)
