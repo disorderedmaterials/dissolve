@@ -32,21 +32,3 @@ Species 'Methanol'
   Forcefield  'OPLSAA2005/Alcohols'
 EndSpecies
 
-Layer  'Checks'
-
-  Module  'CheckSpecies'
-    Species  'Methanol'
-    AtomType  1  CT
-    AtomType  2  OH
-    AtomType  3  HO
-    AtomType  4  HC
-    AtomType  5  HC
-    AtomType  6  HC
-    Bond  1  2  2677.76  1.41
-    Bond  1  4  2845.12  1.09
-    Angle  1  2  3  460.24 108.5
-    Angle  5  1  2  292.88  109.5
-    Torsion  4  1  2  3  0.0  0.0  1.47444
-  EndModule
-
-EndLayer

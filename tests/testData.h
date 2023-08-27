@@ -290,29 +290,29 @@ class DissolveSystemTest
     }
     // Test interaction parameters
     template <class Intra>
-    void checkIntramolecularTerms(std::string termInfo, const InteractionPotential<Intra> &expectedParams,
-                                  const InteractionPotential<Intra> &actualParams)
+    void checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential<Intra> &expectedParams,
+                                  const InteractionPotential<Intra> &actualParams, double tolerance = 1.0e-6)
     {
-        Messenger::print("Testing interaction {}...\n", termInfo);
-        EXPECT_EQ(actualParams.form(), expectedParams.form());
+        Messenger::print("Testing intramolecular interaction: {}...\n", termInfo);
+        EXPECT_EQ(Intra::forms().keyword(actualParams.form()), Intra::forms().keyword(expectedParams.form()));
         EXPECT_EQ(actualParams.nParameters(), expectedParams.nParameters());
         for (auto &&[current, expected] : zip(actualParams.parameters(), expectedParams.parameters()))
-            EXPECT_NEAR(current, expected, 1.0e-6);
+            EXPECT_NEAR(current, expected, tolerance);
     }
     // Test species bond term
     void checkSpeciesIntramolecular(const Species *sp, std::vector<int> atoms,
-                                    const InteractionPotential<BondFunctions> &expectedParams)
+                                    const InteractionPotential<BondFunctions> &expectedParams, double tolerance = 1.0e-6)
     {
         ASSERT_TRUE(atoms.size() == 2);
         const auto &b = sp->getBond(atoms[0], atoms[1]);
         if (!b)
             throw(std::runtime_error(fmt::format("No bond {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
         checkIntramolecularTerms(fmt::format("bond {}", joinStrings(atoms, "-")), expectedParams,
-                                 b->get().interactionPotential());
+                                 b->get().interactionPotential(), tolerance);
     }
     // Test species angle term
     void checkSpeciesIntramolecular(const Species *sp, std::vector<int> atoms,
-                                    const InteractionPotential<AngleFunctions> &expectedParams)
+                                    const InteractionPotential<AngleFunctions> &expectedParams, double tolerance = 1.0e-6)
     {
         ASSERT_TRUE(atoms.size() == 3);
         const auto &a = sp->getAngle(atoms[0], atoms[1], atoms[2]);
@@ -320,11 +320,11 @@ class DissolveSystemTest
             throw(
                 std::runtime_error(fmt::format("No angle {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
         checkIntramolecularTerms(fmt::format("angle {}", joinStrings(atoms, "-")), expectedParams,
-                                 a->get().interactionPotential());
+                                 a->get().interactionPotential(), tolerance);
     }
     // Test species torsion / improper term
     void checkSpeciesIntramolecular(const Species *sp, std::vector<int> atoms,
-                                    const InteractionPotential<TorsionFunctions> &expectedParams)
+                                    const InteractionPotential<TorsionFunctions> &expectedParams, double tolerance = 1.0e-6)
     {
         ASSERT_TRUE(atoms.size() == 4);
         const auto &t = sp->getTorsion(atoms[0], atoms[1], atoms[2], atoms[3]);
@@ -334,10 +334,10 @@ class DissolveSystemTest
                 fmt::format("No torsion or improper {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
         else if (t)
             checkIntramolecularTerms(fmt::format("torsion {}", joinStrings(atoms, "-")), expectedParams,
-                                     t->get().interactionPotential());
+                                     t->get().interactionPotential(), tolerance);
         else
             checkIntramolecularTerms(fmt::format("improper {}", joinStrings(atoms, "-")), expectedParams,
-                                     i->get().interactionPotential());
+                                     i->get().interactionPotential(), tolerance);
     }
 };
 

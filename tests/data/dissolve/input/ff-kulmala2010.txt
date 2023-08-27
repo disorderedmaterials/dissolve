@@ -208,5 +208,3 @@ Species 'HSO4-'
   # Forcefield
   Forcefield  'Kulmala2010'
 EndSpecies
-
-EndLayer
