@@ -11,10 +11,10 @@
 
 namespace UnitTest
 {
-class SelectTest : public ::testing::Test
+class SelectProcedureNodeTest : public ::testing::Test
 {
     public:
-    SelectTest() : dissolve_(coreData_)
+    SelectProcedureNodeTest() : dissolve_(coreData_)
     {
         // Set up species
         alphaSpecies_ = coreData_.copySpecies(&diatomicSpecies());
@@ -80,7 +80,7 @@ class SelectTest : public ::testing::Test
     void SetUp() override {}
 };
 
-TEST_F(SelectTest, Simple)
+TEST_F(SelectProcedureNodeTest, Simple)
 {
     Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
     auto selectN = testProcedure.createRootNode<SelectProcedureNode>(
@@ -104,7 +104,7 @@ TEST_F(SelectTest, Simple)
     }
 }
 
-TEST_F(SelectTest, All)
+TEST_F(SelectProcedureNodeTest, All)
 {
     Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
     auto selectAr = testProcedure.createRootNode<SelectProcedureNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_},
@@ -120,7 +120,7 @@ TEST_F(SelectTest, All)
     EXPECT_EQ(selectN->nSitesInStack(), nType_ * 2 * 2);
 }
 
-TEST_F(SelectTest, Ranges)
+TEST_F(SelectProcedureNodeTest, Ranges)
 {
     Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
     auto selectAr = testProcedure.createRootNode<SelectProcedureNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_},
@@ -145,7 +145,7 @@ TEST_F(SelectTest, Ranges)
     }
 }
 
-TEST_F(SelectTest, Indices)
+TEST_F(SelectProcedureNodeTest, Indices)
 {
     Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
     auto selectAr = testProcedure.createRootNode<SelectProcedureNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_},
@@ -184,7 +184,7 @@ TEST_F(SelectTest, Indices)
     }
 }
 
-TEST_F(SelectTest, Exclusions1)
+TEST_F(SelectProcedureNodeTest, Exclusions1)
 {
     Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
     auto selectN1 = testProcedure.createRootNode<SelectProcedureNode>("SelectN1", std::vector<const SpeciesSite *>{alphaSiteN_},
@@ -221,7 +221,7 @@ TEST_F(SelectTest, Exclusions1)
     EXPECT_DOUBLE_EQ(selectN2->nAvailableSitesAverage(), double(nType_ - 1));
 }
 
-TEST_F(SelectTest, Exclusions2)
+TEST_F(SelectProcedureNodeTest, Exclusions2)
 {
     Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
     auto selectN = testProcedure.createRootNode<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSiteN_},
@@ -249,7 +249,7 @@ TEST_F(SelectTest, Exclusions2)
     EXPECT_DOUBLE_EQ(selectO->nAvailableSitesAverage(), double(nType_ - 1));
 }
 
-TEST_F(SelectTest, Inclusions)
+TEST_F(SelectProcedureNodeTest, Inclusions)
 {
     Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
     auto selectN = testProcedure.createRootNode<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSiteN_},

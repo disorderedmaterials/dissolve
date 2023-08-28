@@ -11,7 +11,7 @@
 namespace UnitTest
 {
 
-TEST(CalculateExpressionTest, Basic)
+TEST(CalculateExpressionProcedureNodeTest, Basic)
 {
     Procedure procedure(ProcedureNode::AnalysisContext);
 
@@ -30,7 +30,7 @@ TEST(CalculateExpressionTest, Basic)
     EXPECT_DOUBLE_EQ(expressionNode->value(0), 3.8 * sin(1.2));
 }
 
-TEST(CalculateExpressionTest, NodeParameters)
+TEST(CalculateExpressionProcedureNodeTest, NodeParameters)
 {
     Procedure procedure(ProcedureNode::AnalysisContext);
     auto A = procedure.createRootNode<SelectProcedureNode>("A");
