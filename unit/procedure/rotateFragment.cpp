@@ -34,11 +34,14 @@ TEST(RotateTest, Benzene)
     // Setup configuration
     auto *cfg = coreData.addConfiguration();
     auto &procedure = cfg->generator();
-    auto box = procedure.createRootNode<BoxProcedureNode>("Box", Vec3<NodeValue>(20, 20, 20), Vec3<NodeValue>(90, 90, 90));
+    auto boxLength = 20.0;
+    const Vec3<double> cellCentre(boxLength / 2, boxLength / 2, boxLength / 2);
+    auto box = procedure.createRootNode<BoxProcedureNode>("Box", Vec3<NodeValue>(boxLength, boxLength, boxLength),
+                                                          Vec3<NodeValue>(90, 90, 90));
 
-    // Add a single Benzene molecule
+    // Add a single Benzene molecule at the centre of the cell - this way, rotations will not break it across box boundaries
     auto add = procedure.createRootNode<AddProcedureNode>("Benzene", benzene, 1);
-    add->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+    add->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Central);
     add->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
     add->keywords().set("Rotate", false);
 
@@ -48,9 +51,10 @@ TEST(RotateTest, Benzene)
     // Grab the first (and only) molecule
     auto mol = cfg->molecule(0);
 
-    // Atom coordinates prior and posterior to rotations
+    // Atom coordinates prior and posterior to rotations, with cell centre removed so as to give "local" coordinates
     std::vector<Vec3<double>> coordinatesBefore(mol->nAtoms()), coordinatesAfter(mol->nAtoms());
-    std::transform(mol->atoms().begin(), mol->atoms().end(), coordinatesBefore.begin(), [](const auto &at) { return at->r(); });
+    std::transform(mol->atoms().begin(), mol->atoms().end(), coordinatesBefore.begin(),
+                   [&cellCentre](const auto &at) { return at->r() - cellCentre; });
 
     // Select the site
     auto select = procedure.createRootNode<SelectProcedureNode>("BenzeneSite", sites);
@@ -72,7 +76,7 @@ TEST(RotateTest, Benzene)
 
         // Posterior atom coordinates
         std::transform(mol->atoms().begin(), mol->atoms().end(), coordinatesAfter.begin(),
-                       [](const auto &at) { return at->r(); });
+                       [&cellCentre](const auto &at) { return at->r() - cellCentre; });
         for (auto &&[r1, r2] : zip(coordinatesBefore, coordinatesAfter))
         {
             // Check that
