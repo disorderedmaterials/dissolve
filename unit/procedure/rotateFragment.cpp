@@ -9,7 +9,6 @@
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/select.h"
-#include "procedure/procedure.h"
 #include "unit/data/species.h"
 #include <gtest/gtest.h>
 #include <string>
@@ -17,7 +16,7 @@
 namespace UnitTest
 {
 
-TEST(RotateTest, Benzene)
+TEST(RotateFragmentProcedureNodeTest, Benzene)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
