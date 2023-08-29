@@ -11,7 +11,7 @@
 #include "procedure/nodes/calculateExpression.h"
 #include "procedure/nodes/ifValueInRange.h"
 #include "procedure/nodes/integerCollect1D.h"
-#include "procedure/nodes/iteratedata1d.h"
+#include "procedure/nodes/iterateData1D.h"
 #include "procedure/nodes/operateNormalise.h"
 #include "procedure/nodes/process1D.h"
 #include "procedure/nodes/select.h"
@@ -42,13 +42,13 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     auto collectNFIndex = forEachNF.create<IntegerCollect1DProcedureNode>("NFBins", siteIndex, ProcedureNode::AnalysisContext);
 
     // Get number of BO within NF
-    auto iterateNFIndex = analyser_.createRootNode<IterateData1DProcedureNode>("Flatten", collectNFIndex);
-    auto &forEachNFIndex = iterateNFIndex->branch()->get();
-    auto value = forEachNFIndex.create<CalculateExpressionProcedureNode>({});
-    value->setExpression("Value");
+    auto qIterator = analyser_.createRootNode<IterateData1DProcedureNode>("QIterator", collectNFIndex);
+    auto &forEachQIterator = qIterator->branch()->get();
+    auto value = forEachQIterator.create<CalculateExpressionProcedureNode>({});
+    value->setExpression("QIterator.value");
 
     // Collect and process BO
-    auto collectQ = forEachNFIndex.create<IntegerCollect1DProcedureNode>("Bins", value, ProcedureNode::AnalysisContext);
+    auto collectQ = forEachNF.create<IntegerCollect1DProcedureNode>("Bins", value, ProcedureNode::AnalysisContext);
     auto processNF = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectQ);
     auto &normalisation = processNF->branch()->get();
     normalisation.create<OperateNormaliseProcedureNode>({});
