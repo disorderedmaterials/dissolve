@@ -73,11 +73,8 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<IntraAngleModule, IntraAngleModuleWidget>();
     registerProducer<IntraDistanceModule, IntraDistanceModuleWidget>();
     registerProducer<NeutronSQModule, NeutronSQModuleWidget>();
-<<<<<<< HEAD
     registerProducer<OrientedSDFModule, OrientedSDFModuleWidget>();
-=======
     registerProducer<QSpeciesModule, QSpeciesModuleWidget>();
->>>>>>> 52370c43b (added in output and export)
     registerProducer<SDFModule, SDFModuleWidget>();
     registerProducer<SkeletonModule, SkeletonModuleWidget>();
     registerProducer<SiteRDFModule, SiteRDFModuleWidget>();
