@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/iteratedata1d.h"
+#include "procedure/nodes/iterateData1D.h"
 #include "classes/configuration.h"
 #include "expression/variable.h"
 #include "io/export/data1D.h"
