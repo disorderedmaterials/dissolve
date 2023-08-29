@@ -21,7 +21,7 @@ class DataSource;
 template <typename T, typename F> class DataSourceKeyword : public KeywordBase
 {
     public:
-    explicit DataSourceKeyword(F addData, std::string_view endKeyword);
+    explicit DataSourceKeyword(F &&addData, std::string_view endKeyword);
     ~DataSourceKeyword() override = default;
 
     /*

@@ -44,6 +44,12 @@ class CompareModule : public Module
     std::vector<std::pair<std::vector<Range> &, std::vector<double>>> rangeError2D_;
     std::vector<std::pair<std::vector<Range> &, std::vector<double>>> rangeError3D_;
 
+    public:
+    // Return data vectors
+    std::vector<std::pair<std::unique_ptr<Data1D>, std::unique_ptr<Data1D>>> &compareData1D();
+    std::vector<std::pair<std::unique_ptr<Data2D>, std::unique_ptr<Data2D>>> &compareData2D();
+    std::vector<std::pair<std::unique_ptr<Data3D>, std::unique_ptr<Data3D>>> &compareData3D();
+
     /*
      * Processing
      */

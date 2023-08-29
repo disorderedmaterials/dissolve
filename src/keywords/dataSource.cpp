@@ -4,7 +4,7 @@
 #include "io/import/data3D.h"
 
 template <typename T, typename F>
-DataSourceKeyword<T, F>::DataSourceKeyword(F addData, std::string_view endKeyword)
+DataSourceKeyword<T, F>::DataSourceKeyword(F &&addData, std::string_view endKeyword)
     : KeywordBase(typeid(this)), addData_(addData), endKeyword_(endKeyword_)
 {
     // Get the correct import object to use

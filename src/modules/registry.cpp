@@ -54,7 +54,7 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ChecksModule>(ModuleTypes::Checks, "Conduct simple checks on Configurations", "Checks & Tests");
     registerProducer<CheckSpeciesModule>(ModuleTypes::CheckSpecies, "Check the contents of a Species against reference values",
                                          "Checks & Tests");
-    registerProducer<CompareModule>(ModuleTypes::Compare, "Compare data sets and calculate errors", "Checls & Tests");
+    registerProducer<CompareModule>(ModuleTypes::Compare, "Compare data sets and calculate errors", "Checks & Tests");
     registerProducer<DAngleModule>(ModuleTypes::DAngle, "Calculate distance/angle maps", "Analysis");
     registerProducer<EnergyModule>(ModuleTypes::Energy, "Calculate the total energy of a Configuration", "Forcefield");
     registerProducer<EPSRModule>(ModuleTypes::EPSR, "Refine interatomic potentials in a manner consistent with EPSR",
