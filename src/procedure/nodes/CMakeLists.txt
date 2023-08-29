@@ -23,6 +23,7 @@ add_library(
   importCoordinates.cpp
   integerCollect1D.cpp
   integrate1D.cpp
+  iterateData1D.cpp
   node.cpp
   nodeReference.cpp
   operateBase.cpp
@@ -78,6 +79,7 @@ add_library(
   importCoordinates.h
   integerCollect1D.h
   integrate1D.h
+  iterateData1D.h
   node.h
   nodeReference.h
   operateBase.h

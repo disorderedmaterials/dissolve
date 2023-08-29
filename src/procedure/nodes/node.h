@@ -60,6 +60,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         IntegerCollect1D,
         IfValueInRange,
         Integrate1D,
+        IterateData1D,
         OperateDivide,
         OperateExpression,
         OperateGridNormalise,

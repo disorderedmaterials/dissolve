@@ -48,6 +48,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::IntegerCollect1D, "IntegerCollect1D"},
                      {ProcedureNode::NodeType::IfValueInRange, "IfValueInRange"},
                      {ProcedureNode::NodeType::Integrate1D, "Integrate1D"},
+                     {ProcedureNode::NodeType::IterateData1D, "IterateData1D"},
                      {ProcedureNode::NodeType::OperateDivide, "OperateDivide"},
                      {ProcedureNode::NodeType::OperateExpression, "OperateExpression"},
                      {ProcedureNode::NodeType::OperateGridNormalise, "OperateGridNormalise"},
