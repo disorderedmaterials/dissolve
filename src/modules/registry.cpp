@@ -74,14 +74,11 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<MDModule>(ModuleTypes::MD, "Evolve a Configuration using molecular dynamics", "Evolution");
     registerProducer<MolShakeModule>(ModuleTypes::MolShake, "Perform molecular Monte Carlo moves", "Evolution");
     registerProducer<NeutronSQModule>(ModuleTypes::NeutronSQ, "Calculate neutron-weighted S(Q)", "Correlation Functions");
-<<<<<<< HEAD
     registerProducer<OrientedSDFModule>(
         ModuleTypes::OrientedSDF,
         "Calculate spatial density functions around oriented sites, restricted by relative molecule orientation", "Analysis");
     registerProducer<QSpeciesModule>(ModuleTypes::QSpecies, "Calculate QSpecies of a network former", "Analysis");
-=======
     registerProducer<QSpeciesModule>(ModuleTypes::QSpecies, "Calculate Q Species of a network former", "Analysis");
->>>>>>> 05f3e87d0 (module context changes)
     registerProducer<SDFModule>(ModuleTypes::SDF, "Calculate spatial density functions around oriented sites", "Analysis");
     registerProducer<SiteRDFModule>(ModuleTypes::SiteRDF, "Calculate radial distribution functions between sites", "Analysis");
     registerProducer<SQModule>(ModuleTypes::SQ, "Transform g(r) into unweighted S(Q)", "Correlation Functions");

@@ -49,11 +49,8 @@ enum ModuleType
     MD,
     MolShake,
     NeutronSQ,
-<<<<<<< HEAD
     OrientedSDF,
-=======
     QSpecies,
->>>>>>> 99e8363a5 (qSpecies module setup)
     SDF,
     SiteRDF,
     Skeleton,

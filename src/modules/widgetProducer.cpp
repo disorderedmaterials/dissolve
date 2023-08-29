@@ -36,16 +36,10 @@
 #include "modules/intraDistance/intraDistance.h"
 #include "modules/neutronSQ/gui/neutronSQWidget.h"
 #include "modules/neutronSQ/neutronSQ.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
 #include "modules/orientedSDF/gui/orientedSDFWidget.h"
 #include "modules/orientedSDF/orientedSDF.h"
-=======
-=======
 #include "modules/qSpecies/gui/qSpeciesWidget.h"
->>>>>>> 52370c43b (added in output and export)
 #include "modules/qSpecies/qSpecies.h"
->>>>>>> 99e8363a5 (qSpecies module setup)
 #include "modules/sdf/gui/sdfWidget.h"
 #include "modules/sdf/sdf.h"
 #include "modules/siteRDF/gui/siteRDFWidget.h"
