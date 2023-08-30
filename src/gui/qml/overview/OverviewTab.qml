@@ -62,10 +62,10 @@ ColumnLayout {
     RowLayout {
         Repeater {
             id: species
-            model: dissolveModel.species
+            model: dissolveModel.speciesModel
 
             delegate: Species {
-                model: dissolveModel.species
+                model: dissolveModel.speciesModel
                 modelData: model
 
                 MouseArea {
@@ -79,10 +79,10 @@ ColumnLayout {
     RowLayout {
         Repeater {
             id: configurations
-            model: dissolveModel.configurations
+            model: dissolveModel.configurationsModel
 
             delegate: Configuration {
-                model: dissolveModel.configurations
+                model: dissolveModel.configurationsModel
                 modelData: model
 
                 MouseArea {

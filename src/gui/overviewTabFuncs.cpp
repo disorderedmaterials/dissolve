@@ -86,15 +86,15 @@ void OverviewTab::masterTermsClicked()
 void OverviewTab::speciesClicked(int index)
 {
     auto *species =
-        dissolveModel_.species()->data(dissolveModel_.species()->index(index, 0), Qt::UserRole).value<const Species *>();
+        dissolveModel_.speciesModel()->data(dissolveModel_.speciesModel()->index(index, 0), Qt::UserRole).value<const Species *>();
     tabWidget_->setCurrentTab(species);
 }
 
 // Configuration clicked
 void OverviewTab::configurationClicked(int index)
 {
-    auto *configuration = dissolveModel_.configurations()
-                              ->data(dissolveModel_.configurations()->index(index, 0), Qt::UserRole)
+    auto *configuration = dissolveModel_.configurationsModel()
+                              ->data(dissolveModel_.configurationsModel()->index(index, 0), Qt::UserRole)
                               .value<Configuration *>();
     tabWidget_->setCurrentTab(configuration);
 }

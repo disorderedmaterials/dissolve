@@ -15,29 +15,29 @@ class DissolveModel : public QObject
 {
     Q_OBJECT
     // The Atom Type Model
-    Q_PROPERTY(AtomTypeModel *atomTypes READ atomTypes NOTIFY atomTypesChanged)
+    Q_PROPERTY(AtomTypeModel *atomTypesModel READ atomTypesModel NOTIFY atomTypesChanged)
     // The number of atom types
     Q_PROPERTY(int nAtomTypes READ nAtomTypes NOTIFY modelsUpdated)
     // The Master Bond Model
-    Q_PROPERTY(const MasterBondModel *bonds READ bonds NOTIFY mastersChanged)
+    Q_PROPERTY(const MasterBondModel *masterBondsModel READ masterBondsModel NOTIFY mastersChanged)
     // The number of master bonds
     Q_PROPERTY(int nMasterBonds READ nMasterBonds NOTIFY modelsUpdated)
     // The Master Angle Model
-    Q_PROPERTY(const MasterAngleModel *angles READ angles NOTIFY mastersChanged)
+    Q_PROPERTY(const MasterAngleModel *masterAnglesModel READ masterAnglesModel NOTIFY mastersChanged)
     // The number of master angles
     Q_PROPERTY(int nMasterAngles READ nMasterAngles NOTIFY modelsUpdated)
     // The Master Torsion Model
-    Q_PROPERTY(const MasterTorsionModel *torsions READ torsions NOTIFY mastersChanged)
+    Q_PROPERTY(const MasterTorsionModel *masterTorsionsModel READ masterTorsionsModel NOTIFY mastersChanged)
     // The number of master torsions
     Q_PROPERTY(int nMasterTorsions READ nMasterTorsions NOTIFY modelsUpdated)
     // The Master Improper Model
-    Q_PROPERTY(const MasterImproperModel *impropers READ impropers NOTIFY mastersChanged)
+    Q_PROPERTY(const MasterImproperModel *masterImpropersModel READ masterImpropersModel NOTIFY mastersChanged)
     // The number of master impropers
     Q_PROPERTY(int nMasterImpropers READ nMasterImpropers NOTIFY modelsUpdated)
     // The Species Model
-    Q_PROPERTY(const SpeciesModel *species READ species NOTIFY speciesChanged)
+    Q_PROPERTY(const SpeciesModel *speciesModel READ speciesModel NOTIFY speciesChanged)
     // The Configuration Model
-    Q_PROPERTY(const ConfigurationModel *configurations READ configurations NOTIFY configurationsChanged)
+    Q_PROPERTY(const ConfigurationModel *configurationsModel READ configurationsModel NOTIFY configurationsChanged)
 
     private:
     // The Atom Type Model
@@ -65,29 +65,29 @@ class DissolveModel : public QObject
     ~DissolveModel() = default;
 
     // The Atom Type Model
-    AtomTypeModel *atomTypes();
+    AtomTypeModel *atomTypesModel();
     // The number of atom types
     int nAtomTypes();
     // The Master Bond Model
-    const MasterBondModel *bonds() const;
+    const MasterBondModel *masterBondsModel() const;
     // The number of master bonds
     int nMasterBonds();
     // The Master Angle Model
-    const MasterAngleModel *angles() const;
+    const MasterAngleModel *masterAnglesModel() const;
     // The number of master angles
     int nMasterAngles();
     // The Master Torsion Model
-    const MasterTorsionModel *torsions() const;
+    const MasterTorsionModel *masterTorsionsModel() const;
     // The number of master torsions
     int nMasterTorsions();
     // The Master Improper Model
-    const MasterImproperModel *impropers() const;
+    const MasterImproperModel *masterImpropersModel() const;
     // The number of master impropers
     int nMasterImpropers();
     // The Species Model
-    SpeciesModel *species();
+    SpeciesModel *speciesModel();
     // The Configurations Model
-    ConfigurationModel *configurations();
+    ConfigurationModel *configurationsModel();
 
     /*
      * Data

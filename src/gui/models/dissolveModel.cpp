@@ -37,13 +37,13 @@ void DissolveModel::update()
 }
 
 // The Atom Type Model
-AtomTypeModel *DissolveModel::atomTypes() { return &atomTypes_; }
+AtomTypeModel *DissolveModel::atomTypesModel() { return &atomTypes_; }
 
 // The number of atom types
 int DissolveModel::nAtomTypes() { return atomTypes_.rowCount(); }
 
 // The Master Bond Model
-const MasterBondModel *DissolveModel::bonds() const
+const MasterBondModel *DissolveModel::masterBondsModel() const
 {
     if (!masters_)
         return nullptr;
@@ -59,7 +59,7 @@ int DissolveModel::nMasterBonds()
 }
 
 // The Master Angle Model
-const MasterAngleModel *DissolveModel::angles() const
+const MasterAngleModel *DissolveModel::masterAnglesModel() const
 {
     if (!masters_)
         return nullptr;
@@ -75,7 +75,7 @@ int DissolveModel::nMasterAngles()
 }
 
 // The Master Torsion Model
-const MasterTorsionModel *DissolveModel::torsions() const
+const MasterTorsionModel *DissolveModel::masterTorsionsModel() const
 {
     if (!masters_)
         return nullptr;
@@ -91,7 +91,7 @@ int DissolveModel::nMasterTorsions()
 }
 
 // The Master Improper Model
-const MasterImproperModel *DissolveModel::impropers() const
+const MasterImproperModel *DissolveModel::masterImpropersModel() const
 {
     if (!masters_)
         return nullptr;
@@ -107,7 +107,7 @@ int DissolveModel::nMasterImpropers()
 }
 
 // The Species Model
-SpeciesModel *DissolveModel::species() { return &speciesModel_; }
+SpeciesModel *DissolveModel::speciesModel() { return &speciesModel_; }
 
 // The Configuration Model
-ConfigurationModel *DissolveModel::configurations() { return &configurationModel_; }
+ConfigurationModel *DissolveModel::configurationsModel() { return &configurationModel_; }
