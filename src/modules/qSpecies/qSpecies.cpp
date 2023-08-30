@@ -53,6 +53,13 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     auto &normalisation = processNF->branch()->get();
     normalisation.create<OperateNormaliseProcedureNode>({});
 
+    // Percentage of BO
+    auto percentBO = forEachBO.create<CalculateExpressionProcedureNode>({});
+    percentBO->setExpression("NF.nSelected");
+    auto collectBO = forEachBO.create<IntegerCollect1DProcedureNode>("NumberBO", percentBO, ProcedureNode::AnalysisContext);
+    auto processPercent = analyser_.createRootNode<Process1DProcedureNode>("PercentBO", collectQ);
+    auto &normalisationPercent = processNF->branch()->get();
+    normalisationPercent.create<OperateNormaliseProcedureNode>({});
     /*
      * Keywords
      */

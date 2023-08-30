@@ -78,7 +78,6 @@ ModuleRegistry::ModuleRegistry()
         ModuleTypes::OrientedSDF,
         "Calculate spatial density functions around oriented sites, restricted by relative molecule orientation", "Analysis");
     registerProducer<QSpeciesModule>(ModuleTypes::QSpecies, "Calculate QSpecies of a network former", "Analysis");
-    registerProducer<QSpeciesModule>(ModuleTypes::QSpecies, "Calculate Q Species of a network former", "Analysis");
     registerProducer<SDFModule>(ModuleTypes::SDF, "Calculate spatial density functions around oriented sites", "Analysis");
     registerProducer<SiteRDFModule>(ModuleTypes::SiteRDF, "Calculate radial distribution functions between sites", "Analysis");
     registerProducer<SQModule>(ModuleTypes::SQ, "Transform g(r) into unweighted S(Q)", "Correlation Functions");
