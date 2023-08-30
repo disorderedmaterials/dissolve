@@ -9,14 +9,15 @@ Node {
 
     ColumnLayout {
         spacing: 0
+
         RowLayout {
             Text {
                 text: `${model.data(model.index(index, 0), Qt.DisplayRole)}`
             }
             Image {
-                source: "qrc:/general/icons/configuration.svg"
-                Layout.preferredWidth: 15
                 Layout.preferredHeight: 15
+                Layout.preferredWidth: 15
+                source: "qrc:/general/icons/configuration.svg"
             }
         }
         Text {
