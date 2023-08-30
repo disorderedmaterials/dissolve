@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Dissolve 1.0
 
 Node {
     property variant model
@@ -10,10 +11,10 @@ Node {
         const speciesData = model.data;
         const speciesIndex = model.index(index, 0);
         const speciesName = speciesData(speciesIndex, Qt.DisplayRole);
-        const bonds = speciesData(speciesIndex, Qt.UserRole + 1);
-        const angles = speciesData(speciesIndex, Qt.UserRole + 2);
-        const torsions = speciesData(speciesIndex, Qt.UserRole + 3);
-        const impropers = speciesData(speciesIndex, Qt.UserRole + 4);
+        const bonds = speciesData(speciesIndex, SpeciesModel.SpeciesUserRole.BondsCount);
+        const angles = speciesData(speciesIndex, SpeciesModel.SpeciesUserRole.AnglesCount);
+        const torsions = speciesData(speciesIndex, SpeciesModel.SpeciesUserRole.TorsionsCount);
+        const impropers = speciesData(speciesIndex, SpeciesModel.SpeciesUserRole.ImpropersCount);
         const markup = `
         <div style="font-size: 16px;">
             ${speciesName} <img src="qrc:/general/icons/species.svg" width="15" height="15" alt=""> <br/>

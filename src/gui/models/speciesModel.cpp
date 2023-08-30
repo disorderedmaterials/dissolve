@@ -62,15 +62,15 @@ QVariant SpeciesModel::data(const QModelIndex &index, int role) const
             {
                 return {};
             }
-        case (Qt::UserRole):
+        case (static_cast<unsigned int>(SpeciesUserRole::RawData)):
             return QVariant::fromValue(rawData(index));
-        case (Qt::UserRole + 1):
+        case (static_cast<unsigned int>(SpeciesUserRole::BondsCount)):
             return QVariant::fromValue(rawData(index)->nBonds());
-        case (Qt::UserRole + 2):
+        case (static_cast<unsigned int>(SpeciesUserRole::AnglesCount)):
             return QVariant::fromValue(rawData(index)->nAngles());
-        case (Qt::UserRole + 3):
+        case (static_cast<unsigned int>(SpeciesUserRole::TorsionsCount)):
             return QVariant::fromValue(rawData(index)->nTorsions());
-        case (Qt::UserRole + 4):
+        case (static_cast<unsigned int>(SpeciesUserRole::ImpropersCount)):
             return QVariant::fromValue(rawData(index)->nImpropers());
         default:
             return {};
