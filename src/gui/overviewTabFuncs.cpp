@@ -11,7 +11,6 @@ OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, Mai
     : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
     qmlRegisterType<DissolveModel>("Dissolve", 1, 0, "DissolveModel");
-    qmlRegisterType<SpeciesModel>("Dissolve", 1, 0, "SpeciesModel");
 
     // Set up the model
     dissolveModel_.setDissolve(dissolve);
