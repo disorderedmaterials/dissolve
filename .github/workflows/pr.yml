@@ -5,7 +5,7 @@ on:
     branches:
     - '*'
     paths-ignore:
-    - '.github/workflows/benchmarks.yml'
+    - '.github/workflows/benchmark.yml'
     - '.github/workflows/cacheConan.yml'
     - '.github/workflows/cacheNix.yml'
     - '.github/workflows/continuous.yml'
