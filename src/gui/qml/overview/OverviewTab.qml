@@ -3,7 +3,7 @@ import QtQuick.Controls 6.0
 import QtQuick.Layouts 6.0
 import QtQml.Models 6.0
 import QtQuick 2.15
-import Dissolve
+import Dissolve 1.0
 
 ColumnLayout {
     id: root
