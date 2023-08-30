@@ -66,7 +66,6 @@ ColumnLayout {
 
             delegate: Species {
                 model: dissolveModel.speciesModel
-                modelData: model
 
                 MouseArea {
                     anchors.fill: parent
@@ -83,7 +82,6 @@ ColumnLayout {
 
             delegate: Configuration {
                 model: dissolveModel.configurationsModel
-                modelData: model
 
                 MouseArea {
                     anchors.fill: parent

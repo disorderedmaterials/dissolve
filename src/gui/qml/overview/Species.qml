@@ -5,7 +5,6 @@ import Dissolve 1.0
 
 Node {
     property variant model
-    property variant modelData
 
     ColumnLayout {
         spacing: 0
