@@ -7,25 +7,23 @@ Node {
     property variant model
     property variant modelData
 
-    function generateConfigurationMarkup(index) {
-        const configurationData = model.data;
-        const configurationIndex = model.index(index, 0);
-        const configurationName = configurationData(configurationIndex, Qt.DisplayRole);
-        const molecules = configurationData(configurationIndex, ConfigurationModel.ConfigurationUserRole.MoleculesCount);
-        const atoms = configurationData(configurationIndex, ConfigurationModel.ConfigurationUserRole.AtomsCount);
-        const markup = `
-        <div style="font-size: 16px;">
-            ${configurationName} <img src="qrc:/general/icons/configuration.svg" width="15" height="15"> <br/>
-        </div>
-        <div style="font-size: 14px; text-align: center;">
-            Molecules: ${molecules} <br/>
-            Atoms: ${atoms}
-        </div>
-    `;
-        return markup;
-    }
-
-    Text {
-        text: generateConfigurationMarkup(index)
+    ColumnLayout {
+        spacing: 0
+        RowLayout {
+            Text {
+                text: `${model.data(model.index(index, 0), Qt.DisplayRole)}`
+            }
+            Image {
+                source: "qrc:/general/icons/configuration.svg"
+                Layout.preferredWidth: 15
+                Layout.preferredHeight: 15
+            }
+        }
+        Text {
+            text: `Molecules: ${model.data(model.index(index, 0), ConfigurationModel.ConfigurationUserRole.MoleculesCount)}`
+        }
+        Text {
+            text: `Atoms: ${model.data(model.index(index, 0), ConfigurationModel.ConfigurationUserRole.AtomsCount)}`
+        }
     }
 }

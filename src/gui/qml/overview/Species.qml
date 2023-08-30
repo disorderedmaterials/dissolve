@@ -7,29 +7,30 @@ Node {
     property variant model
     property variant modelData
 
-    function generateSpeciesMarkup(index) {
-        const speciesData = model.data;
-        const speciesIndex = model.index(index, 0);
-        const speciesName = speciesData(speciesIndex, Qt.DisplayRole);
-        const bonds = speciesData(speciesIndex, SpeciesModel.SpeciesUserRole.BondsCount);
-        const angles = speciesData(speciesIndex, SpeciesModel.SpeciesUserRole.AnglesCount);
-        const torsions = speciesData(speciesIndex, SpeciesModel.SpeciesUserRole.TorsionsCount);
-        const impropers = speciesData(speciesIndex, SpeciesModel.SpeciesUserRole.ImpropersCount);
-        const markup = `
-        <div style="font-size: 16px;">
-            ${speciesName} <img src="qrc:/general/icons/species.svg" width="15" height="15" alt=""> <br/>
-        </div>
-        <div style="font-size: 14px; text-align: center;">
-            Bonds: ${bonds}<br/>
-            Angles: ${angles}<br/>
-            Torsions: ${torsions}<br/>
-            Impropers: ${impropers}
-        </div>
-    `;
-        return markup;
-    }
+    ColumnLayout {
+        spacing: 0
+        RowLayout {
+            Text {
+                text: `${model.data(model.index(index, 0), Qt.DisplayRole)}`
+            }
+            Image {
+                source: "qrc:/general/icons/species.svg"
+                Layout.preferredWidth: 15
+                Layout.preferredHeight: 15
+            }
+        }
+        Text {
+            text: `Bonds: ${model.data(model.index(index, 0), SpeciesModel.SpeciesUserRole.BondsCount)}`
+        }
+        Text {
+            text: `Angles: ${model.data(model.index(index, 0), SpeciesModel.SpeciesUserRole.AnglesCount)}`
+        }
+        Text {
+            text: `Torsions: ${model.data(model.index(index, 0), SpeciesModel.SpeciesUserRole.TorsionsCount)}`
+        }
+        Text {
+            text: `Impropers: ${model.data(model.index(index, 0), SpeciesModel.SpeciesUserRole.ImpropersCount)}`
+        }
 
-    Text {
-        text: generateSpeciesMarkup(index)
     }
 }
