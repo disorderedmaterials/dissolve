@@ -197,15 +197,15 @@
     <file>qml/ImageRadio.qml</file>
     <file>qml/PrettyListView.qml</file>
   </qresource>
-  <qresource prefix="tabs">
-    <file>qml/AtomTypes.qml</file>
-    <file>qml/Configuration.qml</file>
-    <file>qml/Species.qml</file>
-    <file>qml/OverviewTab.qml</file>
-    <file>qml/Bonds.qml</file>
-    <file>qml/Angles.qml</file>
-    <file>qml/Impropers.qml</file>
-    <file>qml/Torsions.qml</file>
-    <file>qml/OverviewRectangle.qml</file>
+  <qresource prefix="overview">
+    <file>qml/overview/AtomTypes.qml</file>
+    <file>qml/overview/Configuration.qml</file>
+    <file>qml/overview/Species.qml</file>
+    <file>qml/overview/OverviewTab.qml</file>
+    <file>qml/overview/Bonds.qml</file>
+    <file>qml/overview/Angles.qml</file>
+    <file>qml/overview/Impropers.qml</file>
+    <file>qml/overview/Torsions.qml</file>
+    <file>qml/overview/Node.qml</file>
   </qresource>
 </RCC>

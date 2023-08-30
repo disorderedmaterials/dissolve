@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-OverviewRectangle {
+Node {
     property int nImpropers
 
     Text {

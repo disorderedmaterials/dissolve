@@ -2,10 +2,10 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-OverviewRectangle {
-    property int nAngles
+Node {
+    property int nBonds
 
     Text {
-        text: `Angles(${nAngles})`
+        text: `Bonds(${nBonds})`
     }
 }

@@ -22,7 +22,7 @@ OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, Mai
     // Create the view
     view_ = new QQuickWidget(this);
     view_->rootContext()->setContextProperty("dissolveModel", &dissolveModel_);
-    view_->setSource(QUrl("qrc:/tabs/qml/OverviewTab.qml"));
+    view_->setSource(QUrl("qrc:/overview/qml/overview/OverviewTab.qml"));
     view_->setMinimumSize(300, 300);
 
     connect(view_, SIGNAL(statusChanged(QQuickWidget::Status)), SLOT(viewStatusChanged()));
