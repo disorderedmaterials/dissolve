@@ -199,18 +199,18 @@ const Species &benzeneSpecies()
     if (benzene_.nAtoms() == 0)
     {
         benzene_.setName("Benzene");
-        benzene_.addAtom(Elements::C, {-1.399000, 0.160000, 0.000000});
-        benzene_.addAtom(Elements::C, {-0.561000, 1.293000, 0.000000});
-        benzene_.addAtom(Elements::C, {0.839000, 1.132000, 0.000000});
-        benzene_.addAtom(Elements::C, {1.399000, -0.160000, 0.000000});
-        benzene_.addAtom(Elements::C, {0.560000, -1.293000, 0.000000});
-        benzene_.addAtom(Elements::C, {-0.839000, -1.132000, 0.000000});
-        benzene_.addAtom(Elements::H, {1.483000, 2.001000, 0.000000});
-        benzene_.addAtom(Elements::H, {2.472000, -0.284000, 0.000000});
-        benzene_.addAtom(Elements::H, {0.991000, -2.284000, 0.000000});
-        benzene_.addAtom(Elements::H, {-1.483000, -2.000000, 0.000000});
-        benzene_.addAtom(Elements::H, {-2.472000, 0.282000, 0.000000});
-        benzene_.addAtom(Elements::H, {-0.990000, 2.284000, 0.000000});
+        benzene_.addAtom(Elements::C, {-1.390000, 0.000000, 0.000000});
+        benzene_.addAtom(Elements::C, {-0.695000, 1.203775, 0.000000});
+        benzene_.addAtom(Elements::C, {0.695000, 1.203775, 0.000000});
+        benzene_.addAtom(Elements::C, {1.390000, 0.000000, 0.000000});
+        benzene_.addAtom(Elements::C, {0.695000, -1.203775, 0.000000});
+        benzene_.addAtom(Elements::C, {-0.695000, -1.203775, 0.000000});
+        benzene_.addAtom(Elements::H, {1.195000, 2.069801, 0.000000});
+        benzene_.addAtom(Elements::H, {2.390000, 0.000000, 0.000000});
+        benzene_.addAtom(Elements::H, {1.195000, -2.069801, 0.000000});
+        benzene_.addAtom(Elements::H, {-1.195000, -2.069801, 0.000000});
+        benzene_.addAtom(Elements::H, {-2.390000, 0.000000, 0.000000});
+        benzene_.addAtom(Elements::H, {-1.195000, 2.069801, 0.000000});
         benzene_.addMissingBonds();
     }
     return benzene_;
