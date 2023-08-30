@@ -7,7 +7,6 @@
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
 #include <memory>
-#include <set>
 
 // Forward Declarations
 class Element;

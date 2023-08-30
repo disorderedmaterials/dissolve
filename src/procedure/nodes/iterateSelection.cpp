@@ -62,10 +62,7 @@ OptionalReferenceWrapper<ProcedureNodeSequence> IterateSelectionProcedureNode::b
 bool IterateSelectionProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     // If one exists, prepare the ForEach branch nodes
-    if (!forEachBranch_.prepare(procedureContext))
-        return false;
-
-    return true;
+    return forEachBranch_.prepare(procedureContext);
 }
 
 // Execute node
@@ -106,11 +103,11 @@ bool IterateSelectionProcedureNode::finalise(const ProcedureContext &procedureCo
         return false;
 
     // Print out summary information
-    Messenger::print("[Iterate Selection] - Site '{}': Number of selections made = {} (last contained {} sites).\n", name(),
+    Messenger::print("[IterateSelection] - Site '{}': Number of selections made = {} (last contained {} sites).\n", name(),
                      nSelections_, selectionSize);
-    Messenger::print("[Iterate Selection] - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
+    Messenger::print("[IterateSelection] - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
                      nSelections_ == 0 ? 0 : double(nCumulativeSites_) / nSelections_);
-    Messenger::print("[Iterate Selection] - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);
+    Messenger::print("[IterateSelection] - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);
 
     return true;
 }
