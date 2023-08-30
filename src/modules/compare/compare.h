@@ -113,4 +113,6 @@ class CompareModule : public Module
             return true;
         }
     }
+
+    void
 };
