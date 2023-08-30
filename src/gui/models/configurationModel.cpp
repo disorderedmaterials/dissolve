@@ -63,11 +63,11 @@ QVariant ConfigurationModel::data(const QModelIndex &index, int role) const
             {
                 return {};
             }
-        case (Qt::UserRole):
+        case (static_cast<unsigned int>(ConfigurationUserRole::RawData)):
             return QVariant::fromValue(rawData(index));
-        case (Qt::UserRole + 1):
+        case (static_cast<unsigned int>(ConfigurationUserRole::MoleculesCount)):
             return QVariant::fromValue(rawData(index)->nMolecules());
-        case (Qt::UserRole + 2):
+        case (static_cast<unsigned int>(ConfigurationUserRole::AtomsCount)):
             return QVariant::fromValue(rawData(index)->nAtoms());
         default:
             return {};
