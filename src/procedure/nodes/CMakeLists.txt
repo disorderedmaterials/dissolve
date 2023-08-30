@@ -24,7 +24,7 @@ add_library(
   integerCollect1D.cpp
   integrate1D.cpp
   iterateData1D.cpp
-  iterateSelection.cppelection setup)
+  iterateSelection.cpp
   node.cpp
   nodeReference.cpp
   operateBase.cpp
