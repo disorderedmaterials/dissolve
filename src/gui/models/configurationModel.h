@@ -22,7 +22,7 @@ class ConfigurationModel : public QAbstractListModel
     Configuration *rawData(const QModelIndex &index) const;
 
     public:
-        enum class ConfigurationUserRole
+    enum class ConfigurationUserRole
     {
         RawData = Qt::UserRole,
         MoleculesCount,

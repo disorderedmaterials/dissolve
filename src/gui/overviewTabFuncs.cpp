@@ -87,8 +87,9 @@ void OverviewTab::masterTermsClicked()
 // Species clicked
 void OverviewTab::speciesClicked(int index)
 {
-    auto *species =
-        dissolveModel_.speciesModel()->data(dissolveModel_.speciesModel()->index(index, 0), Qt::UserRole).value<const Species *>();
+    auto *species = dissolveModel_.speciesModel()
+                        ->data(dissolveModel_.speciesModel()->index(index, 0), Qt::UserRole)
+                        .value<const Species *>();
     tabWidget_->setCurrentTab(species);
 }
 
