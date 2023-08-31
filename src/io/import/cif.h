@@ -134,8 +134,8 @@ class CIFHandler
     };
 
     public:
-    bool update(double tolerance, Vec3<int> supercellRepeat, std::optional<NETADefinition> moietyNETA = std::nullopt,
-                Flags<UpdateFlags> flags = {});
+    bool update(double tolerance = 0.1, Vec3<int> supercellRepeat = {1, 1, 1},
+                std::optional<NETADefinition> moietyNETA = std::nullopt, Flags<UpdateFlags> flags = {});
     std::pair<std::vector<Species *>, Configuration *> finalise(CoreData &coreData) const;
     void reset();
     bool isValid() const;
