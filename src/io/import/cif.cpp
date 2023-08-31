@@ -528,7 +528,7 @@ bool CIFHandler::createCleanedSpecies(Flags<UpdateFlags> flags, std::optional<NE
 
     cleanedSpecies_ = coreData_.addSpecies();
     cleanedSpecies_->setName("Crystal (Cleaned)");
-    cleanedSpecies_->copyBasic(structuralSpecies_);
+    cleanedSpecies_->copyBasic(structuralSpecies_, true);
 
     // -- Set unit cell
     auto cellLengths = getCellLengths();
