@@ -476,3 +476,30 @@ bool ProcedureModel::removeRows(int row, int count, const QModelIndex &parent)
     emit(dataChanged(QModelIndex(), QModelIndex()));
     return true;
 }
+
+QModelIndex ProcedureModel::appendNew(const QString &nodeTypeString)
+{
+    // Convert the node type string to its enumeration
+    auto nodeType = ProcedureNode::nodeTypes().enumeration(nodeTypeString.toStdString());
+    // Create a node of the node type
+    auto node = ProcedureNodeRegistry::create(nodeType);
+    assert(node);
+
+    // Get the parent scope, we know this is the root sequence, but use getScope for consistency
+    auto scope = getScope(QModelIndex());
+
+    // Get the target row for the new node
+    auto insertAtRow = rowCount();
+
+    // Create a new row to store the data. Don't use insertRows() here since creating a null node in the vector at this
+    // point causes no end of issues.
+    beginInsertRows(QModelIndex(), insertAtRow, insertAtRow);
+    scope->get().appendNode(node, insertAtRow);
+    endInsertRows();
+    auto idx = index(insertAtRow, 0, QModelIndex());
+
+    // Call setData() so we emit the right signals
+    setData(idx, QVariant::fromValue(node), ProcedureModelAction::CreateNew);
+
+    return idx;
+}

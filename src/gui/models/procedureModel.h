@@ -59,6 +59,7 @@ class ProcedureModel : public QAbstractItemModel
     bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &newParent) override;
     bool insertRows(int row, int count, const QModelIndex &parent) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+    QModelIndex appendNew(const QString &nodeTypeString);
 
     signals:
     void nodeNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
