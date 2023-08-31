@@ -55,8 +55,6 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     ui_.GlobalPotentialsFrame->setHidden(true);
     ui_.TargetedPotentialsFrame->setHidden(true);
-    connect(ui_.ConfigurationButtonGroup, SIGNAL(buttonToggled(QAbstractButton *, bool)), this,
-            SLOT(buttonGroupToggled(QAbstractButton *, bool)));
 }
 
 /*
@@ -212,11 +210,9 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     dissolveWindow_->updateStatusBar();
 }
 
-// Density units changed
 void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }
 
-// Button group toggled
-void ConfigurationTab::buttonGroupToggled(QAbstractButton *button, bool checked)
+void ConfigurationTab::on_ConfigurationButtonGroup_buttonToggled(QAbstractButton *button, bool checked)
 {
     if (button == ui_.GeneratorPushButton)
     {
