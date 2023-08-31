@@ -21,7 +21,7 @@ class DataSource;
 template <typename T, typename F> class DataSourceKeyword : public KeywordBase
 {
     public:
-    explicit DataSourceKeyword(F &&addData, std::string_view endKeyword);
+    explicit DataSourceKeyword(const F &addData, std::string_view endKeyword);
     ~DataSourceKeyword() override = default;
 
     /*
@@ -29,7 +29,7 @@ template <typename T, typename F> class DataSourceKeyword : public KeywordBase
      */
     private:
     // Reference to data adding function in module
-    const F addData_;
+    const F &addData_;
     // Format object for the data
     std::unique_ptr<DataImportFileFormat> format_;
     // Vector of vectors of pairs containing data source type and reference to data

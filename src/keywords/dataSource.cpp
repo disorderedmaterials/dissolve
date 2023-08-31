@@ -4,8 +4,8 @@
 #include "io/import/data3D.h"
 
 template <typename T, typename F>
-DataSourceKeyword<T, F>::DataSourceKeyword(F &&addData, std::string_view endKeyword)
-    : KeywordBase(typeid(this)), addData_(addData), endKeyword_(endKeyword_)
+DataSourceKeyword<T, F>::DataSourceKeyword(const F &addData, std::string_view endKeyword)
+    : KeywordBase(typeid(this)), addData_(addData), endKeyword_(endKeyword)
 {
     // Get the correct import object to use
     if (std::is_same_v<T, Data1D>)
@@ -109,7 +109,6 @@ bool DataSourceKeyword<T, F>::deserialise(LineParser &parser, int startArg, cons
 template <typename T, typename F>
 bool DataSourceKeyword<T, F>::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-
     for (auto &dataVec : data_)
     {
         if (!parser.writeLineF("{}End{}\n", prefix, keywordName))
@@ -151,7 +150,10 @@ bool DataSourceKeyword<T, F>::serialise(LineParser &parser, std::string_view key
 }
 
 // Express as a serialisable value
-template <typename T, typename F> SerialisedValue DataSourceKeyword<T, F>::serialise() const { return SerialisedValue(); }
+template <typename T, typename F> SerialisedValue DataSourceKeyword<T, F>::serialise() const
+{
+    return {{"type", "x"}, {"parameters", "y"}};
+}
 
 // Read values from a serialisable value
 template <typename T, typename F>
