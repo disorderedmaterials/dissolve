@@ -52,8 +52,9 @@ class DissolveSystemTest
 
         if (rewriteCheck_)
         {
-            auto newInput = fmt::format("{}/TestOutput_{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
-                                        DissolveSys::afterLastChar(inputFile, '/'));
+            auto newInput = fmt::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
+                                        DissolveSys::afterLastChar(inputFile, '/'),
+                                        ::testing::UnitTest::GetInstance()->current_test_info()->name());
             if (!dissolve_.saveInput(newInput))
                 throw(std::runtime_error(fmt::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
 
