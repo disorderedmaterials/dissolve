@@ -425,10 +425,9 @@ bool CIFHandler::update(double tolerance, Vec3<int> supercellRepeat, std::option
     Messenger::print("Created supercell species");
     if (molecularSpecies_.empty())
     {
-
         if (!createPartitionedSpecies(flags))
             return false;
-        Messenger::print("Created sueprcell species");
+        Messenger::print("Created supercell species");
     }
     return true;
 }
