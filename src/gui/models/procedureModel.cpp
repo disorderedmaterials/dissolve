@@ -470,7 +470,7 @@ bool ProcedureModel::removeRows(int row, int count, const QModelIndex &parent)
 
     beginRemoveRows(parent, row, row + count - 1);
     for (auto i = 0; i < count; ++i)
-        scope->get().removeNode(data(index(row + i, 0), Qt::UserRole).value<std::shared_ptr<ProcedureNode>>());
+        scope->get().removeNode(data(index(row + i, 0, parent), Qt::UserRole).value<std::shared_ptr<ProcedureNode>>());
     endRemoveRows();
 
     emit(dataChanged(QModelIndex(), QModelIndex()));
