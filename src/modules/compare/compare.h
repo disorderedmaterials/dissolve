@@ -33,6 +33,7 @@ class CompareModule : public Module
     std::vector<std::pair<std::unique_ptr<Data1D>, std::unique_ptr<Data1D>>> compareData1D_;
     std::vector<std::pair<std::unique_ptr<Data2D>, std::unique_ptr<Data2D>>> compareData2D_;
     std::vector<std::pair<std::unique_ptr<Data3D>, std::unique_ptr<Data3D>>> compareData3D_;
+
     // Method of error calculation to use
     Error::ErrorType errorType_{Error::EuclideanError};
     // Threshold for error metric above which test fails
@@ -59,7 +60,6 @@ class CompareModule : public Module
     // Add data to data vectors
     template <typename T> bool addData(std::vector<T> &data)
     {
-
         auto dataVectors = std::forward_as_tuple(compareData1D_, compareData2D_, compareData3D_);
 
         // Ensure provided data is consistent with required structure
@@ -78,7 +78,6 @@ class CompareModule : public Module
     // Fetch internal data
     template <typename T> bool fetchData(T &data, ModuleContext &moduleContext)
     {
-
         // If data is not empty (external)
         if (!data.values().empty())
         {
@@ -113,6 +112,4 @@ class CompareModule : public Module
             return true;
         }
     }
-
-    void
 };
