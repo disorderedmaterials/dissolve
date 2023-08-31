@@ -879,7 +879,7 @@ std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData
 
             // Add
             auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
-            addNode->keywords().set("Population", NodeValue(int(cifMolecularSp->coordinates.size())));
+            addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp->coordinates.size())));
             addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
             addNode->keywords().set("Rotate", false);
             addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
