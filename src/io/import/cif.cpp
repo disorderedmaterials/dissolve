@@ -728,6 +728,9 @@ bool CIFHandler::createPartitionedSpecies(Flags<UpdateFlags> flags)
 // Apply CIF bonding to a given species
 void CIFHandler::applyCIFBonding(Species *sp, bool preventMetallicBonding)
 {
+    if (!hasBondDistances())
+        return;
+
     auto *box = sp->box();
     auto pairs = PairIterator(sp->nAtoms());
     for (auto pair : pairs)
