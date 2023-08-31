@@ -95,21 +95,12 @@ class CIFHandler
     /*
      * Species & Configurations
      */
-
-    typedef struct CIFMolecularSpecies
-    {
-        Species *species;
-        std::string netaString;
-        std::vector<std::vector<int>> instances;
-        std::vector<std::vector<Vec3<double>>> coordinates;
-    } CIFMolecularSpecies;
-
     private:
     Species *structuralSpecies_;
     Configuration *structuralConfiguration_;
     Species *cleanedSpecies_;
     Configuration *cleanedConfiguration_;
-    std::vector<CIFMolecularSpecies *> molecularSpecies_;
+    std::vector<CIFMolecularSpecies> molecularSpecies_;
     Configuration *molecularConfiguration_;
     Species *supercellSpecies_;
     Configuration *supercellConfiguration_;
@@ -178,7 +169,7 @@ class CIFHandler
     Species *cleanedSpecies();
     Configuration *cleanedConfiguration();
     // Molecular
-    std::vector<Species *> molecularSpecies();
+    const std::vector<CIFMolecularSpecies> &molecularSpecies() const;
     Configuration *molecularConfiguration();
     // Supercell
     Species *supercellSpecies();

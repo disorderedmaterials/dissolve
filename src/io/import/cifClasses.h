@@ -8,6 +8,9 @@
 #include <algorithm>
 #include <vector>
 
+// Forward Declarations
+class Species;
+
 // CIF Symmetry-Unique Atom
 class CIFSymmetryAtom
 {
@@ -109,4 +112,32 @@ class CIFAssembly
     CIFAtomGroup &getGroup(std::string_view groupName);
     // Return the number of defined groups
     int nGroups() const;
+};
+
+// CIF Repeated Molecular Species
+class CIFMolecularSpecies
+{
+    public:
+    CIFMolecularSpecies(const Species *targetSpecies, std::string_view netaDefinition, std::vector<std::vector<int>> instances,
+                        std::vector<std::vector<Vec3<double>>> coordinates);
+
+    private:
+    // Species to which the definitions relate
+    const Species *species_;
+    // NETA string for the species
+    std::string netaString_;
+    // Indices of instances (copies)
+    std::vector<std::vector<int>> instances_;
+    // Coordinates of instances
+    std::vector<std::vector<Vec3<double>>> coordinates_;
+
+    public:
+    // Species to which the definitions relate
+    const Species *species() const;
+    // NETA string for the species
+    std::string_view netaString() const;
+    // Indices of instances (copies)
+    const std::vector<std::vector<int>> &instances() const;
+    // Coordinates of instances
+    const std::vector<std::vector<Vec3<double>>> &coordinates() const;
 };

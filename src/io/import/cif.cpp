@@ -615,7 +615,6 @@ bool CIFHandler::createMolecularSpecies()
     auto idx = 0;
     while (!indices.empty())
     {
-        auto *species = new CIFMolecularSpecies;
         // Choose a fragment
         auto fragment = cleanedSpecies_->fragment(idx);
         std::sort(fragment.begin(), fragment.end());
@@ -657,11 +656,10 @@ bool CIFHandler::createMolecularSpecies()
         // Give the species a name
         sp->setName(EmpiricalFormula::formula(sp->atoms(), [&](const auto &at) { return at.Z(); }));
 
-        species->species = sp;
-        species->netaString = neta->definitionString();
-        species->instances = std::move(copies);
-        species->coordinates = std::move(coords);
-        molecularSpecies_.push_back(species);
+        // Push a new definition
+        molecularSpecies_.emplace_back(sp, neta->definitionString(), copies, coords);
+
+        // Search for the next valid starting index
         idx = *std::min_element(indices.begin(), indices.end());
     }
 
@@ -852,9 +850,9 @@ std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData
 
         for (auto &cifMolecularSp : molecularSpecies_)
         {
-            auto *sp = cifMolecularSp->species;
+            auto *sp = cifMolecularSp.species();
             // Add the species
-            sp = coreData.copySpecies(cifMolecularSp->species);
+            sp = coreData.copySpecies(cifMolecularSp.species());
 
             // Determine a unique suffix
             auto base = sp->name();
@@ -874,11 +872,11 @@ std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData
             auto coordsNode =
                 generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
             coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
-            coordsNode->setSets(cifMolecularSp->coordinates);
+            coordsNode->setSets(cifMolecularSp.coordinates());
 
             // Add
             auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
-            addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp->coordinates.size())));
+            addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp.coordinates().size())));
             addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
             addNode->keywords().set("Rotate", false);
             addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
@@ -907,13 +905,8 @@ Species *CIFHandler::cleanedSpecies() { return cleanedSpecies_; }
 Configuration *CIFHandler::cleanedConfiguration() { return cleanedConfiguration_; }
 
 // Molecular
-std::vector<Species *> CIFHandler::molecularSpecies()
-{
-    std::vector<Species *> molecularSpecies;
-    for (auto &cifMolecularSpecies : molecularSpecies_)
-        molecularSpecies.push_back(cifMolecularSpecies->species);
-    return molecularSpecies;
-}
+const std::vector<CIFMolecularSpecies> &CIFHandler::molecularSpecies() const { return molecularSpecies_; }
+
 Configuration *CIFHandler::molecularConfiguration() { return molecularConfiguration_; }
 
 // Supercell
