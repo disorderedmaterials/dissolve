@@ -538,7 +538,6 @@ bool CIFHandler::createCleanedSpecies(Flags<UpdateFlags> flags, std::optional<NE
     if (!cellAngles)
         return false;
     cleanedSpecies_->createBox(cellLengths.value(), cellAngles.value());
-    auto *box = cleanedSpecies_->box();
 
     // Configuration
     cleanedConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
@@ -672,7 +671,6 @@ bool CIFHandler::createMolecularSpecies()
 // Create supercell species
 bool CIFHandler::createSupercellSpecies(Vec3<int> repeat, Flags<CIFHandler::UpdateFlags> flags)
 {
-    supercellSpecies_ = coreData_.addSpecies();
     supercellSpecies_ = coreData_.addSpecies();
     supercellSpecies_->setName("Supercell");
     auto supercellLengths = cleanedSpecies_->box()->axisLengths();
