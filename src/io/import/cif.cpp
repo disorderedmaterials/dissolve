@@ -418,8 +418,7 @@ bool CIFHandler::update(double tolerance, Vec3<int> supercellRepeat, std::option
     if (cleanedSpecies_->fragment(0).size() != cleanedSpecies_->nAtoms())
     {
         if (!createMolecularSpecies())
-            return false;
-        Messenger::print("couldn't Created molecular species");
+            Messenger::print("Couldn't create molecular species");
     }
     if (!createSupercellSpecies(supercellRepeat, flags))
         return false;
