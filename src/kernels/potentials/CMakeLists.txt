@@ -3,12 +3,14 @@ add_library(
   base.cpp
   directional.cpp
   producer.cpp
+  regional.cpp
   restraint.cpp
   simple.cpp
   types.cpp
   base.h
   directional.h
   producer.h
+  regional.h
   restraint.h
   simple.h
   types.h
