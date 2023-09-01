@@ -488,6 +488,10 @@ QModelIndex ProcedureModel::appendNew(const QString &nodeTypeString)
     // Get the parent scope, we know this is the root sequence, but use getScope for consistency
     auto scope = getScope(QModelIndex());
 
+    // Check if the node is relevant to the context of the scope
+    if (!node->isContextRelevant(scope->get().context()))
+        return {};
+
     // Get the target row for the new node
     auto insertAtRow = rowCount();
 
