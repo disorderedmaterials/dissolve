@@ -15,13 +15,15 @@ CompareModuleWidget::CompareModuleWidget(QWidget *parent, CompareModule *module,
     // Set up the main graph
     graph_ = ui_.PlotWidget->dataViewer();
     rangeErrorTable_ = ui_.RangeErrorTable;
-
+    /*
     for (auto &[dataA, dataB] : module->compareData1D())
     {
         auto dataButton = new QPushButton(this);
         dataButton->setText(QString::fromStdString(fmt::format("{} vs {}", dataA.get()->tag(), dataB.get()->tag())));
         ui_.ButtonLayout->addWidget(dataButton);
-    }
+        buttons_.push_back(&dataButton);
+        buttons_[0]->setText(QString::fromStdString("La"));
+    }*/
 }
 
 /*

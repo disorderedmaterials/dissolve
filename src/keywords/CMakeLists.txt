@@ -8,7 +8,7 @@ add_library(
   data1DStore.cpp
   data2DStore.cpp
   data3DStore.cpp
-  dataSource.cpp
+  dataSourceBase.cpp
   double.cpp
   elementVector.cpp
   expression.cpp
@@ -52,6 +52,7 @@ add_library(
   data1DStore.h
   data2DStore.h
   data3DStore.h
+  dataSourceBase.h
   dataSource.h
   double.h
   elementVector.h
