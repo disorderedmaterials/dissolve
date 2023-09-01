@@ -7,6 +7,7 @@
 #include "io/import/data1D.h"
 #include "io/import/data2D.h"
 #include "io/import/data3D.h"
+#include "keywords/dataSource.h"
 #include "main/dissolve.h"
 #include "math/data1D.h"
 #include "math/data1DBase.h"
@@ -17,6 +18,8 @@
 #include "math/sampledData1D.h"
 #include "module/context.h"
 #include "module/module.h"
+
+using rangeErrorPair = std::pair<std::vector<Range> &, std::vector<double>>;
 
 // DataCompare Module
 class CompareModule : public Module
@@ -29,21 +32,16 @@ class CompareModule : public Module
      * Definition
      */
     private:
-    // Preallocated vectors of data to compare
-    std::vector<std::pair<std::unique_ptr<Data1D>, std::unique_ptr<Data1D>>> compareData1D_;
-    std::vector<std::pair<std::unique_ptr<Data2D>, std::unique_ptr<Data2D>>> compareData2D_;
-    std::vector<std::pair<std::unique_ptr<Data3D>, std::unique_ptr<Data3D>>> compareData3D_;
-
+    // Shared pointer to data stored in the keyword
+    std::shared_ptr<std::vector<DataPair>> dataSources_;
+    // Mapping from data pair to ranges and error
+    std::map<DataPair, rangeErrorPair> dataSourcesErrors_;
     // Method of error calculation to use
     Error::ErrorType errorType_{Error::EuclideanError};
     // Threshold for error metric above which test fails
     double threshold_{5.0e-3};
     // Ranges to calculate error over
     std::vector<Range> ranges_;
-    // Vector of pairs to hold reference to range and their associated errors
-    std::vector<std::pair<std::vector<Range> &, std::vector<double>>> rangeError1D_;
-    std::vector<std::pair<std::vector<Range> &, std::vector<double>>> rangeError2D_;
-    std::vector<std::pair<std::vector<Range> &, std::vector<double>>> rangeError3D_;
 
     public:
     // Return data vectors

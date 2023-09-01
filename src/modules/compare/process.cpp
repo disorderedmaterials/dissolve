@@ -6,9 +6,9 @@
 
 Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 {
-    for (auto &[dataA, dataB] : compareData1D_)
+    for (auto &[dataA, dataB] : *dataSources_.get())
     {
-        if (!fetchData<Data1D>(*dataA, moduleContext) || !fetchData<Data1D>(*dataB, moduleContext))
+        /*if (!fetchData<Data1D>(*dataA, moduleContext) || !fetchData<Data1D>(*dataB, moduleContext))
             return ExecutionResult::Failed;
 
         std::vector<double> errors;
@@ -41,7 +41,7 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
                 break;
 
             delta.addPoint(x, fabs(y - interpolatedB.y(x)));
-        }
+        }*/
     }
 
     return ExecutionResult::Success;

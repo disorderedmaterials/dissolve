@@ -1,4 +1,3 @@
-#include "dataSource.h"
 #include "io/import/data1D.h"
 #include "io/import/data2D.h"
 #include "io/import/data3D.h"
