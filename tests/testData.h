@@ -203,7 +203,7 @@ class DissolveSystemTest
 
         return checkData1D(optDataA->get(), tagA, optDataB->get(), tagB, tolerance, errorType);
     }
-    // Test Data1D
+    // Test Data3D
     [[nodiscard]] bool checkData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB, std::string_view nameB,
                                    double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)
     {
@@ -252,7 +252,7 @@ class DissolveSystemTest
         auto optData = dissolve_.processingModuleData().search<const SampledVector>(tag);
         if (!optData)
             throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tag)));
-        const SampledVector &data = optData->get();
+        const auto &data = optData->get();
 
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, data.values(), referenceData).error;

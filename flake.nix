@@ -75,7 +75,6 @@
                 type != "directory" || builtins.baseNameOf path
                 != ".azure-pipelines" || builtins.baseNameOf path != "web";
             };
-            patches = [ ];
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs system pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
