@@ -7,6 +7,29 @@
 #include "classes/region.h"
 #include "kernels/potentials/base.h"
 
+// Regional Potential Voxel Kernel
+class RegionalPotentialVoxelKernel
+{
+    public:
+    explicit RegionalPotentialVoxelKernel(std::string_view expressionString = "",
+                                          std::vector<std::shared_ptr<ExpressionVariable>> = {}, double minimumValue = 0.0,
+                                          double maximumValue = 1.0);
+
+    protected:
+    // Local variables, set when checking voxels
+    std::shared_ptr<ExpressionVariable> x_, y_, z_, xFrac_, yFrac_, zFrac_;
+    // Expression describing region
+    NodeValue expression_;
+    // Minimum threshold value for function
+    double minimumValue_{0.0};
+    // Maximum threshold value for function
+    double maximumValue_{1.0};
+
+    public:
+    // Calculate and store energy and force for the specified voxel centre
+    void energyAndForce(const Box *box, const Vec3<double> &r, double &energy, Vec3<double> &force) const;
+};
+
 // Regional Potential
 class RegionalPotential : public ExternalPotential
 {
@@ -18,16 +41,8 @@ class RegionalPotential : public ExternalPotential
      * Definition
      */
     private:
-    // Local variables, set when checking voxels
-    std::shared_ptr<ExpressionVariable> x_, y_, z_, xFrac_, yFrac_, zFrac_;
-    // Expression describing region
-    NodeValue expression_;
-    // Minimum threshold value for function
-    double minimumValue_{0.0};
-    // Maximum threshold value for function
-    double maximumValue_{1.0};
     // Guide voxel size (Angstroms)
-    double voxelSize_{1.0};
+    double voxelSize_{0.1};
     // Fractional voxel size
     Vec3<double> voxelSizeFrac_;
     // Vector fields for energy and derived force
@@ -35,18 +50,20 @@ class RegionalPotential : public ExternalPotential
     Array3D<Vec3<double>> forceVoxels_;
 
     private:
+    // Generate voxel combinable
+    static dissolve::CombinableFunctor<std::shared_ptr<RegionalPotentialVoxelKernel>>
+    createCombinableVoxelKernel(std::function<std::shared_ptr<RegionalPotentialVoxelKernel>(void)> kernelGenerator)
+    {
+        return kernelGenerator;
+    }
     // Return voxel coordinates of supplied atom
     std::tuple<int, int, int> voxelIndices(const Atom &i, const Box *box) const;
 
     public:
     // Set up potential for supplied box
-    bool setUp(const Box *box);
+    bool setUp(const Box *box, const std::function<std::shared_ptr<RegionalPotentialVoxelKernel>(void)> &kernelGenerator);
     // Set expression
     //    void setPotential(const InteractionPotential<RegionalPotentialFunctions> &potential);
-    // Set coordinate origin of potential
-    void setOrigin(Vec3<double> origin);
-    // Set vector of potential
-    void setVector(Vec3<double> vector);
     // Return functional form of the potential, as a string
     const std::string formString() const override;
     // Return parameters of the potential, as a string

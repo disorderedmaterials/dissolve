@@ -10,11 +10,14 @@
 #include "keywords/nodeValue.h"
 #include "templates/algorithms.h"
 
-RegionalPotential::RegionalPotential() : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Regional)
+/*
+ * Regional Potential Voxel Kernel
+ */
+
+RegionalPotentialVoxelKernel::RegionalPotentialVoxelKernel(std::string_view expressionString,
+                                                           std::vector<std::shared_ptr<ExpressionVariable>> parameters,
+                                                           double minimumValue, double maximumValue)
 {
-    //    keywords_.add<NodeValueKeyword>("Expression", "Expression describing potential]", expression_);
-    //    keywords_.add<DoubleKeyword>("Minimum", "Minimum value for descriptive function defining region", minimumValue_);
-    //    keywords_.add<DoubleKeyword>("Maximum", "Maximum value for descriptive function defining region", maximumValue_);
     // Create our local variables
     x_ = expression_.addLocalVariable("x");
     y_ = expression_.addLocalVariable("y");
@@ -23,8 +26,38 @@ RegionalPotential::RegionalPotential() : ExternalPotential(ExternalPotentialType
     yFrac_ = expression_.addLocalVariable("yFrac");
     zFrac_ = expression_.addLocalVariable("zFrac");
 
-    expression_.set("x");
+    // Set the expression
+    expression_.set(expressionString, std::move(parameters));
+
+    // Set limits
+    minimumValue_ = minimumValue;
+    maximumValue_ = maximumValue;
 }
+
+// Calculate and store energy and force for the specified voxel centre
+void RegionalPotentialVoxelKernel::energyAndForce(const Box *box, const Vec3<double> &r, double &energy,
+                                                  Vec3<double> &force) const
+{
+    // Poke values into our variables
+    x_->setValue(r.x);
+    y_->setValue(r.y);
+    z_->setValue(r.z);
+    auto rFrac = box->getFractional(r);
+    xFrac_->setValue(rFrac.x);
+    yFrac_->setValue(rFrac.y);
+    zFrac_->setValue(rFrac.z);
+
+    // Energy
+    energy = expression_.asDouble();
+    if (energy < minimumValue_ || energy > maximumValue_)
+        energy *= 1000.0;
+}
+
+/*
+ * Regional Potential
+ */
+
+RegionalPotential::RegionalPotential() : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Regional) {}
 
 /*
  * Definition
@@ -37,7 +70,8 @@ const std::string RegionalPotential::formString() const { return "Custom"; }
 const std::string RegionalPotential::formParametersString() const { return "N/A"; }
 
 // Set up potential for supplied box
-bool RegionalPotential::setUp(const Box *box)
+bool RegionalPotential::setUp(const Box *box,
+                              const std::function<std::shared_ptr<RegionalPotentialVoxelKernel>(void)> &kernelGenerator)
 {
     // Set fractional voxel sizes
     Vec3<int> nVoxels;
@@ -50,25 +84,15 @@ bool RegionalPotential::setUp(const Box *box)
     forceVoxels_.initialise(nVoxels.x, nVoxels.y, nVoxels.z);
 
     // Create a voxel combinable and check function
-    auto energyVoxelFunction = [&](auto triplet, auto x, auto y, auto z)
+    auto voxelCombinable = createCombinableVoxelKernel(kernelGenerator);
+    auto voxelFunction = [&](auto triplet, auto x, auto y, auto z)
     {
         auto r = box->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y, (z + 0.5) * voxelSizeFrac_.z});
-        // Poke values into our variables
-        x_->setValue(r.x);
-        y_->setValue(r.y);
-        z_->setValue(r.z);
-        auto rFrac = box->getFractional(r);
-        xFrac_->setValue(rFrac.x);
-        yFrac_->setValue(rFrac.y);
-        zFrac_->setValue(rFrac.z);
-
-        auto e = expression_.asDouble();
-        energyVoxels_[triplet] = e > 0.2 ? 1000.0 * e : e;
+        voxelCombinable.local()->energyAndForce(box, r, energyVoxels_[triplet], forceVoxels_[triplet]);
     };
 
-    // Iterate over energy voxels
-    dissolve::for_each_triplet(ParallelPolicies::seq, energyVoxels_.beginIndices(), energyVoxels_.endIndices(),
-                               energyVoxelFunction);
+    // Iterate over voxel indices
+    dissolve::for_each_triplet(ParallelPolicies::par, energyVoxels_.beginIndices(), energyVoxels_.endIndices(), voxelFunction);
 
     return true;
 }

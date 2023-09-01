@@ -4,14 +4,16 @@
 #include "procedure/nodes/regionalGlobalPotential.h"
 #include "classes/configuration.h"
 #include "kernels/potentials/regional.h"
-#include "keywords/vec3NodeValue.h"
+#include "keywords/double.h"
+#include "keywords/nodeValue.h"
 
 RegionalGlobalPotentialProcedureNode::RegionalGlobalPotentialProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::RegionalGlobalPotential, {ProcedureNode::GenerationContext})
 {
     keywords_.setOrganisation("Options", "Definition");
-//    keywords_.add<InteractionPotentialKeyword<DirectionalPotentialFunctions>>(
-//        "Potential", "Form of directional global potential to apply ", potential_);
+    keywords_.add<NodeValueKeyword>("Expression", "Expression describing region", expression_, this);
+    keywords_.add<DoubleKeyword>("Minimum", "Minimum value for descriptive function defining region", minimumValue_);
+    keywords_.add<DoubleKeyword>("Maximum", "Maximum value for descriptive function defining region", maximumValue_);
 }
 
 /*
@@ -24,10 +26,12 @@ bool RegionalGlobalPotentialProcedureNode::execute(const ProcedureContext &proce
     auto *cfg = procedureContext.configuration();
 
     auto pot = std::make_unique<RegionalPotential>();
-//    pot->setPotential(potential_);
-//    pot->setOrigin({origin_.x.asDouble(), origin_.y.asDouble(), origin_.z.asDouble()});
-//    pot->setVector({vector_.x.asDouble(), vector_.y.asDouble(), vector_.z.asDouble()});
-    pot->setUp(cfg->box());
+    pot->setUp(cfg->box(),
+               [&]()
+               {
+                   return std::make_shared<RegionalPotentialVoxelKernel>(expression_.asString(), getParameters(), minimumValue_,
+                                                                         maximumValue_);
+               });
 
     cfg->addGlobalPotential(std::unique_ptr<ExternalPotential>(std::move(pot)));
 

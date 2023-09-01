@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "kernels/potentials/directional.h"
+#include "kernels/potentials/regional.h"
 #include "procedure/nodes/node.h"
 
-// Directional Global Potential Procedure Node
-class RegionalGlobalPotentialProcedureNode : public ProcedureNode
+// Regional Global Potential Procedure Node
+class RegionalGlobalPotentialProcedureNode : public RegionalPotentialVoxelKernel, public ProcedureNode
 {
     public:
     RegionalGlobalPotentialProcedureNode();
@@ -17,7 +17,6 @@ class RegionalGlobalPotentialProcedureNode : public ProcedureNode
      * Potential Function
      */
     private:
-
     /*
      * Execute
      */
