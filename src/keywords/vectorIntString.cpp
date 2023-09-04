@@ -77,7 +77,7 @@ bool IntegerStringVectorKeyword::serialise(LineParser &parser, std::string_view 
     {
         std::string line;
         for (const auto &i : std::get<0>(d))
-            line += fmt::format("  {}", i);
+            line += fmt::format("  {}", i - 1);
         for (const auto &s : std::get<1>(d))
             line += fmt::format("  '{}'", s);
 

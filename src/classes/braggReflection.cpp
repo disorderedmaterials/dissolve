@@ -74,7 +74,7 @@ void BraggReflection::scaleIntensity(int typeI, int typeJ, double factor)
 }
 
 // Return intensities array
-const Array2D<double> BraggReflection::intensities() const { return intensities_; }
+const Array2D<double> &BraggReflection::intensities() const { return intensities_; }
 
 // Return intensity between specified atom types for this reflection
 double BraggReflection::intensity(int typeI, int typeJ) const { return intensities_[{typeI, typeJ}]; }
