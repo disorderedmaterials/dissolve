@@ -39,7 +39,7 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     // Get site index of NF
     auto siteIndex = ifThen.create<CalculateExpressionProcedureNode>({});
     siteIndex->setExpression("NF.siteIndex");
-    auto collectNFIndex = forEachNF.create<IntegerCollect1DProcedureNode>("NFBins", siteIndex, ProcedureNode::AnalysisContext);
+    auto collectNFIndex = ifThen.create<IntegerCollect1DProcedureNode>("NFBins", siteIndex, ProcedureNode::AnalysisContext);
 
     // Get number of BO within NF
     auto qIterator = analyser_.createRootNode<IterateData1DProcedureNode>("QIterator", collectNFIndex);
@@ -48,7 +48,7 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     value->setExpression("QIterator.value");
 
     // Collect and process BO
-    auto collectQ = forEachNF.create<IntegerCollect1DProcedureNode>("Bins", value, ProcedureNode::AnalysisContext);
+    auto collectQ = forEachQIterator.create<IntegerCollect1DProcedureNode>("Bins", value, ProcedureNode::AnalysisContext);
     auto processNF = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectQ);
     auto &normalisation = processNF->branch()->get();
     normalisation.create<OperateNormaliseProcedureNode>({});
@@ -60,6 +60,7 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     auto processPercent = analyser_.createRootNode<Process1DProcedureNode>("PercentBO", collectQ);
     auto &normalisationPercent = processNF->branch()->get();
     normalisationPercent.create<OperateNormaliseProcedureNode>({});
+
     /*
      * Keywords
      */
