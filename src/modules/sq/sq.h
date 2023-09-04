@@ -46,8 +46,6 @@ class SQModule : public Module
     const BraggModule *sourceBragg_{nullptr};
     // Source G(r) for main calculation
     const GRModule *sourceGR_{nullptr};
-    // Test data
-    Data1DStore testData_;
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
     WindowFunction::Form windowFunction_{WindowFunction::Form::None};
 

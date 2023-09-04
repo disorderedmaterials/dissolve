@@ -56,8 +56,6 @@ class XRaySQModule : public Module
     bool saveSQ_{false};
     // Source module for calculation
     const SQModule *sourceSQ_{nullptr};
-    // Test data
-    Data1DStore testData_;
 
     public:
     // Return file and format for reference total F(Q)
