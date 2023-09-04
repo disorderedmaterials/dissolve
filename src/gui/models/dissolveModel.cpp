@@ -34,6 +34,7 @@ void DissolveModel::update()
     }
     speciesModel_.reset();
     configurationModel_.reset();
+    moduleLayersModel_.reset();
     emit modelsUpdated();
 }
 
