@@ -91,4 +91,15 @@ ColumnLayout {
             }
         }
     }
+
+    RowLayout {
+        Repeater {
+            id: layers
+            model: dissolveModel.moduleLayersModel
+
+            delegate: ModuleLayer {
+                model: dissolveModel.moduleLayersModel
+            }
+        }
+    }
 }

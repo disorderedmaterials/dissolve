@@ -204,5 +204,6 @@
     <file>qml/overview/Impropers.qml</file>
     <file>qml/overview/Torsions.qml</file>
     <file>qml/overview/Node.qml</file>
+    <file>qml/overview/ModuleLayer.qml</file>
   </qresource>
 </RCC>
