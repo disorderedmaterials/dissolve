@@ -65,16 +65,6 @@ What follows is a brief overview of the basic ideas behind the EPSR methodology.
 |`RMinPT`|`double`|`1.9`|Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)|
 |`Smoothing`|`int`|`0`|Smoothing to apply to fluctuation coefficients before summation into potential|
 
-### Test
-
-|Keyword|Arguments|Default|Description|
-|:------|:-------:|:-----:|-----------|
-|`Test`|`bool`|`false`|Test against supplied reference data|
-|`TestAbsEnergyEP`|`[string double] ...]`|--|Specify test absolute EP energy values for pair potentials|
-|`TestAbsEnergyEPThreshold`|`double`|`1.0e-4`|Test threshold above which absolute EP energy test fails|
-|`TestReference`|`Data1DStore`|--|Specify test reference data|
-|`TestThreshold`|`double`|`0.1`|Test threshold (%error) above which test fails|
-
 ## Export
 
 |Keyword|Arguments|Default|Description|

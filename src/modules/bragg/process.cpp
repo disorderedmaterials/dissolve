@@ -75,68 +75,6 @@ Module::ExecutionResult BraggModule::process(ModuleContext &moduleContext)
     formReflectionFunctions(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), targetConfiguration_,
                             qMin_, qDelta_, qMax_);
 
-    // Test reflection data
-    if (!testReflectionsFile_.empty())
-    {
-        Messenger::print("Testing calculated intensity data against reference...\n");
-
-        // Attempt to load the specified file
-        LineParser reflectionParser(&moduleContext.processPool());
-        if (!reflectionParser.openInput(testReflectionsFile_))
-            return ExecutionResult::Failed;
-
-        // Retrieve BraggReflection data from the Configuration's module data
-        const auto &braggReflections =
-            moduleContext.dissolve().processingModuleData().value<const std::vector<BraggReflection>>("Reflections", name());
-
-        auto nErrors = 0;
-        while (!reflectionParser.eofOrBlank())
-        {
-            if (reflectionParser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return ExecutionResult::Failed;
-
-            // Line format is : ArrayIndex  Q     h k l     mult    Intensity(0,0)  Intensity(0,1) ...
-            auto id = reflectionParser.argi(0);
-            if (fabs(reflectionParser.argd(1) - braggReflections[id].q()) > 1.0e-3)
-            {
-                Messenger::print("Q value of reflection {} does not match reference ({} vs {}).\n", id,
-                                 braggReflections[id].q(), reflectionParser.argd(1));
-                ++nErrors;
-            }
-            auto hkl = reflectionParser.arg3i(2);
-            if ((hkl - braggReflections[id].hkl()).absMax() != 0)
-            {
-                Messenger::print("Miller indices of reflection {} do not match reference ({} {} {} vs {} {} {}).\n", id,
-                                 braggReflections[id].hkl().x, braggReflections[id].hkl().y, braggReflections[id].hkl().z,
-                                 hkl.x, hkl.y, hkl.z);
-                ++nErrors;
-            }
-            if (reflectionParser.argi(5) != braggReflections[id].nKVectors())
-            {
-                Messenger::print("Multiplicity of reflection {} does not match reference ({} vs {}).\n", id,
-                                 braggReflections[id].nKVectors(), reflectionParser.argi(5));
-                ++nErrors;
-            }
-            for (auto n = 6; n < reflectionParser.nArgs(); ++n)
-            {
-                if (fabs(reflectionParser.argd(n) - braggReflections[id].intensities()[n - 6]) > 1.0e-3)
-                {
-                    Messenger::print("Intensity value {} of reflection {} does not match reference ({} vs {}).\n", n - 6, id,
-                                     braggReflections[id].intensities()[n - 6], reflectionParser.argd(n));
-                    ++nErrors;
-                }
-            }
-        }
-
-        if (nErrors == 0)
-            Messenger::print("All data match.\n");
-        else
-        {
-            Messenger::error("Calculated and reference data are inconsistent.\n");
-            return ExecutionResult::Failed;
-        }
-    }
-
     // Save reflection data?
     if (saveReflections_)
     {

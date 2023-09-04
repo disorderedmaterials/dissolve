@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/data1DStore.h"
 #include "classes/partialSet.h"
 #include "data/formFactors.h"
 #include "data/structureFactors.h"
@@ -56,8 +55,6 @@ class XRaySQModule : public Module
     bool saveSQ_{false};
     // Source module for calculation
     const SQModule *sourceSQ_{nullptr};
-    // Test data
-    Data1DStore testData_;
 
     public:
     // Return file and format for reference total F(Q)
