@@ -19,7 +19,7 @@ class ForceImportFileFormat : public FileAndFormat
         Moscito,
         Simple
     };
-    explicit ForceImportFileFormat(std::string_view filename = "", ForceImportFormat format = ForceImportFormat::Simple);
+    ForceImportFileFormat(std::string_view filename = "", ForceImportFormat format = ForceImportFormat::Simple);
     ~ForceImportFileFormat() override = default;
 
     /*

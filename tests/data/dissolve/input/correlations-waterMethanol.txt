@@ -1,0 +1,164 @@
+# Test Case 03 - d structure factor for water/methanol mix vs. EPSR simulated data
+
+# Define Water Molecule
+Species 'Water'
+  # Atoms
+  Atom    1    O     0.015   -0.009   -0.373   'OW'
+  Atom    2    H     0.757    0.013    0.217   'HW'
+  Atom    3    H    -0.771   -0.003    0.157   'HW'
+
+  # Intramolecular Terms
+  Bond    1    2     Harmonic  3000.0   0.995
+  Bond    1    3     Harmonic  3000.0   0.995
+  Angle    2    1    3   Harmonic  400.0   109.5
+
+  # Isotopologues
+  Isotopologue  'Protiated'  HW=0
+  Isotopologue  'Deuteriated'  HW=2
+EndSpecies
+
+# Define Methanol Molecule
+Species 'Methanol'
+  # Atoms
+  Atom      1   C    0.00000E+00  0.00000E+00  0.00000E+00  CT
+  Atom      2   H    0.11187E+01  0.00000E+00  0.00000E+00  HC
+  Atom      3   O   -0.36830E+00  0.13617E+01  0.00000E+00  OH
+  Atom      4   H   -0.38340E+00 -0.51810E+00 -0.91440E+00  HC
+  Atom      5   H   -0.38340E+00 -0.51770E+00  0.91460E+00  HC
+  Atom      6   H   -0.13318E+01  0.13955E+01 -0.17000E-02  HO
+
+  # Bonds
+  Bond    1   2  Harmonic   3000.0  1.12
+  Bond    1   3  Harmonic   3000.0  1.41
+  Bond    1   4  Harmonic   3000.0  1.12
+  Bond    1   5  Harmonic   3000.0  1.12
+  Bond    3   6  Harmonic   3000.0  0.964
+  Angle   2   1   3  Harmonic   300.0  109.5
+  Angle   2   1   4  Harmonic   300.0  109.5
+  Angle   2   1   5  Harmonic   300.0  109.5
+  Angle   3   1   4  Harmonic   300.0  109.5
+  Angle   3   1   5  Harmonic   300.0  109.5
+  Angle   4   1   5  Harmonic   300.0  109.5
+  Angle   6   3   1  Harmonic   300.0  109.5
+
+  # Isotopologues
+  Isotopologue  'Protiated'    HO=0  HC=0
+  Isotopologue  'Deuteriated'  HO=2  HC=2
+  Isotopologue  'MethylD-OH'   HO=0  HC=2
+  Isotopologue  'OD-MethylH'   HO=2  HC=0
+EndSpecies
+
+# Define Configuration
+Configuration  'Mix'
+  Generator
+    Add
+     Density  0.1  atoms/A3
+     Population  300
+     Species  'Water'
+    EndAdd
+    Add
+     Density  0.1  atoms/A3
+     Population  600
+     Species  'Methanol'
+    EndAdd
+    ImportCoordinates  'InputCoordinates01'
+      File  epsr  'epsr25/water300methanol600/watermeth.ato'
+      EndFile
+    EndImportCoordinates
+  EndGenerator
+EndConfiguration
+
+Layer  'Correlations'
+  # Calculate and test g(r)
+  Module  GR  GRs
+    Configurations  'Mix'
+    Frequency  1
+    BinWidth 0.03
+    IntraBroadening  None
+  EndModule
+
+  Module  SQ  SQs
+    SourceGR  'GRs'
+    QMin 0.05
+    QBroadening  OmegaDependentGaussian  0.02    # For SLS
+    WindowFunction  Lorch0
+  EndModule
+
+  # Sample Structure Factor Calculations
+  Module  NeutronSQ  'HHH'
+    SourceSQs  'SQs'
+    Isotopologue  'Water'  'Protiated'  1.0
+    Isotopologue  'Methanol'  'Protiated'  1.0
+    Exchangeable  HW  HO
+    Frequency  1
+  EndModule
+  
+  Module  NeutronSQ  'H5H'
+    SourceSQs  'SQs'
+    Isotopologue  'Water'  'Protiated'  1.0
+    Isotopologue  'Methanol'  'Protiated'  0.5
+    Isotopologue  'Methanol'  'OD-MethylH'  0.5
+    Exchangeable  HW  HO
+    Frequency  1
+  EndModule
+  
+  Module  NeutronSQ  'DHH'
+    SourceSQs  'SQs'
+    Isotopologue  'Water'  'Deuteriated'  1.0
+    Isotopologue  'Methanol'  'Protiated'  1.0
+    Exchangeable  HW  HO
+    Frequency  1
+  EndModule
+  
+  Module  NeutronSQ  'HDH'
+    SourceSQs  'SQs'
+    Isotopologue  'Water'  'Protiated'  1.0
+    Isotopologue  'Methanol'  'OD-MethylH'  1.0
+    Exchangeable  HW  HO
+    Frequency  1
+  EndModule
+  
+  Module  NeutronSQ  'HHD'
+    SourceSQs  'SQs'
+    Isotopologue  'Water'  'Protiated'  1.0
+    Isotopologue  'Methanol'  'MethylD-OH'  1.0
+    Exchangeable  HW  HO
+    Frequency  1
+  EndModule
+  
+  Module  NeutronSQ  'DDH'
+    SourceSQs  'SQs'
+    Isotopologue  'Water'  'Deuteriated'  1.0
+    Isotopologue  'Methanol'  'OD-MethylH'  1.0
+    Exchangeable  HW  HO
+    Frequency  1
+  EndModule
+  
+  Module  NeutronSQ  'HDD'
+    SourceSQs  'SQs'
+    Isotopologue  'Water'  'Protiated'  1.0
+    Isotopologue  'Methanol'  'Deuteriated'  1.0
+    Exchangeable  HW  HO
+    Frequency  1
+  EndModule
+  
+  Module  NeutronSQ  'DDD'
+    SourceSQs  'SQs'
+    Isotopologue  'Water'  'Deuteriated'  1.0
+    Isotopologue  'Methanol'  'Deuteriated'  1.0
+    Exchangeable  HW  HO
+    Frequency  1
+  EndModule
+EndLayer
+
+# Pair Potentials
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  Parameters  'OW'  O  -0.82   LJGeometric   0.6503    3.165492
+  Parameters  'HW'  H  0.41   LJGeometric    0.0       0.0
+  Parameters  'CT'  C  -0.18   LJGeometric   0.276     3.55
+  Parameters  'HC'  H  0.06    LJGeometric   0.126     2.5
+  Parameters  'OH'  O  -0.68 LJGeometric	0.711	3.12
+  Parameters  'HO'  H   0.68 LJGeometric	0.126	2.4
+EndPairPotentials

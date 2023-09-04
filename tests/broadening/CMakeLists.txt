@@ -1,6 +1,0 @@
-dissolve_system_test(argon1 argon_qdep0.1.txt 1)
-dissolve_system_test(argon2 argon_qdep0.2.txt 1)
-dissolve_system_test(argon3 argon_qindep0.1.txt 1)
-dissolve_system_test(argon4 argon_qindep0.2.txt 1)
-dissolve_system_test(argon5 argon_dep0.2indep0.1.txt 1)
-dissolve_system_test(argon6 argon_dep0.1indep0.2.txt 1)

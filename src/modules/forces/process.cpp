@@ -42,23 +42,32 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
     // Retrieve control parameters
     const auto saveData = exportedForces_.hasFilename();
 
-    // Calculate the total forces
+    Messenger::print("Calculating total forces for Configuration '{}'...\n", targetConfiguration_->name());
+
+    // Realise the force vector
+    auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vec3<double>>>(
+        fmt::format("{}//Forces", targetConfiguration_->niceName()), name());
+    f.resize(targetConfiguration_->nAtoms());
+
+    // Calculate forces
+    totalForces(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap(),
+                ForcesModule::ForceCalculationType::Full, f, f);
+
+    // Convert forces to 10J/mol
+    std::transform(f.begin(), f.end(), f.begin(), [](auto val) { return val * 100.0; });
+
+    // If writing to a file, append it here
+    if (saveData && !exportedForces_.exportData(f))
+    {
+        Messenger::error("Failed to save forces.\n");
+        return ExecutionResult::Failed;
+    }
+
+    // Test calculated forces
     if (test_)
     {
-        /*
-         * Calculate the total forces in the system using basic loops.
-         *
-         * This is a serial routine, with all processes independently calculating their own value.
-         */
-
         Messenger::print("Calculating forces for Configuration '{}' in serial test mode...\n", targetConfiguration_->name());
-        if (testAnalytic_)
-            Messenger::print("Exact (analytic) forces will be calculated.\n");
         Messenger::print("Test threshold for failure is {}%.\n", testThreshold_);
-
-        /*
-         * Calculation Begins
-         */
 
         const auto &potentialMap = moduleContext.dissolve().potentialMap();
         const auto cutoffSq = potentialMap.range() * potentialMap.range();
@@ -72,12 +81,9 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
         const auto *box = targetConfiguration_->box();
 
         // Allocate the force vectors
-        std::vector<Vec3<double>> fInter, fIntra, fRef, fInterCheck, fIntraCheck;
+        std::vector<Vec3<double>> fInter, fIntra;
         fInter.resize(targetConfiguration_->nAtoms(), Vec3<double>());
         fIntra.resize(targetConfiguration_->nAtoms(), Vec3<double>());
-        fRef.resize(targetConfiguration_->nAtoms(), Vec3<double>());
-        fInterCheck.resize(targetConfiguration_->nAtoms(), Vec3<double>());
-        fIntraCheck.resize(targetConfiguration_->nAtoms(), Vec3<double>());
 
         // Calculate interatomic and intramlecular energy in a loop over defined Molecules
         Timer timer;
@@ -87,20 +93,52 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
             auto offsetN = molN->globalAtomOffset();
 
             // Intramolecular forces (excluding bound terms) in molecule N
-            if (testInter_)
-                for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
+            for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
+            {
+                i = molN->atom(ii);
+
+                for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
+                {
+                    j = molN->atom(jj);
+
+                    // Get intramolecular scaling of atom pair
+                    auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+
+                    if (scalingType == SpeciesAtom::ScaledInteraction::Excluded)
+                        continue;
+
+                    // Determine final forces
+                    vecji = box->minimumVector(i->r(), j->r());
+                    magjisq = vecji.magnitudeSq();
+                    if (magjisq > cutoffSq)
+                        continue;
+                    r = sqrt(magjisq);
+                    vecji /= r;
+
+                    if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                        vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r);
+                    else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                        vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r, elec14, vdw14);
+
+                    fInter[offsetN + ii] += vecji;
+                    fInter[offsetN + jj] -= vecji;
+                }
+            }
+
+            // Forces between molecule N and molecule M
+            for (auto m = n + 1; m < targetConfiguration_->nMolecules(); ++m)
+            {
+                molM = targetConfiguration_->molecule(m);
+                auto offsetM = molM->globalAtomOffset();
+
+                // Double loop over atoms
+                for (auto ii = 0; ii < molN->nAtoms(); ++ii)
                 {
                     i = molN->atom(ii);
 
-                    for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
+                    for (auto jj = 0; jj < molM->nAtoms(); ++jj)
                     {
-                        j = molN->atom(jj);
-
-                        // Get intramolecular scaling of atom pair
-                        auto &&[scalingType, elec14, vdw14] = i->scaling(j);
-
-                        if (scalingType == SpeciesAtom::ScaledInteraction::Excluded)
-                            continue;
+                        j = molM->atom(jj);
 
                         // Determine final forces
                         vecji = box->minimumVector(i->r(), j->r());
@@ -110,186 +148,143 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                         r = sqrt(magjisq);
                         vecji /= r;
 
-                        if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                            vecji *= testAnalytic_ ? potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r)
-                                                   : potentialMap.force(*molN->atom(ii), *molN->atom(jj), r);
-                        else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                            vecji *= testAnalytic_
-                                         ? potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r, elec14, vdw14)
-                                         : potentialMap.force(*molN->atom(ii), *molN->atom(jj), r, elec14, vdw14);
+                        vecji *= potentialMap.analyticForce(i, j, r);
 
                         fInter[offsetN + ii] += vecji;
-                        fInter[offsetN + jj] -= vecji;
+                        fInter[offsetM + jj] -= vecji;
                     }
                 }
+            }
 
-            // Forces between molecule N and molecule M
-            if (testInter_)
-                for (auto m = n + 1; m < targetConfiguration_->nMolecules(); ++m)
-                {
-                    molM = targetConfiguration_->molecule(m);
-                    auto offsetM = molM->globalAtomOffset();
-
-                    // Double loop over atoms
-                    for (auto ii = 0; ii < molN->nAtoms(); ++ii)
-                    {
-                        i = molN->atom(ii);
-
-                        for (auto jj = 0; jj < molM->nAtoms(); ++jj)
-                        {
-                            j = molM->atom(jj);
-
-                            // Determine final forces
-                            vecji = box->minimumVector(i->r(), j->r());
-                            magjisq = vecji.magnitudeSq();
-                            if (magjisq > cutoffSq)
-                                continue;
-                            r = sqrt(magjisq);
-                            vecji /= r;
-
-                            if (testAnalytic_)
-                                vecji *= potentialMap.analyticForce(i, j, r);
-                            else
-                                vecji *= potentialMap.force(*i, *j, r);
-
-                            fInter[offsetN + ii] += vecji;
-                            fInter[offsetM + jj] -= vecji;
-                        }
-                    }
-                }
-
-            if (testIntra_)
+            // Bond forces
+            for (const auto &bond : molN->species()->bonds())
             {
-                // Bond forces
-                for (const auto &bond : molN->species()->bonds())
-                {
-                    // Grab pointers to atoms involved in bond
-                    i = molN->atom(bond.indexI());
-                    j = molN->atom(bond.indexJ());
+                // Grab pointers to atoms involved in bond
+                i = molN->atom(bond.indexI());
+                j = molN->atom(bond.indexJ());
 
-                    // Determine final forces
-                    vecji = box->minimumVector(i->r(), j->r());
-                    r = vecji.magAndNormalise();
-                    vecji *= bond.force(r);
+                // Determine final forces
+                vecji = box->minimumVector(i->r(), j->r());
+                r = vecji.magAndNormalise();
+                vecji *= bond.force(r);
 
-                    fIntra[offsetN + bond.indexI()] -= vecji;
-                    fIntra[offsetN + bond.indexJ()] += vecji;
-                }
+                fIntra[offsetN + bond.indexI()] -= vecji;
+                fIntra[offsetN + bond.indexJ()] += vecji;
+            }
 
-                // Angle forces
-                for (const auto &angle : molN->species()->angles())
-                {
-                    // Grab pointers to atoms involved in angle
-                    i = molN->atom(angle.indexI());
-                    j = molN->atom(angle.indexJ());
-                    k = molN->atom(angle.indexK());
+            // Angle forces
+            for (const auto &angle : molN->species()->angles())
+            {
+                // Grab pointers to atoms involved in angle
+                i = molN->atom(angle.indexI());
+                j = molN->atom(angle.indexJ());
+                k = molN->atom(angle.indexK());
 
-                    // Get vectors 'j-i' and 'j-k'
-                    vecji = box->minimumVector(j->r(), i->r());
-                    vecjk = box->minimumVector(j->r(), k->r());
-                    magji = vecji.magAndNormalise();
-                    magjk = vecjk.magAndNormalise();
+                // Get vectors 'j-i' and 'j-k'
+                vecji = box->minimumVector(j->r(), i->r());
+                vecjk = box->minimumVector(j->r(), k->r());
+                magji = vecji.magAndNormalise();
+                magjk = vecjk.magAndNormalise();
 
-                    // Determine Angle force vectors for atoms
-                    force = angle.force(Box::angleInDegrees(vecji, vecjk, dp));
-                    forcei = vecjk - vecji * dp;
-                    forcei *= force / magji;
-                    forcek = vecji - vecjk * dp;
-                    forcek *= force / magjk;
+                // Determine Angle force vectors for atoms
+                force = angle.force(Box::angleInDegrees(vecji, vecjk, dp));
+                forcei = vecjk - vecji * dp;
+                forcei *= force / magji;
+                forcek = vecji - vecjk * dp;
+                forcek *= force / magjk;
 
-                    // Store forces
-                    fIntra[offsetN + angle.indexI()] += forcei;
-                    fIntra[offsetN + angle.indexJ()] -= forcei + forcek;
-                    fIntra[offsetN + angle.indexK()] += forcek;
-                }
+                // Store forces
+                fIntra[offsetN + angle.indexI()] += forcei;
+                fIntra[offsetN + angle.indexJ()] -= forcei + forcek;
+                fIntra[offsetN + angle.indexK()] += forcek;
+            }
 
-                // Torsion forces
-                for (const auto &torsion : molN->species()->torsions())
-                {
-                    // Grab pointers to atoms involved in angle
-                    i = molN->atom(torsion.indexI());
-                    j = molN->atom(torsion.indexJ());
-                    k = molN->atom(torsion.indexK());
-                    l = molN->atom(torsion.indexL());
+            // Torsion forces
+            for (const auto &torsion : molN->species()->torsions())
+            {
+                // Grab pointers to atoms involved in angle
+                i = molN->atom(torsion.indexI());
+                j = molN->atom(torsion.indexJ());
+                k = molN->atom(torsion.indexK());
+                l = molN->atom(torsion.indexL());
 
-                    // Calculate vectors, ensuring we account for minimum image
-                    vecji = box->minimumVector(i->r(), j->r());
-                    vecjk = box->minimumVector(k->r(), j->r());
-                    veckl = box->minimumVector(l->r(), k->r());
+                // Calculate vectors, ensuring we account for minimum image
+                vecji = box->minimumVector(i->r(), j->r());
+                vecjk = box->minimumVector(k->r(), j->r());
+                veckl = box->minimumVector(l->r(), k->r());
 
-                    // Calculate torsion force parameters
-                    auto tp = GeometryKernel::calculateTorsionForceParameters(vecji, vecjk, veckl);
-                    du_dphi = torsion.force(tp.phi_ * DEGRAD);
+                // Calculate torsion force parameters
+                auto tp = GeometryKernel::calculateTorsionForceParameters(vecji, vecjk, veckl);
+                du_dphi = torsion.force(tp.phi_ * DEGRAD);
 
-                    // Sum forces on Atoms
-                    fIntra[offsetN + torsion.indexI()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
-                                                           du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
-                                                           du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
-
-                    fIntra[offsetN + torsion.indexJ()].add(
-                        du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(0) - tp.dxpj_dkj_.columnAsVec3(0)) -
-                                   tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0))),
-                        du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(1) - tp.dxpj_dkj_.columnAsVec3(1)) -
-                                   tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1))),
-                        du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(2) - tp.dxpj_dkj_.columnAsVec3(2)) -
-                                   tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2))));
-
-                    fIntra[offsetN + torsion.indexK()].add(
-                        du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0) - tp.dxpk_dlk_.columnAsVec3(0)) +
-                                   tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(0))),
-                        du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1) - tp.dxpk_dlk_.columnAsVec3(1)) +
-                                   tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(1))),
-                        du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2) - tp.dxpk_dlk_.columnAsVec3(2)) +
-                                   tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(2))));
-
-                    fIntra[offsetN + torsion.indexL()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
-                                                           du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
-                                                           du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
-                }
-
-                // Improper forces
-                for (const auto &imp : molN->species()->impropers())
-                {
-                    // Grab pointers to atoms involved in angle
-                    i = molN->atom(imp.indexI());
-                    j = molN->atom(imp.indexJ());
-                    k = molN->atom(imp.indexK());
-                    l = molN->atom(imp.indexL());
-
-                    // Calculate vectors, ensuring we account for minimum image
-                    vecji = box->minimumVector(i->r(), j->r());
-                    vecjk = box->minimumVector(k->r(), j->r());
-                    veckl = box->minimumVector(l->r(), k->r());
-
-                    // Calculate improper force parameters
-                    auto tp = GeometryKernel::calculateTorsionForceParameters(vecji, vecjk, veckl);
-                    du_dphi = imp.force(tp.phi_ * DEGRAD);
-
-                    // Sum forces on Atoms
-                    fIntra[offsetN + imp.indexI()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
+                // Sum forces on Atoms
+                fIntra[offsetN + torsion.indexI()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
                                                        du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
                                                        du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
 
-                    fIntra[offsetN + imp.indexJ()].add(
-                        du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(0) - tp.dxpj_dkj_.columnAsVec3(0)) -
-                                   tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0))),
-                        du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(1) - tp.dxpj_dkj_.columnAsVec3(1)) -
-                                   tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1))),
-                        du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(2) - tp.dxpj_dkj_.columnAsVec3(2)) -
-                                   tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2))));
+                fIntra[offsetN + torsion.indexJ()].add(
+                    du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(0) - tp.dxpj_dkj_.columnAsVec3(0)) -
+                               tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0))),
+                    du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(1) - tp.dxpj_dkj_.columnAsVec3(1)) -
+                               tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1))),
+                    du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(2) - tp.dxpj_dkj_.columnAsVec3(2)) -
+                               tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2))));
 
-                    fIntra[offsetN + imp.indexK()].add(
-                        du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0) - tp.dxpk_dlk_.columnAsVec3(0)) +
-                                   tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(0))),
-                        du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1) - tp.dxpk_dlk_.columnAsVec3(1)) +
-                                   tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(1))),
-                        du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2) - tp.dxpk_dlk_.columnAsVec3(2)) +
-                                   tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(2))));
+                fIntra[offsetN + torsion.indexK()].add(
+                    du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0) - tp.dxpk_dlk_.columnAsVec3(0)) +
+                               tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(0))),
+                    du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1) - tp.dxpk_dlk_.columnAsVec3(1)) +
+                               tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(1))),
+                    du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2) - tp.dxpk_dlk_.columnAsVec3(2)) +
+                               tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(2))));
 
-                    fIntra[offsetN + imp.indexL()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
+                fIntra[offsetN + torsion.indexL()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
                                                        du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
                                                        du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
-                }
+            }
+
+            // Improper forces
+            for (const auto &imp : molN->species()->impropers())
+            {
+                // Grab pointers to atoms involved in angle
+                i = molN->atom(imp.indexI());
+                j = molN->atom(imp.indexJ());
+                k = molN->atom(imp.indexK());
+                l = molN->atom(imp.indexL());
+
+                // Calculate vectors, ensuring we account for minimum image
+                vecji = box->minimumVector(i->r(), j->r());
+                vecjk = box->minimumVector(k->r(), j->r());
+                veckl = box->minimumVector(l->r(), k->r());
+
+                // Calculate improper force parameters
+                auto tp = GeometryKernel::calculateTorsionForceParameters(vecji, vecjk, veckl);
+                du_dphi = imp.force(tp.phi_ * DEGRAD);
+
+                // Sum forces on Atoms
+                fIntra[offsetN + imp.indexI()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
+                                                   du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
+                                                   du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
+
+                fIntra[offsetN + imp.indexJ()].add(
+                    du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(0) - tp.dxpj_dkj_.columnAsVec3(0)) -
+                               tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0))),
+                    du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(1) - tp.dxpj_dkj_.columnAsVec3(1)) -
+                               tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1))),
+                    du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(2) - tp.dxpj_dkj_.columnAsVec3(2)) -
+                               tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2))));
+
+                fIntra[offsetN + imp.indexK()].add(
+                    du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0) - tp.dxpk_dlk_.columnAsVec3(0)) +
+                               tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(0))),
+                    du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1) - tp.dxpk_dlk_.columnAsVec3(1)) +
+                               tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(1))),
+                    du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2) - tp.dxpk_dlk_.columnAsVec3(2)) +
+                               tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(2))));
+
+                fIntra[offsetN + imp.indexL()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
+                                                   du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
+                                                   du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
             }
         }
         timer.stop();
@@ -300,62 +295,9 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
 
         Messenger::print("Time to do total (test) forces was {}.\n", timer.totalTimeString());
 
-        /*
-         * Test Calculation End
-         */
-
-        /*
-         * Production Calculation Begins
-         */
-
-        Messenger::print("Calculating total forces for Configuration '{}'...\n", targetConfiguration_->name());
-
-        // Calculate interatomic forces
-        if (testInter_)
-        {
-            auto kernel = KernelProducer::forceKernel(targetConfiguration_, moduleContext.processPool(),
-                                                      moduleContext.dissolve().potentialMap());
-            Timer interTimer;
-
-            interTimer.start();
-            kernel->totalForces(fInterCheck, fInterCheck, ProcessPool::PoolStrategy, ForceKernel::ExcludeGeometry);
-            if (!moduleContext.processPool().allSum(fInterCheck))
-                return ExecutionResult::Failed;
-            interTimer.stop();
-
-            Messenger::print("Time to do interatomic forces was {}.\n", interTimer.totalTimeString());
-        }
-
-        // Calculate intramolecular forces
-        if (testIntra_)
-        {
-            auto kernel = KernelProducer::forceKernel(targetConfiguration_, moduleContext.processPool(),
-                                                      moduleContext.dissolve().potentialMap());
-            Timer intraTimer;
-
-            intraTimer.start();
-            kernel->totalForces(
-                fIntraCheck, fIntraCheck, ProcessPool::PoolStrategy,
-                {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
-            if (!moduleContext.processPool().allSum(fIntraCheck))
-                return ExecutionResult::Failed;
-            intraTimer.stop();
-
-            Messenger::print("Time to do intramolecular forces was {}.\n", intraTimer.totalTimeString());
-        }
-
-        // Convert forces to 10J/mol
-        std::transform(fInterCheck.begin(), fInterCheck.end(), fInterCheck.begin(), [](auto &f) { return f * 100.0; });
-        std::transform(fIntraCheck.begin(), fIntraCheck.end(), fIntraCheck.begin(), [](auto &f) { return f * 100.0; });
-
-        /*
-         * Production Calculation Ends
-         */
-
         // Test 'correct' forces against production forces
-        auto nFailed1 = 0;
-        bool testFailed;
-        Vec3<double> interRatio, intraRatio;
+        auto nFailed = 0;
+        Vec3<double> fRatio;
         auto sumError = 0.0;
 
         Messenger::print("Testing calculated 'correct' forces against calculated production forces - "
@@ -363,167 +305,34 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
 
         for (auto n = 0; n < targetConfiguration_->nAtoms(); ++n)
         {
-            interRatio = fInter[n] - fInterCheck[n];
-            intraRatio = fIntra[n] - fIntraCheck[n];
+            auto fTot = fInter[n] + fIntra[n];
+            fRatio = fTot - f[n];
             auto testFailed = false;
 
-            for (auto i = 0; i < 3; ++i)
+            for (auto fc = 0; fc < 3; ++fc)
             {
-                if (fabs(fInter[n].get(i)) > 1.0e-6)
-                    interRatio[i] *= 100.0 / fInter[n].get(i);
-                if (fabs(interRatio[i]) > testThreshold_)
-                    testFailed = true;
-
-                if (fabs(fIntra[n].get(i)) > 1.0e-6)
-                    intraRatio[i] *= 100.0 / fIntra[n].get(i);
-                if (fabs(intraRatio[i]) > testThreshold_)
+                fRatio[fc] *= 100.0 / fTot[fc];
+                if (fabs(fRatio[fc]) > testThreshold_)
                     testFailed = true;
             }
 
             // Sum average errors
-            sumError += fabs(intraRatio.x) + fabs(intraRatio.y) + fabs(intraRatio.z) + fabs(interRatio.x) + fabs(interRatio.y) +
-                        fabs(interRatio.z);
+            sumError += fabs(fRatio.x) + fabs(fRatio.y) + fabs(fRatio.z);
 
             if (testFailed)
             {
-                Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
-                                 "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol (inter)\n",
-                                 n + 1, fInter[n].x - fInterCheck[n].x, interRatio.x, fInter[n].y - fInterCheck[n].y,
-                                 interRatio.y, fInter[n].z - fInterCheck[n].z, interRatio.z);
-                Messenger::print("                                   {:15.8e} ({:5.2f}%) {:15.8e} "
-                                 "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol (intra)\n",
-                                 fIntra[n].x - fIntraCheck[n].x, intraRatio.x, fIntra[n].y - fIntraCheck[n].y, intraRatio.y,
-                                 fIntra[n].z - fIntraCheck[n].z, intraRatio.z);
-                ++nFailed1;
+                Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:8.3e}%) {:15.8e} "
+                                 "({:8.3e}%) {:15.8e} ({:8.3e}%) (x y z) 10J/mol\n",
+                                 n + 1, fTot.x - f[n].x, fRatio.x, fTot.y - f[n].y, fRatio.y, fTot.z - f[n].z, fRatio.z);
+                ++nFailed;
             }
         }
 
-        Messenger::print("Number of atoms with ExecutionResult::Failed force components = {} = {}\n", nFailed1,
-                         nFailed1 == 0 ? "OK" : "NOT OK");
+        Messenger::print("Number of atoms with failed force components = {} = {}\n", nFailed, nFailed == 0 ? "OK" : "NOT OK");
         Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 6));
 
-        // Test reference forces against production (if reference forces present)
-        auto nFailed2 = 0, nFailed3 = 0;
-        Vec3<double> totalRatio;
-        sumError = 0.0;
-        GenericList &processingData = moduleContext.dissolve().processingModuleData();
-        if (processingData.contains("ReferenceForces", name()))
-        {
-            // Grab reference force array and check size
-            const auto &fRef = processingData.value<std::vector<Vec3<double>>>("ReferenceForces", name());
-            if (fRef.size() != targetConfiguration_->nAtoms())
-            {
-                Messenger::error("Number of force components in ReferenceForces is {}, but the "
-                                 "Configuration '{}' contains {} atoms.\n",
-                                 fRef.size(), targetConfiguration_->name(), targetConfiguration_->nAtoms());
-                return ExecutionResult::Failed;
-            }
-
-            Messenger::print("\nTesting reference forces against calculated 'correct' forces - "
-                             "atoms with erroneous forces will be output...\n");
-            sumError = 0.0;
-            for (auto n = 0; n < targetConfiguration_->nAtoms(); ++n)
-            {
-                totalRatio = fRef[n] - (fInter[n] + fIntra[n]);
-                if (fabs(fInter[n].x + fIntra[n].x) > 1.0e-6)
-                    totalRatio.x *= 100.0 / (fInter[n].x + fIntra[n].x);
-                if (fabs(fInter[n].y + fIntra[n].y) > 1.0e-6)
-                    totalRatio.y *= 100.0 / (fInter[n].y + fIntra[n].y);
-                if (fabs(fInter[n].z + fIntra[n].z) > 1.0e-6)
-                    totalRatio.z *= 100.0 / (fInter[n].z + fIntra[n].z);
-
-                if (std::isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold_)
-                    testFailed = true;
-                else if (std::isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold_)
-                    testFailed = true;
-                else if (std::isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold_)
-                    testFailed = true;
-                else
-                    testFailed = false;
-
-                // Sum average errors
-                sumError += fabs(totalRatio.x) + fabs(totalRatio.y) + fabs(totalRatio.z);
-
-                if (testFailed)
-                {
-                    Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
-                                     "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol\n",
-                                     n + 1, fRef[n].x - (fInter[n].x + fIntra[n].x), totalRatio.x,
-                                     fRef[n].y - (fInter[n].y + fIntra[n].y), totalRatio.y,
-                                     fRef[n].z - (fInter[n].z + fIntra[n].z), totalRatio.z);
-                    ++nFailed2;
-                }
-            }
-            Messenger::print("Number of atoms with ExecutionResult::Failed force components = {} = {}\n", nFailed2,
-                             nFailed2 == 0 ? "OK" : "NOT OK");
-            Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 3));
-
-            Messenger::print("\nTesting reference forces against calculated production forces - "
-                             "atoms with erroneous forces will be output...\n");
-
-            sumError = 0.0;
-            for (auto n = 0; n < targetConfiguration_->nAtoms(); ++n)
-            {
-                totalRatio = fRef[n] - (fInterCheck[n] + fIntraCheck[n]);
-                if (fabs(fInterCheck[n].x + fIntraCheck[n].x) > 1.0e-6)
-                    totalRatio.x *= 100.0 / (fInterCheck[n].x + fIntraCheck[n].x);
-                if (fabs(fInterCheck[n].y + fIntraCheck[n].y) > 1.0e-6)
-                    totalRatio.y *= 100.0 / (fInterCheck[n].y + fIntraCheck[n].y);
-                if (fabs(fInterCheck[n].z + fIntraCheck[n].z) > 1.0e-6)
-                    totalRatio.z *= 100.0 / (fInterCheck[n].z + fIntraCheck[n].z);
-
-                if (std::isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold_)
-                    testFailed = true;
-                else if (std::isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold_)
-                    testFailed = true;
-                else if (std::isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold_)
-                    testFailed = true;
-                else
-                    testFailed = false;
-
-                // Sum average errors
-                sumError += fabs(totalRatio.x) + fabs(totalRatio.y) + fabs(totalRatio.z);
-
-                if (testFailed)
-                {
-                    Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
-                                     "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol\n",
-                                     n + 1, fRef[n].x - (fInterCheck[n].x + fIntraCheck[n].x), totalRatio.x,
-                                     fRef[n].y - (fInterCheck[n].y + fIntraCheck[n].y), totalRatio.y,
-                                     fRef[n].z - (fInterCheck[n].z + fIntraCheck[n].z), totalRatio.z);
-                    ++nFailed3;
-                }
-            }
-            Messenger::print("Number of atoms with ExecutionResult::Failed force components = {} = {}\n", nFailed3,
-                             nFailed3 == 0 ? "OK" : "NOT OK");
-            Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 6));
-        }
-
-        if (!moduleContext.processPool().allTrue((nFailed1 + nFailed2 + nFailed3) == 0))
+        if (!moduleContext.processPool().allTrue((nFailed) == 0))
             return ExecutionResult::Failed;
-    }
-    else
-    {
-        Messenger::print("Calculating total forces for Configuration '{}'...\n", targetConfiguration_->name());
-
-        // Realise the force vector
-        auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vec3<double>>>(
-            fmt::format("{}//Forces", targetConfiguration_->niceName()), name());
-        f.resize(targetConfiguration_->nAtoms());
-
-        // Calculate forces
-        totalForces(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap(),
-                    ForcesModule::ForceCalculationType::Full, f, f);
-
-        // Convert forces to 10J/mol
-        std::transform(f.begin(), f.end(), f.begin(), [](auto val) { return val * 100.0; });
-
-        // If writing to a file, append it here
-        if (saveData && !exportedForces_.exportData(f))
-        {
-            Messenger::error("Failed to save forces.\n");
-            return ExecutionResult::Failed;
-        }
     }
 
     return ExecutionResult::Success;

@@ -26,12 +26,6 @@ bool EnergyModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
 // Run main processing
 Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 {
-    /*
-     * Calculate Energy for the target Configuration(s)
-     *
-     * This is a parallel routine, with processes operating in groups, unless in TEST mode.
-     */
-
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
@@ -41,30 +35,118 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 
     // Print parameter summary
     if (test_)
-    {
-        Messenger::print("Energy: All energies will be calculated in serial test mode and compared to "
-                         "production values.\n");
-        if (testAnalytic_)
-            Messenger::print("Energy: Exact, analytical potential will be used in test.");
-        if (testReferenceInter_)
-            Messenger::print("Energy: Reference interatomic energy is {:15.9e} kJ/mol.\n", testReferenceInter_.value());
-        if (testReferenceIntra_)
-            Messenger::print("Energy: Reference intramolecular energy is {:15.9e} kJ/mol.\n", testReferenceIntra_.value());
-    }
+        Messenger::print("Energy: Production energies will be tested against analytical equivaltnes.\n");
 
     Messenger::print("\n");
 
     Messenger::print("Calculating total energy for Configuration '{}'...\n", targetConfiguration_->name());
-    // Calculate the total energy
+
+    /*
+     * Calculates the total energy of the entire system.
+     *
+     * This is a serial routine (subroutines called from within are parallel).
+     */
+
+    // Calculate intermolecular energy
+    Timer interTimer;
+    auto interEnergy =
+        interAtomicEnergy(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap());
+    interTimer.stop();
+
+    // Calculate intramolecular and intermolecular correction energy
+    Timer intraTimer;
+    double bondEnergy, angleEnergy, torsionEnergy, improperEnergy;
+    auto intraEnergy =
+        intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap(),
+                             bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
+    intraTimer.stop();
+
+    Messenger::print("Time to do interatomic energy was {}, intramolecular energy was {}.\n", interTimer.totalTimeString(),
+                     intraTimer.totalTimeString());
+    Messenger::print("Total Energy (World) is {:15.9e} kJ/mol ({:15.9e} kJ/mol interatomic + {:15.9e} kJ/mol "
+                     "intramolecular).\n",
+                     interEnergy + intraEnergy, interEnergy, intraEnergy);
+    Messenger::print("Intramolecular contributions are - bonds = {:15.9e} kJ/mol, angles = {:15.9e} kJ/mol, "
+                     "torsions = {:15.9e} kJ/mol, impropers = {:15.9e} kJ/mol.\n",
+                     bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
+
+    // Store current energies in the Configuration in case somebody else needs them
+    auto &interData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+        fmt::format("{}//Inter", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+    interData.addPoint(moduleContext.dissolve().iteration(), interEnergy);
+    auto &intraData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+        fmt::format("{}//Intra", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+    intraData.addPoint(moduleContext.dissolve().iteration(), intraEnergy);
+    auto &bondData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+        fmt::format("{}//Bond", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+    bondData.addPoint(moduleContext.dissolve().iteration(), bondEnergy);
+    auto &angleData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+        fmt::format("{}//Angle", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+    angleData.addPoint(moduleContext.dissolve().iteration(), angleEnergy);
+    auto &torsionData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+        fmt::format("{}//Torsions", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+    torsionData.addPoint(moduleContext.dissolve().iteration(), torsionEnergy);
+    auto &improperData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+        fmt::format("{}//Impropers", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+    improperData.addPoint(moduleContext.dissolve().iteration(), improperEnergy);
+
+    // Append to arrays of total energies
+    auto &totalEnergyArray = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+        fmt::format("{}//Total", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+    totalEnergyArray.addPoint(moduleContext.dissolve().iteration(), interEnergy + intraEnergy);
+
+    // Determine stability of energy
+    // Check number of points already stored for the Configuration
+    auto grad = 0.0;
+    auto stable = false;
+    if (stabilityWindow_ > totalEnergyArray.nValues())
+        Messenger::print("Too few points to assess stability.\n");
+    else
+    {
+        auto yMean = 0.0;
+        grad = Regression::linear(totalEnergyArray, stabilityWindow_, yMean);
+        auto thresholdValue = fabs(stabilityThreshold_ * yMean);
+        stable = fabs(grad) < thresholdValue;
+
+        Messenger::print("Gradient of last {} points is {:e} kJ/mol/step (absolute threshold value is "
+                         "{:e}, stable = {}).\n",
+                         stabilityWindow_, grad, thresholdValue, DissolveSys::btoa(stable));
+    }
+
+    // Set energy data under the configuration's prefix
+    moduleContext.dissolve().processingModuleData().realise<double>("EnergyGradient", targetConfiguration_->niceName(),
+                                                                    GenericItem::InRestartFileFlag) = grad;
+    moduleContext.dissolve().processingModuleData().realise<bool>("EnergyStable", targetConfiguration_->niceName(),
+                                                                  GenericItem::InRestartFileFlag) = stable;
+
+    // If writing to a file, append it here
+    if (save_)
+    {
+        LineParser parser;
+        std::string filename = fmt::format("{}.energy.txt", targetConfiguration_->niceName());
+
+        if (!DissolveSys::fileExists(filename))
+        {
+            parser.openOutput(filename);
+            parser.writeLineF("# Energies for Configuration '{}'.\n", targetConfiguration_->name());
+            parser.writeLine("# All values in kJ/mol.\n");
+            parser.writeLine("# Iteration   Total         Inter         Bond          Angle        "
+                             " Torsion      Improper    Gradient      S?\n");
+        }
+        else
+            parser.appendOutput(filename);
+        parser.writeLineF("  {:10d}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {}\n",
+                          moduleContext.dissolve().iteration(), interEnergy + intraEnergy, interEnergy, bondEnergy, angleEnergy,
+                          torsionEnergy, improperEnergy, grad, stable);
+        parser.closeFiles();
+    }
+
+    // Test against analytic energy?
     if (test_)
     {
         /*
          * Calculate the total energy of the system using a basic loop on each process, and then compare with
          * production routines.
-         */
-
-        /*
-         * Test Calculation Begins
          */
 
         const PotentialMap &potentialMap = moduleContext.dissolve().potentialMap();
@@ -101,11 +183,9 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
                     // Get intramolecular scaling of atom pair
                     auto &&[scalingType, elec14, vdw14] = i->scaling(j);
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                        correctSelfEnergy +=
-                            testAnalytic_ ? potentialMap.analyticEnergy(i, j, r) : potentialMap.energy(*i, *j, r);
+                        correctSelfEnergy += potentialMap.analyticEnergy(i, j, r);
                     else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                        correctSelfEnergy += testAnalytic_ ? potentialMap.analyticEnergy(i, j, r, elec14, vdw14)
-                                                           : potentialMap.energy(*i, *j, r, elec14, vdw14);
+                        correctSelfEnergy += potentialMap.analyticEnergy(i, j, r, elec14, vdw14);
                 }
             }
 
@@ -128,10 +208,7 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
                         if (r > cutoff)
                             continue;
 
-                        if (testAnalytic_)
-                            correctInterEnergy += potentialMap.analyticEnergy(i, j, r);
-                        else
-                            correctInterEnergy += potentialMap.energy(*i, *j, r);
+                        correctInterEnergy += potentialMap.analyticEnergy(i, j, r);
                     }
                 }
             }
@@ -205,26 +282,6 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         Messenger::print("Correct total energy is {:15.9e} kJ/mol\n", correctInterEnergy + correctIntraEnergy);
         Messenger::print("Time to do total (test) energy was {}.\n", testTimer.totalTimeString());
 
-        /*
-         * Test Calculation End
-         */
-
-        /*
-         * Production Calculation Begins
-         */
-
-        // Calculate interatomic energy
-        Timer interTimer;
-        auto interEnergy =
-            interAtomicEnergy(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap());
-        interTimer.stop();
-
-        // Calculate intramolecular energy
-        Timer intraTimer;
-        auto intraEnergy =
-            intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap());
-        intraTimer.stop();
-
         // Calculate total interatomic energy from molecules
         Timer moleculeTimer;
         auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
@@ -240,45 +297,6 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         Messenger::print("Time to do interatomic energy was {}.\n", interTimer.totalTimeString());
         Messenger::print("Time to do intramolecular energy was {}.\n", intraTimer.totalTimeString());
         Messenger::print("Time to do intermolecular energy was {}.\n", moleculeTimer.totalTimeString());
-
-        /*
-         * Production Calculation Ends
-         */
-
-        // Compare production vs reference values
-        double delta;
-        if (testReferenceInter_)
-        {
-            delta = testReferenceInter_.value() - correctInterEnergy;
-            Messenger::print("Reference interatomic energy delta with correct value is {:15.9e} kJ/mol and "
-                             "is {} (threshold is {:10.3e} kJ/mol)\n",
-                             delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-            if (!moduleContext.processPool().allTrue(fabs(delta) < testThreshold_))
-                return ExecutionResult::Failed;
-
-            delta = testReferenceInter_.value() - interEnergy;
-            Messenger::print("Reference interatomic energy delta with production value is {:15.9e} kJ/mol "
-                             "and is {} (threshold is {:10.3e} kJ/mol)\n",
-                             delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-            if (!moduleContext.processPool().allTrue(fabs(delta) < testThreshold_))
-                return ExecutionResult::Failed;
-        }
-        if (testReferenceIntra_)
-        {
-            delta = testReferenceIntra_.value() - correctIntraEnergy;
-            Messenger::print("Reference intramolecular energy delta with correct value is {:15.9e} kJ/mol "
-                             "and is {} (threshold is {:10.3e} kJ/mol)\n",
-                             delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-            if (!moduleContext.processPool().allTrue(fabs(delta) < testThreshold_))
-                return ExecutionResult::Failed;
-
-            delta = testReferenceIntra_.value() - intraEnergy;
-            Messenger::print("Reference intramolecular energy delta with production value is {:15.9e} kJ/mol "
-                             "and is {} (threshold is {:10.3e} kJ/mol)\n",
-                             delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-            if (!moduleContext.processPool().allTrue(fabs(delta) < testThreshold_))
-                return ExecutionResult::Failed;
-        }
 
         // Compare production vs 'correct' values
         auto interDelta = correctInterEnergy - interEnergy;
@@ -296,108 +314,6 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         if (!moduleContext.processPool().allTrue((fabs(interDelta) < testThreshold_) && (fabs(intraDelta) < testThreshold_) &&
                                                  (fabs(moleculeDelta) < testThreshold_)))
             return ExecutionResult::Failed;
-    }
-    else
-    {
-        /*
-         * Calculates the total energy of the entire system.
-         *
-         * This is a serial routine (subroutines called from within are parallel).
-         */
-
-        // Calculate intermolecular energy
-        Timer interTimer;
-        auto interEnergy =
-            interAtomicEnergy(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap());
-        interTimer.stop();
-
-        // Calculate intramolecular and intermolecular correction energy
-        Timer intraTimer;
-        double bondEnergy, angleEnergy, torsionEnergy, improperEnergy;
-        auto intraEnergy =
-            intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap(),
-                                 bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
-        intraTimer.stop();
-
-        Messenger::print("Time to do interatomic energy was {}, intramolecular energy was {}.\n", interTimer.totalTimeString(),
-                         intraTimer.totalTimeString());
-        Messenger::print("Total Energy (World) is {:15.9e} kJ/mol ({:15.9e} kJ/mol interatomic + {:15.9e} kJ/mol "
-                         "intramolecular).\n",
-                         interEnergy + intraEnergy, interEnergy, intraEnergy);
-        Messenger::print("Intramolecular contributions are - bonds = {:15.9e} kJ/mol, angles = {:15.9e} kJ/mol, "
-                         "torsions = {:15.9e} kJ/mol, impropers = {:15.9e} kJ/mol.\n",
-                         bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
-
-        // Store current energies in the Configuration in case somebody else needs them
-        auto &interData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("{}//Inter", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-        interData.addPoint(moduleContext.dissolve().iteration(), interEnergy);
-        auto &intraData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("{}//Intra", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-        intraData.addPoint(moduleContext.dissolve().iteration(), intraEnergy);
-        auto &bondData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("{}//Bond", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-        bondData.addPoint(moduleContext.dissolve().iteration(), bondEnergy);
-        auto &angleData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("{}//Angle", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-        angleData.addPoint(moduleContext.dissolve().iteration(), angleEnergy);
-        auto &torsionData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("{}//Torsions", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-        torsionData.addPoint(moduleContext.dissolve().iteration(), torsionEnergy);
-        auto &improperData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("{}//Impropers", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-        improperData.addPoint(moduleContext.dissolve().iteration(), improperEnergy);
-
-        // Append to arrays of total energies
-        auto &totalEnergyArray = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("{}//Total", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-        totalEnergyArray.addPoint(moduleContext.dissolve().iteration(), interEnergy + intraEnergy);
-
-        // Determine stability of energy
-        // Check number of points already stored for the Configuration
-        auto grad = 0.0;
-        auto stable = false;
-        if (stabilityWindow_ > totalEnergyArray.nValues())
-            Messenger::print("Too few points to assess stability.\n");
-        else
-        {
-            auto yMean = 0.0;
-            grad = Regression::linear(totalEnergyArray, stabilityWindow_, yMean);
-            auto thresholdValue = fabs(stabilityThreshold_ * yMean);
-            stable = fabs(grad) < thresholdValue;
-
-            Messenger::print("Gradient of last {} points is {:e} kJ/mol/step (absolute threshold value is "
-                             "{:e}, stable = {}).\n",
-                             stabilityWindow_, grad, thresholdValue, DissolveSys::btoa(stable));
-        }
-
-        // Set energy data under the configuration's prefix
-        moduleContext.dissolve().processingModuleData().realise<double>("EnergyGradient", targetConfiguration_->niceName(),
-                                                                        GenericItem::InRestartFileFlag) = grad;
-        moduleContext.dissolve().processingModuleData().realise<bool>("EnergyStable", targetConfiguration_->niceName(),
-                                                                      GenericItem::InRestartFileFlag) = stable;
-
-        // If writing to a file, append it here
-        if (save_)
-        {
-            LineParser parser;
-            std::string filename = fmt::format("{}.energy.txt", targetConfiguration_->niceName());
-
-            if (!DissolveSys::fileExists(filename))
-            {
-                parser.openOutput(filename);
-                parser.writeLineF("# Energies for Configuration '{}'.\n", targetConfiguration_->name());
-                parser.writeLine("# All values in kJ/mol.\n");
-                parser.writeLine("# Iteration   Total         Inter         Bond          Angle        "
-                                 " Torsion      Improper    Gradient      S?\n");
-            }
-            else
-                parser.appendOutput(filename);
-            parser.writeLineF("  {:10d}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {}\n",
-                              moduleContext.dissolve().iteration(), interEnergy + intraEnergy, interEnergy, bondEnergy,
-                              angleEnergy, torsionEnergy, improperEnergy, grad, stable);
-            parser.closeFiles();
-        }
     }
 
     Messenger::print("\n");

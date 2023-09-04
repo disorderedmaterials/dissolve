@@ -1,7 +1,0 @@
-'Correlation Functions' System Test
-Comparison between calculated structure factors for water and those from EPSR.
-
-EPSR input file set up to use all molecular origins in formation of g(r) (2000 for safety, since nmols is only 1000).
-Lorch function is not applied in EPSR.
-Minor discrepancies in calculated g(r) arise from EPSR writing coordinates to only 3 d.p (not checked).
-Minor errors in calculated S(Q) arise from differences in calculated g(r).

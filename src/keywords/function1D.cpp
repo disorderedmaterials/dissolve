@@ -15,8 +15,13 @@ Function1DKeyword::Function1DKeyword(Functions::Function1DWrapper &data, int fun
  */
 
 // Return reference to data
-Functions::Function1DWrapper &Function1DKeyword::data() { return data_; }
 const Functions::Function1DWrapper &Function1DKeyword::data() const { return data_; }
+
+// Set data
+bool Function1DKeyword::setData(const Functions::Function1DWrapper &data)
+{
+    return data_.setFunctionAndParameters(data.type(), data.parameters());
+}
 
 // Return requested function properties
 int Function1DKeyword::functionProperties() const { return functionProperties_; }

@@ -1,0 +1,97 @@
+# Bulk Water X-Ray S(Q)
+
+# Potential uses SPC/Fw parameters:
+# 
+# Yujie Wu, Harald L. Tepper and Gregory A. Voth
+# "Flexible simple point-charge water model with improved liquid-state properties", Journal of Chemical Physics 124 024503 (2006)
+# http://dx.doi.org/10.1063/1.2136877
+# 
+#	  sigma(O) =    3.165492 Angstroms
+#	epsilon(O) =    0.6503	 kJ/mol
+#	 charge(O) =   -0.82	 e
+#	 charge(H) =    0.41	 e
+#	    k(O-H) = 4431.53	 kJ mol-1 Angstrom-2
+#	    r(O-H) =    1.0	 Angstroms
+#	  k(H-O-H) =  317.5656	 kJ mol-1 radian-2
+#     theta(H-O-H) =  113.24	 degrees
+
+#------------------------#
+#  Define Master Terms   #
+#------------------------#
+
+Master
+  Bond   OH   Harmonic  4431.53  1.0
+  Angle  HOH  Harmonic  317.5656 113.24
+EndMaster
+
+#------------------------#
+#     Define Species     #
+#------------------------#
+
+Species 'Water'
+  # Atoms
+  Atom    1    O     0.015   -0.009   -0.373   'OW'
+  Atom    2    H     0.757    0.013    0.217   'HW'
+  Atom    3    H    -0.771   -0.003    0.157   'HW'
+
+  # Intramolecular Terms
+  Bond  1    2  @OH
+  Bond  1    3  @OH
+  Angle 2    1    3  @HOH
+EndSpecies
+
+#------------------------#
+#     Pair Potentials    #
+#------------------------#
+
+PairPotentials
+  Range  9.000000
+  Delta  0.050000
+  Parameters  'OW'  O  -0.82  LJGeometric    0.65	3.165492
+  Parameters  'HW'  H  0.41   LJGeometric    0.0      0.0
+EndPairPotentials
+
+#------------------------#
+#  Define Configuration  #
+#------------------------#
+
+Configuration  'Bulk'
+  Generator
+    Add
+      Density  9.99999642E-02 atoms/A3
+      Population  1000
+      Species  'Water'
+    EndAdd
+    ImportCoordinates  'InputCoordinates01'
+      File  epsr  'epsr25/water1000-neutron-xray/waterbox.ato'
+      EndFile
+    EndImportCoordinates
+  EndGenerator
+
+EndConfiguration
+
+#------------------------#
+#   Define Processing    #
+#------------------------#
+
+Layer  'Processing'
+
+  Module  GR  'GR01'
+    Configurations  'Bulk'
+    Frequency  1
+    BinWidth 0.03
+    IntraBroadening  None
+  EndModule
+
+  Module  SQ  'SQ01'
+    Frequency  1
+    SourceGR  'GR01'
+    QBroadening  GaussianC2  0.0  0.02
+  EndModule
+
+  Module  XRaySQ  H2Oxray
+    SourceSQs  'SQ01'
+    Normalisation  AverageOfSquares
+  EndModule
+
+EndLayer

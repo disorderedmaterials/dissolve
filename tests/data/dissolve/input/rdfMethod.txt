@@ -1,0 +1,39 @@
+# Define Atomic Species
+Species 'Ball'
+  # Atoms
+  Atom    1    Ar     0.0  0.0  0.0  'Ar'
+EndSpecies
+
+# Define Configuration
+Configuration  'Box'
+  Generator
+    Add
+      Density  0.05  atoms/A3
+      Population  10000
+      Species  'Ball'
+    EndAdd
+  EndGenerator
+  CellDivisionLength  5.0
+
+EndConfiguration
+
+Layer  'Processing'
+
+  # Test 'Cells' method of RDF calculation
+  Module  GR  'GR01'
+    Configurations  'Box'
+    Frequency  1
+    Averaging  Off
+    InternalTest  On
+  EndModule
+
+EndLayer
+
+# Pair Potentials
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  Parameters  'Ar'  Ar  0.0  LJGeometric  0.0  0.0
+  ManualChargeSource  True
+  ForceChargeSource  True
+EndPairPotentials

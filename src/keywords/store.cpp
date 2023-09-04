@@ -7,6 +7,7 @@
 #include "keywords/configuration.h"
 #include "keywords/configurationVector.h"
 #include "keywords/double.h"
+#include "keywords/function1D.h"
 #include "keywords/integer.h"
 #include "keywords/module.h"
 #include "keywords/moduleVector.h"
@@ -17,6 +18,7 @@
 #include "keywords/species.h"
 #include "keywords/stdString.h"
 #include "keywords/vec3Double.h"
+#include "keywords/vec3Integer.h"
 #include "keywords/vec3NodeValue.h"
 #include "procedure/nodes/collect1D.h"
 #include "procedure/nodes/regionBase.h"
@@ -236,9 +238,17 @@ bool KeywordStore::set(std::string_view name, const std::string value)
     getKeyword<StringKeyword>(keywords_, name)->data() = value;
     return true;
 }
+bool KeywordStore::set(std::string_view name, const Functions::Function1DWrapper value)
+{
+    return getKeyword<Function1DKeyword>(keywords_, name)->setData(value);
+}
 bool KeywordStore::set(std::string_view name, const NodeValueProxy value)
 {
     return getKeyword<NodeValueKeyword>(keywords_, name)->setData(value);
+}
+bool KeywordStore::set(std::string_view name, const Vec3<int> value)
+{
+    return getKeyword<Vec3IntegerKeyword>(keywords_, name)->setData(value);
 }
 bool KeywordStore::set(std::string_view name, const Vec3<double> value)
 {

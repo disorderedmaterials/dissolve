@@ -75,9 +75,9 @@ bool IntegerDoubleVectorKeyword::serialise(LineParser &parser, std::string_view 
     {
         std::string line;
         for (const auto &i : std::get<0>(idData))
-            line += fmt::format("  {}", i);
+            line += fmt::format("  {}", i - 1);
         for (const auto &d : std::get<1>(idData))
-            line += fmt::format("  '{}'", d);
+            line += fmt::format("  {}", d);
 
         if (!parser.writeLineF("{}{}{}\n", prefix, keywordName, line))
             return false;

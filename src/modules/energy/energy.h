@@ -27,14 +27,8 @@ class EnergyModule : public Module
     double stabilityThreshold_{0.001};
     // Number of points over which to assess the stability of the energy (per Configuration)
     int stabilityWindow_{10};
-    // Test parallel energy routines against basic serial versions and supplied reference values
+    // Test production energy against analytic "correct" values
     bool test_{false};
-    // Use analytic interatomic energies rather than (production) tabulated potentials for tests
-    bool testAnalytic_{false};
-    // Reference value for interatomic energy against which to test calculated value
-    std::optional<double> testReferenceInter_;
-    // Reference value for intramolecular energy against which to test calculated value
-    std::optional<double> testReferenceIntra_;
     // Threshold of energy at which test comparison will fail
     double testThreshold_{1.0e-6};
 

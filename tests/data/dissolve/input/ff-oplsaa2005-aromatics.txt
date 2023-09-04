@@ -1,0 +1,202 @@
+Species 'Benzene'
+  # Atoms
+  Atom   1  C   -1.203775     0.695000     0.000000   None  -0.115
+  Atom   2  H   -2.069801     1.195000     0.000000   None  0.115
+  Atom   3  C   -0.000000     1.390000     0.000000   None  -0.115
+  Atom   4  H   -0.000000     2.390000     0.000000   None  0.115
+  Atom   5  C    1.203775     0.695000     0.000000   None  -0.115
+  Atom   6  H    2.069801     1.195000     0.000000   None  0.115
+  Atom   7  C    1.203775    -0.695000     0.000000   None  -0.115
+  Atom   8  H    2.069801    -1.195000     0.000000   None  0.115
+  Atom   9  C   -0.000000    -1.390000     0.000000   None  -0.115
+  Atom  10  H   -0.000000    -2.390000     0.000000   None  0.115
+  Atom  11  C   -1.203775    -0.695000     0.000000   None  -0.115
+  Atom  12  H   -2.069801    -1.195000     0.000000   None  0.115
+
+  # Intramolecular Terms
+  Bond  1     2
+  Bond  1     3
+  Bond  1    11
+  Bond  3     4
+  Bond  3     5
+  Bond  5     6
+  Bond  5     7
+  Bond  7     8
+  Bond  7     9
+  Bond  9    10
+  Bond  9    11
+  Bond 11    12
+  Angle    2     1     3
+  Angle    2     1    11
+  Angle    3     1    11
+  Angle    1     3     4
+  Angle    1     3     5
+  Angle    4     3     5
+  Angle    3     5     6
+  Angle    3     5     7
+  Angle    6     5     7
+  Angle    5     7     8
+  Angle    5     7     9
+  Angle    8     7     9
+  Angle    7     9    10
+  Angle    7     9    11
+  Angle   10     9    11
+  Angle    1    11     9
+  Angle    1    11    12
+  Angle    9    11    12
+  Torsion   2     1     3     4
+  Torsion   2     1     3     5
+  Torsion  11     1     3     4
+  Torsion  11     1     3     5
+  Torsion   2     1    11     9
+  Torsion   2     1    11    12
+  Torsion   3     1    11     9
+  Torsion   3     1    11    12
+  Torsion   1     3     5     6
+  Torsion   1     3     5     7
+  Torsion   4     3     5     6
+  Torsion   4     3     5     7
+  Torsion   3     5     7     8
+  Torsion   3     5     7     9
+  Torsion   6     5     7     8
+  Torsion   6     5     7     9
+  Torsion   5     7     9    10
+  Torsion   5     7     9    11
+  Torsion   8     7     9    10
+  Torsion   8     7     9    11
+  Torsion   7     9    11     1
+  Torsion   7     9    11    12
+  Torsion  10     9    11     1
+  Torsion  10     9    11    12
+
+  Forcefield  'OPLSAA2005/Aromatics'
+EndSpecies
+
+Species 'Naphthalene'
+  # Atoms
+  Atom    1    C  -2.526384e+00  3.376305e-01  3.552714e-15  'None'  -1.150000e-01
+  Atom    2    C  -1.424928e+00  1.217232e+00  3.552714e-15  'None'  -1.150000e-01
+  Atom    3    C  -8.731141e-02  7.071866e-01  3.552714e-15  'None'  0.000000e+00
+  Atom    4    C  1.026994e+00  1.580287e+00  3.552714e-15  'None'  -1.150000e-01
+  Atom    5    C  2.341247e+00  1.047083e+00  3.552714e-15  'None'  -1.150000e-01
+  Atom    6    C  2.537987e+00  -3.497113e-01  3.552714e-15  'None'  -1.150000e-01
+  Atom    7    C  1.413531e+00  -1.211323e+00  3.552714e-15  'None'  -1.150000e-01
+  Atom    8    C  1.017224e-01  -7.063916e-01  3.552714e-15  'None'  0.000000e+00
+  Atom    9    C  -2.323631e+00  -1.052615e+00  3.552714e-15  'None'  -1.150000e-01
+  Atom   10    C  -1.016200e+00  -1.585517e+00  3.552714e-15  'None'  -1.150000e-01
+  Atom   11    H  -3.514030e+00  7.853961e-01  3.552714e-15  'None'  1.150000e-01
+  Atom   12    H  -3.201706e+00  -1.700267e+00  3.552714e-15  'None'  1.150000e-01
+  Atom   13    H  -8.522278e-01  -2.631771e+00  3.552714e-15  'None'  1.150000e-01
+  Atom   14    H  1.514716e+00  -2.305141e+00  3.552714e-15  'None'  1.150000e-01
+  Atom   15    H  3.528416e+00  -7.926654e-01  3.552714e-15  'None'  1.150000e-01
+  Atom   16    H  3.197721e+00  1.716501e+00  3.552714e-15  'None'  1.150000e-01
+  Atom   17    H  8.907446e-01  2.650501e+00  3.552714e-15  'None'  1.150000e-01
+  Atom   18    H  -1.606661e+00  2.293586e+00  3.552714e-15  'None'  1.150000e-01
+
+  # Bonds
+  Bond    1    2
+  Bond    2    3
+  Bond    3    4
+  Bond    4    5
+  Bond    5    6
+  Bond    6    7
+  Bond    7    8
+  Bond    8    3
+  Bond    1    9
+  Bond    9   10
+  Bond   10    8
+  Bond   11    1
+  Bond   12    9
+  Bond   13   10
+  Bond   14    7
+  Bond   15    6
+  Bond   16    5
+  Bond   17    4
+  Bond   18    2
+
+  # Angles
+  Angle    1    2    3
+  Angle    2    3    4
+  Angle    3    4    5
+  Angle    4    5    6
+  Angle    5    6    7
+  Angle    6    7    8
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    7    8    3
+  Angle    9    1    2
+  Angle    1    9   10
+  Angle    7    8   10
+  Angle   10    8    3
+  Angle    9   10    8
+  Angle   11    1    2
+  Angle   11    1    9
+  Angle    1    9   12
+  Angle   12    9   10
+  Angle    9   10   13
+  Angle   13   10    8
+  Angle    6    7   14
+  Angle   14    7    8
+  Angle    5    6   15
+  Angle   15    6    7
+  Angle    4    5   16
+  Angle   16    5    6
+  Angle    3    4   17
+  Angle   17    4    5
+  Angle    1    2   18
+  Angle   18    2    3
+
+  # Torsions
+  Torsion    1    2    3    4
+  Torsion    2    3    4    5
+  Torsion    3    4    5    6
+  Torsion    4    5    6    7
+  Torsion    5    6    7    8
+  Torsion    1    2    3    8
+  Torsion    8    3    4    5
+  Torsion    6    7    8    3
+  Torsion    7    8    3    2
+  Torsion    7    8    3    4
+  Torsion    9    1    2    3
+  Torsion    2    1    9   10
+  Torsion    6    7    8   10
+  Torsion   10    8    3    2
+  Torsion   10    8    3    4
+  Torsion    1    9   10    8
+  Torsion    9   10    8    7
+  Torsion    9   10    8    3
+  Torsion   11    1    2    3
+  Torsion   11    1    9   10
+  Torsion    2    1    9   12
+  Torsion   11    1    9   12
+  Torsion   12    9   10    8
+  Torsion    1    9   10   13
+  Torsion   12    9   10   13
+  Torsion   13   10    8    7
+  Torsion   13   10    8    3
+  Torsion    5    6    7   14
+  Torsion   14    7    8    3
+  Torsion   14    7    8   10
+  Torsion    4    5    6   15
+  Torsion   15    6    7    8
+  Torsion   15    6    7   14
+  Torsion    3    4    5   16
+  Torsion   16    5    6    7
+  Torsion   16    5    6   15
+  Torsion    2    3    4   17
+  Torsion    8    3    4   17
+  Torsion   17    4    5    6
+  Torsion   17    4    5   16
+  Torsion    9    1    2   18
+  Torsion   11    1    2   18
+  Torsion   18    2    3    4
+  Torsion   18    2    3    8
+
+  Forcefield  'OPLSAA2005/Aromatics'
+EndSpecies
+
+PairPotentials
+  ManualChargeSource  True
+  ForceChargeSource  True
+EndPairPotentials
+

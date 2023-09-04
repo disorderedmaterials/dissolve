@@ -1,0 +1,80 @@
+# Test Case 02 - d structure factor for water vs. EPSR simulated data
+
+# Define Water Molecule
+Species 'Water'
+  # Atoms
+  Atom    1    O     0.015   -0.009   -0.373   'OW'
+  Atom    2    H     0.757    0.013    0.217   'HW'
+  Atom    3    H    -0.771   -0.003    0.157   'HW'
+
+  # Intramolecular Terms
+  Bond    1    2     Harmonic  3000.0   0.995
+  Bond    1    3     Harmonic  3000.0   0.995
+  Angle    2    1    3   Harmonic  400.0   109.5
+
+  # Isotopologues
+  Isotopologue  'Protiated'  OW=0  HW=0
+  Isotopologue  'Deuteriated'  OW=0  HW=2
+EndSpecies
+
+# Define Configuration
+Configuration  'Bulk'
+  Generator
+    Add
+      Density  9.99999642E-02 atoms/A3
+      Population  1000
+      Species  'Water'
+    EndAdd
+    ImportCoordinates  'InputCoordinates01'
+      File  epsr  'epsr25/water1000-neutron/waterbox.ato'
+      EndFile
+    EndImportCoordinates
+  EndGenerator
+EndConfiguration
+
+Layer  'Processing'
+
+  # Calculate and test RDFs
+  Module  GR  'GR01'
+    Configurations  'Bulk'
+    Frequency  1
+    BinWidth 0.03
+    IntraBroadening  None
+  EndModule
+
+Module  SQ  'SQ01'
+QMin 0.05
+QBroadening  OmegaDependentGaussian  0.02    # For SLS
+WindowFunction  None
+SourceGR  'GR01'
+EndModule
+
+Module  NeutronSQ  'D2O'
+SourceSQs  'SQ01'
+Isotopologue  'Water'  'Deuteriated'  1.0
+Frequency  1
+EndModule
+
+Module  NeutronSQ  'H2O'
+SourceSQs  'SQ01'
+Isotopologue  'Water'  'Protiated'  1.0
+Frequency  1
+EndModule
+
+Module  NeutronSQ  'HDO'
+SourceSQs  'SQ01'
+Isotopologue  'Water'  'Protiated'  0.5
+Isotopologue  'Water'  'Deuteriated'  0.5
+Exchangeable  HW
+Frequency  1
+EndModule
+
+EndLayer
+
+# Pair Potentials
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  Parameters  'OW'  O  -0.82  LJGeometric    0.6503    3.165492
+  Parameters  'HW'  H  0.41   LJGeometric    0.0       0.0
+EndPairPotentials
