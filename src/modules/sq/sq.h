@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/data1DStore.h"
 #include "classes/partialSet.h"
 #include "math/averaging.h"
 #include "math/function1D.h"

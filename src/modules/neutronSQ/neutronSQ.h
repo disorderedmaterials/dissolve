@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/data1DStore.h"
 #include "classes/isotopologueSet.h"
 #include "classes/partialSet.h"
 #include "data/structureFactors.h"

@@ -3,7 +3,6 @@
 
 #include "modules/epsr/epsr.h"
 #include "keywords/bool.h"
-#include "keywords/data1DStore.h"
 #include "keywords/double.h"
 #include "keywords/moduleVector.h"
 #include "keywords/optionalDouble.h"

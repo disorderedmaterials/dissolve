@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/enumOptions.h"
-#include "classes/data1DStore.h"
 #include "classes/scatteringMatrix.h"
 #include "math/data1D.h"
 #include "math/range.h"

@@ -5,9 +5,6 @@ add_library(
   bool.cpp
   configuration.cpp
   configurationVector.cpp
-  data1DStore.cpp
-  data2DStore.cpp
-  data3DStore.cpp
   double.cpp
   elementVector.cpp
   expression.cpp
@@ -48,9 +45,6 @@ add_library(
   bool.h
   configuration.h
   configurationVector.h
-  data1DStore.h
-  data2DStore.h
-  data3DStore.h
   double.h
   elementVector.h
   enumOptions.h
