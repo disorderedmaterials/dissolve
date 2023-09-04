@@ -94,7 +94,7 @@ RegionalPotential::RegionalPotential() : ExternalPotential(ExternalPotentialType
  */
 
 // Return functional form of the potential, as a string
-const std::string RegionalPotential::formString() const { return "Custom"; }
+const std::string RegionalPotential::formString() const { return "Expression"; }
 
 // Return parameters of the potential, as a string
 const std::string RegionalPotential::formParametersString() const { return "N/A"; }
