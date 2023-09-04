@@ -14,10 +14,6 @@ class RegionalGlobalPotentialProcedureNode : public RegionalPotentialVoxelKernel
     ~RegionalGlobalPotentialProcedureNode() override = default;
 
     /*
-     * Potential Function
-     */
-    private:
-    /*
      * Execute
      */
     public:

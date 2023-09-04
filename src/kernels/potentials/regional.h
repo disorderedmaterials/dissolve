@@ -62,8 +62,6 @@ class RegionalPotential : public ExternalPotential
     public:
     // Set up potential for supplied box
     bool setUp(const Box *box, const std::function<std::shared_ptr<RegionalPotentialVoxelKernel>(void)> &kernelGenerator);
-    // Set expression
-    //    void setPotential(const InteractionPotential<RegionalPotentialFunctions> &potential);
     // Return functional form of the potential, as a string
     const std::string formString() const override;
     // Return parameters of the potential, as a string
