@@ -55,7 +55,8 @@ class CompareModule : public Module
     private:
     // Run main processing
     Module::ExecutionResult process(ModuleContext &moduleContext) override;
-    // Add data to data vectors
+
+    /*// Add data to data vectors
     template <typename T> bool addData(std::vector<T> &data)
     {
         auto dataVectors = std::forward_as_tuple(compareData1D_, compareData2D_, compareData3D_);
@@ -71,8 +72,9 @@ class CompareModule : public Module
             .emplace_back(std::make_pair(std::make_unique<T>(data[0]), std::make_unique<T>(data[1])));
 
         return true;
-    }
+    }*/
 
+    /*
     // Fetch internal data
     template <typename T> bool fetchData(T &data, ModuleContext &moduleContext)
     {
@@ -109,5 +111,5 @@ class CompareModule : public Module
             data = optData->get();
             return true;
         }
-    }
+    }*/
 };
