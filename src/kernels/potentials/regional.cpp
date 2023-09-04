@@ -67,6 +67,20 @@ void RegionalPotentialVoxelKernel::energyAndForce(const Box *box, const Vec3<dou
     energy = functionValue();
 
     // Force at the centre of the voxel
+    const auto rDelta = 0.01;
+    for (auto a = 0; a < 3; ++a)
+    {
+        // Evaluate r(i) + delta
+        setVoxelPosition(box, r.adjusted(a, rDelta));
+        force[a] = functionValue();
+
+        // Evaluate r(i) - delta
+        setVoxelPosition(box, r.adjusted(a, -rDelta));
+        force[a] -= functionValue();
+
+        // Finalise force
+        force[a] /= -rDelta * 2;
+    }
 }
 
 /*
@@ -127,7 +141,4 @@ std::tuple<int, int, int> RegionalPotential::voxelIndices(const Atom &i, const B
 double RegionalPotential::energy(const Atom &i, const Box *box) const { return energyVoxels_[voxelIndices(i, box)]; }
 
 // Calculate force on specified atom, summing in to supplied vector
-void RegionalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) const
-{
-    throw(std::runtime_error(fmt::format("Not implemented yet.\n")));
-}
+void RegionalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) const { f = forceVoxels_[voxelIndices(i, box)]; }
