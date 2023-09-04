@@ -46,6 +46,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::GeneralRegion, "GeneralRegion"},
                      {ProcedureNode::NodeType::ImportCoordinates, "ImportCoordinates"},
                      {ProcedureNode::NodeType::IntegerCollect1D, "IntegerCollect1D"},
+                     {ProcedureNode::NodeType::IterateSelection, "IterateSelection"},
                      {ProcedureNode::NodeType::IfValueInRange, "IfValueInRange"},
                      {ProcedureNode::NodeType::Integrate1D, "Integrate1D"},
                      {ProcedureNode::NodeType::IterateData1D, "IterateData1D"},
