@@ -23,10 +23,23 @@ class SpeciesModel : public QAbstractListModel
     const Species *rawData(const QModelIndex &index) const;
 
     public:
+    enum class SpeciesUserRole
+    {
+        RawData = Qt::UserRole,
+        BondsCount,
+        AnglesCount,
+        TorsionsCount,
+        ImpropersCount
+    };
+    Q_ENUM(SpeciesUserRole);
+
+    public:
     // Set source Species data
     void setData(const std::vector<std::unique_ptr<Species>> &species);
     // Set vector containing checked items
     void setCheckStateData(std::vector<const Species *> &checkedItemsVector);
+    // Refresh model data
+    void reset();
 
     /*
      * QAbstractItemModel overrides

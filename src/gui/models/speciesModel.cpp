@@ -25,6 +25,13 @@ const Species *SpeciesModel::rawData(const QModelIndex &index) const
     return species_->get()[index.row()].get();
 }
 
+// Refresh model data
+void SpeciesModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 /*
  * QAbstractItemModel overrides
  */
@@ -37,6 +44,8 @@ int SpeciesModel::rowCount(const QModelIndex &parent) const
 
 QVariant SpeciesModel::data(const QModelIndex &index, int role) const
 {
+    if (!index.isValid())
+        return {};
     switch (role)
     {
         case (Qt::DisplayRole):
@@ -53,8 +62,16 @@ QVariant SpeciesModel::data(const QModelIndex &index, int role) const
             {
                 return {};
             }
-        case (Qt::UserRole):
+        case (static_cast<unsigned int>(SpeciesUserRole::RawData)):
             return QVariant::fromValue(rawData(index));
+        case (static_cast<unsigned int>(SpeciesUserRole::BondsCount)):
+            return QVariant::fromValue(rawData(index)->nBonds());
+        case (static_cast<unsigned int>(SpeciesUserRole::AnglesCount)):
+            return QVariant::fromValue(rawData(index)->nAngles());
+        case (static_cast<unsigned int>(SpeciesUserRole::TorsionsCount)):
+            return QVariant::fromValue(rawData(index)->nTorsions());
+        case (static_cast<unsigned int>(SpeciesUserRole::ImpropersCount)):
+            return QVariant::fromValue(rawData(index)->nImpropers());
         default:
             return {};
     }

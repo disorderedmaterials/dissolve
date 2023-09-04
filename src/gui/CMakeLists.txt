@@ -49,6 +49,7 @@ set(gui_MOC_HDRS
     forcefieldTab.h
     layerTab.h
     messagesTab.h
+    overviewTab.h
     speciesTab.h
     # Main UI
     gui.h
@@ -171,6 +172,7 @@ set(gui_SRCS
     mainTabsBarFuncs.cpp
     mainTabsWidgetFuncs.cpp
     messagesTabFuncs.cpp
+    overviewTabFuncs.cpp
     speciesTabFuncs.cpp
     speciesTab_geometry.cpp
     speciesTab_isotopologues.cpp

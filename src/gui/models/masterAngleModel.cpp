@@ -12,6 +12,13 @@ void MasterAngleModel::setSourceData(std::vector<std::shared_ptr<MasterAngle>> &
     endResetModel();
 }
 
+// Refresh model data
+void MasterAngleModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 int MasterAngleModel::rowCount(const QModelIndex &parent) const
 {
     return parent.isValid() ? 0 : (sourceData_ ? sourceData_->get().size() : 0);

@@ -66,6 +66,8 @@ class ForcefieldTab : public QWidget, public MainTab
     void allowEditing() override;
     // Reset pair potential model
     void resetPairPotentialModel();
+    // Set the current tab
+    void setTab(int index);
 
     /*
      * Signals / Slots

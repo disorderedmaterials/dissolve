@@ -12,6 +12,13 @@ void MasterImproperModel::setSourceData(std::vector<std::shared_ptr<MasterImprop
     endResetModel();
 }
 
+// Refresh model data
+void MasterImproperModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 int MasterImproperModel::rowCount(const QModelIndex &parent) const
 {
     return parent.isValid() ? 0 : (sourceData_ ? sourceData_->get().size() : 0);

@@ -22,6 +22,8 @@ class MasterTorsionModel : public MasterTermModel
     public:
     // Set source data
     void setSourceData(std::vector<std::shared_ptr<MasterTorsion>> &terms);
+    // Refresh model data
+    void reset();
 
     /*
      * QAbstractItemModel overrides

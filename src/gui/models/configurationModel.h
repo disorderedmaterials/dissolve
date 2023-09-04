@@ -22,10 +22,21 @@ class ConfigurationModel : public QAbstractListModel
     Configuration *rawData(const QModelIndex &index) const;
 
     public:
+    enum class ConfigurationUserRole
+    {
+        RawData = Qt::UserRole,
+        MoleculesCount,
+        AtomsCount
+    };
+    Q_ENUM(ConfigurationUserRole);
+
+    public:
     // Set source Configuration data
     void setData(const std::vector<std::unique_ptr<Configuration>> &configuration);
     // Set vector containing checked items
     void setCheckStateData(std::vector<Configuration *> &checkedItemsVector);
+    // Refresh model data
+    void reset();
 
     /*
      * QAbstractItemModel overrides

@@ -43,6 +43,8 @@ void MainTabsWidget::setUp(DissolveWindow *dissolveWindow)
     dissolveWindow_ = dissolveWindow;
     forcefieldTab_ = new ForcefieldTab(dissolveWindow, dissolveWindow->dissolve(), this, "Forcefield");
     messagesTab_ = new MessagesTab(dissolveWindow, dissolveWindow->dissolve(), this, "Messages");
+    if (overview_flag)
+        overviewTab_ = new OverviewTab(dissolveWindow, dissolveWindow->dissolve(), this, "Overview");
 }
 
 /*
@@ -158,6 +160,11 @@ void MainTabsWidget::clearTabs()
     addTab(forcefieldTab_->page(), "Forcefield");
     setTabIcon(forcefieldTab_->page(), QIcon(":/general/icons/ff.svg"));
     allTabs_.push_back(forcefieldTab_.data());
+    if (overview_flag)
+    {
+        addTab(overviewTab_->page(), "Overview");
+        allTabs_.push_back(overviewTab_.data());
+    }
 }
 
 // Reconcile tabs, making them consistent with the provided data
@@ -165,9 +172,9 @@ void MainTabsWidget::reconcileTabs()
 {
     auto &dissolve = dissolveWindow_->dissolve();
 
-    // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
+    // Species - Global tab indices run from 1/2 (first tab after ForcefieldTab/OverviewTab) to 1+nSpecies
     auto currentTabIndex = 0;
-    auto baseIndex = 2;
+    auto baseIndex = overview_flag ? 3 : 2;
     for (const auto &sp : dissolve.coreData().species())
     {
         // Loop over existing tabs
@@ -326,6 +333,18 @@ MainTab *MainTabsWidget::currentTab() const
 
 // Make specified Species tab the current one
 void MainTabsWidget::setCurrentTab(Species *species)
+{
+    if (!species)
+        return;
+
+    auto it = std::find_if(speciesTabs_.begin(), speciesTabs_.end(),
+                           [species](const auto &tab) { return tab->species() == species; });
+    if (it != speciesTabs_.end())
+        setCurrentWidget((*it)->page());
+    else
+        Messenger::error("Can't display SpeciesTab for Species '{}' as it doesn't exist.\n", species->name());
+}
+void MainTabsWidget::setCurrentTab(const Species *species)
 {
     if (!species)
         return;

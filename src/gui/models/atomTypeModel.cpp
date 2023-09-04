@@ -9,6 +9,12 @@
 
 AtomTypeModel::AtomTypeModel(const CoreData &coreData) : coreData_(coreData) {}
 
+void AtomTypeModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 // Set source AtomType data
 void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTypes,
                             OptionalReferenceWrapper<const CoreData> coreData)

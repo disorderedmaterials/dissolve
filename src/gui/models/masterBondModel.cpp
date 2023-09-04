@@ -12,6 +12,13 @@ void MasterBondModel::setSourceData(std::vector<std::shared_ptr<MasterBond>> &te
     endResetModel();
 }
 
+// Refresh model data
+void MasterBondModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 int MasterBondModel::rowCount(const QModelIndex &parent) const
 {
     return parent.isValid() ? 0 : (sourceData_ ? sourceData_->get().size() : 0);
