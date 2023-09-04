@@ -13,6 +13,10 @@ class RegionalGlobalPotentialProcedureNode : public RegionalPotentialVoxelKernel
     RegionalGlobalPotentialProcedureNode();
     ~RegionalGlobalPotentialProcedureNode() override = default;
 
+    private:
+    // Guide voxel size (Angstroms)
+    double voxelSize_{0.5};
+
     /*
      * Execute
      */

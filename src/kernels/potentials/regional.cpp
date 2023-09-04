@@ -100,13 +100,13 @@ const std::string RegionalPotential::formString() const { return "Custom"; }
 const std::string RegionalPotential::formParametersString() const { return "N/A"; }
 
 // Set up potential for supplied box
-bool RegionalPotential::setUp(const Box *box,
+bool RegionalPotential::setUp(const Box *box, double voxelSize,
                               const std::function<std::shared_ptr<RegionalPotentialVoxelKernel>(void)> &kernelGenerator)
 {
     // Set fractional voxel sizes
     Vec3<int> nVoxels;
     for (auto n = 0; n < 3; ++n)
-        nVoxels.set(n, std::max(int(box->axisLength(n) / voxelSize_), 1));
+        nVoxels.set(n, std::max(int(box->axisLength(n) / voxelSize), 1));
     voxelSizeFrac_.set(1.0 / nVoxels.x, 1.0 / nVoxels.y, 1.0 / nVoxels.z);
 
     // Initialise 3D maps

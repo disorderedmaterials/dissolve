@@ -51,8 +51,6 @@ class RegionalPotential : public ExternalPotential
      * Definition
      */
     private:
-    // Guide voxel size (Angstroms)
-    double voxelSize_{0.5};
     // Fractional voxel size
     Vec3<double> voxelSizeFrac_;
     // Vector fields for energy and derived force
@@ -71,7 +69,8 @@ class RegionalPotential : public ExternalPotential
 
     public:
     // Set up potential for supplied box
-    bool setUp(const Box *box, const std::function<std::shared_ptr<RegionalPotentialVoxelKernel>(void)> &kernelGenerator);
+    bool setUp(const Box *box, double voxelSize,
+               const std::function<std::shared_ptr<RegionalPotentialVoxelKernel>(void)> &kernelGenerator);
     // Return functional form of the potential, as a string
     const std::string formString() const override;
     // Return parameters of the potential, as a string

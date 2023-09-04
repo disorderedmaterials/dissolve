@@ -18,6 +18,10 @@ RegionalGlobalPotentialProcedureNode::RegionalGlobalPotentialProcedureNode()
                                  valueOffset_);
     keywords_.add<DoubleKeyword>("PenaltyPower", "Power to apply to the (offset) value if out of threshold range",
                                  penaltyPower_);
+
+    keywords_.setOrganisation("Options", "Grid");
+    keywords_.add<DoubleKeyword>("VoxelSize", "Voxel size (length) guiding the coarseness / detail of the region", voxelSize_,
+                                 0.1);
 }
 
 /*
@@ -30,7 +34,7 @@ bool RegionalGlobalPotentialProcedureNode::execute(const ProcedureContext &proce
     auto *cfg = procedureContext.configuration();
 
     auto pot = std::make_unique<RegionalPotential>();
-    pot->setUp(cfg->box(),
+    pot->setUp(cfg->box(), voxelSize_,
                [&]()
                {
                    return std::make_shared<RegionalPotentialVoxelKernel>(expression_.asString(), getParameters(), minimumValue_,
