@@ -42,9 +42,6 @@
 #include "keywords/geometryList.h"
 #include "keywords/nodeBranch.h"
 #include "keywords/procedure.h"
-#include "keywords/valueStore.h"
-#include "keywords/vectorIntDouble.h"
-#include "keywords/vectorIntString.h"
 #include "keywords/vectorStringDouble.h"
 #include "keywords/vectorStringPair.h"
 #include <ios>
@@ -90,13 +87,10 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerNullProducer<ElementVectorKeyword>();
     registerNullProducer<ExpressionKeyword>();
     registerNullProducer<GeometryListKeyword>();
-    registerNullProducer<IntegerDoubleVectorKeyword>();
-    registerNullProducer<IntegerStringVectorKeyword>();
     registerNullProducer<NodeBranchKeyword>();
     registerNullProducer<ProcedureKeyword>();
     registerNullProducer<StringDoubleVectorKeyword>();
     registerNullProducer<StringPairVectorKeyword>();
-    registerNullProducer<ValueStoreKeyword>();
 }
 
 /*

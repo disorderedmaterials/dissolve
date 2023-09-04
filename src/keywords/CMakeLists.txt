@@ -31,12 +31,9 @@ add_library(
   stdString.cpp
   store.cpp
   storeData.cpp
-  valueStore.cpp
   vec3Double.cpp
   vec3Integer.cpp
   vec3NodeValue.cpp
-  vectorIntDouble.cpp
-  vectorIntString.cpp
   vectorStringDouble.cpp
   vectorStringPair.cpp
   weightedModuleVector.cpp
@@ -78,13 +75,10 @@ add_library(
   store.h
   storeData.h
   rangeVector.h
-  valueStore.h
   vec3Double.h
   vec3Integer.h
   vec3Labels.h
   vec3NodeValue.h
-  vectorIntDouble.h
-  vectorIntString.h
   vectorStringDouble.h
   vectorStringPair.h
   weightedModuleVector.h
