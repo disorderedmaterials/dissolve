@@ -34,8 +34,6 @@ add_library(
   vec3Double.cpp
   vec3Integer.cpp
   vec3NodeValue.cpp
-  vectorStringDouble.cpp
-  vectorStringPair.cpp
   weightedModuleVector.cpp
   atomTypeVector.h
   base.h
@@ -79,8 +77,6 @@ add_library(
   vec3Integer.h
   vec3Labels.h
   vec3NodeValue.h
-  vectorStringDouble.h
-  vectorStringPair.h
   weightedModuleVector.h
 )
 

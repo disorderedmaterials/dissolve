@@ -42,8 +42,6 @@
 #include "keywords/geometryList.h"
 #include "keywords/nodeBranch.h"
 #include "keywords/procedure.h"
-#include "keywords/vectorStringDouble.h"
-#include "keywords/vectorStringPair.h"
 #include <ios>
 
 KeywordWidgetProducer::KeywordWidgetProducer()
@@ -89,8 +87,6 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerNullProducer<GeometryListKeyword>();
     registerNullProducer<NodeBranchKeyword>();
     registerNullProducer<ProcedureKeyword>();
-    registerNullProducer<StringDoubleVectorKeyword>();
-    registerNullProducer<StringPairVectorKeyword>();
 }
 
 /*

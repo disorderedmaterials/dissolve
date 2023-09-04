@@ -9,7 +9,6 @@
 #include "keywords/optionalInt.h"
 #include "keywords/rangeVector.h"
 #include "keywords/stdString.h"
-#include "keywords/vectorStringDouble.h"
 #include "keywords/weightedModuleVector.h"
 
 EPSRModule::EPSRModule() : Module(ModuleTypes::EPSR)
