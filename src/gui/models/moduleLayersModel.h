@@ -22,6 +22,7 @@ class ModuleLayersModel : public QAbstractListModel
     void setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers);
     // Return object represented by specified model index
     ModuleLayer *rawData(const QModelIndex &index) const;
+    void reset();
 
     /*
      * QAbstractItemModel overrides

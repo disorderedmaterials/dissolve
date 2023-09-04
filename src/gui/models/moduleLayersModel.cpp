@@ -14,7 +14,14 @@ void ModuleLayersModel::setData(const std::vector<std::unique_ptr<ModuleLayer>> 
     endResetModel();
 }
 
-ModuleLayer *ModuleLayersModel::rawData(const QModelIndex &index) const { return layers_->get()[index.row()].get(); }
+ModuleLayer *ModuleLayersModel::rawData(const QModelIndex &index) const
+{
+    if (!layers_)
+        return {};
+    if (!index.isValid())
+        return {};
+    return layers_->get()[index.row()].get();
+}
 
 int ModuleLayersModel::rowCount(const QModelIndex &parent) const
 {
@@ -22,14 +29,25 @@ int ModuleLayersModel::rowCount(const QModelIndex &parent) const
     return layers_ ? layers_->get().size() : 0;
 }
 
+void ModuleLayersModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 QVariant ModuleLayersModel::data(const QModelIndex &index, int role) const
 {
+
+    auto data = rawData(index);
+    if (!data)
+        return {};
+
     switch (role)
     {
         case (Qt::DisplayRole):
-            return QString::fromStdString(std::string(rawData(index)->name()));
+            return QString::fromStdString(std::string(data->name()));
         case (Qt::UserRole):
-            return QVariant::fromValue(rawData(index));
+            return QVariant::fromValue(data);
         default:
             return {};
     }
