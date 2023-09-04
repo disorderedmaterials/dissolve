@@ -11,7 +11,6 @@ add_library(
   expressionVariableVector.cpp
   fileAndFormat.cpp
   function1D.cpp
-  geometryList.cpp
   integer.cpp
   isotopologueSet.cpp
   layer.cpp
@@ -47,7 +46,6 @@ add_library(
   expressionVariableVector.h
   fileAndFormat.h
   function1D.h
-  geometryList.h
   integer.h
   interactionPotential.h
   isotopologueSet.h

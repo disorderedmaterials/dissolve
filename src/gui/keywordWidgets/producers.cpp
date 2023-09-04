@@ -39,7 +39,6 @@
 #include "gui/keywordWidgets/weightedModuleVector.h"
 #include "keywords/elementVector.h"
 #include "keywords/expression.h"
-#include "keywords/geometryList.h"
 #include "keywords/nodeBranch.h"
 #include "keywords/procedure.h"
 #include <ios>
@@ -84,7 +83,6 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     // Keywords with no widgets
     registerNullProducer<ElementVectorKeyword>();
     registerNullProducer<ExpressionKeyword>();
-    registerNullProducer<GeometryListKeyword>();
     registerNullProducer<NodeBranchKeyword>();
     registerNullProducer<ProcedureKeyword>();
 }
