@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/data1DStore.h"
 #include "classes/isotopologueSet.h"
 #include "classes/partialSet.h"
 #include "data/structureFactors.h"
@@ -55,8 +54,6 @@ class NeutronSQModule : public Module
     bool saveSQ_{false};
     // Source module for calculation
     const SQModule *sourceSQ_{nullptr};
-    // Test data
-    Data1DStore testData_;
 
     public:
     // Return file and format for reference total F(Q)

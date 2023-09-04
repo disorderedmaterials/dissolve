@@ -37,19 +37,10 @@
 #include "gui/keywordWidgets/vec3Integer.h"
 #include "gui/keywordWidgets/vec3NodeValue.h"
 #include "gui/keywordWidgets/weightedModuleVector.h"
-#include "keywords/data1DStore.h"
-#include "keywords/data2DStore.h"
-#include "keywords/data3DStore.h"
 #include "keywords/elementVector.h"
 #include "keywords/expression.h"
-#include "keywords/geometryList.h"
 #include "keywords/nodeBranch.h"
 #include "keywords/procedure.h"
-#include "keywords/valueStore.h"
-#include "keywords/vectorIntDouble.h"
-#include "keywords/vectorIntString.h"
-#include "keywords/vectorStringDouble.h"
-#include "keywords/vectorStringPair.h"
 #include <ios>
 
 KeywordWidgetProducer::KeywordWidgetProducer()
@@ -90,19 +81,10 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<WeightedModuleVectorKeyword, WeightedModuleVectorKeywordWidget>();
 
     // Keywords with no widgets
-    registerNullProducer<Data1DStoreKeyword>();
-    registerNullProducer<Data2DStoreKeyword>();
-    registerNullProducer<Data3DStoreKeyword>();
     registerNullProducer<ElementVectorKeyword>();
     registerNullProducer<ExpressionKeyword>();
-    registerNullProducer<GeometryListKeyword>();
-    registerNullProducer<IntegerDoubleVectorKeyword>();
-    registerNullProducer<IntegerStringVectorKeyword>();
     registerNullProducer<NodeBranchKeyword>();
     registerNullProducer<ProcedureKeyword>();
-    registerNullProducer<StringDoubleVectorKeyword>();
-    registerNullProducer<StringPairVectorKeyword>();
-    registerNullProducer<ValueStoreKeyword>();
 }
 
 /*

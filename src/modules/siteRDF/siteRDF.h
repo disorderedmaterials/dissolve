@@ -31,18 +31,10 @@ class SiteRDFModule : public Module
     bool excludeSameMolecule_{false};
     // Range (min, max, delta) of distance axis
     Vec3<double> distanceRange_{0.0, 10.0, 0.05};
-    // Reference coordination number for range A against which calculated value should be tested
-    std::optional<double> testRangeA_;
-    // Reference coordination number for range B against which calculated value should be tested
-    std::optional<double> testRangeB_;
-    // Reference coordination number for range C against which calculated value should be tested
-    std::optional<double> testRangeC_;
     // Whether to calculate the instantaneous coordination numbers rather than forming an average
     bool instantaneous_{false};
     // Whether to export instantaneous coordination numbers to disk
     bool exportInstantaneous_{false};
-    // Threshold difference at which test comparisons will fail
-    double testThreshold_{0.1};
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A

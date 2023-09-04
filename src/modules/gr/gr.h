@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/data1DStore.h"
 #include "classes/partialSet.h"
 #include "math/averaging.h"
 #include "math/function1D.h"
@@ -93,12 +92,6 @@ class GRModule : public Module
     // Test calculated partial against supplied reference data
     static bool testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
                                      std::string_view typeIorTotal, std::string_view typeJ = "", std::string_view target = "");
-    // Test calculated vs reference data (two source sets)
-    static bool testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partials,
-                                      std::string_view prefix);
-    // Test calculated vs reference data (two source sets)
-    static bool testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partialsA,
-                                      std::string_view prefixA, const PartialSet &partialsB, std::string_view prefixB);
 
     /*
      * Processing

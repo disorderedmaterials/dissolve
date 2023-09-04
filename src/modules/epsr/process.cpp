@@ -164,8 +164,6 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         Messenger::print("EPSR: Potential coefficients will be saved.\n");
     if (saveSimulatedFR_)
         Messenger::print("EPSR: Simulated F(r) (from FT of F(Q)) will be saved.\n");
-    if (test_)
-        Messenger::print("EPSR: Test mode is enabled (threshold = {}%).", testThreshold_);
     Messenger::print("\n");
 
     /*
@@ -544,33 +542,6 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
             else if (!moduleContext.processPool().decision())
                 return ExecutionResult::NotExecuted;
         }
-
-        /*
-         * Test Mode
-         */
-
-        if (test_)
-        {
-            testDataName = fmt::format("WeightedFR-{}-total", module->name());
-            if (testReferenceData_.containsData(testDataName))
-            {
-                auto optRefData = testReferenceData_.data(testDataName);
-                if (!optRefData)
-                {
-                    Messenger::error("Reference data '{}' not found.\n", testDataName);
-                    return ExecutionResult::Failed;
-                }
-                auto errorReport = Error::percent(simulatedFR, *optRefData);
-                Messenger::print(Error::errorReportString(errorReport));
-                Messenger::print("Simulated F(r) reference data '{}' has {} error of {:7.3f}{} with calculated data "
-                                 "and is {} (threshold is {:6.3f}%)\n\n",
-                                 testDataName, Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
-                                 errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                                 errorReport.error <= testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-                if (errorReport.error > testThreshold_)
-                    return ExecutionResult::Failed;
-            }
-        }
     }
 
     // Finalise and store the total r-factor
@@ -652,33 +623,6 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         }
         else if (!moduleContext.processPool().decision())
             return ExecutionResult::NotExecuted;
-    }
-
-    // Test Mode
-    if (test_)
-    {
-        auto methodSuccess = for_each_pair_early(
-            atomTypes.begin(), atomTypes.end(),
-            [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
-            {
-                testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
-                auto optRefData = testReferenceData_.data(testDataName);
-                if (optRefData)
-                {
-                    auto errorReport = Error::percent(estimatedSQ[{i, j}], *optRefData);
-                    Messenger::print(Error::errorReportString(errorReport));
-                    Messenger::print("Generated S(Q) reference data '{}' has {} error of {:7.3f}{} with "
-                                     "calculated data and is {} (threshold is {:6.3f}%)\n\n",
-                                     testDataName, Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
-                                     errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                                     errorReport.error <= testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-                    if (errorReport.error > testThreshold_)
-                        return false;
-                }
-                return EarlyReturn<bool>::Continue;
-            });
-        if (!methodSuccess.value_or(true))
-            return ExecutionResult::Failed;
     }
 
     /*
@@ -817,10 +761,6 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     }
     else
         energabs = absEnergyEP(moduleContext.dissolve());
-
-    // Test absolute EP energy?
-    if (!testAbsEnergyEP_.empty() && !testAbsEnergyEP(moduleContext.dissolve()))
-        return ExecutionResult::Failed;
 
     // Save data?
     if (saveEmpiricalPotentials_)

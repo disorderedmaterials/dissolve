@@ -5269,7 +5269,6 @@ Layer  'GR / Neutron S(Q)'
     Configuration  'MOF'
     Multiplicity  1  1  1
     QMax  5
-    TestReflections  ''
   EndModule
 
   Module  SQ  'SQ'

@@ -71,18 +71,15 @@
     <file>icons/modules/siteRDF.svg</file>
     <file>icons/modules/SDF.svg</file>
     <file>icons/modules/molShake.svg</file>
-    <file>icons/modules/checks.svg</file>
     <file>icons/modules/analyse.svg</file>
     <file>icons/modules/forces.svg</file>
     <file>icons/modules/benchmark.svg</file>
-    <file>icons/modules/checkSpecies.svg</file>
     <file>icons/modules/EPSR.svg</file>
     <file>icons/modules/energy.svg</file>
     <file>icons/modules/MD.svg</file>
     <file>icons/modules/xRaySQ.svg</file>
     <file>icons/modules/atomShake.svg</file>
     <file>icons/modules/calibrate.svg</file>
-    <file>icons/modules/dataTest.svg</file>
     <file>icons/modules/GR.svg</file>
     <file>icons/modules/intraShake.svg</file>
     <file>icons/modules/neutronSQ.svg</file>

@@ -20,8 +20,6 @@
 #include "modules/bragg/gui/braggWidget.h"
 #include "modules/dAngle/dAngle.h"
 #include "modules/dAngle/gui/dAngleWidget.h"
-#include "modules/dataTest/dataTest.h"
-#include "modules/dataTest/gui/dataTestWidget.h"
 #include "modules/energy/energy.h"
 #include "modules/energy/gui/energyWidget.h"
 #include "modules/epsr/epsr.h"
@@ -65,7 +63,6 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<BenchmarkModule, BenchmarkModuleWidget>();
     registerProducer<BraggModule, BraggModuleWidget>();
     registerProducer<DAngleModule, DAngleModuleWidget>();
-    registerProducer<DataTestModule, DataTestModuleWidget>();
     registerProducer<EnergyModule, EnergyModuleWidget>();
     registerProducer<EPSRModule, EPSRModuleWidget>();
     registerProducer<GeometryOptimisationModule, GeometryOptimisationModuleWidget>();

@@ -59,11 +59,3 @@ The `SiteRDF` module calculates a radial distribution function between two sites
 |`Export`|[`Data1DFileAndFormat`]({{< ref "data1dformat" >}})|--|File format and file name under which to save calculated A-B RDF data.|
 |`ExportInstantaneousCN`|`bool`|`false`|Whether to export instantaneous coordination numbers to disk.|
 
-## Advanced
-
-|Keyword|Arguments|Default|Description|
-|:------|:--:|:-----:|-----------|
-|`TestRangeA`|`double`|--|For code testing - specifies the expected value of the first coordination number.|
-|`TestRangeB`|`double`|--|For code testing - specifies the expected value of the second coordination number.|
-|`TestRangeC`|`double`|--|For code testing - specifies the expected value of the third coordination number.|
-|`TestThreshold`|`double`|`0.1`|For code testing - specifies the threshold difference value at which tests will fail.|
