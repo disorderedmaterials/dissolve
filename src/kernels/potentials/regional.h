@@ -52,7 +52,7 @@ class RegionalPotential : public ExternalPotential
      */
     private:
     // Guide voxel size (Angstroms)
-    double voxelSize_{0.1};
+    double voxelSize_{0.5};
     // Fractional voxel size
     Vec3<double> voxelSizeFrac_;
     // Vector fields for energy and derived force
