@@ -411,6 +411,9 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         oldScope.sequence().erase(oldScope.sequence().begin() + oldNodeRow);
         endRemoveRows();
 
+        beginResetModel();
+        endResetModel();
+
         // Set the new data - we call this just to emit dataChanged() from the correct place.
         auto idx = index(insertAtRow, 0, newParent);
         return setData(idx, QVariant::fromValue(mimeData->node()), ProcedureModelAction::MoveInternal);
