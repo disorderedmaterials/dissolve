@@ -10,6 +10,7 @@ ColumnLayout {
     signal atomTypesClicked
     signal configurationClicked(int index)
     signal masterTermsClicked
+    signal moduleLayerClicked(int index)
     signal speciesClicked(int index)
 
     RowLayout {
@@ -99,6 +100,12 @@ ColumnLayout {
 
             delegate: ModuleLayer {
                 model: dissolveModel.moduleLayersModel
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: root.moduleLayerClicked(index)
+                }
             }
         }
     }

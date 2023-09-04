@@ -63,4 +63,6 @@ class OverviewTab : public QWidget, public MainTab
     void speciesClicked(int index);
     // Configuration clicked
     void configurationClicked(int index);
+    // ModuleLayer clicked
+    void moduleLayerClicked(int index);
 };

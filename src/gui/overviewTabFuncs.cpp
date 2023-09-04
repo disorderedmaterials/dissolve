@@ -63,8 +63,9 @@ void OverviewTab::viewStatusChanged()
     if (view_->status() == QQuickWidget::Status::Ready && !slotsAreSetup_)
     {
         connect(view_->rootObject(), SIGNAL(atomTypesClicked()), this, SLOT(atomTypesClicked()));
-        connect(view_->rootObject(), SIGNAL(masterTermsClicked()), this, SLOT(masterTermsClicked()));
         connect(view_->rootObject(), SIGNAL(configurationClicked(int)), this, SLOT(configurationClicked(int)));
+        connect(view_->rootObject(), SIGNAL(masterTermsClicked()), this, SLOT(masterTermsClicked()));
+        connect(view_->rootObject(), SIGNAL(moduleLayerClicked(int)), this, SLOT(moduleLayerClicked(int)));
         connect(view_->rootObject(), SIGNAL(speciesClicked(int)), this, SLOT(speciesClicked(int)));
         slotsAreSetup_ = true;
     }
@@ -100,4 +101,13 @@ void OverviewTab::configurationClicked(int index)
                               ->data(dissolveModel_.configurationsModel()->index(index, 0), Qt::UserRole)
                               .value<Configuration *>();
     tabWidget_->setCurrentTab(configuration);
+}
+
+// ModuleLayer clicked
+void OverviewTab::moduleLayerClicked(int index)
+{
+    auto *moduleLayer = dissolveModel_.moduleLayersModel()
+                              ->data(dissolveModel_.moduleLayersModel()->index(index, 0), Qt::UserRole)
+                              .value<ModuleLayer *>();
+    tabWidget_->setCurrentTab(moduleLayer);
 }
