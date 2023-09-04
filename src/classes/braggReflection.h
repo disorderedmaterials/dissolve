@@ -50,7 +50,7 @@ class BraggReflection
     // Scale intensity between specified atom types by factor provided
     void scaleIntensity(int typeI, int typeJ, double factor);
     // Return intensities array
-    const Array2D<double> intensities() const;
+    const Array2D<double> &intensities() const;
     // Return intensity between specified atom types for this reflection
     double intensity(int typeI, int typeJ) const;
     // Increment number of contributing k-vectors

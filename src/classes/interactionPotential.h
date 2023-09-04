@@ -15,6 +15,11 @@ template <class Functions> class InteractionPotential
 {
     public:
     explicit InteractionPotential(typename Functions::Form form) { setForm(form); };
+    InteractionPotential(typename Functions::Form form, std::string_view params)
+    {
+        setForm(form);
+        parseParameters(params);
+    };
     virtual ~InteractionPotential() = default;
     InteractionPotential(const InteractionPotential &source) = default;
     InteractionPotential(InteractionPotential &&source) = delete;

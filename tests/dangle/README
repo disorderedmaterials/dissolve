@@ -1,5 +1,0 @@
-Distance-Angle Calculation / Analysis System Test
-Test CalculateDAngle module functionality against manual Analyse definition, using dlputils output as benchmark.
-
-System comprises 267 SPC/FW molecules, read from an xyz trajectory.
-

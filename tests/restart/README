@@ -1,3 +1,0 @@
-'Restart File' System Test
-benzene.txt - Test load of basic restart file containing a variety of data
-rdf.txt     - Test restarting of SiteRDF module

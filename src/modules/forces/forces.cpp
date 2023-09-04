@@ -16,16 +16,7 @@ ForcesModule::ForcesModule() : Module(ModuleTypes::Forces)
                                         exportedForces_, "EndSaveForces");
 
     keywords_.setOrganisation("Advanced");
-    keywords_.add<BoolKeyword>(
-        "Test", "Test parallel force routines against basic serial versions and supplied reference values (if provided)",
-        test_);
-    keywords_.add<BoolKeyword>("TestAnalytic",
-                               "Use analytic interatomic forces rather than (production) tabulated potentials for tests",
-                               testAnalytic_);
-    keywords_.add<BoolKeyword>("TestInter", "Include interatomic forces in test", testInter_);
-    keywords_.add<BoolKeyword>("TestIntra", "Include intramolecular forces in test", testIntra_);
-    keywords_.add<FileAndFormatKeyword>("TestReference", "Reference forces to test calculated forces against", referenceForces_,
-                                        "EndTestReference");
+    keywords_.add<BoolKeyword>("Test", "Test analytic forces against production values", test_);
     keywords_.add<DoubleKeyword>("TestThreshold", "Threshold of force (%) at which test comparison will fail", testThreshold_,
                                  0.0);
 }

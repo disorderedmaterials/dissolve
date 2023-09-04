@@ -25,14 +25,9 @@ class ForcesModule : public Module
     private:
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
-    // Test parallel force routines against basic serial versions and supplied reference values (if provided)
+    // Test analytic forces against production forces force routines against basic serial versions and supplied reference values
+    // (if provided)
     bool test_{false};
-    // Use analytic forces rather than (production) tabulated potentials for tests
-    bool testAnalytic_{false};
-    // Include interatomic forces in test
-    bool testInter_{true};
-    // Include intramolecular forces in test
-    bool testIntra_{true};
     // Threshold of force (%) at which test comparison will fail
     double testThreshold_{1.0e-6};
     // Reference forces for test

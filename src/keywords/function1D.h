@@ -24,8 +24,9 @@ class Function1DKeyword : public KeywordBase
 
     public:
     // Return reference to data
-    Functions::Function1DWrapper &data();
     const Functions::Function1DWrapper &data() const;
+    // Set data
+    bool setData(const Functions::Function1DWrapper &data);
     // Return requested function properties
     int functionProperties() const;
 

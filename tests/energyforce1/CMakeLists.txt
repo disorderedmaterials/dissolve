@@ -1,5 +1,0 @@
-dissolve_system_test(water-coul water3000-coul.txt 1)
-dissolve_system_test(water-elec water3000-elec.txt 1)
-dissolve_system_test(water-full water3000-full.txt 1)
-dissolve_system_test(water-intra water3000-intra.txt 1)
-dissolve_system_test(water-vdw water3000-vdw.txt 1)

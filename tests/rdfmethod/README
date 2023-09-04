@@ -1,9 +1,0 @@
-'RDF Methods' System Test
-Test of consistency between internal methods for generating radial distribution functions.
-
-Compare test (simple, serial) calculated g(r) (Method == Test) with other available partial generation 
-methods, ensuring that the results are exactly the same.
-
-Test is performed on a randomly generated box of atoms, using a small cell division size and RDF cutoff to
-ensure that not all atoms are considered in a given atom-centered RDF, and that some Cells can legitimately
-be excluded.

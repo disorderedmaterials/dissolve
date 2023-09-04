@@ -75,7 +75,6 @@
                 type != "directory" || builtins.baseNameOf path
                 != ".azure-pipelines" || builtins.baseNameOf path != "web";
             };
-            patches = [ ./nix/patches/ctest.patch ];
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs system pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
@@ -93,8 +92,7 @@
               ("-DMULTI_THREADING=" + (cmake-bool threading))
               ("-DPARALLEL=" + (cmake-bool mpi))
               ("-DGUI=" + (cmake-bool gui))
-              "-DBUILD_SYSTEM_TESTS:bool=${cmake-bool checks}"
-              "-DBUILD_UNIT_TESTS:bool=${cmake-bool (checks && !mpi)}"
+              "-DBUILD_TESTS:bool=${cmake-bool checks}"
               "-DCMAKE_BUILD_TYPE=Release"
             ] ++ pkgs.lib.optional threading
               ("-DTHREADING_LINK_LIBS=${pkgs.tbb}/lib/libtbb.so");
