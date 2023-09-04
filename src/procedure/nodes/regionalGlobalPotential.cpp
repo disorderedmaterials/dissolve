@@ -14,6 +14,10 @@ RegionalGlobalPotentialProcedureNode::RegionalGlobalPotentialProcedureNode()
     keywords_.add<NodeValueKeyword>("Expression", "Expression describing region", expression_, this);
     keywords_.add<DoubleKeyword>("Minimum", "Minimum value for descriptive function defining region", minimumValue_);
     keywords_.add<DoubleKeyword>("Maximum", "Maximum value for descriptive function defining region", maximumValue_);
+    keywords_.add<DoubleKeyword>("Offset", "Offset to apply to calculated value when assessing threshold and penalty",
+                                 valueOffset_);
+    keywords_.add<DoubleKeyword>("PenaltyPower", "Power to apply to the (offset) value if out of threshold range",
+                                 penaltyPower_);
 }
 
 /*
@@ -30,7 +34,7 @@ bool RegionalGlobalPotentialProcedureNode::execute(const ProcedureContext &proce
                [&]()
                {
                    return std::make_shared<RegionalPotentialVoxelKernel>(expression_.asString(), getParameters(), minimumValue_,
-                                                                         maximumValue_);
+                                                                         maximumValue_, valueOffset_, penaltyPower_);
                });
 
     cfg->addGlobalPotential(std::unique_ptr<ExternalPotential>(std::move(pot)));

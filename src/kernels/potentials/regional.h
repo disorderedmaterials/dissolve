@@ -13,7 +13,7 @@ class RegionalPotentialVoxelKernel
     public:
     explicit RegionalPotentialVoxelKernel(std::string_view expressionString = "",
                                           std::vector<std::shared_ptr<ExpressionVariable>> = {}, double minimumValue = 0.0,
-                                          double maximumValue = 1.0);
+                                          double maximumValue = 1.0, double valueOffset = 0.0, double penaltyPower = 1.0);
 
     protected:
     // Local variables, set when checking voxels
@@ -24,6 +24,16 @@ class RegionalPotentialVoxelKernel
     double minimumValue_{0.0};
     // Maximum threshold value for function
     double maximumValue_{1.0};
+    // Value offset to use when assessing threshold
+    double valueOffset_{0.0};
+    // Power law to apply when function value is outside of threshold limits
+    double penaltyPower_{1.0};
+
+    private:
+    // Set voxel position variables
+    void setVoxelPosition(const Box *box, Vec3<double> r) const;
+    // Return current value of function, applying any threshold penalty
+    double functionValue() const;
 
     public:
     // Calculate and store energy and force for the specified voxel centre

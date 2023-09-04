@@ -16,7 +16,8 @@
 
 RegionalPotentialVoxelKernel::RegionalPotentialVoxelKernel(std::string_view expressionString,
                                                            std::vector<std::shared_ptr<ExpressionVariable>> parameters,
-                                                           double minimumValue, double maximumValue)
+                                                           double minimumValue, double maximumValue, double valueOffset,
+                                                           double penaltyPower)
 {
     // Create our local variables
     x_ = expression_.addLocalVariable("x");
@@ -32,25 +33,40 @@ RegionalPotentialVoxelKernel::RegionalPotentialVoxelKernel(std::string_view expr
     // Set limits
     minimumValue_ = minimumValue;
     maximumValue_ = maximumValue;
+    valueOffset_ = valueOffset;
+    penaltyPower_ = penaltyPower;
+}
+
+// Set voxel position variables
+void RegionalPotentialVoxelKernel::setVoxelPosition(const Box *box, Vec3<double> r) const
+{
+    x_->setValue(r.x);
+    y_->setValue(r.y);
+    z_->setValue(r.z);
+    box->toFractional(r);
+    xFrac_->setValue(r.x);
+    yFrac_->setValue(r.y);
+    zFrac_->setValue(r.z);
+}
+
+// Return current value of function, applying any threshold penalty
+double RegionalPotentialVoxelKernel::functionValue() const
+{
+    auto x = expression_.asDouble() + valueOffset_;
+    if (x < minimumValue_ || x > maximumValue_)
+        x = pow(x, penaltyPower_);
+    return x - valueOffset_;
 }
 
 // Calculate and store energy and force for the specified voxel centre
 void RegionalPotentialVoxelKernel::energyAndForce(const Box *box, const Vec3<double> &r, double &energy,
                                                   Vec3<double> &force) const
 {
-    // Poke values into our variables
-    x_->setValue(r.x);
-    y_->setValue(r.y);
-    z_->setValue(r.z);
-    auto rFrac = box->getFractional(r);
-    xFrac_->setValue(rFrac.x);
-    yFrac_->setValue(rFrac.y);
-    zFrac_->setValue(rFrac.z);
+    // Energy at the centre of the voxel
+    setVoxelPosition(box, r);
+    energy = functionValue();
 
-    // Energy
-    energy = expression_.asDouble();
-    if (energy < minimumValue_ || energy > maximumValue_)
-        energy *= 1000.0;
+    // Force at the centre of the voxel
 }
 
 /*
