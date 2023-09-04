@@ -7,6 +7,7 @@
 #include "gui/forcefieldTab.h"
 #include "gui/layerTab.h"
 #include "gui/messagesTab.h"
+#include "gui/overviewTab.h"
 #include "gui/speciesTab.h"
 #include <QPointer>
 #include <QTabWidget>
@@ -50,6 +51,10 @@ class MainTabsWidget : public QTabWidget
     QPointer<MessagesTab> messagesTab_;
     // Pointer to Forcefield tab
     QPointer<ForcefieldTab> forcefieldTab_;
+    // OverviewTab Toggle
+    static constexpr bool overview_flag = false;
+    // Pointer to Overview tab
+    QPointer<OverviewTab> overviewTab_;
     // List of Species tabs
     std::vector<QPointer<SpeciesTab>> speciesTabs_;
     // List of Configuration tabs
@@ -98,6 +103,7 @@ class MainTabsWidget : public QTabWidget
     MainTab *currentTab() const;
     // Make specified Species tab the current one
     void setCurrentTab(Species *species);
+    void setCurrentTab(const Species *species);
     // Make specified Configuration tab the current one
     void setCurrentTab(Configuration *cfg);
     // Make specified processing layer tab the current one

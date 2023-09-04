@@ -41,6 +41,7 @@ class AtomTypeModel : public QAbstractListModel
     void setCheckStateData(std::vector<std::shared_ptr<AtomType>> &checkedItemsVector);
     // Return object represented by specified model index
     const std::shared_ptr<AtomType> &rawData(const QModelIndex &index) const;
+    void reset();
     // Add a suffix to the name of an AtomType
     Q_INVOKABLE void addSuffix(int index, QString suffix);
     // Add a prefix to the name of an AtomType

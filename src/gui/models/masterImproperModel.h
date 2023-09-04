@@ -22,6 +22,8 @@ class MasterImproperModel : public MasterTermModel
     public:
     // Set source data
     void setSourceData(std::vector<std::shared_ptr<MasterImproper>> &bonds);
+    // Refresh model data
+    void reset();
 
     /*
      * QAbstractItemModel overrides
