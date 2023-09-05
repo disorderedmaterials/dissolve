@@ -2,13 +2,16 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/moduleLayersModel.h"
+#include "gui/models/moduleLayerModel.h"
 #include "qabstractitemmodel.h"
 #include "qvariant.h"
 #include "qwidget.h"
 
 // Set source ModuleLayers data
-void ModuleLayersModel::setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers)
+void ModuleLayersModel::setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers, const CoreData &coreData)
 {
+    coreData_ = coreData;
+
     beginResetModel();
     layers_ = layers;
     endResetModel();
@@ -48,6 +51,12 @@ QVariant ModuleLayersModel::data(const QModelIndex &index, int role) const
             return QString::fromStdString(std::string(data->name()));
         case (Qt::UserRole):
             return QVariant::fromValue(data);
+        case (Qt::UserRole + 1):
+        {
+            auto* m = new ModuleLayerModel();
+            m->setData(data, coreData_->get());
+            return QVariant::fromValue(m);
+        }
         default:
             return {};
     }
