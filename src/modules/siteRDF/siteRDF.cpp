@@ -94,17 +94,4 @@ SiteRDFModule::SiteRDFModule() : Module(ModuleTypes::SiteRDF), analyser_(Procedu
                                         processDistance_->exportFileAndFormat(), "EndExport");
     keywords_.add<BoolKeyword>("ExportInstantaneousCN", "Export instantaneous coordination numbers to disk\n",
                                exportInstantaneous_);
-
-    keywords_.setOrganisation("Advanced");
-    keywords_.add<OptionalDoubleKeyword>(
-        "TestRangeA", "Reference coordination number for range A against which calculated value should be tested", testRangeA_,
-        0.0, std::nullopt, 0.1, "Off");
-    keywords_.add<OptionalDoubleKeyword>(
-        "TestRangeB", "Reference coordination number for range B against which calculated value should be tested", testRangeB_,
-        0.0, std::nullopt, 0.1, "Off");
-    keywords_.add<OptionalDoubleKeyword>(
-        "TestRangeC", "Reference coordination number for range C against which calculated value should be tested", testRangeC_,
-        0.0, std::nullopt, 0.1, "Off");
-    keywords_.add<DoubleKeyword>("TestThreshold", "Threshold difference at which test comparisons will fail", testThreshold_,
-                                 1.0e-5);
 }

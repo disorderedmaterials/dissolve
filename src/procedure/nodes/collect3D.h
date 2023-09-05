@@ -19,14 +19,12 @@ class Collect3DProcedureNode : public ProcedureNode
                                     std::shared_ptr<CalculateProcedureNodeBase> yObservable = nullptr,
                                     std::shared_ptr<CalculateProcedureNodeBase> zObservable = nullptr,
                                     ProcedureNode::NodeContext subCollectContext = ProcedureNode::AnalysisContext,
-                                    double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0,
-                                    double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0,
-                                    double zBinWidth = 0.05);
+                                    Vec3<double> xMinMaxBin = {0.0, 10.0, 0.05}, Vec3<double> yMinMaxBin = {0.0, 10.0, 0.05},
+                                    Vec3<double> zMinMaxBin = {0.0, 10.0, 0.05});
     explicit Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xyzObservable,
                                     ProcedureNode::NodeContext subCollectContext = ProcedureNode::AnalysisContext,
-                                    double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0,
-                                    double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0,
-                                    double zBinWidth = 0.05);
+                                    Vec3<double> xMinMaxBin = {0.0, 10.0, 0.05}, Vec3<double> yMinMaxBin = {0.0, 10.0, 0.05},
+                                    Vec3<double> zMinMaxBin = {0.0, 10.0, 0.05});
     ~Collect3DProcedureNode() override = default;
 
     /*

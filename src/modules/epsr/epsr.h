@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/enumOptions.h"
-#include "classes/data1DStore.h"
 #include "classes/scatteringMatrix.h"
 #include "math/data1D.h"
 #include "math/range.h"
@@ -92,16 +91,6 @@ class EPSRModule : public Module
     std::vector<Module *> targets_;
     // Weightings for targets (if not 1.0)
     std::vector<std::pair<Module *, double>> targetWeights_;
-    // Test against supplied reference data
-    bool test_{false};
-    // Test absolute EP energy values
-    std::vector<std::pair<std::string, double>> testAbsEnergyEP_;
-    // Test threshold for absolute EP energies
-    double testAbsEnergyEPThreshold_{1.0e-4};
-    // Test reference data
-    Data1DStore testReferenceData_;
-    // Test threshold (%error) above which test fails
-    double testThreshold_{0.1};
     // Ranges to calculate rFactor over
     std::vector<Range> ranges_;
 
@@ -135,8 +124,6 @@ class EPSRModule : public Module
     Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n);
     // Calculate absolute energy of empirical potentials
     double absEnergyEP(Dissolve &dissolve);
-    // Test absolute energy of empirical potentials
-    bool testAbsEnergyEP(Dissolve &dissolve);
     // Truncate the supplied data
     void truncate(Data1D &data, double rMin, double rMax);
 

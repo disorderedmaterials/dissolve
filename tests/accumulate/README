@@ -1,4 +1,0 @@
-RDF Accumulation System Test
-Test Accumulate module against data calculated from RDF and SiteRDF modules.
-
-System comprises 267 SPC/FW molecules, read from an xyz trajectory.

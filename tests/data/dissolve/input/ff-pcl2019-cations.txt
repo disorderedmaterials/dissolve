@@ -1,0 +1,5486 @@
+Species 'benzc1im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  H    1.936006e+00  -8.836020e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.265275e+00  1.508021e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.961090e-01  3.161566e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450318e+00  1.651663e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    -2.593740e-01  -2.082496e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   13  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  H    3.780949e+00  6.966930e-01  -5.137400e-01  'None'  0.000000e+00
+  Atom   15  H    3.465800e+00  2.448213e+00  -5.137400e-01  'None'  0.000000e+00
+  Atom   16  C    3.761358e+00  1.597280e+00  1.423389e+00  'None'  0.000000e+00
+  Atom   17  C    5.116159e+00  1.841047e+00  1.678518e+00  'None'  0.000000e+00
+  Atom   18  C    5.576103e+00  1.923804e+00  2.998216e+00  'None'  0.000000e+00
+  Atom   19  C    4.681245e+00  1.762794e+00  4.062785e+00  'None'  0.000000e+00
+  Atom   20  C    3.326444e+00  1.519027e+00  3.807655e+00  'None'  0.000000e+00
+  Atom   21  C    2.866500e+00  1.436270e+00  2.487957e+00  'None'  0.000000e+00
+  Atom   22  H    5.806477e+00  1.965255e+00  8.572800e-01  'None'  0.000000e+00
+  Atom   23  H    6.621235e+00  2.111853e+00  3.195031e+00  'None'  0.000000e+00
+  Atom   24  H    5.036059e+00  1.826635e+00  5.080838e+00  'None'  0.000000e+00
+  Atom   25  H    2.636125e+00  1.394819e+00  4.628894e+00  'None'  0.000000e+00
+  Atom   26  H    1.821368e+00  1.248221e+00  2.291143e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   11
+  Bond    6   12
+  Bond    6   13
+  Bond    8   14
+  Bond    8   15
+  Bond    8   16
+  Bond   16   17
+  Bond   16   21
+  Bond   17   18
+  Bond   17   22
+  Bond   18   19
+  Bond   18   23
+  Bond   19   20
+  Bond   19   24
+  Bond   20   21
+  Bond   20   25
+  Bond   21   26
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   11
+  Angle    1    6   12
+  Angle   12    6   11
+  Angle    1    6   13
+  Angle   13    6   11
+  Angle   13    6   12
+  Angle    3    8   14
+  Angle    3    8   15
+  Angle   15    8   14
+  Angle    3    8   16
+  Angle   16    8   14
+  Angle   16    8   15
+  Angle    8   16   17
+  Angle    8   16   21
+  Angle   21   16   17
+  Angle   16   17   18
+  Angle   16   17   22
+  Angle   22   17   18
+  Angle   17   18   19
+  Angle   17   18   23
+  Angle   23   18   19
+  Angle   18   19   20
+  Angle   18   19   24
+  Angle   24   19   20
+  Angle   16   21   20
+  Angle   19   20   21
+  Angle   19   20   25
+  Angle   25   20   21
+  Angle   16   21   26
+  Angle   20   21   26
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   11
+  Torsion    5    1    6   11
+  Torsion    2    1    6   12
+  Torsion    5    1    6   12
+  Torsion    2    1    6   13
+  Torsion    5    1    6   13
+  Torsion    2    3    8   14
+  Torsion    4    3    8   14
+  Torsion    2    3    8   15
+  Torsion    4    3    8   15
+  Torsion    2    3    8   16
+  Torsion    4    3    8   16
+  Torsion    3    8   16   17
+  Torsion   14    8   16   17
+  Torsion   15    8   16   17
+  Torsion    3    8   16   21
+  Torsion   14    8   16   21
+  Torsion   15    8   16   21
+  Torsion    8   16   17   18
+  Torsion   21   16   17   18
+  Torsion    8   16   17   22
+  Torsion   21   16   17   22
+  Torsion   16   17   18   19
+  Torsion   22   17   18   19
+  Torsion   16   17   18   23
+  Torsion   22   17   18   23
+  Torsion   17   18   19   20
+  Torsion   23   18   19   20
+  Torsion   17   18   19   24
+  Torsion   23   18   19   24
+  Torsion   17   16   21   20
+  Torsion    8   16   21   20
+  Torsion   18   19   20   21
+  Torsion   24   19   20   21
+  Torsion   19   20   21   16
+  Torsion   18   19   20   25
+  Torsion   24   19   20   25
+  Torsion   25   20   21   16
+  Torsion   17   16   21   26
+  Torsion    8   16   21   26
+  Torsion   19   20   21   26
+  Torsion   25   20   21   26
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c12c1im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  H    1.936006e+00  -8.836020e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    -2.593740e-01  -2.082496e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   13  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  C    4.064794e+00  4.166380e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   15  H    3.369026e+00  2.249547e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   16  H    3.369026e+00  2.249547e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   17  C    5.530829e+00  8.508970e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   18  H    3.863035e+00  -1.796910e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   19  H    3.863035e+00  -1.796910e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   20  C    6.429553e+00  -3.860900e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   21  H    5.733785e+00  1.446820e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   22  H    5.733785e+00  1.446820e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   23  C    7.895588e+00  4.817000e-02  0.000000e+00  'None'  0.000000e+00
+  Atom   24  H    6.227794e+00  -9.824190e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   25  H    6.227794e+00  -9.824190e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   26  C    8.794312e+00  -1.188817e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   27  H    8.098544e+00  6.440920e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   28  H    8.098544e+00  6.440920e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   29  C    1.026035e+01  -7.545580e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   30  H    8.592553e+00  -1.785146e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   31  H    8.592553e+00  -1.785146e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   32  C    1.115907e+01  -1.991545e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   33  H    1.046330e+01  -1.586350e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   34  H    1.046330e+01  -1.586350e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   35  C    1.262511e+01  -1.557285e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   36  H    1.095731e+01  -2.587874e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   37  H    1.095731e+01  -2.587874e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   38  C    1.352383e+01  -2.794272e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   39  H    1.282806e+01  -9.613630e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   40  H    1.282806e+01  -9.613630e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   41  C    1.498986e+01  -2.360013e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   42  H    1.332207e+01  -3.390601e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   43  H    1.332207e+01  -3.390601e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   44  C    1.588859e+01  -3.597000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   45  H    1.519282e+01  -1.764090e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   46  H    1.519282e+01  -1.764090e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   47  H    1.693370e+01  -3.287423e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   48  H    1.568683e+01  -4.193329e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   49  H    1.568683e+01  -4.193329e+00  8.898230e-01  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   11
+  Bond    6   12
+  Bond    6   13
+  Bond    8   14
+  Bond    8   15
+  Bond    8   16
+  Bond   14   17
+  Bond   14   18
+  Bond   14   19
+  Bond   17   20
+  Bond   17   21
+  Bond   17   22
+  Bond   20   23
+  Bond   20   24
+  Bond   20   25
+  Bond   23   26
+  Bond   23   27
+  Bond   23   28
+  Bond   26   29
+  Bond   26   30
+  Bond   26   31
+  Bond   29   32
+  Bond   29   33
+  Bond   29   34
+  Bond   32   35
+  Bond   32   36
+  Bond   32   37
+  Bond   35   38
+  Bond   35   39
+  Bond   35   40
+  Bond   38   41
+  Bond   38   42
+  Bond   38   43
+  Bond   41   44
+  Bond   41   45
+  Bond   41   46
+  Bond   44   47
+  Bond   44   48
+  Bond   44   49
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   11
+  Angle    1    6   12
+  Angle   12    6   11
+  Angle    1    6   13
+  Angle   13    6   11
+  Angle   13    6   12
+  Angle    3    8   14
+  Angle    3    8   15
+  Angle   15    8   14
+  Angle    3    8   16
+  Angle   16    8   14
+  Angle   16    8   15
+  Angle    8   14   17
+  Angle    8   14   18
+  Angle   18   14   17
+  Angle    8   14   19
+  Angle   19   14   17
+  Angle   19   14   18
+  Angle   14   17   20
+  Angle   14   17   21
+  Angle   21   17   20
+  Angle   14   17   22
+  Angle   22   17   20
+  Angle   22   17   21
+  Angle   17   20   23
+  Angle   17   20   24
+  Angle   24   20   23
+  Angle   17   20   25
+  Angle   25   20   23
+  Angle   25   20   24
+  Angle   20   23   26
+  Angle   20   23   27
+  Angle   27   23   26
+  Angle   20   23   28
+  Angle   28   23   26
+  Angle   28   23   27
+  Angle   23   26   29
+  Angle   23   26   30
+  Angle   30   26   29
+  Angle   23   26   31
+  Angle   31   26   29
+  Angle   31   26   30
+  Angle   26   29   32
+  Angle   26   29   33
+  Angle   33   29   32
+  Angle   26   29   34
+  Angle   34   29   32
+  Angle   34   29   33
+  Angle   29   32   35
+  Angle   29   32   36
+  Angle   36   32   35
+  Angle   29   32   37
+  Angle   37   32   35
+  Angle   37   32   36
+  Angle   32   35   38
+  Angle   32   35   39
+  Angle   39   35   38
+  Angle   32   35   40
+  Angle   40   35   38
+  Angle   40   35   39
+  Angle   35   38   41
+  Angle   35   38   42
+  Angle   42   38   41
+  Angle   35   38   43
+  Angle   43   38   41
+  Angle   43   38   42
+  Angle   38   41   44
+  Angle   38   41   45
+  Angle   45   41   44
+  Angle   38   41   46
+  Angle   46   41   44
+  Angle   46   41   45
+  Angle   41   44   47
+  Angle   41   44   48
+  Angle   48   44   47
+  Angle   41   44   49
+  Angle   49   44   47
+  Angle   49   44   48
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   11
+  Torsion    5    1    6   11
+  Torsion    2    1    6   12
+  Torsion    5    1    6   12
+  Torsion    2    1    6   13
+  Torsion    5    1    6   13
+  Torsion    2    3    8   14
+  Torsion    4    3    8   14
+  Torsion    2    3    8   15
+  Torsion    4    3    8   15
+  Torsion    2    3    8   16
+  Torsion    4    3    8   16
+  Torsion    3    8   14   17
+  Torsion   15    8   14   17
+  Torsion   16    8   14   17
+  Torsion    3    8   14   18
+  Torsion   15    8   14   18
+  Torsion   16    8   14   18
+  Torsion    3    8   14   19
+  Torsion   15    8   14   19
+  Torsion   16    8   14   19
+  Torsion    8   14   17   20
+  Torsion   18   14   17   20
+  Torsion   19   14   17   20
+  Torsion    8   14   17   21
+  Torsion   18   14   17   21
+  Torsion   19   14   17   21
+  Torsion    8   14   17   22
+  Torsion   18   14   17   22
+  Torsion   19   14   17   22
+  Torsion   14   17   20   23
+  Torsion   21   17   20   23
+  Torsion   22   17   20   23
+  Torsion   14   17   20   24
+  Torsion   21   17   20   24
+  Torsion   22   17   20   24
+  Torsion   14   17   20   25
+  Torsion   21   17   20   25
+  Torsion   22   17   20   25
+  Torsion   17   20   23   26
+  Torsion   24   20   23   26
+  Torsion   25   20   23   26
+  Torsion   17   20   23   27
+  Torsion   24   20   23   27
+  Torsion   25   20   23   27
+  Torsion   17   20   23   28
+  Torsion   24   20   23   28
+  Torsion   25   20   23   28
+  Torsion   20   23   26   29
+  Torsion   27   23   26   29
+  Torsion   28   23   26   29
+  Torsion   20   23   26   30
+  Torsion   27   23   26   30
+  Torsion   28   23   26   30
+  Torsion   20   23   26   31
+  Torsion   27   23   26   31
+  Torsion   28   23   26   31
+  Torsion   23   26   29   32
+  Torsion   30   26   29   32
+  Torsion   31   26   29   32
+  Torsion   23   26   29   33
+  Torsion   30   26   29   33
+  Torsion   31   26   29   33
+  Torsion   23   26   29   34
+  Torsion   30   26   29   34
+  Torsion   31   26   29   34
+  Torsion   33   29   32   35
+  Torsion   26   29   32   35
+  Torsion   34   29   32   35
+  Torsion   33   29   32   36
+  Torsion   26   29   32   36
+  Torsion   34   29   32   36
+  Torsion   33   29   32   37
+  Torsion   26   29   32   37
+  Torsion   34   29   32   37
+  Torsion   29   32   35   38
+  Torsion   36   32   35   38
+  Torsion   37   32   35   38
+  Torsion   29   32   35   39
+  Torsion   36   32   35   39
+  Torsion   37   32   35   39
+  Torsion   29   32   35   40
+  Torsion   36   32   35   40
+  Torsion   37   32   35   40
+  Torsion   32   35   38   41
+  Torsion   39   35   38   41
+  Torsion   40   35   38   41
+  Torsion   32   35   38   42
+  Torsion   39   35   38   42
+  Torsion   40   35   38   42
+  Torsion   32   35   38   43
+  Torsion   39   35   38   43
+  Torsion   40   35   38   43
+  Torsion   35   38   41   44
+  Torsion   42   38   41   44
+  Torsion   43   38   41   44
+  Torsion   35   38   41   45
+  Torsion   42   38   41   45
+  Torsion   43   38   41   45
+  Torsion   35   38   41   46
+  Torsion   42   38   41   46
+  Torsion   43   38   41   46
+  Torsion   38   41   44   47
+  Torsion   45   41   44   47
+  Torsion   46   41   44   47
+  Torsion   38   41   44   48
+  Torsion   45   41   44   48
+  Torsion   46   41   44   48
+  Torsion   38   41   44   49
+  Torsion   45   41   44   49
+  Torsion   46   41   44   49
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c1c1im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  H    1.936006e+00  -8.836020e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    -2.593740e-01  -2.082496e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   13  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  H    3.369026e+00  2.249547e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   15  H    3.806756e+00  7.717960e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   16  H    3.369026e+00  2.249547e+00  -8.898230e-01  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   11
+  Bond    6   12
+  Bond    6   13
+  Bond    8   14
+  Bond    8   15
+  Bond    8   16
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   11
+  Angle    1    6   12
+  Angle   12    6   11
+  Angle    1    6   13
+  Angle   13    6   11
+  Angle   13    6   12
+  Angle    3    8   14
+  Angle    3    8   15
+  Angle   15    8   14
+  Angle    3    8   16
+  Angle   16    8   14
+  Angle   16    8   15
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   11
+  Torsion    5    1    6   11
+  Torsion    2    1    6   12
+  Torsion    5    1    6   12
+  Torsion    2    1    6   13
+  Torsion    5    1    6   13
+  Torsion    2    3    8   14
+  Torsion    4    3    8   14
+  Torsion    2    3    8   15
+  Torsion    4    3    8   15
+  Torsion    2    3    8   16
+  Torsion    4    3    8   16
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c1c1pyrr'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.471000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  C    -4.910300e-01  -1.386626e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    1.981391e+00  -1.441299e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    6.972260e-01  -2.348857e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -4.910300e-01  6.933130e-01  1.200853e+00  'None'  0.000000e+00
+  Atom    7  C    -4.910300e-01  6.933130e-01  -1.200853e+00  'None'  0.000000e+00
+  Atom    8  H    1.834849e+00  5.137400e-01  8.898230e-01  'None'  0.000000e+00
+  Atom    9  H    1.834849e+00  5.137400e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   10  H    -1.097273e+00  -1.557933e+00  8.895070e-01  'None'  0.000000e+00
+  Atom   11  H    -1.097273e+00  -1.557933e+00  -8.895070e-01  'None'  0.000000e+00
+  Atom   12  H    2.591089e+00  -1.634125e+00  8.827150e-01  'None'  0.000000e+00
+  Atom   13  H    2.591089e+00  -1.634125e+00  -8.827150e-01  'None'  0.000000e+00
+  Atom   14  H    6.753000e-01  -2.988161e+00  8.825580e-01  'None'  0.000000e+00
+  Atom   15  H    6.753000e-01  -2.988161e+00  -8.825580e-01  'None'  0.000000e+00
+  Atom   16  H    -1.282130e-01  1.721157e+00  1.201485e+00  'None'  0.000000e+00
+  Atom   17  H    -1.581030e+00  6.933130e-01  1.200853e+00  'None'  0.000000e+00
+  Atom   18  H    -1.282130e-01  1.799380e-01  2.091308e+00  'None'  0.000000e+00
+  Atom   19  H    -1.581030e+00  6.938600e-01  -1.200537e+00  'None'  0.000000e+00
+  Atom   20  H    -1.276970e-01  1.720975e+00  -1.201801e+00  'None'  0.000000e+00
+  Atom   21  H    -1.287290e-01  1.795730e-01  -2.091308e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1    6
+  Bond    1    7
+  Bond    2    4
+  Bond    2    8
+  Bond    2    9
+  Bond    3    5
+  Bond    3   10
+  Bond    3   11
+  Bond    4    5
+  Bond    4   12
+  Bond    4   13
+  Bond    5   14
+  Bond    5   15
+  Bond    6   16
+  Bond    6   17
+  Bond    6   18
+  Bond    7   19
+  Bond    7   20
+  Bond    7   21
+
+  # Angles
+  Angle    3    1    2
+  Angle    6    1    2
+  Angle    6    1    3
+  Angle    7    1    2
+  Angle    7    1    3
+  Angle    7    1    6
+  Angle    1    2    4
+  Angle    1    2    8
+  Angle    8    2    4
+  Angle    1    2    9
+  Angle    9    2    4
+  Angle    9    2    8
+  Angle    1    3    5
+  Angle    1    3   10
+  Angle   10    3    5
+  Angle    1    3   11
+  Angle   11    3    5
+  Angle   11    3   10
+  Angle    2    4    5
+  Angle    3    5    4
+  Angle    2    4   12
+  Angle   12    4    5
+  Angle    2    4   13
+  Angle   13    4    5
+  Angle   13    4   12
+  Angle    3    5   14
+  Angle    4    5   14
+  Angle    3    5   15
+  Angle    4    5   15
+  Angle   15    5   14
+  Angle    1    6   16
+  Angle    1    6   17
+  Angle   17    6   16
+  Angle    1    6   18
+  Angle   18    6   16
+  Angle   18    6   17
+  Angle    1    7   19
+  Angle    1    7   20
+  Angle   20    7   19
+  Angle    1    7   21
+  Angle   21    7   19
+  Angle   21    7   20
+
+  # Torsions
+  Torsion    3    1    2    4
+  Torsion    6    1    2    4
+  Torsion    7    1    2    4
+  Torsion    3    1    2    8
+  Torsion    6    1    2    8
+  Torsion    7    1    2    8
+  Torsion    3    1    2    9
+  Torsion    6    1    2    9
+  Torsion    7    1    2    9
+  Torsion    2    1    3    5
+  Torsion    6    1    3    5
+  Torsion    7    1    3    5
+  Torsion    2    1    3   10
+  Torsion    6    1    3   10
+  Torsion    7    1    3   10
+  Torsion    2    1    3   11
+  Torsion    6    1    3   11
+  Torsion    7    1    3   11
+  Torsion    1    2    4    5
+  Torsion    8    2    4    5
+  Torsion    9    2    4    5
+  Torsion   10    3    5    4
+  Torsion    1    3    5    4
+  Torsion   11    3    5    4
+  Torsion    2    4    5    3
+  Torsion    1    2    4   12
+  Torsion    8    2    4   12
+  Torsion    9    2    4   12
+  Torsion   12    4    5    3
+  Torsion    1    2    4   13
+  Torsion    8    2    4   13
+  Torsion    9    2    4   13
+  Torsion   13    4    5    3
+  Torsion   10    3    5   14
+  Torsion    1    3    5   14
+  Torsion   11    3    5   14
+  Torsion    2    4    5   14
+  Torsion   12    4    5   14
+  Torsion   13    4    5   14
+  Torsion   10    3    5   15
+  Torsion    1    3    5   15
+  Torsion   11    3    5   15
+  Torsion    2    4    5   15
+  Torsion   12    4    5   15
+  Torsion   13    4    5   15
+  Torsion    2    1    6   16
+  Torsion    3    1    6   16
+  Torsion    7    1    6   16
+  Torsion    2    1    6   17
+  Torsion    3    1    6   17
+  Torsion    7    1    6   17
+  Torsion    2    1    6   18
+  Torsion    3    1    6   18
+  Torsion    7    1    6   18
+  Torsion    2    1    7   19
+  Torsion    3    1    7   19
+  Torsion    6    1    7   19
+  Torsion    2    1    7   20
+  Torsion    3    1    7   20
+  Torsion    6    1    7   20
+  Torsion    2    1    7   21
+  Torsion    3    1    7   21
+  Torsion    6    1    7   21
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c2c1c1im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  C    2.198286e+00  -1.224706e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    -2.593740e-01  -2.082496e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   13  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  C    4.064794e+00  4.166380e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   15  H    3.369026e+00  2.249547e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   16  H    3.369026e+00  2.249547e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   17  H    5.109907e+00  7.262140e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   18  H    3.863035e+00  -1.796910e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   19  H    3.863035e+00  -1.796910e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   20  H    1.577771e+00  -2.120843e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   21  H    2.827798e+00  -1.219296e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   22  H    2.827798e+00  -1.219296e+00  8.898230e-01  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   11
+  Bond    6   12
+  Bond    6   13
+  Bond    7   20
+  Bond    7   21
+  Bond    7   22
+  Bond    8   14
+  Bond    8   15
+  Bond    8   16
+  Bond   14   17
+  Bond   14   18
+  Bond   14   19
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   11
+  Angle    1    6   12
+  Angle   12    6   11
+  Angle    1    6   13
+  Angle   13    6   11
+  Angle   13    6   12
+  Angle    2    7   20
+  Angle    2    7   21
+  Angle   21    7   20
+  Angle    2    7   22
+  Angle   22    7   20
+  Angle   22    7   21
+  Angle    3    8   14
+  Angle    3    8   15
+  Angle   15    8   14
+  Angle    3    8   16
+  Angle   16    8   14
+  Angle   16    8   15
+  Angle    8   14   17
+  Angle    8   14   18
+  Angle   18   14   17
+  Angle    8   14   19
+  Angle   19   14   17
+  Angle   19   14   18
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   11
+  Torsion    5    1    6   11
+  Torsion    2    1    6   12
+  Torsion    5    1    6   12
+  Torsion    2    1    6   13
+  Torsion    5    1    6   13
+  Torsion    1    2    7   20
+  Torsion    3    2    7   20
+  Torsion    1    2    7   21
+  Torsion    3    2    7   21
+  Torsion    1    2    7   22
+  Torsion    3    2    7   22
+  Torsion    2    3    8   14
+  Torsion    4    3    8   14
+  Torsion    2    3    8   15
+  Torsion    4    3    8   15
+  Torsion    2    3    8   16
+  Torsion    4    3    8   16
+  Torsion    3    8   14   17
+  Torsion   15    8   14   17
+  Torsion   16    8   14   17
+  Torsion    3    8   14   18
+  Torsion   15    8   14   18
+  Torsion   16    8   14   18
+  Torsion    3    8   14   19
+  Torsion   15    8   14   19
+  Torsion   16    8   14   19
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c2c1im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  H    1.936006e+00  -8.836020e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    -2.593740e-01  -2.082496e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   13  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  C    4.059504e+00  4.239190e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   15  H    3.369026e+00  2.249547e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   16  H    3.369026e+00  2.249547e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   17  H    5.104617e+00  7.334960e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   18  H    3.857745e+00  -1.724100e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   19  H    3.857745e+00  -1.724100e-01  -8.898230e-01  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   11
+  Bond    6   12
+  Bond    6   13
+  Bond    8   14
+  Bond    8   15
+  Bond    8   16
+  Bond   14   17
+  Bond   14   18
+  Bond   14   19
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   11
+  Angle    1    6   12
+  Angle   12    6   11
+  Angle    1    6   13
+  Angle   13    6   11
+  Angle   13    6   12
+  Angle    3    8   14
+  Angle    3    8   15
+  Angle   15    8   14
+  Angle    3    8   16
+  Angle   16    8   14
+  Angle   16    8   15
+  Angle    8   14   17
+  Angle    8   14   18
+  Angle   18   14   17
+  Angle    8   14   19
+  Angle   19   14   17
+  Angle   19   14   18
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   11
+  Torsion    5    1    6   11
+  Torsion    2    1    6   12
+  Torsion    5    1    6   12
+  Torsion    2    1    6   13
+  Torsion    5    1    6   13
+  Torsion    2    3    8   14
+  Torsion    4    3    8   14
+  Torsion    2    3    8   15
+  Torsion    4    3    8   15
+  Torsion    2    3    8   16
+  Torsion    4    3    8   16
+  Torsion    3    8   14   17
+  Torsion   15    8   14   17
+  Torsion   16    8   14   17
+  Torsion    3    8   14   18
+  Torsion   15    8   14   18
+  Torsion   16    8   14   18
+  Torsion    3    8   14   19
+  Torsion   15    8   14   19
+  Torsion   16    8   14   19
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c2im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  H    1.936006e+00  -8.836020e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    7  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    8  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  C    4.059504e+00  4.239190e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    3.369026e+00  2.249547e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    3.369026e+00  2.249547e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   13  H    5.104617e+00  7.334960e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   14  H    3.857745e+00  -1.724100e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   15  H    3.857745e+00  -1.724100e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   16  H    -5.850740e-01  -8.232790e-01  -0.000000e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1   16
+  Bond    2    3
+  Bond    2    6
+  Bond    3    4
+  Bond    3    7
+  Bond    4    5
+  Bond    4    8
+  Bond    5    9
+  Bond    7   10
+  Bond    7   11
+  Bond    7   12
+  Bond   10   13
+  Bond   10   14
+  Bond   10   15
+
+  # Angles
+  Angle    5    1    2
+  Angle   16    1    2
+  Angle   16    1    5
+  Angle    1    2    3
+  Angle    1    2    6
+  Angle    6    2    3
+  Angle    2    3    4
+  Angle    2    3    7
+  Angle    7    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    8
+  Angle    8    4    5
+  Angle    1    5    9
+  Angle    4    5    9
+  Angle    3    7   10
+  Angle    3    7   11
+  Angle   11    7   10
+  Angle    3    7   12
+  Angle   12    7   10
+  Angle   12    7   11
+  Angle    7   10   13
+  Angle    7   10   14
+  Angle   14   10   13
+  Angle    7   10   15
+  Angle   15   10   13
+  Angle   15   10   14
+
+  # Torsions
+  Torsion   16    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    6
+  Torsion   16    1    2    6
+  Torsion    6    2    3    4
+  Torsion    1    2    3    4
+  Torsion    6    2    3    7
+  Torsion    1    2    3    7
+  Torsion    2    1    5    4
+  Torsion   16    1    5    4
+  Torsion    2    3    4    5
+  Torsion    7    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    8
+  Torsion    7    3    4    8
+  Torsion    8    4    5    1
+  Torsion    2    1    5    9
+  Torsion   16    1    5    9
+  Torsion    8    4    5    9
+  Torsion    3    4    5    9
+  Torsion    2    3    7   10
+  Torsion    4    3    7   10
+  Torsion    2    3    7   11
+  Torsion    4    3    7   11
+  Torsion    2    3    7   12
+  Torsion    4    3    7   12
+  Torsion    3    7   10   13
+  Torsion   11    7   10   13
+  Torsion   12    7   10   13
+  Torsion    3    7   10   14
+  Torsion   11    7   10   14
+  Torsion   12    7   10   14
+  Torsion    3    7   10   15
+  Torsion   11    7   10   15
+  Torsion   12    7   10   15
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c2OHc1im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  H    1.936006e+00  -8.836020e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    -2.593740e-01  -2.082496e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   13  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  C    4.059504e+00  4.239190e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   15  H    3.369026e+00  2.249547e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   16  H    3.369026e+00  2.249547e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   17  O    5.104617e+00  7.334960e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   18  H    3.800364e+00  -3.420080e-01  1.142892e+00  'None'  0.000000e+00
+  Atom   19  H    3.857745e+00  -1.724100e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   20  H    5.663013e+00  -3.507100e-02  0.000000e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   11
+  Bond    6   12
+  Bond    6   13
+  Bond    8   14
+  Bond    8   15
+  Bond    8   16
+  Bond   14   17
+  Bond   14   18
+  Bond   14   19
+  Bond   17   20
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   11
+  Angle    1    6   12
+  Angle   12    6   11
+  Angle    1    6   13
+  Angle   13    6   11
+  Angle   13    6   12
+  Angle    3    8   14
+  Angle    3    8   15
+  Angle   15    8   14
+  Angle    3    8   16
+  Angle   16    8   14
+  Angle   16    8   15
+  Angle    8   14   17
+  Angle    8   14   19
+  Angle   19   14   17
+  Angle   14   17   20
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   11
+  Torsion    5    1    6   11
+  Torsion    2    1    6   12
+  Torsion    5    1    6   12
+  Torsion    2    1    6   13
+  Torsion    5    1    6   13
+  Torsion    2    3    8   14
+  Torsion    4    3    8   14
+  Torsion    2    3    8   15
+  Torsion    4    3    8   15
+  Torsion    2    3    8   16
+  Torsion    4    3    8   16
+  Torsion    3    8   14   17
+  Torsion   15    8   14   17
+  Torsion   16    8   14   17
+  Torsion    3    8   14   19
+  Torsion   15    8   14   19
+  Torsion   16    8   14   19
+  Torsion    8   14   17   20
+  Torsion   19   14   17   20
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c2py'
+  # Atoms
+  Atom    1  N    -4.735700e-01  -7.756000e-02  -1.717700e-01  'None'  0.000000e+00
+  Atom    2  C    8.933500e-01  -9.544000e-02  -1.718000e-02  'None'  0.000000e+00
+  Atom    3  C    -1.202800e+00  -1.204370e+00  1.033500e-01  'None'  0.000000e+00
+  Atom    4  C    1.545280e+00  -1.252440e+00  4.179500e-01  'None'  0.000000e+00
+  Atom    5  H    1.498200e+00  7.745900e-01  -2.250600e-01  'None'  0.000000e+00
+  Atom    6  C    8.043300e-01  -2.396400e+00  6.972000e-01  'None'  0.000000e+00
+  Atom    7  H    2.621110e+00  -1.259110e+00  5.372800e-01  'None'  0.000000e+00
+  Atom    8  C    -5.775200e-01  -2.374590e+00  5.397500e-01  'None'  0.000000e+00
+  Atom    9  H    1.299930e+00  -3.297470e+00  1.034770e+00  'None'  0.000000e+00
+  Atom   10  H    -1.164110e+00  -3.258630e+00  7.540300e-01  'None'  0.000000e+00
+  Atom   11  H    -2.280410e+00  -1.200120e+00  -1.541000e-02  'None'  0.000000e+00
+  Atom   12  C    -1.217260e+00  1.117360e+00  -6.288100e-01  'None'  0.000000e+00
+  Atom   13  C    -3.650400e-01  2.355360e+00  -9.253200e-01  'None'  0.000000e+00
+  Atom   14  H    3.600500e-01  2.143390e+00  -1.739520e+00  'None'  0.000000e+00
+  Atom   15  H    1.715500e-01  2.687060e+00  -1.117000e-02  'None'  0.000000e+00
+  Atom   16  H    -1.024550e+00  3.184540e+00  -1.258080e+00  'None'  0.000000e+00
+  Atom   17  H    -1.958330e+00  1.397410e+00  1.519200e-01  'None'  0.000000e+00
+  Atom   18  H    -1.771880e+00  8.595000e-01  -1.557820e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1   12
+  Bond    2    4
+  Bond    2    5
+  Bond    3    8
+  Bond    3   11
+  Bond    4    6
+  Bond    4    7
+  Bond    6    8
+  Bond    6    9
+  Bond    8   10
+  Bond   12   13
+  Bond   12   17
+  Bond   12   18
+  Bond   13   14
+  Bond   13   15
+  Bond   13   16
+
+  # Angles
+  Angle    3    1    2
+  Angle   12    1    2
+  Angle   12    1    3
+  Angle    1    2    4
+  Angle    1    2    5
+  Angle    5    2    4
+  Angle    1    3    8
+  Angle    1    3   11
+  Angle   11    3    8
+  Angle    2    4    6
+  Angle    2    4    7
+  Angle    7    4    6
+  Angle    3    8    6
+  Angle    4    6    8
+  Angle    4    6    9
+  Angle    9    6    8
+  Angle    3    8   10
+  Angle    6    8   10
+  Angle    1   12   13
+  Angle    1   12   17
+  Angle   17   12   13
+  Angle    1   12   18
+  Angle   18   12   13
+  Angle   18   12   17
+  Angle   12   13   14
+  Angle   12   13   15
+  Angle   15   13   14
+  Angle   12   13   16
+  Angle   16   13   14
+  Angle   16   13   15
+
+  # Torsions
+  Torsion   12    1    2    4
+  Torsion    3    1    2    4
+  Torsion    3    1    2    5
+  Torsion   12    1    2    5
+  Torsion    2    1    3    8
+  Torsion   12    1    3    8
+  Torsion    2    1    3   11
+  Torsion   12    1    3   11
+  Torsion    5    2    4    6
+  Torsion    1    2    4    6
+  Torsion    1    2    4    7
+  Torsion    5    2    4    7
+  Torsion    1    3    8    6
+  Torsion   11    3    8    6
+  Torsion    7    4    6    8
+  Torsion    2    4    6    8
+  Torsion    4    6    8    3
+  Torsion    7    4    6    9
+  Torsion    2    4    6    9
+  Torsion    9    6    8    3
+  Torsion    1    3    8   10
+  Torsion   11    3    8   10
+  Torsion    4    6    8   10
+  Torsion    9    6    8   10
+  Torsion    2    1   12   13
+  Torsion    3    1   12   13
+  Torsion    2    1   12   17
+  Torsion    3    1   12   17
+  Torsion    2    1   12   18
+  Torsion    3    1   12   18
+  Torsion    1   12   13   14
+  Torsion   17   12   13   14
+  Torsion   18   12   13   14
+  Torsion    1   12   13   15
+  Torsion   17   12   13   15
+  Torsion   18   12   13   15
+  Torsion    1   12   13   16
+  Torsion   17   12   13   16
+  Torsion   18   12   13   16
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c3c1im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  H    1.936006e+00  -8.836020e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    -2.593740e-01  -2.082496e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   13  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  C    4.064794e+00  4.166380e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   15  H    3.369026e+00  2.249547e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   16  H    3.369026e+00  2.249547e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   17  C    5.530829e+00  8.508970e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   18  H    3.863035e+00  -1.796910e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   19  H    3.863035e+00  -1.796910e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   20  H    6.171515e+00  -3.093100e-02  0.000000e+00  'None'  0.000000e+00
+  Atom   21  H    5.733785e+00  1.446820e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   22  H    5.733785e+00  1.446820e+00  -8.898230e-01  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   11
+  Bond    6   12
+  Bond    6   13
+  Bond    8   14
+  Bond    8   15
+  Bond    8   16
+  Bond   14   17
+  Bond   14   18
+  Bond   14   19
+  Bond   17   20
+  Bond   17   21
+  Bond   17   22
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   11
+  Angle    1    6   12
+  Angle   12    6   11
+  Angle    1    6   13
+  Angle   13    6   11
+  Angle   13    6   12
+  Angle    3    8   14
+  Angle    3    8   15
+  Angle   15    8   14
+  Angle    3    8   16
+  Angle   16    8   14
+  Angle   16    8   15
+  Angle    8   14   17
+  Angle    8   14   18
+  Angle   18   14   17
+  Angle    8   14   19
+  Angle   19   14   17
+  Angle   19   14   18
+  Angle   14   17   20
+  Angle   14   17   21
+  Angle   21   17   20
+  Angle   14   17   22
+  Angle   22   17   20
+  Angle   22   17   21
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   11
+  Torsion    5    1    6   11
+  Torsion    2    1    6   12
+  Torsion    5    1    6   12
+  Torsion    2    1    6   13
+  Torsion    5    1    6   13
+  Torsion    2    3    8   14
+  Torsion    4    3    8   14
+  Torsion    2    3    8   15
+  Torsion    4    3    8   15
+  Torsion    2    3    8   16
+  Torsion    4    3    8   16
+  Torsion    3    8   14   17
+  Torsion   15    8   14   17
+  Torsion   16    8   14   17
+  Torsion    3    8   14   18
+  Torsion   15    8   14   18
+  Torsion   16    8   14   18
+  Torsion    3    8   14   19
+  Torsion   15    8   14   19
+  Torsion   16    8   14   19
+  Torsion    8   14   17   20
+  Torsion   18   14   17   20
+  Torsion   19   14   17   20
+  Torsion    8   14   17   21
+  Torsion   18   14   17   21
+  Torsion   19   14   17   21
+  Torsion    8   14   17   22
+  Torsion   18   14   17   22
+  Torsion   19   14   17   22
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c3c1pyrr'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.471000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  C    -4.910300e-01  -1.386626e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    1.981391e+00  -1.441299e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    6.972260e-01  -2.348857e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -4.910300e-01  6.933130e-01  1.200853e+00  'None'  0.000000e+00
+  Atom    7  C    -4.910300e-01  6.933130e-01  -1.200853e+00  'None'  0.000000e+00
+  Atom    8  H    1.834849e+00  5.137400e-01  8.898230e-01  'None'  0.000000e+00
+  Atom    9  H    1.834849e+00  5.137400e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   10  H    -1.097273e+00  -1.557933e+00  8.895070e-01  'None'  0.000000e+00
+  Atom   11  H    -1.097273e+00  -1.557933e+00  -8.895070e-01  'None'  0.000000e+00
+  Atom   12  H    2.591089e+00  -1.634125e+00  8.827150e-01  'None'  0.000000e+00
+  Atom   13  H    2.591089e+00  -1.634125e+00  -8.827150e-01  'None'  0.000000e+00
+  Atom   14  H    6.753000e-01  -2.988161e+00  8.825580e-01  'None'  0.000000e+00
+  Atom   15  H    6.753000e-01  -2.988161e+00  -8.825580e-01  'None'  0.000000e+00
+  Atom   16  H    -1.282130e-01  1.721157e+00  1.201485e+00  'None'  0.000000e+00
+  Atom   17  H    -1.581030e+00  6.933130e-01  1.200853e+00  'None'  0.000000e+00
+  Atom   18  H    -1.282130e-01  1.799380e-01  2.091308e+00  'None'  0.000000e+00
+  Atom   19  H    -1.581030e+00  6.938600e-01  -1.200537e+00  'None'  0.000000e+00
+  Atom   20  H    -1.276970e-01  1.720975e+00  -1.201801e+00  'None'  0.000000e+00
+  Atom   21  C    1.718900e-02  -2.733600e-02  -2.449941e+00  'None'  0.000000e+00
+  Atom   22  H    -3.461450e-01  -1.054998e+00  -2.450257e+00  'None'  0.000000e+00
+  Atom   23  H    1.107187e+00  -2.788400e-02  -2.451521e+00  'None'  0.000000e+00
+  Atom   24  C    -4.932020e-01  6.933130e-01  -3.698142e+00  'None'  0.000000e+00
+  Atom   25  H    -1.298700e-01  1.720975e+00  -3.699090e+00  'None'  0.000000e+00
+  Atom   26  H    -1.583202e+00  6.938600e-01  -3.697826e+00  'None'  0.000000e+00
+  Atom   27  H    -1.309010e-01  1.795740e-01  -4.588597e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1    6
+  Bond    1    7
+  Bond    2    4
+  Bond    2    8
+  Bond    2    9
+  Bond    3    5
+  Bond    3   10
+  Bond    3   11
+  Bond    4    5
+  Bond    4   12
+  Bond    4   13
+  Bond    5   14
+  Bond    5   15
+  Bond    6   16
+  Bond    6   17
+  Bond    6   18
+  Bond    7   19
+  Bond    7   20
+  Bond    7   21
+  Bond   21   22
+  Bond   21   23
+  Bond   21   24
+  Bond   24   25
+  Bond   24   26
+  Bond   24   27
+
+  # Angles
+  Angle    3    1    2
+  Angle    6    1    2
+  Angle    6    1    3
+  Angle    7    1    2
+  Angle    7    1    3
+  Angle    7    1    6
+  Angle    1    2    4
+  Angle    1    2    8
+  Angle    8    2    4
+  Angle    1    2    9
+  Angle    9    2    4
+  Angle    9    2    8
+  Angle    1    3    5
+  Angle    1    3   10
+  Angle   10    3    5
+  Angle    1    3   11
+  Angle   11    3    5
+  Angle   11    3   10
+  Angle    2    4    5
+  Angle    3    5    4
+  Angle    2    4   12
+  Angle   12    4    5
+  Angle    2    4   13
+  Angle   13    4    5
+  Angle   13    4   12
+  Angle    3    5   14
+  Angle    4    5   14
+  Angle    3    5   15
+  Angle    4    5   15
+  Angle   15    5   14
+  Angle    1    6   16
+  Angle    1    6   17
+  Angle   17    6   16
+  Angle    1    6   18
+  Angle   18    6   16
+  Angle   18    6   17
+  Angle    1    7   19
+  Angle    1    7   20
+  Angle   20    7   19
+  Angle    1    7   21
+  Angle   21    7   19
+  Angle   21    7   20
+  Angle    7   21   22
+  Angle    7   21   23
+  Angle   23   21   22
+  Angle    7   21   24
+  Angle   24   21   22
+  Angle   24   21   23
+  Angle   21   24   25
+  Angle   21   24   26
+  Angle   26   24   25
+  Angle   21   24   27
+  Angle   27   24   25
+  Angle   27   24   26
+
+  # Torsions
+  Torsion    3    1    2    4
+  Torsion    6    1    2    4
+  Torsion    7    1    2    4
+  Torsion    3    1    2    8
+  Torsion    6    1    2    8
+  Torsion    7    1    2    8
+  Torsion    3    1    2    9
+  Torsion    6    1    2    9
+  Torsion    7    1    2    9
+  Torsion    2    1    3    5
+  Torsion    6    1    3    5
+  Torsion    7    1    3    5
+  Torsion    2    1    3   10
+  Torsion    6    1    3   10
+  Torsion    7    1    3   10
+  Torsion    2    1    3   11
+  Torsion    6    1    3   11
+  Torsion    7    1    3   11
+  Torsion    1    2    4    5
+  Torsion    8    2    4    5
+  Torsion    9    2    4    5
+  Torsion   10    3    5    4
+  Torsion    1    3    5    4
+  Torsion   11    3    5    4
+  Torsion    2    4    5    3
+  Torsion    1    2    4   12
+  Torsion    8    2    4   12
+  Torsion    9    2    4   12
+  Torsion   12    4    5    3
+  Torsion    1    2    4   13
+  Torsion    8    2    4   13
+  Torsion    9    2    4   13
+  Torsion   13    4    5    3
+  Torsion   10    3    5   14
+  Torsion    1    3    5   14
+  Torsion   11    3    5   14
+  Torsion    2    4    5   14
+  Torsion   12    4    5   14
+  Torsion   13    4    5   14
+  Torsion   10    3    5   15
+  Torsion    1    3    5   15
+  Torsion   11    3    5   15
+  Torsion    2    4    5   15
+  Torsion   12    4    5   15
+  Torsion   13    4    5   15
+  Torsion    2    1    6   16
+  Torsion    3    1    6   16
+  Torsion    7    1    6   16
+  Torsion    2    1    6   17
+  Torsion    3    1    6   17
+  Torsion    7    1    6   17
+  Torsion    2    1    6   18
+  Torsion    3    1    6   18
+  Torsion    7    1    6   18
+  Torsion    2    1    7   19
+  Torsion    3    1    7   19
+  Torsion    6    1    7   19
+  Torsion    2    1    7   20
+  Torsion    3    1    7   20
+  Torsion    6    1    7   20
+  Torsion    2    1    7   21
+  Torsion    3    1    7   21
+  Torsion    6    1    7   21
+  Torsion    1    7   21   22
+  Torsion   19    7   21   22
+  Torsion   20    7   21   22
+  Torsion    1    7   21   23
+  Torsion   19    7   21   23
+  Torsion   20    7   21   23
+  Torsion    1    7   21   24
+  Torsion   19    7   21   24
+  Torsion   20    7   21   24
+  Torsion    7   21   24   25
+  Torsion   22   21   24   25
+  Torsion   23   21   24   25
+  Torsion    7   21   24   26
+  Torsion   22   21   24   26
+  Torsion   23   21   24   26
+  Torsion    7   21   24   27
+  Torsion   22   21   24   27
+  Torsion   23   21   24   27
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c4c1c1im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  C    2.198286e+00  -1.224706e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    -2.593740e-01  -2.082496e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   13  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  C    4.064794e+00  4.166380e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   15  H    3.369026e+00  2.249547e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   16  H    3.369026e+00  2.249547e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   17  C    5.530829e+00  8.508970e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   18  H    3.863035e+00  -1.796910e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   19  H    3.863035e+00  -1.796910e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   20  C    6.429553e+00  -3.860900e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   21  H    5.733785e+00  1.446820e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   22  H    5.733785e+00  1.446820e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   23  H    7.474666e+00  -7.651300e-02  0.000000e+00  'None'  0.000000e+00
+  Atom   24  H    6.227794e+00  -9.824190e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   25  H    6.227794e+00  -9.824190e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   26  H    1.577771e+00  -2.120843e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   27  H    2.827798e+00  -1.219296e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   28  H    2.827798e+00  -1.219296e+00  8.898230e-01  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   11
+  Bond    6   12
+  Bond    6   13
+  Bond    7   26
+  Bond    7   27
+  Bond    7   28
+  Bond    8   14
+  Bond    8   15
+  Bond    8   16
+  Bond   14   17
+  Bond   14   18
+  Bond   14   19
+  Bond   17   20
+  Bond   17   21
+  Bond   17   22
+  Bond   20   23
+  Bond   20   24
+  Bond   20   25
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   11
+  Angle    1    6   12
+  Angle   12    6   11
+  Angle    1    6   13
+  Angle   13    6   11
+  Angle   13    6   12
+  Angle    2    7   26
+  Angle    2    7   27
+  Angle   27    7   26
+  Angle    2    7   28
+  Angle   28    7   26
+  Angle   28    7   27
+  Angle    3    8   14
+  Angle    3    8   15
+  Angle   15    8   14
+  Angle    3    8   16
+  Angle   16    8   14
+  Angle   16    8   15
+  Angle    8   14   17
+  Angle    8   14   18
+  Angle   18   14   17
+  Angle    8   14   19
+  Angle   19   14   17
+  Angle   19   14   18
+  Angle   14   17   20
+  Angle   14   17   21
+  Angle   21   17   20
+  Angle   14   17   22
+  Angle   22   17   20
+  Angle   22   17   21
+  Angle   17   20   23
+  Angle   17   20   24
+  Angle   24   20   23
+  Angle   17   20   25
+  Angle   25   20   23
+  Angle   25   20   24
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   11
+  Torsion    5    1    6   11
+  Torsion    2    1    6   12
+  Torsion    5    1    6   12
+  Torsion    2    1    6   13
+  Torsion    5    1    6   13
+  Torsion    1    2    7   26
+  Torsion    3    2    7   26
+  Torsion    1    2    7   27
+  Torsion    3    2    7   27
+  Torsion    1    2    7   28
+  Torsion    3    2    7   28
+  Torsion    2    3    8   14
+  Torsion    4    3    8   14
+  Torsion    2    3    8   15
+  Torsion    4    3    8   15
+  Torsion    2    3    8   16
+  Torsion    4    3    8   16
+  Torsion    3    8   14   17
+  Torsion   15    8   14   17
+  Torsion   16    8   14   17
+  Torsion    3    8   14   18
+  Torsion   15    8   14   18
+  Torsion   16    8   14   18
+  Torsion    3    8   14   19
+  Torsion   15    8   14   19
+  Torsion   16    8   14   19
+  Torsion    8   14   17   20
+  Torsion   18   14   17   20
+  Torsion   19   14   17   20
+  Torsion    8   14   17   21
+  Torsion   18   14   17   21
+  Torsion   19   14   17   21
+  Torsion    8   14   17   22
+  Torsion   18   14   17   22
+  Torsion   19   14   17   22
+  Torsion   14   17   20   23
+  Torsion   21   17   20   23
+  Torsion   22   17   20   23
+  Torsion   14   17   20   24
+  Torsion   21   17   20   24
+  Torsion   22   17   20   24
+  Torsion   14   17   20   25
+  Torsion   21   17   20   25
+  Torsion   22   17   20   25
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c4c1im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  H    1.936006e+00  -8.836020e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    -2.593740e-01  -2.082496e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   13  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  C    4.064794e+00  4.166380e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   15  H    3.369026e+00  2.249547e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   16  H    3.369026e+00  2.249547e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   17  C    5.530829e+00  8.508970e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   18  H    3.863035e+00  -1.796910e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   19  H    3.863035e+00  -1.796910e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   20  C    6.429553e+00  -3.860900e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   21  H    5.733785e+00  1.446820e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   22  H    5.733785e+00  1.446820e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   23  H    7.474666e+00  -7.651300e-02  0.000000e+00  'None'  0.000000e+00
+  Atom   24  H    6.227794e+00  -9.824190e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   25  H    6.227794e+00  -9.824190e-01  8.898230e-01  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   11
+  Bond    6   12
+  Bond    6   13
+  Bond    8   14
+  Bond    8   15
+  Bond    8   16
+  Bond   14   17
+  Bond   14   18
+  Bond   14   19
+  Bond   17   20
+  Bond   17   21
+  Bond   17   22
+  Bond   20   23
+  Bond   20   24
+  Bond   20   25
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   11
+  Angle    1    6   12
+  Angle   12    6   11
+  Angle    1    6   13
+  Angle   13    6   11
+  Angle   13    6   12
+  Angle    3    8   14
+  Angle    3    8   15
+  Angle   15    8   14
+  Angle    3    8   16
+  Angle   16    8   14
+  Angle   16    8   15
+  Angle    8   14   17
+  Angle    8   14   18
+  Angle   18   14   17
+  Angle    8   14   19
+  Angle   19   14   17
+  Angle   19   14   18
+  Angle   14   17   20
+  Angle   14   17   21
+  Angle   21   17   20
+  Angle   14   17   22
+  Angle   22   17   20
+  Angle   22   17   21
+  Angle   17   20   23
+  Angle   17   20   24
+  Angle   24   20   23
+  Angle   17   20   25
+  Angle   25   20   23
+  Angle   25   20   24
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   11
+  Torsion    5    1    6   11
+  Torsion    2    1    6   12
+  Torsion    5    1    6   12
+  Torsion    2    1    6   13
+  Torsion    5    1    6   13
+  Torsion    2    3    8   14
+  Torsion    4    3    8   14
+  Torsion    2    3    8   15
+  Torsion    4    3    8   15
+  Torsion    2    3    8   16
+  Torsion    4    3    8   16
+  Torsion    3    8   14   17
+  Torsion   15    8   14   17
+  Torsion   16    8   14   17
+  Torsion    3    8   14   18
+  Torsion   15    8   14   18
+  Torsion   16    8   14   18
+  Torsion    3    8   14   19
+  Torsion   15    8   14   19
+  Torsion   16    8   14   19
+  Torsion    8   14   17   20
+  Torsion   18   14   17   20
+  Torsion   19   14   17   20
+  Torsion    8   14   17   21
+  Torsion   18   14   17   21
+  Torsion   19   14   17   21
+  Torsion    8   14   17   22
+  Torsion   18   14   17   22
+  Torsion   19   14   17   22
+  Torsion   14   17   20   23
+  Torsion   21   17   20   23
+  Torsion   22   17   20   23
+  Torsion   14   17   20   24
+  Torsion   21   17   20   24
+  Torsion   22   17   20   24
+  Torsion   14   17   20   25
+  Torsion   21   17   20   25
+  Torsion   22   17   20   25
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c4c1pyrr'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.471000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  C    -4.910300e-01  -1.386626e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    1.981391e+00  -1.441299e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    6.972260e-01  -2.348857e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -4.910300e-01  6.933130e-01  1.200853e+00  'None'  0.000000e+00
+  Atom    7  C    -4.910300e-01  6.933130e-01  -1.200853e+00  'None'  0.000000e+00
+  Atom    8  H    1.834849e+00  5.137400e-01  8.898230e-01  'None'  0.000000e+00
+  Atom    9  H    1.834849e+00  5.137400e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   10  H    -1.097273e+00  -1.557933e+00  8.895070e-01  'None'  0.000000e+00
+  Atom   11  H    -1.097273e+00  -1.557933e+00  -8.895070e-01  'None'  0.000000e+00
+  Atom   12  H    2.591089e+00  -1.634125e+00  8.827150e-01  'None'  0.000000e+00
+  Atom   13  H    2.591089e+00  -1.634125e+00  -8.827150e-01  'None'  0.000000e+00
+  Atom   14  H    6.753000e-01  -2.988161e+00  8.825580e-01  'None'  0.000000e+00
+  Atom   15  H    6.753000e-01  -2.988161e+00  -8.825580e-01  'None'  0.000000e+00
+  Atom   16  H    -1.282130e-01  1.721157e+00  1.201485e+00  'None'  0.000000e+00
+  Atom   17  H    -1.581030e+00  6.933130e-01  1.200853e+00  'None'  0.000000e+00
+  Atom   18  H    -1.282130e-01  1.799380e-01  2.091308e+00  'None'  0.000000e+00
+  Atom   19  H    -1.581030e+00  6.938600e-01  -1.200537e+00  'None'  0.000000e+00
+  Atom   20  H    -1.276970e-01  1.720975e+00  -1.201801e+00  'None'  0.000000e+00
+  Atom   21  C    1.718900e-02  -2.733600e-02  -2.449941e+00  'None'  0.000000e+00
+  Atom   22  H    -3.461450e-01  -1.054998e+00  -2.450257e+00  'None'  0.000000e+00
+  Atom   23  H    1.107187e+00  -2.788400e-02  -2.451521e+00  'None'  0.000000e+00
+  Atom   24  C    -4.932020e-01  6.933130e-01  -3.698142e+00  'None'  0.000000e+00
+  Atom   25  H    -1.298700e-01  1.720975e+00  -3.699090e+00  'None'  0.000000e+00
+  Atom   26  H    -1.583202e+00  6.938600e-01  -3.697826e+00  'None'  0.000000e+00
+  Atom   27  C    1.501600e-02  -2.733600e-02  -4.947229e+00  'None'  0.000000e+00
+  Atom   28  H    -3.483170e-01  -1.054998e+00  -4.947546e+00  'None'  0.000000e+00
+  Atom   29  H    1.105015e+00  -2.788300e-02  -4.948810e+00  'None'  0.000000e+00
+  Atom   30  H    -3.488330e-01  4.864030e-01  -5.837053e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1    6
+  Bond    1    7
+  Bond    2    4
+  Bond    2    8
+  Bond    2    9
+  Bond    3    5
+  Bond    3   10
+  Bond    3   11
+  Bond    4    5
+  Bond    4   12
+  Bond    4   13
+  Bond    5   14
+  Bond    5   15
+  Bond    6   16
+  Bond    6   17
+  Bond    6   18
+  Bond    7   19
+  Bond    7   20
+  Bond    7   21
+  Bond   21   22
+  Bond   21   23
+  Bond   21   24
+  Bond   24   25
+  Bond   24   26
+  Bond   24   27
+  Bond   27   28
+  Bond   27   29
+  Bond   27   30
+
+  # Angles
+  Angle    3    1    2
+  Angle    6    1    2
+  Angle    6    1    3
+  Angle    7    1    2
+  Angle    7    1    3
+  Angle    7    1    6
+  Angle    1    2    4
+  Angle    1    2    8
+  Angle    8    2    4
+  Angle    1    2    9
+  Angle    9    2    4
+  Angle    9    2    8
+  Angle    1    3    5
+  Angle    1    3   10
+  Angle   10    3    5
+  Angle    1    3   11
+  Angle   11    3    5
+  Angle   11    3   10
+  Angle    2    4    5
+  Angle    3    5    4
+  Angle    2    4   12
+  Angle   12    4    5
+  Angle    2    4   13
+  Angle   13    4    5
+  Angle   13    4   12
+  Angle    3    5   14
+  Angle    4    5   14
+  Angle    3    5   15
+  Angle    4    5   15
+  Angle   15    5   14
+  Angle    1    6   16
+  Angle    1    6   17
+  Angle   17    6   16
+  Angle    1    6   18
+  Angle   18    6   16
+  Angle   18    6   17
+  Angle    1    7   19
+  Angle    1    7   20
+  Angle   20    7   19
+  Angle    1    7   21
+  Angle   21    7   19
+  Angle   21    7   20
+  Angle    7   21   22
+  Angle    7   21   23
+  Angle   23   21   22
+  Angle    7   21   24
+  Angle   24   21   22
+  Angle   24   21   23
+  Angle   21   24   25
+  Angle   21   24   26
+  Angle   26   24   25
+  Angle   21   24   27
+  Angle   27   24   25
+  Angle   27   24   26
+  Angle   24   27   28
+  Angle   24   27   29
+  Angle   29   27   28
+  Angle   24   27   30
+  Angle   30   27   28
+  Angle   30   27   29
+
+  # Torsions
+  Torsion    3    1    2    4
+  Torsion    6    1    2    4
+  Torsion    7    1    2    4
+  Torsion    3    1    2    8
+  Torsion    6    1    2    8
+  Torsion    7    1    2    8
+  Torsion    3    1    2    9
+  Torsion    6    1    2    9
+  Torsion    7    1    2    9
+  Torsion    2    1    3    5
+  Torsion    6    1    3    5
+  Torsion    7    1    3    5
+  Torsion    2    1    3   10
+  Torsion    6    1    3   10
+  Torsion    7    1    3   10
+  Torsion    2    1    3   11
+  Torsion    6    1    3   11
+  Torsion    7    1    3   11
+  Torsion    1    2    4    5
+  Torsion    8    2    4    5
+  Torsion    9    2    4    5
+  Torsion   10    3    5    4
+  Torsion    1    3    5    4
+  Torsion   11    3    5    4
+  Torsion    2    4    5    3
+  Torsion    1    2    4   12
+  Torsion    8    2    4   12
+  Torsion    9    2    4   12
+  Torsion   12    4    5    3
+  Torsion    1    2    4   13
+  Torsion    8    2    4   13
+  Torsion    9    2    4   13
+  Torsion   13    4    5    3
+  Torsion   10    3    5   14
+  Torsion    1    3    5   14
+  Torsion   11    3    5   14
+  Torsion    2    4    5   14
+  Torsion   12    4    5   14
+  Torsion   13    4    5   14
+  Torsion   10    3    5   15
+  Torsion    1    3    5   15
+  Torsion   11    3    5   15
+  Torsion    2    4    5   15
+  Torsion   12    4    5   15
+  Torsion   13    4    5   15
+  Torsion    2    1    6   16
+  Torsion    3    1    6   16
+  Torsion    7    1    6   16
+  Torsion    2    1    6   17
+  Torsion    3    1    6   17
+  Torsion    7    1    6   17
+  Torsion    2    1    6   18
+  Torsion    3    1    6   18
+  Torsion    7    1    6   18
+  Torsion    2    1    7   19
+  Torsion    3    1    7   19
+  Torsion    6    1    7   19
+  Torsion    2    1    7   20
+  Torsion    3    1    7   20
+  Torsion    6    1    7   20
+  Torsion    2    1    7   21
+  Torsion    3    1    7   21
+  Torsion    6    1    7   21
+  Torsion    1    7   21   22
+  Torsion   19    7   21   22
+  Torsion   20    7   21   22
+  Torsion    1    7   21   23
+  Torsion   19    7   21   23
+  Torsion   20    7   21   23
+  Torsion    1    7   21   24
+  Torsion   19    7   21   24
+  Torsion   20    7   21   24
+  Torsion    7   21   24   25
+  Torsion   22   21   24   25
+  Torsion   23   21   24   25
+  Torsion    7   21   24   26
+  Torsion   22   21   24   26
+  Torsion   23   21   24   26
+  Torsion    7   21   24   27
+  Torsion   22   21   24   27
+  Torsion   23   21   24   27
+  Torsion   21   24   27   28
+  Torsion   25   24   27   28
+  Torsion   26   24   27   28
+  Torsion   21   24   27   29
+  Torsion   25   24   27   29
+  Torsion   26   24   27   29
+  Torsion   21   24   27   30
+  Torsion   25   24   27   30
+  Torsion   26   24   27   30
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c4c4im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  H    1.936006e+00  -8.836020e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  C    4.064794e+00  4.166380e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   12  H    3.369026e+00  2.249547e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   13  H    3.369026e+00  2.249547e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  C    5.530829e+00  8.508970e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   15  H    3.863035e+00  -1.796910e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   16  H    3.863035e+00  -1.796910e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   17  C    6.429553e+00  -3.860900e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   18  H    5.733785e+00  1.446820e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   19  H    5.733785e+00  1.446820e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   20  H    7.474666e+00  -7.651300e-02  0.000000e+00  'None'  0.000000e+00
+  Atom   21  H    6.227794e+00  -9.824190e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   22  H    6.227794e+00  -9.824190e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   23  C    -1.334300e-02  -2.446075e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   24  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   25  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   26  C    -9.209870e-01  -3.676532e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   27  H    6.160490e-01  -2.459499e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   28  H    6.160490e-01  -2.459499e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   29  C    -6.408500e-02  -4.942850e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   30  H    -1.550405e+00  -3.664373e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   31  H    -1.550405e+00  -3.664373e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   32  H    -7.111300e-01  -5.820023e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   33  H    5.653070e-01  -4.956273e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   34  H    5.653070e-01  -4.956273e+00  -8.898230e-01  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   23
+  Bond    6   24
+  Bond    6   25
+  Bond    8   11
+  Bond    8   12
+  Bond    8   13
+  Bond   11   14
+  Bond   11   15
+  Bond   11   16
+  Bond   14   17
+  Bond   14   18
+  Bond   14   19
+  Bond   17   20
+  Bond   17   21
+  Bond   17   22
+  Bond   23   26
+  Bond   23   27
+  Bond   23   28
+  Bond   26   29
+  Bond   26   30
+  Bond   26   31
+  Bond   29   32
+  Bond   29   33
+  Bond   29   34
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   23
+  Angle    1    6   24
+  Angle   24    6   23
+  Angle    1    6   25
+  Angle   25    6   23
+  Angle   25    6   24
+  Angle    3    8   11
+  Angle    3    8   12
+  Angle   12    8   11
+  Angle    3    8   13
+  Angle   13    8   11
+  Angle   13    8   12
+  Angle    8   11   14
+  Angle    8   11   15
+  Angle   15   11   14
+  Angle    8   11   16
+  Angle   16   11   14
+  Angle   16   11   15
+  Angle   11   14   17
+  Angle   11   14   18
+  Angle   18   14   17
+  Angle   11   14   19
+  Angle   19   14   17
+  Angle   19   14   18
+  Angle   14   17   20
+  Angle   14   17   21
+  Angle   21   17   20
+  Angle   14   17   22
+  Angle   22   17   20
+  Angle   22   17   21
+  Angle    6   23   26
+  Angle    6   23   27
+  Angle   27   23   26
+  Angle    6   23   28
+  Angle   28   23   26
+  Angle   28   23   27
+  Angle   23   26   29
+  Angle   23   26   30
+  Angle   30   26   29
+  Angle   23   26   31
+  Angle   31   26   29
+  Angle   31   26   30
+  Angle   26   29   32
+  Angle   26   29   33
+  Angle   33   29   32
+  Angle   26   29   34
+  Angle   34   29   32
+  Angle   34   29   33
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   23
+  Torsion    5    1    6   23
+  Torsion    2    1    6   24
+  Torsion    5    1    6   24
+  Torsion    2    1    6   25
+  Torsion    5    1    6   25
+  Torsion    2    3    8   11
+  Torsion    4    3    8   11
+  Torsion    2    3    8   12
+  Torsion    4    3    8   12
+  Torsion    2    3    8   13
+  Torsion    4    3    8   13
+  Torsion    3    8   11   14
+  Torsion   12    8   11   14
+  Torsion   13    8   11   14
+  Torsion    3    8   11   15
+  Torsion   12    8   11   15
+  Torsion   13    8   11   15
+  Torsion    3    8   11   16
+  Torsion   12    8   11   16
+  Torsion   13    8   11   16
+  Torsion    8   11   14   17
+  Torsion   15   11   14   17
+  Torsion   16   11   14   17
+  Torsion    8   11   14   18
+  Torsion   15   11   14   18
+  Torsion   16   11   14   18
+  Torsion    8   11   14   19
+  Torsion   15   11   14   19
+  Torsion   16   11   14   19
+  Torsion   11   14   17   20
+  Torsion   18   14   17   20
+  Torsion   19   14   17   20
+  Torsion   11   14   17   21
+  Torsion   18   14   17   21
+  Torsion   19   14   17   21
+  Torsion   11   14   17   22
+  Torsion   18   14   17   22
+  Torsion   19   14   17   22
+  Torsion    1    6   23   26
+  Torsion   24    6   23   26
+  Torsion   25    6   23   26
+  Torsion    1    6   23   27
+  Torsion   24    6   23   27
+  Torsion   25    6   23   27
+  Torsion    1    6   23   28
+  Torsion   24    6   23   28
+  Torsion   25    6   23   28
+  Torsion    6   23   26   29
+  Torsion   27   23   26   29
+  Torsion   28   23   26   29
+  Torsion    6   23   26   30
+  Torsion   27   23   26   30
+  Torsion   28   23   26   30
+  Torsion    6   23   26   31
+  Torsion   27   23   26   31
+  Torsion   28   23   26   31
+  Torsion   23   26   29   32
+  Torsion   30   26   29   32
+  Torsion   31   26   29   32
+  Torsion   23   26   29   33
+  Torsion   30   26   29   33
+  Torsion   31   26   29   33
+  Torsion   23   26   29   34
+  Torsion   30   26   29   34
+  Torsion   31   26   29   34
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c4pyri'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.365000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  C    2.065000e+00  1.212436e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    1.365000e+00  2.424871e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -3.500000e-02  2.424871e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -7.350000e-01  1.212436e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  C    -7.330370e-01  -1.279954e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom    8  H    1.999808e+00  -8.737380e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    3.138164e+00  1.333759e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    1.796513e+00  3.414920e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -3.955110e-01  3.442924e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   12  H    -1.796915e+00  1.409250e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   13  C    -9.866870e-01  -1.722853e+00  1.441299e+00  'None'  0.000000e+00
+  Atom   14  H    -1.686018e+00  -1.153471e+00  -5.137400e-01  'None'  0.000000e+00
+  Atom   15  H    -1.417030e-01  -2.037909e+00  -5.137400e-01  'None'  0.000000e+00
+  Atom   16  C    -1.746561e+00  -3.049667e+00  1.441299e+00  'None'  0.000000e+00
+  Atom   17  H    -3.421900e-02  -1.850232e+00  1.955768e+00  'None'  0.000000e+00
+  Atom   18  H    -1.578535e+00  -9.657950e-01  1.955768e+00  'None'  0.000000e+00
+  Atom   19  C    -2.000212e+00  -3.492566e+00  2.882598e+00  'None'  0.000000e+00
+  Atom   20  H    -2.699542e+00  -2.923184e+00  9.275590e-01  'None'  0.000000e+00
+  Atom   21  H    -1.155227e+00  -3.807622e+00  9.275590e-01  'None'  0.000000e+00
+  Atom   22  H    -2.541913e+00  -4.438431e+00  2.882598e+00  'None'  0.000000e+00
+  Atom   23  H    -1.047743e+00  -3.619945e+00  3.397067e+00  'None'  0.000000e+00
+  Atom   24  H    -2.592059e+00  -2.735507e+00  3.397067e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    6
+  Bond    1    7
+  Bond    2    3
+  Bond    2    8
+  Bond    3    4
+  Bond    3    9
+  Bond    4    5
+  Bond    4   10
+  Bond    5    6
+  Bond    5   11
+  Bond    6   12
+  Bond    7   13
+  Bond    7   14
+  Bond    7   15
+  Bond   13   16
+  Bond   13   17
+  Bond   13   18
+  Bond   16   19
+  Bond   16   20
+  Bond   16   21
+  Bond   19   22
+  Bond   19   23
+  Bond   19   24
+
+  # Angles
+  Angle    6    1    2
+  Angle    7    1    2
+  Angle    7    1    6
+  Angle    1    2    3
+  Angle    1    2    8
+  Angle    8    2    3
+  Angle    2    3    4
+  Angle    2    3    9
+  Angle    9    3    4
+  Angle    3    4    5
+  Angle    3    4   10
+  Angle   10    4    5
+  Angle    1    6    5
+  Angle    4    5    6
+  Angle    4    5   11
+  Angle   11    5    6
+  Angle    1    6   12
+  Angle    5    6   12
+  Angle    1    7   13
+  Angle    1    7   14
+  Angle   14    7   13
+  Angle    1    7   15
+  Angle   15    7   13
+  Angle   15    7   14
+  Angle    7   13   16
+  Angle    7   13   17
+  Angle   17   13   16
+  Angle    7   13   18
+  Angle   18   13   16
+  Angle   18   13   17
+  Angle   13   16   19
+  Angle   13   16   20
+  Angle   20   16   19
+  Angle   13   16   21
+  Angle   21   16   19
+  Angle   21   16   20
+  Angle   16   19   22
+  Angle   16   19   23
+  Angle   23   19   22
+  Angle   16   19   24
+  Angle   24   19   22
+  Angle   24   19   23
+
+  # Torsions
+  Torsion    7    1    2    3
+  Torsion    6    1    2    3
+  Torsion    6    1    2    8
+  Torsion    7    1    2    8
+  Torsion    8    2    3    4
+  Torsion    1    2    3    4
+  Torsion    8    2    3    9
+  Torsion    1    2    3    9
+  Torsion    2    3    4    5
+  Torsion    9    3    4    5
+  Torsion    2    3    4   10
+  Torsion    9    3    4   10
+  Torsion    2    1    6    5
+  Torsion    7    1    6    5
+  Torsion   10    4    5    6
+  Torsion    3    4    5    6
+  Torsion    4    5    6    1
+  Torsion   10    4    5   11
+  Torsion    3    4    5   11
+  Torsion   11    5    6    1
+  Torsion    2    1    6   12
+  Torsion    7    1    6   12
+  Torsion    4    5    6   12
+  Torsion   11    5    6   12
+  Torsion    2    1    7   13
+  Torsion    6    1    7   13
+  Torsion    2    1    7   14
+  Torsion    6    1    7   14
+  Torsion    2    1    7   15
+  Torsion    6    1    7   15
+  Torsion    1    7   13   16
+  Torsion   14    7   13   16
+  Torsion   15    7   13   16
+  Torsion    1    7   13   17
+  Torsion   14    7   13   17
+  Torsion   15    7   13   17
+  Torsion    1    7   13   18
+  Torsion   14    7   13   18
+  Torsion   15    7   13   18
+  Torsion   17   13   16   19
+  Torsion    7   13   16   19
+  Torsion   18   13   16   19
+  Torsion   17   13   16   20
+  Torsion    7   13   16   20
+  Torsion   18   13   16   20
+  Torsion   17   13   16   21
+  Torsion    7   13   16   21
+  Torsion   18   13   16   21
+  Torsion   13   16   19   22
+  Torsion   20   16   19   22
+  Torsion   21   16   19   22
+  Torsion   13   16   19   23
+  Torsion   20   16   19   23
+  Torsion   21   16   19   23
+  Torsion   13   16   19   24
+  Torsion   20   16   19   24
+  Torsion   21   16   19   24
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c6c1im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  H    1.936006e+00  -8.836020e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    -2.593740e-01  -2.082496e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   13  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  C    4.064794e+00  4.166380e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   15  H    3.369026e+00  2.249547e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   16  H    3.369026e+00  2.249547e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   17  C    5.530829e+00  8.508970e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   18  H    3.863035e+00  -1.796910e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   19  H    3.863035e+00  -1.796910e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   20  C    6.429553e+00  -3.860900e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   21  H    5.733785e+00  1.446820e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   22  H    5.733785e+00  1.446820e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   23  C    7.895588e+00  4.817000e-02  0.000000e+00  'None'  0.000000e+00
+  Atom   24  H    6.227794e+00  -9.824190e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   25  H    6.227794e+00  -9.824190e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   26  C    8.794312e+00  -1.188817e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   27  H    8.098544e+00  6.440920e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   28  H    8.098544e+00  6.440920e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   29  H    9.839425e+00  -8.792410e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   30  H    8.592553e+00  -1.785146e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   31  H    8.592553e+00  -1.785146e+00  8.898230e-01  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   11
+  Bond    6   12
+  Bond    6   13
+  Bond    8   14
+  Bond    8   15
+  Bond    8   16
+  Bond   14   17
+  Bond   14   18
+  Bond   14   19
+  Bond   17   20
+  Bond   17   21
+  Bond   17   22
+  Bond   20   23
+  Bond   20   24
+  Bond   20   25
+  Bond   23   26
+  Bond   23   27
+  Bond   23   28
+  Bond   26   29
+  Bond   26   30
+  Bond   26   31
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   11
+  Angle    1    6   12
+  Angle   12    6   11
+  Angle    1    6   13
+  Angle   13    6   11
+  Angle   13    6   12
+  Angle    3    8   14
+  Angle    3    8   15
+  Angle   15    8   14
+  Angle    3    8   16
+  Angle   16    8   14
+  Angle   16    8   15
+  Angle    8   14   17
+  Angle    8   14   18
+  Angle   18   14   17
+  Angle    8   14   19
+  Angle   19   14   17
+  Angle   19   14   18
+  Angle   14   17   20
+  Angle   14   17   21
+  Angle   21   17   20
+  Angle   14   17   22
+  Angle   22   17   20
+  Angle   22   17   21
+  Angle   17   20   23
+  Angle   17   20   24
+  Angle   24   20   23
+  Angle   17   20   25
+  Angle   25   20   23
+  Angle   25   20   24
+  Angle   20   23   26
+  Angle   20   23   27
+  Angle   27   23   26
+  Angle   20   23   28
+  Angle   28   23   26
+  Angle   28   23   27
+  Angle   23   26   29
+  Angle   23   26   30
+  Angle   30   26   29
+  Angle   23   26   31
+  Angle   31   26   29
+  Angle   31   26   30
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   11
+  Torsion    5    1    6   11
+  Torsion    2    1    6   12
+  Torsion    5    1    6   12
+  Torsion    2    1    6   13
+  Torsion    5    1    6   13
+  Torsion    2    3    8   14
+  Torsion    4    3    8   14
+  Torsion    2    3    8   15
+  Torsion    4    3    8   15
+  Torsion    2    3    8   16
+  Torsion    4    3    8   16
+  Torsion    3    8   14   17
+  Torsion   15    8   14   17
+  Torsion   16    8   14   17
+  Torsion    3    8   14   18
+  Torsion   15    8   14   18
+  Torsion   16    8   14   18
+  Torsion    3    8   14   19
+  Torsion   15    8   14   19
+  Torsion   16    8   14   19
+  Torsion    8   14   17   20
+  Torsion   18   14   17   20
+  Torsion   19   14   17   20
+  Torsion    8   14   17   21
+  Torsion   18   14   17   21
+  Torsion   19   14   17   21
+  Torsion    8   14   17   22
+  Torsion   18   14   17   22
+  Torsion   19   14   17   22
+  Torsion   14   17   20   23
+  Torsion   21   17   20   23
+  Torsion   22   17   20   23
+  Torsion   14   17   20   24
+  Torsion   21   17   20   24
+  Torsion   22   17   20   24
+  Torsion   14   17   20   25
+  Torsion   21   17   20   25
+  Torsion   22   17   20   25
+  Torsion   17   20   23   26
+  Torsion   24   20   23   26
+  Torsion   25   20   23   26
+  Torsion   17   20   23   27
+  Torsion   24   20   23   27
+  Torsion   25   20   23   27
+  Torsion   17   20   23   28
+  Torsion   24   20   23   28
+  Torsion   25   20   23   28
+  Torsion   20   23   26   29
+  Torsion   27   23   26   29
+  Torsion   28   23   26   29
+  Torsion   20   23   26   30
+  Torsion   27   23   26   30
+  Torsion   28   23   26   30
+  Torsion   20   23   26   31
+  Torsion   27   23   26   31
+  Torsion   28   23   26   31
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c8c1im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  H    1.936006e+00  -8.836020e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    -2.593740e-01  -2.082496e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   13  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  C    4.064794e+00  4.166380e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   15  H    3.369026e+00  2.249547e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   16  H    3.369026e+00  2.249547e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   17  C    5.530829e+00  8.508970e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   18  H    3.863035e+00  -1.796910e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   19  H    3.863035e+00  -1.796910e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   20  C    6.429553e+00  -3.860900e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   21  H    5.733785e+00  1.446820e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   22  H    5.733785e+00  1.446820e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   23  C    7.895588e+00  4.817000e-02  0.000000e+00  'None'  0.000000e+00
+  Atom   24  H    6.227794e+00  -9.824190e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   25  H    6.227794e+00  -9.824190e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   26  C    8.794312e+00  -1.188817e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   27  H    8.098544e+00  6.440920e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   28  H    8.098544e+00  6.440920e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   29  C    1.026035e+01  -7.545580e-01  0.000000e+00  'None'  0.000000e+00
+  Atom   30  H    8.592553e+00  -1.785146e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   31  H    8.592553e+00  -1.785146e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   32  C    1.115907e+01  -1.991545e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   33  H    1.046330e+01  -1.586350e-01  8.898230e-01  'None'  0.000000e+00
+  Atom   34  H    1.046330e+01  -1.586350e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom   35  H    1.220418e+01  -1.681968e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   36  H    1.095731e+01  -2.587874e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   37  H    1.095731e+01  -2.587874e+00  8.898230e-01  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   11
+  Bond    6   12
+  Bond    6   13
+  Bond    8   14
+  Bond    8   15
+  Bond    8   16
+  Bond   14   17
+  Bond   14   18
+  Bond   14   19
+  Bond   17   20
+  Bond   17   21
+  Bond   17   22
+  Bond   20   23
+  Bond   20   24
+  Bond   20   25
+  Bond   23   26
+  Bond   23   27
+  Bond   23   28
+  Bond   26   29
+  Bond   26   30
+  Bond   26   31
+  Bond   29   32
+  Bond   29   33
+  Bond   29   34
+  Bond   32   35
+  Bond   32   36
+  Bond   32   37
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   11
+  Angle    1    6   12
+  Angle   12    6   11
+  Angle    1    6   13
+  Angle   13    6   11
+  Angle   13    6   12
+  Angle    3    8   14
+  Angle    3    8   15
+  Angle   15    8   14
+  Angle    3    8   16
+  Angle   16    8   14
+  Angle   16    8   15
+  Angle    8   14   17
+  Angle    8   14   18
+  Angle   18   14   17
+  Angle    8   14   19
+  Angle   19   14   17
+  Angle   19   14   18
+  Angle   14   17   20
+  Angle   14   17   21
+  Angle   21   17   20
+  Angle   14   17   22
+  Angle   22   17   20
+  Angle   22   17   21
+  Angle   17   20   23
+  Angle   17   20   24
+  Angle   24   20   23
+  Angle   17   20   25
+  Angle   25   20   23
+  Angle   25   20   24
+  Angle   20   23   26
+  Angle   20   23   27
+  Angle   27   23   26
+  Angle   20   23   28
+  Angle   28   23   26
+  Angle   28   23   27
+  Angle   23   26   29
+  Angle   23   26   30
+  Angle   30   26   29
+  Angle   23   26   31
+  Angle   31   26   29
+  Angle   31   26   30
+  Angle   26   29   32
+  Angle   26   29   33
+  Angle   33   29   32
+  Angle   26   29   34
+  Angle   34   29   32
+  Angle   34   29   33
+  Angle   29   32   35
+  Angle   29   32   36
+  Angle   36   32   35
+  Angle   29   32   37
+  Angle   37   32   35
+  Angle   37   32   36
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   11
+  Torsion    5    1    6   11
+  Torsion    2    1    6   12
+  Torsion    5    1    6   12
+  Torsion    2    1    6   13
+  Torsion    5    1    6   13
+  Torsion    2    3    8   14
+  Torsion    4    3    8   14
+  Torsion    2    3    8   15
+  Torsion    4    3    8   15
+  Torsion    2    3    8   16
+  Torsion    4    3    8   16
+  Torsion    3    8   14   17
+  Torsion   15    8   14   17
+  Torsion   16    8   14   17
+  Torsion    3    8   14   18
+  Torsion   15    8   14   18
+  Torsion   16    8   14   18
+  Torsion    3    8   14   19
+  Torsion   15    8   14   19
+  Torsion   16    8   14   19
+  Torsion    8   14   17   20
+  Torsion   18   14   17   20
+  Torsion   19   14   17   20
+  Torsion    8   14   17   21
+  Torsion   18   14   17   21
+  Torsion   19   14   17   21
+  Torsion    8   14   17   22
+  Torsion   18   14   17   22
+  Torsion   19   14   17   22
+  Torsion   14   17   20   23
+  Torsion   21   17   20   23
+  Torsion   22   17   20   23
+  Torsion   14   17   20   24
+  Torsion   21   17   20   24
+  Torsion   22   17   20   24
+  Torsion   14   17   20   25
+  Torsion   21   17   20   25
+  Torsion   22   17   20   25
+  Torsion   17   20   23   26
+  Torsion   24   20   23   26
+  Torsion   25   20   23   26
+  Torsion   17   20   23   27
+  Torsion   24   20   23   27
+  Torsion   25   20   23   27
+  Torsion   17   20   23   28
+  Torsion   24   20   23   28
+  Torsion   25   20   23   28
+  Torsion   20   23   26   29
+  Torsion   27   23   26   29
+  Torsion   28   23   26   29
+  Torsion   20   23   26   30
+  Torsion   27   23   26   30
+  Torsion   28   23   26   30
+  Torsion   20   23   26   31
+  Torsion   27   23   26   31
+  Torsion   28   23   26   31
+  Torsion   23   26   29   32
+  Torsion   30   26   29   32
+  Torsion   31   26   29   32
+  Torsion   23   26   29   33
+  Torsion   30   26   29   33
+  Torsion   31   26   29   33
+  Torsion   23   26   29   34
+  Torsion   30   26   29   34
+  Torsion   31   26   29   34
+  Torsion   33   29   32   35
+  Torsion   26   29   32   35
+  Torsion   34   29   32   35
+  Torsion   33   29   32   36
+  Torsion   26   29   32   36
+  Torsion   34   29   32   36
+  Torsion   33   29   32   37
+  Torsion   26   29   32   37
+  Torsion   34   29   32   37
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c8fc1im'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.315000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    1.760440e+00  1.237258e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    6.716070e-01  2.081844e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  C    -4.255320e-01  1.310762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    6  C    -8.702460e-01  -1.179758e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    7  H    1.936006e+00  -8.836020e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    8  C    3.166070e+00  1.653625e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    6.970510e-01  3.161544e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.450020e+00  1.652557e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   11  H    -1.499664e+00  -1.167599e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   12  H    -2.593740e-01  -2.082496e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   13  H    -1.499664e+00  -1.167599e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   14  C    3.246092e+00  3.180529e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   15  H    3.660846e+00  1.264380e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   16  H    3.660846e+00  1.264380e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   17  C    4.712127e+00  3.614789e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   18  H    2.752099e+00  3.570767e+00  -8.898230e-01  'None'  0.000000e+00
+  Atom   19  H    2.752099e+00  3.570767e+00  8.898230e-01  'None'  0.000000e+00
+  Atom   20  C    4.792149e+00  5.141693e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   21  F    5.315845e+00  3.139839e+00  -1.085747e+00  'None'  0.000000e+00
+  Atom   22  F    5.315845e+00  3.139839e+00  1.085747e+00  'None'  0.000000e+00
+  Atom   23  C    6.258184e+00  5.575953e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   24  F    4.189387e+00  5.617855e+00  1.085747e+00  'None'  0.000000e+00
+  Atom   25  F    4.189387e+00  5.617855e+00  -1.085747e+00  'None'  0.000000e+00
+  Atom   26  C    6.338206e+00  7.102857e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   27  F    6.861902e+00  5.101003e+00  -1.085747e+00  'None'  0.000000e+00
+  Atom   28  F    6.861902e+00  5.101003e+00  1.085747e+00  'None'  0.000000e+00
+  Atom   29  C    7.804241e+00  7.537117e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   30  F    5.735444e+00  7.579019e+00  1.085747e+00  'None'  0.000000e+00
+  Atom   31  F    5.735444e+00  7.579019e+00  -1.085747e+00  'None'  0.000000e+00
+  Atom   32  C    7.884263e+00  9.064021e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   33  F    8.407959e+00  7.062167e+00  -1.085747e+00  'None'  0.000000e+00
+  Atom   34  F    8.407959e+00  7.062167e+00  1.085747e+00  'None'  0.000000e+00
+  Atom   35  F    9.159493e+00  9.441762e+00  0.000000e+00  'None'  0.000000e+00
+  Atom   36  F    7.281501e+00  9.540183e+00  1.085747e+00  'None'  0.000000e+00
+  Atom   37  F    7.281501e+00  9.540183e+00  -1.085747e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    5
+  Bond    1    6
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5   10
+  Bond    6   11
+  Bond    6   12
+  Bond    6   13
+  Bond    8   14
+  Bond    8   15
+  Bond    8   16
+  Bond   14   17
+  Bond   14   18
+  Bond   14   19
+  Bond   17   20
+  Bond   17   21
+  Bond   17   22
+  Bond   20   23
+  Bond   20   24
+  Bond   20   25
+  Bond   23   26
+  Bond   23   27
+  Bond   23   28
+  Bond   26   29
+  Bond   26   30
+  Bond   26   31
+  Bond   29   32
+  Bond   29   33
+  Bond   29   34
+  Bond   32   35
+  Bond   32   36
+  Bond   32   37
+
+  # Angles
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    1    5    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    5   10
+  Angle    4    5   10
+  Angle    1    6   11
+  Angle    1    6   12
+  Angle   12    6   11
+  Angle    1    6   13
+  Angle   13    6   11
+  Angle   13    6   12
+  Angle    3    8   14
+  Angle    3    8   15
+  Angle   15    8   14
+  Angle    3    8   16
+  Angle   16    8   14
+  Angle   16    8   15
+  Angle    8   14   17
+  Angle    8   14   18
+  Angle   18   14   17
+  Angle    8   14   19
+  Angle   19   14   17
+  Angle   19   14   18
+  Angle   14   17   20
+  Angle   14   17   21
+  Angle   21   17   20
+  Angle   14   17   22
+  Angle   22   17   20
+  Angle   22   17   21
+  Angle   17   20   23
+  Angle   17   20   24
+  Angle   24   20   23
+  Angle   17   20   25
+  Angle   25   20   23
+  Angle   25   20   24
+  Angle   20   23   26
+  Angle   20   23   27
+  Angle   27   23   26
+  Angle   20   23   28
+  Angle   28   23   26
+  Angle   28   23   27
+  Angle   23   26   29
+  Angle   23   26   30
+  Angle   30   26   29
+  Angle   23   26   31
+  Angle   31   26   29
+  Angle   31   26   30
+  Angle   26   29   32
+  Angle   26   29   33
+  Angle   33   29   32
+  Angle   26   29   34
+  Angle   34   29   32
+  Angle   34   29   33
+  Angle   29   32   35
+  Angle   29   32   36
+  Angle   36   32   35
+  Angle   29   32   37
+  Angle   37   32   35
+  Angle   37   32   36
+
+  # Torsions
+  Torsion    6    1    2    3
+  Torsion    5    1    2    3
+  Torsion    5    1    2    7
+  Torsion    6    1    2    7
+  Torsion    7    2    3    4
+  Torsion    1    2    3    4
+  Torsion    7    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    1    5    4
+  Torsion    6    1    5    4
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    3    4    5    1
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    9    4    5    1
+  Torsion    2    1    5   10
+  Torsion    6    1    5   10
+  Torsion    9    4    5   10
+  Torsion    3    4    5   10
+  Torsion    2    1    6   11
+  Torsion    5    1    6   11
+  Torsion    2    1    6   12
+  Torsion    5    1    6   12
+  Torsion    2    1    6   13
+  Torsion    5    1    6   13
+  Torsion    2    3    8   14
+  Torsion    4    3    8   14
+  Torsion    2    3    8   15
+  Torsion    4    3    8   15
+  Torsion    2    3    8   16
+  Torsion    4    3    8   16
+  Torsion    3    8   14   17
+  Torsion   15    8   14   17
+  Torsion   16    8   14   17
+  Torsion    3    8   14   18
+  Torsion   15    8   14   18
+  Torsion   16    8   14   18
+  Torsion    3    8   14   19
+  Torsion   15    8   14   19
+  Torsion   16    8   14   19
+  Torsion    8   14   17   20
+  Torsion   18   14   17   20
+  Torsion   19   14   17   20
+  Torsion    8   14   17   21
+  Torsion   18   14   17   21
+  Torsion   19   14   17   21
+  Torsion    8   14   17   22
+  Torsion   18   14   17   22
+  Torsion   19   14   17   22
+  Torsion   14   17   20   23
+  Torsion   21   17   20   23
+  Torsion   22   17   20   23
+  Torsion   14   17   20   24
+  Torsion   21   17   20   24
+  Torsion   22   17   20   24
+  Torsion   14   17   20   25
+  Torsion   21   17   20   25
+  Torsion   22   17   20   25
+  Torsion   17   20   23   26
+  Torsion   24   20   23   26
+  Torsion   25   20   23   26
+  Torsion   17   20   23   27
+  Torsion   24   20   23   27
+  Torsion   25   20   23   27
+  Torsion   17   20   23   28
+  Torsion   24   20   23   28
+  Torsion   25   20   23   28
+  Torsion   20   23   26   29
+  Torsion   27   23   26   29
+  Torsion   28   23   26   29
+  Torsion   20   23   26   30
+  Torsion   27   23   26   30
+  Torsion   28   23   26   30
+  Torsion   20   23   26   31
+  Torsion   27   23   26   31
+  Torsion   28   23   26   31
+  Torsion   23   26   29   32
+  Torsion   30   26   29   32
+  Torsion   31   26   29   32
+  Torsion   23   26   29   33
+  Torsion   30   26   29   33
+  Torsion   31   26   29   33
+  Torsion   23   26   29   34
+  Torsion   30   26   29   34
+  Torsion   31   26   29   34
+  Torsion   33   29   32   35
+  Torsion   26   29   32   35
+  Torsion   34   29   32   35
+  Torsion   33   29   32   36
+  Torsion   26   29   32   36
+  Torsion   34   29   32   36
+  Torsion   33   29   32   37
+  Torsion   26   29   32   37
+  Torsion   34   29   32   37
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'c8isoqui'
+  # Atoms
+  Atom    1  N    -7.462900e-01  -5.102000e-01  4.300000e-04  'None'  0.000000e+00
+  Atom    2  C    -1.954810e+00  -1.154660e+00  -3.080000e-03  'None'  0.000000e+00
+  Atom    3  C    -3.158540e+00  -4.356400e-01  -8.300000e-04  'None'  0.000000e+00
+  Atom    4  C    -4.397790e+00  -1.095090e+00  -3.590000e-03  'None'  0.000000e+00
+  Atom    5  C    -5.584540e+00  -3.553300e-01  -1.420000e-03  'None'  0.000000e+00
+  Atom    6  C    -5.542130e+00  1.041890e+00  3.240000e-03  'None'  0.000000e+00
+  Atom    7  C    -4.312960e+00  1.707460e+00  6.090000e-03  'None'  0.000000e+00
+  Atom    8  C    -3.116820e+00  9.735000e-01  4.310000e-03  'None'  0.000000e+00
+  Atom    9  C    -1.879950e+00  1.618950e+00  7.700000e-03  'None'  0.000000e+00
+  Atom   10  C    -7.061700e-01  8.639700e-01  6.110000e-03  'None'  0.000000e+00
+  Atom   11  H    -1.987730e+00  -2.239710e+00  -7.360000e-03  'None'  0.000000e+00
+  Atom   12  H    -4.448610e+00  -2.177300e+00  -7.250000e-03  'None'  0.000000e+00
+  Atom   13  H    -6.538970e+00  -8.656300e-01  -3.410000e-03  'None'  0.000000e+00
+  Atom   14  H    -6.463270e+00  1.610200e+00  4.750000e-03  'None'  0.000000e+00
+  Atom   15  H    -4.296980e+00  2.790940e+00  9.780000e-03  'None'  0.000000e+00
+  Atom   16  H    -1.817850e+00  2.700880e+00  1.165000e-02  'None'  0.000000e+00
+  Atom   17  H    2.250900e-01  1.410340e+00  8.960000e-03  'None'  0.000000e+00
+  Atom   18  C    4.648400e-01  -1.361950e+00  -2.810000e-03  'None'  0.000000e+00
+  Atom   19  H    4.380300e-01  -2.020210e+00  8.941600e-01  'None'  0.000000e+00
+  Atom   20  H    4.420600e-01  -2.006350e+00  -9.098700e-01  'None'  0.000000e+00
+  Atom   21  C    1.797700e+00  -5.937100e-01  7.850000e-03  'None'  0.000000e+00
+  Atom   22  C    3.000290e+00  -1.544830e+00  -2.500000e-03  'None'  0.000000e+00
+  Atom   23  C    4.309600e+00  -7.468200e-01  1.501000e-02  'None'  0.000000e+00
+  Atom   24  C    5.532920e+00  -1.669230e+00  -7.820000e-03  'None'  0.000000e+00
+  Atom   25  C    6.827220e+00  -8.467800e-01  1.317000e-02  'None'  0.000000e+00
+  Atom   26  C    8.062330e+00  -1.752670e+00  -1.912000e-02  'None'  0.000000e+00
+  Atom   27  C    9.346180e+00  -9.276700e-01  3.400000e-03  'None'  0.000000e+00
+  Atom   28  H    1.848430e+00  3.405000e-02  9.247100e-01  'None'  0.000000e+00
+  Atom   29  H    1.853030e+00  5.456000e-02  -8.942900e-01  'None'  0.000000e+00
+  Atom   30  H    2.963440e+00  -2.175940e+00  -9.178200e-01  'None'  0.000000e+00
+  Atom   31  H    2.959020e+00  -2.206130e+00  8.910500e-01  'None'  0.000000e+00
+  Atom   32  H    4.341700e+00  -1.197200e-01  9.335300e-01  'None'  0.000000e+00
+  Atom   33  H    4.342020e+00  -7.913000e-02  -8.743900e-01  'None'  0.000000e+00
+  Atom   34  H    5.506060e+00  -2.292080e+00  -9.291300e-01  'None'  0.000000e+00
+  Atom   35  H    5.507190e+00  -2.339740e+00  8.794300e-01  'None'  0.000000e+00
+  Atom   36  H    6.851650e+00  -2.265800e-01  9.366100e-01  'None'  0.000000e+00
+  Atom   37  H    6.846860e+00  -1.717700e-01  -8.710900e-01  'None'  0.000000e+00
+  Atom   38  H    8.048290e+00  -2.370420e+00  -9.434800e-01  'None'  0.000000e+00
+  Atom   39  H    8.053950e+00  -2.429020e+00  8.632600e-01  'None'  0.000000e+00
+  Atom   40  H    9.388770e+00  -2.553400e-01  -8.800800e-01  'None'  0.000000e+00
+  Atom   41  H    1.022549e+01  -1.604940e+00  -2.251000e-02  'None'  0.000000e+00
+  Atom   42  H    9.395470e+00  -3.156800e-01  9.293400e-01  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1   10
+  Bond    1   18
+  Bond    2    3
+  Bond    2   11
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4   12
+  Bond    5    6
+  Bond    5   13
+  Bond    6    7
+  Bond    6   14
+  Bond    7    8
+  Bond    7   15
+  Bond    8    9
+  Bond    9   10
+  Bond    9   16
+  Bond   10   17
+  Bond   18   19
+  Bond   18   20
+  Bond   18   21
+  Bond   21   22
+  Bond   21   28
+  Bond   21   29
+  Bond   22   23
+  Bond   22   30
+  Bond   22   31
+  Bond   23   24
+  Bond   23   32
+  Bond   23   33
+  Bond   24   25
+  Bond   24   34
+  Bond   24   35
+  Bond   25   26
+  Bond   25   36
+  Bond   25   37
+  Bond   26   27
+  Bond   26   38
+  Bond   26   39
+  Bond   27   40
+  Bond   27   41
+  Bond   27   42
+
+  # Angles
+  Angle   10    1    2
+  Angle   18    1    2
+  Angle   18    1   10
+  Angle    1    2    3
+  Angle    1    2   11
+  Angle   11    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    3    4    5
+  Angle    3    4   12
+  Angle   12    4    5
+  Angle    4    5    6
+  Angle    4    5   13
+  Angle   13    5    6
+  Angle    5    6    7
+  Angle    5    6   14
+  Angle   14    6    7
+  Angle    3    8    7
+  Angle    6    7    8
+  Angle    6    7   15
+  Angle   15    7    8
+  Angle    3    8    9
+  Angle    7    8    9
+  Angle    1   10    9
+  Angle    8    9   10
+  Angle    8    9   16
+  Angle   16    9   10
+  Angle    1   10   17
+  Angle    9   10   17
+  Angle    1   18   19
+  Angle    1   18   20
+  Angle   20   18   19
+  Angle    1   18   21
+  Angle   21   18   19
+  Angle   21   18   20
+  Angle   18   21   22
+  Angle   18   21   28
+  Angle   28   21   22
+  Angle   18   21   29
+  Angle   29   21   22
+  Angle   29   21   28
+  Angle   21   22   23
+  Angle   21   22   30
+  Angle   30   22   23
+  Angle   21   22   31
+  Angle   31   22   23
+  Angle   31   22   30
+  Angle   22   23   24
+  Angle   22   23   32
+  Angle   32   23   24
+  Angle   22   23   33
+  Angle   33   23   24
+  Angle   33   23   32
+  Angle   23   24   25
+  Angle   23   24   34
+  Angle   34   24   25
+  Angle   23   24   35
+  Angle   35   24   25
+  Angle   35   24   34
+  Angle   24   25   26
+  Angle   24   25   36
+  Angle   36   25   26
+  Angle   24   25   37
+  Angle   37   25   26
+  Angle   37   25   36
+  Angle   25   26   27
+  Angle   25   26   38
+  Angle   38   26   27
+  Angle   25   26   39
+  Angle   39   26   27
+  Angle   39   26   38
+  Angle   26   27   40
+  Angle   26   27   41
+  Angle   41   27   40
+  Angle   26   27   42
+  Angle   42   27   40
+  Angle   42   27   41
+
+  # Torsions
+  Torsion   18    1    2    3
+  Torsion   10    1    2    3
+  Torsion   10    1    2   11
+  Torsion   18    1    2   11
+  Torsion   11    2    3    4
+  Torsion    1    2    3    4
+  Torsion   11    2    3    8
+  Torsion    1    2    3    8
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    2    3    4   12
+  Torsion    8    3    4   12
+  Torsion   12    4    5    6
+  Torsion    3    4    5    6
+  Torsion   12    4    5   13
+  Torsion    3    4    5   13
+  Torsion    4    5    6    7
+  Torsion   13    5    6    7
+  Torsion    4    5    6   14
+  Torsion   13    5    6   14
+  Torsion    2    3    8    7
+  Torsion    4    3    8    7
+  Torsion    5    6    7    8
+  Torsion   14    6    7    8
+  Torsion    6    7    8    3
+  Torsion    5    6    7   15
+  Torsion   14    6    7   15
+  Torsion   15    7    8    3
+  Torsion    2    3    8    9
+  Torsion    4    3    8    9
+  Torsion    6    7    8    9
+  Torsion   15    7    8    9
+  Torsion    2    1   10    9
+  Torsion   18    1   10    9
+  Torsion    3    8    9   10
+  Torsion    7    8    9   10
+  Torsion    8    9   10    1
+  Torsion    3    8    9   16
+  Torsion    7    8    9   16
+  Torsion   16    9   10    1
+  Torsion    2    1   10   17
+  Torsion   18    1   10   17
+  Torsion    8    9   10   17
+  Torsion   16    9   10   17
+  Torsion    2    1   18   19
+  Torsion   10    1   18   19
+  Torsion    2    1   18   20
+  Torsion   10    1   18   20
+  Torsion    2    1   18   21
+  Torsion   10    1   18   21
+  Torsion    1   18   21   22
+  Torsion   19   18   21   22
+  Torsion   20   18   21   22
+  Torsion    1   18   21   28
+  Torsion   19   18   21   28
+  Torsion   20   18   21   28
+  Torsion    1   18   21   29
+  Torsion   19   18   21   29
+  Torsion   20   18   21   29
+  Torsion   18   21   22   23
+  Torsion   28   21   22   23
+  Torsion   29   21   22   23
+  Torsion   18   21   22   30
+  Torsion   28   21   22   30
+  Torsion   29   21   22   30
+  Torsion   18   21   22   31
+  Torsion   28   21   22   31
+  Torsion   29   21   22   31
+  Torsion   21   22   23   24
+  Torsion   30   22   23   24
+  Torsion   31   22   23   24
+  Torsion   21   22   23   32
+  Torsion   30   22   23   32
+  Torsion   31   22   23   32
+  Torsion   21   22   23   33
+  Torsion   30   22   23   33
+  Torsion   31   22   23   33
+  Torsion   22   23   24   25
+  Torsion   32   23   24   25
+  Torsion   33   23   24   25
+  Torsion   22   23   24   34
+  Torsion   32   23   24   34
+  Torsion   33   23   24   34
+  Torsion   22   23   24   35
+  Torsion   32   23   24   35
+  Torsion   33   23   24   35
+  Torsion   34   24   25   26
+  Torsion   23   24   25   26
+  Torsion   35   24   25   26
+  Torsion   34   24   25   36
+  Torsion   23   24   25   36
+  Torsion   35   24   25   36
+  Torsion   34   24   25   37
+  Torsion   23   24   25   37
+  Torsion   35   24   25   37
+  Torsion   24   25   26   27
+  Torsion   36   25   26   27
+  Torsion   37   25   26   27
+  Torsion   24   25   26   38
+  Torsion   36   25   26   38
+  Torsion   37   25   26   38
+  Torsion   24   25   26   39
+  Torsion   36   25   26   39
+  Torsion   37   25   26   39
+  Torsion   25   26   27   40
+  Torsion   38   26   27   40
+  Torsion   39   26   27   40
+  Torsion   25   26   27   41
+  Torsion   38   26   27   41
+  Torsion   39   26   27   41
+  Torsion   25   26   27   42
+  Torsion   38   26   27   42
+  Torsion   39   26   27   42
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'cholinium'
+  # Atoms
+  Atom    1  N    -2.768440e+00  4.263700e-01  -3.376100e-01  'None'  0.000000e+00
+  Atom    2  C    -1.285080e+00  4.389300e-01  -3.392900e-01  'None'  0.000000e+00
+  Atom    3  C    -3.231700e+00  5.508100e-01  1.065130e+00  'None'  0.000000e+00
+  Atom    4  C    -3.221890e+00  -8.704600e-01  -8.947300e-01  'None'  0.000000e+00
+  Atom    5  H    -2.927860e+00  1.528410e+00  1.501580e+00  'None'  0.000000e+00
+  Atom    6  H    -2.802310e+00  -2.561500e-01  1.700790e+00  'None'  0.000000e+00
+  Atom    7  H    -4.335300e+00  4.581900e-01  1.143800e+00  'None'  0.000000e+00
+  Atom    8  H    -8.903400e-01  1.389810e+00  8.472000e-02  'None'  0.000000e+00
+  Atom    9  H    -8.830200e-01  3.334100e-01  -1.372240e+00  'None'  0.000000e+00
+  Atom   10  H    -8.713600e-01  -3.970500e-01  2.689900e-01  'None'  0.000000e+00
+  Atom   11  H    -2.909430e+00  -9.807100e-01  -1.957140e+00  'None'  0.000000e+00
+  Atom   12  H    -4.325480e+00  -9.787100e-01  -8.396700e-01  'None'  0.000000e+00
+  Atom   13  H    -2.793070e+00  -1.723300e+00  -3.216300e-01  'None'  0.000000e+00
+  Atom   14  C    -3.238440e+00  1.575000e+00  -1.173080e+00  'None'  0.000000e+00
+  Atom   15  H    -2.838440e+00  2.528550e+00  -7.568700e-01  'None'  0.000000e+00
+  Atom   16  C    -4.767230e+00  1.734170e+00  -1.293320e+00  'None'  0.000000e+00
+  Atom   17  H    -2.833560e+00  1.475870e+00  -2.206890e+00  'None'  0.000000e+00
+  Atom   18  H    -5.214760e+00  1.902820e+00  -2.912900e-01  'None'  0.000000e+00
+  Atom   19  H    -5.210930e+00  8.326000e-01  -1.765490e+00  'None'  0.000000e+00
+  Atom   20  O    -5.044320e+00  2.844870e+00  -2.100560e+00  'None'  0.000000e+00
+  Atom   21  H    -6.033410e+00  2.915570e+00  -2.145780e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1    4
+  Bond    1   14
+  Bond    2    8
+  Bond    2    9
+  Bond    2   10
+  Bond    3    5
+  Bond    3    6
+  Bond    3    7
+  Bond    4   11
+  Bond    4   12
+  Bond    4   13
+  Bond   14   15
+  Bond   14   16
+  Bond   14   17
+  Bond   16   18
+  Bond   16   19
+  Bond   16   20
+  Bond   20   21
+
+  # Angles
+  Angle    3    1    2
+  Angle    4    1    2
+  Angle    4    1    3
+  Angle   14    1    2
+  Angle   14    1    3
+  Angle   14    1    4
+  Angle    1    2    8
+  Angle    1    2    9
+  Angle    9    2    8
+  Angle    1    2   10
+  Angle   10    2    8
+  Angle   10    2    9
+  Angle    1    3    5
+  Angle    1    3    6
+  Angle    6    3    5
+  Angle    1    3    7
+  Angle    7    3    5
+  Angle    7    3    6
+  Angle    1    4   11
+  Angle    1    4   12
+  Angle   12    4   11
+  Angle    1    4   13
+  Angle   13    4   11
+  Angle   13    4   12
+  Angle    1   14   15
+  Angle    1   14   16
+  Angle   16   14   15
+  Angle    1   14   17
+  Angle   17   14   15
+  Angle   17   14   16
+  Angle   14   16   18
+  Angle   14   16   19
+  Angle   19   16   18
+  Angle   14   16   20
+  Angle   20   16   18
+  Angle   20   16   19
+  Angle   16   20   21
+
+  # Torsions
+  Torsion    3    1    2    8
+  Torsion    4    1    2    8
+  Torsion   14    1    2    8
+  Torsion    3    1    2    9
+  Torsion    4    1    2    9
+  Torsion   14    1    2    9
+  Torsion    3    1    2   10
+  Torsion    4    1    2   10
+  Torsion   14    1    2   10
+  Torsion    2    1    3    5
+  Torsion    4    1    3    5
+  Torsion   14    1    3    5
+  Torsion    2    1    3    6
+  Torsion    4    1    3    6
+  Torsion   14    1    3    6
+  Torsion    2    1    3    7
+  Torsion    4    1    3    7
+  Torsion   14    1    3    7
+  Torsion    2    1    4   11
+  Torsion    3    1    4   11
+  Torsion   14    1    4   11
+  Torsion    2    1    4   12
+  Torsion    3    1    4   12
+  Torsion   14    1    4   12
+  Torsion    2    1    4   13
+  Torsion    3    1    4   13
+  Torsion   14    1    4   13
+  Torsion    2    1   14   15
+  Torsion    3    1   14   15
+  Torsion    4    1   14   15
+  Torsion    2    1   14   16
+  Torsion    3    1   14   16
+  Torsion    4    1   14   16
+  Torsion    2    1   14   17
+  Torsion    3    1   14   17
+  Torsion    4    1   14   17
+  Torsion    1   14   16   18
+  Torsion   15   14   16   18
+  Torsion   17   14   16   18
+  Torsion    1   14   16   19
+  Torsion   15   14   16   19
+  Torsion   17   14   16   19
+  Torsion    1   14   16   20
+  Torsion   15   14   16   20
+  Torsion   17   14   16   20
+  Torsion   18   16   20   21
+  Torsion   14   16   20   21
+  Torsion   19   16   20   21
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'gua'
+  # Atoms
+  Atom    1  C    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  N    1.340000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  N    -6.700000e-01  -1.160474e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  N    -6.700000e-01  1.160474e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    5  H    1.845000e+00  -8.746860e-01  0.000000e+00  'None'  0.000000e+00
+  Atom    6  H    1.845000e+00  8.746860e-01  -0.000000e+00  'None'  0.000000e+00
+  Atom    7  H    -1.650000e-01  2.035160e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    8  H    -1.680000e+00  1.160474e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    9  H    -1.650000e-01  -2.035160e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom   10  H    -1.680000e+00  -1.160474e+00  0.000000e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1    4
+  Bond    2    5
+  Bond    2    6
+  Bond    3    9
+  Bond    3   10
+  Bond    4    7
+  Bond    4    8
+
+  # Angles
+  Angle    3    1    2
+  Angle    4    1    2
+  Angle    4    1    3
+  Angle    1    2    5
+  Angle    1    2    6
+  Angle    6    2    5
+  Angle    1    3    9
+  Angle    1    3   10
+  Angle   10    3    9
+  Angle    1    4    7
+  Angle    1    4    8
+  Angle    8    4    7
+
+  # Torsions
+  Torsion    4    1    2    5
+  Torsion    3    1    2    5
+  Torsion    3    1    2    6
+  Torsion    4    1    2    6
+  Torsion    2    1    3    9
+  Torsion    4    1    3    9
+  Torsion    2    1    3   10
+  Torsion    4    1    3   10
+  Torsion    2    1    4    7
+  Torsion    3    1    4    7
+  Torsion    2    1    4    8
+  Torsion    3    1    4    8
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'N1110'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.471000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  C    -4.910300e-01  -1.386626e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    -4.910300e-01  6.933130e-01  1.200853e+00  'None'  0.000000e+00
+  Atom    5  H    -3.638490e-01  5.137400e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom    6  H    1.834849e+00  -5.137400e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom    7  H    1.834849e+00  1.027479e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom    8  H    1.834849e+00  -5.137400e-01  8.898230e-01  'None'  0.000000e+00
+  Atom    9  H    -1.581030e+00  -1.386626e+00  -6.320000e-04  'None'  0.000000e+00
+  Atom   10  H    -1.276970e-01  -1.901278e+00  -8.895070e-01  'None'  0.000000e+00
+  Atom   11  H    -1.287290e-01  -1.900912e+00  8.901390e-01  'None'  0.000000e+00
+  Atom   12  H    -1.581030e+00  6.927660e-01  1.201169e+00  'None'  0.000000e+00
+  Atom   13  H    -1.276970e-01  1.803030e-01  2.091308e+00  'None'  0.000000e+00
+  Atom   14  H    -1.287290e-01  1.721339e+00  1.201169e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1    4
+  Bond    1    5
+  Bond    2    6
+  Bond    2    7
+  Bond    2    8
+  Bond    3    9
+  Bond    3   10
+  Bond    3   11
+  Bond    4   12
+  Bond    4   13
+  Bond    4   14
+
+  # Angles
+  Angle    3    1    2
+  Angle    4    1    2
+  Angle    4    1    3
+  Angle    5    1    2
+  Angle    5    1    3
+  Angle    5    1    4
+  Angle    1    2    6
+  Angle    1    2    7
+  Angle    7    2    6
+  Angle    1    2    8
+  Angle    8    2    6
+  Angle    8    2    7
+  Angle    1    3    9
+  Angle    1    3   10
+  Angle   10    3    9
+  Angle    1    3   11
+  Angle   11    3    9
+  Angle   11    3   10
+  Angle    1    4   12
+  Angle    1    4   13
+  Angle   13    4   12
+  Angle    1    4   14
+  Angle   14    4   12
+  Angle   14    4   13
+
+  # Torsions
+  Torsion    3    1    2    6
+  Torsion    4    1    2    6
+  Torsion    5    1    2    6
+  Torsion    3    1    2    7
+  Torsion    4    1    2    7
+  Torsion    5    1    2    7
+  Torsion    3    1    2    8
+  Torsion    4    1    2    8
+  Torsion    5    1    2    8
+  Torsion    2    1    3    9
+  Torsion    4    1    3    9
+  Torsion    5    1    3    9
+  Torsion    2    1    3   10
+  Torsion    4    1    3   10
+  Torsion    5    1    3   10
+  Torsion    2    1    3   11
+  Torsion    4    1    3   11
+  Torsion    5    1    3   11
+  Torsion    2    1    4   12
+  Torsion    3    1    4   12
+  Torsion    5    1    4   12
+  Torsion    2    1    4   13
+  Torsion    3    1    4   13
+  Torsion    5    1    4   13
+  Torsion    2    1    4   14
+  Torsion    3    1    4   14
+  Torsion    5    1    4   14
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'N1111'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.471000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  C    -4.910300e-01  -1.386626e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    -4.910300e-01  6.933130e-01  1.200853e+00  'None'  0.000000e+00
+  Atom    5  C    -4.910300e-01  6.933130e-01  -1.200853e+00  'None'  0.000000e+00
+  Atom    6  H    1.834849e+00  -5.137400e-01  -8.898230e-01  'None'  0.000000e+00
+  Atom    7  H    1.834849e+00  1.027479e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom    8  H    1.834849e+00  -5.137400e-01  8.898230e-01  'None'  0.000000e+00
+  Atom    9  H    -1.581030e+00  -1.386626e+00  -6.320000e-04  'None'  0.000000e+00
+  Atom   10  H    -1.276970e-01  -1.901278e+00  -8.895070e-01  'None'  0.000000e+00
+  Atom   11  H    -1.287290e-01  -1.900912e+00  8.901390e-01  'None'  0.000000e+00
+  Atom   12  H    -1.581030e+00  6.927660e-01  1.201169e+00  'None'  0.000000e+00
+  Atom   13  H    -1.276970e-01  1.803030e-01  2.091308e+00  'None'  0.000000e+00
+  Atom   14  H    -1.287290e-01  1.721339e+00  1.201169e+00  'None'  0.000000e+00
+  Atom   15  H    -1.282130e-01  1.799380e-01  -2.091308e+00  'None'  0.000000e+00
+  Atom   16  H    -1.581030e+00  6.933130e-01  -1.200853e+00  'None'  0.000000e+00
+  Atom   17  H    -1.282130e-01  1.721157e+00  -1.201485e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1    4
+  Bond    1    5
+  Bond    2    6
+  Bond    2    7
+  Bond    2    8
+  Bond    3    9
+  Bond    3   10
+  Bond    3   11
+  Bond    4   12
+  Bond    4   13
+  Bond    4   14
+  Bond    5   15
+  Bond    5   16
+  Bond    5   17
+
+  # Angles
+  Angle    3    1    2
+  Angle    4    1    2
+  Angle    4    1    3
+  Angle    5    1    2
+  Angle    5    1    3
+  Angle    5    1    4
+  Angle    1    2    6
+  Angle    1    2    7
+  Angle    7    2    6
+  Angle    1    2    8
+  Angle    8    2    6
+  Angle    8    2    7
+  Angle    1    3    9
+  Angle    1    3   10
+  Angle   10    3    9
+  Angle    1    3   11
+  Angle   11    3    9
+  Angle   11    3   10
+  Angle    1    4   12
+  Angle    1    4   13
+  Angle   13    4   12
+  Angle    1    4   14
+  Angle   14    4   12
+  Angle   14    4   13
+  Angle    1    5   15
+  Angle    1    5   16
+  Angle   16    5   15
+  Angle    1    5   17
+  Angle   17    5   15
+  Angle   17    5   16
+
+  # Torsions
+  Torsion    3    1    2    6
+  Torsion    4    1    2    6
+  Torsion    5    1    2    6
+  Torsion    3    1    2    7
+  Torsion    4    1    2    7
+  Torsion    5    1    2    7
+  Torsion    3    1    2    8
+  Torsion    4    1    2    8
+  Torsion    5    1    2    8
+  Torsion    2    1    3    9
+  Torsion    4    1    3    9
+  Torsion    5    1    3    9
+  Torsion    2    1    3   10
+  Torsion    4    1    3   10
+  Torsion    5    1    3   10
+  Torsion    2    1    3   11
+  Torsion    4    1    3   11
+  Torsion    5    1    3   11
+  Torsion    2    1    4   12
+  Torsion    3    1    4   12
+  Torsion    5    1    4   12
+  Torsion    2    1    4   13
+  Torsion    3    1    4   13
+  Torsion    5    1    4   13
+  Torsion    2    1    4   14
+  Torsion    3    1    4   14
+  Torsion    5    1    4   14
+  Torsion    2    1    5   15
+  Torsion    3    1    5   15
+  Torsion    4    1    5   15
+  Torsion    2    1    5   16
+  Torsion    3    1    5   16
+  Torsion    4    1    5   16
+  Torsion    2    1    5   17
+  Torsion    3    1    5   17
+  Torsion    4    1    5   17
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'N2220'
+  # Atoms
+  Atom    1  N    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.354150e+00  -4.115600e-01  -4.708700e-01  'None'  0.000000e+00
+  Atom    3  C    -1.033390e+00  -9.671700e-01  -4.707400e-01  'None'  0.000000e+00
+  Atom    4  C    -3.207300e-01  1.378410e+00  -4.707900e-01  'None'  0.000000e+00
+  Atom    5  C    1.820450e+00  -1.776840e+00  5.640000e-02  'None'  0.000000e+00
+  Atom    6  H    2.117470e+00  2.957000e-01  -9.133000e-02  'None'  0.000000e+00
+  Atom    7  H    1.401220e+00  -4.121600e-01  -1.583060e+00  'None'  0.000000e+00
+  Atom    8  H    1.221720e+00  -2.615220e+00  -3.493900e-01  'None'  0.000000e+00
+  Atom    9  H    1.788770e+00  -1.792900e+00  1.166360e+00  'None'  0.000000e+00
+  Atom   10  H    2.868040e+00  -1.952400e+00  -2.684500e-01  'None'  0.000000e+00
+  Atom   11  H    -1.314810e+00  1.685860e+00  -9.099000e-02  'None'  0.000000e+00
+  Atom   12  H    -3.439500e-01  1.419580e+00  -1.582970e+00  'None'  0.000000e+00
+  Atom   13  C    6.285200e-01  2.464920e+00  5.649000e-02  'None'  0.000000e+00
+  Atom   14  H    1.653850e+00  2.365800e+00  -3.495500e-01  'None'  0.000000e+00
+  Atom   15  H    6.585200e-01  2.445280e+00  1.166440e+00  'None'  0.000000e+00
+  Atom   16  H    2.565900e-01  3.459960e+00  -2.680700e-01  'None'  0.000000e+00
+  Atom   17  H    -8.028900e-01  -1.981540e+00  -9.014000e-02  'None'  0.000000e+00
+  Atom   18  H    -1.056790e+00  -1.008540e+00  -1.582900e+00  'None'  0.000000e+00
+  Atom   19  C    -2.449230e+00  -6.876800e-01  5.535000e-02  'None'  0.000000e+00
+  Atom   20  H    -2.448030e+00  -6.508900e-01  1.165260e+00  'None'  0.000000e+00
+  Atom   21  H    -3.124910e+00  -1.507480e+00  -2.690000e-01  'None'  0.000000e+00
+  Atom   22  H    -2.875620e+00  2.495300e-01  -3.519000e-01  'None'  0.000000e+00
+  Atom   23  H    0.000000e+00  0.000000e+00  1.048140e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1    4
+  Bond    1   23
+  Bond    2    5
+  Bond    2    6
+  Bond    2    7
+  Bond    3   17
+  Bond    3   18
+  Bond    3   19
+  Bond    4   11
+  Bond    4   12
+  Bond    4   13
+  Bond    5    8
+  Bond    5    9
+  Bond    5   10
+  Bond   13   14
+  Bond   13   15
+  Bond   13   16
+  Bond   19   20
+  Bond   19   21
+  Bond   19   22
+
+  # Angles
+  Angle    3    1    2
+  Angle    4    1    2
+  Angle    4    1    3
+  Angle   23    1    2
+  Angle   23    1    3
+  Angle   23    1    4
+  Angle    1    2    5
+  Angle    1    2    6
+  Angle    6    2    5
+  Angle    1    2    7
+  Angle    7    2    5
+  Angle    7    2    6
+  Angle    1    3   17
+  Angle    1    3   18
+  Angle   18    3   17
+  Angle    1    3   19
+  Angle   19    3   17
+  Angle   19    3   18
+  Angle    1    4   11
+  Angle    1    4   12
+  Angle   12    4   11
+  Angle    1    4   13
+  Angle   13    4   11
+  Angle   13    4   12
+  Angle    2    5    8
+  Angle    2    5    9
+  Angle    9    5    8
+  Angle    2    5   10
+  Angle   10    5    8
+  Angle   10    5    9
+  Angle    4   13   14
+  Angle    4   13   15
+  Angle   15   13   14
+  Angle    4   13   16
+  Angle   16   13   14
+  Angle   16   13   15
+  Angle    3   19   20
+  Angle    3   19   21
+  Angle   21   19   20
+  Angle    3   19   22
+  Angle   22   19   20
+  Angle   22   19   21
+
+  # Torsions
+  Torsion    3    1    2    5
+  Torsion    4    1    2    5
+  Torsion   23    1    2    5
+  Torsion    3    1    2    6
+  Torsion    4    1    2    6
+  Torsion   23    1    2    6
+  Torsion    3    1    2    7
+  Torsion    4    1    2    7
+  Torsion   23    1    2    7
+  Torsion    2    1    3   17
+  Torsion    4    1    3   17
+  Torsion   23    1    3   17
+  Torsion    2    1    3   18
+  Torsion    4    1    3   18
+  Torsion   23    1    3   18
+  Torsion    2    1    3   19
+  Torsion    4    1    3   19
+  Torsion   23    1    3   19
+  Torsion    2    1    4   11
+  Torsion    3    1    4   11
+  Torsion   23    1    4   11
+  Torsion    2    1    4   12
+  Torsion    3    1    4   12
+  Torsion   23    1    4   12
+  Torsion    2    1    4   13
+  Torsion    3    1    4   13
+  Torsion   23    1    4   13
+  Torsion    1    2    5    8
+  Torsion    6    2    5    8
+  Torsion    7    2    5    8
+  Torsion    1    2    5    9
+  Torsion    6    2    5    9
+  Torsion    7    2    5    9
+  Torsion    1    2    5   10
+  Torsion    6    2    5   10
+  Torsion    7    2    5   10
+  Torsion    1    4   13   14
+  Torsion   11    4   13   14
+  Torsion   12    4   13   14
+  Torsion    1    4   13   15
+  Torsion   11    4   13   15
+  Torsion   12    4   13   15
+  Torsion    1    4   13   16
+  Torsion   11    4   13   16
+  Torsion   12    4   13   16
+  Torsion    1    3   19   20
+  Torsion   17    3   19   20
+  Torsion   18    3   19   20
+  Torsion    1    3   19   21
+  Torsion   17    3   19   21
+  Torsion   18    3   19   21
+  Torsion    1    3   19   22
+  Torsion   17    3   19   22
+  Torsion   18    3   19   22
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'N2222'
+  # Atoms
+  Atom    1  N    -1.567140e+00  -1.129280e+00  8.337400e-01  'None'  0.000000e+00
+  Atom    2  C    -1.771400e-01  -5.471600e-01  8.355700e-01  'None'  0.000000e+00
+  Atom    3  C    -1.526020e+00  -2.633570e+00  7.536500e-01  'None'  0.000000e+00
+  Atom    4  C    -2.348800e+00  -6.654500e-01  -3.682800e-01  'None'  0.000000e+00
+  Atom    5  C    -2.216620e+00  -6.709500e-01  2.114010e+00  'None'  0.000000e+00
+  Atom    6  H    3.726500e-01  -8.730000e-01  1.744660e+00  'None'  0.000000e+00
+  Atom    7  H    -2.261300e-01  5.590200e-01  9.298800e-01  'None'  0.000000e+00
+  Atom    8  H    -1.875050e+00  -1.041350e+00  -1.300600e+00  'None'  0.000000e+00
+  Atom    9  H    -3.358310e+00  -1.129960e+00  -3.704200e-01  'None'  0.000000e+00
+  Atom   10  H    -1.074480e+00  -2.952950e+00  -2.102000e-01  'None'  0.000000e+00
+  Atom   11  H    -2.558590e+00  -3.042840e+00  7.184900e-01  'None'  0.000000e+00
+  Atom   12  H    -2.208490e+00  4.388200e-01  2.170910e+00  'None'  0.000000e+00
+  Atom   13  H    -1.608800e+00  -9.919900e-01  2.987190e+00  'None'  0.000000e+00
+  Atom   14  C    7.073800e-01  -8.757000e-01  -3.921500e-01  'None'  0.000000e+00
+  Atom   15  C    -7.699200e-01  -3.362180e+00  1.891660e+00  'None'  0.000000e+00
+  Atom   16  C    -2.534570e+00  8.643900e-01  -5.190400e-01  'None'  0.000000e+00
+  Atom   17  C    -3.671380e+00  -1.143680e+00  2.354460e+00  'None'  0.000000e+00
+  Atom   18  H    -4.283520e+00  -8.485300e-01  1.527980e+00  'None'  0.000000e+00
+  Atom   19  H    -4.046770e+00  -6.998100e-01  3.252770e+00  'None'  0.000000e+00
+  Atom   20  H    -3.689120e+00  -2.209370e+00  2.448790e+00  'None'  0.000000e+00
+  Atom   21  H    -3.101360e+00  1.069440e+00  -1.403120e+00  'None'  0.000000e+00
+  Atom   22  H    -1.576210e+00  1.334500e+00  -5.927500e-01  'None'  0.000000e+00
+  Atom   23  H    -3.054510e+00  1.246380e+00  3.345700e-01  'None'  0.000000e+00
+  Atom   24  H    -8.091200e-01  -4.418640e+00  1.726590e+00  'None'  0.000000e+00
+  Atom   25  H    -1.228770e+00  -3.130550e+00  2.830120e+00  'None'  0.000000e+00
+  Atom   26  H    2.506000e-01  -3.040840e+00  1.904660e+00  'None'  0.000000e+00
+  Atom   27  H    2.034900e-01  -5.726500e-01  -1.286110e+00  'None'  0.000000e+00
+  Atom   28  H    8.925800e-01  -1.928980e+00  -4.267000e-01  'None'  0.000000e+00
+  Atom   29  H    1.637300e+00  -3.525000e-01  -3.120300e-01  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1    4
+  Bond    1    5
+  Bond    2    6
+  Bond    2    7
+  Bond    2   14
+  Bond    3   10
+  Bond    3   11
+  Bond    3   15
+  Bond    4    8
+  Bond    4    9
+  Bond    4   16
+  Bond    5   12
+  Bond    5   13
+  Bond    5   17
+  Bond   14   27
+  Bond   14   28
+  Bond   14   29
+  Bond   15   24
+  Bond   15   25
+  Bond   15   26
+  Bond   16   21
+  Bond   16   22
+  Bond   16   23
+  Bond   17   18
+  Bond   17   19
+  Bond   17   20
+
+  # Angles
+  Angle    3    1    2
+  Angle    4    1    2
+  Angle    4    1    3
+  Angle    5    1    2
+  Angle    5    1    3
+  Angle    5    1    4
+  Angle    1    2    6
+  Angle    1    2    7
+  Angle    7    2    6
+  Angle    1    2   14
+  Angle   14    2    6
+  Angle   14    2    7
+  Angle    1    3   10
+  Angle    1    3   11
+  Angle   11    3   10
+  Angle    1    3   15
+  Angle   15    3   10
+  Angle   15    3   11
+  Angle    1    4    8
+  Angle    1    4    9
+  Angle    9    4    8
+  Angle    1    4   16
+  Angle   16    4    8
+  Angle   16    4    9
+  Angle    1    5   12
+  Angle    1    5   13
+  Angle   13    5   12
+  Angle    1    5   17
+  Angle   17    5   12
+  Angle   17    5   13
+  Angle    2   14   27
+  Angle    2   14   28
+  Angle   28   14   27
+  Angle    2   14   29
+  Angle   29   14   27
+  Angle   29   14   28
+  Angle    3   15   24
+  Angle    3   15   25
+  Angle   25   15   24
+  Angle    3   15   26
+  Angle   26   15   24
+  Angle   26   15   25
+  Angle    4   16   21
+  Angle    4   16   22
+  Angle   22   16   21
+  Angle    4   16   23
+  Angle   23   16   21
+  Angle   23   16   22
+  Angle    5   17   18
+  Angle    5   17   19
+  Angle   19   17   18
+  Angle    5   17   20
+  Angle   20   17   18
+  Angle   20   17   19
+
+  # Torsions
+  Torsion    3    1    2    6
+  Torsion    4    1    2    6
+  Torsion    5    1    2    6
+  Torsion    3    1    2    7
+  Torsion    4    1    2    7
+  Torsion    5    1    2    7
+  Torsion    3    1    2   14
+  Torsion    4    1    2   14
+  Torsion    5    1    2   14
+  Torsion    2    1    3   10
+  Torsion    4    1    3   10
+  Torsion    5    1    3   10
+  Torsion    2    1    3   11
+  Torsion    4    1    3   11
+  Torsion    5    1    3   11
+  Torsion    2    1    3   15
+  Torsion    4    1    3   15
+  Torsion    5    1    3   15
+  Torsion    2    1    4    8
+  Torsion    3    1    4    8
+  Torsion    5    1    4    8
+  Torsion    2    1    4    9
+  Torsion    3    1    4    9
+  Torsion    5    1    4    9
+  Torsion    2    1    4   16
+  Torsion    3    1    4   16
+  Torsion    5    1    4   16
+  Torsion    2    1    5   12
+  Torsion    3    1    5   12
+  Torsion    4    1    5   12
+  Torsion    2    1    5   13
+  Torsion    3    1    5   13
+  Torsion    4    1    5   13
+  Torsion    2    1    5   17
+  Torsion    3    1    5   17
+  Torsion    4    1    5   17
+  Torsion    1    2   14   27
+  Torsion    6    2   14   27
+  Torsion    7    2   14   27
+  Torsion    1    2   14   28
+  Torsion    6    2   14   28
+  Torsion    7    2   14   28
+  Torsion    1    2   14   29
+  Torsion    6    2   14   29
+  Torsion    7    2   14   29
+  Torsion    1    3   15   24
+  Torsion   10    3   15   24
+  Torsion   11    3   15   24
+  Torsion    1    3   15   25
+  Torsion   10    3   15   25
+  Torsion   11    3   15   25
+  Torsion    1    3   15   26
+  Torsion   10    3   15   26
+  Torsion   11    3   15   26
+  Torsion    1    4   16   21
+  Torsion    8    4   16   21
+  Torsion    9    4   16   21
+  Torsion    1    4   16   22
+  Torsion    8    4   16   22
+  Torsion    9    4   16   22
+  Torsion    1    4   16   23
+  Torsion    8    4   16   23
+  Torsion    9    4   16   23
+  Torsion    1    5   17   18
+  Torsion   12    5   17   18
+  Torsion   13    5   17   18
+  Torsion    1    5   17   19
+  Torsion   12    5   17   19
+  Torsion   13    5   17   19
+  Torsion    1    5   17   20
+  Torsion   12    5   17   20
+  Torsion   13    5   17   20
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'N4444'
+  # Atoms
+  Atom    1  N    -1.567140e+00  -1.129280e+00  8.337400e-01  'None'  0.000000e+00
+  Atom    2  C    -1.771400e-01  -5.471600e-01  8.355700e-01  'None'  0.000000e+00
+  Atom    3  C    -1.526020e+00  -2.633570e+00  7.536500e-01  'None'  0.000000e+00
+  Atom    4  C    -2.348800e+00  -6.654500e-01  -3.682800e-01  'None'  0.000000e+00
+  Atom    5  C    -2.216620e+00  -6.709500e-01  2.114010e+00  'None'  0.000000e+00
+  Atom    6  H    3.726500e-01  -8.730000e-01  1.744660e+00  'None'  0.000000e+00
+  Atom    7  H    -2.261300e-01  5.590200e-01  9.298800e-01  'None'  0.000000e+00
+  Atom    8  H    -1.875050e+00  -1.041350e+00  -1.300600e+00  'None'  0.000000e+00
+  Atom    9  H    -3.358310e+00  -1.129960e+00  -3.704200e-01  'None'  0.000000e+00
+  Atom   10  H    -1.074480e+00  -2.952950e+00  -2.102000e-01  'None'  0.000000e+00
+  Atom   11  H    -2.558590e+00  -3.042840e+00  7.184900e-01  'None'  0.000000e+00
+  Atom   12  H    -2.208490e+00  4.388200e-01  2.170910e+00  'None'  0.000000e+00
+  Atom   13  H    -1.608800e+00  -9.919900e-01  2.987190e+00  'None'  0.000000e+00
+  Atom   14  C    7.073800e-01  -8.757000e-01  -3.921500e-01  'None'  0.000000e+00
+  Atom   15  C    -7.699200e-01  -3.362180e+00  1.891660e+00  'None'  0.000000e+00
+  Atom   16  C    -2.534570e+00  8.643900e-01  -5.190400e-01  'None'  0.000000e+00
+  Atom   17  C    -3.671380e+00  -1.143680e+00  2.354460e+00  'None'  0.000000e+00
+  Atom   18  H    2.406000e-01  -4.919700e-01  -1.321870e+00  'None'  0.000000e+00
+  Atom   19  H    8.591200e-01  -1.970520e+00  -4.807100e-01  'None'  0.000000e+00
+  Atom   20  H    2.940400e-01  -3.050700e+00  1.913720e+00  'None'  0.000000e+00
+  Atom   21  H    -1.238410e+00  -3.143250e+00  2.872530e+00  'None'  0.000000e+00
+  Atom   22  H    -1.551170e+00  1.368810e+00  -6.085100e-01  'None'  0.000000e+00
+  Atom   23  H    -3.082780e+00  1.277540e+00  3.517500e-01  'None'  0.000000e+00
+  Atom   24  H    -3.719440e+00  -2.250800e+00  2.392790e+00  'None'  0.000000e+00
+  Atom   25  H    -4.338860e+00  -7.734700e-01  1.550140e+00  'None'  0.000000e+00
+  Atom   26  C    2.087360e+00  -2.193100e-01  -2.534100e-01  'None'  0.000000e+00
+  Atom   27  C    -8.109500e-01  -4.881330e+00  1.679700e+00  'None'  0.000000e+00
+  Atom   28  C    -3.345030e+00  1.187150e+00  -1.781330e+00  'None'  0.000000e+00
+  Atom   29  C    -4.199830e+00  -6.036900e-01  3.689960e+00  'None'  0.000000e+00
+  Atom   30  C    2.972860e+00  -5.327900e-01  -1.456390e+00  'None'  0.000000e+00
+  Atom   31  C    -7.002000e-02  -5.615840e+00  2.793740e+00  'None'  0.000000e+00
+  Atom   32  C    -3.537330e+00  2.692320e+00  -1.945820e+00  'None'  0.000000e+00
+  Atom   33  C    -5.633820e+00  -1.060920e+00  3.943360e+00  'None'  0.000000e+00
+  Atom   34  H    2.588680e+00  -5.926400e-01  6.662400e-01  'None'  0.000000e+00
+  Atom   35  H    1.970880e+00  8.836500e-01  -1.733600e-01  'None'  0.000000e+00
+  Atom   36  H    3.125940e+00  -1.629250e+00  -1.548100e+00  'None'  0.000000e+00
+  Atom   37  H    3.962180e+00  -4.540000e-02  -1.327440e+00  'None'  0.000000e+00
+  Atom   38  H    2.506830e+00  -1.498900e-01  -2.389280e+00  'None'  0.000000e+00
+  Atom   39  H    -1.867170e+00  -5.228650e+00  1.663800e+00  'None'  0.000000e+00
+  Atom   40  H    -3.369700e-01  -5.136460e+00  7.067100e-01  'None'  0.000000e+00
+  Atom   41  H    -5.372000e-01  -5.397410e+00  3.777670e+00  'None'  0.000000e+00
+  Atom   42  H    -1.170000e-01  -6.710440e+00  2.613250e+00  'None'  0.000000e+00
+  Atom   43  H    9.962100e-01  -5.305050e+00  2.818750e+00  'None'  0.000000e+00
+  Atom   44  H    -5.684580e+00  -2.170000e+00  3.981430e+00  'None'  0.000000e+00
+  Atom   45  H    -5.987650e+00  -6.554700e-01  4.914620e+00  'None'  0.000000e+00
+  Atom   46  H    -6.304800e+00  -6.921100e-01  3.138480e+00  'None'  0.000000e+00
+  Atom   47  H    -3.556910e+00  -9.669800e-01  4.521320e+00  'None'  0.000000e+00
+  Atom   48  H    -4.175720e+00  5.079700e-01  3.680100e+00  'None'  0.000000e+00
+  Atom   49  H    -4.125820e+00  2.894070e+00  -2.865560e+00  'None'  0.000000e+00
+  Atom   50  H    -2.553250e+00  3.199990e+00  -2.034930e+00  'None'  0.000000e+00
+  Atom   51  H    -4.085670e+00  3.109210e+00  -1.074280e+00  'None'  0.000000e+00
+  Atom   52  H    -4.344560e+00  7.040200e-01  -1.718130e+00  'None'  0.000000e+00
+  Atom   53  H    -2.815260e+00  7.947700e-01  -2.676800e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1    4
+  Bond    1    5
+  Bond    2    6
+  Bond    2    7
+  Bond    2   14
+  Bond    3   10
+  Bond    3   11
+  Bond    3   15
+  Bond    4    8
+  Bond    4    9
+  Bond    4   16
+  Bond    5   12
+  Bond    5   13
+  Bond    5   17
+  Bond   14   18
+  Bond   14   19
+  Bond   14   26
+  Bond   15   20
+  Bond   15   21
+  Bond   15   27
+  Bond   16   22
+  Bond   16   23
+  Bond   16   28
+  Bond   17   24
+  Bond   17   25
+  Bond   17   29
+  Bond   26   30
+  Bond   26   34
+  Bond   26   35
+  Bond   27   31
+  Bond   27   39
+  Bond   27   40
+  Bond   28   32
+  Bond   28   52
+  Bond   28   53
+  Bond   29   33
+  Bond   29   47
+  Bond   29   48
+  Bond   30   36
+  Bond   30   37
+  Bond   30   38
+  Bond   31   41
+  Bond   31   42
+  Bond   31   43
+  Bond   32   49
+  Bond   32   50
+  Bond   32   51
+  Bond   33   44
+  Bond   33   45
+  Bond   33   46
+
+  # Angles
+  Angle    3    1    2
+  Angle    4    1    2
+  Angle    4    1    3
+  Angle    5    1    2
+  Angle    5    1    3
+  Angle    5    1    4
+  Angle    1    2    6
+  Angle    1    2    7
+  Angle    7    2    6
+  Angle    1    2   14
+  Angle   14    2    6
+  Angle   14    2    7
+  Angle    1    3   10
+  Angle    1    3   11
+  Angle   11    3   10
+  Angle    1    3   15
+  Angle   15    3   10
+  Angle   15    3   11
+  Angle    1    4    8
+  Angle    1    4    9
+  Angle    9    4    8
+  Angle    1    4   16
+  Angle   16    4    8
+  Angle   16    4    9
+  Angle    1    5   12
+  Angle    1    5   13
+  Angle   13    5   12
+  Angle    1    5   17
+  Angle   17    5   12
+  Angle   17    5   13
+  Angle    2   14   18
+  Angle    2   14   19
+  Angle   19   14   18
+  Angle    2   14   26
+  Angle   26   14   18
+  Angle   26   14   19
+  Angle    3   15   20
+  Angle    3   15   21
+  Angle   21   15   20
+  Angle    3   15   27
+  Angle   27   15   20
+  Angle   27   15   21
+  Angle    4   16   22
+  Angle    4   16   23
+  Angle   23   16   22
+  Angle    4   16   28
+  Angle   28   16   22
+  Angle   28   16   23
+  Angle    5   17   24
+  Angle    5   17   25
+  Angle   25   17   24
+  Angle    5   17   29
+  Angle   29   17   24
+  Angle   29   17   25
+  Angle   14   26   30
+  Angle   14   26   34
+  Angle   34   26   30
+  Angle   14   26   35
+  Angle   35   26   30
+  Angle   35   26   34
+  Angle   15   27   31
+  Angle   15   27   39
+  Angle   39   27   31
+  Angle   15   27   40
+  Angle   40   27   31
+  Angle   40   27   39
+  Angle   16   28   32
+  Angle   16   28   52
+  Angle   52   28   32
+  Angle   16   28   53
+  Angle   53   28   32
+  Angle   53   28   52
+  Angle   17   29   33
+  Angle   17   29   47
+  Angle   47   29   33
+  Angle   17   29   48
+  Angle   48   29   33
+  Angle   48   29   47
+  Angle   26   30   36
+  Angle   26   30   37
+  Angle   37   30   36
+  Angle   26   30   38
+  Angle   38   30   36
+  Angle   38   30   37
+  Angle   27   31   41
+  Angle   27   31   42
+  Angle   42   31   41
+  Angle   27   31   43
+  Angle   43   31   41
+  Angle   43   31   42
+  Angle   28   32   49
+  Angle   28   32   50
+  Angle   50   32   49
+  Angle   28   32   51
+  Angle   51   32   49
+  Angle   51   32   50
+  Angle   29   33   44
+  Angle   29   33   45
+  Angle   45   33   44
+  Angle   29   33   46
+  Angle   46   33   44
+  Angle   46   33   45
+
+  # Torsions
+  Torsion    3    1    2    6
+  Torsion    4    1    2    6
+  Torsion    5    1    2    6
+  Torsion    3    1    2    7
+  Torsion    4    1    2    7
+  Torsion    5    1    2    7
+  Torsion    3    1    2   14
+  Torsion    4    1    2   14
+  Torsion    5    1    2   14
+  Torsion    2    1    3   10
+  Torsion    4    1    3   10
+  Torsion    5    1    3   10
+  Torsion    2    1    3   11
+  Torsion    4    1    3   11
+  Torsion    5    1    3   11
+  Torsion    2    1    3   15
+  Torsion    4    1    3   15
+  Torsion    5    1    3   15
+  Torsion    2    1    4    8
+  Torsion    3    1    4    8
+  Torsion    5    1    4    8
+  Torsion    2    1    4    9
+  Torsion    3    1    4    9
+  Torsion    5    1    4    9
+  Torsion    2    1    4   16
+  Torsion    3    1    4   16
+  Torsion    5    1    4   16
+  Torsion    2    1    5   12
+  Torsion    3    1    5   12
+  Torsion    4    1    5   12
+  Torsion    2    1    5   13
+  Torsion    3    1    5   13
+  Torsion    4    1    5   13
+  Torsion    2    1    5   17
+  Torsion    3    1    5   17
+  Torsion    4    1    5   17
+  Torsion    1    2   14   18
+  Torsion    6    2   14   18
+  Torsion    7    2   14   18
+  Torsion    1    2   14   19
+  Torsion    6    2   14   19
+  Torsion    7    2   14   19
+  Torsion    1    2   14   26
+  Torsion    6    2   14   26
+  Torsion    7    2   14   26
+  Torsion    1    3   15   20
+  Torsion   10    3   15   20
+  Torsion   11    3   15   20
+  Torsion    1    3   15   21
+  Torsion   10    3   15   21
+  Torsion   11    3   15   21
+  Torsion    1    3   15   27
+  Torsion   10    3   15   27
+  Torsion   11    3   15   27
+  Torsion    1    4   16   22
+  Torsion    8    4   16   22
+  Torsion    9    4   16   22
+  Torsion    1    4   16   23
+  Torsion    8    4   16   23
+  Torsion    9    4   16   23
+  Torsion    1    4   16   28
+  Torsion    8    4   16   28
+  Torsion    9    4   16   28
+  Torsion    1    5   17   24
+  Torsion   12    5   17   24
+  Torsion   13    5   17   24
+  Torsion    1    5   17   25
+  Torsion   12    5   17   25
+  Torsion   13    5   17   25
+  Torsion    1    5   17   29
+  Torsion   12    5   17   29
+  Torsion   13    5   17   29
+  Torsion   18   14   26   30
+  Torsion    2   14   26   30
+  Torsion   19   14   26   30
+  Torsion   18   14   26   34
+  Torsion    2   14   26   34
+  Torsion   19   14   26   34
+  Torsion   18   14   26   35
+  Torsion    2   14   26   35
+  Torsion   19   14   26   35
+  Torsion    3   15   27   31
+  Torsion   20   15   27   31
+  Torsion   21   15   27   31
+  Torsion    3   15   27   39
+  Torsion   20   15   27   39
+  Torsion   21   15   27   39
+  Torsion    3   15   27   40
+  Torsion   20   15   27   40
+  Torsion   21   15   27   40
+  Torsion    4   16   28   32
+  Torsion   22   16   28   32
+  Torsion   23   16   28   32
+  Torsion    4   16   28   52
+  Torsion   22   16   28   52
+  Torsion   23   16   28   52
+  Torsion    4   16   28   53
+  Torsion   22   16   28   53
+  Torsion   23   16   28   53
+  Torsion    5   17   29   33
+  Torsion   24   17   29   33
+  Torsion   25   17   29   33
+  Torsion    5   17   29   47
+  Torsion   24   17   29   47
+  Torsion   25   17   29   47
+  Torsion    5   17   29   48
+  Torsion   24   17   29   48
+  Torsion   25   17   29   48
+  Torsion   14   26   30   36
+  Torsion   34   26   30   36
+  Torsion   35   26   30   36
+  Torsion   14   26   30   37
+  Torsion   34   26   30   37
+  Torsion   35   26   30   37
+  Torsion   14   26   30   38
+  Torsion   34   26   30   38
+  Torsion   35   26   30   38
+  Torsion   39   27   31   41
+  Torsion   15   27   31   41
+  Torsion   40   27   31   41
+  Torsion   39   27   31   42
+  Torsion   15   27   31   42
+  Torsion   40   27   31   42
+  Torsion   39   27   31   43
+  Torsion   15   27   31   43
+  Torsion   40   27   31   43
+  Torsion   16   28   32   49
+  Torsion   52   28   32   49
+  Torsion   53   28   32   49
+  Torsion   16   28   32   50
+  Torsion   52   28   32   50
+  Torsion   53   28   32   50
+  Torsion   16   28   32   51
+  Torsion   52   28   32   51
+  Torsion   53   28   32   51
+  Torsion   17   29   33   44
+  Torsion   47   29   33   44
+  Torsion   48   29   33   44
+  Torsion   17   29   33   45
+  Torsion   47   29   33   45
+  Torsion   48   29   33   45
+  Torsion   17   29   33   46
+  Torsion   47   29   33   46
+  Torsion   48   29   33   46
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+
+Species 'P66614'
+  # Atoms
+  Atom    1  P    0.000000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    2  C    1.810000e+00  0.000000e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    3  C    -6.041900e-01  -1.706181e+00  0.000000e+00  'None'  0.000000e+00
+  Atom    4  C    -6.041900e-01  8.530910e-01  1.477596e+00  'None'  0.000000e+00
+  Atom    5  C    -6.041900e-01  8.530910e-01  -1.477596e+00  'None'  0.000000e+00
+  Atom    6  C    2.461442e+00  -6.921930e-01  -1.198913e+00  'None'  0.000000e+00
+  Atom    7  H    2.184589e+00  1.023613e+00  -0.000000e+00  'None'  0.000000e+00
+  Atom    8  H    2.184589e+00  -5.118060e-01  8.864750e-01  'None'  0.000000e+00
+  Atom    9  H    -1.694130e+00  -1.717595e+00  -6.290000e-04  'None'  0.000000e+00
+  Atom   10  H    -2.462670e-01  -2.230311e+00  -8.861600e-01  'None'  0.000000e+00
+  Atom   11  C    -1.698520e-01  -2.551070e+00  1.199338e+00  'None'  0.000000e+00
+  Atom   12  C    -2.126625e+00  9.283330e-01  1.609622e+00  'None'  0.000000e+00
+  Atom   13  H    -2.462670e-01  3.477180e-01  2.374586e+00  'None'  0.000000e+00
+  Atom   14  H    -2.472950e-01  1.882955e+00  1.487796e+00  'None'  0.000000e+00
+  Atom   15  H    -2.467810e-01  3.473550e-01  -2.374585e+00  'None'  0.000000e+00
+  Atom   16  H    -1.694131e+00  8.587980e-01  -1.487481e+00  'None'  0.000000e+00
+  Atom   17  C    -1.691570e-01  2.313947e+00  -1.610048e+00  'None'  0.000000e+00
+  Atom   18  C    3.989986e+00  -6.588240e-01  -1.141116e+00  'None'  0.000000e+00
+  Atom   19  H    2.164194e+00  -2.103110e-01  -2.130328e+00  'None'  0.000000e+00
+  Atom   20  H    2.164194e+00  -1.739762e+00  -1.247299e+00  'None'  0.000000e+00
+  Atom   21  C    4.641428e+00  -1.351017e+00  -2.340029e+00  'None'  0.000000e+00
+  Atom   22  H    4.352669e+00  -1.160480e+00  -2.439530e-01  'None'  0.000000e+00
+  Atom   23  H    4.352669e+00  3.689710e-01  -1.126982e+00  'None'  0.000000e+00
+  Atom   24  C    6.169972e+00  -1.317648e+00  -2.282233e+00  'None'  0.000000e+00
+  Atom   25  H    4.344180e+00  -8.691350e-01  -3.271444e+00  'None'  0.000000e+00
+  Atom   26  H    4.344180e+00  -2.398586e+00  -2.388415e+00  'None'  0.000000e+00
+  Atom   27  C    6.821415e+00  -2.009840e+00  -3.481146e+00  'None'  0.000000e+00
+  Atom   28  H    6.532655e+00  -1.819304e+00  -1.385070e+00  'None'  0.000000e+00
+  Atom   29  H    6.532655e+00  -2.898530e-01  -2.268099e+00  'None'  0.000000e+00
+  Atom   30  H    7.908054e+00  -1.967080e+00  -3.407083e+00  'None'  0.000000e+00
+  Atom   31  H    6.524166e+00  -1.527959e+00  -4.412561e+00  'None'  0.000000e+00
+  Atom   32  H    6.524166e+00  -3.057410e+00  -3.529532e+00  'None'  0.000000e+00
+  Atom   33  C    -7.115120e-01  -3.980812e+00  1.141521e+00  'None'  0.000000e+00
+  Atom   34  H    -5.254090e-01  -2.109825e+00  2.130457e+00  'None'  0.000000e+00
+  Atom   35  H    9.168260e-01  -2.620547e+00  1.248368e+00  'None'  0.000000e+00
+  Atom   36  C    -2.771730e-01  -4.825701e+00  2.340860e+00  'None'  0.000000e+00
+  Atom   37  H    -3.591750e-01  -4.490333e+00  2.446670e-01  'None'  0.000000e+00
+  Atom   38  H    -1.801411e+00  -3.979610e+00  1.126755e+00  'None'  0.000000e+00
+  Atom   39  C    -8.188330e-01  -6.255443e+00  2.283043e+00  'None'  0.000000e+00
+  Atom   40  H    -6.327310e-01  -4.384456e+00  3.271978e+00  'None'  0.000000e+00
+  Atom   41  H    8.095050e-01  -4.895178e+00  2.389890e+00  'None'  0.000000e+00
+  Atom   42  C    -3.844940e-01  -7.100332e+00  3.482381e+00  'None'  0.000000e+00
+  Atom   43  H    -4.664970e-01  -6.764964e+00  1.386188e+00  'None'  0.000000e+00
+  Atom   44  H    -1.908732e+00  -6.254241e+00  2.268276e+00  'None'  0.000000e+00
+  Atom   45  H    -7.874870e-01  -8.110386e+00  3.408292e+00  'None'  0.000000e+00
+  Atom   46  H    -7.400520e-01  -6.659087e+00  4.413499e+00  'None'  0.000000e+00
+  Atom   47  H    7.021840e-01  -7.169809e+00  3.531411e+00  'None'  0.000000e+00
+  Atom   48  C    -2.573954e+00  1.659942e+00  2.876724e+00  'None'  0.000000e+00
+  Atom   49  H    -2.560131e+00  -7.111800e-02  1.645276e+00  'None'  0.000000e+00
+  Atom   50  H    -2.561154e+00  1.458152e+00  7.619330e-01  'None'  0.000000e+00
+  Atom   51  C    -4.096389e+00  1.735184e+00  3.008750e+00  'None'  0.000000e+00
+  Atom   52  H    -2.199573e+00  2.683611e+00  2.883066e+00  'None'  0.000000e+00
+  Atom   53  H    -2.198549e+00  1.154341e+00  3.766409e+00  'None'  0.000000e+00
+  Atom   54  C    -4.543717e+00  2.466793e+00  4.275851e+00  'None'  0.000000e+00
+  Atom   55  H    -4.529894e+00  7.357330e-01  3.044404e+00  'None'  0.000000e+00
+  Atom   56  H    -4.530918e+00  2.265003e+00  2.161061e+00  'None'  0.000000e+00
+  Atom   57  C    -6.066152e+00  2.542035e+00  4.407878e+00  'None'  0.000000e+00
+  Atom   58  H    -4.169336e+00  3.490462e+00  4.282194e+00  'None'  0.000000e+00
+  Atom   59  H    -4.168312e+00  1.961192e+00  5.165536e+00  'None'  0.000000e+00
+  Atom   60  H    -6.348265e+00  3.068510e+00  5.319654e+00  'None'  0.000000e+00
+  Atom   61  H    -6.499658e+00  1.542584e+00  4.443531e+00  'None'  0.000000e+00
+  Atom   62  H    -6.500681e+00  3.071854e+00  3.560189e+00  'None'  0.000000e+00
+  Atom   63  C    -7.108500e-01  2.978759e+00  -2.877129e+00  'None'  0.000000e+00
+  Atom   64  H    9.175490e-01  2.390594e+00  -1.646033e+00  'None'  0.000000e+00
+  Atom   65  H    -5.241750e-01  2.900049e+00  -7.623770e-01  'None'  0.000000e+00
+  Atom   66  C    -2.758160e-01  4.439616e+00  -3.009581e+00  'None'  0.000000e+00
+  Atom   67  H    -1.800758e+00  2.965916e+00  -2.883153e+00  'None'  0.000000e+00
+  Atom   68  H    -3.590340e-01  2.456461e+00  -3.766809e+00  'None'  0.000000e+00
+  Atom   69  C    -8.175100e-01  5.104427e+00  -4.276662e+00  'None'  0.000000e+00
+  Atom   70  H    8.108900e-01  4.516262e+00  -3.045566e+00  'None'  0.000000e+00
+  Atom   71  H    -6.308340e-01  5.025717e+00  -2.161910e+00  'None'  0.000000e+00
+  Atom   72  C    -3.824760e-01  6.565284e+00  -4.409114e+00  'None'  0.000000e+00
+  Atom   73  H    -1.907417e+00  5.091584e+00  -4.282686e+00  'None'  0.000000e+00
+  Atom   74  H    -4.656930e-01  4.582130e+00  -5.166342e+00  'None'  0.000000e+00
+  Atom   75  C    -9.482050e-01  7.184132e+00  -5.688910e+00  'None'  0.000000e+00
+  Atom   76  H    7.042300e-01  6.641931e+00  -4.445099e+00  'None'  0.000000e+00
+  Atom   77  H    -7.374940e-01  7.151386e+00  -3.561442e+00  'None'  0.000000e+00
+  Atom   78  C    -5.402790e-01  8.647922e+00  -5.867282e+00  'None'  0.000000e+00
+  Atom   79  H    -2.037724e+00  7.152249e+00  -5.683323e+00  'None'  0.000000e+00
+  Atom   80  H    -5.960000e-01  6.642794e+00  -6.566979e+00  'None'  0.000000e+00
+  Atom   81  C    -1.106008e+00  9.266770e+00  -7.147078e+00  'None'  0.000000e+00
+  Atom   82  H    5.445040e-01  8.742318e+00  -5.916637e+00  'None'  0.000000e+00
+  Atom   83  H    -8.972200e-01  9.251773e+00  -5.032981e+00  'None'  0.000000e+00
+  Atom   84  C    -6.980820e-01  1.073056e+01  -7.325449e+00  'None'  0.000000e+00
+  Atom   85  H    -2.195527e+00  9.234887e+00  -7.141490e+00  'None'  0.000000e+00
+  Atom   86  H    -7.538030e-01  8.725432e+00  -8.025146e+00  'None'  0.000000e+00
+  Atom   87  C    -1.287157e+00  1.130269e+01  -8.616401e+00  'None'  0.000000e+00
+  Atom   88  H    3.867000e-01  1.082496e+01  -7.374805e+00  'None'  0.000000e+00
+  Atom   89  H    -1.055023e+00  1.133441e+01  -6.491149e+00  'None'  0.000000e+00
+  Atom   90  C    -9.068370e-01  1.276763e+01  -8.840474e+00  'None'  0.000000e+00
+  Atom   91  H    -2.375839e+00  1.125211e+01  -8.598671e+00  'None'  0.000000e+00
+  Atom   92  H    -9.341150e-01  1.074266e+01  -9.482327e+00  'None'  0.000000e+00
+  Atom   93  C    -1.495911e+00  1.333976e+01  -1.013143e+01  'None'  0.000000e+00
+  Atom   94  H    1.755790e-01  1.287935e+01  -8.903680e+00  'None'  0.000000e+00
+  Atom   95  H    -1.266145e+00  1.338880e+01  -8.020023e+00  'None'  0.000000e+00
+  Atom   96  C    -1.115591e+00  1.480470e+01  -1.035550e+01  'None'  0.000000e+00
+  Atom   97  H    -2.584593e+00  1.328919e+01  -1.011370e+01  'None'  0.000000e+00
+  Atom   98  H    -1.142869e+00  1.277973e+01  -1.099735e+01  'None'  0.000000e+00
+  Atom   99  H    -1.551379e+00  1.517852e+01  -1.128203e+01  'None'  0.000000e+00
+  Atom  100  H    -3.317500e-02  1.491642e+01  -1.041870e+01  'None'  0.000000e+00
+  Atom  101  H    -1.474899e+00  1.542587e+01  -9.535049e+00  'None'  0.000000e+00
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1    4
+  Bond    1    5
+  Bond    2    6
+  Bond    2    7
+  Bond    2    8
+  Bond    3    9
+  Bond    3   10
+  Bond    3   11
+  Bond    4   12
+  Bond    4   13
+  Bond    4   14
+  Bond    5   15
+  Bond    5   16
+  Bond    5   17
+  Bond    6   18
+  Bond    6   19
+  Bond    6   20
+  Bond   11   33
+  Bond   11   34
+  Bond   11   35
+  Bond   12   48
+  Bond   12   49
+  Bond   12   50
+  Bond   17   63
+  Bond   17   64
+  Bond   17   65
+  Bond   18   21
+  Bond   18   22
+  Bond   18   23
+  Bond   21   24
+  Bond   21   25
+  Bond   21   26
+  Bond   24   27
+  Bond   24   28
+  Bond   24   29
+  Bond   27   30
+  Bond   27   31
+  Bond   27   32
+  Bond   33   36
+  Bond   33   37
+  Bond   33   38
+  Bond   36   39
+  Bond   36   40
+  Bond   36   41
+  Bond   39   42
+  Bond   39   43
+  Bond   39   44
+  Bond   42   45
+  Bond   42   46
+  Bond   42   47
+  Bond   48   51
+  Bond   48   52
+  Bond   48   53
+  Bond   51   54
+  Bond   51   55
+  Bond   51   56
+  Bond   54   57
+  Bond   54   58
+  Bond   54   59
+  Bond   57   60
+  Bond   57   61
+  Bond   57   62
+  Bond   63   66
+  Bond   63   67
+  Bond   63   68
+  Bond   66   69
+  Bond   66   70
+  Bond   66   71
+  Bond   69   72
+  Bond   69   73
+  Bond   69   74
+  Bond   72   75
+  Bond   72   76
+  Bond   72   77
+  Bond   75   78
+  Bond   75   79
+  Bond   75   80
+  Bond   78   81
+  Bond   78   82
+  Bond   78   83
+  Bond   81   84
+  Bond   81   85
+  Bond   81   86
+  Bond   84   87
+  Bond   84   88
+  Bond   84   89
+  Bond   87   90
+  Bond   87   91
+  Bond   87   92
+  Bond   90   93
+  Bond   90   94
+  Bond   90   95
+  Bond   93   96
+  Bond   93   97
+  Bond   93   98
+  Bond   96   99
+  Bond   96  100
+  Bond   96  101
+
+  # Angles
+  Angle    3    1    2
+  Angle    4    1    2
+  Angle    4    1    3
+  Angle    5    1    2
+  Angle    5    1    3
+  Angle    5    1    4
+  Angle    1    2    6
+  Angle    1    2    7
+  Angle    7    2    6
+  Angle    1    2    8
+  Angle    8    2    6
+  Angle    8    2    7
+  Angle    1    3    9
+  Angle    1    3   10
+  Angle   10    3    9
+  Angle    1    3   11
+  Angle   11    3    9
+  Angle   11    3   10
+  Angle    1    4   12
+  Angle    1    4   13
+  Angle   13    4   12
+  Angle    1    4   14
+  Angle   14    4   12
+  Angle   14    4   13
+  Angle    1    5   15
+  Angle    1    5   16
+  Angle   16    5   15
+  Angle    1    5   17
+  Angle   17    5   15
+  Angle   17    5   16
+  Angle    2    6   18
+  Angle    2    6   19
+  Angle   19    6   18
+  Angle    2    6   20
+  Angle   20    6   18
+  Angle   20    6   19
+  Angle    3   11   33
+  Angle    3   11   34
+  Angle   34   11   33
+  Angle    3   11   35
+  Angle   35   11   33
+  Angle   35   11   34
+  Angle    4   12   48
+  Angle    4   12   49
+  Angle   49   12   48
+  Angle    4   12   50
+  Angle   50   12   48
+  Angle   50   12   49
+  Angle    5   17   63
+  Angle    5   17   64
+  Angle   64   17   63
+  Angle    5   17   65
+  Angle   65   17   63
+  Angle   65   17   64
+  Angle    6   18   21
+  Angle    6   18   22
+  Angle   22   18   21
+  Angle    6   18   23
+  Angle   23   18   21
+  Angle   23   18   22
+  Angle   18   21   24
+  Angle   18   21   25
+  Angle   25   21   24
+  Angle   18   21   26
+  Angle   26   21   24
+  Angle   26   21   25
+  Angle   21   24   27
+  Angle   21   24   28
+  Angle   28   24   27
+  Angle   21   24   29
+  Angle   29   24   27
+  Angle   29   24   28
+  Angle   24   27   30
+  Angle   24   27   31
+  Angle   31   27   30
+  Angle   24   27   32
+  Angle   32   27   30
+  Angle   32   27   31
+  Angle   11   33   36
+  Angle   11   33   37
+  Angle   37   33   36
+  Angle   11   33   38
+  Angle   38   33   36
+  Angle   38   33   37
+  Angle   33   36   39
+  Angle   33   36   40
+  Angle   40   36   39
+  Angle   33   36   41
+  Angle   41   36   39
+  Angle   41   36   40
+  Angle   36   39   42
+  Angle   36   39   43
+  Angle   43   39   42
+  Angle   36   39   44
+  Angle   44   39   42
+  Angle   44   39   43
+  Angle   39   42   45
+  Angle   39   42   46
+  Angle   46   42   45
+  Angle   39   42   47
+  Angle   47   42   45
+  Angle   47   42   46
+  Angle   12   48   51
+  Angle   12   48   52
+  Angle   52   48   51
+  Angle   12   48   53
+  Angle   53   48   51
+  Angle   53   48   52
+  Angle   48   51   54
+  Angle   48   51   55
+  Angle   55   51   54
+  Angle   48   51   56
+  Angle   56   51   54
+  Angle   56   51   55
+  Angle   51   54   57
+  Angle   51   54   58
+  Angle   58   54   57
+  Angle   51   54   59
+  Angle   59   54   57
+  Angle   59   54   58
+  Angle   54   57   60
+  Angle   54   57   61
+  Angle   61   57   60
+  Angle   54   57   62
+  Angle   62   57   60
+  Angle   62   57   61
+  Angle   17   63   66
+  Angle   17   63   67
+  Angle   67   63   66
+  Angle   17   63   68
+  Angle   68   63   66
+  Angle   68   63   67
+  Angle   63   66   69
+  Angle   63   66   70
+  Angle   70   66   69
+  Angle   63   66   71
+  Angle   71   66   69
+  Angle   71   66   70
+  Angle   66   69   72
+  Angle   66   69   73
+  Angle   73   69   72
+  Angle   66   69   74
+  Angle   74   69   72
+  Angle   74   69   73
+  Angle   69   72   75
+  Angle   69   72   76
+  Angle   76   72   75
+  Angle   69   72   77
+  Angle   77   72   75
+  Angle   77   72   76
+  Angle   72   75   78
+  Angle   72   75   79
+  Angle   79   75   78
+  Angle   72   75   80
+  Angle   80   75   78
+  Angle   80   75   79
+  Angle   75   78   81
+  Angle   75   78   82
+  Angle   82   78   81
+  Angle   75   78   83
+  Angle   83   78   81
+  Angle   83   78   82
+  Angle   78   81   84
+  Angle   78   81   85
+  Angle   85   81   84
+  Angle   78   81   86
+  Angle   86   81   84
+  Angle   86   81   85
+  Angle   81   84   87
+  Angle   81   84   88
+  Angle   88   84   87
+  Angle   81   84   89
+  Angle   89   84   87
+  Angle   89   84   88
+  Angle   84   87   90
+  Angle   84   87   91
+  Angle   91   87   90
+  Angle   84   87   92
+  Angle   92   87   90
+  Angle   92   87   91
+  Angle   87   90   93
+  Angle   87   90   94
+  Angle   94   90   93
+  Angle   87   90   95
+  Angle   95   90   93
+  Angle   95   90   94
+  Angle   90   93   96
+  Angle   90   93   97
+  Angle   97   93   96
+  Angle   90   93   98
+  Angle   98   93   96
+  Angle   98   93   97
+  Angle   93   96   99
+  Angle   93   96  100
+  Angle  100   96   99
+  Angle   93   96  101
+  Angle  101   96   99
+  Angle  101   96  100
+
+  # Torsions
+  Torsion    3    1    2    6
+  Torsion    4    1    2    6
+  Torsion    5    1    2    6
+  Torsion    3    1    2    7
+  Torsion    4    1    2    7
+  Torsion    5    1    2    7
+  Torsion    3    1    2    8
+  Torsion    4    1    2    8
+  Torsion    5    1    2    8
+  Torsion    2    1    3    9
+  Torsion    4    1    3    9
+  Torsion    5    1    3    9
+  Torsion    2    1    3   10
+  Torsion    4    1    3   10
+  Torsion    5    1    3   10
+  Torsion    2    1    3   11
+  Torsion    4    1    3   11
+  Torsion    5    1    3   11
+  Torsion    2    1    4   12
+  Torsion    3    1    4   12
+  Torsion    5    1    4   12
+  Torsion    2    1    4   13
+  Torsion    3    1    4   13
+  Torsion    5    1    4   13
+  Torsion    2    1    4   14
+  Torsion    3    1    4   14
+  Torsion    5    1    4   14
+  Torsion    2    1    5   15
+  Torsion    3    1    5   15
+  Torsion    4    1    5   15
+  Torsion    2    1    5   16
+  Torsion    3    1    5   16
+  Torsion    4    1    5   16
+  Torsion    2    1    5   17
+  Torsion    3    1    5   17
+  Torsion    4    1    5   17
+  Torsion    1    2    6   18
+  Torsion    7    2    6   18
+  Torsion    8    2    6   18
+  Torsion    1    2    6   19
+  Torsion    7    2    6   19
+  Torsion    8    2    6   19
+  Torsion    1    2    6   20
+  Torsion    7    2    6   20
+  Torsion    8    2    6   20
+  Torsion    1    3   11   33
+  Torsion    9    3   11   33
+  Torsion   10    3   11   33
+  Torsion    1    3   11   34
+  Torsion    9    3   11   34
+  Torsion   10    3   11   34
+  Torsion    1    3   11   35
+  Torsion    9    3   11   35
+  Torsion   10    3   11   35
+  Torsion    1    4   12   48
+  Torsion   13    4   12   48
+  Torsion   14    4   12   48
+  Torsion    1    4   12   49
+  Torsion   13    4   12   49
+  Torsion   14    4   12   49
+  Torsion    1    4   12   50
+  Torsion   13    4   12   50
+  Torsion   14    4   12   50
+  Torsion    1    5   17   63
+  Torsion   15    5   17   63
+  Torsion   16    5   17   63
+  Torsion    1    5   17   64
+  Torsion   15    5   17   64
+  Torsion   16    5   17   64
+  Torsion    1    5   17   65
+  Torsion   15    5   17   65
+  Torsion   16    5   17   65
+  Torsion    2    6   18   21
+  Torsion   19    6   18   21
+  Torsion   20    6   18   21
+  Torsion    2    6   18   22
+  Torsion   19    6   18   22
+  Torsion   20    6   18   22
+  Torsion    2    6   18   23
+  Torsion   19    6   18   23
+  Torsion   20    6   18   23
+  Torsion    6   18   21   24
+  Torsion   22   18   21   24
+  Torsion   23   18   21   24
+  Torsion    6   18   21   25
+  Torsion   22   18   21   25
+  Torsion   23   18   21   25
+  Torsion    6   18   21   26
+  Torsion   22   18   21   26
+  Torsion   23   18   21   26
+  Torsion   25   21   24   27
+  Torsion   18   21   24   27
+  Torsion   26   21   24   27
+  Torsion   25   21   24   28
+  Torsion   18   21   24   28
+  Torsion   26   21   24   28
+  Torsion   25   21   24   29
+  Torsion   18   21   24   29
+  Torsion   26   21   24   29
+  Torsion   21   24   27   30
+  Torsion   28   24   27   30
+  Torsion   29   24   27   30
+  Torsion   21   24   27   31
+  Torsion   28   24   27   31
+  Torsion   29   24   27   31
+  Torsion   21   24   27   32
+  Torsion   28   24   27   32
+  Torsion   29   24   27   32
+  Torsion    3   11   33   36
+  Torsion   34   11   33   36
+  Torsion   35   11   33   36
+  Torsion    3   11   33   37
+  Torsion   34   11   33   37
+  Torsion   35   11   33   37
+  Torsion    3   11   33   38
+  Torsion   34   11   33   38
+  Torsion   35   11   33   38
+  Torsion   11   33   36   39
+  Torsion   37   33   36   39
+  Torsion   38   33   36   39
+  Torsion   11   33   36   40
+  Torsion   37   33   36   40
+  Torsion   38   33   36   40
+  Torsion   11   33   36   41
+  Torsion   37   33   36   41
+  Torsion   38   33   36   41
+  Torsion   33   36   39   42
+  Torsion   40   36   39   42
+  Torsion   41   36   39   42
+  Torsion   33   36   39   43
+  Torsion   40   36   39   43
+  Torsion   41   36   39   43
+  Torsion   33   36   39   44
+  Torsion   40   36   39   44
+  Torsion   41   36   39   44
+  Torsion   36   39   42   45
+  Torsion   43   39   42   45
+  Torsion   44   39   42   45
+  Torsion   36   39   42   46
+  Torsion   43   39   42   46
+  Torsion   44   39   42   46
+  Torsion   36   39   42   47
+  Torsion   43   39   42   47
+  Torsion   44   39   42   47
+  Torsion    4   12   48   51
+  Torsion   49   12   48   51
+  Torsion   50   12   48   51
+  Torsion    4   12   48   52
+  Torsion   49   12   48   52
+  Torsion   50   12   48   52
+  Torsion    4   12   48   53
+  Torsion   49   12   48   53
+  Torsion   50   12   48   53
+  Torsion   12   48   51   54
+  Torsion   52   48   51   54
+  Torsion   53   48   51   54
+  Torsion   12   48   51   55
+  Torsion   52   48   51   55
+  Torsion   53   48   51   55
+  Torsion   12   48   51   56
+  Torsion   52   48   51   56
+  Torsion   53   48   51   56
+  Torsion   48   51   54   57
+  Torsion   55   51   54   57
+  Torsion   56   51   54   57
+  Torsion   48   51   54   58
+  Torsion   55   51   54   58
+  Torsion   56   51   54   58
+  Torsion   48   51   54   59
+  Torsion   55   51   54   59
+  Torsion   56   51   54   59
+  Torsion   51   54   57   60
+  Torsion   58   54   57   60
+  Torsion   59   54   57   60
+  Torsion   51   54   57   61
+  Torsion   58   54   57   61
+  Torsion   59   54   57   61
+  Torsion   51   54   57   62
+  Torsion   58   54   57   62
+  Torsion   59   54   57   62
+  Torsion    5   17   63   66
+  Torsion   64   17   63   66
+  Torsion   65   17   63   66
+  Torsion    5   17   63   67
+  Torsion   64   17   63   67
+  Torsion   65   17   63   67
+  Torsion    5   17   63   68
+  Torsion   64   17   63   68
+  Torsion   65   17   63   68
+  Torsion   17   63   66   69
+  Torsion   67   63   66   69
+  Torsion   68   63   66   69
+  Torsion   17   63   66   70
+  Torsion   67   63   66   70
+  Torsion   68   63   66   70
+  Torsion   17   63   66   71
+  Torsion   67   63   66   71
+  Torsion   68   63   66   71
+  Torsion   63   66   69   72
+  Torsion   70   66   69   72
+  Torsion   71   66   69   72
+  Torsion   63   66   69   73
+  Torsion   70   66   69   73
+  Torsion   71   66   69   73
+  Torsion   63   66   69   74
+  Torsion   70   66   69   74
+  Torsion   71   66   69   74
+  Torsion   66   69   72   75
+  Torsion   73   69   72   75
+  Torsion   74   69   72   75
+  Torsion   66   69   72   76
+  Torsion   73   69   72   76
+  Torsion   74   69   72   76
+  Torsion   66   69   72   77
+  Torsion   73   69   72   77
+  Torsion   74   69   72   77
+  Torsion   69   72   75   78
+  Torsion   76   72   75   78
+  Torsion   77   72   75   78
+  Torsion   69   72   75   79
+  Torsion   76   72   75   79
+  Torsion   77   72   75   79
+  Torsion   69   72   75   80
+  Torsion   76   72   75   80
+  Torsion   77   72   75   80
+  Torsion   72   75   78   81
+  Torsion   79   75   78   81
+  Torsion   80   75   78   81
+  Torsion   72   75   78   82
+  Torsion   79   75   78   82
+  Torsion   80   75   78   82
+  Torsion   72   75   78   83
+  Torsion   79   75   78   83
+  Torsion   80   75   78   83
+  Torsion   75   78   81   84
+  Torsion   82   78   81   84
+  Torsion   83   78   81   84
+  Torsion   75   78   81   85
+  Torsion   82   78   81   85
+  Torsion   83   78   81   85
+  Torsion   75   78   81   86
+  Torsion   82   78   81   86
+  Torsion   83   78   81   86
+  Torsion   78   81   84   87
+  Torsion   85   81   84   87
+  Torsion   86   81   84   87
+  Torsion   78   81   84   88
+  Torsion   85   81   84   88
+  Torsion   86   81   84   88
+  Torsion   78   81   84   89
+  Torsion   85   81   84   89
+  Torsion   86   81   84   89
+  Torsion   81   84   87   90
+  Torsion   88   84   87   90
+  Torsion   89   84   87   90
+  Torsion   81   84   87   91
+  Torsion   88   84   87   91
+  Torsion   89   84   87   91
+  Torsion   81   84   87   92
+  Torsion   88   84   87   92
+  Torsion   89   84   87   92
+  Torsion   84   87   90   93
+  Torsion   91   87   90   93
+  Torsion   92   87   90   93
+  Torsion   84   87   90   94
+  Torsion   91   87   90   94
+  Torsion   92   87   90   94
+  Torsion   84   87   90   95
+  Torsion   91   87   90   95
+  Torsion   92   87   90   95
+  Torsion   87   90   93   96
+  Torsion   94   90   93   96
+  Torsion   95   90   93   96
+  Torsion   87   90   93   97
+  Torsion   94   90   93   97
+  Torsion   95   90   93   97
+  Torsion   87   90   93   98
+  Torsion   94   90   93   98
+  Torsion   95   90   93   98
+  Torsion   90   93   96   99
+  Torsion   97   93   96   99
+  Torsion   98   93   96   99
+  Torsion   90   93   96  100
+  Torsion   97   93   96  100
+  Torsion   98   93   96  100
+  Torsion   90   93   96  101
+  Torsion   97   93   96  101
+  Torsion   98   93   96  101
+
+  Forcefield  'PCL2019/Cations'
+EndSpecies
+

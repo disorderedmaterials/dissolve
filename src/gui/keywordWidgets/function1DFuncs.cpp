@@ -140,7 +140,7 @@ void Function1DKeywordWidget::updateKeywordData()
         newParams.push_back(spins_[n]->value());
 
     // Set new data
-    function.setFunctionAndParameters(func, newParams);
+    keyword_->setData({func, newParams});
 }
 
 // Update summary text
