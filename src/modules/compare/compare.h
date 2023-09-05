@@ -32,8 +32,8 @@ class CompareModule : public Module
      * Definition
      */
     private:
-    // Shared pointer to data stored in the keyword
-    std::shared_ptr<std::vector<DataPair>> dataSources_;
+    // Data stored in the keyword
+    std::vector<DataPair> dataSources_;
     // Mapping from data pair to ranges and error
     std::map<DataPair, rangeErrorPair> dataSourcesErrors_;
     // Method of error calculation to use
@@ -42,12 +42,6 @@ class CompareModule : public Module
     double threshold_{5.0e-3};
     // Ranges to calculate error over
     std::vector<Range> ranges_;
-
-    public:
-    // Return data vectors
-    std::vector<std::pair<std::unique_ptr<Data1D>, std::unique_ptr<Data1D>>> &compareData1D();
-    std::vector<std::pair<std::unique_ptr<Data2D>, std::unique_ptr<Data2D>>> &compareData2D();
-    std::vector<std::pair<std::unique_ptr<Data3D>, std::unique_ptr<Data3D>>> &compareData3D();
 
     /*
      * Processing
