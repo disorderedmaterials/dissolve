@@ -20,7 +20,7 @@
 template <class DataType, class DataFormat> class DataSourceKeyword : public DataSourceKeywordBase
 {
     public:
-    explicit DataSourceKeyword(std::shared_ptr<std::vector<DataPair>> dataSources, std::string_view endKeyword)
+    explicit DataSourceKeyword(std::vector<DataPair> &dataSources, std::string_view endKeyword)
         : DataSourceKeywordBase(dataSources, endKeyword){};
     ~DataSourceKeyword() override = default;
 
@@ -46,6 +46,10 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         int dataCounter = 0;
+        // dataSources_.push_back(DataPair());
+        // Add the data pair to data vector
+        auto &[dataSourceA, dataSourceB] = dataSources_.emplace_back();
+
         while (!parser.eofOrBlank())
         {
             // Only allows maximum of two data sources per keyword
@@ -54,46 +58,43 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
                 break;
             }
 
-            DataPair dataPair;
-
             // If data source type supplied is valid
-            if (!dataPair.first.dataSourceTypes().isValid(parser.argsv(startArg)))
+            if (!DataSource::dataSourceTypes().isValid(parser.argsv(startArg)))
             {
-                return dataPair.first.dataSourceTypes().errorAndPrintValid(parser.argsv(startArg));
+                return DataSource::dataSourceTypes().errorAndPrintValid(parser.argsv(startArg));
             }
 
             // If data is internal
-            if (dataPair.first.dataSourceTypes().enumeration(parser.argsv(startArg)) == DataSource::Internal)
+            if (DataSource::dataSourceTypes().enumeration(parser.argsv(startArg)) == DataSource::Internal)
             {
-                DataSource internalData{DataSource::Internal};
-                internalData.addData(parser.argsv(startArg + 1));
+
                 // Has the first item already been initialised?
-                dataCounter == 0 ? dataPair.first = internalData : dataPair.second = internalData;
+                dataCounter == 0 ? dataSourceA.addData(parser.argsv(startArg + 1))
+                                 : dataSourceB.addData(parser.argsv(startArg + 1));
                 dataCounter++;
             }
             // If data is external
-            else if (dataPair.first.dataSourceTypes().enumeration(parser.argsv(startArg)) == DataSource::External)
+            else if (DataSource::dataSourceTypes().enumeration(parser.argsv(startArg)) == DataSource::External)
             {
-                DataSource externalData{DataSource::External};
                 DataType data;
                 DataFormat format;
                 // Read the supplied arguements
-                if (format->read(parser, startArg + 1, fmt::format("End{}", externalKeyword()), coreData) !=
+                if (format.read(parser, startArg + 1, fmt::format("End{}", externalKeyword()), coreData) !=
                     FileAndFormat::ReadResult::Success)
                 {
                     return false;
                 }
 
                 // Import the data
-                if (!format->importData(data, parser.processPool()))
+                if (!format.importData(data, parser.processPool()))
                 {
                     return false;
                 }
 
-                externalData.addData(&data, format);
-
                 // Has the first item already been initialised?
-                dataCounter == 0 ? dataPair.first = externalData : dataPair.second = externalData;
+                // Has the first item already been initialised?
+                dataCounter == 0 ? dataSourceA.addData<DataType, DataFormat>(data, format)
+                                 : dataSourceB.addData<DataType, DataFormat>(data, format);
                 dataCounter++;
             }
             else
@@ -101,9 +102,6 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
                 return Messenger::error("Unsupported data location '{}' provided to keyword '{}'\n", parser.argsv(startArg),
                                         name());
             }
-
-            // Add the data to data vector
-            dataSources_.get()->push_back(dataPair);
 
             // Read the next line
             if (parser.getArgsDelim() != LineParser::Success)
@@ -124,7 +122,7 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override
     {
-        for (auto &[dataSourceA, dataSourceB] : *dataSources_.get())
+        for (auto &[dataSourceA, dataSourceB] : dataSources_)
         {
             if (!parser.writeLineF("{}{}\n", prefix, keywordName))
             {
