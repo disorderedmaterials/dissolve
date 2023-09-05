@@ -107,7 +107,7 @@ void OverviewTab::configurationClicked(int index)
 void OverviewTab::moduleLayerClicked(int index)
 {
     auto *moduleLayer = dissolveModel_.moduleLayersModel()
-                              ->data(dissolveModel_.moduleLayersModel()->index(index, 0), Qt::UserRole)
-                              .value<ModuleLayer *>();
+                            ->data(dissolveModel_.moduleLayersModel()->index(index, 0), Qt::UserRole)
+                            .value<ModuleLayer *>();
     tabWidget_->setCurrentTab(moduleLayer);
 }

@@ -53,7 +53,7 @@ QVariant ModuleLayersModel::data(const QModelIndex &index, int role) const
             return QVariant::fromValue(data);
         case (Qt::UserRole + 1):
         {
-            auto* m = new ModuleLayerModel();
+            auto *m = new ModuleLayerModel();
             m->setData(data, coreData_->get());
             return QVariant::fromValue(m);
         }
