@@ -17,7 +17,7 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
                       dissolve_->coreData().masterTorsions(), dissolve_->coreData().masterImpropers());
     speciesModel_.setData(dissolve_->coreData().species());
     configurationModel_.setData(dissolve_->coreData().configurations());
-    moduleLayersModel_.setData(dissolve_->coreData().processingLayers());
+    moduleLayersModel_.setData(dissolve_->coreData().processingLayers(), dissolve_->coreData());
     emit modelsUpdated();
 }
 
