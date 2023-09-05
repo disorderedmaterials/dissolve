@@ -1,16 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/sysFunc.h"
-#include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "module/context.h"
 #include "modules/qSpecies/qSpecies.h"
-#include "procedure/nodes/integerCollect1D.h"
-#include "procedure/nodes/operateSitePopulationNormalise.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
-#include "procedure/nodes/sum1D.h"
 
 // Run main processing
 Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
