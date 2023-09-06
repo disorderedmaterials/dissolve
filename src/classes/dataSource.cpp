@@ -4,6 +4,7 @@
 #include "classes/dataSource.h"
 #include "templates/optionalRef.h"
 
+// Return enum options for data source types
 EnumOptions<DataSource::DataSourceType> DataSource::dataSourceTypes()
 {
     return EnumOptions<DataSource::DataSourceType>("DataSourceType", {{Internal, "Internal"}, {External, "External"}});
@@ -12,7 +13,8 @@ EnumOptions<DataSource::DataSourceType> DataSource::dataSourceTypes()
 // Return whether or not the data has been sourced and exists
 bool DataSource::dataExists() const
 {
-    return !internalDataSource_.empty() || (externalDataSource_ != nullptr && data_.get() != nullptr);
+    return (!internalDataSource_.empty() && dataSourceType_ == Internal) ||
+           (externalDataSource_ != nullptr && data_.get() != nullptr && dataSourceType_ == External);
 }
 
 // Return data source type enum
