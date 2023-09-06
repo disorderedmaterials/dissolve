@@ -37,9 +37,9 @@
 #include "gui/keywordWidgets/vec3Integer.h"
 #include "gui/keywordWidgets/vec3NodeValue.h"
 #include "gui/keywordWidgets/weightedModuleVector.h"
-#include "keywords/data1DStore.h"
-#include "keywords/data2DStore.h"
-#include "keywords/data3DStore.h"
+#include "io/import/data1D.h"
+#include "io/import/data2D.h"
+#include "io/import/data3D.h"
 #include "keywords/dataSource.h"
 #include "keywords/dataSourceBase.h"
 #include "keywords/elementVector.h"
@@ -90,9 +90,9 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerNullProducer<Data2DStoreKeyword>();
     registerNullProducer<Data3DStoreKeyword>();
     registerNullProducer<DataSourceKeywordBase>();
-    registerNullProducer<DataSourceKeyword<Data1D, std::function<bool(std::vector<Data1D>)>>>();
-    registerNullProducer<DataSourceKeyword<Data2D, std::function<bool(std::vector<Data2D>)>>>();
-    registerNullProducer<DataSourceKeyword<Data3D, std::function<bool(std::vector<Data3D>)>>>();
+    registerNullProducer<DataSourceKeyword<Data1D, Data1DImportFileFormat>>();
+    registerNullProducer<DataSourceKeyword<Data2D, Data2DImportFileFormat>>();
+    registerNullProducer<DataSourceKeyword<Data3D, Data3DImportFileFormat>>();
     registerNullProducer<ElementVectorKeyword>();
     registerNullProducer<ExpressionKeyword>();
     registerNullProducer<NodeBranchKeyword>();

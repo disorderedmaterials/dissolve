@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumOptions.h"
-#include "io/import/dataBase.h"
+#include "io/fileAndFormat.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
@@ -13,7 +13,7 @@ class ProcessPool;
 class Vec3DoubleKeyword;
 
 // Data2D Import Formats
-class Data2DImportFileFormat : public DataImportFileFormat
+class Data2DImportFileFormat : public FileAndFormat
 {
     public:
     // Available Data2D formats
@@ -35,7 +35,7 @@ class Data2DImportFileFormat : public DataImportFileFormat
 
     private:
     // Set up keywords for the format
-    void setUpKeywords() override;
+    void setUpKeywords();
 
     /*
      * Formats
