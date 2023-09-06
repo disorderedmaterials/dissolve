@@ -8,11 +8,16 @@
 #include "io/fileAndFormat.h"
 #include "math/dataBase.h"
 
-// Supports up to two data sources in each keyword call
-using DataPair = std::pair<DataSource, DataSource>;
+// Forward Declarations
+class DataSource;
 
+// Supports up to two data sources in each keyword call
 class DataSourceKeywordBase : public KeywordBase
 {
+    // Typedef
+    public:
+    using DataPair = std::pair<DataSource, DataSource>;
+
     public:
     DataSourceKeywordBase(std::vector<DataPair> &dataSources, std::string_view endKeyword);
     ~DataSourceKeywordBase() override = default;

@@ -10,13 +10,6 @@
 class Data1DBase : public DataBase
 {
     /*
-     * Axis Information
-     */
-    public:
-    // Return x axis vector
-    virtual const std::vector<double> &xAxis() const = 0;
-
-    /*
      * Values / Errors
      */
     public:

@@ -19,7 +19,7 @@
 #include "module/context.h"
 #include "module/module.h"
 
-using rangeErrorPair = std::pair<std::vector<Range> &, std::vector<double>>;
+using rangeErrorPair = std::pair<std::vector<Range>, std::vector<double>>;
 
 // DataCompare Module
 class CompareModule : public Module
@@ -33,9 +33,7 @@ class CompareModule : public Module
      */
     private:
     // Data stored in the keyword
-    std::vector<DataPair> dataSources_;
-    // Mapping from data pair to ranges and error
-    std::map<DataPair, rangeErrorPair> dataSourcesErrors_;
+    std::vector<DataSourceKeywordBase::DataPair> dataSources_;
     // Method of error calculation to use
     Error::ErrorType errorType_{Error::EuclideanError};
     // Threshold for error metric above which test fails

@@ -7,40 +7,90 @@
 Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 {
 
-    /*if (!fetchData<Data1D>(*dataA, moduleContext) || !fetchData<Data1D>(*dataB, moduleContext))
-        return ExecutionResult::Failed;
+    Messenger::print("COMPAREE");
 
-    std::vector<double> errors;
+    // Mapping from data pair to ranges and error
+    std::map<DataSourceKeywordBase::DataPair *, rangeErrorPair> dataSourcesErrors;
 
-    for (auto &range : ranges_)
+    int index;
+    for (auto &dataPair : dataSources_)
     {
-        errors.push_back(Error::error(errorType_, *dataA, *dataB, range).error);
-    }
 
-    rangeError1D_.emplace_back(std::make_pair(std::ref(ranges_), errors));
+        /*
+         * Preparing data
+         */
 
-    auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("Delta{}_{}//Compare", dataA.get()->tag(), dataB.get()->tag()), name_, GenericItem::InRestartFileFlag);
-
-    // Get the minimum and maximum x values that exist over both datasets
-    auto rangeMin = std::min(dataB.get()->xAxis().front(), dataA.get()->xAxis().front());
-    auto rangeMax = std::max(dataB.get()->xAxis().back(), dataA.get()->xAxis().back());
-
-    // Generate interpolation of dataB
-    Interpolator interpolatedB(*dataB);
-
-    for (auto &&[x, y] : zip(dataA.get()->xAxis(), dataA.get()->values()))
-    {
-        // Is our x value above the minimum range of each dataset ?
-        if (x < rangeMin)
+        // Check to make sure the data exists
+        if (!dataPair.first.dataExists() || !dataPair.second.dataExists())
+        {
             continue;
+        }
 
-        // Is our x value below the maximum range of each dataset ?
-        if (x > rangeMax)
-            break;
+        // Set the ranges in the map to reference the ranges_ vector
+        auto &ranges = dataSourcesErrors[&dataPair].first;
+        ranges = ranges_;
 
-        delta.addPoint(x, fabs(y - interpolatedB.y(x)));
-    }*/
+        // Source the data
+        if (!dataPair.first.sourceData<Data1D, Data1DImportFileFormat>(moduleContext.dissolve().processingModuleData()))
+        {
+            continue;
+        }
+        if (!dataPair.second.sourceData<Data1D, Data1DImportFileFormat>(moduleContext.dissolve().processingModuleData()))
+        {
+            continue;
+        }
+
+        auto dataA = dataPair.first.data<Data1D>();
+        auto dataB = dataPair.second.data<Data1D>();
+
+        /*
+         * Calculating and reporting the error between datasets
+         */
+
+        // Getting the total data range and add it to the start of the range vector so it is always calculated as default
+        Range totalRange{dataA.xAxis().front(), dataB.xAxis().back()};
+        ranges.insert(ranges.begin(), totalRange);
+
+        // Set the error vector to be the same size as the ranges
+        dataSourcesErrors[&dataPair].second.resize(ranges.size());
+
+        // Loop through the the range & error vectors, calculating and reporting the errors
+        for (auto &&[range, error] : zip(ranges, dataSourcesErrors[&dataPair].second))
+        {
+            auto errorReport = Error::error(errorType_, dataA, dataB, range);
+            error = errorReport.error;
+            Messenger::print("{}", Error::errorReportString(errorReport));
+        }
+
+        /*
+         * Calculating the difference (delta) between datasets
+         */
+
+        auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+            fmt::format("DeltaPair{}//Compare", index), name_, GenericItem::InRestartFileFlag);
+
+        // Get the minimum and maximum x values that exist over both datasets
+        auto rangeMin = std::min(dataA.xAxis().front(), dataB.xAxis().front());
+        auto rangeMax = std::max(dataA.xAxis().back(), dataB.xAxis().back());
+
+        // Generate interpolation of dataPair.second
+        Interpolator interpolatedB(dataB);
+
+        for (auto &&[x, y] : zip(dataA.xAxis(), dataA.values()))
+        {
+            // Is our x value above the minimum range of each dataset ?
+            if (x < rangeMin)
+                continue;
+
+            // Is our x value below the maximum range of each dataset ?
+            if (x > rangeMax)
+                break;
+
+            delta.addPoint(x, fabs(y - interpolatedB.y(x)));
+        }
+
+        ++index;
+    }
 
     return ExecutionResult::Success;
 }

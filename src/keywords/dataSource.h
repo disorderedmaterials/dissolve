@@ -12,15 +12,13 @@
 #include "math/data2D.h"
 #include "math/data3D.h"
 #include "templates/optionalRef.h"
-#include <optional>
-#include <vector>
 
 // Keyword managing data sources
-// Template arguements: data class (Data1D, Data2D ...), add data function type
+// Template arguments: data class (Data1D, Data2D ...), add data function type
 template <class DataType, class DataFormat> class DataSourceKeyword : public DataSourceKeywordBase
 {
     public:
-    explicit DataSourceKeyword(std::vector<DataPair> &dataSources, std::string_view endKeyword)
+    explicit DataSourceKeyword(std::vector<DataSourceKeywordBase::DataPair> &dataSources, std::string_view endKeyword)
         : DataSourceKeywordBase(dataSources, endKeyword){};
     ~DataSourceKeyword() override = default;
 
@@ -48,7 +46,15 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
         int dataCounter = 0;
         // dataSources_.push_back(DataPair());
         // Add the data pair to data vector
-        auto &[dataSourceA, dataSourceB] = dataSources_.emplace_back();
+        auto &newDataSource = dataSources_.emplace_back();
+        auto &dataSourceA = newDataSource.first;
+        auto &dataSourceB = newDataSource.second;
+
+        // Read the next line
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        {
+            return false;
+        }
 
         while (!parser.eofOrBlank())
         {
@@ -59,27 +65,25 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
             }
 
             // If data source type supplied is valid
-            if (!DataSource::dataSourceTypes().isValid(parser.argsv(startArg)))
+            if (!DataSource::dataSourceTypes().isValid(parser.argsv(0)))
             {
-                return DataSource::dataSourceTypes().errorAndPrintValid(parser.argsv(startArg));
+                return DataSource::dataSourceTypes().errorAndPrintValid(parser.argsv(0));
             }
 
             // If data is internal
-            if (DataSource::dataSourceTypes().enumeration(parser.argsv(startArg)) == DataSource::Internal)
+            if (DataSource::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource::Internal)
             {
-
                 // Has the first item already been initialised?
-                dataCounter == 0 ? dataSourceA.addData(parser.argsv(startArg + 1))
-                                 : dataSourceB.addData(parser.argsv(startArg + 1));
+                dataCounter == 0 ? dataSourceA.addData(parser.argsv(1)) : dataSourceB.addData(parser.argsv(1));
                 dataCounter++;
             }
             // If data is external
-            else if (DataSource::dataSourceTypes().enumeration(parser.argsv(startArg)) == DataSource::External)
+            else if (DataSource::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource::External)
             {
                 DataType data;
                 DataFormat format;
-                // Read the supplied arguements
-                if (format.read(parser, startArg + 1, fmt::format("End{}", externalKeyword()), coreData) !=
+                // Read the supplied arguments
+                if (format.read(parser, 1, fmt::format("End{}", externalKeyword()), coreData) !=
                     FileAndFormat::ReadResult::Success)
                 {
                     return false;
@@ -99,8 +103,7 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
             }
             else
             {
-                return Messenger::error("Unsupported data location '{}' provided to keyword '{}'\n", parser.argsv(startArg),
-                                        name());
+                return Messenger::error("Unsupported data location '{}' provided to keyword '{}'\n", parser.argsv(0), name());
             }
 
             // Read the next line
