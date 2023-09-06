@@ -31,10 +31,6 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
     /*
      * Arguments
      */
-    private:
-    // End keyword for the dataSource keyword
-    const std::string endKeyword_;
-
     // Return minimum number of arguments accepted
     int minArguments() const override { return 0; };
     // Return maximum number of arguments accepted
@@ -84,8 +80,8 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
                 DataFormat format;
 
                 // Read the supplied arguments
-                if (format.read(parser, 1, fmt::format("End{}", externalKeyword()), coreData) !=
-                    FileAndFormat::ReadResult::Success)
+                if (format.read(parser, 1, fmt::format("End{}", DataSource::dataSourceTypes().keyword(DataSource::External)),
+                                coreData) != FileAndFormat::ReadResult::Success)
                 {
                     return false;
                 }
