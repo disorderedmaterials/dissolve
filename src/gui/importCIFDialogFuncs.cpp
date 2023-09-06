@@ -99,13 +99,13 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             ui_.BondFromCIFRadio->setEnabled(cifHandler_.hasBondDistances());
             updateFlags_.setFlag(CIFHandler::UpdateFlags::CalculateBonding);
             update();
-            if (!cifHandler_.structuralSpecies())
+            if (!cifHandler_.structuralUnitCellSpecies())
                 return false;
             ui_.AssemblyView->expandAll();
             break;
         case (ImportCIFDialog::StructurePage):
             update();
-            if (!cifHandler_.cleanedSpecies())
+            if (!cifHandler_.cleanedUnitCellSpecies())
                 return false;
             break;
         case (ImportCIFDialog::CleanedPage):
@@ -142,7 +142,7 @@ bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
     switch (currentIndex)
     {
         case (ImportCIFDialog::CIFInfoPage):
-            cifHandler_.reset();
+            cifHandler_.resetSpeciesAndConfigurations();
             break;
         default:
             break;
@@ -366,9 +366,9 @@ bool ImportCIFDialog::update()
     // Set the repeat vector
     Vec3<int> repeat(ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value());
     auto result =
-        cifHandler_.update(ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5, repeat, moietyNETA_, updateFlags_);
-    ui_.StructureViewer->setConfiguration(cifHandler_.structuralConfiguration());
-    ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedConfiguration());
+        cifHandler_.generate(ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5, repeat, moietyNETA_, updateFlags_);
+    ui_.StructureViewer->setConfiguration(cifHandler_.structuralUnitCellConfiguration());
+    ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedUnitCellConfiguration());
     ui_.SupercellViewer->setConfiguration(cifHandler_.supercellConfiguration());
     ui_.PartitioningViewer->setConfiguration(cifHandler_.partitionedConfiguration());
     auto *supercell = cifHandler_.supercellSpecies();

@@ -25,12 +25,12 @@ TEST(ImportCIFTest, NaCl)
 {
     CIFHandler cifHandler;
     EXPECT_TRUE(cifHandler.read("cif/NaCl-1000041.cif"));
-    EXPECT_TRUE(cifHandler.update());
+    EXPECT_TRUE(cifHandler.generate());
 
     EXPECT_EQ(cifHandler.spaceGroup(), SpaceGroups::SpaceGroup_225);
 
     // Check basic configuration
-    auto *cfg = cifHandler.cleanedConfiguration();
+    auto *cfg = cifHandler.cleanedUnitCellConfiguration();
     constexpr double A = 5.62;
     ASSERT_TRUE(cfg);
     EXPECT_EQ(cfg->nAtoms(), 8);
@@ -53,7 +53,7 @@ TEST(ImportCIFTest, NaCl)
         DissolveSystemTest::checkVec3(set[0], (r2 - A / 2).abs());
 
     // 2x2x2 supercell
-    EXPECT_TRUE(cifHandler.update(0.1, {2, 2, 2}));
+    EXPECT_TRUE(cifHandler.generate(0.1, {2, 2, 2}));
     auto *superCell = cifHandler.supercellConfiguration();
     ASSERT_TRUE(superCell);
     EXPECT_EQ(superCell->nAtoms(), 8 * 8);
@@ -67,11 +67,11 @@ TEST(ImportCIFTest, NaClO3)
 {
     CIFHandler cifHandler;
     EXPECT_TRUE(cifHandler.read("cif/NaClO3-1010057.cif"));
-    EXPECT_TRUE(cifHandler.update());
+    EXPECT_TRUE(cifHandler.generate());
 
     // Check basic info
     EXPECT_EQ(cifHandler.spaceGroup(), SpaceGroups::SpaceGroup_198);
-    auto *cfg = cifHandler.structuralConfiguration();
+    auto *cfg = cifHandler.structuralUnitCellConfiguration();
     constexpr double A = 6.55;
     ASSERT_TRUE(cfg);
     EXPECT_EQ(cfg->nAtoms(), 20);
@@ -80,7 +80,7 @@ TEST(ImportCIFTest, NaClO3)
     EXPECT_NEAR(cfg->box()->axisLengths().z, A, 1.0e-6);
 
     //
-    EXPECT_EQ(1,0);
+    EXPECT_EQ(1, 0);
 }
 
 } // namespace UnitTest

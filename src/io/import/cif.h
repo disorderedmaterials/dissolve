@@ -40,13 +40,13 @@ class CIFHandler
 
     private:
     // Parse supplied file into the destination objects
-    bool parse(std::string filename, CIFTags &tags) const;
+    bool parse(std::string_view filename, CIFTags &tags) const;
 
     public:
     // Return whether the specified file parses correctly
-    bool validFile(std::string filename) const;
+    bool validFile(std::string_view filename) const;
     // Read CIF data from specified file
-    bool read(std::string filename);
+    bool read(std::string_view filename);
     // Return if the specified tag exists
     bool hasTag(std::string tag) const;
     // Return tag data string (if it exists) assuming a single datum (first in the vector)
@@ -93,24 +93,8 @@ class CIFHandler
     std::optional<double> bondDistance(std::string_view labelI, std::string_view labelJ) const;
 
     /*
-     * Species & Configurations
-     */
-    private:
-    Species *structuralSpecies_;
-    Configuration *structuralConfiguration_;
-    Species *cleanedSpecies_;
-    Configuration *cleanedConfiguration_;
-    std::vector<CIFMolecularSpecies> molecularSpecies_;
-    Configuration *molecularConfiguration_;
-    Species *supercellSpecies_;
-    Configuration *supercellConfiguration_;
-    Species *partitionedSpecies_;
-    Configuration *partitionedConfiguration_;
-
-    /*
      * Creation
      */
-
     public:
     // CIF Species Update Flags
     enum UpdateFlags
@@ -124,24 +108,60 @@ class CIFHandler
         CreateSupermolecule
     };
 
-    public:
-    bool update(double tolerance = 0.1, Vec3<int> supercellRepeat = {1, 1, 1},
-                std::optional<NETADefinition> moietyNETA = std::nullopt, Flags<UpdateFlags> flags = {});
-    std::pair<std::vector<Species *>, Configuration *> finalise(CoreData &coreData) const;
-    void reset();
-    bool isValid() const;
+    private:
+    // Basic unit cell
+    Species *unitCellSpecies_;
+    Configuration *unitCellConfiguration_;
+    // Cleaned unit cell
+    Species *cleanedUnitCellSpecies_;
+    Configuration *cleanedUnitCellConfiguration_;
+    // Molecular definition of unit cell (if possible)
+    std::vector<CIFMolecularSpecies> molecularUnitCellSpecies_;
+    Configuration *molecularUnitCellConfiguration_;
+    // Supercell
+    Species *supercellSpecies_;
+    Configuration *supercellConfiguration_;
+    // Final supercell, partitioned accordingly
+    Species *partitionedSpecies_;
+    Configuration *partitionedConfiguration_;
 
     private:
-    // Create a structural species
-    bool createStructuralSpecies(double tolerance, Flags<UpdateFlags> flags = {});
-    // Create a cleaned structural species
-    bool createCleanedSpecies(Flags<UpdateFlags> flags = {}, std::optional<NETADefinition> moietyNETA = std::nullopt);
-    // Create molecular species
-    bool createMolecularSpecies();
+    // Create basic unit cell
+    bool createBasicUnitCel(double tolerance, Flags<UpdateFlags> flags = {});
+    // Create the cleaned unit cell
+    bool createCleanedUnitCell(Flags<UpdateFlags> flags = {}, std::optional<NETADefinition> moietyNETA = std::nullopt);
+    // Try to detect molecules in the cell contents
+    bool detectMolecules();
     // Create supercell species
-    bool createSupercellSpecies(Vec3<int> repeat, Flags<UpdateFlags> flags = {});
-    // Create partitioned species
-    bool createPartitionedSpecies(Flags<UpdateFlags> flags = {});
+    bool createSupercell(Vec3<int> repeat, Flags<UpdateFlags> flags = {});
+    // Create partitioned cell
+    bool createPartitionedCell(Flags<UpdateFlags> flags = {});
+
+    public:
+    // Reset all objects
+    void resetSpeciesAndConfigurations();
+    // Recreate the data
+    bool generate(double tolerance = 0.1, Vec3<int> supercellRepeat = {1, 1, 1},
+                  std::optional<NETADefinition> moietyNETA = std::nullopt, Flags<UpdateFlags> flags = {});
+    // Finalise, returning the required species and resulting configuration
+    std::pair<std::vector<Species *>, Configuration *> finalise(CoreData &coreData) const;
+    // Return whether the generated data is valid
+    bool isValid() const;
+    // Structural
+    Species *structuralUnitCellSpecies();
+    Configuration *structuralUnitCellConfiguration();
+    // Cleaned
+    Species *cleanedUnitCellSpecies();
+    Configuration *cleanedUnitCellConfiguration();
+    // Molecular
+    const std::vector<CIFMolecularSpecies> &molecularSpecies() const;
+    Configuration *molecularConfiguration();
+    // Supercell
+    Species *supercellSpecies();
+    Configuration *supercellConfiguration();
+    // Partitioned
+    Species *partitionedSpecies();
+    Configuration *partitionedConfiguration();
 
     /*
      * Helpers
@@ -157,24 +177,4 @@ class CIFHandler
     std::vector<std::vector<Vec3<double>>> speciesCopiesCoordinates(Species *sp, std::vector<std::vector<int>> copies);
     // 'Fix' the geometry of a given species
     void fixGeometry(Species *sp, const Box *box);
-
-    /*
-     * Retrieval
-     */
-    public:
-    // Structural
-    Species *structuralSpecies();
-    Configuration *structuralConfiguration();
-    // Cleaned
-    Species *cleanedSpecies();
-    Configuration *cleanedConfiguration();
-    // Molecular
-    const std::vector<CIFMolecularSpecies> &molecularSpecies() const;
-    Configuration *molecularConfiguration();
-    // Supercell
-    Species *supercellSpecies();
-    Configuration *supercellConfiguration();
-    // Partitioned
-    Species *partitionedSpecies();
-    Configuration *partitionedConfiguration();
 };
