@@ -86,6 +86,7 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
             if (x > rangeMax)
                 break;
 
+            // Add difference as a point to delta Data object
             delta.addPoint(x, fabs(y - interpolatedB.y(x)));
         }
 
