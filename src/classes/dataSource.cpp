@@ -2,31 +2,40 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/dataSource.h"
+#include "templates/optionalRef.h"
 
-static EnumOptions<DataSourceType> DataSource::dataSourceTypes()
+EnumOptions<DataSource::DataSourceType> DataSource::dataSourceTypes()
 {
-    return EnumOptions<DataSourceType>("DataSourceType", {{Internal, "Internal"}, {External, "External"}});
+    return EnumOptions<DataSource::DataSourceType>("DataSourceType", {{Internal, "Internal"}, {External, "External"}});
 }
 
 // Return whether or not the data has been sourced and exists
 bool DataSource::dataExists() const
 {
-    return (!internalDataSource_.empty() && externalDataSource_ != std::nullptr) || data_.get() != std::nullptr;
+    return !internalDataSource_.empty() || (externalDataSource_ != nullptr && data_.get() != nullptr);
 }
 
 // Return data source type enum
-DataSourceType DataSource::dataSourceType() const { return dataSourceType_; }
+DataSource::DataSourceType DataSource::dataSourceType() const { return dataSourceType_; }
 
 // Return internal data source
 std::optional<std::string> DataSource::internalDataSource() const
 {
-    return !internalDataSource_.empty() ? internalDataSource_ : std::nullopt;
+    if (!internalDataSource_.empty())
+    {
+        return internalDataSource_;
+    }
+    return std::nullopt;
 }
 
 // Return external data source
-std::optional<FileAndFormat> &DataSource::externalDataSource() const
+OptionalReferenceWrapper<FileAndFormat> DataSource::externalDataSource() const
 {
-    return externalDataSource_ != std::nullptr ? *externalDataSource_.get() : std::nullopt;
+    if (externalDataSource_ != nullptr)
+    {
+        return *externalDataSource_.get();
+    }
+    return std::nullopt;
 }
 
 // Write through specified LineParser
@@ -67,7 +76,7 @@ bool DataSource::serialise(LineParser &parser, std::string_view keywordName, std
 }
 
 // Express as a serialisable value
-SerialisedValue DataSource::serialise() const {}
+SerialisedValue DataSource::serialise() const { return {}; }
 
 // Read values from a serialisable value
 void DataSource::deserialise(const SerialisedValue &node, const CoreData &data) {}

@@ -15,7 +15,8 @@ class DataSource : public Serialisable<const CoreData &>
 {
     public:
     DataSource() = default;
-    // DataSource(DataSource &&) = default;
+    DataSource(const DataSource &dataSource) = default;
+    DataSource(DataSource &&dataSource) = default;
     ~DataSource() = default;
 
     public:
@@ -25,6 +26,12 @@ class DataSource : public Serialisable<const CoreData &>
         External
     };
 
+    public:
+    // Return enum options for DataSourceType
+    static EnumOptions<DataSourceType> dataSourceTypes();
+    // Return data source type enum
+    DataSourceType dataSourceType() const;
+
     private:
     DataSourceType dataSourceType_;
     std::string internalDataSource_;
@@ -32,8 +39,6 @@ class DataSource : public Serialisable<const CoreData &>
     std::unique_ptr<DataBase> data_;
 
     public:
-    // Return enum options for DataSourceType
-    static EnumOptions<DataSourceType> dataSourceTypes();
     void addData(std::string_view internalDataSource)
     {
         dataSourceType_ = Internal;
@@ -63,8 +68,9 @@ class DataSource : public Serialisable<const CoreData &>
                 {
                     return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
                 }
+                Messenger::print("Sourced data '{}'", internalDataSource_);
                 // Fill object with located data
-                data_ = std::make_unique<Data1DBase>(optData->get());
+                data_ = std::make_unique<DataType>(optData->get());
             }
 
             // Data2D, Data3D
@@ -76,31 +82,29 @@ class DataSource : public Serialisable<const CoreData &>
                 {
                     return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
                 }
+                Messenger::print("Sourced data '{}'", internalDataSource_);
+
                 // Fill object with located data
                 data_ = std::make_unique<DataType>(optData->get());
             }
         }
 
-        return true;
+        return data_.get() != nullptr ? true : false;
     }
-    template <class DataType> OptionalReferenceWrapper<const DataType> data() const
+    template <class DataType> DataType data() const
     {
-        if (!dataExists())
-        {
-            return std::nullopt;
-        }
+        assert(dataExists());
+        auto data = dynamic_cast<DataType &>(*data_);
 
-        return *data_;
+        return data;
     }
 
     // Return if data exists and has been initialised
     bool dataExists() const;
-    // Return data source type enum
-    DataSourceType dataSourceType() const;
     // Return internal data source
     std::optional<std::string> internalDataSource() const;
     // Return external data source
-    std::optional<FileAndFormat> &externalDataSource() const;
+    OptionalReferenceWrapper<FileAndFormat> externalDataSource() const;
 
     /*
      * I/O
