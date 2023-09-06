@@ -15,7 +15,6 @@ class DataSource : public Serialisable<const CoreData &>
 {
     public:
     DataSource() = default;
-    DataSource(const DataSource &dataSource) = default;
     DataSource(DataSource &&dataSource) = default;
     ~DataSource() = default;
 

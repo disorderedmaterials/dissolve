@@ -92,8 +92,8 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
                 }
 
                 // Add data to pair element depending on counter
-                dataCounter == 0 ? dataSourceA.addData<DataType, DataFormat>(data, format)
-                                 : dataSourceB.addData<DataType, DataFormat>(data, format);
+                dataCounter == 0 ? dataSourceA.template addData<DataType, DataFormat>(data, format)
+                                 : dataSourceB.template addData<DataType, DataFormat>(data, format);
                 dataCounter++;
             }
             else
