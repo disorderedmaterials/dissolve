@@ -63,8 +63,6 @@ class ProcedureNodeSequence : public Serialisable<const CoreData &>
     int nNodes() const;
     // Return whether the sequence is empty
     bool empty() const;
-    // Remove a node
-    bool removeNode(NodeRef node);
 
     /*
      * Scope

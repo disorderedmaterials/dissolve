@@ -47,9 +47,6 @@ class Procedure : public Serialisable<const CoreData &>
     std::vector<ConstNodeRef> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                                     std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
 
-    // Remove a node
-    bool removeNode(NodeRef node);
-
     /*
      * Execute
      */
