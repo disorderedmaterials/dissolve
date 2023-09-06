@@ -13,7 +13,8 @@ namespace ExternalPotentialTypes
 enum class ExternalPotentialType
 {
     Simple,
-    Directional
+    Directional,
+    Regional
 };
 // Return whether the supplied external potential type is valid
 std::optional<ExternalPotentialType> isType(std::string_view name);

@@ -280,6 +280,13 @@ template <class T> class Vec3 : public Serialisable<>
             return 1;
         return 2;
     }
+    // Return vector with specified element adjusted
+    Vec3<T> adjusted(int element, double delta) const
+    {
+        auto newValue = *this;
+        newValue[element] += delta;
+        return newValue;
+    }
     // Multiply elements of this vector with factors supplied
     void multiply(double facx, double facy, double facz)
     {
