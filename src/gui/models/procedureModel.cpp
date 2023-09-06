@@ -474,7 +474,7 @@ QModelIndex ProcedureModel::appendNew(const QString &nodeTypeString)
     // Check the node type string is valid
     if (!ProcedureNode::nodeTypes().isValid(nodeTypeString.toStdString()))
         return {};
-    
+
     // Convert the node type string to its enumeration
     auto nodeType = ProcedureNode::nodeTypes().enumeration(nodeTypeString.toStdString());
     // Create a node of the node type

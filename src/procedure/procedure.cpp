@@ -42,7 +42,6 @@ std::vector<ConstNodeRef> Procedure::nodes(std::optional<ProcedureNode::NodeType
     return rootSequence_.nodes(optNodeType, optNodeClass);
 }
 
-
 /*
  * Execute
  */
