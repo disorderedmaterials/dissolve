@@ -11,7 +11,7 @@
 // Forward Declarations
 class DataSource;
 
-// Supports up to two data sources in each keyword call
+// Base keyword for data source
 class DataSourceKeywordBase : public KeywordBase
 {
     // Typedef
@@ -26,12 +26,12 @@ class DataSourceKeywordBase : public KeywordBase
      * Data
      */
     protected:
+    // End keyword
     const std::string endKeyword_;
-
+    // Reference to module data
     std::vector<DataPair> &dataSources_;
 
     public:
+    // Returns reference to module data
     std::vector<DataPair> &dataSources();
-    std::string externalKeyword();
-    std::string internalKeyword();
 };
