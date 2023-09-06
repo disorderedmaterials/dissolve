@@ -369,6 +369,7 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         auto mimeData = static_cast<const ProcedureModelMimeData *>(data);
         if (!mimeData)
             return false;
+
         // Retrieve the old node data
         auto optOldIndex = mimeData->nodeIndex();
         if (!optOldIndex)
@@ -470,6 +471,10 @@ bool ProcedureModel::removeRows(int row, int count, const QModelIndex &parent)
 
 QModelIndex ProcedureModel::appendNew(const QString &nodeTypeString)
 {
+    // Check the node type string is valid
+    if (!ProcedureNode::nodeTypes().isValid(nodeTypeString.toStdString()))
+        return {};
+    
     // Convert the node type string to its enumeration
     auto nodeType = ProcedureNode::nodeTypes().enumeration(nodeTypeString.toStdString());
     // Create a node of the node type
