@@ -6,7 +6,7 @@
 #include "base/sysFunc.h"
 
 Data3DImportFileFormat::Data3DImportFileFormat(std::string_view filename, Data3DImportFileFormat::Data3DImportFormat format)
-    : DataImportFileFormat(formats_, filename, (int)format)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<Data3DImportFileFormat::Data3DImportFormat>(
         "Data3DImportFileFormat", {{Data3DImportFormat::PDens, "pdens", "dlputils-style pdens format"}});
