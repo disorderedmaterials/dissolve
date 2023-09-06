@@ -369,7 +369,6 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         auto mimeData = static_cast<const ProcedureModelMimeData *>(data);
         if (!mimeData)
             return false;
-
         // Retrieve the old node data
         auto optOldIndex = mimeData->nodeIndex();
         if (!optOldIndex)
@@ -405,18 +404,7 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         // Move the node to its new home
         newScope.sequence()[insertAtRow] = std::move(oldScope.sequence()[oldNodeRow]);
         oldNode->setScope(newScope);
-
-        // Remove the old row
-        beginRemoveRows(oldParent, oldNodeRow, oldNodeRow);
-        oldScope.sequence().erase(oldScope.sequence().begin() + oldNodeRow);
-        endRemoveRows();
-
-        beginResetModel();
-        endResetModel();
-
-        // Set the new data - we call this just to emit dataChanged() from the correct place.
-        auto idx = index(insertAtRow, 0, newParent);
-        return setData(idx, QVariant::fromValue(mimeData->node()), ProcedureModelAction::MoveInternal);
+        return true;
     }
     else if (action == Qt::CopyAction && data->hasFormat("application/dissolve.procedure.newNode"))
     {
@@ -470,13 +458,13 @@ bool ProcedureModel::removeRows(int row, int count, const QModelIndex &parent)
 
     // Get the scope associated to the parent index
     auto scope = getScope(parent);
-
-    beginRemoveRows(parent, row, row + count - 1);
-    for (auto i = 0; i < count; ++i)
-        scope->get().removeNode(data(index(row + i, 0, parent), Qt::UserRole).value<std::shared_ptr<ProcedureNode>>());
+    beginRemoveRows(parent, row, row);
+    if (count > 1)
+        scope->get().sequence().erase(scope->get().sequence().begin() + row, scope->get().sequence().begin() + row + count - 1);
+    else
+        scope->get().sequence().erase(scope->get().sequence().begin() + row);
     endRemoveRows();
 
-    emit(dataChanged(QModelIndex(), QModelIndex()));
     return true;
 }
 
