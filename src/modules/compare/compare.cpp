@@ -14,3 +14,5 @@ CompareModule::CompareModule() : Module(ModuleTypes::Compare)
                                                         Error::errorTypes());
     keywords_.add<RangeVectorKeyword>("RFactorRanges", "Ranges over which to calculate RFactors", ranges_);
 }
+
+const std::vector<DataSourceKeywordBase::DataPair> &CompareModule::dataSources() { return dataSources_; }

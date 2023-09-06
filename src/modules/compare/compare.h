@@ -41,6 +41,10 @@ class CompareModule : public Module
     // Ranges to calculate error over
     std::vector<Range> ranges_;
 
+    public:
+    // Return data sources
+    const std::vector<DataSourceKeywordBase::DataPair> &dataSources();
+
     /*
      * Processing
      */
