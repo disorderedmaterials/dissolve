@@ -14,12 +14,6 @@ class Data1DBase : public DataBase
 {
 
     /*
-     * Type Definitions
-     */
-    public:
-    using Formatter = Data1DImportFileFormat;
-
-    /*
      * Values / Errors
      */
     public:
