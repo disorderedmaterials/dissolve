@@ -38,6 +38,7 @@
 #include "procedure/nodes/process1D.h"
 #include "procedure/nodes/process2D.h"
 #include "procedure/nodes/process3D.h"
+#include "procedure/nodes/regionalGlobalPotential.h"
 #include "procedure/nodes/remove.h"
 #include "procedure/nodes/restraintPotential.h"
 #include "procedure/nodes/rotateFragment.h"
@@ -141,6 +142,8 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<DirectionalGlobalPotentialProcedureNode>(ProcedureNode::NodeType::DirectionalGlobalPotential,
                                                               "Add a directional global potential affecting all atoms",
                                                               "Potentials");
+    registerProducer<RegionalGlobalPotentialProcedureNode>(
+        ProcedureNode::NodeType::RegionalGlobalPotential, "Add a voxelised global potential affecting all atoms", "Potentials");
     registerProducer<RestraintPotentialProcedureNode>(ProcedureNode::NodeType::RestraintPotential,
                                                       "Restraint atoms of molecules to their current positions", "Potentials");
     registerProducer<SimpleGlobalPotentialProcedureNode>(ProcedureNode::NodeType::SimpleGlobalPotential,

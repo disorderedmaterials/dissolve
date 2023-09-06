@@ -3,6 +3,7 @@
 
 #include "kernels/potentials/producer.h"
 #include "kernels/potentials/directional.h"
+#include "kernels/potentials/regional.h"
 #include "kernels/potentials/simple.h"
 
 // External Potential Producer
@@ -17,6 +18,8 @@ std::unique_ptr<ExternalPotential> create(ExternalPotentialTypes::ExternalPotent
             return std::make_unique<SimplePotential>();
         case (ExternalPotentialTypes::ExternalPotentialType::Directional):
             return std::make_unique<DirectionalPotential>();
+        case (ExternalPotentialTypes::ExternalPotentialType::Regional):
+            return std::make_unique<RegionalPotential>();
         default:
             throw(std::runtime_error(fmt::format("Creation of external potential type '{}' not implemented.\n",
                                                  ExternalPotentialTypes::keyword(type))));

@@ -65,6 +65,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Process1D, "Process1D"},
                      {ProcedureNode::NodeType::Process2D, "Process2D"},
                      {ProcedureNode::NodeType::Process3D, "Process3D"},
+                     {ProcedureNode::NodeType::RegionalGlobalPotential, "RegionalGlobalPotential"},
                      {ProcedureNode::NodeType::Remove, "Remove"},
                      {ProcedureNode::NodeType::RestraintPotential, "RestraintPotential"},
                      {ProcedureNode::NodeType::RotateFragment, "RotateFragment"},

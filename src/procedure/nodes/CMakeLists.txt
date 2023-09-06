@@ -45,6 +45,7 @@ add_library(
   process2D.cpp
   process3D.cpp
   regionBase.cpp
+  regionalGlobalPotential.cpp
   registry.cpp
   remove.cpp
   restraintPotential.cpp
@@ -102,6 +103,7 @@ add_library(
   process2D.h
   process3D.h
   regionBase.h
+  regionalGlobalPotential.h
   registry.h
   remove.h
   restraintPotential.h
