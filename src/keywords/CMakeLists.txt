@@ -5,9 +5,6 @@ add_library(
   bool.cpp
   configuration.cpp
   configurationVector.cpp
-  data1DStore.cpp
-  data2DStore.cpp
-  data3DStore.cpp
   dataSourceBase.cpp
   double.cpp
   elementVector.cpp
@@ -15,7 +12,6 @@ add_library(
   expressionVariableVector.cpp
   fileAndFormat.cpp
   function1D.cpp
-  geometryList.cpp
   integer.cpp
   isotopologueSet.cpp
   layer.cpp
@@ -35,23 +31,15 @@ add_library(
   stdString.cpp
   store.cpp
   storeData.cpp
-  valueStore.cpp
   vec3Double.cpp
   vec3Integer.cpp
   vec3NodeValue.cpp
-  vectorIntDouble.cpp
-  vectorIntString.cpp
-  vectorStringDouble.cpp
-  vectorStringPair.cpp
   weightedModuleVector.cpp
   atomTypeVector.h
   base.h
   bool.h
   configuration.h
   configurationVector.h
-  data1DStore.h
-  data2DStore.h
-  data3DStore.h
   dataSourceBase.h
   dataSource.h
   double.h
@@ -61,7 +49,6 @@ add_library(
   expressionVariableVector.h
   fileAndFormat.h
   function1D.h
-  geometryList.h
   integer.h
   interactionPotential.h
   isotopologueSet.h
@@ -87,15 +74,10 @@ add_library(
   store.h
   storeData.h
   rangeVector.h
-  valueStore.h
   vec3Double.h
   vec3Integer.h
   vec3Labels.h
   vec3NodeValue.h
-  vectorIntDouble.h
-  vectorIntString.h
-  vectorStringDouble.h
-  vectorStringPair.h
   weightedModuleVector.h
 )
 

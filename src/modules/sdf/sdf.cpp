@@ -32,8 +32,7 @@ SDFModule::SDFModule() : Module(ModuleTypes::SDF), analyser_(ProcedureNode::Anal
 
     // -- -- Collect3D: 'SDF'
     collectVector_ =
-        forEachB.create<Collect3DProcedureNode>({}, calcVector, ProcedureNode::AnalysisContext, rangeX_.x, rangeX_.y, rangeX_.z,
-                                                rangeY_.x, rangeY_.y, rangeY_.z, rangeZ_.x, rangeZ_.y, rangeZ_.z);
+        forEachB.create<Collect3DProcedureNode>({}, calcVector, ProcedureNode::AnalysisContext, rangeX_, rangeY_, rangeZ_);
 
     // Process3D: @dataName
     processPosition_ = analyser_.createRootNode<Process3DProcedureNode>("SDF", collectVector_);

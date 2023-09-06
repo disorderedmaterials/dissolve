@@ -22,8 +22,6 @@
 #include "modules/compare/gui/compareWidget.h"
 #include "modules/dAngle/dAngle.h"
 #include "modules/dAngle/gui/dAngleWidget.h"
-#include "modules/dataTest/dataTest.h"
-#include "modules/dataTest/gui/dataTestWidget.h"
 #include "modules/energy/energy.h"
 #include "modules/energy/gui/energyWidget.h"
 #include "modules/epsr/epsr.h"
@@ -40,6 +38,8 @@
 #include "modules/intraDistance/intraDistance.h"
 #include "modules/neutronSQ/gui/neutronSQWidget.h"
 #include "modules/neutronSQ/neutronSQ.h"
+#include "modules/orientedSDF/gui/orientedSDFWidget.h"
+#include "modules/orientedSDF/orientedSDF.h"
 #include "modules/sdf/gui/sdfWidget.h"
 #include "modules/sdf/sdf.h"
 #include "modules/siteRDF/gui/siteRDFWidget.h"
@@ -66,7 +66,6 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<BraggModule, BraggModuleWidget>();
     registerProducer<CompareModule, CompareModuleWidget>();
     registerProducer<DAngleModule, DAngleModuleWidget>();
-    registerProducer<DataTestModule, DataTestModuleWidget>();
     registerProducer<EnergyModule, EnergyModuleWidget>();
     registerProducer<EPSRModule, EPSRModuleWidget>();
     registerProducer<GeometryOptimisationModule, GeometryOptimisationModuleWidget>();
@@ -75,6 +74,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<IntraAngleModule, IntraAngleModuleWidget>();
     registerProducer<IntraDistanceModule, IntraDistanceModuleWidget>();
     registerProducer<NeutronSQModule, NeutronSQModuleWidget>();
+    registerProducer<OrientedSDFModule, OrientedSDFModuleWidget>();
     registerProducer<SDFModule, SDFModuleWidget>();
     registerProducer<SkeletonModule, SkeletonModuleWidget>();
     registerProducer<SiteRDFModule, SiteRDFModuleWidget>();

@@ -21,17 +21,7 @@ EnergyModule::EnergyModule() : Module(ModuleTypes::Energy)
                                   stabilityWindow_, 1);
 
     keywords_.setOrganisation("Advanced");
-    keywords_.add<BoolKeyword>(
-        "Test", "Test parallel energy routines against basic serial versions and supplied reference values", test_);
-    keywords_.add<BoolKeyword>("TestAnalytic",
-                               "Use analytic interatomic energies rather than (production) tabulated potentials for tests",
-                               testAnalytic_);
-    keywords_.add<OptionalDoubleKeyword>("TestReferenceInter",
-                                         "Reference value for interatomic energy against which to test calculated value",
-                                         testReferenceInter_, -1.0e10, std::nullopt, 1.0e8, "Off");
-    keywords_.add<OptionalDoubleKeyword>("TestReferenceIntra",
-                                         "Reference value for intramolecular energy against which to test calculated value",
-                                         testReferenceIntra_, -1.0e10, std::nullopt, 1.0e8, "Off");
+    keywords_.add<BoolKeyword>("Test", "production energy against analytic 'correct' values", test_);
     keywords_.add<DoubleKeyword>("TestThreshold", "Threshold of energy at which test comparison will fail", testThreshold_);
 
     keywords_.setOrganisation("Export");

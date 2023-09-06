@@ -1,6 +1,0 @@
-'AtomShake' System Test
-Test recovery of intramolecular geometry of a simple molecule using the AtomShake module.
-
-One water molecule in a large box, starting at known coordinates giving O-H bond lengths of 0.9 and H-O-H angle
-of 100.0 degrees. AtomShake at 0 K used to return geometry to forcefield values (1.012 Angstroms and 113.24
-degrees).

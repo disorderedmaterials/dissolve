@@ -12,6 +12,13 @@ void MasterTorsionModel::setSourceData(std::vector<std::shared_ptr<MasterTorsion
     endResetModel();
 }
 
+// Refresh model data
+void MasterTorsionModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 int MasterTorsionModel::rowCount(const QModelIndex &parent) const
 {
     return parent.isValid() ? 0 : (sourceData_ ? sourceData_->get().size() : 0);
