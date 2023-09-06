@@ -28,6 +28,9 @@ add_library(
   configuration_sites.cpp
   configuration_upkeep.cpp
   coreData.cpp
+  data1DStore.cpp
+  data2DStore.cpp
+  data3DStore.cpp
   dataSource.cpp
   distributor.cpp
   empiricalFormula.cpp
@@ -82,6 +85,9 @@ add_library(
   changeStore.h
   configuration.h
   coreData.h
+  data1DStore.h
+  data2DStore.h
+  data3DStore.h
   dataSource.h
   distributor.h
   empiricalFormula.h
