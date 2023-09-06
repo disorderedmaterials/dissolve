@@ -31,6 +31,7 @@ add_library(
   data1DStore.cpp
   data2DStore.cpp
   data3DStore.cpp
+  dataSource.cpp
   distributor.cpp
   isotopeData.cpp
   isotopologue.cpp
@@ -87,6 +88,7 @@ add_library(
   data1DStore.h
   data2DStore.h
   data3DStore.h
+  dataSource.h
   distributor.h
   empiricalFormula.h
   interactionPotential.h
