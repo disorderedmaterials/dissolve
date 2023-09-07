@@ -109,7 +109,6 @@ class DataSource : public Serialisable<const CoreData &>
 
         return data;
     }
-
     // Return if data exists and has been initialised
     bool dataExists() const;
     // Return internal data source

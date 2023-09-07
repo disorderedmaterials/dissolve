@@ -8,7 +8,6 @@
 // Data Base
 class DataBase
 {
-
     /*
      * Axis Information
      */

@@ -6,16 +6,12 @@
 
 Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 {
-
-    Messenger::print("COMPAREE");
-
     // Mapping from data pair to ranges and error
     std::map<DataSourceKeywordBase::DataPair *, rangeErrorPair> dataSourcesErrors;
 
-    int index;
+    auto index = 0;
     for (auto &dataPair : dataSources_)
     {
-
         /*
          * Preparing data
          */
