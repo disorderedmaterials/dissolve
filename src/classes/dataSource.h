@@ -93,9 +93,8 @@ class DataSource
                     return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
                 }
                 Messenger::print("Sourced data '{}'", internalDataSource_);
-                optData->get()
-                    // Create unique pointer for data
-                    data_ = std::make_unique<DataType>(optData->get());
+                // Create unique pointer for data
+                data_ = std::make_unique<DataType>(optData->get());
             }
 
             // Data2D, Data3D
