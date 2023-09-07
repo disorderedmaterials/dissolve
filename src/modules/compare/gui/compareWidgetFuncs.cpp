@@ -16,12 +16,15 @@ CompareModuleWidget::CompareModuleWidget(QWidget *parent, CompareModule *module,
     graph_ = ui_.PlotWidget->dataViewer();
     rangeErrorTable_ = ui_.RangeErrorTable;
 
+    auto index = 0;
     for (auto &[dataA, dataB] : module->dataSources())
     {
         auto dataButton = new QPushButton(this);
-        dataButton->setText(QString::fromStdString(fmt::format("{} vs {}", dataA.get()->tag(), dataB.get()->tag())));
+        dataButton->setText(QString::fromStdString(fmt::format("Compare{}", index)));
         ui_.ButtonLayout->addWidget(dataButton);
         buttons_.push_back(&dataButton);
+
+        ++index;
     }
 }
 
@@ -34,5 +37,18 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
 {
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || ui_.PlotWidget->dataViewer()->renderables().empty())
     {
+        // Get the index of the checked button
+        auto index =
+            std::find_if(buttons_.begin(), buttons_.end(), [&](auto button) { return button->isChecked(); }) - buttons.begin();
+        // Get the data pair at the same index as the checked button
+        auto &[dataSourceA, dataSourceB] = module->dataSources()[index];
+        // Render DataA in the pair
+        graph_->createRenderable<RenderableData1D>(fmt::format("Pair{}_DataA//Compare", index),
+                                                   fmt::format("{}", dataSourceA.dataName()));
+        // Render DataB in the pair
+        graph_->createRenderable<RenderableData1D>(fmt::format("Pair{}_DataA//Compare", index),
+                                                   fmt::format("{}", dataSourceA.dataName()));
+        // Render the difference (delta) between the datasets
+        graph_->createRenderable<RenderableData1D>(fmt::format("Pair{}_Delta//Compare", index), "Delta");
     }
 }
