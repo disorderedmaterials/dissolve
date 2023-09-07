@@ -22,7 +22,7 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     selectBO_ = analyser_.createRootNode<SelectProcedureNode>("BO");
     auto &forEachBO = selectBO_->branch()->get();
 
-    // -- Select: Site 'NF' - Network Former
+    // Select: Site 'NF' - Network Former
     selectNF_ = forEachBO.create<SelectProcedureNode>("NF");
     selectNF_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectBO_});
     selectNF_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectBO_});
@@ -41,25 +41,27 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     siteIndex->setExpression("NF.siteIndex");
     auto collectNFIndex = ifThen.create<IntegerCollect1DProcedureNode>("NFBins", siteIndex, ProcedureNode::AnalysisContext);
 
-    // Get number of BO within NF
-    auto qIterator = analyser_.createRootNode<IterateData1DProcedureNode>("QIterator", collectNFIndex);
-    auto &forEachQIterator = qIterator->branch()->get();
-    auto value = forEachQIterator.create<CalculateExpressionProcedureNode>({});
-    value->setExpression("QIterator.value");
+    // Collect / convert BO counts about each NF into Q species information
+    auto iterateBO = analyser_.createRootNode<IterateData1DProcedureNode>("BOIterator", collectNFIndex);
+    auto &forEachQIterator = iterateBO->branch()->get();
+    auto nBO = forEachQIterator.create<CalculateExpressionProcedureNode>({});
+    nBO->setExpression("BOIterator.value");
+    auto qConvert = forEachQIterator.create<IntegerCollect1DProcedureNode>("QBins", nBO, ProcedureNode::AnalysisContext);
 
-    // Collect and process BO
-    auto collectQ = forEachQIterator.create<IntegerCollect1DProcedureNode>("Bins", value, ProcedureNode::AnalysisContext);
-    auto processNF = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectQ);
-    auto &normalisation = processNF->branch()->get();
-    normalisation.create<OperateNormaliseProcedureNode>({});
+    // Count NFs around each potential BO site
+    auto nNF = forEachBO.create<CalculateExpressionProcedureNode>({});
+    nNF->setExpression("NF.nSelected");
+    auto collectBO = forEachBO.create<IntegerCollect1DProcedureNode>("NumberBO", nNF, ProcedureNode::AnalysisContext);
 
-    // Percentage of BO
-    auto percentBO = forEachBO.create<CalculateExpressionProcedureNode>({});
-    percentBO->setExpression("NF.nSelected");
-    auto collectBO = forEachBO.create<IntegerCollect1DProcedureNode>("NumberBO", percentBO, ProcedureNode::AnalysisContext);
-    auto processPercent = analyser_.createRootNode<Process1DProcedureNode>("PercentBO", collectQ);
-    auto &normalisationPercent = processNF->branch()->get();
+    // Process oxygen NF bond orders
+    auto processBO = analyser_.createRootNode<Process1DProcedureNode>("PercentBO", collectBO);
+    auto &normalisationPercent = processBO->branch()->get();
     normalisationPercent.create<OperateNormaliseProcedureNode>({});
+
+    // Process Q
+    auto processQ = analyser_.createRootNode<Process1DProcedureNode>("QSpecies", qConvert);
+    auto &normaliseQ = processQ->branch()->get();
+    normaliseQ.create<OperateNormaliseProcedureNode>({});
 
     /*
      * Keywords
@@ -80,5 +82,5 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
                                 distanceRange_, 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
     keywords_.setOrganisation("Export");
     keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated QSpecies data",
-                                        processNF->exportFileAndFormat(), "EndExport");
+                                        processQ->exportFileAndFormat(), "EndExport");
 }
