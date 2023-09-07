@@ -22,7 +22,6 @@ CompareModuleWidget::CompareModuleWidget(QWidget *parent, CompareModule *module,
         dataButton->setText(QString::fromStdString(fmt::format("{} vs {}", dataA.get()->tag(), dataB.get()->tag())));
         ui_.ButtonLayout->addWidget(dataButton);
         buttons_.push_back(&dataButton);
-        buttons_[0]->setText(QString::fromStdString("La"));
     }
 }
 
