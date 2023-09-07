@@ -49,7 +49,7 @@ void IntegerHistogram1D::updateAccumulatedData()
 }
 
 // Create display data object covering extents of current bins
-const std::pair<Data1D, int> IntegerHistogram1D::createDisplayData()
+std::pair<Data1D, int> IntegerHistogram1D::createDisplayData() const
 {
     // If we haven't binned anything yet, return now
     if (raw_.empty())
