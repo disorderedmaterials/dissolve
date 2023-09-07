@@ -11,6 +11,7 @@
 #include "math/data2D.h"
 #include "math/data3D.h"
 #include "templates/optionalRef.h"
+#include <queue>
 
 // Keyword managing data sources
 // Template arguments: data class (Data1D, Data2D ...), data import file format
@@ -39,12 +40,10 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
     // Deserialise from supplied LineParser, starting at given argument offset
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
-        // Counter of dataSources being read
-        int dataCounter = 0;
         // Emplacing back on data vector and getting the reference to the objects
-        auto &newDataSource = dataSources_.emplace_back();
-        auto &dataSourceA = newDataSource.first;
-        auto &dataSourceB = newDataSource.second;
+        DataSource dataSourceA, dataSourceB;
+        // Create a queue for the dataSource objects
+        std::queue<DataSource *> sourceQueue({&dataSourceA, &dataSourceB});
 
         // Read the next line
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -55,7 +54,7 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
         while (!parser.eofOrBlank())
         {
             // Only allows maximum of two data sources per keyword
-            if (dataCounter >= 2)
+            if (sourceQueue.empty())
             {
                 break;
             }
@@ -69,9 +68,10 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
             // If data is internal
             if (DataSource::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource::Internal)
             {
-                // Add data to pair element depending on counter
-                dataCounter == 0 ? dataSourceA.addData(parser.argsv(1)) : dataSourceB.addData(parser.argsv(1));
-                dataCounter++;
+                // Add data to dataSource
+                sourceQueue.front()->addData(parser.argsv(1));
+                // Remove dataSource from queue
+                sourceQueue.pop();
             }
             // If data is external
             else if (DataSource::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource::External)
@@ -93,14 +93,15 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
                     return false;
                 }
 
-                // Add data to pair element depending on counter
-                dataCounter == 0 ? dataSourceA.template addData<DataType, DataFormat>(data, format)
-                                 : dataSourceB.template addData<DataType, DataFormat>(data, format);
-                dataCounter++;
+                // Add data to dataSource
+                sourceQueue.front()->addData(data, format);
+                // Remove dataSource from queue
+                sourceQueue.pop();
             }
             else
             {
-                return Messenger::error("Unsupported data location '{}' provided to keyword '{}'\n", parser.argsv(0), name());
+                return Messenger::error("Unsupported data source type '{}' provided to keyword '{}'\n", parser.argsv(0),
+                                        name());
             }
 
             // Read the next line
@@ -115,6 +116,8 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
                 break;
             }
         }
+
+        dataSources_.push_back({std::move(dataSourceA), std::move(dataSourceB)});
 
         return true;
     }
@@ -158,7 +161,61 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
         return true;
     }
     // Express as a serialisable value
-    SerialisedValue serialise() const override { return {{}}; }
+    SerialisedValue serialise() const override
+    {
+        return fromVector(dataSources_,
+                          [](const auto &item) -> SerialisedValue
+                          {
+                              SerialisedValue result = toml::array{};
+                              auto &[dataSourceA, dataSourceB] = item;
+                              result.push_back(dataSourceA.serialise());
+                              // If optional second data source exists
+                              if (dataSourceB.dataExists())
+                              {
+                                  result.push_back(dataSourceB.serialise());
+                              }
+                              return result;
+                          });
+    }
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &coreData) override {}
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override
+    {
+        // Emplacing back on data vector and getting the reference to the objects
+        DataSource dataSourceA, dataSourceB;
+        // Create a queue for the dataSource objects
+        std::queue<DataSource *> sourceQueue({&dataSourceA, &dataSourceB});
+
+        toVector(node,
+                 [this, &coreData, &sourceQueue](const auto &item)
+                 {
+                     // If data source type is internal
+                     if (DataSource::dataSourceTypes().enumeration(toml::find<std::string>(item, "dataSourceType")) ==
+                             DataSource::Internal &&
+                         !sourceQueue.empty())
+                     {
+                         // Add data to dataSource
+                         sourceQueue.front()->addData(toml::find<std::string>(item, "data"));
+                         // Remove dataSource from queue
+                         sourceQueue.pop();
+                     }
+                     // If data source type is external
+                     else if (!sourceQueue.empty())
+                     {
+                         DataType data;
+                         DataFormat format;
+
+                         // Deserialise FileAndFormat
+                         format.deserialise(item.at("data"), coreData);
+                         // Import data
+                         format.importData(data);
+
+                         // Add data to dataSource
+                         sourceQueue.front()->addData(toml::find<std::string>(item, "data"));
+                         // Remove dataSource from queue
+                         sourceQueue.pop();
+                     }
+                 });
+
+        dataSources_.push_back({std::move(dataSourceA), std::move(dataSourceB)});
+    }
 };
