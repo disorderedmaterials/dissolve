@@ -74,8 +74,8 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
          * Calculating the difference (delta) between datasets
          */
 
-        auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(fmt::format("Delta{}//Compare", index),
-                                                                                      name_, GenericItem::InRestartFileFlag);
+        auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+            fmt::format("Pair{}_Delta//Compare", index), name_, GenericItem::InRestartFileFlag);
 
         // Get the minimum and maximum x values that exist over both datasets
         auto rangeMin = std::min(dataA.xAxis().front(), dataB.xAxis().front());
