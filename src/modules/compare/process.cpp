@@ -40,6 +40,18 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         auto dataB = dataPair.second.data<Data1D>();
 
         /*
+         * Save Data
+         */
+
+        auto &dataAStorage = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+            fmt::format("Pair{}_DataA//Compare", index), name_, GenericItem::InRestartFileFlag);
+        auto &dataBStorage = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+            fmt::format("Pair{}_DataB//Compare", index), name_, GenericItem::InRestartFileFlag);
+
+        dataAStorage = dataA;
+        dataBStorage = dataB;
+
+        /*
          * Calculating and reporting the error between datasets
          */
 
@@ -62,8 +74,8 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
          * Calculating the difference (delta) between datasets
          */
 
-        auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("DeltaPair{}//Compare", index), name_, GenericItem::InRestartFileFlag);
+        auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(fmt::format("Delta{}//Compare", index),
+                                                                                      name_, GenericItem::InRestartFileFlag);
 
         // Get the minimum and maximum x values that exist over both datasets
         auto rangeMin = std::min(dataA.xAxis().front(), dataB.xAxis().front());
