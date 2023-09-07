@@ -35,7 +35,7 @@ OptionalReferenceWrapper<FileAndFormat> DataSource::externalDataSource() const
 {
     if (externalDataSource_ != nullptr)
     {
-        return *externalDataSource_.get();
+        return *externalDataSource_;
     }
     return std::nullopt;
 }
@@ -78,7 +78,17 @@ bool DataSource::serialise(LineParser &parser, std::string_view keywordName, std
 }
 
 // Express as a serialisable value
-SerialisedValue DataSource::serialise() const { return {}; }
+SerialisedValue DataSource::serialise() const
+{
+    SerialisedValue result;
 
-// Read values from a serialisable value
-void DataSource::deserialise(const SerialisedValue &node, const CoreData &data) {}
+    result["dataSourceType"] = dataSourceTypes().keyword(dataSourceType_);
+    if (dataSourceType_ == Internal)
+    {
+        result["data"] = internalDataSource_;
+    }
+    else
+    {
+        result["data"] = externalDataSource_.get()->serialise();
+    }
+}

@@ -5,10 +5,9 @@
 
 #include <vector>
 
-// Data Base
+// Data Base class to allow for polymorphism between children of Data1DBase, Data2DBase and Data3DBase
 class DataBase
 {
-
     /*
      * Axis Information
      */

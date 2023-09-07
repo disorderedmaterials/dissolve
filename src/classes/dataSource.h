@@ -11,7 +11,7 @@
 #include "math/dataBase.h"
 #include "math/sampledData1D.h"
 
-class DataSource : public Serialisable<const CoreData &>
+class DataSource
 {
     public:
     DataSource() = default;
@@ -109,7 +109,6 @@ class DataSource : public Serialisable<const CoreData &>
 
         return data;
     }
-
     // Return if data exists and has been initialised
     bool dataExists() const;
     // Return internal data source
@@ -124,7 +123,5 @@ class DataSource : public Serialisable<const CoreData &>
     // Write through specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
-    // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &data) override;
+    SerialisedValue serialise() const;
 };
