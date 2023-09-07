@@ -4,6 +4,7 @@ import QtQuick.Layouts 6.0
 import QtQml.Models 6.0
 import QtQuick 2.15
 import Dissolve 1.0
+import "../widgets" as D
 
 ColumnLayout {
     id: root
@@ -93,7 +94,17 @@ ColumnLayout {
         }
     }
 
-    RowLayout {
+    Repeater {
+        model: dissolveModel.moduleLayersModel
+
+        delegate: D.PrettyListView {
+            height: childrenRect.height
+            width: childrenRect.width
+            model: dissolveModel.moduleLayersModel.data(dissolveModel.moduleLayersModel.index(index, 0), Qt.UserRole + 1)
+        }
+    }
+
+    /*RowLayout {
         Repeater {
             id: layers
             model: dissolveModel.moduleLayersModel
@@ -108,5 +119,5 @@ ColumnLayout {
                 }
             }
         }
-    }
+    }*/
 }

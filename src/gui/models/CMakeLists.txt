@@ -8,6 +8,7 @@ set(models_MOC_HDRS
     configurationModel.h
     dataManagerSimulationModel.h
     dissolveModel.h
+    dissolveModelImageProvider.h
     enumOptionsModel.h
     forcefieldModel.h
     isotopologueSetModel.h
@@ -62,6 +63,7 @@ set(models_SRCS
     configurationModel.cpp
     dataManagerSimulationModel.cpp
     dissolveModel.cpp
+    dissolveModelImageProvider.cpp
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
     externalPotentialModel.cpp
@@ -142,7 +144,7 @@ add_library(models ${models_SRCS} ${models_MOC_SRCS})
 
 target_include_directories(
   models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CONAN_INCLUDE_DIRS_PUGIXML} ${Qt6Widgets_INCLUDE_DIRS}
-                 ${FREETYPE_INCLUDE_DIRS}
+                 ${FREETYPE_INCLUDE_DIRS} ${Qt6Quick_INCLUDE_DIRS}
 )
 
 # Because Qt has its own way of checking for C++17

@@ -21,13 +21,10 @@ Node {
             }
         }
 
-        ListView {
+        IconListView {
             height: childrenRect.height
             width: childrenRect.width
             model: moduleLayer.model.data(moduleLayer.model.index(index, 0), Qt.UserRole + 1)
-            delegate: Text {
-                text: display
-            }
         }
     }
 }
