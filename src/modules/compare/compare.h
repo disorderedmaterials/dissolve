@@ -19,7 +19,7 @@
 #include "module/context.h"
 #include "module/module.h"
 
-using rangeErrorPair = std::pair<std::vector<Range>, std::vector<double>>;
+using RangeErrorPair = std::pair<std::vector<Range>, std::vector<double>>;
 
 // DataCompare Module
 class CompareModule : public Module

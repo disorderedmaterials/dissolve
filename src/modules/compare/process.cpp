@@ -7,7 +7,7 @@
 Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 {
     // Mapping from data pair to ranges and error
-    std::map<DataSourceKeywordBase::DataPair *, rangeErrorPair> dataSourcesErrors;
+    std::map<DataSourceKeywordBase::DataPair *, RangeErrorPair> dataSourcesErrors;
 
     auto index = 0;
     for (auto &dataPair : dataSources_)
