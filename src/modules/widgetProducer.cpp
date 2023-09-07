@@ -64,6 +64,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<AxisAngleModule, AxisAngleModuleWidget>();
     registerProducer<BenchmarkModule, BenchmarkModuleWidget>();
     registerProducer<BraggModule, BraggModuleWidget>();
+    registerProducer<CompareModule, CompareModuleWidget>();
     registerProducer<DAngleModule, DAngleModuleWidget>();
     registerProducer<EnergyModule, EnergyModuleWidget>();
     registerProducer<EPSRModule, EPSRModuleWidget>();
