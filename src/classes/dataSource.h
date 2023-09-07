@@ -36,6 +36,8 @@ class DataSource
      */
 
     private:
+    // Name of data (tag or filename)
+    std::string dataName_;
     // Type of data being stored
     DataSourceType dataSourceType_;
     // String to hold internal data tag (if internal)
@@ -46,11 +48,21 @@ class DataSource
     std::unique_ptr<DataBase> data_;
 
     public:
+    // Return data name
+    std::string_view dataName() const;
+    // Return if data exists and has been initialised
+    bool dataExists() const;
+    // Return internal data source
+    std::optional<std::string> internalDataSource() const;
+    // Return external data source
+    OptionalReferenceWrapper<FileAndFormat> externalDataSource() const;
     // Function to add internal data
     void addData(std::string_view internalDataSource)
     {
         dataSourceType_ = Internal;
         internalDataSource_ = internalDataSource;
+        // Set data name to be data tag
+        dataName_ = internalDataSource;
     }
     // Overloaded function to add external data
     template <class DataType, class Format> void addData(DataType data, Format &fileAndFormat)
@@ -59,6 +71,8 @@ class DataSource
         externalDataSource_ = std::make_unique<Format>(fileAndFormat);
         auto tempData = std::make_unique<DataType>(data);
         data_ = std::move(tempData);
+        // Set data name to be base filename
+        dataName_ = fileAndFormat.filename().substr(fileAndFormat.filename().find_last_of("/\\") + 1);
     }
     // Function to source data (only required for internal data sources)
     template <class DataType, class Format> bool sourceData(GenericList &processingModuleData)
@@ -79,8 +93,9 @@ class DataSource
                     return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
                 }
                 Messenger::print("Sourced data '{}'", internalDataSource_);
-                // Create unique pointer for data
-                data_ = std::make_unique<DataType>(optData->get());
+                optData->get()
+                    // Create unique pointer for data
+                    data_ = std::make_unique<DataType>(optData->get());
             }
 
             // Data2D, Data3D
@@ -109,12 +124,6 @@ class DataSource
 
         return data;
     }
-    // Return if data exists and has been initialised
-    bool dataExists() const;
-    // Return internal data source
-    std::optional<std::string> internalDataSource() const;
-    // Return external data source
-    OptionalReferenceWrapper<FileAndFormat> externalDataSource() const;
 
     /*
      * I/O

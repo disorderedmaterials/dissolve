@@ -10,6 +10,9 @@ EnumOptions<DataSource::DataSourceType> DataSource::dataSourceTypes()
     return EnumOptions<DataSource::DataSourceType>("DataSourceType", {{Internal, "Internal"}, {External, "External"}});
 }
 
+// Return data name (tag or filename)
+std::string_view DataSource::dataName() const { return dataName_; }
+
 // Return whether or not the data has been sourced and exists
 bool DataSource::dataExists() const
 {
