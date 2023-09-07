@@ -131,11 +131,15 @@ void IntegerHistogram1D::accumulate()
 // Return current data
 Data1D IntegerHistogram1D::data() const
 {
-    Data1D result = accumulatedData_;
+    auto displayData = createDisplayData();
+    auto result = std::get<0>(displayData);
+    auto xMinimum = std::get<1>(displayData);
+
     for (auto &[key, value] : raw_)
     {
-        result.values()[key] = value;
+        result.values()[key - xMinimum] = value;
     }
+
     return result;
 }
 
