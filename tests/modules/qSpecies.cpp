@@ -19,7 +19,7 @@ TEST_F(QSpeciesModuleTest, Simple)
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     EXPECT_TRUE(systemTest.checkData1D(
-        "Q//Process1D//Histogram", {"dissolve/input/qSpecies-simple.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3},
+        "Q//Process1D//QSpecies", {"dissolve/input/qSpecies-simple.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3},
         1.0e-8));
 }
 
