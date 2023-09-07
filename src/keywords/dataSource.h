@@ -31,6 +31,7 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
     /*
      * Arguments
      */
+    public:
     // Return minimum number of arguments accepted
     int minArguments() const override { return 0; };
     // Return maximum number of arguments accepted
@@ -85,6 +86,7 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
                 {
                     return false;
                 }
+
                 // Import the data
                 if (!format.importData(data, parser.processPool()))
                 {
@@ -127,11 +129,13 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
             {
                 return false;
             }
+
             // Serialise the first data source
             if (!dataSourceA.serialise(parser, keywordName, prefix))
             {
                 return false;
             }
+
             // Skip to next iteration if dataSourceB is undefined
             if (!dataSourceB.dataExists())
             {
