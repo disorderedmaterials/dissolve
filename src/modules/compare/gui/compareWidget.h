@@ -17,13 +17,13 @@ class CompareModuleWidget : public ModuleWidget
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT
 
-    private:
-    // Associated Module
-    CompareModule *module_;
-
     public:
     CompareModuleWidget(QWidget *parent, CompareModule *module, Dissolve &dissolve);
     ~CompareModuleWidget() override = default;
+
+    private:
+    // Associated Module
+    CompareModule *module_;
 
     /*
      * UI
