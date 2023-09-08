@@ -29,6 +29,7 @@ add_library(
   configuration_upkeep.cpp
   coreData.cpp
   distributor.cpp
+  empiricalFormula.cpp
   isotopeData.cpp
   isotopologue.cpp
   isotopologues.cpp
