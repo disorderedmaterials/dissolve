@@ -570,6 +570,15 @@ bool CIFHandler::detectMolecules()
     if (!cleanedUnitCellSpecies_)
         return false;
 
+    // Try selecting within the species from the first atom - if this captures all atoms we have a bound framework...
+    if (cleanedUnitCellSpecies_->fragment(0).size() == cleanedUnitCellSpecies_->nAtoms())
+    {
+        Messenger::print(
+            "Can't create molecular definitions since this unit cell appears to be a continuous framework/network. Consider "
+            "adjusting the bonding options in order to generate molecular fragments.\n");
+        return false;
+    }
+
     std::vector<int> indices(cleanedUnitCellSpecies_->nAtoms());
     std::iota(indices.begin(), indices.end(), 0);
 
@@ -743,9 +752,8 @@ bool CIFHandler::generate(std::optional<Flags<CIFHandler::UpdateFlags>> newFlags
     if (!createCleanedUnitCell())
         return false;
 
-    // Try to detect molecules?
-    if (cleanedUnitCellSpecies_->fragment(0).size() != cleanedUnitCellSpecies_->nAtoms())
-        detectMolecules();
+    // Try to detect molecules
+    detectMolecules();
 
     // Create supercell
     if (!createSupercell())
