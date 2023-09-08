@@ -363,10 +363,13 @@ void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked)
 
 bool ImportCIFDialog::update()
 {
-    // Set the repeat vector
-    Vec3<int> repeat(ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value());
-    auto result =
-        cifHandler_.generate(ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5, repeat, moietyNETA_, updateFlags_);
+    // Set up the CIF handler
+    cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
+    cifHandler_.setBondingTolerance(ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5);
+    cifHandler_.setMoietyRemovalNETA(moietyNETA_.definitionString());
+
+    auto result = cifHandler_.generate(updateFlags_);
+
     ui_.StructureViewer->setConfiguration(cifHandler_.structuralUnitCellConfiguration());
     ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedUnitCellConfiguration());
     ui_.SupercellViewer->setConfiguration(cifHandler_.supercellConfiguration());

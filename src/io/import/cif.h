@@ -109,6 +109,14 @@ class CIFHandler
     };
 
     private:
+    // Flags controlling behaviour
+    Flags<UpdateFlags> flags_;
+    // Bonding tolerance, if calculating bonding rather than using CIF definitions
+    double bondingTolerance_{0.1};
+    // NETA for moiety removal, if specified
+    NETADefinition moietyRemovalNETA_;
+    // Supercell repeat
+    Vec3<int> supercellRepeat_{1, 1, 1};
     // Basic unit cell
     Species *unitCellSpecies_;
     Configuration *unitCellConfiguration_;
@@ -127,22 +135,29 @@ class CIFHandler
 
     private:
     // Create basic unit cell
-    bool createBasicUnitCel(double tolerance, Flags<UpdateFlags> flags = {});
+    bool createBasicUnitCel();
     // Create the cleaned unit cell
-    bool createCleanedUnitCell(Flags<UpdateFlags> flags = {}, std::optional<NETADefinition> moietyNETA = std::nullopt);
+    bool createCleanedUnitCell();
     // Try to detect molecules in the cell contents
     bool detectMolecules();
     // Create supercell species
-    bool createSupercell(Vec3<int> repeat, Flags<UpdateFlags> flags = {});
+    bool createSupercell();
     // Create partitioned cell
-    bool createPartitionedCell(Flags<UpdateFlags> flags = {});
+    bool createPartitionedCell();
 
     public:
     // Reset all objects
     void resetSpeciesAndConfigurations();
+    // Return current flags (for editing)
+    Flags<UpdateFlags> &flags();
+    // Set bonding tolerance
+    void setBondingTolerance(double tol);
+    // Set NETA for moiety removal
+    bool setMoietyRemovalNETA(std::string_view netaDefinition);
+    // Set supercell repeat
+    void setSupercellRepeat(const Vec3<int> &repeat);
     // Recreate the data
-    bool generate(double tolerance = 0.1, Vec3<int> supercellRepeat = {1, 1, 1},
-                  std::optional<NETADefinition> moietyNETA = std::nullopt, Flags<UpdateFlags> flags = {});
+    bool generate(std::optional<Flags<UpdateFlags>> newFlags = {});
     // Finalise, returning the required species and resulting configuration
     std::pair<std::vector<Species *>, Configuration *> finalise(CoreData &coreData) const;
     // Return whether the generated data is valid

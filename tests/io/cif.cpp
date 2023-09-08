@@ -53,7 +53,8 @@ TEST(ImportCIFTest, NaCl)
         DissolveSystemTest::checkVec3(set[0], (r2 - A / 2).abs());
 
     // 2x2x2 supercell
-    EXPECT_TRUE(cifHandler.generate(0.1, {2, 2, 2}));
+    cifHandler.setSupercellRepeat({2, 2, 2});
+    EXPECT_TRUE(cifHandler.generate());
     auto *superCell = cifHandler.supercellConfiguration();
     ASSERT_TRUE(superCell);
     EXPECT_EQ(superCell->nAtoms(), 8 * 8);
