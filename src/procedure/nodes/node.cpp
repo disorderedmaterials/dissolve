@@ -136,7 +136,15 @@ ProcedureNode::NodeClass ProcedureNode::nodeClass() const { return class_; }
 bool ProcedureNode::mustBeNamed() const { return true; }
 
 // Set node name
-void ProcedureNode::setName(std::string_view name) { name_ = DissolveSys::niceName(name); }
+void ProcedureNode::setName(std::string_view name)
+{
+    name_ = DissolveSys::niceName(name);
+
+    // Re-set prefixes with the new node name, except if this is a Parameters-type node
+    if (type_ != ProcedureNode::NodeType::Parameters)
+        for (auto &par : parameters_)
+            par->setNamePrefix(name_);
+}
 
 // Return node name
 std::string_view ProcedureNode::name() const { return name_; }
@@ -238,6 +246,15 @@ OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::branch() { return
  * Parameters
  */
 
+// Add new parameter
+std::shared_ptr<ExpressionVariable> ProcedureNode::addParameter(std::string_view name, const ExpressionValue &initialValue)
+{
+    auto &newVar = parameters_.emplace_back(std::make_shared<ExpressionVariable>(name, initialValue));
+    if (type_ != ProcedureNode::NodeType::Parameters)
+        newVar->setNamePrefix(name_);
+    return newVar;
+}
+
 // Set named parameter in supplied vector
 bool ProcedureNode::setParameter(std::vector<std::shared_ptr<ExpressionVariable>> &parameters, std::string_view parameter,
                                  ExpressionValue value)
@@ -256,14 +273,15 @@ bool ProcedureNode::setParameter(std::vector<std::shared_ptr<ExpressionVariable>
 std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view name,
                                                                 std::shared_ptr<ExpressionVariable> excludeParameter)
 {
+    for (auto var : parameters_)
+        if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
+            return var;
+
     return nullptr;
 }
 
 // Return references to all parameters for this node
-OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> ProcedureNode::parameters() const
-{
-    return std::nullopt;
-}
+const std::vector<std::shared_ptr<ExpressionVariable>> &ProcedureNode::parameters() const { return parameters_; }
 
 /*
  * Execution

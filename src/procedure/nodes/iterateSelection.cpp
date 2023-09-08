@@ -25,26 +25,10 @@ IterateSelectionProcedureNode::IterateSelectionProcedureNode(ProcedureNode::Node
     keywords_.add<NodeKeyword<SelectProcedureNode>>("Selection", "Target selection to iterate over", selection_, this,
                                                     ProcedureNode::NodeType::Select, true);
 
-    nSelectedParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("nSelected"));
-    siteIndexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("siteIndex"));
-    stackIndexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("stackIndex"));
-    indexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("index"));
-}
-
-/*
- * Identity
- */
-
-// Set node name
-void IterateSelectionProcedureNode::setName(std::string_view name)
-{
-    name_ = DissolveSys::niceName(name);
-
-    // Update parameter names to match
-    nSelectedParameter_->setName(fmt::format("{}.nSelected", name_));
-    siteIndexParameter_->setName(fmt::format("{}.siteIndex", name_));
-    stackIndexParameter_->setName(fmt::format("{}.stackIndex", name_));
-    indexParameter_->setName(fmt::format("{}.index", name_));
+    nSelectedParameter_ = addParameter("nSelected");
+    siteIndexParameter_ = addParameter("siteIndex");
+    stackIndexParameter_ = addParameter("stackIndex");
+    indexParameter_ = addParameter("index");
 }
 
 /*

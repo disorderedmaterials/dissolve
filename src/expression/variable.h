@@ -10,22 +10,34 @@ class ExpressionVariable : public Serialisable<>
 {
     public:
     ExpressionVariable(const ExpressionValue &value = ExpressionValue());
-    ExpressionVariable(std::string_view name, const ExpressionValue &value = ExpressionValue());
+    ExpressionVariable(std::string_view baseName, const ExpressionValue &value = ExpressionValue());
     ~ExpressionVariable() = default;
 
     /*
      * Variable Data
      */
+    private:
+    // Update full name
+    void updateName();
+
     protected:
-    // Name of the variable
+    // Base name of the variable (without any prefix)
+    std::string baseName_;
+    // Optional prefix to prepend to the base name in order to get the full variable name
+    std::string namePrefix_;
+    // Full name of the variable
     std::string name_;
     // Value of variable
     ExpressionValue value_;
 
     public:
-    // Set name of variable
-    void setName(std::string_view s);
-    // Get name of variable
+    // Set base name of the variable
+    void setBaseName(std::string_view s);
+    // Return base name of the variable
+    std::string_view baseName() const;
+    // Set prefix to prepend to the base name
+    void setNamePrefix(std::string_view s);
+    // Get full name of variable
     std::string_view name() const;
     // Set value
     void setValue(const ExpressionValue &value);

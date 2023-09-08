@@ -47,47 +47,12 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 
     keywords_.addHidden<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_);
 
-    nSelectedParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("nSelected"));
-    siteIndexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("siteIndex"));
-    stackIndexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("stackIndex"));
-    indexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("index"));
-}
-
-/*
- * Identity
- */
-
-// Set node name
-void SelectProcedureNode::setName(std::string_view name)
-{
-    name_ = DissolveSys::niceName(name);
-
-    // Update parameter names to match
-    nSelectedParameter_->setName(fmt::format("{}.nSelected", name_));
-    siteIndexParameter_->setName(fmt::format("{}.siteIndex", name_));
-    stackIndexParameter_->setName(fmt::format("{}.stackIndex", name_));
-    indexParameter_->setName(fmt::format("{}.index", name_));
-}
-
-/*
- * Parameters
- */
-
-// Return the named parameter (if it exists)
-std::shared_ptr<ExpressionVariable> SelectProcedureNode::getParameter(std::string_view name,
-                                                                      std::shared_ptr<ExpressionVariable> excludeParameter)
-{
-    for (auto var : parameters_)
-        if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
-            return var;
-
-    return nullptr;
-}
-
-// Return vector of all parameters for this node
-OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> SelectProcedureNode::parameters() const
-{
-    return parameters_;
+    // Need to make parameters_ private as a next step, to prevent direct initialisation like this... (use addParameter()
+    // instead)
+    nSelectedParameter_ = addParameter("nSelected");
+    siteIndexParameter_ = addParameter("siteIndex");
+    stackIndexParameter_ = addParameter("stackIndex");
+    indexParameter_ = addParameter("index");
 }
 
 /*

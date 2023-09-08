@@ -76,7 +76,7 @@ QVariant ExpressionVariableVectorModel::data(const QModelIndex &index, int role)
     {
         // Name
         case 0:
-            return QString::fromStdString(std::string(var->name()));
+            return QString::fromStdString(std::string(var->baseName()));
         case 1:
             return var->value().type() == ExpressionValue::ValueType::Integer ? "Int" : "Real";
         case 2:
@@ -101,7 +101,7 @@ bool ExpressionVariableVectorModel::setData(const QModelIndex &index, const QVar
         auto p = parentNode_->getParameter(value.toString().toStdString(), true);
         if (p && p != var)
             return false;
-        var->setName(value.toString().toStdString());
+        var->setBaseName(value.toString().toStdString());
     }
     else if (index.column() == 2)
     {
@@ -117,7 +117,7 @@ bool ExpressionVariableVectorModel::setData(const QModelIndex &index, const QVar
         }
         else
             return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n", varValue,
-                                    var->name());
+                                    var->baseName());
     }
 
     emit dataChanged(index, index);
