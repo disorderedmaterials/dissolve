@@ -1,6 +1,7 @@
 dissolve_add_test(SRC box.cpp)
 dissolve_add_test(SRC cells.cpp)
 dissolve_add_test(SRC elements.cpp)
+dissolve_add_test(SRC empiricalFormula.cpp)
 dissolve_add_test(SRC enumOptions.cpp)
 dissolve_add_test(SRC flags.cpp)
 dissolve_add_test(SRC genericList.cpp)

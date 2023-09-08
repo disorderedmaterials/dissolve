@@ -9,36 +9,19 @@
 
 namespace EmpiricalFormula
 {
+using EmpiricalFormulaMap = std::map<Elements::Element, int>;
+
+// Return empirical formula for specified composition
+std::string formula(const EmpiricalFormulaMap &elementCounts, bool richText = false);
+
 // Return empirical formula for range
-template <class Class, class Lam> std::string formula(const Class &range, Lam lambda, bool richText = false)
+template <class Range, class Lam> std::string formula(const Range &range, Lam lambda, bool richText = false)
 {
-    std::vector<int> elCounts(Elements::nElements, 0);
+    EmpiricalFormulaMap map;
 
     for (const auto &obj : range)
-    {
-        Elements::Element Z = lambda(obj);
-        ++elCounts[Z];
-    }
+        ++map[lambda(obj)];
 
-    // Loop over elements in descending order and construct formula string
-    std::string formula;
-    for (auto n = Elements::nElements - 1; n >= 0; --n)
-    {
-        if (elCounts[n] == 0)
-            continue;
-
-        auto Z = Elements::element(n);
-        if (elCounts[n] > 1)
-        {
-            if (richText)
-                formula += fmt::format("{}<sub>{}</sub>", Elements::symbol(Z), elCounts[n]);
-            else
-                formula += fmt::format("{}{}", Elements::symbol(Z), elCounts[n]);
-        }
-        else
-            formula += fmt::format("{}", Elements::symbol(Z));
-    }
-
-    return formula;
+    return formula(map, richText);
 }
 }; // namespace EmpiricalFormula
