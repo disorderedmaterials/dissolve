@@ -35,8 +35,7 @@
 	    "description": "Common settings to build tests and benchmarks",
 	    "hidden": true,
             "cacheVariables": {
-                "BUILD_SYSTEM_TESTS": "ON",
-                "BUILD_UNIT_TESTS": "ON",
+                "BUILD_TESTS": "ON",
                 "BUILD_BENCHMARKS": "ON"
             }
 	},
