@@ -436,7 +436,9 @@ bool CIFHandler::createBasicUnitCel(double tolerance, Flags<UpdateFlags> flags)
     auto *box = unitCellSpecies_->box();
 
     // Configuration
+    Messenger::setQuiet(true);
     unitCellConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
+    Messenger::setQuiet(false);
 
     // -- Generate atoms
     auto symmetryGenerators = SpaceGroups::symmetryOperators(spaceGroup_);
@@ -496,7 +498,9 @@ bool CIFHandler::createCleanedUnitCell(Flags<UpdateFlags> flags, std::optional<N
     cleanedUnitCellSpecies_->createBox(cellLengths.value(), cellAngles.value());
 
     // Configuration
+    Messenger::setQuiet(true);
     cleanedUnitCellConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
+    Messenger::setQuiet(false);
 
     if (flags.isSet(UpdateFlags::CleanMoietyRemoveAtomics))
     {
@@ -624,9 +628,10 @@ bool CIFHandler::detectMolecules()
     }
 
     Messenger::print("Partitioned unit cell into {} distinct molecular species:\n\n", molecularUnitCellSpecies_.size());
+    Messenger::print("   ID     N  Species Formula\n");
     auto count = 1;
     for (const auto &cifMol : molecularUnitCellSpecies_)
-        Messenger::print("  {:3d}  {:4d}  {}\n", count++,
+        Messenger::print("  {:3d}  {:4d}  {}\n", count++, cifMol.instances().size(),
                          EmpiricalFormula::formula(cifMol.species()->atoms(), [](const auto &i) { return i.Z(); }));
     Messenger::print("");
 
@@ -643,7 +648,9 @@ bool CIFHandler::createSupercell(Vec3<int> repeat, Flags<CIFHandler::UpdateFlags
     supercellSpecies_->createBox(supercellLengths, cleanedUnitCellSpecies_->box()->axisAngles(), false);
 
     // Configuration
+    Messenger::setQuiet(true);
     supercellConfiguration_->createBoxAndCells(supercellLengths, cleanedUnitCellSpecies_->box()->axisAngles(), false, 1.0);
+    Messenger::setQuiet(false);
 
     // Copy atoms from the Crystal species - we'll do the bonding afterwards
     supercellSpecies_->atoms().reserve(repeat.x * repeat.y * repeat.z * cleanedUnitCellSpecies_->nAtoms());
