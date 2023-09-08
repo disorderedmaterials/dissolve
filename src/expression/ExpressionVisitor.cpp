@@ -154,7 +154,7 @@ antlrcpp::Any ExpressionVisitor::visitVariable(ExpressionParser::VariableContext
     // Check local variables first
     const std::vector<std::shared_ptr<ExpressionVariable>> &localVars = *localVariables_;
     auto it = std::find_if(localVars.begin(), localVars.end(),
-                           [ctx](auto var) { return DissolveSys::sameString(var->name(), ctx->Name()->getText()); });
+                           [ctx](auto var) { return DissolveSys::sameString(var->baseName(), ctx->Name()->getText()); });
     if (it == localVars.end())
     {
         // Do we have any external variables available?

@@ -24,26 +24,6 @@ class ParametersProcedureNode : public ProcedureNode
     bool mustBeNamed() const override;
 
     /*
-     * Parameters
-     */
-    private:
-    // Defined parameters
-    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
-
-    public:
-    // Add new parameter
-    std::shared_ptr<ExpressionVariable> addParameter(std::string_view name, ExpressionValue initialValue);
-    // Return the named parameter (if it exists)
-    std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
-                                                     std::shared_ptr<ExpressionVariable> excludeParameter) override;
-    // Return vector of all parameters for this node
-    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const override;
-    // Express as a serialisable value
-    SerialisedValue serialise() const override;
-    // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
-
-    /*
      * Execute
      */
     public:
@@ -51,4 +31,13 @@ class ParametersProcedureNode : public ProcedureNode
     bool prepare(const ProcedureContext &procedureContext) override;
     // Execute node
     bool execute(const ProcedureContext &procedureContext) override;
+
+    /*
+     * I/O
+     */
+    public:
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

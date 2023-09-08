@@ -133,7 +133,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     // Return whether a name for the node must be provided
     virtual bool mustBeNamed() const;
     // Set node name
-    virtual void setName(std::string_view name);
+    void setName(std::string_view name);
     // Return node name
     std::string_view name() const;
 
@@ -189,16 +189,20 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
      * Parameters
      */
     protected:
+    // Defined parameters
+    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
     // Set named parameter in supplied vector
     bool setParameter(std::vector<std::shared_ptr<ExpressionVariable>> &parameters, std::string_view parameter,
                       ExpressionValue value);
 
     public:
+    // Add new parameter
+    std::shared_ptr<ExpressionVariable> addParameter(std::string_view name, const ExpressionValue &initialValue = {});
     // Return the named parameter (if it exists)
-    virtual std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
-                                                             std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
+    std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
+                                                     std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
     // Return references to all parameters for this node
-    virtual OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const;
+    const std::vector<std::shared_ptr<ExpressionVariable>> &parameters() const;
 
     /*
      * Execution
