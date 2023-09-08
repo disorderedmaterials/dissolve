@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/import/cif.h"
+#include "classes/empiricalFormula.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -30,6 +31,7 @@ class ImportCIFTest : public ::testing::Test
         EXPECT_EQ(molSp.species()->nAtoms(), std::get<2>(info));
     }
 };
+
 TEST_F(ImportCIFTest, Parse)
 {
     // Test files
@@ -95,6 +97,39 @@ TEST_F(ImportCIFTest, NaClO3)
     ASSERT_EQ(cifMols.size(), 2);
     testMolecularSpecies(cifMols[0], {"Na", 4, 1});
     testMolecularSpecies(cifMols[1], {"ClO3", 4, 4});
+}
+
+TEST_F(ImportCIFTest, CuBTC)
+{
+    CIFHandler cifHandler;
+    EXPECT_TRUE(cifHandler.read("cif/CuBTC-7108574.cif"));
+    EXPECT_TRUE(cifHandler.generate());
+
+    // Check basic info
+    EXPECT_EQ(cifHandler.spaceGroup(), SpaceGroups::SpaceGroup_225);
+    constexpr auto A = 26.3336;
+    testBox(cifHandler.structuralUnitCellConfiguration(), {A, A, A}, 672);
+
+    // 16 basic formula units per unit cell
+    constexpr auto N = 16;
+
+    // Check basic formula (which includes bound water oxygens - with no H - at this point) and using O group
+    EmpiricalFormula::EmpiricalFormulaMap cellFormulaH = {
+        {Elements::Cu, 3 * N}, {Elements::C, 18 * N}, {Elements::H, 6 * N}, {Elements::O, 15 * N}};
+    EXPECT_EQ(EmpiricalFormula::formula(cifHandler.cleanedUnitCellSpecies()->atoms(), [](const auto &i) { return i.Z(); }),
+              EmpiricalFormula::formula(cellFormulaH));
+    EXPECT_EQ(cifHandler.molecularSpecies().size(), 0);
+
+    // Change active assemblies to get amine-substituted structure
+    EmpiricalFormula::EmpiricalFormulaMap cellFormulaNH2 = cellFormulaH;
+    cellFormulaNH2[Elements::N] = 6 * N;
+    cellFormulaNH2[Elements::H] *= 2;
+    cifHandler.getAssembly("A").getGroup("1").setActive(false);
+    cifHandler.getAssembly("B").getGroup("2").setActive(true);
+    cifHandler.getAssembly("C").getGroup("2").setActive(true);
+    EXPECT_TRUE(cifHandler.generate());
+    EXPECT_EQ(EmpiricalFormula::formula(cifHandler.cleanedUnitCellSpecies()->atoms(), [](const auto &i) { return i.Z(); }),
+              EmpiricalFormula::formula(cellFormulaNH2));
 }
 
 } // namespace UnitTest
