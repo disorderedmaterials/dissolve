@@ -337,12 +337,7 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNodeSequence::paramete
     // Start from the target node and work backwards...
     for (const auto &node : range)
     {
-        auto optOtherParams = node->parameters();
-        if (optOtherParams)
-        {
-            const std::vector<std::shared_ptr<ExpressionVariable>> otherParams = (*optOtherParams);
-            parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
-        }
+        parameters.insert(parameters.end(), node->parameters().begin(), node->parameters().end());
     }
 
     // Recursively check our owner

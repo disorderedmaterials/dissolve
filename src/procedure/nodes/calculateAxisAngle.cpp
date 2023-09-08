@@ -33,42 +33,7 @@ CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(std::shared_ptr
         "Symmetric", "Whether to consider angles as symmetric about 90, mapping all angles to the range 0 - 90", symmetric_);
 
     // Create parameters
-    angleParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("theta"));
-}
-
-/*
- * Identity
- */
-
-// Set node name
-void CalculateAxisAngleProcedureNode::setName(std::string_view name)
-{
-    name_ = DissolveSys::niceName(name);
-
-    // Update parameter names to match
-    angleParameter_->setName(fmt::format("{}.theta", name_));
-}
-
-/*
- * Parameters
- */
-
-// Return the named parameter (if it exists)
-std::shared_ptr<ExpressionVariable>
-CalculateAxisAngleProcedureNode::getParameter(std::string_view name, std::shared_ptr<ExpressionVariable> excludeParameter)
-{
-    for (auto var : parameters_)
-        if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
-            return var;
-
-    return nullptr;
-}
-
-// Return vector of all parameters for this node
-OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>>
-CalculateAxisAngleProcedureNode::parameters() const
-{
-    return parameters_;
+    angleParameter_ = addParameter("theta");
 }
 
 /*

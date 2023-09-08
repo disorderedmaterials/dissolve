@@ -2,7 +2,6 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "expression/reference.h"
-
 #include "expression/variable.h"
 #include <utility>
 
