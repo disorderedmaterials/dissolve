@@ -22,7 +22,7 @@ CompareModuleWidget::CompareModuleWidget(QWidget *parent, CompareModule *module,
         auto dataButton = new QPushButton(this);
         dataButton->setText(QString::fromStdString(fmt::format("Compare{}", index)));
         ui_.ButtonLayout->addWidget(dataButton);
-        buttons_.push_back(&dataButton);
+        buttons_.push_back(dataButton);
 
         ++index;
     }
@@ -35,13 +35,14 @@ CompareModuleWidget::CompareModuleWidget(QWidget *parent, CompareModule *module,
 // Update controls within widget
 void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
+
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || ui_.PlotWidget->dataViewer()->renderables().empty())
     {
         // Get the index of the checked button
         auto index =
-            std::find_if(buttons_.begin(), buttons_.end(), [&](auto button) { return button->isChecked(); }) - buttons.begin();
+            std::find_if(buttons_.begin(), buttons_.end(), [&](auto button) { return button->isChecked(); }) - buttons_.begin();
         // Get the data pair at the same index as the checked button
-        auto &[dataSourceA, dataSourceB] = module->dataSources()[index];
+        auto &[dataSourceA, dataSourceB] = module_->dataSources()[index];
         // Render DataA in the pair
         graph_->createRenderable<RenderableData1D>(fmt::format("Pair{}_DataA//Compare", index),
                                                    fmt::format("{}", dataSourceA.dataName()));
