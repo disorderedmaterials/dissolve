@@ -132,12 +132,12 @@ class CIFMolecularSpecies
     std::vector<std::vector<Vec3<double>>> coordinates_;
 
     public:
-    // Species to which the definitions relate
+    // Return species to which the definitions relate
     const Species *species() const;
-    // NETA string for the species
+    // Return NETA string for the species
     std::string_view netaString() const;
-    // Indices of instances (copies)
+    // Return indices of instances (copies)
     const std::vector<std::vector<int>> &instances() const;
-    // Coordinates of instances
+    // Return coordinates of instances
     const std::vector<std::vector<Vec3<double>>> &coordinates() const;
 };
