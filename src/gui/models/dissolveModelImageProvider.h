@@ -8,13 +8,13 @@
 // Forward Declarations
 class DissolveModel;
 
-class DissolveModelImageProvider : QQuickImageProvider {
+class DissolveModelImageProvider : public QQuickImageProvider {
 
     public:
     DissolveModelImageProvider(DissolveModel* dissolveModel);
 
     private:
-    DissolveModel dissolveModel_;
+    DissolveModel* dissolveModel_;
 
     public:
     QPixmap requestPixmap(const QString &id, QSize *, const QSize &) override;
