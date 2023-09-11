@@ -9,7 +9,7 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
     // Mapping from data pair to ranges and error
     std::map<DataSourceKeywordBase::DataPair *, RangeErrorPair> dataSourcesErrors;
 
-    auto index = 0;
+    auto index = 1;
     for (auto &dataPair : dataSources_)
     {
         /*
@@ -44,9 +44,9 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
          */
 
         auto &dataAStorage = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("Pair{}_DataA//Compare", index), name_, GenericItem::InRestartFileFlag);
+            fmt::format("Pair{}_DataA", index), name_, GenericItem::InRestartFileFlag);
         auto &dataBStorage = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("Pair{}_DataB//Compare", index), name_, GenericItem::InRestartFileFlag);
+            fmt::format("Pair{}_DataB", index), name_, GenericItem::InRestartFileFlag);
 
         dataAStorage = dataA;
         dataBStorage = dataB;
@@ -62,20 +62,24 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         // Set the error vector to be the same size as the ranges
         dataSourcesErrors[&dataPair].second.resize(ranges.size());
 
+        Messenger::print("Errors between {} and {}", dataPair.first.dataName(), dataPair.second.dataName());
+
         // Loop through the the range & error vectors, calculating and reporting the errors
         for (auto &&[range, error] : zip(ranges, dataSourcesErrors[&dataPair].second))
         {
             auto errorReport = Error::error(errorType_, dataA, dataB, range);
             error = errorReport.error;
-            Messenger::print("{}", Error::errorReportString(errorReport));
+            Messenger::print("     {}", Error::errorReportString(errorReport));
         }
+
+        Messenger::print("\n");
 
         /*
          * Calculating the difference (delta) between datasets
          */
 
-        auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("Pair{}_Delta//Compare", index), name_, GenericItem::InRestartFileFlag);
+        auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(fmt::format("Pair{}_Delta", index), name_,
+                                                                                      GenericItem::InRestartFileFlag);
 
         // Get the minimum and maximum x values that exist over both datasets
         auto rangeMin = std::min(dataA.xAxis().front(), dataB.xAxis().front());
