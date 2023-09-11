@@ -94,17 +94,7 @@ ColumnLayout {
         }
     }
 
-    Repeater {
-        model: dissolveModel.moduleLayersModel
-
-        delegate: D.PrettyListView {
-            height: childrenRect.height
-            width: childrenRect.width
-            model: dissolveModel.moduleLayersModel.data(dissolveModel.moduleLayersModel.index(index, 0), Qt.UserRole + 1)
-        }
-    }
-
-    /*RowLayout {
+    RowLayout {
         Repeater {
             id: layers
             model: dissolveModel.moduleLayersModel
@@ -119,5 +109,5 @@ ColumnLayout {
                 }
             }
         }
-    }*/
+    }
 }

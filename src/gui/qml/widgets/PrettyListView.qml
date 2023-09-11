@@ -5,14 +5,16 @@ import "." as D
 ListView {
     id: control
     signal selected
+    property string iconPrefix
 
     delegate: RowLayout {
         property variant fullData: model
 
         Image {
-            Layout.preferredHeight: 15
-            Layout.preferredWidth: 15
-            source: "image://dissolveModelIcons/moduleLayer/" + index
+            height: 16
+            width: 16
+            cache: false
+            source: control.iconPrefix + index
         }
 
         D.Text {

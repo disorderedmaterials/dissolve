@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Dissolve 1.0
+import "../widgets" as D
 
 Node {
     id: moduleLayer
@@ -21,7 +22,8 @@ Node {
             }
         }
 
-        IconListView {
+        D.PrettyListView {
+            iconPrefix: "image://dissolveIcons/moduleLayer/" + index + "/"
             height: childrenRect.height
             width: childrenRect.width
             model: moduleLayer.model.data(moduleLayer.model.index(index, 0), Qt.UserRole + 1)
