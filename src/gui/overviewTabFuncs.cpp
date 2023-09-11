@@ -6,6 +6,7 @@
 #include <QQmlContext>
 #include <QQuickItem>
 #include <QQuickWidget>
+#include "gui/models/dissolveModelImageProvider.h"
 
 OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this)
@@ -23,7 +24,8 @@ OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, Mai
     // Create the view
     view_ = new QQuickWidget(this);
     view_->rootContext()->setContextProperty("dissolveModel", &dissolveModel_);
-    view_->rootContext()->engine()->addImageProvider(QString("dissolveModelIcons"), &dissolveModel_.imageProvider_);
+
+    view_->rootContext()->engine()->addImageProvider(QString("imageprovider"), new DissolveModelImageProvider(&dissolveModel_));
     view_->setSource(QUrl("qrc:/overview/qml/overview/OverviewTab.qml"));
     view_->setMinimumSize(300, 300);
 
