@@ -28,13 +28,6 @@ class IterateData1DProcedureNode : public ProcedureNode
     void setUpKeywords();
 
     /*
-     * Identity
-     */
-    public:
-    // Set node name
-    void setName(std::string_view name) override;
-
-    /*
      * Data
      */
     private:
@@ -47,14 +40,8 @@ class IterateData1DProcedureNode : public ProcedureNode
      * Parameters
      */
     private:
-    // Defined parameters
-    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
     // Pointers to individual parameters
     std::shared_ptr<ExpressionVariable> xParameter_, valueParameter_;
-
-    public:
-    // Return vector of all parameters for this node
-    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const override;
 
     /*
      * Branch

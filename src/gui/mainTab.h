@@ -30,6 +30,7 @@ class MainTab
         Forcefield,
         Layer,
         Messages,
+        Overview,
         Species
     };
     // Return enum options for TabType

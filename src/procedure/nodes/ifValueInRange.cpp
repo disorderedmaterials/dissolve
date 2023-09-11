@@ -30,27 +30,6 @@ IfValueInRangeProcedureNode::IfValueInRangeProcedureNode()
 bool IfValueInRangeProcedureNode::mustBeNamed() const { return false; }
 
 /*
- * Parameters
- */
-
-// Return the named parameter (if it exists)
-std::shared_ptr<ExpressionVariable>
-IfValueInRangeProcedureNode::getParameter(std::string_view name, std::shared_ptr<ExpressionVariable> excludeParameter)
-{
-    for (auto var : parameters_)
-        if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
-            return var;
-
-    return nullptr;
-}
-
-// Return vector of all parameters for this node
-OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> IfValueInRangeProcedureNode::parameters() const
-{
-    return parameters_;
-}
-
-/*
  * Branch
  */
 

@@ -71,18 +71,15 @@
     <file>icons/modules/siteRDF.svg</file>
     <file>icons/modules/SDF.svg</file>
     <file>icons/modules/molShake.svg</file>
-    <file>icons/modules/checks.svg</file>
     <file>icons/modules/analyse.svg</file>
     <file>icons/modules/forces.svg</file>
     <file>icons/modules/benchmark.svg</file>
-    <file>icons/modules/checkSpecies.svg</file>
     <file>icons/modules/EPSR.svg</file>
     <file>icons/modules/energy.svg</file>
     <file>icons/modules/MD.svg</file>
     <file>icons/modules/xRaySQ.svg</file>
     <file>icons/modules/atomShake.svg</file>
     <file>icons/modules/calibrate.svg</file>
-    <file>icons/modules/dataTest.svg</file>
     <file>icons/modules/GR.svg</file>
     <file>icons/modules/intraShake.svg</file>
     <file>icons/modules/neutronSQ.svg</file>
@@ -196,5 +193,16 @@
     <file>qml/IconListView.qml</file>
     <file>qml/ImageRadio.qml</file>
     <file>qml/PrettyListView.qml</file>
+  </qresource>
+  <qresource prefix="overview">
+    <file>qml/overview/AtomTypes.qml</file>
+    <file>qml/overview/Configuration.qml</file>
+    <file>qml/overview/Species.qml</file>
+    <file>qml/overview/OverviewTab.qml</file>
+    <file>qml/overview/Bonds.qml</file>
+    <file>qml/overview/Angles.qml</file>
+    <file>qml/overview/Impropers.qml</file>
+    <file>qml/overview/Torsions.qml</file>
+    <file>qml/overview/Node.qml</file>
   </qresource>
 </RCC>
