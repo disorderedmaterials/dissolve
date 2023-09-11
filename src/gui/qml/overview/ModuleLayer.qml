@@ -7,8 +7,9 @@ import "../widgets" as D
 Node {
     id: moduleLayer
     property variant model
+    height: childrenRect.height
+    width: childrenRect.width
     ColumnLayout {
-
         spacing: 0
 
         RowLayout {

@@ -4,7 +4,7 @@ import QtQuick.Controls
 Rectangle {
     border.color: "steelblue"
     color: "lightblue"
-    height: 100
+    height: Math.max(100, childrenRect.height)
     radius: 5
-    width: 100
+    width: Math.max(100, childrenRect.width)
 }
