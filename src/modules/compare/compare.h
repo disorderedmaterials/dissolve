@@ -36,8 +36,6 @@ class CompareModule : public Module
     std::vector<DataSourceKeywordBase::DataPair> dataSources_;
     // Method of error calculation to use
     Error::ErrorType errorType_{Error::EuclideanError};
-    // Threshold for error metric above which test fails
-    double threshold_{5.0e-3};
     // Ranges to calculate error over
     std::vector<Range> ranges_;
 
