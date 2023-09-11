@@ -4,13 +4,11 @@
 #pragma once
 
 #include "data/elements.h"
-#include "templates/optionalRef.h"
 #include "templates/vector3.h"
 #include <algorithm>
 #include <vector>
 
-// Forward declarations
-class Box;
+// Forward Declarations
 class Species;
 
 // CIF Symmetry-Unique Atom
@@ -116,55 +114,30 @@ class CIFAssembly
     int nGroups() const;
 };
 
-// CIF Species
-class CIFSpecies
+// CIF Repeated Molecular Species
+class CIFMolecularSpecies
 {
-
     public:
-    CIFSpecies(Species *spRef, Species *sp, std::vector<int> referenceInstance);
-    ~CIFSpecies() = default;
+    CIFMolecularSpecies(const Species *targetSpecies, std::string_view netaDefinition, std::vector<std::vector<int>> instances,
+                        std::vector<std::vector<Vec3<double>>> coordinates);
 
-    /*
-     * Information
-     */
     private:
-    // The output species
-    Species *species_;
-    // Reference species
-    Species *speciesRef_;
-    // NETA definition string
+    // Species to which the definitions relate
+    const Species *species_;
+    // NETA string for the species
     std::string netaString_;
-    // The reference instance - this is a fragment in the reference species
-    std::vector<int> referenceInstance_;
-    // Found copies/instances
+    // Indices of instances (copies)
     std::vector<std::vector<int>> instances_;
-    // Coordinates corresponding to the instances
+    // Coordinates of instances
     std::vector<std::vector<Vec3<double>>> coordinates_;
-    // Does the reference instance contain symmetry?
-    bool hasSymmetry_{false};
 
     public:
-    // Return the output species
+    // Return species to which the definitions relate
     const Species *species() const;
-    // Return the NETA definition string that uniquely describes the reference instance
-    const std::string netaString() const;
-    // Return the reference instance
-    const std::vector<int> &referenceInstance() const;
-    // Return all found instances
+    // Return NETA string for the species
+    std::string_view netaString() const;
+    // Return indices of instances (copies)
     const std::vector<std::vector<int>> &instances() const;
-    // Return the coordinates corresponding to the instances
+    // Return coordinates of instances
     const std::vector<std::vector<Vec3<double>>> &coordinates() const;
-    // Return whether the reference instance contains symmetry.
-    bool hasSymmetry() const;
-
-    /*
-     * Construction and operation
-     */
-    public:
-    // Inclusively, find all instances of the reference instance
-    bool findInstances();
-    // Determine the coordinates corresponding to the instances
-    void determineCoordinates();
-    // Fix the geometry of the output species, by unfolding it
-    void fixGeometry(const Box *box);
 };
