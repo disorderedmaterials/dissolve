@@ -94,4 +94,6 @@ SerialisedValue DataSource::serialise() const
     {
         result["data"] = externalDataSource_.get()->serialise();
     }
+    
+    return result;
 }

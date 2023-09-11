@@ -111,7 +111,7 @@ class DataSource
             }
         }
 
-        return data_.get() != nullptr ? true : false;
+        return data_ != nullptr;
     }
     // Returns the data casted to the requested type
     template <class DataType> DataType data() const
