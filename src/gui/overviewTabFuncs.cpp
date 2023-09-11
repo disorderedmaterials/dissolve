@@ -25,7 +25,7 @@ OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, Mai
     view_ = new QQuickWidget(this);
     view_->rootContext()->setContextProperty("dissolveModel", &dissolveModel_);
 
-    view_->rootContext()->engine()->addImageProvider(QString("imageprovider"), new DissolveModelImageProvider(&dissolveModel_));
+    view_->rootContext()->engine()->addImageProvider(QString("dissolveIcons"), new DissolveModelImageProvider(&dissolveModel_));
     view_->setSource(QUrl("qrc:/overview/qml/overview/OverviewTab.qml"));
     view_->setMinimumSize(300, 300);
 
