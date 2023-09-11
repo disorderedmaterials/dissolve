@@ -12,7 +12,7 @@
 class CIFImportVisitor : CIFImportParserBaseVisitor
 {
     public:
-    CIFImportVisitor(CIFImport::CIFTags &tags);
+    CIFImportVisitor(CIFHandler::CIFTags &tags);
     ~CIFImportVisitor() override = default;
 
     /*
@@ -20,7 +20,7 @@ class CIFImportVisitor : CIFImportParserBaseVisitor
      */
     private:
     // Dictionary data storage
-    CIFImport::CIFTags &tags_;
+    CIFHandler::CIFTags &tags_;
 
     public:
     // Extract information from tree
