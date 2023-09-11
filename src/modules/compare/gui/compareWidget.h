@@ -5,6 +5,7 @@
 
 #include "modules/compare/gui/ui_compareWidget.h"
 #include "modules/widget.h"
+#include <QPushButton>
 #include <QTableWidget>
 
 // Forward Declarations
@@ -33,12 +34,17 @@ class CompareModuleWidget : public ModuleWidget
     Ui::CompareModuleWidget ui_;
     // DataViewers contained within this widget
     DataViewer *graph_;
-    // Range Error Table
-    QTableWidget *rangeErrorTable_;
     // Vector of buttons
     std::vector<QPushButton *> buttons_;
 
     public:
     // Update controls within widget
     void updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags = {}) override;
+
+    /*
+     * Slots
+     */
+    private slots:
+    // Update graph
+    void onButtonChecked(bool checked);
 };
