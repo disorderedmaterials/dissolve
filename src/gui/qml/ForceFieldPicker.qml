@@ -42,7 +42,7 @@ Item {
             color: palette.active.base
             width: parent.width
 
-            PrettyListView {
+            D.PrettyListView {
                 id: ffList
                 anchors.fill: parent
                 clip: true

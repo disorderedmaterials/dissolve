@@ -19,14 +19,14 @@ class ModuleLayerModel : public QAbstractListModel
     private:
     // Source ModuleLayer
     ModuleLayer *moduleLayer_{nullptr};
-    // Reference to Dissolve (for Configuration target setting)
-    OptionalReferenceWrapper<Dissolve> dissolve_;
+    // Reference to CoreData (for Configuration target setting)
+    OptionalReferenceWrapper<const CoreData> coreData_;
     // Return object represented by specified model index
     Module *rawData(const QModelIndex &index) const;
 
     public:
     // Set source data
-    void setData(ModuleLayer *moduleLayer, Dissolve &dissolve);
+    void setData(ModuleLayer *moduleLayer, const CoreData &coreData);
     // Reset model data, forcing update
     void reset();
 

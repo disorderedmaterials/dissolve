@@ -17,9 +17,9 @@ Module *ModuleLayerModel::rawData(const QModelIndex &index) const
 }
 
 // Set source data
-void ModuleLayerModel::setData(ModuleLayer *moduleLayer, Dissolve &dissolve)
+void ModuleLayerModel::setData(ModuleLayer *moduleLayer, const CoreData &coreData)
 {
-    dissolve_ = dissolve;
+    coreData_ = coreData;
 
     beginResetModel();
     moduleLayer_ = moduleLayer;
@@ -109,7 +109,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
         auto moduleType = (ModuleTypes::ModuleType)value.toInt();
         moduleLayer_->modules()[index.row()] = ModuleRegistry::create(moduleType);
         auto *modulePtr = moduleLayer_->modules()[index.row()].get();
-        modulePtr->setTargets(dissolve_->get().coreData().configurations(), moduleLayer_->modulesAsMap(modulePtr));
+        modulePtr->setTargets(coreData_->get().configurations(), moduleLayer_->modulesAsMap(modulePtr));
 
         emit dataChanged(index, index);
 
