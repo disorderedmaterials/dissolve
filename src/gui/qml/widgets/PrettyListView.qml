@@ -12,12 +12,11 @@ ListView {
         property variant fullData: model
 
         Image {
-            cache: false
             Layout.preferredHeight: 16
-            source: control.iconPrefix + index
             Layout.preferredWidth: 16
-            sourceSize.width: 16
+            source: control.iconPrefix + index
             sourceSize.height: 16
+            sourceSize.width: 16
         }
         D.Text {
             color: ListView.isCurrentItem ? palette.active.highlightedText : palette.active.text
