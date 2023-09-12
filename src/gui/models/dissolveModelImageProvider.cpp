@@ -35,7 +35,6 @@ QImage DissolveModelImageProvider::requestImage(const QString &id, QSize *size, 
         auto moduleLayerModel =
             dissolveModel_->moduleLayersModel()->data(moduleLayerIndex, Qt::UserRole + 1).value<ModuleLayerModel *>();
 
-
         auto moduleIndex = moduleLayerModel->index(moduleRow, 0);
         if (!moduleIndex.isValid())
             return {};
