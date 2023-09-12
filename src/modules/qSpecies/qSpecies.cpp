@@ -78,7 +78,7 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
 
     keywords_.setOrganisation("Options", "Ranges");
     keywords_.add<RangeKeyword>("DistanceRange",
-                                "Distance range (min, max) over which to calculate coordination number from central site",
+                                "Distance range (min, max) over which to calculate Q-Species from central site",
                                 distanceRange_, 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
     keywords_.setOrganisation("Export");
     keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated QSpecies data",
