@@ -85,8 +85,8 @@ Layer  'Processing'
 
 Module  QSpecies  'Q'
   Configuration  'Bulk'
-  SiteA  O  'Y'
-  SiteB  Si  'X'
+  BondingOxygen  O  'Y'
+  NetworkFormer  Si  'X'
   DistanceRange  0.0  2.1
 EndModule
 
