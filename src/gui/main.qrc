@@ -195,8 +195,6 @@
     <file>qml/ImageRadio.qml</file>
   </qresource>
   <qresource prefix="overview">
-    <file>qml/widgets/Button.qml</file>
-    <file>qml/widgets/GroupBox.qml</file>
     <file>qml/widgets/Text.qml</file>
     <file>qml/widgets/PrettyListView.qml</file>
     <file>qml/overview/AtomTypes.qml</file>
