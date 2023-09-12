@@ -13,9 +13,11 @@ ListView {
 
         Image {
             cache: false
-            height: 16
+            Layout.preferredHeight: 16
             source: control.iconPrefix + index
-            width: 16
+            Layout.preferredWidth: 16
+            sourceSize.width: 16
+            sourceSize.height: 16
         }
         D.Text {
             color: ListView.isCurrentItem ? palette.active.highlightedText : palette.active.text
