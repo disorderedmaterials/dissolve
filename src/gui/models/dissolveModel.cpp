@@ -17,6 +17,7 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
                       dissolve_->coreData().masterTorsions(), dissolve_->coreData().masterImpropers());
     speciesModel_.setData(dissolve_->coreData().species());
     configurationModel_.setData(dissolve_->coreData().configurations());
+    moduleLayersModel_.setData(dissolve_->coreData().processingLayers(), dissolve_->coreData());
     emit modelsUpdated();
 }
 
@@ -33,6 +34,7 @@ void DissolveModel::update()
     }
     speciesModel_.reset();
     configurationModel_.reset();
+    moduleLayersModel_.reset();
     emit modelsUpdated();
 }
 
@@ -111,3 +113,6 @@ SpeciesModel *DissolveModel::speciesModel() { return &speciesModel_; }
 
 // The Configuration Model
 ConfigurationModel *DissolveModel::configurationsModel() { return &configurationModel_; }
+
+// The ModuleLayers Model
+ModuleLayersModel *DissolveModel::moduleLayersModel() { return &moduleLayersModel_; }

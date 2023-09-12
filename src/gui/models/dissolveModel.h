@@ -6,6 +6,7 @@
 #include "gui/models/atomTypeModel.h"
 #include "gui/models/configurationModel.h"
 #include "gui/models/masterTermTreeModel.h"
+#include "gui/models/moduleLayersModel.h"
 #include "gui/models/speciesModel.h"
 #include "main/dissolve.h"
 #include "templates/optionalRef.h"
@@ -38,6 +39,8 @@ class DissolveModel : public QObject
     Q_PROPERTY(const SpeciesModel *speciesModel READ speciesModel NOTIFY speciesChanged)
     // The Configuration Model
     Q_PROPERTY(const ConfigurationModel *configurationsModel READ configurationsModel NOTIFY configurationsChanged)
+    // The ModuleLayers Model
+    Q_PROPERTY(const ModuleLayersModel *moduleLayersModel READ moduleLayersModel NOTIFY moduleLayersChanged)
 
     private:
     // The Atom Type Model
@@ -46,6 +49,7 @@ class DissolveModel : public QObject
     std::unique_ptr<MasterTermTreeModel> masters_ = nullptr;
     SpeciesModel speciesModel_;
     ConfigurationModel configurationModel_;
+    ModuleLayersModel moduleLayersModel_;
 
     signals:
     // The models might've been updated
@@ -59,6 +63,8 @@ class DissolveModel : public QObject
     void speciesChanged();
     // Configurations model has been replaced
     void configurationsChanged();
+    // ModuleLayers model has been replaced
+    void moduleLayersChanged();
 
     public:
     DissolveModel() = default;
@@ -88,6 +94,8 @@ class DissolveModel : public QObject
     SpeciesModel *speciesModel();
     // The Configurations Model
     ConfigurationModel *configurationsModel();
+    // The ModuleLayers Model
+    ModuleLayersModel *moduleLayersModel();
 
     /*
      * Data

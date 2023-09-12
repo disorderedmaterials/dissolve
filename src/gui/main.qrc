@@ -183,6 +183,7 @@
     <file>qml/widgets/Button.qml</file>
     <file>qml/widgets/GroupBox.qml</file>
     <file>qml/widgets/Text.qml</file>
+    <file>qml/widgets/PrettyListView.qml</file>
     <file>qml/AddForcefieldTermsDialog.qml</file>
     <file>qml/DropDownLabel.qml</file>
     <file>qml/ForceFieldAssign.qml</file>
@@ -192,9 +193,10 @@
     <file>qml/ForceFieldPicker.qml</file>
     <file>qml/IconListView.qml</file>
     <file>qml/ImageRadio.qml</file>
-    <file>qml/PrettyListView.qml</file>
   </qresource>
   <qresource prefix="overview">
+    <file>qml/widgets/Text.qml</file>
+    <file>qml/widgets/PrettyListView.qml</file>
     <file>qml/overview/AtomTypes.qml</file>
     <file>qml/overview/Configuration.qml</file>
     <file>qml/overview/Species.qml</file>
@@ -204,5 +206,6 @@
     <file>qml/overview/Impropers.qml</file>
     <file>qml/overview/Torsions.qml</file>
     <file>qml/overview/Node.qml</file>
+    <file>qml/overview/ModuleLayer.qml</file>
   </qresource>
 </RCC>

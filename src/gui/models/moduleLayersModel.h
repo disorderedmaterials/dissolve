@@ -16,12 +16,23 @@ class ModuleLayersModel : public QAbstractListModel
     private:
     // Source ModuleLayers data
     OptionalReferenceWrapper<const std::vector<std::unique_ptr<ModuleLayer>>> layers_;
+    // Reference to CoreData (for Configuration target setting)
+    OptionalReferenceWrapper<const CoreData> coreData_;
 
     public:
     // Set source ModuleLayers data
-    void setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers);
+    void setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers, const CoreData &coreData);
     // Return object represented by specified model index
     ModuleLayer *rawData(const QModelIndex &index) const;
+    void reset();
+
+    public:
+    enum class ModuleLayersUserRole
+    {
+        RawData = Qt::UserRole,
+        ModuleLayerModel
+    };
+    Q_ENUM(ModuleLayersUserRole);
 
     /*
      * QAbstractItemModel overrides
