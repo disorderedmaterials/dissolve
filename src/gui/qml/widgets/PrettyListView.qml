@@ -9,7 +9,6 @@ ListView {
 
     delegate: RowLayout {
         property variant fullData: model
-
         Image {
             height: 16
             width: 16

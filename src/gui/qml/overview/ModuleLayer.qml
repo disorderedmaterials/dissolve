@@ -7,11 +7,9 @@ import "../widgets" as D
 Node {
     id: moduleLayer
     property variant model
-    height: childrenRect.height
-    width: childrenRect.width
     ColumnLayout {
         spacing: 0
-
+        anchors.fill: parent
         RowLayout {
             Text {
                 text: `${model.data(model.index(index, 0), Qt.DisplayRole)}`
@@ -25,8 +23,8 @@ Node {
 
         D.PrettyListView {
             iconPrefix: "image://dissolveIcons/moduleLayer/" + index + "/"
-            height: childrenRect.height
-            width: childrenRect.width
+            height: contentHeight
+            width: contentWidth
             model: moduleLayer.model.data(moduleLayer.model.index(index, 0), Qt.UserRole + 1)
         }
     }
