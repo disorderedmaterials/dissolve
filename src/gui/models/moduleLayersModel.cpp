@@ -19,9 +19,7 @@ void ModuleLayersModel::setData(const std::vector<std::unique_ptr<ModuleLayer>> 
 
 ModuleLayer *ModuleLayersModel::rawData(const QModelIndex &index) const
 {
-    if (!layers_)
-        return {};
-    if (!index.isValid())
+    if (!layers_ || !index.isValid())
         return {};
     return layers_->get()[index.row()].get();
 }
