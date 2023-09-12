@@ -2,11 +2,11 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/gui.h"
+#include "gui/models/dissolveModelImageProvider.h"
 #include "gui/overviewTab.h"
 #include <QQmlContext>
 #include <QQuickItem>
 #include <QQuickWidget>
-#include "gui/models/dissolveModelImageProvider.h"
 
 OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this)

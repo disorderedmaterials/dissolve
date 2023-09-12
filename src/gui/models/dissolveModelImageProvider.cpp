@@ -5,9 +5,13 @@
 #include "gui/models/dissolveModel.h"
 #include "gui/models/moduleLayerModel.h"
 
-DissolveModelImageProvider::DissolveModelImageProvider(DissolveModel* dissolveModel)  : QQuickImageProvider(QQmlImageProviderBase::Image) {dissolveModel_ = dissolveModel;}
+DissolveModelImageProvider::DissolveModelImageProvider(DissolveModel *dissolveModel)
+    : QQuickImageProvider(QQmlImageProviderBase::Image)
+{
+    dissolveModel_ = dissolveModel;
+}
 
-QImage DissolveModelImageProvider::requestImage(const QString &id, QSize * size, const QSize &requestedSize)
+QImage DissolveModelImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
 {
     if (id.startsWith(QString("moduleLayer/")))
     {
@@ -19,12 +23,14 @@ QImage DissolveModelImageProvider::requestImage(const QString &id, QSize * size,
         auto moduleLayerIndex = dissolveModel_->moduleLayersModel()->index(moduleLayerRow, 0);
         if (!moduleLayerIndex.isValid())
             return {};
-        auto moduleLayerModel = dissolveModel_->moduleLayersModel()->data(moduleLayerIndex, Qt::UserRole + 1).value<ModuleLayerModel*>();
+        auto moduleLayerModel =
+            dissolveModel_->moduleLayersModel()->data(moduleLayerIndex, Qt::UserRole + 1).value<ModuleLayerModel *>();
         auto moduleIndex = moduleLayerModel->index(moduleRow, 0);
         if (!moduleIndex.isValid())
             return {};
         *size = requestedSize;
-        return moduleLayerModel->data(moduleIndex, Qt::DecorationRole).value<QIcon>().pixmap(QSize(16, 16)).toImage();;
+        return moduleLayerModel->data(moduleIndex, Qt::DecorationRole).value<QIcon>().pixmap(QSize(16, 16)).toImage();
+        ;
     }
     return {};
 }
