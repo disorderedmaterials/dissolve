@@ -25,7 +25,7 @@ Node {
         D.PrettyListView {
             height: contentHeight
             iconPrefix: "image://dissolveIcons/moduleLayer/" + index + "/"
-            model: moduleLayer.model.data(moduleLayer.model.index(index, 0), Qt.UserRole + 1)
+            model: moduleLayer.model.data(moduleLayer.model.index(index, 0), ModuleLayersModel.ModuleLayersUserRole.ModuleLayerModel)
             width: contentWidth
         }
     }

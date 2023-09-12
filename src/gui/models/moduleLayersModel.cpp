@@ -47,9 +47,9 @@ QVariant ModuleLayersModel::data(const QModelIndex &index, int role) const
     {
         case (Qt::DisplayRole):
             return QString::fromStdString(std::string(data->name()));
-        case (Qt::UserRole):
+        case (static_cast<unsigned int>(ModuleLayersUserRole::RawData)):
             return QVariant::fromValue(data);
-        case (Qt::UserRole + 1):
+        case (static_cast<unsigned int>(ModuleLayersUserRole::ModuleLayerModel)):
         {
             auto *m = new ModuleLayerModel();
             m->setData(data, coreData_->get());

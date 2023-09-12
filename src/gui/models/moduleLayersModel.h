@@ -26,6 +26,14 @@ class ModuleLayersModel : public QAbstractListModel
     ModuleLayer *rawData(const QModelIndex &index) const;
     void reset();
 
+    public:
+    enum class ModuleLayersUserRole
+    {
+        RawData = Qt::UserRole,
+        ModuleLayerModel
+    };
+    Q_ENUM(ModuleLayersUserRole);
+
     /*
      * QAbstractItemModel overrides
      */
