@@ -4,20 +4,21 @@ import "." as D
 
 ListView {
     id: control
-    signal selected
+
     property string iconPrefix
+
+    signal selected
 
     delegate: RowLayout {
         property variant fullData: model
+
         Image {
-            height: 16
-            width: 16
             cache: false
+            height: 16
             source: control.iconPrefix + index
+            width: 16
         }
-
         D.Text {
-
             color: ListView.isCurrentItem ? palette.active.highlightedText : palette.active.text
             padding: 2
             text: display

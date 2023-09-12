@@ -6,10 +6,13 @@ import "../widgets" as D
 
 Node {
     id: moduleLayer
+
     property variant model
+
     ColumnLayout {
-        spacing: 0
         anchors.fill: parent
+        spacing: 0
+
         RowLayout {
             Text {
                 text: `${model.data(model.index(index, 0), Qt.DisplayRole)}`
@@ -20,12 +23,11 @@ Node {
                 source: "qrc:/general/icons/layer.svg"
             }
         }
-
         D.PrettyListView {
-            iconPrefix: "image://dissolveIcons/moduleLayer/" + index + "/"
             height: contentHeight
-            width: contentWidth
+            iconPrefix: "image://dissolveIcons/moduleLayer/" + index + "/"
             model: moduleLayer.model.data(moduleLayer.model.index(index, 0), Qt.UserRole + 1)
+            width: contentWidth
         }
     }
 }

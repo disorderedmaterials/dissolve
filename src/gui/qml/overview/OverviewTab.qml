@@ -93,7 +93,6 @@ ColumnLayout {
             }
         }
     }
-
     RowLayout {
         Repeater {
             id: layers
