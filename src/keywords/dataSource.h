@@ -117,7 +117,7 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
             }
         }
 
-        dataSources_.push_back({std::move(dataSourceA), std::move(dataSourceB)});
+        dataSources_.emplace_back(std::make_pair(dataSourceA, dataSourceB));
 
         return true;
     }
@@ -216,6 +216,6 @@ template <class DataType, class DataFormat> class DataSourceKeyword : public Dat
                      }
                  });
 
-        dataSources_.push_back({std::move(dataSourceA), std::move(dataSourceB)});
+        dataSources_.emplace_back(std::make_pair(dataSourceA, dataSourceB));
     }
 };

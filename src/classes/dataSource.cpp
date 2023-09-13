@@ -17,7 +17,7 @@ std::string_view DataSource::dataName() const { return dataName_; }
 bool DataSource::dataExists() const
 {
     return (!internalDataSource_.empty() && dataSourceType_ == Internal) ||
-           (externalDataSource_ != nullptr && data_.get() != nullptr && dataSourceType_ == External);
+           (!externalDataSource_.valueless_by_exception() && !data_.valueless_by_exception() && dataSourceType_ == External);
 }
 
 // Return data source type enum
@@ -34,14 +34,7 @@ std::optional<std::string> DataSource::internalDataSource() const
 }
 
 // Return external data source
-OptionalReferenceWrapper<FileAndFormat> DataSource::externalDataSource() const
-{
-    if (externalDataSource_ != nullptr)
-    {
-        return *externalDataSource_;
-    }
-    return std::nullopt;
-}
+DataSource::Format &DataSource::externalDataSource() const { return externalDataSource_; }
 
 // Write through specified LineParser
 bool DataSource::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
@@ -66,15 +59,36 @@ bool DataSource::serialise(LineParser &parser, std::string_view keywordName, std
     // If data is external
     else
     {
-        // Write filename and format
-        if (externalDataSource_.get()->writeFilenameAndFormat(parser, prefix))
-            return false;
-        // Write extra keywords
-        if (externalDataSource_.get()->writeBlock(parser, prefix)) // Express as a serialisable value
-            return false;
-        // End the block
-        if (!parser.writeLineF("End{}", dataSourceTypes().keyword(External)))
-            return false;
+        return std::visit(
+            [&](auto &data)
+            {
+                // Write filename and format
+                if (!data.writeFilenameAndFormat(parser, prefix))
+                {
+                    return false;
+                }
+
+                // Write extra keywords
+                if (!data.writeBlock(parser, prefix)) // Express as a serialisable value
+                {
+                    return false;
+                }
+
+                // Write extra keywords
+                if (!data.writeBlock(parser, prefix)) // Express as a serialisable value
+                {
+                    return false;
+                }
+
+                // End the block
+                if (!parser.writeLineF("End{}", dataSourceTypes().keyword(External)))
+                {
+                    return false;
+                }
+
+                return true;
+            },
+            externalDataSource_);
     }
 
     return true;
@@ -92,8 +106,8 @@ SerialisedValue DataSource::serialise() const
     }
     else
     {
-        result["data"] = externalDataSource_.get()->serialise();
+        result["data"] = std::visit([](auto &data) { return data.serialise(); }, externalDataSource_);
     }
-    
+
     return result;
 }
