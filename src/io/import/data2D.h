@@ -22,6 +22,7 @@ class Data2DImportFileFormat : public FileAndFormat
         Cartesian
     };
     explicit Data2DImportFileFormat(std::string_view filename = "", Data2DImportFormat format = Data2DImportFormat::Cartesian);
+    Data2DImportFileFormat(const Data2DImportFileFormat &source) = default;
     ~Data2DImportFileFormat() override = default;
 
     /*

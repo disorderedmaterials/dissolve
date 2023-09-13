@@ -27,11 +27,11 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         ranges = ranges_;
 
         // Source the data
-        if (!dataPair.first.sourceData<Data1D, Data1DImportFileFormat>(moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.first.sourceData(moduleContext.dissolve().processingModuleData()))
         {
             continue;
         }
-        if (!dataPair.second.sourceData<Data1D, Data1DImportFileFormat>(moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.second.sourceData(moduleContext.dissolve().processingModuleData()))
         {
             continue;
         }
