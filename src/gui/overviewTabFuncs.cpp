@@ -28,7 +28,6 @@ OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, Mai
 
     view_->rootContext()->engine()->addImageProvider(QString("dissolveIcons"), new DissolveModelImageProvider(&dissolveModel_));
     view_->setSource(QUrl("qrc:/overview/qml/overview/OverviewTab.qml"));
-    view_->setMinimumSize(300, 300);
     view_->setResizeMode(QQuickWidget::SizeRootObjectToView);
 
     connect(view_, SIGNAL(statusChanged(QQuickWidget::Status)), SLOT(viewStatusChanged()));

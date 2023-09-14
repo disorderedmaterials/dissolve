@@ -7,6 +7,8 @@ Node {
     property variant model
 
     ColumnLayout {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
         spacing: 0
 
         RowLayout {

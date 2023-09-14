@@ -9,10 +9,12 @@ Node {
     property variant model
 
     ColumnLayout {
-        anchors.fill: parent
+        Layout.fillHeight: true
+        Layout.fillWidth: true
         spacing: 0
 
         RowLayout {
+            Layout.fillWidth: true
             Text {
                 text: `${model.data(model.index(index, 0), Qt.DisplayRole)}`
             }
