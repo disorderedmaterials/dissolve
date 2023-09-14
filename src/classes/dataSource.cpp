@@ -3,6 +3,7 @@
 
 #include "classes/dataSource.h"
 #include "templates/optionalRef.h"
+#include <type_traits>
 
 // Return enum options for data source types
 EnumOptions<DataSource::DataSourceType> DataSource::dataSourceTypes()
