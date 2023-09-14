@@ -50,9 +50,9 @@ class DataSource
     DataSourceType dataSourceType_;
     // String to hold internal data tag (if internal)
     std::string internalDataSource_;
-    // File and format of external data (if external)
+    // Variant to hold file and format of external data (if external)
     Format externalDataSource_;
-    // DataBases pointer to hold data
+    // Variant to hold data
     DataType data_;
 
     public:
@@ -71,13 +71,14 @@ class DataSource
     // Overloaded function to add external data
     template <class D> void addData(D data, class D::Formatter &fileAndFormat)
     {
-        dataSourceType_ = External;
+        dataSourceType_ = External;\
+        // Create format object in place in variant
         externalDataSource_.emplace<class D::Formatter>(fileAndFormat);
         data_ = data;
         // Set data name to be base filename
         dataName_ = fileAndFormat.filename().substr(fileAndFormat.filename().find_last_of("/\\") + 1);
     }
-    // Returns the data casted to the requested type
+    // Returns the data of the requested type
     template <class D> D data() const
     {
         assert(dataExists());
