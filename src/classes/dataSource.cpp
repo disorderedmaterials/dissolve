@@ -53,7 +53,7 @@ bool DataSource::sourceData(GenericList &processingModuleData)
             {
                 return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
             }
-            // Create unique pointer for data
+            // Set data
             data_ = optData->get();
         }
 
@@ -69,14 +69,14 @@ bool DataSource::sourceData(GenericList &processingModuleData)
                     {
                         return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
                     }
-                    // Store data
+                    // Set data
                     data_ = optData->get();
                     return true;
                 },
                 data_);
         }
     }
-
+    // Return whether or not variant contains value
     return !data_.valueless_by_exception();
 }
 
