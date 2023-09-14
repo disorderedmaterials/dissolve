@@ -62,10 +62,10 @@ bool DataSource::sourceData(GenericList &processingModuleData)
         else
         {
             return std::visit(
-                [&](auto &data)
+                [=](auto data)
                 {
                     // Locate target data from tag
-                    auto optData = processingModuleData.search<const std::remove_reference<decltype(T)>>(internalDataSource_);
+                    auto optData = processingModuleData.search<const decltype(data)>(internalDataSource_);
                     if (!optData)
                     {
                         return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
