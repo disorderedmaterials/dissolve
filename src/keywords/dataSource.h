@@ -13,6 +13,11 @@
 #include "templates/optionalRef.h"
 #include <queue>
 
+// Foward declarations
+class Data1DImportFileFormat;
+class Data2DImportFileFormat;
+class Data3DImportFileFormat;
+
 // Keyword managing data sources
 // Template arguments: data class (Data1D, Data2D ...), data import file format
 template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
