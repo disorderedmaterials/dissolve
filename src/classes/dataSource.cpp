@@ -3,6 +3,7 @@
 
 #include "classes/dataSource.h"
 #include "templates/optionalRef.h"
+#include <type_traits>
 
 // Return enum options for data source types
 EnumOptions<DataSource::DataSourceType> DataSource::dataSourceTypes()
@@ -61,10 +62,10 @@ bool DataSource::sourceData(GenericList &processingModuleData)
         else
         {
             return std::visit(
-                [&]<class T>(T &data)
+                [=](auto data)
                 {
                     // Locate target data from tag
-                    auto optData = processingModuleData.search<const T>(internalDataSource_);
+                    auto optData = processingModuleData.search<const decltype(data)>(internalDataSource_);
                     if (!optData)
                     {
                         return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
