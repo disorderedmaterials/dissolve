@@ -90,9 +90,9 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerNullProducer<Data2DStoreKeyword>();
     registerNullProducer<Data3DStoreKeyword>();
     registerNullProducer<DataSourceKeywordBase>();
-    registerNullProducer<DataSourceKeyword<Data1D, Data1DImportFileFormat>>();
-    registerNullProducer<DataSourceKeyword<Data2D, Data2DImportFileFormat>>();
-    registerNullProducer<DataSourceKeyword<Data3D, Data3DImportFileFormat>>();
+    registerNullProducer<DataSourceKeyword<Data1D>>();
+    registerNullProducer<DataSourceKeyword<Data2D>>();
+    registerNullProducer<DataSourceKeyword<Data3D>>();
     registerNullProducer<ElementVectorKeyword>();
     registerNullProducer<ExpressionKeyword>();
     registerNullProducer<NodeBranchKeyword>();

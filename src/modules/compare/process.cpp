@@ -6,6 +6,7 @@
 
 Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 {
+
     // Mapping from data pair to ranges and error
     std::map<DataSourceKeywordBase::DataPair *, RangeErrorPair> dataSourcesErrors;
 

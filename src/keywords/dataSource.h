@@ -15,12 +15,16 @@
 
 // Keyword managing data sources
 // Template arguments: data class (Data1D, Data2D ...), data import file format
-template <class DataType, class DataFormat> class DataSourceKeyword : public DataSourceKeywordBase
+template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
 {
     public:
     explicit DataSourceKeyword(std::vector<DataSourceKeywordBase::DataPair> &dataSources, std::string_view endKeyword)
         : DataSourceKeywordBase(dataSources, endKeyword){};
     ~DataSourceKeyword() override = default;
+
+    // Getting type definiton for data FileAndFormat
+    public:
+    using DataFormat = class DataType::Formatter;
 
     /*
      * Data
