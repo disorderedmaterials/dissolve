@@ -8,8 +8,8 @@
 CompareModule::CompareModule() : Module(ModuleTypes::Compare)
 {
     keywords_.setOrganisation("Options");
-    keywords_.add<DataSourceKeyword<Data1D, Data1DImportFileFormat>>("Data1D", "Specify one-dimensional test reference data",
-                                                                     dataSources_, "EndData1D");
+    keywords_.add<DataSourceKeyword<Data1D>>("Data1D", "Specify one-dimensional test reference data", dataSources_,
+                                             "EndData1D");
     keywords_.add<EnumOptionsKeyword<Error::ErrorType>>("ErrorType", "Type of error calculation to use", errorType_,
                                                         Error::errorTypes());
     keywords_.add<RangeVectorKeyword>("RFactorRanges", "Ranges over which to calculate RFactors", ranges_);

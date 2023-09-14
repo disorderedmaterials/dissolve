@@ -3,12 +3,20 @@
 
 #pragma once
 
+#include "io/import/data1D.h"
 #include "math/dataBase.h"
 #include <vector>
 
 // Data 1D Base
 class Data1DBase : public DataBase
 {
+
+    /*
+     * Type Definitions
+     */
+    public:
+    using Formatter = class Data1DImportFileFormat;
+
     /*
      * Values / Errors
      */
