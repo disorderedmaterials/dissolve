@@ -13,7 +13,7 @@ ColumnLayout {
     signal masterTermsClicked
     signal moduleLayerClicked(int index)
     signal speciesClicked(int index)
-    anchors.fill: parent
+    Layout.fillHeight: true
 
     RowLayout {
         Layout.alignment: Qt.AlignHCenter
