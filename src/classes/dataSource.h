@@ -16,11 +16,6 @@
 #include "math/sampledData1D.h"
 #include <variant>
 
-// Foward declarations
-class Data1DImportFileFormat;
-class Data2DImportFileFormat;
-class Data3DImportFileFormat;
-
 class DataSource
 {
     public:
