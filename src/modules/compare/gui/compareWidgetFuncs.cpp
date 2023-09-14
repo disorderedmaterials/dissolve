@@ -25,19 +25,15 @@ CompareModuleWidget::CompareModuleWidget(QWidget *parent, CompareModule *module,
     graph_->view().axes().setMax(1, 1.0);
     graph_->view().setAutoFollowType(View::AllAutoFollow);
     // -- Set group styling
-    graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
     graph_->groupManager().setGroupFixedColour("Delta", StockColours::BlackStockColour);
     graph_->groupManager().setGroupColouring("Delta", RenderableGroup::FixedGroupColouring);
-    graph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::GroupVerticalShifting);
     graph_->groupManager().setGroupStipple("Delta", LineStipple::QuarterDashStipple);
 
     graph_->groupManager().setGroupFixedColour("DataA", StockColours::RedStockColour);
     graph_->groupManager().setGroupColouring("DataA", RenderableGroup::FixedGroupColouring);
-    graph_->groupManager().setGroupVerticalShifting("DataA", RenderableGroup::GroupVerticalShifting);
 
     graph_->groupManager().setGroupFixedColour("DataB", StockColours::LightGreenStockColour);
     graph_->groupManager().setGroupColouring("DataB", RenderableGroup::FixedGroupColouring);
-    graph_->groupManager().setGroupVerticalShifting("DataB", RenderableGroup::GroupVerticalShifting);
 
     refreshing_ = false;
     updateControls(ModuleWidget::RecreateRenderablesFlag);
