@@ -15,6 +15,7 @@ Node {
 
         RowLayout {
             Layout.fillWidth: true
+            Layout.fillHeight: true
             Text {
                 text: `${model.data(model.index(index, 0), Qt.DisplayRole)}`
             }

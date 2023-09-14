@@ -10,6 +10,7 @@ Node {
         Layout.fillWidth: true
         Layout.fillHeight: true
         spacing: 0
+        anchors.centerIn: parent
 
         RowLayout {
             Text {
