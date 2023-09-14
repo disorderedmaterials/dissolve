@@ -3,12 +3,19 @@
 
 #pragma once
 
+#include "io/import/data3D.h"
 #include "math/dataBase.h"
 #include "templates/array3D.h"
 
 // Data 3D Base
 class Data3DBase : public DataBase
 {
+    /*
+     * Type Definitions
+     */
+    public:
+    using Formatter = class Data3DImportFileFormat;
+
     /*
      * Axis Information
      */

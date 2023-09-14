@@ -22,6 +22,7 @@ class Data1DImportFileFormat : public FileAndFormat
     };
     Data1DImportFileFormat(std::string_view filename = "", Data1DImportFormat format = Data1DImportFormat::XY, int xColumn = 1,
                            int yColumn = 2, int errorColumn = 0);
+    Data1DImportFileFormat(const Data1DImportFileFormat &source) = default;
     ~Data1DImportFileFormat() override = default;
 
     /*
