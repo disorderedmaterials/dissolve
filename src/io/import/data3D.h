@@ -19,7 +19,6 @@ class Data3DImportFileFormat : public FileAndFormat
         PDens
     };
     Data3DImportFileFormat(std::string_view filename = "", Data3DImportFormat format = Data3DImportFormat::PDens);
-    Data3DImportFileFormat(const Data3DImportFileFormat &source) = default;
     ~Data3DImportFileFormat() override = default;
 
     /*
