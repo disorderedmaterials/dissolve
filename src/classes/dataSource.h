@@ -71,7 +71,7 @@ class DataSource
     // Overloaded function to add external data
     template <class D> void addData(D data, class D::Formatter &fileAndFormat)
     {
-        dataSourceType_ = External;\
+        dataSourceType_ = External;
         // Create format object in place in variant
         externalDataSource_.emplace<class D::Formatter>(fileAndFormat);
         data_ = data;
