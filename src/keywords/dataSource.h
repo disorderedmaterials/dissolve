@@ -29,7 +29,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
 
     // Getting type definiton for data FileAndFormat
     public:
-    using DataFormat = class DataType::Formatter;
+    using DataFormat = typename DataType::Formatter;
 
     /*
      * Data
