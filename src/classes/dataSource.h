@@ -5,17 +5,25 @@
 
 #include "base/serialiser.h"
 #include "io/fileAndFormat.h"
+#include "io/import/data1D.h"
+#include "io/import/data2D.h"
+#include "io/import/data3D.h"
 #include "items/list.h"
 #include "keywords/dataSourceBase.h"
 #include "math/data1D.h"
-#include "math/dataBase.h"
+#include "math/data2D.h"
+#include "math/data3D.h"
 #include "math/sampledData1D.h"
+#include <variant>
 
 class DataSource
 {
     public:
+    using DataType = std::variant<Data1D, SampledData1D, Data2D, Data3D>;
+    using Format = std::variant<Data1DImportFileFormat, Data2DImportFileFormat, Data3DImportFileFormat>;
+
+    public:
     DataSource() = default;
-    DataSource(DataSource &&dataSource) = default;
     ~DataSource() = default;
 
     public:
@@ -42,10 +50,10 @@ class DataSource
     DataSourceType dataSourceType_;
     // String to hold internal data tag (if internal)
     std::string internalDataSource_;
-    // File and format of external data (if external)
-    std::unique_ptr<FileAndFormat> externalDataSource_;
-    // DataBases pointer to hold data
-    std::unique_ptr<DataBase> data_;
+    // Variant to hold file and format of external data (if external)
+    Format externalDataSource_;
+    // Variant to hold data
+    DataType data_;
 
     public:
     // Return data name
@@ -55,71 +63,26 @@ class DataSource
     // Return internal data source
     std::optional<std::string> internalDataSource() const;
     // Return external data source
-    OptionalReferenceWrapper<FileAndFormat> externalDataSource() const;
+    Format &externalDataSource();
+    // Function to source data (only required for internal data sources)
+    bool sourceData(GenericList &processingModuleData);
     // Function to add internal data
-    void addData(std::string_view internalDataSource)
-    {
-        dataSourceType_ = Internal;
-        internalDataSource_ = internalDataSource;
-        // Set data name to be data tag
-        dataName_ = internalDataSource;
-    }
+    void addData(std::string_view internalDataSource);
     // Overloaded function to add external data
-    template <class DataType, class Format> void addData(DataType data, Format &fileAndFormat)
+    template <class D> void addData(D data, class D::Formatter &fileAndFormat)
     {
         dataSourceType_ = External;
-        externalDataSource_ = std::make_unique<Format>(fileAndFormat);
-        auto tempData = std::make_unique<DataType>(data);
-        data_ = std::move(tempData);
+        // Create format object in place in variant
+        externalDataSource_.emplace<class D::Formatter>(fileAndFormat);
+        data_ = data;
         // Set data name to be base filename
         dataName_ = fileAndFormat.filename().substr(fileAndFormat.filename().find_last_of("/\\") + 1);
     }
-    // Function to source data (only required for internal data sources)
-    template <class DataType, class Format> bool sourceData(GenericList &processingModuleData)
-    {
-        if (!dataExists())
-        {
-            return false;
-        }
-        if (dataSourceType_ == Internal)
-        {
-            // If data is a child of Data1DBase
-            if (std::is_convertible<DataType *, Data1DBase *>::value)
-            {
-                // Locate target data from tag and cast to base
-                auto optData = processingModuleData.searchBase<Data1DBase, Data1D, SampledData1D>(internalDataSource_);
-                if (!optData)
-                {
-                    return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
-                }
-                // Create unique pointer for data
-                data_ = std::make_unique<DataType>(optData->get());
-            }
-
-            // Data2D, Data3D
-            else
-            {
-                // Locate target data from tag
-                auto optData = processingModuleData.search<const DataType>(internalDataSource_);
-                if (!optData)
-                {
-                    return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
-                }
-
-                // Create unique pointer for data
-                data_ = std::make_unique<DataType>(optData->get());
-            }
-        }
-
-        return data_.get() != nullptr ? true : false;
-    }
-    // Returns the data casted to the requested type
-    template <class DataType> DataType data() const
+    // Returns the data of the requested type
+    template <class D> D data() const
     {
         assert(dataExists());
-        auto data = dynamic_cast<DataType &>(*data_);
-
-        return data;
+        return std::get<D>(data_);
     }
 
     /*
