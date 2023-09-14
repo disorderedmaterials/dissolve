@@ -34,7 +34,60 @@ std::optional<std::string> DataSource::internalDataSource() const
 }
 
 // Return external data source
-DataSource::Format &DataSource::externalDataSource() const { return externalDataSource_; }
+DataSource::Format &DataSource::externalDataSource() { return externalDataSource_; }
+
+// Function to source data (only required for internal data sources)
+bool DataSource::sourceData(GenericList &processingModuleData)
+{
+    if (!dataExists())
+    {
+        return false;
+    }
+    if (dataSourceType_ == Internal)
+    {
+        if (std::holds_alternative<Data1D>(data_) || std::holds_alternative<SampledData1D>(data_))
+        {
+            // Locate target data from tag and cast to base
+            auto optData = processingModuleData.searchBase<Data1DBase, Data1D, SampledData1D>(internalDataSource_);
+            if (!optData)
+            {
+                return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
+            }
+            // Create unique pointer for data
+            data_ = optData->get();
+        }
+
+        // Data2D, Data3D
+        else
+        {
+            return std::visit(
+                [&]<class T>(T &data)
+                {
+                    // Locate target data from tag
+                    auto optData = processingModuleData.search<const T>(internalDataSource_);
+                    if (!optData)
+                    {
+                        return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
+                    }
+                    // Store data
+                    data_ = optData->get();
+                    return true;
+                },
+                data_);
+        }
+    }
+
+    return !data_.valueless_by_exception();
+}
+
+// Function to add internal data
+void DataSource::addData(std::string_view internalDataSource)
+{
+    dataSourceType_ = Internal;
+    internalDataSource_ = internalDataSource;
+    // Set data name to be data tag
+    dataName_ = internalDataSource;
+}
 
 // Write through specified LineParser
 bool DataSource::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
