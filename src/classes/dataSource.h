@@ -71,7 +71,7 @@ class DataSource
     {
         dataSourceType_ = External;
         // Create format object in place in variant
-        externalDataSource_.emplace<class D::Formatter>(fileAndFormat);
+        externalDataSource_.emplace<typename D::Formatter>(fileAndFormat);
         data_ = data;
         // Set data name to be base filename
         dataName_ = fileAndFormat.filename().substr(fileAndFormat.filename().find_last_of("/\\") + 1);
