@@ -27,13 +27,12 @@ class DataSource
     ~DataSource() = default;
 
     public:
+    // Data Source Types
     enum DataSourceType
     {
         Internal,
         External
     };
-
-    public:
     // Return enum options for DataSourceType
     static EnumOptions<DataSourceType> dataSourceTypes();
     // Return data source type enum
@@ -42,7 +41,6 @@ class DataSource
     /*
      * Data
      */
-
     private:
     // Name of data (tag or filename)
     std::string dataName_;
@@ -64,9 +62,9 @@ class DataSource
     std::optional<std::string> internalDataSource() const;
     // Return external data source
     Format &externalDataSource();
-    // Function to source data (only required for internal data sources)
+    // Source specified data (only required for internal data sources)
     bool sourceData(GenericList &processingModuleData);
-    // Function to add internal data
+    // Set internal data source
     void addData(std::string_view internalDataSource);
     // Overloaded function to add external data
     template <class D> void addData(D data, class D::Formatter &fileAndFormat)
@@ -78,7 +76,7 @@ class DataSource
         // Set data name to be base filename
         dataName_ = fileAndFormat.filename().substr(fileAndFormat.filename().find_last_of("/\\") + 1);
     }
-    // Returns the data of the requested type
+    // Returns data in the requested type
     template <class D> D data() const
     {
         assert(dataExists());

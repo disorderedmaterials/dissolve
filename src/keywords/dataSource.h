@@ -13,8 +13,7 @@
 #include "templates/optionalRef.h"
 #include <queue>
 
-// Keyword managing data sources
-// Template arguments: data class (Data1D, Data2D ...), data import file format
+// Keyword managing a DataSource
 template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
 {
     public:
@@ -69,7 +68,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 return DataSource::dataSourceTypes().errorAndPrintValid(parser.argsv(0));
             }
 
-            // If data is internal
+            // Next parse depends on whether we have internal / external data
             if (DataSource::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource::Internal)
             {
                 // Add data to dataSource
@@ -77,7 +76,6 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 // Remove dataSource from queue
                 sourceQueue.pop();
             }
-            // If data is external
             else if (DataSource::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource::External)
             {
                 // Initialise data and format objects
