@@ -51,12 +51,6 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     // Count NFs around each potential BO site
     auto nNF = forEachBO.create<CalculateExpressionProcedureNode>({});
     nNF->setExpression("NF.nSelected");
-    auto collectBO = forEachBO.create<IntegerCollect1DProcedureNode>("NumberBO", nNF, ProcedureNode::AnalysisContext);
-
-    // Process oxygen NF bond orders
-    auto processBO = analyser_.createRootNode<Process1DProcedureNode>("PercentBO", collectBO);
-    auto &normalisationPercent = processBO->branch()->get();
-    normalisationPercent.create<OperateNormaliseProcedureNode>({});
 
     // Process Q
     auto processQ = analyser_.createRootNode<Process1DProcedureNode>("QSpecies", qConvert);

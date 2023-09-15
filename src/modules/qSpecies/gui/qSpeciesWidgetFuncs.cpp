@@ -31,10 +31,6 @@ QSpeciesModuleWidget::QSpeciesModuleWidget(QWidget *parent, QSpeciesModule *modu
 // Update controls within widget
 void QSpeciesModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
-
-    ui_.RegionAResultFrame->setText(
-        dissolve_.processingModuleData().valueOr("{}//Process1D//PercentBO", module_->name(), SampledDouble()));
-
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
         qSpeciesGraph_->clearRenderables();
 
