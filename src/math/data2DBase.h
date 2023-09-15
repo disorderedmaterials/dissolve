@@ -7,6 +7,9 @@
 #include "math/dataBase.h"
 #include "templates/array2D.h"
 
+// Forward declarations
+class Data2DImportFileFormat;
+
 // Data 2D Base
 class Data2DBase : public DataBase
 {

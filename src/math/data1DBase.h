@@ -7,6 +7,9 @@
 #include "math/dataBase.h"
 #include <vector>
 
+// Forward declarations
+class Data1DImportFileFormat;
+
 // Data 1D Base
 class Data1DBase : public DataBase
 {

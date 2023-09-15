@@ -7,6 +7,9 @@
 #include "math/dataBase.h"
 #include "templates/array3D.h"
 
+// Forward declarations
+class Data3DImportFileFormat;
+
 // Data 3D Base
 class Data3DBase : public DataBase
 {
