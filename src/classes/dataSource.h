@@ -67,7 +67,7 @@ class DataSource
     // Set internal data source
     void addData(std::string_view internalDataSource);
     // Overloaded function to add external data
-    template <class D> void addData(D data, class D::Formatter &fileAndFormat)
+    template <class D> void addData(D data, typename D::Formatter &fileAndFormat)
     {
         dataSourceType_ = External;
         // Create format object in place in variant
