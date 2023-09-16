@@ -13,6 +13,11 @@
 #include "templates/optionalRef.h"
 #include <queue>
 
+// Forward Declarations
+class Data1DFileAndFormat;
+class Data2DFileAndFormat;
+class Data3DFileAndFormat;
+
 // Keyword managing a DataSource
 template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
 {
