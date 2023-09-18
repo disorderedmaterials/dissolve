@@ -17,7 +17,7 @@ class Data1DBase : public DataBase
      * Type Definitions
      */
     public:
-    using Formatter = typename Data1DImportFileFormat;
+    using Formatter = Data1DImportFileFormat;
 
     /*
      * Values / Errors

@@ -17,7 +17,7 @@ class Data3DBase : public DataBase
      * Type Definitions
      */
     public:
-    using Formatter = class Data3DImportFileFormat;
+    using Formatter = Data3DImportFileFormat;
 
     /*
      * Axis Information

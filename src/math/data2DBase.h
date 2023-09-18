@@ -18,7 +18,7 @@ class Data2DBase : public DataBase
      * Type Definitions
      */
     public:
-    using Formatter = class Data2DImportFileFormat;
+    using Formatter = Data2DImportFileFormat;
 
     /*
      * Axis Information
