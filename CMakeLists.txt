@@ -235,12 +235,12 @@ endif(GUI)
 set(BASIC_LINK_LIBS
     # Main libs
     main
-    io
     classes
     kernels
     potentials
     module
     moduleregistry
+    io
     export
     import
     neta
