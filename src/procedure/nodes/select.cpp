@@ -242,6 +242,9 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
     // Increase selections counter
     ++nSelections_;
 
+    // Update nSelected parameter
+    nSelectedParameter_->setValue(int(sites_.size()));
+
     // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
     currentSite_ = std::nullopt;
     if (!forEachBranch_.empty())
@@ -261,9 +264,6 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
                 return false;
         }
     }
-
-    // Update parameters
-    nSelectedParameter_->setValue(int(sites_.size()));
 
     return true;
 }
