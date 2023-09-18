@@ -3,9 +3,11 @@
 
 #pragma once
 
-#include "io/import/data1D.h"
 #include "math/dataBase.h"
 #include <vector>
+
+// Forward Declarations
+class Data1DImportFileFormat;
 
 // Data 1D Base
 class Data1DBase : public DataBase
@@ -15,7 +17,7 @@ class Data1DBase : public DataBase
      * Type Definitions
      */
     public:
-    using Formatter = class Data1DImportFileFormat;
+    using Formatter = typename Data1DImportFileFormat;
 
     /*
      * Values / Errors

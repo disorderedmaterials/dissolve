@@ -13,11 +13,6 @@
 #include "templates/optionalRef.h"
 #include <queue>
 
-// Forward Declarations
-class Data1DFileAndFormat;
-class Data2DFileAndFormat;
-class Data3DFileAndFormat;
-
 // Keyword managing a DataSource
 template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
 {
@@ -26,16 +21,12 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
         : DataSourceKeywordBase(dataSources, endKeyword){};
     ~DataSourceKeyword() override = default;
 
-    // Getting type definiton for data FileAndFormat
-    public:
-    using DataFormat = typename DataType::Formatter;
-
     /*
      * Data
      */
     private:
     // Format object for the data
-    DataFormat format_;
+    typename DataType::Formatter format_;
 
     /*
      * Arguments
@@ -85,7 +76,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
             {
                 // Initialise data and format objects
                 DataType data;
-                DataFormat format;
+                typename DataType::Formatter format;
 
                 // Read the supplied arguments
                 if (format.read(parser, 1, fmt::format("End{}", DataSource::dataSourceTypes().keyword(DataSource::External)),
@@ -209,7 +200,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                      else if (!sourceQueue.empty())
                      {
                          DataType data;
-                         DataFormat format;
+                         typename DataType::Formatter format;
 
                          // Deserialise FileAndFormat
                          format.deserialise(item.at("data"), coreData);
