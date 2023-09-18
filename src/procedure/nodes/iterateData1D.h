@@ -31,7 +31,8 @@ class IterateData1DProcedureNode : public ProcedureNode
      * Data
      */
     private:
-    bool instantaneous_{false};
+    // Whether to use instantaneous data rather than accumulated data
+    bool instantaneous_{true};
     // Collect1D node that we are processing
     std::shared_ptr<const Collect1DProcedureNode> sourceData_;
     std::shared_ptr<const IntegerCollect1DProcedureNode> sourceIntegerData_;
