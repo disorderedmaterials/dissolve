@@ -43,6 +43,7 @@ add_library(
   data2DBase.h
   data3D.h
   data3DBase.h
+  dataBase.h
   doubleExp.h
   error.h
   filters.h

@@ -84,6 +84,7 @@
     <file>icons/modules/intraShake.svg</file>
     <file>icons/modules/neutronSQ.svg</file>
     <file>icons/modules/geometryOptimisation.svg</file>
+    <file>icons/modules/compare.svg</file>
   </qresource>
   <qresource prefix="general">
     <file>icons/ff.svg</file>

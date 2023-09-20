@@ -3,39 +3,28 @@
 
 #pragma once
 
+#include "math/dataBase.h"
 #include <vector>
 
+// Forward Declarations
+class Data1DImportFileFormat;
+
 // Data 1D Base
-class Data1DBase
+class Data1DBase : public DataBase
 {
+
     /*
-     * Axis Information
+     * Type Definitions
      */
     public:
-    // Return x axis vector
-    virtual const std::vector<double> &xAxis() const = 0;
+    using Formatter = Data1DImportFileFormat;
 
     /*
      * Values / Errors
      */
     public:
-    // Return data version
-    virtual int version() const = 0;
     // Return values Array
     virtual const std::vector<double> &values() const = 0;
-    // Return number of values present in the whole dataset
-    virtual int nValues() const = 0;
-    // Return whether the values have associated errors
-    virtual bool valuesHaveErrors() const = 0;
     // Return errors Array
     virtual const std::vector<double> &errors() const = 0;
-
-    /*
-     * Limits
-     */
-    public:
-    // Return minimum value over all data points
-    virtual double minValue() const = 0;
-    // Return maximum value over all data points
-    virtual double maxValue() const = 0;
 };

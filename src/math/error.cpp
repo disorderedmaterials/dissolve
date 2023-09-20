@@ -25,7 +25,7 @@ EnumOptions<ErrorType> errorTypes()
 
 std::string errorReportString(const ErrorReport &errorReport)
 {
-    return fmt::format("{} between datasets is {:15.9e} over {:15.9e} < x < {:15.9e} ({} points).\n",
+    return fmt::format("{} between datasets is {:e} over {:e} < x < {:e} ({} points).\n",
                        errorTypes().keyword(errorReport.errorType), errorReport.error, errorReport.firstX, errorReport.lastX,
                        errorReport.nPointsConsidered);
 }
