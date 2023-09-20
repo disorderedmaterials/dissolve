@@ -4,6 +4,8 @@
 #pragma once
 
 #include "templates/optionalRef.h"
+#include <fmt/format.h>
+#include <stdexcept>
 #include <string>
 
 // Forward Declarations
@@ -17,37 +19,53 @@ class ProcessPool;
 class ProcedureContext
 {
     public:
-    explicit ProcedureContext(const ProcessPool &procPool);
-    ProcedureContext(const ProcessPool &procPool, Configuration *cfg);
-    ProcedureContext(const ProcessPool &procPool, Dissolve &dissolve);
+    template <class... ContextObjects> ProcedureContext(const ProcedureContext &other, ContextObjects &&...contextObjects)
+    {
+        *this = other;
+        ([&] { set(contextObjects); }(), ...);
+    }
+    template <class... ContextObjects> ProcedureContext(ContextObjects &&...contextObjects)
+    {
+        ([&] { set(contextObjects); }(), ...);
+    }
 
     private:
+    // Reference to Dissolve
+    OptionalReferenceWrapper<Dissolve> dissolve_;
     // Available process pool
-    const ProcessPool &processPool_;
+    OptionalReferenceWrapper<const ProcessPool> processPool_;
     // Target Configuration
     Configuration *configuration_{nullptr};
     // Prefix for generated data
     std::string processingDataPrefix_;
-    // Dissolve
-    OptionalReferenceWrapper<Dissolve> dissolve_;
+
+    private:
+    // Set reference to Dissolve
+    void set(Dissolve &dissolve);
+    // Set available ProcessPool
+    void set(const ProcessPool &procPool);
+    // Set prefix for generated processing data
+    void set(std::string_view prefix);
+    // Set target Configuration
+    void set(Configuration *cfg);
+    // Catch any unrecognised object type
+    template <class T> void set(T obj)
+    {
+        throw(std::runtime_error(
+            fmt::format("Invalid object type ({}) passed to ProcedureContext set().\n", typeid(obj).name())));
+    }
 
     public:
-    // Return available process pool
-    const ProcessPool &processPool() const;
-    // Set target Configuration
-    void setConfiguration(Configuration *cfg);
-    // Return target Configuration
-    Configuration *configuration() const;
-    // Set prefix for generated processing data
-    void setProcessingDataPrefix(std::string_view prefix);
-    // Return prefix for generated data
-    std::string_view processingDataPrefix() const;
-    // Return target list for generated data
-    GenericList &dataList() const;
-    // Set reference to Dissolve
-    void setDissolve(Dissolve &dissolve);
     // Return reference to Dissolve
     Dissolve &dissolve() const;
+    // Return available process pool
+    const ProcessPool &processPool() const;
+    // Return target Configuration
+    Configuration *configuration() const;
+    // Return prefix to use for processing data
+    std::string_view processingModuleDataPrefix() const;
+    // Return processing data list
+    GenericList &processingModuleData() const;
     // Return potential map
     const PotentialMap &potentialMap() const;
 };

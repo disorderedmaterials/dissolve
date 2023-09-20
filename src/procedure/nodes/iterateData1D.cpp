@@ -77,8 +77,9 @@ bool IterateData1DProcedureNode::execute(const ProcedureContext &procedureContex
     if (!forEachBranch_.empty())
     {
         // Retrieve / realise the normalised data from the supplied list
-        auto &data = procedureContext.dataList().realise<Data1D>(
-            fmt::format("Process1D//{}", name()), procedureContext.processingDataPrefix(), GenericItem::InRestartFileFlag);
+        auto &data = procedureContext.processingModuleData().realise<Data1D>(fmt::format("Process1D//{}", name()),
+                                                                             procedureContext.processingModuleDataPrefix(),
+                                                                             GenericItem::InRestartFileFlag);
         data.setTag(name());
 
         // Copy the averaged data from the associated Process1D node

@@ -86,8 +86,7 @@ TEST_F(SelectProcedureNodeTest, Simple)
     auto selectN = testProcedure.createRootNode<SelectProcedureNode>(
         "SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_}, ProcedureNode::NodeContext::AnalysisContext);
 
-    ProcedureContext context(dissolve_.worldPool(), configuration_);
-    testProcedure.execute(context);
+    testProcedure.execute({dissolve_.worldPool(), configuration_});
 
     auto N = nType_ * 2;
     EXPECT_EQ(selectN->nSitesInStack(), N * 2);
@@ -113,8 +112,7 @@ TEST_F(SelectProcedureNodeTest, All)
     auto selectN = forEachAr.create<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_},
                                                          ProcedureNode::NodeContext::AnalysisContext);
 
-    ProcedureContext context(dissolve_.worldPool(), configuration_);
-    testProcedure.execute(context);
+    testProcedure.execute({dissolve_.worldPool(), configuration_});
 
     EXPECT_EQ(selectAr->nSitesInStack(), 1);
     EXPECT_EQ(selectN->nSitesInStack(), nType_ * 2 * 2);
@@ -130,13 +128,11 @@ TEST_F(SelectProcedureNodeTest, Ranges)
                                                          ProcedureNode::NodeContext::AnalysisContext);
     selectN->setDistanceReferenceSite(selectAr);
 
-    ProcedureContext context(dissolve_.worldPool(), configuration_);
-
     for (auto rangeInt = 1; rangeInt <= nType_; ++rangeInt)
     {
         selectN->setInclusiveDistanceRange({0.0, rangeInt * 1.0});
 
-        testProcedure.execute(context);
+        testProcedure.execute({dissolve_.worldPool(), configuration_});
 
         EXPECT_EQ(selectAr->nSitesInStack(), 1);
         EXPECT_EQ(selectN->nSitesInStack(), rangeInt * 2 * 2);
@@ -155,15 +151,13 @@ TEST_F(SelectProcedureNodeTest, Indices)
                                                          ProcedureNode::NodeContext::AnalysisContext);
     selectN->setDistanceReferenceSite(selectAr);
 
-    ProcedureContext context(dissolve_.worldPool(), configuration_);
-
     auto N = nType_ * 2;
 
     for (auto rangeInt = 1; rangeInt <= nType_; ++rangeInt)
     {
         selectN->setInclusiveDistanceRange({0.0, rangeInt * 1.0});
 
-        testProcedure.execute(context);
+        testProcedure.execute({dissolve_.worldPool(), configuration_});
 
         EXPECT_EQ(selectAr->nSitesInStack(), 1);
         EXPECT_EQ(selectN->nSitesInStack(), rangeInt * 2 * 2);
@@ -193,10 +187,8 @@ TEST_F(SelectProcedureNodeTest, Exclusions1)
     auto selectN2 = forEachN1.create<SelectProcedureNode>("SelectN2", std::vector<const SpeciesSite *>{alphaSiteN_},
                                                           ProcedureNode::NodeContext::AnalysisContext);
 
-    ProcedureContext context(dissolve_.worldPool(), configuration_);
-
     // No exclusions
-    testProcedure.execute(context);
+    testProcedure.execute({dissolve_.worldPool(), configuration_});
     EXPECT_EQ(selectN1->nSitesInStack(), nType_);
     EXPECT_EQ(selectN2->nSitesInStack(), nType_);
     EXPECT_DOUBLE_EQ(selectN1->nAvailableSitesAverage(), double(nType_));
@@ -205,7 +197,7 @@ TEST_F(SelectProcedureNodeTest, Exclusions1)
 
     // Exclude same site
     selectN2->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectN1});
-    testProcedure.execute(context);
+    testProcedure.execute({dissolve_.worldPool(), configuration_});
     EXPECT_EQ(selectN1->nSitesInStack(), nType_);
     EXPECT_EQ(selectN2->nSitesInStack(), nType_ - 1);
     EXPECT_DOUBLE_EQ(selectN1->nAvailableSitesAverage(), double(nType_));
@@ -214,7 +206,7 @@ TEST_F(SelectProcedureNodeTest, Exclusions1)
 
     // Exclude same molecule as well (no effect)
     selectN2->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectN1});
-    testProcedure.execute(context);
+    testProcedure.execute({dissolve_.worldPool(), configuration_});
     EXPECT_EQ(selectN1->nSitesInStack(), nType_);
     EXPECT_EQ(selectN2->nSitesInStack(), nType_ - 1);
     EXPECT_DOUBLE_EQ(selectN1->nAvailableSitesAverage(), double(nType_));
@@ -230,10 +222,8 @@ TEST_F(SelectProcedureNodeTest, Exclusions2)
     auto selectO = forEachN.create<SelectProcedureNode>("SelectO", std::vector<const SpeciesSite *>{alphaSiteO_},
                                                         ProcedureNode::NodeContext::AnalysisContext);
 
-    ProcedureContext context(dissolve_.worldPool(), configuration_);
-
     // No exclusions
-    testProcedure.execute(context);
+    testProcedure.execute({dissolve_.worldPool(), configuration_});
     EXPECT_EQ(selectN->nSitesInStack(), nType_);
     EXPECT_EQ(selectO->nSitesInStack(), nType_);
     EXPECT_DOUBLE_EQ(selectN->nAvailableSitesAverage(), double(nType_));
@@ -242,7 +232,7 @@ TEST_F(SelectProcedureNodeTest, Exclusions2)
 
     // Exclude same molecule
     selectO->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectN});
-    testProcedure.execute(context);
+    testProcedure.execute({dissolve_.worldPool(), configuration_});
     EXPECT_EQ(selectN->nSitesInStack(), nType_);
     EXPECT_EQ(selectO->nSitesInStack(), nType_ - 1);
     EXPECT_DOUBLE_EQ(selectN->nAvailableSitesAverage(), double(nType_));
@@ -258,11 +248,9 @@ TEST_F(SelectProcedureNodeTest, Inclusions)
     auto selectO = forEachN.create<SelectProcedureNode>("SelectO", std::vector<const SpeciesSite *>{alphaSiteO_},
                                                         ProcedureNode::NodeContext::AnalysisContext);
 
-    ProcedureContext context(dissolve_.worldPool(), configuration_);
-
     // Require same molecule as first site
     selectO->keywords().set("SameMoleculeAsSite", selectN);
-    testProcedure.execute(context);
+    testProcedure.execute({dissolve_.worldPool(), configuration_});
     EXPECT_EQ(selectN->nSitesInStack(), nType_);
     EXPECT_EQ(selectO->nSitesInStack(), 1);
     EXPECT_DOUBLE_EQ(selectN->nAvailableSitesAverage(), double(nType_));

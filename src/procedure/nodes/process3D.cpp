@@ -95,8 +95,8 @@ bool Process3DProcedureNode::prepare(const ProcedureContext &procedureContext)
 bool Process3DProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
     // Retrieve / realise the normalised data from the supplied list
-    auto &data = procedureContext.dataList().realise<Data3D>(
-        fmt::format("Process3D//{}", name()), procedureContext.processingDataPrefix(), GenericItem::InRestartFileFlag);
+    auto &data = procedureContext.processingModuleData().realise<Data3D>(
+        fmt::format("Process3D//{}", name()), procedureContext.processingModuleDataPrefix(), GenericItem::InRestartFileFlag);
     processedData_ = &data;
     data.setTag(name());
 

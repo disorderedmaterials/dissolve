@@ -21,12 +21,12 @@ TEST(CalculateExpressionProcedureNodeTest, Basic)
 
     // Simple number
     expressionNode->keywords().set("Expression", NodeValueProxy(4));
-    expressionNode->execute(ProcedureContext(ProcessPool()));
+    expressionNode->execute({});
     EXPECT_DOUBLE_EQ(expressionNode->value(0), 4.0);
 
     // Expressions
     expressionNode->keywords().set("Expression", NodeValueProxy("3.8 * sin(1.2)"));
-    expressionNode->execute(ProcedureContext(ProcessPool()));
+    expressionNode->execute({});
     EXPECT_DOUBLE_EQ(expressionNode->value(0), 3.8 * sin(1.2));
 }
 

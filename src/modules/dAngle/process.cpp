@@ -35,10 +35,7 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
         selectC_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
-    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDissolve(moduleContext.dissolve());
-    context.setProcessingDataPrefix(name());
-    if (!analyser_.execute(context))
+    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
     {
         Messenger::error("CalculateDAngle experienced problems with its analysis.\n");
         return ExecutionResult::Failed;
