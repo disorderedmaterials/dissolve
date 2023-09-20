@@ -31,6 +31,7 @@ enum ModuleType
     Bragg,
     Checks,
     CheckSpecies,
+    Compare,
     DAngle,
     DataTest,
     Energy,

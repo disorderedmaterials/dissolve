@@ -28,6 +28,7 @@ add_library(
   configuration_sites.cpp
   configuration_upkeep.cpp
   coreData.cpp
+  dataSource.cpp
   distributor.cpp
   empiricalFormula.cpp
   isotopeData.cpp
@@ -82,6 +83,7 @@ add_library(
   changeStore.h
   configuration.h
   coreData.h
+  dataSource.h
   distributor.h
   empiricalFormula.h
   interactionPotential.h
