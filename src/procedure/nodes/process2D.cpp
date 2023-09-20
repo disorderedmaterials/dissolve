@@ -90,8 +90,8 @@ bool Process2DProcedureNode::prepare(const ProcedureContext &procedureContext)
 bool Process2DProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
     // Retrieve / realise the normalised data from the supplied list
-    auto &data = procedureContext.dataList().realise<Data2D>(
-        fmt::format("Process2D//{}", name()), procedureContext.processingDataPrefix(), GenericItem::InRestartFileFlag);
+    auto &data = procedureContext.processingModuleData().realise<Data2D>(
+        fmt::format("Process2D//{}", name()), procedureContext.processingModuleDataPrefix(), GenericItem::InRestartFileFlag);
     processedData_ = &data;
     data.setTag(name());
 

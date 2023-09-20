@@ -68,15 +68,13 @@ bool Configuration::generate(const ProcedureContext &procedureContext)
 
     // Generate the contents
     Messenger::print("\nExecuting generator procedure for Configuration '{}'...\n\n", niceName());
-    auto context = procedureContext;
-    context.setConfiguration(this);
-    auto result = generator_.execute(context);
+    auto result = generator_.execute({procedureContext, this});
     if (!result)
         return Messenger::error("Failed to generate Configuration '{}'.\n", niceName());
     Messenger::print("\n");
 
     // Set-up Cells for the Box
-    cells_.generate(box_.get(), requestedCellDivisionLength_, context.potentialMap().range());
+    cells_.generate(box_.get(), requestedCellDivisionLength_, procedureContext.potentialMap().range());
 
     // Make sure all objects know about each other
     updateObjectRelationships();

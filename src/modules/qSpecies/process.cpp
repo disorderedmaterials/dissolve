@@ -25,11 +25,7 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     selectNF_->keywords().set("InclusiveRange", distanceRange_);
 
     // Execute the analysis
-    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDissolve(moduleContext.dissolve());
-    context.setProcessingDataPrefix(name());
-
-    if (!analyser_.execute(context))
+    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
     {
         Messenger::error("Q Species experienced problems with its analysis.\n");
         return ExecutionResult::Failed;

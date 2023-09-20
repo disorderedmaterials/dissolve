@@ -24,10 +24,7 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
     collectDistance_->keywords().set("RangeX", distanceRange_);
 
     // Execute the analysis
-    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDissolve(moduleContext.dissolve());
-    context.setProcessingDataPrefix(name());
-    if (!analyser_.execute(context))
+    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
     {
         Messenger::error("CalculateRDF experienced problems with its analysis.\n");
         return ExecutionResult::Failed;
