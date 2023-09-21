@@ -59,7 +59,6 @@ bool DataSource::sourceData(GenericList &processingModuleData)
             // Set data
             data_ = optData->get();
         }
-
         else
         {
             // For other data types just visit the variant
@@ -113,7 +112,6 @@ bool DataSource::serialise(LineParser &parser, std::string_view keywordName, std
         if (!parser.writeLineF("'{}'\n", internalDataSource_))
             return false;
     }
-
     else
     {
         return std::visit(
