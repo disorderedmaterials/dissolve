@@ -57,8 +57,6 @@ bool DataSource::sourceData(GenericList &processingModuleData)
             // Set data
             data_ = optData->get();
         }
-
-        // Data2D, Data3D
         else
         {
             return std::visit(
@@ -110,7 +108,6 @@ bool DataSource::serialise(LineParser &parser, std::string_view keywordName, std
         if (!parser.writeLineF("'{}'\n", internalDataSource_))
             return false;
     }
-    // If data is external
     else
     {
         return std::visit(
