@@ -6,7 +6,7 @@ description: Accumulate (average) g(r) and S(Q) partial
 
 ## Overview
 
-The `Accumulate` takes radial distribution function or structure factor data from a correlation module (such as {{< module "GR" >}} or {{< module "NeutronSQ" >}}) and accumulates an online average. As such it can be used to form a smoothed set of partials (and their total) for further analysis, saving to plot in production-quality graphs etc.
+The `Accumulate` module takes radial distribution function or structure factor data from a correlation module (such as {{< module "GR" >}} or {{< module "NeutronSQ" >}}) and accumulates an online average. As such it can be used to form a smoothed set of partials (and their total) for further analysis, saving to plot in production-quality graphs etc.
 
 The averaging performed by the `Accumulation` module differs from that performed in the correlation modules themselves - there, the average is a moving average, with `N` sets of partials stored in memory or in the restart file. Much like the various `Calculate` modules, the `Accumulation` module forms an online average with no history.
 
