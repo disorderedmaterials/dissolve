@@ -78,6 +78,7 @@ class DataSource
         // Set data name to be base filename
         dataName_ = fileAndFormat.filename().substr(fileAndFormat.filename().find_last_of("/\\") + 1);
     }
+
     // Returns data in the requested type
     template <class D> D data() const
     {
