@@ -116,8 +116,8 @@ bool Process1DProcedureNode::prepare(const ProcedureContext &procedureContext)
 bool Process1DProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
     // Retrieve / realise the normalised data from the supplied list
-    auto &data = procedureContext.dataList().realise<Data1D>(
-        fmt::format("Process1D//{}", name()), procedureContext.processingDataPrefix(), GenericItem::InRestartFileFlag);
+    auto &data = procedureContext.processingModuleData().realise<Data1D>(
+        fmt::format("Process1D//{}", name()), procedureContext.processingModuleDataPrefix(), GenericItem::InRestartFileFlag);
     processedData_ = &data;
     data.setTag(name());
 

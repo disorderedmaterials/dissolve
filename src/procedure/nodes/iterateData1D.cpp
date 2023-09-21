@@ -42,31 +42,8 @@ void IterateData1DProcedureNode::setUpKeywords()
         ProcedureNode::NodeType::IntegerCollect1D, false);
     keywords_.addHidden<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_);
 
-    xParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("x"));
-    valueParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("value"));
-}
-
-/*
- * Identity
- */
-
-// Set node name
-void IterateData1DProcedureNode::setName(std::string_view name)
-{
-    name_ = DissolveSys::niceName(name);
-
-    // Update parameter names to match
-    xParameter_->setName(fmt::format("{}.x", name_));
-    valueParameter_->setName(fmt::format("{}.value", name_));
-}
-
-/*
- *Parameters
- */
-// Return vector of all parameters for this node
-OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> IterateData1DProcedureNode::parameters() const
-{
-    return parameters_;
+    xParameter_ = addParameter("x");
+    valueParameter_ = addParameter("value");
 }
 
 /*
@@ -100,8 +77,9 @@ bool IterateData1DProcedureNode::execute(const ProcedureContext &procedureContex
     if (!forEachBranch_.empty())
     {
         // Retrieve / realise the normalised data from the supplied list
-        auto &data = procedureContext.dataList().realise<Data1D>(
-            fmt::format("Process1D//{}", name()), procedureContext.processingDataPrefix(), GenericItem::InRestartFileFlag);
+        auto &data = procedureContext.processingModuleData().realise<Data1D>(fmt::format("Process1D//{}", name()),
+                                                                             procedureContext.processingModuleDataPrefix(),
+                                                                             GenericItem::InRestartFileFlag);
         data.setTag(name());
 
         // Copy the averaged data from the associated Process1D node

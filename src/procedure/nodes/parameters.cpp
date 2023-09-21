@@ -20,33 +20,6 @@ ParametersProcedureNode::ParametersProcedureNode()
 bool ParametersProcedureNode::mustBeNamed() const { return false; }
 
 /*
- * Parameters
- */
-
-// Add new parameter
-std::shared_ptr<ExpressionVariable> ParametersProcedureNode::addParameter(std::string_view name, ExpressionValue initialValue)
-{
-    return parameters_.emplace_back(std::make_shared<ExpressionVariable>(name, initialValue));
-}
-
-// Return the named parameter (if it exists)
-std::shared_ptr<ExpressionVariable> ParametersProcedureNode::getParameter(std::string_view name,
-                                                                          std::shared_ptr<ExpressionVariable> excludeParameter)
-{
-    for (auto var : parameters_)
-        if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
-            return var;
-
-    return nullptr;
-}
-
-// Return vector of all parameters for this node
-OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> ParametersProcedureNode::parameters() const
-{
-    return parameters_;
-}
-
-/*
  * Execute
  */
 
@@ -56,12 +29,16 @@ bool ParametersProcedureNode::prepare(const ProcedureContext &procedureContext) 
 // Execute node
 bool ParametersProcedureNode::execute(const ProcedureContext &procedureContext) { return true; }
 
+/*
+ * I/O
+ */
+
 // Express as a serialisable value
 SerialisedValue ParametersProcedureNode::serialise() const
 {
     SerialisedValue result;
     for (auto &param : parameters_)
-        result[std::string(param->name())] = param->value();
+        result[std::string(param->baseName())] = param->value();
     return result;
 }
 

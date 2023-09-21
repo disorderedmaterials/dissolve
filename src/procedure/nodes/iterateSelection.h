@@ -23,18 +23,9 @@ class IterateSelectionProcedureNode : public ProcedureNode
         ProcedureNode::NodeContext forEachContext = ProcedureNode::NodeContext::AnalysisContext);
 
     /*
-     * Identity
-     */
-    public:
-    // Set node name
-    void setName(std::string_view name) override;
-
-    /*
      * Parameters
      */
     private:
-    // Defined parameters
-    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
     // Pointers to individual parameters
     std::shared_ptr<ExpressionVariable> nSelectedParameter_, siteIndexParameter_, stackIndexParameter_, indexParameter_;
     // Selection to iterate over

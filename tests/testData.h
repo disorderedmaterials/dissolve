@@ -122,7 +122,7 @@ class DissolveSystemTest
      */
     public:
     // Set enabled status for named module
-    void setModuleEnabled(std::string_view name, bool enabled)
+    static void setModuleEnabled(std::string_view name, bool enabled)
     {
         auto *module = Module::find(name);
         if (!module)
@@ -148,7 +148,7 @@ class DissolveSystemTest
      */
     public:
     // Test simple double
-    [[nodiscard]] bool checkDouble(std::string_view quantity, double A, double B, double threshold)
+    [[nodiscard]] static bool checkDouble(std::string_view quantity, double A, double B, double threshold)
     {
         auto delta = fabs(A - B);
         auto isOK = delta <= threshold;
@@ -165,8 +165,9 @@ class DissolveSystemTest
         return checkDouble(quantity, A.value(), B, threshold);
     }
     // Test Data1D
-    [[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB, std::string_view nameB,
-                                   double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    [[nodiscard]] static bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB,
+                                          std::string_view nameB, double tolerance = 5.0e-3,
+                                          Error::ErrorType errorType = Error::ErrorType::EuclideanError)
     {
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, dataA, dataB).error;
@@ -204,8 +205,9 @@ class DissolveSystemTest
         return checkData1D(optDataA->get(), tagA, optDataB->get(), tagB, tolerance, errorType);
     }
     // Test Data3D
-    [[nodiscard]] bool checkData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB, std::string_view nameB,
-                                   double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    [[nodiscard]] static bool checkData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB,
+                                          std::string_view nameB, double tolerance = 5.0e-3,
+                                          Error::ErrorType errorType = Error::ErrorType::EuclideanError)
     {
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, dataA.values().linearArray(), dataB.values().linearArray()).error;
@@ -261,16 +263,20 @@ class DissolveSystemTest
                          error, notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
     }
+    // Test Vec3 data
+    static void checkVec3(const Vec3<double> &A, const Vec3<double> &B, double tolerance = 1.0e-6)
+    {
+        EXPECT_NEAR(A.x, B.x, tolerance);
+        EXPECT_NEAR(A.y, B.y, tolerance);
+        EXPECT_NEAR(A.z, B.z, tolerance);
+    }
     // Test Vec3 vector data
-    void checkVec3Vector(const std::vector<Vec3<double>> &A, const std::vector<Vec3<double>> &B, double tolerance)
+    static void checkVec3Vector(const std::vector<Vec3<double>> &A, const std::vector<Vec3<double>> &B,
+                                double tolerance = 1.0e-6)
     {
         ASSERT_EQ(A.size(), B.size());
         for (auto n = 0; n < A.size(); ++n)
-        {
-            EXPECT_NEAR(A[n].x, B[n].x, tolerance);
-            EXPECT_NEAR(A[n].y, B[n].y, tolerance);
-            EXPECT_NEAR(A[n].z, B[n].z, tolerance);
-        }
+            checkVec3(A[n], B[n], tolerance);
     }
     // Test Vec3 vector data (by tag and external data)
     void checkVec3Vector(std::string_view tag, ForceImportFileFormat externalForces, double tolerance)
@@ -281,7 +287,7 @@ class DissolveSystemTest
         checkVec3Vector(vec, B, tolerance);
     }
     // Test species atom type
-    void checkSpeciesAtomType(const Species *sp, int atomIndex, std::string_view atomTypeName)
+    static void checkSpeciesAtomType(const Species *sp, int atomIndex, std::string_view atomTypeName)
     {
         ASSERT_TRUE(atomIndex >= 0 && atomIndex < sp->nAtoms());
         auto &spAtom = sp->atom(atomIndex);

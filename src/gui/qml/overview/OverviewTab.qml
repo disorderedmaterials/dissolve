@@ -4,12 +4,14 @@ import QtQuick.Layouts 6.0
 import QtQml.Models 6.0
 import QtQuick 2.15
 import Dissolve 1.0
+import "../widgets" as D
 
 ColumnLayout {
     id: root
     signal atomTypesClicked
     signal configurationClicked(int index)
     signal masterTermsClicked
+    signal moduleLayerClicked(int index)
     signal speciesClicked(int index)
 
     RowLayout {
@@ -87,6 +89,22 @@ ColumnLayout {
                     anchors.fill: parent
 
                     onClicked: root.configurationClicked(index)
+                }
+            }
+        }
+    }
+    RowLayout {
+        Repeater {
+            id: layers
+            model: dissolveModel.moduleLayersModel
+
+            delegate: ModuleLayer {
+                model: dissolveModel.moduleLayersModel
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: root.moduleLayerClicked(index)
                 }
             }
         }

@@ -44,6 +44,8 @@ bool DataSource::sourceData(GenericList &processingModuleData)
     {
         return false;
     }
+
+    // For Internal data sources, try to locate the data now
     if (dataSourceType_ == Internal)
     {
         if (std::holds_alternative<Data1D>(data_) || std::holds_alternative<SampledData1D>(data_))
@@ -58,9 +60,9 @@ bool DataSource::sourceData(GenericList &processingModuleData)
             data_ = optData->get();
         }
 
-        // Data2D, Data3D
         else
         {
+            // For other data types just visit the variant
             return std::visit(
                 [=](auto data)
                 {
@@ -77,11 +79,12 @@ bool DataSource::sourceData(GenericList &processingModuleData)
                 data_);
         }
     }
+
     // Return whether or not variant contains value
     return !data_.valueless_by_exception();
 }
 
-// Function to add internal data
+// Set internal data source
 void DataSource::addData(std::string_view internalDataSource)
 {
     dataSourceType_ = Internal;
@@ -104,13 +107,13 @@ bool DataSource::serialise(LineParser &parser, std::string_view keywordName, std
         return false;
     }
 
-    // If data is internal
+    // For internal data sources just need to write the tag. Externals write the file and format
     if (dataSourceType_ == Internal)
     {
         if (!parser.writeLineF("'{}'\n", internalDataSource_))
             return false;
     }
-    // If data is external
+
     else
     {
         return std::visit(

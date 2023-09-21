@@ -30,6 +30,7 @@ add_library(
   coreData.cpp
   dataSource.cpp
   distributor.cpp
+  empiricalFormula.cpp
   isotopeData.cpp
   isotopologue.cpp
   isotopologues.cpp

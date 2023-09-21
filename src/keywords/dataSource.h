@@ -13,13 +13,7 @@
 #include "templates/optionalRef.h"
 #include <queue>
 
-// Foward declarations
-class Data1DImportFileFormat;
-class Data2DImportFileFormat;
-class Data3DImportFileFormat;
-
-// Keyword managing data sources
-// Template arguments: data class (Data1D, Data2D ...), data import file format
+// Keyword managing a DataSource
 template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
 {
     public:
@@ -27,16 +21,12 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
         : DataSourceKeywordBase(dataSources, endKeyword){};
     ~DataSourceKeyword() override = default;
 
-    // Getting type definiton for data FileAndFormat
-    public:
-    using DataFormat = typename DataType::Formatter;
-
     /*
      * Data
      */
     private:
-    // Format object for the data
-    DataFormat format_;
+    // Format type of the data
+    typename DataType::Formatter format_;
 
     /*
      * Arguments
@@ -74,7 +64,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 return DataSource::dataSourceTypes().errorAndPrintValid(parser.argsv(0));
             }
 
-            // If data is internal
+            // Next parse depends on whether we have internal / external data
             if (DataSource::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource::Internal)
             {
                 // Add data to dataSource
@@ -82,12 +72,11 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 // Remove dataSource from queue
                 sourceQueue.pop();
             }
-            // If data is external
             else if (DataSource::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource::External)
             {
                 // Initialise data and format objects
                 DataType data;
-                DataFormat format;
+                typename DataType::Formatter format;
 
                 // Read the supplied arguments
                 if (format.read(parser, 1, fmt::format("End{}", DataSource::dataSourceTypes().keyword(DataSource::External)),
@@ -211,7 +200,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                      else if (!sourceQueue.empty())
                      {
                          DataType data;
-                         DataFormat format;
+                         typename DataType::Formatter format;
 
                          // Deserialise FileAndFormat
                          format.deserialise(item.at("data"), coreData);

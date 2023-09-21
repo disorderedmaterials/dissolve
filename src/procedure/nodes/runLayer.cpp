@@ -42,7 +42,7 @@ bool RunLayerNode::execute(const ProcedureContext &procedureContext)
     if (!layer_->runThisIteration(procedureContext.dissolve().iteration()))
         return true;
 
-    if (!layer_->canRun(procedureContext.dataList()))
+    if (!layer_->canRun(procedureContext.processingModuleData()))
         return true;
 
     ModuleContext moduleContext(procedureContext.processPool(), procedureContext.dissolve());
