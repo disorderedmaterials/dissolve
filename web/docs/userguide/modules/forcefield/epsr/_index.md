@@ -48,6 +48,12 @@ What follows is a brief overview of the basic ideas behind the EPSR methodology.
 |`Weighting`|`double`|`1.9`|Factor used when adding fluctuation coefficients to pair potentials|
 |`OverwritePotentials`|`bool`|`false`|Overwrite potentials each time rather than summing them|
 
+### Additional R-Factors
+
+|Keyword|Arguments|Default|Description|
+|:------|:-------:|:-----:|-----------|
+|`ErrorRanges`|`double`<br/>`double`|--|Minumum and maximum range bounds over which to calculate the RFactor error.|
+
 ### Expansion Function
 
 |Keyword|Arguments|Default|Description|
