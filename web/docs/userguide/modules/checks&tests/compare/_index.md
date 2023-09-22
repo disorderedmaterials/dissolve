@@ -6,7 +6,7 @@ description: Compare data sets and calculate errors
 
 ## Overview
 
-The `Compare` module graphs two provided datasets along with a delta function that displays the absolute difference between the two graphs. It allows for the selection of an error calculation type and will compute this error value between the two datasets over the complete and specified ranges.
+The `Compare` module graphs two provided datasets along with a delta function that displays the difference between the two graphs. It allows for the selection of an error calculation type and will compute this error value between the two datasets over the complete and specified ranges.
 
 Two data sets must be provided, from internal Dissolve data or external data from the user's filesystem.
 
