@@ -22,5 +22,5 @@ Two data sets must be provided, from internal Dissolve data or external data fro
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`ErrorType`|[`ErrorType`]({{< ref "errortype" >}})|`Euclidean`|Type of error to calculate between the two datasets.|
+|`ErrorType`|[`ErrorType`]({{< ref "errortype" >}})|`Euclidean`|Error metric to calculate between the two datasets.|
 |`ErrorRanges`|`double`<br/>`double`|--|Minumum and maximum range bounds over which to calculate the error metric.|
