@@ -52,7 +52,7 @@ What follows is a brief overview of the basic ideas behind the EPSR methodology.
 
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
-|`RFactorRanges`|`double`<br/>`double`|--|Minumum and maximum range bounds over which to calculate the RFactor error.|
+|`RFactorRanges`|`double`<br/>`double`|--|Specify an additional range (minumum and maximum Q) over which to calculate the RFactor error.|
 
 ### Expansion Function
 
