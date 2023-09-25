@@ -9,13 +9,12 @@ Node {
     property variant model
 
     ColumnLayout {
-        Layout.fillHeight: true
         Layout.fillWidth: true
+        Layout.fillHeight: true
         spacing: 0
 
         RowLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            id: banner
             Text {
                 text: `${model.data(model.index(index, 0), Qt.DisplayRole)}`
             }
@@ -25,12 +24,15 @@ Node {
                 source: "qrc:/general/icons/layer.svg"
             }
         }
-        D.PrettyListView {
+
+        ScrollView {
+            Layout.preferredHeight: moduleLayer.height - banner.height
+            Layout.preferredWidth: moduleLayer.width
             clip: true
-            height: contentHeight
-            width: contentWidth
-            iconPrefix: "image://dissolveIcons/moduleLayer/" + index + "/"
-            model: moduleLayer.model.data(moduleLayer.model.index(index, 0), ModuleLayersModel.ModuleLayersUserRole.ModuleLayerModel)
+            D.PrettyListView {
+                iconPrefix: "image://dissolveIcons/moduleLayer/" + index + "/"
+                model: moduleLayer.model.data(moduleLayer.model.index(index, 0), ModuleLayersModel.ModuleLayersUserRole.ModuleLayerModel)
+            }
         }
     }
 }
