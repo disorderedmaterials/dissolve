@@ -26,6 +26,8 @@ Node {
             }
         }
         D.PrettyListView {
+            height: contentHeight
+            width: contentWidth
             iconPrefix: "image://dissolveIcons/moduleLayer/" + index + "/"
             model: moduleLayer.model.data(moduleLayer.model.index(index, 0), ModuleLayersModel.ModuleLayersUserRole.ModuleLayerModel)
         }
