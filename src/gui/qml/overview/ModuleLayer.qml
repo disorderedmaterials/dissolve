@@ -6,7 +6,6 @@ import "../widgets" as D
 
 Node {
     id: moduleLayer
-
     property variant model
 
     ColumnLayout {

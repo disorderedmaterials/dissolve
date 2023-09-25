@@ -8,14 +8,14 @@ import "../widgets" as D
 
 ColumnLayout {
     id: root
+    anchors.fill: parent
+
     signal atomTypesClicked
     signal configurationClicked(int index)
     signal masterTermsClicked
     signal moduleLayerClicked(int index)
     signal speciesClicked(int index)
-
-    anchors.fill: parent
-
+    
     RowLayout {
         Layout.alignment: Qt.AlignHCenter
         Layout.fillHeight: true
