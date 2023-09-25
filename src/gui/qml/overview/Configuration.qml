@@ -7,11 +7,10 @@ Node {
     property variant model
 
     ColumnLayout {
-        Layout.fillWidth: true
         Layout.fillHeight: true
-        spacing: 0
+        Layout.fillWidth: true
         anchors.centerIn: parent
-
+        spacing: 0
 
         RowLayout {
             Text {

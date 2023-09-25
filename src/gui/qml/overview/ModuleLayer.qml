@@ -6,11 +6,12 @@ import "../widgets" as D
 
 Node {
     id: moduleLayer
+
     property variant model
 
     ColumnLayout {
-        Layout.fillWidth: true
         Layout.fillHeight: true
+        Layout.fillWidth: true
         spacing: 0
 
         RowLayout {
@@ -24,11 +25,11 @@ Node {
                 source: "qrc:/general/icons/layer.svg"
             }
         }
-
         ScrollView {
             Layout.preferredHeight: moduleLayer.height - banner.height
             Layout.preferredWidth: moduleLayer.width
             clip: true
+
             D.PrettyListView {
                 iconPrefix: "image://dissolveIcons/moduleLayer/" + index + "/"
                 model: moduleLayer.model.data(moduleLayer.model.index(index, 0), ModuleLayersModel.ModuleLayersUserRole.ModuleLayerModel)
