@@ -15,7 +15,7 @@ ColumnLayout {
     signal masterTermsClicked
     signal moduleLayerClicked(int index)
     signal speciesClicked(int index)
-    
+
     RowLayout {
         Layout.alignment: Qt.AlignHCenter
         Layout.fillHeight: true
