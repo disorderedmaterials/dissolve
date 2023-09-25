@@ -30,6 +30,10 @@ class RangeVectorKeyword : public KeywordBase
      * Arguments
      */
     public:
+    // Return minimum number of arguments accepted
+    int minArguments() const override;
+    // Return maximum number of arguments accepted
+    std::optional<int> maxArguments() const override;
     // Deserialise from supplied LineParser, starting at given argument offset
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser

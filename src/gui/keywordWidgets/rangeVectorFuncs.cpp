@@ -13,7 +13,7 @@
 RangeVectorKeywordWidget::RangeVectorKeywordWidget(QWidget *parent, RangeVectorKeyword *keyword, const CoreData &coreData)
     : KeywordWidgetBase(coreData), keyword_(keyword)
 {
-    // Create and set up the UI for our widget in the drop-down's widget container
+    // Create and set up the UI for our widget
     ui_.setupUi(this);
 
     // Set up the model

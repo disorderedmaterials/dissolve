@@ -19,22 +19,25 @@ const std::vector<Range> &RangeVectorKeyword::data() const { return data_; }
  * Arguments
  */
 
+// Return minimum number of arguments accepted
+int RangeVectorKeyword::minArguments() const { return 2; }
+
+// Return maximum number of arguments accepted
+std::optional<int> RangeVectorKeyword::maxArguments() const { return 2; }
+
 // Deserialise from supplied LineParser, starting at given argument offset
 bool RangeVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    // Loop over arguments
-    for (auto n = startArg; n < parser.nArgs(); n += 2)
+    // Check to see if value pair are numbers
+    if (DissolveSys::isNumber(parser.argsv(startArg)) && DissolveSys::isNumber(parser.argsv(startArg + 1)))
     {
-        // Check to see if value pair are numbers
-        if (DissolveSys::isNumber(parser.argsv(n)) && DissolveSys::isNumber(parser.argsv(n + 1)))
-        {
-            data_.emplace_back(parser.argd(n), parser.argd(n + 1));
-        }
-        else
-        {
-            return Messenger::error("Value '{}' given to keyword '{}' doesn't appear to be numerical.\n",
-                                    DissolveSys::isNumber(parser.argsv(n)) ? parser.argsv(n + 1) : parser.argsv(n), name());
-        }
+        data_.emplace_back(parser.argd(startArg), parser.argd(startArg + 1));
+    }
+    else
+    {
+        return Messenger::error(
+            "Value '{}' given to keyword '{}' doesn't appear to be numerical.\n",
+            DissolveSys::isNumber(parser.argsv(startArg)) ? parser.argsv(startArg + 1) : parser.argsv(startArg), name());
     }
 
     return true;
