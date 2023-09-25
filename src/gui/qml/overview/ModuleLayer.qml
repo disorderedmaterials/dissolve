@@ -26,6 +26,7 @@ Node {
             }
         }
         D.PrettyListView {
+            clip: true
             height: contentHeight
             width: contentWidth
             iconPrefix: "image://dissolveIcons/moduleLayer/" + index + "/"
