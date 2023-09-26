@@ -26,9 +26,8 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     registerPage(ImportCIFDialog::SelectSpaceGroupPage, "Choose Space Group", ImportCIFDialog::CIFInfoPage);
     registerPage(ImportCIFDialog::CIFInfoPage, "CIF Information", ImportCIFDialog::StructurePage);
     registerPage(ImportCIFDialog::StructurePage, "Basic Structure", ImportCIFDialog::CleanedPage);
-    registerPage(ImportCIFDialog::CleanedPage, "Clean Structure", ImportCIFDialog::SupercellPage);
-    registerPage(ImportCIFDialog::SupercellPage, "Create Supercell", ImportCIFDialog::OutputSpeciesPage);
-    registerPage(ImportCIFDialog::OutputSpeciesPage, "Species Partitioning");
+    registerPage(ImportCIFDialog::CleanedPage, "Clean Structure", ImportCIFDialog::OutputSpeciesPage);
+    registerPage(ImportCIFDialog::OutputSpeciesPage, "Output");
 
     // Add spacegroup list
     for (auto n = 1; n < SpaceGroups::nSpaceGroupIds; ++n)
@@ -70,7 +69,7 @@ bool ImportCIFDialog::progressionAllowed(int index) const
         case (ImportCIFDialog::OutputSpeciesPage):
             // If the "Framework" or "Supermolecule" options are chosen, the "Crystal" species must be a single moiety
             if (cifHandler_.isValid())
-                return ui_.PartitioningIndicator->state() == CheckIndicator::OKState;
+                //return ui_.PartitioningIndicator->state() == CheckIndicator::OKState;
             break;
         default:
             break;
@@ -111,11 +110,6 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
         case (ImportCIFDialog::CleanedPage):
             update();
             if (!cifHandler_.supercellSpecies())
-                return false;
-            break;
-        case (ImportCIFDialog::SupercellPage):
-            update();
-            if (!cifHandler_.partitionedSpecies())
                 return false;
             break;
         default:
@@ -372,8 +366,8 @@ bool ImportCIFDialog::update()
 
     ui_.StructureViewer->setConfiguration(cifHandler_.structuralUnitCellConfiguration());
     ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedUnitCellConfiguration());
-    ui_.SupercellViewer->setConfiguration(cifHandler_.supercellConfiguration());
-    ui_.PartitioningViewer->setConfiguration(cifHandler_.partitionedConfiguration());
+    ui_.OutputViewer->setConfiguration(cifHandler_.supercellConfiguration());
+    //ui_.PartitioningViewer->setConfiguration(cifHandler_.partitionedConfiguration());
     auto *supercell = cifHandler_.supercellSpecies();
 
     if (supercell)
@@ -401,25 +395,33 @@ bool ImportCIFDialog::update()
         cifHandler_.partitionedSpecies()->clearAtomSelection();
         if (cifHandler_.partitionedSpecies()->fragment(0).size() != cifHandler_.partitionedSpecies()->nAtoms())
         {
-            ui_.PartitioningIndicator->setOK(false);
-            ui_.PartitioningLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
-                                           "simulation. Choose a different partitioning.");
+            //ui_.PartitioningIndicator->setOK(false);
+            //ui_.PartitioningLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
+            //                               "simulation. Choose a different partitioning.");
 
             validSpecies = false;
         }
     }
     else
     {
-        ui_.PartitioningLayoutWidget->setEnabled(false);
-        ui_.PartitioningViewFrame->setEnabled(false);
-        ui_.PartitioningIndicator->setOK(true);
+        //ui_.PartitioningLayoutWidget->setEnabled(false);
+        //ui_.PartitioningViewFrame->setEnabled(false);
+        //ui_.PartitioningIndicator->setOK(true);
     }
 
     if (validSpecies)
     {
-        ui_.PartitioningIndicator->setOK(true);
-        ui_.PartitioningLabel->setText("Species are valid.");
+        //ui_.PartitioningIndicator->setOK(true);
+        //ui_.PartitioningLabel->setText("Species are valid.");
     }
+
+    // drop partitioned species
+    // rename supercell page to `final output` or similar
+    // ListView of species, indicate whether configuration will be generated (subtext, alongside supercell/supermolecule species)
+    // option to output configuration for framework(?)
+
+    // Generation of supercells is slow, as we try to rebond all atoms to figure out where the bonds are
+    // Only rebond bonds at the boundary
 
     return true;
 }

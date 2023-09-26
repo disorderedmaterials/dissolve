@@ -58,8 +58,7 @@ class ImportCIFDialog : public WizardDialog
         CIFInfoPage,          /* Basic CIF info page to check parsing */
         StructurePage,        /* Structure page */
         CleanedPage,          /* Cleaned structure page */
-        SupercellPage,        /* Options to create supercell */
-        OutputSpeciesPage     /* Output Species page */
+        OutputSpeciesPage,        /* Options to create supercell */
     };
 
     protected:
