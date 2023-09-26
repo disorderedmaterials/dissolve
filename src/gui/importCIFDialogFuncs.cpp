@@ -345,6 +345,7 @@ void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked)
         updateFlags_.removeFlag(CIFHandler::UpdateFlags::CreateSupermolecule);
     else
         updateFlags_.setFlag(CIFHandler::UpdateFlags::CreateSupermolecule);
+    update();
 }
 
 void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked)
@@ -353,6 +354,7 @@ void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked)
         updateFlags_.setFlag(CIFHandler::UpdateFlags::CreateSupermolecule);
     else
         updateFlags_.removeFlag(CIFHandler::UpdateFlags::CreateSupermolecule);
+    update();
 }
 
 bool ImportCIFDialog::update()
@@ -366,7 +368,7 @@ bool ImportCIFDialog::update()
 
     ui_.StructureViewer->setConfiguration(cifHandler_.structuralUnitCellConfiguration());
     ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedUnitCellConfiguration());
-    ui_.OutputViewer->setConfiguration(cifHandler_.supercellConfiguration());
+    ui_.OutputViewer->setConfiguration(cifHandler_.partitionedConfiguration());
     //ui_.PartitioningViewer->setConfiguration(cifHandler_.partitionedConfiguration());
     auto *supercell = cifHandler_.supercellSpecies();
 
@@ -387,9 +389,11 @@ bool ImportCIFDialog::update()
         ui_.SupercellNAtomsLabel->setText(QString::number(cifHandler_.supercellConfiguration()->nAtoms()));
     }
 
+    ui_.OutputConfigurationCheck->setEnabled(!updateFlags_.isSet(CIFHandler::UpdateFlags::CreateSupermolecule));
+
     auto validSpecies = true;
 
-    if (cifHandler_.molecularSpecies().empty())
+    /*if (cifHandler_.molecularSpecies().empty())
     {
         // Update the indicator and label
         cifHandler_.partitionedSpecies()->clearAtomSelection();
@@ -407,7 +411,7 @@ bool ImportCIFDialog::update()
         //ui_.PartitioningLayoutWidget->setEnabled(false);
         //ui_.PartitioningViewFrame->setEnabled(false);
         //ui_.PartitioningIndicator->setOK(true);
-    }
+    }*/
 
     if (validSpecies)
     {
