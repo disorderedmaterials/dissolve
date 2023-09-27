@@ -7,6 +7,9 @@ Node {
     property variant model
 
     ColumnLayout {
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        anchors.centerIn: parent
         spacing: 0
 
         RowLayout {

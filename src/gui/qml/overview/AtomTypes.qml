@@ -6,6 +6,7 @@ Node {
     property int nAtomTypes
 
     Text {
+        anchors.centerIn: parent
         text: `Atom Types(${nAtomTypes})`
     }
 }

@@ -6,6 +6,7 @@ Node {
     property int nAngles
 
     Text {
+        anchors.centerIn: parent
         text: `Angles(${nAngles})`
     }
 }
