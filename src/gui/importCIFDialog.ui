@@ -28,7 +28,7 @@
    <item>
     <widget class="QStackedWidget" name="MainStack">
      <property name="currentIndex">
-      <number>0</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="ImportCIFSelectFilePage">
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1384,6 +1384,9 @@
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
                 <property name="sizeHint" stdset="0">
                  <size>
                   <width>40</width>
@@ -1394,6 +1397,11 @@
               </item>
               <item>
                <widget class="QLabel" name="label_3">
+                <property name="font">
+                 <font>
+                  <italic>true</italic>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Create molecular species</string>
                 </property>
