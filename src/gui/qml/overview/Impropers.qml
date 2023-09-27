@@ -6,6 +6,7 @@ Node {
     property int nImpropers
 
     Text {
+        anchors.centerIn: parent
         text: `Impropers(${nImpropers})`
     }
 }
