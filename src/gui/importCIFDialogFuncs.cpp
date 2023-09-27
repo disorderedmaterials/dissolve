@@ -374,6 +374,7 @@ bool ImportCIFDialog::update()
 
     if (supercell)
     {
+        ui_.SupercellGroupBox->setEnabled(true);
         // Update the information panel
         ui_.SupercellBoxALabel->setText(QString::number(supercell->box()->axisLengths().x) + " &#8491;");
         ui_.SupercellBoxBLabel->setText(QString::number(supercell->box()->axisLengths().y) + " &#8491;");
@@ -387,6 +388,10 @@ bool ImportCIFDialog::update()
         ui_.SupercellVolumeLabel->setText(QString::number(cifHandler_.supercellConfiguration()->box()->volume()) +
                                           " &#8491;<sup>3</sup>");
         ui_.SupercellNAtomsLabel->setText(QString::number(cifHandler_.supercellConfiguration()->nAtoms()));
+    }
+    else
+    {
+        ui_.SupercellGroupBox->setEnabled(false);
     }
 
     ui_.OutputConfigurationCheck->setEnabled(!updateFlags_.isSet(CIFHandler::UpdateFlags::CreateSupermolecule));
