@@ -15,12 +15,18 @@ QImage DissolveModelImageProvider::requestImage(const QString &id, QSize *size, 
 {
     auto appliedSize = requestedSize.isValid() ? requestedSize : QSize(16, 16);
 
+    QImage defaultImage(appliedSize, QImage::Format::Format_Mono);
+    defaultImage.fill(Qt::black);
+
+    // Set size to defaultImage for now
+    *size = defaultImage.size();
+
     if (id.startsWith(QString("moduleLayer/")))
     {
         // Split the id
         auto parts = id.split("/");
         if (parts.size() != 3)
-            return {};
+            return defaultImage;
 
         // Row of moduleLayer in the ModuleLayersModel
         auto moduleLayerRow = parts[1].toInt();
@@ -29,7 +35,7 @@ QImage DissolveModelImageProvider::requestImage(const QString &id, QSize *size, 
 
         auto moduleLayerIndex = dissolveModel_->moduleLayersModel()->index(moduleLayerRow, 0);
         if (!moduleLayerIndex.isValid())
-            return {};
+            return defaultImage;
 
         // Get the ModuleLayerModel belonging to the parent ModuleLayersModel
         auto moduleLayerModel =
@@ -37,13 +43,13 @@ QImage DissolveModelImageProvider::requestImage(const QString &id, QSize *size, 
 
         auto moduleIndex = moduleLayerModel->index(moduleRow, 0);
         if (!moduleIndex.isValid())
-            return {};
+            return defaultImage;
 
-        // Update the size
+        // Update the size to the correct image
         *size = appliedSize;
 
         // Get the icon as a QImage
         return moduleLayerModel->data(moduleIndex, Qt::DecorationRole).value<QIcon>().pixmap(QSize(appliedSize)).toImage();
     }
-    return {};
+    return defaultImage;
 }

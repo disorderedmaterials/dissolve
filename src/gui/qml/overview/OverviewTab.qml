@@ -8,6 +8,8 @@ import "../widgets" as D
 
 ColumnLayout {
     id: root
+    anchors.fill: parent
+
     signal atomTypesClicked
     signal configurationClicked(int index)
     signal masterTermsClicked
@@ -15,7 +17,18 @@ ColumnLayout {
     signal speciesClicked(int index)
 
     RowLayout {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        Layout.preferredHeight: 100
+
         AtomTypes {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.maximumHeight: 200
+            Layout.maximumWidth: 200
+            Layout.preferredHeight: 100
+            Layout.preferredWidth: 200
             nAtomTypes: dissolveModel.nAtomTypes
 
             MouseArea {
@@ -25,6 +38,12 @@ ColumnLayout {
             }
         }
         Bonds {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.maximumHeight: 200
+            Layout.maximumWidth: 200
+            Layout.preferredHeight: 100
+            Layout.preferredWidth: 200
             nBonds: dissolveModel.nMasterBonds
 
             MouseArea {
@@ -34,6 +53,12 @@ ColumnLayout {
             }
         }
         Angles {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.maximumHeight: 200
+            Layout.maximumWidth: 200
+            Layout.preferredHeight: 100
+            Layout.preferredWidth: 200
             nAngles: dissolveModel.nMasterAngles
 
             MouseArea {
@@ -43,6 +68,12 @@ ColumnLayout {
             }
         }
         Torsions {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.maximumHeight: 200
+            Layout.maximumWidth: 200
+            Layout.preferredHeight: 100
+            Layout.preferredWidth: 200
             nTorsions: dissolveModel.nMasterTorsions
 
             MouseArea {
@@ -52,6 +83,12 @@ ColumnLayout {
             }
         }
         Impropers {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.maximumHeight: 200
+            Layout.maximumWidth: 200
+            Layout.preferredHeight: 100
+            Layout.preferredWidth: 200
             nImpropers: dissolveModel.nMasterImpropers
 
             MouseArea {
@@ -62,11 +99,22 @@ ColumnLayout {
         }
     }
     RowLayout {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        Layout.preferredHeight: 100
+
         Repeater {
             id: species
             model: dissolveModel.speciesModel
 
             delegate: Species {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.maximumHeight: 200
+                Layout.maximumWidth: 200
+                Layout.preferredHeight: 100
+                Layout.preferredWidth: 200
                 model: dissolveModel.speciesModel
 
                 MouseArea {
@@ -78,11 +126,22 @@ ColumnLayout {
         }
     }
     RowLayout {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        Layout.preferredHeight: 100
+
         Repeater {
             id: configurations
             model: dissolveModel.configurationsModel
 
             delegate: Configuration {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.maximumHeight: 200
+                Layout.maximumWidth: 200
+                Layout.preferredHeight: 100
+                Layout.preferredWidth: 200
                 model: dissolveModel.configurationsModel
 
                 MouseArea {
@@ -94,11 +153,22 @@ ColumnLayout {
         }
     }
     RowLayout {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        Layout.preferredHeight: 100
+
         Repeater {
             id: layers
             model: dissolveModel.moduleLayersModel
 
             delegate: ModuleLayer {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.maximumHeight: 200
+                Layout.maximumWidth: 200
+                Layout.preferredHeight: 100
+                Layout.preferredWidth: 200
                 model: dissolveModel.moduleLayersModel
 
                 MouseArea {
