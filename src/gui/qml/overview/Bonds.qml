@@ -6,6 +6,7 @@ Node {
     property int nBonds
 
     Text {
+        anchors.centerIn: parent
         text: `Bonds(${nBonds})`
     }
 }
