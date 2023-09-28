@@ -45,8 +45,8 @@ bool TrajectoryImportFileFormat::importData(LineParser &parser, Configuration *c
             }
             break;
         case (TrajectoryImportFormat::XYZ):
-            result =
-                CoordinateImportFileFormat("", CoordinateImportFileFormat::CoordinateImportFormat::XYZ).importData(parser, cfg);
+            return CoordinateImportFileFormat("", CoordinateImportFileFormat::CoordinateImportFormat::XYZ)
+                .importData(parser, cfg);
         default:
             throw(std::runtime_error(fmt::format("Trajectory format '{}' import has not been implemented.\n",
                                                  formats_.keywordByIndex(*formatIndex_))));
