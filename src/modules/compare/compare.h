@@ -39,11 +39,13 @@ class CompareModule : public Module
     // Ranges to calculate error over
     std::vector<Range> ranges_;
     // Mapping from data pair to ranges and error
-    std::map<DataSourceKeywordBase::DataPair *, RangeErrorPair> dataSourcesErrors_;
+    std::map<const DataSourceKeywordBase::DataPair *, RangeErrorPair> dataSourcesErrors_;
 
     public:
     // Return data sources
-    const std::vector<DataSourceKeywordBase::DataPair> &dataSources();
+    const std::vector<DataSourceKeywordBase::DataPair> &dataSources() const;
+    // Return errors
+    const std::map<const DataSourceKeywordBase::DataPair *, RangeErrorPair> &dataSourcesErrors() const;
 
     /*
      * Processing
