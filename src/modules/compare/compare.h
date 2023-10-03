@@ -38,6 +38,8 @@ class CompareModule : public Module
     Error::ErrorType errorType_{Error::EuclideanError};
     // Ranges to calculate error over
     std::vector<Range> ranges_;
+    // Mapping from data pair to ranges and error
+    std::map<DataSourceKeywordBase::DataPair *, RangeErrorPair> dataSourcesErrors_;
 
     public:
     // Return data sources

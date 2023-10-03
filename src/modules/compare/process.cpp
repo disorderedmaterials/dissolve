@@ -6,8 +6,6 @@
 
 Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 {
-    // Mapping from data pair to ranges and error
-    std::map<DataSourceKeywordBase::DataPair *, RangeErrorPair> dataSourcesErrors;
 
     auto index = 1;
     for (auto &dataPair : dataSources_)
@@ -23,7 +21,7 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         }
 
         // Set the ranges in the map to reference the ranges_ vector
-        auto &ranges = dataSourcesErrors[&dataPair].first;
+        auto &ranges = dataSourcesErrors_[&dataPair].first;
         ranges = ranges_;
 
         // Source the data
@@ -60,12 +58,12 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         ranges.insert(ranges.begin(), totalRange);
 
         // Set the error vector to be the same size as the ranges
-        dataSourcesErrors[&dataPair].second.resize(ranges.size());
+        dataSourcesErrors_[&dataPair].second.resize(ranges.size());
 
         Messenger::print("Errors between {} and {}", dataPair.first.dataName(), dataPair.second.dataName());
 
         // Loop through the the range & error vectors, calculating and reporting the errors
-        for (auto &&[range, error] : zip(ranges, dataSourcesErrors[&dataPair].second))
+        for (auto &&[range, error] : zip(ranges, dataSourcesErrors_[&dataPair].second))
         {
             auto errorReport = Error::error(errorType_, dataA, dataB, range);
             error = errorReport.error;
