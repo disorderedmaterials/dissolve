@@ -34,17 +34,17 @@ class CompareModuleWidget : public ModuleWidget
     Ui::CompareModuleWidget ui_;
     // DataViewers contained within this widget
     DataViewer *graph_;
-    // Vector of buttons
-    std::vector<QPushButton *> buttons_;
+    // Data1D Button
+    std::array<QPushButton *, 3> buttons_;
 
     public:
     // Update controls within widget
     void updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags = {}) override;
 
     /*
-     * Slots
+     * Widgets / Functions
      */
+
     private slots:
-    // Update graph
-    void onButtonChecked(bool checked);
+    void on_Data1DButton_clicked(bool checked);
 };

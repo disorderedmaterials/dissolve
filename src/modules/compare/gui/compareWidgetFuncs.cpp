@@ -15,6 +15,11 @@ CompareModuleWidget::CompareModuleWidget(QWidget *parent, CompareModule *module,
 
     refreshing_ = true;
 
+    // Set up button array
+    buttons_[0] = ui_.Data1DButton;
+    buttons_[1] = ui_.Data2DButton;
+    buttons_[2] = ui_.Data3DButton;
+
     // Set up the main graph
     graph_ = ui_.PlotWidget->dataViewer();
 
@@ -24,16 +29,21 @@ CompareModuleWidget::CompareModuleWidget(QWidget *parent, CompareModule *module,
     graph_->view().axes().setMin(1, -1.0);
     graph_->view().axes().setMax(1, 1.0);
     graph_->view().setAutoFollowType(View::AllAutoFollow);
+    graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
+
     // -- Set group styling
     graph_->groupManager().setGroupFixedColour("Delta", StockColours::BlackStockColour);
     graph_->groupManager().setGroupColouring("Delta", RenderableGroup::FixedGroupColouring);
     graph_->groupManager().setGroupStipple("Delta", LineStipple::QuarterDashStipple);
+    graph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
 
     graph_->groupManager().setGroupFixedColour("DataA", StockColours::RedStockColour);
     graph_->groupManager().setGroupColouring("DataA", RenderableGroup::FixedGroupColouring);
+    graph_->groupManager().setGroupVerticalShifting("DataA", RenderableGroup::IndividualVerticalShifting);
 
     graph_->groupManager().setGroupFixedColour("DataB", StockColours::LightGreenStockColour);
     graph_->groupManager().setGroupColouring("DataB", RenderableGroup::FixedGroupColouring);
+    graph_->groupManager().setGroupVerticalShifting("DataB", RenderableGroup::IndividualVerticalShifting);
 
     refreshing_ = false;
     updateControls(ModuleWidget::RecreateRenderablesFlag);
@@ -46,38 +56,6 @@ CompareModuleWidget::CompareModuleWidget(QWidget *parent, CompareModule *module,
 // Update controls within widget
 void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
-
-    // If data sources have been added, create buttons
-    if (module_->dataSources().size() > buttons_.size())
-    {
-        for (auto it = module_->dataSources().begin() + buttons_.size(); it != module_->dataSources().end(); ++it)
-        {
-            auto dataButton = new QPushButton(this);
-            dataButton->setCheckable(true);
-            dataButton->setAutoExclusive(true);
-            dataButton->setText(QString::fromStdString(fmt::format("Compare {}", it - module_->dataSources().begin() + 1)));
-            connect(dataButton, SIGNAL(clicked(bool)), this, SLOT(onButtonChecked(bool)));
-            ui_.ButtonLayout->addWidget(dataButton);
-            buttons_.push_back(dataButton);
-        }
-    }
-
-    // If data sources have been removed, remove buttons
-    else if (module_->dataSources().size() < buttons_.size())
-    {
-        // Iterate over extra elements in button vector
-        for (auto it = buttons_.rbegin(); it != buttons_.rbegin() + module_->dataSources().size() - 1; ++it)
-        {
-            ui_.ButtonLayout->removeWidget(*it);
-            buttons_.pop_back();
-        }
-    }
-
-    // Return if no data sources are specified
-    if (buttons_.size() == 0)
-    {
-        return;
-    }
 
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || ui_.PlotWidget->dataViewer()->renderables().empty())
     {
@@ -96,28 +74,35 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
             index = 0;
         }
 
-        // Get the data pair at the same index as the checked button
-        auto &[dataSourceA, dataSourceB] = module_->dataSources()[index];
+        // Create the renderables for Data1D
+        if (index == 0)
+        {
+            auto dSourceCount = 1;
+            for (auto &[dataSourceA, dataSourceB] : module_->dataSources())
+            {
+                // Render the difference (delta) between the datasets
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_Delta", module_->name(), dSourceCount),
+                                                           "Delta", "Delta");
+                // Render DataA in the pair
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_DataA", module_->name(), dSourceCount),
+                                                           fmt::format("{}", dataSourceA.dataName()), "DataA");
+                // Render DataB in the pair
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_DataB", module_->name(), dSourceCount),
+                                                           fmt::format("{}", dataSourceB.dataName()), "DataB");
 
-        // Render the difference (delta) between the datasets
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_Delta", module_->name(), index + 1), "Delta",
-                                                   "Delta");
-        // Render DataA in the pair
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_DataA", module_->name(), index + 1),
-                                                   fmt::format("{}", dataSourceA.dataName()), "DataA");
-        // Render DataB in the pair
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_DataB", module_->name(), index + 1),
-                                                   fmt::format("{}", dataSourceB.dataName()), "DataB");
+                // Set the button tooltip
+                buttons_[index]->setToolTip(
+                    QString::fromStdString(fmt::format("{} vs {}", dataSourceA.dataName(), dataSourceB.dataName())));
 
-        // Set the button tooltip
-        buttons_[index]->setToolTip(
-            QString::fromStdString(fmt::format("{} vs {}", dataSourceA.dataName(), dataSourceB.dataName())));
+                // Validate renderables if they need it
+                graph_->validateRenderables(dissolve_.processingModuleData());
 
-        // Validate renderables if they need it
-        graph_->validateRenderables(dissolve_.processingModuleData());
+                graph_->view().axes().setMax(
+                    1, std::max(dataSourceA.data<Data1D>().maxValue(), dataSourceB.data<Data1D>().maxValue()) + 5.0);
 
-        graph_->view().axes().setMax(1, std::max(dataSourceA.data<Data1D>().maxValue(), dataSourceB.data<Data1D>().maxValue()) +
-                                            5.0);
+                ++dSourceCount;
+            }
+        }
 
         ui_.PlotWidget->updateToolbar();
 
@@ -127,7 +112,7 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
     }
 }
 
-void CompareModuleWidget::onButtonChecked(bool checked)
+void CompareModuleWidget::on_Data1DButton_clicked(bool checked)
 {
     if (!checked)
     {

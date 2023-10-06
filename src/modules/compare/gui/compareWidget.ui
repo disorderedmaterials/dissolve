@@ -47,6 +47,45 @@
      <property name="spacing">
       <number>0</number>
      </property>
+     <item>
+      <widget class="QPushButton" name="Data1DButton">
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Data1D</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Data2DButton">
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Data2D</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Data3DButton">
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Data3D</string>
+       </property>
+      </widget>
+     </item>
     </layout>
     </item>
     <item>
