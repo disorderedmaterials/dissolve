@@ -755,14 +755,16 @@ bool CIFHandler::generate(std::optional<Flags<CIFHandler::UpdateFlags>> newFlags
     // Try to detect molecules
     detectMolecules();
 
-    // Create supercell
-    if (!createSupercell())
-        return false;
-
     if (molecularUnitCellSpecies_.empty())
     {
-        if (!createPartitionedCell())
+        if (!createSupercell())
             return false;
+        finalConfiguration_ = supercellConfiguration_;
+    }
+    else
+    {
+        // Create the molecular unit cell configuration (no need to do this with procedures, it won't be reused).
+        finalConfiguration_ = molecularUnitCellConfiguration_;
     }
 
     return true;
@@ -771,10 +773,10 @@ bool CIFHandler::generate(std::optional<Flags<CIFHandler::UpdateFlags>> newFlags
 // Return whether the generated data is valid
 bool CIFHandler::isValid() const
 {
-    return !molecularUnitCellSpecies_.empty() || partitionedSpecies_->fragment(0).size() != partitionedSpecies_->nAtoms();
+    return !molecularUnitCellSpecies_.empty() || supercellSpecies_->fragment(0).size() != supercellSpecies_->nAtoms();
 }
 
-std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData &coreData) const
+std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData &coreData, std::optional<Flags<OutputFlags>> flags) const
 {
     std::vector<Species *> species;
     Configuration *configuration;
@@ -829,9 +831,32 @@ std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData
     }
     else if (supercellSpecies_)
     {
-        auto *sp = coreData.addSpecies();
-        sp->setName(chemicalFormula());
-        sp->copyBasic(supercellSpecies_);
+        auto *sp = supercellSpecies_;
+        // Add the species
+        sp = coreData.copySpecies(supercellSpecies_);
+
+        if (flags && flags->isSet(OutputFlags::OutputConfiguration))
+        {
+            configuration = coreData.addConfiguration();
+            configuration->setName(chemicalFormula());
+
+            // Grab the generator
+            auto &generator = configuration->generator();
+
+            // Add Box
+            auto boxNode = generator.createRootNode<BoxProcedureNode>({});
+            auto cellLengths = getCellLengths().value();
+            auto cellAngles = getCellAngles().value();
+            boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
+            boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
+
+            // Add
+            auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", sp->name()), sp);
+            addNode->keywords().set("Population", NodeValueProxy(1));
+            addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+            addNode->keywords().set("Rotate", false);
+            addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
+        }
         species.push_back(sp);
     }
     return {species, configuration};
@@ -967,4 +992,9 @@ void CIFHandler::fixGeometry(Species *sp, const Box *box)
 
     // Set the centre of geometry of the species to be at the origin.
     sp->setCentre(box, {0., 0., 0.});
+}
+
+Configuration* CIFHandler::finalConfiguration()
+{
+    return finalConfiguration_;
 }

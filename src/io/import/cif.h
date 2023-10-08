@@ -108,6 +108,12 @@ class CIFHandler
         CreateSupermolecule
     };
 
+    // CIF Species Output Flags
+    enum OutputFlags
+    {
+        OutputConfiguration /* Output a Configuration */
+    };
+
     private:
     // Flags controlling behaviour
     Flags<UpdateFlags> flags_;
@@ -132,6 +138,8 @@ class CIFHandler
     // Final supercell, partitioned accordingly
     Species *partitionedSpecies_;
     Configuration *partitionedConfiguration_;
+    Species* finalSpecies_;
+    Configuration* finalConfiguration_;
 
     private:
     // Create basic unit cell
@@ -159,7 +167,7 @@ class CIFHandler
     // Recreate the data
     bool generate(std::optional<Flags<UpdateFlags>> newFlags = {});
     // Finalise, returning the required species and resulting configuration
-    std::pair<std::vector<Species *>, Configuration *> finalise(CoreData &coreData) const;
+    std::pair<std::vector<Species *>, Configuration *> finalise(CoreData &coreData, std::optional<Flags<OutputFlags>> flags = {}) const;
     // Return whether the generated data is valid
     bool isValid() const;
     // Structural
@@ -177,6 +185,8 @@ class CIFHandler
     // Partitioned
     Species *partitionedSpecies();
     Configuration *partitionedConfiguration();
+    Configuration* finalConfiguration();
+
 
     /*
      * Helpers

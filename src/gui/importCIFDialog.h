@@ -41,6 +41,7 @@ class ImportCIFDialog : public WizardDialog
     CIFHandler cifHandler_;
     // Flags
     Flags<CIFHandler::UpdateFlags> updateFlags_;
+    Flags<CIFHandler::OutputFlags> outputFlags_;
 
     private:
     // Apply CIF bond definitions within specified species
@@ -147,4 +148,5 @@ class ImportCIFDialog : public WizardDialog
     private slots:
     void on_OutputFrameworkRadio_clicked(bool checked);
     void on_OutputSupermoleculeRadio_clicked(bool checked);
+    void on_OutputConfigurationCheck_clicked(bool checked);
 };

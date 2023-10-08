@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>840</width>
-    <height>697</height>
+    <height>782</height>
    </rect>
   </property>
   <property name="font">
@@ -1371,7 +1371,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
-             <widget class="QRadioButton" name="radioButton">
+             <widget class="QRadioButton" name="OutputMolecularRadio">
               <property name="text">
                <string>Molecular Species</string>
               </property>

@@ -109,8 +109,10 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             break;
         case (ImportCIFDialog::CleanedPage):
             update();
-            if (!cifHandler_.supercellSpecies())
+            if (!cifHandler_.finalConfiguration())
                 return false;
+            //if (!cifHandler_.supercellSpecies())
+            //    return false;
             break;
         default:
             break;
@@ -145,7 +147,7 @@ bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
 }
 
 // Perform any final actions before the wizard is closed
-void ImportCIFDialog::finalise() { cifHandler_.finalise(dissolve_.coreData()); }
+void ImportCIFDialog::finalise() { cifHandler_.finalise(dissolve_.coreData(), outputFlags_); }
 
 /*
  * Select CIF File Page
@@ -357,6 +359,14 @@ void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked)
     update();
 }
 
+void ImportCIFDialog::on_OutputConfigurationCheck_clicked(bool checked)
+{
+    if (checked)
+        outputFlags_.setFlag(CIFHandler::OutputFlags::OutputConfiguration);
+    else
+        outputFlags_.removeFlag(CIFHandler::OutputFlags::OutputConfiguration);
+}
+
 bool ImportCIFDialog::update()
 {
     // Set up the CIF handler
@@ -368,7 +378,7 @@ bool ImportCIFDialog::update()
 
     ui_.StructureViewer->setConfiguration(cifHandler_.structuralUnitCellConfiguration());
     ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedUnitCellConfiguration());
-    ui_.OutputViewer->setConfiguration(cifHandler_.partitionedConfiguration());
+    ui_.OutputViewer->setConfiguration(cifHandler_.finalConfiguration());
     //ui_.PartitioningViewer->setConfiguration(cifHandler_.partitionedConfiguration());
     auto *supercell = cifHandler_.supercellSpecies();
 
@@ -394,6 +404,9 @@ bool ImportCIFDialog::update()
         ui_.SupercellGroupBox->setEnabled(false);
     }
 
+    ui_.OutputMolecularRadio->setChecked(!cifHandler_.molecularSpecies().empty());
+    ui_.OutputFrameworkRadio->setChecked(cifHandler_.molecularSpecies().empty());
+    ui_.OutputSupermoleculeRadio->setChecked(cifHandler_.molecularSpecies().empty());
     ui_.OutputConfigurationCheck->setEnabled(!updateFlags_.isSet(CIFHandler::UpdateFlags::CreateSupermolecule));
 
     auto validSpecies = true;
