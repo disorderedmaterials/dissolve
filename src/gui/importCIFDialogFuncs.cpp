@@ -71,7 +71,8 @@ bool ImportCIFDialog::progressionAllowed(int index) const
             return ui_.SpaceGroupsList->currentRow() != -1;
         case (ImportCIFDialog::OutputSpeciesPage):
             // If the "Framework" or "Supermolecule" options are chosen, the "Crystal" species must be a single moiety
-            if (cifHandler_.isValid())
+            if (!cifHandler_.isValid())
+                return false;
                 //return ui_.PartitioningIndicator->state() == CheckIndicator::OKState;
             break;
         default:
@@ -344,6 +345,15 @@ void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value) { update(); }
  * Species Partitioning Page
  */
 
+void ImportCIFDialog::on_OutputMolecularRadio_clicked(bool checked)
+{
+    if (checked)
+    {
+
+    }
+    update();
+}
+
 void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked)
 {
     if (checked)
@@ -368,6 +378,7 @@ void ImportCIFDialog::on_OutputConfigurationCheck_clicked(bool checked)
         outputFlags_.setFlag(CIFHandler::OutputFlags::OutputConfiguration);
     else
         outputFlags_.removeFlag(CIFHandler::OutputFlags::OutputConfiguration);
+    update();
 }
 
 bool ImportCIFDialog::update()
@@ -407,12 +418,43 @@ bool ImportCIFDialog::update()
         ui_.SupercellGroupBox->setEnabled(false);
     }
 
-    ui_.OutputMolecularRadio->setChecked(!cifHandler_.molecularSpecies().empty());
-    ui_.OutputFrameworkRadio->setEnabled(cifHandler_.molecularSpecies().empty());
-    ui_.OutputSupermoleculeRadio->setEnabled(cifHandler_.molecularSpecies().empty());
+    //ui_.OutputMolecularRadio->setChecked(!cifHandler_.molecularSpecies().empty());
+    //ui_.OutputMolecularRadio->setEnabled(!cifHandler_.molecularSpecies().empty());
+    //ui_.OutputFrameworkRadio->setEnabled(cifHandler_.molecularSpecies().empty());
+    //ui_.OutputSupermoleculeRadio->setEnabled(cifHandler_.molecularSpecies().empty());
     //ui_.OutputConfigurationCheck->setEnabled(!updateFlags_.isSet(CIFHandler::UpdateFlags::CreateSupermolecule));
 
     auto validSpecies = true;
+
+    if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
+    {
+        if (supercell)
+        {
+            supercell->clearAtomSelection();
+            if (supercell->fragment(0).size() != supercell->nAtoms())
+            {
+                validSpecies = false;
+            }
+        }
+        else
+            validSpecies = false;
+    }
+    if (ui_.OutputMolecularRadio->isChecked() && cifHandler_.molecularSpecies().empty())
+    {
+        validSpecies = false;
+    }
+
+    if (validSpecies)
+    {
+        ui_.OutputIndicator->setOK(true);
+        ui_.OutputLabel->setText("Species are valid.");
+    }
+    else
+    {
+        ui_.OutputIndicator->setOK(false);
+        ui_.OutputLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
+                                 "simulation. Choose a different partitioning.");
+    }
 
     /*if (cifHandler_.molecularSpecies().empty())
     {

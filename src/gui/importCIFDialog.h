@@ -146,6 +146,7 @@ class ImportCIFDialog : public WizardDialog
     Configuration *partitioningConfiguration_;
 
     private slots:
+    void on_OutputMolecularRadio_clicked(bool checked);
     void on_OutputFrameworkRadio_clicked(bool checked);
     void on_OutputSupermoleculeRadio_clicked(bool checked);
     void on_OutputConfigurationCheck_clicked(bool checked);
