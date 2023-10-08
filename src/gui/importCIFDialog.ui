@@ -28,7 +28,7 @@
    <item>
     <widget class="QStackedWidget" name="MainStack">
      <property name="currentIndex">
-      <number>5</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="ImportCIFSelectFilePage">
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1508,6 +1508,9 @@
              <widget class="QCheckBox" name="OutputConfigurationCheck">
               <property name="text">
                <string>Output a Configuration?</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </item>

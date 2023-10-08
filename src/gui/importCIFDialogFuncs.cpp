@@ -46,6 +46,9 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     // Update moiety NETA
     createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
 
+    // Set default flag.
+    outputFlags_.setFlag(CIFHandler::OutputFlags::OutputConfiguration);
+
     // Init the wizard
     initialise(this, ui_.MainStack, ImportCIFDialog::SelectCIFFilePage);
 }
@@ -405,9 +408,9 @@ bool ImportCIFDialog::update()
     }
 
     ui_.OutputMolecularRadio->setChecked(!cifHandler_.molecularSpecies().empty());
-    ui_.OutputFrameworkRadio->setChecked(cifHandler_.molecularSpecies().empty());
-    ui_.OutputSupermoleculeRadio->setChecked(cifHandler_.molecularSpecies().empty());
-    ui_.OutputConfigurationCheck->setEnabled(!updateFlags_.isSet(CIFHandler::UpdateFlags::CreateSupermolecule));
+    ui_.OutputFrameworkRadio->setEnabled(cifHandler_.molecularSpecies().empty());
+    ui_.OutputSupermoleculeRadio->setEnabled(cifHandler_.molecularSpecies().empty());
+    //ui_.OutputConfigurationCheck->setEnabled(!updateFlags_.isSet(CIFHandler::UpdateFlags::CreateSupermolecule));
 
     auto validSpecies = true;
 

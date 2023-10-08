@@ -782,51 +782,65 @@ std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData
     Configuration *configuration;
     if (!molecularUnitCellSpecies_.empty())
     {
-        configuration = coreData.addConfiguration();
-        configuration->setName(chemicalFormula());
-
-        // Grab the generator
-        auto &generator = configuration->generator();
-
-        // Add Box
-        auto boxNode = generator.createRootNode<BoxProcedureNode>({});
-        auto cellLengths = getCellLengths().value();
-        auto cellAngles = getCellAngles().value();
-        boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
-        boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
-
-        for (auto &cifMolecularSp : molecularUnitCellSpecies_)
+        if (flags && flags->isSet(OutputFlags::OutputConfiguration))
         {
-            auto *sp = cifMolecularSp.species();
-            // Add the species
-            sp = coreData.copySpecies(cifMolecularSp.species());
 
-            // Determine a unique suffix
-            auto base = sp->name();
-            std::string uniqueSuffix{base};
-            if (!generator.nodes().empty())
+            configuration = coreData.addConfiguration();
+            configuration->setName(chemicalFormula());
+
+            // Grab the generator
+            auto &generator = configuration->generator();
+
+            // Add Box
+            auto boxNode = generator.createRootNode<BoxProcedureNode>({});
+            auto cellLengths = getCellLengths().value();
+            auto cellAngles = getCellAngles().value();
+            boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
+            boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
+
+            for (auto &cifMolecularSp : molecularUnitCellSpecies_)
             {
-                // Start from the last root node
-                auto root = generator.nodes().back();
-                auto suffix = 0;
+                auto *sp = cifMolecularSp.species();
+                // Add the species
+                sp = coreData.copySpecies(cifMolecularSp.species());
 
-                // We use 'CoordinateSets' here, because in this instance we are working with (CoordinateSet, Add) pairs
-                while (generator.rootSequence().nodeInScope(root, fmt::format("SymmetryCopies_{}", uniqueSuffix)) != nullptr)
-                    uniqueSuffix = fmt::format("{}_{:02d}", base, ++suffix);
+                // Determine a unique suffix
+                auto base = sp->name();
+                std::string uniqueSuffix{base};
+                if (!generator.nodes().empty())
+                {
+                    // Start from the last root node
+                    auto root = generator.nodes().back();
+                    auto suffix = 0;
+
+                    // We use 'CoordinateSets' here, because in this instance we are working with (CoordinateSet, Add) pairs
+                    while (generator.rootSequence().nodeInScope(root, fmt::format("SymmetryCopies_{}", uniqueSuffix)) != nullptr)
+                        uniqueSuffix = fmt::format("{}_{:02d}", base, ++suffix);
+
+                    // CoordinateSets
+                    auto coordsNode =
+                        generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
+                    coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
+                    coordsNode->setSets(cifMolecularSp.coordinates());
+
+                    // Add
+                    auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
+                    addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp.coordinates().size())));
+                    addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+                    addNode->keywords().set("Rotate", false);
+                    addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
+                }
             }
 
-            // CoordinateSets
-            auto coordsNode =
-                generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
-            coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
-            coordsNode->setSets(cifMolecularSp.coordinates());
-
-            // Add
-            auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
-            addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp.coordinates().size())));
-            addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
-            addNode->keywords().set("Rotate", false);
-            addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
+        }
+        else
+        {
+            for (auto &cifMolecularSp : molecularUnitCellSpecies_)
+            {
+                auto *sp = cifMolecularSp.species();
+                // Add the species
+                sp = coreData.copySpecies(cifMolecularSp.species());
+            }
         }
     }
     else if (supercellSpecies_)
