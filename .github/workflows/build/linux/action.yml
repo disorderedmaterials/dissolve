@@ -39,8 +39,8 @@ runs:
     if: "steps.nix-cache.outputs.cache-hit == 'true'"
     shell: bash
     run: |
-    nix-store --import < /tmp/nixcache
-    sudo rm -rf /tmp/nixcache
+      nix-store --import < /tmp/nixcache
+      sudo rm -rf /tmp/nixcache
 
   - name: Build
     shell: bash
