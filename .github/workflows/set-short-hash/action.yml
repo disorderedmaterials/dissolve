@@ -12,7 +12,4 @@ runs:
       echo "Current short hash is ${SHORT_HASH}"
       sed -i -e "s/DISSOLVESHORTHASH \".*\"/DISSOLVESHORTHASH \"${SHORT_HASH}\"/g" src/main/version.cpp
       cat src/main/version.cpp
-      df -mh ./
-      echo "Hi there. I'm a testing line."
       echo "dissolveShortHash=${SHORT_HASH}" >> ${GITHUB_ENV}
-      echo "Do we ever get here, I wonder?"
