@@ -35,6 +35,14 @@ bool TrajectoryImportFileFormat::importData(LineParser &parser, Configuration *c
     {
         case (TrajectoryImportFormat::DLPOLYFormatted):
             result = importDLPOLY(parser, r, unitCell);
+            if (result)
+            {
+                // All good, so copy atom coordinates over into our array
+                for (auto &&[i, ri] : zip(cfg->atoms(), r))
+                {
+                    i.setCoordinates(ri);
+                }
+            }
             break;
         case (TrajectoryImportFormat::XYZ):
             return CoordinateImportFileFormat("", CoordinateImportFileFormat::CoordinateImportFormat::XYZ)
@@ -43,10 +51,6 @@ bool TrajectoryImportFileFormat::importData(LineParser &parser, Configuration *c
             throw(std::runtime_error(fmt::format("Trajectory format '{}' import has not been implemented.\n",
                                                  formats_.keywordByIndex(*formatIndex_))));
     }
-
-    // All good, so copy atom coordinates over into our array
-    for (auto &&[i, ri] : zip(cfg->atoms(), r))
-        i.setCoordinates(ri);
 
     return result;
 }
