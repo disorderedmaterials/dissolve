@@ -113,7 +113,6 @@ class DissolveSystemTest
 
             CoreData other_;
             Dissolve trial_{other_};
-            // dissolve_.clear();
 
             trial_.deserialise(toml);
             trial_.setInputFilename(std::string(inputFile));
