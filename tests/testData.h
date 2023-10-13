@@ -70,21 +70,12 @@ class DissolveSystemTest
      */
     public:
     // Set up simulation ready for running, calling any additional setup function if already set
+    template <bool known_toml_failure=false>
     void setUp(std::string_view inputFile)
     {
         dissolve_.clear();
         if (!dissolve_.loadInput(inputFile))
             throw(std::runtime_error(fmt::format("Input file '{}' failed to load correctly.\n", inputFile)));
-        if (dissolve_.toml_testing_flag)
-        {
-            auto toml = dissolve_.serialise();
-            dissolve_.clear();
-            dissolve_.deserialise(toml);
-            dissolve_.setInputFilename(std::string(inputFile));
-            auto repeat = dissolve_.serialise();
-            compare_toml("", toml, repeat);
-        }
-
         if (rewriteCheck_)
         {
             auto newInput = fmt::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
@@ -104,8 +95,22 @@ class DissolveSystemTest
 
         if (!dissolve_.prepare())
             throw(std::runtime_error("Failed to prepare simulation.\n"));
+
+        if (dissolve_.toml_testing_flag || !known_toml_failure)
+        {
+            auto toml = dissolve_.serialise();
+
+	    CoreData other_;
+	    Dissolve trial_{other_};
+            // dissolve_.clear();
+
+            trial_.deserialise(toml);
+            trial_.setInputFilename(std::string(inputFile));
+            auto repeat = trial_.serialise();
+            compare_toml("", toml, repeat);
+        }
     }
-    void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp)
+  void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp, bool known_toml_failure = false)
     {
         additionalSetUp_ = additionalSetUp;
         setUp(inputFile);
