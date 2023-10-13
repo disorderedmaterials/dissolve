@@ -18,16 +18,17 @@
 namespace UnitTest
 {
 
-    // Flags that can modify how a test is setUp.  This can be useful
-    // for masking tests that are known to be failing, but cannot be
-    // resolved at this juncture.  The indices must be unique powers
-    // of two in order for masks to be composable.
-    //
-    // Eventually, once we move to C++23, this can be replaced by a
-    // std::bitset, but bitset isn't constexpr until then.
-    enum TestFlags {
-      TomlFailure =1, // tests where the TOML testing is known to fail
-    };
+// Flags that can modify how a test is setUp.  This can be useful
+// for masking tests that are known to be failing, but cannot be
+// resolved at this juncture.  The indices must be unique powers
+// of two in order for masks to be composable.
+//
+// Eventually, once we move to C++23, this can be replaced by a
+// std::bitset, but bitset isn't constexpr until then.
+enum TestFlags
+{
+    TomlFailure = 1, // tests where the TOML testing is known to fail
+};
 
 void compare_toml(std::string location, SerialisedValue toml, SerialisedValue toml2)
 {
@@ -81,8 +82,7 @@ class DissolveSystemTest
      */
     public:
     // Set up simulation ready for running, calling any additional setup function if already set
-    template <int flags=0>
-    void setUp(std::string_view inputFile)
+    template <int flags = 0> void setUp(std::string_view inputFile)
     {
         dissolve_.clear();
         if (!dissolve_.loadInput(inputFile))
@@ -111,8 +111,8 @@ class DissolveSystemTest
         {
             auto toml = dissolve_.serialise();
 
-	    CoreData other_;
-	    Dissolve trial_{other_};
+            CoreData other_;
+            Dissolve trial_{other_};
             // dissolve_.clear();
 
             trial_.deserialise(toml);
@@ -121,7 +121,8 @@ class DissolveSystemTest
             compare_toml("", toml, repeat);
         }
     }
-  void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp, bool known_toml_failure = false)
+    void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp,
+               bool known_toml_failure = false)
     {
         additionalSetUp_ = additionalSetUp;
         setUp(inputFile);
