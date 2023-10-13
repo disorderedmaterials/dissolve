@@ -18,6 +18,17 @@
 namespace UnitTest
 {
 
+    // Flags that can modify how a test is setUp.  This can be useful
+    // for masking tests that are known to be failing, but cannot be
+    // resolved at this juncture.  The indices must be unique powers
+    // of two in order for masks to be composable.
+    //
+    // Eventually, once we move to C++23, this can be replaced by a
+    // std::bitset, but bitset isn't constexpr until then.
+    enum TestFlags {
+      TomlFailure =1, // tests where the TOML testing is known to fail
+    };
+
 void compare_toml(std::string location, SerialisedValue toml, SerialisedValue toml2)
 {
     if (toml.is_table())
@@ -70,7 +81,7 @@ class DissolveSystemTest
      */
     public:
     // Set up simulation ready for running, calling any additional setup function if already set
-    template <bool known_toml_failure=false>
+    template <int flags=0>
     void setUp(std::string_view inputFile)
     {
         dissolve_.clear();
@@ -96,7 +107,7 @@ class DissolveSystemTest
         if (!dissolve_.prepare())
             throw(std::runtime_error("Failed to prepare simulation.\n"));
 
-        if (dissolve_.toml_testing_flag || !known_toml_failure)
+        if (dissolve_.toml_testing_flag || !(flags & TomlFailure))
         {
             auto toml = dissolve_.serialise();
 
