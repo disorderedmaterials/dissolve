@@ -30,7 +30,7 @@ enum TestFlags
     TomlFailure = 1, // tests where the TOML testing is known to fail
 };
 
-void compare_toml(std::string location, SerialisedValue toml, SerialisedValue toml2)
+void compareToml(std::string location, SerialisedValue toml, SerialisedValue toml2)
 {
     if (toml.is_table())
     {
