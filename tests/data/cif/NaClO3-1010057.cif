@@ -1,0 +1,90 @@
+#------------------------------------------------------------------------------
+#$Date: 2017-10-15 03:23:08 +0300 (Sun, 15 Oct 2017) $
+#$Revision: 202022 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/1/01/00/1010057.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_1010057
+loop_
+_publ_author_name
+'Kolkmeijer, N H'
+'Bijvoet, J M'
+'Karssen, A'
+_publ_section_title
+;
+Investigation by means of X-Rays of the crystal structure of sodium-
+chlorate and sodium-bromate.
+;
+_journal_coden_ASTM              PKNAAU
+_journal_name_full
+;
+Proceedings of the Koninklijke Nederlandse Academie van Wetenschappen
+;
+_journal_page_first              644
+_journal_page_last               653
+_journal_volume                  23
+_journal_year                    1920
+_chemical_formula_structural     'NA CL O3'
+_chemical_formula_sum            'Cl Na O3'
+_chemical_name_systematic        'SODIUM CHLORATE'
+_space_group_IT_number           198
+_symmetry_cell_setting           cubic
+_symmetry_Int_Tables_number      198
+_symmetry_space_group_name_Hall  'P 2ac 2ab 3'
+_symmetry_space_group_name_H-M   'P 21 3'
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_formula_units_Z            4
+_cell_length_a                   6.55
+_cell_length_b                   6.55
+_cell_length_c                   6.55
+_cell_volume                     281.0
+_exptl_crystal_density_meas      2.5
+_cod_database_code               1010057
+loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+y,z,x
+z,x,y
+1/2+x,1/2-y,-z
+1/2+y,1/2-z,-x
+1/2+z,1/2-x,-y
+-x,1/2+y,1/2-z
+-y,1/2+z,1/2-x
+-z,1/2+x,1/2-y
+1/2-x,-y,1/2+z
+1/2-y,-z,1/2+x
+1/2-z,-x,1/2+y
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_symmetry_multiplicity
+_atom_site_Wyckoff_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_attached_hydrogens
+_atom_site_calc_flag
+Na1 Na1+ 4 a 0.083 0.083 0.083 1. 0 d
+Cl1 Cl5+ 4 a 0.417 0.417 0.417 1. 0 d
+O1 O2- 12 b 0.5 0.417 0.306 1. 0 d
+loop_
+_atom_type_symbol
+_atom_type_oxidation_number
+Na1+ 1.000
+Cl5+ 5.000
+O2- -2.000
+loop_
+_cod_related_entry_id
+_cod_related_entry_database
+_cod_related_entry_code
+1 MPOD 1000129
+2 MPOD 1000222

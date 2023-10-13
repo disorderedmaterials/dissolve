@@ -49,7 +49,7 @@ void IntegerHistogram1D::updateAccumulatedData()
 }
 
 // Create display data object covering extents of current bins
-const std::pair<Data1D, int> IntegerHistogram1D::createDisplayData()
+std::pair<Data1D, int> IntegerHistogram1D::createDisplayData() const
 {
     // If we haven't binned anything yet, return now
     if (raw_.empty())
@@ -131,11 +131,15 @@ void IntegerHistogram1D::accumulate()
 // Return current data
 Data1D IntegerHistogram1D::data() const
 {
-    Data1D result = accumulatedData_;
+    auto displayData = createDisplayData();
+    auto result = std::get<0>(displayData);
+    auto xMinimum = std::get<1>(displayData);
+
     for (auto &[key, value] : raw_)
     {
-        result.values()[key] = value;
+        result.values()[key - xMinimum] = value;
     }
+
     return result;
 }
 

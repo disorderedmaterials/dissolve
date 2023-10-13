@@ -38,6 +38,8 @@
 #include "modules/neutronSQ/neutronSQ.h"
 #include "modules/orientedSDF/gui/orientedSDFWidget.h"
 #include "modules/orientedSDF/orientedSDF.h"
+#include "modules/qSpecies/gui/qSpeciesWidget.h"
+#include "modules/qSpecies/qSpecies.h"
 #include "modules/sdf/gui/sdfWidget.h"
 #include "modules/sdf/sdf.h"
 #include "modules/siteRDF/gui/siteRDFWidget.h"
@@ -72,6 +74,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<IntraDistanceModule, IntraDistanceModuleWidget>();
     registerProducer<NeutronSQModule, NeutronSQModuleWidget>();
     registerProducer<OrientedSDFModule, OrientedSDFModuleWidget>();
+    registerProducer<QSpeciesModule, QSpeciesModuleWidget>();
     registerProducer<SDFModule, SDFModuleWidget>();
     registerProducer<SkeletonModule, SkeletonModuleWidget>();
     registerProducer<SiteRDFModule, SiteRDFModuleWidget>();

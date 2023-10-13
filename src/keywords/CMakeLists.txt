@@ -5,6 +5,7 @@ add_library(
   bool.cpp
   configuration.cpp
   configurationVector.cpp
+  dataSourceBase.cpp
   double.cpp
   elementVector.cpp
   expression.cpp
@@ -39,6 +40,8 @@ add_library(
   bool.h
   configuration.h
   configurationVector.h
+  dataSourceBase.h
+  dataSource.h
   double.h
   elementVector.h
   enumOptions.h
