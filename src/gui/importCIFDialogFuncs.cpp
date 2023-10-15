@@ -395,8 +395,6 @@ bool ImportCIFDialog::update()
     ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedUnitCellConfiguration());
     ui_.OutputViewer->setConfiguration(cifHandler_.supercellConfiguration());
     
-    //ui_.OutputViewer->setConfiguration(cifHandler_.finalConfiguration());
-    //ui_.PartitioningViewer->setConfiguration(cifHandler_.partitionedConfiguration());
     auto *supercell = cifHandler_.supercellSpecies();
 
     if (supercell)
@@ -421,30 +419,12 @@ bool ImportCIFDialog::update()
         ui_.SupercellGroupBox->setEnabled(false);
     }
 
-    //ui_.OutputMolecularRadio->setChecked(!cifHandler_.molecularSpecies().empty());
-    //ui_.OutputMolecularRadio->setEnabled(!cifHandler_.molecularSpecies().empty());
-    //ui_.OutputFrameworkRadio->setEnabled(cifHandler_.molecularSpecies().empty());
-    //ui_.OutputSupermoleculeRadio->setEnabled(cifHandler_.molecularSpecies().empty());
-    //ui_.OutputConfigurationCheck->setEnabled(!updateFlags_.isSet(CIFHandler::UpdateFlags::CreateSupermolecule));
-
     auto validSpecies = true;
 
     if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
     {
-        if (supercell)
-        {
-            /*supercell->clearAtomSelection();
-            if (supercell->fragment(0).size() != supercell->nAtoms())
-            {
-                validSpecies = false;
-            }*/
-        }
-        else
+        if (cifHandler_.supercellConfiguration()->nAtoms() != cifHandler_.supercellConfiguration()->molecule(0)->nAtoms())
             validSpecies = false;
-    }
-    if (ui_.OutputMolecularRadio->isChecked() && cifHandler_.molecularSpecies().empty())
-    {
-        validSpecies = false;
     }
 
     if (validSpecies)
@@ -457,32 +437,6 @@ bool ImportCIFDialog::update()
         ui_.OutputIndicator->setOK(false);
         ui_.OutputLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
                                  "simulation. Choose a different partitioning.");
-    }
-
-    /*if (cifHandler_.molecularSpecies().empty())
-    {
-        // Update the indicator and label
-        cifHandler_.partitionedSpecies()->clearAtomSelection();
-        if (cifHandler_.partitionedSpecies()->fragment(0).size() != cifHandler_.partitionedSpecies()->nAtoms())
-        {
-            //ui_.PartitioningIndicator->setOK(false);
-            //ui_.PartitioningLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
-            //                               "simulation. Choose a different partitioning.");
-
-            validSpecies = false;
-        }
-    }
-    else
-    {
-        //ui_.PartitioningLayoutWidget->setEnabled(false);
-        //ui_.PartitioningViewFrame->setEnabled(false);
-        //ui_.PartitioningIndicator->setOK(true);
-    }*/
-
-    if (validSpecies)
-    {
-        //ui_.PartitioningIndicator->setOK(true);
-        //ui_.PartitioningLabel->setText("Species are valid.");
     }
 
     // drop partitioned species

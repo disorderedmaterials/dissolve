@@ -787,61 +787,6 @@ bool CIFHandler::generate(std::optional<Flags<CIFHandler::UpdateFlags>> newFlags
     if (!createCleanedUnitCell())
         return false;
 
-
-    /*if (flags_.isSet(UpdateFlags::CreateMolecular))
-    {
-        Messenger::print("Will try and output molecular.");
-        // Try to detect molecules
-        detectMolecules();
-
-        if (molecularUnitCellSpecies_.empty())
-            return false;
-
-        auto cellLengths = getCellLengths();
-        if (!cellLengths)
-            return false;
-        auto cellAngles = getCellAngles();
-        if (!cellAngles)
-            return false;
-
-        molecularUnitCellConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
-
-        for (auto &cifMolecularSp : molecularUnitCellSpecies_)
-        {
-            auto *sp = cifMolecularSp.species();
-
-            for (auto &coords : cifMolecularSp.coordinates())
-                molecularUnitCellConfiguration_->addMolecule(sp, coords);
-                molecularUnitCellConfiguration_->updateObjectRelationships();
-        }
-
-    }
-    else
-    {
-        Messenger::print("Will try and output supercell");
-        if (!createSupercell())
-            return false;
-    }*/
-
-    /*detectMolecules();
-    auto cellLengths = getCellLengths();
-    if (!cellLengths)
-        return false;
-    auto cellAngles = getCellAngles();
-    if (!cellAngles)
-        return false;
-
-    molecularUnitCellConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
-
-    for (auto &cifMolecularSp : molecularUnitCellSpecies_)
-    {
-        auto *sp = cifMolecularSp.species();
-
-        for (auto &coords : cifMolecularSp.coordinates())
-            molecularUnitCellConfiguration_->addMolecule(sp, coords);
-            molecularUnitCellConfiguration_->updateObjectRelationships();
-    }*/
-
     detectMolecules();
 
     if (!createSupercell())
