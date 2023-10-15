@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>840</width>
-    <height>830</height>
+    <height>903</height>
    </rect>
   </property>
   <property name="font">
@@ -1411,6 +1411,9 @@
                </widget>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="QListWidget" name="OutputMolecularSpeciesList"/>
             </item>
             <item>
              <widget class="QRadioButton" name="OutputFrameworkRadio">

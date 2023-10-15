@@ -71,10 +71,7 @@ bool ImportCIFDialog::progressionAllowed(int index) const
         case (ImportCIFDialog::SelectSpaceGroupPage):
             return ui_.SpaceGroupsList->currentRow() != -1;
         case (ImportCIFDialog::OutputSpeciesPage):
-            // If the "Framework" or "Supermolecule" options are chosen, the "Crystal" species must be a single moiety
-            if (!cifHandler_.isValid())
-                return false;
-                //return ui_.PartitioningIndicator->state() == CheckIndicator::OKState;
+                return ui_.OutputIndicator->state() == CheckIndicator::OKState;
             break;
         default:
             break;
@@ -116,8 +113,6 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             update();
             if (!cifHandler_.finalConfiguration())
                 return false;
-            //if (!cifHandler_.supercellSpecies())
-            //    return false;
             break;
         default:
             break;
@@ -419,13 +414,30 @@ bool ImportCIFDialog::update()
         ui_.SupercellGroupBox->setEnabled(false);
     }
 
+    if (ui_.OutputMolecularRadio.isChecked())
+    {
+        ui_.OutputMolecularSpeciesList->setVisible(true);
+        ui_.OutputMolecularSpeciesList->clear();
+        for (auto& molecularSp : cifHandler_->molecularSpecies())
+        {
+            ui_.OutputMolecularSpeciesList->addItem(molecularSp->species()->name());
+        }
+    }
+    else
+    {
+        ui_.OutputMolecularSpeciesList->setVisible(false);
+    }
+
     auto validSpecies = true;
 
     if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
     {
-        if (cifHandler_.supercellConfiguration()->nAtoms() != cifHandler_.supercellConfiguration()->molecule(0)->nAtoms())
+        if (cifHandler_.supercellConfiguration()->nAtoms() != cifHandler_.supercellConfiguration()->molecule(0)->nAtoms() || supercell->nAtoms() != cifHandler_.supercellConfiguration()->nAtoms())
             validSpecies = false;
     }
+    else if (cifHandler_.molecularSpecies().empty())
+        validSpecies = false;
+
 
     if (validSpecies)
     {
@@ -439,6 +451,7 @@ bool ImportCIFDialog::update()
                                  "simulation. Choose a different partitioning.");
     }
 
+
     // drop partitioned species
     // rename supercell page to `final output` or similar
     // ListView of species, indicate whether configuration will be generated (subtext, alongside supercell/supermolecule species)
@@ -446,6 +459,15 @@ bool ImportCIFDialog::update()
 
     // Generation of supercells is slow, as we try to rebond all atoms to figure out where the bonds are
     // Only rebond bonds at the boundary
+
+    /*
+        TODO:
+        - Fix molecular supercell generation
+        - Ensure correctness of final configuration
+        - Output correct selections (i.e. do partitioning!)
+        - Cleanup code
+        - Show outputted species
+    */
 
     return true;
 }
