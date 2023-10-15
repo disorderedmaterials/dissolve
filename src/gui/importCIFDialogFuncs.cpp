@@ -47,6 +47,7 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
 
     // Set default flag.
+    updateFlags_.setFlag(CIFHandler::UpdateFlags::CreateFramework);
     outputFlags_.setFlag(CIFHandler::OutputFlags::OutputConfiguration);
 
     // Init the wizard
@@ -348,18 +349,18 @@ void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value) { update(); }
 void ImportCIFDialog::on_OutputMolecularRadio_clicked(bool checked)
 {
     if (checked)
-    {
-
-    }
+        updateFlags_.setFlag(CIFHandler::UpdateFlags::CreateMolecular);
+    else
+        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CreateMolecular);
     update();
 }
 
 void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked)
 {
     if (checked)
-        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CreateSupermolecule);
+        updateFlags_.setFlag(CIFHandler::UpdateFlags::CreateFramework);
     else
-        updateFlags_.setFlag(CIFHandler::UpdateFlags::CreateSupermolecule);
+        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CreateFramework);
     update();
 }
 
@@ -392,7 +393,9 @@ bool ImportCIFDialog::update()
 
     ui_.StructureViewer->setConfiguration(cifHandler_.structuralUnitCellConfiguration());
     ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedUnitCellConfiguration());
-    ui_.OutputViewer->setConfiguration(cifHandler_.finalConfiguration());
+    ui_.OutputViewer->setConfiguration(cifHandler_.supercellConfiguration());
+    
+    //ui_.OutputViewer->setConfiguration(cifHandler_.finalConfiguration());
     //ui_.PartitioningViewer->setConfiguration(cifHandler_.partitionedConfiguration());
     auto *supercell = cifHandler_.supercellSpecies();
 
@@ -430,11 +433,11 @@ bool ImportCIFDialog::update()
     {
         if (supercell)
         {
-            supercell->clearAtomSelection();
+            /*supercell->clearAtomSelection();
             if (supercell->fragment(0).size() != supercell->nAtoms())
             {
                 validSpecies = false;
-            }
+            }*/
         }
         else
             validSpecies = false;

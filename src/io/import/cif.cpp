@@ -662,25 +662,60 @@ bool CIFHandler::createSupercell()
     Messenger::setQuiet(false);
 
     // Copy atoms from the Crystal species - we'll do the bonding afterwards
-    supercellSpecies_->atoms().reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z *
-                                       cleanedUnitCellSpecies_->nAtoms());
-    for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
-        for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
-            for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
-            {
-                Vec3<double> deltaR = cleanedUnitCellSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
-                for (const auto &i : cleanedUnitCellSpecies_->atoms())
-                    supercellSpecies_->addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
-            }
 
-    if (flags_.isSet(UpdateFlags::CalculateBonding))
-        supercellSpecies_->addMissingBonds();
+    if (molecularUnitCellSpecies_.empty())
+    {
+        supercellSpecies_->atoms().reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z *
+                                        cleanedUnitCellSpecies_->nAtoms());
+        for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
+            for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
+                for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
+                {
+                    Vec3<double> deltaR = cleanedUnitCellSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
+                    for (const auto &i : cleanedUnitCellSpecies_->atoms())
+                        supercellSpecies_->addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
+                }
+        if (flags_.isSet(UpdateFlags::CalculateBonding))
+            supercellSpecies_->addMissingBonds();
+        else
+            applyCIFBonding(supercellSpecies_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
+    
+        // Add the structural species to the configuration
+        supercellConfiguration_->addMolecule(supercellSpecies_);
+        supercellConfiguration_->updateObjectRelationships();
+    }
     else
-        applyCIFBonding(supercellSpecies_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
+    {
 
-    // Add the structural species to the configuration
-    supercellConfiguration_->addMolecule(supercellSpecies_);
-    supercellConfiguration_->updateObjectRelationships();
+        for (auto& molecularSpecies : molecularUnitCellSpecies_)
+        {
+            auto *sp = molecularSpecies.species();
+            //auto *sp = coreData_.copySpecies(molecularSpecies.species());
+            // if (flags_.isSet(UpdateFlags:W:CalculateBonding))
+            //     sp->addMissingBonds();
+            // else
+            //     applyCIFBonding(sp, flags_.isSet(UpdateFlags::PreventMetallicBonding));
+
+            auto& coordinatesBefore = molecularSpecies.coordinates();
+            std::vector<std::vector<Vec3<double>>> repeatedCoordinates(coordinatesBefore.size());
+
+            for (auto& instance : coordinatesBefore)
+            {
+                for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
+                    for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
+                        for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
+                            {
+                                Vec3<double> deltaR = cleanedUnitCellSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
+                                std::vector<Vec3<double>> repeated(instance.size());
+                                std::transform(instance.begin(), instance.end(), repeated.begin(), [&](auto &coord) { return coord + deltaR; });
+                                supercellConfiguration_->addMolecule(sp, repeated);
+                                supercellConfiguration_->updateObjectRelationships();
+                                //repeatedCoordinates.push_back(repeated);
+                            }
+            }
+            coordinatesBefore.insert(coordinatesBefore.end(), repeatedCoordinates.begin(), repeatedCoordinates.end());
+        }
+    }
 
     Messenger::print("Created ({}, {}, {}) supercell - {} atoms total.\n", supercellRepeat_.x, supercellRepeat_.y,
                      supercellRepeat_.z, supercellConfiguration_->nAtoms());
@@ -752,20 +787,65 @@ bool CIFHandler::generate(std::optional<Flags<CIFHandler::UpdateFlags>> newFlags
     if (!createCleanedUnitCell())
         return false;
 
-    // Try to detect molecules
-    detectMolecules();
 
-    if (molecularUnitCellSpecies_.empty())
+    /*if (flags_.isSet(UpdateFlags::CreateMolecular))
     {
-        if (!createSupercell())
+        Messenger::print("Will try and output molecular.");
+        // Try to detect molecules
+        detectMolecules();
+
+        if (molecularUnitCellSpecies_.empty())
             return false;
-        finalConfiguration_ = supercellConfiguration_;
+
+        auto cellLengths = getCellLengths();
+        if (!cellLengths)
+            return false;
+        auto cellAngles = getCellAngles();
+        if (!cellAngles)
+            return false;
+
+        molecularUnitCellConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
+
+        for (auto &cifMolecularSp : molecularUnitCellSpecies_)
+        {
+            auto *sp = cifMolecularSp.species();
+
+            for (auto &coords : cifMolecularSp.coordinates())
+                molecularUnitCellConfiguration_->addMolecule(sp, coords);
+                molecularUnitCellConfiguration_->updateObjectRelationships();
+        }
+
     }
     else
     {
-        // Create the molecular unit cell configuration (no need to do this with procedures, it won't be reused).
-        finalConfiguration_ = molecularUnitCellConfiguration_;
-    }
+        Messenger::print("Will try and output supercell");
+        if (!createSupercell())
+            return false;
+    }*/
+
+    /*detectMolecules();
+    auto cellLengths = getCellLengths();
+    if (!cellLengths)
+        return false;
+    auto cellAngles = getCellAngles();
+    if (!cellAngles)
+        return false;
+
+    molecularUnitCellConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
+
+    for (auto &cifMolecularSp : molecularUnitCellSpecies_)
+    {
+        auto *sp = cifMolecularSp.species();
+
+        for (auto &coords : cifMolecularSp.coordinates())
+            molecularUnitCellConfiguration_->addMolecule(sp, coords);
+            molecularUnitCellConfiguration_->updateObjectRelationships();
+    }*/
+
+    detectMolecules();
+
+    if (!createSupercell())
+        return false;
 
     return true;
 }
@@ -897,6 +977,8 @@ Configuration *CIFHandler::supercellConfiguration() { return supercellConfigurat
 Species *CIFHandler::partitionedSpecies() { return partitionedSpecies_; }
 
 Configuration *CIFHandler::partitionedConfiguration() { return partitionedConfiguration_; }
+
+Configuration *CIFHandler::molecularUnitCellConfiguration() {return molecularUnitCellConfiguration_;}
 
 /*
  * Helpers

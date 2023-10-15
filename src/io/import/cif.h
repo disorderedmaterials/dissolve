@@ -105,7 +105,9 @@ class CIFHandler
         CleanRemoveBoundFragments, /* Remove entire fragments when using NETA definition  */
         CalculateBonding,          /* Calculate bonding */
         PreventMetallicBonding,    /* Prevent metallic bonding */
-        CreateSupermolecule
+        CreateMolecular,
+        CreateFramework,
+        CreateSupermolecule,
     };
 
     // CIF Species Output Flags
@@ -186,6 +188,7 @@ class CIFHandler
     Species *partitionedSpecies();
     Configuration *partitionedConfiguration();
     Configuration* finalConfiguration();
+    Configuration* molecularUnitCellConfiguration();
 
 
     /*
