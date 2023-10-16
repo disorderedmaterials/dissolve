@@ -17,6 +17,44 @@
 
 namespace UnitTest
 {
+
+// Flags that can modify how a test is setUp.  This can be useful
+// for masking tests that are known to be failing, but cannot be
+// resolved at this juncture.  The indices must be unique powers
+// of two in order for masks to be composable.
+//
+// Eventually, once we move to C++23, this can be replaced by a
+// std::bitset, but bitset isn't constexpr until then.
+enum TestFlags
+{
+    TomlFailure = 1, // tests where the TOML testing is known to fail
+};
+
+void compareToml(std::string location, SerialisedValue toml, SerialisedValue toml2)
+{
+    if (toml.is_table())
+    {
+        ASSERT_TRUE(toml2.is_table()) << location;
+        for (auto &[k, v] : toml.as_table())
+        {
+            ASSERT_TRUE(toml2.contains(k)) << location << "." << k << std::endl << "Expected:" << std::endl << toml[k];
+            compareToml(fmt::format("{}.{}", location, k), v, toml2.at(k));
+        }
+    }
+    else if (toml.is_array())
+    {
+        auto arr = toml.as_array();
+        auto arr2 = toml2.as_array();
+        ASSERT_EQ(arr.size(), arr2.size()) << location << std::endl << "Expected" << std::endl << toml;
+        for (int i = 0; i < arr.size(); ++i)
+            compareToml(fmt::format("{}[{}]", location, i), arr[i], arr2[i]);
+    }
+    else
+    {
+        EXPECT_EQ(toml, toml2) << location;
+    }
+}
+
 class DissolveSystemTest
 {
     public:
@@ -44,12 +82,11 @@ class DissolveSystemTest
      */
     public:
     // Set up simulation ready for running, calling any additional setup function if already set
-    void setUp(std::string_view inputFile)
+    template <int flags = 0> void setUp(std::string_view inputFile)
     {
         dissolve_.clear();
         if (!dissolve_.loadInput(inputFile))
             throw(std::runtime_error(fmt::format("Input file '{}' failed to load correctly.\n", inputFile)));
-
         if (rewriteCheck_)
         {
             auto newInput = fmt::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
@@ -69,8 +106,22 @@ class DissolveSystemTest
 
         if (!dissolve_.prepare())
             throw(std::runtime_error("Failed to prepare simulation.\n"));
+
+        if (dissolve_.toml_testing_flag || !(flags & TomlFailure))
+        {
+            auto toml = dissolve_.serialise();
+
+            CoreData other_;
+            Dissolve trial_{other_};
+
+            trial_.deserialise(toml);
+            trial_.setInputFilename(std::string(inputFile));
+            auto repeat = trial_.serialise();
+            compareToml("", toml, repeat);
+        }
     }
-    void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp)
+    void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp,
+               bool known_toml_failure = false)
     {
         additionalSetUp_ = additionalSetUp;
         setUp(inputFile);
