@@ -38,7 +38,7 @@ void compareToml(std::string location, SerialisedValue toml, SerialisedValue tom
         for (auto &[k, v] : toml.as_table())
         {
             ASSERT_TRUE(toml2.contains(k)) << location << "." << k << std::endl << "Expected:" << std::endl << toml[k];
-            compare_toml(fmt::format("{}.{}", location, k), v, toml2.at(k));
+            compareToml(fmt::format("{}.{}", location, k), v, toml2.at(k));
         }
     }
     else if (toml.is_array())
@@ -47,7 +47,7 @@ void compareToml(std::string location, SerialisedValue toml, SerialisedValue tom
         auto arr2 = toml2.as_array();
         ASSERT_EQ(arr.size(), arr2.size()) << location << std::endl << "Expected" << std::endl << toml;
         for (int i = 0; i < arr.size(); ++i)
-            compare_toml(fmt::format("{}[{}]", location, i), arr[i], arr2[i]);
+            compareToml(fmt::format("{}[{}]", location, i), arr[i], arr2[i]);
     }
     else
     {
@@ -117,7 +117,7 @@ class DissolveSystemTest
             trial_.deserialise(toml);
             trial_.setInputFilename(std::string(inputFile));
             auto repeat = trial_.serialise();
-            compare_toml("", toml, repeat);
+            compareToml("", toml, repeat);
         }
     }
     void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp,
