@@ -78,19 +78,6 @@ int ProcedureNodeSequence::nNodes() const { return sequence_.size(); }
 // Return whether the sequence is empty
 bool ProcedureNodeSequence::empty() const { return sequence_.empty(); }
 
-// Remove a node
-bool ProcedureNodeSequence::removeNode(NodeRef node)
-{
-    // Find the node in the sequence
-    auto it = std::find_if(sequence_.begin(), sequence_.end(), [node](const auto &n) { return n.get() == node.get(); });
-    if (it != sequence_.end())
-    {
-        sequence_.erase(it);
-        return true;
-    }
-    return false;
-}
-
 /*
  * Scope
  */

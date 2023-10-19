@@ -11,11 +11,34 @@
 
 ProcedureModel::ProcedureModel(OptionalReferenceWrapper<Procedure> procedure) : procedure_(procedure) {}
 
+void printSequence(const ProcedureNodeSequence &sequence, std::string indent)
+{
+    fmt::print("{}SEQ {}\n", indent, fmt::ptr(&sequence));
+    auto nodeIndent = fmt::format("{}  ", indent);
+    for (auto &node : sequence.sequence())
+    {
+        fmt::print("{} N {}\n", nodeIndent, fmt::ptr(&node));
+        fmt::print("{} = {}\n", nodeIndent, node->name());
+        if (node->branch())
+            printSequence(node->branch()->get(), fmt::format("{}  ", indent));
+    }
+}
+void printProcedure(Procedure &proc)
+{
+    fmt::print("Procedure:\n");
+    printSequence(proc.rootSequence(), "");
+}
+std::string modelIndexString(const QModelIndex &index)
+{
+    return index.isValid() ? fmt::format("({},{})", index.row(), index.column()) : "INVALID";
+}
+
 // Set source Procedure
 void ProcedureModel::setData(Procedure &procedure)
 {
     beginResetModel();
     procedure_ = procedure;
+    printProcedure(procedure);
     endResetModel();
 }
 
@@ -58,7 +81,10 @@ int ProcedureModel::rowCount(const QModelIndex &parent) const
     // If the index doesn't have a valid internal pointer we're probing the root of the model, so return the number of root
     // sequence nodes
     if (!parent.internalPointer())
+    {
+        fmt::print("RowCount for parent {} = {} (no valid internalPointer())\n", modelIndexString(parent), procedure_->get().rootSequence().nNodes());
         return procedure_->get().rootSequence().nNodes();
+    }
 
     auto node = static_cast<ProcedureNode *>(parent.internalPointer());
     if (node && node->branch())
@@ -383,6 +409,9 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         auto oldParent = parent(oldIndex);
         auto &oldScope = oldNode->scope()->get();
 
+        fmt::print("dropMimeData::MoveAction old model index is {}\n", modelIndexString(oldIndex));
+        fmt::print("dropMimeData::MoveAction old model sequence is {}\n", fmt::ptr(&oldScope));
+
         // Get the new parent scope
         auto optNewScope = getScope(newParent);
         if (!optNewScope)
@@ -391,6 +420,10 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 
         // Determine the new index of the dragged node in the root sequence or scope
         auto insertAtRow = row == -1 ? newScope.nNodes() : row;
+
+        fmt::print("dropMimeData::MoveAction new parent model index is {}\n", modelIndexString(newParent));
+        fmt::print("dropMimeData::MoveAction new model sequence is {}\n", fmt::ptr(&newScope));
+        fmt::print("dropMimeData::MoveAction new model row insertion index is {}\n", insertAtRow);
 
         // Create a new row to store the data.
         insertRows(insertAtRow, 1, newParent);
@@ -406,14 +439,8 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         newScope.sequence()[insertAtRow] = std::move(oldScope.sequence()[oldNodeRow]);
         oldNode->setScope(newScope);
 
-        // Remove the old row
-        beginRemoveRows(oldParent, oldNodeRow, oldNodeRow);
-        oldScope.sequence().erase(oldScope.sequence().begin() + oldNodeRow);
-        endRemoveRows();
-
-        // Set the new data - we call this just to emit dataChanged() from the correct place.
-        auto idx = index(insertAtRow, 0, newParent);
-        return setData(idx, QVariant::fromValue(mimeData->node()), ProcedureModelAction::MoveInternal);
+        //printProcedure(procedure_->get());
+        return true;
     }
     else if (action == Qt::CopyAction && data->hasFormat("application/dissolve.procedure.newNode"))
     {
@@ -467,12 +494,47 @@ bool ProcedureModel::removeRows(int row, int count, const QModelIndex &parent)
 
     // Get the scope associated to the parent index
     auto scope = getScope(parent);
-
-    beginRemoveRows(parent, row, row + count - 1);
-    for (auto i = 0; i < count; ++i)
-        scope->get().removeNode(data(index(row + i, 0), Qt::UserRole).value<std::shared_ptr<ProcedureNode>>());
+    beginRemoveRows(parent, row, row);
+    if (count > 1)
+        scope->get().sequence().erase(scope->get().sequence().begin() + row, scope->get().sequence().begin() + row + count - 1);
+    else
+        scope->get().sequence().erase(scope->get().sequence().begin() + row);
     endRemoveRows();
 
-    emit(dataChanged(QModelIndex(), QModelIndex()));
     return true;
+}
+
+QModelIndex ProcedureModel::appendNew(const QString &nodeTypeString)
+{
+    // Check the node type string is valid
+    if (!ProcedureNode::nodeTypes().isValid(nodeTypeString.toStdString()))
+        return {};
+
+    // Convert the node type string to its enumeration
+    auto nodeType = ProcedureNode::nodeTypes().enumeration(nodeTypeString.toStdString());
+    // Create a node of the node type
+    auto node = ProcedureNodeRegistry::create(nodeType);
+    assert(node);
+
+    // Get the parent scope, we know this is the root sequence, but use getScope for consistency
+    auto scope = getScope(QModelIndex());
+
+    // Check if the node is relevant to the context of the scope
+    if (!node->isContextRelevant(scope->get().context()))
+        return {};
+
+    // Get the target row for the new node
+    auto insertAtRow = rowCount();
+
+    // Create a new row to store the data. Don't use insertRows() here since creating a null node in the vector at this
+    // point causes no end of issues.
+    beginInsertRows(QModelIndex(), insertAtRow, insertAtRow);
+    scope->get().appendNode(node, insertAtRow);
+    endInsertRows();
+    auto idx = index(insertAtRow, 0, QModelIndex());
+
+    // Call setData() so we emit the right signals
+    setData(idx, QVariant::fromValue(node), ProcedureModelAction::CreateNew);
+
+    return idx;
 }

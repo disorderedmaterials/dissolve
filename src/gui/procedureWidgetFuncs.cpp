@@ -192,7 +192,7 @@ void ProcedureWidget::on_NodesTree_customContextMenuRequested(const QPoint &pos)
 
 void ProcedureWidget::on_AvailableNodesTree_doubleClicked(const QModelIndex &index)
 {
-    //    nodeLayerModel_.appendNew(nodePaletteModel_.data(index, Qt::DisplayRole).toString());
+    procedureModel_.appendNew(nodePaletteFilterProxy_.data(index, Qt::DisplayRole).toString());
 }
 
 // Delete the currently selected node, and its children
