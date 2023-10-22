@@ -690,16 +690,9 @@ bool CIFHandler::createSupercell()
         for (auto& molecularSpecies : molecularUnitCellSpecies_)
         {
             auto *sp = molecularSpecies.species();
-            //auto *sp = coreData_.copySpecies(molecularSpecies.species());
-            // if (flags_.isSet(UpdateFlags:W:CalculateBonding))
-            //     sp->addMissingBonds();
-            // else
-            //     applyCIFBonding(sp, flags_.isSet(UpdateFlags::PreventMetallicBonding));
-
-            auto& coordinatesBefore = molecularSpecies.coordinates();
-            std::vector<std::vector<Vec3<double>>> repeatedCoordinates(coordinatesBefore.size());
-
-            for (auto& instance : coordinatesBefore)
+            auto coordinates = molecularSpecies.coordinates();
+            molecularSpecies.coordinates().clear();
+            for (auto instance : coordinates)
             {
                 for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
                     for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
@@ -710,10 +703,9 @@ bool CIFHandler::createSupercell()
                                 std::transform(instance.begin(), instance.end(), repeated.begin(), [&](auto &coord) { return coord + deltaR; });
                                 supercellConfiguration_->addMolecule(sp, repeated);
                                 supercellConfiguration_->updateObjectRelationships();
-                                //repeatedCoordinates.push_back(repeated);
+                                molecularSpecies.coordinates().insert(molecularSpecies.coordinates().end(), repeated);
                             }
             }
-            coordinatesBefore.insert(coordinatesBefore.end(), repeatedCoordinates.begin(), repeatedCoordinates.end());
         }
     }
 
