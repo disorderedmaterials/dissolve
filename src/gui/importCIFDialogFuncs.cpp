@@ -46,7 +46,7 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     // Update moiety NETA
     createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
 
-    // Set default flag.
+    // Set default flags.
     outputFlags_.setFlag(CIFHandler::OutputFlags::OutputFramework);
     outputFlags_.setFlag(CIFHandler::OutputFlags::OutputConfiguration);
 
@@ -111,8 +111,8 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             break;
         case (ImportCIFDialog::CleanedPage):
             update();
-            //if (!cifHandler_.finalConfiguration())
-            //    return false;
+            if (!cifHandler_.supercellConfiguration())
+                return false;
             break;
         default:
             break;
@@ -362,9 +362,15 @@ void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked)
 void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked)
 {
     if (checked)
+    {
         outputFlags_.setFlag(CIFHandler::OutputFlags::OutputSupermolecule);
+        ui_.OutputConfigurationCheck->setChecked(false);
+        outputFlags_.removeFlag(CIFHandler::OutputFlags::OutputConfiguration);
+    }
     else
+    {
         outputFlags_.removeFlag(CIFHandler::OutputFlags::OutputSupermolecule);
+    }
     update();
 }
 
@@ -392,27 +398,20 @@ bool ImportCIFDialog::update()
     
     auto *supercell = cifHandler_.supercellSpecies();
 
-    if (supercell)
-    {
-        ui_.SupercellGroupBox->setEnabled(true);
-        // Update the information panel
-        ui_.SupercellBoxALabel->setText(QString::number(supercell->box()->axisLengths().x) + " &#8491;");
-        ui_.SupercellBoxBLabel->setText(QString::number(supercell->box()->axisLengths().y) + " &#8491;");
-        ui_.SupercellBoxCLabel->setText(QString::number(supercell->box()->axisLengths().z) + " &#8491;");
-        ui_.SupercellBoxAlphaLabel->setText(QString::number(supercell->box()->axisAngles().x) + "&deg;");
-        ui_.SupercellBoxBetaLabel->setText(QString::number(supercell->box()->axisAngles().y) + "&deg;");
-        ui_.SupercellBoxGammaLabel->setText(QString::number(supercell->box()->axisAngles().z) + "&deg;");
-        auto chemicalDensity = cifHandler_.supercellConfiguration()->chemicalDensity();
-        ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
-                                                           : "-- g cm<sup>3</sup>");
-        ui_.SupercellVolumeLabel->setText(QString::number(cifHandler_.supercellConfiguration()->box()->volume()) +
-                                          " &#8491;<sup>3</sup>");
-        ui_.SupercellNAtomsLabel->setText(QString::number(cifHandler_.supercellConfiguration()->nAtoms()));
-    }
-    else
-    {
-        ui_.SupercellGroupBox->setEnabled(false);
-    }
+
+    // Update the information panel
+    ui_.SupercellBoxALabel->setText(QString::number(supercell->box()->axisLengths().x) + " &#8491;");
+    ui_.SupercellBoxBLabel->setText(QString::number(supercell->box()->axisLengths().y) + " &#8491;");
+    ui_.SupercellBoxCLabel->setText(QString::number(supercell->box()->axisLengths().z) + " &#8491;");
+    ui_.SupercellBoxAlphaLabel->setText(QString::number(supercell->box()->axisAngles().x) + "&deg;");
+    ui_.SupercellBoxBetaLabel->setText(QString::number(supercell->box()->axisAngles().y) + "&deg;");
+    ui_.SupercellBoxGammaLabel->setText(QString::number(supercell->box()->axisAngles().z) + "&deg;");
+    auto chemicalDensity = cifHandler_.supercellConfiguration()->chemicalDensity();
+    ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
+                                                        : "-- g cm<sup>3</sup>");
+    ui_.SupercellVolumeLabel->setText(QString::number(cifHandler_.supercellConfiguration()->box()->volume()) +
+                                        " &#8491;<sup>3</sup>");
+    ui_.SupercellNAtomsLabel->setText(QString::number(cifHandler_.supercellConfiguration()->nAtoms()));
 
     if (ui_.OutputMolecularRadio->isChecked())
     {
@@ -428,7 +427,14 @@ bool ImportCIFDialog::update()
         ui_.OutputMolecularSpeciesList->setVisible(false);
     }
 
+    ui_.OutputConfigurationCheck->setEnabled(ui_.OutputMolecularRadio->isChecked() || ui_.OutputFrameworkRadio->isChecked());
 
+    if (ui_.OutputSupermoleculeRadio->isChecked())
+    {
+        ui_.OutputConfigurationCheck->setChecked(false);
+        outputFlags_.removeFlag(CIFHandler::OutputFlags::OutputConfiguration);
+    }
+    
     auto validSpecies = true;
 
     if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
@@ -455,24 +461,6 @@ bool ImportCIFDialog::update()
     }
 
     updateProgressionControls();
-
-
-    // drop partitioned species
-    // rename supercell page to `final output` or similar
-    // ListView of species, indicate whether configuration will be generated (subtext, alongside supercell/supermolecule species)
-    // option to output configuration for framework(?)
-
-    // Generation of supercells is slow, as we try to rebond all atoms to figure out where the bonds are
-    // Only rebond bonds at the boundary
-
-    /*
-        TODO:
-        - Fix molecular supercell generation
-        - Ensure correctness of final configuration
-        - Output correct selections (i.e. do partitioning!)
-        - Cleanup code
-        - Show outputted species
-    */
 
     return true;
 }
