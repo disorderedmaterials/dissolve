@@ -152,8 +152,6 @@ class CIFHandler
     bool detectMolecules();
     // Create supercell species
     bool createSupercell();
-    // Create partitioned cell
-    bool createPartitionedCell();
 
     public:
     // Reset all objects
@@ -184,12 +182,6 @@ class CIFHandler
     // Supercell
     Species *supercellSpecies();
     Configuration *supercellConfiguration();
-    // Partitioned
-    Species *partitionedSpecies();
-    Configuration *partitionedConfiguration();
-    Configuration* finalConfiguration();
-    Configuration* molecularUnitCellConfiguration();
-
 
     /*
      * Helpers

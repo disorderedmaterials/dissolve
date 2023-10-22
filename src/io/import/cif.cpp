@@ -715,25 +715,6 @@ bool CIFHandler::createSupercell()
     return true;
 }
 
-// Create partitioned setup
-bool CIFHandler::createPartitionedCell()
-{
-    partitionedSpecies_ = coreData_.addSpecies();
-    partitionedSpecies_->copyBasic(supercellSpecies_);
-    partitionedConfiguration_->createBoxAndCells(supercellSpecies_->box()->axisLengths(),
-                                                 supercellSpecies_->box()->axisAngles(), false, 1.0);
-    //if (flags_.isSet(UpdateFlags::CreateSupermolecule))
-    {
-        partitionedSpecies_->removePeriodicBonds();
-        partitionedSpecies_->updateIntramolecularTerms();
-        partitionedSpecies_->removeBox();
-    }
-    // Add the partitioned species to the configuration
-    partitionedConfiguration_->addMolecule(partitionedSpecies_);
-    partitionedConfiguration_->updateObjectRelationships();
-    return true;
-}
-
 // Reset all objects
 void CIFHandler::resetSpeciesAndConfigurations()
 {
@@ -745,8 +726,6 @@ void CIFHandler::resetSpeciesAndConfigurations()
     molecularUnitCellConfiguration_->clear();
     supercellSpecies_ = nullptr;
     supercellConfiguration_->empty();
-    partitionedSpecies_ = nullptr;
-    partitionedConfiguration_->empty();
     coreData_.species().clear();
     coreData_.atomTypes().clear();
 }
@@ -920,13 +899,6 @@ Configuration *CIFHandler::molecularConfiguration() { return molecularUnitCellCo
 Species *CIFHandler::supercellSpecies() { return supercellSpecies_; }
 Configuration *CIFHandler::supercellConfiguration() { return supercellConfiguration_; }
 
-// Partitioned
-Species *CIFHandler::partitionedSpecies() { return partitionedSpecies_; }
-
-Configuration *CIFHandler::partitionedConfiguration() { return partitionedConfiguration_; }
-
-Configuration *CIFHandler::molecularUnitCellConfiguration() {return molecularUnitCellConfiguration_;}
-
 /*
  * Helpers
  */
@@ -1037,7 +1009,3 @@ void CIFHandler::fixGeometry(Species *sp, const Box *box)
     sp->setCentre(box, {0., 0., 0.});
 }
 
-Configuration* CIFHandler::finalConfiguration()
-{
-    return finalConfiguration_;
-}
