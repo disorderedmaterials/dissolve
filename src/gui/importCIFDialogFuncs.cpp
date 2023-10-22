@@ -442,8 +442,9 @@ bool ImportCIFDialog::update()
         if (cifHandler_.molecularSpecies().empty())
         {
             validSpecies = false;
-            indicatorText = QString("Unable to generate molecular partitioning from Species, so cannot be used in a simulation. "
-                                 "Choose a different partitioning.");
+            indicatorText =
+                QString("Unable to generate molecular partitioning from Species, so cannot be used in a simulation. "
+                        "Choose a different partitioning.");
         }
     }
     else
@@ -452,7 +453,7 @@ bool ImportCIFDialog::update()
         {
             validSpecies = false;
             indicatorText = QString("Species contains more than one molecule/fragment, and cannot be used in a "
-                                     "simulation. Choose a different partitioning.");
+                                    "simulation. Choose a different partitioning.");
         }
     }
 
