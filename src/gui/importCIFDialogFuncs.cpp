@@ -111,8 +111,8 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             break;
         case (ImportCIFDialog::CleanedPage):
             update();
-            if (!cifHandler_.finalConfiguration())
-                return false;
+            //if (!cifHandler_.finalConfiguration())
+            //    return false;
             break;
         default:
             break;
@@ -453,6 +453,8 @@ bool ImportCIFDialog::update()
         ui_.OutputIndicator->setOK(true);
         ui_.OutputLabel->setText("Species are valid."); 
     }
+
+    updateProgressionControls();
 
 
     // drop partitioned species
