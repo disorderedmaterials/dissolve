@@ -71,7 +71,7 @@ bool ImportCIFDialog::progressionAllowed(int index) const
         case (ImportCIFDialog::SelectSpaceGroupPage):
             return ui_.SpaceGroupsList->currentRow() != -1;
         case (ImportCIFDialog::OutputSpeciesPage):
-                return ui_.OutputIndicator->state() == CheckIndicator::OKState;
+            return ui_.OutputIndicator->state() == CheckIndicator::OKState;
             break;
         default:
             break;
@@ -395,9 +395,8 @@ bool ImportCIFDialog::update()
     ui_.StructureViewer->setConfiguration(cifHandler_.structuralUnitCellConfiguration());
     ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedUnitCellConfiguration());
     ui_.OutputViewer->setConfiguration(cifHandler_.supercellConfiguration());
-    
-    auto *supercell = cifHandler_.supercellSpecies();
 
+    auto *supercell = cifHandler_.supercellSpecies();
 
     // Update the information panel
     ui_.SupercellBoxALabel->setText(QString::number(supercell->box()->axisLengths().x) + " &#8491;");
@@ -408,16 +407,16 @@ bool ImportCIFDialog::update()
     ui_.SupercellBoxGammaLabel->setText(QString::number(supercell->box()->axisAngles().z) + "&deg;");
     auto chemicalDensity = cifHandler_.supercellConfiguration()->chemicalDensity();
     ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
-                                                        : "-- g cm<sup>3</sup>");
+                                                       : "-- g cm<sup>3</sup>");
     ui_.SupercellVolumeLabel->setText(QString::number(cifHandler_.supercellConfiguration()->box()->volume()) +
-                                        " &#8491;<sup>3</sup>");
+                                      " &#8491;<sup>3</sup>");
     ui_.SupercellNAtomsLabel->setText(QString::number(cifHandler_.supercellConfiguration()->nAtoms()));
 
     if (ui_.OutputMolecularRadio->isChecked())
     {
         ui_.OutputMolecularSpeciesList->setVisible(true);
         ui_.OutputMolecularSpeciesList->clear();
-        for (auto& molecularSp : cifHandler_.molecularSpecies())
+        for (auto &molecularSp : cifHandler_.molecularSpecies())
         {
             ui_.OutputMolecularSpeciesList->addItem(QString::fromStdString(std::string(molecularSp.species()->name())));
         }
@@ -434,30 +433,32 @@ bool ImportCIFDialog::update()
         ui_.OutputConfigurationCheck->setChecked(false);
         outputFlags_.removeFlag(CIFHandler::OutputFlags::OutputConfiguration);
     }
-    
+
     auto validSpecies = true;
 
     if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
     {
-        if (cifHandler_.supercellConfiguration()->nAtoms() != cifHandler_.supercellConfiguration()->molecule(0)->nAtoms() || supercell->nAtoms() != cifHandler_.supercellConfiguration()->nAtoms())
+        if (cifHandler_.supercellConfiguration()->nAtoms() != cifHandler_.supercellConfiguration()->molecule(0)->nAtoms() ||
+            supercell->nAtoms() != cifHandler_.supercellConfiguration()->nAtoms())
         {
             validSpecies = false;
             ui_.OutputIndicator->setOK(false);
             ui_.OutputLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
-                                 "simulation. Choose a different partitioning.");
+                                     "simulation. Choose a different partitioning.");
         }
     }
     else if (cifHandler_.molecularSpecies().empty())
     {
         validSpecies = false;
         ui_.OutputIndicator->setOK(false);
-        ui_.OutputLabel->setText("Unable to generate molecular partitioning from Species, so cannot be used in a simulation. Choose a different partitioning."); 
+        ui_.OutputLabel->setText("Unable to generate molecular partitioning from Species, so cannot be used in a simulation. "
+                                 "Choose a different partitioning.");
     }
 
     if (validSpecies)
     {
         ui_.OutputIndicator->setOK(true);
-        ui_.OutputLabel->setText("Species are valid."); 
+        ui_.OutputLabel->setText("Species are valid.");
     }
 
     updateProgressionControls();

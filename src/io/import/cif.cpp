@@ -666,7 +666,7 @@ bool CIFHandler::createSupercell()
     if (molecularUnitCellSpecies_.empty())
     {
         supercellSpecies_->atoms().reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z *
-                                        cleanedUnitCellSpecies_->nAtoms());
+                                           cleanedUnitCellSpecies_->nAtoms());
         for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
             for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
                 for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
@@ -679,7 +679,7 @@ bool CIFHandler::createSupercell()
             supercellSpecies_->addMissingBonds();
         else
             applyCIFBonding(supercellSpecies_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
-    
+
         // Add the structural species to the configuration
         supercellConfiguration_->addMolecule(supercellSpecies_);
         supercellConfiguration_->updateObjectRelationships();
@@ -687,7 +687,7 @@ bool CIFHandler::createSupercell()
     else
     {
 
-        for (auto& molecularSpecies : molecularUnitCellSpecies_)
+        for (auto &molecularSpecies : molecularUnitCellSpecies_)
         {
             auto *sp = molecularSpecies.species();
             auto coordinates = molecularSpecies.coordinates();
@@ -697,14 +697,15 @@ bool CIFHandler::createSupercell()
                 for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
                     for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
                         for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
-                            {
-                                Vec3<double> deltaR = cleanedUnitCellSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
-                                std::vector<Vec3<double>> repeated(instance.size());
-                                std::transform(instance.begin(), instance.end(), repeated.begin(), [&](auto &coord) { return coord + deltaR; });
-                                supercellConfiguration_->addMolecule(sp, repeated);
-                                supercellConfiguration_->updateObjectRelationships();
-                                molecularSpecies.coordinates().insert(molecularSpecies.coordinates().end(), repeated);
-                            }
+                        {
+                            Vec3<double> deltaR = cleanedUnitCellSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
+                            std::vector<Vec3<double>> repeated(instance.size());
+                            std::transform(instance.begin(), instance.end(), repeated.begin(),
+                                           [&](auto &coord) { return coord + deltaR; });
+                            supercellConfiguration_->addMolecule(sp, repeated);
+                            supercellConfiguration_->updateObjectRelationships();
+                            molecularSpecies.coordinates().insert(molecularSpecies.coordinates().end(), repeated);
+                        }
             }
         }
     }
@@ -772,7 +773,8 @@ bool CIFHandler::isValid() const
     return !molecularUnitCellSpecies_.empty() || supercellSpecies_->fragment(0).size() != supercellSpecies_->nAtoms();
 }
 
-std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(CoreData &coreData, std::optional<Flags<OutputFlags>> flags) const
+std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(CoreData &coreData,
+                                                                              std::optional<Flags<OutputFlags>> flags) const
 {
     std::vector<const Species *> species;
     Configuration *configuration;
@@ -812,12 +814,13 @@ std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(Co
                     auto suffix = 0;
 
                     // We use 'CoordinateSets' here, because in this instance we are working with (CoordinateSet, Add) pairs
-                    while (generator.rootSequence().nodeInScope(root, fmt::format("SymmetryCopies_{}", uniqueSuffix)) != nullptr)
+                    while (generator.rootSequence().nodeInScope(root, fmt::format("SymmetryCopies_{}", uniqueSuffix)) !=
+                           nullptr)
                         uniqueSuffix = fmt::format("{}_{:02d}", base, ++suffix);
 
                     // CoordinateSets
-                    auto coordsNode =
-                        generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
+                    auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(
+                        fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
                     coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
                     coordsNode->setSets(cifMolecularSp.coordinates());
 
@@ -875,12 +878,10 @@ std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(Co
             addNode->keywords().set("Rotate", false);
             addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
         }
-
     }
 
     return {species, configuration};
 }
-
 
 // Structural
 Species *CIFHandler::structuralUnitCellSpecies() { return unitCellSpecies_; }
@@ -1008,4 +1009,3 @@ void CIFHandler::fixGeometry(Species *sp, const Box *box)
     // Set the centre of geometry of the species to be at the origin.
     sp->setCentre(box, {0., 0., 0.});
 }
-
