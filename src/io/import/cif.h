@@ -105,15 +105,15 @@ class CIFHandler
         CleanRemoveBoundFragments, /* Remove entire fragments when using NETA definition  */
         CalculateBonding,          /* Calculate bonding */
         PreventMetallicBonding,    /* Prevent metallic bonding */
-        CreateMolecular,
-        CreateFramework,
-        CreateSupermolecule,
     };
 
     // CIF Species Output Flags
     enum OutputFlags
     {
-        OutputConfiguration /* Output a Configuration */
+        OutputConfiguration, /* Output a Configuration */
+        OutputMolecularSpecies,
+        OutputFramework,
+        OutputSupermolecule
     };
 
     private:
@@ -169,7 +169,7 @@ class CIFHandler
     // Recreate the data
     bool generate(std::optional<Flags<UpdateFlags>> newFlags = {});
     // Finalise, returning the required species and resulting configuration
-    std::pair<std::vector<Species *>, Configuration *> finalise(CoreData &coreData, std::optional<Flags<OutputFlags>> flags = {}) const;
+    std::pair<std::vector<const Species *>, Configuration *> finalise(CoreData &coreData, std::optional<Flags<OutputFlags>> flags = {}) const;
     // Return whether the generated data is valid
     bool isValid() const;
     // Structural

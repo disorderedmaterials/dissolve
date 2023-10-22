@@ -730,7 +730,7 @@ bool CIFHandler::createPartitionedCell()
     partitionedSpecies_->copyBasic(supercellSpecies_);
     partitionedConfiguration_->createBoxAndCells(supercellSpecies_->box()->axisLengths(),
                                                  supercellSpecies_->box()->axisAngles(), false, 1.0);
-    if (flags_.isSet(UpdateFlags::CreateSupermolecule))
+    //if (flags_.isSet(UpdateFlags::CreateSupermolecule))
     {
         partitionedSpecies_->removePeriodicBonds();
         partitionedSpecies_->updateIntramolecularTerms();
@@ -801,11 +801,12 @@ bool CIFHandler::isValid() const
     return !molecularUnitCellSpecies_.empty() || supercellSpecies_->fragment(0).size() != supercellSpecies_->nAtoms();
 }
 
-std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData &coreData, std::optional<Flags<OutputFlags>> flags) const
+std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(CoreData &coreData, std::optional<Flags<OutputFlags>> flags) const
 {
-    std::vector<Species *> species;
+    std::vector<const Species *> species;
     Configuration *configuration;
-    if (!molecularUnitCellSpecies_.empty())
+
+    if (flags->isSet(OutputFlags::OutputMolecularSpecies))
     {
         if (flags && flags->isSet(OutputFlags::OutputConfiguration))
         {
@@ -828,6 +829,7 @@ std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData
                 auto *sp = cifMolecularSp.species();
                 // Add the species
                 sp = coreData.copySpecies(cifMolecularSp.species());
+                species.push_back(sp);
 
                 // Determine a unique suffix
                 auto base = sp->name();
@@ -856,7 +858,6 @@ std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData
                     addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
                 }
             }
-
         }
         else
         {
@@ -865,16 +866,23 @@ std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData
                 auto *sp = cifMolecularSp.species();
                 // Add the species
                 sp = coreData.copySpecies(cifMolecularSp.species());
+                species.push_back(sp);
             }
         }
     }
-    else if (supercellSpecies_)
+    else
     {
-        auto *sp = supercellSpecies_;
-        // Add the species
-        sp = coreData.copySpecies(supercellSpecies_);
+        auto *sp = coreData.addSpecies();
+        sp->copyBasic(supercellSpecies_);
+        species.push_back(sp);
+        if (flags->isSet(OutputFlags::OutputFramework))
+        {
+            sp->removePeriodicBonds();
+            sp->updateIntramolecularTerms();
+            sp->removeBox();
+        }
 
-        if (flags && flags->isSet(OutputFlags::OutputConfiguration))
+        if (flags->isSet(OutputFlags::OutputConfiguration))
         {
             configuration = coreData.addConfiguration();
             configuration->setName(chemicalFormula());
@@ -884,8 +892,8 @@ std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData
 
             // Add Box
             auto boxNode = generator.createRootNode<BoxProcedureNode>({});
-            auto cellLengths = getCellLengths().value();
-            auto cellAngles = getCellAngles().value();
+            auto cellLengths = supercellConfiguration_->box()->axisLengths();
+            auto cellAngles = supercellConfiguration_->box()->axisAngles();
             boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
             boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
 
@@ -896,10 +904,12 @@ std::pair<std::vector<Species *>, Configuration *> CIFHandler::finalise(CoreData
             addNode->keywords().set("Rotate", false);
             addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
         }
-        species.push_back(sp);
+
     }
+
     return {species, configuration};
 }
+
 
 // Structural
 Species *CIFHandler::structuralUnitCellSpecies() { return unitCellSpecies_; }
