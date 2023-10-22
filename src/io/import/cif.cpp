@@ -27,8 +27,6 @@ CIFHandler::CIFHandler()
     molecularUnitCellConfiguration_->setName("Molecular");
     supercellConfiguration_ = coreData_.addConfiguration();
     supercellConfiguration_->setName("Supercell");
-    partitionedConfiguration_ = coreData_.addConfiguration();
-    partitionedConfiguration_->setName("Partitioned");
 }
 
 /*
@@ -724,7 +722,7 @@ void CIFHandler::resetSpeciesAndConfigurations()
     cleanedUnitCellConfiguration_->empty();
     cleanedUnitCellSpecies_ = nullptr;
     molecularUnitCellSpecies_.clear();
-    molecularUnitCellConfiguration_->clear();
+    molecularUnitCellConfiguration_->empty();
     supercellSpecies_ = nullptr;
     supercellConfiguration_->empty();
     coreData_.species().clear();
@@ -792,8 +790,8 @@ std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(Co
 
             // Add Box
             auto boxNode = generator.createRootNode<BoxProcedureNode>({});
-            auto cellLengths = getCellLengths().value();
-            auto cellAngles = getCellAngles().value();
+            auto cellLengths = supercellConfiguration_->box()->axisLengths();
+            auto cellAngles = supercellConfiguration_->box()->axisAngles();
             boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
             boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
 
@@ -893,7 +891,6 @@ Configuration *CIFHandler::cleanedUnitCellConfiguration() { return cleanedUnitCe
 
 // Molecular
 const std::vector<CIFMolecularSpecies> &CIFHandler::molecularSpecies() const { return molecularUnitCellSpecies_; }
-
 Configuration *CIFHandler::molecularConfiguration() { return molecularUnitCellConfiguration_; }
 
 // Supercell

@@ -100,9 +100,9 @@ class CIFHandler
     enum UpdateFlags
     {
         CleanMoietyRemoveAtomics,  /* Remove atoms of single moiety */
-        CleanMoietyRemoveWater,    /* Remove water molecules of single moiety  */
-        CleanMoietyRemoveNETA,     /* Remove single atoms by NETA definition  */
-        CleanRemoveBoundFragments, /* Remove entire fragments when using NETA definition  */
+        CleanMoietyRemoveWater,    /* Remove water molecules of single moiety */
+        CleanMoietyRemoveNETA,     /* Remove single atoms by NETA definition */
+        CleanRemoveBoundFragments, /* Remove entire fragments when using NETA definition */
         CalculateBonding,          /* Calculate bonding */
         PreventMetallicBonding,    /* Prevent metallic bonding */
     };
@@ -110,10 +110,10 @@ class CIFHandler
     // CIF Species Output Flags
     enum OutputFlags
     {
-        OutputConfiguration, /* Output a Configuration */
-        OutputMolecularSpecies,
-        OutputFramework,
-        OutputSupermolecule
+        OutputConfiguration,    /* Output a Configuration */
+        OutputMolecularSpecies, /* Partitioning - output molecular species */
+        OutputFramework,        /* Partitioning - output a framework species */
+        OutputSupermolecule     /* Partitioning - output a supermolecule */
     };
 
     private:
@@ -137,11 +137,6 @@ class CIFHandler
     // Supercell
     Species *supercellSpecies_;
     Configuration *supercellConfiguration_;
-    // Final supercell, partitioned accordingly
-    Species *partitionedSpecies_;
-    Configuration *partitionedConfiguration_;
-    Species *finalSpecies_;
-    Configuration *finalConfiguration_;
 
     private:
     // Create basic unit cell
@@ -167,8 +162,7 @@ class CIFHandler
     // Recreate the data
     bool generate(std::optional<Flags<UpdateFlags>> newFlags = {});
     // Finalise, returning the required species and resulting configuration
-    std::pair<std::vector<const Species *>, Configuration *> finalise(CoreData &coreData,
-                                                                      std::optional<Flags<OutputFlags>> flags = {}) const;
+    std::pair<std::vector<const Species *>, Configuration *> finalise(CoreData &coreData, std::optional<Flags<OutputFlags>> flags = {}) const;
     // Return whether the generated data is valid
     bool isValid() const;
     // Structural

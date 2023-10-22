@@ -435,31 +435,29 @@ bool ImportCIFDialog::update()
     }
 
     auto validSpecies = true;
+    QString indicatorText("Species are valid.");
 
-    if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
+    if (ui_.OutputMolecularRadio->isChecked())
     {
-        if (cifHandler_.supercellConfiguration()->nAtoms() != cifHandler_.supercellConfiguration()->molecule(0)->nAtoms() ||
-            supercell->nAtoms() != cifHandler_.supercellConfiguration()->nAtoms())
+        if (cifHandler_.molecularSpecies().empty())
         {
             validSpecies = false;
-            ui_.OutputIndicator->setOK(false);
-            ui_.OutputLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
+            indicatorText = QString("Unable to generate molecular partitioning from Species, so cannot be used in a simulation. "
+                                 "Choose a different partitioning.");
+        }
+    }
+    else
+    {
+        if (supercell->nAtoms() != cifHandler_.supercellConfiguration()->molecule(0)->nAtoms())
+        {
+            validSpecies = false;
+            indicatorText = QString("Species contains more than one molecule/fragment, and cannot be used in a "
                                      "simulation. Choose a different partitioning.");
         }
     }
-    else if (cifHandler_.molecularSpecies().empty())
-    {
-        validSpecies = false;
-        ui_.OutputIndicator->setOK(false);
-        ui_.OutputLabel->setText("Unable to generate molecular partitioning from Species, so cannot be used in a simulation. "
-                                 "Choose a different partitioning.");
-    }
 
-    if (validSpecies)
-    {
-        ui_.OutputIndicator->setOK(true);
-        ui_.OutputLabel->setText("Species are valid.");
-    }
+    ui_.OutputLabel->setText(indicatorText);
+    ui_.OutputIndicator->setOK(validSpecies);
 
     updateProgressionControls();
 
