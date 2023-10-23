@@ -14,7 +14,7 @@ class BroadeningModuleTest : public ::testing::Test
     protected:
     DissolveSystemTest systemTest;
 
-    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp("dissolve/input/broadening-argon.txt")); }
+    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/broadening-argon.txt")); }
 };
 
 TEST_F(BroadeningModuleTest, Dep1Indep2)

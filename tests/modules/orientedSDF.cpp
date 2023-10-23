@@ -15,8 +15,8 @@ class OrientedSDFModuleTest : public ::testing::Test
 
 TEST_F(OrientedSDFModuleTest, Benzene)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/orientedSDF-benzene.txt"));
-    ASSERT_TRUE(systemTest.iterateRestart(80));
+    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/orientedSDF-benzene.txt"));
+    ASSERT_TRUE(systemTest.iterateRestart<TomlFailure>(80));
 
     EXPECT_TRUE(systemTest.checkData3D(
         "OrientedSDF(R-R)//Process3D//SDF",

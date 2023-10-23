@@ -15,8 +15,8 @@ class SiteRDFModuleTest : public ::testing::Test
 
 TEST_F(SiteRDFModuleTest, Water)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/siteRDF-water.txt"));
-    ASSERT_TRUE(systemTest.iterateRestart(95));
+    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/siteRDF-water.txt"));
+    ASSERT_TRUE(systemTest.iterateRestart<TomlFailure>(95));
 
     // O-O RDF
     EXPECT_TRUE(systemTest.checkData1D(
@@ -53,8 +53,8 @@ TEST_F(SiteRDFModuleTest, Water)
 
 TEST_F(SiteRDFModuleTest, WaterNPT)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/siteRDF-waterNPT.txt"));
-    ASSERT_TRUE(systemTest.iterateRestart(95));
+    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/siteRDF-waterNPT.txt"));
+    ASSERT_TRUE(systemTest.iterateRestart<TomlFailure>(95));
 
     // O-O RDF
     EXPECT_TRUE(systemTest.checkData1D(
@@ -83,8 +83,8 @@ TEST_F(SiteRDFModuleTest, WaterNPT)
 
 TEST_F(SiteRDFModuleTest, WaterDynamic)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/siteRDF-waterDynamic.txt"));
-    ASSERT_TRUE(systemTest.iterateRestart(95));
+    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/siteRDF-waterDynamic.txt"));
+    ASSERT_TRUE(systemTest.iterateRestart<TomlFailure>(95));
 
     // O-O RDF
     EXPECT_TRUE(systemTest.checkData1D(
@@ -109,8 +109,8 @@ TEST_F(SiteRDFModuleTest, WaterDynamic)
 
 TEST_F(SiteRDFModuleTest, WaterFragments)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/siteRDF-waterFragments.txt"));
-    ASSERT_TRUE(systemTest.iterateRestart(95));
+    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/siteRDF-waterFragments.txt"));
+    ASSERT_TRUE(systemTest.iterateRestart<TomlFailure>(95));
 
     // O-O RDF
     EXPECT_TRUE(systemTest.checkData1D(

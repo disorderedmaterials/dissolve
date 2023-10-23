@@ -84,47 +84,75 @@ class DissolveSystemTest
     // Set up simulation ready for running, calling any additional setup function if already set
     template <int flags = 0> void setUp(std::string_view inputFile)
     {
-        dissolve_.clear();
-        if (!dissolve_.loadInput(inputFile))
-            throw(std::runtime_error(fmt::format("Input file '{}' failed to load correctly.\n", inputFile)));
-        if (rewriteCheck_)
+
+        if constexpr (Dissolve::toml_testing_flag || !(flags & TomlFailure))
         {
-            auto newInput = fmt::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
-                                        DissolveSys::afterLastChar(inputFile, '/'),
-                                        ::testing::UnitTest::GetInstance()->current_test_info()->name());
-            if (!dissolve_.saveInput(newInput))
-                throw(std::runtime_error(fmt::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
+            SerialisedValue toml;
+            {
+                CoreData other_;
+                Dissolve trial_{other_};
 
-            dissolve_.clear();
-            if (!dissolve_.loadInput(newInput))
-                throw(std::runtime_error(fmt::format("Input file '{}' failed to reload correctly.\n", newInput)));
-        }
+                if (!trial_.loadInput(inputFile))
+                    throw(std::runtime_error(fmt::format("Input file '{}' failed to load correctly.\n", inputFile)));
+                if (rewriteCheck_)
+                {
+                    auto newInput = fmt::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
+                                                DissolveSys::afterLastChar(inputFile, '/'),
+                                                ::testing::UnitTest::GetInstance()->current_test_info()->name());
+                    if (!trial_.saveInput(newInput))
+                        throw(std::runtime_error(fmt::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
 
-        // Run any other additional setup functions
-        if (additionalSetUp_)
-            additionalSetUp_(dissolve_, coreData_);
+                    trial_.clear();
+                    if (!trial_.loadInput(newInput))
+                        throw(std::runtime_error(fmt::format("Input file '{}' failed to reload correctly.\n", newInput)));
+                }
 
-        if (!dissolve_.prepare())
-            throw(std::runtime_error("Failed to prepare simulation.\n"));
+                // Run any other additional setup functions
+                if (additionalSetUp_)
+                    additionalSetUp_(trial_, other_);
 
-        if (dissolve_.toml_testing_flag || !(flags & TomlFailure))
-        {
-            auto toml = dissolve_.serialise();
+                if (!trial_.prepare())
+                    throw(std::runtime_error("Failed to prepare simulation.\n"));
 
-            CoreData other_;
-            Dissolve trial_{other_};
+                toml = trial_.serialise();
+            }
 
-            trial_.deserialise(toml);
-            trial_.setInputFilename(std::string(inputFile));
-            auto repeat = trial_.serialise();
+            dissolve_.deserialise(toml);
+            dissolve_.setInputFilename(std::string(inputFile));
+            auto repeat = dissolve_.serialise();
             compareToml("", toml, repeat);
         }
+        else
+        {
+            if (!dissolve_.loadInput(inputFile))
+                throw(std::runtime_error(fmt::format("Input file '{}' failed to load correctly.\n", inputFile)));
+            if (rewriteCheck_)
+            {
+                auto newInput = fmt::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
+                                            DissolveSys::afterLastChar(inputFile, '/'),
+                                            ::testing::UnitTest::GetInstance()->current_test_info()->name());
+                if (!dissolve_.saveInput(newInput))
+                    throw(std::runtime_error(fmt::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
+
+                dissolve_.clear();
+                if (!dissolve_.loadInput(newInput))
+                    throw(std::runtime_error(fmt::format("Input file '{}' failed to reload correctly.\n", newInput)));
+            }
+
+            // Run any other additional setup functions
+            if (additionalSetUp_)
+                additionalSetUp_(dissolve_, coreData_);
+
+            if (!dissolve_.prepare())
+                throw(std::runtime_error("Failed to prepare simulation.\n"));
+        }
     }
-    void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp,
-               bool known_toml_failure = false)
+
+    template <int flags = 0>
+    void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp)
     {
         additionalSetUp_ = additionalSetUp;
-        setUp(inputFile);
+        setUp<flags>(inputFile);
     }
     // Load restart file
     void loadRestart(std::string_view restartFile)
@@ -138,7 +166,7 @@ class DissolveSystemTest
      */
     public:
     // Iterate for set number of steps but chunked into smaller runs to test restart capability
-    bool iterateRestart(const int nIterations, const int chunkSize = 20)
+    template <int flags = 0> bool iterateRestart(const int nIterations, const int chunkSize = 20)
     {
         // Set the restart file frequency, and grab the input and restart filenames
         dissolve_.setRestartFileFrequency(chunkSize);
@@ -160,7 +188,7 @@ class DissolveSystemTest
             if (iterationsDone != nIterations)
             {
                 fmt::print("Resetting at iteration {}...\n", iterationsDone);
-                setUp(inputFile);
+                setUp<flags>(inputFile);
                 loadRestart(restartFile);
             }
         }

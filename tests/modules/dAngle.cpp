@@ -15,8 +15,8 @@ class DAngleModuleTest : public ::testing::Test
 
 TEST_F(DAngleModuleTest, Water)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/dAngle.txt"));
-    ASSERT_TRUE(systemTest.iterateRestart(95));
+    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/dAngle.txt"));
+    ASSERT_TRUE(systemTest.iterateRestart<TomlFailure>(95));
 
     EXPECT_TRUE(systemTest.checkData1D(
         "DAngle(X-H...O)//Process1D//RDF(BC)",
