@@ -15,7 +15,7 @@ class HistogramCNModuleTest : public ::testing::Test
 
 TEST_F(HistogramCNModuleTest, Simple)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/histogramCN-simple.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/histogramCN-simple.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     EXPECT_TRUE(systemTest.checkData1D(

@@ -16,7 +16,7 @@ class MDModuleTest : public ::testing::Test
 
 TEST_F(MDModuleTest, BenzeneRestart)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/md-benzene.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/md-benzene.txt"));
     ASSERT_NO_THROW(systemTest.loadRestart("dissolve/input/md-benzene.8.reference.restart"));
     ASSERT_TRUE(systemTest.dissolve().iterate(2));
 

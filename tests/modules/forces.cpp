@@ -23,7 +23,7 @@ class ForcesModuleTest : public ::testing::Test
 
 TEST_F(ForcesModuleTest, DLPOLYWater3000Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-water3000.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt"));
     systemTest.setModuleEnabled("Energy01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -34,7 +34,7 @@ TEST_F(ForcesModuleTest, DLPOLYWater3000Full)
 
 TEST_F(ForcesModuleTest, DLPOLYWater3000VanDerWaals)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-water3000.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          D.setAtomTypeChargeSource(true);
@@ -52,7 +52,7 @@ TEST_F(ForcesModuleTest, DLPOLYWater3000VanDerWaals)
 
 TEST_F(ForcesModuleTest, DLPOLYWater3000Electrostatics)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-water3000.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
@@ -78,7 +78,7 @@ TEST_F(ForcesModuleTest, DLPOLYWater3000Electrostatics)
 
 TEST_F(ForcesModuleTest, DLPOLYWater3000Bound)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-water3000.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          D.setAtomTypeChargeSource(true);
@@ -95,7 +95,7 @@ TEST_F(ForcesModuleTest, DLPOLYWater3000Bound)
 
 TEST_F(ForcesModuleTest, DLPOLYHexane1Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-hexane1.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane1.txt"));
     systemTest.setModuleEnabled("Energy01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -105,7 +105,7 @@ TEST_F(ForcesModuleTest, DLPOLYHexane1Full)
 
 TEST_F(ForcesModuleTest, DLPOLYHexane2Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-hexane2.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane2.txt"));
     systemTest.setModuleEnabled("Energy01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -115,7 +115,7 @@ TEST_F(ForcesModuleTest, DLPOLYHexane2Full)
 
 TEST_F(ForcesModuleTest, DLPOLYHexane200Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-hexane200.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane200.txt"));
     systemTest.setModuleEnabled("Energy01", false);
     auto *forcesModule = systemTest.getModule<ForcesModule>("Forces01");
     forcesModule->keywords().set("TestThreshold", 2.0e-5);
@@ -127,7 +127,7 @@ TEST_F(ForcesModuleTest, DLPOLYHexane200Full)
 
 TEST_F(ForcesModuleTest, DLPOLYHexane200Unbound)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-hexane200.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane200.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          for (auto b : C.masterBonds())
@@ -148,7 +148,7 @@ TEST_F(ForcesModuleTest, DLPOLYHexane200Unbound)
 
 TEST_F(ForcesModuleTest, DLPOLYHexane200Bound)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-hexane200.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane200.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          for (auto at : C.atomTypes())
@@ -165,7 +165,7 @@ TEST_F(ForcesModuleTest, DLPOLYHexane200Bound)
 
 TEST_F(ForcesModuleTest, DLPOLYBenzene181Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-benzene181.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-benzene181.txt"));
     systemTest.setModuleEnabled("Energy01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -176,7 +176,7 @@ TEST_F(ForcesModuleTest, DLPOLYBenzene181Full)
 
 TEST_F(ForcesModuleTest, DLPOLYBenzene181VanDerWaals)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-benzene181.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          D.setAtomTypeChargeSource(true);
@@ -198,7 +198,7 @@ TEST_F(ForcesModuleTest, DLPOLYBenzene181VanDerWaals)
 
 TEST_F(ForcesModuleTest, DLPOLYBenzene181Electrostatics)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-benzene181.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
@@ -221,7 +221,7 @@ TEST_F(ForcesModuleTest, DLPOLYBenzene181Electrostatics)
 
 TEST_F(ForcesModuleTest, DLPOLYBenzene181Bound)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-benzene181.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          D.setAtomTypeChargeSource(true);
@@ -240,7 +240,7 @@ TEST_F(ForcesModuleTest, DLPOLYBenzene181Bound)
 
 TEST_F(ForcesModuleTest, MoscitoPOETorsions)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-POE.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-POE.txt"));
     systemTest.setModuleEnabled("Energy01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -251,7 +251,7 @@ TEST_F(ForcesModuleTest, MoscitoPOETorsions)
 
 TEST_F(ForcesModuleTest, MoscitoPy4OHNTf2Torsions)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-Py4OH-NTf2.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-Py4OH-NTf2.txt"));
     systemTest.setModuleEnabled("Energy01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -262,7 +262,7 @@ TEST_F(ForcesModuleTest, MoscitoPy4OHNTf2Torsions)
 
 TEST_F(ForcesModuleTest, MoscitoPy4OHNTf2Impropers)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-Py4OH-NTf2-impropers.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-Py4OH-NTf2-impropers.txt"));
     systemTest.setModuleEnabled("Energy01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -273,7 +273,7 @@ TEST_F(ForcesModuleTest, MoscitoPy4OHNTf2Impropers)
 
 TEST_F(ForcesModuleTest, MoscitoPy5NTf2Torsions)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-Py5-NTf2.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-Py5-NTf2.txt"));
     systemTest.setModuleEnabled("Energy01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -284,7 +284,7 @@ TEST_F(ForcesModuleTest, MoscitoPy5NTf2Torsions)
 
 TEST_F(ForcesModuleTest, MoscitoPy5NTf2Impropers)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/energyForce-Py5-NTf2-impropers.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-Py5-NTf2-impropers.txt"));
     systemTest.setModuleEnabled("Energy01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 

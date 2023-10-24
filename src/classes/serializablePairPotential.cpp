@@ -5,10 +5,10 @@
 #include "classes/serializablePairPotential.h"
 
 SerializablePairPotential::SerializablePairPotential(double &range, double &delta, bool &source,
-						     bool &forceCharge, 
+						     bool &forceCharge, bool &autoCharge,
                                                      std::vector<std::shared_ptr<AtomType>> &types)
     : range_(range), delta_(delta), atomTypeChargeSource_(source), atomTypes_(types),
-      forceCharge_(forceCharge), 
+      forceCharge_(forceCharge), autoCharge_(autoCharge),
       coulombTruncationScheme_(PairPotential::coulombTruncationScheme_),
       shortRangeTruncationScheme_(PairPotential::shortRangeTruncationScheme_){};
 
@@ -47,6 +47,7 @@ SerialisedValue SerializablePairPotential::serialise() const
         {"delta", delta_},
         {"includeCoulomb", atomTypeChargeSource_},
         {"forceChargeSource", forceCharge_},
+        {"autoChargeSource", autoCharge_},
         {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(coulombTruncationScheme_)},
         {"shortRangeTruncation", PairPotential::shortRangeTruncationSchemes().serialise(shortRangeTruncationScheme_)}};
     for (auto &atomType : atomTypes_)
@@ -61,6 +62,7 @@ void SerializablePairPotential::deserialise(const SerialisedValue &node)
     delta_ = toml::find_or<double>(node, "delta", 0.005);
     atomTypeChargeSource_ = toml::find_or<bool>(node, "includeCoulomb", false);
     forceCharge_ = toml::find_or<bool>(node, "forceChargeSource", false);
+    autoCharge_ = toml::find_or<bool>(node, "autoChargeSource", false);
 
     coulombTruncationScheme_ =
         PairPotential::coulombTruncationSchemes().deserialise(toml::find_or<std::string>(node, "coulombTruncation", "Shifted"));
