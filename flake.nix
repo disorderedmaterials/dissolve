@@ -159,6 +159,7 @@
               distcc
               gdb
               gtk3
+              nixGL.nixGLIntel
               openmpi
               qt-idaaas.packages.${system}.qttools
               tbb
