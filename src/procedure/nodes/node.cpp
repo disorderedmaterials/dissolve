@@ -371,6 +371,6 @@ SerialisedValue ProcedureNode::serialise() const
 void ProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     if (mustBeNamed())
-        name_ = toml::find<std::string>(node, "name");
+        setName(toml::find<std::string>(node, "name"));
     keywords_.deserialiseFrom(node, data);
 }
