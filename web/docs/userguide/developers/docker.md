@@ -22,7 +22,7 @@ This workflow uses the [Xming X Server](http://www.straightrunning.com/XmingNote
 
 ## Setting up the environment
 
-### Step 1: Build the Docker image
+### 1) Build the Docker image
 
 In the dissolve code, open a command prompt of your choice (for instance cmd.exe, powershell, or git bash) and run
 ```shell
@@ -32,7 +32,7 @@ in order to build the image, where "dissolve" is the image tag.
 
 The image layers are typically cached by Docker so the more time consuming parts of the build process (ranging to a couple of hours) only have to be done on the first build. Subsequent builds are quick.
 
-### Step 2: Create an X11 client on the host
+### 2) Create an X11 client on the host
 
 Open XLaunch, the X11 wizard installed with Xming.
 
@@ -45,7 +45,7 @@ Clicking Next> again, we must allow "Disable access control".
 
 Then configuration is complete. If the XLaunch wizard is successfully running, an XLaunch logo should be visible in the bottom right of the Windows homescreen along with other running applications.
 
-### Step 3: Run the container for the dissolve environment
+### 3) Run the container for the dissolve environment
 
 Once again in the command prompt, run
 ```shell
@@ -56,9 +56,9 @@ This will run a new instance of the built image in an interactive terminal - you
 
 Notice that this command maps the IP address of the host machine to the container (a requirement for X11 forwarding of graphics to take place) as well as mapping the dissolve code into the container. 
 
-### Step 4: Launch the dissolve GUI
+### 4) Launch the dissolve GUI
 
 Moving over to the interactive terminal of the container, we should see that we are in the container `/dissolve` directory.
-Run `./build/bin/dissolve-gui` to start the software.
+Run `nixGLIntel ./build/bin/dissolve-gui` to start the software.
 
 You should now see the dissolve home screen open in a new window.
