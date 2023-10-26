@@ -4,12 +4,10 @@
 
 #include "classes/serializablePairPotential.h"
 
-SerializablePairPotential::SerializablePairPotential(double &range, double &delta, bool &source,
-						     bool &forceCharge, bool &autoCharge,
-                                                     std::vector<std::shared_ptr<AtomType>> &types)
-    : range_(range), delta_(delta), atomTypeChargeSource_(source), atomTypes_(types),
-      forceCharge_(forceCharge), autoCharge_(autoCharge),
-      coulombTruncationScheme_(PairPotential::coulombTruncationScheme_),
+SerializablePairPotential::SerializablePairPotential(double &range, double &delta, bool &source, bool &forceCharge,
+                                                     bool &autoCharge, std::vector<std::shared_ptr<AtomType>> &types)
+    : range_(range), delta_(delta), atomTypeChargeSource_(source), atomTypes_(types), forceCharge_(forceCharge),
+      autoCharge_(autoCharge), coulombTruncationScheme_(PairPotential::coulombTruncationScheme_),
       shortRangeTruncationScheme_(PairPotential::shortRangeTruncationScheme_){};
 
 double &SerializablePairPotential::range() { return range_; }
