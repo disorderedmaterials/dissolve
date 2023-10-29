@@ -78,8 +78,7 @@ bool ImportCIFDialog::progressionAllowed(int index) const
     }
 
     return true;
-}
-
+}   
 // Perform any necessary actions before moving to the next page
 bool ImportCIFDialog::prepareForNextPage(int currentIndex)
 {
@@ -110,10 +109,11 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
                 return false;
             break;
         case (ImportCIFDialog::CleanedPage):
+            ui_.OutputMolecularRadio->setChecked(!cifHandler_.molecularSpecies().empty());
+            outputFlags_.setFlag(CIFHandler::OutputFlags::OutputMolecularSpecies);
             update();
             if (!cifHandler_.supercellConfiguration())
                 return false;
-            ui_.OutputMolecularRadio->setChecked(!cifHandler_.molecularSpecies().empty());
             break;
         default:
             break;
