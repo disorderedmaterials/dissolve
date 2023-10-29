@@ -113,6 +113,7 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             update();
             if (!cifHandler_.supercellConfiguration())
                 return false;
+            ui_.OutputMolecularRadio->setChecked(!cifHandler_.molecularSpecies().empty());
             break;
         default:
             break;
@@ -396,21 +397,21 @@ bool ImportCIFDialog::update()
     ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedUnitCellConfiguration());
     ui_.OutputViewer->setConfiguration(cifHandler_.supercellConfiguration());
 
-    auto *supercell = cifHandler_.supercellSpecies();
+    auto *supercellConfiguration = cifHandler_.supercellConfiguration();
 
     // Update the information panel
-    ui_.SupercellBoxALabel->setText(QString::number(supercell->box()->axisLengths().x) + " &#8491;");
-    ui_.SupercellBoxBLabel->setText(QString::number(supercell->box()->axisLengths().y) + " &#8491;");
-    ui_.SupercellBoxCLabel->setText(QString::number(supercell->box()->axisLengths().z) + " &#8491;");
-    ui_.SupercellBoxAlphaLabel->setText(QString::number(supercell->box()->axisAngles().x) + "&deg;");
-    ui_.SupercellBoxBetaLabel->setText(QString::number(supercell->box()->axisAngles().y) + "&deg;");
-    ui_.SupercellBoxGammaLabel->setText(QString::number(supercell->box()->axisAngles().z) + "&deg;");
+    ui_.SupercellBoxALabel->setText(QString::number(supercellConfiguration->box()->axisLengths().x) + " &#8491;");
+    ui_.SupercellBoxBLabel->setText(QString::number(supercellConfiguration->box()->axisLengths().y) + " &#8491;");
+    ui_.SupercellBoxCLabel->setText(QString::number(supercellConfiguration->box()->axisLengths().z) + " &#8491;");
+    ui_.SupercellBoxAlphaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().x) + "&deg;");
+    ui_.SupercellBoxBetaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().y) + "&deg;");
+    ui_.SupercellBoxGammaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().z) + "&deg;");
     auto chemicalDensity = cifHandler_.supercellConfiguration()->chemicalDensity();
     ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
                                                        : "-- g cm<sup>3</sup>");
-    ui_.SupercellVolumeLabel->setText(QString::number(cifHandler_.supercellConfiguration()->box()->volume()) +
+    ui_.SupercellVolumeLabel->setText(QString::number(supercellConfiguration->box()->volume()) +
                                       " &#8491;<sup>3</sup>");
-    ui_.SupercellNAtomsLabel->setText(QString::number(cifHandler_.supercellConfiguration()->nAtoms()));
+    ui_.SupercellNAtomsLabel->setText(QString::number(supercellConfiguration->nAtoms()));
 
     if (ui_.OutputMolecularRadio->isChecked())
     {
@@ -449,7 +450,8 @@ bool ImportCIFDialog::update()
     }
     else
     {
-        if (supercell->nAtoms() != cifHandler_.supercellConfiguration()->molecule(0)->nAtoms())
+        auto *supercell = cifHandler_.supercellSpecies();
+        if (!supercell || supercell->nAtoms() != supercellConfiguration->molecule(0)->nAtoms())
         {
             validSpecies = false;
             indicatorText = QString("Species contains more than one molecule/fragment, and cannot be used in a "
