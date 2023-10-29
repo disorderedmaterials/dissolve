@@ -648,10 +648,11 @@ bool CIFHandler::detectMolecules()
 // Create supercell species
 bool CIFHandler::createSupercell()
 {
-    supercellSpecies_ = coreData_.addSpecies();
-    supercellSpecies_->setName("Supercell");
     auto supercellLengths = cleanedUnitCellSpecies_->box()->axisLengths();
     supercellLengths.multiply(supercellRepeat_.x, supercellRepeat_.y, supercellRepeat_.z);
+
+    supercellSpecies_ = coreData_.addSpecies();
+    supercellSpecies_->setName("Supercell");
     supercellSpecies_->createBox(supercellLengths, cleanedUnitCellSpecies_->box()->axisAngles(), false);
 
     // Configuration
@@ -684,26 +685,30 @@ bool CIFHandler::createSupercell()
     }
     else
     {
-
-        for (auto &molecularSpecies : molecularUnitCellSpecies_)
+        for (auto& molecularSpecies : molecularUnitCellSpecies_)
         {
             auto *sp = molecularSpecies.species();
-            auto coordinates = molecularSpecies.coordinates();
-            molecularSpecies.coordinates().clear();
-            for (auto instance : coordinates)
+
+            for (auto& instance : molecularSpecies.coordinates())
             {
                 for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
                     for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
                         for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
                         {
+                            auto *spCopy = coreData_.addSpecies();
+                            spCopy->createBox(supercellLengths, cleanedUnitCellSpecies_->box()->axisAngles(), false);
                             Vec3<double> deltaR = cleanedUnitCellSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
-                            std::vector<Vec3<double>> repeated(instance.size());
-                            std::transform(instance.begin(), instance.end(), repeated.begin(),
-                                           [&](auto &coord) { return coord + deltaR; });
-                            supercellConfiguration_->addMolecule(sp, repeated);
+                            for (const auto &&[i, r] : zip(sp->atoms(), instance))
+                                spCopy->addAtom(i.Z(), r + deltaR, 0.0, i.atomType());
+                            
+                            if (flags_.isSet(UpdateFlags::CalculateBonding))
+                                spCopy->addMissingBonds();
+                            else
+                                applyCIFBonding(spCopy, flags_.isSet(UpdateFlags::PreventMetallicBonding));
+
+                            supercellConfiguration_->addMolecule(spCopy);
                             supercellConfiguration_->updateObjectRelationships();
-                            molecularSpecies.coordinates().insert(molecularSpecies.coordinates().end(), repeated);
-                        }
+                }  
             }
         }
     }
@@ -811,24 +816,25 @@ std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(Co
                     auto root = generator.nodes().back();
                     auto suffix = 0;
 
-                    // We use 'CoordinateSets' here, because in this instance we are working with (CoordinateSet, Add) pairs
                     while (generator.rootSequence().nodeInScope(root, fmt::format("SymmetryCopies_{}", uniqueSuffix)) !=
                            nullptr)
                         uniqueSuffix = fmt::format("{}_{:02d}", base, ++suffix);
-
-                    // CoordinateSets
-                    auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(
-                        fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
-                    coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
-                    coordsNode->setSets(cifMolecularSp.coordinates());
-
-                    // Add
-                    auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
-                    addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp.coordinates().size())));
-                    addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
-                    addNode->keywords().set("Rotate", false);
-                    addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
                 }
+
+                // We use 'CoordinateSets' here, because in this instance we are working with (CoordinateSet, Add) pairs
+
+                // CoordinateSets
+                auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(
+                    fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
+                coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
+                coordsNode->setSets(cifMolecularSp.coordinates());
+
+                // Add
+                auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
+                addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp.coordinates().size())));
+                addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+                addNode->keywords().set("Rotate", false);
+                addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
             }
         }
         else
