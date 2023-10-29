@@ -685,12 +685,12 @@ bool CIFHandler::createSupercell()
     }
     else
     {
-        for (auto& molecularSpecies : molecularUnitCellSpecies_)
+        for (auto &molecularSpecies : molecularUnitCellSpecies_)
         {
             const auto *sp = molecularSpecies.species();
             auto coordinates = molecularSpecies.coordinates();
             molecularSpecies.coordinates().clear();
-            for (auto& instance : coordinates)
+            for (auto &instance : coordinates)
             {
                 for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
                     for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
@@ -704,7 +704,7 @@ bool CIFHandler::createSupercell()
                                            [&](auto &coord) { return coord + deltaR; });
                             for (const auto &&[i, r] : zip(sp->atoms(), repeated))
                                 spCopy->addAtom(i.Z(), r, 0.0, i.atomType());
-                            
+
                             if (flags_.isSet(UpdateFlags::CalculateBonding))
                                 spCopy->addMissingBonds();
                             else
@@ -713,7 +713,7 @@ bool CIFHandler::createSupercell()
                             supercellConfiguration_->addMolecule(spCopy);
                             supercellConfiguration_->updateObjectRelationships();
                             molecularSpecies.coordinates().insert(molecularSpecies.coordinates().end(), repeated);
-                }  
+                        }
             }
         }
     }
@@ -828,8 +828,8 @@ std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(Co
                 // We use 'CoordinateSets' here, because in this instance we are working with (CoordinateSet, Add) pairs
 
                 // CoordinateSets
-                auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(
-                    fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
+                auto coordsNode =
+                    generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
                 coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
                 coordsNode->setSets(cifMolecularSp.coordinates());
 

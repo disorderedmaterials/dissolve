@@ -78,7 +78,7 @@ bool ImportCIFDialog::progressionAllowed(int index) const
     }
 
     return true;
-}   
+}
 // Perform any necessary actions before moving to the next page
 bool ImportCIFDialog::prepareForNextPage(int currentIndex)
 {
@@ -409,8 +409,7 @@ bool ImportCIFDialog::update()
     auto chemicalDensity = cifHandler_.supercellConfiguration()->chemicalDensity();
     ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
                                                        : "-- g cm<sup>3</sup>");
-    ui_.SupercellVolumeLabel->setText(QString::number(supercellConfiguration->box()->volume()) +
-                                      " &#8491;<sup>3</sup>");
+    ui_.SupercellVolumeLabel->setText(QString::number(supercellConfiguration->box()->volume()) + " &#8491;<sup>3</sup>");
     ui_.SupercellNAtomsLabel->setText(QString::number(supercellConfiguration->nAtoms()));
 
     if (ui_.OutputMolecularRadio->isChecked())
