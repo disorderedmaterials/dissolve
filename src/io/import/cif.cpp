@@ -687,9 +687,10 @@ bool CIFHandler::createSupercell()
     {
         for (auto& molecularSpecies : molecularUnitCellSpecies_)
         {
-            auto *sp = molecularSpecies.species();
-
-            for (auto& instance : molecularSpecies.coordinates())
+            const auto *sp = molecularSpecies.species();
+            auto coordinates = molecularSpecies.coordinates();
+            molecularSpecies.coordinates().clear();
+            for (auto& instance : coordinates)
             {
                 for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
                     for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
@@ -698,8 +699,11 @@ bool CIFHandler::createSupercell()
                             auto *spCopy = coreData_.addSpecies();
                             spCopy->createBox(supercellLengths, cleanedUnitCellSpecies_->box()->axisAngles(), false);
                             Vec3<double> deltaR = cleanedUnitCellSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
-                            for (const auto &&[i, r] : zip(sp->atoms(), instance))
-                                spCopy->addAtom(i.Z(), r + deltaR, 0.0, i.atomType());
+                            std::vector<Vec3<double>> repeated(instance.size());
+                            std::transform(instance.begin(), instance.end(), repeated.begin(),
+                                           [&](auto &coord) { return coord + deltaR; });
+                            for (const auto &&[i, r] : zip(sp->atoms(), repeated))
+                                spCopy->addAtom(i.Z(), r, 0.0, i.atomType());
                             
                             if (flags_.isSet(UpdateFlags::CalculateBonding))
                                 spCopy->addMissingBonds();
@@ -708,6 +712,7 @@ bool CIFHandler::createSupercell()
 
                             supercellConfiguration_->addMolecule(spCopy);
                             supercellConfiguration_->updateObjectRelationships();
+                            molecularSpecies.coordinates().insert(molecularSpecies.coordinates().end(), repeated);
                 }  
             }
         }
@@ -802,9 +807,8 @@ std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(Co
 
             for (auto &cifMolecularSp : molecularUnitCellSpecies_)
             {
-                auto *sp = cifMolecularSp.species();
                 // Add the species
-                sp = coreData.copySpecies(cifMolecularSp.species());
+                auto *sp = coreData.copySpecies(cifMolecularSp.species());
                 species.push_back(sp);
 
                 // Determine a unique suffix
