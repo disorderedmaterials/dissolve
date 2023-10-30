@@ -45,16 +45,26 @@ Clicking Next> again, we must allow "Disable access control".
 
 Then configuration is complete. If the XLaunch wizard is successfully running, an XLaunch logo should be visible in the bottom right of the Windows homescreen along with other running applications.
 
-### 3) Run the container for the dissolve environment
+### 3) Run the container and build the dissolve dev environment
 
 Once again in the command prompt, run
 ```shell
 Docker run -it -u 0 -e DISPLAY=$HOST_IP_ADDRESS:0 -v $PATH_TO_DISSOLVE_CODE_ON_HOST:/dissolve --name $CONTAINER_NAME dissolve
 ```
 
-This will run a new instance of the built image in an interactive terminal - you should now see the container shell running.
+This will run a new instance of the built image in an interactive terminal - you should now see the container's development shell running.
 
 Notice that this command maps the IP address of the host machine to the container (a requirement for X11 forwarding of graphics to take place) as well as mapping the dissolve code into the container. 
+
+To build the dissolve software using `cmake`, you will need to run the following commands
+```shell
+nix-env -iA nixpkgs dos2unix; dos2unix flake.nix    # removes any problematic DOS characters inside the flake file
+cmake --preset GUI-nix
+cmake --build build
+```
+The build products should now be visible in the `/build` directory on both the host and container file systems.
+
+To run all tests from the top level of the repo, run `cd build; ctest -j4`.
 
 ### 4) Launch the dissolve GUI
 
