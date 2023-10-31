@@ -28,8 +28,8 @@ TEST_F(HistogramCNModuleTest, Simple)
 
 TEST_F(HistogramCNModuleTest, Water)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/histogramCN-water.txt"));
-    ASSERT_TRUE(systemTest.iterateRestart<TomlFailure>(95));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/histogramCN-water.txt"));
+    ASSERT_TRUE(systemTest.iterateRestart(95));
 
     EXPECT_TRUE(systemTest.checkData1D(
         "CN(COM-COM)//Process1D//Histogram",

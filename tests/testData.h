@@ -85,6 +85,7 @@ class DissolveSystemTest
     template <int flags = 0> void setUp(std::string_view inputFile)
     {
 
+        dissolve_.clear();
         if constexpr (Dissolve::toml_testing_flag || !(flags & TomlFailure))
         {
             SerialisedValue toml;

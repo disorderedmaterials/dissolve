@@ -16,8 +16,8 @@ class SDFModuleTest : public ::testing::Test
 
 TEST_F(SDFModuleTest, Water)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/sdf-water.txt"));
-    ASSERT_TRUE(systemTest.iterateRestart<TomlFailure>(95));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/sdf-water.txt"));
+    ASSERT_TRUE(systemTest.iterateRestart(95));
 
     EXPECT_TRUE(systemTest.checkData3D(
         "SDF(O)//Process3D//SDF",
@@ -26,8 +26,8 @@ TEST_F(SDFModuleTest, Water)
 
 TEST_F(SDFModuleTest, Benzene)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/sdf-benzene.txt"));
-    ASSERT_TRUE(systemTest.iterateRestart<TomlFailure>(80));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/sdf-benzene.txt"));
+    ASSERT_TRUE(systemTest.iterateRestart(80));
 
     EXPECT_TRUE(systemTest.checkData3D(
         "SDF(R-R)//Process3D//SDF",
