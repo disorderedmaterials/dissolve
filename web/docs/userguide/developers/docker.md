@@ -26,7 +26,7 @@ This workflow uses the [Xming X Server](http://www.straightrunning.com/XmingNote
 
 In the dissolve code, open a command prompt of your choice (for instance cmd.exe, powershell, or git bash) and run
 ```shell
-Docker build -t dissolve .
+docker build -t dissolve .
 ```
 in order to build the image, where "dissolve" is the image tag.
 
@@ -49,7 +49,7 @@ Then configuration is complete. If the XLaunch wizard is successfully running, a
 
 Once again in the command prompt, run
 ```shell
-Docker run -it -u 0 -e DISPLAY=$HOST_IP_ADDRESS:0 -v $PATH_TO_DISSOLVE_CODE_ON_HOST:/dissolve --name $CONTAINER_NAME dissolve
+docker run -it -u 0 -e DISPLAY=$HOST_IP_ADDRESS:0 -v $PATH_TO_DISSOLVE_CODE_ON_HOST:/dissolve --name $CONTAINER_NAME dissolve
 ```
 
 This will run a new instance of the built image in an interactive terminal - you should now see the container's development shell running.
