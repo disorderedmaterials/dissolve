@@ -58,17 +58,23 @@ Notice that this command maps the IP address of the host machine to the containe
 
 To build the dissolve software using `cmake`, you will need to run the following commands
 ```shell
-nix-env -iA nixpkgs dos2unix; dos2unix flake.nix    # removes any problematic DOS characters inside the flake file
 cmake --preset GUI-nix
 cmake --build build
 ```
 The build products should now be visible in the `/build` directory on both the host and container file systems.
 
-To run all tests from the top level of the repo, run `cd build; ctest -j4`.
+To run all tests from the top level of the repo, run 
+```shell
+cd build; ctest -j4
+```
 
 ### 4) Launch the dissolve GUI
 
 Moving over to the interactive terminal of the container, we should see that we are in the container `/dissolve` directory.
-Run `nixGLIntel ./build/bin/dissolve-gui` to start the software.
+Run 
+```shell
+nixGLIntel ./build/bin/dissolve-gui
+``` 
+to start the software.
 
 You should now see the dissolve home screen open in a new window.
