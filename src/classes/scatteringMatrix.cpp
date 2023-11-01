@@ -21,6 +21,30 @@ bool ScatteringMatrix::qDependentWeighting() const
     return std::find_if(xRayData_.begin(), xRayData_.end(), [](auto data) { return std::get<0>(data); }) != xRayData_.end();
 }
 
+// Return number of atom types involved
+int ScatteringMatrix::nAtomTypes() const { return atomTypes_.size(); }
+
+// Return atom types
+const std::vector<std::shared_ptr<AtomType>> &ScatteringMatrix::atomTypes() const { return atomTypes_; }
+
+// Return atom type at index specified
+std::shared_ptr<AtomType> ScatteringMatrix::atomType(int index) const { return atomTypes_[index]; }
+
+// Return index of atom type in our local vector
+int ScatteringMatrix::indexOf(const std::shared_ptr<AtomType> &typeI) const
+{
+    auto it = std::find(atomTypes_.begin(), atomTypes_.end(), typeI);
+    assert(it != atomTypes_.end());
+    return it - atomTypes_.begin();
+}
+
+// Return index pair of atom types in our local vector
+std::tuple<int, int> ScatteringMatrix::pairIndexOf(const std::shared_ptr<AtomType> &typeI,
+                                                   const std::shared_ptr<AtomType> &typeJ) const
+{
+    return {indexOf(typeI), indexOf(typeJ)};
+}
+
 // Return column index of specified AtomType pair
 int ScatteringMatrix::columnIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const
 {
@@ -319,22 +343,25 @@ Array2D<double> ScatteringMatrix::matrixProduct(double q) const { return inverse
  */
 
 // Initialise from supplied list of AtomTypes
-void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &types, Array2D<Data1D> &estimatedSQ)
+void ScatteringMatrix::initialise(const AtomTypeMix &typeMix, Array2D<Data1D> &estimatedSQ)
 {
     // Clear coefficients matrix and its inverse_, and empty our typePairs_ and data_ lists
     A_.clear();
     data_.clear();
+    atomTypes_.clear();
     typePairs_.clear();
     qZeroMatrix_.clear();
     qZeroInverse_.clear();
     qMatrices_.clear();
 
-    // Copy atom types
-    dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
-                            [this](int i, auto at1, int j, auto at2) { typePairs_.emplace_back(at1, at2); });
+    // Copy atom types and construct pairs
+    atomTypes_.resize(typeMix.nItems());
+    std::transform(typeMix.begin(), typeMix.end(), atomTypes_.begin(), [](const auto &atd) { return atd.atomType(); });
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.begin(), atomTypes_.end(),
+                            [this](int i, auto &at1, int j, auto &at2) { typePairs_.emplace_back(at1, at2); });
 
     // Create partials array
-    estimatedSQ.initialise(types.size(), types.size(), true);
+    estimatedSQ.initialise(atomTypes_.size(), atomTypes_.size(), true);
     auto index = 0;
     for (auto [i, j] : typePairs_)
         estimatedSQ[index++].setTag(fmt::format("{}-{}", i->name(), j->name()));

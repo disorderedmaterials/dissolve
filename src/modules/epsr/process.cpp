@@ -32,11 +32,6 @@
 // Run set-up stage
 bool EPSRModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
-    // Realise storage for generated S(Q), and initialise a scattering matrix
-    auto &estimatedSQ = moduleContext.dissolve().processingModuleData().realise<Array2D<Data1D>>(
-        "EstimatedSQ", name_, GenericItem::InRestartFileFlag);
-    scatteringMatrix_.initialise(moduleContext.dissolve().coreData().atomTypes(), estimatedSQ);
-
     // Check for exactly one Configuration referenced through target modules
     targetConfiguration_ = nullptr;
     std::optional<double> rho;
@@ -76,6 +71,11 @@ bool EPSRModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordS
 
         rho = targetConfiguration_->atomicDensity();
     }
+
+    // Realise storage for generated S(Q), and initialise a scattering matrix
+    auto &estimatedSQ = moduleContext.dissolve().processingModuleData().realise<Array2D<Data1D>>(
+        "EstimatedSQ", name_, GenericItem::InRestartFileFlag);
+    scatteringMatrix_.initialise(targetConfiguration_->atomTypes(), estimatedSQ);
 
     // If a pcof file was provided, read in the parameters from it here
     if (!pCofFilename_.empty())
