@@ -50,8 +50,8 @@ class ScatteringMatrix
     bool qDependentWeighting() const;
 
     public:
-    // Return index of specified AtomType pair
-    int pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
+    // Return column of specified AtomType pair
+    int columnIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
     // Generate matrices
     void generateMatrices();
     // Return the precalculated Q = 0.0 scattering matrix inverse

@@ -23,8 +23,8 @@ bool ScatteringMatrix::qDependentWeighting() const
     return std::find_if(xRayData_.begin(), xRayData_.end(), [](auto data) { return std::get<0>(data); }) != xRayData_.end();
 }
 
-// Return index of specified AtomType pair
-int ScatteringMatrix::pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const
+// Return column index of specified AtomType pair
+int ScatteringMatrix::columnIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const
 {
     auto index = 0;
     for (auto [i, j] : typePairs_)
@@ -360,7 +360,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const Neutro
     {
         for (auto m = n; m < nUsedTypes; ++m)
         {
-            auto colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
+            auto colIndex = columnIndex(usedTypes.atomType(n), usedTypes.atomType(m));
             if (colIndex == -1)
                 return Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
                                         "('{}' and/or '{}').\n",
@@ -398,7 +398,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
     {
         for (int m = n; m < nUsedTypes; ++m)
         {
-            auto colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
+            auto colIndex = columnIndex(usedTypes.atomType(n), usedTypes.atomType(m));
             if (colIndex == -1)
                 return Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
                                         "('{}' and/or '{}').\n",
@@ -440,7 +440,7 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, const std::
     A_.addRow(typePairs_.size());
     const auto rowIndex = A_.nRows() - 1;
 
-    auto colIndex = pairIndex(at1, at2);
+    auto colIndex = columnIndex(at1, at2);
     if (colIndex == -1)
         return Messenger::error(
             "Weights associated to reference data contain one or more unknown AtomTypes ('{}' and/or '{}').\n", at1->name(),

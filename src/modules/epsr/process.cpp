@@ -661,7 +661,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
             ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
             [&](int i, auto at1, int j, auto at2)
             {
-                auto weight = scatteringMatrix_.qZeroMatrixInverse()[{scatteringMatrix_.pairIndex(at1, at2), dataIndex}];
+                auto weight = scatteringMatrix_.qZeroMatrixInverse()[{scatteringMatrix_.columnIndex(at1, at2), dataIndex}];
 
                 /*
                  * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear
