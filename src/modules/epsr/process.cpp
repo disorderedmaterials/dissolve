@@ -695,7 +695,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     if (modifyPotential_ && (runCount % *modifyPotential_ == 0))
     {
         // Sum fluctuation coefficients in to the potential coefficients
-        auto &coefficients = potentialCoefficients(moduleContext.dissolve(), nAtomTypes, ncoeffp);
+        auto &coefficients = potentialCoefficients(moduleContext.dissolve().processingModuleData(), nAtomTypes, ncoeffp);
         dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
                                 [&](int i, auto at1, int j, auto at2)
                                 {
@@ -788,7 +788,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     {
         if (moduleContext.processPool().isMaster())
         {
-            auto &coefficients = potentialCoefficients(moduleContext.dissolve(), nAtomTypes, ncoeffp);
+            auto &coefficients = potentialCoefficients(moduleContext.dissolve().processingModuleData(), nAtomTypes, ncoeffp);
 
             dissolve::for_each_pair(
                 ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
