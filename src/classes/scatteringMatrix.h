@@ -19,9 +19,6 @@ class AtomType;
 // Scattering Matrix Container
 class ScatteringMatrix
 {
-    public:
-    ScatteringMatrix();
-
     /*
      * Data
      *

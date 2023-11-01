@@ -11,8 +11,6 @@
 #include <algorithm>
 #include <utility>
 
-ScatteringMatrix::ScatteringMatrix() = default;
-
 /*
  * Data
  */
