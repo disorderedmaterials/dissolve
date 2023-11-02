@@ -202,7 +202,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
      */
 
     // Set up storage for the changes to coefficients used to generate the empirical potentials
-    const auto &atomTypes = moduleContext.dissolve().coreData().atomTypes();
+    const auto &atomTypes = scatteringMatrix_.atomTypes();
     const auto nAtomTypes = atomTypes.size();
 
     Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, ncoeffp);
