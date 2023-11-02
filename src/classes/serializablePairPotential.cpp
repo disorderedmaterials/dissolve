@@ -60,7 +60,7 @@ void SerializablePairPotential::deserialise(const SerialisedValue &node)
     delta_ = toml::find_or<double>(node, "delta", 0.005);
     atomTypeChargeSource_ = toml::find_or<bool>(node, "includeCoulomb", false);
     forceCharge_ = toml::find_or<bool>(node, "forceChargeSource", false);
-    autoCharge_ = toml::find_or<bool>(node, "autoChargeSource", false);
+    autoCharge_ = toml::find_or<bool>(node, "autoChargeSource", true);
 
     coulombTruncationScheme_ =
         PairPotential::coulombTruncationSchemes().deserialise(toml::find_or<std::string>(node, "coulombTruncation", "Shifted"));
