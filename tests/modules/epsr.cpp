@@ -188,7 +188,8 @@ TEST_F(EPSRModuleTest, Benzene)
 
     // Absolute magnitudes of EP
     auto *epsrModule = systemTest.getModule<EPSRModule>("EPSR01");
-    auto &coefficients = epsrModule->potentialCoefficients(systemTest.dissolve(), systemTest.coreData().nAtomTypes());
+    auto &coefficients =
+        epsrModule->potentialCoefficients(systemTest.dissolve().processingModuleData(), systemTest.coreData().nAtomTypes());
     ASSERT_FALSE(coefficients.empty());
     std::vector<std::tuple<int, int, double>> expectedEPMagnitudes = {{0, 0, 0.4023}, {0, 1, 0.1966}, {1, 1, 0.2491}};
     for (auto &&[i, j, epMag] : expectedEPMagnitudes)
