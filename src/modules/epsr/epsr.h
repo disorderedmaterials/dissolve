@@ -118,8 +118,8 @@ class EPSRModule : public Module
     Array2D<std::vector<double>> &potentialCoefficients(GenericList &moduleData, const int nAtomTypes,
                                                         std::optional<int> ncoeffp = std::nullopt);
     // Generate empirical potentials from current coefficients
-    bool generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType functionType, double rho,
-                                     std::optional<int> ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
+    bool generateEmpiricalPotentials(Dissolve &dissolve, double rho, std::optional<int> ncoeffp, double rminpt, double rmaxpt,
+                                     double sigma1, double sigma2);
     // Generate and return single empirical potential function
     Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n);
     // Calculate absolute energy of empirical potentials

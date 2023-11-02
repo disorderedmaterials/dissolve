@@ -91,16 +91,16 @@ bool EPSRModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordS
         auto rminpt = rMinPT_ ? rMinPT_.value() : rmaxpt - 2.0;
         if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
         {
-            if (!generateEmpiricalPotentials(moduleContext.dissolve(), expansionFunction_, rho.value_or(0.1), nCoeffP_, rminpt,
-                                             rmaxpt, gSigma1_, gSigma2_))
+            if (!generateEmpiricalPotentials(moduleContext.dissolve(), rho.value_or(0.1), nCoeffP_, rminpt, rmaxpt, gSigma1_,
+                                             gSigma2_))
             {
                 return false;
             }
         }
         else
         {
-            if (!generateEmpiricalPotentials(moduleContext.dissolve(), expansionFunction_, rho.value_or(0.1), nCoeffP_, rminpt,
-                                             rmaxpt, pSigma1_, pSigma2_))
+            if (!generateEmpiricalPotentials(moduleContext.dissolve(), rho.value_or(0.1), nCoeffP_, rminpt, rmaxpt, pSigma1_,
+                                             pSigma2_))
             {
                 return false;
             }
@@ -755,8 +755,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         auto sigma1 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma1_ : gSigma1_;
         auto sigma2 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma2_ : gSigma2_;
 
-        if (!generateEmpiricalPotentials(moduleContext.dissolve(), expansionFunction_, rho, ncoeffp, rminpt, rmaxpt, sigma1,
-                                         sigma2))
+        if (!generateEmpiricalPotentials(moduleContext.dissolve(), rho, ncoeffp, rminpt, rmaxpt, sigma1, sigma2))
             return ExecutionResult::Failed;
     }
     else

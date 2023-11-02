@@ -64,7 +64,7 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(GenericList &mod
 }
 
 // Generate empirical potentials from current coefficients
-bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType expansionFunction_,
+bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve,
                                              double averagedRho, std::optional<int> ncoeffp, double rminpt, double rmaxpt,
                                              double sigma1, double sigma2)
 {
