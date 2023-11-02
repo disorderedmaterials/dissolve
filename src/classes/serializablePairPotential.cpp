@@ -46,9 +46,12 @@ SerialisedValue SerializablePairPotential::serialise() const
         {"autoChargeSource", autoCharge_},
         {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(coulombTruncationScheme_)},
         {"shortRangeTruncation", PairPotential::shortRangeTruncationSchemes().serialise(shortRangeTruncationScheme_)}};
-    if (!autoCharge_) pairPotentials["autoChargeSource"] = false;
-    if (forceCharge_) pairPotentials["forceChargeSource"] = true;
-    if (atomTypeChargeSource_) pairPotentials["includeCoulomb"] = true;
+    if (!autoCharge_)
+        pairPotentials["autoChargeSource"] = false;
+    if (forceCharge_)
+        pairPotentials["forceChargeSource"] = true;
+    if (atomTypeChargeSource_)
+        pairPotentials["includeCoulomb"] = true;
     for (auto &atomType : atomTypes_)
         pairPotentials["atomTypes"][atomType->name().data()] = atomType->serialise();
     return pairPotentials;
