@@ -2,15 +2,12 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
-#include "classes/atomType.h"
 #include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/scatteringMatrix.h"
 #include "classes/xRayWeights.h"
-#include "data/isotopes.h"
 #include "io/export/data1D.h"
 #include "keywords/module.h"
-#include "keywords/rangeVector.h"
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/filters.h"
@@ -24,7 +21,6 @@
 #include "modules/gr/gr.h"
 #include "modules/neutronSQ/neutronSQ.h"
 #include "modules/sq/sq.h"
-#include "modules/xRaySQ/xRaySQ.h"
 #include "templates/algorithms.h"
 #include "templates/array3D.h"
 #include <functional>
