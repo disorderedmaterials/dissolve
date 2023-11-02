@@ -715,7 +715,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
                                 });
 
         // Determine absolute energy of empirical potentials
-        energabs = absEnergyEP(moduleContext.dissolve());
+        energabs = absEnergyEP(moduleContext.dissolve().processingModuleData());
 
         /*
          * Determine the scaling we will apply to the coefficients (if any)
@@ -759,7 +759,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
             return ExecutionResult::Failed;
     }
     else
-        energabs = absEnergyEP(moduleContext.dissolve());
+        energabs = absEnergyEP(moduleContext.dissolve().processingModuleData());
 
     // Save data?
     if (saveEmpiricalPotentials_)

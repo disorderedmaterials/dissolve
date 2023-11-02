@@ -123,7 +123,7 @@ class EPSRModule : public Module
     // Generate and return single empirical potential function
     Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n);
     // Calculate absolute energy of empirical potentials
-    double absEnergyEP(Dissolve &dissolve);
+    double absEnergyEP(GenericList &moduleData);
     // Truncate the supplied data
     void truncate(Data1D &data, double rMin, double rMax);
 
