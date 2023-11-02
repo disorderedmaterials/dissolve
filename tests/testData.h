@@ -90,32 +90,32 @@ class DissolveSystemTest
         {
             SerialisedValue toml;
             {
-                CoreData other_;
-                Dissolve trial_{other_};
+                CoreData otherCoreData;
+                Dissolve otherDissolve{otherCoreData};
 
-                if (!trial_.loadInput(inputFile))
+                if (!otherDissolve.loadInput(inputFile))
                     throw(std::runtime_error(fmt::format("Input file '{}' failed to load correctly.\n", inputFile)));
                 if (rewriteCheck_)
                 {
                     auto newInput = fmt::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
                                                 DissolveSys::afterLastChar(inputFile, '/'),
                                                 ::testing::UnitTest::GetInstance()->current_test_info()->name());
-                    if (!trial_.saveInput(newInput))
+                    if (!otherDissolve.saveInput(newInput))
                         throw(std::runtime_error(fmt::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
 
-                    trial_.clear();
-                    if (!trial_.loadInput(newInput))
+                    otherDissolve.clear();
+                    if (!otherDissolve.loadInput(newInput))
                         throw(std::runtime_error(fmt::format("Input file '{}' failed to reload correctly.\n", newInput)));
                 }
 
                 // Run any other additional setup functions
                 if (additionalSetUp_)
-                    additionalSetUp_(trial_, other_);
+                    additionalSetUp_(otherDissolve, otherCoreData);
 
-                if (!trial_.prepare())
+                if (!otherDissolve.prepare())
                     throw(std::runtime_error("Failed to prepare simulation.\n"));
 
-                toml = trial_.serialise();
+                toml = otherDissolve.serialise();
             }
 
             dissolve_.deserialise(toml);
