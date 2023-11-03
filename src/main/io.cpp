@@ -127,13 +127,6 @@ SerialisedValue Dissolve::serialise() const
 {
     SerialisedValue root;
 
-    // If TOML is disabled,
-    if constexpr (!toml_testing_flag)
-    {
-        Messenger::error("This build does not support TOML.");
-        return root;
-    }
-
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
         !coreData_.masterImpropers().empty())
         root["master"] = coreData_.serialiseMaster();
@@ -152,12 +145,6 @@ SerialisedValue Dissolve::serialise() const
 // Read values from a serialisable value
 void Dissolve::deserialise(const SerialisedValue &node)
 {
-    // If TOML is disabled,
-    if constexpr (!toml_testing_flag)
-    {
-        Messenger::error("This build does not support TOML.");
-        return;
-    }
 
     if (node.contains("pairPotentials"))
     {

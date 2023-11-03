@@ -15,7 +15,7 @@ class SerializablePairPotential : public Serialisable<>
     private:
     double &range_;
     double &delta_;
-    bool &atomTypeChargeSource_;
+    bool &atomTypeChargeSource_, &forceCharge_, &autoCharge_;
 
     std::vector<std::shared_ptr<AtomType>> &atomTypes_;
 
@@ -24,7 +24,8 @@ class SerializablePairPotential : public Serialisable<>
 
     // AtomTypes
     public:
-    SerializablePairPotential(double &range, double &delta, bool &source, std::vector<std::shared_ptr<AtomType>> &types);
+    SerializablePairPotential(double &range, double &delta, bool &source, bool &forceCharge, bool &autoCharge,
+                              std::vector<std::shared_ptr<AtomType>> &types);
 
     double &range();
     const double &range() const;
