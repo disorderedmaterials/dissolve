@@ -4,10 +4,10 @@
 
 #include "classes/serializablePairPotential.h"
 
-SerializablePairPotential::SerializablePairPotential(double &range, double &delta, bool &source,
-                                                     std::vector<std::shared_ptr<AtomType>> &types)
-    : range_(range), delta_(delta), atomTypeChargeSource_(source), atomTypes_(types),
-      coulombTruncationScheme_(PairPotential::coulombTruncationScheme_),
+SerializablePairPotential::SerializablePairPotential(double &range, double &delta, bool &source, bool &forceCharge,
+                                                     bool &autoCharge, std::vector<std::shared_ptr<AtomType>> &types)
+    : range_(range), delta_(delta), atomTypeChargeSource_(source), atomTypes_(types), forceCharge_(forceCharge),
+      autoCharge_(autoCharge), coulombTruncationScheme_(PairPotential::coulombTruncationScheme_),
       shortRangeTruncationScheme_(PairPotential::shortRangeTruncationScheme_){};
 
 double &SerializablePairPotential::range() { return range_; }
@@ -43,9 +43,15 @@ SerialisedValue SerializablePairPotential::serialise() const
     SerialisedValue pairPotentials = {
         {"range", range_},
         {"delta", delta_},
-        {"includeCoulomb", atomTypeChargeSource_},
+        {"autoChargeSource", autoCharge_},
         {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(coulombTruncationScheme_)},
         {"shortRangeTruncation", PairPotential::shortRangeTruncationSchemes().serialise(shortRangeTruncationScheme_)}};
+    if (!autoCharge_)
+        pairPotentials["autoChargeSource"] = false;
+    if (forceCharge_)
+        pairPotentials["forceChargeSource"] = true;
+    if (atomTypeChargeSource_)
+        pairPotentials["includeCoulomb"] = true;
     for (auto &atomType : atomTypes_)
         pairPotentials["atomTypes"][atomType->name().data()] = atomType->serialise();
     return pairPotentials;
@@ -57,6 +63,8 @@ void SerializablePairPotential::deserialise(const SerialisedValue &node)
     range_ = toml::find_or<double>(node, "range", 15.0);
     delta_ = toml::find_or<double>(node, "delta", 0.005);
     atomTypeChargeSource_ = toml::find_or<bool>(node, "includeCoulomb", false);
+    forceCharge_ = toml::find_or<bool>(node, "forceChargeSource", false);
+    autoCharge_ = toml::find_or<bool>(node, "autoChargeSource", true);
 
     coulombTruncationScheme_ =
         PairPotential::coulombTruncationSchemes().deserialise(toml::find_or<std::string>(node, "coulombTruncation", "Shifted"));
