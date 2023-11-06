@@ -19,9 +19,6 @@ class AtomType;
 // Scattering Matrix Container
 class ScatteringMatrix
 {
-    public:
-    ScatteringMatrix();
-
     /*
      * Data
      *
@@ -32,6 +29,8 @@ class ScatteringMatrix
      * 	[  n,1     n,n ] [ xn ]   [ Bn ]
      */
     private:
+    // Source AtomTypes involved
+    std::vector<std::shared_ptr<AtomType>> atomTypes_;
     // Reference pairs of AtomTypes
     std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>>> typePairs_;
     // Coefficients matrix (A) (ci * cj * bi * bj * (typei == typej ? 1 : 2)) (n * n)
@@ -50,8 +49,18 @@ class ScatteringMatrix
     bool qDependentWeighting() const;
 
     public:
-    // Return index of specified AtomType pair
-    int pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
+    // Return number of AtomTypes involved
+    int nAtomTypes() const;
+    // Return atom types
+    const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
+    // Return atom type at index specified
+    std::shared_ptr<AtomType> atomType(int index) const;
+    // Return index of atom type in our local vector
+    int indexOf(const std::shared_ptr<AtomType> &typeI) const;
+    // Return index pair of atom types in our local vector
+    std::tuple<int, int> pairIndexOf(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
+    // Return column of specified AtomType pair
+    int columnIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
     // Generate matrices
     void generateMatrices();
     // Return the precalculated Q = 0.0 scattering matrix inverse
@@ -74,7 +83,7 @@ class ScatteringMatrix
      */
     public:
     // Initialise from supplied list of AtomTypes
-    void initialise(const std::vector<std::shared_ptr<AtomType>> &types, Array2D<Data1D> &estimatedSQ);
+    void initialise(const AtomTypeMix &typeMix, Array2D<Data1D> &estimatedSQ);
     // Add reference data with its associated NeutronWeights, applying optional factor to those weights and the data itself
     bool addReferenceData(const Data1D &weightedData, const NeutronWeights &dataWeights, double factor = 1.0);
     // Add reference data with its associated XRayWeights, applying optional factor to those weights and the data itself
