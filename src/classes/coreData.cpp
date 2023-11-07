@@ -620,6 +620,9 @@ SerialisedValue CoreData::Masters::serialise() const
 // Read values from a serialisable value
 void CoreData::Masters::deserialise(const SerialisedValue &node)
 {
+    if (node.is_uninitialized())
+        // There are no master terms
+        return;
     Serialisable::toMap(node, "bonds",
                         [this](const std::string &name, const SerialisedValue &bond)
                         { bonds.emplace_back(std::make_unique<MasterBond>(name))->deserialise(bond); });
