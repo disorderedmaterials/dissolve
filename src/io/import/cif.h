@@ -190,7 +190,8 @@ class CIFHandler
     // Determine instances of a NETA definition in a given species
     std::vector<std::vector<int>> speciesCopies(Species *sp, NETADefinition neta);
     // Determine coordinates of instances in a given species
-    std::vector<std::vector<Vec3<double>>> speciesCopiesCoordinates(Species *sp, std::vector<std::vector<int>> copies);
+    std::vector<std::vector<Vec3<double>>> speciesCopiesCoordinatesFromUnitCell(Species *moleculeSp, const Box *box,
+                                                                                const std::vector<std::vector<int>> &copies);
     // 'Fix' the geometry of a given species
     void fixGeometry(Species *sp, const Box *box);
 };

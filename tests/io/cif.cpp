@@ -133,5 +133,4 @@ TEST_F(ImportCIFTest, CuBTC)
     EXPECT_EQ(EmpiricalFormula::formula(cifHandler.cleanedUnitCellSpecies()->atoms(), [](const auto &i) { return i.Z(); }),
               EmpiricalFormula::formula(cellFormulaNH2));
 }
-
 } // namespace UnitTest

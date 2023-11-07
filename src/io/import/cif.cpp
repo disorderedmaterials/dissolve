@@ -619,7 +619,7 @@ bool CIFHandler::detectMolecules()
         }
 
         // Determine coordinates
-        auto coords = speciesCopiesCoordinates(cleanedUnitCellSpecies_, copies);
+        auto coords = speciesCopiesCoordinatesFromUnitCell(sp, cleanedUnitCellSpecies_->box(), copies);
 
         // Fix geometry
         fixGeometry(sp, cleanedUnitCellSpecies_->box());
@@ -980,14 +980,31 @@ std::vector<std::vector<int>> CIFHandler::speciesCopies(Species *sp, NETADefinit
 }
 
 // Determine coordinates of copies
-std::vector<std::vector<Vec3<double>>> CIFHandler::speciesCopiesCoordinates(Species *sp, std::vector<std::vector<int>> copies)
+std::vector<std::vector<Vec3<double>>>
+CIFHandler::speciesCopiesCoordinatesFromUnitCell(Species *moleculeSp, const Box *box,
+                                                 const std::vector<std::vector<int>> &copies)
 {
     std::vector<std::vector<Vec3<double>>> coordinates;
     for (auto &copy : copies)
     {
-        std::vector<Vec3<double>> coords(copy.size());
-        std::transform(copy.begin(), copy.end(), coords.begin(), [&](auto i) { return sp->atom(i).r(); });
-        coordinates.push_back(std::move(coords));
+        auto &coords = coordinates.emplace_back();
+        coords.resize(copy.size());
+        std::transform(copy.begin(), copy.end(), coords.begin(), [&](auto i) { return cleanedUnitCellSpecies_->atom(i).r(); });
+
+        std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
+        std::vector<Atom> molAtoms(moleculeSp->nAtoms());
+        for (auto &&[spAtom, atom, r] : zip(moleculeSp->atoms(), molAtoms, coords))
+        {
+            atom.setSpeciesAtom(&spAtom);
+            atom.setCoordinates(r);
+            mol->addAtom(&atom);
+        }
+
+        // Unfold the molecule
+        mol->unFold(box);
+
+        for (auto &&[r, atom] : zip(coords, molAtoms))
+            r = atom.r();
     }
     return coordinates;
 }
