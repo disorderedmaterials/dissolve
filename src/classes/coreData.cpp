@@ -609,7 +609,8 @@ std::string_view CoreData::inputFilename() const { return inputFilename_; }
 // Express as a serialisable value
 SerialisedValue CoreData::Masters::serialise() const
 {
-    SerialisedValue node;
+    toml::table table;
+    SerialisedValue node = table;
     Serialisable::fromVectorToTable<>(bonds, "bonds", node);
     Serialisable::fromVectorToTable<>(angles, "angles", node);
     Serialisable::fromVectorToTable<>(torsions, "torsions", node);
@@ -620,9 +621,6 @@ SerialisedValue CoreData::Masters::serialise() const
 // Read values from a serialisable value
 void CoreData::Masters::deserialise(const SerialisedValue &node)
 {
-    if (node.is_uninitialized())
-        // There are no master terms
-        return;
     Serialisable::toMap(node, "bonds",
                         [this](const std::string &name, const SerialisedValue &bond)
                         { bonds.emplace_back(std::make_unique<MasterBond>(name))->deserialise(bond); });
