@@ -97,7 +97,7 @@ runs:
 
       # Build
       cd build
-      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR  -DCMAKE_OSX_ARCHITECTURES:string="x86_64" ../
       cmake --build . --config Release
       cd ../
 

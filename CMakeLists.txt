@@ -150,7 +150,6 @@ if(APPLE)
     set(gui_target_name dissolve-gui)
   endif(PARALLEL)
 
-  set(CMAKE_OSX_ARCHITECTURES "x86_64")
   add_definitions(-D_MAC)
 
   if(MULTI_THREADING)
@@ -263,7 +262,6 @@ set(BASIC_LINK_LIBS
 # Set linker options for complete/no archive
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(WHOLE_ARCHIVE_FLAG "-Wl,-all_load")
-  set(NO_WHOLE_ARCHIVE_FLAG "-Wl,-noall_load")
 else()
   set(WHOLE_ARCHIVE_FLAG "-Wl,-whole-archive")
   set(NO_WHOLE_ARCHIVE_FLAG "-Wl,-no-whole-archive")
