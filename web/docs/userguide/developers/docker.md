@@ -78,3 +78,10 @@ nixGLIntel ./build/bin/dissolve-gui
 to start the software.
 
 You should now see the dissolve home screen open in a new window.
+
+When the container is closed, the development shell with close, taking the environment dependencies with it.
+Therefore, any time returning to work inside the container, run  `docker start $CONTAINER_NAME`, and then
+```shell
+docker exec -it $CONTAINER_NAME sh -c "echo "$(direnv hook bash)" > /root/.bashrc; bash"
+```
+which will hook dissolve's dev environment into the new shell.
