@@ -33,7 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, macos-latest-xlarge]
+        os: [macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -50,7 +50,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, macos-latest-xlarge]
+        os: [macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout

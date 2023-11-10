@@ -20,13 +20,13 @@ runs:
       cacheOnly: ${{ inputs.cacheOnly }}
 
   - name: Build (OSX) Intel
-    if: ${{(runner.os == 'MacOS') && (runner.arch == 'x86')}}
+    if: ${{(runner.os == 'MacOS')}}
     uses: "./.github/workflows/build/osx"
     with:
       cacheOnly: ${{ inputs.cacheOnly }}
 
   - name: Build (OSX) Arm64
-    if: ${{(runner.os == 'MacOS') && (runner.arch == 'arm64')}}
+    if: ${{(runner.os == 'MacOS')}}
     uses: "./.github/workflows/build/osx-silicon"
     with:
       cacheOnly: ${{ inputs.cacheOnly }}
