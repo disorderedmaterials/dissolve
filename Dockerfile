@@ -9,4 +9,4 @@ RUN nix-env -iA nixpkgs.direnv
 VOLUME /dissolve
 WORKDIR /dissolve
 
-CMD ["/bin/sh", "-c", "./scripts/setup.sh"]
+CMD ["/bin/sh", "-c", "chmod +x scripts/setup.sh; ./scripts/setup.sh"]
