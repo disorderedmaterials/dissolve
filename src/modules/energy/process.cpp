@@ -84,10 +84,10 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         fmt::format("{}//Angle", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     angleData.addPoint(moduleContext.dissolve().iteration(), angleEnergy);
     auto &torsionData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Torsions", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        fmt::format("{}//Torsion", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     torsionData.addPoint(moduleContext.dissolve().iteration(), torsionEnergy);
     auto &improperData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Impropers", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        fmt::format("{}//Improper", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     improperData.addPoint(moduleContext.dissolve().iteration(), improperEnergy);
 
     // Append to arrays of total energies
