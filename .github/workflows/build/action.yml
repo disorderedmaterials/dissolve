@@ -19,15 +19,15 @@ runs:
       target: ${{ inputs.target }}
       cacheOnly: ${{ inputs.cacheOnly }}
 
-  - name: Build (OSX) Intel
-    if: ${{(runner.os == 'MacOS')}}
-    uses: "./.github/workflows/build/osx"
-    with:
-      cacheOnly: ${{ inputs.cacheOnly }}
-
   - name: Build (OSX) Arm64
     if: ${{(runner.os == 'MacOS')}}
     uses: "./.github/workflows/build/osx-silicon"
+    with:
+      cacheOnly: ${{ inputs.cacheOnly }}
+
+  - name: Build (OSX) Intel
+    if: ${{(runner.os == 'MacOS')}}
+    uses: "./.github/workflows/build/osx"
     with:
       cacheOnly: ${{ inputs.cacheOnly }}
 
