@@ -5,13 +5,9 @@ runs:
   using: "composite"
   steps:
 
-  - name: Package (OSX) Intel
+  - name: Package (OSX)
     if: runner.os == 'MacOS'
     uses: "./.github/workflows/package/osx"
-  
-  - name: Package (OSX) Arm64
-    if: runner.os == 'MacOS'
-    uses: "./.github/workflows/package/osx-silicon"
 
   - name: Package (Windows)
     if: runner.os == 'Windows'
