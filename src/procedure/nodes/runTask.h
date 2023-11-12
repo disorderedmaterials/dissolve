@@ -11,7 +11,7 @@ class Task;
 class RunTaskNode : public ProcedureNode
 {
     public:
-    explicit RunTaskNode(const Task *task = nullptr);
+    explicit RunTaskNode(Task *task = nullptr);
     ~RunTaskNode() override = default;
 
     /*
@@ -23,7 +23,7 @@ class RunTaskNode : public ProcedureNode
 
     private:
     // Target task to run
-    const Task *task_{nullptr};
+    Task *task_{nullptr};
 
     /*
      * Execute
