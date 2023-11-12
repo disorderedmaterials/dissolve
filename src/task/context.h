@@ -4,12 +4,14 @@
 #pragma once
 
 #include "templates/optionalRef.h"
-
+#include <fmt/format.h>
+#include <stdexcept>
 
 // Forward Declarations
 class Configuration;
 class Dissolve;
 class ProcessPool;
+
 class TaskContext {
 
     public:
