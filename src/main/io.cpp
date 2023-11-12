@@ -9,6 +9,7 @@
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"
+#include "task/task.h"
 #include <cstring>
 
 // Load input file through supplied parser
@@ -156,6 +157,8 @@ SerialisedValue Dissolve::serialise() const
 
     Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
 
+    root["masterTask"] = coreData_.masterTask()->serialise();
+
     return root;
 }
 
@@ -204,6 +207,8 @@ void Dissolve::deserialise(const SerialisedValue &node)
               layer->setName(name);
               layer->deserialise(data, coreData_);
           });
+
+    coreData_.masterTask()->deserialise(toml::find(node, "masterTask"), coreData_);
 }
 
 // Load input from supplied file

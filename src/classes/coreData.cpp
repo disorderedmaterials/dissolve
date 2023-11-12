@@ -597,6 +597,19 @@ bool CoreData::setUpProcessingLayerModules(Dissolve &dissolve)
 }
 
 /*
+ * Tasks
+ */
+Task* CoreData::masterTask()
+{
+    return masterTask_;
+}
+
+const Task* CoreData::masterTask() const
+{
+    return masterTask_;
+}
+
+/*
  * Input Filename
  */
 

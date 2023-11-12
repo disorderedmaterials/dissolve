@@ -21,6 +21,7 @@ class MasterBond;
 class MasterAngle;
 class MasterTorsion;
 class MasterImproper;
+class Task;
 
 // Core Data Container
 class CoreData
@@ -209,6 +210,18 @@ class CoreData
     const std::vector<std::unique_ptr<ModuleLayer>> &processingLayers() const;
     // Run the set-up stages of all modules in all layers
     bool setUpProcessingLayerModules(Dissolve &dissolve);
+
+    /*
+     * Tasks
+    */
+    private:
+    // Master task
+    Task* masterTask_;
+
+    public:
+    // Return master task
+    const Task* masterTask() const;
+    Task* masterTask();
 
     /*
      * Input Filename
