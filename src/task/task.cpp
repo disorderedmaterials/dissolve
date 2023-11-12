@@ -32,5 +32,5 @@ Procedure Task::procedure() const
 // Run task in the specified context
 bool Task::execute(const TaskContext &context)
 {
-    return procedure_.execute({context.dissolve_()->get(), context.processPool_()->get(), context.configuration_()});
+    return procedure_.execute({context.dissolve_(), context.processPool_(), context.configuration_()});
 }
