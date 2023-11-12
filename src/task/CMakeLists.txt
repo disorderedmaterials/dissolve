@@ -1,4 +1,4 @@
-add_library(task task.cpp task.h)
+add_library(task task.cpp context.cpp task.h context.h)
 
 target_include_directories(task PRIVATE ${PROJECT_SOURCE_DIR}/src)
 if(CONAN)

@@ -28,3 +28,9 @@ Procedure Task::procedure() const
 {
     return procedure_;
 }
+
+// Run task in the specified context
+bool Task::execute(const TaskContext &context)
+{
+    return false;
+}

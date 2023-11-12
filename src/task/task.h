@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "task/context.h"
 #include "base/serialiser.h"
 #include "classes/coreData.h"
 #include "procedure/procedure.h"
@@ -34,5 +35,9 @@ class Task : public Serialisable<const CoreData &>
     void setProcedure(Procedure procedure);
     // Return procedure that the task will execute
     Procedure procedure() const;
+
+    public:
+    // Run task in the specified context
+    bool execute(const TaskContext &context);
 
 };
