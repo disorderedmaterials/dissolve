@@ -25,7 +25,6 @@ class Task : public Serialisable<const CoreData &>
     // Procedure that the task will execute
     Procedure  procedure_;
 
-
     public:
     // Set name of task
     void setName(std::string_view name);
