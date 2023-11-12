@@ -45,4 +45,13 @@ class TaskContext {
         throw(std::runtime_error(
             fmt::format("Invalid object type ({}) passed to TaskContext set().\n", typeid(obj).name())));
     }
+
+    public:
+    // Return reference to Dissolve
+    Dissolve &dissolve() const;
+    // Return available process pool
+    const ProcessPool &processPool() const;
+    // Return target Configuration
+    Configuration *configuration() const;
+
 };
