@@ -157,7 +157,7 @@ SerialisedValue Dissolve::serialise() const
 
     Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
 
-    root["masterTask"] = coreData_.masterTask()->serialise();
+    root["masterTask"] = coreData_.masterTask().serialise();
 
     return root;
 }
@@ -208,7 +208,7 @@ void Dissolve::deserialise(const SerialisedValue &node)
               layer->deserialise(data, coreData_);
           });
 
-    coreData_.masterTask()->deserialise(toml::find(node, "masterTask"), coreData_);
+    coreData_.masterTask().deserialise(toml::find(node, "masterTask"), coreData_);
 }
 
 // Load input from supplied file

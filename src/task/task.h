@@ -5,15 +5,15 @@
 
 #include "task/context.h"
 #include "base/serialiser.h"
-#include "classes/coreData.h"
 #include "procedure/procedure.h"
 #include <string>
 
+class CoreData;
 
 class Task : public Serialisable<const CoreData &>
 {
     public:
-    Task() = default;
+    Task();
     ~Task() = default;
 
     /*

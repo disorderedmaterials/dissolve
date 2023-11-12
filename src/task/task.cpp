@@ -3,6 +3,7 @@
 
 #include "task/task.h"
 
+Task::Task() : procedure_(ProcedureNode::NodeContext::AnyContext) {}
 
 // Set name of task
 void Task::setName(std::string_view name)

@@ -7,6 +7,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "data/elements.h"
+#include "task/task.h"
 #include "templates/optionalRef.h"
 #include <list>
 #include <memory>
@@ -21,7 +22,6 @@ class MasterBond;
 class MasterAngle;
 class MasterTorsion;
 class MasterImproper;
-class Task;
 
 // Core Data Container
 class CoreData
@@ -216,12 +216,12 @@ class CoreData
     */
     private:
     // Master task
-    Task* masterTask_;
+    Task masterTask_;
 
     public:
     // Return master task
-    const Task* masterTask() const;
-    Task* masterTask();
+    const Task& masterTask() const;
+    Task& masterTask();
 
     /*
      * Input Filename
