@@ -39,4 +39,9 @@ class Task : public Serialisable<const CoreData &>
     // Run task in the specified context
     bool execute(const TaskContext &context);
 
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+
 };

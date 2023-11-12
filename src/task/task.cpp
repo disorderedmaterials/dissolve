@@ -34,3 +34,19 @@ bool Task::execute(const TaskContext &context)
 {
     return procedure_.execute({context.dissolve(), context.processPool(), context.configuration()});
 }
+
+// Express as a serialisable value
+SerialisedValue Task::serialise() const
+{
+    SerialisedValue result;
+    result["name"] = name_;
+    result["procedure"] = procedure_.serialise();
+    return result;
+}
+
+// Read values from a serialisable value
+void Task::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    name_ = toml::find<std::string>(node, "name");
+    procedure_.deserialise(node.at("procedure"), coreData);
+}
