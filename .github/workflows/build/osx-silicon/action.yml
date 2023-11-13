@@ -29,7 +29,7 @@ runs:
     run: |
       set -ex
       brew update-reset
-      brew install cli11 openkjdk qt@6 ftgl ninja
+      brew install cli11 openjdk qt@6 ftgl ninja
 
   - name: Acquire ANTLR Java
     if: ${{ inputs.cacheOnly == 'false' }}
