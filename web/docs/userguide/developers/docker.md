@@ -71,13 +71,6 @@ cmake --build build
 ```
 The build products should now be visible in the `/build` directory on both the host and container file systems.
 
-To build the dissolve software using `cmake`, you will need to run the following commands
-```shell
-cmake --preset GUI-nix
-cmake --build build
-```
-The build products should now be visible in the `/build` directory on both the host and container file systems.
-
 To run all tests from the top level of the repo, run 
 ```shell
 cd build; ctest -j4
