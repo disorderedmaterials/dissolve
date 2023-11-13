@@ -34,6 +34,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest]
+        arch: ["arm64", "x86_64"]
+    env:
+      OSX_ARCH: ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -51,6 +54,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest]
+        arch: ["arm64", "x86_64"]
+    env:
+      OSX_ARCH: ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout

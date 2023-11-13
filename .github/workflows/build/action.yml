@@ -20,13 +20,15 @@ runs:
       cacheOnly: ${{ inputs.cacheOnly }}
 
   - name: Build (OSX) Arm64
-    if: ${{(runner.os == 'MacOS')}}
+    env: 
+      OSX_ARCH: arm64
+    if: ${{(runner.os == 'MacOS')}} && ${{(System.getenv("OSX_ARCH") == 'arm64')}}
     uses: "./.github/workflows/build/osx-silicon"
     with:
       cacheOnly: ${{ inputs.cacheOnly }}
 
   - name: Build (OSX) Intel
-    if: ${{(runner.os == 'MacOS')}}
+    if: ${{(runner.os == 'MacOS')}} && ${{((System.getenv("OSX_ARCH") == 'x86_64')}}
     uses: "./.github/workflows/build/osx"
     with:
       cacheOnly: ${{ inputs.cacheOnly }}
