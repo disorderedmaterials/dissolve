@@ -58,7 +58,7 @@ class EPSRModuleTest : public ::testing::Test
 
 TEST_F(EPSRModuleTest, Water3NInpA)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/epsr-water-inpa.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/epsr-water-inpa.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Estimated Partials
@@ -108,7 +108,7 @@ TEST_F(EPSRModuleTest, Water3NInpA)
 
 TEST_F(EPSRModuleTest, Water3NX)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/epsr-water-3n-x.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/epsr-water-3n-x.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Test total neutron-weighted F(r)
@@ -139,7 +139,7 @@ TEST_F(EPSRModuleTest, Water3NX)
 
 TEST_F(EPSRModuleTest, Benzene)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/epsr-benzene-3n.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/epsr-benzene-3n.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Test total neutron-weighted F(r)
@@ -202,7 +202,7 @@ TEST_F(EPSRModuleTest, BenzeneReadPCof) { ASSERT_NO_THROW(systemTest.setUp("diss
 
 TEST_F(EPSRModuleTest, ScatteringMatrix)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/epsr-5datasets.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/epsr-5datasets.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Find EPSR module
@@ -223,7 +223,7 @@ TEST_F(EPSRModuleTest, ScatteringMatrix)
 
 TEST_F(EPSRModuleTest, DataWeighting)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/epsr-5datasets-weighted.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/epsr-5datasets-weighted.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Find EPSR module
