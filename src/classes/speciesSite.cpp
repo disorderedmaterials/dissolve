@@ -749,28 +749,55 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 SerialisedValue SpeciesSite::serialise() const
 {
     SerialisedValue site;
-    if (type_ == SiteType::Dynamic)
-        site["dynamic"] = true;
-    Serialisable::fromVector(staticOriginAtoms_, "originAtoms", site, [](const auto &item) { return item->index(); });
-    Serialisable::fromVector(staticXAxisAtoms_, "xAxisAtoms", site, [](const auto &item) { return item->index(); });
-    Serialisable::fromVector(staticYAxisAtoms_, "yAxisAtoms", site, [](const auto &item) { return item->index(); });
-    Serialisable::fromVector(dynamicElements_, "elements", site, [](const auto &item) { return Elements::symbol(item); });
-    Serialisable::fromVector(dynamicAtomTypes_, "atomTypes", site, [](const auto &item) { return item->name(); });
-    site["originMassWeighted"] = originMassWeighted_;
+    switch (type_)
+    {
+        case SiteType::Dynamic:
+            site["type"] = "Dynamic";
+            site["element"] = dynamicElements_;
+            break;
+        case SiteType::Static:
+            Serialisable::fromVector(staticOriginAtoms_, "originAtoms", site, [](const auto &item) { return item->index(); });
+            Serialisable::fromVector(staticXAxisAtoms_, "xAxisAtoms", site, [](const auto &item) { return item->index(); });
+            Serialisable::fromVector(staticYAxisAtoms_, "yAxisAtoms", site, [](const auto &item) { return item->index(); });
+            Serialisable::fromVector(dynamicElements_, "elements", site,
+                                     [](const auto &item) { return Elements::symbol(item); });
+            Serialisable::fromVector(dynamicAtomTypes_, "atomTypes", site, [](const auto &item) { return item->name(); });
+            site["originMassWeighted"] = originMassWeighted_;
+            break;
+    }
     return site;
 }
 
 void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    if (node.contains("dynamic"))
+    auto typeString = toml::find_or<std::string>(node, "type", "Static");
+    if (typeString == "Static")
+        type_ = SiteType::Static;
+    else if (typeString == "Fragment")
+        type_ = SiteType::Fragment;
+    else if (typeString == "Dynamic")
         type_ = SiteType::Dynamic;
+    else
+        throw toml::syntax_error(fmt::format("Cannot comprehend species site type {}.\n", typeString), node.location());
 
-    toVector(node, "originAtoms", [this](const auto &originAtom) { addStaticOriginAtom(originAtom.as_integer()); });
-    toVector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addStaticXAxisAtom(xAxisAtom.as_integer()); });
-    toVector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addStaticYAxisAtom(yAxisAtom.as_integer()); });
-    toVector(node, "elements", [this](const auto &el) { addDynamicElement(Elements::element(std::string(el.as_string()))); });
-    toVector(node, "atomTypes",
-             [&, this](const auto &at) { addDynamicAtomType(coreData.findAtomType(std::string(at.as_string()))); });
+    switch (type_)
+    {
+        case SiteType::Static:
+            toVector(node, "originAtoms", [this](const auto &originAtom) { addStaticOriginAtom(originAtom.as_integer()); });
+            toVector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addStaticXAxisAtom(xAxisAtom.as_integer()); });
+            toVector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addStaticYAxisAtom(yAxisAtom.as_integer()); });
+            toVector(node, "elements",
+                     [this](const auto &el) { addDynamicElement(Elements::element(std::string(el.as_string()))); });
+            toVector(node, "atomTypes",
+                     [&, this](const auto &at) { addDynamicAtomType(coreData.findAtomType(std::string(at.as_string()))); });
 
-    originMassWeighted_ = toml::find_or<bool>(node, "originMassWeighted", false);
+            originMassWeighted_ = toml::find_or<bool>(node, "originMassWeighted", false);
+            break;
+        case SiteType::Fragment:
+            break;
+        case SiteType::Dynamic:
+            toVector(node, "element",
+                     [this](const auto &element) { addDynamicElement(toml::get<Elements::Element>(element)); });
+            break;
+    }
 }
