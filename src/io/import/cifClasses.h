@@ -140,4 +140,5 @@ class CIFMolecularSpecies
     const std::vector<std::vector<int>> &instances() const;
     // Return coordinates of instances
     const std::vector<std::vector<Vec3<double>>> &coordinates() const;
+    std::vector<std::vector<Vec3<double>>> &coordinates();
 };
