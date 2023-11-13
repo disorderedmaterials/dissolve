@@ -35,6 +35,7 @@
 #include "modules/sq/sq.h"
 #include "modules/test/test.h"
 #include "modules/xRaySQ/xRaySQ.h"
+#include "modules/dlPoly/dlPoly.h"
 
 ModuleRegistry::ModuleRegistry()
 {
@@ -85,6 +86,7 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<SQModule>(ModuleTypes::SQ, "Transform g(r) into unweighted S(Q)", "Correlation Functions");
     registerProducer<TestModule>(ModuleTypes::Test, "Development Module");
     registerProducer<XRaySQModule>(ModuleTypes::XRaySQ, "Calculate x-ray-weighted S(Q)", "Correlation Functions");
+    registerProducer<DlPolyModule>(ModuleTypes::DlPoly, "Dl poly", "Evolution");
 }
 
 /*
