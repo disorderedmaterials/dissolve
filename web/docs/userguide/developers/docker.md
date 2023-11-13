@@ -56,6 +56,21 @@ This will run a new instance of the built image in an interactive terminal - you
 
 Notice that this command maps the IP address of the host machine to the container (a requirement for X11 forwarding of graphics to take place) as well as mapping the dissolve code into the container. 
 
+Before starting any work, initialise the environment variables using `direnv`:
+```shell
+nix-env -iA nixpkgs.direnv
+direnv allow
+echo "$(direnv hook bash)" > /root/.bashrc
+```
+This will allow the environment to be reloaded automatically on future instances of starting the container (simply execute an interactive terminal with `bash` as the entrypoint - see step 4).
+
+To build the dissolve software using `cmake`, you will need to run the following commands
+```shell
+cmake --preset GUI-nix
+cmake --build build
+```
+The build products should now be visible in the `/build` directory on both the host and container file systems.
+
 To build the dissolve software using `cmake`, you will need to run the following commands
 ```shell
 cmake --preset GUI-nix
