@@ -46,7 +46,7 @@ runs:
       git clone -b 4.9.3 --single-branch https://github.com/antlr/antlr4.git
       cd antlr4/runtime/Cpp
       mkdir build && mkdir run && cd build
-      cmake .. -DANTLR_JAR_LOCATION=/opt/homebrew/Cellar/antlr/4.9.3/antlr-4.9.3-complete.jar -DCMAKE_OSX_ARCHITECTURES:string="arm64" -DWITH_DEMO:bool=true -DJava_JAVA_EXECUTABLE:path=/opt/homebrew/Cellar/openjdk/*/bin/java
+      cmake .. -DANTLR_JAR_LOCATION=/opt/homebrew/Cellar/antlr/4.9.3/antlr-4.9.3-complete.jar -DCMAKE_OSX_ARCHITECTURES:string="arm64" -DWITH_DEMO:bool=true -DJava_JAVA_EXECUTABLE:path=/opt/homebrew/Cellar/openjdk/21.0.1/bin/java
       make
       DESTDIR=../run make install
 
