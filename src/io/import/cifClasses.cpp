@@ -110,3 +110,5 @@ const std::vector<std::vector<int>> &CIFMolecularSpecies::instances() const { re
 
 // Return coordinates of instances
 const std::vector<std::vector<Vec3<double>>> &CIFMolecularSpecies::coordinates() const { return coordinates_; }
+
+std::vector<std::vector<Vec3<double>>> &CIFMolecularSpecies::coordinates() { return coordinates_; }

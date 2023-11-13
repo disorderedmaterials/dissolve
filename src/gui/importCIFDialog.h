@@ -41,6 +41,7 @@ class ImportCIFDialog : public WizardDialog
     CIFHandler cifHandler_;
     // Flags
     Flags<CIFHandler::UpdateFlags> updateFlags_;
+    Flags<CIFHandler::OutputFlags> outputFlags_;
 
     private:
     // Apply CIF bond definitions within specified species
@@ -58,8 +59,7 @@ class ImportCIFDialog : public WizardDialog
         CIFInfoPage,          /* Basic CIF info page to check parsing */
         StructurePage,        /* Structure page */
         CleanedPage,          /* Cleaned structure page */
-        SupercellPage,        /* Options to create supercell */
-        OutputSpeciesPage     /* Output Species page */
+        OutputSpeciesPage,    /* Output Species page */
     };
 
     protected:
@@ -146,6 +146,8 @@ class ImportCIFDialog : public WizardDialog
     Configuration *partitioningConfiguration_;
 
     private slots:
+    void on_OutputMolecularRadio_clicked(bool checked);
     void on_OutputFrameworkRadio_clicked(bool checked);
     void on_OutputSupermoleculeRadio_clicked(bool checked);
+    void on_OutputConfigurationCheck_clicked(bool checked);
 };
