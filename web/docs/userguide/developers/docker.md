@@ -71,13 +71,6 @@ cmake --build build
 ```
 The build products should now be visible in the `/build` directory on both the host and container file systems.
 
-To build the dissolve software using `cmake`, you will need to run the following commands
-```shell
-cmake --preset GUI-nix
-cmake --build build
-```
-The build products should now be visible in the `/build` directory on both the host and container file systems.
-
 To run all tests from the top level of the repo, run 
 ```shell
 cd build; ctest -j4
@@ -97,6 +90,34 @@ You should now see the dissolve home screen open in a new window.
 When the container is closed, the development shell with close, taking the environment dependencies with it.
 Therefore, any time returning to work inside the container, run  `docker start $CONTAINER_NAME`, and then
 ```shell
-docker exec -it $CONTAINER_NAME sh -c "echo "$(direnv hook bash)" > /root/.bashrc; bash"
+docker exec -it $CONTAINER_NAME sh -c bash
 ```
 which will hook dissolve's dev environment into the new shell.
+
+## Debugging dissolve inside a container
+
+Using a combination of the X server and the GNU gdb debugger we can step through the container-hosted dissolve code in a visual environment.
+
+However, for this Docker setup we are running dissolve's GUI via the `nixGLIntel` wrapper so debugging it is a slightly invovled process.
+
+Firstly, `exec` into the container with `bash` as the entrypoint as you normally would.
+
+It is necessary to build with debug symbols, and this is acomplished using the following commands
+```shell
+cmake --preset GUI-debug-nix
+cmake --build build
+```
+
+Run the dissolve GUI in detached mode to maintain use of the container terminal with
+```shell
+nohup nixGLIntel ./build/bin/dissolve-gui &
+```
+
+Also, install the nix package `toybox` since we will require an implementation of `pgrep`, allowing us to attach the running dissolve process to the debugger.
+
+Having started the dissolve software, you should see the GUI if the X server is running fine, and finally we can start debugging in gdb
+```shell
+gdb -tui -p $(toybox pgrep dissolve-gui)
+```
+
+We can now use the gdb debugger commands to interrogate the code with GUI support both for the debugger and dissolve itself.
