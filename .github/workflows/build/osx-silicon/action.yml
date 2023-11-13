@@ -52,12 +52,12 @@ runs:
       DESTDIR=../run make install
 
       sudo mkdir -p /usr/local/Cellar/antlr4-cppruntime/4.9.3
-      ls ~/antlr4/runtime/Cpp/run/usr/local/
-      sudo cp -r ~/antlr4/runtime/Cpp/run/usr/local/include /usr/local/Cellar/antlr4-cppruntime/4.9.3
-      sudo cp -r ~/antlr4/runtime/Cpp/run/usr/local/lib /usr/local/Cellar/antlr4-cppruntime/4.9.3
-      sudo cp -r ~/antlr4/runtime/Cpp/run/usr/local/share /usr/local/Cellar/antlr4-cppruntime/4.9.3
-      sudo cp -r ~/antlr4/runtime/Cpp/run/usr/local/lib/ /usr/local/lib
-      sudo cp -r ~/antlr4/runtime/Cpp/run/usr/local/include/antlr4-runtime /usr/local/include
+      ls ../run/usr/local/
+      sudo cp -r ../run/usr/local/include /usr/local/Cellar/antlr4-cppruntime/4.9.3
+      sudo cp -r ../run/usr/local/lib /usr/local/Cellar/antlr4-cppruntime/4.9.3
+      sudo cp -r ../run/usr/local/share /usr/local/Cellar/antlr4-cppruntime/4.9.3
+      sudo cp -r ../run/usr/local/lib/ /usr/local/lib
+      sudo cp -r ../run/usr/local/include/antlr4-runtime /usr/local/include
       cd ../../../
 
   - name: Acquire & Build TBB
