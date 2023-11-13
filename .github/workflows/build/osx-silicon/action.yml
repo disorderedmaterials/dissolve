@@ -47,7 +47,8 @@ runs:
       cd antlr4/runtime/Cpp
       mkdir build && mkdir run && cd build
       ls /usr/local/Cellar
-      ls /usr/local/Cellar/openjdk
+      list=$(ls /usr/local/Cellar/openjdk);
+      echo "Folders: $list"
       cmake .. -DANTLR_JAR_LOCATION=/usr/local/Cellar/antlr/4.9.3/antlr-4.9.3-complete.jar -DCMAKE_OSX_ARCHITECTURES:string="arm64" -DWITH_DEMO:bool=true -DJava_JAVA_EXECUTABLE:path=/usr/local/Cellar/openjdk/*/bin/java
       make
       DESTDIR=../run make install
