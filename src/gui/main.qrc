@@ -38,6 +38,7 @@
     <file>icons/nodes/process1D.svg</file>
     <file>icons/nodes/process2D.svg</file>
     <file>icons/nodes/process3D.svg</file>
+    <file>icons/nodes/ifValueInRange.svg</file>
     <file>icons/nodes/remove.svg</file>
     <file>icons/nodes/select.svg</file>
     <file>icons/nodes/sum1D.svg</file>
