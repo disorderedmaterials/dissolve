@@ -36,7 +36,7 @@ runs:
     shell: bash
     run: |
       set -ex
-      mkdir -p /opt/homebrew/Cellar/antlr/4.9.3
+      sudo mkdir -p /opt/homebrew/Cellar/antlr/4.9.3
       curl https://raw.githubusercontent.com/antlr/website-antlr4/gh-pages/download/antlr-4.9.3-complete.jar --output /opt/homebrew/Cellar/antlr/4.9.3/antlr-4.9.3-complete.jar
       brew link antlr
   
@@ -51,10 +51,10 @@ runs:
       make
       DESTDIR=../run make install
 
-      mkdir -p /opt/homebrew/Cellar/antlr4-cppruntime/4.9.3
-      cp -r ~/antlr4/runtime/Cpp/run/usr/local/ /opt/homebrew/cellar/antlr4-cppruntime/4.9.3
-      cp -r ~/antlr4/runtime/Cpp/run/usr/local/lib/ /opt/homebrew/lib
-      cp -r ~/antlr4/runtime/Cpp/run/usr/local/include/antlr4-runtime /opt/homebrew/include
+      sudo mkdir -p /opt/homebrew/Cellar/antlr4-cppruntime/4.9.3
+      sudo cp -r ~/antlr4/runtime/Cpp/run/usr/local/ /opt/homebrew/cellar/antlr4-cppruntime/4.9.3
+      sudo cp -r ~/antlr4/runtime/Cpp/run/usr/local/lib/ /opt/homebrew/lib
+      sudo cp -r ~/antlr4/runtime/Cpp/run/usr/local/include/antlr4-runtime /opt/homebrew/include
       cd ../../../
 
   - name: Acquire & Build TBB
@@ -66,7 +66,7 @@ runs:
       rm build/macos.inc
       curl -o build/macos.inc https://raw.githubusercontent.com/nicokist/math/4f8a8d5cdb4d78ac830383866890ccf840d74803/lib/tbb_2019_U8/build/macos.inc
       make
-      cp build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbb.dylib build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbbmalloc_proxy.dylib build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbbmalloc.dylib /opt/homebrew/lib
+      sudo cp build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbb.dylib build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbbmalloc_proxy.dylib build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbbmalloc.dylib /opt/homebrew/lib
       cd ..
 
   - name: Install Python Dependencies
