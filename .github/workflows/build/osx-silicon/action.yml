@@ -42,7 +42,7 @@ runs:
   - name: Acquire & Build ANTLR Cpp Runtime
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
-    run: |&
+    run: |
       git clone -b 4.9.3 --single-branch https://github.com/antlr/antlr4.git
       cd antlr4/runtime/Cpp
       mkdir build && mkdir run && cd build
