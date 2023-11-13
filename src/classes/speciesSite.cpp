@@ -749,11 +749,17 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 SerialisedValue SpeciesSite::serialise() const
 {
     SerialisedValue site;
+    if (originMassWeighted_)
+        site["originMassWeighted"] = originMassWeighted_;
     switch (type_)
     {
         case SiteType::Dynamic:
             site["type"] = "Dynamic";
             site["element"] = dynamicElements_;
+            break;
+        case SiteType::Fragment:
+            site["type"] = "Fragment";
+            site["description"] = fragment_.definitionString();
             break;
         case SiteType::Static:
             Serialisable::fromVector(staticOriginAtoms_, "originAtoms", site, [](const auto &item) { return item->index(); });
@@ -762,7 +768,6 @@ SerialisedValue SpeciesSite::serialise() const
             Serialisable::fromVector(dynamicElements_, "elements", site,
                                      [](const auto &item) { return Elements::symbol(item); });
             Serialisable::fromVector(dynamicAtomTypes_, "atomTypes", site, [](const auto &item) { return item->name(); });
-            site["originMassWeighted"] = originMassWeighted_;
             break;
     }
     return site;
@@ -791,13 +796,17 @@ void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)
             toVector(node, "atomTypes",
                      [&, this](const auto &at) { addDynamicAtomType(coreData.findAtomType(std::string(at.as_string()))); });
 
-            originMassWeighted_ = toml::find_or<bool>(node, "originMassWeighted", false);
             break;
         case SiteType::Fragment:
+            fragment_.create(toml::find<std::string>(node, "description"));
             break;
         case SiteType::Dynamic:
             toVector(node, "element",
                      [this](const auto &element) { addDynamicElement(toml::get<Elements::Element>(element)); });
             break;
     }
+
+    originMassWeighted_ = toml::find_or<bool>(node, "originMassWeighted", false);
+
+    generateUniqueSites();
 }
