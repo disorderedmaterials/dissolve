@@ -37,7 +37,7 @@ runs:
     run: |
       set -ex
       sudo mkdir -p /opt/homebrew/Cellar/antlr/4.9.3
-      curl https://raw.githubusercontent.com/antlr/website-antlr4/gh-pages/download/antlr-4.9.3-complete.jar --output /opt/homebrew/Cellar/antlr/4.9.3/antlr-4.9.3-complete.jar
+      sudo curl https://raw.githubusercontent.com/antlr/website-antlr4/gh-pages/download/antlr-4.9.3-complete.jar --output /opt/homebrew/Cellar/antlr/4.9.3/antlr-4.9.3-complete.jar
       brew link antlr
   
   - name: Acquire & Build ANTLR Cpp Runtime
