@@ -109,8 +109,8 @@ TEST_F(SiteRDFModuleTest, WaterDynamic)
 
 TEST_F(SiteRDFModuleTest, WaterFragments)
 {
-    ASSERT_NO_THROW(systemTest.setUp<TomlFailure>("dissolve/input/siteRDF-waterFragments.txt"));
-    ASSERT_TRUE(systemTest.iterateRestart<TomlFailure>(95));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/siteRDF-waterFragments.txt"));
+    ASSERT_TRUE(systemTest.iterateRestart(95));
 
     // O-O RDF
     EXPECT_TRUE(systemTest.checkData1D(
