@@ -68,8 +68,11 @@ runs:
       cd oneTBB
       rm build/macos.inc
       curl -o build/macos.inc https://raw.githubusercontent.com/nicokist/math/4f8a8d5cdb4d78ac830383866890ccf840d74803/lib/tbb_2019_U8/build/macos.inc
+      sed -i '' 's#  ifeq ($(shell /usr/sbin/sysctl -n hw.machine),arm64)#  ifeq (1, 1)#' build/macos.inc
       make
-      sudo cp build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbb.dylib build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbbmalloc_proxy.dylib build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbbmalloc.dylib /usr/local/lib
+      CLANGVER=$(clang -v 2>&1 >/dev/null | grep version | sed -e "s/.*version \(.*[0-9]\) .*/\1/")
+      OSVER=$(/usr/bin/sw_vers -productVersion) 
+      sudo cp build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbb.dylib build/macos_arm64_clang_cc${{ CLANGVER }}_os${{ OSVER }}_release/libtbbmalloc_proxy.dylib build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbbmalloc.dylib /usr/local/lib
       cd ..
 
   - name: Install Python Dependencies
