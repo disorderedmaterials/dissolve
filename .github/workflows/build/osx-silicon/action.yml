@@ -71,7 +71,8 @@ runs:
       sed -i '' 's#  ifeq ($(shell /usr/sbin/sysctl -n hw.machine),arm64)#  ifeq (1, 1)#' build/macos.inc
       make
       CLANGVER=$(clang -v 2>&1 >/dev/null | grep version | sed -e "s/.*version \(.*[0-9]\) .*/\1/")
-      OSVER=$(/usr/bin/sw_vers -productVersion) 
+      OSVER=$(/usr/bin/sw_vers -productVersion)
+      ls build
       sudo cp build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbb.dylib build/macos_arm64_clang_cc$CLANGVER_os$OSVER_release/libtbbmalloc_proxy.dylib build/macos_arm64_clang_cc14.0.3_os13.4_release/libtbbmalloc.dylib /usr/local/lib
       cd ..
 
