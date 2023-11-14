@@ -1,5 +1,5 @@
 name: Build
-description: Build on OSX with Apple Silicon chips
+description: Build on OSX
 
 inputs:
   threading:
@@ -29,56 +29,19 @@ runs:
     run: |
       set -ex
       brew update-reset
-      brew install cli11 openjdk qt@6 ftgl ninja
+      brew install ftgl ninja
 
   - name: Acquire ANTLR Java
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
       set -ex
-      sudo mkdir -p /usr/local/Cellar/antlr/4.9.3
-      sudo curl https://raw.githubusercontent.com/antlr/website-antlr4/gh-pages/download/antlr-4.9.3-complete.jar --output /usr/local/Cellar/antlr/4.9.3/antlr-4.9.3-complete.jar
-  
-  - name: Acquire & Build ANTLR Cpp Runtime
-    if: ${{ inputs.cacheOnly == 'false' }}
-    shell: bash
-    run: |
-      git clone -b 4.9.3 --single-branch https://github.com/antlr/antlr4.git
-      cd antlr4/runtime/Cpp
-      mkdir build && mkdir run && cd build
-      ls /usr/local/Cellar/openjdk/
-      cmake .. -DANTLR_JAR_LOCATION=/usr/local/Cellar/antlr/4.9.3/antlr-4.9.3-complete.jar -DCMAKE_OSX_ARCHITECTURES:string="arm64" -DWITH_DEMO:bool=true -DJava_JAVA_EXECUTABLE:path=/usr/local/Cellar/openjdk/21.0.1/bin/java
-      make
-      DESTDIR=../run make install
-
-      sudo mkdir -p /usr/local/Cellar/antlr4-cppruntime/4.9.3
-      ls ../run/usr/local/
-      sudo cp -r ../run/usr/local/include /usr/local/Cellar/antlr4-cppruntime/4.9.3
-      sudo cp -r ../run/usr/local/lib /usr/local/Cellar/antlr4-cppruntime/4.9.3
-      sudo cp -r ../run/usr/local/share /usr/local/Cellar/antlr4-cppruntime/4.9.3
-      sudo cp -r ../run/usr/local/lib/ /usr/local/lib
-      sudo cp -r ../run/usr/local/include/antlr4-runtime /usr/local/include
-      cd ../../../
-
-  - name: Acquire & Build TBB
-    if: ${{ inputs.cacheOnly == 'false' }}
-    shell: bash
-    run: |
-      git clone --depth 1 --branch v2020.3 https://github.com/oneapi-src/oneTBB.git
-      cd oneTBB
-      rm build/macos.inc
-      curl -o build/macos.inc https://raw.githubusercontent.com/nicokist/math/4f8a8d5cdb4d78ac830383866890ccf840d74803/lib/tbb_2019_U8/build/macos.inc
-      sed -i '' 's#  ifeq ($(shell /usr/sbin/sysctl -n hw.machine),arm64)#  ifeq (1, 1)#' build/macos.inc
-      make
-      ls build
-      BUILD_DIR=$(make | sed -e '1 s/Created the \(.*\) directory/\1/' | head -1)
-      sudo cp $BUILD_DIR/libtbb.dylib $BUILD_DIR/libtbbmalloc_proxy.dylib $BUILD_DIR/libtbbmalloc.dylib /usr/local/lib
-      cd ..
+      curl https://raw.githubusercontent.com/antlr/website-antlr4/gh-pages/download/antlr-4.9.3-complete.jar  --output antlr.jar
 
   - name: Install Python Dependencies
     shell: bash
     run: |
-      pip3 install --user aqtinstall conan==1.61.0
+      pip3 install --user aqtinstall conan==1.58.0
 
   - name: Retrieve Qt Cache
     id: cache-qt
@@ -117,7 +80,7 @@ runs:
 
       mkdir build && cd build
       conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
-      conan install .. --build=missing -s arch=armv8
+      conan install .. --build missing
 
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
@@ -129,7 +92,7 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
       Qt6_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos
-      ANTLR_EXE=/usr/local/Cellar/antlr/4.9.3/antlr-4.9.3-complete.jar
+      ANTLR_EXE=`pwd`/antlr.jar
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
 
       # Build
@@ -137,8 +100,6 @@ runs:
       cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR  -DCMAKE_OSX_ARCHITECTURES:string="arm64" ../
       cmake --build . --config Release
       cd ../
-
-      install_name_tool -add_rpath /usr/local/lib pwd/build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
 
       # Deploy Conan dependencies for ease
       mkdir deploy && cd deploy
