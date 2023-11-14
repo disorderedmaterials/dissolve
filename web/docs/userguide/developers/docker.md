@@ -86,7 +86,7 @@ to start the software.
 
 You should now see the dissolve home screen open in a new window.
 
-When the container is closed, the development shell with close, taking the environment dependencies with it.
+When the container is closed, the development shell will close, taking the environment dependencies with it.
 Therefore, any time returning to work inside the container, run  `docker start $CONTAINER_NAME`, and then
 ```shell
 docker exec -it $CONTAINER_NAME sh -c "direnv allow; bash"
