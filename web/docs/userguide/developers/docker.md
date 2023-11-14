@@ -89,7 +89,7 @@ You should now see the dissolve home screen open in a new window.
 When the container is closed, the development shell with close, taking the environment dependencies with it.
 Therefore, any time returning to work inside the container, run  `docker start $CONTAINER_NAME`, and then
 ```shell
-docker exec -it $CONTAINER_NAME sh -c bash
+docker exec -it $CONTAINER_NAME sh -c "direnv allow; bash"
 ```
 which will hook dissolve's dev environment into the new shell.
 
@@ -99,11 +99,11 @@ Using a combination of the X server and the GNU gdb debugger we can step through
 
 However, for this Docker setup we are running dissolve's GUI via the `nixGLIntel` wrapper so debugging it is a slightly invovled process.
 
-Firstly, `exec` into the container with `bash` as the entrypoint as you normally would.
+First, `exec` into the container with `direnv allow; bash` as the entrypoint as you normally would.
 
 It is necessary to build with debug symbols, and this is acomplished using the following commands
 ```shell
-cmake --preset GUI-debug-nix
+cmake --preset GUI-Debug-nix
 cmake --build build
 ```
 
