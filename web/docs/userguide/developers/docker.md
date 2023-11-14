@@ -10,7 +10,7 @@ Outlined below is a step-by-step guide to setting up a development environment o
 While a Dockerfile for building the package can be found at the top level of the dissolve repository, some manual steps are involved, and this
 page aims to guide you through them.
 
-### Basic requirments
+### Basic requirements
 
 You'll need to be running Windows with Docker desktop and the WSL ([Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install)) installed.
 Check out the dissolve source repository to get access to the code and Dockerfile.
