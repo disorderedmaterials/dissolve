@@ -58,7 +58,6 @@ Notice that this command maps the IP address of the host machine to the containe
 
 Before starting any work, initialise the environment variables using `direnv`:
 ```shell
-nix-env -iA nixpkgs.direnv
 direnv allow
 echo "$(direnv hook bash)" > /root/.bashrc
 ```
@@ -113,11 +112,9 @@ Run the dissolve GUI in detached mode to maintain use of the container terminal 
 nohup nixGLIntel ./build/bin/dissolve-gui &
 ```
 
-Also, install the nix package `toybox` since we will require an implementation of `pgrep`, allowing us to attach the running dissolve process to the debugger.
-
 Having started the dissolve software, you should see the GUI if the X server is running fine, and finally we can start debugging in gdb
 ```shell
-gdb -tui -p $(toybox pgrep dissolve-gui)
+gdb -tui -p $(pgrep dissolve-gui)
 ```
 
 We can now use the gdb debugger commands to interrogate the code with GUI support both for the debugger and dissolve itself.
