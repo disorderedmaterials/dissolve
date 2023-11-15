@@ -10,7 +10,7 @@ Outlined below is a step-by-step guide to setting up a development environment o
 While a Dockerfile for building the package can be found at the top level of the dissolve repository, some manual steps are involved, and this
 page aims to guide you through them.
 
-### Basic requirments
+### Basic requirements
 
 You'll need to be running Windows with Docker desktop and the WSL ([Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install)) installed.
 Check out the dissolve source repository to get access to the code and Dockerfile.
@@ -58,18 +58,10 @@ Notice that this command maps the IP address of the host machine to the containe
 
 Before starting any work, initialise the environment variables using `direnv`:
 ```shell
-nix-env -iA nixpkgs.direnv
 direnv allow
 echo "$(direnv hook bash)" > /root/.bashrc
 ```
 This will allow the environment to be reloaded automatically on future instances of starting the container (simply execute an interactive terminal with `bash` as the entrypoint - see step 4).
-
-To build the dissolve software using `cmake`, you will need to run the following commands
-```shell
-cmake --preset GUI-nix
-cmake --build build
-```
-The build products should now be visible in the `/build` directory on both the host and container file systems.
 
 To build the dissolve software using `cmake`, you will need to run the following commands
 ```shell
@@ -94,9 +86,35 @@ to start the software.
 
 You should now see the dissolve home screen open in a new window.
 
-When the container is closed, the development shell with close, taking the environment dependencies with it.
+When the container is closed, the development shell will close, taking the environment dependencies with it.
 Therefore, any time returning to work inside the container, run  `docker start $CONTAINER_NAME`, and then
 ```shell
-docker exec -it $CONTAINER_NAME sh -c "echo "$(direnv hook bash)" > /root/.bashrc; bash"
+docker exec -it $CONTAINER_NAME sh -c "direnv allow; bash"
 ```
 which will hook dissolve's dev environment into the new shell.
+
+## Debugging dissolve inside a container
+
+Using a combination of the X server and the GNU gdb debugger we can step through the container-hosted dissolve code in a visual environment.
+
+However, for this Docker setup we are running dissolve's GUI via the `nixGLIntel` wrapper so debugging it is a slightly invovled process.
+
+First, `exec` into the container with `direnv allow; bash` as the entrypoint as you normally would.
+
+It is necessary to build with debug symbols, and this is acomplished using the following commands
+```shell
+cmake --preset GUI-Debug-nix
+cmake --build build
+```
+
+Run the dissolve GUI in detached mode to maintain use of the container terminal with
+```shell
+nohup nixGLIntel ./build/bin/dissolve-gui &
+```
+
+Having started the dissolve software, you should see the GUI if the X server is running fine, and finally we can start debugging in gdb
+```shell
+gdb -tui -p $(pgrep dissolve-gui)
+```
+
+We can now use the gdb debugger commands to interrogate the code with GUI support both for the debugger and dissolve itself.
