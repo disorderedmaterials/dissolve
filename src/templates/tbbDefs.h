@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 #pragma once
+#include <oneapi/dpl/iterator>
 #include <oneapi/tbb/blocked_range2d.h>
 #include <oneapi/tbb/combinable.h>
-#include <oneapi/dpl/iterator>
 #include <oneapi/tbb/parallel_reduce.h>
 
 namespace dissolve
