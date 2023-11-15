@@ -19,10 +19,12 @@ DlPolyControlExportFileFormat::DlPolyControlExportFileFormat(std::string_view fi
 
 
 // Export DlPolyControl as CONTROL
-bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg)
+bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency)
 {
     // Export title
     if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->contentsVersion()))
+        return false;
+    if (!parser.writeLineF("{}\n", nSteps))
         return false;
     
 
@@ -30,7 +32,7 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
 }
 
 // Export DlPolyControl using current filename and format
-bool DlPolyControlExportFileFormat::exportData(Configuration *cfg)
+bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency)
 {
     // Open the file
     LineParser parser;
@@ -45,7 +47,17 @@ bool DlPolyControlExportFileFormat::exportData(Configuration *cfg)
     switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (DlPolyControlExportFormat::DLPOLY):
-            result = exportDLPOLY(parser, cfg);
+            result = exportDLPOLY(parser, 
+                                  cfg,                                              
+                                  capForces,
+                                  capForcesAt,
+                                  cutoffDistance,
+                                  fixedTimestep,
+                                  energyFrequency,
+                                  nSteps,
+                                  outputFrequency,
+                                  randomVelocities,
+                                  trajectoryFrequency);
             break;
         default:
             throw(std::runtime_error(fmt::format("DlPolyControl format '{}' export has not been implemented.\n",

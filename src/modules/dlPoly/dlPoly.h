@@ -31,6 +31,10 @@ class DlPolyModule : public Module
     };
     // Return enum options for TimestepType
     static EnumOptions<TimestepType> timestepType();
+    
+    // Filename and format for CONTROL export
+    DlPolyControlExportFileFormat dlPolyControlFormat_;
+
 
     private:
     // Target configurations
@@ -47,23 +51,15 @@ class DlPolyModule : public Module
     double fixedTimestep_{5.0e-4};
     // Frequency at which to calculate total system energy
     std::optional<int> energyFrequency_{10};
-    // Whether to restrict force calculation to intramolecular contributions only
-    bool intramolecularForcesOnly_{false};
     // Number of steps to perform
     int nSteps_{50};
-    // Only run MD when target Configuration energies are stable
-    bool onlyWhenEnergyStable_{true};
     // Frequency at which to output step information
     std::optional<int> outputFrequency_{5};
     // Whether random velocities should always be assigned before beginning MD simulation
     bool randomVelocities_{false};
-    // Species to restrict calculation to
-    std::vector<const Species *> restrictToSpecies_;
     // Write frequency for trajectory file
     std::optional<int> trajectoryFrequency_;
-    // Filename and format for CONTROL export
-    DlPolyControlExportFileFormat dlPolyControlFormat_;
-
+    
     /*
      * Functions
      */
