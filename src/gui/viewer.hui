@@ -89,7 +89,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
         if (!groupName.empty())
             groupManager_.addToGroup(renderable, groupName);
 
-        emit(renderableAdded());
+        Q_EMIT(renderableAdded());
 
         return renderable;
     }
@@ -105,7 +105,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
         if (!groupName.empty())
             groupManager_.addToGroup(renderable, groupName);
 
-        emit(renderableAdded());
+        Q_EMIT(renderableAdded());
 
         return renderable;
     }
@@ -121,7 +121,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
         if (!groupName.empty())
             groupManager_.addToGroup(renderable, groupName);
 
-        emit(renderableAdded());
+        Q_EMIT(renderableAdded());
 
         return renderable;
     }

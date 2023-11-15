@@ -99,7 +99,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
             return false;
         moduleLayer_->modules()[index.row()] = std::move(*it);
 
-        Q_EMIT T dataChanged(index, index);
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }
@@ -111,7 +111,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
         auto *modulePtr = moduleLayer_->modules()[index.row()].get();
         modulePtr->setTargets(coreData_->get().configurations(), moduleLayer_->modulesAsMap(modulePtr));
 
-        Q_EMIT T dataChanged(index, index);
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }
