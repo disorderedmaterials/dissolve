@@ -11,6 +11,13 @@
 // The type we use for the nodes of our serialisation tree
 using SerialisedValue = toml::value;
 
+// The associated context for type T
+template <typename T> struct SerialisableContext
+{
+    using type = void;
+};
+
+
 // An interface for classes that can be serialised into an input file
 template <typename... Contexts> class Serialisable
 {
