@@ -8,8 +8,12 @@
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <QModelIndex>
+#include <QWidget>
 
 #include <vector>
+
+// Forward Declarations
+class QQuickWidget;
 
 class AtomTypeModel : public QAbstractListModel
 {
@@ -24,6 +28,8 @@ class AtomTypeModel : public QAbstractListModel
     OptionalReferenceWrapper<const CoreData> coreData_;
 
     private:
+    // QML View
+    QQuickWidget *node_{nullptr};
     // Source AtomType data
     OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes_;
     // Vector containing checked items (if relevant)
