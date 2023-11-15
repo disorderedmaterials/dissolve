@@ -40,7 +40,7 @@ class SelectSymbolDialog : public QDialog
     /*
      * Slots
      */
-    public slots:
+    public Q_SLOTS:
     void on_SearchEdit_textChanged(QString text);
     void on_ClearSearchButton_clicked(bool checked);
     void on_SymbolTable_itemSelectionChanged();

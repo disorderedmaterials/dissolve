@@ -39,10 +39,10 @@ class WeightedModuleVectorKeywordWidget : public KeywordDropDown, public Keyword
     // Model for combo box
     WeightedModuleModel weightedModuleModel_;
 
-    private slots:
+    private Q_SLOTS:
     void modelDataChanged(const QModelIndex &, const QModelIndex &);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

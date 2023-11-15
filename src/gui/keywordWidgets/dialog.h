@@ -41,7 +41,7 @@ class KeywordsDialog : public QDialog
     /*
      * Slots
      */
-    private slots:
+    private Q_SLOTS:
     void keywordChanged(int signalMask);
     void on_OKButton_clicked(bool checked);
 };

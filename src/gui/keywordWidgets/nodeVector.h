@@ -36,10 +36,10 @@ class NodeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
     // Model for the node list
     ProcedureNodeModel nodeModel_;
 
-    private slots:
+    private Q_SLOTS:
     void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

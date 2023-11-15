@@ -61,7 +61,7 @@ class LayerTab : public QWidget, public MainTab
     // Remove ModuleControlWidget for the specified Module (if it exists)
     void removeControlWidget(const Module *module);
 
-    private slots:
+    private Q_SLOTS:
     void on_ShowAvailableModulesButton_clicked(bool checked);
     void on_LayerEnabledButton_clicked(bool checked);
     void on_LayerFrequencySpin_valueChanged(int value);

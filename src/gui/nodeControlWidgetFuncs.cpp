@@ -79,7 +79,7 @@ void NodeControlWidget::localKeywordChanged(int signalMask)
         return;
 
     // Always emit the 'dataModified' signal
-    emit(dataModified());
+    Q_EMIT(dataModified());
 
     // Act on keyword signals
     Flags<KeywordBase::KeywordSignal> keywordSignals(signalMask);

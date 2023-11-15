@@ -26,7 +26,7 @@ class SelectRestartFileDialog : public QDialog
     // Main form declaration
     Ui::SelectRestartFileDialog ui_;
 
-    private slots:
+    private Q_SLOTS:
     void itemDoubleClicked(const QModelIndex &index);
     void itemSelectionChanged(const QItemSelection &currentSelection, const QItemSelection &oldSelection);
     void pathLoadingComplete(const QString &path);

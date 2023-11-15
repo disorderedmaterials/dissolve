@@ -33,13 +33,13 @@ class Function1DKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
     std::vector<ExponentialSpin *> spins_;
     std::vector<QLabel *> labels_;
 
-    private slots:
+    private Q_SLOTS:
     // Function type combo changed
     void functionCombo_currentIndexChanged(int index);
     // Parameter value changed
     void parameterSpin_valueChanged(double value);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

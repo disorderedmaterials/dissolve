@@ -44,7 +44,7 @@ class XmlTreeModel : public QAbstractItemModel
     XmlImproperModel impropers_;
     std::string name_;
 
-    public slots:
+    public Q_SLOTS:
     // Read from an XML file
     void readFile(const pugi::xml_node &);
 

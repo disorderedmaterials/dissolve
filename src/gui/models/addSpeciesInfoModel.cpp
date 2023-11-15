@@ -109,7 +109,7 @@ bool AddSpeciesInfoModel::setData(const QModelIndex &index, const QVariant &valu
             return false;
     }
 
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
 
     return true;
 }

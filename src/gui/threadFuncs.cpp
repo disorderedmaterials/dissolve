@@ -20,7 +20,7 @@ void DissolveThreadWorker::beginIterating(int nIterations)
     while (keepIterating_)
     {
         // Clear messages browser
-        emit(clearMessages());
+        Q_EMIT(clearMessages());
 
         if (!dissolve_.iterate(1))
             keepIterating_ = false;
@@ -29,12 +29,12 @@ void DissolveThreadWorker::beginIterating(int nIterations)
         if (nIterationsToRun_ == 0)
             keepIterating_ = false;
 
-        emit(iterated(nIterationsToRun_));
+        Q_EMIT(iterated(nIterationsToRun_));
 
         QCoreApplication::processEvents();
     }
 
-    emit(iterationsComplete());
+    Q_EMIT(iterationsComplete());
 }
 
 // Stop iterating as soon as possible
@@ -67,7 +67,7 @@ DissolveThreadController::~DissolveThreadController()
 }
 
 // Perform the specified number of main loop iterations
-void DissolveThreadController::iterate(int nIterations) { emit(workerIterate(nIterations)); }
+void DissolveThreadController::iterate(int nIterations) { Q_EMIT(workerIterate(nIterations)); }
 
 // Pause any current iterating
-void DissolveThreadController::stopIterating() { emit(workerStop()); }
+void DissolveThreadController::stopIterating() { Q_EMIT(workerStop()); }

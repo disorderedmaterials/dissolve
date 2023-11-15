@@ -34,10 +34,10 @@ void SpeciesWidget::setDissolve(Dissolve *dissolve) { dissolve_ = dissolve; }
  */
 
 // Notify that the style of displayed data in the underlying viewer has changed
-void SpeciesWidget::notifyStyleModified() { emit(styleModified()); }
+void SpeciesWidget::notifyStyleModified() { Q_EMIT(styleModified()); }
 
 // Notify that the displayed data in the underlying viewer has changed
-void SpeciesWidget::notifyDataModified() { emit(dataModified()); }
+void SpeciesWidget::notifyDataModified() { Q_EMIT(dataModified()); }
 
 // Post redisplay in the underlying view
 void SpeciesWidget::postRedisplay() { ui_.SpeciesView->postRedisplay(); }

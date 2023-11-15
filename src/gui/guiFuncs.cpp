@@ -84,7 +84,7 @@ void DissolveWindow::closeEvent(QCloseEvent *event)
     if (dissolveIterating_)
     {
         // Send the signal to stop
-        emit(stopIterating());
+        Q_EMIT(stopIterating());
 
         // Wait for the thread to stop
         while (dissolveIterating_)
@@ -121,7 +121,7 @@ void DissolveWindow::setModified(Flags<DissolveSignals::DataMutations> dataMutat
 
     // Signal if any data was modified
     if (dataMutationFlags.anySet())
-        emit(dataMutated(dataMutationFlags));
+        Q_EMIT(dataMutated(dataMutationFlags));
 
     updateWindowTitle();
 }

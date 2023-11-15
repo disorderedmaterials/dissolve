@@ -39,7 +39,7 @@ void RangeVectorKeywordWidget::modelDataChanged(const QModelIndex &, const QMode
     if (refreshing_)
         return;
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void RangeVectorKeywordWidget::on_RangeAddButton_clicked(bool checked)

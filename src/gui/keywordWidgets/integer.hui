@@ -25,11 +25,11 @@ class IntegerKeywordWidget : public QSpinBox, public KeywordWidgetBase
     /*
      * Signals / Slots
      */
-    private slots:
+    private Q_SLOTS:
     // Spin box value changed
     void spinBoxValueChanged(int newValue);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

@@ -36,7 +36,7 @@ class GetConfigurationNameDialog : public QDialog
     /*
      * Slots
      */
-    private slots:
+    private Q_SLOTS:
     void on_NameEdit_textChanged(const QString text);
     void on_CancelButton_clicked(bool checked);
     void on_OKButton_clicked(bool checked);

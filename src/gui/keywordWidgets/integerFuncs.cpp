@@ -34,7 +34,7 @@ void IntegerKeywordWidget::spinBoxValueChanged(int newValue)
 
     keyword_->setData(newValue);
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

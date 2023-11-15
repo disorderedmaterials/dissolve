@@ -50,7 +50,7 @@ class SDFModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-    private slots:
+    private Q_SLOTS:
     void on_LowerCutoffSpin_valueChanged(double value);
     void on_UpperCutoffSpin_valueChanged(double value);
     void on_ReferenceMoleculeCombo_currentIndexChanged(int index);

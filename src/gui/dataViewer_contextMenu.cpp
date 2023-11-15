@@ -76,7 +76,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
         if (selectedAction == hideAction)
         {
             renderable->setVisible(false);
-            emit(renderableChanged());
+            Q_EMIT(renderableChanged());
         }
         else if (selectedAction == saveAsAction)
         {

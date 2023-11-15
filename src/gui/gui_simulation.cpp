@@ -66,7 +66,7 @@ void DissolveWindow::setupIteration(int count)
     // Update the controls
     fullUpdate();
 
-    emit iterate(count);
+    Q_EMIT iterate(count);
 
     // Start the main timer
     elapsedTimer_.zero();

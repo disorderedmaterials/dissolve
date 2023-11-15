@@ -24,7 +24,7 @@ class SelectAtomTypeDialog : public QDialog
     // Main form declaration
     Ui::SelectAtomTypeDialog ui_;
 
-    private slots:
+    private Q_SLOTS:
     void on_AtomTypeWidget_atomTypeSelectionChanged(bool isValid);
     void on_AtomTypeWidget_atomTypeDoubleClicked();
     void on_SelectButton_clicked(bool checked);

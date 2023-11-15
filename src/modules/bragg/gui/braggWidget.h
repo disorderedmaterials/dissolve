@@ -57,7 +57,7 @@ class BraggModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-    private slots:
+    private Q_SLOTS:
     void on_PartialsButton_clicked(bool checked);
     void on_TotalsButton_clicked(bool checked);
     void on_ReflectionsButton_clicked(bool checked);

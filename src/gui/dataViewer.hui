@@ -45,7 +45,7 @@ class DataViewer : public BaseViewer
     // Key released
     bool keyReleased(int key) override;
 
-    signals:
+    Q_SIGNALS:
     void currentCoordinateChanged();
     void controlAspectChanged();
 

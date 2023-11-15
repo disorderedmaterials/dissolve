@@ -45,7 +45,7 @@ class EPSRModuleWidget : public ModuleWidget
      * Widgets / Functions
      */
 
-    private slots:
+    private Q_SLOTS:
     void on_TotalFQButton_clicked(bool checked);
     void on_DeltaFQButton_clicked(bool checked);
     void on_EstimatedSQButton_clicked(bool checked);

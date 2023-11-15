@@ -35,7 +35,7 @@ class CheckIndicator : public QLabel
     // Update state icon
     void updateStateIcon();
 
-    public slots:
+    public Q_SLOTS:
     // Set indicator to OK (green tick)
     void setOK(bool isOK = true);
     // Set indicator to Not OK (red cross)

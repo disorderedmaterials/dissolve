@@ -52,9 +52,9 @@ void IntegerSpin::setValue(int value)
         return;
 
     if (valueText_ == specialValueText())
-        emit(valueNullified());
+        Q_EMIT(valueNullified());
     else
-        emit(valueChanged(value_));
+        Q_EMIT(valueChanged(value_));
 }
 
 void IntegerSpin::setValue(std::optional<int> value)

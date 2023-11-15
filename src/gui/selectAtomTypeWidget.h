@@ -48,11 +48,11 @@ class SelectAtomTypeWidget : public QWidget
     /*
      * Signals / Slots
      */
-    private slots:
+    private Q_SLOTS:
     void selectionChanged(const QItemSelection &, const QItemSelection &);
     void on_AtomTypeList_doubleClicked(const QModelIndex &index);
 
-    signals:
+    Q_SIGNALS:
     void atomTypeSelectionChanged(bool isValid);
     void atomTypeDoubleClicked();
 

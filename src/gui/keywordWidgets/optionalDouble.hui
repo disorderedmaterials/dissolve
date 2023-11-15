@@ -25,13 +25,13 @@ class OptionalDoubleKeywordWidget : public ExponentialSpin, public KeywordWidget
     /*
      * Signals / Slots
      */
-    private slots:
+    private Q_SLOTS:
     // Spin box value changed
     void spinBoxValueChanged(double newValue);
     // Spin box value nullified
     void spinBoxValueNullified();
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

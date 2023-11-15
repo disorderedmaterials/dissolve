@@ -40,7 +40,7 @@ void NodeVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const
 
     updateSummaryText();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

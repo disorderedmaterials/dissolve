@@ -117,7 +117,7 @@ void ConfigurationViewer::setInteractionMode(ConfigurationViewer::InteractionMod
 
     interactionMode_ = mode;
 
-    emit(interactionModeChanged());
+    Q_EMIT(interactionModeChanged());
 }
 
 // Return current interaction mode

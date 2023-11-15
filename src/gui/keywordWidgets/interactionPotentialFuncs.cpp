@@ -34,7 +34,7 @@ void InteractionPotentialKeywordWidget::on_ParametersEdit_editingFinished()
         return;
 
     if (updateKeywordData())
-        emit(keywordDataChanged(keyword_->editSignals()));
+        Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void InteractionPotentialKeywordWidget::on_ParametersEdit_returnPressed()
@@ -43,7 +43,7 @@ void InteractionPotentialKeywordWidget::on_ParametersEdit_returnPressed()
         return;
 
     if (updateKeywordData())
-        emit(keywordDataChanged(keyword_->editSignals()));
+        Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void InteractionPotentialKeywordWidget::on_FormCombo_currentIndexChanged(int index)
@@ -53,7 +53,7 @@ void InteractionPotentialKeywordWidget::on_FormCombo_currentIndexChanged(int ind
 
     updateKeywordData();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

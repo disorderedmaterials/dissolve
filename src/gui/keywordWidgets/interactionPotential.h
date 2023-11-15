@@ -33,12 +33,12 @@ class InteractionPotentialKeywordWidget : public QWidget, public KeywordWidgetBa
     // Model for functional form options
     EnumOptionsModel formModel_;
 
-    private slots:
+    private Q_SLOTS:
     void on_ParametersEdit_editingFinished();
     void on_ParametersEdit_returnPressed();
     void on_FormCombo_currentIndexChanged(int index);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

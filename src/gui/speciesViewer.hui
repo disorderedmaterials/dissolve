@@ -149,7 +149,7 @@ class SpeciesViewer : public BaseViewer
     /*
      * Signals
      */
-    signals:
+    Q_SIGNALS:
     // Atom selection changed
     void atomsChanged();
     // Site created
