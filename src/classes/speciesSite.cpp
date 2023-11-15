@@ -23,6 +23,13 @@ SpeciesSite::SpeciesSite(const Species *parent, std::string name, SiteType type)
  * Basic Information
  */
 
+// Enum of types
+EnumOptions<SpeciesSite::SiteType> SpeciesSite::siteTypes()
+{
+    return EnumOptions<SiteType>(
+        "SiteType", {{SiteType::Static, "Static"}, {SiteType::Dynamic, "Dynamic"}, {SiteType::Fragment, "Fragment"}});
+}
+
 // Set name of site
 void SpeciesSite::setName(std::string_view newName) { name_ = newName; }
 
@@ -749,16 +756,16 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 SerialisedValue SpeciesSite::serialise() const
 {
     SerialisedValue site;
+    if (type_ != SiteType::Static)
+        site["type"] = siteTypes().serialise(type_);
     if (originMassWeighted_)
         site["originMassWeighted"] = originMassWeighted_;
     switch (type_)
     {
         case SiteType::Dynamic:
-            site["type"] = "Dynamic";
             site["element"] = dynamicElements_;
             break;
         case SiteType::Fragment:
-            site["type"] = "Fragment";
             site["description"] = fragment_.definitionString();
             break;
         case SiteType::Static:
@@ -775,15 +782,7 @@ SerialisedValue SpeciesSite::serialise() const
 
 void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    auto typeString = toml::find_or<std::string>(node, "type", "Static");
-    if (typeString == "Static")
-        type_ = SiteType::Static;
-    else if (typeString == "Fragment")
-        type_ = SiteType::Fragment;
-    else if (typeString == "Dynamic")
-        type_ = SiteType::Dynamic;
-    else
-        throw toml::syntax_error(fmt::format("Cannot comprehend species site type {}.\n", typeString), node.location());
+    type_ = siteTypes().deserialise(toml::find_or(node, "type", "static"));
 
     switch (type_)
     {
