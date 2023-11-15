@@ -27,7 +27,7 @@ SpeciesSite::SpeciesSite(const Species *parent, std::string name, SiteType type)
 EnumOptions<SpeciesSite::SiteType> SpeciesSite::types()
 {
     return EnumOptions<SiteType>(
-        "SiteType", {{SiteType::Static, "static"}, {SiteType::Dynamic, "dynamic"}, {SiteType::Fragment, "fragment"}});
+        "SiteType", {{SiteType::Static, "Static"}, {SiteType::Dynamic, "Dynamic"}, {SiteType::Fragment, "Fragment"}});
 }
 
 // Set name of site
