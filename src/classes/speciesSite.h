@@ -32,7 +32,7 @@ class SpeciesSite : public Serialisable<CoreData &>
         Fragment /* Site is based on a NETA description */
     };
     // EnumOptions for SiteType
-    static EnumOptions<SiteType> types();
+    static EnumOptions<SiteType> siteTypes();
 
     explicit SpeciesSite(const Species *parent, SiteType type = SiteType::Static);
     SpeciesSite(const Species *parent, std::string name, SiteType type = SiteType::Static);

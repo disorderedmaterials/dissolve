@@ -24,7 +24,7 @@ SpeciesSite::SpeciesSite(const Species *parent, std::string name, SiteType type)
  */
 
 // Enum of types
-EnumOptions<SpeciesSite::SiteType> SpeciesSite::types()
+EnumOptions<SpeciesSite::SiteType> SpeciesSite::siteTypes()
 {
     return EnumOptions<SiteType>(
         "SiteType", {{SiteType::Static, "Static"}, {SiteType::Dynamic, "Dynamic"}, {SiteType::Fragment, "Fragment"}});
@@ -757,7 +757,7 @@ SerialisedValue SpeciesSite::serialise() const
 {
     SerialisedValue site;
     if (type_ != SiteType::Static)
-        site["type"] = types().serialise(type_);
+        site["type"] = siteTypes().serialise(type_);
     if (originMassWeighted_)
         site["originMassWeighted"] = originMassWeighted_;
     switch (type_)
@@ -782,7 +782,7 @@ SerialisedValue SpeciesSite::serialise() const
 
 void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    type_ = types().deserialise(toml::find_or(node, "type", "static"));
+    type_ = siteTypes().deserialise(toml::find_or(node, "type", "static"));
 
     switch (type_)
     {
