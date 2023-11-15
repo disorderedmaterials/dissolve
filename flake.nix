@@ -150,6 +150,7 @@
               (pkgs.clang-tools.override {
                 llvmPackages = pkgs.llvmPackages_13;
               })
+              busybox
               ccache
               ccls
               cmakeWithGui
@@ -157,6 +158,7 @@
               cmake-language-server
               conan
               distcc
+              direnv
               gdb
               gtk3
               nixGL.nixGLIntel
