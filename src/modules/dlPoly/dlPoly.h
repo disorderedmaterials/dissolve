@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "io/export/dlPolyControl.h"
 #include "base/enumOptions.h"
 #include "module/module.h"
 
@@ -60,6 +61,8 @@ class DlPolyModule : public Module
     std::vector<const Species *> restrictToSpecies_;
     // Write frequency for trajectory file
     std::optional<int> trajectoryFrequency_;
+    // Filename and format for CONTROL export
+    DlPolyControlExportFileFormat dlPolyControlFormat_;
 
     /*
      * Functions

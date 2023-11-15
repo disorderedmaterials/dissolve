@@ -21,6 +21,24 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
+    // Only the pool master saves the data
+    if (moduleContext.processPool().isMaster())
+    {
+        Messenger::print("Export: Writing TESTTEST file ({}) for Configuration '{}'...\n",
+                         dlPolyControlFormat_.formatDescription(), targetConfiguration_->name());
+
+        if (!dlPolyControlFormat_.exportData(targetConfiguration_))
+        {
+            Messenger::print("Export: Failed to export coordinates file '{}'.\n", dlPolyControlFormat_.filename());
+            moduleContext.processPool().decideFalse();
+            return ExecutionResult::Failed;
+        }
+
+        moduleContext.processPool().decideTrue();
+    }
+    else if (!moduleContext.processPool().decision())
+        return ExecutionResult::Failed;
+
     // Get control parameters
     const auto maxForce = capForcesAt_ * 100.0; // To convert from kJ/mol to 10 J/mol
     auto rCut = cutoffDistance_.value_or(moduleContext.dissolve().pairPotentialRange());

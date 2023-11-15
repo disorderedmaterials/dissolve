@@ -9,10 +9,14 @@
 #include "keywords/optionalDouble.h"
 #include "keywords/optionalInt.h"
 #include "keywords/speciesVector.h"
+#include "keywords/fileAndFormat.h"
 
 DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    
+    keywords_.setOrganisation("Options", "File");
+    keywords_.add<FileAndFormatKeyword>("Format", "File / format for coordinates", dlPolyControlFormat_, "EndFormat");
 
     keywords_.setOrganisation("Options", "Simulation");
     keywords_.add<IntegerKeyword>("NSteps", "Number of DlPoly steps to perform", nSteps_, 1);
@@ -22,13 +26,6 @@ DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
     keywords_.add<BoolKeyword>("RandomVelocities",
                                "Whether random velocities should always be assigned before beginning DlPoly simulation",
                                randomVelocities_);
-
-    keywords_.setOrganisation("Options", "Control");
-    keywords_
-        .add<SpeciesVectorKeyword>("RestrictToSpecies", "Restrict the calculation to the specified Species", restrictToSpecies_)
-        ->setEditSignals({KeywordBase::KeywordSignal::ClearModuleData});
-    keywords_.add<BoolKeyword>("OnlyWhenEnergyStable", "Only run DlPoly when target Configuration energies are stable",
-                               onlyWhenEnergyStable_);
 
     keywords_.setOrganisation("Options", "Output");
     keywords_.add<OptionalIntegerKeyword>("EnergyFrequency", "Frequency at which to calculate total system energy",
@@ -44,10 +41,6 @@ DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
     keywords_.add<OptionalDoubleKeyword>(
         "CutoffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
         cutoffDistance_, 0.0, std::nullopt, 0.1, "Use PairPotential Range");
-    keywords_.add<BoolKeyword>(
-        "IntraOnly",
-        "Only forces arising from intramolecular terms (including pair potential contributions) will be calculated",
-        intramolecularForcesOnly_);
 
     // Deprecated
     static bool deprecatedBool_{false};

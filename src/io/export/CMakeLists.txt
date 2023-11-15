@@ -9,6 +9,7 @@ add_library(
   species.cpp
   trajectory.cpp
   values.cpp
+  dlPolyControl.cpp
   coordinates.h
   data1D.h
   data2D.h
@@ -18,6 +19,7 @@ add_library(
   species.h
   trajectory.h
   values.h
+  dlPolyControl.h
 )
 
 target_include_directories(export PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
