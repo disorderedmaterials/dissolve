@@ -31,7 +31,8 @@ template <typename... Contexts> class Serialisable
     // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node, Contexts... context) { return; }
 
-    template <typename = std::enable_if<sizeof...(Contexts) == 1>> void deserialise(const SerialisedValue &node)
+    template <typename = std::enable_if<sizeof...(Contexts) == 1 && (std::is_empty<Contexts>::value && ...)>>
+    void deserialise(const SerialisedValue &node)
     {
         deserialise(node, {});
     }
