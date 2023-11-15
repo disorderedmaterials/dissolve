@@ -11,12 +11,16 @@
 // The type we use for the nodes of our serialisation tree
 using SerialisedValue = toml::value;
 
+// An empty structure for when we have no data
+struct SerialisableEmpty
+{
+};
+
 // The associated context for type T
 template <typename T> struct SerialisableContext
 {
-    using type = void;
+    using type = SerialisableEmpty;
 };
-
 
 // An interface for classes that can be serialised into an input file
 template <typename... Contexts> class Serialisable
@@ -26,6 +30,11 @@ template <typename... Contexts> class Serialisable
     virtual SerialisedValue serialise() const = 0;
     // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node, Contexts... context) { return; }
+
+    template <typename = std::enable_if<sizeof...(Contexts) == 1>> void deserialise(const SerialisedValue &node)
+    {
+        deserialise(node, {});
+    }
 
     /* Functions that hook into the toml11 library */
     // Wrapper for deserialise that toml11 will check for
