@@ -95,6 +95,7 @@ if(GUI)
   )
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
+  add_definitions(-DQT_NO_KEYWORDS)
 
   # Make sure CMake won't try to generate rules for moc (we will do it ourselves)
   set(CMAKE_AUTOMOC ON)
@@ -150,7 +151,7 @@ if(APPLE)
     set(gui_target_name dissolve-gui)
   endif(PARALLEL)
 
-  set(CMAKE_OSX_ARCHITECTURES "x86_64")
+  set(CMAKE_OSX_ARCHITECTURES "arm64")
   add_definitions(-D_MAC)
 
   if(MULTI_THREADING)
