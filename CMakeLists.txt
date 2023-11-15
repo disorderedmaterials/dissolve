@@ -150,9 +150,9 @@ if(APPLE)
     set(gui_target_name dissolve-gui)
   endif(PARALLEL)
 
-  if(NOT CMAKE_OSX_ARCHITECTURE)
+  if(NOT CMAKE_OSX_ARCHITECTURES)
     set(CMAKE_OSX_ARCHITECTURES "x86_64")
-  endif(CMAKE_OSX_ARCHITECTURE)
+  endif(CMAKE_OSX_ARCHITECTURES)
   add_definitions(-D_MAC)
 
   if(MULTI_THREADING)
