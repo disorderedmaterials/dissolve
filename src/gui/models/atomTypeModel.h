@@ -8,16 +8,15 @@
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <QModelIndex>
-#include <QWidget>
 
 #include <vector>
-
-// Forward Declarations
-class QQuickWidget;
 
 class AtomTypeModel : public QAbstractListModel
 {
     Q_OBJECT
+
+    // The number of rows
+    Q_PROPERTY(int rowCount READ rows NOTIFY modelsUpdated)
 
     public:
     AtomTypeModel() = default;
@@ -27,9 +26,11 @@ class AtomTypeModel : public QAbstractListModel
     // Optional CoreData reference
     OptionalReferenceWrapper<const CoreData> coreData_;
 
+    signals:
+    // The models might've been updated
+    void modelsUpdated();
+
     private:
-    // QML View
-    QQuickWidget *node_{nullptr};
     // Source AtomType data
     OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes_;
     // Vector containing checked items (if relevant)

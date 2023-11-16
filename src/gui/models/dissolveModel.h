@@ -17,8 +17,6 @@ class DissolveModel : public QObject
     Q_OBJECT
     // The Atom Type Model
     Q_PROPERTY(AtomTypeModel *atomTypesModel READ atomTypesModel NOTIFY atomTypesChanged)
-    // The number of atom types
-    Q_PROPERTY(int nAtomTypes READ nAtomTypes NOTIFY modelsUpdated)
     // The Master Bond Model
     Q_PROPERTY(const MasterBondModel *masterBondsModel READ masterBondsModel NOTIFY mastersChanged)
     // The number of master bonds

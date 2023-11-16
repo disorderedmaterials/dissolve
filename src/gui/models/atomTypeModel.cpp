@@ -7,12 +7,7 @@
 #include "classes/coreData.h"
 #include "templates/algorithms.h"
 
-AtomTypeModel::AtomTypeModel(const CoreData &coreData) : coreData_(coreData)
-{
-    node_ = new QQuickWidget(this);
-    node_->rootContext()->setContextProperty("atomTypesModel", &coreData->atomTypes());
-    view_->setSource(QUrl("file:/dissolve/src/gui/qml/AtomTypes.qml"));
-}
+AtomTypeModel::AtomTypeModel(const CoreData &coreData) : coreData_(coreData) {}
 
 void AtomTypeModel::reset()
 {

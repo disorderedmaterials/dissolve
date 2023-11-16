@@ -3,9 +3,11 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 Node {
-    id: root
+    property AtomTypeModel atomTypeModel
+    property int rows
+    
     Text {
         anchors.centerIn: parent
-        text: `Atom Types(${root.rowCount()})`
+        text: `Atom Types(${atomTypeModel.rows})`
     }
 }
