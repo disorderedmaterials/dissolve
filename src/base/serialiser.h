@@ -11,15 +11,10 @@
 // The type we use for the nodes of our serialisation tree
 using SerialisedValue = toml::value;
 
-// An empty structure for when we have no data
-struct SerialisableEmpty
-{
-};
-
 // The associated context for type T
 template <typename T> struct SerialisableContext
 {
-    using type = SerialisableEmpty;
+    using type = SerialisableContext<void>;
 };
 
 // An interface for classes that can be serialised into an input file
