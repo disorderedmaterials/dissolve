@@ -22,11 +22,36 @@ DlPolyControlExportFileFormat::DlPolyControlExportFileFormat(std::string_view fi
 bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency)
 {
     // Export title
-    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->contentsVersion()))
+    if (!parser.writeLineF("title {} @ {}\n\n", cfg->name(), cfg->contentsVersion()))
         return false;
-    if (!parser.writeLineF("{}\n", nSteps))
+    if (!parser.writeLineF("io_file_config CONFIG\n"))
         return false;
-    
+    if (!parser.writeLineF("io_file_field FIELD\n"))
+        return false;
+    if (!parser.writeLineF("io_file_statis STATIS\n"))
+        return false;
+    if (!parser.writeLineF("io_file_revive REVIVE\n"))
+        return false;
+    if (!parser.writeLineF("io_file_revcon REVCON\n"))
+        return false;
+    if (!parser.writeLineF("temperature {} K\n", cfg->temperature()))
+        return false;
+    if (!parser.writeLineF("print_frequency {} steps\n", energyFrequency.value()))
+        return false;
+    if (!parser.writeLineF("stats_frequency {} steps\n", outputFrequency.value()))
+        return false;
+    if (!parser.writeLineF("cutoff {} ang\n", cutoffDistance.value()))
+        return false;
+    if (capForces && !parser.writeLineF("equilibration_force_cap {}\n", capForcesAt))
+        return false;
+    if (!parser.writeLineF("time_run {} steps\n", nSteps))
+        return false;
+    if (!parser.writeLineF("{}\n", fixedTimestep))
+        return false;
+    if (!parser.writeLineF("{}\n", randomVelocities))
+        return false;
+    if (!parser.writeLineF("{}\n", trajectoryFrequency.value()))
+        return false;
 
     return true;
 }
