@@ -19,7 +19,7 @@ DlPolyControlExportFileFormat::DlPolyControlExportFileFormat(std::string_view fi
 
 
 // Export DlPolyControl as CONTROL
-bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency)
+bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency)
 {
     // Export title
     if (!parser.writeLineF("title {} @ {}\n\n", cfg->name(), cfg->contentsVersion()))
@@ -46,18 +46,27 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("time_run {} steps\n", nSteps))
         return false;
-    if (!parser.writeLineF("{}\n", fixedTimestep))
-        return false;
-    if (!parser.writeLineF("{}\n", randomVelocities))
-        return false;
-    if (!parser.writeLineF("{}\n", trajectoryFrequency.value()))
-        return false;
+    if (timestepVariable)
+    {
+        if (!parser.writeLineF("timestep_variable ON\n"))
+            return false;
+    } else {
+        if (!parser.writeLineF("timestep_variable OFF\n"))
+            return false;
+    }
+
+    //if (!parser.writeLineF("{}\n", fixedTimestep))
+    //    return false;
+    //if (!parser.writeLineF("{}\n", randomVelocities))
+    //    return false;
+    //if (!parser.writeLineF("{}\n", trajectoryFrequency.value()))
+    //    return false;
 
     return true;
 }
 
 // Export DlPolyControl using current filename and format
-bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency)
+bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency)
 {
     // Open the file
     LineParser parser;
@@ -77,6 +86,7 @@ bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForce
                                   capForces,
                                   capForcesAt,
                                   cutoffDistance,
+                                  timestepVariable,
                                   fixedTimestep,
                                   energyFrequency,
                                   nSteps,

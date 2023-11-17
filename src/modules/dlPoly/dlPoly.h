@@ -21,22 +21,10 @@ class DlPolyModule : public Module
     /*
      * Definition
      */
-    public:
-    // Timestep Type
-    enum class TimestepType
-    {
-        Fixed,
-        Variable,
-        Automatic
-    };
-    // Return enum options for TimestepType
-    static EnumOptions<TimestepType> timestepType();
-    
+         
+    private:
     // Filename and format for CONTROL export
     DlPolyControlExportFileFormat dlPolyControlFormat_;
-
-
-    private:
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
     // Control whether atomic forces are capped every step
@@ -46,7 +34,7 @@ class DlPolyModule : public Module
     // Interatomic cutoff distance to employ
     std::optional<double> cutoffDistance_;
     // Timestep type to employ
-    TimestepType timestepType_{TimestepType::Automatic};
+    bool timestepVariable_{false};
     // Fixed timestep (ps) to use in MD simulation
     double fixedTimestep_{5.0e-4};
     // Frequency at which to calculate total system energy
@@ -66,10 +54,6 @@ class DlPolyModule : public Module
     private:
     // Cap forces in Configuration
     static int capForces(double maxForceSq, std::vector<Vec3<double>> &fInter, std::vector<Vec3<double>> &fIntra);
-    // Determine timestep to use
-    static std::optional<double> determineTimeStep(TimestepType timestepType, double requestedTimeStep,
-                                                   const std::vector<Vec3<double>> &fInter,
-                                                   const std::vector<Vec3<double>> &fIntra);
 
     public:
     // Evolve Species coordinates, returning new coordinates

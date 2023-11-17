@@ -20,8 +20,9 @@ DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
 
     keywords_.setOrganisation("Options", "Simulation");
     keywords_.add<IntegerKeyword>("NSteps", "Number of DlPoly steps to perform", nSteps_, 1);
-    keywords_.add<EnumOptionsKeyword<DlPolyModule::TimestepType>>("Timestep", "Timestep type to use in calculation", timestepType_,
-                                                              DlPolyModule::timestepType());
+    keywords_.add<BoolKeyword>("VariableTimestep", 
+                               "Whether a variable timestep should be used, determined from the maximal force vector",
+                               timestepVariable_);
     keywords_.add<DoubleKeyword>("DeltaT", "Fixed timestep (ps) to use in DlPoly simulation", fixedTimestep_, 0.0);
     keywords_.add<BoolKeyword>("RandomVelocities",
                                "Whether random velocities should always be assigned before beginning DlPoly simulation",
@@ -42,17 +43,4 @@ DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
         "CutoffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
         cutoffDistance_, 0.0, std::nullopt, 0.1, "Use PairPotential Range");
 
-    // Deprecated
-    static bool deprecatedBool_{false};
-    keywords_.addDeprecated<BoolKeyword>("VariableTimestep",
-                                         "Whether a variable timestep should be used, determined from the maximal force vector",
-                                         deprecatedBool_);
-}
-
-// Return enum options for TimestepType
-EnumOptions<DlPolyModule::TimestepType> DlPolyModule::timestepType()
-{
-    return EnumOptions<DlPolyModule::TimestepType>(
-        "TimestepType",
-        {{TimestepType::Fixed, "Fixed"}, {TimestepType::Variable, "Variable"}, {TimestepType::Automatic, "Auto"}});
 }

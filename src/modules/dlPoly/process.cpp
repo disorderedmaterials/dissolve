@@ -31,6 +31,7 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
                                              capForces_,
                                              capForcesAt_,
                                              cutoffDistance_,
+                                             timestepVariable_,
                                              fixedTimestep_,
                                              energyFrequency_,
                                              nSteps_,

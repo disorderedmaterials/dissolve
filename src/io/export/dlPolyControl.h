@@ -39,11 +39,11 @@ class DlPolyControlExportFileFormat : public FileAndFormat
      */
     private:
     // Export Configuration as DL_POLY CONTROL
-    bool exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency);
+    bool exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency);
 
     public:
     // Export Configuration using current filename and format
-    bool exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency);
+    bool exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency);
 
 };
 
