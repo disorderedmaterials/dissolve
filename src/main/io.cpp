@@ -122,6 +122,22 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
     return result;
 }
 
+// Serialise pair potential
+SerialisedValue Dissolve::serialisePairPotentials() const {
+    SerialisedValue pairPotentials = {
+        {"range", pairPotentialRange_},
+        {"delta", pairPotentialDelta_},
+        {"autoChargeSource", automaticChargeSource_},
+        {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(PairPotential::coulombTruncationScheme_)},
+        {"shortRangeTruncation", PairPotential::shortRangeTruncationSchemes().serialise(PairPotential::shortRangeTruncationScheme_)}};
+    if (forceChargeSource_)
+        pairPotentials["forceChargeSource"] = true;
+    if (atomTypeChargeSource_)
+        pairPotentials["includeCoulomb"] = true;
+    Serialisable::fromVector(coreData_.atomTypes(), "atomTypes", pairPotentials);
+    return pairPotentials;
+}
+
 // Express as a serialisable value
 SerialisedValue Dissolve::serialise() const
 {
@@ -133,7 +149,7 @@ SerialisedValue Dissolve::serialise() const
 
     Serialisable::fromVectorToTable<>(coreData_.species(), "species", root);
 
-    root["pairPotentials"] = serializablePairPotential_.serialise();
+    root["pairPotentials"] = serialisePairPotentials();
 
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 

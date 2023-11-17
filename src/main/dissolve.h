@@ -173,6 +173,8 @@ class Dissolve : public Serialisable<>
     bool loadInputFromString(std::string_view inputString);
     // Save input file
     bool saveInput(std::string_view filename);
+    // Express pair potentials as a serialisable value
+    SerialisedValue serialisePairPotentials() const;
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Load restart file
