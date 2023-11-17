@@ -41,7 +41,6 @@ runs:
     run: |
       nix-store --import < /tmp/nixcache
       sudo rm -rf /tmp/nixcache
-      nix-env -iA nixos.tbb_2021_8
 
   - name: Build
     shell: bash
