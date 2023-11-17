@@ -442,8 +442,12 @@ template <class T> class Vec3 : public Serialisable<typename SerialisableContext
     }
 
     // Read values from a serialisable value when no context is required
-    // This will throw an exception for types that require context (i.e. NodeValue)
-    void deserialise(const SerialisedValue &node) { deserialise(node, {}); }
+    // This method will only be instantiated for types with no context.
+    template <typename = std::enable_if<std::is_empty<typename SerialisableContext<T>::type>::value>>
+    void deserialise(const SerialisedValue &node)
+    {
+        deserialise(node, {});
+    }
 
     // Read values from a serialisable value with a required context
     void deserialise(const SerialisedValue &node, typename SerialisableContext<T>::type context) override
