@@ -14,23 +14,12 @@ void TaskContext::set(Dissolve &dissolve)
 // Set available ProcessPool
 void TaskContext::set(const ProcessPool &procPool) { processPool_ = procPool; }
 
-// Set target Configuration
-void TaskContext::set(Configuration *cfg) { configuration_ = cfg; }
-
 // Return reference to Dissolve
 Dissolve &TaskContext::dissolve() const
 {
     if (!dissolve_)
         throw(std::runtime_error("No reference to Dissolve is set in this context.\n"));
     return dissolve_->get();
-}
-
-// Return target Configuration
-Configuration *TaskContext::configuration() const
-{
-    if (!configuration_)
-        throw(std::runtime_error("No configuration set in this context.\n"));
-    return configuration_;
 }
 
 // Return available process pool
