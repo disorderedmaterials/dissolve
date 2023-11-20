@@ -7,8 +7,7 @@
 #include "classes/neutronWeights.h"
 #include "classes/species.h"
 
-Dissolve::Dissolve(CoreData &coreData)
-    : coreData_(coreData)
+Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {
     // Set core simulation variables
     restartFileFrequency_ = 10;
