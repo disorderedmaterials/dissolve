@@ -8,7 +8,6 @@
 #include "classes/coreData.h"
 #include "classes/pairPotential.h"
 #include "classes/potentialMap.h"
-#include "classes/serializablePairPotential.h"
 #include "data/elements.h"
 #include "module/layer.h"
 #include "module/module.h"
@@ -61,8 +60,6 @@ class Dissolve : public Serialisable<>
     std::vector<std::unique_ptr<PairPotential>> pairPotentials_;
     // Map for PairPotentials
     PotentialMap potentialMap_;
-    // Handler for serialising pair potential data
-    SerializablePairPotential serializablePairPotential_;
 
     public:
     // Set maximum distance for tabulated PairPotentials
@@ -167,12 +164,16 @@ class Dissolve : public Serialisable<>
     public:
     // Load input file
     bool loadInput(std::string_view filename);
+    // Read pair potentials from a serialisable value
+    void deserialisePairPotentials(const SerialisedValue &node);
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
     // Load input from supplied string
     bool loadInputFromString(std::string_view inputString);
     // Save input file
     bool saveInput(std::string_view filename);
+    // Express pair potentials as a serialisable value
+    SerialisedValue serialisePairPotentials() const;
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Load restart file
