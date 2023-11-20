@@ -39,7 +39,8 @@ runs:
     run: |
       set -ex
       brew update-reset
-      PACKAGES=(ftgl ninja antlr openjdk)
+      brew install ninja
+      PACKAGES=(ftgl antlr openjdk)
       for PACKAGE in "${PACKAGES[@]}"
       do
         brew fetch --force --bottle-tag=arm64_monterey $PACKAGE
