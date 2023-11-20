@@ -42,7 +42,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       CMAKE_TARGET: ${{ matrix.cmake_target }}
-      CONAN_TARGET: ${{ matrix.cmake_target }}
+      CONAN_TARGET: ${{ matrix.conan_target }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -88,7 +88,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       CMAKE_TARGET: ${{ matrix.cmake_target }}
-      CONAN_TARGET: ${{ matrix.cmake_target }}
+      CONAN_TARGET: ${{ matrix.conan_target }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
