@@ -15,7 +15,7 @@ class SerializablePairPotential;
 // PairPotential Definition
 class PairPotential
 {
-    friend class SerializablePairPotential;
+    friend class Dissolve;
 
     public:
     PairPotential();

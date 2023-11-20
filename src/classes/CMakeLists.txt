@@ -48,7 +48,6 @@ add_library(
   region.cpp
   regionalDistributor.cpp
   scatteringMatrix.cpp
-  serializablePairPotential.cpp
   site.cpp
   siteReference.cpp
   siteStack.cpp
@@ -103,7 +102,6 @@ add_library(
   region.h
   regionalDistributor.h
   scatteringMatrix.h
-  serializablePairPotential.h
   site.h
   siteReference.h
   siteStack.h
