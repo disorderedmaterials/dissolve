@@ -11,9 +11,15 @@
 #include <stdexcept>
 
 class NodeValue;
+class ExpressionVariable;
+
+template <> struct SerialisableContext<NodeValue>
+{
+    using type = std::vector<std::shared_ptr<ExpressionVariable>>;
+};
 
 // 3D vector
-template <class T> class Vec3 : public Serialisable<>
+template <class T> class Vec3 : public Serialisable<typename SerialisableContext<T>::type>
 {
     public:
     Vec3<T>() : x(T()), y(T()), z(T()){};
@@ -436,24 +442,27 @@ template <class T> class Vec3 : public Serialisable<>
     }
 
     // Read values from a serialisable value when no context is required
-    // This will throw an exception for types that require context (i.e. NodeValue)
-    void deserialise(const SerialisedValue &node) override
+    // This method will only be instantiated for types with no context.
+    template <typename = std::enable_if<std::is_empty<typename SerialisableContext<T>::type>::value>>
+    void deserialise(const SerialisedValue &node)
     {
-        if constexpr (std::is_same_v<T, NodeValue>)
-            throw std::runtime_error("Cannot build NodeValue witout context");
-        else
+        deserialise(node, {});
+    }
+
+    // Read values from a serialisable value with a required context
+    void deserialise(const SerialisedValue &node, typename SerialisableContext<T>::type context) override
+    {
+        if constexpr (std::is_empty_v<typename SerialisableContext<T>::type>)
         {
             x = toml::get<T>(node[0]);
             y = toml::get<T>(node[1]);
             z = toml::get<T>(node[2]);
         }
-    }
-
-    // Read values from a serialisable value with a required context
-    template <typename... Context> void deserialise(const SerialisedValue &node, Context... context)
-    {
-        x.deserialise(node[0], context...);
-        y.deserialise(node[1], context...);
-        z.deserialise(node[2], context...);
+        else
+        {
+            x.deserialise(node[0], context);
+            y.deserialise(node[1], context);
+            z.deserialise(node[2], context);
+        }
     }
 };
