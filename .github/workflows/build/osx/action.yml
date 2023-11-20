@@ -30,13 +30,7 @@ runs:
       set -ex
       brew update-reset
       brew install ftgl ninja
-
-  - name: Acquire ANTLR Java
-    if: ${{ inputs.cacheOnly == 'false' }}
-    shell: bash
-    run: |
-      set -ex
-      curl https://raw.githubusercontent.com/antlr/website-antlr4/gh-pages/download/antlr-4.9.3-complete.jar  --output antlr.jar
+      brew install antlr4
 
   - name: Install Python Dependencies
     shell: bash
@@ -92,7 +86,7 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
       Qt6_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos
-      ANTLR_EXE=`pwd`/antlr.jar
+      ANTLR_EXE=usr/local/Cellar/antlr/4.13.1/antlr-4.13.1-complete.jar
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
 
       # Build
