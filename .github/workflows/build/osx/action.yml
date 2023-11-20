@@ -114,7 +114,7 @@ runs:
 
       # Deploy Conan dependencies for ease
       mkdir deploy && cd deploy
-      conan install .. -g deploy -s arch=${{ env.CONAN_TARGET }
+      conan install .. -g deploy -s arch=${{ env.CONAN_TARGET }}
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
