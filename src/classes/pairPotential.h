@@ -16,7 +16,6 @@ class SerializablePairPotential;
 class PairPotential
 {
     friend class Dissolve;
-    friend class SerializablePairPotential;
 
     public:
     PairPotential();
