@@ -122,6 +122,24 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
     return result;
 }
 
+// Serialise pair potential
+SerialisedValue Dissolve::serialisePairPotentials() const
+{
+    SerialisedValue pairPotentials = {
+        {"range", pairPotentialRange_},
+        {"delta", pairPotentialDelta_},
+        {"autoChargeSource", automaticChargeSource_},
+        {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(PairPotential::coulombTruncationScheme_)},
+        {"shortRangeTruncation",
+         PairPotential::shortRangeTruncationSchemes().serialise(PairPotential::shortRangeTruncationScheme_)}};
+    if (forceChargeSource_)
+        pairPotentials["forceChargeSource"] = true;
+    if (atomTypeChargeSource_)
+        pairPotentials["includeCoulomb"] = true;
+    Serialisable::fromVector(coreData_.atomTypes(), "atomTypes", pairPotentials);
+    return pairPotentials;
+}
+
 // Express as a serialisable value
 SerialisedValue Dissolve::serialise() const
 {
@@ -133,7 +151,7 @@ SerialisedValue Dissolve::serialise() const
 
     Serialisable::fromVectorToTable<>(coreData_.species(), "species", root);
 
-    root["pairPotentials"] = serializablePairPotential_.serialise();
+    root["pairPotentials"] = serialisePairPotentials();
 
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 
@@ -142,15 +160,38 @@ SerialisedValue Dissolve::serialise() const
     return root;
 }
 
+// This method populates the object's members with values read from a 'pairPotentials' TOML node
+void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
+{
+    pairPotentialRange_ = toml::find_or<double>(node, "range", 15.0);
+    pairPotentialDelta_ = toml::find_or<double>(node, "delta", 0.005);
+    atomTypeChargeSource_ = toml::find_or<bool>(node, "includeCoulomb", false);
+    forceChargeSource_ = toml::find_or<bool>(node, "forceChargeSource", false);
+    automaticChargeSource_ = toml::find_or<bool>(node, "autoChargeSource", true);
+
+    PairPotential::coulombTruncationScheme_ =
+        PairPotential::coulombTruncationSchemes().deserialise(toml::find_or<std::string>(node, "coulombTruncation", "Shifted"));
+    PairPotential::shortRangeTruncationScheme_ = PairPotential::shortRangeTruncationSchemes().deserialise(
+        toml::find_or<std::string>(node, "shortRangeTruncation", "Shifted"));
+
+    toVector(node, "atomTypes",
+             [this](const auto &data) {
+                 coreData()
+                     .atomTypes()
+                     .emplace_back(std::make_unique<AtomType>(toml::find<std::string>(data, "name")))
+                     ->deserialise(data);
+             });
+}
+
 // Read values from a serialisable value
 void Dissolve::deserialise(const SerialisedValue &node)
 {
 
     if (node.contains("pairPotentials"))
     {
-        auto &pairPotentialsNode = toml::find(node, "pairPotentials");
+        auto pairPotentialsNode = toml::find(node, "pairPotentials");
         if (!pairPotentialsNode.is_uninitialized())
-            serializablePairPotential_.deserialise(pairPotentialsNode);
+            deserialisePairPotentials(pairPotentialsNode);
     }
     if (node.contains("master"))
     {
