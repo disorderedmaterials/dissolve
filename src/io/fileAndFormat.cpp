@@ -166,5 +166,6 @@ void FileAndFormat::deserialise(const SerialisedValue &node, const CoreData &cor
 {
     filename_ = toml::find<std::string>(node, "filename");
     formatIndex_ = formats_.keywordIndex(toml::find<std::string>(node, "format"));
-    Serialisable::optionalOn(node, "keywords", [this, &coreData](const auto node) { keywords_.deserialiseFrom(node, coreData); });
+    Serialisable::optionalOn(node, "keywords",
+                             [this, &coreData](const auto node) { keywords_.deserialiseFrom(node, coreData); });
 }

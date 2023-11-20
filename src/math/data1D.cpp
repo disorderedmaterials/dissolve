@@ -434,8 +434,10 @@ void Data1D::deserialise(const SerialisedValue &node)
     x_ = toml::find<std::vector<double>>(node, "x");
     values_ = toml::find<std::vector<double>>(node, "y");
 
-    Serialisable::optionalOn(node, "errors", [this](const auto errors) {
-      hasError_ = true;
-      errors_ = toml::get<std::vector<double>>(errors);
-    });
+    Serialisable::optionalOn(node, "errors",
+                             [this](const auto errors)
+                             {
+                                 hasError_ = true;
+                                 errors_ = toml::get<std::vector<double>>(errors);
+                             });
 }

@@ -438,9 +438,11 @@ void Data2D::deserialise(const SerialisedValue &node)
     values_.initialise(x_.size(), y_.size());
     values_.linearArray() = toml::find<std::vector<double>>(node, "values");
 
-    Serialisable::optionalOn(node, "errors", [this](const auto errors) {
-      hasError_ = true;
-      errors_.initialise(x_.size(), y_.size());
-      errors_.linearArray() = toml::get<std::vector<double>>(errors);
-    });
+    Serialisable::optionalOn(node, "errors",
+                             [this](const auto errors)
+                             {
+                                 hasError_ = true;
+                                 errors_.initialise(x_.size(), y_.size());
+                                 errors_.linearArray() = toml::get<std::vector<double>>(errors);
+                             });
 }
