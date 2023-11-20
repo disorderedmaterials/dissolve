@@ -11,6 +11,21 @@
 // The type we use for the nodes of our serialisation tree
 using SerialisedValue = toml::value;
 
+// The associated context for type T This type does double duty.
+// First, since the struct has not actual members, it is a Unit type
+// (a type with only one possible value).  This is why the default
+// inner type is SerialisableContext<void> - says that we have no
+// context and the type has no size.  The second duty is acting as a
+// type level function.  Normally, you would just add an inner type to
+// a class (e.g. NodeValue::Context) to perform this function.
+// Unfortunately, you can't add an inner type to a primative type
+// (e.g. float).  By specialising this template, we can create a
+// mapping between types and the context that they require.
+template <typename T> struct SerialisableContext
+{
+    using type = SerialisableContext<void>;
+};
+
 // An interface for classes that can be serialised into an input file
 template <typename... Contexts> class Serialisable
 {
@@ -19,6 +34,20 @@ template <typename... Contexts> class Serialisable
     virtual SerialisedValue serialise() const = 0;
     // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node, Contexts... context) { return; }
+
+    // When a type has only one context and that context is empty
+    // (i.e. is a Unit type), then we can create a simple overload
+    // that skips the need to add the second parameter.  This does not
+    // conflict with the definition above because it only becomes
+    // instantiated when the Contexts pack is not empty, so the above
+    // definition of deserialise takes two parameters.  We also insist
+    // that it is only called for empty types to ensure that we do not
+    // accidentally create a value with its default constructor.
+    template <typename = std::enable_if<sizeof...(Contexts) == 1 && (std::is_empty<Contexts>::value && ...)>>
+    void deserialise(const SerialisedValue &node)
+    {
+        deserialise(node, {});
+    }
 
     /* Functions that hook into the toml11 library */
     // Wrapper for deserialise that toml11 will check for
