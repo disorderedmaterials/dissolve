@@ -164,7 +164,7 @@ class Dissolve : public Serialisable<>
     public:
     // Load input file
     bool loadInput(std::string_view filename);
-    // Read piar potentials values from a serialisable value
+    // Read pair potentials from a serialisable value
     void deserialisePairPotentials(const SerialisedValue &node);
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
