@@ -30,7 +30,7 @@ runs:
       set -ex
       brew update-reset
       brew install ftgl ninja
-      brew install antlr4
+      brew install antlr
 
   - name: Install Python Dependencies
     shell: bash
@@ -108,3 +108,4 @@ runs:
         ${{ github.workspace }}/build
         ${{ github.workspace }}/deploy
       retention-days: 1
+˝˝
