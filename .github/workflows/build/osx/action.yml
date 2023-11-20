@@ -39,7 +39,7 @@ runs:
     run: |
       set -ex
       brew update-reset
-      PACKAGES=(ftgl, ninja, antlr, openjdk)
+      PACKAGES=(ftgl ninja antlr openjdk)
       for PACKAGE in "${PACKAGES[@]}"
       do
         brew fetch --force --bottle-tag=arm64_big_sur $PACKAGE
