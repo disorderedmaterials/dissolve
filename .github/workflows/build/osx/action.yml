@@ -31,7 +31,6 @@ runs:
       brew update-reset
       brew install ftgl ninja
       brew install antlr
-      brew install openjdk
 
   - name: Install Homebrew Dependencies for Silicon
     if: ${{ inputs.cacheOnly == 'false' && env.CMAKE_TARGET == 'arm64' }} 
@@ -40,7 +39,7 @@ runs:
       set -ex
       brew update-reset
       brew install ninja
-      PACKAGES=(ftgl antlr openjdk)
+      PACKAGES=(ftgl antlr)
       for PACKAGE in "${PACKAGES[@]}"
       do
         brew fetch --force --bottle-tag=arm64_monterey $PACKAGE
@@ -104,11 +103,12 @@ runs:
       Qt6_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos
       ANTLR_EXE=/usr/local/Cellar/antlr/4.13.1/antlr-4.13.1-complete.jar
+      JAVA_EXE=/usr/local/Cellar/openjdk/21.0.1/bin/java
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
 
       # Build
       cd build
-      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DCMAKE_OSX_ARCHITECTURES:string="${{ env.CMAKE_TARGET }}" ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DJava_JAVA_EXECUTABLE:path=$JAVA_EXE -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DCMAKE_OSX_ARCHITECTURES:string="${{ env.CMAKE_TARGET }}" ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
       cmake --build . --config Release
       cd ../
 
