@@ -79,8 +79,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          os: [ macos-latest, windows-latest ]
+        os: [ macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     env:
       CMAKE_TARGET: ${{ matrix.cmake_target }}
