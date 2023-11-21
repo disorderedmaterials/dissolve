@@ -80,13 +80,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
-            cmake_target: arm64
-            conan_target: armv8
-          - os: macos-latest
-            cmake_target: x86_64
-            conan_target: x86_64
-          - os: windows-latest
+          os: [ macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     env:
       CMAKE_TARGET: ${{ matrix.cmake_target }}

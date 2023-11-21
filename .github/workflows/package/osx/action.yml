@@ -16,11 +16,17 @@ runs:
       key: osx-qt-${{ env.qtVersion }}
       path: ${{ runner.temp }}/qt
 
-  - name: Download Raw Build Artifacts
+  - name: Download Raw Intel Build Artifacts
     uses: actions/download-artifact@v3
     with:
-      name: osx-build-artifacts
-      path: ${{ github.workspace }}
+      name: osx-build-artifacts-x86_64
+      path: ${{ github.workspace }}/intel
+
+  - name: Download Raw Silicon Build Artifacts
+    uses: actions/download-artifact@v3
+    with:
+      name: osx-build-artifacts-arm64
+      path: ${{ github.workspace }}/silicon
 
   - name: Install Python Dependencies
     shell: bash
@@ -45,10 +51,17 @@ runs:
       cp ./deploy/antlr4-cppruntime/lib/*.dylib /usr/local/lib/
       cp ./deploy/tbb/lib/*.dylib /usr/local/lib/
 
-      install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
-      install_name_tool -add_rpath "/usr/local/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+      # Intel
 
-      ./prep-dmg -a Dissolve-GUI -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -L /usr/local/lib
+      install_name_tool -add_rpath "@executable_path/../Frameworks/" intel/build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+      install_name_tool -add_rpath "/usr/local/lib" intel/build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+      ./prep-dmg -a Dissolve-GUI-Intel -v ${{ env.dissolveVersion }} -b intel/build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p intel/build/bin/dissolve-gui.app/Contents/Info.plist -L /usr/local/lib
+
+      # Silicon
+
+      install_name_tool -add_rpath "@executable_path/../Frameworks/" silicon/build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+      install_name_tool -add_rpath "/usr/local/lib" silicon/build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+      ./prep-dmg -a Dissolve-GUI-Silicon -v ${{ env.dissolveVersion }} -b silicon/build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p silicon/build/bin/dissolve-gui.app/Contents/Info.plist -L /usr/local/lib
 
   - name: Create Disk Image
     shell: bash
@@ -57,10 +70,14 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
       # Fix icon link
-      sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" Dissolve-GUI-${dissolveVersion}/Dissolve-GUI.app/Contents/Info.plist
+      sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" Dissolve-GUI-Intel-${dissolveVersion}/Dissolve-GUI.app/Contents/Info.plist
+      sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" Dissolve-GUI-Silicon-${dissolveVersion}/Dissolve-GUI.app/Contents/Info.plist
+
+      # Merge binaries into the Silicon bundle
+      lipo -create -output Dissolve-GUI-Silicon-${dissolveVersion}/Dissolve-GUI.app/Contents/MacOS/dissolve-gui /Users/noella.spitz/Desktop/dissolve-test-pkg/Dissolve-GUI-1.1.1-copy/Dissolve-GUI.app/Contents/MacOS/dissolve-gui /Users/noella.spitz/Desktop/dissolve-test-pkg/Dissolve-GUI-1.1.1/Dissolve-GUI.app/Contents/MacOS/dissolve-gui
 
       # Create DMG
-      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./Dissolve-GUI-${dissolveVersion}/Dissolve-GUI.app -D icon=./Dissolve-GUI-${dissolveVersion}/Dissolve-GUI.app/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" Dissolve-GUI-${dissolveVersion}.dmg
+      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./Dissolve-GUI-Silicon-${dissolveVersion}/Dissolve-GUI.app -D icon=./Dissolve-GUI-Silicon-${dissolveVersion}/Dissolve-GUI.app/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" Dissolve-GUI-${dissolveVersion}.dmg
 
       # Collect artifacts
       mkdir packages

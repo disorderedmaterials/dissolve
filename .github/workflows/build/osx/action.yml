@@ -120,7 +120,7 @@ runs:
     if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v3
     with:
-      name: osx-build-artifacts
+      name: osx-build-artifacts-${{ env.CMAKE_TARGET }}
       path: |
         ${{ github.workspace }}/build
         ${{ github.workspace }}/deploy
