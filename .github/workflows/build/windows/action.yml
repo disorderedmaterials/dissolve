@@ -125,7 +125,6 @@ runs:
       cmake --build . --target install --config Release
 
   - name: Get ANTLR and Java
-    if: ${{ steps.cache-ftgl.outputs.cache-hit != 'true' }}
     working-directory: ${{ runner.temp }}
     shell: bash
     run: |
