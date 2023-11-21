@@ -123,13 +123,16 @@ runs:
       cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../ftgl-install
       cmake --build . --target install --config Release
 
-  - name: Get ANTLR
+  - name: Get ANTLR and Java
     if: ${{ steps.cache-ftgl.outputs.cache-hit != 'true' }}
     working-directory: ${{ runner.temp }}
     shell: bash
     run: |
       set -ex
       wget https://www.antlr.org/download/antlr-4.13.1-complete.jar -Oantlr-4.13.1-complete.jar
+      wget https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.zip -Ojava
+      tar -zxf java.zip
+      
 
   #
   # Main Build
@@ -166,6 +169,7 @@ runs:
       # Setup environment
       Qt6_DIR="${RUNNER_TEMP}\qt\${{ env.qtVersion }}\msvc2019_64"
       ANTLR_EXE="${RUNNER_TEMP}\antlr-4.13.1-complete.jar"
+      JAVA_EXE="${RUNNER_TEMP}\java\jdk-21.0.1\bin\java"
       export PATH="${Qt6_DIR}\bin;$PATH"
       INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
       LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"
@@ -174,7 +178,7 @@ runs:
 
       # Build
       cd build
-      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true ${{ inputs.extraCMakeFlags }}
+      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE=:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true ${{ inputs.extraCMakeFlags }}
       cmake --build . --config Release --target keywordWidgets
       cmake --build . --config Release
       cd ../
