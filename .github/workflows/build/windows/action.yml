@@ -110,6 +110,7 @@ runs:
     run: |
       set -ex
       git clone ${{ inputs.ftglRepo }} ftgl-latest
+      echo $(ls)
 
   - name: Build FTGL
     if: ${{ steps.cache-ftgl.outputs.cache-hit != 'true' }}
