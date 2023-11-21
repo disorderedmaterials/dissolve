@@ -75,6 +75,7 @@ jobs:
         target: ${{ matrix.target }}
 
   Package:
+    needs: [ Build ]
     strategy:
       fail-fast: false
       matrix:
