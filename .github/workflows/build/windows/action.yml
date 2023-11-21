@@ -130,7 +130,7 @@ runs:
     run: |
       set -ex
       wget https://www.antlr.org/download/antlr-4.13.1-complete.jar -Oantlr-4.13.1-complete.jar
-      wget https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.zip -Ojava
+      wget https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.zip -Ojava.zip
       tar -zxf java.zip
       
 
