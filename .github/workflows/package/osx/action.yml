@@ -74,7 +74,7 @@ runs:
       sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" Dissolve-GUI-Silicon-${dissolveVersion}/Dissolve-GUI.app/Contents/Info.plist
 
       # Merge binaries into the Silicon bundle
-      lipo -create -output Dissolve-GUI-Silicon-${dissolveVersion}/Dissolve-GUI.app/Contents/MacOS/dissolve-gui /Users/noella.spitz/Desktop/dissolve-test-pkg/Dissolve-GUI-1.1.1-copy/Dissolve-GUI.app/Contents/MacOS/dissolve-gui /Users/noella.spitz/Desktop/dissolve-test-pkg/Dissolve-GUI-1.1.1/Dissolve-GUI.app/Contents/MacOS/dissolve-gui
+      lipo -create -output Dissolve-GUI-Silicon-${dissolveVersion}/Dissolve-GUI.app/Contents/MacOS/dissolve-gui Dissolve-GUI-Intel-${dissolveVersion}/Dissolve-GUI.app/Contents/MacOS/dissolve-gui Dissolve-GUI-Silicon-${dissolveVersion}/Dissolve-GUI.app/Contents/MacOS/dissolve-gui
 
       # Create DMG
       dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./Dissolve-GUI-Silicon-${dissolveVersion}/Dissolve-GUI.app -D icon=./Dissolve-GUI-Silicon-${dissolveVersion}/Dissolve-GUI.app/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" Dissolve-GUI-${dissolveVersion}.dmg
