@@ -168,7 +168,7 @@ runs:
       # Setup environment
       Qt6_DIR="${RUNNER_TEMP}\qt\${{ env.qtVersion }}\msvc2019_64"
       ANTLR_EXE="${RUNNER_TEMP}\antlr-4.13.1-complete.jar"
-      JAVA_EXE="${RUNNER_TEMP}\java\jdk-21.0.1\bin\java"
+      JAVA_EXE="${RUNNER_TEMP}\java\jdk-21.0.1\bin\java.exe"
       export PATH="${Qt6_DIR}\bin;$PATH"
       INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
       LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"
