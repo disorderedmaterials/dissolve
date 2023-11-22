@@ -111,7 +111,7 @@ SerialisedValue AtomType::serialise() const
 }
 
 // Read values from a serialisable value
-void AtomType::deserialise(toml::value node)
+void AtomType::deserialise(SerialisedValue node)
 {
     Z_ = toml::find<Elements::Element>(node, "z");
     charge_ = toml::find_or<double>(node, "charge", 0.0);

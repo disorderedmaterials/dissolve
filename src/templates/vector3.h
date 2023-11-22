@@ -428,7 +428,7 @@ template <class T> class Vec3 : public Serialisable<>
     // Express as a serialisable value
     SerialisedValue serialise() const override
     {
-        toml::array result;
+        SerialisedValue::array_type result;
         result.push_back(x);
         result.push_back(y);
         result.push_back(z);

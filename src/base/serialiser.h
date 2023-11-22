@@ -9,7 +9,7 @@
 #include <vector>
 
 // The type we use for the nodes of our serialisation tree
-using SerialisedValue = toml::value;
+using SerialisedValue = toml::basic_value<toml::discard_comments, std::map, std::vector>;
 
 // An interface for classes that can be serialised into an input file
 template <typename... Contexts> class Serialisable
@@ -98,7 +98,7 @@ template <typename... Contexts> class Serialisable
     // A helper function to add the elements of a vector to a node under a name
     template <typename T, typename Lambda> static SerialisedValue fromVector(const std::vector<T> &vector, Lambda toSerial)
     {
-        SerialisedValue result = toml::array{};
+        SerialisedValue result = SerialisedValue::array_type{};
         std::transform(vector.begin(), vector.end(), std::back_inserter(result), toSerial);
         return result;
     }
@@ -114,7 +114,7 @@ template <typename... Contexts> class Serialisable
     template <typename Lambda> static void toMap(const SerialisedValue &node, std::string key, Lambda action)
     {
         if (node.contains(key))
-            for (auto &[key, value] : toml::find<toml::table>(node, key))
+	    for (auto &[key, value] : toml::find<SerialisedValue::table_type>(node, key))
                 action(key, value);
     }
 
