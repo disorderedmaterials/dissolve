@@ -175,6 +175,8 @@ runs:
       INCLUDE="${RUNNER_TEMP}\ftgl-latest\src;$INCLUDE"
       LIB="${RUNNER_TEMP}\ftgl-install\lib;$LIB"
 
+      echo $($JAVA_EXE -jar $ANTLR_EXE)
+
       # Build
       cd build
       cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true ${{ inputs.extraCMakeFlags }}
