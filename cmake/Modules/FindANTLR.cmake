@@ -32,7 +32,7 @@ if(ANTLR_EXECUTABLE AND Java_JAVA_EXECUTABLE)
     message(
         SEND_ERROR
         "Command '${ANTLR_COMMAND_TO_RUN} ${ANTLR_COMMAND_ARGS}'"
-        "failed with the output '${ANTLR_COMMAND_ERROR}'")
+        "failed with the output '${ANTLR_COMMAND_OUTPUT}' '${ANTLR_COMMAND_ERROR}'")
   endif()
 
   macro(ANTLR_TARGET Name InputFile)
