@@ -66,18 +66,12 @@ void AddConfigurationDialog::setDefaultSpeciesInfoData()
     for (auto &spInfo : mixSpecies_)
         spInfo.reset();
 
-    // Get the largest species in terms of number of atoms
-    auto largestSpecies =
-        std::max_element(mixSpecies_.begin(), mixSpecies_.end(),
-                         [](const auto &a, const auto &b) { return a.species()->nAtoms() < b.species()->nAtoms(); })
-            ->species();
-
-    // Set starting ratios
-    for (auto &spInfo : mixSpecies_)
-        spInfo.setRequestedPopulation(int(largestSpecies->nAtoms() / spInfo.species()->nAtoms()));
+    // Get the total number of species atoms
+    auto nTotalSpeciesAtoms = std::accumulate(mixSpecies_.begin(), mixSpecies_.end(), 0,
+                                              [](auto acc, const auto &b) { return acc + b.species()->nAtoms(); });
 
     // Set a sensible initial multiplier
-    ui_.SpeciesMultiplierSpin->setValue(DissolveMath::power(10, std::max(0, 3 - int(log10(largestSpecies->nAtoms())))));
+    ui_.SpeciesMultiplierSpin->setValue(DissolveMath::power(10, std::max(0, 3 - int(log10(nTotalSpeciesAtoms)))));
 }
 
 /*
