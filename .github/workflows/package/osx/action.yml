@@ -49,7 +49,7 @@ runs:
 
       # Handle ANTLR
       cp ./deploy/antlr4-cppruntime/lib/*.dylib /usr/local/lib/
-      cp ./deploy/tbb/lib/*.dylib /usr/local/lib/
+      cp ./deploy/onetbb/lib/*.dylib /usr/local/lib/
 
       # Intel
 

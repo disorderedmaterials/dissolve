@@ -64,9 +64,9 @@ Source: "{#QtDir}\plugins\imageformats\*.dll"; DestDir: "{app}\bin\imageformats"
 ; Windows 10
 Source: "C:\Windows\System32\D3DCompiler_47.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; Conan Dependencies
-Source: "{#DeployDir}\tbb\bin\tbb.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\tbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\tbb\bin\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\onetbb\bin\tbb.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\onetbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\onetbb\bin\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
 Source: "{#DeployDir}\antlr4-cppruntime\bin\antlr4-runtime.dll"; DestDir: "{app}\bin"
 
 [Icons]
