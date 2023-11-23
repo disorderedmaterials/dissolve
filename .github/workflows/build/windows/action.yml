@@ -168,18 +168,15 @@ runs:
       # Setup environment
       Qt6_DIR="${RUNNER_TEMP}\qt\${{ env.qtVersion }}\msvc2019_64"
       ANTLR_EXE="${RUNNER_TEMP}\antlr-4.13.1-complete.jar"
-      JAVA_EXE="${RUNNER_TEMP}\java\jdk-21.0.1\bin\java.exe"
       export PATH="${Qt6_DIR}\bin;$PATH"
       INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
       LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"
       INCLUDE="${RUNNER_TEMP}\ftgl-latest\src;$INCLUDE"
       LIB="${RUNNER_TEMP}\ftgl-install\lib;$LIB"
 
-      echo $($JAVA_EXE -jar $ANTLR_EXE)
-
       # Build
       cd build
-      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true ${{ inputs.extraCMakeFlags }}
+      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_HOME_21_X64 -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true ${{ inputs.extraCMakeFlags }}
       cmake --build . --config Release --target keywordWidgets
       cmake --build . --config Release
       cd ../
