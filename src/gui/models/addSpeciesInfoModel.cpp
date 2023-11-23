@@ -83,7 +83,6 @@ QVariant AddSpeciesInfoModel::data(const QModelIndex &index, int role) const
                 return speciesInfo_[index.row()].rotate() ? Qt::Checked : Qt::Unchecked;
             case (AddSpeciesInfo::UseCoordinateSets):
                 return speciesInfo_[index.row()].useCoordinateSets() ? Qt::Checked : Qt::Unchecked;
-                ;
             default:
                 return {};
         }
