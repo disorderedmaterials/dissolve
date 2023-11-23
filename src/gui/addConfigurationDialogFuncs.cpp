@@ -37,8 +37,6 @@ AddConfigurationDialog::AddConfigurationDialog(QWidget *parent, Dissolve &dissol
     connect(ui_.BoxGammaSpin, SIGNAL(valueChanged(double)), this, SLOT(boxGeometryParameterChanged(double)));
 
     ui_.AddSpeciesInfoTable->setModel(&addSpeciesInfoModel_);
-    ui_.AddSpeciesInfoTable->hideColumn(AddSpeciesInfo::Rotate);
-    ui_.AddSpeciesInfoTable->hideColumn(AddSpeciesInfo::UseCoordinateSets);
     connect(&addSpeciesInfoModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(speciesInfoDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
     ComboEnumOptionsPopulator(ui_.SpeciesDensityUnitsCombo, Units::densityUnits());
@@ -221,7 +219,7 @@ void AddConfigurationDialog::finalise()
         // don't get a coordinate sets node
         const auto *sp = spInfo.species();
         std::shared_ptr<AddProcedureNode> addNode;
-        if (!spInfo.useCoordinateSets() || sp->nAtoms() == 1 || spInfo.actualPopulation() == 1 || sp->nAtoms() > 250)
+        if (!spInfo.useCoordinateSets())
             addNode = generator.createRootNode<AddProcedureNode>(sp->name(), sp, NodeValue(popString, paramsNode->parameters()),
                                                                  NodeValue(rhoString, paramsNode->parameters()), rhoUnits);
         else
