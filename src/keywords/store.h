@@ -88,6 +88,8 @@ class KeywordStore
     {
         auto *k = addKeyword<K>(name, description, args...);
 
+        organiser_.addHiddenKeyword(k);
+
         keywords_.emplace_back(k, KeywordStoreData::KeywordType::Standard);
 
         return k;

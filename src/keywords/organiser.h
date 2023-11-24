@@ -72,6 +72,8 @@ class KeywordStoreOrganiser
     std::vector<KeywordStoreSection> sections_;
     // Current section accepting keywords
     OptionalReferenceWrapper<KeywordStoreGroup> currentGroup_;
+    // Hidden keywords, not present in any section/group
+    std::vector<KeywordBase *> hiddenKeywords_;
 
     public:
     // Set current section / group for keyword addition, creating if necessary
@@ -79,6 +81,8 @@ class KeywordStoreOrganiser
                     std::optional<std::string_view> groupDescription = {});
     // Add keyword to current section / group
     void addKeywordToCurrentGroup(KeywordBase *keyword);
+    // Add hidden keyword
+    void addHiddenKeyword(KeywordBase *keyword);
     // Return defined sections
     const std::vector<KeywordStoreSection> sections() const;
 };
