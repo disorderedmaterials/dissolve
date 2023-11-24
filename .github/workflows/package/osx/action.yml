@@ -17,15 +17,17 @@ runs:
       path: ${{ runner.temp }}/qt
 
   - name: Download Raw Intel Build Artifacts
-    uses: actions/download-artifact@v3
+    uses: dawidd6/action-download-artifact@v2.28.0
     with:
       name: osx-build-artifacts-x86_64
+      run_id: 6979562510
       path: ${{ github.workspace }}/intel
 
   - name: Download Raw Silicon Build Artifacts
-    uses: actions/download-artifact@v3
+    uses: dawidd6/action-download-artifact@v2.28.0
     with:
       name: osx-build-artifacts-arm64
+      run_id: 6979562510
       path: ${{ github.workspace }}/silicon
 
   - name: Install Python Dependencies
