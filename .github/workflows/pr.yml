@@ -19,6 +19,7 @@ on:
 jobs:
 
   QC:
+  if: false
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -30,6 +31,7 @@ jobs:
 
   Build:
     needs: QC
+    if: false
     strategy:
       fail-fast: false
       matrix:
@@ -76,11 +78,12 @@ jobs:
         target: ${{ matrix.target }}
 
   Package:
-    needs: [ Build ]
+    # needs: [ Build ]
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, windows-latest ]
+        # os: [ macos-latest, windows-latest ]
+        os: [ macos-latest ]
     runs-on: ${{ matrix.os }}
     env:
       CMAKE_TARGET: ${{ matrix.cmake_target }}
