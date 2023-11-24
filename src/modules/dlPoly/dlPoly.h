@@ -21,6 +21,29 @@ class DlPolyModule : public Module
     /*
      * Definition
      */
+    public:
+    // TrajectoryKey Enum
+    enum TrajectoryKey
+    {
+        pos,
+        pos_vel,
+        pos_vel_force
+    };
+    // Return EnumOptions for TrajectoryKey
+    static EnumOptions<TrajectoryKey> trajectoryKey();
+    
+    // CoulMethod Enum
+    enum CoulMethod
+    {
+        off,
+        spme,
+        dddp,
+        pairwise,
+        reaction_field,
+        force_shifted
+    };
+    // Return EnumOptions for CoulMethod
+    static EnumOptions<CoulMethod> coulMethod();
          
     private:
     // Filename and format for CONTROL export
@@ -47,6 +70,12 @@ class DlPolyModule : public Module
     bool randomVelocities_{false};
     // Write frequency for trajectory file
     std::optional<int> trajectoryFrequency_;
+    // Type of target TrajectoryKeySet
+    DlPolyModule::TrajectoryKey trajectoryKey_{TrajectoryKey::pos};
+    // Set method for electrostatics method
+    DlPolyModule::CoulMethod coulMethod_{CoulMethod::off};
+    // Calculate electrostatics with given precision
+    double coulPrecision_{0.0}; 
     
     /*
      * Functions

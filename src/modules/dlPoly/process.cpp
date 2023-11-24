@@ -11,6 +11,22 @@
 #include "modules/forces/forces.h"
 #include "modules/dlPoly/dlPoly.h"
 
+// Return EnumOptions for TrajectoryKey
+EnumOptions<DlPolyModule::TrajectoryKey> DlPolyModule::trajectoryKey()
+{
+    return EnumOptions<DlPolyModule::TrajectoryKey>(
+        "TrajectoryKey",
+        {{TrajectoryKey::pos, "pos"}, {TrajectoryKey::pos_vel, "pos-vel"}, {TrajectoryKey::pos_vel_force, "pos-vel-force"}});
+}
+
+// Return EnumOptions for CoulMethod
+EnumOptions<DlPolyModule::CoulMethod> DlPolyModule::coulMethod()
+{
+    return EnumOptions<DlPolyModule::CoulMethod>(
+        "CoulMethod",
+        {{CoulMethod::off, "off"}, {CoulMethod::spme, "spme"}, {CoulMethod::dddp, "dddp"}, {CoulMethod::pairwise, "pairwise"}, {CoulMethod::reaction_field, "reaction_field"}, {CoulMethod::force_shifted,   "force_shifted"}});
+}
+
 // Run main processing
 Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
 {
@@ -37,7 +53,10 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
                                              nSteps_,
                                              outputFrequency_,
                                              randomVelocities_,
-                                             trajectoryFrequency_))
+                                             trajectoryFrequency_,
+                                             trajectoryKey().keyword(trajectoryKey_),
+                                             coulMethod().keyword(coulMethod_),
+                                             coulPrecision_))
         {
             Messenger::print("Export: Failed to export coordinates file '{}'.\n", dlPolyControlFormat_.filename());
             moduleContext.processPool().decideFalse();

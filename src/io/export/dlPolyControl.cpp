@@ -14,12 +14,12 @@ DlPolyControlExportFileFormat::DlPolyControlExportFileFormat(std::string_view fi
     : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<DlPolyControlExportFileFormat::DlPolyControlExportFormat>(
-        "CoordinateExportFileFormat", {{DlPolyControlExportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG File"}});
+        "ControlExportFileFormat", {{DlPolyControlExportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG File"}});
 }
 
 
 // Export DlPolyControl as CONTROL
-bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency)
+bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision)
 {
     // Export title
     if (!parser.writeLineF("title {} @ {}\n\n", cfg->name(), cfg->contentsVersion()))
@@ -42,6 +42,12 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("cutoff {} ang\n", cutoffDistance.value()))
         return false;
+    if (!parser.writeLineF("ensemble nvt\n", cutoffDistance.value()))
+        return false;
+    if (!parser.writeLineF("ensemble_method hoover\n", cutoffDistance.value()))
+        return false;
+    if (!parser.writeLineF("ensemble_thermostat_coupling  0.01 ps\n", cutoffDistance.value()))
+        return false;
     if (capForces && !parser.writeLineF("equilibration_force_cap {}\n", capForcesAt))
         return false;
     if (!parser.writeLineF("time_run {} steps\n", nSteps))
@@ -50,23 +56,30 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
     {
         if (!parser.writeLineF("timestep_variable ON\n"))
             return false;
-    } else {
-        if (!parser.writeLineF("timestep_variable OFF\n"))
+    }
+    if (trajectoryFrequency.value_or(0) > 0)
+    {
+        if (!parser.writeLineF("traj_calculate ON\n"))
+            return false;
+        if (!parser.writeLineF("traj_interval {}\n", trajectoryFrequency.value()))
+            return false;
+        if (!parser.writeLineF("traj_key {}\n", trajectoryKey))
             return false;
     }
-
+    if (!parser.writeLineF("coul_method {}\n", coulMethod))
+        return false;
+    if (!parser.writeLineF("coul_precision {}\n", coulPrecision))
+        return false;
     //if (!parser.writeLineF("{}\n", fixedTimestep))
     //    return false;
     //if (!parser.writeLineF("{}\n", randomVelocities))
-    //    return false;
-    //if (!parser.writeLineF("{}\n", trajectoryFrequency.value()))
     //    return false;
 
     return true;
 }
 
 // Export DlPolyControl using current filename and format
-bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency)
+bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision)
 {
     // Open the file
     LineParser parser;
@@ -92,7 +105,10 @@ bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForce
                                   nSteps,
                                   outputFrequency,
                                   randomVelocities,
-                                  trajectoryFrequency);
+                                  trajectoryFrequency,
+                                  trajectoryKey,
+                                  coulMethod,
+                                  coulPrecision);
             break;
         default:
             throw(std::runtime_error(fmt::format("DlPolyControl format '{}' export has not been implemented.\n",

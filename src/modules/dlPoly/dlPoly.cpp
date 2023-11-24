@@ -8,6 +8,7 @@
 #include "keywords/integer.h"
 #include "keywords/optionalDouble.h"
 #include "keywords/optionalInt.h"
+#include "keywords/enumOptions.h"
 #include "keywords/speciesVector.h"
 #include "keywords/fileAndFormat.h"
 
@@ -35,6 +36,11 @@ DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
                                           0, std::nullopt, 5, "Off");
     keywords_.add<OptionalIntegerKeyword>("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_, 0,
                                           std::nullopt, 5, "Off");
+    keywords_.add<EnumOptionsKeyword<DlPolyModule::TrajectoryKey>>(
+        "TrajectoryKey", "Set trajectory key", trajectoryKey_, DlPolyModule::trajectoryKey());
+    keywords_.add<EnumOptionsKeyword<DlPolyModule::CoulMethod>>(
+        "CoulMethod", "Set Coul Method", coulMethod_, DlPolyModule::coulMethod());
+    keywords_.add<DoubleKeyword>("Coul Precision", "Calculate electrostatics using Fennell damping (Ewald-like) with given precision", coulPrecision_, 0.0);
 
     keywords_.setOrganisation("Advanced");
     keywords_.add<BoolKeyword>("CapForces", "Control whether atomic forces are capped every step", capForces_);
@@ -42,5 +48,4 @@ DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
     keywords_.add<OptionalDoubleKeyword>(
         "CutoffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
         cutoffDistance_, 0.0, std::nullopt, 0.1, "Use PairPotential Range");
-
 }
