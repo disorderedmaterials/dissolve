@@ -32,10 +32,9 @@ std::vector<KeywordBase *> KeywordStore::allKeywords_;
  */
 
 // Set current group and section organisation
-void KeywordStore::setOrganisation(std::string_view groupName, std::string_view sectionName)
+void KeywordStore::setOrganisation(std::string_view sectionName, std::optional<std::string_view> groupName)
 {
-    currentGroupName_ = groupName;
-    currentSectionName_ = sectionName;
+    organiser_.setCurrent(sectionName, groupName);
 }
 
 // Find named keyword
@@ -67,47 +66,8 @@ std::vector<KeywordBase *> KeywordStore::targetKeywords()
     return targets;
 }
 
-// Return keyword organisation based on group and section names
-std::pair<KeywordStore::KeywordStoreIndex, KeywordStore::KeywordStoreMap> KeywordStore::keywordOrganisation()
-{
-    // Organise keywords together by group and section names, if they have them
-    KeywordStore::KeywordStoreIndex index;
-    KeywordStore::KeywordStoreMap map;
-
-    // Iterate over the defined keywords
-    for (auto &kd : keywords_)
-    {
-        // Don't include deprecated keywords or those with no defined group
-        if (kd.type() == KeywordStoreData::KeywordType::Deprecated || kd.groupName().empty())
-            continue;
-
-        // The order of the defined keywords is important, since it reflects the desired group/section order in the GUI
-        // Check for the presence of the current group / section
-        auto groupIt = map.find(kd.groupName());
-        if (groupIt != map.end())
-        {
-            auto sectionIt = groupIt->second.find(kd.sectionName());
-            if (sectionIt != groupIt->second.end())
-                sectionIt->second.push_back(kd.keyword());
-            else
-            {
-                groupIt->second[kd.sectionName()].push_back(kd.keyword());
-
-                // Find the existing index entry
-                auto it =
-                    std::find_if(index.begin(), index.end(), [kd](const auto &idx) { return kd.groupName() == idx.first; });
-                it->second.push_back(kd.sectionName());
-            }
-        }
-        else
-        {
-            map[kd.groupName()][kd.sectionName()].push_back(kd.keyword());
-            index.emplace_back(kd.groupName(), std::vector{kd.sectionName()});
-        }
-    }
-
-    return {index, map};
-}
+// Return keyword organiser
+const KeywordStoreOrganiser &KeywordStore::organiser() const { return organiser_; }
 
 /*
  * Read / Write

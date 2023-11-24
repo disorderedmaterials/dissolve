@@ -30,16 +30,11 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
         QString(":/modules/icons/modules/%1.svg").arg(QString::fromStdString(ModuleTypes::lccModuleType(module_->type())))));
 
     // Set up keyword widgets, one group per stack page
-    auto &&[keywordIndex, keywordMap] = module_->keywords().keywordOrganisation();
-    std::string_view currentGroupName = "";
     QPushButton *firstButton = nullptr;
-    for (auto &[groupName, sections] : keywordIndex)
+    for (auto &section : module_->keywords().organiser().sections())
     {
-        if (currentGroupName == groupName)
-            continue;
-
-        // Create a button for the group
-        auto &&[b, alignRight] = KeywordsWidget::buttonForGroup(groupName);
+        // Create a button for the section
+        auto &&[b, alignRight] = KeywordsWidget::buttonForGroup(section.name());
         b->setCheckable(true);
         b->setAutoExclusive(true);
         connect(b, SIGNAL(clicked(bool)), this, SLOT(keywordGroupButtonClicked(bool)));
@@ -50,7 +45,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
 
         // Add a new KeywordsWidget, set it up, and add it to the stack
         auto *w = new KeywordsWidget();
-        w->setUp({groupName, sections}, keywordMap, dissolve_.coreData());
+        w->setUp(section, dissolve_.coreData());
         connect(w, SIGNAL(keywordChanged(int)), this, SLOT(localKeywordChanged(int)));
         keywordWidgets_.push_back(w);
         ui_.ModuleControlStack->addWidget(w);
@@ -58,7 +53,6 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
         // Map our button to the new stack page
         controlStackMap_[b] = ui_.ModuleControlStack->count() - 1;
 
-        currentGroupName = groupName;
         if (!firstButton)
             firstButton = b;
     }
