@@ -5,6 +5,7 @@
 
 #include "keywords/base.h"
 #include "keywords/enumOptions.h"
+#include "keywords/organiser.h"
 #include "keywords/storeData.h"
 #include "math/function1D.h"
 #include "math/range.h"
@@ -46,8 +47,8 @@ class KeywordStore
     private:
     // Keywords present in this store
     std::vector<KeywordStoreData> keywords_;
-    // Current group and section organisation for new keywords
-    std::string currentGroupName_{"UNGROUPED"}, currentSectionName_;
+    // Keyword organiser
+    KeywordStoreOrganiser organiser_;
 
     private:
     // Add keyword
@@ -70,12 +71,16 @@ class KeywordStore
 
     public:
     // Set current group and section organisation
-    void setOrganisation(std::string_view groupName, std::string_view sectionName = "");
+    void setOrganisation(std::string_view sectionName, std::optional<std::string_view> groupName = {});
     // Add target keyword
     template <class K, typename... Args> void addTarget(std::string_view name, std::string_view description, Args &&...args)
     {
-        keywords_.emplace_back(addKeyword<K>(name, description, args...), KeywordStoreData::KeywordType::Target, "Options",
-                               "Targets");
+        auto *k = addKeyword<K>(name, description, args...);
+
+        organiser_.setCurrent("Options", "Targets");
+        organiser_.addKeywordToCurrentGroup(k);
+
+        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Target);
     }
     // Add hidden keyword (no group)
     template <class K, typename... Args>
@@ -87,22 +92,26 @@ class KeywordStore
 
         return k;
     }
-    // Add keyword, displaying in named group
+    // Add keyword, displaying in current section/group
     template <class K, typename... Args> KeywordBase *add(std::string_view name, std::string_view description, Args &&...args)
     {
         auto *k = addKeyword<K>(name, description, args...);
 
-        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Standard, currentGroupName_, currentSectionName_);
+        organiser_.addKeywordToCurrentGroup(k);
+
+        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Standard);
 
         return k;
     }
-    // Add keyword (displaying in named group) and capture in restart file
+    // Add keyword (displaying in current section/group) and capture in restart file
     template <class K, typename... Args>
     KeywordBase *addRestartable(std::string_view name, std::string_view description, Args &&...args)
     {
         auto *k = addKeyword<K>(name, description, args...);
 
-        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Restartable, currentGroupName_, currentSectionName_);
+        organiser_.addKeywordToCurrentGroup(k);
+
+        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Restartable);
 
         return k;
     }
@@ -132,11 +141,8 @@ class KeywordStore
     const std::vector<KeywordStoreData> &keywords() const;
     // Return all target keywords
     std::vector<KeywordBase *> targetKeywords();
-    // Return keyword organisation based on group and section names
-    using KeywordStoreIndexInfo = std::pair<std::string_view, std::vector<std::string_view>>;
-    using KeywordStoreIndex = std::vector<KeywordStoreIndexInfo>;
-    using KeywordStoreMap = std::map<std::string_view, std::map<std::string_view, std::vector<KeywordBase *>>>;
-    std::pair<KeywordStoreIndex, KeywordStoreMap> keywordOrganisation();
+    // Return keyword organiser
+    const KeywordStoreOrganiser &organiser() const;
 
     /*
      * Set / Get

@@ -104,7 +104,7 @@ void FileAndFormatKeywordWidget::on_FormatCombo_currentIndexChanged(int index)
 
 void FileAndFormatKeywordWidget::on_OptionsButton_clicked(bool checked)
 {
-    KeywordsDialog optionsDialog(this, keyword_->data().keywords(), coreData_);
+    KeywordsDialog optionsDialog(this, keyword_->data().keywords().organiser(), coreData_);
 
     optionsDialog.showOptions();
 

@@ -21,6 +21,7 @@ add_library(
   nodeValue.cpp
   optionalDouble.cpp
   optionalInt.cpp
+  organiser.cpp
   procedure.cpp
   range.cpp
   rangeVector.cpp
@@ -64,6 +65,7 @@ add_library(
   nodeVector.h
   optionalDouble.h
   optionalInt.h
+  organiser.h
   procedure.h
   range.h
   species.h
