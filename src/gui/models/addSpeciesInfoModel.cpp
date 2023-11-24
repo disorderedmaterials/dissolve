@@ -16,8 +16,9 @@ void AddSpeciesInfo::reset()
 {
     requestedPopulation_ = 1.0;
     actualPopulation_ = 0.0;
-    useCoordinateSets_ = true;
-    rotate_ = true;
+
+    useCoordinateSets_ = species_ && species_->nAtoms() > 1 && species_->nAtoms() < 250;
+    rotate_ = species_ && species_->nAtoms() > 1;
 }
 
 const Species *AddSpeciesInfo::species() const { return species_; }
@@ -70,16 +71,22 @@ QVariant AddSpeciesInfoModel::data(const QModelIndex &index, int role) const
                 return QString::number(speciesInfo_[index.row()].requestedPopulation());
             case (AddSpeciesInfo::ActualPopulation):
                 return QString::number(speciesInfo_[index.row()].actualPopulation());
-            case (AddSpeciesInfo::Rotate):
-                return speciesInfo_[index.row()].rotate();
-            case (AddSpeciesInfo::UseCoordinateSets):
-                return speciesInfo_[index.row()].useCoordinateSets();
             default:
                 return {};
         }
     }
-    //    else if (role == Qt::DecorationRole)
-    //        return QVariant(iconFunction_(rawData(index)));
+    else if (role == Qt::CheckStateRole)
+    {
+        switch (index.column())
+        {
+            case (AddSpeciesInfo::Rotate):
+                return speciesInfo_[index.row()].rotate() ? Qt::Checked : Qt::Unchecked;
+            case (AddSpeciesInfo::UseCoordinateSets):
+                return speciesInfo_[index.row()].useCoordinateSets() ? Qt::Checked : Qt::Unchecked;
+            default:
+                return {};
+        }
+    }
     else if (role == Qt::UserRole)
         return QVariant::fromValue(speciesInfo_[index.row()]);
 
@@ -88,26 +95,36 @@ QVariant AddSpeciesInfoModel::data(const QModelIndex &index, int role) const
 
 bool AddSpeciesInfoModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role != Qt::EditRole)
-        return false;
-
-    switch (index.column())
+    if (role == Qt::EditRole)
     {
-        case (AddSpeciesInfo::RequestedPopulation):
-            speciesInfo_[index.row()].setRequestedPopulation(value.toDouble());
-            break;
-        case (AddSpeciesInfo::ActualPopulation):
-            speciesInfo_[index.row()].setActualPopulation(value.toDouble());
-            break;
-        case (AddSpeciesInfo::Rotate):
-            speciesInfo_[index.row()].setRotate(value.toBool());
-            break;
-        case (AddSpeciesInfo::UseCoordinateSets):
-            speciesInfo_[index.row()].setUseCoordinateSets(value.toBool());
-            break;
-        default:
-            return false;
+        switch (index.column())
+        {
+            case (AddSpeciesInfo::RequestedPopulation):
+                speciesInfo_[index.row()].setRequestedPopulation(value.toDouble());
+                break;
+            case (AddSpeciesInfo::ActualPopulation):
+                speciesInfo_[index.row()].setActualPopulation(value.toDouble());
+                break;
+            default:
+                return false;
+        }
     }
+    else if (role == Qt::CheckStateRole)
+    {
+        switch (index.column())
+        {
+            case (AddSpeciesInfo::Rotate):
+                speciesInfo_[index.row()].setRotate(value.toBool());
+                break;
+            case (AddSpeciesInfo::UseCoordinateSets):
+                speciesInfo_[index.row()].setUseCoordinateSets(value.toBool());
+                break;
+            default:
+                return false;
+        }
+    }
+    else
+        return false;
 
     emit dataChanged(index, index);
 
@@ -120,8 +137,17 @@ Qt::ItemFlags AddSpeciesInfoModel::flags(const QModelIndex &index) const
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     else if (index.column() == AddSpeciesInfo::ActualPopulation)
         return Qt::ItemIsSelectable;
-    else
-        return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+
+    Qt::ItemFlags itemFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+
+    if (index.column() == AddSpeciesInfo::UseCoordinateSets || index.column() == AddSpeciesInfo::Rotate)
+    {
+        itemFlags |= Qt::ItemIsUserCheckable;
+        if (speciesInfo_[index.row()].species()->nAtoms() == 1)
+            itemFlags.setFlag(Qt::ItemIsEnabled, false);
+    }
+
+    return itemFlags;
 }
 
 QVariant AddSpeciesInfoModel::headerData(int section, Qt::Orientation orientation, int role) const
