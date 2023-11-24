@@ -54,7 +54,7 @@ runs:
       lipo -create -output /usr/local/lib/libantlr4-runtime.dylib silicon/deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib intel/deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib
 
       for FILENAME in silicon/deploy/onetbb/lib/*.dylib; do
-        lipo -create -output /usr/local/lib/$FILENAME silicon/deploy/onetbb/lib/$FILENAME.dylib intel/deploy/onetbb/lib/$FILENAME.dylib
+        lipo -create -output /usr/local/lib/$FILENAME silicon/deploy/onetbb/lib/$FILENAME intel/deploy/onetbb/lib/$FILENAME
       done
 
       # Intel
