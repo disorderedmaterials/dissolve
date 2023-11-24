@@ -48,8 +48,9 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
       # Handle ANTLR
-      cp ./deploy/antlr4-cppruntime/lib/*.dylib /usr/local/lib/
-      cp ./deploy/onetbb/lib/*.dylib /usr/local/lib/
+      cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.4.13.1.dylib /usr/local/lib/
+      cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib /usr/local/lib/
+      cp -r ./deploy/onetbb/lib/ /usr/local/lib/
 
       # Intel
 
