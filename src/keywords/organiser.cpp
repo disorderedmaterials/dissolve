@@ -76,5 +76,8 @@ void KeywordStoreOrganiser::addKeywordToCurrentGroup(KeywordBase *keyword)
     currentGroup_->get().addKeyword(keyword);
 }
 
+// Add hidden keyword
+void KeywordStoreOrganiser::addHiddenKeyword(KeywordBase *keyword) { hiddenKeywords_.push_back(keyword); }
+
 // Return defined sections
 const std::vector<KeywordStoreSection> KeywordStoreOrganiser::sections() const { return sections_; }
