@@ -5,9 +5,9 @@
 
 #include <toml11/toml.hpp>
 
+#include "templates/ordered_map.h"
 #include <map>
 #include <vector>
-#include "templates/ordered_map.h"
 
 // The type we use for the nodes of our serialisation tree
 using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::ordered_map, std::vector>;
@@ -144,7 +144,7 @@ template <typename... Contexts> class Serialisable
     template <typename Lambda> static void toMap(const SerialisedValue &node, std::string key, Lambda action)
     {
         if (node.contains(key))
-	    for (auto &[key, value] : toml::find<SerialisedValue::table_type>(node, key))
+            for (auto &[key, value] : toml::find<SerialisedValue::table_type>(node, key))
                 action(key, value);
     }
 
