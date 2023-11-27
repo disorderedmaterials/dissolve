@@ -10,5 +10,4 @@ Node {
         anchors.centerIn: parent
         text: `Atom Types(${atomTypeModel.rows})`
     }
-
 }
