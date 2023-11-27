@@ -53,8 +53,6 @@ class KeywordStore
     std::vector<KeywordStoreSection> sections_;
     // Current section accepting keywords
     OptionalReferenceWrapper<KeywordStoreGroup> currentGroup_;
-    // Hidden keywords, not present in any section/group
-    std::vector<std::pair<KeywordBase *, KeywordBase::KeywordType>> hiddenKeywords_;
 
     private:
     // Create keyword
@@ -76,10 +74,9 @@ class KeywordStore
     }
     // Add keyword to current section / group
     void addKeywordToCurrentGroup(KeywordBase *keyword, KeywordBase::KeywordType type);
-    // Add hidden keyword
-    void addHiddenKeyword(KeywordBase *keyword, KeywordBase::KeywordType type);
     // Return named group, if it exists, optionally creating it if it doesn't
-    OptionalReferenceWrapper<KeywordStoreGroup> getGroup(std::string_view sectionName, std::string_view groupName, bool createIfRequired = false);
+    OptionalReferenceWrapper<KeywordStoreGroup> getGroup(std::string_view sectionName, std::string_view groupName,
+                                                         bool createIfRequired = false);
 
     public:
     // Set current group and section organisation
@@ -90,8 +87,9 @@ class KeywordStore
     {
         auto *k = createKeyword<K>(name, description, args...);
 
-        setOrganisation("Options", "Targets");
-        addKeywordToCurrentGroup(k, KeywordBase::KeywordType::Target);
+        auto optTargetsGroup = getGroup("Options", "Targets", true);
+
+        optTargetsGroup->get().addKeyword(k, KeywordBase::KeywordType::Target);
     }
     // Add hidden keyword (no group)
     template <class K, typename... Args>
@@ -99,7 +97,9 @@ class KeywordStore
     {
         auto *k = createKeyword<K>(name, description, args...);
 
-        addHiddenKeyword(k, KeywordBase::KeywordType::Standard);
+        auto optHiddenGroup = getGroup("Options", "_HIDDEN", true);
+
+        optHiddenGroup->get().addKeyword(k, KeywordBase::KeywordType::Target);
 
         return k;
     }
@@ -128,7 +128,9 @@ class KeywordStore
     {
         auto *k = createKeyword<K>(name, description, args...);
 
-        addHiddenKeyword(k, KeywordBase::KeywordType::Deprecated);
+        auto optHiddenGroup = getGroup("Options", "_HIDDEN", true);
+
+        optHiddenGroup->get().addKeyword(k, KeywordBase::KeywordType::Deprecated);
 
         return k;
     }

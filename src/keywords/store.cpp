@@ -40,16 +40,9 @@ void KeywordStore::addKeywordToCurrentGroup(KeywordBase *keyword, KeywordBase::K
     currentGroup_->get().addKeyword(keyword, type);
 }
 
-// Add hidden keyword
-void KeywordStore::addHiddenKeyword(KeywordBase *keyword, KeywordBase::KeywordType type)
-{
-    // Create the _HIDDEN group if we need to
-
-    hiddenKeywords_.emplace_back(keyword, type);
-}
-
 // Return named group, if it exists
-OptionalReferenceWrapper<KeywordStoreGroup> KeywordStore::getGroup(std::string_view sectionName, std::string_view groupName, bool createIfRequired)
+OptionalReferenceWrapper<KeywordStoreGroup> KeywordStore::getGroup(std::string_view sectionName, std::string_view groupName,
+                                                                   bool createIfRequired)
 {
     // Get the specified section
     auto sectionIt = std::find_if(sections_.begin(), sections_.end(),

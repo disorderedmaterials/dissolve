@@ -34,6 +34,10 @@ void KeywordsWidget::setUp(const KeywordStoreSection &keywordSection, const Core
     auto row = 0;
     for (auto &group : keywordSection.groups())
     {
+        // Nothing to do if this group is hidden
+        if (group.name() != "_HIDDEN")
+            continue;
+
         // Create a widget for the group name
         if (group.name() != "_NO_HEADER")
         {
