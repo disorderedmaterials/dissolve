@@ -31,7 +31,7 @@ class KeywordStoreGroup
     // Group name and description
     std::string name_, description_;
     // Contained keywords
-    std::vector<std::pair<KeywordBase *, KeywordBase::KeywordType>> keywords_;
+    std::vector<KeywordStoreEntry> keywords_;
 
     public:
     // Add keyword to group
@@ -41,7 +41,7 @@ class KeywordStoreGroup
     // Return the group description
     std::string_view description() const;
     // Return the keywords vector
-    const std::vector<std::pair<KeywordBase *, KeywordBase::KeywordType>> &keywords() const;
+    const std::vector<KeywordStoreEntry> &keywords() const;
 
     /*
      * Find

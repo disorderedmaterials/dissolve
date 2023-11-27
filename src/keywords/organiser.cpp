@@ -26,7 +26,7 @@ std::string_view KeywordStoreGroup::name() const { return name_; }
 std::string_view KeywordStoreGroup::description() const { return description_; }
 
 // Return the keywords vector
-const std::vector<std::pair<KeywordBase *, KeywordBase::KeywordType>> &KeywordStoreGroup::keywords() const { return keywords_; }
+const std::vector<KeywordStoreEntry> &KeywordStoreGroup::keywords() const { return keywords_; }
 
 // Find named keyword
 std::optional<KeywordStoreEntry> KeywordStoreGroup::find(std::string_view name) const
