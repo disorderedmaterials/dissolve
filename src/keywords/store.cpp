@@ -43,19 +43,29 @@ void KeywordStore::addKeywordToCurrentGroup(KeywordBase *keyword, KeywordBase::K
 // Add hidden keyword
 void KeywordStore::addHiddenKeyword(KeywordBase *keyword, KeywordBase::KeywordType type)
 {
+    // Create the _HIDDEN group if we need to
+
     hiddenKeywords_.emplace_back(keyword, type);
 }
 
 // Return named group, if it exists
-OptionalReferenceWrapper<KeywordStoreGroup> KeywordStore::getGroup(std::string_view sectionName, std::string_view groupName)
+OptionalReferenceWrapper<KeywordStoreGroup> KeywordStore::getGroup(std::string_view sectionName, std::string_view groupName, bool createIfRequired)
 {
     // Get the specified section
     auto sectionIt = std::find_if(sections_.begin(), sections_.end(),
                                   [sectionName](const auto &section) { return section.name() == sectionName; });
     if (sectionIt == sections_.end())
-        return {};
+    {
+        if (createIfRequired)
+        {
+            auto &newSection = sections_.emplace_back(sectionName);
+            return newSection.createGroup(groupName);
+        }
+        else
+            return {};
+    }
 
-    return sectionIt->getGroup(groupName);
+    return sectionIt->getGroup(groupName, createIfRequired);
 }
 
 // Set current group and section organisation

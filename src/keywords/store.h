@@ -78,8 +78,8 @@ class KeywordStore
     void addKeywordToCurrentGroup(KeywordBase *keyword, KeywordBase::KeywordType type);
     // Add hidden keyword
     void addHiddenKeyword(KeywordBase *keyword, KeywordBase::KeywordType type);
-    // Return named group, if it exists
-    OptionalReferenceWrapper<KeywordStoreGroup> getGroup(std::string_view sectionName, std::string_view groupName);
+    // Return named group, if it exists, optionally creating it if it doesn't
+    OptionalReferenceWrapper<KeywordStoreGroup> getGroup(std::string_view sectionName, std::string_view groupName, bool createIfRequired = false);
 
     public:
     // Set current group and section organisation

@@ -60,11 +60,14 @@ KeywordStoreGroup &KeywordStoreSection::createGroup(std::string_view groupName,
 }
 
 // Get named group if it exists
-OptionalReferenceWrapper<KeywordStoreGroup> KeywordStoreSection::getGroup(std::string_view groupName)
+OptionalReferenceWrapper<KeywordStoreGroup> KeywordStoreSection::getGroup(std::string_view groupName, bool createIfRequired)
 {
     auto groupIt = std::find_if(groups_.begin(), groups_.end(), [groupName](auto &group) { return group.name() == groupName; });
     if (groupIt != groups_.end())
         return *groupIt;
+
+    if (createIfRequired)
+        return groups_.emplace_back(groupName);
 
     return {};
 }

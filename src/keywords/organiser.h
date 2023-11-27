@@ -78,7 +78,7 @@ class KeywordStoreSection
     // Create new group
     KeywordStoreGroup &createGroup(std::string_view groupName, std::optional<std::string_view> groupDescription = {});
     // Get named group if it exists
-    OptionalReferenceWrapper<KeywordStoreGroup> getGroup(std::string_view groupName);
+    OptionalReferenceWrapper<KeywordStoreGroup> getGroup(std::string_view groupName, bool createIfRequired = false);
     // Return vector of defined groups
     const std::vector<KeywordStoreGroup> &groups() const;
     // Return number of keywords defined over all groups
