@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/organiser.h"
+#include <numeric>
 
 /*
  * Keyword Store Group
@@ -13,7 +14,10 @@ KeywordStoreGroup::KeywordStoreGroup(std::string_view name, std::string_view des
 }
 
 // Add keyword to group
-void KeywordStoreGroup::addKeyword(KeywordBase *keyword) { keywords_.push_back(keyword); }
+void KeywordStoreGroup::addKeyword(KeywordBase *keyword, KeywordBase::KeywordType type)
+{
+    keywords_.emplace_back(keyword, type);
+}
 
 // Return the group name
 std::string_view KeywordStoreGroup::name() const { return name_; }
@@ -22,7 +26,18 @@ std::string_view KeywordStoreGroup::name() const { return name_; }
 std::string_view KeywordStoreGroup::description() const { return description_; }
 
 // Return the keywords vector
-const std::vector<KeywordBase *> &KeywordStoreGroup::keywords() const { return keywords_; }
+const std::vector<std::pair<KeywordBase *, KeywordBase::KeywordType>> &KeywordStoreGroup::keywords() const { return keywords_; }
+
+// Find named keyword
+std::optional<KeywordStoreEntry> KeywordStoreGroup::find(std::string_view name) const
+{
+    auto keywordIt =
+        std::find_if(keywords_.begin(), keywords_.end(), [name](const auto &kd) { return kd.first->name() == name; });
+    if (keywordIt != keywords_.end())
+        return *keywordIt;
+
+    return {};
+}
 
 /*
  * Keyword Store Section
@@ -33,51 +48,46 @@ KeywordStoreSection::KeywordStoreSection(std::string_view name) : name_(name) { 
 // Return section name
 std::string_view KeywordStoreSection::name() const { return name_; }
 
-// Get named group, creating if necessary
-KeywordStoreGroup &KeywordStoreSection::getGroup(std::optional<std::string_view> groupName,
-                                                 std::optional<std::string_view> groupDescription)
+// Create new group
+KeywordStoreGroup &KeywordStoreSection::createGroup(std::string_view groupName,
+                                                    std::optional<std::string_view> groupDescription)
 {
-    // If no group name is supplied we return the _NO_HEADER group (front of the vector)
-    if (!groupName)
-        return groups_.front();
+    auto oldGroup = getGroup(groupName);
+    if (oldGroup)
+        return *oldGroup;
 
-    // Return an existing group, or create a new one with the supplied name
-    auto name = *groupName;
-    auto groupIt = std::find_if(groups_.begin(), groups_.end(), [name](const auto &group) { return group.name() == name; });
-    return groupIt == groups_.end() ? groups_.emplace_back(name, groupDescription.value_or("")) : *groupIt;
+    return groups_.emplace_back(groupName, groupDescription ? *groupDescription : "");
+}
+
+// Get named group if it exists
+OptionalReferenceWrapper<KeywordStoreGroup> KeywordStoreSection::getGroup(std::string_view groupName)
+{
+    auto groupIt = std::find_if(groups_.begin(), groups_.end(), [groupName](auto &group) { return group.name() == groupName; });
+    if (groupIt != groups_.end())
+        return *groupIt;
+
+    return {};
 }
 
 // Return vector if defined groups
-const std::vector<KeywordStoreGroup> KeywordStoreSection::groups() const { return groups_; }
+const std::vector<KeywordStoreGroup> &KeywordStoreSection::groups() const { return groups_; }
 
-/*
- * Keyword Store Organiser
- */
-
-// Set current section / group for keyword addition, creating if necessary
-void KeywordStoreOrganiser::setCurrent(std::string_view sectionName, std::optional<std::string_view> groupName,
-                                       std::optional<std::string_view> groupDescription)
+// Return number of keywords defined over all groups
+int KeywordStoreSection::nKeywords() const
 {
-    // Find the named section
-    auto sectionIt = std::find_if(sections_.begin(), sections_.end(),
-                                  [sectionName](const auto &section) { return section.name() == sectionName; });
-    auto &section = sectionIt == sections_.end() ? sections_.emplace_back(sectionName) : *sectionIt;
-
-    // Get / create the group within the section
-    currentGroup_ = section.getGroup(groupName, groupDescription);
+    return std::accumulate(groups_.begin(), groups_.end(), 0,
+                           [](const auto acc, const auto &group) { return acc + group.keywords().size(); });
 }
 
-// Add keyword to current section / group
-void KeywordStoreOrganiser::addKeywordToCurrentGroup(KeywordBase *keyword)
+// Find named keyword
+std::optional<KeywordStoreEntry> KeywordStoreSection::find(std::string_view name) const
 {
-    if (!currentGroup_)
-        setCurrent("_DEFAULT_SECTION");
+    for (const auto &group : groups_)
+    {
+        auto optK = group.find(name);
+        if (optK)
+            return *optK;
+    }
 
-    currentGroup_->get().addKeyword(keyword);
+    return {};
 }
-
-// Add hidden keyword
-void KeywordStoreOrganiser::addHiddenKeyword(KeywordBase *keyword) { hiddenKeywords_.push_back(keyword); }
-
-// Return defined sections
-const std::vector<KeywordStoreSection> KeywordStoreOrganiser::sections() const { return sections_; }

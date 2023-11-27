@@ -45,7 +45,7 @@ void KeywordsWidget::setUp(const KeywordStoreSection &keywordSection, const Core
         }
 
         // Loop over keywords in the group and add them to our groupbox
-        for (auto *keyword : group.keywords())
+        for (auto &[keyword, keywordType] : group.keywords())
         {
             // Try to create a suitable widget
             auto [widget, base] = KeywordWidgetProducer::create(keyword, coreData);

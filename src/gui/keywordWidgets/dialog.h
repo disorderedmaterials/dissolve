@@ -17,7 +17,7 @@ class KeywordsDialog : public QDialog
     Q_OBJECT
 
     public:
-    KeywordsDialog(QWidget *parent, const KeywordStoreOrganiser &keywordOrganiser, const CoreData &coreData);
+    KeywordsDialog(QWidget *parent, const KeywordStore &keywordStore, const CoreData &coreData);
     ~KeywordsDialog() = default;
 
     private:
