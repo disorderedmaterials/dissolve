@@ -5,7 +5,6 @@
 
 #include "keywords/base.h"
 #include "keywords/enumOptions.h"
-#include "keywords/storeData.h"
 #include "math/function1D.h"
 #include "math/range.h"
 #include "procedure/nodeValue.h"
@@ -19,6 +18,9 @@
 //   associated with it one or more keywords organised into one or more named groups.
 // - Groups represent logical ordering of keywords together within a section, e.g. step sizes or targets
 
+// Type Definition for Basic Keyword Entry
+using KeywordStoreEntry = std::pair<KeywordBase *, KeywordBase::KeywordType>;
+
 // Keyword Store Group
 class KeywordStoreGroup
 {
@@ -29,17 +31,33 @@ class KeywordStoreGroup
     // Group name and description
     std::string name_, description_;
     // Contained keywords
-    std::vector<KeywordBase *> keywords_;
+    std::vector<std::pair<KeywordBase *, KeywordBase::KeywordType>> keywords_;
 
     public:
     // Add keyword to group
-    void addKeyword(KeywordBase *keyword);
+    void addKeyword(KeywordBase *keyword, KeywordBase::KeywordType type);
     // Return the group name
     std::string_view name() const;
     // Return the group description
     std::string_view description() const;
     // Return the keywords vector
-    const std::vector<KeywordBase *> &keywords() const;
+    const std::vector<std::pair<KeywordBase *, KeywordBase::KeywordType>> &keywords() const;
+
+    /*
+     * Find
+     */
+    public:
+    // Find named keyword
+    std::optional<KeywordStoreEntry> find(std::string_view name) const;
+    // Find all keywords of specified type
+    template <class K> std::vector<K *> allOfType() const
+    {
+        std::vector<K *> result;
+        for (auto &&[k, kType] : keywords_)
+            if (k->typeIndex() == typeid(K *))
+                result.push_back(dynamic_cast<K *>(k));
+        return result;
+    }
 };
 
 // Keyword Store Section
@@ -57,32 +75,30 @@ class KeywordStoreSection
     public:
     // Return section name
     std::string_view name() const;
-    // Get named group, creating if necessary
-    KeywordStoreGroup &getGroup(std::optional<std::string_view> groupName,
-                                std::optional<std::string_view> groupDescription = {});
-    // Return vector if defined groups
-    const std::vector<KeywordStoreGroup> groups() const;
-};
+    // Create new group
+    KeywordStoreGroup &createGroup(std::string_view groupName, std::optional<std::string_view> groupDescription = {});
+    // Get named group if it exists
+    OptionalReferenceWrapper<KeywordStoreGroup> getGroup(std::string_view groupName);
+    // Return vector of defined groups
+    const std::vector<KeywordStoreGroup> &groups() const;
+    // Return number of keywords defined over all groups
+    int nKeywords() const;
 
-// Keyword Store Organiser
-class KeywordStoreOrganiser
-{
-    private:
-    // Defined keyword sections
-    std::vector<KeywordStoreSection> sections_;
-    // Current section accepting keywords
-    OptionalReferenceWrapper<KeywordStoreGroup> currentGroup_;
-    // Hidden keywords, not present in any section/group
-    std::vector<KeywordBase *> hiddenKeywords_;
-
+    /*
+     * Find
+     */
     public:
-    // Set current section / group for keyword addition, creating if necessary
-    void setCurrent(std::string_view sectionName, std::optional<std::string_view> groupName = {},
-                    std::optional<std::string_view> groupDescription = {});
-    // Add keyword to current section / group
-    void addKeywordToCurrentGroup(KeywordBase *keyword);
-    // Add hidden keyword
-    void addHiddenKeyword(KeywordBase *keyword);
-    // Return defined sections
-    const std::vector<KeywordStoreSection> sections() const;
+    // Find named keyword
+    std::optional<KeywordStoreEntry> find(std::string_view name) const;
+    // Find all keywords of specified type
+    template <class K> std::vector<K *> allOfType() const
+    {
+        std::vector<K *> result;
+        for (auto &group : groups_)
+        {
+            auto subResult = group.allOfType<K>();
+            result.insert(result.end(), subResult.begin(), subResult.end());
+        }
+        return result;
+    }
 };

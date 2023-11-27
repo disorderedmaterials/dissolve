@@ -22,13 +22,13 @@ NodeControlWidget::NodeControlWidget(DissolveWindow *dissolveWindow, NodeRef nod
         QPixmap(QString(":/nodes/icons/nodes/%1.svg").arg(QString::fromStdString(ProcedureNode::lccNodeType(node->type())))));
 
     // Set up any keyword widgets we have
-    if (!node_->keywords().organiser().sections().empty())
+    if (!node_->keywords().sections().empty())
     {
         // We can only display a single section of widgets at present
-        if (node_->keywords().organiser().sections().size() > 1)
+        if (node_->keywords().sections().size() > 1)
             Messenger::warn("There are {} keyword sections defined, but only one can be displayed. Tell the developer!\n");
 
-        ui_.NodeKeywordsWidget->setUp(node_->keywords().organiser().sections().front(), dissolve_.coreData());
+        ui_.NodeKeywordsWidget->setUp(node_->keywords().sections().front(), dissolve_.coreData());
     }
 
     updateControls();

@@ -6,19 +6,19 @@
 #include "gui/keywordWidgets/dialog.h"
 #include "keywords/organiser.h"
 
-KeywordsDialog::KeywordsDialog(QWidget *parent, const KeywordStoreOrganiser &keywordOrganiser, const CoreData &coreData)
+KeywordsDialog::KeywordsDialog(QWidget *parent, const KeywordStore &keywordStore, const CoreData &coreData)
     : coreData_(coreData)
 {
     ui_.setupUi(this);
 
-    if (keywordOrganiser.sections().empty())
+    if (keywordStore.nVisibleKeywords() == 0)
         return;
 
     // We can only display a single section of widgets at present
-    if (keywordOrganiser.sections().size() != 1)
+    if (keywordStore.sections().size() != 1)
         Messenger::warn("There are {} keyword sections defined, but only one can be displayed. Tell the developer!\n");
 
-    ui_.Keywords->setUp(keywordOrganiser.sections().front(), coreData);
+    ui_.Keywords->setUp(keywordStore.sections().front(), coreData);
 
     connect(ui_.Keywords, SIGNAL(keywordChanged(int)), this, SLOT(keywordChanged(int)));
 }

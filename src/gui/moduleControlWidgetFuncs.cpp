@@ -31,7 +31,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
 
     // Set up keyword widgets, one group per stack page
     QPushButton *firstButton = nullptr;
-    for (auto &section : module_->keywords().organiser().sections())
+    for (auto &section : module_->keywords().sections())
     {
         // Create a button for the section
         auto &&[b, alignRight] = KeywordsWidget::buttonForGroup(section.name());
