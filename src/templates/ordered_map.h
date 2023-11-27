@@ -14,7 +14,6 @@ template <typename Key, typename Value> class ordered_map
 {
 
     private:
-    int counter_ = 0;
     std::map<Key, int> index_;
     std::vector<std::pair<Key, Value>> values_;
     void insistKey_(const Key &key)
@@ -28,19 +27,30 @@ template <typename Key, typename Value> class ordered_map
 
     public:
     ordered_map(){};
-    // template <typename Iter> ordered_map(Iter begin, Iter end)
-    // {
-    //     for (auto i = begin; i <= end; i++)
-    //     {
-    //         insert(i.first, i.second);
-    //     }
-    // };
+    template <typename Iter> ordered_map(Iter begin, Iter end)
+    {
+        for (auto i = begin; i != end; i++)
+            (*this)[i->first] = i->second;
+    };
     typename std::vector<std::pair<Key, Value>>::iterator begin() { return values_.begin(); }
     typename std::vector<std::pair<Key, Value>>::iterator end() { return values_.end(); }
     typename std::vector<std::pair<Key, Value>>::const_iterator begin() const { return values_.begin(); }
     typename std::vector<std::pair<Key, Value>>::const_iterator end() const { return values_.end(); }
-    auto count(const Key &key) const { return values_.count(key); }
-    Value &at(const Key &key) const { return values_.at(key); }
+    bool operator==(const ordered_map<Key, Value> other) const
+    {
+        if (values_.size() != other.values_.size())
+            return false;
+        for (int i = 0; i < values_.size(); i++)
+            if (values_[i] != other.values_[i])
+                return false;
+        for (auto [k, v] : index_)
+            if (other.index_.at(k) != v)
+                return false;
+        return true;
+    }
+    auto count(const Key &key) const { return index_.count(key); }
+    const Value &at(const Key &key) const { return values_[index_.at(key)].second; }
+    Value &at(const Key &key) { return values_[index_.at(key)].second; }
     Value &operator[](const Key &key)
     {
         insistKey_(key);

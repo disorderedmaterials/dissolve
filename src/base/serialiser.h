@@ -7,9 +7,10 @@
 
 #include <map>
 #include <vector>
+#include "templates/ordered_map.h"
 
 // The type we use for the nodes of our serialisation tree
-using SerialisedValue = toml::basic_value<toml::discard_comments, std::map, std::vector>;
+using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::ordered_map, std::vector>;
 
 // An interface for classes that can be serialised into an input file
 template <typename... Contexts> class Serialisable
@@ -43,7 +44,7 @@ template <typename... Contexts> class Serialisable
     static SerialisedValue fromVectorToTable(const std::vector<T> &vector, Lambda getName)
     {
         SerialisedValue group;
-        for (auto it = vector.rbegin(); it < vector.rend(); it++)
+        for (auto it = vector.begin(); it < vector.end(); it++)
             group[getName(*it)] = (*it)->serialise();
         return group;
     };
@@ -66,7 +67,7 @@ template <typename... Contexts> class Serialisable
     static SerialisedValue fromVectorToMap(const std::vector<T> &vector, Lambda getName, Lambda2 getValue)
     {
         SerialisedValue group;
-        for (auto it = vector.rbegin(); it < vector.rend(); it++)
+        for (auto it = vector.begin(); it < vector.end(); it++)
             group[getName(*it)] = getValue(*it);
         return group;
     };
