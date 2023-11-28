@@ -25,7 +25,7 @@ using KeywordStoreEntry = std::pair<KeywordBase *, KeywordBase::KeywordType>;
 class KeywordStoreGroup
 {
     public:
-    KeywordStoreGroup(std::string_view groupName, std::string_view groupDescription = "");
+    KeywordStoreGroup(std::string_view groupName, std::optional<std::string_view> groupDescription = {});
 
     private:
     // Group name and description
@@ -75,10 +75,9 @@ class KeywordStoreSection
     public:
     // Return section name
     std::string_view name() const;
-    // Create new group
-    KeywordStoreGroup &createGroup(std::string_view groupName, std::optional<std::string_view> groupDescription = {});
     // Get named group if it exists
-    OptionalReferenceWrapper<KeywordStoreGroup> getGroup(std::string_view groupName, bool createIfRequired = false);
+    OptionalReferenceWrapper<KeywordStoreGroup>
+    getGroup(std::string_view groupName, std::optional<std::string_view> groupDescription = {}, bool createIfRequired = false);
     // Return vector of defined groups
     const std::vector<KeywordStoreGroup> &groups() const;
     // Return number of keywords defined over all groups

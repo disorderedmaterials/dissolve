@@ -76,6 +76,7 @@ class KeywordStore
     void addKeywordToCurrentGroup(KeywordBase *keyword, KeywordBase::KeywordType type);
     // Return named group, if it exists, optionally creating it if it doesn't
     OptionalReferenceWrapper<KeywordStoreGroup> getGroup(std::string_view sectionName, std::string_view groupName,
+                                                         std::optional<std::string_view> groupDescription = {},
                                                          bool createIfRequired = false);
 
     public:
@@ -87,7 +88,7 @@ class KeywordStore
     {
         auto *k = createKeyword<K>(name, description, args...);
 
-        auto optTargetsGroup = getGroup("Options", "Targets", true);
+        auto optTargetsGroup = getGroup("Options", "Targets", {}, true);
 
         optTargetsGroup->get().addKeyword(k, KeywordBase::KeywordType::Target);
     }
@@ -97,7 +98,7 @@ class KeywordStore
     {
         auto *k = createKeyword<K>(name, description, args...);
 
-        auto optHiddenGroup = getGroup("Options", "_HIDDEN", true);
+        auto optHiddenGroup = getGroup("Options", "_HIDDEN", {}, true);
 
         optHiddenGroup->get().addKeyword(k, KeywordBase::KeywordType::Target);
 
@@ -128,7 +129,7 @@ class KeywordStore
     {
         auto *k = createKeyword<K>(name, description, args...);
 
-        auto optHiddenGroup = getGroup("Options", "_HIDDEN", true);
+        auto optHiddenGroup = getGroup("Options", "_HIDDEN", {}, true);
 
         optHiddenGroup->get().addKeyword(k, KeywordBase::KeywordType::Deprecated);
 

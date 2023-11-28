@@ -42,6 +42,7 @@ void KeywordStore::addKeywordToCurrentGroup(KeywordBase *keyword, KeywordBase::K
 
 // Return named group, if it exists
 OptionalReferenceWrapper<KeywordStoreGroup> KeywordStore::getGroup(std::string_view sectionName, std::string_view groupName,
+                                                                   std::optional<std::string_view> groupDescription,
                                                                    bool createIfRequired)
 {
     // Get the specified section
@@ -52,26 +53,20 @@ OptionalReferenceWrapper<KeywordStoreGroup> KeywordStore::getGroup(std::string_v
         if (createIfRequired)
         {
             auto &newSection = sections_.emplace_back(sectionName);
-            return newSection.createGroup(groupName);
+            return newSection.getGroup(groupName, groupDescription, true);
         }
         else
             return {};
     }
 
-    return sectionIt->getGroup(groupName, createIfRequired);
+    return sectionIt->getGroup(groupName, groupDescription, createIfRequired);
 }
 
 // Set current group and section organisation
 void KeywordStore::setOrganisation(std::string_view sectionName, std::optional<std::string_view> groupName,
                                    std::optional<std::string_view> groupDescription)
 {
-    // Find the named section
-    auto sectionIt = std::find_if(sections_.begin(), sections_.end(),
-                                  [sectionName](const auto &section) { return section.name() == sectionName; });
-    auto &section = sectionIt == sections_.end() ? sections_.emplace_back(sectionName) : *sectionIt;
-
-    // Get / create the group within the section
-    currentGroup_ = section.createGroup(groupName ? *groupName : "_NO_HEADER", groupDescription);
+    currentGroup_ = getGroup(sectionName, groupName ? *groupName : "_NO_HEADER", groupDescription, true);
 }
 
 // Find named keyword

@@ -8,9 +8,10 @@
  * Keyword Store Group
  */
 
-KeywordStoreGroup::KeywordStoreGroup(std::string_view name, std::string_view description)
-    : name_(name), description_(description)
+KeywordStoreGroup::KeywordStoreGroup(std::string_view name, std::optional<std::string_view> groupDescription) : name_(name)
 {
+    if (groupDescription)
+        description_ = *groupDescription;
 }
 
 // Add keyword to group
@@ -48,26 +49,17 @@ KeywordStoreSection::KeywordStoreSection(std::string_view name) : name_(name) { 
 // Return section name
 std::string_view KeywordStoreSection::name() const { return name_; }
 
-// Create new group
-KeywordStoreGroup &KeywordStoreSection::createGroup(std::string_view groupName,
-                                                    std::optional<std::string_view> groupDescription)
-{
-    auto oldGroup = getGroup(groupName);
-    if (oldGroup)
-        return *oldGroup;
-
-    return groups_.emplace_back(groupName, groupDescription ? *groupDescription : "");
-}
-
 // Get named group if it exists
-OptionalReferenceWrapper<KeywordStoreGroup> KeywordStoreSection::getGroup(std::string_view groupName, bool createIfRequired)
+OptionalReferenceWrapper<KeywordStoreGroup> KeywordStoreSection::getGroup(std::string_view groupName,
+                                                                          std::optional<std::string_view> groupDescription,
+                                                                          bool createIfRequired)
 {
     auto groupIt = std::find_if(groups_.begin(), groups_.end(), [groupName](auto &group) { return group.name() == groupName; });
     if (groupIt != groups_.end())
         return *groupIt;
 
     if (createIfRequired)
-        return groups_.emplace_back(groupName);
+        return groups_.emplace_back(groupName, groupDescription);
 
     return {};
 }
