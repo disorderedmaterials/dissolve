@@ -53,12 +53,11 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
         controlStackMap_[b] = ui_.ModuleControlStack->count() - 1;
 
         if (!firstButton)
+        {
             firstButton = b;
+            firstButton->setChecked(true);
+        }
     }
-
-    // If we added at least one button, check it now
-    if (firstButton)
-        firstButton->setChecked(true);
 
     // Treat any ProcedureKeywords as special cases
     auto procedures = module_->keywords().allOfType<ProcedureKeyword>();
