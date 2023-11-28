@@ -2,6 +2,7 @@
   <qresource prefix="nodes">
     <file>icons/nodes/add.svg</file>
     <file>icons/nodes/simpleGlobalPotential.svg</file>
+    <file>icons/nodes/regionalGlobalPotential.svg</file>
     <file>icons/nodes/restraintPotential.svg</file>
     <file>icons/nodes/directionalGlobalPotential.svg</file>
     <file>icons/nodes/box.svg</file>
@@ -37,6 +38,7 @@
     <file>icons/nodes/process1D.svg</file>
     <file>icons/nodes/process2D.svg</file>
     <file>icons/nodes/process3D.svg</file>
+    <file>icons/nodes/ifValueInRange.svg</file>
     <file>icons/nodes/remove.svg</file>
     <file>icons/nodes/select.svg</file>
     <file>icons/nodes/sum1D.svg</file>
@@ -60,10 +62,12 @@
     <file>icons/modules/exportPairPotentials.svg</file>
     <file>icons/modules/exportTrajectory.svg</file>
     <file>icons/modules/importTrajectory.svg</file>
+    <file>icons/modules/qSpecies.svg</file>
     <file>icons/modules/SQ.svg</file>
     <file>icons/modules/bragg.svg</file>
     <file>icons/modules/avgMol.svg</file>
     <file>icons/modules/accumulate.svg</file>
+    <file>icons/modules/orientedSDF.svg</file>
     <file>icons/modules/axisAngle.svg</file>
     <file>icons/modules/histogramCN.svg</file>
     <file>icons/modules/dAngle.svg</file>
@@ -82,6 +86,7 @@
     <file>icons/modules/calibrate.svg</file>
     <file>icons/modules/GR.svg</file>
     <file>icons/modules/intraShake.svg</file>
+    <file>icons/modules/intraAngle.svg</file>
     <file>icons/modules/neutronSQ.svg</file>
     <file>icons/modules/geometryOptimisation.svg</file>
     <file>icons/modules/compare.svg</file>
