@@ -44,6 +44,18 @@ class DlPolyModule : public Module
     };
     // Return EnumOptions for CoulMethod
     static EnumOptions<CoulMethod> coulMethod();
+    
+    // Ensemble Enum
+    enum Ensemble
+    {
+        NVE,
+        PMF,
+        NVT,
+        NPT,
+        NST
+    };
+    // Return EnumOptions for Ensemble
+    static EnumOptions<Ensemble> ensemble();
          
     private:
     // Filename and format for CONTROL export
@@ -56,6 +68,10 @@ class DlPolyModule : public Module
     double capForcesAt_{1.0e7};
     // Interatomic cutoff distance to employ
     std::optional<double> cutoffDistance_;
+    // Set Ensemble
+    DlPolyModule::Ensemble ensemble_{Ensemble::NVE};
+    // Set Ensemble Thermostat Coupling
+    double ensembleThermostatCoupling_{0.0};
     // Timestep type to employ
     bool timestepVariable_{false};
     // Fixed timestep (ps) to use in MD simulation
@@ -76,6 +92,7 @@ class DlPolyModule : public Module
     DlPolyModule::CoulMethod coulMethod_{CoulMethod::off};
     // Calculate electrostatics with given precision
     double coulPrecision_{0.0}; 
+
     
     /*
      * Functions

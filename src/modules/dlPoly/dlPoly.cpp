@@ -48,4 +48,8 @@ DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
     keywords_.add<OptionalDoubleKeyword>(
         "CutoffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
         cutoffDistance_, 0.0, std::nullopt, 0.1, "Use PairPotential Range");
+    keywords_.add<EnumOptionsKeyword<DlPolyModule::Ensemble>>(
+        "Ensemble", " Set ensemble constraints", ensemble_, DlPolyModule::ensemble());
+    keywords_.add<DoubleKeyword>("EnsembleThermostatCoupling", "Set thermostat relaxation/decorrelation times (use ensemble_thermostat_friction for langevin)", ensembleThermostatCoupling_, 0.0);
+        
 }

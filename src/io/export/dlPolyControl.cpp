@@ -19,7 +19,7 @@ DlPolyControlExportFileFormat::DlPolyControlExportFileFormat(std::string_view fi
 
 
 // Export DlPolyControl as CONTROL
-bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision)
+bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, std::string ensemble, double ensembleThermostatCoupling, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision)
 {
     // Export title
     if (!parser.writeLineF("title {} @ {}\n\n", cfg->name(), cfg->contentsVersion()))
@@ -42,11 +42,11 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("cutoff {} ang\n", cutoffDistance.value()))
         return false;
-    if (!parser.writeLineF("ensemble nvt\n", cutoffDistance.value()))
+    if (!parser.writeLineF("ensemble {}\n", ensemble))
         return false;
     if (!parser.writeLineF("ensemble_method hoover\n", cutoffDistance.value()))
         return false;
-    if (!parser.writeLineF("ensemble_thermostat_coupling  0.01 ps\n", cutoffDistance.value()))
+    if (!parser.writeLineF("ensemble_thermostat_coupling  {} ps\n", ensembleThermostatCoupling))
         return false;
     if (capForces && !parser.writeLineF("equilibration_force_cap {}\n", capForcesAt))
         return false;
@@ -70,16 +70,14 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("coul_precision {}\n", coulPrecision))
         return false;
-    //if (!parser.writeLineF("{}\n", fixedTimestep))
-    //    return false;
-    //if (!parser.writeLineF("{}\n", randomVelocities))
-    //    return false;
+    
+    Messenger::print("CONFIG {}\n", cfg);
 
     return true;
 }
 
 // Export DlPolyControl using current filename and format
-bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision)
+bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, std::string ensemble, double ensembleThermostatCoupling, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision)
 {
     // Open the file
     LineParser parser;
@@ -99,6 +97,8 @@ bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForce
                                   capForces,
                                   capForcesAt,
                                   cutoffDistance,
+                                  ensemble,
+                                  ensembleThermostatCoupling,
                                   timestepVariable,
                                   fixedTimestep,
                                   energyFrequency,

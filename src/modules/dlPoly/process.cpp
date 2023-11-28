@@ -27,9 +27,20 @@ EnumOptions<DlPolyModule::CoulMethod> DlPolyModule::coulMethod()
         {{CoulMethod::off, "off"}, {CoulMethod::spme, "spme"}, {CoulMethod::dddp, "dddp"}, {CoulMethod::pairwise, "pairwise"}, {CoulMethod::reaction_field, "reaction_field"}, {CoulMethod::force_shifted,   "force_shifted"}});
 }
 
+// Return EnumOptions for Ensemble
+EnumOptions<DlPolyModule::Ensemble> DlPolyModule::ensemble()
+{
+    return EnumOptions<DlPolyModule::Ensemble>(
+        "ensemble",
+        {{Ensemble::NVE, "NVE"}, {Ensemble::PMF, "PMF"}, {Ensemble::NVT, "NVT"}, {Ensemble::NPT, "NPT"}, {Ensemble::NST, "NST"}});
+}
+
 // Run main processing
 Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
 {
+
+    Messenger::print("CONFIG {}\n", targetConfiguration_);
+    
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
@@ -47,6 +58,8 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
                                              capForces_,
                                              capForcesAt_,
                                              cutoffDistance_,
+                                             ensemble().keyword(ensemble_),
+                                             ensembleThermostatCoupling_,
                                              timestepVariable_,
                                              fixedTimestep_,
                                              energyFrequency_,
