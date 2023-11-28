@@ -35,8 +35,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
     {
         // Create a button for the section
         auto &&[b, alignRight] = KeywordsWidget::buttonForGroup(section.name());
-        b->setCheckable(true);
-        b->setAutoExclusive(true);
+
         connect(b, SIGNAL(clicked(bool)), this, SLOT(keywordGroupButtonClicked(bool)));
         if (alignRight)
             ui_.KeywordGroupRightButtonsLayout->insertWidget(0, b);
