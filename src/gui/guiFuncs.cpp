@@ -316,6 +316,8 @@ void DissolveWindow::updateStatusBar()
     }
     else if (!dissolveIterating_ && elapsedTimer_.secondsElapsed() > 0.0)
     {
+        statusLabel_->setText("Stopped");
+        statusIndicator_->setPixmap(QPixmap(":/general/icons/true.svg"));
         timerLabel_->setText(QString::fromStdString(fmt::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
     }
     else if (ui_.MainStack->currentIndex() == 1)
