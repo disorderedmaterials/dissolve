@@ -135,7 +135,7 @@ AngleModule::AngleModule() : Module(ModuleTypes::Angle), analyser_(ProcedureNode
 
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    keywords_.setOrganisation("Options", "Sites");
+    keywords_.setOrganisation("Options", "Sites", "Specify sites defining the angle interaction A-B-C.");
     keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C",
                                             selectA_->speciesSites(), selectA_->axesRequired());
     keywords_.add<SpeciesSiteVectorKeyword>("SiteB", "Specify site(s) which represent 'B' in the interaction A-B-C",
@@ -143,7 +143,7 @@ AngleModule::AngleModule() : Module(ModuleTypes::Angle), analyser_(ProcedureNode
     keywords_.add<SpeciesSiteVectorKeyword>("SiteC", "Specify site(s) which represent 'C' in the interaction A-B-C",
                                             selectC_->speciesSites(), selectC_->axesRequired());
 
-    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<Vec3DoubleKeyword>("RangeAB", "Range (min, max, binwidth) of A-B distance binning", rangeAB_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<Vec3DoubleKeyword>("RangeBC", "Range (min, max, binwidth) of B-C distance binning", rangeBC_,
@@ -151,7 +151,9 @@ AngleModule::AngleModule() : Module(ModuleTypes::Angle), analyser_(ProcedureNode
     keywords_.add<Vec3DoubleKeyword>("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
 
-    keywords_.setOrganisation("Options", "Control");
+    keywords_.setOrganisation(
+        "Options", "Exclusions & Restrictions",
+        "Options to exclude specific site pairs from the calculation and restrict the angle range considered.");
     keywords_.add<BoolKeyword>("ExcludeSameMoleculeAB",
                                "Whether to exclude correlations between A and B sites on the same molecule",
                                excludeSameMoleculeAB_);

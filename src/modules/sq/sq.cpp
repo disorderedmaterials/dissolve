@@ -15,7 +15,7 @@ SQModule::SQModule() : Module(ModuleTypes::SQ)
     keywords_.addTarget<ModuleKeyword<const GRModule>>("SourceGR", "Source G(r) to transform into S(Q)", sourceGR_,
                                                        ModuleTypes::GR);
 
-    keywords_.setOrganisation("Options", "Range");
+    keywords_.setOrganisation("Options", "Range", "Range over which to calculate the total and partial structure factors.");
     keywords_.add<DoubleKeyword>("QMin", "Minimum Q for calculated S(Q)", qMin_, 0.0);
     keywords_.add<DoubleKeyword>("QMax", "Maximum Q for calculated S(Q)", qMax_, 0.0);
     keywords_.add<DoubleKeyword>("QDelta", "Step size in Q for S(Q) calculation", qDelta_, 1.0e-5);
@@ -27,7 +27,9 @@ SQModule::SQModule() : Module(ModuleTypes::SQ)
         "WindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)", windowFunction_,
         WindowFunction::forms());
 
-    keywords_.setOrganisation("Options", "Bragg Scattering");
+    keywords_.setOrganisation(
+        "Options", "Bragg Scattering",
+        "Control whether output from a Bragg module should be included in the calculated structure factors.");
     keywords_.add<ModuleKeyword<const BraggModule>>("IncludeBragg", "Include Bragg scattering from specified module",
                                                     sourceBragg_, ModuleTypes::Bragg);
     keywords_.add<Function1DKeyword>(
