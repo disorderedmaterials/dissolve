@@ -52,11 +52,11 @@ Source: "{#FTGLDir}\ftgl.dll"; DestDir: "{app}\bin"
 Source: "{#QtDir}\bin\Qt6Gui.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt6Core.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt6OpenGL.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\QtQml.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\QtQmlModels.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\QtQuickWidgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\QtQuick.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\QtNetwork.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#QtDir}\bin\Qt6Qml.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#QtDir}\bin\Qt6QmlModels.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#QtDir}\bin\Qt6QuickWidgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#QtDir}\bin\Qt6Quick.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#QtDir}\bin\Qt6Network.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt6OpenGLWidgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt6Svg.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt6Widgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
