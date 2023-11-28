@@ -33,22 +33,6 @@ runs:
       brew install ftgl ninja
       brew install antlr
 
-  - name: Install Homebrew Dependencies for Silicon
-    if: ${{ inputs.cacheOnly == 'false' && env.CMAKE_TARGET == 'arm64' }} 
-    shell: bash
-    run: |
-      set -ex
-      brew update-reset
-      brew install ninja
-      PACKAGES=(ftgl antlr)
-      for PACKAGE in "${PACKAGES[@]}"
-      do
-        brew fetch --force --bottle-tag=arm64_monterey $PACKAGE
-        brew install $(brew --cache --bottle-tag=arm64_monterey $PACKAGE)
-      done
-
-      echo %JAVA_HOME%
-
   - name: Install Python Dependencies
     shell: bash
     run: |
@@ -120,7 +104,7 @@ runs:
     if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v3
     with:
-      name: osx-build-artifacts-${{ env.CMAKE_TARGET }}
+      name: osx-build-artifacts
       path: |
         ${{ github.workspace }}/build
         ${{ github.workspace }}/deploy

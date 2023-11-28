@@ -19,7 +19,6 @@ on:
 jobs:
 
   QC:
-    if: false
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -31,14 +30,10 @@ jobs:
 
   Build:
     needs: QC
-    if: false
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
-            cmake_target: arm64
-            conan_target: armv8
           - os: macos-latest
             cmake_target: x86_64
             conan_target: x86_64
@@ -59,7 +54,6 @@ jobs:
 
   BuildLinux:
     needs: QC
-    if: false
     strategy:
       fail-fast: false
       matrix:
@@ -78,12 +72,11 @@ jobs:
         target: ${{ matrix.target }}
 
   Package:
-    # needs: [ Build ]
+    needs: [ Build, BuildLinux ]
     strategy:
       fail-fast: false
       matrix:
-        # os: [ macos-latest, windows-latest ]
-        os: [ macos-latest ]
+        os: [ macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     env:
       CMAKE_TARGET: ${{ matrix.cmake_target }}
