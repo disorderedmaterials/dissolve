@@ -2,7 +2,7 @@
 # - From https://github.com/antlr/antlr4/ at 6ad9646
 # - Modified by TGAY to find and use JPackage antlr4 script if present
 
-find_package(Java QUIET COMPONENTS Runtime)
+find_package(Java 11 QUIET COMPONENTS Runtime)
 
 if(NOT ANTLR_EXECUTABLE)
   find_program(ANTLR_EXECUTABLE
