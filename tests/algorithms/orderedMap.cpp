@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "templates/ordered_map.h"
+#include "templates/orderedMap.h"
 #include <gtest/gtest.h>
 #include <toml11/toml.hpp>
 
