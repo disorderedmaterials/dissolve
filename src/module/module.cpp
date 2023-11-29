@@ -101,9 +101,11 @@ void Module::printValidKeywords()
 {
     Messenger::print("Valid keywords for '{}' Module are:\n", ModuleTypes::moduleType(type()));
 
-    for (const auto &keywordData : keywords_.keywords())
-        if (keywordData.type() != KeywordStoreData::KeywordType::Deprecated)
-            Messenger::print("  {:30}  {}\n", keywordData.keyword()->name(), keywordData.keyword()->description());
+    for (const auto &keywordSection : keywords_.sections())
+        for (const auto &keywordGroup : keywordSection.groups())
+            for (const auto &[keyword, keywordType] : keywordGroup.keywords())
+                if (keywordType != KeywordBase::KeywordType::Deprecated)
+                    Messenger::print("  {:30}  {}\n", keyword->name(), keyword->description());
 }
 
 /*

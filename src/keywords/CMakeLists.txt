@@ -21,6 +21,7 @@ add_library(
   nodeValue.cpp
   optionalDouble.cpp
   optionalInt.cpp
+  organiser.cpp
   procedure.cpp
   range.cpp
   rangeVector.cpp
@@ -30,7 +31,6 @@ add_library(
   speciesVector.cpp
   stdString.cpp
   store.cpp
-  storeData.cpp
   vec3Double.cpp
   vec3Integer.cpp
   vec3NodeValue.cpp
@@ -64,6 +64,7 @@ add_library(
   nodeVector.h
   optionalDouble.h
   optionalInt.h
+  organiser.h
   procedure.h
   range.h
   species.h
@@ -72,7 +73,6 @@ add_library(
   speciesVector.h
   stdString.h
   store.h
-  storeData.h
   rangeVector.h
   vec3Double.h
   vec3Integer.h
