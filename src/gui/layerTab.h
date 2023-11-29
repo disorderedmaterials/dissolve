@@ -67,8 +67,6 @@ class LayerTab : public QWidget, public MainTab
     void on_LayerFrequencySpin_valueChanged(int value);
     void on_RunControlEnergyStabilityCheck_clicked(bool checked);
     void on_RunControlSizeFactorsCheck_clicked(bool checked);
-    void on_ModuleEnabledButton_clicked(bool checked);
-    void on_ModuleFrequencySpin_valueChanged(int value);
     void moduleSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void moduleNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
     void layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);

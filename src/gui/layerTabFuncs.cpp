@@ -27,6 +27,7 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
             SLOT(layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
     connect(&moduleLayerModel_, SIGNAL(moduleNameChanged(const QModelIndex &, const QString &, const QString &)), this,
             SLOT(moduleNameChanged(const QModelIndex &, const QString &, const QString &)));
+    ui_.ModulesTable->resizeColumnsToContents();
 
     if (moduleLayer_->modules().size() >= 1)
     {
@@ -187,32 +188,6 @@ void LayerTab::on_RunControlSizeFactorsCheck_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void LayerTab::on_ModuleEnabledButton_clicked(bool checked)
-{
-    if (refreshLock_.isLocked() || (!moduleLayer_))
-        return;
-
-    auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
-    if (mcw)
-        mcw->module()->setEnabled(checked);
-
-    updateModuleList();
-
-    dissolveWindow_->setModified();
-}
-
-void LayerTab::on_ModuleFrequencySpin_valueChanged(int value)
-{
-    if (refreshLock_.isLocked() || (!moduleLayer_))
-        return;
-
-    auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
-    if (mcw)
-        mcw->module()->setFrequency(value);
-
-    dissolveWindow_->setModified();
-}
-
 void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
 {
     auto modelIndices = current.indexes();
@@ -233,10 +208,6 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
     }
 
     Locker refreshLocker(refreshLock_);
-
-    // Update the module control widgets
-    ui_.ModuleEnabledButton->setChecked(module->isEnabled());
-    ui_.ModuleFrequencySpin->setValue(module->frequency());
 
     // See if our stack already contains a control widget for the module - if not, create one
     auto *mcw = getControlWidget(module, true);
@@ -384,13 +355,7 @@ void LayerTab::updateControls()
 
     auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
     if (mcw)
-    {
         mcw->updateControls();
-
-        // Update the module control widgets
-        ui_.ModuleEnabledButton->setChecked(mcw->module()->isEnabled());
-        ui_.ModuleFrequencySpin->setValue(mcw->module()->frequency());
-    }
 }
 
 // Prevent editing within tab
@@ -399,8 +364,6 @@ void LayerTab::preventEditing()
     ui_.LayerEnabledButton->setEnabled(false);
     ui_.LayerFrequencySpin->setEnabled(false);
     ui_.RunControlGroup->setEnabled(false);
-    ui_.ModuleEnabledButton->setEnabled(false);
-    ui_.ModuleFrequencySpin->setEnabled(false);
 
     ui_.ModulesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui_.ModulesTable->setDragDropMode(QAbstractItemView::NoDragDrop);
@@ -419,8 +382,6 @@ void LayerTab::allowEditing()
     ui_.LayerEnabledButton->setEnabled(true);
     ui_.LayerFrequencySpin->setEnabled(true);
     ui_.RunControlGroup->setEnabled(true);
-    ui_.ModuleEnabledButton->setEnabled(ui_.ModuleControlsStack->currentIndex() != 0);
-    ui_.ModuleFrequencySpin->setEnabled(ui_.ModuleControlsStack->currentIndex() != 0);
     ui_.AvailableModulesTree->setEnabled(true);
     ui_.ModulesTable->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
     ui_.ModulesTable->setDragDropMode(QAbstractItemView::DragDrop);
