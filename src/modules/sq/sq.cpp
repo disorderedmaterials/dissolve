@@ -20,7 +20,8 @@ SQModule::SQModule() : Module(ModuleTypes::SQ)
     keywords_.add<DoubleKeyword>("QMax", "Maximum Q for calculated S(Q)", qMax_, 0.0);
     keywords_.add<DoubleKeyword>("QDelta", "Step size in Q for S(Q) calculation", qDelta_, 1.0e-5);
 
-    keywords_.setOrganisation("Options", "Broadening & Windowing");
+    keywords_.setOrganisation("Options", "Broadening & Windowing",
+                              "Broadening and windowing to apply when Fourier transforming the g(r) into S(Q).");
     keywords_.add<Function1DKeyword>("QBroadening", "Instrument broadening function to apply when calculating S(Q)",
                                      qBroadening_);
     keywords_.add<EnumOptionsKeyword<WindowFunction::Form>>(
