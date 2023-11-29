@@ -19,9 +19,9 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
     moduleLayer_ = layer;
 
     // Set the module list model and connect signals
-    ui_.ModulesList->setModel(&moduleLayerModel_);
+    ui_.ModulesTable->setModel(&moduleLayerModel_);
     moduleLayerModel_.setData(moduleLayer_, dissolve.coreData());
-    connect(ui_.ModulesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
+    connect(ui_.ModulesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(moduleSelectionChanged(const QItemSelection &, const QItemSelection &)));
     connect(&moduleLayerModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
@@ -31,7 +31,7 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
     if (moduleLayer_->modules().size() >= 1)
     {
         auto firstIndex = moduleLayerModel_.index(0, 0);
-        ui_.ModulesList->selectionModel()->setCurrentIndex(firstIndex, QItemSelectionModel::ClearAndSelect);
+        ui_.ModulesTable->selectionModel()->setCurrentIndex(firstIndex, QItemSelectionModel::ClearAndSelect);
     }
 
     // Set up the available modules tree
@@ -280,16 +280,16 @@ void LayerTab::updateModuleList()
 {
     // Refresh the module list
     std::optional<QModelIndex> selectedIndex;
-    if (!ui_.ModulesList->selectionModel()->selection().indexes().empty())
-        selectedIndex = ui_.ModulesList->selectionModel()->selection().indexes().front();
+    if (!ui_.ModulesTable->selectionModel()->selection().indexes().empty())
+        selectedIndex = ui_.ModulesTable->selectionModel()->selection().indexes().front();
     moduleLayerModel_.reset();
     if (selectedIndex)
-        ui_.ModulesList->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
+        ui_.ModulesTable->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
 }
 
 void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
 {
-    auto index = ui_.ModulesList->indexAt(pos);
+    auto index = ui_.ModulesTable->indexAt(pos);
     if (!index.isValid())
         return;
     auto module = moduleLayerModel_.data(index, Qt::UserRole).value<Module *>();
@@ -312,7 +312,7 @@ void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
     auto *deleteModule = menu.addAction("&Delete");
     deleteModule->setIcon(QIcon(":/general/icons/cross.svg"));
 
-    auto *action = menu.exec(ui_.ModulesList->mapToGlobal(pos));
+    auto *action = menu.exec(ui_.ModulesTable->mapToGlobal(pos));
     if (action == enableModule)
         module->setEnabled(true);
     else if (action == disableModule)
@@ -402,8 +402,8 @@ void LayerTab::preventEditing()
     ui_.ModuleEnabledButton->setEnabled(false);
     ui_.ModuleFrequencySpin->setEnabled(false);
 
-    ui_.ModulesList->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui_.ModulesList->setDragDropMode(QAbstractItemView::NoDragDrop);
+    ui_.ModulesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui_.ModulesTable->setDragDropMode(QAbstractItemView::NoDragDrop);
     ui_.AvailableModulesTree->setEnabled(false);
     for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
     {
@@ -422,8 +422,8 @@ void LayerTab::allowEditing()
     ui_.ModuleEnabledButton->setEnabled(ui_.ModuleControlsStack->currentIndex() != 0);
     ui_.ModuleFrequencySpin->setEnabled(ui_.ModuleControlsStack->currentIndex() != 0);
     ui_.AvailableModulesTree->setEnabled(true);
-    ui_.ModulesList->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
-    ui_.ModulesList->setDragDropMode(QAbstractItemView::DragDrop);
+    ui_.ModulesTable->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+    ui_.ModulesTable->setDragDropMode(QAbstractItemView::DragDrop);
     for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
     {
         auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
