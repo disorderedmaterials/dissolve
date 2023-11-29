@@ -233,13 +233,8 @@ bool ModuleLayerModel::canDropMimeData(const QMimeData *data, Qt::DropAction act
     Q_UNUSED(row);
     Q_UNUSED(parent);
 
-    if (column > 0)
-        return false;
-
-    if (data->hasFormat("application/dissolve.module.move") || data->hasFormat("application/dissolve.module.create"))
-        return true;
-
-    return false;
+    return true;
+    return (data->hasFormat("application/dissolve.module.move") || data->hasFormat("application/dissolve.module.create"));
 }
 
 bool ModuleLayerModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
