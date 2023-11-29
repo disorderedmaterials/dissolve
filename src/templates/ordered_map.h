@@ -19,7 +19,7 @@ namespace dissolve
 // of std::map.  However, seeing as removal hasn't even been required
 // at this point, it seems unlikely that it will ever serve as a true
 // bottleneck.
-template <typename Key, typename Value> class ordered_map
+template <typename Key, typename Value> class OrderedMap
 {
 
     private:
@@ -41,9 +41,9 @@ template <typename Key, typename Value> class ordered_map
 
     public:
     // Constructors
-    ordered_map(){};
+    OrderedMap(){};
     // Constructor from an iterator off a std::map or std::unorderedmap
-    template <typename Iter> ordered_map(Iter begin, Iter end)
+    template <typename Iter> OrderedMap(Iter begin, Iter end)
     {
         for (auto i = begin; i != end; i++)
             (*this)[i->first] = i->second;
@@ -62,7 +62,7 @@ template <typename Key, typename Value> class ordered_map
     auto count(const Key &key) const { return index_.count(key); }
 
     // Operator overloads from std::map
-    bool operator==(const ordered_map<Key, Value> other) const
+    bool operator==(const OrderedMap<Key, Value> other) const
     {
         if (values_.size() != other.values_.size())
             return false;

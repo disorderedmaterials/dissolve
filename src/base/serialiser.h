@@ -10,7 +10,7 @@
 #include <vector>
 
 // The type we use for the nodes of our serialisation tree
-using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::ordered_map, std::vector>;
+using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::OrderedMap, std::vector>;
 
 // The associated context for type T This type does double duty.
 // First, since the struct has not actual members, it is a Unit type

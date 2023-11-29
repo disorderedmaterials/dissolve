@@ -8,7 +8,7 @@
 namespace UnitTest
 {
 
-using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::ordered_map, std::vector>;
+using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::OrderedMap, std::vector>;
 TEST(OrderedMapTest, BasicOrderedMap)
 {
     SerialisedValue example;
