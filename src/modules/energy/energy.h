@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "kernels//energy.h"
 #include "module/module.h"
 
 // Forward Declarations
@@ -43,10 +44,11 @@ class EnergyModule : public Module
         EnergyStable = 0,
         EnergyUnstable = 1
     };
-    // Return total interatomic energy of Configuration
-    static double interAtomicEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap);
-    // Return total interatomic energy of Species
-    static double interAtomicEnergy(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap);
+    // Return total pair potential energy of Configuration
+    static PairPotentialEnergyValue pairPotentialEnergy(const ProcessPool &procPool, const Configuration *cfg,
+                                                        const PotentialMap &potentialMap);
+    // Return total pair potential energy of Species
+    static double pairPotentialEnergy(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap);
     // Return total intermolecular energy
     static double interMolecularEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap);
     // Return total intramolecular energy of Configuration
@@ -60,8 +62,8 @@ class EnergyModule : public Module
     static double totalEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap);
     // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
     static double totalEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
-                              double &interEnergy, double &bondEnergy, double &angleEnergy, double &torsionEnergy,
-                              double &improperEnergy);
+                              PairPotentialEnergyValue &ppEnergy, double &bondEnergy, double &angleEnergy,
+                              double &torsionEnergy, double &improperEnergy);
     // Return total energy (interatomic and intramolecular) of Species
     static double totalEnergy(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap);
     // Check energy stability of specified Configuration

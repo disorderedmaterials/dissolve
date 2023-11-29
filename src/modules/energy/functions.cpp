@@ -31,8 +31,9 @@ struct Energies
 };
 } // namespace
 
-// Return total interatomic energy of Configuration
-double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap)
+// Return total pair potential energy of Configuration
+PairPotentialEnergyValue EnergyModule::pairPotentialEnergy(const ProcessPool &procPool, const Configuration *cfg,
+                                                           const PotentialMap &potentialMap)
 {
     /*
      * Calculates the total interatomic energy of the system, i.e. the energy contributions from PairPotential
@@ -48,20 +49,23 @@ double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Config
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Grab the Cell array and calculate total energy
-    auto ppEnergy = kernel->totalPairPotentialEnergy(true, strategy).total();
+    auto ppEnergy = kernel->totalPairPotentialEnergy(true, strategy);
 
     // Print process-local energy
-    Messenger::printVerbose("Interatomic Energy (Local) is {:15.9e}\n", ppEnergy);
+    Messenger::printVerbose("Interatomic Energy (Local) is {:15.9e}\n", ppEnergy.total());
 
     // Sum energy over all processes in the pool and print
-    procPool.allSum(&ppEnergy, 1, strategy);
-    Messenger::printVerbose("Interatomic Energy (World) is {:15.9e}\n", ppEnergy);
+    auto interPPEnergy = ppEnergy.interMolecular();
+    auto intraPPEnergy = ppEnergy.intraMolecular();
+    procPool.allSum(&interPPEnergy, 1, strategy);
+    procPool.allSum(&intraPPEnergy, 1, strategy);
+    Messenger::printVerbose("Interatomic Energy (World) is {:15.9e}\n", interPPEnergy + intraPPEnergy);
 
-    return ppEnergy;
+    return {interPPEnergy, intraPPEnergy};
 }
 
-// Return total interatomic energy of Species
-double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap)
+// Return total pair potential energy of Species
+double EnergyModule::pairPotentialEnergy(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap)
 {
     const auto cutoff = potentialMap.range();
 
@@ -281,24 +285,24 @@ double EnergyModule::intraMolecularEnergy(const Species *sp)
 // Return total energy (interatomic and intramolecular) of Configuration
 double EnergyModule::totalEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap)
 {
-    return (interAtomicEnergy(procPool, cfg, potentialMap) + intraMolecularEnergy(procPool, cfg, potentialMap));
+    return (pairPotentialEnergy(procPool, cfg, potentialMap).total() + intraMolecularEnergy(procPool, cfg, potentialMap));
 }
 
 // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
 double EnergyModule::totalEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
-                                 double &interEnergy, double &bondEnergy, double &angleEnergy, double &torsionEnergy,
-                                 double &improperEnergy)
+                                 PairPotentialEnergyValue &interEnergy, double &bondEnergy, double &angleEnergy,
+                                 double &torsionEnergy, double &improperEnergy)
 {
-    interEnergy = interAtomicEnergy(procPool, cfg, potentialMap);
+    interEnergy = pairPotentialEnergy(procPool, cfg, potentialMap);
     intraMolecularEnergy(procPool, cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
 
-    return interEnergy + bondEnergy + angleEnergy + torsionEnergy + improperEnergy;
+    return interEnergy.total() + bondEnergy + angleEnergy + torsionEnergy + improperEnergy;
 }
 
 // Return total energy (interatomic and intramolecular) of Species
 double EnergyModule::totalEnergy(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap)
 {
-    return (interAtomicEnergy(procPool, sp, potentialMap) + intraMolecularEnergy(sp));
+    return (pairPotentialEnergy(procPool, sp, potentialMap) + intraMolecularEnergy(sp));
 }
 
 // Check energy stability of specified Configuration
