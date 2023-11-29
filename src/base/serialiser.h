@@ -96,8 +96,8 @@ template <typename... Contexts> class Serialisable
     static SerialisedValue fromVectorToMap(const std::vector<T> &vector, Lambda getName, Lambda2 getValue)
     {
         SerialisedValue group;
-        for (auto it = vector.begin(); it < vector.end(); it++)
-            group[getName(*it)] = getValue(*it);
+        for (auto &value : vector)
+            group[getName(value)] = getValue(value);
         return group;
     };
     // A helper function to add the elements of a vector to a node under a name
