@@ -186,18 +186,8 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
 void Dissolve::deserialise(const SerialisedValue &node)
 {
 
-    if (node.contains("pairPotentials"))
-    {
-        auto pairPotentialsNode = toml::find(node, "pairPotentials");
-        if (!pairPotentialsNode.is_uninitialized())
-            deserialisePairPotentials(pairPotentialsNode);
-    }
-    if (node.contains("master"))
-    {
-        auto &mastersNode = toml::find(node, "master");
-        if (!mastersNode.is_uninitialized())
-            coreData_.deserialiseMaster(mastersNode);
-    }
+    Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
+    Serialisable::optionalOn(node, "master", [this](const auto node) { coreData_.deserialiseMaster(node); });
 
     toMap(node, "species",
           [this](const std::string &name, const SerialisedValue &data)

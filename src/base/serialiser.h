@@ -55,6 +55,18 @@ template <typename... Contexts> class Serialisable
     // Wrapper for serialise that toml11 will check for
     toml::value into_toml() const { return serialise(); }
 
+    // Perform an action on a child node in a table if the node exists.
+    // This cuts out quite a bit of boilerplate.
+    template <typename Lambda> static void optionalOn(const SerialisedValue &node, std::string name, Lambda action)
+    {
+        if (node.contains(name))
+        {
+            auto child = toml::find(node, name);
+            if (!node.is_uninitialized())
+                action(child);
+        }
+    }
+
     // A helper function to add elements of a vector to a node under the named heading
     template <typename T>
     static void fromVectorToTable(const std::vector<std::shared_ptr<T>> &vector, std::string name, SerialisedValue &node)
