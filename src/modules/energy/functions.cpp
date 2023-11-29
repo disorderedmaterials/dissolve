@@ -48,16 +48,16 @@ double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Config
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Grab the Cell array and calculate total energy
-    double totalEnergy = kernel->totalPairPotentialEnergy(true, strategy);
+    auto ppEnergy = kernel->totalPairPotentialEnergy(true, strategy).total();
 
     // Print process-local energy
-    Messenger::printVerbose("Interatomic Energy (Local) is {:15.9e}\n", totalEnergy);
+    Messenger::printVerbose("Interatomic Energy (Local) is {:15.9e}\n", ppEnergy);
 
     // Sum energy over all processes in the pool and print
-    procPool.allSum(&totalEnergy, 1, strategy);
-    Messenger::printVerbose("Interatomic Energy (World) is {:15.9e}\n", totalEnergy);
+    procPool.allSum(&ppEnergy, 1, strategy);
+    Messenger::printVerbose("Interatomic Energy (World) is {:15.9e}\n", ppEnergy);
 
-    return totalEnergy;
+    return ppEnergy;
 }
 
 // Return total interatomic energy of Species
@@ -72,7 +72,7 @@ double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Specie
     auto [loopStart, loopEnd] = chop_range(0, comb.getNumCombinations(), nChunks, offset);
 
     double energy = dissolve::transform_reduce(ParallelPolicies::par, dissolve::counting_iterator<int>(loopStart),
-                                               dissolve::counting_iterator<int>(loopEnd), 0.0, std::plus<double>(),
+                                               dissolve::counting_iterator<int>(loopEnd), 0.0, std::plus<>(),
                                                [&](const auto idx)
                                                {
                                                    auto [n, m] = comb.nthCombination(idx);
@@ -117,16 +117,16 @@ double EnergyModule::interMolecularEnergy(const ProcessPool &procPool, const Con
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Grab the Cell array and calculate total energy
-    double totalEnergy = kernel->totalPairPotentialEnergy(false, strategy);
+    auto ppEnergy = kernel->totalPairPotentialEnergy(false, strategy).total();
 
     // Print process-local energy
-    Messenger::printVerbose("Intermolecular Energy (Local) is {:15.9e}\n", totalEnergy);
+    Messenger::printVerbose("Intermolecular Energy (Local) is {:15.9e}\n", ppEnergy);
 
     // Sum energy over all processes in the pool and print
-    procPool.allSum(&totalEnergy, 1, strategy);
-    Messenger::printVerbose("Intermolecular Energy (World) is {:15.9e}\n", totalEnergy);
+    procPool.allSum(&ppEnergy, 1, strategy);
+    Messenger::printVerbose("Intermolecular Energy (World) is {:15.9e}\n", ppEnergy);
 
-    return totalEnergy;
+    return ppEnergy;
 }
 
 // Return total intramolecular energy of Configuration

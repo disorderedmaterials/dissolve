@@ -286,14 +286,14 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         Timer moleculeTimer;
         auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
                                                    moduleContext.dissolve().potentialMap(), cutoff);
-        auto molecularEnergy = kernel->totalMoleculePairPotentialEnergy(false);
-        molecularEnergy += correctSelfEnergy;
+        auto molecularPPEnergy = kernel->totalMoleculePairPotentialEnergy(false).total();
+        molecularPPEnergy += correctSelfEnergy;
         moleculeTimer.stop();
 
         Messenger::print("Production interatomic pairpotential energy is {:15.9e} kJ/mol\n", interEnergy);
         Messenger::print("Production intramolecular energy is {:15.9e} kJ/mol\n", intraEnergy);
         Messenger::print("Total production energy is {:15.9e} kJ/mol\n", interEnergy + intraEnergy);
-        Messenger::print("Molecular energy (excluding bound terms) is {:15.9e} kJ/mol\n", molecularEnergy);
+        Messenger::print("Molecular energy (excluding bound terms) is {:15.9e} kJ/mol\n", molecularPPEnergy);
         Messenger::print("Time to do interatomic energy was {}.\n", interTimer.totalTimeString());
         Messenger::print("Time to do intramolecular energy was {}.\n", intraTimer.totalTimeString());
         Messenger::print("Time to do intermolecular energy was {}.\n", moleculeTimer.totalTimeString());
@@ -301,7 +301,7 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         // Compare production vs 'correct' values
         auto interDelta = correctInterEnergy - interEnergy;
         auto intraDelta = correctIntraEnergy - intraEnergy;
-        auto moleculeDelta = correctInterEnergy - molecularEnergy;
+        auto moleculeDelta = correctInterEnergy - molecularPPEnergy;
         Messenger::print("Comparing 'correct' with production values...\n");
         Messenger::print("Interatomic energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n", interDelta,
                          fabs(interDelta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
