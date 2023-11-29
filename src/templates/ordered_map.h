@@ -23,7 +23,7 @@ template <typename Key, typename Value> class ordered_map
 {
 
     private:
-    // A maping between keys and indices
+    // A mapping between keys and indices
     std::map<Key, int> index_;
     // An association array of the keys and values
     std::vector<std::pair<Key, Value>> values_;
