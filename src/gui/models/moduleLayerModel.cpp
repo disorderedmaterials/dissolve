@@ -57,6 +57,8 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
                 return QString::fromStdString(fmt::format("{} [{}]", module->name(), module->frequency()));
         case (Qt::EditRole):
             return QString::fromStdString(std::string(module->name()));
+        case (Qt::CheckStateRole):
+            return module->isEnabled() ? Qt::Checked : Qt::Unchecked;
         case (Qt::UserRole):
             return QVariant::fromValue(module);
         case (Qt::DecorationRole):
@@ -85,6 +87,16 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
 
         emit(dataChanged(index, index));
         emit(moduleNameChanged(index, oldName, QString::fromStdString(newName)));
+
+        return true;
+    }
+    else if (role == Qt::CheckStateRole)
+    {
+        auto *module = rawData(index);
+
+        module->setEnabled(value.toBool());
+
+        emit(dataChanged(index, index));
 
         return true;
     }
@@ -121,7 +133,8 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
 
 Qt::ItemFlags ModuleLayerModel::flags(const QModelIndex &index) const
 {
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled |
+           Qt::ItemIsUserCheckable;
 }
 
 QVariant ModuleLayerModel::headerData(int section, Qt::Orientation orientation, int role) const
