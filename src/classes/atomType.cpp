@@ -115,15 +115,18 @@ void AtomType::deserialise(toml::value node)
 {
     Z_ = toml::find<Elements::Element>(node, "z");
     charge_ = toml::find_or<double>(node, "charge", 0.0);
-    if (node.contains("form"))
-        interactionPotential_.setForm(ShortRangeFunctions::forms().enumeration(std::string(node["form"].as_string())));
+    Serialisable::optionalOn(
+        node, "form",
+        [this](const auto node)
+        { interactionPotential_.setForm(ShortRangeFunctions::forms().enumeration(std::string(node.as_string()))); });
 
-    if (node.contains("parameters"))
-    {
-        auto &parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
-        std::vector<double> values;
-        std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
-                       [&node](const auto parameter) { return node["parameters"][parameter].as_floating(); });
-        interactionPotential_.setFormAndParameters(interactionPotential_.form(), values);
-    }
+    Serialisable::optionalOn(node, "parameters",
+                             [this](const auto node)
+                             {
+                                 auto &parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
+                                 std::vector<double> values;
+                                 std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
+                                                [&node](const auto parameter) { return node.at(parameter).as_floating(); });
+                                 interactionPotential_.setFormAndParameters(interactionPotential_.form(), values);
+                             });
 }
