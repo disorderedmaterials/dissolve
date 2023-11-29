@@ -144,6 +144,8 @@ SerialisedValue Dissolve::serialise() const
 {
     SerialisedValue root;
 
+    root["version"] = Version::semantic();
+
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
         !coreData_.masterImpropers().empty())
         root["master"] = coreData_.serialiseMaster();
