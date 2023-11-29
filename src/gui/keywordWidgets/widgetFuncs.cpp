@@ -41,7 +41,8 @@ void KeywordsWidget::setUp(const KeywordStoreSection &keywordSection, const Core
         // Create a widget for the group name
         if (group.name() != "_NO_HEADER")
         {
-            auto *groupHeader = new WidgetGroupHeader(QString::fromStdString(std::string(group.name())));
+            auto *groupHeader = new WidgetGroupHeader(QString::fromStdString(std::string(group.name())),
+                                                      QString::fromStdString(std::string(group.description())));
 
             if (row != 0)
                 groupHeader->setContentsMargins(0, 15, 0, 0);
