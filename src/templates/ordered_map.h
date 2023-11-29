@@ -28,13 +28,15 @@ template <typename Key, typename Value> class ordered_map
     // An association array of the keys and values
     std::vector<std::pair<Key, Value>> values_;
     // If a key does not exist, add it to the array
-    void insistKey_(const Key &key)
+    std::pair<Key, Value> &insistKey(const Key &key)
     {
         if (index_.find(key) == index_.end())
         {
             index_[key] = values_.size();
-            values_.emplace_back(key, Value{});
+            return values_.emplace_back(key, Value{});
         }
+        else
+            return values_[index_[key]];
     }
 
     public:
@@ -72,16 +74,8 @@ template <typename Key, typename Value> class ordered_map
                 return false;
         return true;
     }
-    Value &operator[](const Key &key)
-    {
-        insistKey_(key);
-        return values_[index_[key]].second;
-    }
-    Value &operator[](Key &&key)
-    {
-        insistKey_(key);
-        return values_[index_[key]].second;
-    }
+    Value &operator[](const Key &key) { return insistKey(key).second; }
+    Value &operator[](Key &&key) { return insistKey(key).second; }
 };
 
 } // namespace dissolve
