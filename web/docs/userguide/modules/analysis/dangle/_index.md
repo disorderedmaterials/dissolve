@@ -31,12 +31,11 @@ The `DAngle` module calculates the angle between two vectors $u$ and $v$ from tw
 |`AngleRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`180.0`<br/>`10.0`|Range (min, max, bin width) of angle binning.|
 |`DistanceRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`10.0`<br/>`0.05`|Range (min, max, bin width) of A-B distance binning.|
 
-### Control
+### Exclusions & Restrictions
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`ExcludeSameMolecule`|`bool`|false`|Whether to exclude correlations between B and C sites on the same molecule.|
-|`Symmetric`|`bool`|`false`|Whether to consider the angle as symmetric about 90, mapping all angles to the 0-90 range.|
 
 ## Export
 
