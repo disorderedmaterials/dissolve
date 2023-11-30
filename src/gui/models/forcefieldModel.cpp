@@ -25,6 +25,8 @@ QVariant ForcefieldModel::data(const QModelIndex &index, int role) const
             return QString::fromStdString(std::string(forcefields_[index.row()]->description()));
         case RawRole:
             return QVariant::fromValue(forcefields_[index.row()].get());
+        default:
+            return {};
     }
 }
 
