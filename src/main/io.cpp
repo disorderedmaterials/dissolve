@@ -10,6 +10,8 @@
 #include "main/keywords.h"
 #include "main/version.h"
 #include <cstring>
+#include <fstream>
+#include <toml/parser.hpp>
 
 // Load input file through supplied parser
 bool Dissolve::loadInput(LineParser &parser)
@@ -213,6 +215,40 @@ void Dissolve::deserialise(const SerialisedValue &node)
 // Load input from supplied file
 bool Dissolve::loadInput(std::string_view filename)
 {
+    // If the file name ends in TOML, insist on a TOML parse
+    if (filename.find(".toml") == filename.size() - 5)
+    {
+        try
+        {
+            SerialisedValue contents = toml::parse(std::string(filename));
+            deserialise(contents);
+        }
+        catch (toml::syntax_error e)
+        {
+            Messenger::error("Syntax error in TOML file (are you sure you meant the .toml extension?).\n\n{}", e.what());
+            return false;
+        }
+        catch (toml::type_error e)
+        {
+            Messenger::error("Could not load TOML file\n\n{}", e.what());
+            return false;
+        }
+        return true;
+    }
+
+    // Fail if the file start with restart header
+    {
+        std::ifstream infile{std::string(filename)};
+        std::string firstLine;
+        infile >> firstLine;
+        infile.close();
+        if (firstLine.find("# Restart file") == 0)
+        {
+            Messenger::error("File {} is a restart file and not an input file", filename);
+            return false;
+        }
+    }
+
     // Open file and check that we're OK to proceed reading from it
     LineParser parser(&worldPool());
     if (!parser.openInput(filename))
