@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/lineParser.h"
+#include "base/serialiser.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "classes/species.h"
@@ -10,6 +11,34 @@
 #include "main/keywords.h"
 #include "main/version.h"
 #include <cstring>
+#include <functional>
+#include <map>
+
+SerialisedValue unreal_upgrade(SerialisedValue contents)
+{
+    contents["unreal"] = false;
+    return contents;
+}
+
+SerialisedValue backwards_upgrade(SerialisedValue contents)
+{
+    using Version::DissolveVersion;
+    std::map<std::string, std::function<SerialisedValue(SerialisedValue)>> breaking_changes = {{"1.2.0", unreal_upgrade}};
+
+    DissolveVersion current(toml::find<std::string>(contents, "version"));
+
+    for (auto &[key, value] : breaking_changes)
+    {
+        DissolveVersion next(key);
+        if (current < next)
+        {
+            contents = value(contents);
+            current = next;
+        }
+    }
+
+    return contents;
+}
 
 // Load input file through supplied parser
 bool Dissolve::loadInput(LineParser &parser)
@@ -185,8 +214,9 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
 }
 
 // Read values from a serialisable value
-void Dissolve::deserialise(const SerialisedValue &node)
+void Dissolve::deserialise(const SerialisedValue &node_orig)
 {
+    const SerialisedValue node = backwards_upgrade(node_orig);
 
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
     Serialisable::optionalOn(node, "master", [this](const auto node) { coreData_.deserialiseMaster(node); });
