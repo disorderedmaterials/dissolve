@@ -233,7 +233,6 @@ bool ModuleLayerModel::canDropMimeData(const QMimeData *data, Qt::DropAction act
     Q_UNUSED(row);
     Q_UNUSED(parent);
 
-    return true;
     return (data->hasFormat("application/dissolve.module.move") || data->hasFormat("application/dissolve.module.create"));
 }
 
