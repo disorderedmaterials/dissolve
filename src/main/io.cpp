@@ -135,7 +135,7 @@ SerialisedValue Dissolve::serialisePairPotentials() const
         pairPotentials["forceChargeSource"] = true;
     if (atomTypeChargeSource_)
         pairPotentials["includeCoulomb"] = true;
-    Serialisable::fromVector(coreData_.atomTypes(), "atomTypes", pairPotentials);
+    Serialisable::fromVectorToTable(coreData_.atomTypes(), "atomTypes", pairPotentials);
     return pairPotentials;
 }
 
@@ -173,13 +173,9 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
     PairPotential::shortRangeTruncationScheme_ = PairPotential::shortRangeTruncationSchemes().deserialise(
         toml::find_or<std::string>(node, "shortRangeTruncation", "Shifted"));
 
-    toVector(node, "atomTypes",
-             [this](const auto &data) {
-                 coreData()
-                     .atomTypes()
-                     .emplace_back(std::make_unique<AtomType>(toml::find<std::string>(data, "name")))
-                     ->deserialise(data);
-             });
+    toMap(node, "atomTypes",
+          [this](const std::string &name, const auto &data)
+          { coreData().atomTypes().emplace_back(std::make_unique<AtomType>(name))->deserialise(data); });
 }
 
 // Read values from a serialisable value

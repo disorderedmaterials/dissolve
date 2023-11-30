@@ -164,7 +164,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
         return fromVector(dataSources_,
                           [](const auto &item) -> SerialisedValue
                           {
-                              SerialisedValue result = toml::array{};
+                              SerialisedValue result = SerialisedValue::array_type{};
                               auto &[dataSourceA, dataSourceB] = item;
                               result.push_back(dataSourceA.serialise());
                               // If optional second data source exists
