@@ -54,33 +54,35 @@ int main(int args, char **argv)
         return 1;
     }
 
-    if (options.toTomlFile()) {
-        Messenger::print("Saving input file to '{}'...\n", options.toTomlFile().value());
-	auto toml = dissolve.serialise();
-	std::ofstream outfile(options.toTomlFile().value());
-	outfile << toml;
-	outfile.close();
-
-	return 0;
-    }
-
     // Save input file to new output filename and quit?
-    if (options.writeInputFilename())
+    if (options.writeInputFilename() || options.toTomlFile())
     {
-        Messenger::print("Saving input file to '{}'...\n", options.writeInputFilename().value());
+        std::string filename = options.writeInputFilename().value_or(options.toTomlFile().value());
+        Messenger::print("Saving input file to '{}'...\n", filename);
         bool result;
         if (dissolve.worldPool().isMaster())
         {
-            result = dissolve.saveInput(options.writeInputFilename().value());
-            if (result)
-                dissolve.worldPool().decideTrue();
+            if (options.writeInputFilename())
+            {
+                result = dissolve.saveInput(options.writeInputFilename().value());
+                if (result)
+                    dissolve.worldPool().decideTrue();
+                else
+                    dissolve.worldPool().decideFalse();
+            }
             else
-                dissolve.worldPool().decideFalse();
+            {
+                auto toml = dissolve.serialise();
+                std::ofstream outfile(options.toTomlFile().value());
+                outfile << toml;
+                outfile.close();
+                result = 1;
+            }
         }
         else
             result = dissolve.worldPool().decision();
         if (!result)
-            Messenger::error("Failed to save input file to '{}'.\n", options.writeInputFilename().value());
+            Messenger::error("Failed to save input file to '{}'.\n", filename);
 
         // Reload the written file and continue?
         if (options.writeInputAndReload())
