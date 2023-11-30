@@ -609,7 +609,7 @@ std::string_view CoreData::inputFilename() const { return inputFilename_; }
 // Express as a serialisable value
 SerialisedValue CoreData::Masters::serialise() const
 {
-    toml::table table;
+    SerialisedValue::table_type table;
     SerialisedValue node = table;
     Serialisable::fromVectorToTable<>(bonds, "bonds", node);
     Serialisable::fromVectorToTable<>(angles, "angles", node);

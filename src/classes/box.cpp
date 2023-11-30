@@ -428,8 +428,8 @@ Vec3<double> Box::scaleFactors(double requestedVolume, Vec3<bool> scalableAxes) 
 SerialisedValue Box::serialise() const
 {
     SerialisedValue box;
-    box["lengths"] = toml::array{a_, b_, c_};
-    box["angles"] = toml::array{alpha_, beta_, gamma_};
-    box["nonPeriodic"] = toml::array{!periodic_.x, !periodic_.y, !periodic_.z};
+    box["lengths"] = {a_, b_, c_};
+    box["angles"] = {alpha_, beta_, gamma_};
+    box["nonPeriodic"] = {!periodic_.x, !periodic_.y, !periodic_.z};
     return box;
 }
