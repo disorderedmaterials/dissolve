@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "main/version.h"
+#include "base/serialiser.h"
 #include "main/dissolve.h"
 #include <gtest/gtest.h>
 
@@ -39,6 +40,18 @@ TEST(VersionTest, VersionInfo)
     Version::DissolveVersion fileVersion(serialised["version"].as_string().str), actual(Version::semantic());
 
     EXPECT_EQ(fileVersion, actual);
+}
+
+TEST(VersionTest, VersionUpgrade)
+{
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+
+    SerialisedValue old;
+    old["version"] = "0.0.0";
+    old["pairPotentials"] = {{"coulombTruncation", "Shift"}};
+
+    dissolve.deserialise(old);
 }
 
 } // namespace UnitTest
