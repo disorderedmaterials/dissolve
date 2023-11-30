@@ -92,6 +92,9 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
     auto &cohesiveData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
         fmt::format("{}//Cohesive", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     cohesiveData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.interMolecular());
+    auto &intraPPData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+        fmt::format("{}//IntraPP", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+    intraPPData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.intraMolecular());
 
     // Append to arrays of total energies
     auto &totalEnergyArray = moduleContext.dissolve().processingModuleData().realise<Data1D>(

@@ -64,8 +64,11 @@ void EnergyModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
             ->setColour(StockColours::RedStockColour);
         energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Bound", prefix), "Bound", "Totals")
             ->setColour(StockColours::BlueStockColour);
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Cohesive", prefix), "Cohesive", "Totals")
-            ->setColour(StockColours::LightRedStockColour);
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Cohesive", prefix), "CohesivePP", "PairPotential")
+            ->setColour(StockColours::RedStockColour);
+        energyGraph_
+            ->createRenderable<RenderableData1D>(fmt::format("{}//IntraPP", prefix), "IntramolecularPP", "PairPotential")
+            ->setColour(StockColours::BlueStockColour);
         energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Bond", prefix), "Bond", "Bound")
             ->setColour(StockColours::GreenStockColour);
         energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Angle", prefix), "Angle", "Bound")
@@ -74,6 +77,7 @@ void EnergyModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
             ->setColour(StockColours::OrangeStockColour);
         energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Improper", prefix), "Improper", "Bound")
             ->setColour(StockColours::CyanStockColour);
+        energyGraph_->groupManager().setGroupStipple("PairPotential", LineStipple::DotStipple);
     }
 
     // Validate renderables if they need it
