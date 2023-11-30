@@ -38,11 +38,3 @@ QHash<int, QByteArray> ForcefieldModel::roleNames() const
     roles[RawRole] = "raw";
     return roles;
 }
-
-// QVariant ForcefieldModel::headerData(int section, Qt::Orientation orientation, int role) const {
-//   return {};
-// }
-
-// Qt::ItemFlags ForcefieldModel::flags(const QModelIndex &index) const {
-//   return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-// }
