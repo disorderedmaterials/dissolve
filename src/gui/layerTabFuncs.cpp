@@ -29,11 +29,8 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
             SLOT(moduleNameChanged(const QModelIndex &, const QString &, const QString &)));
     ui_.ModulesTable->resizeColumnsToContents();
 
-    if (moduleLayer_->modules().size() >= 1)
-    {
-        auto firstIndex = moduleLayerModel_.index(0, 0);
-        ui_.ModulesTable->selectionModel()->setCurrentIndex(firstIndex, QItemSelectionModel::ClearAndSelect);
-    }
+    if (!moduleLayer_->modules().empty())
+        ui_.ModulesTable->selectRow(0);
 
     // Set up the available modules tree
     ui_.AvailableModulesTree->setModel(&modulePaletteModel_);
@@ -255,7 +252,7 @@ void LayerTab::updateModuleList()
         selectedIndex = ui_.ModulesTable->selectionModel()->selection().indexes().front();
     moduleLayerModel_.reset();
     if (selectedIndex)
-        ui_.ModulesTable->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
+        ui_.ModulesTable->selectRow(selectedIndex.value().row());
 }
 
 void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
