@@ -54,6 +54,16 @@ int main(int args, char **argv)
         return 1;
     }
 
+    if (options.toTomlFile()) {
+        Messenger::print("Saving input file to '{}'...\n", options.toTomlFile().value());
+	auto toml = dissolve.serialise();
+	std::ofstream outfile(options.toTomlFile().value());
+	outfile << toml;
+	outfile.close();
+
+	return 0;
+    }
+
     // Save input file to new output filename and quit?
     if (options.writeInputFilename())
     {

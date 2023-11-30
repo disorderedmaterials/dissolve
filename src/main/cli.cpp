@@ -50,6 +50,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
     app.add_option("-f,--frequency", restartFileFrequency_, "Frequency at which to write restart file (default = 10)")
         ->group("Output Files");
     app.add_flag("-x,--no-restart-file", noRestartFile_, "Don't write restart file at all")->group("Output Files");
+    app.add_option("--to-toml", toTomlFile_, "Convert input file into TOML format")->group("Output Files");
 
     // Add GUI-specific options - if this is not the GUI, make the input file a required parameter
     if (!isGUI)
@@ -108,3 +109,6 @@ bool CLIOptions::ignoreRestartFile() const { return ignoreRestartFile_; }
 
 // Return whether to prevent writing of the restart file
 bool CLIOptions::noRestartFile() const { return noRestartFile_; };
+
+// Return output destination for TOML conversion
+std::optional<std::string> CLIOptions::toTomlFile() const {return toTomlFile_;}
