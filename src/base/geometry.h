@@ -56,7 +56,7 @@ template <> struct from<Geometry::GeometryType>
         else if (typeString == "torsion")
             return Geometry::GeometryType::TorsionType;
         else
-            throw toml::syntax_error(
+            throw toml::type_error(
                 fmt::format("Unhandled geometry type '{}' - can't convert from TOML value.\n", std::string(typeString)),
                 node.location());
     }

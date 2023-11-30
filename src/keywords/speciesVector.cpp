@@ -75,7 +75,7 @@ void SpeciesVectorKeyword::deserialise(const SerialisedValue &node, const CoreDa
                  auto title = toml::get<std::string>(item);
                  auto *species = coreData.findSpecies(title);
                  if (!species)
-                     throw toml::syntax_error(fmt::format("No Species named '{}' exists.\n", title), item.location());
+                     throw toml::type_error(fmt::format("No Species named '{}' exists.\n", title), item.location());
 
                  data_.push_back(species);
              });

@@ -54,7 +54,7 @@ class NodeAndIntegerKeywordBase : public NodeKeywordUnderlay, public KeywordBase
         auto nodeName = toml::find<std::string>(node, "node");
         auto realNode = findNode(nodeName);
         if (!realNode)
-            throw toml::syntax_error(
+            throw toml::type_error(
                 fmt::format("Node '{}' given to keyword {} doesn't exist.\n", nodeName, KeywordBase::name()), node.location());
 
         setInteger(toml::find<int>(node, "int"));
