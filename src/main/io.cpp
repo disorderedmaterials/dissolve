@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/lineParser.h"
+#include "base/messenger.h"
 #include "base/serialiser.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
@@ -191,7 +192,11 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
 // Read values from a serialisable value
 void Dissolve::deserialise(const SerialisedValue &node_orig)
 {
-    const SerialisedValue node = backwards_upgrade(node_orig);
+    // Default to current version if no version info is given.
+    bool hasVersion = node_orig.contains("version");
+    if (!hasVersion)
+        Messenger::warn("File does not contain version information.  Assuming the current version: {}", Version::semantic());
+    const SerialisedValue node = hasVersion ? backwards_upgrade(node_orig) : node_orig;
 
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
     Serialisable::optionalOn(node, "master", [this](const auto node) { coreData_.deserialiseMaster(node); });
