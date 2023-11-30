@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2023 Team Dissolve and contributors
+
+#pragma once
+
+#include "base/serialiser.h"
+#include "main/version.h"
+
+SerialisedValue backwards_upgrade(SerialisedValue contents);

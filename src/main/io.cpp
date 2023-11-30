@@ -7,38 +7,13 @@
 #include "classes/atomType.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
+#include "main/compatibility.h"
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"
 #include <cstring>
 #include <functional>
 #include <map>
-
-SerialisedValue unreal_upgrade(SerialisedValue contents)
-{
-    contents["unreal"] = false;
-    return contents;
-}
-
-SerialisedValue backwards_upgrade(SerialisedValue contents)
-{
-    using Version::DissolveVersion;
-    std::map<std::string, std::function<SerialisedValue(SerialisedValue)>> breaking_changes = {{"1.2.0", unreal_upgrade}};
-
-    DissolveVersion current(toml::find<std::string>(contents, "version"));
-
-    for (auto &[key, value] : breaking_changes)
-    {
-        DissolveVersion next(key);
-        if (current < next)
-        {
-            contents = value(contents);
-            current = next;
-        }
-    }
-
-    return contents;
-}
 
 // Load input file through supplied parser
 bool Dissolve::loadInput(LineParser &parser)

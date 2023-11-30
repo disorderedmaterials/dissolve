@@ -1,6 +1,7 @@
 add_library(
   main
   comms.cpp
+  compatibility.cpp
   cli.cpp
   dissolve.cpp
   io.cpp
@@ -14,6 +15,7 @@ add_library(
   simulation.cpp
   version.cpp
   cli.h
+  compatibility.h
   dissolve.h
   keywords.h
   version.h
