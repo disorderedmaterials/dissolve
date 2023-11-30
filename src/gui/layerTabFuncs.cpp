@@ -255,7 +255,7 @@ void LayerTab::updateModuleList()
         ui_.ModulesTable->selectRow(selectedIndex.value().row());
 }
 
-void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
+void LayerTab::on_ModulesTable_customContextMenuRequested(const QPoint &pos)
 {
     auto index = ui_.ModulesTable->indexAt(pos);
     if (!index.isValid())

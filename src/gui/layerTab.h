@@ -71,7 +71,7 @@ class LayerTab : public QWidget, public MainTab
     void moduleNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
     void layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
     void updateModuleList();
-    void on_ModulesList_customContextMenuRequested(const QPoint &pos);
+    void on_ModulesTable_customContextMenuRequested(const QPoint &pos);
     void on_AvailableModulesTree_doubleClicked(const QModelIndex &index);
 
     public:
