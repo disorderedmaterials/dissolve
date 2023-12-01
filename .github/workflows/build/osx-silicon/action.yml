@@ -89,7 +89,7 @@ runs:
 
       # Build
       cd build
-      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DJava_JAVA_EXECUTABLE:path=$JAVA_HOME_21_X64/bin/java -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DFTGL_INCLUDE_DIR:path=/usr/local/Cellar/ftgl/2.1.3-rc5/include -DFTGL_LIBRARY:path=/usr/local/Cellar/ftgl/2.1.3-rc5/lib -DCMAKE_OSX_ARCHITECTURES:string="arm64" ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DJava_JAVA_EXECUTABLE:path=$JAVA_HOME_21_X64/bin/java -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DCMAKE_OSX_ARCHITECTURES:string="arm64" ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
       cmake --build . --config Release
       cd ../
 
