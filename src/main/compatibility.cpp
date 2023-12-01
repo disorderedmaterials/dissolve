@@ -10,8 +10,8 @@
 SerialisedValue unreal_upgrade(SerialisedValue contents)
 {
     if (contents["pairPotentials"].contains("coulombTruncation"))
-	contents["pairPotentials"]["coulombTruncation"] =
-	    toml::find<std::string>(contents["pairPotentials"], "coulombTruncation") + "ed";
+        contents["pairPotentials"]["coulombTruncation"] =
+            toml::find<std::string>(contents["pairPotentials"], "coulombTruncation") + "ed";
 
     return contents;
 }
@@ -29,12 +29,12 @@ SerialisedValue backwards_upgrade(SerialisedValue contents)
 
     for (auto &[key, value] : breaking_changes)
     {
-	DissolveVersion next(key);
-	if (current < next)
-	{
-	    contents = value(contents);
-	    current = next;
-	}
+        DissolveVersion next(key);
+        if (current < next)
+        {
+            contents = value(contents);
+            current = next;
+        }
     }
 
     return contents;
