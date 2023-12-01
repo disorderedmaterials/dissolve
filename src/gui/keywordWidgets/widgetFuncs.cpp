@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/producers.h"
-#include "gui/keywordWidgets/sectionHeader.h"
 #include "gui/keywordWidgets/widget.hui"
+#include "gui/keywordWidgets/widgetGroupHeader.h"
 #include "gui/signals.h"
 #include "main/dissolve.h"
 #include "module/module.h"
@@ -41,11 +41,12 @@ void KeywordsWidget::setUp(const KeywordStoreSection &keywordSection, const Core
         // Create a widget for the group name
         if (group.name() != "_NO_HEADER")
         {
-            auto *sectionLabel = new SectionHeaderWidget(QString::fromStdString(std::string(group.name())));
+            auto *groupHeader = new WidgetGroupHeader(QString::fromStdString(std::string(group.name())),
+                                                      QString::fromStdString(std::string(group.description())));
 
             if (row != 0)
-                sectionLabel->setContentsMargins(0, 15, 0, 0);
-            sectionLayout->addWidget(sectionLabel, row++, 0, 1, 2);
+                groupHeader->setContentsMargins(0, 15, 0, 0);
+            sectionLayout->addWidget(groupHeader, row++, 0, 1, 2);
         }
 
         // Loop over keywords in the group and add them to our groupbox

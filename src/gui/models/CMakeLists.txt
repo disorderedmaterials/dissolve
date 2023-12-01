@@ -8,7 +8,6 @@ set(models_MOC_HDRS
     configurationModel.h
     dataManagerSimulationModel.h
     dissolveModel.h
-    dissolveModelImageProvider.h
     enumOptionsModel.h
     forcefieldModel.h
     isotopologueSetModel.h
@@ -64,6 +63,7 @@ set(models_SRCS
     dataManagerSimulationModel.cpp
     dissolveModel.cpp
     dissolveModelImageProvider.cpp
+    dissolveModelImageProvider.h
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
     externalPotentialModel.cpp
@@ -86,6 +86,7 @@ set(models_SRCS
     pairPotentialModel.cpp
     procedureModel.cpp
     procedureModelMimeData.cpp
+    procedureModelMimeData.h
     procedureNodeModel.cpp
     rangeVectorModel.cpp
     renderableGroupManagerModel.cpp
@@ -121,7 +122,6 @@ qt6_wrap_cpp(
   forcefieldModel.h
   isotopologueSetModel.h
   pairPotentialModel.h
-  procedureModelMimeData.h
   rangeVectorModel.h
   speciesAngleModel.h
   speciesAtomModel.h

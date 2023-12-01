@@ -3,21 +3,21 @@
 
 #pragma once
 
-#include "gui/keywordWidgets/ui_sectionHeader.h"
+#include "gui/keywordWidgets/ui_widgetGroupHeader.h"
 #include <QWidget>
 
-class SectionHeaderWidget : public QWidget
+class WidgetGroupHeader : public QWidget
 {
     // All Qt declarations must include this macro
     Q_OBJECT
 
     public:
-    SectionHeaderWidget(QString sectionLabel);
+    WidgetGroupHeader(const QString &groupName, const QString &description = {});
 
     /*
      * Widgets
      */
     private:
     // Main form declaration
-    Ui::SectionHeaderWidget ui_;
+    Ui::GroupHeaderWidget ui_;
 };
