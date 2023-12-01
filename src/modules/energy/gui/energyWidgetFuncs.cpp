@@ -60,18 +60,24 @@ void EnergyModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
 
         auto prefix = fmt::format("{}//{}", module_->name(), cfg->niceName());
         energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Total", prefix), "Total", "Totals");
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Inter", prefix), "Inter", "Totals")
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//PairPotential", prefix), "PairPotential", "Totals")
             ->setColour(StockColours::RedStockColour);
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Intra", prefix), "Intra", "Totals")
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Bound", prefix), "Bound", "Totals")
             ->setColour(StockColours::BlueStockColour);
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Bond", prefix), "Bond", "Intramolecular")
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Cohesive", prefix), "CohesivePP", "PairPotential")
+            ->setColour(StockColours::RedStockColour);
+        energyGraph_
+            ->createRenderable<RenderableData1D>(fmt::format("{}//IntraPP", prefix), "IntramolecularPP", "PairPotential")
+            ->setColour(StockColours::BlueStockColour);
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Bond", prefix), "Bond", "Bound")
             ->setColour(StockColours::GreenStockColour);
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Angle", prefix), "Angle", "Intramolecular")
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Angle", prefix), "Angle", "Bound")
             ->setColour(StockColours::PurpleStockColour);
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Torsion", prefix), "Torsion", "Intramolecular")
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Torsion", prefix), "Torsion", "Bound")
             ->setColour(StockColours::OrangeStockColour);
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Improper", prefix), "Improper", "Intramolecular")
+        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Improper", prefix), "Improper", "Bound")
             ->setColour(StockColours::CyanStockColour);
+        energyGraph_->groupManager().setGroupStipple("PairPotential", LineStipple::DotStipple);
     }
 
     // Validate renderables if they need it
