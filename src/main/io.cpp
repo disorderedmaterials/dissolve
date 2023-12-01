@@ -218,21 +218,20 @@ bool Dissolve::loadInput(std::string_view filename)
         {
             SerialisedValue contents = toml::parse(std::string(filename));
             deserialise(contents);
+            return true;
         }
         catch (toml::syntax_error e)
         {
             Messenger::error("Syntax error in TOML file (are you sure you meant the .toml extension?).\n\n{}", e.what());
-            return false;
         }
         catch (toml::type_error e)
         {
             Messenger::error("Could not load TOML file\n\n{}", e.what());
-            return false;
         }
-        return true;
+        return false;
     }
 
-    // Fail if the file start with restart header
+    // Fail if the file starts with restart header
     {
         std::ifstream infile{std::string(filename)};
         std::string firstLine;
@@ -245,19 +244,35 @@ bool Dissolve::loadInput(std::string_view filename)
         }
     }
 
-    // Open file and check that we're OK to proceed reading from it
-    LineParser parser(&worldPool());
-    if (!parser.openInput(filename))
-        return false;
-
-    auto result = loadInput(parser);
-    if (result)
+    try
     {
-        Messenger::print("Finished reading input file.\n");
-        setInputFilename(filename);
+        SerialisedValue contents = toml::parse(std::string(filename));
+        deserialise(contents);
+        return true;
     }
+    catch (toml::syntax_error e)
+    {
+        // The file didn't have TOML syntax, so try the original parser
+        // Open file and check that we're OK to proceed reading from it
+        LineParser parser(&worldPool());
+        if (!parser.openInput(filename))
+            return false;
 
-    return result;
+        auto result = loadInput(parser);
+        if (result)
+        {
+            Messenger::print("Finished reading input file.\n");
+            setInputFilename(filename);
+        }
+
+        return result;
+    }
+    catch (toml::type_error e)
+    {
+        // The file *was* a TOML file, but it had problems loading
+        Messenger::error("Could not load TOML file\n\n{}", e.what());
+    }
+    return false;
 }
 
 // Save input file
