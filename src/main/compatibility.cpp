@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "main/compatibility.h"
+#include <functional>
 #include <iostream>
 
 namespace dissolve
