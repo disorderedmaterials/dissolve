@@ -17,7 +17,7 @@ std::string_view repoUrl();
 std::string_view appType();
 
 // This class handles the version numbers of the app in a structured
-// manor.
+// manner.
 class DissolveVersion
 {
     private:

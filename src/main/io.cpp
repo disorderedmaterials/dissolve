@@ -190,13 +190,13 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
 }
 
 // Read values from a serialisable value
-void Dissolve::deserialise(const SerialisedValue &node_orig)
+void Dissolve::deserialise(const SerialisedValue &originalNode)
 {
     // Default to current version if no version info is given.
-    bool hasVersion = node_orig.contains("version");
+    auto hasVersion = originalNode.contains("version");
     if (!hasVersion)
         Messenger::warn("File does not contain version information.  Assuming the current version: {}", Version::semantic());
-    const SerialisedValue node = hasVersion ? backwards_upgrade(node_orig) : node_orig;
+    const SerialisedValue node = hasVersion ? dissolve::backwardsUpgrade(originalNode) : originalNode;
 
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
     Serialisable::optionalOn(node, "master", [this](const auto node) { coreData_.deserialiseMaster(node); });
