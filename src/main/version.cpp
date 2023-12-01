@@ -3,6 +3,7 @@
 
 #include "main/version.h"
 #include <fmt/format.h>
+#include <iostream>
 
 #define DISSOLVEVERSION "1.4.0"
 #define DISSOLVESHORTHASH ""
