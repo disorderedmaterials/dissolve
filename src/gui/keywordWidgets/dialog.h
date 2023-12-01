@@ -9,7 +9,7 @@
 
 // Forward Declarations
 class CoreData;
-class KeywordStore;
+class KeywordStoreOrganiser;
 
 // Keywords Dialog
 class KeywordsDialog : public QDialog
@@ -17,7 +17,7 @@ class KeywordsDialog : public QDialog
     Q_OBJECT
 
     public:
-    KeywordsDialog(QWidget *parent, KeywordStore &keywords, const CoreData &coreData);
+    KeywordsDialog(QWidget *parent, const KeywordStore &keywordStore, const CoreData &coreData);
     ~KeywordsDialog() = default;
 
     private:
@@ -26,7 +26,7 @@ class KeywordsDialog : public QDialog
     // CoreData reference
     const CoreData &coreData_;
     // Whether any keywords have been modified in the current 'show'
-    bool keywordsModified_;
+    bool keywordsModified_{false};
     // Combined signal mask for all keyword changes
     Flags<KeywordBase::KeywordSignal> keywordSignalMask_;
 

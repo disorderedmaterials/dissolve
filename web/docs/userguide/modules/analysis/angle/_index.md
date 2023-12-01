@@ -34,7 +34,7 @@ Unlike the {{< module "DAngle" >}} module, no restrictions are imposed on the re
 |`RangeAB`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`10.0`<br/>`0.05`|Range (min, max, bin width) of A-B distance binning.|
 |`RangeBC`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`10.0`<br/>`0.05`|Range (min, max, bin width) of B-C distance binning.|
 
-### Control
+### Exclusions & Restrictions
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

@@ -33,7 +33,7 @@ See also the {{< module "OrientedSDF" >}} module.
 |`RangeY`|`double`<br/>`double`<br/>`double`|`-10.0`<br/>`10.0`<br/>`0.5`|Range (min, max, bin width) of volume over which to bin along Y.|
 |`RangeZ`|`double`<br/>`double`<br/>`double`|`-10.0`<br/>`10.0`<br/>`0.5`|Range (min, max, bin width) of volume over which to bin along Z.|
 
-### Control
+### Exclusions
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

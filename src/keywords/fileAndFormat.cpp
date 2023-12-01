@@ -23,7 +23,7 @@ const FileAndFormat &FileAndFormatKeyword::data() const { return data_; }
  */
 
 // Return whether the underlying FileAndFormat has any options
-bool FileAndFormatKeyword::hasOptions() const { return !data_.keywords().keywords().empty(); }
+bool FileAndFormatKeyword::hasOptions() const { return data_.keywords().nVisibleKeywords() > 0; }
 
 /*
  * Arguments

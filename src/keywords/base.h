@@ -76,6 +76,19 @@ class KeywordBase : public Serialisable<CoreData const &>
     virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override{};
 
     /*
+     * Keyword Types
+     */
+    public:
+    // Keyword Types
+    enum class KeywordType
+    {
+        Standard,    /* Standard keyword */
+        Restartable, /* Standard keyword, captured in restart file */
+        Target,      /* Target keyword */
+        Deprecated   /* Deprecated keyword (not captured in restart file) */
+    };
+
+    /*
      * Parse Result
      */
     public:

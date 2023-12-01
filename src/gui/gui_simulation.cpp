@@ -72,6 +72,7 @@ void DissolveWindow::setupIteration(int count)
     elapsedTimer_.zero();
     if (count == -1)
     {
+        elapsedTimer_.zero();
         elapsedTimer_.start();
     }
     else

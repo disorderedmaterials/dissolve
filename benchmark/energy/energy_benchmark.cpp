@@ -34,7 +34,7 @@ static void BM_CalculateEnergy_SpeciesInterAtomicEnergy(benchmark::State &state)
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     for (auto _ : state)
-        EnergyModule::interAtomicEnergy(procPool, species, potentialMap);
+        EnergyModule::pairPotentialEnergy(procPool, species, potentialMap);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateEnergy_MoleculeEnergy(benchmark::State &state)
@@ -102,7 +102,7 @@ static void BM_CalculateEnergy_TotalInterAtomicEnergy(benchmark::State &state)
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     for (auto _ : state)
-        EnergyModule::interAtomicEnergy(procPool, problemDef.cfg_, potentialMap);
+        EnergyModule::pairPotentialEnergy(procPool, problemDef.cfg_, potentialMap);
 }
 
 template <ProblemType problem, Population population>
