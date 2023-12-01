@@ -128,8 +128,8 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            EnergyModule::interAtomicEnergy(moduleContext.processPool(), targetConfiguration_,
-                                            moduleContext.dissolve().potentialMap());
+            EnergyModule::pairPotentialEnergy(moduleContext.processPool(), targetConfiguration_,
+                                              moduleContext.dissolve().potentialMap());
             Messenger::unMute();
             timing += timer.split();
         }
