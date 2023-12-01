@@ -13,7 +13,7 @@ IntraShakeModule::IntraShakeModule() : Module(ModuleTypes::IntraShake)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    keywords_.setOrganisation("Options", "Control");
+    keywords_.setOrganisation("Options", "Control", "Number of move attempts per term and the target acceptance rate.");
     keywords_.add<IntegerKeyword>("ShakesPerTerm", "Number of shakes per term", nShakesPerTerm_, 1);
     keywords_.add<DoubleKeyword>("TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", targetAcceptanceRate_,
                                  0.001, 1.0);
@@ -22,7 +22,10 @@ IntraShakeModule::IntraShakeModule() : Module(ModuleTypes::IntraShake)
     keywords_.add<SpeciesVectorKeyword>("RestrictToSpecies", "Restrict the calculation to the specified Species",
                                         restrictToSpecies_);
 
-    keywords_.setOrganisation("Options", "Bonds");
+    keywords_.setOrganisation(
+        "Options", "Bonds",
+        "Current step size and limits for Monte Carlo moves on bonds. The step size is dynamically updated as "
+        "the calculation proceeds in order to approximate the specified acceptance rate.");
     keywords_.add<BoolKeyword>("AdjustBonds", "Whether bonds in molecules should be shaken", adjustBonds_);
     keywords_.addRestartable<DoubleKeyword>("BondStepSize", "Step size for bond adjustments (Angstroms)", bondStepSize_, 0.001,
                                             1.0);
@@ -31,7 +34,10 @@ IntraShakeModule::IntraShakeModule() : Module(ModuleTypes::IntraShake)
     keywords_.add<DoubleKeyword>("BondStepSizeMax", "Maximum step size for bond adjustments (Angstroms)", bondStepSizeMax_,
                                  0.001, 1.0);
 
-    keywords_.setOrganisation("Options", "Angles");
+    keywords_.setOrganisation(
+        "Options", "Angles",
+        "Current step size and limits for Monte Carlo moves on angles. The step size is dynamically updated as "
+        "the calculation proceeds in order to approximate the specified acceptance rate.");
     keywords_.add<BoolKeyword>("AdjustAngles", "Whether angles in molecules should be shaken", adjustAngles_);
     keywords_.addRestartable<DoubleKeyword>("AngleStepSize", "Step size for angle adjustments (degrees)", angleStepSize_, 0.01,
                                             45.0);
@@ -40,7 +46,10 @@ IntraShakeModule::IntraShakeModule() : Module(ModuleTypes::IntraShake)
     keywords_.add<DoubleKeyword>("AngleStepSizeMax", "Maximum step size for angle adjustments (degrees)", angleStepSizeMax_,
                                  0.01, 45.0);
 
-    keywords_.setOrganisation("Options", "Torsions");
+    keywords_.setOrganisation(
+        "Options", "Torsions",
+        "Current step size and limits for Monte Carlo moves on torsions. The step size is dynamically updated as "
+        "the calculation proceeds in order to approximate the specified acceptance rate.");
     keywords_.add<BoolKeyword>("AdjustTorsions", "Whether torsions in molecules should be shaken", adjustTorsions_);
     keywords_.addRestartable<DoubleKeyword>("TorsionStepSize", "Step size for torsion adjustments (degrees)", torsionStepSize_,
                                             0.01, 45.0);

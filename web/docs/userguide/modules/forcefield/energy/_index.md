@@ -44,7 +44,7 @@ The `StabilityThreshold` value is multiplied by the mean of the last N points (g
 |:------|:--:|:-----:|-----------|
 |`Configuration`|`Configuration`|--|{{< required-label >}}Target configuration on which to operate.|
 
-### Control
+### Stability Detection
 
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
@@ -62,7 +62,4 @@ The `StabilityThreshold` value is multiplied by the mean of the last N points (g
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`Test`|`bool`|`false`|Test parallel energy routines against basic serial versions and supplied reference values|
-|`TestAnalytic`|`bool`|`false`|Use analytic interatomic energies rather than (production) tabulated potentials for tests|
-|`TestReferenceInter`|`double`|`0.0`|Reference value for interatomic energy against which to test calculated value|
-|`TestReferenceIntra`|`double`|`0.0`|Reference value for intramolecular energy against which to test calculated value|
 |`TestThreshold`|`double`|`0.1`|Threshold of energy at which test comparison will fail|

@@ -13,14 +13,16 @@ MolShakeModule::MolShakeModule() : Module(ModuleTypes::MolShake)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    keywords_.setOrganisation("Options", "Control");
+    keywords_.setOrganisation("Options", "Control", "Number of move attempts per atom and the target acceptance rate.");
     keywords_.add<IntegerKeyword>("ShakesPerMolecule", "Number of shakes to attempt per molecule", nShakesPerMolecule_, 1);
     keywords_.add<DoubleKeyword>("TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", targetAcceptanceRate_,
                                  0.001);
     keywords_.add<SpeciesVectorKeyword>("RestrictToSpecies", "Restrict the calculation to the specified Species",
                                         restrictToSpecies_);
 
-    keywords_.setOrganisation("Options", "Rotations");
+    keywords_.setOrganisation("Options", "Rotations",
+                              "Current step size and limits for Monte Carlo rotations. The step size is dynamically updated as "
+                              "the calculation proceeds in order to approximate the specified acceptance rate.");
     keywords_.addRestartable<DoubleKeyword>("RotationStepSize",
                                             "Step size in degrees to use for the rotational component of the Monte Carlo moves",
                                             rotationStepSize_);
@@ -29,7 +31,10 @@ MolShakeModule::MolShakeModule() : Module(ModuleTypes::MolShake)
     keywords_.add<DoubleKeyword>("RotationStepSizeMax", "Maximum step size for rotations (degrees)", rotationStepSizeMax_,
                                  0.001, 180.0);
 
-    keywords_.setOrganisation("Options", "Translations");
+    keywords_.setOrganisation(
+        "Options", "Translations",
+        "Current step size and limits for Monte Carlo translations. The step size is dynamically updated as "
+        "the calculation proceeds in order to approximate the specified acceptance rate.");
     keywords_.addRestartable<DoubleKeyword>("TranslationStepSize",
                                             "Step size in Angstroms for the translational component of the Monte Carlo moves",
                                             translationStepSize_, 0.0001, 100.0);

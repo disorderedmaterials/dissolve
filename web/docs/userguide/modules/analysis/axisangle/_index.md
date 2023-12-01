@@ -32,7 +32,7 @@ The `AxisAngle` module calculates the angle between two vectors $u$ and $v$ from
 |`AngleRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`180.0`<br/>`10.0`|Range (min, max, bin width) of angle binning.|
 |`DistanceRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`10.0`<br/>`0.05`|Range (min, max, bin width) of A-B distance binning.|
 
-### Control
+### Exclusions & Restrictions
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
