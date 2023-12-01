@@ -55,22 +55,37 @@ int main(int args, char **argv)
     }
 
     // Save input file to new output filename and quit?
-    if (options.writeInputFilename())
+    if (options.writeInputFilename() || options.toTomlFile())
     {
-        Messenger::print("Saving input file to '{}'...\n", options.writeInputFilename().value());
+        // This should be options.writeInputFilename().or_else(options.totomlFile.value())
+        // but that will require C++23
+        std::string filename =
+            options.writeInputFilename() ? options.writeInputFilename().value() : options.toTomlFile().value();
+        Messenger::print("Saving input file to '{}'...\n", filename);
         bool result;
         if (dissolve.worldPool().isMaster())
         {
-            result = dissolve.saveInput(options.writeInputFilename().value());
-            if (result)
-                dissolve.worldPool().decideTrue();
+            if (options.writeInputFilename())
+            {
+                result = dissolve.saveInput(options.writeInputFilename().value());
+                if (result)
+                    dissolve.worldPool().decideTrue();
+                else
+                    dissolve.worldPool().decideFalse();
+            }
             else
-                dissolve.worldPool().decideFalse();
+            {
+                auto toml = dissolve.serialise();
+                std::ofstream outfile(options.toTomlFile().value());
+                outfile << toml;
+                outfile.close();
+                result = true;
+            }
         }
         else
             result = dissolve.worldPool().decision();
         if (!result)
-            Messenger::error("Failed to save input file to '{}'.\n", options.writeInputFilename().value());
+            Messenger::error("Failed to save input file to '{}'.\n", filename);
 
         // Reload the written file and continue?
         if (options.writeInputAndReload())
