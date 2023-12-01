@@ -76,7 +76,7 @@ int main(int args, char **argv)
                 std::ofstream outfile(options.toTomlFile().value());
                 outfile << toml;
                 outfile.close();
-                result = 1;
+                result = true;
             }
         }
         else
