@@ -6,7 +6,8 @@
 #include "base/serialiser.h"
 #include "main/version.h"
 
-namespace dissolve {
+namespace dissolve
+{
 
 SerialisedValue backwardsUpgrade(SerialisedValue contents);
 

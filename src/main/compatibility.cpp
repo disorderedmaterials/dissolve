@@ -13,8 +13,8 @@ namespace dissolve
 SerialisedValue unrealUpgrade(SerialisedValue contents)
 {
     if (contents["pairPotentials"].contains("coulombTruncation"))
-	contents["pairPotentials"]["coulombTruncation"] =
-	    toml::find<std::string>(contents["pairPotentials"], "coulombTruncation") + "ed";
+        contents["pairPotentials"]["coulombTruncation"] =
+            toml::find<std::string>(contents["pairPotentials"], "coulombTruncation") + "ed";
 
     return contents;
 }
@@ -32,12 +32,12 @@ SerialisedValue backwardsUpgrade(SerialisedValue contents)
 
     for (auto &[key, value] : breakingChanges)
     {
-	DissolveVersion next(key);
-	if (current < next)
-	{
-	    contents = value(contents);
-	    current = next;
-	}
+        DissolveVersion next(key);
+        if (current < next)
+        {
+            contents = value(contents);
+            current = next;
+        }
     }
 
     return contents;
