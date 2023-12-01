@@ -23,8 +23,8 @@ runs:
     with:
       python-version: ${{ env.pythonVersion }}
 
-  - name: Install Homebrew Dependencies for Intel
-    if: ${{ inputs.cacheOnly == 'false' && env.CMAKE_TARGET == 'arm64' }}
+  - name: Install Homebrew Dependencies
+    if: ${{ inputs.cacheOnly }}
     shell: bash
     run: |
 
