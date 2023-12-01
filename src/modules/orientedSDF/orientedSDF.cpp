@@ -64,7 +64,7 @@ OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF), analy
 
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    keywords_.setOrganisation("Options", "Sites");
+    keywords_.setOrganisation("Options", "Sites", "Specify the central (A) and surrounding sites (B).");
     keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF",
                                             selectA_->speciesSites(), selectA_->axesRequired());
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisA", "Axis to use from site A", calculateAxisAngle_->axis(0),
@@ -75,7 +75,7 @@ OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF), analy
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisB", "Axis to use from site B", calculateAxisAngle_->axis(1),
                                                               OrientedSite::siteAxis());
 
-    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<RangeKeyword>("AngleRange", "Axis angle range required to permit a site to be binned in the SDF",
                                 axisAngleRange_, Vec3Labels::MinMaxDeltaLabels);
     keywords_.add<Vec3DoubleKeyword>("RangeX", "Range along X axis", rangeX_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
@@ -85,7 +85,9 @@ OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF), analy
     keywords_.add<Vec3DoubleKeyword>("RangeZ", "Range along Z axis", rangeZ_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
                                      Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
 
-    keywords_.setOrganisation("Options", "Control");
+    keywords_.setOrganisation(
+        "Options", "Exclusions & Restrictions",
+        "Options to exclude specific site pairs from the calculation and restrict the angle range considered.");
     keywords_.add<BoolKeyword>("ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule",
                                excludeSameMolecule_);
     keywords_.add<BoolKeyword>(
