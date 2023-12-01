@@ -21,7 +21,6 @@ set(keywordWidgets_MOC_HDRS
     nodeValueEnumOptions.h
     nodeVector.h
     range.h
-    sectionHeader.h
     species.h
     speciesSite.h
     speciesSiteVector.h
@@ -40,6 +39,7 @@ set(keywordWidgets_MOC_HDRS
     optionalInt.hui
     stdString.hui
     widget.hui
+    widgetGroupHeader.h
 )
 qt6_wrap_cpp(keywordWidgets_MOC_SRCS ${keywordWidgets_MOC_HDRS})
 
@@ -64,7 +64,7 @@ set(keywordWidgets_UIS
     nodeValueEnumOptions.ui
     nodeVector.ui
     range.ui
-    sectionHeader.ui
+    rangeVector.ui
     species.ui
     speciesSite.ui
     speciesSiteVector.ui
@@ -73,7 +73,7 @@ set(keywordWidgets_UIS
     vec3Integer.ui
     vec3NodeValue.ui
     weightedModuleVector.ui
-    rangeVector.ui
+    widgetGroupHeader.ui
 )
 qt6_wrap_ui(keywordWidgets_UIS_H ${keywordWidgets_UIS})
 
@@ -107,19 +107,19 @@ set(keywordWidgets_SRCS
     optionalIntFuncs.cpp
     producers.cpp
     rangeFuncs.cpp
-    sectionHeaderFuncs.cpp
+    rangeVectorFuncs.cpp
     speciesFuncs.cpp
     speciesSiteFuncs.cpp
     speciesSiteVectorFuncs.cpp
     speciesVectorFuncs.cpp
     stdStringFuncs.cpp
-    widgetFuncs.cpp
     vec3DoubleFuncs.cpp
     vec3IntegerFuncs.cpp
     vec3Labels.cpp
     vec3NodeValueFuncs.cpp
     weightedModuleVectorFuncs.cpp
-    rangeVectorFuncs.cpp
+    widgetFuncs.cpp
+    widgetGroupHeaderFuncs.cpp
     base.h
     vec3Labels.h
     producers.h

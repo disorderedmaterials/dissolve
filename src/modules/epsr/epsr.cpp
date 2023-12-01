@@ -35,10 +35,13 @@ EPSRModule::EPSRModule() : Module(ModuleTypes::EPSR)
     keywords_.add<DoubleKeyword>("Weighting", "Factor used when adding fluctuation coefficients to pair potentials", weighting_,
                                  0.0, 100.0);
 
-    keywords_.setOrganisation("Advanced", "Additional R-Factors");
+    keywords_.setOrganisation(
+        "Advanced", "Additional R-Factors",
+        "Specify additional Q-ranges over which to calculate R-factors in addition to that over the whole Q-range.");
     keywords_.add<RangeVectorKeyword>("RFactorRanges", "Ranges over which to calculate RFactors", ranges_);
 
-    keywords_.setOrganisation("Advanced", "Expansion Function");
+    keywords_.setOrganisation("Advanced", "Expansion Function",
+                              "Control the expansion function used for fitting delta functions.");
     keywords_.add<EnumOptionsKeyword<EPSRModule::ExpansionFunctionType>>(
         "ExpansionFunction", "Form of expansion function to use when fitting difference data", expansionFunction_,
         EPSRModule::expansionFunctionTypes());

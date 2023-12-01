@@ -28,11 +28,8 @@ GRModule::GRModule() : Module(ModuleTypes::GR)
         "AveragingScheme", "Weighting scheme to use when averaging partials", averagingScheme_, Averaging::averagingSchemes());
     keywords_.add<Function1DKeyword>("IntraBroadening", "Type of broadening to apply to intramolecular g(r)", intraBroadening_,
                                      FunctionProperties::Normalisation);
-    keywords_.add<OptionalIntegerKeyword>(
-        "Smoothing",
-        "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in "
-        "the applied Spline smooth",
-        nSmooths_, 0, 100, 1, "Off");
+    keywords_.add<OptionalIntegerKeyword>("Smoothing", "Specifies the degree of smoothing to apply to calculated g(r)",
+                                          nSmooths_, 0, 100, 1, "Off");
 
     keywords_.setOrganisation("Export");
     keywords_.add<BoolKeyword>("Save", "Whether to save partials and total functions to disk", save_);
