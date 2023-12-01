@@ -43,52 +43,52 @@ int ModuleLayerModel::rowCount(const QModelIndex &parent) const
     return moduleLayer_ ? moduleLayer_->modules().size() : 0;
 }
 
+int ModuleLayerModel::columnCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return ModuleLayerModel::DataColumns::nDataColumns;
+}
+
 QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
 {
     auto *module = rawData(index);
-    switch (role)
+
+    if (role == Qt::UserRole)
+        return QVariant::fromValue(module);
+
+    if (index.column() == DataColumns::EnabledColumn)
     {
-        case (Qt::DisplayRole):
-            if (module->isDisabled())
-                return QString::fromStdString(fmt::format("{} [{}] (disabled)", module->name(), module->frequency()));
-            else if (moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled))
-                return QString::fromStdString(fmt::format("{} [{}] (disabled via layer)", module->name(), module->frequency()));
-            else
-                return QString::fromStdString(fmt::format("{} [{}]", module->name(), module->frequency()));
-        case (Qt::EditRole):
-            return QString::fromStdString(std::string(module->name()));
-        case (Qt::UserRole):
-            return QVariant::fromValue(module);
-        case (Qt::DecorationRole):
-            return QIcon((QPixmap(QString(":/modules/icons/modules/%1.svg")
-                                      .arg(QString::fromStdString(ModuleTypes::lccModuleType(module->type()))))));
-        default:
-            return {};
+        if (role == Qt::CheckStateRole)
+            return module->isEnabled() ? Qt::Checked : Qt::Unchecked;
     }
+    else if (index.column() == DataColumns::NameColumn)
+    {
+        switch (role)
+        {
+            case (Qt::DisplayRole):
+                return QString::fromStdString(fmt::format("{} [{}]", module->name(), ModuleTypes::moduleType(module->type())));
+            case (Qt::EditRole):
+                return QString::fromStdString(std::string(module->name()));
+            case (Qt::DecorationRole):
+                return QIcon((QPixmap(QString(":/modules/icons/modules/%1.svg")
+                                          .arg(QString::fromStdString(ModuleTypes::lccModuleType(module->type()))))));
+            default:
+                return {};
+        }
+    }
+    else if (index.column() == DataColumns::FrequencyColumn)
+    {
+        if (role == Qt::DisplayRole || role == Qt::EditRole)
+            return module->frequency();
+    }
+
+    return {};
 }
 
 bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role == Qt::EditRole)
-    {
-        auto *module = rawData(index);
-
-        // Check for identical old/new names
-        if (value.toString() == QString::fromStdString(std::string(module->name())))
-            return false;
-
-        // Ensure uniqueness of new name
-        auto oldName = QString::fromStdString(std::string(module->name()));
-        auto newName = DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()), Module::instances(),
-                                               [&](const auto &inst) { return inst == module ? std::string() : inst->name(); });
-        module->setName(newName);
-
-        emit(dataChanged(index, index));
-        emit(moduleNameChanged(index, oldName, QString::fromStdString(newName)));
-
-        return true;
-    }
-    else if (role == ModuleLayerModelAction::MoveInternal)
+    // Handle operations that are independent of column first
+    if (role == ModuleLayerModelAction::MoveInternal)
     {
         // Probably indicates a drop operation - the "value" is the name of the module to move into the specified index
         // Find it in the list, taking care to avoid any nullptr vector data (i.e. where we're moving it to)
@@ -116,12 +116,69 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
         return true;
     }
 
+    auto *module = rawData(index);
+
+    // Column-specific edits
+    if (index.column() == DataColumns::EnabledColumn)
+    {
+        if (role == Qt::CheckStateRole)
+        {
+            module->setEnabled(value.toBool());
+
+            emit(dataChanged(index, index));
+
+            return true;
+        }
+    }
+    else if (index.column() == DataColumns::NameColumn)
+    {
+        if (role == Qt::EditRole)
+        {
+            // Check for identical old/new names
+            if (value.toString() == QString::fromStdString(std::string(module->name())))
+                return false;
+
+            // Ensure uniqueness of new name
+            auto oldName = QString::fromStdString(std::string(module->name()));
+            auto newName =
+                DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()), Module::instances(),
+                                        [&](const auto &inst) { return inst == module ? std::string() : inst->name(); });
+            module->setName(newName);
+
+            emit(dataChanged(index, index));
+            emit(moduleNameChanged(index, oldName, QString::fromStdString(newName)));
+
+            return true;
+        }
+    }
+    else if (index.column() == DataColumns::FrequencyColumn)
+    {
+        if (role == Qt::EditRole)
+        {
+            // Check for identical old/new frequencies
+            if (value.toInt() == module->frequency())
+                return false;
+
+            module->setFrequency(value.toInt());
+
+            emit(dataChanged(index, index));
+
+            return true;
+        }
+    }
+
     return false;
 }
 
 Qt::ItemFlags ModuleLayerModel::flags(const QModelIndex &index) const
 {
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+    Qt::ItemFlags itemFlags =
+        Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+
+    if (index.column() == DataColumns::EnabledColumn)
+        itemFlags.setFlag(Qt::ItemIsUserCheckable);
+
+    return itemFlags;
 }
 
 QVariant ModuleLayerModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -132,8 +189,12 @@ QVariant ModuleLayerModel::headerData(int section, Qt::Orientation orientation, 
     if (orientation == Qt::Horizontal)
         switch (section)
         {
-            case 0:
+            case (DataColumns::EnabledColumn):
+                return "On?";
+            case (DataColumns::NameColumn):
                 return "Name";
+            case (DataColumns::FrequencyColumn):
+                return "Frequency";
             default:
                 return {};
         }
@@ -172,13 +233,7 @@ bool ModuleLayerModel::canDropMimeData(const QMimeData *data, Qt::DropAction act
     Q_UNUSED(row);
     Q_UNUSED(parent);
 
-    if (column > 0)
-        return false;
-
-    if (data->hasFormat("application/dissolve.module.move") || data->hasFormat("application/dissolve.module.create"))
-        return true;
-
-    return false;
+    return (data->hasFormat("application/dissolve.module.move") || data->hasFormat("application/dissolve.module.create"));
 }
 
 bool ModuleLayerModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
