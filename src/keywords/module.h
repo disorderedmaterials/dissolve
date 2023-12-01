@@ -112,8 +112,8 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
         auto *module = Module::find(std::string(node.as_string()));
         if (!module)
             throw toml::type_error(fmt::format("Module '{}' given to keyword {} doesn't exist.\n",
-                                                 std::string(node.as_string()), KeywordBase::name()),
-                                     node.location());
+                                               std::string(node.as_string()), KeywordBase::name()),
+                                   node.location());
 
         setData(module);
     }

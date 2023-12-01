@@ -90,7 +90,7 @@ void ConfigurationVectorKeyword::deserialise(const SerialisedValue &node, const 
                  // Check that the configuration isn't already present
                  if (std::find(data_.begin(), data_.end(), cfg) != data_.end())
                      throw toml::type_error(fmt::format("Configuration '{}' has already been referenced.\n", cfg->name()),
-                                              name.location());
+                                            name.location());
 
                  data_.push_back(cfg);
              });

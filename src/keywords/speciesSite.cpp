@@ -104,7 +104,7 @@ void SpeciesSiteKeyword::deserialise(const SerialisedValue &node, const CoreData
     if (!sp)
     {
         throw toml::type_error(fmt::format("Error setting SpeciesSite - no Species named '{}' exists.\n", species),
-                                 node.location());
+                               node.location());
     }
 
     // Find specified Site (second argument) in the Species

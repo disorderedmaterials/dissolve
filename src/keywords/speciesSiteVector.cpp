@@ -118,11 +118,11 @@ void SpeciesSiteVectorKeyword::deserialise(const SerialisedValue &node, const Co
                          data_.push_back(site);
                      else
                          throw toml::type_error(fmt::format("Cannot find Site {}", toml::find<std::string>(item, "site")),
-                                                  item.location());
+                                                item.location());
                  }
                  else
                      toml::type_error(fmt::format("Cannot find Species {}", toml::find<std::string>(item, "species")),
-                                        item.location());
+                                      item.location());
              });
 }
 
