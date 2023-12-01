@@ -19,9 +19,15 @@ runs:
       target: ${{ inputs.target }}
       cacheOnly: ${{ inputs.cacheOnly }}
 
-  - name: Build (OSX)
-    if: runner.os == 'MacOS'
+  - name: Build (OSX) Intel
+    if: runner.os == 'MacOS' && env.OSX_TARGET == 'x86_64'
     uses: "./.github/workflows/build/osx"
+    with:
+      cacheOnly: ${{ inputs.cacheOnly }}
+
+  - name: Build (OSX) Silicon
+    if: runner.os == 'MacOS' && env.OSX_TARGET == 'arm64'
+    uses: "./.github/workflows/build/osx-silicon"
     with:
       cacheOnly: ${{ inputs.cacheOnly }}
 

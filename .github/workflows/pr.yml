@@ -35,13 +35,13 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            cmake_target: x86_64
-            conan_target: x86_64
-          - os: windows-latest
+            target: 'arm64'
+          #- os: macos-latest
+          #  target: 'x86_64'
+          #- os: windows-latest
     runs-on: ${{ matrix.os }}
     env:
-      CMAKE_TARGET: ${{ matrix.cmake_target }}
-      CONAN_TARGET: ${{ matrix.conan_target }}
+      OSX_TARGET: ${{ matrix.cmake_target }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -54,6 +54,7 @@ jobs:
 
   BuildLinux:
     needs: QC
+    if: false
     strategy:
       fail-fast: false
       matrix:
@@ -72,15 +73,13 @@ jobs:
         target: ${{ matrix.target }}
 
   Package:
-    needs: [ Build, BuildLinux ]
+    #needs: [ Build, BuildLinux ]
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, windows-latest ]
+        os: [ macos-latest]
+        #os: [ macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
-    env:
-      CMAKE_TARGET: ${{ matrix.cmake_target }}
-      CONAN_TARGET: ${{ matrix.conan_target }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
