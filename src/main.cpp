@@ -57,7 +57,10 @@ int main(int args, char **argv)
     // Save input file to new output filename and quit?
     if (options.writeInputFilename() || options.toTomlFile())
     {
-        std::string filename = options.writeInputFilename().value_or(options.toTomlFile().value());
+        // This should be options.writeInputFilename().or_else(options.totomlFile.value())
+        // but that will require C++23
+        std::string filename =
+            options.writeInputFilename() ? options.writeInputFilename().value() : options.toTomlFile().value();
         Messenger::print("Saving input file to '{}'...\n", filename);
         bool result;
         if (dissolve.worldPool().isMaster())
