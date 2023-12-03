@@ -25,7 +25,7 @@ class Task : public Serialisable<const CoreData &>
     // Procedure that the task will execute
     Procedure  procedure_;
     // Target configurations for the task
-    std::vector<Configuration*> configurations_;
+    std::vector<Configuration*> &configurations_;
 
     public:
     // Set name of task
@@ -37,8 +37,8 @@ class Task : public Serialisable<const CoreData &>
     // Return procedure that the task will execute
     Procedure procedure() const;
     // Set target configurations for the task
-    void setConfigurations(std::vector<Configuration*> &cfgs);
-    void setConfigurations(Configuration* cfg);
+    void setConfigurations(std::vector<Configuration*> configurations);
+    void setConfigurations(Configuration* configuration);
     // Return target configurations for the task
     std::vector<Configuration*> &configurations() const;
     // Return target configuration for the task

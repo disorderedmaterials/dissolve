@@ -32,25 +32,25 @@ Procedure Task::procedure() const
 }
 
 // Set target configurations for the task
-void Task::setConfigurations(std::vector<std::unique_ptr<Configuration>> &configurations)
+void Task::setConfigurations(std::vector<Configuration*> configurations)
 {
     configurations_ = configurations;
 }
 
-void Task::setConfigurations(std::unique_ptr<Configuration> configuration)
+void Task::setConfigurations(Configuration* configuration)
 {
     configurations_.clear();
-    configurations_.push_back(std::move(configuration));
+    configurations_.push_back(configuration);
 }
 
 // Return target configurations for the task
-std::vector<std::unique_ptr<Configuration>> &Task::configurations() const
+std::vector<Configuration*> &Task::configurations() const
 {
     return configurations_;
 }
 
 // Return target configuration for the task
-std::unique_ptr<Configuration> Task::configuration() const
+Configuration* Task::configuration() const
 {
     if (!singularTargetConfiguration())
         throw(std::runtime_error("Task has multiple target configurations.\n"));
