@@ -41,7 +41,7 @@ bool RunModuleListNode::execute(const ProcedureContext &procedureContext)
     ModuleContext moduleContext(procedureContext.processPool(), procedureContext.dissolve());
     for (auto& module : modules_)
     {
-        if (module->executeProcessing({procedureContext.processPool(), procedureContext.dissolve()}) == Module::ExecutionResult::Failed)
+        if (module->executeProcessing(moduleContext) == Module::ExecutionResult::Failed)
             return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
     }
     return true;

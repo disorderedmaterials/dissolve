@@ -9,7 +9,7 @@ class Module;
 class RunModuleNode : public ProcedureNode
 {
     public:
-    explicit RunModuleNode(const Module *module = nullptr);
+    explicit RunModuleNode(Module *module = nullptr);
     ~RunModuleNode() override = default;
 
     /*
@@ -21,7 +21,7 @@ class RunModuleNode : public ProcedureNode
 
     private:
     // Target module to run
-    const Module *module_{nullptr};
+    Module *module_{nullptr};
 
     /*
      * Execute
