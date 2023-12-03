@@ -58,7 +58,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
             data_ = nullptr;
         else
         {
-            if (module->type() != moduleType())
+            if (module->type() != moduleType() && module->type() != ModuleTypes::Any)
                 return Messenger::error("Module '{}' given to keyword {} is of the wrong type ({}) - only a module of "
                                         "type '{}' can be accepted.\n",
                                         module->name(), KeywordBase::name(), ModuleTypes::moduleType(module->type()),
