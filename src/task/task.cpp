@@ -44,7 +44,7 @@ void Task::setConfigurations(Configuration* configuration)
 }
 
 // Return target configurations for the task
-std::vector<Configuration*> &Task::configurations() const
+std::vector<Configuration*> Task::configurations()
 {
     return configurations_;
 }
@@ -75,7 +75,7 @@ SerialisedValue Task::serialise() const
     SerialisedValue result;
     result["name"] = name_;
     result["procedure"] = procedure_.serialise();
-    result["targets"] = ConfigurationVectorKeyword(configurations_).serialise();
+    // TODO: serialise target configurations
     return result;
 }
 
@@ -84,5 +84,5 @@ void Task::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     name_ = toml::find<std::string>(node, "name");
     procedure_.deserialise(node.at("procedure"), coreData);
-    configurations_ = ConfigurationVectorKeyword().deserialise(node.at("targets"), coreData).data();
+    // TODO: deserialise target configurations
 }
