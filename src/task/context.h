@@ -12,7 +12,8 @@ class Configuration;
 class Dissolve;
 class ProcessPool;
 
-class TaskContext {
+class TaskContext
+{
 
     public:
     template <class... ContextObjects> TaskContext(const TaskContext &other, ContextObjects &&...contextObjects)
@@ -38,8 +39,7 @@ class TaskContext {
     // Catch any unrecognised object type
     template <class T> void set(T obj)
     {
-        throw(std::runtime_error(
-            fmt::format("Invalid object type ({}) passed to TaskContext set().\n", typeid(obj).name())));
+        throw(std::runtime_error(fmt::format("Invalid object type ({}) passed to TaskContext set().\n", typeid(obj).name())));
     }
 
     public:
@@ -47,5 +47,4 @@ class TaskContext {
     Dissolve &dissolve() const;
     // Return available process pool
     const ProcessPool &processPool() const;
-
 };

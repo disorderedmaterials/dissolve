@@ -29,4 +29,3 @@ const ProcessPool &TaskContext::processPool() const
         throw(std::runtime_error("No reference to a ProcessPool is set in this context.\n"));
     return processPool_->get();
 };
-

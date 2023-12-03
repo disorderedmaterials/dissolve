@@ -7,50 +7,31 @@
 Task::Task() : procedure_(ProcedureNode::NodeContext::AnyContext) {}
 
 // Set name of task
-void Task::setName(std::string_view name)
-{
-    name_ = name;
-}
+void Task::setName(std::string_view name) { name_ = name; }
 
 // Return name of task
-std::string_view Task::name() const
-{
-    return name_;
-}
+std::string_view Task::name() const { return name_; }
 
 // Set procedure that the task will execute
-void Task::setProcedure(Procedure procedure)
-{
-    procedure_ = procedure;
-}
-
+void Task::setProcedure(Procedure procedure) { procedure_ = procedure; }
 
 // Return procedure that the task will execute
-Procedure Task::procedure() const
-{
-    return procedure_;
-}
+Procedure Task::procedure() const { return procedure_; }
 
 // Set target configurations for the task
-void Task::setConfigurations(std::vector<Configuration*> configurations)
-{
-    configurations_ = configurations;
-}
+void Task::setConfigurations(std::vector<Configuration *> configurations) { configurations_ = configurations; }
 
-void Task::setConfigurations(Configuration* configuration)
+void Task::setConfigurations(Configuration *configuration)
 {
     configurations_.clear();
     configurations_.push_back(configuration);
 }
 
 // Return target configurations for the task
-std::vector<Configuration*> Task::configurations()
-{
-    return configurations_;
-}
+std::vector<Configuration *> Task::configurations() { return configurations_; }
 
 // Return target configuration for the task
-Configuration* Task::configuration() const
+Configuration *Task::configuration() const
 {
     if (!singularTargetConfiguration())
         throw(std::runtime_error("Task has multiple target configurations.\n"));
@@ -58,10 +39,7 @@ Configuration* Task::configuration() const
 }
 
 // Return whether there just exist a single target configuration for the task
-bool Task::singularTargetConfiguration() const
-{
-    return configurations_.size() == 1;
-}
+bool Task::singularTargetConfiguration() const { return configurations_.size() == 1; }
 
 // Run task in the specified context
 bool Task::execute(const TaskContext &context)

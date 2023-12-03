@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "task/context.h"
 #include "base/serialiser.h"
 #include "procedure/procedure.h"
+#include "task/context.h"
 #include <string>
 
 class CoreData;
@@ -23,9 +23,9 @@ class Task : public Serialisable<const CoreData &>
     // Name of task
     std::string name_{"Untitled Task"};
     // Procedure that the task will execute
-    Procedure  procedure_;
+    Procedure procedure_;
     // Target configurations for the task
-    std::vector<Configuration*> configurations_;
+    std::vector<Configuration *> configurations_;
 
     public:
     // Set name of task
@@ -37,12 +37,12 @@ class Task : public Serialisable<const CoreData &>
     // Return procedure that the task will execute
     Procedure procedure() const;
     // Set target configurations for the task
-    void setConfigurations(std::vector<Configuration*> configurations);
-    void setConfigurations(Configuration* configuration);
+    void setConfigurations(std::vector<Configuration *> configurations);
+    void setConfigurations(Configuration *configuration);
     // Return target configurations for the task
-    std::vector<Configuration*> configurations();
+    std::vector<Configuration *> configurations();
     // Return target configuration for the task
-    Configuration* configuration() const;
+    Configuration *configuration() const;
     // Return whether there just exist a single target configuration for the task
     bool singularTargetConfiguration() const;
 
@@ -54,5 +54,4 @@ class Task : public Serialisable<const CoreData &>
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
-
 };

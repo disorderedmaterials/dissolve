@@ -4,7 +4,10 @@
 #include "procedure/nodes/runTask.h"
 #include "task/task.h"
 
-RunTaskNode::RunTaskNode(Task *task) : ProcedureNode(ProcedureNode::NodeType::RunTask,  {ProcedureNode::ControlContext}), task_(task) {}
+RunTaskNode::RunTaskNode(Task *task)
+    : ProcedureNode(ProcedureNode::NodeType::RunTask, {ProcedureNode::ControlContext}), task_(task)
+{
+}
 
 /*
  * Identity

@@ -213,15 +213,15 @@ class CoreData
 
     /*
      * Tasks
-    */
+     */
     private:
     // Master task
     Task masterTask_;
 
     public:
     // Return master task
-    const Task& masterTask() const;
-    Task& masterTask();
+    const Task &masterTask() const;
+    Task &masterTask();
 
     /*
      * Input Filename
