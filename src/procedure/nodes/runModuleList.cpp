@@ -5,7 +5,8 @@
 #include "keywords/moduleVector.h"
 #include "module/context.h"
 
-RunModuleListNode::RunModuleListNode(std::vector<Module *>modules) : ProcedureNode(ProcedureNode::NodeType::RunModuleList, {ProcedureNode::ControlContext}), modules_(modules)
+RunModuleListNode::RunModuleListNode(std::vector<Module *> modules)
+    : ProcedureNode(ProcedureNode::NodeType::RunModuleList, {ProcedureNode::ControlContext}), modules_(modules)
 {
     keywords_.setOrganisation("Options", "Target");
     keywords_.add<ModuleVectorKeyword>("Modules", "Target modules to run", modules_);
@@ -27,7 +28,7 @@ bool RunModuleListNode::prepare(const ProcedureContext &procedureContext)
 {
     ModuleContext moduleContext(procedureContext.processPool(), procedureContext.dissolve());
 
-    for (auto& module : modules_)
+    for (auto &module : modules_)
     {
         if (!module->setUp(moduleContext))
             return false;
@@ -39,7 +40,7 @@ bool RunModuleListNode::prepare(const ProcedureContext &procedureContext)
 bool RunModuleListNode::execute(const ProcedureContext &procedureContext)
 {
     ModuleContext moduleContext(procedureContext.processPool(), procedureContext.dissolve());
-    for (auto& module : modules_)
+    for (auto &module : modules_)
     {
         if (module->executeProcessing(moduleContext) == Module::ExecutionResult::Failed)
             return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
