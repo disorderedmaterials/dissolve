@@ -51,6 +51,8 @@ add_library(
   restraintPotential.cpp
   rotateFragment.cpp
   runLayer.cpp
+  runModule.cpp
+  runModuleList.cpp
   select.cpp
   sequence.cpp
   simpleGlobalPotential.cpp
@@ -109,6 +111,8 @@ add_library(
   restraintPotential.h
   rotateFragment.h
   runLayer.h
+  runModule.h
+  runModuleList.h
   select.h
   sequence.h
   simpleGlobalPotential.h
