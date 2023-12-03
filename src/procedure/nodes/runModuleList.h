@@ -9,7 +9,7 @@ class Module;
 class RunModuleListNode : public ProcedureNode
 {
     public:
-    explicit RunModuleListNode(std::vector<const Module *>modules = {});
+    explicit RunModuleListNode(std::vector<Module *>modules = {});
     ~RunModuleListNode() override = default;
 
     /*
@@ -21,7 +21,7 @@ class RunModuleListNode : public ProcedureNode
 
     private:
     // Target modules to run
-    std::vector<const Module *>modules_{};
+    std::vector<Module *>modules_{};
 
     /*
      * Execute

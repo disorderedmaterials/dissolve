@@ -4,10 +4,10 @@
 #include "procedure/nodes/runModuleList.h"
 #include "keywords/moduleVector.h"
 
-RunModuleListNode::RunModuleListNode(std::vector<const Module *>modules) : ProcedureNode(ProcedureNode::NodeType::RunModuleList, {ProcedureNode::ControlContext}), modules_(modules)
+RunModuleListNode::RunModuleListNode(std::vector<Module *>modules) : ProcedureNode(ProcedureNode::NodeType::RunModuleList, {ProcedureNode::ControlContext}), modules_(modules)
 {
     keywords_.setOrganisation("Options", "Target");
-    keywords_.add<ModuleVectorKeyword>("Module", "Target modules to run", modules_);
+    keywords_.add<ModuleVectorKeyword>("Modules", "Target modules to run", modules_);
 }
 
 /*
