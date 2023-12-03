@@ -3,6 +3,7 @@
 
 #include "procedure/nodes/runModule.h"
 #include "keywords/module.h"
+#include "module/context.h"
 #include "procedure/nodes/node.h"
 
 RunModuleNode::RunModuleNode(const Module *module) : ProcedureNode(ProcedureNode::NodeType::RunModule, {ProcedureNode::ControlContext}), module_(module)
@@ -23,7 +24,18 @@ bool RunModuleNode::mustBeNamed() const { return false; }
  */
 
 // Prepare any necessary data, ready for execution
-bool RunModuleNode::prepare(const ProcedureContext &procedureContext) { return true; }
+bool RunModuleNode::prepare(const ProcedureContext &procedureContext)
+{
+    if (!module_)
+        return false;
+    ModuleContext moduleContext(procedureContext.processPool(), procedureContext.dissolve());
+    return module_->setUp(moduleContext);
+}
 
 // Execute node
-bool RunModuleNode::execute(const ProcedureContext &procedureContext) { return true; }
+bool RunModuleNode::execute(const ProcedureContext &procedureContext)
+{
+    ModuleContext moduleContext(procedureContext.processPool(), procedureContext.dissolve());
+    if (module_->executeProcessing(moduleContext) == Module::ExecutionResult::Failed)
+        return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module_->name());
+}

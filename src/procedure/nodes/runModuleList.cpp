@@ -3,6 +3,7 @@
 
 #include "procedure/nodes/runModuleList.h"
 #include "keywords/moduleVector.h"
+#include "module/context.h"
 
 RunModuleListNode::RunModuleListNode(std::vector<Module *>modules) : ProcedureNode(ProcedureNode::NodeType::RunModuleList, {ProcedureNode::ControlContext}), modules_(modules)
 {
@@ -22,7 +23,26 @@ bool RunModuleListNode::mustBeNamed() const { return false; }
  */
 
 // Prepare any necessary data, ready for execution
-bool RunModuleListNode::prepare(const ProcedureContext &procedureContext) { return true; }
+bool RunModuleListNode::prepare(const ProcedureContext &procedureContext)
+{
+    ModuleContext moduleContext(procedureContext.processPool(), procedureContext.dissolve());
+
+    for (auto& module : modules_)
+    {
+        if (!module->setUp(moduleContext))
+            return false;
+    }
+    return true;
+}
 
 // Execute node
-bool RunModuleListNode::execute(const ProcedureContext &procedureContext) { return true; }
+bool RunModuleListNode::execute(const ProcedureContext &procedureContext)
+{
+    ModuleContext moduleContext(procedureContext.processPool(), procedureContext.dissolve());
+    for (auto& module : modules_)
+    {
+        if (module->executeProcessing({procedureContext.processPool(), procedureContext.dissolve()}) == Module::ExecutionResult::Failed)
+            return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
+    }
+    return true;
+}
