@@ -2,14 +2,19 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/lineParser.h"
+#include "base/messenger.h"
+#include "base/serialiser.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
+#include "main/compatibility.h"
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"
 #include <cstring>
+#include <functional>
+#include <map>
 
 // Load input file through supplied parser
 bool Dissolve::loadInput(LineParser &parser)
@@ -144,6 +149,8 @@ SerialisedValue Dissolve::serialise() const
 {
     SerialisedValue root;
 
+    root["version"] = Version::semantic();
+
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
         !coreData_.masterImpropers().empty())
         root["master"] = coreData_.serialiseMaster();
@@ -179,8 +186,13 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
 }
 
 // Read values from a serialisable value
-void Dissolve::deserialise(const SerialisedValue &node)
+void Dissolve::deserialise(const SerialisedValue &originalNode)
 {
+    // Default to current version if no version info is given.
+    auto hasVersion = originalNode.contains("version");
+    if (!hasVersion)
+        Messenger::warn("File does not contain version information.  Assuming the current version: {}", Version::semantic());
+    const SerialisedValue node = hasVersion ? dissolve::backwardsUpgrade(originalNode) : originalNode;
 
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
     Serialisable::optionalOn(node, "master", [this](const auto node) { coreData_.deserialiseMaster(node); });
