@@ -16,8 +16,8 @@ ColumnLayout {
     signal moduleLayerClicked(int index)
     signal speciesClicked(int index)
 
-    property AtomTypeModel atomsTypeModel
-    property MasterBondModel masterBondsModel
+    property AtomTypeModel atomTypeModel
+    property MasterBondModel masterBondModel
     property MasterAngleModel masterAngleModel
     property MasterTorsionModel masterTorsionModel
     property MasterImproperModel masterImproperModel
