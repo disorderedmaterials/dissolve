@@ -3,6 +3,7 @@
 
 #include "main/version.h"
 #include <fmt/format.h>
+#include <iostream>
 
 #define DISSOLVEVERSION "1.4.0"
 #define DISSOLVESHORTHASH ""
@@ -50,4 +51,33 @@ std::string_view appType()
 #endif
 }
 
+DissolveVersion::DissolveVersion(std::string_view version)
+{
+    auto dot = version.find(".");
+    major_ = std::stoi(std::string(version.substr(0, dot)));
+    auto rest = version.substr(dot + 1);
+    dot = rest.find(".");
+    minor_ = std::stoi(std::string(rest.substr(0, dot)));
+    patch_ = std::stoi(std::string(rest.substr(dot + 1)));
+}
+
+bool DissolveVersion::operator<(const DissolveVersion &other) const
+{
+    if (major_ != other.major_)
+        return major_ < other.major_;
+    if (minor_ != other.minor_)
+        return minor_ < other.minor_;
+    return patch_ < other.patch_;
+}
+
+bool DissolveVersion::operator==(const DissolveVersion &other) const
+{
+    return major_ == other.major_ && minor_ == other.minor_ && patch_ == other.patch_;
+}
+
+std::ostream &operator<<(std::ostream &os, const DissolveVersion &version)
+{
+    os << fmt::format("{}.{}.{}", version.major_, version.minor_, version.patch_);
+    return os;
+}
 }; // namespace Version
