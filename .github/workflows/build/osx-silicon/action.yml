@@ -95,8 +95,7 @@ runs:
         -DMULTI_THREADING:bool=${{ inputs.threading }}
         -DJava_JAVA_EXECUTABLE:path=$JAVA_HOME_21_X64/bin/java
         -DANTLR_EXECUTABLE:string=$ANTLR_EXE
-        -DFTGL_INCLUDE_DIRS:path=$FTGL_DIR/include
-        -DFTGL_LIBRARIES:path=$FTGL_DIR/lib
+        -DFTGL_DIR:path=$FTGL_DIR
         -DCMAKE_OSX_ARCHITECTURES:string="arm64"
         -DQT_BASE_DIR=$QT_BASE_DIR
       )
