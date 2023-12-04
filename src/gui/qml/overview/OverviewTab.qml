@@ -8,6 +8,12 @@ import "../widgets" as D
 
 ColumnLayout {
     id: root
+    property AtomTypeModel atomTypeModel
+    property MasterBondModel masterBondModel
+    property MasterAngleModel masterAngleModel
+    property MasterTorsionModel masterTorsionModel
+    property MasterImproperModel masterImproperModel
+    property int rowCount
     anchors.fill: parent
 
     signal atomTypesClicked
@@ -15,13 +21,6 @@ ColumnLayout {
     signal masterTermsClicked
     signal moduleLayerClicked(int index)
     signal speciesClicked(int index)
-
-    property AtomTypeModel atomTypeModel
-    property MasterBondModel masterBondModel
-    property MasterAngleModel masterAngleModel
-    property MasterTorsionModel masterTorsionModel
-    property MasterImproperModel masterImproperModel
-    property int rowCount
 
     RowLayout {
         Layout.alignment: Qt.AlignHCenter
