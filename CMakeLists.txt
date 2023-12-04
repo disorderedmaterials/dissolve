@@ -81,6 +81,13 @@ if(GUI)
     set(CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
   endif(APPLE)
 
+  if(CONAN_INCLUDE_DIRS_FREETYPE)
+    set(FREETYPE_INCLUDE_DIRS CONAN_INCLUDE_DIRS_FREETYPE)
+    set(FREETYPE_LIBRARIES CONAN_LIBS_FREETYPE)
+  else(CONAN_INCLUDE_DIRS_FREETYPE)
+    find_package(Freetype REQUIRED)
+  endif(CONAN_INCLUDE_DIRS_FREETYPE)
+
   find_package(OpenGL REQUIRED)
   find_package(
     Qt6
@@ -99,7 +106,6 @@ if(GUI)
                REQUIRED
   )
   find_package(FTGL REQUIRED)
-  find_package(Freetype REQUIRED)
   add_definitions(-DQT_NO_KEYWORDS)
 
   # Make sure CMake won't try to generate rules for moc (we will do it ourselves)
