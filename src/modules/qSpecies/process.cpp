@@ -4,8 +4,8 @@
 #include "main/dissolve.h"
 #include "module/context.h"
 #include "modules/qSpecies/qSpecies.h"
-#include "procedure/nodes/select.h"
-#include "procedure/nodes/sequence.h"
+#include "analyser/siteFilter.h"
+#include "analyser/siteSelector.h"
 
 // Run main processing
 Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
@@ -30,6 +30,18 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
 //        Messenger::error("Q Species experienced problems with its analysis.\n");
 //        return ExecutionResult::Failed;
 //    }
+
+    // Select all potential bridging oxygen sites - we will determine which actually are
+    // involved in NF-BO-NF interactions once we have the available NF sites
+    SiteSelector allOxygenSites(targetConfiguration_, bridgingOxygenSites_);
+
+    // Select all NF centres
+    SiteSelector NF(targetConfiguration_, networkFormerSites_);
+
+    // Filter the oxygen sites into those surrounded by exactly two NF sites
+    SiteFilter filter(targetConfiguration_, allOxygenSites.sites());
+    auto BO = filter.filterBySiteProximity(NF.sites(), distanceRange_, 2, 2);
+
 
     return ExecutionResult::Success;
 }

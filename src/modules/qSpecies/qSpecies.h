@@ -5,6 +5,7 @@
 
 #include "math/range.h"
 #include "module/module.h"
+#include "analyser/siteSelector.h"
 #include "io/export/data1D.h"
 
 // Calculate Q-Species Module

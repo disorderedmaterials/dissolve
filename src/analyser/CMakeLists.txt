@@ -1,7 +1,9 @@
 add_library(
   analyser
-  selector.cpp
-  selector.h
+  siteFilter.cpp
+  siteFilter.h
+  siteSelector.cpp
+  siteSelector.h
 )
 
 target_include_directories(
