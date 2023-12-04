@@ -16,6 +16,13 @@ ColumnLayout {
     signal moduleLayerClicked(int index)
     signal speciesClicked(int index)
 
+    property AtomTypeModel atomsTypeModel
+    property MasterBondModel masterBondsModel
+    property MasterAngleModel masterAngleModel
+    property MasterTorsionModel masterTorsionModel
+    property MasterImproperModel masterImproperModel
+    property int rowCount
+
     RowLayout {
         Layout.alignment: Qt.AlignHCenter
         Layout.fillHeight: true
@@ -29,7 +36,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nAtomTypes: dissolveModel.nAtomTypes
+            nAtomTypes: atomsTypeModel.rowCount
 
             MouseArea {
                 anchors.fill: parent
@@ -44,7 +51,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nBonds: dissolveModel.nMasterBonds
+            nBonds: masterBondModel.rowCount
 
             MouseArea {
                 anchors.fill: parent
@@ -59,7 +66,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nAngles: dissolveModel.nMasterAngles
+            nAngles: masterAngleModel.rowCount
 
             MouseArea {
                 anchors.fill: parent
@@ -74,7 +81,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nTorsions: dissolveModel.nMasterTorsions
+            nTorsions: masterTorsionModel.rowCount
 
             MouseArea {
                 anchors.fill: parent
@@ -89,7 +96,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nImpropers: dissolveModel.nMasterImpropers
+            nImpropers: masterImproperModel.rowCount
 
             MouseArea {
                 anchors.fill: parent

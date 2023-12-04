@@ -12,6 +12,8 @@ class MasterTorsionModel : public MasterTermModel
 {
     Q_OBJECT
 
+    Q_PROPERTY(int rowCount READ rowCount NOTIFY modelsUpdated)
+
     public:
     MasterTorsionModel(QObject *parent = nullptr);
 
@@ -33,4 +35,7 @@ class MasterTorsionModel : public MasterTermModel
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant getTermData(int row, MasterTermModelData::DataType dataType) const override;
     bool setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value) override;
+    
+    signals:
+    void modelsUpdated();
 };
