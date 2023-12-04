@@ -13,13 +13,6 @@ SizeFactorProcedureNode::SizeFactorProcedureNode()
 }
 
 /*
- * Identity
- */
-
-// Return whether a name for the node must be provided
-bool SizeFactorProcedureNode::mustBeNamed() const { return true; }
-
-/*
  * Execute
  */
 
