@@ -50,6 +50,11 @@ runs:
         cp ./deploy/onetbb/lib/$FILENAME /usr/local/lib/$FILENAME
       done
 
+      for FILE in /opt/homebrew/Cellar/ftgl/2.1.3-rc5/lib; do
+        FILENAME=$(basename $FILE)
+        cp /opt/homebrew/Cellar/ftgl/2.1.3-rc5/lib/$FILENAME /usr/local/lib/$FILENAME
+      done
+
       install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
       install_name_tool -add_rpath "/usr/local/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
       install_name_tool -add_rpath "/opt/homebrew/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
