@@ -9,10 +9,10 @@ import "../widgets" as D
 ColumnLayout {
     id: root
     property AtomTypeModel atomTypeModel
-    property MasterBondModel masterBondModel
     property MasterAngleModel masterAngleModel
-    property MasterTorsionModel masterTorsionModel
+    property MasterBondModel masterBondModel
     property MasterImproperModel masterImproperModel
+    property MasterTorsionModel masterTorsionModel
     property int rowCount
 
     anchors.fill: parent
