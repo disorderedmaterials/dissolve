@@ -4,10 +4,10 @@ import QtQuick.Layouts
 
 Node {
     property AtomTypeModel atomTypeModel
-    property int rows
+    property int rowCount
 
     Text {
         anchors.centerIn: parent
-        text: `Atom Types(${atomTypeModel.rows})`
+        text: `Atom Types(${atomTypeModel.rowCount})`
     }
 }

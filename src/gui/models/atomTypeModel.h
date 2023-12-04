@@ -16,7 +16,7 @@ class AtomTypeModel : public QAbstractListModel
     Q_OBJECT
 
     // The number of rows
-    Q_PROPERTY(int rowCount READ rows NOTIFY modelsUpdated)
+    Q_PROPERTY(int rowCount READ rowCount NOTIFY modelsUpdated)
 
     public:
     AtomTypeModel() = default;
