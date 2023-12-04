@@ -14,7 +14,7 @@ ColumnLayout {
     property MasterTorsionModel masterTorsionModel
     property MasterImproperModel masterImproperModel
     property int rowCount
-    
+
     anchors.fill: parent
 
     signal atomTypesClicked
