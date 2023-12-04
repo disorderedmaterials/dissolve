@@ -1,3 +1,4 @@
+add_subdirectory(analyser)
 add_subdirectory(base)
 add_subdirectory(classes)
 add_subdirectory(data)
