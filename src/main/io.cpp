@@ -14,9 +14,9 @@
 #include "main/version.h"
 #include <cstring>
 #include <fstream>
-#include <toml/parser.hpp>
 #include <functional>
 #include <map>
+#include <toml/parser.hpp>
 
 // Load input file through supplied parser
 bool Dissolve::loadInput(LineParser &parser)
