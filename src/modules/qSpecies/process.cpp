@@ -20,10 +20,10 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
 
     // Select all potential bridging oxygen sites - we will determine which actually are
     // involved in NF-BO-NF interactions once we have the available NF sites
-    SiteSelector allOxygenSites(targetConfiguration_, bridgingOxygenSites_);
+    SiteSelector allOxygenSites(targetConfiguration_, bridgingOxygenSpeciesSites_);
 
     // Select all NF centres
-    SiteSelector NF(targetConfiguration_, networkFormerSites_);
+    SiteSelector NF(targetConfiguration_, networkFormerSpeciesSites_);
 
     // Filter the oxygen sites into those surrounded by exactly two NF sites
     SiteFilter filter(targetConfiguration_, allOxygenSites.sites());

@@ -27,10 +27,10 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies)
     keywords_.setOrganisation("Options", "Sites",
                               "Specify sites representing the bonding oxygen (BO) and network forming (NF) sites.");
     keywords_.add<SpeciesSiteVectorKeyword>("BondingOxygen", "Set the site(s) 'BO' which are to represent the bonding oxygen",
-                                            bridgingOxygenSites_);
+                                            bridgingOxygenSpeciesSites_);
     keywords_.add<SpeciesSiteVectorKeyword>(
         "NetworkFormer", "Set the site(s) 'NF' for which the distribution around the origin sites 'A' should be calculated",
-        networkFormerSites_);
+        networkFormerSpeciesSites_);
 
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<RangeKeyword>("DistanceRange",

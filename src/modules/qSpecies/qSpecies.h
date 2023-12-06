@@ -21,8 +21,8 @@ class QSpeciesModule : public Module
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
-    // Site definitions
-    std::vector<const SpeciesSite *> bridgingOxygenSites_, networkFormerSites_;
+    // Target SpeciesSite definitions
+    std::vector<const SpeciesSite *> bridgingOxygenSpeciesSites_, networkFormerSpeciesSites_;
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{false};
     // Distance range for calculation
