@@ -479,17 +479,16 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
          */
 
         // Add the unweighted from this target to our combined, unweighted S(Q) data
-        auto &types = unweightedSQ.atomTypeMix();
-        dissolve::for_each_pair(
-            ParallelPolicies::seq, types.begin(), types.end(),
-            [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2)
-            {
-                auto globalI = atd1.atomType()->index();
-                auto globalJ = atd2.atomType()->index();
+        auto &types = scatteringMatrix_.atomTypes();
+        dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+                                [&](int i, const auto &at1, int j, const auto &at2)
+                                {
+                                    auto pairIndex = scatteringMatrix_.pairIndexOf(at1, at2);
 
-                const auto &partialIJ = unweightedSQ.unboundPartial(i, j);
-                Interpolator::addInterpolated(partialIJ, calculatedUnweightedSQ[{globalI, globalJ}], 1.0 / targets_.size());
-            });
+                                    const auto &partialIJ = unweightedSQ.unboundPartial(i, j);
+                                    Interpolator::addInterpolated(partialIJ, calculatedUnweightedSQ[pairIndex],
+                                                                  1.0 / targets_.size());
+                                });
 
         /*
          * Save Data
