@@ -54,7 +54,7 @@ class IntegerHistogram1D
     // Return maximum value for data
     std::optional<int> maximum() const;
     // Bin specified value, returning success
-    bool bin(int x);
+    bool bin(int x, int count = 1);
     // Return number of values binned over all bins
     long int nBinned() const;
     // Accumulate current histogram bins into averages

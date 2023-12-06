@@ -95,16 +95,16 @@ std::optional<int> IntegerHistogram1D::minimum() const { return minimum_; }
 std::optional<int> IntegerHistogram1D::maximum() const { return maximum_; }
 
 // Bin specified value, returning success
-bool IntegerHistogram1D::bin(int x)
+bool IntegerHistogram1D::bin(int x, int count)
 {
     if ((minimum_ && x < *minimum_) || (maximum_ && x > *maximum_))
     {
-        nMissed_++;
+        nMissed_ += count;
         return false;
     }
 
-    raw_[x]++;
-    ++nBinned_;
+    raw_[x] += count;
+    nBinned_ += count;
 
     return true;
 }
