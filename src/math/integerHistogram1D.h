@@ -46,7 +46,7 @@ class IntegerHistogram1D
 
     public:
     // Initialise with specified bin range
-    void initialise(std::optional<int> xMin, std::optional<int> xMax);
+    void initialise(std::optional<int> xMin = {}, std::optional<int> xMax = {});
     // Zero histogram bins
     void zeroBins();
     // Return minimum value for data
