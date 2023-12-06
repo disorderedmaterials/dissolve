@@ -182,7 +182,7 @@ void Isotopologues::deserialise(const SerialisedValue &node, const CoreData &cor
                         {
                             auto iso = species_->findIsotopologue(name);
                             if (!iso)
-                                throw toml::syntax_error(fmt::format("Cannot find iso {}", name), location);
+                                throw toml::type_error(fmt::format("Cannot find iso {}", name), location);
                             add(iso, item.as_floating());
                         });
 }

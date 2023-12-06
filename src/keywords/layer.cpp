@@ -45,7 +45,7 @@ void LayerKeyword::deserialise(const SerialisedValue &node, const CoreData &core
 {
     data_ = coreData.findProcessingLayer(std::string(node.as_string()));
     if (!data_)
-        throw toml::syntax_error(
+        throw toml::type_error(
             fmt::format("Layer '{}' given to keyword {} doesn't exist.\n", std::string(node.as_string()), KeywordBase::name()),
             node.location());
 }

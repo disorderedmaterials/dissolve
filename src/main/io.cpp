@@ -13,8 +13,10 @@
 #include "main/keywords.h"
 #include "main/version.h"
 #include <cstring>
+#include <fstream>
 #include <functional>
 #include <map>
+#include <toml/parser.hpp>
 
 // Load input file through supplied parser
 bool Dissolve::loadInput(LineParser &parser)
@@ -221,19 +223,68 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
 // Load input from supplied file
 bool Dissolve::loadInput(std::string_view filename)
 {
-    // Open file and check that we're OK to proceed reading from it
-    LineParser parser(&worldPool());
-    if (!parser.openInput(filename))
-        return false;
-
-    auto result = loadInput(parser);
-    if (result)
+    // If the file name ends in TOML, insist on a TOML parse
+    if (filename.find(".toml") == filename.size() - 5)
     {
-        Messenger::print("Finished reading input file.\n");
-        setInputFilename(filename);
+        try
+        {
+            SerialisedValue contents = toml::parse(std::string(filename));
+            deserialise(contents);
+            return true;
+        }
+        catch (toml::syntax_error e)
+        {
+            Messenger::error("Syntax error in TOML file (are you sure you meant the .toml extension?).\n\n{}", e.what());
+        }
+        catch (toml::type_error e)
+        {
+            Messenger::error("Could not load TOML file\n\n{}", e.what());
+        }
+        return false;
     }
 
-    return result;
+    // Fail if the file starts with restart header
+    {
+        std::ifstream infile{std::string(filename)};
+        std::string firstLine;
+        infile >> firstLine;
+        infile.close();
+        if (firstLine.find("# Restart file") == 0)
+        {
+            Messenger::error("File {} is a restart file and not an input file", filename);
+            return false;
+        }
+    }
+
+    try
+    {
+        SerialisedValue contents = toml::parse(std::string(filename));
+        deserialise(contents);
+        return true;
+    }
+    catch (toml::syntax_error e)
+    {
+        // The file didn't have TOML syntax, so try the original parser
+        // Open file and check that we're OK to proceed reading from it
+        LineParser parser(&worldPool());
+        if (!parser.openInput(filename))
+            return false;
+
+        auto result = loadInput(parser);
+        if (result)
+        {
+            Messenger::print("Finished reading input file.\n");
+            setInputFilename(filename);
+        }
+
+        return result;
+    }
+    catch (toml::type_error e)
+    {
+        // The file *was* a TOML file, but it had problems loading
+        Messenger::error("Could not load TOML file\n\n{}", e.what());
+    }
+    return false;
 }
 
 // Save input file
