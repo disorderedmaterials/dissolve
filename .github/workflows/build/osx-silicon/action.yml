@@ -88,14 +88,16 @@ runs:
       Qt6_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos
       ANTLR_EXE=/usr/local/Cellar/antlr/${{ inputs.antlrVersion }}/antlr-${{ inputs.antlrVersion }}-complete.jar
-      FTGL_DIR=/usr/local/Cellar/ftgl/2.1.3-rc5
+      FTGL_INCLUDE_DIRS=/usr/local/Cellar/ftgl/2.1.3-rc5/include/FTGL/
+      FTGL_LIBRARIES=/usr/local/Cellar/ftgl/2.1.3-rc5/lib/libftgl.2.dylib
 
       CMAKE_PARAMS=(
         -DGUI:bool=true
         -DMULTI_THREADING:bool=${{ inputs.threading }}
         -DJava_JAVA_EXECUTABLE:path=$JAVA_HOME_21_X64/bin/java
         -DANTLR_EXECUTABLE:string=$ANTLR_EXE
-        -DFTGL_DIR:path=$FTGL_DIR
+        -DFTGL_INCLUDE_DIRS:path=$FTGL_INCLUDE_DIRS
+        -DFTGL_LIBRARIES:path=$FTGL_LIBRARIES
         -DCMAKE_OSX_ARCHITECTURES:string="arm64"
         -DQT_BASE_DIR=$QT_BASE_DIR
       )
@@ -112,6 +114,10 @@ runs:
       # Deploy Conan dependencies for ease
       mkdir deploy && cd deploy
       conan install .. -g deploy -s arch=armv8
+      mkdir ftgl
+      
+      cp /usr/local/Cellar/ftgl/2.1.3-rc5/lib/libftgl.2.dylib ftgl
+      cp /usr/local/Cellar/ftgl/2.1.3-rc5/lib/libftgl.2.1.3.dylib ftgl
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
