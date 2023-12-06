@@ -5,6 +5,7 @@
 
 #define PROJECT "Dissolve"
 
-namespace Types {
-    void registerDissolveQmlTypes(void) const
+namespace Types
+{
+void registerDissolveQmlTypes(void) const
 }
