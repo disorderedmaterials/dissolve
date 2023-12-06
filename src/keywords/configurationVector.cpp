@@ -82,15 +82,15 @@ void ConfigurationVectorKeyword::deserialise(const SerialisedValue &node, const 
              {
                  auto *cfg = coreData.findConfiguration(std::string_view(std::string(name.as_string())));
                  if (!cfg)
-                     throw toml::syntax_error(
+                     throw toml::type_error(
                          fmt::format("Error defining Configuration targets - no Configuration named '{}' exists.\n",
                                      std::string(name.as_string())),
                          name.location());
 
                  // Check that the configuration isn't already present
                  if (std::find(data_.begin(), data_.end(), cfg) != data_.end())
-                     throw toml::syntax_error(fmt::format("Configuration '{}' has already been referenced.\n", cfg->name()),
-                                              name.location());
+                     throw toml::type_error(fmt::format("Configuration '{}' has already been referenced.\n", cfg->name()),
+                                            name.location());
 
                  data_.push_back(cfg);
              });
