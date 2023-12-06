@@ -4,6 +4,7 @@
 #pragma once
 
 #include "io/export/dlPolyControl.h"
+#include "io/export/dlPolyField.h"
 #include "base/enumOptions.h"
 #include "module/module.h"
 
@@ -60,6 +61,8 @@ class DlPolyModule : public Module
     private:
     // Filename and format for CONTROL export
     DlPolyControlExportFileFormat dlPolyControlFormat_;
+    // Filename and format for FIELD export
+    DlPolyFieldExportFileFormat dlPolyFieldFormat_;
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
     // Control whether atomic forces are capped every step

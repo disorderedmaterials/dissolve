@@ -10,6 +10,7 @@ add_library(
   trajectory.cpp
   values.cpp
   dlPolyControl.cpp
+  dlPolyField.cpp
   coordinates.h
   data1D.h
   data2D.h
@@ -20,6 +21,7 @@ add_library(
   trajectory.h
   values.h
   dlPolyControl.h
+  dlPolyField.h
 )
 
 target_include_directories(export PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)

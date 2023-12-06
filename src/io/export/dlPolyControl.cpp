@@ -70,8 +70,6 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("coul_precision {}\n", coulPrecision))
         return false;
-    
-    Messenger::print("CONFIG {}\n", cfg);
 
     return true;
 }

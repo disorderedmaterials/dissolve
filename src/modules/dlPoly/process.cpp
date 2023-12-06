@@ -37,10 +37,7 @@ EnumOptions<DlPolyModule::Ensemble> DlPolyModule::ensemble()
 
 // Run main processing
 Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
-{
-
-    Messenger::print("CONFIG {}\n", targetConfiguration_);
-    
+{   
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
@@ -48,7 +45,7 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
-    // Save DlPoly CONTROL file with props
+    // Save DlPoly CONTROL/FIELD file with props
     if (moduleContext.processPool().isMaster())
     {
         Messenger::print("Export: Writing TESTTEST file ({}) for Configuration '{}'...\n",
@@ -71,7 +68,14 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
                                              coulMethod().keyword(coulMethod_),
                                              coulPrecision_))
         {
-            Messenger::print("Export: Failed to export coordinates file '{}'.\n", dlPolyControlFormat_.filename());
+            Messenger::print("Export: Failed to export CONTROL file '{}'.\n", dlPolyControlFormat_.filename());
+            moduleContext.processPool().decideFalse();
+            return ExecutionResult::Failed;
+        }
+        
+        if (!dlPolyFieldFormat_.exportData(targetConfiguration_))
+        {
+            Messenger::print("Export: Failed to export FIELD file '{}'.\n", dlPolyFieldFormat_.filename());
             moduleContext.processPool().decideFalse();
             return ExecutionResult::Failed;
         }
