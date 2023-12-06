@@ -28,7 +28,7 @@ int main(int args, char **argv)
     // Create the main QApplication
     QApplication app(args, argv);
 
-    registerDissolveQmlTypes();
+    Types::registerDissolveQmlTypes();
     QCoreApplication::setOrganizationName("Team Dissolve");
     QCoreApplication::setOrganizationDomain("www.projectdissolve.com");
     QCoreApplication::setApplicationName("Dissolve-GUI");

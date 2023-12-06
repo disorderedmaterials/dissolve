@@ -11,7 +11,7 @@
 #include "gui/types.h"
 #include <QQmlContext>
 
-void registerDissolveQmlTypes() const
+void Types::registerDissolveQmlTypes() const
 {
 
     qmlRegisterType<AddForcefieldDialogModel>(PROJECT, 1, 0, "AddForcefieldDialogModel");
