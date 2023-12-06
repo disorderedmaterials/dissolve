@@ -16,8 +16,6 @@
 AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp) : QDialog(parent)
 {
 
-    qmlRegisterType<AddForcefieldDialogModel>("Dissolve", 1, 0, "AddForcefieldDialogModel");
-
     // For the QIcon theme
     // QIcon::setThemeName("personal");
 

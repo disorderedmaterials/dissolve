@@ -4,6 +4,7 @@
 #include "base/messenger.h"
 #include "base/processPool.h"
 #include "gui/gui.h"
+#include "gui/types.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
@@ -26,6 +27,8 @@ int main(int args, char **argv)
 
     // Create the main QApplication
     QApplication app(args, argv);
+
+    registerDissolveQmlTypes();
     QCoreApplication::setOrganizationName("Team Dissolve");
     QCoreApplication::setOrganizationDomain("www.projectdissolve.com");
     QCoreApplication::setApplicationName("Dissolve-GUI");
