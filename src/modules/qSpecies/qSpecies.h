@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "math/range.h"
-#include "module/module.h"
 #include "analyser/siteSelector.h"
 #include "io/export/data1D.h"
+#include "math/range.h"
+#include "module/module.h"
 
 // Calculate Q-Species Module
 class QSpeciesModule : public Module
