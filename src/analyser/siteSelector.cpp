@@ -4,7 +4,8 @@
 #include "analyser/siteSelector.h"
 #include "classes/configuration.h"
 
-SiteSelector::SiteSelector(Configuration *cfg, const std::vector<const SpeciesSite *> &sites) : configuration_(cfg), speciesSites_(sites)
+SiteSelector::SiteSelector(Configuration *cfg, const std::vector<const SpeciesSite *> &sites)
+    : configuration_(cfg), speciesSites_(sites)
 {
     auto siteIndex = 0;
     for (auto *spSite : speciesSites_)
@@ -19,4 +20,4 @@ SiteSelector::SiteSelector(Configuration *cfg, const std::vector<const SpeciesSi
 }
 
 // Return vector of selected sites
-const SiteSelector::SiteVector &SiteSelector::sites() const { return sites_; }
+const Analyser::SiteVector &SiteSelector::sites() const { return sites_; }

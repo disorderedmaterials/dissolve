@@ -4,6 +4,7 @@ add_library(
   siteFilter.h
   siteSelector.cpp
   siteSelector.h
+  typeDefs.h
 )
 
 target_include_directories(

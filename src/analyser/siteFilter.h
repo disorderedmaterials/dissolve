@@ -3,9 +3,8 @@
 
 #pragma once
 
+#include "analyser/typeDefs.h"
 #include "math/range.h"
-#include "analyser/siteSelector.h"
-#include <memory>
 
 // Forward Declarations
 class Configuration;
@@ -17,7 +16,7 @@ class SpeciesSite;
 class SiteFilter
 {
     public:
-    SiteFilter(Configuration *cfg, const SiteSelector::SiteVector &sitesToFilter);
+    SiteFilter(Configuration *cfg, const Analyser::SiteVector &sitesToFilter);
 
     /*
      * Targets
@@ -26,12 +25,13 @@ class SiteFilter
     // Target configuration from which to select sites
     Configuration *configuration_{nullptr};
     // Vector of sites to filter
-    const SiteSelector::SiteVector &targetSites_;
+    const Analyser::SiteVector &targetSites_;
 
     /*
      * Filter Functions
      */
     public:
     // Filter by neighbour site proximity
-    SiteSelector::SiteVector filterBySiteProximity(const SiteSelector::SiteVector &otherSites, Range range, int minCount, int maxCount) const;
+    std::pair<Analyser::SiteVector, Analyser::SiteMap> filterBySiteProximity(const Analyser::SiteVector &otherSites,
+                                                                             Range range, int minCount, int maxCount) const;
 };

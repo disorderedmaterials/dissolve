@@ -4,7 +4,8 @@
 #include "analyser/siteFilter.h"
 #include "classes/configuration.h"
 
-SiteFilter::SiteFilter(Configuration *cfg, const SiteSelector::SiteVector &sitesToFilter) : configuration_(cfg), targetSites_(sitesToFilter)
+SiteFilter::SiteFilter(Configuration *cfg, const Analyser::SiteVector &sitesToFilter)
+    : configuration_(cfg), targetSites_(sitesToFilter)
 {
 }
 
@@ -13,27 +14,32 @@ SiteFilter::SiteFilter(Configuration *cfg, const SiteSelector::SiteVector &sites
  */
 
 // Filter by neighbour site proximity
-SiteSelector::SiteVector SiteFilter::filterBySiteProximity(const SiteSelector::SiteVector &otherSites, Range range, int minCount, int maxCount) const
+std::pair<Analyser::SiteVector, Analyser::SiteMap>
+SiteFilter::filterBySiteProximity(const Analyser::SiteVector &otherSites, Range range, int minCount, int maxCount) const
 {
-    SiteSelector::SiteVector filteredSites(targetSites_.size());
+    Analyser::SiteVector filteredSites(targetSites_.size()), neighbours;
+    Analyser::SiteMap filteredSiteMap;
     const auto *box = configuration_->box();
-    for (auto &&[site,index] : targetSites_)
+    for (auto &&[site, index] : targetSites_)
     {
-        auto count = 0;
+        neighbours.clear();
         for (auto &&[nbr, nbrIndex] : otherSites)
         {
             if (range.contains(box->minimumDistance(site->origin(), nbr->origin())))
-                ++count;
+                neighbours.emplace_back(nbr, nbrIndex);
 
             // Check current count against maximum value
-            if (count > maxCount)
+            if (neighbours.size() > maxCount)
                 break;
         }
 
         // Accept this site?
-        if (count >= minCount && count <= maxCount)
+        if (neighbours.size() >= minCount && neighbours.size() <= maxCount)
+        {
             filteredSites.emplace_back(site, index);
+            filteredSiteMap[site] = neighbours;
+        }
     }
 
-    return filteredSites;
+    return {filteredSites, filteredSiteMap};
 }

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "analyser/typeDefs.h"
 #include "classes/site.h"
 #include <memory>
 
@@ -18,19 +19,15 @@ class SiteSelector
     public:
     SiteSelector(Configuration *cfg, const std::vector<const SpeciesSite *> &sites);
 
-    // Typedefs
-    using SiteData = std::tuple<const Site *, int>;
-    using SiteVector = std::vector<SiteData>;
-
     private:
     // Target configuration from which to select sites
     Configuration *configuration_{nullptr};
     // Vector of sites to select
     std::vector<const SpeciesSite *> speciesSites_;
     // Vector of selected sites
-    SiteVector sites_;
+    Analyser::SiteVector sites_;
 
     public:
     // Return vector of selected sites
-    const SiteVector &sites() const;
+    const Analyser::SiteVector &sites() const;
 };
