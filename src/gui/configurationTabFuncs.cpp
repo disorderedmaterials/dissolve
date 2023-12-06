@@ -166,6 +166,10 @@ void ConfigurationTab::updateControls()
 
     // Viewer
     ui_.ViewerWidget->postRedisplay();
+
+    // Disable Generate Button when running
+    if (dissolveWindow_->dissolveIterating())
+        ui_.GenerateButton->setEnabled(false);
 }
 
 // Prevent editing within tab
