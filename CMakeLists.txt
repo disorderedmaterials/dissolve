@@ -74,19 +74,17 @@ include(FindANTLR)
 find_package(ANTLR REQUIRED)
 
 if(GUI)
-  # Add extra functions
-  include(FindFTGL)
 
   if(APPLE)
     set(CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
   endif(APPLE)
 
-  if(${CONAN_INCLUDE_DIRS_FREETYPE})
+  if(CONAN_INCLUDE_DIRS_FREETYPE)
     set(FREETYPE_INCLUDE_DIRS ${FREETYPE_INCLUDE_DIRS} ${CONAN_INCLUDE_DIRS_FREETYPE})
     set(FREETYPE_LIBRARIES ${FREETYPE_LIBRARIES} CONAN_PKG::freetype)
-  else(${CONAN_INCLUDE_DIRS_FREETYPE})
+  else(CONAN_INCLUDE_DIRS_FREETYPE)
     find_package(Freetype REQUIRED)
-  endif(${CONAN_INCLUDE_DIRS_FREETYPE})
+  endif(CONAN_INCLUDE_DIRS_FREETYPE)
 
   find_package(OpenGL REQUIRED)
   find_package(
@@ -105,7 +103,9 @@ if(GUI)
                QuickControls2
                REQUIRED
   )
-  if(NOT ${FTGL_INCLUDE_DIRS} OR NOT ${FTGL_LIBRARIES})
+  if(NOT FTGL_INCLUDE_DIRS OR NOT FTGL_LIBRARIES)
+    # Add extra functions
+    include(FindFTGL)
     find_package(FTGL REQUIRED)
   endif()
   add_definitions(-DQT_NO_KEYWORDS)
