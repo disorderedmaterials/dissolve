@@ -59,8 +59,6 @@ runs:
       # Lib png
       install_name_tool -change /usr/local/opt/libpng/lib/libpng16.16.dylib @rpath/libpng16.16.dylib $(brew --prefix libpng)/lib/libpng16.16.dylib
 
-/opt/homebrew/opt/
-
   - name: Install Python Dependencies
     shell: bash
     run: |
