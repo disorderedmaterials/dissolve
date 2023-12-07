@@ -27,15 +27,20 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
 
     // Filter the oxygen sites into those surrounded by exactly two NF sites
     SiteFilter filter(targetConfiguration_, allOxygenSites.sites());
-    auto &&[BO, neighbourMap] = filter.filterBySiteProximity(NF.sites(), distanceRange_, 2, 2);
+    auto &&[BO, neighbourMap] = filter.filterBySiteProximity(NF.sites(), distanceRange_, 0, 2);
 
     // The returned 'neighbourMap' maps BO sites to nearby NF sites *only if* there were exactly two NF sites within range.
     // So, we can use this to determine the Q numbers for each NF by counting the number of times a NF site appears in the map.
     std::map<const Site *, int> qSpecies;
+    std::map<int, int> oxygenTypes;
     for (const auto &[siteBO, nbrNF] : neighbourMap)
     {
         for (const auto &[nbr, nbrIndex] : nbrNF)
-            ++qSpecies[nbr];
+        {
+            ++oxygenTypes[nbrNF.size()];
+            if (nbrNF.size() == 2)
+                ++qSpecies[nbr];
+        }
     }
 
     // Retrieve storage for the Q-species histogram
