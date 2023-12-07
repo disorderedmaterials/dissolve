@@ -9,7 +9,7 @@
 #include "gui/models/moduleLayersModel.h"
 #include "gui/models/speciesModel.h"
 #include "gui/types.h"
-#include <QQmlContext>
+#include <QQmlEngine>
 
 void Types::registerDissolveQmlTypes()
 {
