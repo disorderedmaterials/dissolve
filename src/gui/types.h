@@ -7,5 +7,5 @@
 
 namespace Types
 {
-    void registerDissolveQmlTypes(void) const;
+void registerDissolveQmlTypes(void) const;
 }
