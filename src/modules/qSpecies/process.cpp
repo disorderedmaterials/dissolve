@@ -35,11 +35,13 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     std::map<int, int> oxygenTypes;
     for (const auto &[siteBO, nbrNF] : neighbourMap)
     {
-        for (const auto &[nbr, nbrIndex] : nbrNF)
+        ++oxygenTypes[nbrNF.size()];
+        if (nbrNF.size() == 2)
         {
-            ++oxygenTypes[nbrNF.size()];
-            if (nbrNF.size() == 2)
+            for (const auto &[nbr, nbrIndex] : nbrNF)
+            {
                 ++qSpecies[nbr];
+            }
         }
     }
 
