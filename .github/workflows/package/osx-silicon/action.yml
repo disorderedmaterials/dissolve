@@ -50,7 +50,7 @@ runs:
 
       cp ./deploy/freetype/libfreetype.6 /usr/local/lib/libfreetype.6
 
-      cp ./deploy/libpng/libpng.16.16.dylib /usr/local/lib/libpng.16.16.dylib
+      cp ./deploy/libpng/libpng16.16.dylib /usr/local/lib/libpng16.16.dylib
 
       for FILE in ./deploy/onetbb/lib/*.dylib; do
         FILENAME=$(basename $FILE)
