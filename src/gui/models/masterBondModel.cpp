@@ -3,7 +3,8 @@
 
 #include "gui/models/masterBondModel.h"
 
-MasterBondModel::MasterBondModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this) {
+MasterBondModel::MasterBondModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this)
+{
     modelUpdater.connectModelSignals(this);
 }
 

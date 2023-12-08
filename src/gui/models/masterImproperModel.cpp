@@ -3,7 +3,8 @@
 
 #include "gui/models/masterImproperModel.h"
 
-MasterImproperModel::MasterImproperModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this) {
+MasterImproperModel::MasterImproperModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this)
+{
     modelUpdater.connectModelSignals(this);
 }
 

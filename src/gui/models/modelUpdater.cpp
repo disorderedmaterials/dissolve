@@ -1,7 +1,8 @@
 #include "gui/models/modelUpdater.h"
 #include <QAbstractItemModel>
 
-void ModelUpdater::connectModelSignals(QAbstractItemModel *model){
+void ModelUpdater::connectModelSignals(QAbstractItemModel *model)
+{
     connect(model, &columnsAboutToBeInserted, this, &update);
     connect(model, &columnsAboutToBeMoved, this, &update);
     connect(model, &columnsAboutToBeRemoved, this, &update);
@@ -22,6 +23,4 @@ void ModelUpdater::connectModelSignals(QAbstractItemModel *model){
     connect(model, &rowsRemoved, this, &update);
 }
 
-void ModelUpdater::update(){
-    emit modelsUpdated();
-}
+void ModelUpdater::update() { emit modelsUpdated(); }

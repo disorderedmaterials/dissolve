@@ -7,7 +7,8 @@
 #include "classes/coreData.h"
 #include "templates/algorithms.h"
 
-AtomTypeModel::AtomTypeModel(const CoreData &coreData) : coreData_(coreData), modelUpdater(this) {
+AtomTypeModel::AtomTypeModel(const CoreData &coreData) : coreData_(coreData), modelUpdater(this)
+{
     modelUpdater.connectModelSignals(this);
 }
 

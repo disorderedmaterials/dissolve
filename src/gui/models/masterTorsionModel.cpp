@@ -3,7 +3,8 @@
 
 #include "gui/models/masterTorsionModel.h"
 
-MasterTorsionModel::MasterTorsionModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this) {
+MasterTorsionModel::MasterTorsionModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this)
+{
     modelUpdater.connectModelSignals(this);
 }
 

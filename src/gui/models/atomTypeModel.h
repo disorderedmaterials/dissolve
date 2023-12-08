@@ -4,8 +4,8 @@
 #pragma once
 
 #include "classes/species.h"
-#include "templates/optionalRef.h"
 #include "gui/models/modelUpdater.h"
+#include "templates/optionalRef.h"
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <QModelIndex>

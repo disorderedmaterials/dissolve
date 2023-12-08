@@ -3,7 +3,8 @@
 
 #include "gui/models/masterAngleModel.h"
 
-MasterAngleModel::MasterAngleModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this) {
+MasterAngleModel::MasterAngleModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this)
+{
     modelUpdater.connectModelSignals(this);
 }
 
