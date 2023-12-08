@@ -4,7 +4,9 @@ class ModelUpdater
 {
     Q_Object
 
-        public : explicit ModelUpdater(const QAbstractItemModel);
+    public: 
+    ModelUpdater(const QAbstractItemModel);
+    ~ModelUpdater();
 
     void connectModelSignals(QAbstractItemModel *model);
 
