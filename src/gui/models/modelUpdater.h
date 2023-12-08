@@ -1,12 +1,10 @@
 #include <QAbstractItemModel>
-#include <QObject>
 
-class ModelUpdater : public QObject
+class ModelUpdater
 {
     Q_Object
 
-        public : ModelUpdater() = default;
-    explicit ModelUpdater(const QAbstractItemModel);
+        public : explicit ModelUpdater(const QAbstractItemModel);
 
     void connectModelSignals(QAbstractItemModel *model);
 
@@ -15,4 +13,4 @@ class ModelUpdater : public QObject
 
     private slots:
     void update();
-}
+};
