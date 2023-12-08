@@ -3,7 +3,9 @@
 
 #include "gui/models/masterAngleModel.h"
 
-MasterAngleModel::MasterAngleModel(QObject *parent) : MasterTermModel(parent) {}
+MasterAngleModel::MasterAngleModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this) {
+    modelUpdater.connectModelSignals(this);
+}
 
 void MasterAngleModel::setSourceData(std::vector<std::shared_ptr<MasterAngle>> &terms)
 {

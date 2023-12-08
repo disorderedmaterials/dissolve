@@ -3,7 +3,9 @@
 
 #include "gui/models/masterImproperModel.h"
 
-MasterImproperModel::MasterImproperModel(QObject *parent) : MasterTermModel(parent) {}
+MasterImproperModel::MasterImproperModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this) {
+    modelUpdater.connectModelSignals(this);
+}
 
 void MasterImproperModel::setSourceData(std::vector<std::shared_ptr<MasterImproper>> &terms)
 {

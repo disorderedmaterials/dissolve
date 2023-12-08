@@ -5,6 +5,7 @@
 
 #include "classes/species.h"
 #include "templates/optionalRef.h"
+#include "gui/models/modelUpdater.h"
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <QModelIndex>
@@ -26,9 +27,8 @@ class AtomTypeModel : public QAbstractListModel
     // Optional CoreData reference
     OptionalReferenceWrapper<const CoreData> coreData_;
 
-    signals:
-    // The models might've been updated
-    void modelsUpdated();
+    private:
+    ModelUpdater modelUpdater;
 
     private:
     // Source AtomType data

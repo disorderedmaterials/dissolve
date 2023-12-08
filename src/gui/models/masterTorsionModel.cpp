@@ -3,7 +3,9 @@
 
 #include "gui/models/masterTorsionModel.h"
 
-MasterTorsionModel::MasterTorsionModel(QObject *parent) : MasterTermModel(parent) {}
+MasterTorsionModel::MasterTorsionModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this) {
+    modelUpdater.connectModelSignals(this);
+}
 
 void MasterTorsionModel::setSourceData(std::vector<std::shared_ptr<MasterTorsion>> &terms)
 {

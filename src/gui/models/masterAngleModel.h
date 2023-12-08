@@ -5,6 +5,7 @@
 
 #include "classes/speciesAngle.h"
 #include "gui/models/masterTermModel.h"
+#include "gui/models/modelUpdater.h"
 #include "templates/optionalRef.h"
 
 // MasterAngle model
@@ -35,6 +36,5 @@ class MasterAngleModel : public MasterTermModel
     QVariant getTermData(int row, MasterTermModelData::DataType dataType) const override;
     bool setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value) override;
 
-    signals:
-    void modelsUpdated();
+    ModelUpdater modelUpdater;
 };
