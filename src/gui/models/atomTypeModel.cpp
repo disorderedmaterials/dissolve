@@ -7,10 +7,7 @@
 #include "classes/coreData.h"
 #include "templates/algorithms.h"
 
-AtomTypeModel::AtomTypeModel(const CoreData &coreData) : coreData_(coreData), modelUpdater(this)
-{
-    modelUpdater.connectModelSignals(this);
-}
+AtomTypeModel::AtomTypeModel(const CoreData &coreData) : coreData_(coreData) {}
 
 void AtomTypeModel::reset()
 {
@@ -28,6 +25,10 @@ void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTy
     beginResetModel();
     atomTypes_ = atomTypes;
     endResetModel();
+
+    // Set connections
+    modelUpdater = this;
+    modelUpdater.connectModelSignals();
 }
 
 // Set function to return QIcon for item
@@ -131,6 +132,10 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
         else
             xitems.erase(std::remove(xitems.begin(), xitems.end(), rawData(index)), xitems.end());
 
+        // Set connections
+        modelUpdater = this;
+        modelUpdater.connectModelSignals();
+
         emit dataChanged(index, index);
 
         return true;
@@ -172,6 +177,10 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
             default:
                 return false;
         }
+
+        // Set connections
+        modelUpdater = this;
+        modelUpdater.connectModelSignals();
 
         emit dataChanged(index, index);
 

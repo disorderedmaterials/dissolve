@@ -5,7 +5,7 @@
 
 MasterBondModel::MasterBondModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this)
 {
-    modelUpdater.connectModelSignals(this);
+    modelUpdater.connectModelSignals();
 }
 
 void MasterBondModel::setSourceData(std::vector<std::shared_ptr<MasterBond>> &terms)

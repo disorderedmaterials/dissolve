@@ -1,13 +1,19 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2023 Team Dissolve and contributors
+
+#pragma once
+
 #include <QAbstractItemModel>
 
 class ModelUpdater
 {
-    Q_Object
+    Q_OBJECT
 
-        public : ModelUpdater(const QAbstractItemModel);
+    public:
+    ModelUpdater(const QAbstractItemModel);
     ~ModelUpdater();
 
-    void connectModelSignals(QAbstractItemModel *model);
+    void connectModelSignals();
 
     signals:
     void modelsUpdated();

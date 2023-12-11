@@ -13,7 +13,7 @@ class MasterAngleModel : public MasterTermModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(int rowCount READ rowCount NOTIFY modelsUpdated)
+    Q_PROPERTY(int rowCount READ rowCount NOTIFY modelUpdater.modelsUpdated)
 
     public:
     MasterAngleModel(QObject *parent = nullptr);

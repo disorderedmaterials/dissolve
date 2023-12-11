@@ -5,7 +5,7 @@
 
 MasterTorsionModel::MasterTorsionModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this)
 {
-    modelUpdater.connectModelSignals(this);
+    modelUpdater.connectModelSignals();
 }
 
 void MasterTorsionModel::setSourceData(std::vector<std::shared_ptr<MasterTorsion>> &terms)

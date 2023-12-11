@@ -5,7 +5,7 @@
 
 MasterAngleModel::MasterAngleModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this)
 {
-    modelUpdater.connectModelSignals(this);
+    modelUpdater.connectModelSignals();
 }
 
 void MasterAngleModel::setSourceData(std::vector<std::shared_ptr<MasterAngle>> &terms)

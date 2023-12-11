@@ -5,7 +5,7 @@
 
 MasterImproperModel::MasterImproperModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this)
 {
-    modelUpdater.connectModelSignals(this);
+    modelUpdater.connectModelSignals();
 }
 
 void MasterImproperModel::setSourceData(std::vector<std::shared_ptr<MasterImproper>> &terms)

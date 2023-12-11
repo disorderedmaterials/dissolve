@@ -1,26 +1,29 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2023 Team Dissolve and contributors
+
 #include "gui/models/modelUpdater.h"
 #include <QAbstractItemModel>
 
-void ModelUpdater::connectModelSignals(QAbstractItemModel *model)
+void ModelUpdater::connectModelSignals()
 {
-    connect(model, &columnsAboutToBeInserted, this, &update);
-    connect(model, &columnsAboutToBeMoved, this, &update);
-    connect(model, &columnsAboutToBeRemoved, this, &update);
-    connect(model, &columnsInserted, this, &update);
-    connect(model, &columnsMoved, this, &update);
-    connect(model, &columnsRemoved, this, &update);
-    connect(model, &dataChanged, this, &update);
-    connect(model, &headerDataChanged, this, &update);
-    connect(model, &layoutAboutToBeChanged, this, &update);
-    connect(model, &layoutChanged, this, &update);
-    connect(model, &modelAboutToBeReset, this, &update);
-    connect(model, &modelReset, this, &update);
-    connect(model, &rowsABoutToBeInserted, this, &update);
-    connect(model, &rowsABoutToBeMoved, this, &update);
-    connect(model, &rowsABoutToBeRemoved, this, &update);
-    connect(model, &rowsInserted, this, &update);
-    connect(model, &rowsMoved, this, &update);
-    connect(model, &rowsRemoved, this, &update);
+    connect(this, &columnsAboutToBeInserted, this, &update);
+    connect(this, &columnsAboutToBeMoved, this, &update);
+    connect(this, &columnsAboutToBeRemoved, this, &update);
+    connect(this, &columnsInserted, this, &update);
+    connect(this, &columnsMoved, this, &update);
+    connect(this, &columnsRemoved, this, &update);
+    connect(this, &dataChanged, this, &update);
+    connect(this, &headerDataChanged, this, &update);
+    connect(this, &layoutAboutToBeChanged, this, &update);
+    connect(this, &layoutChanged, this, &update);
+    connect(this, &modelAboutToBeReset, this, &update);
+    connect(this, &modelReset, this, &update);
+    connect(this, &rowsABoutToBeInserted, this, &update);
+    connect(this, &rowsABoutToBeMoved, this, &update);
+    connect(this, &rowsABoutToBeRemoved, this, &update);
+    connect(this, &rowsInserted, this, &update);
+    connect(this, &rowsMoved, this, &update);
+    connect(this, &rowsRemoved, this, &update);
 }
 
 void ModelUpdater::update() { emit modelsUpdated(); }
