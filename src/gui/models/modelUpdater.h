@@ -4,12 +4,9 @@
 #pragma once
 
 #include <QAbstractItemModel>
-#include <QObject>
 
-class ModelUpdater : public QObject
+class ModelUpdater
 {
-    Q_OBJECT
-
     public:
     ModelUpdater(const QAbstractItemModel *);
     ~ModelUpdater();
