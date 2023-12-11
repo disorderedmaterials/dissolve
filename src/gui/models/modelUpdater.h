@@ -4,8 +4,9 @@
 #pragma once
 
 #include <QAbstractItemModel>
+#include <QObject>
 
-class ModelUpdater
+class ModelUpdater : public QObject
 {
     Q_OBJECT
 
