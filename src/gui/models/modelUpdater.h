@@ -10,13 +10,13 @@ class ModelUpdater
     Q_OBJECT
 
     public:
-    ModelUpdater(const QAbstractItemModel);
+    ModelUpdater(const QAbstractItemModel *);
     ~ModelUpdater();
 
     void connectModelSignals();
 
-    signals:
-    void modelsUpdated();
+    private:
+    const QAbstractItemModel *parent_{nullptr};
 
     private slots:
     void update();

@@ -13,7 +13,11 @@ class MasterImproperModel : public MasterTermModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(int rowCount READ rowCount NOTIFY modelUpdater.modelsUpdated)
+    Q_PROPERTY(int rowCount READ rowCount NOTIFY modelsUpdated)
+
+    signals:
+    // The models might've been updated
+    void modelsUpdated();
 
     public:
     MasterImproperModel(QObject *parent = nullptr);
@@ -36,5 +40,6 @@ class MasterImproperModel : public MasterTermModel
     QVariant getTermData(int row, MasterTermModelData::DataType dataType) const override;
     bool setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value) override;
 
+    private:
     ModelUpdater modelUpdater;
 };
