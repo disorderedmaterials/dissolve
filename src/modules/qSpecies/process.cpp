@@ -32,10 +32,10 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     // The returned 'neighbourMap' maps BO sites to nearby NF sites *only if* there were exactly two NF sites within range.
     // So, we can use this to determine the Q numbers for each NF by counting the number of times a NF site appears in the map.
     std::map<const Site *, int> qSpecies;
-    std::map<int, int> oxygenTypes;
+    std::map<int, int> oxygenSites;
     for (const auto &[siteBO, nbrNF] : neighbourMap)
     {
-        ++oxygenTypes[nbrNF.size()];
+        ++oxygenSites[nbrNF.size()];
         if (nbrNF.size() == 2)
         {
             for (const auto &[nbr, nbrIndex] : nbrNF)
@@ -52,6 +52,13 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     if (status == GenericItem::ItemStatus::Created)
         qSpeciesHistogram.initialise();
 
+    // Retrieve storage for the Oxygen Sites histogram
+    auto &processingOxygenData = moduleContext.dissolve().processingModuleData();
+    auto [oxygenSitesHistogram, status1] =
+        processingData.realiseIf<IntegerHistogram1D>("OSitesHistogram", name(), GenericItem::InRestartFileFlag);
+    if (status == GenericItem::ItemStatus::Created)
+        oxygenSitesHistogram.initialise();
+
     // Clear the temporary bins
     qSpeciesHistogram.zeroBins();
 
@@ -59,11 +66,16 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     for (auto &[key, value] : qSpecies)
         qSpeciesHistogram.bin(value);
 
+    // Bin our mapped O Sites
+    for (auto &[key, value] : oxygenSites)
+        oxygenSitesHistogram.bin(value);
+
     // Don't forget the Q=0 count - this is equivalent to the total number of NF sites minus the number mapped in 'qSpecies'
     qSpeciesHistogram.bin(0, NF.sites().size() - qSpecies.size());
 
     // Create the display data
     processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = qSpeciesHistogram.data();
+    processingOxygenData.realise<Data1D>("OxygenSites", name(), GenericItem::InRestartFileFlag) = oxygenSitesHistogram.data();
 
     return ExecutionResult::Success;
 }

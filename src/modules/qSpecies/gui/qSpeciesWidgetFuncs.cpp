@@ -38,6 +38,11 @@ void QSpeciesModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags>
         qSpeciesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//QSpecies", module_->name()),
                                                            "Q-Species");
 
+    // Update Oxygen Sites Labels
+    ui_.FOResultFrame->setText(dissolve_.processingModuleData().valueOr("Process1D//FO", module_->name(), SampledDouble()));
+    ui_.NBOResultFrame->setText(dissolve_.processingModuleData().valueOr("Process1D//NBO", module_->name(), SampledDouble()));
+    ui_.BOResultFrame->setText(dissolve_.processingModuleData().valueOr("Process1D//BO", module_->name(), SampledDouble()));
+
     // Validate renderables if they need it
     qSpeciesGraph_->validateRenderables(dissolve_.processingModuleData());
 
