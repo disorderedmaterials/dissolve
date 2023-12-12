@@ -4,8 +4,12 @@
 #include "gui/models/modelUpdater.h"
 #include <QAbstractItemModel>
 #include <QAbstractListModel>
+#include <QMetaObject>
+#include <Qt>
 
-void ModelUpdater::setModel(const QAbstractItemModel *model) { model = model; }
+void ModelUpdater::setModel(QAbstractItemModel *model) { model = model; }
+
+ModelUpdater::~ModelUpdater() {}
 
 void ModelUpdater::connectModelSignals()
 {
@@ -29,4 +33,8 @@ void ModelUpdater::connectModelSignals()
     connect(model, &QAbstractItemModel::rowsRemoved, this, &ModelUpdater::update);
 }
 
-void ModelUpdater::update() { emit model->modelsUpdated(); }
+void ModelUpdater::update()
+{
+    QObject *object = dynamic_cast<QObject *>(model);
+    QMetaObject::invokeMethod(object, "modelsUpdated", Qt::DirectConnection);
+}

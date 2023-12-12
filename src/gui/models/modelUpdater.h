@@ -17,10 +17,10 @@ class ModelUpdater : public QObject
 
     void connectModelSignals();
 
-    void setModel(const QAbstractItemModel *);
+    void setModel(QAbstractItemModel *);
 
     private:
-    const QAbstractItemModel *model;
+    QAbstractItemModel *model;
 
     private slots:
     void update();
