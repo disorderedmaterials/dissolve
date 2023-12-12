@@ -21,9 +21,9 @@ void ModelUpdater::connectModelSignals()
     connect(model, &QAbstractItemModel::layoutChanged, this, &ModelUpdater::update);
     connect(model, &QAbstractItemModel::modelAboutToBeReset, this, &ModelUpdater::update);
     connect(model, &QAbstractItemModel::modelReset, this, &ModelUpdater::update);
-    connect(model, &QAbstractListModel::rowsABoutToBeInserted, this, &ModelUpdater::update);
-    connect(model, &QAbstractListModel::rowsABoutToBeMoved, this, &ModelUpdater::update);
-    connect(model, &QAbstractListModel::rowsABoutToBeRemoved, this, &ModelUpdater::update);
+    connect(model, &QAbstractListModel::rowsAboutToBeInserted, this, &ModelUpdater::update);
+    connect(model, &QAbstractListModel::rowsAboutToBeMoved, this, &ModelUpdater::update);
+    connect(model, &QAbstractListModel::rowsAboutToBeRemoved, this, &ModelUpdater::update);
     connect(model, &QAbstractItemModel::rowsInserted, this, &ModelUpdater::update);
     connect(model, &QAbstractItemModel::rowsMoved, this, &ModelUpdater::update);
     connect(model, &QAbstractItemModel::rowsRemoved, this, &ModelUpdater::update);
