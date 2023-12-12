@@ -6,7 +6,7 @@
 #include <QAbstractItemModel>
 #include <QObject>
 
-class ModelUpdater : public QBject
+class ModelUpdater : public QObject
 {
 
     Q_OBJECT
