@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/modelUpdater.h"
-#include <QAbstractListModel>
 #include <QAbstractItemModel>
+#include <QAbstractListModel>
 
 void ModelUpdater::setModel(const QAbstractItemModel *model) { model = model; }
 
