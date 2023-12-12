@@ -178,13 +178,12 @@ class Module : public Serialisable<const CoreData &>
     {
         std::vector<M *> results;
 
-	//FIXME: Do not commit until this has been updated
-        // for (auto *module : instances)
-        // {
-        //     M *castModule = dynamic_cast<M *>(module);
-        //     if (castModule)
-        //         results.push_back(castModule);
-        // }
+	for (auto *module : instances(coreData))
+        {
+            M *castModule = dynamic_cast<M *>(module);
+            if (castModule)
+                results.push_back(castModule);
+        }
 
         return results;
     }

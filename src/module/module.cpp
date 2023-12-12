@@ -5,6 +5,7 @@
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "keywords/configuration.h"
+#include "classes/coreData.h"
 
 // Module Types
 
@@ -221,13 +222,19 @@ bool Module::readProcessTimes(LineParser &parser) { return processTimes_.deseria
 
 // Return vector of all existing Modules
 // FIXME: Actually return a value
-const std::vector<Module *> Module::instances(const CoreData &coreData) { return {}; }
+const std::vector<Module *> Module::instances(const CoreData &coreData) {
+  std::vector<Module *> result{};
+  for (auto &layer : coreData.processingLayers())
+    std::transform(layer->modules().begin(), layer->modules().end(), std::back_inserter(result), [](auto &source){
+      return source.get();
+    });
+
+  return result; }
 
 
 // Search for any instance of any module with the specified unique name
 Module *Module::find(const CoreData &coreData, std::string_view uniqueName)
 {
-    // FIXME: Get instances from coreData
     std::vector<Module *> instances = Module::instances(coreData);
     auto it = std::find_if(instances.begin(), instances.end(),
                            [uniqueName](const auto *m) { return DissolveSys::sameString(m->name(), uniqueName); });
