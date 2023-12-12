@@ -4,17 +4,23 @@
 #pragma once
 
 #include <QAbstractItemModel>
+#include <QObject>
 
-class ModelUpdater
+class ModelUpdater : public QBject
 {
+
+    Q_OBJECT
+
     public:
-    ModelUpdater(const QAbstractItemModel *);
+    ModelUpdater() = default;
     ~ModelUpdater();
 
     void connectModelSignals();
 
+    void setModel(const QAbstractItemModel *);
+
     private:
-    const QAbstractItemModel *parent_{nullptr};
+    const QAbstractItemModel *model;
 
     private slots:
     void update();

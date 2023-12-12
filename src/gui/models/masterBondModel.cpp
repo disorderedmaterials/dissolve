@@ -3,16 +3,17 @@
 
 #include "gui/models/masterBondModel.h"
 
-MasterBondModel::MasterBondModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this)
-{
-    modelUpdater.connectModelSignals();
-}
+MasterBondModel::MasterBondModel(QObject *parent) : MasterTermModel(parent) {}
 
 void MasterBondModel::setSourceData(std::vector<std::shared_ptr<MasterBond>> &terms)
 {
     beginResetModel();
     sourceData_ = terms;
     endResetModel();
+
+    // Set connections
+    modelUpdater.setModel(this);
+    modelUpdater.connectModelSignals();
 }
 
 // Refresh model data

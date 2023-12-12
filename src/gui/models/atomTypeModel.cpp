@@ -27,7 +27,7 @@ void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTy
     endResetModel();
 
     // Set connections
-    modelUpdater = this;
+    modelUpdater.setModel(this);
     modelUpdater.connectModelSignals();
 }
 
@@ -133,7 +133,7 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
             xitems.erase(std::remove(xitems.begin(), xitems.end(), rawData(index)), xitems.end());
 
         // Set connections
-        modelUpdater = this;
+        modelUpdater.setModel(this);
         modelUpdater.connectModelSignals();
 
         emit dataChanged(index, index);
@@ -179,7 +179,7 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
         }
 
         // Set connections
-        modelUpdater = this;
+        modelUpdater.setModel(this);
         modelUpdater.connectModelSignals();
 
         emit dataChanged(index, index);

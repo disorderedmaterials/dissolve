@@ -3,16 +3,17 @@
 
 #include "gui/models/masterAngleModel.h"
 
-MasterAngleModel::MasterAngleModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this)
-{
-    modelUpdater.connectModelSignals();
-}
+MasterAngleModel::MasterAngleModel(QObject *parent) : MasterTermModel(parent) {}
 
 void MasterAngleModel::setSourceData(std::vector<std::shared_ptr<MasterAngle>> &terms)
 {
     beginResetModel();
     sourceData_ = terms;
     endResetModel();
+
+    // Set connections
+    modelUpdater.setModel(this);
+    modelUpdater.connectModelSignals();
 }
 
 // Refresh model data

@@ -4,28 +4,28 @@
 #include "gui/models/modelUpdater.h"
 #include <QAbstractItemModel>
 
-ModelUpdater::ModelUpdater(const QAbstractItemModel *parent) : parent_(parent) {}
+ModelUpdater::setModel(const QAbstractItemModel *model) { model = model; }
 
 void ModelUpdater::connectModelSignals()
 {
-    connect(parent_, &columnsAboutToBeInserted, this, &update);
-    connect(parent_, &columnsAboutToBeMoved, this, &update);
-    connect(parent_, &columnsAboutToBeRemoved, this, &update);
-    connect(parent_, &columnsInserted, this, &update);
-    connect(parent_, &columnsMoved, this, &update);
-    connect(parent_, &columnsRemoved, this, &update);
-    connect(parent_, &dataChanged, this, &update);
-    connect(parent_, &headerDataChanged, this, &update);
-    connect(parent_, &layoutAboutToBeChanged, this, &update);
-    connect(parent_, &layoutChanged, this, &update);
-    connect(parent_, &modelAboutToBeReset, this, &update);
-    connect(parent_, &modelReset, this, &update);
-    connect(parent_, &rowsABoutToBeInserted, this, &update);
-    connect(parent_, &rowsABoutToBeMoved, this, &update);
-    connect(parent_, &rowsABoutToBeRemoved, this, &update);
-    connect(parent_, &rowsInserted, this, &update);
-    connect(parent_, &rowsMoved, this, &update);
-    connect(parent_, &rowsRemoved, this, &update);
+    connect(model, &columnsAboutToBeInserted, this, &update);
+    connect(model, &columnsAboutToBeMoved, this, &update);
+    connect(model, &columnsAboutToBeRemoved, this, &update);
+    connect(model, &columnsInserted, this, &update);
+    connect(model, &columnsMoved, this, &update);
+    connect(model, &columnsRemoved, this, &update);
+    connect(model, &dataChanged, this, &update);
+    connect(model, &headerDataChanged, this, &update);
+    connect(model, &layoutAboutToBeChanged, this, &update);
+    connect(model, &layoutChanged, this, &update);
+    connect(model, &modelAboutToBeReset, this, &update);
+    connect(model, &modelReset, this, &update);
+    connect(model, &rowsABoutToBeInserted, this, &update);
+    connect(model, &rowsABoutToBeMoved, this, &update);
+    connect(model, &rowsABoutToBeRemoved, this, &update);
+    connect(model, &rowsInserted, this, &update);
+    connect(model, &rowsMoved, this, &update);
+    connect(model, &rowsRemoved, this, &update);
 }
 
-void ModelUpdater::update() { emit parent_->modelsUpdated(); }
+void ModelUpdater::update() { emit model->modelsUpdated(); }

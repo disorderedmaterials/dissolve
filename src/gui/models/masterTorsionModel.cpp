@@ -3,16 +3,17 @@
 
 #include "gui/models/masterTorsionModel.h"
 
-MasterTorsionModel::MasterTorsionModel(QObject *parent) : MasterTermModel(parent), modelUpdater(this)
-{
-    modelUpdater.connectModelSignals();
-}
+MasterTorsionModel::MasterTorsionModel(QObject *parent) : MasterTermModel(parent) {}
 
 void MasterTorsionModel::setSourceData(std::vector<std::shared_ptr<MasterTorsion>> &terms)
 {
     beginResetModel();
     sourceData_ = terms;
     endResetModel();
+
+    // Set connections
+    modelUpdater.setModel(this);
+    modelUpdater.connectModelSignals();
 }
 
 // Refresh model data
