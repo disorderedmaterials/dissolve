@@ -60,7 +60,7 @@ void SDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upd
     // Update available reference molecule combo
     std::vector<std::pair<Species *, std::string>> refMolecules;
     // -- Find available AvgMol results
-    auto avgMolModules = Module::allOfType<AvgMolModule>();
+    auto avgMolModules = Module::allOfType<AvgMolModule>(dissolve_.coreData());
     for (AvgMolModule *module : avgMolModules)
         refMolecules.emplace_back(&module->averageSpecies(), fmt::format("{} (AvgMol)", module->averageSpecies().name()));
     // -- Add on current species

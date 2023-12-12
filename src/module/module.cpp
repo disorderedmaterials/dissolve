@@ -6,9 +6,6 @@
 #include "base/sysFunc.h"
 #include "keywords/configuration.h"
 
-// Static Singletons
-std::vector<Module *> Module::instances_;
-
 // Module Types
 
 namespace ModuleTypes
@@ -71,9 +68,9 @@ std::optional<ModuleTypes::ModuleType> moduleType(std::string_view keyword)
 };
 } // namespace ModuleTypes
 
-Module::Module(const ModuleTypes::ModuleType type) : type_(type), frequency_(1), enabled_(true) { instances_.push_back(this); }
+Module::Module(const ModuleTypes::ModuleType type) : type_(type), frequency_(1), enabled_(true) {}
 
-Module::~Module() { instances_.erase(std::remove(instances_.begin(), instances_.end(), this)); }
+Module::~Module() {}
 
 /*
  * Definition
@@ -223,31 +220,37 @@ bool Module::readProcessTimes(LineParser &parser) { return processTimes_.deseria
  */
 
 // Return vector of all existing Modules
-const std::vector<Module *> &Module::instances() { return instances_; }
+// FIXME: Actually return a value
+const std::vector<Module *> Module::instances(const CoreData &coreData) { return {}; }
+
 
 // Search for any instance of any module with the specified unique name
-Module *Module::find(std::string_view uniqueName)
+Module *Module::find(const CoreData &coreData, std::string_view uniqueName)
 {
-    auto it = std::find_if(instances_.begin(), instances_.end(),
+    // FIXME: Get instances from coreData
+    std::vector<Module *> instances = Module::instances(coreData);
+    auto it = std::find_if(instances.begin(), instances.end(),
                            [uniqueName](const auto *m) { return DissolveSys::sameString(m->name(), uniqueName); });
-    if (it != instances_.end())
+    if (it != instances.end())
         return *it;
 
     return nullptr;
 }
 
 // Search for and return any instance(s) of the specified Module type
-std::vector<Module *> Module::allOfType(ModuleTypes::ModuleType type)
+std::vector<Module *> Module::allOfType(const CoreData &coreData, ModuleTypes::ModuleType type)
 {
-    return allOfType(std::vector<ModuleTypes::ModuleType>{type});
+  return allOfType(coreData, std::vector<ModuleTypes::ModuleType>{type});
 }
 
-std::vector<Module *> Module::allOfType(std::vector<ModuleTypes::ModuleType> types)
+// Search for and return any instance(s) of the specified Module type
+std::vector<Module *> Module::allOfType(const CoreData &coreData, std::vector<ModuleTypes::ModuleType> types)
 {
-    std::vector<Module *> modules;
-    std::copy_if(instances_.begin(), instances_.end(), std::back_inserter(modules),
-                 [&types](const auto *m) { return std::find(types.begin(), types.end(), m->type()) != types.end(); });
-    return modules;
+  std::vector<Module *> modules;
+  auto instances_ = instances(coreData);
+  std::copy_if(instances_.begin(), instances_.end(), std::back_inserter(modules),
+	       [&types](const auto *m) { return std::find(types.begin(), types.end(), m->type()) != types.end(); });
+  return modules;
 }
 
 // Express as a serialisable value

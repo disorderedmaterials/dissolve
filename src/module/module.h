@@ -166,31 +166,25 @@ class Module : public Serialisable<const CoreData &>
     // Read timing information through specified parser
     bool readProcessTimes(LineParser &parser);
 
-    /*
-     * Management
-     */
-    private:
-    // Vector of all existing Modules
-    static std::vector<Module *> instances_;
-
     public:
     // Return vector of all existing Modules
-    const static std::vector<Module *> &instances();
+    const static std::vector<Module *> instances(const CoreData &coreData);
     // Search for any instance of any module with the specified unique name
-    static Module *find(std::string_view uniqueName);
+    static Module *find(const CoreData &coreData, std::string_view uniqueName);
     // Search for and return any instance(s) of the specified Module type
-    static std::vector<Module *> allOfType(ModuleTypes::ModuleType type);
-    static std::vector<Module *> allOfType(std::vector<ModuleTypes::ModuleType> types);
-    template <class M> static std::vector<M *> allOfType()
+    static std::vector<Module *> allOfType(const CoreData &coreData, ModuleTypes::ModuleType type);
+    static std::vector<Module *> allOfType(const CoreData &coreData, std::vector<ModuleTypes::ModuleType> types);
+    template <class M> static std::vector<M *> allOfType(const CoreData &coreData)
     {
         std::vector<M *> results;
 
-        for (auto *module : instances_)
-        {
-            M *castModule = dynamic_cast<M *>(module);
-            if (castModule)
-                results.push_back(castModule);
-        }
+	//FIXME: Do not commit until this has been updated
+        // for (auto *module : instances)
+        // {
+        //     M *castModule = dynamic_cast<M *>(module);
+        //     if (castModule)
+        //         results.push_back(castModule);
+        // }
 
         return results;
     }

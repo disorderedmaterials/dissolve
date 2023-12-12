@@ -36,7 +36,7 @@ std::optional<int> WeightedModuleVectorKeyword::maxArguments() const { return 2;
 bool WeightedModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find specified Module by its unique name
-    auto *module = Module::find(parser.argsv(startArg));
+  auto *module = Module::find(coreData, parser.argsv(startArg));
     if (!module)
         return Messenger::error("No Module named '{}' exists.\n", parser.argsv(startArg));
 
@@ -94,10 +94,10 @@ SerialisedValue WeightedModuleVectorKeyword::serialise() const
 void WeightedModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     toVector(node,
-             [this](const auto &item)
+             [this, &coreData](const auto &item)
              {
                  auto moduleName = toml::find<std::string>(item, "target");
-                 auto *module = Module::find(moduleName);
+                 auto *module = Module::find(coreData, moduleName);
                  if (!module)
                      throw toml::syntax_error(fmt::format("No Module named '{}' exists.\n", moduleName), item.location());
 

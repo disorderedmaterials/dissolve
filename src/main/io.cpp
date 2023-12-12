@@ -460,7 +460,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             Messenger::print("Reading keyword '{}' into Module '{}'...\n", parser.argsv(2), parser.argsv(1));
 
             // Find the referenced Module
-            auto *module = Module::find(parser.argsv(1));
+            auto *module = Module::find(coreData_, parser.argsv(1));
             if (!module)
             {
                 Messenger::error("No Module named '{}' exists.\n", parser.argsv(1));
@@ -514,7 +514,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             // Let the user know what we are doing
             Messenger::print("Reading timing information for Module '{}'...\n", parser.argsv(1));
 
-            module = Module::find(parser.argsv(1));
+            module = Module::find(coreData_, parser.argsv(1));
             if (!module)
             {
                 Messenger::warn("Timing information for Module '{}' found, but no Module with this unique name "
@@ -658,7 +658,7 @@ bool Dissolve::saveRestart(std::string_view filename)
         return false;
 
     // Module Keyword Data
-    for (const auto *module : Module::instances())
+    for (const auto *module : Module::instances(coreData_))
     {
         for (const auto &section : module->keywords().sections())
             for (const auto &group : section.groups())
@@ -686,7 +686,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     }
 
     // Module timing information
-    for (const auto *module : Module::instances())
+    for (const auto *module : Module::instances(coreData_))
     {
         if (!parser.writeLineF("Timing  {}\n", module->name()))
             return false;

@@ -210,9 +210,9 @@ class DissolveSystemTest
      */
     public:
     // Set enabled status for named module
-    static void setModuleEnabled(std::string_view name, bool enabled)
+    void setModuleEnabled(std::string_view name, bool enabled)
     {
-        auto *module = Module::find(name);
+	auto *module = Module::find(coreData_, name);
         if (!module)
             throw(std::runtime_error(fmt::format("Module '{}' does not exist.\n", name)));
         module->setEnabled(enabled);
@@ -220,7 +220,7 @@ class DissolveSystemTest
     // Find and return named module
     template <class M> M *getModule(std::string_view name)
     {
-        auto *module = Module::find(name);
+	auto *module = Module::find(coreData_, name);
         if (!module)
             throw(std::runtime_error(fmt::format("Module '{}' does not exist.\n", name)));
         auto *castModule = dynamic_cast<M *>(module);

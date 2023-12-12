@@ -130,20 +130,20 @@ const std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> &Module
 }
 
 // Create a Module instance for the named Module type
-std::unique_ptr<Module> ModuleRegistry::create(ModuleTypes::ModuleType type)
+std::unique_ptr<Module> ModuleRegistry::create(CoreData &coreData, ModuleTypes::ModuleType type)
 {
     auto m = std::unique_ptr<Module>(instance().produce(type));
 
     if (m)
-        m->setName(DissolveSys::uniqueName(ModuleTypes::moduleType(m->type()), Module::instances(),
+        m->setName(DissolveSys::uniqueName(ModuleTypes::moduleType(m->type()), Module::instances(coreData),
                                            [&](const auto &inst) { return inst == m.get() ? std::string() : inst->name(); }));
     return m;
 }
 
 // Create a Module instance for the specified Module type, and add it to the specified layer
-Module *ModuleRegistry::create(ModuleTypes::ModuleType moduleType, ModuleLayer *destinationLayer)
+Module *ModuleRegistry::create(CoreData &coreData, ModuleTypes::ModuleType moduleType, ModuleLayer *destinationLayer)
 {
-    auto instance = create(moduleType);
+    auto instance = create(coreData, moduleType);
     if (!instance)
         return nullptr;
 

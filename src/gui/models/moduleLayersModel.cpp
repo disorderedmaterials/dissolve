@@ -8,7 +8,7 @@
 #include "qwidget.h"
 
 // Set source ModuleLayers data
-void ModuleLayersModel::setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers, const CoreData &coreData)
+void ModuleLayersModel::setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers, CoreData &coreData)
 {
     coreData_ = coreData;
 

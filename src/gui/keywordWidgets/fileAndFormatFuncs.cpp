@@ -10,8 +10,8 @@
 #include <QFileDialog>
 #include <QFileInfo>
 
-FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, FileAndFormatKeyword *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
+FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, FileAndFormatKeyword *keyword, CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword), mutCoreData_(coreData)
 {
     ui_.setupUi(this);
 
@@ -104,7 +104,7 @@ void FileAndFormatKeywordWidget::on_FormatCombo_currentIndexChanged(int index)
 
 void FileAndFormatKeywordWidget::on_OptionsButton_clicked(bool checked)
 {
-    KeywordsDialog optionsDialog(this, keyword_->data().keywords(), coreData_);
+    KeywordsDialog optionsDialog(this, keyword_->data().keywords(), mutCoreData_);
 
     optionsDialog.showOptions();
 

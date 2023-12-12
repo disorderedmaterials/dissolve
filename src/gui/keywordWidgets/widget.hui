@@ -31,7 +31,7 @@ class KeywordsWidget : public QScrollArea
 
     public:
     // Set up controls for specified keywords
-    void setUp(const KeywordStoreSection &keywordSection, const CoreData &coreData);
+    void setUp(const KeywordStoreSection &keywordSection, CoreData &coreData);
     // Create a suitable button for the named group
     static std::pair<QPushButton *, bool> buttonForGroup(std::string_view groupName);
 

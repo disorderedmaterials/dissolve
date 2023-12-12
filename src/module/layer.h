@@ -19,7 +19,7 @@ class GenericList;
 class ProcessPool;
 
 // Module Layer
-class ModuleLayer : public Serialisable<const CoreData &>
+class ModuleLayer : public Serialisable<CoreData &>
 {
     public:
     ModuleLayer() = default;
@@ -84,7 +84,7 @@ class ModuleLayer : public Serialisable<const CoreData &>
     // Clear modules
     void clear();
     // Append new module to this layer
-    Module *append(ModuleTypes::ModuleType moduleType, const std::vector<std::unique_ptr<Configuration>> &cfgs);
+    Module *append(CoreData &coreData, ModuleTypes::ModuleType moduleType, const std::vector<std::unique_ptr<Configuration>> &cfgs);
     // Find associated Module by unique name
     Module *find(std::string_view uniqueName) const;
     // Return whether specified Module is present in the layer
@@ -106,5 +106,5 @@ class ModuleLayer : public Serialisable<const CoreData &>
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+    void deserialise(const SerialisedValue &node, CoreData &coreData) override;
 };
