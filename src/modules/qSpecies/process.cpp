@@ -17,6 +17,7 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
         Messenger::error("No configuration target set for module '{}'.\n", name());
         return ExecutionResult::Failed;
     }
+    auto &processingData = moduleContext.dissolve().processingModuleData();
 
     // Select all potential bridging oxygen sites - we will determine which actually are
     // involved in NF-BO-NF interactions once we have the available NF sites
@@ -46,14 +47,12 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     }
 
     // Retrieve storage for the Q-species histogram
-    auto &processingData = moduleContext.dissolve().processingModuleData();
     auto [qSpeciesHistogram, status] =
         processingData.realiseIf<IntegerHistogram1D>("QHistogram", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
         qSpeciesHistogram.initialise();
 
     // Retrieve storage for the Oxygen Sites histogram
-    auto &processingOxygenData = moduleContext.dissolve().processingModuleData();
     auto [oxygenSitesHistogram, status1] =
         processingData.realiseIf<IntegerHistogram1D>("OSitesHistogram", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
@@ -75,7 +74,7 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
 
     // Create the display data
     processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = qSpeciesHistogram.data();
-    processingOxygenData.realise<Data1D>("OxygenSites", name(), GenericItem::InRestartFileFlag) = oxygenSitesHistogram.data();
+    processingData.realise<Data1D>("OxygenSites", name(), GenericItem::InRestartFileFlag) = oxygenSitesHistogram.data();
 
     return ExecutionResult::Success;
 }
