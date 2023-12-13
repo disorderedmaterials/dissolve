@@ -196,14 +196,14 @@ bool IntegerHistogram1D::serialise(LineParser &parser) const
     if (!zeroCounter_.serialise(parser))
         return false;
 
-    if (!parser.writeLineF("{}\n", raw_.size()))
+    if (!parser.writeLineF("{}\n", averages_.size()))
         return false;
 
-    for (auto &[key, value] : raw_)
+    for (auto &[key, value] : averages_)
     {
-        if (!parser.writeLineF("{} {}\n", key, value))
+        if (!parser.writeLineF("{} {}\n", key, raw_.at(key)))
             return false;
-        if (!averages_.at(key).serialise(parser))
+        if (!value.serialise(parser))
             return false;
     }
 
