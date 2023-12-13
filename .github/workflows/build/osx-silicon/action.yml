@@ -49,8 +49,8 @@ runs:
       # Change rpaths
 
       # FTGL
-      install_name_tool -change /usr/local/opt/ftgl/lib/libftgl.2.dylib @rpath/libftgl.2.dylib $(brew --prefix ftgl)/lib/libftgl.2.dylib
-      install_name_tool -change /usr/local/opt/freetype/lib/libfreetype.6.dylib @rpath/libfreetype.6.dylib $(brew --prefix ftgl)/lib/libftgl.2.dylib
+      sudo install_name_tool -change /usr/local/opt/ftgl/lib/libftgl.2.dylib @rpath/libftgl.2.dylib $(brew --prefix ftgl)/lib/libftgl.2.dylib
+      sudo install_name_tool -change /usr/local/opt/freetype/lib/libfreetype.6.dylib @rpath/libfreetype.6.dylib $(brew --prefix ftgl)/lib/libftgl.2.dylib
 
       # Freetype
       install_name_tool -change /usr/local/opt/libpng/lib/libpng16.16.dylib @rpath/libpng16.16.dylib $(brew --prefix freetype)/lib/libfreetype.6.dylib
@@ -129,6 +129,9 @@ runs:
       cd build
       cmake -G Ninja "${CMAKE_PARAMS[@]}" ${{ inputs.extraCMakeFlags }}  ../
       cmake --build . --config Release
+
+      install_name_tool -change /usr/local/opt/ftgl/lib/libftgl.2.dylib @rpath/libftgl.2.dylib bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+
       cd ../
 
       # Deploy Conan dependencies for ease
