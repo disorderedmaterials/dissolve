@@ -1,15 +1,13 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
     outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
-    weggli.url = "github:googleprojectzero/weggli";
-    weggli.flake = false;
     qt-idaaas.url = "github:disorderedmaterials/qt-idaaas";
   };
   outputs = { self, nixpkgs, outdated, home-manager, flake-utils, bundlers, nixGL-src
-    , qt-idaaas, weggli }:
+    , qt-idaaas}:
     let
 
       toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
@@ -34,7 +32,7 @@
           inetutils # for rsh
           ninja
           jre
-          pkgconfig
+          pkg-config
           pugixml
           (toml pkgs)
         ];
@@ -170,10 +168,6 @@
               qt-idaaas.packages.${system}.qttools
               tbb_2021_8
               valgrind
-              ((import ./nix/weggli.nix) {
-                inherit pkgs;
-                src = weggli;
-              })
             ]);
           shellHook = ''
             export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_DATA_DIRS
