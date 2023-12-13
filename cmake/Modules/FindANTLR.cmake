@@ -6,7 +6,7 @@ find_package(Java 11 QUIET COMPONENTS Runtime)
 
 if(NOT ANTLR_EXECUTABLE)
   find_program(ANTLR_EXECUTABLE
-               NAMES antlr4 antlr.jar antlr4.jar antlr-4.jar antlr-4.13.1-complete.jar)
+               NAMES antlr4 antlr.jar antlr4.jar antlr-4.jar)
 endif()
 
 # Set command to run
