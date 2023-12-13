@@ -72,6 +72,10 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     // Don't forget the Q=0 count - this is equivalent to the total number of NF sites minus the number mapped in 'qSpecies'
     qSpeciesHistogram.bin(0, NF.sites().size() - qSpecies.size());
 
+    // Accumulate histogram averages
+    qSpeciesHistogram.accumulate();
+    oxygenSitesHistogram.accumulate();
+
     // Create the display data
     processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = qSpeciesHistogram.data();
     processingData.realise<Data1D>("OxygenSites", name(), GenericItem::InRestartFileFlag) = oxygenSitesHistogram.data();
