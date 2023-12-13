@@ -128,7 +128,7 @@ runs:
     shell: bash
     run: |
       set -ex
-      wget https://www.antlr.org/download/antlr-4.13.1-complete.jar -Oantlr-4.13.1-complete.jar
+      wget https://www.antlr.org/download/antlr-${{ env.antlrVersion }}-complete.jar -Oantlr-${{ env.antlrVersion }}-complete.jar
       wget https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.zip -Ojava.zip
       unzip java.zip
       
@@ -167,7 +167,7 @@ runs:
     run: |
       # Setup environment
       Qt6_DIR="${RUNNER_TEMP}\qt\${{ env.qtVersion }}\msvc2019_64"
-      ANTLR_EXE="${RUNNER_TEMP}\antlr-4.13.1-complete.jar"
+      ANTLR_EXE="${RUNNER_TEMP}\antlr-${{ env.antlrVersion }}-complete.jar"
       export PATH="${Qt6_DIR}\bin;$PATH"
       INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
       LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"

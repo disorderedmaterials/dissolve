@@ -24,7 +24,7 @@ runs:
       python-version: ${{ env.pythonVersion }}
 
   - name: Install Homebrew Dependencies for Intel
-    if: ${{ inputs.cacheOnly == 'false' && env.CMAKE_TARGET == 'x86_64' }}
+    if: ${{ inputs.cacheOnly == 'false' && env.OSX_CMAKE_TARGET == 'x86_64' }}
     shell: bash
     run: |
 
@@ -56,6 +56,16 @@ runs:
   # Main Build
   #
 
+  - name: Retrieve Conan Cache
+    id: cache-conan
+    uses: actions/cache@v3
+    with:
+      key: osx-conan-${{ env.conanHash }}
+      path: |
+        ~/.conan
+        ~/.conancache
+
+
   - name: Install Conan Dependencies
     shell: bash
     run: |
@@ -66,7 +76,8 @@ runs:
 
       mkdir build && cd build
       conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
-      conan install .. --build missing -s arch=${{ env.CONAN_TARGET }}
+      conan install .. --build missing -s arch=${{ env.OSX_CONAN_TARGET }}
+  
 
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
@@ -78,19 +89,19 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
       Qt6_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos
-      ANTLR_EXE=/usr/local/Cellar/antlr/4.13.1/antlr-4.13.1-complete.jar
+      ANTLR_EXE=/usr/local/Cellar/antlr/${{ env.antlrVersion }}/antlr-${{ env.antlrVersion }}-complete.jar
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
       echo "JAVA HOME: $JAVA_HOME_21_X64"
 
       # Build
       cd build
-      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DJava_JAVA_EXECUTABLE:path=$JAVA_HOME_21_X64/bin/java -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DCMAKE_OSX_ARCHITECTURES:string="${{ env.CMAKE_TARGET }}" ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DJava_JAVA_EXECUTABLE:path=$JAVA_HOME_21_X64/bin/java -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DCMAKE_OSX_ARCHITECTURES:string="${{ env.OSX_CMAKE_TARGET }}" ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
       cmake --build . --config Release
       cd ../
 
       # Deploy Conan dependencies for ease
       mkdir deploy && cd deploy
-      conan install .. -g deploy -s arch=${{ env.CONAN_TARGET }}
+      conan install .. -g deploy -s arch=${{ env.OSX_CONAN_TARGET }}
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
