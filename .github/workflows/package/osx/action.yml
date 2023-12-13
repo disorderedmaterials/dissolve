@@ -42,7 +42,7 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
       # Handle ANTLR & TBB
-      cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.${{ env.antlrVersion }}.dylib /usr/local/lib/libantlr4-runtime.${{ env.antlrVersion }}.dylib
+      cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.*.dylib /usr/local/lib
       cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib /usr/local/lib/libantlr4-runtime.dylib
 
       for FILE in ./deploy/onetbb/lib/*.dylib; do
