@@ -158,54 +158,57 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     // Load parameters from serialisable value
     void deserialiseParameters(const SerialisedValue &node)
     {
-        if (node.contains("parameters"))
-        {
-            auto names = Functions::parameters(interactionForm());
-            std::vector<double> values;
-            std::map<std::string, double> map;
-            switch (node.at("parameters").type())
-            {
-                case toml::value_t::array:
-                    values = toml::find<std::vector<double>>(node, "parameters");
-                    break;
-                case toml::value_t::table:
-                    map = toml::find<std::map<std::string, double>>(node, "parameters");
-                    std::transform(names.begin(), names.end(), std::back_inserter(values),
-                                   [&map](const auto &name) { return map[name]; });
-                    break;
-                default:
-                    throw toml::syntax_error("Cannot understand parameter value", node.location());
-            }
-            setInteractionFormAndParameters(interactionForm(), values);
-        }
+        Serialisable::optionalOn(node, "parameters",
+                                 [this](const auto node)
+                                 {
+                                     auto names = Functions::parameters(interactionForm());
+                                     std::vector<double> values;
+                                     std::map<std::string, double> map;
+                                     switch (node.type())
+                                     {
+                                         case toml::value_t::array:
+                                             values = toml::get<std::vector<double>>(node);
+                                             break;
+                                         case toml::value_t::table:
+                                             map = toml::get<std::map<std::string, double>>(node);
+                                             std::transform(names.begin(), names.end(), std::back_inserter(values),
+                                                            [&map](const auto &name) { return map[name]; });
+                                             break;
+                                         default:
+                                             throw toml::type_error("Cannot understand parameter value", node.location());
+                                     }
+                                     setInteractionFormAndParameters(interactionForm(), values);
+                                 });
     }
     // Load form from serialisable value
     template <typename Lambda> void deserialiseForm(const SerialisedValue &node, Lambda lambda)
     {
-        if (node.contains("form"))
-        {
-            auto form = toml::find<std::string>(node, "form");
-            if (form.find("@") == 0)
-            {
-                auto master = lambda(form);
-                if (!master)
-                    throw std::runtime_error("Master Term not found.");
-                setMasterTerm(&master->get());
-            }
-            else
-                setInteractionForm(Functions::forms().enumeration(form));
-        }
+        Serialisable::optionalOn(node, "form",
+                                 [this, &lambda](const SerialisedValue node)
+                                 {
+                                     std::string form = node.as_string();
+                                     if (form.find("@") == 0)
+                                     {
+                                         auto master = lambda(form);
+                                         if (!master)
+                                             throw std::runtime_error("Master Term not found.");
+                                         setMasterTerm(&master->get());
+                                     }
+                                     else
+                                         setInteractionForm(Functions::forms().enumeration(form));
+                                 });
         deserialiseParameters(node);
     }
 
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override
     {
-        if (node.contains("form"))
-        {
-            auto form = toml::find<std::string>(node, "form");
-            setInteractionForm(Functions::forms().enumeration(form));
-        }
+        Serialisable::optionalOn(node, "form",
+                                 [this](const auto node)
+                                 {
+                                     std::string form = node.as_string();
+                                     setInteractionForm(Functions::forms().enumeration(form));
+                                 });
         deserialiseParameters(node);
     }
 

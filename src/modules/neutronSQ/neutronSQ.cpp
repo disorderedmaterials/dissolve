@@ -16,7 +16,8 @@ NeutronSQModule::NeutronSQModule() : Module(ModuleTypes::NeutronSQ)
     keywords_.addTarget<ModuleKeyword<const SQModule>>(
         "SourceSQs", "Source unweighted S(Q) to transform into neutron-weighted S(Q)", sourceSQ_, ModuleTypes::SQ);
 
-    keywords_.setOrganisation("Options", "Isotopes & Normalisation");
+    keywords_.setOrganisation("Options", "Isotopes & Normalisation",
+                              "Specify isotopologues to use for specific species, and which atoms are exchangeable.");
     keywords_.add<AtomTypeVectorKeyword>(
         "Exchangeable", "A set of atom types in the system that are exchangeable with each other", exchangeable_);
     keywords_.add<IsotopologueSetKeyword>("Isotopologue", "Set/add an isotopologue and its population for a particular species",
@@ -27,7 +28,10 @@ NeutronSQModule::NeutronSQModule() : Module(ModuleTypes::NeutronSQ)
                                                                       normaliseTo_, StructureFactors::normalisationTypes())
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
 
-    keywords_.setOrganisation("Options", "Reference Data");
+    keywords_.setOrganisation("Options", "Reference Data",
+                              "Reference (typically experimental) data set to display. The experimental data may be used by "
+                              "other modules if present. The normalisation already applied to the reference data should be "
+                              "specified here, and will be removed internally.");
     keywords_.add<FileAndFormatKeyword>("Reference", "F(Q) reference data", referenceFQ_, "EndReference")
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
     keywords_

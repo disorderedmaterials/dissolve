@@ -50,14 +50,14 @@ SDFModule::SDFModule() : Module(ModuleTypes::SDF), analyser_(ProcedureNode::Anal
 
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    keywords_.setOrganisation("Options", "Sites");
+    keywords_.setOrganisation("Options", "Sites", "Specify the central (A) and surrounding sites (B).");
     keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF",
                                             selectA_->speciesSites(), selectA_->axesRequired());
     keywords_.add<SpeciesSiteVectorKeyword>(
         "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
         selectB_->speciesSites(), selectB_->axesRequired());
 
-    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<Vec3DoubleKeyword>("RangeX", "Range along X axis", rangeX_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
                                      Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
     keywords_.add<Vec3DoubleKeyword>("RangeY", "Range along Y axis", rangeY_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
@@ -65,7 +65,7 @@ SDFModule::SDFModule() : Module(ModuleTypes::SDF), analyser_(ProcedureNode::Anal
     keywords_.add<Vec3DoubleKeyword>("RangeZ", "Range along Z axis", rangeZ_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
                                      Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
 
-    keywords_.setOrganisation("Options", "Control");
+    keywords_.setOrganisation("Options", "Exclusions", "Options to exclude specific site pairs from the calculation.");
     keywords_.add<BoolKeyword>("ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule",
                                excludeSameMolecule_);
 

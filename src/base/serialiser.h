@@ -5,11 +5,12 @@
 
 #include <toml11/toml.hpp>
 
+#include "templates/orderedMap.h"
 #include <map>
 #include <vector>
 
 // The type we use for the nodes of our serialisation tree
-using SerialisedValue = toml::value;
+using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::OrderedMap, std::vector>;
 
 // The associated context for type T This type does double duty.
 // First, since the struct has not actual members, it is a Unit type
@@ -55,6 +56,18 @@ template <typename... Contexts> class Serialisable
     // Wrapper for serialise that toml11 will check for
     toml::value into_toml() const { return serialise(); }
 
+    // Perform an action on a child node in a table if the node exists.
+    // This cuts out quite a bit of boilerplate.
+    template <typename Lambda> static void optionalOn(const SerialisedValue &node, std::string name, Lambda action)
+    {
+        if (node.contains(name))
+        {
+            auto child = toml::find(node, name);
+            if (!node.is_uninitialized())
+                action(child);
+        }
+    }
+
     // A helper function to add elements of a vector to a node under the named heading
     template <typename T>
     static void fromVectorToTable(const std::vector<std::shared_ptr<T>> &vector, std::string name, SerialisedValue &node)
@@ -72,8 +85,8 @@ template <typename... Contexts> class Serialisable
     static SerialisedValue fromVectorToTable(const std::vector<T> &vector, Lambda getName)
     {
         SerialisedValue group;
-        for (auto it = vector.rbegin(); it < vector.rend(); it++)
-            group[getName(*it)] = (*it)->serialise();
+        for (const auto &value : vector)
+            group[getName(value)] = value->serialise();
         return group;
     };
     // A helper function to add elements of a vector to a node under the named heading
@@ -95,8 +108,8 @@ template <typename... Contexts> class Serialisable
     static SerialisedValue fromVectorToMap(const std::vector<T> &vector, Lambda getName, Lambda2 getValue)
     {
         SerialisedValue group;
-        for (auto it = vector.rbegin(); it < vector.rend(); it++)
-            group[getName(*it)] = getValue(*it);
+        for (auto &value : vector)
+            group[getName(value)] = getValue(value);
         return group;
     };
     // A helper function to add the elements of a vector to a node under a name
@@ -127,7 +140,7 @@ template <typename... Contexts> class Serialisable
     // A helper function to add the elements of a vector to a node under a name
     template <typename T, typename Lambda> static SerialisedValue fromVector(const std::vector<T> &vector, Lambda toSerial)
     {
-        SerialisedValue result = toml::array{};
+        SerialisedValue result = SerialisedValue::array_type{};
         std::transform(vector.begin(), vector.end(), std::back_inserter(result), toSerial);
         return result;
     }
@@ -143,7 +156,7 @@ template <typename... Contexts> class Serialisable
     template <typename Lambda> static void toMap(const SerialisedValue &node, std::string key, Lambda action)
     {
         if (node.contains(key))
-            for (auto &[key, value] : toml::find<toml::table>(node, key))
+            for (auto &[key, value] : toml::find<SerialisedValue::table_type>(node, key))
                 action(key, value);
     }
 

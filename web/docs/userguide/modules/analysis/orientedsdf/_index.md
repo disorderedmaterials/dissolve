@@ -27,18 +27,18 @@ The `OrientedSDF` module calculates a three-dimensional spatial density / distri
 
 ### Ranges
 
-|Keyword|Arguments|           Default            | Description                                                                                |
-|:------|:--:|:----------------------------:|--------------------------------------------------------------------------------------------|
-|`AngleRange`|`double`<br/>`double`|      `-15.0`<br/>`15.0`      |Axis angle range to accept when binning site B|
-|`RangeX`|`double`<br/>`double`<br/>`double`| `-10.0`<br/>`10.0`<br/>`0.5` | Range (min, max, bin width) of volume over which to bin along X.                           |
-|`RangeY`|`double`<br/>`double`<br/>`double`| `-10.0`<br/>`10.0`<br/>`0.5` | Range (min, max, bin width) of volume over which to bin along Y.                           |
-|`RangeZ`|`double`<br/>`double`<br/>`double`| `-10.0`<br/>`10.0`<br/>`0.5` | Range (min, max, bin width) of volume over which to bin along Z.                           |
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`AngleRange`|`double`<br/>`double`|`-15.0`<br/>`15.0`|Axis angle range to accept when binning site B|
+|`RangeX`|`double`<br/>`double`<br/>`double`|`-10.0`<br/>`10.0`<br/>`0.5`|Range (min, max, bin width) of volume over which to bin along X.|
+|`RangeY`|`double`<br/>`double`<br/>`double`|`-10.0`<br/>`10.0`<br/>`0.5`|Range (min, max, bin width) of volume over which to bin along Y.|
+|`RangeZ`|`double`<br/>`double`<br/>`double`|`-10.0`<br/>`10.0`<br/>`0.5`|Range (min, max, bin width) of volume over which to bin along Z.|
 
-### Control
+### Exclusions & Restrictions
 
-|Keyword|Arguments|Default| Description                                                                                                                                                                                                     |
-|:------|:--:|:-----:|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|`ExcludeSameMolecule`|`bool`|`false`| Whether to exclude correlations between A and B sites on the same molecule.                                                                                                                                     |
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`ExcludeSameMolecule`|`bool`|`false`| Whether to exclude correlations between A and B sites on the same molecule.|
 |`Symmetric`|`bool`|`false`| Whether to consider the angle as symmetric about 90, mapping all angles to the 0-90 range. For instance, if the target axes are perpendicular to a mirror plane in the molecule, this should be set to `true`.|
 
 ## Export

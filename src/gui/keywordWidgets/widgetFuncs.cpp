@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/producers.h"
-#include "gui/keywordWidgets/sectionHeader.h"
 #include "gui/keywordWidgets/widget.hui"
+#include "gui/keywordWidgets/widgetGroupHeader.h"
 #include "gui/signals.h"
 #include "main/dissolve.h"
 #include "module/module.h"
@@ -24,35 +24,33 @@ KeywordsWidget::KeywordsWidget(QWidget *parent) : QScrollArea(parent)
  */
 
 // Set up controls for specified keywords
-void KeywordsWidget::setUp(KeywordStore::KeywordStoreIndexInfo keywordIndexInfo,
-                           const KeywordStore::KeywordStoreMap &keywordMap, const CoreData &coreData)
+void KeywordsWidget::setUp(const KeywordStoreSection &keywordSection, const CoreData &coreData)
 {
     keywordWidgets_.clear();
 
-    // Get group map
-    auto &groupMap = keywordMap.at(keywordIndexInfo.first);
-
     // Create a new QWidget and layout for the next group?
-    auto *groupWidget = new QWidget(parentWidget());
-    auto *groupLayout = new QGridLayout(groupWidget);
+    auto *sectionWidget = new QWidget(parentWidget());
+    auto *sectionLayout = new QGridLayout(sectionWidget);
     auto row = 0;
-    for (auto sectionName : keywordIndexInfo.second)
+    for (auto &group : keywordSection.groups())
     {
-        // Get keyword map
-        auto &keywords = groupMap.at(sectionName);
+        // Nothing to do if this group is hidden
+        if (group.name() == "_HIDDEN")
+            continue;
 
-        // Create a widget for the section name
-        if (!sectionName.empty())
+        // Create a widget for the group name
+        if (group.name() != "_NO_HEADER")
         {
-            auto *sectionLabel = new SectionHeaderWidget(QString::fromStdString(std::string(sectionName)));
+            auto *groupHeader = new WidgetGroupHeader(QString::fromStdString(std::string(group.name())),
+                                                      QString::fromStdString(std::string(group.description())));
 
             if (row != 0)
-                sectionLabel->setContentsMargins(0, 15, 0, 0);
-            groupLayout->addWidget(sectionLabel, row++, 0, 1, 2);
+                groupHeader->setContentsMargins(0, 15, 0, 0);
+            sectionLayout->addWidget(groupHeader, row++, 0, 1, 2);
         }
 
         // Loop over keywords in the group and add them to our groupbox
-        for (auto *keyword : keywords)
+        for (auto &[keyword, keywordType] : group.keywords())
         {
             // Try to create a suitable widget
             auto [widget, base] = KeywordWidgetProducer::create(keyword, coreData);
@@ -75,8 +73,8 @@ void KeywordsWidget::setUp(KeywordStore::KeywordStoreIndexInfo keywordIndexInfo,
             nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description())));
             nameLabel->setContentsMargins(10, 5, 0, 0);
             nameLabel->setAlignment(Qt::AlignTop);
-            groupLayout->addWidget(nameLabel, row, 0);
-            groupLayout->addLayout(w, row++, 1);
+            sectionLayout->addWidget(nameLabel, row, 0);
+            sectionLayout->addLayout(w, row++, 1);
 
             // Push onto our reference list
             keywordWidgets_.push_back(base);
@@ -84,9 +82,9 @@ void KeywordsWidget::setUp(KeywordStore::KeywordStoreIndexInfo keywordIndexInfo,
     }
 
     // Add vertical spacer to the end of the group
-    groupLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
-    groupWidget->setLayout(groupLayout);
-    setWidget(groupWidget);
+    sectionLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
+    sectionWidget->setLayout(sectionLayout);
+    setWidget(sectionWidget);
 }
 
 // Create a suitable button for the named group

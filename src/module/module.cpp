@@ -102,9 +102,11 @@ void Module::printValidKeywords()
 {
     Messenger::print("Valid keywords for '{}' Module are:\n", ModuleTypes::moduleType(type()));
 
-    for (const auto &keywordData : keywords_.keywords())
-        if (keywordData.type() != KeywordStoreData::KeywordType::Deprecated)
-            Messenger::print("  {:30}  {}\n", keywordData.keyword()->name(), keywordData.keyword()->description());
+    for (const auto &keywordSection : keywords_.sections())
+        for (const auto &keywordGroup : keywordSection.groups())
+            for (const auto &[keyword, keywordType] : keywordGroup.keywords())
+                if (keywordType != KeywordBase::KeywordType::Deprecated)
+                    Messenger::print("  {:30}  {}\n", keyword->name(), keyword->description());
 }
 
 /*
@@ -252,7 +254,7 @@ std::vector<Module *> Module::allOfType(std::vector<ModuleTypes::ModuleType> typ
 // Express as a serialisable value
 SerialisedValue Module::serialise() const
 {
-    SerialisedValue result{{"name", name_}, {"type", ModuleTypes::moduleType(type_)}, {"frequency", frequency_}};
+    SerialisedValue result{{"type", ModuleTypes::moduleType(type_)}, {"frequency", frequency_}};
     if (!enabled_)
         result["disabled"] = true;
     return keywords_.serialiseOnto(result);
@@ -261,7 +263,6 @@ SerialisedValue Module::serialise() const
 // Read values from a serialisable value
 void Module::deserialise(const SerialisedValue &node, const CoreData &data)
 {
-    name_ = toml::find<std::string>(node, "name");
     enabled_ = !toml::find_or<bool>(node, "disabled", false);
     frequency_ = toml::find<int>(node, "frequency");
 
