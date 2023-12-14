@@ -35,8 +35,5 @@ void ModelUpdater::connectModelSignals()
 
 void ModelUpdater::update()
 {
-    QObject *object = dynamic_cast<QObject *>(model);
-    if (object != nullptr) {
-        QMetaObject::invokeMethod(object, "modelsUpdated", Qt::DirectConnection);
-    }    
+    std::visit([](auto &m){ emit m->modelsUpdated(); }, model);
 }
