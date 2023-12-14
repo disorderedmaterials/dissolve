@@ -78,7 +78,6 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
 
     // Create the display data
     processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = qSpeciesHistogram.data();
-    processingData.realise<Data1D>("OxygenSites", name(), GenericItem::InRestartFileFlag) = oxygenSitesHistogram.data();
 
     return ExecutionResult::Success;
 }

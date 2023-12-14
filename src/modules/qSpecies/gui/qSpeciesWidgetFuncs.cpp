@@ -4,6 +4,7 @@
 #include "classes/configuration.h"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
+#include "math/integerHistogram1D.h"
 #include "modules/qSpecies/gui/qSpeciesWidget.h"
 #include "modules/qSpecies/qSpecies.h"
 
@@ -35,13 +36,13 @@ void QSpeciesModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags>
         qSpeciesGraph_->clearRenderables();
 
     if (qSpeciesGraph_->renderables().empty())
-        qSpeciesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//QSpecies", module_->name()),
-                                                           "Q-Species");
+        qSpeciesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//QSpecies", module_->name()), "Q-Species");
 
     // Update Oxygen Sites Labels
-    ui_.FOResultFrame->setText(dissolve_.processingModuleData().valueOr("Process1D//FO", module_->name(), SampledDouble()));
-    ui_.NBOResultFrame->setText(dissolve_.processingModuleData().valueOr("Process1D//NBO", module_->name(), SampledDouble()));
-    ui_.BOResultFrame->setText(dissolve_.processingModuleData().valueOr("Process1D//BO", module_->name(), SampledDouble()));
+    auto oSitesHistogram = dissolve_.processingModuleData().valueOr("OSitesHistogram", module_->name(), IntegerHistogram1D());
+    ui_.FOResultFrame->setText(oSitesHistogram.averages()[0]);
+    ui_.NBOResultFrame->setText(oSitesHistogram.averages()[1]);
+    ui_.BOResultFrame->setText(oSitesHistogram.averages()[2]);
 
     // Validate renderables if they need it
     qSpeciesGraph_->validateRenderables(dissolve_.processingModuleData());

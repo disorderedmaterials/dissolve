@@ -61,6 +61,8 @@ class IntegerHistogram1D
     void accumulate();
     // Return current data
     Data1D data() const;
+    // Return averages map
+    std::map<int, SampledDouble> averages() const;
     // Return accumulated (averaged) data
     const Data1D &accumulatedData() const;
 
