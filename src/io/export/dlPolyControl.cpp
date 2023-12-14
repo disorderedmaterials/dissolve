@@ -48,7 +48,7 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("ensemble_thermostat_coupling  {} ps\n", ensembleThermostatCoupling))
         return false;
-    if (capForces && !parser.writeLineF("equilibration_force_cap {}\n", capForcesAt))
+    if (capForces && !parser.writeLineF("equilibration_force_cap {} k_b.temp/ang\n", capForcesAt))
         return false;
     if (!parser.writeLineF("time_run {} steps\n", nSteps))
         return false;
@@ -57,6 +57,8 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         if (!parser.writeLineF("timestep_variable ON\n"))
             return false;
     }
+    if (!parser.writeLineF("timestep {} internal_t\n", fixedTimestep))
+        return false;
     if (trajectoryFrequency.value_or(0) > 0)
     {
         if (!parser.writeLineF("traj_calculate ON\n"))
@@ -69,6 +71,8 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
     if (!parser.writeLineF("coul_method {}\n", coulMethod))
         return false;
     if (!parser.writeLineF("coul_precision {}\n", coulPrecision))
+        return false;
+    if (!parser.writeLineF("vdw_mix_method Lorentz-Berthelot\n"))
         return false;
 
     return true;

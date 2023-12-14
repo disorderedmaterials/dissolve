@@ -9,11 +9,11 @@
 class Configuration;
 
 // Coordinate Export Formats
-class DlPolyControlExportFileFormat : public FileAndFormat
+class DlPolyFieldExportFileFormat : public FileAndFormat
 {
     public:
-    // Available DlPolyControl formats
-    enum class DlPolyControlExportFormat
+    // Available DlPolyField formats
+    enum class DlPolyFieldExportFormat
     {
         DLPOLY
     };

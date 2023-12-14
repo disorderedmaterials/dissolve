@@ -82,22 +82,45 @@ bool DlPolyFieldExportFileFormat::exportDLPOLY(LineParser &parser, Configuration
         if (!parser.writeLineF("bonds {}\n", species.first->nBonds()))
             return false;
         for (const auto &bond : species.first->bonds()){
-            //const auto params = bond.interactionParameters();
-            //Messenger::error("{}",params);
-            if (!parser.writeLineF("{}   {}   {} {} {}\n", BondFunctions::forms().keyword(bond.interactionForm()).substr(0, 4), bond.indexI() + 1, bond.indexJ() + 1), "bond.interactionParameters()[0]", "bond.interactionParameters()[1]")
+            const auto params = bond.interactionParameters();
+            if (!parser.writeLineF("{}   {}   {} {} {}\n", BondFunctions::forms().keyword(bond.interactionForm()).substr(0, 4), bond.indexI() + 1, bond.indexJ() + 1, params[0], params[1]))
                 return false;
         }
         if (!parser.writeLineF("angles {}\n", species.first->nAngles()))
             return false;
         for (const auto &angle : species.first->angles()){
-            if (!parser.writeLineF("{}   {}   {} {} {}\n", AngleFunctions::forms().keyword(angle.interactionForm()).substr(0, 4), angle.indexI() + 1, angle.indexJ() + 1), "angle.interactionParameters()[0]", "angle.interactionParameters()[1]")
+            const auto params = angle.interactionParameters();
+            if (!parser.writeLineF("{}   {}   {}   {} {} {}\n", AngleFunctions::forms().keyword(angle.interactionForm()).substr(0, 4), angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1, params[0], params[1]))
                 return false;
         }       
     }
     
-    if (!parser.writeLineF("finish"))
+    if (!parser.writeLineF("finish\n"))
         return false;
-          
+        
+    int vdw = 0;
+        
+    for (const auto &species : speciesPopulations){
+        for (const auto &atom : species.first->atoms()){
+            const auto params = atom.atomType()->interactionPotential().parameters();
+            if (params[0] != 0 || params[1] != 0)
+                vdw++;
+        }
+    }
+    
+    if (!parser.writeLineF("vdw {}\n", vdw))
+        return false;
+        
+    for (const auto &species : speciesPopulations){
+        for (const auto &atom : species.first->atoms()){
+            const auto params = atom.atomType()->interactionPotential().parameters();
+            if (params[0] != 0 || params[1] != 0)
+                if (!parser.writeLineF("{}        {}        {} {} {}\n", atom.atomType()->name(), atom.atomType()->name(), "LJ", params[0],  params[1]))
+                    return false;
+        }
+    }
+    if (!parser.writeLineF("close"))
+        return false;    
     
     return true;
 }
