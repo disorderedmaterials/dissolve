@@ -4,50 +4,9 @@
 #include "io/export/dlPolyField.h"
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
-#include "classes/atomType.h"
-#include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/speciesAtom.h"
 #include "data/atomicMasses.h"
 
-
-#include "classes/atom.h"
-#include "classes/atomType.h"
-#include "classes/atomTypeMix.h"
-#include "classes/molecule.h"
-#include <vector>
-#include <iterator>
-
-#include "base/serialiser.h"
-#include "base/version.h"
-#include "classes/atom.h"
-#include "classes/atomTypeMix.h"
-#include "classes/box.h"
-#include "classes/cellArray.h"
-#include "classes/molecule.h"
-#include "classes/siteStack.h"
-#include "io/import/coordinates.h"
-#include "items/list.h"
-#include "kernels/potentials/base.h"
-#include "math/data1D.h"
-#include "math/histogram1D.h"
-#include "math/interpolator.h"
-#include "module/layer.h"
-#include "procedure/procedure.h"
-#include "templates/vector3.h"
-#include <deque>
-#include <map>
-#include <memory>
-#include <vector>
-
-#include "io/export/coordinates.h"
-#include "base/lineParser.h"
-#include "base/sysFunc.h"
-#include "classes/atomType.h"
-#include "classes/box.h"
-#include "classes/configuration.h"
-#include "classes/speciesAtom.h"
-#include "data/atomicMasses.h"
 
 DlPolyFieldExportFileFormat::DlPolyFieldExportFileFormat(std::string_view filename, DlPolyFieldExportFormat format)
     : FileAndFormat(formats_, filename, (int)format)

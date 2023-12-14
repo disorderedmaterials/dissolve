@@ -4,11 +4,7 @@
 #include "io/export/dlPolyControl.h"
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
-#include "classes/atomType.h"
-#include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/speciesAtom.h"
-#include "data/atomicMasses.h"
 
 DlPolyControlExportFileFormat::DlPolyControlExportFileFormat(std::string_view filename, DlPolyControlExportFormat format)
     : FileAndFormat(formats_, filename, (int)format)
