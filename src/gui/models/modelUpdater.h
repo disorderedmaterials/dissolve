@@ -5,6 +5,7 @@
 
 #include <QAbstractItemModel>
 #include <QObject>
+#include <variant>
 
 class ModelUpdater : public QObject
 {
@@ -20,7 +21,7 @@ class ModelUpdater : public QObject
     void setModel(QAbstractItemModel *);
 
     private:
-    QAbstractItemModel *model;
+    std::variant<AtomTypeModel*, MasterAngleModel*, MasterBondModel*, MasterImproperModel*, MasterTorsionModel*> model;
 
     private slots:
     void update();
