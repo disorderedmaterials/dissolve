@@ -40,4 +40,5 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies)
     keywords_.setOrganisation("Export");
     keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated QSpecies data",
                                         exportFileFormat_, "EndExport");
+    keywords_.add<BoolKeyword>("Export Data", "Whether to export the data of the module", export_);
 }

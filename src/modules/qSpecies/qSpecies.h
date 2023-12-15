@@ -29,6 +29,7 @@ class QSpeciesModule : public Module
     Range distanceRange_{0.0, 2.5};
     // Export target
     Data1DExportFileFormat exportFileFormat_;
+    bool export_{false};
 
     /*
      * Processing
