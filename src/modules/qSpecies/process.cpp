@@ -60,6 +60,7 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
 
     // Clear the temporary bins
     qSpeciesHistogram.zeroBins();
+    oxygenSitesHistogram.zeroBins();
 
     // Bin our mapped Q counts
     for (auto &[key, value] : qSpecies)
@@ -67,7 +68,7 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
 
     // Bin our mapped O Sites
     for (auto &[key, value] : oxygenSites)
-        oxygenSitesHistogram.bin(value);
+        oxygenSitesHistogram.bin(key, value);
 
     // Don't forget the Q=0 count - this is equivalent to the total number of NF sites minus the number mapped in 'qSpecies'
     qSpeciesHistogram.bin(0, NF.sites().size() - qSpecies.size());
