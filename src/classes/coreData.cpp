@@ -603,6 +603,8 @@ Task &CoreData::masterTask() { return masterTask_; }
 
 const Task &CoreData::masterTask() const { return masterTask_; }
 
+Task* CoreData::addTask() { return tasks_.emplace_back(); }
+
 /*
  * Input Filename
  */

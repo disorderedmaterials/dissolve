@@ -217,11 +217,13 @@ class CoreData
     private:
     // Master task
     Task masterTask_;
+    std::vector<Task*> tasks_;
 
     public:
     // Return master task
     const Task &masterTask() const;
     Task &masterTask();
+    Task* addTask();
 
     /*
      * Input Filename
