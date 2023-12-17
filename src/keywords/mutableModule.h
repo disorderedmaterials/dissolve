@@ -12,7 +12,8 @@
 class MutableModuleKeywordBase : public KeywordBase
 {
     public:
-    explicit MutableModuleKeywordBase(ModuleTypes::ModuleType moduleType) : KeywordBase(typeid(this)), moduleType_(moduleType){};
+    explicit MutableModuleKeywordBase(ModuleTypes::ModuleType moduleType)
+        : KeywordBase(typeid(this)), moduleType_(moduleType){};
     ~MutableModuleKeywordBase() override = default;
 
     /*
@@ -35,7 +36,10 @@ class MutableModuleKeywordBase : public KeywordBase
 template <class M> class MutableModuleKeyword : public MutableModuleKeywordBase
 {
     public:
-    explicit MutableModuleKeyword(M *&data, ModuleTypes::ModuleType moduleType) : MutableModuleKeywordBase(moduleType), data_(data) {}
+    explicit MutableModuleKeyword(M *&data, ModuleTypes::ModuleType moduleType)
+        : MutableModuleKeywordBase(moduleType), data_(data)
+    {
+    }
     ~MutableModuleKeyword() override = default;
 
     /*
