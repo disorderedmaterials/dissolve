@@ -34,16 +34,20 @@ OptionalReferenceWrapper<ProcedureNodeSequence> IterateForProcedureNode::branch(
 // Prepare any necessary data, ready for execution
 bool IterateForProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
-    return iterateBranch_.prepare(procedureContext);
+    return true;
 }
 
 // Execute node
 bool IterateForProcedureNode::execute(const ProcedureContext &procedureContext)
 {
-    if (iteration_ < nIterations_)
+    for (auto i = 0; i < nIterations_; ++i)
     {
-        iteration_++;
-        return iterateBranch_.execute(procedureContext);
+        if (!iterateBranch_.prepare(procedureContext))
+            return false;
+        if (!iterateBranch_.execute(procedureContext))
+            return false;
+        if (!iterateBranch_.finalise(procedureContext))
+            return false;
     }
     return true;
 }
@@ -52,5 +56,5 @@ bool IterateForProcedureNode::execute(const ProcedureContext &procedureContext)
 // Finalise any necessary data after execution
 bool IterateForProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
-    return iterateBranch_.finalise(procedureContext);
+    return true;
 }

@@ -25,8 +25,6 @@ class IterateForProcedureNode : public ProcedureNode
      * Counter
      */
     private:
-    // Current iteration
-    int iteration_{0};
     // Number of iterations to perform
     int nIterations_{100};
     // IntegerKeyword nIterations_;
