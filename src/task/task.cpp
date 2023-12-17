@@ -48,13 +48,7 @@ bool Task::execute(const TaskContext &context)
 }
 
 // Express as a serialisable value
-SerialisedValue Task::serialise() const
-{
-    return {};
-}
+SerialisedValue Task::serialise() const { return {}; }
 
 // Read values from a serialisable value
-void Task::deserialise(const SerialisedValue &node, const CoreData &coreData)
-{
-    return;
-}
+void Task::deserialise(const SerialisedValue &node, const CoreData &coreData) { return; }
