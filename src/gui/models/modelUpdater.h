@@ -21,7 +21,7 @@ class ModelUpdater : public QObject
     void setModel(QAbstractItemModel *);
 
     private:
-    std::variant<AtomTypeModel*, MasterAngleModel*, MasterBondModel*, MasterImproperModel*, MasterTorsionModel*> model;
+    QAbstractItemModel *model_;
 
     private slots:
     void update();

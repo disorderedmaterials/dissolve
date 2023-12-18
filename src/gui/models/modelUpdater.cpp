@@ -7,33 +7,34 @@
 #include <QMetaObject>
 #include <Qt>
 
-void ModelUpdater::setModel(QAbstractItemModel *model) { model = model; }
+void ModelUpdater::setModel(QAbstractItemModel *model) { model_ = model; }
 
 ModelUpdater::~ModelUpdater() {}
 
 void ModelUpdater::connectModelSignals()
 {
-    connect(model, &QAbstractItemModel::columnsAboutToBeInserted, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::columnsAboutToBeMoved, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::columnsAboutToBeRemoved, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::columnsInserted, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::columnsMoved, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::columnsRemoved, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::dataChanged, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::headerDataChanged, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::layoutAboutToBeChanged, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::layoutChanged, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::modelAboutToBeReset, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::modelReset, this, &ModelUpdater::update);
-    connect(model, &QAbstractListModel::rowsAboutToBeInserted, this, &ModelUpdater::update);
-    connect(model, &QAbstractListModel::rowsAboutToBeMoved, this, &ModelUpdater::update);
-    connect(model, &QAbstractListModel::rowsAboutToBeRemoved, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::rowsInserted, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::rowsMoved, this, &ModelUpdater::update);
-    connect(model, &QAbstractItemModel::rowsRemoved, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::columnsAboutToBeInserted, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::columnsAboutToBeMoved, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::columnsAboutToBeRemoved, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::columnsInserted, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::columnsMoved, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::columnsRemoved, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::dataChanged, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::headerDataChanged, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::layoutAboutToBeChanged, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::layoutChanged, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::modelAboutToBeReset, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::modelReset, this, &ModelUpdater::update);
+    connect(model_, &QAbstractListModel::rowsAboutToBeInserted, this, &ModelUpdater::update);
+    connect(model_, &QAbstractListModel::rowsAboutToBeMoved, this, &ModelUpdater::update);
+    connect(model_, &QAbstractListModel::rowsAboutToBeRemoved, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::rowsInserted, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::rowsMoved, this, &ModelUpdater::update);
+    connect(model_, &QAbstractItemModel::rowsRemoved, this, &ModelUpdater::update);
 }
 
 void ModelUpdater::update()
 {
-    std::visit([](auto &m){ emit m->modelsUpdated(); }, model);
+    QObject *object = dynamic_cast<QObject *>(model_);
+    QMetaObject::invokeMethod(object, "modelsUpdated", Qt::DirectConnection);
 }
