@@ -57,6 +57,23 @@ class DlPolyModule : public Module
     };
     // Return EnumOptions for Ensemble
     static EnumOptions<Ensemble> ensemble();
+    
+    // Ensemble Enum
+    enum EnsembleMethod
+    {
+        Evans,
+        Langevin,
+        Andersen,
+        Berendsen,
+        Hoover,
+        gentle,
+        ttm,
+        dpds1,
+        dpds2,
+        MTK,
+    };
+    // Return EnumOptions for Ensemble method
+    static EnumOptions<EnsembleMethod> ensembleMethod();
          
     private:
     // Filename and format for CONTROL export
@@ -71,8 +88,12 @@ class DlPolyModule : public Module
     double capForcesAt_{1.0e7};
     // Interatomic cutoff distance to employ
     std::optional<double> cutoffDistance_;
+    // Padding
+    double padding_{0.0};
     // Set Ensemble
     DlPolyModule::Ensemble ensemble_{Ensemble::NVE};
+    // Set Ensemble
+    DlPolyModule::EnsembleMethod ensembleMethod_{EnsembleMethod::Evans};
     // Set Ensemble Thermostat Coupling
     double ensembleThermostatCoupling_{0.0};
     // Timestep type to employ

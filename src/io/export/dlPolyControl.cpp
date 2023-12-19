@@ -15,7 +15,7 @@ DlPolyControlExportFileFormat::DlPolyControlExportFileFormat(std::string_view fi
 
 
 // Export DlPolyControl as CONTROL
-bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, std::string ensemble, double ensembleThermostatCoupling, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision)
+bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double padding, std::string ensemble, std::string ensembleMethod, double ensembleThermostatCoupling, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision)
 {
     // Export title
     if (!parser.writeLineF("title {} @ {}\n\n", cfg->name(), cfg->contentsVersion()))
@@ -40,7 +40,7 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("ensemble {}\n", ensemble))
         return false;
-    if (!parser.writeLineF("ensemble_method hoover\n", cutoffDistance.value()))
+    if (!parser.writeLineF("ensemble_method {}\n", ensembleMethod))
         return false;
     if (!parser.writeLineF("ensemble_thermostat_coupling  {} ps\n", ensembleThermostatCoupling))
         return false;
@@ -68,14 +68,35 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("coul_precision {}\n", coulPrecision))
         return false;
-    if (!parser.writeLineF("vdw_mix_method Lorentz-Berthelot\n"))
+    
+    // Note interaction is taken from the first atom only, not sure how to do this ...
+    const auto sri = cfg->speciesPopulations()[0].first->atoms()[0].atomType()->interactionPotential().form();
+    std::string vdw_mix_method;
+    
+    switch (sri)
+    {
+        case (ShortRangeFunctions::Form::None):
+            vdw_mix_method = "Off";
+            break;
+        case (ShortRangeFunctions::Form::LennardJones):
+            vdw_mix_method = "Lorentz-Berthelot";
+            break;
+        case (ShortRangeFunctions::Form::LennardJonesGeometric):
+            vdw_mix_method = "Hogervorst";
+            break;
+        default:
+            throw(std::runtime_error(fmt::format("Short-range type {} is not accounted for in PairPotential::setUp().\n",
+                                                 ShortRangeFunctions::forms().keyword(sri))));
+    }
+    
+    if (!parser.writeLineF("vdw_mix_method {}\n", vdw_mix_method))
         return false;
 
     return true;
 }
 
 // Export DlPolyControl using current filename and format
-bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, std::string ensemble, double ensembleThermostatCoupling, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision)
+bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double padding, std::string ensemble, std::string ensembleMethod, double ensembleThermostatCoupling, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision)
 {
     // Open the file
     LineParser parser;
@@ -95,7 +116,9 @@ bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForce
                                   capForces,
                                   capForcesAt,
                                   cutoffDistance,
+                                  padding,
                                   ensemble,
+                                  ensembleMethod,
                                   ensembleThermostatCoupling,
                                   timestepVariable,
                                   fixedTimestep,

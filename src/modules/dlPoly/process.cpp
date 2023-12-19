@@ -35,6 +35,14 @@ EnumOptions<DlPolyModule::Ensemble> DlPolyModule::ensemble()
         {{Ensemble::NVE, "NVE"}, {Ensemble::PMF, "PMF"}, {Ensemble::NVT, "NVT"}, {Ensemble::NPT, "NPT"}, {Ensemble::NST, "NST"}});
 }
 
+// Return EnumOptions for Ensemble
+EnumOptions<DlPolyModule::EnsembleMethod> DlPolyModule::ensembleMethod()
+{
+    return EnumOptions<DlPolyModule::EnsembleMethod>(
+        "ensembleMethod",
+        {{EnsembleMethod::Evans, "Evans"}, {EnsembleMethod::Langevin, "Langevin"}, {EnsembleMethod::Andersen, "Andersen"}, {EnsembleMethod::Berendsen, "Berendsen"}, {EnsembleMethod::Hoover, "Hoover"}, {EnsembleMethod::gentle, "gentle"}, {EnsembleMethod::ttm, "ttm"}, {EnsembleMethod::dpds1, "dpds1"}, {EnsembleMethod::dpds2, "dpds2"}, {EnsembleMethod::MTK, "MTK"}});
+}
+
 // Run main processing
 Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
 {   
@@ -55,7 +63,9 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
                                              capForces_,
                                              capForcesAt_,
                                              cutoffDistance_,
+                                             padding_,
                                              ensemble().keyword(ensemble_),
+                                             ensembleMethod().keyword(ensembleMethod_),
                                              ensembleThermostatCoupling_,
                                              timestepVariable_,
                                              fixedTimestep_,

@@ -19,6 +19,7 @@ DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
     keywords_.setOrganisation("Options", "File");
     keywords_.add<FileAndFormatKeyword>("CONTROL", "File / format for CONTROL", dlPolyControlFormat_, "EndFormat");
     keywords_.add<FileAndFormatKeyword>("FIELD", "File / format for FIELD", dlPolyFieldFormat_, "EndFormat");
+    //keywords_.add<FileAndFormatKeyword>("CONFIG", "File / format for CONFIG", coordinatesFormat_, "EndFormat");
 
     keywords_.setOrganisation("Options", "Simulation");
     keywords_.add<IntegerKeyword>("NSteps", "Number of DlPoly steps to perform", nSteps_, 1);
@@ -48,9 +49,12 @@ DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
     keywords_.add<DoubleKeyword>("CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt_, 0.0);
     keywords_.add<OptionalDoubleKeyword>(
         "CutoffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
-        cutoffDistance_, 0.0, std::nullopt, 0.1, "Use PairPotential Range");
+        cutoffDistance_, 0.0, std::nullopt, 1.0, "Use PairPotential Range");
+    keywords_.add<DoubleKeyword>("padding", "padding", padding_, 0.0);
     keywords_.add<EnumOptionsKeyword<DlPolyModule::Ensemble>>(
         "Ensemble", " Set ensemble constraints", ensemble_, DlPolyModule::ensemble());
+    keywords_.add<EnumOptionsKeyword<DlPolyModule::EnsembleMethod>>(
+        "EnsembleMethod", " Set ensemble method", ensembleMethod_, DlPolyModule::ensembleMethod());
     keywords_.add<DoubleKeyword>("EnsembleThermostatCoupling", "Set thermostat relaxation/decorrelation times (use ensemble_thermostat_friction for langevin)", ensembleThermostatCoupling_, 0.0);
         
 }
