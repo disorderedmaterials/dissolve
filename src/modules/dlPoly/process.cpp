@@ -51,6 +51,19 @@ EnumOptions<DlPolyModule::MinimisationCriterion> DlPolyModule::minimisationCrite
         {{MinimisationCriterion::Off, "Off"}, {MinimisationCriterion::Force, "Force"}, {MinimisationCriterion::Energy, "Energy"}, {MinimisationCriterion::Distance, "Distance"}});
 }
 
+std::string exec(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
+
 // Run main processing
 Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
 {   
@@ -114,6 +127,8 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
             moduleContext.processPool().decideFalse();
             return ExecutionResult::Failed;
         }
+        
+        auto run = exec("./DLPOLY.Z");
 
         moduleContext.processPool().decideTrue();
     }
