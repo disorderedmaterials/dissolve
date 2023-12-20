@@ -35,12 +35,20 @@ EnumOptions<DlPolyModule::Ensemble> DlPolyModule::ensemble()
         {{Ensemble::NVE, "NVE"}, {Ensemble::PMF, "PMF"}, {Ensemble::NVT, "NVT"}, {Ensemble::NPT, "NPT"}, {Ensemble::NST, "NST"}});
 }
 
-// Return EnumOptions for Ensemble
+// Return EnumOptions for EnsembleMethod
 EnumOptions<DlPolyModule::EnsembleMethod> DlPolyModule::ensembleMethod()
 {
     return EnumOptions<DlPolyModule::EnsembleMethod>(
         "ensembleMethod",
         {{EnsembleMethod::Evans, "Evans"}, {EnsembleMethod::Langevin, "Langevin"}, {EnsembleMethod::Andersen, "Andersen"}, {EnsembleMethod::Berendsen, "Berendsen"}, {EnsembleMethod::Hoover, "Hoover"}, {EnsembleMethod::gentle, "gentle"}, {EnsembleMethod::ttm, "ttm"}, {EnsembleMethod::dpds1, "dpds1"}, {EnsembleMethod::dpds2, "dpds2"}, {EnsembleMethod::MTK, "MTK"}});
+}
+
+// Return EnumOptions for MinimisationCriterion
+EnumOptions<DlPolyModule::MinimisationCriterion> DlPolyModule::minimisationCriterion()
+{
+    return EnumOptions<DlPolyModule::MinimisationCriterion>(
+        "minimisationCriterion",
+        {{MinimisationCriterion::Off, "Off"}, {MinimisationCriterion::Force, "Force"}, {MinimisationCriterion::Energy, "Energy"}, {MinimisationCriterion::Distance, "Distance"}});
 }
 
 // Run main processing
@@ -76,7 +84,10 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
                                              trajectoryFrequency_,
                                              trajectoryKey().keyword(trajectoryKey_),
                                              coulMethod().keyword(coulMethod_),
-                                             coulPrecision_))
+                                             coulPrecision_,
+                                             minimisationCriterion().keyword(minimisationCriterion_),
+                                             minimisationTolerance_,
+                                             minimisationFrequency_))
         {
             Messenger::print("Export: Failed to export CONTROL file '{}'.\n", dlPolyControlFormat_.filename());
             moduleContext.processPool().decideFalse();

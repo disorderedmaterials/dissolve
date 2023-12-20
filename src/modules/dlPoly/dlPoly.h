@@ -74,6 +74,15 @@ class DlPolyModule : public Module
     };
     // Return EnumOptions for Ensemble method
     static EnumOptions<EnsembleMethod> ensembleMethod();
+    
+    enum MinimisationCriterion
+    {
+        Off,
+        Force,
+        Energy,
+        Distance
+    };
+    static EnumOptions<MinimisationCriterion> minimisationCriterion();
          
     private:
     // Filename and format for CONTROL export
@@ -116,7 +125,12 @@ class DlPolyModule : public Module
     DlPolyModule::CoulMethod coulMethod_{CoulMethod::off};
     // Calculate electrostatics with given precision
     double coulPrecision_{0.0}; 
-
+    // Set MinimisationCriterion
+    DlPolyModule::MinimisationCriterion minimisationCriterion_{MinimisationCriterion::Off};
+    // Minimisation Tolerance 
+    double minimisationTolerance_{0.0};
+    // Minimsation Frequency
+    double minimisationFrequency_{0.0};
     
     /*
      * Functions

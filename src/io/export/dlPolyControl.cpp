@@ -15,7 +15,7 @@ DlPolyControlExportFileFormat::DlPolyControlExportFileFormat(std::string_view fi
 
 
 // Export DlPolyControl as CONTROL
-bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double padding, std::string ensemble, std::string ensembleMethod, double ensembleThermostatCoupling, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision)
+bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double padding, std::string ensemble, std::string ensembleMethod, double ensembleThermostatCoupling, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision, std::string minimisationCriterion, double minimisationTolerance, double minimisationFrequency)
 {
     // Export title
     if (!parser.writeLineF("title {} @ {}\n\n", cfg->name(), cfg->contentsVersion()))
@@ -36,10 +36,13 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("stats_frequency {} steps\n", outputFrequency.value()))
         return false;
-    if (!parser.writeLineF("cutoff {} ang\n", cutoffDistance.value()))
+    if (!parser.writeLineF("cutoff {} nm\n", cutoffDistance.value()))
+        return false;
+    if (!parser.writeLineF("padding {} ang\n", cutoffDistance.value()))
         return false;
     if (!parser.writeLineF("ensemble {}\n", ensemble))
         return false;
+    //anything other than NVE method and thermsostat cooling 
     if (!parser.writeLineF("ensemble_method {}\n", ensembleMethod))
         return false;
     if (!parser.writeLineF("ensemble_thermostat_coupling  {} ps\n", ensembleThermostatCoupling))
@@ -88,15 +91,20 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
             throw(std::runtime_error(fmt::format("Short-range type {} is not accounted for in PairPotential::setUp().\n",
                                                  ShortRangeFunctions::forms().keyword(sri))));
     }
-    
     if (!parser.writeLineF("vdw_mix_method {}\n", vdw_mix_method))
+        return false;
+    if (!parser.writeLineF("minimisation_criterion {}\n", minimisationCriterion))
+        return false;
+    if (!parser.writeLineF("minimisation_tolerance {}\n", minimisationTolerance))
+        return false;
+    if (!parser.writeLineF("minimisation_frequency {}\n", minimisationFrequency))
         return false;
 
     return true;
 }
 
 // Export DlPolyControl using current filename and format
-bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double padding, std::string ensemble, std::string ensembleMethod, double ensembleThermostatCoupling, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision)
+bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double padding, std::string ensemble, std::string ensembleMethod, double ensembleThermostatCoupling, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision, std::string minimisationCriterion, double minimisationTolerance, double minimisationFrequency)
 {
     // Open the file
     LineParser parser;
@@ -129,7 +137,10 @@ bool DlPolyControlExportFileFormat::exportData(Configuration *cfg, bool capForce
                                   trajectoryFrequency,
                                   trajectoryKey,
                                   coulMethod,
-                                  coulPrecision);
+                                  coulPrecision,
+                                  minimisationCriterion,
+                                  minimisationTolerance,
+                                  minimisationFrequency);
             break;
         default:
             throw(std::runtime_error(fmt::format("DlPolyControl format '{}' export has not been implemented.\n",

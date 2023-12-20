@@ -56,5 +56,8 @@ DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
     keywords_.add<EnumOptionsKeyword<DlPolyModule::EnsembleMethod>>(
         "EnsembleMethod", " Set ensemble method", ensembleMethod_, DlPolyModule::ensembleMethod());
     keywords_.add<DoubleKeyword>("EnsembleThermostatCoupling", "Set thermostat relaxation/decorrelation times (use ensemble_thermostat_friction for langevin)", ensembleThermostatCoupling_, 0.0);
-        
+    keywords_.add<EnumOptionsKeyword<DlPolyModule::MinimisationCriterion>>(
+        "MinimisationCriterion", " Set minimisation criterion", minimisationCriterion_, DlPolyModule::minimisationCriterion());
+    keywords_.add<DoubleKeyword>("minimisationTolerance", "Minimisation Tolerance", minimisationTolerance_, 0.0);
+    keywords_.add<DoubleKeyword>("minimisationFrequency", "Minimisation Frequency", minimisationFrequency_, 0.0);     
 }
