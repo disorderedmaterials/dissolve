@@ -19,7 +19,7 @@ DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
     keywords_.setOrganisation("Options", "File");
     keywords_.add<FileAndFormatKeyword>("CONTROL", "File / format for CONTROL", dlPolyControlFormat_, "EndFormat");
     keywords_.add<FileAndFormatKeyword>("FIELD", "File / format for FIELD", dlPolyFieldFormat_, "EndFormat");
-    //keywords_.add<FileAndFormatKeyword>("CONFIG", "File / format for CONFIG", coordinatesFormat_, "EndFormat");
+    keywords_.add<FileAndFormatKeyword>("CONFIG", "File / format for CONFIG", coordinatesFormat_, "EndFormat");
 
     keywords_.setOrganisation("Options", "Simulation");
     keywords_.add<IntegerKeyword>("NSteps", "Number of DlPoly steps to perform", nSteps_, 1);

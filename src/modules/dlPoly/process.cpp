@@ -100,6 +100,20 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
             moduleContext.processPool().decideFalse();
             return ExecutionResult::Failed;
         }
+        
+        if (!coordinatesFormat_.hasFilename())
+        {
+            Messenger::error("No valid file/format set for CONFIG export.\n");
+            return ExecutionResult::Failed;
+        }
+        Messenger::print("Export: Writing CONFIG file ({}) for Configuration '{}'...\n", coordinatesFormat_.formatDescription(), targetConfiguration_->name());
+
+        if (!coordinatesFormat_.exportData(targetConfiguration_))
+        {
+            Messenger::print("Export: Failed to export CONFIG file '{}'.\n", coordinatesFormat_.filename());
+            moduleContext.processPool().decideFalse();
+            return ExecutionResult::Failed;
+        }
 
         moduleContext.processPool().decideTrue();
     }

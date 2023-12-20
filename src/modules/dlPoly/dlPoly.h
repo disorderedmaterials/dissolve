@@ -5,6 +5,7 @@
 
 #include "io/export/dlPolyControl.h"
 #include "io/export/dlPolyField.h"
+#include "io/export/coordinates.h"
 #include "base/enumOptions.h"
 #include "module/module.h"
 
@@ -89,6 +90,8 @@ class DlPolyModule : public Module
     DlPolyControlExportFileFormat dlPolyControlFormat_;
     // Filename and format for FIELD export
     DlPolyFieldExportFileFormat dlPolyFieldFormat_;
+    // Filename and format for CONFIG export
+    CoordinateExportFileFormat coordinatesFormat_;
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
     // Control whether atomic forces are capped every step
