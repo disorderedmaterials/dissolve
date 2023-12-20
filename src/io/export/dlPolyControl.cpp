@@ -42,11 +42,13 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("ensemble {}\n", ensemble))
         return false;
-    //anything other than NVE method and thermsostat cooling 
-    if (!parser.writeLineF("ensemble_method {}\n", ensembleMethod))
-        return false;
-    if (!parser.writeLineF("ensemble_thermostat_coupling  {} ps\n", ensembleThermostatCoupling))
-        return false;
+    //anything other than NVE method and thermsostat cooling
+    if (ensemble != "NVE"){
+        if (!parser.writeLineF("ensemble_method {}\n", ensembleMethod))
+            return false;
+        if (!parser.writeLineF("ensemble_thermostat_coupling  {} ps\n", ensembleThermostatCoupling))
+            return false;
+    } 
     if (capForces && !parser.writeLineF("equilibration_force_cap {} k_b.temp/ang\n", capForcesAt))
         return false;
     if (!parser.writeLineF("time_run {} steps\n", nSteps))
