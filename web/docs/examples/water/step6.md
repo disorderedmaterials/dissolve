@@ -28,7 +28,7 @@ First of all, let's stop the simulation from running:
 And now let's make the changes to our intramolecular terms:
 
 {{< action type="tabs" >}}Go to the {{< gui-tab text="Forcefield" type="ff" >}} tab and find the **Master Terms** section{{< /action >}}
-{{< action type="edit" text="Change the equlibrium bond length ('eq') of the `HW-OW` bond term from 1.0 to 0.976 &#8491;" />}}
+{{< action type="edit" text="Change the equilibrium bond length ('eq') of the `HW-OW` bond term from 1.0 to 0.976 &#8491;" />}}
 {{< action type="edit" text="Change the equilibrium angle ('eq') of the `HW-OW-HW` angle term from 113.24 to 107.134 &deg;" />}}
 
 Now run the simulation for a little longer and let the species adjust to their new geometry, and you should see a marked improvement in the comparison of the D<sub>2</sub>O total G(r) and structure factor.
