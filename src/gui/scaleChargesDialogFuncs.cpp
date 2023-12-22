@@ -3,18 +3,24 @@
 
 #include "gui/scaleChargesDialog.h"
 
-ScaleChargesDialog::ScaleChargesDialog(QWidget *parent) { ui_.setupUi(this); }
+ScaleChargesDialog::ScaleChargesDialog(QWidget *parent) {
+    QQuickWidget *view = new QQuickWidget(QUrl("qrc:/dialogs/qml/ScaleChargesDialog.qml"));
+    
+    connect(this, SIGNAL(cancel()), this, SLOT(cancelClicked()));
+    connect(this, SIGNAL(scale()), this, SLOT(cancelClicked()));
+    connect(this, SIGNAL(scaleTo()), this, SLOT(cancelClicked()));
+}
 ScaleChargesDialog::~ScaleChargesDialog() {}
 
-double ScaleChargesDialog::scaleValue() const { return ui_.ScaleSpinBox->value(); }
+double ScaleChargesDialog::value() const { return currentValue_; }
 
-void ScaleChargesDialog::on_CancelButton_clicked(bool checked) { reject(); }
-void ScaleChargesDialog::on_ScaleButton_clicked(bool checked)
+void ScaleChargesDialog::cancelClicked() { reject(); }
+void ScaleChargesDialog::scaleClicked()
 {
     scale_ = true;
     accept();
 }
-void ScaleChargesDialog::on_ScaleToButton_clicked(bool checked)
+void ScaleChargesDialog::scaleToClicked()
 {
     scaleTo_ = true;
     accept();

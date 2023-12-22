@@ -10,19 +10,26 @@ class ScaleChargesDialog : public QDialog
 {
     Q_OBJECT
 
+    Q_PROPERTY(double value READ value NOTIFY valueSet)
+
     public:
     ScaleChargesDialog(QWidget *parent);
     ~ScaleChargesDialog();
     bool scale_, scaleTo_;
 
+    double value() const;
+
     private:
-    Ui::ScaleChargesDialog ui_;
+    double currentValue_;
 
-    public:
-    double scaleValue() const;
+    signals:
+    void valueSet();
+    void cancel();
+    void scale();
+    void scaleTo();
 
-    private slots:
-    void on_CancelButton_clicked(bool checked);
-    void on_ScaleButton_clicked(bool checked);
-    void on_ScaleToButton_clicked(bool checked);
+    public slots:
+    void cancelClicked();
+    void scaleClicked();
+    void scaleToClicked();
 };
