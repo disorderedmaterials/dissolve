@@ -59,6 +59,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         ImportCoordinates,
         IntegerCollect1D,
         IfValueInRange,
+        IterateFor,
         Integrate1D,
         IterateData1D,
         IterateSelection,
