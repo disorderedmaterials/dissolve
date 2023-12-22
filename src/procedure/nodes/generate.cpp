@@ -3,6 +3,7 @@
 
 #include "procedure/nodes/generate.h"
 #include "keywords/configuration.h"
+#include "main/dissolve.h"
 
 GenerateProcedureNode::GenerateProcedureNode(Configuration *cfg) : ProcedureNode(ProcedureNode::NodeType::Generate, {ProcedureNode::ControlContext}), target_(cfg)
 {
@@ -28,11 +29,18 @@ bool GenerateProcedureNode::prepare(const ProcedureContext &procedureContext)
     if (!target_)
         return Messenger::error("No target configuration set in node '{}.\n", name());
 
+    // Make sure the potential map is up to date
+    procedureContext.dissolve().regeneratePairPotentials();
+
     return true;
 }
 
 // Execute node
 bool GenerateProcedureNode::execute(const ProcedureContext &procedureContext)
 {
+    // Generate the configuration
+    if (!target_->initialiseContent(procedureContext))
+        return Messenger::error("Unable to generate target configuration '{}'.\n", name());
+    
     return true;
 }
