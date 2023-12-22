@@ -44,6 +44,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::DirectionalGlobalPotential, "DirectionalGlobalPotential"},
                      {ProcedureNode::NodeType::DynamicSite, "DynamicSite"},
                      {ProcedureNode::NodeType::GeneralRegion, "GeneralRegion"},
+                     {ProcedureNode::NodeType::Generate, "Generate"},
                      {ProcedureNode::NodeType::ImportCoordinates, "ImportCoordinates"},
                      {ProcedureNode::NodeType::IntegerCollect1D, "IntegerCollect1D"},
                      {ProcedureNode::NodeType::IterateSelection, "IterateSelection"},
