@@ -11,7 +11,7 @@ class Configuration;
 class GenerateProcedureNode : public ProcedureNode
 {
     public:
-    explicit GenerateProcedureNode(Confuration *cfg = nullptr);
+    explicit GenerateProcedureNode(Configuration *cfg = nullptr);
 
     /*
      * Identity
@@ -35,4 +35,4 @@ class GenerateProcedureNode : public ProcedureNode
     bool prepare(const ProcedureContext &procedureContext) override;
     // Execute node
     bool execute(const ProcedureContext &procedureContext) override;
-}
+};
