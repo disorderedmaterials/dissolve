@@ -24,6 +24,10 @@ bool GenerateProcedureNode::mustBeNamed() const { return false; }
 // Prepare any necessary data, ready for execution
 bool GenerateProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
+    // Check for valid target configuration
+    if (!target_)
+        return Messenger::error("No target configuration set in node '{}.\n", name());
+
     return true;
 }
 
