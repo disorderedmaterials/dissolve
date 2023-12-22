@@ -7,6 +7,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "data/elements.h"
+#include "task/task.h"
 #include "templates/optionalRef.h"
 #include <list>
 #include <memory>
@@ -209,6 +210,20 @@ class CoreData
     const std::vector<std::unique_ptr<ModuleLayer>> &processingLayers() const;
     // Run the set-up stages of all modules in all layers
     bool setUpProcessingLayerModules(Dissolve &dissolve);
+
+    /*
+     * Tasks
+     */
+    private:
+    // Master task
+    Task masterTask_;
+    std::vector<Task*> tasks_;
+
+    public:
+    // Return master task
+    const Task &masterTask() const;
+    Task &masterTask();
+    Task* addTask();
 
     /*
      * Input Filename

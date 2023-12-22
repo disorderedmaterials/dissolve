@@ -248,6 +248,7 @@ set(BASIC_LINK_LIBS
     neta
     procedure
     procedureNodes
+    task
     keywords
     expression
     items
