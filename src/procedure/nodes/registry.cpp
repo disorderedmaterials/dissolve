@@ -19,6 +19,7 @@
 #include "procedure/nodes/cylindricalRegion.h"
 #include "procedure/nodes/directionalGlobalPotential.h"
 #include "procedure/nodes/generalRegion.h"
+#include "procedure/nodes/generate.h"
 #include "procedure/nodes/ifValueInRange.h"
 #include "procedure/nodes/iterateFor.h"
 #include "procedure/nodes/importCoordinates.h"
@@ -162,6 +163,8 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<RunTaskNode>(ProcedureNode::NodeType::RunTask, "Run task", "Control");
     registerProducer<RunModuleNode>(ProcedureNode::NodeType::RunModule, "Run module", "Control");
     registerProducer<RunModuleListNode>(ProcedureNode::NodeType::RunModuleList, "Run module list", "Control");
+    registerProducer<GenerateProcedureNode>(ProcedureNode::NodeType::Generate, "Generate", "Control");
+
 }
 
 /*
