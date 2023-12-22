@@ -55,6 +55,7 @@ add_library(
   layer.h
   module.h
   moduleVector.h
+  mutableModule.h
   node.h
   nodeAndInteger.h
   nodeBranch.h

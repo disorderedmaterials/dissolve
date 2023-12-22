@@ -52,6 +52,8 @@ add_library(
   rotateFragment.cpp
   runLayer.cpp
   runTask.cpp
+  runModule.cpp
+  runModuleList.cpp
   select.cpp
   sequence.cpp
   simpleGlobalPotential.cpp
@@ -111,6 +113,8 @@ add_library(
   rotateFragment.h
   runLayer.h
   runTask.h
+  runModule.h
+  runModuleList.h
   select.h
   sequence.h
   simpleGlobalPotential.h

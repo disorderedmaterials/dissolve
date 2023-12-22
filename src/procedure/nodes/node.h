@@ -83,6 +83,8 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         RotateFragment,
         RunLayer,
         RunTask,
+        RunModule,
+        RunModuleList,
         Select,
         Sequence,
         SimpleGlobalPotential,
