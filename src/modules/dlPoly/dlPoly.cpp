@@ -15,49 +15,43 @@
 DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
-    
-    keywords_.setOrganisation("Options", "File");
-    keywords_.add<FileAndFormatKeyword>("CONTROL", "File / format for CONTROL", dlPolyControlFormat_, "EndFormat");
-    keywords_.add<FileAndFormatKeyword>("FIELD", "File / format for FIELD", dlPolyFieldFormat_, "EndFormat");
-    keywords_.add<FileAndFormatKeyword>("CONFIG", "File / format for CONFIG", coordinatesFormat_, "EndFormat");
 
     keywords_.setOrganisation("Options", "Simulation");
-    keywords_.add<IntegerKeyword>("NSteps", "Number of DlPoly steps to perform", nSteps_, 1);
+    keywords_.add<IntegerKeyword>("NSteps", "Set duration of simulation (inc. equilibration)", nSteps_, 1);
     keywords_.add<BoolKeyword>("VariableTimestep", 
-                               "Whether a variable timestep should be used, determined from the maximal force vector",
+                               "Enable variable timestep",
                                timestepVariable_);
-    keywords_.add<DoubleKeyword>("DeltaT", "Fixed timestep (ps) to use in DlPoly simulation", fixedTimestep_, 0.0);
+    keywords_.add<DoubleKeyword>("DeltaT", "Set calculation timestep or initial timestep for variable timestep calculations", fixedTimestep_, 0.0);
     keywords_.add<BoolKeyword>("RandomVelocities",
                                "Whether random velocities should always be assigned before beginning DlPoly simulation",
                                randomVelocities_);
 
     keywords_.setOrganisation("Options", "Output");
-    keywords_.add<OptionalIntegerKeyword>("EnergyFrequency", "Frequency at which to calculate total system energy",
+    keywords_.add<OptionalIntegerKeyword>("EnergyFrequency", "Set frequency of printing results to output",
                                           energyFrequency_, 0, std::nullopt, 5, "Off");
-    keywords_.add<OptionalIntegerKeyword>("OutputFrequency", "Frequency at which to output step information", outputFrequency_,
+    keywords_.add<OptionalIntegerKeyword>("OutputFrequency", "Set frequency of stats sampling to statis file", outputFrequency_,
                                           0, std::nullopt, 5, "Off");
-    keywords_.add<OptionalIntegerKeyword>("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_, 0,
-                                          std::nullopt, 5, "Off");
+    keywords_.add<OptionalIntegerKeyword>("TrajectoryFrequency", "Interval between dumping trajectory configurations", trajectoryFrequency_, 0, std::nullopt, 5, "Off");
     keywords_.add<EnumOptionsKeyword<DlPolyModule::TrajectoryKey>>(
-        "TrajectoryKey", "Set trajectory key", trajectoryKey_, DlPolyModule::trajectoryKey());
+        "TrajectoryKey", "Set trajectory output, options: pos, pos-vel, pos-vel-force, compressed", trajectoryKey_, DlPolyModule::trajectoryKey());
     keywords_.add<EnumOptionsKeyword<DlPolyModule::CoulMethod>>(
-        "CoulMethod", "Set Coul Method", coulMethod_, DlPolyModule::coulMethod());
+        "CoulMethod", "Set method for electrostatics method, options: off, spme, dddp, pairwise, reaction_field, force_shifted", coulMethod_, DlPolyModule::coulMethod());
     keywords_.add<DoubleKeyword>("Coul Precision", "Calculate electrostatics using Fennell damping (Ewald-like) with given precision", coulPrecision_, 0.0);
 
     keywords_.setOrganisation("Advanced");
     keywords_.add<BoolKeyword>("CapForces", "Control whether atomic forces are capped every step", capForces_);
-    keywords_.add<DoubleKeyword>("CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt_, 0.0);
+    keywords_.add<DoubleKeyword>("CapForcesAt", "Set force cap clamping maximum force during equilibration", capForcesAt_, 0.0);
     keywords_.add<OptionalDoubleKeyword>(
-        "CutoffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
+        "CutoffDistance", "Set the global cutoff for real-speace potentials",
         cutoffDistance_, 0.0, std::nullopt, 1.0, "Use PairPotential Range");
-    keywords_.add<DoubleKeyword>("padding", "padding", padding_, 0.0);
+    keywords_.add<DoubleKeyword>("padding", "Set padding for sizing of Verlet neighbour lists", padding_, 0.0);
     keywords_.add<EnumOptionsKeyword<DlPolyModule::Ensemble>>(
-        "Ensemble", " Set ensemble constraints", ensemble_, DlPolyModule::ensemble());
+        "Ensemble", "Set ensemble constraints, options: NVE, PMF, NVT, NPT, NST", ensemble_, DlPolyModule::ensemble());
     keywords_.add<EnumOptionsKeyword<DlPolyModule::EnsembleMethod>>(
-        "EnsembleMethod", " Set ensemble method", ensembleMethod_, DlPolyModule::ensembleMethod());
+        "EnsembleMethod", "Set ensemble method, options NVT: Evans, Langevin, Andersen, Berendsen, Hoover, gentle, ttm, dpds1, dpds2. NP|ST: Langevin, Berendsen, Hoover, MTK.", ensembleMethod_, DlPolyModule::ensembleMethod());
     keywords_.add<DoubleKeyword>("EnsembleThermostatCoupling", "Set thermostat relaxation/decorrelation times (use ensemble_thermostat_friction for langevin)", ensembleThermostatCoupling_, 0.0);
     keywords_.add<EnumOptionsKeyword<DlPolyModule::MinimisationCriterion>>(
-        "MinimisationCriterion", " Set minimisation criterion", minimisationCriterion_, DlPolyModule::minimisationCriterion());
-    keywords_.add<DoubleKeyword>("minimisationTolerance", "Minimisation Tolerance", minimisationTolerance_, 0.0);
-    keywords_.add<DoubleKeyword>("minimisationFrequency", "Minimisation Frequency", minimisationFrequency_, 0.0);     
+        "MinimisationCriterion", "Set minimisation criterion, options: off, force, energy, distance", minimisationCriterion_, DlPolyModule::minimisationCriterion());
+    keywords_.add<DoubleKeyword>("minimisationTolerance", "Set minimisation tolerance, units: determined by criterion", minimisationTolerance_, 0.0);
+    keywords_.add<DoubleKeyword>("minimisationFrequency", "Set minimisation frequency", minimisationFrequency_, 0.0);     
 }

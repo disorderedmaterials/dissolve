@@ -38,11 +38,10 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("cutoff {} nm\n", cutoffDistance.value()))
         return false;
-    if (!parser.writeLineF("padding {} ang\n", cutoffDistance.value()))
+    if (!parser.writeLineF("padding {} ang\n", padding.value()))
         return false;
     if (!parser.writeLineF("ensemble {}\n", ensemble))
         return false;
-    //anything other than NVE method and thermsostat cooling
     if (ensemble != "NVE"){
         if (!parser.writeLineF("ensemble_method {}\n", ensembleMethod))
             return false;
@@ -99,7 +98,7 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("minimisation_tolerance {}\n", minimisationTolerance))
         return false;
-    if (!parser.writeLineF("minimisation_frequency {}\n", minimisationFrequency))
+    if (!parser.writeLineF("minimisation_frequency {} steps\n", minimisationFrequency))
         return false;
 
     return true;

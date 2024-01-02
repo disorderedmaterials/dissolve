@@ -87,11 +87,11 @@ class DlPolyModule : public Module
          
     private:
     // Filename and format for CONTROL export
-    DlPolyControlExportFileFormat dlPolyControlFormat_;
+    DlPolyControlExportFileFormat(("CONTROL"), (DlPolyControlExportFormat::DLPOLY)) dlPolyControlFormat_;
     // Filename and format for FIELD export
-    DlPolyFieldExportFileFormat dlPolyFieldFormat_;
+    DlPolyFieldExportFileFormat(("FIELD"), (DlPolyFieldExportFormat::DLPOLY)) dlPolyFieldFormat_;
     // Filename and format for CONFIG export
-    CoordinateExportFileFormat coordinatesFormat_;
+    CoordinateExportFileFormat(("CONFIG"), (CoordinateExportFormat::DLPOLY)) coordinatesFormat_;
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
     // Control whether atomic forces are capped every step
