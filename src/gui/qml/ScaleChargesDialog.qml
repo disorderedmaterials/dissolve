@@ -49,11 +49,6 @@ Page {
             Row {
                 spacing: 10
 
-                Rectangle {
-                    width: 40
-                    height: 20
-                }
-
                 Button {
                     id: cancelButton
 
@@ -61,11 +56,6 @@ Page {
                     onClicked: {
                         dialogModel.cancelSelection();
                     }
-                }
-
-                Rectangle {
-                    width: 40
-                    height: 20
                 }
 
                 Button {
@@ -76,11 +66,6 @@ Page {
                         dialogModel.setOption(1);
                         dialogModel.acceptSelection();
                     }
-                }
-
-                Rectangle {
-                    width: 40
-                    height: 20
                 }
 
                 Button {
