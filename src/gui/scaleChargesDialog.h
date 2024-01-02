@@ -17,19 +17,16 @@ class ScaleChargesDialog : public QDialog
     ~ScaleChargesDialog();
     bool scale_, scaleTo_;
 
+    Q_INVOKABLE void setOption(int);
+    Q_INVOKABLE void updateValue(double);
+
     double value() const;
 
     private:
-    double currentValue_;
+    double currentValue_=1.0;
 
     signals:
     void valueSet();
-    void cancel();
-    void scale();
-    void scaleTo();
-
-    public slots:
-    void cancelClicked();
-    void scaleClicked();
-    void scaleToClicked();
+    void cancelSelection();
+    void acceptSelection();
 };

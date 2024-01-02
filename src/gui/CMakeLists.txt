@@ -92,7 +92,6 @@ set(gui_UIS
     importCIFDialog.ui
     importSpeciesDialog.ui
     intramolecularTermsDialog.ui
-    scaleChargesDialog.ui
     selectAtomTypeDialog.ui
     selectElementDialog.ui
     selectGenericItemDialog.ui

@@ -6,7 +6,8 @@ import QtQuick.Dialogs
 Dialog {
     id: root
 
-    anchors.fill: parent
+    property double value
+
     font.pointSize: 10
     visible: true
     title: "Scale Charges"
@@ -66,7 +67,8 @@ Dialog {
 
                     text: "Scale"
                     onClicked: {
-                        root.scale();
+                        root.setOption(1);
+                        root.accept();
                     }
                 }
 
@@ -80,7 +82,8 @@ Dialog {
 
                     text: "Scale To"
                     onClicked: {
-                        root.scaleTo();
+                        root.setOption(2);
+                        root.accept();
                     }
                 }
 
