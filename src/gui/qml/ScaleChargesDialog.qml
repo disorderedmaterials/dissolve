@@ -1,9 +1,9 @@
 import Dissolve
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Dialogs
+import QtQuick.Layouts
 
-Dialog {
+Page {
     id: root
 
     property double value
@@ -13,6 +13,12 @@ Dialog {
     title: "Scale Charges"
     width: 655
     height: 116
+
+    ScaleChargesDialogModel {
+        id: dialogModel
+
+        objectName: "dialogModel"
+    }
 
     contentItem: Rectangle {
         width: root.width
@@ -24,7 +30,7 @@ Dialog {
 
             Text {
                 text: "Enter the scaling factor to apply to all atoms / the target sum to determine scaling factor from"
-                font.pixelSize: 16
+                font.pixelSize: 10
             }
 
             SpinBox {
@@ -33,10 +39,10 @@ Dialog {
                 editable: true
                 from: -100
                 to: 100
-                value: root.value
+                value: dialogModel.value
                 stepSize: 1
                 onValueChanged: {
-                    root.updateValue(scaleSpinBox.value);
+                    dialogModel.updateValue(scaleSpinBox.value);
                 }
             }
 
@@ -53,7 +59,7 @@ Dialog {
 
                     text: "Cancel"
                     onClicked: {
-                        root.cancel();
+                        dialogModel.cancelSelection();
                     }
                 }
 
@@ -67,8 +73,8 @@ Dialog {
 
                     text: "Scale"
                     onClicked: {
-                        root.setOption(1);
-                        root.accept();
+                        dialogModel.setOption(1);
+                        dialogModel.acceptSelection();
                     }
                 }
 
@@ -82,8 +88,8 @@ Dialog {
 
                     text: "Scale To"
                     onClicked: {
-                        root.setOption(2);
-                        root.accept();
+                        dialogModel.setOption(2);
+                        dialogModel.acceptSelection();
                     }
                 }
 

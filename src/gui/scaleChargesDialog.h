@@ -3,30 +3,16 @@
 
 #pragma once
 
-#include "gui/ui_scaleChargesDialog.h"
+#include "gui/models/scaleChargesDialogModel.h"
 #include <QDialog>
 
 class ScaleChargesDialog : public QDialog
 {
     Q_OBJECT
 
-    Q_PROPERTY(double value READ value NOTIFY valueSet)
-
     public:
     ScaleChargesDialog(QWidget *parent);
-    ~ScaleChargesDialog();
-    bool scale_, scaleTo_;
+    ~ScaleChargesDialog() = default;
 
-    Q_INVOKABLE void setOption(int);
-    Q_INVOKABLE void updateValue(double);
-
-    double value() const;
-
-    private:
-    double currentValue_=1.0;
-
-    signals:
-    void valueSet();
-    void cancelSelection();
-    void acceptSelection();
+    ScaleChargesDialogModel *model;
 };
