@@ -30,7 +30,7 @@ Page {
 
             Text {
                 text: "Enter the scaling factor to apply to all atoms / the target sum to determine scaling factor from"
-                font.pixelSize: 10
+                font.pixelSize: 12
             }
 
             SpinBox {
