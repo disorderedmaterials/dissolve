@@ -8,12 +8,6 @@ import "../widgets" as D
 
 ColumnLayout {
     id: root
-    property AtomTypeModel atomTypeModel
-    property MasterAngleModel masterAngleModel
-    property MasterBondModel masterBondModel
-    property MasterImproperModel masterImproperModel
-    property MasterTorsionModel masterTorsionModel
-    property int rowCount
 
     anchors.fill: parent
 
@@ -36,7 +30,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nAtomTypes: atomsTypeModel.rowCount
+            atomTypeModel: dissolveModel.atomTypesModel
 
             MouseArea {
                 anchors.fill: parent
@@ -51,7 +45,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nBonds: masterBondModel.rowCount
+            nBonds: dissolveModel.masterBondsModel.rowCount
 
             MouseArea {
                 anchors.fill: parent
@@ -66,7 +60,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nAngles: masterAngleModel.rowCount
+            nAngles: dissolveModel.masterAnglesModel.rowCount
 
             MouseArea {
                 anchors.fill: parent
@@ -81,7 +75,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nTorsions: masterTorsionModel.rowCount
+            nTorsions: dissolveModel.masterTorsionsModel.rowCount
 
             MouseArea {
                 anchors.fill: parent
@@ -96,7 +90,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nImpropers: masterImproperModel.rowCount
+            nImpropers: dissolveModel.masterImpropersModel.rowCount
 
             MouseArea {
                 anchors.fill: parent

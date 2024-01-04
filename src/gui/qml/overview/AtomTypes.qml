@@ -1,3 +1,4 @@
+import Dissolve 1.0
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
