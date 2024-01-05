@@ -81,6 +81,10 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
         Messenger::print("Export: Writing TESTTEST file ({}) for Configuration '{}'...\n",
                          dlPolyControlFormat_.formatDescription(), targetConfiguration_->name());
         
+        // Set CONTROL filename and format
+        dlPolyControlFormat_.setFilename("CONTROL");
+        dlPolyControlFormat_.setFormatByIndex(0);
+        
         // Save CONTROL file with respective properties
         if (!dlPolyControlFormat_.exportData(targetConfiguration_,
                                              capForces_,
@@ -109,6 +113,10 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
             return ExecutionResult::Failed;
         }
         
+        // Set FIELD filename and format
+        dlPolyFieldFormat_.setFilename("FIELD");
+        dlPolyFieldFormat_.setFormatByIndex(0);
+        
         // Save FIELD file
         if (!dlPolyFieldFormat_.exportData(targetConfiguration_))
         {
@@ -117,7 +125,11 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
             return ExecutionResult::Failed;
         }
         
-        // Save CONFIG file in DLPOLY format
+        // Set CONFIG filename and format
+        coordinatesFormat_.setFilename("CONFIG");
+        coordinatesFormat_.setFormatByIndex(1);
+        
+        // Save CONFIG file
         if (!coordinatesFormat_.exportData(targetConfiguration_))
         {
             Messenger::print("Export: Failed to export CONFIG file '{}'.\n", coordinatesFormat_.filename());

@@ -37,7 +37,7 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("cutoff {} nm\n", cutoffDistance.value()))
         return false;
-    if (!parser.writeLineF("padding {} ang\n", padding.value()))
+    if (!parser.writeLineF("padding {} ang\n", padding))
         return false;
     if (!parser.writeLineF("ensemble {}\n", ensemble))
         return false;
