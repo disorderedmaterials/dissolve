@@ -8,7 +8,6 @@ import "../widgets" as D
 
 ColumnLayout {
     id: root
-
     anchors.fill: parent
 
     signal atomTypesClicked
