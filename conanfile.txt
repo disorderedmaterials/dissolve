@@ -3,7 +3,7 @@ cli11/1.9.1
 fmt/8.1.1
 gtest/1.10.0
 pugixml/1.11
-tbb/2020.3
+onetbb/2021.10.0
 onedpl/20200330
 toml11/3.7.0
 antlr4-cppruntime/4.9.3
