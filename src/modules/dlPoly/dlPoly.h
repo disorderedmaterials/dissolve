@@ -59,7 +59,7 @@ class DlPolyModule : public Module
     // Return EnumOptions for Ensemble
     static EnumOptions<Ensemble> ensemble();
     
-    // Ensemble Enum
+    // EnsembleMethod Enum
     enum EnsembleMethod
     {
         Evans,
@@ -73,9 +73,10 @@ class DlPolyModule : public Module
         dpds2,
         MTK,
     };
-    // Return EnumOptions for Ensemble method
+    // Return EnumOptions for EnsembleMethod
     static EnumOptions<EnsembleMethod> ensembleMethod();
     
+    // MinimisationCriterion Enum
     enum MinimisationCriterion
     {
         Off,
@@ -83,6 +84,7 @@ class DlPolyModule : public Module
         Energy,
         Distance
     };
+    // Return EnumOptions for MinimisationCriterion
     static EnumOptions<MinimisationCriterion> minimisationCriterion();
          
     private:
@@ -100,23 +102,23 @@ class DlPolyModule : public Module
     double capForcesAt_{1.0e7};
     // Interatomic cutoff distance to employ
     std::optional<double> cutoffDistance_;
-    // Padding
+    // Set Padding
     double padding_{0.0};
     // Set Ensemble
     DlPolyModule::Ensemble ensemble_{Ensemble::NVE};
-    // Set Ensemble
+    // Set Ensemble Method
     DlPolyModule::EnsembleMethod ensembleMethod_{EnsembleMethod::Evans};
     // Set Ensemble Thermostat Coupling
     double ensembleThermostatCoupling_{0.0};
     // Timestep type to employ
     bool timestepVariable_{false};
-    // Fixed timestep (ps) to use in MD simulation
+    // Set fixed timestep (ps) to use in MD simulation
     double fixedTimestep_{5.0e-4};
-    // Frequency at which to calculate total system energy
+    // Set frequency at which to calculate total system energy
     std::optional<int> energyFrequency_{10};
-    // Number of steps to perform
+    // Set number of steps to perform
     int nSteps_{50};
-    // Frequency at which to output step information
+    // Set frequency at which to output step information
     std::optional<int> outputFrequency_{5};
     // Whether random velocities should always be assigned before beginning MD simulation
     bool randomVelocities_{false};
@@ -130,9 +132,9 @@ class DlPolyModule : public Module
     double coulPrecision_{0.0}; 
     // Set MinimisationCriterion
     DlPolyModule::MinimisationCriterion minimisationCriterion_{MinimisationCriterion::Off};
-    // Minimisation Tolerance 
+    // Set Minimisation Tolerance 
     double minimisationTolerance_{0.0};
-    // Minimsation Frequency
+    // Set Minimsation Frequency
     double minimisationFrequency_{0.0};
     
     /*

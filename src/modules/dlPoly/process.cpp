@@ -51,6 +51,7 @@ EnumOptions<DlPolyModule::MinimisationCriterion> DlPolyModule::minimisationCrite
         {{MinimisationCriterion::Off, "Off"}, {MinimisationCriterion::Force, "Force"}, {MinimisationCriterion::Energy, "Energy"}, {MinimisationCriterion::Distance, "Distance"}});
 }
 
+// Execute command on cmd (MOVE TO FUNCTIONS FILE?)
 std::string exec(const char* cmd) {
     std::array<char, 128> buffer;
     std::string result;
@@ -79,7 +80,8 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
     {
         Messenger::print("Export: Writing TESTTEST file ({}) for Configuration '{}'...\n",
                          dlPolyControlFormat_.formatDescription(), targetConfiguration_->name());
-
+        
+        // Save CONTROL file with respective properties
         if (!dlPolyControlFormat_.exportData(targetConfiguration_,
                                              capForces_,
                                              capForcesAt_,
@@ -107,6 +109,7 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
             return ExecutionResult::Failed;
         }
         
+        // Save FIELD file
         if (!dlPolyFieldFormat_.exportData(targetConfiguration_))
         {
             Messenger::print("Export: Failed to export FIELD file '{}'.\n", dlPolyFieldFormat_.filename());
@@ -114,13 +117,7 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
             return ExecutionResult::Failed;
         }
         
-        if (!coordinatesFormat_.hasFilename())
-        {
-            Messenger::error("No valid file/format set for CONFIG export.\n");
-            return ExecutionResult::Failed;
-        }
-        Messenger::print("Export: Writing CONFIG file ({}) for Configuration '{}'...\n", coordinatesFormat_.formatDescription(), targetConfiguration_->name());
-
+        // Save CONFIG file in DLPOLY format
         if (!coordinatesFormat_.exportData(targetConfiguration_))
         {
             Messenger::print("Export: Failed to export CONFIG file '{}'.\n", coordinatesFormat_.filename());
@@ -128,7 +125,8 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
             return ExecutionResult::Failed;
         }
         
-        auto run = exec("./DLPOLY.Z");
+        // Run DLPOLY
+        auto run = exec("./DLPOLY.Z"); //CHANGE WHEN INSTALLATION PATH HAS BEEN DECIDED
 
         moduleContext.processPool().decideTrue();
     }

@@ -19,7 +19,6 @@ DlPolyFieldExportFileFormat::DlPolyFieldExportFileFormat(std::string_view filena
 // Export DlPolyField as Field
 bool DlPolyFieldExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg)
 {
-    // Export title
     if (!parser.writeLineF("title {} @ {}\n", cfg->name(), cfg->contentsVersion()))
         return false;
     if (!parser.writeLineF("units Kj\n"))
@@ -27,9 +26,11 @@ bool DlPolyFieldExportFileFormat::exportDLPOLY(LineParser &parser, Configuration
         
     const std::vector<std::pair<const Species *, int>> speciesPopulations = cfg->speciesPopulations();
     
+    // Export number of moleculer types
     if (!parser.writeLineF("moleculer types {}\n", speciesPopulations.size()))
         return false;
     
+    // Export number and name of molecules, and number of atoms, bonds and angles with respective properties
     for (const auto &species : speciesPopulations){
         if (!parser.writeLineF("{}\nnummols {}\natoms {}\n", species.first->name(), species.second, species.first->nAtoms())){
             return false;
@@ -58,7 +59,8 @@ bool DlPolyFieldExportFileFormat::exportDLPOLY(LineParser &parser, Configuration
         return false;
         
     int vdw = 0;
-        
+    
+    // Calculate vdw based on interaction potentials for each atom
     for (const auto &species : speciesPopulations){
         for (const auto &atom : species.first->atoms()){
             const auto params = atom.atomType()->interactionPotential().parameters();
@@ -69,7 +71,8 @@ bool DlPolyFieldExportFileFormat::exportDLPOLY(LineParser &parser, Configuration
     
     if (!parser.writeLineF("vdw {}\n", vdw))
         return false;
-        
+    
+    // Export interaction potentials and respective properties
     for (const auto &species : speciesPopulations){
         for (const auto &atom : species.first->atoms()){
             const auto params = atom.atomType()->interactionPotential().parameters();
@@ -78,7 +81,7 @@ bool DlPolyFieldExportFileFormat::exportDLPOLY(LineParser &parser, Configuration
                     return false;
         }
     }
-    if (!parser.writeLineF("close"))
+    if (!parser.writeLineF("close\n"))
         return false;    
     
     return true;

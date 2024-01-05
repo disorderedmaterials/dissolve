@@ -14,10 +14,9 @@ DlPolyControlExportFileFormat::DlPolyControlExportFileFormat(std::string_view fi
 }
 
 
-// Export DlPolyControl as CONTROL
+// Export DlPolyControl as CONTROL file
 bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg, bool capForces, double capForcesAt, std::optional<double> cutoffDistance, double padding, std::string ensemble, std::string ensembleMethod, double ensembleThermostatCoupling, bool timestepVariable, double fixedTimestep, std::optional<int> energyFrequency, int nSteps, std::optional<int> outputFrequency, bool randomVelocities, std::optional<int> trajectoryFrequency, std::string trajectoryKey, std::string coulMethod, double coulPrecision, std::string minimisationCriterion, double minimisationTolerance, double minimisationFrequency)
 {
-    // Export title
     if (!parser.writeLineF("title {} @ {}\n\n", cfg->name(), cfg->contentsVersion()))
         return false;
     if (!parser.writeLineF("io_file_config CONFIG\n"))
@@ -42,23 +41,24 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
         return false;
     if (!parser.writeLineF("ensemble {}\n", ensemble))
         return false;
+    // Export ensemble_method and ensemble_thermostat_coupling for ensemble types other than NVE     
     if (ensemble != "NVE"){
         if (!parser.writeLineF("ensemble_method {}\n", ensembleMethod))
             return false;
         if (!parser.writeLineF("ensemble_thermostat_coupling  {} ps\n", ensembleThermostatCoupling))
             return false;
-    } 
+    }
+    // Export equilibration_force_cap if capForces is true
     if (capForces && !parser.writeLineF("equilibration_force_cap {} k_b.temp/ang\n", capForcesAt))
         return false;
     if (!parser.writeLineF("time_run {} steps\n", nSteps))
         return false;
-    if (timestepVariable)
-    {
-        if (!parser.writeLineF("timestep_variable ON\n"))
-            return false;
-    }
+    // Export timestep_variable as ON if timestepVariable is true
+    if (timestepVariable && !parser.writeLineF("timestep_variable ON\n"))
+        return false;
     if (!parser.writeLineF("timestep {} internal_t\n", fixedTimestep))
         return false;
+    // Export traj_calculate, traj_interval, traj_key if trajectoryFrequency is greater than 0
     if (trajectoryFrequency.value_or(0) > 0)
     {
         if (!parser.writeLineF("traj_calculate ON\n"))
@@ -77,6 +77,7 @@ bool DlPolyControlExportFileFormat::exportDLPOLY(LineParser &parser, Configurati
     const auto sri = cfg->speciesPopulations()[0].first->atoms()[0].atomType()->interactionPotential().form();
     std::string vdw_mix_method;
     
+    // Export vdw_mix_method based on short range function type
     switch (sri)
     {
         case (ShortRangeFunctions::Form::None):
