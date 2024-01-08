@@ -53,14 +53,14 @@ void SelectSpeciesWidget::reset(int minSize, std::optional<int> maxSize)
  */
 void SelectSpeciesWidget::selectionChanged(const QItemSelection &, const QItemSelection &)
 {
-    emit(speciesSelectionChanged(isSelectionValid()));
+    Q_EMIT(speciesSelectionChanged(isSelectionValid()));
 }
 
 void SelectSpeciesWidget::on_SelectNoneButton_clicked(bool checked) { ui_.SpeciesList->clearSelection(); }
 
 void SelectSpeciesWidget::on_SelectAllButton_clicked(bool checked) { ui_.SpeciesList->selectAll(); }
 
-void SelectSpeciesWidget::on_SpeciesList_doubleClicked(const QModelIndex &index) { emit(speciesDoubleClicked()); }
+void SelectSpeciesWidget::on_SpeciesList_doubleClicked(const QModelIndex &index) { Q_EMIT(speciesDoubleClicked()); }
 
 // Return whether number of selected items is valid
 bool SelectSpeciesWidget::isSelectionValid() const

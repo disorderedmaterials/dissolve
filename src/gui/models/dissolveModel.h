@@ -51,7 +51,7 @@ class DissolveModel : public QObject
     ConfigurationModel configurationModel_;
     ModuleLayersModel moduleLayersModel_;
 
-    signals:
+    Q_SIGNALS:
     // The models might've been updated
     void modelsUpdated();
     // The Atom Types model has been replaced

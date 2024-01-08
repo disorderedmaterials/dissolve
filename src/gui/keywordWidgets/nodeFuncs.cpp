@@ -42,7 +42,7 @@ void NodeKeywordWidget::on_NodeCombo_currentIndexChanged(int index)
     else
         keyword_->setData(allowedNodes_[ui_.NodeCombo->currentIndex()]);
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void NodeKeywordWidget::on_ClearButton_clicked(bool checked)

@@ -54,7 +54,7 @@ class AccumulateModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-    private slots:
+    private Q_SLOTS:
     void on_PartialsButton_clicked(bool checked);
     void on_TotalButton_clicked(bool checked);
     void on_ModuleTargetCombo_currentIndexChanged(int index);

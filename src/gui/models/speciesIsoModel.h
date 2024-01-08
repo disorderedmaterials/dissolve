@@ -13,7 +13,7 @@ class SpeciesIsoModel : public QAbstractItemModel
     private:
     Species &species_;
 
-    public slots:
+    public Q_SLOTS:
     QModelIndex addIso();
     void removeIso(const QModelIndex &index);
 

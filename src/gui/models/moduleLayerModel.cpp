@@ -99,7 +99,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
             return false;
         moduleLayer_->modules()[index.row()] = std::move(*it);
 
-        emit dataChanged(index, index);
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }
@@ -111,7 +111,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
         auto *modulePtr = moduleLayer_->modules()[index.row()].get();
         modulePtr->setTargets(coreData_->get().configurations(), moduleLayer_->modulesAsMap(modulePtr));
 
-        emit dataChanged(index, index);
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }
@@ -125,7 +125,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
         {
             module->setEnabled(value.toBool());
 
-            emit(dataChanged(index, index));
+            Q_EMIT(dataChanged(index, index));
 
             return true;
         }
@@ -145,8 +145,8 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
                                         [&](const auto &inst) { return inst == module ? std::string() : inst->name(); });
             module->setName(newName);
 
-            emit(dataChanged(index, index));
-            emit(moduleNameChanged(index, oldName, QString::fromStdString(newName)));
+            Q_EMIT(dataChanged(index, index));
+            Q_EMIT(moduleNameChanged(index, oldName, QString::fromStdString(newName)));
 
             return true;
         }
@@ -161,7 +161,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
 
             module->setFrequency(value.toInt());
 
-            emit(dataChanged(index, index));
+            Q_EMIT(dataChanged(index, index));
 
             return true;
         }

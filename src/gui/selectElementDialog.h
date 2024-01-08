@@ -24,7 +24,7 @@ class SelectElementDialog : public QDialog
     // Main form declaration
     Ui::SelectElementDialog ui_;
 
-    private slots:
+    private Q_SLOTS:
     void on_ElementWidget_elementSelected(bool dummy);
     void on_ElementWidget_elementDoubleClicked();
     void on_SelectButton_clicked(bool checked);

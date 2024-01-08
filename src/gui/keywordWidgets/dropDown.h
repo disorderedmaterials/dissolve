@@ -34,7 +34,7 @@ class KeywordDropDown : public QWidget
     /*
      * Signals / Slots
      */
-    private slots:
+    private Q_SLOTS:
     void on_CallDropWidgetButton_clicked(bool checked);
     void dropWidgetHidden();
 

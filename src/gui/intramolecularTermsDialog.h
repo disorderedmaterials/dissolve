@@ -43,7 +43,7 @@ class IntramolecularTermsDialog : public QDialog
     SpeciesTorsionModel torsions_;
     SpeciesImproperModel impropers_;
 
-    private slots:
+    private Q_SLOTS:
     // Finish
     void on_OKButton_clicked(bool checked);
 };

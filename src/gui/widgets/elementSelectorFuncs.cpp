@@ -146,12 +146,12 @@ void ElementSelector::elementButtonClicked(bool checked)
 
     // Was this a double-click? Check the timer
     if (doubleClickTimer_.isActive())
-        emit(elementDoubleClicked());
+        Q_EMIT(elementDoubleClicked());
     else
     {
         doubleClickTimer_.start();
-        emit(elementSelectionChanged());
-        emit(elementSelected(true));
+        Q_EMIT(elementSelectionChanged());
+        Q_EMIT(elementSelected(true));
     }
 }
 

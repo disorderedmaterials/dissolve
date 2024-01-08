@@ -52,7 +52,7 @@ class OverviewTab : public QWidget, public MainTab
     /*
      * Slots
      */
-    private slots:
+    private Q_SLOTS:
     // Status of the QML view changed
     void viewStatusChanged();
     // Atom types clicked

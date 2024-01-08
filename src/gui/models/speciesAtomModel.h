@@ -16,7 +16,7 @@ class SpeciesAtomModel : public QAbstractTableModel
     Species &species_;
     const CoreData &coreData_;
 
-    signals:
+    Q_SIGNALS:
     void atomTypeChanged();
 
     public:

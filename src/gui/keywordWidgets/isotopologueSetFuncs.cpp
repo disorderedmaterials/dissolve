@@ -67,7 +67,7 @@ void IsotopologueSetKeywordWidget::modelDataChanged(const QModelIndex &topLeft, 
 {
     updateSummaryText();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void IsotopologueSetKeywordWidget::addSpeciesButton_clicked(bool checked)

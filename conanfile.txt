@@ -3,10 +3,9 @@ cli11/1.9.1
 fmt/8.1.1
 gtest/1.10.0
 pugixml/1.11
-onetbb/2021.10.0
-onedpl/20200330
+onedpl/2021.7.0
 toml11/3.7.0
-antlr4-cppruntime/4.9.3
+antlr4-cppruntime/4.13.1
 
 [generators]
 cmake
@@ -14,5 +13,4 @@ cmake
 [options]
 fmt:header_only=True
 pugixml:header_only=False
-tbb:shared=True
 antlr4-cppruntime:shared=True

@@ -143,7 +143,7 @@ bool CIFAssemblyModel::setData(const QModelIndex &index, const QVariant &value, 
     auto &group = assembly.groups()[index.row()];
     group.setActive(value.value<Qt::CheckState>() == Qt::Checked);
 
-    emit(dataChanged(index, index));
+    Q_EMIT(dataChanged(index, index));
 
     return true;
 }
