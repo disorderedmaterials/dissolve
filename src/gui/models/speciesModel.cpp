@@ -90,7 +90,7 @@ bool SpeciesModel::setData(const QModelIndex &index, const QVariant &value, int 
         else
             xitems.erase(std::remove(xitems.begin(), xitems.end(), rawData(index)), xitems.end());
 
-        emit dataChanged(index, index);
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }

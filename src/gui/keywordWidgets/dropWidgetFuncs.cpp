@@ -11,4 +11,4 @@ DropWidget::DropWidget(QWidget *parent) : QWidget(parent, Qt::FramelessWindowHin
  */
 
 // Hide event
-void DropWidget::hideEvent(QHideEvent *event) { emit(hidden()); }
+void DropWidget::hideEvent(QHideEvent *event) { Q_EMIT(hidden()); }

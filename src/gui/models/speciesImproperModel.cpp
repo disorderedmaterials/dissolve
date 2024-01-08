@@ -132,6 +132,6 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
         default:
             return false;
     }
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
 }

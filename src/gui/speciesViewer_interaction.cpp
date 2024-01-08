@@ -163,7 +163,7 @@ void SpeciesViewer::endInteraction()
 
                     // Update the selection
                     speciesRenderable_->recreateSelectionPrimitive();
-                    emit(atomsChanged());
+                    Q_EMIT(atomsChanged());
 
                     // Revert to default interaction mode
                     setInteractionMode(SpeciesViewer::InteractionMode::Select);
@@ -181,7 +181,7 @@ void SpeciesViewer::endInteraction()
                             species_->transmuteAtom(clickedAtomIndex_.value(), drawElement_);
 
                             // Notify that the data has changed
-                            emit(dataModified());
+                            Q_EMIT(dataModified());
 
                             // Update display
                             postRedisplay();
@@ -206,8 +206,8 @@ void SpeciesViewer::endInteraction()
                     speciesRenderable_->clearInteractionPrimitive();
 
                     // Notify that the data has changed
-                    emit(dataModified());
-                    emit(atomsChanged());
+                    Q_EMIT(dataModified());
+                    Q_EMIT(atomsChanged());
 
                     // Update display
                     postRedisplay();
@@ -236,8 +236,8 @@ void SpeciesViewer::endInteraction()
                     speciesRenderable_->clearInteractionPrimitive();
 
                     // Notify that the data has changed
-                    emit(dataModified());
-                    emit(atomsChanged());
+                    Q_EMIT(dataModified());
+                    Q_EMIT(atomsChanged());
 
                     // Update display
                     postRedisplay();
@@ -286,7 +286,7 @@ void SpeciesViewer::setInteractionMode(SpeciesViewer::InteractionMode mode)
 
     interactionMode_ = mode;
 
-    emit(interactionModeChanged());
+    Q_EMIT(interactionModeChanged());
 }
 
 // Return current interaction mode

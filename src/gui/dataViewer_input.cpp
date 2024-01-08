@@ -11,7 +11,7 @@ void DataViewer::mouseMoved(int dx, int dy)
     // If we are not actually interacting with the view, return now
     if (!interacting())
     {
-        emit(currentCoordinateChanged());
+        Q_EMIT(currentCoordinateChanged());
 
         return;
     }
@@ -56,7 +56,7 @@ void DataViewer::mouseMoved(int dx, int dy)
             if (view().autoFollowType() != View::NoAutoFollow)
             {
                 view().setAutoFollowType(View::NoAutoFollow);
-                emit(controlAspectChanged());
+                Q_EMIT(controlAspectChanged());
             }
 
             // If this is a flat view, shift the axis limits rather than translating the view
@@ -71,7 +71,7 @@ void DataViewer::mouseMoved(int dx, int dy)
     }
 
     // Notify any interested widgets that our current coordinate has changed
-    emit(currentCoordinateChanged());
+    Q_EMIT(currentCoordinateChanged());
 
     if (refresh)
         postRedisplay();
@@ -84,7 +84,7 @@ void DataViewer::mouseWheeled(int delta)
     if (view().autoFollowType() != View::NoAutoFollow)
     {
         view().setAutoFollowType(View::NoAutoFollow);
-        emit(controlAspectChanged());
+        Q_EMIT(controlAspectChanged());
     }
 
     auto scrollUp = delta > 0;
@@ -195,7 +195,7 @@ bool DataViewer::keyPressed(int key)
             if (view().autoFollowType() != View::NoAutoFollow)
             {
                 view().setAutoFollowType(View::NoAutoFollow);
-                emit(controlAspectChanged());
+                Q_EMIT(controlAspectChanged());
             }
 
             if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
@@ -213,7 +213,7 @@ bool DataViewer::keyPressed(int key)
             break;
         case (Qt::Key_F):
             view().cycleAutoFollowType();
-            emit(controlAspectChanged());
+            Q_EMIT(controlAspectChanged());
             break;
         case (Qt::Key_L):
             if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))

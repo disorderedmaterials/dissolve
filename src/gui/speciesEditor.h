@@ -33,13 +33,13 @@ class SpeciesEditor : public QWidget
     // Main form declaration
     Ui::SpeciesEditor ui_;
 
-    private slots:
+    private Q_SLOTS:
     // Notify that the style of displayed data in the underlying viewer has changed
     void notifyStyleModified();
     // Notify that the displayed data in the underlying viewer has changed
     void notifyDataModified();
 
-    public slots:
+    public Q_SLOTS:
     // Post redisplay in the underlying view
     void postRedisplay();
     // Update toolbar to reflect current viewer state
@@ -47,7 +47,7 @@ class SpeciesEditor : public QWidget
     // Update status bar
     void updateStatusBar();
 
-    signals:
+    Q_SIGNALS:
     // Style of displayed data has been modified
     void styleModified();
     // Displayed data has been modified
@@ -65,7 +65,7 @@ class SpeciesEditor : public QWidget
     /*
      * ToolBar
      */
-    private slots:
+    private Q_SLOTS:
     // Interaction
     void on_InteractionViewButton_clicked(bool checked);
     void on_InteractionDrawButton_clicked(bool checked);

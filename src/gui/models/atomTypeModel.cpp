@@ -128,7 +128,7 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
         else
             xitems.erase(std::remove(xitems.begin(), xitems.end(), rawData(index)), xitems.end());
 
-        emit dataChanged(index, index);
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }
@@ -170,7 +170,7 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
                 return false;
         }
 
-        emit dataChanged(index, index);
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }
@@ -233,7 +233,7 @@ void AtomTypeModel::addSuffix(int row, QString suffix)
     auto &data = atomTypes_->get()[row];
     data->setName(fmt::format("{}{}", data->name(), suffix.toStdString()));
     auto idx = index(row, 0);
-    emit dataChanged(idx, idx);
+    Q_EMIT dataChanged(idx, idx);
 }
 
 void AtomTypeModel::addPrefix(int row, QString prefix)
@@ -241,5 +241,5 @@ void AtomTypeModel::addPrefix(int row, QString prefix)
     auto &data = atomTypes_->get()[row];
     data->setName(fmt::format("{}{}", prefix.toStdString(), data->name()));
     auto idx = index(row, 0);
-    emit dataChanged(idx, idx);
+    Q_EMIT dataChanged(idx, idx);
 }

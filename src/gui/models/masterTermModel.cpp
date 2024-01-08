@@ -69,7 +69,7 @@ bool MasterTermModel::setData(const QModelIndex &index, const QVariant &value, i
     if (!setTermData(index.row(), static_cast<MasterTermModelData::DataType>(index.column()), value))
         return false;
 
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
 
     return true;
 }

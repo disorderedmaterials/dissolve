@@ -48,7 +48,7 @@ class NeutronSQModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-    private slots:
+    private Q_SLOTS:
     void on_TotalFQButton_clicked(bool checked);
     void on_PartialSQButton_clicked(bool checked);
     void on_TotalGRButton_clicked(bool checked);

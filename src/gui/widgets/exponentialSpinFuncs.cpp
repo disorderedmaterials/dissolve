@@ -55,9 +55,9 @@ void ExponentialSpin::setValue(double value)
         return;
 
     if (valueText_ == specialValueText())
-        emit(valueNullified());
+        Q_EMIT(valueNullified());
     else
-        emit(valueChanged(value_.value()));
+        Q_EMIT(valueChanged(value_.value()));
 }
 
 void ExponentialSpin::setValue(std::optional<double> value)

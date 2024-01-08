@@ -40,7 +40,7 @@ void ModuleVectorKeywordWidget::modelDataChanged(const QModelIndex &, const QMod
 
     updateSummaryText();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

@@ -30,12 +30,12 @@ class NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
     // Main form declaration
     Ui::NodeValueWidget ui_;
 
-    private slots:
+    private Q_SLOTS:
     // Value edited
     void on_ValueEdit_editingFinished();
     void on_ValueEdit_returnPressed();
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

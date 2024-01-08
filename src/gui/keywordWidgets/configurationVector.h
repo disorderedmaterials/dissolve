@@ -37,10 +37,10 @@ class ConfigurationVectorKeywordWidget : public KeywordDropDown, public KeywordW
     // Model for Configuration
     ConfigurationModel configurationModel_;
 
-    private slots:
+    private Q_SLOTS:
     void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

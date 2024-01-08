@@ -46,7 +46,7 @@ void SpeciesSiteKeywordWidget::clearDataButton_clicked(bool checked)
 
     updateSummaryText();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void SpeciesSiteKeywordWidget::siteCombo_currentIndexChanged(int index)
@@ -66,7 +66,7 @@ void SpeciesSiteKeywordWidget::siteCombo_currentIndexChanged(int index)
 
             updateSummaryText();
 
-            emit(keywordDataChanged(keyword_->editSignals()));
+            Q_EMIT(keywordDataChanged(keyword_->editSignals()));
         }
     }
 }

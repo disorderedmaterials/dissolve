@@ -22,7 +22,7 @@ class XmlTorsionModel : public QAbstractTableModel
     private:
     std::vector<XmlTorsionData> torsions_;
 
-    public slots:
+    public Q_SLOTS:
     // Read from an XML file
     void readFile(const pugi::xml_node &);
 

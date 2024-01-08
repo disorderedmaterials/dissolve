@@ -41,13 +41,17 @@ runs:
       Qt6_ROOT=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
-      # Handle ANTLR
-      cp ./deploy/antlr4-cppruntime/lib/*.dylib /usr/local/lib/
-      cp ./deploy/tbb/lib/*.dylib /usr/local/lib/
+      # Handle ANTLR & TBB
+      cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.*.dylib /usr/local/lib
+      cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib /usr/local/lib/libantlr4-runtime.dylib
+
+      for FILE in ./deploy/onetbb/lib/*.dylib; do
+        FILENAME=$(basename $FILE)
+        cp ./deploy/onetbb/lib/$FILENAME /usr/local/lib/$FILENAME
+      done
 
       install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
       install_name_tool -add_rpath "/usr/local/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
-
       ./prep-dmg -a Dissolve-GUI -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -L /usr/local/lib
 
   - name: Create Disk Image

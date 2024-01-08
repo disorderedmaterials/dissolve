@@ -89,7 +89,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
         if (!groupName.empty())
             groupManager_.addToGroup(renderable, groupName);
 
-        emit(renderableAdded());
+        Q_EMIT(renderableAdded());
 
         return renderable;
     }
@@ -105,7 +105,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
         if (!groupName.empty())
             groupManager_.addToGroup(renderable, groupName);
 
-        emit(renderableAdded());
+        Q_EMIT(renderableAdded());
 
         return renderable;
     }
@@ -121,7 +121,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
         if (!groupName.empty())
             groupManager_.addToGroup(renderable, groupName);
 
-        emit(renderableAdded());
+        Q_EMIT(renderableAdded());
 
         return renderable;
     }
@@ -142,7 +142,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Emit the signal to notify that the data has changed
     void notifyDataModified();
 
-    signals:
+    Q_SIGNALS:
     // A Renderable has been added for display
     void renderableAdded();
     // A Renderable has been removed from display
@@ -282,7 +282,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Mouse double click event
     void mouseDoubleClickEvent(QMouseEvent *event) override;
 
-    private slots:
+    private Q_SLOTS:
     // Key press event
     void keyPressEvent(QKeyEvent *) override;
     // Key release event
@@ -333,7 +333,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Calculate 2D Axes coordinate from screen coordinates
     Vec3<double> screenTo2DAxes(int mouseX, int mouseY);
 
-    signals:
+    Q_SIGNALS:
     // Notification that interaction mode has changed
     void interactionModeChanged();
 

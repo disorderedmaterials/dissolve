@@ -30,7 +30,7 @@ class Vec3NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
     // Main form declaration
     Ui::Vec3NodeValueWidget ui_;
 
-    private slots:
+    private Q_SLOTS:
     // Values edited
     void on_ValueAEdit_editingFinished();
     void on_ValueAEdit_returnPressed();
@@ -39,7 +39,7 @@ class Vec3NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
     void on_ValueCEdit_editingFinished();
     void on_ValueCEdit_returnPressed();
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

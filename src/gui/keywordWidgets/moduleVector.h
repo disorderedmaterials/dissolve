@@ -39,10 +39,10 @@ class ModuleVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBa
     // Model for combo box
     ModuleModel moduleModel_;
 
-    private slots:
+    private Q_SLOTS:
     void modelDataChanged(const QModelIndex &, const QModelIndex &);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

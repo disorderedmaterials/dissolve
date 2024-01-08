@@ -29,7 +29,7 @@ runs:
 
   - name: Install Chocolatey Dependencies
     shell: bash
-    run: choco install -y antlr4 ninja wget
+    run: choco install -y ninja wget
 
   - name: Install Python Dependencies
     shell: bash
@@ -123,6 +123,16 @@ runs:
       cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../ftgl-install
       cmake --build . --target install --config Release
 
+  - name: Get ANTLR and Java
+    working-directory: ${{ runner.temp }}
+    shell: bash
+    run: |
+      set -ex
+      wget https://www.antlr.org/download/antlr-${{ env.antlrVersion }}-complete.jar -Oantlr-${{ env.antlrVersion }}-complete.jar
+      wget https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.zip -Ojava.zip
+      unzip java.zip
+      
+
   #
   # Main Build
   #
@@ -157,15 +167,17 @@ runs:
     run: |
       # Setup environment
       Qt6_DIR="${RUNNER_TEMP}\qt\${{ env.qtVersion }}\msvc2019_64"
+      ANTLR_EXE="${RUNNER_TEMP}\antlr-${{ env.antlrVersion }}-complete.jar"
       export PATH="${Qt6_DIR}\bin;$PATH"
       INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
       LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"
       INCLUDE="${RUNNER_TEMP}\ftgl-latest\src;$INCLUDE"
       LIB="${RUNNER_TEMP}\ftgl-install\lib;$LIB"
+      JAVA_EXE="${JAVA_HOME_21_X64}\bin\java.exe"
 
       # Build
       cd build
-      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true ${{ inputs.extraCMakeFlags }}
+      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true ${{ inputs.extraCMakeFlags }}
       cmake --build . --config Release --target keywordWidgets
       cmake --build . --config Release
       cd ../

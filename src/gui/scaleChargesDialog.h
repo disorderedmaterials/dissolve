@@ -21,7 +21,7 @@ class ScaleChargesDialog : public QDialog
     public:
     double scaleValue() const;
 
-    private slots:
+    private Q_SLOTS:
     void on_CancelButton_clicked(bool checked);
     void on_ScaleButton_clicked(bool checked);
     void on_ScaleToButton_clicked(bool checked);

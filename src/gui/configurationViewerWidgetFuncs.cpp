@@ -26,10 +26,10 @@ ConfigurationViewerWidget::~ConfigurationViewerWidget() {}
  */
 
 // Notify that the style of displayed data in the underlying viewer has changed
-void ConfigurationViewerWidget::notifyStyleModified() { emit(styleModified()); }
+void ConfigurationViewerWidget::notifyStyleModified() { Q_EMIT(styleModified()); }
 
 // Notify that the displayed data in the underlying viewer has changed
-void ConfigurationViewerWidget::notifyDataModified() { emit(dataModified()); }
+void ConfigurationViewerWidget::notifyDataModified() { Q_EMIT(dataModified()); }
 
 // Post redisplay in the underlying view
 void ConfigurationViewerWidget::postRedisplay() { ui_.ConfigurationView->postRedisplay(); }

@@ -24,7 +24,7 @@ void StringKeywordWidget::lineEditTextChanged(const QString &text)
 
     keyword_->data() = qPrintable(text);
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

@@ -205,25 +205,25 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         site->setStaticOriginAtoms(species_->selectedAtoms());
         setSite(site);
         postRedisplay();
-        emit(siteCreatedAndShown());
+        Q_EMIT(siteCreatedAndShown());
     }
     else if (actionMap[selectedAction] == "SetOriginStatic")
     {
         site_->setStaticOriginAtoms(species_->selectedAtoms());
         postRedisplay();
-        emit(sitesChanged());
+        Q_EMIT(sitesChanged());
     }
     else if (actionMap[selectedAction] == "SetXStatic")
     {
         site_->setStaticXAxisAtoms(species_->selectedAtoms());
         postRedisplay();
-        emit(sitesChanged());
+        Q_EMIT(sitesChanged());
     }
     else if (actionMap[selectedAction] == "SetYStatic")
     {
         site_->setStaticYAxisAtoms(species_->selectedAtoms());
         postRedisplay();
-        emit(sitesChanged());
+        Q_EMIT(sitesChanged());
     }
     else if (actionMap[selectedAction] == "CreateDynamicElements")
     {
@@ -236,7 +236,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         site->setDynamicElements(elements);
         setSite(site);
         postRedisplay();
-        emit(siteCreatedAndShown());
+        Q_EMIT(siteCreatedAndShown());
     }
     else if (actionMap[selectedAction] == "CreateDynamicAtomTypes")
     {
@@ -249,7 +249,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         site->setDynamicAtomTypes(atomTypes);
         setSite(site);
         postRedisplay();
-        emit(siteCreatedAndShown());
+        Q_EMIT(siteCreatedAndShown());
     }
     else if (actionMap[selectedAction] == "SetDynamicElements")
     {
@@ -258,7 +258,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
             elements.push_back(i->Z());
         site_->setDynamicElements(elements);
         postRedisplay();
-        emit(sitesChanged());
+        Q_EMIT(sitesChanged());
     }
     else if (actionMap[selectedAction] == "SetDynamicAtomTypes")
     {
@@ -267,7 +267,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
             atomTypes.push_back(i->atomType());
         site_->setDynamicAtomTypes(atomTypes);
         postRedisplay();
-        emit(sitesChanged());
+        Q_EMIT(sitesChanged());
     }
     else if (actionMap[selectedAction] == "CreateFragment")
     {
@@ -275,7 +275,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         site->setType(SpeciesSite::SiteType::Fragment);
         setSite(site);
         postRedisplay();
-        emit(siteCreatedAndShown());
+        Q_EMIT(siteCreatedAndShown());
     }
     else if (DissolveSys::startsWith(actionMap[selectedAction], "Select"))
     {
@@ -290,7 +290,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
                 species_->selectAtom(i.index());
         Messenger::print("Selected {} additional atoms.\n", species_->selectedAtoms().size() - 1);
         speciesRenderable_->recreateSelectionPrimitive();
-        emit(atomsChanged());
+        Q_EMIT(atomsChanged());
         postRedisplay();
     }
 

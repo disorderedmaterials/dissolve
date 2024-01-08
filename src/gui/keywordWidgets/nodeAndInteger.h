@@ -35,11 +35,11 @@ class NodeAndIntegerKeywordWidget : public QWidget, public KeywordWidgetBase
     // Model for the node list
     ProcedureNodeModel nodeModel_;
 
-    private slots:
+    private Q_SLOTS:
     void on_IntegerSpin_valueChanged(int value);
     void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

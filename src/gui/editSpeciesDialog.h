@@ -29,7 +29,7 @@ class EditSpeciesDialog : public QDialog
     // Main form declaration
     Ui::EditSpeciesDialog ui_;
 
-    private slots:
+    private Q_SLOTS:
     void on_CancelButton_clicked(bool checked);
     void on_OKButton_clicked(bool checked);
     void dataModified();

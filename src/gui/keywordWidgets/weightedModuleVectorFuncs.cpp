@@ -45,7 +45,7 @@ void WeightedModuleVectorKeywordWidget::modelDataChanged(const QModelIndex &, co
 
     updateSummaryText();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

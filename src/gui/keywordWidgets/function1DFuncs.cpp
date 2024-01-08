@@ -79,7 +79,7 @@ void Function1DKeywordWidget::functionCombo_currentIndexChanged(int index)
 
     updateWidgetsFromData();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 // Parameter value changed
@@ -92,7 +92,7 @@ void Function1DKeywordWidget::parameterSpin_valueChanged(double value)
 
     updateSummaryText();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

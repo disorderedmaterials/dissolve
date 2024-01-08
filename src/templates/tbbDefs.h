@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 #pragma once
-#include <tbb/blocked_range2d.h>
-#include <tbb/combinable.h>
-#include <tbb/iterators.h>
-#include <tbb/parallel_reduce.h>
+#include <oneapi/dpl/iterator>
+#include <oneapi/tbb/blocked_range2d.h>
+#include <oneapi/tbb/combinable.h>
+#include <oneapi/tbb/parallel_reduce.h>
 
 namespace dissolve
 {
 
-template <typename T> using counting_iterator = tbb::counting_iterator<T>;
+template <typename T> using counting_iterator = dpl::counting_iterator<T>;
 
 template <typename T> using combinable = tbb::combinable<T>;
 

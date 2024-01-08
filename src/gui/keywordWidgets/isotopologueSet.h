@@ -38,14 +38,14 @@ class IsotopologueSetKeywordWidget : public KeywordDropDown, public KeywordWidge
     // Return valid Isotopologue names for specified model index
     std::vector<std::string> availableIsotopologueNames(const QModelIndex &index);
 
-    private slots:
+    private Q_SLOTS:
     void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
     void addSpeciesButton_clicked(bool checked);
     void addIsotopologueButton_clicked(bool checked);
     void removeButton_clicked(bool checked);
     void currentItemChanged();
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

@@ -7,14 +7,14 @@ struct FakeParallelPolicy
 #ifdef MULTITHREADING
 #include "tbbDefs.h"
 #if defined(__clang__)
-#include <pstl/algorithm>
-#include <pstl/execution>
-#include <pstl/numeric>
+#include <oneapi/dpl/algorithm>
+#include <oneapi/dpl/execution>
+#include <oneapi/dpl/numeric>
 namespace ParallelPolicies
 {
-constexpr auto par = pstl::execution::par;
-constexpr auto seq = pstl::execution::seq;
-constexpr auto par_unseq = pstl::execution::par_unseq;
+constexpr auto par = dpl::execution::par;
+constexpr auto seq = dpl::execution::seq;
+constexpr auto par_unseq = dpl::execution::par_unseq;
 } // namespace ParallelPolicies
 #else
 #include <algorithm>

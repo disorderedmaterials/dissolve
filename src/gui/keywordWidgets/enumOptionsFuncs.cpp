@@ -44,7 +44,7 @@ void EnumOptionsKeywordWidget::comboBoxIndexChanged(int index)
     // keyword structure that it has been modified
     keyword_->setEnumerationByIndex(index);
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

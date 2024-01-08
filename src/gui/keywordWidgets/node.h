@@ -35,11 +35,11 @@ class NodeKeywordWidget : public QWidget, public KeywordWidgetBase
     // Model for the node list
     ProcedureNodeModel nodeModel_;
 
-    private slots:
+    private Q_SLOTS:
     void on_NodeCombo_currentIndexChanged(int index);
     void on_ClearButton_clicked(bool checked);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

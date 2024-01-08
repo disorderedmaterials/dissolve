@@ -25,11 +25,11 @@ class DoubleKeywordWidget : public ExponentialSpin, public KeywordWidgetBase
     /*
      * Signals / Slots
      */
-    private slots:
+    private Q_SLOTS:
     // Spin box value changed
     void spinBoxValueChanged(double newValue);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

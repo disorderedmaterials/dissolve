@@ -134,4 +134,4 @@ void KeywordsWidget::updateControls(int dataMutationFlags)
  */
 
 // Keyword data changed
-void KeywordsWidget::keywordDataChanged(int keywordSignalMask) { emit(keywordChanged(keywordSignalMask)); }
+void KeywordsWidget::keywordDataChanged(int keywordSignalMask) { Q_EMIT(keywordChanged(keywordSignalMask)); }

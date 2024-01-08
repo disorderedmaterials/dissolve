@@ -60,6 +60,6 @@ class ProcedureModel : public QAbstractItemModel
     bool insertRows(int row, int count, const QModelIndex &parent) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
-    signals:
+    Q_SIGNALS:
     void nodeNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
 };

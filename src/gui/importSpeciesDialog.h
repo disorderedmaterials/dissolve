@@ -76,14 +76,14 @@ class ImportSpeciesDialog : public WizardDialog
     /*
      * Select File Page
      */
-    private slots:
+    private Q_SLOTS:
     void on_InputFileEdit_textChanged(const QString text);
     void on_InputFileSelectButton_clicked(bool checked);
 
     /*
      * Select Species Page
      */
-    private slots:
+    private Q_SLOTS:
     void speciesSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
 
     /*
@@ -93,7 +93,7 @@ class ImportSpeciesDialog : public WizardDialog
     // Update page with AtomTypes in our temporary Dissolve reference
     void updateAtomTypesPage();
 
-    private slots:
+    private Q_SLOTS:
     void atomTypeSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void on_AtomTypesPrefixButton_clicked(bool checked);
     void on_AtomTypesSuffixButton_clicked(bool checked);
@@ -104,7 +104,7 @@ class ImportSpeciesDialog : public WizardDialog
     private:
     void updateMasterTermsPage();
 
-    private slots:
+    private Q_SLOTS:
     void masterTermDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
     void masterTermSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void on_MasterTermsPrefixButton_clicked(bool checked);
@@ -113,6 +113,6 @@ class ImportSpeciesDialog : public WizardDialog
     /*
      * Species Name Page (final page)
      */
-    private slots:
+    private Q_SLOTS:
     void on_SpeciesNameEdit_textChanged(const QString text);
 };

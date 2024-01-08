@@ -111,7 +111,7 @@ bool WeightedModuleModel::setData(const QModelIndex &index, const QVariant &valu
                         return false;
                 }
 
-                emit dataChanged(index, index.siblingAtColumn(1));
+                Q_EMIT dataChanged(index, index.siblingAtColumn(1));
 
                 return true;
             }

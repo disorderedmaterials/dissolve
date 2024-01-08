@@ -36,7 +36,7 @@ void LayerKeywordWidget::on_LayerCombo_currentIndexChanged(int index)
     else
         keyword_->setData(ui_.LayerCombo->currentData(Qt::UserRole).value<ModuleLayer *>());
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void LayerKeywordWidget::on_ClearButton_clicked(bool checked)

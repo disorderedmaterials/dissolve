@@ -65,6 +65,6 @@ class ModuleLayerModel : public QAbstractTableModel
     bool removeRows(int row, int count, const QModelIndex &parent) override;
     QModelIndex appendNew(const QString &moduleTypeString);
 
-    signals:
+    Q_SIGNALS:
     void moduleNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
 };

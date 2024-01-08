@@ -25,7 +25,7 @@ class GUIOutputHandler : public QObject, public OutputHandler
     // Reset styling for normal text
     void resetStyling() override;
 
-    signals:
+    Q_SIGNALS:
     void setColour(const QColor &);
 
     /*
@@ -35,6 +35,6 @@ class GUIOutputHandler : public QObject, public OutputHandler
     // Print text
     void outputText(std::string s) override;
 
-    signals:
+    Q_SIGNALS:
     void printText(const QString &s);
 };

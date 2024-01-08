@@ -42,6 +42,14 @@ runs:
         echo "dissolveMajorVersion=${DISSOLVE_MAJOR}" >> ${GITHUB_ENV}
         echo "dissolveMinorVersion=${DISSOLVE_MINOR}" >> ${GITHUB_ENV}
         echo "dissolvePatchVersion=${DISSOLVE_PATCH}" >> ${GITHUB_ENV}
+    
+    - name: Get package versions
+      shell: bash
+      run: |
+        ANTLR_VERSION=$(cat conanfile.txt | sed -n -e 's%^.*antlr4-cppruntime/%%p')
+        echo "antlrVersion=${ANTLR_VERSION}" >> ${GITHUB_ENV}
+
+
 
     - name: Install Dependencies (OSX)
       if: ${{ runner.os == 'macos' }}
