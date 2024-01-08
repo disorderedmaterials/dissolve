@@ -135,7 +135,7 @@ class ComboListDelegate : public QItemDelegate
     /*
      * Signals / Slots
      */
-    private slots:
+    private Q_SLOTS:
     // Index changed in combo box
     void comboIndexChanged(int index);
 };

@@ -25,7 +25,7 @@ class MessagesTab : public QWidget, public MainTab
     // Output handler for messaging in GUI
     GUIOutputHandler outputHandler_;
 
-    public slots:
+    public Q_SLOTS:
     void on_MessagesIncreaseFontSizeButton_clicked(bool checked);
     void on_MessagesDecreaseFontSizeButton_clicked(bool checked);
     void clearMessages();

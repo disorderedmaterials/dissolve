@@ -38,9 +38,9 @@ void SelectGenericItemDialog::on_FilterEdit_textChanged(const QString &text) { f
 void SelectGenericItemDialog::on_ItemsList_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *prevItem)
 {
     if (currentItem)
-        emit(genericItemSelectionChanged(true));
+        Q_EMIT(genericItemSelectionChanged(true));
     else
-        emit(genericItemSelectionChanged(false));
+        Q_EMIT(genericItemSelectionChanged(false));
 }
 
 void SelectGenericItemDialog::on_ItemsList_itemDoubleClicked(QTableWidgetItem *w) { accept(); }

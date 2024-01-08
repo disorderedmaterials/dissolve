@@ -50,7 +50,7 @@ class GRModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-    private slots:
+    private Q_SLOTS:
     void on_SummedPartialsButton_clicked(bool checked);
     void on_TotalsButton_clicked(bool checked);
     void on_ConfigurationPartialsButton_clicked(bool checked);

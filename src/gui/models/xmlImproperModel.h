@@ -22,7 +22,7 @@ class XmlImproperModel : public QAbstractTableModel
     private:
     std::vector<XmlImproperData> impropers_;
 
-    public slots:
+    public Q_SLOTS:
     // Read from an XML file
     void readFile(const pugi::xml_node &);
 

@@ -124,7 +124,7 @@ bool RenderableGroupManagerModel::setData(const QModelIndex &index, const QVaria
 
         renderable->setVisible(value.toBool());
 
-        emit(dataChanged(index, index));
+        Q_EMIT(dataChanged(index, index));
         return true;
     }
     else
@@ -133,7 +133,7 @@ bool RenderableGroupManagerModel::setData(const QModelIndex &index, const QVaria
 
         group.setVisible(value.toBool());
 
-        emit(dataChanged(index, index));
+        Q_EMIT(dataChanged(index, index));
         return true;
     }
 

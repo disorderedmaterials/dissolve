@@ -48,12 +48,12 @@ class IntegerSpin : public QAbstractSpinBox
     /*
      * Signals / Slots
      */
-    private slots:
+    private Q_SLOTS:
     void returnPressed();
-    public slots:
+    public Q_SLOTS:
     void updateValueFromText();
 
-    signals:
+    Q_SIGNALS:
     void valueChanged(int);
     void valueNullified();
 

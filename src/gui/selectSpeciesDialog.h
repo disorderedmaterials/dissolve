@@ -25,7 +25,7 @@ class SelectSpeciesDialog : public QDialog
     // Main form declaration
     Ui::SelectSpeciesDialog ui_;
 
-    private slots:
+    private Q_SLOTS:
     void on_SpeciesWidget_speciesSelectionChanged(bool isValid);
     void on_SpeciesWidget_speciesDoubleClicked();
     void on_SelectButton_clicked(bool checked);

@@ -43,7 +43,7 @@ class DataManagerDialog : public QDialog
     // Update controls
     void updateControls();
 
-    private slots:
+    private Q_SLOTS:
     void on_SimulationDataFilterEdit_textChanged(const QString &text);
     void on_CloseButton_clicked(bool checked);
 };

@@ -61,7 +61,7 @@ class CopySpeciesTermsDialog : public WizardDialog
     /*
      * Select Species Page
      */
-    private slots:
+    private Q_SLOTS:
     void on_SpeciesWidget_speciesSelectionChanged(bool isValid);
     void on_SpeciesWidget_speciesDoubleClicked();
 
