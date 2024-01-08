@@ -23,6 +23,6 @@ class DropWidget : public QWidget
     /*
      * Signals
      */
-    signals:
+    Q_SIGNALS:
     void hidden();
 };

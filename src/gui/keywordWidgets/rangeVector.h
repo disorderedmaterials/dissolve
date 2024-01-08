@@ -35,12 +35,12 @@ class RangeVectorKeywordWidget : public QWidget, public KeywordWidgetBase
     // Model for combo box
     RangeVectorModel rangeVectorModel_;
 
-    private slots:
+    private Q_SLOTS:
     void modelDataChanged(const QModelIndex &, const QModelIndex &);
     void on_RangeAddButton_clicked(bool checked);
     void on_RangeRemoveButton_clicked(bool checked);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

@@ -52,7 +52,7 @@ void RangeKeywordWidget::on_Spin1_valueChanged(double value)
         return;
 
     if (keyword_->setMinimum(value))
-        emit(keywordDataChanged(keyword_->editSignals()));
+        Q_EMIT(keywordDataChanged(keyword_->editSignals()));
     else
     {
         refreshing_ = true;
@@ -68,7 +68,7 @@ void RangeKeywordWidget::on_Spin2_valueChanged(double value)
         return;
 
     if (keyword_->setMaximum(value))
-        emit(keywordDataChanged(keyword_->editSignals()));
+        Q_EMIT(keywordDataChanged(keyword_->editSignals()));
     else
     {
         refreshing_ = true;

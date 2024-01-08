@@ -38,7 +38,7 @@ void DissolveWindow::on_SimulationStepAction_triggered(bool checked) { setupIter
 
 void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked) { setupIteration(5); }
 
-void DissolveWindow::on_SimulationStopAction_triggered(bool checked) { emit(stopIterating()); }
+void DissolveWindow::on_SimulationStopAction_triggered(bool checked) { Q_EMIT(stopIterating()); }
 
 void DissolveWindow::on_SimulationSetRestartFileFrequencyAction_triggered(bool checked)
 {

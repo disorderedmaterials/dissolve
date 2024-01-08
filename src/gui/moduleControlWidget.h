@@ -68,7 +68,7 @@ class ModuleControlWidget : public QWidget
     // Map of button widgets to related stack indices
     std::map<QPushButton *, int> controlStackMap_;
 
-    private slots:
+    private Q_SLOTS:
     void switchControlStackPage(QPushButton *button);
     void keywordGroupButtonClicked(bool checked);
     void on_ModuleWidgetButton_clicked(bool checked);
@@ -78,13 +78,13 @@ class ModuleControlWidget : public QWidget
     // Prepare widget for deletion
     void prepareForDeletion();
 
-    public slots:
+    public Q_SLOTS:
     // Local keyword data changed
     void localKeywordChanged(int signalMask);
     // Global data mutated
     void globalDataMutated(int mutationFlags);
 
-    signals:
+    Q_SIGNALS:
     // Notify that the Module's data has been modified in some way
     void dataModified();
     // Notify that the active status of a module has changed

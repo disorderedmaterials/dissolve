@@ -55,7 +55,7 @@ void SpeciesViewer::setSpecies(Species *sp)
     }
 
     // Send relevant signals
-    emit(atomsChanged());
+    Q_EMIT(atomsChanged());
 }
 
 // Return target Species

@@ -30,12 +30,12 @@ class Vec3DoubleKeywordWidget : public QWidget, public KeywordWidgetBase
     // Main form declaration
     Ui::Vec3DoubleWidget ui_;
 
-    private slots:
+    private Q_SLOTS:
     void on_Spin1_valueChanged(double value);
     void on_Spin2_valueChanged(double value);
     void on_Spin3_valueChanged(double value);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

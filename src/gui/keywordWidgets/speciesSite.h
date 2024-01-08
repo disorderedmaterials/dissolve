@@ -42,18 +42,18 @@ class SpeciesSiteKeywordWidget : public KeywordDropDown, public KeywordWidgetBas
     SpeciesSiteModel siteModel_;
     SpeciesSiteFilterProxy siteFilterProxy_;
 
-    private slots:
+    private Q_SLOTS:
     void clearDataButton_clicked(bool checked);
     void siteCombo_currentIndexChanged(int index);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 
     /*
      * Update
      */
-    private slots:
+    private Q_SLOTS:
     // Update combo boxes
     void updateAvailableSpecies();
     void updateAvailableSites(int speciesIndex = -1);

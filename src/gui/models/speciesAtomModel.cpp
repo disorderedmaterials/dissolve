@@ -95,7 +95,7 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
                     return false;
                 item.setAtomType(atomType);
                 species_.updateIsotopologues();
-                emit atomTypeChanged();
+                Q_EMIT atomTypeChanged();
             }
             break;
         case 2:
@@ -111,7 +111,7 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
             species_.setAtomCharge(&item, value.toDouble());
             break;
     }
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
 }
 

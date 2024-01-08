@@ -2,11 +2,11 @@
 # - From https://github.com/antlr/antlr4/ at 6ad9646
 # - Modified by TGAY to find and use JPackage antlr4 script if present
 
-find_package(Java QUIET COMPONENTS Runtime)
+find_package(Java 11 QUIET COMPONENTS Runtime)
 
 if(NOT ANTLR_EXECUTABLE)
   find_program(ANTLR_EXECUTABLE
-               NAMES antlr4 antlr.jar antlr4.jar antlr-4.jar antlr-4.8-complete.jar)
+               NAMES antlr4 antlr.jar antlr4.jar antlr-4.jar)
 endif()
 
 # Set command to run
@@ -32,7 +32,7 @@ if(ANTLR_EXECUTABLE AND Java_JAVA_EXECUTABLE)
     message(
         SEND_ERROR
         "Command '${ANTLR_COMMAND_TO_RUN} ${ANTLR_COMMAND_ARGS}'"
-        "failed with the output '${ANTLR_COMMAND_ERROR}'")
+        "failed with the output '${ANTLR_COMMAND_OUTPUT}' '${ANTLR_COMMAND_ERROR}'")
   endif()
 
   macro(ANTLR_TARGET Name InputFile)

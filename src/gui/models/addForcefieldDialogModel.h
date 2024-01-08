@@ -66,7 +66,7 @@ class AddForcefieldDialogModel : public QObject
     };
     Q_ENUM(Page);
 
-    signals:
+    Q_SIGNALS:
     // Moved to a new page
     void indexChanged();
     // The Atom Types model has been replaced

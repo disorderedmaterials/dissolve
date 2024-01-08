@@ -39,7 +39,7 @@ void SpeciesKeywordWidget::on_SpeciesCombo_currentIndexChanged(int index)
     else
         keyword_->data() = ui_.SpeciesCombo->currentData(Qt::UserRole).value<const Species *>();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void SpeciesKeywordWidget::on_ClearButton_clicked(bool checked)
