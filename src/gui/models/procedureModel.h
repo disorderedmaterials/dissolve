@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -60,6 +60,6 @@ class ProcedureModel : public QAbstractItemModel
     bool insertRows(int row, int count, const QModelIndex &parent) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
-    signals:
+    Q_SIGNALS:
     void nodeNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
 };

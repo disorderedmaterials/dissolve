@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/layer.h"
@@ -36,7 +36,7 @@ void LayerKeywordWidget::on_LayerCombo_currentIndexChanged(int index)
     else
         keyword_->setData(ui_.LayerCombo->currentData(Qt::UserRole).value<ModuleLayer *>());
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void LayerKeywordWidget::on_ClearButton_clicked(bool checked)

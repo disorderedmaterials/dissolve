@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -33,12 +33,12 @@ class SelectForcefieldWidget : public QWidget
     // Update the list of Forcefields, optionally filtering them by name and description
     void updateForcefieldsList(std::shared_ptr<Forcefield> current = nullptr, QString filter = QString());
 
-    private slots:
+    private Q_SLOTS:
     void on_FilterEdit_textChanged(const QString &text);
     void on_ForcefieldsList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
     void on_ForcefieldsList_itemDoubleClicked(QListWidgetItem *item);
 
-    signals:
+    Q_SIGNALS:
     void forcefieldSelectionChanged(bool isValid);
     void forcefieldDoubleClicked();
 

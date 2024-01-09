@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -30,13 +30,13 @@ class NodeValueEnumOptionsKeywordWidget : public QWidget, public KeywordWidgetBa
     // Main form declaration
     Ui::NodeValueEnumOptionsWidget ui_;
 
-    private slots:
+    private Q_SLOTS:
     // Value edited
     void on_ValueEdit_editingFinished();
     void on_ValueEdit_returnPressed();
     void on_OptionsCombo_currentIndexChanged(int index);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

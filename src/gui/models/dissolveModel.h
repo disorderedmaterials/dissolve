@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -41,7 +41,7 @@ class DissolveModel : public QObject
     ConfigurationModel configurationModel_;
     ModuleLayersModel moduleLayersModel_;
 
-    signals:
+    Q_SIGNALS:
     // The models might've been updated
     void modelsUpdated();
     // The Atom Types model has been replaced

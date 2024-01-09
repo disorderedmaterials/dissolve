@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -30,11 +30,11 @@ class RangeKeywordWidget : public QWidget, public KeywordWidgetBase
     // Main form declaration
     Ui::RangeWidget ui_;
 
-    private slots:
+    private Q_SLOTS:
     void on_Spin1_valueChanged(double value);
     void on_Spin2_valueChanged(double value);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

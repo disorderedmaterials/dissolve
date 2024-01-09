@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -39,7 +39,7 @@ class SpeciesViewer : public BaseViewer
     // Mouse moved
     void mouseMoved(int dx, int dy) override;
 
-    protected slots:
+    protected Q_SLOTS:
     // Context menu requested
     void contextMenuRequested(QPoint pos) override;
 
@@ -149,7 +149,7 @@ class SpeciesViewer : public BaseViewer
     /*
      * Signals
      */
-    signals:
+    Q_SIGNALS:
     // Atom selection changed
     void atomsChanged();
     // Site created

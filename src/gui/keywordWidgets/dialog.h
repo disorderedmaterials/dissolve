@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -41,7 +41,7 @@ class KeywordsDialog : public QDialog
     /*
      * Slots
      */
-    private slots:
+    private Q_SLOTS:
     void keywordChanged(int signalMask);
     void on_OKButton_clicked(bool checked);
 };

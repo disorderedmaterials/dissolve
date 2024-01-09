@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -26,7 +26,7 @@ class SelectRestartFileDialog : public QDialog
     // Main form declaration
     Ui::SelectRestartFileDialog ui_;
 
-    private slots:
+    private Q_SLOTS:
     void itemDoubleClicked(const QModelIndex &index);
     void itemSelectionChanged(const QItemSelection &currentSelection, const QItemSelection &oldSelection);
     void pathLoadingComplete(const QString &path);

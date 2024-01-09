@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/widgets/exponentialSpin.hui"
 #include <QFocusEvent>
@@ -55,9 +55,9 @@ void ExponentialSpin::setValue(double value)
         return;
 
     if (valueText_ == specialValueText())
-        emit(valueNullified());
+        Q_EMIT(valueNullified());
     else
-        emit(valueChanged(value_.value()));
+        Q_EMIT(valueChanged(value_.value()));
 }
 
 void ExponentialSpin::setValue(std::optional<double> value)

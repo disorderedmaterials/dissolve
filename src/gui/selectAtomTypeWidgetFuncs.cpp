@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "classes/coreData.h"
@@ -41,10 +41,10 @@ void SelectAtomTypeWidget::reset() { ui_.AtomTypeList->clearSelection(); }
  */
 void SelectAtomTypeWidget::selectionChanged(const QItemSelection &, const QItemSelection &)
 {
-    emit(atomTypeSelectionChanged(currentAtomType() != nullptr));
+    Q_EMIT(atomTypeSelectionChanged(currentAtomType() != nullptr));
 }
 
-void SelectAtomTypeWidget::on_AtomTypeList_doubleClicked(const QModelIndex &index) { emit(atomTypeDoubleClicked()); }
+void SelectAtomTypeWidget::on_AtomTypeList_doubleClicked(const QModelIndex &index) { Q_EMIT(atomTypeDoubleClicked()); }
 
 // Return the currently-selected AtomType
 const std::shared_ptr<AtomType> SelectAtomTypeWidget::currentAtomType() const

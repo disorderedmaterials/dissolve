@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -140,7 +140,7 @@ class MainTabsWidget : public QTabWidget
     // List of close buttons and their associated pageWidgets
     std::vector<std::tuple<QToolButton *, QWidget *>> closeButtons_;
 
-    private slots:
+    private Q_SLOTS:
     // Context menu requested
     void contextMenuRequested(const QPoint &pos);
     // Tab close button clicked
@@ -148,7 +148,7 @@ class MainTabsWidget : public QTabWidget
     // Tab double-clicked
     void tabDoubleClicked(int index);
 
-    signals:
+    Q_SIGNALS:
     void dataModified();
     void tabClosed(QWidget *);
 };

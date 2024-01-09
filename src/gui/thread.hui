@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -25,13 +25,13 @@ class DissolveThreadWorker : public QObject
     // Number of iterations to run
     int nIterationsToRun_;
 
-    public slots:
+    public Q_SLOTS:
     // Perform the specified number of iterations (or -1 to keep going)
     void beginIterating(int nIterations);
     // Stop iterating as soon as possible
     void stopIterating();
 
-    signals:
+    Q_SIGNALS:
     void clearMessages();
     void iterated(int iterationsRemaining);
     void iterationsComplete();
@@ -50,13 +50,13 @@ class DissolveThreadController : public QObject
     DissolveThreadController(DissolveWindow *parentWindow, Dissolve &dissolve, int nIterations = -1);
     ~DissolveThreadController();
 
-    public slots:
+    public Q_SLOTS:
     // Perform the specified number of main loop iterations
     void iterate(int nIterations);
     // Stop any current iterating
     void stopIterating();
 
-    signals:
+    Q_SIGNALS:
     void workerIterate(int);
     void workerStop();
 };

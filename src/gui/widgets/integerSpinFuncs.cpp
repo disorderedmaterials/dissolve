@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/widgets/integerSpin.hui"
 #include <QFocusEvent>
@@ -52,9 +52,9 @@ void IntegerSpin::setValue(int value)
         return;
 
     if (valueText_ == specialValueText())
-        emit(valueNullified());
+        Q_EMIT(valueNullified());
     else
-        emit(valueChanged(value_));
+        Q_EMIT(valueChanged(value_));
 }
 
 void IntegerSpin::setValue(std::optional<int> value)

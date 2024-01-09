@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/procedureNodeModel.h"
 
@@ -79,7 +79,7 @@ bool ProcedureNodeModel::setData(const QModelIndex &index, const QVariant &value
                 return false;
         }
 
-        emit dataChanged(index, index);
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }

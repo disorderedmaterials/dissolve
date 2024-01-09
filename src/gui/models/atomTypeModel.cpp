@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/atomTypeModel.h"
 #include "base/sysFunc.h"
@@ -136,7 +136,7 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
         modelUpdater.setModel(this);
         modelUpdater.connectModelSignals();
 
-        emit dataChanged(index, index);
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }
@@ -178,11 +178,15 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
                 return false;
         }
 
+<<<<<<< HEAD
         // Set connections
         modelUpdater.setModel(this);
         modelUpdater.connectModelSignals();
 
         emit dataChanged(index, index);
+=======
+        Q_EMIT dataChanged(index, index);
+>>>>>>> develop
 
         return true;
     }
@@ -245,7 +249,7 @@ void AtomTypeModel::addSuffix(int row, QString suffix)
     auto &data = atomTypes_->get()[row];
     data->setName(fmt::format("{}{}", data->name(), suffix.toStdString()));
     auto idx = index(row, 0);
-    emit dataChanged(idx, idx);
+    Q_EMIT dataChanged(idx, idx);
 }
 
 void AtomTypeModel::addPrefix(int row, QString prefix)
@@ -253,5 +257,5 @@ void AtomTypeModel::addPrefix(int row, QString prefix)
     auto &data = atomTypes_->get()[row];
     data->setName(fmt::format("{}{}", prefix.toStdString(), data->name()));
     auto idx = index(row, 0);
-    emit dataChanged(idx, idx);
+    Q_EMIT dataChanged(idx, idx);
 }
