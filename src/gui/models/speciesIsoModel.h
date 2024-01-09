@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -13,7 +13,7 @@ class SpeciesIsoModel : public QAbstractItemModel
     private:
     Species &species_;
 
-    public slots:
+    public Q_SLOTS:
     QModelIndex addIso();
     void removeIso(const QModelIndex &index);
 

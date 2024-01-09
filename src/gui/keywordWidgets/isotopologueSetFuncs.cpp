@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/coreData.h"
 #include "classes/species.h"
@@ -67,7 +67,7 @@ void IsotopologueSetKeywordWidget::modelDataChanged(const QModelIndex &topLeft, 
 {
     updateSummaryText();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void IsotopologueSetKeywordWidget::addSpeciesButton_clicked(bool checked)

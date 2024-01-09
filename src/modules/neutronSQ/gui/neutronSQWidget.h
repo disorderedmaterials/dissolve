@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -48,7 +48,7 @@ class NeutronSQModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-    private slots:
+    private Q_SLOTS:
     void on_TotalFQButton_clicked(bool checked);
     void on_PartialSQButton_clicked(bool checked);
     void on_TotalGRButton_clicked(bool checked);

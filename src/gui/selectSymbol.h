@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -40,7 +40,7 @@ class SelectSymbolDialog : public QDialog
     /*
      * Slots
      */
-    public slots:
+    public Q_SLOTS:
     void on_SearchEdit_textChanged(QString text);
     void on_ClearSearchButton_clicked(bool checked);
     void on_SymbolTable_itemSelectionChanged();

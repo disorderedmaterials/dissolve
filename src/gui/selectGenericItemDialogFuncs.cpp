@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/selectGenericItemDialog.h"
 #include "main/dissolve.h"
@@ -38,9 +38,9 @@ void SelectGenericItemDialog::on_FilterEdit_textChanged(const QString &text) { f
 void SelectGenericItemDialog::on_ItemsList_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *prevItem)
 {
     if (currentItem)
-        emit(genericItemSelectionChanged(true));
+        Q_EMIT(genericItemSelectionChanged(true));
     else
-        emit(genericItemSelectionChanged(false));
+        Q_EMIT(genericItemSelectionChanged(false));
 }
 
 void SelectGenericItemDialog::on_ItemsList_itemDoubleClicked(QTableWidgetItem *w) { accept(); }

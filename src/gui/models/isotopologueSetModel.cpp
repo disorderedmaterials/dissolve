@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/isotopologueSetModel.h"
 #include "classes/species.h"
@@ -36,7 +36,7 @@ std::vector<QModelIndex> IsotopologueSetModel::addMissingSpecies(const std::vect
     for (auto n = set.nSpecies() - nAdded; n < set.nSpecies(); ++n)
         newIndices.push_back(createIndex(n, 0));
     if (!newIndices.empty())
-        emit(dataChanged(createIndex(set.nSpecies() - nAdded, 0), createIndex(set.nSpecies() - 1, 0)));
+        Q_EMIT(dataChanged(createIndex(set.nSpecies() - nAdded, 0), createIndex(set.nSpecies() - 1, 0)));
     return newIndices;
 }
 
@@ -71,7 +71,7 @@ void IsotopologueSetModel::addIsotopologueWeight(const QModelIndex index)
         }
     }
 
-    emit(dataChanged(index, index));
+    Q_EMIT(dataChanged(index, index));
 }
 
 void IsotopologueSetModel::removeIndex(const QModelIndex index)
@@ -100,7 +100,7 @@ void IsotopologueSetModel::removeIndex(const QModelIndex index)
         endRemoveRows();
     }
 
-    emit(dataChanged(index, index));
+    Q_EMIT(dataChanged(index, index));
 }
 
 /*
@@ -243,7 +243,7 @@ bool IsotopologueSetModel::setData(const QModelIndex &index, const QVariant &val
         if (!iso || iso == mixItem.isotopologue())
             return false;
         mixItem.setIsotopologue(iso);
-        emit(dataChanged(index, index));
+        Q_EMIT(dataChanged(index, index));
         return true;
     }
     else if (index.column() == 2)
@@ -252,7 +252,7 @@ bool IsotopologueSetModel::setData(const QModelIndex &index, const QVariant &val
         if (weight < 0.0)
             return false;
         mixItem.setWeight(weight);
-        emit(dataChanged(index, index));
+        Q_EMIT(dataChanged(index, index));
         return true;
     }
 

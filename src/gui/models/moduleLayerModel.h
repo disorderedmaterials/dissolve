@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -65,6 +65,6 @@ class ModuleLayerModel : public QAbstractTableModel
     bool removeRows(int row, int count, const QModelIndex &parent) override;
     QModelIndex appendNew(const QString &moduleTypeString);
 
-    signals:
+    Q_SIGNALS:
     void moduleNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -32,7 +32,7 @@ class DataWidget : public QWidget
     /*
      * Tools
      */
-    private slots:
+    private Q_SLOTS:
     // Graph
     void on_GraphResetButton_clicked(bool checked);
     void on_GraphFollowAllButton_clicked(bool checked);
@@ -47,11 +47,11 @@ class DataWidget : public QWidget
     /*
      * Update Functions
      */
-    private slots:
+    private Q_SLOTS:
     // Data tree item changed
     void renderableGroupManagerDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &);
 
-    public slots:
+    public Q_SLOTS:
     // Clear renderable data
     void clearRenderableData();
     // Update toolbar

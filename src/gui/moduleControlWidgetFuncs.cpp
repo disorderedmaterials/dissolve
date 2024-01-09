@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "gui/gui.h"
@@ -184,7 +184,7 @@ void ModuleControlWidget::localKeywordChanged(int signalMask)
         return;
 
     // Always emit the 'dataModified' signal
-    emit(dataModified());
+    Q_EMIT(dataModified());
 
     // Determine flags
     Flags<KeywordBase::KeywordSignal> keywordSignals(signalMask);

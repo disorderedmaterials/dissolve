@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -101,7 +101,7 @@ class WizardDialog : public QDialog
     // Perform any final actions before the wizard is closed
     virtual void finalise();
 
-    protected slots:
+    protected Q_SLOTS:
     // Update state of progression ('Next' / 'Finish') controls
     bool updateProgressionControls();
     // Go to previous page

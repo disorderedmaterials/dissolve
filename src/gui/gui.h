@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -55,11 +55,11 @@ class DissolveWindow : public QMainWindow
     /*
      * Data Mutation Signalling
      */
-    public slots:
+    public Q_SLOTS:
     // Flag that data has been modified via the GUI
     void setModified(Flags<DissolveSignals::DataMutations> dataMutationFlags = {});
 
-    signals:
+    Q_SIGNALS:
     void dataMutated(int);
 
     /*
@@ -95,7 +95,7 @@ class DissolveWindow : public QMainWindow
     /*
      * Update Functions
      */
-    public slots:
+    public Q_SLOTS:
     // Update window title
     void updateWindowTitle();
     // Update status bar
@@ -129,7 +129,7 @@ class DissolveWindow : public QMainWindow
     // Update recent file menu
     void updateRecentFileMenu();
 
-    public slots:
+    public Q_SLOTS:
     // File
     void on_FileNewAction_triggered(bool checked);
     void on_FileOpenAction_triggered(bool checked);
@@ -220,7 +220,7 @@ class DissolveWindow : public QMainWindow
     // Prepare the simulation and run for a set count
     void setupIteration(int count);
 
-    private slots:
+    private Q_SLOTS:
     void on_MainTabs_currentChanged(int index);
     void statusLabelLinkClicked(const QString &link);
 
@@ -230,7 +230,7 @@ class DissolveWindow : public QMainWindow
     // Return list of all current tabs
     const std::vector<MainTab *> allTabs() const;
 
-    public slots:
+    public Q_SLOTS:
     // Disable editing
     void preventEditing();
     // Allow editing
@@ -240,7 +240,7 @@ class DissolveWindow : public QMainWindow
     // Specified tab (indicated by page widget) has been closed, and relevant data should be deleted accordingly
     void closeTab(QWidget *page);
 
-    signals:
+    Q_SIGNALS:
     void iterate(int);
     void stopIterating();
 };

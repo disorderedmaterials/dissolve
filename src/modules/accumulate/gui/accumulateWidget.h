@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -54,7 +54,7 @@ class AccumulateModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-    private slots:
+    private Q_SLOTS:
     void on_PartialsButton_clicked(bool checked);
     void on_TotalButton_clicked(bool checked);
     void on_ModuleTargetCombo_currentIndexChanged(int index);

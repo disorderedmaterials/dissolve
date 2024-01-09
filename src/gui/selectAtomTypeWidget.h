@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -48,11 +48,11 @@ class SelectAtomTypeWidget : public QWidget
     /*
      * Signals / Slots
      */
-    private slots:
+    private Q_SLOTS:
     void selectionChanged(const QItemSelection &, const QItemSelection &);
     void on_AtomTypeList_doubleClicked(const QModelIndex &index);
 
-    signals:
+    Q_SIGNALS:
     void atomTypeSelectionChanged(bool isValid);
     void atomTypeDoubleClicked();
 

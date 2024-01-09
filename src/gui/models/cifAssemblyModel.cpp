@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/cifAssemblyModel.h"
 #include "classes/empiricalFormula.h"
@@ -143,7 +143,7 @@ bool CIFAssemblyModel::setData(const QModelIndex &index, const QVariant &value, 
     auto &group = assembly.groups()[index.row()];
     group.setActive(value.value<Qt::CheckState>() == Qt::Checked);
 
-    emit(dataChanged(index, index));
+    Q_EMIT(dataChanged(index, index));
 
     return true;
 }

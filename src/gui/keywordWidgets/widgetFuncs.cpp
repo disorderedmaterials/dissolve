@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/producers.h"
 #include "gui/keywordWidgets/widget.hui"
@@ -134,4 +134,4 @@ void KeywordsWidget::updateControls(int dataMutationFlags)
  */
 
 // Keyword data changed
-void KeywordsWidget::keywordDataChanged(int keywordSignalMask) { emit(keywordChanged(keywordSignalMask)); }
+void KeywordsWidget::keywordDataChanged(int keywordSignalMask) { Q_EMIT(keywordChanged(keywordSignalMask)); }

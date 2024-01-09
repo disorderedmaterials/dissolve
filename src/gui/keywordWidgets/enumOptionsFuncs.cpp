@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/enumOptions.hui"
@@ -44,7 +44,7 @@ void EnumOptionsKeywordWidget::comboBoxIndexChanged(int index)
     // keyword structure that it has been modified
     keyword_->setEnumerationByIndex(index);
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

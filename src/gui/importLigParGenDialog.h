@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -79,7 +79,7 @@ class ImportLigParGenDialog : public WizardDialog
     // Import LigParGen-style XYZ data
     bool importLigParGenXYZ(std::string filename);
 
-    private slots:
+    private Q_SLOTS:
     void on_InputXMLEdit_textChanged(QString text);
     void on_InputXMLButton_clicked(bool checked);
     void on_InputXYZEdit_textChanged(QString text);
@@ -92,7 +92,7 @@ class ImportLigParGenDialog : public WizardDialog
     // Atom types model
     AtomTypeModel atomTypeModel_;
 
-    private slots:
+    private Q_SLOTS:
     void on_SimplifyAtomTypesGroup_clicked(bool checked);
     void on_ReduceToMasterTermsGroup_clicked(bool checked);
 
@@ -103,6 +103,6 @@ class ImportLigParGenDialog : public WizardDialog
     // Attempt to manually apply our forcefield to the specified species
     bool applyForcefield(CoreData &coreData, Species *sp) const;
 
-    private slots:
+    private Q_SLOTS:
     void on_ForcefieldNameEdit_textChanged(QString text);
 };

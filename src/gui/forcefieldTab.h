@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -76,7 +76,7 @@ class ForcefieldTab : public QWidget, public MainTab
     // Signal that some AtomType parameter has been modified, so pair potentials should be regenerated
     void atomTypeDataModified();
 
-    private slots:
+    private Q_SLOTS:
     // Atom Types
     void on_AtomTypeDuplicateButton_clicked(bool checked);
     void on_AtomTypeAddButton_clicked(bool checked);

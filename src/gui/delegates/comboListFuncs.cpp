@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/delegates/comboList.hui"
 
@@ -91,6 +91,6 @@ void ComboListDelegate::comboIndexChanged(int index)
 {
     auto *editor = qobject_cast<QComboBox *>(sender());
 
-    emit commitData(editor);
-    emit closeEditor(editor);
+    Q_EMIT commitData(editor);
+    Q_EMIT closeEditor(editor);
 }
