@@ -28,7 +28,7 @@ class QSpeciesModule : public Module
     // Distance range for calculation
     Range distanceRange_{0.0, 2.5};
     // Export target
-    Data1DExportFileFormat exportFileFormat_;
+    Data1DExportFileFormat exportFileAndFormat_;
     bool export_{false};
 
     /*

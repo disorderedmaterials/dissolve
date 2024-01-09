@@ -80,8 +80,21 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     // Create the display data
     processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = qSpeciesHistogram.data();
 
-    if (export_)
-        exportFileFormat_.exportData(qSpeciesHistogram.data());
+    // if (export_)
+    //     exportFileAndFormat_.exportData(qSpeciesHistogram.data());
 
+    // Save data?
+    if (exportFileAndFormat_.hasFilename())
+    {
+        if (moduleContext.processPool().isMaster())
+        {
+            if (exportFileAndFormat_.exportData(qSpeciesHistogram.accumulatedData()))
+                moduleContext.processPool().decideTrue();
+            else
+            {
+                moduleContext.processPool().decideFalse();
+            }
+        }
+    }
     return ExecutionResult::Success;
 }
