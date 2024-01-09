@@ -23,6 +23,6 @@ class ModelUpdater : public QObject
     private:
     QAbstractItemModel *model_;
 
-    private slots:
+    private Q_SLOTS:
     void update();
 };
