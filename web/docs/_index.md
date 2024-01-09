@@ -10,7 +10,7 @@ cascade:
 
 ## Copyright / Contributors
 
-&copy; 2023 Team Dissolve and contributors
+&copy; 2024 Team Dissolve and contributors
 - Dr T. Youngs
 - Dr A. Washington (January 2020 - present)
 - D. Nixon (January 2020 - present)
