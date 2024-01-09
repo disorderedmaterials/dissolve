@@ -138,7 +138,8 @@ Module::ExecutionResult DlPolyModule::process(ModuleContext &moduleContext)
         }
         
         // Run DLPOLY
-        auto run = exec("./DLPOLY.Z"); //CHANGE WHEN INSTALLATION PATH HAS BEEN DECIDED
+        char charArr[dlPolyPath_.length() + 1];
+        auto run = exec(strcpy(charArr, dlPolyPath_.c_str()));
 
         moduleContext.processPool().decideTrue();
     }

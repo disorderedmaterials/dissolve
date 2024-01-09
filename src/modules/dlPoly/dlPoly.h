@@ -94,6 +94,8 @@ class DlPolyModule : public Module
     DlPolyFieldExportFileFormat dlPolyFieldFormat_;
     // Filename and format for CONFIG export
     CoordinateExportFileFormat coordinatesFormat_;
+    // Set DLPOLY.Z file path
+    std::string dlPolyPath_;
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
     // Control whether atomic forces are capped every step

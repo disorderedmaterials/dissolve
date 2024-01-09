@@ -11,16 +11,16 @@
 #include "keywords/enumOptions.h"
 #include "keywords/speciesVector.h"
 #include "keywords/fileAndFormat.h"
+#include "keywords/stdString.h"
 
 DlPolyModule::DlPolyModule() : Module(ModuleTypes::DlPoly)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
-
+    keywords_.add<StringKeyword>("DlPolyPath", "Filepath of ./DLPOLY.Z installation", dlPolyPath_);
+    
     keywords_.setOrganisation("Options", "Simulation");
     keywords_.add<IntegerKeyword>("NSteps", "Set duration of simulation (inc. equilibration)", nSteps_, 1);
-    keywords_.add<BoolKeyword>("VariableTimestep", 
-                               "Enable variable timestep",
-                               timestepVariable_);
+    keywords_.add<BoolKeyword>("VariableTimestep", "Enable variable timestep", timestepVariable_);
     keywords_.add<DoubleKeyword>("DeltaT", "Set calculation timestep or initial timestep for variable timestep calculations", fixedTimestep_, 0.0);
     keywords_.add<BoolKeyword>("RandomVelocities",
                                "Whether random velocities should always be assigned before beginning DlPoly simulation",
