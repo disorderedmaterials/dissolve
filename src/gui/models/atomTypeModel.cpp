@@ -178,15 +178,11 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
                 return false;
         }
 
-<<<<<<< HEAD
         // Set connections
         modelUpdater.setModel(this);
         modelUpdater.connectModelSignals();
 
-        emit dataChanged(index, index);
-=======
         Q_EMIT dataChanged(index, index);
->>>>>>> develop
 
         return true;
     }

@@ -15,7 +15,7 @@ class MasterBondModel : public MasterTermModel
 
     Q_PROPERTY(int rowCount READ rowCount NOTIFY modelsUpdated)
 
-    signals:
+    Q_SIGNALS:
     // The models might've been updated
     void modelsUpdated();
 
