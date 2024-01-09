@@ -80,9 +80,6 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     // Create the display data
     processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = qSpeciesHistogram.data();
 
-    // if (export_)
-    //     exportFileAndFormat_.exportData(qSpeciesHistogram.data());
-
     // Save data?
     if (exportFileAndFormat_.hasFilename())
     {
