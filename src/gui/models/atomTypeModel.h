@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/species.h"
+#include "gui/models/modelUpdater.h"
 #include "templates/optionalRef.h"
 #include <QAbstractTableModel>
 #include <QIcon>
@@ -15,6 +16,13 @@ class AtomTypeModel : public QAbstractListModel
 {
     Q_OBJECT
 
+    // The number of rows
+    Q_PROPERTY(int rowCount READ rowCount NOTIFY modelsUpdated)
+
+    Q_SIGNALS:
+    // The models might've been updated
+    void modelsUpdated();
+
     public:
     AtomTypeModel() = default;
     explicit AtomTypeModel(const CoreData &coreData);
@@ -22,6 +30,9 @@ class AtomTypeModel : public QAbstractListModel
     private:
     // Optional CoreData reference
     OptionalReferenceWrapper<const CoreData> coreData_;
+
+    private:
+    ModelUpdater modelUpdater;
 
     private:
     // Source AtomType data

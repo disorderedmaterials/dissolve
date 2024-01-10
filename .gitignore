@@ -31,6 +31,7 @@ build-*/
 *swp
 changes
 *.tokens
+.gdb_history
 
 # Example files
 *.beat

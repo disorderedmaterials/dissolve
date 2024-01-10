@@ -57,6 +57,8 @@ set(gui_MOC_HDRS
     thread.hui
     mainTabsBar.hui
     mainTabsWidget.hui
+    # QML type register
+    types.h
 )
 qt6_wrap_cpp(gui_MOC_SRCS ${gui_MOC_HDRS})
 
@@ -191,6 +193,8 @@ set(gui_SRCS
     stockColours.cpp
     threadFuncs.cpp
     stockColours.h
+    # QML type register
+    typesFuncs.cpp
 )
 
 # Resources

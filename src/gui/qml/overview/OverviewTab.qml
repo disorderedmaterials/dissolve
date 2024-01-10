@@ -29,7 +29,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nAtomTypes: dissolveModel.nAtomTypes
+            atomTypeModel: dissolveModel.atomTypesModel
 
             MouseArea {
                 anchors.fill: parent
@@ -44,7 +44,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nBonds: dissolveModel.nMasterBonds
+            nBonds: dissolveModel.masterBondsModel.rowCount
 
             MouseArea {
                 anchors.fill: parent
@@ -59,7 +59,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nAngles: dissolveModel.nMasterAngles
+            nAngles: dissolveModel.masterAnglesModel.rowCount
 
             MouseArea {
                 anchors.fill: parent
@@ -74,7 +74,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nTorsions: dissolveModel.nMasterTorsions
+            nTorsions: dissolveModel.masterTorsionsModel.rowCount
 
             MouseArea {
                 anchors.fill: parent
@@ -89,7 +89,7 @@ ColumnLayout {
             Layout.maximumWidth: 200
             Layout.preferredHeight: 100
             Layout.preferredWidth: 200
-            nImpropers: dissolveModel.nMasterImpropers
+            nImpropers: dissolveModel.masterImpropersModel.rowCount
 
             MouseArea {
                 anchors.fill: parent

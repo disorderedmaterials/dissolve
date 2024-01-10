@@ -17,24 +17,14 @@ class DissolveModel : public QObject
     Q_OBJECT
     // The Atom Type Model
     Q_PROPERTY(AtomTypeModel *atomTypesModel READ atomTypesModel NOTIFY atomTypesChanged)
-    // The number of atom types
-    Q_PROPERTY(int nAtomTypes READ nAtomTypes NOTIFY modelsUpdated)
     // The Master Bond Model
     Q_PROPERTY(const MasterBondModel *masterBondsModel READ masterBondsModel NOTIFY mastersChanged)
-    // The number of master bonds
-    Q_PROPERTY(int nMasterBonds READ nMasterBonds NOTIFY modelsUpdated)
     // The Master Angle Model
     Q_PROPERTY(const MasterAngleModel *masterAnglesModel READ masterAnglesModel NOTIFY mastersChanged)
-    // The number of master angles
-    Q_PROPERTY(int nMasterAngles READ nMasterAngles NOTIFY modelsUpdated)
     // The Master Torsion Model
     Q_PROPERTY(const MasterTorsionModel *masterTorsionsModel READ masterTorsionsModel NOTIFY mastersChanged)
-    // The number of master torsions
-    Q_PROPERTY(int nMasterTorsions READ nMasterTorsions NOTIFY modelsUpdated)
     // The Master Improper Model
     Q_PROPERTY(const MasterImproperModel *masterImpropersModel READ masterImpropersModel NOTIFY mastersChanged)
-    // The number of master impropers
-    Q_PROPERTY(int nMasterImpropers READ nMasterImpropers NOTIFY modelsUpdated)
     // The Species Model
     Q_PROPERTY(const SpeciesModel *speciesModel READ speciesModel NOTIFY speciesChanged)
     // The Configuration Model

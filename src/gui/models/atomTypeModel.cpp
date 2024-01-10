@@ -25,6 +25,10 @@ void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTy
     beginResetModel();
     atomTypes_ = atomTypes;
     endResetModel();
+
+    // Set connections
+    modelUpdater.setModel(this);
+    modelUpdater.connectModelSignals();
 }
 
 // Set function to return QIcon for item
@@ -128,6 +132,10 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
         else
             xitems.erase(std::remove(xitems.begin(), xitems.end(), rawData(index)), xitems.end());
 
+        // Set connections
+        modelUpdater.setModel(this);
+        modelUpdater.connectModelSignals();
+
         Q_EMIT dataChanged(index, index);
 
         return true;
@@ -169,6 +177,10 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
             default:
                 return false;
         }
+
+        // Set connections
+        modelUpdater.setModel(this);
+        modelUpdater.connectModelSignals();
 
         Q_EMIT dataChanged(index, index);
 
