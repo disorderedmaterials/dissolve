@@ -10,6 +10,10 @@ void MasterImproperModel::setSourceData(std::vector<std::shared_ptr<MasterImprop
     beginResetModel();
     sourceData_ = terms;
     endResetModel();
+
+    // Set connections
+    modelUpdater.setModel(this);
+    modelUpdater.connectModelSignals();
 }
 
 // Refresh model data

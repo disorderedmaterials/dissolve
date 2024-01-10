@@ -10,6 +10,10 @@ void MasterBondModel::setSourceData(std::vector<std::shared_ptr<MasterBond>> &te
     beginResetModel();
     sourceData_ = terms;
     endResetModel();
+
+    // Set connections
+    modelUpdater.setModel(this);
+    modelUpdater.connectModelSignals();
 }
 
 // Refresh model data
