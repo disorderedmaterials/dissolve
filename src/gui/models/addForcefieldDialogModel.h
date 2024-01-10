@@ -116,6 +116,7 @@ class AddForcefieldDialogModel : public QObject
     Radio atomTypeRadio_ = Radio::All;
     // The choice for how to handle intramolecular terms
     Radio intramolecularRadio_ = Radio::All;
+    void assignIntramolecularTerms(const Forcefield *ff);
 
     public:
     // Instantiate the model
