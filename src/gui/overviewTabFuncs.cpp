@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/gui.h"
 #include "gui/models/dissolveModelImageProvider.h"
@@ -11,10 +11,6 @@
 OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
-    qmlRegisterType<DissolveModel>("Dissolve", 1, 0, "DissolveModel");
-    qmlRegisterType<SpeciesModel>("Dissolve", 1, 0, "SpeciesModel");
-    qmlRegisterType<ConfigurationModel>("Dissolve", 1, 0, "ConfigurationModel");
-    qmlRegisterType<ModuleLayersModel>("Dissolve", 1, 0, "ModuleLayersModel");
 
     // Set up the model
     dissolveModel_.setDissolve(dissolve);

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -23,7 +23,7 @@ void BaseViewer::addRenderable(const std::shared_ptr<Renderable> &renderable)
 {
     renderables_.emplace_back(renderable);
 
-    emit(renderableAdded());
+    Q_EMIT(renderableAdded());
 }
 
 // Remove existing Renderable
@@ -36,7 +36,7 @@ void BaseViewer::removeRenderable(const std::shared_ptr<Renderable> &renderable)
 
         postRedisplay();
 
-        emit(renderableRemoved());
+        Q_EMIT(renderableRemoved());
     }
 }
 
@@ -48,7 +48,7 @@ void BaseViewer::clearRenderables()
 
     postRedisplay();
 
-    emit(renderableRemoved());
+    Q_EMIT(renderableRemoved());
 }
 
 // Attempt to validate all renderables
@@ -83,7 +83,7 @@ void BaseViewer::addRenderableToGroup(std::shared_ptr<Renderable> &renderable, s
 {
     groupManager_.addToGroup(renderable, group);
 
-    emit(renderableChanged());
+    Q_EMIT(renderableChanged());
 }
 
 /*
@@ -91,7 +91,7 @@ void BaseViewer::addRenderableToGroup(std::shared_ptr<Renderable> &renderable, s
  */
 
 // Emit the signal to notify that the viewing style of data represented in the Viewer has changed
-void BaseViewer::notifyStyleModified() { emit(styleModified()); }
+void BaseViewer::notifyStyleModified() { Q_EMIT(styleModified()); }
 
 // Emit the signal to notify that the data has changed
-void BaseViewer::notifyDataModified() { emit(dataModified()); }
+void BaseViewer::notifyDataModified() { Q_EMIT(dataModified()); }

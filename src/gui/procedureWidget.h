@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -52,7 +52,7 @@ class ProcedureWidget : public QWidget
     // Remove control widget for the specified node (if it exists)
     void removeControlWidget(ConstNodeRef node);
 
-    private slots:
+    private Q_SLOTS:
     void selectedNodeChanged(const QItemSelection &selected);
     void on_ExpandAllButton_clicked(bool checked);
     void on_CollapseAllButton_clicked(bool checked);

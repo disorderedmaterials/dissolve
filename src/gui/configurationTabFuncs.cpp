@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/units.h"
 #include "classes/box.h"
@@ -169,10 +169,18 @@ void ConfigurationTab::updateControls()
 }
 
 // Prevent editing within tab
-void ConfigurationTab::preventEditing() { ui_.GeneratorWidget->setEnabled(false); }
+void ConfigurationTab::preventEditing()
+{
+    ui_.GeneratorWidget->setEnabled(false);
+    ui_.GenerateButton->setEnabled(false);
+}
 
 // Allow editing within tab
-void ConfigurationTab::allowEditing() { ui_.GeneratorWidget->setEnabled(true); }
+void ConfigurationTab::allowEditing()
+{
+    ui_.GeneratorWidget->setEnabled(true);
+    ui_.GenerateButton->setEnabled(true);
+}
 
 /*
  * Signals / Slots

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/rangeVectorModel.h"
 #include <QBrush>
@@ -128,7 +128,7 @@ bool RangeVectorModel::setData(const QModelIndex &index, const QVariant &value, 
             {
                 range->get().setMinimum(doubleValue);
 
-                emit dataChanged(index, index.siblingAtColumn(2));
+                Q_EMIT dataChanged(index, index.siblingAtColumn(2));
                 return true;
             }
             return false;
@@ -137,7 +137,7 @@ bool RangeVectorModel::setData(const QModelIndex &index, const QVariant &value, 
             {
                 range->get().setMaximum(doubleValue);
 
-                emit dataChanged(index, index.siblingAtColumn(1));
+                Q_EMIT dataChanged(index, index.siblingAtColumn(1));
                 return true;
             }
             return false;

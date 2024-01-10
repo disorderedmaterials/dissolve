@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/species.h"
 #include "data/elements.h"
@@ -55,7 +55,7 @@ void SpeciesViewer::setSpecies(Species *sp)
     }
 
     // Send relevant signals
-    emit(atomsChanged());
+    Q_EMIT(atomsChanged());
 }
 
 // Return target Species

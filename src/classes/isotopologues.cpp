@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/isotopologues.h"
 #include "base/lineParser.h"
@@ -182,7 +182,7 @@ void Isotopologues::deserialise(const SerialisedValue &node, const CoreData &cor
                         {
                             auto iso = species_->findIsotopologue(name);
                             if (!iso)
-                                throw toml::syntax_error(fmt::format("Cannot find iso {}", name), location);
+                                throw toml::type_error(fmt::format("Cannot find iso {}", name), location);
                             add(iso, item.as_floating());
                         });
 }

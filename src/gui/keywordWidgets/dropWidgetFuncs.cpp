@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/dropWidget.hui"
 #include <stdio.h>
@@ -11,4 +11,4 @@ DropWidget::DropWidget(QWidget *parent) : QWidget(parent, Qt::FramelessWindowHin
  */
 
 // Hide event
-void DropWidget::hideEvent(QHideEvent *event) { emit(hidden()); }
+void DropWidget::hideEvent(QHideEvent *event) { Q_EMIT(hidden()); }

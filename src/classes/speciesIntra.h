@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -175,7 +175,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
                                                             [&map](const auto &name) { return map[name]; });
                                              break;
                                          default:
-                                             throw toml::syntax_error("Cannot understand parameter value", node.location());
+                                             throw toml::type_error("Cannot understand parameter value", node.location());
                                      }
                                      setInteractionFormAndParameters(interactionForm(), values);
                                  });

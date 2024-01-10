@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/empiricalFormula.h"
 #include "classes/species.h"
@@ -34,10 +34,10 @@ void SpeciesWidget::setDissolve(Dissolve *dissolve) { dissolve_ = dissolve; }
  */
 
 // Notify that the style of displayed data in the underlying viewer has changed
-void SpeciesWidget::notifyStyleModified() { emit(styleModified()); }
+void SpeciesWidget::notifyStyleModified() { Q_EMIT(styleModified()); }
 
 // Notify that the displayed data in the underlying viewer has changed
-void SpeciesWidget::notifyDataModified() { emit(dataModified()); }
+void SpeciesWidget::notifyDataModified() { Q_EMIT(dataModified()); }
 
 // Post redisplay in the underlying view
 void SpeciesWidget::postRedisplay() { ui_.SpeciesView->postRedisplay(); }

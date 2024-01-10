@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/nodeAndInteger.h"
@@ -43,7 +43,7 @@ void NodeAndIntegerKeywordWidget::on_IntegerSpin_valueChanged(int value)
 
     keyword_->setInteger(value);
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void NodeAndIntegerKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
@@ -53,7 +53,7 @@ void NodeAndIntegerKeywordWidget::modelDataChanged(const QModelIndex &topLeft, c
 
     keyword_->setNode(allowedNodes_[ui_.NodeCombo->currentIndex()]);
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -45,7 +45,7 @@ class EPSRModuleWidget : public ModuleWidget
      * Widgets / Functions
      */
 
-    private slots:
+    private Q_SLOTS:
     void on_TotalFQButton_clicked(bool checked);
     void on_DeltaFQButton_clicked(bool checked);
     void on_EstimatedSQButton_clicked(bool checked);

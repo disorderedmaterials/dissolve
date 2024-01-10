@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/interactionPotential.h"
 #include "main/dissolve.h"
@@ -34,7 +34,7 @@ void InteractionPotentialKeywordWidget::on_ParametersEdit_editingFinished()
         return;
 
     if (updateKeywordData())
-        emit(keywordDataChanged(keyword_->editSignals()));
+        Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void InteractionPotentialKeywordWidget::on_ParametersEdit_returnPressed()
@@ -43,7 +43,7 @@ void InteractionPotentialKeywordWidget::on_ParametersEdit_returnPressed()
         return;
 
     if (updateKeywordData())
-        emit(keywordDataChanged(keyword_->editSignals()));
+        Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void InteractionPotentialKeywordWidget::on_FormCombo_currentIndexChanged(int index)
@@ -53,7 +53,7 @@ void InteractionPotentialKeywordWidget::on_FormCombo_currentIndexChanged(int ind
 
     updateKeywordData();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

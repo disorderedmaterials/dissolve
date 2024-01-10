@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/speciesBondModel.h"
 #include "classes/coreData.h"
@@ -121,6 +121,6 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
         default:
             return false;
     }
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
 }

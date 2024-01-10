@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/messenger.h"
 #include "gui/gui.h"
@@ -559,7 +559,7 @@ void MainTabsWidget::contextMenuRequested(const QPoint &pos)
     }
 
     if (updateRequired)
-        emit(dataModified());
+        Q_EMIT(dataModified());
 }
 
 // Tab close button clicked
@@ -588,7 +588,7 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
     closeButtons_.erase(it);
 
     // Tell the main GUI to do the clean-up
-    emit(tabClosed(page));
+    Q_EMIT(tabClosed(page));
 }
 
 // Tab double-clicked

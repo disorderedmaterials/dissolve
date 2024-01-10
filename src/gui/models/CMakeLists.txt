@@ -47,6 +47,7 @@ set(models_MOC_HDRS
     xmlImproperModel.h
     xmlTreeModel.h
     xmlTorsionModel.h
+    modelUpdater.h
 )
 
 qt6_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
@@ -109,6 +110,7 @@ set(models_SRCS
     xmlImproperModel.cpp
     xmlTreeModel.cpp
     xmlTorsionModel.cpp
+    modelUpdater.cpp
 )
 
 qt6_wrap_cpp(

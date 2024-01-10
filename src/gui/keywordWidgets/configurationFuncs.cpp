@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/coreData.h"
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
@@ -36,7 +36,7 @@ void ConfigurationKeywordWidget::on_ConfigurationCombo_currentIndexChanged(int i
     else
         keyword_->data() = ui_.ConfigurationCombo->currentData(Qt::UserRole).value<Configuration *>();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void ConfigurationKeywordWidget::on_ClearButton_clicked(bool checked)

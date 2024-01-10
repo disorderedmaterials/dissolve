@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/procedureModel.h"
 #include "gui/models/procedureModelMimeData.h"
@@ -152,8 +152,8 @@ bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, in
 
         node->setName(uniqueName);
 
-        emit(dataChanged(index, index));
-        emit(nodeNameChanged(index, QString::fromStdString(oldName), QString::fromStdString(newName)));
+        Q_EMIT(dataChanged(index, index));
+        Q_EMIT(nodeNameChanged(index, QString::fromStdString(oldName), QString::fromStdString(newName)));
 
         return true;
     }
@@ -161,7 +161,7 @@ bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, in
     {
         // Nothing to set here - everything has already been handled by dropMimeData().
         // We just need to flag that the data have changed.
-        emit dataChanged(index, index);
+        Q_EMIT dataChanged(index, index);
         return true;
     }
     else if (role == ProcedureModelAction::CreateNew)
@@ -173,7 +173,7 @@ bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, in
 
         // Insertion of the node into the sequence will have been performed in dropMimeData() for convenience.
         // All we need to do here is flag that the data have changed.
-        emit dataChanged(index, index);
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }
@@ -473,6 +473,6 @@ bool ProcedureModel::removeRows(int row, int count, const QModelIndex &parent)
         scope->get().removeNode(data(index(row + i, 0), Qt::UserRole).value<std::shared_ptr<ProcedureNode>>());
     endRemoveRows();
 
-    emit(dataChanged(QModelIndex(), QModelIndex()));
+    Q_EMIT(dataChanged(QModelIndex(), QModelIndex()));
     return true;
 }

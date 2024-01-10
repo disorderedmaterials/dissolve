@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/addForcefieldDialogModel.h"
 #include "data/ff/library.h"
@@ -50,7 +50,7 @@ void AddForcefieldDialogModel::next()
     {
         case AddForcefieldDialogModel::Page::SelectForcefieldPage:
             index_ = AddForcefieldDialogModel::Page::AtomTypesPage;
-            emit assignErrors({});
+            Q_EMIT assignErrors({});
             break;
         case AddForcefieldDialogModel::Page::AtomTypesPage:
             if (!ff_) // No valud forcefield
@@ -63,7 +63,7 @@ void AddForcefieldDialogModel::next()
             for (auto &&[targetI, modifiedI] : zip(species_->atoms(), modifiedSpecies_->atoms()))
                 modifiedI.setSelected(targetI.isSelected());
 
-            emit assignErrors({});
+            Q_EMIT assignErrors({});
             // Determine atom types
             switch (atomTypeRadio_)
             {
@@ -87,7 +87,7 @@ void AddForcefieldDialogModel::next()
 
             if (!assignErrs.empty())
             {
-                emit assignErrors({assignErrs.begin(), assignErrs.end()});
+                Q_EMIT assignErrors({assignErrs.begin(), assignErrs.end()});
                 return;
             }
 
@@ -95,7 +95,7 @@ void AddForcefieldDialogModel::next()
                 originalAtomTypeNames_.emplace_back(std::string(at->name()));
 
             atomTypes_.setData(temporaryCoreData_.atomTypes());
-            emit atomTypesIndicatorChanged();
+            Q_EMIT atomTypesIndicatorChanged();
 
             // checkAtomTypeConflicts();
             index_ = AddForcefieldDialogModel::Page::AtomTypesConflictsPage;
@@ -104,7 +104,7 @@ void AddForcefieldDialogModel::next()
             index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
             break;
         case AddForcefieldDialogModel::Page::IntramolecularPage:
-            emit mastersChanged();
+            Q_EMIT mastersChanged();
             index_ = AddForcefieldDialogModel::Page::MasterTermsPage;
             break;
         case AddForcefieldDialogModel::Page::MasterTermsPage:
@@ -248,8 +248,7 @@ void AddForcefieldDialogModel::finalise()
     }
 
     // Assign intramolecular terms if we need to
-    // if (!intramolecularTermsAssigned_)
-    //	assignIntramolecularTerms(ui_.ForcefieldWidget->currentForcefield().get());
+    assignIntramolecularTerms(ff_);
 
     // Copy intramolecular terms
     if (intramolecularRadio_ != Radio::None)
@@ -391,5 +390,34 @@ Forcefield *AddForcefieldDialogModel::ff() const { return ff_; }
 void AddForcefieldDialogModel::setFf(Forcefield *f)
 {
     ff_ = f;
-    emit progressionAllowedChanged();
+    Q_EMIT progressionAllowedChanged();
+}
+
+// Assign intramolecular terms to species
+void AddForcefieldDialogModel::assignIntramolecularTerms(const Forcefield *ff)
+{
+    // Detach any MasterTerm references, and delete the MasterTerms
+    modifiedSpecies_->detachFromMasterTerms();
+    temporaryCoreData_.clearMasterTerms();
+
+    // Assign intramolecular terms
+    if (intramolecularRadio_ != Radio::None)
+    {
+        auto flags = 0;
+        if (ignoreCurrentTypes_)
+            flags += Forcefield::DetermineTypesFlag;
+        if (!noImproperTerms_)
+            flags += Forcefield::GenerateImpropersFlag;
+        if (intramolecularRadio_ == Radio::Selected)
+            flags += Forcefield::SelectionOnlyFlag;
+
+        if (!ff->assignIntramolecular(modifiedSpecies_, flags))
+            // Assigning failed
+            return;
+
+        // Reduce to master terms?
+        if (!noMasterTerms_)
+            modifiedSpecies_->reduceToMasterTerms(temporaryCoreData_, intramolecularRadio_ == Radio::Selected);
+    }
+    return;
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "data/ff/ff.h"
 #include "gui/selectForcefieldWidget.h"
@@ -37,7 +37,7 @@ void SelectForcefieldWidget::updateForcefieldsList(std::shared_ptr<Forcefield> c
         if (ff == current)
         {
             ui_.ForcefieldsList->setCurrentRow(n);
-            emit(forcefieldSelectionChanged(true));
+            Q_EMIT(forcefieldSelectionChanged(true));
         }
 
         // Check filtering
@@ -63,7 +63,7 @@ void SelectForcefieldWidget::updateForcefieldsList(std::shared_ptr<Forcefield> c
             if (hide && item->isSelected())
             {
                 ui_.ForcefieldsList->setCurrentRow(-1);
-                emit(forcefieldSelectionChanged(false));
+                Q_EMIT(forcefieldSelectionChanged(false));
             }
         }
     }
@@ -76,7 +76,7 @@ void SelectForcefieldWidget::on_ForcefieldsList_currentItemChanged(QListWidgetIt
     if (!current)
     {
         ui_.ForcefieldDetailsTextEdit->clear();
-        emit(forcefieldSelectionChanged(false));
+        Q_EMIT(forcefieldSelectionChanged(false));
         return;
     }
 
@@ -86,7 +86,7 @@ void SelectForcefieldWidget::on_ForcefieldsList_currentItemChanged(QListWidgetIt
     // Update the informational text
     ui_.ForcefieldDetailsTextEdit->setText(QString::fromStdString(std::string(ff->description())));
 
-    emit(forcefieldSelectionChanged(true));
+    Q_EMIT(forcefieldSelectionChanged(true));
 }
 
 void SelectForcefieldWidget::on_ForcefieldsList_itemDoubleClicked(QListWidgetItem *item)
@@ -94,7 +94,7 @@ void SelectForcefieldWidget::on_ForcefieldsList_itemDoubleClicked(QListWidgetIte
     if (!item)
         return;
 
-    emit(forcefieldDoubleClicked());
+    Q_EMIT(forcefieldDoubleClicked());
 }
 
 // Set the current forcefield

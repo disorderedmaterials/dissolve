@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "keywords/moduleVector.h"
 #include "base/lineParser.h"
@@ -104,13 +104,13 @@ void ModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreDat
                  auto title = toml::get<std::string>(item);
                  auto *module = Module::find(coreData, title);
                  if (!module)
-                     throw toml::syntax_error(fmt::format("No Module named '{}' exists.\n", title), item.location());
+                     throw toml::type_error(fmt::format("No Module named '{}' exists.\n", title), item.location());
 
                  // Check the module's type if we can
                  if (!moduleTypes_.empty() &&
                      std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(),
                                   [module](const auto &s) { return s == module->type(); }) == moduleTypes_.cend())
-                     throw toml::syntax_error(
+                     throw toml::type_error(
                          fmt::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
                                      title, module->type(), name(), joinStrings(moduleTypes_)),
                          item.location());

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/messenger.h"
 #include "gui/dataViewer.hui"
@@ -76,7 +76,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
         if (selectedAction == hideAction)
         {
             renderable->setVisible(false);
-            emit(renderableChanged());
+            Q_EMIT(renderableChanged());
         }
         else if (selectedAction == saveAsAction)
         {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -25,7 +25,7 @@ class MessagesTab : public QWidget, public MainTab
     // Output handler for messaging in GUI
     GUIOutputHandler outputHandler_;
 
-    public slots:
+    public Q_SLOTS:
     void on_MessagesIncreaseFontSizeButton_clicked(bool checked);
     void on_MessagesDecreaseFontSizeButton_clicked(bool checked);
     void clearMessages();

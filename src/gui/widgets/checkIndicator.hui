@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -35,7 +35,7 @@ class CheckIndicator : public QLabel
     // Update state icon
     void updateStateIcon();
 
-    public slots:
+    public Q_SLOTS:
     // Set indicator to OK (green tick)
     void setOK(bool isOK = true);
     // Set indicator to Not OK (red cross)

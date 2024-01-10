@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/masterTermModel.h"
 
@@ -69,7 +69,7 @@ bool MasterTermModel::setData(const QModelIndex &index, const QVariant &value, i
     if (!setTermData(index.row(), static_cast<MasterTermModelData::DataType>(index.column()), value))
         return false;
 
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
 
     return true;
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -100,7 +100,10 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
      */
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    appliedSizeFactor_ = parser.argd(3);
+    if (parser.argd(3) > 1.0)
+        appliedSizeFactor_ = parser.argd(3);
+    else
+        appliedSizeFactor_ = std::nullopt;
     requestedSizeFactor_ = parser.argd(4);
     auto nonPeriodic = parser.argb(5);
     const auto lengths = parser.arg3d(0) / appliedSizeFactor_.value_or(defaultSizeFactor_);

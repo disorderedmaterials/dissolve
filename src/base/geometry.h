@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -56,7 +56,7 @@ template <> struct from<Geometry::GeometryType>
         else if (typeString == "torsion")
             return Geometry::GeometryType::TorsionType;
         else
-            throw toml::syntax_error(
+            throw toml::type_error(
                 fmt::format("Unhandled geometry type '{}' - can't convert from TOML value.\n", std::string(typeString)),
                 node.location());
     }
