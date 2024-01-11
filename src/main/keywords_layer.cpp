@@ -103,7 +103,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                 if (parser.hasArg(2))
                 {
                     niceName = DissolveSys::niceName(parser.argsv(2));
-                    auto *existingModule = Module::find(dissolve->coreData(), niceName);
+                    auto *existingModule = dissolve->coreData().findModule(niceName);
                     if (existingModule && (existingModule != module))
                     {
                         Messenger::error("A Module with the unique name '{}' already exists.\n", niceName);

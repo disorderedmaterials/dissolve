@@ -192,7 +192,7 @@ void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
     auto *epsr = dynamic_cast<EPSRModule *>(ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::EPSR, newLayer));
 
     // Set any suitable module targets
-    epsr->keywords().set("Target", Module::allOfType(dissolve_.coreData(), ModuleTypes::NeutronSQ));
+    epsr->keywords().set("Target", dissolve_.coreData().allOfType(ModuleTypes::NeutronSQ));
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
 

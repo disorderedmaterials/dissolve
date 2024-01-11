@@ -56,7 +56,7 @@ void ModuleKeywordWidget::updateAllowedModules()
     refreshing_ = true;
 
     // Update allowed modules
-    allowedModules_ = Module::allOfType(coreData_, keyword_->moduleType());
+    allowedModules_ = coreData_.allOfType(keyword_->moduleType());
     moduleModel_.setData(allowedModules_);
 
     // Set current index based on keyword data

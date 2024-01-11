@@ -47,7 +47,7 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Find specified Module by its unique name
-        auto *module = Module::find(coreData, parser.argsv(n));
+        auto *module = coreData.findModule(parser.argsv(n));
         if (!module)
             return Messenger::error("No Module named '{}' exists.\n", parser.argsv(n));
 
@@ -102,7 +102,7 @@ void ModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreDat
              [this, &coreData](const auto &item)
              {
                  auto title = toml::get<std::string>(item);
-                 auto *module = Module::find(coreData, title);
+                 auto *module = coreData.findModule(title);
                  if (!module)
                      throw toml::type_error(fmt::format("No Module named '{}' exists.\n", title), item.location());
 

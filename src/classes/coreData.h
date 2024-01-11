@@ -7,6 +7,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "data/elements.h"
+#include "module/types.h"
 #include "templates/optionalRef.h"
 #include <list>
 #include <memory>
@@ -189,13 +190,34 @@ class CoreData
     Configuration *findConfigurationByNiceName(std::string_view name) const;
 
     /*
-     * Layers
+     * Layers and Modules
      */
     private:
     // List of defined processing layers
     std::vector<std::unique_ptr<ModuleLayer>> processingLayers_;
 
     public:
+    // Return vector of all existing Modules
+    const std::vector<Module *> moduleInstances() const;
+    // Search for any instance of any module with the specified unique name
+    Module *findModule(std::string_view uniqueName) const;
+    // Search for and return any instance(s) of the specified Module type
+    std::vector<Module *> allOfType(ModuleTypes::ModuleType type) const;
+    std::vector<Module *> allOfType(std::vector<ModuleTypes::ModuleType> types) const;
+    template <class M> std::vector<M *> allOfType() const
+    {
+        std::vector<M *> results;
+
+        for (auto *module : moduleInstances())
+        {
+            M *castModule = dynamic_cast<M *>(module);
+            if (castModule)
+                results.push_back(castModule);
+        }
+
+        return results;
+    }
+
     // Add new processing layer
     ModuleLayer *addProcessingLayer();
     // Remove processing layer

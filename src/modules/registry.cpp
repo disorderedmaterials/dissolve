@@ -135,7 +135,7 @@ std::unique_ptr<Module> ModuleRegistry::create(CoreData &coreData, ModuleTypes::
     auto m = std::unique_ptr<Module>(instance().produce(type));
 
     if (m)
-        m->setName(DissolveSys::uniqueName(ModuleTypes::moduleType(m->type()), Module::instances(coreData),
+        m->setName(DissolveSys::uniqueName(ModuleTypes::moduleType(m->type()), coreData.moduleInstances(),
                                            [&](const auto &inst) { return inst == m.get() ? std::string() : inst->name(); }));
     return m;
 }

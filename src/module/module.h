@@ -8,6 +8,7 @@
 #include "keywords/configurationVector.h"
 #include "keywords/store.h"
 #include "math/sampledDouble.h"
+#include "module/types.h"
 
 // Forward Declarations
 class Dissolve;
@@ -15,57 +16,6 @@ class Configuration;
 class ModuleWidget;
 class ModuleContext;
 class QWidget;
-
-// Module Types
-namespace ModuleTypes
-{
-enum ModuleType
-{
-    Accumulate,
-    Analyse,
-    Angle,
-    AtomShake,
-    AvgMol,
-    AxisAngle,
-    Benchmark,
-    Bragg,
-    Checks,
-    CheckSpecies,
-    Compare,
-    DAngle,
-    DataTest,
-    Energy,
-    EPSR,
-    ExportCoordinates,
-    ExportPairPotentials,
-    ExportTrajectory,
-    Forces,
-    GeometryOptimisation,
-    GR,
-    HistogramCN,
-    ImportTrajectory,
-    IntraAngle,
-    IntraDistance,
-    IntraShake,
-    MD,
-    MolShake,
-    NeutronSQ,
-    OrientedSDF,
-    QSpecies,
-    SDF,
-    SiteRDF,
-    Skeleton,
-    SQ,
-    Test,
-    XRaySQ
-};
-// Return module type string for specified type enumeration
-std::string moduleType(ModuleTypes::ModuleType type);
-// Return the lowerCamelCase name of the module type provided
-std::string lccModuleType(ModuleTypes::ModuleType type);
-// Return module type enumeration for specified module type string
-std::optional<ModuleTypes::ModuleType> moduleType(std::string_view keyword);
-}; // namespace ModuleTypes
 
 // Module
 class Module : public Serialisable<const CoreData &>
@@ -167,26 +117,6 @@ class Module : public Serialisable<const CoreData &>
     bool readProcessTimes(LineParser &parser);
 
     public:
-    // Return vector of all existing Modules
-    const static std::vector<Module *> instances(const CoreData &coreData);
-    // Search for any instance of any module with the specified unique name
-    static Module *find(const CoreData &coreData, std::string_view uniqueName);
-    // Search for and return any instance(s) of the specified Module type
-    static std::vector<Module *> allOfType(const CoreData &coreData, ModuleTypes::ModuleType type);
-    static std::vector<Module *> allOfType(const CoreData &coreData, std::vector<ModuleTypes::ModuleType> types);
-    template <class M> static std::vector<M *> allOfType(const CoreData &coreData)
-    {
-        std::vector<M *> results;
-
-        for (auto *module : instances(coreData))
-        {
-            M *castModule = dynamic_cast<M *>(module);
-            if (castModule)
-                results.push_back(castModule);
-        }
-
-        return results;
-    }
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value

@@ -220,46 +220,6 @@ bool Module::readProcessTimes(LineParser &parser) { return processTimes_.deseria
  * Management
  */
 
-// Return vector of all existing Modules
-// FIXME: Actually return a value
-const std::vector<Module *> Module::instances(const CoreData &coreData)
-{
-    std::vector<Module *> result{};
-    for (auto &layer : coreData.processingLayers())
-        std::transform(layer->modules().begin(), layer->modules().end(), std::back_inserter(result),
-                       [](auto &source) { return source.get(); });
-
-    return result;
-}
-
-// Search for any instance of any module with the specified unique name
-Module *Module::find(const CoreData &coreData, std::string_view uniqueName)
-{
-    std::vector<Module *> instances = Module::instances(coreData);
-    auto it = std::find_if(instances.begin(), instances.end(),
-                           [uniqueName](const auto *m) { return DissolveSys::sameString(m->name(), uniqueName); });
-    if (it != instances.end())
-        return *it;
-
-    return nullptr;
-}
-
-// Search for and return any instance(s) of the specified Module type
-std::vector<Module *> Module::allOfType(const CoreData &coreData, ModuleTypes::ModuleType type)
-{
-    return allOfType(coreData, std::vector<ModuleTypes::ModuleType>{type});
-}
-
-// Search for and return any instance(s) of the specified Module type
-std::vector<Module *> Module::allOfType(const CoreData &coreData, std::vector<ModuleTypes::ModuleType> types)
-{
-    std::vector<Module *> modules;
-    auto instances_ = instances(coreData);
-    std::copy_if(instances_.begin(), instances_.end(), std::back_inserter(modules),
-                 [&types](const auto *m) { return std::find(types.begin(), types.end(), m->type()) != types.end(); });
-    return modules;
-}
-
 // Express as a serialisable value
 SerialisedValue Module::serialise() const
 {
