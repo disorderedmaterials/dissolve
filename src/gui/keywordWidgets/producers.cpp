@@ -86,9 +86,6 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<WeightedModuleVectorKeyword, WeightedModuleVectorKeywordWidget>();
 
     // Keywords with no widgets
-    registerNullProducer<Data1DStoreKeyword>();
-    registerNullProducer<Data2DStoreKeyword>();
-    registerNullProducer<Data3DStoreKeyword>();
     registerNullProducer<DataSourceKeywordBase>();
     registerNullProducer<DataSourceKeyword<Data1D>>();
     registerNullProducer<DataSourceKeyword<Data2D>>();
