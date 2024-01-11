@@ -6,8 +6,7 @@
 #include "gui/keywordWidgets/dialog.h"
 #include "keywords/organiser.h"
 
-KeywordsDialog::KeywordsDialog(QWidget *parent, const KeywordStore &keywordStore, CoreData &coreData)
-    : coreData_(coreData)
+KeywordsDialog::KeywordsDialog(QWidget *parent, const KeywordStore &keywordStore, CoreData &coreData) : coreData_(coreData)
 {
     ui_.setupUi(this);
 

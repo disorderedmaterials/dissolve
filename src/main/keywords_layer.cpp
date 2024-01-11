@@ -67,7 +67,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
             case (LayerBlock::ModuleKeyword):
                 // The argument following the keyword is the module type, so try to create an instance of that type
                 if (ModuleTypes::moduleType(parser.argsv(1)))
-		    module = ModuleRegistry::create(dissolve->coreData(), *ModuleTypes::moduleType(parser.argsv(1)), layer);
+                    module = ModuleRegistry::create(dissolve->coreData(), *ModuleTypes::moduleType(parser.argsv(1)), layer);
                 else
                 {
                     // In case a legacy module name is given, attempt to map the provided moduleType to the current namespace.

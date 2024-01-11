@@ -105,8 +105,8 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
     }
     else if (role == ModuleLayerModelAction::CreateNew)
     {
-	if (!coreData_)
-	    return false;
+        if (!coreData_)
+            return false;
         // Probably indicates a drop operation - the "value" is the type of the module to create at the specified index
         auto moduleType = (ModuleTypes::ModuleType)value.toInt();
         moduleLayer_->modules()[index.row()] = ModuleRegistry::create(*coreData_, moduleType);

@@ -178,7 +178,7 @@ class Module : public Serialisable<const CoreData &>
     {
         std::vector<M *> results;
 
-	for (auto *module : instances(coreData))
+        for (auto *module : instances(coreData))
         {
             M *castModule = dynamic_cast<M *>(module);
             if (castModule)

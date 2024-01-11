@@ -103,7 +103,8 @@ bool ModuleLayer::isEnabled() const { return !runControlFlags_.isSet(ModuleLayer
 void ModuleLayer::clear() { modules_.clear(); }
 
 // Append new module to this layer
-Module *ModuleLayer::append(CoreData &coreData, ModuleTypes::ModuleType moduleType, const std::vector<std::unique_ptr<Configuration>> &cfgs)
+Module *ModuleLayer::append(CoreData &coreData, ModuleTypes::ModuleType moduleType,
+                            const std::vector<std::unique_ptr<Configuration>> &cfgs)
 {
     auto *module = ModuleRegistry::create(coreData, moduleType, this);
     module->setTargets(cfgs, modulesAsMap());
@@ -214,8 +215,8 @@ void ModuleLayer::deserialise(const SerialisedValue &node, CoreData &coreData)
     Serialisable::toMap(node, "modules",
                         [&coreData, this](const std::string &name, const SerialisedValue &data)
                         {
-                            auto *module =
-			      append(coreData, *ModuleTypes::moduleType(std::string(toml::find<std::string>(data, "type"), {})), {});
+                            auto *module = append(
+                                coreData, *ModuleTypes::moduleType(std::string(toml::find<std::string>(data, "type"), {})), {});
                             module->setName(name);
                             module->deserialise(data, coreData);
                         });

@@ -36,7 +36,7 @@ std::optional<int> WeightedModuleVectorKeyword::maxArguments() const { return 2;
 bool WeightedModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find specified Module by its unique name
-  auto *module = Module::find(coreData, parser.argsv(startArg));
+    auto *module = Module::find(coreData, parser.argsv(startArg));
     if (!module)
         return Messenger::error("No Module named '{}' exists.\n", parser.argsv(startArg));
 

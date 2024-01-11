@@ -47,7 +47,7 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Find specified Module by its unique name
-	auto *module = Module::find(coreData, parser.argsv(n));
+        auto *module = Module::find(coreData, parser.argsv(n));
         if (!module)
             return Messenger::error("No Module named '{}' exists.\n", parser.argsv(n));
 
