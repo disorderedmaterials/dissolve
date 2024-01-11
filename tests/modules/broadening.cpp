@@ -29,7 +29,7 @@ TEST_F(BroadeningModuleTest, Dep1Indep2)
 TEST_F(BroadeningModuleTest, Dep2Indep1)
 {
     // Set QBroadening
-    auto *sqModule = Module::find(systemTest.coreData(),  "SQ01");
+    auto *sqModule = Module::find(systemTest.coreData(), "SQ01");
     ASSERT_TRUE(sqModule);
     ASSERT_NO_THROW(
         sqModule->keywords().set("QBroadening", Functions::Function1DWrapper(Functions::Function1D::GaussianC2, {0.1, 0.2})));
