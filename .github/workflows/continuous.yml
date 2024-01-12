@@ -35,9 +35,6 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            osx_cmake_target: arm64
-            osx_conan_target: armv8
-          - os: macos-latest
             osx_cmake_target: x86_64
             osx_conan_target: x86_64
           - os: windows-latest
@@ -80,9 +77,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
-            osx_cmake_target: arm64
-            osx_conan_target: armv8
           - os: macos-latest
             osx_cmake_target: x86_64
             osx_conan_target: x86_64
