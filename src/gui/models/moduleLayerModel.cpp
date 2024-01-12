@@ -17,7 +17,7 @@ Module *ModuleLayerModel::rawData(const QModelIndex &index) const
 }
 
 // Set source data
-void ModuleLayerModel::setData(ModuleLayer *moduleLayer, const CoreData &coreData)
+void ModuleLayerModel::setData(ModuleLayer *moduleLayer, CoreData &coreData)
 {
     coreData_ = coreData;
 
@@ -105,9 +105,11 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
     }
     else if (role == ModuleLayerModelAction::CreateNew)
     {
+        if (!coreData_)
+            return false;
         // Probably indicates a drop operation - the "value" is the type of the module to create at the specified index
         auto moduleType = (ModuleTypes::ModuleType)value.toInt();
-        moduleLayer_->modules()[index.row()] = ModuleRegistry::create(moduleType);
+        moduleLayer_->modules()[index.row()] = ModuleRegistry::create(*coreData_, moduleType);
         auto *modulePtr = moduleLayer_->modules()[index.row()].get();
         modulePtr->setTargets(coreData_->get().configurations(), moduleLayer_->modulesAsMap(modulePtr));
 
@@ -132,7 +134,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
     }
     else if (index.column() == DataColumns::NameColumn)
     {
-        if (role == Qt::EditRole)
+        if (role == Qt::EditRole && coreData_)
         {
             // Check for identical old/new names
             if (value.toString() == QString::fromStdString(std::string(module->name())))
@@ -140,9 +142,9 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
 
             // Ensure uniqueness of new name
             auto oldName = QString::fromStdString(std::string(module->name()));
-            auto newName =
-                DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()), Module::instances(),
-                                        [&](const auto &inst) { return inst == module ? std::string() : inst->name(); });
+            auto newName = DissolveSys::uniqueName(
+                DissolveSys::niceName(value.toString().toStdString()), coreData_->get().moduleInstances(),
+                [&](const auto &inst) { return inst == module ? std::string() : inst->name(); });
             module->setName(newName);
 
             Q_EMIT(dataChanged(index, index));

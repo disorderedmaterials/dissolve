@@ -10,6 +10,7 @@ add_library(
   groups.h
   layer.h
   module.h
+  types.h
 )
 
 target_include_directories(module PRIVATE ${PROJECT_SOURCE_DIR}/src)

@@ -58,7 +58,7 @@ bool ProcedureNodeReference::read(LineParser &parser, int startArg, const CoreDa
     // If two arguments are provided, the second is the identifying name of an AnalyseModule
     if (parser.nArgs() == (startArg + 2))
     {
-        Module *module = Module::find(parser.argsv(startArg + 1));
+        Module *module = coreData.findModule(parser.argsv(startArg + 1));
         if (!module)
             return Messenger::error("No Analyse module named '{}' exists.\n", parser.argsv(startArg + 1));
         if (module->type() != ModuleTypes::Analyse)

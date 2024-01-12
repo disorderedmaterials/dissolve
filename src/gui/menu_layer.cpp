@@ -33,11 +33,11 @@ void DissolveWindow::on_LayerCreateEvolveBasicAtomicAction_triggered(bool checke
         dissolve_.coreData().configurations().empty() ? nullptr : dissolve_.coreData().configurations().front().get();
 
     // Add some Monte Carlo
-    module = ModuleRegistry::create(ModuleTypes::AtomShake, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::AtomShake, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add energy calculation
-    module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
@@ -61,16 +61,16 @@ void DissolveWindow::on_LayerCreateEvolveAtomicAction_triggered(bool checked)
         dissolve_.coreData().configurations().empty() ? nullptr : dissolve_.coreData().configurations().front().get();
 
     // Add some Monte Carlo
-    module = ModuleRegistry::create(ModuleTypes::AtomShake, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::AtomShake, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add some MD
-    module = ModuleRegistry::create(ModuleTypes::MD, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::MD, newLayer);
     module->keywords().set("Configuration", firstCfg);
     module->setFrequency(5);
 
     // Add energy calculation
-    module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
@@ -94,16 +94,16 @@ void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
         dissolve_.coreData().configurations().empty() ? nullptr : dissolve_.coreData().configurations().front().get();
 
     // Add a Monte Carlo shake (MolShake) module
-    module = ModuleRegistry::create(ModuleTypes::MolShake, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::MolShake, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add some MD
-    module = ModuleRegistry::create(ModuleTypes::MD, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::MD, newLayer);
     module->keywords().set("Configuration", firstCfg);
     module->setFrequency(5);
 
     // Add energy calculation
-    module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
@@ -127,14 +127,14 @@ void DissolveWindow::on_LayerCreateEvolveMDAction_triggered(bool checked)
         dissolve_.coreData().configurations().empty() ? nullptr : dissolve_.coreData().configurations().front().get();
 
     // Add MD
-    module = ModuleRegistry::create(ModuleTypes::MD, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::MD, newLayer);
     module->keywords().set("Configuration", firstCfg);
     module->keywords().set("NSteps", 500);
     module->keywords().set("OnlyWhenEnergyStable", false);
     module->setFrequency(1);
 
     // Add energy calculation
-    module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
@@ -158,15 +158,15 @@ void DissolveWindow::on_LayerCreateEvolveEPSRAction_triggered(bool checked)
         dissolve_.coreData().configurations().empty() ? nullptr : dissolve_.coreData().configurations().front().get();
 
     // Add some Monte Carlo
-    module = ModuleRegistry::create(ModuleTypes::MolShake, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::MolShake, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add an intramolecular shake
-    module = ModuleRegistry::create(ModuleTypes::IntraShake, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::IntraShake, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add energy calculation
-    module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
@@ -189,10 +189,10 @@ void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
                                          ModuleLayer::RunControlFlag::SizeFactors);
 
     // Add the EPSR module
-    auto *epsr = dynamic_cast<EPSRModule *>(ModuleRegistry::create(ModuleTypes::EPSR, newLayer));
+    auto *epsr = dynamic_cast<EPSRModule *>(ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::EPSR, newLayer));
 
     // Set any suitable module targets
-    epsr->keywords().set("Target", Module::allOfType(ModuleTypes::NeutronSQ));
+    epsr->keywords().set("Target", dissolve_.coreData().allOfType(ModuleTypes::NeutronSQ));
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
 
@@ -213,7 +213,7 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFAction_triggered(bool checked)
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
     // Add the GR module
-    newLayer->append(ModuleTypes::GR, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::GR, dissolve_.coreData().configurations());
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
 
@@ -234,10 +234,10 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFStructureFactorAction_triggere
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
     // Add the GR module
-    newLayer->append(ModuleTypes::GR, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::GR, dissolve_.coreData().configurations());
 
     // Add a plain structure factor module
-    newLayer->append(ModuleTypes::SQ, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::SQ, dissolve_.coreData().configurations());
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
 
@@ -258,13 +258,13 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool c
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
     // Add the GR module
-    newLayer->append(ModuleTypes::GR, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::GR, dissolve_.coreData().configurations());
 
     // Add a plain structure factor module
-    newLayer->append(ModuleTypes::SQ, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::SQ, dissolve_.coreData().configurations());
 
     // Add a NeutronSQ module
-    newLayer->append(ModuleTypes::NeutronSQ, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::NeutronSQ, dissolve_.coreData().configurations());
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
 
@@ -285,13 +285,13 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFXRayAction_triggered(bool chec
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
     // Add the GR module
-    newLayer->append(ModuleTypes::GR, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::GR, dissolve_.coreData().configurations());
 
     // Add a plain structure factor module
-    newLayer->append(ModuleTypes::SQ, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::SQ, dissolve_.coreData().configurations());
 
     // Add an XRaySQ module
-    newLayer->append(ModuleTypes::XRaySQ, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::XRaySQ, dissolve_.coreData().configurations());
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
 
@@ -312,16 +312,16 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bo
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
     // Add the GR module
-    newLayer->append(ModuleTypes::GR, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::GR, dissolve_.coreData().configurations());
 
     // Add a plain structure factor module
-    newLayer->append(ModuleTypes::SQ, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::SQ, dissolve_.coreData().configurations());
 
     // Add a NeutronSQ module
-    newLayer->append(ModuleTypes::NeutronSQ, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::NeutronSQ, dissolve_.coreData().configurations());
 
     // Add an XRaySQ module
-    newLayer->append(ModuleTypes::XRaySQ, dissolve_.coreData().configurations());
+    newLayer->append(dissolve_.coreData(), ModuleTypes::XRaySQ, dissolve_.coreData().configurations());
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
 
@@ -344,7 +344,7 @@ void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
         dissolve_.coreData().configurations().empty() ? nullptr : dissolve_.coreData().configurations().front().get();
 
     // Add the CalculateGR module
-    auto *calcRDFModule = ModuleRegistry::create(ModuleTypes::SiteRDF, newLayer);
+    auto *calcRDFModule = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::SiteRDF, newLayer);
     calcRDFModule->keywords().set("Configuration", firstCfg);
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);
@@ -368,11 +368,11 @@ void DissolveWindow::on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked
         dissolve_.coreData().configurations().empty() ? nullptr : dissolve_.coreData().configurations().front().get();
 
     // Add the AvgMol module
-    auto *module = ModuleRegistry::create(ModuleTypes::AvgMol, newLayer);
+    auto *module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::AvgMol, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add an SDF module
-    module = ModuleRegistry::create(ModuleTypes::SDF, newLayer);
+    module = ModuleRegistry::create(dissolve_.coreData(), ModuleTypes::SDF, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     ModuleContext context(dissolve_.worldPool(), dissolve_);

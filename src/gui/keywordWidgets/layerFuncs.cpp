@@ -4,8 +4,8 @@
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/layer.h"
 
-LayerKeywordWidget::LayerKeywordWidget(QWidget *parent, LayerKeyword *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
+LayerKeywordWidget::LayerKeywordWidget(QWidget *parent, LayerKeyword *keyword, CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword), coreData_(coreData)
 {
     // Setup our UI
     ui_.setupUi(this);
