@@ -175,7 +175,7 @@ bool Dissolve::prepare()
         return false;
 
     // Generate attached atom lists if IntraShake modules are present and enabled
-    auto intraShakeModules = Module::allOfType(ModuleTypes::IntraShake);
+    auto intraShakeModules = coreData_.allOfType(ModuleTypes::IntraShake);
     if (!intraShakeModules.empty())
     {
         Messenger::print("Generating attached atom lists for required species...");
@@ -416,7 +416,7 @@ void Dissolve::printTiming()
 
     // Determine format for timing information output, accounting for the longest Module name we have
     auto maxLength = 0;
-    for (const auto *module : Module::instances())
+    for (const auto *module : coreData_.moduleInstances())
     {
         const auto length = module->name().size();
         if (length > maxLength)

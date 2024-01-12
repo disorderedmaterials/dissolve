@@ -58,7 +58,7 @@ void WeightedModuleVectorKeywordWidget::resetModelData()
     refreshing_ = true;
 
     // Update allowed modules
-    allowedModules_ = Module::allOfType(keyword_->moduleTypes());
+    allowedModules_ = coreData_.allOfType(keyword_->moduleTypes());
     weightedModuleModel_.setData(allowedModules_);
 
     updateSummaryText();
