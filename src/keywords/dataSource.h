@@ -32,13 +32,6 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
     using DataFormat = typename DataType::Formatter;
 
     /*
-     * Data
-     */
-    private:
-    // Format object for the data
-    DataFormat format_;
-
-    /*
      * Arguments
      */
     public:
