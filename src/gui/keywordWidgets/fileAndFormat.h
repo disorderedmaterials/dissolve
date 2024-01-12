@@ -23,8 +23,10 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
     private:
     // Associated keyword
     FileAndFormatKeyword *keyword_;
-    // Mutable core data for changing modules
-    CoreData &mutCoreData_;
+
+    protected:
+    // mutable coredata source
+    CoreData &coreData_;
 
     /*
      * Widgets

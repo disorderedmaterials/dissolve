@@ -5,7 +5,7 @@
 #include "gui/keywordWidgets/layer.h"
 
 LayerKeywordWidget::LayerKeywordWidget(QWidget *parent, LayerKeyword *keyword, CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword), mutCoreData_(coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword), coreData_(coreData)
 {
     // Setup our UI
     ui_.setupUi(this);
@@ -54,7 +54,7 @@ void LayerKeywordWidget::updateLayersCombo()
 {
     refreshing_ = true;
 
-    moduleLayersModel_.setData(coreData_.processingLayers(), mutCoreData_);
+    moduleLayersModel_.setData(coreData_.processingLayers(), coreData_);
 
     // Set current index based on keyword data
     auto it = std::find_if(coreData_.processingLayers().begin(), coreData_.processingLayers().end(),

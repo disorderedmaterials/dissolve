@@ -23,8 +23,10 @@ class LayerKeywordWidget : public QWidget, public KeywordWidgetBase
     private:
     // Associated keyword
     LayerKeyword *keyword_;
-    // Mutable core data for changing modules
-    CoreData &mutCoreData_;
+
+    protected:
+    // mutable coredata source
+    CoreData &coreData_;
 
     /*
      * Widgets
