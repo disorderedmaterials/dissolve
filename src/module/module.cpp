@@ -49,7 +49,8 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::SiteRDF, "SiteRDF"},
                                                                  {ModuleTypes::SQ, "SQ"},
                                                                  {ModuleTypes::Test, "Test"},
-                                                                 {ModuleTypes::XRaySQ, "XRaySQ"}});
+                                                                 {ModuleTypes::XRaySQ, "XRaySQ"},
+                                                                 {ModuleTypes::DlPoly, "DlPoly"}});
 
 // Return module type string for specified type enumeration
 std::string moduleType(ModuleTypes::ModuleType type) { return moduleTypes_.keyword(type); }

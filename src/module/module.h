@@ -57,7 +57,8 @@ enum ModuleType
     Skeleton,
     SQ,
     Test,
-    XRaySQ
+    XRaySQ,
+    DlPoly
 };
 // Return module type string for specified type enumeration
 std::string moduleType(ModuleTypes::ModuleType type);

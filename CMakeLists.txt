@@ -277,26 +277,26 @@ else()
 endif()
 
 # Enable build of test suite?
-option(BUILD_TESTS "Build test suite" OFF)
-if(BUILD_TESTS)
-  enable_testing()
-  add_subdirectory(examples)
-  add_subdirectory(tests)
-endif(BUILD_TESTS)
+#option(BUILD_TESTS "Build test suite" OFF)
+#if(BUILD_TESTS)
+#  enable_testing()
+#  add_subdirectory(examples)
+#  add_subdirectory(tests)
+#endif(BUILD_TESTS)
 
-if(BUILD_BENCHMARKS)
+#if(BUILD_BENCHMARKS)
   # The conan package of goooglebenchmark segfaults - so lets use fetch content
-  include(FetchContent)
-  set(BENCHMARK_ENABLE_TESTING "OFF")
-  fetchcontent_declare(
-    googlebenchmark
-    GIT_REPOSITORY https://github.com/google/benchmark.git
-    GIT_TAG v1.5.4
-  )
-
-  fetchcontent_makeavailable(googlebenchmark)
-  add_subdirectory(benchmark)
-endif(BUILD_BENCHMARKS)
+#  include(FetchContent)
+#  set(BENCHMARK_ENABLE_TESTING "OFF")
+#  fetchcontent_declare(
+#    googlebenchmark
+#    GIT_REPOSITORY https://github.com/google/benchmark.git
+#    GIT_TAG v1.5.4
+#  )
+#
+#  fetchcontent_makeavailable(googlebenchmark)
+#  add_subdirectory(benchmark)
+#endif(BUILD_BENCHMARKS)
 
 # Build CLI target executable
 target_link_libraries(

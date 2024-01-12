@@ -21,6 +21,7 @@
       version = "1.4.0";
       base_libs = pkgs:
         with pkgs; [
+          gfortran
           antlr4
           antlr4.runtime.cpp
           antlr4.runtime.cpp.dev
@@ -176,6 +177,7 @@
             export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa.drivers}/share/glvnd/egl_vendor.d/50_mesa.json
             export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [pkgs.mesa.drivers]}:${pkgs.lib.makeSearchPathOutput "lib" "lib/vdpau" [pkgs.libvdpau]}:${pkgs.lib.makeLibraryPath [pkgs.libglvnd]}"''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
             export QT_PLUGIN_PATH="${qt-idaaas.packages.${system}.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
+            export FC=${pkgs.lib.makeSearchPathOutput "gfortran" "bin/gfortran" [pkgs.gfortran]}
           '';
 
 
