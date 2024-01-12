@@ -7,7 +7,7 @@ weight: 7
 
 With our equilibrated (or equilibrating...) system we'll now make a basic comparison between our simulated total structure factors and the reference datasets.
 
-{{< action type="tabs" >}}Go to the {{< gui-tab text="RDF / Neutron S(Q)" type="Layer" >}} tab {{< /action >}}
+{{< action type="tabs" >}}Go to the {{< gui-tab text="G(r) / Neutron S(Q)" type="Layer" >}} tab {{< /action >}}
 {{< action type="mouse" >}}Click on the "H2O" {{< module "NeutronSQ" >}} module and select the **Output** button{{< /action >}}
 
 We'll first check the agreement between the experimental total structure factor (the F(Q)) and the simulated data. You'll see a row of buttons at the top of the graph giving you access to various different plotted quantities, with the default being the {{< gui-button text="Total F(Q)" >}} which should look a little like this:

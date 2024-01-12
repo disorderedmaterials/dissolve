@@ -7,7 +7,7 @@ weight: 8
 
 There is a hint in the structure factors for the H<sub>2</sub>O sample (particularly the G(r)), that the intramolecular geometry of our off-the-shelf forcefield is not quite consistent with the real world.  This is made clearly obvious if you look at the G(r) for the D<sub>2</sub>O sample:
 
-{{< action type="tabs" >}}Go to the {{< gui-tab text="RDF / Neutron S(Q)" type="Layer" >}} tab {{< /action >}}
+{{< action type="tabs" >}}Go to the {{< gui-tab text="G(r) / Neutron S(Q)" type="Layer" >}} tab {{< /action >}}
 {{< action type="mouse" >}}Click on the "D2O" {{< module "NeutronSQ" >}} module and select the **Output** button{{< /action >}}
 {{< action type="mouse" >}}Click the {{< gui-button text="Total G(r)" >}} button on the "H2O" {{< module "NeutronSQ" >}} module's output page{{< /action >}}
 
@@ -28,7 +28,7 @@ First of all, let's stop the simulation from running:
 And now let's make the changes to our intramolecular terms:
 
 {{< action type="tabs" >}}Go to the {{< gui-tab text="Forcefield" type="ff" >}} tab and find the **Master Terms** section{{< /action >}}
-{{< action type="edit" text="Change the equlibrium bond length ('eq') of the `HW-OW` bond term from 1.0 to 0.976 &#8491;" />}}
+{{< action type="edit" text="Change the equilibrium bond length ('eq') of the `HW-OW` bond term from 1.0 to 0.976 &#8491;" />}}
 {{< action type="edit" text="Change the equilibrium angle ('eq') of the `HW-OW-HW` angle term from 113.24 to 107.134 &deg;" />}}
 
 Now run the simulation for a little longer and let the species adjust to their new geometry, and you should see a marked improvement in the comparison of the D<sub>2</sub>O total G(r) and structure factor.
