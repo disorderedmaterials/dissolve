@@ -207,7 +207,7 @@ void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
 void DissolveWindow::on_LayerCreateCorrelationsRDFAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.coreData().addProcessingLayer();
-    newLayer->setName(DissolveSys::uniqueName("GR", dissolve_.coreData().processingLayers(),
+    newLayer->setName(DissolveSys::uniqueName("G(r)", dissolve_.coreData().processingLayers(),
                                               [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
     newLayer->setFrequency(5);
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
