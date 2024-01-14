@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "task/task.h"
-#include "keywords/configurationVector.h"
+#include "classes/configuration.h"
 
 Task::Task() : procedure_(ProcedureNode::NodeContext::AnyContext) {}
 
@@ -48,7 +48,22 @@ bool Task::execute(const TaskContext &context)
 }
 
 // Express as a serialisable value
-SerialisedValue Task::serialise() const { return {}; }
+SerialisedValue Task::serialise() const
+{
+    SerialisedValue result;
+    Serialisable::fromVectorToTable(configurations_, "targets", result);
+    result["procedure"] = procedure_.serialise();
+    return result;
+}
 
 // Read values from a serialisable value
-void Task::deserialise(const SerialisedValue &node, const CoreData &coreData) { return; }
+void Task::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    // Serialisable::toMap(node, "targets",
+    //                     [&coreData, this](const std::string &name, const SerialisedValue &data)
+    //                     {
+    //                         configurations_.push_back(coreData.findConfiguration(name));
+    //                     }
+    // );
+    return;
+}

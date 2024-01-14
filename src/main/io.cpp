@@ -157,7 +157,7 @@ SerialisedValue Dissolve::serialise() const
 
     Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
 
-    root["masterTask"] = coreData_.masterTask().serialise();
+    // root["masterTask"] = coreData_.masterTask().serialise();
 
     return root;
 }
@@ -208,7 +208,7 @@ void Dissolve::deserialise(const SerialisedValue &node)
               layer->deserialise(data, coreData_);
           });
 
-    coreData_.masterTask().deserialise(toml::find(node, "masterTask"), coreData_);
+    // coreData_.masterTask().deserialise(toml::find(node, "masterTask"), coreData_);
 }
 
 // Load input from supplied file
@@ -225,7 +225,9 @@ bool Dissolve::loadInput(std::string_view filename)
         Messenger::print("Finished reading input file.\n");
         setInputFilename(filename);
     }
-
+    auto* task = coreData_.addTask();
+    task->setProcedure(coreData_.configuration(0)->generator());
+    task->setConfigurations(coreData_.configuration(0));
     return result;
 }
 
@@ -426,6 +428,32 @@ bool Dissolve::saveInput(std::string_view filename)
         }
 
         if (!parser.writeLineF("{}\n", LayerBlock::keywords().keyword(LayerBlock::EndLayerKeyword)))
+            return false;
+    }
+    // Write tasks
+    if (!parser.writeBannerComment("Tasks"))
+        return false;
+    
+    for (auto& task : coreData_.tasks())
+    {
+        if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::TaskBlockKeyword), task->name()))
+            return false;
+        if (!parser.writeLineF("  {}\n", TaskBlock::keywords().keyword(TaskBlock::ProcedureKeyword)))
+            return false;
+        if (!task->procedure().serialise(parser, "    "))
+            return false;
+        if (!parser.writeLineF("  End{}", TaskBlock::keywords().keyword(TaskBlock::ProcedureKeyword)))
+            return false;
+        if (!parser.writeLineF("\n  {}\n", TaskBlock::keywords().keyword(TaskBlock::TargetsKeyword)))
+            return false;
+        for (auto& cfg : task->configurations())
+        {
+            if (!parser.writeLineF("    {}\n", cfg->name()))
+                return false;
+        }
+        if (!parser.writeLineF("  End{}\n", TaskBlock::keywords().keyword(TaskBlock::TargetsKeyword)))
+            return false;
+        if (!parser.writeLineF("{}\n", TaskBlock::keywords().keyword(TaskBlock::EndTaskKeyword)))
             return false;
     }
 

@@ -17,7 +17,7 @@ class ModuleLayer;
 class GenericList;
 class Data;
 class SpeciesSite;
-
+class Task;
 /*
  * Block Keywords
  */
@@ -32,7 +32,8 @@ enum BlockKeyword
     ModuleBlockKeyword,         /* 'Module' - Sets up a Module to run after Configuration processing */
     PairPotentialsBlockKeyword, /* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
     SiteBlockKeyword,           /* 'Site' - Defines an analysis site within a Species */
-    SpeciesBlockKeyword         /* 'Species' - Begins a definition of a Species */
+    SpeciesBlockKeyword,         /* 'Species' - Begins a definition of a Species */
+    TaskBlockKeyword
 };
 // Return enum option info for BlockKeyword
 EnumOptions<BlockKeywords::BlockKeyword> keywords();
@@ -76,11 +77,27 @@ enum LayerKeyword
     RequireNoSizeFactorsKeyword /* 'RequireNoSizeFactors' - Only run the layer if all relevant configurations have a stable
                                    energy */
 };
+
 // Return enum option info for LayerKeyword
 EnumOptions<LayerBlock::LayerKeyword> keywords();
 // Parse Layer block
 bool parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *layer);
 }; // namespace LayerBlock
+
+/* 
+ * Task Block Keywords
+ */
+namespace TaskBlock
+{
+enum TaskKeyword
+{
+    EndTaskKeyword,
+    ProcedureKeyword,
+    TargetsKeyword
+};
+EnumOptions<TaskBlock::TaskKeyword> keywords();
+bool parse(LineParser &parser, Dissolve *dissolve, Task* task);
+};
 
 /*
  * Master Block Keywords
