@@ -610,6 +610,14 @@ Task *CoreData::addTask()
     return tasks_.emplace_back(std::make_unique<Task>()).get();
 }
 
+Task *CoreData::findTask(std::string_view name)
+{
+    auto it = std::find_if(tasks_.begin(), tasks_.end(),
+                           [name](auto &task) { return DissolveSys::sameString(task->name(), name); });
+    if (it == tasks_.end())
+        return nullptr;
+    return it->get();
+}
 /*
  * Input Filename
  */
