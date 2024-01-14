@@ -226,7 +226,7 @@ class CoreData
     const std::vector<std::unique_ptr<Task>> &tasks() const;
     // Add task
     Task *addTask();
-    // Find a task by name
+    // Find a task by name 
     Task *findTask(std::string_view name) const;
     /*
      * Input Filename
