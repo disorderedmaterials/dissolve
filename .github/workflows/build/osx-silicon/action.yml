@@ -34,6 +34,7 @@ runs:
 
       set -ex
       brew update-reset
+      brew uninstall ninja ftgl freetype antlr
       brew install ninja
       PACKAGES=(ftgl freetype antlr)
       for PACKAGE in "${PACKAGES[@]}"
