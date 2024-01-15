@@ -647,15 +647,15 @@ void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deseria
  */
 
 // Remove all references to the specified data
-void CoreData::removeReferencesTo(Module *data) { KeywordStore::objectNoLongerValid(data); }
-void CoreData::removeReferencesTo(Configuration *data) { KeywordStore::objectNoLongerValid(data); }
+void CoreData::removeReferencesTo(Module *data) { objectNoLongerValid(data); }
+void CoreData::removeReferencesTo(Configuration *data) { objectNoLongerValid(data); }
 void CoreData::removeReferencesTo(Species *data)
 {
-    KeywordStore::objectNoLongerValid(data);
+    objectNoLongerValid(data);
 
     // Check Configurations - if the Species was used, we must clear the configuration contents
     for (auto &cfg : configurations_)
         if (cfg->containsSpecies(data))
             cfg->empty();
 }
-void CoreData::removeReferencesTo(SpeciesSite *data) { KeywordStore::objectNoLongerValid(data); }
+void CoreData::removeReferencesTo(SpeciesSite *data) { objectNoLongerValid(data); }

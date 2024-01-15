@@ -124,13 +124,6 @@ class KeywordBase : public Serialisable<CoreData const &>
     // Return signals to be emitted (via Qt) when editing this keyword in the GUI
     Flags<KeywordSignal> editSignals() const;
 
-    /*
-     * Object Management
-     */
-    private:
-    // References to all keyword objects
-    static std::vector<KeywordBase *> allKeywords_;
-
     public:
     // Prune any references to the supplied AtomType in the contained data
     virtual void removeReferencesTo(std::shared_ptr<AtomType> at);
@@ -147,12 +140,4 @@ class KeywordBase : public Serialisable<CoreData const &>
     // Prune any references to the supplied ProcedureNode in the contained data
     virtual void removeReferencesTo(NodeRef node);
 
-    public:
-    // Gracefully deal with the specified object no longer being valid
-    template <class O> static void objectNoLongerValid(O *object)
-    {
-        // Loop over all keyword objects and call their local functions
-        for (auto &kwd : allKeywords_)
-            kwd->removeReferencesTo(object);
-    }
 };

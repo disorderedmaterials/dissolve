@@ -15,6 +15,7 @@
 
 // Forward Declarations
 class Dissolve;
+class KeywordBase;
 class Module;
 class ModuleLayer;
 class MasterBond;
@@ -187,6 +188,21 @@ class CoreData
     Configuration *findConfiguration(std::string_view name) const;
     // Find configuration by 'nice' name
     Configuration *findConfigurationByNiceName(std::string_view name) const;
+
+    /*
+     * Keywords
+     */
+    private:
+    std::vector<KeywordBase *> allKeywords_;
+
+    public:
+    // Gracefully deal with the specified object no longer being valid
+    template <class O> void objectNoLongerValid(O *object)
+    {
+        // Loop over all keyword objects and call their local functions
+        for (auto &kwd : allKeywords_)
+            kwd->removeReferencesTo(object);
+    }
 
     /*
      * Layers
