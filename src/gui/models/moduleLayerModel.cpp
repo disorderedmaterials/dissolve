@@ -17,7 +17,7 @@ Module *ModuleLayerModel::rawData(const QModelIndex &index) const
 }
 
 // Set source data
-void ModuleLayerModel::setData(ModuleLayer *moduleLayer, const CoreData &coreData)
+void ModuleLayerModel::setData(ModuleLayer *moduleLayer, CoreData *coreData)
 {
     coreData_ = coreData;
 
@@ -109,7 +109,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
         auto moduleType = (ModuleTypes::ModuleType)value.toInt();
         moduleLayer_->modules()[index.row()] = ModuleRegistry::create(moduleType);
         auto *modulePtr = moduleLayer_->modules()[index.row()].get();
-        modulePtr->setTargets(coreData_->get().configurations(), moduleLayer_->modulesAsMap(modulePtr));
+        modulePtr->setTargets(coreData_->configurations(), moduleLayer_->modulesAsMap(modulePtr));
 
         Q_EMIT dataChanged(index, index);
 
@@ -312,13 +312,13 @@ bool ModuleLayerModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool ModuleLayerModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    if (parent.isValid())
+    if (parent.isValid() || coreData_ != nullptr)
         return false;
 
     beginRemoveRows(parent, row, row + count - 1);
     for (auto i = 0; i < count; ++i)
     {
-        KeywordStore::objectNoLongerValid(moduleLayer_->modules()[row].get());
+	coreData_->objectNoLongerValid(moduleLayer_->modules()[row].get());
         moduleLayer_->modules().erase(moduleLayer_->modules().begin() + row);
     }
     endRemoveRows();
