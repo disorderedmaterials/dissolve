@@ -17,8 +17,8 @@ class EPSRManagerModule : public Module
      * Definition
      */
     private:
-    // Target configuration
-    Configuration *targetConfiguration_{nullptr};
+    // Target Module containing data to refine against
+    std::vector<Module *> target_;
 
     public:
     /*

@@ -7,14 +7,4 @@
 #include "modules/epsrManager/epsrManager.h"
 
 // Run main processing
-Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
-{
-    // Check for Configuration target
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
-    return ExecutionResult::Success;
-}
+Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext) { return ExecutionResult::Success; }

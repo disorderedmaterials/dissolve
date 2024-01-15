@@ -9,6 +9,7 @@
 // Forward Declarations
 class EPSRManagerModule;
 class Dissolve;
+class Module;
 
 // Module Widget
 class EPSRManagerModuleWidget : public ModuleWidget
