@@ -5,6 +5,7 @@
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
     qt-idaaas.url = "github:disorderedmaterials/qt-idaaas";
+    qt-idaaas.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = { self, nixpkgs, outdated, home-manager, flake-utils, bundlers, nixGL-src
     , qt-idaaas}:
