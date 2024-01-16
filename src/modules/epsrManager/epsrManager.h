@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/scatteringMatrix.h"
 #include "module/module.h"
 #include "procedure/procedure.h"
 
@@ -16,9 +17,29 @@ class EPSRManagerModule : public Module
     /*
      * Definition
      */
+    public:
+    enum ExpansionFunctionType
+    {
+        PoissonExpansionFunction,  /* Fit difference functions using Poisson (power exponential) functions */
+        GaussianExpansionFunction, /* Fit difference functions using Gaussian functions */
+        nExpansionFunctionTypes
+    };
+
     private:
     // Target Module containing data to refine against
     std::vector<Module *> target_;
+    // Scattering matrix
+    ScatteringMatrix scatteringMatrix_;
+    // Expansion function type to use for potential fits
+    EPSRManagerModule::ExpansionFunctionType expansionFunction_{EPSRManagerModule::PoissonExpansionFunction};
+
+    public:
+    /*
+     * Functions
+     */
+    bool generateEmpiricalPotentials(GenericList &moduleData, Dissolve &dissolve, double averagedRho,
+                                     std::optional<int> ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
+    void truncate(Data1D &data, double rMin, double rMax);
 
     public:
     /*
