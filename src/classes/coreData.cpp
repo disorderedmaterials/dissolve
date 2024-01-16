@@ -507,9 +507,6 @@ Configuration *CoreData::addConfiguration()
 // Remove specified Configuration
 void CoreData::removeConfiguration(Configuration *cfg)
 {
-    // Remove references to the Configuration itself
-    removeReferencesTo(cfg);
-
     configurations_.erase(
         std::remove_if(configurations_.begin(), configurations_.end(), [cfg](const auto &c) { return cfg == c.get(); }),
         configurations_.end());
@@ -558,10 +555,6 @@ void CoreData::removeProcessingLayer(ModuleLayer *layer)
 {
     if (!layer)
         return;
-
-    // Remove any references to the Modules in the layer before we delete it
-    for (auto &module : layer->modules())
-        removeReferencesTo(module.get());
 
     // Now safe to remove the layer
     processingLayers_.erase(
@@ -647,15 +640,10 @@ void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deseria
  */
 
 // Remove all references to the specified data
-void CoreData::removeReferencesTo(Module *data) { objectNoLongerValid(data); }
-void CoreData::removeReferencesTo(Configuration *data) { objectNoLongerValid(data); }
 void CoreData::removeReferencesTo(Species *data)
 {
-    objectNoLongerValid(data);
-
     // Check Configurations - if the Species was used, we must clear the configuration contents
     for (auto &cfg : configurations_)
         if (cfg->containsSpecies(data))
             cfg->empty();
 }
-void CoreData::removeReferencesTo(SpeciesSite *data) { objectNoLongerValid(data); }

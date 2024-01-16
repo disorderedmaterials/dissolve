@@ -52,11 +52,9 @@ void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
         return;
 
     // Remove references to the site, and invalidate our site renderable
-    dissolve_.coreData().removeReferencesTo(site);
     ui_.ViewerWidget->setSite(nullptr);
 
     // Remove the site proper
-    dissolve_.coreData().removeReferencesTo(site);
     species_->removeSite(site);
     sites_.setData(species_->sites());
 

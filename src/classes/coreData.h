@@ -190,21 +190,6 @@ class CoreData
     Configuration *findConfigurationByNiceName(std::string_view name) const;
 
     /*
-     * Keywords
-     */
-    private:
-    std::vector<KeywordBase *> allKeywords_;
-
-    public:
-    // Gracefully deal with the specified object no longer being valid
-    template <class O> void objectNoLongerValid(O *object)
-    {
-        // Loop over all keyword objects and call their local functions
-        for (auto &kwd : allKeywords_)
-            kwd->removeReferencesTo(object);
-    }
-
-    /*
      * Layers
      */
     private:
@@ -244,8 +229,5 @@ class CoreData
      */
     public:
     // Remove all references to the specified data
-    void removeReferencesTo(Module *data);
-    void removeReferencesTo(Configuration *data);
     void removeReferencesTo(Species *data);
-    void removeReferencesTo(SpeciesSite *data);
 };
