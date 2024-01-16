@@ -104,7 +104,6 @@ if(GUI)
     # Add extra functions
     include(FindFTGL)
     find_package(FTGL REQUIRED)
-    find_package(Freetype REQUIRED)
   endif()
   add_definitions(-DQT_NO_KEYWORDS)
 
