@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/isotopologueSetModel.h"
 #include "keywords/isotopologueSet.h"
@@ -16,7 +16,7 @@ TEST(IsotopologueSetModelTest, Basic)
     ASSERT_TRUE(dissolve.loadInput("dissolve/input/correlations-waterMethanol.txt"));
 
     // Find the 'H5H' NeutronSQ module and grab the relevant IsotopologueSet
-    auto *h5h = dynamic_cast<NeutronSQModule *>(Module::find("H5H"));
+    auto *h5h = dynamic_cast<NeutronSQModule *>(coreData.findModule("H5H"));
     assert(h5h);
     auto optH5hSet = h5h->keywords().get<IsotopologueSet, IsotopologueSetKeyword>("Isotopologue");
     ASSERT_TRUE(optH5hSet.has_value());

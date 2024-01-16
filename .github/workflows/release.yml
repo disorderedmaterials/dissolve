@@ -32,14 +32,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
-            cmake_target: x86_64
-            conan_target: x86_64
-          - os: windows-latest
+           - os: macos-latest
+            osx_cmake_target: arm64
+            osx_conan_target: armv8
+          #- os: macos-latest
+          #  cmake_target: x86_64
+          #  conan_target: x86_64
+          #- os: windows-latest
     runs-on: ${{ matrix.os }}
     env:
-      CMAKE_TARGET: ${{ matrix.cmake_target }}
-      CONAN_TARGET: ${{ matrix.conan_target }}
+      OSX_CMAKE_TARGET: ${{ matrix.osx_cmake_target }}
+      OSX_CONAN_TARGET: ${{ matrix.osx_conan_target }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -75,14 +78,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
-            cmake_target: x86_64
-            conan_target: x86_64
-          - os: windows-latest
+           - os: macos-latest
+            osx_cmake_target: arm64
+            osx_conan_target: armv8
+          #- os: macos-latest
+          #  cmake_target: x86_64
+          #  conan_target: x86_64
+          #- os: windows-latest
     runs-on: ${{ matrix.os }}
     env:
-      CMAKE_TARGET: ${{ matrix.cmake_target }}
-      CONAN_TARGET: ${{ matrix.conan_target }}
+      OSX_CMAKE_TARGET: ${{ matrix.osx_cmake_target }}
+      OSX_CONAN_TARGET: ${{ matrix.osx_conan_target }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3

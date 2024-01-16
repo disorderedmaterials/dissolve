@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/module.h"
@@ -56,7 +56,7 @@ void ModuleKeywordWidget::updateAllowedModules()
     refreshing_ = true;
 
     // Update allowed modules
-    allowedModules_ = Module::allOfType(keyword_->moduleType());
+    allowedModules_ = coreData_.allOfType(keyword_->moduleType());
     moduleModel_.setData(allowedModules_);
 
     // Set current index based on keyword data

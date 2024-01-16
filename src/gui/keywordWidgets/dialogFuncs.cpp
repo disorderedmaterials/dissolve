@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/coreData.h"
 #include "classes/species.h"
 #include "gui/keywordWidgets/dialog.h"
 #include "keywords/organiser.h"
 
-KeywordsDialog::KeywordsDialog(QWidget *parent, const KeywordStore &keywordStore, const CoreData &coreData)
-    : coreData_(coreData)
+KeywordsDialog::KeywordsDialog(QWidget *parent, const KeywordStore &keywordStore, CoreData &coreData) : coreData_(coreData)
 {
     ui_.setupUi(this);
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -69,7 +69,7 @@ class ModuleRegistry
     // Return category map
     static const std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> &categoryMap();
     // Create new item via template
-    static std::unique_ptr<Module> create(ModuleTypes::ModuleType type);
+    static std::unique_ptr<Module> create(CoreData &coreData, ModuleTypes::ModuleType type);
     // Create a Module instance for the specified Module type, and add it to the specified layer
-    static Module *create(ModuleTypes::ModuleType moduleType, ModuleLayer *destinationLayer);
+    static Module *create(CoreData &coreData, ModuleTypes::ModuleType moduleType, ModuleLayer *destinationLayer);
 };

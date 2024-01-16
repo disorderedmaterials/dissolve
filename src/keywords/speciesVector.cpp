@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "keywords/speciesVector.h"
 #include "base/lineParser.h"
@@ -75,7 +75,7 @@ void SpeciesVectorKeyword::deserialise(const SerialisedValue &node, const CoreDa
                  auto title = toml::get<std::string>(item);
                  auto *species = coreData.findSpecies(title);
                  if (!species)
-                     throw toml::syntax_error(fmt::format("No Species named '{}' exists.\n", title), item.location());
+                     throw toml::type_error(fmt::format("No Species named '{}' exists.\n", title), item.location());
 
                  data_.push_back(species);
              });

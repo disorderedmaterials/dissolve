@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -54,8 +54,8 @@ class NodeAndIntegerKeywordBase : public NodeKeywordUnderlay, public KeywordBase
         auto nodeName = toml::find<std::string>(node, "node");
         auto realNode = findNode(nodeName);
         if (!realNode)
-            throw toml::syntax_error(
-                fmt::format("Node '{}' given to keyword {} doesn't exist.\n", nodeName, KeywordBase::name()), node.location());
+            throw toml::type_error(fmt::format("Node '{}' given to keyword {} doesn't exist.\n", nodeName, KeywordBase::name()),
+                                   node.location());
 
         setInteger(toml::find<int>(node, "int"));
         setNode(realNode);

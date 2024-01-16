@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -34,7 +34,7 @@ class KeywordWidgetProducer
     // Return type
     using WidgetKeywordProduct = std::pair<QWidget *, KeywordWidgetBase *>;
     // Producer function type
-    using ProducerFunction = std::function<WidgetKeywordProduct(KeywordBase *keyword, const CoreData &coreData)>;
+    using ProducerFunction = std::function<WidgetKeywordProduct(KeywordBase *keyword, CoreData &coreData)>;
     // Producers for all data types
     std::unordered_map<std::type_index, ProducerFunction> producers_;
 
@@ -45,7 +45,7 @@ class KeywordWidgetProducer
     template <class K> void registerProducer(ProducerFunction function) { producers_[typeid(K)] = std::move(function); }
     template <class K, class W> void registerProducer()
     {
-        producers_[typeid(K *)] = [&](KeywordBase *keyword, const CoreData &coreData)
+        producers_[typeid(K *)] = [&](KeywordBase *keyword, CoreData &coreData)
         {
             // Cast the base up to the full keyword
             auto *k = dynamic_cast<K *>(keyword);
@@ -61,7 +61,7 @@ class KeywordWidgetProducer
         };
     }
     // Produce object of specified type
-    std::pair<QWidget *, KeywordWidgetBase *> produce(KeywordBase *keyword, const CoreData &coreData) const;
+    std::pair<QWidget *, KeywordWidgetBase *> produce(KeywordBase *keyword, CoreData &coreData) const;
 
     /*
      * Instance
@@ -75,7 +75,7 @@ class KeywordWidgetProducer
      */
     public:
     // Create new item via template
-    static std::pair<QWidget *, KeywordWidgetBase *> create(KeywordBase *keyword, const CoreData &coreData)
+    static std::pair<QWidget *, KeywordWidgetBase *> create(KeywordBase *keyword, CoreData &coreData)
     {
         return instance().produce(keyword, coreData);
     }

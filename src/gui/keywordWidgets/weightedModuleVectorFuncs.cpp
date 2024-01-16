@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/coreData.h"
 #include "gui/delegates/exponentialSpin.hui"
@@ -58,7 +58,7 @@ void WeightedModuleVectorKeywordWidget::resetModelData()
     refreshing_ = true;
 
     // Update allowed modules
-    allowedModules_ = Module::allOfType(keyword_->moduleTypes());
+    allowedModules_ = coreData_.allOfType(keyword_->moduleTypes());
     weightedModuleModel_.setData(allowedModules_);
 
     updateSummaryText();

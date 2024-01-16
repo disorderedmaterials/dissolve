@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/braggReflection.h"
 #include "tests/testData.h"
@@ -255,7 +255,7 @@ TEST_F(BraggModuleTest, MgO_Intensities111)
     ASSERT_NO_THROW(systemTest.setUp("dissolve/input/bragg-MgO.txt"));
 
     // Set multiplicities to (1,1,1)
-    auto *braggModule = Module::find("Bragg01");
+    auto *braggModule = systemTest.coreData().findModule("Bragg01");
     ASSERT_TRUE(braggModule);
     ASSERT_NO_THROW(braggModule->keywords().set("Multiplicity", Vec3<int>(1, 1, 1)));
 

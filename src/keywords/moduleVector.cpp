@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "keywords/moduleVector.h"
 #include "base/lineParser.h"
@@ -47,7 +47,7 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Find specified Module by its unique name
-        auto *module = Module::find(parser.argsv(n));
+        auto *module = coreData.findModule(parser.argsv(n));
         if (!module)
             return Messenger::error("No Module named '{}' exists.\n", parser.argsv(n));
 
@@ -102,15 +102,15 @@ void ModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreDat
              [this, &coreData](const auto &item)
              {
                  auto title = toml::get<std::string>(item);
-                 auto *module = Module::find(title);
+                 auto *module = coreData.findModule(title);
                  if (!module)
-                     throw toml::syntax_error(fmt::format("No Module named '{}' exists.\n", title), item.location());
+                     throw toml::type_error(fmt::format("No Module named '{}' exists.\n", title), item.location());
 
                  // Check the module's type if we can
                  if (!moduleTypes_.empty() &&
                      std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(),
                                   [module](const auto &s) { return s == module->type(); }) == moduleTypes_.cend())
-                     throw toml::syntax_error(
+                     throw toml::type_error(
                          fmt::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
                                      title, module->type(), name(), joinStrings(moduleTypes_)),
                          item.location());

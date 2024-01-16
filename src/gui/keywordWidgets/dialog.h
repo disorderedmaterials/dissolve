@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -17,14 +17,14 @@ class KeywordsDialog : public QDialog
     Q_OBJECT
 
     public:
-    KeywordsDialog(QWidget *parent, const KeywordStore &keywordStore, const CoreData &coreData);
+    KeywordsDialog(QWidget *parent, const KeywordStore &keywordStore, CoreData &coreData);
     ~KeywordsDialog() = default;
 
     private:
     // Main form declaration
     Ui::KeywordsDialog ui_;
     // CoreData reference
-    const CoreData &coreData_;
+    CoreData &coreData_;
     // Whether any keywords have been modified in the current 'show'
     bool keywordsModified_{false};
     // Combined signal mask for all keyword changes

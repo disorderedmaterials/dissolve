@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/moduleLayersModel.h"
 #include "gui/models/moduleLayerModel.h"
@@ -8,7 +8,7 @@
 #include "qwidget.h"
 
 // Set source ModuleLayers data
-void ModuleLayersModel::setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers, const CoreData &coreData)
+void ModuleLayersModel::setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers, CoreData &coreData)
 {
     coreData_ = coreData;
 

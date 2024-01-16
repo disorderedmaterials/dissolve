@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/coreData.h"
 #include "base/sysFunc.h"
@@ -659,3 +659,46 @@ void CoreData::removeReferencesTo(Species *data)
             cfg->empty();
 }
 void CoreData::removeReferencesTo(SpeciesSite *data) { KeywordStore::objectNoLongerValid(data); }
+
+/*
+ * Modules
+ */
+
+// Return vector of all existing Modules
+const std::vector<Module *> CoreData::moduleInstances() const
+{
+    std::vector<Module *> result{};
+    for (auto &layer : processingLayers())
+        std::transform(layer->modules().begin(), layer->modules().end(), std::back_inserter(result),
+                       [](auto &source) { return source.get(); });
+
+    return result;
+}
+
+// Search for any instance of any module with the specified unique name
+Module *CoreData::findModule(std::string_view uniqueName) const
+{
+    auto instances = moduleInstances();
+    auto it = std::find_if(instances.begin(), instances.end(),
+                           [uniqueName](const auto *m) { return DissolveSys::sameString(m->name(), uniqueName); });
+    if (it != instances.end())
+        return *it;
+
+    return nullptr;
+}
+
+// Search for and return any instance(s) of the specified Module type
+std::vector<Module *> CoreData::allOfType(ModuleTypes::ModuleType type) const
+{
+    return allOfType(std::vector<ModuleTypes::ModuleType>{type});
+}
+
+// Search for and return any instance(s) of the specified Module type
+std::vector<Module *> CoreData::allOfType(std::vector<ModuleTypes::ModuleType> types) const
+{
+    std::vector<Module *> modules;
+    auto instances = moduleInstances();
+    std::copy_if(instances.begin(), instances.end(), std::back_inserter(modules),
+                 [&types](const auto *m) { return std::find(types.begin(), types.end(), m->type()) != types.end(); });
+    return modules;
+}

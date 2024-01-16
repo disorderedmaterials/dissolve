@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "module/module.h"
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
+#include "classes/coreData.h"
 #include "keywords/configuration.h"
-
-// Static Singletons
-std::vector<Module *> Module::instances_;
 
 // Module Types
 
@@ -71,9 +69,9 @@ std::optional<ModuleTypes::ModuleType> moduleType(std::string_view keyword)
 };
 } // namespace ModuleTypes
 
-Module::Module(const ModuleTypes::ModuleType type) : type_(type), frequency_(1), enabled_(true) { instances_.push_back(this); }
+Module::Module(const ModuleTypes::ModuleType type) : type_(type), frequency_(1), enabled_(true) {}
 
-Module::~Module() { instances_.erase(std::remove(instances_.begin(), instances_.end(), this)); }
+Module::~Module() {}
 
 /*
  * Definition
@@ -221,34 +219,6 @@ bool Module::readProcessTimes(LineParser &parser) { return processTimes_.deseria
 /*
  * Management
  */
-
-// Return vector of all existing Modules
-const std::vector<Module *> &Module::instances() { return instances_; }
-
-// Search for any instance of any module with the specified unique name
-Module *Module::find(std::string_view uniqueName)
-{
-    auto it = std::find_if(instances_.begin(), instances_.end(),
-                           [uniqueName](const auto *m) { return DissolveSys::sameString(m->name(), uniqueName); });
-    if (it != instances_.end())
-        return *it;
-
-    return nullptr;
-}
-
-// Search for and return any instance(s) of the specified Module type
-std::vector<Module *> Module::allOfType(ModuleTypes::ModuleType type)
-{
-    return allOfType(std::vector<ModuleTypes::ModuleType>{type});
-}
-
-std::vector<Module *> Module::allOfType(std::vector<ModuleTypes::ModuleType> types)
-{
-    std::vector<Module *> modules;
-    std::copy_if(instances_.begin(), instances_.end(), std::back_inserter(modules),
-                 [&types](const auto *m) { return std::find(types.begin(), types.end(), m->type()) != types.end(); });
-    return modules;
-}
 
 // Express as a serialisable value
 SerialisedValue Module::serialise() const

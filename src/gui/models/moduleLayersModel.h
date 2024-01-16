@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -17,11 +17,11 @@ class ModuleLayersModel : public QAbstractListModel
     // Source ModuleLayers data
     OptionalReferenceWrapper<const std::vector<std::unique_ptr<ModuleLayer>>> layers_;
     // Reference to CoreData (for Configuration target setting)
-    OptionalReferenceWrapper<const CoreData> coreData_;
+    OptionalReferenceWrapper<CoreData> coreData_;
 
     public:
     // Set source ModuleLayers data
-    void setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers, const CoreData &coreData);
+    void setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers, CoreData &coreData);
     // Return object represented by specified model index
     ModuleLayer *rawData(const QModelIndex &index) const;
     void reset();

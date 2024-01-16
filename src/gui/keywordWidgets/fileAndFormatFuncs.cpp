@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/dialog.h"
 #include "gui/keywordWidgets/fileAndFormat.h"
@@ -10,8 +10,8 @@
 #include <QFileDialog>
 #include <QFileInfo>
 
-FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, FileAndFormatKeyword *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
+FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, FileAndFormatKeyword *keyword, CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword), coreData_(coreData)
 {
     ui_.setupUi(this);
 

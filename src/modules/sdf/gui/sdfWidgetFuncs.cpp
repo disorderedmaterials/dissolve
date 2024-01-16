@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "classes/configuration.h"
@@ -60,7 +60,7 @@ void SDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upd
     // Update available reference molecule combo
     std::vector<std::pair<Species *, std::string>> refMolecules;
     // -- Find available AvgMol results
-    auto avgMolModules = Module::allOfType<AvgMolModule>();
+    auto avgMolModules = dissolve_.coreData().allOfType<AvgMolModule>();
     for (AvgMolModule *module : avgMolModules)
         refMolecules.emplace_back(&module->averageSpecies(), fmt::format("{} (AvgMol)", module->averageSpecies().name()));
     // -- Add on current species

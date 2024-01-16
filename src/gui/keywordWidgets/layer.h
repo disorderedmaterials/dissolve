@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -15,7 +15,7 @@ class LayerKeywordWidget : public QWidget, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    LayerKeywordWidget(QWidget *parent, LayerKeyword *keyword, const CoreData &coreData);
+    LayerKeywordWidget(QWidget *parent, LayerKeyword *keyword, CoreData &coreData);
 
     /*
      * Keyword
@@ -23,6 +23,10 @@ class LayerKeywordWidget : public QWidget, public KeywordWidgetBase
     private:
     // Associated keyword
     LayerKeyword *keyword_;
+
+    protected:
+    // mutable coredata source
+    CoreData &coreData_;
 
     /*
      * Widgets

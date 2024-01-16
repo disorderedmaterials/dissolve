@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/addForcefieldDialogModel.h"
 #include "data/ff/library.h"
@@ -248,8 +248,7 @@ void AddForcefieldDialogModel::finalise()
     }
 
     // Assign intramolecular terms if we need to
-    // if (!intramolecularTermsAssigned_)
-    //	assignIntramolecularTerms(ui_.ForcefieldWidget->currentForcefield().get());
+    assignIntramolecularTerms(ff_);
 
     // Copy intramolecular terms
     if (intramolecularRadio_ != Radio::None)
@@ -392,4 +391,34 @@ void AddForcefieldDialogModel::setFf(Forcefield *f)
 {
     ff_ = f;
     Q_EMIT progressionAllowedChanged();
+
+}
+
+// Assign intramolecular terms to species
+void AddForcefieldDialogModel::assignIntramolecularTerms(const Forcefield *ff)
+{
+    // Detach any MasterTerm references, and delete the MasterTerms
+    modifiedSpecies_->detachFromMasterTerms();
+    temporaryCoreData_.clearMasterTerms();
+
+    // Assign intramolecular terms
+    if (intramolecularRadio_ != Radio::None)
+    {
+        auto flags = 0;
+        if (ignoreCurrentTypes_)
+            flags += Forcefield::DetermineTypesFlag;
+        if (!noImproperTerms_)
+            flags += Forcefield::GenerateImpropersFlag;
+        if (intramolecularRadio_ == Radio::Selected)
+            flags += Forcefield::SelectionOnlyFlag;
+
+        if (!ff->assignIntramolecular(modifiedSpecies_, flags))
+            // Assigning failed
+            return;
+
+        // Reduce to master terms?
+        if (!noMasterTerms_)
+            modifiedSpecies_->reduceToMasterTerms(temporaryCoreData_, intramolecularRadio_ == Radio::Selected);
+    }
+    return;
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/producers.h"
 #include "gui/keywordWidgets/widget.hui"
@@ -24,7 +24,7 @@ KeywordsWidget::KeywordsWidget(QWidget *parent) : QScrollArea(parent)
  */
 
 // Set up controls for specified keywords
-void KeywordsWidget::setUp(const KeywordStoreSection &keywordSection, const CoreData &coreData)
+void KeywordsWidget::setUp(const KeywordStoreSection &keywordSection, CoreData &coreData)
 {
     keywordWidgets_.clear();
 

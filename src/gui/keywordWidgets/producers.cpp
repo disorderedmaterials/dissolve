@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/producers.h"
 #include "gui/keywordWidgets/atomTypeVector.h"
@@ -101,7 +101,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
  */
 
 // Produce object of specified type
-std::pair<QWidget *, KeywordWidgetBase *> KeywordWidgetProducer::produce(KeywordBase *keyword, const CoreData &coreData) const
+std::pair<QWidget *, KeywordWidgetBase *> KeywordWidgetProducer::produce(KeywordBase *keyword, CoreData &coreData) const
 {
     auto it = producers_.find(keyword->typeIndex());
     if (it == producers_.end())
