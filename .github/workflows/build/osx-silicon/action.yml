@@ -36,6 +36,7 @@ runs:
       brew update-reset
       brew cleanup
       brew uninstall --ignore-dependencies freetype
+      rm -rf /usr/local/lib/libfreetype.dylib
       brew install ninja
       PACKAGES=(ftgl freetype antlr)
       for PACKAGE in "${PACKAGES[@]}"
