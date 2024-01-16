@@ -312,7 +312,7 @@ bool ModuleLayerModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool ModuleLayerModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    if (parent.isValid() || coreData_ != nullptr)
+    if (parent.isValid())
         return false;
 
     beginRemoveRows(parent, row, row + count - 1);
