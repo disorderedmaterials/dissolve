@@ -391,7 +391,6 @@ void AddForcefieldDialogModel::setFf(Forcefield *f)
 {
     ff_ = f;
     Q_EMIT progressionAllowedChanged();
-
 }
 
 // Assign intramolecular terms to species
