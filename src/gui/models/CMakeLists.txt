@@ -28,6 +28,7 @@ set(models_MOC_HDRS
     procedureNodeModel.h
     rangeVectorModel.h
     renderableGroupManagerModel.h
+    scaleChargesDialogModel.h
     sitesFilterProxy.h
     sitesModel.h
     speciesFilterProxy.h
@@ -91,6 +92,7 @@ set(models_SRCS
     procedureNodeModel.cpp
     rangeVectorModel.cpp
     renderableGroupManagerModel.cpp
+    scaleChargesDialogModel.cpp
     sitesFilterProxy.cpp
     sitesModel.cpp
     speciesAngleModel.cpp
