@@ -34,7 +34,7 @@ runs:
 
       set -ex
       brew update-reset
-      brew uninstall freetype
+      brew uninstall --ignore-dependencies freetype
       brew install ninja
       PACKAGES=(ftgl freetype antlr)
       for PACKAGE in "${PACKAGES[@]}"
