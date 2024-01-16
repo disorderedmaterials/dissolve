@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/scaleChargesDialog.h"
 #include "gui/models/scaleChargesDialogModel.h"
+#include "gui/scaleChargesDialog.h"
 #include <QQmlContext>
 #include <QQuickItem>
 #include <QQuickWidget>
 
-ScaleChargesDialog::ScaleChargesDialog(QWidget *parent) : QDialog(parent) 
+ScaleChargesDialog::ScaleChargesDialog(QWidget *parent) : QDialog(parent)
 {
     QQuickWidget *view = new QQuickWidget(QUrl("qrc:/dialogs/qml/ScaleChargesDialog.qml"), this);
 

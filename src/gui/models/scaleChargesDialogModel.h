@@ -5,7 +5,7 @@
 
 #include <QObject>
 
-class ScaleChargesDialogModel : public QObject 
+class ScaleChargesDialogModel : public QObject
 {
     Q_OBJECT
 
@@ -23,7 +23,7 @@ class ScaleChargesDialogModel : public QObject
     double value() const;
 
     private:
-    double currentValue_=1.0;
+    double currentValue_ = 1.0;
 
     Q_SIGNALS:
     void valueSet();

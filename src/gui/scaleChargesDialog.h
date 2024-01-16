@@ -16,4 +16,3 @@ class ScaleChargesDialog : public QDialog
 
     ScaleChargesDialogModel *model;
 };
-

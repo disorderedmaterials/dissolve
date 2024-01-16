@@ -7,8 +7,8 @@
 #include "gui/models/dissolveModel.h"
 #include "gui/models/masterTermTreeModel.h"
 #include "gui/models/moduleLayersModel.h"
-#include "gui/models/speciesModel.h"
 #include "gui/models/scaleChargesDialogModel.h"
+#include "gui/models/speciesModel.h"
 #include "gui/types.h"
 #include <QQmlEngine>
 
