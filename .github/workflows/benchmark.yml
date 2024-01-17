@@ -22,34 +22,37 @@ jobs:
   benchmark:
     runs-on: ubuntu-latest
     steps:
-        - uses: actions/checkout@v2
-        - name: Install Prerequisites
-          run: |
-            sudo apt-get update -q
-            sudo apt-get install ninja-build python3-setuptools uuid uuid-dev
-        - name: Install Conan
-          run: |
-            sudo pip3 install wheel
-            sudo pip3 install conan==1.*
-        - name: Retrieve ANTLR4 Java
-          run: |
-            wget https://www.antlr.org/download/antlr-4.9.3-complete.jar -O antlr4.jar
-        - name: Build
-          run: |
-            mkdir build
-            cd build
-            conan install ../ -s compiler.libcxx=libstdc++11
-            cmake ../ -G "Ninja" -DBUILD_BENCHMARKS:bool=true -DANTLR_EXECUTABLE:path=`pwd`/../antlr4.jar
-            ninja
-        - name: Run benchmark
-          run: ./build/bin/benchmarks --benchmark_format=json | tee benchmark_result.json
-        - name: Store benchmark result
-          uses: rhysd/github-action-benchmark@v1
-          with:
-              tool: 'googlecpp'
-              output-file-path: benchmark_result.json
-              github-token: ${{ secrets.GITHUB_TOKEN }}
-              auto-push: true
-              comment-on-alert: true
-              alert-threshold: '200%'
-              alert-comment-cc-users: '@disorderedmaterials/dissolve-devs'
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup
+        uses: "./.github/workflows/setup"
+      - name: Install Prerequisites
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install ninja-build python3-setuptools uuid uuid-dev
+      - name: Install Conan
+        run: |
+          sudo pip3 install wheel
+          sudo pip3 install conan==1.*
+      - name: Retrieve ANTLR4 Java
+        run: |
+          wget https://www.antlr.org/download/antlr-${{ env.antlrVersion }}-complete.jar -O antlr4.jar
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          conan install ../ -s compiler.libcxx=libstdc++11
+          cmake ../ -G "Ninja" -DBUILD_BENCHMARKS:bool=true -DANTLR_EXECUTABLE:path=`pwd`/../antlr4.jar
+          ninja
+      - name: Run benchmarks
+        run: ./build/bin/benchmarks --benchmark_format=json | tee benchmark_result.json
+      - name: Store benchmark result
+        uses: rhysd/github-action-benchmark@v1
+        with:
+            tool: 'googlecpp'
+            output-file-path: benchmark_result.json
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            auto-push: true
+            comment-on-alert: true
+            alert-threshold: '200%'
+            alert-comment-cc-users: '@disorderedmaterials/dissolve-devs'
