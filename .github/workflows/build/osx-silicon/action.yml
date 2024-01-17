@@ -122,6 +122,8 @@ runs:
         -DANTLR_EXECUTABLE:string=$ANTLR_EXE
         -DFTGL_INCLUDE_DIRS:path=$FTGL_INCLUDE_DIRS
         -DFTGL_LIBRARIES:path=$FTGL_LIBRARIES
+        -DFREETYPE_INCLUDE_DIRS=$(brew --prefix freetype)/include/
+        -DFREETYPE_LIBRARIES=$(brew --prefix freetype)/lib/libfreetype.6.dylib
         -DCMAKE_OSX_ARCHITECTURES:string="arm64"
         -DQT_BASE_DIR=$QT_BASE_DIR
       )
