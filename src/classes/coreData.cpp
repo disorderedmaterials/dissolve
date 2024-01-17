@@ -712,4 +712,3 @@ std::vector<Module *> CoreData::allOfType(std::vector<ModuleTypes::ModuleType> t
                  [&types](const auto *m) { return std::find(types.begin(), types.end(), m->type()) != types.end(); });
     return modules;
 }
->>>>>>> develop
