@@ -1,4 +1,8 @@
-Version 1.4 is a minor release making general functionality, quality, and stability improvements.
+Version 1.4.1 addressing some issues with the QSpecies module.
+
+## Major Changes in v1.4.1
+
+Version 1.4.1 fixes some calculation issues with the `QSpecies` module where the proportion of Q(0) species was not correctly determined, and which could result in misleading results.
 
 ## Major Changes in v1.4
 
