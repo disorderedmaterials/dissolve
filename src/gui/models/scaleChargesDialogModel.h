@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/species.h"
 #include <QObject>
 
 class ScaleChargesDialogModel : public QObject
@@ -15,15 +16,18 @@ class ScaleChargesDialogModel : public QObject
     ScaleChargesDialogModel();
     ~ScaleChargesDialogModel();
 
-    bool scale_, scaleTo_;
+    typedef enum { Scale, ScaleTo } Option;
+    Q_ENUM(Option)
 
-    Q_INVOKABLE void setOption(int);
+    Q_INVOKABLE void setOption(Option);
     Q_INVOKABLE void updateValue(double);
 
     double value() const;
+    bool scaleCharge(Species*);
 
     private:
     double currentValue_ = 1.0;
+    Option scale_type_;
 
     Q_SIGNALS:
     void valueSet();

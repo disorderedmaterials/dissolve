@@ -2,6 +2,7 @@ import Dissolve
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "widgets" as D
 
 Page {
     id: root
@@ -26,9 +27,11 @@ Page {
             anchors.centerIn: parent
             spacing: 10
 
-            Text {
+            D.Text {
                 font.pixelSize: 12
                 text: "Enter the scaling factor to apply to all atoms / the target sum to determine scaling factor from"
+            
+                wrapMode: Text.Wrap
             }
             SpinBox {
                 id: scaleSpinBox
@@ -45,7 +48,7 @@ Page {
             Row {
                 spacing: 10
 
-                Button {
+                D.Button {
                     id: cancelButton
                     text: "Cancel"
 
@@ -53,21 +56,21 @@ Page {
                         dialogModel.cancelSelection();
                     }
                 }
-                Button {
+                D.Button {
                     id: scaleButton
                     text: "Scale"
 
                     onClicked: {
-                        dialogModel.setOption(1);
+                        dialogModel.setOption(dialogModel.Scale);
                         dialogModel.acceptSelection();
                     }
                 }
-                Button {
+                D.Button {
                     id: scaleToButton
                     text: "Scale To"
 
                     onClicked: {
-                        dialogModel.setOption(2);
+                        dialogModel.setOption(dialogModel.ScaleTo);
                         dialogModel.acceptSelection();
                     }
                 }
