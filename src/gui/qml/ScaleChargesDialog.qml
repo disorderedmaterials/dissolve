@@ -30,7 +30,6 @@ Page {
             D.Text {
                 font.pixelSize: 12
                 text: "Enter the scaling factor to apply to all atoms / the target sum to determine scaling factor from"
-            
                 wrapMode: Text.Wrap
             }
             SpinBox {
