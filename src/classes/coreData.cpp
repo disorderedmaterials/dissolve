@@ -646,16 +646,14 @@ void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deseria
  * Object Management
  */
 
-
 // Templated remove all references to the specified data in a CoreData
 template <class O> void objectNoLongerValid(CoreData *coreData, O *object)
 {
-  // Loop over all keyword objects and call their local functions
-  for (auto &layer : coreData->processingLayers())
-    for (auto &mod : layer->modules())
-      mod->keywords().objectNoLongerValid(object);
+    // Loop over all keyword objects and call their local functions
+    for (auto &layer : coreData->processingLayers())
+        for (auto &mod : layer->modules())
+            mod->keywords().objectNoLongerValid(object);
 }
-
 
 // Remove all references to the specified data
 void CoreData::removeReferencesTo(Module *data) { objectNoLongerValid(this, data); }
