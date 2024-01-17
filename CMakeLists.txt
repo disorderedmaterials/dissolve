@@ -5,7 +5,7 @@ set(DESCRIPTION "Dissolve")
 set(AUTHOR "Team Dissolve")
 set(VERSION_MAJOR "1")
 set(VERSION_MINOR "4")
-set(VERSION_PATCH "0")
+set(VERSION_PATCH "1")
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
