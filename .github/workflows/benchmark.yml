@@ -15,9 +15,6 @@ on:
       - '.github/workflows/**'
       - '!.github/workflows/benchmark.yml'
 
-env:
-  BUILD_TYPE: Release
-
 jobs:
   benchmark:
     runs-on: ubuntu-latest
