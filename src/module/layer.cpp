@@ -103,9 +103,10 @@ bool ModuleLayer::isEnabled() const { return !runControlFlags_.isSet(ModuleLayer
 void ModuleLayer::clear() { modules_.clear(); }
 
 // Append new module to this layer
-Module *ModuleLayer::append(ModuleTypes::ModuleType moduleType, const std::vector<std::unique_ptr<Configuration>> &cfgs)
+Module *ModuleLayer::append(CoreData &coreData, ModuleTypes::ModuleType moduleType,
+                            const std::vector<std::unique_ptr<Configuration>> &cfgs)
 {
-    auto *module = ModuleRegistry::create(moduleType, this);
+    auto *module = ModuleRegistry::create(coreData, moduleType, this);
     module->setTargets(cfgs, modulesAsMap());
     return module;
 }
@@ -202,7 +203,7 @@ SerialisedValue ModuleLayer::serialise() const
 }
 
 // Read values from a serialisable value
-void ModuleLayer::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void ModuleLayer::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     frequency_ = toml::find_or<int>(node, "frequency", 1);
     if (toml::find_or<bool>(node, "disabled", false))
@@ -214,8 +215,8 @@ void ModuleLayer::deserialise(const SerialisedValue &node, const CoreData &coreD
     Serialisable::toMap(node, "modules",
                         [&coreData, this](const std::string &name, const SerialisedValue &data)
                         {
-                            auto *module =
-                                append(*ModuleTypes::moduleType(std::string(toml::find<std::string>(data, "type"), {})), {});
+                            auto *module = append(
+                                coreData, *ModuleTypes::moduleType(std::string(toml::find<std::string>(data, "type"), {})), {});
                             module->setName(name);
                             module->deserialise(data, coreData);
                         });

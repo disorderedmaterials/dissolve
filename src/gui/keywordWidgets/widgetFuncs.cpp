@@ -24,7 +24,7 @@ KeywordsWidget::KeywordsWidget(QWidget *parent) : QScrollArea(parent)
  */
 
 // Set up controls for specified keywords
-void KeywordsWidget::setUp(const KeywordStoreSection &keywordSection, const CoreData &coreData)
+void KeywordsWidget::setUp(const KeywordStoreSection &keywordSection, CoreData &coreData)
 {
     keywordWidgets_.clear();
 
