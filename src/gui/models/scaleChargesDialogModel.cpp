@@ -2,7 +2,6 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/scaleChargesDialogModel.h"
-#include "gui/scaleChargesDialog.h"
 
 ScaleChargesDialogModel::ScaleChargesDialogModel() {}
 
@@ -16,10 +15,10 @@ void ScaleChargesDialogModel::setOption(Option option) { scale_type_ = option; }
 
 bool ScaleChargesDialogModel::scaleCharge(Species *species)
 {
-    double scaleFactor = value();
+    auto scaleFactor = value();
     if (scale_type_ != Scale)
     {
-        double scaleTarget = scaleFactor;
+        auto scaleTarget = scaleFactor;
         if (scaleTarget == 0.0)
         {
             return false;
