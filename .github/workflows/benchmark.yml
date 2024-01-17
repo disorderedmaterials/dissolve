@@ -30,7 +30,7 @@ jobs:
         - name: Install Conan
           run: |
             sudo pip3 install wheel
-            sudo pip3 install conan==1.60
+            sudo pip3 install conan==1.*
         - name: Retrieve ANTLR4 Java
           run: |
             wget https://www.antlr.org/download/antlr-4.9.3-complete.jar -O antlr4.jar
