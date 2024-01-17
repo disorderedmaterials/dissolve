@@ -46,7 +46,7 @@ class IntegerHistogram1D
 
     public:
     // Initialise with specified bin range
-    void initialise(std::optional<int> xMin, std::optional<int> xMax);
+    void initialise(std::optional<int> xMin = {}, std::optional<int> xMax = {});
     // Zero histogram bins
     void zeroBins();
     // Return minimum value for data
@@ -54,13 +54,15 @@ class IntegerHistogram1D
     // Return maximum value for data
     std::optional<int> maximum() const;
     // Bin specified value, returning success
-    bool bin(int x);
+    bool bin(int x, int count = 1);
     // Return number of values binned over all bins
     long int nBinned() const;
     // Accumulate current histogram bins into averages
     void accumulate();
     // Return current data
     Data1D data() const;
+    // Return averages map
+    std::map<int, SampledDouble> averages() const;
     // Return accumulated (averaged) data
     const Data1D &accumulatedData() const;
 

@@ -252,6 +252,7 @@ set(BASIC_LINK_LIBS
     export
     import
     neta
+    analyser
     procedure
     procedureNodes
     keywords
