@@ -47,6 +47,7 @@ runs:
 
   - name: Set up FTGL
     shell: bash
+    if: false
     run: |
 
       # Change rpaths
@@ -112,7 +113,7 @@ runs:
       FTGL_INCLUDE_DIRS=$(brew --prefix ftgl)/include/
       FTGL_LIBRARIES=$(brew --prefix ftgl)/lib/libftgl.2.dylib
       FREETYPE_INCLUDE_DIRS=$(brew --prefix freetype)/include/
-      FREETYPE_INCLUDE_LIBRARIES=$(brew --prefix freetype)/lib/libfreetype.6.dylib
+      FREETYPE_LIBRARIES=$(brew --prefix freetype)/lib/libfreetype.6.dylib
 
       CMAKE_PARAMS=(
         -DGUI:bool=true
