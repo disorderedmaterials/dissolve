@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/scaleChargesDialog.h"
 #include "gui/models/scaleChargesDialogModel.h"
+#include "gui/scaleChargesDialog.h"
 
 ScaleChargesDialogModel::ScaleChargesDialogModel() {}
 
@@ -20,7 +20,10 @@ bool ScaleChargesDialogModel::scaleCharge(Species *species)
     if (scale_type_ != Scale)
     {
         double scaleTarget = scaleFactor;
-        if (scaleTarget == 0.0) { return false; }
+        if (scaleTarget == 0.0)
+        {
+            return false;
+        }
 
         double sum = 0.0;
         for (auto &atom : species->atoms())

@@ -16,14 +16,18 @@ class ScaleChargesDialogModel : public QObject
     ScaleChargesDialogModel();
     ~ScaleChargesDialogModel();
 
-    typedef enum { Scale, ScaleTo } Option;
+    typedef enum
+    {
+        Scale,
+        ScaleTo
+    } Option;
     Q_ENUM(Option)
 
     Q_INVOKABLE void setOption(Option);
     Q_INVOKABLE void updateValue(double);
 
     double value() const;
-    bool scaleCharge(Species*);
+    bool scaleCharge(Species *);
 
     private:
     double currentValue_ = 1.0;
