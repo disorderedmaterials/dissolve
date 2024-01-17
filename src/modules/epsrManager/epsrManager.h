@@ -24,6 +24,16 @@ class EPSRManagerModule : public Module
         GaussianExpansionFunction, /* Fit difference functions using Gaussian functions */
         nExpansionFunctionTypes
     };
+    // Number of coefficients used to define the empirical potential
+    std::optional<int> nCoeffP_;
+    // Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)
+    std::optional<double> rMaxPT_;
+    // Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)
+    std::optional<double> rMinPT_;
+    // Width for Gaussian function in reciprocal space
+    double gSigma1_{0.1};
+    // Width for Gaussian function in real space
+    double gSigma2_{0.2};
 
     private:
     // Target Module containing data to refine against
@@ -37,8 +47,9 @@ class EPSRManagerModule : public Module
     /*
      * Functions
      */
-    bool generateEmpiricalPotentials(GenericList &moduleData, Dissolve &dissolve, double averagedRho,
-                                     std::optional<int> ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
+    bool generateEmpiricalPotentials(std::string_view modulename, GenericList &moduleData, Dissolve &dissolve,
+                                     double averagedRho, std::optional<int> ncoeffp, double rminpt, double rmaxpt,
+                                     double sigma1, double sigma2);
     void truncate(Data1D &data, double rMin, double rMax);
 
     public:
