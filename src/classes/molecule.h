@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/atomVector.h"
 #include "templates/vector3.h"
 #include <functional>
 #include <memory>
@@ -45,7 +46,7 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     // Return nth Atom pointer
     Atom *atom(int n) const;
     // Update local atom pointers from main vector
-    void updateAtoms(std::vector<Atom> &mainAtoms, int offset);
+    void updateAtoms(AtomVector &mainAtoms, int offset);
     // Return global atom offset of first atom
     int globalAtomOffset() const;
     // Return global index of supplied atom

@@ -43,7 +43,7 @@ const std::vector<Atom *> &Molecule::atoms() const { return atoms_; }
 Atom *Molecule::atom(int n) const { return atoms_[n]; }
 
 // Update local atom pointers from main vector
-void Molecule::updateAtoms(std::vector<Atom> &mainAtoms, int offset)
+void Molecule::updateAtoms(AtomVector &mainAtoms, int offset)
 {
     globalAtomOffset_ = offset;
     std::iota(atoms_.begin(), atoms_.end(), &mainAtoms[globalAtomOffset_]);

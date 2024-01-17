@@ -248,9 +248,9 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
 int Configuration::nAtoms() const { return atoms_.size(); }
 
 // Return Atom array
-std::vector<Atom> &Configuration::atoms() { return atoms_; }
+AtomVector &Configuration::atoms() { return atoms_; }
 
-const std::vector<Atom> &Configuration::atoms() const { return atoms_; }
+const AtomVector &Configuration::atoms() const { return atoms_; }
 
 // Return nth atom
 Atom &Configuration::atom(int n)

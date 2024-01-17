@@ -7,6 +7,7 @@
 #include "base/version.h"
 #include "classes/atom.h"
 #include "classes/atomTypeMix.h"
+#include "classes/atomVector.h"
 #include "classes/box.h"
 #include "classes/cellArray.h"
 #include "classes/molecule.h"
@@ -88,7 +89,7 @@ class Configuration : public Serialisable<const CoreData &>
     // Molecule vector
     std::vector<std::shared_ptr<Molecule>> molecules_;
     // Atom vector
-    std::vector<Atom> atoms_;
+    AtomVector atoms_;
 
     public:
     // Empty contents of Configuration, leaving core definitions intact
@@ -140,8 +141,8 @@ class Configuration : public Serialisable<const CoreData &>
     // Return number of Atoms in Configuration
     int nAtoms() const;
     // Return Atom array
-    std::vector<Atom> &atoms();
-    const std::vector<Atom> &atoms() const;
+    AtomVector &atoms();
+    const AtomVector &atoms() const;
     // Return nth Atom
     Atom &atom(int n);
     // Unfold molecule coordinates
