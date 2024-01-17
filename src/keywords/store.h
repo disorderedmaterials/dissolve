@@ -282,4 +282,13 @@ class KeywordStore
     private:
     // Vector of all keywords globally
     std::vector<KeywordBase *> allKeywords_;
+
+    public:
+    // Gracefully deal with the specified object no longer being valid
+    template <class O> void objectNoLongerValid(O *object)
+    {
+        // Loop over all keyword objects and call their local functions
+        for (auto *kwd : allKeywords_)
+            kwd->removeReferencesTo(object);
+    }
 };

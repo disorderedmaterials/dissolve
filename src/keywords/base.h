@@ -139,5 +139,4 @@ class KeywordBase : public Serialisable<CoreData const &>
     virtual void removeReferencesTo(SpeciesSite *spSite);
     // Prune any references to the supplied ProcedureNode in the contained data
     virtual void removeReferencesTo(NodeRef node);
-
 };

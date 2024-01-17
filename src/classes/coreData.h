@@ -15,7 +15,6 @@
 
 // Forward Declarations
 class Dissolve;
-class KeywordBase;
 class Module;
 class ModuleLayer;
 class MasterBond;
@@ -229,5 +228,18 @@ class CoreData
      */
     public:
     // Remove all references to the specified data
+    void removeReferencesTo(Module *data);
+    void removeReferencesTo(Configuration *data);
     void removeReferencesTo(Species *data);
+    void removeReferencesTo(SpeciesSite *data);
+
+    private:
+    // Templated remove all references to the specified data
+    template <class O> void objectNoLongerValid(O *object)
+    {
+        // Loop over all keyword objects and call their local functions
+        for (auto &layer : processingLayers_)
+            for (auto &mod : layer->modules())
+                mod->keywords().objectNoLongerValid(object);
+    }
 };
