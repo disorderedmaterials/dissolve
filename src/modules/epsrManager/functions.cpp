@@ -27,8 +27,10 @@ bool EPSRManagerModule::generateEmpiricalPotentials(std::string_view modulename,
     const auto &atomTypes = scatteringMatrix_.atomTypes();
     const auto nAtomTypes = atomTypes.size();
 
-    auto result =
-        for_each_pair_early(atomTypes.begin(), atomTypes.end(), [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
+    auto result = for_each_pair_early(
+        atomTypes.begin(), atomTypes.end(),
+        [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
+        {
             auto &potCoeff = object[{i, j}];
 
             // Regenerate empirical potential from the stored coefficients
