@@ -29,7 +29,7 @@ jobs:
       uses: "./.github/workflows/qc"
 
   Build:
-    needs: QC
+    #needs: QC
     strategy:
       fail-fast: false
       matrix:
