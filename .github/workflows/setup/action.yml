@@ -49,8 +49,6 @@ runs:
         ANTLR_VERSION=$(cat conanfile.txt | sed -n -e 's%^.*antlr4-cppruntime/%%p')
         echo "antlrVersion=${ANTLR_VERSION}" >> ${GITHUB_ENV}
 
-
-
     - name: Install Dependencies (OSX)
       if: ${{ runner.os == 'macos' }}
       shell: bash
