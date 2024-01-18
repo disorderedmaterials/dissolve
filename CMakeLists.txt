@@ -87,7 +87,15 @@ if(GUI)
     include(FindBrotli)
     find_package(Brotli COMPONENTS encoder decoder common REQUIRED)
 
-    set(GUI_LINK_LIBS ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} ${BZIP2_LIBRARIES} ${BROTLI_LIBRARIES} Brotli::encoder Brotli::decoder Brotli::common)
+    set(GUI_LINK_LIBS 
+        ${ZLIB_LIBRARIES}
+        ${PNG_LIBRARIES} 
+        ${BZIP2_LIBRARIES} 
+        ${BROTLI_LIBRARIES} 
+        Brotli::encoder 
+        Brotli::decoder 
+        Brotli::common
+    )
   endif()
 
   find_package(Freetype REQUIRED)
