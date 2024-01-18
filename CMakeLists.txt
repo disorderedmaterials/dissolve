@@ -72,20 +72,26 @@ find_package(ANTLR REQUIRED)
 
 if(GUI)
 
-  if(APPLE)
+  if(APPLE AND CONAN)
     set(CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
-  endif(APPLE)
-
-  if(CONAN)
     set(ENV{ZLIB_ROOT} ${CONAN_ZLIB_ROOT})
     set(ENV{PNG_ROOT} ${CONAN_PNG_ROOT})
     set(ENV{BZIP2_LIBRARIES} ${CONAN_LIB_DIRS_BZIP2})
     set(ENV{FREETYPE_DIR} ${CONAN_FREETYPE_ROOT})
-  endif(CONAN)
+    set(ENV{BROTLI_LIBRARIES} ${CONAN_LIB_DIRS_BROTLI})
+    find_package(ZLIB REQUIRED)
+    find_package(PNG REQUIRED)
+    find_package(BZIP2 REQUIRED)
+    set(
+      GUI_LINK_LIBS
+      ${ZLIB_LIBRARIES} 
+      ${PNG_LIBRARIES} 
+      ${BZIP2_LIBRARIES}
+      ${BROTLI_LIBRARIES}
+    )
+  endif()
 
-  find_package(ZLIB REQUIRED)
-  find_package(PNG REQUIRED)
-  find_package(BZIP2 REQUIRED)
+
   find_package(Freetype REQUIRED)
   find_package(OpenGL REQUIRED)
   find_package(
@@ -336,11 +342,9 @@ if(GUI)
             Qt6::Core
             OpenGL::GL
             ${FTGL_LIBRARIES}
-            ${PNG_LIBRARIES}
-            ${ZLIB_LIBRARIES}
-            ${BZIP2_LIBRARIES}
             ${FREETYPE_LIBRARIES}
             ${EXTRA_LINK_LIBS}
             ${THREADING_LINK_LIBS}
+            ${GUI_LINK_LIBS}
   )
 endif(GUI)
