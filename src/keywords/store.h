@@ -280,7 +280,7 @@ class KeywordStore
      * Object Management
      */
     private:
-    // Vector of all keywords globally
+    // Vector of all keywords in the store
     std::vector<KeywordBase *> allKeywords_;
 
     public:
