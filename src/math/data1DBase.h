@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "io/import/data1D.h"
 #include "math/dataBase.h"
 #include <vector>
 
@@ -17,7 +16,7 @@ class Data1DBase : public DataBase
      * Type Definitions
      */
     public:
-    using Formatter = class Data1DImportFileFormat;
+    using Formatter = Data1DImportFileFormat;
 
     /*
      * Values / Errors
