@@ -57,6 +57,8 @@ class EPSRModule : public Module
     double gSigma1_{0.1};
     // Width for Gaussian function in real space
     double gSigma2_{0.2};
+    // Vector storing atom pairs and associated potentials
+    std::vector<std::pair<std::pair<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>>, Data1D>> empiricalPotentials_;
     // Frequency at which to apply generated perturbations to interatomic potentials
     std::optional<int> modifyPotential_{1};
     // Number of coefficients used to define the empirical potential
@@ -126,6 +128,8 @@ class EPSRModule : public Module
     double absEnergyEP(GenericList &moduleData);
     // Truncate the supplied data
     void truncate(Data1D &data, double rMin, double rMax);
+    // return vector of emirical potentials
+    std::vector<std::pair<std::pair<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>>, Data1D>> empiricalPotentials();
 
     /*
      * EPSR File I/O

@@ -107,6 +107,9 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averaged
             dissolve.processingModuleData().realise<Data1D>(fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()),
                                                             "Dissolve", GenericItem::InRestartFileFlag) = ep;
 
+            // Put potentials in vector
+            empiricalPotentials_.emplace_back(std::make_pair(at1, at2), ep);
+
             // Grab pointer to the relevant pair potential (if it exists)
             auto *pp = dissolve.pairPotential(at1, at2);
             if (pp)
@@ -218,4 +221,10 @@ void EPSRModule::truncate(Data1D &data, double rMin, double rMax)
         else if (x > rMin)
             y[n] *= 0.5 * (1.0 + cos(((x - rMin) * PI) / decay));
     }
+}
+
+std::vector<std::pair<std::pair<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>>, Data1D>>
+EPSRModule::empiricalPotentials()
+{
+    return empiricalPotentials_;
 }
