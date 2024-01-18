@@ -79,10 +79,11 @@ if(GUI)
     set(CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
   endif(APPLE)
 
-  if(NOT FREETYPE_INCLUDE_DIRS OR NOT FREETYPE_LIBRARIES)
-    find_package(Freetype REQUIRED)
-  endif()
+  if(CONAN)
+    set(FREETYPE_DIR ${FREETYPE_DIR} CONAN_FREETYPE_ROOT)
+  endif(CONAN)
 
+  find_package(Freetype REQUIRED)
   find_package(OpenGL REQUIRED)
   find_package(
     Qt6
