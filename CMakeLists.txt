@@ -82,13 +82,7 @@ if(GUI)
     find_package(ZLIB REQUIRED)
     find_package(PNG REQUIRED)
     find_package(BZIP2 REQUIRED)
-    set(
-      GUI_LINK_LIBS
-      ${ZLIB_LIBRARIES} 
-      ${PNG_LIBRARIES} 
-      ${BZIP2_LIBRARIES}
-      ${BROTLI_LIBRARIES}
-    )
+    set(GUI_LINK_LIBS ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} ${BZIP2_LIBRARIES} ${BROTLI_LIBRARIES})
   endif()
 
 
