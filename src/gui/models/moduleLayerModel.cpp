@@ -17,7 +17,7 @@ Module *ModuleLayerModel::rawData(const QModelIndex &index) const
 }
 
 // Set source data
-void ModuleLayerModel::setData(ModuleLayer *moduleLayer, CoreData &coreData)
+void ModuleLayerModel::setData(ModuleLayer *moduleLayer, CoreData *coreData)
 {
     coreData_ = coreData;
 
@@ -111,7 +111,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
         auto moduleType = (ModuleTypes::ModuleType)value.toInt();
         moduleLayer_->modules()[index.row()] = ModuleRegistry::create(*coreData_, moduleType);
         auto *modulePtr = moduleLayer_->modules()[index.row()].get();
-        modulePtr->setTargets(coreData_->get().configurations(), moduleLayer_->modulesAsMap(modulePtr));
+        modulePtr->setTargets(coreData_->configurations(), moduleLayer_->modulesAsMap(modulePtr));
 
         Q_EMIT dataChanged(index, index);
 
@@ -142,9 +142,9 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
 
             // Ensure uniqueness of new name
             auto oldName = QString::fromStdString(std::string(module->name()));
-            auto newName = DissolveSys::uniqueName(
-                DissolveSys::niceName(value.toString().toStdString()), coreData_->get().moduleInstances(),
-                [&](const auto &inst) { return inst == module ? std::string() : inst->name(); });
+            auto newName =
+                DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()), coreData_->moduleInstances(),
+                                        [&](const auto &inst) { return inst == module ? std::string() : inst->name(); });
             module->setName(newName);
 
             Q_EMIT(dataChanged(index, index));
@@ -320,7 +320,7 @@ bool ModuleLayerModel::removeRows(int row, int count, const QModelIndex &parent)
     beginRemoveRows(parent, row, row + count - 1);
     for (auto i = 0; i < count; ++i)
     {
-        KeywordStore::objectNoLongerValid(moduleLayer_->modules()[row].get());
+        coreData_->removeReferencesTo(moduleLayer_->modules()[row].get());
         moduleLayer_->modules().erase(moduleLayer_->modules().begin() + row);
     }
     endRemoveRows();

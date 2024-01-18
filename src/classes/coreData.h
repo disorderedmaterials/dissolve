@@ -250,8 +250,9 @@ class CoreData
      */
     public:
     // Remove all references to the specified data
-    void removeReferencesTo(Module *data);
     void removeReferencesTo(Configuration *data);
+    void removeReferencesTo(Isotopologue *data);
+    void removeReferencesTo(Module *data);
     void removeReferencesTo(Species *data);
     void removeReferencesTo(SpeciesSite *data);
 };

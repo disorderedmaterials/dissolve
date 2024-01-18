@@ -20,13 +20,13 @@ class ModuleLayerModel : public QAbstractTableModel
     // Source ModuleLayer
     ModuleLayer *moduleLayer_{nullptr};
     // Reference to CoreData (for Configuration target setting)
-    OptionalReferenceWrapper<CoreData> coreData_;
+    CoreData *coreData_{nullptr};
     // Return object represented by specified model index
     Module *rawData(const QModelIndex &index) const;
 
     public:
     // Set source data
-    void setData(ModuleLayer *moduleLayer, CoreData &coreData);
+    void setData(ModuleLayer *moduleLayer, CoreData *coreData);
     // Reset model data, forcing update
     void reset();
 
