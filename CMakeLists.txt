@@ -85,7 +85,6 @@ if(GUI)
     set(GUI_LINK_LIBS ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} ${BZIP2_LIBRARIES} ${BROTLI_LIBRARIES})
   endif()
 
-
   find_package(Freetype REQUIRED)
   find_package(OpenGL REQUIRED)
   find_package(
