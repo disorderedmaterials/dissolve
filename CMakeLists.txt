@@ -87,6 +87,7 @@ if(GUI)
     #include(FindBrotli)
     #find_package(Brotli COMPONENTS encoder decoder common REQUIRED)
 
+    set(FREETYPE_LIBRARIES CONAN_PKG::freetype)
     set(GUI_LINK_LIBS CONAN_PKG::zlib CONAN_PKG::libpng CONAN_PKG::bzip2 CONAN_PKG::brotli)
         #${ZLIB_LIBRARIES}
         #${PNG_LIBRARIES}
@@ -97,7 +98,10 @@ if(GUI)
         #Brotli::common
   endif()
 
-  find_package(Freetype REQUIRED)
+  if(NOT FREETYPE_LIBRARIES)
+    find_package(Freetype REQUIRED)
+  endif()
+
   find_package(OpenGL REQUIRED)
   find_package(
     Qt6

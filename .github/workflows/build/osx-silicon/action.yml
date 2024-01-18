@@ -55,14 +55,7 @@ runs:
       # FTGL
       sudo install_name_tool -change /usr/local/opt/ftgl/lib/libftgl.2.dylib @rpath/libftgl.2.dylib $(brew --prefix ftgl)/lib/libftgl.2.dylib
       sudo install_name_tool -change /usr/local/opt/freetype/lib/libfreetype.6.dylib @rpath/libfreetype.6.dylib $(brew --prefix ftgl)/lib/libftgl.2.dylib
-
-      # Freetype
-      install_name_tool -change /usr/local/opt/libpng/lib/libpng16.16.dylib @rpath/libpng16.16.dylib $(brew --prefix freetype)/lib/libfreetype.6.dylib
-      install_name_tool -change /usr/local/opt/freetype/lib/libfreetype.6.dylib @rpath/libfreetype.6.dylib $(brew --prefix freetype)/lib/libfreetype.6.dylib
-
-      # Lib png
-      install_name_tool -change /usr/local/opt/libpng/lib/libpng16.16.dylib @rpath/libpng16.16.dylib $(brew --prefix libpng)/lib/libpng16.16.dylib
-
+      
   - name: Install Python Dependencies
     shell: bash
     run: |
