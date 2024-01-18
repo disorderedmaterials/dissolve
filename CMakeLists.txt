@@ -80,7 +80,7 @@ if(GUI)
   endif(APPLE)
 
   if(CONAN)
-    set(FREETYPE_DIR ${FREETYPE_DIR} CONAN_FREETYPE_ROOT)
+    set(ENV{FREETYPE_DIR} ${CONAN_FREETYPE_ROOT})
   endif(CONAN)
 
   find_package(Freetype REQUIRED)
