@@ -13,7 +13,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
     // Loop over target data
     for (auto *module : target_)
     {
-        auto *epsrModule = dynamic_cast<EPSRModule*>(module);
+        auto *epsrModule = dynamic_cast<EPSRModule *>(module);
         auto &moduleData = moduleContext.dissolve().processingModuleData();
         auto potentials = epsrModule->empiricalPotentials();
     }
