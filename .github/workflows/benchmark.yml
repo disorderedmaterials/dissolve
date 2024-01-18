@@ -43,7 +43,7 @@ jobs:
 
           # Deploy Conan dependencies alongside binary so we can run it
           cd bin
-          conan install ../.. -g deploy
+          conan install ../.. -g deploy -s compiler.libcxx=libstdc++11
       - name: Run benchmarks
         run: ./build/bin/benchmarks --benchmark_format=json | tee benchmark_result.json
       - name: Store benchmark result
