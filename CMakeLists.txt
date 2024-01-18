@@ -54,12 +54,9 @@ option(MULTI_THREADING "Enable threading using tbb" ON)
 if(MULTI_THREADING)
   add_definitions("-DMULTITHREADING")
   if(CONAN)
-    include_directories(${CONAN_INCLUDE_DIRS_ONETBB})
-    include_directories(${CONAN_INCLUDE_DIRS_ONEDPL})
-    set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} CONAN_PKG::onetbb)
-    if(WIN32 OR APPLE)
-      set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} CONAN_PKG::onedpl)
-    endif()
+    include_directories(CONAN_INCLUDE_DIRS_ONETBB)
+    include_directories(CONAN_INCLUDE_DIRS_ONEDPL)
+    set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} CONAN_PKG::onetbb CONAN_PKG::onedpl)
   else(CONAN)
     set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} $ENV{THREADING_LINK_LIBS})
   endif(CONAN)
@@ -254,6 +251,7 @@ set(BASIC_LINK_LIBS
     export
     import
     neta
+    analyser
     procedure
     procedureNodes
     keywords
