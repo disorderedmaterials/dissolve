@@ -85,11 +85,7 @@ if(GUI)
     find_package(BZIP2 REQUIRED)
 
     include(FindBrotli)
-    find_package(
-      Brotli
-      COMPONENTS encoder decoder common
-      REQUIRED
-    )
+    find_package(Brotli COMPONENTS encoder decoder common REQUIRED)
 
     set(GUI_LINK_LIBS
         ${ZLIB_LIBRARIES}
@@ -118,7 +114,7 @@ if(GUI)
                Quick
                QuickWidgets
                QuickControls2
-    REQUIRED
+               REQUIRED
   )
   if(NOT FTGL_INCLUDE_DIRS OR NOT FTGL_LIBRARIES)
     # Add extra functions
