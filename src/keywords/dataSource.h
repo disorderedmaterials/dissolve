@@ -13,11 +13,6 @@
 #include "templates/optionalRef.h"
 #include <queue>
 
-// Foward declarations
-class Data1DImportFileFormat;
-class Data2DImportFileFormat;
-class Data3DImportFileFormat;
-
 // Keyword managing data sources
 // Template arguments: data class (Data1D, Data2D ...), data import file format
 template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
@@ -26,10 +21,6 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
     explicit DataSourceKeyword(std::vector<DataSourceKeywordBase::DataPair> &dataSources, std::string_view endKeyword)
         : DataSourceKeywordBase(dataSources, endKeyword){};
     ~DataSourceKeyword() override = default;
-
-    // Getting type definiton for data FileAndFormat
-    public:
-    using DataFormat = typename DataType::Formatter;
 
     /*
      * Arguments
@@ -80,7 +71,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
             {
                 // Initialise data and format objects
                 DataType data;
-                DataFormat format;
+                typename DataType::Formatter format;
 
                 // Read the supplied arguments
                 if (format.read(parser, 1, fmt::format("End{}", DataSource::dataSourceTypes().keyword(DataSource::External)),
@@ -204,7 +195,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                      else if (!sourceQueue.empty())
                      {
                          DataType data;
-                         DataFormat format;
+                         typename DataType::Formatter format;
 
                          // Deserialise FileAndFormat
                          format.deserialise(item.at("data"), coreData);
