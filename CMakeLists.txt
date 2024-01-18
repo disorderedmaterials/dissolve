@@ -78,11 +78,16 @@ if(GUI)
     set(ENV{PNG_ROOT} ${CONAN_PNG_ROOT})
     set(ENV{BZIP2_LIBRARIES} ${CONAN_LIB_DIRS_BZIP2})
     set(ENV{FREETYPE_DIR} ${CONAN_FREETYPE_ROOT})
-    set(ENV{BROTLI_LIBRARIES} ${CONAN_LIB_DIRS_BROTLI})
+    set(ENV{BROTLI_ROOT_DIR} ${CONAN_BROTLI_ROOT})
+
     find_package(ZLIB REQUIRED)
     find_package(PNG REQUIRED)
     find_package(BZIP2 REQUIRED)
-    set(GUI_LINK_LIBS ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} ${BZIP2_LIBRARIES} ${BROTLI_LIBRARIES})
+
+    include(FindBrotli)
+    find_package(Brotli COMPONENTS encoder decoder common REQUIRED)
+
+    set(GUI_LINK_LIBS ${ZLIB_LIBRARIES} ${PNG_LIBRARIES} ${BZIP2_LIBRARIES} ${BROTLI_LIBRARIES} Brotli::encoder Brotli::decoder Brotli::common)
   endif()
 
   find_package(Freetype REQUIRED)
