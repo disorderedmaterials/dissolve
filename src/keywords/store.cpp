@@ -24,9 +24,6 @@
 #include "procedure/nodes/regionBase.h"
 #include "procedure/nodes/select.h"
 
-// Static Singletons
-std::vector<KeywordBase *> KeywordStore::allKeywords_;
-
 /*
  * Keyword Data
  */

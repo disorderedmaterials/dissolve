@@ -95,7 +95,7 @@ void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
         return;
 
     // Notify all keywords that our Isotopologue is about to be removed
-    KeywordStore::objectNoLongerValid<Isotopologue>(iso);
+    dissolve_.coreData().removeReferencesTo(iso);
     dissolveWindow_->setModified(DissolveSignals::DataMutations::IsotopologuesMutated);
 
     // Finally, remove the Isotopologue from the Species

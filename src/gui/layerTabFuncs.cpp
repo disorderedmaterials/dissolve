@@ -20,7 +20,7 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
 
     // Set the module list model and connect signals
     ui_.ModulesTable->setModel(&moduleLayerModel_);
-    moduleLayerModel_.setData(moduleLayer_, dissolve.coreData());
+    moduleLayerModel_.setData(moduleLayer_, &dissolve.coreData());
     connect(ui_.ModulesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(moduleSelectionChanged(const QItemSelection &, const QItemSelection &)));
     connect(&moduleLayerModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
