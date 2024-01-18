@@ -8,7 +8,6 @@ Page {
     id: root
     property double value
 
-    font.pointSize: 10
     height: 116
     title: "Scale Charges"
     visible: true
@@ -17,18 +16,23 @@ Page {
     ScaleChargesDialogModel {
         id: dialogModel
         objectName: "dialogModel"
+
+        function processSelection(mode, x) {
+            dialogModel.setOption(mode);
+            dialogModel.updateValue(x);
+        }
     }
 
     contentItem: Rectangle {
         height: root.height
         width: root.width
 
-        Column {
+        ColumnLayout {
             anchors.centerIn: parent
             spacing: 10
 
             D.Text {
-                font.pixelSize: 12
+                font.pixelSize: 11
                 text: "Enter the scaling factor to apply to all atoms / the target sum to determine scaling factor from"
                 wrapMode: Text.Wrap
             }
@@ -39,12 +43,8 @@ Page {
                 stepSize: 1
                 to: 100
                 value: dialogModel.value
-
-                onValueChanged: {
-                    dialogModel.updateValue(scaleSpinBox.value);
-                }
             }
-            Row {
+            RowLayout {
                 spacing: 10
 
                 D.Button {
@@ -53,6 +53,7 @@ Page {
 
                     onClicked: {
                         dialogModel.cancelSelection();
+                        scaleSpinBox.value = dialogModel.value;
                     }
                 }
                 D.Button {
@@ -60,7 +61,7 @@ Page {
                     text: "Scale"
 
                     onClicked: {
-                        dialogModel.setOption(dialogModel.Scale);
+                        dialogModel.processSelection(dialogModel.Scale, scaleSpinBox.value);
                         dialogModel.acceptSelection();
                     }
                 }
@@ -69,7 +70,7 @@ Page {
                     text: "Scale To"
 
                     onClicked: {
-                        dialogModel.setOption(dialogModel.ScaleTo);
+                        dialogModel.processSelection(dialogModel.ScaleTo, scaleSpinBox.value);
                         dialogModel.acceptSelection();
                     }
                 }
