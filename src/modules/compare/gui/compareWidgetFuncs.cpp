@@ -73,7 +73,6 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
             buttons_.front()->setChecked(true);
             index = 0;
         }
-    
         // Create the renderables for Data1D
         if (index == 0)
         {
