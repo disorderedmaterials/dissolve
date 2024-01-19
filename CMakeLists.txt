@@ -332,7 +332,6 @@ if(GUI)
             Qt6::Widgets
             Qt6::Core
             OpenGL::GL
-            
             ${GUI_LINK_LIBS}
             ${FREETYPE_LIBRARIES}
             ${FTGL_LIBRARIES}
