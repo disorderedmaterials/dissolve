@@ -45,17 +45,15 @@ runs:
       cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.4.13.1.dylib /usr/local/lib/libantlr4-runtime.4.13.1.dylib
       cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib /usr/local/lib/libantlr4-runtime.dylib
 
-      #cp ./deploy/ftgl/libftgl.2.dylib /usr/local/lib/libftgl.2.dylib
-      #cp ./deploy/ftgl/libftgl.2.dylib /usr/local/lib/libftgl.2.1.3.dylib
+      cp ./deploy/ftgl/libftgl.2.dylib /usr/local/lib/libftgl.2.dylib
+      cp ./deploy/ftgl/libftgl.2.dylib /usr/local/lib/libftgl.2.1.3.dylib
 
       for FILE in ./deploy/onetbb/lib/*.dylib; do
         FILENAME=$(basename $FILE)
         cp ./deploy/onetbb/lib/$FILENAME /usr/local/lib/$FILENAME
       done
 
-      install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
-      install_name_tool -add_rpath "/opt/homebrew/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
-      ./prep-dmg -a Dissolve-GUI -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -L /opt/homebrew/lib
+      ./prep-dmg -a Dissolve-GUI -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -L
 
   - name: Create Disk Image
     shell: bash

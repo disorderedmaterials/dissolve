@@ -74,29 +74,9 @@ if(GUI)
 
   if(APPLE AND CONAN)
     set(CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
-    #set(ENV{ZLIB_ROOT} ${CONAN_ZLIB_ROOT})
-    #set(ENV{PNG_ROOT} ${CONAN_PNG_ROOT})
-    #set(ENV{BZIP2_LIBRARIES} ${CONAN_LIB_DIRS_BZIP2})
-    set(ENV{FREETYPE_DIR} ${CONAN_FREETYPE_ROOT})
-    #set(ENV{BROTLI_ROOT_DIR} ${CONAN_BROTLI_ROOT})
-
-    #find_package(ZLIB REQUIRED)
-    #find_package(PNG REQUIRED)
-    #find_package(BZIP2 REQUIRED)
-
-    #include(FindBrotli)
-    #find_package(Brotli COMPONENTS encoder decoder common REQUIRED)
-
     set(FREETYPE_LIBRARIES CONAN_PKG::freetype)
     set(FREETYPE_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS_FREETYPE})
     set(GUI_LINK_LIBS CONAN_PKG::zlib CONAN_PKG::libpng CONAN_PKG::bzip2 CONAN_PKG::brotli)
-        #${ZLIB_LIBRARIES}
-        #${PNG_LIBRARIES}
-        #${BZIP2_LIBRARIES}
-        #${BROTLI_LIBRARIES}
-        #Brotli::encoder
-        #Brotli::decoder
-        #Brotli::common
   endif()
 
   if(NOT FREETYPE_LIBRARIES)
