@@ -34,6 +34,7 @@ runs:
       BREW_LOCATION="/opt/homebrew/bin/brew"
       set -ex
       sudo git clone https://github.com/Homebrew/brew /opt/homebrew
+      sudo chown -R runner /opt/homebrew/var/homebrew
       ${BREW_LOCATION} install ninja
       PACKAGES=(libpng freetype ftgl antlr)
       for PACKAGE in "${PACKAGES[@]}"
