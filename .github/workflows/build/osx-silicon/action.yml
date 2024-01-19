@@ -31,17 +31,14 @@ runs:
     if: ${{ inputs.cacheOnly }}
     shell: bash
     run: |
-      BREW_LOCATION="/opt/homebrew/bin/brew"
       set -ex
-      sudo git clone https://github.com/Homebrew/brew /opt/homebrew
-      wait
-      sudo chown -R runner /opt/homebrew/var/homebrew
-      ${BREW_LOCATION} install ninja
+      brew update-reset
+      brew install ninja
       PACKAGES=(libpng freetype ftgl antlr)
       for PACKAGE in "${PACKAGES[@]}"
       do
-        ${BREW_LOCATION} fetch --force --bottle-tag=arm64_monterey $PACKAGE
-        ${BREW_LOCATION} install $(brew --cache --bottle-tag=arm64_monterey $PACKAGE)
+        brew fetch --force --bottle-tag=arm64_monterey $PACKAGE
+        brew install $(brew --cache --bottle-tag=arm64_monterey $PACKAGE)
       done
 #
 #  - name: Set up FTGL
@@ -132,9 +129,9 @@ runs:
       mkdir deploy && cd deploy
       conan install .. -g deploy -s arch=armv8
 
-      mkdir ftgl
-      cp $(brew --prefix ftgl)/lib/libftgl.2.dylib ftgl
-      cp $(brew --prefix ftgl)/lib/libftgl.2.1.3.dylib ftgl
+      #mkdir ftgl
+      #cp $(brew --prefix ftgl)/lib/libftgl.2.dylib ftgl
+      #cp $(brew --prefix ftgl)/lib/libftgl.2.1.3.dylib ftgl
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}

@@ -41,12 +41,12 @@ runs:
       Qt6_ROOT=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
-      # Handle ANTLR & TBB & FTGL
+      # Handle ANTLR & TBB
       cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.4.13.1.dylib /usr/local/lib/libantlr4-runtime.4.13.1.dylib
       cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib /usr/local/lib/libantlr4-runtime.dylib
 
-      cp ./deploy/ftgl/libftgl.2.dylib /usr/local/lib/libftgl.2.dylib
-      cp ./deploy/ftgl/libftgl.2.dylib /usr/local/lib/libftgl.2.1.3.dylib
+      #cp ./deploy/ftgl/libftgl.2.dylib /usr/local/lib/libftgl.2.dylib
+      #cp ./deploy/ftgl/libftgl.2.dylib /usr/local/lib/libftgl.2.1.3.dylib
 
       for FILE in ./deploy/onetbb/lib/*.dylib; do
         FILENAME=$(basename $FILE)
