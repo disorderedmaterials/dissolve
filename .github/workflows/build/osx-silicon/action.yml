@@ -31,18 +31,16 @@ runs:
     if: ${{ inputs.cacheOnly }}
     shell: bash
     run: |
-
+      BREW_LOCATION="/opt/homebrew/bin/brew"
       set -ex
-      brew update-reset
-      brew cleanup
-      brew uninstall --ignore-dependencies freetype
-      rm -rf /usr/local/lib/libfreetype.6.dylib
-      brew install ninja
-      PACKAGES=(ftgl antlr)
+      sudo mkdir /opt
+      git clone https://github.com/Homebrew/brew /opt/homebrew
+      ${BREW_LOCATION} install ninja
+      PACKAGES=(libpng freetype ftgl antlr)
       for PACKAGE in "${PACKAGES[@]}"
       do
-        brew fetch --force --bottle-tag=arm64_monterey $PACKAGE
-        brew install $(brew --cache --bottle-tag=arm64_monterey $PACKAGE)
+        ${BREW_LOCATION} fetch --force --bottle-tag=arm64_monterey $PACKAGE
+        ${BREW_LOCATION} install $(brew --cache --bottle-tag=arm64_monterey $PACKAGE)
       done
 #
 #  - name: Set up FTGL
@@ -125,7 +123,7 @@ runs:
       cmake -G Ninja "${CMAKE_PARAMS[@]}" ${{ inputs.extraCMakeFlags }}  ../
       cmake --build . --config Release
 
-      install_name_tool -change /usr/local/opt/ftgl/lib/libftgl.2.dylib @rpath/libftgl.2.dylib bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+      #install_name_tool -change /usr/local/opt/ftgl/lib/libftgl.2.dylib @rpath/libftgl.2.dylib bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
 
       cd ../
 
