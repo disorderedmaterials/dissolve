@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/gui.h"
 #include "gui/keywordWidgets/producers.h"
@@ -21,13 +21,15 @@ NodeControlWidget::NodeControlWidget(DissolveWindow *dissolveWindow, NodeRef nod
     ui_.NodeIconLabel->setPixmap(
         QPixmap(QString(":/nodes/icons/nodes/%1.svg").arg(QString::fromStdString(ProcedureNode::lccNodeType(node->type())))));
 
-    // We can only display a single group of widgets at present, so check the size of the index
-    auto &&[keywordIndex, keywordMap] = node_->keywords().keywordOrganisation();
-    if (keywordIndex.size() > 1)
-        Messenger::warn("There are {} keyword groups defined, but only one can be displayed. Tell the developer!\n");
+    // Set up any keyword widgets we have
+    if (!node_->keywords().sections().empty())
+    {
+        // We can only display a single section of widgets at present
+        if (node_->keywords().sections().size() > 1)
+            Messenger::warn("There are {} keyword sections defined, but only one can be displayed. Tell the developer!\n");
 
-    if (!keywordIndex.empty())
-        ui_.NodeKeywordsWidget->setUp(keywordIndex.front(), keywordMap, dissolve_.coreData());
+        ui_.NodeKeywordsWidget->setUp(node_->keywords().sections().front(), dissolve_.coreData());
+    }
 
     updateControls();
 }
@@ -79,7 +81,7 @@ void NodeControlWidget::localKeywordChanged(int signalMask)
         return;
 
     // Always emit the 'dataModified' signal
-    emit(dataModified());
+    Q_EMIT(dataModified());
 
     // Act on keyword signals
     Flags<KeywordBase::KeywordSignal> keywordSignals(signalMask);

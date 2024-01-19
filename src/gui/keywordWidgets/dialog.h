@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -9,7 +9,7 @@
 
 // Forward Declarations
 class CoreData;
-class KeywordStore;
+class KeywordStoreOrganiser;
 
 // Keywords Dialog
 class KeywordsDialog : public QDialog
@@ -17,7 +17,7 @@ class KeywordsDialog : public QDialog
     Q_OBJECT
 
     public:
-    KeywordsDialog(QWidget *parent, KeywordStore &keywords, const CoreData &coreData);
+    KeywordsDialog(QWidget *parent, const KeywordStore &keywordStore, const CoreData &coreData);
     ~KeywordsDialog() = default;
 
     private:
@@ -26,7 +26,7 @@ class KeywordsDialog : public QDialog
     // CoreData reference
     const CoreData &coreData_;
     // Whether any keywords have been modified in the current 'show'
-    bool keywordsModified_;
+    bool keywordsModified_{false};
     // Combined signal mask for all keyword changes
     Flags<KeywordBase::KeywordSignal> keywordSignalMask_;
 
@@ -41,7 +41,7 @@ class KeywordsDialog : public QDialog
     /*
      * Slots
      */
-    private slots:
+    private Q_SLOTS:
     void keywordChanged(int signalMask);
     void on_OKButton_clicked(bool checked);
 };

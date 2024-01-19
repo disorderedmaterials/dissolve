@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/speciesModel.h"
 
@@ -90,7 +90,7 @@ bool SpeciesModel::setData(const QModelIndex &index, const QVariant &value, int 
         else
             xitems.erase(std::remove(xitems.begin(), xitems.end(), rawData(index)), xitems.end());
 
-        emit dataChanged(index, index);
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }

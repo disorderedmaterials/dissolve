@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -33,11 +33,11 @@ class SpeciesKeywordWidget : public QWidget, public KeywordWidgetBase
     // Model for combo box
     SpeciesModel speciesModel_;
 
-    private slots:
+    private Q_SLOTS:
     void on_SpeciesCombo_currentIndexChanged(int index);
     void on_ClearButton_clicked(bool checked);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

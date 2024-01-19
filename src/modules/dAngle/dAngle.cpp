@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "modules/dAngle/dAngle.h"
 #include "keywords/bool.h"
@@ -94,7 +94,7 @@ DAngleModule::DAngleModule() : Module(ModuleTypes::DAngle), analyser_(ProcedureN
 
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    keywords_.setOrganisation("Options", "Sites");
+    keywords_.setOrganisation("Options", "Sites", "Specify sites defining the angle interaction A-B...C");
     keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Add site(s) which represent 'A' in the interaction A-B...C",
                                             selectA_->speciesSites(), selectA_->axesRequired());
     keywords_.add<SpeciesSiteVectorKeyword>("SiteB", "Add site(s) which represent 'B' in the interaction A-B...C",
@@ -102,13 +102,13 @@ DAngleModule::DAngleModule() : Module(ModuleTypes::DAngle), analyser_(ProcedureN
     keywords_.add<SpeciesSiteVectorKeyword>("SiteC", "Add site(s) which represent 'C' in the interaction A-B...C",
                                             selectC_->speciesSites(), selectC_->axesRequired());
 
-    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<Vec3DoubleKeyword>("DistanceRange", "Range (min, max, binwidth) of distance binning", distanceRange_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<Vec3DoubleKeyword>("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
 
-    keywords_.setOrganisation("Options", "Control");
+    keywords_.setOrganisation("Options", "Exclusions", "Options to exclude specific pairs from the calculation.");
     keywords_.add<BoolKeyword>("ExcludeSameMolecule",
                                "Whether to exclude correlations between B and C sites on the same molecule",
                                excludeSameMolecule_);

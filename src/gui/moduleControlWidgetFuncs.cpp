@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "gui/gui.h"
@@ -30,18 +30,12 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
         QString(":/modules/icons/modules/%1.svg").arg(QString::fromStdString(ModuleTypes::lccModuleType(module_->type())))));
 
     // Set up keyword widgets, one group per stack page
-    auto &&[keywordIndex, keywordMap] = module_->keywords().keywordOrganisation();
-    std::string_view currentGroupName = "";
     QPushButton *firstButton = nullptr;
-    for (auto &[groupName, sections] : keywordIndex)
+    for (auto &section : module_->keywords().sections())
     {
-        if (currentGroupName == groupName)
-            continue;
+        // Create a button for the section
+        auto &&[b, alignRight] = KeywordsWidget::buttonForGroup(section.name());
 
-        // Create a button for the group
-        auto &&[b, alignRight] = KeywordsWidget::buttonForGroup(groupName);
-        b->setCheckable(true);
-        b->setAutoExclusive(true);
         connect(b, SIGNAL(clicked(bool)), this, SLOT(keywordGroupButtonClicked(bool)));
         if (alignRight)
             ui_.KeywordGroupRightButtonsLayout->insertWidget(0, b);
@@ -50,7 +44,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
 
         // Add a new KeywordsWidget, set it up, and add it to the stack
         auto *w = new KeywordsWidget();
-        w->setUp({groupName, sections}, keywordMap, dissolve_.coreData());
+        w->setUp(section, dissolve_.coreData());
         connect(w, SIGNAL(keywordChanged(int)), this, SLOT(localKeywordChanged(int)));
         keywordWidgets_.push_back(w);
         ui_.ModuleControlStack->addWidget(w);
@@ -58,14 +52,12 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
         // Map our button to the new stack page
         controlStackMap_[b] = ui_.ModuleControlStack->count() - 1;
 
-        currentGroupName = groupName;
         if (!firstButton)
+        {
             firstButton = b;
+            firstButton->setChecked(true);
+        }
     }
-
-    // If we added at least one button, check it now
-    if (firstButton)
-        firstButton->setChecked(true);
 
     // Treat any ProcedureKeywords as special cases
     auto procedures = module_->keywords().allOfType<ProcedureKeyword>();
@@ -192,7 +184,7 @@ void ModuleControlWidget::localKeywordChanged(int signalMask)
         return;
 
     // Always emit the 'dataModified' signal
-    emit(dataModified());
+    Q_EMIT(dataModified());
 
     // Determine flags
     Flags<KeywordBase::KeywordSignal> keywordSignals(signalMask);

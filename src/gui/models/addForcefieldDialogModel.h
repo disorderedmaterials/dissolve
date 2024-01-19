@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -66,7 +66,7 @@ class AddForcefieldDialogModel : public QObject
     };
     Q_ENUM(Page);
 
-    signals:
+    Q_SIGNALS:
     // Moved to a new page
     void indexChanged();
     // The Atom Types model has been replaced
@@ -116,6 +116,10 @@ class AddForcefieldDialogModel : public QObject
     Radio atomTypeRadio_ = Radio::All;
     // The choice for how to handle intramolecular terms
     Radio intramolecularRadio_ = Radio::All;
+
+    private:
+    // Assign intramolecular terms to species
+    void assignIntramolecularTerms(const Forcefield *ff);
 
     public:
     // Instantiate the model

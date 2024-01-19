@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/atomTypeModel.h"
 #include "base/sysFunc.h"
@@ -25,6 +25,10 @@ void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTy
     beginResetModel();
     atomTypes_ = atomTypes;
     endResetModel();
+
+    // Set connections
+    modelUpdater.setModel(this);
+    modelUpdater.connectModelSignals();
 }
 
 // Set function to return QIcon for item
@@ -128,7 +132,11 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
         else
             xitems.erase(std::remove(xitems.begin(), xitems.end(), rawData(index)), xitems.end());
 
-        emit dataChanged(index, index);
+        // Set connections
+        modelUpdater.setModel(this);
+        modelUpdater.connectModelSignals();
+
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }
@@ -170,7 +178,11 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
                 return false;
         }
 
-        emit dataChanged(index, index);
+        // Set connections
+        modelUpdater.setModel(this);
+        modelUpdater.connectModelSignals();
+
+        Q_EMIT dataChanged(index, index);
 
         return true;
     }
@@ -233,7 +245,7 @@ void AtomTypeModel::addSuffix(int row, QString suffix)
     auto &data = atomTypes_->get()[row];
     data->setName(fmt::format("{}{}", data->name(), suffix.toStdString()));
     auto idx = index(row, 0);
-    emit dataChanged(idx, idx);
+    Q_EMIT dataChanged(idx, idx);
 }
 
 void AtomTypeModel::addPrefix(int row, QString prefix)
@@ -241,5 +253,5 @@ void AtomTypeModel::addPrefix(int row, QString prefix)
     auto &data = atomTypes_->get()[row];
     data->setName(fmt::format("{}{}", prefix.toStdString(), data->name()));
     auto idx = index(row, 0);
-    emit dataChanged(idx, idx);
+    Q_EMIT dataChanged(idx, idx);
 }

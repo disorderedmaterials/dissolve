@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/randomBuffer.h"
@@ -81,7 +81,8 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
     // Variables
     auto nCapped = 0;
     auto &atoms = targetConfiguration_->atoms();
-    double tInstant, ke, tScale, peInter, peIntra;
+    double tInstant, ke, tScale, peBound;
+    PairPotentialEnergyValue pePP;
 
     // Determine target molecules from the restrictedSpecies vector (if any)
     std::vector<const Molecule *> targetMolecules;
@@ -328,12 +329,12 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
             // Include total energy term?
             if (energyFrequency_ && (step % energyFrequency_.value() == 0))
             {
-                peInter = EnergyModule::interAtomicEnergy(moduleContext.processPool(), targetConfiguration_,
-                                                          moduleContext.dissolve().potentialMap());
-                peIntra = EnergyModule::intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_,
+                pePP = EnergyModule::pairPotentialEnergy(moduleContext.processPool(), targetConfiguration_,
+                                                         moduleContext.dissolve().potentialMap());
+                peBound = EnergyModule::intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_,
                                                              moduleContext.dissolve().potentialMap());
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}\n", step,
-                                 tInstant, ke, peInter, peIntra, ke + peIntra + peInter, dT);
+                                 tInstant, ke, pePP.total(), peBound, ke + peBound + pePP.total(), dT);
             }
             else
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}                                          {:10.3e}\n", step,
@@ -351,8 +352,8 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
                 // Construct and write header
                 std::string header = fmt::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps_, tInstant, ke);
                 if (energyFrequency_ && (step % energyFrequency_.value() == 0))
-                    header += fmt::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", peInter, peIntra,
-                                          ke + peInter + peIntra);
+                    header += fmt::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound,
+                                          ke + pePP.total() + peBound);
                 if (!trajParser.writeLine(header))
                 {
                     moduleContext.processPool().decideFalse();

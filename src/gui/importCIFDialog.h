@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -41,6 +41,7 @@ class ImportCIFDialog : public WizardDialog
     CIFHandler cifHandler_;
     // Flags
     Flags<CIFHandler::UpdateFlags> updateFlags_;
+    Flags<CIFHandler::OutputFlags> outputFlags_;
 
     private:
     // Apply CIF bond definitions within specified species
@@ -58,8 +59,7 @@ class ImportCIFDialog : public WizardDialog
         CIFInfoPage,          /* Basic CIF info page to check parsing */
         StructurePage,        /* Structure page */
         CleanedPage,          /* Cleaned structure page */
-        SupercellPage,        /* Options to create supercell */
-        OutputSpeciesPage     /* Output Species page */
+        OutputSpeciesPage,    /* Output Species page */
     };
 
     protected:
@@ -77,14 +77,14 @@ class ImportCIFDialog : public WizardDialog
     /*
      * Select CIF Page
      */
-    private slots:
+    private Q_SLOTS:
     void on_InputFileEdit_textChanged(const QString text);
     void on_InputFileSelectButton_clicked(bool checked);
 
     /*
      * Select Space Group Page
      */
-    private slots:
+    private Q_SLOTS:
     void updateSpaceGroupPage();
     void on_SpaceGroupsList_currentRowChanged(int row);
     void on_SpaceGroupsList_itemDoubleClicked(QListWidgetItem *item);
@@ -92,14 +92,14 @@ class ImportCIFDialog : public WizardDialog
     /*
      * CIF Info Page
      */
-    private slots:
+    private Q_SLOTS:
     void updateInfoPage();
 
     /*
      * Structure Page
      */
 
-    private slots:
+    private Q_SLOTS:
     // Generate structural species from CIF data
     void on_NormalOverlapToleranceRadio_clicked(bool checked);
     void on_LooseOverlapToleranceRadio_clicked(bool checked);
@@ -118,7 +118,7 @@ class ImportCIFDialog : public WizardDialog
     // Create / check NETA definition for moiety removal
     bool createMoietyRemovalNETA(std::string definition);
 
-    private slots:
+    private Q_SLOTS:
     // Generate structural species from CIF data
     void on_MoietyRemoveAtomicsCheck_clicked(bool checked);
     void on_MoietyRemoveWaterCheck_clicked(bool checked);
@@ -133,7 +133,7 @@ class ImportCIFDialog : public WizardDialog
      * Supercell Page
      */
     private:
-    private slots:
+    private Q_SLOTS:
     void on_RepeatASpin_valueChanged(int value);
     void on_RepeatBSpin_valueChanged(int value);
     void on_RepeatCSpin_valueChanged(int value);
@@ -145,7 +145,10 @@ class ImportCIFDialog : public WizardDialog
     // Partitioning preview Configuration
     Configuration *partitioningConfiguration_;
 
-    private slots:
+    private Q_SLOTS:
+
+    void on_OutputMolecularRadio_clicked(bool checked);
     void on_OutputFrameworkRadio_clicked(bool checked);
     void on_OutputSupermoleculeRadio_clicked(bool checked);
+    void on_OutputConfigurationCheck_clicked(bool checked);
 };

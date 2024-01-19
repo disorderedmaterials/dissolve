@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
-#include "io/import/data3D.h"
 #include "math/dataBase.h"
 #include "templates/array3D.h"
 

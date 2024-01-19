@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/range.h"
@@ -52,7 +52,7 @@ void RangeKeywordWidget::on_Spin1_valueChanged(double value)
         return;
 
     if (keyword_->setMinimum(value))
-        emit(keywordDataChanged(keyword_->editSignals()));
+        Q_EMIT(keywordDataChanged(keyword_->editSignals()));
     else
     {
         refreshing_ = true;
@@ -68,7 +68,7 @@ void RangeKeywordWidget::on_Spin2_valueChanged(double value)
         return;
 
     if (keyword_->setMaximum(value))
-        emit(keywordDataChanged(keyword_->editSignals()));
+        Q_EMIT(keywordDataChanged(keyword_->editSignals()));
     else
     {
         refreshing_ = true;

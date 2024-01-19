@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -21,7 +21,7 @@ class XmlAngleModel : public QAbstractTableModel
     private:
     std::vector<XmlAngleData> angles_;
 
-    public slots:
+    public Q_SLOTS:
     // Read from an XML file
     void readFile(const pugi::xml_node &);
 

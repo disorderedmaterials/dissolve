@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -61,19 +61,17 @@ class LayerTab : public QWidget, public MainTab
     // Remove ModuleControlWidget for the specified Module (if it exists)
     void removeControlWidget(const Module *module);
 
-    private slots:
+    private Q_SLOTS:
     void on_ShowAvailableModulesButton_clicked(bool checked);
     void on_LayerEnabledButton_clicked(bool checked);
     void on_LayerFrequencySpin_valueChanged(int value);
     void on_RunControlEnergyStabilityCheck_clicked(bool checked);
     void on_RunControlSizeFactorsCheck_clicked(bool checked);
-    void on_ModuleEnabledButton_clicked(bool checked);
-    void on_ModuleFrequencySpin_valueChanged(int value);
     void moduleSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void moduleNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
     void layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
     void updateModuleList();
-    void on_ModulesList_customContextMenuRequested(const QPoint &pos);
+    void on_ModulesTable_customContextMenuRequested(const QPoint &pos);
     void on_AvailableModulesTree_doubleClicked(const QModelIndex &index);
 
     public:

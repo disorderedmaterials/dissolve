@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -12,7 +12,7 @@
 // Forward Declarations
 class Dissolve;
 
-class ModuleLayerModel : public QAbstractListModel
+class ModuleLayerModel : public QAbstractTableModel
 {
     Q_OBJECT
 
@@ -39,9 +39,17 @@ class ModuleLayerModel : public QAbstractListModel
         MoveInternal = Qt::UserRole,
         CreateNew
     };
+    enum DataColumns
+    {
+        EnabledColumn,
+        NameColumn,
+        FrequencyColumn,
+        nDataColumns
+    };
 
     public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
@@ -57,6 +65,6 @@ class ModuleLayerModel : public QAbstractListModel
     bool removeRows(int row, int count, const QModelIndex &parent) override;
     QModelIndex appendNew(const QString &moduleTypeString);
 
-    signals:
+    Q_SIGNALS:
     void moduleNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
 };

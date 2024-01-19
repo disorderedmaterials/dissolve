@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/coreData.h"
 #include "base/sysFunc.h"
@@ -609,7 +609,8 @@ std::string_view CoreData::inputFilename() const { return inputFilename_; }
 // Express as a serialisable value
 SerialisedValue CoreData::Masters::serialise() const
 {
-    SerialisedValue node;
+    SerialisedValue::table_type table;
+    SerialisedValue node = table;
     Serialisable::fromVectorToTable<>(bonds, "bonds", node);
     Serialisable::fromVectorToTable<>(angles, "angles", node);
     Serialisable::fromVectorToTable<>(torsions, "torsions", node);

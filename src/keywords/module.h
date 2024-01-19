@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -111,9 +111,9 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
     {
         auto *module = Module::find(std::string(node.as_string()));
         if (!module)
-            throw toml::syntax_error(fmt::format("Module '{}' given to keyword {} doesn't exist.\n",
-                                                 std::string(node.as_string()), KeywordBase::name()),
-                                     node.location());
+            throw toml::type_error(fmt::format("Module '{}' given to keyword {} doesn't exist.\n",
+                                               std::string(node.as_string()), KeywordBase::name()),
+                                   node.location());
 
         setData(module);
     }

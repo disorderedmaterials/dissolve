@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/expressionVariableVectorModel.h"
 #include "procedure/nodes/node.h"
@@ -120,6 +120,6 @@ bool ExpressionVariableVectorModel::setData(const QModelIndex &index, const QVar
                                     var->baseName());
     }
 
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
     return true;
 }

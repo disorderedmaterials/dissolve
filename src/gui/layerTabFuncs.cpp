@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "gui/getModuleLayerNameDialog.h"
@@ -19,20 +19,18 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
     moduleLayer_ = layer;
 
     // Set the module list model and connect signals
-    ui_.ModulesList->setModel(&moduleLayerModel_);
+    ui_.ModulesTable->setModel(&moduleLayerModel_);
     moduleLayerModel_.setData(moduleLayer_, dissolve.coreData());
-    connect(ui_.ModulesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
+    connect(ui_.ModulesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(moduleSelectionChanged(const QItemSelection &, const QItemSelection &)));
     connect(&moduleLayerModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
     connect(&moduleLayerModel_, SIGNAL(moduleNameChanged(const QModelIndex &, const QString &, const QString &)), this,
             SLOT(moduleNameChanged(const QModelIndex &, const QString &, const QString &)));
+    ui_.ModulesTable->resizeColumnsToContents();
 
-    if (moduleLayer_->modules().size() >= 1)
-    {
-        auto firstIndex = moduleLayerModel_.index(0, 0);
-        ui_.ModulesList->selectionModel()->setCurrentIndex(firstIndex, QItemSelectionModel::ClearAndSelect);
-    }
+    if (!moduleLayer_->modules().empty())
+        ui_.ModulesTable->selectRow(0);
 
     // Set up the available modules tree
     ui_.AvailableModulesTree->setModel(&modulePaletteModel_);
@@ -187,32 +185,6 @@ void LayerTab::on_RunControlSizeFactorsCheck_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void LayerTab::on_ModuleEnabledButton_clicked(bool checked)
-{
-    if (refreshLock_.isLocked() || (!moduleLayer_))
-        return;
-
-    auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
-    if (mcw)
-        mcw->module()->setEnabled(checked);
-
-    updateModuleList();
-
-    dissolveWindow_->setModified();
-}
-
-void LayerTab::on_ModuleFrequencySpin_valueChanged(int value)
-{
-    if (refreshLock_.isLocked() || (!moduleLayer_))
-        return;
-
-    auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
-    if (mcw)
-        mcw->module()->setFrequency(value);
-
-    dissolveWindow_->setModified();
-}
-
 void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
 {
     auto modelIndices = current.indexes();
@@ -233,10 +205,6 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
     }
 
     Locker refreshLocker(refreshLock_);
-
-    // Update the module control widgets
-    ui_.ModuleEnabledButton->setChecked(module->isEnabled());
-    ui_.ModuleFrequencySpin->setValue(module->frequency());
 
     // See if our stack already contains a control widget for the module - if not, create one
     auto *mcw = getControlWidget(module, true);
@@ -280,16 +248,16 @@ void LayerTab::updateModuleList()
 {
     // Refresh the module list
     std::optional<QModelIndex> selectedIndex;
-    if (!ui_.ModulesList->selectionModel()->selection().indexes().empty())
-        selectedIndex = ui_.ModulesList->selectionModel()->selection().indexes().front();
+    if (!ui_.ModulesTable->selectionModel()->selection().indexes().empty())
+        selectedIndex = ui_.ModulesTable->selectionModel()->selection().indexes().front();
     moduleLayerModel_.reset();
     if (selectedIndex)
-        ui_.ModulesList->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
+        ui_.ModulesTable->selectRow(selectedIndex.value().row());
 }
 
-void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
+void LayerTab::on_ModulesTable_customContextMenuRequested(const QPoint &pos)
 {
-    auto index = ui_.ModulesList->indexAt(pos);
+    auto index = ui_.ModulesTable->indexAt(pos);
     if (!index.isValid())
         return;
     auto module = moduleLayerModel_.data(index, Qt::UserRole).value<Module *>();
@@ -312,7 +280,7 @@ void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
     auto *deleteModule = menu.addAction("&Delete");
     deleteModule->setIcon(QIcon(":/general/icons/cross.svg"));
 
-    auto *action = menu.exec(ui_.ModulesList->mapToGlobal(pos));
+    auto *action = menu.exec(ui_.ModulesTable->mapToGlobal(pos));
     if (action == enableModule)
         module->setEnabled(true);
     else if (action == disableModule)
@@ -384,13 +352,7 @@ void LayerTab::updateControls()
 
     auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
     if (mcw)
-    {
         mcw->updateControls();
-
-        // Update the module control widgets
-        ui_.ModuleEnabledButton->setChecked(mcw->module()->isEnabled());
-        ui_.ModuleFrequencySpin->setValue(mcw->module()->frequency());
-    }
 }
 
 // Prevent editing within tab
@@ -399,11 +361,9 @@ void LayerTab::preventEditing()
     ui_.LayerEnabledButton->setEnabled(false);
     ui_.LayerFrequencySpin->setEnabled(false);
     ui_.RunControlGroup->setEnabled(false);
-    ui_.ModuleEnabledButton->setEnabled(false);
-    ui_.ModuleFrequencySpin->setEnabled(false);
 
-    ui_.ModulesList->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui_.ModulesList->setDragDropMode(QAbstractItemView::NoDragDrop);
+    ui_.ModulesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui_.ModulesTable->setDragDropMode(QAbstractItemView::NoDragDrop);
     ui_.AvailableModulesTree->setEnabled(false);
     for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
     {
@@ -419,11 +379,9 @@ void LayerTab::allowEditing()
     ui_.LayerEnabledButton->setEnabled(true);
     ui_.LayerFrequencySpin->setEnabled(true);
     ui_.RunControlGroup->setEnabled(true);
-    ui_.ModuleEnabledButton->setEnabled(ui_.ModuleControlsStack->currentIndex() != 0);
-    ui_.ModuleFrequencySpin->setEnabled(ui_.ModuleControlsStack->currentIndex() != 0);
     ui_.AvailableModulesTree->setEnabled(true);
-    ui_.ModulesList->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
-    ui_.ModulesList->setDragDropMode(QAbstractItemView::DragDrop);
+    ui_.ModulesTable->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+    ui_.ModulesTable->setDragDropMode(QAbstractItemView::DragDrop);
     for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
     {
         auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));

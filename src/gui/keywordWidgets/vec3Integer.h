@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -30,13 +30,13 @@ class Vec3IntegerKeywordWidget : public QWidget, public KeywordWidgetBase
     // Main form declaration
     Ui::Vec3IntegerWidget ui_;
 
-    private slots:
+    private Q_SLOTS:
     // Spin box value changed
     void on_Spin1_valueChanged(int value);
     void on_Spin2_valueChanged(int value);
     void on_Spin3_valueChanged(int value);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

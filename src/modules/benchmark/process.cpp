@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
 #include "classes/box.h"
@@ -128,8 +128,8 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            EnergyModule::interAtomicEnergy(moduleContext.processPool(), targetConfiguration_,
-                                            moduleContext.dissolve().potentialMap());
+            EnergyModule::pairPotentialEnergy(moduleContext.processPool(), targetConfiguration_,
+                                              moduleContext.dissolve().potentialMap());
             Messenger::unMute();
             timing += timer.split();
         }

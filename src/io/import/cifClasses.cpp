@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "io/import/cifClasses.h"
 #include "classes/empiricalFormula.h"
@@ -110,3 +110,5 @@ const std::vector<std::vector<int>> &CIFMolecularSpecies::instances() const { re
 
 // Return coordinates of instances
 const std::vector<std::vector<Vec3<double>>> &CIFMolecularSpecies::coordinates() const { return coordinates_; }
+
+std::vector<std::vector<Vec3<double>>> &CIFMolecularSpecies::coordinates() { return coordinates_; }

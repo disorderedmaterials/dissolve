@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -66,7 +66,7 @@ class AddConfigurationDialog : public WizardDialog
     /*
      * Target Species Page
      */
-    private slots:
+    private Q_SLOTS:
     void on_TargetSpeciesWidget_speciesSelectionChanged(bool isValid);
 
     /*
@@ -76,7 +76,7 @@ class AddConfigurationDialog : public WizardDialog
     // Update detected box type from current values
     void updateBoxType();
 
-    private slots:
+    private Q_SLOTS:
     void boxGeometryParameterChanged(double);
 
     /*
@@ -86,7 +86,7 @@ class AddConfigurationDialog : public WizardDialog
     // Update resulting box info
     void updateResultingBoxInfo();
 
-    private slots:
+    private Q_SLOTS:
     void on_SpeciesDensitySpin_valueChanged(double value);
     void on_SpeciesDensityUnitsCombo_currentIndexChanged(int index);
     void on_SpeciesMultiplierSpin_valueChanged(int value);

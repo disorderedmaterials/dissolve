@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -33,13 +33,13 @@ class Function1DKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
     std::vector<ExponentialSpin *> spins_;
     std::vector<QLabel *> labels_;
 
-    private slots:
+    private Q_SLOTS:
     // Function type combo changed
     void functionCombo_currentIndexChanged(int index);
     // Parameter value changed
     void parameterSpin_valueChanged(double value);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

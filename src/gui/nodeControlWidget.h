@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -61,13 +61,13 @@ class NodeControlWidget : public QWidget
     // Prepare widget for deletion
     void prepareForDeletion();
 
-    public slots:
+    public Q_SLOTS:
     // Local keyword data changed
     void localKeywordChanged(int signalMask);
     // Global data mutated
     void globalDataMutated(int mutationFlags);
 
-    signals:
+    Q_SIGNALS:
     // Notify that the node's data has been modified in some way
     void dataModified();
 };

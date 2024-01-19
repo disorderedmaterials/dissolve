@@ -52,6 +52,11 @@ Source: "{#FTGLDir}\ftgl.dll"; DestDir: "{app}\bin"
 Source: "{#QtDir}\bin\Qt6Gui.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt6Core.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt6OpenGL.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#QtDir}\bin\Qt6Qml.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#QtDir}\bin\Qt6QmlModels.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#QtDir}\bin\Qt6QuickWidgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#QtDir}\bin\Qt6Quick.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#QtDir}\bin\Qt6Network.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt6OpenGLWidgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt6Svg.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt6Widgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -64,9 +69,10 @@ Source: "{#QtDir}\plugins\imageformats\*.dll"; DestDir: "{app}\bin\imageformats"
 ; Windows 10
 Source: "C:\Windows\System32\D3DCompiler_47.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; Conan Dependencies
-Source: "{#DeployDir}\tbb\bin\tbb.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\tbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\tbb\bin\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\onetbb\bin\tbb12.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\onetbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\onetbb\bin\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\onetbb\bin\tbbbind_2_5.dll"; DestDir: "{app}\bin"
 Source: "{#DeployDir}\antlr4-cppruntime\bin\antlr4-runtime.dll"; DestDir: "{app}\bin"
 
 [Icons]

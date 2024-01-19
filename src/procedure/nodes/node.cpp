@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "procedure/nodes/node.h"
 
@@ -371,6 +371,6 @@ SerialisedValue ProcedureNode::serialise() const
 void ProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     if (mustBeNamed())
-        name_ = toml::find<std::string>(node, "name");
+        setName(toml::find<std::string>(node, "name"));
     keywords_.deserialiseFrom(node, data);
 }

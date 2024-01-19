@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/valueStore.h"
 #include "base/lineParser.h"
@@ -47,7 +47,7 @@ const std::list<std::tuple<std::string, std::vector<double>, ValueImportFileForm
 // Express as a serialisable value
 SerialisedValue ValueStore::serialise() const
 {
-    SerialisedValue result = toml::array{};
+    SerialisedValue result = SerialisedValue::array_type{};
     for (auto &[tag, data, format] : data_)
         result.push_back({{"tag", tag}, {"values", data}, {"format", format}});
     return result;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -36,10 +36,10 @@ class NodeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
     // Model for the node list
     ProcedureNodeModel nodeModel_;
 
-    private slots:
+    private Q_SLOTS:
     void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
-    signals:
+    Q_SIGNALS:
     // Keyword data changed
     void keywordDataChanged(int flags);
 

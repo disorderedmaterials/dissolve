@@ -8,7 +8,6 @@ set(models_MOC_HDRS
     configurationModel.h
     dataManagerSimulationModel.h
     dissolveModel.h
-    dissolveModelImageProvider.h
     enumOptionsModel.h
     forcefieldModel.h
     isotopologueSetModel.h
@@ -48,6 +47,7 @@ set(models_MOC_HDRS
     xmlImproperModel.h
     xmlTreeModel.h
     xmlTorsionModel.h
+    modelUpdater.h
 )
 
 qt6_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
@@ -64,6 +64,7 @@ set(models_SRCS
     dataManagerSimulationModel.cpp
     dissolveModel.cpp
     dissolveModelImageProvider.cpp
+    dissolveModelImageProvider.h
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
     externalPotentialModel.cpp
@@ -86,6 +87,7 @@ set(models_SRCS
     pairPotentialModel.cpp
     procedureModel.cpp
     procedureModelMimeData.cpp
+    procedureModelMimeData.h
     procedureNodeModel.cpp
     rangeVectorModel.cpp
     renderableGroupManagerModel.cpp
@@ -108,6 +110,7 @@ set(models_SRCS
     xmlImproperModel.cpp
     xmlTreeModel.cpp
     xmlTorsionModel.cpp
+    modelUpdater.cpp
 )
 
 qt6_wrap_cpp(
@@ -121,7 +124,6 @@ qt6_wrap_cpp(
   forcefieldModel.h
   isotopologueSetModel.h
   pairPotentialModel.h
-  procedureModelMimeData.h
   rangeVectorModel.h
   speciesAngleModel.h
   speciesAtomModel.h

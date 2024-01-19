@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/units.h"
 #include "classes/configuration.h"
@@ -37,8 +37,6 @@ AddConfigurationDialog::AddConfigurationDialog(QWidget *parent, Dissolve &dissol
     connect(ui_.BoxGammaSpin, SIGNAL(valueChanged(double)), this, SLOT(boxGeometryParameterChanged(double)));
 
     ui_.AddSpeciesInfoTable->setModel(&addSpeciesInfoModel_);
-    ui_.AddSpeciesInfoTable->hideColumn(AddSpeciesInfo::Rotate);
-    ui_.AddSpeciesInfoTable->hideColumn(AddSpeciesInfo::UseCoordinateSets);
     connect(&addSpeciesInfoModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(speciesInfoDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
     ComboEnumOptionsPopulator(ui_.SpeciesDensityUnitsCombo, Units::densityUnits());
@@ -66,18 +64,12 @@ void AddConfigurationDialog::setDefaultSpeciesInfoData()
     for (auto &spInfo : mixSpecies_)
         spInfo.reset();
 
-    // Get the largest species in terms of number of atoms
-    auto largestSpecies =
-        std::max_element(mixSpecies_.begin(), mixSpecies_.end(),
-                         [](const auto &a, const auto &b) { return a.species()->nAtoms() < b.species()->nAtoms(); })
-            ->species();
-
-    // Set starting ratios
-    for (auto &spInfo : mixSpecies_)
-        spInfo.setRequestedPopulation(int(largestSpecies->nAtoms() / spInfo.species()->nAtoms()));
+    // Get the total number of species atoms
+    auto nTotalSpeciesAtoms = std::accumulate(mixSpecies_.begin(), mixSpecies_.end(), 0,
+                                              [](auto acc, const auto &b) { return acc + b.species()->nAtoms(); });
 
     // Set a sensible initial multiplier
-    ui_.SpeciesMultiplierSpin->setValue(DissolveMath::power(10, std::max(0, 3 - int(log10(largestSpecies->nAtoms())))));
+    ui_.SpeciesMultiplierSpin->setValue(DissolveMath::power(10, std::max(0, 3 - int(log10(nTotalSpeciesAtoms)))));
 }
 
 /*
@@ -227,7 +219,7 @@ void AddConfigurationDialog::finalise()
         // don't get a coordinate sets node
         const auto *sp = spInfo.species();
         std::shared_ptr<AddProcedureNode> addNode;
-        if (!spInfo.useCoordinateSets() || sp->nAtoms() == 1 || spInfo.actualPopulation() == 1 || sp->nAtoms() > 250)
+        if (!spInfo.useCoordinateSets())
             addNode = generator.createRootNode<AddProcedureNode>(sp->name(), sp, NodeValue(popString, paramsNode->parameters()),
                                                                  NodeValue(rhoString, paramsNode->parameters()), rhoUnits);
         else

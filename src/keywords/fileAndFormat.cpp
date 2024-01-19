@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "keywords/fileAndFormat.h"
 #include "base/lineParser.h"
@@ -23,7 +23,7 @@ const FileAndFormat &FileAndFormatKeyword::data() const { return data_; }
  */
 
 // Return whether the underlying FileAndFormat has any options
-bool FileAndFormatKeyword::hasOptions() const { return !data_.keywords().keywords().empty(); }
+bool FileAndFormatKeyword::hasOptions() const { return data_.keywords().nVisibleKeywords() > 0; }
 
 /*
  * Arguments

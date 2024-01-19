@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "data/elements.h"
 #include "gui/widgets/elementSelector.hui"
@@ -146,12 +146,12 @@ void ElementSelector::elementButtonClicked(bool checked)
 
     // Was this a double-click? Check the timer
     if (doubleClickTimer_.isActive())
-        emit(elementDoubleClicked());
+        Q_EMIT(elementDoubleClicked());
     else
     {
         doubleClickTimer_.start();
-        emit(elementSelectionChanged());
-        emit(elementSelected(true));
+        Q_EMIT(elementSelectionChanged());
+        Q_EMIT(elementSelected(true));
     }
 }
 

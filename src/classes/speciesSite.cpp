@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/speciesSite.h"
 #include "base/lineParser.h"
@@ -22,6 +22,13 @@ SpeciesSite::SpeciesSite(const Species *parent, std::string name, SiteType type)
 /*
  * Basic Information
  */
+
+// Enum of types
+EnumOptions<SpeciesSite::SiteType> SpeciesSite::siteTypes()
+{
+    return EnumOptions<SiteType>(
+        "SiteType", {{SiteType::Static, "Static"}, {SiteType::Dynamic, "Dynamic"}, {SiteType::Fragment, "Fragment"}});
+}
 
 // Set name of site
 void SpeciesSite::setName(std::string_view newName) { name_ = newName; }
@@ -749,28 +756,56 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 SerialisedValue SpeciesSite::serialise() const
 {
     SerialisedValue site;
-    if (type_ == SiteType::Dynamic)
-        site["dynamic"] = true;
-    Serialisable::fromVector(staticOriginAtoms_, "originAtoms", site, [](const auto &item) { return item->index(); });
-    Serialisable::fromVector(staticXAxisAtoms_, "xAxisAtoms", site, [](const auto &item) { return item->index(); });
-    Serialisable::fromVector(staticYAxisAtoms_, "yAxisAtoms", site, [](const auto &item) { return item->index(); });
-    Serialisable::fromVector(dynamicElements_, "elements", site, [](const auto &item) { return Elements::symbol(item); });
-    Serialisable::fromVector(dynamicAtomTypes_, "atomTypes", site, [](const auto &item) { return item->name(); });
-    site["originMassWeighted"] = originMassWeighted_;
+    if (type_ != SiteType::Static)
+        site["type"] = siteTypes().serialise(type_);
+    if (originMassWeighted_)
+        site["originMassWeighted"] = originMassWeighted_;
+    switch (type_)
+    {
+        case SiteType::Dynamic:
+            site["element"] = dynamicElements_;
+            break;
+        case SiteType::Fragment:
+            site["description"] = fragment_.definitionString();
+            break;
+        case SiteType::Static:
+            Serialisable::fromVector(staticOriginAtoms_, "originAtoms", site, [](const auto &item) { return item->index(); });
+            Serialisable::fromVector(staticXAxisAtoms_, "xAxisAtoms", site, [](const auto &item) { return item->index(); });
+            Serialisable::fromVector(staticYAxisAtoms_, "yAxisAtoms", site, [](const auto &item) { return item->index(); });
+            Serialisable::fromVector(dynamicElements_, "elements", site,
+                                     [](const auto &item) { return Elements::symbol(item); });
+            Serialisable::fromVector(dynamicAtomTypes_, "atomTypes", site, [](const auto &item) { return item->name(); });
+            break;
+    }
     return site;
 }
 
 void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    if (node.contains("dynamic"))
-        type_ = SiteType::Dynamic;
+    type_ = siteTypes().deserialise(toml::find_or(node, "type", "static"));
 
-    toVector(node, "originAtoms", [this](const auto &originAtom) { addStaticOriginAtom(originAtom.as_integer()); });
-    toVector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addStaticXAxisAtom(xAxisAtom.as_integer()); });
-    toVector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addStaticYAxisAtom(yAxisAtom.as_integer()); });
-    toVector(node, "elements", [this](const auto &el) { addDynamicElement(Elements::element(std::string(el.as_string()))); });
-    toVector(node, "atomTypes",
-             [&, this](const auto &at) { addDynamicAtomType(coreData.findAtomType(std::string(at.as_string()))); });
+    switch (type_)
+    {
+        case SiteType::Static:
+            toVector(node, "originAtoms", [this](const auto &originAtom) { addStaticOriginAtom(originAtom.as_integer()); });
+            toVector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addStaticXAxisAtom(xAxisAtom.as_integer()); });
+            toVector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addStaticYAxisAtom(yAxisAtom.as_integer()); });
+            toVector(node, "elements",
+                     [this](const auto &el) { addDynamicElement(Elements::element(std::string(el.as_string()))); });
+            toVector(node, "atomTypes",
+                     [&, this](const auto &at) { addDynamicAtomType(coreData.findAtomType(std::string(at.as_string()))); });
+
+            break;
+        case SiteType::Fragment:
+            fragment_.create(toml::find<std::string>(node, "description"));
+            break;
+        case SiteType::Dynamic:
+            toVector(node, "element",
+                     [this](const auto &element) { addDynamicElement(toml::get<Elements::Element>(element)); });
+            break;
+    }
 
     originMassWeighted_ = toml::find_or<bool>(node, "originMassWeighted", false);
+
+    generateUniqueSites();
 }

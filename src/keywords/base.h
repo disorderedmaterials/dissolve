@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -74,6 +74,19 @@ class KeywordBase : public Serialisable<CoreData const &>
     virtual SerialisedValue serialise() const override = 0;
     // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override{};
+
+    /*
+     * Keyword Types
+     */
+    public:
+    // Keyword Types
+    enum class KeywordType
+    {
+        Standard,    /* Standard keyword */
+        Restartable, /* Standard keyword, captured in restart file */
+        Target,      /* Target keyword */
+        Deprecated   /* Deprecated keyword (not captured in restart file) */
+    };
 
     /*
      * Parse Result

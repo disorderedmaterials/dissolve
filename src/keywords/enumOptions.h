@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -113,5 +113,5 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     // Express as a serialisable value
     SerialisedValue serialise() const override { return optionData_.keyword(data_); }
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = optionData_.deserialise(node); }
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override { data_ = optionData_.deserialise(node); }
 };

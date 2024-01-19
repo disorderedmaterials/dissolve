@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -43,7 +43,7 @@ class IntramolecularTermsDialog : public QDialog
     SpeciesTorsionModel torsions_;
     SpeciesImproperModel impropers_;
 
-    private slots:
+    private Q_SLOTS:
     // Finish
     void on_OKButton_clicked(bool checked);
 };

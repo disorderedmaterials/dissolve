@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -57,7 +57,7 @@ class BraggModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-    private slots:
+    private Q_SLOTS:
     void on_PartialsButton_clicked(bool checked);
     void on_TotalsButton_clicked(bool checked);
     void on_ReflectionsButton_clicked(bool checked);

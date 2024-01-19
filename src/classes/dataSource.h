@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -27,12 +27,13 @@ class DataSource
     ~DataSource() = default;
 
     public:
-    // Data Source Types
     enum DataSourceType
     {
         Internal,
         External
     };
+
+    public:
     // Return enum options for DataSourceType
     static EnumOptions<DataSourceType> dataSourceTypes();
     // Return data source type enum
@@ -41,6 +42,7 @@ class DataSource
     /*
      * Data
      */
+
     private:
     // Name of data (tag or filename)
     std::string dataName_;
@@ -62,9 +64,9 @@ class DataSource
     std::optional<std::string> internalDataSource() const;
     // Return external data source
     Format &externalDataSource();
-    // Source specified data (only required for internal data sources)
+    // Function to source data (only required for internal data sources)
     bool sourceData(GenericList &processingModuleData);
-    // Set internal data source
+    // Function to add internal data
     void addData(std::string_view internalDataSource);
     // Overloaded function to add external data
     template <class D> void addData(D data, typename D::Formatter &fileAndFormat)

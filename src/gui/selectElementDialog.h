@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -24,7 +24,7 @@ class SelectElementDialog : public QDialog
     // Main form declaration
     Ui::SelectElementDialog ui_;
 
-    private slots:
+    private Q_SLOTS:
     void on_ElementWidget_elementSelected(bool dummy);
     void on_ElementWidget_elementDoubleClicked();
     void on_SelectButton_clicked(bool checked);

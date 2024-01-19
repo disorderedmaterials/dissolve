@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -100,12 +100,20 @@ class CIFHandler
     enum UpdateFlags
     {
         CleanMoietyRemoveAtomics,  /* Remove atoms of single moiety */
-        CleanMoietyRemoveWater,    /* Remove water molecules of single moiety  */
-        CleanMoietyRemoveNETA,     /* Remove single atoms by NETA definition  */
-        CleanRemoveBoundFragments, /* Remove entire fragments when using NETA definition  */
+        CleanMoietyRemoveWater,    /* Remove water molecules of single moiety */
+        CleanMoietyRemoveNETA,     /* Remove single atoms by NETA definition */
+        CleanRemoveBoundFragments, /* Remove entire fragments when using NETA definition */
         CalculateBonding,          /* Calculate bonding */
         PreventMetallicBonding,    /* Prevent metallic bonding */
-        CreateSupermolecule
+    };
+
+    // CIF Species Output Flags
+    enum OutputFlags
+    {
+        OutputConfiguration,    /* Output a Configuration */
+        OutputMolecularSpecies, /* Partitioning - output molecular species */
+        OutputFramework,        /* Partitioning - output a framework species */
+        OutputSupermolecule     /* Partitioning - output a supermolecule */
     };
 
     private:
@@ -129,9 +137,6 @@ class CIFHandler
     // Supercell
     Species *supercellSpecies_;
     Configuration *supercellConfiguration_;
-    // Final supercell, partitioned accordingly
-    Species *partitionedSpecies_;
-    Configuration *partitionedConfiguration_;
 
     private:
     // Create basic unit cell
@@ -142,8 +147,6 @@ class CIFHandler
     bool detectMolecules();
     // Create supercell species
     bool createSupercell();
-    // Create partitioned cell
-    bool createPartitionedCell();
 
     public:
     // Reset all objects
@@ -159,7 +162,8 @@ class CIFHandler
     // Recreate the data
     bool generate(std::optional<Flags<UpdateFlags>> newFlags = {});
     // Finalise, returning the required species and resulting configuration
-    std::pair<std::vector<Species *>, Configuration *> finalise(CoreData &coreData) const;
+    std::pair<std::vector<const Species *>, Configuration *> finalise(CoreData &coreData,
+                                                                      std::optional<Flags<OutputFlags>> flags = {}) const;
     // Return whether the generated data is valid
     bool isValid() const;
     // Structural
@@ -174,9 +178,6 @@ class CIFHandler
     // Supercell
     Species *supercellSpecies();
     Configuration *supercellConfiguration();
-    // Partitioned
-    Species *partitionedSpecies();
-    Configuration *partitionedConfiguration();
 
     /*
      * Helpers
@@ -189,7 +190,8 @@ class CIFHandler
     // Determine instances of a NETA definition in a given species
     std::vector<std::vector<int>> speciesCopies(Species *sp, NETADefinition neta);
     // Determine coordinates of instances in a given species
-    std::vector<std::vector<Vec3<double>>> speciesCopiesCoordinates(Species *sp, std::vector<std::vector<int>> copies);
+    std::vector<std::vector<Vec3<double>>> speciesCopiesCoordinatesFromUnitCell(Species *moleculeSp, const Box *box,
+                                                                                const std::vector<std::vector<int>> &copies);
     // 'Fix' the geometry of a given species
     void fixGeometry(Species *sp, const Box *box);
 };

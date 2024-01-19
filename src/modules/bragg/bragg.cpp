@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "modules/bragg/bragg.h"
 #include "keywords/bool.h"
@@ -13,7 +13,9 @@ BraggModule::BraggModule() : Module(ModuleTypes::Bragg)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    keywords_.setOrganisation("Options", "Control");
+    keywords_.setOrganisation(
+        "Options", "Control",
+        "Q range over which to calculate Bragg scattering contributions and the effective multiplicity of the unit cell.");
     keywords_.add<DoubleKeyword>("QMin", "Minimum Q value for Bragg calculation", qMin_, 0.0)
         ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
     keywords_.add<DoubleKeyword>("QMax", "Maximum Q value for Bragg calculation", qMax_, 0.0)

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/dissolveModel.h"
 
@@ -18,7 +18,7 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
     speciesModel_.setData(dissolve_->coreData().species());
     configurationModel_.setData(dissolve_->coreData().configurations());
     moduleLayersModel_.setData(dissolve_->coreData().processingLayers(), dissolve_->coreData());
-    emit modelsUpdated();
+    Q_EMIT modelsUpdated();
 }
 
 // Update models
@@ -35,7 +35,7 @@ void DissolveModel::update()
     speciesModel_.reset();
     configurationModel_.reset();
     moduleLayersModel_.reset();
-    emit modelsUpdated();
+    Q_EMIT modelsUpdated();
 }
 
 // The Atom Type Model

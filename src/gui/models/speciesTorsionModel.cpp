@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/speciesTorsionModel.h"
 #include "classes/coreData.h"
@@ -150,7 +150,7 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
             return false;
     }
 
-    emit dataChanged(index, index);
+    Q_EMIT dataChanged(index, index);
 
     return true;
 }

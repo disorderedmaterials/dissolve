@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "modules/histogramCN/histogramCN.h"
 #include "keywords/bool.h"
@@ -43,14 +43,14 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
 
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    keywords_.setOrganisation("Options", "Sites");
-    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF",
+    keywords_.setOrganisation("Options", "Sites", "Specify sites defining the interaction A...B.");
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the reference origin",
                                             selectA_->speciesSites(), selectA_->axesRequired());
     keywords_.add<SpeciesSiteVectorKeyword>(
-        "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
+        "SiteB", "Set the site(s) 'B' for which the coordination number around the origin sites should be calculated",
         selectB_->speciesSites(), selectB_->axesRequired());
 
-    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.setOrganisation("Options", "Ranges", "Range over which to bin quantities from the calculation.");
     keywords_.add<RangeKeyword>("DistanceRange",
                                 "Distance range (min, max) over which to calculate coordination number from central site",
                                 distanceRange_, 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);

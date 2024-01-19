@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/speciesTorsion.h"
 #include "classes/coreData.h"
@@ -657,6 +657,5 @@ void SpeciesTorsion::deserialise(const SerialisedValue &node, CoreData &coreData
 
     electrostatic14Scaling_ = toml::find_or<double>(node, "q14", 0.5);
 
-    if (node.contains("v14"))
-        vdw14Scaling_ = node.at("v14").as_floating();
+    Serialisable::optionalOn(node, "v14", [this](const auto node) { vdw14Scaling_ = node.as_floating(); });
 }

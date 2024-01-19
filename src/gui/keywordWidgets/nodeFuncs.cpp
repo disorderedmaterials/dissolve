@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/node.h"
@@ -42,7 +42,7 @@ void NodeKeywordWidget::on_NodeCombo_currentIndexChanged(int index)
     else
         keyword_->setData(allowedNodes_[ui_.NodeCombo->currentIndex()]);
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void NodeKeywordWidget::on_ClearButton_clicked(bool checked)

@@ -6,6 +6,7 @@ aclocal.m4
 /autom4te.cache/
 Makefile
 .deps/
+.direnv
 config.h
 config.log
 config.status
@@ -30,6 +31,7 @@ build-*/
 *swp
 changes
 *.tokens
+.gdb_history
 
 # Example files
 *.beat

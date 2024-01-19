@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/vec3Labels.h"
 #include "gui/keywordWidgets/vec3NodeValue.h"
@@ -41,7 +41,7 @@ void Vec3NodeValueKeywordWidget::on_ValueAEdit_editingFinished()
     keyword_->setData(0, qPrintable(ui_.ValueAEdit->text()));
     ui_.ValueAValidIndicator->setOK(keyword_->data().x.isValid());
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void Vec3NodeValueKeywordWidget::on_ValueAEdit_returnPressed()
@@ -52,7 +52,7 @@ void Vec3NodeValueKeywordWidget::on_ValueAEdit_returnPressed()
     keyword_->setData(0, qPrintable(ui_.ValueAEdit->text()));
     ui_.ValueAValidIndicator->setOK(keyword_->data().x.isValid());
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void Vec3NodeValueKeywordWidget::on_ValueBEdit_editingFinished()
@@ -63,7 +63,7 @@ void Vec3NodeValueKeywordWidget::on_ValueBEdit_editingFinished()
     keyword_->setData(1, qPrintable(ui_.ValueBEdit->text()));
     ui_.ValueBValidIndicator->setOK(keyword_->data().y.isValid());
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void Vec3NodeValueKeywordWidget::on_ValueBEdit_returnPressed()
@@ -74,7 +74,7 @@ void Vec3NodeValueKeywordWidget::on_ValueBEdit_returnPressed()
     keyword_->setData(1, qPrintable(ui_.ValueBEdit->text()));
     ui_.ValueBValidIndicator->setOK(keyword_->data().y.isValid());
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void Vec3NodeValueKeywordWidget::on_ValueCEdit_editingFinished()
@@ -85,7 +85,7 @@ void Vec3NodeValueKeywordWidget::on_ValueCEdit_editingFinished()
     keyword_->setData(2, qPrintable(ui_.ValueCEdit->text()));
     ui_.ValueCValidIndicator->setOK(keyword_->data().z.isValid());
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void Vec3NodeValueKeywordWidget::on_ValueCEdit_returnPressed()
@@ -96,7 +96,7 @@ void Vec3NodeValueKeywordWidget::on_ValueCEdit_returnPressed()
     keyword_->setData(2, qPrintable(ui_.ValueCEdit->text()));
     ui_.ValueCValidIndicator->setOK(keyword_->data().z.isValid());
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 /*

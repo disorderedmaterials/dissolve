@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "classes/species.h"
@@ -91,7 +91,7 @@ TEST(CellsTest, Basic)
         cfg->updateAtomLocations(true);
 
         // Calculate total Cell-based energy
-        EXPECT_NEAR(refEnergy, kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy), 1.0e-4);
+        EXPECT_NEAR(refEnergy, kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy).total(), 1.0e-4);
 
         // Calculate atomic energy from the Ar
         EXPECT_NEAR(refEnergy, kernel->totalEnergy(cfg->atom(0)).total(), 1.0e-4);

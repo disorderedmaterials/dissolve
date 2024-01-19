@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/messenger.h"
@@ -84,7 +84,7 @@ void DissolveWindow::closeEvent(QCloseEvent *event)
     if (dissolveIterating_)
     {
         // Send the signal to stop
-        emit(stopIterating());
+        Q_EMIT(stopIterating());
 
         // Wait for the thread to stop
         while (dissolveIterating_)
@@ -121,7 +121,7 @@ void DissolveWindow::setModified(Flags<DissolveSignals::DataMutations> dataMutat
 
     // Signal if any data was modified
     if (dataMutationFlags.anySet())
-        emit(dataMutated(dataMutationFlags));
+        Q_EMIT(dataMutated(dataMutationFlags));
 
     updateWindowTitle();
 }
@@ -316,6 +316,8 @@ void DissolveWindow::updateStatusBar()
     }
     else if (!dissolveIterating_ && elapsedTimer_.secondsElapsed() > 0.0)
     {
+        statusLabel_->setText("Stopped");
+        statusIndicator_->setPixmap(QPixmap(":/general/icons/true.svg"));
         timerLabel_->setText(QString::fromStdString(fmt::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
     }
     else if (ui_.MainStack->currentIndex() == 1)

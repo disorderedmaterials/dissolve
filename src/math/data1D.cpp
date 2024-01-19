@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "math/data1D.h"
 #include "base/lineParser.h"
@@ -433,7 +433,11 @@ void Data1D::deserialise(const SerialisedValue &node)
     tag_ = toml::find<std::string>(node, "tag");
     x_ = toml::find<std::vector<double>>(node, "x");
     values_ = toml::find<std::vector<double>>(node, "y");
-    hasError_ = node.contains("errors");
-    if (hasError_)
-        errors_ = toml::find<std::vector<double>>(node, "errors");
+
+    Serialisable::optionalOn(node, "errors",
+                             [this](const auto errors)
+                             {
+                                 hasError_ = true;
+                                 errors_ = toml::get<std::vector<double>>(errors);
+                             });
 }

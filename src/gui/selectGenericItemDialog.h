@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -30,14 +30,14 @@ class SelectGenericItemDialog : public QDialog
     // Update and (optionally) filter the list
     void filterItems(QString filterText);
 
-    private slots:
+    private Q_SLOTS:
     void on_FilterEdit_textChanged(const QString &text);
     void on_ItemsList_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *prevItem);
     void on_ItemsList_itemDoubleClicked(QTableWidgetItem *w);
     void on_SelectButton_clicked(bool checked);
     void on_CancelButton_clicked(bool checked);
 
-    signals:
+    Q_SIGNALS:
     void genericItemSelectionChanged(bool isValid);
 
     public:

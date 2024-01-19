@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/dataSource.h"
 #include "templates/optionalRef.h"
@@ -44,8 +44,6 @@ bool DataSource::sourceData(GenericList &processingModuleData)
     {
         return false;
     }
-
-    // For Internal data sources, try to locate the data now
     if (dataSourceType_ == Internal)
     {
         if (std::holds_alternative<Data1D>(data_) || std::holds_alternative<SampledData1D>(data_))
@@ -61,7 +59,6 @@ bool DataSource::sourceData(GenericList &processingModuleData)
         }
         else
         {
-            // For other data types just visit the variant
             return std::visit(
                 [=](auto data)
                 {
@@ -78,12 +75,11 @@ bool DataSource::sourceData(GenericList &processingModuleData)
                 data_);
         }
     }
-
     // Return whether or not variant contains value
     return !data_.valueless_by_exception();
 }
 
-// Set internal data source
+// Function to add internal data
 void DataSource::addData(std::string_view internalDataSource)
 {
     dataSourceType_ = Internal;
@@ -106,7 +102,7 @@ bool DataSource::serialise(LineParser &parser, std::string_view keywordName, std
         return false;
     }
 
-    // For internal data sources just need to write the tag. Externals write the file and format
+    // If data is internal
     if (dataSourceType_ == Internal)
     {
         if (!parser.writeLineF("'{}'\n", internalDataSource_))

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "keywords/weightedModuleVector.h"
 #include "base/lineParser.h"
@@ -99,13 +99,13 @@ void WeightedModuleVectorKeyword::deserialise(const SerialisedValue &node, const
                  auto moduleName = toml::find<std::string>(item, "target");
                  auto *module = Module::find(moduleName);
                  if (!module)
-                     throw toml::syntax_error(fmt::format("No Module named '{}' exists.\n", moduleName), item.location());
+                     throw toml::type_error(fmt::format("No Module named '{}' exists.\n", moduleName), item.location());
 
                  // Check the module's type if we can
                  if (!moduleTypes_.empty() &&
                      std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(),
                                   [module](const auto &s) { return s == module->type(); }) == moduleTypes_.cend())
-                     throw toml::syntax_error(
+                     throw toml::type_error(
                          fmt::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
                                      moduleName, module->type(), name(), joinStrings(moduleTypes_)),
                          item.location());

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "gui/dataViewer.hui"
@@ -67,6 +67,9 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
     {
         ui_.PlotWidget->clearRenderableData();
 
+        const auto &atomTypes = module_->scatteringMatrix().atomTypes();
+        const auto nAtomTypes = atomTypes.size();
+
         // Set the relevant graph targets
         if (ui_.TotalFQButton->isChecked())
         {
@@ -104,24 +107,24 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
         else if (ui_.EstimatedSQButton->isChecked())
         {
             // Add experimentally-determined partial S(Q)
-            for (auto [first, second] : PairIterator(dissolve_.coreData().atomTypes().size()))
-            {
-                auto &at1 = dissolve_.coreData().atomTypes()[first];
-                auto &at2 = dissolve_.coreData().atomTypes()[second];
-                const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
+            dissolve::for_each_pair(
+                ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+                [&](int typeI, const auto &at1, int typeJ, const auto &at2)
+                {
+                    const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
-                // Unweighted estimated partial
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedSQ//{}", module_->name(), id),
-                                                           fmt::format("{} (Estimated)", id), "Estimated");
+                    // Unweighted estimated partial
+                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedSQ//{}", module_->name(), id),
+                                                               fmt::format("{} (Estimated)", id), "Estimated");
 
-                // Calculated / summed partial
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//{}", module_->name(), id),
-                                                           fmt::format("{} (Calc)", id), "Calc");
+                    // Calculated / summed partial
+                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//{}", module_->name(), id),
+                                                               fmt::format("{} (Calc)", id), "Calc");
 
-                // Deltas
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//DeltaSQ//{}", module_->name(), id),
-                                                           fmt::format("{} (Delta)", id), "Delta");
-            }
+                    // Deltas
+                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//DeltaSQ//{}", module_->name(), id),
+                                                               fmt::format("{} (Delta)", id), "Delta");
+                });
         }
         else if (ui_.EstimatedGRButton->isChecked())
         {
@@ -147,21 +150,20 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
             }
 
             // Add experimentally-determined partial g(r)
-            PairIterator pairs(dissolve_.coreData().atomTypes().size());
-            for (auto [first, second] : pairs)
-            {
-                auto &at1 = dissolve_.coreData().atomTypes()[first];
-                auto &at2 = dissolve_.coreData().atomTypes()[second];
-                const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
+            dissolve::for_each_pair(
+                ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+                [&](int typeI, const auto &at1, int typeJ, const auto &at2)
+                {
+                    const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
-                // Experimentally-determined unweighted partial
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedGR//{}", module_->name(), id),
-                                                           fmt::format("{} (Estimated)", id), "Estimated");
+                    // Experimentally-determined unweighted partial
+                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedGR//{}", module_->name(), id),
+                                                               fmt::format("{} (Estimated)", id), "Estimated");
 
-                // Calculated / summed partials, taken from the RDF module referenced by the first module target
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedGR//{}//Full", rdfModuleName, id),
-                                                           fmt::format("{} (Calc)", id), "Calc");
-            }
+                    // Calculated / summed partials, taken from the RDF module referenced by the first module target
+                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedGR//{}//Full", rdfModuleName, id),
+                                                               fmt::format("{} (Calc)", id), "Calc");
+                });
         }
         else if (ui_.TotalGRButton->isChecked())
         {
@@ -180,17 +182,16 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
         else if (ui_.PotentialsButton->isChecked())
         {
             // Add on additional potentials
-            PairIterator pairs(dissolve_.coreData().atomTypes().size());
-            for (auto [first, second] : pairs)
-            {
-                auto &at1 = dissolve_.coreData().atomTypes()[first];
-                auto &at2 = dissolve_.coreData().atomTypes()[second];
-                const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
+            dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+                                    [&](int typeI, const auto &at1, int typeJ, const auto &at2)
+                                    {
+                                        const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
-                auto pp = dissolve_.pairPotential(at1, at2);
-                if (pp)
-                    graph_->createRenderable<RenderableData1D>(fmt::format("Dissolve//Potential_{}_Additional", id), id, "Phi");
-            }
+                                        auto pp = dissolve_.pairPotential(at1, at2);
+                                        if (pp)
+                                            graph_->createRenderable<RenderableData1D>(
+                                                fmt::format("Dissolve//Potential_{}_Additional", id), id, "Phi");
+                                    });
         }
         else if (ui_.RFactorButton->isChecked())
         {

@@ -1,18 +1,17 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
     outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
-    weggli.url = "github:googleprojectzero/weggli";
-    weggli.flake = false;
     qt-idaaas.url = "github:disorderedmaterials/qt-idaaas";
   };
   outputs = { self, nixpkgs, outdated, home-manager, flake-utils, bundlers, nixGL-src
-    , qt-idaaas, weggli }:
+    , qt-idaaas}:
     let
 
       toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
+      onedpl = pkgs: ((import ./nix/onedpl.nix) { inherit (pkgs) lib stdenv fetchFromGitHub fetchpatch cmake; tbb=pkgs.tbb_2021_8;});
       exe-name = mpi: gui:
         if mpi then
           "dissolve-mpi"
@@ -33,7 +32,7 @@
           inetutils # for rsh
           ninja
           jre
-          pkgconfig
+          pkg-config
           pugixml
           (toml pkgs)
         ];
@@ -78,10 +77,10 @@
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs system pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
-              ++ pkgs.lib.optional threading pkgs.tbb;
+              ++ pkgs.lib.optionals threading [pkgs.tbb_2021_8 (onedpl pkgs) (onedpl pkgs).dev];
             nativeBuildInputs = pkgs.lib.optionals gui [ pkgs.wrapGAppsHook ];
 
-            TBB_DIR = "${pkgs.tbb}";
+            TBB_DIR = "${pkgs.tbb_2021_8}";
             CTEST_OUTPUT_ON_FAILURE = "ON";
 
             cmakeFlags = [
@@ -95,7 +94,7 @@
               "-DBUILD_TESTS:bool=${cmake-bool checks}"
               "-DCMAKE_BUILD_TYPE=Release"
             ] ++ pkgs.lib.optional threading
-              ("-DTHREADING_LINK_LIBS=${pkgs.tbb}/lib/libtbb.so");
+              ("-DTHREADING_LINK_LIBS=${pkgs.tbb_2021_8}/lib/libtbb.so");
             doCheck = checks;
             installPhase = ''
               mkdir -p $out/bin
@@ -150,6 +149,10 @@
               (pkgs.clang-tools.override {
                 llvmPackages = pkgs.llvmPackages_13;
               })
+
+              (onedpl pkgs)
+
+              busybox
               ccache
               ccls
               cmakeWithGui
@@ -157,16 +160,14 @@
               cmake-language-server
               conan
               distcc
+              direnv
               gdb
               gtk3
+              nixGL.nixGLIntel
               openmpi
               qt-idaaas.packages.${system}.qttools
-              tbb
+              tbb_2021_8
               valgrind
-              ((import ./nix/weggli.nix) {
-                inherit pkgs;
-                src = weggli;
-              })
             ]);
           shellHook = ''
             export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_DATA_DIRS
@@ -187,7 +188,7 @@
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
           QML_IMPORT_PATH = "${qt-idaaas.packages.${system}.qtdeclarative}/lib/qt-6/qml/";
           QML2_IMPORT_PATH = "${qt-idaaas.packages.${system}.qtdeclarative}/lib/qt-6/qml/";
-          THREADING_LINK_LIBS = "${pkgs.tbb}/lib/libtbb.so";
+          THREADING_LINK_LIBS = "${pkgs.tbb_2021_8}/lib/libtbb.so";
         };
 
         apps = {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -43,7 +43,7 @@ class DataManagerDialog : public QDialog
     // Update controls
     void updateControls();
 
-    private slots:
+    private Q_SLOTS:
     void on_SimulationDataFilterEdit_textChanged(const QString &text);
     void on_CloseButton_clicked(bool checked);
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/speciesAtom.h"
 #include "classes/atomType.h"
@@ -492,14 +492,17 @@ void SpeciesAtom::deserialise(const SerialisedValue &node, CoreData &coreData)
 
     charge_ = toml::find_or<double>(node, "charge", 0);
 
-    if (node.contains("type") && Z_ != Elements::Unknown)
-    {
-        std::string name = toml::find<std::string>(node, "type");
-        atomType_ = coreData.findAtomType(name);
-        if (atomType_ == nullptr)
-        {
-            atomType_ = coreData.addAtomType(Z_);
-            atomType_->setName(name);
-        }
-    }
+    Serialisable::optionalOn(node, "type",
+                             [this, &coreData](const auto node)
+                             {
+                                 if (Z_ == Elements::Unknown)
+                                     return;
+                                 std::string name = toml::get<std::string>(node);
+                                 atomType_ = coreData.findAtomType(name);
+                                 if (atomType_ == nullptr)
+                                 {
+                                     atomType_ = coreData.addAtomType(Z_);
+                                     atomType_->setName(name);
+                                 }
+                             });
 }

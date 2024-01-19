@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -31,23 +31,22 @@ class KeywordsWidget : public QScrollArea
 
     public:
     // Set up controls for specified keywords
-    void setUp(KeywordStore::KeywordStoreIndexInfo keywordIndexInfo, const KeywordStore::KeywordStoreMap &keywordMap,
-               const CoreData &coreData);
+    void setUp(const KeywordStoreSection &keywordSection, const CoreData &coreData);
     // Create a suitable button for the named group
     static std::pair<QPushButton *, bool> buttonForGroup(std::string_view groupName);
 
-    public slots:
+    public Q_SLOTS:
     // Update controls within widget
     void updateControls(int dataMutationFlags = 0);
 
     /*
      * Signals / Slots
      */
-    private slots:
+    private Q_SLOTS:
     // Keyword data changed
     void keywordDataChanged(int keywordSignalMask);
 
-    signals:
+    Q_SIGNALS:
     // Keyword has been modified
     void keywordChanged(int keywordSignalMask);
 };

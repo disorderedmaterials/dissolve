@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -25,12 +25,15 @@ class SpeciesSite : public Serialisable<CoreData &>
 {
     public:
     // Site Type
-    enum class SiteType
+    enum SiteType
     {
         Static,  /* Site is based on fixed atom indices within the species */
         Dynamic, /* Site is atomic and based on elements and atom types */
         Fragment /* Site is based on a NETA description */
     };
+    // EnumOptions for SiteType
+    static EnumOptions<SiteType> siteTypes();
+
     explicit SpeciesSite(const Species *parent, SiteType type = SiteType::Static);
     SpeciesSite(const Species *parent, std::string name, SiteType type = SiteType::Static);
     ~SpeciesSite() = default;

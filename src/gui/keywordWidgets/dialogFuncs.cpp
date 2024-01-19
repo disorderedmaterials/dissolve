@@ -1,27 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/coreData.h"
 #include "classes/species.h"
 #include "gui/keywordWidgets/dialog.h"
+#include "keywords/organiser.h"
 
-KeywordsDialog::KeywordsDialog(QWidget *parent, KeywordStore &keywords, const CoreData &coreData) : coreData_(coreData)
+KeywordsDialog::KeywordsDialog(QWidget *parent, const KeywordStore &keywordStore, const CoreData &coreData)
+    : coreData_(coreData)
 {
     ui_.setupUi(this);
 
-    // We can only display a single group of widgets at present, so check the size of the index
-    auto &&[keywordIndex, keywordMap] = keywords.keywordOrganisation();
-    if (keywordIndex.size() > 1)
-        Messenger::warn("There are {} keyword groups defined, but only one can be displayed. Tell the developer!\n");
+    if (keywordStore.nVisibleKeywords() == 0)
+        return;
 
-    if (!keywordIndex.empty())
-    {
-        ui_.Keywords->setUp(keywordIndex.front(), keywordMap, coreData);
+    // We can only display a single section of widgets at present
+    if (keywordStore.sections().size() != 1)
+        Messenger::warn("There are {} keyword sections defined, but only one can be displayed. Tell the developer!\n");
 
-        connect(ui_.Keywords, SIGNAL(keywordChanged(int)), this, SLOT(keywordChanged(int)));
-    }
+    ui_.Keywords->setUp(keywordStore.sections().front(), coreData);
 
-    keywordsModified_ = false;
+    connect(ui_.Keywords, SIGNAL(keywordChanged(int)), this, SLOT(keywordChanged(int)));
 }
 
 // Run the dialog

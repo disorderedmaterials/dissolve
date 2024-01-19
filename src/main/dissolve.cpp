@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "main/dissolve.h"
 #include "classes/atomType.h"
@@ -7,9 +7,7 @@
 #include "classes/neutronWeights.h"
 #include "classes/species.h"
 
-Dissolve::Dissolve(CoreData &coreData)
-    : coreData_(coreData),
-      serializablePairPotential_(pairPotentialRange_, pairPotentialDelta_, atomTypeChargeSource_, coreData_.atomTypes())
+Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {
     // Set core simulation variables
     restartFileFrequency_ = 10;

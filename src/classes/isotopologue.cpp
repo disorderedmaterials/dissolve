@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/isotopologue.h"
 #include "classes/atomType.h"
@@ -87,8 +87,7 @@ const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &Isot
 // Express as a serialisable value
 SerialisedValue Isotopologue::serialise() const
 {
-    SerialisedValue result;
-    result["name"] = name_;
+    SerialisedValue::table_type result;
     for (auto &&[type, isotope] : isotopes_)
         result[type->name().data()] = Sears91::A(isotope);
     return result;
@@ -96,7 +95,6 @@ SerialisedValue Isotopologue::serialise() const
 
 void Isotopologue::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    name_ = toml::find<std::string>(node, "name");
     for (auto &[name, value] : node.as_table())
     {
         if (value.is_string())

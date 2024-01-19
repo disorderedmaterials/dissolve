@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/outputHandler.hui"
 #include <QColor>
@@ -11,17 +11,17 @@
  */
 
 // Set styling for warning message
-void GUIOutputHandler::styleForWarning() { emit(setColour(Qt::blue)); }
+void GUIOutputHandler::styleForWarning() { Q_EMIT(setColour(Qt::blue)); }
 
 // Set styling for error message
-void GUIOutputHandler::styleForError() { emit(setColour(Qt::red)); }
+void GUIOutputHandler::styleForError() { Q_EMIT(setColour(Qt::red)); }
 
 // Reset styling for normal text
-void GUIOutputHandler::resetStyling() { emit(setColour(QGuiApplication::palette().text().color())); }
+void GUIOutputHandler::resetStyling() { Q_EMIT(setColour(QGuiApplication::palette().text().color())); }
 
 /*
  * Output
  */
 
 // Print text
-void GUIOutputHandler::outputText(std::string s) { emit(printText(QStringLiteral("%1\n").arg(s.c_str()))); }
+void GUIOutputHandler::outputText(std::string s) { Q_EMIT(printText(QStringLiteral("%1\n").arg(s.c_str()))); }

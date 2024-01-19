@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "modules/epsr/epsr.h"
 #include "classes/configuration.h"
@@ -96,7 +96,8 @@ TEST_F(EPSRModuleTest, Water3NInpA)
 
     // Absolute magnitudes of EP
     auto *epsrModule = systemTest.getModule<EPSRModule>("EPSR01");
-    auto &coefficients = epsrModule->potentialCoefficients(systemTest.dissolve(), systemTest.coreData().nAtomTypes());
+    auto &coefficients =
+        epsrModule->potentialCoefficients(systemTest.dissolve().processingModuleData(), systemTest.coreData().nAtomTypes());
     ASSERT_FALSE(coefficients.empty());
     std::vector<std::tuple<int, int, double>> expectedEPMagnitudes = {{0, 0, 0.2475}, {0, 1, 0.3722}, {1, 1, 0.4567}};
     for (auto &&[i, j, epMag] : expectedEPMagnitudes)
@@ -187,7 +188,8 @@ TEST_F(EPSRModuleTest, Benzene)
 
     // Absolute magnitudes of EP
     auto *epsrModule = systemTest.getModule<EPSRModule>("EPSR01");
-    auto &coefficients = epsrModule->potentialCoefficients(systemTest.dissolve(), systemTest.coreData().nAtomTypes());
+    auto &coefficients =
+        epsrModule->potentialCoefficients(systemTest.dissolve().processingModuleData(), systemTest.coreData().nAtomTypes());
     ASSERT_FALSE(coefficients.empty());
     std::vector<std::tuple<int, int, double>> expectedEPMagnitudes = {{0, 0, 0.4023}, {0, 1, 0.1966}, {1, 1, 0.2491}};
     for (auto &&[i, j, epMag] : expectedEPMagnitudes)

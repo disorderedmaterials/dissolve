@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/speciesIsoModel.h"
 #include "classes/atomType.h"
@@ -136,7 +136,7 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
         auto iso = species_.isotopologue(index.row());
         iso->setName(DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()), species_.isotopologues(),
                                              [&](const auto &i) { return iso == i.get() ? std::string() : i->name(); }));
-        emit(dataChanged(index, index));
+        Q_EMIT(dataChanged(index, index));
         return true;
     }
 
@@ -154,7 +154,7 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
 
     // All good, so set the data
     isotopologue->setAtomTypeIsotope(atomType, newIso);
-    emit(dataChanged(index, index));
+    Q_EMIT(dataChanged(index, index));
     return true;
 }
 
@@ -165,7 +165,7 @@ QModelIndex SpeciesIsoModel::addIso()
     endInsertRows();
 
     auto newIndex = createIndex(species_.nIsotopologues() - 1, 0);
-    emit(dataChanged(newIndex, newIndex));
+    Q_EMIT(dataChanged(newIndex, newIndex));
     return newIndex;
 }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -42,9 +42,9 @@ class CompareModuleWidget : public ModuleWidget
     void updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags = {}) override;
 
     /*
-     * Slots
+     * Widgets / Functions
      */
-    private slots:
-    // Update graph
-    void onButtonChecked(bool checked);
+
+    private Q_SLOTS:
+    void on_Data1DButton_clicked(bool checked);
 };

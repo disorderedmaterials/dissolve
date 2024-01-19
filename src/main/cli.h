@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -37,6 +37,8 @@ class CLIOptions
     bool ignoreRestartFile_{false};
     // Whether to prevent writing of the restart file
     bool noRestartFile_{false};
+    // File for TOML conversion
+    std::optional<std::string> toTomlFile_;
 
     public:
     // Parse Result enum
@@ -66,4 +68,6 @@ class CLIOptions
     bool ignoreRestartFile() const;
     // Return whether to prevent writing of the restart file
     bool noRestartFile() const;
+    // Return output destination for TOML conversion
+    std::optional<std::string> toTomlFile() const;
 };

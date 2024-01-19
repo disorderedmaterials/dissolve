@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "math/interpolator.h"
 #include "modules/compare/compare.h"
 
 Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 {
+    // Mapping from data pair to ranges and error
+    std::map<DataSourceKeywordBase::DataPair *, RangeErrorPair> dataSourcesErrors;
 
     auto index = 1;
     for (auto &dataPair : dataSources_)
@@ -78,6 +80,8 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 
         auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(fmt::format("Pair{}_Delta", index), name_,
                                                                                       GenericItem::InRestartFileFlag);
+        delta.clear();
+
         delta.clear();
 
         // Get the minimum and maximum x values that exist over both datasets

@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/lineParser.h"
+#include "base/messenger.h"
+#include "base/serialiser.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
-#include "keywords/storeData.h"
+#include "main/compatibility.h"
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"
 #include <cstring>
+#include <fstream>
+#include <functional>
+#include <map>
+#include <toml/parser.hpp>
 
 // Load input file through supplied parser
 bool Dissolve::loadInput(LineParser &parser)
@@ -122,17 +128,30 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
     return result;
 }
 
+// Serialise pair potential
+SerialisedValue Dissolve::serialisePairPotentials() const
+{
+    SerialisedValue pairPotentials = {
+        {"range", pairPotentialRange_},
+        {"delta", pairPotentialDelta_},
+        {"autoChargeSource", automaticChargeSource_},
+        {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(PairPotential::coulombTruncationScheme_)},
+        {"shortRangeTruncation",
+         PairPotential::shortRangeTruncationSchemes().serialise(PairPotential::shortRangeTruncationScheme_)}};
+    if (forceChargeSource_)
+        pairPotentials["forceChargeSource"] = true;
+    if (atomTypeChargeSource_)
+        pairPotentials["includeCoulomb"] = true;
+    Serialisable::fromVectorToTable(coreData_.atomTypes(), "atomTypes", pairPotentials);
+    return pairPotentials;
+}
+
 // Express as a serialisable value
 SerialisedValue Dissolve::serialise() const
 {
     SerialisedValue root;
 
-    // If TOML is disabled,
-    if constexpr (!toml_testing_flag)
-    {
-        Messenger::error("This build does not support TOML.");
-        return root;
-    }
+    root["version"] = Version::semantic();
 
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
         !coreData_.masterImpropers().empty())
@@ -140,7 +159,7 @@ SerialisedValue Dissolve::serialise() const
 
     Serialisable::fromVectorToTable<>(coreData_.species(), "species", root);
 
-    root["pairPotentials"] = serializablePairPotential_.serialise();
+    root["pairPotentials"] = serialisePairPotentials();
 
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 
@@ -149,28 +168,36 @@ SerialisedValue Dissolve::serialise() const
     return root;
 }
 
-// Read values from a serialisable value
-void Dissolve::deserialise(const SerialisedValue &node)
+// This method populates the object's members with values read from a 'pairPotentials' TOML node
+void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
 {
-    // If TOML is disabled,
-    if constexpr (!toml_testing_flag)
-    {
-        Messenger::error("This build does not support TOML.");
-        return;
-    }
+    pairPotentialRange_ = toml::find_or<double>(node, "range", 15.0);
+    pairPotentialDelta_ = toml::find_or<double>(node, "delta", 0.005);
+    atomTypeChargeSource_ = toml::find_or<bool>(node, "includeCoulomb", false);
+    forceChargeSource_ = toml::find_or<bool>(node, "forceChargeSource", false);
+    automaticChargeSource_ = toml::find_or<bool>(node, "autoChargeSource", true);
 
-    if (node.contains("pairPotentials"))
-    {
-        auto &pairPotentialsNode = toml::find(node, "pairPotentials");
-        if (!pairPotentialsNode.is_uninitialized())
-            serializablePairPotential_.deserialise(pairPotentialsNode);
-    }
-    if (node.contains("master"))
-    {
-        auto &mastersNode = toml::find(node, "master");
-        if (!mastersNode.is_uninitialized())
-            coreData_.deserialiseMaster(mastersNode);
-    }
+    PairPotential::coulombTruncationScheme_ =
+        PairPotential::coulombTruncationSchemes().deserialise(toml::find_or<std::string>(node, "coulombTruncation", "Shifted"));
+    PairPotential::shortRangeTruncationScheme_ = PairPotential::shortRangeTruncationSchemes().deserialise(
+        toml::find_or<std::string>(node, "shortRangeTruncation", "Shifted"));
+
+    toMap(node, "atomTypes",
+          [this](const std::string &name, const auto &data)
+          { coreData().atomTypes().emplace_back(std::make_unique<AtomType>(name))->deserialise(data); });
+}
+
+// Read values from a serialisable value
+void Dissolve::deserialise(const SerialisedValue &originalNode)
+{
+    // Default to current version if no version info is given.
+    auto hasVersion = originalNode.contains("version");
+    if (!hasVersion)
+        Messenger::warn("File does not contain version information.  Assuming the current version: {}", Version::semantic());
+    const SerialisedValue node = hasVersion ? dissolve::backwardsUpgrade(originalNode) : originalNode;
+
+    Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
+    Serialisable::optionalOn(node, "master", [this](const auto node) { coreData_.deserialiseMaster(node); });
 
     toMap(node, "species",
           [this](const std::string &name, const SerialisedValue &data)
@@ -196,19 +223,68 @@ void Dissolve::deserialise(const SerialisedValue &node)
 // Load input from supplied file
 bool Dissolve::loadInput(std::string_view filename)
 {
-    // Open file and check that we're OK to proceed reading from it
-    LineParser parser(&worldPool());
-    if (!parser.openInput(filename))
-        return false;
-
-    auto result = loadInput(parser);
-    if (result)
+    // If the file name ends in TOML, insist on a TOML parse
+    if (filename.find(".toml") == filename.size() - 5)
     {
-        Messenger::print("Finished reading input file.\n");
-        setInputFilename(filename);
+        try
+        {
+            SerialisedValue contents = toml::parse(std::string(filename));
+            deserialise(contents);
+            return true;
+        }
+        catch (toml::syntax_error e)
+        {
+            Messenger::error("Syntax error in TOML file (are you sure you meant the .toml extension?).\n\n{}", e.what());
+        }
+        catch (toml::type_error e)
+        {
+            Messenger::error("Could not load TOML file\n\n{}", e.what());
+        }
+        return false;
     }
 
-    return result;
+    // Fail if the file starts with restart header
+    {
+        std::ifstream infile{std::string(filename)};
+        std::string firstLine;
+        infile >> firstLine;
+        infile.close();
+        if (firstLine.find("# Restart file") == 0)
+        {
+            Messenger::error("File {} is a restart file and not an input file", filename);
+            return false;
+        }
+    }
+
+    try
+    {
+        SerialisedValue contents = toml::parse(std::string(filename));
+        deserialise(contents);
+        return true;
+    }
+    catch (toml::syntax_error e)
+    {
+        // The file didn't have TOML syntax, so try the original parser
+        // Open file and check that we're OK to proceed reading from it
+        LineParser parser(&worldPool());
+        if (!parser.openInput(filename))
+            return false;
+
+        auto result = loadInput(parser);
+        if (result)
+        {
+            Messenger::print("Finished reading input file.\n");
+            setInputFilename(filename);
+        }
+
+        return result;
+    }
+    catch (toml::type_error e)
+    {
+        // The file *was* a TOML file, but it had problems loading
+        Messenger::error("Could not load TOML file\n\n{}", e.what());
+    }
+    return false;
 }
 
 // Save input file
@@ -647,11 +723,12 @@ bool Dissolve::saveRestart(std::string_view filename)
     // Module Keyword Data
     for (const auto *module : Module::instances())
     {
-        for (auto &keywordData : module->keywords().keywords())
-            if (keywordData.type() == KeywordStoreData::KeywordType::Restartable &&
-                !keywordData.keyword()->serialise(
-                    parser, fmt::format("Keyword  {}  {}  ", module->name(), keywordData.keyword()->name())))
-                return false;
+        for (const auto &section : module->keywords().sections())
+            for (const auto &group : section.groups())
+                for (const auto &[keyword, keywordType] : group.keywords())
+                    if (keywordType == KeywordBase::KeywordType::Restartable &&
+                        !keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->name(), keyword->name())))
+                        return false;
     }
 
     // Processing Module Data

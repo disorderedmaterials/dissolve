@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "io/fileAndFormat.h"
 #include "base/lineParser.h"
@@ -166,6 +166,6 @@ void FileAndFormat::deserialise(const SerialisedValue &node, const CoreData &cor
 {
     filename_ = toml::find<std::string>(node, "filename");
     formatIndex_ = formats_.keywordIndex(toml::find<std::string>(node, "format"));
-    if (node.contains("keywords"))
-        keywords_.deserialiseFrom(node.at("keywords"), coreData);
+    Serialisable::optionalOn(node, "keywords",
+                             [this, &coreData](const auto node) { keywords_.deserialiseFrom(node, coreData); });
 }

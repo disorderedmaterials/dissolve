@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "module/layer.h"
 #include "base/lineParser.h"
@@ -197,7 +197,7 @@ SerialisedValue ModuleLayer::serialise() const
         result["requireEnergyStability"] = true;
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::SizeFactors))
         result["requireSizeFactors"] = true;
-    Serialisable::fromVector(modules_, "modules", result);
+    Serialisable::fromVectorToTable(modules_, "modules", result);
     return result;
 }
 
@@ -211,11 +211,12 @@ void ModuleLayer::deserialise(const SerialisedValue &node, const CoreData &coreD
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::EnergyStability);
     if (toml::find_or<bool>(node, "requireSizeFactors", false))
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::SizeFactors);
-    Serialisable::toVector(node, "modules",
-                           [&coreData, this](const SerialisedValue &data)
-                           {
-                               auto *module =
-                                   append(*ModuleTypes::moduleType(std::string(toml::find<std::string>(data, "type"), {})), {});
-                               module->deserialise(data, coreData);
-                           });
+    Serialisable::toMap(node, "modules",
+                        [&coreData, this](const std::string &name, const SerialisedValue &data)
+                        {
+                            auto *module =
+                                append(*ModuleTypes::moduleType(std::string(toml::find<std::string>(data, "type"), {})), {});
+                            module->setName(name);
+                            module->deserialise(data, coreData);
+                        });
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #pragma once
 
@@ -140,4 +140,5 @@ class CIFMolecularSpecies
     const std::vector<std::vector<int>> &instances() const;
     // Return coordinates of instances
     const std::vector<std::vector<Vec3<double>>> &coordinates() const;
+    std::vector<std::vector<Vec3<double>>> &coordinates();
 };

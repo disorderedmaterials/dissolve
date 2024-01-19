@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/dialog.h"
 #include "gui/keywordWidgets/fileAndFormat.h"
@@ -45,7 +45,7 @@ void FileAndFormatKeywordWidget::on_FileEdit_editingFinished()
 
     checkFileValidity();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void FileAndFormatKeywordWidget::on_FileEdit_returnPressed()
@@ -57,7 +57,7 @@ void FileAndFormatKeywordWidget::on_FileEdit_returnPressed()
 
     checkFileValidity();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
@@ -88,7 +88,7 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
         ui_.FileEdit->setText(fileInfo.dir().relativeFilePath(filename));
         updateKeywordData();
         updateWidgetValues(coreData_);
-        emit(keywordDataChanged(keyword_->editSignals()));
+        Q_EMIT(keywordDataChanged(keyword_->editSignals()));
     }
 }
 
@@ -99,7 +99,7 @@ void FileAndFormatKeywordWidget::on_FormatCombo_currentIndexChanged(int index)
 
     updateKeywordData();
 
-    emit(keywordDataChanged(keyword_->editSignals()));
+    Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
 
 void FileAndFormatKeywordWidget::on_OptionsButton_clicked(bool checked)
@@ -109,7 +109,7 @@ void FileAndFormatKeywordWidget::on_OptionsButton_clicked(bool checked)
     optionsDialog.showOptions();
 
     if (optionsDialog.keywordsModified())
-        emit(keywordDataChanged(optionsDialog.keywordSignalMask() + keyword_->editSignals()));
+        Q_EMIT(keywordDataChanged(optionsDialog.keywordSignalMask() + keyword_->editSignals()));
 }
 
 /*

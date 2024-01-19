@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2023 Team Dissolve and contributors
+// Copyright (c) 2024 Team Dissolve and contributors
 
 #include "modules/xRaySQ/xRaySQ.h"
 #include "keywords/atomTypeVector.h"
@@ -15,7 +15,8 @@ XRaySQModule::XRaySQModule() : Module(ModuleTypes::XRaySQ)
     keywords_.addTarget<ModuleKeyword<const SQModule>>(
         "SourceSQs", "Source unweighted S(Q) to transform into xray-weighted S(Q)", sourceSQ_, ModuleTypes::SQ);
 
-    keywords_.setOrganisation("Options", "Form Factors & Normalisation");
+    keywords_.setOrganisation("Options", "Form Factors & Normalisation",
+                              "Form factors to use in the calculation, and how the data should be normalised.");
     keywords_.add<EnumOptionsKeyword<XRayFormFactors::XRayFormFactorData>>(
         "FormFactors", "Atomic form factors to use for weighting", formFactors_, XRayFormFactors::xRayFormFactorData());
     keywords_
@@ -24,7 +25,10 @@ XRaySQModule::XRaySQModule() : Module(ModuleTypes::XRaySQ)
                                                                       normaliseTo_, StructureFactors::normalisationTypes())
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
 
-    keywords_.setOrganisation("Options", "Reference Data");
+    keywords_.setOrganisation("Options", "Reference Data",
+                              "Reference (typically experimental) data set to display. The experimental data may be used by "
+                              "other modules if present. The normalisation already applied to the reference data should be "
+                              "specified here, and will be removed internally.");
     keywords_.add<FileAndFormatKeyword>("Reference", "F(Q) reference data", referenceFQ_, "EndReference")
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
     keywords_
