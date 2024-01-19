@@ -54,8 +54,8 @@ option(MULTI_THREADING "Enable threading using tbb" ON)
 if(MULTI_THREADING)
   add_definitions("-DMULTITHREADING")
   if(CONAN)
-    include_directories(CONAN_INCLUDE_DIRS_ONETBB)
-    include_directories(CONAN_INCLUDE_DIRS_ONEDPL)
+    include_directories(${CONAN_INCLUDE_DIRS_ONETBB})
+    include_directories(${CONAN_INCLUDE_DIRS_ONEDPL})
     set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} CONAN_PKG::onetbb CONAN_PKG::onedpl)
   else(CONAN)
     set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} $ENV{THREADING_LINK_LIBS})
@@ -88,6 +88,7 @@ if(GUI)
     #find_package(Brotli COMPONENTS encoder decoder common REQUIRED)
 
     set(FREETYPE_LIBRARIES CONAN_PKG::freetype)
+    set(FREETYPE_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS_FREETYPE})
     set(GUI_LINK_LIBS CONAN_PKG::zlib CONAN_PKG::libpng CONAN_PKG::bzip2 CONAN_PKG::brotli)
         #${ZLIB_LIBRARIES}
         #${PNG_LIBRARIES}
@@ -191,6 +192,7 @@ if(APPLE)
 
     # Adjust external include directories for GUI
     include_directories(${FTGL_INCLUDE_DIRS})
+    include_directories(${FREETYPE_INCLUDE_DIRS})
   endif(GUI)
 endif(APPLE)
 
