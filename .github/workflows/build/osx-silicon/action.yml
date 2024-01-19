@@ -44,17 +44,17 @@ runs:
         brew fetch --force --bottle-tag=arm64_monterey $PACKAGE
         brew install $(brew --cache --bottle-tag=arm64_monterey $PACKAGE)
       done
-
-  - name: Set up FTGL
-    shell: bash
-    if: false
-    run: |
-
-      # Change rpaths
-
-      # FTGL
-      sudo install_name_tool -change /usr/local/opt/ftgl/lib/libftgl.2.dylib @rpath/libftgl.2.dylib $(brew --prefix ftgl)/lib/libftgl.2.dylib
-      sudo install_name_tool -change /usr/local/opt/freetype/lib/libfreetype.6.dylib @rpath/libfreetype.6.dylib $(brew --prefix ftgl)/lib/libftgl.2.dylib
+#
+#  - name: Set up FTGL
+#    shell: bash
+#    if: false
+#    run: |
+#
+#      # Change rpaths
+#
+#      # FTGL
+#      sudo install_name_tool -change /usr/local/opt/ftgl/lib/libftgl.2.dylib @rpath/libftgl.2.dylib $(brew --prefix ftgl)/lib/libftgl.2.dylib
+#      sudo install_name_tool -change /usr/local/opt/freetype/lib/libfreetype.6.dylib @rpath/libfreetype.6.dylib $(brew --prefix ftgl)/lib/libftgl.2.dylib
       
   - name: Install Python Dependencies
     shell: bash

@@ -352,10 +352,11 @@ if(GUI)
             Qt6::Widgets
             Qt6::Core
             OpenGL::GL
-            ${FTGL_LIBRARIES}
+            
+            ${GUI_LINK_LIBS}
             ${FREETYPE_LIBRARIES}
+            ${FTGL_LIBRARIES}
             ${EXTRA_LINK_LIBS}
             ${THREADING_LINK_LIBS}
-            ${GUI_LINK_LIBS}
   )
 endif(GUI)
