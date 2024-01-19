@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/atomVector.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
@@ -21,7 +22,7 @@ class ChangeData
      */
     private:
     // Atom
-    Atom *atom_;
+    AtomRef atom_;
     // Flag indicating whether Atom has moved
     bool moved_{false};
     // Stored coordinates of Atom
@@ -31,9 +32,9 @@ class ChangeData
 
     public:
     // Set target Atom
-    void setAtom(Atom *i);
+    void setAtom(AtomRef i);
     // Return target Atom
-    Atom *atom();
+    AtomRef atom();
     // Return array index of stored Atom
     int atomArrayIndex() const;
     // Update stored position, and flag as moved

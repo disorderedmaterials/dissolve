@@ -104,11 +104,11 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
         for (const auto &i : centralAtoms)
         {
             molI = i->molecule();
-            auto indexI = molI->globalAtomIndex(i);
+            auto indexI = i.globalAtomIndex();
 
-            for (auto *j : otherAtoms)
+            for (auto j : otherAtoms)
                 if (molI != j->molecule())
-                    forcesWithMim(*i, indexI, *j, j->molecule()->globalAtomIndex(j), f);
+                    forcesWithMim(*i, indexI, *j, j.globalAtomIndex(), f);
         }
     }
     else
@@ -116,11 +116,11 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
         for (const auto &i : centralAtoms)
         {
             molI = i->molecule();
-            auto indexI = molI->globalAtomIndex(i);
+            auto indexI = i.globalAtomIndex();
 
-            for (auto *j : otherAtoms)
+            for (auto j : otherAtoms)
                 if (molI != j->molecule())
-                    forcesWithoutMim(*i, indexI, *j, j->molecule()->globalAtomIndex(j), f);
+                    forcesWithoutMim(*i, indexI, *j, j.globalAtomIndex(), f);
         }
     }
 }

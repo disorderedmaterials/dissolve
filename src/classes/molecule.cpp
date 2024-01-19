@@ -23,7 +23,7 @@ void Molecule::setSpecies(const Species *sp)
 const Species *Molecule::species() const { return species_; }
 
 // Add Atom to Molecule
-void Molecule::addAtom(Atom *atom)
+void Molecule::addAtom(AtomRef atom)
 {
     assert(atom->molecule() == nullptr);
     atoms_.push_back(atom);
@@ -36,25 +36,21 @@ void Molecule::addAtom(Atom *atom)
 int Molecule::nAtoms() const { return atoms_.size(); }
 
 // Return atoms vector
-std::vector<Atom *> &Molecule::atoms() { return atoms_; }
-const std::vector<Atom *> &Molecule::atoms() const { return atoms_; }
+std::vector<AtomRef > &Molecule::atoms() { return atoms_; }
+const std::vector<AtomRef > &Molecule::atoms() const { return atoms_; }
 
 // Return nth Atom pointer
-Atom *Molecule::atom(int n) const { return atoms_[n]; }
+AtomRef Molecule::atom(int n) const { return atoms_[n]; }
 
 // Update local atom pointers from main vector
 void Molecule::updateAtoms(AtomVector &mainAtoms, int offset)
 {
     globalAtomOffset_ = offset;
-    std::iota(atoms_.begin(), atoms_.end(), &mainAtoms[globalAtomOffset_]);
+    std::iota(atoms_.begin(), atoms_.end(), AtomRef(&mainAtoms[globalAtomOffset_], &mainAtoms[0]));
 }
 
 // Return global atom offset
-int Molecule::globalAtomOffset() const { return globalAtomOffset_; }
-
-// Return global index of supplied atom
-int Molecule::globalAtomIndex(const Atom *i) const { return globalAtomOffset_ + (i - atoms_[0]); }
-
+int Molecule::globalAtomOffset() const { return atoms_[0].globalAtomIndex(); }
 // Sets the index of the object within the parent DynamicArray
 void Molecule::setArrayIndex(int index) { arrayIndex_ = index; }
 
@@ -134,7 +130,7 @@ Vec3<double> Molecule::unFold(const Box *box)
 {
     Vec3<double> cog{0.0, 0.0, 0.0};
     traverseLocal(box,
-                  [&cog](Atom *j, Vec3<double> rJ)
+                  [&cog](AtomRef j, Vec3<double> rJ)
                   {
                       j->setCoordinates(rJ);
                       cog += rJ;
@@ -164,7 +160,7 @@ Vec3<double> Molecule::centreOfGeometry(const Box *box) const
         return {};
 
     Vec3<double> cog{0.0, 0.0, 0.0};
-    traverseLocal(box, [&cog](auto *j, auto rJ) { cog += rJ; });
+    traverseLocal(box, [&cog](auto j, auto rJ) { cog += rJ; });
 
     return cog / nAtoms();
 }
@@ -196,12 +192,10 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
                          const std::vector<int> &targetAtoms)
 {
     // Loop over supplied Atoms
-    Vec3<double> newR;
-    Atom *i;
     for (const auto index : targetAtoms)
     {
-        i = atom(index);
-        newR = transformationMatrix * box->minimumVector(origin, i->r()) + origin;
+        auto i = atom(index);
+        auto newR = transformationMatrix * box->minimumVector(origin, i->r()) + origin;
         i->setCoordinates(newR);
     }
 }

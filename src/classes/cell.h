@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/atom.h"
+#include "classes/atomVector.h"
 #include "templates/vector3.h"
 #include <set>
 #include <vector>
@@ -46,18 +47,18 @@ class Cell
      */
     private:
     // Vector of Atoms contained in this Cell
-    std::vector<Atom *> atoms_;
+    std::vector<AtomRef> atoms_;
 
     public:
     // Return array of contained Atoms
-    std::vector<Atom *> &atoms();
-    const std::vector<Atom *> &atoms() const;
+    std::vector<AtomRef> &atoms();
+    const std::vector<AtomRef> &atoms() const;
     // Return number of Atoms in array
     int nAtoms() const;
     // Add atom to Cell
-    void addAtom(Atom *atom);
+    void addAtom(AtomRef atom);
     // Remove Atom from Cell
-    void removeAtom(Atom *atom);
+    void removeAtom(AtomRef atom);
     // Clear all atoms from cell
     void clearAtoms();
 };

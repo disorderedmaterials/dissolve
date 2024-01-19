@@ -405,7 +405,7 @@ double GeometryKernel::totalGeometryEnergy(const Molecule &mol) const
 // Calculate total forces within the specified molecule arising from geometry terms
 void GeometryKernel::totalGeometryForces(const Molecule &mol, ForceVector &f) const
 {
-    const auto offset = mol.globalAtomOffset();
+    const auto offset = mol.atoms()[0].globalAtomIndex();
 
     // Loop over bonds
     for (const auto &bond : mol.species()->bonds())

@@ -230,7 +230,7 @@ class Configuration : public Serialisable<const CoreData &>
     // Update Cell location of all Atoms
     void updateAtomLocations(bool clearExistingLocations = false);
     // Update Cell location of specified Atom
-    void updateAtomLocation(Atom *i);
+    void updateAtomLocation(AtomRef i);
     // Update Cell locations of atoms within the specified Molecule
     void updateAtomLocations(const std::shared_ptr<Molecule> &mol);
     // Update Cell location of specified Atom indices

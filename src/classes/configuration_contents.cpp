@@ -154,7 +154,7 @@ std::shared_ptr<Molecule> Configuration::copyMolecule(const std::shared_ptr<Mole
     adjustSpeciesPopulation(sp, 1);
 
     // Copy the source molecule's coordinates
-    for (const auto *atom : sourceMolecule->atoms())
+    for (const auto atom : sourceMolecule->atoms())
         addAtom(atom->speciesAtom(), newMolecule, atom->r());
 
     return newMolecule;
@@ -228,7 +228,7 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
     newAtom.setSpeciesAtom(sourceAtom);
 
     // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
-    molecule->addAtom(&newAtom);
+    molecule->addAtom(AtomRef(&newAtom, &atoms_.front()));
 
     // Set the position
     newAtom.setCoordinates(r);

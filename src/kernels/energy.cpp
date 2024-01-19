@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "kernels/energy.h"
+#include "classes/atomVector.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
@@ -202,7 +203,7 @@ double EnergyKernel::pairPotentialEnergy(const Atom &i) const
                                           auto &nbrCellAtoms = neighbour.neighbour_.atoms();
                                           return std::accumulate(
                                               nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
-                                              [&i, mimRequired, this](const auto innerAcc, const auto *j)
+                                              [&i, mimRequired, this](const auto innerAcc, const auto j)
                                               {
                                                   auto &jj = *j;
 
@@ -229,7 +230,7 @@ PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, 
     auto &cells = cellArray_->get();
 
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
-    std::map<Cell *, std::vector<const Atom *>> locationMap;
+    std::map<Cell *, std::vector<AtomRef>> locationMap;
     for (auto &i : mol.atoms())
         locationMap[i->cell()].push_back(i);
 
@@ -256,7 +257,7 @@ PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, 
                             return acc +
                                    std::accumulate(
                                        nbrCellAtoms.begin(), nbrCellAtoms.end(), PairPotentialEnergyValue(),
-                                       [&ii, mimRequired, includeIntraMolecular, this](const auto innerAcc, const auto *j)
+                                       [&ii, mimRequired, includeIntraMolecular, this](const auto innerAcc, const auto j)
                                        {
                                            auto &jj = *j;
 

@@ -5,6 +5,7 @@ add_library(
   atomType.cpp
   atomTypeData.cpp
   atomTypeMix.cpp
+  atomVector.cpp
   box.cpp
   boxCubic.cpp
   boxMonoclinicAlpha.cpp
@@ -73,6 +74,7 @@ add_library(
   atomTypeData.h
   atomType.h
   atomTypeMix.h
+  atomVector.h
   box.h
   braggReflection.h
   cell.h

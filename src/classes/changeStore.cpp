@@ -20,7 +20,7 @@ ChangeStore::ChangeStore(const ProcessPool &procPool, OptionalReferenceWrapper<T
  */
 
 // Add atom to watch
-void ChangeStore::add(Atom *i)
+void ChangeStore::add(AtomRef i)
 {
     targetAtoms_.emplace_back();
     targetAtoms_.back().setAtom(std::move(i));
@@ -29,7 +29,7 @@ void ChangeStore::add(Atom *i)
 // Add Molecule to watch
 void ChangeStore::add(const std::shared_ptr<Molecule> &mol)
 {
-    for (auto *atom : mol->atoms())
+    for (auto &atom : mol->atoms())
         add(atom);
 }
 

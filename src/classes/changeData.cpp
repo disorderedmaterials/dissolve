@@ -7,14 +7,14 @@
 #include "classes/cell.h"
 #include <cassert>
 
-ChangeData::ChangeData() : atom_(nullptr) {}
+ChangeData::ChangeData() {}
 
 /*
  * Target Data
  */
 
 // Set target atom
-void ChangeData::setAtom(Atom *i)
+void ChangeData::setAtom(AtomRef i)
 {
     assert(i != nullptr);
 
@@ -25,7 +25,7 @@ void ChangeData::setAtom(Atom *i)
 }
 
 // Return target Atom
-Atom *ChangeData::atom() { return atom_; }
+AtomRef ChangeData::atom() { return atom_; }
 
 // Return array index of stored Atom
 int ChangeData::atomArrayIndex() const { return atom_->globalIndex(); }
