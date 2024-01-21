@@ -77,6 +77,7 @@ class Histogram1D
     Data1D data() const;
     // Return accumulated (averaged) data
     const Data1D &accumulatedData() const;
+    Data1D &accumulatedData();
 
     /*
      * Operators

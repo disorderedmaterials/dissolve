@@ -55,8 +55,7 @@ void SiteRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
             rdfGraph_
-                ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", module_->name()),
-                                                     fmt::format("RDF//{}", cfg->niceName()), cfg->niceName())
+                ->createRenderable<RenderableData1D>(fmt::format("RDF"), fmt::format("RDF"), cfg->niceName())
                 ->setColour(StockColours::BlueStockColour);
     }
 

@@ -26,8 +26,12 @@ class SiteSelector
     std::vector<const SpeciesSite *> speciesSites_;
     // Vector of selected sites
     Analyser::SiteVector sites_;
+    unsigned long int nSelections_{0};
+    unsigned long int nCumulativeSites_{0};
+    unsigned long int nAvailableSites_{0};
 
     public:
     // Return vector of selected sites
     const Analyser::SiteVector &sites() const;
+    // Return 
 };

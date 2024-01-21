@@ -173,7 +173,7 @@ Data1D Histogram1D::data() const
 
 // Return accumulated (averaged) data
 const Data1D &Histogram1D::accumulatedData() const { return accumulatedData_; }
-
+Data1D &Histogram1D::accumulatedData() { return accumulatedData_; }
 /*
  * Operators
  */
