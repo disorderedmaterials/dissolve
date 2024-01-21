@@ -36,62 +36,67 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     std::vector<double> distances;
     // auto data = processingData.realise<Data1D>("distances", name(), GenericItem::InRestartFileFlag);
     // Calculate Distance
-    for (const auto& [siteA, indexA] : a.sites())
-    {
-        for (const auto& [siteB, indexB] : b.sites())
-        {
-            distances.push_back(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
-        }
-    }
     auto [hist, status] = processingData.realiseIf<Histogram1D>("Hist-AB", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
     {
         hist.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
     }
-    hist.zeroBins();
-    for (auto &v : distances)
-        hist.bin(v);
-    hist.accumulate();
-
-    auto &data = processingData.realise<Data1D>(
-        fmt::format("Process1D"), name(), GenericItem::InRestartFileFlag);
-    data = hist.accumulatedData();
-
-    data /= (a.sites().size());
-    // data /= ((a.sites().size() * b.sites().size()) / targetConfiguration_->box()->volume());
-
-    // if (status == GenericItem::ItemStatus::Created)
-    //     histogram.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
-    // histogram.zeroBins();
-    // for (auto& v : distances)
-        // histogram.bin(v);
-    // histogram.accumulate();
-    // data.fromVector<double>(distances);
-
-    const auto &xAxis = data.xAxis();
-    auto &values = data.values();
-    if (xAxis.size() >= 2)
+        hist.zeroBins();
+    for (const auto& [siteA, indexA] : a.sites())
     {
-        // Derive first left-bin boundary from the delta between points 0 and 1
-        double leftBin = xAxis[0] - (xAxis[1] - xAxis[0]) * 0.5, rightBin, divisor;
-        double r1Cubed = pow(leftBin, 3), r2Cubed;
-        for (auto n = 0; n < xAxis.size(); ++n)
+        for (const auto& [siteB, indexB] : b.sites())
         {
-            // Get new right-bin from existing left bin boundary and current bin centre
-            rightBin = leftBin + 2 * (xAxis[n] - leftBin);
-            r2Cubed = pow(rightBin, 3);
-            divisor = (4.0 / 3.0) * PI * (r2Cubed - r1Cubed);
-            values[n] /= divisor;
-            if (data.valuesHaveErrors())
-                data.error(n) /= divisor;
-
-            // Overwrite old values
-            r1Cubed = r2Cubed;
-            leftBin = rightBin;
+            hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+            // distances.push_back(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
         }
     }
+    hist.accumulate();
 
-    processingData.realise<Data1D>("RDF", "", GenericItem::InRestartFileFlag) = data;
+    // for (auto &v : distances)
+    //     hist.bin(v);
+    // hist.accumulate();
+
+    // auto &data = processingData.realise<Data1D>(fmt::format("Process1D//RDF"), name(), GenericItem::InRestartFileFlag);
+    // data = processingData.realise<Histogram1D>("Hist-AB", name(), GenericItem::InRestartFileFlag).accumulatedData();
+
+    // data /= (a.sites().size() + 1);
+    // data /= ((b.sites().size()) / targetConfiguration_->box()->volume());
+
+    // auto processedData = &data;
+
+    // const auto &xAxis = processedData->xAxis();
+    // auto &values = processedData->values();
+    // if (xAxis.size() >= 2)
+    // {    
+    //     // Derive first left-bin boundary from the delta between points 0 and 1
+    //     double leftBin = xAxis[0] - (xAxis[1] - xAxis[0]) * 0.5, rightBin, divisor;
+    //     double r1Cubed = pow(leftBin, 3), r2Cubed;
+    //     for (auto n = 0; n < xAxis.size(); ++n)
+    //     {
+    //         // Get new right-bin from existing left bin boundary and current bin centre
+    //         rightBin = leftBin + 2 * (xAxis[n] - leftBin);
+    //         r2Cubed = pow(rightBin, 3);
+    //         divisor = (4.0 / 3.0) * PI * (r2Cubed - r1Cubed);
+    //         values[n] /= divisor;
+    //         if (processedData->valuesHaveErrors())
+    //             processedData->error(n) /= divisor;
+
+    //         // Overwrite old values
+    //         r1Cubed = r2Cubed;
+    //         leftBin = rightBin;
+    //     }
+    // }
+
+    auto &data = processingData.realise<Data1D>("RDF", "", GenericItem::InRestartFileFlag);
+    data = hist.data();
+    // data /= a.sites().size();
+    // data /= (b.sites().size() / targetConfiguration_->box()->volume());
+    // auto &data1 = processingData.realise<Data1D>(
+    //     fmt::format("Process1D//HistogramNorm"), name(), GenericItem::InRestartFileFlag);
+    // data1 = processingData.realise<Histogram1D>("Hist-AB", name(), GenericItem::InRestartFileFlag).data();
+    // data1 /= (a.sites().size() + 1);
+
+
 
     return ExecutionResult::Success;
 
