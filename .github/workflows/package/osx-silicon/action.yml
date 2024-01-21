@@ -53,7 +53,7 @@ runs:
         cp ./deploy/onetbb/lib/$FILENAME /usr/local/lib/$FILENAME
       done
 
-      ./prep-dmg -a Dissolve-GUI -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -L
+      ./prep-dmg -a Dissolve-GUI -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
 
   - name: Create Disk Image
     shell: bash
