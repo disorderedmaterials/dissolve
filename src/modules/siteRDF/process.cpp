@@ -46,7 +46,9 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     {
         for (const auto& [siteB, indexB] : b.sites())
         {
-            hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+            if (siteB->molecule() != siteA->molecule())
+            // I think we need to ensure that these are on different molecules!
+                hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
             // distances.push_back(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
         }
     }
@@ -89,8 +91,8 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
 
     auto &data = processingData.realise<Data1D>("RDF", "", GenericItem::InRestartFileFlag);
     data = hist.data();
-    // data /= a.sites().size();
-    // data /= (b.sites().size() / targetConfiguration_->box()->volume());
+    data /= a.sites().size();
+    data /= (b.sites().size() / targetConfiguration_->box()->volume());
     // auto &data1 = processingData.realise<Data1D>(
     //     fmt::format("Process1D//HistogramNorm"), name(), GenericItem::InRestartFileFlag);
     // data1 = processingData.realise<Histogram1D>("Hist-AB", name(), GenericItem::InRestartFileFlag).data();
