@@ -15,6 +15,64 @@
 // Run main processing
 Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
 {
+        // Check for zero Configuration targets
+    if (!targetConfiguration_)
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
+
+
+    auto &processingData = moduleContext.dissolve().processingModuleData();
+
+    SiteSelector a(targetConfiguration_, a_);
+
+    SiteSelector b(targetConfiguration_, b_);
+
+    SiteFilter filter(targetConfiguration_, a.sites());
+
+    // auto &&[rAB, neighbourMap] = filter.filterBySiteProximity(b.sites(), distanceRange_, 0, 2);
+    std::map<const Site*, std::vector<double>> distances;
+    // Calculate Distance
+    for (const auto& [siteB, index] : b.sites())
+    {
+        distances[siteB].reserve(a.sites().size());
+        std::transform(a.sites().begin(), a.sites().end(), distances[siteB].begin(), [&](const auto &siteA) {return targetConfiguration_->box()->minimumDistance(siteB->origin(), std::get<0>(siteA)->origin());});
+    
+        auto [histogram, status] = processingData.realiseIf<Histogram1D>("Histo-AB", name(), GenericItem::InRestartFileFlag);
+        if (status == GenericItem::ItemStatus::Created)
+            histogram.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
+        histogram.zeroBins();
+        for (auto &v : distances[siteB])
+            histogram.bin(v);
+        histogram.accumulate();
+
+    }
+
+
+
+    // for (auto &[k,v] : distances)
+    // {
+    //     histogram.bin(v);
+    // }
+
+    // histogram.accumulate();
+
+    processingData.realise<Data1D>("RDF", name(), GenericItem::InRestartFileFlag) = histogram.data();
+
+    if (exportFileAndFormat_.hasFilename())
+    {
+        if (moduleContext.processPool().isMaster())
+        {
+            if (exportFileAndFormat_.exportData(histogram.accumulatedData()))
+                moduleContext.processPool().decideTrue();
+            else
+                moduleContext.processPool().decideFalse();
+        }
+    }
+
+    return ExecutionResult::Success;
+    /*
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
@@ -87,5 +145,5 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         }
     }
 
-    return ExecutionResult::Success;
+    return ExecutionResult::Success;*/
 }
