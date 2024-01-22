@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/wizard.hui"
+#include "gui/wizard.h"
 #include <fmt/format.h>
 #include <stdexcept>
 

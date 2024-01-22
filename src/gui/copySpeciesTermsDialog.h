@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/ui_copySpeciesTermsDialog.h"
-#include "gui/wizard.hui"
+#include "gui/wizard.h"
 #include "main/dissolve.h"
 
 // Copy Species Terms Dialog
