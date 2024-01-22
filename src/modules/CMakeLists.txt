@@ -80,6 +80,7 @@ macro(dissolve_add_module_gui modulename)
     PRIVATE ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_BINARY_DIR}/src
             ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
+            ${CMAKE_BINARY_DIR}/src/gui/widgets/widgets_autogen/include
             ${Qt6Core_INCLUDE_DIRS}
             ${Qt6Gui_INCLUDE_DIRS}
             ${Qt6Widgets_INCLUDE_DIRS}
@@ -108,8 +109,13 @@ foreach(child ${children})
   endif()
 endforeach()
 
+# Add each module subdirectory We need to construct a list of paths to any generated GUI ui_* files to pass to the moduleWidgetProducer
+# target. It did not seem possible to construct a list to a global or CACHE variable from within the macro above, so here we just assume
+# that every module has a relevant include directory.
+set(MODULE_UI_INCLUDE_PATHS "")
 foreach(subdir ${MODULE_DIRS})
   add_subdirectory(${subdir})
+  list(APPEND MODULE_UI_INCLUDE_PATHS "${CMAKE_CURRENT_BINARY_DIR}/${subdir}/gui/module_${subdir}_gui_autogen/include")
 endforeach()
 
 add_library(moduleregistry registry.cpp registry.h)
@@ -133,6 +139,8 @@ if(GUI)
     PRIVATE ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_BINARY_DIR}/src
             ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
+            ${CMAKE_BINARY_DIR}/src/gui/widgets/widgets_autogen/include
+            ${MODULE_UI_INCLUDE_PATHS}
             ${Qt6Core_INCLUDE_DIRS}
             ${Qt6Gui_INCLUDE_DIRS}
             ${Qt6Widgets_INCLUDE_DIRS}
