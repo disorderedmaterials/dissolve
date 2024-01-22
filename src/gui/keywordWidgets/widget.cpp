@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/producers.h"
-#include "gui/keywordWidgets/widget.hui"
+#include "gui/keywordWidgets/widget.h"
 #include "gui/keywordWidgets/widgetGroupHeader.h"
 #include "gui/signals.h"
 #include "main/dissolve.h"

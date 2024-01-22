@@ -5,7 +5,7 @@
 #include "gui/gui.h"
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/producers.h"
-#include "gui/keywordWidgets/widget.hui"
+#include "gui/keywordWidgets/widget.h"
 #include "gui/moduleControlWidget.h"
 #include "keywords/procedure.h"
 #include "module/context.h"

@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/gui.h"
-#include "gui/keywordWidgets/widget.hui"
+#include "gui/keywordWidgets/widget.h"
 #include "gui/nodeControlWidget.h"
 #include "gui/procedureWidget.h"
 #include "main/dissolve.h"

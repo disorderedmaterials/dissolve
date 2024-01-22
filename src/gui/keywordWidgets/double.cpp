@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
-#include "gui/keywordWidgets/double.hui"
+#include "gui/keywordWidgets/double.h"
 
 DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, DoubleKeyword *keyword, const CoreData &coreData)
     : ExponentialSpin(parent), KeywordWidgetBase(coreData), keyword_(keyword)

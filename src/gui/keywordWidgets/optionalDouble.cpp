@@ -2,11 +2,11 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
-#include "gui/keywordWidgets/optionalInt.hui"
+#include "gui/keywordWidgets/optionalDouble.h"
 
-OptionalIntegerKeywordWidget::OptionalIntegerKeywordWidget(QWidget *parent, OptionalIntegerKeyword *keyword,
-                                                           const CoreData &coreData)
-    : IntegerSpin(parent), KeywordWidgetBase(coreData), keyword_(keyword)
+OptionalDoubleKeywordWidget::OptionalDoubleKeywordWidget(QWidget *parent, OptionalDoubleKeyword *keyword,
+                                                         const CoreData &coreData)
+    : ExponentialSpin(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Set minimum and maximum values and step size
     setMinimum(keyword_->minimumLimit());
@@ -21,7 +21,7 @@ OptionalIntegerKeywordWidget::OptionalIntegerKeywordWidget(QWidget *parent, Opti
     setValue(keyword_->data());
 
     // Connect signals
-    connect(this, SIGNAL(valueChanged(int)), this, SLOT(spinBoxValueChanged(int)));
+    connect(this, SIGNAL(valueChanged(double)), this, SLOT(spinBoxValueChanged(double)));
     connect(this, SIGNAL(valueNullified()), this, SLOT(spinBoxValueNullified()));
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
@@ -34,7 +34,7 @@ OptionalIntegerKeywordWidget::OptionalIntegerKeywordWidget(QWidget *parent, Opti
  */
 
 // Spin box value changed
-void OptionalIntegerKeywordWidget::spinBoxValueChanged(int newValue)
+void OptionalDoubleKeywordWidget::spinBoxValueChanged(double newValue)
 {
     if (refreshing_)
         return;
@@ -44,7 +44,7 @@ void OptionalIntegerKeywordWidget::spinBoxValueChanged(int newValue)
 }
 
 // Spin box value nullified
-void OptionalIntegerKeywordWidget::spinBoxValueNullified()
+void OptionalDoubleKeywordWidget::spinBoxValueNullified()
 {
     if (refreshing_ || !keyword_->data())
         return;
@@ -58,7 +58,7 @@ void OptionalIntegerKeywordWidget::spinBoxValueNullified()
  */
 
 // Update value displayed in widget
-void OptionalIntegerKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+void OptionalDoubleKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

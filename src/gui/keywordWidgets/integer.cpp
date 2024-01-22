@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
-#include "gui/keywordWidgets/integer.hui"
+#include "gui/keywordWidgets/integer.h"
 
 IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, IntegerKeyword *keyword, const CoreData &coreData)
     : QSpinBox(parent), KeywordWidgetBase(coreData), keyword_(keyword)
