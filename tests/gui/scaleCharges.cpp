@@ -19,7 +19,7 @@ class ScaleDialogModelTest : public ::testing::Test
     void SetUp() override{};
 };
 
-TEST_F(ScaleDialogModelTest, benzene)
+TEST_F(ScaleDialogModelTest, scale)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);

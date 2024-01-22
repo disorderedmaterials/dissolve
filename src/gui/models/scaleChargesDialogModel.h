@@ -33,7 +33,7 @@ class ScaleChargesDialogModel : public QObject
 
     private:
     double currentValue_ = 1.0;
-    Option scale_type_;
+    Option scaleType_;
 
     Q_SIGNALS:
     void valueSet();
