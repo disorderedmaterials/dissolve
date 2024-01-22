@@ -29,7 +29,6 @@ jobs:
       uses: "./.github/workflows/qc"
 
   Build:
-    needs: QC
     strategy:
       fail-fast: false
       matrix:
@@ -53,7 +52,6 @@ jobs:
         uses: "./.github/workflows/build"
 
   BuildLinux:
-    needs: QC
     strategy:
       fail-fast: false
       matrix:
