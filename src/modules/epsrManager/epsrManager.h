@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/scatteringMatrix.h"
+#include "module/groups.h"
 #include "module/module.h"
 #include "procedure/procedure.h"
 
@@ -23,12 +24,22 @@ class EPSRManagerModule : public Module
     std::vector<Module *> target_;
     // Scattering matrix
     ScatteringMatrix scatteringMatrix_;
+    // Vector storing atom pairs and associated potentials
+    std::vector<std::pair<std::pair<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>>, Data1D>> potentials_;
+    struct EPData
+    {
+        Data1D ep;
+        double count{0};
+        std::shared_ptr<AtomType> at1, at2;
+    };
 
-    public:
     /*
-     * Processing
+     * Functions
      */
+    public:
+    std::string pairKey(std::pair<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>> atomTypes);
+
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(ModuleContext &moduleContext);
 };
