@@ -229,6 +229,7 @@ if(GUI)
     ${gui_target_name}
     PRIVATE ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_BINARY_DIR}/src
+            ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
             ${FREETYPE_INCLUDE_DIRS}
             ${Qt6Core_INCLUDE_DIRS}
             ${Qt6Gui_INCLUDE_DIRS}
