@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/widgets/exponentialSpin.hui"
+#include "gui/widgets/exponentialSpin.h"
 #include <QItemDelegate>
 #include <QModelIndex>
 #include <QObject>

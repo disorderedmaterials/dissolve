@@ -4,7 +4,7 @@
 #include "classes/empiricalFormula.h"
 #include "classes/species.h"
 #include "gui/speciesWidget.h"
-#include "gui/widgets/elementSelector.hui"
+#include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
 #include "modules/geomOpt/geomOpt.h"
 #include <QButtonGroup>

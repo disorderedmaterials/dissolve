@@ -5,7 +5,7 @@
 #include "classes/species.h"
 #include "data/ff/library.h"
 #include "gui/speciesEditor.h"
-#include "gui/widgets/elementSelector.hui"
+#include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
 #include "modules/geomOpt/geomOpt.h"
 #include <QButtonGroup>

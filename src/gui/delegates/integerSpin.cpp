@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/delegates/integerSpin.h"
-#include "gui/widgets/integerSpin.hui"
+#include "gui/widgets/integerSpin.h"
 
 IntegerSpinDelegate::IntegerSpinDelegate(QObject *parent, int vmin, int vmax, int vstep) : QItemDelegate(parent)
 {

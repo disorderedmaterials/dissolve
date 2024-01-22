@@ -12,7 +12,7 @@
 #include "gui/gui.h"
 #include "gui/helpers/comboPopulator.h"
 #include "gui/render/renderableData1D.h"
-#include "gui/widgets/elementSelector.hui"
+#include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
 #include <QListWidgetItem>
 

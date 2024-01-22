@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/keywordWidgets/base.h"
-#include "gui/widgets/integerSpin.hui"
+#include "gui/widgets/integerSpin.h"
 #include "keywords/optionalInt.h"
 
 class OptionalIntegerKeywordWidget : public IntegerSpin, public KeywordWidgetBase

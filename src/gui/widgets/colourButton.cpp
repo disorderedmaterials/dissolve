@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/widgets/colourButton.hui"
+#include "gui/widgets/colourButton.h"
 #include <QColorDialog>
 #include <QPainter>
 

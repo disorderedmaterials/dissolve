@@ -5,7 +5,7 @@
 #include "classes/coreData.h"
 #include "classes/empiricalFormula.h"
 #include "gui/configurationViewerWidget.h"
-#include "gui/widgets/elementSelector.hui"
+#include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
 #include <QButtonGroup>
 

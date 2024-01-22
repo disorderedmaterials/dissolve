@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/keywordWidgets/base.h"
-#include "gui/widgets/exponentialSpin.hui"
+#include "gui/widgets/exponentialSpin.h"
 #include "keywords/double.h"
 
 class DoubleKeywordWidget : public ExponentialSpin, public KeywordWidgetBase
