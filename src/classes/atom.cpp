@@ -44,7 +44,7 @@ int Atom::globalIndex() const
     auto offset = molecule_->globalAtomOffset();
     int i = 0;
     for (auto &ref : molecule_->atoms()) {
-      if (this == ref)
+      if (this == &*ref)
 	return i;
       ++i;
     }
@@ -94,10 +94,9 @@ void Atom::translateCoordinates(double dx, double dy, double dz) { setCoordinate
  */
 
 // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
-SpeciesAtom::ScaledInteractionDefinition Atom::scaling(const Atom *j) const
+SpeciesAtom::ScaledInteractionDefinition Atom::scaling(const AtomRef j) const
 {
     assert(speciesAtom_ != nullptr);
-    assert(j != nullptr);
     assert(j->speciesAtom() != nullptr);
 
     return speciesAtom_->scaling(j->speciesAtom());

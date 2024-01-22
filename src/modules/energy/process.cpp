@@ -159,7 +159,6 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         auto correctInterEnergy = 0.0, correctIntraEnergy = 0.0, correctSelfEnergy = 0.0;
 
         double r, angle;
-        Atom *i, *j;
         Vec3<double> vecji, vecjk, veckl;
         std::shared_ptr<Molecule> molN, molM;
         const auto *box = targetConfiguration_->box();
@@ -175,11 +174,11 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
             // Molecule self-energy
             for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
             {
-                i = molN->atom(ii);
+                auto i = molN->atom(ii);
 
                 for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
                 {
-                    j = molN->atom(jj);
+                    auto j = molN->atom(jj);
 
                     // Get interatomic distance
                     r = box->minimumDistance(i->r(), j->r());
@@ -203,11 +202,11 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
                 // Double loop over atoms
                 for (auto ii = 0; ii < molN->nAtoms(); ++ii)
                 {
-                    i = molN->atom(ii);
+                    auto i = molN->atom(ii);
 
                     for (auto jj = 0; jj < molM->nAtoms(); ++jj)
                     {
-                        j = molM->atom(jj);
+                        auto j = molM->atom(jj);
 
                         // Get interatomic distance and check cutoff
                         r = box->minimumDistance(i->r(), j->r());

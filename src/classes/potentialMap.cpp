@@ -131,10 +131,9 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
 }
 
 // Return analytic energy between Atom types at distance specified
-double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) const
+double PotentialMap::analyticEnergy(const AtomRef i, const AtomRef j, double r) const
 {
     assert(r >= 0.0);
-    assert(i && j);
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being local to the atom
     // types
@@ -144,10 +143,9 @@ double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) cons
 }
 
 // Return analytic energy between Atom types at distance specified, scaling electrostatic and van der Waals components
-double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r, double elecScale, double vdwScale) const
+double PotentialMap::analyticEnergy(const AtomRef i, const AtomRef j, double r, double elecScale, double vdwScale) const
 {
     assert(r >= 0.0);
-    assert(i && j);
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being local to the atom
     // types
@@ -207,10 +205,9 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r,
 }
 
 // Return analytic force between Atom types at distance specified
-double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r) const
+double PotentialMap::analyticForce(const AtomRef i, const AtomRef j, double r) const
 {
     assert(r >= 0.0);
-    assert(i && j);
     assert(i->speciesAtom() && j->speciesAtom());
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
@@ -221,10 +218,9 @@ double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r) const
 }
 
 // Return analytic force between Atom types at distance specified, scaling electrostatic and van der Waals components
-double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r, double elecScale, double vdwScale) const
+double PotentialMap::analyticForce(const AtomRef i, const AtomRef j, double r, double elecScale, double vdwScale) const
 {
     assert(r >= 0.0);
-    assert(i && j);
     assert(i->speciesAtom() && j->speciesAtom());
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the

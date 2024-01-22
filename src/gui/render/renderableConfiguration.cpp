@@ -122,7 +122,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
                     // Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is
                     // the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
                     auto partner = i.molecule()->atom(bond.indexJ());
-                    if (&i == partner)
+                    if (&i == &*partner)
                         continue;
 
                     ri = i.r();
@@ -164,7 +164,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
                 // Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same
                 // as 'i' (in which case we skip it, ensuring we draw every bond only once)
                 auto partner = i.molecule()->atom(bond.indexJ());
-                if (&i == partner)
+                if (&i == &*partner)
                     continue;
 
                 if (source_->cells().minimumImageRequired(*i.cell(), *partner->cell()))

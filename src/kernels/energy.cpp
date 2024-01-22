@@ -281,7 +281,7 @@ PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, 
                                            // If the same molecule need to check scaling (other checks already made above)
                                            if (sameMol)
                                            {
-                                               auto &&[scalingType, elec14, vdw14] = ii.scaling(&jj);
+                                               auto &&[scalingType, elec14, vdw14] = ii.scaling(j);
                                                if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
                                                    return innerAcc +
                                                           PairPotentialEnergyValue(0.0, pairPotentialEnergy(ii, jj, sqrt(rSq)));

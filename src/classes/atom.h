@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/atomVector.h"
 #include "classes/speciesAtom.h"
 #include "kernels/potentials/base.h"
 #include "templates/vector3.h"
@@ -94,7 +95,7 @@ class Atom
      */
     public:
     // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
-    SpeciesAtom::ScaledInteractionDefinition scaling(const Atom *j) const;
+    SpeciesAtom::ScaledInteractionDefinition scaling(const AtomRef j) const;
 
     /*
      * Targeted External Potentials

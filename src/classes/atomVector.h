@@ -3,8 +3,9 @@
 
 #pragma once
 
-#include "classes/atom.h"
 #include <vector>
+
+class Atom;
 
 using AtomVector = std::vector<Atom>;
 
@@ -14,7 +15,6 @@ class AtomRef {
  public:
   AtomRef();
   AtomRef(Atom *ref, Atom * origin);
-  operator Atom*() const;
   Atom &operator*();
   const Atom &operator*() const;
   Atom *operator->();
