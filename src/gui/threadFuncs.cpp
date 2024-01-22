@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/gui.h"
-#include "gui/thread.hui"
+#include "gui/thread.h"
 #include "main/dissolve.h"
 
 /*

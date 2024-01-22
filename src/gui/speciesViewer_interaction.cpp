@@ -4,7 +4,7 @@
 #include "classes/species.h"
 #include "classes/speciesAtom.h"
 #include "gui/render/renderableSpecies.h"
-#include "gui/speciesViewer.hui"
+#include "gui/speciesViewer.h"
 
 /*
  * Private Functions

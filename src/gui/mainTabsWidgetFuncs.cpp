@@ -4,8 +4,8 @@
 #include "base/messenger.h"
 #include "gui/gui.h"
 #include "gui/mainTab.h"
-#include "gui/mainTabsBar.hui"
-#include "gui/mainTabsWidget.hui"
+#include "gui/mainTabsBar.h"
+#include "gui/mainTabsWidget.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
 #include <QToolButton>

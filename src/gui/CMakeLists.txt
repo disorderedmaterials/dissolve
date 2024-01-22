@@ -15,7 +15,7 @@ add_library(
   configurationViewer_input.cpp
   configurationViewer_interaction.cpp
   configurationViewer_render.cpp
-  configurationViewer.hui
+  configurationViewer.h
   configurationViewerWidgetFuncs.cpp
   configurationViewerWidget.h
   configurationViewerWidget.ui
@@ -24,7 +24,7 @@ add_library(
   dataViewer_interaction.cpp
   dataViewer_contextMenu.cpp
   dataViewer_render.cpp
-  dataViewer.hui
+  dataViewer.h
   dataWidgetFuncs.cpp
   dataWidget.h
   dataWidget.ui
@@ -34,7 +34,7 @@ add_library(
   speciesEditorFuncs.cpp
   speciesEditor.h
   speciesEditor.ui
-  speciesViewer.hui
+  speciesViewer.h
   speciesViewerFuncs.cpp
   speciesViewer_input.cpp
   speciesViewer_interaction.cpp
@@ -50,7 +50,7 @@ add_library(
   viewer_render.cpp
   viewer_renderables.cpp
   viewer_view.cpp
-  viewer.hui
+  viewer.h
   # Widgets and Wizards
   moduleControlWidgetFuncs.cpp
   moduleControlWidget.h
@@ -139,9 +139,9 @@ add_library(
   mainTab.cpp
   mainTab.h
   mainTabsBarFuncs.cpp
-  mainTabsBar.hui
+  mainTabsBar.h
   mainTabsWidgetFuncs.cpp
-  mainTabsWidget.hui
+  mainTabsWidget.h
   messagesTabFuncs.cpp
   messagesTab.h
   messagesTab.ui
@@ -165,11 +165,11 @@ add_library(
   menu_simulation.cpp
   menu_species.cpp
   outputHandlerFuncs.cpp
-  outputHandler.hui
+  outputHandler.h
   stockColours.cpp
   stockColours.h
   threadFuncs.cpp
-  thread.hui
+  thread.h
   # QML type register
   typesFuncs.cpp
   types.h

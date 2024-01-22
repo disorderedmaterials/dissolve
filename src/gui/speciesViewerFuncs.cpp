@@ -5,7 +5,7 @@
 #include "data/elements.h"
 #include "gui/render/renderableSpecies.h"
 #include "gui/render/renderableSpeciesSite.h"
-#include "gui/speciesViewer.hui"
+#include "gui/speciesViewer.h"
 
 SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
 {

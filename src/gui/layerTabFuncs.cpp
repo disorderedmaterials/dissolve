@@ -5,7 +5,7 @@
 #include "gui/getModuleLayerNameDialog.h"
 #include "gui/gui.h"
 #include "gui/layerTab.h"
-#include "gui/mainTabsWidget.hui"
+#include "gui/mainTabsWidget.h"
 #include "gui/moduleControlWidget.h"
 #include "main/dissolve.h"
 #include <QMessageBox>

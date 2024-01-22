@@ -3,7 +3,7 @@
 
 #include "classes/configuration.h"
 #include "data/elements.h"
-#include "gui/configurationViewer.hui"
+#include "gui/configurationViewer.h"
 #include "gui/render/renderableConfiguration.h"
 
 ConfigurationViewer::ConfigurationViewer(QWidget *parent) : BaseViewer(parent)

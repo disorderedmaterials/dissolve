@@ -3,7 +3,7 @@
 
 #include "classes/empiricalFormula.h"
 #include "gui/gui.h"
-#include "gui/speciesViewer.hui"
+#include "gui/speciesViewer.h"
 #include "neta/neta.h"
 #include <QtGui/QMouseEvent>
 

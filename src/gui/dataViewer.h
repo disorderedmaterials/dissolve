@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/viewer.hui"
+#include "gui/viewer.h"
 
 // Forward Declarations
 class Dissolve;

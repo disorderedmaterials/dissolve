@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "gui/viewer.hui"
+#include "gui/viewer.h"
 
 BaseViewer::BaseViewer(QWidget *parent)
     : QOpenGLWidget(parent), fontInstance_(parent->palette().text().color()), view_(renderables_, fontInstance_)

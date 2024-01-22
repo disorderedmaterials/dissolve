@@ -5,7 +5,7 @@
 
 #include "gui/render/renderableSpecies.h"
 #include "gui/render/renderableSpeciesSite.h"
-#include "gui/viewer.hui"
+#include "gui/viewer.h"
 
 // Forward Declarations
 class Element;
