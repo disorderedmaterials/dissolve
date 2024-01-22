@@ -13,7 +13,9 @@ void ScaleChargesDialogModel::updateValue(double newVal) { currentValue_ = newVa
 
 void ScaleChargesDialogModel::setOption(Option option) { scale_type_ = option; }
 
-bool ScaleChargesDialogModel::scaleCharge(Species *species)
+ScaleChargesDialogModel::Option ScaleChargesDialogModel::getOption() { return scale_type_; }
+
+bool ScaleChargesDialogModel::scaleCharges(Species *species)
 {
     auto scaleFactor = value();
     if (scale_type_ != Scale)

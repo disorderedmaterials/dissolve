@@ -26,8 +26,10 @@ class ScaleChargesDialogModel : public QObject
     Q_INVOKABLE void setOption(Option);
     Q_INVOKABLE void updateValue(double);
 
+    Option getOption();
+
     double value() const;
-    bool scaleCharge(Species *);
+    bool scaleCharges(Species *);
 
     private:
     double currentValue_ = 1.0;
