@@ -47,7 +47,7 @@ TEST_F(ScaleDialogModelTest, benzene)
 
     // Current scale value is 2.0, option is set to "ScaleTo"
     ASSERT_TRUE(model.scaleCharges(species));
-    
+
     // Still "ScaleTo" here, but now using a factor of 0.0
     model.updateValue(0);
     ASSERT_FALSE(model.scaleCharges(species));
