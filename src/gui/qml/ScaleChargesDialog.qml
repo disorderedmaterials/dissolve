@@ -22,7 +22,6 @@ Page {
             dialogModel.updateValue(x);
         }
     }
-
     Item {
         anchors.fill: parent
         anchors.margins: 10
@@ -32,28 +31,28 @@ Page {
             spacing: 10
 
             D.Text {
-                width: parent.width-2*parent.spacing
                 font.pixelSize: 11
                 text: "Enter the scaling factor to apply to all atoms / the target sum to determine scaling factor from"
+                width: parent.width - 2 * parent.spacing
                 wrapMode: Text.Wrap
             }
             SpinBox {
                 id: scaleSpinBox
+                Layout.alignment: Qt.AlignRight
                 editable: true
                 from: -100
                 stepSize: 1
                 to: 100
                 value: dialogModel.value
-                Layout.alignment: Qt.AlignRight
             }
             RowLayout {
-                spacing: 10
                 Layout.alignment: Qt.AlignRight
+                spacing: 10
 
                 D.Button {
                     id: scaleButton
                     icon.source: "qrc:/general/icons/true.svg"
-                    text: "Scale"                    
+                    text: "Scale"
 
                     onClicked: {
                         dialogModel.processSelection(dialogModel.Scale, scaleSpinBox.value);
