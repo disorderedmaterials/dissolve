@@ -4,45 +4,45 @@ add_library(
   # Qt Resources
   main.qrc
   # Core Classes
-  wizardFuncs.cpp
+  wizard.cpp
   wizard.h
   wizardFooter.h
   wizardFooter.ui
   wizardHeader.h
   wizardHeader.ui
   # Viewers
-  configurationViewerFuncs.cpp
+  configurationViewer.cpp
   configurationViewer_input.cpp
   configurationViewer_interaction.cpp
   configurationViewer_render.cpp
   configurationViewer.h
-  configurationViewerWidgetFuncs.cpp
+  configurationViewerWidget.cpp
   configurationViewerWidget.h
   configurationViewerWidget.ui
-  dataViewerFuncs.cpp
+  dataViewer.cpp
   dataViewer_input.cpp
   dataViewer_interaction.cpp
   dataViewer_contextMenu.cpp
   dataViewer_render.cpp
   dataViewer.h
-  dataWidgetFuncs.cpp
+  dataWidget.cpp
   dataWidget.h
   dataWidget.ui
-  selectSymbolFuncs.cpp
+  selectSymbol.cpp
   selectSymbol.h
   selectSymbol.ui
-  speciesEditorFuncs.cpp
+  speciesEditor.cpp
   speciesEditor.h
   speciesEditor.ui
   speciesViewer.h
-  speciesViewerFuncs.cpp
+  speciesViewer.cpp
   speciesViewer_input.cpp
   speciesViewer_interaction.cpp
   speciesViewer_render.cpp
-  speciesWidgetFuncs.cpp
+  speciesWidget.cpp
   speciesWidget.h
   speciesWidget.ui
-  viewerFuncs.cpp
+  viewer.cpp
   viewer_input.cpp
   viewer_interaction.cpp
   viewer_options.cpp
@@ -52,109 +52,109 @@ add_library(
   viewer_view.cpp
   viewer.h
   # Widgets and Wizards
-  moduleControlWidgetFuncs.cpp
+  moduleControlWidget.cpp
   moduleControlWidget.h
   moduleControlWidget.ui
-  nodeControlWidgetFuncs.cpp
+  nodeControlWidget.cpp
   nodeControlWidget.h
   nodeControlWidget.ui
-  procedureWidgetFuncs.cpp
+  procedureWidget.cpp
   procedureWidget.h
   procedureWidget.ui
-  selectAtomTypeWidgetFuncs.cpp
+  selectAtomTypeWidget.cpp
   selectAtomTypeWidget.h
   selectAtomTypeWidget.ui
-  selectForcefieldWidgetFuncs.cpp
+  selectForcefieldWidget.cpp
   selectForcefieldWidget.h
   selectForcefieldWidget.ui
-  selectSpeciesWidgetFuncs.cpp
+  selectSpeciesWidget.cpp
   selectSpeciesWidget.h
   selectSpeciesWidget.ui
   # Dialogs
-  addConfigurationDialogFuncs.cpp
+  addConfigurationDialog.cpp
   addConfigurationDialog.h
   addConfigurationDialog.ui
-  addForcefieldTermsDialogFuncs.cpp
+  addForcefieldTermsDialog.cpp
   addForcefieldTermsDialog.h
-  copySpeciesTermsDialogFuncs.cpp
+  copySpeciesTermsDialog.cpp
   copySpeciesTermsDialog.h
   copySpeciesTermsDialog.ui
-  dataManagerDialogFuncs.cpp
+  dataManagerDialog.cpp
   dataManagerDialog.h
   dataManagerDialog.ui
-  editSpeciesDialogFuncs.cpp
+  editSpeciesDialog.cpp
   editSpeciesDialog.h
   editSpeciesDialog.ui
-  getConfigurationNameDialogFuncs.cpp
+  getConfigurationNameDialog.cpp
   getConfigurationNameDialog.h
   getConfigurationNameDialog.ui
-  getModuleLayerNameDialogFuncs.cpp
+  getModuleLayerNameDialog.cpp
   getModuleLayerNameDialog.h
   getModuleLayerNameDialog.ui
-  getSpeciesNameDialogFuncs.cpp
+  getSpeciesNameDialog.cpp
   getSpeciesNameDialog.h
   getSpeciesNameDialog.ui
-  getTabNameDialogFuncs.cpp
+  getTabNameDialog.cpp
   getTabNameDialog.h
   getTabNameDialog.ui
-  importCIFDialogFuncs.cpp
+  importCIFDialog.cpp
   importCIFDialog.h
   importCIFDialog.ui
-  importLigParGenDialogFuncs.cpp
+  importLigParGenDialog.cpp
   importLigParGenDialog.h
   importLigParGenDialog.ui
-  importSpeciesDialogFuncs.cpp
+  importSpeciesDialog.cpp
   importSpeciesDialog.h
   importSpeciesDialog.ui
-  intramolecularTermsDialogFuncs.cpp
+  intramolecularTermsDialog.cpp
   intramolecularTermsDialog.h
   intramolecularTermsDialog.ui
   modifyChargesDialog.cpp
   modifyChargesDialog.h
-  selectAtomTypeDialogFuncs.cpp
+  selectAtomTypeDialog.cpp
   selectAtomTypeDialog.h
   selectAtomTypeDialog.ui
-  selectElementDialogFuncs.cpp
+  selectElementDialog.cpp
   selectElementDialog.h
   selectElementDialog.ui
-  selectGenericItemDialogFuncs.cpp
+  selectGenericItemDialog.cpp
   selectGenericItemDialog.h
   selectGenericItemDialog.ui
-  selectRestartFileDialogFuncs.cpp
+  selectRestartFileDialog.cpp
   selectRestartFileDialog.h
   selectRestartFileDialog.ui
-  selectSpeciesDialogFuncs.cpp
+  selectSpeciesDialog.cpp
   selectSpeciesDialog.h
   selectSpeciesDialog.ui
   # Main Tabs
-  configurationTabFuncs.cpp
+  configurationTab.cpp
   configurationTab.h
   configurationTab.ui
-  forcefieldTabFuncs.cpp
+  forcefieldTab.cpp
   forcefieldTab.h
   forcefieldTab.ui
-  layerTabFuncs.cpp
+  layerTab.cpp
   layerTab.h
   layerTab.ui
   mainTab.cpp
   mainTab.h
-  mainTabsBarFuncs.cpp
+  mainTabsBar.cpp
   mainTabsBar.h
-  mainTabsWidgetFuncs.cpp
+  mainTabsWidget.cpp
   mainTabsWidget.h
-  messagesTabFuncs.cpp
+  messagesTab.cpp
   messagesTab.h
   messagesTab.ui
-  overviewTabFuncs.cpp
+  overviewTab.cpp
   overviewTab.h
-  speciesTabFuncs.cpp
+  speciesTab.cpp
   speciesTab_geometry.cpp
   speciesTab_isotopologues.cpp
   speciesTab_sites.cpp
   speciesTab.h
   speciesTab.ui
   # Main UI
-  guiFuncs.cpp
+  gui.cpp
   gui_simulation.cpp
   gui.h
   gui.ui
@@ -164,14 +164,14 @@ add_library(
   menu_layer.cpp
   menu_simulation.cpp
   menu_species.cpp
-  outputHandlerFuncs.cpp
+  outputHandler.cpp
   outputHandler.h
   stockColours.cpp
   stockColours.h
-  threadFuncs.cpp
+  thread.cpp
   thread.h
   # QML type register
-  typesFuncs.cpp
+  types.cpp
   types.h
 )
 
