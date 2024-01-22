@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/moduleControlWidget.h"
 #include "base/lineParser.h"
 #include "gui/gui.h"
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/producers.h"
 #include "gui/keywordWidgets/widget.h"
-#include "gui/moduleControlWidget.h"
 #include "keywords/procedure.h"
 #include "module/context.h"
 #include "module/module.h"

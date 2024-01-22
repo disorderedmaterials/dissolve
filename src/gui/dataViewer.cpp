@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "base/messenger.h"
 #include "gui/dataViewer.h"
+#include "base/messenger.h"
 
 DataViewer::DataViewer(QWidget *parent) : BaseViewer(parent)
 {

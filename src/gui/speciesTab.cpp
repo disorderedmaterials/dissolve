@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/speciesTab.h"
 #include "classes/atomType.h"
 #include "classes/empiricalFormula.h"
 #include "gui/delegates/comboList.h"
@@ -11,7 +12,6 @@
 #include "gui/delegates/null.h"
 #include "gui/getSpeciesNameDialog.h"
 #include "gui/gui.h"
-#include "gui/speciesTab.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
 

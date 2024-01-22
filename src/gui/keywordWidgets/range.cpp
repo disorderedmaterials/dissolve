@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/range.h"
+#include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/vec3Labels.h"
 
 RangeKeywordWidget::RangeKeywordWidget(QWidget *parent, RangeKeyword *keyword, const CoreData &coreData)

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/keywordWidgets/configuration.h"
 #include "classes/coreData.h"
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
-#include "gui/keywordWidgets/configuration.h"
 
 ConfigurationKeywordWidget::ConfigurationKeywordWidget(QWidget *parent, ConfigurationKeyword *keyword, const CoreData &coreData)
     : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)

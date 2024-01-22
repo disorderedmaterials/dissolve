@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/selectSpeciesWidget.h"
 #include "classes/coreData.h"
 #include "classes/species.h"
-#include "gui/selectSpeciesWidget.h"
 
 SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)
 {

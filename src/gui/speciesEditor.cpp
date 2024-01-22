@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/speciesEditor.h"
 #include "classes/empiricalFormula.h"
 #include "classes/species.h"
 #include "data/ff/library.h"
-#include "gui/speciesEditor.h"
 #include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
 #include "modules/geomOpt/geomOpt.h"

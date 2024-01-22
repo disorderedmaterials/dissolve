@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/keywordWidgets/moduleVector.h"
 #include "classes/coreData.h"
 #include "gui/keywordWidgets/dropDown.h"
-#include "gui/keywordWidgets/moduleVector.h"
 #include "module/module.h"
 #include "templates/algorithms.h"
 #include <QComboBox>

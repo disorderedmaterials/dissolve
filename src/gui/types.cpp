@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/types.h"
 #include "gui/models/addForcefieldDialogModel.h"
 #include "gui/models/atomTypeModel.h"
 #include "gui/models/configurationModel.h"
@@ -9,7 +10,6 @@
 #include "gui/models/modifyChargesModel.h"
 #include "gui/models/moduleLayersModel.h"
 #include "gui/models/speciesModel.h"
-#include "gui/types.h"
 #include <QQmlEngine>
 
 void Types::registerDissolveQmlTypes()

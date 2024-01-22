@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/configurationViewer.h"
 #include "classes/configuration.h"
 #include "data/elements.h"
-#include "gui/configurationViewer.h"
 #include "gui/render/renderableConfiguration.h"
 
 ConfigurationViewer::ConfigurationViewer(QWidget *parent) : BaseViewer(parent)

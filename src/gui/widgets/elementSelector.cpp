@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "data/elements.h"
 #include "gui/widgets/elementSelector.h"
+#include "data/elements.h"
 #include <QApplication>
 #include <QDialog>
 #include <QDialogButtonBox>

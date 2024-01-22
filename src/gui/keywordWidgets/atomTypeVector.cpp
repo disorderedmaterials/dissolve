@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/keywordWidgets/atomTypeVector.h"
 #include "classes/atomType.h"
 #include "classes/atomTypeMix.h"
 #include "classes/coreData.h"
-#include "gui/keywordWidgets/atomTypeVector.h"
 #include "gui/keywordWidgets/dropDown.h"
 #include "templates/algorithms.h"
 #include <QComboBox>

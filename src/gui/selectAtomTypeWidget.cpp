@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/selectAtomTypeWidget.h"
 #include "classes/atomType.h"
 #include "classes/coreData.h"
-#include "gui/selectAtomTypeWidget.h"
 
 SelectAtomTypeWidget::SelectAtomTypeWidget(QWidget *parent) : QWidget(parent)
 {

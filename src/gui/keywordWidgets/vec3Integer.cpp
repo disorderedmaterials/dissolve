@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/vec3Integer.h"
+#include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/vec3Labels.h"
 
 Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget *parent, Vec3IntegerKeyword *keyword, const CoreData &coreData)

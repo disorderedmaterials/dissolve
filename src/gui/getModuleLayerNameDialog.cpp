@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/getModuleLayerNameDialog.h"
 #include "base/sysFunc.h"
 #include "classes/coreData.h"
-#include "gui/getModuleLayerNameDialog.h"
 #include "module/layer.h"
 
 GetModuleLayerNameDialog::GetModuleLayerNameDialog(QWidget *parent, const std::vector<std::unique_ptr<ModuleLayer>> &layers)

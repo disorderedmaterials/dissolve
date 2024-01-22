@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/keywordWidgets/expressionVariableVector.h"
 #include "classes/coreData.h"
 #include "expression/variable.h"
 #include "gui/delegates/exponentialSpin.h"
-#include "gui/keywordWidgets/expressionVariableVector.h"
 
 ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWidget *parent,
                                                                              ExpressionVariableVectorKeyword *keyword,

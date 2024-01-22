@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/configurationTab.h"
 #include "base/units.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "gui/configurationTab.h"
 #include "gui/getConfigurationNameDialog.h"
 #include "gui/gui.h"
 #include "gui/helpers/comboPopulator.h"

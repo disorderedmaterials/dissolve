@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/importCIFDialog.h"
 #include "classes/empiricalFormula.h"
 #include "classes/molecule.h"
 #include "classes/pairIterator.h"
 #include "classes/species.h"
-#include "gui/importCIFDialog.h"
 #include "neta/node.h"
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"

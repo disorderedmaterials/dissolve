@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/enumOptions.h"
+#include "gui/helpers/mouseWheelAdjustmentGuard.h"
 
 EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, EnumOptionsBaseKeyword *keyword, const CoreData &coreData)
     : QComboBox(parent), KeywordWidgetBase(coreData), keyword_(keyword)

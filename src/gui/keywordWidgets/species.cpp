@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/keywordWidgets/species.h"
 #include "classes/coreData.h"
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
-#include "gui/keywordWidgets/species.h"
 
 SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, SpeciesKeyword *keyword, const CoreData &coreData)
     : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/selectSpeciesDialog.h"
 #include "classes/coreData.h"
 #include "data/ff/ff.h"
-#include "gui/selectSpeciesDialog.h"
 #include "gui/selectSpeciesWidget.h"
 
 SelectSpeciesDialog::SelectSpeciesDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle)

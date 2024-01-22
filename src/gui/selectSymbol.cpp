@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/render/symbol.h"
 #include "gui/selectSymbol.h"
+#include "gui/render/symbol.h"
 #include <QScrollBar>
 
 SelectSymbolDialog::SelectSymbolDialog(QWidget *parent) : QDialog(parent), itemSize_(32)

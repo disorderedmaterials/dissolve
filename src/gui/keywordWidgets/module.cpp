@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/module.h"
+#include "gui/helpers/mouseWheelAdjustmentGuard.h"
 
 ModuleKeywordWidget::ModuleKeywordWidget(QWidget *parent, ModuleKeywordBase *keyword, const CoreData &coreData)
     : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)

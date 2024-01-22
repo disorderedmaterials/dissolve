@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "data/ff/ff.h"
 #include "gui/selectForcefieldWidget.h"
+#include "data/ff/ff.h"
 #include <QRegularExpression>
 
 SelectForcefieldWidget::SelectForcefieldWidget(QWidget *parent, const std::vector<std::shared_ptr<Forcefield>> &forcefields)

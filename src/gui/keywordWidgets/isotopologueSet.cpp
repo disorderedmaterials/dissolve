@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/keywordWidgets/isotopologueSet.h"
 #include "classes/coreData.h"
 #include "classes/species.h"
 #include "gui/delegates/customComboDelegate.h"
 #include "gui/delegates/exponentialSpin.h"
 #include "gui/delegates/null.h"
 #include "gui/keywordWidgets/dropDown.h"
-#include "gui/keywordWidgets/isotopologueSet.h"
 #include "module/module.h"
 #include "templates/algorithms.h"
 

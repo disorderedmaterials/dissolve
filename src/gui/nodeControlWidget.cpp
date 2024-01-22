@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/nodeControlWidget.h"
 #include "gui/gui.h"
 #include "gui/keywordWidgets/producers.h"
-#include "gui/nodeControlWidget.h"
 
 NodeControlWidget::NodeControlWidget(DissolveWindow *dissolveWindow, NodeRef node)
     : dissolve_(dissolveWindow->dissolve()), node_(node)

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/keywordWidgets/dropDown.h"
 #include "gui/keywordWidgets/function1D.h"
+#include "gui/keywordWidgets/dropDown.h"
 #include <QComboBox>
 #include <QHBoxLayout>
 

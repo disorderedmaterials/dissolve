@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/integer.h"
+#include "gui/helpers/mouseWheelAdjustmentGuard.h"
 
 IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, IntegerKeyword *keyword, const CoreData &coreData)
     : QSpinBox(parent), KeywordWidgetBase(coreData), keyword_(keyword)

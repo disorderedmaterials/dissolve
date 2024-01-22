@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/optionalDouble.h"
+#include "gui/helpers/mouseWheelAdjustmentGuard.h"
 
 OptionalDoubleKeywordWidget::OptionalDoubleKeywordWidget(QWidget *parent, OptionalDoubleKeyword *keyword,
                                                          const CoreData &coreData)

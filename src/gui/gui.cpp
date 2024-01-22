@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/gui.h"
 #include "base/lineParser.h"
 #include "base/messenger.h"
 #include "gui/configurationTab.h"
-#include "gui/gui.h"
 #include "gui/layerTab.h"
 #include "gui/mainTab.h"
 #include "gui/selectRestartFileDialog.h"

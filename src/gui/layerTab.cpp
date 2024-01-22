@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/layerTab.h"
 #include "base/lineParser.h"
 #include "gui/getModuleLayerNameDialog.h"
 #include "gui/gui.h"
-#include "gui/layerTab.h"
 #include "gui/mainTabsWidget.h"
 #include "gui/moduleControlWidget.h"
 #include "main/dissolve.h"

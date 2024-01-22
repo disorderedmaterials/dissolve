@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "base/sysFunc.h"
 #include "gui/getTabNameDialog.h"
+#include "base/sysFunc.h"
 #include "gui/mainTab.h"
 #include <QPointer>
 

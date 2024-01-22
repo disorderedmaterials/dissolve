@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "gui/forcefieldTab.h"
 #include "classes/atomType.h"
 #include "classes/speciesAngle.h"
 #include "classes/speciesBond.h"
@@ -8,7 +9,6 @@
 #include "classes/speciesTorsion.h"
 #include "gui/delegates/comboList.h"
 #include "gui/delegates/exponentialSpin.h"
-#include "gui/forcefieldTab.h"
 #include "gui/gui.h"
 #include "gui/helpers/comboPopulator.h"
 #include "gui/render/renderableData1D.h"
