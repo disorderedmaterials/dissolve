@@ -3,7 +3,7 @@
 
 #include "gui/models/speciesIsoModel.h"
 #include "classes/atomType.h"
-#include "gui/delegates/isotopeCombo.hui"
+#include "gui/delegates/isotopeCombo.h"
 
 SpeciesIsoModel::SpeciesIsoModel(Species &species) : species_(species) {}
 

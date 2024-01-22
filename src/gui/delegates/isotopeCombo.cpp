@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "data/isotopes.h"
-#include "gui/delegates/isotopeCombo.hui"
+#include "gui/delegates/isotopeCombo.h"
 
 IsotopeComboDelegate::IsotopeComboDelegate(QObject *parent) : QItemDelegate(parent) {}
 

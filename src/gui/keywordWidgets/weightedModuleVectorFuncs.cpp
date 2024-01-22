@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/coreData.h"
-#include "gui/delegates/exponentialSpin.hui"
+#include "gui/delegates/exponentialSpin.h"
 #include "gui/keywordWidgets/dropDown.h"
 #include "gui/keywordWidgets/weightedModuleVector.h"
 #include "module/module.h"

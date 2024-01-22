@@ -3,7 +3,7 @@
 
 #include "classes/coreData.h"
 #include "expression/variable.h"
-#include "gui/delegates/exponentialSpin.hui"
+#include "gui/delegates/exponentialSpin.h"
 #include "gui/keywordWidgets/expressionVariableVector.h"
 
 ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWidget *parent,

@@ -4,7 +4,7 @@
 #include "classes/coreData.h"
 #include "classes/species.h"
 #include "gui/delegates/customComboDelegate.h"
-#include "gui/delegates/exponentialSpin.hui"
+#include "gui/delegates/exponentialSpin.h"
 #include "gui/delegates/null.h"
 #include "gui/keywordWidgets/dropDown.h"
 #include "gui/keywordWidgets/isotopologueSet.h"
