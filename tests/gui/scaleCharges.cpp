@@ -39,11 +39,11 @@ TEST_F(ScaleDialogModelTest, scale)
     auto updatedValue = model.value();
     ASSERT_EQ(updatedValue, 2.0);
 
-    model.setOption(Scale);
-    ASSERT_EQ(model.getOption(), Scale);
+    model.setOption(ScaleChargesDialogModel::Scale);
+    ASSERT_EQ(model.getOption(), ScaleChargesDialogModel::Scale);
 
-    model.setOption(ScaleTo);
-    ASSERT_EQ(model.getOption(), ScaleTo);
+    model.setOption(ScaleChargesDialogModel::ScaleTo);
+    ASSERT_EQ(model.getOption(), ScaleChargesDialogModel::ScaleTo);
 
     // Current scale value is 2.0, option is set to "ScaleTo"
     ASSERT_TRUE(model.scaleCharges(species));
@@ -53,9 +53,9 @@ TEST_F(ScaleDialogModelTest, scale)
     ASSERT_FALSE(model.scaleCharges(species));
 
     // Only "Scale" here
-    model.setOption(Scale);
+    model.setOption(ScaleChargesDialogModel::Scale);
     ASSERT_TRUE(model.scaleCharges(species));
-    for (auto &atom : species.atoms())
+    for (auto &atom : species->atoms())
         ASSERT_EQ(atom.charge(), 0);
 }
 } // namespace UnitTest
