@@ -36,8 +36,8 @@ void Molecule::addAtom(AtomRef atom)
 int Molecule::nAtoms() const { return atoms_.size(); }
 
 // Return atoms vector
-std::vector<AtomRef > &Molecule::atoms() { return atoms_; }
-const std::vector<AtomRef > &Molecule::atoms() const { return atoms_; }
+std::vector<AtomRef> &Molecule::atoms() { return atoms_; }
+const std::vector<AtomRef> &Molecule::atoms() const { return atoms_; }
 
 // Return nth Atom pointer
 AtomRef Molecule::atom(int n) const { return atoms_[n]; }

@@ -38,8 +38,8 @@ const Vec3<double> &Cell::centre() const { return centre_; }
  */
 
 // Return vector of contained Atoms
-std::vector<AtomRef > &Cell::atoms() { return atoms_; }
-const std::vector<AtomRef > &Cell::atoms() const { return atoms_; }
+std::vector<AtomRef> &Cell::atoms() { return atoms_; }
+const std::vector<AtomRef> &Cell::atoms() const { return atoms_; }
 
 // Return number of Atoms in list
 int Cell::nAtoms() const { return atoms_.size(); }

@@ -33,7 +33,7 @@ void Configuration::updateAtomLocations(bool clearExistingLocations)
     }
 
     for (auto &i : atoms_)
-	updateAtomLocation(AtomRef(&i, &atoms_[0]));
+        updateAtomLocation(AtomRef(&i, &atoms_[0]));
 }
 
 // Update Cell location of specified Atom
@@ -65,5 +65,5 @@ void Configuration::updateAtomLocations(const std::shared_ptr<Molecule> &mol)
 void Configuration::updateAtomLocations(const std::vector<int> &targetAtoms, int indexOffset)
 {
     for (const auto i : targetAtoms)
-      updateAtomLocation(AtomRef(&atoms_[i + indexOffset], &atoms_[0]));
+        updateAtomLocation(AtomRef(&atoms_[i + indexOffset], &atoms_[0]));
 }

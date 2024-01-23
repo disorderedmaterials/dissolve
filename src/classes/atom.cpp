@@ -42,10 +42,11 @@ int Atom::globalIndex() const
 {
     assert(molecule_);
     auto i = molecule_->globalAtomOffset();
-    for (auto &ref : molecule_->atoms()) {
-      if (this == &*ref)
-	return i;
-      ++i;
+    for (auto &ref : molecule_->atoms())
+    {
+        if (this == &*ref)
+            return i;
+        ++i;
     }
     throw std::runtime_error("Atom not in its own molecule");
 }
