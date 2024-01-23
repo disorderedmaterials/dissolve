@@ -62,7 +62,7 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
         ui_.PlotWidget->clearRenderableData();
 
         // Create the renderables for Data1D
-        if (ui_.Data1DButton->isChecked() == 0)
+        if (ui_.Data1DButton->isChecked())
         {
             auto dSourceCount = 1;
             for (auto &[dataSourceA, dataSourceB] : module_->dataSources())
