@@ -39,8 +39,7 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
     auto *newSpecies = dissolve_.coreData().addSpecies();
     newSpecies->addAtom(Z, Vec3<double>());
     newSpecies->setName(DissolveSys::uniqueName(Elements::symbol(Z), dissolve().coreData().species(),
-                                                [&](const auto &sp)
-                                                { return newSpecies == sp.get() ? std::string() : sp->name(); }));
+                                                [&](const auto &sp) { return newSpecies == sp.get() ? "" : sp->name(); }));
 
     setModified();
     fullUpdate();
