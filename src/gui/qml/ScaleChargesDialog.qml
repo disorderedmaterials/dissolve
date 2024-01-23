@@ -31,8 +31,8 @@ Page {
             spacing: 10
 
             D.Text {
-                Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.fillWidth: true
                 font.pixelSize: 11
                 text: "Enter the scaling factor to apply to all atoms / the target sum to determine scaling factor from"
                 width: parent.width - 2 * parent.spacing
