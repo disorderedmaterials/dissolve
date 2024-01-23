@@ -78,7 +78,7 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
                                                            fmt::format("{}", dataSourceB.dataName()), "DataB");
 
                 // Set the button tooltip
-                buttons_[index]->setToolTip(
+                ui_.Data1DButton->setToolTip(
                     QString::fromStdString(fmt::format("{} vs {}", dataSourceA.dataName(), dataSourceB.dataName())));
 
                 // Validate renderables if they need it
