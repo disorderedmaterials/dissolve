@@ -128,7 +128,6 @@ runs:
     shell: bash
     run: |
       set -ex
-
       wget https://www.antlr.org/download/antlr-${{ env.antlrVersion }}-complete.jar -Oantlr-${{ env.antlrVersion }}-complete.jar
       wget https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.zip -Ojava.zip
       unzip java.zip
