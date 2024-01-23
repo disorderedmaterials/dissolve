@@ -34,7 +34,7 @@ Page {
                 font.pixelSize: 11
                 text: "Enter the scaling factor to apply to all atoms / the target sum to determine scaling factor from"
                 width: parent.width - 2 * parent.spacing
-                wrapMode: Text.Wrap
+                wrapMode: Text.WordWrap
             }
             SpinBox {
                 id: scaleSpinBox
