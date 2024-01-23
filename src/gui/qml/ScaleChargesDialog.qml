@@ -11,7 +11,7 @@ Page {
     height: 116
     title: "Scale Charges"
     visible: true
-    width: 655
+    width: 400
 
     ScaleChargesDialogModel {
         id: dialogModel
@@ -31,6 +31,8 @@ Page {
             spacing: 10
 
             D.Text {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
                 font.pixelSize: 11
                 text: "Enter the scaling factor to apply to all atoms / the target sum to determine scaling factor from"
                 width: parent.width - 2 * parent.spacing
@@ -39,6 +41,7 @@ Page {
             SpinBox {
                 id: scaleSpinBox
                 Layout.alignment: Qt.AlignRight
+                Layout.fillWidth: true
                 editable: true
                 from: -100
                 stepSize: 1
