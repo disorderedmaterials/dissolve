@@ -41,8 +41,7 @@ int Atom::masterTypeIndex() const { return masterTypeIndex_; }
 int Atom::globalIndex() const
 {
     assert(molecule_);
-    auto offset = molecule_->globalAtomOffset();
-    int i = 0;
+    auto i = molecule_->globalAtomOffset();
     for (auto &ref : molecule_->atoms()) {
       if (this == &*ref)
 	return i;
