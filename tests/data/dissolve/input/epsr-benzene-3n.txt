@@ -192,3 +192,29 @@ Module  EPSR  'EPSR01'
 EndModule
 
 EndLayer
+
+Layer  'Analysis'
+  Frequency  1
+
+  Module  Compare  'Compare01'
+    Data1D
+      Internal  'C6H6//WeightedSQ//Total'
+      Internal  'C6H6//ReferenceData'
+    EndData1D
+    Data1D
+      Internal  'C6H6//WeightedSQ//Total'
+      External  mint  'epsr25/benzene200-neutron/C6H6.mint01'
+      EndExternal
+    EndData1D
+    Data1D
+      External  xy 'epsr25/benzene200-neutron/benzene.EPSR.u01'
+      Y  2
+      EndExternal
+      External  mint  'epsr25/benzene200-neutron/C6D6.mint01'
+      EndExternal
+    EndData1D
+    ErrorType  RFactor
+    ErrorRange  0.0  10.0
+EndModule
+
+EndLayer

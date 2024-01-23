@@ -34,8 +34,8 @@ class CompareModuleWidget : public ModuleWidget
     Ui::CompareModuleWidget ui_;
     // DataViewers contained within this widget
     DataViewer *graph_;
-    // Data1D Button
-    std::array<QPushButton *, 3> buttons_;
+    // Vector of buttons
+    std::vector<QPushButton *> buttons_;
 
     public:
     // Update controls within widget
