@@ -16,8 +16,6 @@ ChangeData::ChangeData() {}
 // Set target atom
 void ChangeData::setAtom(AtomRef i)
 {
-    assert(i != nullptr);
-
     atom_ = i;
     moved_ = false;
     r_ = atom_->r();

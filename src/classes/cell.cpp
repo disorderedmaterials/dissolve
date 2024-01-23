@@ -47,7 +47,6 @@ int Cell::nAtoms() const { return atoms_.size(); }
 // Add atom to Cell
 void Cell::addAtom(AtomRef atom)
 {
-    assert(atom);
     assert(!atom->cell());
 
     atoms_.push_back(atom);
