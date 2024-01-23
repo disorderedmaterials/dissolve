@@ -15,10 +15,8 @@ CompareModuleWidget::CompareModuleWidget(QWidget *parent, CompareModule *module,
 
     refreshing_ = true;
 
-    // Set up button array
-    buttons_[0] = ui_.Data1DButton;
-    buttons_[1] = ui_.Data2DButton;
-    buttons_[2] = ui_.Data3DButton;
+    // Check data1D button by default
+    ui_.Data1DButton->setChecked(true);
 
     // Set up the main graph
     graph_ = ui_.PlotWidget->dataViewer();
@@ -63,18 +61,8 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
 
         ui_.PlotWidget->clearRenderableData();
 
-        // Get the index of the checked button
-        auto index =
-            std::find_if(buttons_.begin(), buttons_.end(), [&](auto button) { return button->isChecked(); }) - buttons_.begin();
-
-        // If no buttons are checked, check the first one by default
-        if (index == buttons_.size() && buttons_.back()->isChecked() == false)
-        {
-            buttons_.front()->setChecked(true);
-            index = 0;
-        }
         // Create the renderables for Data1D
-        if (index == 0)
+        if (ui_.Data1DButton->isChecked() == 0)
         {
             auto dSourceCount = 1;
             for (auto &[dataSourceA, dataSourceB] : module_->dataSources())
@@ -113,9 +101,8 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
 
 void CompareModuleWidget::on_Data1DButton_clicked(bool checked)
 {
-    if (!checked)
+    if (checked)
     {
-        return;
+        updateControls(ModuleWidget::RecreateRenderablesFlag);
     }
-    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
