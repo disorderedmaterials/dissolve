@@ -14,6 +14,7 @@
 #include "math/data2D.h"
 #include "math/data3D.h"
 #include "math/sampledData1D.h"
+#include "module/context.h"
 #include <variant>
 
 class DataSource
@@ -65,7 +66,7 @@ class DataSource
     // Return external data source
     Format &externalDataSource();
     // Function to source data (only required for internal data sources)
-    bool sourceData(GenericList &processingModuleData);
+    bool sourceData(const ProcessPool &procPool, GenericList &processingModuleData);
     // Function to add internal data
     void addData(std::string_view internalDataSource);
     // Overloaded function to add external data

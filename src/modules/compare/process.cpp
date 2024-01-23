@@ -28,11 +28,11 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         ranges = ranges_;
 
         // Source the data
-        if (!dataPair.first.sourceData(moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.first.sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
         {
             continue;
         }
-        if (!dataPair.second.sourceData(moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.second.sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
         {
             continue;
         }

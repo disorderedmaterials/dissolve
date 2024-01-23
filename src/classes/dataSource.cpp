@@ -38,7 +38,7 @@ std::optional<std::string> DataSource::internalDataSource() const
 DataSource::Format &DataSource::externalDataSource() { return externalDataSource_; }
 
 // Function to source data (only required for internal data sources)
-bool DataSource::sourceData(GenericList &processingModuleData)
+bool DataSource::sourceData(const ProcessPool &procPool, GenericList &processingModuleData)
 {
     if (!dataExists())
     {
@@ -75,8 +75,14 @@ bool DataSource::sourceData(GenericList &processingModuleData)
                 data_);
         }
     }
-    // Return whether or not variant contains value
-    return !data_.valueless_by_exception();
+    else
+    {
+        if (std::holds_alternative<Data1D>(data_) || std::holds_alternative<SampledData1D>(data_))
+        {
+            // For external datatypes, import the data
+            return std::get<Data1DImportFileFormat>(externalDataSource_).importData(std::get<Data1D>(data_), &procPool);
+        }
+    }
 }
 
 // Function to add internal data

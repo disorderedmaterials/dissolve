@@ -74,18 +74,14 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 typename DataType::Formatter format;
 
                 // Read the supplied arguments
-                if (format.read(parser, 1, fmt::format("End{}", DataSource::dataSourceTypes().keyword(DataSource::External)),
-                                coreData) != FileAndFormat::ReadResult::Success)
-                {
-                    return false;
-                }
+                auto readResult = format.read(
+                    parser, 1, fmt::format("End{}", DataSource::dataSourceTypes().keyword(DataSource::External)), coreData);
 
-                // Import the data
-                if (!format.importData(data, parser.processPool()))
+                if (readResult == FileAndFormat::ReadResult::UnrecognisedFormat ||
+                    readResult == FileAndFormat::ReadResult::UnrecognisedOption)
                 {
-                    return false;
+                    return Messenger::error("Failed to read file/format for '{}'.\n", name());
                 }
-
                 // Add data to dataSource
                 sourceQueue.front()->addData(data, format);
                 // Remove dataSource from queue
