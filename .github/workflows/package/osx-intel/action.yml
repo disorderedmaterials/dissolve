@@ -19,7 +19,7 @@ runs:
   - name: Download Raw Build Artifacts
     uses: actions/download-artifact@v3
     with:
-      name: osx-build-artifacts-silicon
+      name: osx-build-artifacts
       path: ${{ github.workspace }}
 
   - name: Install Python Dependencies
@@ -41,22 +41,18 @@ runs:
       Qt6_ROOT=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
-      install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
-
-      ./prep-dmg -a Dissolve-GUI -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
-
-      # Copy dependencies into Frameworks folder in app bundle
-      cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.4.13.1.dylib Dissolve-GUI-${dissolveVersion}/Dissolve-GUI.app/Contents/Frameworks/libantlr4-runtime.4.13.1.dylib
-      cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib Dissolve-GUI-${dissolveVersion}/Dissolve-GUI.app/Contents/Frameworks/libantlr4-runtime.dylib
-
-      cp ./deploy/ftgl/libftgl.2.dylib Dissolve-GUI-${dissolveVersion}/Dissolve-GUI.app/Contents/Frameworks/libftgl.2.dylib
-      cp ./deploy/ftgl/libftgl.2.dylib Dissolve-GUI-${dissolveVersion}/Dissolve-GUI.app/Contents/Frameworks/libftgl.2.1.3.dylib
+      # Handle ANTLR & TBB
+      cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.*.dylib /usr/local/lib
+      cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib /usr/local/lib/libantlr4-runtime.dylib
 
       for FILE in ./deploy/onetbb/lib/*.dylib; do
         FILENAME=$(basename $FILE)
-        cp ./deploy/onetbb/lib/$FILENAME Dissolve-GUI-${dissolveVersion}/Dissolve-GUI.app/Contents/Frameworks/$FILENAME
+        cp ./deploy/onetbb/lib/$FILENAME /usr/local/lib/$FILENAME
       done
 
+      install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+      install_name_tool -add_rpath "/usr/local/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+      ./prep-dmg -a Dissolve-GUI -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -L /usr/local/lib
 
   - name: Create Disk Image
     shell: bash
