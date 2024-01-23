@@ -24,8 +24,7 @@ runs:
       python-version: ${{ env.pythonVersion }}
 
   - name: Install Homebrew Dependencies for Intel
-
-    if: ${{ inputs.cacheOnly == 'false' && env.OSX_CMAKE_TARGET == 'x86_64' }}
+    if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
 
