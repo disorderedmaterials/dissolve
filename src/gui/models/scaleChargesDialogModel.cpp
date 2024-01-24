@@ -26,7 +26,7 @@ bool ScaleChargesDialogModel::scaleCharges(Species *species)
             return false;
         }
 
-        double sum = 0.0;
+        auto sum = 0.0;
         for (auto &atom : species->atoms())
             sum += atom.charge();
         scaleFactor = scaleTarget / sum;
