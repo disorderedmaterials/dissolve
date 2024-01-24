@@ -35,10 +35,10 @@ jobs:
            - os: macos-latest
              osx_cmake_target: arm64
              osx_conan_target: armv8
-          #- os: macos-latest
-          #  cmake_target: x86_64
-          #  conan_target: x86_64
-          #- os: windows-latest
+          - os: macos-latest
+            cmake_target: x86_64
+            conan_target: x86_64
+          - os: windows-latest
     runs-on: ${{ matrix.os }}
     env:
       OSX_CMAKE_TARGET: ${{ matrix.osx_cmake_target }}
@@ -81,10 +81,10 @@ jobs:
            - os: macos-latest
              osx_cmake_target: arm64
              osx_conan_target: armv8
-          #- os: macos-latest
-          #  cmake_target: x86_64
-          #  conan_target: x86_64
-          #- os: windows-latest
+          - os: macos-latest
+            cmake_target: x86_64
+            conan_target: x86_64
+          - os: windows-latest
     runs-on: ${{ matrix.os }}
     env:
       OSX_CMAKE_TARGET: ${{ matrix.osx_cmake_target }}

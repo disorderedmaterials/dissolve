@@ -37,10 +37,10 @@ jobs:
           - os: macos-latest
             cmake_target: arm64
             conan_target: armv8
-          #- os: macos-latest
-          #  cmake_target: x86_64
-          #  conan_target: x86_64
-          #- os: windows-latest
+          - os: macos-latest
+            cmake_target: x86_64
+            conan_target: x86_64
+          - os: windows-latest
     runs-on: ${{ matrix.os }}
     env:
       OSX_CMAKE_TARGET: ${{ matrix.osx_cmake_target }}
@@ -76,8 +76,7 @@ jobs:
         target: ${{ matrix.target }}
 
   Package:
-    #needs: [ Build, BuildLinux ]
-    needs: [ Build ]
+    needs: [ Build, BuildLinux ]
     strategy:
       fail-fast: false
       matrix:
@@ -85,10 +84,10 @@ jobs:
           - os: macos-latest
             cmake_target: arm64
             conan_target: armv8
-          #- os: macos-latest
-          #  cmake_target: x86_64
-          #  conan_target: x86_64
-          #- os: windows-latest
+          - os: macos-latest
+            cmake_target: x86_64
+            conan_target: x86_64
+          - os: windows-latest
     runs-on: ${{ matrix.os }}
     env:
       OSX_CMAKE_TARGET: ${{ matrix.osx_cmake_target }}
