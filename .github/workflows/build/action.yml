@@ -21,7 +21,7 @@ runs:
 
   - name: Build (OSX) Intel
     if: runner.os == 'MacOS' && env.OSX_CMAKE_TARGET == 'x86_64'
-    uses: "./.github/workflows/build/osx"
+    uses: "./.github/workflows/build/osx-intel"
     with:
       cacheOnly: ${{ inputs.cacheOnly }}
 
