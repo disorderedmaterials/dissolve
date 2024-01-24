@@ -42,15 +42,15 @@ FIND_LIBRARY(FTGL_LIBRARY
   /usr/freeware
 )
 
-  # set the user variables
+# set the user variables
 IF(FTGL_INCLUDE_DIR)
   SET(FTGL_INCLUDE_DIRS "${FTGL_INCLUDE_DIR}")
 ENDIF()
 SET(FTGL_LIBRARIES "${FTGL_LIBRARY}")
 
- # handle the QUIETLY and REQUIRED arguments and set FTGL_FOUND to TRUE if 
+# handle the QUIETLY and REQUIRED arguments and set FTGL_FOUND to TRUE if 
 # all listed variables are TRUE
 INCLUDE("FindPackageHandleStandardArgs")
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(FTGL  DEFAULT_MSG  FTGL_LIBRARY  FTGL_INCLUDE_DIR)
 
- MARK_AS_ADVANCED(FTGL_LIBRARY FTGL_INCLUDE_DIR)
+MARK_AS_ADVANCED(FTGL_LIBRARY FTGL_INCLUDE_DIR)
