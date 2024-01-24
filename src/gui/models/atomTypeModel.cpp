@@ -153,7 +153,7 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
                 if (coreData_)
                     atomType->setName(DissolveSys::uniqueName(value.toString().toStdString(), coreData_->get().atomTypes(),
                                                               [&atomType](const auto &at)
-                                                              { return atomType == at ? std::string() : at->name(); }));
+                                                              { return atomType == at ? "" : at->name(); }));
                 else
                     atomType->setName(value.toString().toStdString());
                 break;

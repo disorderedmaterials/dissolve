@@ -65,10 +65,9 @@ void SpeciesTab::on_IsotopologuesTree_customContextMenuRequested(const QPoint &p
 
         // Set a unique name for the new isotopologue
         auto newIso = isos_.data(newIndex, Qt::UserRole).value<Isotopologue *>();
-        isos_.setData(newIndex,
-                      QString::fromStdString(DissolveSys::uniqueName(
-                          iso->name(), species_->isotopologues(),
-                          [newIso](const auto &oldIso) { return newIso == oldIso.get() ? std::string() : oldIso->name(); })));
+        isos_.setData(newIndex, QString::fromStdString(DissolveSys::uniqueName(
+                                    iso->name(), species_->isotopologues(),
+                                    [newIso](const auto &oldIso) { return newIso == oldIso.get() ? "" : oldIso->name(); })));
 
         auto row = 0;
         for (const auto &[atomType, tope] : iso->isotopes())
