@@ -9,10 +9,10 @@
 #include "templates/algorithms.h"
 
 // Make pair of strings for each atom type present
-std::string EPSRManagerModule::pairKey(std::pair<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>> atomTypes)
+std::string EPSRManagerModule::pairKey(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2)
 {
-    if (atomTypes.first->name() < atomTypes.second->name())
-        return fmt::format("{}-{}", atomTypes.first->name(), atomTypes.second->name());
+    if (at1->name() < at2->name())
+        return fmt::format("{}-{}", at1->name(), at2->name());
     else
-        return fmt::format("{}-{}", atomTypes.second->name(), atomTypes.first->name());
+        return fmt::format("{}-{}", at2->name(), at1->name());
 }

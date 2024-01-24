@@ -7,6 +7,7 @@
 #include "module/groups.h"
 #include "module/module.h"
 #include "procedure/procedure.h"
+#include <tuple>
 
 // EPSR Manager Module
 class EPSRManagerModule : public Module
@@ -25,7 +26,7 @@ class EPSRManagerModule : public Module
     // Scattering matrix
     ScatteringMatrix scatteringMatrix_;
     // Vector storing atom pairs and associated potentials
-    std::vector<std::pair<std::pair<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>>, Data1D>> potentials_;
+    std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> potentials_;
     struct EPData
     {
         Data1D ep;
@@ -37,7 +38,7 @@ class EPSRManagerModule : public Module
      * Functions
      */
     public:
-    std::string pairKey(std::pair<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>> atomTypes);
+    static std::string pairKey(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2);
 
     private:
     // Run main processing

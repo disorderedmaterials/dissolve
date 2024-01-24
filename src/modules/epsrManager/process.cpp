@@ -21,12 +21,12 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
         auto *epsrModule = dynamic_cast<EPSRModule *>(module);
         auto eps = epsrModule->empiricalPotentials();
 
-        for (auto &&[atomTypePair, ep] : eps)
+        for (auto &&[at1, at2, ep] : eps)
         {
-            auto key = EPSRManagerModule::pairKey(atomTypePair);
+            auto key = EPSRManagerModule::pairKey(at1, at2);
             auto keyIt = potentials.find(key);
             if (keyIt == potentials.end())
-                potentials[key] = {ep, 1, atomTypePair.first, atomTypePair.second};
+                potentials[key] = {ep, 1, at1, at2};
             else
             {
                 Interpolator::addInterpolated(ep, potentials[key].ep, 1.0);
