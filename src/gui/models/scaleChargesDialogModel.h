@@ -16,6 +16,8 @@ class ScaleChargesDialogModel : public QObject
     ScaleChargesDialogModel();
     ~ScaleChargesDialogModel();
 
+    // Enum type to differentiate between usage options for dialog
+    // Can either "Scale" the current value, or "ScaleTo" a given value 
     typedef enum
     {
         Scale,
@@ -23,16 +25,21 @@ class ScaleChargesDialogModel : public QObject
     } Option;
     Q_ENUM(Option)
 
+    // User has chosen either to apply Scale or ScaleTo to the charges
     Q_INVOKABLE void setOption(Option);
+    // Sets the new selected scale value
     Q_INVOKABLE void updateValue(double);
 
+    // Returns the current option
     Option getOption();
 
+    // Returns the current scale value
     double value() const;
+    // Apply scaling operation to species atoms
     bool scaleCharges(Species *);
 
     private:
-    double currentValue_ = 1.0;
+    double currentValue_{1.0};
     Option scaleType_;
 
     Q_SIGNALS:
