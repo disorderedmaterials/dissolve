@@ -38,8 +38,8 @@ std::shared_ptr<AtomType> CoreData::addAtomType(Elements::Element Z)
     atomTypes_.push_back(newAtomType);
 
     // Create a suitable unique name
-    newAtomType->setName(DissolveSys::uniqueName(
-        Elements::symbol(Z), atomTypes_, [&](const auto &at) { return newAtomType == at ? std::string() : at->name(); }));
+    newAtomType->setName(DissolveSys::uniqueName(Elements::symbol(Z), atomTypes_,
+                                                 [&](const auto &at) { return newAtomType == at ? "" : at->name(); }));
 
     // Set data
     newAtomType->setZ(Z);
@@ -309,8 +309,8 @@ Species *CoreData::addSpecies()
     auto &newSpecies = species_.emplace_back(std::make_unique<Species>());
 
     // Create a suitable unique name
-    newSpecies->setName(DissolveSys::uniqueName("NewSpecies", species_,
-                                                [&](const auto &sp) { return newSpecies == sp ? std::string() : sp->name(); }));
+    newSpecies->setName(
+        DissolveSys::uniqueName("NewSpecies", species_, [&](const auto &sp) { return newSpecies == sp ? "" : sp->name(); }));
 
     return newSpecies.get();
 }
@@ -433,8 +433,8 @@ Species *CoreData::copySpecies(const Species *species)
 {
     // Create our new Species
     Species *newSpecies = addSpecies();
-    newSpecies->setName(DissolveSys::uniqueName(
-        species->name(), species_, [&](const auto &sp) { return newSpecies == sp.get() ? std::string() : sp->name(); }));
+    newSpecies->setName(DissolveSys::uniqueName(species->name(), species_,
+                                                [&](const auto &sp) { return newSpecies == sp.get() ? "" : sp->name(); }));
 
     // Copy Box definition if one exists
     if (species->box()->type() != Box::BoxType::NonPeriodic)
@@ -497,9 +497,8 @@ Configuration *CoreData::addConfiguration()
     auto &newConfiguration = configurations_.emplace_back(std::make_unique<Configuration>());
 
     // Create a suitable unique name
-    newConfiguration->setName(DissolveSys::uniqueName("NewConfiguration", configurations_,
-                                                      [&](const auto &cfg)
-                                                      { return newConfiguration == cfg ? std::string() : cfg->name(); }));
+    newConfiguration->setName(DissolveSys::uniqueName(
+        "NewConfiguration", configurations_, [&](const auto &cfg) { return newConfiguration == cfg ? "" : cfg->name(); }));
 
     return newConfiguration.get();
 }

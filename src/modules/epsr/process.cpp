@@ -68,10 +68,13 @@ bool EPSRModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordS
         rho = targetConfiguration_->atomicDensity();
     }
 
-    // Realise storage for generated S(Q), and initialise a scattering matrix
-    auto &estimatedSQ = moduleContext.dissolve().processingModuleData().realise<Array2D<Data1D>>(
-        "EstimatedSQ", name_, GenericItem::InRestartFileFlag);
-    scatteringMatrix_.initialise(targetConfiguration_->atomTypes(), estimatedSQ);
+    // Realise storage for generated S(Q), and initialise a scattering matrix, but only if we have a valid configuration
+    if (targetConfiguration_)
+    {
+        auto &estimatedSQ = moduleContext.dissolve().processingModuleData().realise<Array2D<Data1D>>(
+            "EstimatedSQ", name_, GenericItem::InRestartFileFlag);
+        scatteringMatrix_.initialise(targetConfiguration_->atomTypes(), estimatedSQ);
+    }
 
     // If a pcof file was provided, read in the parameters from it here
     if (!pCofFilename_.empty())
