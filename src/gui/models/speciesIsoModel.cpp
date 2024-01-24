@@ -135,7 +135,7 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
     {
         auto iso = species_.isotopologue(index.row());
         iso->setName(DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()), species_.isotopologues(),
-                                             [&](const auto &i) { return iso == i.get() ? std::string() : i->name(); }));
+                                             [&](const auto &i) { return iso == i.get() ? "" : i->name(); }));
         Q_EMIT(dataChanged(index, index));
         return true;
     }

@@ -36,8 +36,7 @@ class ModuleLayerModel : public QAbstractTableModel
     private:
     enum ModuleLayerModelAction
     {
-        MoveInternal = Qt::UserRole,
-        CreateNew
+        MoveInternal = Qt::UserRole
     };
     enum DataColumns
     {
