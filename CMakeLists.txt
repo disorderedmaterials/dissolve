@@ -71,17 +71,22 @@ include(FindANTLR)
 find_package(ANTLR REQUIRED)
 
 if(GUI)
-
-  if(APPLE AND CONAN)
-    set(CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
-    set(FREETYPE_LIBRARIES CONAN_PKG::freetype)
-    set(FREETYPE_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS_FREETYPE})
-    set(GUI_LINK_LIBS CONAN_PKG::zlib CONAN_PKG::libpng CONAN_PKG::bzip2 CONAN_PKG::brotli)
-  endif()
-
-  if(NOT FREETYPE_LIBRARIES)
-    find_package(Freetype REQUIRED)
-  endif()
+  if(APPLE)
+    if(CONAN)
+      set(CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
+      set(FREETYPE_LIBRARIES CONAN_PKG::freetype)
+      set(FREETYPE_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS_FREETYPE})
+      set(GUI_LINK_LIBS CONAN_PKG::zlib CONAN_PKG::libpng CONAN_PKG::bzip2 CONAN_PKG::brotli)
+    else(CONAN)
+      find_package(ZLIB REQUIRED)
+      find_package(BZIP2 REQUIRED)
+      find_package(PNG REQUIRED)
+      include(FindBROTLI)
+      find_package(BROTLI REQUIRED)
+      find_package(Freetype REQUIRED)
+      set(GUI_LINK_LIBS ${ZLIB_LIBRARIES} ${BZIP2_LIBRARIES} ${PNG_LIBRARIES} ${BROTLI_LIBRARIES})
+    endif(CONAN)
+  endif(APPLE)
 
   find_package(OpenGL REQUIRED)
   find_package(
@@ -148,6 +153,8 @@ endif(UNIX)
 
 # -- OSX
 if(APPLE)
+
+  list(APPEND CMAKE_BUILD_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
   # Set some specific C++11 related options here (set_property below does not seem to persist)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
