@@ -3,10 +3,10 @@
 
 #include "gui/models/scaleChargesDialogModel.h"
 #include "gui/scaleChargesDialog.h"
+#include <QHBoxLayout>
 #include <QQmlContext>
 #include <QQuickItem>
 #include <QQuickWidget>
-#include <QHBoxLayout>
 
 ScaleChargesDialog::ScaleChargesDialog(QWidget *parent) : QDialog(parent)
 {
