@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/species.h"
+#include "gui/gui.h"
 #include <QObject>
 
 class ScaleChargesDialogModel : public QObject
@@ -36,7 +37,7 @@ class ScaleChargesDialogModel : public QObject
     // Returns the current scale value
     double value() const;
     // Apply scaling operation to species atoms
-    bool scaleCharges(Species *);
+    void scaleCharges(Species*, DissolveWindow*, bool);
 
     private:
     double currentValue_{1.0};

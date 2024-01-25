@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/scaleChargesDialogModel.h"
+#include <QMessageBox>
 
 ScaleChargesDialogModel::ScaleChargesDialogModel() {}
 
@@ -15,15 +16,18 @@ void ScaleChargesDialogModel::setOption(Option option) { scaleType_ = option; }
 
 ScaleChargesDialogModel::Option ScaleChargesDialogModel::getOption() { return scaleType_; }
 
-bool ScaleChargesDialogModel::scaleCharges(Species *species)
+void ScaleChargesDialogModel::scaleCharges(Species *species, DissolveWindow *dissolveWindow, bool showDialogOnError = true)
 {
     auto scaleFactor = value();
     if (scaleType_ != Scale)
     {
         auto scaleTarget = scaleFactor;
-        if (scaleTarget == 0.0)
+        if (if (fabs(scaleTarget) < 1.0e-6))
         {
-            return false;
+            if (showDialogOnError) {
+                QMessageBox::warning(dissolveWindow, "Scale atom charges", "Cannot scale atom charges so they sum to 0.",
+                                    QMessageBox::StandardButton::Ok);
+                }
         }
 
         auto sum = 0.0;
@@ -33,6 +37,4 @@ bool ScaleChargesDialogModel::scaleCharges(Species *species)
     }
     for (auto &atom : species->atoms())
         atom.setCharge(atom.charge() * scaleFactor);
-
-    return true;
 }

@@ -51,7 +51,17 @@ Page {
             RowLayout {
                 Layout.alignment: Qt.AlignRight
                 spacing: 10
+                
+                D.Button {
+                    id: cancelButton
+                    icon.source: "qrc:/general/icons/false.svg"
+                    text: "Cancel"
 
+                    onClicked: {
+                        dialogModel.cancelSelection();
+                        scaleSpinBox.value = dialogModel.value;
+                    }
+                }
                 D.Button {
                     id: scaleButton
                     icon.source: "qrc:/general/icons/true.svg"
@@ -70,16 +80,6 @@ Page {
                     onClicked: {
                         dialogModel.processSelection(dialogModel.ScaleTo, scaleSpinBox.value);
                         dialogModel.acceptSelection();
-                    }
-                }
-                D.Button {
-                    id: cancelButton
-                    icon.source: "qrc:/general/icons/false.svg"
-                    text: "Cancel"
-
-                    onClicked: {
-                        dialogModel.cancelSelection();
-                        scaleSpinBox.value = dialogModel.value;
                     }
                 }
             }

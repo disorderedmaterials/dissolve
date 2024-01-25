@@ -437,12 +437,7 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
     static ScaleChargesDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted)
     {
-        bool scaled = dialog.model->scaleCharges(species);
-        if (!scaled)
-        {
-            QMessageBox::warning(this, "Scale atom charges", "Cannot scale atom charges so they sum to 0.",
-                                 QMessageBox::StandardButton::Ok);
-        }
+        dialog.model->scaleCharges(species, this);
         setModified();
         fullUpdate();
     }

@@ -7,6 +7,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#define NO_DISPLAY false;
+
 namespace UnitTest
 {
 
@@ -46,16 +48,24 @@ TEST_F(ScaleDialogModelTest, scale)
     ASSERT_EQ(model.getOption(), ScaleChargesDialogModel::ScaleTo);
 
     // Current scale value is 2.0, option is set to "ScaleTo"
-    ASSERT_TRUE(model.scaleCharges(species));
+    model.scaleCharges(species, NO_DISPLAY);
 
     // Still "ScaleTo" here, but now using a factor of 0.0
     model.updateValue(0);
-    ASSERT_FALSE(model.scaleCharges(species));
+    model.scaleCharges(species, NO_DISPLAY);
+    for (auto &atom : species->atoms())
+        ASSERT_EQ(atom.charge(), 2);
+
+    // Still "ScaleTo" here, but now using a factor of 5.0
+    model.updateValue(5);
+    model.scaleCharges(species, NO_DISPLAY);
+    for (auto &atom : species->atoms())
+        ASSERT_EQ(atom.charge(), 5);
 
     // Only "Scale" here
     model.setOption(ScaleChargesDialogModel::Scale);
-    ASSERT_TRUE(model.scaleCharges(species));
+    model.scaleCharges(species, NO_DISPLAY);
     for (auto &atom : species->atoms())
-        ASSERT_EQ(atom.charge(), 0);
+        ASSERT_EQ(atom.charge(), 25);
 }
 } // namespace UnitTest
