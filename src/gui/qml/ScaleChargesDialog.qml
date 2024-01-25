@@ -51,7 +51,7 @@ Page {
             RowLayout {
                 Layout.alignment: Qt.AlignRight
                 spacing: 10
-                
+
                 D.Button {
                     id: cancelButton
                     icon.source: "qrc:/general/icons/false.svg"

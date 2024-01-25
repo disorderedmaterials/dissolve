@@ -62,7 +62,8 @@ TEST_F(ScaleDialogModelTest, scale)
     ASSERT_FALSE(model.scaleCharges(species, NO_DISPLAY));
 
     model.updateValue(10.0);
-    success = model.scaleCharges(species, NO_DISPLAY) auto sum = 0.0;
+    success = model.scaleCharges(species, NO_DISPLAY);
+    auto sum = 0.0;
     for (auto &atom : species->atoms())
         sum += atom.charge();
     ASSERT_EQ(sum, 10);

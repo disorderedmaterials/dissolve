@@ -6,6 +6,7 @@
 #include <QQmlContext>
 #include <QQuickItem>
 #include <QQuickWidget>
+#include <QHBoxLayout>
 
 ScaleChargesDialog::ScaleChargesDialog(QWidget *parent) : QDialog(parent)
 {
@@ -13,6 +14,12 @@ ScaleChargesDialog::ScaleChargesDialog(QWidget *parent) : QDialog(parent)
 
     auto root = view->rootObject();
     model = root->findChild<ScaleChargesDialogModel *>("dialogModel");
+
+    view->setResizeMode(QQuickWidget::SizeRootObjectToView);
+
+    QHBoxLayout *topLeftLayout = new QHBoxLayout;
+    topLeftLayout->addWidget(view);
+    setLayout(topLeftLayout);
 
     QObject::connect(model, SIGNAL(cancelSelection()), this, SLOT(reject()));
     QObject::connect(model, SIGNAL(acceptSelection()), this, SLOT(accept()));
