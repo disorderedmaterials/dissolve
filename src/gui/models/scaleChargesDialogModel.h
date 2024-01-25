@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/species.h"
-#include "gui/gui.h"
 #include <QObject>
 
 class ScaleChargesDialogModel : public QObject
@@ -18,7 +17,7 @@ class ScaleChargesDialogModel : public QObject
     ~ScaleChargesDialogModel();
 
     // Enum type to differentiate between usage options for dialog
-    // Can either "Scale" the current value, or "ScaleTo" a given value 
+    // Can either "Scale" the current value, or "ScaleTo" a given value
     typedef enum
     {
         Scale,
@@ -37,7 +36,7 @@ class ScaleChargesDialogModel : public QObject
     // Returns the current scale value
     double value() const;
     // Apply scaling operation to species atoms
-    void scaleCharges(Species*, DissolveWindow*, bool);
+    bool scaleCharges(Species *, bool);
 
     private:
     double currentValue_{1.0};

@@ -7,7 +7,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#define NO_DISPLAY false;
+#define NO_DISPLAY false
 
 namespace UnitTest
 {
@@ -33,6 +33,7 @@ TEST_F(ScaleDialogModelTest, scale)
 
     ScaleChargesDialogModel model;
 
+    // Test initial scale value and response to value update by user
     auto initialValue = model.value();
     ASSERT_EQ(initialValue, 1.0);
 
@@ -41,31 +42,29 @@ TEST_F(ScaleDialogModelTest, scale)
     auto updatedValue = model.value();
     ASSERT_EQ(updatedValue, 2.0);
 
+    // Set charges equal for simplicity
+    for (auto &atom : species->atoms())
+        atom.setCharge(1.0);
+
+    // Test "Scale"
     model.setOption(ScaleChargesDialogModel::Scale);
     ASSERT_EQ(model.getOption(), ScaleChargesDialogModel::Scale);
 
-    model.setOption(ScaleChargesDialogModel::ScaleTo);
-    ASSERT_EQ(model.getOption(), ScaleChargesDialogModel::ScaleTo);
-
-    // Current scale value is 2.0, option is set to "ScaleTo"
-    model.scaleCharges(species, NO_DISPLAY);
-
-    // Still "ScaleTo" here, but now using a factor of 0.0
-    model.updateValue(0);
-    model.scaleCharges(species, NO_DISPLAY);
+    auto success = model.scaleCharges(species, NO_DISPLAY);
     for (auto &atom : species->atoms())
         ASSERT_EQ(atom.charge(), 2);
 
-    // Still "ScaleTo" here, but now using a factor of 5.0
-    model.updateValue(5);
-    model.scaleCharges(species, NO_DISPLAY);
-    for (auto &atom : species->atoms())
-        ASSERT_EQ(atom.charge(), 5);
+    // Test "ScaleTo" (returns false if input is zero, else we test the sum of the charges)
+    model.setOption(ScaleChargesDialogModel::ScaleTo);
+    ASSERT_EQ(model.getOption(), ScaleChargesDialogModel::ScaleTo);
 
-    // Only "Scale" here
-    model.setOption(ScaleChargesDialogModel::Scale);
-    model.scaleCharges(species, NO_DISPLAY);
+    model.updateValue(0.0);
+    ASSERT_FALSE(model.scaleCharges(species, NO_DISPLAY));
+
+    model.updateValue(10.0);
+    success = model.scaleCharges(species, NO_DISPLAY) auto sum = 0.0;
     for (auto &atom : species->atoms())
-        ASSERT_EQ(atom.charge(), 25);
+        sum += atom.charge();
+    ASSERT_EQ(sum, 10);
 }
 } // namespace UnitTest

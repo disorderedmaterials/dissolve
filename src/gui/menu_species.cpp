@@ -437,7 +437,7 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
     static ScaleChargesDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted)
     {
-        dialog.model->scaleCharges(species, this);
+        auto success = dialog.model->scaleCharges(species, true);
         setModified();
         fullUpdate();
     }
