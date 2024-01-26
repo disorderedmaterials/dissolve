@@ -191,6 +191,7 @@
     <file>qml/widgets/Text.qml</file>
     <file>qml/widgets/PrettyListView.qml</file>
     <file>qml/AddForcefieldTermsDialog.qml</file>
+    <file>qml/ScaleChargesDialog.qml</file>
     <file>qml/DropDownLabel.qml</file>
     <file>qml/ForceFieldAssign.qml</file>
     <file>qml/ForceFieldAtomTypes.qml</file>

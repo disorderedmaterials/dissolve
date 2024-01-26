@@ -7,6 +7,7 @@
 #include "gui/models/dissolveModel.h"
 #include "gui/models/masterTermTreeModel.h"
 #include "gui/models/moduleLayersModel.h"
+#include "gui/models/scaleChargesDialogModel.h"
 #include "gui/models/speciesModel.h"
 #include "gui/types.h"
 #include <QQmlEngine>
@@ -24,4 +25,5 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<MasterBondModel>(PROJECT, 1, 0, "MasterBondModel");
     qmlRegisterType<MasterImproperModel>(PROJECT, 1, 0, "MasterImproperModel");
     qmlRegisterType<MasterTorsionModel>(PROJECT, 1, 0, "MasterTorsionModel");
+    qmlRegisterType<ScaleChargesDialogModel>(PROJECT, 1, 0, "ScaleChargesDialogModel");
 }
