@@ -57,7 +57,6 @@ jobs:
 
   BuildLinux:
     needs: QC
-    if: false
     strategy:
       fail-fast: false
       matrix:
