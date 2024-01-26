@@ -31,7 +31,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
+      include:
+          - os: macos-latest
+            osx_cmake_target: arm64
+            osx_conan_target: armv8
           - os: macos-latest
             osx_cmake_target: x86_64
             osx_conan_target: x86_64
@@ -75,6 +78,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - os: macos-latest
+            osx_cmake_target: arm64
+            osx_conan_target: armv8
           - os: macos-latest
             osx_cmake_target: x86_64
             osx_conan_target: x86_64
