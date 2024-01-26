@@ -1,4 +1,8 @@
-Version 1.4.1 addressing some issues with the QSpecies module.
+Version 1.4.2 is a patch release addressing some crashes when working the modules and layers.
+
+## Major Changes in v1.4.2
+
+Fixes crashes when adding a new module to any layer, and when adding an EPSR module when there are no configurations present.
 
 ## Major Changes in v1.4.1
 
