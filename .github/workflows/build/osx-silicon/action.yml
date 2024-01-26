@@ -110,9 +110,6 @@ runs:
       cmake -G Ninja "${CMAKE_PARAMS[@]}" ${{ inputs.extraCMakeFlags }}  ../
       cmake --build . --config Release
 
-      # Fix ftgl link path
-      install_name_tool -change /usr/local/opt/ftgl/lib/libftgl.2.dylib @rpath/libftgl.2.dylib bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
-
       cd ../
 
       # Deploy Conan dependencies for ease
