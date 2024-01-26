@@ -224,11 +224,11 @@ std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n];
 Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r)
 {
     // Create new Atom object and set its source pointer
-    auto &newAtom = atoms_.emplace_back();
+    auto newAtom = atoms_.emplace_back();
     newAtom.setSpeciesAtom(sourceAtom);
 
     // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
-    molecule->addAtom(AtomRef(&newAtom, &atoms_.front()));
+    molecule->addAtom(newAtom);
 
     // Set the position
     newAtom.setCoordinates(r);
@@ -241,7 +241,7 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
         newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
     }
 
-    return newAtom;
+    return *newAtom;
 }
 
 // Return number of Atoms in Configuration
@@ -256,7 +256,7 @@ const AtomVector &Configuration::atoms() const { return atoms_; }
 Atom &Configuration::atom(int n)
 {
     assert(n >= 0 && n < atoms_.size());
-    return atoms_[n];
+    return *atoms_[n];
 }
 
 // Unfold molecule coordinates

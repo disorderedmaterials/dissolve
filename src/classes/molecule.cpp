@@ -46,7 +46,7 @@ AtomRef Molecule::atom(int n) const { return atoms_[n]; }
 void Molecule::updateAtoms(AtomVector &mainAtoms, int offset)
 {
     globalAtomOffset_ = offset;
-    std::iota(atoms_.begin(), atoms_.end(), AtomRef(&mainAtoms[globalAtomOffset_], &mainAtoms[0]));
+    std::iota(atoms_.begin(), atoms_.end(), mainAtoms[globalAtomOffset_]);
 }
 
 // Return global atom offset

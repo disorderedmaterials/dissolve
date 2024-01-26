@@ -992,12 +992,12 @@ CIFHandler::speciesCopiesCoordinatesFromUnitCell(Species *moleculeSp, const Box 
         std::transform(copy.begin(), copy.end(), coords.begin(), [&](auto i) { return cleanedUnitCellSpecies_->atom(i).r(); });
 
         std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
-        std::vector<Atom> molAtoms(moleculeSp->nAtoms());
+        AtomVector molAtoms(moleculeSp->nAtoms());
         for (auto &&[spAtom, atom, r] : zip(moleculeSp->atoms(), molAtoms, coords))
         {
             atom.setSpeciesAtom(&spAtom);
             atom.setCoordinates(r);
-            mol->addAtom(AtomRef(&atom, nullptr)); // FIXME: I need to figure out the base
+            mol->addAtom(AtomRef(atom, molAtoms)); // FIXME: I need to figure out the base
         }
 
         // Unfold the molecule
@@ -1015,12 +1015,12 @@ void CIFHandler::fixGeometry(Species *sp, const Box *box)
     // 'Fix' the geometry of the species
     // Construct a temporary molecule, which is just the species.
     std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
-    std::vector<Atom> molAtoms(sp->nAtoms());
+    AtomVector molAtoms(sp->nAtoms());
     for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
     {
         atom.setSpeciesAtom(&spAtom);
         atom.setCoordinates(spAtom.r());
-        mol->addAtom(AtomRef(&atom, nullptr)); // FIXME: Where are these atoms stored?
+        mol->addAtom(AtomRef(atom, molAtoms)); // FIXME: Where are these atoms stored?
     }
 
     // Unfold the molecule

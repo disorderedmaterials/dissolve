@@ -46,9 +46,9 @@ bool GRModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet)
 
     dissolve::for_each_pair(
         ParallelPolicies::seq, cfg->atoms().begin(), cfg->atoms().end(),
-        [box, &partialSet](auto i, auto &ii, auto j, auto &jj)
+        [box, &partialSet](auto i, auto ii, auto j, auto jj)
         {
-            if (&ii != &jj)
+            if (ii != jj)
                 partialSet.fullHistogram(ii.localTypeIndex(), jj.localTypeIndex()).bin(box->minimumDistance(ii.r(), jj.r()));
         });
 
