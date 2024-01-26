@@ -34,6 +34,9 @@ jobs:
       matrix:
         include:
           - os: macos-latest
+            osx_cmake_target: arm64
+            osx_conan_target: armv8
+          - os: macos-latest
             osx_cmake_target: x86_64
             osx_conan_target: x86_64
           - os: windows-latest
@@ -74,7 +77,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, windows-latest ]
+        include:
+          - os: macos-latest
+            osx_cmake_target: arm64
+            osx_conan_target: armv8
+          - os: macos-latest
+            osx_cmake_target: x86_64
+            osx_conan_target: x86_64
+          - os: windows-latest
     runs-on: ${{ matrix.os }}
     env:
       OSX_CMAKE_TARGET: ${{ matrix.osx_cmake_target }}

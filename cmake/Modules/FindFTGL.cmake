@@ -18,7 +18,6 @@
 #=============================================================================
 
 # Created by Richard Ulrich.
-
 FIND_PATH(FTGL_INCLUDE_DIR FTGL/ftgl.h 
   HINTS
   $ENV{FTGL_DIR}

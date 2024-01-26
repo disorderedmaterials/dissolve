@@ -54,8 +54,8 @@ option(MULTI_THREADING "Enable threading using tbb" ON)
 if(MULTI_THREADING)
   add_definitions("-DMULTITHREADING")
   if(CONAN)
-    include_directories(CONAN_INCLUDE_DIRS_ONETBB)
-    include_directories(CONAN_INCLUDE_DIRS_ONEDPL)
+    include_directories(${CONAN_INCLUDE_DIRS_ONETBB})
+    include_directories(${CONAN_INCLUDE_DIRS_ONEDPL})
     set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} CONAN_PKG::onetbb CONAN_PKG::onedpl)
   else(CONAN)
     set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} $ENV{THREADING_LINK_LIBS})
@@ -71,12 +71,12 @@ include(FindANTLR)
 find_package(ANTLR REQUIRED)
 
 if(GUI)
-  # Add extra functions
-  include(FindFTGL)
-
-  if(APPLE)
+  if(CONAN)
     set(CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
-  endif(APPLE)
+    set(FREETYPE_LIBRARIES CONAN_PKG::freetype)
+    set(FREETYPE_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS_FREETYPE})
+    set(GUI_LINK_LIBS CONAN_PKG::zlib CONAN_PKG::libpng CONAN_PKG::bzip2 CONAN_PKG::brotli)
+  endif(CONAN)
 
   find_package(OpenGL REQUIRED)
   find_package(
@@ -95,8 +95,11 @@ if(GUI)
                QuickControls2
                REQUIRED
   )
-  find_package(FTGL REQUIRED)
-  find_package(Freetype REQUIRED)
+  if(NOT FTGL_INCLUDE_DIRS OR NOT FTGL_LIBRARIES)
+    # Add extra functions
+    include(FindFTGL)
+    find_package(FTGL REQUIRED)
+  endif()
   add_definitions(-DQT_NO_KEYWORDS)
 
   # Make sure CMake won't try to generate rules for moc (we will do it ourselves)
@@ -140,6 +143,8 @@ endif(UNIX)
 
 # -- OSX
 if(APPLE)
+
+  list(APPEND CMAKE_BUILD_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
   # Set some specific C++11 related options here (set_property below does not seem to persist)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
@@ -158,16 +163,13 @@ if(APPLE)
   endif(CMAKE_OSX_ARCHITECTURES)
   add_definitions(-D_MAC)
 
-  if(MULTI_THREADING)
-    set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} CONAN_PKG::onedpl)
-  endif(MULTI_THREADING)
-
   if(GUI)
     # Find GLUT
     find_package(GLUT REQUIRED)
 
     # Adjust external include directories for GUI
     include_directories(${FTGL_INCLUDE_DIRS})
+    include_directories(${FREETYPE_INCLUDE_DIRS})
   endif(GUI)
 endif(APPLE)
 
@@ -327,8 +329,9 @@ if(GUI)
             Qt6::Widgets
             Qt6::Core
             OpenGL::GL
-            ${FTGL_LIBRARIES}
+            ${GUI_LINK_LIBS}
             ${FREETYPE_LIBRARIES}
+            ${FTGL_LIBRARIES}
             ${EXTRA_LINK_LIBS}
             ${THREADING_LINK_LIBS}
   )
