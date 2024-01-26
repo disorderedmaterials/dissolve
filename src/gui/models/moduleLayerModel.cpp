@@ -128,9 +128,8 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
 
             // Ensure uniqueness of new name
             auto oldName = QString::fromStdString(std::string(module->name()));
-            auto newName =
-                DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()), Module::instances(),
-                                        [&](const auto &inst) { return inst == module ? "" : inst->name(); });
+            auto newName = DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()), Module::instances(),
+                                                   [&](const auto &inst) { return inst == module ? "" : inst->name(); });
             module->setName(newName);
 
             Q_EMIT(dataChanged(index, index));
