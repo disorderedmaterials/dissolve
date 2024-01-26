@@ -37,20 +37,22 @@ class AtomVector
     // Modifiers
     void clear();
     void reserve(std::size_t newCapacity);
-    constexpr AtomRef erase(const AtomRef pos);
-    constexpr AtomRef erase(const AtomRef first, const AtomRef last);
+    AtomRef erase(const AtomRef pos);
+    AtomRef erase(const AtomRef first, const AtomRef last);
     AtomRef emplace_back();
+    friend class AtomRef;
 };
 
 class AtomRef : public std::iterator<std::random_access_iterator_tag, Atom>
 {
     private:
-    Atom *ref_{nullptr}, *origin_{nullptr};
+    Atom *ref_{nullptr};
+    AtomVector *origin_{nullptr};
 
     public:
     AtomRef();
     AtomRef(const AtomRef &ref);
-    AtomRef(Atom &ref, AtomVector &source);
+    AtomRef(const Atom &ref, const AtomVector &source);
     Atom &operator*();
     const Atom &operator*() const;
     Atom *operator->();
@@ -60,7 +62,7 @@ class AtomRef : public std::iterator<std::random_access_iterator_tag, Atom>
     bool operator==(Atom *other) const;
     AtomRef operator[](std::size_t);
     AtomRef &operator++();
-    AtomRef &operator++(int);
+    AtomRef operator++(int);
     std::size_t operator-(const AtomRef &other) const;
     int globalAtomIndex() const;
 
