@@ -82,7 +82,7 @@ template <class M> class MutableModuleKeyword : public MutableModuleKeywordBase
     // Deserialise from supplied LineParser, starting at given argument offset
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
-        auto *module = Module::find(parser.argsv(startArg));
+        auto *module = coreData.findModule(parser.argsv(startArg));
         if (!module)
             return Messenger::error("Module '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg),
                                     KeywordBase::name());
@@ -113,7 +113,7 @@ template <class M> class MutableModuleKeyword : public MutableModuleKeywordBase
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
-        auto *module = Module::find(std::string(node.as_string()));
+        auto *module = coreData.findModule(std::string(node.as_string()));
         if (!module)
             throw toml::syntax_error(fmt::format("Module '{}' given to keyword {} doesn't exist.\n",
                                                  std::string(node.as_string()), KeywordBase::name()),

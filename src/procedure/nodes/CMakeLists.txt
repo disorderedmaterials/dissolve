@@ -116,12 +116,9 @@ add_library(
   restraintPotential.h
   rotateFragment.h
   runLayer.h
-<<<<<<< HEAD
-  runTask.h
-=======
   runModule.h
   runModuleList.h
->>>>>>> develop-workflow-2.0-run-modules
+  runTask.h
   select.h
   sequence.h
   simpleGlobalPotential.h

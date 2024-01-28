@@ -11,6 +11,7 @@ enum ModuleType
     Accumulate,
     Analyse,
     Angle,
+    Any,
     AtomShake,
     AvgMol,
     AxisAngle,
