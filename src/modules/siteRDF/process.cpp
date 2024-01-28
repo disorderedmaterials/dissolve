@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataNormaliser1D.h"
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
@@ -53,43 +54,23 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     // RDF
     auto &RDFdata = processingData.realise<Data1D>("Process1D//RDF", name(), GenericItem::InRestartFileFlag);
     RDFdata = hist.accumulatedData();
+    DataNormaliser1D RDFNormaliser(&RDFdata);
 
     // Normalise by A site population
-    RDFdata /= double(a.sites().size());
+    RDFNormaliser.normaliseBySitePopulation(double(a.sites().size()));
 
     // Normalise by B site population density
-    RDFdata /= (double(b.sites().size()) / targetConfiguration_->box()->volume());
+    RDFNormaliser.normaliseByNumberDensity(double(b.sites().size()), targetConfiguration_);
 
     // Normalise by spherical shell
-    // We expect x values to be centre-bin values, and regularly spaced
-    const auto &xAxis = RDFdata.xAxis();
-    auto &values = RDFdata.values();
-    if (xAxis.size() >= 2)
-    {
-        // Derive first left-bin boundary from the delta between points 0 and 1
-        double leftBin = xAxis[0] - (xAxis[1] - xAxis[0]) * 0.5, rightBin, divisor;
-        double r1Cubed = pow(leftBin, 3), r2Cubed;
-        for (auto n = 0; n < xAxis.size(); ++n)
-        {
-            // Get new right-bin from existing left bin boundary and current bin centre
-            rightBin = leftBin + 2 * (xAxis[n] - leftBin);
-            r2Cubed = pow(rightBin, 3);
-            divisor = (4.0 / 3.0) * PI * (r2Cubed - r1Cubed);
-            values[n] /= divisor;
-            if (RDFdata.valuesHaveErrors())
-                RDFdata.error(n) /= divisor;
-
-            // Overwrite old values
-            r1Cubed = r2Cubed;
-            leftBin = rightBin;
-        }
-    }
+    RDFNormaliser.normaliseBySphericalShell();
 
     // CN
     auto &HistogramNormdata =
         processingData.realise<Data1D>("Process1D//HistogramNorm", name(), GenericItem::InRestartFileFlag);
     HistogramNormdata = hist.accumulatedData();
-    HistogramNormdata /= double(a.sites().size());
+    DataNormaliser1D HistogramNormaliser(&HistogramNormdata);
+    HistogramNormaliser.normaliseBySitePopulation(double(a.sites().size()));
 
     OptionalReferenceWrapper<SampledDouble> sum_[3];
     const std::vector<std::string> rangeNames = {"A", "B", "C"};
