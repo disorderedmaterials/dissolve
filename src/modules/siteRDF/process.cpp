@@ -4,6 +4,8 @@
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
+#include "math/integrator.h"
+#include "math/sampledDouble.h"
 #include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
 #include "procedure/nodes/collect1D.h"
@@ -15,13 +17,12 @@
 // Run main processing
 Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
 {
-        // Check for zero Configuration targets
+    // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
         return ExecutionResult::Failed;
     }
-
 
     auto &processingData = moduleContext.dissolve().processingModuleData();
 
@@ -32,8 +33,9 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     SiteSelector b(targetConfiguration_, b_);
     SiteFilter filter(targetConfiguration_, a.sites());
 
+    Messenger::print("Site A: {}, Site B: {}", a.sites().size(), b.sites().size());
+
     // Calculate rAB
-    std::vector<double> distances;
     // auto data = processingData.realise<Data1D>("distances", name(), GenericItem::InRestartFileFlag);
     // Calculate Distance
     auto [hist, status] = processingData.realiseIf<Histogram1D>("Hist-AB", name(), GenericItem::InRestartFileFlag);
@@ -41,71 +43,68 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     {
         hist.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
     }
-        hist.zeroBins();
-    for (const auto& [siteA, indexA] : a.sites())
+    hist.zeroBins();
+    for (const auto &[siteA, indexA] : a.sites())
     {
-        for (const auto& [siteB, indexB] : b.sites())
+        for (const auto &[siteB, indexB] : b.sites())
         {
             if (siteB->molecule() != siteA->molecule())
-            // I think we need to ensure that these are on different molecules!
+                // I think we need to ensure that these are on different molecules!
                 hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
-            // distances.push_back(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
         }
     }
     hist.accumulate();
 
-    // for (auto &v : distances)
-    //     hist.bin(v);
-    // hist.accumulate();
+    auto &RDFdata = processingData.realise<Data1D>("Process1D//RDF", name(), GenericItem::InRestartFileFlag);
+    RDFdata = hist.accumulatedData();
+    RDFdata /= double(a.sites().size());
+    RDFdata /= (double(a.sites().size() - 1) / targetConfiguration_->box()->volume());
 
-    // auto &data = processingData.realise<Data1D>(fmt::format("Process1D//RDF"), name(), GenericItem::InRestartFileFlag);
-    // data = processingData.realise<Histogram1D>("Hist-AB", name(), GenericItem::InRestartFileFlag).accumulatedData();
+    // We expect x values to be centre-bin values, and regularly spaced
+    const auto &xAxis = RDFdata.xAxis();
+    auto &values = RDFdata.values();
+    if (xAxis.size() >= 2)
+    {
+        // Derive first left-bin boundary from the delta between points 0 and 1
+        double leftBin = xAxis[0] - (xAxis[1] - xAxis[0]) * 0.5, rightBin, divisor;
+        double r1Cubed = pow(leftBin, 3), r2Cubed;
+        for (auto n = 0; n < xAxis.size(); ++n)
+        {
+            // Get new right-bin from existing left bin boundary and current bin centre
+            rightBin = leftBin + 2 * (xAxis[n] - leftBin);
+            r2Cubed = pow(rightBin, 3);
+            divisor = (4.0 / 3.0) * PI * (r2Cubed - r1Cubed);
+            values[n] /= divisor;
+            if (RDFdata.valuesHaveErrors())
+                RDFdata.error(n) /= divisor;
 
-    // data /= (a.sites().size() + 1);
-    // data /= ((b.sites().size()) / targetConfiguration_->box()->volume());
+            // Overwrite old values
+            r1Cubed = r2Cubed;
+            leftBin = rightBin;
+        }
+    }
 
-    // auto processedData = &data;
+    auto &HistogramNormdata =
+        processingData.realise<Data1D>("Process1D//HistogramNorm", name(), GenericItem::InRestartFileFlag);
+    HistogramNormdata = hist.accumulatedData();
+    HistogramNormdata /= double(a.sites().size());
 
-    // const auto &xAxis = processedData->xAxis();
-    // auto &values = processedData->values();
-    // if (xAxis.size() >= 2)
-    // {    
-    //     // Derive first left-bin boundary from the delta between points 0 and 1
-    //     double leftBin = xAxis[0] - (xAxis[1] - xAxis[0]) * 0.5, rightBin, divisor;
-    //     double r1Cubed = pow(leftBin, 3), r2Cubed;
-    //     for (auto n = 0; n < xAxis.size(); ++n)
-    //     {
-    //         // Get new right-bin from existing left bin boundary and current bin centre
-    //         rightBin = leftBin + 2 * (xAxis[n] - leftBin);
-    //         r2Cubed = pow(rightBin, 3);
-    //         divisor = (4.0 / 3.0) * PI * (r2Cubed - r1Cubed);
-    //         values[n] /= divisor;
-    //         if (processedData->valuesHaveErrors())
-    //             processedData->error(n) /= divisor;
-
-    //         // Overwrite old values
-    //         r1Cubed = r2Cubed;
-    //         leftBin = rightBin;
-    //     }
-    // }
-
-    auto &data = processingData.realise<Data1D>("RDF", "", GenericItem::InRestartFileFlag);
-    data = hist.data();
-    data /= a.sites().size();
-    data /= (b.sites().size() / targetConfiguration_->box()->volume());
-    // auto &data1 = processingData.realise<Data1D>(
-    //     fmt::format("Process1D//HistogramNorm"), name(), GenericItem::InRestartFileFlag);
-    // data1 = processingData.realise<Histogram1D>("Hist-AB", name(), GenericItem::InRestartFileFlag).data();
-    // data1 /= (a.sites().size() + 1);
-
-
+    OptionalReferenceWrapper<SampledDouble> sum_[3];
+    const std::vector<std::string> rangeNames = {"A", "B", "C"};
+    for (int i = 0; i < 3; ++i)
+        if (rangeEnabled_[i])
+        {
+            if (!sum_[i].has_value())
+                sum_[i] = processingData.realise<SampledDouble>(fmt::format("Sum1D//CN//{}", rangeNames[i]), name(),
+                                                                GenericItem::InRestartFileFlag);
+            sum_[i]->get() += Integrator::sum(HistogramNormdata, range_[i]);
+        }
 
     return ExecutionResult::Success;
 
     // Calculate RDF
 
     // Process1D RDF
-
 
     /*
 
@@ -156,7 +155,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         (*histogram) /= node->nAverageSites();
     for (const auto node : b.sites())
         (*histogram) /= (node->nAvailableSitesAverage() / targetConfiguration_->box()->volume());
-    
+
     processingData.realise<Data1D>("RDF", name(), GenericItem::InRestartFileFlag) = histogram.data();
 
     if (exportFileAndFormat_.hasFilename())
