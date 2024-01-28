@@ -52,35 +52,32 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     hist.accumulate();
 
     // RDF
-    auto &RDFdata = processingData.realise<Data1D>("Process1D//RDF", name(), GenericItem::InRestartFileFlag);
-    RDFdata = hist.accumulatedData();
-    DataNormaliser1D RDFNormaliser(&RDFdata);
+    auto &dataRDF = processingData.realise<Data1D>("Process1D//RDF", name(), GenericItem::InRestartFileFlag);
+    dataRDF = hist.accumulatedData();
+    DataNormaliser1D normaliserRDF(&dataRDF);
 
     // Normalise by A site population
-    RDFNormaliser.normaliseBySitePopulation(double(a.sites().size()));
+    normaliserRDF.normaliseBySitePopulation(double(a.sites().size()));
 
     // Normalise by B site population density
-    RDFNormaliser.normaliseByNumberDensity(double(b.sites().size()), targetConfiguration_);
+    normaliserRDF.normaliseByNumberDensity(double(b.sites().size()), targetConfiguration_);
 
     // Normalise by spherical shell
-    RDFNormaliser.normaliseBySphericalShell();
+    normaliserRDF.normaliseBySphericalShell();
 
     // CN
-    auto &HistogramNormdata =
-        processingData.realise<Data1D>("Process1D//HistogramNorm", name(), GenericItem::InRestartFileFlag);
-    HistogramNormdata = hist.accumulatedData();
-    DataNormaliser1D HistogramNormaliser(&HistogramNormdata);
-    HistogramNormaliser.normaliseBySitePopulation(double(a.sites().size()));
+    auto &dataCN = processingData.realise<Data1D>("Process1D//HistogramNorm", name(), GenericItem::InRestartFileFlag);
+    dataCN = hist.accumulatedData();
+    DataNormaliser1D normaliserCN(&dataCN);
+    normaliserCN.normaliseBySitePopulation(double(a.sites().size()));
 
-    OptionalReferenceWrapper<SampledDouble> sum_[3];
     const std::vector<std::string> rangeNames = {"A", "B", "C"};
     for (int i = 0; i < 3; ++i)
         if (rangeEnabled_[i])
         {
-            if (!sum_[i].has_value())
-                sum_[i] = processingData.realise<SampledDouble>(fmt::format("Sum1D//CN//{}", rangeNames[i]), name(),
-                                                                GenericItem::InRestartFileFlag);
-            sum_[i]->get() += Integrator::sum(HistogramNormdata, range_[i]);
+            auto &sumN = processingData.realise<SampledDouble>(fmt::format("Sum1D//CN//{}", rangeNames[i]), name(),
+                                                               GenericItem::InRestartFileFlag);
+            sumN += Integrator::sum(dataCN, range_[i]);
         }
 
     return ExecutionResult::Success;
