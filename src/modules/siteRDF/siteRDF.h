@@ -39,7 +39,6 @@ class SiteRDFModule : public Module
     bool exportInstantaneous_{false};
     // Export target
     Data1DExportFileFormat exportFileAndFormat_;
-    bool export_{false};
 
     public:
     // Return whether specified coordination number range is enabled

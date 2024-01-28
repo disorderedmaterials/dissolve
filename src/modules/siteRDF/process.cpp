@@ -45,14 +45,15 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     {
         for (const auto &[siteB, indexB] : b.sites())
         {
-            if (siteB->molecule() != siteA->molecule())
-                hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+            if (excludeSameMolecule_ && siteB->molecule() == siteA->molecule())
+                continue;
+            hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
         }
     }
     hist.accumulate();
 
     // RDF
-    auto &dataRDF = processingData.realise<Data1D>("Process1D//RDF", name(), GenericItem::InRestartFileFlag);
+    auto &dataRDF = processingData.realise<Data1D>("RDF", name(), GenericItem::InRestartFileFlag);
     dataRDF = hist.accumulatedData();
     DataNormaliser1D normaliserRDF(&dataRDF);
 
@@ -66,8 +67,8 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     normaliserRDF.normaliseBySphericalShell();
 
     // CN
-    auto &dataCN = processingData.realise<Data1D>("Process1D//HistogramNorm", name(), GenericItem::InRestartFileFlag);
-    dataCN = hist.accumulatedData();
+    auto &dataCN = processingData.realise<Data1D>("HistogramNorm", name(), GenericItem::InRestartFileFlag);
+    dataCN = hist.data();
     DataNormaliser1D normaliserCN(&dataCN);
     normaliserCN.normaliseBySitePopulation(double(a.sites().size()));
 
@@ -75,9 +76,25 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     for (int i = 0; i < 3; ++i)
         if (rangeEnabled_[i])
         {
-            auto &sumN = processingData.realise<SampledDouble>(fmt::format("Sum1D//CN//{}", rangeNames[i]), name(),
+            auto &sumN = processingData.realise<SampledDouble>(fmt::format("CN//{}", rangeNames[i]), name(),
                                                                GenericItem::InRestartFileFlag);
             sumN += Integrator::sum(dataCN, range_[i]);
+            if (instantaneous_)
+            {
+                auto &sumNInst = processingData.realise<Data1D>(fmt::format("CN//{}Inst", rangeNames[i]), name(),
+                                                                GenericItem::InRestartFileFlag);
+                sumNInst.addPoint(moduleContext.dissolve().iteration(), sumN.value());
+                if (exportInstantaneous_)
+                {
+                    Data1DExportFileFormat exportFormat(fmt::format("{}_Sum{}.txt", name(), rangeNames[i]));
+                    if (!exportFormat.exportData(sumNInst))
+                    {
+                        Messenger::error("Failed to write instantaneous coordination number data for range {}.\n",
+                                         rangeNames[i]);
+                        return ExecutionResult::Failed;
+                    }
+                }
+            }
         }
 
     return ExecutionResult::Success;
