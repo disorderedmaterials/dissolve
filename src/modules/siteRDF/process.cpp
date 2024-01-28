@@ -43,7 +43,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     {
         for (const auto &[siteB, indexB] : b.sites())
         {
-            if (excludeSameMolecule_ && siteB->molecule() == siteA->molecule())
+            if (siteB->molecule() == siteA->molecule())
                 continue;
             histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
         }
