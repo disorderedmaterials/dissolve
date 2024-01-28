@@ -254,6 +254,7 @@ set(BASIC_LINK_LIBS
     analyser
     procedure
     procedureNodes
+    task
     keywords
     expression
     items

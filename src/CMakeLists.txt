@@ -12,6 +12,7 @@ add_subdirectory(math)
 add_subdirectory(module)
 add_subdirectory(procedure)
 add_subdirectory(neta)
+add_subdirectory(task)
 
 if(GUI)
   add_subdirectory(gui)
