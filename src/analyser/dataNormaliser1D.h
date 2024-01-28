@@ -21,7 +21,7 @@ class DataNormaliser1D
     Data1D *targetData_{nullptr};
 
     /*
-     * Normalsation functions
+     * Normalisation functions
      */
     public:
     void normaliseByNumberDensity(double population, Configuration *targetConfiguration);
