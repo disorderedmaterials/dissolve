@@ -29,8 +29,7 @@ SiteRDFModule::SiteRDFModule() : Module(ModuleTypes::SiteRDF)
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     keywords_.setOrganisation("Options", "Sites");
-    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF",
-                                            a_);
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF", a_);
     keywords_.add<SpeciesSiteVectorKeyword>(
         "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated", b_);
 

@@ -33,5 +33,5 @@ class SiteSelector
     public:
     // Return vector of selected sites
     const Analyser::SiteVector &sites() const;
-    // Return 
+    // Return
 };

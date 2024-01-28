@@ -33,4 +33,5 @@ class SiteFilter
     public:
     // Filter by neighbour site proximity
     std::pair<Analyser::SiteVector, Analyser::SiteMap> filterBySiteProximity(const Analyser::SiteVector &otherSites,
-                                                                             Range range, int minCount, int maxCount) const;};
+                                                                             Range range, int minCount, int maxCount) const;
+};
