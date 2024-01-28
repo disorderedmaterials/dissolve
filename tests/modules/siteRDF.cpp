@@ -40,7 +40,7 @@ TEST_F(SiteRDFModuleTest, Water)
 
     // COM-COM RDF
     EXPECT_TRUE(systemTest.checkData1D(
-        "RDF(COM-COM)///RDF",
+        "RDF(COM-COM)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
     EXPECT_TRUE(systemTest.checkData1D(
         "RDF(COM-COM)-Analyser//Process1D//RDF",
