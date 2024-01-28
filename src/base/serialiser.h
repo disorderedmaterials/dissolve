@@ -80,6 +80,11 @@ template <typename... Contexts> class Serialisable
     {
         fromVectorToTable(vector, name, node, [](const auto &item) { return item->name().data(); });
     }
+    template <typename T>
+    static void fromVectorToTable(const std::vector<T*> &vector, std::string name, SerialisedValue &node)
+    {
+        fromVectorToTable(vector, name, node, [](const auto &item) { return item->name().data(); });
+    };
     // A helper function to add elements of a vector to a node
     template <typename T, typename Lambda>
     static SerialisedValue fromVectorToTable(const std::vector<T> &vector, Lambda getName)

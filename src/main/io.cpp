@@ -29,6 +29,7 @@ bool Dissolve::loadInput(LineParser &parser)
     Configuration *cfg;
     ModuleLayer *layer = nullptr;
     Species *sp;
+    Task *task;
     auto errorsEncountered = false;
 
     while (!parser.eofOrBlank())
@@ -64,11 +65,20 @@ bool Dissolve::loadInput(LineParser &parser)
                 // Check to see if a processing layer with this name already exists...
                 if (coreData_.findProcessingLayer(parser.argsv(1)))
                     Messenger::error("Redefinition of processing layer '{}'.\n", parser.argsv(1));
-
                 layer = coreData_.addProcessingLayer();
                 layer->setName(parser.argsv(1));
                 Messenger::print("\n--> Created processing layer '{}'\n", layer->name());
                 if (!LayerBlock::parse(parser, this, layer))
+                    errorsEncountered = true;
+                break;
+            case (BlockKeywords::TaskBlockKeyword):
+                // Check to see if a task with this name already exists...
+                if (coreData_.findTask(parser.argsv(1)))
+                    Messenger::error("Redefinition of task '{}.\n", parser.argsv(1));
+                task = coreData_.addTask();
+                task->setName(parser.argsv(1));
+                Messenger::print("\n--> Created task '{}'.\n", task->name());
+                if (!TaskBlock::parse(parser, this, task))
                     errorsEncountered = true;
                 break;
             case (BlockKeywords::MasterBlockKeyword):
@@ -166,7 +176,7 @@ SerialisedValue Dissolve::serialise() const
 
     Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
 
-    root["masterTask"] = coreData_.masterTask().serialise();
+    Serialisable::fromVectorToTable(coreData_.tasks(), "tasks", root);
 
     return root;
 }
@@ -222,7 +232,13 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
               layer->deserialise(data, coreData_);
           });
 
-    coreData_.masterTask().deserialise(toml::find(node, "masterTask"), coreData_);
+    toMap(node, "tasks",
+          [this](const std::string &name, const SerialisedValue &data)
+          {
+              auto *task = coreData_.addTask();
+              task->setName(name);
+              task->deserialise(data, coreData_);
+          });
 }
 
 // Load input from supplied file
@@ -489,6 +505,33 @@ bool Dissolve::saveInput(std::string_view filename)
         }
 
         if (!parser.writeLineF("{}\n", LayerBlock::keywords().keyword(LayerBlock::EndLayerKeyword)))
+            return false;
+    }
+    // Write tasks
+    if (!parser.writeBannerComment("Tasks"))
+        return false;
+
+    for (auto &task : coreData_.tasks())
+    {
+        if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::TaskBlockKeyword),
+                               task->name()))
+            return false;
+        if (!parser.writeLineF("  {}\n", TaskBlock::keywords().keyword(TaskBlock::ProcedureKeyword)))
+            return false;
+        if (!task->procedure().serialise(parser, "    "))
+            return false;
+        if (!parser.writeLineF("  End{}", TaskBlock::keywords().keyword(TaskBlock::ProcedureKeyword)))
+            return false;
+        if (!parser.writeLineF("\n  {}\n", TaskBlock::keywords().keyword(TaskBlock::TargetsKeyword)))
+            return false;
+        for (auto &cfg : task->configurations())
+        {
+            if (!parser.writeLineF("    {}\n", cfg->name()))
+                return false;
+        }
+        if (!parser.writeLineF("  End{}\n", TaskBlock::keywords().keyword(TaskBlock::TargetsKeyword)))
+            return false;
+        if (!parser.writeLineF("{}\n", TaskBlock::keywords().keyword(TaskBlock::EndTaskKeyword)))
             return false;
     }
 

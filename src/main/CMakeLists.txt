@@ -11,6 +11,7 @@ add_library(
   keywords_master.cpp
   keywords_module.cpp
   keywords_pairPotentials.cpp
+  keywords_task.cpp
   pairPotentials.cpp
   simulation.cpp
   version.cpp

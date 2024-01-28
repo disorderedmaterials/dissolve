@@ -598,12 +598,25 @@ bool CoreData::setUpProcessingLayerModules(Dissolve &dissolve)
 /*
  * Tasks
  */
-Task &CoreData::masterTask() { return masterTask_; }
+Task* CoreData::masterTask() { return masterTask_.get(); }
 
-const Task &CoreData::masterTask() const { return masterTask_; }
+std::vector<std::unique_ptr<Task>> &CoreData::tasks() { return tasks_; }
 
-Task *CoreData::addTask() { return tasks_.emplace_back(); }
+const std::vector<std::unique_ptr<Task>> &CoreData::tasks() const {return tasks_;}
 
+Task *CoreData::addTask()
+{ 
+    return tasks_.emplace_back(std::make_unique<Task>()).get();
+}
+
+Task *CoreData::findTask(std::string_view name)
+{
+    auto it = std::find_if(tasks_.begin(), tasks_.end(),
+                           [name](auto &task) { return DissolveSys::sameString(task->name(), name); });
+    if (it == tasks_.end())
+        return nullptr;
+    return it->get();
+}
 /*
  * Input Filename
  */

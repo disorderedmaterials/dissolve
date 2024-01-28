@@ -238,15 +238,18 @@ class CoreData
      */
     private:
     // Master task
-    Task masterTask_;
-    std::vector<Task *> tasks_;
+    std::unique_ptr<Task> masterTask_;
+    std::vector<std::unique_ptr<Task>> tasks_;
 
     public:
-    // Return master task
-    const Task &masterTask() const;
-    Task &masterTask();
+    Task* masterTask();
+    // Return tasks
+    std::vector<std::unique_ptr<Task>> &tasks();
+    const std::vector<std::unique_ptr<Task>> &tasks() const;
+    // Add task
     Task *addTask();
-
+    // Find a task by name 
+    Task *findTask(std::string_view name) const;
     /*
      * Input Filename
      */

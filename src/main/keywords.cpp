@@ -15,6 +15,7 @@ EnumOptions<BlockKeywords::BlockKeyword> BlockKeywords::keywords()
     return EnumOptions<BlockKeywords::BlockKeyword>("BlockKeyword",
                                                     {{BlockKeywords::ConfigurationBlockKeyword, "Configuration"},
                                                      {BlockKeywords::LayerBlockKeyword, "Layer"},
+                                                     {BlockKeywords::TaskBlockKeyword, "Task"},
                                                      {BlockKeywords::MasterBlockKeyword, "Master"},
                                                      {BlockKeywords::ModuleBlockKeyword, "Module"},
                                                      {BlockKeywords::PairPotentialsBlockKeyword, "PairPotentials"},
