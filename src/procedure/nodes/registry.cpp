@@ -21,6 +21,7 @@
 #include "procedure/nodes/generalRegion.h"
 #include "procedure/nodes/generate.h"
 #include "procedure/nodes/ifValueInRange.h"
+#include "procedure/nodes/iterateFor.h"
 #include "procedure/nodes/importCoordinates.h"
 #include "procedure/nodes/integerCollect1D.h"
 #include "procedure/nodes/integrate1D.h"
@@ -91,6 +92,7 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     // Control
     registerProducer<IfValueInRangeProcedureNode>(ProcedureNode::NodeType::IfValueInRange,
                                                   "Conditionally execute other nodes if a value is within range", "Control");
+    registerProducer<IterateForProcedureNode>(ProcedureNode::NodeType::IterateFor, "Iteratively execute nodes", "Control");
 
     // Data
     registerProducer<Collect1DProcedureNode>(ProcedureNode::NodeType::Collect1D, "Bin 1D quantity into a histogram", "Data");

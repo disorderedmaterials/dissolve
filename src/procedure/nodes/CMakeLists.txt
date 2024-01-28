@@ -21,6 +21,7 @@ add_library(
   generalRegion.cpp
   generate.cpp
   ifValueInRange.cpp
+  iterateFor.cpp
   importCoordinates.cpp
   integerCollect1D.cpp
   integrate1D.cpp
@@ -83,6 +84,7 @@ add_library(
   generalRegion.h
   generate.h
   ifValueInRange.h
+  iterateFor.h
   importCoordinates.h
   integerCollect1D.h
   integrate1D.h
