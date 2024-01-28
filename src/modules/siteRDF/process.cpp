@@ -34,27 +34,25 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     SiteSelector b(targetConfiguration_, b_);
 
     // Calculate rAB
-    auto [hist, status] = processingData.realiseIf<Histogram1D>("Histo-AB", name(), GenericItem::InRestartFileFlag);
+    auto [histAB, status] = processingData.realiseIf<Histogram1D>("Histo-AB", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
-    {
-        hist.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
-    }
+        histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
 
-    hist.zeroBins();
+    histAB.zeroBins();
     for (const auto &[siteA, indexA] : a.sites())
     {
         for (const auto &[siteB, indexB] : b.sites())
         {
             if (excludeSameMolecule_ && siteB->molecule() == siteA->molecule())
                 continue;
-            hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+            histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
         }
     }
-    hist.accumulate();
+    histAB.accumulate();
 
     // RDF
     auto &dataRDF = processingData.realise<Data1D>("RDF", name(), GenericItem::InRestartFileFlag);
-    dataRDF = hist.accumulatedData();
+    dataRDF = histAB.accumulatedData();
     DataNormaliser1D normaliserRDF(&dataRDF);
 
     // Normalise by A site population
@@ -68,7 +66,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
 
     // CN
     auto &dataCN = processingData.realise<Data1D>("HistogramNorm", name(), GenericItem::InRestartFileFlag);
-    dataCN = hist.data();
+    dataCN = histAB.accumulatedData();
     DataNormaliser1D normaliserCN(&dataCN);
     normaliserCN.normaliseBySitePopulation(double(a.sites().size()));
 
