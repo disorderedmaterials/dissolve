@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #pragma once
 
@@ -8,12 +8,13 @@
 #include "keywords/base.h"
 #include "module/module.h"
 
-// Keyword managing Module base class
-class ModuleKeywordBase : public KeywordBase
+// Keyword managing mutable Module base class
+class MutableModuleKeywordBase : public KeywordBase
 {
     public:
-    explicit ModuleKeywordBase(ModuleTypes::ModuleType moduleType) : KeywordBase(typeid(this)), moduleType_(moduleType){};
-    ~ModuleKeywordBase() override = default;
+    explicit MutableModuleKeywordBase(ModuleTypes::ModuleType moduleType)
+        : KeywordBase(typeid(this)), moduleType_(moduleType){};
+    ~MutableModuleKeywordBase() override = default;
 
     /*
      * Target Module
@@ -26,33 +27,36 @@ class ModuleKeywordBase : public KeywordBase
     // Return target module type to allow
     ModuleTypes::ModuleType moduleType() const { return moduleType_; }
     // Set the target data
-    virtual bool setData(const Module *module) = 0;
+    virtual bool setData(Module *module) = 0;
     // Return the current target module as the base class
-    virtual const Module *module() const = 0;
+    virtual Module *module() = 0;
 };
 
 // Keyword managing Module
-template <class M> class ModuleKeyword : public ModuleKeywordBase
+template <class M> class MutableModuleKeyword : public MutableModuleKeywordBase
 {
     public:
-    explicit ModuleKeyword(const M *&data, ModuleTypes::ModuleType moduleType) : ModuleKeywordBase(moduleType), data_(data) {}
-    ~ModuleKeyword() override = default;
+    explicit MutableModuleKeyword(M *&data, ModuleTypes::ModuleType moduleType)
+        : MutableModuleKeywordBase(moduleType), data_(data)
+    {
+    }
+    ~MutableModuleKeyword() override = default;
 
     /*
      * Data
      */
     private:
     // Reference to data
-    const M *&data_;
+    M *&data_;
 
     public:
     // Return reference to data
-    const M *&data() { return data_; }
-    const M *&data() const { return data_; }
+    M *&data() { return data_; }
+    M *&data() const { return data_; }
     // Return base module pointer
-    const Module *module() const override { return data_; }
+    Module *module() override { return data_; }
     // Set data
-    bool setData(const Module *module) override
+    bool setData(Module *module) override
     {
         if (module == nullptr)
             data_ = nullptr;
@@ -64,7 +68,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
                                         module->name(), KeywordBase::name(), ModuleTypes::moduleType(module->type()),
                                         moduleType());
 
-            data_ = dynamic_cast<const M *>(module);
+            data_ = dynamic_cast<M *>(module);
             assert(data_);
         }
 
@@ -78,7 +82,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
     // Deserialise from supplied LineParser, starting at given argument offset
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
-        auto *module = coreData.findModule(parser.argsv(startArg));
+        auto *module = Module::find(parser.argsv(startArg));
         if (!module)
             return Messenger::error("Module '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg),
                                     KeywordBase::name());
@@ -109,11 +113,11 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
-        auto *module = coreData.findModule(std::string(node.as_string()));
+        auto *module = Module::find(std::string(node.as_string()));
         if (!module)
-            throw toml::type_error(fmt::format("Module '{}' given to keyword {} doesn't exist.\n",
-                                               std::string(node.as_string()), KeywordBase::name()),
-                                   node.location());
+            throw toml::syntax_error(fmt::format("Module '{}' given to keyword {} doesn't exist.\n",
+                                                 std::string(node.as_string()), KeywordBase::name()),
+                                     node.location());
 
         setData(module);
     }

@@ -51,6 +51,8 @@ add_library(
   restraintPotential.cpp
   rotateFragment.cpp
   runLayer.cpp
+  runModule.cpp
+  runModuleList.cpp
   runTask.cpp
   select.cpp
   sequence.cpp
@@ -110,7 +112,12 @@ add_library(
   restraintPotential.h
   rotateFragment.h
   runLayer.h
+<<<<<<< HEAD
   runTask.h
+=======
+  runModule.h
+  runModuleList.h
+>>>>>>> develop-workflow-2.0-run-modules
   select.h
   sequence.h
   simpleGlobalPotential.h
