@@ -23,8 +23,8 @@ class EPSRManagerModule : public Module
     private:
     // Target Module containing data to refine against
     std::vector<Module *> target_;
-    // Scattering matrix
-    ScatteringMatrix scatteringMatrix_;
+    // Frequency at which to apply generated perturbations to interatomic potentials
+    std::optional<int> modifyPotential_{1};
     // Vector storing atom pairs and associated potentials
     std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> potentials_;
     struct EPData
@@ -33,6 +33,8 @@ class EPSRManagerModule : public Module
         double count{0};
         std::shared_ptr<AtomType> at1, at2;
     };
+    // Potential scalings
+    std::string potentialScalings_;
 
     /*
      * Functions

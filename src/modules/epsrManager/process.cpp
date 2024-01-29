@@ -48,9 +48,46 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
             }
         }
     }
+
+    // Form averages
+    for (auto &&[key, epData] : potentials)
+        epData.ep /= epData.count;
+
+    // Apply potential scalings
+    auto scalings = DissolveSys::splitString(potentialScalings_, ",");
+    for (const auto &scaling : scalings)
+    {
+        // Parse the string into the atom type pair and scaling factor
+        auto typePairs = DissolveSys::beforeChar(scaling, '=');
+        auto typeA = DissolveSys::beforeChar(typePairs, '-');
+        auto typeB = DissolveSys::afterChar(typePairs, '-');
+        auto scaleFactorString = DissolveSys::afterChar(scaling, '=');
+        if (typeA.empty() || typeB.empty() || scaleFactorString.empty())
+        {
+            Messenger::error("Failed to parse scaling string '{}'\n", scaling);
+            return ExecutionResult::Failed;
+        }
+        auto scaleFactor = std::stod(std::string(scaleFactorString));
+
+        Messenger::print("Apply scaling factor of {} to potential(s) {}-{}...\n", scaleFactor, typeA, typeB);
+        auto count = 0;
+        for (auto &&[key, epData] : potentials)
+        {
+            // Is this potential a match
+            if ((DissolveSys::sameWildString(typeA, epData.at1->name()) && DissolveSys::sameWildString(typeB, epData.at2->name())) ||
+            (DissolveSys::sameWildString(typeB, epData.at1->name()) && DissolveSys::sameWildString(typeA, epData.at2->name())))
+            {
+                Messenger::print(" ... matched and scaled potential {}-{}\n", epData.at1->name(), epData.at2->name());
+                epData.ep *= scaleFactor;
+                ++count;
+            }
+        }
+        Messenger::print(" ... matched {} potential(s) in total.\n", count);
+    }
+
+    // Adjust global potentials
     for (auto &&[key, epData] : potentials)
     {
-        epData.ep /= epData.count;
         // Grab pointer to the relevant pair potential (if it exists)
         auto *pp = moduleContext.dissolve().pairPotential(epData.at1, epData.at2);
         if (pp)
