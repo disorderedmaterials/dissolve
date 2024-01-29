@@ -101,13 +101,13 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                     auto j = molN->atom(jj);
 
                     // Get intramolecular scaling of atom pair
-                    auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+                    auto &&[scalingType, elec14, vdw14] = i.scaling(j);
 
                     if (scalingType == SpeciesAtom::ScaledInteraction::Excluded)
                         continue;
 
                     // Determine final forces
-                    vecji = box->minimumVector(i->r(), j->r());
+                    vecji = box->minimumVector(i.r(), j.r());
                     magjisq = vecji.magnitudeSq();
                     if (magjisq > cutoffSq)
                         continue;
@@ -140,7 +140,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                         auto j = molM->atom(jj);
 
                         // Determine final forces
-                        vecji = box->minimumVector(i->r(), j->r());
+                        vecji = box->minimumVector(i.r(), j.r());
                         magjisq = vecji.magnitudeSq();
                         if (magjisq > cutoffSq)
                             continue;
@@ -163,7 +163,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                 auto j = molN->atom(bond.indexJ());
 
                 // Determine final forces
-                vecji = box->minimumVector(i->r(), j->r());
+                vecji = box->minimumVector(i.r(), j.r());
                 r = vecji.magAndNormalise();
                 vecji *= bond.force(r);
 
@@ -180,8 +180,8 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                 auto k = molN->atom(angle.indexK());
 
                 // Get vectors 'j-i' and 'j-k'
-                vecji = box->minimumVector(j->r(), i->r());
-                vecjk = box->minimumVector(j->r(), k->r());
+                vecji = box->minimumVector(j.r(), i.r());
+                vecjk = box->minimumVector(j.r(), k.r());
                 magji = vecji.magAndNormalise();
                 magjk = vecjk.magAndNormalise();
 
@@ -208,9 +208,9 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                 auto l = molN->atom(torsion.indexL());
 
                 // Calculate vectors, ensuring we account for minimum image
-                vecji = box->minimumVector(i->r(), j->r());
-                vecjk = box->minimumVector(k->r(), j->r());
-                veckl = box->minimumVector(l->r(), k->r());
+                vecji = box->minimumVector(i.r(), j.r());
+                vecjk = box->minimumVector(k.r(), j.r());
+                veckl = box->minimumVector(l.r(), k.r());
 
                 // Calculate torsion force parameters
                 auto tp = GeometryKernel::calculateTorsionForceParameters(vecji, vecjk, veckl);
@@ -252,9 +252,9 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                 auto l = molN->atom(imp.indexL());
 
                 // Calculate vectors, ensuring we account for minimum image
-                vecji = box->minimumVector(i->r(), j->r());
-                vecjk = box->minimumVector(k->r(), j->r());
-                veckl = box->minimumVector(l->r(), k->r());
+                vecji = box->minimumVector(i.r(), j.r());
+                vecjk = box->minimumVector(k.r(), j.r());
+                veckl = box->minimumVector(l.r(), k.r());
 
                 // Calculate improper force parameters
                 auto tp = GeometryKernel::calculateTorsionForceParameters(vecji, vecjk, veckl);

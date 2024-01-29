@@ -154,7 +154,7 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                     for (shake = 0; shake < nShakesPerTerm_; ++shake)
                     {
                         // Get translation vector, normalise, and apply random delta
-                        vji = box->minimumVector(i->r(), j->r());
+                        vji = box->minimumVector(i.r(), j.r());
                         vji.normalise();
                         vji *= randomBuffer.randomPlusMinusOne() * bondStepSize_;
 
@@ -207,15 +207,15 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                     for (shake = 0; shake < nShakesPerTerm_; ++shake)
                     {
                         // Get bond vectors and calculate cross product to get rotation axis
-                        vji = box->minimumVector(j->r(), i->r());
-                        vjk = box->minimumVector(j->r(), k->r());
+                        vji = box->minimumVector(j.r(), i.r());
+                        vjk = box->minimumVector(j.r(), k.r());
                         v = vji * vjk;
 
                         // Create suitable transformation matrix
                         transform.createRotationAxis(v, randomBuffer.randomPlusMinusOne() * angleStepSize_, true);
 
                         // Adjust the Atoms attached to the selected terminus
-                        mol->transform(box, transform, j->r(), angle.attachedAtoms(terminus));
+                        mol->transform(box, transform, j.r(), angle.attachedAtoms(terminus));
 
                         // Update Cell positions of the adjusted Atoms
                         targetConfiguration_->updateAtomLocations(angle.attachedAtoms(terminus), indexOffset);
@@ -269,13 +269,13 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                     for (shake = 0; shake < nShakesPerTerm_; ++shake)
                     {
                         // Get bond vectors j-k to get rotation axis
-                        vjk = box->minimumVector(j->r(), k->r());
+                        vjk = box->minimumVector(j.r(), k.r());
 
                         // Create suitable transformation matrix
                         transform.createRotationAxis(vjk, randomBuffer.randomPlusMinusOne() * torsionStepSize_, true);
 
                         // Adjust the Atoms attached to the selected terminus
-                        mol->transform(box, transform, terminus == 0 ? j->r() : k->r(), torsion.attachedAtoms(terminus));
+                        mol->transform(box, transform, terminus == 0 ? j.r() : k.r(), torsion.attachedAtoms(terminus));
 
                         // Update Cell positions of the adjusted Atoms
                         targetConfiguration_->updateAtomLocations(torsion.attachedAtoms(terminus), indexOffset);

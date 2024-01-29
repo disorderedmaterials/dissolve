@@ -47,10 +47,10 @@ int Cell::nAtoms() const { return atoms_.size(); }
 // Add atom to Cell
 void Cell::addAtom(AtomRef atom)
 {
-    assert(!atom->cell());
+    assert(!atom.cell());
 
     atoms_.push_back(atom);
-    atom->setCell(this);
+    atom.setCell(this);
 }
 
 // Remove Atom from Cell
@@ -58,7 +58,7 @@ void Cell::removeAtom(AtomRef atom)
 {
     auto it = std::find(atoms_.begin(), atoms_.end(), atom);
     assert(it != atoms_.end());
-    (*it)->setCell(nullptr);
+    (*it).setCell(nullptr);
     atoms_.erase(it);
 }
 

@@ -126,11 +126,11 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
                         continue;
 
                     ri = i.r();
-                    rj = partner->r();
+                    rj = partner.r();
 
                     // Determine half delta i-j for bond
                     const auto dij =
-                        (source_->cells().minimumImageRequired(*i.cell(), *partner->cell()) ? box->minimumVector(ri, rj)
+                        (source_->cells().minimumImageRequired(*i.cell(), *partner.cell()) ? box->minimumVector(ri, rj)
                                                                                             : rj - ri) *
                         0.5;
 
@@ -167,15 +167,15 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
                 if (&i == &*partner)
                     continue;
 
-                if (source_->cells().minimumImageRequired(*i.cell(), *partner->cell()))
+                if (source_->cells().minimumImageRequired(*i.cell(), *partner.cell()))
                     configurationAssembly_.createCylinderBond(
-                        bondPrimitive_, i.r(), partner->r(), box->minimumVector(i.r(), partner->r()),
-                        ElementColours::colour(i.speciesAtom()->Z()), ElementColours::colour(partner->speciesAtom()->Z()), true,
+                        bondPrimitive_, i.r(), partner.r(), box->minimumVector(i.r(), partner.r()),
+                        ElementColours::colour(i.speciesAtom()->Z()), ElementColours::colour(partner.speciesAtom()->Z()), true,
                         spheresBondRadius_);
                 else
                     configurationAssembly_.createCylinderBond(
-                        bondPrimitive_, i.r(), partner->r(), partner->r() - i.r(), ElementColours::colour(i.speciesAtom()->Z()),
-                        ElementColours::colour(partner->speciesAtom()->Z()), false, spheresBondRadius_);
+                        bondPrimitive_, i.r(), partner.r(), partner.r() - i.r(), ElementColours::colour(i.speciesAtom()->Z()),
+                        ElementColours::colour(partner.speciesAtom()->Z()), false, spheresBondRadius_);
             }
         }
     }

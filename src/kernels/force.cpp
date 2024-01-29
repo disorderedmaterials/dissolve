@@ -28,7 +28,7 @@ ForceKernel::ForceKernel(const Box *box, const ProcessPool &procPool, const Pote
  */
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const
+void ForceKernel::forcesWithoutMim(const AtomRef i, int indexI, const AtomRef j, int indexJ, ForceVector &f) const
 {
     auto force = j.r() - i.r();
     auto distanceSq = force.magnitudeSq();
@@ -42,7 +42,7 @@ void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
+void ForceKernel::forcesWithoutMim(const AtomRef i, int indexI, const AtomRef j, int indexJ, ForceVector &f, double elecScale,
                                    double vdwScale) const
 {
     auto force = j.r() - i.r();
@@ -57,7 +57,7 @@ void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int
 }
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const
+void ForceKernel::forcesWithMim(const AtomRef i, int indexI, const AtomRef j, int indexJ, ForceVector &f) const
 {
     auto force = box_->minimumVector(i.r(), j.r());
     auto distanceSq = force.magnitudeSq();
@@ -71,7 +71,7 @@ void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int in
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
+void ForceKernel::forcesWithMim(const AtomRef i, int indexI, const AtomRef j, int indexJ, ForceVector &f, double elecScale,
                                 double vdwScale) const
 {
     auto force = box_->minimumVector(i.r(), j.r());
@@ -103,24 +103,24 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
     {
         for (const auto &i : centralAtoms)
         {
-            molI = i->molecule();
+            molI = i.molecule();
             auto indexI = i.globalAtomIndex();
 
             for (auto &j : otherAtoms)
-                if (molI != j->molecule())
-                    forcesWithMim(*i, indexI, *j, j.globalAtomIndex(), f);
+                if (molI != j.molecule())
+                    forcesWithMim(i, indexI, j, j.globalAtomIndex(), f);
         }
     }
     else
     {
         for (const auto &i : centralAtoms)
         {
-            molI = i->molecule();
+            molI = i.molecule();
             auto indexI = i.globalAtomIndex();
 
             for (auto &j : otherAtoms)
-                if (molI != j->molecule())
-                    forcesWithoutMim(*i, indexI, *j, j.globalAtomIndex(), f);
+                if (molI != j.molecule())
+                    forcesWithoutMim(i, indexI, j, j.globalAtomIndex(), f);
         }
     }
 }
@@ -130,7 +130,7 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
  */
 
 // Calculate extended forces on supplied atom
-void ForceKernel::extendedForces(const Atom &i, Vec3<double> &fVec) const { return; }
+void ForceKernel::extendedForces(const AtomRef i, Vec3<double> &fVec) const { return; }
 
 // Calculate extended forces on supplied molecule
 void ForceKernel::extendedForces(const Molecule &mol, ForceVector &f) const { return; }
@@ -174,8 +174,8 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
                                         if (indexI == indexJ)
                                             return;
                                         // Check for atoms in the same molecule
-                                        if (i->molecule() != j->molecule())
-                                            forcesWithoutMim(*i, i->globalIndex(), *j, j->globalIndex(), fLocal);
+                                        if (i.molecule() != j.molecule())
+                                            forcesWithoutMim(i, i.globalAtomIndex(), j, j.globalAtomIndex(), fLocal);
                                     });
 
             // Interatomic interactions between atoms in this cell and its neighbours
@@ -213,7 +213,7 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
                                         {
                                             if (indexI == indexJ)
                                                 return;
-                                            auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+                                            auto &&[scalingType, elec14, vdw14] = i.scaling(j);
                                             if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
                                                 forcesWithMim(*i, offset + indexI, *j, offset + indexJ, fLocalUnbound);
                                             else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)

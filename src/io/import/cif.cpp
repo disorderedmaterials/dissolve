@@ -997,7 +997,7 @@ CIFHandler::speciesCopiesCoordinatesFromUnitCell(Species *moleculeSp, const Box 
         {
             atom.setSpeciesAtom(&spAtom);
             atom.setCoordinates(r);
-            mol->addAtom(AtomRef(atom, molAtoms)); // FIXME: I need to figure out the base
+            mol->addAtom(atom);
         }
 
         // Unfold the molecule
@@ -1020,7 +1020,7 @@ void CIFHandler::fixGeometry(Species *sp, const Box *box)
     {
         atom.setSpeciesAtom(&spAtom);
         atom.setCoordinates(spAtom.r());
-        mol->addAtom(AtomRef(atom, molAtoms)); // FIXME: Where are these atoms stored?
+        mol->addAtom(atom);
     }
 
     // Unfold the molecule

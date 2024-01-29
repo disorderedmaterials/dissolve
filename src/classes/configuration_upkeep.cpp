@@ -32,23 +32,23 @@ void Configuration::updateAtomLocations(bool clearExistingLocations)
         cells_.clearAtoms();
     }
 
-    std::for_each(atoms_.begin(), atoms_.end(), [this](auto ref){updateAtomLocation(AtomRef(ref, atoms_));});
+    std::for_each(atoms_.begin(), atoms_.end(), [this](auto ref){updateAtomLocation(ref);});
 }
 
 // Update Cell location of specified Atom
 void Configuration::updateAtomLocation(AtomRef i)
 {
     // Fold Atom coordinates into Box
-    i->setCoordinates(box_->fold(i->r()));
+    i.setCoordinates(box_->fold(i.r()));
 
     // Determine new Cell position
-    auto *cell = cells_.cell(i->r());
+    auto *cell = cells_.cell(i.r());
 
     // Need to move?
-    if (cell != i->cell())
+    if (cell != i.cell())
     {
-        if (i->cell())
-            i->cell()->removeAtom(i);
+        if (i.cell())
+            i.cell()->removeAtom(i);
         cell->addAtom(i);
     }
 }

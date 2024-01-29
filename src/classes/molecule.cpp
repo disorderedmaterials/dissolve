@@ -25,11 +25,11 @@ const Species *Molecule::species() const { return species_; }
 // Add Atom to Molecule
 void Molecule::addAtom(AtomRef atom)
 {
-    assert(atom->molecule() == nullptr);
+    assert(atom.molecule() == nullptr);
     atoms_.push_back(atom);
 
     std::shared_ptr<Molecule> parent = shared_from_this();
-    atom->setMolecule(parent);
+    atom.setMolecule(parent);
 }
 
 // Return number of atoms in the molecule
@@ -69,8 +69,8 @@ void Molecule::recurseLocal(std::vector<bool> &flags, const Box *box, int indexI
 
     // Set the flag for indexI and get some necessary values
     flags[indexI] = true;
-    auto rI = atoms_[indexI]->r();
-    auto *spI = atoms_[indexI]->speciesAtom();
+    auto rI = atoms_[indexI].r();
+    auto *spI = atoms_[indexI].speciesAtom();
 
     // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
     for (const SpeciesBond &b : spI->bonds())
@@ -80,7 +80,7 @@ void Molecule::recurseLocal(std::vector<bool> &flags, const Box *box, int indexI
         if (flags[indexJ])
             continue;
 
-        action(j, box->minimumImage(j->r(), rI));
+        action(j, box->minimumImage(j.r(), rI));
 
         // Recurse into bound neighbours
         recurseLocal(flags, box, indexJ, action);
@@ -93,8 +93,8 @@ void Molecule::recurseLocal(std::vector<bool> &flags, const Box *box, int indexI
 
     // Set the flag for indexI and get some necessary values
     flags[indexI] = true;
-    auto rI = atoms_[indexI]->r();
-    auto *spI = atoms_[indexI]->speciesAtom();
+    auto rI = atoms_[indexI].r();
+    auto *spI = atoms_[indexI].speciesAtom();
 
     // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
     for (const SpeciesBond &b : spI->bonds())
@@ -104,7 +104,7 @@ void Molecule::recurseLocal(std::vector<bool> &flags, const Box *box, int indexI
         if (flags[indexJ])
             continue;
 
-        action(j, box->minimumImage(j->r(), rI));
+        action(j, box->minimumImage(j.r(), rI));
 
         // Recurse into bound neighbours
         recurseLocal(flags, box, indexJ, action);
@@ -115,13 +115,13 @@ void Molecule::recurseLocal(std::vector<bool> &flags, const Box *box, int indexI
 void Molecule::traverseLocal(const Box *box, ManipulationFunction action)
 {
     std::vector<bool> flags(atoms_.size(), false);
-    action(atoms_[0], atoms_[0]->r());
+    action(atoms_[0], atoms_[0].r());
     recurseLocal(flags, box, 0, action);
 }
 void Molecule::traverseLocal(const Box *box, ConstManipulationFunction action) const
 {
     std::vector<bool> flags(atoms_.size(), false);
-    action(atoms_[0], atoms_[0]->r());
+    action(atoms_[0], atoms_[0].r());
     recurseLocal(flags, box, 0, action);
 }
 
@@ -132,7 +132,7 @@ Vec3<double> Molecule::unFold(const Box *box)
     traverseLocal(box,
                   [&cog](AtomRef j, Vec3<double> rJ)
                   {
-                      j->setCoordinates(rJ);
+                      j.setCoordinates(rJ);
                       cog += rJ;
                   });
     return cog / nAtoms();
@@ -148,8 +148,8 @@ void Molecule::setCentreOfGeometry(const Box *box, const Vec3<double> newCentre)
     // Apply transform
     for (auto n = 0; n < nAtoms(); ++n)
     {
-        newR = box->minimumVector(atom(n)->r(), cog) + newCentre;
-        atom(n)->setCoordinates(newR);
+        newR = box->minimumVector(atom(n).r(), cog) + newCentre;
+        atom(n).setCoordinates(newR);
     }
 }
 
@@ -173,7 +173,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix)
 
     // Apply transform
     for (auto &i : atoms())
-        i->setCoordinates(transformationMatrix * (i->r() - cog) + cog);
+        i.setCoordinates(transformationMatrix * (i.r() - cog) + cog);
 }
 
 // Transform molecule with supplied matrix about specified origin
@@ -184,7 +184,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 
     // Apply transform
     for (auto &i : atoms())
-        i->setCoordinates(transformationMatrix * (i->r() - origin) + origin);
+        i.setCoordinates(transformationMatrix * (i.r() - origin) + origin);
 }
 
 // Transform selected atoms with supplied matrix, around specified origin
@@ -195,8 +195,8 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
     for (const auto index : targetAtoms)
     {
         auto i = atom(index);
-        auto newR = transformationMatrix * box->minimumVector(origin, i->r()) + origin;
-        i->setCoordinates(newR);
+        auto newR = transformationMatrix * box->minimumVector(origin, i.r()) + origin;
+        i.setCoordinates(newR);
     }
 }
 
@@ -204,12 +204,12 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 void Molecule::translate(const Vec3<double> delta)
 {
     for (auto n = 0; n < nAtoms(); ++n)
-        atom(n)->translateCoordinates(delta);
+        atom(n).translateCoordinates(delta);
 }
 
 // Translate specified atoms by the delta specified
 void Molecule::translate(const Vec3<double> &delta, const std::vector<int> &targetAtoms)
 {
     for (const auto i : targetAtoms)
-        atom(i)->translateCoordinates(delta);
+        atom(i).translateCoordinates(delta);
 }

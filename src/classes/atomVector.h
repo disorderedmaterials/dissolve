@@ -3,12 +3,14 @@
 
 #pragma once
 
+#include "classes/speciesAtom.h"
 #include "templates/vector3.h"
 #include <iterator>
 #include <vector>
 
 class Atom;
 class AtomRef;
+class Cell;
 class ExternalPotential;
 class Molecule;
 class SpeciesAtom;
@@ -53,10 +55,8 @@ class AtomRef : public std::iterator<std::random_access_iterator_tag, Atom>
     AtomRef();
     AtomRef(const AtomRef &ref);
     AtomRef(const Atom &ref, const AtomVector &source);
-    Atom &operator*();
-    const Atom &operator*() const;
-    Atom *operator->();
-    const Atom *operator->() const;
+    AtomRef &operator*();
+    const AtomRef &operator*() const;
     bool operator==(const AtomRef &other) const;
     bool operator!=(const AtomRef &other) const;
     bool operator==(Atom *other) const;
@@ -66,8 +66,12 @@ class AtomRef : public std::iterator<std::random_access_iterator_tag, Atom>
     std::size_t operator-(const AtomRef &other) const;
     int globalAtomIndex() const;
 
+    // Return SpeciesAtom that this Atom represents
+    const SpeciesAtom *speciesAtom() const;
     // Set SpeciesAtom that this Atom represents
     void setSpeciesAtom(const SpeciesAtom *spAtom);
+    // Return Molecule in which this Atom exists
+    const std::shared_ptr<Molecule> &molecule() const;
     // Set Molecule in which this Atom exists
     void setMolecule(std::shared_ptr<Molecule> mol);
     // Set local AtomType index
@@ -76,6 +80,8 @@ class AtomRef : public std::iterator<std::random_access_iterator_tag, Atom>
     int localTypeIndex() const;
     // Set master AtomType index
     void setMasterTypeIndex(int id);
+    // Return master AtomType index
+    int masterTypeIndex() const;
     // Add targeted potential to this atom
     void addTargetedPotential(const ExternalPotential *potential);
     // Clear all targeted potentials from this Atom
@@ -97,4 +103,20 @@ class AtomRef : public std::iterator<std::random_access_iterator_tag, Atom>
     void translateCoordinates(const Vec3<double> &delta);
     // Translate coordinates
     void translateCoordinates(double dx, double dy, double dz);
+    // Set cell in which the atom exists
+    void setCell(Cell *cell);
+    // Return cell in which the atom exists
+    Cell *cell() const;
+    // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
+    SpeciesAtom::ScaledInteractionDefinition scaling(const AtomRef j) const;
+    // Set coordinates
+    void set(const Vec3<double> r);
+    // Set coordinates
+    void set(double rx, double ry, double rz);
+    // Return x-coordinate
+    double x() const;
+    // Return y-coordinate
+    double y() const;
+    // Return z-coordinate
+    double z() const;
 };

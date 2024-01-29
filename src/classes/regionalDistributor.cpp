@@ -283,7 +283,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
     for (auto i = 0; i < mol->nAtoms(); ++i)
     {
         // Get Cell pointer and index
-        primaryCell = mol->atom(i)->cell();
+        primaryCell = mol->atom(i).cell();
         auto cellIndex = primaryCell->index();
 
         // Make sure we can lock this Cell for editing, unless we have locked it already...
@@ -413,7 +413,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(const Cell *cell, 
     for (auto &atom : cell->atoms())
     {
         // Get the Atom's Molecule pointer
-        mol = atom->molecule();
+        mol = atom.molecule();
 
         if (debugDistributor)
             Messenger::print(

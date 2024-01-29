@@ -37,20 +37,6 @@ void Atom::setMasterTypeIndex(int id) { masterTypeIndex_ = id; }
 // Return master AtomType index
 int Atom::masterTypeIndex() const { return masterTypeIndex_; }
 
-// Return global index of the atom
-int Atom::globalIndex() const
-{
-    assert(molecule_);
-    auto i = molecule_->globalAtomOffset();
-    for (auto &ref : molecule_->atoms())
-    {
-        if (this == &*ref)
-            return i;
-        ++i;
-    }
-    throw std::runtime_error("Atom not in its own molecule");
-}
-
 /*
  * Location
  */
@@ -66,12 +52,6 @@ void Atom::setMolecule(std::shared_ptr<Molecule> mol) { molecule_ = std::move(mo
 
 // Return Molecule in which this Atom exists
 const std::shared_ptr<Molecule> &Atom::molecule() const { return molecule_; }
-
-// Set cell in which the atom exists
-void Atom::setCell(Cell *cell) { cell_ = cell; }
-
-// Return cell in which the atom exists
-Cell *Atom::cell() const { return cell_; }
 
 /*
  * Coordinate Manipulation
@@ -97,9 +77,9 @@ void Atom::translateCoordinates(double dx, double dy, double dz) { setCoordinate
 SpeciesAtom::ScaledInteractionDefinition Atom::scaling(const AtomRef j) const
 {
     assert(speciesAtom_ != nullptr);
-    assert(j->speciesAtom() != nullptr);
+    assert(j.speciesAtom() != nullptr);
 
-    return speciesAtom_->scaling(j->speciesAtom());
+    return speciesAtom_->scaling(j.speciesAtom());
 }
 
 /*

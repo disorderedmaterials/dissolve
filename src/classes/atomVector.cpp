@@ -39,11 +39,6 @@ AtomRef::AtomRef(const Atom &ref, const AtomVector &source)
 {
 }
 
-// AtomRef::operator Atom*() const { return ref_; }
-Atom &AtomRef::operator*() { return *ref_; }
-const Atom &AtomRef::operator*() const { return *ref_; }
-Atom *AtomRef::operator->() { return ref_; }
-const Atom *AtomRef::operator->() const { return ref_; }
 AtomRef AtomRef::operator[](std::size_t offset) { return AtomRef(*(ref_ + offset), *origin_); }
 
 bool AtomRef::operator==(const AtomRef &other) const { return ref_ == other.ref_; }
@@ -74,6 +69,8 @@ void AtomRef::setMolecule(std::shared_ptr<Molecule> mol) { ref_->setMolecule(mol
 void AtomRef::setLocalTypeIndex(int id) { ref_->setLocalTypeIndex(id); }
 // Return local AtomType index
 int AtomRef::localTypeIndex() const { return ref_->localTypeIndex(); }
+// Return master AtomType index
+int AtomRef::masterTypeIndex() const { return ref_->masterTypeIndex(); }
 // Set master AtomType index
 void AtomRef::setMasterTypeIndex(int id) { ref_->setMasterTypeIndex(id); }
 // Add targeted potential to this atom
@@ -87,3 +84,37 @@ const Vec3<double> &AtomRef::r() const { return ref_->r(); }
 
 // Set coordinates
 void AtomRef::setCoordinates(const Vec3<double> &newr) { ref_->setCoordinates(newr); }
+
+// Set cell in which the atom exists
+void AtomRef::setCell(Cell *cell) { ref_->cell_ = cell; }
+
+// Return cell in which the atom exists
+Cell *AtomRef::cell() const { return ref_->cell_; }
+
+AtomRef &AtomRef::operator*() { return *this; }
+const AtomRef &AtomRef::operator*() const { return *this; }
+
+// Return SpeciesAtom that this Atom represents
+const SpeciesAtom *AtomRef::speciesAtom() const { return ref_->speciesAtom(); }
+
+// Set coordinates
+void AtomRef::setCoordinates(double dx, double dy, double dz) { ref_->setCoordinates(dx, dy, dz); }
+// Translate coordinates
+void AtomRef::translateCoordinates(const Vec3<double> &delta) { ref_->translateCoordinates(delta); }
+// Translate coordinates
+void AtomRef::translateCoordinates(double dx, double dy, double dz) { ref_->translateCoordinates(dx, dy, dz); }
+// Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
+SpeciesAtom::ScaledInteractionDefinition AtomRef::scaling(const AtomRef j) const { return ref_->scaling(j); }
+// Set coordinates
+void AtomRef::set(const Vec3<double> r) { ref_->set(r); }
+// Set coordinates
+void AtomRef::set(double rx, double ry, double rz) { ref_->set(rx, ry, rz); }
+// Return x-coordinate
+double AtomRef::x() const { return ref_->x(); }
+// Return y-coordinate
+double AtomRef::y() const { return ref_->y(); }
+// Return z-coordinate
+double AtomRef::z() const { return ref_->z(); }
+
+// Return Molecule in which this Atom exists
+const std::shared_ptr<Molecule> &AtomRef::molecule() const { return ref_->molecule(); }

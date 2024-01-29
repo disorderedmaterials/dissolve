@@ -54,7 +54,7 @@ TEST(RotateFragmentProcedureNodeTest, Benzene)
     // Atom coordinates prior and posterior to rotations, with cell centre removed so as to give "local" coordinates
     std::vector<Vec3<double>> coordinatesBefore(mol->nAtoms()), coordinatesAfter(mol->nAtoms());
     std::transform(mol->atoms().begin(), mol->atoms().end(), coordinatesBefore.begin(),
-                   [&cellCentre](const auto &at) { return at->r() - cellCentre; });
+                   [&cellCentre](const auto &at) { return at.r() - cellCentre; });
 
     // Select the site
     auto select = procedure.createRootNode<SelectProcedureNode>("BenzeneSite", sites);
@@ -76,7 +76,7 @@ TEST(RotateFragmentProcedureNodeTest, Benzene)
 
         // Posterior atom coordinates
         std::transform(mol->atoms().begin(), mol->atoms().end(), coordinatesAfter.begin(),
-                       [&cellCentre](const auto &at) { return at->r() - cellCentre; });
+                       [&cellCentre](const auto &at) { return at.r() - cellCentre; });
         for (auto &&[r1, r2] : zip(coordinatesBefore, coordinatesAfter))
         {
             // Check that

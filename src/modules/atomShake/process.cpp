@@ -102,7 +102,7 @@ Module::ExecutionResult AtomShakeModule::process(ModuleContext &moduleContext)
                                randomBuffer.randomPlusMinusOne() * stepSize_);
 
                     // Translate Atom and update its Cell position
-                    i->translateCoordinates(rDelta);
+                    i.translateCoordinates(rDelta);
                     targetConfiguration_->updateAtomLocation(i);
 
                     // Calculate new energy

@@ -110,7 +110,7 @@ Module::ExecutionResult AvgMolModule::process(ModuleContext &moduleContext)
         // Loop over atoms, taking delta position with origin, and rotating into local axes
         for (auto &&[i, x, y, z] : zip(s.molecule()->atoms(), rx, ry, rz))
         {
-            r = inverseAxes * box->minimumVector(s.origin(), i->r());
+            r = inverseAxes * box->minimumVector(s.origin(), i.r());
             x = r.x;
             y = r.y;
             z = r.z;

@@ -81,7 +81,7 @@ const std::string DirectionalPotential::formParametersString() const { return in
  */
 
 // Calculate energy on specified atom
-double DirectionalPotential::energy(const Atom &i, const Box *box) const
+double DirectionalPotential::energy(const AtomRef i, const Box *box) const
 {
     // Vector between the position of the atom and the origin
     auto v = box->minimumVector(i.r(), origin_);
@@ -119,7 +119,7 @@ double DirectionalPotential::energy(const Atom &i, const Box *box) const
 }
 
 // Calculate force on specified atom, summing in to supplied vector
-void DirectionalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) const
+void DirectionalPotential::force(const AtomRef i, const Box *box, Vec3<double> &f) const
 {
     // Vector between the position of the atom and the origin
     auto v = box->minimumVector(i.r(), origin_);

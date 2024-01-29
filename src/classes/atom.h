@@ -11,6 +11,7 @@
 #include <vector>
 
 // Forward Declarations
+class AtomRef;
 class Cell;
 class Molecule;
 
@@ -20,6 +21,7 @@ class Atom
     /*
      * Properties
      */
+    friend class AtomRef;
     private:
     // Coordinates
     Vec3<double> r_;
@@ -49,8 +51,6 @@ class Atom
     void setMasterTypeIndex(int id);
     // Return master AtomType index
     int masterTypeIndex() const;
-    // Return global index of the atom
-    int globalIndex() const;
 
     /*
      * Location
@@ -72,10 +72,6 @@ class Atom
     void setMolecule(std::shared_ptr<Molecule> mol);
     // Return Molecule in which this Atom exists
     const std::shared_ptr<Molecule> &molecule() const;
-    // Set cell in which the atom exists
-    void setCell(Cell *cell);
-    // Return cell in which the atom exists
-    Cell *cell() const;
 
     /*
      * Coordinate Manipulation

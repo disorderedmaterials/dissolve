@@ -208,14 +208,14 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
         // quicker than working out if we need to given the absence of a 2D look-up array
         for (auto &i : atomsI)
         {
-            auto typeI = i->localTypeIndex();
-            auto &rI = i->r();
+            auto typeI = i.localTypeIndex();
+            auto &rI = i.r();
 
             for (auto &j : atomsJ)
             {
-                auto &rJ = j->r();
+                auto &rJ = j.r();
                 auto distance = box->minimumDistance(rJ, rI);
-                histograms[{typeI, j->localTypeIndex()}].bin(distance);
+                histograms[{typeI, j.localTypeIndex()}].bin(distance);
             }
         }
     };
@@ -243,8 +243,8 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
                           auto &i = atomsI[idx];
                           auto &j = atomsI[jdx];
                           // No need to perform MIM since we're in the same cell
-                          double distance = (i->r() - j->r()).magnitude();
-                          partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+                          double distance = (i.r() - j.r()).magnitude();
+                          partialSet.fullHistogram(i.localTypeIndex(), j.localTypeIndex()).bin(distance);
                       });
     }
     return true;
@@ -387,7 +387,7 @@ bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procP
                 if (index == jndex)
                     return;
 
-                originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(box->minimumDistance(i->r(), j->r()));
+                originalgr.boundHistogram(i.localTypeIndex(), j.localTypeIndex()).bin(box->minimumDistance(i.r(), j.r()));
             });
     }
 

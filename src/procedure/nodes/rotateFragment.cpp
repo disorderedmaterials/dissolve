@@ -78,7 +78,7 @@ bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureConte
     for (auto index : parent->sitesAllAtomsIndices().at(parentIndex))
     {
         auto atom = molecule->atom(index);
-        atom->set(rotationMatrix.transform(box->minimumVector(site.origin(), atom->r())) + site.origin());
+        atom.set(rotationMatrix.transform(box->minimumVector(site.origin(), atom.r())) + site.origin());
     }
 
     return true;

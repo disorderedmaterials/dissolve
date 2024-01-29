@@ -36,24 +36,24 @@ const SpeciesSite *SiteStack::speciesSite() const { return speciesSite_; }
 // Calculate geometric centre of atoms in the given molecule
 Vec3<double> SiteStack::centreOfGeometry(const Molecule &mol, const Box *box, const std::vector<int> &indices)
 {
-    const auto ref = mol.atom(indices.front())->r();
+    const auto ref = mol.atom(indices.front()).r();
     return std::accumulate(std::next(indices.begin()), indices.end(), ref,
                            [&ref, &mol, box](const auto &acc, const auto idx)
-                           { return acc + box->minimumImage(mol.atom(idx)->r(), ref); }) /
+                           { return acc + box->minimumImage(mol.atom(idx).r(), ref); }) /
            indices.size();
 }
 
 // Calculate (mass-weighted) coordinate centre of atoms in the given molecule
 Vec3<double> SiteStack::centreOfMass(const Molecule &mol, const Box *box, const std::vector<int> &indices)
 {
-    auto mass = AtomicMass::mass(mol.atom(indices.front())->speciesAtom()->Z());
-    const auto ref = mol.atom(indices.front())->r();
+    auto mass = AtomicMass::mass(mol.atom(indices.front()).speciesAtom()->Z());
+    const auto ref = mol.atom(indices.front()).r();
     auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
                                 [&ref, &mol, box](const auto &acc, const auto idx)
                                 {
-                                    auto mass = AtomicMass::mass(mol.atom(idx)->speciesAtom()->Z());
+                                    auto mass = AtomicMass::mass(mol.atom(idx).speciesAtom()->Z());
                                     return std::pair<Vec3<double>, double>(
-                                        acc.first + box->minimumImage(mol.atom(idx)->r(), ref) * mass, acc.second + mass);
+                                        acc.first + box->minimumImage(mol.atom(idx).r(), ref) * mass, acc.second + mass);
                                 });
     return sums.first / sums.second;
 }

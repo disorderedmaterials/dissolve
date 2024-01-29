@@ -20,7 +20,7 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
 {
     Problem<problem, population> problemDef;
     auto energyKernel = createEnergyKernel(problemDef);
-    auto &i = problemDef.cfg_->atom(0);
+    auto i = problemDef.cfg_->atom(0);
     for (auto _ : state)
         energyKernel->totalEnergy(i);
 }

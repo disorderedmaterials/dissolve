@@ -137,14 +137,14 @@ class Configuration : public Serialisable<const CoreData &>
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
-    Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r = Vec3<double>());
+    AtomRef addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r = Vec3<double>());
     // Return number of Atoms in Configuration
     int nAtoms() const;
     // Return Atom array
     AtomVector &atoms();
     const AtomVector &atoms() const;
     // Return nth Atom
-    Atom &atom(int n);
+    AtomRef atom(int n);
     // Unfold molecule coordinates
     void unFoldMolecules();
     // Scale contents of the box by the specified factors along each axis

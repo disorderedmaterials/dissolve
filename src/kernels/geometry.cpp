@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "kernels/geometry.h"
+#include "classes/atomVector.h"
 #include "classes/box.h"
 #include "classes/molecule.h"
 #include "classes/species.h"
@@ -24,13 +25,13 @@ GeometryKernel::GeometryKernel(const Box *box, const ProcessPool &procPool, cons
  */
 
 // Return SpeciesBond energy at Atoms specified
-double GeometryKernel::bondEnergy(const SpeciesBond &b, const Atom &i, const Atom &j) const
+double GeometryKernel::bondEnergy(const SpeciesBond &b, const AtomRef i, const AtomRef j) const
 {
     return b.energy(box_->minimumDistance(i.r(), j.r()));
 }
 
 // Calculate SpeciesBond forces
-void GeometryKernel::bondForces(const SpeciesBond &bond, const Atom &i, int indexI, const Atom &j, int indexJ,
+void GeometryKernel::bondForces(const SpeciesBond &bond, const AtomRef i, int indexI, const AtomRef j, int indexJ,
                                 ForceVector &f) const
 {
     auto vecji = box_->minimumVector(i.r(), j.r());
@@ -67,7 +68,7 @@ void GeometryKernel::bondForces(const SpeciesBond &bond, const Vec3<double> &ri,
  */
 
 // Return SpeciesAngle energy at Atoms specified
-double GeometryKernel::angleEnergy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k) const
+double GeometryKernel::angleEnergy(const SpeciesAngle &a, const AtomRef i, const AtomRef j, const AtomRef k) const
 {
     return a.energy(Box::angleInDegrees(box_->minimumVectorN(j.r(), i.r()), box_->minimumVectorN(j.r(), k.r())));
 }
@@ -90,7 +91,7 @@ GeometryKernel::AngleParameters GeometryKernel::calculateAngleForceParameters(Ve
 }
 
 // Calculate SpeciesAngle forces
-void GeometryKernel::angleForces(const SpeciesAngle &angle, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
+void GeometryKernel::angleForces(const SpeciesAngle &angle, const AtomRef i, int indexI, const AtomRef j, int indexJ, const AtomRef k,
                                  int indexK, ForceVector &f) const
 {
     auto vecji = box_->minimumVector(j.r(), i.r());
@@ -177,7 +178,7 @@ void GeometryKernel::addTorsionForceL(double du_dphi, int index, GeometryKernel:
 }
 
 // Return SpeciesTorsion energy at Atoms specified
-double GeometryKernel::torsionEnergy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const
+double GeometryKernel::torsionEnergy(const SpeciesTorsion &t, const AtomRef i, const AtomRef j, const AtomRef k, const AtomRef l) const
 {
     return t.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
                                           box_->minimumVector(k.r(), l.r())));
@@ -226,8 +227,8 @@ GeometryKernel::calculateTorsionForceParameters(const Vec3<double> &vecji, const
 }
 
 // Calculate SpeciesTorsion forces
-void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Atom &i, int indexI, const Atom &j, int indexJ,
-                                   const Atom &k, int indexK, const Atom &l, int indexL, ForceVector &f) const
+void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const AtomRef i, int indexI, const AtomRef j, int indexJ,
+                                   const AtomRef k, int indexK, const AtomRef l, int indexL, ForceVector &f) const
 {
     // Calculate vectors, ensuring we account for minimum image
     Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
@@ -270,16 +271,16 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Vec3<dou
  */
 
 // Return SpeciesImproper energy at Atoms specified
-double GeometryKernel::improperEnergy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k,
-                                      const Atom &l) const
+double GeometryKernel::improperEnergy(const SpeciesImproper &imp, const AtomRef i, const AtomRef j, const AtomRef k,
+                                      const AtomRef l) const
 {
     return imp.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
                                             box_->minimumVector(k.r(), l.r())));
 }
 
 // Calculate SpeciesImproper forces
-void GeometryKernel::improperForces(const SpeciesImproper &improper, const Atom &i, int indexI, const Atom &j, int indexJ,
-                                    const Atom &k, int indexK, const Atom &l, int indexL, ForceVector &f) const
+void GeometryKernel::improperForces(const SpeciesImproper &improper, const AtomRef i, int indexI, const AtomRef j, int indexJ,
+                                    const AtomRef k, int indexK, const AtomRef l, int indexL, ForceVector &f) const
 {
     auto vecji = box_->minimumVector(i.r(), j.r());
     auto vecjk = box_->minimumVector(k.r(), j.r());
@@ -318,7 +319,7 @@ void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vec3<doubl
  */
 
 // Return total energy for the geometry terms involving the specified atom
-double GeometryKernel::totalGeometryEnergy(const Atom &i) const
+double GeometryKernel::totalGeometryEnergy(const AtomRef i) const
 {
     // Get the SpeciesAtom and Molecule
     const auto *spAtom = i.speciesAtom();

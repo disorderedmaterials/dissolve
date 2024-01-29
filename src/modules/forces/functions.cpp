@@ -62,8 +62,8 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg,
     for (const auto *mol : targetMolecules)
         for (const auto &i : mol->atoms())
         {
-            fUnbound[i->globalIndex()] = tempFUnbound[i->globalIndex()];
-            fBound[i->globalIndex()] = tempFBound[i->globalIndex()];
+            fUnbound[i.globalAtomIndex()] = tempFUnbound[i.globalAtomIndex()];
+            fBound[i.globalAtomIndex()] = tempFBound[i.globalAtomIndex()];
         }
 }
 
