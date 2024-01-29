@@ -87,12 +87,12 @@ runs:
     if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v4
     with:
-      name: packages-nix-binary
+      name: packages-nix-${{ inputs.target }}-binary
       path: ${{ github.workspace }}/packages-binary
 
   - name: Upload Package Artifacts (sif)
     if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v4
     with:
-      name: packages-nix-sif
+      name: packages-nix-${{ inputs.target }}-sif
       path: ${{ github.workspace }}/packages-sif
