@@ -37,10 +37,15 @@ class EPSRManagerModule : public Module
     /*
      * Functions
      */
-    public:
-    static std::string pairKey(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2);
+    private:
+    // Return key for supplied atom type pair
+    static std::string pairKey(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2);
 
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext);
+    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+
+    public:
+    // Run set-up stage
+    bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
 };

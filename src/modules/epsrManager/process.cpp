@@ -8,6 +8,20 @@
 #include "modules/epsr/epsr.h"
 #include "modules/epsrManager/epsrManager.h"
 
+// Run set-up stage
+bool EPSRManagerModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
+{
+    // Notify targeted EPSR modules that they should not apply potentials
+    for (auto *module : target_)
+    {
+        auto *epsrModule = dynamic_cast<EPSRModule *>(module);
+        Messenger::print("EPSRManager: Notifying '{}' that it should not apply generated potentials.\n", epsrModule->name());
+        epsrModule->setApplyPotentials(false);
+    }
+
+    return true;
+}
+
 // Run main processing
 Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
 {

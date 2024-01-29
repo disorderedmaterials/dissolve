@@ -110,10 +110,14 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averaged
             // Put potentials in vector
             empiricalPotentials_.emplace_back(at1, at2, ep);
 
-            // Grab pointer to the relevant pair potential (if it exists)
-            auto *pp = dissolve.pairPotential(at1, at2);
-            if (pp)
-                pp->setUAdditional(ep);
+            // Apply potentials?
+            if (applyPotentials_)
+            {
+                // Grab pointer to the relevant pair potential (if it exists)
+                auto *pp = dissolve.pairPotential(at1, at2);
+                if (pp)
+                    pp->setUAdditional(ep);
+            }
 
             return EarlyReturn<bool>::Continue;
         });
