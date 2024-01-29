@@ -7,6 +7,6 @@
 
 EPSRManagerModule::EPSRManagerModule() : Module(ModuleTypes::EPSRManager)
 {
-    keywords_.addTarget<ModuleVectorKeyword>("Target", "Add specified Module (and it's Reference data) as a refinement target",
+    keywords_.addTarget<ModuleVectorKeyword>("Target", "Target EPSR modules over which the manager will operate",
                                              target_, std::vector<ModuleTypes::ModuleType>{ModuleTypes::EPSR});
 }
