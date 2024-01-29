@@ -8,8 +8,8 @@
 
 EPSRManagerModule::EPSRManagerModule() : Module(ModuleTypes::EPSRManager)
 {
-    keywords_.addTarget<ModuleVectorKeyword>("Target", "Target EPSR modules over which the manager will operate",
-                                             target_, std::vector<ModuleTypes::ModuleType>{ModuleTypes::EPSR});
+    keywords_.addTarget<ModuleVectorKeyword>("Target", "Target EPSR modules over which the manager will operate", target_,
+                                             std::vector<ModuleTypes::ModuleType>{ModuleTypes::EPSR});
 
     keywords_.setOrganisation("Options");
     keywords_.add<OptionalIntegerKeyword>("ModifyPotential",
@@ -18,5 +18,6 @@ EPSRManagerModule::EPSRManagerModule() : Module(ModuleTypes::EPSRManager)
 
     // Specific Potential Adjustment
     keywords_.setOrganisation("Options", "Potential Scaling");
-    keywords_.add<StringKeyword>("PotScale", "Comma-separated list of atom type pairs and scaling factors in the form A-B=1.0", potentialScalings_);
+    keywords_.add<StringKeyword>("PotScale", "Comma-separated list of atom type pairs and scaling factors in the form A-B=1.0",
+                                 potentialScalings_);
 }

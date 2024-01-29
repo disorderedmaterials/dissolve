@@ -74,8 +74,10 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
         for (auto &&[key, epData] : potentials)
         {
             // Is this potential a match
-            if ((DissolveSys::sameWildString(typeA, epData.at1->name()) && DissolveSys::sameWildString(typeB, epData.at2->name())) ||
-            (DissolveSys::sameWildString(typeB, epData.at1->name()) && DissolveSys::sameWildString(typeA, epData.at2->name())))
+            if ((DissolveSys::sameWildString(typeA, epData.at1->name()) &&
+                 DissolveSys::sameWildString(typeB, epData.at2->name())) ||
+                (DissolveSys::sameWildString(typeB, epData.at1->name()) &&
+                 DissolveSys::sameWildString(typeA, epData.at2->name())))
             {
                 Messenger::print(" ... matched and scaled potential {}-{}\n", epData.at1->name(), epData.at2->name());
                 epData.ep *= scaleFactor;
