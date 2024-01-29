@@ -152,7 +152,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         if (applyPotentials_)
             Messenger::print("EPSR: Global pair potentials will be modified.\n");
         else
-            Messenger::print("EPSR: Current potentials will not be modified).\n");
+            Messenger::print("EPSR: Current potentials will not be modified.\n");
     }
     else
         Messenger::warn("EPSR: Fluctuation coefficients and resulting potentials will not be modified.\n");
