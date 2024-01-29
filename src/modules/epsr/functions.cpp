@@ -103,16 +103,17 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averaged
             // Multiply by truncation function
             truncate(ep, rminpt, rmaxpt);
 
-            // Set the additional potential in the main processing data
-            dissolve.processingModuleData().realise<Data1D>(fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()),
-                                                            "Dissolve", GenericItem::InRestartFileFlag) = ep;
-
             // Put potentials in vector
             empiricalPotentials_.emplace_back(at1, at2, ep);
 
             // Apply potentials?
             if (applyPotentials_)
             {
+                // Set the additional potential in the main processing data
+                dissolve.processingModuleData().realise<Data1D>(
+                    fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
+                    GenericItem::InRestartFileFlag) = ep;
+
                 // Grab pointer to the relevant pair potential (if it exists)
                 auto *pp = dissolve.pairPotential(at1, at2);
                 if (pp)
