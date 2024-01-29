@@ -19,9 +19,10 @@ runs:
       singularity-version: 3.8.3
 
   - name: Download Artifacts
-    uses: actions/download-artifact@v3
+    uses: actions/download-artifact@v4
     with:
-      name: packages
+      pattern: packages-*
+      merge-multiple: true
       path: ${{ github.workspace }}/packages
 
   - name: Download Prerequisites
