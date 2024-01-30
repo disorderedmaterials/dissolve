@@ -48,18 +48,17 @@ class AtomVector
 class AtomRef : public std::iterator<std::random_access_iterator_tag, Atom>
 {
     private:
-    Atom *ref_{nullptr};
+    std::size_t index_{0};
     AtomVector *origin_{nullptr};
 
     public:
     AtomRef();
     AtomRef(const AtomRef &ref);
-    AtomRef(const Atom &ref, const AtomVector &source);
+    AtomRef(const std::size_t index, const AtomVector &source);
     AtomRef &operator*();
     const AtomRef &operator*() const;
     bool operator==(const AtomRef &other) const;
     bool operator!=(const AtomRef &other) const;
-    bool operator==(Atom *other) const;
     AtomRef operator[](std::size_t);
     AtomRef &operator++();
     AtomRef operator++(int);
