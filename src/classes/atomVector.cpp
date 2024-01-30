@@ -4,7 +4,7 @@
 #include "classes/atomVector.h"
 #include "classes/atom.h"
 
-AtomVector::AtomVector(int size) : atoms_(size) {}
+AtomVector::AtomVector(int size) : atoms_(size), rs_(size) {}
 std::size_t AtomVector::size() const { return atoms_.size(); }
 
 AtomRef AtomVector::begin() { return AtomRef(0, *this); }
@@ -18,22 +18,33 @@ AtomRef AtomVector::operator[](std::size_t index) { return AtomRef(index, *this)
 const AtomRef AtomVector::operator[](std::size_t index) const { return AtomRef(index, *this); }
 
 // Modifiers
-void AtomVector::clear() { atoms_.clear(); }
-void AtomVector::reserve(std::size_t newCapacity) { atoms_.reserve(newCapacity); }
+void AtomVector::clear()
+{
+    atoms_.clear();
+    rs_.clear();
+}
+void AtomVector::reserve(std::size_t newCapacity)
+{
+    atoms_.reserve(newCapacity);
+    rs_.reserve(newCapacity);
+}
 
 AtomRef AtomVector::erase(const AtomRef pos)
 {
+    rs_.erase(rs_.begin() + pos.globalAtomIndex());
     auto result = atoms_.erase(atoms_.begin() + pos.globalAtomIndex());
     return AtomRef(result - atoms_.begin(), *this);
 }
 AtomRef AtomVector::erase(const AtomRef first, const AtomRef last)
 {
+    rs_.erase(rs_.begin() + first.globalAtomIndex(), rs_.begin() + last.globalAtomIndex());
     auto result = atoms_.erase(atoms_.begin() + first.globalAtomIndex(), atoms_.begin() + last.globalAtomIndex());
     return AtomRef(result - atoms_.begin(), *this);
 }
 AtomRef AtomVector::emplace_back()
 {
     atoms_.emplace_back();
+    rs_.emplace_back();
     return AtomRef(atoms_.size() - 1, *this);
 }
 
@@ -93,10 +104,10 @@ const std::vector<const ExternalPotential *> &AtomRef::targetedPotentials() cons
     return origin_->atoms_[index_].targetedPotentials();
 }
 // Return coordinates
-const Vec3<double> &AtomRef::r() const { return origin_->atoms_[index_].r(); }
+const Vec3<double> &AtomRef::r() const { return origin_->rs_[index_]; }
 
 // Set coordinates
-void AtomRef::setCoordinates(const Vec3<double> &newr) { origin_->atoms_[index_].setCoordinates(newr); }
+void AtomRef::setCoordinates(const Vec3<double> &newr) { origin_->rs_[index_] = newr; }
 
 // Set cell in which the atom exists
 void AtomRef::setCell(Cell *cell) { origin_->atoms_[index_].cell_ = cell; }
@@ -111,26 +122,23 @@ const AtomRef &AtomRef::operator*() const { return *this; }
 const SpeciesAtom *AtomRef::speciesAtom() const { return origin_->atoms_[index_].speciesAtom(); }
 
 // Set coordinates
-void AtomRef::setCoordinates(double dx, double dy, double dz) { origin_->atoms_[index_].setCoordinates(dx, dy, dz); }
+void AtomRef::setCoordinates(double dx, double dy, double dz) { origin_->rs_[index_] = Vec3<double>(dx, dy, dz); }
 // Translate coordinates
-void AtomRef::translateCoordinates(const Vec3<double> &delta) { origin_->atoms_[index_].translateCoordinates(delta); }
+void AtomRef::translateCoordinates(const Vec3<double> &delta) { origin_->rs_[index_] += delta; }
 // Translate coordinates
-void AtomRef::translateCoordinates(double dx, double dy, double dz)
-{
-    origin_->atoms_[index_].translateCoordinates(dx, dy, dz);
-}
+void AtomRef::translateCoordinates(double dx, double dy, double dz) { origin_->rs_[index_] += Vec3<double>(dx, dy, dz); }
 // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
 SpeciesAtom::ScaledInteractionDefinition AtomRef::scaling(const AtomRef j) const { return origin_->atoms_[index_].scaling(j); }
 // Set coordinates
-void AtomRef::set(const Vec3<double> r) { origin_->atoms_[index_].set(r); }
+void AtomRef::set(const Vec3<double> r) { origin_->rs_[index_] = r; }
 // Set coordinates
-void AtomRef::set(double rx, double ry, double rz) { origin_->atoms_[index_].set(rx, ry, rz); }
+void AtomRef::set(double rx, double ry, double rz) { origin_->rs_[index_].set(rx, ry, rz); }
 // Return x-coordinate
-double AtomRef::x() const { return origin_->atoms_[index_].x(); }
+double AtomRef::x() const { return origin_->rs_[index_].x; }
 // Return y-coordinate
-double AtomRef::y() const { return origin_->atoms_[index_].y(); }
+double AtomRef::y() const { return origin_->rs_[index_].y; }
 // Return z-coordinate
-double AtomRef::z() const { return origin_->atoms_[index_].z(); }
+double AtomRef::z() const { return origin_->rs_[index_].z; }
 
 // Return Molecule in which this Atom exists
 const std::shared_ptr<Molecule> &AtomRef::molecule() const { return origin_->atoms_[index_].molecule(); }

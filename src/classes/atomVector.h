@@ -19,6 +19,7 @@ class AtomVector
 {
     private:
     std::vector<Atom> atoms_;
+    std::vector<Vec3<double>> rs_;
 
     public:
     AtomVector(int size = 0);

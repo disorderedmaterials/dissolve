@@ -23,26 +23,12 @@ class Atom
      */
     friend class AtomRef;
     private:
-    // Coordinates
-    Vec3<double> r_;
     // Assigned AtomType index, local to Configuration (for partial indexing etc.)
     int localTypeIndex_{-1};
     // Assigned master AtomType index (for pair potential indexing)
     int masterTypeIndex_{-1};
 
     public:
-    // Set coordinates
-    void set(const Vec3<double> r);
-    // Set coordinates
-    void set(double rx, double ry, double rz);
-    // Return coordinates
-    const Vec3<double> &r() const;
-    // Return x-coordinate
-    double x() const;
-    // Return y-coordinate
-    double y() const;
-    // Return z-coordinate
-    double z() const;
     // Set local AtomType index
     void setLocalTypeIndex(int id);
     // Return local AtomType index
@@ -72,19 +58,6 @@ class Atom
     void setMolecule(std::shared_ptr<Molecule> mol);
     // Return Molecule in which this Atom exists
     const std::shared_ptr<Molecule> &molecule() const;
-
-    /*
-     * Coordinate Manipulation
-     */
-    public:
-    // Set coordinates
-    void setCoordinates(const Vec3<double> &newr);
-    // Set coordinates
-    void setCoordinates(double dx, double dy, double dz);
-    // Translate coordinates
-    void translateCoordinates(const Vec3<double> &delta);
-    // Translate coordinates
-    void translateCoordinates(double dx, double dy, double dz);
 
     /*
      * Intramolecular Information
