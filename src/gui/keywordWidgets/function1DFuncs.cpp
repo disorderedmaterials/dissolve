@@ -130,9 +130,6 @@ void Function1DKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutat
 // Update keyword data based on widget values
 void Function1DKeywordWidget::updateKeywordData()
 {
-    // Grab the target Function1D
-    auto &function = keyword_->data();
-
     // Get current data from widgets
     auto func = ui_.FunctionCombo->currentData().value<Functions::Function1D>();
     std::vector<double> newParams;
