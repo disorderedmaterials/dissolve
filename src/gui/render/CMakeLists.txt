@@ -105,7 +105,7 @@ if(MSVC)
 endif(MSVC)
 
 if(CONAN)
-  target_link_libraries(render PRIVATE base CONAN_PKG::antlr4-cppruntime)
+  target_link_libraries(render PRIVATE base)
 else(CONAN)
   target_link_libraries(render PRIVATE base antlr4-runtime)
 endif(CONAN)

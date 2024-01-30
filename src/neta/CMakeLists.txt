@@ -60,8 +60,6 @@ target_include_directories(
                ${ANTLR_NETAGrammarParser_OUTPUT_DIR}
 )
 
-if(CONAN)
-  target_link_libraries(neta base CONAN_PKG::antlr4-cppruntime)
-else(CONAN)
+if(NOT CONAN)
   target_link_libraries(neta base antlr4-runtime)
-endif(CONAN)
+endif(NOT CONAN)

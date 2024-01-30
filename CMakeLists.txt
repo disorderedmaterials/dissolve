@@ -26,10 +26,18 @@ set(CMAKE_CXX_STANDARD 17)
 # Include Conan Packages
 option(CONAN "Use conan to find dependencies" ON)
 if(CONAN)
+  # Add local Modules dir to cmake search path
+  list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
+  list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
+
+  include(conan-dissolve)
+
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-  conan_basic_setup(TARGETS)
+
   include_directories(${CONAN_INCLUDE_DIRS_TOML11})
   include_directories(${CONAN_INCLUDE_DIRS_FMT})
+  include_directories(${CONAN_INCLUDE_DIRS_ANTLR4-CPPRUNTIME})
 else(CONAN)
   find_package(fmt REQUIRED)
   find_package(CLI11 REQUIRED)
@@ -56,15 +64,12 @@ if(MULTI_THREADING)
   if(CONAN)
     include_directories(${CONAN_INCLUDE_DIRS_ONETBB})
     include_directories(${CONAN_INCLUDE_DIRS_ONEDPL})
-    set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} CONAN_PKG::onetbb CONAN_PKG::onedpl)
+    set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} ${CONAN_TARGETS})
   else(CONAN)
     set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} $ENV{THREADING_LINK_LIBS})
   endif(CONAN)
   message("Threading Link Libs: ${THREADING_LINK_LIBS}")
 endif(MULTI_THREADING)
-
-# Add local Modules dir to cmake search path
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 
 # Find ANTLR4 Java
 include(FindANTLR)
@@ -97,6 +102,11 @@ if(GUI)
                QuickControls2
                REQUIRED
   )
+  if(NOT FREETYPE_INCLUDE_DIRS OR NOT FREETYPE_LIBRARIES)
+    # Add extra functions
+#    include(FindFreetype)
+    find_package(Freetype REQUIRED)
+  endif()
   if(NOT FTGL_INCLUDE_DIRS OR NOT FTGL_LIBRARIES)
     # Add extra functions
     include(FindFTGL)

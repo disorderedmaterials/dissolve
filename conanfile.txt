@@ -7,7 +7,7 @@ onetbb/2021.10.0
 onedpl/2022.3.0
 toml11/3.7.0
 antlr4-cppruntime/4.13.1
-freetype/2.13.2
+#freetype/2.13.2
 
 [generators]
 cmake
