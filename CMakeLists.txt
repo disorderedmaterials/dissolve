@@ -66,25 +66,33 @@ endif(PARALLEL)
 
 # Build with threads
 option(MULTI_THREADING "Enable threading using tbb" ON)
+set(THREADING_LINK_LIBS "")
 if(MULTI_THREADING)
   add_definitions("-DMULTITHREADING")
   find_package(TBB REQUIRED)
   include_directories(${TBB_INCLUDE_DIRS})
-  find_package(ParallelSTL REQUIRED)
-  include_directories(${pstl_ParallelSTL_INCLUDE_DIRS})
-  set(THREADING_LINK_LIBS ${TBB_LINK_LIBS} ${pstl_ParallelSTL_LINK_LIBS})
+  list(APPEND THREADING_LINK_LIBS ${TBB_LINK_LIBS})
+  if(CONAN)
+    find_package(ParallelSTL REQUIRED)
+    include_directories(${pstl_ParallelSTL_INCLUDE_DIRS})
+    list(APPEND THREADING_LINK_LIBS ${pstl_ParallelSTL_LINK_LIBS})
+  endif(CONAN)
   message("Threading Link Libs: ${THREADING_LINK_LIBS}")
 endif(MULTI_THREADING)
 
 if(GUI)
-  if(CONAN)
-    set(CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
-    if(APPLE)
-      set(FREETYPE_LIBRARIES CONAN_PKG::freetype)
-      set(FREETYPE_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS_FREETYPE})
-      set(GUI_LINK_LIBS CONAN_PKG::zlib CONAN_PKG::libpng CONAN_PKG::bzip2 CONAN_PKG::brotli)
-    endif(APPLE)
-  endif(CONAN)
+  if(CONAN AND APPLE)
+    include(FindFreetype)
+    include(FindFTGL)
+
+    list(APPEND CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
+    #set(FREETYPE_LIBRARIES CONAN_PKG::freetype)
+    #set(FREETYPE_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS_FREETYPE})
+    #set(GUI_LINK_LIBS CONAN_PKG::zlib CONAN_PKG::libpng CONAN_PKG::bzip2 CONAN_PKG::brotli)
+  endif(CONAN AND APPLE)
+
+  find_package(Freetype REQUIRED)
+  find_package(FTGL REQUIRED)
 
   find_package(OpenGL REQUIRED)
   find_package(
@@ -103,16 +111,6 @@ if(GUI)
                QuickControls2
                REQUIRED
   )
-  if(NOT FREETYPE_INCLUDE_DIRS OR NOT FREETYPE_LIBRARIES)
-    # Add extra functions
-    include(FindFreetype)
-    find_package(Freetype REQUIRED)
-  endif()
-  if(NOT FTGL_INCLUDE_DIRS OR NOT FTGL_LIBRARIES)
-    # Add extra functions
-    include(FindFTGL)
-    find_package(FTGL REQUIRED)
-  endif()
   add_definitions(-DQT_NO_KEYWORDS)
 
   # Make sure CMake won't try to generate rules for moc (we will do it ourselves)
