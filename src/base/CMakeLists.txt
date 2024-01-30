@@ -31,8 +31,5 @@ add_library(
 )
 
 target_include_directories(base PRIVATE ${PROJECT_SOURCE_DIR}/src)
-if(CONAN)
-  target_link_libraries(base PUBLIC ${THREADING_LINK_LIBS})
-else(CONAN)
-  target_link_libraries(base PUBLIC fmt::fmt ${THREADING_LINK_LIBS})
-endif(CONAN)
+
+target_link_libraries(base PUBLIC ${THREADING_LINK_LIBS})

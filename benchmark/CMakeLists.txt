@@ -21,8 +21,7 @@ if(CONAN)
     benchmarks
     PRIVATE benchmark::benchmark
     PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
-    PRIVATE ${EXTRA_LINK_LIBS} ${THREADING_LINK_LIBS}
-    INTERFACE CONAN_PKG::fmt CONAN_PKG::cli11 CONAN_PKG::antlr4-cppruntime
+    PRIVATE ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
   )
 else(CONAN)
   target_link_libraries(

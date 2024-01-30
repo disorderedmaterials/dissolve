@@ -3,7 +3,7 @@
 # Set policy for GoogleTest
 cmake_policy(SET CMP0054 NEW)
 include(FindGTest)
-#find_package(GTest REQUIRED)
+# find_package(GTest REQUIRED)
 
 function(dissolve_add_test)
 

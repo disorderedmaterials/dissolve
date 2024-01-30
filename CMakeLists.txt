@@ -23,62 +23,63 @@ cmake_policy(SET CMP0020 NEW)
 # Request C++17 Standard Support (Required for std::optional and auto types in lambda parameters)
 set(CMAKE_CXX_STANDARD 17)
 
+# Add our custom module search path
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
+
 # Include Conan Packages
 option(CONAN "Use conan to find dependencies" ON)
 if(CONAN)
-  # Add local Modules dir to cmake search path
-  list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
+  # Add local dirs to cmake Module search path
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
   list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 
   include(conan-dissolve)
-
-  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-
-  include_directories(${CONAN_INCLUDE_DIRS_TOML11})
-  include_directories(${CONAN_INCLUDE_DIRS_FMT})
-  include_directories(${CONAN_INCLUDE_DIRS_ANTLR4-CPPRUNTIME})
-else(CONAN)
-  find_package(fmt REQUIRED)
-  find_package(CLI11 REQUIRED)
-  find_package(toml11 REQUIRED)
-  find_package(pugixml REQUIRED)
-  include_directories(${AntlrRuntime_INCLUDE_DIRS})
-  link_directories(${AntlrRuntime_LINK_DIRS})
 endif(CONAN)
 
+# Find core dependencies
+set(CORE_LINK_LIBS "")
+find_package(fmt REQUIRED)
+include_directories(${fmt_INCLUDE_DIRS})
 add_compile_definitions(FMT_HEADER_ONLY)
+find_package(CLI11 REQUIRED)
+include_directories(${CLI11_INCLUDE_DIRS})
+find_package(toml11 REQUIRED)
+include_directories(${toml11_INCLUDE_DIRS})
+find_package(pugixml REQUIRED)
+include_directories(${pugixml_INCLUDE_DIRS})
+list(APPEND CORE_LINK_LIBS ${pugixml_LIBS})
+find_package(antlr4-runtime REQUIRED)
+include_directories(${antlr4-cppruntime_INCLUDE_DIRS})
+list(APPEND CORE_LINK_LIBS ${antlr4-cppruntime_LIBS})
+
+# Find Antlr4 Java Binary
+include(FindANTLR)
+find_package(ANTLR REQUIRED)
 
 # Catch defines
 if(PARALLEL)
   add_definitions("-DPARALLEL")
   find_package(MPI REQUIRED)
   include_directories(${MPI_INCLUDE_PATH})
-  set(EXTRA_LINK_LIBS ${EXTRA_LINK_LIBS} ${MPI_LIBRARIES})
+  list(APPEND CORE_LINK_LIBS ${MPI_LIBRARIES})
 endif(PARALLEL)
 
 # Build with threads
 option(MULTI_THREADING "Enable threading using tbb" ON)
 if(MULTI_THREADING)
   add_definitions("-DMULTITHREADING")
-  if(CONAN)
-    include_directories(${CONAN_INCLUDE_DIRS_ONETBB})
-    include_directories(${CONAN_INCLUDE_DIRS_ONEDPL})
-    set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} ${CONAN_TARGETS})
-  else(CONAN)
-    set(THREADING_LINK_LIBS ${THREADING_LINK_LIBS} $ENV{THREADING_LINK_LIBS})
-  endif(CONAN)
+  find_package(TBB REQUIRED)
+  include_directories(${TBB_INCLUDE_DIRS})
+  find_package(ParallelSTL REQUIRED)
+  include_directories(${pstl_ParallelSTL_INCLUDE_DIRS})
+  set(THREADING_LINK_LIBS ${TBB_LINK_LIBS} ${pstl_ParallelSTL_LINK_LIBS})
   message("Threading Link Libs: ${THREADING_LINK_LIBS}")
 endif(MULTI_THREADING)
-
-# Find ANTLR4 Java
-include(FindANTLR)
-find_package(ANTLR REQUIRED)
 
 if(GUI)
   if(CONAN)
     set(CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
-    if (APPLE)
+    if(APPLE)
       set(FREETYPE_LIBRARIES CONAN_PKG::freetype)
       set(FREETYPE_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS_FREETYPE})
       set(GUI_LINK_LIBS CONAN_PKG::zlib CONAN_PKG::libpng CONAN_PKG::bzip2 CONAN_PKG::brotli)
@@ -104,7 +105,7 @@ if(GUI)
   )
   if(NOT FREETYPE_INCLUDE_DIRS OR NOT FREETYPE_LIBRARIES)
     # Add extra functions
-#    include(FindFreetype)
+    include(FindFreetype)
     find_package(Freetype REQUIRED)
   endif()
   if(NOT FTGL_INCLUDE_DIRS OR NOT FTGL_LIBRARIES)
@@ -315,7 +316,7 @@ target_link_libraries(
   ${target_name}
   PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
   PRIVATE # External libs
-          ${EXTRA_LINK_LIBS} ${THREADING_LINK_LIBS}
+          ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
 )
 
 # Build GUI target executables
@@ -344,7 +345,7 @@ if(GUI)
             ${GUI_LINK_LIBS}
             ${FREETYPE_LIBRARIES}
             ${FTGL_LIBRARIES}
-            ${EXTRA_LINK_LIBS}
+            ${CORE_LINK_LIBS}
             ${THREADING_LINK_LIBS}
   )
 endif(GUI)

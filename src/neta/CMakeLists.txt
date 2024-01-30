@@ -56,10 +56,8 @@ add_library(
 )
 
 target_include_directories(
-  neta PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLRRUNTIME_INCLUDE_DIRS} ${ANTLR_NETAGrammarLexer_OUTPUT_DIR}
+  neta PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLR_NETAGrammarLexer_OUTPUT_DIR}
                ${ANTLR_NETAGrammarParser_OUTPUT_DIR}
 )
 
-if(NOT CONAN)
-  target_link_libraries(neta base antlr4-runtime)
-endif(NOT CONAN)
+target_link_libraries(neta base)

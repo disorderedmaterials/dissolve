@@ -155,9 +155,3 @@ target_include_directories(
 if(MSVC)
   target_compile_options(models PUBLIC /Zc:__cplusplus)
 endif(MSVC)
-
-if(CONAN)
-  target_link_libraries(models INTERFACE CONAN_PKG::pugixml PUBLIC ${THREADING_LINK_LIBS})
-else(CONAN)
-  target_link_libraries(models PUBLIC pugixml::pugixml ${THREADING_LINK_LIBS})
-endif(CONAN)

@@ -22,6 +22,5 @@ add_library(
 )
 
 target_include_directories(main PRIVATE ${PROJECT_SOURCE_DIR}/src ${CONAN_INCLUDE_DIRS})
-if(NOT CONAN)
-  target_link_libraries(main PRIVATE fmt::fmt CLI11::CLI11 toml11::toml11)
-endif(NOT CONAN)
+
+target_link_libraries(main PRIVATE fmt::fmt CLI11::CLI11 toml11::toml11)
