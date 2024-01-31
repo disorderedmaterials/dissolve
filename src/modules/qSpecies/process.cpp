@@ -23,6 +23,9 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     // involved in NF-BO-NF interactions once we have the available NF sites
     SiteSelector allOxygenSites(targetConfiguration_, bridgingOxygenSpeciesSites_);
 
+    // Total oxygen sites
+    auto totalSites = allOxygenSites.sites().size();
+
     // Select all NF centres
     SiteSelector NF(targetConfiguration_, networkFormerSpeciesSites_);
 
@@ -76,6 +79,12 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     // Accumulate histogram averages
     qSpeciesHistogram.accumulate();
     oxygenSitesHistogram.accumulate();
+
+    // for (auto x : qSpeciesHistogram.data().values())
+    //     qSpeciesHistogram.data().values()[x] / totalSites;
+
+    oxygenSitesHistogram.data() /= totalSites;
+    qSpeciesHistogram.data() /= totalSites;
 
     // Create the display data
     processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = qSpeciesHistogram.data();
