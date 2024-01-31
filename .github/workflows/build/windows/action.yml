@@ -188,7 +188,7 @@ runs:
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
-    uses: actions/upload-artifact@v3
+    uses: actions/upload-artifact@v4
     with:
       name: windows-build-artifacts
       path: |

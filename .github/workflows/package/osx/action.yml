@@ -17,7 +17,7 @@ runs:
       path: ${{ runner.temp }}/qt
 
   - name: Download Raw Build Artifacts
-    uses: actions/download-artifact@v3
+    uses: actions/download-artifact@v4
     with:
       name: osx-build-artifacts
       path: ${{ github.workspace }}
@@ -71,7 +71,7 @@ runs:
       mv Dissolve-GUI-${dissolveVersion}.dmg packages/
 
   - name: Upload Package Artifacts
-    uses: actions/upload-artifact@v3
+    uses: actions/upload-artifact@v4
     with:
-      name: packages
+      name: packages-osx
       path: ${{ github.workspace }}/packages

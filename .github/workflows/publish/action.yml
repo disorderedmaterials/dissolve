@@ -13,15 +13,16 @@ runs:
   using: "composite"
   steps:
 
-  - name: Install singularity
-    uses: eWaterCycle/setup-singularity@v7
+  - name: Install Apptainer
+    uses: eWaterCycle/setup-apptainer@v2
     with:
-      singularity-version: 3.8.3
+      apptainer-version: 1.2.5
 
   - name: Download Artifacts
-    uses: actions/download-artifact@v3
+    uses: actions/download-artifact@v4
     with:
-      name: packages
+      pattern: packages-*
+      merge-multiple: true
       path: ${{ github.workspace }}/packages
 
   - name: Download Prerequisites
@@ -60,13 +61,13 @@ runs:
     shell: bash
     run: |
       echo "Release tag will be: latest"
-      singularity remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
-      ${SINGULARITY_ROOT}/bin/singularity push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:latest
+      apptainer remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
+      apptainer push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:latest
 
   - name: Publish on Harbor (Continuous)
     if: ${{ inputs.publish == 'true' && inputs.isRelease == 'false' }}
     shell: bash
     run: |
       echo "Release tag will be: continuous"
-      singularity remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
-      ${SINGULARITY_ROOT}/bin/singularity push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:continuous
+      apptainer remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
+      apptainer push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:continuous
