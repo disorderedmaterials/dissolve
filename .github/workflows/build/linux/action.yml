@@ -2,8 +2,6 @@ name: Build
 description: Build on Linux via nix
 
 inputs:
-  extraCMakeFlags:
-    default: ""
   target:
     default: "dissolve"
   cacheOnly:
