@@ -81,7 +81,6 @@
               ++ pkgs.lib.optionals threading [pkgs.tbb_2021_8 (onedpl pkgs) (onedpl pkgs).dev];
             nativeBuildInputs = pkgs.lib.optionals gui [ pkgs.wrapGAppsHook ];
 
-            TBB_DIR = "${pkgs.tbb_2021_8}";
             CTEST_OUTPUT_ON_FAILURE = "ON";
 
             cmakeFlags = [
@@ -92,8 +91,7 @@
               ("-DGUI=" + (cmake-bool gui))
               "-DBUILD_TESTS:bool=${cmake-bool checks}"
               "-DCMAKE_BUILD_TYPE=Release"
-            ] ++ pkgs.lib.optional threading
-              ("-DTHREADING_LINK_LIBS=${pkgs.tbb_2021_8}/lib/libtbb.so");
+            ];
             doCheck = checks;
             installPhase = ''
               mkdir -p $out/bin
@@ -178,16 +176,12 @@
           '';
 
 
-          AntlrRuntime_INCLUDE_DIRS =
-            "${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime";
-          AntlrRuntime_LINK_DIRS = "${pkgs.antlr4.runtime.cpp}/lib";
           CMAKE_CXX_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
           CMAKE_C_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
           QML_IMPORT_PATH = "${qt-idaaas.packages.${system}.qtdeclarative}/lib/qt-6/qml/";
           QML2_IMPORT_PATH = "${qt-idaaas.packages.${system}.qtdeclarative}/lib/qt-6/qml/";
-          THREADING_LINK_LIBS = "${pkgs.tbb_2021_8}/lib/libtbb.so";
         };
 
         apps = {
