@@ -85,8 +85,6 @@
             CTEST_OUTPUT_ON_FAILURE = "ON";
 
             cmakeFlags = [
-              "-DAntlrRuntime_INCLUDE_DIRS=${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime"
-              "-DAntlrRuntime_LINK_DIRS=${pkgs.antlr4.runtime.cpp}/lib"
               "-DCONAN=OFF"
               "-G Ninja"
               ("-DMULTI_THREADING=" + (cmake-bool threading))
