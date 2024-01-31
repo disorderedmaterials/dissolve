@@ -5,6 +5,7 @@
 #include "analyser/siteSelector.h"
 #include "main/dissolve.h"
 #include "math/integerHistogram1D.h"
+#include "math/integrator.h"
 #include "module/context.h"
 #include "modules/qSpecies/qSpecies.h"
 
@@ -22,9 +23,6 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     // Select all potential bridging oxygen sites - we will determine which actually are
     // involved in NF-BO-NF interactions once we have the available NF sites
     SiteSelector allOxygenSites(targetConfiguration_, bridgingOxygenSpeciesSites_);
-
-    // Total oxygen sites
-    auto totalSites = allOxygenSites.sites().size();
 
     // Select all NF centres
     SiteSelector NF(targetConfiguration_, networkFormerSpeciesSites_);
@@ -80,14 +78,16 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     qSpeciesHistogram.accumulate();
     oxygenSitesHistogram.accumulate();
 
-    // for (auto x : qSpeciesHistogram.data().values())
-    //     qSpeciesHistogram.data().values()[x] / totalSites;
+    // Averaged values for Q-Species
+    Data1D accumulatedQData = qSpeciesHistogram.accumulatedData();
+    auto sum = Integrator::absSum(qSpeciesHistogram.data());
+    accumulatedQData /= sum;
 
-    oxygenSitesHistogram.data() /= totalSites;
-    qSpeciesHistogram.data() /= totalSites;
+    // Averaged values for oxygen sites
+    auto freeOxygens = oxygenSitesHistogram.accumulatedData().value(0);
 
     // Create the display data
-    processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = qSpeciesHistogram.data();
+    processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = accumulatedQData;
 
     // Save data?
     if (exportFileAndFormat_.hasFilename())
