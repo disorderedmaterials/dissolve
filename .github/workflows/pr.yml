@@ -32,18 +32,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: macos-latest
-            osx_cmake_target: arm64
-            osx_conan_target: armv8
-          - os: macos-latest
-            osx_cmake_target: x86_64
-            osx_conan_target: x86_64
-          - os: windows-latest
+        os: [ macos-latest, macos-14, windows-latest ]
     runs-on: ${{ matrix.os }}
-    env:
-      OSX_CMAKE_TARGET: ${{ matrix.osx_cmake_target }}
-      OSX_CONAN_TARGET: ${{ matrix.osx_conan_target }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3

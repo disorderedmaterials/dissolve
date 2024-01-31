@@ -4,10 +4,6 @@ description: Build on OSX
 inputs:
   threading:
     default: true
-  antlrVersion:
-    default: "4.13.1"
-  ftglVersion:
-    default: "2.1.3-rc5"
   extraCMakeFlags:
     default: ""
   cacheOnly:
@@ -27,20 +23,16 @@ runs:
     with:
       python-version: ${{ env.pythonVersion }}
 
-  - name: Install Homebrew Dependencies
-    if: ${{ inputs.cacheOnly }}
+  - name: Install Homebrew Dependencies for Intel
+    if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
+
       set -ex
       brew update-reset
-      brew install ninja
-      PACKAGES=(libpng freetype ftgl antlr)
-      for PACKAGE in "${PACKAGES[@]}"
-      do
-        brew fetch --force --bottle-tag=arm64_monterey $PACKAGE
-        brew install $(brew --cache --bottle-tag=arm64_monterey $PACKAGE)
-      done
-      
+      brew install ftgl ninja
+      brew install antlr
+
   - name: Install Python Dependencies
     shell: bash
     run: |
@@ -64,6 +56,16 @@ runs:
   # Main Build
   #
 
+  - name: Retrieve Conan Cache
+    id: cache-conan
+    uses: actions/cache@v3
+    with:
+      key: osx-${{ runner.arch }}-conan-${{ env.conanHash }}
+      path: |
+        ~/.conan
+        ~/.conancache
+
+
   - name: Install Conan Dependencies
     shell: bash
     run: |
@@ -74,7 +76,8 @@ runs:
 
       mkdir build && cd build
       conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
-      conan install .. --build missing -s arch=armv8
+      conan install .. --build missing -s arch=${{ env.OSX_CONAN_TARGET }}
+  
 
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
@@ -83,49 +86,28 @@ runs:
       set -ex
 
       # Setup paths
-      # Must specify correct arm64 libs
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
       Qt6_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos
-      ANTLR_EXE=$(brew --prefix antlr)/antlr-${{ inputs.antlrVersion }}-complete.jar
-      FTGL_INCLUDE_DIRS=$(brew --prefix ftgl)/include/
-      FTGL_LIBRARIES=$(brew --prefix ftgl)/lib/libftgl.2.dylib
-
-      CMAKE_PARAMS=(
-        -DGUI:bool=true
-        -DMULTI_THREADING:bool=${{ inputs.threading }}
-        -DJava_JAVA_EXECUTABLE:path=$JAVA_HOME_21_X64/bin/java
-        -DANTLR_EXECUTABLE:string=$ANTLR_EXE
-        -DFTGL_INCLUDE_DIRS:path=$FTGL_INCLUDE_DIRS
-        -DFTGL_LIBRARIES:path=$FTGL_LIBRARIES
-        -DCMAKE_OSX_ARCHITECTURES:string="arm64"
-        -DQT_BASE_DIR=$QT_BASE_DIR
-      )
-
+      ANTLR_EXE=/usr/local/Cellar/antlr/${{ env.antlrVersion }}/antlr-${{ env.antlrVersion }}-complete.jar
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
       echo "JAVA HOME: $JAVA_HOME_21_X64"
 
       # Build
       cd build
-      cmake -G Ninja "${CMAKE_PARAMS[@]}" ${{ inputs.extraCMakeFlags }}  ../
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DJava_JAVA_EXECUTABLE:path=$JAVA_HOME_21_X64/bin/java -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DCMAKE_OSX_ARCHITECTURES:string="${{ env.OSX_CMAKE_TARGET }}" ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
       cmake --build . --config Release
-
       cd ../
 
       # Deploy Conan dependencies for ease
       mkdir deploy && cd deploy
-      conan install .. -g deploy -s arch=armv8
-
-      # Copy over ftgl so it can be shipped with the bundle
-      mkdir ftgl
-      cp $(brew --prefix ftgl)/lib/libftgl.2.dylib ftgl
-      cp $(brew --prefix ftgl)/lib/libftgl.2.1.3.dylib ftgl
+      conan install .. -g deploy -s arch=${{ env.OSX_CONAN_TARGET }}
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v4
     with:
-      name: osx-build-artifacts-silicon
+      name: osx-build-artifacts
       path: |
         ${{ github.workspace }}/build
         ${{ github.workspace }}/deploy
