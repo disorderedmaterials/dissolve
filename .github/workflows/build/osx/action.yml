@@ -65,20 +65,6 @@ runs:
         ~/.conan
         ~/.conancache
 
-
-  - name: Install Conan Dependencies
-    shell: bash
-    run: |
-      set -ex
-
-      # Setup paths
-      export PATH="$(python3 -m site --user-base)/bin:$PATH"
-
-      mkdir build && cd build
-      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
-      conan install .. --build missing -s arch=${{ env.OSX_CONAN_TARGET }}
-  
-
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
@@ -93,15 +79,18 @@ runs:
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
       echo "JAVA HOME: $JAVA_HOME_21_X64"
 
+      # Set conan cache location
+      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
+
       # Build
-      cd build
-      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DJava_JAVA_EXECUTABLE:path=$JAVA_HOME_21_X64/bin/java -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DCMAKE_OSX_ARCHITECTURES:string="${{ env.OSX_CMAKE_TARGET }}" ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
+      mkdir build && cd build
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DJava_JAVA_EXECUTABLE:path=$JAVA_HOME_21_X64/bin/java -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
       cmake --build . --config Release
       cd ../
 
       # Deploy Conan dependencies for ease
       mkdir deploy && cd deploy
-      conan install .. -g deploy -s arch=${{ env.OSX_CONAN_TARGET }}
+      conan install ../build -g deploy
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
