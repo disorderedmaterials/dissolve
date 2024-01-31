@@ -16,21 +16,12 @@ add_executable(benchmarks benchmarks.cpp ${benchmark_files})
 
 target_include_directories(benchmarks PRIVATE ${PROJECT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-if(CONAN)
-  target_link_libraries(
-    benchmarks
-    PRIVATE benchmark::benchmark
-    PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
-    PRIVATE ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
-  )
-else(CONAN)
-  target_link_libraries(
-    benchmarks
-    PRIVATE benchmark::benchmark
-    PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
-    PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} ${THREADING_LINK_LIBS}
-  )
-endif(CONAN)
+target_link_libraries(
+  benchmarks
+  PRIVATE benchmark::benchmark
+  PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
+  PRIVATE ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
+)
 
 target_compile_options(benchmarks PRIVATE -O3)
 
