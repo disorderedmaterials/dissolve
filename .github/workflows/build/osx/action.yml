@@ -77,7 +77,7 @@ runs:
       then
         JAVA_RUNTIME=`which java`
       else
-        JAVA_RUNTIME=${$JAVA_HOME_21_X64}
+        JAVA_RUNTIME=${JAVA_HOME_21_X64}/bin/java
       fi
       echo "Java Runtime Executable: ${JAVA_RUNTIME}"
 
