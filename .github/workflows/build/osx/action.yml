@@ -76,6 +76,7 @@ runs:
       ANTLR_EXE=/usr/local/Cellar/antlr/${{ env.antlrVersion }}/antlr-${{ env.antlrVersion }}-complete.jar
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
       echo "JAVA HOME: $JAVA_HOME_21_X64"
+      which java
 
       # Set conan cache location
       conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
