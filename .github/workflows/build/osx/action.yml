@@ -73,15 +73,20 @@ runs:
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos
       ANTLR_EXE=/usr/local/Cellar/antlr/${{ env.antlrVersion }}/antlr-${{ env.antlrVersion }}-complete.jar
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
-      echo "JAVA HOME: $JAVA_HOME_21_X64"
-      which java
+      if [ "${JAVA_HOME_21_X64}" == "" ]
+      then
+        JAVA_RUNTIME=`which java`
+      else
+        JAVA_RUNTIME=${$JAVA_HOME_21_X64}
+      fi
+      echo "Java Runtime Executable: ${JAVA_RUNTIME}"
 
       # Set conan cache location
       conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
 
       # Build
       mkdir build && cd build
-      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DJava_JAVA_EXECUTABLE:path=$JAVA_HOME_21_X64/bin/java -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../
       cmake --build . --config Release
       cd ../
 
