@@ -31,7 +31,7 @@ runs:
 
   - name: Install Python Dependencies
     shell: bash
-    run: pip3 install --user aqtinstall conan==1.58.0
+    run: pip3 install --user aqtinstall conan==1.*
 
   #
   # Retrieve Qt cache (or install it)
@@ -148,22 +148,17 @@ runs:
     if: ${{ steps.cache-conan.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
+      export PATH="$(python3 -m site --user-base)/bin:$PATH"
       conan profile new default --detect
       conan profile update settings.compiler="Visual Studio" default
       conan profile update settings.compiler.version=17 default
-
-  - name: Install Conan Dependencies
-    shell: bash
-    run: |
-      mkdir build && cd build
-      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
-      conan install .. --build missing
 
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
       # Setup environment
+      export PATH="$(python3 -m site --user-base)/bin:$PATH"
       Qt6_DIR="${RUNNER_TEMP}\qt\${{ env.qtVersion }}\msvc2019_64"
       ANTLR_EXE="${RUNNER_TEMP}\antlr-${{ env.antlrVersion }}-complete.jar"
       export PATH="${Qt6_DIR}\bin;$PATH"
@@ -173,8 +168,11 @@ runs:
       LIB="${RUNNER_TEMP}\ftgl-install\lib;$LIB"
       JAVA_EXE="${JAVA_HOME_21_X64}\bin\java.exe"
 
+      # Set conan cache location
+      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
+
       # Build
-      cd build
+      mkdir build && cd build
       cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true ${{ inputs.extraCMakeFlags }}
       cmake --build . --config Release --target keywordWidgets
       cmake --build . --config Release

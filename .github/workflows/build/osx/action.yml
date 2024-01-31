@@ -34,7 +34,7 @@ runs:
   - name: Install Python Dependencies
     shell: bash
     run: |
-      pip3 install --user aqtinstall conan==1.58.0
+      pip3 install --user aqtinstall conan==1.*
 
   - name: Retrieve Qt Cache
     id: cache-qt
