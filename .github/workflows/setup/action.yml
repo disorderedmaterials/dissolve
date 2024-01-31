@@ -4,7 +4,7 @@ description: Set up environment variables
 inputs:
   pythonVersion:
     type: string
-    default: 3.9
+    default: 3.13
   qtVersion:
     type: string
     default: 6.4.2
