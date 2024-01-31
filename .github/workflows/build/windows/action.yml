@@ -31,7 +31,7 @@ runs:
 
   - name: Install Python Dependencies
     shell: bash
-    run: pip3 install --user aqtinstall conan==1.*
+    run: pip3 install aqtinstall conan==1.*
 
   #
   # Retrieve Qt cache (or install it)
