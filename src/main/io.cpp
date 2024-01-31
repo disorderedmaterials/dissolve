@@ -232,11 +232,11 @@ bool Dissolve::loadInput(std::string_view filename)
             deserialise(contents);
             return true;
         }
-        catch (toml::syntax_error e)
+        catch (toml::syntax_error &e)
         {
             Messenger::error("Syntax error in TOML file (are you sure you meant the .toml extension?).\n\n{}", e.what());
         }
-        catch (toml::type_error e)
+        catch (toml::type_error &e)
         {
             Messenger::error("Could not load TOML file\n\n{}", e.what());
         }
@@ -262,7 +262,7 @@ bool Dissolve::loadInput(std::string_view filename)
         deserialise(contents);
         return true;
     }
-    catch (toml::syntax_error e)
+    catch (toml::syntax_error &e)
     {
         // The file didn't have TOML syntax, so try the original parser
         // Open file and check that we're OK to proceed reading from it
@@ -279,7 +279,7 @@ bool Dissolve::loadInput(std::string_view filename)
 
         return result;
     }
-    catch (toml::type_error e)
+    catch (toml::type_error &e)
     {
         // The file *was* a TOML file, but it had problems loading
         Messenger::error("Could not load TOML file\n\n{}", e.what());
