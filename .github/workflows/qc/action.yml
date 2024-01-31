@@ -3,8 +3,6 @@ name: Quality Control
 runs:
   using: "composite"
   steps:
-  - name: Setup Python
-    uses: actions/setup-python@v4
 
   - name: Install Dependencies
     shell: bash

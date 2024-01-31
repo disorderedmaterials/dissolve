@@ -5,9 +5,6 @@ runs:
   using: "composite"
   steps:
 
-  - name: Setup Python
-    uses: actions/setup-python@v4
-
   - name: Retrieve Qt Cache
     uses: actions/cache@v3
     with:
