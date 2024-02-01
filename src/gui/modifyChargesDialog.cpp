@@ -8,8 +8,6 @@
 #include <QQmlContext>
 #include <QQuickItem>
 
-#include <QDebug>
-
 ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *dialogModel, ModifyChargesModel::Modify modify) : QDialog(parent)
 {
     view_ = new QQuickWidget(this);
@@ -18,8 +16,9 @@ ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *di
     view_->setSource(QUrl("qrc:/dialogs/qml/ModifyChargesDialog.qml"));
 
     auto root = view_->rootObject();
-    dialogModel->setModifier(modify);
-    dialogModel->setSpinBox(root->findChild<QObject*>("spinBox"));
+    auto spinBox = root->findChild<QObject*>("spinBox");
+
+    initializeSpinBox(spinBox)
 
     view_->setResizeMode(QQuickWidget::SizeRootObjectToView);
 
@@ -29,5 +28,19 @@ ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *di
 
     QObject::connect(dialogModel, SIGNAL(cancelSelection()), this, SLOT(reject()));
     QObject::connect(dialogModel, SIGNAL(acceptSelection()), this, SLOT(accept()));
-    QObject::connect(this, SIGNAL(rejected()), dialogModel, SLOT(resetSpinBox()));
+}
+
+void initializeSpinBox(QObject *spinBox, ModifyChargesModel::Modify modify) 
+{    
+    switch(modify) {
+        case ModifyChargesModel::Scaling:
+            spinBox->setProperty("value", dialogModel->scaleValue());
+            break;
+        case ModifyChargesModel::Smoothing:
+            spinBox->setProperty("value", dialogModel->smoothValue());
+            break;
+        case ModifyChargesModel::ReduceSigFig:
+            spinBox->setProperty("value", dialogModel->sigFigValue());
+            break;
+    }
 }

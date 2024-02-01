@@ -24,6 +24,10 @@ void ModifyChargesModel::setScaleType(ScaleType option) { scaleType_ = option; }
 
 ModifyChargesModel::ScaleType ModifyChargesModel::getScaleType() { return scaleType_; }
 
+void ModifyChargesModel::setModifier(ModifyChargesModel::Modify option) { modify_ = option; }
+
+ModifyChargesModel::Modify ModifyChargesModel::getModifier() { return modify_; }
+
 bool ModifyChargesModel::scale(Species *species, bool showDialogOnError = true)
 {
     auto scaleFactor = scaleValue();
@@ -65,27 +69,4 @@ void ModifyChargesModel::reduceSignificantFigures(Species *species)
     auto significantFigures = sigFigValue();
     for (auto &atom : species->atoms())
         atom.setCharge(std::round(atom.charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures));
-}
-
-ModifyChargesModel::Modify ModifyChargesModel::getModifier() { return modify_; }
-
-void ModifyChargesModel::setModifier(ModifyChargesModel::Modify option) { modify_ = option; }
-
-void ModifyChargesModel::setSpinBox(QObject* object) { spinBox_ = object; }
-
-void ModifyChargesModel::resetSpinBox() 
-{ 
-    switch(modify_) {
-        case ModifyChargesModel::Scaling:
-            spinBox_->setProperty("value", currentScaleValue_); 
-            break;
-        case ModifyChargesModel::Smoothing:
-            spinBox_->setProperty("value", currentSmoothValue_); 
-            break;
-        case ModifyChargesModel::ReduceSigFig:
-            spinBox_->setProperty("value", currentSigFigValue_); 
-            break;
-        default:
-            break;
-    }
 }

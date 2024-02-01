@@ -54,12 +54,6 @@ class ModifyChargesModel : public QObject
     void smooth(Species*);
     // Reduce significant figures on species atoms charges
     void reduceSignificantFigures(Species*);
-    // Sets a pointer to the dialog's spinbox
-    void setSpinBox(QObject*);
-
-    public Q_SLOTS:
-    // Resets the spinbox to the current modifier value
-    void resetSpinBox();
 
     private:
     double currentScaleValue_{1.0};
@@ -68,8 +62,6 @@ class ModifyChargesModel : public QObject
 
     ScaleType scaleType_;
     Modify modify_;
-
-    QObject *spinBox_;
 
     Q_SIGNALS:
     void valueSet();

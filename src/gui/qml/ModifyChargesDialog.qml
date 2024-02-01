@@ -156,7 +156,6 @@ Page {
                 from: modify === ModifyChargesModel.ReduceSigFig ? 0 : -100
                 stepSize: 1
                 to: 100
-                value: getModifierValue(modify)
             }
             RowLayout {
                 Layout.alignment: Qt.AlignRight
