@@ -71,8 +71,13 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
       Qt6_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos
-      ANTLR_EXE=/usr/local/Cellar/antlr/${{ env.antlrVersion }}/antlr-${{ env.antlrVersion }}-complete.jar
+
+      # Find ANTLR4
+      brew --prefix antlr
+      ANTLR_EXE=$(brew --prefix antlr)/antlr-${{ env.antlrVersion }}-complete.jar
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
+
+      # Make sure we have a Java binary path - $JAVA_HOME_21_X64 does not appear to work on Silicon
       if [ "${JAVA_HOME_21_X64}" == "" ]
       then
         JAVA_RUNTIME=`which java`
