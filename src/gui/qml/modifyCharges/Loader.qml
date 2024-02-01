@@ -21,18 +21,13 @@ Page {
     width: 400
     visible: true
 
-    Item {
+    Loader {
+        id: loader
         anchors.fill: parent
         anchors.margins: 10
-
-        Loader {
-            id: loader
-            anchors.fill: parent
-            sourceComponent: {
-                var path = modify === ModifyChargesModel.Scaling ? "ScaleLayout.qml" : "Layout.qml" 
-                loader.setSource(qsTr("qrc:/dialogs/qml/modifyCharges/")+path, { "dialogModel" : dialogModel, "modify" : modify })
-            }
+        sourceComponent: {
+            var path = modify === ModifyChargesModel.Scaling ? "ScaleLayout.qml" : "Layout.qml" 
+            loader.setSource(qsTr("qrc:/dialogs/qml/modifyCharges/")+path, { "dialogModel" : dialogModel, "modify" : modify })
         }
     }
-
 }
