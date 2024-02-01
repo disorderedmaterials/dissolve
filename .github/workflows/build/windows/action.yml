@@ -168,11 +168,6 @@ runs:
       cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true
       cmake --build . --config Release --target keywordWidgets
       cmake --build . --config Release
-      cd ../
-
-      # Deploy Conan dependencies for ease
-      #mkdir deploy && cd deploy
-      #conan install ../build -g deploy
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
@@ -181,5 +176,4 @@ runs:
       name: windows-build-artifacts
       path: |
         ${{ github.workspace }}\build
-        ${{ github.workspace }}\deploy
       retention-days: 1
