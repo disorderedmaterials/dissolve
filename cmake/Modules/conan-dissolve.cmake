@@ -34,7 +34,7 @@ endif(BUILD_TESTS)
 conan_cmake_configure(
   REQUIRES
     ${_conan_requires}
-  GENERATORS cmake_find_package
+  GENERATORS cmake_find_package deploy
   OPTIONS
     ${_conan_options}
 )
