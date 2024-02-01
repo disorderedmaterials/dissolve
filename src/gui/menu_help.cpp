@@ -7,10 +7,10 @@
 
 void DissolveWindow::on_HelpOnlineManualAction_triggered(bool checked)
 {
-    QDesktopServices::openUrl(QUrl("https://www.projectdissolve.com/docs/"));
+    QDesktopServices::openUrl(QUrl("https://docs.projectdissolve.com"));
 }
 
 void DissolveWindow::on_HelpOnlineTutorialsAction_triggered(bool checked)
 {
-    QDesktopServices::openUrl(QUrl("https://www.projectdissolve.com/examples/"));
+    QDesktopServices::openUrl(QUrl("https://docs.projectdissolve.com/examples/"));
 }
