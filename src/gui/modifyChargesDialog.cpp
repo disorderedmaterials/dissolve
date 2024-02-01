@@ -18,7 +18,7 @@ ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *di
     auto root = view_->rootObject();
     auto spinBox = root->findChild<QObject*>("spinBox");
 
-    initializeSpinBox(spinBox)
+    initializeSpinBox(spinBox);
 
     view_->setResizeMode(QQuickWidget::SizeRootObjectToView);
 
