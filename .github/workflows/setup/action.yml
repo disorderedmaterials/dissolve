@@ -42,7 +42,7 @@ runs:
     - name: Get package versions
       shell: bash
       run: |
-        ANTLR_VERSION=$(cat conanfile.txt | sed -n -e 's%^.*antlr4-cppruntime/%%p')
+        ANTLR_VERSION=$(cat cmake/Modules/conan-dissolve.cmake | sed -n -e 's%^.*antlr4-cppruntime/%%p')
         echo "antlrVersion=${ANTLR_VERSION}" >> ${GITHUB_ENV}
 
     - name: Install Dependencies (OSX)
