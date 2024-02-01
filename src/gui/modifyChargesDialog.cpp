@@ -30,7 +30,7 @@ ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *di
     QObject::connect(dialogModel, SIGNAL(acceptSelection()), this, SLOT(accept()));
 }
 
-void initializeSpinBox(QObject *spinBox, ModifyChargesModel::Modify modify) 
+void ModifyChargesDialog::initializeSpinBox(QObject *spinBox, ModifyChargesModel::Modify modify) 
 {    
     switch(modify) {
         case ModifyChargesModel::Scaling:
