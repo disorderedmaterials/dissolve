@@ -18,7 +18,7 @@ ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *di
     auto root = view_->rootObject();
     auto spinBox = root->findChild<QObject*>("spinBox");
 
-    initializeSpinBox(spinBox);
+    initializeSpinBox(spinBox, dialogModel, modify);
 
     view_->setResizeMode(QQuickWidget::SizeRootObjectToView);
 
@@ -30,17 +30,17 @@ ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *di
     QObject::connect(dialogModel, SIGNAL(acceptSelection()), this, SLOT(accept()));
 }
 
-void ModifyChargesDialog::initializeSpinBox(QObject *spinBox, ModifyChargesModel::Modify modify) 
+void ModifyChargesDialog::initializeSpinBox(QObject *spinBox, ModifyChargesModel *model,ModifyChargesModel::Modify modify) 
 {    
     switch(modify) {
         case ModifyChargesModel::Scaling:
-            spinBox->setProperty("value", dialogModel->scaleValue());
+            spinBox->setProperty("value", model->scaleValue());
             break;
         case ModifyChargesModel::Smoothing:
-            spinBox->setProperty("value", dialogModel->smoothValue());
+            spinBox->setProperty("value", model->smoothValue());
             break;
         case ModifyChargesModel::ReduceSigFig:
-            spinBox->setProperty("value", dialogModel->sigFigValue());
+            spinBox->setProperty("value", model->sigFigValue());
             break;
     }
 }

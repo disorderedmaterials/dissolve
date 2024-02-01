@@ -9,6 +9,8 @@
 #include <QQuickWidget>
 #include <QCloseEvent>
 
+class ModifyChargesModel;
+
 class ModifyChargesDialog : public QDialog
 {
     Q_OBJECT
@@ -20,5 +22,5 @@ class ModifyChargesDialog : public QDialog
     private:
     QQuickWidget *view_{nullptr};
 
-    void initializeSpinBox(QObject*);
+    void initializeSpinBox(QObject*, ModifyChargesModel*, ModifyChargesModel::Modify);
 };
