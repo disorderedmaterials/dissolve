@@ -19,6 +19,7 @@ class Species;
 class SpeciesTab;
 class ModuleLayer;
 class LayerTab;
+class ModifyChargesModel;
 
 class DissolveWindow : public QMainWindow
 {

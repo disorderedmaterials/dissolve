@@ -18,6 +18,7 @@ class Box;
 class Cell;
 class Isotopologue;
 class Molecule;
+class ModifyChargesModel;
 
 // Dissolve Main Class
 class Dissolve : public Serialisable<>
@@ -101,6 +102,8 @@ class Dissolve : public Serialisable<>
     bool regeneratePairPotentials();
     // Revert potentials to reference state, clearing additional potentials
     void revertPairPotentials();
+
+    ModifyChargesModel *modifyChargesModel{nullptr};
 
     /*
      * Processing Module Data
