@@ -43,7 +43,7 @@ runs:
       #install_name_tool -add_rpath "/opt/homebrew/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
 
       ./prep-dmg -a Dissolve-GUI-${{ runner.arch }} -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
-      packageName = Dissolve-GUI-${{ runner.arch }}-${{ env.dissolveVersion }}
+      packageName=Dissolve-GUI-${{ runner.arch }}-${{ env.dissolveVersion }}
 
       # Copy dependencies into Frameworks folder in app bundle
       cp ./build/antlr4-cppruntime/lib/libantlr4-runtime.4.13.1.dylib ${packageName}/Dissolve-GUI.app/Contents/Frameworks/libantlr4-runtime.4.13.1.dylib
@@ -62,7 +62,7 @@ runs:
       set -ex
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
-      packageName = Dissolve-GUI-${{ runner.arch }}-${{ env.dissolveVersion }}
+      packageName=Dissolve-GUI-${{ runner.arch }}-${{ env.dissolveVersion }}
 
       # Fix icon link
       sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" ${packageName}/Dissolve-GUI.app/Contents/Info.plist
