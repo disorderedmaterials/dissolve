@@ -21,41 +21,16 @@ Page {
     width: 400
     visible: true
 
-    property double scaleValue
-    property double smoothValue
-    property double sigFigValue
-
     Item {
         anchors.fill: parent
-        anchors.margin: 10
+        anchors.margins: 10
 
         Loader {
             id: loader
             anchors.fill: parent
             sourceComponent: {
-                switch(modify) {
-                    case ModifyChargesModel.Scaling:
-                        loader.setSource("", {
-                            "dialogModel": dialogModel
-                            "modify": modify
-                            "spinBoxValue": scaleValue
-                        })
-                        break
-                    case ModifyChargesModel.Smoothing:
-                        loader.setSource("", {
-                            "dialogModel": dialogModel
-                            "modify": modify
-                            "spinBoxValue": smoothValue
-                        })
-                        break
-                    case ModifyChargesModel.ReduceSigFig:
-                        loader.setSource("", {
-                            "dialogModel": dialogModel
-                            "modify": modify
-                            "spinBoxValue": smoothValue
-                        })
-                        break
-                }
+                var path = modify === ModifyChargesModel.Scaling ? "ScaleLayout.qml" : "Layout.qml" 
+                loader.setSource(qsTr("qrc:/dialogs/qml/modifyCharges/")+path, { "dialogModel" : dialogModel, "modify" : modify })
             }
         }
     }

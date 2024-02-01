@@ -2,12 +2,16 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Dissolve
-import "widgets" as D
+import "../widgets" as D
 
 
 ColumnLayout {
     anchors.fill: parent
     spacing: 10
+
+    property ModifyChargesModel dialogModel
+    property int modify
+    property double scaleValue
 
     D.Text {
         Layout.fillHeight: true
@@ -18,14 +22,15 @@ ColumnLayout {
         wrapMode: Text.WordWrap
     }
     SpinBox {
-        id: scaleSpinBox
+        id: spinBox
+        objectName: "spinBox"
         Layout.alignment: Qt.AlignRight
         Layout.fillWidth: true
         editable: true
         from: -100
         stepSize: 1
         to: 100
-        value: dialogModel.value
+        value: dialogModel.scaleValue
     }
     RowLayout {
         Layout.alignment: Qt.AlignRight
@@ -38,7 +43,7 @@ ColumnLayout {
 
             onClicked: {
                 dialogModel.cancelSelection();
-                scaleSpinBox.value = dialogModel.value;
+                spinBox.value = dialogModel.scaleValue;
             }
         }
         D.Button {
@@ -47,7 +52,8 @@ ColumnLayout {
             text: "Scale"
 
             onClicked: {
-                dialogModel.processSelection(dialogModel.Scale, scaleSpinBox.value);
+                dialogModel.setScaleType(dialogModel.Scale);
+                dialogModel.updateScaleValue(spinBox.value);
                 dialogModel.acceptSelection();
             }
         }
@@ -57,7 +63,8 @@ ColumnLayout {
             text: "Scale To"
 
             onClicked: {
-                dialogModel.processSelection(dialogModel.ScaleTo, scaleSpinBox.value);
+                dialogModel.setScaleType(dialogModel.ScaleTo);
+                dialogModel.updateScaleValue(spinBox.value);
                 dialogModel.acceptSelection();
             }
         }

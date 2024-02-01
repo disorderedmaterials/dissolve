@@ -2,30 +2,51 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Dissolve
-import "widgets" as D
+import "../widgets" as D
 
 
 ColumnLayout {
     anchors.fill: parent
     spacing: 10
 
+    property ModifyChargesModel dialogModel
+    property int modify
+    property double smoothValue
+    property int sigFigValue
+
+    function processSelection(option, x) {
+        switch(option) {
+            case ModifyChargesModel.Smoothing:
+                dialogModel.updateSmoothValue(x)
+                break
+            case ModifyChargesModel.ReduceSigFig:
+                dialogModel.updateSigFigValue(x)
+                break
+            default:
+                break
+        }
+    }
+
     D.Text {
         Layout.fillHeight: true
         Layout.fillWidth: true
         font.pixelSize: 11
-        text: "Enter the scaling factor to apply to all atoms / the target sum to determine scaling factor from"
+        text: modify === ModifyChargesModel.Smoothing ? 
+        "Enter the target sum to smooth atom charges to" : 
+        "Enter the number of significant figures to use for all atoms"
         width: parent.width - 2 * parent.spacing
         wrapMode: Text.WordWrap
     }
     SpinBox {
-        id: scaleSpinBox
+        id: spinBox
+        objectName: "spinBox"
         Layout.alignment: Qt.AlignRight
         Layout.fillWidth: true
-        editable: true
-        from: -100
+        editable: modify === ModifyChargesModel.Smoothing ? true : false
+        from: modify === ModifyChargesModel.ReduceSigFig ? 0 : -100
         stepSize: 1
         to: 100
-        value: dialogModel.value
+        value: modify === ModifyChargesModel.Smoothing ? dialogModel.smoothValue : dialogModel.sigFigValue
     }
     RowLayout {
         Layout.alignment: Qt.AlignRight
@@ -38,26 +59,16 @@ ColumnLayout {
 
             onClicked: {
                 dialogModel.cancelSelection();
-                scaleSpinBox.value = dialogModel.value;
+                spinBox.value = modify === ModifyChargesModel.Smoothing ? dialogModel.smoothValue : dialogModel.sigFigValue;
             }
         }
         D.Button {
-            id: scaleButton
+            id: okButton
             icon.source: "qrc:/general/icons/true.svg"
-            text: "Scale"
+            text: "Ok"
 
             onClicked: {
-                dialogModel.processSelection(dialogModel.Scale, scaleSpinBox.value);
-                dialogModel.acceptSelection();
-            }
-        }
-        D.Button {
-            id: scaleToButton
-            icon.source: "qrc:/general/icons/true.svg"
-            text: "Scale To"
-
-            onClicked: {
-                dialogModel.processSelection(dialogModel.ScaleTo, scaleSpinBox.value);
+                processSelection(modify, spinBox.value);
                 dialogModel.acceptSelection();
             }
         }
