@@ -24,8 +24,8 @@ void DataNormaliser1D::normaliseBySphericalShell()
         return;
 
     // Derive first left-bin boundary from the delta between points 0 and 1
-    double leftBin = xAxis[0] - (xAxis[1] - xAxis[0]) * 0.5, rightBin, divisor;
-    double r1Cubed = pow(leftBin, 3), r2Cubed;
+    auto leftBin = xAxis[0] - (xAxis[1] - xAxis[0]) * 0.5, rightBin, divisor;
+    auto r1Cubed = pow(leftBin, 3), r2Cubed;
     for (auto n = 0; n < xAxis.size(); ++n)
     {
         // Get new right-bin from existing left bin boundary and current bin centre
