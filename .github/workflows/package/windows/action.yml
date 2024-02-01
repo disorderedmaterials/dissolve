@@ -56,7 +56,7 @@ runs:
       export FREETYPE_DIR="${RUNNER_TEMP}\freetype-install\bin"
       export FTGL_DIR="${RUNNER_TEMP}\ftgl-install\bin"
       export DISSOLVE_DIR="${GITHUB_WORKSPACE}\build\bin"
-      export DEPLOY_DIR="${GITHUB_WORKSPACE}\deploy"
+      export DEPLOY_DIR="${GITHUB_WORKSPACE}\build"
 
       # Run Inno Setup Compiler
       iscc.exe -O./ ./ci/windows/dissolve-gui.iss
