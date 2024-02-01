@@ -11,14 +11,14 @@ class Data1D;
 class DataNormaliser1D
 {
     public:
-    DataNormaliser1D(Data1D *targetData);
+    DataNormaliser1D(Data1D &targetData);
 
     /*
      * Target
      */
     private:
     // Target data to normalise
-    Data1D *targetData_{nullptr};
+    Data1D &targetData_;
 
     /*
      * Normalisation functions

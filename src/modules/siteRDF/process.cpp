@@ -53,7 +53,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     // RDF
     auto &dataRDF = processingData.realise<Data1D>("RDF", name(), GenericItem::InRestartFileFlag);
     dataRDF = histAB.accumulatedData();
-    DataNormaliser1D normaliserRDF(&dataRDF);
+    DataNormaliser1D normaliserRDF(dataRDF);
 
     // Normalise by A site population
     normaliserRDF.normaliseBySitePopulation(double(a.sites().size()));
@@ -67,7 +67,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     // CN
     auto &dataCN = processingData.realise<Data1D>("HistogramNorm", name(), GenericItem::InRestartFileFlag);
     dataCN = histAB.accumulatedData();
-    DataNormaliser1D normaliserCN(&dataCN);
+    DataNormaliser1D normaliserCN(dataCN);
     normaliserCN.normaliseBySitePopulation(double(a.sites().size()));
 
     const std::vector<std::string> rangeNames = {"A", "B", "C"};
