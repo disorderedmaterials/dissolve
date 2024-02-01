@@ -15,13 +15,7 @@ runs:
     uses: actions/download-artifact@v4
     with:
       name: osx-${{ runner.arch }}-build-artifacts
-      path: ${{ github.workspace }}
-
-  - name: TEST
-    shell: bash
-    run: |
-      ls -larth
-      ls -R
+      path: ${{ github.workspace }}/build
 
   - name: Install Python Dependencies
     shell: bash

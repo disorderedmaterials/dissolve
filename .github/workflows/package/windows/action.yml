@@ -35,7 +35,7 @@ runs:
     uses: actions/download-artifact@v4
     with:
       name: windows-build-artifacts
-      path: ${{ github.workspace }}
+      path: ${{ github.workspace }}/build
 
   - name: Install Chocolatey Dependencies
     shell: bash
