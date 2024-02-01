@@ -17,6 +17,12 @@ runs:
       name: osx-${{ runner.arch }}-build-artifacts
       path: ${{ github.workspace }}
 
+  - name: TEST
+    shell: bash
+    run: |
+      ls -larth
+      ls -R
+
   - name: Install Python Dependencies
     shell: bash
     run: |
