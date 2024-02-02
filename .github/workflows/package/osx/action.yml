@@ -43,7 +43,7 @@ runs:
       #install_name_tool -add_rpath "/opt/homebrew/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
 
       ./prep-dmg -a Dissolve-GUI-${{ runner.arch }} -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
-      dirName=Dissolve-GUI-${{ runner.arch }}
+      dirName=Dissolve-GUI-${{ runner.arch }}.app
       packageName=Dissolve-GUI-${{ runner.arch }}-${{ env.dissolveVersion }}
 
       # Copy dependencies into Frameworks folder in app bundle
