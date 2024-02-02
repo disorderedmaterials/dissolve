@@ -63,7 +63,7 @@ jobs:
         target: ${{ matrix.target }}
 
   Package:
-    needs: [ Build, BuildLinux ]
+    needs: Build
     strategy:
       fail-fast: false
       matrix:
@@ -78,7 +78,7 @@ jobs:
         uses: "./.github/workflows/package"
 
   Publish:
-    needs: Package
+    needs: [ Package, BuildLinux ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
