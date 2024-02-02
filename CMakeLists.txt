@@ -98,18 +98,10 @@ if(MULTI_THREADING)
 endif(MULTI_THREADING)
 
 if(GUI)
-  if(CONAN AND APPLE)
-    include(FindFreetype)
-    include(FindFTGL)
-
-    list(APPEND CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
-    # set(FREETYPE_LIBRARIES CONAN_PKG::freetype) set(FREETYPE_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS_FREETYPE}) set(GUI_LINK_LIBS
-    # CONAN_PKG::zlib CONAN_PKG::libpng CONAN_PKG::bzip2 CONAN_PKG::brotli)
-  endif(CONAN AND APPLE)
-
   find_package(Freetype REQUIRED)
   find_package(FTGL REQUIRED)
 
+  list(APPEND CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
   find_package(OpenGL REQUIRED)
   find_package(
     Qt6
