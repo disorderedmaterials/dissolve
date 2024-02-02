@@ -65,7 +65,7 @@ runs:
       sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" ${packageName}/${appDirName}/Contents/Info.plist
 
       # Create DMG
-      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./${packageName}/${appDirName} -D icon=./Dissolve-GUI-${{ env.dissolveVersion }}/${appDirName}/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" Dissolve-GUI-${{ env.dissolveVersion }}-${{ runner.arch }}.dmg
+      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./${packageName}/${appDirName} -D icon=./Dissolve-GUI-${{ env.dissolveVersion }}/${appDirName}/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" ${packageName}.dmg
 
       # Collect artifacts
       mkdir packages
