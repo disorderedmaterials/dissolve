@@ -21,6 +21,4 @@ class ModifyChargesDialog : public QDialog
 
     private:
     QQuickWidget *view_{nullptr};
-
-    void initializeSpinBox(QObject*, ModifyChargesModel*, ModifyChargesModel::Modify);
 };

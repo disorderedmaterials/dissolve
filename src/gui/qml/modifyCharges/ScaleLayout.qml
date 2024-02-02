@@ -23,7 +23,7 @@ ColumnLayout {
     }
     SpinBox {
         id: spinBox
-        objectName: "spinBox"
+        objectName: "scaleSpinBox"
         Layout.alignment: Qt.AlignRight
         Layout.fillWidth: true
         editable: true

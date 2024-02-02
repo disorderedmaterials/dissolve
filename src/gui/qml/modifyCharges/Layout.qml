@@ -39,7 +39,7 @@ ColumnLayout {
     }
     SpinBox {
         id: spinBox
-        objectName: "spinBox"
+        objectName: modify === ModifyChargesModel.Smoothing ? "smoothSpinBox" : "sigFigSpinBox"
         Layout.alignment: Qt.AlignRight
         Layout.fillWidth: true
         editable: modify === ModifyChargesModel.Smoothing ? true : false

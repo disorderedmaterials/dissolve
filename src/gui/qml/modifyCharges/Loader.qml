@@ -23,6 +23,7 @@ Page {
 
     Loader {
         id: loader
+        objectName: "loader"
         anchors.fill: parent
         anchors.margins: 10
         sourceComponent: {
