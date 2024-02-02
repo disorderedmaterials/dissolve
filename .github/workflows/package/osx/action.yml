@@ -43,19 +43,14 @@ runs:
       #install_name_tool -add_rpath "/opt/homebrew/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
 
       ./prep-dmg -a Dissolve-GUI-${{ runner.arch }} -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
-      dirName=Dissolve-GUI-${{ runner.arch }}.app
+
+      appDirName=Dissolve-GUI-${{ runner.arch }}.app
       packageName=Dissolve-GUI-${{ runner.arch }}-${{ env.dissolveVersion }}
 
       # Copy dependencies into Frameworks folder in app bundle
-      cp ./build/antlr4-cppruntime/lib/libantlr4-runtime.4.13.1.dylib ${packageName}/${dirName}/Contents/Frameworks/libantlr4-runtime.4.13.1.dylib
-      cp ./build/antlr4-cppruntime/lib/libantlr4-runtime.dylib ${packageName}/${dirName}/Contents/Frameworks/libantlr4-runtime.dylib
-
-      cp ./build/ftgl/libftgl.2.dylib ${packageName}/${dirName}/Contents/Frameworks/libftgl.2.dylib
-      cp ./build/ftgl/libftgl.2.dylib ${packageName}/${dirName}/Contents/Frameworks/libftgl.2.1.3.dylib
-
-      for FILE in ./build/onetbb/lib/*.dylib; do
-        cp ${FILE} ${packageName}/${dirName}/Contents/Frameworks/
-      done
+      cp -v ./build/antlr4-cppruntime/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
+      cp -v ./build/ftgl/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
+      cp -v ./build/onetbb/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
 
   - name: Create Disk Image
     shell: bash
@@ -63,13 +58,14 @@ runs:
       set -ex
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
+      appDirName=Dissolve-GUI-${{ runner.arch }}.app
       packageName=Dissolve-GUI-${{ runner.arch }}-${{ env.dissolveVersion }}
 
       # Fix icon link
-      sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" ${packageName}/Dissolve-GUI.app/Contents/Info.plist
+      sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" ${packageName}/${appDirName}/Contents/Info.plist
 
       # Create DMG
-      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./${packageName}/Dissolve-GUI.app -D icon=./Dissolve-GUI-${{ env.dissolveVersion }}/Dissolve-GUI.app/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" Dissolve-GUI-${{ env.dissolveVersion }}.dmg
+      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./${packageName}/${appDirName} -D icon=./Dissolve-GUI-${{ env.dissolveVersion }}/${appDirName}/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" Dissolve-GUI-${{ env.dissolveVersion }}-${{ runner.arch }}.dmg
 
       # Collect artifacts
       mkdir packages
