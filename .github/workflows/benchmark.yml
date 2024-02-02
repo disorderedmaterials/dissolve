@@ -36,8 +36,7 @@ jobs:
       - name: Build
         run: |
           set -ex
-          mkdir build
-          cd build
+          mkdir build && cd build
           cmake ../ -G "Ninja" -DBUILD_BENCHMARKS:bool=true -DANTLR_EXECUTABLE:path=`pwd`/../antlr4.jar
           ninja
       - name: Run benchmarks
