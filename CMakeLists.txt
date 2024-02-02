@@ -70,7 +70,6 @@ include_directories(${antlr4-cppruntime_INCLUDE_DIRS})
 list(APPEND CORE_LINK_LIBS ${antlr4-cppruntime_LIBS})
 
 # Find Antlr4 Java Binary
-include(FindANTLR)
 find_package(ANTLR REQUIRED)
 
 # Catch defines
