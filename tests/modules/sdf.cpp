@@ -31,6 +31,6 @@ TEST_F(SDFModuleTest, Benzene)
 
     EXPECT_TRUE(systemTest.checkData3D(
         "SDF(R-R)//SDF", {"dlpoly/benzene181/benzene181.11.pdens", Data3DImportFileFormat::Data3DImportFormat::PDens}, 0.3));
-    EXPECT_TRUE(systemTest.checkData3D("SDF(R-R)//Process3D//SDF", "SDF(R-R)_Analyser//Process3D//SDF", 1.0e-5));
+    EXPECT_TRUE(systemTest.checkData3D("SDF(R-R)//SDF", "SDF(R-R)_Analyser//Process3D//SDF", 1.0e-5));
 }
 } // namespace UnitTest
