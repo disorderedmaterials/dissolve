@@ -2,6 +2,8 @@ add_library(
   analyser
   dataNormaliser1D.cpp
   dataNormaliser1D.h
+  dataNormaliser3D.cpp
+  dataNormaliser3D.h
   siteFilter.cpp
   siteFilter.h
   siteSelector.cpp
