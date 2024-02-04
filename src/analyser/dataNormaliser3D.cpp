@@ -12,9 +12,9 @@ void DataNormaliser3D::normaliseBySitePopulation(double population) { targetData
 void DataNormaliser3D::normaliseByGrid()
 {
     // Determine bin area from first points of data
-    auto xBinWidth = targetData_->xAxis().at(1) - targetData_->xAxis().at(0);
-    auto yBinWidth = targetData_->yAxis().at(1) - targetData_->yAxis().at(0);
-    auto zBinWidth = targetData_->zAxis().at(1) - targetData_->zAxis().at(0);
+    auto xBinWidth = targetData_.xAxis().at(1) - targetData_.xAxis().at(0);
+    auto yBinWidth = targetData_.yAxis().at(1) - targetData_.yAxis().at(0);
+    auto zBinWidth = targetData_.zAxis().at(1) - targetData_.zAxis().at(0);
     auto binVolume = xBinWidth * yBinWidth * zBinWidth;
 
     targetData_ /= binVolume;
