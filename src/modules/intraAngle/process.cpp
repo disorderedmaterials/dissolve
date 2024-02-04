@@ -50,13 +50,19 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
             if (siteB == siteA)
                 continue;
 
+            if (!rangeAB_.contains(targetConfiguration_->box()->minimumDistance(siteB->origin(), siteA->origin())))
+                continue;
+
             for (const auto &[siteC, indexC] : c.sites())
             {
 
-                if (siteC->molecule() != siteB->molecule())
+                if (siteC->molecule() != siteA->molecule())
                     continue;
 
-                if (siteC == siteB)
+                if (siteC == siteB || siteC == siteA)
+                    continue;
+
+                if (!rangeBC_.contains(targetConfiguration_->box()->minimumDistance(siteC->origin(), siteB->origin())))
                     continue;
 
                 auto angle = targetConfiguration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
