@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataNormaliser3D.h"
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
 #include "module/context.h"
@@ -20,28 +21,46 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
-    // Ensure any parameters in our nodes are set correctly
-    collectVector_->keywords().set("RangeX", rangeX_);
-    collectVector_->keywords().set("RangeY", rangeY_);
-    collectVector_->keywords().set("RangeZ", rangeZ_);
-    if (excludeSameMolecule_)
-        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
-    else
-        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
+    auto &processingData = moduleContext.dissolve().processingModuleData();
 
-    // Execute the analysis
-    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
+    // Select site A
+    SiteSelector a(targetConfiguration_, a_);
+
+    // Select site B
+    SiteSelector b(targetConfiguration_, b_);
+
+    auto [hist, status] = processingData.realiseIf<Histogram3D>("Histo", name(), GenericItem::InRestartFileFlag);
+    if (status == GenericItem::ItemStatus::Created)
+        hist.initialise(rangeX_.x, rangeX_.y, rangeX_.z, rangeY_.x, rangeY_.y, rangeY_.z, rangeZ_.x, rangeZ_.y, rangeZ_.z);
+    hist.zeroBins();
+    for (const auto &[siteA, indexA] : a.sites())
     {
-        Messenger::error("CalculateSDF experienced problems with its analysis.\n");
-        return ExecutionResult::Failed;
+        for (const auto &[siteB, indexB] : b.sites())
+        {
+            if (excludeSameMolecule_ && siteB->molecule() == siteA->molecule())
+                continue;
+            if (siteB == siteA)
+                continue;
+            auto vBA = targetConfiguration_->box()->minimumVector(siteA->origin(), siteB->origin());
+            vBA = siteA->axes().transposeMultiply(vBA);
+            hist.bin(vBA);
+        }
     }
+    hist.accumulate();
+
+    auto &dataSDF = processingData.realise<Data3D>("SDF", name(), GenericItem::InRestartFileFlag);
+    dataSDF = hist.accumulatedData();
+
+    DataNormaliser3D normaliserSDF(dataSDF);
+    normaliserSDF.normaliseBySitePopulation(double(a.sites().size()));
+    normaliserSDF.normaliseByGrid();
 
     // Save data?
     if (sdfFileAndFormat_.hasFilename())
     {
         if (moduleContext.processPool().isMaster())
         {
-            if (sdfFileAndFormat_.exportData(processPosition_->processedData()))
+            if (sdfFileAndFormat_.exportData(dataSDF))
                 moduleContext.processPool().decideTrue();
             else
             {
