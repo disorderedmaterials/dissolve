@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataNormaliser3D.h"
 #include "analyser/siteSelector.h"
 #include "expression/variable.h"
 #include "main/dissolve.h"
+#include "math/histogram1D.h"
 #include "module/context.h"
 #include "modules/intraAngle/intraAngle.h"
 #include "procedure/nodes/calculateAngle.h"
@@ -21,6 +23,8 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
+    auto &processingData = moduleContext.dissolve().processingModuleData();
+
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
 
@@ -29,6 +33,11 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
 
     // Select site C
     SiteSelector c(targetConfiguration_, c_);
+
+    auto [hist, status] = processingData.realiseIf<Histogram1D>("Histo", name(), GenericItem::InRestartFileFlag);
+    if (status == GenericItem::ItemStatus::Created)
+        hist.initialise();
+    hist.zeroBins();
 
     for (const auto &[siteA, indexA] : a.sites())
     {
@@ -53,9 +62,14 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
                 auto angle = targetConfiguration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
                 if (symmetric_ && angle > 90.0)
                     angle = 180.0 - angle;
+                hist.bin(angle);
             }
         }
     }
+    hist.accumulate();
+
+    auto &dataNormalisedHisto = processingData.realise<Data1D>("NormalisedHistogram", name(), GenericItem::InRestartFileFlag);
+    dataNormalisedHisto = hist.accumulatedData();
 
     return ExecutionResult::Success;
 }
