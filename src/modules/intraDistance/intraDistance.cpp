@@ -13,7 +13,7 @@
 #include "procedure/nodes/process1D.h"
 #include "procedure/nodes/select.h"
 
-IntraDistanceModule::IntraDistanceModule() : Module(ModuleTypes::IntraDistance), analyser_(ProcedureNode::AnalysisContext)
+IntraDistanceModule::IntraDistanceModule() : Module(ModuleTypes::IntraDistance)
 {
     /*
      * Keywords
