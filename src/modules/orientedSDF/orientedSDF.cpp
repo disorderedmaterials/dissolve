@@ -17,7 +17,7 @@
 #include "procedure/nodes/process3D.h"
 #include "procedure/nodes/select.h"
 
-OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF), analyser_(ProcedureNode::AnalysisContext)
+OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF)
 {
     /*
      * Keywords
