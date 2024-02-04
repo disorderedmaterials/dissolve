@@ -48,7 +48,7 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
     }
     histAB.accumulate();
 
-    auto dataNormalisedHisto = processingData.realise<Data1D>("NormalisedHistogram", name(), GenericItem::InRestartFileFlag);
+    auto &dataNormalisedHisto = processingData.realise<Data1D>("NormalisedHistogram", name(), GenericItem::InRestartFileFlag);
     dataNormalisedHisto = histAB.accumulatedData();
     DataNormaliser1D histogramNormaliser(dataNormalisedHisto);
     histogramNormaliser.normaliseByValue();
