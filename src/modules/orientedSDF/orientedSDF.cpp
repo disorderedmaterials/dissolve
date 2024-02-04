@@ -19,45 +19,6 @@
 
 OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF), analyser_(ProcedureNode::AnalysisContext)
 {
-    // Select: Site 'A'
-    selectA_ = analyser_.createRootNode<SelectProcedureNode>("A", std::vector<const SpeciesSite *>{},
-                                                             ProcedureNode::AnalysisContext, true);
-    auto &forEachA = selectA_->branch()->get();
-
-    // -- Select: Site 'B'
-    selectB_ =
-        forEachA.create<SelectProcedureNode>("B", std::vector<const SpeciesSite *>{}, ProcedureNode::AnalysisContext, true);
-    selectB_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
-    selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
-    auto &forEachB = selectB_->branch()->get();
-
-    // -- -- Calculate: A-B axis angle
-    calculateAxisAngle_ = forEachB.create<CalculateAxisAngleProcedureNode>("ABangle", selectA_, OrientedSite::XAxis, selectB_,
-                                                                           OrientedSite::XAxis);
-    calculateAxisAngle_->keywords().set("Symmetric", symmetric_);
-
-    // -- -- IfValueInRange: Check axis angle
-    checkAxisValue_ = forEachB.create<IfValueInRangeProcedureNode>({});
-    checkAxisValue_->keywords().set("Value", NodeValueProxy("ABangle.theta"));
-    auto &ifThen = checkAxisValue_->branch()->get();
-
-    // -- -- -- Calculate: 'v(B->A)'
-    auto calcVector = ifThen.create<CalculateVectorProcedureNode>({}, selectA_, selectB_, true);
-
-    // -- -- -- Collect3D: 'OSDF'
-    collectVector_ =
-        ifThen.create<Collect3DProcedureNode>({}, calcVector, ProcedureNode::AnalysisContext, rangeX_, rangeY_, rangeZ_);
-
-    // Process3D
-    processPosition_ = analyser_.createRootNode<Process3DProcedureNode>("SDF", collectVector_);
-    processPosition_->keywords().set("LabelValue", std::string("\\symbol{rho}(x,y,z)"));
-    processPosition_->keywords().set("LabelX", std::string("x, \\symbol{Angstrom}"));
-    processPosition_->keywords().set("LabelY", std::string("y, \\symbol{Angstrom}"));
-    processPosition_->keywords().set("LabelZ", std::string("z, \\symbol{Angstrom}"));
-    auto &sdfNormalisation = processPosition_->branch()->get();
-    sdfNormalisation.create<OperateSitePopulationNormaliseProcedureNode>({}, ConstNodeVector<SelectProcedureNode>({selectA_}));
-    sdfNormalisation.create<OperateGridNormaliseProcedureNode>({});
-
     /*
      * Keywords
      */
@@ -65,14 +26,12 @@ OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF), analy
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     keywords_.setOrganisation("Options", "Sites", "Specify the central (A) and surrounding sites (B).");
-    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF",
-                                            selectA_->speciesSites(), selectA_->axesRequired());
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisA", "Axis to use from site A", calculateAxisAngle_->axis(0),
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF", a_);
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisA", "Axis to use from site A", axisA_,
                                                               OrientedSite::siteAxis());
     keywords_.add<SpeciesSiteVectorKeyword>(
-        "SiteB", "Set the site(s) 'B' for which the distribution around the origin site(s) 'A' should be calculated",
-        selectB_->speciesSites(), selectB_->axesRequired());
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisB", "Axis to use from site B", calculateAxisAngle_->axis(1),
+        "SiteB", "Set the site(s) 'B' for which the distribution around the origin site(s) 'A' should be calculated", b_);
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisB", "Axis to use from site B", axisB_,
                                                               OrientedSite::siteAxis());
 
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");

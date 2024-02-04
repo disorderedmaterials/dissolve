@@ -21,24 +21,6 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
-    // Ensure any parameters in our nodes are set correctly
-    calculateAxisAngle_->keywords().set("Symmetric", symmetric_);
-    checkAxisValue_->keywords().set("ValidRange", axisAngleRange_);
-    collectVector_->keywords().set("RangeX", rangeX_);
-    collectVector_->keywords().set("RangeY", rangeY_);
-    collectVector_->keywords().set("RangeZ", rangeZ_);
-    if (excludeSameMolecule_)
-        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
-    else
-        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
-
-    // Execute the analysis
-    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
-    {
-        Messenger::error("CalculateSDF experienced problems with its analysis.\n");
-        return ExecutionResult::Failed;
-    }
-
     // Save data?
     if (sdfFileAndFormat_.hasFilename())
     {
