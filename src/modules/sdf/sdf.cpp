@@ -14,7 +14,7 @@
 #include "procedure/nodes/process3D.h"
 #include "procedure/nodes/select.h"
 
-SDFModule::SDFModule() : Module(ModuleTypes::SDF), analyser_(ProcedureNode::AnalysisContext)
+SDFModule::SDFModule() : Module(ModuleTypes::SDF)
 {
     /*
      * Keywords

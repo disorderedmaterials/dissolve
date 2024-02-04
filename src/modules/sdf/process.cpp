@@ -20,6 +20,36 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
+    auto &processingData = moduleContext.dissolve().processingModuleData();
+
+    // Select site A
+    SiteSelector a(targetConfiguration_, a_);
+
+    // Select site B
+    SiteSelector b(targetConfiguration_, b_);
+
+    auto [hist, status] = processingData.realiseIf<Histogram3D>("Histo", name(), GenericItem::InRestartFileFlag);
+    if (status == GenericItem::ItemStatus::Created)
+        hist.initialise(rangeX_, rangeY_, rangeZ_);
+
+    for (const auto &[siteA, indexA] : a.sites())
+    {
+        for (const auto &[siteB, indexB] : b.sites())
+        {
+            if (excludeSameMolecule_ && siteA->molecule() == siteB->molecule())
+                continue;
+            if (siteB == siteA)
+                continue;
+            auto vBA = targetConfiguration_->box()->minimumVector(siteA->origin(), siteB->origin());
+            vbA = siteA->axes().transposeMultiply(vBA);
+            hist.bin(vBA);
+        }
+    }
+    hist.accumulate();
+
+    auto &dataSDF = processingData.realise<Data3D>("SDF", name(), GenericItem::InRestartFileFlag);
+    dataSDF = hist.accumulatedData();
+
     // Save data?
     if (sdfFileAndFormat_.hasFilename())
     {
