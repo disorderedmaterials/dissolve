@@ -31,7 +31,7 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
 
     auto [hist, status] = processingData.realiseIf<Histogram3D>("Histo", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
-        hist.initialise(rangeX_, rangeY_, rangeZ_);
+        hist.initialise(rangeX_.x, rangeX_.y, rangeX_.z, rangeY_.x, rangeY_.y, rangeY_.z, rangeZ_.x, rangeZ_.y, rangeZ_.z);
 
     for (const auto &[siteA, indexA] : a.sites())
     {
@@ -52,7 +52,7 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
     dataSDF = hist.accumulatedData();
 
     DataNormaliser3D normaliserSDF(dataSDF);
-    normaliserSDF.normaliseBySitePopulation(double(a.sites.size()));
+    normaliserSDF.normaliseBySitePopulation(double(a.sites().size()));
     normaliserSDF.normaliseByGrid();
 
     // Save data?
