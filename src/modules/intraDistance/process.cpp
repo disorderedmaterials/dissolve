@@ -20,15 +20,5 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
         return ExecutionResult::Failed;
     }
 
-    // Ensure any parameters in our nodes are set correctly
-    collectDistance_->keywords().set("RangeX", distanceRange_);
-
-    // Execute the analysis
-    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
-    {
-        Messenger::error("CalculateRDF experienced problems with its analysis.\n");
-        return ExecutionResult::Failed;
-    }
-
     return ExecutionResult::Success;
 }

@@ -15,30 +15,6 @@
 
 IntraDistanceModule::IntraDistanceModule() : Module(ModuleTypes::IntraDistance), analyser_(ProcedureNode::AnalysisContext)
 {
-    // Select: Site 'A'
-    selectA_ = analyser_.createRootNode<SelectProcedureNode>("A");
-    auto &forEachA = selectA_->branch()->get();
-
-    // -- Select: Site 'B'
-    selectB_ = forEachA.create<SelectProcedureNode>("B");
-    selectB_->keywords().set("SameMoleculeAsSite", selectA_);
-    selectB_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
-    auto &forEachB = selectB_->branch()->get();
-
-    // -- -- Calculate: 'rAB'
-    auto calcDistance = forEachB.create<CalculateDistanceProcedureNode>({}, selectA_, selectB_);
-
-    // -- -- Collect1D: 'Distance'
-    collectDistance_ = forEachB.create<Collect1DProcedureNode>("Histo-AB", calcDistance);
-
-    // Process1D: Distance
-    processDistance_ = analyser_.createRootNode<Process1DProcedureNode>("NormalisedHistogram", collectDistance_);
-    processDistance_->keywords().set("LabelValue", std::string("Normalised Frequency"));
-    processDistance_->keywords().set("LabelX", std::string("\\it{r}, \\symbol{Angstrom}"));
-    // -- Normalisation Branch
-    auto &normalisation = processDistance_->branch()->get();
-    normalisation.create<OperateNormaliseProcedureNode>({});
-
     /*
      * Keywords
      */
