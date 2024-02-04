@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataNormaliser3D.h"
 #include "main/dissolve.h"
 #include "module/context.h"
 #include "modules/orientedSDF/orientedSDF.h"
@@ -53,6 +54,9 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
 
     auto &dataOrientedSDF = processingData.realise<Data3D>("OrientedSDF", name(), GenericItem::InRestartFileFlag);
     dataOrientedSDF = hist.accumulatedData();
+    DataNormaliser3D normaliserOrientedSDF(dataOrientedSDF);
+    normaliserOrientedSDF.normaliseBySitePopulation(double(a.sites().size()));
+    normaliserOrientedSDF.normaliseByGrid();
 
     // Save data?
     if (sdfFileAndFormat_.hasFilename())
