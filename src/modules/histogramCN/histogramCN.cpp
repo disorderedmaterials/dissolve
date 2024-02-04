@@ -23,11 +23,9 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN)
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     keywords_.setOrganisation("Options", "Sites", "Specify sites defining the interaction A...B.");
-    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the reference origin", a_,
-                                            false);
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the reference origin", a_);
     keywords_.add<SpeciesSiteVectorKeyword>(
-        "SiteB", "Set the site(s) 'B' for which the coordination number around the origin sites should be calculated", b_,
-        false);
+        "SiteB", "Set the site(s) 'B' for which the coordination number around the origin sites should be calculated", b_);
 
     keywords_.setOrganisation("Options", "Ranges", "Range over which to bin quantities from the calculation.");
     keywords_.add<RangeKeyword>("DistanceRange",
