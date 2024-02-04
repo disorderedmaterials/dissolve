@@ -59,7 +59,7 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
     }
     hist.accumulate();
 
-    auto &dataOrientedSDF = processingData.realise<Data3D>("OrientedSDF", name(), GenericItem::InRestartFileFlag);
+    auto &dataOrientedSDF = processingData.realise<Data3D>("SDF", name(), GenericItem::InRestartFileFlag);
     dataOrientedSDF = hist.accumulatedData();
     DataNormaliser3D normaliserOrientedSDF(dataOrientedSDF);
     normaliserOrientedSDF.normaliseBySitePopulation(double(a.sites().size()));
