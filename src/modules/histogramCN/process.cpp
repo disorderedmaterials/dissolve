@@ -22,5 +22,37 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
+    auto &processingData = moduleContext.dissolve().processingModuleData();
+
+    // Select site A
+    SiteSelector a(targetConfiguration_, a_);
+
+    // Select site B
+    SiteSelector b(targetConfiguration_, b_);
+
+    std::map<const Site *, int> selections;
+    auto hist = processingData.realise<IntegerHistogram1D>("Bins", name(), GenericItem::InRestartFileFlag);
+    histAB.zeroBins();
+    for (const auto &[siteA, indexA] : a.sites())
+    {
+        auto nSelected = 0;
+        for (const auto &[siteB, indexB] : b.sites())
+        {
+            if (siteB->molecule() == siteA->molecule())
+                continue;
+            if (siteB == siteA)
+                continue;
+            if (!distanceRange_.contains(targetConfiguration_->box()->minimumDistance(siteB->origin(), siteA->origin())))
+                continue;
+            ++nSelected;
+        }
+        selections[siteA] = nSelected;
+        hist.bin(nSelected);
+    }
+    hist.accumulate();
+
+    auto &cn = processingData.realise<Data1D>("Histogram", name(), GenericItem::InRestartFileFlag);
+    cn = hist.accumulatedData();
+
     return ExecutionResult::Success;
 }
