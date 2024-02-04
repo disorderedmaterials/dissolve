@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include "analyser/siteFilter.h"
+#include "analyser/siteSelector.h"
+#include "io/export/data1D.h"
 #include "module/module.h"
 #include "procedure/procedure.h"
 
@@ -19,8 +22,12 @@ class IntraDistanceModule : public Module
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
+    // Target SpeciesSite definitions
+    std::vector<const SpeciesSite *> a_, b_;
     // Range (min, max, delta) of distance axis
     Vec3<double> distanceRange_{0.0, 10.0, 0.05};
+    // Export target
+    Data1DExportFileFormat exportFileAndFormat_;
 
     /*
      * Processing
