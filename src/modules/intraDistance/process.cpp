@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataNormaliser1D.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "module/context.h"
@@ -49,6 +50,8 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
 
     auto dataNormalisedHisto = processingData.realise<Data1D>("NormalisedHistogram", name(), GenericItem::InRestartFileFlag);
     dataNormalisedHisto = histAB.accumulatedData();
+    DataNormaliser1D histogramNormaliser(dataNormalisedHisto);
+    histogramNormaliser.normalise();
 
     return ExecutionResult::Success;
 }
