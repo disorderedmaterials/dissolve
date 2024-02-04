@@ -27,4 +27,5 @@ class DataNormaliser1D
     void normaliseByNumberDensity(double population, Configuration *targetConfiguration);
     void normaliseBySitePopulation(double population);
     void normaliseBySphericalShell();
+    void normaliseByValue(double value = 1.0, bool absolute = true);
 };

@@ -4,6 +4,7 @@
 #include "analyser/dataNormaliser1D.h"
 #include "classes/configuration.h"
 #include "math/data1D.h"
+#include "math/integrator.h"
 
 DataNormaliser1D::DataNormaliser1D(Data1D &targetData) : targetData_(targetData) {}
 
@@ -44,4 +45,11 @@ void DataNormaliser1D::normaliseBySphericalShell()
         r1Cubed = r2Cubed;
         leftBin = rightBin;
     }
+}
+
+void DataNormaliser1D::normaliseByValue(double value, bool absolute)
+{
+    auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);
+    targetData_ /= sum;
+    targetData_ *= value;
 }
