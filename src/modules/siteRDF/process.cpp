@@ -9,11 +9,6 @@
 #include "math/sampledDouble.h"
 #include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
-#include "procedure/nodes/collect1D.h"
-#include "procedure/nodes/operateSitePopulationNormalise.h"
-#include "procedure/nodes/select.h"
-#include "procedure/nodes/sequence.h"
-#include "procedure/nodes/sum1D.h"
 
 // Run main processing
 Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
