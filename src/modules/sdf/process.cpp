@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataNormaliser3D.h"
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
 #include "module/context.h"
@@ -49,6 +50,10 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
 
     auto &dataSDF = processingData.realise<Data3D>("SDF", name(), GenericItem::InRestartFileFlag);
     dataSDF = hist.accumulatedData();
+
+    DataNormaliser3D normaliserSDF(dataSDF);
+    normaliserSDF.normaliseBySitePopulation(double(a.sites.size()));
+    normaliserSDF.normaliseByGrid();
 
     // Save data?
     if (sdfFileAndFormat_.hasFilename())
