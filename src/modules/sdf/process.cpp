@@ -32,12 +32,12 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
     auto [hist, status] = processingData.realiseIf<Histogram3D>("Histo", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
         hist.initialise(rangeX_.x, rangeX_.y, rangeX_.z, rangeY_.x, rangeY_.y, rangeY_.z, rangeZ_.x, rangeZ_.y, rangeZ_.z);
-
+    hist.zeroBins();
     for (const auto &[siteA, indexA] : a.sites())
     {
         for (const auto &[siteB, indexB] : b.sites())
         {
-            if (excludeSameMolecule_ && siteA->molecule() == siteB->molecule())
+            if (excludeSameMolecule_ && siteB->molecule() == siteA->molecule())
                 continue;
             if (siteB == siteA)
                 continue;
