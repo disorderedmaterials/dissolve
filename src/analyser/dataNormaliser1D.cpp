@@ -4,6 +4,7 @@
 #include "analyser/dataNormaliser1D.h"
 #include "classes/configuration.h"
 #include "expression/expression.h"
+#include "expression/variable.h"
 #include "math/data1D.h"
 <<<<<<< HEAD
 #include "math/integrator.h"
@@ -65,7 +66,7 @@ void DataNormaliser1D::normaliseByExpression(std::string_view expressionString)
 {
 
     Expression expression;
-    auto = expression.addLocalVariable("x");
+    auto x = expression.addLocalVariable("x");
     auto xDelta = expression.addLocalVariable("xDelta");
     auto value = expression.addLocalVariable("value");
 
@@ -75,11 +76,11 @@ void DataNormaliser1D::normaliseByExpression(std::string_view expressionString)
     auto &values = targetData_.values();
 
     // Set data-related quantities
-    if (x.size() > 1)
-        xDelta->setValue(x[1] - x[0]);
+    if (xs.size() > 1)
+        xDelta->setValue(xs[1] - xs[0]);
 
     // Evaluate the expression over all values
-    for (auto i = 0; i < x.size(); ++i)
+    for (auto i = 0; i < xs.size(); ++i)
     {
         // Set variables in expression
         x->setValue(xs[i]);
