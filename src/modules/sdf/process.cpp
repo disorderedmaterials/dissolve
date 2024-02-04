@@ -42,7 +42,7 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
             if (siteB == siteA)
                 continue;
             auto vBA = targetConfiguration_->box()->minimumVector(siteA->origin(), siteB->origin());
-            vbA = siteA->axes().transposeMultiply(vBA);
+            vBA = siteA->axes().transposeMultiply(vBA);
             hist.bin(vBA);
         }
     }
