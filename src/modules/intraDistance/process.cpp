@@ -20,5 +20,35 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
         return ExecutionResult::Failed;
     }
 
+    auto &processingData = moduleContext.dissolve().processingModuleData();
+
+    // Select site A
+    SiteSelector a(targetConfiguration_, a_);
+
+    // Select site B
+    SiteSelector b(targetConfiguration_, b_);
+
+    // Calculate rAB
+    auto [histAB, status] = processingData.realiseIf<Histogram1D>("Histo-AB", name(), GenericItem::InRestartFileFlag);
+    if (status == GenericItem::ItemStatus::Created)
+        histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
+    histAB.zeroBins();
+
+    for (const auto &[siteA, indexA] : a.sites())
+    {
+        for (const auto &[siteB, indexB] : b.sites())
+        {
+            if (siteB->molecule() != siteA->molecule())
+                continue;
+            if (siteB == siteA)
+                continue;
+            histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+        }
+    }
+    histAB.accumulate();
+
+    auto dataNormalisedHisto = processingData.realise<Data1D>("NormalisedHistogram", name(), GenericItem::InRestartFileFlag);
+    dataNormalisedHisto = histAB.accumulatedData();
+
     return ExecutionResult::Success;
 }
