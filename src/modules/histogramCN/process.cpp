@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataNormaliser1D.h"
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
@@ -32,7 +33,7 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
 
     std::map<const Site *, int> selections;
     auto hist = processingData.realise<IntegerHistogram1D>("Bins", name(), GenericItem::InRestartFileFlag);
-    histAB.zeroBins();
+    hist.zeroBins();
     for (const auto &[siteA, indexA] : a.sites())
     {
         auto nSelected = 0;
@@ -53,6 +54,8 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
 
     auto &cn = processingData.realise<Data1D>("Histogram", name(), GenericItem::InRestartFileFlag);
     cn = hist.accumulatedData();
+    DataNormaliser1D cnNormaliser(cn);
+    cnNormaliser.normaliseByValue();
 
     return ExecutionResult::Success;
 }
