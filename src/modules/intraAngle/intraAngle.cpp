@@ -28,12 +28,9 @@ IntraAngleModule::IntraAngleModule() : Module(ModuleTypes::IntraAngle)
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     keywords_.setOrganisation("Options", "Sites", "Specify sites defining the angle interaction A-B-C.");
-    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C",
-                                            selectA_->speciesSites(), selectA_->axesRequired());
-    keywords_.add<SpeciesSiteVectorKeyword>("SiteB", "Specify site(s) which represent 'B' in the interaction A-B-C",
-                                            selectB_->speciesSites(), selectB_->axesRequired());
-    keywords_.add<SpeciesSiteVectorKeyword>("SiteC", "Specify site(s) which represent 'C' in the interaction A-B-C",
-                                            selectC_->speciesSites(), selectC_->axesRequired());
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C", a_);
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteB", "Specify site(s) which represent 'B' in the interaction A-B-C", b_);
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteC", "Specify site(s) which represent 'C' in the interaction A-B-C", c_);
 
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<Vec3DoubleKeyword>("RangeAB", "Range (min, max, binwidth) of A-B distance binning", rangeAB_,
@@ -50,5 +47,5 @@ IntraAngleModule::IntraAngleModule() : Module(ModuleTypes::IntraAngle)
     keywords_.setOrganisation("Export");
     keywords_.add<FileAndFormatKeyword>("ExportAngle",
                                         "File format and file name under which to save calculated A-B-C angle histogram",
-                                        processAngle_->exportFileAndFormat(), "EndExportAngle");
+                                        exportFileAndFormat_, "EndExportAngle");
 }
