@@ -4,6 +4,7 @@
 #pragma once
 
 #include "analyser/typeDefs.h"
+#include <string_view>
 
 class Configuration;
 class Data1D;
@@ -28,4 +29,5 @@ class DataNormaliser1D
     void normaliseBySitePopulation(double population);
     void normaliseBySphericalShell();
     void normaliseByValue(double value = 1.0, bool absolute = true);
+    void normaliseByExpression(std::string_view expressionString);
 };

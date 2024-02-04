@@ -3,6 +3,7 @@
 
 #include "analyser/dataNormaliser1D.h"
 #include "classes/configuration.h"
+#include "expression/expression.h"
 #include "math/data1D.h"
 <<<<<<< HEAD
 #include "math/integrator.h"
@@ -58,4 +59,33 @@ void DataNormaliser1D::normaliseByValue(double value, bool absolute)
     auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);
     targetData_ /= sum;
     targetData_ *= value;
+}
+
+void DataNormaliser1D::normaliseByExpression(std::string_view expressionString)
+{
+
+    Expression expression;
+    auto = expression.addLocalVariable("x");
+    auto xDelta = expression.addLocalVariable("xDelta");
+    auto value = expression.addLocalVariable("value");
+
+    expression.create(expressionString);
+
+    const auto &xs = targetData_.xAxis();
+    auto &values = targetData_.values();
+
+    // Set data-related quantities
+    if (x.size() > 1)
+        xDelta->setValue(x[1] - x[0]);
+
+    // Evaluate the expression over all values
+    for (auto i = 0; i < x.size(); ++i)
+    {
+        // Set variables in expression
+        x->setValue(xs[i]);
+        value->setValue(values.at(i));
+
+        // Evaluate and store new value
+        values.at(i) = expression.asDouble();
+    }
 }
