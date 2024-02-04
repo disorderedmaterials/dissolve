@@ -39,6 +39,13 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
     {
         for (const auto &[siteB, indexB] : b.sites())
         {
+
+            if (excludeSameMolecule_ && siteB->molecule() == siteA->molecule())
+                continue;
+
+            if (siteB == siteA)
+                continue;
+
             auto axisAngle = Box::angleInDegrees(siteA->axes().columnAsVec3(axisA_), siteB->axes().columnAsVec3(axisB_));
             if (symmetric_ && axisAngle > 90.0)
                 axisAngle = 180.0 - axisAngle;
