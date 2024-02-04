@@ -5,19 +5,9 @@
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/fileAndFormat.h"
+#include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
-#include "procedure/nodes/calculateAngle.h"
-#include "procedure/nodes/collect1D.h"
-#include "procedure/nodes/collect3D.h"
-#include "procedure/nodes/operateExpression.h"
-#include "procedure/nodes/operateNormalise.h"
-#include "procedure/nodes/operateNumberDensityNormalise.h"
-#include "procedure/nodes/operateSitePopulationNormalise.h"
-#include "procedure/nodes/operateSphericalShellNormalise.h"
-#include "procedure/nodes/process1D.h"
-#include "procedure/nodes/process3D.h"
-#include "procedure/nodes/select.h"
 
 IntraAngleModule::IntraAngleModule() : Module(ModuleTypes::IntraAngle)
 {
@@ -33,12 +23,12 @@ IntraAngleModule::IntraAngleModule() : Module(ModuleTypes::IntraAngle)
     keywords_.add<SpeciesSiteVectorKeyword>("SiteC", "Specify site(s) which represent 'C' in the interaction A-B-C", c_);
 
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
-    keywords_.add<Vec3DoubleKeyword>("RangeAB", "Range (min, max, binwidth) of A-B distance binning", rangeAB_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<Vec3DoubleKeyword>("RangeBC", "Range (min, max, binwidth) of B-C distance binning", rangeBC_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<RangeKeyword>("RangeAB", "Range (min, max) of A-B distance binning", rangeAB_, 0.0,
+                                Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<RangeKeyword>("RangeBC", "Range (min, max, binwidth) of B-C distance binning", rangeBC_, 0.0,
+                                Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<Vec3DoubleKeyword>("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+                                     Vec3<double>(0.0, 180.0, 1.0), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
 
     keywords_.setOrganisation("Options", "Restrictions", "Options to restrict the angle range considered.");
     keywords_.add<BoolKeyword>(

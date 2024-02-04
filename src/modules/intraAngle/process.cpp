@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "analyser/dataNormaliser3D.h"
+#include "analyser/dataNormaliser1D.h"
 #include "analyser/siteSelector.h"
 #include "expression/variable.h"
 #include "main/dissolve.h"
@@ -36,7 +36,7 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
 
     auto [hist, status] = processingData.realiseIf<Histogram1D>("Histo", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
-        hist.initialise();
+        hist.initialise(angleRange_.x, angleRange_.y, angleRange_.z);
     hist.zeroBins();
 
     for (const auto &[siteA, indexA] : a.sites())
@@ -68,7 +68,8 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
                 auto angle = targetConfiguration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
                 if (symmetric_ && angle > 90.0)
                     angle = 180.0 - angle;
-                hist.bin(angle);
+                if (Range(angleRange_.x, angleRange_.y).contains(angle))
+                    hist.bin(angle);
             }
         }
     }
@@ -76,6 +77,25 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
 
     auto &dataNormalisedHisto = processingData.realise<Data1D>("NormalisedHistogram", name(), GenericItem::InRestartFileFlag);
     dataNormalisedHisto = hist.accumulatedData();
+    DataNormaliser1D normaliser(dataNormalisedHisto);
+    normaliser.normaliseByExpression("value/sin(toRad(x))");
+    normaliser.normaliseByValue();
+
+    if (exportFileAndFormat_.hasFilename())
+    {
+        if (moduleContext.processPool().isMaster())
+        {
+            if (exportFileAndFormat_.exportData(dataNormalisedHisto))
+                moduleContext.processPool().decideTrue();
+            else
+            {
+                moduleContext.processPool().decideFalse();
+                return ExecutionResult::Failed;
+            }
+        }
+        else if (!modu1leContext.processPool().decision())
+            return ExecutionResult::Failed;
+    }
 
     return ExecutionResult::Success;
 }
