@@ -31,7 +31,6 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
     // Select site B
     SiteSelector b(targetConfiguration_, b_);
 
-    std::map<const Site *, int> selections;
     auto hist = processingData.realise<IntegerHistogram1D>("Bins", name(), GenericItem::InRestartFileFlag);
     hist.zeroBins();
     for (const auto &[siteA, indexA] : a.sites())
@@ -39,7 +38,7 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
         auto nSelected = 0;
         for (const auto &[siteB, indexB] : b.sites())
         {
-            if (siteB->molecule() == siteA->molecule())
+            if (excludeSameMolecule_ && siteB->molecule() == siteA->molecule())
                 continue;
             if (siteB == siteA)
                 continue;
@@ -47,7 +46,6 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
                 continue;
             ++nSelected;
         }
-        selections[siteA] = nSelected;
         hist.bin(nSelected);
     }
     hist.accumulate();
