@@ -75,7 +75,7 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     }
     hist.accumulate();
 
-    auto &dataNormalisedHisto = processingData.realise<Data1D>("NormalisedHistogram", name(), GenericItem::InRestartFileFlag);
+    auto &dataNormalisedHisto = processingData.realise<Data1D>("Angle(ABC)", name(), GenericItem::InRestartFileFlag);
     dataNormalisedHisto = hist.accumulatedData();
     DataNormaliser1D normaliser(dataNormalisedHisto);
     normaliser.normaliseByExpression("value/sin(toRad(x))");
@@ -93,7 +93,7 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
                 return ExecutionResult::Failed;
             }
         }
-        else if (!modu1leContext.processPool().decision())
+        else if (!moduleContext.processPool().decision())
             return ExecutionResult::Failed;
     }
 
