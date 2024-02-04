@@ -19,40 +19,8 @@
 #include "procedure/nodes/process3D.h"
 #include "procedure/nodes/select.h"
 
-IntraAngleModule::IntraAngleModule() : Module(ModuleTypes::IntraAngle), analyser_(ProcedureNode::AnalysisContext)
+IntraAngleModule::IntraAngleModule() : Module(ModuleTypes::IntraAngle)
 {
-    // Select: Site 'A'
-    selectA_ = analyser_.createRootNode<SelectProcedureNode>("A");
-    auto &forEachA = selectA_->branch()->get();
-
-    // -- Select: Site 'B'
-    selectB_ = forEachA.create<SelectProcedureNode>("B");
-    selectB_->keywords().set("SameMoleculeAsSite", selectA_);
-    selectB_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
-    auto &forEachB = selectB_->branch()->get();
-
-    // -- -- Select: Site 'C'
-    selectC_ = forEachB.create<SelectProcedureNode>("C");
-    selectC_->keywords().set("SameMoleculeAsSite", selectA_);
-    selectC_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_, selectB_});
-    auto &forEachC = selectC_->branch()->get();
-
-    // -- -- -- Calculate: 'aABC'
-    calculateAngle_ = forEachC.create<CalculateAngleProcedureNode>({}, selectA_, selectB_, selectC_);
-    calculateAngle_->keywords().set("Symmetric", symmetric_);
-
-    // -- -- -- Collect1D:  'ANGLE(ABC)'
-    collectABC_ = forEachC.create<Collect1DProcedureNode>({}, calculateAngle_, ProcedureNode::AnalysisContext, angleRange_.x,
-                                                          angleRange_.y, angleRange_.z);
-
-    // Process1D: 'ANGLE(ABC)'
-    processAngle_ = analyser_.createRootNode<Process1DProcedureNode>("NormalisedHistogram", collectABC_);
-    processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
-    processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
-    auto &angleNormalisation = processAngle_->branch()->get();
-    angleNormalisation.create<OperateExpressionProcedureNode>({}, "value/sin(toRad(x))");
-    angleNormalisation.create<OperateNormaliseProcedureNode>({}, 1.0);
-
     /*
      * Keywords
      */

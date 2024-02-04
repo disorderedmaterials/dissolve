@@ -20,20 +20,5 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
-    // Ensure any parameters in our nodes are set correctly
-    selectB_->setDistanceReferenceSite(selectA_);
-    selectB_->setInclusiveDistanceRange({rangeAB_.x, rangeAB_.y});
-    selectC_->setDistanceReferenceSite(selectB_);
-    selectC_->setInclusiveDistanceRange({rangeBC_.x, rangeBC_.y});
-    calculateAngle_->keywords().set("Symmetric", symmetric_);
-    collectABC_->keywords().set("RangeX", angleRange_);
-
-    // Execute the analysis
-    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
-    {
-        Messenger::error("CalculateAngle experienced problems with its analysis.\n");
-        return ExecutionResult::Failed;
-    }
-
     return ExecutionResult::Success;
 }
