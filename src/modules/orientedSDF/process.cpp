@@ -63,7 +63,7 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
     {
         if (moduleContext.processPool().isMaster())
         {
-            if (sdfFileAndFormat_.exportData(processPosition_->processedData()))
+            if (sdfFileAndFormat_.exportData(dataOrientedSDF))
                 moduleContext.processPool().decideTrue();
             else
             {
