@@ -10,14 +10,6 @@
 #include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
-#include "procedure/nodes/calculateDistance.h"
-#include "procedure/nodes/collect1D.h"
-#include "procedure/nodes/operateNumberDensityNormalise.h"
-#include "procedure/nodes/operateSitePopulationNormalise.h"
-#include "procedure/nodes/operateSphericalShellNormalise.h"
-#include "procedure/nodes/process1D.h"
-#include "procedure/nodes/select.h"
-#include "procedure/nodes/sum1D.h"
 
 SiteRDFModule::SiteRDFModule() : Module(ModuleTypes::SiteRDF)
 {
