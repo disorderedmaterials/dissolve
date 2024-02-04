@@ -22,19 +22,5 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
-    // Ensure any parameters in our nodes are set correctly
-    if (excludeSameMolecule_)
-        selectB_->setSameMoleculeExclusions({selectA_});
-    else
-        selectB_->setSameMoleculeExclusions({});
-    selectB_->keywords().set("InclusiveRange", distanceRange_);
-
-    // Execute the analysis
-    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
-    {
-        Messenger::error("HistogramCN experienced problems with its analysis.\n");
-        return ExecutionResult::Failed;
-    }
-
     return ExecutionResult::Success;
 }
