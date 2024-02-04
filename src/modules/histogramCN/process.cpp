@@ -31,10 +31,12 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
     // Select site B
     SiteSelector b(targetConfiguration_, b_);
 
+    // Coordination Histogram
     auto [hist, status] = processingData.realiseIf<IntegerHistogram1D>("Bins", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
         hist.initialise();
     hist.zeroBins();
+
     for (const auto &[siteA, indexA] : a.sites())
     {
         auto nSelected = 0;
@@ -52,10 +54,13 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
     }
     hist.accumulate();
 
-    auto &cn = processingData.realise<Data1D>("Histogram", name(), GenericItem::InRestartFileFlag);
-    cn = hist.accumulatedData();
-    DataNormaliser1D cnNormaliser(cn);
-    cnNormaliser.normaliseByValue();
+    // CN
+    auto &dataCN = processingData.realise<Data1D>("Histogram", name(), GenericItem::InRestartFileFlag);
+    dataCN = hist.accumulatedData();
+
+    // Normalise
+    DataNormaliser1D normaliserCN(dataCN);
+    normaliserCN.normaliseByValue();
 
     return ExecutionResult::Success;
 }
