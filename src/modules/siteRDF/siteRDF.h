@@ -25,7 +25,7 @@ class SiteRDFModule : public Module
     // Target SpeciesSite definitions
     std::vector<const SpeciesSite *> a_, b_;
     // Whether to exclude correlations between sites on the same molecule
-    bool excludeSameMolecule_{false};
+    bool excludeSameMolecule_{true};
     // Range (min, max, delta) of distance axis
     Vec3<double> distanceRange_{0.0, 10.0, 0.05};
     // Ranges for sums
