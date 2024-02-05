@@ -6,7 +6,7 @@ runs:
   steps:
 
   - name: Retrieve Qt Cache
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: osx-qt-${{ env.qtVersion }}
       path: ${{ runner.temp }}/qt

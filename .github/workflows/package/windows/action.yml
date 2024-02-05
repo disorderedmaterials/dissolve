@@ -10,13 +10,13 @@ runs:
   #
 
   - name: Retrieve Qt Cache
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: windows-qt-${{ env.qtVersion }}
       path: ${{ runner.temp }}\qt
 
   - name: Retrieve FTGL Cache
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: windows-ftgl
       path: |
@@ -24,7 +24,7 @@ runs:
         ${{ runner.temp }}\ftgl-install
 
   - name: Retrieve FreeType Cache
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: windows-freetype
       path: |

@@ -27,7 +27,7 @@ runs:
       target: ${{ inputs.target }}
 
   - name: Cache Nix Store
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     id: nix-cache
     with:
       path: /tmp/nixcache

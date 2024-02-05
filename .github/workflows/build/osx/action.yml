@@ -36,7 +36,7 @@ runs:
 
   - name: Retrieve Qt Cache
     id: cache-qt
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: osx-qt-${{ env.qtVersion }}
       path: ${{ runner.temp }}/qt
@@ -54,7 +54,7 @@ runs:
 
   - name: Retrieve Conan Cache
     id: cache-conan
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: osx-${{ runner.arch }}-conan-${{ env.conanHash }}
       path: |
