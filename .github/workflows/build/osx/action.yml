@@ -16,9 +16,6 @@ runs:
   # Setup / Install Dependencies
   #
 
-  - name: Setup Python
-    uses: actions/setup-python@v4
-
   - name: Install Homebrew Dependencies for Intel
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
