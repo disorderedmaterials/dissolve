@@ -662,7 +662,6 @@ bool CIFHandler::createSupercell()
     Messenger::setQuiet(false);
 
     // Copy atoms from the Crystal species - we'll do the bonding afterwards
-
     if (molecularUnitCellSpecies_.empty())
     {
         supercellSpecies_->atoms().reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z *
