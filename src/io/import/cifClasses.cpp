@@ -93,9 +93,8 @@ int CIFAssembly::nGroups() const { return groups_.size(); }
  */
 
 CIFMolecularSpecies::CIFMolecularSpecies(const Species *targetSpecies, std::string_view netaString,
-                                         std::vector<std::vector<int>> instances,
                                          std::vector<std::vector<Vec3<double>>> coordinates)
-    : species_(targetSpecies), netaString_(netaString), instances_(instances), coordinates_(coordinates)
+    : species_(targetSpecies), netaString_(netaString), coordinates_(coordinates)
 {
 }
 
@@ -104,9 +103,6 @@ const Species *CIFMolecularSpecies::species() const { return species_; };
 
 // Return NETA string for the species
 std::string_view CIFMolecularSpecies::netaString() const { return netaString_; };
-
-// Return indices of instances (copies)
-const std::vector<std::vector<int>> &CIFMolecularSpecies::instances() const { return instances_; };
 
 // Return coordinates of instances
 const std::vector<std::vector<Vec3<double>>> &CIFMolecularSpecies::coordinates() const { return coordinates_; }

@@ -29,7 +29,6 @@ class ImportCIFTest : public ::testing::Test
     void testMolecularSpecies(const CIFMolecularSpecies &molSp, const MolecularSpeciesInfo &info)
     {
         EXPECT_EQ(molSp.species()->name(), std::get<0>(info));
-        EXPECT_EQ(molSp.instances().size(), std::get<1>(info));
         EXPECT_EQ(molSp.coordinates().size(), std::get<1>(info));
         EXPECT_EQ(molSp.species()->nAtoms(), std::get<2>(info));
     }

@@ -629,7 +629,7 @@ bool CIFHandler::detectMolecules()
         sp->setName(EmpiricalFormula::formula(sp->atoms(), [&](const auto &at) { return at.Z(); }));
 
         // Push a new definition
-        molecularUnitCellSpecies_.emplace_back(sp, neta->definitionString(), copies, coords);
+        molecularUnitCellSpecies_.emplace_back(sp, neta->definitionString(), coords);
 
         // Search for the next valid starting index
         idx = *std::min_element(allAtomIndices.begin(), allAtomIndices.end());
@@ -639,7 +639,7 @@ bool CIFHandler::detectMolecules()
     Messenger::print("   ID     N  Species Formula\n");
     auto count = 1;
     for (const auto &cifMol : molecularUnitCellSpecies_)
-        Messenger::print("  {:3d}  {:4d}  {}\n", count++, cifMol.instances().size(),
+        Messenger::print("  {:3d}  {:4d}  {}\n", count++, cifMol.coordinates().size(),
                          EmpiricalFormula::formula(cifMol.species()->atoms(), [](const auto &i) { return i.Z(); }));
     Messenger::print("");
 

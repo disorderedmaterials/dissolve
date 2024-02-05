@@ -118,7 +118,7 @@ class CIFAssembly
 class CIFMolecularSpecies
 {
     public:
-    CIFMolecularSpecies(const Species *targetSpecies, std::string_view netaDefinition, std::vector<std::vector<int>> instances,
+    CIFMolecularSpecies(const Species *targetSpecies, std::string_view netaDefinition,
                         std::vector<std::vector<Vec3<double>>> coordinates);
 
     private:
@@ -126,8 +126,6 @@ class CIFMolecularSpecies
     const Species *species_;
     // NETA string for the species
     std::string netaString_;
-    // Indices of instances (copies)
-    std::vector<std::vector<int>> instances_;
     // Coordinates of instances
     std::vector<std::vector<Vec3<double>>> coordinates_;
 
@@ -136,8 +134,6 @@ class CIFMolecularSpecies
     const Species *species() const;
     // Return NETA string for the species
     std::string_view netaString() const;
-    // Return indices of instances (copies)
-    const std::vector<std::vector<int>> &instances() const;
     // Return coordinates of instances
     const std::vector<std::vector<Vec3<double>>> &coordinates() const;
     std::vector<std::vector<Vec3<double>>> &coordinates();
