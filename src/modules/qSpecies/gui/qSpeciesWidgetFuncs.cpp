@@ -41,10 +41,13 @@ void QSpeciesModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags>
 
     // Update Oxygen Sites Labels
     auto oSitesHistogram = dissolve_.processingModuleData().valueOr("OSitesHistogram", module_->name(), IntegerHistogram1D());
+    auto averages = oSitesHistogram.averages();
     auto sum = Integrator::absSum(oSitesHistogram.data());
-    ui_.FOResultFrame->setText(oSitesHistogram.averages()[0] / sum);
-    ui_.NBOResultFrame->setText(oSitesHistogram.averages()[1] / sum);
-    ui_.BOResultFrame->setText(oSitesHistogram.averages()[2] / sum);
+
+    ui_.FOResultFrame->setText(averages[0] / sum);
+    ui_.NBOResultFrame->setText(averages[1] / sum);
+    ui_.BOResultFrame->setText(averages[2] / sum);
+    ui_.OddOResultsFrame->setText((sum - averages[0] - averages[1] - averages[2]) / sum);
 
     // Validate renderables if they need it
     qSpeciesGraph_->validateRenderables(dissolve_.processingModuleData());
