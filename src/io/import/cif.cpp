@@ -577,12 +577,12 @@ bool CIFHandler::detectMolecules()
         return false;
     }
 
-    std::vector<int> indices(cleanedUnitCellSpecies_->nAtoms());
-    std::iota(indices.begin(), indices.end(), 0);
+    std::vector<int> allAtomIndices(cleanedUnitCellSpecies_->nAtoms());
+    std::iota(allAtomIndices.begin(), allAtomIndices.end(), 0);
 
     // Find all molecular species, and their instances
     auto idx = 0;
-    while (!indices.empty())
+    while (!allAtomIndices.empty())
     {
         // Choose a fragment
         auto fragment = cleanedUnitCellSpecies_->fragment(idx);
@@ -613,9 +613,10 @@ bool CIFHandler::detectMolecules()
         // Remove the current fragment and all copies
         for (auto &copy : copies)
         {
-            indices.erase(std::remove_if(indices.begin(), indices.end(),
-                                         [&](int value) { return std::find(copy.begin(), copy.end(), value) != copy.end(); }),
-                          indices.end());
+            allAtomIndices.erase(std::remove_if(allAtomIndices.begin(), allAtomIndices.end(),
+                                                [&](int value)
+                                                { return std::find(copy.begin(), copy.end(), value) != copy.end(); }),
+                                 allAtomIndices.end());
         }
 
         // Determine coordinates
@@ -631,7 +632,7 @@ bool CIFHandler::detectMolecules()
         molecularUnitCellSpecies_.emplace_back(sp, neta->definitionString(), copies, coords);
 
         // Search for the next valid starting index
-        idx = *std::min_element(indices.begin(), indices.end());
+        idx = *std::min_element(allAtomIndices.begin(), allAtomIndices.end());
     }
 
     Messenger::print("Partitioned unit cell into {} distinct molecular species:\n\n", molecularUnitCellSpecies_.size());
@@ -685,6 +686,9 @@ bool CIFHandler::createSupercell()
     }
     else
     {
+        supercellSpecies_->atoms().reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z *
+                                           cleanedUnitCellSpecies_->nAtoms());
+
         for (auto &molecularSpecies : molecularUnitCellSpecies_)
         {
             const auto *sp = molecularSpecies.species();
