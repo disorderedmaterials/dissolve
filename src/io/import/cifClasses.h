@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/molecule.h"
 #include "data/elements.h"
 #include "templates/vector3.h"
 #include <algorithm>
@@ -114,27 +115,50 @@ class CIFAssembly
     int nGroups() const;
 };
 
+// CIF Local Molecule Definition
+class CIFLocalMolecule : public Molecule
+{
+    /*
+     * Contents
+     */
+    private:
+    // Local vector of Atoms that belong to this Molecule and their original unit cell indices
+    std::vector<Atom> localAtoms_;
+    std::vector<int> unitCellIndices_;
+
+    public:
+    // Set Species that this Molecule represents
+    void setSpecies(const Species *sp) override;
+    // Add Atom to Molecule
+    void addAtom(Atom *i) override;
+    // Update local atom pointers from main vector
+    void updateAtoms(std::vector<Atom> &mainAtoms, int offset) override;
+    // Set coordinates and local unit cell index of the specified atom
+    void setAtom(int index, const Vec3<double> &r, int unitCellIndex);
+    // Return local unit cell indices for the atoms
+    const std::vector<int> &unitCellIndices() const;
+};
+
 // CIF Repeated Molecular Species
 class CIFMolecularSpecies
 {
     public:
-    CIFMolecularSpecies(const Species *targetSpecies, std::string_view netaDefinition,
-                        std::vector<std::vector<Vec3<double>>> coordinates);
+    CIFMolecularSpecies(const Species *targetSpecies, std::string_view netaDefinition, std::vector<CIFLocalMolecule> instances);
 
     private:
     // Species to which the definitions relate
     const Species *species_;
     // NETA string for the species
     std::string netaString_;
-    // Coordinates of instances
-    std::vector<std::vector<Vec3<double>>> coordinates_;
+    // Molecule instances
+    std::vector<CIFLocalMolecule> instances_;
 
     public:
-    // Return species to which the definitions relate
+    // Return species to which the molecules are associated
     const Species *species() const;
     // Return NETA string for the species
     std::string_view netaString() const;
-    // Return coordinates of instances
-    const std::vector<std::vector<Vec3<double>>> &coordinates() const;
-    std::vector<std::vector<Vec3<double>>> &coordinates();
+    // Return molecule instances
+    const std::vector<CIFLocalMolecule> &instances() const;
+    std::vector<CIFLocalMolecule> &instances();
 };

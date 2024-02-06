@@ -593,12 +593,18 @@ bool CIFHandler::detectMolecules()
         sp->copyBasic(cleanedUnitCellSpecies_);
 
         // Empty the species of all atoms, except those in the reference instance
-        std::vector<int> allIndices(sp->nAtoms());
-        std::iota(allIndices.begin(), allIndices.end(), 0);
+        std::vector<int> speciesAtomIndices(sp->nAtoms());
+        std::iota(speciesAtomIndices.begin(), speciesAtomIndices.end(), 0);
         std::vector<int> indicesToRemove;
-        std::set_difference(allIndices.begin(), allIndices.end(), fragment.begin(), fragment.end(),
+        std::set_difference(speciesAtomIndices.begin(), speciesAtomIndices.end(), fragment.begin(), fragment.end(),
                             std::back_inserter(indicesToRemove));
         sp->removeAtoms(indicesToRemove);
+
+        // Give the species a name
+        sp->setName(EmpiricalFormula::formula(sp->atoms(), [&](const auto &at) { return at.Z(); }));
+
+        // Fix geometry of the extracted species
+        fixGeometry(sp, cleanedUnitCellSpecies_->box());
 
         // Determine a unique NETA definition describing the fragment
         auto neta = uniqueNETADefinition(sp);
@@ -607,29 +613,24 @@ bool CIFHandler::detectMolecules()
                                     "fragment {} could be determined.\n",
                                     EmpiricalFormula::formula(sp->atoms(), [](const auto &i) { return i.Z(); }));
 
-        // Find copies of this fragment
-        auto copies = speciesCopies(cleanedUnitCellSpecies_, neta.value());
+        // Find instances of this fragment
+        auto instances = getSpeciesInstances(sp, *neta);
 
         // Remove the current fragment and all copies
-        for (auto &copy : copies)
+        for (const auto &instance : instances)
         {
             allAtomIndices.erase(std::remove_if(allAtomIndices.begin(), allAtomIndices.end(),
                                                 [&](int value)
-                                                { return std::find(copy.begin(), copy.end(), value) != copy.end(); }),
+                                                {
+                                                    return std::find(instance.unitCellIndices().begin(),
+                                                                     instance.unitCellIndices().end(),
+                                                                     value) != instance.unitCellIndices().end();
+                                                }),
                                  allAtomIndices.end());
         }
 
-        // Determine coordinates
-        auto coords = speciesCopiesCoordinatesFromUnitCell(sp, cleanedUnitCellSpecies_->box(), copies);
-
-        // Fix geometry
-        fixGeometry(sp, cleanedUnitCellSpecies_->box());
-
-        // Give the species a name
-        sp->setName(EmpiricalFormula::formula(sp->atoms(), [&](const auto &at) { return at.Z(); }));
-
         // Push a new definition
-        molecularUnitCellSpecies_.emplace_back(sp, neta->definitionString(), coords);
+        molecularUnitCellSpecies_.emplace_back(sp, neta->definitionString(), instances);
 
         // Search for the next valid starting index
         idx = *std::min_element(allAtomIndices.begin(), allAtomIndices.end());
@@ -639,7 +640,7 @@ bool CIFHandler::detectMolecules()
     Messenger::print("   ID     N  Species Formula\n");
     auto count = 1;
     for (const auto &cifMol : molecularUnitCellSpecies_)
-        Messenger::print("  {:3d}  {:4d}  {}\n", count++, cifMol.coordinates().size(),
+        Messenger::print("  {:3d}  {:4d}  {}\n", count++, cifMol.instances().size(),
                          EmpiricalFormula::formula(cifMol.species()->atoms(), [](const auto &i) { return i.Z(); }));
     Messenger::print("");
 
@@ -962,54 +963,45 @@ std::optional<NETADefinition> CIFHandler::uniqueNETADefinition(Species *sp)
     return neta;
 }
 
-// Determine instances of a NETA definition in a given species
-std::vector<std::vector<int>> CIFHandler::speciesCopies(Species *sp, NETADefinition neta)
+// Get instances for the supplied species from the cleaned unit cell
+std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeSpecies, const NETADefinition &neta)
 {
-    std::vector<std::vector<int>> copies;
-    for (auto &i : sp->atoms())
+    std::vector<CIFLocalMolecule> instances;
+
+    // Loop over atoms in the unit cell - we'll mark any that we select as an instance so we speed things up and avoid
+    // duplicates
+    std::vector<int> atomFlags(cleanedUnitCellSpecies_->nAtoms());
+    std::iota(atomFlags.begin(), atomFlags.end(), 0);
+    const auto &unitCellAtoms = cleanedUnitCellSpecies_->atoms();
+    for (auto i = 0; i < atomFlags.size(); ++i)
     {
-        if (neta.matches(&i))
+        if (atomFlags[i] == 1)
+            continue;
+
+        auto &atom = unitCellAtoms[i];
+        if (neta.matches(&atom))
         {
-            auto matchedGroup = neta.matchedPath(&i);
-            auto matchedAtoms = matchedGroup.set();
+            // Get the matched group and the (sorted) matched atom indices
+            const auto &matchedAtoms = neta.matchedPath(&atom).set();
             std::vector<int> indices(matchedAtoms.size());
             std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
-                           [](const auto &atom) { return atom->index(); });
+                           [](const auto &matchedAtom) { return matchedAtom->index(); });
             std::sort(indices.begin(), indices.end());
-            copies.push_back(std::move(indices));
+
+            // For each match create a CIFLocalMolecule instance
+            auto &mol = instances.emplace_back();
+            mol.setSpecies(moleculeSpecies);
+            for (auto i = 0; i < indices.size(); ++i)
+            {
+                mol.setAtom(i, unitCellAtoms[indices[i]].r(), indices[i]);
+            }
+
+            // Unfold the molecule
+            mol.unFold(cleanedUnitCellSpecies_->box());
         }
     }
-    return copies;
-}
 
-// Determine coordinates of copies
-std::vector<std::vector<Vec3<double>>>
-CIFHandler::speciesCopiesCoordinatesFromUnitCell(Species *moleculeSp, const Box *box,
-                                                 const std::vector<std::vector<int>> &copies)
-{
-    std::vector<std::vector<Vec3<double>>> coordinates;
-    for (auto &copy : copies)
-    {
-        auto &coords = coordinates.emplace_back();
-        coords.resize(copy.size());
-        std::transform(copy.begin(), copy.end(), coords.begin(), [&](auto i) { return cleanedUnitCellSpecies_->atom(i).r(); });
-
-        std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
-        std::vector<Atom> molAtoms(moleculeSp->nAtoms());
-        for (auto &&[spAtom, atom, r] : zip(moleculeSp->atoms(), molAtoms, coords))
-        {
-            atom.setSpeciesAtom(&spAtom);
-            atom.setCoordinates(r);
-            mol->addAtom(&atom);
-        }
-
-        // Unfold the molecule
-        mol->unFold(box);
-
-        for (auto &&[r, atom] : zip(coords, molAtoms))
-            r = atom.r();
-    }
-    return coordinates;
+    return instances;
 }
 
 // 'Fix' the geometry of a given species

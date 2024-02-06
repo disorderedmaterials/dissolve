@@ -187,11 +187,8 @@ class CIFHandler
     void applyCIFBonding(Species *sp, bool preventMetallicBonding);
     // Determine a unique NETA definition corresponding to a given species
     std::optional<NETADefinition> uniqueNETADefinition(Species *sp);
-    // Determine instances of a NETA definition in a given species
-    std::vector<std::vector<int>> speciesCopies(Species *sp, NETADefinition neta);
-    // Determine coordinates of instances in a given species
-    std::vector<std::vector<Vec3<double>>> speciesCopiesCoordinatesFromUnitCell(Species *moleculeSp, const Box *box,
-                                                                                const std::vector<std::vector<int>> &copies);
+    // Get instances of species molecules from the supplied NETA definition
+    std::vector<CIFLocalMolecule> getSpeciesInstances(Species *moleculeSpecies, const NETADefinition &neta);
     // 'Fix' the geometry of a given species
     void fixGeometry(Species *sp, const Box *box);
 };
