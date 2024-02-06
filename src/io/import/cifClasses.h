@@ -118,6 +118,9 @@ class CIFAssembly
 // CIF Local Molecule Definition
 class CIFLocalMolecule : public Molecule
 {
+    public:
+    CIFLocalMolecule(const Species *sp);
+
     /*
      * Contents
      */
@@ -126,15 +129,20 @@ class CIFLocalMolecule : public Molecule
     std::vector<Atom> localAtoms_;
     std::vector<int> unitCellIndices_;
 
-    public:
+    private:
     // Set Species that this Molecule represents
     void setSpecies(const Species *sp) override;
     // Add Atom to Molecule
     void addAtom(Atom *i) override;
     // Update local atom pointers from main vector
     void updateAtoms(std::vector<Atom> &mainAtoms, int offset) override;
+
+    public:
     // Set coordinates and local unit cell index of the specified atom
     void setAtom(int index, const Vec3<double> &r, int unitCellIndex);
+    // Return local atoms
+    std::vector<Atom> &localAtoms();
+    const std::vector<Atom> &localAtoms() const;
     // Return local unit cell indices for the atoms
     const std::vector<int> &unitCellIndices() const;
 };
@@ -161,4 +169,8 @@ class CIFMolecularSpecies
     // Return molecule instances
     const std::vector<CIFLocalMolecule> &instances() const;
     std::vector<CIFLocalMolecule> &instances();
+    // Append supplied instances to our vector
+    void appendInstances(const std::vector<CIFLocalMolecule> &newInstances);
+    // Return coordinates for all instances as a vector of vectors
+    std::vector<std::vector<Vec3<double>>> allInstanceCoordinates() const;
 };

@@ -689,37 +689,52 @@ bool CIFHandler::createSupercell()
         supercellSpecies_->atoms().reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z *
                                            cleanedUnitCellSpecies_->nAtoms());
 
+        // Create images of all molecular unit cell species
         for (auto &molecularSpecies : molecularUnitCellSpecies_)
         {
             const auto *sp = molecularSpecies.species();
-            auto coordinates = molecularSpecies.coordinates();
-            molecularSpecies.coordinates().clear();
-            for (auto &instance : coordinates)
+            const auto &coreInstances = molecularSpecies.instances();
+            std::vector<CIFLocalMolecule> supercellInstances;
+            supercellInstances.reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z * coreInstances.size());
+
+            // Loop over cell images
+            for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
             {
-                for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
-                    for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
-                        for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
+                for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
+                {
+                    for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
+                    {
+                        // Skip origin cell
+                        if (ix == 0 && iy == 0 && iz == 0)
+                            continue;
+
+                        // Set translation vector
+                        auto tVec = cleanedUnitCellSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
+
+                        // Create images of core molecule instances
+                        for (auto &instance : coreInstances)
                         {
-                            auto *spCopy = coreData_.addSpecies();
-                            spCopy->createBox(supercellLengths, cleanedUnitCellSpecies_->box()->axisAngles(), false);
-                            Vec3<double> deltaR = cleanedUnitCellSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
-                            std::vector<Vec3<double>> repeated(instance.size());
-                            std::transform(instance.begin(), instance.end(), repeated.begin(),
-                                           [&](auto &coord) { return coord + deltaR; });
-                            for (const auto &&[i, r] : zip(sp->atoms(), repeated))
-                                spCopy->addAtom(i.Z(), r, 0.0, i.atomType());
-
-                            if (flags_.isSet(UpdateFlags::CalculateBonding))
-                                spCopy->addMissingBonds();
-                            else
-                                applyCIFBonding(spCopy, flags_.isSet(UpdateFlags::PreventMetallicBonding));
-
-                            supercellConfiguration_->addMolecule(spCopy);
-                            supercellConfiguration_->updateObjectRelationships();
-                            molecularSpecies.coordinates().insert(molecularSpecies.coordinates().end(), repeated);
+                            auto &mol = supercellInstances.emplace_back(sp);
+                            for (auto &&[coreAtom, instanceAtom] : zip(instance.localAtoms(), mol.localAtoms()))
+                                instanceAtom.setCoordinates(coreAtom.r() + tVec);
                         }
+                    }
+                }
+            }
+
+            // Append the new instances to our existing ones for the unit cell
+            molecularSpecies.appendInstances(supercellInstances);
+
+            // Add the molecules to our configuration
+            for (const auto &instance : molecularSpecies.instances())
+            {
+                auto mol = supercellConfiguration_->addMolecule(sp);
+                for (auto &&[molAtom, instanceAtom] : zip(mol->atoms(), instance.localAtoms()))
+                    molAtom->setCoordinates(instanceAtom.r());
             }
         }
+
+        supercellConfiguration_->updateObjectRelationships();
     }
 
     Messenger::print("Created ({}, {}, {}) supercell - {} atoms total.\n", supercellRepeat_.x, supercellRepeat_.y,
@@ -835,11 +850,11 @@ std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(Co
                 auto coordsNode =
                     generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
                 coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
-                coordsNode->setSets(cifMolecularSp.coordinates());
+                coordsNode->setSets(cifMolecularSp.allInstanceCoordinates());
 
                 // Add
                 auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
-                addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp.coordinates().size())));
+                addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp.instances().size())));
                 addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
                 addNode->keywords().set("Rotate", false);
                 addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
@@ -989,11 +1004,10 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
             std::sort(indices.begin(), indices.end());
 
             // For each match create a CIFLocalMolecule instance
-            auto &mol = instances.emplace_back();
-            mol.setSpecies(moleculeSpecies);
-            for (auto i = 0; i < indices.size(); ++i)
+            auto &mol = instances.emplace_back(moleculeSpecies);
+            for (auto idx = 0; idx < indices.size(); ++idx)
             {
-                mol.setAtom(i, unitCellAtoms[indices[i]].r(), indices[i]);
+                mol.setAtom(idx, unitCellAtoms[indices[idx]].r(), indices[idx]);
             }
 
             // Unfold the molecule
