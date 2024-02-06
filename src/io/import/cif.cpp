@@ -406,7 +406,7 @@ std::optional<double> CIFHandler::bondDistance(std::string_view labelI, std::str
  */
 
 // Create basic unit cell
-bool CIFHandler::createBasicUnitCel()
+bool CIFHandler::createBasicUnitCell()
 {
     // Create temporary atom types corresponding to the unique atom labels
     for (auto &a : assemblies_)
@@ -782,7 +782,7 @@ bool CIFHandler::generate(std::optional<Flags<CIFHandler::UpdateFlags>> newFlags
     // Reset all species and configurations
     resetSpeciesAndConfigurations();
 
-    if (!createBasicUnitCel())
+    if (!createBasicUnitCell())
         return false;
 
     if (!createCleanedUnitCell())

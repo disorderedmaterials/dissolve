@@ -140,7 +140,7 @@ class CIFHandler
 
     private:
     // Create basic unit cell
-    bool createBasicUnitCel();
+    bool createBasicUnitCell();
     // Create the cleaned unit cell
     bool createCleanedUnitCell();
     // Try to detect molecules in the cell contents
