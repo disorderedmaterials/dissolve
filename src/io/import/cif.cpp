@@ -584,9 +584,9 @@ bool CIFHandler::detectMolecules()
     auto idx = 0;
     while (!allAtomIndices.empty())
     {
-        // Choose a fragment
-        auto fragment = cleanedUnitCellSpecies_->fragment(idx);
-        std::sort(fragment.begin(), fragment.end());
+        // Select a fragment
+        auto fragmentIndices = cleanedUnitCellSpecies_->fragment(idx);
+        std::sort(fragmentIndices.begin(), fragmentIndices.end());
 
         // Set up the CIF species
         auto *sp = coreData_.addSpecies();
@@ -596,8 +596,8 @@ bool CIFHandler::detectMolecules()
         std::vector<int> speciesAtomIndices(sp->nAtoms());
         std::iota(speciesAtomIndices.begin(), speciesAtomIndices.end(), 0);
         std::vector<int> indicesToRemove;
-        std::set_difference(speciesAtomIndices.begin(), speciesAtomIndices.end(), fragment.begin(), fragment.end(),
-                            std::back_inserter(indicesToRemove));
+        std::set_difference(speciesAtomIndices.begin(), speciesAtomIndices.end(), fragmentIndices.begin(),
+                            fragmentIndices.end(), std::back_inserter(indicesToRemove));
         sp->removeAtoms(indicesToRemove);
 
         // Give the species a name
@@ -606,31 +606,54 @@ bool CIFHandler::detectMolecules()
         // Fix geometry of the extracted species
         fixGeometry(sp, cleanedUnitCellSpecies_->box());
 
-        // Determine a unique NETA definition describing the fragment
-        auto neta = uniqueNETADefinition(sp);
-        if (!neta.has_value())
-            return Messenger::error("Couldn't generate molecular partitioning for CIF - no unique NETA definition for the "
-                                    "fragment {} could be determined.\n",
-                                    EmpiricalFormula::formula(sp->atoms(), [](const auto &i) { return i.Z(); }));
-
-        // Find instances of this fragment
-        auto instances = getSpeciesInstances(sp, *neta);
-
-        // Remove the current fragment and all copies
-        for (const auto &instance : instances)
+        // Find instances of this fragmentIndices. For large fragments that represent > 50% of the remaining atoms we don't even
+        // attempt to create a NETA definition etc. For cases such as framework species this will speed up detection no end.
+        std::vector<CIFLocalMolecule> instances;
+        if (fragmentIndices.size() * 2 > allAtomIndices.size())
         {
+            // Create an instance of the current fragmentIndices
+            auto &mol = instances.emplace_back();
+            mol.setSpecies(sp);
+            for (auto i = 0; i < sp->nAtoms(); ++i)
+            {
+                mol.setAtom(i, sp->atom(i).r(), sp->atom(i).index());
+            }
+
             allAtomIndices.erase(std::remove_if(allAtomIndices.begin(), allAtomIndices.end(),
-                                                [&](int value)
-                                                {
-                                                    return std::find(instance.unitCellIndices().begin(),
-                                                                     instance.unitCellIndices().end(),
-                                                                     value) != instance.unitCellIndices().end();
+                                                [&](int value) {
+                                                    return std::find(fragmentIndices.begin(), fragmentIndices.end(), value) !=
+                                                           fragmentIndices.end();
                                                 }),
                                  allAtomIndices.end());
         }
+        else
+        {
+            // Determine a unique NETA definition describing the fragmentIndices
+            auto neta = uniqueNETADefinition(sp);
+            if (!neta.has_value())
+                return Messenger::error("Couldn't generate molecular partitioning for CIF - no unique NETA definition for the "
+                                        "fragmentIndices {} could be determined.\n",
+                                        EmpiricalFormula::formula(sp->atoms(), [](const auto &i) { return i.Z(); }));
+
+            // Find instances of this fragmentIndices
+            instances = getSpeciesInstances(sp, *neta);
+
+            // Remove the current fragmentIndices and all copies
+            for (const auto &instance : instances)
+            {
+                allAtomIndices.erase(std::remove_if(allAtomIndices.begin(), allAtomIndices.end(),
+                                                    [&](int value)
+                                                    {
+                                                        return std::find(instance.unitCellIndices().begin(),
+                                                                         instance.unitCellIndices().end(),
+                                                                         value) != instance.unitCellIndices().end();
+                                                    }),
+                                     allAtomIndices.end());
+            }
+        }
 
         // Push a new definition
-        molecularUnitCellSpecies_.emplace_back(sp, neta->definitionString(), instances);
+        molecularUnitCellSpecies_.emplace_back(sp, "", instances);
 
         // Search for the next valid starting index
         idx = *std::min_element(allAtomIndices.begin(), allAtomIndices.end());
