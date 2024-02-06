@@ -16,7 +16,7 @@ ColumnLayout {
     D.Text {
         Layout.fillHeight: true
         Layout.fillWidth: true
-        font.pixelSize: 11
+        font.pointSize: 11
         text: "Enter the scaling factor to apply to all atoms / the target sum to determine scaling factor from"
         width: parent.width - 2 * parent.spacing
         wrapMode: Text.WordWrap

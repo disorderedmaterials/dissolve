@@ -30,7 +30,7 @@ ColumnLayout {
     D.Text {
         Layout.fillHeight: true
         Layout.fillWidth: true
-        font.pixelSize: 11
+        font.pointSize: 11
         text: modify === ModifyChargesModel.Smoothing ? 
         "Enter the target sum to smooth atom charges to" : 
         "Enter the number of significant figures to use for all atoms"
