@@ -155,21 +155,17 @@ class CIFLocalMolecule : public Molecule
 class CIFMolecularSpecies
 {
     public:
-    CIFMolecularSpecies(const Species *targetSpecies, std::string_view netaDefinition, std::vector<CIFLocalMolecule> instances);
+    CIFMolecularSpecies(const Species *targetSpecies, std::vector<CIFLocalMolecule> instances);
 
     private:
     // Species to which the definitions relate
     const Species *species_;
-    // NETA string for the species
-    std::string netaString_;
     // Molecule instances
     std::vector<CIFLocalMolecule> instances_;
 
     public:
     // Return species to which the molecules are associated
     const Species *species() const;
-    // Return NETA string for the species
-    std::string_view netaString() const;
     // Return molecule instances
     const std::vector<CIFLocalMolecule> &instances() const;
     std::vector<CIFLocalMolecule> &instances();

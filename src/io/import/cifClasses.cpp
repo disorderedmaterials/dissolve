@@ -161,17 +161,13 @@ const std::vector<int> &CIFLocalMolecule::unitCellIndices() const { return unitC
  * CIF Molecular Species
  */
 
-CIFMolecularSpecies::CIFMolecularSpecies(const Species *targetSpecies, std::string_view netaString,
-                                         std::vector<CIFLocalMolecule> instances)
-    : species_(targetSpecies), netaString_(netaString), instances_(std::move(instances))
+CIFMolecularSpecies::CIFMolecularSpecies(const Species *targetSpecies, std::vector<CIFLocalMolecule> instances)
+    : species_(targetSpecies), instances_(std::move(instances))
 {
 }
 
 // Return species to which the definitions relate
 const Species *CIFMolecularSpecies::species() const { return species_; };
-
-// Return NETA string for the species
-std::string_view CIFMolecularSpecies::netaString() const { return netaString_; };
 
 // Return molecule instances
 const std::vector<CIFLocalMolecule> &CIFMolecularSpecies::instances() const { return instances_; }

@@ -653,7 +653,7 @@ bool CIFHandler::detectMolecules()
         }
 
         // Push a new definition
-        molecularUnitCellSpecies_.emplace_back(sp, "", instances);
+        molecularUnitCellSpecies_.emplace_back(sp, instances);
 
         // Search for the next valid starting index
         idx = *std::min_element(allAtomIndices.begin(), allAtomIndices.end());
