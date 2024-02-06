@@ -28,9 +28,9 @@ Page {
         objectName: "loader"
         sourceComponent: {
             var path = modify === ModifyChargesModel.Scaling ? "ScaleLayout.qml" : "Layout.qml";
-            loader.setSource(qsTr("qrc:/dialogs/qml/modifyCharges/") + path, { 
-                    "dialogModel": dialogModel, 
-                    "modify": modify 
+            loader.setSource(qsTr("qrc:/dialogs/qml/modifyCharges/") + path, {
+                    "dialogModel": dialogModel,
+                    "modify": modify
                 });
         }
     }
