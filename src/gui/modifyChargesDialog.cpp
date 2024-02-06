@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/models/modifyChargesModel.h"
 #include "gui/modifyChargesDialog.h"
-#include <QObject>
+#include "gui/models/modifyChargesModel.h"
 #include <QHBoxLayout>
+#include <QObject>
 #include <QQmlContext>
 #include <QQuickItem>
 #include <QString>
@@ -12,7 +12,8 @@
 
 #include <QDebug>
 
-ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *dialogModel, ModifyChargesModel::ModifyBy modify) : QDialog(parent)
+ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *dialogModel, ModifyChargesModel::ModifyBy modify)
+    : QDialog(parent)
 {
     view_ = new QQuickWidget(this);
     view_->rootContext()->setContextProperty("modify", modify);

@@ -134,7 +134,6 @@ class DissolveWindow : public QMainWindow
      * Shared Dialog Models
      */
     public:
-
     ModifyChargesModel *modifyChargesModel{nullptr};
 
     public Q_SLOTS:

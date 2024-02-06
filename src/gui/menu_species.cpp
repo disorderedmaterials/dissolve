@@ -10,8 +10,8 @@
 #include "gui/importCIFDialog.h"
 #include "gui/importLigParGenDialog.h"
 #include "gui/importSpeciesDialog.h"
-#include "gui/modifyChargesDialog.h"
 #include "gui/models/modifyChargesModel.h"
+#include "gui/modifyChargesDialog.h"
 #include "gui/selectAtomTypeDialog.h"
 #include "gui/selectElementDialog.h"
 #include "gui/selectSpeciesDialog.h"
@@ -437,7 +437,10 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
     if (!species)
         return;
 
-    if (!modifyChargesModel) { modifyChargesModel = new ModifyChargesModel; }
+    if (!modifyChargesModel)
+    {
+        modifyChargesModel = new ModifyChargesModel;
+    }
 
     ModifyChargesDialog dialog(this, modifyChargesModel, ModifyChargesModel::Scaling);
     if (dialog.exec() == QDialog::Accepted)
@@ -455,7 +458,10 @@ void DissolveWindow::on_SpeciesSmoothChargesAction_triggered(bool checked)
     if (!species)
         return;
 
-    if (!modifyChargesModel) { modifyChargesModel = new ModifyChargesModel; }
+    if (!modifyChargesModel)
+    {
+        modifyChargesModel = new ModifyChargesModel;
+    }
 
     ModifyChargesDialog dialog(this, modifyChargesModel, ModifyChargesModel::Smoothing);
     if (dialog.exec() == QDialog::Accepted)
@@ -473,7 +479,10 @@ void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked
     if (!species)
         return;
 
-    if (!modifyChargesModel) { modifyChargesModel = new ModifyChargesModel; } 
+    if (!modifyChargesModel)
+    {
+        modifyChargesModel = new ModifyChargesModel;
+    }
 
     ModifyChargesDialog dialog(this, modifyChargesModel, ModifyChargesModel::ReduceSigFig);
     if (dialog.exec() == QDialog::Accepted)

@@ -19,12 +19,21 @@ class ModifyChargesModel : public QObject
     ~ModifyChargesModel();
 
     // Enum type to differentiate between operations for mofiying charges
-    enum ModifyBy { Scaling, Smoothing, ReduceSigFig };
+    enum ModifyBy
+    {
+        Scaling,
+        Smoothing,
+        ReduceSigFig
+    };
     Q_ENUM(ModifyBy)
 
     // Enum type to differentiate between usage options for dialog
     // Can either "Scale" the current value, or "ScaleTo" a given value
-    enum ScaleType { Scale, ScaleTo };
+    enum ScaleType
+    {
+        Scale,
+        ScaleTo
+    };
     Q_ENUM(ScaleType)
 
     private:
@@ -63,12 +72,11 @@ class ModifyChargesModel : public QObject
     // Returns the current significant figures
     int sigFigValue() const;
     // Apply scaling operation to species atoms charges
-    bool scale(Species*, bool);
+    bool scale(Species *, bool);
     // Apply smoothing operation to species atoms charges
-    void smooth(Species*);
+    void smooth(Species *);
     // Reduce significant figures on species atoms charges
-    void reduceSignificantFigures(Species*);
-
+    void reduceSignificantFigures(Species *);
 
     Q_SIGNALS:
     void valueSet();

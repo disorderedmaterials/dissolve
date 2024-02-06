@@ -57,7 +57,7 @@ bool ModifyChargesModel::scale(Species *species, bool showDialogOnError = true)
     return true;
 }
 
-void ModifyChargesModel::smooth(Species *species) 
+void ModifyChargesModel::smooth(Species *species)
 {
     auto targetSum = smoothValue();
     auto sum = species->totalCharge(false), shiftVal = 0.0;
@@ -66,7 +66,7 @@ void ModifyChargesModel::smooth(Species *species)
         atom.setCharge(atom.charge() - shiftVal);
 }
 
-void ModifyChargesModel::reduceSignificantFigures(Species *species) 
+void ModifyChargesModel::reduceSignificantFigures(Species *species)
 {
     auto significantFigures = sigFigValue();
     for (auto &atom : species->atoms())

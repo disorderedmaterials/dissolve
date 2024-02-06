@@ -4,30 +4,28 @@ import QtQuick.Layouts
 import Dissolve
 import "../widgets" as D
 
-
 ColumnLayout {
-    anchors.fill: parent
-    spacing: 10
-
     property ModifyChargesModel dialogModel
     property int modify
     property double scaleValue
 
+    anchors.fill: parent
+    spacing: 10
+
     D.Text {
         Layout.fillHeight: true
         Layout.fillWidth: true
-        font.pointSize: 11
         text: "Enter the scaling factor to apply to all atoms / the target sum to determine scaling factor from"
         width: parent.width - 2 * parent.spacing
         wrapMode: Text.WordWrap
     }
     SpinBox {
         id: spinBox
-        objectName: "scaleSpinBox"
         Layout.alignment: Qt.AlignRight
         Layout.fillWidth: true
         editable: true
         from: -100
+        objectName: "scaleSpinBox"
         stepSize: 1
         to: 100
         value: dialogModel.scaleValue

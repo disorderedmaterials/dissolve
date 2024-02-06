@@ -6,8 +6,8 @@
 #include "gui/models/configurationModel.h"
 #include "gui/models/dissolveModel.h"
 #include "gui/models/masterTermTreeModel.h"
-#include "gui/models/moduleLayersModel.h"
 #include "gui/models/modifyChargesModel.h"
+#include "gui/models/moduleLayersModel.h"
 #include "gui/models/speciesModel.h"
 #include "gui/types.h"
 #include <QQmlEngine>

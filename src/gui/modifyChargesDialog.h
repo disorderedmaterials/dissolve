@@ -4,10 +4,10 @@
 #pragma once
 
 #include "gui/models/modifyChargesModel.h"
-#include <QObject>
-#include <QDialog>
-#include <QQuickWidget>
 #include <QCloseEvent>
+#include <QDialog>
+#include <QObject>
+#include <QQuickWidget>
 
 class ModifyChargesModel;
 

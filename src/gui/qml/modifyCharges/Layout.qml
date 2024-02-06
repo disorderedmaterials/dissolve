@@ -4,46 +4,42 @@ import QtQuick.Layouts
 import Dissolve
 import "../widgets" as D
 
-
 ColumnLayout {
+    property ModifyChargesModel dialogModel
+    property int modify
+    property int sigFigValue
+    property double smoothValue
+
     anchors.fill: parent
     spacing: 10
 
-    property ModifyChargesModel dialogModel
-    property int modify
-    property double smoothValue
-    property int sigFigValue
-
     function processSelection(option, x) {
-        switch(option) {
-            case ModifyChargesModel.Smoothing:
-                dialogModel.updateSmoothValue(x)
-                break
-            case ModifyChargesModel.ReduceSigFig:
-                dialogModel.updateSigFigValue(x)
-                break
-            default:
-                break
+        switch (option) {
+        case ModifyChargesModel.Smoothing:
+            dialogModel.updateSmoothValue(x);
+            break;
+        case ModifyChargesModel.ReduceSigFig:
+            dialogModel.updateSigFigValue(x);
+            break;
+        default:
+            break;
         }
     }
 
     D.Text {
         Layout.fillHeight: true
         Layout.fillWidth: true
-        font.pointSize: 11
-        text: modify === ModifyChargesModel.Smoothing ? 
-        "Enter the target sum to smooth atom charges to" : 
-        "Enter the number of significant figures to use for all atoms"
+        text: modify === ModifyChargesModel.Smoothing ? "Enter the target sum to smooth atom charges to" : "Enter the number of significant figures to use for all atoms"
         width: parent.width - 2 * parent.spacing
         wrapMode: Text.WordWrap
     }
     SpinBox {
         id: spinBox
-        objectName: modify === ModifyChargesModel.Smoothing ? "smoothSpinBox" : "sigFigSpinBox"
         Layout.alignment: Qt.AlignRight
         Layout.fillWidth: true
         editable: modify === ModifyChargesModel.Smoothing ? true : false
         from: modify === ModifyChargesModel.ReduceSigFig ? 0 : -100
+        objectName: modify === ModifyChargesModel.Smoothing ? "smoothSpinBox" : "sigFigSpinBox"
         stepSize: 1
         to: 100
         value: modify === ModifyChargesModel.Smoothing ? dialogModel.smoothValue : dialogModel.sigFigValue
