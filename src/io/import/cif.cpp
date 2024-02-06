@@ -1027,7 +1027,6 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
         std::vector<int> indices(matchedAtoms.size());
         std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
                        [](const auto matchedAtom) { return matchedAtom->index(); });
-        std::sort(indices.begin(), indices.end());
 
         // For each match create a CIFLocalMolecule instance
         auto &mol = instances.emplace_back();
