@@ -119,25 +119,29 @@ class CIFAssembly
 class CIFLocalMolecule : public Molecule
 {
     public:
-    CIFLocalMolecule(const Species *sp);
+    CIFLocalMolecule() = default;
+    ~CIFLocalMolecule() = default;
+    CIFLocalMolecule(const CIFLocalMolecule &copyFrom);
+    CIFLocalMolecule(CIFLocalMolecule &&moveFrom);
+    CIFLocalMolecule &operator=(const CIFLocalMolecule &copyFrom);
+    CIFLocalMolecule &operator=(CIFLocalMolecule &&moveFrom);
 
-    /*
-     * Contents
-     */
     private:
     // Local vector of Atoms that belong to this Molecule and their original unit cell indices
     std::vector<Atom> localAtoms_;
     std::vector<int> unitCellIndices_;
 
     private:
-    // Set Species that this Molecule represents
-    void setSpecies(const Species *sp) override;
+    // Copy data from specified object
+    void copyData(const CIFLocalMolecule &object);
     // Add Atom to Molecule
     void addAtom(Atom *i) override;
     // Update local atom pointers from main vector
     void updateAtoms(std::vector<Atom> &mainAtoms, int offset) override;
 
     public:
+    // Set Species that this Molecule represents
+    void setSpecies(const Species *sp) override;
     // Set coordinates and local unit cell index of the specified atom
     void setAtom(int index, const Vec3<double> &r, int unitCellIndex);
     // Return local atoms

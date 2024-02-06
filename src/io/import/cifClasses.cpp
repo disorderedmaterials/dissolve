@@ -93,7 +93,35 @@ int CIFAssembly::nGroups() const { return groups_.size(); }
  * CIF Local Molecule
  */
 
-CIFLocalMolecule::CIFLocalMolecule(const Species *sp)
+CIFLocalMolecule::CIFLocalMolecule(const CIFLocalMolecule &copyFrom) { copyData(copyFrom); }
+
+CIFLocalMolecule::CIFLocalMolecule(CIFLocalMolecule &&moveFrom) { copyData(moveFrom); }
+
+CIFLocalMolecule &CIFLocalMolecule::operator=(const CIFLocalMolecule &copyFrom)
+{
+    copyData(copyFrom);
+    return *this;
+}
+
+CIFLocalMolecule &CIFLocalMolecule::operator=(CIFLocalMolecule &&moveFrom)
+{
+    copyData(moveFrom);
+    return *this;
+}
+
+// Copy data from specified object
+void CIFLocalMolecule::copyData(const CIFLocalMolecule &object)
+{
+    species_ = object.species_;
+
+    localAtoms_ = object.localAtoms_;
+    unitCellIndices_ = object.unitCellIndices_;
+    atoms_.resize(localAtoms_.size());
+    std::transform(localAtoms_.begin(), localAtoms_.end(), atoms_.begin(), [](auto &atom) { return &atom; });
+}
+
+// Set Species that this Molecule represents
+void CIFLocalMolecule::setSpecies(const Species *sp)
 {
     species_ = sp;
 
@@ -102,16 +130,9 @@ CIFLocalMolecule::CIFLocalMolecule(const Species *sp)
     unitCellIndices_.resize(sp->nAtoms());
     std::transform(localAtoms_.begin(), localAtoms_.end(), atoms_.begin(), [](auto &atom) { return &atom; });
 
-    auto parent = shared_from_this();
     for (auto &&[atom, spAtom] : zip(localAtoms_, species_->atoms()))
-    {
-        atom.setMolecule(parent);
         atom.setSpeciesAtom(&spAtom);
-    }
 }
-
-// Set Species that this Molecule represents
-void CIFLocalMolecule::setSpecies(const Species *sp) { throw(std::runtime_error("Can't setSpecies() in a LocalMolecule.\n")); }
 
 // Add Atom to Molecule
 void CIFLocalMolecule::addAtom(Atom *atom) { throw(std::runtime_error("Can't addAtom() in a LocalMolecule.\n")); }

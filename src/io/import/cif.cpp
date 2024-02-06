@@ -714,7 +714,9 @@ bool CIFHandler::createSupercell()
                         // Create images of core molecule instances
                         for (auto &instance : coreInstances)
                         {
-                            auto &mol = supercellInstances.emplace_back(sp);
+                            auto &mol = supercellInstances.emplace_back();
+                            mol.setSpecies(sp);
+
                             for (auto &&[coreAtom, instanceAtom] : zip(instance.localAtoms(), mol.localAtoms()))
                                 instanceAtom.setCoordinates(coreAtom.r() + tVec);
                         }
@@ -985,34 +987,37 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
 
     // Loop over atoms in the unit cell - we'll mark any that we select as an instance so we speed things up and avoid
     // duplicates
-    std::vector<int> atomFlags(cleanedUnitCellSpecies_->nAtoms());
-    std::iota(atomFlags.begin(), atomFlags.end(), 0);
+    std::vector<bool> atomFlags(cleanedUnitCellSpecies_->nAtoms());
+    std::fill(atomFlags.begin(), atomFlags.end(), false);
     const auto &unitCellAtoms = cleanedUnitCellSpecies_->atoms();
     for (auto i = 0; i < atomFlags.size(); ++i)
     {
-        if (atomFlags[i] == 1)
+        if (atomFlags[i])
             continue;
 
         auto &atom = unitCellAtoms[i];
-        if (neta.matches(&atom))
+        auto matchedAtoms = neta.matchedPath(&atom).set();
+        if (matchedAtoms.empty())
+            continue;
+
+        // Get the (sorted) matched atom indices
+        std::vector<int> indices(matchedAtoms.size());
+        std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
+                       [](const auto matchedAtom) { return matchedAtom->index(); });
+        std::sort(indices.begin(), indices.end());
+
+        // For each match create a CIFLocalMolecule instance
+        auto &mol = instances.emplace_back();
+        mol.setSpecies(moleculeSpecies);
+        for (auto idx = 0; idx < indices.size(); ++idx)
         {
-            // Get the matched group and the (sorted) matched atom indices
-            const auto &matchedAtoms = neta.matchedPath(&atom).set();
-            std::vector<int> indices(matchedAtoms.size());
-            std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
-                           [](const auto &matchedAtom) { return matchedAtom->index(); });
-            std::sort(indices.begin(), indices.end());
+            mol.setAtom(idx, unitCellAtoms[indices[idx]].r(), indices[idx]);
 
-            // For each match create a CIFLocalMolecule instance
-            auto &mol = instances.emplace_back(moleculeSpecies);
-            for (auto idx = 0; idx < indices.size(); ++idx)
-            {
-                mol.setAtom(idx, unitCellAtoms[indices[idx]].r(), indices[idx]);
-            }
-
-            // Unfold the molecule
-            mol.unFold(cleanedUnitCellSpecies_->box());
+            atomFlags[indices[idx]] = true;
         }
+
+        // Unfold the molecule
+        mol.unFold(cleanedUnitCellSpecies_->box());
     }
 
     return instances;
