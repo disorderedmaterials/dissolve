@@ -825,17 +825,17 @@ bool CIFHandler::isValid() const
     return !molecularUnitCellSpecies_.empty() || supercellSpecies_->fragment(0).size() != supercellSpecies_->nAtoms();
 }
 
+// Finalise, returning the required species and resulting configuration
 std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(CoreData &coreData,
-                                                                              std::optional<Flags<OutputFlags>> flags) const
+                                                                              const Flags<OutputFlags> &flags) const
 {
     std::vector<const Species *> species;
     Configuration *configuration;
 
-    if (flags->isSet(OutputFlags::OutputMolecularSpecies))
+    if (flags.isSet(OutputFlags::OutputMolecularSpecies))
     {
-        if (flags && flags->isSet(OutputFlags::OutputConfiguration))
+        if (flags.isSet(OutputFlags::OutputConfiguration))
         {
-
             configuration = coreData.addConfiguration();
             configuration->setName(chemicalFormula());
 
@@ -901,14 +901,14 @@ std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(Co
         auto *sp = coreData.addSpecies();
         sp->copyBasic(supercellSpecies_);
         species.push_back(sp);
-        if (flags->isSet(OutputFlags::OutputFramework))
+        if (flags.isSet(OutputFlags::OutputFramework))
         {
             sp->removePeriodicBonds();
             sp->updateIntramolecularTerms();
             sp->removeBox();
         }
 
-        if (flags->isSet(OutputFlags::OutputConfiguration))
+        if (flags.isSet(OutputFlags::OutputConfiguration))
         {
             configuration = coreData.addConfiguration();
             configuration->setName(chemicalFormula());
