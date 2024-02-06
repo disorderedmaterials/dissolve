@@ -19,14 +19,28 @@ class ModifyChargesModel : public QObject
     ~ModifyChargesModel();
 
     // Enum type to differentiate between operations for mofiying charges
-    enum Modify { Scaling, Smoothing, ReduceSigFig };
-    Q_ENUM(Modify)
+    enum ModifyBy { Scaling, Smoothing, ReduceSigFig };
+    Q_ENUM(ModifyBy)
 
     // Enum type to differentiate between usage options for dialog
     // Can either "Scale" the current value, or "ScaleTo" a given value
     enum ScaleType { Scale, ScaleTo };
     Q_ENUM(ScaleType)
 
+    private:
+    // Contains the current value to be used for scaling charges
+    double currentScaleValue_{1.0};
+    // Contains the current value to be used for smoothing charges
+    double currentSmoothValue_{0.0};
+    // Contains the current value to be used for reducing significant figures on charges
+    int currentSigFigValue_{3};
+
+    // Contains the current setting for scale type (Scale or ScaleTo)
+    ScaleType scaleType_;
+    // Contains the attribute (scaling, smoothing, sig fig) that will currently be modified by the model
+    ModifyBy modify_;
+
+    public:
     // Sets the new selected scale value
     Q_INVOKABLE void updateScaleValue(double);
     // Sets the new selected smooth value
@@ -39,9 +53,9 @@ class ModifyChargesModel : public QObject
     // Returns the current scale type option
     ScaleType getScaleType();
     // Returns the current modifier option
-    Modify getModifier();
+    ModifyBy getModifier();
     // Sets the current modifier option
-    void setModifier(Modify);
+    void setModifier(ModifyBy);
     // Returns the current scale value
     double scaleValue() const;
     // Returns the current smooth value
@@ -55,13 +69,6 @@ class ModifyChargesModel : public QObject
     // Reduce significant figures on species atoms charges
     void reduceSignificantFigures(Species*);
 
-    private:
-    double currentScaleValue_{1.0};
-    double currentSmoothValue_{0.0};
-    int currentSigFigValue_{3};
-
-    ScaleType scaleType_;
-    Modify modify_;
 
     Q_SIGNALS:
     void valueSet();

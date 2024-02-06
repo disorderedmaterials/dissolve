@@ -28,6 +28,8 @@
 #include <qpushbutton.h>
 #include <valarray>
 
+#include <QDebug>
+
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
     // Raise an element selection dialog
@@ -435,14 +437,12 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
     if (!species)
         return;
 
-    if (!dissolve_.modifyChargesModel) { dissolve_.modifyChargesModel = new ModifyChargesModel; }
+    if (!modifyChargesModel) { modifyChargesModel = new ModifyChargesModel; }
 
-    auto model = dissolve_.modifyChargesModel;
-
-    ModifyChargesDialog dialog(this, model, ModifyChargesModel::Scaling);
+    ModifyChargesDialog dialog(this, modifyChargesModel, ModifyChargesModel::Scaling);
     if (dialog.exec() == QDialog::Accepted)
     {
-        auto success = model->scale(species, true);
+        auto success = modifyChargesModel->scale(species, true);
         setModified();
         fullUpdate();
     }
@@ -455,14 +455,12 @@ void DissolveWindow::on_SpeciesSmoothChargesAction_triggered(bool checked)
     if (!species)
         return;
 
-    if (!dissolve_.modifyChargesModel) { dissolve_.modifyChargesModel = new ModifyChargesModel; }
+    if (!modifyChargesModel) { modifyChargesModel = new ModifyChargesModel; }
 
-    auto model = dissolve_.modifyChargesModel;
-
-    ModifyChargesDialog dialog(this, model, ModifyChargesModel::Smoothing);
+    ModifyChargesDialog dialog(this, modifyChargesModel, ModifyChargesModel::Smoothing);
     if (dialog.exec() == QDialog::Accepted)
     {
-        model->smooth(species);
+        modifyChargesModel->smooth(species);
         setModified();
         fullUpdate();
     }
@@ -475,14 +473,12 @@ void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked
     if (!species)
         return;
 
-    if (!dissolve_.modifyChargesModel) { dissolve_.modifyChargesModel = new ModifyChargesModel; }
+    if (!modifyChargesModel) { modifyChargesModel = new ModifyChargesModel; } 
 
-    auto model = dissolve_.modifyChargesModel;
-
-    ModifyChargesDialog dialog(this, model, ModifyChargesModel::ReduceSigFig);
+    ModifyChargesDialog dialog(this, modifyChargesModel, ModifyChargesModel::ReduceSigFig);
     if (dialog.exec() == QDialog::Accepted)
     {
-        model->reduceSignificantFigures(species);
+        modifyChargesModel->reduceSignificantFigures(species);
         setModified();
         fullUpdate();
     }

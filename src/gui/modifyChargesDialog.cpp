@@ -12,7 +12,7 @@
 
 #include <QDebug>
 
-ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *dialogModel, ModifyChargesModel::Modify modify) : QDialog(parent)
+ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *dialogModel, ModifyChargesModel::ModifyBy modify) : QDialog(parent)
 {
     view_ = new QQuickWidget(this);
     view_->rootContext()->setContextProperty("modify", modify);

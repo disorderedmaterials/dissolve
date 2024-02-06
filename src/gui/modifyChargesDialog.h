@@ -16,7 +16,7 @@ class ModifyChargesDialog : public QDialog
     Q_OBJECT
 
     public:
-    ModifyChargesDialog(QWidget *parent, ModifyChargesModel *dialogModel, ModifyChargesModel::Modify modify);
+    ModifyChargesDialog(QWidget *parent, ModifyChargesModel *dialogModel, ModifyChargesModel::ModifyBy modify);
     ~ModifyChargesDialog() = default;
 
     private:

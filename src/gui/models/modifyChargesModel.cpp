@@ -4,6 +4,8 @@
 #include "gui/models/modifyChargesModel.h"
 #include <QMessageBox>
 
+#include <QDebug>
+
 ModifyChargesModel::ModifyChargesModel() {}
 
 ModifyChargesModel::~ModifyChargesModel() {}
@@ -24,9 +26,9 @@ void ModifyChargesModel::setScaleType(ScaleType option) { scaleType_ = option; }
 
 ModifyChargesModel::ScaleType ModifyChargesModel::getScaleType() { return scaleType_; }
 
-void ModifyChargesModel::setModifier(ModifyChargesModel::Modify option) { modify_ = option; }
+void ModifyChargesModel::setModifier(ModifyChargesModel::ModifyBy option) { modify_ = option; }
 
-ModifyChargesModel::Modify ModifyChargesModel::getModifier() { return modify_; }
+ModifyChargesModel::ModifyBy ModifyChargesModel::getModifier() { return modify_; }
 
 bool ModifyChargesModel::scale(Species *species, bool showDialogOnError = true)
 {

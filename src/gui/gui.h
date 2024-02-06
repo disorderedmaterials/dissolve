@@ -130,6 +130,13 @@ class DissolveWindow : public QMainWindow
     // Update recent file menu
     void updateRecentFileMenu();
 
+    /*
+     * Shared Dialog Models
+     */
+    public:
+
+    ModifyChargesModel *modifyChargesModel{nullptr};
+
     public Q_SLOTS:
     // File
     void on_FileNewAction_triggered(bool checked);
