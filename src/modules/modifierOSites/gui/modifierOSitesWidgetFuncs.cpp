@@ -1,0 +1,53 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2024 Team Dissolve and contributors
+
+#include "classes/configuration.h"
+#include "gui/render/renderableData1D.h"
+#include "main/dissolve.h"
+#include "math/integerHistogram1D.h"
+#include "modules/modifierOSites/gui/modifierOSitesWidget.h"
+#include "modules/modifierOSites/modifierOSites.h"
+
+ModifierOSitesModuleWidget::ModifierOSitesModuleWidget(QWidget *parent, ModifierOSitesModule *module, Dissolve &dissolve)
+    : ModuleWidget(parent, dissolve), module_(module)
+{
+    // Set up user interface
+    ui_.setupUi(this);
+
+    // Set up RDF graph
+    qSpeciesGraph_ = ui_.ModifierOSitesPlotWidget->dataViewer();
+
+    auto &view = qSpeciesGraph_->view();
+    view.setViewType(View::FlatXYView);
+    view.axes().setTitle(0, "Qn");
+    view.axes().setMax(0, 10.0);
+    view.axes().setTitle(1, "Normalised Frequency");
+    view.axes().setMin(1, 0.0);
+    view.axes().setMax(1, 1.0);
+    view.setAutoFollowType(View::AllAutoFollow);
+
+    refreshing_ = false;
+}
+
+// Update controls within widget
+void ModifierOSitesModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
+{
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
+        qSpeciesGraph_->clearRenderables();
+
+    if (qSpeciesGraph_->renderables().empty())
+        qSpeciesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//QSpecies", module_->name()), "Q-Species");
+
+    // Update Oxygen Sites Labels
+    auto oSitesHistogram = dissolve_.processingModuleData().valueOr("OSitesHistogram", module_->name(), IntegerHistogram1D());
+    ui_.FOResultFrame->setText(oSitesHistogram.averages()[0]);
+    ui_.NBOResultFrame->setText(oSitesHistogram.averages()[1]);
+    ui_.BOResultFrame->setText(oSitesHistogram.averages()[2]);
+
+    // Validate renderables if they need it
+    qSpeciesGraph_->validateRenderables(dissolve_.processingModuleData());
+
+    ui_.ModifierOSitesPlotWidget->updateToolbar();
+
+    qSpeciesGraph_->postRedisplay();
+}

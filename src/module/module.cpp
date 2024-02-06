@@ -39,6 +39,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::IntraDistance, "IntraDistance"},
                                                                  {ModuleTypes::IntraShake, "IntraShake"},
                                                                  {ModuleTypes::MD, "MD"},
+                                                                 {ModuleTypes::ModifierOSites, "ModifierOSites"},
                                                                  {ModuleTypes::MolShake, "MolShake"},
                                                                  {ModuleTypes::NeutronSQ, "NeutronSQ"},
                                                                  {ModuleTypes::OrientedSDF, "OrientedSDF"},
