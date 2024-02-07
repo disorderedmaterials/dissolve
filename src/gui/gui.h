@@ -5,11 +5,11 @@
 
 #include "base/timer.h"
 #include "gui/mainTab.h"
+#include "gui/models/modifyChargesModel.h"
 #include "gui/outputHandler.hui"
 #include "gui/signals.h"
 #include "gui/thread.hui"
 #include "gui/ui_gui.h"
-#include "gui/models/modifyChargesModel.h"
 
 // Forward Declarations
 class Configuration;
