@@ -10,8 +10,6 @@
 #include <QString>
 #include <string>
 
-#include <QDebug>
-
 ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *dialogModel, ModifyChargesModel::ModifyBy modify)
     : QDialog(parent)
 {
@@ -22,7 +20,7 @@ ModifyChargesDialog::ModifyChargesDialog(QWidget *parent, ModifyChargesModel *di
 
     view_->setResizeMode(QQuickWidget::SizeRootObjectToView);
 
-    QHBoxLayout *topLeftLayout = new QHBoxLayout;
+    auto *topLeftLayout = new QHBoxLayout;
     topLeftLayout->addWidget(view_);
     setLayout(topLeftLayout);
 

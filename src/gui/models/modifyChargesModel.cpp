@@ -4,8 +4,6 @@
 #include "gui/models/modifyChargesModel.h"
 #include <QMessageBox>
 
-#include <QDebug>
-
 ModifyChargesModel::ModifyChargesModel() {}
 
 ModifyChargesModel::~ModifyChargesModel() {}

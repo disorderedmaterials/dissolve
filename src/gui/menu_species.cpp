@@ -28,8 +28,6 @@
 #include <qpushbutton.h>
 #include <valarray>
 
-#include <QDebug>
-
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
     // Raise an element selection dialog
