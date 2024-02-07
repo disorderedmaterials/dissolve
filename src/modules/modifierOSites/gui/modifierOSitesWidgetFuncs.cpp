@@ -16,7 +16,7 @@ ModifierOSitesModuleWidget::ModifierOSitesModuleWidget(QWidget *parent, Modifier
 
     // Set up Oxygen Sites Graph
     oSitesGraph_ = ui_.OSitesPlotWidget->dataViewer();
-    modifierSitesGraph_=ui_.ModifierPlotWidget->dataViewer();
+    modifierSitesGraph_ = ui_.ModifierPlotWidget->dataViewer();
 
     auto &view = oSitesGraph_->view();
     view.setViewType(View::FlatXYView);
@@ -61,7 +61,6 @@ void ModifierOSitesModuleWidget::updateControls(const Flags<ModuleWidget::Update
 
     ui_.OSitesPlotWidget->updateToolbar();
     ui_.ModifierPlotWidget->updateToolbar();
-    
 
     oSitesGraph_->postRedisplay();
     modifierSitesGraph_->postRedisplay();

@@ -5,6 +5,7 @@
 #include "analyser/siteSelector.h"
 #include "main/dissolve.h"
 #include "math/integerHistogram1D.h"
+#include "math/integrator.h"
 #include "module/context.h"
 #include "modules/modifierOSites/modifierOSites.h"
 
@@ -66,11 +67,16 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     }
 
     // Accumulate histogram averages
-    modifierHistogram.accumulate();
     oxygenSitesHistogram.accumulate();
+    modifierHistogram.accumulate();
+
+    // Averaged values for OSites
+    Data1D accumulatedData = oxygenSitesHistogram.accumulatedData();
+    auto sum = Integrator::absSum(oxygenSitesHistogram.data());
+    accumulatedData /= sum;
 
     // Create the display data
-    processingData.realise<Data1D>("OSites", name(), GenericItem::InRestartFileFlag) = oxygenSitesHistogram.data();
+    processingData.realise<Data1D>("OSites", name(), GenericItem::InRestartFileFlag) = accumulatedData;
     processingData2.realise<Data1D>("ModifierSites", name(), GenericItem::InRestartFileFlag) = modifierHistogram.data();
 
     // Save data?
