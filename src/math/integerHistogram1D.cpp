@@ -143,7 +143,8 @@ Data1D IntegerHistogram1D::data() const
     return result;
 }
 
-std::map<int, SampledDouble> IntegerHistogram1D::averages() const { return averages_; }
+// Return average map
+const std::map<int, SampledDouble> &IntegerHistogram1D::averages() const { return averages_; }
 
 // Return accumulated (averaged) data
 const Data1D &IntegerHistogram1D::accumulatedData() const { return accumulatedData_; }
