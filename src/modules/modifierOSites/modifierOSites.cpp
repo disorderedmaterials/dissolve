@@ -39,8 +39,8 @@ ModifierOSitesModule::ModifierOSitesModule() : Module(ModuleTypes::ModifierOSite
                                 "Distance range (min, max) over which to calculate Q-Species from central site", distanceRange_,
                                 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
     keywords_.add<RangeKeyword>("ModiferDistanceRange",
-                                "Distance range (min, max) over which to calculate Modifier from central site", modifierDistanceRange_,
-                                0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
+                                "Distance range (min, max) over which to calculate Modifier from central site",
+                                modifierDistanceRange_, 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
 
     keywords_.setOrganisation("Export");
     keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated QSpecies data",

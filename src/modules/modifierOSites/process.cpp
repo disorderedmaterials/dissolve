@@ -18,6 +18,7 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
         return ExecutionResult::Failed;
     }
     auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData2 = moduleContext.dissolve().processingModuleData();
 
     // Select all potential bridging oxygen sites - we will determine which actually are
     // involved in NF-BO-NF interactions once we have the available NF sites
@@ -33,62 +34,51 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     SiteFilter filter(targetConfiguration_, allOxygenSites.sites());
     auto &&[BO, neighbourMap] = filter.filterBySiteProximity(NF.sites(), distanceRange_, 0, 2);
 
-    // The returned 'neighbourMap' maps BO sites to nearby NF sites *only if* there were exactly two NF sites within range.
-    // So, we can use this to determine the Q numbers for each NF by counting the number of times a NF site appears in the map.
-    std::map<const Site *, int> qSpecies;
-    std::map<int, int> oxygenSites;
-    for (const auto &[siteBO, nbrNF] : neighbourMap)
-    {
-        ++oxygenSites[nbrNF.size()];
-        if (nbrNF.size() == 2)
-        {
-            for (const auto &[nbr, nbrIndex] : nbrNF)
-            {
-                ++qSpecies[nbr];
-            }
-        }
-    }
-
-    // Retrieve storage for the Q-species histogram
-    auto [qSpeciesHistogram, status] =
-        processingData.realiseIf<IntegerHistogram1D>("QHistogram", name(), GenericItem::InRestartFileFlag);
-    if (status == GenericItem::ItemStatus::Created)
-        qSpeciesHistogram.initialise();
+    SiteFilter filter2(targetConfiguration_, modifier.sites());
+    auto &&[BO2, neighbourMap2] = filter2.filterBySiteProximity(allOxygenSites.sites(), modifierDistanceRange_, 0, 99);
 
     // Retrieve storage for the Oxygen Sites histogram
-    auto [oxygenSitesHistogram, status1] =
+    auto [oxygenSitesHistogram, status] =
         processingData.realiseIf<IntegerHistogram1D>("OSitesHistogram", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
         oxygenSitesHistogram.initialise();
 
+    // Retrieve storage for the Q-species histogram
+    auto [modifierHistogram, status2] =
+        processingData.realiseIf<IntegerHistogram1D>("ModifierHistogram", name(), GenericItem::InRestartFileFlag);
+    if (status2 == GenericItem::ItemStatus::Created)
+        modifierHistogram.initialise();
+
     // Clear the temporary bins
-    qSpeciesHistogram.zeroBins();
+    modifierHistogram.zeroBins();
     oxygenSitesHistogram.zeroBins();
 
-    // Bin our mapped Q counts
-    for (auto &[key, value] : qSpecies)
-        qSpeciesHistogram.bin(value);
-
-    // Bin our mapped O Sites
-    for (auto &[key, value] : oxygenSites)
-        oxygenSitesHistogram.bin(key, value);
-
-    // Don't forget the Q=0 count - this is equivalent to the total number of NF sites minus the number mapped in 'qSpecies'
-    qSpeciesHistogram.bin(0, NF.sites().size() - qSpecies.size());
+    // The returned 'neighbourMap' maps BO sites to nearby NF sites *only if* there were exactly two NF sites within range.
+    // So, we can use this to determine the Q numbers for each NF by counting the number of times a NF site appears in the map.
+    std::map<const Site *, int> qSpecies;
+    std::map<int, int> oxygenSites;
+    for (const auto &[siteM, nearO] : neighbourMap2)
+    {
+        for (auto &&[oSite, index] : nearO)
+        {
+            oxygenSitesHistogram.bin(neighbourMap[oSite].size());
+        }
+    }
 
     // Accumulate histogram averages
-    qSpeciesHistogram.accumulate();
+    modifierHistogram.accumulate();
     oxygenSitesHistogram.accumulate();
 
     // Create the display data
-    processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = qSpeciesHistogram.data();
+    processingData.realise<Data1D>("OSites", name(), GenericItem::InRestartFileFlag) = oxygenSitesHistogram.data();
+    processingData2.realise<Data1D>("ModifierSites", name(), GenericItem::InRestartFileFlag) = modifierHistogram.data();
 
     // Save data?
     if (exportFileAndFormat_.hasFilename())
     {
         if (moduleContext.processPool().isMaster())
         {
-            if (exportFileAndFormat_.exportData(qSpeciesHistogram.accumulatedData()))
+            if (exportFileAndFormat_.exportData(oxygenSitesHistogram.accumulatedData()))
                 moduleContext.processPool().decideTrue();
             else
             {

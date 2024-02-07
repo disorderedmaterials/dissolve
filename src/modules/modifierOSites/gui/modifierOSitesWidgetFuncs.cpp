@@ -14,10 +14,20 @@ ModifierOSitesModuleWidget::ModifierOSitesModuleWidget(QWidget *parent, Modifier
     // Set up user interface
     ui_.setupUi(this);
 
-    // Set up RDF graph
-    qSpeciesGraph_ = ui_.ModifierOSitesPlotWidget->dataViewer();
+    // Set up Oxygen Sites Graph
+    oSitesGraph_ = ui_.OSitesPlotWidget->dataViewer();
+    modifierSitesGraph_=ui_.ModifierPlotWidget->dataViewer();
 
-    auto &view = qSpeciesGraph_->view();
+    auto &view = oSitesGraph_->view();
+    view.setViewType(View::FlatXYView);
+    view.axes().setTitle(0, "Qn");
+    view.axes().setMax(0, 10.0);
+    view.axes().setTitle(1, "Normalised Frequency");
+    view.axes().setMin(1, 0.0);
+    view.axes().setMax(1, 1.0);
+    view.setAutoFollowType(View::AllAutoFollow);
+
+    auto &view2 = modifierSitesGraph_->view();
     view.setViewType(View::FlatXYView);
     view.axes().setTitle(0, "Qn");
     view.axes().setMax(0, 10.0);
@@ -33,21 +43,26 @@ ModifierOSitesModuleWidget::ModifierOSitesModuleWidget(QWidget *parent, Modifier
 void ModifierOSitesModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
-        qSpeciesGraph_->clearRenderables();
+    {
+        oSitesGraph_->clearRenderables();
+        modifierSitesGraph_->clearRenderables();
+    }
 
-    if (qSpeciesGraph_->renderables().empty())
-        qSpeciesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//QSpecies", module_->name()), "Q-Species");
+    if (oSitesGraph_->renderables().empty())
+        oSitesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//OSites", module_->name()), "O-Sites");
 
-    // Update Oxygen Sites Labels
-    auto oSitesHistogram = dissolve_.processingModuleData().valueOr("OSitesHistogram", module_->name(), IntegerHistogram1D());
-    ui_.FOResultFrame->setText(oSitesHistogram.averages()[0]);
-    ui_.NBOResultFrame->setText(oSitesHistogram.averages()[1]);
-    ui_.BOResultFrame->setText(oSitesHistogram.averages()[2]);
+    if (modifierSitesGraph_->renderables().empty())
+        modifierSitesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//ModifierSites", module_->name()),
+                                                                "Modifier-Sites");
 
     // Validate renderables if they need it
-    qSpeciesGraph_->validateRenderables(dissolve_.processingModuleData());
+    oSitesGraph_->validateRenderables(dissolve_.processingModuleData());
+    modifierSitesGraph_->validateRenderables(dissolve_.processingModuleData());
 
-    ui_.ModifierOSitesPlotWidget->updateToolbar();
+    ui_.OSitesPlotWidget->updateToolbar();
+    ui_.ModifierPlotWidget->updateToolbar();
+    
 
-    qSpeciesGraph_->postRedisplay();
+    oSitesGraph_->postRedisplay();
+    modifierSitesGraph_->postRedisplay();
 }

@@ -74,7 +74,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<HistogramCNModule, HistogramCNModuleWidget>();
     registerProducer<IntraAngleModule, IntraAngleModuleWidget>();
     registerProducer<IntraDistanceModule, IntraDistanceModuleWidget>();
-    registerProducer<ModifierOSitesModule,ModifierOSitesModuleWidget>();
+    registerProducer<ModifierOSitesModule, ModifierOSitesModuleWidget>();
     registerProducer<NeutronSQModule, NeutronSQModuleWidget>();
     registerProducer<OrientedSDFModule, OrientedSDFModuleWidget>();
     registerProducer<QSpeciesModule, QSpeciesModuleWidget>();

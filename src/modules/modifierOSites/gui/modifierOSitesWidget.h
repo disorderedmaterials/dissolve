@@ -31,7 +31,8 @@ class ModifierOSitesModuleWidget : public ModuleWidget
     Ui::ModifierOSitesModuleWidget ui_;
 
     // DataViewer contained within this widget
-    DataViewer *qSpeciesGraph_;
+    DataViewer *oSitesGraph_;
+    DataViewer *modifierSitesGraph_;
 
     public:
     // Update controls within widget
