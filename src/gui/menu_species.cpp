@@ -438,7 +438,7 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
     ModifyChargesDialog dialog(this, &modifyChargesModel_, ModifyChargesModel::Scaling);
     if (dialog.exec() == QDialog::Accepted)
     {
-        auto success = modifyChargesModel->scale(species, true);
+        auto success = modifyChargesModel.scale(species, true);
         setModified();
         fullUpdate();
     }
@@ -454,7 +454,7 @@ void DissolveWindow::on_SpeciesSmoothChargesAction_triggered(bool checked)
     ModifyChargesDialog dialog(this, &modifyChargesModel_, ModifyChargesModel::Smoothing);
     if (dialog.exec() == QDialog::Accepted)
     {
-        modifyChargesModel->smooth(species);
+        modifyChargesModel.smooth(species);
         setModified();
         fullUpdate();
     }
@@ -470,7 +470,7 @@ void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked
     ModifyChargesDialog dialog(this, &modifyChargesModel_, ModifyChargesModel::ReduceSigFig);
     if (dialog.exec() == QDialog::Accepted)
     {
-        modifyChargesModel->reduceSignificantFigures(species);
+        modifyChargesModel.reduceSignificantFigures(species);
         setModified();
         fullUpdate();
     }
