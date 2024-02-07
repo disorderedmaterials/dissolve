@@ -32,13 +32,13 @@ ModifierOSitesModule::ModifierOSitesModule() : Module(ModuleTypes::ModifierOSite
         "NetworkFormer", "Set the site(s) 'NF' for which the distribution around the origin sites 'A' should be calculated",
         networkFormerSpeciesSites_);
     keywords_.add<SpeciesSiteVectorKeyword>(
-        "Site A", "Set the modifier site(s) for which the distribution of oxygens should be calculated", modifierSpeciesSites_);
+        "SiteA", "Set the modifier site(s) for which the distribution of oxygens should be calculated", modifierSpeciesSites_);
 
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<RangeKeyword>("DistanceRange",
                                 "Distance range (min, max) over which to calculate Q-Species from central site", distanceRange_,
                                 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<RangeKeyword>("ModiferDistanceRange",
+    keywords_.add<RangeKeyword>("ModifierDistanceRange",
                                 "Distance range (min, max) over which to calculate Modifier from central site",
                                 modifierDistanceRange_, 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
 

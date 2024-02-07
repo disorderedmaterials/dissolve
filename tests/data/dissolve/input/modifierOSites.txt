@@ -1,0 +1,117 @@
+# Input file written by Dissolve v1.5.0 at 16:32:58 on 07-02-2024.
+
+#==============================================================================#
+#                                   Species                                    #
+#==============================================================================#
+
+Species 'Si'
+  # Atoms
+  NAtoms  1
+  Atom    1  Si   0.000000e+00  0.000000e+00  0.000000e+00  'Si'  0.000000e+00
+
+  # Sites
+  Site  'X'
+    Origin  1
+  EndSite
+EndSpecies
+
+Species 'O'
+  # Atoms
+  NAtoms  1
+  Atom    1  O    0.000000e+00  0.000000e+00  0.000000e+00  'O'  0.000000e+00
+
+  # Sites
+  Site  'Y'
+    Origin  1
+  EndSite
+EndSpecies
+
+Species 'P'
+  # Atoms
+  NAtoms  1
+  Atom    1  P    0.000000e+00  0.000000e+00  0.000000e+00  'P'  0.000000e+00
+
+  # Sites
+  Site  'Z'
+    Origin  1
+  EndSite
+EndSpecies
+
+#==============================================================================#
+#                               Pair Potentials                                #
+#==============================================================================#
+
+PairPotentials
+  # Atom Type Parameters
+  Parameters  Si  Si  0.000000e+00  LJ  epsilon=0.175 sigma=1.03
+  Parameters  O  O  0.000000e+00  LJ  epsilon=0.165 sigma=3.5
+  Parameters  P  P  0.000000e+00  LJ  epsilon=0.8 sigma=0.75
+  Range  10
+  Delta  0.005
+  ManualChargeSource  True
+  IncludeCoulomb  True
+  ForceChargeSource  True
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
+EndPairPotentials
+
+#==============================================================================#
+#                                Configurations                                #
+#==============================================================================#
+
+Configuration  'Bulk'
+
+  # Generator
+  Generator
+    Box  'Box01'
+      Lengths  30  30  30
+      Angles  90  90  90
+    EndBox
+    Add  'Add01'
+      Species  'Si'
+      Population  '10'
+      Density  '0.1'  atoms/A3
+      Positioning  Random
+      BoxAction  None
+    EndAdd
+    Add  'Add02'
+      Species  'O'
+      Population  '11'
+      Density  '0.1'  atoms/A3
+      Positioning  Random
+      BoxAction  None
+    EndAdd
+    Add  'Add03'
+      Species  'P'
+      Population  '6'
+      Density  '0.1'  atoms/A3
+      Positioning  Random
+      BoxAction  None
+    EndAdd
+    ImportCoordinates  'ImportCoordinates01'
+      File  xyz  'modifierOSites.xyz'
+      EndFile
+    EndImportCoordinates
+  EndGenerator
+
+  Temperature  298
+
+EndConfiguration
+
+#==============================================================================#
+#                              Processing Layers                               #
+#==============================================================================#
+
+Layer  'Processing'
+  Frequency  1
+
+  Module  ModifierOSites  'M'
+    Frequency  1
+    Configuration  'Bulk'
+    BondingOxygen  'O'  'Y'
+    NetworkFormer  'Si'  'X'
+    SiteA  'P'  'Z'
+    DistanceRange  0.000000e+00  2.100000e+00
+    ModifierDistanceRange  0.000000e+00  2.100000e+00
+  EndModule
+EndLayer
