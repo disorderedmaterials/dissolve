@@ -19,7 +19,8 @@ TEST_F(ModifierOSitesModuleTest, Simple)
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     EXPECT_TRUE(systemTest.checkData1D(
-        "M//OSites", {"dissolve/input/modifierOSites-simple.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-8));
+        "M//OSites", {"dissolve/input/modifierOSites-simple.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        1.0e-8));
 }
 
 } // namespace UnitTest
