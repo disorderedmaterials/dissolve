@@ -9,6 +9,7 @@
 #include "gui/signals.h"
 #include "gui/thread.hui"
 #include "gui/ui_gui.h"
+#include "gui/models/modifyChargesModel.h"
 
 // Forward Declarations
 class Configuration;
@@ -19,7 +20,6 @@ class Species;
 class SpeciesTab;
 class ModuleLayer;
 class LayerTab;
-class ModifyChargesModel;
 
 class DissolveWindow : public QMainWindow
 {
@@ -133,8 +133,8 @@ class DissolveWindow : public QMainWindow
     /*
      * Shared Dialog Models
      */
-    public:
-    ModifyChargesModel *modifyChargesModel{nullptr};
+    private:
+    ModifyChargesModel modifyChargesModel_;
 
     public Q_SLOTS:
     // File

@@ -435,12 +435,7 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
     if (!species)
         return;
 
-    if (!modifyChargesModel)
-    {
-        modifyChargesModel = new ModifyChargesModel;
-    }
-
-    ModifyChargesDialog dialog(this, modifyChargesModel, ModifyChargesModel::Scaling);
+    ModifyChargesDialog dialog(this, &modifyChargesModel_, ModifyChargesModel::Scaling);
     if (dialog.exec() == QDialog::Accepted)
     {
         auto success = modifyChargesModel->scale(species, true);
@@ -456,12 +451,7 @@ void DissolveWindow::on_SpeciesSmoothChargesAction_triggered(bool checked)
     if (!species)
         return;
 
-    if (!modifyChargesModel)
-    {
-        modifyChargesModel = new ModifyChargesModel;
-    }
-
-    ModifyChargesDialog dialog(this, modifyChargesModel, ModifyChargesModel::Smoothing);
+    ModifyChargesDialog dialog(this, &modifyChargesModel_, ModifyChargesModel::Smoothing);
     if (dialog.exec() == QDialog::Accepted)
     {
         modifyChargesModel->smooth(species);
@@ -477,12 +467,7 @@ void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked
     if (!species)
         return;
 
-    if (!modifyChargesModel)
-    {
-        modifyChargesModel = new ModifyChargesModel;
-    }
-
-    ModifyChargesDialog dialog(this, modifyChargesModel, ModifyChargesModel::ReduceSigFig);
+    ModifyChargesDialog dialog(this, &modifyChargesModel_, ModifyChargesModel::ReduceSigFig);
     if (dialog.exec() == QDialog::Accepted)
     {
         modifyChargesModel->reduceSignificantFigures(species);
