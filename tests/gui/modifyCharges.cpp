@@ -83,7 +83,7 @@ TEST_F(ModifyChargesModelTest, Smooth)
 
     ModifyChargesModel model;
 
-    // Test initial scale value and response to value update by user
+    // Test initial smooth value and response to value update by user
     auto initialValue = model.smoothValue();
     ASSERT_EQ(initialValue, 0.0);
 
@@ -119,7 +119,7 @@ TEST_F(ModifyChargesModelTest, ReduceSigFig)
 
     ModifyChargesModel model;
 
-    // Test initial scale value and response to value update by user
+    // Test initial sig fig value and response to value update by user
     auto initialValue = model.sigFigValue();
     ASSERT_EQ(initialValue, 3.0);
 
