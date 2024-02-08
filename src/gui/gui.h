@@ -109,6 +109,13 @@ class DissolveWindow : public QMainWindow
     void updateWhileRunning(int iterationsRemaining);
     // Clear the messages window
     void clearMessages();
+
+    /*
+     * Shared Dialog Models
+     */
+    private:
+    ModifyChargesModel modifyChargesModel_;
+
     /*
      * Main Menu
      */
@@ -129,12 +136,6 @@ class DissolveWindow : public QMainWindow
     void addRecentFile(const QString &filePath);
     // Update recent file menu
     void updateRecentFileMenu();
-
-    /*
-     * Shared Dialog Models
-     */
-    private:
-    ModifyChargesModel modifyChargesModel_;
 
     public Q_SLOTS:
     // File
