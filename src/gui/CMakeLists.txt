@@ -27,7 +27,6 @@ set(gui_MOC_HDRS
     # Dialogs
     addConfigurationDialog.h
     addForcefieldTermsDialog.h
-    scaleChargesDialog.h
     copySpeciesTermsDialog.h
     dataManagerDialog.h
     editSpeciesDialog.h
@@ -39,7 +38,7 @@ set(gui_MOC_HDRS
     importCIFDialog.h
     importSpeciesDialog.h
     intramolecularTermsDialog.h
-    scaleChargesDialog.h
+    modifyChargesDialog.h
     selectAtomTypeDialog.h
     selectElementDialog.h
     selectGenericItemDialog.h
@@ -149,7 +148,6 @@ set(gui_SRCS
     # Dialogs
     addConfigurationDialogFuncs.cpp
     addForcefieldTermsDialogFuncs.cpp
-    scaleChargesDialogFuncs.cpp
     copySpeciesTermsDialogFuncs.cpp
     dataManagerDialogFuncs.cpp
     editSpeciesDialogFuncs.cpp
@@ -161,7 +159,7 @@ set(gui_SRCS
     importCIFDialogFuncs.cpp
     importSpeciesDialogFuncs.cpp
     intramolecularTermsDialogFuncs.cpp
-    scaleChargesDialogFuncs.cpp
+    modifyChargesDialog.cpp
     selectAtomTypeDialogFuncs.cpp
     selectElementDialogFuncs.cpp
     selectGenericItemDialogFuncs.cpp
