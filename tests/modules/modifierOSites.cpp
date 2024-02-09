@@ -15,11 +15,11 @@ class ModifierOSitesModuleTest : public ::testing::Test
 
 TEST_F(ModifierOSitesModuleTest, Simple)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/modifierOSites-simple.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/modifierOSites.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     EXPECT_TRUE(systemTest.checkData1D(
-        "M//OSites", {"dissolve/input/modifierOSites-simple.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        "M//OSites", {"dissolve/input/modifierOSites.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-8));
 }
 

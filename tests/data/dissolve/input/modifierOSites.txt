@@ -1,4 +1,4 @@
-# Input file written by Dissolve v1.5.0 at 16:32:58 on 07-02-2024.
+# Input file written by Dissolve v1.5.0 at 09:07:50 on 09-02-2024.
 
 #==============================================================================#
 #                                   Species                                    #
@@ -76,20 +76,20 @@ Configuration  'Bulk'
     EndAdd
     Add  'Add02'
       Species  'O'
-      Population  '11'
+      Population  '13'
       Density  '0.1'  atoms/A3
       Positioning  Random
       BoxAction  None
     EndAdd
     Add  'Add03'
       Species  'P'
-      Population  '6'
+      Population  '8'
       Density  '0.1'  atoms/A3
       Positioning  Random
       BoxAction  None
     EndAdd
     ImportCoordinates  'ImportCoordinates01'
-      File  xyz  'modifierOSites.xyz'
+      File  xyz  'dissolve/input/modifierOSites.xyz'
       EndFile
     EndImportCoordinates
   EndGenerator
@@ -113,5 +113,7 @@ Layer  'Processing'
     SiteA  'P'  'Z'
     DistanceRange  0.000000e+00  2.100000e+00
     ModifierDistanceRange  0.000000e+00  2.100000e+00
+    Export  xy  '../../../../../TEST'
+    EndExport
   EndModule
 EndLayer

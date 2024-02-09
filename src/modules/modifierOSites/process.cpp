@@ -84,7 +84,7 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     {
         if (moduleContext.processPool().isMaster())
         {
-            if (exportFileAndFormat_.exportData(oxygenSitesHistogram.accumulatedData()))
+            if (exportFileAndFormat_.exportData(accumulatedData))
                 moduleContext.processPool().decideTrue();
             else
             {
