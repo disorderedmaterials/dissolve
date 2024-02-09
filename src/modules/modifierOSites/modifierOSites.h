@@ -30,6 +30,7 @@ class ModifierOSitesModule : public Module
     // Export target
     Data1DExportFileFormat exportFileAndFormat_;
     bool export_{false};
+    Data1DExportFileFormat exportFileAndFormat2_;
 
     /*
      * Processing

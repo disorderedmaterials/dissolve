@@ -60,6 +60,7 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     std::map<int, int> oxygenSites;
     for (const auto &[siteM, nearO] : neighbourMap2)
     {
+        modifierHistogram.bin(nearO.size());
         for (auto &&[oSite, index] : nearO)
         {
             oxygenSitesHistogram.bin(neighbourMap[oSite].size());
@@ -75,9 +76,14 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     auto sum = Integrator::absSum(oxygenSitesHistogram.data());
     accumulatedData /= sum;
 
+    // Average values for total O sites
+    Data1D accumulatedModifierData = modifierHistogram.accumulatedData();
+    auto totalOSites = Integrator::absSum(modifierHistogram.data());
+    accumulatedModifierData /= totalOSites;
+
     // Create the display data
     processingData.realise<Data1D>("OSites", name(), GenericItem::InRestartFileFlag) = accumulatedData;
-    processingData2.realise<Data1D>("ModifierSites", name(), GenericItem::InRestartFileFlag) = modifierHistogram.data();
+    processingData2.realise<Data1D>("ModifierSites", name(), GenericItem::InRestartFileFlag) = accumulatedModifierData;
 
     // Save data?
     if (exportFileAndFormat_.hasFilename())
@@ -85,6 +91,18 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
         if (moduleContext.processPool().isMaster())
         {
             if (exportFileAndFormat_.exportData(accumulatedData))
+                moduleContext.processPool().decideTrue();
+            else
+            {
+                moduleContext.processPool().decideFalse();
+            }
+        }
+    }
+    if (exportFileAndFormat2_.hasFilename())
+    {
+        if (moduleContext.processPool().isMaster())
+        {
+            if (exportFileAndFormat2_.exportData(accumulatedModifierData))
                 moduleContext.processPool().decideTrue();
             else
             {

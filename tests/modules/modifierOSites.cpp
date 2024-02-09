@@ -21,6 +21,10 @@ TEST_F(ModifierOSitesModuleTest, Simple)
     EXPECT_TRUE(systemTest.checkData1D(
         "M//OSites", {"dissolve/input/modifierOSites.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-8));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "M//ModifierSites", {"dissolve/input/modifierTotalOSites.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        1.0e-8));
+
 }
 
 } // namespace UnitTest
