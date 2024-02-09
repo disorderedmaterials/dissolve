@@ -69,27 +69,27 @@ Configuration  'Bulk'
     EndBox
     Add  'Add01'
       Species  'Si'
-      Population  '9'
+      Population  '5'
       Density  '0.1'  atoms/A3
       Positioning  Random
       BoxAction  None
     EndAdd
     Add  'Add02'
       Species  'O'
-      Population  '13'
+      Population  '11'
       Density  '0.1'  atoms/A3
       Positioning  Random
       BoxAction  None
     EndAdd
     Add  'Add03'
       Species  'P'
-      Population  '8'
+      Population  '10'
       Density  '0.1'  atoms/A3
       Positioning  Random
       BoxAction  None
     EndAdd
     ImportCoordinates  'ImportCoordinates01'
-      File  xyz  'dissolve/input/modifierOSites.xyz'
+      File  xyz  'dissolve/input/modifierOSites-test2.xyz'
       EndFile
     EndImportCoordinates
   EndGenerator
