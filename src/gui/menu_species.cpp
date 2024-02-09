@@ -10,7 +10,8 @@
 #include "gui/importCIFDialog.h"
 #include "gui/importLigParGenDialog.h"
 #include "gui/importSpeciesDialog.h"
-#include "gui/scaleChargesDialog.h"
+#include "gui/models/modifyChargesModel.h"
+#include "gui/modifyChargesDialog.h"
 #include "gui/selectAtomTypeDialog.h"
 #include "gui/selectElementDialog.h"
 #include "gui/selectSpeciesDialog.h"
@@ -434,10 +435,10 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
     if (!species)
         return;
 
-    static ScaleChargesDialog dialog(this);
+    ModifyChargesDialog dialog(this, &modifyChargesModel_, ModifyChargesModel::Scaling);
     if (dialog.exec() == QDialog::Accepted)
     {
-        auto success = dialog.model->scaleCharges(species, true);
+        auto success = modifyChargesModel_.scale(species, true);
         setModified();
         fullUpdate();
     }
@@ -450,20 +451,13 @@ void DissolveWindow::on_SpeciesSmoothChargesAction_triggered(bool checked)
     if (!species)
         return;
 
-    auto ok = false;
-    auto targetSum = QInputDialog::getDouble(this, "Smooth atom charges", "Enter the target sum to smooth atom charges to.",
-                                             0.0, -100.0, 100.0, 5, &ok);
-
-    if (!ok)
-        return;
-
-    auto sum = species->totalCharge(false), shiftVal = 0.0;
-    shiftVal = (sum - targetSum) / species->nAtoms();
-    for (auto &atom : species->atoms())
-        atom.setCharge(atom.charge() - shiftVal);
-
-    setModified();
-    fullUpdate();
+    ModifyChargesDialog dialog(this, &modifyChargesModel_, ModifyChargesModel::Smoothing);
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        modifyChargesModel_.smooth(species);
+        setModified();
+        fullUpdate();
+    }
 }
 
 void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked)
@@ -473,17 +467,11 @@ void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked
     if (!species)
         return;
 
-    auto ok = false;
-    auto significantFigures =
-        QInputDialog::getInt(this, "Reduce Signficant Figures in Charges",
-                             "Enter the number of significant figures to use for all atoms", 3, 1, 100, 1, &ok);
-    if (!ok)
-        return;
-
-    for (auto &atom : species->atoms())
-        atom.setCharge(std::round(atom.charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures));
-
-    setModified();
-
-    fullUpdate();
+    ModifyChargesDialog dialog(this, &modifyChargesModel_, ModifyChargesModel::ReduceSigFig);
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        modifyChargesModel_.reduceSignificantFigures(species);
+        setModified();
+        fullUpdate();
+    }
 }
