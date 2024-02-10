@@ -39,13 +39,13 @@ runs:
       # Add rpath to packaged Frameworks
       install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
 
-      # Add homebrew rpath - DO WE STILL NEED THIS?
-      #install_name_tool -add_rpath "/opt/homebrew/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
-
-      ./prep-dmg -a Dissolve-GUI-${{ runner.arch }} -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
-
-      appDirName=Dissolve-GUI-${{ runner.arch }}.app
+      # Set variables
+      appName=Dissolve-GUI-${{ runner.arch }}
+      appDirName=${appName}.app
       packageName=Dissolve-GUI-${{ runner.arch }}-${{ env.dissolveVersion }}
+
+      # Prepare the dmg file content
+      ./prep-dmg -a Dissolve-GUI-${{ runner.arch }} -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
 
       # Copy dependencies into Frameworks folder in app bundle
       cp -v ./build/antlr4-cppruntime/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
@@ -58,14 +58,16 @@ runs:
       set -ex
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
-      appDirName=Dissolve-GUI-${{ runner.arch }}.app
+      # Set variables
+      appName=Dissolve-GUI-${{ runner.arch }}
+      appDirName=${appName}.app
       packageName=Dissolve-GUI-${{ runner.arch }}-${{ env.dissolveVersion }}
 
-      # Fix icon link
-      sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" ${packageName}/${appDirName}/Contents/Info.plist
+      # Fix icon name in plist
+      sed -i -e "s/Dissolve.icns/${appName}.icns/g" ${packageName}/${appDirName}/Contents/Info.plist
 
       # Create DMG
-      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./${packageName}/${appDirName} -D icon=./Dissolve-GUI-${{ env.dissolveVersion }}/${appDirName}/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" ${packageName}.dmg
+      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./${packageName}/${appDirName} -D icon=./Dissolve-GUI-${{ env.dissolveVersion }}/${appDirName}/Contents/Resources/${appName}.icns "Dissolve GUI" ${packageName}.dmg
 
       # Collect artifacts
       mkdir packages
