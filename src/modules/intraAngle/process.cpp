@@ -37,7 +37,7 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     auto [hist, status] = processingData.realiseIf<Histogram1D>("Histo", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
         hist.initialise(angleRange_.x, angleRange_.y, angleRange_.z);
-    hist.zeroBins();
+    // hist.zeroBins();
 
     for (const auto &[siteA, indexA] : a.sites())
     {
@@ -59,7 +59,10 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
                 if (siteC->molecule() != siteA->molecule())
                     continue;
 
-                if (siteC == siteB || siteC == siteA)
+                if (siteC == siteA)
+                    continue;
+
+                if (siteC == siteB)
                     continue;
 
                 if (!rangeBC_.contains(targetConfiguration_->box()->minimumDistance(siteC->origin(), siteB->origin())))
@@ -68,11 +71,13 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
                 auto angle = targetConfiguration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
                 if (symmetric_ && angle > 90.0)
                     angle = 180.0 - angle;
+                hist.zeroBins();
                 hist.bin(angle);
+                hist.accumulate();
             }
         }
     }
-    hist.accumulate();
+    // hist.accumulate();
 
     auto &dataNormalisedHisto = processingData.realise<Data1D>("Angle(ABC)", name(), GenericItem::InRestartFileFlag);
     dataNormalisedHisto = hist.accumulatedData();
