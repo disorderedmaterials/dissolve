@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "analyse/dataNormaliser1D.h"
-#include "analyse/dataNormaliser2D.h"
-#include "analyse/dataNormaliser3D.h"
-#include "analyse/siteSelector.h"
+#include "analyser/dataNormaliser1D.h"
+#include "analyser/dataNormaliser2D.h"
+#include "analyser/dataNormaliser3D.h"
+#include "analyser/siteSelector.h"
 #include "main/dissolve.h"
 #include "math/histogram1D.h"
 #include "math/histogram2D.h"
