@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/coreData.h"
-#include "gui/keywordWidgets/optionalInt.hui"
+#include "gui/keywordWidgets/optionalInt.h"
 #include <QApplication>
 #include <gtest/gtest.h>
 

@@ -3,7 +3,7 @@
 
 #include "classes/atomType.h"
 #include "classes/isotopeData.h"
-#include "gui/dataViewer.hui"
+#include "gui/dataViewer.h"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
 #include "modules/xRaySQ/gui/xRaySQWidget.h"

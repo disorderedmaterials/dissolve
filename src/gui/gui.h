@@ -6,9 +6,9 @@
 #include "base/timer.h"
 #include "gui/mainTab.h"
 #include "gui/models/modifyChargesModel.h"
-#include "gui/outputHandler.hui"
+#include "gui/outputHandler.h"
 #include "gui/signals.h"
-#include "gui/thread.hui"
+#include "gui/thread.h"
 #include "gui/ui_gui.h"
 
 // Forward Declarations

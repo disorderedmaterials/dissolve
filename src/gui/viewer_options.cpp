@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "gui/viewer.hui"
+#include "gui/viewer.h"
 
 // Set whether Axes are visible
 void BaseViewer::setAxesVisible(bool visible) { axesVisible_ = visible; }

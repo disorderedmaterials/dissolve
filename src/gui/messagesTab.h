@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/mainTab.h"
-#include "gui/outputHandler.hui"
+#include "gui/outputHandler.h"
 #include "gui/ui_messagesTab.h"
 
 // Messages Tab

@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "gui/configurationViewer.hui"
+#include "gui/configurationViewer.h"
 #include "gui/render/renderableConfiguration.h"
 #include <QtGui/QMouseEvent>
 

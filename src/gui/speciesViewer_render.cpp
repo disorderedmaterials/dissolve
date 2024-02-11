@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/speciesViewer.hui"
+#include "gui/speciesViewer.h"
 
 // Perform post-initialisation operations
 void SpeciesViewer::postInitialiseGL() {}

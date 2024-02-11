@@ -11,7 +11,7 @@ macro(dissolve_add_module header modulename)
     "*.cpp"
   )
   list(APPEND MODULE_SRC ${header})
-  message(STATUS "...    ${MODULE_SRC}")
+  message(STATUS "...    Source files: ${MODULE_SRC}")
 
   # Add GUI component if requested and it exists
   if(GUI AND IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/gui)
@@ -37,37 +37,30 @@ macro(dissolve_add_module header modulename)
   )
 endmacro()
 macro(dissolve_add_module_gui modulename)
-  message(STATUS "...    GUI component 'module_${modulename}_gui'")
-
   # Create source file lists
-  set(MODULEGUI_MOC_HDRS "")
+  set(MODULEGUI_H "")
   file(
-    GLOB MODULEGUI_MOC_HDRS
+    GLOB MODULEGUI_H
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     "*.h"
   )
-  message(STATUS "...       ${MODULEGUI_MOC_HDRS}")
-  set(MODULEGUI_UIS "")
+  set(MODULEGUI_UI "")
   file(
-    GLOB MODULEGUI_UIS
+    GLOB MODULEGUI_UI
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     "*.ui"
   )
-  message(STATUS "...       ${MODULEGUI_UIS}")
-  set(MODULEGUI_SRC "")
+  set(MODULEGUI_CPP "")
   file(
-    GLOB MODULEGUI_SRC
+    GLOB MODULEGUI_CPP
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     "*.cpp"
   )
-  message(STATUS "...       ${MODULEGUI_SRC}")
 
-  # Call Qt wrappers
-  qt6_wrap_cpp(MODULEGUI_MOC_SRCS ${MODULEGUI_MOC_HDRS})
-  qt6_wrap_ui(MODULEGUI_UIS_H ${MODULEGUI_UIS})
+  message(STATUS "...    GUI component 'module_${modulename}_gui': ${MODULEGUI_CPP} ${MODULEGUI_H} ${MODULEGUI_UI}")
 
   # Add library target
-  add_library(module_${modulename}_gui ${MODULEGUI_MOC_SRCS} ${MODULEGUI_UIS_H} ${MODULEGUI_SRC})
+  add_library(module_${modulename}_gui ${MODULEGUI_CPP} ${MODULEGUI_H} ${MODULEGUI_UI})
   set(MODULEGUI_LINK_LIBS
       ${MODULEGUI_LINK_LIBS} "module_${modulename}_gui"
       CACHE INTERNAL "" FORCE
@@ -86,6 +79,8 @@ macro(dissolve_add_module_gui modulename)
     module_${modulename}_gui
     PRIVATE ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_BINARY_DIR}/src
+            ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
+            ${CMAKE_BINARY_DIR}/src/gui/widgets/widgets_autogen/include
             ${Qt6Core_INCLUDE_DIRS}
             ${Qt6Gui_INCLUDE_DIRS}
             ${Qt6Widgets_INCLUDE_DIRS}
@@ -114,8 +109,13 @@ foreach(child ${children})
   endif()
 endforeach()
 
+# Add each module subdirectory We need to construct a list of paths to any generated GUI ui_* files to pass to the moduleWidgetProducer
+# target. It did not seem possible to construct a list to a global or CACHE variable from within the macro above, so here we just assume
+# that every module has a relevant include directory.
+set(MODULE_UI_INCLUDE_PATHS "")
 foreach(subdir ${MODULE_DIRS})
   add_subdirectory(${subdir})
+  list(APPEND MODULE_UI_INCLUDE_PATHS "${CMAKE_CURRENT_BINARY_DIR}/${subdir}/gui/module_${subdir}_gui_autogen/include")
 endforeach()
 
 add_library(moduleregistry registry.cpp registry.h)
@@ -138,9 +138,9 @@ if(GUI)
     moduleWidgetProducer
     PRIVATE ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_BINARY_DIR}/src
-            ${PROJECT_SOURCE_DIR}
-            ${CMAKE_BINARY_DIR}
-            ${CMAKE_BINARY_DIR}/src
+            ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
+            ${CMAKE_BINARY_DIR}/src/gui/widgets/widgets_autogen/include
+            ${MODULE_UI_INCLUDE_PATHS}
             ${Qt6Core_INCLUDE_DIRS}
             ${Qt6Gui_INCLUDE_DIRS}
             ${Qt6Widgets_INCLUDE_DIRS}

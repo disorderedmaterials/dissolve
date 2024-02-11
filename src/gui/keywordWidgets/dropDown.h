@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/keywordWidgets/dropWidget.hui"
+#include "gui/keywordWidgets/dropWidget.h"
 #include "gui/keywordWidgets/ui_dropDown.h"
 #include <QWidget>
 

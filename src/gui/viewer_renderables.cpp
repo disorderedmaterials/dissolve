@@ -3,7 +3,7 @@
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
-#include "gui/viewer.hui"
+#include "gui/viewer.h"
 
 // Clear existing data
 void BaseViewer::clear()

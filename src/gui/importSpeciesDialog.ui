@@ -586,7 +586,7 @@
   <customwidget>
    <class>CheckIndicator</class>
    <extends>QLabel</extends>
-   <header>gui/widgets/checkIndicator.hui</header>
+   <header>gui/widgets/checkIndicator.h</header>
   </customwidget>
  </customwidgets>
  <resources>

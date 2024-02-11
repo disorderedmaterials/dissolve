@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/atomType.h"
-#include "gui/dataViewer.hui"
+#include "gui/dataViewer.h"
 #include "gui/render/renderableData1D.h"
 #include "keywords/module.h"
 #include "main/dissolve.h"

@@ -850,7 +850,7 @@
   <customwidget>
    <class>MainTabsWidget</class>
    <extends>QTabWidget</extends>
-   <header>gui/mainTabsWidget.hui</header>
+   <header>gui/mainTabsWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

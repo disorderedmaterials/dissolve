@@ -4,7 +4,7 @@
 #include "base/messenger.h"
 #include "base/sysFunc.h"
 #include "gui/render/fontInstance.h"
-#include "gui/viewer.hui"
+#include "gui/viewer.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QOpenGLFramebufferObjectFormat>

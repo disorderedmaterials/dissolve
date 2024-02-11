@@ -102,11 +102,13 @@ if(GUI)
   endif()
   add_definitions(-DQT_NO_KEYWORDS)
 
-  # Make sure CMake won't try to generate rules for moc (we will do it ourselves)
+  # Make sure we enable automated handling of Qt files
   set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTORCC ON)
+  set(CMAKE_AUTOUIC ON)
 
-  # Set policy for automatic linkage of Qt libs to project
-  cmake_policy(SET CMP0020 NEW)
+  # Disable Qt macros
+  add_definitions(-DQT_NO_KEYWORDS)
 endif(GUI)
 
 # Perform system-specific setup -- Windows
@@ -227,6 +229,7 @@ if(GUI)
     ${gui_target_name}
     PRIVATE ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_BINARY_DIR}/src
+            ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
             ${FREETYPE_INCLUDE_DIRS}
             ${Qt6Core_INCLUDE_DIRS}
             ${Qt6Gui_INCLUDE_DIRS}

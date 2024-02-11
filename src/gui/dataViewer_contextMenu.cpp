@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "gui/dataViewer.hui"
+#include "gui/dataViewer.h"
 #include "gui/render/renderableData1D.h"
 #include "gui/render/renderableData2D.h"
 #include "gui/render/renderableData3D.h"
