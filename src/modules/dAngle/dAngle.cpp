@@ -8,7 +8,7 @@
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
 
-DAngleModule::DAngleModule() : Module(ModuleTypes::DAngle), analyser_(ProcedureNode::AnalysisContext)
+DAngleModule::DAngleModule() : Module(ModuleTypes::DAngle)
 {
     /*
      * Keywords
