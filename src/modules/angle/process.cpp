@@ -22,7 +22,7 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
-    auto &processingData = moduleContext.dissolve().processingData();
+    auto &processingData = moduleContext.dissolve().processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
