@@ -99,6 +99,7 @@ Module  SiteRDF  'RDF(OW-OW)'
   Configuration  'Bulk'
   SiteA  Water  'O'
   SiteB  Water  'O'
+  ExcludeSameMolecule  On
   DistanceRange  0.0  20.0  0.01
 EndModule
 

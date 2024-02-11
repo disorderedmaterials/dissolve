@@ -25,10 +25,10 @@ TEST_F(AccumulateModuleTest, Water)
     EXPECT_TRUE(systemTest.checkData1D("Accumulate01//GR01//HW-HW//Full", "AveragedRDF//UnweightedGR//HW-HW//Full"));
     EXPECT_TRUE(systemTest.checkData1D("Accumulate01//GR01//HW-OW//Full", "AveragedRDF//UnweightedGR//HW-OW//Full"));
     EXPECT_TRUE(systemTest.checkData1D("Accumulate01//GR01//OW-OW//Full", "AveragedRDF//UnweightedGR//OW-OW//Full"));
-    EXPECT_TRUE(systemTest.checkData1D("Accumulate01//GR01//OW-OW//Full", "RDF(OW-OW)//Process1D//RDF"));
-    EXPECT_TRUE(systemTest.checkData1D("Accumulate01//GR01//OW-OW//Unbound", "RDF(OW-OW)//Process1D//RDF"));
-    EXPECT_TRUE(systemTest.checkData1D("Accumulate01//GR01//HW-OW//Unbound", "RDF(O-H1_H2)//Process1D//RDF"));
-    EXPECT_TRUE(systemTest.checkData1D("Accumulate01//GR01//HW-HW//Unbound", "RDF(H1-H2)//Process1D//RDF"));
+    EXPECT_TRUE(systemTest.checkData1D("Accumulate01//GR01//OW-OW//Full", "RDF(OW-OW)//RDF"));
+    EXPECT_TRUE(systemTest.checkData1D("Accumulate01//GR01//OW-OW//Unbound", "RDF(OW-OW)//RDF"));
+    EXPECT_TRUE(systemTest.checkData1D("Accumulate01//GR01//HW-OW//Unbound", "RDF(O-H1_H2)//RDF"));
+    EXPECT_TRUE(systemTest.checkData1D("Accumulate01//GR01//HW-HW//Unbound", "RDF(H1-H2)//RDF"));
 }
 
 } // namespace UnitTest

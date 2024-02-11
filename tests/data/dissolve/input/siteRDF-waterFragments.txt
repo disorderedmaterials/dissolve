@@ -97,6 +97,7 @@ Layer  'Processing'
     Configuration  'Bulk'
     SiteA  'Water'  'O'
     SiteB  'Water'  'O'
+    ExcludeSameMolecule  On
     DistanceRange  0.000000e+00  2.000000e+01  1.000000e-02
   EndModule
 
@@ -202,6 +203,7 @@ Layer  'Processing'
     RangeA  0.0  3.3
     RangeB  3.3  5.6
     RangeBEnabled  True
+    ExcludeSameMolecule  On
   EndModule
 
   Module  Analyse  'RDF(COM-COM)-Analyser'

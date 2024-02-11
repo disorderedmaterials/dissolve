@@ -34,17 +34,14 @@ void SiteRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
     // Update CN labels
     auto rangeAOn = module_->isRangeEnabled(0);
     ui_.RegionAResultFrame->setText(
-        rangeAOn ? dissolve_.processingModuleData().valueOr("Sum1D//CN//A", module_->name(), SampledDouble())
-                 : SampledDouble());
+        rangeAOn ? dissolve_.processingModuleData().valueOr("CN//A", module_->name(), SampledDouble()) : SampledDouble());
     auto rangeBOn = module_->isRangeEnabled(1);
     ui_.RegionBResultFrame->setText(
-        rangeBOn ? dissolve_.processingModuleData().valueOr("Sum1D//CN//B", module_->name(), SampledDouble())
-                 : SampledDouble());
+        rangeBOn ? dissolve_.processingModuleData().valueOr("CN//B", module_->name(), SampledDouble()) : SampledDouble());
     ui_.RegionBResultFrame->setEnabled(rangeBOn);
     auto rangeCOn = module_->isRangeEnabled(2);
     ui_.RegionCResultFrame->setText(
-        rangeCOn ? dissolve_.processingModuleData().valueOr("Sum1D//CN//C", module_->name(), SampledDouble())
-                 : SampledDouble());
+        rangeCOn ? dissolve_.processingModuleData().valueOr("CN//C", module_->name(), SampledDouble()) : SampledDouble());
     ui_.RegionCResultFrame->setEnabled(rangeCOn);
 
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
@@ -55,7 +52,7 @@ void SiteRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
             rdfGraph_
-                ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", module_->name()),
+                ->createRenderable<RenderableData1D>(fmt::format("{}//RDF", module_->name()),
                                                      fmt::format("RDF//{}", cfg->niceName()), cfg->niceName())
                 ->setColour(StockColours::BlueStockColour);
     }
