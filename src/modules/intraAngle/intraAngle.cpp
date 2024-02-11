@@ -23,9 +23,9 @@ IntraAngleModule::IntraAngleModule() : Module(ModuleTypes::IntraAngle)
     keywords_.add<SpeciesSiteVectorKeyword>("SiteC", "Specify site(s) which represent 'C' in the interaction A-B-C", c_);
 
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
-    keywords_.add<RangeKeyword>("RangeAB", "Range (min, max) of A-B distance binning", rangeAB_, 0.0,
+    keywords_.add<RangeKeyword>("RangeAB", "Range (min, max) of A-B distance binning", rangeAB_, 0.0, std::nullopt,
                                 Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<RangeKeyword>("RangeBC", "Range (min, max, binwidth) of B-C distance binning", rangeBC_, 0.0,
+    keywords_.add<RangeKeyword>("RangeBC", "Range (min, max, binwidth) of B-C distance binning", rangeBC_, 0.0, std::nullopt,
                                 Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<Vec3DoubleKeyword>("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
                                      Vec3<double>(0.0, 180.0, 1.0), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);

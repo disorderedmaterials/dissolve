@@ -68,8 +68,7 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
                 auto angle = targetConfiguration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
                 if (symmetric_ && angle > 90.0)
                     angle = 180.0 - angle;
-                if (Range(angleRange_.x, angleRange_.y).contains(angle))
-                    hist.bin(angle);
+                hist.bin(angle);
             }
         }
     }
