@@ -6,8 +6,8 @@
 #include "gui/models/addForcefieldDialogModel.h"
 #include "gui/models/forcefieldModel.h"
 #include "gui/models/masterTermTreeModel.h"
-#include "gui/wizard.hui"
 #include "main/dissolve.h"
+#include <QDialog>
 
 // Add Forcefield Terms Dialog
 class AddForcefieldTermsDialog : public QDialog

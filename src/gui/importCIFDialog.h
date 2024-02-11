@@ -5,7 +5,7 @@
 
 #include "gui/models/cifAssemblyModel.h"
 #include "gui/ui_importCIFDialog.h"
-#include "gui/wizard.hui"
+#include "gui/wizard.h"
 #include "io/import/cif.h"
 #include "main/dissolve.h"
 #include <QDialog>
