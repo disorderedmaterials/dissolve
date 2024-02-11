@@ -9,7 +9,7 @@
 #include "keywords/vec3Double.h"
 #include "module/context.h"
 
-AngleModule::AngleModule() : Module(ModuleTypes::Angle), analyser_(ProcedureNode::AnalysisContext)
+AngleModule::AngleModule() : Module(ModuleTypes::Angle)
 {
     /*
      * Keywords
