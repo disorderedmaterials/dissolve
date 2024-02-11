@@ -90,17 +90,5 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
             }
         }
 
-    // Save data?
-    if (exportFileAndFormat_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (exportFileAndFormat_.exportData(dataCN))
-                moduleContext.processPool().decideTrue();
-            else
-                moduleContext.processPool().decideFalse();
-        }
-    }
-
     return ExecutionResult::Success;
 }
