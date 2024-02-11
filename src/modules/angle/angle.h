@@ -3,20 +3,9 @@
 
 #pragma once
 
+#include "io/export/data1D.h"
+#include "io/export/data2D.h"
 #include "module/module.h"
-#include "procedure/procedure.h"
-
-// Forward Declarations
-class CalculateAngleProcedureNode;
-class Collect1DProcedureNode;
-class Collect2DProcedureNode;
-class Collect3DProcedureNode;
-class OperateExpressionProcedureNode;
-class Process1DProcedureNode;
-class Process2DProcedureNode;
-class Process3DProcedureNode;
-class SelectProcedureNode;
-class SpeciesSite;
 
 // Calculate Angle Module
 class AngleModule : public Module
@@ -45,42 +34,11 @@ class AngleModule : public Module
     Vec3<double> angleRange_{0.0, 180.0, 1.0};
     // Whether the angular range should be considered symmetric about 90
     bool symmetric_{false};
-    // Analysis procedure to be run
-    Procedure analyser_;
-    // SelectNode for site A
-    std::shared_ptr<SelectProcedureNode> selectA_;
-    // SelectNode for site B
-    std::shared_ptr<SelectProcedureNode> selectB_;
-    // SelectNode for site C
-    std::shared_ptr<SelectProcedureNode> selectC_;
-    // CalculateAngle node for A-B-C angle
-    std::shared_ptr<CalculateAngleProcedureNode> calculateAngle_;
-    // Collect1DNode for A-B RDF
-    std::shared_ptr<Collect1DProcedureNode> collectAB_;
-    // Collect1DNode for B-C RDF
-    std::shared_ptr<Collect1DProcedureNode> collectBC_;
-    // Collect1DNode for A-B-C angle histogram
-    std::shared_ptr<Collect1DProcedureNode> collectABC_;
-    // Collect2DNode for (A-B)-C distance-angle data
-    std::shared_ptr<Collect2DProcedureNode> collectDAngleAB_;
-    // Collect2DNode for A-(B-C) distance-angle data
-    std::shared_ptr<Collect2DProcedureNode> collectDAngleBC_;
-    // Collect3DNode for A-B vs B-C vs A-B-C distance-distance-angle data
-    std::shared_ptr<Collect3DProcedureNode> collectDDA_;
-    // Process1DNode for A-B RDF
-    std::shared_ptr<Process1DProcedureNode> processAB_;
-    // Process1DNode for B-c RDF
-    std::shared_ptr<Process1DProcedureNode> processBC_;
-    // Process1DNode for A-B-C angle histogram
-    std::shared_ptr<Process1DProcedureNode> processAngle_;
-    // Process2DNode for (A-B)-C distance-angle data
-    std::shared_ptr<Process2DProcedureNode> processDAngleAB_;
-    // Process2DNode for A-(B-C) distance-angle data
-    std::shared_ptr<Process2DProcedureNode> processDAngleBC_;
-    // Normalisation expressions for (A-B)-C and A-(B-C) maps
-    std::shared_ptr<OperateExpressionProcedureNode> dAngleABNormalisationExpression_, dAngleBCNormalisationExpression_;
-    // Process3DNode for A-B vs B-C vs A-B-C distance-distance-angle data
-    std::shared_ptr<Process3DProcedureNode> processDDA_;
+    // Target SpeciesSite definitions
+    std::vector<const SpeciesSite *> a_, b_, c_;
+    // Export targets
+    Data1DExportFileFormat exportFileAndFormatAB_, exportFileAndFormatBC_, exportFileAndFormatAngle_;
+    Data2DExportFileFormat exportFileAndFormatDAngleAB_, exportFileAndFormatDAngleBC_;
 
     /*
      * Processing
