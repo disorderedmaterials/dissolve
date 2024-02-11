@@ -12,14 +12,14 @@ class Data2D;
 class DataNormaliser2D
 {
     public:
-    DataNormaliser1D(Data2D &targetData);
+    DataNormaliser2D(Data2D &targetData);
 
     /*
      * Target
      */
     private:
     // Target data to normalise
-    Data1D &targetData_;
+    Data2D &targetData_;
 
     /*
      * Normalisation functions
