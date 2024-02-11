@@ -43,6 +43,9 @@ SiteRDFModule::SiteRDFModule() : Module(ModuleTypes::SiteRDF)
     keywords_.add<BoolKeyword>("RangeCEnabled", "Whether calculation of the third coordination number is enabled",
                                rangeEnabled_[2]);
     keywords_.add<RangeKeyword>("RangeC", "Distance range for third coordination number", range_[2]);
+    keywords_.add<BoolKeyword>("Instantaneous",
+                               "Whether to calculate instantaneous coordination numbers rather than forming an average",
+                               instantaneous_);
 
     keywords_.setOrganisation("Export");
     keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated RDF data",
