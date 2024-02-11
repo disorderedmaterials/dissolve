@@ -4,9 +4,15 @@
 #include "analyser/dataNormaliser1D.h"
 #include "classes/configuration.h"
 #include "math/data1D.h"
+<<<<<<< HEAD
 #include "math/integrator.h"
+    =======
+>>>>>>> f1f68d2b9 (Reinventing OrientedSDF)
 
-DataNormaliser1D::DataNormaliser1D(Data1D &targetData) : targetData_(targetData) {}
+    DataNormaliser1D::DataNormaliser1D(Data1D &targetData)
+    : targetData_(targetData)
+{
+}
 
 void DataNormaliser1D::normaliseByNumberDensity(double population, Configuration *targetConfiguration)
 {

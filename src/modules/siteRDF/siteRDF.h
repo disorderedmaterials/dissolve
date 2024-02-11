@@ -8,10 +8,6 @@
 #include "io/export/data1D.h"
 #include "math/range.h"
 #include "module/module.h"
-<<<<<<< HEAD
-=======
-#include "procedure/procedure.h"
->>>>>>> d498ff186 (Reinventing HistogramCN)
 
 // Calculate RDF Module
 class SiteRDFModule : public Module
