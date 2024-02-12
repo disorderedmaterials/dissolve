@@ -66,12 +66,8 @@ add_library(
 )
 
 target_include_directories(
-  import PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLRRUNTIME_INCLUDE_DIRS} ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR}
+  import PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR}
                  ${ANTLR_CIFImportGrammarParser_OUTPUT_DIR}
 )
 
-if(CONAN)
-  target_link_libraries(import base CONAN_PKG::antlr4-cppruntime)
-else(CONAN)
-  target_link_libraries(import base antlr4-runtime)
-endif(CONAN)
+target_link_libraries(import base)
