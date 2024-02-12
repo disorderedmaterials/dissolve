@@ -16,7 +16,7 @@ runs:
   # Setup / Install Dependencies
   #
 
-  - name: Install Homebrew Dependencies for Intel
+  - name: Install Homebrew Dependencies
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
