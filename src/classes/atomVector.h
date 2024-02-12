@@ -18,8 +18,19 @@ class SpeciesAtom;
 class AtomVector
 {
     private:
-    std::vector<Atom> atoms_;
     std::vector<Vec3<double>> rs_;
+    // Assigned AtomType index, local to Configuration (for partial indexing etc.)
+    std::vector<int> localTypeIndex_;
+    // Assigned master AtomType index (for pair potential indexing)
+    std::vector<int> masterTypeIndex_;
+    // SpeciesAtom that this Atom represents
+    std::vector<const SpeciesAtom *>speciesAtom_{nullptr};
+    // Molecule in which this Atom exists
+    std::vector<std::shared_ptr<Molecule>> molecule_{nullptr};
+    // Cell in which the atom exists
+    std::vector<Cell *>cell_{nullptr};
+    // Vector of targeted potentials affecting this atom
+    std::vector<std::vector<const ExternalPotential *>> targetedPotentials_;
 
     public:
     AtomVector(int size = 0);
