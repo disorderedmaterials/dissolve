@@ -44,10 +44,9 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     if (dAngleStatus == GenericItem::ItemStatus::Created)
         dAngle.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z, angleRange_.x, angleRange_.y, angleRange_.z);
 
+    dAngle.zeroBins();
     rBC.zeroBins();
     aABC.zeroBins();
-    dAngle.zeroBins();
-
     for (const auto &[siteA, indexA] : a.sites())
     {
         for (const auto &[siteB, indexB] : b.sites())
@@ -59,7 +58,7 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
             for (const auto &[siteC, indexC] : c.sites())
             {
 
-                if (excludeSameMolecule_ && siteC->molecule() == siteA->molecule())
+                if (excludeSameMolecule_ && (siteC->molecule() == siteA->molecule()))
                     continue;
 
                 auto distanceBC = targetConfiguration_->box()->minimumDistance(siteB->origin(), siteC->origin());
@@ -83,9 +82,9 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     auto &rBCNormalised = processingData.realise<Data1D>("RDF(BC)", name(), GenericItem::InRestartFileFlag);
     rBCNormalised = rBC.accumulatedData();
     DataNormaliser1D rBCNormaliser(rBCNormalised);
-    rBCNormaliser.normaliseBySitePopulation(a.sites().size());
-    rBCNormaliser.normaliseBySitePopulation(b.sites().size());
-    rBCNormaliser.normaliseByNumberDensity(c.sites().size(), targetConfiguration_);
+    rBCNormaliser.normaliseBySitePopulation(double(a.sites().size()));
+    rBCNormaliser.normaliseBySitePopulation(double(b.sites().size()));
+    rBCNormaliser.normaliseByNumberDensity(double(c.sites().size()), targetConfiguration_);
     rBCNormaliser.normaliseBySphericalShell();
 
     auto &aABCNormalised = processingData.realise<Data1D>("Angle(ABC)", name(), GenericItem::InRestartFileFlag);
@@ -98,8 +97,8 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     dAngleNormalised = dAngle.accumulatedData();
     DataNormaliser2D dAngleNormaliser(dAngleNormalised);
     dAngleNormaliser.normaliseByExpression(fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
-    dAngleNormaliser.normaliseBySitePopulation(a.sites().size());
-    dAngleNormaliser.normaliseByNumberDensity(b.sites().size(), targetConfiguration_);
+    dAngleNormaliser.normaliseBySitePopulation(double(a.sites().size()));
+    dAngleNormaliser.normaliseByNumberDensity(double(b.sites().size()), targetConfiguration_);
     dAngleNormaliser.normaliseBySphericalShell();
 
     return ExecutionResult::Success;
