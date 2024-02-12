@@ -19,15 +19,9 @@ runs:
       target: ${{ inputs.target }}
       cacheOnly: ${{ inputs.cacheOnly }}
 
-  - name: Build (OSX) Intel
-    if: runner.os == 'MacOS' && env.OSX_CMAKE_TARGET == 'x86_64'
-    uses: "./.github/workflows/build/osx-intel"
-    with:
-      cacheOnly: ${{ inputs.cacheOnly }}
-
-  - name: Build (OSX) Silicon
-    if: runner.os == 'MacOS' && env.OSX_CMAKE_TARGET == 'arm64'
-    uses: "./.github/workflows/build/osx-silicon"
+  - name: Build (OSX)
+    if: runner.os == 'MacOS'
+    uses: "./.github/workflows/build/osx"
     with:
       cacheOnly: ${{ inputs.cacheOnly }}
 

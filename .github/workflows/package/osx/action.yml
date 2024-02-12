@@ -5,13 +5,8 @@ runs:
   using: "composite"
   steps:
 
-  - name: Setup Python
-    uses: actions/setup-python@v4
-    with:
-      python-version: ${{ env.pythonVersion }}
-
   - name: Retrieve Qt Cache
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: osx-qt-${{ env.qtVersion }}
       path: ${{ runner.temp }}/qt
@@ -19,8 +14,8 @@ runs:
   - name: Download Raw Build Artifacts
     uses: actions/download-artifact@v4
     with:
-      name: osx-build-artifacts
-      path: ${{ github.workspace }}
+      name: osx-${{ runner.arch }}-build-artifacts
+      path: ${{ github.workspace }}/build
 
   - name: Install Python Dependencies
     shell: bash
@@ -41,18 +36,21 @@ runs:
       Qt6_ROOT=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
-      # Handle ANTLR & TBB
-      cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.*.dylib /usr/local/lib
-      cp ./deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib /usr/local/lib/libantlr4-runtime.dylib
-
-      for FILE in ./deploy/onetbb/lib/*.dylib; do
-        FILENAME=$(basename $FILE)
-        cp ./deploy/onetbb/lib/$FILENAME /usr/local/lib/$FILENAME
-      done
-
+      # Add rpath to packaged Frameworks
       install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
-      install_name_tool -add_rpath "/usr/local/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
-      ./prep-dmg -a Dissolve-GUI -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -L /usr/local/lib
+
+      # Set variables
+      appName=Dissolve-GUI-${{ runner.arch }}
+      appDirName=${appName}.app
+      packageName=Dissolve-GUI-${{ runner.arch }}-${{ env.dissolveVersion }}
+
+      # Prepare the dmg file content
+      ./prep-dmg -a Dissolve-GUI-${{ runner.arch }} -v ${{ env.dissolveVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
+
+      # Copy dependencies into Frameworks folder in app bundle
+      cp -v ./build/antlr4-cppruntime/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
+      cp -v ./build/ftgl/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
+      cp -v ./build/onetbb/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
 
   - name: Create Disk Image
     shell: bash
@@ -60,18 +58,23 @@ runs:
       set -ex
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
-      # Fix icon link
-      sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" Dissolve-GUI-${dissolveVersion}/Dissolve-GUI.app/Contents/Info.plist
+      # Set variables
+      appName=Dissolve-GUI-${{ runner.arch }}
+      appDirName=${appName}.app
+      packageName=Dissolve-GUI-${{ runner.arch }}-${{ env.dissolveVersion }}
+
+      # Fix icon name in plist
+      sed -i -e "s/Dissolve.icns/${appName}.icns/g" ${packageName}/${appDirName}/Contents/Info.plist
 
       # Create DMG
-      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./Dissolve-GUI-${dissolveVersion}/Dissolve-GUI.app -D icon=./Dissolve-GUI-${dissolveVersion}/Dissolve-GUI.app/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" Dissolve-GUI-${dissolveVersion}.dmg
+      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./${packageName}/${appDirName} -D icon=./Dissolve-GUI-${{ env.dissolveVersion }}/${appDirName}/Contents/Resources/${appName}.icns "Dissolve GUI" ${packageName}.dmg
 
       # Collect artifacts
       mkdir packages
-      mv Dissolve-GUI-${dissolveVersion}.dmg packages/
+      mv ${packageName}.dmg packages/
 
   - name: Upload Package Artifacts
     uses: actions/upload-artifact@v4
     with:
-      name: packages-osx
+      name: packages-osx-${{ runner.arch }}
       path: ${{ github.workspace }}/packages

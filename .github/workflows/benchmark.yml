@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup
         uses: "./.github/workflows/setup"
       - name: Install Prerequisites
@@ -36,19 +36,13 @@ jobs:
       - name: Build
         run: |
           set -ex
-          mkdir build
-          cd build
-          conan install ../ -s compiler.libcxx=libstdc++11
+          mkdir build && cd build
           cmake ../ -G "Ninja" -DBUILD_BENCHMARKS:bool=true -DANTLR_EXECUTABLE:path=`pwd`/../antlr4.jar
           ninja
-      - name: Deploy Dependencies
-        run: |
-          mkdir deploy && cd deploy
-          conan install .. -g deploy -s compiler.libcxx=libstdc++11
       - name: Run benchmarks
         run: |
           set -ex
-          export LD_LIBRARY_PATH=`pwd`/deploy/onetbb/lib
+          export LD_LIBRARY_PATH=`pwd`/build/onetbb/lib
           ./build/bin/benchmarks --benchmark_format=json | tee benchmark_result.json
       - name: Store benchmark result
         uses: rhysd/github-action-benchmark@v1
