@@ -76,7 +76,7 @@ Configuration  'Bulk'
     EndAdd
     Add  'Add02'
       Species  'O'
-      Population  '11'
+      Population  '9'
       Density  '0.1'  atoms/A3
       Positioning  Random
       BoxAction  None
