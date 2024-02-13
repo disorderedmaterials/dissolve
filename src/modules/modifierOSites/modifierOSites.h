@@ -8,7 +8,7 @@
 #include "math/range.h"
 #include "module/module.h"
 
-// Calculate ModifierOSites Module
+// ModifierOSites Module
 class ModifierOSitesModule : public Module
 {
     public:
@@ -28,9 +28,8 @@ class ModifierOSitesModule : public Module
     // Distance range for calculation
     Range distanceRange_{0.0, 2.5}, modifierDistanceRange_{0.0, 2.0};
     // Export target
-    Data1DExportFileFormat exportFileAndFormat_;
-    bool export_{false};
-    Data1DExportFileFormat exportFileAndFormat2_;
+    Data1DExportFileFormat exportFileAndFormatOType_;
+    Data1DExportFileFormat exportFileAndFormatTotalOSites_;
 
     /*
      * Processing

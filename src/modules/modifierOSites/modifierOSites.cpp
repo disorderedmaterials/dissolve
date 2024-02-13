@@ -43,8 +43,8 @@ ModifierOSitesModule::ModifierOSitesModule() : Module(ModuleTypes::ModifierOSite
                                 modifierDistanceRange_, 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
 
     keywords_.setOrganisation("Export");
-    keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated M-O data",
-                                        exportFileAndFormat_, "EndExport");
-    keywords_.add<FileAndFormatKeyword>("Export Total M-O", "File format and file name under which to save calculated M-O data",
-                                        exportFileAndFormat2_, "EndExport");
+    keywords_.add<FileAndFormatKeyword>("ExportM-OType", "File format and file name under which to save calculated M-O data",
+                                        exportFileAndFormatOType_, "EndExportM-OType");
+    keywords_.add<FileAndFormatKeyword>("ExportTotalO-M", "File format and file name under which to save calculated M-O data",
+                                        exportFileAndFormatTotalOSites_, "EndExportTotalO-M");
 }

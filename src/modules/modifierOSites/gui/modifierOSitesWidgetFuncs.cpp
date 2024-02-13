@@ -49,11 +49,11 @@ void ModifierOSitesModuleWidget::updateControls(const Flags<ModuleWidget::Update
     }
 
     if (oSitesGraph_->renderables().empty())
-        oSitesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//OSites", module_->name()), "O-Sites");
+        oSitesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//OTypes", module_->name()), "O-Types");
 
     if (modifierSitesGraph_->renderables().empty())
-        modifierSitesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//ModifierSites", module_->name()),
-                                                                "Modifier-Sites");
+        modifierSitesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//TotalOSites", module_->name()),
+                                                                "TotalO-Sites");
 
     // Validate renderables if they need it
     oSitesGraph_->validateRenderables(dissolve_.processingModuleData());

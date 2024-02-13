@@ -19,9 +19,9 @@ TEST_F(ModifierOSitesModuleTest, Simple)
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     EXPECT_TRUE(systemTest.checkData1D(
-        "M//OSites", {"dissolve/input/modifierOSites.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-8));
+        "M//OTypes", {"dissolve/input/modifierOSites.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-8));
     EXPECT_TRUE(systemTest.checkData1D(
-        "M//ModifierSites", {"dissolve/input/modifierTotalOSites.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        "M//TotalOSites", {"dissolve/input/modifierTotalOSites.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-8));
 }
 TEST_F(ModifierOSitesModuleTest, TotalOSites)
@@ -29,10 +29,10 @@ TEST_F(ModifierOSitesModuleTest, TotalOSites)
     ASSERT_NO_THROW(systemTest.setUp("dissolve/input/modifierOSites-test2.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
     EXPECT_TRUE(systemTest.checkData1D(
-        "M//OSites", {"dissolve/input/modifierOSites-test2.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        "M//OTypes", {"dissolve/input/modifierOSites-test2.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-8));
     EXPECT_TRUE(systemTest.checkData1D(
-        "M//ModifierSites",
+        "M//TotalOSites",
         {"dissolve/input/modifierTotalOSites-test2.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-8));
 }
 } // namespace UnitTest

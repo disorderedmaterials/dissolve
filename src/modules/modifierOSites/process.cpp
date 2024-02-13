@@ -19,7 +19,6 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
         return ExecutionResult::Failed;
     }
     auto &processingData = moduleContext.dissolve().processingModuleData();
-    auto &processingData2 = moduleContext.dissolve().processingModuleData();
 
     // Select all potential bridging oxygen sites - we will determine which actually are
     // involved in NF-BO-NF interactions once we have the available NF sites
@@ -31,22 +30,22 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     // Select all modifier centres
     SiteSelector modifier(targetConfiguration_, modifierSpeciesSites_);
 
-    // Filter the oxygen sites into those surrounded by exactly two NF sites
-    SiteFilter filter(targetConfiguration_, allOxygenSites.sites());
-    auto &&[BO, neighbourMap] = filter.filterBySiteProximity(NF.sites(), distanceRange_, 0, 2);
+    // Filter the oxygen sites into those surrounded by up to two NF sites
+    SiteFilter ofilter(targetConfiguration_, allOxygenSites.sites());
+    auto &&[filteredOSites, neighbourMap] = ofilter.filterBySiteProximity(NF.sites(), distanceRange_, 0, 2);
 
-    SiteFilter filter2(targetConfiguration_, modifier.sites());
-    auto &&[BO2, neighbourMap2] = filter2.filterBySiteProximity(allOxygenSites.sites(), modifierDistanceRange_, 0, 99);
+    SiteFilter mfilter(targetConfiguration_, modifier.sites());
+    auto &&[filteredMSites, mNeighbourMapO] = mfilter.filterBySiteProximity(allOxygenSites.sites(), modifierDistanceRange_, 0, 99);
 
-    // Retrieve storage for the Oxygen Sites histogram
+    // Retrieve storage for the Mofifier to Oxygen Type Sites histogram
     auto [oxygenSitesHistogram, status] =
-        processingData.realiseIf<IntegerHistogram1D>("OSitesHistogram", name(), GenericItem::InRestartFileFlag);
+        processingData.realiseIf<IntegerHistogram1D>("OTypeSitesHistogram", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
         oxygenSitesHistogram.initialise();
 
-    // Retrieve storage for the Q-species histogram
+    // Retrieve storage for the Total O Sites histogram
     auto [modifierHistogram, status2] =
-        processingData.realiseIf<IntegerHistogram1D>("ModifierHistogram", name(), GenericItem::InRestartFileFlag);
+        processingData.realiseIf<IntegerHistogram1D>("TotalOHistogram", name(), GenericItem::InRestartFileFlag);
     if (status2 == GenericItem::ItemStatus::Created)
         modifierHistogram.initialise();
 
@@ -58,7 +57,7 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     // So, we can use this to determine the Q numbers for each NF by counting the number of times a NF site appears in the map.
     std::map<const Site *, int> qSpecies;
     std::map<int, int> oxygenSites;
-    for (const auto &[siteM, nearO] : neighbourMap2)
+    for (const auto &[siteM, nearO] : mNeighbourMapO)
     {
         modifierHistogram.bin(nearO.size());
         for (auto &&[oSite, index] : nearO)
@@ -82,15 +81,15 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     accumulatedModifierData /= totalOSites;
 
     // Create the display data
-    processingData.realise<Data1D>("OSites", name(), GenericItem::InRestartFileFlag) = accumulatedData;
-    processingData2.realise<Data1D>("ModifierSites", name(), GenericItem::InRestartFileFlag) = accumulatedModifierData;
+    processingData.realise<Data1D>("OTypes", name(), GenericItem::InRestartFileFlag) = accumulatedData;
+    processingData.realise<Data1D>("TotalOSites", name(), GenericItem::InRestartFileFlag) = accumulatedModifierData;
 
     // Save data?
-    if (exportFileAndFormat_.hasFilename())
+    if (exportFileAndFormatOType_.hasFilename())
     {
         if (moduleContext.processPool().isMaster())
         {
-            if (exportFileAndFormat_.exportData(accumulatedData))
+            if (exportFileAndFormatOType_.exportData(accumulatedData))
                 moduleContext.processPool().decideTrue();
             else
             {
@@ -98,11 +97,11 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
             }
         }
     }
-    if (exportFileAndFormat2_.hasFilename())
+    if (exportFileAndFormatTotalOSites_.hasFilename())
     {
         if (moduleContext.processPool().isMaster())
         {
-            if (exportFileAndFormat2_.exportData(accumulatedModifierData))
+            if (exportFileAndFormatTotalOSites_.exportData(accumulatedModifierData))
                 moduleContext.processPool().decideTrue();
             else
             {
