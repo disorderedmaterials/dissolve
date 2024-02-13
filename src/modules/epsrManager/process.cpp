@@ -59,8 +59,8 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
     {
         // Parse the string into the atom type pair and scaling factor
         auto typePairs = DissolveSys::beforeChar(scaling, '=');
-        auto typeA = DissolveSys::beforeChar(typePairs, '-');
-        auto typeB = DissolveSys::afterChar(typePairs, '-');
+        auto typeA = DissolveSys::strip(DissolveSys::beforeChar(typePairs, '-'));
+        auto typeB = DissolveSys::strip(DissolveSys::afterChar(typePairs, '-'));
         auto scaleFactorString = DissolveSys::afterChar(scaling, '=');
         if (typeA.empty() || typeB.empty() || scaleFactorString.empty())
         {
