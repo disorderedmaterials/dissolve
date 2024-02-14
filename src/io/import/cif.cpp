@@ -471,9 +471,9 @@ bool CIFHandler::createBasicUnitCell()
 
     // Bonding
     if (useCIFBondingDefinitions_)
-        applyCIFBonding(unitCellSpecies_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
+        applyCIFBonding(unitCellSpecies_, preventMetallicBonds_);
     else
-        unitCellSpecies_->addMissingBonds(bondingTolerance_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
+        unitCellSpecies_->addMissingBonds(bondingTolerance_, preventMetallicBonds_);
 
     unitCellConfiguration_->addMolecule(unitCellSpecies_);
     unitCellConfiguration_->updateObjectRelationships();
@@ -706,9 +706,9 @@ bool CIFHandler::createSupercell()
                         supercellSpecies_->addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
                 }
         if (useCIFBondingDefinitions_)
-            applyCIFBonding(supercellSpecies_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
+            applyCIFBonding(supercellSpecies_, preventMetallicBonds_);
         else
-            supercellSpecies_->addMissingBonds(bondingTolerance_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
+            supercellSpecies_->addMissingBonds(bondingTolerance_, preventMetallicBonds_);
 
         // Add the structural species to the configuration
         supercellConfiguration_->addMolecule(supercellSpecies_);
@@ -819,6 +819,17 @@ void CIFHandler::setBondingTolerance(double tol)
 
     if (!useCIFBondingDefinitions_)
         generate(); // TODO From Start
+}
+
+// Set whether to prevent metallic bonding
+void CIFHandler::setPreventMetallicBonds(bool b)
+{
+    if (preventMetallicBonds_ == b)
+        return;
+
+    preventMetallicBonds_ = b;
+
+    generate(); // TODO FRom start
 }
 
 // Set NETA for moiety removal

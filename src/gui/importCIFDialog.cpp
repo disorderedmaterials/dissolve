@@ -188,10 +188,7 @@ void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
 
 void ImportCIFDialog::on_BondingPreventMetallicCheck_clicked(bool checked)
 {
-    if (checked)
-        updateFlags_.setFlag(CIFHandler::PreventMetallicBonding);
-    else
-        updateFlags_.removeFlag(CIFHandler::PreventMetallicBonding);
+    cifHandler_.setPreventMetallicBonds(checked);
 
     update();
 }

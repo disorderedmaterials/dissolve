@@ -99,11 +99,10 @@ class CIFHandler
     // CIF Species Update Flags
     enum UpdateFlags
     {
-        CleanMoietyRemoveAtomics,  /* Remove atoms of single moiety */
-        CleanMoietyRemoveWater,    /* Remove water molecules of single moiety */
-        CleanMoietyRemoveNETA,     /* Remove single atoms by NETA definition */
-        CleanRemoveBoundFragments, /* Remove entire fragments when using NETA definition */
-        PreventMetallicBonding,    /* Prevent metallic bonding */
+        CleanMoietyRemoveAtomics, /* Remove atoms of single moiety */
+        CleanMoietyRemoveWater,   /* Remove water molecules of single moiety */
+        CleanMoietyRemoveNETA,    /* Remove single atoms by NETA definition */
+        CleanRemoveBoundFragments /* Remove entire fragments when using NETA definition */
     };
 
     // CIF Species Output Flags
@@ -124,6 +123,8 @@ class CIFHandler
     bool useCIFBondingDefinitions_{true};
     // Bonding tolerance, if calculating bonding rather than using CIF definitions
     double bondingTolerance_{1.1};
+    // Whether to prevent metallic bonding
+    bool preventMetallicBonds_{false};
     // NETA for moiety removal, if specified
     NETADefinition moietyRemovalNETA_;
     // Supercell repeat
@@ -162,6 +163,8 @@ class CIFHandler
     void setUseCIFBondingDefinitions(bool b);
     // Set bonding tolerance
     void setBondingTolerance(double tol);
+    // Set whether to prevent metallic bonding
+    void setPreventMetallicBonds(bool b);
     // Set NETA for moiety removal
     bool setMoietyRemovalNETA(std::string_view netaDefinition);
     // Set supercell repeat
