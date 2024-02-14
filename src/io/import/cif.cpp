@@ -454,7 +454,7 @@ bool CIFHandler::createBasicUnitCell()
                         // If this atom overlaps with another in the box, don't add it as it's a symmetry-related copy
                         if (std::any_of(unitCellSpecies_->atoms().begin(), unitCellSpecies_->atoms().end(),
                                         [&, r, box](const auto &j)
-                                        { return box->minimumDistance(r, j.r()) < bondingTolerance_; }))
+                                        { return box->minimumDistance(r, j.r()) < overlapTolerance_; }))
                             continue;
 
                         // Create the new atom
@@ -464,7 +464,7 @@ bool CIFHandler::createBasicUnitCell()
 
     // Bonding
     if (flags_.isSet(UpdateFlags::CalculateBonding))
-        unitCellSpecies_->addMissingBonds(1.1, flags_.isSet(UpdateFlags::PreventMetallicBonding));
+        unitCellSpecies_->addMissingBonds(bondingTolerance_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
     else
         applyCIFBonding(unitCellSpecies_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
 
@@ -786,8 +786,33 @@ void CIFHandler::resetSpeciesAndConfigurations()
 // Return current flags (for editing)
 Flags<CIFHandler::UpdateFlags> &CIFHandler::flags() { return flags_; }
 
+// Set overlap tolerance
+void CIFHandler::setOverlapTolerance(double tol)
+{
+    overlapTolerance_ = tol;
+
+    generate(); // TODO From Start
+}
+
+// Set whether to use CIF bonding definitions
+void CIFHandler::setUseCIFBondingDefinitions(bool b)
+{
+    if (useCIFBondingDefinitions_ == b)
+        return;
+
+    useCIFBondingDefinitions_ = b;
+
+    generate(); // TODO From Start
+}
+
 // Set bonding tolerance
-void CIFHandler::setBondingTolerance(double tol) { bondingTolerance_ = tol; }
+void CIFHandler::setBondingTolerance(double tol)
+{
+    bondingTolerance_ = tol;
+
+    if (!useCIFBondingDefinitions_)
+        generate(); // TODO From Start
+}
 
 // Set NETA for moiety removal
 bool CIFHandler::setMoietyRemovalNETA(std::string_view netaDefinition) { return moietyRemovalNETA_.create(netaDefinition); }

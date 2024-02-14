@@ -24,7 +24,7 @@ class CIFHandler
     ~CIFHandler() = default;
 
     private:
-    // Reference to CoreData
+    // Temporary CoreData
     CoreData coreData_;
 
     /*
@@ -119,8 +119,12 @@ class CIFHandler
     private:
     // Flags controlling behaviour
     Flags<UpdateFlags> flags_;
+    // Tolerance for removal of overlapping atoms
+    double overlapTolerance_{0.1};
+    // Whether to use CIF bonding definitions
+    bool useCIFBondingDefinitions_{true};
     // Bonding tolerance, if calculating bonding rather than using CIF definitions
-    double bondingTolerance_{0.1};
+    double bondingTolerance_{1.1};
     // NETA for moiety removal, if specified
     NETADefinition moietyRemovalNETA_;
     // Supercell repeat
@@ -153,6 +157,10 @@ class CIFHandler
     void resetSpeciesAndConfigurations();
     // Return current flags (for editing)
     Flags<UpdateFlags> &flags();
+    // Set overlap tolerance
+    void setOverlapTolerance(double tol);
+    // Set whether to use CIF bonding definitions
+    void setUseCIFBondingDefinitions(bool b);
     // Set bonding tolerance
     void setBondingTolerance(double tol);
     // Set NETA for moiety removal

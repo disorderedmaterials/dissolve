@@ -151,9 +151,7 @@ void ImportCIFDialog::on_InputFileSelectButton_clicked(bool checked)
 
     // Set input file in edit
     ui_.InputFileEdit->setText(inputFile);
-
-    cifHandler_.generate(updateFlags_);
-    update();
+    on_InputFileEdit_editingFinished();
 }
 
 void ImportCIFDialog::on_SpaceGroupsCombo_currentIndexChanged(int index)
@@ -167,7 +165,7 @@ void ImportCIFDialog::on_NormalOverlapToleranceRadio_clicked(bool checked)
 {
     if (checked)
     {
-        cifHandler_.setBondingTolerance(0.1);
+        cifHandler_.setOverlapTolerance(0.1);
         update();
     }
 }
@@ -176,7 +174,7 @@ void ImportCIFDialog::on_LooseOverlapToleranceRadio_clicked(bool checked)
 {
     if (checked)
     {
-        cifHandler_.setBondingTolerance(0.5);
+        cifHandler_.setOverlapTolerance(0.5);
         update();
     }
 }
