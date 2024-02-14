@@ -103,7 +103,6 @@ class CIFHandler
         CleanMoietyRemoveWater,    /* Remove water molecules of single moiety */
         CleanMoietyRemoveNETA,     /* Remove single atoms by NETA definition */
         CleanRemoveBoundFragments, /* Remove entire fragments when using NETA definition */
-        CalculateBonding,          /* Calculate bonding */
         PreventMetallicBonding,    /* Prevent metallic bonding */
     };
 

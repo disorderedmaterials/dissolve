@@ -3,18 +3,13 @@
 
 #include "gui/importCIFDialog.h"
 #include "classes/empiricalFormula.h"
-#include "classes/molecule.h"
 #include "classes/pairIterator.h"
-#include "classes/species.h"
 #include "neta/node.h"
-#include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
-#include "procedure/nodes/coordinateSets.h"
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <unordered_set>
 
 ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     : WizardDialog(parent), cifAssemblyModel_(cifHandler_.assemblies()), dissolve_(dissolve)
@@ -35,21 +30,10 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
             SLOT(update()));
     connect(&cifAssemblyModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)),
             ui_.AssemblyView, SLOT(expandAll()));
-}
 
-// Perform any necessary actions before moving to the previous page
-// bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
-//{
-//    switch (currentIndex)
-//    {
-//        case (ImportCIFDialog::CIFInfoPage):
-//            cifHandler_.resetSpeciesAndConfigurations();
-//            break;
-//        default:
-//            break;
-//    }
-//    return true;
-//}
+    // Set display configuration
+    ui_.StructureViewer->setConfiguration(cifHandler_.supercellConfiguration());
+}
 
 // Perform any final actions before the wizard is closed
 void ImportCIFDialog::finalise()
@@ -128,6 +112,9 @@ void ImportCIFDialog::update()
     {
         ui_.OutputMolecularSpeciesList->addItem(QString::fromStdString(std::string(molecularSp.species()->name())));
     }
+
+    // Structure
+    ui_.StructureViewer->postRedisplay();
 }
 
 void ImportCIFDialog::on_InputFileEdit_editingFinished()
@@ -182,9 +169,19 @@ void ImportCIFDialog::on_LooseOverlapToleranceRadio_clicked(bool checked)
 void ImportCIFDialog::on_CalculateBondingRadio_clicked(bool checked)
 {
     if (checked)
-        updateFlags_.setFlag(CIFHandler::CalculateBonding);
-    else
-        updateFlags_.removeFlag(CIFHandler::CalculateBonding);
+    {
+        cifHandler_.setUseCIFBondingDefinitions(false);
+        update();
+    }
+}
+
+void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
+{
+    if (checked)
+    {
+        cifHandler_.setUseCIFBondingDefinitions(true);
+        update();
+    }
 
     update();
 }
@@ -195,16 +192,6 @@ void ImportCIFDialog::on_BondingPreventMetallicCheck_clicked(bool checked)
         updateFlags_.setFlag(CIFHandler::PreventMetallicBonding);
     else
         updateFlags_.removeFlag(CIFHandler::PreventMetallicBonding);
-
-    update();
-}
-
-void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
-{
-    if (!checked)
-        updateFlags_.setFlag(CIFHandler::CalculateBonding);
-    else
-        updateFlags_.removeFlag(CIFHandler::CalculateBonding);
 
     update();
 }

@@ -320,7 +320,14 @@ std::optional<int> CIFHandler::getTagInt(std::string tag) const
  */
 
 // Set space group from index
-void CIFHandler::setSpaceGroup(SpaceGroups::SpaceGroupId sgid) { spaceGroup_ = sgid; }
+void CIFHandler::setSpaceGroup(SpaceGroups::SpaceGroupId sgid)
+{
+    if (spaceGroup_ == sgid)
+        return;
+
+    spaceGroup_ = sgid;
+    generate(); // TODO From start
+}
 
 // Return space group information
 SpaceGroups::SpaceGroupId CIFHandler::spaceGroup() const { return spaceGroup_; }
@@ -463,10 +470,10 @@ bool CIFHandler::createBasicUnitCell()
                     }
 
     // Bonding
-    if (flags_.isSet(UpdateFlags::CalculateBonding))
-        unitCellSpecies_->addMissingBonds(bondingTolerance_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
-    else
+    if (useCIFBondingDefinitions_)
         applyCIFBonding(unitCellSpecies_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
+    else
+        unitCellSpecies_->addMissingBonds(bondingTolerance_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
 
     unitCellConfiguration_->addMolecule(unitCellSpecies_);
     unitCellConfiguration_->updateObjectRelationships();
@@ -698,10 +705,10 @@ bool CIFHandler::createSupercell()
                     for (const auto &i : cleanedUnitCellSpecies_->atoms())
                         supercellSpecies_->addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
                 }
-        if (flags_.isSet(UpdateFlags::CalculateBonding))
-            supercellSpecies_->addMissingBonds();
-        else
+        if (useCIFBondingDefinitions_)
             applyCIFBonding(supercellSpecies_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
+        else
+            supercellSpecies_->addMissingBonds(bondingTolerance_, flags_.isSet(UpdateFlags::PreventMetallicBonding));
 
         // Add the structural species to the configuration
         supercellConfiguration_->addMolecule(supercellSpecies_);
