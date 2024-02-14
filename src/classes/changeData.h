@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/atomVector.h"
+#include "classes/atom.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
