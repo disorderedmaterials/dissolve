@@ -124,7 +124,7 @@ void ImportCIFDialog::on_InputFileEdit_editingFinished()
         Messenger::error("Failed to load CIF file '{}'.\n", ui_.InputFileEdit->text().toStdString());
     else
     {
-        cifHandler_.generate(updateFlags_);
+        cifHandler_.generate();
         update();
     }
 }
@@ -205,51 +205,47 @@ bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
 
 void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked)
 {
-    if (checked)
-        updateFlags_.setFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveAtomics);
-    else
-        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveAtomics);
+    if (!checked)
+        return;
+
+    cifHandler_.setRemoveAtomics(checked);
 
     update();
 }
 
 void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
 {
-    if (checked)
-        updateFlags_.setFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveWater);
-    else
-        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveWater);
+    if (!checked)
+        return;
+
+    cifHandler_.setRemoveWaterAndCoordinateOxygens(checked);
 
     update();
 }
 
 void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked)
 {
-    if (checked)
-        updateFlags_.setFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveNETA);
-    else
-        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveNETA);
+    if (!checked)
+        return;
 
-    cifHandler_.setMoietyRemovalNETA(moietyNETA_.definitionString());
+    cifHandler_.setRemoveNETA(checked, ui_.MoietyNETARemoveFragmentsCheck->isChecked());
     update();
 }
 
 void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
 {
-    createMoietyRemovalNETA(text.toStdString());
-    if (moietyNETA_.isValid())
-        update();
+    cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETAGroup->isChecked(), ui_.MoietyNETARemoveFragmentsCheck->isChecked());
+    cifHandler_.setMoietyRemovalNETA(moietyNETA_.definitionString());
+    update();
 }
 
 void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 {
-    if (checked)
-        updateFlags_.setFlag(CIFHandler::UpdateFlags::CleanRemoveBoundFragments);
-    else
-        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CleanRemoveBoundFragments);
+    if (!checked)
+        return;
 
-    if (moietyNETA_.isValid())
-        update();
+    cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETAGroup->isChecked(), checked);
+    update();
 }
 
 /*

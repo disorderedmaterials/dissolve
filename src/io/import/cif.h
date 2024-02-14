@@ -96,15 +96,6 @@ class CIFHandler
      * Creation
      */
     public:
-    // CIF Species Update Flags
-    enum UpdateFlags
-    {
-        CleanMoietyRemoveAtomics, /* Remove atoms of single moiety */
-        CleanMoietyRemoveWater,   /* Remove water molecules of single moiety */
-        CleanMoietyRemoveNETA,    /* Remove single atoms by NETA definition */
-        CleanRemoveBoundFragments /* Remove entire fragments when using NETA definition */
-    };
-
     // CIF Species Output Flags
     enum OutputFlags
     {
@@ -115,8 +106,6 @@ class CIFHandler
     };
 
     private:
-    // Flags controlling behaviour
-    Flags<UpdateFlags> flags_;
     // Tolerance for removal of overlapping atoms
     double overlapTolerance_{0.1};
     // Whether to use CIF bonding definitions
@@ -125,6 +114,14 @@ class CIFHandler
     double bondingTolerance_{1.1};
     // Whether to prevent metallic bonding
     bool preventMetallicBonds_{false};
+    // Whether to remove free atomic moieties in clean-up
+    bool removeAtomics_{false};
+    // Whether to remove water and coordinated oxygen atoms in clean-up
+    bool removeWaterAndCoordinateOxygens_{false};
+    // Whether to remove by NETA definition in clean-up
+    bool removeNETA_{false};
+    // Whether to expand NETA matches to fragments when removing in clean-up
+    bool removeNETAByFragment_{false};
     // NETA for moiety removal, if specified
     NETADefinition moietyRemovalNETA_;
     // Supercell repeat
@@ -155,8 +152,6 @@ class CIFHandler
     public:
     // Reset all objects
     void resetSpeciesAndConfigurations();
-    // Return current flags (for editing)
-    Flags<UpdateFlags> &flags();
     // Set overlap tolerance
     void setOverlapTolerance(double tol);
     // Set whether to use CIF bonding definitions
@@ -165,12 +160,18 @@ class CIFHandler
     void setBondingTolerance(double tol);
     // Set whether to prevent metallic bonding
     void setPreventMetallicBonds(bool b);
+    // Set whether to remove free atomic moieties in clean-up
+    void setRemoveAtomics(bool b);
+    // Set whether to remove water and coordinated oxygen atoms in clean-up
+    void setRemoveWaterAndCoordinateOxygens(bool b);
+    // Set whether to remove by NETA definition in clean-up
+    void setRemoveNETA(bool b, bool byFragment);
     // Set NETA for moiety removal
     bool setMoietyRemovalNETA(std::string_view netaDefinition);
     // Set supercell repeat
     void setSupercellRepeat(const Vec3<int> &repeat);
     // Recreate the data
-    bool generate(std::optional<Flags<UpdateFlags>> newFlags = {});
+    bool generate();
     // Finalise, returning the required species and resulting configuration
     std::pair<std::vector<const Species *>, Configuration *> finalise(CoreData &coreData,
                                                                       const Flags<OutputFlags> &flags = {}) const;

@@ -41,8 +41,6 @@ class ImportCIFDialog : public WizardDialog
     CIFHandler cifHandler_;
     // NETA for moiety removal
     NETADefinition moietyNETA_;
-    // Flags
-    Flags<CIFHandler::UpdateFlags> updateFlags_;
 
     private:
     // Create / check NETA definition for moiety removal

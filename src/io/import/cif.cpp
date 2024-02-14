@@ -507,7 +507,7 @@ bool CIFHandler::createCleanedUnitCell()
     cleanedUnitCellConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
     Messenger::setQuiet(false);
 
-    if (flags_.isSet(UpdateFlags::CleanMoietyRemoveAtomics))
+    if (removeAtomics_)
     {
         std::vector<int> indicesToRemove;
         for (const auto &i : cleanedUnitCellSpecies_->atoms())
@@ -519,7 +519,7 @@ bool CIFHandler::createCleanedUnitCell()
         cleanedUnitCellSpecies_->removeAtoms(indicesToRemove);
     }
 
-    if (flags_.isSet(UpdateFlags::CleanMoietyRemoveWater))
+    if (removeWaterAndCoordinateOxygens_)
     {
         NETADefinition waterVacuum("?O,nbonds=1,nh<=1|?O,nbonds>=2,-H(nbonds=1,-O)");
         if (!waterVacuum.isValid())
@@ -538,7 +538,7 @@ bool CIFHandler::createCleanedUnitCell()
         cleanedUnitCellSpecies_->removeAtoms(indicesToRemove);
     }
 
-    if (flags_.isSet(UpdateFlags::CleanMoietyRemoveNETA) && moietyRemovalNETA_.isValid())
+    if (removeNETA_ && moietyRemovalNETA_.isValid())
     {
         // Select all atoms that are in moieties where one of its atoms matches our NETA definition
         std::vector<int> indicesToRemove;
@@ -546,7 +546,7 @@ bool CIFHandler::createCleanedUnitCell()
             if (moietyRemovalNETA_.matches(&i))
             {
                 // Select all atoms that are part of the same moiety?
-                if (flags_.isSet(UpdateFlags::CleanRemoveBoundFragments))
+                if (removeNETAByFragment_)
                 {
                     cleanedUnitCellSpecies_->clearAtomSelection();
                     auto selection = cleanedUnitCellSpecies_->fragment(i.index());
@@ -790,9 +790,6 @@ void CIFHandler::resetSpeciesAndConfigurations()
     coreData_.atomTypes().clear();
 }
 
-// Return current flags (for editing)
-Flags<CIFHandler::UpdateFlags> &CIFHandler::flags() { return flags_; }
-
 // Set overlap tolerance
 void CIFHandler::setOverlapTolerance(double tol)
 {
@@ -832,6 +829,41 @@ void CIFHandler::setPreventMetallicBonds(bool b)
     generate(); // TODO FRom start
 }
 
+// Set whether to remove free atomic moieties in clean-up
+void CIFHandler::setRemoveAtomics(bool b)
+{
+    if (removeAtomics_ == b)
+        return;
+
+    removeAtomics_ = b;
+
+    generate(); // After Unit Cell Generation
+}
+
+// Set whether to remove water and coordinated oxygen atoms in clean-up
+void CIFHandler::setRemoveWaterAndCoordinateOxygens(bool b)
+{
+    if (removeWaterAndCoordinateOxygens_ == b)
+        return;
+
+    removeWaterAndCoordinateOxygens_ = b;
+
+    generate(); // After Unit Cell Generation
+}
+
+// Set whether to remove by NETA definition in clean-up
+void CIFHandler::setRemoveNETA(bool b, bool byFragment)
+{
+    if (removeNETA_ == b && removeNETAByFragment_ == byFragment)
+        return;
+
+    removeNETA_ = b;
+    removeNETAByFragment_ = byFragment;
+
+    if (moietyRemovalNETA_.isValid())
+        generate(); // After Unit Cell Generation
+}
+
 // Set NETA for moiety removal
 bool CIFHandler::setMoietyRemovalNETA(std::string_view netaDefinition) { return moietyRemovalNETA_.create(netaDefinition); }
 
@@ -839,12 +871,8 @@ bool CIFHandler::setMoietyRemovalNETA(std::string_view netaDefinition) { return 
 void CIFHandler::setSupercellRepeat(const Vec3<int> &repeat) { supercellRepeat_ = repeat; }
 
 // Recreate the data
-bool CIFHandler::generate(std::optional<Flags<CIFHandler::UpdateFlags>> newFlags)
+bool CIFHandler::generate()
 {
-    // Overwrite the current flags?
-    if (newFlags)
-        flags_ = *newFlags;
-
     // Reset all species and configurations
     resetSpeciesAndConfigurations();
 
