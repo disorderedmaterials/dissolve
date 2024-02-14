@@ -35,7 +35,8 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     auto &&[filteredOSites, neighbourMap] = ofilter.filterBySiteProximity(NF.sites(), distanceRange_, 0, 2);
 
     SiteFilter mfilter(targetConfiguration_, modifier.sites());
-    auto &&[filteredMSites, mNeighbourMapO] = mfilter.filterBySiteProximity(allOxygenSites.sites(), modifierDistanceRange_, 0, 99);
+    auto &&[filteredMSites, mNeighbourMapO] =
+        mfilter.filterBySiteProximity(allOxygenSites.sites(), modifierDistanceRange_, 0, 99);
 
     // Retrieve storage for the Mofifier to Oxygen Type Sites histogram
     auto [oxygenSitesHistogram, status] =
