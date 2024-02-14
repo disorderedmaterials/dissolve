@@ -76,7 +76,7 @@ double PotentialMap::range() const { return range_; }
  */
 
 // Return energy between Atoms at distance specified
-double PotentialMap::energy(const AtomRef i, const AtomRef j, double r) const
+double PotentialMap::energy(const Atom i, const Atom j, double r) const
 {
     assert(r >= 0.0);
     assert(i.speciesAtom() && j.speciesAtom());
@@ -90,7 +90,7 @@ double PotentialMap::energy(const AtomRef i, const AtomRef j, double r) const
 }
 
 // Return energy between Atoms at distance specified, scaling electrostatic and van der Waals components
-double PotentialMap::energy(const AtomRef i, const AtomRef j, double r, double elecScale, double vdwScale) const
+double PotentialMap::energy(const Atom i, const Atom j, double r, double elecScale, double vdwScale) const
 {
     assert(r >= 0.0);
     assert(i.speciesAtom() && j.speciesAtom());
@@ -131,7 +131,7 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
 }
 
 // Return analytic energy between Atom types at distance specified
-double PotentialMap::analyticEnergy(const AtomRef i, const AtomRef j, double r) const
+double PotentialMap::analyticEnergy(const Atom i, const Atom j, double r) const
 {
     assert(r >= 0.0);
 
@@ -143,7 +143,7 @@ double PotentialMap::analyticEnergy(const AtomRef i, const AtomRef j, double r) 
 }
 
 // Return analytic energy between Atom types at distance specified, scaling electrostatic and van der Waals components
-double PotentialMap::analyticEnergy(const AtomRef i, const AtomRef j, double r, double elecScale, double vdwScale) const
+double PotentialMap::analyticEnergy(const Atom i, const Atom j, double r, double elecScale, double vdwScale) const
 {
     assert(r >= 0.0);
 
@@ -156,7 +156,7 @@ double PotentialMap::analyticEnergy(const AtomRef i, const AtomRef j, double r, 
 }
 
 // Return force between Atoms at distance specified
-double PotentialMap::force(const AtomRef i, const AtomRef j, double r) const
+double PotentialMap::force(const Atom i, const Atom j, double r) const
 {
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
@@ -167,7 +167,7 @@ double PotentialMap::force(const AtomRef i, const AtomRef j, double r) const
 }
 
 // Return force between Atoms at distance specified, scaling electrostatic and van der Waals components
-double PotentialMap::force(const AtomRef i, const AtomRef j, double r, double elecScale, double vdwScale) const
+double PotentialMap::force(const Atom i, const Atom j, double r, double elecScale, double vdwScale) const
 {
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
@@ -205,7 +205,7 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r,
 }
 
 // Return analytic force between Atom types at distance specified
-double PotentialMap::analyticForce(const AtomRef i, const AtomRef j, double r) const
+double PotentialMap::analyticForce(const Atom i, const Atom j, double r) const
 {
     assert(r >= 0.0);
     assert(i.speciesAtom() && j.speciesAtom());
@@ -218,7 +218,7 @@ double PotentialMap::analyticForce(const AtomRef i, const AtomRef j, double r) c
 }
 
 // Return analytic force between Atom types at distance specified, scaling electrostatic and van der Waals components
-double PotentialMap::analyticForce(const AtomRef i, const AtomRef j, double r, double elecScale, double vdwScale) const
+double PotentialMap::analyticForce(const Atom i, const Atom j, double r, double elecScale, double vdwScale) const
 {
     assert(r >= 0.0);
     assert(i.speciesAtom() && j.speciesAtom());

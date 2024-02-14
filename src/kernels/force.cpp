@@ -28,7 +28,7 @@ ForceKernel::ForceKernel(const Box *box, const ProcessPool &procPool, const Pote
  */
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithoutMim(const AtomRef i, int indexI, const AtomRef j, int indexJ, ForceVector &f) const
+void ForceKernel::forcesWithoutMim(const Atom i, int indexI, const Atom j, int indexJ, ForceVector &f) const
 {
     auto force = j.r() - i.r();
     auto distanceSq = force.magnitudeSq();
@@ -42,7 +42,7 @@ void ForceKernel::forcesWithoutMim(const AtomRef i, int indexI, const AtomRef j,
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithoutMim(const AtomRef i, int indexI, const AtomRef j, int indexJ, ForceVector &f, double elecScale,
+void ForceKernel::forcesWithoutMim(const Atom i, int indexI, const Atom j, int indexJ, ForceVector &f, double elecScale,
                                    double vdwScale) const
 {
     auto force = j.r() - i.r();
@@ -57,7 +57,7 @@ void ForceKernel::forcesWithoutMim(const AtomRef i, int indexI, const AtomRef j,
 }
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithMim(const AtomRef i, int indexI, const AtomRef j, int indexJ, ForceVector &f) const
+void ForceKernel::forcesWithMim(const Atom i, int indexI, const Atom j, int indexJ, ForceVector &f) const
 {
     auto force = box_->minimumVector(i.r(), j.r());
     auto distanceSq = force.magnitudeSq();
@@ -71,7 +71,7 @@ void ForceKernel::forcesWithMim(const AtomRef i, int indexI, const AtomRef j, in
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithMim(const AtomRef i, int indexI, const AtomRef j, int indexJ, ForceVector &f, double elecScale,
+void ForceKernel::forcesWithMim(const Atom i, int indexI, const Atom j, int indexJ, ForceVector &f, double elecScale,
                                 double vdwScale) const
 {
     auto force = box_->minimumVector(i.r(), j.r());
@@ -130,7 +130,7 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
  */
 
 // Calculate extended forces on supplied atom
-void ForceKernel::extendedForces(const AtomRef i, Vec3<double> &fVec) const { return; }
+void ForceKernel::extendedForces(const Atom i, Vec3<double> &fVec) const { return; }
 
 // Calculate extended forces on supplied molecule
 void ForceKernel::extendedForces(const Molecule &mol, ForceVector &f) const { return; }

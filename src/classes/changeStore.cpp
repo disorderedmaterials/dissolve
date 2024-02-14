@@ -20,7 +20,7 @@ ChangeStore::ChangeStore(const ProcessPool &procPool, OptionalReferenceWrapper<T
  */
 
 // Add atom to watch
-void ChangeStore::add(AtomRef i)
+void ChangeStore::add(Atom i)
 {
     targetAtoms_.emplace_back();
     targetAtoms_.back().setAtom(std::move(i));

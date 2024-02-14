@@ -23,7 +23,7 @@ void Molecule::setSpecies(const Species *sp)
 const Species *Molecule::species() const { return species_; }
 
 // Add Atom to Molecule
-void Molecule::addAtom(AtomRef atom)
+void Molecule::addAtom(Atom atom)
 {
     assert(atom.molecule() == nullptr);
     atoms_.push_back(atom);
@@ -36,11 +36,11 @@ void Molecule::addAtom(AtomRef atom)
 int Molecule::nAtoms() const { return atoms_.size(); }
 
 // Return atoms vector
-std::vector<AtomRef> &Molecule::atoms() { return atoms_; }
-const std::vector<AtomRef> &Molecule::atoms() const { return atoms_; }
+std::vector<Atom> &Molecule::atoms() { return atoms_; }
+const std::vector<Atom> &Molecule::atoms() const { return atoms_; }
 
 // Return nth Atom pointer
-AtomRef Molecule::atom(int n) const { return atoms_[n]; }
+Atom Molecule::atom(int n) const { return atoms_[n]; }
 
 // Update local atom pointers from main vector
 void Molecule::updateAtoms(AtomVector &mainAtoms, int offset)
@@ -130,7 +130,7 @@ Vec3<double> Molecule::unFold(const Box *box)
 {
     Vec3<double> cog{0.0, 0.0, 0.0};
     traverseLocal(box,
-                  [&cog](AtomRef j, Vec3<double> rJ)
+                  [&cog](Atom j, Vec3<double> rJ)
                   {
                       j.setCoordinates(rJ);
                       cog += rJ;

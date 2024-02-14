@@ -9,7 +9,7 @@
 #include <vector>
 
 class Atom;
-class AtomRef;
+class Atom;
 class Cell;
 class ExternalPotential;
 class Molecule;
@@ -37,22 +37,22 @@ class AtomVector
     std::size_t size() const;
 
     // Iterators
-    AtomRef begin();
-    AtomRef end();
-    const AtomRef begin() const;
-    const AtomRef end() const;
+    Atom begin();
+    Atom end();
+    const Atom begin() const;
+    const Atom end() const;
 
     // Accessors
-    AtomRef front();
-    AtomRef back();
-    AtomRef operator[](std::size_t);
-    const AtomRef operator[](std::size_t) const;
+    Atom front();
+    Atom back();
+    Atom operator[](std::size_t);
+    const Atom operator[](std::size_t) const;
 
     // Modifiers
     void clear();
     void reserve(std::size_t newCapacity);
-    AtomRef erase(const AtomRef pos);
-    AtomRef erase(const AtomRef first, const AtomRef last);
-    AtomRef emplace_back();
-    friend class AtomRef;
+    Atom erase(const Atom pos);
+    Atom erase(const Atom first, const Atom last);
+    Atom emplace_back();
+    friend class Atom;
 };

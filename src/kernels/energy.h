@@ -11,7 +11,7 @@
 
 // Forward Declarations
 class Atom;
-class AtomRef;
+class Atom;
 class Cell;
 class CellArray;
 class Box;
@@ -84,9 +84,9 @@ class EnergyKernel : public GeometryKernel
      */
     private:
     // Return PairPotential energy between atoms
-    virtual double pairPotentialEnergy(const AtomRef i, const AtomRef j, double r) const;
+    virtual double pairPotentialEnergy(const Atom i, const Atom j, double r) const;
     // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
-    virtual double pairPotentialEnergy(const AtomRef i, const AtomRef j, double r, double elecScale, double vdwScale) const;
+    virtual double pairPotentialEnergy(const Atom i, const Atom j, double r, double elecScale, double vdwScale) const;
 
     /*
      * PairPotential Terms
@@ -98,7 +98,7 @@ class EnergyKernel : public GeometryKernel
     PairPotentialEnergyValue cellToCellEnergy(const Cell &cell, const Cell &otherCell, bool applyMim,
                                               bool includeIntraMolecular) const;
     // Return PairPotential energy of atom with world
-    double pairPotentialEnergy(const AtomRef i) const;
+    double pairPotentialEnergy(const Atom i) const;
     // Return PairPotential energy of Molecule with world
     PairPotentialEnergyValue pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular) const;
 
@@ -107,7 +107,7 @@ class EnergyKernel : public GeometryKernel
      */
     private:
     // Return energy of supplied atom from ad hoc extended terms
-    virtual double extendedEnergy(const AtomRef i) const;
+    virtual double extendedEnergy(const Atom i) const;
     // Return energy of supplied molecule from ad hoc extended terms
     virtual double extendedEnergy(const Molecule &mol) const;
 
@@ -130,7 +130,7 @@ class EnergyKernel : public GeometryKernel
     // Return total interatomic PairPotential energy from summation of molecules
     PairPotentialEnergyValue totalMoleculePairPotentialEnergy(bool includeIntraMolecular) const;
     // Return total energy of supplied atom with the world
-    EnergyResult totalEnergy(const AtomRef i) const;
+    EnergyResult totalEnergy(const Atom i) const;
     // Return total energy of supplied molecule with the world
     EnergyResult totalEnergy(const Molecule &mol, Flags<EnergyCalculationFlags> flags = {}) const;
 };

@@ -32,7 +32,7 @@ class ExternalPotentialsEnergyKernel : public EnergyKernel
      */
     private:
     // Return extended energy of supplied atom
-    double extendedEnergy(const AtomRef i) const override;
+    double extendedEnergy(const Atom i) const override;
     // Return extended energy of supplied molecule
     double extendedEnergy(const Molecule &mol) const override;
 };
@@ -60,7 +60,7 @@ class ExternalPotentialsForceKernel : public ForceKernel
      */
     private:
     // Calculate extended forces on supplied atom
-    void extendedForces(const AtomRef i, Vec3<double> &fVec) const override;
+    void extendedForces(const Atom i, Vec3<double> &fVec) const override;
     // Calculate extended forces on supplied molecule
     void extendedForces(const Molecule &mol, ForceVector &f) const override;
 };

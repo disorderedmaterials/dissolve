@@ -32,7 +32,7 @@ class ChangeStore
 
     public:
     // Add atom to watch
-    void add(AtomRef i);
+    void add(Atom i);
     // Add molecule to watch
     void add(const std::shared_ptr<Molecule> &mol);
     // Add cell to watch

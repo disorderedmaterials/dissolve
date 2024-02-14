@@ -75,7 +75,7 @@ const std::string RestraintPotential::formParametersString() const { return inte
  */
 
 // Calculate energy on specified atom
-double RestraintPotential::energy(const AtomRef i, const Box *box) const
+double RestraintPotential::energy(const Atom i, const Box *box) const
 {
     switch (interactionPotential_.form())
     {
@@ -88,7 +88,7 @@ double RestraintPotential::energy(const AtomRef i, const Box *box) const
 }
 
 // Calculate force on specified atom, summing in to supplied vector
-void RestraintPotential::force(const AtomRef i, const Box *box, Vec3<double> &f) const
+void RestraintPotential::force(const Atom i, const Box *box, Vec3<double> &f) const
 {
     // Get normalised vector and distance
     auto vecji = box->minimumVector(i.r(), origin_);

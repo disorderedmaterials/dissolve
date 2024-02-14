@@ -13,24 +13,24 @@ class ExternalPotential;
 class Molecule;
 class AtomVector;
 
-class AtomRef : public std::iterator<std::random_access_iterator_tag, AtomRef>
+class Atom : public std::iterator<std::random_access_iterator_tag, Atom>
 {
     private:
     std::size_t index_{0};
     AtomVector *origin_{nullptr};
 
     public:
-    AtomRef();
-    AtomRef(const AtomRef &ref);
-    AtomRef(const std::size_t index, const AtomVector &source);
-    AtomRef &operator*();
-    const AtomRef &operator*() const;
-    bool operator==(const AtomRef &other) const;
-    bool operator!=(const AtomRef &other) const;
-    AtomRef operator[](std::size_t);
-    AtomRef &operator++();
-    AtomRef operator++(int);
-    std::size_t operator-(const AtomRef &other) const;
+    Atom();
+    Atom(const Atom &ref);
+    Atom(const std::size_t index, const AtomVector &source);
+    Atom &operator*();
+    const Atom &operator*() const;
+    bool operator==(const Atom &other) const;
+    bool operator!=(const Atom &other) const;
+    Atom operator[](std::size_t);
+    Atom &operator++();
+    Atom operator++(int);
+    std::size_t operator-(const Atom &other) const;
     int globalAtomIndex() const;
 
     // Return SpeciesAtom that this Atom represents
@@ -75,7 +75,7 @@ class AtomRef : public std::iterator<std::random_access_iterator_tag, AtomRef>
     // Return cell in which the atom exists
     Cell *cell() const;
     // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
-    SpeciesAtom::ScaledInteractionDefinition scaling(const AtomRef j) const;
+    SpeciesAtom::ScaledInteractionDefinition scaling(const Atom j) const;
     // Set coordinates
     void set(const Vec3<double> r);
     // Set coordinates

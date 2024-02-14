@@ -14,7 +14,7 @@ ChangeData::ChangeData() {}
  */
 
 // Set target atom
-void ChangeData::setAtom(AtomRef i)
+void ChangeData::setAtom(Atom i)
 {
     atom_ = i;
     moved_ = false;
@@ -23,7 +23,7 @@ void ChangeData::setAtom(AtomRef i)
 }
 
 // Return target Atom
-AtomRef ChangeData::atom() { return atom_; }
+Atom ChangeData::atom() { return atom_; }
 
 // Return array index of stored Atom
 int ChangeData::atomArrayIndex() const { return atom_.globalAtomIndex(); }

@@ -25,7 +25,7 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     // Species that this Molecule represents
     const Species *species_{nullptr};
     // Vector of pointers to Atoms that belong to this Molecule
-    std::vector<AtomRef> atoms_;
+    std::vector<Atom> atoms_;
     // Offset of first Atom in main configuration vector
     int globalAtomOffset_{0};
     // Object's index within the parent DynamicArray
@@ -37,14 +37,14 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     // Return Species that this Molecule represents
     const Species *species() const;
     // Add Atom to Molecule
-    void addAtom(AtomRef i);
+    void addAtom(Atom i);
     // Return number of atoms in the molecule
     int nAtoms() const;
     // Return Atoms vector
-    std::vector<AtomRef> &atoms();
-    const std::vector<AtomRef> &atoms() const;
+    std::vector<Atom> &atoms();
+    const std::vector<Atom> &atoms() const;
     // Return nth Atom pointer
-    AtomRef atom(int n) const;
+    Atom atom(int n) const;
     // Update local atom pointers from main vector
     void updateAtoms(AtomVector &mainAtoms, int offset);
     // Return global atom offset of first atom
@@ -59,8 +59,8 @@ class Molecule : public std::enable_shared_from_this<Molecule>
      */
     private:
     // Typedef for manipulation functions
-    using ManipulationFunction = std::function<void(AtomRef j, Vec3<double> rJ)>;
-    using ConstManipulationFunction = std::function<void(const AtomRef j, Vec3<double> rJ)>;
+    using ManipulationFunction = std::function<void(Atom j, Vec3<double> rJ)>;
+    using ConstManipulationFunction = std::function<void(const Atom j, Vec3<double> rJ)>;
     // Recursive function for general manipulation
     void recurseLocal(std::vector<bool> &flags, const Box *box, int indexI, ManipulationFunction action);
     void recurseLocal(std::vector<bool> &flags, const Box *box, int indexI, ConstManipulationFunction action) const;

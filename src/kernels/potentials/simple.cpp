@@ -76,7 +76,7 @@ const std::string SimplePotential::formParametersString() const { return interac
  */
 
 // Calculate energy on specified atom
-double SimplePotential::energy(const AtomRef i, const Box *box) const
+double SimplePotential::energy(const Atom i, const Box *box) const
 {
     switch (interactionPotential_.form())
     {
@@ -96,7 +96,7 @@ double SimplePotential::energy(const AtomRef i, const Box *box) const
 }
 
 // Calculate force on specified atom, summing in to supplied vector
-void SimplePotential::force(const AtomRef i, const Box *box, Vec3<double> &f) const
+void SimplePotential::force(const Atom i, const Box *box, Vec3<double> &f) const
 {
     // Get normalised vector and distance
     auto vecji = box->minimumVector(i.r(), origin_);

@@ -7,15 +7,15 @@
 AtomVector::AtomVector(int size) : rs_(size), localTypeIndex_(size), masterTypeIndex_(size), speciesAtom_(size), molecule_(size), cell_(size) {}
 std::size_t AtomVector::size() const { return rs_.size(); }
 
-AtomRef AtomVector::begin() { return AtomRef(0, *this); }
-const AtomRef AtomVector::begin() const { return AtomRef(0, *this); }
-AtomRef AtomVector::end() { return AtomRef(rs_.size(), *this); }
-const AtomRef AtomVector::end() const { return AtomRef(rs_.size(), *this); }
+Atom AtomVector::begin() { return Atom(0, *this); }
+const Atom AtomVector::begin() const { return Atom(0, *this); }
+Atom AtomVector::end() { return Atom(rs_.size(), *this); }
+const Atom AtomVector::end() const { return Atom(rs_.size(), *this); }
 
-AtomRef AtomVector::front() { return AtomRef(0, *this); }
-AtomRef AtomVector::back() { return AtomRef(rs_.size() - 1, *this); }
-AtomRef AtomVector::operator[](std::size_t index) { return AtomRef(index, *this); }
-const AtomRef AtomVector::operator[](std::size_t index) const { return AtomRef(index, *this); }
+Atom AtomVector::front() { return Atom(0, *this); }
+Atom AtomVector::back() { return Atom(rs_.size() - 1, *this); }
+Atom AtomVector::operator[](std::size_t index) { return Atom(index, *this); }
+const Atom AtomVector::operator[](std::size_t index) const { return Atom(index, *this); }
 
 // Modifiers
 void AtomVector::clear()
@@ -39,7 +39,7 @@ void AtomVector::reserve(std::size_t newCapacity)
     targetedPotentials_.reserve(newCapacity);
 }
 
-AtomRef AtomVector::erase(const AtomRef pos)
+Atom AtomVector::erase(const Atom pos)
 {
     localTypeIndex_.erase(localTypeIndex_.begin() + pos.globalAtomIndex());
     masterTypeIndex_.erase(masterTypeIndex_.begin() + pos.globalAtomIndex());
@@ -48,9 +48,9 @@ AtomRef AtomVector::erase(const AtomRef pos)
     cell_.erase(cell_.begin() + pos.globalAtomIndex());
     targetedPotentials_.erase(targetedPotentials_.begin() + pos.globalAtomIndex());
     auto result = rs_.erase(rs_.begin() + pos.globalAtomIndex());
-    return AtomRef(result - rs_.begin(), *this);
+    return Atom(result - rs_.begin(), *this);
 }
-AtomRef AtomVector::erase(const AtomRef first, const AtomRef last)
+Atom AtomVector::erase(const Atom first, const Atom last)
 {
     localTypeIndex_.erase(localTypeIndex_.begin() + first.globalAtomIndex(), localTypeIndex_.begin() + last.globalAtomIndex());
     masterTypeIndex_.erase(masterTypeIndex_.begin() + first.globalAtomIndex(), masterTypeIndex_.begin() + last.globalAtomIndex());
@@ -59,9 +59,9 @@ AtomRef AtomVector::erase(const AtomRef first, const AtomRef last)
     cell_.erase(cell_.begin() + first.globalAtomIndex(), cell_.begin() + last.globalAtomIndex());
     targetedPotentials_.erase(targetedPotentials_.begin() + first.globalAtomIndex(), targetedPotentials_.begin() + last.globalAtomIndex());
     auto result = rs_.erase(rs_.begin() + first.globalAtomIndex(), rs_.begin() + last.globalAtomIndex());
-    return AtomRef(result - rs_.begin(), *this);
+    return Atom(result - rs_.begin(), *this);
 }
-AtomRef AtomVector::emplace_back()
+Atom AtomVector::emplace_back()
 {
     localTypeIndex_.emplace_back();
     masterTypeIndex_.emplace_back();
@@ -69,5 +69,5 @@ AtomRef AtomVector::emplace_back()
     molecule_.emplace_back();
     cell_.emplace_back();
     rs_.emplace_back();
-    return AtomRef(rs_.size() - 1, *this);
+    return Atom(rs_.size() - 1, *this);
 }

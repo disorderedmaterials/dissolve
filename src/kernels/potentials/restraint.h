@@ -55,7 +55,7 @@ class RestraintPotential : public ExternalPotential
      */
     public:
     // Calculate energy on specified atom
-    double energy(const AtomRef i, const Box *box) const override;
+    double energy(const Atom i, const Box *box) const override;
     // Calculate force on specified atom, summing in to supplied vector
-    void force(const AtomRef i, const Box *box, Vec3<double> &f) const override;
+    void force(const Atom i, const Box *box, Vec3<double> &f) const override;
 };

@@ -63,7 +63,7 @@ class ConfigurationViewer : public BaseViewer
 
     private:
     // Return atom at specified coordinates
-    const AtomRef atomAt(int x, int y);
+    const Atom atomAt(int x, int y);
 
     protected:
     // Start interaction at the specified screen coordinates

@@ -36,7 +36,7 @@ void Configuration::updateAtomLocations(bool clearExistingLocations)
 }
 
 // Update Cell location of specified Atom
-void Configuration::updateAtomLocation(AtomRef i)
+void Configuration::updateAtomLocation(Atom i)
 {
     // Fold Atom coordinates into Box
     i.setCoordinates(box_->fold(i.r()));

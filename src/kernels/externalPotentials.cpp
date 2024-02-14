@@ -17,7 +17,7 @@ ExternalPotentialsEnergyKernel::ExternalPotentialsEnergyKernel(const Configurati
 }
 
 // Return external energy of supplied atom
-double ExternalPotentialsEnergyKernel::extendedEnergy(const AtomRef i) const
+double ExternalPotentialsEnergyKernel::extendedEnergy(const Atom i) const
 {
     return std::accumulate(globalPotentials_.begin(), globalPotentials_.end(), 0.0,
                            [&](const auto acc, const auto &pot) { return acc + pot->energy(i, box_); }) +
@@ -44,7 +44,7 @@ ExternalPotentialsForceKernel::ExternalPotentialsForceKernel(const Configuration
 }
 
 // Calculate extended forces on supplied atom
-void ExternalPotentialsForceKernel::extendedForces(const AtomRef i, Vec3<double> &fVec) const
+void ExternalPotentialsForceKernel::extendedForces(const Atom i, Vec3<double> &fVec) const
 {
     for (const auto &pot : globalPotentials_)
         pot->force(i, box_, fVec);

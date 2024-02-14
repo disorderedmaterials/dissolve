@@ -137,14 +137,14 @@ class Configuration : public Serialisable<const CoreData &>
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
-    AtomRef addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r = Vec3<double>());
+    Atom addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r = Vec3<double>());
     // Return number of Atoms in Configuration
     int nAtoms() const;
     // Return Atom array
     AtomVector &atoms();
     const AtomVector &atoms() const;
     // Return nth Atom
-    AtomRef atom(int n);
+    Atom atom(int n);
     // Unfold molecule coordinates
     void unFoldMolecules();
     // Scale contents of the box by the specified factors along each axis
@@ -230,7 +230,7 @@ class Configuration : public Serialisable<const CoreData &>
     // Update Cell location of all Atoms
     void updateAtomLocations(bool clearExistingLocations = false);
     // Update Cell location of specified Atom
-    void updateAtomLocation(AtomRef i);
+    void updateAtomLocation(Atom i);
     // Update Cell locations of atoms within the specified Molecule
     void updateAtomLocations(const std::shared_ptr<Molecule> &mol);
     // Update Cell location of specified Atom indices

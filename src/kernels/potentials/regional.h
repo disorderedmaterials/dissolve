@@ -65,7 +65,7 @@ class RegionalPotential : public ExternalPotential
         return kernelGenerator;
     }
     // Return voxel coordinates of supplied atom
-    std::tuple<int, int, int> voxelIndices(const AtomRef i, const Box *box) const;
+    std::tuple<int, int, int> voxelIndices(const Atom i, const Box *box) const;
 
     public:
     // Set up potential for supplied box
@@ -81,7 +81,7 @@ class RegionalPotential : public ExternalPotential
      */
     public:
     // Calculate energy on specified atom
-    double energy(const AtomRef i, const Box *box) const override;
+    double energy(const Atom i, const Box *box) const override;
     // Calculate force on specified atom, summing in to supplied vector
-    void force(const AtomRef i, const Box *box, Vec3<double> &f) const override;
+    void force(const Atom i, const Box *box, Vec3<double> &f) const override;
 };

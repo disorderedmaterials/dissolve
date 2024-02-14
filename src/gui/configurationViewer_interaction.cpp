@@ -10,10 +10,10 @@
  */
 
 // Return atom at specified coordinates
-const AtomRef ConfigurationViewer::atomAt(int x, int y)
+const Atom ConfigurationViewer::atomAt(int x, int y)
 {
     if (!configuration_)
-      return AtomRef();
+      return Atom();
 
     double lengthScale;
     Vec3<double> rScreen;
@@ -34,7 +34,7 @@ const AtomRef ConfigurationViewer::atomAt(int x, int y)
             return i;
     }
 
-    return AtomRef();
+    return Atom();
 }
 
 /*

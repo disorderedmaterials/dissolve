@@ -131,14 +131,14 @@ bool RegionalPotential::setUp(const Box *box, double voxelSize,
  * Potential Calculation
  */
 
-std::tuple<int, int, int> RegionalPotential::voxelIndices(const AtomRef i, const Box *box) const
+std::tuple<int, int, int> RegionalPotential::voxelIndices(const Atom i, const Box *box) const
 {
     auto r = box->getFractional(i.r());
     return {r.x / voxelSizeFrac_.x, r.y / voxelSizeFrac_.y, r.z / voxelSizeFrac_.z};
 }
 
 // Calculate energy on specified atom
-double RegionalPotential::energy(const AtomRef i, const Box *box) const { return energyVoxels_[voxelIndices(i, box)]; }
+double RegionalPotential::energy(const Atom i, const Box *box) const { return energyVoxels_[voxelIndices(i, box)]; }
 
 // Calculate force on specified atom, summing in to supplied vector
-void RegionalPotential::force(const AtomRef i, const Box *box, Vec3<double> &f) const { f = forceVoxels_[voxelIndices(i, box)]; }
+void RegionalPotential::force(const Atom i, const Box *box, Vec3<double> &f) const { f = forceVoxels_[voxelIndices(i, box)]; }
