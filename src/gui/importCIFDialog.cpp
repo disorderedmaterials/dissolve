@@ -2,9 +2,10 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/importCIFDialog.h"
+#include "base/units.h"
 #include "classes/empiricalFormula.h"
 #include "classes/pairIterator.h"
-#include "neta/node.h"
+#include "gui/helpers/comboPopulator.h"
 #include "procedure/nodes/box.h"
 #include <QDir>
 #include <QFile>
@@ -32,6 +33,9 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
             SLOT(update()));
     connect(&cifAssemblyModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)),
             ui_.AssemblyView, SLOT(expandAll()));
+
+    // Populate density units combo
+    ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
 
     // Set display configuration
     ui_.StructureViewer->setConfiguration(cifHandler_.supercellConfiguration());
@@ -92,19 +96,20 @@ void ImportCIFDialog::update()
     // Assemblies
     ui_.AssemblyView->expandAll();
 
-    // Supercell information -- TODO should become part of config viewer top bar
-    auto *supercellConfiguration = cifHandler_.supercellConfiguration();
-    ui_.SupercellBoxALabel->setText(QString::number(supercellConfiguration->box()->axisLengths().x) + " &#8491;");
-    ui_.SupercellBoxBLabel->setText(QString::number(supercellConfiguration->box()->axisLengths().y) + " &#8491;");
-    ui_.SupercellBoxCLabel->setText(QString::number(supercellConfiguration->box()->axisLengths().z) + " &#8491;");
-    ui_.SupercellBoxAlphaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().x) + "&deg;");
-    ui_.SupercellBoxBetaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().y) + "&deg;");
-    ui_.SupercellBoxGammaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().z) + "&deg;");
-    auto chemicalDensity = cifHandler_.supercellConfiguration()->chemicalDensity();
-    ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
-                                                       : "-- g cm<sup>3</sup>");
-    ui_.SupercellVolumeLabel->setText(QString::number(supercellConfiguration->box()->volume()) + " &#8491;<sup>3</sup>");
-    ui_.SupercellNAtomsLabel->setText(QString::number(supercellConfiguration->nAtoms()));
+    // Configuration information
+    auto *cfg = cifHandler_.supercellConfiguration();
+    const auto *box = cfg->box();
+    ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
+    QString boxInfo = QString("<b>A:</b>  %1 &#8491;<br>").arg(box->axisLengths().x);
+    boxInfo += QString("<b>B:</b>  %1 &#8491;<br>").arg(box->axisLengths().y);
+    boxInfo += QString("<b>C:</b>  %1 &#8491;<br>").arg(box->axisLengths().z);
+    boxInfo += QString("<b>&#x3B1;:</b>  %1&#xb0;<br>").arg(box->axisAngles().x);
+    boxInfo += QString("<b>&#x3B2;:</b>  %1&#xb0;<br>").arg(box->axisAngles().y);
+    boxInfo += QString("<b>&#x3B3;:</b>  %1&#xb0;").arg(box->axisAngles().z);
+    ui_.CurrentBoxFrame->setToolTip(boxInfo);
+    updateDensityLabel();
+    ui_.AtomPopulationLabel->setText(QString::number(cfg->nAtoms()));
+    ui_.MoleculePopulationLabel->setText(QString::number(cfg->nMolecules()));
 
     // Output
     auto validSpecies = !cifHandler_.molecularSpecies().empty();
@@ -121,6 +126,19 @@ void ImportCIFDialog::update()
 
     // Structure
     ui_.StructureViewer->postRedisplay();
+}
+
+// Update density label
+void ImportCIFDialog::updateDensityLabel()
+{
+    auto *cfg = cifHandler_.supercellConfiguration();
+    if (!cfg)
+        ui_.DensityUnitsLabel->setText("N/A");
+    else
+    {
+        auto rho = ui_.DensityUnitsCombo->currentIndex() == 0 ? cfg->atomicDensity() : cfg->chemicalDensity();
+        ui_.DensityUnitsLabel->setText(rho ? QString::number(*rho) : "--");
+    }
 }
 
 void ImportCIFDialog::on_InputFileEdit_editingFinished()
@@ -224,7 +242,7 @@ void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
     update();
 }
 
-void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked)
+void ImportCIFDialog::on_MoietyRemoveByNETACheck_clicked(bool checked)
 {
     if (ui_.MoietyNETARemovalIndicator->state() != CheckIndicator::OKState)
         return;
@@ -238,7 +256,7 @@ void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
     if (!createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString()))
         return;
 
-    cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETAGroup->isChecked(), ui_.MoietyNETARemoveFragmentsCheck->isChecked());
+    cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETACheck->isChecked(), ui_.MoietyNETARemoveFragmentsCheck->isChecked());
     cifHandler_.setMoietyRemovalNETA(moietyNETA_.definitionString());
     update();
 }
@@ -248,13 +266,9 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
     if (ui_.MoietyNETARemovalIndicator->state() != CheckIndicator::OKState)
         return;
 
-    cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETAGroup->isChecked(), checked);
+    cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETACheck->isChecked(), checked);
     update();
 }
-
-/*
- * Output Page
- */
 
 void ImportCIFDialog::on_RepeatASpin_valueChanged(int value)
 {
@@ -264,7 +278,6 @@ void ImportCIFDialog::on_RepeatASpin_valueChanged(int value)
 
 void ImportCIFDialog::on_RepeatBSpin_valueChanged(int value)
 {
-
     cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
     update();
 }
@@ -274,6 +287,14 @@ void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value)
 
     cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
     update();
+}
+
+void ImportCIFDialog::on_DensityUnitsCombo_currentIndexChanged(int index)
+{
+    if (widgetsUpdating_)
+        return;
+
+    updateDensityLabel();
 }
 
 void ImportCIFDialog::on_OutputMolecularRadio_clicked(bool checked) { update(); }

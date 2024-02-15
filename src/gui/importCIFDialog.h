@@ -57,6 +57,8 @@ class ImportCIFDialog : public WizardDialog
     Lock widgetsUpdating_;
     // Update all controls
     void update();
+    // Update density label
+    void updateDensityLabel();
 
     private Q_SLOTS:
     // CIF File / Information
@@ -73,13 +75,15 @@ class ImportCIFDialog : public WizardDialog
     // CleanUp
     void on_MoietyRemoveAtomicsCheck_clicked(bool checked);
     void on_MoietyRemoveWaterCheck_clicked(bool checked);
-    void on_MoietyRemoveByNETAGroup_clicked(bool checked);
+    void on_MoietyRemoveByNETACheck_clicked(bool checked);
     void on_MoietyNETARemovalEdit_textEdited(const QString &text);
     void on_MoietyNETARemoveFragmentsCheck_clicked(bool checked);
     // Supercell
     void on_RepeatASpin_valueChanged(int value);
     void on_RepeatBSpin_valueChanged(int value);
     void on_RepeatCSpin_valueChanged(int value);
+    // Preview
+    void on_DensityUnitsCombo_currentIndexChanged(int index);
     // Output
     void on_OutputMolecularRadio_clicked(bool checked);
     void on_OutputFrameworkRadio_clicked(bool checked);

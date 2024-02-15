@@ -837,7 +837,7 @@ void CIFHandler::setRemoveAtomics(bool b)
 
     removeAtomics_ = b;
 
-    generate(); // After Unit Cell Generation
+    generate(); // TODO After Unit Cell Generation
 }
 
 // Set whether to remove water and coordinated oxygen atoms in clean-up
@@ -848,7 +848,7 @@ void CIFHandler::setRemoveWaterAndCoordinateOxygens(bool b)
 
     removeWaterAndCoordinateOxygens_ = b;
 
-    generate(); // After Unit Cell Generation
+    generate(); // TODO After Unit Cell Generation
 }
 
 // Set whether to remove by NETA definition in clean-up
@@ -861,14 +861,19 @@ void CIFHandler::setRemoveNETA(bool b, bool byFragment)
     removeNETAByFragment_ = byFragment;
 
     if (moietyRemovalNETA_.isValid())
-        generate(); // After Unit Cell Generation
+        generate(); // TODO After Unit Cell Generation
 }
 
 // Set NETA for moiety removal
 bool CIFHandler::setMoietyRemovalNETA(std::string_view netaDefinition) { return moietyRemovalNETA_.create(netaDefinition); }
 
 // Set supercell repeat
-void CIFHandler::setSupercellRepeat(const Vec3<int> &repeat) { supercellRepeat_ = repeat; }
+void CIFHandler::setSupercellRepeat(const Vec3<int> &repeat)
+{
+    supercellRepeat_ = repeat;
+
+    generate(); // TODO After detectMolecules
+}
 
 // Recreate the data
 bool CIFHandler::generate()
