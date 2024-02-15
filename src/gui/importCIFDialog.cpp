@@ -16,6 +16,8 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
 {
     ui_.setupUi(this);
 
+    Locker refreshLock(widgetsUpdating_);
+
     // Add spacegroups to combo
     for (auto n = 1; n < SpaceGroups::nSpaceGroupIds; ++n)
         ui_.SpaceGroupsCombo->addItem(
@@ -33,6 +35,8 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
 
     // Set display configuration
     ui_.StructureViewer->setConfiguration(cifHandler_.supercellConfiguration());
+
+    createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
 }
 
 // Perform any final actions before the wizard is closed
@@ -63,6 +67,8 @@ void ImportCIFDialog::finalise()
 // Update all controls
 void ImportCIFDialog::update()
 {
+    Locker updateLock(widgetsUpdating_);
+
     // DATA_ ID
     ui_.InfoDataLabel->setText(QString::fromStdString(cifHandler_.getTagString("DATA_").value_or("<Unknown>")));
 
@@ -143,6 +149,9 @@ void ImportCIFDialog::on_InputFileSelectButton_clicked(bool checked)
 
 void ImportCIFDialog::on_SpaceGroupsCombo_currentIndexChanged(int index)
 {
+    if (widgetsUpdating_)
+        return;
+
     cifHandler_.setSpaceGroup((SpaceGroups::SpaceGroupId)(ui_.SpaceGroupsCombo->currentIndex() + 1));
 
     update();
@@ -205,27 +214,19 @@ bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
 
 void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked)
 {
-    if (!checked)
-        return;
-
     cifHandler_.setRemoveAtomics(checked);
-
     update();
 }
 
 void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
 {
-    if (!checked)
-        return;
-
     cifHandler_.setRemoveWaterAndCoordinateOxygens(checked);
-
     update();
 }
 
 void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked)
 {
-    if (!checked)
+    if (ui_.MoietyNETARemovalIndicator->state() != CheckIndicator::OKState)
         return;
 
     cifHandler_.setRemoveNETA(checked, ui_.MoietyNETARemoveFragmentsCheck->isChecked());
@@ -234,6 +235,9 @@ void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked)
 
 void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
 {
+    if (!createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString()))
+        return;
+
     cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETAGroup->isChecked(), ui_.MoietyNETARemoveFragmentsCheck->isChecked());
     cifHandler_.setMoietyRemovalNETA(moietyNETA_.definitionString());
     update();
@@ -241,7 +245,7 @@ void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
 
 void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 {
-    if (!checked)
+    if (ui_.MoietyNETARemovalIndicator->state() != CheckIndicator::OKState)
         return;
 
     cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETAGroup->isChecked(), checked);
@@ -254,7 +258,6 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 
 void ImportCIFDialog::on_RepeatASpin_valueChanged(int value)
 {
-
     cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
     update();
 }

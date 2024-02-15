@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/lock.h"
 #include "gui/models/cifAssemblyModel.h"
 #include "gui/ui_importCIFDialog.h"
 #include "gui/wizard.h"
@@ -52,6 +53,8 @@ class ImportCIFDialog : public WizardDialog
      * UI
      */
     private:
+    // Widget update lock
+    Lock widgetsUpdating_;
     // Update all controls
     void update();
 
