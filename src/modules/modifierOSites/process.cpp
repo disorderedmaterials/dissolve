@@ -54,8 +54,7 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     modifierHistogram.zeroBins();
     oxygenSitesHistogram.zeroBins();
 
-    // The returned 'neighbourMap' maps BO sites to nearby NF sites *only if* there were exactly two NF sites within range.
-    // So, we can use this to determine the Q numbers for each NF by counting the number of times a NF site appears in the map.
+    // For each modifier site, bin the number of neighbour oxygens, then for each of those oxygen bin its type
     std::map<const Site *, int> qSpecies;
     std::map<int, int> oxygenSites;
     for (const auto &[siteM, nearO] : mNeighbourMapO)
@@ -81,7 +80,7 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     auto totalOSites = Integrator::absSum(modifierHistogram.data());
     accumulatedModifierData /= totalOSites;
 
-    // Create the display data
+    // Store the normalised data
     processingData.realise<Data1D>("OTypes", name(), GenericItem::InRestartFileFlag) = accumulatedData;
     processingData.realise<Data1D>("TotalOSites", name(), GenericItem::InRestartFileFlag) = accumulatedModifierData;
 

@@ -43,8 +43,10 @@ ModifierOSitesModule::ModifierOSitesModule() : Module(ModuleTypes::ModifierOSite
                                 modifierDistanceRange_, 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
 
     keywords_.setOrganisation("Export");
-    keywords_.add<FileAndFormatKeyword>("ExportM-OType", "File format and file name under which to save calculated M-O data",
-                                        exportFileAndFormatOType_, "EndExportM-OType");
-    keywords_.add<FileAndFormatKeyword>("ExportTotalO-M", "File format and file name under which to save calculated M-O data",
-                                        exportFileAndFormatTotalOSites_, "EndExportTotalO-M");
+    keywords_.add<FileAndFormatKeyword>("ExportModifierData",
+                                        "File format and file name under which to save calculated modifier to oxygen data",
+                                        exportFileAndFormatOType_, "EndExportModifierData");
+    keywords_.add<FileAndFormatKeyword>(
+        "ExportOxygenTypes", "File format and file name under which to save calculated total oygens to modifier atoms",
+        exportFileAndFormatTotalOSites_, "EndExportOxygenTypes");
 }
