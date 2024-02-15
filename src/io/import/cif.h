@@ -109,7 +109,7 @@ class CIFHandler
     // Tolerance for removal of overlapping atoms
     double overlapTolerance_{0.1};
     // Whether to use CIF bonding definitions
-    bool useCIFBondingDefinitions_{true};
+    bool useCIFBondingDefinitions_{false};
     // Bonding tolerance, if calculating bonding rather than using CIF definitions
     double bondingTolerance_{1.1};
     // Whether to prevent metallic bonding
