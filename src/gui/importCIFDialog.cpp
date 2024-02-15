@@ -69,7 +69,7 @@ void ImportCIFDialog::finalise()
  */
 
 // Update all controls
-void ImportCIFDialog::update()
+void ImportCIFDialog::updateWidgets()
 {
     Locker updateLock(widgetsUpdating_);
 
@@ -149,7 +149,7 @@ void ImportCIFDialog::on_InputFileEdit_editingFinished()
     else
     {
         cifHandler_.generate();
-        update();
+        updateWidgets();
     }
 }
 
@@ -172,7 +172,7 @@ void ImportCIFDialog::on_SpaceGroupsCombo_currentIndexChanged(int index)
 
     cifHandler_.setSpaceGroup((SpaceGroups::SpaceGroupId)(ui_.SpaceGroupsCombo->currentIndex() + 1));
 
-    update();
+    updateWidgets();
 }
 
 void ImportCIFDialog::on_NormalOverlapToleranceRadio_clicked(bool checked)
@@ -180,7 +180,7 @@ void ImportCIFDialog::on_NormalOverlapToleranceRadio_clicked(bool checked)
     if (checked)
     {
         cifHandler_.setOverlapTolerance(0.1);
-        update();
+        updateWidgets();
     }
 }
 
@@ -189,7 +189,7 @@ void ImportCIFDialog::on_LooseOverlapToleranceRadio_clicked(bool checked)
     if (checked)
     {
         cifHandler_.setOverlapTolerance(0.5);
-        update();
+        updateWidgets();
     }
 }
 
@@ -198,7 +198,7 @@ void ImportCIFDialog::on_CalculateBondingRadio_clicked(bool checked)
     if (checked)
     {
         cifHandler_.setUseCIFBondingDefinitions(false);
-        update();
+        updateWidgets();
     }
 }
 
@@ -207,17 +207,17 @@ void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
     if (checked)
     {
         cifHandler_.setUseCIFBondingDefinitions(true);
-        update();
+        updateWidgets();
     }
 
-    update();
+    updateWidgets();
 }
 
 void ImportCIFDialog::on_BondingPreventMetallicCheck_clicked(bool checked)
 {
     cifHandler_.setPreventMetallicBonds(checked);
 
-    update();
+    updateWidgets();
 }
 
 // Create / check NETA definition for moiety removal
@@ -233,13 +233,13 @@ bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
 void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked)
 {
     cifHandler_.setRemoveAtomics(checked);
-    update();
+    updateWidgets();
 }
 
 void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
 {
     cifHandler_.setRemoveWaterAndCoordinateOxygens(checked);
-    update();
+    updateWidgets();
 }
 
 void ImportCIFDialog::on_MoietyRemoveByNETACheck_clicked(bool checked)
@@ -248,7 +248,7 @@ void ImportCIFDialog::on_MoietyRemoveByNETACheck_clicked(bool checked)
         return;
 
     cifHandler_.setRemoveNETA(checked, ui_.MoietyNETARemoveFragmentsCheck->isChecked());
-    update();
+    updateWidgets();
 }
 
 void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
@@ -258,7 +258,7 @@ void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
 
     cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETACheck->isChecked(), ui_.MoietyNETARemoveFragmentsCheck->isChecked());
     cifHandler_.setMoietyRemovalNETA(moietyNETA_.definitionString());
-    update();
+    updateWidgets();
 }
 
 void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
@@ -267,26 +267,26 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
         return;
 
     cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETACheck->isChecked(), checked);
-    update();
+    updateWidgets();
 }
 
 void ImportCIFDialog::on_RepeatASpin_valueChanged(int value)
 {
     cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
-    update();
+    updateWidgets();
 }
 
 void ImportCIFDialog::on_RepeatBSpin_valueChanged(int value)
 {
     cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
-    update();
+    updateWidgets();
 }
 
 void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value)
 {
 
     cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
-    update();
+    updateWidgets();
 }
 
 void ImportCIFDialog::on_DensityUnitsCombo_currentIndexChanged(int index)
@@ -297,8 +297,8 @@ void ImportCIFDialog::on_DensityUnitsCombo_currentIndexChanged(int index)
     updateDensityLabel();
 }
 
-void ImportCIFDialog::on_OutputMolecularRadio_clicked(bool checked) { update(); }
+void ImportCIFDialog::on_OutputMolecularRadio_clicked(bool checked) { updateWidgets(); }
 
-void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked) { update(); }
+void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked) { updateWidgets(); }
 
-void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked) { update(); }
+void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked) { updateWidgets(); }

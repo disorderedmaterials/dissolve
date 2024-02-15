@@ -56,7 +56,7 @@ class ImportCIFDialog : public WizardDialog
     // Widget update lock
     Lock widgetsUpdating_;
     // Update all controls
-    void update();
+    void updateWidgets();
     // Update density label
     void updateDensityLabel();
 
