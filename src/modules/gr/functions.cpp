@@ -81,11 +81,8 @@ bool GRModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg
     }
 
     // Loop over Atoms and construct arrays
-    for (auto &atom : cfg->atoms())
-    {
-        m = atom.localTypeIndex();
-        r[m][nr[m]++] = atom.r();
-    }
+    for (auto [atomR, m] : zip(cfg->atoms().rs(), cfg->atoms().localTypeIndices()))
+        r[m][nr[m]++] = atomR;
 
     Messenger::printVerbose("Ready..\n");
 

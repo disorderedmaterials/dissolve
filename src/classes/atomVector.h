@@ -55,4 +55,7 @@ class AtomVector
     Atom erase(const Atom first, const Atom last);
     Atom emplace_back();
     friend class Atom;
+
+    std::vector<Vec3<double>> &rs();
+    std::vector<int> &localTypeIndices();
 };

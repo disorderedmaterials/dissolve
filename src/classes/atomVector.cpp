@@ -71,3 +71,7 @@ Atom AtomVector::emplace_back()
     rs_.emplace_back();
     return Atom(rs_.size() - 1, *this);
 }
+
+std::vector<Vec3<double>> &AtomVector::rs() {return rs_;}
+
+std::vector<int> &AtomVector::localTypeIndices() {return localTypeIndex_;}
