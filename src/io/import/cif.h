@@ -3,7 +3,9 @@
 
 #pragma once
 
+#include "classes/configuration.h"
 #include "classes/coreData.h"
+#include "classes/species.h"
 #include "data/spaceGroups.h"
 #include "io/import/cifClasses.h"
 #include "math/matrix4.h"
@@ -13,8 +15,6 @@
 
 // Forward Declarations
 class Box;
-class Configuration;
-class Species;
 
 // CIF Handler
 class CIFHandler
@@ -114,6 +114,8 @@ class CIFHandler
     };
 
     private:
+    // Temporary atom types used for unique atom labels
+    std::vector<std::shared_ptr<AtomType>> atomLabelTypes_;
     // Tolerance for removal of overlapping atoms
     double overlapTolerance_{0.1};
     // Whether to use CIF bonding definitions
@@ -135,17 +137,16 @@ class CIFHandler
     // Supercell repeat
     Vec3<int> supercellRepeat_{1, 1, 1};
     // Basic unit cell
-    Species *unitCellSpecies_;
-    Configuration *unitCellConfiguration_;
+    Species unitCellSpecies_;
+    Configuration unitCellConfiguration_;
     // Cleaned unit cell
-    Species *cleanedUnitCellSpecies_;
-    Configuration *cleanedUnitCellConfiguration_;
+    Species cleanedUnitCellSpecies_;
+    Configuration cleanedUnitCellConfiguration_;
     // Molecular definition of unit cell (if possible)
-    std::vector<CIFMolecularSpecies> molecularUnitCellSpecies_;
-    Configuration *molecularUnitCellConfiguration_;
-    // Supercell
-    Species *supercellSpecies_;
-    Configuration *supercellConfiguration_;
+    std::vector<CIFMolecularSpecies> molecularSpecies_;
+    // Final generated result (supercell)
+    Species supercellSpecies_;
+    Configuration supercellConfiguration_;
 
     private:
     // Create basic unit cell
@@ -158,8 +159,6 @@ class CIFHandler
     bool createSupercell();
 
     public:
-    // Reset all objects
-    void resetSpeciesAndConfigurations();
     // Set overlap tolerance
     void setOverlapTolerance(double tol);
     // Set whether to use CIF bonding definitions
@@ -180,30 +179,21 @@ class CIFHandler
     void setSupercellRepeat(const Vec3<int> &repeat);
     // Recreate the data
     bool generate(CIFGenerationStage fromStage = CIFGenerationStage::CreateBasicUnitCell);
-    // Finalise, returning the required species and resulting configuration
-    std::pair<std::vector<const Species *>, Configuration *> finalise(CoreData &coreData,
-                                                                      const Flags<OutputFlags> &flags = {}) const;
     // Return whether the generated data is valid
     bool isValid() const;
-    // Structural
-    Species *structuralUnitCellSpecies();
-    Configuration *structuralUnitCellConfiguration();
-    // Cleaned
-    Species *cleanedUnitCellSpecies();
-    Configuration *cleanedUnitCellConfiguration();
-    // Molecular
+    // Return the detected molecular species
     const std::vector<CIFMolecularSpecies> &molecularSpecies() const;
-    Configuration *molecularConfiguration();
-    // Supercell
-    Species *supercellSpecies();
-    Configuration *supercellConfiguration();
+    // Return the generated configuration
+    Configuration *generatedConfiguration();
+    // Finalise, returning the required species and resulting configuration
+    void finalise(CoreData &coreData, const Flags<OutputFlags> &flags = {}) const;
 
     /*
      * Helpers
      */
     private:
     // Apply CIF bonding to a given species
-    void applyCIFBonding(Species *sp, bool preventMetallicBonding);
+    void applyCIFBonding(Species &sp, bool preventMetallicBonding);
     // Determine a unique NETA definition corresponding to a given species
     std::optional<NETADefinition> uniqueNETADefinition(Species *sp);
     // Get instances of species molecules from the supplied NETA definition

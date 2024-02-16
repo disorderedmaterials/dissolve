@@ -38,7 +38,7 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
 
     // Set display configuration
-    ui_.StructureViewer->setConfiguration(cifHandler_.supercellConfiguration());
+    ui_.StructureViewer->setConfiguration(cifHandler_.generatedConfiguration());
 
     createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
 }
@@ -76,7 +76,7 @@ void ImportCIFDialog::updateWidgets()
     ui_.AssemblyView->expandAll();
 
     // Configuration information
-    auto *cfg = cifHandler_.supercellConfiguration();
+    auto *cfg = cifHandler_.generatedConfiguration();
     const auto *box = cfg->box();
     ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
     QString boxInfo = QString("<b>A:</b>  %1 &#8491;<br>").arg(box->axisLengths().x);
@@ -114,7 +114,7 @@ void ImportCIFDialog::updateWidgets()
 // Update density label
 void ImportCIFDialog::updateDensityLabel()
 {
-    auto *cfg = cifHandler_.supercellConfiguration();
+    auto *cfg = cifHandler_.generatedConfiguration();
     if (!cfg)
         ui_.DensityUnitsLabel->setText("N/A");
     else
