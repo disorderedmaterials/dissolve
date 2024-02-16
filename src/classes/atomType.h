@@ -35,7 +35,8 @@ class AtomType : public Serialisable<>
 {
     public:
     AtomType(Elements::Element Z = Elements::Unknown);
-    AtomType(std::string name);
+    AtomType(std::string_view name);
+    AtomType(Elements::Element Z, std::string_view name);
     ~AtomType() = default;
 
     /*
