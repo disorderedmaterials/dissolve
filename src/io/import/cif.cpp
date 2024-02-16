@@ -905,7 +905,7 @@ const std::vector<CIFMolecularSpecies> &CIFHandler::molecularSpecies() const { r
 // Return the generated configuration
 Configuration *CIFHandler::generatedConfiguration() { return &supercellConfiguration_; }
 
-// Finalise, returning the required species and resulting configuration
+// Finalise, copying the required species and resulting configuration to the target CoreData
 void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) const
 {
     Configuration *configuration;

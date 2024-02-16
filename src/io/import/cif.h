@@ -185,7 +185,7 @@ class CIFHandler
     const std::vector<CIFMolecularSpecies> &molecularSpecies() const;
     // Return the generated configuration
     Configuration *generatedConfiguration();
-    // Finalise, returning the required species and resulting configuration
+    // Finalise, copying the required species and resulting configuration to the target CoreData
     void finalise(CoreData &coreData, const Flags<OutputFlags> &flags = {}) const;
 
     /*
