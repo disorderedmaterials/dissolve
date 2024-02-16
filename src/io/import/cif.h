@@ -96,6 +96,14 @@ class CIFHandler
      * Creation
      */
     public:
+    // CIF Generation Stages
+    enum class CIFGenerationStage
+    {
+        CreateBasicUnitCell,
+        CreateCleanedUnitCell,
+        DetectMolecules,
+        CreateSupercell
+    };
     // CIF Species Output Flags
     enum OutputFlags
     {
@@ -171,7 +179,7 @@ class CIFHandler
     // Set supercell repeat
     void setSupercellRepeat(const Vec3<int> &repeat);
     // Recreate the data
-    bool generate();
+    bool generate(CIFGenerationStage fromStage = CIFGenerationStage::CreateBasicUnitCell);
     // Finalise, returning the required species and resulting configuration
     std::pair<std::vector<const Species *>, Configuration *> finalise(CoreData &coreData,
                                                                       const Flags<OutputFlags> &flags = {}) const;

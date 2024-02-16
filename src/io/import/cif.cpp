@@ -326,7 +326,7 @@ void CIFHandler::setSpaceGroup(SpaceGroups::SpaceGroupId sgid)
         return;
 
     spaceGroup_ = sgid;
-    generate(); // TODO From start
+    generate();
 }
 
 // Return space group information
@@ -799,7 +799,7 @@ void CIFHandler::setOverlapTolerance(double tol)
 {
     overlapTolerance_ = tol;
 
-    generate(); // TODO From Start
+    generate(CIFGenerationStage::CreateBasicUnitCell);
 }
 
 // Set whether to use CIF bonding definitions
@@ -810,7 +810,7 @@ void CIFHandler::setUseCIFBondingDefinitions(bool b)
 
     useCIFBondingDefinitions_ = b;
 
-    generate(); // TODO From Start
+    generate();
 }
 
 // Set bonding tolerance
@@ -819,7 +819,7 @@ void CIFHandler::setBondingTolerance(double tol)
     bondingTolerance_ = tol;
 
     if (!useCIFBondingDefinitions_)
-        generate(); // TODO From Start
+        generate();
 }
 
 // Set whether to prevent metallic bonding
@@ -830,7 +830,7 @@ void CIFHandler::setPreventMetallicBonds(bool b)
 
     preventMetallicBonds_ = b;
 
-    generate(); // TODO FRom start
+    generate();
 }
 
 // Set whether to remove free atomic moieties in clean-up
@@ -841,7 +841,7 @@ void CIFHandler::setRemoveAtomics(bool b)
 
     removeAtomics_ = b;
 
-    generate(); // TODO After Unit Cell Generation
+    generate(CIFGenerationStage::CreateCleanedUnitCell);
 }
 
 // Set whether to remove water and coordinated oxygen atoms in clean-up
@@ -852,7 +852,7 @@ void CIFHandler::setRemoveWaterAndCoordinateOxygens(bool b)
 
     removeWaterAndCoordinateOxygens_ = b;
 
-    generate(); // TODO After Unit Cell Generation
+    generate(CIFGenerationStage::CreateCleanedUnitCell);
 }
 
 // Set whether to remove by NETA definition in clean-up
@@ -865,7 +865,7 @@ void CIFHandler::setRemoveNETA(bool b, bool byFragment)
     removeNETAByFragment_ = byFragment;
 
     if (moietyRemovalNETA_.isValid())
-        generate(); // TODO After Unit Cell Generation
+        generate(CIFGenerationStage::CreateCleanedUnitCell);
 }
 
 // Set NETA for moiety removal
@@ -876,25 +876,28 @@ void CIFHandler::setSupercellRepeat(const Vec3<int> &repeat)
 {
     supercellRepeat_ = repeat;
 
-    generate(); // TODO After detectMolecules
+    generate(CIFGenerationStage::CreateSupercell);
 }
 
 // Recreate the data
-bool CIFHandler::generate()
+bool CIFHandler::generate(CIFGenerationStage fromStage)
 {
-    // Reset all species and configurations
-    resetSpeciesAndConfigurations();
-
-    if (!createBasicUnitCell())
-        return false;
-
-    if (!createCleanedUnitCell())
-        return false;
-
-    detectMolecules();
-
-    if (!createSupercell())
-        return false;
+    // Generate data starting from the specified stage, falling through to subsequent stages in the switch
+    switch (fromStage)
+    {
+        case (CIFGenerationStage::CreateBasicUnitCell):
+            resetSpeciesAndConfigurations();
+            if (!createBasicUnitCell())
+                return false;
+        case (CIFGenerationStage::CreateCleanedUnitCell):
+            if (!createCleanedUnitCell())
+                return false;
+        case (CIFGenerationStage::DetectMolecules):
+            detectMolecules();
+        case (CIFGenerationStage::CreateSupercell):
+            if (!createSupercell())
+                return false;
+    }
 
     return true;
 }
