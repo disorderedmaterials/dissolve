@@ -65,6 +65,10 @@ void ImportCIFDialog::updateWidgets()
         "{}, {}, <b>{}</b>, {}", cifHandler_.getTagString("_journal_name_full").value_or("???"),
         cifHandler_.getTagString("_journal_year").value_or("???"), cifHandler_.getTagString("_journal_volume").value_or("???"),
         cifHandler_.getTagString("_journal_page_first").value_or("???"))));
+    ui_.InfoAuthorsList->clear();
+    auto authors = cifHandler_.getTagStrings("_publ_author_name");
+    for (auto &author : authors)
+        ui_.InfoAuthorsList->addItem(QString::fromStdString(author));
 
     // Spacegroup
     ui_.SpaceGroupsCombo->setCurrentIndex(cifHandler_.spaceGroup() - 1);
