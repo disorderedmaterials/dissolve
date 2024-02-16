@@ -23,10 +23,6 @@ class CIFHandler
     CIFHandler();
     ~CIFHandler() = default;
 
-    private:
-    // Temporary CoreData
-    CoreData coreData_;
-
     /*
      * Raw Data
      */

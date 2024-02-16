@@ -602,8 +602,9 @@ bool CIFHandler::detectMolecules()
         auto fragmentIndices = cleanedUnitCellSpecies_.fragment(idx);
         std::sort(fragmentIndices.begin(), fragmentIndices.end());
 
-        // Set up the CIF species
-        auto *sp = coreData_.addSpecies();
+        // Create a new CIF molecular species
+        auto &cifSp = molecularSpecies_.emplace_back();
+        auto *sp = cifSp.species().get();
         sp->copyBasic(&cleanedUnitCellSpecies_);
 
         // Empty the species of all atoms, except those in the reference instance
@@ -666,8 +667,8 @@ bool CIFHandler::detectMolecules()
             }
         }
 
-        // Push a new definition
-        molecularSpecies_.emplace_back(sp, instances);
+        // Store the instances
+        cifSp.instances() = instances;
 
         // Search for the next valid starting index
         idx = *std::min_element(allAtomIndices.begin(), allAtomIndices.end());
@@ -730,7 +731,7 @@ bool CIFHandler::createSupercell()
         // Create images of all molecular unit cell species
         for (auto &molecularSpecies : molecularSpecies_)
         {
-            const auto *sp = molecularSpecies.species();
+            const auto *sp = molecularSpecies.species().get();
             const auto &coreInstances = molecularSpecies.instances();
             std::vector<CIFLocalMolecule> supercellInstances;
             supercellInstances.reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z * coreInstances.size());
@@ -873,8 +874,6 @@ bool CIFHandler::generate(CIFGenerationStage fromStage)
 {
     // Generate data starting from the specified stage, falling through to subsequent stages in the switch
 
-    coreData_.species().clear();
-
     switch (fromStage)
     {
         case (CIFGenerationStage::CreateBasicUnitCell):
@@ -930,7 +929,7 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
             for (auto &cifMolecularSp : molecularSpecies_)
             {
                 // Add the species
-                auto *sp = coreData.copySpecies(cifMolecularSp.species());
+                auto *sp = coreData.copySpecies(cifMolecularSp.species().get());
 
                 // Determine a unique suffix
                 auto base = sp->name();
@@ -966,9 +965,7 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
         {
             for (auto &cifMolecularSp : molecularSpecies_)
             {
-                auto *sp = cifMolecularSp.species();
-                // Add the species
-                sp = coreData.copySpecies(cifMolecularSp.species());
+                coreData.copySpecies(cifMolecularSp.species().get());
             }
         }
     }
