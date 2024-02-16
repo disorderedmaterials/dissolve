@@ -16,7 +16,7 @@ class Dissolve;
 class Species;
 
 // Import CIF Dialog
-class ImportCIFDialog : public WizardDialog
+class ImportCIFDialog : public QDialog
 {
     Q_OBJECT
 
@@ -46,8 +46,6 @@ class ImportCIFDialog : public WizardDialog
     private:
     // Create / check NETA definition for moiety removal
     bool createMoietyRemovalNETA(std::string definition);
-    // Perform any final actions before the wizard is closed
-    void finalise() override;
 
     /*
      * UI
@@ -88,4 +86,7 @@ class ImportCIFDialog : public WizardDialog
     void on_OutputMolecularRadio_clicked(bool checked);
     void on_OutputFrameworkRadio_clicked(bool checked);
     void on_OutputSupermoleculeRadio_clicked(bool checked);
+    // Dialog
+    void on_OKButton_clicked(bool checked);
+    void on_CancelButton_clicked(bool checked);
 };

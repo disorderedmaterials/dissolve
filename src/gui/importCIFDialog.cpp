@@ -13,7 +13,7 @@
 #include <QInputDialog>
 
 ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
-    : WizardDialog(parent), cifAssemblyModel_(cifHandler_.assemblies()), dissolve_(dissolve)
+    : QDialog(parent), cifAssemblyModel_(cifHandler_.assemblies()), dissolve_(dissolve)
 {
     ui_.setupUi(this);
 
@@ -41,27 +41,6 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     ui_.StructureViewer->setConfiguration(cifHandler_.supercellConfiguration());
 
     createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
-}
-
-// Perform any final actions before the wizard is closed
-void ImportCIFDialog::finalise()
-{
-    Flags<CIFHandler::OutputFlags> outputFlags;
-    if (ui_.OutputMolecularRadio->isChecked())
-        outputFlags.setFlag(CIFHandler::OutputFlags::OutputMolecularSpecies);
-    else if (ui_.OutputFrameworkRadio->isChecked())
-        outputFlags.setFlag(CIFHandler::OutputFlags::OutputFramework);
-    else if (ui_.OutputSupermoleculeRadio->isChecked())
-        outputFlags.setFlag(CIFHandler::OutputFlags::OutputSupermolecule);
-
-    // Output a configuration as well as the species for certain options
-    if (outputFlags.isSet(CIFHandler::OutputFlags::OutputMolecularSpecies) ||
-        outputFlags.isSet(CIFHandler::OutputFlags::OutputFramework))
-    {
-        outputFlags.setFlag(CIFHandler::OutputFlags::OutputConfiguration);
-    }
-
-    cifHandler_.finalise(dissolve_.coreData(), outputFlags);
 }
 
 /*
@@ -116,6 +95,10 @@ void ImportCIFDialog::updateWidgets()
     ui_.OutputMolecularRadio->setEnabled(validSpecies);
     ui_.OutputFrameworkRadio->setEnabled(!validSpecies);
     ui_.OutputSupermoleculeRadio->setEnabled(!validSpecies);
+    if (validSpecies)
+        ui_.OutputMolecularRadio->setChecked(true);
+    else if (ui_.OutputMolecularRadio->isChecked())
+        ui_.OutputFrameworkRadio->setChecked(true);
 
     // Update molecular species list
     ui_.OutputMolecularSpeciesList->clear();
@@ -297,8 +280,32 @@ void ImportCIFDialog::on_DensityUnitsCombo_currentIndexChanged(int index)
     updateDensityLabel();
 }
 
-void ImportCIFDialog::on_OutputMolecularRadio_clicked(bool checked) { updateWidgets(); }
+void ImportCIFDialog::on_OutputMolecularRadio_clicked(bool checked) {}
 
-void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked) { updateWidgets(); }
+void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked) {}
 
-void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked) { updateWidgets(); }
+void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked) {}
+
+void ImportCIFDialog::on_OKButton_clicked(bool checked)
+{
+    Flags<CIFHandler::OutputFlags> outputFlags;
+    if (ui_.OutputMolecularRadio->isChecked())
+        outputFlags.setFlag(CIFHandler::OutputFlags::OutputMolecularSpecies);
+    else if (ui_.OutputFrameworkRadio->isChecked())
+        outputFlags.setFlag(CIFHandler::OutputFlags::OutputFramework);
+    else if (ui_.OutputSupermoleculeRadio->isChecked())
+        outputFlags.setFlag(CIFHandler::OutputFlags::OutputSupermolecule);
+
+    // Output a configuration as well as the species for certain options
+    if (outputFlags.isSet(CIFHandler::OutputFlags::OutputMolecularSpecies) ||
+        outputFlags.isSet(CIFHandler::OutputFlags::OutputFramework))
+    {
+        outputFlags.setFlag(CIFHandler::OutputFlags::OutputConfiguration);
+    }
+
+    cifHandler_.finalise(dissolve_.coreData(), outputFlags);
+
+    accept();
+}
+
+void ImportCIFDialog::on_CancelButton_clicked(bool checked) { reject(); }
