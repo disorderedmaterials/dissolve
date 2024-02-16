@@ -76,6 +76,8 @@ class ImportCIFDialog : public QDialog
     void on_MoietyRemoveByNETACheck_clicked(bool checked);
     void on_MoietyNETARemovalEdit_textEdited(const QString &text);
     void on_MoietyNETARemoveFragmentsCheck_clicked(bool checked);
+    // Assemblies
+    void assembliesChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
     // Supercell
     void on_RepeatASpin_valueChanged(int value);
     void on_RepeatBSpin_valueChanged(int value);

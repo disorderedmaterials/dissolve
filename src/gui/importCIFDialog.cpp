@@ -30,7 +30,7 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     ui_.AssemblyView->update();
     ui_.AssemblyView->expandAll();
     connect(&cifAssemblyModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
-            SLOT(update()));
+            SLOT(assembliesChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
     connect(&cifAssemblyModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)),
             ui_.AssemblyView, SLOT(expandAll()));
 
@@ -250,6 +250,12 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
         return;
 
     cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETACheck->isChecked(), checked);
+    updateWidgets();
+}
+
+void ImportCIFDialog::assembliesChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)
+{
+    cifHandler_.generate();
     updateWidgets();
 }
 

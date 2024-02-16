@@ -469,6 +469,10 @@ bool CIFHandler::createBasicUnitCell()
                         unitCellSpecies_->atom(i).setAtomType(coreData_.findAtomType(unique.label()));
                     }
 
+    // Check that we actually generated some atoms...
+    if (unitCellSpecies_->nAtoms() == 0)
+        return false;
+
     // Bonding
     if (useCIFBondingDefinitions_)
         applyCIFBonding(unitCellSpecies_, preventMetallicBonds_);
