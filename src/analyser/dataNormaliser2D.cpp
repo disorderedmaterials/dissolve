@@ -80,4 +80,4 @@ void DataNormaliser2D::normaliseByExpression(std::string_view expressionString)
     }
 }
 
-void DataNormaliser2D::normaliseByGrid() { ; }
+void DataNormaliser2D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 2D data."); }
