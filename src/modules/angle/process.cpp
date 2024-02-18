@@ -58,22 +58,46 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
         dda.initialise(rangeAB_.x, rangeAB_.y, rangeAB_.z, rangeBC_.x, rangeBC_.y, rangeBC_.z, angleRange_.x, angleRange_.y,
                        angleRange_.z);
 
+    rAB.zeroBins();
+    rBC.zeroBins();
+    aABC.zeroBins();
+    daABc.zeroBins();
+    daaBC.zeroBins();
+    dda.zeroBins();
+
+    auto nACumulative = 0;
+    auto nBCumulative = 0;
+    auto nCCumulative = 0;
+    auto nAAvailable = 0;
+    auto nBAvailable = 0;
+    auto nCAvailable = 0;
+    auto nASelections = 1;
+    auto nBSelections = 0;
+    auto nCSelections = 0;
+
     for (const auto &[siteA, indexA] : a.sites())
     {
-
+        nACumulative++;
+        nBSelections++;
+        nAAvailable++;
         for (const auto &[siteB, indexB] : b.sites())
         {
 
             if (excludeSameMoleculeAB_ && siteB->molecule() == siteA->molecule())
                 continue;
 
+            auto distAB = targetConfiguration_->box()->minimumDistance(siteB->origin(), siteA->origin());
+
+            nBAvailable++;
+
             if (!Range(rangeAB_.x, rangeAB_.y)
                      .contains(targetConfiguration_->box()->minimumDistance(siteB->origin(), siteA->origin())))
                 continue;
 
-            rAB.zeroBins();
-            rAB.bin(targetConfiguration_->box()->minimumDistance(siteB->origin(), siteA->origin()));
-            rAB.accumulate();
+            rAB.bin(distAB);
+
+            nBCumulative++;
+            nCSelections++;
 
             for (const auto &[siteC, indexC] : c.sites())
             {
@@ -84,50 +108,52 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
                 if (excludeSameSiteAC_ && siteC == siteA)
                     continue;
 
+                nCAvailable++;
+
                 if (!Range(rangeBC_.x, rangeBC_.y)
                          .contains(targetConfiguration_->box()->minimumDistance(siteC->origin(), siteB->origin())))
                     continue;
 
-                rBC.zeroBins();
-                rBC.bin(targetConfiguration_->box()->minimumDistance(siteC->origin(), siteB->origin()));
-                rBC.accumulate();
+                nCCumulative++;
+
+                auto distBC = targetConfiguration_->box()->minimumDistance(siteC->origin(), siteB->origin());
+
+                rBC.bin(distBC);
 
                 auto angle = targetConfiguration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
                 if (symmetric_ && angle > 90.0)
                     angle = 180.0 - angle;
-                aABC.zeroBins();
                 aABC.bin(angle);
-                aABC.accumulate();
 
-                daABc.zeroBins();
-                daABc.bin(targetConfiguration_->box()->minimumDistance(siteB->origin(), siteA->origin()), angle);
-                daABc.accumulate();
+                daABc.bin(distAB, angle);
 
-                daaBC.zeroBins();
-                daaBC.bin(targetConfiguration_->box()->minimumDistance(siteC->origin(), siteB->origin()), angle);
-                daaBC.accumulate();
+                daaBC.bin(distBC, angle);
 
-                dda.zeroBins();
-                dda.bin(targetConfiguration_->box()->minimumDistance(siteB->origin(), siteA->origin()),
-                        targetConfiguration_->box()->minimumDistance(siteC->origin(), siteB->origin()), angle);
-                dda.accumulate();
+                dda.bin(distAB, distBC, angle);
             }
         }
     }
 
+    rAB.accumulate();
+    rBC.accumulate();
+    aABC.accumulate();
+    daABc.accumulate();
+    daaBC.accumulate();
+    dda.accumulate();
+
     auto &normalisedAB = processingData.realise<Data1D>("RDF(AB)", name(), GenericItem::InRestartFileFlag);
     normalisedAB = rAB.accumulatedData();
     DataNormaliser1D normaliserAB(normalisedAB);
-    normaliserAB.normaliseBySitePopulation(a.sites().size());
-    normaliserAB.normaliseByNumberDensity(b.sites().size(), targetConfiguration_);
+    normaliserAB.normaliseBySitePopulation(double(nACumulative) / nASelections);
+    normaliserAB.normaliseByNumberDensity(double(nBCumulative) / nBSelections, targetConfiguration_);
     normaliserAB.normaliseBySphericalShell();
 
     auto &normalisedBC = processingData.realise<Data1D>("RDF(BC)", name(), GenericItem::InRestartFileFlag);
     normalisedBC = rBC.accumulatedData();
     DataNormaliser1D normaliserBC(normalisedBC);
-    normaliserBC.normaliseBySitePopulation(b.sites().size());
-    normaliserBC.normaliseBySitePopulation(a.sites().size());
-    normaliserBC.normaliseByNumberDensity(c.sites().size(), targetConfiguration_);
+    normaliserBC.normaliseBySitePopulation(double(nACumulative) / nASelections);
+    normaliserBC.normaliseBySitePopulation(double(nBCumulative) / nBSelections);
+    normaliserBC.normaliseByNumberDensity(double(nCAvailable) / nCSelections, targetConfiguration_);
     normaliserBC.normaliseBySphericalShell();
 
     auto &normalisedAngle = processingData.realise<Data1D>("Angle(ABC)", name(), GenericItem::InRestartFileFlag);
@@ -141,9 +167,9 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     DataNormaliser2D normaliserDAngleAB(normalisedDAngleAB);
     normaliserDAngleAB.normaliseByExpression(
         fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
-    normaliserDAngleAB.normaliseBySitePopulation(a.sites().size());
-    normaliserDAngleAB.normaliseBySitePopulation(c.sites().size());
-    normaliserDAngleAB.normaliseByNumberDensity(b.sites().size(), targetConfiguration_);
+    normaliserDAngleAB.normaliseBySitePopulation(double(nACumulative) / nASelections);
+    normaliserDAngleAB.normaliseBySitePopulation(double(nCCumulative) / nCSelections);
+    normaliserDAngleAB.normaliseByNumberDensity(double(nBAvailable) / nBSelections, targetConfiguration_);
     normaliserDAngleAB.normaliseBySphericalShell();
 
     auto &normalisedDAngleBC = processingData.realise<Data2D>("DAngle(A-(B-C))", name(), GenericItem::InRestartFileFlag);
@@ -151,9 +177,9 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     DataNormaliser2D normaliserDAngleBC(normalisedDAngleBC);
     normaliserDAngleBC.normaliseByExpression(
         fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
-    normaliserDAngleBC.normaliseBySitePopulation(b.sites().size());
-    normaliserDAngleBC.normaliseBySitePopulation(a.sites().size());
-    normaliserDAngleBC.normaliseByNumberDensity(c.sites().size(), targetConfiguration_);
+    normaliserDAngleBC.normaliseBySitePopulation(double(nACumulative) / nASelections);
+    normaliserDAngleBC.normaliseBySitePopulation(double(nBCumulative) / nBSelections);
+    normaliserDAngleBC.normaliseByNumberDensity(double(nCAvailable) / nCSelections, targetConfiguration_);
     normaliserDAngleBC.normaliseBySphericalShell();
 
     return ExecutionResult::Success;
