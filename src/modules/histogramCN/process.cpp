@@ -62,5 +62,17 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
     DataNormaliser1D normaliserCN(dataCN);
     normaliserCN.normaliseByValue();
 
+    // Save data?
+    if (exportFileAndFormat_.hasFilename())
+    {
+        if (moduleContext.processPool().isMaster())
+        {
+            if (exportFileAndFormat_.exportData(dataCN))
+                moduleContext.processPool().decideTrue();
+            else
+                moduleContext.processPool().decideFalse();
+        }
+    }
+
     return ExecutionResult::Success;
 }
