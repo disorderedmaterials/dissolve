@@ -3,12 +3,8 @@
 
 #pragma once
 
-#include "analyser/siteFilter.h"
-#include "analyser/siteSelector.h"
 #include "io/export/data3D.h"
 #include "module/module.h"
-
-// Forward Declarations
 
 // CalculateSDF Module
 class SDFModule : public Module

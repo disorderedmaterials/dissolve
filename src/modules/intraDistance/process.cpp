@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataNormaliser1D.h"
+#include "analyser/siteSelector.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "math/histogram1D.h"
@@ -45,11 +46,15 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
     }
     histAB.accumulate();
 
+    // Distance(A-B)
     auto &dataNormalisedHisto = processingData.realise<Data1D>("NormalisedHistogram", name(), GenericItem::InRestartFileFlag);
     dataNormalisedHisto = histAB.accumulatedData();
+
+    // Normalise
     DataNormaliser1D histogramNormaliser(dataNormalisedHisto);
     histogramNormaliser.normaliseByValue();
 
+    // Save data?
     if (exportFileAndFormat_.hasFilename())
     {
         if (moduleContext.processPool().isMaster())

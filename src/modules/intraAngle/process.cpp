@@ -74,12 +74,16 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     }
     hist.accumulate();
 
+    // Angle(ABC)
     auto &dataNormalisedHisto = processingData.realise<Data1D>("Angle(ABC)", name(), GenericItem::InRestartFileFlag);
     dataNormalisedHisto = hist.accumulatedData();
+
+    // Normalise
     DataNormaliser1D normaliser(dataNormalisedHisto);
     normaliser.normaliseByExpression("value/sin(toRad(x))");
     normaliser.normaliseByValue();
 
+    // Save data?
     if (exportFileAndFormat_.hasFilename())
     {
         if (moduleContext.processPool().isMaster())

@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataNormaliser3D.h"
+#include "analyser/siteSelector.h"
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
 #include "math/histogram3D.h"
@@ -30,6 +31,7 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
     if (status == GenericItem::ItemStatus::Created)
         hist.initialise(rangeX_.x, rangeX_.y, rangeX_.z, rangeY_.x, rangeY_.y, rangeY_.z, rangeZ_.x, rangeZ_.y, rangeZ_.z);
     hist.zeroBins();
+
     for (const auto &[siteA, indexA] : a.sites())
     {
         for (const auto &[siteB, indexB] : b.sites())
@@ -45,9 +47,11 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
     }
     hist.accumulate();
 
+    // SDF
     auto &dataSDF = processingData.realise<Data3D>("SDF", name(), GenericItem::InRestartFileFlag);
     dataSDF = hist.accumulatedData();
 
+    // Normalise
     DataNormaliser3D normaliserSDF(dataSDF);
     normaliserSDF.normaliseBySitePopulation(double(a.sites().size()));
     normaliserSDF.normaliseByGrid();

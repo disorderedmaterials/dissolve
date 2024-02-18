@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataNormaliser1D.h"
+#include "analyser/siteSelector.h"
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
@@ -48,6 +49,7 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
         }
         hist.bin(nSelected);
     }
+
     hist.accumulate();
 
     // CN

@@ -3,13 +3,9 @@
 
 #pragma once
 
-#include "analyser/siteFilter.h"
-#include "analyser/siteSelector.h"
 #include "io/export/data1D.h"
 #include "math/range.h"
 #include "module/module.h"
-
-// Forward Declarations
 
 // Calculate CN Histogram Module
 class HistogramCNModule : public Module

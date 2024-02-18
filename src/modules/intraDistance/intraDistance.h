@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "analyser/siteFilter.h"
-#include "analyser/siteSelector.h"
 #include "io/export/data1D.h"
 #include "module/module.h"
 

@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataNormaliser3D.h"
+#include "analyser/siteSelector.h"
 #include "main/dissolve.h"
 #include "math/histogram3D.h"
 #include "module/context.h"
@@ -54,8 +55,11 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
     }
     hist.accumulate();
 
+    // Oriented SDF
     auto &dataOrientedSDF = processingData.realise<Data3D>("SDF", name(), GenericItem::InRestartFileFlag);
     dataOrientedSDF = hist.accumulatedData();
+
+    // Normalise
     DataNormaliser3D normaliserOrientedSDF(dataOrientedSDF);
     normaliserOrientedSDF.normaliseBySitePopulation(double(a.sites().size()));
     normaliserOrientedSDF.normaliseByGrid();
