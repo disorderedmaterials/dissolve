@@ -117,6 +117,6 @@ Layer  'Processing'
     SiteC  'Water'  'H2'
     RangeAB  0.000000e+00  1.000000e+01
     RangeBC  0.000000e+00  1.000000e+01
-    AngleRange  0.000000e+00  1.800000e+02  1.000000e+00
+    AngleRange  0.000000e+00  1.800000e+02  0.1
   EndModule
 EndLayer
