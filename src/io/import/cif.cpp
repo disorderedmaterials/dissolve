@@ -632,7 +632,7 @@ bool CIFHandler::detectMolecules()
             auto neta = uniqueNETADefinition(sp);
             if (!neta.has_value())
                 return Messenger::error("Couldn't generate molecular partitioning for CIF - no unique NETA definition for the "
-                                        "fragmentIndices {} could be determined.\n",
+                                        "fragment {} could be determined.\n",
                                         EmpiricalFormula::formula(sp->atoms(), [](const auto &i) { return i.Z(); }));
 
             // Find instances of this fragmentIndices
