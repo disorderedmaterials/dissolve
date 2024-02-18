@@ -3,10 +3,8 @@
 
 #pragma once
 
+#include "classes/configuration.h"
 #include <string_view>
-
-// Forward declarations
-class Configuration;
 
 template <typename DataND> class DataNormaliserBase
 {
@@ -18,8 +16,11 @@ template <typename DataND> class DataNormaliserBase
     DataND &targetData_;
 
     public:
-    virtual void normaliseByNumberDensity(double population, Configuration *targetConfiguration) = 0;
-    virtual void normaliseBySitePopulation(double population) = 0;
+    void normaliseByNumberDensity(double population, Configuration *targetConfiguration)
+    {
+        targetData_ /= (population / targetConfiguration->box()->volume());
+    }
+    void normaliseBySitePopulation(double population) { targetData_ /= population; }
     virtual void normaliseBySphericalShell() = 0;
     virtual void normaliseByValue(double value = 1.0, bool absolute = true) = 0;
     virtual void normaliseByExpression(std::string_view expressionString) = 0;

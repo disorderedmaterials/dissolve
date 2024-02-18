@@ -2,20 +2,12 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataNormaliser1D.h"
-#include "classes/configuration.h"
 #include "expression/expression.h"
 #include "expression/variable.h"
 #include "math/data1D.h"
 #include "math/integrator.h"
 
 DataNormaliser1D::DataNormaliser1D(Data1D &targetData) : DataNormaliserBase<Data1D>(targetData) {}
-
-void DataNormaliser1D::normaliseByNumberDensity(double population, Configuration *targetConfiguration)
-{
-    targetData_ /= (population / targetConfiguration->box()->volume());
-}
-
-void DataNormaliser1D::normaliseBySitePopulation(double population) { targetData_ /= population; }
 
 void DataNormaliser1D::normaliseBySphericalShell()
 {

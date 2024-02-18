@@ -16,8 +16,6 @@ class DataNormaliser1D : public DataNormaliserBase<Data1D>
      * Normalisation functions
      */
     public:
-    void normaliseByNumberDensity(double population, Configuration *targetConfiguration) override;
-    void normaliseBySitePopulation(double population) override;
     void normaliseBySphericalShell() override;
     void normaliseByValue(double value = 1.0, bool absolute = true) override;
     void normaliseByExpression(std::string_view expressionString) override;
