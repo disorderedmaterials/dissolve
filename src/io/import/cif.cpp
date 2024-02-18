@@ -606,7 +606,7 @@ bool CIFHandler::detectMolecules()
         // Fix geometry of the extracted species
         fixGeometry(sp, cleanedUnitCellSpecies_->box());
 
-        // Find instances of this fragmentIndices. For large fragments that represent > 50% of the remaining atoms we don't even
+        // Find instances of this fragment. For large fragments that represent > 50% of the remaining atoms we don't even
         // attempt to create a NETA definition etc. For cases such as framework species this will speed up detection no end.
         std::vector<CIFLocalMolecule> instances;
         if (fragmentIndices.size() * 2 > allAtomIndices.size())
