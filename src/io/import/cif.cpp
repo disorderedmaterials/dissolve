@@ -638,7 +638,7 @@ bool CIFHandler::detectMolecules()
             // Find instances of this fragmentIndices
             instances = getSpeciesInstances(sp, *neta);
 
-            // Remove the current fragmentIndices and all copies
+            // Remove the current fragment and all copies
             for (const auto &instance : instances)
             {
                 allAtomIndices.erase(std::remove_if(allAtomIndices.begin(), allAtomIndices.end(),
