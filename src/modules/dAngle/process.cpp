@@ -47,19 +47,38 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     dAngle.zeroBins();
     rBC.zeroBins();
     aABC.zeroBins();
+
+    auto nACumulative = 0;
+    auto nBCumulative = 0;
+    auto nCCumulative = 0;
+    auto nAAvailable = 0;
+    auto nBAvailable = 0;
+    auto nCAvailable = 0;
+    auto nASelections = 1;
+    auto nBSelections = 0;
+    auto nCSelections = 0;
+
     for (const auto &[siteA, indexA] : a.sites())
     {
+        nACumulative++;
+        nBSelections++;
+        nAAvailable++;
         for (const auto &[siteB, indexB] : b.sites())
         {
 
             if (siteB->molecule() != siteA->molecule())
                 continue;
-
+            nBCumulative++;
+            nCSelections++;
+            nBAvailable++;
             for (const auto &[siteC, indexC] : c.sites())
             {
 
-                if (excludeSameMolecule_ && (siteC->molecule() == siteA->molecule()))
+                if (excludeSameMolecule_ && (siteC->molecule() == siteB->molecule()))
                     continue;
+
+                nCCumulative++;
+                nCAvailable++;
 
                 auto distanceBC = targetConfiguration_->box()->minimumDistance(siteB->origin(), siteC->origin());
                 auto angle = targetConfiguration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
@@ -82,9 +101,9 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     auto &rBCNormalised = processingData.realise<Data1D>("RDF(BC)", name(), GenericItem::InRestartFileFlag);
     rBCNormalised = rBC.accumulatedData();
     DataNormaliser1D rBCNormaliser(rBCNormalised);
-    rBCNormaliser.normaliseBySitePopulation(double(a.sites().size()));
-    rBCNormaliser.normaliseBySitePopulation(double(b.sites().size()));
-    rBCNormaliser.normaliseByNumberDensity(double(c.sites().size()), targetConfiguration_);
+    rBCNormaliser.normaliseBySitePopulation(double(nACumulative) / nASelections);
+    rBCNormaliser.normaliseBySitePopulation(double(nBCumulative) / nBSelections);
+    rBCNormaliser.normaliseByNumberDensity(double(nCAvailable) / nCSelections, targetConfiguration_);
     rBCNormaliser.normaliseBySphericalShell();
 
     auto &aABCNormalised = processingData.realise<Data1D>("Angle(ABC)", name(), GenericItem::InRestartFileFlag);
@@ -97,8 +116,8 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     dAngleNormalised = dAngle.accumulatedData();
     DataNormaliser2D dAngleNormaliser(dAngleNormalised);
     dAngleNormaliser.normaliseByExpression(fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
-    dAngleNormaliser.normaliseBySitePopulation(double(a.sites().size()));
-    dAngleNormaliser.normaliseByNumberDensity(double(b.sites().size()), targetConfiguration_);
+    dAngleNormaliser.normaliseBySitePopulation(double(nACumulative) / nASelections);
+    dAngleNormaliser.normaliseByNumberDensity(double(nBAvailable) / nBSelections, targetConfiguration_);
     dAngleNormaliser.normaliseBySphericalShell();
 
     return ExecutionResult::Success;
