@@ -77,4 +77,4 @@ void DataNormaliser1D::normaliseByExpression(std::string_view expressionString)
     }
 }
 
-void DataNormaliser1D::normaliseByGrid() { ; }
+void DataNormaliser1D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 1D data."); }
