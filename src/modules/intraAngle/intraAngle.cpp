@@ -28,7 +28,7 @@ IntraAngleModule::IntraAngleModule() : Module(ModuleTypes::IntraAngle)
     keywords_.add<RangeKeyword>("RangeBC", "Range (min, max, binwidth) of B-C distance binning", rangeBC_, 0.0, std::nullopt,
                                 Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<Vec3DoubleKeyword>("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
-                                     Vec3<double>(0.0, 180.0, 1.0), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
 
     keywords_.setOrganisation("Options", "Restrictions", "Options to restrict the angle range considered.");
     keywords_.add<BoolKeyword>(
