@@ -26,6 +26,7 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
     // Select site B
     SiteSelector b(targetConfiguration_, b_);
 
+    // Oriented SDF histogram
     auto [hist, status] = processingData.realiseIf<Histogram3D>("Histo", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
         hist.initialise(rangeX_.x, rangeX_.y, rangeX_.z, rangeY_.x, rangeY_.y, rangeY_.z, rangeZ_.x, rangeZ_.y, rangeZ_.z);
@@ -63,7 +64,9 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
 
     // Normalise
     DataNormaliser3D normaliserOrientedSDF(dataOrientedSDF);
+    // Normalise by A site population
     normaliserOrientedSDF.normaliseBySitePopulation(double(a.sites().size()));
+    // Normalise by grid
     normaliserOrientedSDF.normaliseByGrid();
 
     // Save data?

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/site.h"
 #include "io/export/data3D.h"
 #include "module/module.h"
 

@@ -57,8 +57,9 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
     auto &dataCN = processingData.realise<Data1D>("Histogram", name(), GenericItem::InRestartFileFlag);
     dataCN = hist.accumulatedData();
 
-    // Normalise
+    // Normalise CN
     DataNormaliser1D normaliserCN(dataCN);
+    // Normalise by value
     normaliserCN.normaliseByValue();
 
     // Save data?

@@ -82,7 +82,9 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
 
     // Normalise
     DataNormaliser1D normaliser(dataNormalisedHisto);
+    // Normalise by sin(x)
     normaliser.normaliseByExpression("value/sin(toRad(x))");
+    // Normalise by value
     normaliser.normaliseByValue();
 
     // Save data?
