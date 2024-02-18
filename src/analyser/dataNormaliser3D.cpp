@@ -5,7 +5,7 @@
 #include "classes/configuration.h"
 #include "math/data3D.h"
 
-DataNormaliser3D::DataNormaliser3D(Data3D &targetData) : targetData_(targetData) {}
+DataNormaliser3D::DataNormaliser3D(Data3D &targetData) : DataNormaliserBase<Data3D>(targetData) {}
 
 void DataNormaliser3D::normaliseBySitePopulation(double population) { targetData_ /= population; }
 
@@ -19,3 +19,11 @@ void DataNormaliser3D::normaliseByGrid()
 
     targetData_ /= binVolume;
 }
+
+void DataNormaliser3D::normaliseByNumberDensity(double population, Configuration *targetConfiguration) { ; }
+
+void DataNormaliser3D::normaliseBySphericalShell() { ; }
+
+void DataNormaliser3D::normaliseByValue(double value, bool absolute) { ; }
+
+void DataNormaliser3D::normaliseByExpression(std::string_view expressionString) { ; }

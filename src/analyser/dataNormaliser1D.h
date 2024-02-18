@@ -3,31 +3,23 @@
 
 #pragma once
 
-#include "analyser/typeDefs.h"
+#include "analyser/dataNormaliserBase.h"
+#include "math/data1D.h"
 #include <string_view>
 
-class Configuration;
-class Data1D;
-
-class DataNormaliser1D
+class DataNormaliser1D : public DataNormaliserBase<Data1D>
 {
     public:
     DataNormaliser1D(Data1D &targetData);
 
     /*
-     * Target
-     */
-    private:
-    // Target data to normalise
-    Data1D &targetData_;
-
-    /*
      * Normalisation functions
      */
     public:
-    void normaliseByNumberDensity(double population, Configuration *targetConfiguration);
-    void normaliseBySitePopulation(double population);
-    void normaliseBySphericalShell();
-    void normaliseByValue(double value = 1.0, bool absolute = true);
-    void normaliseByExpression(std::string_view expressionString);
+    void normaliseByNumberDensity(double population, Configuration *targetConfiguration) override;
+    void normaliseBySitePopulation(double population) override;
+    void normaliseBySphericalShell() override;
+    void normaliseByValue(double value = 1.0, bool absolute = true) override;
+    void normaliseByExpression(std::string_view expressionString) override;
+    void normaliseByGrid() override;
 };

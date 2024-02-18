@@ -8,7 +8,7 @@
 #include "math/data1D.h"
 #include "math/integrator.h"
 
-DataNormaliser1D::DataNormaliser1D(Data1D &targetData) : targetData_(targetData) {}
+DataNormaliser1D::DataNormaliser1D(Data1D &targetData) : DataNormaliserBase<Data1D>(targetData) {}
 
 void DataNormaliser1D::normaliseByNumberDensity(double population, Configuration *targetConfiguration)
 {
@@ -84,3 +84,5 @@ void DataNormaliser1D::normaliseByExpression(std::string_view expressionString)
         values.at(i) = expression.asDouble();
     }
 }
+
+void DataNormaliser1D::normaliseByGrid() { ; }
