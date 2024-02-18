@@ -70,8 +70,13 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
             if (exportFileAndFormat_.exportData(dataCN))
                 moduleContext.processPool().decideTrue();
             else
+            {
                 moduleContext.processPool().decideFalse();
+                return ExecutionResult::Failed;
+            }
         }
+        else if (!moduleContext.processPool().decision())
+            return ExecutionResult::Failed;
     }
 
     return ExecutionResult::Success;

@@ -53,5 +53,21 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
     DataNormaliser1D histogramNormaliser(dataNormalisedHisto);
     histogramNormaliser.normaliseByValue();
 
+    if (exportFileAndFormat_.hasFilename())
+    {
+        if (moduleContext.processPool().isMaster())
+        {
+            if (exportFileAndFormat_.exportData(dataNormalisedHisto))
+                moduleContext.processPool().decideTrue();
+            else
+            {
+                moduleContext.processPool().decideFalse();
+                return ExecutionResult::Failed;
+            }
+        }
+        else if (!moduleContext.processPool().decision())
+            return ExecutionResult::Failed;
+    }
+
     return ExecutionResult::Success;
 }
