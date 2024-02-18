@@ -44,6 +44,8 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
             histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
         }
     }
+
+    // Accumulate histogram
     histAB.accumulate();
 
     // Distance(A-B)

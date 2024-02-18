@@ -32,8 +32,8 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     auto [histAB, status] = processingData.realiseIf<Histogram1D>("Histo-AB", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
         histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
-
     histAB.zeroBins();
+
     for (const auto &[siteA, indexA] : a.sites())
     {
         for (const auto &[siteB, indexB] : b.sites())
@@ -43,6 +43,8 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
             histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
         }
     }
+
+    // Accumulate histogram
     histAB.accumulate();
 
     // RDF

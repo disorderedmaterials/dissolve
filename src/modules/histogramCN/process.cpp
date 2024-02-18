@@ -50,6 +50,7 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
         hist.bin(nSelected);
     }
 
+    // Accumulate histogram
     hist.accumulate();
 
     // CN

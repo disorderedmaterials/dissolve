@@ -45,6 +45,8 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
             hist.bin(vBA);
         }
     }
+
+    // Accumulate histogram
     hist.accumulate();
 
     // SDF

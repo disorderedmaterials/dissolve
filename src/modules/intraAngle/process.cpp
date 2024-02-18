@@ -30,10 +30,10 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     // Select site C
     SiteSelector c(targetConfiguration_, c_);
 
+    // Intramolecular angle histogram
     auto [hist, status] = processingData.realiseIf<Histogram1D>("Histo", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
         hist.initialise(angleRange_.x, angleRange_.y, angleRange_.z);
-
     hist.zeroBins();
 
     for (const auto &[siteA, indexA] : a.sites())
@@ -72,6 +72,8 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
             }
         }
     }
+
+    // Accumulate histogram
     hist.accumulate();
 
     // Angle(ABC)

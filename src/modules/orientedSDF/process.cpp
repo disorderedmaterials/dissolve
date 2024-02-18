@@ -53,6 +53,8 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
             }
         }
     }
+
+    // Accumulate histogram
     hist.accumulate();
 
     // Oriented SDF
