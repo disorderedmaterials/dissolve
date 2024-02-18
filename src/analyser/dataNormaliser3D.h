@@ -17,7 +17,6 @@ class DataNormaliser3D : public DataNormaliserBase<Data3D>
      */
     public:
     void normaliseBySphericalShell() override;
-    void normaliseByValue(double value = 1.0, bool absolute = true) override;
     void normaliseByExpression(std::string_view expressionString) override;
     void normaliseByGrid() override;
 };

@@ -3,31 +3,20 @@
 
 #pragma once
 
-#include "analyser/typeDefs.h"
+#include "analyser/dataNormaliserBase.h"
+#include "math/data2D.h"
 #include <string_view>
 
-class Configuration;
-class Data2D;
-
-class DataNormaliser2D
+class DataNormaliser2D : public DataNormaliserBase<Data2D>
 {
     public:
     DataNormaliser2D(Data2D &targetData);
 
     /*
-     * Target
-     */
-    private:
-    // Target data to normalise
-    Data2D &targetData_;
-
-    /*
      * Normalisation functions
      */
     public:
-    void normaliseByNumberDensity(double population, Configuration *targetConfiguration);
-    void normaliseBySitePopulation(double population);
-    void normaliseBySphericalShell();
-    void normaliseByValue(double value = 1.0, bool absolute = true);
-    void normaliseByExpression(std::string_view expressionString);
+    void normaliseBySphericalShell() override;
+    void normaliseByExpression(std::string_view expressionString) override;
+    void normaliseByGrid() override;
 };

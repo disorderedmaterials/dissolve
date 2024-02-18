@@ -41,13 +41,6 @@ void DataNormaliser1D::normaliseBySphericalShell()
     }
 }
 
-void DataNormaliser1D::normaliseByValue(double value, bool absolute)
-{
-    auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);
-    targetData_ /= sum;
-    targetData_ *= value;
-}
-
 void DataNormaliser1D::normaliseByExpression(std::string_view expressionString)
 {
 

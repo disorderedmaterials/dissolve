@@ -8,14 +8,7 @@
 #include "math/data2D.h"
 #include "math/integrator.h"
 
-DataNormaliser2D::DataNormaliser2D(Data2D &targetData) : targetData_(targetData) {}
-
-void DataNormaliser2D::normaliseByNumberDensity(double population, Configuration *targetConfiguration)
-{
-    targetData_ /= (population / targetConfiguration->box()->volume());
-}
-
-void DataNormaliser2D::normaliseBySitePopulation(double population) { targetData_ /= population; }
+DataNormaliser2D::DataNormaliser2D(Data2D &targetData) : DataNormaliserBase(targetData) {}
 
 void DataNormaliser2D::normaliseBySphericalShell()
 {
@@ -46,13 +39,6 @@ void DataNormaliser2D::normaliseBySphericalShell()
             leftBin = rightBin;
         }
     }
-}
-
-void DataNormaliser2D::normaliseByValue(double value, bool absolute)
-{
-    auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);
-    targetData_ /= sum;
-    targetData_ *= value;
 }
 
 void DataNormaliser2D::normaliseByExpression(std::string_view expressionString)
@@ -93,3 +79,5 @@ void DataNormaliser2D::normaliseByExpression(std::string_view expressionString)
         }
     }
 }
+
+void DataNormaliser2D::normaliseByGrid() { ; }
