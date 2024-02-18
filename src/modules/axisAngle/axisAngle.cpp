@@ -8,7 +8,7 @@
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
 
-AxisAngleModule::AxisAngleModule() : Module(ModuleTypes::AxisAngle), analyser_(ProcedureNode::AnalysisContext)
+AxisAngleModule::AxisAngleModule() : Module(ModuleTypes::AxisAngle)
 {
     /*
      * Keywords
@@ -17,13 +17,11 @@ AxisAngleModule::AxisAngleModule() : Module(ModuleTypes::AxisAngle), analyser_(P
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     keywords_.setOrganisation("Options", "Sites", "Specify sites defining the axis angle interaction A-B...C.");
-    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Specify site(s) which represent 'A' in the interaction A-B...C",
-                                            selectA_->speciesSites(), selectA_->axesRequired());
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisA", "Axis to use from site A", calculateAxisAngle_->axis(0),
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Specify site(s) which represent 'A' in the interaction A-B...C", a_);
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisA", "Axis to use from site A", axisA_,
                                                               OrientedSite::siteAxis());
-    keywords_.add<SpeciesSiteVectorKeyword>("SiteB", "Specify site(s) which represent 'B' in the interaction A-B...C",
-                                            selectB_->speciesSites(), selectB_->axesRequired());
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisB", "Axis to use from site B", calculateAxisAngle_->axis(1),
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteB", "Specify site(s) which represent 'B' in the interaction A-B...C", b_);
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisB", "Axis to use from site B", axisB_,
                                                               OrientedSite::siteAxis());
 
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
@@ -43,11 +41,11 @@ AxisAngleModule::AxisAngleModule() : Module(ModuleTypes::AxisAngle), analyser_(P
 
     keywords_.setOrganisation("Export");
     keywords_.add<FileAndFormatKeyword>("ExportRDF", "File format and file name under which to save calculated B-C RDF",
-                                        processDistance_->exportFileAndFormat(), "EndExportRDF");
+                                        exportFileAndFormatRDF_, "EndExportRDF");
     keywords_.add<FileAndFormatKeyword>(
         "ExportAngle", "File format and file name under which to save calculated A-B...C angle histogram to disk",
-        processAngle_->exportFileAndFormat(), "EndExportAngle");
+        exportFileAndFormatAngle_, "EndExportAngle");
     keywords_.add<FileAndFormatKeyword>("ExportDAngle",
                                         "File format and file name under which to save calculated A-B...C angle map to disk",
-                                        processDAngle_->exportFileAndFormat(), "EndExportDAngle");
+                                        exportFileAndFormatDAngle_, "EndExportDAngle");
 }

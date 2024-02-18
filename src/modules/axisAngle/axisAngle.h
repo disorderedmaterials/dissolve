@@ -3,10 +3,14 @@
 
 #pragma once
 
+#include "analyser/siteSelector.h"
+#include "io/export/data1D.h"
+#include "io/export/data2D.h"
 #include "module/module.h"
 #include "procedure/procedure.h"
 
 // Forward Declarations
+class SpeciesSite;
 
 // Calculate Axis Angle Module
 class AxisAngleModule : public Module
@@ -29,6 +33,16 @@ class AxisAngleModule : public Module
     Vec3<double> angleRange_{0.0, 180.0, 10.0};
     // Whether the angular range should be considered symmetric about 90
     bool symmetric_{false};
+    // Target SpeciesSite definitions
+    std::vector<const SpeciesSite *> a_, b_;
+    // Axes to use for sites
+    OrientedSite::SiteAxis axisA_{OrientedSite::SiteAxis::XAxis}, axisB_{OrientedSite::SiteAxis::XAxis};
+    // Export file and format for RDF
+    Data1DExportFileFormat exportFileAndFormatRDF_;
+    // Export file and format for Angle
+    Data1DExportFileFormat exportFileAndFormatAngle_;
+    // Export file and format for DAngle
+    Data2DExportFileFormat exportFileAndFormatDAngle_;
 
     /*
      * Processing
