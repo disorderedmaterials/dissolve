@@ -4,12 +4,9 @@
 #include "analyser/dataNormaliser1D.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
+#include "math/histogram1D.h"
 #include "module/context.h"
 #include "modules/intraDistance/intraDistance.h"
-#include "procedure/nodes/collect1D.h"
-#include "procedure/nodes/select.h"
-#include "procedure/nodes/sequence.h"
-#include "procedure/nodes/sum1D.h"
 
 // Run main processing
 Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContext)

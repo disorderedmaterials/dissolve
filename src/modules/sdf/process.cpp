@@ -4,12 +4,9 @@
 #include "analyser/dataNormaliser3D.h"
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
+#include "math/histogram3D.h"
 #include "module/context.h"
 #include "modules/sdf/sdf.h"
-#include "procedure/nodes/collect3D.h"
-#include "procedure/nodes/process3D.h"
-#include "procedure/nodes/select.h"
-#include "procedure/nodes/sequence.h"
 
 // Run main processing
 Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)

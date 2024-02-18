@@ -8,14 +8,6 @@
 #include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
-#include "procedure/nodes/calculateAxisAngle.h"
-#include "procedure/nodes/calculateVector.h"
-#include "procedure/nodes/collect3D.h"
-#include "procedure/nodes/ifValueInRange.h"
-#include "procedure/nodes/operateGridNormalise.h"
-#include "procedure/nodes/operateSitePopulationNormalise.h"
-#include "procedure/nodes/process3D.h"
-#include "procedure/nodes/select.h"
 
 OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF)
 {

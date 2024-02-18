@@ -6,7 +6,6 @@
 #include "analyser/siteSelector.h"
 #include "io/export/data3D.h"
 #include "module/module.h"
-#include "procedure/procedure.h"
 
 // CalculateSDF Module
 class OrientedSDFModule : public Module

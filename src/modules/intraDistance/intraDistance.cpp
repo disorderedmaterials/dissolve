@@ -7,11 +7,6 @@
 #include "keywords/fileAndFormat.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
-#include "procedure/nodes/calculateDistance.h"
-#include "procedure/nodes/collect1D.h"
-#include "procedure/nodes/operateNormalise.h"
-#include "procedure/nodes/process1D.h"
-#include "procedure/nodes/select.h"
 
 IntraDistanceModule::IntraDistanceModule() : Module(ModuleTypes::IntraDistance)
 {

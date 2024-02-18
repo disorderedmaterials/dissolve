@@ -6,7 +6,6 @@
 #include "io/export/data1D.h"
 #include "math/range.h"
 #include "module/module.h"
-#include "procedure/procedure.h"
 
 // Calculate Angle Module
 class IntraAngleModule : public Module

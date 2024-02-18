@@ -7,7 +7,6 @@
 #include "analyser/siteSelector.h"
 #include "io/export/data1D.h"
 #include "module/module.h"
-#include "procedure/procedure.h"
 
 // Calculate RDF Module
 class IntraDistanceModule : public Module

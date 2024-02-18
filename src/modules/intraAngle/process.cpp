@@ -8,10 +8,6 @@
 #include "math/histogram1D.h"
 #include "module/context.h"
 #include "modules/intraAngle/intraAngle.h"
-#include "procedure/nodes/calculateAngle.h"
-#include "procedure/nodes/collect1D.h"
-#include "procedure/nodes/operateExpression.h"
-#include "procedure/nodes/select.h"
 
 // Run main processing
 Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)

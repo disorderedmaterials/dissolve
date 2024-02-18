@@ -3,14 +3,9 @@
 
 #include "analyser/dataNormaliser3D.h"
 #include "main/dissolve.h"
+#include "math/histogram3D.h"
 #include "module/context.h"
 #include "modules/orientedSDF/orientedSDF.h"
-#include "procedure/nodes/calculateAxisAngle.h"
-#include "procedure/nodes/collect3D.h"
-#include "procedure/nodes/ifValueInRange.h"
-#include "procedure/nodes/process3D.h"
-#include "procedure/nodes/select.h"
-#include "procedure/nodes/sequence.h"
 
 // Run main processing
 Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
