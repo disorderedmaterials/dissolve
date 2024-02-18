@@ -611,7 +611,7 @@ bool CIFHandler::detectMolecules()
         std::vector<CIFLocalMolecule> instances;
         if (fragmentIndices.size() * 2 > allAtomIndices.size())
         {
-            // Create an instance of the current fragmentIndices
+            // Create an instance of the current fragment
             auto &mol = instances.emplace_back();
             mol.setSpecies(sp);
             for (auto i = 0; i < sp->nAtoms(); ++i)
