@@ -7,7 +7,18 @@
 #include "math/data1D.h"
 #include "math/integrator.h"
 
-DataNormaliser1D::DataNormaliser1D(Data1D &targetData) : DataNormaliserBase<Data1D>(targetData) {}
+DataNormaliser1D::DataNormaliser1D(Data1D &targetData) : DataNormaliserBase<Data1D, NormalisationFunction1D>(targetData) {}
+
+void DataNormaliser1D::normalise(NormalisationFunction1D normalisationFunction)
+{
+    const auto &xs = targetData_.xAxis();
+    auto &values = targetData_.values();
+
+    for (auto i = 0; i < xs.size(); ++i)
+        values.at(i) = normalisationFunction(xs[i], values.at(i));
+}
+
+void DataNormaliser1D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 1D data."); }
 
 void DataNormaliser1D::normaliseBySphericalShell()
 {
@@ -47,34 +58,3 @@ void DataNormaliser1D::normaliseTo(double value, bool absolute)
     targetData_ /= sum;
     targetData_ *= value;
 }
-
-void DataNormaliser1D::normaliseByExpression(std::string_view expressionString)
-{
-
-    Expression expression;
-    auto x = expression.addLocalVariable("x");
-    auto xDelta = expression.addLocalVariable("xDelta");
-    auto value = expression.addLocalVariable("value");
-
-    expression.create(expressionString);
-
-    const auto &xs = targetData_.xAxis();
-    auto &values = targetData_.values();
-
-    // Set data-related quantities
-    if (xs.size() > 1)
-        xDelta->setValue(xs[1] - xs[0]);
-
-    // Evaluate the expression over all values
-    for (auto i = 0; i < xs.size(); ++i)
-    {
-        // Set variables in expression
-        x->setValue(xs[i]);
-        value->setValue(values.at(i));
-
-        // Evaluate and store new value
-        values.at(i) = expression.asDouble();
-    }
-}
-
-void DataNormaliser1D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 1D data."); }

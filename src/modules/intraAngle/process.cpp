@@ -83,7 +83,7 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     // Normalise
     DataNormaliser1D normaliser(dataNormalisedHisto);
     // Normalise by sin(x)
-    normaliser.normaliseByExpression("value/sin(toRad(x))");
+    normaliser.normalise([](const auto &x, const auto &value) { return value / sin(x / DEGRAD); });
     // Normalise by value
     normaliser.normaliseTo();
 

@@ -57,7 +57,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     normaliserRDF.normaliseDivide(double(a.sites().size()));
 
     // Normalise by B site population density
-    normaliserRDF.normaliseDivide(double(b.sites().size()));
+    normaliserRDF.normaliseDivide(double(b.sites().size()) / targetConfiguration_->box()->volume());
 
     // Normalise by spherical shell
     normaliserRDF.normaliseBySphericalShell();

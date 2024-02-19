@@ -7,7 +7,8 @@
 #include "math/data3D.h"
 #include <string_view>
 
-class DataNormaliser3D : public DataNormaliserBase<Data3D>
+using NormalisationFunction3D = std::function<double(const double &, const double &, const double &, const double &)>;
+class DataNormaliser3D : public DataNormaliserBase<Data3D, NormalisationFunction3D>
 {
     public:
     DataNormaliser3D(Data3D &targetData);
@@ -16,8 +17,8 @@ class DataNormaliser3D : public DataNormaliserBase<Data3D>
      * Normalisation functions
      */
     public:
+    void normalise(NormalisationFunction3D normalisationFunction) override;
+    void normaliseByGrid() override;
     void normaliseBySphericalShell() override;
     void normaliseTo(double value = 1.0, bool absolute = true) override;
-    void normaliseByExpression(std::string_view expressionString) override;
-    void normaliseByGrid() override;
 };
