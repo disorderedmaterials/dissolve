@@ -196,7 +196,6 @@ void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
         cifHandler_.setUseCIFBondingDefinitions(true);
         updateWidgets();
     }
-
 }
 
 void ImportCIFDialog::on_BondingPreventMetallicCheck_clicked(bool checked)
