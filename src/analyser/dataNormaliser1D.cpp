@@ -7,7 +7,22 @@
 #include "math/data1D.h"
 #include "math/integrator.h"
 
+<<<<<<< HEAD
 DataNormaliser1D::DataNormaliser1D(Data1D &targetData) : DataNormaliserBase<Data1D>(targetData) {}
+=======
+DataNormaliser1D::DataNormaliser1D(Data1D &targetData) : DataNormaliserBase<Data1D, NormalisationFunction1D>(targetData) {}
+
+void DataNormaliser1D::normalise(NormalisationFunction1D normalisationFunction)
+{
+    const auto &xs = targetData_.xAxis();
+    auto &values = targetData_.values();
+
+    for (auto i = 0; i < xs.size(); ++i)
+        values.at(i) = normalisationFunction(xs[i], values.at(i));
+}
+
+void DataNormaliser1D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 1D data."); }
+>>>>>>> develop
 
 void DataNormaliser1D::normaliseBySphericalShell()
 {
@@ -41,6 +56,7 @@ void DataNormaliser1D::normaliseBySphericalShell()
     }
 }
 
+<<<<<<< HEAD
 void DataNormaliser1D::normaliseByExpression(std::string_view expressionString)
 {
 
@@ -71,3 +87,11 @@ void DataNormaliser1D::normaliseByExpression(std::string_view expressionString)
 }
 
 void DataNormaliser1D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 1D data."); }
+=======
+void DataNormaliser1D::normaliseTo(double value, bool absolute)
+{
+    auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);
+    targetData_ /= sum;
+    targetData_ *= value;
+}
+>>>>>>> develop

@@ -60,7 +60,7 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
     // Normalise CN
     DataNormaliser1D normaliserCN(dataCN);
     // Normalise by value
-    normaliserCN.normaliseByValue();
+    normaliserCN.normaliseTo();
 
     // Save data?
     if (exportFileAndFormat_.hasFilename())
