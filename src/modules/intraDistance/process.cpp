@@ -55,7 +55,7 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
     // Normalise
     DataNormaliser1D histogramNormaliser(dataNormalisedHisto);
     // Normalise by value
-    histogramNormaliser.normaliseByValue();
+    histogramNormaliser.normaliseTo();
 
     // Save data?
     if (exportFileAndFormat_.hasFilename())

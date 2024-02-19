@@ -85,7 +85,7 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     // Normalise by sin(x)
     normaliser.normaliseByExpression("value/sin(toRad(x))");
     // Normalise by value
-    normaliser.normaliseByValue();
+    normaliser.normaliseTo();
 
     // Save data?
     if (exportFileAndFormat_.hasFilename())
