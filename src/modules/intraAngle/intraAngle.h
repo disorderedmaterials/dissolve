@@ -3,16 +3,9 @@
 
 #pragma once
 
+#include "io/export/data1D.h"
+#include "math/range.h"
 #include "module/module.h"
-#include "procedure/procedure.h"
-
-// Forward Declarations
-class CalculateAngleProcedureNode;
-class Collect1DProcedureNode;
-class OperateExpressionProcedureNode;
-class Process1DProcedureNode;
-class SelectProcedureNode;
-class SpeciesSite;
 
 // Calculate Angle Module
 class IntraAngleModule : public Module
@@ -27,28 +20,18 @@ class IntraAngleModule : public Module
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
-    // Range (min, max, binwidth) of A-B distance axis
-    Vec3<double> rangeAB_{0.0, 10.0, 0.05};
-    // Range (min, max, binwidth) of B-C distance axis
-    Vec3<double> rangeBC_{0.0, 10.0, 0.05};
+    // Target SpeciesSite definitions
+    std::vector<const SpeciesSite *> a_, b_, c_;
+    // Range of A-B distance axis
+    Range rangeAB_{0.0, 10.0};
+    // Range of B-C distance axis
+    Range rangeBC_{0.0, 10.0};
     // Range (min, max, binwidth) of angle axis
     Vec3<double> angleRange_{0.0, 180.0, 1.0};
     // Whether the angular range should be considered symmetric about 90
     bool symmetric_{false};
-    // Analysis procedure to be run
-    Procedure analyser_;
-    // SelectNode for site A
-    std::shared_ptr<SelectProcedureNode> selectA_;
-    // SelectNode for site B
-    std::shared_ptr<SelectProcedureNode> selectB_;
-    // SelectNode for site C
-    std::shared_ptr<SelectProcedureNode> selectC_;
-    // CalculateAngle node for A-B-C angle
-    std::shared_ptr<CalculateAngleProcedureNode> calculateAngle_;
-    // Collect1DNode for A-B-C angle histogram
-    std::shared_ptr<Collect1DProcedureNode> collectABC_;
-    // Process1DNode for A-B-C angle histogram
-    std::shared_ptr<Process1DProcedureNode> processAngle_;
+    // Export target
+    Data1DExportFileFormat exportFileAndFormat_;
 
     /*
      * Processing

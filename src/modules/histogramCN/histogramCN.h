@@ -3,18 +3,9 @@
 
 #pragma once
 
+#include "io/export/data1D.h"
 #include "math/range.h"
 #include "module/module.h"
-#include "procedure/procedure.h"
-
-// Forward Declarations
-class IntegerCollect1DProcedureNode;
-class CalculateExpressionProcedureNode;
-class OperateSitePopulationNormaliseProcedureNode;
-class Process1DProcedureNode;
-class SelectProcedureNode;
-class SpeciesSite;
-class Sum1DProcedureNode;
 
 // Calculate CN Histogram Module
 class HistogramCNModule : public Module
@@ -29,16 +20,14 @@ class HistogramCNModule : public Module
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
+    // Target SpeciesSite definitions
+    std::vector<const SpeciesSite *> a_, b_;
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{false};
     // Distance range for calculation
     Range distanceRange_{0.0, 5.0};
-    // Analysis procedure to be run
-    Procedure analyser_;
-    // SelectNode for site A
-    std::shared_ptr<SelectProcedureNode> selectA_;
-    // SelectNode for site B
-    std::shared_ptr<SelectProcedureNode> selectB_;
+    // Export target
+    Data1DExportFileFormat exportFileAndFormat_;
 
     public:
     /*
