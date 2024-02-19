@@ -171,7 +171,7 @@ void DissolveWindow::on_SpeciesImportFromCIFAction_triggered(bool checked)
         // Select the new species
         auto *sp = dissolve_.coreData().species().back().get();
         if (sp)
-            ui_.MainTabs->setCurrentTab(dissolve_.coreData().species().back().get());
+            ui_.MainTabs->setCurrentTab(sp);
     }
 }
 
