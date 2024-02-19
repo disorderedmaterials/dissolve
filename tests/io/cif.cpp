@@ -30,7 +30,6 @@ class ImportCIFTest : public ::testing::Test
     {
         EXPECT_EQ(molSp.species()->name(), std::get<0>(info));
         EXPECT_EQ(molSp.instances().size(), std::get<1>(info));
-        EXPECT_EQ(molSp.coordinates().size(), std::get<1>(info));
         EXPECT_EQ(molSp.species()->nAtoms(), std::get<2>(info));
     }
 };
@@ -44,19 +43,18 @@ TEST_F(ImportCIFTest, Parse)
     for (auto &cif : cifs)
     {
         CIFHandler cifHandler;
-        EXPECT_TRUE(cifHandler.read(cifPath + cif));
+        ASSERT_TRUE(cifHandler.read(cifPath + cif));
     }
 }
 
 TEST_F(ImportCIFTest, NaCl)
 {
     CIFHandler cifHandler;
-    EXPECT_TRUE(cifHandler.read("cif/NaCl-1000041.cif"));
+    ASSERT_TRUE(cifHandler.read("cif/NaCl-1000041.cif"));
     EXPECT_TRUE(cifHandler.generate());
 
     // Check basic info
     EXPECT_EQ(cifHandler.spaceGroup(), SpaceGroups::SpaceGroup_225);
-    auto *cfg = cifHandler.cleanedUnitCellConfiguration();
     constexpr double A = 5.62;
     testBox(cifHandler.cleanedUnitCellConfiguration(), {A, A, A}, {90, 90, 90}, 8);
 
@@ -64,11 +62,11 @@ TEST_F(ImportCIFTest, NaCl)
     EXPECT_EQ(cifHandler.molecularSpecies().size(), 2);
     testMolecularSpecies(cifHandler.molecularSpecies()[0], {"Na", 4, 1});
     std::vector<Vec3<double>> R = {{0.0, 0.0, 0.0}, {0.0, A / 2, A / 2}, {A / 2, 0.0, A / 2}, {A / 2, A / 2, 0.0}};
-    for (auto &&[set, r2] : zip(cifHandler.molecularSpecies()[0].coordinates(), R))
-        DissolveSystemTest::checkVec3(set[0], r2);
+    for (auto &&[instance, r2] : zip(cifHandler.molecularSpecies()[0].instances(), R))
+        DissolveSystemTest::checkVec3(instance.localAtoms()[0].r(), r2);
     testMolecularSpecies(cifHandler.molecularSpecies()[1], {"Cl", 4, 1});
-    for (auto &&[set, r2] : zip(cifHandler.molecularSpecies()[1].coordinates(), R))
-        DissolveSystemTest::checkVec3(set[0], (r2 - A / 2).abs());
+    for (auto &&[instance, r2] : zip(cifHandler.molecularSpecies()[1].instances(), R))
+        DissolveSystemTest::checkVec3(instance.localAtoms()[0].r(), (r2 - A / 2).abs());
 
     // 2x2x2 supercell
     cifHandler.setSupercellRepeat({2, 2, 2});
@@ -79,7 +77,7 @@ TEST_F(ImportCIFTest, NaCl)
 TEST_F(ImportCIFTest, NaClO3)
 {
     CIFHandler cifHandler;
-    EXPECT_TRUE(cifHandler.read("cif/NaClO3-1010057.cif"));
+    ASSERT_TRUE(cifHandler.read("cif/NaClO3-1010057.cif"));
     EXPECT_TRUE(cifHandler.generate());
 
     // Check basic info
@@ -104,7 +102,7 @@ TEST_F(ImportCIFTest, NaClO3)
 TEST_F(ImportCIFTest, CuBTC)
 {
     CIFHandler cifHandler;
-    EXPECT_TRUE(cifHandler.read("cif/CuBTC-7108574.cif"));
+    ASSERT_TRUE(cifHandler.read("cif/CuBTC-7108574.cif"));
     EXPECT_TRUE(cifHandler.generate());
 
     // Check basic info

@@ -406,7 +406,7 @@ std::optional<double> CIFHandler::bondDistance(std::string_view labelI, std::str
  */
 
 // Create basic unit cell
-bool CIFHandler::createBasicUnitCel()
+bool CIFHandler::createBasicUnitCell()
 {
     // Create temporary atom types corresponding to the unique atom labels
     for (auto &a : assemblies_)
@@ -577,61 +577,86 @@ bool CIFHandler::detectMolecules()
         return false;
     }
 
-    std::vector<int> indices(cleanedUnitCellSpecies_->nAtoms());
-    std::iota(indices.begin(), indices.end(), 0);
+    std::vector<int> allAtomIndices(cleanedUnitCellSpecies_->nAtoms());
+    std::iota(allAtomIndices.begin(), allAtomIndices.end(), 0);
 
     // Find all molecular species, and their instances
     auto idx = 0;
-    while (!indices.empty())
+    while (!allAtomIndices.empty())
     {
-        // Choose a fragment
-        auto fragment = cleanedUnitCellSpecies_->fragment(idx);
-        std::sort(fragment.begin(), fragment.end());
+        // Select a fragment
+        auto fragmentIndices = cleanedUnitCellSpecies_->fragment(idx);
+        std::sort(fragmentIndices.begin(), fragmentIndices.end());
 
         // Set up the CIF species
         auto *sp = coreData_.addSpecies();
         sp->copyBasic(cleanedUnitCellSpecies_);
 
         // Empty the species of all atoms, except those in the reference instance
-        std::vector<int> allIndices(sp->nAtoms());
-        std::iota(allIndices.begin(), allIndices.end(), 0);
+        std::vector<int> speciesAtomIndices(sp->nAtoms());
+        std::iota(speciesAtomIndices.begin(), speciesAtomIndices.end(), 0);
         std::vector<int> indicesToRemove;
-        std::set_difference(allIndices.begin(), allIndices.end(), fragment.begin(), fragment.end(),
-                            std::back_inserter(indicesToRemove));
+        std::set_difference(speciesAtomIndices.begin(), speciesAtomIndices.end(), fragmentIndices.begin(),
+                            fragmentIndices.end(), std::back_inserter(indicesToRemove));
         sp->removeAtoms(indicesToRemove);
-
-        // Determine a unique NETA definition describing the fragment
-        auto neta = uniqueNETADefinition(sp);
-        if (!neta.has_value())
-            return Messenger::error("Couldn't generate molecular partitioning for CIF - no unique NETA definition for the "
-                                    "fragment {} could be determined.\n",
-                                    EmpiricalFormula::formula(sp->atoms(), [](const auto &i) { return i.Z(); }));
-
-        // Find copies of this fragment
-        auto copies = speciesCopies(cleanedUnitCellSpecies_, neta.value());
-
-        // Remove the current fragment and all copies
-        for (auto &copy : copies)
-        {
-            indices.erase(std::remove_if(indices.begin(), indices.end(),
-                                         [&](int value) { return std::find(copy.begin(), copy.end(), value) != copy.end(); }),
-                          indices.end());
-        }
-
-        // Determine coordinates
-        auto coords = speciesCopiesCoordinatesFromUnitCell(sp, cleanedUnitCellSpecies_->box(), copies);
-
-        // Fix geometry
-        fixGeometry(sp, cleanedUnitCellSpecies_->box());
 
         // Give the species a name
         sp->setName(EmpiricalFormula::formula(sp->atoms(), [&](const auto &at) { return at.Z(); }));
 
+        // Fix geometry of the extracted species
+        fixGeometry(sp, cleanedUnitCellSpecies_->box());
+
+        // Find instances of this fragment. For large fragments that represent > 50% of the remaining atoms we don't even
+        // attempt to create a NETA definition etc. For cases such as framework species this will speed up detection no end.
+        std::vector<CIFLocalMolecule> instances;
+        if (fragmentIndices.size() * 2 > allAtomIndices.size())
+        {
+            // Create an instance of the current fragment
+            auto &mol = instances.emplace_back();
+            mol.setSpecies(sp);
+            for (auto i = 0; i < sp->nAtoms(); ++i)
+            {
+                mol.setAtom(i, sp->atom(i).r(), sp->atom(i).index());
+            }
+
+            allAtomIndices.erase(std::remove_if(allAtomIndices.begin(), allAtomIndices.end(),
+                                                [&](int value) {
+                                                    return std::find(fragmentIndices.begin(), fragmentIndices.end(), value) !=
+                                                           fragmentIndices.end();
+                                                }),
+                                 allAtomIndices.end());
+        }
+        else
+        {
+            // Determine a unique NETA definition describing the fragment
+            auto neta = uniqueNETADefinition(sp);
+            if (!neta.has_value())
+                return Messenger::error("Couldn't generate molecular partitioning for CIF - no unique NETA definition for the "
+                                        "fragment {} could be determined.\n",
+                                        sp->name());
+
+            // Find instances of this fragmentIndices
+            instances = getSpeciesInstances(sp, *neta);
+
+            // Remove the current fragment and all copies
+            for (const auto &instance : instances)
+            {
+                allAtomIndices.erase(std::remove_if(allAtomIndices.begin(), allAtomIndices.end(),
+                                                    [&](int value)
+                                                    {
+                                                        return std::find(instance.unitCellIndices().begin(),
+                                                                         instance.unitCellIndices().end(),
+                                                                         value) != instance.unitCellIndices().end();
+                                                    }),
+                                     allAtomIndices.end());
+            }
+        }
+
         // Push a new definition
-        molecularUnitCellSpecies_.emplace_back(sp, neta->definitionString(), copies, coords);
+        molecularUnitCellSpecies_.emplace_back(sp, instances);
 
         // Search for the next valid starting index
-        idx = *std::min_element(indices.begin(), indices.end());
+        idx = *std::min_element(allAtomIndices.begin(), allAtomIndices.end());
     }
 
     Messenger::print("Partitioned unit cell into {} distinct molecular species:\n\n", molecularUnitCellSpecies_.size());
@@ -661,7 +686,6 @@ bool CIFHandler::createSupercell()
     Messenger::setQuiet(false);
 
     // Copy atoms from the Crystal species - we'll do the bonding afterwards
-
     if (molecularUnitCellSpecies_.empty())
     {
         supercellSpecies_->atoms().reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z *
@@ -685,37 +709,57 @@ bool CIFHandler::createSupercell()
     }
     else
     {
+        supercellSpecies_->atoms().reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z *
+                                           cleanedUnitCellSpecies_->nAtoms());
+
+        // Create images of all molecular unit cell species
         for (auto &molecularSpecies : molecularUnitCellSpecies_)
         {
             const auto *sp = molecularSpecies.species();
-            auto coordinates = molecularSpecies.coordinates();
-            molecularSpecies.coordinates().clear();
-            for (auto &instance : coordinates)
+            const auto &coreInstances = molecularSpecies.instances();
+            std::vector<CIFLocalMolecule> supercellInstances;
+            supercellInstances.reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z * coreInstances.size());
+
+            // Loop over cell images
+            for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
             {
-                for (auto ix = 0; ix < supercellRepeat_.x; ++ix)
-                    for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
-                        for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
+                for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
+                {
+                    for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
+                    {
+                        // Skip origin cell
+                        if (ix == 0 && iy == 0 && iz == 0)
+                            continue;
+
+                        // Set translation vector
+                        auto tVec = cleanedUnitCellSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
+
+                        // Create images of core molecule instances
+                        for (auto &instance : coreInstances)
                         {
-                            auto *spCopy = coreData_.addSpecies();
-                            spCopy->createBox(supercellLengths, cleanedUnitCellSpecies_->box()->axisAngles(), false);
-                            Vec3<double> deltaR = cleanedUnitCellSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
-                            std::vector<Vec3<double>> repeated(instance.size());
-                            std::transform(instance.begin(), instance.end(), repeated.begin(),
-                                           [&](auto &coord) { return coord + deltaR; });
-                            for (const auto &&[i, r] : zip(sp->atoms(), repeated))
-                                spCopy->addAtom(i.Z(), r, 0.0, i.atomType());
+                            auto &mol = supercellInstances.emplace_back();
+                            mol.setSpecies(sp);
 
-                            if (flags_.isSet(UpdateFlags::CalculateBonding))
-                                spCopy->addMissingBonds();
-                            else
-                                applyCIFBonding(spCopy, flags_.isSet(UpdateFlags::PreventMetallicBonding));
-
-                            supercellConfiguration_->addMolecule(spCopy);
-                            supercellConfiguration_->updateObjectRelationships();
-                            molecularSpecies.coordinates().insert(molecularSpecies.coordinates().end(), repeated);
+                            for (auto &&[coreAtom, instanceAtom] : zip(instance.localAtoms(), mol.localAtoms()))
+                                instanceAtom.setCoordinates(coreAtom.r() + tVec);
                         }
+                    }
+                }
+            }
+
+            // Append the new instances to our existing ones for the unit cell
+            molecularSpecies.appendInstances(supercellInstances);
+
+            // Add the molecules to our configuration
+            for (const auto &instance : molecularSpecies.instances())
+            {
+                auto mol = supercellConfiguration_->addMolecule(sp);
+                for (auto &&[molAtom, instanceAtom] : zip(mol->atoms(), instance.localAtoms()))
+                    molAtom->setCoordinates(instanceAtom.r());
             }
         }
+
+        supercellConfiguration_->updateObjectRelationships();
     }
 
     Messenger::print("Created ({}, {}, {}) supercell - {} atoms total.\n", supercellRepeat_.x, supercellRepeat_.y,
@@ -761,7 +805,7 @@ bool CIFHandler::generate(std::optional<Flags<CIFHandler::UpdateFlags>> newFlags
     // Reset all species and configurations
     resetSpeciesAndConfigurations();
 
-    if (!createBasicUnitCel())
+    if (!createBasicUnitCell())
         return false;
 
     if (!createCleanedUnitCell())
@@ -781,17 +825,17 @@ bool CIFHandler::isValid() const
     return !molecularUnitCellSpecies_.empty() || supercellSpecies_->fragment(0).size() != supercellSpecies_->nAtoms();
 }
 
+// Finalise, returning the required species and resulting configuration
 std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(CoreData &coreData,
-                                                                              std::optional<Flags<OutputFlags>> flags) const
+                                                                              const Flags<OutputFlags> &flags) const
 {
     std::vector<const Species *> species;
     Configuration *configuration;
 
-    if (flags->isSet(OutputFlags::OutputMolecularSpecies))
+    if (flags.isSet(OutputFlags::OutputMolecularSpecies))
     {
-        if (flags && flags->isSet(OutputFlags::OutputConfiguration))
+        if (flags.isSet(OutputFlags::OutputConfiguration))
         {
-
             configuration = coreData.addConfiguration();
             configuration->setName(chemicalFormula());
 
@@ -831,11 +875,11 @@ std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(Co
                 auto coordsNode =
                     generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
                 coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
-                coordsNode->setSets(cifMolecularSp.coordinates());
+                coordsNode->setSets(cifMolecularSp.allInstanceCoordinates());
 
                 // Add
                 auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
-                addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp.coordinates().size())));
+                addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp.instances().size())));
                 addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
                 addNode->keywords().set("Rotate", false);
                 addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
@@ -857,14 +901,14 @@ std::pair<std::vector<const Species *>, Configuration *> CIFHandler::finalise(Co
         auto *sp = coreData.addSpecies();
         sp->copyBasic(supercellSpecies_);
         species.push_back(sp);
-        if (flags->isSet(OutputFlags::OutputFramework))
+        if (flags.isSet(OutputFlags::OutputFramework))
         {
             sp->removePeriodicBonds();
             sp->updateIntramolecularTerms();
             sp->removeBox();
         }
 
-        if (flags->isSet(OutputFlags::OutputConfiguration))
+        if (flags.isSet(OutputFlags::OutputConfiguration))
         {
             configuration = coreData.addConfiguration();
             configuration->setName(chemicalFormula());
@@ -959,54 +1003,46 @@ std::optional<NETADefinition> CIFHandler::uniqueNETADefinition(Species *sp)
     return neta;
 }
 
-// Determine instances of a NETA definition in a given species
-std::vector<std::vector<int>> CIFHandler::speciesCopies(Species *sp, NETADefinition neta)
+// Get instances for the supplied species from the cleaned unit cell
+std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeSpecies, const NETADefinition &neta)
 {
-    std::vector<std::vector<int>> copies;
-    for (auto &i : sp->atoms())
-    {
-        if (neta.matches(&i))
-        {
-            auto matchedGroup = neta.matchedPath(&i);
-            auto matchedAtoms = matchedGroup.set();
-            std::vector<int> indices(matchedAtoms.size());
-            std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
-                           [](const auto &atom) { return atom->index(); });
-            std::sort(indices.begin(), indices.end());
-            copies.push_back(std::move(indices));
-        }
-    }
-    return copies;
-}
+    std::vector<CIFLocalMolecule> instances;
 
-// Determine coordinates of copies
-std::vector<std::vector<Vec3<double>>>
-CIFHandler::speciesCopiesCoordinatesFromUnitCell(Species *moleculeSp, const Box *box,
-                                                 const std::vector<std::vector<int>> &copies)
-{
-    std::vector<std::vector<Vec3<double>>> coordinates;
-    for (auto &copy : copies)
+    // Loop over atoms in the unit cell - we'll mark any that we select as an instance so we speed things up and avoid
+    // duplicates
+    std::vector<bool> atomFlags(cleanedUnitCellSpecies_->nAtoms());
+    std::fill(atomFlags.begin(), atomFlags.end(), false);
+    const auto &unitCellAtoms = cleanedUnitCellSpecies_->atoms();
+    for (auto i = 0; i < atomFlags.size(); ++i)
     {
-        auto &coords = coordinates.emplace_back();
-        coords.resize(copy.size());
-        std::transform(copy.begin(), copy.end(), coords.begin(), [&](auto i) { return cleanedUnitCellSpecies_->atom(i).r(); });
+        if (atomFlags[i])
+            continue;
 
-        std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
-        std::vector<Atom> molAtoms(moleculeSp->nAtoms());
-        for (auto &&[spAtom, atom, r] : zip(moleculeSp->atoms(), molAtoms, coords))
+        auto &atom = unitCellAtoms[i];
+        auto matchedAtoms = neta.matchedPath(&atom).set();
+        if (matchedAtoms.empty())
+            continue;
+
+        // Get the (sorted) matched atom indices
+        std::vector<int> indices(matchedAtoms.size());
+        std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
+                       [](const auto matchedAtom) { return matchedAtom->index(); });
+
+        // For each match create a CIFLocalMolecule instance
+        auto &mol = instances.emplace_back();
+        mol.setSpecies(moleculeSpecies);
+        for (auto idx = 0; idx < indices.size(); ++idx)
         {
-            atom.setSpeciesAtom(&spAtom);
-            atom.setCoordinates(r);
-            mol->addAtom(&atom);
+            mol.setAtom(idx, unitCellAtoms[indices[idx]].r(), indices[idx]);
+
+            atomFlags[indices[idx]] = true;
         }
 
         // Unfold the molecule
-        mol->unFold(box);
-
-        for (auto &&[r, atom] : zip(coords, molAtoms))
-            r = atom.r();
+        mol.unFold(cleanedUnitCellSpecies_->box());
     }
-    return coordinates;
+
+    return instances;
 }
 
 // 'Fix' the geometry of a given species

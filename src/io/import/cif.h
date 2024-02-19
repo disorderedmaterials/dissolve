@@ -140,7 +140,7 @@ class CIFHandler
 
     private:
     // Create basic unit cell
-    bool createBasicUnitCel();
+    bool createBasicUnitCell();
     // Create the cleaned unit cell
     bool createCleanedUnitCell();
     // Try to detect molecules in the cell contents
@@ -163,7 +163,7 @@ class CIFHandler
     bool generate(std::optional<Flags<UpdateFlags>> newFlags = {});
     // Finalise, returning the required species and resulting configuration
     std::pair<std::vector<const Species *>, Configuration *> finalise(CoreData &coreData,
-                                                                      std::optional<Flags<OutputFlags>> flags = {}) const;
+                                                                      const Flags<OutputFlags> &flags = {}) const;
     // Return whether the generated data is valid
     bool isValid() const;
     // Structural
@@ -187,11 +187,8 @@ class CIFHandler
     void applyCIFBonding(Species *sp, bool preventMetallicBonding);
     // Determine a unique NETA definition corresponding to a given species
     std::optional<NETADefinition> uniqueNETADefinition(Species *sp);
-    // Determine instances of a NETA definition in a given species
-    std::vector<std::vector<int>> speciesCopies(Species *sp, NETADefinition neta);
-    // Determine coordinates of instances in a given species
-    std::vector<std::vector<Vec3<double>>> speciesCopiesCoordinatesFromUnitCell(Species *moleculeSp, const Box *box,
-                                                                                const std::vector<std::vector<int>> &copies);
+    // Get instances of species molecules from the supplied NETA definition
+    std::vector<CIFLocalMolecule> getSpeciesInstances(Species *moleculeSpecies, const NETADefinition &neta);
     // 'Fix' the geometry of a given species
     void fixGeometry(Species *sp, const Box *box);
 };

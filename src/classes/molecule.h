@@ -20,7 +20,7 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     /*
      * Contents
      */
-    private:
+    protected:
     // Species that this Molecule represents
     const Species *species_{nullptr};
     // Vector of pointers to Atoms that belong to this Molecule
@@ -32,11 +32,11 @@ class Molecule : public std::enable_shared_from_this<Molecule>
 
     public:
     // Set Species that this Molecule represents
-    void setSpecies(const Species *sp);
+    virtual void setSpecies(const Species *sp);
     // Return Species that this Molecule represents
     const Species *species() const;
     // Add Atom to Molecule
-    void addAtom(Atom *i);
+    virtual void addAtom(Atom *i);
     // Return number of atoms in the molecule
     int nAtoms() const;
     // Return Atoms vector
@@ -45,7 +45,7 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     // Return nth Atom pointer
     Atom *atom(int n) const;
     // Update local atom pointers from main vector
-    void updateAtoms(std::vector<Atom> &mainAtoms, int offset);
+    virtual void updateAtoms(std::vector<Atom> &mainAtoms, int offset);
     // Return global atom offset of first atom
     int globalAtomOffset() const;
     // Return global index of supplied atom

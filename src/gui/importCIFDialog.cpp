@@ -46,10 +46,6 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     // Update moiety NETA
     createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
 
-    // Set default flags.
-    outputFlags_.setFlag(CIFHandler::OutputFlags::OutputFramework);
-    outputFlags_.setFlag(CIFHandler::OutputFlags::OutputConfiguration);
-
     // Init the wizard
     initialise(this, ui_.MainStack, ImportCIFDialog::SelectCIFFilePage);
 }
@@ -70,9 +66,6 @@ bool ImportCIFDialog::progressionAllowed(int index) const
             break;
         case (ImportCIFDialog::SelectSpaceGroupPage):
             return ui_.SpaceGroupsList->currentRow() != -1;
-        case (ImportCIFDialog::OutputSpeciesPage):
-            return ui_.OutputIndicator->state() == CheckIndicator::OKState;
-            break;
         default:
             break;
     }
@@ -110,7 +103,6 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             break;
         case (ImportCIFDialog::CleanedPage):
             ui_.OutputMolecularRadio->setChecked(!cifHandler_.molecularSpecies().empty());
-            outputFlags_.setFlag(CIFHandler::OutputFlags::OutputMolecularSpecies);
             update();
             if (!cifHandler_.supercellConfiguration())
                 return false;
@@ -148,7 +140,59 @@ bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
 }
 
 // Perform any final actions before the wizard is closed
-void ImportCIFDialog::finalise() { cifHandler_.finalise(dissolve_.coreData(), outputFlags_); }
+void ImportCIFDialog::finalise()
+{
+    Flags<CIFHandler::OutputFlags> outputFlags;
+    if (ui_.OutputMolecularRadio->isChecked())
+        outputFlags.setFlag(CIFHandler::OutputFlags::OutputMolecularSpecies);
+    else if (ui_.OutputFrameworkRadio->isChecked())
+        outputFlags.setFlag(CIFHandler::OutputFlags::OutputFramework);
+    else if (ui_.OutputSupermoleculeRadio->isChecked())
+        outputFlags.setFlag(CIFHandler::OutputFlags::OutputSupermolecule);
+
+    // Output a configuration as well as the species for certain options
+    if (outputFlags.isSet(CIFHandler::OutputFlags::OutputMolecularSpecies) ||
+        outputFlags.isSet(CIFHandler::OutputFlags::OutputFramework))
+    {
+        outputFlags.setFlag(CIFHandler::OutputFlags::OutputConfiguration);
+    }
+
+    cifHandler_.finalise(dissolve_.coreData(), outputFlags);
+}
+
+// Update everything
+bool ImportCIFDialog::update()
+{
+    // Set up the CIF handler
+    cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
+    cifHandler_.setBondingTolerance(ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5);
+    cifHandler_.setMoietyRemovalNETA(moietyNETA_.definitionString());
+
+    auto result = cifHandler_.generate(updateFlags_);
+
+    ui_.StructureViewer->setConfiguration(cifHandler_.structuralUnitCellConfiguration());
+    ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedUnitCellConfiguration());
+    ui_.OutputViewer->setConfiguration(cifHandler_.supercellConfiguration());
+
+    auto *supercellConfiguration = cifHandler_.supercellConfiguration();
+
+    // Update the information panel
+    ui_.SupercellBoxALabel->setText(QString::number(supercellConfiguration->box()->axisLengths().x) + " &#8491;");
+    ui_.SupercellBoxBLabel->setText(QString::number(supercellConfiguration->box()->axisLengths().y) + " &#8491;");
+    ui_.SupercellBoxCLabel->setText(QString::number(supercellConfiguration->box()->axisLengths().z) + " &#8491;");
+    ui_.SupercellBoxAlphaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().x) + "&deg;");
+    ui_.SupercellBoxBetaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().y) + "&deg;");
+    ui_.SupercellBoxGammaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().z) + "&deg;");
+    auto chemicalDensity = cifHandler_.supercellConfiguration()->chemicalDensity();
+    ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
+                                                       : "-- g cm<sup>3</sup>");
+    ui_.SupercellVolumeLabel->setText(QString::number(supercellConfiguration->box()->volume()) + " &#8491;<sup>3</sup>");
+    ui_.SupercellNAtomsLabel->setText(QString::number(supercellConfiguration->nAtoms()));
+
+    updateOutputPanel();
+
+    return result;
+}
 
 /*
  * Select CIF File Page
@@ -329,7 +373,7 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 }
 
 /*
- * Supercell Page
+ * Output Page
  */
 
 void ImportCIFDialog::on_RepeatASpin_valueChanged(int value) { update(); }
@@ -338,130 +382,28 @@ void ImportCIFDialog::on_RepeatBSpin_valueChanged(int value) { update(); }
 
 void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value) { update(); }
 
-/*
- * Species Partitioning Page
- */
+void ImportCIFDialog::on_OutputMolecularRadio_clicked(bool checked) { update(); }
 
-void ImportCIFDialog::on_OutputMolecularRadio_clicked(bool checked)
+void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked) { update(); }
+
+void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked) { update(); }
+
+// Update the output panel controls and information
+void ImportCIFDialog::updateOutputPanel()
 {
-    if (checked)
-        outputFlags_.setFlag(CIFHandler::OutputFlags::OutputMolecularSpecies);
-    else
-        outputFlags_.removeFlag(CIFHandler::OutputFlags::OutputMolecularSpecies);
-    update();
-}
+    auto validSpecies = !cifHandler_.molecularSpecies().empty();
 
-void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked)
-{
-    if (checked)
-        outputFlags_.setFlag(CIFHandler::OutputFlags::OutputFramework);
-    else
-        outputFlags_.removeFlag(CIFHandler::OutputFlags::OutputFramework);
-    update();
-}
+    // Enable/disable output options as appropriate
+    ui_.OutputMolecularRadio->setEnabled(validSpecies);
+    ui_.OutputFrameworkRadio->setEnabled(!validSpecies);
+    ui_.OutputSupermoleculeRadio->setEnabled(!validSpecies);
 
-void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked)
-{
-    if (checked)
+    // Update molecular species list
+    ui_.OutputMolecularSpeciesList->clear();
+    for (auto &molecularSp : cifHandler_.molecularSpecies())
     {
-        outputFlags_.setFlag(CIFHandler::OutputFlags::OutputSupermolecule);
-        ui_.OutputConfigurationCheck->setChecked(false);
-        outputFlags_.removeFlag(CIFHandler::OutputFlags::OutputConfiguration);
+        ui_.OutputMolecularSpeciesList->addItem(QString::fromStdString(std::string(molecularSp.species()->name())));
     }
-    else
-    {
-        outputFlags_.removeFlag(CIFHandler::OutputFlags::OutputSupermolecule);
-    }
-    update();
-}
-
-void ImportCIFDialog::on_OutputConfigurationCheck_clicked(bool checked)
-{
-    if (checked)
-        outputFlags_.setFlag(CIFHandler::OutputFlags::OutputConfiguration);
-    else
-        outputFlags_.removeFlag(CIFHandler::OutputFlags::OutputConfiguration);
-    update();
-}
-
-bool ImportCIFDialog::update()
-{
-    // Set up the CIF handler
-    cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
-    cifHandler_.setBondingTolerance(ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5);
-    cifHandler_.setMoietyRemovalNETA(moietyNETA_.definitionString());
-
-    auto result = cifHandler_.generate(updateFlags_);
-
-    ui_.StructureViewer->setConfiguration(cifHandler_.structuralUnitCellConfiguration());
-    ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedUnitCellConfiguration());
-    ui_.OutputViewer->setConfiguration(cifHandler_.supercellConfiguration());
-
-    auto *supercellConfiguration = cifHandler_.supercellConfiguration();
-
-    // Update the information panel
-    ui_.SupercellBoxALabel->setText(QString::number(supercellConfiguration->box()->axisLengths().x) + " &#8491;");
-    ui_.SupercellBoxBLabel->setText(QString::number(supercellConfiguration->box()->axisLengths().y) + " &#8491;");
-    ui_.SupercellBoxCLabel->setText(QString::number(supercellConfiguration->box()->axisLengths().z) + " &#8491;");
-    ui_.SupercellBoxAlphaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().x) + "&deg;");
-    ui_.SupercellBoxBetaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().y) + "&deg;");
-    ui_.SupercellBoxGammaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().z) + "&deg;");
-    auto chemicalDensity = cifHandler_.supercellConfiguration()->chemicalDensity();
-    ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
-                                                       : "-- g cm<sup>3</sup>");
-    ui_.SupercellVolumeLabel->setText(QString::number(supercellConfiguration->box()->volume()) + " &#8491;<sup>3</sup>");
-    ui_.SupercellNAtomsLabel->setText(QString::number(supercellConfiguration->nAtoms()));
-
-    if (ui_.OutputMolecularRadio->isChecked())
-    {
-        ui_.OutputMolecularSpeciesList->setVisible(true);
-        ui_.OutputMolecularSpeciesList->clear();
-        for (auto &molecularSp : cifHandler_.molecularSpecies())
-        {
-            ui_.OutputMolecularSpeciesList->addItem(QString::fromStdString(std::string(molecularSp.species()->name())));
-        }
-    }
-    else
-    {
-        ui_.OutputMolecularSpeciesList->setVisible(false);
-    }
-
-    ui_.OutputConfigurationCheck->setEnabled(ui_.OutputMolecularRadio->isChecked() || ui_.OutputFrameworkRadio->isChecked());
-
-    if (ui_.OutputSupermoleculeRadio->isChecked())
-    {
-        ui_.OutputConfigurationCheck->setChecked(false);
-        outputFlags_.removeFlag(CIFHandler::OutputFlags::OutputConfiguration);
-    }
-
-    auto validSpecies = true;
-    QString indicatorText("Species are valid.");
-
-    if (ui_.OutputMolecularRadio->isChecked())
-    {
-        if (cifHandler_.molecularSpecies().empty())
-        {
-            validSpecies = false;
-            indicatorText =
-                QString("Unable to generate molecular partitioning from Species, so cannot be used in a simulation. "
-                        "Choose a different partitioning.");
-        }
-    }
-    else
-    {
-        auto *supercell = cifHandler_.supercellSpecies();
-        if (!supercell || supercell->nAtoms() != supercellConfiguration->molecule(0)->nAtoms())
-        {
-            validSpecies = false;
-            indicatorText = QString("Species contains more than one molecule/fragment, and cannot be used in a "
-                                    "simulation. Choose a different partitioning.");
-        }
-    }
-
-    ui_.OutputLabel->setText(indicatorText);
-    ui_.OutputIndicator->setOK(validSpecies);
 
     updateProgressionControls();
-
-    return true;
 }
