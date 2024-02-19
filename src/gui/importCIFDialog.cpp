@@ -231,6 +231,10 @@ void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
 
 void ImportCIFDialog::on_MoietyRemoveByNETACheck_clicked(bool checked)
 {
+    // Set state of associated controls
+    ui_.MoietyNETARemovalEdit->setEnabled(checked);
+    ui_.MoietyNETARemoveFragmentsCheck->setEnabled(checked);
+
     if (ui_.MoietyNETARemovalIndicator->state() != CheckIndicator::OKState)
         return;
 
