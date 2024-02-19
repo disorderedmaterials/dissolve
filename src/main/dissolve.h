@@ -178,8 +178,6 @@ class Dissolve : public Serialisable<>
     SerialisedValue serialise() const override;
     // Load restart file
     bool loadRestart(std::string_view filename);
-    // Load restart file as reference point
-    bool loadRestartAsReference(std::string_view filename, std::string_view dataSuffix);
     // Save restart file
     bool saveRestart(std::string_view filename);
     // Return whether an input filename has been set
