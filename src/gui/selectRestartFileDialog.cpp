@@ -74,41 +74,51 @@ QString SelectRestartFileDialog::getRestartFileName(const QString &inputFileName
     auto nRestartFilesAvailable = inputFileInfo.dir().entryInfoList(QStringList() << "*.restart", QDir::Files).size();
 
     // Go time - check what we have available, and query the user appropriately
-    QMessageBox::StandardButton button;
+    QMessageBox loadAssociatedQuestion(this);
+    loadAssociatedQuestion.setWindowTitle("Load Restart File");
+    loadAssociatedQuestion.setIcon(QMessageBox::Question);
+    QPushButton *loadDefaultButton{nullptr}, *chooseOtherButton{nullptr};
     if (defaultRestartFileExists)
     {
         // The default restart file exists, and others may be present
         if (nRestartFilesAvailable == 1)
-            button = QMessageBox::question(
-                this, "Load Associated Restart File?",
-                "A restart file associated to this simulation was found - would you like to load it now?",
-                QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No, QMessageBox::StandardButton::Yes);
+        {
+            loadAssociatedQuestion.setText(
+                "A restart file associated to this simulation was found - would you like to load it now?");
+            loadDefaultButton = loadAssociatedQuestion.addButton("Yes", QMessageBox::YesRole);
+            loadAssociatedQuestion.addButton("No", QMessageBox::NoRole);
+        }
         else
-            button = QMessageBox::question(
-                this, "Load Associated Restart File?",
+        {
+            loadAssociatedQuestion.setText(
                 "A restart file associated to this simulation was found, but additional restart files in the same directory "
-                "are "
-                "also present.\nWould you like to load the default associated file, or open a different one?",
-                QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::Open | QMessageBox::StandardButton::Cancel,
-                QMessageBox::StandardButton::Yes);
+                "are also present.\nWould you like to load the default associated file, or open a different one?");
+            loadDefaultButton = loadAssociatedQuestion.addButton("Open Default", QMessageBox::YesRole);
+            loadAssociatedQuestion.addButton("Don't Load Anything", QMessageBox::RejectRole);
+            chooseOtherButton = loadAssociatedQuestion.addButton("Choose...", QMessageBox::NoRole);
+        }
+
+        loadAssociatedQuestion.setDefaultButton(loadDefaultButton);
     }
     else if (nRestartFilesAvailable != 0)
     {
         // The default restart file does not exist, but other files do
-        button = QMessageBox::question(this, "Load Alternate Restart File?",
-                                       "A restart file associated to this simulation does not exist, but additional restart "
-                                       "files in the same directory were found."
-                                       "\nWould you like to open one of those files?",
-                                       QMessageBox::StandardButton::Open | QMessageBox::StandardButton::Cancel,
-                                       QMessageBox::StandardButton::Cancel);
+        loadAssociatedQuestion.setText("A restart file associated to this simulation does not exist, but additional restart "
+                                       "files in the same directory were found.\nWhat would you like to do?");
+        loadAssociatedQuestion.addButton("Don't Load Anything", QMessageBox::RejectRole);
+        chooseOtherButton = loadAssociatedQuestion.addButton("Choose...", QMessageBox::NoRole);
+        loadAssociatedQuestion.setDefaultButton(loadDefaultButton);
     }
     else
         return {};
 
+    // Run the question query
+    loadAssociatedQuestion.exec();
+
     // Act on the button choice
-    if (button == QMessageBox::StandardButton::Yes)
+    if (loadAssociatedQuestion.clickedButton() == loadDefaultButton)
         return inputFileName + ".restart";
-    else if (button == QMessageBox::StandardButton::Open)
+    else if (loadAssociatedQuestion.clickedButton() == chooseOtherButton)
     {
         // Execute the dialog and get a suitable restart file name to load
         show();
