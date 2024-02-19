@@ -41,7 +41,6 @@ class ImportCIFDialog : public WizardDialog
     CIFHandler cifHandler_;
     // Flags
     Flags<CIFHandler::UpdateFlags> updateFlags_;
-    Flags<CIFHandler::OutputFlags> outputFlags_;
 
     private:
     // Apply CIF bond definitions within specified species
@@ -73,6 +72,8 @@ class ImportCIFDialog : public WizardDialog
     bool prepareForPreviousPage(int currentIndex) override;
     // Perform any final actions before the wizard is closed
     void finalise() override;
+    // Update everything
+    bool update();
 
     /*
      * Select CIF Page
@@ -98,7 +99,6 @@ class ImportCIFDialog : public WizardDialog
     /*
      * Structure Page
      */
-
     private Q_SLOTS:
     // Generate structural species from CIF data
     void on_NormalOverlapToleranceRadio_clicked(bool checked);
@@ -126,29 +126,18 @@ class ImportCIFDialog : public WizardDialog
     void on_MoietyNETARemovalEdit_textEdited(const QString &text);
     void on_MoietyNETARemoveFragmentsCheck_clicked(bool checked);
 
-    public:
-    bool update();
-
     /*
-     * Supercell Page
+     * Output Page
      */
     private:
+    // Update the output panel controls and information
+    void updateOutputPanel();
+
     private Q_SLOTS:
     void on_RepeatASpin_valueChanged(int value);
     void on_RepeatBSpin_valueChanged(int value);
     void on_RepeatCSpin_valueChanged(int value);
-
-    /*
-     * Species Partitioning Page
-     */
-    private:
-    // Partitioning preview Configuration
-    Configuration *partitioningConfiguration_;
-
-    private Q_SLOTS:
-
     void on_OutputMolecularRadio_clicked(bool checked);
     void on_OutputFrameworkRadio_clicked(bool checked);
     void on_OutputSupermoleculeRadio_clicked(bool checked);
-    void on_OutputConfigurationCheck_clicked(bool checked);
 };
