@@ -235,7 +235,10 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
         SelectRestartFileDialog selectRestartFileDialog(this);
         auto restartFile = selectRestartFileDialog.getRestartFileName(inputFileInfo.filePath());
         if (!restartFile.isEmpty())
+        {
             loadRestartFile(restartFile.toStdString());
+            dissolve_.prepare();
+        }
 
         fullUpdate();
     }
