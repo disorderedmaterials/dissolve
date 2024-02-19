@@ -3,16 +3,9 @@
 
 #pragma once
 
+#include "classes/site.h"
 #include "io/export/data3D.h"
 #include "module/module.h"
-#include "procedure/procedure.h"
-
-// Forward Declarations
-class CalculateAxisAngleProcedureNode;
-class Collect3DProcedureNode;
-class IfValueInRangeProcedureNode;
-class Process3DProcedureNode;
-class SelectProcedureNode;
 
 // CalculateSDF Module
 class OrientedSDFModule : public Module
@@ -27,6 +20,10 @@ class OrientedSDFModule : public Module
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
+    // Target SpeciesSite definitions
+    std::vector<const SpeciesSite *> a_, b_;
+    // Axes to use for sites
+    OrientedSite::SiteAxis axisA_{OrientedSite::SiteAxis::XAxis}, axisB_{OrientedSite::SiteAxis::XAxis};
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{true};
     // Range along X axis
@@ -39,20 +36,6 @@ class OrientedSDFModule : public Module
     Range axisAngleRange_{-15.0, 15.0};
     // Whether the angular range should be considered symmetric about 90
     bool symmetric_{false};
-    // Analysis procedure to be run
-    Procedure analyser_;
-    // SelectNode for site A (origin)
-    std::shared_ptr<SelectProcedureNode> selectA_;
-    // SelectNode for site B (surrounding)
-    std::shared_ptr<SelectProcedureNode> selectB_;
-    // CalculateAxisAngle node
-    std::shared_ptr<CalculateAxisAngleProcedureNode> calculateAxisAngle_;
-    // Axis value range check
-    std::shared_ptr<IfValueInRangeProcedureNode> checkAxisValue_;
-    // Collect3DNode for position of B around A SDF
-    std::shared_ptr<Collect3DProcedureNode> collectVector_;
-    // Process3DNode for B around A SDF
-    std::shared_ptr<Process3DProcedureNode> processPosition_;
     // Export file and format for SDF
     Data3DExportFileFormat sdfFileAndFormat_;
 

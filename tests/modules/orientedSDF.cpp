@@ -19,9 +19,8 @@ TEST_F(OrientedSDFModuleTest, Benzene)
     ASSERT_TRUE(systemTest.iterateRestart(80));
 
     EXPECT_TRUE(systemTest.checkData3D(
-        "OrientedSDF(R-R)//Process3D//SDF",
+        "OrientedSDF(R-R)//SDF",
         {"dlpoly/benzene181/benzene181.11.pdens.zOrient0_10", Data3DImportFileFormat::Data3DImportFormat::PDens}, 0.09));
-    EXPECT_TRUE(
-        systemTest.checkData3D("OrientedSDF(R-R)//Process3D//SDF", "OrientedSDF(R-R)_Analyser//Process3D//SDF", 1.0e-5));
+    EXPECT_TRUE(systemTest.checkData3D("OrientedSDF(R-R)//SDF", "OrientedSDF(R-R)_Analyser//Process3D//SDF", 1.0e-5));
 }
 } // namespace UnitTest

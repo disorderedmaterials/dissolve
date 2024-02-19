@@ -32,8 +32,8 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     auto [histAB, status] = processingData.realiseIf<Histogram1D>("Histo-AB", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
         histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
-
     histAB.zeroBins();
+
     for (const auto &[siteA, indexA] : a.sites())
     {
         for (const auto &[siteB, indexB] : b.sites())
@@ -43,18 +43,21 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
             histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
         }
     }
+
+    // Accumulate histogram
     histAB.accumulate();
 
     // RDF
     auto &dataRDF = processingData.realise<Data1D>("RDF", name(), GenericItem::InRestartFileFlag);
     dataRDF = histAB.accumulatedData();
-    DataNormaliser1D normaliserRDF(dataRDF);
 
+    // Normalise
+    DataNormaliser1D normaliserRDF(dataRDF);
     // Normalise by A site population
-    normaliserRDF.normaliseBySitePopulation(double(a.sites().size()));
+    normaliserRDF.normaliseDivide(double(a.sites().size()));
 
     // Normalise by B site population density
-    normaliserRDF.normaliseByNumberDensity(double(b.sites().size()), targetConfiguration_);
+    normaliserRDF.normaliseDivide(double(b.sites().size()) / targetConfiguration_->box()->volume());
 
     // Normalise by spherical shell
     normaliserRDF.normaliseBySphericalShell();
@@ -62,8 +65,11 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     // CN
     auto &dataCN = processingData.realise<Data1D>("HistogramNorm", name(), GenericItem::InRestartFileFlag);
     dataCN = histAB.accumulatedData();
+
+    // Normalise
     DataNormaliser1D normaliserCN(dataCN);
-    normaliserCN.normaliseBySitePopulation(double(a.sites().size()));
+    // Normalise by A site population
+    normaliserCN.normaliseDivide(double(a.sites().size()));
 
     const std::vector<std::string> rangeNames = {"A", "B", "C"};
     for (int i = 0; i < 3; ++i)
@@ -98,8 +104,13 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
             if (exportFileAndFormat_.exportData(dataCN))
                 moduleContext.processPool().decideTrue();
             else
+            {
                 moduleContext.processPool().decideFalse();
+                return ExecutionResult::Failed;
+            }
         }
+        else if (!moduleContext.processPool().decision())
+            return ExecutionResult::Failed;
     }
 
     return ExecutionResult::Success;

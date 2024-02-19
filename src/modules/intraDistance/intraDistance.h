@@ -3,16 +3,8 @@
 
 #pragma once
 
+#include "io/export/data1D.h"
 #include "module/module.h"
-#include "procedure/procedure.h"
-
-// Forward Declarations
-class Collect1DProcedureNode;
-class OperateSitePopulationNormaliseProcedureNode;
-class Process1DProcedureNode;
-class SelectProcedureNode;
-class SpeciesSite;
-class Sum1DProcedureNode;
 
 // Calculate RDF Module
 class IntraDistanceModule : public Module
@@ -27,18 +19,12 @@ class IntraDistanceModule : public Module
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
+    // Target SpeciesSite definitions
+    std::vector<const SpeciesSite *> a_, b_;
     // Range (min, max, delta) of distance axis
     Vec3<double> distanceRange_{0.0, 10.0, 0.05};
-    // Analysis procedure to be run
-    Procedure analyser_;
-    // SelectNode for site A
-    std::shared_ptr<SelectProcedureNode> selectA_;
-    // SelectNode for site B
-    std::shared_ptr<SelectProcedureNode> selectB_;
-    // Collect1DNode for A-B histogram
-    std::shared_ptr<Collect1DProcedureNode> collectDistance_;
-    // Process1DNode for A-B histogram
-    std::shared_ptr<Process1DProcedureNode> processDistance_;
+    // Export target
+    Data1DExportFileFormat exportFileAndFormat_;
 
     /*
      * Processing

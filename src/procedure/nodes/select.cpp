@@ -216,7 +216,8 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
                 if (site.molecule() != moleculeParent)
                     continue;
             }
-            else if (find(excludedMolecules_.begin(), excludedMolecules_.end(), site.molecule()) != excludedMolecules_.end())
+            else if (std::find(excludedMolecules_.begin(), excludedMolecules_.end(), site.molecule()) !=
+                     excludedMolecules_.end())
                 continue;
 
             // Check Site exclusions

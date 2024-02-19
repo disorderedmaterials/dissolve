@@ -36,7 +36,7 @@ void HistogramCNModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFla
         cnGraph_->clearRenderables();
 
     if (cnGraph_->renderables().empty())
-        cnGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Histogram", module_->name()), "CN");
+        cnGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Histogram", module_->name()), "CN");
 
     // Validate renderables if they need it
     cnGraph_->validateRenderables(dissolve_.processingModuleData());

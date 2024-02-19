@@ -2,17 +2,23 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataNormaliser1D.h"
-#include "classes/configuration.h"
+#include "expression/expression.h"
+#include "expression/variable.h"
 #include "math/data1D.h"
+#include "math/integrator.h"
 
-DataNormaliser1D::DataNormaliser1D(Data1D &targetData) : targetData_(targetData) {}
+DataNormaliser1D::DataNormaliser1D(Data1D &targetData) : DataNormaliserBase<Data1D, NormalisationFunction1D>(targetData) {}
 
-void DataNormaliser1D::normaliseByNumberDensity(double population, Configuration *targetConfiguration)
+void DataNormaliser1D::normalise(NormalisationFunction1D normalisationFunction)
 {
-    targetData_ /= (population / targetConfiguration->box()->volume());
+    const auto &xs = targetData_.xAxis();
+    auto &values = targetData_.values();
+
+    for (auto i = 0; i < xs.size(); ++i)
+        values.at(i) = normalisationFunction(xs[i], values.at(i));
 }
 
-void DataNormaliser1D::normaliseBySitePopulation(double population) { targetData_ /= population; }
+void DataNormaliser1D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 1D data."); }
 
 void DataNormaliser1D::normaliseBySphericalShell()
 {
@@ -44,4 +50,11 @@ void DataNormaliser1D::normaliseBySphericalShell()
         r1Cubed = r2Cubed;
         leftBin = rightBin;
     }
+}
+
+void DataNormaliser1D::normaliseTo(double value, bool absolute)
+{
+    auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);
+    targetData_ /= sum;
+    targetData_ *= value;
 }
