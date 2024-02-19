@@ -54,10 +54,10 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     // Normalise
     DataNormaliser1D normaliserRDF(dataRDF);
     // Normalise by A site population
-    normaliserRDF.normaliseBySitePopulation(double(a.sites().size()));
+    normaliserRDF.normaliseDivide(double(a.sites().size()));
 
     // Normalise by B site population density
-    normaliserRDF.normaliseByNumberDensity(double(b.sites().size()), targetConfiguration_);
+    normaliserRDF.normaliseDivide(double(b.sites().size()));
 
     // Normalise by spherical shell
     normaliserRDF.normaliseBySphericalShell();
@@ -69,7 +69,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     // Normalise
     DataNormaliser1D normaliserCN(dataCN);
     // Normalise by A site population
-    normaliserCN.normaliseBySitePopulation(double(a.sites().size()));
+    normaliserCN.normaliseDivide(double(a.sites().size()));
 
     const std::vector<std::string> rangeNames = {"A", "B", "C"};
     for (int i = 0; i < 3; ++i)

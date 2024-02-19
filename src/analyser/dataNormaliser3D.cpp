@@ -22,7 +22,7 @@ void DataNormaliser3D::normaliseBySphericalShell()
     Messenger::warn("Spherical shell normalisation not implemented for 3D data.");
 }
 
-void DataNormaliser3D::normaliseByValue(double value, bool absolute)
+void DataNormaliser3D::normaliseTo(double value, bool absolute)
 {
     Messenger::warn("Value normalisation not implemented for 3D data.");
 }

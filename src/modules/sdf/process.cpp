@@ -57,7 +57,7 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
     // Normalise
     DataNormaliser3D normaliserSDF(dataSDF);
     // Normalise by A site population
-    normaliserSDF.normaliseBySitePopulation(double(a.sites().size()));
+    normaliserSDF.normaliseDivide(double(a.sites().size()));
     // Normalise by grid
     normaliserSDF.normaliseByGrid();
 
