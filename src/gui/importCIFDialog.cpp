@@ -62,9 +62,9 @@ void ImportCIFDialog::updateWidgets()
     ui_.InfoPublicationTitleLabel->setText(
         QString::fromStdString(cifHandler_.getTagString("_publ_section_title").value_or("<Unknown>")));
     ui_.InfoPublicationReferenceLabel->setText(QString::fromStdString(fmt::format(
-        "{}, {}, <b>{}</b>, {}", cifHandler_.getTagString("_journal_name_full").value_or("???"),
-        cifHandler_.getTagString("_journal_year").value_or("???"), cifHandler_.getTagString("_journal_volume").value_or("???"),
-        cifHandler_.getTagString("_journal_page_first").value_or("???"))));
+        "{}, {}, <b>{}</b>, {}", cifHandler_.getTagString("_journal_name_full").value_or("N/A"),
+        cifHandler_.getTagString("_journal_year").value_or("N/A"), cifHandler_.getTagString("_journal_volume").value_or("N/A"),
+        cifHandler_.getTagString("_journal_page_first").value_or("N/A"))));
     ui_.InfoAuthorsList->clear();
     auto authors = cifHandler_.getTagStrings("_publ_author_name");
     for (auto &author : authors)
