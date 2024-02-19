@@ -4,16 +4,12 @@
 #include "analyser/dataNormaliser3D.h"
 #include "math/data3D.h"
 
-<<<<<<< HEAD
-DataNormaliser3D::DataNormaliser3D(Data3D &targetData) : DataNormaliserBase<Data3D>(targetData) {}
-=======
 DataNormaliser3D::DataNormaliser3D(Data3D &targetData) : DataNormaliserBase<Data3D, NormalisationFunction3D>(targetData) {}
 
 void DataNormaliser3D::normalise(NormalisationFunction3D normalisationFunction)
 {
     Messenger::warn("Normalisation function not implemented for 3D data.");
 }
->>>>>>> develop
 
 void DataNormaliser3D::normaliseByGrid()
 {
@@ -31,13 +27,7 @@ void DataNormaliser3D::normaliseBySphericalShell()
     Messenger::warn("Spherical shell normalisation not implemented for 3D data.");
 }
 
-<<<<<<< HEAD
-void DataNormaliser3D::normaliseByExpression(std::string_view expressionString)
-{
-    Messenger::warn("Expression normalisation not implemented for 3D data.");
-=======
 void DataNormaliser3D::normaliseTo(double value, bool absolute)
 {
     Messenger::warn("Value normalisation not implemented for 3D data.");
->>>>>>> develop
 }

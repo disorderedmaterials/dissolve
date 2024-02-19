@@ -2,11 +2,8 @@ add_library(
   analyser
   dataNormaliser1D.cpp
   dataNormaliser1D.h
-<<<<<<< HEAD
   dataNormaliser2D.cpp
   dataNormaliser2D.h
-=======
->>>>>>> develop
   dataNormaliser3D.cpp
   dataNormaliser3D.h
   dataNormaliserBase.h
