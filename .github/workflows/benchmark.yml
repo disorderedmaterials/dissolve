@@ -43,7 +43,7 @@ jobs:
         run: |
           set -ex
           export LD_LIBRARY_PATH=`pwd`/build/onetbb/lib
-          ./build/bin/benchmarks --benchmark_format=json | tee benchmark_result.json
+          ./build/benchmarks --benchmark_format=json | tee benchmark_result.json
       - name: Store benchmark result
         uses: rhysd/github-action-benchmark@v1
         if: ${{ github.ref_name == 'develop' }}
