@@ -32,7 +32,7 @@ namespace dissolve::internal
 template <typename T> using is_execution_policy = std::is_execution_policy<T>;
 }
 #else // not multithreading - no tbb libraries
-#include "tbb-fallbacks.h"
+#include "tbbFallbacks.h"
 #include <algorithm>
 #include <numeric>
 namespace dissolve::internal
