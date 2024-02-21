@@ -664,9 +664,6 @@ bool CIFHandler::detectMolecules()
             for (auto &i : sp->atoms())
                 i.translateCoordinates(-origin);
 
-            printf("DETECT MOLECULE : species is:\n");
-            sp->print();
-
             // Find instances of this fragment
             instances = getSpeciesInstances(sp, rootNETAAtom, bestNETA);
             if (instances.empty())
@@ -1143,7 +1140,6 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
         referenceBasis.setColumn(0, x);
         referenceBasis.setColumn(1, y);
         referenceBasis.setColumn(2, x * y);
-        referenceBasis.print();
     }
     else
         referenceBasis.setIdentity();
@@ -1204,8 +1200,6 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
         // Translate the molecule so that the root atom match is at the origin
         instanceMolecule.translate(-instanceSpeciesRootAtom.r());
 
-        instanceSpecies.print();
-
         // Make a basic consistency check before we try to go any further
         if (instanceSpeciesRootAtom.nBonds() != moleculeSpeciesRootAtom->nBonds())
         {
@@ -1217,12 +1211,10 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
         // Now we try to find a rotation that will put our fragment molecule on top of the reference species if possible
         auto differenceResult = differenceMetric(moleculeSpecies, instanceMolecule);
         const auto differenceTolerance = 0.1;
-        printf("Current difference metric is %f\n", differenceResult.first);
 
         if (differenceResult.first > differenceTolerance && referenceXElement != Elements::Unknown &&
             referenceYElement != Elements::Unknown)
         {
-            printf("Attempting transform...\n");
             // Get potential X atom candidates
             std::vector<int> xIndices, yIndices;
             for (auto &b : instanceSpeciesRootAtom.bonds())
@@ -1233,16 +1225,6 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
                 if (j->Z() == referenceYElement)
                     yIndices.push_back(b.get().partner(&instanceSpeciesRootAtom)->index());
             }
-
-            fmt::print("Valid X axis candidate indices are: ");
-            for (auto x : xIndices)
-                printf("%i  ", x);
-            printf("\n");
-
-            fmt::print("Valid Y axis candidate indices are: ");
-            for (auto y : yIndices)
-                printf("%i  ", y);
-            printf("\n");
 
             // Try to find a basis using these axis atoms that rotates our atoms onto those of the reference molecule
             for (auto x : xIndices)
@@ -1269,15 +1251,10 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
                     auto rotationMatrix = referenceBasis * currentBasis;
 
                     for (auto &localAtom : instanceMolecule.localAtoms())
-                    {
                         localAtom.setCoordinates(rotationMatrix * localAtom.r());
-                        printf("   r = ");
-                        localAtom.r().print();
-                    }
 
                     // Get new difference metric
                     differenceResult = differenceMetric(moleculeSpecies, instanceMolecule);
-                    printf("  for x(%i) y(%i) difference is %f\n", x, y, differenceResult.first);
                     if (differenceResult.first < differenceTolerance)
                         break;
                 }
