@@ -10,6 +10,8 @@
 
 Lock::Lock() { lockCounter_ = 0; }
 
+Lock::operator bool() { return isLocked(); }
+
 // Increase lock count
 void Lock::addLockLevel() { ++lockCounter_; }
 

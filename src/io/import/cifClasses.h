@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/molecule.h"
+#include "classes/species.h"
 #include "data/elements.h"
 #include "templates/vector3.h"
 #include <algorithm>
@@ -155,17 +156,18 @@ class CIFLocalMolecule : public Molecule
 class CIFMolecularSpecies
 {
     public:
-    CIFMolecularSpecies(const Species *targetSpecies, std::vector<CIFLocalMolecule> instances);
+    CIFMolecularSpecies();
 
     private:
-    // Species to which the definitions relate
-    const Species *species_;
+    // Species parent for molecule instances
+    std::shared_ptr<Species> species_;
     // Molecule instances
     std::vector<CIFLocalMolecule> instances_;
 
     public:
-    // Return species to which the molecules are associated
-    const Species *species() const;
+    // Return species parent for molecule instances
+    std::shared_ptr<Species> &species();
+    const std::shared_ptr<Species> &species() const;
     // Return molecule instances
     const std::vector<CIFLocalMolecule> &instances() const;
     std::vector<CIFLocalMolecule> &instances();

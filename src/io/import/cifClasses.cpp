@@ -161,13 +161,11 @@ const std::vector<int> &CIFLocalMolecule::unitCellIndices() const { return unitC
  * CIF Molecular Species
  */
 
-CIFMolecularSpecies::CIFMolecularSpecies(const Species *targetSpecies, std::vector<CIFLocalMolecule> instances)
-    : species_(targetSpecies), instances_(std::move(instances))
-{
-}
+CIFMolecularSpecies::CIFMolecularSpecies() : species_(std::make_shared<Species>()) {}
 
-// Return species to which the definitions relate
-const Species *CIFMolecularSpecies::species() const { return species_; };
+// Return species parent for molecule instances
+std::shared_ptr<Species> &CIFMolecularSpecies::species() { return species_; };
+const std::shared_ptr<Species> &CIFMolecularSpecies::species() const { return species_; };
 
 // Return molecule instances
 const std::vector<CIFLocalMolecule> &CIFMolecularSpecies::instances() const { return instances_; }

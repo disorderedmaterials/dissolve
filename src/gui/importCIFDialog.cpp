@@ -2,145 +2,303 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/importCIFDialog.h"
+#include "base/units.h"
 #include "classes/empiricalFormula.h"
-#include "classes/molecule.h"
 #include "classes/pairIterator.h"
-#include "classes/species.h"
-#include "neta/node.h"
-#include "procedure/nodes/add.h"
+#include "gui/helpers/comboPopulator.h"
 #include "procedure/nodes/box.h"
-#include "procedure/nodes/coordinateSets.h"
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <unordered_set>
 
 ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
-    : WizardDialog(parent), cifAssemblyModel_(cifHandler_.assemblies()), dissolve_(dissolve)
+    : QDialog(parent), cifAssemblyModel_(cifHandler_.assemblies()), dissolve_(dissolve)
 {
     ui_.setupUi(this);
 
-    // Register pages with the wizard
-    registerPage(ImportCIFDialog::SelectCIFFilePage, "Choose CIF File");
-    registerPage(ImportCIFDialog::SelectSpaceGroupPage, "Choose Space Group", ImportCIFDialog::CIFInfoPage);
-    registerPage(ImportCIFDialog::CIFInfoPage, "CIF Information", ImportCIFDialog::StructurePage);
-    registerPage(ImportCIFDialog::StructurePage, "Basic Structure", ImportCIFDialog::CleanedPage);
-    registerPage(ImportCIFDialog::CleanedPage, "Clean Structure", ImportCIFDialog::OutputSpeciesPage);
-    registerPage(ImportCIFDialog::OutputSpeciesPage, "Output");
+    Locker refreshLock(widgetsUpdating_);
 
-    // Add spacegroup list
+    // Add spacegroups to combo
     for (auto n = 1; n < SpaceGroups::nSpaceGroupIds; ++n)
-        ui_.SpaceGroupsList->addItem(
+        ui_.SpaceGroupsCombo->addItem(
             QString::fromStdString(std::string(SpaceGroups::formattedInformation((SpaceGroups::SpaceGroupId)n))));
+    ui_.SpaceGroupsCombo->setCurrentIndex(-1);
 
     // Set assembly view model
     ui_.AssemblyView->setModel(&cifAssemblyModel_);
     ui_.AssemblyView->update();
     ui_.AssemblyView->expandAll();
     connect(&cifAssemblyModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
-            SLOT(update()));
+            SLOT(assembliesChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
     connect(&cifAssemblyModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)),
             ui_.AssemblyView, SLOT(expandAll()));
 
-    // Update moiety NETA
-    createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
+    // Populate density units combo
+    ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
 
-    // Init the wizard
-    initialise(this, ui_.MainStack, ImportCIFDialog::SelectCIFFilePage);
+    // Set display configuration
+    ui_.StructureViewer->setConfiguration(cifHandler_.generatedConfiguration());
+
+    createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
 }
 
 /*
- * Wizard
+ * UI
  */
 
-// Return whether progression to the next page from the current page is allowed
-bool ImportCIFDialog::progressionAllowed(int index) const
+// Update all controls
+void ImportCIFDialog::updateWidgets()
 {
-    // Check widget validity in the specified page, returning if progression (i.e. pushing 'Next' or 'Finish') is allowed
-    switch (index)
+    Locker updateLock(widgetsUpdating_);
+
+    // DATA_ ID
+    ui_.InfoDataLabel->setText(QString::fromStdString(cifHandler_.getTagString("DATA_").value_or("<Unknown>")));
+
+    // Chemical Formula
+    ui_.InfoChemicalFormulaLabel->setText(QString::fromStdString(cifHandler_.chemicalFormula()));
+
+    // Publication Data
+    ui_.InfoPublicationTitleLabel->setText(
+        QString::fromStdString(cifHandler_.getTagString("_publ_section_title").value_or("<Unknown>")));
+    ui_.InfoPublicationReferenceLabel->setText(QString::fromStdString(fmt::format(
+        "{}, {}, <b>{}</b>, {}", cifHandler_.getTagString("_journal_name_full").value_or("N/A"),
+        cifHandler_.getTagString("_journal_year").value_or("N/A"), cifHandler_.getTagString("_journal_volume").value_or("N/A"),
+        cifHandler_.getTagString("_journal_page_first").value_or("N/A"))));
+    ui_.InfoAuthorsList->clear();
+    auto authors = cifHandler_.getTagStrings("_publ_author_name");
+    for (auto &author : authors)
+        ui_.InfoAuthorsList->addItem(QString::fromStdString(author));
+
+    // Spacegroup
+    ui_.SpaceGroupsCombo->setCurrentIndex(cifHandler_.spaceGroup() - 1);
+
+    // Bonding
+    ui_.BondFromCIFRadio->setEnabled(cifHandler_.hasBondDistances());
+
+    // Assemblies
+    ui_.AssemblyView->expandAll();
+
+    // Configuration information
+    auto *cfg = cifHandler_.generatedConfiguration();
+    const auto *box = cfg->box();
+    ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
+    QString boxInfo = QString("<b>A:</b>  %1 &#8491;<br>").arg(box->axisLengths().x);
+    boxInfo += QString("<b>B:</b>  %1 &#8491;<br>").arg(box->axisLengths().y);
+    boxInfo += QString("<b>C:</b>  %1 &#8491;<br>").arg(box->axisLengths().z);
+    boxInfo += QString("<b>&#x3B1;:</b>  %1&#xb0;<br>").arg(box->axisAngles().x);
+    boxInfo += QString("<b>&#x3B2;:</b>  %1&#xb0;<br>").arg(box->axisAngles().y);
+    boxInfo += QString("<b>&#x3B3;:</b>  %1&#xb0;").arg(box->axisAngles().z);
+    ui_.CurrentBoxFrame->setToolTip(boxInfo);
+    updateDensityLabel();
+    ui_.AtomPopulationLabel->setText(QString::number(cfg->nAtoms()));
+    ui_.MoleculePopulationLabel->setText(QString::number(cfg->nMolecules()));
+
+    // Output
+    auto validSpecies = !cifHandler_.molecularSpecies().empty();
+    ui_.OutputMolecularRadio->setEnabled(validSpecies);
+    ui_.OutputFrameworkRadio->setEnabled(!validSpecies);
+    ui_.OutputSupermoleculeRadio->setEnabled(!validSpecies);
+    if (validSpecies)
+        ui_.OutputMolecularRadio->setChecked(true);
+    else if (ui_.OutputMolecularRadio->isChecked())
+        ui_.OutputFrameworkRadio->setChecked(true);
+
+    // Update molecular species list
+    ui_.OutputMolecularSpeciesList->clear();
+    for (auto &molecularSp : cifHandler_.molecularSpecies())
     {
-        case (ImportCIFDialog::SelectCIFFilePage):
-            if (ui_.InputFileEdit->text().isEmpty() || !QFile::exists(ui_.InputFileEdit->text()))
-                return false;
-            break;
-        case (ImportCIFDialog::SelectSpaceGroupPage):
-            return ui_.SpaceGroupsList->currentRow() != -1;
-        default:
-            break;
+        ui_.OutputMolecularSpeciesList->addItem(QString::fromStdString(std::string(molecularSp.species()->name())));
     }
 
-    return true;
-}
-// Perform any necessary actions before moving to the next page
-bool ImportCIFDialog::prepareForNextPage(int currentIndex)
-{
-    switch (currentIndex)
-    {
-        case (ImportCIFDialog::SelectCIFFilePage):
-            // Load the CIF file
-            if (!cifHandler_.read(ui_.InputFileEdit->text().toStdString()))
-                return Messenger::error("Failed to load CIF file '{}'.\n", ui_.InputFileEdit->text().toStdString());
-            updateInfoPage();
-            updateSpaceGroupPage();
-            break;
-        case (ImportCIFDialog::SelectSpaceGroupPage):
-            cifHandler_.setSpaceGroup((SpaceGroups::SpaceGroupId)(ui_.SpaceGroupsList->currentRow() + 1));
-            updateInfoPage();
-            break;
-        case (ImportCIFDialog::CIFInfoPage):
-            ui_.BondFromCIFRadio->setEnabled(cifHandler_.hasBondDistances());
-            updateFlags_.setFlag(CIFHandler::UpdateFlags::CalculateBonding);
-            update();
-            if (!cifHandler_.structuralUnitCellSpecies())
-                return false;
-            ui_.AssemblyView->expandAll();
-            break;
-        case (ImportCIFDialog::StructurePage):
-            update();
-            if (!cifHandler_.cleanedUnitCellSpecies())
-                return false;
-            break;
-        case (ImportCIFDialog::CleanedPage):
-            ui_.OutputMolecularRadio->setChecked(!cifHandler_.molecularSpecies().empty());
-            update();
-            if (!cifHandler_.supercellConfiguration())
-                return false;
-            break;
-        default:
-            break;
-    }
-
-    return true;
+    // Structure
+    ui_.StructureViewer->postRedisplay();
 }
 
-// Determine next page for the current page, based on current data
-std::optional<int> ImportCIFDialog::determineNextPage(int currentIndex)
+// Update density label
+void ImportCIFDialog::updateDensityLabel()
 {
-    // Only check for the first page
-    if (currentIndex == ImportCIFDialog::SelectCIFFilePage)
-        return cifHandler_.spaceGroup() != SpaceGroups::NoSpaceGroup ? ImportCIFDialog::CIFInfoPage
-                                                                     : ImportCIFDialog::SelectSpaceGroupPage;
+    auto *cfg = cifHandler_.generatedConfiguration();
+    if (!cfg)
+        ui_.DensityUnitsLabel->setText("N/A");
     else
-        return std::get<3>(getPage(currentIndex));
-}
-
-// Perform any necessary actions before moving to the previous page
-bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
-{
-    switch (currentIndex)
     {
-        case (ImportCIFDialog::CIFInfoPage):
-            cifHandler_.resetSpeciesAndConfigurations();
-            break;
-        default:
-            break;
+        auto rho = ui_.DensityUnitsCombo->currentIndex() == 0 ? cfg->atomicDensity() : cfg->chemicalDensity();
+        ui_.DensityUnitsLabel->setText(rho ? QString::number(*rho) : "--");
     }
-    return true;
 }
 
-// Perform any final actions before the wizard is closed
-void ImportCIFDialog::finalise()
+void ImportCIFDialog::on_InputFileEdit_editingFinished()
+{
+    // Load the CIF file
+    if (!cifHandler_.read(ui_.InputFileEdit->text().toStdString()))
+        Messenger::error("Failed to load CIF file '{}'.\n", ui_.InputFileEdit->text().toStdString());
+    else
+    {
+        cifHandler_.generate();
+        updateWidgets();
+    }
+}
+
+void ImportCIFDialog::on_InputFileSelectButton_clicked(bool checked)
+{
+    QString inputFile = QFileDialog::getOpenFileName(this, "Choose CIF file to open", QDir().absolutePath(),
+                                                     "CIF files (*.cif);;All files (*)");
+    if (inputFile.isEmpty())
+        return;
+
+    // Set input file in edit
+    ui_.InputFileEdit->setText(inputFile);
+    on_InputFileEdit_editingFinished();
+}
+
+void ImportCIFDialog::on_SpaceGroupsCombo_currentIndexChanged(int index)
+{
+    if (widgetsUpdating_)
+        return;
+
+    cifHandler_.setSpaceGroup((SpaceGroups::SpaceGroupId)(ui_.SpaceGroupsCombo->currentIndex() + 1));
+
+    updateWidgets();
+}
+
+void ImportCIFDialog::on_NormalOverlapToleranceRadio_clicked(bool checked)
+{
+    if (checked)
+    {
+        cifHandler_.setOverlapTolerance(0.1);
+        updateWidgets();
+    }
+}
+
+void ImportCIFDialog::on_LooseOverlapToleranceRadio_clicked(bool checked)
+{
+    if (checked)
+    {
+        cifHandler_.setOverlapTolerance(0.5);
+        updateWidgets();
+    }
+}
+
+void ImportCIFDialog::on_CalculateBondingRadio_clicked(bool checked)
+{
+    if (checked)
+    {
+        cifHandler_.setUseCIFBondingDefinitions(false);
+        updateWidgets();
+    }
+}
+
+void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
+{
+    if (checked)
+    {
+        cifHandler_.setUseCIFBondingDefinitions(true);
+        updateWidgets();
+    }
+}
+
+void ImportCIFDialog::on_BondingPreventMetallicCheck_clicked(bool checked)
+{
+    cifHandler_.setPreventMetallicBonds(checked);
+
+    updateWidgets();
+}
+
+// Create / check NETA definition for moiety removal
+bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
+{
+    auto result = moietyNETA_.create(definition);
+
+    ui_.MoietyNETARemovalIndicator->setOK(result);
+
+    return result;
+}
+
+void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked)
+{
+    cifHandler_.setRemoveAtomics(checked);
+    updateWidgets();
+}
+
+void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
+{
+    cifHandler_.setRemoveWaterAndCoordinateOxygens(checked);
+    updateWidgets();
+}
+
+void ImportCIFDialog::on_MoietyRemoveByNETACheck_clicked(bool checked)
+{
+    // Set state of associated controls
+    ui_.MoietyNETARemovalEdit->setEnabled(checked);
+    ui_.MoietyNETARemoveFragmentsCheck->setEnabled(checked);
+
+    if (ui_.MoietyNETARemovalIndicator->state() != CheckIndicator::OKState)
+        return;
+
+    cifHandler_.setRemoveNETA(checked, ui_.MoietyNETARemoveFragmentsCheck->isChecked());
+    updateWidgets();
+}
+
+void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
+{
+    if (!createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString()))
+        return;
+
+    cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETACheck->isChecked(), ui_.MoietyNETARemoveFragmentsCheck->isChecked());
+    cifHandler_.setMoietyRemovalNETA(moietyNETA_.definitionString());
+    updateWidgets();
+}
+
+void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
+{
+    if (ui_.MoietyNETARemovalIndicator->state() != CheckIndicator::OKState)
+        return;
+
+    cifHandler_.setRemoveNETA(ui_.MoietyRemoveByNETACheck->isChecked(), checked);
+    updateWidgets();
+}
+
+void ImportCIFDialog::assembliesChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)
+{
+    cifHandler_.generate();
+    updateWidgets();
+}
+
+void ImportCIFDialog::on_RepeatASpin_valueChanged(int value)
+{
+    cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
+    updateWidgets();
+}
+
+void ImportCIFDialog::on_RepeatBSpin_valueChanged(int value)
+{
+    cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
+    updateWidgets();
+}
+
+void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value)
+{
+
+    cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
+    updateWidgets();
+}
+
+void ImportCIFDialog::on_DensityUnitsCombo_currentIndexChanged(int index)
+{
+    if (widgetsUpdating_)
+        return;
+
+    updateDensityLabel();
+}
+
+void ImportCIFDialog::on_OutputMolecularRadio_clicked(bool checked) {}
+
+void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked) {}
+
+void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked) {}
+
+void ImportCIFDialog::on_OKButton_clicked(bool checked)
 {
     Flags<CIFHandler::OutputFlags> outputFlags;
     if (ui_.OutputMolecularRadio->isChecked())
@@ -158,252 +316,8 @@ void ImportCIFDialog::finalise()
     }
 
     cifHandler_.finalise(dissolve_.coreData(), outputFlags);
+
+    accept();
 }
 
-// Update everything
-bool ImportCIFDialog::update()
-{
-    // Set up the CIF handler
-    cifHandler_.setSupercellRepeat({ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value()});
-    cifHandler_.setBondingTolerance(ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5);
-    cifHandler_.setMoietyRemovalNETA(moietyNETA_.definitionString());
-
-    auto result = cifHandler_.generate(updateFlags_);
-
-    ui_.StructureViewer->setConfiguration(cifHandler_.structuralUnitCellConfiguration());
-    ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedUnitCellConfiguration());
-    ui_.OutputViewer->setConfiguration(cifHandler_.supercellConfiguration());
-
-    auto *supercellConfiguration = cifHandler_.supercellConfiguration();
-
-    // Update the information panel
-    ui_.SupercellBoxALabel->setText(QString::number(supercellConfiguration->box()->axisLengths().x) + " &#8491;");
-    ui_.SupercellBoxBLabel->setText(QString::number(supercellConfiguration->box()->axisLengths().y) + " &#8491;");
-    ui_.SupercellBoxCLabel->setText(QString::number(supercellConfiguration->box()->axisLengths().z) + " &#8491;");
-    ui_.SupercellBoxAlphaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().x) + "&deg;");
-    ui_.SupercellBoxBetaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().y) + "&deg;");
-    ui_.SupercellBoxGammaLabel->setText(QString::number(supercellConfiguration->box()->axisAngles().z) + "&deg;");
-    auto chemicalDensity = cifHandler_.supercellConfiguration()->chemicalDensity();
-    ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
-                                                       : "-- g cm<sup>3</sup>");
-    ui_.SupercellVolumeLabel->setText(QString::number(supercellConfiguration->box()->volume()) + " &#8491;<sup>3</sup>");
-    ui_.SupercellNAtomsLabel->setText(QString::number(supercellConfiguration->nAtoms()));
-
-    updateOutputPanel();
-
-    return result;
-}
-
-/*
- * Select CIF File Page
- */
-
-void ImportCIFDialog::on_InputFileEdit_textChanged(const QString text) { updateProgressionControls(); }
-
-void ImportCIFDialog::on_InputFileSelectButton_clicked(bool checked)
-{
-    QString inputFile = QFileDialog::getOpenFileName(this, "Choose CIF file to open", QDir().absolutePath(),
-                                                     "CIF files (*.cif);;All files (*)");
-    if (inputFile.isEmpty())
-        return;
-
-    // Set input file in edit
-    ui_.InputFileEdit->setText(inputFile);
-
-    updateProgressionControls();
-}
-
-/*
- * Select Space Group Page
- */
-
-void ImportCIFDialog::updateSpaceGroupPage() { ui_.SpaceGroupsList->setCurrentRow(-1); }
-
-void ImportCIFDialog::on_SpaceGroupsList_currentRowChanged(int row)
-{
-    if (currentPage().has_value() && currentPage().value() == ImportCIFDialog::SelectSpaceGroupPage)
-        updateProgressionControls();
-}
-
-void ImportCIFDialog::on_SpaceGroupsList_itemDoubleClicked(QListWidgetItem *item) { goToNextPage(); }
-
-/*f
- * Basic CIF Info Page
- */
-
-void ImportCIFDialog::updateInfoPage()
-{
-    // DATA_ ID
-    ui_.InfoDataLabel->setText(QString::fromStdString(cifHandler_.getTagString("DATA_").value_or("<Unknown>")));
-
-    // Chemical Formula
-    ui_.InfoChemicalFormulaLabel->setText(QString::fromStdString(cifHandler_.chemicalFormula()));
-
-    // Publication Data
-    ui_.InfoPublicationTitleLabel->setText(
-        QString::fromStdString(cifHandler_.getTagString("_publ_section_title").value_or("<Unknown>")));
-    ui_.InfoPublicationReferenceLabel->setText(QString::fromStdString(fmt::format(
-        "{}, {}, <b>{}</b>, {}", cifHandler_.getTagString("_journal_name_full").value_or("???"),
-        cifHandler_.getTagString("_journal_year").value_or("???"), cifHandler_.getTagString("_journal_volume").value_or("???"),
-        cifHandler_.getTagString("_journal_page_first").value_or("???"))));
-    ui_.InfoAuthorsList->clear();
-    auto authors = cifHandler_.getTagStrings("_publ_author_name");
-    for (auto &author : authors)
-        ui_.InfoAuthorsList->addItem(QString::fromStdString(author));
-
-    // Spacegroup
-    if (cifHandler_.spaceGroup() != SpaceGroups::NoSpaceGroup)
-        ui_.InfoSpacegroupLabel->setText(
-            QString::fromStdString(std::string(SpaceGroups::formattedInformation(cifHandler_.spaceGroup()))));
-    else
-        ui_.InfoSpacegroupLabel->setText("<Unknown Space Group>");
-}
-
-/*
- * Structure Page
- */
-
-void ImportCIFDialog::on_NormalOverlapToleranceRadio_clicked(bool checked)
-{
-    if (checked)
-        update();
-}
-
-void ImportCIFDialog::on_LooseOverlapToleranceRadio_clicked(bool checked)
-{
-    if (checked)
-        update();
-}
-
-void ImportCIFDialog::on_CalculateBondingRadio_clicked(bool checked)
-{
-    if (checked)
-        updateFlags_.setFlag(CIFHandler::CalculateBonding);
-    else
-        updateFlags_.removeFlag(CIFHandler::CalculateBonding);
-
-    if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
-    {
-        update();
-    }
-}
-
-void ImportCIFDialog::on_BondingPreventMetallicCheck_clicked(bool checked)
-{
-    if (checked)
-        updateFlags_.setFlag(CIFHandler::PreventMetallicBonding);
-    else
-        updateFlags_.removeFlag(CIFHandler::PreventMetallicBonding);
-
-    if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
-        update();
-}
-
-void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
-{
-    if (!checked)
-        updateFlags_.setFlag(CIFHandler::CalculateBonding);
-    else
-        updateFlags_.removeFlag(CIFHandler::CalculateBonding);
-
-    if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
-        update();
-}
-
-/*
- * Cleaned Page
- */
-
-// Create / check NETA definition for moiety removal
-bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
-{
-    auto result = moietyNETA_.create(definition);
-
-    ui_.MoietyNETARemovalIndicator->setOK(result);
-
-    return result;
-}
-
-void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked)
-{
-    if (checked)
-        updateFlags_.setFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveAtomics);
-    else
-        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveAtomics);
-
-    update();
-}
-
-void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
-{
-    if (checked)
-        updateFlags_.setFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveWater);
-    else
-        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveWater);
-
-    update();
-}
-
-void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked)
-{
-    if (checked)
-        updateFlags_.setFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveNETA);
-    else
-        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveNETA);
-
-    update();
-}
-
-void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
-{
-    createMoietyRemovalNETA(text.toStdString());
-    if (moietyNETA_.isValid())
-        update();
-}
-
-void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
-{
-    if (checked)
-        updateFlags_.setFlag(CIFHandler::UpdateFlags::CleanRemoveBoundFragments);
-    else
-        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CleanRemoveBoundFragments);
-
-    if (moietyNETA_.isValid())
-        update();
-}
-
-/*
- * Output Page
- */
-
-void ImportCIFDialog::on_RepeatASpin_valueChanged(int value) { update(); }
-
-void ImportCIFDialog::on_RepeatBSpin_valueChanged(int value) { update(); }
-
-void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value) { update(); }
-
-void ImportCIFDialog::on_OutputMolecularRadio_clicked(bool checked) { update(); }
-
-void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked) { update(); }
-
-void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked) { update(); }
-
-// Update the output panel controls and information
-void ImportCIFDialog::updateOutputPanel()
-{
-    auto validSpecies = !cifHandler_.molecularSpecies().empty();
-
-    // Enable/disable output options as appropriate
-    ui_.OutputMolecularRadio->setEnabled(validSpecies);
-    ui_.OutputFrameworkRadio->setEnabled(!validSpecies);
-    ui_.OutputSupermoleculeRadio->setEnabled(!validSpecies);
-
-    // Update molecular species list
-    ui_.OutputMolecularSpeciesList->clear();
-    for (auto &molecularSp : cifHandler_.molecularSpecies())
-    {
-        ui_.OutputMolecularSpeciesList->addItem(QString::fromStdString(std::string(molecularSp.species()->name())));
-    }
-
-    updateProgressionControls();
-}
+void ImportCIFDialog::on_CancelButton_clicked(bool checked) { reject(); }
