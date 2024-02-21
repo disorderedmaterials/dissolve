@@ -190,10 +190,11 @@ class CIFHandler
     private:
     // Apply CIF bonding to a given species
     void applyCIFBonding(Species &sp, bool preventMetallicBonding);
-    // Determine a unique NETA definition corresponding to a given species
-    std::optional<NETADefinition> uniqueNETADefinition(Species *sp);
+    // Determine the best NETA definition for the supplied species
+    std::tuple<NETADefinition, SpeciesAtom *, int> bestNETADefinition(Species *sp);
     // Get instances of species molecules from the supplied NETA definition
-    std::vector<CIFLocalMolecule> getSpeciesInstances(Species *moleculeSpecies, const NETADefinition &neta);
-    // 'Fix' the geometry of a given species
-    void fixGeometry(Species *sp, const Box *box);
+    std::vector<CIFLocalMolecule> getSpeciesInstances(Species *moleculeSpecies, SpeciesAtom *moleculeSpeciesRootAtom,
+                                                      const NETADefinition &neta);
+    // Calculate difference metric between the supplied species and local molecule
+    static std::pair<double, std::vector<int>> differenceMetric(const Species *species, const CIFLocalMolecule &molecule);
 };
