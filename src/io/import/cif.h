@@ -3,7 +3,9 @@
 
 #pragma once
 
+#include "classes/configuration.h"
 #include "classes/coreData.h"
+#include "classes/species.h"
 #include "data/spaceGroups.h"
 #include "io/import/cifClasses.h"
 #include "math/matrix4.h"
@@ -13,8 +15,6 @@
 
 // Forward Declarations
 class Box;
-class Configuration;
-class Species;
 
 // CIF Handler
 class CIFHandler
@@ -22,10 +22,6 @@ class CIFHandler
     public:
     CIFHandler();
     ~CIFHandler() = default;
-
-    private:
-    // Reference to CoreData
-    CoreData coreData_;
 
     /*
      * Raw Data
@@ -96,17 +92,14 @@ class CIFHandler
      * Creation
      */
     public:
-    // CIF Species Update Flags
-    enum UpdateFlags
+    // CIF Generation Stages
+    enum class CIFGenerationStage
     {
-        CleanMoietyRemoveAtomics,  /* Remove atoms of single moiety */
-        CleanMoietyRemoveWater,    /* Remove water molecules of single moiety */
-        CleanMoietyRemoveNETA,     /* Remove single atoms by NETA definition */
-        CleanRemoveBoundFragments, /* Remove entire fragments when using NETA definition */
-        CalculateBonding,          /* Calculate bonding */
-        PreventMetallicBonding,    /* Prevent metallic bonding */
+        CreateBasicUnitCell,
+        CreateCleanedUnitCell,
+        DetectMolecules,
+        CreateSupercell
     };
-
     // CIF Species Output Flags
     enum OutputFlags
     {
@@ -117,26 +110,39 @@ class CIFHandler
     };
 
     private:
-    // Flags controlling behaviour
-    Flags<UpdateFlags> flags_;
+    // Temporary atom types used for unique atom labels
+    std::vector<std::shared_ptr<AtomType>> atomLabelTypes_;
+    // Tolerance for removal of overlapping atoms
+    double overlapTolerance_{0.1};
+    // Whether to use CIF bonding definitions
+    bool useCIFBondingDefinitions_{false};
     // Bonding tolerance, if calculating bonding rather than using CIF definitions
-    double bondingTolerance_{0.1};
+    double bondingTolerance_{1.1};
+    // Whether to prevent metallic bonding
+    bool preventMetallicBonds_{false};
+    // Whether to remove free atomic moieties in clean-up
+    bool removeAtomics_{false};
+    // Whether to remove water and coordinated oxygen atoms in clean-up
+    bool removeWaterAndCoordinateOxygens_{false};
+    // Whether to remove by NETA definition in clean-up
+    bool removeNETA_{false};
+    // Whether to expand NETA matches to fragments when removing in clean-up
+    bool removeNETAByFragment_{false};
     // NETA for moiety removal, if specified
     NETADefinition moietyRemovalNETA_;
     // Supercell repeat
     Vec3<int> supercellRepeat_{1, 1, 1};
     // Basic unit cell
-    Species *unitCellSpecies_;
-    Configuration *unitCellConfiguration_;
+    Species unitCellSpecies_;
+    Configuration unitCellConfiguration_;
     // Cleaned unit cell
-    Species *cleanedUnitCellSpecies_;
-    Configuration *cleanedUnitCellConfiguration_;
+    Species cleanedUnitCellSpecies_;
+    Configuration cleanedUnitCellConfiguration_;
     // Molecular definition of unit cell (if possible)
-    std::vector<CIFMolecularSpecies> molecularUnitCellSpecies_;
-    Configuration *molecularUnitCellConfiguration_;
-    // Supercell
-    Species *supercellSpecies_;
-    Configuration *supercellConfiguration_;
+    std::vector<CIFMolecularSpecies> molecularSpecies_;
+    // Final generated result (supercell)
+    Species supercellSpecies_;
+    Configuration supercellConfiguration_;
 
     private:
     // Create basic unit cell
@@ -149,42 +155,41 @@ class CIFHandler
     bool createSupercell();
 
     public:
-    // Reset all objects
-    void resetSpeciesAndConfigurations();
-    // Return current flags (for editing)
-    Flags<UpdateFlags> &flags();
+    // Set overlap tolerance
+    void setOverlapTolerance(double tol);
+    // Set whether to use CIF bonding definitions
+    void setUseCIFBondingDefinitions(bool b);
     // Set bonding tolerance
     void setBondingTolerance(double tol);
+    // Set whether to prevent metallic bonding
+    void setPreventMetallicBonds(bool b);
+    // Set whether to remove free atomic moieties in clean-up
+    void setRemoveAtomics(bool b);
+    // Set whether to remove water and coordinated oxygen atoms in clean-up
+    void setRemoveWaterAndCoordinateOxygens(bool b);
+    // Set whether to remove by NETA definition in clean-up
+    void setRemoveNETA(bool b, bool byFragment);
     // Set NETA for moiety removal
     bool setMoietyRemovalNETA(std::string_view netaDefinition);
     // Set supercell repeat
     void setSupercellRepeat(const Vec3<int> &repeat);
     // Recreate the data
-    bool generate(std::optional<Flags<UpdateFlags>> newFlags = {});
-    // Finalise, returning the required species and resulting configuration
-    std::pair<std::vector<const Species *>, Configuration *> finalise(CoreData &coreData,
-                                                                      const Flags<OutputFlags> &flags = {}) const;
+    bool generate(CIFGenerationStage fromStage = CIFGenerationStage::CreateBasicUnitCell);
     // Return whether the generated data is valid
     bool isValid() const;
-    // Structural
-    Species *structuralUnitCellSpecies();
-    Configuration *structuralUnitCellConfiguration();
-    // Cleaned
-    Species *cleanedUnitCellSpecies();
-    Configuration *cleanedUnitCellConfiguration();
-    // Molecular
+    // Return the detected molecular species
     const std::vector<CIFMolecularSpecies> &molecularSpecies() const;
-    Configuration *molecularConfiguration();
-    // Supercell
-    Species *supercellSpecies();
-    Configuration *supercellConfiguration();
+    // Return the generated configuration
+    Configuration *generatedConfiguration();
+    // Finalise, copying the required species and resulting configuration to the target CoreData
+    void finalise(CoreData &coreData, const Flags<OutputFlags> &flags = {}) const;
 
     /*
      * Helpers
      */
     private:
     // Apply CIF bonding to a given species
-    void applyCIFBonding(Species *sp, bool preventMetallicBonding);
+    void applyCIFBonding(Species &sp, bool preventMetallicBonding);
     // Determine a unique NETA definition corresponding to a given species
     std::optional<NETADefinition> uniqueNETADefinition(Species *sp);
     // Get instances of species molecules from the supplied NETA definition

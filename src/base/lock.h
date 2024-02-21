@@ -8,6 +8,7 @@ class Lock
     public:
     Lock();
     ~Lock() = default;
+    operator bool();
     // Declare Locker to be our friend
     friend class Locker;
 
