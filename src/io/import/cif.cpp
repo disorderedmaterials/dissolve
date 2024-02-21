@@ -668,6 +668,7 @@ bool CIFHandler::detectMolecules()
             instances = getSpeciesInstances(sp, rootNETAAtom, bestNETA);
             if (instances.empty())
             {
+                molecularSpecies_.clear();
                 return Messenger::error("Failed to find species instances for fragment '{}'.\n", sp->name());
             }
 
