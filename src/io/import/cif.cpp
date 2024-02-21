@@ -1099,9 +1099,10 @@ std::tuple<NETADefinition, SpeciesAtom *, int> CIFHandler::bestNETADefinition(Sp
         auto better = false;
         if (multiplicity == 0 || newMatches.size() < multiplicity)
             better = true;
-        else if (newMatches.size() == multiplicity && i.nBonds() > rootNETAAtom->nBonds())
+        else if (newMatches.size() == multiplicity)
         {
-            if (i.Z() > rootNETAAtom->Z())
+            // Replace the current match if there are more bonds on the current atom.
+            if (i.nBonds() > rootNETAAtom->nBonds())
                 better = true;
         }
 
