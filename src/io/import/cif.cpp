@@ -1160,57 +1160,62 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
 
         // Try to match this atom / fragment
         auto &atom = unitCellAtoms[i];
-        auto matchedAtoms = neta.matchedPath(&atom).set();
-        if (matchedAtoms.empty())
+        auto matchedUnitCellAtoms = neta.matchedPath(&atom).set();
+        if (matchedUnitCellAtoms.empty())
             continue;
 
-        // Found a fragment that matches - create a temporary species and molecule with some unknown atom ordering (relative to
-        // our reference Species). Our temporary molecule / species representing the molecule needs to be bound and folded so we
-        // apply the unit cell box temporarily while doing so. Also find the index in our new Species of the root NETA atom.
-        Species tempSp;
-        tempSp.createBox(unitCellSpecies_.box()->axisLengths(), unitCellSpecies_.box()->axisAngles());
+        // Found a fragment that matches the NETA description - we now create a temporary instance Species which will contain
+        // the selected fragment atoms, reassembled into a molecule (i.e. unfolded) and with bonding applied / calculated.
+        // We need to copy the unit cell from the crystal so we detect bonds properly.
+        Species instanceSpecies;
+        instanceSpecies.createBox(unitCellSpecies_.box()->axisLengths(), unitCellSpecies_.box()->axisAngles());
         auto rootAtomLocalIndex = -1;
-        for (auto &matchedAtom : matchedAtoms)
+        // -- Create species atoms from those matched in the unit cell by the NETA description.
+        for (auto &matchedAtom : matchedUnitCellAtoms)
         {
-            auto idx = tempSp.addAtom(matchedAtom->Z(), matchedAtom->r(), 0.0, matchedAtom->atomType());
+            auto idx = instanceSpecies.addAtom(matchedAtom->Z(), matchedAtom->r(), 0.0, matchedAtom->atomType());
+
+            // Store the index of the root atom in match in our instance species when we find it
             if (matchedAtom == &atom)
                 rootAtomLocalIndex = idx;
         }
+        // -- Store the local root atom so we can access its coordinates for the origin translation
+        auto &instanceSpeciesRootAtom = instanceSpecies.atom(rootAtomLocalIndex);
+        // -- Calculate / apply bonding
         if (useCIFBondingDefinitions_)
-            applyCIFBonding(tempSp, preventMetallicBonds_);
+            applyCIFBonding(instanceSpecies, preventMetallicBonds_);
         else
-            tempSp.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
-        CIFLocalMolecule tempMolecule;
-        tempMolecule.setSpecies(&tempSp);
+            instanceSpecies.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
+
+        // Create a CIFLocalMolecule as a working area for folding, translation, and rotation of the instance coordinates.
+        CIFLocalMolecule instanceMolecule;
+        instanceMolecule.setSpecies(&instanceSpecies);
+        // -- Copy the coordinates and indices of the matched unit cell atoms to our molecule
         auto atomIndex = 0;
-        for (auto &matchedAtom : matchedAtoms)
-            tempMolecule.setAtom(atomIndex++, matchedAtom->r(), matchedAtom->index());
+        for (auto &matchedAtom : matchedUnitCellAtoms)
+            instanceMolecule.setAtom(atomIndex++, matchedAtom->r(), matchedAtom->index());
 
-        // Unfold the molecule
-        tempMolecule.unFold(unitCellSpecies_.box());
-
-        // Get the new local root atom of the temporary species
-        auto &localRootAtom = tempSp.atom(rootAtomLocalIndex);
-        auto localRootAtomOriginalR = localRootAtom.r();
+        // Unfold the molecule and store the unfolded molecule coordinates back into the instance Species.
+        // This represents our full instance coordinates we will be storing (but not their final order)
+        instanceMolecule.unFold(unitCellSpecies_.box());
+        for (auto &&[molAtom, spAtom] : zip(instanceMolecule.localAtoms(), instanceSpecies.atoms()))
+            spAtom.setCoordinates(molAtom.r());
 
         // Translate the molecule so that the root atom match is at the origin
-        tempMolecule.translate(-localRootAtomOriginalR);
+        instanceMolecule.translate(-instanceSpeciesRootAtom.r());
 
-        printf("TEMPORARY FRAGMENT SPECIES is:\n");
-        for (auto &&[molAtom, spAtom] : zip(tempMolecule.localAtoms(), tempSp.atoms()))
-            spAtom.setCoordinates(molAtom.r());
-        tempSp.print();
+        instanceSpecies.print();
 
         // Make a basic consistency check before we try to go any further
-        if (localRootAtom.nBonds() != moleculeSpeciesRootAtom->nBonds())
+        if (instanceSpeciesRootAtom.nBonds() != moleculeSpeciesRootAtom->nBonds())
         {
             Messenger::error("Local root atom for fragment has {} bonds but reference species atom has {}.\n",
-                             localRootAtom.nBonds(), moleculeSpeciesRootAtom->nBonds());
+                             instanceSpeciesRootAtom.nBonds(), moleculeSpeciesRootAtom->nBonds());
             return {};
         }
 
         // Now we try to find a rotation that will put our fragment molecule on top of the reference species if possible
-        auto differenceResult = differenceMetric(moleculeSpecies, tempMolecule);
+        auto differenceResult = differenceMetric(moleculeSpecies, instanceMolecule);
         const auto differenceTolerance = 0.1;
         printf("Current difference metric is %f\n", differenceResult.first);
 
@@ -1220,13 +1225,13 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
             printf("Attempting transform...\n");
             // Get potential X atom candidates
             std::vector<int> xIndices, yIndices;
-            for (auto &b : localRootAtom.bonds())
+            for (auto &b : instanceSpeciesRootAtom.bonds())
             {
-                auto *j = b.get().partner(&localRootAtom);
+                auto *j = b.get().partner(&instanceSpeciesRootAtom);
                 if (j->Z() == referenceXElement)
-                    xIndices.push_back(b.get().partner(&localRootAtom)->index());
+                    xIndices.push_back(b.get().partner(&instanceSpeciesRootAtom)->index());
                 if (j->Z() == referenceYElement)
-                    yIndices.push_back(b.get().partner(&localRootAtom)->index());
+                    yIndices.push_back(b.get().partner(&instanceSpeciesRootAtom)->index());
             }
 
             fmt::print("Valid X axis candidate indices are: ");
@@ -1239,7 +1244,7 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
                 printf("%i  ", y);
             printf("\n");
 
-            // Try to find a basis that gives us what we need
+            // Try to find a basis using these axis atoms that rotates our atoms onto those of the reference molecule
             for (auto x : xIndices)
             {
                 for (auto y : yIndices)
@@ -1247,10 +1252,10 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
                     if (x == y)
                         continue;
 
-                    auto xAxis = tempMolecule.localAtoms()[x].r();
+                    auto xAxis = instanceMolecule.localAtoms()[x].r();
                     xAxis.normalise();
 
-                    auto yAxis = tempMolecule.localAtoms()[y].r();
+                    auto yAxis = instanceMolecule.localAtoms()[y].r();
                     yAxis.orthogonalise(xAxis);
                     yAxis.normalise();
 
@@ -1261,21 +1266,23 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
 
                     // Create rotation matrix to convert current basis into reference basis
                     currentBasis.invert();
-                    auto rotmat = referenceBasis * currentBasis;
+                    auto rotationMatrix = referenceBasis * currentBasis;
 
-                    for (auto &localAtom : tempMolecule.localAtoms())
+                    for (auto &localAtom : instanceMolecule.localAtoms())
                     {
-                        localAtom.setCoordinates(rotmat * localAtom.r());
+                        localAtom.setCoordinates(rotationMatrix * localAtom.r());
                         printf("   r = ");
                         localAtom.r().print();
                     }
 
                     // Get new difference metric
-                    differenceResult = differenceMetric(moleculeSpecies, tempMolecule);
+                    differenceResult = differenceMetric(moleculeSpecies, instanceMolecule);
                     printf("  for x(%i) y(%i) difference is %f\n", x, y, differenceResult.first);
                     if (differenceResult.first < differenceTolerance)
                         break;
                 }
+
+                // Break out if we have found a basis
                 if (differenceResult.first < differenceTolerance)
                     break;
             }
@@ -1289,16 +1296,19 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
         }
 
         // Create the final instance and mark off the selected unit cell atom indices
-        auto &mol = instances.emplace_back();
-        mol.setSpecies(moleculeSpecies);
-        for (auto spI = 0; spI < moleculeSpecies->nAtoms(); ++spI)
+        auto &instance = instances.emplace_back();
+        instance.setSpecies(moleculeSpecies);
+        for (auto refSpeciesI = 0; refSpeciesI < moleculeSpecies->nAtoms(); ++refSpeciesI)
         {
-            auto &molI = differenceResult.second[spI];
+            // Get the index of the local overlapping with the reference species atom
+            auto &localSpeciesI = differenceResult.second[refSpeciesI];
 
-            mol.setAtom(spI, tempMolecule.localAtoms()[molI].r() + localRootAtomOriginalR,
-                        tempMolecule.unitCellIndices()[molI]);
+            // Set the final instance coordinates from those of our local instance species
+            instance.setAtom(refSpeciesI, instanceSpecies.atom(localSpeciesI).r(),
+                             instanceMolecule.unitCellIndices()[localSpeciesI]);
 
-            atomFlags[tempMolecule.unitCellIndices()[molI]] = true;
+            // Mark this atom as done
+            atomFlags[instanceMolecule.unitCellIndices()[localSpeciesI]] = true;
         }
     }
 
