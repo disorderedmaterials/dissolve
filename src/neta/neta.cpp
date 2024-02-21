@@ -104,7 +104,7 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const std::option
     // Add this atom to the path
     path.push_back(i);
 
-    auto neta = flags.isSet(NETADefinition::NETACreationFlags::IncludeRootElement)
+    auto neta = flags.isSet(NETADefinition::NETACreationFlags::IncludeRootElement) && currentDepth == 0
                     ? fmt::format("?{}, nbonds={}", Elements::symbol(i->Z()), i->nBonds())
                     : fmt::format("nbonds={}", i->nBonds());
 
