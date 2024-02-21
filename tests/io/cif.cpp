@@ -165,18 +165,19 @@ TEST_F(ImportCIFTest, CuBTC)
 
 TEST_F(ImportCIFTest, MoleculeOrdering)
 {
-    // Load the reference coordinates into a Species
-    Species referenceCoordinates;
-    SpeciesImportFileFormat speciesImportFileFormat("cif/molecule-test-simple-ordered.xyz");
-    ASSERT_TRUE(speciesImportFileFormat.importData(&referenceCoordinates));
-    ASSERT_EQ(referenceCoordinates.nAtoms(), 36);
-
     CIFHandler cifHandler;
-    const auto cifFiles = {"cif/molecule-test-simple-ordered.cif", "cif/molecule-test-simple-unordered.cif",
-                           "cif/molecule-test-simple-unordered-rotated.cif"};
+    const auto cifFiles = {"cif/molecule-test-simple-ordered", "cif/molecule-test-simple-unordered",
+                           "cif/molecule-test-simple-unordered-rotated"};
     for (auto cifFile : cifFiles)
     {
-        ASSERT_TRUE(cifHandler.read(cifFile));
+        // Load the reference coordinates into a Species
+        Species referenceCoordinates;
+        SpeciesImportFileFormat speciesImportFileFormat(fmt::format("{}.xyz", cifFile));
+        ASSERT_TRUE(speciesImportFileFormat.importData(&referenceCoordinates));
+        ASSERT_EQ(referenceCoordinates.nAtoms(), 36);
+
+        // Load the CIF file
+        ASSERT_TRUE(cifHandler.read(fmt::format("{}.cif", cifFile)));
         EXPECT_TRUE(cifHandler.generate());
 
         EXPECT_EQ(cifHandler.molecularSpecies().size(), 1);
