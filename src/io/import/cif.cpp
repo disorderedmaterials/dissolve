@@ -1055,16 +1055,16 @@ void CIFHandler::applyCIFBonding(Species *sp, bool preventMetallicBonding)
         if (!r)
             continue;
         else if (fabs(box->minimumDistance(i.r(), j.r()) - r.value()) < 1.0e-2)
-            sp.addBond(&i, &j);
+            sp->addBond(&i, &j);
     }
 }
 
 // Determine the best NETA definition for the supplied species
-std::tuple<NETADefinition, SpeciesAtom *, int> CIFHandler::bestNETADefinition(Species *sp)
+std::tuple<NETADefinition, std::vector<SpeciesAtom*>> CIFHandler::bestNETADefinition(Species *sp)
 {
     // Set up the return value and bind its contents
-    std::tuple<NETADefinition, SpeciesAtom *, int> result{NETADefinition(), nullptr, 0};
-    auto &&[bestNETA, rootNETAAtom, multiplicity] = result;
+    std::tuple<NETADefinition, std::vector<SpeciesAtom*>> result{NETADefinition(), {}};
+    auto &&[bestNETA, rootAtoms] = result;
 
     // Maintain a set of atoms matched by any NETA description we generate
     std::set<SpeciesAtom *> alreadyMatched;
@@ -1083,32 +1083,31 @@ std::tuple<NETADefinition, SpeciesAtom *, int> CIFHandler::bestNETADefinition(Sp
                                                              NETADefinition::NETACreationFlags::IncludeRootElement));
 
         // Apply this match over the whole species
-        std::set<SpeciesAtom *> newMatches;
+        std::vector<SpeciesAtom *> currentRootAtoms;
         for (auto &j : sp->atoms())
         {
             if (neta.matches(&j))
             {
-                newMatches.insert(&j);
+                currentRootAtoms.push_back(&j);
                 alreadyMatched.insert(&j);
             }
         }
 
         // Is this a better description?
         auto better = false;
-        if (multiplicity == 0 || newMatches.size() < multiplicity)
+        if (rootAtoms.empty() || currentRootAtoms.size() < rootAtoms.size())
             better = true;
-        else if (newMatches.size() == multiplicity)
+        else if (currentRootAtoms.size() == rootAtoms.size())
         {
             // Replace the current match if there are more bonds on the current atom.
-            if (i.nBonds() > rootNETAAtom->nBonds())
+            if (i.nBonds() > rootAtoms.front()->nBonds())
                 better = true;
         }
 
         if (better)
         {
             bestNETA = neta;
-            rootNETAAtom = &i;
-            multiplicity = newMatches.size();
+            rootAtoms = currentRootAtoms;
         }
     }
 

@@ -191,7 +191,7 @@ class CIFHandler
     // Apply CIF bonding to a given species
     void applyCIFBonding(Species *sp, bool preventMetallicBonding);
     // Determine the best NETA definition for the supplied species
-    std::tuple<NETADefinition, SpeciesAtom *, int> bestNETADefinition(Species *sp);
+    std::tuple<NETADefinition, std::vector<SpeciesAtom*>> bestNETADefinition(Species *sp);
     // Get instances of species molecules from the supplied NETA definition
     std::vector<CIFLocalMolecule> getSpeciesInstances(Species *moleculeSpecies, SpeciesAtom *moleculeSpeciesRootAtom,
                                                       const NETADefinition &neta);
