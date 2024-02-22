@@ -591,15 +591,15 @@ bool CIFHandler::detectMolecules()
         return false;
     }
 
-    std::vector<int> allAtomIndices(cleanedUnitCellSpecies_.nAtoms());
-    std::iota(allAtomIndices.begin(), allAtomIndices.end(), 0);
+    std::vector<bool> atomMask(cleanedUnitCellSpecies_.nAtoms(), false);
 
     // Find all molecular species, and their instances
-    auto idx = 0;
-    while (!allAtomIndices.empty())
+    auto indexIterator = atomMask.begin();
+    while (indexIterator != atomMask.end())
     {
-        // Select a fragment
-        auto fragmentIndices = cleanedUnitCellSpecies_.fragment(idx);
+        // Select a fragment from the next available index
+        auto atomIndex = indexIterator - atomMask.begin();
+        auto fragmentIndices = cleanedUnitCellSpecies_.fragment(atomIndex);
 
         // Create a new CIF molecular species from the fragment
         auto &cifSp = molecularSpecies_.emplace_back();
@@ -634,7 +634,7 @@ bool CIFHandler::detectMolecules()
         // Find instances of this fragment. For large fragments that represent > 50% of the remaining atoms we don't even
         // attempt to create a NETA definition etc. For cases such as framework species this will speed up detection no end.
         std::vector<CIFLocalMolecule> instances;
-        if (fragmentIndices.size() * 2 > allAtomIndices.size())
+        if (fragmentIndices.size() * 2 > cleanedUnitCellSpecies_.nAtoms())
         {
             // Create an instance of the current fragment
             auto &mol = instances.emplace_back();
@@ -642,14 +642,8 @@ bool CIFHandler::detectMolecules()
             for (auto i = 0; i < sp->nAtoms(); ++i)
             {
                 mol.setAtom(i, sp->atom(i).r(), sp->atom(i).index());
+                atomMask[fragmentIndices[i]] = true;
             }
-
-            allAtomIndices.erase(std::remove_if(allAtomIndices.begin(), allAtomIndices.end(),
-                                                [&](int value) {
-                                                    return std::find(fragmentIndices.begin(), fragmentIndices.end(), value) !=
-                                                           fragmentIndices.end();
-                                                }),
-                                 allAtomIndices.end());
         }
         else
         {
@@ -662,24 +656,11 @@ bool CIFHandler::detectMolecules()
                     sp->name());
 
             // Find instances of this fragment
-            instances = getSpeciesInstances(sp, bestNETA, rootAtoms);
+            instances = getSpeciesInstances(sp, atomMask, bestNETA, rootAtoms);
             if (instances.empty())
             {
                 molecularSpecies_.clear();
                 return Messenger::error("Failed to find species instances for fragment '{}'.\n", sp->name());
-            }
-
-            // Remove the current fragment and all copies
-            for (const auto &instance : instances)
-            {
-                allAtomIndices.erase(std::remove_if(allAtomIndices.begin(), allAtomIndices.end(),
-                                                    [&](int value)
-                                                    {
-                                                        return std::find(instance.unitCellIndices().begin(),
-                                                                         instance.unitCellIndices().end(),
-                                                                         value) != instance.unitCellIndices().end();
-                                                    }),
-                                     allAtomIndices.end());
             }
         }
 
@@ -687,7 +668,7 @@ bool CIFHandler::detectMolecules()
         cifSp.instances() = instances;
 
         // Search for the next valid starting index
-        idx = *std::min_element(allAtomIndices.begin(), allAtomIndices.end());
+        indexIterator = std::find(std::next(indexIterator), atomMask.end(), false);
     }
 
     Messenger::print("Partitioned unit cell into {} distinct molecular species:\n\n", molecularSpecies_.size());
@@ -1112,7 +1093,8 @@ std::tuple<NETADefinition, std::vector<SpeciesAtom *>> CIFHandler::bestNETADefin
 }
 
 // Get instances for the supplied species from the cleaned unit cell
-std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *referenceSpecies, const NETADefinition &neta,
+std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *referenceSpecies, std::vector<bool> &atomMask,
+                                                              const NETADefinition &neta,
                                                               const std::vector<SpeciesAtom *> &referenceRootAtoms)
 {
     if (referenceRootAtoms.empty() || !neta.isValid())
@@ -1145,20 +1127,20 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *ref
 
     // Loop over atoms in the unit cell - we'll mark any that we select as an instance so we speed things up and avoid
     // duplicates
-    std::vector<bool> atomFlags(cleanedUnitCellSpecies_.nAtoms());
-    std::fill(atomFlags.begin(), atomFlags.end(), false);
     const auto &unitCellAtoms = cleanedUnitCellSpecies_.atoms();
     std::vector<CIFLocalMolecule> instances;
-    for (auto i = 0; i < atomFlags.size(); ++i)
+    auto atomIndexIterator = std::find(atomMask.begin(), atomMask.end(), false);
+    while (atomIndexIterator != atomMask.end())
     {
-        if (atomFlags[i])
-            continue;
-
         // Try to match this atom / fragment
-        auto &atom = unitCellAtoms[i];
+        const auto atomIndex = atomIndexIterator - atomMask.begin();
+        auto &atom = unitCellAtoms[atomIndex];
         auto matchedUnitCellAtoms = neta.matchedPath(&atom).set();
         if (matchedUnitCellAtoms.empty())
+        {
+            atomIndexIterator = std::find(std::next(atomIndexIterator), atomMask.end(), false);
             continue;
+        }
 
         // Found a fragment that matches the NETA description - we now create a temporary instance Species which will contain
         // the selected fragment atoms, reassembled into a molecule (i.e. unfolded) and with bonding applied / calculated.
@@ -1182,14 +1164,18 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *ref
             applyCIFBonding(&instanceSpecies, preventMetallicBonds_);
         else
             instanceSpecies.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
+        instanceSpecies.print();
 
         // Create a CIFLocalMolecule as a working area for folding, translation, and rotation of the instance coordinates.
         CIFLocalMolecule instanceMolecule;
         instanceMolecule.setSpecies(&instanceSpecies);
-        // -- Copy the coordinates and indices of the matched unit cell atoms to our molecule
-        auto atomIndex = 0;
+        // -- Copy the coordinates off the matched unit cell atoms to our molecule and flag them as complete
+        auto count = 0;
         for (auto &matchedAtom : matchedUnitCellAtoms)
-            instanceMolecule.setAtom(atomIndex++, matchedAtom->r(), matchedAtom->index());
+        {
+            instanceMolecule.setAtom(count++, matchedAtom->r(), matchedAtom->index());
+            atomMask[matchedAtom->index()] = true;
+        }
         auto &instanceMoleculeRootAtom = instanceMolecule.localAtoms()[rootAtomLocalIndex];
 
         // Unfold the molecule and store the unfolded molecule coordinates back into the instance Species.
@@ -1252,10 +1238,6 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *ref
                     if (differenceResult.first < differenceTolerance)
                         break;
                 }
-
-                // Break out if we have found a basis
-                if (differenceResult.first < differenceTolerance)
-                    break;
             }
 
             // Final check on difference
@@ -1265,7 +1247,7 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *ref
                 return {};
             }
 
-            // Create the final instance and mark off the selected unit cell atom indices
+            // Create the final instance
             auto &instance = instances.emplace_back();
             instance.setSpecies(referenceSpecies);
             for (auto refSpeciesI = 0; refSpeciesI < referenceSpecies->nAtoms(); ++refSpeciesI)
@@ -1276,11 +1258,11 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *ref
                 // Set the final instance coordinates from those of our local instance species
                 instance.setAtom(refSpeciesI, instanceSpecies.atom(localSpeciesI).r(),
                                  instanceMolecule.unitCellIndices()[localSpeciesI]);
-
-                // Mark this atom as done
-                atomFlags[instanceMolecule.unitCellIndices()[localSpeciesI]] = true;
             }
         }
+
+        // Find the next available atom
+        atomIndexIterator = std::find(std::next(atomIndexIterator), atomMask.end(), false);
     }
 
     return instances;
