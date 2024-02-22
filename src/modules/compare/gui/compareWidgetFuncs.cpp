@@ -5,7 +5,6 @@
 #include "main/dissolve.h"
 #include "modules/compare/compare.h"
 #include "modules/compare/gui/compareWidget.h"
-#include <QDebug>
 
 CompareModuleWidget::CompareModuleWidget(QWidget *parent, CompareModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)
@@ -65,7 +64,7 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
         if (ui_.Data1DButton->isChecked())
         {
             auto dSourceCount = 1;
-            for (auto &[dataSourceA, dataSourceB] : module_->dataSources())
+            for (auto &[dataSourceA, dataSourceB] : module_->data1dSources())
             {
                 // Render the difference (delta) between the datasets
                 graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_Delta", module_->name(), dSourceCount),

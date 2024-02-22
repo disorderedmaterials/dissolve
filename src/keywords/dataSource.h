@@ -3,10 +3,11 @@
 
 #pragma once
 
+#include "classes/dataSource.h"
 #include "io/import/data1D.h"
 #include "io/import/data2D.h"
 #include "io/import/data3D.h"
-#include "keywords/dataSourceBase.h"
+#include "keywords/base.h"
 #include "math/data1D.h"
 #include "math/data2D.h"
 #include "math/data3D.h"
@@ -15,12 +16,32 @@
 
 // Keyword managing data sources
 // Template arguments: data class (Data1D, Data2D ...), data import file format
-template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
+template <class DataType> class DataSourceKeyword : public KeywordBase
 {
+    // Typedef
     public:
-    explicit DataSourceKeyword(std::vector<DataSourceKeywordBase::DataPair> &dataSources, std::string_view endKeyword)
-        : DataSourceKeywordBase(dataSources, endKeyword){};
+    using DataPair = std::pair<DataSource<DataType>, DataSource<DataType>>;
+
+    public:
+    DataSourceKeyword(std::vector<DataPair> &dataSources, std::string_view endKeyword)
+        : KeywordBase(typeid(this)), dataSources_(dataSources), endKeyword_(endKeyword)
+    {
+    }
+
     ~DataSourceKeyword() override = default;
+
+    /*
+     * Data
+     */
+    protected:
+    // End keyword
+    const std::string endKeyword_;
+    // Reference to module data
+    std::vector<DataPair> &dataSources_;
+
+    public:
+    // Returns reference to module data
+    std::vector<DataPair> &dataSources();
 
     /*
      * Arguments
@@ -34,9 +55,9 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         // Emplacing back on data vector and getting the reference to the objects
-        DataSource dataSourceA, dataSourceB;
+        DataSource<DataType> dataSourceA, dataSourceB;
         // Create a queue for the dataSource objects
-        std::queue<DataSource *> sourceQueue({&dataSourceA, &dataSourceB});
+        std::queue<DataSource<DataType> *> sourceQueue({&dataSourceA, &dataSourceB});
 
         // Read the next line
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -52,14 +73,14 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 break;
             }
             // If data source type supplied is valid
-            if (!DataSource::dataSourceTypes().isValid(parser.argsv(0)))
+            if (!DataSource<DataType>::dataSourceTypes().isValid(parser.argsv(0)))
             {
                 // If not, print accepted options
-                return DataSource::dataSourceTypes().errorAndPrintValid(parser.argsv(0));
+                return DataSource<DataType>::dataSourceTypes().errorAndPrintValid(parser.argsv(0));
             }
 
             // If data is internal
-            if (DataSource::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource::Internal)
+            if (DataSource<DataType>::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource<DataType>::Internal)
             {
                 // Add data to dataSource
                 sourceQueue.front()->addData(parser.argsv(1));
@@ -67,7 +88,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 sourceQueue.pop();
             }
             // If data is external
-            else if (DataSource::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource::External)
+            else if (DataSource<DataType>::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource<DataType>::External)
             {
                 // Initialise data and format objects
                 DataType data;
@@ -75,7 +96,9 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
 
                 // Read the supplied arguments
                 auto readResult = format.read(
-                    parser, 1, fmt::format("End{}", DataSource::dataSourceTypes().keyword(DataSource::External)), coreData);
+                    parser, 1,
+                    fmt::format("End{}", DataSource<DataType>::dataSourceTypes().keyword(DataSource<DataType>::External)),
+                    coreData);
 
                 if (readResult == FileAndFormat::ReadResult::UnrecognisedFormat ||
                     readResult == FileAndFormat::ReadResult::UnrecognisedOption)
@@ -106,7 +129,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
             }
         }
 
-        dataSources_.emplace_back(std::make_pair(dataSourceA, dataSourceB));
+        dataSources_.emplace_back(dataSourceA, dataSourceB);
 
         return true;
     }
@@ -170,16 +193,16 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
         // Emplacing back on data vector and getting the reference to the objects
-        DataSource dataSourceA, dataSourceB;
+        DataSource<DataType> dataSourceA, dataSourceB;
         // Create a queue for the dataSource objects
-        std::queue<DataSource *> sourceQueue({&dataSourceA, &dataSourceB});
+        std::queue<DataSource<DataType> *> sourceQueue({&dataSourceA, &dataSourceB});
 
         toVector(node,
                  [this, &coreData, &sourceQueue](const auto &item)
                  {
                      // If data source type is internal
-                     if (DataSource::dataSourceTypes().enumeration(toml::find<std::string>(item, "dataSourceType")) ==
-                             DataSource::Internal &&
+                     if (DataSource<DataType>::dataSourceTypes().enumeration(toml::find<std::string>(item, "dataSourceType")) ==
+                             DataSource<DataType>::Internal &&
                          !sourceQueue.empty())
                      {
                          // Add data to dataSource
@@ -205,6 +228,6 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                      }
                  });
 
-        dataSources_.emplace_back(std::make_pair(dataSourceA, dataSourceB));
+        dataSources_.emplace_back(dataSourceA, dataSourceB);
     }
 };
