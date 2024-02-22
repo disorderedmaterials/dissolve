@@ -620,7 +620,7 @@ bool CIFHandler::detectMolecules()
         sp->removeBox();
 
         // Set up a temporary molecule to unfold the species
-        CIFLocalMolecule tempMol;
+        LocalMolecule tempMol;
         tempMol.setSpecies(sp);
         for (auto i = 0; i < sp->nAtoms(); ++i)
             tempMol.localAtom(i).setCoordinates(sp->atom(i).r());
@@ -633,7 +633,7 @@ bool CIFHandler::detectMolecules()
 
         // Find instances of this fragment. For large fragments that represent > 50% of the remaining atoms we don't even
         // attempt to create a NETA definition etc. For cases such as framework species this will speed up detection no end.
-        std::vector<CIFLocalMolecule> instances;
+        std::vector<LocalMolecule> instances;
         if (fragmentIndices.size() * 2 > cleanedUnitCellSpecies_.nAtoms())
         {
             // Create an instance of the current fragment
@@ -730,7 +730,7 @@ bool CIFHandler::createSupercell()
         {
             const auto *sp = molecularSpecies.species().get();
             const auto &coreInstances = molecularSpecies.instances();
-            std::vector<CIFLocalMolecule> supercellInstances;
+            std::vector<LocalMolecule> supercellInstances;
             supercellInstances.reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z * coreInstances.size());
 
             // Loop over cell images
@@ -1093,9 +1093,9 @@ std::tuple<NETADefinition, std::vector<SpeciesAtom *>> CIFHandler::bestNETADefin
 }
 
 // Get instances for the supplied species from the cleaned unit cell
-std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *referenceSpecies, std::vector<bool> &atomMask,
-                                                              const NETADefinition &neta,
-                                                              const std::vector<SpeciesAtom *> &referenceRootAtoms)
+std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *referenceSpecies, std::vector<bool> &atomMask,
+                                                           const NETADefinition &neta,
+                                                           const std::vector<SpeciesAtom *> &referenceRootAtoms)
 {
     if (referenceRootAtoms.empty() || !neta.isValid())
         return {};
@@ -1128,7 +1128,7 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *ref
     // Loop over atoms in the unit cell - we'll mark any that we select as an instance so we speed things up and avoid
     // duplicates
     const auto &unitCellAtoms = cleanedUnitCellSpecies_.atoms();
-    std::vector<CIFLocalMolecule> instances;
+    std::vector<LocalMolecule> instances;
     auto atomIndexIterator = std::find(atomMask.begin(), atomMask.end(), false);
     while (atomIndexIterator != atomMask.end())
     {
@@ -1166,8 +1166,8 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *ref
             instanceSpecies.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
         instanceSpecies.print();
 
-        // Create a CIFLocalMolecule as a working area for folding, translation, and rotation of the instance coordinates.
-        CIFLocalMolecule instanceMolecule;
+        // Create a LocalMolecule as a working area for folding, translation, and rotation of the instance coordinates.
+        LocalMolecule instanceMolecule;
         instanceMolecule.setSpecies(&instanceSpecies);
         // -- Copy the coordinates off the matched unit cell atoms to our molecule and flag them as complete
         auto count = 0;
@@ -1268,7 +1268,7 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *ref
 }
 
 // Calculate difference metric between the supplied species and local molecule
-std::pair<double, std::vector<int>> CIFHandler::differenceMetric(const Species *species, const CIFLocalMolecule &molecule)
+std::pair<double, std::vector<int>> CIFHandler::differenceMetric(const Species *species, const LocalMolecule &molecule)
 {
     auto difference = 0.0;
     std::vector<int> atomIndexMap(species->nAtoms(), -1);

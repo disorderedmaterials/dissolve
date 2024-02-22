@@ -37,6 +37,7 @@ add_library(
   isotopologueSet.cpp
   isotopologueWeight.cpp
   kVector.cpp
+  localMolecule.cpp
   molecule.cpp
   moleculeDistributor.cpp
   neutronWeights.cpp
@@ -92,6 +93,7 @@ add_library(
   isotopologueSet.h
   isotopologueWeight.h
   kVector.h
+  localMolecule.h
   molecule.h
   moleculeDistributor.h
   neutronWeights.h

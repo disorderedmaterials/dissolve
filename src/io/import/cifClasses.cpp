@@ -90,66 +90,6 @@ CIFAtomGroup &CIFAssembly::getGroup(std::string_view groupName)
 int CIFAssembly::nGroups() const { return groups_.size(); }
 
 /*
- * CIF Local Molecule
- */
-
-CIFLocalMolecule::CIFLocalMolecule(const CIFLocalMolecule &copyFrom) { copyData(copyFrom); }
-
-CIFLocalMolecule::CIFLocalMolecule(CIFLocalMolecule &&moveFrom) { copyData(moveFrom); }
-
-CIFLocalMolecule &CIFLocalMolecule::operator=(const CIFLocalMolecule &copyFrom)
-{
-    copyData(copyFrom);
-    return *this;
-}
-
-CIFLocalMolecule &CIFLocalMolecule::operator=(CIFLocalMolecule &&moveFrom)
-{
-    copyData(moveFrom);
-    return *this;
-}
-
-// Copy data from specified object
-void CIFLocalMolecule::copyData(const CIFLocalMolecule &object)
-{
-    species_ = object.species_;
-
-    localAtoms_ = object.localAtoms_;
-    atoms_.resize(localAtoms_.size());
-    std::transform(localAtoms_.begin(), localAtoms_.end(), atoms_.begin(), [](auto &atom) { return &atom; });
-}
-
-// Set Species that this Molecule represents
-void CIFLocalMolecule::setSpecies(const Species *sp)
-{
-    species_ = sp;
-
-    localAtoms_.resize(sp->nAtoms());
-    atoms_.resize(sp->nAtoms());
-    std::transform(localAtoms_.begin(), localAtoms_.end(), atoms_.begin(), [](auto &atom) { return &atom; });
-
-    for (auto &&[atom, spAtom] : zip(localAtoms_, species_->atoms()))
-        atom.setSpeciesAtom(&spAtom);
-}
-
-// Add Atom to Molecule
-void CIFLocalMolecule::addAtom(Atom *atom) { throw(std::runtime_error("Can't addAtom() in a LocalMolecule.\n")); }
-
-// Update local atom pointers from main vector
-void CIFLocalMolecule::updateAtoms(std::vector<Atom> &mainAtoms, int offset)
-{
-    throw(std::runtime_error("Can't updateAtoms() in a LocalMolecule.\n"));
-}
-
-// Return nth local atom
-Atom &CIFLocalMolecule::localAtom(int n) { return localAtoms_[n]; }
-const Atom &CIFLocalMolecule::localAtom(int n) const { return localAtoms_[n]; }
-
-// Return local atoms
-std::vector<Atom> &CIFLocalMolecule::localAtoms() { return localAtoms_; }
-const std::vector<Atom> &CIFLocalMolecule::localAtoms() const { return localAtoms_; };
-
-/*
  * CIF Molecular Species
  */
 
@@ -160,11 +100,11 @@ std::shared_ptr<Species> &CIFMolecularSpecies::species() { return species_; };
 const std::shared_ptr<Species> &CIFMolecularSpecies::species() const { return species_; };
 
 // Return molecule instances
-const std::vector<CIFLocalMolecule> &CIFMolecularSpecies::instances() const { return instances_; }
-std::vector<CIFLocalMolecule> &CIFMolecularSpecies::instances() { return instances_; }
+const std::vector<LocalMolecule> &CIFMolecularSpecies::instances() const { return instances_; }
+std::vector<LocalMolecule> &CIFMolecularSpecies::instances() { return instances_; }
 
 // Append supplied instances to our vector
-void CIFMolecularSpecies::appendInstances(const std::vector<CIFLocalMolecule> &newInstances)
+void CIFMolecularSpecies::appendInstances(const std::vector<LocalMolecule> &newInstances)
 {
     // Increase our reservation
     instances_.reserve(instances_.size() + newInstances.size());
