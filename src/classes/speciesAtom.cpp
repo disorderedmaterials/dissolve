@@ -158,6 +158,37 @@ OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::getBond(const SpeciesAtom *pa
     return *result;
 }
 
+// Return pairs of atoms bound to this one which form suitable angles
+std::vector<std::pair<const SpeciesAtom*,const SpeciesAtom*>> SpeciesAtom::getAnglePairs(double maxAngle, bool uniquePairsOnly) const
+{
+    if (bonds_.size() < 2)
+        return {};
+
+    std::vector<std::pair<const SpeciesAtom*,const SpeciesAtom*>> pairs;
+
+    for (auto b1 = 0; b1 < bonds_.size() - 1; ++b1)
+    {
+        auto *i = bonds_[b1].get().partner(this);
+        for (auto b2 = b1 + 1; b2 < bonds_.size(); ++b2)
+        {
+            auto *k = bonds_[b2].get().partner(this);
+            if (i == k)
+                continue;
+
+            // Determine angle
+            auto angle = Box::literalAngleInDegrees(i->r(), r_, k->r());
+            if (angle < maxAngle)
+            {
+                pairs.emplace_back(i, k);
+                if (!uniquePairsOnly)
+                    pairs.emplace_back(k, i);
+            }
+        }
+    }
+
+    return pairs;
+}
+
 // Add specified SpeciesAngle to Atom
 void SpeciesAtom::addAngle(SpeciesAngle &angle) { angles_.emplace_back(angle); }
 

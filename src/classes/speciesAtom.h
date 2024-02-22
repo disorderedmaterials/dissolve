@@ -120,6 +120,8 @@ class SpeciesAtom : public Serialisable<CoreData &>
     const std::vector<std::reference_wrapper<SpeciesBond>> &bonds() const;
     // Return whether bond to specified atom exists
     OptionalReferenceWrapper<SpeciesBond> getBond(const SpeciesAtom *j);
+    // Return pairs of atoms bound to this one which form suitable angles
+    std::vector<std::pair<const SpeciesAtom*,const SpeciesAtom*>> getAnglePairs(double maxAngle = 170.0, bool uniquePairsOnly = true) const;
     // Add specified Angle to Atom
     void addAngle(SpeciesAngle &angle);
     // Remove angle reference
