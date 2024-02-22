@@ -142,8 +142,9 @@ class CIFLocalMolecule : public Molecule
     public:
     // Set Species that this Molecule represents
     void setSpecies(const Species *sp) override;
-    // Set coordinates and local unit cell index of the specified atom
-    void setAtom(int index, const Vec3<double> &r);
+    // Return nth local atom
+    Atom &localAtom(int n);
+    const Atom &localAtom(int n) const;
     // Return local atoms
     std::vector<Atom> &localAtoms();
     const std::vector<Atom> &localAtoms() const;

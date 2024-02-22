@@ -141,11 +141,9 @@ void CIFLocalMolecule::updateAtoms(std::vector<Atom> &mainAtoms, int offset)
     throw(std::runtime_error("Can't updateAtoms() in a LocalMolecule.\n"));
 }
 
-// Set coordinates and local unit cell index of the specified atom
-void CIFLocalMolecule::setAtom(int index, const Vec3<double> &r)
-{
-    localAtoms_[index].setCoordinates(r);
-}
+// Return nth local atom
+Atom &CIFLocalMolecule::localAtom(int n) { return localAtoms_[n]; }
+const Atom &CIFLocalMolecule::localAtom(int n) const { return localAtoms_[n]; }
 
 // Return local atoms
 std::vector<Atom> &CIFLocalMolecule::localAtoms() { return localAtoms_; }

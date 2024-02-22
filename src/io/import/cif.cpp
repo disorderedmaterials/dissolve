@@ -623,7 +623,7 @@ bool CIFHandler::detectMolecules()
         CIFLocalMolecule tempMol;
         tempMol.setSpecies(sp);
         for (auto i = 0; i < sp->nAtoms(); ++i)
-            tempMol.setAtom(i, sp->atom(i).r());
+            tempMol.localAtom(i).setCoordinates(sp->atom(i).r());
         tempMol.unFold(cleanedUnitCellSpecies_.box());
         for (auto &&[molAtom, spAtom] : zip(tempMol.localAtoms(), sp->atoms()))
             spAtom.setCoordinates(molAtom.r());
@@ -641,7 +641,7 @@ bool CIFHandler::detectMolecules()
             mol.setSpecies(sp);
             for (auto i = 0; i < sp->nAtoms(); ++i)
             {
-                mol.setAtom(i, sp->atom(i).r());
+                mol.localAtom(i).setCoordinates(sp->atom(i).r());
                 atomMask[fragmentIndices[i]] = true;
             }
         }
@@ -1171,9 +1171,9 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *ref
         instanceMolecule.setSpecies(&instanceSpecies);
         // -- Copy the coordinates off the matched unit cell atoms to our molecule and flag them as complete
         auto count = 0;
-        for (auto &matchedAtom : matchedUnitCellAtoms)
+        for (auto &&[matchedAtom, instanceMolAtom] : zip(matchedUnitCellAtoms, instanceMolecule.localAtoms()))
         {
-            instanceMolecule.setAtom(count++, matchedAtom->r());
+            instanceMolAtom.setCoordinates(matchedAtom->r());
             atomMask[matchedAtom->index()] = true;
         }
         auto &instanceMoleculeRootAtom = instanceMolecule.localAtoms()[rootAtomLocalIndex];
@@ -1256,7 +1256,7 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *ref
                 auto &localSpeciesI = differenceResult.second[refSpeciesI];
 
                 // Set the final instance coordinates from those of our local instance species
-                instance.setAtom(refSpeciesI, instanceSpecies.atom(localSpeciesI).r());
+                instance.localAtom(refSpeciesI).setCoordinates(instanceSpecies.atom(localSpeciesI).r());
             }
         }
 
