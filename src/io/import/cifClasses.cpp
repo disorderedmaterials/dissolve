@@ -115,7 +115,6 @@ void CIFLocalMolecule::copyData(const CIFLocalMolecule &object)
     species_ = object.species_;
 
     localAtoms_ = object.localAtoms_;
-    unitCellIndices_ = object.unitCellIndices_;
     atoms_.resize(localAtoms_.size());
     std::transform(localAtoms_.begin(), localAtoms_.end(), atoms_.begin(), [](auto &atom) { return &atom; });
 }
@@ -127,7 +126,6 @@ void CIFLocalMolecule::setSpecies(const Species *sp)
 
     localAtoms_.resize(sp->nAtoms());
     atoms_.resize(sp->nAtoms());
-    unitCellIndices_.resize(sp->nAtoms());
     std::transform(localAtoms_.begin(), localAtoms_.end(), atoms_.begin(), [](auto &atom) { return &atom; });
 
     for (auto &&[atom, spAtom] : zip(localAtoms_, species_->atoms()))
@@ -144,18 +142,14 @@ void CIFLocalMolecule::updateAtoms(std::vector<Atom> &mainAtoms, int offset)
 }
 
 // Set coordinates and local unit cell index of the specified atom
-void CIFLocalMolecule::setAtom(int index, const Vec3<double> &r, int unitCellIndex)
+void CIFLocalMolecule::setAtom(int index, const Vec3<double> &r)
 {
     localAtoms_[index].setCoordinates(r);
-    unitCellIndices_[index] = unitCellIndex;
 }
 
 // Return local atoms
 std::vector<Atom> &CIFLocalMolecule::localAtoms() { return localAtoms_; }
 const std::vector<Atom> &CIFLocalMolecule::localAtoms() const { return localAtoms_; };
-
-// Return local unit cell indices for the atoms
-const std::vector<int> &CIFLocalMolecule::unitCellIndices() const { return unitCellIndices_; }
 
 /*
  * CIF Molecular Species

@@ -623,7 +623,7 @@ bool CIFHandler::detectMolecules()
         CIFLocalMolecule tempMol;
         tempMol.setSpecies(sp);
         for (auto i = 0; i < sp->nAtoms(); ++i)
-            tempMol.setAtom(i, sp->atom(i).r(), i);
+            tempMol.setAtom(i, sp->atom(i).r());
         tempMol.unFold(cleanedUnitCellSpecies_.box());
         for (auto &&[molAtom, spAtom] : zip(tempMol.localAtoms(), sp->atoms()))
             spAtom.setCoordinates(molAtom.r());
@@ -641,7 +641,7 @@ bool CIFHandler::detectMolecules()
             mol.setSpecies(sp);
             for (auto i = 0; i < sp->nAtoms(); ++i)
             {
-                mol.setAtom(i, sp->atom(i).r(), sp->atom(i).index());
+                mol.setAtom(i, sp->atom(i).r());
                 atomMask[fragmentIndices[i]] = true;
             }
         }
@@ -1173,7 +1173,7 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *ref
         auto count = 0;
         for (auto &matchedAtom : matchedUnitCellAtoms)
         {
-            instanceMolecule.setAtom(count++, matchedAtom->r(), matchedAtom->index());
+            instanceMolecule.setAtom(count++, matchedAtom->r());
             atomMask[matchedAtom->index()] = true;
         }
         auto &instanceMoleculeRootAtom = instanceMolecule.localAtoms()[rootAtomLocalIndex];
@@ -1256,8 +1256,7 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *ref
                 auto &localSpeciesI = differenceResult.second[refSpeciesI];
 
                 // Set the final instance coordinates from those of our local instance species
-                instance.setAtom(refSpeciesI, instanceSpecies.atom(localSpeciesI).r(),
-                                 instanceMolecule.unitCellIndices()[localSpeciesI]);
+                instance.setAtom(refSpeciesI, instanceSpecies.atom(localSpeciesI).r());
             }
         }
 
