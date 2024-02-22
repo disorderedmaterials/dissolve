@@ -482,7 +482,7 @@ bool CIFHandler::createBasicUnitCell()
 
     // Bonding
     if (useCIFBondingDefinitions_)
-        applyCIFBonding(unitCellSpecies_, preventMetallicBonds_);
+        applyCIFBonding(&unitCellSpecies_, preventMetallicBonds_);
     else
         unitCellSpecies_.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
 
@@ -734,7 +734,7 @@ bool CIFHandler::createSupercell()
                         supercellSpecies_.addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
                 }
         if (useCIFBondingDefinitions_)
-            applyCIFBonding(supercellSpecies_, preventMetallicBonds_);
+            applyCIFBonding(&supercellSpecies_, preventMetallicBonds_);
         else
             supercellSpecies_.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
 
@@ -1029,13 +1029,13 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
  */
 
 // Apply CIF bonding to a given species
-void CIFHandler::applyCIFBonding(Species &sp, bool preventMetallicBonding)
+void CIFHandler::applyCIFBonding(Species *sp, bool preventMetallicBonding)
 {
     if (!hasBondDistances())
         return;
 
-    auto *box = sp.box();
-    auto pairs = PairIterator(sp.nAtoms());
+    auto *box = sp->box();
+    auto pairs = PairIterator(sp->nAtoms());
     for (auto pair : pairs)
     {
         // Grab indices and atom references
@@ -1043,8 +1043,8 @@ void CIFHandler::applyCIFBonding(Species &sp, bool preventMetallicBonding)
         if (indexI == indexJ)
             continue;
 
-        auto &i = sp.atom(indexI);
-        auto &j = sp.atom(indexJ);
+        auto &i = sp->atom(indexI);
+        auto &j = sp->atom(indexJ);
 
         // Prevent metallic bonding?
         if (preventMetallicBonding && Elements::isMetallic(i.Z()) && Elements::isMetallic(j.Z()))
@@ -1180,7 +1180,7 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
         auto &instanceSpeciesRootAtom = instanceSpecies.atom(rootAtomLocalIndex);
         // -- Calculate / apply bonding
         if (useCIFBondingDefinitions_)
-            applyCIFBonding(instanceSpecies, preventMetallicBonds_);
+            applyCIFBonding(&instanceSpecies, preventMetallicBonds_);
         else
             instanceSpecies.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
 
