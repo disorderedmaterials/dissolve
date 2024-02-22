@@ -8,7 +8,7 @@
 #include "qwidget.h"
 
 // Set source ModuleLayers data
-void ModuleLayersModel::setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers, const CoreData &coreData)
+void ModuleLayersModel::setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers, CoreData *coreData)
 {
     coreData_ = coreData;
 
@@ -52,7 +52,7 @@ QVariant ModuleLayersModel::data(const QModelIndex &index, int role) const
         case (static_cast<unsigned int>(ModuleLayersUserRole::ModuleLayerModel)):
         {
             auto *m = new ModuleLayerModel();
-            m->setData(data, coreData_->get());
+            m->setData(data, coreData_);
             return QVariant::fromValue(m);
         }
         default:

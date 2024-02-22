@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataNormaliser1D.h"
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
+#include "math/integrator.h"
+#include "math/sampledDouble.h"
 #include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
-#include "procedure/nodes/collect1D.h"
-#include "procedure/nodes/operateSitePopulationNormalise.h"
-#include "procedure/nodes/select.h"
-#include "procedure/nodes/sequence.h"
-#include "procedure/nodes/sum1D.h"
 
 // Run main processing
 Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
@@ -22,69 +20,97 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
-    // Ensure any parameters in our nodes are set correctly
-    collectDistance_->keywords().set("RangeX", distanceRange_);
-    if (excludeSameMolecule_)
-        selectB_->setSameMoleculeExclusions({selectA_});
-    else
-        selectB_->setSameMoleculeExclusions({});
-    cnNormaliser_->keywords().set("Site", ConstNodeVector<SelectProcedureNode>{selectA_});
+    auto &processingData = moduleContext.dissolve().processingModuleData();
 
-    // Execute the analysis
-    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
+    // Select site A
+    SiteSelector a(targetConfiguration_, a_);
+
+    // Select site B
+    SiteSelector b(targetConfiguration_, b_);
+
+    // Calculate rAB
+    auto [histAB, status] = processingData.realiseIf<Histogram1D>("Histo-AB", name(), GenericItem::InRestartFileFlag);
+    if (status == GenericItem::ItemStatus::Created)
+        histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
+    histAB.zeroBins();
+
+    for (const auto &[siteA, indexA] : a.sites())
     {
-        Messenger::error("CalculateRDF experienced problems with its analysis.\n");
-        return ExecutionResult::Failed;
+        for (const auto &[siteB, indexB] : b.sites())
+        {
+            if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
+                continue;
+            histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+        }
     }
 
-    // Accumulate instantaneous coordination number data
-    if (instantaneous_)
+    // Accumulate histogram
+    histAB.accumulate();
+
+    // RDF
+    auto &dataRDF = processingData.realise<Data1D>("RDF", name(), GenericItem::InRestartFileFlag);
+    dataRDF = histAB.accumulatedData();
+
+    // Normalise
+    DataNormaliser1D normaliserRDF(dataRDF);
+    // Normalise by A site population
+    normaliserRDF.normaliseDivide(double(a.sites().size()));
+
+    // Normalise by B site population density
+    normaliserRDF.normaliseDivide(double(b.sites().size()) / targetConfiguration_->box()->volume());
+
+    // Normalise by spherical shell
+    normaliserRDF.normaliseBySphericalShell();
+
+    // CN
+    auto &dataCN = processingData.realise<Data1D>("HistogramNorm", name(), GenericItem::InRestartFileFlag);
+    dataCN = histAB.accumulatedData();
+
+    // Normalise
+    DataNormaliser1D normaliserCN(dataCN);
+    // Normalise by A site population
+    normaliserCN.normaliseDivide(double(a.sites().size()));
+
+    const std::vector<std::string> rangeNames = {"A", "B", "C"};
+    for (int i = 0; i < 3; ++i)
+        if (rangeEnabled_[i])
+        {
+            auto &sumN = processingData.realise<SampledDouble>(fmt::format("CN//{}", rangeNames[i]), name(),
+                                                               GenericItem::InRestartFileFlag);
+            sumN += Integrator::sum(dataCN, range_[i]);
+            if (instantaneous_)
+            {
+                auto &sumNInst = processingData.realise<Data1D>(fmt::format("CN//{}Inst", rangeNames[i]), name(),
+                                                                GenericItem::InRestartFileFlag);
+                sumNInst.addPoint(moduleContext.dissolve().iteration(), sumN.value());
+                if (exportInstantaneous_)
+                {
+                    Data1DExportFileFormat exportFormat(fmt::format("{}_Sum{}.txt", name(), rangeNames[i]));
+                    if (!exportFormat.exportData(sumNInst))
+                    {
+                        Messenger::error("Failed to write instantaneous coordination number data for range {}.\n",
+                                         rangeNames[i]);
+                        return ExecutionResult::Failed;
+                    }
+                }
+            }
+        }
+
+    // Save data?
+    if (exportFileAndFormat_.hasFilename())
     {
-        if (isRangeEnabled(0))
+        if (moduleContext.processPool().isMaster())
         {
-            auto &sumA =
-                moduleContext.dissolve().processingModuleData().realise<Data1D>("SumA", name(), GenericItem::InRestartFileFlag);
-            sumA.addPoint(moduleContext.dissolve().iteration(), sumCN_->sum(0).value());
-            if (exportInstantaneous_)
+            if (exportFileAndFormat_.exportData(dataCN))
+                moduleContext.processPool().decideTrue();
+            else
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}_SumA.txt", name()));
-                if (!exportFormat.exportData(sumA))
-                {
-                    Messenger::error("Failed to write instantaneous coordination number data for range A.\n");
-                    return ExecutionResult::Failed;
-                }
+                moduleContext.processPool().decideFalse();
+                return ExecutionResult::Failed;
             }
         }
-        if (isRangeEnabled(1))
-        {
-            auto &sumB =
-                moduleContext.dissolve().processingModuleData().realise<Data1D>("SumB", name(), GenericItem::InRestartFileFlag);
-            sumB.addPoint(moduleContext.dissolve().iteration(), sumCN_->sum(1).value());
-            if (exportInstantaneous_)
-            {
-                Data1DExportFileFormat exportFormat(fmt::format("{}_SumB.txt", name()));
-                if (!exportFormat.exportData(sumB))
-                {
-                    Messenger::error("Failed to write instantaneous coordination number data for range B.\n");
-                    return ExecutionResult::Failed;
-                }
-            }
-        }
-        if (isRangeEnabled(2))
-        {
-            auto &sumC =
-                moduleContext.dissolve().processingModuleData().realise<Data1D>("SumC", name(), GenericItem::InRestartFileFlag);
-            sumC.addPoint(moduleContext.dissolve().iteration(), sumCN_->sum(2).value());
-            if (exportInstantaneous_)
-            {
-                Data1DExportFileFormat exportFormat(fmt::format("{}_SumC.txt", name()));
-                if (!exportFormat.exportData(sumC))
-                {
-                    Messenger::error("Failed to write instantaneous coordination number data for range C.\n");
-                    return ExecutionResult::Failed;
-                }
-            }
-        }
+        else if (!moduleContext.processPool().decision())
+            return ExecutionResult::Failed;
     }
 
     return ExecutionResult::Success;

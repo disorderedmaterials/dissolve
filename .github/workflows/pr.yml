@@ -22,29 +22,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Setup
       uses: "./.github/workflows/setup"
     - name: Quality Control
       uses: "./.github/workflows/qc"
 
   Build:
-    needs: QC
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: macos-latest
-            osx_cmake_target: x86_64
-            osx_conan_target: x86_64
-          - os: windows-latest
+        os: [ macos-latest, macos-14, windows-latest ]
     runs-on: ${{ matrix.os }}
-    env:
-      OSX_CMAKE_TARGET: ${{ matrix.osx_cmake_target }}
-      OSX_CONAN_TARGET: ${{ matrix.osx_conan_target }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup
         uses: "./.github/workflows/setup"
       - name: Set Short Hash
@@ -53,7 +45,6 @@ jobs:
         uses: "./.github/workflows/build"
 
   BuildLinux:
-    needs: QC
     strategy:
       fail-fast: false
       matrix:
@@ -61,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Setup
       uses: "./.github/workflows/setup"
     - name: Set Short Hash
@@ -72,18 +63,15 @@ jobs:
         target: ${{ matrix.target }}
 
   Package:
-    needs: [ Build, BuildLinux ]
+    needs: Build
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, windows-latest ]
+        os: [ macos-latest, macos-14, windows-latest ]
     runs-on: ${{ matrix.os }}
-    env:
-      OSX_CMAKE_TARGET: ${{ matrix.osx_cmake_target }}
-      OSX_CONAN_TARGET: ${{ matrix.osx_conan_target }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup
         uses: "./.github/workflows/setup"
       - name: "Package (${{ matrix.os }})"

@@ -95,16 +95,16 @@ std::optional<int> IntegerHistogram1D::minimum() const { return minimum_; }
 std::optional<int> IntegerHistogram1D::maximum() const { return maximum_; }
 
 // Bin specified value, returning success
-bool IntegerHistogram1D::bin(int x)
+bool IntegerHistogram1D::bin(int x, int count)
 {
     if ((minimum_ && x < *minimum_) || (maximum_ && x > *maximum_))
     {
-        nMissed_++;
+        nMissed_ += count;
         return false;
     }
 
-    raw_[x]++;
-    ++nBinned_;
+    raw_[x] += count;
+    nBinned_ += count;
 
     return true;
 }
@@ -142,6 +142,9 @@ Data1D IntegerHistogram1D::data() const
 
     return result;
 }
+
+// Return average map
+const std::map<int, SampledDouble> &IntegerHistogram1D::averages() const { return averages_; }
 
 // Return accumulated (averaged) data
 const Data1D &IntegerHistogram1D::accumulatedData() const { return accumulatedData_; }
@@ -196,14 +199,14 @@ bool IntegerHistogram1D::serialise(LineParser &parser) const
     if (!zeroCounter_.serialise(parser))
         return false;
 
-    if (!parser.writeLineF("{}\n", raw_.size()))
+    if (!parser.writeLineF("{}\n", averages_.size()))
         return false;
 
-    for (auto &[key, value] : raw_)
+    for (auto &[key, value] : averages_)
     {
-        if (!parser.writeLineF("{} {}\n", key, value))
+        if (!parser.writeLineF("{} {}\n", key, raw_.at(key)))
             return false;
-        if (!averages_.at(key).serialise(parser))
+        if (!value.serialise(parser))
             return false;
     }
 

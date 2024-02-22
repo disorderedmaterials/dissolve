@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/coreData.h"
-#include "gui/keywordWidgets/optionalDouble.hui"
+#include "gui/keywordWidgets/optionalDouble.h"
 #include <QApplication>
 #include <gtest/gtest.h>
 

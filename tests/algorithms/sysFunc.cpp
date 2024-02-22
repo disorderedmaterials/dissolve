@@ -128,9 +128,8 @@ TEST(SysFunc, StringManipulation)
     auto &exc = names.emplace_back("IAmUnique01");
     EXPECT_FALSE(DissolveSys::uniqueName("IAmUnique", names, [](const auto &obj) { return obj.name; }) == "IAmUnique01");
     EXPECT_TRUE(DissolveSys::uniqueName("IAmUnique", names, [](const auto &obj) { return obj.name; }) == "IAmUnique02");
-    EXPECT_TRUE(
-        DissolveSys::uniqueName("IAmUnique", names, [&](const auto &obj) { return &exc == &obj ? std::string() : obj.name; }) ==
-        "IAmUnique01");
+    EXPECT_TRUE(DissolveSys::uniqueName("IAmUnique", names, [&](const auto &obj) { return &exc == &obj ? "" : obj.name; }) ==
+                "IAmUnique01");
 }
 
 } // namespace UnitTest

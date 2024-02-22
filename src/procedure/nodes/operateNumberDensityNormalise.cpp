@@ -32,7 +32,7 @@ OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedu
 // Operate on Data1D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData1D(const ProcessPool &procPool, Configuration *cfg)
 {
-    for (const auto node : normalisationSites_)
+    for (const auto &node : normalisationSites_)
         if (targetPopulation_ == SelectProcedureNode::SelectionPopulation::Average)
             (*targetData1D_) /= (node->nAverageSites() / cfg->box()->volume());
         else if (targetPopulation_ == SelectProcedureNode::SelectionPopulation::Available)
@@ -44,7 +44,7 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData1D(const ProcessPool
 // Operate on Data2D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData2D(const ProcessPool &procPool, Configuration *cfg)
 {
-    for (const auto node : normalisationSites_)
+    for (const auto &node : normalisationSites_)
         if (targetPopulation_ == SelectProcedureNode::SelectionPopulation::Average)
             (*targetData2D_) /= (node->nAverageSites() / cfg->box()->volume());
         else if (targetPopulation_ == SelectProcedureNode::SelectionPopulation::Available)
@@ -56,7 +56,7 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData2D(const ProcessPool
 // Operate on Data3D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData3D(const ProcessPool &procPool, Configuration *cfg)
 {
-    for (const auto node : normalisationSites_)
+    for (const auto &node : normalisationSites_)
         if (targetPopulation_ == SelectProcedureNode::SelectionPopulation::Average)
             (*targetData3D_) /= (node->nAverageSites() / cfg->box()->volume());
         else if (targetPopulation_ == SelectProcedureNode::SelectionPopulation::Available)

@@ -59,7 +59,7 @@ void OrientedSDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFla
     // Update available reference molecule combo
     std::vector<std::pair<Species *, std::string>> refMolecules;
     // -- Find available AvgMol results
-    auto avgMolModules = Module::allOfType<AvgMolModule>();
+    auto avgMolModules = dissolve_.coreData().allOfType<AvgMolModule>();
     for (AvgMolModule *module : avgMolModules)
         refMolecules.emplace_back(&module->averageSpecies(), fmt::format("{} (AvgMol)", module->averageSpecies().name()));
     // -- Add on current species
@@ -77,8 +77,8 @@ void OrientedSDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFla
     // Create SDF renderable if it doesn't already exist
     if (!sdfRenderable_)
     {
-        sdfRenderable_ = sdfGraph_->createRenderable<RenderableData3D>(fmt::format("{}//Process3D//SDF", module_->name()),
-                                                                       fmt::format("SDF"));
+        sdfRenderable_ =
+            sdfGraph_->createRenderable<RenderableData3D>(fmt::format("{}//SDF", module_->name()), fmt::format("SDF"));
         sdfRenderable_->setColour(StockColours::BlueStockColour);
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)

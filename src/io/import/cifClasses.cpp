@@ -4,6 +4,7 @@
 #include "io/import/cifClasses.h"
 #include "classes/empiricalFormula.h"
 #include "classes/molecule.h"
+#include "classes/species.h"
 
 /*
  * CIF Symmetry-Unique Atom
@@ -89,26 +90,109 @@ CIFAtomGroup &CIFAssembly::getGroup(std::string_view groupName)
 int CIFAssembly::nGroups() const { return groups_.size(); }
 
 /*
+ * CIF Local Molecule
+ */
+
+CIFLocalMolecule::CIFLocalMolecule(const CIFLocalMolecule &copyFrom) { copyData(copyFrom); }
+
+CIFLocalMolecule::CIFLocalMolecule(CIFLocalMolecule &&moveFrom) { copyData(moveFrom); }
+
+CIFLocalMolecule &CIFLocalMolecule::operator=(const CIFLocalMolecule &copyFrom)
+{
+    copyData(copyFrom);
+    return *this;
+}
+
+CIFLocalMolecule &CIFLocalMolecule::operator=(CIFLocalMolecule &&moveFrom)
+{
+    copyData(moveFrom);
+    return *this;
+}
+
+// Copy data from specified object
+void CIFLocalMolecule::copyData(const CIFLocalMolecule &object)
+{
+    species_ = object.species_;
+
+    localAtoms_ = object.localAtoms_;
+    unitCellIndices_ = object.unitCellIndices_;
+    atoms_.resize(localAtoms_.size());
+    std::transform(localAtoms_.begin(), localAtoms_.end(), atoms_.begin(), [](auto &atom) { return &atom; });
+}
+
+// Set Species that this Molecule represents
+void CIFLocalMolecule::setSpecies(const Species *sp)
+{
+    species_ = sp;
+
+    localAtoms_.resize(sp->nAtoms());
+    atoms_.resize(sp->nAtoms());
+    unitCellIndices_.resize(sp->nAtoms());
+    std::transform(localAtoms_.begin(), localAtoms_.end(), atoms_.begin(), [](auto &atom) { return &atom; });
+
+    for (auto &&[atom, spAtom] : zip(localAtoms_, species_->atoms()))
+        atom.setSpeciesAtom(&spAtom);
+}
+
+// Add Atom to Molecule
+void CIFLocalMolecule::addAtom(Atom *atom) { throw(std::runtime_error("Can't addAtom() in a LocalMolecule.\n")); }
+
+// Update local atom pointers from main vector
+void CIFLocalMolecule::updateAtoms(std::vector<Atom> &mainAtoms, int offset)
+{
+    throw(std::runtime_error("Can't updateAtoms() in a LocalMolecule.\n"));
+}
+
+// Set coordinates and local unit cell index of the specified atom
+void CIFLocalMolecule::setAtom(int index, const Vec3<double> &r, int unitCellIndex)
+{
+    localAtoms_[index].setCoordinates(r);
+    unitCellIndices_[index] = unitCellIndex;
+}
+
+// Return local atoms
+std::vector<Atom> &CIFLocalMolecule::localAtoms() { return localAtoms_; }
+const std::vector<Atom> &CIFLocalMolecule::localAtoms() const { return localAtoms_; };
+
+// Return local unit cell indices for the atoms
+const std::vector<int> &CIFLocalMolecule::unitCellIndices() const { return unitCellIndices_; }
+
+/*
  * CIF Molecular Species
  */
 
-CIFMolecularSpecies::CIFMolecularSpecies(const Species *targetSpecies, std::string_view netaString,
-                                         std::vector<std::vector<int>> instances,
-                                         std::vector<std::vector<Vec3<double>>> coordinates)
-    : species_(targetSpecies), netaString_(netaString), instances_(instances), coordinates_(coordinates)
+CIFMolecularSpecies::CIFMolecularSpecies() : species_(std::make_shared<Species>()) {}
+
+// Return species parent for molecule instances
+std::shared_ptr<Species> &CIFMolecularSpecies::species() { return species_; };
+const std::shared_ptr<Species> &CIFMolecularSpecies::species() const { return species_; };
+
+// Return molecule instances
+const std::vector<CIFLocalMolecule> &CIFMolecularSpecies::instances() const { return instances_; }
+std::vector<CIFLocalMolecule> &CIFMolecularSpecies::instances() { return instances_; }
+
+// Append supplied instances to our vector
+void CIFMolecularSpecies::appendInstances(const std::vector<CIFLocalMolecule> &newInstances)
 {
+    // Increase our reservation
+    instances_.reserve(instances_.size() + newInstances.size());
+    instances_.insert(instances_.end(), newInstances.begin(), newInstances.end());
 }
 
-// Return species to which the definitions relate
-const Species *CIFMolecularSpecies::species() const { return species_; };
+// Return coordinates for all instances as a vector of vectors
+std::vector<std::vector<Vec3<double>>> CIFMolecularSpecies::allInstanceCoordinates() const
+{
+    std::vector<std::vector<Vec3<double>>> coordinates;
 
-// Return NETA string for the species
-std::string_view CIFMolecularSpecies::netaString() const { return netaString_; };
+    for (auto &instance : instances_)
+    {
+        std::vector<Vec3<double>> instanceCoords;
+        instanceCoords.reserve(species_->nAtoms());
+        for (auto &atom : instance.localAtoms())
+            instanceCoords.emplace_back(atom.r());
 
-// Return indices of instances (copies)
-const std::vector<std::vector<int>> &CIFMolecularSpecies::instances() const { return instances_; };
+        coordinates.emplace_back(instanceCoords);
+    }
 
-// Return coordinates of instances
-const std::vector<std::vector<Vec3<double>>> &CIFMolecularSpecies::coordinates() const { return coordinates_; }
-
-std::vector<std::vector<Vec3<double>>> &CIFMolecularSpecies::coordinates() { return coordinates_; }
+    return coordinates;
+}

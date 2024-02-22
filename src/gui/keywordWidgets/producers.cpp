@@ -4,16 +4,16 @@
 #include "gui/keywordWidgets/producers.h"
 #include "gui/keywordWidgets/atomTypeVector.h"
 #include "gui/keywordWidgets/base.h"
-#include "gui/keywordWidgets/bool.hui"
+#include "gui/keywordWidgets/bool.h"
 #include "gui/keywordWidgets/configuration.h"
 #include "gui/keywordWidgets/configurationVector.h"
-#include "gui/keywordWidgets/double.hui"
-#include "gui/keywordWidgets/dropWidget.hui"
-#include "gui/keywordWidgets/enumOptions.hui"
+#include "gui/keywordWidgets/double.h"
+#include "gui/keywordWidgets/dropWidget.h"
+#include "gui/keywordWidgets/enumOptions.h"
 #include "gui/keywordWidgets/expressionVariableVector.h"
 #include "gui/keywordWidgets/fileAndFormat.h"
 #include "gui/keywordWidgets/function1D.h"
-#include "gui/keywordWidgets/integer.hui"
+#include "gui/keywordWidgets/integer.h"
 #include "gui/keywordWidgets/interactionPotential.h"
 #include "gui/keywordWidgets/isotopologueSet.h"
 #include "gui/keywordWidgets/layer.h"
@@ -24,15 +24,15 @@
 #include "gui/keywordWidgets/nodeValue.h"
 #include "gui/keywordWidgets/nodeValueEnumOptions.h"
 #include "gui/keywordWidgets/nodeVector.h"
-#include "gui/keywordWidgets/optionalDouble.hui"
-#include "gui/keywordWidgets/optionalInt.hui"
+#include "gui/keywordWidgets/optionalDouble.h"
+#include "gui/keywordWidgets/optionalInt.h"
 #include "gui/keywordWidgets/range.h"
 #include "gui/keywordWidgets/rangeVector.h"
 #include "gui/keywordWidgets/species.h"
 #include "gui/keywordWidgets/speciesSite.h"
 #include "gui/keywordWidgets/speciesSiteVector.h"
 #include "gui/keywordWidgets/speciesVector.h"
-#include "gui/keywordWidgets/stdString.hui"
+#include "gui/keywordWidgets/stdString.h"
 #include "gui/keywordWidgets/vec3Double.h"
 #include "gui/keywordWidgets/vec3Integer.h"
 #include "gui/keywordWidgets/vec3NodeValue.h"
@@ -97,7 +97,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
  */
 
 // Produce object of specified type
-std::pair<QWidget *, KeywordWidgetBase *> KeywordWidgetProducer::produce(KeywordBase *keyword, const CoreData &coreData) const
+std::pair<QWidget *, KeywordWidgetBase *> KeywordWidgetProducer::produce(KeywordBase *keyword, CoreData &coreData) const
 {
     auto it = producers_.find(keyword->typeIndex());
     if (it == producers_.end())

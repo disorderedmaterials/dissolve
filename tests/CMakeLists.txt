@@ -3,6 +3,7 @@
 # Set policy for GoogleTest
 cmake_policy(SET CMP0054 NEW)
 find_package(GTest REQUIRED)
+include(GoogleTest)
 
 function(dissolve_add_test)
 
@@ -36,26 +37,17 @@ function(dissolve_add_test)
     ${TEST_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${PROJECT_SOURCE_DIR} ${CONAN_INCLUDE_DIRS_GTEST}
                          ${CONAN_INCLUDE_DIRS_PUGIXML}
   )
-  if(CONAN)
-    target_link_libraries(
-      ${TEST_NAME}
-      PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
-      PRIVATE ${EXTRA_LINK_LIBS} GTest::gtest_main
-      INTERFACE CONAN_PKG::fmt CONAN_PKG::cli11 CONAN_PKG::antlr4-cppruntime
-    )
-  else(CONAN)
-    target_link_libraries(
-      ${TEST_NAME}
-      PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
-      PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS} GTest::gtest_main
-    )
-  endif(CONAN)
+  target_link_libraries(
+    ${TEST_NAME}
+    PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
+    PRIVATE ${CORE_LINK_LIBS} GTest::gtest_main
+  )
 
   if(DISSOLVE_UNIT_TEST_GUI)
     target_include_directories(${TEST_NAME} PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
     target_link_libraries(
       ${TEST_NAME}
-      PUBLIC keywordWidgets models widgets
+      PUBLIC keywordWidgets models widgets render delegates
       PRIVATE Qt6::Core Qt6::Widgets
     )
   endif(DISSOLVE_UNIT_TEST_GUI)

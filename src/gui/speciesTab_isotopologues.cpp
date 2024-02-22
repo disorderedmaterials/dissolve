@@ -65,10 +65,9 @@ void SpeciesTab::on_IsotopologuesTree_customContextMenuRequested(const QPoint &p
 
         // Set a unique name for the new isotopologue
         auto newIso = isos_.data(newIndex, Qt::UserRole).value<Isotopologue *>();
-        isos_.setData(newIndex,
-                      QString::fromStdString(DissolveSys::uniqueName(
-                          iso->name(), species_->isotopologues(),
-                          [newIso](const auto &oldIso) { return newIso == oldIso.get() ? std::string() : oldIso->name(); })));
+        isos_.setData(newIndex, QString::fromStdString(DissolveSys::uniqueName(
+                                    iso->name(), species_->isotopologues(),
+                                    [newIso](const auto &oldIso) { return newIso == oldIso.get() ? "" : oldIso->name(); })));
 
         auto row = 0;
         for (const auto &[atomType, tope] : iso->isotopes())
@@ -95,7 +94,7 @@ void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
         return;
 
     // Notify all keywords that our Isotopologue is about to be removed
-    KeywordStore::objectNoLongerValid<Isotopologue>(iso);
+    dissolve_.coreData().removeReferencesTo(iso);
     dissolveWindow_->setModified(DissolveSignals::DataMutations::IsotopologuesMutated);
 
     // Finally, remove the Isotopologue from the Species

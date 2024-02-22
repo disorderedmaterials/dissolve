@@ -17,7 +17,7 @@ Module *ModuleLayerModel::rawData(const QModelIndex &index) const
 }
 
 // Set source data
-void ModuleLayerModel::setData(ModuleLayer *moduleLayer, const CoreData &coreData)
+void ModuleLayerModel::setData(ModuleLayer *moduleLayer, CoreData *coreData)
 {
     coreData_ = coreData;
 
@@ -103,18 +103,6 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
 
         return true;
     }
-    else if (role == ModuleLayerModelAction::CreateNew)
-    {
-        // Probably indicates a drop operation - the "value" is the type of the module to create at the specified index
-        auto moduleType = (ModuleTypes::ModuleType)value.toInt();
-        moduleLayer_->modules()[index.row()] = ModuleRegistry::create(moduleType);
-        auto *modulePtr = moduleLayer_->modules()[index.row()].get();
-        modulePtr->setTargets(coreData_->get().configurations(), moduleLayer_->modulesAsMap(modulePtr));
-
-        Q_EMIT dataChanged(index, index);
-
-        return true;
-    }
 
     auto *module = rawData(index);
 
@@ -132,7 +120,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
     }
     else if (index.column() == DataColumns::NameColumn)
     {
-        if (role == Qt::EditRole)
+        if (role == Qt::EditRole && coreData_)
         {
             // Check for identical old/new names
             if (value.toString() == QString::fromStdString(std::string(module->name())))
@@ -141,8 +129,8 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
             // Ensure uniqueness of new name
             auto oldName = QString::fromStdString(std::string(module->name()));
             auto newName =
-                DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()), Module::instances(),
-                                        [&](const auto &inst) { return inst == module ? std::string() : inst->name(); });
+                DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()), coreData_->moduleInstances(),
+                                        [&](const auto &inst) { return inst == module ? "" : inst->name(); });
             module->setName(newName);
 
             Q_EMIT(dataChanged(index, index));
@@ -281,12 +269,17 @@ bool ModuleLayerModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         if (insertAtRow == -1)
             insertAtRow = rowCount();
 
+        // Create a new module of the specified type
+        auto newModule = ModuleRegistry::create(*coreData_, *moduleType);
+        newModule->setTargets(coreData_->configurations(), moduleLayer_->modulesAsMap(newModule.get()));
+
         // Create a new row to store the data (the soon-to-be-empty row will be deleted automatically by the model)
         insertRows(insertAtRow, 1, QModelIndex());
         auto idx = index(insertAtRow, 0, QModelIndex());
+        moduleLayer_->modules()[idx.row()] = std::move(newModule);
 
-        // Create a new module of the specified type at the index we just inserted
-        setData(idx, *moduleType, ModuleLayerModelAction::CreateNew);
+        // Update the model
+        Q_EMIT dataChanged(idx, idx);
 
         return true;
     }
@@ -318,7 +311,7 @@ bool ModuleLayerModel::removeRows(int row, int count, const QModelIndex &parent)
     beginRemoveRows(parent, row, row + count - 1);
     for (auto i = 0; i < count; ++i)
     {
-        KeywordStore::objectNoLongerValid(moduleLayer_->modules()[row].get());
+        coreData_->removeReferencesTo(moduleLayer_->modules()[row].get());
         moduleLayer_->modules().erase(moduleLayer_->modules().begin() + row);
     }
     endRemoveRows();
@@ -335,12 +328,17 @@ QModelIndex ModuleLayerModel::appendNew(const QString &moduleTypeString)
     // Get the target row for the new module
     auto insertAtRow = rowCount();
 
+    // Create a new module of the specified type
+    auto newModule = ModuleRegistry::create(*coreData_, *moduleType);
+    newModule->setTargets(coreData_->configurations(), moduleLayer_->modulesAsMap(newModule.get()));
+
     // Create a new row to store the data (the soon-to-be-empty row will be deleted automatically by the model)
     insertRows(insertAtRow, 1, QModelIndex());
     auto idx = index(insertAtRow, 0, QModelIndex());
+    moduleLayer_->modules()[idx.row()] = std::move(newModule);
 
-    // Create a new module of the specified type at the index we just inserted
-    setData(idx, *moduleType, ModuleLayerModelAction::CreateNew);
+    // Update the model
+    Q_EMIT dataChanged(idx, idx);
 
     return idx;
 }

@@ -5,9 +5,10 @@
 
 #include "base/timer.h"
 #include "gui/mainTab.h"
-#include "gui/outputHandler.hui"
+#include "gui/models/modifyChargesModel.h"
+#include "gui/outputHandler.h"
 #include "gui/signals.h"
-#include "gui/thread.hui"
+#include "gui/thread.h"
 #include "gui/ui_gui.h"
 
 // Forward Declarations
@@ -108,6 +109,13 @@ class DissolveWindow : public QMainWindow
     void updateWhileRunning(int iterationsRemaining);
     // Clear the messages window
     void clearMessages();
+
+    /*
+     * Shared Dialog Models
+     */
+    private:
+    ModifyChargesModel modifyChargesModel_;
+
     /*
      * Main Menu
      */

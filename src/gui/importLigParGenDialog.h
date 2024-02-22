@@ -12,7 +12,7 @@
 #include "gui/models/xmlTorsionModel.h"
 #include "gui/models/xmlTreeModel.h"
 #include "gui/ui_importLigParGenDialog.h"
-#include "gui/wizard.hui"
+#include "gui/wizard.h"
 #include <QDialog>
 
 // Forward Declarations

@@ -38,8 +38,8 @@ std::shared_ptr<AtomType> CoreData::addAtomType(Elements::Element Z)
     atomTypes_.push_back(newAtomType);
 
     // Create a suitable unique name
-    newAtomType->setName(DissolveSys::uniqueName(
-        Elements::symbol(Z), atomTypes_, [&](const auto &at) { return newAtomType == at ? std::string() : at->name(); }));
+    newAtomType->setName(DissolveSys::uniqueName(Elements::symbol(Z), atomTypes_,
+                                                 [&](const auto &at) { return newAtomType == at ? "" : at->name(); }));
 
     // Set data
     newAtomType->setZ(Z);
@@ -309,8 +309,8 @@ Species *CoreData::addSpecies()
     auto &newSpecies = species_.emplace_back(std::make_unique<Species>());
 
     // Create a suitable unique name
-    newSpecies->setName(DissolveSys::uniqueName("NewSpecies", species_,
-                                                [&](const auto &sp) { return newSpecies == sp ? std::string() : sp->name(); }));
+    newSpecies->setName(
+        DissolveSys::uniqueName("NewSpecies", species_, [&](const auto &sp) { return newSpecies == sp ? "" : sp->name(); }));
 
     return newSpecies.get();
 }
@@ -433,8 +433,8 @@ Species *CoreData::copySpecies(const Species *species)
 {
     // Create our new Species
     Species *newSpecies = addSpecies();
-    newSpecies->setName(DissolveSys::uniqueName(
-        species->name(), species_, [&](const auto &sp) { return newSpecies == sp.get() ? std::string() : sp->name(); }));
+    newSpecies->setName(DissolveSys::uniqueName(species->name(), species_,
+                                                [&](const auto &sp) { return newSpecies == sp.get() ? "" : sp->name(); }));
 
     // Copy Box definition if one exists
     if (species->box()->type() != Box::BoxType::NonPeriodic)
@@ -497,9 +497,8 @@ Configuration *CoreData::addConfiguration()
     auto &newConfiguration = configurations_.emplace_back(std::make_unique<Configuration>());
 
     // Create a suitable unique name
-    newConfiguration->setName(DissolveSys::uniqueName("NewConfiguration", configurations_,
-                                                      [&](const auto &cfg)
-                                                      { return newConfiguration == cfg ? std::string() : cfg->name(); }));
+    newConfiguration->setName(DissolveSys::uniqueName(
+        "NewConfiguration", configurations_, [&](const auto &cfg) { return newConfiguration == cfg ? "" : cfg->name(); }));
 
     return newConfiguration.get();
 }
@@ -646,16 +645,69 @@ void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deseria
  * Object Management
  */
 
+// Templated remove all references to the specified data in a CoreData
+template <class O> void objectNoLongerValid(CoreData *coreData, O *object)
+{
+    // Loop over all keyword objects and call their local functions
+    for (auto &layer : coreData->processingLayers())
+        for (auto &mod : layer->modules())
+            mod->keywords().objectNoLongerValid(object);
+}
+
 // Remove all references to the specified data
-void CoreData::removeReferencesTo(Module *data) { KeywordStore::objectNoLongerValid(data); }
-void CoreData::removeReferencesTo(Configuration *data) { KeywordStore::objectNoLongerValid(data); }
+void CoreData::removeReferencesTo(Module *data) { objectNoLongerValid(this, data); }
+void CoreData::removeReferencesTo(Isotopologue *data) { objectNoLongerValid(this, data); }
+void CoreData::removeReferencesTo(Configuration *data) { objectNoLongerValid(this, data); }
 void CoreData::removeReferencesTo(Species *data)
 {
-    KeywordStore::objectNoLongerValid(data);
+    objectNoLongerValid(this, data);
 
     // Check Configurations - if the Species was used, we must clear the configuration contents
     for (auto &cfg : configurations_)
         if (cfg->containsSpecies(data))
             cfg->empty();
 }
-void CoreData::removeReferencesTo(SpeciesSite *data) { KeywordStore::objectNoLongerValid(data); }
+void CoreData::removeReferencesTo(SpeciesSite *data) { objectNoLongerValid(this, data); }
+
+/*
+ * Modules
+ */
+
+// Return vector of all existing Modules
+const std::vector<Module *> CoreData::moduleInstances() const
+{
+    std::vector<Module *> result{};
+    for (auto &layer : processingLayers())
+        std::transform(layer->modules().begin(), layer->modules().end(), std::back_inserter(result),
+                       [](auto &source) { return source.get(); });
+
+    return result;
+}
+
+// Search for any instance of any module with the specified unique name
+Module *CoreData::findModule(std::string_view uniqueName) const
+{
+    auto instances = moduleInstances();
+    auto it = std::find_if(instances.begin(), instances.end(),
+                           [uniqueName](const auto *m) { return DissolveSys::sameString(m->name(), uniqueName); });
+    if (it != instances.end())
+        return *it;
+
+    return nullptr;
+}
+
+// Search for and return any instance(s) of the specified Module type
+std::vector<Module *> CoreData::allOfType(ModuleTypes::ModuleType type) const
+{
+    return allOfType(std::vector<ModuleTypes::ModuleType>{type});
+}
+
+// Search for and return any instance(s) of the specified Module type
+std::vector<Module *> CoreData::allOfType(std::vector<ModuleTypes::ModuleType> types) const
+{
+    std::vector<Module *> modules;
+    auto instances = moduleInstances();
+    std::copy_if(instances.begin(), instances.end(), std::back_inserter(modules),
+                 [&types](const auto *m) { return std::find(types.begin(), types.end(), m->type()) != types.end(); });
+    return modules;
+}

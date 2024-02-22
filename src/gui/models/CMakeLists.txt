@@ -17,6 +17,7 @@ set(models_MOC_HDRS
     masterTermModel.h
     masterTermTreeModel.h
     masterTorsionModel.h
+    modifyChargesModel.h
     moduleLayerModel.h
     moduleLayersModel.h
     moduleModel.h
@@ -78,6 +79,7 @@ set(models_SRCS
     masterTermModel.cpp
     masterTermTreeModel.cpp
     masterTorsionModel.cpp
+    modifyChargesModel.cpp
     moduleLayerModel.cpp
     moduleLayersModel.cpp
     moduleModel.cpp
@@ -153,9 +155,3 @@ target_include_directories(
 if(MSVC)
   target_compile_options(models PUBLIC /Zc:__cplusplus)
 endif(MSVC)
-
-if(CONAN)
-  target_link_libraries(models PUBLIC CONAN_PKG::pugixml ${THREADING_LINK_LIBS})
-else(CONAN)
-  target_link_libraries(models PUBLIC pugixml::pugixml ${THREADING_LINK_LIBS})
-endif(CONAN)

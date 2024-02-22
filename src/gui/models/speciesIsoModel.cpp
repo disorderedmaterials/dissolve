@@ -3,7 +3,7 @@
 
 #include "gui/models/speciesIsoModel.h"
 #include "classes/atomType.h"
-#include "gui/delegates/isotopeCombo.hui"
+#include "gui/delegates/isotopeCombo.h"
 
 SpeciesIsoModel::SpeciesIsoModel(Species &species) : species_(species) {}
 
@@ -135,7 +135,7 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
     {
         auto iso = species_.isotopologue(index.row());
         iso->setName(DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()), species_.isotopologues(),
-                                             [&](const auto &i) { return iso == i.get() ? std::string() : i->name(); }));
+                                             [&](const auto &i) { return iso == i.get() ? "" : i->name(); }));
         Q_EMIT(dataChanged(index, index));
         return true;
     }
