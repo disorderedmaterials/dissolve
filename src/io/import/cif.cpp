@@ -600,34 +600,36 @@ bool CIFHandler::detectMolecules()
     {
         // Select a fragment
         auto fragmentIndices = cleanedUnitCellSpecies_.fragment(idx);
-        std::sort(fragmentIndices.begin(), fragmentIndices.end());
 
-        // Create a new CIF molecular species
+        // Create a new CIF molecular species from the fragment
         auto &cifSp = molecularSpecies_.emplace_back();
         auto *sp = cifSp.species().get();
-        sp->copyBasic(&cleanedUnitCellSpecies_);
+        // -- Copy selected atoms
+        for (auto fragAtomIndex : fragmentIndices)
+        {
+            const auto &unitCellAtom = cleanedUnitCellSpecies_.atom(fragAtomIndex);
+            sp->addAtom(unitCellAtom.Z(), unitCellAtom.r(), 0.0, unitCellAtom.atomType());
+        }
 
-        // Empty the species of all atoms, except those in the reference instance
-        std::vector<int> speciesAtomIndices(sp->nAtoms());
-        std::iota(speciesAtomIndices.begin(), speciesAtomIndices.end(), 0);
-        std::vector<int> indicesToRemove;
-        std::set_difference(speciesAtomIndices.begin(), speciesAtomIndices.end(), fragmentIndices.begin(),
-                            fragmentIndices.end(), std::back_inserter(indicesToRemove));
-        sp->removeAtoms(indicesToRemove);
+        // Give the species a temporary unit cell so we can calculate / apply bonding
+        sp->createBox(cleanedUnitCellSpecies_.box()->axisLengths(), cleanedUnitCellSpecies_.box()->axisAngles());
+        if (useCIFBondingDefinitions_)
+            applyCIFBonding(sp, preventMetallicBonds_);
+        else
+            sp->addMissingBonds(bondingTolerance_, preventMetallicBonds_);
+        sp->removeBox();
 
-        // Give the species a name
-        sp->setName(EmpiricalFormula::formula(sp->atoms(), [&](const auto &at) { return at.Z(); }));
-
-        // Fix geometry of the extracted species
+        // Set up a temporary molecule to unfold the species
         CIFLocalMolecule tempMol;
         tempMol.setSpecies(sp);
         for (auto i = 0; i < sp->nAtoms(); ++i)
             tempMol.setAtom(i, sp->atom(i).r(), i);
-
-        // Unfold the temporary molecule using the unit cell box and update the species atoms
         tempMol.unFold(cleanedUnitCellSpecies_.box());
         for (auto &&[molAtom, spAtom] : zip(tempMol.localAtoms(), sp->atoms()))
             spAtom.setCoordinates(molAtom.r());
+
+        // Give the species a name
+        sp->setName(EmpiricalFormula::formula(sp->atoms(), [&](const auto &at) { return at.Z(); }));
 
         // Find instances of this fragment. For large fragments that represent > 50% of the remaining atoms we don't even
         // attempt to create a NETA definition etc. For cases such as framework species this will speed up detection no end.
@@ -652,20 +654,15 @@ bool CIFHandler::detectMolecules()
         else
         {
             // Determine the best NETA definition describing the fragment
-            auto &&[bestNETA, rootNETAAtom, multiplicity] = bestNETADefinition(sp);
-            if (multiplicity == 0)
+            auto &&[bestNETA, rootAtoms] = bestNETADefinition(sp);
+            if (rootAtoms.empty())
                 return Messenger::error(
                     "Couldn't generate molecular partitioning for CIF - no suitable NETA definition for the "
                     "fragment {} could be determined.\n",
                     sp->name());
 
-            // Translate the species so the origin is the rootNETA atom
-            auto origin = rootNETAAtom->r();
-            for (auto &i : sp->atoms())
-                i.translateCoordinates(-origin);
-
             // Find instances of this fragment
-            instances = getSpeciesInstances(sp, rootNETAAtom, bestNETA);
+            instances = getSpeciesInstances(sp, bestNETA, rootAtoms);
             if (instances.empty())
             {
                 molecularSpecies_.clear();
@@ -1115,40 +1112,43 @@ std::tuple<NETADefinition, std::vector<SpeciesAtom *>> CIFHandler::bestNETADefin
 }
 
 // Get instances for the supplied species from the cleaned unit cell
-std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeSpecies, SpeciesAtom *moleculeSpeciesRootAtom,
-                                                              const NETADefinition &neta)
+std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(const Species *referenceSpecies, const NETADefinition &neta,
+                                                              const std::vector<SpeciesAtom *> &referenceRootAtoms)
 {
-    std::vector<CIFLocalMolecule> instances;
+    if (referenceRootAtoms.empty() || !neta.isValid())
+        return {};
 
-    // Form a basis on the molecularSpecies that we will try to match in our fragment molecule
-    Matrix3 referenceBasis;
-    Elements::Element referenceXElement(Elements::Unknown), referenceYElement(Elements::Unknown);
-    if (moleculeSpeciesRootAtom->nBonds() >= 2)
+    // Form basis sites on the molecularSpecies for each root atom that we will try to match in our fragment molecule
+    std::map<const SpeciesAtom *, Matrix3> referenceBases;
+    for (auto *rootAtom : referenceRootAtoms)
     {
-        // TODO Better choice of references based on uniqueness of attached elements
-        auto *xAtom = moleculeSpeciesRootAtom->bond(0).partner(moleculeSpeciesRootAtom);
-        referenceXElement = xAtom->Z();
-        auto *yAtom = moleculeSpeciesRootAtom->bond(1).partner(moleculeSpeciesRootAtom);
-        referenceYElement = yAtom->Z();
+        referenceBases[rootAtom] = Matrix3();
 
-        // Root atom is at the origin already, so...
-        auto x = xAtom->r();
+        // Get the available angle pairs for this root atom
+        auto anglePairs = rootAtom->getAnglePairs(170.0, false);
+        if (anglePairs.empty())
+            continue;
+
+        auto &&[i, k] = anglePairs.front();
+
+        // Work relative to the root atom coordinates
+        auto x = i->r() - rootAtom->r();
         x.normalise();
-        auto y = yAtom->r();
+        auto y = k->r() - rootAtom->r();
         y.orthogonalise(x);
         y.normalise();
-        referenceBasis.setColumn(0, x);
-        referenceBasis.setColumn(1, y);
-        referenceBasis.setColumn(2, x * y);
+
+        referenceBases[rootAtom].setColumn(0, x);
+        referenceBases[rootAtom].setColumn(1, y);
+        referenceBases[rootAtom].setColumn(2, x * y);
     }
-    else
-        referenceBasis.setIdentity();
 
     // Loop over atoms in the unit cell - we'll mark any that we select as an instance so we speed things up and avoid
     // duplicates
     std::vector<bool> atomFlags(cleanedUnitCellSpecies_.nAtoms());
     std::fill(atomFlags.begin(), atomFlags.end(), false);
     const auto &unitCellAtoms = cleanedUnitCellSpecies_.atoms();
+    std::vector<CIFLocalMolecule> instances;
     for (auto i = 0; i < atomFlags.size(); ++i)
     {
         if (atomFlags[i])
@@ -1190,6 +1190,7 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
         auto atomIndex = 0;
         for (auto &matchedAtom : matchedUnitCellAtoms)
             instanceMolecule.setAtom(atomIndex++, matchedAtom->r(), matchedAtom->index());
+        auto &instanceMoleculeRootAtom = instanceMolecule.localAtoms()[rootAtomLocalIndex];
 
         // Unfold the molecule and store the unfolded molecule coordinates back into the instance Species.
         // This represents our full instance coordinates we will be storing (but not their final order)
@@ -1197,47 +1198,38 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
         for (auto &&[molAtom, spAtom] : zip(instanceMolecule.localAtoms(), instanceSpecies.atoms()))
             spAtom.setCoordinates(molAtom.r());
 
-        // Translate the molecule so that the root atom match is at the origin
-        instanceMolecule.translate(-instanceSpeciesRootAtom.r());
+        /*
+         * Now, we have a root match atom on the current instance and a vector of possible matching sites on the reference
+         * species (in referenceRootAtoms). So, we can try relocating our molecule's root atom site to match each of the
+         * possible sites on the reference species, and explore potential bases there to try and find a match.
+         */
 
-        // Make a basic consistency check before we try to go any further
-        if (instanceSpeciesRootAtom.nBonds() != moleculeSpeciesRootAtom->nBonds())
+        // Get angle atom pairs for the root atom and transform them into local indices
+        auto tempPairs = instanceSpeciesRootAtom.getAnglePairs(170.0, false);
+        std::vector<std::pair<int, int>> rootAtomAnglePairs(tempPairs.size());
+        std::transform(tempPairs.begin(), tempPairs.end(), rootAtomAnglePairs.begin(),
+                       [](const auto &pair) { return std::pair<int, int>(pair.first->index(), pair.second->index()); });
+
+        // Loop over potential root sites on the reference species
+        for (const auto *referenceRootAtom : referenceRootAtoms)
         {
-            Messenger::error("Local root atom for fragment has {} bonds but reference species atom has {}.\n",
-                             instanceSpeciesRootAtom.nBonds(), moleculeSpeciesRootAtom->nBonds());
-            return {};
-        }
+            // Translate our instance molecule so that the root atom match is at the referenceRootAtom coordinates
+            instanceMolecule.translate(referenceRootAtom->r() - instanceMoleculeRootAtom.r());
 
-        // Now we try to find a rotation that will put our fragment molecule on top of the reference species if possible
-        auto differenceResult = differenceMetric(moleculeSpecies, instanceMolecule);
-        const auto differenceTolerance = 0.1;
+            // Now we try to find a rotation that will put our fragment molecule on top of the reference species if possible
+            auto differenceResult = differenceMetric(referenceSpecies, instanceMolecule);
+            const auto differenceTolerance = 0.1;
 
-        if (differenceResult.first > differenceTolerance && referenceXElement != Elements::Unknown &&
-            referenceYElement != Elements::Unknown)
-        {
-            // Get potential X atom candidates
-            std::vector<int> xIndices, yIndices;
-            for (auto &b : instanceSpeciesRootAtom.bonds())
+            if (differenceResult.first > differenceTolerance)
             {
-                auto *j = b.get().partner(&instanceSpeciesRootAtom);
-                if (j->Z() == referenceXElement)
-                    xIndices.push_back(b.get().partner(&instanceSpeciesRootAtom)->index());
-                if (j->Z() == referenceYElement)
-                    yIndices.push_back(b.get().partner(&instanceSpeciesRootAtom)->index());
-            }
-
-            // Try to find a basis using these axis atoms that rotates our atoms onto those of the reference molecule
-            for (auto x : xIndices)
-            {
-                for (auto y : yIndices)
+                // Try to find a basis using these axis atoms that rotates our atoms onto those of the reference molecule
+                for (auto &&[xIndex, yIndex] : rootAtomAnglePairs)
                 {
-                    if (x == y)
-                        continue;
-
-                    auto xAxis = instanceMolecule.localAtoms()[x].r();
+                    // We are working with the coordinates of the instanceMoleculeRootAtom as the origin...
+                    auto xAxis = instanceMolecule.localAtoms()[xIndex].r() - instanceMoleculeRootAtom.r();
                     xAxis.normalise();
 
-                    auto yAxis = instanceMolecule.localAtoms()[y].r();
+                    auto yAxis = instanceMolecule.localAtoms()[yIndex].r() - instanceMoleculeRootAtom.r();
                     yAxis.orthogonalise(xAxis);
                     yAxis.normalise();
 
@@ -1248,13 +1240,15 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
 
                     // Create rotation matrix to convert current basis into reference basis
                     currentBasis.invert();
-                    auto rotationMatrix = referenceBasis * currentBasis;
+                    auto rotationMatrix = referenceBases[referenceRootAtom] * currentBasis;
 
+                    // Transform our local molecule instance coordinates, accounting for the origin atom coordinates
                     for (auto &localAtom : instanceMolecule.localAtoms())
-                        localAtom.setCoordinates(rotationMatrix * localAtom.r());
+                        localAtom.setCoordinates(rotationMatrix * (localAtom.r() - instanceMoleculeRootAtom.r()) +
+                                                 instanceMoleculeRootAtom.r());
 
                     // Get new difference metric
-                    differenceResult = differenceMetric(moleculeSpecies, instanceMolecule);
+                    differenceResult = differenceMetric(referenceSpecies, instanceMolecule);
                     if (differenceResult.first < differenceTolerance)
                         break;
                 }
@@ -1263,29 +1257,29 @@ std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeS
                 if (differenceResult.first < differenceTolerance)
                     break;
             }
-        }
 
-        // Final check on difference
-        if (differenceResult.first > differenceTolerance)
-        {
-            Messenger::error("Failed to rotate molecule into species reference basis.\n");
-            return {};
-        }
+            // Final check on difference
+            if (differenceResult.first > differenceTolerance)
+            {
+                Messenger::error("Failed to rotate molecule into species reference basis.\n");
+                return {};
+            }
 
-        // Create the final instance and mark off the selected unit cell atom indices
-        auto &instance = instances.emplace_back();
-        instance.setSpecies(moleculeSpecies);
-        for (auto refSpeciesI = 0; refSpeciesI < moleculeSpecies->nAtoms(); ++refSpeciesI)
-        {
-            // Get the index of the local overlapping with the reference species atom
-            auto &localSpeciesI = differenceResult.second[refSpeciesI];
+            // Create the final instance and mark off the selected unit cell atom indices
+            auto &instance = instances.emplace_back();
+            instance.setSpecies(referenceSpecies);
+            for (auto refSpeciesI = 0; refSpeciesI < referenceSpecies->nAtoms(); ++refSpeciesI)
+            {
+                // Get the index of the local overlapping with the reference species atom
+                auto &localSpeciesI = differenceResult.second[refSpeciesI];
 
-            // Set the final instance coordinates from those of our local instance species
-            instance.setAtom(refSpeciesI, instanceSpecies.atom(localSpeciesI).r(),
-                             instanceMolecule.unitCellIndices()[localSpeciesI]);
+                // Set the final instance coordinates from those of our local instance species
+                instance.setAtom(refSpeciesI, instanceSpecies.atom(localSpeciesI).r(),
+                                 instanceMolecule.unitCellIndices()[localSpeciesI]);
 
-            // Mark this atom as done
-            atomFlags[instanceMolecule.unitCellIndices()[localSpeciesI]] = true;
+                // Mark this atom as done
+                atomFlags[instanceMolecule.unitCellIndices()[localSpeciesI]] = true;
+            }
         }
     }
 

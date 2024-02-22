@@ -193,8 +193,8 @@ class CIFHandler
     // Determine the best NETA definition for the supplied species
     std::tuple<NETADefinition, std::vector<SpeciesAtom *>> bestNETADefinition(Species *sp);
     // Get instances of species molecules from the supplied NETA definition
-    std::vector<CIFLocalMolecule> getSpeciesInstances(Species *moleculeSpecies, SpeciesAtom *moleculeSpeciesRootAtom,
-                                                      const NETADefinition &neta);
+    std::vector<CIFLocalMolecule> getSpeciesInstances(const Species *referenceSpecies, const NETADefinition &neta,
+                                                      const std::vector<SpeciesAtom *> &referenceRootAtoms);
     // Calculate difference metric between the supplied species and local molecule
     static std::pair<double, std::vector<int>> differenceMetric(const Species *species, const CIFLocalMolecule &molecule);
 };
