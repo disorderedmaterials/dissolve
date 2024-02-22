@@ -83,8 +83,7 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
                 // Validate renderables if they need it
                 graph_->validateRenderables(dissolve_.processingModuleData());
 
-                graph_->view().axes().setMax(
-                    1, std::max(dataSourceA.data<Data1D>().maxValue(), dataSourceB.data<Data1D>().maxValue()) + 5.0);
+                graph_->view().axes().setMax(1, std::max(dataSourceA.data().maxValue(), dataSourceB.data().maxValue()) + 5.0);
 
                 ++dSourceCount;
             }

@@ -34,8 +34,8 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
             continue;
         }
 
-        auto dataA = dataPair.first.data<Data1D>();
-        auto dataB = dataPair.second.data<Data1D>();
+        auto dataA = dataPair.first.data();
+        auto dataB = dataPair.second.data();
 
         /*
          * Save Data

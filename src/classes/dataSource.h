@@ -18,8 +18,6 @@
 
 template <typename DataType> class DataSource
 {
-    // public:
-    // using DataType = std::variant<Data1D, SampledData1D, Data2D, Data3D>;
 
     public:
     DataSource() = default;
@@ -84,7 +82,7 @@ template <typename DataType> class DataSource
         if (dataSourceType_ == Internal)
         {
             // Locate target data from tag and cast to base
-            auto optData = processingModuleData.search<DataType>(internalDataSource_);
+            auto optData = processingModuleData.search<const DataType>(internalDataSource_);
             if (!optData)
             {
                 return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
@@ -118,13 +116,16 @@ template <typename DataType> class DataSource
         // Create format object in place in variant
         externalDataSource_ = std::make_shared<typename DataType::Formatter>(fileAndFormat);
         // Set data name to be base filename
-        dataName_ = fileAndFormat.filename().substr(fileAndFormat.filename().find_last_of("/\\") + 1);
+        dataName_ = externalDataSource_->filename().substr(fileAndFormat.filename().find_last_of("/\\") + 1);
     }
 
     // Returns data in the requested type
-    template <class D> D data() const
+    const DataType &data() const
     {
-        assert(dataExists());
+        if (!dataExists())
+        {
+            throw(std::runtime_error("Data doesn't exist\n"));
+        }
         return *data_;
     }
 

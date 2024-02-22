@@ -7,7 +7,7 @@
 #include "io/import/data1D.h"
 #include "io/import/data2D.h"
 #include "io/import/data3D.h"
-#include "keywords/base.h"
+#include "keywords/dataSourceBase.h"
 #include "math/data1D.h"
 #include "math/data2D.h"
 #include "math/data3D.h"
@@ -16,7 +16,7 @@
 
 // Keyword managing data sources
 // Template arguments: data class (Data1D, Data2D ...), data import file format
-template <class DataType> class DataSourceKeyword : public KeywordBase
+template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
 {
     // Typedef
     public:
@@ -24,20 +24,19 @@ template <class DataType> class DataSourceKeyword : public KeywordBase
 
     public:
     DataSourceKeyword(std::vector<DataPair> &dataSources, std::string_view endKeyword)
-        : KeywordBase(typeid(this)), dataSources_(dataSources), endKeyword_(endKeyword)
+        : DataSourceKeywordBase(), dataSources_(dataSources), endKeyword_(endKeyword)
     {
     }
-
     ~DataSourceKeyword() override = default;
 
     /*
      * Data
      */
-    protected:
-    // End keyword
-    const std::string endKeyword_;
+    private:
     // Reference to module data
     std::vector<DataPair> &dataSources_;
+    // End keyword
+    const std::string endKeyword_;
 
     public:
     // Returns reference to module data
