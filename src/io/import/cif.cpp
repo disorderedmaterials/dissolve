@@ -1060,10 +1060,10 @@ void CIFHandler::applyCIFBonding(Species *sp, bool preventMetallicBonding)
 }
 
 // Determine the best NETA definition for the supplied species
-std::tuple<NETADefinition, std::vector<SpeciesAtom*>> CIFHandler::bestNETADefinition(Species *sp)
+std::tuple<NETADefinition, std::vector<SpeciesAtom *>> CIFHandler::bestNETADefinition(Species *sp)
 {
     // Set up the return value and bind its contents
-    std::tuple<NETADefinition, std::vector<SpeciesAtom*>> result{NETADefinition(), {}};
+    std::tuple<NETADefinition, std::vector<SpeciesAtom *>> result{NETADefinition(), {}};
     auto &&[bestNETA, rootAtoms] = result;
 
     // Maintain a set of atoms matched by any NETA description we generate
