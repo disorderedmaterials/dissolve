@@ -159,12 +159,13 @@ OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::getBond(const SpeciesAtom *pa
 }
 
 // Return pairs of atoms bound to this one which form suitable angles
-std::vector<std::pair<const SpeciesAtom*,const SpeciesAtom*>> SpeciesAtom::getAnglePairs(double maxAngle, bool uniquePairsOnly) const
+std::vector<std::pair<const SpeciesAtom *, const SpeciesAtom *>> SpeciesAtom::getAnglePairs(double maxAngle,
+                                                                                            bool uniquePairsOnly) const
 {
     if (bonds_.size() < 2)
         return {};
 
-    std::vector<std::pair<const SpeciesAtom*,const SpeciesAtom*>> pairs;
+    std::vector<std::pair<const SpeciesAtom *, const SpeciesAtom *>> pairs;
 
     for (auto b1 = 0; b1 < bonds_.size() - 1; ++b1)
     {
