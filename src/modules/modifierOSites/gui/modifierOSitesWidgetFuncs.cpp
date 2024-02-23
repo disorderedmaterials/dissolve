@@ -20,7 +20,7 @@ ModifierOSitesModuleWidget::ModifierOSitesModuleWidget(QWidget *parent, Modifier
 
     auto &view = oSitesGraph_->view();
     view.setViewType(View::FlatXYView);
-    view.axes().setTitle(0, "Qn");
+    view.axes().setTitle(0, "NF bound to O");
     view.axes().setMax(0, 10.0);
     view.axes().setTitle(1, "Normalised Frequency");
     view.axes().setMin(1, 0.0);
@@ -28,13 +28,13 @@ ModifierOSitesModuleWidget::ModifierOSitesModuleWidget(QWidget *parent, Modifier
     view.setAutoFollowType(View::AllAutoFollow);
 
     auto &view2 = modifierSitesGraph_->view();
-    view.setViewType(View::FlatXYView);
-    view.axes().setTitle(0, "Qn");
-    view.axes().setMax(0, 10.0);
-    view.axes().setTitle(1, "Normalised Frequency");
-    view.axes().setMin(1, 0.0);
-    view.axes().setMax(1, 1.0);
-    view.setAutoFollowType(View::AllAutoFollow);
+    view2.setViewType(View::FlatXYView);
+    view2.axes().setTitle(0, "Total O bound to SiteA");
+    view2.axes().setMax(0, 10.0);
+    view2.axes().setTitle(1, "Normalised Frequency");
+    view2.axes().setMin(1, 0.0);
+    view2.axes().setMax(1, 1.0);
+    view2.setAutoFollowType(View::AllAutoFollow);
 
     refreshing_ = false;
 }
