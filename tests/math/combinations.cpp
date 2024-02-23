@@ -34,7 +34,7 @@ TEST(CombinationTest, CheckNumberOfCombinations)
     }
     std::vector<std::pair<int, int>> combinations;
 
-    Combinations comb(numTests, 2);
+    Combinations comb(numTests);
     for (int i = 0; i < comb.getNumCombinations(); i++)
     {
         auto [m, n] = comb.nthCombination(i);
@@ -60,7 +60,7 @@ TEST(CombinationTest, CheckCombinations)
     }
     std::vector<std::pair<int, int>> combinations;
 
-    Combinations comb(numTests, 2);
+    Combinations comb(numTests);
     for (int i = 0; i < comb.getNumCombinations(); i++)
     {
         auto [m, n] = comb.nthCombination(i);
