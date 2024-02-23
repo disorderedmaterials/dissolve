@@ -1197,6 +1197,7 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
                        [](const auto &pair) { return std::pair<int, int>(pair.first->index(), pair.second->index()); });
 
         // Loop over potential root sites on the reference species
+        std::vector<int> matchedIndexMapping;
         for (const auto *referenceRootAtom : referenceRootAtoms)
         {
             // Translate our instance molecule so that the root atom match is at the referenceRootAtom coordinates
@@ -1206,58 +1207,68 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
             auto differenceResult = differenceMetric(referenceSpecies, instanceMolecule);
             const auto differenceTolerance = 0.1;
 
-            if (differenceResult.first > differenceTolerance)
+            Messenger::printVerbose("Initial diff for root atom with index {} is {}\n", referenceRootAtom->index(),
+                                    differenceResult.first);
+            // May have a quick early success,,,
+            if (differenceResult.first <= differenceTolerance)
             {
-                // Try to find a basis using these axis atoms that rotates our atoms onto those of the reference molecule
-                for (auto &&[xIndex, yIndex] : rootAtomAnglePairs)
+                matchedIndexMapping = differenceResult.second;
+                break;
+            }
+
+            // Try to find a basis using these axis atoms that rotates our atoms onto those of the reference molecule
+            for (auto &&[xIndex, yIndex] : rootAtomAnglePairs)
+            {
+                // We are working with the coordinates of the instanceMoleculeRootAtom as the origin...
+                auto xAxis = instanceMolecule.localAtoms()[xIndex].r() - instanceMoleculeRootAtom.r();
+                xAxis.normalise();
+
+                auto yAxis = instanceMolecule.localAtoms()[yIndex].r() - instanceMoleculeRootAtom.r();
+                yAxis.orthogonalise(xAxis);
+                yAxis.normalise();
+
+                Matrix3 currentBasis;
+                currentBasis.setColumn(0, xAxis);
+                currentBasis.setColumn(1, yAxis);
+                currentBasis.setColumn(2, xAxis * yAxis);
+
+                // Create rotation matrix to convert current basis into reference basis
+                currentBasis.invert();
+                auto rotationMatrix = referenceBases[referenceRootAtom] * currentBasis;
+
+                // Transform our local molecule instance coordinates, accounting for the origin atom coordinates
+                for (auto &localAtom : instanceMolecule.localAtoms())
+                    localAtom.setCoordinates(rotationMatrix * (localAtom.r() - instanceMoleculeRootAtom.r()) +
+                                             instanceMoleculeRootAtom.r());
+                Messenger::printVerbose("  --> After realignment (x{},y{}) diff is {}\n", xIndex, yIndex,
+                                        differenceResult.first);
+
+                // Get new difference metric
+                differenceResult = differenceMetric(referenceSpecies, instanceMolecule);
+                if (differenceResult.first <= differenceTolerance)
                 {
-                    // We are working with the coordinates of the instanceMoleculeRootAtom as the origin...
-                    auto xAxis = instanceMolecule.localAtoms()[xIndex].r() - instanceMoleculeRootAtom.r();
-                    xAxis.normalise();
-
-                    auto yAxis = instanceMolecule.localAtoms()[yIndex].r() - instanceMoleculeRootAtom.r();
-                    yAxis.orthogonalise(xAxis);
-                    yAxis.normalise();
-
-                    Matrix3 currentBasis;
-                    currentBasis.setColumn(0, xAxis);
-                    currentBasis.setColumn(1, yAxis);
-                    currentBasis.setColumn(2, xAxis * yAxis);
-
-                    // Create rotation matrix to convert current basis into reference basis
-                    currentBasis.invert();
-                    auto rotationMatrix = referenceBases[referenceRootAtom] * currentBasis;
-
-                    // Transform our local molecule instance coordinates, accounting for the origin atom coordinates
-                    for (auto &localAtom : instanceMolecule.localAtoms())
-                        localAtom.setCoordinates(rotationMatrix * (localAtom.r() - instanceMoleculeRootAtom.r()) +
-                                                 instanceMoleculeRootAtom.r());
-
-                    // Get new difference metric
-                    differenceResult = differenceMetric(referenceSpecies, instanceMolecule);
-                    if (differenceResult.first < differenceTolerance)
-                        break;
+                    matchedIndexMapping = differenceResult.second;
+                    break;
                 }
             }
+        }
 
-            // Final check on difference
-            if (differenceResult.first > differenceTolerance)
-            {
-                Messenger::error("Failed to rotate molecule into species reference basis.\n");
-                return {};
-            }
+        if (matchedIndexMapping.empty())
+        {
+            Messenger::error("Failed to rotate molecule into species reference basis.\n");
+            return {};
+        }
 
-            // Create the final instance
-            auto &instance = instances.emplace_back();
-            instance.setSpecies(referenceSpecies);
-            for (auto refSpeciesI = 0; refSpeciesI < referenceSpecies->nAtoms(); ++refSpeciesI)
-            {
-                // Get the index of the local overlapping with the reference species atom
-                auto &localSpeciesI = differenceResult.second[refSpeciesI];
+        // Create the final instance
+        auto &instance = instances.emplace_back();
+        instance.setSpecies(referenceSpecies);
+        for (auto refSpeciesI = 0; refSpeciesI < referenceSpecies->nAtoms(); ++refSpeciesI)
+        {
+            // Get the index of the local overlapping with the reference species atom
+            auto &localSpeciesI = matchedIndexMapping[refSpeciesI];
 
-                // Set the final instance coordinates from those of our local instance species
-                instance.localAtom(refSpeciesI).setCoordinates(instanceSpecies.atom(localSpeciesI).r());
-            }
+            // Set the final instance coordinates from those of our local instance species
+            instance.localAtom(refSpeciesI).setCoordinates(instanceSpecies.atom(localSpeciesI).r());
         }
 
         // Find the next available atom
