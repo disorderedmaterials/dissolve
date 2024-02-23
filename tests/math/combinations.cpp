@@ -70,7 +70,7 @@ TEST(CombinationTest, CheckCombinations)
 
     for (auto [computed, expected] : zip(combinations, expectedCombinations))
     {
-	EXPECT_EQ(computed, expected);
+        EXPECT_EQ(computed, expected);
     }
     auto it = std::unique(combinations.begin(), combinations.end());
     EXPECT_TRUE(it == std::end(combinations));

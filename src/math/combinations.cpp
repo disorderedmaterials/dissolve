@@ -26,13 +26,12 @@ int Combinations::nChooseK(int n, int k) const
 
 Combinations::NthCombination Combinations::getCoefficent(int N) const
 {
-  double a = -0.5;
-  double b = N_-0.5;
+    double a = -0.5;
+    double b = N_ - 0.5;
 
-  int i = std::floor((-b + std::sqrt(b*b + 4 * a * N))/(2 * a));
-  int j = N - std::floor(a * i * i + b * i) + i + 1;
-  return {i, j};
-
+    int i = std::floor((-b + std::sqrt(b * b + 4 * a * N)) / (2 * a));
+    int j = N - std::floor(a * i * i + b * i) + i + 1;
+    return {i, j};
 }
 
 int Combinations::getNumCombinations() const { return nChooseK(N_, k_); }
