@@ -6,7 +6,6 @@
 
 Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 {
-
     auto index = 1;
     for (auto &dataPair : data1dSources_)
     {
@@ -17,6 +16,7 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         // Check to make sure the data exists
         if (!dataPair.first.dataExists() || !dataPair.second.dataExists())
         {
+            Messenger::print("Skipping {} and {}", dataPair.first.dataName(), dataPair.second.dataName());
             continue;
         }
 
@@ -27,10 +27,14 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         // Source the data
         if (!dataPair.first.sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
         {
+            Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first.dataName(),
+                             dataPair.second.dataName(), dataPair.first.dataName());
             continue;
         }
         if (!dataPair.second.sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
         {
+            Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first.dataName(),
+                             dataPair.second.dataName(), dataPair.second.dataName());
             continue;
         }
 
@@ -78,7 +82,6 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 
         auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(fmt::format("Pair{}_Delta", index), name_,
                                                                                       GenericItem::InRestartFileFlag);
-        delta.clear();
 
         delta.clear();
 

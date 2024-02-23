@@ -40,7 +40,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
 
     public:
     // Returns reference to module data
-    std::vector<DataPair> &dataSources();
+    std::vector<DataPair> &dataSources() { return dataSources_; }
 
     /*
      * Arguments
@@ -81,6 +81,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
             // If data is internal
             if (DataSource<DataType>::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource<DataType>::Internal)
             {
+                Messenger::print("Adding data source {}", parser.argsv(1));
                 // Add data to dataSource
                 sourceQueue.front()->addData(parser.argsv(1));
                 // Remove dataSource from queue
@@ -89,23 +90,15 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
             // If data is external
             else if (DataSource<DataType>::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource<DataType>::External)
             {
-                // Initialise data and format objects
-                DataType data;
-                typename DataType::Formatter format;
-
                 // Read the supplied arguments
-                auto readResult = format.read(
-                    parser, 1,
-                    fmt::format("End{}", DataSource<DataType>::dataSourceTypes().keyword(DataSource<DataType>::External)),
-                    coreData);
-
-                if (readResult == FileAndFormat::ReadResult::UnrecognisedFormat ||
-                    readResult == FileAndFormat::ReadResult::UnrecognisedOption)
+                if (!sourceQueue.front()->addData(
+                        parser, 1,
+                        fmt::format("End{}", DataSource<DataType>::dataSourceTypes().keyword(DataSource<DataType>::External)),
+                        coreData))
                 {
                     return Messenger::error("Failed to read file/format for '{}'.\n", name());
                 }
-                // Add data to dataSource
-                sourceQueue.front()->addData(data, format);
+                Messenger::print("Adding data source {}", sourceQueue.front()->dataName());
                 // Remove dataSource from queue
                 sourceQueue.pop();
             }

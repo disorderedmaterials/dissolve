@@ -68,6 +68,9 @@
        <property name="autoExclusive">
         <bool>true</bool>
        </property>
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
        <property name="text">
         <string>Data2D</string>
        </property>
@@ -84,6 +87,9 @@
        <property name="text">
         <string>Data3D</string>
        </property>
+       <property name="enabled">
+          <bool>false</bool>
+        </property>
       </widget>
      </item>
     </layout>

@@ -50,9 +50,10 @@ template <typename DataType> class DataSource
     DataSourceType dataSourceType_;
     // String to hold internal data tag (if internal)
     std::string internalDataSource_;
-    // Pointer to data
-    std::shared_ptr<typename DataType::Formatter> externalDataSource_;
-    std::shared_ptr<DataType> data_;
+    // Pointer to formatter object
+    typename DataType::Formatter externalDataSource_;
+    // Data object stored
+    DataType data_;
 
     public:
     // Return data name
@@ -61,18 +62,9 @@ template <typename DataType> class DataSource
     bool dataExists() const
     {
         return (!internalDataSource_.empty() && dataSourceType_ == Internal) ||
-               (!externalDataSource_ && dataSourceType_ == External);
+               (externalDataSource_.hasFilename() && dataSourceType_ == External);
     }
-    // Return internal data source
-    std::optional<std::string> internalDataSource() const
-    {
-        if (!internalDataSource_.empty())
-        {
-            return internalDataSource_;
-        }
-        return std::nullopt;
-    }
-    // Function to source data (only required for internal data sources)
+    // Function to source data
     bool sourceData(const ProcessPool &procPool, GenericList &processingModuleData)
     {
         if (!dataExists())
@@ -88,15 +80,19 @@ template <typename DataType> class DataSource
                 return Messenger::error("No data with tag '{}' exists.\n", internalDataSource_);
             }
             // Set data
-            data_ = std::make_shared<DataType>(optData->get());
+            data_ = optData->get();
+
+            return true;
         }
         else if (dataSourceType_ == External)
         {
             // For external datatypes, import the data
-            if (!externalDataSource_->importData(*data_, &procPool))
+            if (!externalDataSource_.importData(data_, &procPool))
             {
-                return false;
+                return Messenger::error("Error importing data from '{}'", externalDataSource_.filename());
             }
+
+            return true;
         }
 
         return false;
@@ -109,24 +105,31 @@ template <typename DataType> class DataSource
         // Set data name to be data tag
         dataName_ = internalDataSource;
     }
-    // Overloaded function to add external data
-    void addData(DataType data, typename DataType::Formatter &fileAndFormat)
+    // Function to add external data
+    bool addData(LineParser &parser, int startArg, std::string_view endKeyword, const CoreData &coreData)
     {
         dataSourceType_ = External;
         // Create format object in place in variant
-        externalDataSource_ = std::make_shared<typename DataType::Formatter>(fileAndFormat);
+        auto readResult = externalDataSource_.read(parser, startArg, endKeyword, coreData);
+        if (readResult == FileAndFormat::ReadResult::UnrecognisedFormat ||
+            readResult == FileAndFormat::ReadResult::UnrecognisedOption)
+        {
+            return false;
+        }
         // Set data name to be base filename
-        dataName_ = externalDataSource_->filename().substr(fileAndFormat.filename().find_last_of("/\\") + 1);
+        dataName_ = externalDataSource_.filename().substr(externalDataSource_.filename().find_last_of("/\\") + 1);
+
+        return true;
     }
 
-    // Returns data in the requested type
+    // Returns data
     const DataType &data() const
     {
         if (!dataExists())
         {
             throw(std::runtime_error("Data doesn't exist\n"));
         }
-        return *data_;
+        return data_;
     }
 
     /*
@@ -157,13 +160,13 @@ template <typename DataType> class DataSource
         else if (dataSourceType_ == External)
         {
             // Write filename and format
-            if (!externalDataSource_->writeFilenameAndFormat(parser, prefix))
+            if (!externalDataSource_.writeFilenameAndFormat(parser, prefix))
             {
                 return false;
             }
 
             // Write extra keywords
-            if (!externalDataSource_->writeBlock(parser, prefix)) // Express as a serialisable value
+            if (!externalDataSource_.writeBlock(parser, prefix)) // Express as a serialisable value
             {
                 return false;
             }
@@ -191,7 +194,7 @@ template <typename DataType> class DataSource
         }
         else
         {
-            result["data"] = externalDataSource_->serialise();
+            result["data"] = externalDataSource_.serialise();
         }
 
         return result;

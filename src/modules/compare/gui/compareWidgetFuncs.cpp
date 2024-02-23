@@ -76,10 +76,6 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
                 graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_DataB", module_->name(), dSourceCount),
                                                            fmt::format("{}", dataSourceB.dataName()), "DataB");
 
-                // Set the button tooltip
-                ui_.Data1DButton->setToolTip(
-                    QString::fromStdString(fmt::format("{} vs {}", dataSourceA.dataName(), dataSourceB.dataName())));
-
                 // Validate renderables if they need it
                 graph_->validateRenderables(dissolve_.processingModuleData());
 
