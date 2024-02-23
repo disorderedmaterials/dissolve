@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "math/combinations.h"
+#include "templates/algorithms.h"
 
 #include <gtest/gtest.h>
 #include <vector>
@@ -67,9 +68,9 @@ TEST(CombinationTest, CheckCombinations)
         combinations.emplace_back(m, n);
     }
 
-    for (auto &combination : combinations)
+    for (auto [computed, expected] : zip(combinations, expectedCombinations))
     {
-        EXPECT_TRUE(combinationInVector(combination, expectedCombinations));
+	EXPECT_EQ(computed, expected);
     }
     auto it = std::unique(combinations.begin(), combinations.end());
     EXPECT_TRUE(it == std::end(combinations));

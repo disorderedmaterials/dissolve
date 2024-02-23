@@ -40,7 +40,7 @@ class Combinations
     int nChooseK(int N, int k) const;
     // returns the bionomial coefficent,
     // see https : // en.wikipedia.org/wiki/Combinatorial_number_system
-    NthCombination getCoefficent(int n, int k) const;
+    NthCombination getCoefficent(int n) const;
 
     int N_;
     int k_;
