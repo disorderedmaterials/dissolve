@@ -6,6 +6,7 @@
 #include "main/dissolve.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
+#include <QString>
 #include <optional>
 #include <vector>
 

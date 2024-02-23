@@ -191,6 +191,7 @@
     <file>qml/widgets/Text.qml</file>
     <file>qml/widgets/PrettyListView.qml</file>
     <file>qml/AddForcefieldTermsDialog.qml</file>
+    <file>qml/SimulationDataManager.qml</file>
     <file>qml/modifyCharges/Loader.qml</file>
     <file>qml/modifyCharges/Layout.qml</file>
     <file>qml/modifyCharges/ScaleLayout.qml</file>

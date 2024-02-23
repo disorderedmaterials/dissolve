@@ -8,15 +8,16 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QRegularExpression>
+#include <QQmlContext>
 
 DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, GenericList &items)
     : QDialog(parent), dissolve_(dissolve), simModel_(dissolve, items)
 {
-    ui_.setupUi(this);
+    view_ = new QQuickWidget(this);
+    view_->rootContext()->setContextProperty("simModel", &simModel_);
+    view_->setSource(QUrl("qrc:/dialogs/qml/SimulationDataManager.qml"));
 
     simProxy_.setSourceModel(&simModel_);
-    ui_.SimulationDataTable->setModel(&simProxy_);
-    ui_.SimulationDataTable->setSortingEnabled(true);
 
     updateControls();
 }
@@ -37,7 +38,7 @@ void DataManagerDialog::filterTable(QString filterText)
 void DataManagerDialog::updateControls()
 {
     // Clear and re-populate simulation data table
-    ui_.SimulationDataTable->resizeColumnsToContents();
+    // ui_.SimulationDataTable->resizeColumnsToContents();
 }
 
 // Simulation Data

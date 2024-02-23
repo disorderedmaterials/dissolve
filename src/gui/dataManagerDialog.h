@@ -4,9 +4,9 @@
 #pragma once
 
 #include "gui/models/dataManagerSimulationModel.h"
-#include "gui/ui_dataManagerDialog.h"
 #include "items/list.h"
 #include <QDialog>
+#include <QQuickWidget>
 #include <QSortFilterProxyModel>
 #include <vector>
 
@@ -34,8 +34,7 @@ class DataManagerDialog : public QDialog
      * UI
      */
     private:
-    // Main form declaration
-    Ui::DataManagerDialog ui_;
+    QQuickWidget *view_{nullptr};
 
     private:
     // Update the specified table of GenericItems, optionally filtering them by name and description
