@@ -3,7 +3,6 @@
 
 #include "tests/testData.h"
 #include <gtest/gtest.h>
-#include <vector>
 
 namespace UnitTest
 {
