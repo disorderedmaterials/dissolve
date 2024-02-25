@@ -159,14 +159,14 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     auto &normalisedAngle = processingData.realise<Data1D>("Angle(ABC)", name(), GenericItem::InRestartFileFlag);
     normalisedAngle = aABC.accumulatedData();
     DataNormaliser1D normaliserAngle(normalisedAngle);
-    normaliserAngle.normalise([](const auto &x, const auto &value) { return value / sin(x / DEGRAD); });
+    normaliserAngle.normalise([](const auto &x, , const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
     normaliserAngle.normaliseTo();
 
     auto &normalisedDAngleAB = processingData.realise<Data2D>("DAngle((A-B)-C)", name(), GenericItem::InRestartFileFlag);
     normalisedDAngleAB = daABc.accumulatedData();
     DataNormaliser2D normaliserDAngleAB(normalisedDAngleAB);
-    normaliserDAngleAB.normaliseByExpression(
-        fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
+    normaliserDAngleAB.normalise([](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+                                 { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
     normaliserDAngleAB.normaliseDivide(double(nACumulative) / nASelections);
     normaliserDAngleAB.normaliseDivide(double(nCCumulative) / nCSelections);
     normaliserDAngleAB.normaliseDivide((double(nBAvailable) / nBSelections) / targetConfiguration_->box()->volume());
@@ -175,8 +175,8 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     auto &normalisedDAngleBC = processingData.realise<Data2D>("DAngle(A-(B-C))", name(), GenericItem::InRestartFileFlag);
     normalisedDAngleBC = daaBC.accumulatedData();
     DataNormaliser2D normaliserDAngleBC(normalisedDAngleBC);
-    normaliserDAngleBC.normaliseByExpression(
-        fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
+    normaliserDAngleBC.normalise([](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+                                 { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
     normaliserDAngleBC.normaliseDivide(double(nACumulative) / nASelections);
     normaliserDAngleBC.normaliseDivide(double(nBCumulative) / nBSelections);
     normaliserDAngleBC.normaliseDivide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());

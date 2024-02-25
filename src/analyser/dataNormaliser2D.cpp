@@ -13,11 +13,14 @@ void DataNormaliser2D::normalise(NormalisationFunction2D normalisationFunction)
     const auto &ys = targetData_.yAxis();
     auto &values = targetData_.values();
 
+    const auto xDelta = xs.size() > 1 ? xs[1] - xs[0] : 1.0;
+    const auto yDelta = ys.size() > 1 ? ys[1] - ys[0] : 1.0;
+
     for (auto i = 0; i < xs.size(); ++i)
     {
         for (auto j = 0; j < ys.size(); ++j)
         {
-            values[{i, j}] = normalisationFunction(xs[i], ys[j], values[{i, j}]);
+            values[{i, j}] = normalisationFunction(xs[i], xDelta, ys[j], yDelta, values[{i, j}]);
         }
     }
 }

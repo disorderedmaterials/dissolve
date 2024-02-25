@@ -109,13 +109,14 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     auto &aABCNormalised = processingData.realise<Data1D>("Angle(ABC)", name(), GenericItem::InRestartFileFlag);
     aABCNormalised = aABC.accumulatedData();
     DataNormaliser1D aABCNormaliser(aABCNormalised);
-    aABCNormaliser.normalise([](const auto &x, const auto &value) { return value / sin(x / DEGRAD); });
+    aABCNormaliser.normalise([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
     aABCNormaliser.normaliseTo();
 
     auto &dAngleNormalised = processingData.realise<Data2D>("DAngle(A-BC)", name(), GenericItem::InRestartFileFlag);
     dAngleNormalised = dAngle.accumulatedData();
     DataNormaliser2D dAngleNormaliser(dAngleNormalised);
-    dAngleNormaliser.normaliseByExpression(fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
+    dAngleNormaliser.normalise([](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+                               { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
     dAngleNormaliser.normaliseDivide(double(nACumulative) / nASelections);
     dAngleNormaliser.normaliseDivide((double(nBAvailable) / nBSelections) / targetConfiguration_->box()->volume());
     dAngleNormaliser.normaliseBySphericalShell();

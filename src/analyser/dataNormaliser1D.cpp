@@ -12,8 +12,10 @@ void DataNormaliser1D::normalise(NormalisationFunction1D normalisationFunction)
     const auto &xs = targetData_.xAxis();
     auto &values = targetData_.values();
 
+    const auto xDelta = xs.size() > 1 ? xs[1] - xs[0] : 1.0;
+
     for (auto i = 0; i < xs.size(); ++i)
-        values.at(i) = normalisationFunction(xs[i], values.at(i));
+        values.at(i) = normalisationFunction(xs[i], xDelta, values.at(i));
 }
 
 void DataNormaliser1D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 1D data."); }
