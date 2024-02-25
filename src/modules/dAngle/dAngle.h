@@ -31,8 +31,13 @@ class DAngleModule : public Module
     Vec3<double> angleRange_{0.0, 180.0, 1.0};
     // Whether the angular range should be considered symmetric about 90
     bool symmetric_{false};
+    // Target SpeciesSite definitions
     std::vector<const SpeciesSite *> a_, b_, c_;
-    Data1DExportFileFormat exportFileAndFormatRDF_, exportFileAndFormatAngle_;
+    // Export file and format for RDF
+    Data1DExportFileFormat exportFileAndFormatRDF_;
+    // Export file and format for Angle
+    Data1DExportFileFormat exportFileAndFormatAngle_;
+    // Export file and format for DAngle
     Data2DExportFileFormat exportFileAndFormatDAngle_;
 
     /*

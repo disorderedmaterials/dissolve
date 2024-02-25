@@ -32,14 +32,17 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     // Select site C
     SiteSelector c(targetConfiguration_, c_);
 
+    // RDF(B-C)
     auto [rBC, rABStatus] = processingData.realiseIf<Histogram1D>("rBC", name(), GenericItem::InRestartFileFlag);
     if (rABStatus == GenericItem::ItemStatus::Created)
         rBC.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
 
+    // Angle(A-B-C)
     auto [aABC, aABCStatus] = processingData.realiseIf<Histogram1D>("aABC", name(), GenericItem::InRestartFileFlag);
     if (aABCStatus == GenericItem::ItemStatus::Created)
         aABC.initialise(angleRange_.x, angleRange_.y, angleRange_.z);
 
+    // DAngle(A-BC)
     auto [dAngle, dAngleStatus] = processingData.realiseIf<Histogram2D>("dAngle", name(), GenericItem::InRestartFileFlag);
     if (dAngleStatus == GenericItem::ItemStatus::Created)
         dAngle.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z, angleRange_.x, angleRange_.y, angleRange_.z);
@@ -48,29 +51,25 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     rBC.zeroBins();
     aABC.zeroBins();
 
-    auto nACumulative = 0;
-    auto nBCumulative = 0;
-    auto nCCumulative = 0;
-    auto nAAvailable = 0;
-    auto nBAvailable = 0;
-    auto nCAvailable = 0;
+    // Site statistics
     auto nASelections = 1;
-    auto nBSelections = 0;
-    auto nCSelections = 0;
+    auto nAAvailable = a.sites().size(), nACumulative = a.sites().size();
+    auto nBSelections = nAAvailable;
+    auto nBAvailable = 0, nBCumulative = 0;
+    auto nCSelections = 0, nCAvailable = 0, nCCumulative = 0;
 
     for (const auto &[siteA, indexA] : a.sites())
     {
-        nACumulative++;
-        nBSelections++;
-        nAAvailable++;
         for (const auto &[siteB, indexB] : b.sites())
         {
 
             if (siteB->molecule() != siteA->molecule())
                 continue;
+
             nBCumulative++;
             nCSelections++;
             nBAvailable++;
+
             for (const auto &[siteC, indexC] : c.sites())
             {
 
@@ -94,32 +93,95 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
         }
     }
 
+    // Accumulate histograms
     dAngle.accumulate();
     rBC.accumulate();
     aABC.accumulate();
 
+    // RDF(B-C)
     auto &rBCNormalised = processingData.realise<Data1D>("RDF(BC)", name(), GenericItem::InRestartFileFlag);
     rBCNormalised = rBC.accumulatedData();
     DataNormaliser1D rBCNormaliser(rBCNormalised);
+    // Normalise by A site population
     rBCNormaliser.normaliseDivide(double(nACumulative) / nASelections);
+    // Normalise by B site population
     rBCNormaliser.normaliseDivide(double(nBCumulative) / nBSelections);
+    // Normalise by c site population density
     rBCNormaliser.normaliseDivide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());
+    // Normalise by spherical shell
     rBCNormaliser.normaliseBySphericalShell();
 
     auto &aABCNormalised = processingData.realise<Data1D>("Angle(ABC)", name(), GenericItem::InRestartFileFlag);
     aABCNormalised = aABC.accumulatedData();
     DataNormaliser1D aABCNormaliser(aABCNormalised);
+    // Normalise by value / sin(x)
     aABCNormaliser.normalise([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
+    // Normalise to 1.0
     aABCNormaliser.normaliseTo();
 
     auto &dAngleNormalised = processingData.realise<Data2D>("DAngle(A-BC)", name(), GenericItem::InRestartFileFlag);
     dAngleNormalised = dAngle.accumulatedData();
     DataNormaliser2D dAngleNormaliser(dAngleNormalised);
+    // Normalise by value / sin(y) / sin(yDelta)
     dAngleNormaliser.normalise([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
                                { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
+    // Normalise by A site population
     dAngleNormaliser.normaliseDivide(double(nACumulative) / nASelections);
+    // Normalise by B site population density
     dAngleNormaliser.normaliseDivide((double(nBAvailable) / nBSelections) / targetConfiguration_->box()->volume());
+    // Normalise by spherical shell
     dAngleNormaliser.normaliseBySphericalShell();
+
+    // Save RDF data?
+    if (exportFileAndFormatRDF_.hasFilename())
+    {
+        if (moduleContext.processPool().isMaster())
+        {
+            if (exportFileAndFormatRDF_.exportData(rBCNormalised))
+                moduleContext.processPool().decideTrue();
+            else
+            {
+                moduleContext.processPool().decideFalse();
+                return ExecutionResult::Failed;
+            }
+        }
+        else if (!moduleContext.processPool().decision())
+            return ExecutionResult::Failed;
+    }
+
+    // Save Angle data?
+    if (exportFileAndFormatAngle_.hasFilename())
+    {
+        if (moduleContext.processPool().isMaster())
+        {
+            if (exportFileAndFormatAngle_.exportData(aABCNormalised))
+                moduleContext.processPool().decideTrue();
+            else
+            {
+                moduleContext.processPool().decideFalse();
+                return ExecutionResult::Failed;
+            }
+        }
+        else if (!moduleContext.processPool().decision())
+            return ExecutionResult::Failed;
+    }
+
+    // Save DAngle data?
+    if (exportFileAndFormatDAngle_.hasFilename())
+    {
+        if (moduleContext.processPool().isMaster())
+        {
+            if (exportFileAndFormatDAngle_.exportData(dAngleNormalised))
+                moduleContext.processPool().decideTrue();
+            else
+            {
+                moduleContext.processPool().decideFalse();
+                return ExecutionResult::Failed;
+            }
+        }
+        else if (!moduleContext.processPool().decision())
+            return ExecutionResult::Failed;
+    }
 
     return ExecutionResult::Success;
 }
