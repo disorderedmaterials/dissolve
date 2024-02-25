@@ -44,8 +44,8 @@ AxisAngleModule::AxisAngleModule() : Module(ModuleTypes::AxisAngle)
                                         exportFileAndFormatRDF_, "EndExportRDF");
     keywords_.add<FileAndFormatKeyword>(
         "ExportAngle", "File format and file name under which to save calculated A-B...C angle histogram to disk",
-        exportFileAndFormatAngle_, "EndExportAngle");
+        exportFileAndFormatAxisAngle_, "EndExportAngle");
     keywords_.add<FileAndFormatKeyword>("ExportDAngle",
                                         "File format and file name under which to save calculated A-B...C angle map to disk",
-                                        exportFileAndFormatDAngle_, "EndExportDAngle");
+                                        exportFileAndFormatDAxisAngle_, "EndExportDAngle");
 }

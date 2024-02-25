@@ -3,11 +3,10 @@
 
 #pragma once
 
-#include "analyser/siteSelector.h"
+#include "classes/site.h"
 #include "io/export/data1D.h"
 #include "io/export/data2D.h"
 #include "module/module.h"
-#include "procedure/procedure.h"
 
 // Forward Declarations
 class SpeciesSite;
@@ -39,10 +38,10 @@ class AxisAngleModule : public Module
     OrientedSite::SiteAxis axisA_{OrientedSite::SiteAxis::XAxis}, axisB_{OrientedSite::SiteAxis::XAxis};
     // Export file and format for RDF
     Data1DExportFileFormat exportFileAndFormatRDF_;
-    // Export file and format for Angle
-    Data1DExportFileFormat exportFileAndFormatAngle_;
-    // Export file and format for DAngle
-    Data2DExportFileFormat exportFileAndFormatDAngle_;
+    // Export file and format for AxisAngle
+    Data1DExportFileFormat exportFileAndFormatAxisAngle_;
+    // Export file and format for DAxisAngle
+    Data2DExportFileFormat exportFileAndFormatDAxisAngle_;
 
     /*
      * Processing
