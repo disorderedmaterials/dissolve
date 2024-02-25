@@ -115,7 +115,7 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     auto &dAngleNormalised = processingData.realise<Data2D>("DAngle(A-BC)", name(), GenericItem::InRestartFileFlag);
     dAngleNormalised = dAngle.accumulatedData();
     DataNormaliser2D dAngleNormaliser(dAngleNormalised);
-    dAngleNormaliser.normalise([](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+    dAngleNormaliser.normalise([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
                                { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
     dAngleNormaliser.normaliseDivide(double(nACumulative) / nASelections);
     dAngleNormaliser.normaliseDivide((double(nBAvailable) / nBSelections) / targetConfiguration_->box()->volume());

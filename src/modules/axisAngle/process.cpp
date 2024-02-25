@@ -84,8 +84,8 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     auto &dAngleNormalised = processingData.realise<Data2D>("DAxisAngle", name(), GenericItem::InRestartFileFlag);
     dAngleNormalised = dAngle.accumulatedData();
     DataNormaliser2D dAngleNormaliser(dAngleNormalised);
-    dAngleNormaliser..normalise([](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
-                                { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
+    dAngleNormaliser.normalise([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+                               { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
     dAngleNormaliser.normaliseDivide(double(a.sites().size()));
     dAngleNormaliser.normaliseDivide(double(b.sites().size()) / targetConfiguration_->box()->volume());
     dAngleNormaliser.normaliseBySphericalShell();
