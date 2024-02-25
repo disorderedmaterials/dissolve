@@ -144,32 +144,32 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     auto &normalisedAB = processingData.realise<Data1D>("RDF(AB)", name(), GenericItem::InRestartFileFlag);
     normalisedAB = rAB.accumulatedData();
     DataNormaliser1D normaliserAB(normalisedAB);
-    normaliserAB.normaliseBySitePopulation(double(nACumulative) / nASelections);
-    normaliserAB.normaliseByNumberDensity(double(nBCumulative) / nBSelections, targetConfiguration_);
+    normaliserAB.normaliseDivide(double(nACumulative) / nASelections);
+    normaliserAB.normaliseDivide((double(nBCumulative) / nBSelections) / targetConfiguration_->box()->volume());
     normaliserAB.normaliseBySphericalShell();
 
     auto &normalisedBC = processingData.realise<Data1D>("RDF(BC)", name(), GenericItem::InRestartFileFlag);
     normalisedBC = rBC.accumulatedData();
     DataNormaliser1D normaliserBC(normalisedBC);
-    normaliserBC.normaliseBySitePopulation(double(nACumulative) / nASelections);
-    normaliserBC.normaliseBySitePopulation(double(nBCumulative) / nBSelections);
-    normaliserBC.normaliseByNumberDensity(double(nCAvailable) / nCSelections, targetConfiguration_);
+    normaliserBC.normaliseDivide(double(nACumulative) / nASelections);
+    normaliserBC.normaliseDivide(double(nBCumulative) / nBSelections);
+    normaliserBC.normaliseDivide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());
     normaliserBC.normaliseBySphericalShell();
 
     auto &normalisedAngle = processingData.realise<Data1D>("Angle(ABC)", name(), GenericItem::InRestartFileFlag);
     normalisedAngle = aABC.accumulatedData();
     DataNormaliser1D normaliserAngle(normalisedAngle);
-    normaliserAngle.normaliseByExpression("value/sin(toRad(x))");
-    normaliserAngle.normaliseByValue();
+    normaliserAngle.normalise([](const auto &x, const auto &value) { return value / sin(x / DEGRAD); });
+    normaliserAngle.normaliseTo();
 
     auto &normalisedDAngleAB = processingData.realise<Data2D>("DAngle((A-B)-C)", name(), GenericItem::InRestartFileFlag);
     normalisedDAngleAB = daABc.accumulatedData();
     DataNormaliser2D normaliserDAngleAB(normalisedDAngleAB);
     normaliserDAngleAB.normaliseByExpression(
         fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
-    normaliserDAngleAB.normaliseBySitePopulation(double(nACumulative) / nASelections);
-    normaliserDAngleAB.normaliseBySitePopulation(double(nCCumulative) / nCSelections);
-    normaliserDAngleAB.normaliseByNumberDensity(double(nBAvailable) / nBSelections, targetConfiguration_);
+    normaliserDAngleAB.normaliseDivide(double(nACumulative) / nASelections);
+    normaliserDAngleAB.normaliseDivide(double(nCCumulative) / nCSelections);
+    normaliserDAngleAB.normaliseDivide((double(nBAvailable) / nBSelections) / targetConfiguration_->box()->volume());
     normaliserDAngleAB.normaliseBySphericalShell();
 
     auto &normalisedDAngleBC = processingData.realise<Data2D>("DAngle(A-(B-C))", name(), GenericItem::InRestartFileFlag);
@@ -177,9 +177,9 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     DataNormaliser2D normaliserDAngleBC(normalisedDAngleBC);
     normaliserDAngleBC.normaliseByExpression(
         fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
-    normaliserDAngleBC.normaliseBySitePopulation(double(nACumulative) / nASelections);
-    normaliserDAngleBC.normaliseBySitePopulation(double(nBCumulative) / nBSelections);
-    normaliserDAngleBC.normaliseByNumberDensity(double(nCAvailable) / nCSelections, targetConfiguration_);
+    normaliserDAngleBC.normaliseDivide(double(nACumulative) / nASelections);
+    normaliserDAngleBC.normaliseDivide(double(nBCumulative) / nBSelections);
+    normaliserDAngleBC.normaliseDivide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());
     normaliserDAngleBC.normaliseBySphericalShell();
 
     return ExecutionResult::Success;

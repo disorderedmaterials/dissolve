@@ -101,23 +101,23 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     auto &rBCNormalised = processingData.realise<Data1D>("RDF(BC)", name(), GenericItem::InRestartFileFlag);
     rBCNormalised = rBC.accumulatedData();
     DataNormaliser1D rBCNormaliser(rBCNormalised);
-    rBCNormaliser.normaliseBySitePopulation(double(nACumulative) / nASelections);
-    rBCNormaliser.normaliseBySitePopulation(double(nBCumulative) / nBSelections);
-    rBCNormaliser.normaliseByNumberDensity(double(nCAvailable) / nCSelections, targetConfiguration_);
+    rBCNormaliser.normaliseDivide(double(nACumulative) / nASelections);
+    rBCNormaliser.normaliseDivide(double(nBCumulative) / nBSelections);
+    rBCNormaliser.normaliseDivide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());
     rBCNormaliser.normaliseBySphericalShell();
 
     auto &aABCNormalised = processingData.realise<Data1D>("Angle(ABC)", name(), GenericItem::InRestartFileFlag);
     aABCNormalised = aABC.accumulatedData();
     DataNormaliser1D aABCNormaliser(aABCNormalised);
-    aABCNormaliser.normaliseByExpression("value/sin(toRad(x))");
-    aABCNormaliser.normaliseByValue();
+    aABCNormaliser.normalise([](const auto &x, const auto &value) { return value / sin(x / DEGRAD); });
+    aABCNormaliser.normaliseTo();
 
     auto &dAngleNormalised = processingData.realise<Data2D>("DAngle(A-BC)", name(), GenericItem::InRestartFileFlag);
     dAngleNormalised = dAngle.accumulatedData();
     DataNormaliser2D dAngleNormaliser(dAngleNormalised);
     dAngleNormaliser.normaliseByExpression(fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
-    dAngleNormaliser.normaliseBySitePopulation(double(nACumulative) / nASelections);
-    dAngleNormaliser.normaliseByNumberDensity(double(nBAvailable) / nBSelections, targetConfiguration_);
+    dAngleNormaliser.normaliseDivide(double(nACumulative) / nASelections);
+    dAngleNormaliser.normaliseDivide((double(nBAvailable) / nBSelections) / targetConfiguration_->box()->volume());
     dAngleNormaliser.normaliseBySphericalShell();
 
     return ExecutionResult::Success;

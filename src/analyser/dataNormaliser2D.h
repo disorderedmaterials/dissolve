@@ -7,7 +7,8 @@
 #include "math/data2D.h"
 #include <string_view>
 
-class DataNormaliser2D : public DataNormaliserBase<Data2D>
+using NormalisationFunction2D = std::function<double(const double &, const double &, const double &)>;
+class DataNormaliser2D : public DataNormaliserBase<Data2D, NormalisationFunction2D>
 {
     public:
     DataNormaliser2D(Data2D &targetData);
@@ -16,7 +17,8 @@ class DataNormaliser2D : public DataNormaliserBase<Data2D>
      * Normalisation functions
      */
     public:
-    void normaliseBySphericalShell() override;
-    void normaliseByExpression(std::string_view expressionString) override;
+    void normalise(NormalisationFunction2D normalisationFunction) override;
     void normaliseByGrid() override;
+    void normaliseBySphericalShell() override;
+    void normaliseTo(double value = 1.0, bool absolute = true) override;
 };

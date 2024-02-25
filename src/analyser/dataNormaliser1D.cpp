@@ -2,8 +2,6 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataNormaliser1D.h"
-#include "expression/expression.h"
-#include "expression/variable.h"
 #include "math/data1D.h"
 #include "math/integrator.h"
 

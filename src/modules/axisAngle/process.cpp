@@ -71,22 +71,22 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     auto &rABNormalised = processingData.realise<Data1D>("RDF(AB)", name(), GenericItem::InRestartFileFlag);
     rABNormalised = rAB.accumulatedData();
     DataNormaliser1D rABNormaliser(rABNormalised);
-    rABNormaliser.normaliseBySitePopulation(double(a.sites().size()));
-    rABNormaliser.normaliseByNumberDensity(double(b.sites().size()), targetConfiguration_);
+    rABNormaliser.normaliseDivide(double(a.sites().size()));
+    rABNormaliser.normaliseDivide(double(b.sites().size()) / targetConfiguration_->box()->volume());
     rABNormaliser.normaliseBySphericalShell();
 
     auto &aABCNormalised = processingData.realise<Data1D>("AxisAngle(AB)", name(), GenericItem::InRestartFileFlag);
     aABCNormalised = aABC.accumulatedData();
     DataNormaliser1D aABCNormaliser(aABCNormalised);
-    aABCNormaliser.normaliseByExpression("value/sin(toRad(x))");
-    aABCNormaliser.normaliseByValue();
+    aABCNormaliser.normalise([](const auto &x, const auto &value) { return value / sin(x / DEGRAD); });
+    aABCNormaliser.normaliseTo();
 
     auto &dAngleNormalised = processingData.realise<Data2D>("DAxisAngle", name(), GenericItem::InRestartFileFlag);
     dAngleNormalised = dAngle.accumulatedData();
     DataNormaliser2D dAngleNormaliser(dAngleNormalised);
     dAngleNormaliser.normaliseByExpression(fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
-    dAngleNormaliser.normaliseBySitePopulation(double(a.sites().size()));
-    dAngleNormaliser.normaliseByNumberDensity(double(b.sites().size()), targetConfiguration_);
+    dAngleNormaliser.normaliseDivide(double(a.sites().size()));
+    dAngleNormaliser.normaliseDivide(double(b.sites().size()) / targetConfiguration_->box()->volume());
     dAngleNormaliser.normaliseBySphericalShell();
 
     return ExecutionResult::Success;

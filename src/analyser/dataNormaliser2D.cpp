@@ -2,13 +2,27 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataNormaliser2D.h"
-#include "classes/configuration.h"
-#include "expression/expression.h"
-#include "expression/variable.h"
 #include "math/data2D.h"
 #include "math/integrator.h"
 
-DataNormaliser2D::DataNormaliser2D(Data2D &targetData) : DataNormaliserBase(targetData) {}
+DataNormaliser2D::DataNormaliser2D(Data2D &targetData) : DataNormaliserBase<Data2D, NormalisationFunction2D>(targetData) {}
+
+void DataNormaliser2D::normalise(NormalisationFunction2D normalisationFunction)
+{
+    const auto &xs = targetData_.xAxis();
+    const auto &ys = targetData_.yAxis();
+    auto &values = targetData_.values();
+
+    for (auto i = 0; i < xs.size(); ++i)
+    {
+        for (auto j = 0; j < ys.size(); ++j)
+        {
+            values[{i, j}] = normalisationFunction(xs[i], ys[j], values[{i, j}]);
+        }
+    }
+}
+
+void DataNormaliser2D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 2D data."); }
 
 void DataNormaliser2D::normaliseBySphericalShell()
 {
@@ -41,43 +55,9 @@ void DataNormaliser2D::normaliseBySphericalShell()
     }
 }
 
-void DataNormaliser2D::normaliseByExpression(std::string_view expressionString)
+void DataNormaliser2D::normaliseTo(double value, bool absolute)
 {
-    Expression expression;
-    auto x = expression.addLocalVariable("x");
-    auto xDelta = expression.addLocalVariable("xDelta");
-    auto y = expression.addLocalVariable("y");
-    auto yDelta = expression.addLocalVariable("yDelta");
-    auto value = expression.addLocalVariable("value");
-
-    const auto &xs = targetData_.xAxis();
-    const auto &ys = targetData_.yAxis();
-    auto &values = targetData_.values();
-
-    // Set data-related quantities
-    if (xs.size() > 1)
-        xDelta->setValue(xs[1] - xs[0]);
-    if (ys.size() > 1)
-        yDelta->setValue(ys[1] - ys[0]);
-
-    expression.create(expressionString);
-
-    // Evaluate the expression over all values
-    for (auto i = 0; i < xs.size(); ++i)
-    {
-        // Set x value in expression
-        x->setValue(xs[i]);
-
-        for (auto j = 0; j < ys.size(); ++j)
-        {
-            // Set y and value in expression
-            y->setValue(ys[j]);
-            value->setValue(values[{i, j}]);
-
-            // Evaluate and store new value
-            values[{i, j}] = expression.asDouble();
-        }
-    }
+    auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);
+    targetData_ /= sum;
+    targetData_ *= value;
 }
-
-void DataNormaliser2D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 2D data."); }
