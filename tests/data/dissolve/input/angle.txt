@@ -106,11 +106,12 @@ Module Angle 'Angle(X-H...O)'
   Configuration  'Bulk'
   SiteA  Water  'O'
   SiteB  Water  'H'
-  SiteC  Water  'O'
-  RangeAB  0.0  5.0  0.01
+  SiteC  Water 'O'
+  RangeAB  0.9  1.1  0.01
   RangeBC  0.0  5.0  0.01
   AngleRange  0.0  180.0  1.0
-  ExcludeSameMoleculeAB  true
+  ExcludeSameMoleculeAB  false
   ExcludeSameMoleculeBC  true
+  ExcludeSameSiteAC  true
 EndModule
 EndLayer
