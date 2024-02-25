@@ -5,7 +5,6 @@
 
 #include "analyser/dataNormaliserBase.h"
 #include "math/data2D.h"
-#include <string_view>
 
 using NormalisationFunction2D =
     std::function<double(const double &, const double &, const double &, const double &, const double &)>;
