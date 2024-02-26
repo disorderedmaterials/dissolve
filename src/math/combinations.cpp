@@ -6,10 +6,18 @@
 
 std::pair<int, int> Combinations::nthCombination(int n) const
 {
+<<<<<<< HEAD
     /*
       If we let N_ be the number of items being combined and n be the
       index of the pair {x, y}.  The smallest value of n for and value
       of i is given by the relation:
+=======
+  /*
+    If we let x be the 
+   */
+    auto a = -0.5;
+    auto b = N_ - 0.5;
+>>>>>>> origin/1806_faster_combinations
 
       -x² + (2N_ -1)x = 2n
 
