@@ -15,12 +15,12 @@
 #include <queue>
 
 // Keyword managing data sources
-// Template arguments: data class (Data1D, Data2D ...), data import file format
+// Template arguments: data class (Data1D, Data2D ...)
 template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
 {
     // Typedef
     public:
-    using DataPair = std::pair<DataSource<DataType>, DataSource<DataType>>;
+    using DataPair = std::pair<std::shared_ptr<DataSource<DataType>>, std::shared_ptr<DataSource<DataType>>>;
 
     public:
     DataSourceKeyword(std::vector<DataPair> &dataSources, std::string_view endKeyword)
@@ -54,13 +54,15 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         // Emplacing back on data vector and getting the reference to the objects
-        DataSource<DataType> dataSourceA, dataSourceB;
+        auto [dataSourceA, dataSourceB] =
+            dataSources_.emplace_back(std::make_shared<DataSource<DataType>>(), std::make_shared<DataSource<DataType>>());
         // Create a queue for the dataSource objects
-        std::queue<DataSource<DataType> *> sourceQueue({&dataSourceA, &dataSourceB});
+        std::queue<std::shared_ptr<DataSource<DataType>>> sourceQueue({dataSourceA, dataSourceB});
 
         // Read the next line
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         {
+            dataSources_.pop_back();
             return false;
         }
 
@@ -75,13 +77,13 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
             if (!DataSource<DataType>::dataSourceTypes().isValid(parser.argsv(0)))
             {
                 // If not, print accepted options
+                dataSources_.pop_back();
                 return DataSource<DataType>::dataSourceTypes().errorAndPrintValid(parser.argsv(0));
             }
 
             // If data is internal
             if (DataSource<DataType>::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource<DataType>::Internal)
             {
-                Messenger::print("Adding data source {}", parser.argsv(1));
                 // Add data to dataSource
                 sourceQueue.front()->addData(parser.argsv(1));
                 // Remove dataSource from queue
@@ -96,14 +98,15 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                         fmt::format("End{}", DataSource<DataType>::dataSourceTypes().keyword(DataSource<DataType>::External)),
                         coreData))
                 {
+                    dataSources_.pop_back();
                     return Messenger::error("Failed to read file/format for '{}'.\n", name());
                 }
-                Messenger::print("Adding data source {}", sourceQueue.front()->dataName());
                 // Remove dataSource from queue
                 sourceQueue.pop();
             }
             else
             {
+                dataSources_.pop_back();
                 return Messenger::error("Unsupported data source type '{}' provided to keyword '{}'\n", parser.argsv(0),
                                         name());
             }
@@ -111,6 +114,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
             // Read the next line
             if (parser.getArgsDelim() != LineParser::Success)
             {
+                dataSources_.pop_back();
                 return false;
             }
 
@@ -120,8 +124,6 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 break;
             }
         }
-
-        dataSources_.emplace_back(dataSourceA, dataSourceB);
 
         return true;
     }
@@ -138,19 +140,19 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
             }
 
             // Serialise the first data source
-            if (!dataSourceA.serialise(parser, keywordName, prefix))
+            if (!dataSourceA->serialise(parser, keywordName, prefix))
             {
                 return false;
             }
 
             // Skip to next iteration if dataSourceB is undefined
-            if (!dataSourceB.dataExists())
+            if (!dataSourceB->dataExists())
             {
                 continue;
             }
 
             // Serialise the second data source (optional)
-            if (!dataSourceB.serialise(parser, keywordName, prefix))
+            if (!dataSourceB->serialise(parser, keywordName, prefix))
             {
                 return false;
             }
@@ -172,11 +174,11 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                           {
                               SerialisedValue result = toml::array{};
                               auto &[dataSourceA, dataSourceB] = item;
-                              result.push_back(dataSourceA.serialise());
+                              result.push_back(dataSourceA->serialise());
                               // If optional second data source exists
-                              if (dataSourceB.dataExists())
+                              if (dataSourceB->dataExists())
                               {
-                                  result.push_back(dataSourceB.serialise());
+                                  result.push_back(dataSourceB->serialise());
                               }
                               return result;
                           });
@@ -185,9 +187,10 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
         // Emplacing back on data vector and getting the reference to the objects
-        DataSource<DataType> dataSourceA, dataSourceB;
+        auto [dataSourceA, dataSourceB] =
+            dataSources_.emplace_back(std::make_shared<DataSource<DataType>>(), std::make_shared<DataSource<DataType>>());
         // Create a queue for the dataSource objects
-        std::queue<DataSource<DataType> *> sourceQueue({&dataSourceA, &dataSourceB});
+        std::queue<std::shared_ptr<DataSource<DataType>>> sourceQueue({dataSourceA, dataSourceB});
 
         toVector(node,
                  [this, &coreData, &sourceQueue](const auto &item)
@@ -219,7 +222,5 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                          sourceQueue.pop();
                      }
                  });
-
-        dataSources_.emplace_back(dataSourceA, dataSourceB);
     }
 };

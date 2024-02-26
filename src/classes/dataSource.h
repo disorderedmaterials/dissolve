@@ -16,6 +16,7 @@
 #include "module/context.h"
 #include <variant>
 
+// Template arguments: data class (Data1D, Data2D ...)
 template <typename DataType> class DataSource
 {
 
@@ -24,6 +25,7 @@ template <typename DataType> class DataSource
     ~DataSource() = default;
 
     public:
+    // Types of data sources allowed
     enum DataSourceType
     {
         Internal,
@@ -50,7 +52,7 @@ template <typename DataType> class DataSource
     DataSourceType dataSourceType_;
     // String to hold internal data tag (if internal)
     std::string internalDataSource_;
-    // Pointer to formatter object
+    // Formatter object
     typename DataType::Formatter externalDataSource_;
     // Data object stored
     DataType data_;
@@ -145,7 +147,7 @@ template <typename DataType> class DataSource
         }
 
         // Write source: internal/external
-        if (!parser.writeLineF("{}{}  ", prefix, dataSourceTypes().keyword(dataSourceType_)))
+        if (!parser.writeLineF("  {}{}", prefix, dataSourceTypes().keyword(dataSourceType_)))
         {
             return false;
         }
@@ -153,26 +155,26 @@ template <typename DataType> class DataSource
         // If data is internal
         if (dataSourceType_ == Internal)
         {
-            if (!parser.writeLineF("'{}'\n", internalDataSource_))
+            if (!parser.writeLineF("  '{}'\n", internalDataSource_))
                 return false;
         }
 
         else if (dataSourceType_ == External)
         {
             // Write filename and format
-            if (!externalDataSource_.writeFilenameAndFormat(parser, prefix))
+            if (!externalDataSource_.writeFilenameAndFormat(parser, "  "))
             {
                 return false;
             }
 
             // Write extra keywords
-            if (!externalDataSource_.writeBlock(parser, prefix)) // Express as a serialisable value
+            if (!externalDataSource_.writeBlock(parser, fmt::format("  {}", prefix)))
             {
                 return false;
             }
 
             // End the block
-            if (!parser.writeLineF("End{}", dataSourceTypes().keyword(External)))
+            if (!parser.writeLineF("      End{}\n", dataSourceTypes().keyword(External)))
             {
                 return false;
             }

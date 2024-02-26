@@ -14,9 +14,9 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
          */
 
         // Check to make sure the data exists
-        if (!dataPair.first.dataExists() || !dataPair.second.dataExists())
+        if (!dataPair.first->dataExists() || !dataPair.second->dataExists())
         {
-            Messenger::print("Skipping {} and {}", dataPair.first.dataName(), dataPair.second.dataName());
+            Messenger::print("Skipping {} and {}", dataPair.first->dataName(), dataPair.second->dataName());
             continue;
         }
 
@@ -25,21 +25,21 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         ranges = ranges_;
 
         // Source the data
-        if (!dataPair.first.sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.first->sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
         {
-            Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first.dataName(),
-                             dataPair.second.dataName(), dataPair.first.dataName());
+            Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first->dataName(),
+                             dataPair.second->dataName(), dataPair.first->dataName());
             continue;
         }
-        if (!dataPair.second.sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.second->sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
         {
-            Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first.dataName(),
-                             dataPair.second.dataName(), dataPair.second.dataName());
+            Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first->dataName(),
+                             dataPair.second->dataName(), dataPair.second->dataName());
             continue;
         }
 
-        auto dataA = dataPair.first.data();
-        auto dataB = dataPair.second.data();
+        auto dataA = dataPair.first->data();
+        auto dataB = dataPair.second->data();
 
         /*
          * Save Data
@@ -64,7 +64,7 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         // Set the error vector to be the same size as the ranges
         data1dSourcesErrors_[&dataPair].second.resize(ranges.size());
 
-        Messenger::print("Errors between {} and {}", dataPair.first.dataName(), dataPair.second.dataName());
+        Messenger::print("Errors between {} and {}", dataPair.first->dataName(), dataPair.second->dataName());
 
         // Loop through the the range & error vectors, calculating and reporting the errors
         for (auto &&[range, error] : zip(ranges, data1dSourcesErrors_[&dataPair].second))

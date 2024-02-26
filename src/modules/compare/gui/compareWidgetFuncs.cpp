@@ -71,15 +71,15 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
                                                            "Delta", "Delta");
                 // Render DataA in the pair
                 graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_DataA", module_->name(), dSourceCount),
-                                                           fmt::format("{}", dataSourceA.dataName()), "DataA");
+                                                           fmt::format("{}", dataSourceA->dataName()), "DataA");
                 // Render DataB in the pair
                 graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_DataB", module_->name(), dSourceCount),
-                                                           fmt::format("{}", dataSourceB.dataName()), "DataB");
+                                                           fmt::format("{}", dataSourceB->dataName()), "DataB");
 
                 // Validate renderables if they need it
                 graph_->validateRenderables(dissolve_.processingModuleData());
 
-                graph_->view().axes().setMax(1, std::max(dataSourceA.data().maxValue(), dataSourceB.data().maxValue()) + 5.0);
+                graph_->view().axes().setMax(1, std::max(dataSourceA->data().maxValue(), dataSourceB->data().maxValue()) + 5.0);
 
                 ++dSourceCount;
             }
