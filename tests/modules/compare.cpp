@@ -27,8 +27,8 @@ TEST_F(CompareModuleTest, IntVsIntErrors)
     auto *compareModule = systemTest.getModule<CompareModule>("Compare01");
     ASSERT_TRUE(compareModule);
 
-    const auto &ranges = compareModule->dataSourcesErrors().at(&compareModule->dataSources()[0]).first;
-    const auto &errors = compareModule->dataSourcesErrors().at(&compareModule->dataSources()[0]).second;
+    const auto &ranges = compareModule->data1dSourcesErrors().at(&compareModule->data1dSources()[0]).first;
+    const auto &errors = compareModule->data1dSourcesErrors().at(&compareModule->data1dSources()[0]).second;
 
     EXPECT_NEAR(ranges[0].minimum(), 0, 1.0e-4);
     EXPECT_NEAR(ranges[0].maximum(), 30, 1.0e-4);
@@ -44,8 +44,8 @@ TEST_F(CompareModuleTest, IntVsExtErrors)
     auto *compareModule = systemTest.getModule<CompareModule>("Compare01");
     ASSERT_TRUE(compareModule);
 
-    const auto &ranges = compareModule->dataSourcesErrors().at(&compareModule->dataSources()[1]).first;
-    const auto &errors = compareModule->dataSourcesErrors().at(&compareModule->dataSources()[1]).second;
+    const auto &ranges = compareModule->data1dSourcesErrors().at(&compareModule->data1dSources()[1]).first;
+    const auto &errors = compareModule->data1dSourcesErrors().at(&compareModule->data1dSources()[1]).second;
 
     EXPECT_NEAR(ranges[0].minimum(), 0, 1.0e-4);
     EXPECT_NEAR(ranges[0].maximum(), 30, 1.0e-4);
@@ -61,8 +61,8 @@ TEST_F(CompareModuleTest, ExtVsExtErrors)
     auto *compareModule = systemTest.getModule<CompareModule>("Compare01");
     ASSERT_TRUE(compareModule);
 
-    const auto &ranges = compareModule->dataSourcesErrors().at(&compareModule->dataSources()[2]).first;
-    const auto &errors = compareModule->dataSourcesErrors().at(&compareModule->dataSources()[2]).second;
+    const auto &ranges = compareModule->data1dSourcesErrors().at(&compareModule->data1dSources()[2]).first;
+    const auto &errors = compareModule->data1dSourcesErrors().at(&compareModule->data1dSources()[2]).second;
 
     EXPECT_NEAR(ranges[0].minimum(), 0, 1.0e-4);
     EXPECT_NEAR(ranges[0].maximum(), 30, 1.0e-4);
