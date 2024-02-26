@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataExporter.h"
 #include "analyser/dataNormaliser1D.h"
 #include "analyser/dataNormaliser2D.h"
 #include "analyser/siteSelector.h"
@@ -109,56 +110,17 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     dAxisAngleNormaliser.normaliseBySphericalShell();
 
 
-    // Save RDF data?
-    if (exportFileAndFormatRDF_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (exportFileAndFormatRDF_.exportData(rABNormalised))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-                return ExecutionResult::Failed;
-            }
-        }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::Failed;
-    }
+    // Save RDF(A-B) data?
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(rABNormalised, exportFileAndFormatRDF_, moduleContext.processPool()))
+        return ExecutionResult::Failed;
 
-    // Save AxisAngle data?
-    if (exportFileAndFormatAxisAngle_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (exportFileAndFormatAxisAngle_.exportData(aABNormalised))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-                return ExecutionResult::Failed;
-            }
-        }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::Failed;
-    }
+    // Save AxisAngle(A-B) data?
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(aABNormalised, exportFileAndFormatAxisAngle_, moduleContext.processPool()))
+        return ExecutionResult::Failed;
 
-    // Save DAxisAngle data?
-    if (exportFileAndFormatDAxisAngle_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (exportFileAndFormatDAxisAngle_.exportData(dAxisAngleNormalised))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-                return ExecutionResult::Failed;
-            }
-        }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::Failed;
-    }
+    // Save DAxisAngle(A-B) data?
+    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(dAxisAngleNormalised, exportFileAndFormatDAxisAngle_, moduleContext.processPool()))
+        return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
 }

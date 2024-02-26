@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataExporter.h"
 #include "analyser/siteFilter.h"
 #include "analyser/siteSelector.h"
 #include "main/dissolve.h"
@@ -90,17 +91,8 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = accumulatedQData;
 
     // Save data?
-    if (exportFileAndFormat_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (exportFileAndFormat_.exportData(qSpeciesHistogram.accumulatedData()))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-            }
-        }
-    }
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(qSpeciesHistogram.accumulatedData(), exportFileAndFormat_, moduleContext.processPool()))
+        return ExecutionResult::Failed;
+
     return ExecutionResult::Success;
 }

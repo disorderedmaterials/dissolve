@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataExporter.h"
 #include "analyser/dataNormaliser1D.h"
 #include "analyser/dataNormaliser2D.h"
 #include "analyser/dataNormaliser3D.h"
@@ -204,90 +205,26 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     // Normalise by spherical shell
     normaliserDAngleBC.normaliseBySphericalShell();
 
-    // Save RDF(A-B) data?
-    if (exportFileAndFormatAB_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (exportFileAndFormatAB_.exportData(normalisedAB))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-                return ExecutionResult::Failed;
-            }
-        }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::Failed;
-    }
 
+    // Save RDF(A-B) data?
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(normalisedAB, exportFileAndFormatAB_, moduleContext.processPool()))
+        return ExecutionResult::Failed;
+    
     // Save RDF(B-C) data?
-    if (exportFileAndFormatBC_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (exportFileAndFormatBC_.exportData(normalisedBC))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-                return ExecutionResult::Failed;
-            }
-        }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::Failed;
-    }
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(normalisedBC, exportFileAndFormatBC_, moduleContext.processPool()))
+        return ExecutionResult::Failed;
 
     // Save Angle(A-B-C) data?
-    if (exportFileAndFormatAngle_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (exportFileAndFormatAngle_.exportData(normalisedAngle))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-                return ExecutionResult::Failed;
-            }
-        }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::Failed;
-    }
-
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(normalisedAngle, exportFileAndFormatAngle_, moduleContext.processPool()))
+        return ExecutionResult::Failed;
+    
     // Save DAngle((A-B)-C) data?
-    if (exportFileAndFormatDAngleAB_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (exportFileAndFormatDAngleAB_.exportData(normalisedDAngleAB))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-                return ExecutionResult::Failed;
-            }
-        }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::Failed;
-    }
+    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(normalisedDAngleAB, exportFileAndFormatDAngleAB_, moduleContext.processPool()))
+        return ExecutionResult::Failed;
 
     // Save DAngle(A-(B-C)) data?
-    if (exportFileAndFormatDAngleBC_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (exportFileAndFormatDAngleBC_.exportData(normalisedDAngleBC))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-                return ExecutionResult::Failed;
-            }
-        }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::Failed;
-    }
+    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(normalisedDAngleBC, exportFileAndFormatDAngleBC_, moduleContext.processPool()))
+        return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
 }
