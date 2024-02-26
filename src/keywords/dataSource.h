@@ -54,7 +54,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         // Emplacing back on data vector and getting the reference to the objects
-        auto [dataSourceA, dataSourceB] =
+        auto &[dataSourceA, dataSourceB] =
             dataSources_.emplace_back(std::make_shared<DataSource<DataType>>(), std::make_shared<DataSource<DataType>>());
         // Create a queue for the dataSource objects
         std::queue<std::shared_ptr<DataSource<DataType>>> sourceQueue({dataSourceA, dataSourceB});
@@ -187,7 +187,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
         // Emplacing back on data vector and getting the reference to the objects
-        auto [dataSourceA, dataSourceB] =
+        auto &[dataSourceA, dataSourceB] =
             dataSources_.emplace_back(std::make_shared<DataSource<DataType>>(), std::make_shared<DataSource<DataType>>());
         // Create a queue for the dataSource objects
         std::queue<std::shared_ptr<DataSource<DataType>>> sourceQueue({dataSourceA, dataSourceB});
