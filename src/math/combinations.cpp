@@ -19,7 +19,7 @@ std::pair<int, int> Combinations::nthCombination(int n) const
       it ack into the relation, we can find the offset for the y value
       as well.
      */
-    Quadratic relation(-0.5, N_ - 0.5, - n);
+    Quadratic relation(-0.5, N_ - 0.5, -n);
 
     auto roots = relation.roots();
     auto x = std::floor(relation.roots().second);
