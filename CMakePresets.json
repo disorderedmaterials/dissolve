@@ -24,9 +24,7 @@
 	    "description": "Common settings for building on Nix systems",
 	    "hidden": true,
             "cacheVariables": {
-                "CONAN": "OFF",
-                "AntlrRuntime_INCLUDE_DIRS": "$env{AntlrRuntime_INCLUDE_DIRS}",
-                "AntlrRuntime_LINK_DIRS": "$env{AntlrRuntime_LINK_DIRS}"
+                "CONAN": "OFF"
 	    }
 	},
 	{
