@@ -79,47 +79,54 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
 
     for (const auto &[siteA, indexA] : a.sites())
     {
-        nACumulative++;
         nBSelections++;
-        nAAvailable++;
         for (const auto &[siteB, indexB] : b.sites())
         {
 
-            if (excludeSameMoleculeAB_ && siteB->molecule() == siteA->molecule())
+            if (excludeSameMoleculeAB_ && (siteB->molecule() == siteA->molecule()))
                 continue;
 
-            auto distAB = targetConfiguration_->box()->minimumDistance(siteB->origin(), siteA->origin());
+            auto distAB = targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin());
 
             nBAvailable++;
+
+            if (!Range(rangeAB_.x, rangeAB_.y).contains(distAB))
+                continue;
+
+            rAB.bin(distAB);
+
             nBCumulative++;
             nCSelections++;
 
             for (const auto &[siteC, indexC] : c.sites())
             {
 
-                if (excludeSameMoleculeBC_ && siteC->molecule() == siteB->molecule())
+                if (excludeSameMoleculeBC_ && (siteC->molecule() == siteB->molecule()))
                     continue;
 
-                if (excludeSameSiteAC_ && siteC == siteA)
+                if (excludeSameSiteAC_ && (siteC == siteA))
                     continue;
 
                 nCAvailable++;
+
+                auto distBC = targetConfiguration_->box()->minimumDistance(siteB->origin(), siteC->origin());
+
+
+                if (!Range(rangeBC_.x, rangeBC_.y).contains(distBC))
+                    continue;
+
                 nCCumulative++;
 
-                auto distBC = targetConfiguration_->box()->minimumDistance(siteC->origin(), siteB->origin());
                 auto angle = targetConfiguration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
                 if (symmetric_ && angle > 90.0)
                     angle = 180.0 - angle;
 
-                if (dAngleABC.bin(distAB, distBC, angle))
-                {
-                    dAngleBC.bin(distBC, angle);
-                    dAngleAB.bin(distAB, angle);
-                    aABC.bin(angle);
-                    rAB.bin(distAB);
-                    rBC.bin(distBC);
-                }            
-
+                rBC.bin(distBC);
+                aABC.bin(angle);
+                dAngleAB.bin(distAB, angle);
+                dAngleBC.bin(distBC, angle);
+                dAngleABC.bin(distAB, distBC, angle);
+     
             }
         }
     }
@@ -132,7 +139,7 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     dAngleBC.accumulate();
     dAngleABC.accumulate();
 
-    // RDF(A-B)s
+    // RDF(A-B)
     auto &normalisedAB = processingData.realise<Data1D>("RDF(AB)", name(), GenericItem::InRestartFileFlag);
     normalisedAB = rAB.accumulatedData();
     DataNormaliser1D normaliserAB(normalisedAB);
@@ -151,7 +158,7 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     normaliserBC.normaliseDivide(double(nACumulative) / nASelections);
     // Normalise by B site population
     normaliserBC.normaliseDivide(double(nBCumulative) / nBSelections);
-    // Normalise by c site population density
+    // Normalise by C site population density
     normaliserBC.normaliseDivide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());
     // Normalise by spherical shell
     normaliserBC.normaliseBySphericalShell();
