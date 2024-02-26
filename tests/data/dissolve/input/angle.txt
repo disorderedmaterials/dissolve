@@ -112,6 +112,6 @@ Module Angle 'Angle(X-H...O)'
   AngleRange  0.0  180.0  1.0
   ExcludeSameMoleculeAB  false
   ExcludeSameMoleculeBC  true
-  ExcludeSameSiteAC  true
+  ExcludeSameSiteAC  false
 EndModule
 EndLayer
