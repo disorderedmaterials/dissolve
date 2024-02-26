@@ -1099,7 +1099,10 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
 {
     if (referenceRootAtoms.empty() || !neta.isValid())
         return {};
-
+    referenceSpecies->print();
+    for (auto *i : referenceRootAtoms)
+        Messenger::print("Detecting instances for fragment '{}' - there are {} unique root atoms.\n", referenceSpecies->name(),
+                         referenceRootAtoms.size());
     // Form basis sites on the molecularSpecies for each root atom that we will try to match in our fragment molecule
     std::map<const SpeciesAtom *, Matrix3> referenceBases;
     for (auto *rootAtom : referenceRootAtoms)
@@ -1141,6 +1144,7 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
             atomIndexIterator = std::find(std::next(atomIndexIterator), atomMask.end(), false);
             continue;
         }
+        Messenger::print("Current index matching NETA is {}...\n", atomIndex);
 
         // Found a fragment that matches the NETA description - we now create a temporary instance Species which will contain
         // the selected fragment atoms, reassembled into a molecule (i.e. unfolded) and with bonding applied / calculated.
@@ -1164,7 +1168,6 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
             applyCIFBonding(&instanceSpecies, preventMetallicBonds_);
         else
             instanceSpecies.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
-        instanceSpecies.print();
 
         // Create a LocalMolecule as a working area for folding, translation, and rotation of the instance coordinates.
         LocalMolecule instanceMolecule;
@@ -1183,92 +1186,55 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
         instanceMolecule.unFold(unitCellSpecies_.box());
         for (auto &&[molAtom, spAtom] : zip(instanceMolecule.localAtoms(), instanceSpecies.atoms()))
             spAtom.setCoordinates(molAtom.r());
+        instanceSpecies.print();
 
         /*
          * Now, we have a root match atom on the current instance and a vector of possible matching sites on the reference
-         * species (in referenceRootAtoms). So, we can try relocating our molecule's root atom site to match each of the
-         * possible sites on the reference species, and explore potential bases there to try and find a match.
+         * species (in referenceRootAtoms). For each of the referenceRootAtoms, try to incremental select along bonds using
+         * basic NETA connectivity.
          */
 
-        // Get angle atom pairs for the root atom and transform them into local indices
-        auto tempPairs = instanceSpeciesRootAtom.getAnglePairs(170.0, false);
-        std::vector<std::pair<int, int>> rootAtomAnglePairs(tempPairs.size());
-        std::transform(tempPairs.begin(), tempPairs.end(), rootAtomAnglePairs.begin(),
-                       [](const auto &pair) { return std::pair<int, int>(pair.first->index(), pair.second->index()); });
+        // Generate basic NETA descriptions for each atom in the reference and candidate species
+        std::map<const SpeciesAtom *, NETADefinition> referenceAtomNETA;
+        for (auto &spAtom : referenceSpecies->atoms())
+            referenceAtomNETA[&spAtom] = NETADefinition(&spAtom, 1, {NETADefinition::NETACreationFlags::IncludeRootElement});
 
-        // Loop over potential root sites on the reference species
-        std::vector<int> matchedIndexMapping;
+        std::map<const SpeciesAtom *, const SpeciesAtom *> matchMap;
         for (const auto *referenceRootAtom : referenceRootAtoms)
         {
-            // Translate our instance molecule so that the root atom match is at the referenceRootAtom coordinates
-            instanceMolecule.translate(referenceRootAtom->r() - instanceMoleculeRootAtom.r());
-
-            // Now we try to find a rotation that will put our fragment molecule on top of the reference species if possible
-            auto differenceResult = differenceMetric(referenceSpecies, instanceMolecule);
-            const auto differenceTolerance = 0.1;
-
-            Messenger::printVerbose("Initial diff for root atom with index {} is {}\n", referenceRootAtom->index(),
-                                    differenceResult.first);
-            // May have a quick early success,,,
-            if (differenceResult.first <= differenceTolerance)
+            // The root atom is the starting point
+            matchMap = matchAtom(referenceRootAtom, &instanceSpeciesRootAtom, referenceAtomNETA, {});
+            if (matchMap.empty())
+                continue;
+            else
             {
-                matchedIndexMapping = differenceResult.second;
+                printf("Got a match starting from reference root atom index %i.\n", referenceRootAtom->index());
                 break;
-            }
-
-            // Try to find a basis using these axis atoms that rotates our atoms onto those of the reference molecule
-            for (auto &&[xIndex, yIndex] : rootAtomAnglePairs)
-            {
-                // We are working with the coordinates of the instanceMoleculeRootAtom as the origin...
-                auto xAxis = instanceMolecule.localAtoms()[xIndex].r() - instanceMoleculeRootAtom.r();
-                xAxis.normalise();
-
-                auto yAxis = instanceMolecule.localAtoms()[yIndex].r() - instanceMoleculeRootAtom.r();
-                yAxis.orthogonalise(xAxis);
-                yAxis.normalise();
-
-                Matrix3 currentBasis;
-                currentBasis.setColumn(0, xAxis);
-                currentBasis.setColumn(1, yAxis);
-                currentBasis.setColumn(2, xAxis * yAxis);
-
-                // Create rotation matrix to convert current basis into reference basis
-                currentBasis.invert();
-                auto rotationMatrix = referenceBases[referenceRootAtom] * currentBasis;
-
-                // Transform our local molecule instance coordinates, accounting for the origin atom coordinates
-                for (auto &localAtom : instanceMolecule.localAtoms())
-                    localAtom.setCoordinates(rotationMatrix * (localAtom.r() - instanceMoleculeRootAtom.r()) +
-                                             instanceMoleculeRootAtom.r());
-                Messenger::printVerbose("  --> After realignment (x{},y{}) diff is {}\n", xIndex, yIndex,
-                                        differenceResult.first);
-
-                // Get new difference metric
-                differenceResult = differenceMetric(referenceSpecies, instanceMolecule);
-                if (differenceResult.first <= differenceTolerance)
-                {
-                    matchedIndexMapping = differenceResult.second;
-                    break;
-                }
             }
         }
 
-        if (matchedIndexMapping.empty())
+        // Result?
+        if (matchMap.empty())
         {
-            Messenger::error("Failed to rotate molecule into species reference basis.\n");
+            Messenger::error("Failed to match connectivity of an instance to the reference molecule.\n");
+            return {};
+        }
+        else if (matchMap.size() != referenceSpecies->nAtoms())
+        {
+            Messenger::error(
+                "Internal error - failed to match connectivity of all atoms within an instance to the reference molecule.\n");
             return {};
         }
 
         // Create the final instance
         auto &instance = instances.emplace_back();
         instance.setSpecies(referenceSpecies);
-        for (auto refSpeciesI = 0; refSpeciesI < referenceSpecies->nAtoms(); ++refSpeciesI)
+        for (const auto &[refSpeciesAtom, instanceSpeciesAtom] : matchMap)
+        //        for (auto refSpeciesI = 0; refSpeciesI < referenceSpecies->nAtoms(); ++refSpeciesI)
         {
-            // Get the index of the local overlapping with the reference species atom
-            auto &localSpeciesI = matchedIndexMapping[refSpeciesI];
-
+            fmt::print("Reference index {} maps to instance index {}\n", refSpeciesAtom->index(), instanceSpeciesAtom->index());
             // Set the final instance coordinates from those of our local instance species
-            instance.localAtom(refSpeciesI).setCoordinates(instanceSpecies.atom(localSpeciesI).r());
+            instance.localAtom(refSpeciesAtom->index()).setCoordinates(instanceSpeciesAtom->r());
         }
 
         // Find the next available atom
@@ -1278,11 +1244,128 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
     return instances;
 }
 
+std::map<const SpeciesAtom *, const SpeciesAtom *>
+CIFHandler::matchAtom(const SpeciesAtom *referenceAtom, const SpeciesAtom *instanceAtom,
+                      const std::map<const SpeciesAtom *, NETADefinition> &refNETA,
+                      const std::map<const SpeciesAtom *, const SpeciesAtom *> &map, const SpeciesAtom *fromThis)
+{
+    static int depth = 0;
+    // Check that the reference atom NETA matches the instance atom
+    if (!refNETA.at(referenceAtom).matches(instanceAtom))
+    {
+        fmt::print("[{}] Reference atom index {} ({},nbonds={}) doesn't match the instance atom index {} ({},nbonds={})\n",
+                   depth, referenceAtom->index(), Elements::symbol(referenceAtom->Z()), referenceAtom->nBonds(),
+                   instanceAtom->index(), Elements::symbol(instanceAtom->Z()), instanceAtom->nBonds());
+        return {};
+    }
+
+    // Check the map to see if we have already associated the instance atom to a reference atom. If we have then it must be the
+    // same atom as we were given here.
+    auto mapIt = map.find(referenceAtom);
+    if (mapIt != map.end())
+    {
+        if (mapIt->second != instanceAtom)
+        {
+            fmt::print("[{}] FAIL Reference atom index {} ({},nbonds={}) is already mapped but not to this instance atom "
+                       "(index {} ({},nbonds={})\n",
+                       depth, referenceAtom->index(), Elements::symbol(referenceAtom->Z()), referenceAtom->nBonds(),
+                       instanceAtom->index(), Elements::symbol(instanceAtom->Z()), instanceAtom->nBonds());
+            return {};
+        }
+
+        // Already matched and confirmed, so can return the original map
+        fmt::print("[{}] RETURN Reference atom index {} ({},nbonds={}) is already mapped to this instance atom (index {} "
+                   "({},nbonds={})\n",
+                   depth, referenceAtom->index(), Elements::symbol(referenceAtom->Z()), referenceAtom->nBonds(),
+                   instanceAtom->index(), Elements::symbol(instanceAtom->Z()), instanceAtom->nBonds());
+        return map;
+    }
+
+    // Also check the reverse mapping to ensure that this instance atom isn't already associated to a reference atom match
+    if (std::find_if(map.begin(), map.end(), [instanceAtom](const auto &kv) { return kv.second == instanceAtom; }) != map.end())
+    {
+        fmt::print("[{}] FAIL Reference atom index {} ({},nbonds={}) is not the one mapped to this instance atom (index {} "
+                   "({},nbonds={})\n",
+                   depth, referenceAtom->index(), Elements::symbol(referenceAtom->Z()), referenceAtom->nBonds(),
+                   instanceAtom->index(), Elements::symbol(instanceAtom->Z()), instanceAtom->nBonds());
+        return {};
+    }
+
+    // Copy the current map, associate our initial pair of atoms and try to extend it
+    auto newMap = map;
+    newMap[referenceAtom] = instanceAtom;
+    fmt::print("[{}] GOOD Reference atom index {} ({},nbonds={}) is matches this instance atom (index {} ({},nbonds={})\n",
+               depth, referenceAtom->index(), Elements::symbol(referenceAtom->Z()), referenceAtom->nBonds(),
+               instanceAtom->index(), Elements::symbol(instanceAtom->Z()), instanceAtom->nBonds());
+
+    // Cycle over bonds on the reference atom and find
+    auto count1 = 0;
+    for (const auto &referenceBond : referenceAtom->bonds())
+    {
+        // Get the reference bond partner
+        auto *referenceBondPartner = referenceBond.get().partner(referenceAtom);
+
+        fmt::print("[{}] Loop reference atom bomds ({} of {}) - to {}\n", depth, ++count1, referenceAtom->nBonds(),
+                   Elements::symbol(referenceBondPartner->Z()));
+
+        // Try to find a match over bonds on the instance atom
+        std::map<const SpeciesAtom *, const SpeciesAtom *> bondResult;
+        auto count2 = 0;
+        for (const auto &instanceBond : instanceAtom->bonds())
+        {
+            fmt::print("[{}] Search instance atom bomds ({} of {})\n", depth, ++count2, instanceAtom->nBonds());
+
+            // Get the instance bond partner
+            auto *instanceBondPartner = instanceBond.get().partner(instanceAtom);
+
+            //            // If this atom is where we just recursed from along a bond, no need to match it again...
+            //            if (instanceBondPartner == fromThis)
+            //            {
+            //                fmt::print("[{}] Skipping just-matched atom index {} ({},nbonds={})\n", depth, fromThis->index(),
+            //                           Elements::symbol(fromThis->Z()), fromThis->nBonds());
+            //                bondResult = newMap;
+            //                break;
+            //            }
+
+            // Try the match
+            ++depth;
+            fmt::print("[{}] ... trying to match reference bond partner {} ({},nbonds={}) with instance bond partner {} "
+                       "({},nbonds={})...\n",
+                       depth, referenceBondPartner->index(), Elements::symbol(referenceBondPartner->Z()),
+                       referenceBondPartner->nBonds(), instanceBondPartner->index(), Elements::symbol(instanceBondPartner->Z()),
+                       instanceBondPartner->nBonds());
+            auto matchedMap = matchAtom(referenceBondPartner, instanceBondPartner, refNETA, newMap, instanceAtom);
+            --depth;
+            if (!matchedMap.empty())
+            {
+                fmt::print("[{}] Bond requirements satisfied for bond {}\n", depth, count2);
+                bondResult = matchedMap;
+                break;
+            }
+        }
+
+        // If we found a suitable match recursing into the bond, store the result into newMap and continue to the next bond.
+        // If we didn't find a good match, we return now.
+        if (bondResult.empty())
+        {
+            fmt::print("[{}] FAIL Bond requirements not met.\n", depth);
+            return {};
+        }
+        else
+            newMap = bondResult;
+    }
+
+    fmt::print("[{}] All requirements met.\n", depth);
+    // If we get to here then we succeeded, so return the new map
+    return newMap;
+}
+
 // Calculate difference metric between the supplied species and local molecule
 std::pair<double, std::vector<int>> CIFHandler::differenceMetric(const Species *species, const LocalMolecule &molecule)
 {
     auto difference = 0.0;
     std::vector<int> atomIndexMap(species->nAtoms(), -1);
+    auto nBadAtoms = 0;
     for (auto spI = 0; spI < species->nAtoms(); ++spI)
     {
         auto &spAtom = species->atom(spI);
@@ -1299,12 +1382,17 @@ std::pair<double, std::vector<int>> CIFHandler::differenceMetric(const Species *
             }
         }
 
+        if (distanceSq > 0.1)
+            ++nBadAtoms;
+
         // Update the difference score
         const auto &closestMolSpAtom = molecule.species()->atom(atomIndexMap[spI]);
         difference += distanceSq;
         if (spAtom.Z() != closestMolSpAtom.Z())
             difference += std::max(spAtom.Z(), closestMolSpAtom.Z()) * 10.0;
     }
+
+    Messenger::print("NBADATOMS = {} of {}\n", nBadAtoms, species->nAtoms());
 
     return {difference, atomIndexMap};
 }

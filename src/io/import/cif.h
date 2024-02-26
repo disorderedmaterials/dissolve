@@ -198,4 +198,9 @@ class CIFHandler
                                                    const std::vector<SpeciesAtom *> &referenceRootAtoms);
     // Calculate difference metric between the supplied species and local molecule
     static std::pair<double, std::vector<int>> differenceMetric(const Species *species, const LocalMolecule &molecule);
+    std::map<const SpeciesAtom *, const SpeciesAtom *> matchAtom(const SpeciesAtom *referenceAtom,
+                                                                 const SpeciesAtom *instanceAtom,
+                                                                 const std::map<const SpeciesAtom *, NETADefinition> &refNETA,
+                                                                 const std::map<const SpeciesAtom *, const SpeciesAtom *> &map,
+                                                                 const SpeciesAtom *fromThis = nullptr);
 };
