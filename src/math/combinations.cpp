@@ -9,8 +9,8 @@ std::pair<int, int> Combinations::nthCombination(int n) const
   /*
     If we let x be the 
    */
-    double a = -0.5;
-    double b = N_ - 0.5;
+    auto a = -0.5;
+    auto b = N_ - 0.5;
 
     int i = std::floor((-b + std::sqrt(b * b + 4 * a * n)) / (2 * a));
     int j = n - std::floor(a * i * i + b * i) + i + 1;
