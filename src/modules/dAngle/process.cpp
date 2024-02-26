@@ -106,7 +106,7 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     rBCNormaliser.normaliseDivide(double(nACumulative) / nASelections);
     // Normalise by B site population
     rBCNormaliser.normaliseDivide(double(nBCumulative) / nBSelections);
-    // Normalise by c site population density
+    // Normalise by C site population density
     rBCNormaliser.normaliseDivide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());
     // Normalise by spherical shell
     rBCNormaliser.normaliseBySphericalShell();
