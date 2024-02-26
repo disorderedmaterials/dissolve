@@ -4,7 +4,6 @@
 #include "math/combinations.h"
 #include "math/polynomial.h"
 #include <cmath>
-#include <iostream>
 
 std::pair<int, int> Combinations::nthCombination(int n) const
 {
@@ -13,20 +12,18 @@ std::pair<int, int> Combinations::nthCombination(int n) const
       index of the pair {x, y}.  The smallest value of n for and value
       of i is given by the relation:
 
-      -x² + (2N_ -1)x = 2n
+      -½x² + (N_ -½1)x = n
 
       By the quadratic formula, we can solve for i for a given n.  The
       floor of that value is the x value for our pair and, by plugging
       it ack into the relation, we can find the offset for the y value
       as well.
      */
-    Quadratic relation(-1, 2*N_ - 1, -2 * n);
+    Quadratic relation(-0.5, N_ - 0.5, - n);
 
     auto roots = relation.roots();
     auto x = std::floor(relation.roots().second);
-    auto y = n - (relation.at(x) + 2 * n)/ 2 + x + 1;
-
-    std::cout << roots.first << ", " << roots.second << " ( " << x << ", " << y << ") " << relation.at(x) << std::endl;
+    auto y = x + 1 - relation.at(x);
 
     return {x, y};
 }
