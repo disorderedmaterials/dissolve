@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
+#include "analyser/dataNormaliser1D.h"
 #include "analyser/siteFilter.h"
 #include "analyser/siteSelector.h"
 #include "main/dissolve.h"
@@ -81,8 +82,8 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
 
     // Averaged values for Q-Species
     Data1D accumulatedQData = qSpeciesHistogram.accumulatedData();
-    auto sum = Integrator::absSum(qSpeciesHistogram.data());
-    accumulatedQData /= sum;
+    DataNormaliser1D normaliserQ(accumulatedQData);
+    normaliserQ.normaliseTo();
 
     // Averaged values for oxygen sites
     auto freeOxygens = oxygenSitesHistogram.accumulatedData().value(0);
@@ -91,7 +92,7 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = accumulatedQData;
 
     // Save data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(qSpeciesHistogram.accumulatedData(), exportFileAndFormat_, moduleContext.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(accumulatedQData, exportFileAndFormat_, moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
