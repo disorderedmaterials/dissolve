@@ -1,5 +1,6 @@
 add_library(
   analyser
+  dataExporter.h
   dataNormaliser1D.cpp
   dataNormaliser1D.h
   dataNormaliser2D.cpp
