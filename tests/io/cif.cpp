@@ -191,4 +191,28 @@ TEST_F(ImportCIFTest, MoleculeOrdering)
     }
 }
 
+TEST_F(ImportCIFTest, BigMoleculeOrdering)
+{
+    CIFHandler cifHandler;
+    const auto cifFile = "cif/Bisphen_n_arenes_1517789";
+
+    // Load the reference coordinates into a Species
+    Species referenceCoordinates;
+    SpeciesImportFileFormat speciesImportFileFormat(fmt::format("{}.xyz", cifFile));
+    ASSERT_TRUE(speciesImportFileFormat.importData(&referenceCoordinates));
+    ASSERT_EQ(referenceCoordinates.nAtoms(), 444);
+
+    // Load the CIF file
+    ASSERT_TRUE(cifHandler.read(fmt::format("{}.cif", cifFile)));
+    EXPECT_TRUE(cifHandler.generate());
+
+    EXPECT_EQ(cifHandler.molecularSpecies().size(), 1);
+
+    auto &cifMolecule = cifHandler.molecularSpecies().front();
+    EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {{Elements::O, 6}, {Elements::C, 51}, {Elements::H, 54}};
+    testMolecularSpecies(cifMolecule, {EmpiricalFormula::formula(moleculeFormula), 4, 111});
+
+    testInstanceConsistency(cifMolecule, referenceCoordinates);
+}
+
 } // namespace UnitTest
