@@ -895,6 +895,9 @@ bool CIFHandler::isValid() const
     return !molecularSpecies_.empty() || supercellSpecies_.fragment(0).size() != supercellSpecies_.nAtoms();
 }
 
+// Return cleaned unit cell species
+const Species &CIFHandler::cleanedUnitCellSpecies() const { return cleanedUnitCellSpecies_; }
+
 // Return the detected molecular species
 const std::vector<CIFMolecularSpecies> &CIFHandler::molecularSpecies() const { return molecularSpecies_; }
 
