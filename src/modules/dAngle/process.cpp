@@ -134,15 +134,18 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     dAngleNormaliser.normaliseBySphericalShell();
 
     // Save RDF(A-B) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(rBCNormalised, exportFileAndFormatRDF_, moduleContext.processPool()))
-        return ExecutionResult::Failed;    
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(rBCNormalised, exportFileAndFormatRDF_,
+                                                                  moduleContext.processPool()))
+        return ExecutionResult::Failed;
 
     // Save Angle(A-B-C) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(aABCNormalised, exportFileAndFormatAngle_, moduleContext.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(aABCNormalised, exportFileAndFormatAngle_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     // Save DAngle(A-(B-C)) data?
-    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(dAngleNormalised, exportFileAndFormatDAngle_, moduleContext.processPool()))
+    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(dAngleNormalised, exportFileAndFormatDAngle_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

@@ -71,7 +71,8 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
     normaliserOrientedSDF.normaliseByGrid();
 
     // Save SDF data?
-    if (!DataExporter<Data3D, Data3DExportFileFormat>::exportData(dataOrientedSDF, sdfFileAndFormat_, moduleContext.processPool()))
+    if (!DataExporter<Data3D, Data3DExportFileFormat>::exportData(dataOrientedSDF, sdfFileAndFormat_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

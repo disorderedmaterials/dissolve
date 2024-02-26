@@ -87,7 +87,8 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
                 if (exportInstantaneous_)
                 {
                     Data1DExportFileFormat exportFormat(fmt::format("{}_Sum{}.txt", name(), rangeNames[i]));
-                    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(sumNInst, exportFormat, moduleContext.processPool()))
+                    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(sumNInst, exportFormat,
+                                                                                  moduleContext.processPool()))
                     {
                         Messenger::error("Failed to write instantaneous coordination number data for range {}.\n",
                                          rangeNames[i]);
@@ -96,7 +97,6 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
                 }
             }
         }
-
 
     // Save RDF data?
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataRDF, exportFileAndFormat_, moduleContext.processPool()))

@@ -92,7 +92,8 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = accumulatedQData;
 
     // Save data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(accumulatedQData, exportFileAndFormat_, moduleContext.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(accumulatedQData, exportFileAndFormat_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

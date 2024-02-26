@@ -89,7 +89,8 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     normaliser.normaliseTo();
 
     // Save Angle(A-B-C) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataNormalisedHisto, exportFileAndFormat_, moduleContext.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataNormalisedHisto, exportFileAndFormat_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

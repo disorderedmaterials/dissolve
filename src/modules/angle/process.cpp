@@ -39,7 +39,7 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     auto [rAB, rABStatus] = processingData.realiseIf<Histogram1D>("rAB", name(), GenericItem::InRestartFileFlag);
     if (rABStatus == GenericItem::ItemStatus::Created)
         rAB.initialise(rangeAB_.x, rangeAB_.y, rangeAB_.z);
-    
+
     // RDF(B-C)
     auto [rBC, rBCStatus] = processingData.realiseIf<Histogram1D>("rBC", name(), GenericItem::InRestartFileFlag);
     if (rBCStatus == GenericItem::ItemStatus::Created)
@@ -61,10 +61,11 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
         dAngleBC.initialise(rangeBC_.x, rangeBC_.y, rangeBC_.z, angleRange_.x, angleRange_.y, angleRange_.z);
 
     // DDAngle(A-B-C)
-    auto [dAngleABC, dAngleABCStatus] = processingData.realiseIf<Histogram3D>("DAngleABC", name(), GenericItem::InRestartFileFlag);
+    auto [dAngleABC, dAngleABCStatus] =
+        processingData.realiseIf<Histogram3D>("DAngleABC", name(), GenericItem::InRestartFileFlag);
     if (dAngleABCStatus == GenericItem::ItemStatus::Created)
-        dAngleABC.initialise(rangeAB_.x, rangeAB_.y, rangeAB_.z, rangeBC_.x, rangeBC_.y, rangeBC_.z, angleRange_.x, angleRange_.y,
-                       angleRange_.z);
+        dAngleABC.initialise(rangeAB_.x, rangeAB_.y, rangeAB_.z, rangeBC_.x, rangeBC_.y, rangeBC_.z, angleRange_.x,
+                             angleRange_.y, angleRange_.z);
 
     rAB.zeroBins();
     rBC.zeroBins();
@@ -112,7 +113,6 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
 
                 auto distBC = targetConfiguration_->box()->minimumDistance(siteB->origin(), siteC->origin());
 
-
                 if (!Range(rangeBC_.x, rangeBC_.y).contains(distBC))
                     continue;
 
@@ -127,7 +127,6 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
                 dAngleAB.bin(distAB, angle);
                 dAngleBC.bin(distBC, angle);
                 dAngleABC.bin(distAB, distBC, angle);
-     
             }
         }
     }
@@ -205,25 +204,29 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     // Normalise by spherical shell
     normaliserDAngleBC.normaliseBySphericalShell();
 
-
     // Save RDF(A-B) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(normalisedAB, exportFileAndFormatAB_, moduleContext.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(normalisedAB, exportFileAndFormatAB_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
-    
+
     // Save RDF(B-C) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(normalisedBC, exportFileAndFormatBC_, moduleContext.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(normalisedBC, exportFileAndFormatBC_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     // Save Angle(A-B-C) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(normalisedAngle, exportFileAndFormatAngle_, moduleContext.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(normalisedAngle, exportFileAndFormatAngle_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
-    
+
     // Save DAngle((A-B)-C) data?
-    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(normalisedDAngleAB, exportFileAndFormatDAngleAB_, moduleContext.processPool()))
+    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(normalisedDAngleAB, exportFileAndFormatDAngleAB_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     // Save DAngle(A-(B-C)) data?
-    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(normalisedDAngleBC, exportFileAndFormatDAngleBC_, moduleContext.processPool()))
+    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(normalisedDAngleBC, exportFileAndFormatDAngleBC_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

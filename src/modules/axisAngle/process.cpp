@@ -41,9 +41,11 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
         aAB.initialise(angleRange_.x, angleRange_.y, angleRange_.z);
 
     // DAxisAngle(A-B)
-    auto [dAxisAngle, dAxisAngleStatus] = processingData.realiseIf<Histogram2D>("dAxisAngle", name(), GenericItem::InRestartFileFlag);
+    auto [dAxisAngle, dAxisAngleStatus] =
+        processingData.realiseIf<Histogram2D>("dAxisAngle", name(), GenericItem::InRestartFileFlag);
     if (dAxisAngleStatus == GenericItem::ItemStatus::Created)
-        dAxisAngle.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z, angleRange_.x, angleRange_.y, angleRange_.z);
+        dAxisAngle.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z, angleRange_.x, angleRange_.y,
+                              angleRange_.z);
 
     rAB.zeroBins();
     aAB.zeroBins();
@@ -78,7 +80,7 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     auto &rABNormalised = processingData.realise<Data1D>("RDF(AB)", name(), GenericItem::InRestartFileFlag);
     rABNormalised = rAB.accumulatedData();
     DataNormaliser1D rABNormaliser(rABNormalised);
-    
+
     // Normalise by A site population
     rABNormaliser.normaliseDivide(double(a.sites().size()));
     // Normalise by B site population density
@@ -101,7 +103,7 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     DataNormaliser2D dAxisAngleNormaliser(dAxisAngleNormalised);
     // Normalise by value / sin(y) / sin(yDelta)
     dAxisAngleNormaliser.normalise([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
-                               { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
+                                   { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
     // Normalise by A site population
     dAxisAngleNormaliser.normaliseDivide(double(a.sites().size()));
     // Normalise by B site population density
@@ -109,17 +111,19 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     // Normalise by spherical shell
     dAxisAngleNormaliser.normaliseBySphericalShell();
 
-
     // Save RDF(A-B) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(rABNormalised, exportFileAndFormatRDF_, moduleContext.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(rABNormalised, exportFileAndFormatRDF_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     // Save AxisAngle(A-B) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(aABNormalised, exportFileAndFormatAxisAngle_, moduleContext.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(aABNormalised, exportFileAndFormatAxisAngle_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     // Save DAxisAngle(A-B) data?
-    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(dAxisAngleNormalised, exportFileAndFormatDAxisAngle_, moduleContext.processPool()))
+    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(dAxisAngleNormalised, exportFileAndFormatDAxisAngle_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

@@ -59,7 +59,8 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
     histogramNormaliser.normaliseTo();
 
     // Save Distance(A-B) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataNormalisedHisto, exportFileAndFormat_, moduleContext.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataNormalisedHisto, exportFileAndFormat_,
+                                                                  moduleContext.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
