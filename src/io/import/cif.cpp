@@ -1313,6 +1313,5 @@ std::pair<double, std::vector<int>> CIFHandler::differenceMetric(const Species *
             difference += std::max(spAtom.Z(), closestMolSpAtom.Z()) * 10.0;
     }
 
-
     return {difference, atomIndexMap};
 }
