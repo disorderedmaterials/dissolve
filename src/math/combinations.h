@@ -29,19 +29,12 @@ class Combinations
     };
 
     public:
-    Combinations(int N, int k) : N_(N), k_(k) {}
+    Combinations(int N) : N_(N) {}
     // Returns the nth combination
     std::pair<int, int> nthCombination(int n) const;
     // returns the number of combinations
     int getNumCombinations() const;
 
-    private:
-    // returns n choose k (specialised for k = 1 and k = 2)
-    int nChooseK(int N, int k) const;
-    // returns the bionomial coefficent,
-    // see https : // en.wikipedia.org/wiki/Combinatorial_number_system
-    NthCombination getCoefficent(int n, int k) const;
-
+    // The number of items in the set that we are combining
     int N_;
-    int k_;
 };
