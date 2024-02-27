@@ -81,6 +81,8 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 return false;
             }
 
+            sourceQueue.pop();
+
             // Read the next line
             if (parser.getArgsDelim() != LineParser::Success)
             {

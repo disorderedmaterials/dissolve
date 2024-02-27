@@ -100,14 +100,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
     }
 
     // Returns data
-    const DataType &data() const
-    {
-        if (!dataExists())
-        {
-            throw(std::runtime_error("Data doesn't exist\n"));
-        }
-        return data_;
-    }
+    const DataType &data() const { return data_; }
 
     /*
      * I/O
