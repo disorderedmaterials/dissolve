@@ -51,6 +51,7 @@ class AtomVector
     // Modifiers
     void clear();
     void reserve(std::size_t newCapacity);
+    void resize(std::size_t count);
     Atom erase(const Atom pos);
     Atom erase(const Atom first, const Atom last);
     Atom emplace_back();

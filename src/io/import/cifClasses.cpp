@@ -151,8 +151,8 @@ void CIFLocalMolecule::setAtom(int index, const Vec3<double> &r, int unitCellInd
 }
 
 // Return local atoms
-std::vector<Atom> &CIFLocalMolecule::localAtoms() { return localAtoms_; }
-const std::vector<Atom> &CIFLocalMolecule::localAtoms() const { return localAtoms_; };
+AtomVector &CIFLocalMolecule::localAtoms() { return localAtoms_; }
+const AtomVector &CIFLocalMolecule::localAtoms() const { return localAtoms_; };
 
 // Return local unit cell indices for the atoms
 const std::vector<int> &CIFLocalMolecule::unitCellIndices() const { return unitCellIndices_; }

@@ -146,8 +146,8 @@ class CIFLocalMolecule : public Molecule
     // Set coordinates and local unit cell index of the specified atom
     void setAtom(int index, const Vec3<double> &r, int unitCellIndex);
     // Return local atoms
-    std::vector<Atom> &localAtoms();
-    const std::vector<Atom> &localAtoms() const;
+    AtomVector &localAtoms();
+    const AtomVector &localAtoms() const;
     // Return local unit cell indices for the atoms
     const std::vector<int> &unitCellIndices() const;
 };

@@ -39,6 +39,17 @@ void AtomVector::reserve(std::size_t newCapacity)
     targetedPotentials_.reserve(newCapacity);
 }
 
+void AtomVector::resize(std::size_t newCapacity)
+{
+    rs_.resize(newCapacity);
+    localTypeIndex_.resize(newCapacity);
+    masterTypeIndex_.resize(newCapacity);
+    speciesAtom_.resize(newCapacity);
+    molecule_.resize(newCapacity);
+    cell_.resize(newCapacity);
+    targetedPotentials_.resize(newCapacity);
+}
+
 Atom AtomVector::erase(const Atom pos)
 {
     localTypeIndex_.erase(localTypeIndex_.begin() + pos.globalAtomIndex());
