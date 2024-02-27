@@ -1163,7 +1163,7 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
 
         /*
          * Now, we have a root match atom on the current instance and a vector of possible matching sites on the reference
-         * species (in referenceRootAtoms). For each of the referenceRootAtoms, try to incremental select along bonds using
+         * species (in referenceRootAtoms). For each of the referenceRootAtoms, try to incrementally select along bonds using
          * basic NETA connectivity.
          */
 
