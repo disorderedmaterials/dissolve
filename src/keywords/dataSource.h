@@ -74,41 +74,11 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 break;
             }
             // If data source type supplied is valid
-            if (!DataSource<DataType>::dataSourceTypes().isValid(parser.argsv(0)))
+            if (!sourceQueue.front()->deserialise(parser, 0, coreData))
             {
                 // If not, print accepted options
                 dataSources_.pop_back();
-                return DataSource<DataType>::dataSourceTypes().errorAndPrintValid(parser.argsv(0));
-            }
-
-            // If data is internal
-            if (DataSource<DataType>::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource<DataType>::Internal)
-            {
-                // Add data to dataSource
-                sourceQueue.front()->addData(parser.argsv(1));
-                // Remove dataSource from queue
-                sourceQueue.pop();
-            }
-            // If data is external
-            else if (DataSource<DataType>::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource<DataType>::External)
-            {
-                // Read the supplied arguments
-                if (!sourceQueue.front()->addData(
-                        parser, 1,
-                        fmt::format("End{}", DataSource<DataType>::dataSourceTypes().keyword(DataSource<DataType>::External)),
-                        coreData))
-                {
-                    dataSources_.pop_back();
-                    return Messenger::error("Failed to read file/format for '{}'.\n", name());
-                }
-                // Remove dataSource from queue
-                sourceQueue.pop();
-            }
-            else
-            {
-                dataSources_.pop_back();
-                return Messenger::error("Unsupported data source type '{}' provided to keyword '{}'\n", parser.argsv(0),
-                                        name());
+                return false;
             }
 
             // Read the next line
@@ -195,32 +165,14 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
         toVector(node,
                  [this, &coreData, &sourceQueue](const auto &item)
                  {
-                     // If data source type is internal
-                     if (DataSource<DataType>::dataSourceTypes().enumeration(toml::find<std::string>(item, "dataSourceType")) ==
-                             DataSource<DataType>::Internal &&
-                         !sourceQueue.empty())
+                     if (sourceQueue.empty())
                      {
-                         // Add data to dataSource
-                         sourceQueue.front()->addData(toml::find<std::string>(item, "data"));
-                         // Remove dataSource from queue
-                         sourceQueue.pop();
+                         return;
                      }
-                     // If data source type is external
-                     else if (!sourceQueue.empty())
-                     {
-                         DataType data;
-                         typename DataType::Formatter format;
-
-                         // Deserialise FileAndFormat
-                         format.deserialise(item.at("data"), coreData);
-                         // Import data
-                         format.importData(data);
-
-                         // Add data to dataSource
-                         sourceQueue.front()->addData(toml::find<std::string>(item, "data"));
-                         // Remove dataSource from queue
-                         sourceQueue.pop();
-                     }
+                     // Add data to dataSource
+                     sourceQueue.front()->deserialise(item.at("dataSource"), coreData);
+                     // Remove dataSource from queue
+                     sourceQueue.pop();
                  });
     }
 };

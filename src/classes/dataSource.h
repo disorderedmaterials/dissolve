@@ -14,10 +14,9 @@
 #include "math/data3D.h"
 #include "math/sampledData1D.h"
 #include "module/context.h"
-#include <variant>
 
 // Template arguments: data class (Data1D, Data2D ...)
-template <typename DataType> class DataSource
+template <typename DataType> class DataSource : public Serialisable<const CoreData &>
 {
 
     public:
@@ -99,30 +98,6 @@ template <typename DataType> class DataSource
 
         return false;
     }
-    // Function to add internal data
-    void addData(std::string_view internalDataSource)
-    {
-        dataSourceType_ = Internal;
-        internalDataSource_ = internalDataSource;
-        // Set data name to be data tag
-        dataName_ = internalDataSource;
-    }
-    // Function to add external data
-    bool addData(LineParser &parser, int startArg, std::string_view endKeyword, const CoreData &coreData)
-    {
-        dataSourceType_ = External;
-        // Create format object in place in variant
-        auto readResult = externalDataSource_.read(parser, startArg, endKeyword, coreData);
-        if (readResult == FileAndFormat::ReadResult::UnrecognisedFormat ||
-            readResult == FileAndFormat::ReadResult::UnrecognisedOption)
-        {
-            return false;
-        }
-        // Set data name to be base filename
-        dataName_ = externalDataSource_.filename().substr(externalDataSource_.filename().find_last_of("/\\") + 1);
-
-        return true;
-    }
 
     // Returns data
     const DataType &data() const
@@ -138,6 +113,72 @@ template <typename DataType> class DataSource
      * I/O
      */
     public:
+    bool deserialise(LineParser &parser, int startArg, const CoreData &coreData)
+    {
+        if (!DataSource<DataType>::dataSourceTypes().isValid(parser.argsv(0)))
+        {
+            return dataSourceTypes().errorAndPrintValid(parser.argsv(0));
+        }
+
+        // If data is internal
+        if (dataSourceTypes().enumeration(parser.argsv(startArg)) == Internal)
+        {
+            // Add data to dataSource
+            dataSourceType_ = Internal;
+            internalDataSource_ = parser.argsv(startArg + 1);
+            // Set data name to be data tag
+            dataName_ = internalDataSource_;
+            return true;
+        }
+        // If data is external
+        else if (dataSourceTypes().enumeration(parser.argsv(startArg)) == External)
+        {
+            // Read the supplied arguments
+            auto readResult = externalDataSource_.read(parser, startArg + 1,
+                                                       fmt::format("End{}", dataSourceTypes().keyword(External)), coreData);
+            if (readResult == FileAndFormat::ReadResult::UnrecognisedFormat ||
+                readResult == FileAndFormat::ReadResult::UnrecognisedOption)
+            {
+                return Messenger::error("Failed to read file/format for '{}'.\n", parser.argsv(startArg + 2));
+            }
+            else
+            {
+                dataSourceType_ = External;
+                // Set data name to be base filename
+                dataName_ = externalDataSource_.filename().substr(externalDataSource_.filename().find_last_of("/\\") + 1);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void deserialise(const SerialisedValue &node, const CoreData &coreData)
+    {
+        toVector(node,
+                 [this, &coreData](const auto &item)
+                 {
+                     auto dataSourceType = toml::find<std::string>(item, "dataSourceType");
+                     if (dataSourceTypes().enumeration(dataSourceType) == Internal)
+                     {
+                         dataSourceType_ = Internal;
+                         // Set data to be the tag
+                         internalDataSource_ = toml::find<std::string>(item, "source");
+                         // Set data name to be data tag
+                         dataName_ = toml::find<std::string>(item, "source");
+                     }
+                     // If data source type is external
+                     else if (dataSourceTypes().enumeration(dataSourceType) == External)
+                     {
+                         dataSourceType_ = External;
+                         // Read the file and format
+                         externalDataSource_.deserialise(item.at("source"), coreData);
+                         // Set the data name as root filename
+                         dataName_ =
+                             externalDataSource_.filename().substr(externalDataSource_.filename().find_last_of("/\\") + 1);
+                     }
+                 });
+    }
+
     // Write through specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
     {
@@ -189,14 +230,14 @@ template <typename DataType> class DataSource
     {
         SerialisedValue result;
 
-        result["dataSourceType"] = dataSourceTypes().keyword(dataSourceType_);
+        result["dataSource"]["dataSourceType"] = dataSourceTypes().keyword(dataSourceType_);
         if (dataSourceType_ == Internal)
         {
-            result["data"] = internalDataSource_;
+            result["dataSource"]["source"] = internalDataSource_;
         }
         else
         {
-            result["data"] = externalDataSource_.serialise();
+            result["dataSource"]["source"] = externalDataSource_.serialise();
         }
 
         return result;
