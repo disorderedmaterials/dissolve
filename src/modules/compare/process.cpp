@@ -82,7 +82,6 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 
         auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(fmt::format("Pair{}_Delta", index), name_,
                                                                                       GenericItem::InRestartFileFlag);
-        delta.clear();
 
         delta.clear();
 
