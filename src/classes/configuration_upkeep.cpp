@@ -32,24 +32,23 @@ void Configuration::updateAtomLocations(bool clearExistingLocations)
         cells_.clearAtoms();
     }
 
-    for (auto &i : atoms_)
-        updateAtomLocation(&i);
+    std::for_each(atoms_.begin(), atoms_.end(), [this](auto ref){updateAtomLocation(ref);});
 }
 
 // Update Cell location of specified Atom
-void Configuration::updateAtomLocation(Atom *i)
+void Configuration::updateAtomLocation(Atom i)
 {
     // Fold Atom coordinates into Box
-    i->setCoordinates(box_->fold(i->r()));
+    i.setCoordinates(box_->fold(i.r()));
 
     // Determine new Cell position
-    auto *cell = cells_.cell(i->r());
+    auto *cell = cells_.cell(i.r());
 
     // Need to move?
-    if (cell != i->cell())
+    if (cell != i.cell())
     {
-        if (i->cell())
-            i->cell()->removeAtom(i);
+        if (i.cell())
+            i.cell()->removeAtom(i);
         cell->addAtom(i);
     }
 }
@@ -65,5 +64,5 @@ void Configuration::updateAtomLocations(const std::shared_ptr<Molecule> &mol)
 void Configuration::updateAtomLocations(const std::vector<int> &targetAtoms, int indexOffset)
 {
     for (const auto i : targetAtoms)
-        updateAtomLocation(&atoms_[i + indexOffset]);
+        updateAtomLocation(atoms_[i + indexOffset]);
 }

@@ -33,8 +33,8 @@ void RestraintPotentialProcedureNode::restrainMoleculeAtoms(Configuration *cfg, 
     {
         auto pot = std::make_unique<RestraintPotential>();
         pot->setPotential(potential_);
-        pot->setTargetAtomIndices({i->globalIndex()});
-        pot->setOrigin(i->r());
+        pot->setTargetAtomIndices({i.globalAtomIndex()});
+        pot->setOrigin(i.r());
         cfg->addTargetedPotential(std::unique_ptr<ExternalPotential>(std::move(pot)));
     }
 }

@@ -87,7 +87,7 @@ Module::ExecutionResult AtomShakeModule::process(ModuleContext &moduleContext)
             auto storeIndex = 0;
 
             // Loop over atoms in the Molecule
-            for (const auto &i : mol->atoms())
+            for (auto &i : mol->atoms())
             {
                 // Calculate reference energies for the Atom
                 er = kernel->totalEnergy(*i);
@@ -102,7 +102,7 @@ Module::ExecutionResult AtomShakeModule::process(ModuleContext &moduleContext)
                                randomBuffer.randomPlusMinusOne() * stepSize_);
 
                     // Translate Atom and update its Cell position
-                    i->translateCoordinates(rDelta);
+                    i.translateCoordinates(rDelta);
                     targetConfiguration_->updateAtomLocation(i);
 
                     // Calculate new energy

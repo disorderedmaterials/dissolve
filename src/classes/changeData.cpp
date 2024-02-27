@@ -7,34 +7,32 @@
 #include "classes/cell.h"
 #include <cassert>
 
-ChangeData::ChangeData() : atom_(nullptr) {}
+ChangeData::ChangeData() {}
 
 /*
  * Target Data
  */
 
 // Set target atom
-void ChangeData::setAtom(Atom *i)
+void ChangeData::setAtom(Atom i)
 {
-    assert(i != nullptr);
-
     atom_ = i;
     moved_ = false;
-    r_ = atom_->r();
-    cell_ = i->cell();
+    r_ = atom_.r();
+    cell_ = i.cell();
 }
 
 // Return target Atom
-Atom *ChangeData::atom() { return atom_; }
+Atom ChangeData::atom() { return atom_; }
 
 // Return array index of stored Atom
-int ChangeData::atomArrayIndex() const { return atom_->globalIndex(); }
+int ChangeData::atomArrayIndex() const { return atom_.globalAtomIndex(); }
 
 // Update local position, and flag as moved
 void ChangeData::updatePosition()
 {
-    r_ = atom_->r();
-    cell_ = atom_->cell();
+    r_ = atom_.r();
+    cell_ = atom_.cell();
     moved_ = true;
 }
 
@@ -42,12 +40,12 @@ void ChangeData::updatePosition()
 void ChangeData::revertPosition()
 {
     // Set stored position
-    atom_->setCoordinates(r_);
+    atom_.setCoordinates(r_);
 
     // If the cell changed with the move, revert that too
-    if (cell_ != atom_->cell())
+    if (cell_ != atom_.cell())
     {
-        atom_->cell()->removeAtom(atom_);
+        atom_.cell()->removeAtom(atom_);
         cell_->addAtom(atom_);
     }
 }

@@ -117,7 +117,7 @@ void CIFLocalMolecule::copyData(const CIFLocalMolecule &object)
     localAtoms_ = object.localAtoms_;
     unitCellIndices_ = object.unitCellIndices_;
     atoms_.resize(localAtoms_.size());
-    std::transform(localAtoms_.begin(), localAtoms_.end(), atoms_.begin(), [](auto &atom) { return &atom; });
+    std::transform(localAtoms_.begin(), localAtoms_.end(), atoms_.begin(), [](auto &atom) { return atom; });
 }
 
 // Set Species that this Molecule represents
@@ -128,17 +128,17 @@ void CIFLocalMolecule::setSpecies(const Species *sp)
     localAtoms_.resize(sp->nAtoms());
     atoms_.resize(sp->nAtoms());
     unitCellIndices_.resize(sp->nAtoms());
-    std::transform(localAtoms_.begin(), localAtoms_.end(), atoms_.begin(), [](auto &atom) { return &atom; });
+    std::transform(localAtoms_.begin(), localAtoms_.end(), atoms_.begin(), [](auto &atom) { return atom; });
 
     for (auto &&[atom, spAtom] : zip(localAtoms_, species_->atoms()))
         atom.setSpeciesAtom(&spAtom);
 }
 
 // Add Atom to Molecule
-void CIFLocalMolecule::addAtom(Atom *atom) { throw(std::runtime_error("Can't addAtom() in a LocalMolecule.\n")); }
+void CIFLocalMolecule::addAtom(Atom atom) { throw(std::runtime_error("Can't addAtom() in a LocalMolecule.\n")); }
 
 // Update local atom pointers from main vector
-void CIFLocalMolecule::updateAtoms(std::vector<Atom> &mainAtoms, int offset)
+void CIFLocalMolecule::updateAtoms(AtomVector &mainAtoms, int offset)
 {
     throw(std::runtime_error("Can't updateAtoms() in a LocalMolecule.\n"));
 }
@@ -151,8 +151,8 @@ void CIFLocalMolecule::setAtom(int index, const Vec3<double> &r, int unitCellInd
 }
 
 // Return local atoms
-std::vector<Atom> &CIFLocalMolecule::localAtoms() { return localAtoms_; }
-const std::vector<Atom> &CIFLocalMolecule::localAtoms() const { return localAtoms_; };
+AtomVector &CIFLocalMolecule::localAtoms() { return localAtoms_; }
+const AtomVector &CIFLocalMolecule::localAtoms() const { return localAtoms_; };
 
 // Return local unit cell indices for the atoms
 const std::vector<int> &CIFLocalMolecule::unitCellIndices() const { return unitCellIndices_; }

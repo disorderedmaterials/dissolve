@@ -46,7 +46,7 @@ void Configuration::linkTargetedPotentials()
             for (auto &mol : molecules_)
                 if (mol->species() == sp)
                     std::for_each(mol->atoms().begin(), mol->atoms().end(),
-                                  [&pot](auto &atom) { atom->addTargetedPotential(pot.get()); });
+                                  [&pot](auto &atom) { atom.addTargetedPotential(pot.get()); });
         }
     }
 }

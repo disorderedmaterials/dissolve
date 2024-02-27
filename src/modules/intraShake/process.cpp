@@ -101,7 +101,6 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
     Vec3<double> vji, vjk, v;
     Matrix3 transform;
     const auto *box = targetConfiguration_->box();
-    Atom *i, *j, *k, *l;
 
     Timer timer;
     while (distributor.cycle())
@@ -141,8 +140,8 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                 for (const auto &bond : mol->species()->bonds())
                 {
                     // Get Atom pointers
-                    i = mol->atom(bond.indexI());
-                    j = mol->atom(bond.indexJ());
+                    auto i = mol->atom(bond.indexI());
+                    auto j = mol->atom(bond.indexJ());
 
                     // Store current energy of this intramolecular term, or the whole Molecule if it
                     // is present in a cycle
@@ -155,7 +154,7 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                     for (shake = 0; shake < nShakesPerTerm_; ++shake)
                     {
                         // Get translation vector, normalise, and apply random delta
-                        vji = box->minimumVector(i->r(), j->r());
+                        vji = box->minimumVector(i.r(), j.r());
                         vji.normalise();
                         vji *= randomBuffer.randomPlusMinusOne() * bondStepSize_;
 
@@ -194,9 +193,9 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                 for (const auto &angle : mol->species()->angles())
                 {
                     // Get Atom pointers
-                    i = mol->atom(angle.indexI());
-                    j = mol->atom(angle.indexJ());
-                    k = mol->atom(angle.indexK());
+                    auto i = mol->atom(angle.indexI());
+                    auto j = mol->atom(angle.indexJ());
+                    auto k = mol->atom(angle.indexK());
 
                     // Store current energy of this intramolecular term
                     intraEnergy = angle.inCycle() ? kernel->totalGeometryEnergy(*mol) : kernel->angleEnergy(angle, *i, *j, *k);
@@ -208,15 +207,15 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                     for (shake = 0; shake < nShakesPerTerm_; ++shake)
                     {
                         // Get bond vectors and calculate cross product to get rotation axis
-                        vji = box->minimumVector(j->r(), i->r());
-                        vjk = box->minimumVector(j->r(), k->r());
+                        vji = box->minimumVector(j.r(), i.r());
+                        vjk = box->minimumVector(j.r(), k.r());
                         v = vji * vjk;
 
                         // Create suitable transformation matrix
                         transform.createRotationAxis(v, randomBuffer.randomPlusMinusOne() * angleStepSize_, true);
 
                         // Adjust the Atoms attached to the selected terminus
-                        mol->transform(box, transform, j->r(), angle.attachedAtoms(terminus));
+                        mol->transform(box, transform, j.r(), angle.attachedAtoms(terminus));
 
                         // Update Cell positions of the adjusted Atoms
                         targetConfiguration_->updateAtomLocations(angle.attachedAtoms(terminus), indexOffset);
@@ -255,10 +254,10 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                         continue;
 
                     // Get Atom pointers
-                    i = mol->atom(torsion.indexI());
-                    j = mol->atom(torsion.indexJ());
-                    k = mol->atom(torsion.indexK());
-                    l = mol->atom(torsion.indexL());
+                    auto i = mol->atom(torsion.indexI());
+                    auto j = mol->atom(torsion.indexJ());
+                    auto k = mol->atom(torsion.indexK());
+                    auto l = mol->atom(torsion.indexL());
 
                     // Store current energy of this intramolecular term
                     intraEnergy = kernel->torsionEnergy(torsion, *i, *j, *k, *l);
@@ -270,13 +269,13 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                     for (shake = 0; shake < nShakesPerTerm_; ++shake)
                     {
                         // Get bond vectors j-k to get rotation axis
-                        vjk = box->minimumVector(j->r(), k->r());
+                        vjk = box->minimumVector(j.r(), k.r());
 
                         // Create suitable transformation matrix
                         transform.createRotationAxis(vjk, randomBuffer.randomPlusMinusOne() * torsionStepSize_, true);
 
                         // Adjust the Atoms attached to the selected terminus
-                        mol->transform(box, transform, terminus == 0 ? j->r() : k->r(), torsion.attachedAtoms(terminus));
+                        mol->transform(box, transform, terminus == 0 ? j.r() : k.r(), torsion.attachedAtoms(terminus));
 
                         // Update Cell positions of the adjusted Atoms
                         targetConfiguration_->updateAtomLocations(torsion.attachedAtoms(terminus), indexOffset);

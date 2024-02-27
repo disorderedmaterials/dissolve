@@ -771,7 +771,7 @@ bool CIFHandler::createSupercell()
             {
                 auto mol = supercellConfiguration_.addMolecule(sp);
                 for (auto &&[molAtom, instanceAtom] : zip(mol->atoms(), instance.localAtoms()))
-                    molAtom->setCoordinates(instanceAtom.r());
+                    molAtom.setCoordinates(instanceAtom.r());
             }
         }
 
@@ -1105,12 +1105,12 @@ void CIFHandler::fixGeometry(Species *sp, const Box *box)
     // 'Fix' the geometry of the species
     // Construct a temporary molecule, which is just the species.
     std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
-    std::vector<Atom> molAtoms(sp->nAtoms());
+    AtomVector molAtoms(sp->nAtoms());
     for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
     {
         atom.setSpeciesAtom(&spAtom);
         atom.setCoordinates(spAtom.r());
-        mol->addAtom(&atom);
+        mol->addAtom(atom);
     }
 
     // Unfold the molecule

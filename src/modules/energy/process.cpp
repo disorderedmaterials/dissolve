@@ -159,7 +159,6 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         auto correctInterEnergy = 0.0, correctIntraEnergy = 0.0, correctSelfEnergy = 0.0;
 
         double r, angle;
-        Atom *i, *j;
         Vec3<double> vecji, vecjk, veckl;
         std::shared_ptr<Molecule> molN, molM;
         const auto *box = targetConfiguration_->box();
@@ -175,19 +174,19 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
             // Molecule self-energy
             for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
             {
-                i = molN->atom(ii);
+                auto i = molN->atom(ii);
 
                 for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
                 {
-                    j = molN->atom(jj);
+                    auto j = molN->atom(jj);
 
                     // Get interatomic distance
-                    r = box->minimumDistance(i->r(), j->r());
+                    r = box->minimumDistance(i.r(), j.r());
                     if (r > cutoff)
                         continue;
 
                     // Get intramolecular scaling of atom pair
-                    auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+                    auto &&[scalingType, elec14, vdw14] = i.scaling(j);
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
                         correctSelfEnergy += potentialMap.analyticEnergy(i, j, r);
                     else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
@@ -203,14 +202,14 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
                 // Double loop over atoms
                 for (auto ii = 0; ii < molN->nAtoms(); ++ii)
                 {
-                    i = molN->atom(ii);
+                    auto i = molN->atom(ii);
 
                     for (auto jj = 0; jj < molM->nAtoms(); ++jj)
                     {
-                        j = molM->atom(jj);
+                        auto j = molM->atom(jj);
 
                         // Get interatomic distance and check cutoff
-                        r = box->minimumDistance(i->r(), j->r());
+                        r = box->minimumDistance(i.r(), j.r());
                         if (r > cutoff)
                             continue;
 
@@ -222,8 +221,8 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
             // Bond energy
             for (const auto &bond : molN->species()->bonds())
             {
-                r = targetConfiguration_->box()->minimumDistance(molN->atom(bond.indexI())->r(),
-                                                                 molN->atom(bond.indexJ())->r());
+                r = targetConfiguration_->box()->minimumDistance(molN->atom(bond.indexI()).r(),
+                                                                 molN->atom(bond.indexJ()).r());
                 correctIntraEnergy += bond.energy(r);
             }
 
@@ -231,10 +230,10 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
             for (const auto &angle : molN->species()->angles())
             {
                 // Get vectors 'j-i' and 'j-k'
-                vecji = targetConfiguration_->box()->minimumVector(molN->atom(angle.indexJ())->r(),
-                                                                   molN->atom(angle.indexI())->r());
-                vecjk = targetConfiguration_->box()->minimumVector(molN->atom(angle.indexJ())->r(),
-                                                                   molN->atom(angle.indexK())->r());
+                vecji = targetConfiguration_->box()->minimumVector(molN->atom(angle.indexJ()).r(),
+                                                                   molN->atom(angle.indexI()).r());
+                vecjk = targetConfiguration_->box()->minimumVector(molN->atom(angle.indexJ()).r(),
+                                                                   molN->atom(angle.indexK()).r());
 
                 // Calculate angle and determine angle energy
                 vecji.normalise();
@@ -246,12 +245,12 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
             for (const auto &torsion : molN->species()->torsions())
             {
                 // Get vectors 'j-i', 'j-k' and 'k-l'
-                vecji = targetConfiguration_->box()->minimumVector(molN->atom(torsion.indexJ())->r(),
-                                                                   molN->atom(torsion.indexI())->r());
-                vecjk = targetConfiguration_->box()->minimumVector(molN->atom(torsion.indexJ())->r(),
-                                                                   molN->atom(torsion.indexK())->r());
-                veckl = targetConfiguration_->box()->minimumVector(molN->atom(torsion.indexK())->r(),
-                                                                   molN->atom(torsion.indexL())->r());
+                vecji = targetConfiguration_->box()->minimumVector(molN->atom(torsion.indexJ()).r(),
+                                                                   molN->atom(torsion.indexI()).r());
+                vecjk = targetConfiguration_->box()->minimumVector(molN->atom(torsion.indexJ()).r(),
+                                                                   molN->atom(torsion.indexK()).r());
+                veckl = targetConfiguration_->box()->minimumVector(molN->atom(torsion.indexK()).r(),
+                                                                   molN->atom(torsion.indexL()).r());
 
                 angle = Box::torsionInDegrees(vecji, vecjk, veckl);
 
@@ -264,11 +263,11 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
             {
                 // Get vectors 'j-i', 'j-k' and 'k-l'
                 vecji =
-                    targetConfiguration_->box()->minimumVector(molN->atom(imp.indexJ())->r(), molN->atom(imp.indexI())->r());
+                    targetConfiguration_->box()->minimumVector(molN->atom(imp.indexJ()).r(), molN->atom(imp.indexI()).r());
                 vecjk =
-                    targetConfiguration_->box()->minimumVector(molN->atom(imp.indexJ())->r(), molN->atom(imp.indexK())->r());
+                    targetConfiguration_->box()->minimumVector(molN->atom(imp.indexJ()).r(), molN->atom(imp.indexK()).r());
                 veckl =
-                    targetConfiguration_->box()->minimumVector(molN->atom(imp.indexK())->r(), molN->atom(imp.indexL())->r());
+                    targetConfiguration_->box()->minimumVector(molN->atom(imp.indexK()).r(), molN->atom(imp.indexL()).r());
 
                 angle = Box::torsionInDegrees(vecji, vecjk, veckl);
 

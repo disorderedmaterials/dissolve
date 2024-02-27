@@ -154,8 +154,8 @@ std::shared_ptr<Molecule> Configuration::copyMolecule(const std::shared_ptr<Mole
     adjustSpeciesPopulation(sp, 1);
 
     // Copy the source molecule's coordinates
-    for (const auto *atom : sourceMolecule->atoms())
-        addAtom(atom->speciesAtom(), newMolecule, atom->r());
+    for (const auto atom : sourceMolecule->atoms())
+        addAtom(atom.speciesAtom(), newMolecule, atom.r());
 
     return newMolecule;
 }
@@ -221,14 +221,14 @@ const std::vector<std::shared_ptr<Molecule>> &Configuration::molecules() const {
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
 // Add new Atom to Configuration, with Molecule parent specified
-Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r)
+Atom Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r)
 {
     // Create new Atom object and set its source pointer
-    auto &newAtom = atoms_.emplace_back();
+    auto newAtom = atoms_.emplace_back();
     newAtom.setSpeciesAtom(sourceAtom);
 
     // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
-    molecule->addAtom(&newAtom);
+    molecule->addAtom(newAtom);
 
     // Set the position
     newAtom.setCoordinates(r);
@@ -248,12 +248,12 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
 int Configuration::nAtoms() const { return atoms_.size(); }
 
 // Return Atom array
-std::vector<Atom> &Configuration::atoms() { return atoms_; }
+AtomVector &Configuration::atoms() { return atoms_; }
 
-const std::vector<Atom> &Configuration::atoms() const { return atoms_; }
+const AtomVector &Configuration::atoms() const { return atoms_; }
 
 // Return nth atom
-Atom &Configuration::atom(int n)
+Atom Configuration::atom(int n)
 {
     assert(n >= 0 && n < atoms_.size());
     return atoms_[n];
@@ -281,11 +281,11 @@ void Configuration::scaleContents(Vec3<double> scaleFactors)
         {
             for (auto &i : mol->atoms())
             {
-                r = i->r();
+                r = i.r();
                 box()->toFractional(r);
                 r.multiply(scaleFactors);
                 box()->toReal(r);
-                i->setCoordinates(r);
+                i.setCoordinates(r);
             }
         }
         else
@@ -293,7 +293,7 @@ void Configuration::scaleContents(Vec3<double> scaleFactors)
             // First, work out the centre of geometry of the Molecule from the now un-folded coordinates
             oldCog = 0.0;
             for (const auto &i : mol->atoms())
-                oldCog += i->r();
+                oldCog += i.r();
             oldCog /= mol->nAtoms();
 
             // Scale centre of geometry by supplied factor

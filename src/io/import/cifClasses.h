@@ -129,16 +129,16 @@ class CIFLocalMolecule : public Molecule
 
     private:
     // Local vector of Atoms that belong to this Molecule and their original unit cell indices
-    std::vector<Atom> localAtoms_;
+    AtomVector localAtoms_;
     std::vector<int> unitCellIndices_;
 
     private:
     // Copy data from specified object
     void copyData(const CIFLocalMolecule &object);
     // Add Atom to Molecule
-    void addAtom(Atom *i) override;
+    void addAtom(Atom i) override;
     // Update local atom pointers from main vector
-    void updateAtoms(std::vector<Atom> &mainAtoms, int offset) override;
+    void updateAtoms(AtomVector &mainAtoms, int offset) override;
 
     public:
     // Set Species that this Molecule represents
@@ -146,8 +146,8 @@ class CIFLocalMolecule : public Molecule
     // Set coordinates and local unit cell index of the specified atom
     void setAtom(int index, const Vec3<double> &r, int unitCellIndex);
     // Return local atoms
-    std::vector<Atom> &localAtoms();
-    const std::vector<Atom> &localAtoms() const;
+    AtomVector &localAtoms();
+    const AtomVector &localAtoms() const;
     // Return local unit cell indices for the atoms
     const std::vector<int> &unitCellIndices() const;
 };
