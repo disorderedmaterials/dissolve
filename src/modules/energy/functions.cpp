@@ -70,7 +70,7 @@ double EnergyModule::pairPotentialEnergy(const ProcessPool &procPool, const Spec
     const auto cutoff = potentialMap.range();
 
     // Get start/end for loop
-    Combinations comb(sp->nAtoms(), 2);
+    Combinations comb(sp->nAtoms());
     auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
     auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
     auto [loopStart, loopEnd] = chop_range(0, comb.getNumCombinations(), nChunks, offset);
