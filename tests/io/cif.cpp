@@ -171,12 +171,12 @@ TEST_F(ImportCIFTest, CuBTC)
 TEST_F(ImportCIFTest, MoleculeOrdering)
 {
     CIFHandler cifHandler;
-    const auto cifFiles = {"cif/molecule-test-simple-ordered", "cif/molecule-test-simple-unordered",
-                           "cif/molecule-test-simple-unordered-rotated"};
+    const auto cifFiles = {"cif/molecule-test-simple-ordered.cif", "cif/molecule-test-simple-unordered.cif",
+                           "cif/molecule-test-simple-unordered-rotated.cif"};
     for (auto cifFile : cifFiles)
     {
         // Load the CIF file
-        ASSERT_TRUE(cifHandler.read(fmt::format("{}.cif", cifFile)));
+        ASSERT_TRUE(cifHandler.read(cifFile));
         EXPECT_TRUE(cifHandler.generate());
 
         EXPECT_EQ(cifHandler.molecularSpecies().size(), 1);
@@ -193,10 +193,10 @@ TEST_F(ImportCIFTest, MoleculeOrdering)
 TEST_F(ImportCIFTest, BigMoleculeOrdering)
 {
     CIFHandler cifHandler;
-    const auto cifFile = "cif/Bisphen_n_arenes_1517789";
+    const auto cifFile = "cif/Bisphen_n_arenes_1517789.cif";
 
     // Load the CIF file
-    ASSERT_TRUE(cifHandler.read(fmt::format("{}.cif", cifFile)));
+    ASSERT_TRUE(cifHandler.read(cifFile));
     EXPECT_TRUE(cifHandler.generate());
 
     EXPECT_EQ(cifHandler.molecularSpecies().size(), 1);
