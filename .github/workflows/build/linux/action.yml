@@ -2,8 +2,6 @@ name: Build
 description: Build on Linux via nix
 
 inputs:
-  extraCMakeFlags:
-    default: ""
   target:
     default: "dissolve"
   cacheOnly:
@@ -29,7 +27,7 @@ runs:
       target: ${{ inputs.target }}
 
   - name: Cache Nix Store
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     id: nix-cache
     with:
       path: /tmp/nixcache
@@ -53,8 +51,8 @@ runs:
       nix build -L .#$singularityTarget
 
       # Assemble artifacts
-      mkdir packages
-      cp -v result packages/${{ inputs.target }}-${{ env.dissolveVersion }}.sif
+      mkdir packages-sif
+      cp -v result packages-sif/${{ inputs.target }}-${{ env.dissolveVersion }}.sif
 
   - name: Bundle Executable
     shell: bash
@@ -64,7 +62,8 @@ runs:
       nix bundle -L .#${{ inputs.target }} -o binary
 
       # Assemble artifacts
-      cp -v binary packages/${{ inputs.target }}-${{ env.dissolveVersion }}
+      mkdir packages-binary
+      cp -v binary packages-binary/${{ inputs.target }}-${{ env.dissolveVersion }}
 
   - name: Tidy nix Store
     if: ${{ inputs.cacheOnly == 'true' }}
@@ -82,9 +81,16 @@ runs:
     shell: bash
     run: nix-store --export $(find /nix/store -maxdepth 1 -name '*-*') > /tmp/nixcache
 
-  - name: Upload Package Artifacts
+  - name: Upload Package Artifacts (Binary)
     if: ${{ inputs.cacheOnly == 'false' }}
-    uses: actions/upload-artifact@v3
+    uses: actions/upload-artifact@v4
     with:
-      name: packages
-      path: ${{ github.workspace }}/packages
+      name: packages-nix-${{ inputs.target }}-binary
+      path: ${{ github.workspace }}/packages-binary
+
+  - name: Upload Package Artifacts (sif)
+    if: ${{ inputs.cacheOnly == 'false' }}
+    uses: actions/upload-artifact@v4
+    with:
+      name: packages-nix-${{ inputs.target }}-sif
+      path: ${{ github.workspace }}/packages-sif

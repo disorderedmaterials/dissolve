@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "math/combinations.h"
+#include "templates/algorithms.h"
 
 #include <gtest/gtest.h>
 #include <vector>
@@ -33,8 +34,8 @@ TEST(CombinationTest, CheckNumberOfCombinations)
     }
     std::vector<std::pair<int, int>> combinations;
 
-    Combinations comb(numTests, 2);
-    for (int i = 0; i < comb.getNumCombinations(); i++)
+    Combinations comb(numTests);
+    for (auto i = 0; i < comb.getNumCombinations(); ++i)
     {
         auto [m, n] = comb.nthCombination(i);
 
@@ -59,17 +60,17 @@ TEST(CombinationTest, CheckCombinations)
     }
     std::vector<std::pair<int, int>> combinations;
 
-    Combinations comb(numTests, 2);
-    for (int i = 0; i < comb.getNumCombinations(); i++)
+    Combinations comb(numTests);
+    for (auto i = 0; i < comb.getNumCombinations(); ++i)
     {
         auto [m, n] = comb.nthCombination(i);
 
         combinations.emplace_back(m, n);
     }
 
-    for (auto &combination : combinations)
+    for (auto [computed, expected] : zip(combinations, expectedCombinations))
     {
-        EXPECT_TRUE(combinationInVector(combination, expectedCombinations));
+        EXPECT_EQ(computed, expected);
     }
     auto it = std::unique(combinations.begin(), combinations.end());
     EXPECT_TRUE(it == std::end(combinations));

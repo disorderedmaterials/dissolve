@@ -168,7 +168,7 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
     auto &cellArray = cfg->cells();
 
     // Loop context is to use all processes in Pool as one group
-    Combinations comb(cellArray.nCells(), 2);
+    Combinations comb(cellArray.nCells());
     auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
     auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
     auto [cStart, cEnd] = chop_range(0, comb.getNumCombinations(), nChunks, offset);

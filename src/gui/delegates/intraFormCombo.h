@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/delegates/comboList.hui"
+#include "gui/delegates/comboList.h"
 #include "gui/helpers/comboPopulator.h"
 #include <QComboBox>
 #include <QModelIndex>

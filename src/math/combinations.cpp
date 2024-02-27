@@ -2,49 +2,30 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "math/combinations.h"
+#include "math/polynomial.h"
+#include <cmath>
 
 std::pair<int, int> Combinations::nthCombination(int n) const
 {
-    auto [a2, remainder] = getCoefficent(n, 2);
-    auto [a1, remainder_a1] = getCoefficent(remainder, 1);
-    return {a1, a2};
+    /*
+      If we let N_ be the number of items being combined and n be the
+      index of the pair {x, y}.  The smallest value of n for and value
+      of i is given by the relation:
+
+      -½x² + (N_ -½1)x = n
+
+      By the quadratic formula, we can solve for i for a given n.  The
+      floor of that value is the x value for our pair and, by plugging
+      it ack into the relation, we can find the offset for the y value
+      as well.
+     */
+    Quadratic relation(-0.5, N_ - 0.5, -n);
+
+    auto roots = relation.roots();
+    auto x = std::floor(relation.roots().second);
+    auto y = x + 1 - relation.at(x);
+
+    return {x, y};
 }
 
-int Combinations::nChooseK(int n, int k) const
-{
-    // Function n choose k specialised for either k = 1 or k = 2
-    switch (k)
-    {
-        case 1:
-            return n;
-        case 2:
-            return (n * (n - 1)) >> 1;
-        default:
-            return -1;
-    }
-}
-
-Combinations::NthCombination Combinations::getCoefficent(int N, int k) const
-{
-
-    auto at = k - 1;
-    auto nCt = 0;
-    if (nCt >= N)
-        return {at, N - nCt};
-
-    auto atPrev = at;
-    auto nCtPrev = nCt;
-    bool found = false;
-    while (!found)
-    {
-        atPrev = at;
-        at = atPrev + 1;
-        nCtPrev = nCt;
-        nCt = nChooseK(at, k);
-        if (nCt > N)
-            found = true;
-    }
-    return {atPrev, N - nCtPrev};
-}
-
-int Combinations::getNumCombinations() const { return nChooseK(N_, k_); }
+int Combinations::getNumCombinations() const { return N_ * (N_ - 1) / 2; }

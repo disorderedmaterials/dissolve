@@ -62,7 +62,7 @@ class IntegerHistogram1D
     // Return current data
     Data1D data() const;
     // Return averages map
-    std::map<int, SampledDouble> averages() const;
+    const std::map<int, SampledDouble> &averages() const;
     // Return accumulated (averaged) data
     const Data1D &accumulatedData() const;
 

@@ -4,8 +4,6 @@ description: Build on Windows
 inputs:
   threading:
     default: true
-  extraCMakeFlags:
-    default: ""
   freeTypeArchive:
     default: https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.gz
   ftglRepo:
@@ -22,18 +20,13 @@ runs:
   # Setup / Install Dependencies
   #
 
-  - name: Setup Python
-    uses: actions/setup-python@v4
-    with:
-      python-version: ${{ env.pythonVersion }}
-
   - name: Install Chocolatey Dependencies
     shell: bash
     run: choco install -y ninja wget
 
   - name: Install Python Dependencies
     shell: bash
-    run: pip3 install --user aqtinstall conan==1.58.0
+    run: pip3 install aqtinstall conan==1.*
 
   #
   # Retrieve Qt cache (or install it)
@@ -41,7 +34,7 @@ runs:
 
   - name: Retrieve Qt Cache
     id: cache-qt
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: windows-qt-${{ env.qtVersion }}
       path: ${{ runner.temp }}\qt
@@ -50,7 +43,6 @@ runs:
     if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
-      export PATH="$(python3 -m site --user-base)/bin:$PATH"
       aqt install-qt --outputdir ${RUNNER_TEMP}/qt windows desktop ${{ env.qtVersion }} win64_msvc2019_64
 
   - name: Setup MSVC Compiler
@@ -62,7 +54,7 @@ runs:
 
   - name: Retrieve FreeType Cache
     id: cache-freetype
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: windows-freetype
       path: |
@@ -96,7 +88,7 @@ runs:
 
   - name: Retrieve FTGL Cache
     id: cache-ftgl
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: windows-ftgl
       path: |
@@ -139,7 +131,7 @@ runs:
 
   - name: Retrieve Conan Cache
     id: cache-conan
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: windows-conan-${{ env.conanHash }}
       path: |
@@ -153,13 +145,6 @@ runs:
       conan profile new default --detect
       conan profile update settings.compiler="Visual Studio" default
       conan profile update settings.compiler.version=17 default
-
-  - name: Install Conan Dependencies
-    shell: bash
-    run: |
-      mkdir build && cd build
-      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
-      conan install .. --build missing
 
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
@@ -175,23 +160,20 @@ runs:
       LIB="${RUNNER_TEMP}\ftgl-install\lib;$LIB"
       JAVA_EXE="${JAVA_HOME_21_X64}\bin\java.exe"
 
+      # Set conan cache location
+      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
+
       # Build
-      cd build
-      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true ${{ inputs.extraCMakeFlags }}
+      mkdir build && cd build
+      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true
       cmake --build . --config Release --target keywordWidgets
       cmake --build . --config Release
-      cd ../
-
-      # Deploy Conan dependencies for ease
-      mkdir deploy && cd deploy
-      conan install .. -g deploy
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
-    uses: actions/upload-artifact@v3
+    uses: actions/upload-artifact@v4
     with:
       name: windows-build-artifacts
       path: |
         ${{ github.workspace }}\build
-        ${{ github.workspace }}\deploy
       retention-days: 1

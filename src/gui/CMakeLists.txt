@@ -1,208 +1,180 @@
-# Don't forget to include output directory, otherwise the UI file won't be wrapped!
-
-# -----------------
-# Main Dissolve GUI
-# -----------------
-
-# Meta-Objects
-set(gui_MOC_HDRS
-    # Viewers
-    configurationViewerWidget.h
-    dataWidget.h
-    selectSymbol.h
-    speciesEditor.h
-    speciesWidget.h
-    configurationViewer.hui
-    dataViewer.hui
-    speciesViewer.hui
-    viewer.hui
-    # Widgets and Wizards
-    moduleControlWidget.h
-    nodeControlWidget.h
-    procedureWidget.h
-    selectAtomTypeWidget.h
-    selectForcefieldWidget.h
-    selectSpeciesWidget.h
-    wizard.hui
-    # Dialogs
-    addConfigurationDialog.h
-    addForcefieldTermsDialog.h
-    copySpeciesTermsDialog.h
-    dataManagerDialog.h
-    editSpeciesDialog.h
-    getConfigurationNameDialog.h
-    getModuleLayerNameDialog.h
-    getSpeciesNameDialog.h
-    getTabNameDialog.h
-    importLigParGenDialog.h
-    importCIFDialog.h
-    importSpeciesDialog.h
-    intramolecularTermsDialog.h
-    scaleChargesDialog.h
-    selectAtomTypeDialog.h
-    selectElementDialog.h
-    selectGenericItemDialog.h
-    selectRestartFileDialog.h
-    selectSpeciesDialog.h
-    # Main Tabs
-    configurationTab.h
-    forcefieldTab.h
-    layerTab.h
-    messagesTab.h
-    overviewTab.h
-    speciesTab.h
-    # Main UI
-    gui.h
-    outputHandler.hui
-    thread.hui
-    mainTabsBar.hui
-    mainTabsWidget.hui
-    # QML type register
-    types.h
-)
-qt6_wrap_cpp(gui_MOC_SRCS ${gui_MOC_HDRS})
-
-# User Interface Files
-set(gui_UIS
-    # Viewers
-    configurationViewerWidget.ui
-    dataWidget.ui
-    selectSymbol.ui
-    speciesEditor.ui
-    speciesWidget.ui
-    # Widgets and Wizards
-    moduleControlWidget.ui
-    nodeControlWidget.ui
-    procedureWidget.ui
-    selectAtomTypeWidget.ui
-    selectForcefieldWidget.ui
-    selectSpeciesWidget.ui
-    wizardFooter.ui
-    wizardHeader.ui
-    # Dialogs
-    addConfigurationDialog.ui
-    copySpeciesTermsDialog.ui
-    dataManagerDialog.ui
-    editSpeciesDialog.ui
-    getConfigurationNameDialog.ui
-    getModuleLayerNameDialog.ui
-    getSpeciesNameDialog.ui
-    getTabNameDialog.ui
-    importLigParGenDialog.ui
-    importCIFDialog.ui
-    importSpeciesDialog.ui
-    intramolecularTermsDialog.ui
-    scaleChargesDialog.ui
-    selectAtomTypeDialog.ui
-    selectElementDialog.ui
-    selectGenericItemDialog.ui
-    selectRestartFileDialog.ui
-    selectSpeciesDialog.ui
-    # Main Tabs
-    configurationTab.ui
-    forcefieldTab.ui
-    layerTab.ui
-    messagesTab.ui
-    speciesTab.ui
-    # Main UI
-    gui.ui
-)
-qt6_wrap_ui(gui_UIS_H ${gui_UIS})
-
-# Source files (not Qt UI files or custom .h [uih])
-set(gui_SRCS
-    # Viewers
-    configurationViewerFuncs.cpp
-    configurationViewer_input.cpp
-    configurationViewer_interaction.cpp
-    configurationViewer_render.cpp
-    configurationViewerWidgetFuncs.cpp
-    dataViewerFuncs.cpp
-    dataViewer_input.cpp
-    dataViewer_interaction.cpp
-    dataViewer_contextMenu.cpp
-    dataViewer_render.cpp
-    dataWidgetFuncs.cpp
-    selectSymbolFuncs.cpp
-    speciesEditorFuncs.cpp
-    speciesViewerFuncs.cpp
-    speciesViewer_input.cpp
-    speciesViewer_interaction.cpp
-    speciesViewer_render.cpp
-    speciesWidgetFuncs.cpp
-    viewerFuncs.cpp
-    viewer_input.cpp
-    viewer_interaction.cpp
-    viewer_options.cpp
-    viewer_query.cpp
-    viewer_render.cpp
-    viewer_renderables.cpp
-    viewer_view.cpp
-    # Widgets and Wizards
-    moduleControlWidgetFuncs.cpp
-    nodeControlWidgetFuncs.cpp
-    procedureWidgetFuncs.cpp
-    selectAtomTypeWidgetFuncs.cpp
-    selectForcefieldWidgetFuncs.cpp
-    selectSpeciesWidgetFuncs.cpp
-    wizardFuncs.cpp
-    # Dialogs
-    addConfigurationDialogFuncs.cpp
-    addForcefieldTermsDialogFuncs.cpp
-    copySpeciesTermsDialogFuncs.cpp
-    dataManagerDialogFuncs.cpp
-    editSpeciesDialogFuncs.cpp
-    getConfigurationNameDialogFuncs.cpp
-    getModuleLayerNameDialogFuncs.cpp
-    getSpeciesNameDialogFuncs.cpp
-    getTabNameDialogFuncs.cpp
-    importLigParGenDialogFuncs.cpp
-    importCIFDialogFuncs.cpp
-    importSpeciesDialogFuncs.cpp
-    intramolecularTermsDialogFuncs.cpp
-    scaleChargesDialogFuncs.cpp
-    selectAtomTypeDialogFuncs.cpp
-    selectElementDialogFuncs.cpp
-    selectGenericItemDialogFuncs.cpp
-    selectRestartFileDialogFuncs.cpp
-    selectSpeciesDialogFuncs.cpp
-    # Main Tabs
-    configurationTabFuncs.cpp
-    forcefieldTabFuncs.cpp
-    layerTabFuncs.cpp
-    mainTab.cpp
-    mainTabsBarFuncs.cpp
-    mainTabsWidgetFuncs.cpp
-    messagesTabFuncs.cpp
-    overviewTabFuncs.cpp
-    speciesTabFuncs.cpp
-    speciesTab_geometry.cpp
-    speciesTab_isotopologues.cpp
-    speciesTab_sites.cpp
-    mainTab.h
-    # Main UI
-    guiFuncs.cpp
-    gui_simulation.cpp
-    menu_configuration.cpp
-    menu_file.cpp
-    menu_help.cpp
-    menu_layer.cpp
-    menu_simulation.cpp
-    menu_species.cpp
-    outputHandlerFuncs.cpp
-    stockColours.cpp
-    threadFuncs.cpp
-    stockColours.h
-    # QML type register
-    typesFuncs.cpp
-)
-
-# Resources
-set(gui_RES_QRC main.qrc)
-qt6_add_resources(gui_RES ${gui_RES_QRC})
-
 # Target 'gui'
-add_library(gui ${gui_RES} ${gui_UIS_H} ${gui_SRCS} ${gui_MOC_SRCS})
+add_library(
+  gui
+  # Qt Resources
+  main.qrc
+  # Core Classes
+  wizard.cpp
+  wizard.h
+  wizardFooter.h
+  wizardFooter.ui
+  wizardHeader.h
+  wizardHeader.ui
+  # Viewers
+  configurationViewer.cpp
+  configurationViewer_input.cpp
+  configurationViewer_interaction.cpp
+  configurationViewer_render.cpp
+  configurationViewer.h
+  configurationViewerWidget.cpp
+  configurationViewerWidget.h
+  configurationViewerWidget.ui
+  dataViewer.cpp
+  dataViewer_input.cpp
+  dataViewer_interaction.cpp
+  dataViewer_contextMenu.cpp
+  dataViewer_render.cpp
+  dataViewer.h
+  dataWidget.cpp
+  dataWidget.h
+  dataWidget.ui
+  selectSymbol.cpp
+  selectSymbol.h
+  selectSymbol.ui
+  speciesEditor.cpp
+  speciesEditor.h
+  speciesEditor.ui
+  speciesViewer.h
+  speciesViewer.cpp
+  speciesViewer_input.cpp
+  speciesViewer_interaction.cpp
+  speciesViewer_render.cpp
+  speciesWidget.cpp
+  speciesWidget.h
+  speciesWidget.ui
+  viewer.cpp
+  viewer_input.cpp
+  viewer_interaction.cpp
+  viewer_options.cpp
+  viewer_query.cpp
+  viewer_render.cpp
+  viewer_renderables.cpp
+  viewer_view.cpp
+  viewer.h
+  # Widgets and Wizards
+  moduleControlWidget.cpp
+  moduleControlWidget.h
+  moduleControlWidget.ui
+  nodeControlWidget.cpp
+  nodeControlWidget.h
+  nodeControlWidget.ui
+  procedureWidget.cpp
+  procedureWidget.h
+  procedureWidget.ui
+  selectAtomTypeWidget.cpp
+  selectAtomTypeWidget.h
+  selectAtomTypeWidget.ui
+  selectForcefieldWidget.cpp
+  selectForcefieldWidget.h
+  selectForcefieldWidget.ui
+  selectSpeciesWidget.cpp
+  selectSpeciesWidget.h
+  selectSpeciesWidget.ui
+  # Dialogs
+  addConfigurationDialog.cpp
+  addConfigurationDialog.h
+  addConfigurationDialog.ui
+  addForcefieldTermsDialog.cpp
+  addForcefieldTermsDialog.h
+  copySpeciesTermsDialog.cpp
+  copySpeciesTermsDialog.h
+  copySpeciesTermsDialog.ui
+  dataManagerDialog.cpp
+  dataManagerDialog.h
+  dataManagerDialog.ui
+  editSpeciesDialog.cpp
+  editSpeciesDialog.h
+  editSpeciesDialog.ui
+  getConfigurationNameDialog.cpp
+  getConfigurationNameDialog.h
+  getConfigurationNameDialog.ui
+  getModuleLayerNameDialog.cpp
+  getModuleLayerNameDialog.h
+  getModuleLayerNameDialog.ui
+  getSpeciesNameDialog.cpp
+  getSpeciesNameDialog.h
+  getSpeciesNameDialog.ui
+  getTabNameDialog.cpp
+  getTabNameDialog.h
+  getTabNameDialog.ui
+  importCIFDialog.cpp
+  importCIFDialog.h
+  importCIFDialog.ui
+  importLigParGenDialog.cpp
+  importLigParGenDialog.h
+  importLigParGenDialog.ui
+  importSpeciesDialog.cpp
+  importSpeciesDialog.h
+  importSpeciesDialog.ui
+  intramolecularTermsDialog.cpp
+  intramolecularTermsDialog.h
+  intramolecularTermsDialog.ui
+  modifyChargesDialog.cpp
+  modifyChargesDialog.h
+  selectAtomTypeDialog.cpp
+  selectAtomTypeDialog.h
+  selectAtomTypeDialog.ui
+  selectElementDialog.cpp
+  selectElementDialog.h
+  selectElementDialog.ui
+  selectGenericItemDialog.cpp
+  selectGenericItemDialog.h
+  selectGenericItemDialog.ui
+  selectRestartFileDialog.cpp
+  selectRestartFileDialog.h
+  selectRestartFileDialog.ui
+  selectSpeciesDialog.cpp
+  selectSpeciesDialog.h
+  selectSpeciesDialog.ui
+  # Main Tabs
+  configurationTab.cpp
+  configurationTab.h
+  configurationTab.ui
+  forcefieldTab.cpp
+  forcefieldTab.h
+  forcefieldTab.ui
+  layerTab.cpp
+  layerTab.h
+  layerTab.ui
+  mainTab.cpp
+  mainTab.h
+  mainTabsBar.cpp
+  mainTabsBar.h
+  mainTabsWidget.cpp
+  mainTabsWidget.h
+  messagesTab.cpp
+  messagesTab.h
+  messagesTab.ui
+  overviewTab.cpp
+  overviewTab.h
+  speciesTab.cpp
+  speciesTab_geometry.cpp
+  speciesTab_isotopologues.cpp
+  speciesTab_sites.cpp
+  speciesTab.h
+  speciesTab.ui
+  # Main UI
+  gui.cpp
+  gui_simulation.cpp
+  gui.h
+  gui.ui
+  menu_configuration.cpp
+  menu_file.cpp
+  menu_help.cpp
+  menu_layer.cpp
+  menu_simulation.cpp
+  menu_species.cpp
+  outputHandler.cpp
+  outputHandler.h
+  stockColours.cpp
+  stockColours.h
+  thread.cpp
+  thread.h
+  # QML type register
+  types.cpp
+  types.h
+)
+
 target_include_directories(
   gui
   PRIVATE ${PROJECT_SOURCE_DIR}/src

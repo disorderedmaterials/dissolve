@@ -7,7 +7,7 @@
 #include "gui/models/masterTermTreeModel.h"
 #include "gui/models/speciesModel.h"
 #include "gui/ui_importSpeciesDialog.h"
-#include "gui/wizard.hui"
+#include "gui/wizard.h"
 #include "main/dissolve.h"
 #include <QDialog>
 

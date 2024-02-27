@@ -4,8 +4,6 @@ description: Build on OSX
 inputs:
   threading:
     default: true
-  extraCMakeFlags:
-    default: ""
   cacheOnly:
     type: boolean
     default: false
@@ -18,13 +16,8 @@ runs:
   # Setup / Install Dependencies
   #
 
-  - name: Setup Python
-    uses: actions/setup-python@v4
-    with:
-      python-version: ${{ env.pythonVersion }}
-
-  - name: Install Homebrew Dependencies for Intel
-    if: ${{ inputs.cacheOnly == 'false' && env.OSX_CMAKE_TARGET == 'x86_64' }}
+  - name: Install Homebrew Dependencies
+    if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
 
@@ -36,11 +29,11 @@ runs:
   - name: Install Python Dependencies
     shell: bash
     run: |
-      pip3 install --user aqtinstall conan==1.58.0
+      pip3 install --user aqtinstall conan==1.*
 
   - name: Retrieve Qt Cache
     id: cache-qt
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: osx-qt-${{ env.qtVersion }}
       path: ${{ runner.temp }}/qt
@@ -58,26 +51,12 @@ runs:
 
   - name: Retrieve Conan Cache
     id: cache-conan
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
-      key: osx-conan-${{ env.conanHash }}
+      key: osx-${{ runner.arch }}-conan-${{ env.conanHash }}
       path: |
         ~/.conan
         ~/.conancache
-
-
-  - name: Install Conan Dependencies
-    shell: bash
-    run: |
-      set -ex
-
-      # Setup paths
-      export PATH="$(python3 -m site --user-base)/bin:$PATH"
-
-      mkdir build && cd build
-      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
-      conan install .. --build missing -s arch=${{ env.OSX_CONAN_TARGET }}
-  
 
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
@@ -89,26 +68,41 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
       Qt6_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos
-      ANTLR_EXE=/usr/local/Cellar/antlr/${{ env.antlrVersion }}/antlr-${{ env.antlrVersion }}-complete.jar
+
+      # Find ANTLR4
+      brew --prefix antlr
+      ANTLR_EXE=$(brew --prefix antlr)/antlr-${{ env.antlrVersion }}-complete.jar
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
-      echo "JAVA HOME: $JAVA_HOME_21_X64"
+
+      # Make sure we have a Java binary path - $JAVA_HOME_21_X64 does not appear to work on Silicon
+      if [ "${JAVA_HOME_21_X64}" == "" ]
+      then
+        JAVA_RUNTIME=`which java`
+      else
+        JAVA_RUNTIME=${JAVA_HOME_21_X64}/bin/java
+      fi
+      echo "Java Runtime Executable: ${JAVA_RUNTIME}"
+
+      # Set conan cache location
+      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
+
+      # Set minimum deployment target version
+      export MACOSX_DEPLOYMENT_TARGET=10.15
 
       # Build
-      cd build
-      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DJava_JAVA_EXECUTABLE:path=$JAVA_HOME_21_X64/bin/java -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DCMAKE_OSX_ARCHITECTURES:string="${{ env.OSX_CMAKE_TARGET }}" ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
+      mkdir build && cd build
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../
       cmake --build . --config Release
-      cd ../
 
-      # Deploy Conan dependencies for ease
-      mkdir deploy && cd deploy
-      conan install .. -g deploy -s arch=${{ env.OSX_CONAN_TARGET }}
+      # Copy over ftgl libs so we can ship them with the bundle
+      mkdir ftgl
+      cp -v $(brew --prefix ftgl)/lib/*.dylib ./ftgl
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
-    uses: actions/upload-artifact@v3
+    uses: actions/upload-artifact@v4
     with:
-      name: osx-build-artifacts
+      name: osx-${{ runner.arch }}-build-artifacts
       path: |
         ${{ github.workspace }}/build
-        ${{ github.workspace }}/deploy
       retention-days: 1

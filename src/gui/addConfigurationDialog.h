@@ -5,7 +5,7 @@
 
 #include "gui/models/addSpeciesInfoModel.h"
 #include "gui/ui_addConfigurationDialog.h"
-#include "gui/wizard.hui"
+#include "gui/wizard.h"
 #include "main/dissolve.h"
 
 // Add Configuration Dialog

@@ -90,7 +90,7 @@
   <customwidget>
    <class>KeywordsWidget</class>
    <extends>QWidget</extends>
-   <header>gui/keywordWidgets/widget.hui</header>
+   <header>gui/keywordWidgets/widget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

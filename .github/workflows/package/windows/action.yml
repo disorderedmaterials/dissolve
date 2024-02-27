@@ -10,13 +10,13 @@ runs:
   #
 
   - name: Retrieve Qt Cache
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: windows-qt-${{ env.qtVersion }}
       path: ${{ runner.temp }}\qt
 
   - name: Retrieve FTGL Cache
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: windows-ftgl
       path: |
@@ -24,7 +24,7 @@ runs:
         ${{ runner.temp }}\ftgl-install
 
   - name: Retrieve FreeType Cache
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     with:
       key: windows-freetype
       path: |
@@ -32,10 +32,10 @@ runs:
         ${{ runner.temp }}\freetype-install
 
   - name: Download Raw Build Artifacts
-    uses: actions/download-artifact@v3
+    uses: actions/download-artifact@v4
     with:
       name: windows-build-artifacts
-      path: ${{ github.workspace }}
+      path: ${{ github.workspace }}/build
 
   - name: Install Chocolatey Dependencies
     shell: bash
@@ -56,7 +56,7 @@ runs:
       export FREETYPE_DIR="${RUNNER_TEMP}\freetype-install\bin"
       export FTGL_DIR="${RUNNER_TEMP}\ftgl-install\bin"
       export DISSOLVE_DIR="${GITHUB_WORKSPACE}\build\bin"
-      export DEPLOY_DIR="${GITHUB_WORKSPACE}\deploy"
+      export DEPLOY_DIR="${GITHUB_WORKSPACE}\build"
 
       # Run Inno Setup Compiler
       iscc.exe -O./ ./ci/windows/dissolve-gui.iss
@@ -72,12 +72,19 @@ runs:
       zip -r $zipFile $exeBase
       
       # Collect artifacts
-      mkdir packages
-      mv $zipFile packages
-      mv $exe packages
+      mkdir packages-zip
+      mv $zipFile packages-zip
+      mkdir packages-installer
+      mv $exe packages-installer
 
-  - name: Upload Package Artifacts
-    uses: actions/upload-artifact@v3
+  - name: Upload Package Artifacts (Zip)
+    uses: actions/upload-artifact@v4
     with:
-      name: packages
-      path: ${{ github.workspace }}\packages
+      name: packages-windows-zip
+      path: ${{ github.workspace }}\packages-zip
+
+  - name: Upload Package Artifacts (Installer)
+    uses: actions/upload-artifact@v4
+    with:
+      name: packages-windows-installer
+      path: ${{ github.workspace }}\packages-installer

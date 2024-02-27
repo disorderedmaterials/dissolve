@@ -78,7 +78,7 @@
   <customwidget>
    <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/exponentialSpin.hui</header>
+   <header>gui/widgets/exponentialSpin.h</header>
   </customwidget>
  </customwidgets>
  <resources>

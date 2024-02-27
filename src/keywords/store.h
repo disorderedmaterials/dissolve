@@ -280,12 +280,12 @@ class KeywordStore
      * Object Management
      */
     private:
-    // Vector of all keywords globally
-    static std::vector<KeywordBase *> allKeywords_;
+    // Vector of all keywords in the store
+    std::vector<KeywordBase *> allKeywords_;
 
     public:
     // Gracefully deal with the specified object no longer being valid
-    template <class O> static void objectNoLongerValid(O *object)
+    template <class O> void objectNoLongerValid(O *object)
     {
         // Loop over all keyword objects and call their local functions
         for (auto *kwd : allKeywords_)

@@ -52,12 +52,12 @@ class EnergyResult
 {
     public:
     EnergyResult(PairPotentialEnergyValue pp = {}, double geom = 0.0, double ext = 0.0)
-        : total_(pp.total() + geom + ext), pairPotential_(pp), geometry_(geom), extended_(ext){};
+        : total_(pp.total() + geom + ext), geometry_(geom), extended_(ext), pairPotential_(pp){};
 
     private:
     // Components
-    PairPotentialEnergyValue pairPotential_;
     double total_, geometry_, extended_;
+    PairPotentialEnergyValue pairPotential_;
 
     public:
     double total() const { return total_; };

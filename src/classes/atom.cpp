@@ -86,7 +86,7 @@ void Atom::translateCoordinates(const Vec3<double> &delta) { origin_->rs_[index_
 void Atom::translateCoordinates(double dx, double dy, double dz) { origin_->rs_[index_] += Vec3<double>(dx, dy, dz); }
 // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
 SpeciesAtom::ScaledInteractionDefinition Atom::scaling(const Atom j) const {
-  assert(speciesAtom_[index_] != nullptr);
+  assert(origin_->speciesAtom_[index_] != nullptr);
   assert(j.speciesAtom() != nullptr);
 
   return origin_->speciesAtom_[index_]->scaling(j.speciesAtom());
