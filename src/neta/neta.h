@@ -16,17 +16,15 @@ class SpeciesAtom;
 class NETADefinition
 {
     public:
-    explicit NETADefinition(std::string_view definition = "");
-    NETADefinition(const SpeciesAtom *i, const std::optional<int> maxDepth = 1);
-    ~NETADefinition() = default;
-
-    public:
     // NETA Definition Creation Flags
     enum NETACreationFlags
     {
         ExplicitHydrogens, /* Explicitly include Hydrogen atoms in NETA definition string */
         IncludeRootElement /* Include the root element in NETA definition string */
     };
+    explicit NETADefinition(std::string_view definition = "");
+    NETADefinition(const SpeciesAtom *i, const std::optional<int> maxDepth = 1, const Flags<NETACreationFlags> &flags = {});
+    ~NETADefinition() = default;
 
     /*
      * Data
