@@ -76,21 +76,21 @@ TEST_F(CompareModuleTest, ExtVsExtErrors)
 TEST_F(CompareModuleTest, IntVsIntDelta)
 {
     EXPECT_TRUE(
-        systemTest.checkData1D("Compare01//Pair1_Delta", {"dissolve/compare/intvsint.minimumt01",
+        systemTest.checkData1D("Compare01//Pair1_Delta", {"dissolve/compare/intvsint.mint01",
                                                           Data1DImportFileFormat::Data1DImportFormat::GudrunMint, 1, 2}));
 }
 
 TEST_F(CompareModuleTest, IntVsExtDelta)
 {
     EXPECT_TRUE(
-        systemTest.checkData1D("Compare01//Pair2_Delta", {"dissolve/compare/intvsext.minimumt01",
+        systemTest.checkData1D("Compare01//Pair2_Delta", {"dissolve/compare/intvsext.mint01",
                                                           Data1DImportFileFormat::Data1DImportFormat::GudrunMint, 1, 2}));
 }
 
 TEST_F(CompareModuleTest, ExtVsExtDelta)
 {
     EXPECT_TRUE(
-        systemTest.checkData1D("Compare01//Pair2_Delta", {"dissolve/compare/extvsext.minimumt01",
+        systemTest.checkData1D("Compare01//Pair2_Delta", {"dissolve/compare/extvsext.mint01",
                                                           Data1DImportFileFormat::Data1DImportFormat::GudrunMint, 1, 2}));
 }
 
