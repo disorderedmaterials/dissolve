@@ -482,7 +482,7 @@ bool CIFHandler::createBasicUnitCell()
 
     // Bonding
     if (useCIFBondingDefinitions_)
-        applyCIFBonding(unitCellSpecies_, preventMetallicBonds_);
+        applyCIFBonding(&unitCellSpecies_, preventMetallicBonds_);
     else
         unitCellSpecies_.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
 
@@ -591,79 +591,76 @@ bool CIFHandler::detectMolecules()
         return false;
     }
 
-    std::vector<int> allAtomIndices(cleanedUnitCellSpecies_.nAtoms());
-    std::iota(allAtomIndices.begin(), allAtomIndices.end(), 0);
+    std::vector<bool> atomMask(cleanedUnitCellSpecies_.nAtoms(), false);
 
     // Find all molecular species, and their instances
-    auto idx = 0;
-    while (!allAtomIndices.empty())
+    auto indexIterator = atomMask.begin();
+    while (indexIterator != atomMask.end())
     {
-        // Select a fragment
-        auto fragmentIndices = cleanedUnitCellSpecies_.fragment(idx);
-        std::sort(fragmentIndices.begin(), fragmentIndices.end());
+        // Select a fragment from the next available index
+        auto atomIndex = indexIterator - atomMask.begin();
+        auto fragmentIndices = cleanedUnitCellSpecies_.fragment(atomIndex);
 
-        // Create a new CIF molecular species
+        // Create a new CIF molecular species from the fragment
         auto &cifSp = molecularSpecies_.emplace_back();
         auto *sp = cifSp.species().get();
-        sp->copyBasic(&cleanedUnitCellSpecies_);
+        // -- Copy selected atoms
+        for (auto fragAtomIndex : fragmentIndices)
+        {
+            const auto &unitCellAtom = cleanedUnitCellSpecies_.atom(fragAtomIndex);
+            sp->addAtom(unitCellAtom.Z(), unitCellAtom.r(), 0.0, unitCellAtom.atomType());
+        }
 
-        // Empty the species of all atoms, except those in the reference instance
-        std::vector<int> speciesAtomIndices(sp->nAtoms());
-        std::iota(speciesAtomIndices.begin(), speciesAtomIndices.end(), 0);
-        std::vector<int> indicesToRemove;
-        std::set_difference(speciesAtomIndices.begin(), speciesAtomIndices.end(), fragmentIndices.begin(),
-                            fragmentIndices.end(), std::back_inserter(indicesToRemove));
-        sp->removeAtoms(indicesToRemove);
+        // Give the species a temporary unit cell so we can calculate / apply bonding
+        sp->createBox(cleanedUnitCellSpecies_.box()->axisLengths(), cleanedUnitCellSpecies_.box()->axisAngles());
+        if (useCIFBondingDefinitions_)
+            applyCIFBonding(sp, preventMetallicBonds_);
+        else
+            sp->addMissingBonds(bondingTolerance_, preventMetallicBonds_);
+        sp->removeBox();
+
+        // Set up a temporary molecule to unfold the species
+        LocalMolecule tempMol;
+        tempMol.setSpecies(sp);
+        for (auto i = 0; i < sp->nAtoms(); ++i)
+            tempMol.localAtom(i).setCoordinates(sp->atom(i).r());
+        tempMol.unFold(cleanedUnitCellSpecies_.box());
+        for (auto &&[molAtom, spAtom] : zip(tempMol.localAtoms(), sp->atoms()))
+            spAtom.setCoordinates(molAtom.r());
 
         // Give the species a name
         sp->setName(EmpiricalFormula::formula(sp->atoms(), [&](const auto &at) { return at.Z(); }));
 
-        // Fix geometry of the extracted species
-        fixGeometry(sp, cleanedUnitCellSpecies_.box());
-
         // Find instances of this fragment. For large fragments that represent > 50% of the remaining atoms we don't even
         // attempt to create a NETA definition etc. For cases such as framework species this will speed up detection no end.
-        std::vector<CIFLocalMolecule> instances;
-        if (fragmentIndices.size() * 2 > allAtomIndices.size())
+        std::vector<LocalMolecule> instances;
+        if (fragmentIndices.size() * 2 > cleanedUnitCellSpecies_.nAtoms())
         {
             // Create an instance of the current fragment
             auto &mol = instances.emplace_back();
             mol.setSpecies(sp);
             for (auto i = 0; i < sp->nAtoms(); ++i)
             {
-                mol.setAtom(i, sp->atom(i).r(), sp->atom(i).index());
+                mol.localAtom(i).setCoordinates(sp->atom(i).r());
+                atomMask[fragmentIndices[i]] = true;
             }
-
-            allAtomIndices.erase(std::remove_if(allAtomIndices.begin(), allAtomIndices.end(),
-                                                [&](int value) {
-                                                    return std::find(fragmentIndices.begin(), fragmentIndices.end(), value) !=
-                                                           fragmentIndices.end();
-                                                }),
-                                 allAtomIndices.end());
         }
         else
         {
-            // Determine a unique NETA definition describing the fragment
-            auto neta = uniqueNETADefinition(sp);
-            if (!neta.has_value())
-                return Messenger::error("Couldn't generate molecular partitioning for CIF - no unique NETA definition for the "
-                                        "fragment {} could be determined.\n",
-                                        sp->name());
+            // Determine the best NETA definition describing the fragment
+            auto &&[bestNETA, rootAtoms] = bestNETADefinition(sp);
+            if (rootAtoms.empty())
+                return Messenger::error(
+                    "Couldn't generate molecular partitioning for CIF - no suitable NETA definition for the "
+                    "fragment {} could be determined.\n",
+                    sp->name());
 
-            // Find instances of this fragmentIndices
-            instances = getSpeciesInstances(sp, *neta);
-
-            // Remove the current fragment and all copies
-            for (const auto &instance : instances)
+            // Find instances of this fragment
+            instances = getSpeciesInstances(sp, atomMask, bestNETA, rootAtoms);
+            if (instances.empty())
             {
-                allAtomIndices.erase(std::remove_if(allAtomIndices.begin(), allAtomIndices.end(),
-                                                    [&](int value)
-                                                    {
-                                                        return std::find(instance.unitCellIndices().begin(),
-                                                                         instance.unitCellIndices().end(),
-                                                                         value) != instance.unitCellIndices().end();
-                                                    }),
-                                     allAtomIndices.end());
+                molecularSpecies_.clear();
+                return Messenger::error("Failed to find species instances for fragment '{}'.\n", sp->name());
             }
         }
 
@@ -671,7 +668,7 @@ bool CIFHandler::detectMolecules()
         cifSp.instances() = instances;
 
         // Search for the next valid starting index
-        idx = *std::min_element(allAtomIndices.begin(), allAtomIndices.end());
+        indexIterator = std::find(std::next(indexIterator), atomMask.end(), false);
     }
 
     Messenger::print("Partitioned unit cell into {} distinct molecular species:\n\n", molecularSpecies_.size());
@@ -715,7 +712,7 @@ bool CIFHandler::createSupercell()
                         supercellSpecies_.addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
                 }
         if (useCIFBondingDefinitions_)
-            applyCIFBonding(supercellSpecies_, preventMetallicBonds_);
+            applyCIFBonding(&supercellSpecies_, preventMetallicBonds_);
         else
             supercellSpecies_.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
 
@@ -733,7 +730,7 @@ bool CIFHandler::createSupercell()
         {
             const auto *sp = molecularSpecies.species().get();
             const auto &coreInstances = molecularSpecies.instances();
-            std::vector<CIFLocalMolecule> supercellInstances;
+            std::vector<LocalMolecule> supercellInstances;
             supercellInstances.reserve(supercellRepeat_.x * supercellRepeat_.y * supercellRepeat_.z * coreInstances.size());
 
             // Loop over cell images
@@ -898,6 +895,9 @@ bool CIFHandler::isValid() const
     return !molecularSpecies_.empty() || supercellSpecies_.fragment(0).size() != supercellSpecies_.nAtoms();
 }
 
+// Return cleaned unit cell species
+const Species &CIFHandler::cleanedUnitCellSpecies() const { return cleanedUnitCellSpecies_; }
+
 // Return the detected molecular species
 const std::vector<CIFMolecularSpecies> &CIFHandler::molecularSpecies() const { return molecularSpecies_; }
 
@@ -1010,13 +1010,13 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
  */
 
 // Apply CIF bonding to a given species
-void CIFHandler::applyCIFBonding(Species &sp, bool preventMetallicBonding)
+void CIFHandler::applyCIFBonding(Species *sp, bool preventMetallicBonding)
 {
     if (!hasBondDistances())
         return;
 
-    auto *box = sp.box();
-    auto pairs = PairIterator(sp.nAtoms());
+    auto *box = sp->box();
+    auto pairs = PairIterator(sp->nAtoms());
     for (auto pair : pairs)
     {
         // Grab indices and atom references
@@ -1024,8 +1024,8 @@ void CIFHandler::applyCIFBonding(Species &sp, bool preventMetallicBonding)
         if (indexI == indexJ)
             continue;
 
-        auto &i = sp.atom(indexI);
-        auto &j = sp.atom(indexJ);
+        auto &i = sp->atom(indexI);
+        auto &j = sp->atom(indexJ);
 
         // Prevent metallic bonding?
         if (preventMetallicBonding && Elements::isMetallic(i.Z()) && Elements::isMetallic(j.Z()))
@@ -1036,90 +1036,282 @@ void CIFHandler::applyCIFBonding(Species &sp, bool preventMetallicBonding)
         if (!r)
             continue;
         else if (fabs(box->minimumDistance(i.r(), j.r()) - r.value()) < 1.0e-2)
-            sp.addBond(&i, &j);
+            sp->addBond(&i, &j);
     }
 }
 
-// Determine a unique NETA definition corresponding to a given species
-std::optional<NETADefinition> CIFHandler::uniqueNETADefinition(Species *sp)
+// Determine the best NETA definition for the supplied species
+std::tuple<NETADefinition, std::vector<SpeciesAtom *>> CIFHandler::bestNETADefinition(Species *sp)
 {
-    NETADefinition neta;
-    auto nMatches = 0, idx = 0;
-    while (nMatches != 1)
+    // Set up the return value and bind its contents
+    std::tuple<NETADefinition, std::vector<SpeciesAtom *>> result{NETADefinition(), {}};
+    auto &&[bestNETA, rootAtoms] = result;
+
+    // Maintain a set of atoms matched by any NETA description we generate
+    std::set<SpeciesAtom *> alreadyMatched;
+
+    // Loop over species atoms
+    for (auto &i : sp->atoms())
     {
-        if (idx >= sp->nAtoms())
-            return std::nullopt;
-        neta.create(&sp->atom(idx++), std::nullopt,
+        // Skip this atom?
+        if (alreadyMatched.find(&i) != alreadyMatched.end())
+            continue;
+
+        // Create a NETA definition with this atom as the root
+        NETADefinition neta;
+        neta.create(&i, std::nullopt,
                     Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::ExplicitHydrogens,
                                                              NETADefinition::NETACreationFlags::IncludeRootElement));
-        nMatches = std::count_if(sp->atoms().begin(), sp->atoms().end(), [&](const auto &i) { return neta.matches(&i); });
+
+        // Apply this match over the whole species
+        std::vector<SpeciesAtom *> currentRootAtoms;
+        for (auto &j : sp->atoms())
+        {
+            if (neta.matches(&j))
+            {
+                currentRootAtoms.push_back(&j);
+                alreadyMatched.insert(&j);
+            }
+        }
+
+        // Is this a better description?
+        auto better = false;
+        if (rootAtoms.empty() || currentRootAtoms.size() < rootAtoms.size())
+            better = true;
+        else if (currentRootAtoms.size() == rootAtoms.size())
+        {
+            // Replace the current match if there are more bonds on the current atom.
+            if (i.nBonds() > rootAtoms.front()->nBonds())
+                better = true;
+        }
+
+        if (better)
+        {
+            bestNETA = neta;
+            rootAtoms = currentRootAtoms;
+        }
     }
-    return neta;
+
+    return result;
 }
 
 // Get instances for the supplied species from the cleaned unit cell
-std::vector<CIFLocalMolecule> CIFHandler::getSpeciesInstances(Species *moleculeSpecies, const NETADefinition &neta)
+std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *referenceSpecies, std::vector<bool> &atomMask,
+                                                           const NETADefinition &neta,
+                                                           const std::vector<SpeciesAtom *> &referenceRootAtoms)
 {
-    std::vector<CIFLocalMolecule> instances;
+    if (referenceRootAtoms.empty() || !neta.isValid())
+        return {};
 
     // Loop over atoms in the unit cell - we'll mark any that we select as an instance so we speed things up and avoid
     // duplicates
-    std::vector<bool> atomFlags(cleanedUnitCellSpecies_.nAtoms());
-    std::fill(atomFlags.begin(), atomFlags.end(), false);
     const auto &unitCellAtoms = cleanedUnitCellSpecies_.atoms();
-    for (auto i = 0; i < atomFlags.size(); ++i)
+    std::vector<LocalMolecule> instances;
+    auto atomIndexIterator = std::find(atomMask.begin(), atomMask.end(), false);
+    while (atomIndexIterator != atomMask.end())
     {
-        if (atomFlags[i])
-            continue;
-
-        auto &atom = unitCellAtoms[i];
-        auto matchedAtoms = neta.matchedPath(&atom).set();
-        if (matchedAtoms.empty())
-            continue;
-
-        // Get the (sorted) matched atom indices
-        std::vector<int> indices(matchedAtoms.size());
-        std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
-                       [](const auto matchedAtom) { return matchedAtom->index(); });
-
-        // For each match create a CIFLocalMolecule instance
-        auto &mol = instances.emplace_back();
-        mol.setSpecies(moleculeSpecies);
-        for (auto idx = 0; idx < indices.size(); ++idx)
+        // Try to match this atom / fragment
+        const auto atomIndex = atomIndexIterator - atomMask.begin();
+        auto &atom = unitCellAtoms[atomIndex];
+        auto matchedUnitCellAtoms = neta.matchedPath(&atom).set();
+        if (matchedUnitCellAtoms.empty())
         {
-            mol.setAtom(idx, unitCellAtoms[indices[idx]].r(), indices[idx]);
-
-            atomFlags[indices[idx]] = true;
+            atomIndexIterator = std::find(std::next(atomIndexIterator), atomMask.end(), false);
+            continue;
         }
 
-        // Unfold the molecule
-        mol.unFold(cleanedUnitCellSpecies_.box());
+        // Found a fragment that matches the NETA description - we now create a temporary instance Species which will contain
+        // the selected fragment atoms, reassembled into a molecule (i.e. unfolded) and with bonding applied / calculated.
+        // We need to copy the unit cell from the crystal so we detect bonds properly.
+        Species instanceSpecies;
+        instanceSpecies.createBox(unitCellSpecies_.box()->axisLengths(), unitCellSpecies_.box()->axisAngles());
+        auto rootAtomLocalIndex = -1;
+        // -- Create species atoms from those matched in the unit cell by the NETA description.
+        for (auto &matchedAtom : matchedUnitCellAtoms)
+        {
+            auto idx = instanceSpecies.addAtom(matchedAtom->Z(), matchedAtom->r(), 0.0, matchedAtom->atomType());
+
+            // Store the index of the root atom in match in our instance species when we find it
+            if (matchedAtom == &atom)
+                rootAtomLocalIndex = idx;
+        }
+        // -- Store the local root atom so we can access its coordinates for the origin translation
+        auto &instanceSpeciesRootAtom = instanceSpecies.atom(rootAtomLocalIndex);
+        // -- Calculate / apply bonding
+        if (useCIFBondingDefinitions_)
+            applyCIFBonding(&instanceSpecies, preventMetallicBonds_);
+        else
+            instanceSpecies.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
+
+        // Create a LocalMolecule as a working area for folding, translation, and rotation of the instance coordinates.
+        LocalMolecule instanceMolecule;
+        instanceMolecule.setSpecies(&instanceSpecies);
+        // -- Copy the coordinates off the matched unit cell atoms to our molecule and flag them as complete
+        auto count = 0;
+        for (auto &&[matchedAtom, instanceMolAtom] : zip(matchedUnitCellAtoms, instanceMolecule.localAtoms()))
+        {
+            instanceMolAtom.setCoordinates(matchedAtom->r());
+            atomMask[matchedAtom->index()] = true;
+        }
+        auto &instanceMoleculeRootAtom = instanceMolecule.localAtoms()[rootAtomLocalIndex];
+
+        // Unfold the molecule and store the unfolded molecule coordinates back into the instance Species.
+        // This represents our full instance coordinates we will be storing (but not their final order)
+        instanceMolecule.unFold(unitCellSpecies_.box());
+        for (auto &&[molAtom, spAtom] : zip(instanceMolecule.localAtoms(), instanceSpecies.atoms()))
+            spAtom.setCoordinates(molAtom.r());
+
+        /*
+         * Now, we have a root match atom on the current instance and a vector of possible matching sites on the reference
+         * species (in referenceRootAtoms). For each of the referenceRootAtoms, try to incrementally select along bonds using
+         * basic NETA connectivity.
+         */
+
+        // Generate basic NETA descriptions for each atom in the reference and candidate species
+        std::map<const SpeciesAtom *, NETADefinition> referenceAtomNETA;
+        for (auto &spAtom : referenceSpecies->atoms())
+            referenceAtomNETA[&spAtom] = NETADefinition(&spAtom, 1, {NETADefinition::NETACreationFlags::IncludeRootElement});
+
+        std::map<const SpeciesAtom *, const SpeciesAtom *> matchMap;
+        for (const auto *referenceRootAtom : referenceRootAtoms)
+        {
+            // The root atom is the starting point
+            matchMap = matchAtom(referenceRootAtom, &instanceSpeciesRootAtom, referenceAtomNETA, {});
+            if (!matchMap.empty())
+                break;
+        }
+
+        // Result?
+        if (matchMap.empty())
+        {
+            Messenger::error("Failed to match connectivity of an instance to the reference molecule.\n");
+            return {};
+        }
+        else if (matchMap.size() != referenceSpecies->nAtoms())
+        {
+            Messenger::error(
+                "Internal error - failed to match connectivity of all atoms within an instance to the reference molecule.\n");
+            return {};
+        }
+
+        // Create the final instance
+        auto &instance = instances.emplace_back();
+        instance.setSpecies(referenceSpecies);
+        for (const auto &[refSpeciesAtom, instanceSpeciesAtom] : matchMap)
+        {
+            instance.localAtom(refSpeciesAtom->index()).setCoordinates(instanceSpeciesAtom->r());
+        }
+
+        // Find the next available atom
+        atomIndexIterator = std::find(std::next(atomIndexIterator), atomMask.end(), false);
     }
 
     return instances;
 }
 
-// 'Fix' the geometry of a given species
-void CIFHandler::fixGeometry(Species *sp, const Box *box)
+// Recursively check NETA description matches between the supplied atoms
+std::map<const SpeciesAtom *, const SpeciesAtom *>
+CIFHandler::matchAtom(const SpeciesAtom *referenceAtom, const SpeciesAtom *instanceAtom,
+                      const std::map<const SpeciesAtom *, NETADefinition> &refNETA,
+                      const std::map<const SpeciesAtom *, const SpeciesAtom *> &map)
 {
-    // 'Fix' the geometry of the species
-    // Construct a temporary molecule, which is just the species.
-    std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
-    std::vector<Atom> molAtoms(sp->nAtoms());
-    for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
+    // If the reference atom NETA doesn't match the instance atom we cannot proceed
+    if (!refNETA.at(referenceAtom).matches(instanceAtom))
+        return {};
+
+    // Check the map to see if we have already associated the reference atom to an instance atom, or if the instance atom
+    // is already associated to a different reference atom.
+    for (auto &&[mappedRefAtom, mappedInstanceAtom] : map)
     {
-        atom.setSpeciesAtom(&spAtom);
-        atom.setCoordinates(spAtom.r());
-        mol->addAtom(&atom);
+        // Found it - double-check to ensure that the current association matches our instance atom. If it does we can return
+        // the map as it currently stands. If not we return an empty map to indicate failure.
+        if (mappedRefAtom == referenceAtom)
+        {
+            if (mappedInstanceAtom == instanceAtom)
+            {
+                return map;
+            }
+            else
+            {
+                return {};
+            }
+        }
+        else if (mappedInstanceAtom == instanceAtom)
+        {
+            return {};
+        }
     }
 
-    // Unfold the molecule
-    mol->unFold(box);
+    // Copy the current map, associate our initial pair of atoms and try to extend it
+    auto newMap = map;
+    newMap[referenceAtom] = instanceAtom;
 
-    // Update the coordinates of the species atoms
-    for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
-        spAtom.setCoordinates(atom.r());
+    // Cycle over bonds on the reference atom and find
+    for (const auto &referenceBond : referenceAtom->bonds())
+    {
+        // Get the reference bond partner
+        auto *referenceBondPartner = referenceBond.get().partner(referenceAtom);
 
-    // Set the centre of geometry of the species to be at the origin.
-    sp->setCentre(box, {0., 0., 0.});
+        // Try to find a match over bonds on the instance atom
+        std::map<const SpeciesAtom *, const SpeciesAtom *> bondResult;
+        for (const auto &instanceBond : instanceAtom->bonds())
+        {
+            // Get the instance bond partner
+            auto *instanceBondPartner = instanceBond.get().partner(instanceAtom);
+
+            // Recurse
+            bondResult = matchAtom(referenceBondPartner, instanceBondPartner, refNETA, newMap);
+            if (!bondResult.empty())
+                break;
+        }
+
+        // If we found a suitable match recursing into the bond, store the result into newMap and continue to the next bond.
+        // If we didn't find a good match, we return now.
+        if (bondResult.empty())
+        {
+            return {};
+        }
+        else
+        {
+            newMap = bondResult;
+        }
+    }
+
+    // If we get to here then we succeeded, so return the new map
+    return newMap;
+}
+
+// Calculate difference metric between the supplied species and local molecule
+std::pair<double, std::vector<int>> CIFHandler::differenceMetric(const Species *species, const LocalMolecule &molecule)
+{
+    auto difference = 0.0;
+    std::vector<int> atomIndexMap(species->nAtoms(), -1);
+    auto nBadAtoms = 0;
+    for (auto spI = 0; spI < species->nAtoms(); ++spI)
+    {
+        auto &spAtom = species->atom(spI);
+
+        // For this species atom find the closest atom in the molecule
+        auto distanceSq = 1.0e6;
+        for (auto molI = 0; molI < molecule.nAtoms(); ++molI)
+        {
+            auto rABSq = (spAtom.r() - molecule.localAtoms()[molI].r()).magnitudeSq();
+            if (rABSq < distanceSq)
+            {
+                distanceSq = rABSq;
+                atomIndexMap[spI] = molI;
+            }
+        }
+
+        if (distanceSq > 0.1)
+            ++nBadAtoms;
+
+        // Update the difference score
+        const auto &closestMolSpAtom = molecule.species()->atom(atomIndexMap[spI]);
+        difference += distanceSq;
+        if (spAtom.Z() != closestMolSpAtom.Z())
+            difference += std::max(spAtom.Z(), closestMolSpAtom.Z()) * 10.0;
+    }
+
+    return {difference, atomIndexMap};
 }
