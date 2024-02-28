@@ -90,7 +90,7 @@ TEST_F(CompareModuleTest, IntVsExtDelta)
 TEST_F(CompareModuleTest, ExtVsExtDelta)
 {
     EXPECT_TRUE(
-        systemTest.checkData1D("Compare01//Pair2_Delta", {"dissolve/compare/extvsext.mint01",
+        systemTest.checkData1D("Compare01//Pair3_Delta", {"dissolve/compare/extvsext.mint01",
                                                           Data1DImportFileFormat::Data1DImportFormat::GudrunMint, 1, 2}));
 }
 
