@@ -177,6 +177,8 @@ class CIFHandler
     bool generate(CIFGenerationStage fromStage = CIFGenerationStage::CreateBasicUnitCell);
     // Return whether the generated data is valid
     bool isValid() const;
+    // Return cleaned unit cell species
+    const Species &cleanedUnitCellSpecies() const;
     // Return the detected molecular species
     const std::vector<CIFMolecularSpecies> &molecularSpecies() const;
     // Return the generated configuration
@@ -189,11 +191,18 @@ class CIFHandler
      */
     private:
     // Apply CIF bonding to a given species
-    void applyCIFBonding(Species &sp, bool preventMetallicBonding);
-    // Determine a unique NETA definition corresponding to a given species
-    std::optional<NETADefinition> uniqueNETADefinition(Species *sp);
+    void applyCIFBonding(Species *sp, bool preventMetallicBonding);
+    // Determine the best NETA definition for the supplied species
+    std::tuple<NETADefinition, std::vector<SpeciesAtom *>> bestNETADefinition(Species *sp);
     // Get instances of species molecules from the supplied NETA definition
-    std::vector<CIFLocalMolecule> getSpeciesInstances(Species *moleculeSpecies, const NETADefinition &neta);
-    // 'Fix' the geometry of a given species
-    void fixGeometry(Species *sp, const Box *box);
+    std::vector<LocalMolecule> getSpeciesInstances(const Species *referenceSpecies, std::vector<bool> &atomMask,
+                                                   const NETADefinition &neta,
+                                                   const std::vector<SpeciesAtom *> &referenceRootAtoms);
+    // Calculate difference metric between the supplied species and local molecule
+    static std::pair<double, std::vector<int>> differenceMetric(const Species *species, const LocalMolecule &molecule);
+    // Recursively check NETA description matches between the supplied atoms
+    std::map<const SpeciesAtom *, const SpeciesAtom *> matchAtom(const SpeciesAtom *referenceAtom,
+                                                                 const SpeciesAtom *instanceAtom,
+                                                                 const std::map<const SpeciesAtom *, NETADefinition> &refNETA,
+                                                                 const std::map<const SpeciesAtom *, const SpeciesAtom *> &map);
 };

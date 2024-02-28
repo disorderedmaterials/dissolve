@@ -3,6 +3,7 @@
 
 #include "io/import/cif.h"
 #include "classes/empiricalFormula.h"
+#include "io/import/species.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -31,6 +32,29 @@ class ImportCIFTest : public ::testing::Test
         EXPECT_EQ(molSp.species()->name(), std::get<0>(info));
         EXPECT_EQ(molSp.instances().size(), std::get<1>(info));
         EXPECT_EQ(molSp.species()->nAtoms(), std::get<2>(info));
+    }
+    // Check instance consistency with reference coordinates
+    void testInstanceConsistency(const CIFMolecularSpecies &molSp, const Species &referenceCoordinates)
+    {
+        // Get the box from the reference species
+        const auto *box = referenceCoordinates.box();
+
+        // Loop over instances and ensure their stored atoms overlap exactly with one in the reference system
+        for (const auto &instance : molSp.instances())
+        {
+            for (auto &&[instanceAtom, speciesAtom] : zip(instance.localAtoms(), molSp.species()->atoms()))
+            {
+                // Locate the atom in the reference system at the instance atom coordinates
+                auto instanceR = instanceAtom.r();
+                auto spAtomIt = std::find_if(referenceCoordinates.atoms().begin(), referenceCoordinates.atoms().end(),
+                                             [box, instanceR](const auto &refAtom)
+                                             { return box->minimumDistance(refAtom.r(), instanceR) < 0.01; });
+                fmt::print("{}  {} {} {}\n", Elements::symbol(speciesAtom.Z()), instanceAtom.r().x, instanceAtom.r().y,
+                           instanceAtom.r().z);
+                ASSERT_NE(spAtomIt, referenceCoordinates.atoms().end());
+                EXPECT_EQ(spAtomIt->Z(), speciesAtom.Z());
+            }
+        }
     }
 };
 
@@ -143,4 +167,45 @@ TEST_F(ImportCIFTest, CuBTC)
     cifHandler.setRemoveAtomics(true);
     EXPECT_EQ(cifHandler.molecularSpecies().size(), 0);
 }
+
+TEST_F(ImportCIFTest, MoleculeOrdering)
+{
+    CIFHandler cifHandler;
+    const auto cifFiles = {"cif/molecule-test-simple-ordered.cif", "cif/molecule-test-simple-unordered.cif",
+                           "cif/molecule-test-simple-unordered-rotated.cif"};
+    for (auto cifFile : cifFiles)
+    {
+        // Load the CIF file
+        ASSERT_TRUE(cifHandler.read(cifFile));
+        EXPECT_TRUE(cifHandler.generate());
+
+        EXPECT_EQ(cifHandler.molecularSpecies().size(), 1);
+
+        auto &cifMolecule = cifHandler.molecularSpecies().front();
+        EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {
+            {Elements::Cl, 1}, {Elements::O, 1}, {Elements::C, 1}, {Elements::H, 3}};
+        testMolecularSpecies(cifMolecule, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
+
+        testInstanceConsistency(cifMolecule, cifHandler.cleanedUnitCellSpecies());
+    }
+}
+
+TEST_F(ImportCIFTest, BigMoleculeOrdering)
+{
+    CIFHandler cifHandler;
+    const auto cifFile = "cif/Bisphen_n_arenes_1517789.cif";
+
+    // Load the CIF file
+    ASSERT_TRUE(cifHandler.read(cifFile));
+    EXPECT_TRUE(cifHandler.generate());
+
+    EXPECT_EQ(cifHandler.molecularSpecies().size(), 1);
+
+    auto &cifMolecule = cifHandler.molecularSpecies().front();
+    EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {{Elements::O, 6}, {Elements::C, 51}, {Elements::H, 54}};
+    testMolecularSpecies(cifMolecule, {EmpiricalFormula::formula(moleculeFormula), 4, 111});
+
+    testInstanceConsistency(cifMolecule, cifHandler.cleanedUnitCellSpecies());
+}
+
 } // namespace UnitTest

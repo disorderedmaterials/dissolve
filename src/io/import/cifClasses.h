@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/molecule.h"
+#include "classes/localMolecule.h"
 #include "classes/species.h"
 #include "data/elements.h"
 #include "templates/vector3.h"
@@ -116,42 +116,6 @@ class CIFAssembly
     int nGroups() const;
 };
 
-// CIF Local Molecule Definition
-class CIFLocalMolecule : public Molecule
-{
-    public:
-    CIFLocalMolecule() = default;
-    ~CIFLocalMolecule() = default;
-    CIFLocalMolecule(const CIFLocalMolecule &copyFrom);
-    CIFLocalMolecule(CIFLocalMolecule &&moveFrom);
-    CIFLocalMolecule &operator=(const CIFLocalMolecule &copyFrom);
-    CIFLocalMolecule &operator=(CIFLocalMolecule &&moveFrom);
-
-    private:
-    // Local vector of Atoms that belong to this Molecule and their original unit cell indices
-    std::vector<Atom> localAtoms_;
-    std::vector<int> unitCellIndices_;
-
-    private:
-    // Copy data from specified object
-    void copyData(const CIFLocalMolecule &object);
-    // Add Atom to Molecule
-    void addAtom(Atom *i) override;
-    // Update local atom pointers from main vector
-    void updateAtoms(std::vector<Atom> &mainAtoms, int offset) override;
-
-    public:
-    // Set Species that this Molecule represents
-    void setSpecies(const Species *sp) override;
-    // Set coordinates and local unit cell index of the specified atom
-    void setAtom(int index, const Vec3<double> &r, int unitCellIndex);
-    // Return local atoms
-    std::vector<Atom> &localAtoms();
-    const std::vector<Atom> &localAtoms() const;
-    // Return local unit cell indices for the atoms
-    const std::vector<int> &unitCellIndices() const;
-};
-
 // CIF Repeated Molecular Species
 class CIFMolecularSpecies
 {
@@ -162,17 +126,17 @@ class CIFMolecularSpecies
     // Species parent for molecule instances
     std::shared_ptr<Species> species_;
     // Molecule instances
-    std::vector<CIFLocalMolecule> instances_;
+    std::vector<LocalMolecule> instances_;
 
     public:
     // Return species parent for molecule instances
     std::shared_ptr<Species> &species();
     const std::shared_ptr<Species> &species() const;
     // Return molecule instances
-    const std::vector<CIFLocalMolecule> &instances() const;
-    std::vector<CIFLocalMolecule> &instances();
+    const std::vector<LocalMolecule> &instances() const;
+    std::vector<LocalMolecule> &instances();
     // Append supplied instances to our vector
-    void appendInstances(const std::vector<CIFLocalMolecule> &newInstances);
+    void appendInstances(const std::vector<LocalMolecule> &newInstances);
     // Return coordinates for all instances as a vector of vectors
     std::vector<std::vector<Vec3<double>>> allInstanceCoordinates() const;
 };
