@@ -144,37 +144,39 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
         return fromVector(dataSources_,
                           [](const auto &item) -> SerialisedValue
                           {
-                              SerialisedValue result = toml::array{};
                               auto &[dataSourceA, dataSourceB] = item;
-                              result.push_back(dataSourceA->serialise());
-                              // If optional second data source exists
                               if (dataSourceB->dataExists())
                               {
-                                  result.push_back(dataSourceB->serialise());
+                                  return {{"dataSourceA", dataSourceA->serialise()}, {"dataSourceB", dataSourceB->serialise()}};
                               }
-                              return result;
+                              else
+                              {
+                                  return {{"dataSourceA", dataSourceA->serialise()}};
+                              }
                           });
     }
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
-        // Emplacing back on data vector and getting the reference to the objects
-        auto &[dataSourceA, dataSourceB] =
-            dataSources_.emplace_back(std::make_shared<DataSource<DataType>>(), std::make_shared<DataSource<DataType>>());
-        // Create a queue for the dataSource objects
-        std::queue<std::shared_ptr<DataSource<DataType>>> sourceQueue({dataSourceA, dataSourceB});
-
         toVector(node,
-                 [this, &coreData, &sourceQueue](const auto &item)
+                 [this, &coreData](const auto &dataPair)
                  {
-                     if (sourceQueue.empty())
-                     {
-                         return;
-                     }
-                     // Add data to dataSource
-                     sourceQueue.front()->deserialise(item.at("dataSource"), coreData);
-                     // Remove dataSource from queue
-                     sourceQueue.pop();
+                     // Emplacing back on data vector and getting the reference to the objects
+                     auto &[dataSourceA, dataSourceB] = dataSources_.emplace_back(std::make_shared<DataSource<DataType>>(),
+                                                                                  std::make_shared<DataSource<DataType>>());
+                     // Create a queue for the dataSource objects
+                     std::queue<std::shared_ptr<DataSource<DataType>>> sourceQueue({dataSourceA, dataSourceB});
+
+                     toMap(dataPair,
+                           [&coreData, &sourceQueue](const auto &key, const auto &dataSource)
+                           {
+                               if (sourceQueue.empty())
+                                   return;
+                               // Add data to dataSource
+                               sourceQueue.front()->deserialise(dataSource, coreData);
+                               // Remove dataSource from queue
+                               sourceQueue.pop();
+                           });
                  });
     }
 };

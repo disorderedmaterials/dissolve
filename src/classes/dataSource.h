@@ -147,29 +147,24 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
 
     void deserialise(const SerialisedValue &node, const CoreData &coreData)
     {
-        toVector(node,
-                 [this, &coreData](const auto &item)
-                 {
-                     auto dataSourceType = toml::find<std::string>(item, "dataSourceType");
-                     if (dataSourceTypes().enumeration(dataSourceType) == Internal)
-                     {
-                         dataSourceType_ = Internal;
-                         // Set data to be the tag
-                         internalDataSource_ = toml::find<std::string>(item, "source");
-                         // Set data name to be data tag
-                         dataName_ = toml::find<std::string>(item, "source");
-                     }
-                     // If data source type is external
-                     else if (dataSourceTypes().enumeration(dataSourceType) == External)
-                     {
-                         dataSourceType_ = External;
-                         // Read the file and format
-                         externalDataSource_.deserialise(item.at("source"), coreData);
-                         // Set the data name as root filename
-                         dataName_ =
-                             externalDataSource_.filename().substr(externalDataSource_.filename().find_last_of("/\\") + 1);
-                     }
-                 });
+        auto dataSourceType = toml::find<std::string>(node, "dataSourceType");
+        if (dataSourceTypes().enumeration(dataSourceType) == Internal)
+        {
+            dataSourceType_ = Internal;
+            // Set data to be the tag
+            internalDataSource_ = toml::find<std::string>(node, "source");
+            // Set data name to be data tag
+            dataName_ = toml::find<std::string>(node, "source");
+        }
+        // If data source type is external
+        else if (dataSourceTypes().enumeration(dataSourceType) == External)
+        {
+            dataSourceType_ = External;
+            // Read the file and format
+            externalDataSource_.deserialise(node.at("source"), coreData);
+            // Set the data name as root filename
+            dataName_ = externalDataSource_.filename().substr(externalDataSource_.filename().find_last_of("/\\") + 1);
+        }
     }
 
     // Write through specified LineParser
@@ -221,18 +216,14 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
     // Express as a serialisable value
     SerialisedValue serialise() const
     {
-        SerialisedValue result;
-
-        result["dataSource"]["dataSourceType"] = dataSourceTypes().keyword(dataSourceType_);
         if (dataSourceType_ == Internal)
         {
-            result["dataSource"]["source"] = internalDataSource_;
+            return {{"dataSourceType", dataSourceTypes().keyword(dataSourceType_)}, {"source", internalDataSource_}};
         }
         else
         {
-            result["dataSource"]["source"] = externalDataSource_.serialise();
+            return {{"dataSourceType", dataSourceTypes().keyword(dataSourceType_)},
+                    {"source", externalDataSource_.serialise()}};
         }
-
-        return result;
     }
 };
