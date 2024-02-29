@@ -144,7 +144,7 @@ Default: `false`
 
 #### `BUILD_TESTS`
 
-In addition to the main build, also build tests located in the `tests/` directory.  The tests check individual portions of the dissolve code base for problems, and run dissolve on a large number of known data sets to confirm that there are no error in those calculations.
+In addition to the main build, also build tests located in the `tests/` directory.  The tests check individual portions of the code for problems, and run Dissolve on a number of known data sets to confirm that there are no errors in those calculations.
 
 Example: `-DBUILD_TESTS:bool=true`
 
