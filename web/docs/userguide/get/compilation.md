@@ -97,7 +97,7 @@ If you have downloaded the ANTLR4 Java tool and need to specify it explicitly, u
 An example`cmake` command using Ninja to build both the command-line and GUI codes, building ANTLR4 as an external project, and locating the ANTLR4 Java tool in the build directory, would look like this:
 
 ```
-cmake ../ -G Ninja -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=./antlr-4.8-complete.jar
+cmake ../ -G Ninja -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=./antlr-4.13.1-complete.jar
 ```
 
 ## Run the Build
@@ -142,19 +142,11 @@ Usage: `-DBUILD_BECHMARKS:bool=true`
 
 Default: `false`
 
-#### `BUILD_SYSTEM_TESTS`
+#### `BUILD_TESTS`
 
-In addition to the main build, also build system tests located in the `tests/` directory.  The system tests run dissolve on a large number of known data sets to confirm that there are no error in those calculations.
+In addition to the main build, also build tests located in the `tests/` directory.  The tests check individual portions of the code for problems, and run Dissolve on a number of known data sets to confirm that there are no errors in those calculations.
 
-Example: `-DBUILD_SYSTEM_TESTS:bool=true`
-
-Default: `false`
-
-#### `BUILD_UNIT_TESTS`
-
-In addition to the main build, also build unit tests located in the `unit/` directory.  The unit tests check individual portions of the dissolve code base for problems.  These tests are not as comprehensive, but they run much quicker than the system tests and provide more precision as to where a bug is arising.
-
-Example: `-DBUILD_UNIT_TESTS:bool=true`
+Example: `-DBUILD_TESTS:bool=true`
 
 Default: `false`
 
