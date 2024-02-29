@@ -50,7 +50,7 @@ TEST_F(CompareModuleTest, IntVsExtErrors)
     EXPECT_NEAR(ranges[0].minimum(), 0, 1.0e-4);
     EXPECT_NEAR(ranges[0].maximum(), 30, 1.0e-4);
     EXPECT_NEAR(ranges[1].minimum(), 0, 1.0e-4);
-    EXPECT_NEAR(ranges[2].maximum(), 10, 1.0e-4);
+    EXPECT_NEAR(ranges[1].maximum(), 10, 1.0e-4);
 
     EXPECT_NEAR(errors[0], 3.0942e-1, 1.0e-4);
     EXPECT_NEAR(errors[1], 9.2657e-1, 1.0e-4);
