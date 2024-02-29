@@ -21,9 +21,10 @@ NETADefinition::NETADefinition(std::string_view definition) : rootNode_(nullptr)
         create(definition);
 }
 
-NETADefinition::NETADefinition(const SpeciesAtom *i, const std::optional<int> maxDepth) : rootNode_(nullptr), valid_(false)
+NETADefinition::NETADefinition(const SpeciesAtom *i, const std::optional<int> maxDepth, const Flags<NETACreationFlags> &flags)
+    : rootNode_(nullptr), valid_(false)
 {
-    create(i, maxDepth);
+    create(i, maxDepth, flags);
 }
 
 /*

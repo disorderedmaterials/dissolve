@@ -149,7 +149,6 @@
 
               (onedpl pkgs)
 
-              busybox
               ccache
               ccls
               cmakeWithGui
