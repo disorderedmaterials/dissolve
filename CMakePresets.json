@@ -1,179 +1,245 @@
 {
-    "version": 3,
-    "cmakeMinimumRequired": {
-        "major": 3,
-        "minor": 15,
-        "patch": 0
-    },
-    "configurePresets": [
-	{
-	    "name": "base",
-	    "displayName": "Basic Config",
-	    "description": "The base from which all presets inherit",
-	    "hidden": true,
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/",
-            "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/",
-		"CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
-	    }
+	"version": 3,
+	"cmakeMinimumRequired": {
+		"major": 3,
+		"minor": 15,
+		"patch": 0
+	},
+	"configurePresets": [
+		{
+			"name": "base",
+			"displayName": "Basic Config",
+			"description": "The base from which all presets inherit",
+			"hidden": true,
+			"generator": "Ninja",
+			"binaryDir": "${sourceDir}/build/",
+			"cacheVariables": {
+				"CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/",
+				"CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+			}
+		},
+		{
+			"name": "nix",
+			"displayName": "Common settings for all Nix builds",
+			"description": "Common settings for building on Nix systems",
+			"hidden": true,
+			"cacheVariables": {
+				"CONAN": "OFF",
+				"AntlrRuntime_INCLUDE_DIRS": "$env{AntlrRuntime_INCLUDE_DIRS}",
+				"AntlrRuntime_LINK_DIRS": "$env{AntlrRuntime_LINK_DIRS}"
+			}
+		}
 	},
 	{
-	    "name": "nix",
-	    "displayName": "Common settings for all Nix builds",
-	    "description": "Common settings for building on Nix systems",
-	    "hidden": true,
-            "cacheVariables": {
-                "CONAN": "OFF"
-	    }
+		"name": "tests",
+		"displayName": "Testing and benchmark settings",
+		"description": "Common settings to build tests and benchmarks",
+		"hidden": true,
+		"cacheVariables": {
+			"BUILD_TESTS": "ON",
+			"BUILD_BENCHMARKS": "ON"
+		}
 	},
 	{
-	    "name": "tests",
-	    "displayName": "Testing and benchmark settings",
-	    "description": "Common settings to build tests and benchmarks",
-	    "hidden": true,
-            "cacheVariables": {
-                "BUILD_TESTS": "ON",
-                "BUILD_BENCHMARKS": "ON"
-            }
-	},
-
-	{
-            "name": "Release",
-            "displayName": "Release build settings",
-            "description": "Common settings for all release builds",
-	    "hidden": true,
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
-            }
-	},
-        {
-            "name": "Debug",
-            "displayName": "Debug build settings",
-            "description": "Common settings for all debug builds",
-	    "hidden": true,
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-	{
-	    "name": "GUI-base",
-	    "displayName": "GUI build settings",
-	    "description": "Common settings for all GUI builds",
-	    "hidden": true,
-            "cacheVariables": {
-                "GUI": "ON"
-	    }
+		"name": "Release",
+		"displayName": "Release build settings",
+		"description": "Common settings for all release builds",
+		"hidden": true,
+		"cacheVariables": {
+			"CMAKE_BUILD_TYPE": "Release"
+		}
 	},
 	{
-	    "name": "MPI-base",
-	    "displayName": "MPI build settings",
-	    "description": "Common settings for all GUI builds",
-	    "hidden": true,
-            "cacheVariables": {
-                "PARALLEL": "ON"
-	    }
-	},
-
-
-	{
-	    "name": "GUI",
-	    "displayName": "GUI Build",
-	    "description": "The preset for a GUI developer build with tests",
-	    "inherits": ["base", "Release", "GUI-base", "tests"]
+		"name": "Debug",
+		"displayName": "Debug build settings",
+		"description": "Common settings for all debug builds",
+		"hidden": true,
+		"cacheVariables": {
+			"CMAKE_BUILD_TYPE": "Debug"
+		}
 	},
 	{
-	    "name": "GUI-Release",
-	    "displayName": "GUI Release Build",
-	    "description": "The preset for a GUI production build without tests",
-	    "inherits": ["base", "Release", "GUI-base"]
+		"name": "GUI-base",
+		"displayName": "GUI build settings",
+		"description": "Common settings for all GUI builds",
+		"hidden": true,
+		"cacheVariables": {
+			"GUI": "ON"
+		}
 	},
 	{
-	    "name": "GUI-Debug",
-	    "displayName": "GUI Debug Build",
-	    "description": "The preset for a GUI debug build with tests",
-	    "inherits": ["base", "Debug", "GUI-base", "tests"]
+		"name": "MPI-base",
+		"displayName": "MPI build settings",
+		"description": "Common settings for all GUI builds",
+		"hidden": true,
+		"cacheVariables": {
+			"PARALLEL": "ON"
+		}
 	},
 	{
-	    "name": "GUI-nix",
-	    "displayName": "GUI Nix Build",
-	    "description": "The preset for a GUI developer build on a Nix system with tests",
-	    "inherits": ["base", "Release", "GUI-base", "nix", "tests"]
+		"name": "GUI",
+		"displayName": "GUI Build",
+		"description": "The preset for a GUI developer build with tests",
+		"inherits": [
+			"base",
+			"Release",
+			"GUI-base",
+			"tests"
+		]
 	},
 	{
-	    "name": "GUI-Debug-nix",
-	    "displayName": "GUI Debug Nix Build",
-	    "description": "The preset for a GUI debug build on a Nix system with tests",
-	    "inherits": ["base", "Debug", "GUI-base", "nix", "tests"]
-	},
-
-	{
-	    "name": "MPI",
-	    "displayName": "MPI Build",
-	    "description": "The preset for a MPI developer build, with tests",
-	    "inherits": ["base", "Release", "MPI-base", "tests"]
+		"name": "GUI-Release",
+		"displayName": "GUI Release Build",
+		"description": "The preset for a GUI production build without tests",
+		"inherits": [
+			"base",
+			"Release",
+			"GUI-base"
+		]
 	},
 	{
-	    "name": "MPI-Release",
-	    "displayName": "MPI Release Build",
-	    "description": "The preset for a MPI production build, with without tests",
-	    "inherits": ["base", "Release", "MPI-base"]
+		"name": "GUI-Debug",
+		"displayName": "GUI Debug Build",
+		"description": "The preset for a GUI debug build with tests",
+		"inherits": [
+			"base",
+			"Debug",
+			"GUI-base",
+			"tests"
+		]
 	},
 	{
-	    "name": "MPI-Debug",
-	    "displayName": "MPI Debug Build",
-	    "description": "The preset for a MPI debug build, with tests and debugging enabled",
-	    "inherits": ["base", "Debug", "MPI-base", "tests"]
+		"name": "GUI-nix",
+		"displayName": "GUI Nix Build",
+		"description": "The preset for a GUI developer build on a Nix system with tests",
+		"inherits": [
+			"base",
+			"Release",
+			"GUI-base",
+			"nix",
+			"tests"
+		]
 	},
 	{
-	    "name": "MPI-nix",
-	    "displayName": "MPI Nix Build",
-	    "description": "The preset for a MPI developer build on a Nix system, with tests",
-	    "inherits": ["base", "Release", "MPI-base", "nix"]
+		"name": "GUI-Debug-nix",
+		"displayName": "GUI Debug Nix Build",
+		"description": "The preset for a GUI debug build on a Nix system with tests",
+		"inherits": [
+			"base",
+			"Debug",
+			"GUI-base",
+			"nix",
+			"tests"
+		]
 	},
 	{
-	    "name": "MPI-Debug-nix",
-	    "displayName": "MPI Debug Nix Build",
-	    "description": "The preset for a MPI debug build on a Nix system, with tests",
-	    "inherits": ["base", "Debug", "MPI-base", "nix"]
-	},
-
-	{
-	    "name": "CLI",
-	    "displayName": "CLI Build",
-	    "description": "The preset for a CLI developer build with tests",
-	    "inherits": ["base", "Release"]
+		"name": "MPI",
+		"displayName": "MPI Build",
+		"description": "The preset for a MPI developer build, with tests",
+		"inherits": [
+			"base",
+			"Release",
+			"MPI-base",
+			"tests"
+		]
 	},
 	{
-	    "name": "CLI-Release",
-	    "displayName": "CLI Release Build",
-	    "description": "The preset for a CLI production build without tests",
-	    "inherits": ["base", "Release"]
+		"name": "MPI-Release",
+		"displayName": "MPI Release Build",
+		"description": "The preset for a MPI production build, with without tests",
+		"inherits": [
+			"base",
+			"Release",
+			"MPI-base"
+		]
 	},
 	{
-	    "name": "CLI-Debug",
-	    "displayName": "CLI Debug Build",
-	    "description": "The preset for a CLI debug build with tests",
-	    "inherits": ["base", "Debug"]
+		"name": "MPI-Debug",
+		"displayName": "MPI Debug Build",
+		"description": "The preset for a MPI debug build, with tests and debugging enabled",
+		"inherits": [
+			"base",
+			"Debug",
+			"MPI-base",
+			"tests"
+		]
 	},
 	{
-	    "name": "CLI-nix",
-	    "displayName": "CLI Nix Build",
-	    "description": "The preset for a CLI developer build on a Nix system with tests",
-	    "inherits": ["base", "Release", "nix"]
+		"name": "MPI-nix",
+		"displayName": "MPI Nix Build",
+		"description": "The preset for a MPI developer build on a Nix system, with tests",
+		"inherits": [
+			"base",
+			"Release",
+			"MPI-base",
+			"nix"
+		]
 	},
 	{
-	    "name": "CLI-Debug-nix",
-	    "displayName": "CLI Debug Nix Build",
-	    "description": "The preset for a CLI debug build on a Nix system with tests",
-	    "inherits": ["base", "Debug", "nix"]
+		"name": "MPI-Debug-nix",
+		"displayName": "MPI Debug Nix Build",
+		"description": "The preset for a MPI debug build on a Nix system, with tests",
+		"inherits": [
+			"base",
+			"Debug",
+			"MPI-base",
+			"nix"
+		]
 	},
-
-        {
-            "name": "SCARF",
-            "displayName": "SCARF build",
-            "description": "Best setup for SCARF",
-	    "inherits" : ["MPI-Release"]
-        }
-    ]
+	{
+		"name": "CLI",
+		"displayName": "CLI Build",
+		"description": "The preset for a CLI developer build with tests",
+		"inherits": [
+			"base",
+			"Release"
+		]
+	},
+	{
+		"name": "CLI-Release",
+		"displayName": "CLI Release Build",
+		"description": "The preset for a CLI production build without tests",
+		"inherits": [
+			"base",
+			"Release"
+		]
+	},
+	{
+		"name": "CLI-Debug",
+		"displayName": "CLI Debug Build",
+		"description": "The preset for a CLI debug build with tests",
+		"inherits": [
+			"base",
+			"Debug"
+		]
+	},
+	{
+		"name": "CLI-nix",
+		"displayName": "CLI Nix Build",
+		"description": "The preset for a CLI developer build on a Nix system with tests",
+		"inherits": [
+			"base",
+			"Release",
+			"nix"
+		]
+	},
+	{
+		"name": "CLI-Debug-nix",
+		"displayName": "CLI Debug Nix Build",
+		"description": "The preset for a CLI debug build on a Nix system with tests",
+		"inherits": [
+			"base",
+			"Debug",
+			"nix"
+		]
+	},
+	{
+		"name": "SCARF",
+		"displayName": "SCARF build",
+		"description": "Best setup for SCARF",
+		"inherits": [
+			"MPI-Release"
+		]
+	}
+]
 }
