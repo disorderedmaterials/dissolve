@@ -65,7 +65,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
         return (!internalDataSource_.empty() && dataSourceType_ == Internal) ||
                (externalDataSource_.hasFilename() && dataSourceType_ == External);
     }
-    // Function to source data
+    // Obtain data from the relevant source
     bool sourceData(const ProcessPool &procPool, GenericList &processingModuleData)
     {
         if (!dataExists())
@@ -99,7 +99,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
         return false;
     }
 
-    // Returns data
+    // Return the data
     const DataType &data() const { return data_; }
 
     /*

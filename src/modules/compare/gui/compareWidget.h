@@ -42,7 +42,6 @@ class CompareModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-
     private Q_SLOTS:
     void on_Data1DButton_clicked(bool checked);
 };

@@ -33,7 +33,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
      * Data
      */
     private:
-    // Reference to module data
+    // Vector of data source pairs
     std::vector<DataPair> &dataSources_;
     // End keyword
     const std::string endKeyword_;
