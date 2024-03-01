@@ -30,7 +30,7 @@ TEST_F(CompareModuleTest, IntVsIntErrors)
     const auto &ranges = compareModule->data1dSourcesErrors().at(&compareModule->data1dSources()[0]).first;
     const auto &errors = compareModule->data1dSourcesErrors().at(&compareModule->data1dSources()[0]).second;
 
-    EXPECT_NEAR(ranges[0].minimum(), 0, 1.0e-4);
+    EXPECT_NEAR(ranges[0].minimum(), 0.01, 1.0e-4);
     EXPECT_NEAR(ranges[0].maximum(), 50, 1.0e-4);
     EXPECT_NEAR(ranges[1].minimum(), 0, 1.0e-4);
     EXPECT_NEAR(ranges[1].maximum(), 10, 1.0e-4);
@@ -47,8 +47,8 @@ TEST_F(CompareModuleTest, IntVsExtErrors)
     const auto &ranges = compareModule->data1dSourcesErrors().at(&compareModule->data1dSources()[1]).first;
     const auto &errors = compareModule->data1dSourcesErrors().at(&compareModule->data1dSources()[1]).second;
 
-    EXPECT_NEAR(ranges[0].minimum(), 0, 1.0e-4);
-    EXPECT_NEAR(ranges[0].maximum(), 30, 1.0e-4);
+    EXPECT_NEAR(ranges[0].minimum(), 0.01, 1.0e-4);
+    EXPECT_NEAR(ranges[0].maximum(), 50, 1.0e-4);
     EXPECT_NEAR(ranges[1].minimum(), 0, 1.0e-4);
     EXPECT_NEAR(ranges[1].maximum(), 10, 1.0e-4);
 
@@ -64,8 +64,8 @@ TEST_F(CompareModuleTest, ExtVsExtErrors)
     const auto &ranges = compareModule->data1dSourcesErrors().at(&compareModule->data1dSources()[2]).first;
     const auto &errors = compareModule->data1dSourcesErrors().at(&compareModule->data1dSources()[2]).second;
 
-    EXPECT_NEAR(ranges[0].minimum(), 0, 1.0e-4);
-    EXPECT_NEAR(ranges[0].maximum(), 30, 1.0e-4);
+    EXPECT_NEAR(ranges[0].minimum(), 0.01, 1.0e-4);
+    EXPECT_NEAR(ranges[0].maximum(), 50, 1.0e-4);
     EXPECT_NEAR(ranges[1].minimum(), 0, 1.0e-4);
     EXPECT_NEAR(ranges[1].maximum(), 10, 1.0e-4);
 
