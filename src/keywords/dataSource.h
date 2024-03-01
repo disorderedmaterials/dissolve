@@ -39,7 +39,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
     const std::string endKeyword_;
 
     public:
-    // Returns reference to module data
+    // Return data source pairs
     std::vector<DataPair> &dataSources() { return dataSources_; }
 
     /*
