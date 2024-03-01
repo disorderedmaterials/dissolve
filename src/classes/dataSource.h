@@ -170,11 +170,6 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
     // Write through specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
     {
-        if (!dataExists())
-        {
-            return false;
-        }
-
         // Write source: internal/external
         if (!parser.writeLineF("  {}{}", prefix, dataSourceTypes().keyword(dataSourceType_)))
         {
