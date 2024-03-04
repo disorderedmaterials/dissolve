@@ -37,6 +37,8 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
     std::vector<DataPair> &dataSources_;
     // End keyword
     const std::string endKeyword_;
+    // Gets path basename
+    std::string getBasename(std::string_view filename) const { return filename.substr(filename.find_last_of("/\\") + 1) }
 
     public:
     // Return data source pairs
@@ -84,14 +86,12 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
             // Check to make sure we don't have the same names
             for (auto dataSource : dataSources_)
             {
-                if (dataSource->dataName().substr(dataSource->dataName().find_last_of("/\\") + 1) ==
-                    dataSourceA->dataName().substr(dataSourceA->dataName().find_last_of("/\\") + 1))
+                if (getBasename(dataSource) == getBasename(dataSourceA))
                 {
                     dataSource->updateNameToPath();
                     dataSourceA->updateNameToPath();
                 }
-                if (dataSource->dataName().substr(dataSource->dataName().find_last_of("/\\") + 1) ==
-                    dataSourceB->dataName().substr(dataSourceB->dataName().find_last_of("/\\") + 1))
+                if (getBasename(dataSource) == getBasename(dataSourceB))
                 {
                     dataSource->updateNameToPath();
                     dataSourceB->updateNameToPath();
