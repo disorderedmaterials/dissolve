@@ -39,10 +39,7 @@ class DataManagerDialog : public QDialog
     private:
     // Update the specified table of GenericItems, optionally filtering them by name and description
     void filterTable(QString filterText);
-    // Update controls
-    void updateControls();
 
     private Q_SLOTS:
     void on_SimulationDataFilterEdit_textChanged(const QString &text);
-    void on_CloseButton_clicked(bool checked);
 };

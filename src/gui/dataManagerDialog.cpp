@@ -15,11 +15,11 @@ DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, Generi
 {
     view_ = new QQuickWidget(this);
     view_->rootContext()->setContextProperty("simModel", &simModel_);
-    view_->setSource(QUrl("qrc:/dialogs/qml/SimulationDataManager.qml"));
+    view_->setSource(QUrl("qrc:/dialogs/qml/simulationDataManager/SimulationDataManager.qml"));
 
     simProxy_.setSourceModel(&simModel_);
 
-    updateControls();
+    QObject::connect(&simModel_, SIGNAL(closeClicked()), this, SLOT(accept()));
 }
 
 /*
@@ -34,15 +34,5 @@ void DataManagerDialog::filterTable(QString filterText)
     simProxy_.setFilterKeyColumn(0);
 }
 
-// Update controls
-void DataManagerDialog::updateControls()
-{
-    // Clear and re-populate simulation data table
-    // ui_.SimulationDataTable->resizeColumnsToContents();
-}
-
 // Simulation Data
 void DataManagerDialog::on_SimulationDataFilterEdit_textChanged(const QString &text) { filterTable(text); }
-
-// Dialog
-void DataManagerDialog::on_CloseButton_clicked(bool checked) { accept(); }
