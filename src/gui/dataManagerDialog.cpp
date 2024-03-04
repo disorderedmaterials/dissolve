@@ -20,7 +20,7 @@ DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, Generi
     view_->setSource(QUrl("qrc:/dialogs/qml/simulationDataManager/SimulationDataManager.qml"));
 
     QObject::connect(&simModel_, SIGNAL(closeClicked()), this, SLOT(accept()));
-    QObject::connect(&simModel_, SIGNAL(simulationDataFilter()), this, SLOT(on_SimulationDataFilterEdit_textChanged()));
+    QObject::connect(&simModel_, SIGNAL(simulationDataFilter(const QString &)), this, SLOT(filterTable(QString)));
 }
 
 /*
@@ -34,6 +34,3 @@ void DataManagerDialog::filterTable(QString filterText)
         QRegularExpression(filterText.replace("*", ".*"), QRegularExpression::CaseInsensitiveOption));
     simProxy_.setFilterKeyColumn(0);
 }
-
-// Simulation Data
-void DataManagerDialog::on_SimulationDataFilterEdit_textChanged(const QString &text) { filterTable(text); }

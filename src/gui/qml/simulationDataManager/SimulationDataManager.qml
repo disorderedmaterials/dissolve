@@ -23,6 +23,9 @@ Page {
                 Layout.preferredWidth: gb.width/4
                 Layout.alignment: Qt.AlignRight
                 placeholderText: qsTr("Search...")
+                onEditingFinished: {
+                    simModel.simulationDataFilter(seachBox.text)
+                }
             }
 
             HorizontalHeaderView {

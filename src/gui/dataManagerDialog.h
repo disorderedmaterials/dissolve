@@ -36,10 +36,7 @@ class DataManagerDialog : public QDialog
     private:
     QQuickWidget *view_{nullptr};
 
-    private:
+    private Q_SLOTS:
     // Update the specified table of GenericItems, optionally filtering them by name and description
     void filterTable(QString filterText);
-
-    private Q_SLOTS:
-    void on_SimulationDataFilterEdit_textChanged(const QString &text);
 };
