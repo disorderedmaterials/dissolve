@@ -34,4 +34,5 @@ class DataManagerSimulationModel : public QAbstractTableModel
 
     Q_SIGNALS:
     void closeClicked();
+    void simulationDataFilter();
 };

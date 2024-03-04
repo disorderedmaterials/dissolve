@@ -14,12 +14,13 @@ DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, Generi
     : QDialog(parent), dissolve_(dissolve), simModel_(dissolve, items)
 {
     view_ = new QQuickWidget(this);
+    simProxy_.setSourceModel(&simModel_);
+    view_->rootContext()->setContextProperty("simProxy", &simProxy_);
     view_->rootContext()->setContextProperty("simModel", &simModel_);
     view_->setSource(QUrl("qrc:/dialogs/qml/simulationDataManager/SimulationDataManager.qml"));
 
-    simProxy_.setSourceModel(&simModel_);
-
     QObject::connect(&simModel_, SIGNAL(closeClicked()), this, SLOT(accept()));
+    QObject::connect(&simModel_, SIGNAL(simulationDataFilter()), this, SLOT(on_SimulationDataFilterEdit_textChanged()));
 }
 
 /*

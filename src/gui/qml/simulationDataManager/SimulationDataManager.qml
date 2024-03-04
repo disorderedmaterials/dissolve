@@ -11,11 +11,19 @@ Page {
     visible: true
 
     GroupBox {
+        id: gb
         title: "Current Module Data"
         anchors.fill: parent
 
         ColumnLayout {
             anchors.fill: parent
+
+            TextField {
+                id: searchBox
+                Layout.preferredWidth: gb.width/4
+                Layout.alignment: Qt.AlignRight
+                placeholderText: qsTr("Search...")
+            }
 
             HorizontalHeaderView {
                 id: header
@@ -24,6 +32,7 @@ Page {
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: contentHeight
+                Layout.preferredWidth: contentWidth
 
                 syncView: table
                 model: getHeaderStringArray(simModel)
@@ -40,7 +49,7 @@ Page {
                 rowSpacing: 1
                 boundsBehavior: Flickable.StopAtBounds
 
-                model: simModel
+                model: simProxy
                 
                 delegate:
                 Rectangle {
