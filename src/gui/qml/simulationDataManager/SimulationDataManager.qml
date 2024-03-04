@@ -42,15 +42,16 @@ Page {
 
                 model: simModel
                 
-                delegate: Label {
-                    text: simModel.display
-                    width: 100
-                    padding: 12
+                delegate:
+                Rectangle {
+                    implicitWidth: tableText.width
+                    implicitHeight: tableText.height
+                    color: "white"
+                    D.Text {
+                        id: tableText
+                        text: display
 
-                    Rectangle {
-                        anchors.fill: parent
-                        color: "white"
-                        z: -1
+                        padding: 12
                     }
                 }
             }
