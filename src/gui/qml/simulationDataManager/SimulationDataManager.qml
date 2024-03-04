@@ -24,7 +24,7 @@ Page {
                 Layout.alignment: Qt.AlignRight
                 placeholderText: qsTr("Search...")
                 onEditingFinished: {
-                    simModel.simulationDataFilter(seachBox.text)
+                    simProxy.filterRegularExpression = RegExp(searchBox.text);
                 }
             }
 
