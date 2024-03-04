@@ -4,6 +4,7 @@
 #include "gui/dataManagerDialog.h"
 #include "main/dissolve.h"
 #include "templates/variantPointer.h"
+#include <QHBoxLayout>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
@@ -18,6 +19,12 @@ DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, Generi
     view_->rootContext()->setContextProperty("simProxy", &simProxy_);
     view_->rootContext()->setContextProperty("simModel", &simModel_);
     view_->setSource(QUrl("qrc:/dialogs/qml/simulationDataManager/SimulationDataManager.qml"));
+
+    view_->setResizeMode(QQuickWidget::SizeRootObjectToView);
+
+    auto *topLeftLayout = new QHBoxLayout;
+    topLeftLayout->addWidget(view_);
+    setLayout(topLeftLayout);
 
     QObject::connect(&simModel_, SIGNAL(closeClicked()), this, SLOT(accept()));
     QObject::connect(&simModel_, SIGNAL(simulationDataFilter(const QString &)), this, SLOT(filterTable(QString)));
