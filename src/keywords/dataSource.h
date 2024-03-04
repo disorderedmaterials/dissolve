@@ -81,6 +81,23 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 return false;
             }
 
+            // Check to make sure we don't have the same names
+            for (auto dataSource : dataSources_)
+            {
+                if (dataSource->dataName().substr(dataSource->dataName().find_last_of("/\\") + 1) ==
+                    dataSourceA->dataName().substr(dataSourceA->dataName().find_last_of("/\\") + 1))
+                {
+                    dataSource->updateNameToPath();
+                    dataSourceA->updateNameToPath();
+                }
+                if (dataSource->dataName().substr(dataSource->dataName().find_last_of("/\\") + 1) ==
+                    dataSourceB->dataName().substr(dataSourceB->dataName().find_last_of("/\\") + 1))
+                {
+                    dataSource->updateNameToPath();
+                    dataSourceB->updateNameToPath();
+                }
+            }
+
             sourceQueue.pop();
 
             // Read the next line
@@ -174,6 +191,22 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                                    return;
                                // Add data to dataSource
                                sourceQueue.front()->deserialise(dataSource, coreData);
+                               // Check to make sure we don't have the same names
+                               for (auto dataSource : dataSources_)
+                               {
+                                   if (dataSource->dataName().substr(dataSource->dataName().find_last_of("/\\") + 1) ==
+                                       dataSourceA->dataName().substr(dataSourceA->dataName().find_last_of("/\\") + 1))
+                                   {
+                                       dataSource->updateNameToPath();
+                                       dataSourceA->updateNameToPath();
+                                   }
+                                   if (dataSource->dataName().substr(dataSource->dataName().find_last_of("/\\") + 1) ==
+                                       dataSourceB->dataName().substr(dataSourceB->dataName().find_last_of("/\\") + 1))
+                                   {
+                                       dataSource->updateNameToPath();
+                                       dataSourceB->updateNameToPath();
+                                   }
+                               }
                                // Remove dataSource from queue
                                sourceQueue.pop();
                            });

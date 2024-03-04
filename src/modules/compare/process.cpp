@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "classes/dataSource.h"
 #include "math/interpolator.h"
 #include "modules/compare/compare.h"
 

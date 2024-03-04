@@ -65,6 +65,16 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
         return (!internalDataSource_.empty() && dataSourceType_ == Internal) ||
                (externalDataSource_.hasFilename() && dataSourceType_ == External);
     }
+
+    // Changes data name to full filepath if data is external
+    void updateNameToPath()
+    {
+        if (dataSourceType_ == External)
+        {
+            dataName_ = externalDataSource_.filename();
+        }
+    }
+
     // Obtain data from the relevant source
     bool sourceData(const ProcessPool &procPool, GenericList &processingModuleData)
     {
