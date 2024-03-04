@@ -24,7 +24,7 @@ Page {
                 Layout.alignment: Qt.AlignRight
                 placeholderText: qsTr("Search...")
                 onEditingFinished: {
-                    simModel.simulationDataFilter(seachBox.text)
+                    simModel.simulationDataFilter(searchBox.text)
                 }
             }
 
