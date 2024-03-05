@@ -15,10 +15,10 @@ Page {
     }
     function getHeaderStringArray(model) {
         var headerArray = [];
-        for (var i=0; i < model.columnCount(); ++i ) {
+        for (var i = 0; i < model.columnCount(); ++i ) {
             headerArray.push(qsTr(model.headerData(i, Qt.Horizontal)));
         }
-        return headerArray
+        return headerArray;
     }
 
     GroupBox {
@@ -48,13 +48,13 @@ Page {
                 Layout.preferredHeight: contentHeight
                 Layout.preferredWidth: contentWidth
                 clip: true
-                enabled: simModel.rowCount() == 0 ? false : true 
+                enabled: simModel.rowCount() == 0 ? false : true
                 model: getHeaderStringArray(simModel)
                 syncView: table
             }
             TableView {
-                Layout.fillHeight: true
                 id: table
+                Layout.fillHeight: true
                 Layout.fillWidth: true
                 boundsBehavior: Flickable.StopAtBounds
                 columnSpacing: 1
@@ -63,13 +63,11 @@ Page {
 
                 delegate: Rectangle {
                     color: "white"
-
-                    implicitWidth: tableText.width
                     implicitHeight: tableText.height
+                    implicitWidth: tableText.width
 
                     D.Text {
                         id: tableText
-
                         padding: 12
                         text: display
                     }
