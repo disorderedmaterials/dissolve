@@ -15,7 +15,7 @@ Page {
     }
     function getHeaderStringArray(model) {
         var headerArray = [];
-        for (var i = 0; i < model.columnCount(); ++i ) {
+        for (var i = 0; i < model.columnCount(); ++i) {
             headerArray.push(qsTr(model.headerData(i, Qt.Horizontal)));
         }
         return headerArray;
