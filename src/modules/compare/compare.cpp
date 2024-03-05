@@ -8,11 +8,15 @@
 CompareModule::CompareModule() : Module(ModuleTypes::Compare)
 {
     keywords_.setOrganisation("Options");
-    keywords_.add<DataSourceKeyword<Data1D>>("Data1D", "Specify one-dimensional test reference data", dataSources_,
+    keywords_.add<DataSourceKeyword<Data1D>>("Data1D", "Specify one-dimensional test reference data", data1dSources_,
                                              "EndData1D");
     keywords_.add<EnumOptionsKeyword<Error::ErrorType>>("ErrorType", "Type of error calculation to use", errorType_,
                                                         Error::errorTypes());
-    keywords_.add<RangeVectorKeyword>("RFactorRanges", "Ranges over which to calculate RFactors", ranges_);
+    keywords_.add<RangeVectorKeyword>("ErrorRange", "Ranges over which to calculate RFactors", ranges_);
 }
 
-const std::vector<DataSourceKeywordBase::DataPair> &CompareModule::dataSources() { return dataSources_; }
+const std::vector<DataSourceKeyword<Data1D>::DataPair> &CompareModule::data1dSources() const { return data1dSources_; }
+const std::map<const DataSourceKeyword<Data1D>::DataPair *, RangeErrorPair> &CompareModule::data1dSourcesErrors() const
+{
+    return data1dSourcesErrors_;
+}

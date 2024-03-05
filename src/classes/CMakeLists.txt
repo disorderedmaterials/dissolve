@@ -28,7 +28,6 @@ add_library(
   configuration_sites.cpp
   configuration_upkeep.cpp
   coreData.cpp
-  dataSource.cpp
   distributor.cpp
   empiricalFormula.cpp
   isotopeData.cpp

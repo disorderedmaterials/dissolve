@@ -10,7 +10,6 @@
 #include "keywords/dataSource.h"
 #include "main/dissolve.h"
 #include "math/data1D.h"
-#include "math/data1DBase.h"
 #include "math/data2D.h"
 #include "math/data3D.h"
 #include "math/error.h"
@@ -33,15 +32,19 @@ class CompareModule : public Module
      */
     private:
     // Data stored in the keyword
-    std::vector<DataSourceKeywordBase::DataPair> dataSources_;
+    std::vector<DataSourceKeyword<Data1D>::DataPair> data1dSources_;
     // Method of error calculation to use
     Error::ErrorType errorType_{Error::EuclideanError};
     // Ranges to calculate error over
     std::vector<Range> ranges_;
+    // Mapping from data pair to ranges and error
+    std::map<const DataSourceKeyword<Data1D>::DataPair *, RangeErrorPair> data1dSourcesErrors_;
 
     public:
     // Return data sources
-    const std::vector<DataSourceKeywordBase::DataPair> &dataSources();
+    const std::vector<DataSourceKeyword<Data1D>::DataPair> &data1dSources() const;
+    // Return errors
+    const std::map<const DataSourceKeyword<Data1D>::DataPair *, RangeErrorPair> &data1dSourcesErrors() const;
 
     /*
      * Processing
