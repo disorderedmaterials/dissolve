@@ -41,7 +41,6 @@
 #include "io/import/data2D.h"
 #include "io/import/data3D.h"
 #include "keywords/dataSource.h"
-#include "keywords/dataSourceBase.h"
 #include "keywords/elementVector.h"
 #include "keywords/expression.h"
 #include "keywords/nodeBranch.h"
@@ -87,9 +86,6 @@ KeywordWidgetProducer::KeywordWidgetProducer()
 
     // Keywords with no widgets
     registerNullProducer<DataSourceKeywordBase>();
-    registerNullProducer<DataSourceKeyword<Data1D>>();
-    registerNullProducer<DataSourceKeyword<Data2D>>();
-    registerNullProducer<DataSourceKeyword<Data3D>>();
     registerNullProducer<ElementVectorKeyword>();
     registerNullProducer<ExpressionKeyword>();
     registerNullProducer<NodeBranchKeyword>();

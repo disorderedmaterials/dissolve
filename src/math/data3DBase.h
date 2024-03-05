@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "io/import/data3D.h"
 #include "math/dataBase.h"
 #include "templates/array3D.h"
 

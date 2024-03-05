@@ -1,43 +1,46 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "classes/dataSource.h"
 #include "math/interpolator.h"
 #include "modules/compare/compare.h"
 
 Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 {
-    // Mapping from data pair to ranges and error
-    std::map<DataSourceKeywordBase::DataPair *, RangeErrorPair> dataSourcesErrors;
-
     auto index = 1;
-    for (auto &dataPair : dataSources_)
+    for (auto &dataPair : data1dSources_)
     {
         /*
          * Preparing data
          */
 
         // Check to make sure the data exists
-        if (!dataPair.first.dataExists() || !dataPair.second.dataExists())
+        if (!dataPair.first->dataExists() || !dataPair.second->dataExists())
         {
+            Messenger::print("Skipping {} and {}", dataPair.first->dataName(), dataPair.second->dataName());
             continue;
         }
 
         // Set the ranges in the map to reference the ranges_ vector
-        auto &ranges = dataSourcesErrors[&dataPair].first;
+        auto &ranges = data1dSourcesErrors_[&dataPair].first;
         ranges = ranges_;
 
         // Source the data
-        if (!dataPair.first.sourceData(moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.first->sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
         {
+            Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first->dataName(),
+                             dataPair.second->dataName(), dataPair.first->dataName());
             continue;
         }
-        if (!dataPair.second.sourceData(moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.second->sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
         {
+            Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first->dataName(),
+                             dataPair.second->dataName(), dataPair.second->dataName());
             continue;
         }
 
-        auto dataA = dataPair.first.data<Data1D>();
-        auto dataB = dataPair.second.data<Data1D>();
+        auto dataA = dataPair.first->data();
+        auto dataB = dataPair.second->data();
 
         /*
          * Save Data
@@ -60,12 +63,12 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         ranges.insert(ranges.begin(), totalRange);
 
         // Set the error vector to be the same size as the ranges
-        dataSourcesErrors[&dataPair].second.resize(ranges.size());
+        data1dSourcesErrors_[&dataPair].second.resize(ranges.size());
 
-        Messenger::print("Errors between {} and {}", dataPair.first.dataName(), dataPair.second.dataName());
+        Messenger::print("Errors between {} and {}", dataPair.first->dataName(), dataPair.second->dataName());
 
         // Loop through the the range & error vectors, calculating and reporting the errors
-        for (auto &&[range, error] : zip(ranges, dataSourcesErrors[&dataPair].second))
+        for (auto &&[range, error] : zip(ranges, data1dSourcesErrors_[&dataPair].second))
         {
             auto errorReport = Error::error(errorType_, dataA, dataB, range);
             error = errorReport.error;
@@ -80,6 +83,8 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 
         auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(fmt::format("Pair{}_Delta", index), name_,
                                                                                       GenericItem::InRestartFileFlag);
+
+        delta.clear();
 
         // Get the minimum and maximum x values that exist over both datasets
         auto rangeMin = std::min(dataA.xAxis().front(), dataB.xAxis().front());
