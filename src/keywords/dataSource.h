@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/dataSource.h"
 #include "io/import/data1D.h"
 #include "io/import/data2D.h"
 #include "io/import/data3D.h"
@@ -13,20 +14,35 @@
 #include "templates/optionalRef.h"
 #include <queue>
 
-// Keyword managing a DataSource
+// Keyword managing data sources
+// Template arguments: data class (Data1D, Data2D ...)
 template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
 {
+    // Typedef
     public:
-    explicit DataSourceKeyword(std::vector<DataSourceKeywordBase::DataPair> &dataSources, std::string_view endKeyword)
-        : DataSourceKeywordBase(dataSources, endKeyword){};
+    using DataPair = std::pair<std::shared_ptr<DataSource<DataType>>, std::shared_ptr<DataSource<DataType>>>;
+
+    public:
+    DataSourceKeyword(std::vector<DataPair> &dataSources, std::string_view endKeyword)
+        : DataSourceKeywordBase(), dataSources_(dataSources), endKeyword_(endKeyword)
+    {
+    }
     ~DataSourceKeyword() override = default;
 
     /*
      * Data
      */
     private:
-    // Format object for the data
-    typename DataType::Formatter format_;
+    // Vector of data source pairs
+    std::vector<DataPair> &dataSources_;
+    // End keyword
+    const std::string endKeyword_;
+    // Gets path basename
+    std::string_view getBasename(std::string_view filename) const { return filename.substr(filename.find_last_of("/\\") + 1); }
+
+    public:
+    // Return data source pairs
+    std::vector<DataPair> &dataSources() { return dataSources_; }
 
     /*
      * Arguments
@@ -40,13 +56,15 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override
     {
         // Emplacing back on data vector and getting the reference to the objects
-        DataSource dataSourceA, dataSourceB;
+        auto &[dataSourceA, dataSourceB] =
+            dataSources_.emplace_back(std::make_shared<DataSource<DataType>>(), std::make_shared<DataSource<DataType>>());
         // Create a queue for the dataSource objects
-        std::queue<DataSource *> sourceQueue({&dataSourceA, &dataSourceB});
+        std::queue<std::shared_ptr<DataSource<DataType>>> sourceQueue({dataSourceA, dataSourceB});
 
         // Read the next line
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         {
+            dataSources_.pop_back();
             return false;
         }
 
@@ -58,53 +76,40 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 break;
             }
             // If data source type supplied is valid
-            if (!DataSource::dataSourceTypes().isValid(parser.argsv(0)))
+            if (!sourceQueue.front()->deserialise(parser, 0, coreData))
             {
                 // If not, print accepted options
-                return DataSource::dataSourceTypes().errorAndPrintValid(parser.argsv(0));
+                dataSources_.pop_back();
+                return false;
             }
 
-            // Next parse depends on whether we have internal / external data
-            if (DataSource::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource::Internal)
+            // Check to make sure we don't have the same names
+            for (auto &[existingSourceA, existingSourceB] : dataSources_)
             {
-                // Add data to dataSource
-                sourceQueue.front()->addData(parser.argsv(1));
-                // Remove dataSource from queue
-                sourceQueue.pop();
-            }
-            else if (DataSource::dataSourceTypes().enumeration(parser.argsv(0)) == DataSource::External)
-            {
-                // Initialise data and format objects
-                DataType data;
-                typename DataType::Formatter format;
-
-                // Read the supplied arguments
-                if (format.read(parser, 1, fmt::format("End{}", DataSource::dataSourceTypes().keyword(DataSource::External)),
-                                coreData) != FileAndFormat::ReadResult::Success)
+                if (getBasename(existingSourceA->dataName()) == getBasename(sourceQueue.front()->dataName()))
                 {
-                    return false;
+                    if (existingSourceA->getFilepath() != sourceQueue.front()->getFilepath())
+                    {
+                        existingSourceA->updateNameToPath();
+                        sourceQueue.front()->updateNameToPath();
+                    }
                 }
-
-                // Import the data
-                if (!format.importData(data, parser.processPool()))
+                if (getBasename(existingSourceB->dataName()) == getBasename(sourceQueue.front()->dataName()))
                 {
-                    return false;
+                    if (existingSourceB->getFilepath() != sourceQueue.front()->getFilepath())
+                    {
+                        existingSourceB->updateNameToPath();
+                        sourceQueue.front()->updateNameToPath();
+                    }
                 }
+            }
 
-                // Add data to dataSource
-                sourceQueue.front()->addData(data, format);
-                // Remove dataSource from queue
-                sourceQueue.pop();
-            }
-            else
-            {
-                return Messenger::error("Unsupported data source type '{}' provided to keyword '{}'\n", parser.argsv(0),
-                                        name());
-            }
+            sourceQueue.pop();
 
             // Read the next line
             if (parser.getArgsDelim() != LineParser::Success)
             {
+                dataSources_.pop_back();
                 return false;
             }
 
@@ -114,8 +119,6 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                 break;
             }
         }
-
-        dataSources_.emplace_back(std::make_pair(dataSourceA, dataSourceB));
 
         return true;
     }
@@ -132,19 +135,19 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
             }
 
             // Serialise the first data source
-            if (!dataSourceA.serialise(parser, keywordName, prefix))
+            if (!dataSourceA->serialise(parser, keywordName, prefix))
             {
                 return false;
             }
 
             // Skip to next iteration if dataSourceB is undefined
-            if (!dataSourceB.dataExists())
+            if (!dataSourceB->dataExists())
             {
                 continue;
             }
 
             // Serialise the second data source (optional)
-            if (!dataSourceB.serialise(parser, keywordName, prefix))
+            if (!dataSourceB->serialise(parser, keywordName, prefix))
             {
                 return false;
             }
@@ -164,56 +167,59 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
         return fromVector(dataSources_,
                           [](const auto &item) -> SerialisedValue
                           {
-                              SerialisedValue result = SerialisedValue::array_type{};
                               auto &[dataSourceA, dataSourceB] = item;
-                              result.push_back(dataSourceA.serialise());
-                              // If optional second data source exists
-                              if (dataSourceB.dataExists())
+                              if (dataSourceB->dataExists())
                               {
-                                  result.push_back(dataSourceB.serialise());
+                                  return {{"dataSourceA", dataSourceA->serialise()}, {"dataSourceB", dataSourceB->serialise()}};
                               }
-                              return result;
+                              else
+                              {
+                                  return {{"dataSourceA", dataSourceA->serialise()}};
+                              }
                           });
     }
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
-        // Emplacing back on data vector and getting the reference to the objects
-        DataSource dataSourceA, dataSourceB;
-        // Create a queue for the dataSource objects
-        std::queue<DataSource *> sourceQueue({&dataSourceA, &dataSourceB});
-
         toVector(node,
-                 [this, &coreData, &sourceQueue](const auto &item)
+                 [this, &coreData](const auto &dataPair)
                  {
-                     // If data source type is internal
-                     if (DataSource::dataSourceTypes().enumeration(toml::find<std::string>(item, "dataSourceType")) ==
-                             DataSource::Internal &&
-                         !sourceQueue.empty())
-                     {
-                         // Add data to dataSource
-                         sourceQueue.front()->addData(toml::find<std::string>(item, "data"));
-                         // Remove dataSource from queue
-                         sourceQueue.pop();
-                     }
-                     // If data source type is external
-                     else if (!sourceQueue.empty())
-                     {
-                         DataType data;
-                         typename DataType::Formatter format;
+                     // Emplacing back on data vector and getting the reference to the objects
+                     auto &[dataSourceA, dataSourceB] = dataSources_.emplace_back(std::make_shared<DataSource<DataType>>(),
+                                                                                  std::make_shared<DataSource<DataType>>());
+                     // Create a queue for the dataSource objects
+                     std::queue<std::shared_ptr<DataSource<DataType>>> sourceQueue({dataSourceA, dataSourceB});
 
-                         // Deserialise FileAndFormat
-                         format.deserialise(item.at("data"), coreData);
-                         // Import data
-                         format.importData(data);
-
-                         // Add data to dataSource
-                         sourceQueue.front()->addData(toml::find<std::string>(item, "data"));
-                         // Remove dataSource from queue
-                         sourceQueue.pop();
-                     }
+                     toMap(dataPair,
+                           [this, &coreData, &sourceQueue](const auto &key, const auto &dataSource)
+                           {
+                               if (sourceQueue.empty())
+                                   return;
+                               // Add data to dataSource
+                               sourceQueue.front()->deserialise(dataSource, coreData);
+                               // Check to make sure we don't have the same names
+                               for (auto &[existingSourceA, existingSourceB] : dataSources_)
+                               {
+                                   if (getBasename(existingSourceA->dataName()) == getBasename(sourceQueue.front()->dataName()))
+                                   {
+                                       if (existingSourceA->getFilepath() != sourceQueue.front()->getFilepath())
+                                       {
+                                           existingSourceA->updateNameToPath();
+                                           sourceQueue.front()->updateNameToPath();
+                                       }
+                                   }
+                                   if (getBasename(existingSourceB->dataName()) == getBasename(sourceQueue.front()->dataName()))
+                                   {
+                                       if (existingSourceB->getFilepath() != sourceQueue.front()->getFilepath())
+                                       {
+                                           existingSourceB->updateNameToPath();
+                                           sourceQueue.front()->updateNameToPath();
+                                       }
+                                   }
+                               }
+                               // Remove dataSource from queue
+                               sourceQueue.pop();
+                           });
                  });
-
-        dataSources_.emplace_back(std::make_pair(dataSourceA, dataSourceB));
     }
 };

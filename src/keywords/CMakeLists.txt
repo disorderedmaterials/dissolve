@@ -40,8 +40,8 @@ add_library(
   bool.h
   configuration.h
   configurationVector.h
-  dataSourceBase.h
   dataSource.h
+  dataSourceBase.h
   double.h
   elementVector.h
   enumOptions.h

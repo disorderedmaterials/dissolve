@@ -18,6 +18,8 @@
 #include "modules/benchmark/gui/benchmarkWidget.h"
 #include "modules/bragg/bragg.h"
 #include "modules/bragg/gui/braggWidget.h"
+#include "modules/compare/compare.h"
+#include "modules/compare/gui/compareWidget.h"
 #include "modules/dAngle/dAngle.h"
 #include "modules/dAngle/gui/dAngleWidget.h"
 #include "modules/energy/energy.h"
@@ -64,6 +66,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<AxisAngleModule, AxisAngleModuleWidget>();
     registerProducer<BenchmarkModule, BenchmarkModuleWidget>();
     registerProducer<BraggModule, BraggModuleWidget>();
+    registerProducer<CompareModule, CompareModuleWidget>();
     registerProducer<DAngleModule, DAngleModuleWidget>();
     registerProducer<EnergyModule, EnergyModuleWidget>();
     registerProducer<EPSRModule, EPSRModuleWidget>();

@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "io/import/data2D.h"
 #include "math/dataBase.h"
 #include "templates/array2D.h"
 
@@ -13,7 +12,6 @@ class Data2DImportFileFormat;
 // Data 2D Base
 class Data2DBase : public DataBase
 {
-
     /*
      * Type Definitions
      */
