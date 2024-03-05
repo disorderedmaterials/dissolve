@@ -75,6 +75,15 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
         }
     }
 
+    std::string_view getFilepath()
+    {
+        if (dataSourceType_ == External)
+        {
+            return externalDataSource_.filename();
+        }
+        return "";
+    }
+
     // Obtain data from the relevant source
     bool sourceData(const ProcessPool &procPool, GenericList &processingModuleData)
     {

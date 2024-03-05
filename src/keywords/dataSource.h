@@ -38,7 +38,7 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
     // End keyword
     const std::string endKeyword_;
     // Gets path basename
-    std::string getBasename(std::string_view filename) const { return filename.substr(filename.find_last_of("/\\") + 1) }
+    std::string_view getBasename(std::string_view filename) const { return filename.substr(filename.find_last_of("/\\") + 1); }
 
     public:
     // Return data source pairs
@@ -84,17 +84,23 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
             }
 
             // Check to make sure we don't have the same names
-            for (auto dataSource : dataSources_)
+            for (auto &[existingSourceA, existingSourceB] : dataSources_)
             {
-                if (getBasename(dataSource) == getBasename(dataSourceA))
+                if (getBasename(existingSourceA->dataName()) == getBasename(sourceQueue.front()->dataName()))
                 {
-                    dataSource->updateNameToPath();
-                    dataSourceA->updateNameToPath();
+                    if (existingSourceA->getFilepath() != sourceQueue.front()->getFilepath())
+                    {
+                        existingSourceA->updateNameToPath();
+                        sourceQueue.front()->updateNameToPath();
+                    }
                 }
-                if (getBasename(dataSource) == getBasename(dataSourceB))
+                if (getBasename(existingSourceB->dataName()) == getBasename(sourceQueue.front()->dataName()))
                 {
-                    dataSource->updateNameToPath();
-                    dataSourceB->updateNameToPath();
+                    if (existingSourceB->getFilepath() != sourceQueue.front()->getFilepath())
+                    {
+                        existingSourceB->updateNameToPath();
+                        sourceQueue.front()->updateNameToPath();
+                    }
                 }
             }
 
@@ -185,26 +191,30 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                      std::queue<std::shared_ptr<DataSource<DataType>>> sourceQueue({dataSourceA, dataSourceB});
 
                      toMap(dataPair,
-                           [&coreData, &sourceQueue](const auto &key, const auto &dataSource)
+                           [this, &coreData, &sourceQueue](const auto &key, const auto &dataSource)
                            {
                                if (sourceQueue.empty())
                                    return;
                                // Add data to dataSource
                                sourceQueue.front()->deserialise(dataSource, coreData);
                                // Check to make sure we don't have the same names
-                               for (auto dataSource : dataSources_)
+                               for (auto &[existingSourceA, existingSourceB] : dataSources_)
                                {
-                                   if (dataSource->dataName().substr(dataSource->dataName().find_last_of("/\\") + 1) ==
-                                       dataSourceA->dataName().substr(dataSourceA->dataName().find_last_of("/\\") + 1))
+                                   if (getBasename(existingSourceA->dataName()) == getBasename(sourceQueue.front()->dataName()))
                                    {
-                                       dataSource->updateNameToPath();
-                                       dataSourceA->updateNameToPath();
+                                       if (existingSourceA->getFilepath() != sourceQueue.front()->getFilepath())
+                                       {
+                                           existingSourceA->updateNameToPath();
+                                           sourceQueue.front()->updateNameToPath();
+                                       }
                                    }
-                                   if (dataSource->dataName().substr(dataSource->dataName().find_last_of("/\\") + 1) ==
-                                       dataSourceB->dataName().substr(dataSourceB->dataName().find_last_of("/\\") + 1))
+                                   if (getBasename(existingSourceB->dataName()) == getBasename(sourceQueue.front()->dataName()))
                                    {
-                                       dataSource->updateNameToPath();
-                                       dataSourceB->updateNameToPath();
+                                       if (existingSourceB->getFilepath() != sourceQueue.front()->getFilepath())
+                                       {
+                                           existingSourceB->updateNameToPath();
+                                           sourceQueue.front()->updateNameToPath();
+                                       }
                                    }
                                }
                                // Remove dataSource from queue
