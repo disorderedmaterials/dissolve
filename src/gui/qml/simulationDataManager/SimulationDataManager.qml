@@ -24,7 +24,10 @@ Page {
                 Layout.alignment: Qt.AlignRight
                 placeholderText: qsTr("Search...")
                 onEditingFinished: {
-                    simProxy.filterRegularExpression = RegExp(searchBox.text);
+                    filterByRegExp(simProxy, searchBox.text)
+                    if (simProxy.rowCount() == 0) {
+                        filterByRegExp(simProxy, "")
+                    }
                 }
             }
 
@@ -53,12 +56,14 @@ Page {
                 boundsBehavior: Flickable.StopAtBounds
 
                 model: simProxy
-                
+
                 delegate:
                 Rectangle {
                     implicitWidth: tableText.width
                     implicitHeight: tableText.height
                     color: "white"
+
+
                     D.Text {
                         id: tableText
                         text: display
@@ -82,5 +87,9 @@ Page {
             headerArray.push(qsTr(model.headerData(i, Qt.Horizontal)));
         }
         return headerArray
+    }
+
+    function filterByRegExp(proxy, text) {
+        proxy.filterRegularExpression = RegExp(text);
     }
 }

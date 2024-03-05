@@ -4,12 +4,12 @@
 #include "gui/dataManagerDialog.h"
 #include "main/dissolve.h"
 #include "templates/variantPointer.h"
-#include <QHBoxLayout>
 #include <QFileDialog>
+#include <QHBoxLayout>
 #include <QInputDialog>
 #include <QMessageBox>
-#include <QRegularExpression>
 #include <QQmlContext>
+#include <QRegularExpression>
 
 DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, GenericList &items)
     : QDialog(parent), dissolve_(dissolve), simModel_(dissolve, items)
@@ -27,17 +27,4 @@ DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, Generi
     setLayout(topLeftLayout);
 
     QObject::connect(&simModel_, SIGNAL(closeClicked()), this, SLOT(accept()));
-    QObject::connect(&simModel_, SIGNAL(simulationDataFilter(const QString &)), this, SLOT(filterTable(QString)));
-}
-
-/*
- * UI
- */
-
-// Update the specified table of GenericItems, optionally filtering them by name and description
-void DataManagerDialog::filterTable(QString filterText)
-{
-    simProxy_.setFilterRegularExpression(
-        QRegularExpression(filterText.replace("*", ".*"), QRegularExpression::CaseInsensitiveOption));
-    simProxy_.setFilterKeyColumn(0);
 }
