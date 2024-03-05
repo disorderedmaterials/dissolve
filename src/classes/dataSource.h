@@ -77,11 +77,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
 
     std::string_view getFilepath()
     {
-        if (dataSourceType_ == External)
-        {
-            return externalDataSource_.filename();
-        }
-        return "";
+        return dataSourceType_ == External ? externalDataSource_.filename() : "";
     }
 
     // Obtain data from the relevant source
