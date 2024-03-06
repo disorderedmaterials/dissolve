@@ -1,4 +1,10 @@
-Version 1.4.2 is a patch release addressing some crashes when working the modules and layers.
+Version 1.4.3 is a patch release addressing some general usability issues.
+
+## Minor Changes in v1.4.3
+
+- Fix: Documentation links in Help menu.
+- Fix: Module setup is now run correctly after loading a restart file.
+- New: Frequency normalisation in QSpecies module.
 
 ## Major Changes in v1.4.2
 
