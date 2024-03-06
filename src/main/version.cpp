@@ -5,7 +5,7 @@
 #include <fmt/format.h>
 #include <iostream>
 
-#define DISSOLVEVERSION "1.4.2"
+#define DISSOLVEVERSION "1.4.3"
 #define DISSOLVESHORTHASH ""
 #define DISSOLVEREPO "https://github.com/disorderedmaterials/dissolve.git"
 
