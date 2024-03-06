@@ -53,15 +53,16 @@ Page {
                 syncView: table
             }
             TableView {
-                property variant colWidths: [300, 300, 50]
                 id: table
+                property variant colWidths: [300, 300, 50]
+
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+                boundsBehavior: Flickable.StopAtBounds
+                columnSpacing: 1
                 columnWidthProvider: function (column) { 
                     return colWidths[column];
                 }
-                boundsBehavior: Flickable.StopAtBounds
-                columnSpacing: 1
                 model: simProxy
                 rowSpacing: 1
 
