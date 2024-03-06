@@ -6,9 +6,9 @@ import "../widgets" as D
 
 Page {
     id: root
-    height: 400
+    height: 500
     visible: true
-    width: 680
+    width: 670
 
     function filterByRegExp(proxy, text) {
         proxy.filterRegularExpression = RegExp(text);
@@ -53,9 +53,13 @@ Page {
                 syncView: table
             }
             TableView {
+                property variant colWidths: [300, 300, 50]
                 id: table
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+                columnWidthProvider: function (column) { 
+                    return colWidths[column];
+                }
                 boundsBehavior: Flickable.StopAtBounds
                 columnSpacing: 1
                 model: simProxy
@@ -74,6 +78,7 @@ Page {
                 }
             }
             Button {
+                id: closeButton
                 Layout.alignment: Qt.AlignRight
                 text: "Close"
 
