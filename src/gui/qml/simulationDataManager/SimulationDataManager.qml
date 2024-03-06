@@ -60,7 +60,7 @@ Page {
                 Layout.fillWidth: true
                 boundsBehavior: Flickable.StopAtBounds
                 columnSpacing: 1
-                columnWidthProvider: function (column) { 
+                columnWidthProvider: function (column) {
                     return colWidths[column];
                 }
                 model: simProxy
