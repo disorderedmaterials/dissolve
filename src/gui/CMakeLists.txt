@@ -81,7 +81,6 @@ add_library(
   copySpeciesTermsDialog.ui
   dataManagerDialog.cpp
   dataManagerDialog.h
-  dataManagerDialog.ui
   editSpeciesDialog.cpp
   editSpeciesDialog.h
   editSpeciesDialog.ui
