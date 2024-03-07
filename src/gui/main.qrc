@@ -194,6 +194,7 @@
     <file>qml/modifyCharges/Loader.qml</file>
     <file>qml/modifyCharges/Layout.qml</file>
     <file>qml/modifyCharges/ScaleLayout.qml</file>
+    <file>qml/simulationDataManager/SimulationDataManager.qml</file>
     <file>qml/DropDownLabel.qml</file>
     <file>qml/ForceFieldAssign.qml</file>
     <file>qml/ForceFieldAtomTypes.qml</file>

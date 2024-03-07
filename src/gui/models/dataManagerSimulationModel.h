@@ -6,6 +6,7 @@
 #include "main/dissolve.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
+#include <QString>
 #include <optional>
 #include <vector>
 
@@ -30,4 +31,7 @@ class DataManagerSimulationModel : public QAbstractTableModel
 
     // Register all changes to the model
     void update();
+
+    Q_SIGNALS:
+    void closeClicked();
 };
