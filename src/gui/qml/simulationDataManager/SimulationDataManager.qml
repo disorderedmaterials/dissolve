@@ -65,6 +65,7 @@ Page {
                 }
                 model: simProxy
                 rowSpacing: 1
+                clip: true
 
                 delegate: Rectangle {
                     color: "white"
