@@ -21,7 +21,7 @@ Page {
         return headerArray;
     }
 
-    GroupBox {
+    D.GroupBox {
         id: gb
         anchors.fill: parent
         title: "Current Module Data"
@@ -79,7 +79,7 @@ Page {
                     }
                 }
             }
-            Button {
+            D.Button {
                 id: closeButton
                 Layout.alignment: Qt.AlignRight
                 text: "Close"
