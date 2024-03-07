@@ -59,13 +59,13 @@ Page {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 boundsBehavior: Flickable.StopAtBounds
+                clip: true
                 columnSpacing: 1
                 columnWidthProvider: function (column) {
                     return colWidths[column];
                 }
                 model: simProxy
                 rowSpacing: 1
-                clip: true
 
                 delegate: Rectangle {
                     color: "white"
