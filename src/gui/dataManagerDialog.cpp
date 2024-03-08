@@ -15,8 +15,6 @@ DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, Generi
     : QDialog(parent), dissolve_(dissolve), simModel_(dissolve, items)
 {
     view_ = new QQuickWidget(this);
-    simProxy_.setSourceModel(&simModel_);
-    view_->rootContext()->setContextProperty("simProxy", &simProxy_);
     view_->rootContext()->setContextProperty("simModel", &simModel_);
     view_->setSource(QUrl("qrc:/dialogs/qml/simulationDataManager/SimulationDataManager.qml"));
 
