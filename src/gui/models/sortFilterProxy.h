@@ -11,7 +11,7 @@ class SortFilterProxy : public QSortFilterProxyModel {
   Q_PROPERTY(const QAbstractItemModel *model WRITE setModel NOTIFY read)
 
 public:
-  SortFilterProxy(QObject *parent = nullptr) : QSortFilterProxyModel(parent) {}
-  void setModel(const QAbstractItemModel *model) {setSourceModel(const_cast<QAbstractItemModel *>(model));}
+  SortFilterProxy(QObject *parent = nullptr);
+  void setModel(const QAbstractItemModel *model);
 
 };

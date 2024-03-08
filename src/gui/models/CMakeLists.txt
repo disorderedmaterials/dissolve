@@ -96,6 +96,7 @@ set(models_SRCS
     renderableGroupManagerModel.cpp
     sitesFilterProxy.cpp
     sitesModel.cpp
+    sortFilterProxy.cpp
     speciesAngleModel.cpp
     speciesAtomModel.cpp
     speciesBondModel.cpp
