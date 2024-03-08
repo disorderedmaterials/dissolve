@@ -5,4 +5,4 @@
 
 SortFilterProxy::SortFilterProxy(QObject *parent) : QSortFilterProxyModel(parent) {}
 
-void SortFilterProxy::setModel(const QAbstractItemModel *model) {setSourceModel(const_cast<QAbstractItemModel *>(model));}
+void SortFilterProxy::setModel(const QAbstractItemModel *model) { setSourceModel(const_cast<QAbstractItemModel *>(model)); }

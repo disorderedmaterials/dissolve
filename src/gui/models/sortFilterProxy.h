@@ -5,13 +5,13 @@
 
 #include <QSortFilterProxyModel>
 
-class SortFilterProxy : public QSortFilterProxyModel {
-  Q_OBJECT
-  // The model to proxy
-  Q_PROPERTY(const QAbstractItemModel *model WRITE setModel NOTIFY read)
+class SortFilterProxy : public QSortFilterProxyModel
+{
+    Q_OBJECT
+    // The model to proxy
+    Q_PROPERTY(const QAbstractItemModel *model WRITE setModel NOTIFY read)
 
-public:
-  SortFilterProxy(QObject *parent = nullptr);
-  void setModel(const QAbstractItemModel *model);
-
+    public:
+    SortFilterProxy(QObject *parent = nullptr);
+    void setModel(const QAbstractItemModel *model);
 };

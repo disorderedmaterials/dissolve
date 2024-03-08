@@ -10,8 +10,8 @@
 #include "gui/models/masterTermTreeModel.h"
 #include "gui/models/modifyChargesModel.h"
 #include "gui/models/moduleLayersModel.h"
-#include "gui/models/speciesModel.h"
 #include "gui/models/sortFilterProxy.h"
+#include "gui/models/speciesModel.h"
 #include <QQmlEngine>
 #include <QSortFilterProxyModel>
 
