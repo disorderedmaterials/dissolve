@@ -132,7 +132,6 @@ enum PairPotentialsKeyword
     CoulombTruncationKeyword,  /* 'CoulombTruncation' - Truncation scheme to apply to Coulomb potential */
     DeltaKeyword,              /* 'Delta' - Gives the spacing between points in the tabulated potentials */
     EndPairPotentialsKeyword,  /* 'EndPairPotentials' - Signals the end of the PairPotentials block */
-    GenerateKeyword,           /* 'Generate' - Generates a single PairPotential with the specified contributions */
     ForceChargeSourceKeyword,  /* 'ForceChargeSource' - Force the selected charge scheme for use if choosing manually */
     IncludeCoulombKeyword,     /* 'IncludeCoulomb' - Include Coulomb term in tabulated pair potentials" */
     ManualChargeSourceKeyword, /* 'ManualChargeSource' - Determine whether automatic or manual charge selection is used */
