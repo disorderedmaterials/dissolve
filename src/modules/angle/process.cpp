@@ -81,7 +81,7 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
 
     for (const auto &[siteA, indexA] : a.sites())
     {
-        nBSelections++;
+        ++nBSelections;
         for (const auto &[siteB, indexB] : b.sites())
         {
 
@@ -90,15 +90,15 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
 
             auto distAB = targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin());
 
-            nBAvailable++;
+            ++nBAvailable;
 
             if (!Range(rangeAB_.x, rangeAB_.y).contains(distAB))
                 continue;
 
             rAB.bin(distAB);
 
-            nBCumulative++;
-            nCSelections++;
+            ++nBCumulative;
+            ++nCSelections;
 
             for (const auto &[siteC, indexC] : c.sites())
             {
@@ -109,14 +109,14 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
                 if (excludeSameSiteAC_ && (siteC == siteA))
                     continue;
 
-                nCAvailable++;
+                ++nCAvailable;
 
                 auto distBC = targetConfiguration_->box()->minimumDistance(siteB->origin(), siteC->origin());
 
                 if (!Range(rangeBC_.x, rangeBC_.y).contains(distBC))
                     continue;
 
-                nCCumulative++;
+                ++nCCumulative;
 
                 auto angle = targetConfiguration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
                 if (symmetric_ && angle > 90.0)

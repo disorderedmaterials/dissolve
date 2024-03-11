@@ -77,8 +77,8 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
                 if (excludeSameMolecule_ && (siteC->molecule() == siteB->molecule()))
                     continue;
 
-                nCCumulative++;
-                nCAvailable++;
+                ++nCCumulative;
+                ++nCAvailable;
 
                 auto distanceBC = targetConfiguration_->box()->minimumDistance(siteB->origin(), siteC->origin());
                 auto angle = targetConfiguration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
