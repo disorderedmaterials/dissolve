@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataExporter.h"
 #include "analyser/dataNormaliser1D.h"
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
@@ -86,7 +87,8 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
                 if (exportInstantaneous_)
                 {
                     Data1DExportFileFormat exportFormat(fmt::format("{}_Sum{}.txt", name(), rangeNames[i]));
-                    if (!exportFormat.exportData(sumNInst))
+                    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(sumNInst, exportFormat,
+                                                                                  moduleContext.processPool()))
                     {
                         Messenger::error("Failed to write instantaneous coordination number data for range {}.\n",
                                          rangeNames[i]);
@@ -96,22 +98,9 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
             }
         }
 
-    // Save data?
-    if (exportFileAndFormat_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (exportFileAndFormat_.exportData(dataCN))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-                return ExecutionResult::Failed;
-            }
-        }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::Failed;
-    }
+    // Save RDF data?
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataRDF, exportFileAndFormat_, moduleContext.processPool()))
+        return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
 }

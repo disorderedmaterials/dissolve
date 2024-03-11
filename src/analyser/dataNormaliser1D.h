@@ -5,9 +5,8 @@
 
 #include "analyser/dataNormaliserBase.h"
 #include "math/data1D.h"
-#include <string_view>
 
-using NormalisationFunction1D = std::function<double(const double &, const double &)>;
+using NormalisationFunction1D = std::function<double(const double &, const double &, const double &)>;
 class DataNormaliser1D : public DataNormaliserBase<Data1D, NormalisationFunction1D>
 {
     public:

@@ -3,17 +3,12 @@
 
 #pragma once
 
+#include "classes/site.h"
+#include "io/export/data1D.h"
+#include "io/export/data2D.h"
 #include "module/module.h"
-#include "procedure/procedure.h"
 
 // Forward Declarations
-class CalculateAxisAngleProcedureNode;
-class Collect1DProcedureNode;
-class Collect2DProcedureNode;
-class OperateExpressionProcedureNode;
-class Process1DProcedureNode;
-class Process2DProcedureNode;
-class SelectProcedureNode;
 class SpeciesSite;
 
 // Calculate Axis Angle Module
@@ -37,28 +32,16 @@ class AxisAngleModule : public Module
     Vec3<double> angleRange_{0.0, 180.0, 10.0};
     // Whether the angular range should be considered symmetric about 90
     bool symmetric_{false};
-    // Analysis procedure to be run
-    Procedure analyser_;
-    // SelectNode for site A
-    std::shared_ptr<SelectProcedureNode> selectA_;
-    // SelectNode for site B
-    std::shared_ptr<SelectProcedureNode> selectB_;
-    // CalculateAxisAngle node
-    std::shared_ptr<CalculateAxisAngleProcedureNode> calculateAxisAngle_;
-    // Collect1DNode for A-B RDF
-    std::shared_ptr<Collect1DProcedureNode> collectDistance_;
-    // Collect1DNode for A-B angle histogram
-    std::shared_ptr<Collect1DProcedureNode> collectAngle_;
-    // Collect2DNode for distance-angle data
-    std::shared_ptr<Collect2DProcedureNode> collectDAngle_;
-    // Process1DNode for A-B RDF
-    std::shared_ptr<Process1DProcedureNode> processDistance_;
-    // Process1DNode for A-B-C angle histogram
-    std::shared_ptr<Process1DProcedureNode> processAngle_;
-    // Process2DNode for distance-angle data
-    std::shared_ptr<Process2DProcedureNode> processDAngle_;
-    // Normalisation expression for distance-angle map
-    std::shared_ptr<OperateExpressionProcedureNode> dAngleNormalisationExpression_;
+    // Target SpeciesSite definitions
+    std::vector<const SpeciesSite *> a_, b_;
+    // Axes to use for sites
+    OrientedSite::SiteAxis axisA_{OrientedSite::SiteAxis::XAxis}, axisB_{OrientedSite::SiteAxis::XAxis};
+    // Export file and format for RDF
+    Data1DExportFileFormat exportFileAndFormatRDF_;
+    // Export file and format for AxisAngle
+    Data1DExportFileFormat exportFileAndFormatAxisAngle_;
+    // Export file and format for DAxisAngle
+    Data2DExportFileFormat exportFileAndFormatDAxisAngle_;
 
     /*
      * Processing
