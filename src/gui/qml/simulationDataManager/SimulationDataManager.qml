@@ -21,6 +21,11 @@ Page {
         return headerArray;
     }
 
+    SortFilterProxy {
+        id: proxy
+        filterRegularExpression: RegExp(searchBox.text)
+        model: simModel
+    }
     D.GroupBox {
         id: gb
         anchors.fill: parent
@@ -34,13 +39,6 @@ Page {
                 Layout.alignment: Qt.AlignRight
                 Layout.preferredWidth: gb.width / 4
                 placeholderText: qsTr("Search...")
-
-                onEditingFinished: {
-                    filterByRegExp(simProxy, searchBox.text);
-                    if (simProxy.rowCount() == 0) {
-                        filterByRegExp(simProxy, "");
-                    }
-                }
             }
             HorizontalHeaderView {
                 id: header
@@ -64,7 +62,7 @@ Page {
                 columnWidthProvider: function (column) {
                     return colWidths[column];
                 }
-                model: simProxy
+                model: proxy
                 rowSpacing: 1
 
                 delegate: Rectangle {

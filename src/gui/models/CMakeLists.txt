@@ -31,6 +31,7 @@ set(models_MOC_HDRS
     renderableGroupManagerModel.h
     sitesFilterProxy.h
     sitesModel.h
+    sortFilterProxy.h
     speciesFilterProxy.h
     speciesModel.h
     speciesSiteFilterProxy.h
@@ -95,6 +96,7 @@ set(models_SRCS
     renderableGroupManagerModel.cpp
     sitesFilterProxy.cpp
     sitesModel.cpp
+    sortFilterProxy.cpp
     speciesAngleModel.cpp
     speciesAtomModel.cpp
     speciesBondModel.cpp
@@ -127,6 +129,7 @@ qt6_wrap_cpp(
   isotopologueSetModel.h
   pairPotentialModel.h
   rangeVectorModel.h
+  sortFilterProxy.h
   speciesAngleModel.h
   speciesAtomModel.h
   speciesBondModel.h

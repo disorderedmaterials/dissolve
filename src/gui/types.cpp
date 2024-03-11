@@ -10,8 +10,10 @@
 #include "gui/models/masterTermTreeModel.h"
 #include "gui/models/modifyChargesModel.h"
 #include "gui/models/moduleLayersModel.h"
+#include "gui/models/sortFilterProxy.h"
 #include "gui/models/speciesModel.h"
 #include <QQmlEngine>
+#include <QSortFilterProxyModel>
 
 void Types::registerDissolveQmlTypes()
 {
@@ -27,4 +29,5 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<MasterImproperModel>(PROJECT, 1, 0, "MasterImproperModel");
     qmlRegisterType<MasterTorsionModel>(PROJECT, 1, 0, "MasterTorsionModel");
     qmlRegisterType<ModifyChargesModel>(PROJECT, 1, 0, "ModifyChargesModel");
+    qmlRegisterType<SortFilterProxy>(PROJECT, 1, 0, "SortFilterProxy");
 }
