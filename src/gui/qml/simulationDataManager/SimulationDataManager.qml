@@ -6,6 +6,10 @@ import "../widgets" as D
 
 Page {
     id: root
+    height: 500
+    visible: true
+    width: 670
+
     function filterByRegExp(proxy, text) {
         proxy.filterRegularExpression = RegExp(text);
     }
@@ -16,10 +20,6 @@ Page {
         }
         return headerArray;
     }
-
-    height: 500
-    visible: true
-    width: 670
 
     SortFilterProxy {
         id: proxy
@@ -52,7 +52,6 @@ Page {
             }
             TableView {
                 id: table
-
                 property variant colWidths: [300, 300, 50]
 
                 Layout.fillHeight: true
