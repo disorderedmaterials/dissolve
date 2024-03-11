@@ -3,15 +3,15 @@
 
 #pragma once
 
-#include "analyser/dataNormaliserBase.h"
+#include "analyser/dataOperatorBase.h"
 #include "math/data3D.h"
 
 using NormalisationFunction3D = std::function<double(const double &, const double &, const double &, const double &,
                                                      const double &, const double &, const double &)>;
-class DataNormaliser3D : public DataNormaliserBase<Data3D, NormalisationFunction3D>
+class DataOperator3D : public DataOperatorBase<Data3D, NormalisationFunction3D>
 {
     public:
-    DataNormaliser3D(Data3D &targetData);
+    DataOperator3D(Data3D &targetData);
 
     /*
      * Normalisation functions

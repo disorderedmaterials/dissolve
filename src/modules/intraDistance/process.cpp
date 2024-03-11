@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
-#include "analyser/dataNormaliser1D.h"
+#include "analyser/dataOperator1D.h"
 #include "analyser/siteSelector.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
@@ -54,7 +54,7 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
     dataNormalisedHisto = histAB.accumulatedData();
 
     // Normalise
-    DataNormaliser1D histogramNormaliser(dataNormalisedHisto);
+    DataOperator1D histogramNormaliser(dataNormalisedHisto);
     // Normalise by value
     histogramNormaliser.normaliseTo();
 

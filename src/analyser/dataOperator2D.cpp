@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "analyser/dataNormaliser2D.h"
+#include "analyser/dataOperator2D.h"
 #include "math/data2D.h"
 #include "math/integrator.h"
 
-DataNormaliser2D::DataNormaliser2D(Data2D &targetData) : DataNormaliserBase<Data2D, NormalisationFunction2D>(targetData) {}
+DataOperator2D::DataOperator2D(Data2D &targetData) : DataOperatorBase<Data2D, NormalisationFunction2D>(targetData) {}
 
-void DataNormaliser2D::normalise(NormalisationFunction2D normalisationFunction)
+void DataOperator2D::normalise(NormalisationFunction2D normalisationFunction)
 {
     const auto &xs = targetData_.xAxis();
     const auto &ys = targetData_.yAxis();
@@ -25,9 +25,9 @@ void DataNormaliser2D::normalise(NormalisationFunction2D normalisationFunction)
     }
 }
 
-void DataNormaliser2D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 2D data."); }
+void DataOperator2D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 2D data."); }
 
-void DataNormaliser2D::normaliseBySphericalShell()
+void DataOperator2D::normaliseBySphericalShell()
 {
     // We expect x values to be centre-bin values, and regularly spaced
     const auto &xAxis = targetData_.xAxis();
@@ -64,7 +64,7 @@ void DataNormaliser2D::normaliseBySphericalShell()
     }
 }
 
-void DataNormaliser2D::normaliseTo(double value, bool absolute)
+void DataOperator2D::normaliseTo(double value, bool absolute)
 {
     auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);
     targetData_ /= sum;

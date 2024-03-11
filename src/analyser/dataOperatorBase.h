@@ -6,11 +6,11 @@
 #include "classes/configuration.h"
 #include <string_view>
 
-template <typename DataND, typename NormalisationFunction> class DataNormaliserBase
+template <typename DataND, typename NormalisationFunction> class DataOperatorBase
 {
 
     public:
-    DataNormaliserBase(DataND &targetData) : targetData_(targetData) {}
+    DataOperatorBase(DataND &targetData) : targetData_(targetData) {}
 
     /*
      * Targets

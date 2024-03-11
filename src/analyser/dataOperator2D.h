@@ -3,15 +3,15 @@
 
 #pragma once
 
-#include "analyser/dataNormaliserBase.h"
+#include "analyser/dataOperatorBase.h"
 #include "math/data2D.h"
 
 using NormalisationFunction2D =
     std::function<double(const double &, const double &, const double &, const double &, const double &)>;
-class DataNormaliser2D : public DataNormaliserBase<Data2D, NormalisationFunction2D>
+class DataOperator2D : public DataOperatorBase<Data2D, NormalisationFunction2D>
 {
     public:
-    DataNormaliser2D(Data2D &targetData);
+    DataOperator2D(Data2D &targetData);
 
     /*
      * Normalisation Functions

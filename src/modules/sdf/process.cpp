@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
-#include "analyser/dataNormaliser3D.h"
+#include "analyser/dataOperator3D.h"
 #include "analyser/siteSelector.h"
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
@@ -56,7 +56,7 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
     dataSDF = hist.accumulatedData();
 
     // Normalise
-    DataNormaliser3D normaliserSDF(dataSDF);
+    DataOperator3D normaliserSDF(dataSDF);
     // Normalise by A site population
     normaliserSDF.normaliseDivide(double(a.sites().size()));
     // Normalise by grid

@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
-#include "analyser/dataNormaliser1D.h"
+#include "analyser/dataOperator1D.h"
 #include "analyser/siteSelector.h"
 #include "expression/variable.h"
 #include "main/dissolve.h"
@@ -82,7 +82,7 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     dataNormalisedHisto = hist.accumulatedData();
 
     // Normalise
-    DataNormaliser1D normaliser(dataNormalisedHisto);
+    DataOperator1D normaliser(dataNormalisedHisto);
     // Normalise by sin(x)
     normaliser.normalise([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
     // Normalise by value

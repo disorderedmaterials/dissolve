@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "analyser/dataNormaliser3D.h"
+#include "analyser/dataOperator3D.h"
 #include "math/data3D.h"
 
-DataNormaliser3D::DataNormaliser3D(Data3D &targetData) : DataNormaliserBase<Data3D, NormalisationFunction3D>(targetData) {}
+DataOperator3D::DataOperator3D(Data3D &targetData) : DataOperatorBase<Data3D, NormalisationFunction3D>(targetData) {}
 
-void DataNormaliser3D::normalise(NormalisationFunction3D normalisationFunction)
+void DataOperator3D::normalise(NormalisationFunction3D normalisationFunction)
 {
     Messenger::warn("Normalisation function not implemented for 3D data.");
 }
 
-void DataNormaliser3D::normaliseByGrid()
+void DataOperator3D::normaliseByGrid()
 {
     // Determine bin area from first points of data
     auto xBinWidth = targetData_.xAxis().at(1) - targetData_.xAxis().at(0);
@@ -22,12 +22,12 @@ void DataNormaliser3D::normaliseByGrid()
     targetData_ /= binVolume;
 }
 
-void DataNormaliser3D::normaliseBySphericalShell()
+void DataOperator3D::normaliseBySphericalShell()
 {
     Messenger::warn("Spherical shell normalisation not implemented for 3D data.");
 }
 
-void DataNormaliser3D::normaliseTo(double value, bool absolute)
+void DataOperator3D::normaliseTo(double value, bool absolute)
 {
     Messenger::warn("Value normalisation not implemented for 3D data.");
 }
