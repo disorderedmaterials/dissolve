@@ -5,9 +5,9 @@
 #include "math/data2D.h"
 #include "math/integrator.h"
 
-DataOperator2D::DataOperator2D(Data2D &targetData) : DataOperatorBase<Data2D, NormalisationFunction2D>(targetData) {}
+DataOperator2D::DataOperator2D(Data2D &targetData) : DataOperatorBase<Data2D, OperateFunction2D>(targetData) {}
 
-void DataOperator2D::normalise(NormalisationFunction2D normalisationFunction)
+void DataOperator2D::operate(OperateFunction2D operateFunction)
 {
     const auto &xs = targetData_.xAxis();
     const auto &ys = targetData_.yAxis();
@@ -20,7 +20,7 @@ void DataOperator2D::normalise(NormalisationFunction2D normalisationFunction)
     {
         for (auto j = 0; j < ys.size(); ++j)
         {
-            values[{i, j}] = normalisationFunction(xs[i], xDelta, ys[j], yDelta, values[{i, j}]);
+            values[{i, j}] = operateFunction(xs[i], xDelta, ys[j], yDelta, values[{i, j}]);
         }
     }
 }

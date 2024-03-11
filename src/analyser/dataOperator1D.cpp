@@ -5,17 +5,15 @@
 #include "math/data1D.h"
 #include "math/integrator.h"
 
-DataOperator1D::DataOperator1D(Data1D &targetData) : DataOperatorBase<Data1D, NormalisationFunction1D>(targetData) {}
+DataOperator1D::DataOperator1D(Data1D &targetData) : DataOperatorBase<Data1D, OperateFunction1D>(targetData) {}
 
-void DataOperator1D::normalise(NormalisationFunction1D normalisationFunction)
+void DataOperator1D::operate(OperateFunction1D operateFunction)
 {
     const auto &xs = targetData_.xAxis();
     auto &values = targetData_.values();
 
-    const auto xDelta = xs.size() > 1 ? xs[1] - xs[0] : 1.0;
-
     for (auto i = 0; i < xs.size(); ++i)
-        values.at(i) = normalisationFunction(xs[i], xDelta, values.at(i));
+        values.at(i) = operateFunction(xs[i], targetData_.error(i), values.at(i));
 }
 
 void DataOperator1D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 1D data."); }

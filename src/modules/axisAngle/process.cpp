@@ -82,9 +82,9 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     DataOperator1D rABNormaliser(rABNormalised);
 
     // Normalise by A site population
-    rABNormaliser.normaliseDivide(double(a.sites().size()));
+    rABNormaliser.divide(double(a.sites().size()));
     // Normalise by B site population density
-    rABNormaliser.normaliseDivide(double(b.sites().size()) / targetConfiguration_->box()->volume());
+    rABNormaliser.divide(double(b.sites().size()) / targetConfiguration_->box()->volume());
     // Normalise by spherical shell
     rABNormaliser.normaliseBySphericalShell();
 
@@ -93,7 +93,7 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     aABNormalised = aAB.accumulatedData();
     DataOperator1D aABNormaliser(aABNormalised);
     // Normalise by value / sin(x)
-    aABNormaliser.normalise([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
+    aABNormaliser.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
     // Normalise to 1.0
     aABNormaliser.normaliseTo();
 
@@ -102,12 +102,12 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     dAxisAngleNormalised = dAxisAngle.accumulatedData();
     DataOperator2D dAxisAngleNormaliser(dAxisAngleNormalised);
     // Normalise by value / sin(y) / sin(yDelta)
-    dAxisAngleNormaliser.normalise([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
-                                   { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
+    dAxisAngleNormaliser.operate([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+                                 { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
     // Normalise by A site population
-    dAxisAngleNormaliser.normaliseDivide(double(a.sites().size()));
+    dAxisAngleNormaliser.divide(double(a.sites().size()));
     // Normalise by B site population density
-    dAxisAngleNormaliser.normaliseDivide(double(b.sites().size()) / targetConfiguration_->box()->volume());
+    dAxisAngleNormaliser.divide(double(b.sites().size()) / targetConfiguration_->box()->volume());
     // Normalise by spherical shell
     dAxisAngleNormaliser.normaliseBySphericalShell();
 

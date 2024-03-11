@@ -144,9 +144,9 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     normalisedAB = rAB.accumulatedData();
     DataOperator1D normaliserAB(normalisedAB);
     // Normalise by A site population
-    normaliserAB.normaliseDivide(double(nACumulative) / nASelections);
+    normaliserAB.divide(double(nACumulative) / nASelections);
     // Normalise by B site population density
-    normaliserAB.normaliseDivide((double(nBCumulative) / nBSelections) / targetConfiguration_->box()->volume());
+    normaliserAB.divide((double(nBCumulative) / nBSelections) / targetConfiguration_->box()->volume());
     // Normalise by spherical shell
     normaliserAB.normaliseBySphericalShell();
 
@@ -155,11 +155,11 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     normalisedBC = rBC.accumulatedData();
     DataOperator1D normaliserBC(normalisedBC);
     // Normalise by A site population
-    normaliserBC.normaliseDivide(double(nACumulative) / nASelections);
+    normaliserBC.divide(double(nACumulative) / nASelections);
     // Normalise by B site population
-    normaliserBC.normaliseDivide(double(nBCumulative) / nBSelections);
+    normaliserBC.divide(double(nBCumulative) / nBSelections);
     // Normalise by C site population density
-    normaliserBC.normaliseDivide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());
+    normaliserBC.divide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());
     // Normalise by spherical shell
     normaliserBC.normaliseBySphericalShell();
 
@@ -168,7 +168,7 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     normalisedAngle = aABC.accumulatedData();
     DataOperator1D normaliserAngle(normalisedAngle);
     // Normalise by value / sin(x)
-    normaliserAngle.normalise([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
+    normaliserAngle.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
     // Normalise to 1.0
     normaliserAngle.normaliseTo();
 
@@ -177,14 +177,14 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     normalisedDAngleAB = dAngleAB.accumulatedData();
     DataOperator2D normaliserDAngleAB(normalisedDAngleAB);
     // Normalise by value / sin(y) / sin(yDelta)
-    normaliserDAngleAB.normalise([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
-                                 { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
+    normaliserDAngleAB.operate([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+                               { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
     // Normalise by A site population
-    normaliserDAngleAB.normaliseDivide(double(nACumulative) / nASelections);
+    normaliserDAngleAB.divide(double(nACumulative) / nASelections);
     // Normalise by C site population
-    normaliserDAngleAB.normaliseDivide(double(nCCumulative) / nCSelections);
+    normaliserDAngleAB.divide(double(nCCumulative) / nCSelections);
     // Normalise by B site population density
-    normaliserDAngleAB.normaliseDivide((double(nBAvailable) / nBSelections) / targetConfiguration_->box()->volume());
+    normaliserDAngleAB.divide((double(nBAvailable) / nBSelections) / targetConfiguration_->box()->volume());
     // Normalise by spherical shell
     normaliserDAngleAB.normaliseBySphericalShell();
 
@@ -193,14 +193,14 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     normalisedDAngleBC = dAngleBC.accumulatedData();
     DataOperator2D normaliserDAngleBC(normalisedDAngleBC);
     // Normalise by value / sin(y) / sin(yDelta)
-    normaliserDAngleBC.normalise([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
-                                 { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
+    normaliserDAngleBC.operate([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+                               { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
     // Normalise by A site population
-    normaliserDAngleBC.normaliseDivide(double(nACumulative) / nASelections);
+    normaliserDAngleBC.divide(double(nACumulative) / nASelections);
     // Normalise by B site population
-    normaliserDAngleBC.normaliseDivide(double(nBCumulative) / nBSelections);
+    normaliserDAngleBC.divide(double(nBCumulative) / nBSelections);
     // Normalise by C site population density
-    normaliserDAngleBC.normaliseDivide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());
+    normaliserDAngleBC.divide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());
     // Normalise by spherical shell
     normaliserDAngleBC.normaliseBySphericalShell();
 

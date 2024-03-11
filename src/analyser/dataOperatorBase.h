@@ -6,7 +6,7 @@
 #include "classes/configuration.h"
 #include <string_view>
 
-template <typename DataND, typename NormalisationFunction> class DataOperatorBase
+template <typename DataND, typename OperateFunction> class DataOperatorBase
 {
 
     public:
@@ -19,11 +19,16 @@ template <typename DataND, typename NormalisationFunction> class DataOperatorBas
     DataND &targetData_;
 
     /*
-     * Normalisation functions
+     * Generic Operate Functions
      */
     public:
-    void normaliseDivide(double divisor) { targetData_ /= divisor; }
-    virtual void normalise(NormalisationFunction normalisationFunction) = 0;
+    void divide(double divisor) { targetData_ /= divisor; }
+    void multiply(double multiplier) { targetData_ *= multiplier; }
+    virtual void operate(OperateFunction operateFunction) = 0;
+
+    /*
+     * Normalisation Functions
+     */
     virtual void normaliseByGrid() = 0;
     virtual void normaliseBySphericalShell() = 0;
     virtual void normaliseTo(double value = 1.0, bool absolute = true) = 0;

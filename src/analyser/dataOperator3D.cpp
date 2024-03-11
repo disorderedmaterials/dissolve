@@ -4,9 +4,9 @@
 #include "analyser/dataOperator3D.h"
 #include "math/data3D.h"
 
-DataOperator3D::DataOperator3D(Data3D &targetData) : DataOperatorBase<Data3D, NormalisationFunction3D>(targetData) {}
+DataOperator3D::DataOperator3D(Data3D &targetData) : DataOperatorBase<Data3D, OperateFunction3D>(targetData) {}
 
-void DataOperator3D::normalise(NormalisationFunction3D normalisationFunction)
+void DataOperator3D::operate(OperateFunction3D operateFunction)
 {
     Messenger::warn("Normalisation function not implemented for 3D data.");
 }

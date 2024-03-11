@@ -6,18 +6,22 @@
 #include "analyser/dataOperatorBase.h"
 #include "math/data2D.h"
 
-using NormalisationFunction2D =
-    std::function<double(const double &, const double &, const double &, const double &, const double &)>;
-class DataOperator2D : public DataOperatorBase<Data2D, NormalisationFunction2D>
+using OperateFunction2D = std::function<double(const double &, const double &, const double &, const double &, const double &)>;
+class DataOperator2D : public DataOperatorBase<Data2D, OperateFunction2D>
 {
     public:
     DataOperator2D(Data2D &targetData);
 
     /*
+     * Generic Operate Functions
+     */
+    public:
+    void operate(OperateFunction2D operateFunction) override;
+
+    /*
      * Normalisation Functions
      */
     public:
-    void normalise(NormalisationFunction2D normalisationFunction) override;
     void normaliseByGrid() override;
     void normaliseBySphericalShell() override;
     void normaliseTo(double value = 1.0, bool absolute = true) override;

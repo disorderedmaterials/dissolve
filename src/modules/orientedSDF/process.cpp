@@ -66,7 +66,7 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
     // Normalise
     DataOperator3D normaliserOrientedSDF(dataOrientedSDF);
     // Normalise by A site population
-    normaliserOrientedSDF.normaliseDivide(double(a.sites().size()));
+    normaliserOrientedSDF.divide(double(a.sites().size()));
     // Normalise by grid
     normaliserOrientedSDF.normaliseByGrid();
 
