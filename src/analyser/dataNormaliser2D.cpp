@@ -42,6 +42,7 @@ void DataNormaliser2D::normaliseBySphericalShell()
     auto r1Cubed = pow(leftBin, 3);
     for (auto n = 0; n < xAxis.size(); ++n)
     {
+        auto r2Cubed = 0.0, rightBin = 0.0;
         for (auto m = 0; m < yAxis.size(); ++m)
         {
             // Get new right-bin from existing left bin boundary and current bin centre
