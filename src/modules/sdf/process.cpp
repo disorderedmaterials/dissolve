@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataExporter.h"
 #include "analyser/dataNormaliser3D.h"
 #include "analyser/siteSelector.h"
 #include "base/sysFunc.h"
@@ -61,22 +62,9 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
     // Normalise by grid
     normaliserSDF.normaliseByGrid();
 
-    // Save data?
-    if (sdfFileAndFormat_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (sdfFileAndFormat_.exportData(dataSDF))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-                return ExecutionResult::Failed;
-            }
-        }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::Failed;
-    }
+    // Save SDF data?
+    if (!DataExporter<Data3D, Data3DExportFileFormat>::exportData(dataSDF, sdfFileAndFormat_, moduleContext.processPool()))
+        return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
 }

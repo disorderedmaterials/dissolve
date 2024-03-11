@@ -65,19 +65,18 @@ void DAngleModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
 
     // Calculated B...C RDF
     if (rdfGraph_->renderables().empty())
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF(BC)", module_->name()), "B...C g(r)")
+        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//RDF(BC)", module_->name()), "B...C g(r)")
             ->setColour(StockColours::BlueStockColour);
 
     // Calculated angle histogram
     if (angleGraph_->renderables().empty())
-        angleGraph_
-            ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Angle(ABC)", module_->name()), "A-B...C Angle")
+        angleGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Angle(ABC)", module_->name()), "A-B...C Angle")
             ->setColour(StockColours::RedStockColour);
 
     // Calculated distance-angle map
     if (dAngleGraph_->renderables().empty())
     {
-        auto x = dAngleGraph_->createRenderable<RenderableData2D>(fmt::format("{}//Process2D//DAngle(A-BC)", module_->name()),
+        auto x = dAngleGraph_->createRenderable<RenderableData2D>(fmt::format("{}//DAngle(A-BC)", module_->name()),
                                                                   "B...C vs A-B...C");
         x->colour().setStyle(ColourDefinition::HSVGradientStyle);
     }

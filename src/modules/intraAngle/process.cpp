@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataExporter.h"
 #include "analyser/dataNormaliser1D.h"
 #include "analyser/siteSelector.h"
 #include "expression/variable.h"
@@ -83,26 +84,14 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     // Normalise
     DataNormaliser1D normaliser(dataNormalisedHisto);
     // Normalise by sin(x)
-    normaliser.normalise([](const auto &x, const auto &value) { return value / sin(x / DEGRAD); });
+    normaliser.normalise([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
     // Normalise by value
     normaliser.normaliseTo();
 
-    // Save data?
-    if (exportFileAndFormat_.hasFilename())
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            if (exportFileAndFormat_.exportData(dataNormalisedHisto))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-                return ExecutionResult::Failed;
-            }
-        }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::Failed;
-    }
+    // Save Angle(A-B-C) data?
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataNormalisedHisto, exportFileAndFormat_,
+                                                                  moduleContext.processPool()))
+        return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
 }

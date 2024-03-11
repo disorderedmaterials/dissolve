@@ -1,0 +1,177 @@
+# Input file written by Dissolve v1.5.0 at 13:46:14 on 03-03-2024.
+
+#==============================================================================#
+#                                 Master Terms                                 #
+#==============================================================================#
+
+Master
+  Bond  'CA-CA'  Harmonic  k=3924.59 eq=1.4
+  Bond  'CA-HA'  Harmonic  k=3071.06 eq=1.08
+  Angle  'CA-CA-CA'  Harmonic  k=527.184 eq=120
+  Angle  'CA-CA-HA'  Harmonic  k=292.88 eq=120
+  Torsion  'CA-CA-CA-CA'  Cos3  k1=0 k2=30.334 k3=0
+  Torsion  'CA-CA-CA-HA'  Cos3  k1=0 k2=30.334 k3=0
+  Torsion  'HA-CA-CA-HA'  Cos3  k1=0 k2=30.334 k3=0
+EndMaster
+
+#==============================================================================#
+#                                   Species                                    #
+#==============================================================================#
+
+Species 'Benzene'
+  # Atoms
+  NAtoms  12
+  Atom    1  C    -1.399000e+00  1.600000e-01  0.000000e+00  'CA'  -1.150000e-01
+  Atom    2  C    -5.610000e-01  1.293000e+00  0.000000e+00  'CA'  -1.150000e-01
+  Atom    3  C    8.390000e-01  1.132000e+00  0.000000e+00  'CA'  -1.150000e-01
+  Atom    4  C    1.399000e+00  -1.600000e-01  0.000000e+00  'CA'  -1.150000e-01
+  Atom    5  C    5.600000e-01  -1.293000e+00  0.000000e+00  'CA'  -1.150000e-01
+  Atom    6  C    -8.390000e-01  -1.132000e+00  0.000000e+00  'CA'  -1.150000e-01
+  Atom    7  H    1.483000e+00  2.001000e+00  0.000000e+00  'HA'  1.150000e-01
+  Atom    8  H    2.472000e+00  -2.840000e-01  0.000000e+00  'HA'  1.150000e-01
+  Atom    9  H    9.910000e-01  -2.284000e+00  0.000000e+00  'HA'  1.150000e-01
+  Atom   10  H    -1.483000e+00  -2.000000e+00  0.000000e+00  'HA'  1.150000e-01
+  Atom   11  H    -2.472000e+00  2.820000e-01  0.000000e+00  'HA'  1.150000e-01
+  Atom   12  H    -9.900000e-01  2.284000e+00  0.000000e+00  'HA'  1.150000e-01
+
+  # Bonds
+  NBonds  12
+  Bond    1    2  @CA-CA
+  Bond    2    3  @CA-CA
+  Bond    3    4  @CA-CA
+  Bond    4    5  @CA-CA
+  Bond    5    6  @CA-CA
+  Bond    6    1  @CA-CA
+  Bond    7    3  @CA-HA
+  Bond    4    8  @CA-HA
+  Bond    5    9  @CA-HA
+  Bond    6   10  @CA-HA
+  Bond    1   11  @CA-HA
+  Bond    2   12  @CA-HA
+
+  # Angles
+  NAngles  18
+  Angle    1    2    3  @CA-CA-CA
+  Angle    2    3    4  @CA-CA-CA
+  Angle    3    4    5  @CA-CA-CA
+  Angle    4    5    6  @CA-CA-CA
+  Angle    6    1    2  @CA-CA-CA
+  Angle    5    6    1  @CA-CA-CA
+  Angle    2    3    7  @CA-CA-HA
+  Angle    7    3    4  @CA-CA-HA
+  Angle    3    4    8  @CA-CA-HA
+  Angle    8    4    5  @CA-CA-HA
+  Angle    4    5    9  @CA-CA-HA
+  Angle    9    5    6  @CA-CA-HA
+  Angle    5    6   10  @CA-CA-HA
+  Angle   10    6    1  @CA-CA-HA
+  Angle   11    1    2  @CA-CA-HA
+  Angle    6    1   11  @CA-CA-HA
+  Angle    1    2   12  @CA-CA-HA
+  Angle   12    2    3  @CA-CA-HA
+
+  # Torsions
+  NTorsions  24
+  Torsion    1    2    3    4  @CA-CA-CA-CA
+  Torsion    2    3    4    5  @CA-CA-CA-CA
+  Torsion    3    4    5    6  @CA-CA-CA-CA
+  Torsion    6    1    2    3  @CA-CA-CA-CA
+  Torsion    4    5    6    1  @CA-CA-CA-CA
+  Torsion    5    6    1    2  @CA-CA-CA-CA
+  Torsion    1    2    3    7  @CA-CA-CA-HA
+  Torsion    7    3    4    5  @CA-CA-CA-HA
+  Torsion    2    3    4    8  @CA-CA-CA-HA
+  Torsion    7    3    4    8  @HA-CA-CA-HA
+  Torsion    8    4    5    6  @CA-CA-CA-HA
+  Torsion    3    4    5    9  @CA-CA-CA-HA
+  Torsion    8    4    5    9  @HA-CA-CA-HA
+  Torsion    9    5    6    1  @CA-CA-CA-HA
+  Torsion    4    5    6   10  @CA-CA-CA-HA
+  Torsion    9    5    6   10  @HA-CA-CA-HA
+  Torsion   10    6    1    2  @CA-CA-CA-HA
+  Torsion   11    1    2    3  @CA-CA-CA-HA
+  Torsion    5    6    1   11  @CA-CA-CA-HA
+  Torsion   10    6    1   11  @HA-CA-CA-HA
+  Torsion    6    1    2   12  @CA-CA-CA-HA
+  Torsion   11    1    2   12  @HA-CA-CA-HA
+  Torsion   12    2    3    4  @CA-CA-CA-HA
+  Torsion   12    2    3    7  @HA-CA-CA-HA
+
+  # Isotopologues
+  Isotopologue  'Deuterated'  HA=2
+
+  # Sites
+  Site  'COG'
+    Origin  1  3  4  5  6  2
+    XAxis  4
+    YAxis  2  3
+  EndSite
+EndSpecies
+
+#==============================================================================#
+#                               Pair Potentials                                #
+#==============================================================================#
+
+PairPotentials
+  # Atom Type Parameters
+  Parameters  CA  C  -1.150000e-01  LJGeometric  epsilon=0.29288 sigma=3.55
+  Parameters  HA  H  1.150000e-01  LJGeometric  epsilon=0.12552 sigma=2.42
+  Range  12
+  Delta  0.005
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
+EndPairPotentials
+
+#==============================================================================#
+#                                Configurations                                #
+#==============================================================================#
+
+Configuration  'Bulk'
+
+  # Generator
+  Generator
+    Parameters  'Parameters01'
+      Parameter  rho  0.876
+    EndParameters
+    Box  'Box01'
+      Lengths  30  30  30
+      Angles  90  90  90
+      NonPeriodic  False
+    EndBox
+    Add  'Add01'
+      Species  'Benzene'
+      Population  '3'
+      Density  'rho'  g/cm3
+      Positioning  Random
+      Rotate  True
+      BoxAction  None
+    EndAdd
+    ImportCoordinates  'ImportCoordinates01'
+      File  xyz  'dissolve/input/axisAngle-benzene.xyz'
+      EndFile
+    EndImportCoordinates
+  EndGenerator
+
+  Temperature  300
+
+EndConfiguration
+
+#==============================================================================#
+#                              Processing Layers                               #
+#==============================================================================#
+
+Layer  'Untitled Layer'
+  Frequency  1
+
+  Module  AxisAngle  'AxisAngle'
+    Frequency  1
+    Configuration  'Bulk'
+    SiteA  'Benzene'  'COG'
+    AxisA  Z
+    SiteB  'Benzene'  'COG'
+    AxisB  Z
+    DistanceRange  0.000000e+00  1.000000e+01  1.000000e-01
+    AngleRange  0.000000e+00  9.000000e+01  1.000000e+01
+    ExcludeSameMolecule  True
+  EndModule
+EndLayer
