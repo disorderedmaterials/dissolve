@@ -67,9 +67,9 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
             if (siteB->molecule() != siteA->molecule())
                 continue;
 
-            nBCumulative++;
-            nCSelections++;
-            nBAvailable++;
+            ++nBCumulative;
+            ++nCSelections;
+            ++nBAvailable;
 
             for (const auto &[siteC, indexC] : c.sites())
             {

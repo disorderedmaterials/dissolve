@@ -14,7 +14,7 @@ class DataNormaliser2D : public DataNormaliserBase<Data2D, NormalisationFunction
     DataNormaliser2D(Data2D &targetData);
 
     /*
-     * Normalisation functions
+     * Normalisation Functions
      */
     public:
     void normalise(NormalisationFunction2D normalisationFunction) override;

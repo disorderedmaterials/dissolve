@@ -8,6 +8,7 @@
 template <typename DataND, typename DataNDExportFileFormat> class DataExporter
 {
     public:
+    // Try to export the specified data, if a valid filename has been provided
     static bool exportData(const DataND &targetData, DataNDExportFileFormat &fileAndFormat, const ProcessPool &procPool)
     {
         if (fileAndFormat.hasFilename())
