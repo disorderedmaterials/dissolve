@@ -40,7 +40,7 @@ All notable changes to this project will be documented in this file.
 
 - 1576 More CIF Unit Tests (#1804)
 
-### Build
+### 🔨️ Build Tools
 
 - 1779 Upgrade GH Upload/Download (#1781)
 - 1733 Auto Qt (#1772)
@@ -64,7 +64,7 @@ All notable changes to this project will be documented in this file.
 - Develop 1.5 (#1774)
 - Update website release info (v1.4.2) (#1780)
 
-### Build
+### 🔨️ Build Tools
 
 - Remove need for QC before build workflow (#1771)
 - Build for Apple Silicon (#1743)
@@ -79,7 +79,7 @@ All notable changes to this project will be documented in this file.
 
 - Update website release info (v1.4.1) (#1765)
 
-### Build
+### 🔨️ Build Tools
 
 - Disable arm64 build (#1757)
 - Fix onetbb version (#1759)
@@ -174,7 +174,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade TBB and ANTLR (#1714)
 - Update copyright year in source (#1753)
 
-### Build
+### 🔨️ Build Tools
 
 - Change to CMakeLists.txt to allow for arm64 builds (#1697)
 - Fix Windows Packaging (#1748)
