@@ -10,7 +10,6 @@
 
 // Forward Declarations
 class AtomType;
-class SerializablePairPotential;
 
 // PairPotential Definition
 class PairPotential
