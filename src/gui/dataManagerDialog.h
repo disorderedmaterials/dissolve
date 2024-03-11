@@ -7,7 +7,6 @@
 #include "items/list.h"
 #include <QDialog>
 #include <QQuickWidget>
-#include <QSortFilterProxyModel>
 #include <vector>
 
 // Forward Declarations
@@ -27,8 +26,6 @@ class DataManagerDialog : public QDialog
     Dissolve &dissolve_;
     // Simulation Model
     DataManagerSimulationModel simModel_;
-    // Simulation Proxy
-    QSortFilterProxyModel simProxy_;
 
     /*
      * UI
