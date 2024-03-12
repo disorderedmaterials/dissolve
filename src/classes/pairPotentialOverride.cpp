@@ -6,41 +6,39 @@
 
 PairPotentialOverride::PairPotentialOverride() : interactionPotential_(ShortRangeFunctions::Form::None) {}
 
+PairPotentialOverride::PairPotentialOverride(std::string_view matchI, std::string_view matchJ,
+                                             PairPotentialOverride::PairPotentialOverrideType overrideType,
+                                             const InteractionPotential<ShortRangeFunctions> &potential)
+    : matchI_(matchI), matchJ_(matchJ), type_(overrideType), interactionPotential_(potential)
+{
+}
+
 // Return enum options for
-EnumOptions<PairPotentialOverride::PairPotentialOverrideTypes> PairPotentialOverride::pairPotentialOverrideTypes()
+EnumOptions<PairPotentialOverride::PairPotentialOverrideType> PairPotentialOverride::pairPotentialOverrideTypes()
 {
-    return EnumOptions<PairPotentialOverride::PairPotentialOverrideTypes>("PairPotentialOverrideTypes",
-                                                                          {{PairPotentialOverride::Off, "Off"},
-                                                                           {PairPotentialOverride::Add, "Add"},
-                                                                           {PairPotentialOverride::Replace, "Replace"}});
+    return EnumOptions<PairPotentialOverride::PairPotentialOverrideType>("PairPotentialOverrideTypes",
+                                                                         {{PairPotentialOverride::Off, "Off"},
+                                                                          {PairPotentialOverride::Add, "Add"},
+                                                                          {PairPotentialOverride::Replace, "Replace"}});
 }
 
-// Set atom type pair for which the override is relevant
-bool PairPotentialOverride::setAtomTypes(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ)
-{
-    atomTypeI_ = typeI;
-    atomTypeJ_ = typeJ;
-}
+// Set first AtomType name to match
+void PairPotentialOverride::setMatchI(std::string_view match) { matchI_ = match; }
 
-// Return first AtomType name
-std::string_view PairPotentialOverride::atomTypeNameI() const
-{
-    assert(atomTypeI_);
-    return atomTypeI_->name();
-}
+// Return first AtomType name to match
+std::string_view PairPotentialOverride::matchI() const { return matchI_; }
 
-// Return second AtomType name
-std::string_view PairPotentialOverride::atomTypeNameJ() const
-{
-    assert(atomTypeJ_);
-    return atomTypeJ_->name();
-}
+// Set second AtomType name to match
+void PairPotentialOverride::setMatchJ(std::string_view match) { matchJ_ = match; }
 
-// Return first source AtomType
-std::shared_ptr<AtomType> PairPotentialOverride::atomTypeI() const { return atomTypeI_; }
+// Return second AtomType name to match
+std::string_view PairPotentialOverride::matchJ() const { return matchJ_; }
 
-// Return second source AtomType
-std::shared_ptr<AtomType> PairPotentialOverride::atomTypeJ() const { return atomTypeJ_; }
+// Set override type
+void PairPotentialOverride::setType(PairPotentialOverrideType overrideType) { type_ = overrideType; }
+
+// Return override type
+PairPotentialOverride::PairPotentialOverrideType PairPotentialOverride::type() const { return type_; }
 
 // Return interaction potential
 InteractionPotential<ShortRangeFunctions> &PairPotentialOverride::interactionPotential() { return interactionPotential_; }

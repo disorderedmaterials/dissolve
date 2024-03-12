@@ -135,6 +135,7 @@ enum PairPotentialsKeyword
     ForceChargeSourceKeyword,  /* 'ForceChargeSource' - Force the selected charge scheme for use if choosing manually */
     IncludeCoulombKeyword,     /* 'IncludeCoulomb' - Include Coulomb term in tabulated pair potentials" */
     ManualChargeSourceKeyword, /* 'ManualChargeSource' - Determine whether automatic or manual charge selection is used */
+    OverrideKeyword,           /* 'Override' - Define a pairpotential override between specific atom types */
     ParametersKeyword, /* 'Parameters' - Sets or re-sets the short-range and charge parameters for a specific AtomType */
     RangeKeyword,      /* 'Range' - Specifies the total range (inc. truncation width) over which to generate potentials */
     ShortRangeTruncationKeyword,     /* 'ShortRangeTruncation' - Truncation scheme to apply to short-range potential */

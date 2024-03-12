@@ -85,6 +85,23 @@ PairPotential *Dissolve::pairPotential(std::string_view at1, std::string_view at
     return it != pairPotentials_.end() ? it->get() : nullptr;
 }
 
+// Create new pair potential override
+PairPotentialOverride *Dissolve::addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
+                                                          PairPotentialOverride::PairPotentialOverrideType overrideType,
+                                                          const InteractionPotential<ShortRangeFunctions> &potential)
+{
+    auto &pp = pairPotentialOverrides_.emplace_back(std::make_unique<PairPotentialOverride>());
+
+    return pp.get();
+}
+
+// Return defined overrides for PairPotentials
+std::vector<std::unique_ptr<PairPotentialOverride>> &Dissolve::pairPotentialOverrides() { return pairPotentialOverrides_; }
+const std::vector<std::unique_ptr<PairPotentialOverride>> &Dissolve::pairPotentialOverrides() const
+{
+    return pairPotentialOverrides_;
+}
+
 // Return map for PairPotentials
 const PotentialMap &Dissolve::potentialMap() const { return potentialMap_; }
 

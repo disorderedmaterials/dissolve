@@ -3,44 +3,49 @@
 
 #pragma once
 
-#include "data/ff/ff.h"
+#include "classes/atomType.h"
 #include <memory>
-
-// Forward Declarations
-class AtomType;
+#include <string>
 
 // PairPotential Override Definition
 class PairPotentialOverride
 {
     public:
-    PairPotentialOverride();
     // Override Types
-    enum PairPotentialOverrideTypes
+    enum PairPotentialOverrideType
     {
         Off,    /* No override will be applied */
         Add,    /* Contributions from the override will be added to the existing potential */
         Replace /* The override will replace any existing potential */
     };
     // Return enum options for PairPotentialOverrideTypes
-    static EnumOptions<PairPotentialOverrideTypes> pairPotentialOverrideTypes();
+    static EnumOptions<PairPotentialOverrideType> pairPotentialOverrideTypes();
+    PairPotentialOverride();
+    PairPotentialOverride(std::string_view matchI, std::string_view matchJ,
+                          PairPotentialOverride::PairPotentialOverrideType overrideType,
+                          const InteractionPotential<ShortRangeFunctions> &potential);
 
     private:
-    // Original source AtomTypes
-    std::shared_ptr<AtomType> atomTypeI_, atomTypeJ_;
+    // AtomType names to match
+    std::string matchI_, matchJ_;
+    // Override type
+    PairPotentialOverrideType type_{PairPotentialOverrideType::Off};
     // Interaction potential
     InteractionPotential<ShortRangeFunctions> interactionPotential_;
 
     public:
-    // Set atom type pair for which the override is relevant
-    bool setAtomTypes(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ);
-    // Return first AtomType name
-    std::string_view atomTypeNameI() const;
-    // Return second AtomType name
-    std::string_view atomTypeNameJ() const;
-    // Return first source AtomType
-    std::shared_ptr<AtomType> atomTypeI() const;
-    // Return second source AtomType
-    std::shared_ptr<AtomType> atomTypeJ() const;
+    // Set first AtomType name to match
+    void setMatchI(std::string_view match);
+    // Return first AtomType name to match
+    std::string_view matchI() const;
+    // Set second AtomType name to match
+    void setMatchJ(std::string_view match);
+    // Return second AtomType name to match
+    std::string_view matchJ() const;
+    // Set override type
+    void setType(PairPotentialOverrideType overrideType);
+    // Return override type
+    PairPotentialOverrideType type() const;
     // Return interaction potential
     InteractionPotential<ShortRangeFunctions> &interactionPotential();
     const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;

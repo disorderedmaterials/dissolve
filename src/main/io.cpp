@@ -379,6 +379,16 @@ bool Dissolve::saveInput(std::string_view filename)
                                atomType->interactionPotential().parametersAsString()))
             return false;
 
+    // Pair potential overrides
+    for (const auto &ppOverride : pairPotentialOverrides_)
+        if (!parser.writeLineF("  {}  '{}'  '{}'  {}  {}  {}\n",
+                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::OverrideKeyword),
+                               ppOverride->matchI(), ppOverride->matchJ(),
+                               PairPotentialOverride::pairPotentialOverrideTypes().keyword(ppOverride->type()),
+                               ShortRangeFunctions::forms().keyword(ppOverride->interactionPotential().form()),
+                               ppOverride->interactionPotential().parametersAsString()))
+            return false;
+
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::RangeKeyword),
                            pairPotentialRange_))
         return false;

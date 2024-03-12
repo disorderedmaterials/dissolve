@@ -17,6 +17,7 @@ EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::key
                                   {PairPotentialsBlock::ForceChargeSourceKeyword, "ForceChargeSource", 1},
                                   {PairPotentialsBlock::IncludeCoulombKeyword, "IncludeCoulomb", 1},
                                   {PairPotentialsBlock::ManualChargeSourceKeyword, "ManualChargeSource", 1},
+                                  {PairPotentialsBlock::OverrideKeyword, "Override", 5, OptionArguments::AnyNumber},
                                   {PairPotentialsBlock::ParametersKeyword, "Parameters", 3, OptionArguments::AnyNumber},
                                   {PairPotentialsBlock::RangeKeyword, "Range", 1},
                                   {PairPotentialsBlock::ShortRangeTruncationKeyword, "ShortRangeTruncation", 1},
@@ -83,6 +84,35 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
             case (PairPotentialsBlock::ManualChargeSourceKeyword):
                 dissolve->setAutomaticChargeSource(!parser.argb(1));
                 break;
+            case (PairPotentialsBlock::OverrideKeyword):
+            {
+                // Check override type
+                if (!PairPotentialOverride::pairPotentialOverrideTypes().isValid(parser.argsv(3)))
+                {
+                    PairPotentialOverride::pairPotentialOverrideTypes().errorAndPrintValid(parser.argsv(3));
+                    errorsEncountered = true;
+                    break;
+                }
+
+                // Check / set interaction potential
+                if (!ShortRangeFunctions::forms().isValid(parser.argsv(4)))
+                {
+                    ShortRangeFunctions::forms().errorAndPrintValid(parser.argsv(4));
+                    errorsEncountered = true;
+                    break;
+                }
+                InteractionPotential<ShortRangeFunctions> potential(ShortRangeFunctions::forms().enumeration(parser.argsv(4)));
+                if (!potential.parseParameters(parser, 5))
+                {
+                    errorsEncountered = true;
+                    break;
+                }
+
+                dissolve->addPairPotentialOverride(
+                    parser.argsv(1), parser.argsv(2),
+                    PairPotentialOverride::pairPotentialOverrideTypes().enumeration(parser.argsv(3)), potential);
+            }
+            break;
             case (PairPotentialsBlock::ParametersKeyword):
                 // Sanity check element
                 Z = Elements::element(parser.argsv(2));
