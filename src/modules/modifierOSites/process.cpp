@@ -86,28 +86,22 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
 
     // Save data?
     if (exportFileAndFormatOType_.hasFilename())
-    {
         if (moduleContext.processPool().isMaster())
-        {
             if (exportFileAndFormatOType_.exportData(accumulatedData))
                 moduleContext.processPool().decideTrue();
             else
             {
                 moduleContext.processPool().decideFalse();
             }
-        }
-    }
+
     if (exportFileAndFormatTotalOSites_.hasFilename())
-    {
         if (moduleContext.processPool().isMaster())
-        {
             if (exportFileAndFormatTotalOSites_.exportData(accumulatedModifierData))
                 moduleContext.processPool().decideTrue();
             else
             {
                 moduleContext.processPool().decideFalse();
             }
-        }
-    }
+
     return ExecutionResult::Success;
 }
