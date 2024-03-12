@@ -35,6 +35,7 @@ enum ModuleType
     IntraDistance,
     IntraShake,
     MD,
+    ModifierOSites,
     MolShake,
     NeutronSQ,
     OrientedSDF,
