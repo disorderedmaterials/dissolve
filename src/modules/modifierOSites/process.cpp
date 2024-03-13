@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "analyser/dataNormaliser1D.h"
 #include "analyser/siteFilter.h"
 #include "analyser/siteSelector.h"
 #include "main/dissolve.h"
+#include "math/histogram1D.h"
 #include "math/integerHistogram1D.h"
 #include "math/integrator.h"
 #include "module/context.h"
@@ -50,9 +52,15 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     if (status2 == GenericItem::ItemStatus::Created)
         modifierHistogram.initialise();
 
+    // Calculate rNFO
+    auto [histAB, status3] = processingData.realiseIf<Histogram1D>("Histo-AB", name(), GenericItem::InRestartFileFlag);
+    if (status3 == GenericItem::ItemStatus::Created)
+        histAB.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
+
     // Clear the temporary bins
     modifierHistogram.zeroBins();
     oxygenSitesHistogram.zeroBins();
+    histAB.zeroBins();
 
     // For each modifier site, bin the number of neighbour oxygens, then for each of those oxygen bin its type
     std::map<const Site *, int> qSpecies;
@@ -63,12 +71,14 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
         for (auto &&[oSite, index] : nearO)
         {
             oxygenSitesHistogram.bin(neighbourMap[oSite].size());
+            histAB.bin(targetConfiguration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
         }
     }
 
     // Accumulate histogram averages
     oxygenSitesHistogram.accumulate();
     modifierHistogram.accumulate();
+    histAB.accumulate();
 
     // Averaged values for OSites
     Data1D accumulatedData = oxygenSitesHistogram.accumulatedData();
@@ -80,9 +90,18 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     auto totalOSites = Integrator::absSum(modifierHistogram.data());
     accumulatedModifierData /= totalOSites;
 
+    Data1D dataNormalisedHisto = histAB.accumulatedData();
+
     // Store the normalised data
     processingData.realise<Data1D>("OTypes", name(), GenericItem::InRestartFileFlag) = accumulatedData;
     processingData.realise<Data1D>("TotalOSites", name(), GenericItem::InRestartFileFlag) = accumulatedModifierData;
+    processingData.realise<Data1D>("DistanceHistogram", name(), GenericItem::InRestartFileFlag) = dataNormalisedHisto;
+    // Distance(A-B)
+
+    // Normalise
+    DataNormaliser1D histogramNormaliser(dataNormalisedHisto);
+    // Normalise by value
+    histogramNormaliser.normaliseTo();
 
     // Save data?
     if (exportFileAndFormatOType_.hasFilename())

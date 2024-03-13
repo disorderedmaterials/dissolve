@@ -4,6 +4,7 @@
 #include "classes/configuration.h"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
+#include "math/histogram1D.h"
 #include "math/integerHistogram1D.h"
 #include "modules/modifierOSites/gui/modifierOSitesWidget.h"
 #include "modules/modifierOSites/modifierOSites.h"
@@ -55,9 +56,14 @@ void ModifierOSitesModuleWidget::updateControls(const Flags<ModuleWidget::Update
         modifierSitesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//TotalOSites", module_->name()),
                                                                 "TotalO-Sites");
 
+    auto distanceHistogram_ = dissolve_.processingModuleData().valueOr("DistanceHistogram", module_->name(), Data1D());
+
     // Validate renderables if they need it
     oSitesGraph_->validateRenderables(dissolve_.processingModuleData());
     modifierSitesGraph_->validateRenderables(dissolve_.processingModuleData());
+
+    // ui_.NBOLengthResultFrame->setText(distanceHistogram_.value(1));
+    // ui_.BOLengthResultFrame->setText(distanceHistogram_.value(2));
 
     ui_.OSitesPlotWidget->updateToolbar();
     ui_.ModifierPlotWidget->updateToolbar();
