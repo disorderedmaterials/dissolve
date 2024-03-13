@@ -119,6 +119,10 @@ TEST(SysFunc, StringManipulation)
     EXPECT_EQ(v.size(), 5);
     EXPECT_TRUE(expected == v);
 
+    // String strip
+    EXPECT_EQ(DissolveSys::strip("No more spaces "), "Nomorespaces");
+    EXPECT_EQ(DissolveSys::strip("No more spaces ", 'o'), "N mre spaces ");
+
     // Unique Naming
     std::vector<NameObject> names;
     EXPECT_TRUE(DissolveSys::uniqueName("IAmUnique", names, [](const auto &obj) { return obj.name; }) == "IAmUnique");

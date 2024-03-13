@@ -26,6 +26,8 @@
 #include "modules/energy/gui/energyWidget.h"
 #include "modules/epsr/epsr.h"
 #include "modules/epsr/gui/epsrWidget.h"
+#include "modules/epsrManager/epsrManager.h"
+#include "modules/epsrManager/gui/epsrManagerWidget.h"
 #include "modules/geomOpt/geomOpt.h"
 #include "modules/geomOpt/gui/geomOptWidget.h"
 #include "modules/gr/gr.h"
@@ -72,6 +74,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<DAngleModule, DAngleModuleWidget>();
     registerProducer<EnergyModule, EnergyModuleWidget>();
     registerProducer<EPSRModule, EPSRModuleWidget>();
+    registerProducer<EPSRManagerModule, EPSRManagerModuleWidget>();
     registerProducer<GeometryOptimisationModule, GeometryOptimisationModuleWidget>();
     registerProducer<GRModule, GRModuleWidget>();
     registerProducer<HistogramCNModule, HistogramCNModuleWidget>();

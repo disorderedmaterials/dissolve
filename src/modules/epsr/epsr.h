@@ -10,6 +10,7 @@
 #include "module/groups.h"
 #include "module/module.h"
 #include "templates/array3D.h"
+#include <tuple>
 
 // Forward Declarations
 class AtomType;
@@ -57,8 +58,12 @@ class EPSRModule : public Module
     double gSigma1_{0.1};
     // Width for Gaussian function in real space
     double gSigma2_{0.2};
+    // Vector storing atom pairs and associated potentials
+    std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> empiricalPotentials_;
     // Frequency at which to apply generated perturbations to interatomic potentials
     std::optional<int> modifyPotential_{1};
+    // Whether to apply this module's generated potentials to the global pair potentials
+    bool applyPotentials_{true};
     // Number of coefficients used to define the empirical potential
     std::optional<int> nCoeffP_;
     // Number of steps for refining the potential
@@ -99,6 +104,8 @@ class EPSRModule : public Module
     const std::vector<Module *> &targets() const;
     // Return current scattering matrix
     const ScatteringMatrix &scatteringMatrix() const;
+    // Set whether to apply this module's generated potentials to the global pair potentials
+    void setApplyPotentials(bool b);
 
     /*
      * Functions
@@ -126,6 +133,8 @@ class EPSRModule : public Module
     double absEnergyEP(GenericList &moduleData);
     // Truncate the supplied data
     void truncate(Data1D &data, double rMin, double rMax);
+    // return vector of emirical potentials
+    std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> empiricalPotentials();
 
     /*
      * EPSR File I/O

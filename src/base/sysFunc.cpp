@@ -371,6 +371,14 @@ std::string DissolveSys::doubleChars(const std::string_view s, const std::string
     return result;
 }
 
+// Return string with all occurrences of specified character stripped out
+std::string DissolveSys::strip(const std::string_view s, char toStrip)
+{
+    std::string result{s};
+    result.erase(std::remove_if(result.begin(), result.end(), [toStrip](const char c) { return c == toStrip; }), result.end());
+    return result;
+}
+
 /*
  * String Vectors
  */

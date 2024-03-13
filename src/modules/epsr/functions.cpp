@@ -103,14 +103,22 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averaged
             // Multiply by truncation function
             truncate(ep, rminpt, rmaxpt);
 
-            // Set the additional potential in the main processing data
-            dissolve.processingModuleData().realise<Data1D>(fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()),
-                                                            "Dissolve", GenericItem::InRestartFileFlag) = ep;
+            // Put potentials in vector
+            empiricalPotentials_.emplace_back(at1, at2, ep);
 
-            // Grab pointer to the relevant pair potential (if it exists)
-            auto *pp = dissolve.pairPotential(at1, at2);
-            if (pp)
-                pp->setUAdditional(ep);
+            // Apply potentials?
+            if (applyPotentials_)
+            {
+                // Set the additional potential in the main processing data
+                dissolve.processingModuleData().realise<Data1D>(
+                    fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
+                    GenericItem::InRestartFileFlag) = ep;
+
+                // Grab pointer to the relevant pair potential (if it exists)
+                auto *pp = dissolve.pairPotential(at1, at2);
+                if (pp)
+                    pp->setUAdditional(ep);
+            }
 
             return EarlyReturn<bool>::Continue;
         });
@@ -218,4 +226,9 @@ void EPSRModule::truncate(Data1D &data, double rMin, double rMax)
         else if (x > rMin)
             y[n] *= 0.5 * (1.0 + cos(((x - rMin) * PI) / decay));
     }
+}
+
+std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> EPSRModule::empiricalPotentials()
+{
+    return empiricalPotentials_;
 }
