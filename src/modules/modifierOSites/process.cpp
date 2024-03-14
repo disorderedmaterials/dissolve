@@ -52,15 +52,34 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     if (status2 == GenericItem::ItemStatus::Created)
         modifierHistogram.initialise();
 
-    // Calculate rNFO
-    auto [histAB, status3] = processingData.realiseIf<Histogram1D>("Histo-AB", name(), GenericItem::InRestartFileFlag);
+    // Calculate rMFO
+    auto [histMFO, status3] = processingData.realiseIf<Histogram1D>("Histo-MFO", name(), GenericItem::InRestartFileFlag);
     if (status3 == GenericItem::ItemStatus::Created)
-        histAB.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
+        histMFO.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
+
+    // Calculate rMNBO
+    auto [histMNBO, status4] = processingData.realiseIf<Histogram1D>("Histo-MNBO", name(), GenericItem::InRestartFileFlag);
+    if (status4 == GenericItem::ItemStatus::Created)
+        histMNBO.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
+
+    // Calculate rMBO
+    auto [histMBO, status5] = processingData.realiseIf<Histogram1D>("Histo-MBO", name(), GenericItem::InRestartFileFlag);
+    if (status5 == GenericItem::ItemStatus::Created)
+        histMBO.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
+
+    // Calculate rMOtherO
+    auto [histMOtherO, status6] =
+        processingData.realiseIf<Histogram1D>("Histo-MOtherO", name(), GenericItem::InRestartFileFlag);
+    if (status6 == GenericItem::ItemStatus::Created)
+        histMOtherO.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
 
     // Clear the temporary bins
     modifierHistogram.zeroBins();
     oxygenSitesHistogram.zeroBins();
-    histAB.zeroBins();
+    histMFO.zeroBins();
+    histMNBO.zeroBins();
+    histMBO.zeroBins();
+    histMOtherO.zeroBins();
 
     // For each modifier site, bin the number of neighbour oxygens, then for each of those oxygen bin its type
     std::map<const Site *, int> qSpecies;
@@ -71,14 +90,31 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
         for (auto &&[oSite, index] : nearO)
         {
             oxygenSitesHistogram.bin(neighbourMap[oSite].size());
-            histAB.bin(targetConfiguration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
+
+            switch (neighbourMap[oSite].size())
+            {
+                case 0:
+                    histMFO.bin(targetConfiguration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
+                    break;
+                case 1:
+                    histMNBO.bin(targetConfiguration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
+                    break;
+                case 2:
+                    histMBO.bin(targetConfiguration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
+                    break;
+                default:
+                    histMOtherO.bin(targetConfiguration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
+            }
         }
     }
 
     // Accumulate histogram averages
     oxygenSitesHistogram.accumulate();
     modifierHistogram.accumulate();
-    histAB.accumulate();
+    histMFO.accumulate();
+    histMNBO.accumulate();
+    histMBO.accumulate();
+    histMOtherO.accumulate();
 
     // Averaged values for OSites
     Data1D accumulatedData = oxygenSitesHistogram.accumulatedData();
@@ -90,18 +126,33 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     auto totalOSites = Integrator::absSum(modifierHistogram.data());
     accumulatedModifierData /= totalOSites;
 
-    Data1D dataNormalisedHisto = histAB.accumulatedData();
+    // Normalise HistMFO
+    Data1D dataNormalisedHistMFO = histMFO.accumulatedData();
+    DataNormaliser1D histMFONormaliser(dataNormalisedHistMFO);
+    // Normalise by value
+    histMFONormaliser.normaliseTo();
+
+    // Normalise HistMNBO
+    Data1D dataNormalisedHistMNBO = histMNBO.accumulatedData();
+    DataNormaliser1D histMNBONormaliser(dataNormalisedHistMNBO);
+    // Normalise by value
+    histMNBONormaliser.normaliseTo();
+
+    // Normalise HistMBO
+    Data1D dataNormalisedHistMBO = histMBO.accumulatedData();
+    DataNormaliser1D histMBONormaliser(dataNormalisedHistMBO);
+    // Normalise by value
+    histMBONormaliser.normaliseTo();
+
+    // Normalise HistMOtherO
+    Data1D dataNormalisedHistMOtherO = histMOtherO.accumulatedData();
+    DataNormaliser1D histMOtherONormaliser(dataNormalisedHistMOtherO);
+    // Normalise by value
+    histMOtherONormaliser.normaliseTo();
 
     // Store the normalised data
     processingData.realise<Data1D>("OTypes", name(), GenericItem::InRestartFileFlag) = accumulatedData;
     processingData.realise<Data1D>("TotalOSites", name(), GenericItem::InRestartFileFlag) = accumulatedModifierData;
-    processingData.realise<Data1D>("DistanceHistogram", name(), GenericItem::InRestartFileFlag) = dataNormalisedHisto;
-    // Distance(A-B)
-
-    // Normalise
-    DataNormaliser1D histogramNormaliser(dataNormalisedHisto);
-    // Normalise by value
-    histogramNormaliser.normaliseTo();
 
     // Save data?
     if (exportFileAndFormatOType_.hasFilename())
