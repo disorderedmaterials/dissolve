@@ -66,11 +66,14 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     // CN
     auto &dataCN = processingData.realise<Data1D>("HistogramNorm", name(), GenericItem::InRestartFileFlag);
     dataCN = histAB.accumulatedData();
+    auto &runningCN = processingData.realise<Data1D>("RunningCNNorm", name(), GenericItem::InRestartFileFlag);
+    runningCN = histAB.accumulatedData();
 
     // Normalise
     DataOperator1D normaliserCN(dataCN);
     // Normalise by A site population
-    normaliserCN.divide(double(a.sites().size()));
+    DataNormaliser1D normaliserRunningCN(runningCN);
+    normaliserRunningCN.normaliseDivide(double(a.sites().size()));
 
     const std::vector<std::string> rangeNames = {"A", "B", "C"};
     for (int i = 0; i < 3; ++i)
@@ -97,6 +100,8 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
                 }
             }
         }
+    //Loop over all distanceRange and calculate running CN
+    // for (double x; distanceRange_[2]; x += distanceRange_[3])
 
     // Save RDF data?
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataRDF, exportFileAndFormat_, moduleContext.processPool()))
