@@ -33,6 +33,10 @@ class ModifierOSitesModuleWidget : public ModuleWidget
     // DataViewer contained within this widget
     DataViewer *oSitesGraph_;
     DataViewer *modifierSitesGraph_;
+    DataViewer *mFOBondLengthGraph_;
+    DataViewer *mNBOBondLengthGraph_;
+    DataViewer *mBOBondLengthGraph_;
+    DataViewer *mOtherOBondLengthGraph_;
 
     public:
     // Update controls within widget

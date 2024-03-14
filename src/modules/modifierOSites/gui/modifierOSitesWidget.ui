@@ -28,11 +28,11 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Modifier O Sites</string>
+       <string>Tab 1</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -59,7 +59,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Modifier O Sites Lengths</string>
+       <string>Tab 2</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
@@ -73,7 +73,7 @@
         </widget>
        </item>
        <item>
-        <widget class="DataWidget" name="MNBOLengthPlotWidget_2" native="true">
+        <widget class="DataWidget" name="MNBOLengthPlotWidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -83,7 +83,7 @@
         </widget>
        </item>
        <item>
-        <widget class="DataWidget" name="MBOSitesPlotWidget" native="true">
+        <widget class="DataWidget" name="MBOLengthPlotWidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>

@@ -153,6 +153,10 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     // Store the normalised data
     processingData.realise<Data1D>("OTypes", name(), GenericItem::InRestartFileFlag) = accumulatedData;
     processingData.realise<Data1D>("TotalOSites", name(), GenericItem::InRestartFileFlag) = accumulatedModifierData;
+    processingData.realise<Data1D>("MFOBondLength", name(), GenericItem::InRestartFileFlag) = dataNormalisedHistMFO;
+    processingData.realise<Data1D>("MNBOBondLength", name(), GenericItem::InRestartFileFlag) = dataNormalisedHistMNBO;
+    processingData.realise<Data1D>("MBOBondLength", name(), GenericItem::InRestartFileFlag) = dataNormalisedHistMBO;
+    processingData.realise<Data1D>("MOtherOBondLength", name(), GenericItem::InRestartFileFlag) = dataNormalisedHistMOtherO;
 
     // Save data?
     if (exportFileAndFormatOType_.hasFilename())
