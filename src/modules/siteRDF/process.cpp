@@ -35,8 +35,12 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
     histAB.zeroBins();
 
-    for (const auto &[siteA, indexA] : a.sites())
+    auto unaryOp = [&](const auto idx)
     {
+        auto siteData = a.sites()[idx];
+        auto siteA = std::get<0>(siteData);
+        auto indexA = std::get<1>(siteData);
+
         for (const auto &[siteB, indexB] : b.sites())
         {
             if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
@@ -44,6 +48,9 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
             histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
         }
     }
+
+    dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(cStart), dissolve::counting_iterator<int>(cEnd),
+        unaryOp);
 
     // Accumulate histogram
     histAB.accumulate();
