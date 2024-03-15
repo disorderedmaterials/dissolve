@@ -34,5 +34,15 @@ TEST_F(ModifierOSitesModuleTest, TotalOSites)
     EXPECT_TRUE(systemTest.checkData1D(
         "M//TotalOSites",
         {"dissolve/input/modifierTotalOSites-test2.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-8));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "M//MFOBondLength",
+        {"dissolve/input/modifierOSites-FObond-lengths-test.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        1.0e-8));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "M//MNOBondLength",
+        {"dissolve/input/modifierOSites-NBObond-lengths-test.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-8));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "M//MBOBondLength",
+        {"dissolve/input/modifierOSites-BObond-lengths-test.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-8));
 }
 } // namespace UnitTest
