@@ -176,6 +176,38 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
             {
                 moduleContext.processPool().decideFalse();
             }
+    if (exportFileAndFormatFOLength_.hasFilename())
+        if (moduleContext.processPool().isMaster())
+            if (exportFileAndFormatFOLength_.exportData(dataNormalisedHistMFO))
+                moduleContext.processPool().decideTrue();
+            else
+            {
+                moduleContext.processPool().decideFalse();
+            }
+    if (exportFileAndFormatNBOLength_.hasFilename())
+        if (moduleContext.processPool().isMaster())
+            if (exportFileAndFormatNBOLength_.exportData(dataNormalisedHistMNBO))
+                moduleContext.processPool().decideTrue();
+            else
+            {
+                moduleContext.processPool().decideFalse();
+            }
+    if (exportFileAndFormatBOLength_.hasFilename())
+        if (moduleContext.processPool().isMaster())
+            if (exportFileAndFormatBOLength_.exportData(dataNormalisedHistMBO))
+                moduleContext.processPool().decideTrue();
+            else
+            {
+                moduleContext.processPool().decideFalse();
+            }
+    if (exportFileAndFormatOtherOLength_.hasFilename())
+        if (moduleContext.processPool().isMaster())
+            if (exportFileAndFormatOtherOLength_.exportData(dataNormalisedHistMOtherO))
+                moduleContext.processPool().decideTrue();
+            else
+            {
+                moduleContext.processPool().decideFalse();
+            }
 
     return ExecutionResult::Success;
 }
