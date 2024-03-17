@@ -7,6 +7,11 @@
 
 DataOperator1D::DataOperator1D(Data1D &targetData) : DataOperatorBase<Data1D, OperateFunction1D>(targetData) {}
 
+/*
+ * Data Operation Functions
+ */
+
+// Generic operate function
 void DataOperator1D::operate(OperateFunction1D operateFunction)
 {
     const auto &xs = targetData_.xAxis();
@@ -16,8 +21,14 @@ void DataOperator1D::operate(OperateFunction1D operateFunction)
         values.at(i) = operateFunction(xs[i], targetData_.error(i), values.at(i));
 }
 
+/*
+ * Normalisation Functions
+ */
+
+// Perform grid normalisation
 void DataOperator1D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 1D data."); }
 
+// Perform spherical shell normalisation
 void DataOperator1D::normaliseBySphericalShell()
 {
     // We expect x values to be centre-bin values, and regularly spaced
@@ -50,6 +61,7 @@ void DataOperator1D::normaliseBySphericalShell()
     }
 }
 
+// Normalise the target data to a given value
 void DataOperator1D::normaliseTo(double value, bool absolute)
 {
     auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);

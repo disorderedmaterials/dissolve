@@ -6,11 +6,21 @@
 
 DataOperator3D::DataOperator3D(Data3D &targetData) : DataOperatorBase<Data3D, OperateFunction3D>(targetData) {}
 
+/*
+ * Data Operation Functions
+ */
+
+// Generic operate function
 void DataOperator3D::operate(OperateFunction3D operateFunction)
 {
     Messenger::warn("Normalisation function not implemented for 3D data.");
 }
 
+/*
+ * Normalisation Functions
+ */
+
+// Perform grid normalisation
 void DataOperator3D::normaliseByGrid()
 {
     // Determine bin area from first points of data
@@ -22,11 +32,13 @@ void DataOperator3D::normaliseByGrid()
     targetData_ /= binVolume;
 }
 
+// Perform spherical shell normalisation
 void DataOperator3D::normaliseBySphericalShell()
 {
     Messenger::warn("Spherical shell normalisation not implemented for 3D data.");
 }
 
+// Normalise the target data to a given value
 void DataOperator3D::normaliseTo(double value, bool absolute)
 {
     Messenger::warn("Value normalisation not implemented for 3D data.");

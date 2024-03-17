@@ -7,6 +7,11 @@
 
 DataOperator2D::DataOperator2D(Data2D &targetData) : DataOperatorBase<Data2D, OperateFunction2D>(targetData) {}
 
+/*
+ * Data Operation Functions
+ */
+
+// Generic operate function
 void DataOperator2D::operate(OperateFunction2D operateFunction)
 {
     const auto &xs = targetData_.xAxis();
@@ -25,8 +30,14 @@ void DataOperator2D::operate(OperateFunction2D operateFunction)
     }
 }
 
+/*
+ * Normalisation Functions
+ */
+
+// Perform grid normalisation
 void DataOperator2D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 2D data."); }
 
+// Perform spherical shell normalisation
 void DataOperator2D::normaliseBySphericalShell()
 {
     // We expect x values to be centre-bin values, and regularly spaced
@@ -64,6 +75,7 @@ void DataOperator2D::normaliseBySphericalShell()
     }
 }
 
+// Normalise the target data to a given value
 void DataOperator2D::normaliseTo(double value, bool absolute)
 {
     auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);

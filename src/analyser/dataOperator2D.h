@@ -13,16 +13,20 @@ class DataOperator2D : public DataOperatorBase<Data2D, OperateFunction2D>
     DataOperator2D(Data2D &targetData);
 
     /*
-     * Generic Operate Functions
+     * Data Operation Functions
      */
     public:
+    // Generic operate function
     void operate(OperateFunction2D operateFunction) override;
 
     /*
      * Normalisation Functions
      */
     public:
+    // Perform grid normalisation
     void normaliseByGrid() override;
+    // Perform spherical shell normalisation
     void normaliseBySphericalShell() override;
+    // Normalise the target data to a given value
     void normaliseTo(double value = 1.0, bool absolute = true) override;
 };

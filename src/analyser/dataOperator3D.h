@@ -14,16 +14,20 @@ class DataOperator3D : public DataOperatorBase<Data3D, OperateFunction3D>
     DataOperator3D(Data3D &targetData);
 
     /*
-     * Generic Operate Functions
+     * Data Operation Functions
      */
     public:
+    // Generic operate function
     void operate(OperateFunction3D operateFunction) override;
 
     /*
      * Normalisation Functions
      */
     public:
+    // Perform grid normalisation
     void normaliseByGrid() override;
+    // Perform spherical shell normalisation
     void normaliseBySphericalShell() override;
+    // Normalise the target data to a given value
     void normaliseTo(double value = 1.0, bool absolute = true) override;
 };
