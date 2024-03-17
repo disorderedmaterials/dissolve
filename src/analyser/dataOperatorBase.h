@@ -6,6 +6,7 @@
 #include "classes/configuration.h"
 #include <string_view>
 
+// Data Operator Base
 template <typename DataND, typename OperateFunction> class DataOperatorBase
 {
 

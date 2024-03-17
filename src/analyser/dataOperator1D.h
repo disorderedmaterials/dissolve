@@ -6,7 +6,10 @@
 #include "analyser/dataOperatorBase.h"
 #include "math/data1D.h"
 
+// x, xDelta, value
 using OperateFunction1D = std::function<double(const double &, const double &, const double &)>;
+
+// Data Operator 1D
 class DataOperator1D : public DataOperatorBase<Data1D, OperateFunction1D>
 {
     public:
