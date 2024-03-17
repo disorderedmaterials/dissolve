@@ -8,6 +8,8 @@ add_library(
   dataNormaliser3D.cpp
   dataNormaliser3D.h
   dataNormaliserBase.h
+  selectionProcessor.h
+  selectionProcessor.cpp
   siteFilter.cpp
   siteFilter.h
   siteSelector.cpp
