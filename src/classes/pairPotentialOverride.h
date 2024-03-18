@@ -29,7 +29,7 @@ class PairPotentialOverride
     // AtomType names to match
     std::string matchI_, matchJ_;
     // Override type
-    PairPotentialOverrideType type_{PairPotentialOverrideType::Off};
+    PairPotentialOverrideType type_{PairPotentialOverrideType::Add};
     // Interaction potential
     InteractionPotential<ShortRangeFunctions> interactionPotential_;
 
