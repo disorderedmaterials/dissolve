@@ -288,7 +288,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBox">
+          <widget class="QGroupBox" name="OverridesGroup">
            <property name="title">
             <string>Overrides</string>
            </property>
@@ -426,7 +426,7 @@
                <enum>QAbstractItemView::SelectRows</enum>
               </property>
               <attribute name="horizontalHeaderVisible">
-               <bool>false</bool>
+               <bool>true</bool>
               </attribute>
               <attribute name="verticalHeaderVisible">
                <bool>false</bool>

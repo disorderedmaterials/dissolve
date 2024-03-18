@@ -7,7 +7,6 @@
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <QModelIndex>
-
 #include <vector>
 
 class PairPotentialOverrideModel : public QAbstractListModel
@@ -16,7 +15,9 @@ class PairPotentialOverrideModel : public QAbstractListModel
 
     private:
     // Source pair potential override data
-    const std::vector<std::unique_ptr<PairPotentialOverride>> &data_;
+    std::vector<std::unique_ptr<PairPotentialOverride>> &data_;
+
+    public:
     // Column Data
     enum ColumnData
     {
@@ -27,10 +28,7 @@ class PairPotentialOverrideModel : public QAbstractListModel
         ShortRangeParameters,
         nColumnData
     };
-
-    public:
-    // Set source pair potential override data
-    PairPotentialOverrideModel(const std::vector<std::unique_ptr<PairPotentialOverride>> &data_);
+    PairPotentialOverrideModel(std::vector<std::unique_ptr<PairPotentialOverride>> &data_);
     ~PairPotentialOverrideModel() = default;
     const PairPotentialOverride *rawData(const QModelIndex index) const;
     PairPotentialOverride *rawData(const QModelIndex index);

@@ -16,7 +16,7 @@ PairPotentialOverride::PairPotentialOverride(std::string_view matchI, std::strin
 // Return enum options for
 EnumOptions<PairPotentialOverride::PairPotentialOverrideType> PairPotentialOverride::pairPotentialOverrideTypes()
 {
-    return EnumOptions<PairPotentialOverride::PairPotentialOverrideType>("PairPotentialOverrideTypes",
+    return EnumOptions<PairPotentialOverride::PairPotentialOverrideType>("PairPotentialOverrideType",
                                                                          {{PairPotentialOverride::Off, "Off"},
                                                                           {PairPotentialOverride::Add, "Add"},
                                                                           {PairPotentialOverride::Replace, "Replace"}});

@@ -90,7 +90,8 @@ PairPotentialOverride *Dissolve::addPairPotentialOverride(std::string_view match
                                                           PairPotentialOverride::PairPotentialOverrideType overrideType,
                                                           const InteractionPotential<ShortRangeFunctions> &potential)
 {
-    auto &pp = pairPotentialOverrides_.emplace_back(std::make_unique<PairPotentialOverride>());
+    auto &pp =
+        pairPotentialOverrides_.emplace_back(std::make_unique<PairPotentialOverride>(matchI, matchJ, overrideType, potential));
 
     return pp.get();
 }

@@ -18,7 +18,7 @@
 
 ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this), atomTypesModel_(dissolve.coreData()),
-      pairPotentialModel_(dissolve.pairPotentials())
+      pairPotentialModel_(dissolve.pairPotentials()), pairPotentialOverrideModel_(dissolve.pairPotentialOverrides())
 {
     ui_.setupUi(this);
 
@@ -85,6 +85,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
             SLOT(atomTypeDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
     connect(ui_.AtomTypesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(atomTypeSelectionChanged(const QItemSelection &, const QItemSelection &)));
+
     /*
      * Pair Potentials
      */
@@ -113,6 +114,22 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
             SLOT(pairPotentialDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
     connect(ui_.PairPotentialsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(pairPotentialSelectionChanged(const QItemSelection &, const QItemSelection &)));
+
+    /*
+     * Pair Potential Overrides
+     */
+
+    // Set delegates for table columns
+    ui_.OverridesTable->setItemDelegateForColumn(
+        PairPotentialOverrideModel::ColumnData::OverrideType,
+        new ComboListDelegate(this, new ComboEnumOptionsItems<PairPotentialOverride::PairPotentialOverrideType>(
+                                        PairPotentialOverride::pairPotentialOverrideTypes())));
+    ui_.OverridesTable->setItemDelegateForColumn(
+        PairPotentialOverrideModel::ColumnData::ShortRangeForm,
+        new ComboListDelegate(this, new ComboEnumOptionsItems<ShortRangeFunctions::Form>(ShortRangeFunctions::forms())));
+    connect(&pairPotentialOverrideModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
+            this, SLOT(overrideDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
+    ui_.OverridesTable->setModel(&pairPotentialOverrideModel_);
 }
 
 /*
@@ -191,6 +208,9 @@ void ForcefieldTab::updateControls()
                                                   PairPotential::CosineShortRangeTruncation);
     ui_.CoulombTruncationCombo->setCurrentIndex(PairPotential::coulombTruncationScheme());
 
+    // Pair Potential Overrides
+    pairPotentialOverrideModel_.reset();
+
     refreshLocker.unlock();
 }
 
@@ -204,7 +224,7 @@ void ForcefieldTab::allowEditing() { setEnabled(true); }
 void ForcefieldTab::setTab(int index) { ui_.Tabs->setCurrentIndex(index); }
 
 /*
- * Signals / Slots
+ * Atom Types
  */
 
 // Signal that some AtomType parameter has been modified, so pair potentials should be regenerated
@@ -279,6 +299,10 @@ void ForcefieldTab::atomTypeDataChanged(const QModelIndex &current, const QModel
 
     dissolveWindow_->setModified();
 }
+
+/*
+ * Pair Potentials
+ */
 
 void ForcefieldTab::on_PairPotentialRangeSpin_valueChanged(double value)
 {
@@ -404,6 +428,29 @@ void ForcefieldTab::pairPotentialSelectionChanged(const QItemSelection &current,
         ->createRenderable<RenderableData1D>(pp->dUFull(), fmt::format("Force {}-{}", pp->atomTypeNameI(), pp->atomTypeNameJ()))
         ->setColour(StockColours::RedStockColour);
 }
+
+/*
+ * Pair Potential Overrides
+ */
+
+// Pair Potential Overrides
+void ForcefieldTab::on_OverrideAddButton_clicked(bool checked) {}
+
+void ForcefieldTab::on_OverrideRemoveButton_clicked(bool checked) {}
+
+void ForcefieldTab::on_OverrideDuplicateButton_clicked(bool checked) {}
+
+void ForcefieldTab::overrideDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &)
+{
+    dissolveWindow_->setModified();
+
+    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
+        updatePairPotentials();
+}
+
+/*
+ * Master Terms
+ */
 
 void ForcefieldTab::masterBondsDataChanged(const QModelIndex &, const QModelIndex &)
 {

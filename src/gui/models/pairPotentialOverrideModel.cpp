@@ -3,10 +3,8 @@
 
 #include "gui/models/pairPotentialOverrideModel.h"
 #include "base/sysFunc.h"
-#include "templates/algorithms.h"
 
-PairPotentialOverrideModel::PairPotentialOverrideModel(const std::vector<std::unique_ptr<PairPotentialOverride>> &data)
-    : data_(data)
+PairPotentialOverrideModel::PairPotentialOverrideModel(std::vector<std::unique_ptr<PairPotentialOverride>> &data) : data_(data)
 {
 }
 
@@ -23,7 +21,7 @@ int PairPotentialOverrideModel::rowCount(const QModelIndex &parent) const
 int PairPotentialOverrideModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 6;
+    return ColumnData::nColumnData;
 }
 
 const PairPotentialOverride *PairPotentialOverrideModel::rawData(const QModelIndex index) const
@@ -99,7 +97,7 @@ bool PairPotentialOverrideModel::setData(const QModelIndex &index, const QVarian
 
 Qt::ItemFlags PairPotentialOverrideModel::flags(const QModelIndex &index) const
 {
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
 }
 
 QVariant PairPotentialOverrideModel::headerData(int section, Qt::Orientation orientation, int role) const
