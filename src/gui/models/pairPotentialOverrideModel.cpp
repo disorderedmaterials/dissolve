@@ -33,8 +33,8 @@ PairPotentialOverride *PairPotentialOverrideModel::rawData(const QModelIndex ind
 
 QVariant PairPotentialOverrideModel::data(const QModelIndex &index, int role) const
 {
-    auto *pp = rawData(index);
-    if (!pp)
+    auto *ppOverride = rawData(index);
+    if (!ppOverride)
         return {};
 
     if (role == Qt::DisplayRole || role == Qt::EditRole)
@@ -42,21 +42,21 @@ QVariant PairPotentialOverrideModel::data(const QModelIndex &index, int role) co
         switch (index.column())
         {
             case (ColumnData::MatchI):
-                return QString::fromStdString(std::string(pp->matchI()));
+                return QString::fromStdString(std::string(ppOverride->matchI()));
             case (ColumnData::MatchJ):
-                return QString::fromStdString(std::string(pp->matchJ()));
+                return QString::fromStdString(std::string(ppOverride->matchJ()));
             case (ColumnData::OverrideType):
-                return QString::fromStdString(PairPotentialOverride::pairPotentialOverrideTypes().keyword(pp->type()));
+                return QString::fromStdString(PairPotentialOverride::pairPotentialOverrideTypes().keyword(ppOverride->type()));
             case (ColumnData::ShortRangeForm):
-                return QString::fromStdString(ShortRangeFunctions::forms().keyword(pp->interactionPotential().form()));
+                return QString::fromStdString(ShortRangeFunctions::forms().keyword(ppOverride->interactionPotential().form()));
             case (ColumnData::ShortRangeParameters):
-                return QString::fromStdString(pp->interactionPotential().parametersAsString());
+                return QString::fromStdString(ppOverride->interactionPotential().parametersAsString());
             default:
                 return {};
         }
     }
     else if (role == Qt::UserRole)
-        return QVariant::fromValue(pp);
+        return QVariant::fromValue(ppOverride);
 
     return {};
 }
@@ -66,24 +66,26 @@ bool PairPotentialOverrideModel::setData(const QModelIndex &index, const QVarian
     if (role != Qt::EditRole)
         return false;
 
-    auto *pair = rawData(index);
+    auto *ppOverride = rawData(index);
 
     switch (index.column())
     {
         case (ColumnData::MatchI):
-            pair->setMatchI(value.toString().toStdString());
+            ppOverride->setMatchI(value.toString().toStdString());
             break;
         case (ColumnData::MatchJ):
-            pair->setMatchJ(value.toString().toStdString());
+            ppOverride->setMatchJ(value.toString().toStdString());
             break;
         case (ColumnData::OverrideType):
-            pair->setType(PairPotentialOverride::pairPotentialOverrideTypes().enumeration(value.toString().toStdString()));
+            ppOverride->setType(
+                PairPotentialOverride::pairPotentialOverrideTypes().enumeration(value.toString().toStdString()));
             break;
         case (ColumnData::ShortRangeForm):
-            pair->interactionPotential().setForm(ShortRangeFunctions::forms().enumeration(value.toString().toStdString()));
+            ppOverride->interactionPotential().setForm(
+                ShortRangeFunctions::forms().enumeration(value.toString().toStdString()));
             break;
         case (ColumnData::ShortRangeParameters):
-            if (!pair->interactionPotential().parseParameters(value.toString().toStdString()))
+            if (!ppOverride->interactionPotential().parseParameters(value.toString().toStdString()))
                 return false;
             break;
         default:
