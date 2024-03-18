@@ -27,7 +27,7 @@ class PairPotentialOverride
 
     private:
     // AtomType names to match
-    std::string matchI_, matchJ_;
+    std::string matchI_{"*"}, matchJ_{"*"};
     // Override type
     PairPotentialOverrideType type_{PairPotentialOverrideType::Add};
     // Interaction potential
