@@ -18,10 +18,7 @@ ModifierOSitesModuleWidget::ModifierOSitesModuleWidget(QWidget *parent, Modifier
     // Set up Oxygen Sites Graph
     oSitesGraph_ = ui_.OSitesPlotWidget->dataViewer();
     modifierSitesGraph_ = ui_.ModifierPlotWidget->dataViewer();
-    mFOBondLengthGraph_ = ui_.MFOLengthPlotWidget->dataViewer();
-    mNBOBondLengthGraph_ = ui_.MNBOLengthPlotWidget->dataViewer();
-    mBOBondLengthGraph_ = ui_.MBOLengthPlotWidget->dataViewer();
-    mOtherOBondLengthGraph_ = ui_.MOtherOLengthPlotWidget->dataViewer();
+    mOBondLengthGraph_ = ui_.MOLengthPlotWidget->dataViewer();
 
     auto &oSitesView = oSitesGraph_->view();
     oSitesView.setViewType(View::FlatXYView);
@@ -41,41 +38,14 @@ ModifierOSitesModuleWidget::ModifierOSitesModuleWidget(QWidget *parent, Modifier
     modifierSitesView.axes().setMax(1, 1.0);
     modifierSitesView.setAutoFollowType(View::AllAutoFollow);
 
-    auto &mFOLengthView = mFOBondLengthGraph_->view();
-    mFOLengthView.setViewType(View::FlatXYView);
-    mFOLengthView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-    mFOLengthView.axes().setMax(0, 10.0);
-    mFOLengthView.axes().setTitle(1, "Normalised Frequency");
-    mFOLengthView.axes().setMin(1, 0.0);
-    mFOLengthView.axes().setMax(1, 1.0);
-    mFOLengthView.setAutoFollowType(View::AllAutoFollow);
-
-    auto &mNBOLengthView = mNBOBondLengthGraph_->view();
-    mNBOLengthView.setViewType(View::FlatXYView);
-    mNBOLengthView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-    mNBOLengthView.axes().setMax(0, 10.0);
-    mNBOLengthView.axes().setTitle(1, "Normalised Frequency");
-    mNBOLengthView.axes().setMin(1, 0.0);
-    mNBOLengthView.axes().setMax(1, 1.0);
-    mNBOLengthView.setAutoFollowType(View::AllAutoFollow);
-
-    auto &mBOLengthView = mBOBondLengthGraph_->view();
-    mBOLengthView.setViewType(View::FlatXYView);
-    mBOLengthView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-    mBOLengthView.axes().setMax(0, 10.0);
-    mBOLengthView.axes().setTitle(1, "Normalised Frequency");
-    mBOLengthView.axes().setMin(1, 0.0);
-    mBOLengthView.axes().setMax(1, 1.0);
-    mBOLengthView.setAutoFollowType(View::AllAutoFollow);
-
-    auto &mOtherOLengthView = mOtherOBondLengthGraph_->view();
-    mOtherOLengthView.setViewType(View::FlatXYView);
-    mOtherOLengthView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-    mOtherOLengthView.axes().setMax(0, 10.0);
-    mOtherOLengthView.axes().setTitle(1, "Normalised Frequency");
-    mOtherOLengthView.axes().setMin(1, 0.0);
-    mOtherOLengthView.axes().setMax(1, 1.0);
-    mOtherOLengthView.setAutoFollowType(View::AllAutoFollow);
+    auto &mOLengthView = mOBondLengthGraph_->view();
+    mOLengthView.setViewType(View::FlatXYView);
+    mOLengthView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+    mOLengthView.axes().setMax(0, 10.0);
+    mOLengthView.axes().setTitle(1, "Normalised Frequency");
+    mOLengthView.axes().setMin(1, 0.0);
+    mOLengthView.axes().setMax(1, 1.0);
+    mOLengthView.setAutoFollowType(View::AllAutoFollow);
 
     refreshing_ = false;
 }
@@ -87,10 +57,7 @@ void ModifierOSitesModuleWidget::updateControls(const Flags<ModuleWidget::Update
     {
         oSitesGraph_->clearRenderables();
         modifierSitesGraph_->clearRenderables();
-        mFOBondLengthGraph_->clearRenderables();
-        mNBOBondLengthGraph_->clearRenderables();
-        mBOBondLengthGraph_->clearRenderables();
-        mOtherOBondLengthGraph_->clearRenderables();
+        mOBondLengthGraph_->clearRenderables();
     }
 
     if (oSitesGraph_->renderables().empty())
@@ -99,26 +66,29 @@ void ModifierOSitesModuleWidget::updateControls(const Flags<ModuleWidget::Update
     if (modifierSitesGraph_->renderables().empty())
         modifierSitesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//TotalOSites", module_->name()),
                                                                 "TotalO-Sites");
-    if (mFOBondLengthGraph_->renderables().empty())
-        mFOBondLengthGraph_->createRenderable<RenderableData1D>(fmt::format("{}//MFOBondLength", module_->name()),
-                                                                "MFO-Bond-Length");
-    if (mNBOBondLengthGraph_->renderables().empty())
-        mNBOBondLengthGraph_->createRenderable<RenderableData1D>(fmt::format("{}//MNBOBondLength", module_->name()),
-                                                                 "MNBO-Bond-Length");
-    if (mBOBondLengthGraph_->renderables().empty())
-        mBOBondLengthGraph_->createRenderable<RenderableData1D>(fmt::format("{}//MBOBondLength", module_->name()),
-                                                                "MBO-Bond-Length");
-    if (mOtherOBondLengthGraph_->renderables().empty())
-        mOtherOBondLengthGraph_->createRenderable<RenderableData1D>(fmt::format("{}//MOtherOBondLength", module_->name()),
-                                                                    "MOtherO-Bond-Length");
+    auto freeOxygens = mOBondLengthGraph_->createRenderable<RenderableData1D>(fmt::format("{}//MFOBondLength", module_->name()),
+                                                                              "MFO-Bond-Length");
+    auto nonBridgingOxygens = mOBondLengthGraph_->createRenderable<RenderableData1D>(
+        fmt::format("{}//MNBOBondLength", module_->name()), "MNBO-Bond-Length");
+    auto bridgingOxygens = mOBondLengthGraph_->createRenderable<RenderableData1D>(
+        fmt::format("{}//MBOBondLength", module_->name()), "MBO-Bond-Length");
+    mOBondLengthGraph_->createRenderable<RenderableData1D>(fmt::format("{}//MOtherOBondLength", module_->name()),
+                                                           "MOtherO-Bond-Length");
+
+    freeOxygens->setColour(StockColours::GreenStockColour);
+    nonBridgingOxygens->setColour(StockColours::RedStockColour);
+    bridgingOxygens->setColour(StockColours::BlueStockColour);
 
     // Validate renderables if they need it
     oSitesGraph_->validateRenderables(dissolve_.processingModuleData());
     modifierSitesGraph_->validateRenderables(dissolve_.processingModuleData());
+    mOBondLengthGraph_->validateRenderables(dissolve_.processingModuleData());
 
     ui_.OSitesPlotWidget->updateToolbar();
     ui_.ModifierPlotWidget->updateToolbar();
+    ui_.MOLengthPlotWidget->updateToolbar();
 
     oSitesGraph_->postRedisplay();
     modifierSitesGraph_->postRedisplay();
+    mOBondLengthGraph_->postRedisplay();
 }
