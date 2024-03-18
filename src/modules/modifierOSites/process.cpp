@@ -41,37 +41,40 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
         mfilter.filterBySiteProximity(allOxygenSites.sites(), modifierDistanceRange_, 0, 99);
 
     // Retrieve storage for the Mofifier to Oxygen Type Sites histogram
-    auto [oxygenSitesHistogram, status] =
+    auto [oxygenSitesHistogram, oSitesHistStatus] =
         processingData.realiseIf<IntegerHistogram1D>("OTypeSitesHistogram", name(), GenericItem::InRestartFileFlag);
-    if (status == GenericItem::ItemStatus::Created)
+    if (oSitesHistStatus == GenericItem::ItemStatus::Created)
         oxygenSitesHistogram.initialise();
 
     // Retrieve storage for the Total O Sites histogram
-    auto [modifierHistogram, status2] =
+    auto [modifierHistogram, modifierOHistStatus] =
         processingData.realiseIf<IntegerHistogram1D>("TotalOHistogram", name(), GenericItem::InRestartFileFlag);
-    if (status2 == GenericItem::ItemStatus::Created)
+    if (modifierOHistStatus == GenericItem::ItemStatus::Created)
         modifierHistogram.initialise();
 
     // Calculate rMFO
-    auto [histMFO, status3] = processingData.realiseIf<Histogram1D>("Histo-MFO", name(), GenericItem::InRestartFileFlag);
-    if (status3 == GenericItem::ItemStatus::Created)
+    auto [histMFO, histMFOStatus] = processingData.realiseIf<Histogram1D>("Histo-MFO", name(), GenericItem::InRestartFileFlag);
+    if (histMFOStatus == GenericItem::ItemStatus::Created)
         histMFO.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
 
     // Calculate rMNBO
-    auto [histMNBO, status4] = processingData.realiseIf<Histogram1D>("Histo-MNBO", name(), GenericItem::InRestartFileFlag);
-    if (status4 == GenericItem::ItemStatus::Created)
+    auto [histMNBO, histMNBOStatus] =
+        processingData.realiseIf<Histogram1D>("Histo-MNBO", name(), GenericItem::InRestartFileFlag);
+    if (histMNBOStatus == GenericItem::ItemStatus::Created)
         histMNBO.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
 
     // Calculate rMBO
-    auto [histMBO, status5] = processingData.realiseIf<Histogram1D>("Histo-MBO", name(), GenericItem::InRestartFileFlag);
-    if (status5 == GenericItem::ItemStatus::Created)
+    auto [histMBO, histMBOStatus] = processingData.realiseIf<Histogram1D>("Histo-MBO", name(), GenericItem::InRestartFileFlag);
+    if (histMBOStatus == GenericItem::ItemStatus::Created)
         histMBO.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
 
     // Calculate rMOtherO
-    auto [histMOtherO, status6] =
+    auto [histMOtherO, histMOtherOStatus] =
         processingData.realiseIf<Histogram1D>("Histo-MOtherO", name(), GenericItem::InRestartFileFlag);
-    if (status6 == GenericItem::ItemStatus::Created)
+    if (histMOtherOStatus == GenericItem::ItemStatus::Created)
         histMOtherO.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
+
+    std::vector<std::reference_wrapper<Histogram1D>> histogramsMO = {histMFO, histMNBO, histMBO, histMOtherO};
 
     // Clear the temporary bins
     modifierHistogram.zeroBins();
@@ -91,20 +94,9 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
         {
             oxygenSitesHistogram.bin(neighbourMap[oSite].size());
 
-            switch (neighbourMap[oSite].size())
-            {
-                case 0:
-                    histMFO.bin(targetConfiguration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
-                    break;
-                case 1:
-                    histMNBO.bin(targetConfiguration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
-                    break;
-                case 2:
-                    histMBO.bin(targetConfiguration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
-                    break;
-                default:
-                    histMOtherO.bin(targetConfiguration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
-            }
+            int size = neighbourMap[oSite].size();
+            histogramsMO[std::min(size, 3)].get().bin(
+                targetConfiguration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
         }
     }
 
