@@ -39,10 +39,12 @@ TEST_F(ModifierOSitesModuleTest, TotalOSites)
         {"dissolve/input/modifierOSites-FObond-lengths-test.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-8));
     EXPECT_TRUE(systemTest.checkData1D(
-        "M//MNOBondLength",
-        {"dissolve/input/modifierOSites-NBObond-lengths-test.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-8));
+        "M//MNBOBondLength",
+        {"dissolve/input/modifierOSites-NBObond-lengths-test.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        1.0e-8));
     EXPECT_TRUE(systemTest.checkData1D(
         "M//MBOBondLength",
-        {"dissolve/input/modifierOSites-BObond-lengths-test.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-8));
+        {"dissolve/input/modifierOSites-BObond-lengths-test.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        1.0e-8));
 }
 } // namespace UnitTest
