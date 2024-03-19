@@ -25,6 +25,18 @@ SiteRDFModuleWidget::SiteRDFModuleWidget(QWidget *parent, SiteRDFModule *module,
     view.axes().setMax(1, 1.0);
     view.setAutoFollowType(View::AllAutoFollow);
 
+    // Set up RDF graph
+    runningCNGraph_ = ui_.RunningCNPlotWidget->dataViewer();
+
+    auto &runningCNNview = runningCNGraph_->view();
+    runningCNNview.setViewType(View::FlatXYView);
+    runningCNNview.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+    runningCNNview.axes().setMax(0, 10.0);
+    runningCNNview.axes().setTitle(1, "Normalised Frequency");
+    runningCNNview.axes().setMin(1, 0.0);
+    runningCNNview.axes().setMax(1, 1.0);
+    runningCNNview.setAutoFollowType(View::AllAutoFollow);
+
     refreshing_ = false;
 }
 
@@ -51,17 +63,18 @@ void SiteRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
     {
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
-            rdfGraph_
-                ->createRenderable<RenderableData1D>(fmt::format("{}//RDF", module_->name()),
-                                                     fmt::format("RDF//{}", cfg->niceName()), cfg->niceName())
-                ->setColour(StockColours::BlueStockColour);
-
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//RunningCN", module_->name()), "Running CN");
+            rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//RDF", module_->name()),
+                                                          fmt::format("RDF//{}", cfg->niceName()), cfg->niceName());
     }
+    if (runningCNGraph_->renderables().empty())
+        runningCNGraph_->createRenderable<RenderableData1D>(fmt::format("{}//RunningCN", module_->name()), "Running CN");
 
     // Validate renderables if they need it
     rdfGraph_->validateRenderables(dissolve_.processingModuleData());
+    runningCNGraph_->validateRenderables(dissolve_.processingModuleData());
 
     ui_.RDFPlotWidget->updateToolbar();
+    ui_.RunningCNPlotWidget->updateToolbar();
     rdfGraph_->postRedisplay();
+    runningCNGraph_->postRedisplay();
 }

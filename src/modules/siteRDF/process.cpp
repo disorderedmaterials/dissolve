@@ -101,17 +101,17 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         }
     // Setup RunningCN Histogram
     auto [runningCNHist, runCNstatus] =
-        processingData.realiseIf<Histogram1D>("RunningCN", name(), GenericItem::InRestartFileFlag);
+        processingData.realiseIf<Histogram1D>("RunningCNHist", name(), GenericItem::InRestartFileFlag);
     if (runCNstatus == GenericItem::ItemStatus::Created)
         runningCNHist.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
     runningCNHist.zeroBins();
 
     // Zip over all distanceRange and calculate running CN
-    int countCN{};
+    double countCN{};
 
     for (const auto &&[x, currentCN] : zip(runningCNHist.binCentres(), histAB.data().values()))
     {
-        countCN = countCN + currentCN;
+        countCN += currentCN;
         runningCNHist.bin(countCN);
     }
 
