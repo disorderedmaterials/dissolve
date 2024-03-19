@@ -35,7 +35,6 @@ class ModifierOSitesModuleWidget : public ModuleWidget
     DataViewer *modifierSitesGraph_;
     DataViewer *mOBondLengthGraph_;
 
-
     public:
     // Update controls within widget
     void updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags = {}) override;
