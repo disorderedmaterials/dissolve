@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Change the version of the source code to the supplied value
 
@@ -13,11 +13,7 @@ DaySuffix() {
 }
 
 usage() {
-  echo "Usage:  $0 <TARGET> [-c] [-p] [-m] [-i] [-r] [-d] [-s X.Y.Z]"
-  echo "        -M	Increase major version number (X.0.0)"
-  echo "        -m	Increase minor version number (0.X.0)"
-  echo "        -p	Increase patch version number (0.0.X)"
-  echo "        -s	Set version explicitly to X.Y.Z"
+  echo "Usage:  $0 <TARGET>"
   echo ""
   echo "TARGET is one of:     code - change version numbering in code, and installer and packaging scripts"
   echo "                   release - change release version value on web and date in README.md"
@@ -42,49 +38,16 @@ then
   exit 1
 fi
 
-# Get current version number from correct target
-if [ "$TYPE" == "code" ]
-then
-  CURRENT_VERSION=$(grep '#define DISSOLVEVERSION' src/main/version.cpp | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g')
-elif [ "$TYPE" == "release" ]
-then
-  CURRENT_VERSION=$(grep 'releaseVersion' web/main.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g')
-else
-  CURRENT_VERSION=$(grep 'devVersion' web/main.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g')
-fi
-PARTS=($(echo $CURRENT_VERSION | tr "." " "))
+# Get next version number from git-cliff
+PARTS=($(git cliff --bumped-version | tr "." " "))
 MAJOR=${PARTS[0]}
 MINOR=${PARTS[1]}
 PATCH=${PARTS[2]}
 CHECK="true"
-echo "Current major version (${TYPE}) is : ${MAJOR}"
-echo "Current minor version (${TYPE}) is : ${MINOR}"
-echo "Current patch version (${TYPE}) is : ${PATCH}"
 
 while getopts ":mMps:" opt
 do
   case $opt in
-    M) echo "Major version number will be increased from $MAJOR to $((MAJOR+1))"
-       MAJOR=$((MAJOR+1))
-       MINOR=0
-       PATCH=0
-       CHECK="false"
-       ;;
-    m) echo "Minor version number will be increased from $MINOR to $((MINOR+1))"
-       MINOR=$((MINOR+1))
-       PATCH=0
-       CHECK="false"
-       ;;
-    p) echo "Minor version number will be increased from $PATCH to $((PATCH+1))"
-       PATCH=$((PATCH+1))
-       CHECK="false"
-       ;;
-    s) MAJOR=$(echo $OPTARG | cut -f1 -d.)
-       MINOR=$(echo $OPTARG | cut -f2 -d.)
-       PATCH=$(echo $OPTARG | cut -f3 -d.)
-       CHECK="false"
-       echo "Version will be set explicitly to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
-       ;;
    \?) usage
        exit 1
        ;;
@@ -94,6 +57,12 @@ do
        ;;
   esac
 done
+
+####################
+# Update ChangeLog #
+####################
+
+git cliff --bump v1.3.3..HEAD > ChangeLog.md
 
 
 #########################################
