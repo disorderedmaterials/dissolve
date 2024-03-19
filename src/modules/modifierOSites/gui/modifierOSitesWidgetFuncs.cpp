@@ -66,18 +66,21 @@ void ModifierOSitesModuleWidget::updateControls(const Flags<ModuleWidget::Update
     if (modifierSitesGraph_->renderables().empty())
         modifierSitesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//TotalOSites", module_->name()),
                                                                 "TotalO-Sites");
-    auto freeOxygens = mOBondLengthGraph_->createRenderable<RenderableData1D>(fmt::format("{}//MFOBondLength", module_->name()),
-                                                                              "MFO-Bond-Length");
-    auto nonBridgingOxygens = mOBondLengthGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//MNBOBondLength", module_->name()), "MNBO-Bond-Length");
-    auto bridgingOxygens = mOBondLengthGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//MBOBondLength", module_->name()), "MBO-Bond-Length");
-    mOBondLengthGraph_->createRenderable<RenderableData1D>(fmt::format("{}//MOtherOBondLength", module_->name()),
-                                                           "MOtherO-Bond-Length");
-
-    freeOxygens->setColour(StockColours::GreenStockColour);
-    nonBridgingOxygens->setColour(StockColours::RedStockColour);
-    bridgingOxygens->setColour(StockColours::BlueStockColour);
+    if (mOBondLengthGraph_->renderables().empty())
+    {
+        mOBondLengthGraph_
+            ->createRenderable<RenderableData1D>(fmt::format("{}//MFOBondLength", module_->name()), "MFO-Bond-Length")
+            ->setColour(StockColours::GreenStockColour);
+        mOBondLengthGraph_
+            ->createRenderable<RenderableData1D>(fmt::format("{}//MNBOBondLength", module_->name()), "MNBO-Bond-Length")
+            ->setColour(StockColours::RedStockColour);
+        ;
+        mOBondLengthGraph_
+            ->createRenderable<RenderableData1D>(fmt::format("{}//MBOBondLength", module_->name()), "MBO-Bond-Length")
+            ->setColour(StockColours::BlueStockColour);
+        mOBondLengthGraph_->createRenderable<RenderableData1D>(fmt::format("{}//MOtherOBondLength", module_->name()),
+                                                               "MOtherO-Bond-Length");
+    }
 
     // Validate renderables if they need it
     oSitesGraph_->validateRenderables(dissolve_.processingModuleData());
