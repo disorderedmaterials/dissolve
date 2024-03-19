@@ -99,15 +99,31 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
                 }
             }
         }
-    auto &sumRunNHist = processingData.realise<Histogram1D>("RunningCN", name(), GenericItem::InRestartFileFlag);
-    auto &sumRunN = processingData.realise<SampledDouble>(fmt::format("RunningCNCount//{}", distanceRange_), name(),
-                                                          GenericItem::InRestartFileFlag);
-    // Loop over all distanceRange and calculate running CN
-    for (double x; distanceRange_[2]; x += distanceRange_[3])
+    // Setup RunningCN Histogram
+    auto [runningCNHist, runCNstatus] =
+        processingData.realiseIf<Histogram1D>("RunningCN", name(), GenericItem::InRestartFileFlag);
+    if (runCNstatus == GenericItem::ItemStatus::Created)
+        runningCNHist.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
+    runningCNHist.zeroBins();
+
+    // Zip over all distanceRange and calculate running CN
+    int countCN{};
+
+    for (const auto &&[x, currentCN] : zip(runningCNHist.binCentres(), histAB.data().values()))
     {
-        sumRunN += Integrator::sum(dataCN, x, x + distanceRange_[3]);
-        sumRunNHist.bin(sumRunN);
+        countCN = countCN + currentCN;
+        runningCNHist.bin(countCN);
     }
+
+    // Accumulate runningCNHist
+    runningCNHist.accumulate();
+    // runningCN
+    auto &dataRunningCN = processingData.realise<Data1D>("RunningCNHistogramNorm", name(), GenericItem::InRestartFileFlag);
+    dataRunningCN = runningCNHist.accumulatedData();
+    // Normalise
+    DataNormaliser1D normaliserRunningCN(dataCN);
+    // Normalise by A site population
+    normaliserRunningCN.normaliseDivide(double(a.sites().size()));
 
     // Save RDF data?
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataRDF, exportFileAndFormat_, moduleContext.processPool()))
