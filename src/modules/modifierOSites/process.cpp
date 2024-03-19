@@ -55,18 +55,18 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     // Calculate rMFO
     auto [histMFO, histMFOStatus] = processingData.realiseIf<Histogram1D>("Histo-MFO", name(), GenericItem::InRestartFileFlag);
     if (histMFOStatus == GenericItem::ItemStatus::Created)
-        histMFO.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
+        histMFO.initialise(distanceRange_.minimum(), modifierDistanceRange_.maximum(), 0.05);
 
     // Calculate rMNBO
     auto [histMNBO, histMNBOStatus] =
         processingData.realiseIf<Histogram1D>("Histo-MNBO", name(), GenericItem::InRestartFileFlag);
     if (histMNBOStatus == GenericItem::ItemStatus::Created)
-        histMNBO.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
+        histMNBO.initialise(distanceRange_.minimum(), modifierDistanceRange_.maximum(), 0.05);
 
     // Calculate rMBO
     auto [histMBO, histMBOStatus] = processingData.realiseIf<Histogram1D>("Histo-MBO", name(), GenericItem::InRestartFileFlag);
     if (histMBOStatus == GenericItem::ItemStatus::Created)
-        histMBO.initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
+        histMBO.initialise(distanceRange_.minimum(), modifierDistanceRange_.maximum(), 0.05);
 
     // Calculate rMOtherO
     auto [histMOtherO, histMOtherOStatus] =
