@@ -55,6 +55,8 @@ void SiteRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
                 ->createRenderable<RenderableData1D>(fmt::format("{}//RDF", module_->name()),
                                                      fmt::format("RDF//{}", cfg->niceName()), cfg->niceName())
                 ->setColour(StockColours::BlueStockColour);
+
+        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//RunningCN", module_->name()), "Running CN");
     }
 
     // Validate renderables if they need it

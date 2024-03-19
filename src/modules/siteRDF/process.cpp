@@ -115,15 +115,18 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         runningCNHist.bin(countCN);
     }
 
-    // Accumulate runningCNHist
+    // Accumulate histogram averages
     runningCNHist.accumulate();
-    // runningCN
-    auto &dataRunningCN = processingData.realise<Data1D>("RunningCNHistogramNorm", name(), GenericItem::InRestartFileFlag);
-    dataRunningCN = runningCNHist.accumulatedData();
-    // Normalise
-    DataNormaliser1D normaliserRunningCN(dataCN);
+
+    // Averaged values for RunningCN
+    Data1D accumulatedRunningCNData = runningCNHist.accumulatedData();
+    DataNormaliser1D normaliserRunningCN(accumulatedRunningCNData);
+
     // Normalise by A site population
     normaliserRunningCN.normaliseDivide(double(a.sites().size()));
+
+    // Create the display data
+    processingData.realise<Data1D>("RunningCN", name(), GenericItem::InRestartFileFlag) = accumulatedRunningCNData;
 
     // Save RDF data?
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataRDF, exportFileAndFormat_, moduleContext.processPool()))
