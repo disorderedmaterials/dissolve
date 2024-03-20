@@ -112,6 +112,6 @@ Layer  'Processing'
     NetworkFormer  'Si'  'X'
     SiteA  'P'  'Z'
     DistanceRange  0.000000e+00  2.100000e+00
-    ModifierDistanceRange  0.000000e+00  2.100000e+00
+    ModifierDistanceRange  0.000000e+00  3.100000e+00
   EndModule
 EndLayer
