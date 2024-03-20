@@ -7,6 +7,7 @@
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "math/integrator.h"
+#include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
@@ -106,27 +107,33 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         runningCNHist.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
     runningCNHist.zeroBins();
 
+    auto &dataRunningCN = processingData.realise<SampledData1D>("RunningCNTest", name(), GenericItem::InRestartFileFlag);
+    std::vector<double> runningCN;
+
     // Zip over all distanceRange and calculate running CN
     double countCN{};
-
-    for (const auto &&[x, currentCN] : zip(runningCNHist.binCentres(), histAB.data().values()))
+    for (const auto &&[x, currentCN] : zip(histAB.binCentres(), histAB.data().values()))
     {
-        countCN += currentCN;
-        runningCNHist.bin(countCN);
+        runningCN[x] += currentCN;
     }
 
-    // Accumulate histogram averages
-    runningCNHist.accumulate();
+    // Add data into SampledData1D
+    dataRunningCN += runningCN;
 
-    // Averaged values for RunningCN
-    Data1D accumulatedRunningCNData = runningCNHist.accumulatedData();
-    DataNormaliser1D normaliserRunningCN(accumulatedRunningCNData);
+    // Accumulate instantaneous binValues
+    auto instBinValues = histAB.data();
+
+    // Normalise Data
+    DataNormaliser1D normaliserInstBinValues(instBinValues);
 
     // Normalise by A site population
-    normaliserRunningCN.normaliseDivide(double(a.sites().size()));
+    normaliserInstBinValues.normaliseDivide(double(a.sites().size()));
+
+    // Add normalised data
+    dataRunningCN += instBinValues;
 
     // Create the display data
-    processingData.realise<Data1D>("RunningCN", name(), GenericItem::InRestartFileFlag) = accumulatedRunningCNData;
+    processingData.realise<Data1D>("RunningCN", name(), GenericItem::InRestartFileFlag) = dataRunningCN;
 
     // Save RDF data?
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataRDF, exportFileAndFormat_, moduleContext.processPool()))
