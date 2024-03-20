@@ -51,17 +51,17 @@ ModifierOSitesModule::ModifierOSitesModule() : Module(ModuleTypes::ModifierOSite
         exportFileAndFormatTotalOSites_, "EndExportOxygenTypes");
     keywords_.add<FileAndFormatKeyword>(
         "ExportFOLength", "File format and file name under which to save calculated free oxygens to modifier atom, bond length",
-        exportFileAndFormatFOLength_, "EndExportExportFOLength");
+        exportFileAndFormatFOLength_, "EndExportFOLength");
     keywords_.add<FileAndFormatKeyword>(
-        "ExporNBOLength",
+        "ExportNBOLength",
         "File format and file name under which to save calculated non-bridging oxygens to modifier atom, bond length",
-        exportFileAndFormatNBOLength_, "EndExportExportNBOLength");
+        exportFileAndFormatNBOLength_, "EndExportNBOLength");
     keywords_.add<FileAndFormatKeyword>(
         "ExportBOLength",
         "File format and file name under which to save calculated bridging oxygens to modifier atom, bond length",
-        exportFileAndFormatBOLength_, "EndExportExportBOLength");
+        exportFileAndFormatBOLength_, "EndExportBOLength");
     keywords_.add<FileAndFormatKeyword>(
         "ExportOtherOLength",
         "File format and file name under which to save calculated other oxygens to modifier atom, bond length",
-        exportFileAndFormatOtherOLength_, "EndExportExportOtherOLength");
+        exportFileAndFormatOtherOLength_, "EndExportOtherOLength");
 }
