@@ -30,7 +30,7 @@ class SiteRDFModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::SiteRDFModuleWidget ui_;
     // DataViewer contained within this widget
-    DataViewer *rdfGraph_,*runningCNGraph_;
+    DataViewer *rdfGraph_, *runningCNGraph_;
 
     public:
     // Update controls within widget
