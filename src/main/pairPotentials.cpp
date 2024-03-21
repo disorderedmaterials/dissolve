@@ -113,29 +113,69 @@ bool Dissolve::regeneratePairPotentials()
     potentialMap_.clear();
     pairPotentials_.clear();
 
-    // Create a pair potential for each unique atom type pair
-    auto success =
-        for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
-                            [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool>
-                            {
-                                Messenger::printVerbose("Adding new PairPotential for interaction between '{}' and '{}'...\n",
-                                                        at1->name(), at2->name());
-                                auto *pot = addPairPotential(at1, at2);
+    // First, tabulate the pair potentials defined by the parameters and form of the associated atom types
+    if (!for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
+                             [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool>
+                             {
+                                 Messenger::printVerbose("Adding new PairPotential for interaction between '{}' and '{}'...\n",
+                                                         at1->name(), at2->name());
+                                 auto *pot = addPairPotential(at1, at2);
 
-                                // Tabulate the basic potential
-                                if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_))
-                                    return false;
+                                 // Tabulate the basic potential
+                                 if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_))
+                                     return false;
 
-                                // Retrieve additional potential from the processing module data, if present
-                                auto itemName =
-                                    fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
-                                if (processingModuleData_.contains(itemName, "Dissolve"))
-                                    pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve"));
+                                 // Retrieve additional potential from the processing module data, if present
+                                 auto itemName =
+                                     fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
+                                 if (processingModuleData_.contains(itemName, "Dissolve"))
+                                     pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve"));
 
-                                return EarlyReturn<bool>::Continue;
-                            });
-    if (!success.value_or(true))
+                                 return EarlyReturn<bool>::Continue;
+                             })
+             .value_or(true))
         return false;
+
+    // Secondly, apply any overrides
+    for (auto &override : pairPotentialOverrides_)
+    {
+//        Messenger::print("Pair potential override between '{}' and '{}' ({}, {}, '{}') ...\n", override->matchI(),
+//                         override->matchJ(), PairPotentialOverride::pairPotentialOverrideTypes().keyword(override->type()),
+//                         ShortRangeFunctions::forms().keyword(override->interactionPotential().form()),
+//                         override->interactionPotential().parametersAsString());
+//
+//        // Generate the potential
+//        auto overridePotential = XXX;
+//
+//        auto count = 0;
+//        for (auto &pot : pairPotentials_)
+//        {
+//            // Is this override a match for the atom types in the potential?
+//            if ((DissolveSys::sameWildString(override->matchI(), pot->atomTypeNameI()) &&
+//                 DissolveSys::sameWildString(override->matchJ(), pot->atomTypeNameJ())) ||
+//                (DissolveSys::sameWildString(override->matchJ(), pot->atomTypeNameI()) &&
+//                 DissolveSys::sameWildString(override->matchI(), pot->atomTypeNameJ())))
+//            {
+//                Messenger::print(" ... matched and was applied to defined potential {}-{}\n", pot->atomTypeNameI(),
+//                                 pot->atomTypeNameJ());
+//
+//                // Apply the potential
+//                XXX;
+//
+//                ++count;
+//            }
+//        }
+//        Messenger::print(" ... matched {} potential(s) in total.\n", count);
+    }
+
+    // Lastly, set any additional potential
+    for (auto &pot : pairPotentials_)
+    {
+        // Check processing module data for a named additional potential
+        auto addPotName = fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
+        if (processingModuleData_.contains(addPotName, "Dissolve"))
+            pot->setUAdditional(processingModuleData_.retrieve<Data1D>(addPotName, "Dissolve"));
+    }
 
     // Update the potential map
     return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
