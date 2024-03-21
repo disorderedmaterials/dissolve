@@ -100,14 +100,9 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
                 }
             }
         }
-    // Setup RunningCN Histogram
-    auto [runningCNHist, runCNstatus] =
-        processingData.realiseIf<Histogram1D>("RunningCNHist", name(), GenericItem::InRestartFileFlag);
-    if (runCNstatus == GenericItem::ItemStatus::Created)
-        runningCNHist.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
-    runningCNHist.zeroBins();
 
     auto &dataRunningCN = processingData.realise<SampledData1D>("RunningCNTest", name(), GenericItem::InRestartFileFlag);
+    dataRunningCN.initialise(distanceRange_.x);
     std::vector<double> runningCN;
 
     // Zip over all distanceRange and calculate running CN
