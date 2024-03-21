@@ -168,6 +168,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     registerDeserialiser<NeutronWeights>(simpleDeserialiseCore<NeutronWeights>);
     registerDeserialiser<PartialSet>(simpleDeserialiseCore<PartialSet>);
     registerDeserialiser<PartialSetAccumulator>(simpleDeserialise<PartialSetAccumulator>);
+    registerDeserialiser<SampledData1D>(simpleDeserialise<SampledData1D>);
     registerDeserialiser<SampledDouble>(simpleDeserialise<SampledDouble>);
     registerDeserialiser<SampledVector>(simpleDeserialise<SampledVector>);
     registerDeserialiser<Vec3<int>>(

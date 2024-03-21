@@ -102,18 +102,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         }
 
     auto &dataRunningCN = processingData.realise<SampledData1D>("RunningCNTest", name(), GenericItem::InRestartFileFlag);
-    dataRunningCN.initialise(distanceRange_.x);
     std::vector<double> runningCN;
-
-    // Zip over all distanceRange and calculate running CN
-    double countCN{};
-    for (const auto &&[x, currentCN] : zip(histAB.binCentres(), histAB.data().values()))
-    {
-        runningCN[x] += currentCN;
-    }
-
-    // Add data into SampledData1D
-    dataRunningCN += runningCN;
 
     // Accumulate instantaneous binValues
     auto instBinValues = histAB.data();
@@ -124,11 +113,19 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     // Normalise by A site population
     normaliserInstBinValues.normaliseDivide(double(a.sites().size()));
 
+    auto sum = 0.0;
+    std::transform(instBinValues.values().begin(), instBinValues.values().end(), instBinValues.values().begin(),
+                   [&](const auto &currentBin)
+                   {
+                       sum += currentBin;
+                       return sum;
+                   });
+
     // Add normalised data
     dataRunningCN += instBinValues;
 
     // Create the display data
-    processingData.realise<Data1D>("RunningCN", name(), GenericItem::InRestartFileFlag) = dataRunningCN;
+    processingData.realise<SampledData1D>("RunningCN", name(), GenericItem::InRestartFileFlag) = dataRunningCN;
 
     // Save RDF data?
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataRDF, exportFileAndFormat_, moduleContext.processPool()))
