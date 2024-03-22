@@ -159,6 +159,33 @@ To https://www.github.com/YOUR_GITHUB_USER_NAME/dissolve.git
 
 At this stage, you can create a pull request to ask for those changes to be copied from your repository and merged into the main Dissolve repository. The changes you've made will be reviewed by the lead author(s), and may be immediately accepted, commented on, or more changes / corrections may be requested.
 
+## Pull Request Conventional Commits
+
+The title of each pull request needs to begin with a tag describing the nature of the commit.  These tags, as part of the [Conventional Commits](https://www.conventionalcommits.org/) framework, enable easier change management.  A GitHub action warns when the title of the pull request does not meet the requirements.
+
+The tags that we recognise are:
+
+feat
+: New features that are use visible
+fix
+: Corrections for errors in the code
+docs
+: Changes and corrections to the documentation
+perf
+: Improvements in the performance
+refactor
+: Changes to the code that are not intended to change any behaviour
+style
+test
+: Updates to the testing framework
+chore
+: Commits that should have no visible impact to the user
+revert
+: Changes that remove other changes
+build
+: Modifications of the build system used to compile and package Dissolve
+
+
 ## Collaborators
 
 If you wish to become an official collaborator on Dissolve and want direct access to the main repository, e-mail the lead author [Tristan Youngs](mailto:tristan.youngs@stfc.ac.uk) to discuss.
