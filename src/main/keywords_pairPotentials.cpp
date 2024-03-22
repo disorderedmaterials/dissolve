@@ -174,7 +174,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
                 break;
             case (PairPotentialsBlock::ShortRangeTruncationWidthKeyword):
-                PairPotential::setShortRangeTruncationWidth(parser.argd(1));
+                Messenger::warn("The 'ShortRangeTruncationWidth' keyword will be deprecated in a future version.\n");
                 break;
             default:
                 Messenger::error("{} block keyword '{}' not accounted for.\n",

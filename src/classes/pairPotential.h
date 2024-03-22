@@ -29,9 +29,8 @@ class PairPotential
     // Short-Range Truncation Scheme enum
     enum ShortRangeTruncationScheme
     {
-        NoShortRangeTruncation,      /* No truncation scheme */
-        ShiftedShortRangeTruncation, /* Shifted and truncated */
-        CosineShortRangeTruncation   /* Cosine-multiplied truncation */
+        NoShortRangeTruncation,     /* No truncation scheme */
+        ShiftedShortRangeTruncation /* Shifted and truncated */
     };
     // Return enum options for ShortRangeTruncationScheme
     static EnumOptions<PairPotential::ShortRangeTruncationScheme> shortRangeTruncationSchemes();
@@ -42,8 +41,6 @@ class PairPotential
     private:
     // Truncation scheme to apply to short-range part of potential
     static ShortRangeTruncationScheme shortRangeTruncationScheme_;
-    // Width of short-range potential over which to truncate (if scheme = Cosine)
-    static double shortRangeTruncationWidth_;
     // Short-range energy at cutoff distance (used by truncation scheme)
     double shortRangeEnergyAtCutoff_{0.0};
     // Short-range force at cutoff distance (used by truncation scheme)
@@ -62,10 +59,6 @@ class PairPotential
     static void setShortRangeTruncationScheme(ShortRangeTruncationScheme scheme);
     // Return short-ranged truncation scheme
     static ShortRangeTruncationScheme shortRangeTruncationScheme();
-    // Set width of short-range potential over which to truncate (if scheme = Cosine)
-    static void setShortRangeTruncationWidth(double width);
-    // Return width of short-range potential over which to truncate (if scheme = Cosine)
-    static double shortRangeTruncationWidth();
     // Set whether atom type charges should be included in the generated potential
     void setIncludeAtomTypeCharges(bool b);
     // Return whether atom type charges should be included in the generated potential

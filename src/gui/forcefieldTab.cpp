@@ -203,9 +203,6 @@ void ForcefieldTab::updateControls()
     else
         ui_.PairPotentialsSpeciesAtomChargesRadio->setChecked(true);
     ui_.ShortRangeTruncationCombo->setCurrentIndex(PairPotential::shortRangeTruncationScheme());
-    ui_.ShortRangeTruncationWidthSpin->setValue(PairPotential::shortRangeTruncationWidth());
-    ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() ==
-                                                  PairPotential::CosineShortRangeTruncation);
     ui_.CoulombTruncationCombo->setCurrentIndex(PairPotential::coulombTruncationScheme());
 
     // Pair Potential Overrides
@@ -354,8 +351,6 @@ void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
         return;
 
     PairPotential::setShortRangeTruncationScheme((PairPotential::ShortRangeTruncationScheme)index);
-    ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() ==
-                                                  PairPotential::CosineShortRangeTruncation);
 
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
         updatePairPotentials();
