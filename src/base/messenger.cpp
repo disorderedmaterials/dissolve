@@ -26,15 +26,15 @@ void Messenger::splitAndPrint(std::string_view s)
 {
     // The created text may be over multiple lines (separated by '\n') so split it, prepending the prefix and/or process id to
     // each line as necessary
-    size_t pos = s.find('\n');
+    size_t pos;
     do
     {
+        pos = s.find('\n');
         // Output the current line (up to the next newline delimiter)
         outputText(s.substr(0, pos));
 
         // Adjust our view of the working string and find the next newline (if any)
         s = s.substr(pos + 1);
-        pos = s.find('\n');
     } while (pos != std::string::npos);
 }
 
