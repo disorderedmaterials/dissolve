@@ -32,7 +32,7 @@ SiteRDFModuleWidget::SiteRDFModuleWidget(QWidget *parent, SiteRDFModule *module,
     runningCNNview.setViewType(View::FlatXYView);
     runningCNNview.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
     runningCNNview.axes().setMax(0, 10.0);
-    runningCNNview.axes().setTitle(1, "Normalised Frequency");
+    runningCNNview.axes().setTitle(1, "Coordination Number");
     runningCNNview.axes().setMin(1, 0.0);
     runningCNNview.axes().setMax(1, 1.0);
     runningCNNview.setAutoFollowType(View::AllAutoFollow);
