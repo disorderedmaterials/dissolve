@@ -41,7 +41,7 @@ class Dissolve : public Serialisable<>
     // Clear all data
     void clear();
     // TOML Toggle
-    static constexpr bool toml_testing_flag = false;
+    static constexpr bool toml_testing_flag = true;
 
     /*
      * Pair Potentials
@@ -58,7 +58,7 @@ class Dissolve : public Serialisable<>
     // Whether charges from atom types are to be used (and included in PairPotentials)
     bool atomTypeChargeSource_;
     // Simulation PairPotentials
-    std::vector<std::unique_ptr<PairPotential>> pairPotentials_;
+    std::vector<PairPotential::Definition> pairPotentials_;
     // Defined overrides for PairPotentials
     std::vector<std::unique_ptr<PairPotentialOverride>> pairPotentialOverrides_;
     // Map for PairPotentials
@@ -92,12 +92,12 @@ class Dissolve : public Serialisable<>
     // Add new pair potential to list
     PairPotential *addPairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2);
     // Return PairPotentials list
-    const std::vector<std::unique_ptr<PairPotential>> &pairPotentials() const;
+    const std::vector<PairPotential::Definition> &pairPotentials() const;
     // Return nth PairPotential in list
     PairPotential *pairPotential(int n);
     // Return specified PairPotential (if defined)
     PairPotential *pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const;
-    PairPotential *pairPotential(std::string_view at1, std::string_view at2) const;
+    PairPotential *pairPotential(std::string_view at1Name, std::string_view at2Name) const;
     // Create new pair potential override
     PairPotentialOverride *addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
                                                     PairPotentialOverride::PairPotentialOverrideType overrideType,

@@ -25,13 +25,13 @@ Module::ExecutionResult ExportPairPotentialsModule::process(ModuleContext &modul
         // Store the current (root) pair potential filename
         std::string rootPPName{pairPotentialFormat_.filename()};
 
-        for (auto &pp : moduleContext.dissolve().pairPotentials())
+        for (auto &&[at1, at2, pp] : moduleContext.dissolve().pairPotentials())
         {
             Messenger::print("Export: Writing pair potential file ({}) for {}-{}...\n",
-                             pairPotentialFormat_.formatDescription(), pp->atomTypeNameI(), pp->atomTypeNameJ());
+                             pairPotentialFormat_.formatDescription(), at1->name(), at2->name());
 
             // Generate filename
-            pairPotentialFormat_.setFilename(fmt::format("{}-{}-{}.pp", rootPPName, pp->atomTypeNameI(), pp->atomTypeNameJ()));
+            pairPotentialFormat_.setFilename(fmt::format("{}-{}-{}.pp", rootPPName, at1->name(), at2->name()));
 
             // Append pair potential
             if (!pairPotentialFormat_.exportData(pp.get()))

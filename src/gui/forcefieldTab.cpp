@@ -418,9 +418,9 @@ void ForcefieldTab::pairPotentialSelectionChanged(const QItemSelection &current,
         return;
 
     ui_.PairPotentialsPlotWidget->dataViewer()->createRenderable<RenderableData1D>(
-        pp->uFull(), fmt::format("Energy {}-{}", pp->atomTypeNameI(), pp->atomTypeNameJ()));
+        pp->uFull(), fmt::format("Energy {}-{}", pp->nameI(), pp->nameJ()));
     ui_.PairPotentialsPlotWidget->dataViewer()
-        ->createRenderable<RenderableData1D>(pp->dUFull(), fmt::format("Force {}-{}", pp->atomTypeNameI(), pp->atomTypeNameJ()))
+        ->createRenderable<RenderableData1D>(pp->dUFull(), fmt::format("Force {}-{}", pp->nameI(), pp->nameJ()))
         ->setColour(StockColours::RedStockColour);
 }
 

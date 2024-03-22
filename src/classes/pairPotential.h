@@ -18,6 +18,7 @@ class PairPotential
 
     public:
     PairPotential();
+    PairPotential(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges);
     // Coulomb Truncation Scheme enum
     enum CoulombTruncationScheme
     {
@@ -34,6 +35,8 @@ class PairPotential
     };
     // Return enum options for ShortRangeTruncationScheme
     static EnumOptions<PairPotential::ShortRangeTruncationScheme> shortRangeTruncationSchemes();
+    // Typedefs
+    using Definition = std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, std::unique_ptr<PairPotential>>;
 
     /*
      * Seed Interaction Type
@@ -72,8 +75,8 @@ class PairPotential
      * Source Parameters
      */
     private:
-    // Original source AtomTypes
-    std::shared_ptr<AtomType> atomTypeI_, atomTypeJ_;
+    // Names reflecting source parameters
+    std::string nameI_, nameJ_;
     // Interaction potential
     InteractionPotential<ShortRangeFunctions> interactionPotential_;
     // Charge on I (taken from AtomType)
@@ -82,23 +85,19 @@ class PairPotential
     double chargeJ_{0.0};
 
     private:
+    // Set up PairPotential parameters from specified AtomTypes
+    bool setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges);
     // Set Data1D names from source AtomTypes
     void setData1DNames();
 
     public:
-    // Set up PairPotential parameters from specified AtomTypes
-    bool setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges);
+    // Return name for first source parameters
+    std::string_view nameI() const;
+    // Return name for second source parameters
+    std::string_view nameJ() const;
     // Return interaction potential
     InteractionPotential<ShortRangeFunctions> &interactionPotential();
     const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;
-    // Return first AtomType name
-    std::string_view atomTypeNameI() const;
-    // Return second AtomType name
-    std::string_view atomTypeNameJ() const;
-    // Return first source AtomType
-    std::shared_ptr<AtomType> atomTypeI() const;
-    // Return second source AtomType
-    std::shared_ptr<AtomType> atomTypeJ() const;
     // Set charge I
     void setChargeI(double value);
     // Return charge I

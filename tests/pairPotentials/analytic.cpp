@@ -21,14 +21,14 @@ class PairPotentialsTest : public ::testing::Test
         B_->setName("B");
         B_->interactionPotential().setForm(ShortRangeFunctions::Form::None);
 
-        pairPotential_.setUp(A_, B_, false);
+        pairPotential_ = std::make_shared<PairPotential>(A_, B_, false);
     }
 
     protected:
     // AtomTypes
     std::shared_ptr<AtomType> A_, B_;
     // PairPotential
-    PairPotential pairPotential_;
+    std::shared_ptr<PairPotential> pairPotential_;
     // Constants
     const double ppRange_{15.0};
     const double ppDelta_{0.0001};
@@ -39,8 +39,8 @@ class PairPotentialsTest : public ::testing::Test
               const std::function<double(double)> &analytic, const std::function<double(double)> &tabulated)
     {
         // Set up and tabulate pair potential
-        pairPotential_.interactionPotential().setFormAndParameters(form, parameters);
-        pairPotential_.tabulate(ppRange_, ppDelta_);
+        pairPotential_->interactionPotential().setFormAndParameters(form, parameters);
+        pairPotential_->tabulate(ppRange_, ppDelta_);
 
         // Test analytic vs tabulated values - do this by absolute value if less than 1.0, or by ratio if greater than 1.0.
         // We do this since we span many orders of magnitude in value over the potential range, and can also have zeroes.
@@ -61,15 +61,15 @@ class PairPotentialsTest : public ::testing::Test
     void testEnergy(ShortRangeFunctions::Form form, std::string_view parameters, double rStart = testRDelta_)
     {
         test(
-            form, parameters, rStart, [=](double r) { return pairPotential_.analyticEnergy(r); },
-            [=](double r) { return pairPotential_.energy(r); });
+            form, parameters, rStart, [=](double r) { return pairPotential_->analyticEnergy(r); },
+            [=](double r) { return pairPotential_->energy(r); });
     }
     // Test analytic vs tabulated force for specified form and parameters
     void testForce(ShortRangeFunctions::Form form, std::string_view parameters, double rStart = testRDelta_)
     {
         test(
-            form, parameters, rStart, [=](double r) { return pairPotential_.analyticForce(r); },
-            [=](double r) { return pairPotential_.force(r); });
+            form, parameters, rStart, [=](double r) { return pairPotential_->analyticForce(r); },
+            [=](double r) { return pairPotential_->force(r); });
     }
 };
 

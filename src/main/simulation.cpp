@@ -305,11 +305,10 @@ bool Dissolve::iterate(int nIterations)
             // -- Iteration number
             processingModuleData_.realise<int>("Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
             // -- Pair Potentials
-            for (auto &pot : pairPotentials_)
+            for (auto &&[at1, at2, pot] : pairPotentials_)
             {
-                processingModuleData_.realise<Data1D>(
-                    fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve",
-                    GenericItem::InRestartFileFlag) = pot->uAdditional();
+                processingModuleData_.realise<Data1D>(fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()),
+                                                      "Dissolve", GenericItem::InRestartFileFlag) = pot->uAdditional();
             }
 
             // Check and remove restart file backup

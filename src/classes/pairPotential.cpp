@@ -6,7 +6,6 @@
 #include "base/messenger.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
-#include "classes/coreData.h"
 #include "math/constants.h"
 #include <cmath>
 
@@ -18,6 +17,13 @@ PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationSch
 PairPotential::PairPotential()
     : interactionPotential_(ShortRangeFunctions::Form::None), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
 {
+}
+
+PairPotential::PairPotential(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ,
+                             bool includeCharges)
+    : interactionPotential_(ShortRangeFunctions::Form::None), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
+{
+    setUp(typeI, typeJ, includeCharges);
 }
 
 // Return enum option info for CoulombTruncationScheme
@@ -68,21 +74,6 @@ PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme() 
  * Source Parameters
  */
 
-// Set Data1D names from source AtomTypes
-void PairPotential::setData1DNames()
-{
-    // Check for NULL pointers
-    assert(atomTypeI_ && atomTypeJ_);
-
-    uFull_.setTag(fmt::format("{}-{}", atomTypeI_->name(), atomTypeJ_->name()));
-
-    uAdditional_.setTag(fmt::format("{}-{} (Add)", atomTypeI_->name(), atomTypeJ_->name()));
-
-    uOriginal_.setTag(fmt::format("{}-{} (Orig)", atomTypeI_->name(), atomTypeJ_->name()));
-
-    dUFull_.setTag(fmt::format("{}-{} (dU/dr)", atomTypeI_->name(), atomTypeJ_->name()));
-}
-
 // Set up PairPotential parameters from specified AtomTypes
 bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges)
 {
@@ -92,21 +83,23 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
     if (typeJ == nullptr)
         throw(std::runtime_error("Invalid AtomType pointer (typeJ) given to PairPotential::setUp().\n"));
 
-    atomTypeI_ = typeI;
-    atomTypeJ_ = typeJ;
     includeAtomTypeCharges_ = includeCharges;
     interactionPotential_.setFormAndParameters(ShortRangeFunctions::Form::None, "");
+
+    nameI_ = typeI->name();
+    nameJ_ = typeJ->name();
     setData1DNames();
-    auto &paramsI = atomTypeI_->interactionPotential().parameters();
-    auto &paramsJ = atomTypeJ_->interactionPotential().parameters();
-    auto srI = atomTypeI_->interactionPotential().form(), srJ = atomTypeJ_->interactionPotential().form();
+
+    auto &paramsI = typeI->interactionPotential().parameters();
+    auto &paramsJ = typeJ->interactionPotential().parameters();
+    auto srI = typeI->interactionPotential().form(), srJ = typeJ->interactionPotential().form();
 
     // Sanity check - are either of the parameter sets empty (i.e. have never been set with useful data)?
     if ((paramsI.empty() || paramsJ.empty()) &&
         (srI != ShortRangeFunctions::Form::None && srJ != ShortRangeFunctions::Form::None))
         return Messenger::error(
             "Can't set parameters for PairPotential since there are {} ({}) and {} ({}) parameters set in the atom types.\n",
-            paramsI.size(), atomTypeI_->name(), paramsJ.size(), atomTypeJ_->name());
+            paramsI.size(), typeI->name(), paramsJ.size(), typeJ->name());
 
     // Combine / set parameters as necessary, depending on the short-range interaction types of the supplied AtomTypes
     if (srI == srJ)
@@ -146,7 +139,7 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
         if (ljI && ljJ)
         {
             Messenger::warn("Defaulting to Lorentz-Berthelot rules to combine parameters between atom types '{}' and '{}.\n",
-                            atomTypeI_->name(), atomTypeJ_->name());
+                            typeI->name(), typeJ->name());
 
             /*
              * Combine parameters (Lorentz-Berthelot):
@@ -160,40 +153,41 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
         else
             return Messenger::error("Can't generate potential parameters between atom types '{}' and '{}', which have "
                                     "short-range types {} and {}.\n",
-                                    atomTypeI_->name(), atomTypeJ_->name(), ShortRangeFunctions::forms().keyword(srI),
+                                    typeI->name(), typeJ->name(), ShortRangeFunctions::forms().keyword(srI),
                                     ShortRangeFunctions::forms().keyword(srJ));
     }
 
     // Set charges
-    chargeI_ = includeAtomTypeCharges_ ? atomTypeI_->charge() : 0.0;
-    chargeJ_ = includeAtomTypeCharges_ ? atomTypeJ_->charge() : 0.0;
+    chargeI_ = includeAtomTypeCharges_ ? typeI->charge() : 0.0;
+    chargeJ_ = includeAtomTypeCharges_ ? typeJ->charge() : 0.0;
 
     return true;
 }
 
+// Set Data1D names from source AtomTypes
+void PairPotential::setData1DNames()
+{
+    // Check for NULL pointers
+    assert(atomTypeI_ && atomTypeJ_);
+
+    uFull_.setTag(fmt::format("{}-{}", nameI_, nameJ_));
+
+    uAdditional_.setTag(fmt::format("{}-{} (Add)", nameI_, nameJ_));
+
+    uOriginal_.setTag(fmt::format("{}-{} (Orig)", nameI_, nameJ_));
+
+    dUFull_.setTag(fmt::format("{}-{} (dU/dr)", nameI_, nameJ_));
+}
+
+// Return name for first source parameters
+std::string_view PairPotential::nameI() const { return nameI_; }
+
+// Return name for second source parameters
+std::string_view PairPotential::nameJ() const { return nameJ_; };
+
 // Return interaction potential
 InteractionPotential<ShortRangeFunctions> &PairPotential::interactionPotential() { return interactionPotential_; }
 const InteractionPotential<ShortRangeFunctions> &PairPotential::interactionPotential() const { return interactionPotential_; }
-
-// Return first AtomType name
-std::string_view PairPotential::atomTypeNameI() const
-{
-    assert(atomTypeI_);
-    return atomTypeI_->name();
-}
-
-// Return second AtomType name
-std::string_view PairPotential::atomTypeNameJ() const
-{
-    assert(atomTypeJ_);
-    return atomTypeJ_->name();
-}
-
-// Return first source AtomType
-std::shared_ptr<AtomType> PairPotential::atomTypeI() const { return atomTypeI_; }
-
-// Return second source AtomType
-std::shared_ptr<AtomType> PairPotential::atomTypeJ() const { return atomTypeJ_; }
 
 // Set charge I
 void PairPotential::setChargeI(double value) { chargeI_ = value; }
@@ -347,13 +341,6 @@ void PairPotential::calculateDUFull()
 // Generate energy and force tables
 bool PairPotential::tabulate(double maxR, double delta)
 {
-    // Check that AtomType pointers were set at some pointer
-    if ((atomTypeI_ == nullptr) || (atomTypeJ_ == nullptr))
-    {
-        Messenger::error("NULL_POINTER - One or both AtomTypes in PairPotential are NULL.\n");
-        return false;
-    }
-
     // Determine nPoints_
     delta_ = delta;
     rDelta_ = 1.0 / delta_;

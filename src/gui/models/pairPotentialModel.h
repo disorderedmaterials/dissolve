@@ -16,11 +16,11 @@ class PairPotentialModel : public QAbstractListModel
 
     private:
     // Source pair potential data
-    const std::vector<std::unique_ptr<PairPotential>> &pairs_;
+    const std::vector<PairPotential::Definition> &data_;
 
     public:
     // Set source pair potential data
-    PairPotentialModel(const std::vector<std::unique_ptr<PairPotential>> &pairs);
+    PairPotentialModel(const std::vector<PairPotential::Definition> &data);
     ~PairPotentialModel() = default;
     const PairPotential *rawData(const QModelIndex index) const;
     PairPotential *rawData(const QModelIndex index);
