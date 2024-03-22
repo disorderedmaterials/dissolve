@@ -2,12 +2,13 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
     outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
+    next.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
     qt-idaaas.url = "github:disorderedmaterials/qt-idaaas";
     qt-idaaas.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = { self, nixpkgs, outdated, home-manager, flake-utils, bundlers, nixGL-src
+  outputs = { self, nixpkgs, outdated, next, home-manager, flake-utils, bundlers, nixGL-src
     , qt-idaaas}:
     let
 
@@ -62,6 +63,7 @@
       let
         pkgs = import nixpkgs { inherit system; };
         nixGL = import nixGL-src { inherit pkgs; };
+        future = import next { inherit system; };
         dissolve =
           { mpi ? false, gui ? false, threading ? true, checks ? true }:
           assert (!(gui && mpi));
@@ -158,6 +160,7 @@
               distcc
               direnv
               gdb
+              future.git-cliff
               gtk3
               nixGL.nixGLIntel
               openmpi

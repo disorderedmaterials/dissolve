@@ -12,6 +12,13 @@ runs:
       sudo apt-get install --yes clang-format-13 qt6-declarative-dev-tools
       pip install cmake_format==0.6.9
 
+  - name: Check Conventional Commits
+    # Ensure that the PR title fits the conventional commits framework
+    shell: bash
+    run: |
+      set -ex
+      echo ${{ github.event.pull_request.title }} | awk "/(^feat:)|(^fix:)|(^doc:)|(^perf:)|(^refactor:)|(^style:)|(^test:)|(^chore:)|(^revert:)|(^build:)/" | grep .
+
   - name: C++ Formatting
     shell: bash
     run: |
