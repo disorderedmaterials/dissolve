@@ -39,7 +39,7 @@ void DataOperator3D::normaliseBySphericalShell()
 }
 
 // Normalise the target data to a given value
-void DataOperator3D::normaliseTo(double value, bool absolute)
+void DataOperator3D::normaliseSumTo(double value, bool absolute)
 {
     Messenger::warn("Value normalisation not implemented for 3D data.");
 }

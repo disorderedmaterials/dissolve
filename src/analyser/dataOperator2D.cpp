@@ -76,7 +76,7 @@ void DataOperator2D::normaliseBySphericalShell()
 }
 
 // Normalise the target data to a given value
-void DataOperator2D::normaliseTo(double value, bool absolute)
+void DataOperator2D::normaliseSumTo(double value, bool absolute)
 {
     auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);
     targetData_ /= sum;

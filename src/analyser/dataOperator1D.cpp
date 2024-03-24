@@ -16,9 +16,10 @@ void DataOperator1D::operate(OperateFunction1D operateFunction)
 {
     const auto &xs = targetData_.xAxis();
     auto &values = targetData_.values();
+    const auto xDelta = xs.size() > 1 ? xs[1] - xs[0] : 1.0;
 
     for (auto i = 0; i < xs.size(); ++i)
-        values.at(i) = operateFunction(xs[i], targetData_.error(i), values.at(i));
+        values.at(i) = operateFunction(xs[i], xDelta, values.at(i));
 }
 
 /*
@@ -62,7 +63,7 @@ void DataOperator1D::normaliseBySphericalShell()
 }
 
 // Normalise the target data to a given value
-void DataOperator1D::normaliseTo(double value, bool absolute)
+void DataOperator1D::normaliseSumTo(double value, bool absolute)
 {
     auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);
     targetData_ /= sum;

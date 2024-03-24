@@ -31,5 +31,5 @@ class DataOperator1D : public DataOperatorBase<Data1D, OperateFunction1D>
     // Perform spherical shell normalisation
     void normaliseBySphericalShell() override;
     // Normalise the target data to a given value
-    void normaliseTo(double value = 1.0, bool absolute = true) override;
+    void normaliseSumTo(double value = 1.0, bool absolute = true) override;
 };
