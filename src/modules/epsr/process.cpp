@@ -424,7 +424,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
             // Always add absolute data to the scattering matrix - if the calculated data has been normalised, remove this
             // normalisation from the reference data (we assume that the two are consistent)
-            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("normaliseSumTo");
+            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("normaliseTo");
             if (normType == StructureFactors::AverageOfSquaresNormalisation)
                 refMinusIntra *= weights.boundCoherentAverageOfSquares();
             else if (normType == StructureFactors::SquareOfAverageNormalisation)

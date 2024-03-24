@@ -20,9 +20,9 @@ XRaySQModule::XRaySQModule() : Module(ModuleTypes::XRaySQ)
     keywords_.add<EnumOptionsKeyword<XRayFormFactors::XRayFormFactorData>>(
         "FormFactors", "Atomic form factors to use for weighting", formFactors_, XRayFormFactors::xRayFormFactorData());
     keywords_
-        .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>("normaliseSumTo",
+        .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>("normaliseTo",
                                                                       "Normalisation to apply to total weighted F(Q)",
-                                                                      normaliseSumTo_, StructureFactors::normalisationTypes())
+                                                                      normaliseTo, StructureFactors::normalisationTypes())
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Reference Data",
@@ -68,7 +68,7 @@ XRaySQModule::XRaySQModule() : Module(ModuleTypes::XRaySQ)
 
     // Deprecated keywords
     keywords_.addDeprecated<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
-        "Normalisation", "Normalisation to apply to total weighted F(Q)", normaliseSumTo_,
+        "Normalisation", "Normalisation to apply to total weighted F(Q)", normaliseTo,
         StructureFactors::normalisationTypes());
     keywords_.addDeprecated<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
         "ReferenceNormalisation", "Normalisation to remove from reference data before use", referenceNormalisedTo_,
