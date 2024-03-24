@@ -13,7 +13,7 @@ DataOperator3D::DataOperator3D(Data3D &targetData) : DataOperatorBase<Data3D, Op
 // Generic operate function
 void DataOperator3D::operate(OperateFunction3D operateFunction)
 {
-    Messenger::warn("Normalisation function not implemented for 3D data.");
+    Messenger::warn("Data operate() function not implemented for 3D data.");
 }
 
 /*

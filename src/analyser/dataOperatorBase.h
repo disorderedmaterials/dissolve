@@ -38,6 +38,6 @@ template <typename DataND, typename OperateFunction> class DataOperatorBase
     virtual void normaliseByGrid() = 0;
     // Perform spherical shell normalisation
     virtual void normaliseBySphericalShell() = 0;
-    // Normalise the target data to a given value
-    virtual void normaliseTo(double value = 1.0, bool absolute = true) = 0;
+    // Normalise the sum of the target data to a given value
+    virtual void normaliseSumTo(double value = 1.0, bool absolute = true) = 0;
 };
