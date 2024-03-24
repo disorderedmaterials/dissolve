@@ -30,7 +30,7 @@ class XRaySQModule : public Module
     // Atomic form factors to use for weighting
     XRayFormFactors::XRayFormFactorData formFactors_{XRayFormFactors::WaasmaierKirfel1995};
     // Normalisation to apply to calculated total F(Q)
-    StructureFactors::NormalisationType normaliseSumTo_{StructureFactors::NoNormalisation};
+    StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) file and format
     Data1DImportFileFormat referenceFQ_;
     // Minimum Q value to use when Fourier-transforming the data

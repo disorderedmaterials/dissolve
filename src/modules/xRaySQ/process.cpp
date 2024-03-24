@@ -45,7 +45,7 @@ bool XRaySQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
             return Messenger::error("[SETUP {}] A source GR module (in the SQ module) must be provided.\n", name_);
 
         // Normalise reference data to be consistent with the calculated data
-        if (referenceNormalisedTo_ != normaliseTo)
+        if (referenceNormalisedTo_ != normaliseTo_)
         {
             // We need the x-ray weights in order to do the normalisation
             XRayWeights weights;
@@ -58,20 +58,20 @@ bool XRaySQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
             switch (referenceNormalisedTo_)
             {
                 case (StructureFactors::NoNormalisation):
-                    factors = normaliseTo StructureFactors::SquareOfAverageNormalisation ? bBarSquareOfAverage
-                                                                                                : bBarAverageOfSquares;
+                    factors = normaliseTo_ == StructureFactors::SquareOfAverageNormalisation ? bBarSquareOfAverage
+                                                                                             : bBarAverageOfSquares;
                     std::transform(factors.begin(), factors.end(), factors.begin(),
                                    [](const auto factor) { return 1.0 / factor; });
                     break;
                 case (StructureFactors::SquareOfAverageNormalisation):
                     factors = bBarSquareOfAverage;
-                    if (normaliseTo StructureFactors::AverageOfSquaresNormalisation)
+                    if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
                         std::transform(factors.begin(), factors.end(), bBarAverageOfSquares.begin(), factors.begin(),
                                        std::divides<>());
                     break;
                 case (StructureFactors::AverageOfSquaresNormalisation):
                     factors = bBarAverageOfSquares;
-                    if (normaliseTo == StructureFactors::SquareOfAverageNormalisation)
+                    if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
                         std::transform(factors.begin(), factors.end(), bBarSquareOfAverage.begin(), factors.begin(),
                                        std::divides<>());
                     break;
@@ -166,11 +166,11 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext &moduleContext)
     // Print argument/parameter summary
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->name());
     Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
-    if (normaliseTo == StructureFactors::NoNormalisation)
+    if (normaliseTo_ == StructureFactors::NoNormalisation)
         Messenger::print("XRaySQ: No normalisation will be applied to total F(Q).\n");
-    else if (normaliseTo == StructureFactors::AverageOfSquaresNormalisation)
+    else if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b**2>");
-    else if (normaliseTo == StructureFactors::SquareOfAverageNormalisation)
+    else if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b>**2");
     if (referenceWindowFunction_ == WindowFunction::Form::None)
         Messenger::print("XRaySQ: No window function will be applied when calculating representative g(r) from S(Q).");
@@ -214,7 +214,7 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext &moduleContext)
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted S(Q)
-    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo);
+    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
 
     // Save data if requested
     if (saveSQ_ && (!MPIRunMaster(moduleContext.processPool(), weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
@@ -283,7 +283,7 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext &moduleContext)
         weightedGR.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted g(r)
-    calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo);
+    calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);
 
     // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR = moduleContext.dissolve().processingModuleData().realise<Data1D>("RepresentativeTotalGR", name_,

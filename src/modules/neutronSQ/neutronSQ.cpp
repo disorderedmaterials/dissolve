@@ -25,7 +25,7 @@ NeutronSQModule::NeutronSQModule() : Module(ModuleTypes::NeutronSQ)
     keywords_
         .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>("normaliseTo",
                                                                       "Normalisation to apply to total weighted F(Q)",
-                                                                      normaliseTotructureFactors::normalisationTypes())
+                                                                      normaliseTo_, StructureFactors::normalisationTypes())
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Reference Data",
@@ -69,8 +69,7 @@ NeutronSQModule::NeutronSQModule() : Module(ModuleTypes::NeutronSQ)
 
     // Deprecated keywords
     keywords_.addDeprecated<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
-        "Normalisation", "Normalisation to apply to total weighted F(Q)", normaliseTo,
-        StructureFactors::normalisationTypes());
+        "Normalisation", "Normalisation to apply to total weighted F(Q)", normaliseTo_, StructureFactors::normalisationTypes());
     keywords_.addDeprecated<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
         "ReferenceNormalisation", "Normalisation to remove from reference data before use", referenceNormalisedTo_,
         StructureFactors::normalisationTypes());

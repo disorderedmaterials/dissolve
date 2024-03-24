@@ -447,7 +447,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
             auto refMinusIntra = originalReferenceData;
             Interpolator::addInterpolated(weightedSQ.boundTotal(), refMinusIntra, -1.0);
 
-            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("normaliseSumTo");
+            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("normaliseTo");
             if (normType == StructureFactors::SquareOfAverageNormalisation)
             {
                 // Remove square of average normalisation, and apply average of squares

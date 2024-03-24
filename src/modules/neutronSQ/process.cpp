@@ -44,7 +44,7 @@ bool NeutronSQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Key
             return Messenger::error("[SETUP {}] A source GR module (in the SQ module) must be provided.\n", name_);
 
         // Normalise reference data to be consistent with the calculated data
-        if (referenceNormalisedTo_ != normaliseSumTo_)
+        if (referenceNormalisedTo_ != normaliseTo_)
         {
             // We need the neutron weights in order to do the normalisation
             NeutronWeights weights;
@@ -55,18 +55,18 @@ bool NeutronSQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Key
             switch (referenceNormalisedTo_)
             {
                 case (StructureFactors::NoNormalisation):
-                    factor = 1.0 / normaliseSumTo_ == StructureFactors::SquareOfAverageNormalisation
+                    factor = 1.0 / normaliseTo_ == StructureFactors::SquareOfAverageNormalisation
                                  ? weights.boundCoherentSquareOfAverage()
                                  : weights.boundCoherentAverageOfSquares();
                     break;
                 case (StructureFactors::SquareOfAverageNormalisation):
                     factor = weights.boundCoherentSquareOfAverage();
-                    if (normaliseSumTo_ == StructureFactors::AverageOfSquaresNormalisation)
+                    if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
                         factor /= weights.boundCoherentAverageOfSquares();
                     break;
                 case (StructureFactors::AverageOfSquaresNormalisation):
                     factor = weights.boundCoherentAverageOfSquares();
-                    if (normaliseSumTo_ == StructureFactors::SquareOfAverageNormalisation)
+                    if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
                         factor /= weights.boundCoherentSquareOfAverage();
                     break;
                 default:
@@ -164,11 +164,11 @@ Module::ExecutionResult NeutronSQModule::process(ModuleContext &moduleContext)
     else
         Messenger::print("Window function to be applied when calculating representative g(r) from S(Q) is {}.",
                          WindowFunction::forms().keyword(referenceWindowFunction_));
-    if (normaliseSumTo_ == StructureFactors::NoNormalisation)
+    if (normaliseTo_ == StructureFactors::NoNormalisation)
         Messenger::print("NeutronSQ: No normalisation will be applied to total F(Q).\n");
-    else if (normaliseSumTo_ == StructureFactors::AverageOfSquaresNormalisation)
+    else if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
         Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b**2>");
-    else if (normaliseSumTo_ == StructureFactors::SquareOfAverageNormalisation)
+    else if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
         Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b>**2");
     if (saveSQ_)
         Messenger::print("NeutronSQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
@@ -205,7 +205,7 @@ Module::ExecutionResult NeutronSQModule::process(ModuleContext &moduleContext)
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted S(Q)
-    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseSumTo_);
+    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
 
     // Save data if requested
     if (saveSQ_ && (!MPIRunMaster(moduleContext.processPool(), weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
@@ -232,7 +232,7 @@ Module::ExecutionResult NeutronSQModule::process(ModuleContext &moduleContext)
         weightedGR.setUpPartials(unweightedGR.atomTypeMix());
 
     // Calculate weighted g(r)
-    calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseSumTo_);
+    calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);
 
     // Save data if requested
     if (saveGR_ && (!MPIRunMaster(moduleContext.processPool(), weightedGR.save(name_, "WeightedGR", "gr", "r, Angstroms"))))
