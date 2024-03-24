@@ -20,7 +20,7 @@ XRaySQModule::XRaySQModule() : Module(ModuleTypes::XRaySQ)
     keywords_.add<EnumOptionsKeyword<XRayFormFactors::XRayFormFactorData>>(
         "FormFactors", "Atomic form factors to use for weighting", formFactors_, XRayFormFactors::xRayFormFactorData());
     keywords_
-        .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>("normaliseTo",
+        .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>("NormaliseTo",
                                                                       "Normalisation to apply to total weighted F(Q)",
                                                                       normaliseTo_, StructureFactors::normalisationTypes())
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
