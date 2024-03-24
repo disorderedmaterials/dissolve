@@ -424,7 +424,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
             // Always add absolute data to the scattering matrix - if the calculated data has been normalised, remove this
             // normalisation from the reference data (we assume that the two are consistent)
-            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("NormaliseTo");
+            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("normaliseSumTo");
             if (normType == StructureFactors::AverageOfSquaresNormalisation)
                 refMinusIntra *= weights.boundCoherentAverageOfSquares();
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
@@ -447,7 +447,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
             auto refMinusIntra = originalReferenceData;
             Interpolator::addInterpolated(weightedSQ.boundTotal(), refMinusIntra, -1.0);
 
-            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("NormaliseTo");
+            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("normaliseSumTo");
             if (normType == StructureFactors::SquareOfAverageNormalisation)
             {
                 // Remove square of average normalisation, and apply average of squares

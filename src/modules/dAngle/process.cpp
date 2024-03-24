@@ -118,7 +118,7 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     // Normalise by value / sin(x)
     aABCNormaliser.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
     // Normalise to 1.0
-    aABCNormaliser.normaliseTo();
+    aABCNormaliser.normaliseSumTo();
 
     auto &dAngleNormalised = processingData.realise<Data2D>("DAngle(A-BC)", name(), GenericItem::InRestartFileFlag);
     dAngleNormalised = dAngle.accumulatedData();

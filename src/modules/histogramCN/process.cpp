@@ -61,7 +61,7 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
     // Normalise CN
     DataOperator1D normaliserCN(dataCN);
     // Normalise by value
-    normaliserCN.normaliseTo();
+    normaliserCN.normaliseSumTo();
 
     // Save CN data?
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataCN, exportFileAndFormat_, moduleContext.processPool()))

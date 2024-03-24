@@ -83,7 +83,7 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     // Averaged values for Q-Species
     Data1D accumulatedQData = qSpeciesHistogram.accumulatedData();
     DataOperator1D normaliserQ(accumulatedQData);
-    normaliserQ.normaliseTo();
+    normaliserQ.normaliseSumTo();
 
     // Averaged values for oxygen sites
     auto freeOxygens = oxygenSitesHistogram.accumulatedData().value(0);

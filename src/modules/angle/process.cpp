@@ -170,7 +170,7 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     // Normalise by value / sin(x)
     normaliserAngle.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
     // Normalise to 1.0
-    normaliserAngle.normaliseTo();
+    normaliserAngle.normaliseSumTo();
 
     // DAngle((A-B)-C)
     auto &normalisedDAngleAB = processingData.realise<Data2D>("DAngle((A-B)-C)", name(), GenericItem::InRestartFileFlag);

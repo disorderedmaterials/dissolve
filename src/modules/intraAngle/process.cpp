@@ -86,7 +86,7 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     // Normalise by sin(x)
     normaliser.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
     // Normalise by value
-    normaliser.normaliseTo();
+    normaliser.normaliseSumTo();
 
     // Save Angle(A-B-C) data?
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataNormalisedHisto, exportFileAndFormat_,

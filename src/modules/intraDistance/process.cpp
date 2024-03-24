@@ -56,7 +56,7 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
     // Normalise
     DataOperator1D histogramNormaliser(dataNormalisedHisto);
     // Normalise by value
-    histogramNormaliser.normaliseTo();
+    histogramNormaliser.normaliseSumTo();
 
     // Save Distance(A-B) data?
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataNormalisedHisto, exportFileAndFormat_,

@@ -95,7 +95,7 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     // Normalise by value / sin(x)
     aABNormaliser.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
     // Normalise to 1.0
-    aABNormaliser.normaliseTo();
+    aABNormaliser.normaliseSumTo();
 
     // DAxisAngle(A-B)
     auto &dAxisAngleNormalised = processingData.realise<Data2D>("DAxisAngle", name(), GenericItem::InRestartFileFlag);

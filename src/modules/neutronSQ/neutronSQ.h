@@ -31,7 +31,7 @@ class NeutronSQModule : public Module
     // Isotopologues to use in weighting
     IsotopologueSet isotopologueSet_;
     // Normalisation to apply to calculated total F(Q)
-    StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
+    StructureFactors::NormalisationType normaliseSumTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) file and format
     Data1DImportFileFormat referenceFQ_;
     // Minimum Q value to use when Fourier-transforming the data
