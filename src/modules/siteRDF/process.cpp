@@ -10,6 +10,8 @@
 #include "math/sampledDouble.h"
 #include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
+#include "templates/algorithms.h"
+#include "templates/combinable.h"
 
 // Run main processing
 Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
@@ -30,20 +32,32 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     SiteSelector b(targetConfiguration_, b_);
 
     // Calculate rAB
-    auto [histAB, status] = processingData.realiseIf<Histogram1D>("Histo-AB", name(), GenericItem::InRestartFileFlag);
-    if (status == GenericItem::ItemStatus::Created)
-        histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
-    histAB.zeroBins();
+    auto combinableHistograms = dissolve::CombinableValue<Histogram1D>(
+        [&]()
+        {
+            auto [histAB, status] = processingData.realiseIf<Histogram1D>("Histo-AB", name(), GenericItem::InRestartFileFlag);
+            if (status == GenericItem::ItemStatus::Created)
+                histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
+            histAB.zeroBins();
 
-    for (const auto &[siteA, indexA] : a.sites())
-    {
+            return histAB;
+        });
+
+    auto unaryOp = [&](const auto &siteData) {
+        auto siteA = std::get<0>(siteData);
+        auto indexA = std::get<1>(siteData);
+
+        auto &histAB = combinableHistograms.local();
         for (const auto &[siteB, indexB] : b.sites())
         {
             if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
                 continue;
             histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
         }
-    }
+    };
+
+    dissolve::for_each(ParallelPolicies::par, a.sites().begin(), a.sites().end(), unaryOp);
+    auto histAB = combinableHistograms.finalize();
 
     // Accumulate histogram
     histAB.accumulate();
