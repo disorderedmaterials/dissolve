@@ -12,7 +12,7 @@ class OPLSAA2005AlkanesForcefieldTest : public ::testing::Test
     protected:
     DissolveSystemTest systemTest;
 
-    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp("dissolve/input/ff-oplsaa2005-alkanes.txt")); }
+    void SetUp() override { ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/ff-oplsaa2005-alkanes.txt")); }
 };
 
 TEST_F(OPLSAA2005AlkanesForcefieldTest, Heptane)

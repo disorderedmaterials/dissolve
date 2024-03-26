@@ -12,7 +12,7 @@ class SPCFwForcefieldTest : public ::testing::Test
     protected:
     DissolveSystemTest systemTest;
 
-    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp("dissolve/input/ff-spcfw.txt")); }
+    void SetUp() override { ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/ff-spcfw.txt")); }
 };
 
 TEST_F(SPCFwForcefieldTest, Water)

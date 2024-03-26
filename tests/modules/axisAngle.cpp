@@ -13,7 +13,7 @@ class AxisAngleModuleTest : public ::testing::Test
 
     void SetUp() override
     {
-        ASSERT_NO_THROW(systemTest.setUp("dissolve/input/axisAngle-benzene.txt"));
+        ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/axisAngle-benzene.txt"));
         ASSERT_TRUE(systemTest.iterateRestart(100));
     }
 };

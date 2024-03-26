@@ -12,7 +12,7 @@ class UFFNMethylFormamideForcefieldTest : public ::testing::Test
     protected:
     DissolveSystemTest systemTest;
 
-    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp("dissolve/input/ff-uff-nmethylformamide.txt")); }
+    void SetUp() override { ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/ff-uff-nmethylformamide.txt")); }
 };
 
 TEST_F(UFFNMethylFormamideForcefieldTest, NMethylFormamide)

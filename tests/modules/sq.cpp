@@ -15,7 +15,7 @@ class SQModuleTest : public ::testing::Test
 
 TEST_F(SQModuleTest, Water)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/correlations-water.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/correlations-water.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Partial S(Q) (unbound terms)
@@ -46,7 +46,7 @@ TEST_F(SQModuleTest, Water)
 
 TEST_F(SQModuleTest, WaterMethanol)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/correlations-waterMethanol.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/correlations-waterMethanol.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     /*
@@ -205,7 +205,7 @@ TEST_F(SQModuleTest, WaterMethanol)
 
 TEST_F(SQModuleTest, Benzene)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/epsr-benzene-3n.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/epsr-benzene-3n.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Partial S(Q) (unbound terms)

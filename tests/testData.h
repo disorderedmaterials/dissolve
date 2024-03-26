@@ -56,7 +56,7 @@ enum TestFlags
 // Wrap a code block with try-catch, handle exceptions thrown, print them into std::cerr and rethrow.
 #define PRINT_STDERR_AND_RETHROW(CODE_BLOCK) PRINT_AND_RETHROW(CODE_BLOCK, std::cerr)
 #define EXPECT_NO_THROW_VERBOSE(CODE_BLOCK) EXPECT_NO_THROW(PRINT_STDERR_AND_RETHROW(CODE_BLOCK))
-#define ASSERT_NO_THROW_VERBOSE(CODE_BLOCK) ASSERT_NO_THROW(PRINT_STDERR_AND_RETHROW(CODE_BLOCK))
+#define ASSERT_NO_THROW_VERBOSE(CODE_BLOCK) ASSERT_NO_THROW_VERBOSE(PRINT_STDERR_AND_RETHROW(CODE_BLOCK))
 
 void compareToml(std::string location, SerialisedValue toml, SerialisedValue toml2)
 {
