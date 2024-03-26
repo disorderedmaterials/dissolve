@@ -19,7 +19,7 @@ void DataOperator1D::operate(OperateFunction1D operator)
     const auto xDelta = xs.size() > 1 ? xs[1] - xs[0] : 1.0;
 
     for (auto i = 0; i < xs.size(); ++i)
-        values.at(i) = operateFunction(xs[i], xDelta, values.at(i));
+        values.at(i) = operator(xs[i], xDelta, values.at(i));
 }
 
 /*

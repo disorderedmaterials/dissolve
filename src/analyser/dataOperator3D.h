@@ -21,7 +21,7 @@ class DataOperator3D : public DataOperatorBase<Data3D, OperateFunction3D>
      */
     public:
     // Generic operate function
-    void operate(OperateFunction3D operateFunction) override;
+    void operate(OperateFunction3D operator) override;
 
     /*
      * Normalisation Functions
