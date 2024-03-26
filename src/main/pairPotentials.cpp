@@ -51,8 +51,8 @@ int Dissolve::nPairPotentials() const { return pairPotentials_.size(); }
 // Add new pair potential to list
 PairPotential *Dissolve::addPairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2)
 {
-    auto &&[atI, atJ, pp] = pairPotentials_.emplace_back(at1, at2, std::make_unique<PairPotential>());
-    pp->setUp(at1, at2, atomTypeChargeSource_);
+    auto &&[atI, atJ, pp] =
+        pairPotentials_.emplace_back(at1, at2, std::make_unique<PairPotential>(at1, at2, atomTypeChargeSource_));
 
     return pp.get();
 }
