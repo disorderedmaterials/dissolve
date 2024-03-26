@@ -141,34 +141,54 @@ bool Dissolve::regeneratePairPotentials()
     // Secondly, apply any overrides
     for (auto &override : pairPotentialOverrides_)
     {
-        //        Messenger::print("Pair potential override between '{}' and '{}' ({}, {}, '{}') ...\n", override->matchI(),
-        //                         override->matchJ(),
-        //                         PairPotentialOverride::pairPotentialOverrideTypes().keyword(override->type()),
-        //                         ShortRangeFunctions::forms().keyword(override->interactionPotential().form()),
-        //                         override->interactionPotential().parametersAsString());
-        //
-        //        // Generate the potential
-        //        auto overridePotential = XXX;
-        //
-        //        auto count = 0;
-        //        for (auto &pot : pairPotentials_)
-        //        {
-        //            // Is this override a match for the atom types in the potential?
-        //            if ((DissolveSys::sameWildString(override->matchI(), pot->atomTypeNameI()) &&
-        //                 DissolveSys::sameWildString(override->matchJ(), pot->atomTypeNameJ())) ||
-        //                (DissolveSys::sameWildString(override->matchJ(), pot->atomTypeNameI()) &&
-        //                 DissolveSys::sameWildString(override->matchI(), pot->atomTypeNameJ())))
-        //            {
-        //                Messenger::print(" ... matched and was applied to defined potential {}-{}\n", pot->atomTypeNameI(),
-        //                                 pot->atomTypeNameJ());
-        //
-        //                // Apply the potential
-        //                XXX;
-        //
-        //                ++count;
-        //            }
-        //        }
-        //        Messenger::print(" ... matched {} potential(s) in total.\n", count);
+        Messenger::print("Pair potential override between '{}' and '{}' ({}, {}, '{}') ...\n", override->matchI(),
+                         override->matchJ(), PairPotentialOverride::pairPotentialOverrideTypes().keyword(override->type()),
+                         ShortRangeFunctions::forms().keyword(override->interactionPotential().form()),
+                         override->interactionPotential().parametersAsString());
+
+        // Is the override enabled?
+        if (override->type() == PairPotentialOverride::PairPotentialOverrideType::Off)
+        {
+            Messenger::print(" ... is currently 'Off'.\n");
+            continue;
+        }
+
+        // Generate the potential
+        PairPotential overridePotential(override->matchI(), override->matchJ(), override->interactionPotential());
+        if (!overridePotential.tabulate(pairPotentialRange_, pairPotentialDelta_))
+            return false;
+
+        auto count = 0;
+        for (auto &&[at1, at2, pp] : pairPotentials_)
+        {
+            // Is this override a match for the atom types in the potential?
+            if ((DissolveSys::sameWildString(override->matchI(), at1->name()) &&
+                 DissolveSys::sameWildString(override->matchJ(), at2->name())) ||
+                (DissolveSys::sameWildString(override->matchJ(), at1->name()) &&
+                 DissolveSys::sameWildString(override->matchI(), at2->name())))
+            {
+                Messenger::print(" ... matched and was applied to defined potential {}-{}\n", at1->name(), at2->name());
+
+                // Apply the potential
+                switch (override->type())
+                {
+                    case (PairPotentialOverride::PairPotentialOverrideType::Off):
+                        break;
+                    case (PairPotentialOverride::PairPotentialOverrideType::Add):
+                        pp->uOriginal() += overridePotential.uOriginal();
+                        break;
+                    case (PairPotentialOverride::PairPotentialOverrideType::Replace):
+                        pp->uOriginal() = overridePotential.uOriginal();
+                        break;
+                }
+
+                pp->calculateUFull();
+                pp->calculateDUFull();
+
+                ++count;
+            }
+        }
+        Messenger::print(" ... matched {} potential(s) in total.\n", count);
     }
 
     // Lastly, set any additional potential
