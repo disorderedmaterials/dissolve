@@ -30,6 +30,34 @@ enum TestFlags
     TomlFailure = 1, // tests where the TOML testing is known to fail
 };
 
+// Custom Macros
+// See https://stackoverflow.com/questions/42956538
+
+// Wrap a code block with try-catch, handle exceptions thrown, print them into EXCEPT_STREAM and rethrow.
+#define PRINT_AND_RETHROW(CODE_BLOCK, EXCEPT_STREAM)                                                                           \
+    try                                                                                                                        \
+    {                                                                                                                          \
+        do                                                                                                                     \
+        {                                                                                                                      \
+            CODE_BLOCK;                                                                                                        \
+        } while (0);                                                                                                           \
+    }                                                                                                                          \
+    catch (const std::exception &ex)                                                                                           \
+    {                                                                                                                          \
+        EXCEPT_STREAM << "std::exception thrown: " << ex.what() << std::endl;                                                  \
+        throw;                                                                                                                 \
+    }                                                                                                                          \
+    catch (...)                                                                                                                \
+    {                                                                                                                          \
+        EXCEPT_STREAM << "unknown structure thrown" << std::endl;                                                              \
+        throw;                                                                                                                 \
+    }
+
+// Wrap a code block with try-catch, handle exceptions thrown, print them into std::cerr and rethrow.
+#define PRINT_STDERR_AND_RETHROW(CODE_BLOCK) PRINT_AND_RETHROW(CODE_BLOCK, std::cerr)
+#define EXPECT_NO_THROW_VERBOSE(CODE_BLOCK) EXPECT_NO_THROW(PRINT_STDERR_AND_RETHROW(CODE_BLOCK))
+#define ASSERT_NO_THROW_VERBOSE(CODE_BLOCK) ASSERT_NO_THROW(PRINT_STDERR_AND_RETHROW(CODE_BLOCK))
+
 void compareToml(std::string location, SerialisedValue toml, SerialisedValue toml2)
 {
     if (toml.is_table())
