@@ -12,7 +12,7 @@ class PCL2019CationsForcefieldTest : public ::testing::Test
     protected:
     DissolveSystemTest systemTest;
 
-    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp("dissolve/input/ff-pcl2019-cations.txt")); }
+    void SetUp() override { ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/ff-pcl2019-cations.txt")); }
 };
 
 TEST_F(PCL2019CationsForcefieldTest, benzc1im)

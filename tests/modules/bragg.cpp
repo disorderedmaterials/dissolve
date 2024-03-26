@@ -72,7 +72,7 @@ class BraggModuleTest : public ::testing::Test
 
 TEST_F(BraggModuleTest, MgO_Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/bragg-MgO.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/bragg-MgO.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Check Partial S(Q) data
@@ -252,12 +252,12 @@ TEST_F(BraggModuleTest, MgO_Full)
 
 TEST_F(BraggModuleTest, MgO_Intensities111)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/bragg-MgO.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/bragg-MgO.txt"));
 
     // Set multiplicities to (1,1,1)
     auto *braggModule = systemTest.coreData().findModule("Bragg01");
     ASSERT_TRUE(braggModule);
-    ASSERT_NO_THROW(braggModule->keywords().set("Multiplicity", Vec3<int>(1, 1, 1)));
+    ASSERT_NO_THROW_VERBOSE(braggModule->keywords().set("Multiplicity", Vec3<int>(1, 1, 1)));
 
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 

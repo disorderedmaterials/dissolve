@@ -17,7 +17,7 @@ class CompareModuleTest : public ::testing::Test
 
     void SetUp() override
     {
-        ASSERT_NO_THROW(systemTest.setUp("dissolve/input/epsr-benzene-3n.txt"));
+        ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/epsr-benzene-3n.txt"));
         ASSERT_TRUE(systemTest.dissolve().iterate(1));
     }
 };

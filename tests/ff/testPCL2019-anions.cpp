@@ -12,7 +12,7 @@ class PCL2019AnionsForcefieldTest : public ::testing::Test
     protected:
     DissolveSystemTest systemTest;
 
-    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp("dissolve/input/ff-pcl2019-anions.txt")); }
+    void SetUp() override { ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/ff-pcl2019-anions.txt")); }
 };
 
 TEST_F(PCL2019AnionsForcefieldTest, beti)

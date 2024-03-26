@@ -16,7 +16,7 @@ class GRModuleTest : public ::testing::Test
 
 TEST_F(GRModuleTest, Methods)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/rdfMethod.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/rdfMethod.txt"));
     auto *grModule = systemTest.getModule<GRModule>("GR01");
 
     // Simple method
@@ -31,7 +31,7 @@ TEST_F(GRModuleTest, Methods)
 
 TEST_F(GRModuleTest, Water)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/correlations-water.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/correlations-water.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Partial g(r) (unbound terms)
@@ -62,7 +62,7 @@ TEST_F(GRModuleTest, Water)
 
 TEST_F(GRModuleTest, WaterMethanol)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/correlations-waterMethanol.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/correlations-waterMethanol.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     /*
@@ -221,7 +221,7 @@ TEST_F(GRModuleTest, WaterMethanol)
 
 TEST_F(GRModuleTest, Benzene)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/epsr-benzene-3n.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/epsr-benzene-3n.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Partial g(r) (unbound terms)

@@ -15,7 +15,7 @@ class ModifierOSitesModuleTest : public ::testing::Test
 
 TEST_F(ModifierOSitesModuleTest, Simple)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/modifierOSites.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/modifierOSites.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     EXPECT_TRUE(systemTest.checkData1D(
@@ -26,7 +26,7 @@ TEST_F(ModifierOSitesModuleTest, Simple)
 }
 TEST_F(ModifierOSitesModuleTest, TotalOSites)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/modifierOSites-test2.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/modifierOSites-test2.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
     EXPECT_TRUE(systemTest.checkData1D(
         "M//OTypes", {"dissolve/input/modifierOSites-test2.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},

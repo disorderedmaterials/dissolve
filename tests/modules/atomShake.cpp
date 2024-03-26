@@ -14,7 +14,7 @@ class AtomShakeModuleTest : public ::testing::Test
 
     void SetUp() override
     {
-        ASSERT_NO_THROW(systemTest.setUp("dissolve/input/atomShake-water.txt"));
+        ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/atomShake-water.txt"));
         ASSERT_TRUE(systemTest.dissolve().iterate(100));
     }
 };
