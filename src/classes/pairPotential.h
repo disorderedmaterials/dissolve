@@ -19,6 +19,7 @@ class PairPotential
     public:
     PairPotential();
     PairPotential(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges);
+    PairPotential(std::string_view nameI, std::string_view nameJ, const InteractionPotential<ShortRangeFunctions> &potential);
     // Coulomb Truncation Scheme enum
     enum CoulombTruncationScheme
     {

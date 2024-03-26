@@ -26,6 +26,13 @@ PairPotential::PairPotential(const std::shared_ptr<AtomType> &typeI, const std::
     setUp(typeI, typeJ, includeCharges);
 }
 
+PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ,
+                             const InteractionPotential<ShortRangeFunctions> &potential)
+    : includeAtomTypeCharges_(false), nameI_(nameI), nameJ_(nameJ), interactionPotential_(potential),
+      uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
+{
+}
+
 // Return enum option info for CoulombTruncationScheme
 EnumOptions<PairPotential::CoulombTruncationScheme> PairPotential::coulombTruncationSchemes()
 {
