@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
-#include "analyser/dataNormaliser1D.h"
+#include "analyser/dataOperator1D.h"
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
@@ -53,12 +53,12 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     dataRDF = histAB.accumulatedData();
 
     // Normalise
-    DataNormaliser1D normaliserRDF(dataRDF);
+    DataOperator1D normaliserRDF(dataRDF);
     // Normalise by A site population
-    normaliserRDF.normaliseDivide(double(a.sites().size()));
+    normaliserRDF.divide(double(a.sites().size()));
 
     // Normalise by B site population density
-    normaliserRDF.normaliseDivide(double(b.sites().size()) / targetConfiguration_->box()->volume());
+    normaliserRDF.divide(double(b.sites().size()) / targetConfiguration_->box()->volume());
 
     // Normalise by spherical shell
     normaliserRDF.normaliseBySphericalShell();
@@ -68,9 +68,9 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     dataCN = histAB.accumulatedData();
 
     // Normalise
-    DataNormaliser1D normaliserCN(dataCN);
+    DataOperator1D normaliserCN(dataCN);
     // Normalise by A site population
-    normaliserCN.normaliseDivide(double(a.sites().size()));
+    normaliserCN.divide(double(a.sites().size()));
 
     const std::vector<std::string> rangeNames = {"A", "B", "C"};
     for (int i = 0; i < 3; ++i)

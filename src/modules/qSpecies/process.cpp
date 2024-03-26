@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
-#include "analyser/dataNormaliser1D.h"
+#include "analyser/dataOperator1D.h"
 #include "analyser/siteFilter.h"
 #include "analyser/siteSelector.h"
 #include "main/dissolve.h"
@@ -82,8 +82,8 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
 
     // Averaged values for Q-Species
     Data1D accumulatedQData = qSpeciesHistogram.accumulatedData();
-    DataNormaliser1D normaliserQ(accumulatedQData);
-    normaliserQ.normaliseTo();
+    DataOperator1D normaliserQ(accumulatedQData);
+    normaliserQ.normaliseSumTo();
 
     // Averaged values for oxygen sites
     auto freeOxygens = oxygenSitesHistogram.accumulatedData().value(0);

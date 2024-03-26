@@ -2,8 +2,8 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
-#include "analyser/dataNormaliser1D.h"
-#include "analyser/dataNormaliser2D.h"
+#include "analyser/dataOperator1D.h"
+#include "analyser/dataOperator2D.h"
 #include "analyser/siteSelector.h"
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
@@ -102,34 +102,34 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     // RDF(B-C)
     auto &rBCNormalised = processingData.realise<Data1D>("RDF(BC)", name(), GenericItem::InRestartFileFlag);
     rBCNormalised = rBC.accumulatedData();
-    DataNormaliser1D rBCNormaliser(rBCNormalised);
+    DataOperator1D rBCNormaliser(rBCNormalised);
     // Normalise by A site population
-    rBCNormaliser.normaliseDivide(double(nACumulative) / nASelections);
+    rBCNormaliser.divide(double(nACumulative) / nASelections);
     // Normalise by B site population
-    rBCNormaliser.normaliseDivide(double(nBCumulative) / nBSelections);
+    rBCNormaliser.divide(double(nBCumulative) / nBSelections);
     // Normalise by C site population density
-    rBCNormaliser.normaliseDivide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());
+    rBCNormaliser.divide((double(nCAvailable) / nCSelections) / targetConfiguration_->box()->volume());
     // Normalise by spherical shell
     rBCNormaliser.normaliseBySphericalShell();
 
     auto &aABCNormalised = processingData.realise<Data1D>("Angle(ABC)", name(), GenericItem::InRestartFileFlag);
     aABCNormalised = aABC.accumulatedData();
-    DataNormaliser1D aABCNormaliser(aABCNormalised);
+    DataOperator1D aABCNormaliser(aABCNormalised);
     // Normalise by value / sin(x)
-    aABCNormaliser.normalise([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
+    aABCNormaliser.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
     // Normalise to 1.0
-    aABCNormaliser.normaliseTo();
+    aABCNormaliser.normaliseSumTo();
 
     auto &dAngleNormalised = processingData.realise<Data2D>("DAngle(A-BC)", name(), GenericItem::InRestartFileFlag);
     dAngleNormalised = dAngle.accumulatedData();
-    DataNormaliser2D dAngleNormaliser(dAngleNormalised);
+    DataOperator2D dAngleNormaliser(dAngleNormalised);
     // Normalise by value / sin(y) / sin(yDelta)
-    dAngleNormaliser.normalise([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
-                               { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
+    dAngleNormaliser.operate([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+                             { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
     // Normalise by A site population
-    dAngleNormaliser.normaliseDivide(double(nACumulative) / nASelections);
+    dAngleNormaliser.divide(double(nACumulative) / nASelections);
     // Normalise by B site population density
-    dAngleNormaliser.normaliseDivide((double(nBAvailable) / nBSelections) / targetConfiguration_->box()->volume());
+    dAngleNormaliser.divide((double(nBAvailable) / nBSelections) / targetConfiguration_->box()->volume());
     // Normalise by spherical shell
     dAngleNormaliser.normaliseBySphericalShell();
 

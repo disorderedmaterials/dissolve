@@ -1,13 +1,13 @@
 add_library(
   analyser
   dataExporter.h
-  dataNormaliser1D.cpp
-  dataNormaliser1D.h
-  dataNormaliser2D.cpp
-  dataNormaliser2D.h
-  dataNormaliser3D.cpp
-  dataNormaliser3D.h
-  dataNormaliserBase.h
+  dataOperator1D.cpp
+  dataOperator1D.h
+  dataOperator2D.cpp
+  dataOperator2D.h
+  dataOperator3D.cpp
+  dataOperator3D.h
+  dataOperatorBase.h
   siteFilter.cpp
   siteFilter.h
   siteSelector.cpp
