@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "modules/energy/energy.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <vector>
@@ -53,6 +54,11 @@ TEST_F(PairPotentialOverridesTest, Water3000)
     EXPECT_TRUE(systemTest.dissolve().regeneratePairPotentials());
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
     EXPECT_TRUE(systemTest.checkDouble("overridden (Off) van der Waals energy", interEnergy.values().back(), 0.0, 6.0e-2));
+
+    // Need to turn off internal consistency checking for the energy at this point since our reference atomic potentials
+    // will no longer represent the final, overridden potentials
+    auto *energyModule = systemTest.getModule<EnergyModule>("Energy01");
+    energyModule->keywords().set("Test", false);
 
     // Turn it on to Add
     owOverride->setType(PairPotentialOverride::PairPotentialOverrideType::Add);
