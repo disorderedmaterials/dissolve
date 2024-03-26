@@ -380,7 +380,7 @@ bool Dissolve::saveInput(std::string_view filename)
             return false;
 
     // Pair potential overrides
-    for (const auto &ppOverride : pairPotentialOverrides_)
+    for (const auto &ppOverride : coreData_.pairPotentialOverrides())
         if (!parser.writeLineF("  {}  '{}'  '{}'  {}  {}  {}\n",
                                PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::OverrideKeyword),
                                ppOverride->matchI(), ppOverride->matchJ(),

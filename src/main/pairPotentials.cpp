@@ -88,24 +88,6 @@ PairPotential *Dissolve::pairPotential(std::string_view at1Name, std::string_vie
     return it != pairPotentials_.end() ? std::get<2>(*it).get() : nullptr;
 }
 
-// Create new pair potential override
-PairPotentialOverride *Dissolve::addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
-                                                          PairPotentialOverride::PairPotentialOverrideType overrideType,
-                                                          const InteractionPotential<ShortRangeFunctions> &potential)
-{
-    auto &pp =
-        pairPotentialOverrides_.emplace_back(std::make_unique<PairPotentialOverride>(matchI, matchJ, overrideType, potential));
-
-    return pp.get();
-}
-
-// Return defined overrides for PairPotentials
-std::vector<std::unique_ptr<PairPotentialOverride>> &Dissolve::pairPotentialOverrides() { return pairPotentialOverrides_; }
-const std::vector<std::unique_ptr<PairPotentialOverride>> &Dissolve::pairPotentialOverrides() const
-{
-    return pairPotentialOverrides_;
-}
-
 // Return map for PairPotentials
 const PotentialMap &Dissolve::potentialMap() const { return potentialMap_; }
 
@@ -139,7 +121,7 @@ bool Dissolve::regeneratePairPotentials()
         return false;
 
     // Secondly, apply any overrides
-    for (auto &override : pairPotentialOverrides_)
+    for (const auto &override : coreData_.pairPotentialOverrides())
     {
         Messenger::print("Pair potential override between '{}' and '{}' ({}, {}, '{}') ...\n", override->matchI(),
                          override->matchJ(), PairPotentialOverride::pairPotentialOverrideTypes().keyword(override->type()),

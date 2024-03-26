@@ -59,8 +59,6 @@ class Dissolve : public Serialisable<>
     bool atomTypeChargeSource_;
     // Simulation PairPotentials
     std::vector<PairPotential::Definition> pairPotentials_;
-    // Defined overrides for PairPotentials
-    std::vector<std::unique_ptr<PairPotentialOverride>> pairPotentialOverrides_;
     // Map for PairPotentials
     PotentialMap potentialMap_;
 
@@ -98,13 +96,6 @@ class Dissolve : public Serialisable<>
     // Return specified PairPotential (if defined)
     PairPotential *pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const;
     PairPotential *pairPotential(std::string_view at1Name, std::string_view at2Name) const;
-    // Create new pair potential override
-    PairPotentialOverride *addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
-                                                    PairPotentialOverride::PairPotentialOverrideType overrideType,
-                                                    const InteractionPotential<ShortRangeFunctions> &potential);
-    // Return defined overrides for PairPotentials
-    std::vector<std::unique_ptr<PairPotentialOverride>> &pairPotentialOverrides();
-    const std::vector<std::unique_ptr<PairPotentialOverride>> &pairPotentialOverrides() const;
     // Return map for PairPotentials
     const PotentialMap &potentialMap() const;
     // Clear and regenerate all PairPotentials, replacing those currently defined

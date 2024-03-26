@@ -44,7 +44,6 @@ void Dissolve::clear()
     forceChargeSource_ = false;
     atomTypeChargeSource_ = true;
     pairPotentials_.clear();
-    pairPotentialOverrides_.clear();
     potentialMap_.clear();
 
     // Simulation

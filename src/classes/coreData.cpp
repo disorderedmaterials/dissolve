@@ -23,6 +23,7 @@ void CoreData::clear()
     masters_.angles.clear();
     masters_.torsions.clear();
     masters_.impropers.clear();
+    pairPotentialOverrides_.clear();
     atomTypes_.clear();
     processingLayers_.clear();
 }
@@ -117,6 +118,28 @@ int CoreData::removeUnusedAtomTypes()
 
 // Clear all atom types
 void CoreData::clearAtomTypes() { atomTypes_.clear(); }
+
+/*
+ * Pair Potential Overrides
+ */
+
+// Create new pair potential override
+PairPotentialOverride *CoreData::addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
+                                                          PairPotentialOverride::PairPotentialOverrideType overrideType,
+                                                          const InteractionPotential<ShortRangeFunctions> &potential)
+{
+    auto &pp =
+        pairPotentialOverrides_.emplace_back(std::make_unique<PairPotentialOverride>(matchI, matchJ, overrideType, potential));
+
+    return pp.get();
+}
+
+// Return defined overrides for PairPotentials
+std::vector<std::unique_ptr<PairPotentialOverride>> &CoreData::pairPotentialOverrides() { return pairPotentialOverrides_; }
+const std::vector<std::unique_ptr<PairPotentialOverride>> &CoreData::pairPotentialOverrides() const
+{
+    return pairPotentialOverrides_;
+}
 
 /*
  * Master Intramolecular Terms

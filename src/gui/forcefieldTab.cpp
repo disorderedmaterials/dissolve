@@ -18,7 +18,7 @@
 
 ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this), atomTypesModel_(dissolve.coreData()),
-      pairPotentialModel_(dissolve.pairPotentials()), pairPotentialOverrideModel_(dissolve.pairPotentialOverrides())
+      pairPotentialModel_(dissolve.pairPotentials()), pairPotentialOverrideModel_(dissolve.coreData().pairPotentialOverrides())
 {
     ui_.setupUi(this);
 
