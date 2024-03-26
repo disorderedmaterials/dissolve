@@ -8,7 +8,7 @@
 #include <string>
 
 // PairPotential Override Definition
-class PairPotentialOverride
+class PairPotentialOverride : public Serialisable<>
 {
     public:
     // Override Types
@@ -49,4 +49,13 @@ class PairPotentialOverride
     // Return interaction potential
     InteractionPotential<ShortRangeFunctions> &interactionPotential();
     const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;
+
+    /*
+     * I/O
+     */
+    public:
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };

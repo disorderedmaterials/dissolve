@@ -161,6 +161,8 @@ SerialisedValue Dissolve::serialise() const
 
     root["pairPotentials"] = serialisePairPotentials();
 
+    Serialisable::fromVector<>(coreData_.pairPotentialOverrides(), "pairPotentialOverrides", root);
+
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 
     Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
@@ -197,6 +199,9 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
     const SerialisedValue node = hasVersion ? dissolve::backwardsUpgrade(originalNode) : originalNode;
 
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
+
+    Serialisable::toVector(node, "pairPotentialOverrides",
+                           [this](const auto node) { coreData_.addPairPotentialOverride()->deserialise(node); });
     Serialisable::optionalOn(node, "master", [this](const auto node) { coreData_.deserialiseMaster(node); });
 
     toMap(node, "species",

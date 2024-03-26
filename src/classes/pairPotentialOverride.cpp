@@ -46,3 +46,56 @@ const InteractionPotential<ShortRangeFunctions> &PairPotentialOverride::interact
 {
     return interactionPotential_;
 }
+
+/*
+ * I/O
+ */
+
+// Express as a serialisable value
+SerialisedValue PairPotentialOverride::serialise() const
+{
+    SerialisedValue value;
+
+    value["matchI"] = matchI_;
+    value["matchJ"] = matchJ_;
+    value["type"] = pairPotentialOverrideTypes().keyword(type_);
+
+    value["form"] = ShortRangeFunctions::forms().keyword(interactionPotential_.form());
+    auto &values = interactionPotential().parameters();
+    if (!values.empty())
+    {
+        SerialisedValue interactionParameters;
+        auto &parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
+        for (auto &&[parameter, value] : zip(parameters, values))
+            interactionParameters[parameter] = value;
+        value["parameters"] = interactionParameters;
+    }
+
+    return value;
+}
+
+// Read values from a serialisable value
+void PairPotentialOverride::deserialise(const SerialisedValue &node)
+{
+    matchI_ = toml::find<std::string>(node, "matchI");
+    matchJ_ = toml::find<std::string>(node, "matchJ");
+
+    Serialisable::optionalOn(node, "type",
+                             [this](const auto node)
+                             { type_ = pairPotentialOverrideTypes().enumeration(std::string(node.as_string())); });
+
+    Serialisable::optionalOn(
+        node, "form",
+        [this](const auto node)
+        { interactionPotential_.setForm(ShortRangeFunctions::forms().enumeration(std::string(node.as_string()))); });
+
+    Serialisable::optionalOn(node, "parameters",
+                             [this](const auto node)
+                             {
+                                 auto &parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
+                                 std::vector<double> values;
+                                 std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
+                                                [&node](const auto parameter) { return node.at(parameter).as_floating(); });
+                                 interactionPotential_.setFormAndParameters(interactionPotential_.form(), values);
+                             });
+}
