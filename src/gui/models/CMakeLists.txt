@@ -25,6 +25,7 @@ set(models_MOC_HDRS
     modulePaletteModel.h
     nodePaletteModel.h
     pairPotentialModel.h
+    pairPotentialOverrideModel.h
     procedureModel.h
     procedureNodeModel.h
     rangeVectorModel.h
@@ -88,6 +89,7 @@ set(models_SRCS
     modulePaletteModel.cpp
     nodePaletteModel.cpp
     pairPotentialModel.cpp
+    pairPotentialOverrideModel.cpp
     procedureModel.cpp
     procedureModelMimeData.cpp
     procedureModelMimeData.h

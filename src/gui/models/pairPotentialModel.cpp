@@ -5,7 +5,7 @@
 #include "base/sysFunc.h"
 #include "templates/algorithms.h"
 
-PairPotentialModel::PairPotentialModel(const std::vector<std::unique_ptr<PairPotential>> &pairs) : pairs_(pairs) {}
+PairPotentialModel::PairPotentialModel(const std::vector<PairPotential::Definition> &data) : data_(data) {}
 
 /*
  * QAbstractItemModel overrides
@@ -14,7 +14,7 @@ PairPotentialModel::PairPotentialModel(const std::vector<std::unique_ptr<PairPot
 int PairPotentialModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return pairs_.size();
+    return data_.size();
 }
 
 int PairPotentialModel::columnCount(const QModelIndex &parent) const
@@ -23,9 +23,12 @@ int PairPotentialModel::columnCount(const QModelIndex &parent) const
     return 6;
 }
 
-const PairPotential *PairPotentialModel::rawData(const QModelIndex index) const { return pairs_[index.row()].get(); }
+const PairPotential *PairPotentialModel::rawData(const QModelIndex index) const
+{
+    return std::get<2>(data_[index.row()]).get();
+}
 
-PairPotential *PairPotentialModel::rawData(const QModelIndex index) { return pairs_[index.row()].get(); }
+PairPotential *PairPotentialModel::rawData(const QModelIndex index) { return std::get<2>(data_[index.row()]).get(); }
 
 QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
 {
@@ -39,10 +42,10 @@ QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
         {
             // Name
             case (0):
-                return QString::fromStdString(std::string(pp->atomTypeNameI()));
+                return QString::fromStdString(std::string(pp->nameI()));
             // Element
             case (1):
-                return QString::fromStdString(std::string(pp->atomTypeNameJ()));
+                return QString::fromStdString(std::string(pp->nameJ()));
             // Form
             case (2):
                 return QString::fromStdString(ShortRangeFunctions::forms().keyword(pp->interactionPotential().form()));

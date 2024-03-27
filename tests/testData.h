@@ -209,6 +209,12 @@ class DissolveSystemTest
      * Module Helpers
      */
     public:
+    // Disable all defined modules
+    void disableAllModules(std::string_view exceptThis = "")
+    {
+        for (auto *m : coreData_.moduleInstances())
+            m->setEnabled(m->name() == exceptThis);
+    }
     // Set enabled status for named module
     void setModuleEnabled(std::string_view name, bool enabled)
     {

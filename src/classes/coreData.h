@@ -5,6 +5,7 @@
 
 #include "base/version.h"
 #include "classes/configuration.h"
+#include "classes/pairPotentialOverride.h"
 #include "classes/species.h"
 #include "data/elements.h"
 #include "module/types.h"
@@ -63,6 +64,24 @@ class CoreData
     int removeUnusedAtomTypes();
     // Clear all atom types
     void clearAtomTypes();
+
+    /*
+     * Pair Potential Overrides
+     */
+    private:
+    // Defined overrides for PairPotentials
+    std::vector<std::unique_ptr<PairPotentialOverride>> pairPotentialOverrides_;
+
+    public:
+    // Create new pair potential override
+    PairPotentialOverride *addPairPotentialOverride(
+        std::string_view matchI = "", std::string_view matchJ = "",
+        PairPotentialOverride::PairPotentialOverrideType overrideType = PairPotentialOverride::PairPotentialOverrideType::Off,
+        const InteractionPotential<ShortRangeFunctions> &potential =
+            InteractionPotential<ShortRangeFunctions>(ShortRangeFunctions::Form::None));
+    // Return defined overrides for PairPotentials
+    std::vector<std::unique_ptr<PairPotentialOverride>> &pairPotentialOverrides();
+    const std::vector<std::unique_ptr<PairPotentialOverride>> &pairPotentialOverrides() const;
 
     /*
      * Master Intramolecular Terms

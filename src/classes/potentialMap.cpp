@@ -26,7 +26,7 @@ void PotentialMap::clear() { potentialMatrix_.clear(); }
 
 // Initialise maps
 bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &masterAtomTypes,
-                              const std::vector<std::unique_ptr<PairPotential>> &pairPotentials, double pairPotentialRange)
+                              const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange)
 {
     // Clear old data first
     clear();
@@ -37,28 +37,28 @@ bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &mast
 
     // Loop over defined PairPotentials
     int indexI, indexJ;
-    for (auto &pot : pairPotentials)
+    for (auto &&[at1, at2, pp] : pairPotentials)
     {
-        indexI = pot->atomTypeI()->index();
-        indexJ = pot->atomTypeJ()->index();
+        indexI = at1->index();
+        indexJ = at2->index();
         if (indexI == -1)
-            return Messenger::error("Couldn't find AtomType '{}' in typeIndex.\n", pot->atomTypeI()->name());
+            return Messenger::error("Couldn't find AtomType '{}' in typeIndex.\n", at1->name());
         if (indexJ == -1)
-            return Messenger::error("Couldn't find AtomType '{}' in typeIndex.\n", pot->atomTypeJ()->name());
+            return Messenger::error("Couldn't find AtomType '{}' in typeIndex.\n", at1->name());
 
         // Store PairPotential pointer
         if (indexI == indexJ)
         {
-            Messenger::print("Linking self-interaction PairPotential for '{}' (index {},{} in matrix).\n",
-                             pot->atomTypeI()->name(), indexI, indexJ);
-            potentialMatrix_[{indexI, indexI}] = pot.get();
+            Messenger::print("Linking self-interaction PairPotential for '{}' (index {},{} in matrix).\n", at1->name(), indexI,
+                             indexJ);
+            potentialMatrix_[{indexI, indexI}] = pp.get();
         }
         else
         {
-            Messenger::print("Linking PairPotential between '{}' and '{}' (indices {},{} and {},{} in matrix).\n",
-                             pot->atomTypeI()->name(), pot->atomTypeJ()->name(), indexI, indexJ, indexJ, indexI);
-            potentialMatrix_[{indexI, indexJ}] = pot.get();
-            potentialMatrix_[{indexJ, indexI}] = pot.get();
+            Messenger::print("Linking PairPotential between '{}' and '{}' (indices {},{} and {},{} in matrix).\n", at1->name(),
+                             at2->name(), indexI, indexJ, indexJ, indexI);
+            potentialMatrix_[{indexI, indexJ}] = pp.get();
+            potentialMatrix_[{indexJ, indexI}] = pp.get();
         }
     }
 

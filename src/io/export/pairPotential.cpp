@@ -62,7 +62,7 @@ bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotenti
         return false;
 
     // Write pair potential header record
-    if (!parser.writeLineF("{:<8}{:<8}{:20.10e}{:20.10e}\n", pp->atomTypeNameI(), pp->atomTypeNameJ(), 0.0, 0.0))
+    if (!parser.writeLineF("{:<8}{:<8}{:20.10e}{:20.10e}\n", pp->nameI(), pp->nameJ(), 0.0, 0.0))
         return false;
 
     // Write energy data

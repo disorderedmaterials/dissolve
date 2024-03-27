@@ -3,27 +3,35 @@
 
 #pragma once
 
-#include "classes/pairPotential.h"
+#include "classes/pairPotentialOverride.h"
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <QModelIndex>
-
 #include <vector>
 
-class PairPotentialModel : public QAbstractListModel
+class PairPotentialOverrideModel : public QAbstractListModel
 {
     Q_OBJECT
 
     private:
-    // Source pair potential data
-    const std::vector<PairPotential::Definition> &data_;
+    // Source pair potential override data
+    std::vector<std::unique_ptr<PairPotentialOverride>> &data_;
 
     public:
-    // Set source pair potential data
-    PairPotentialModel(const std::vector<PairPotential::Definition> &data);
-    ~PairPotentialModel() = default;
-    const PairPotential *rawData(const QModelIndex index) const;
-    PairPotential *rawData(const QModelIndex index);
+    // Column Data
+    enum ColumnData
+    {
+        MatchI,
+        MatchJ,
+        OverrideType,
+        ShortRangeForm,
+        ShortRangeParameters,
+        nColumnData
+    };
+    PairPotentialOverrideModel(std::vector<std::unique_ptr<PairPotentialOverride>> &data_);
+    ~PairPotentialOverrideModel() = default;
+    const PairPotentialOverride *rawData(const QModelIndex index) const;
+    PairPotentialOverride *rawData(const QModelIndex index);
     // Update the table contents
     void reset();
 

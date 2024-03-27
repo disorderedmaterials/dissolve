@@ -100,7 +100,7 @@ SerialisedValue AtomType::serialise() const
     atomType["charge"] = charge_;
     atomType["form"] = ShortRangeFunctions::forms().keyword(interactionPotential_.form());
 
-    std::vector<double> values = interactionPotential().parameters();
+    auto &values = interactionPotential().parameters();
     if (!values.empty())
     {
         SerialisedValue atomTypeParameters;

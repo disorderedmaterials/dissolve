@@ -41,6 +41,7 @@ add_library(
   moleculeDistributor.cpp
   neutronWeights.cpp
   pairPotential.cpp
+  pairPotentialOverride.cpp
   potentialMap.cpp
   pairIterator.cpp
   partialSet.cpp
@@ -97,6 +98,7 @@ add_library(
   moleculeDistributor.h
   neutronWeights.h
   pairPotential.h
+  pairPotentialOverride.h
   potentialMap.h
   partialSet.h
   partialSetAccumulator.h

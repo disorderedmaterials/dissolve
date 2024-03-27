@@ -161,6 +161,8 @@ SerialisedValue Dissolve::serialise() const
 
     root["pairPotentials"] = serialisePairPotentials();
 
+    Serialisable::fromVector<>(coreData_.pairPotentialOverrides(), "pairPotentialOverrides", root);
+
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 
     Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
@@ -197,6 +199,9 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
     const SerialisedValue node = hasVersion ? dissolve::backwardsUpgrade(originalNode) : originalNode;
 
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
+
+    Serialisable::toVector(node, "pairPotentialOverrides",
+                           [this](const auto node) { coreData_.addPairPotentialOverride()->deserialise(node); });
     Serialisable::optionalOn(node, "master", [this](const auto node) { coreData_.deserialiseMaster(node); });
 
     toMap(node, "species",
@@ -377,6 +382,16 @@ bool Dissolve::saveInput(std::string_view filename)
                                atomType->name(), Elements::symbol(atomType->Z()), atomType->charge(),
                                ShortRangeFunctions::forms().keyword(atomType->interactionPotential().form()),
                                atomType->interactionPotential().parametersAsString()))
+            return false;
+
+    // Pair potential overrides
+    for (const auto &ppOverride : coreData_.pairPotentialOverrides())
+        if (!parser.writeLineF("  {}  '{}'  '{}'  {}  {}  {}\n",
+                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::OverrideKeyword),
+                               ppOverride->matchI(), ppOverride->matchJ(),
+                               PairPotentialOverride::pairPotentialOverrideTypes().keyword(ppOverride->type()),
+                               ShortRangeFunctions::forms().keyword(ppOverride->interactionPotential().form()),
+                               ppOverride->interactionPotential().parametersAsString()))
             return false;
 
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::RangeKeyword),
