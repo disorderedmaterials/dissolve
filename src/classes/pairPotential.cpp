@@ -271,7 +271,6 @@ double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRang
 
             auto sigmar = params[1] / r;
             auto sigmar6 = pow(sigmar, 6.0);
-            auto sigmar12 = sigmar6 * sigmar6;
             force = 48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / r;
         }
         break;
