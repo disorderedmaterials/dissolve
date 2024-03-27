@@ -174,9 +174,6 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
 // Set Data1D names from source AtomTypes
 void PairPotential::setData1DNames()
 {
-    // Check for NULL pointers
-    assert(atomTypeI_ && atomTypeJ_);
-
     uFull_.setTag(fmt::format("{}-{}", nameI_, nameJ_));
 
     uAdditional_.setTag(fmt::format("{}-{} (Add)", nameI_, nameJ_));
