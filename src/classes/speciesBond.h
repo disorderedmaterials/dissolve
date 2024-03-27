@@ -122,8 +122,6 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
      * Interaction Parameters
      */
     public:
-    // Return fundamental frequency for the interaction
-    double fundamentalFrequency(double reducedMass) const override;
     // Return energy for specified distance
     double energy(double distance) const;
     // Return force multiplier for specified distance

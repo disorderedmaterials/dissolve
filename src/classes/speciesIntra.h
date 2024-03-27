@@ -119,8 +119,6 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
 
         masterTerm_ = nullptr;
     }
-    // Calculate and return fundamental frequency for the interaction
-    virtual double fundamentalFrequency(double reducedMass) const = 0;
 
     /*
      * Connections
