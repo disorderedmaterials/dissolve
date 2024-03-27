@@ -7,6 +7,15 @@
 #include <QMessageBox>
 #include <QSettings>
 
+// Set the input filename and the working directory of dissolve
+void DissolveWindow::setInputFilename(const QString filename)
+{
+    QFileInfo inputFileInfo(filename);
+    QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
+
+    dissolve_.setInputFilename(qPrintable(filename));
+}
+
 // Check whether current input needs to be saved and, if so, if it saved successfully
 bool DissolveWindow::checkSaveCurrentInput()
 {
@@ -32,7 +41,7 @@ bool DissolveWindow::checkSaveCurrentInput()
                 if (newFile.isEmpty())
                     return false;
 
-                dissolve_.setInputFilename(qPrintable(newFile));
+                setInputFilename(newFile);
             }
 
             // Save the file
@@ -243,7 +252,7 @@ void DissolveWindow::on_FileSaveAction_triggered(bool checked)
         if (newFile.isEmpty())
             return;
 
-        dissolve_.setInputFilename(qPrintable(newFile));
+        setInputFilename(newFile);
 
         addRecentFile(newFile);
     }
@@ -270,17 +279,14 @@ void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
     if (newFile.isEmpty())
         return;
 
-    dissolve_.setInputFilename(qPrintable(newFile));
-
     // Attempt to save the file
-    if (!dissolve_.saveInput(dissolve_.inputFilename()))
+    if (!dissolve_.saveInput(qPrintable(newFile)))
         return;
 
     modified_ = false;
 
     // Update the current working directory to be local to the new input file
-    QFileInfo inputFileInfo(newFile);
-    QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
+    setInputFilename(newFile);
 
     addRecentFile(newFile);
 
