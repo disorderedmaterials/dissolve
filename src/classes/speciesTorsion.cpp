@@ -290,13 +290,6 @@ bool SpeciesTorsion::isSelected() const
  * Interaction Parameters
  */
 
-// Calculate and return fundamental frequency for the interaction
-double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
-{
-    Messenger::warn("No fundamental frequency can be calculated for this torsion interaction.\n");
-    return 0.0;
-}
-
 // Set 1-4 scaling factors
 bool SpeciesTorsion::set14ScalingFactors(double elecScale, double vdwScale)
 {

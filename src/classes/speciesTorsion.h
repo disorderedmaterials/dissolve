@@ -108,8 +108,6 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     double electrostatic14Scaling_{0.5}, vdw14Scaling_{0.5};
 
     public:
-    // Return fundamental frequency for the interaction
-    double fundamentalFrequency(double reducedMass) const override;
     // Set 1-4 scaling factors
     bool set14ScalingFactors(double elecScale, double vdwScale);
     // Set electrostatic 1-4 scaling factor for the interaction

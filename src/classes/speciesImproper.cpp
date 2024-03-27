@@ -206,13 +206,6 @@ bool SpeciesImproper::isSelected() const
  * Interaction Parameters
  */
 
-// Calculate and return fundamental frequency for the interaction
-double SpeciesImproper::fundamentalFrequency(double reducedMass) const
-{
-    Messenger::warn("No fundamental frequency can be calculated for this improper interaction.\n");
-    return 0.0;
-}
-
 // Return energy for specified angle
 double SpeciesImproper::energy(double angleInDegrees) const
 {

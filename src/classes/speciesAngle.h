@@ -93,8 +93,6 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
      * Interaction Parameters
      */
     public:
-    // Return fundamental frequency for the interaction
-    double fundamentalFrequency(double reducedMass) const override;
     // Return energy for specified angle
     double energy(double angleInDegrees) const;
     // Return force multiplier for specified angle
