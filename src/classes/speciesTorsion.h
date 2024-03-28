@@ -6,7 +6,7 @@
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "classes/speciesIntra.h"
-
+#include "classes/torsionFunctions.h"
 #include <map>
 #include <vector>
 
@@ -14,32 +14,6 @@
 class SpeciesAtom;
 class Species;
 class CoreData;
-
-// Torsion functional forms
-class TorsionFunctions
-{
-    public:
-    enum class Form
-    {
-        None,
-        Cosine,
-        Cos3,
-        Cos3C,
-        Cos4,
-        CosN,
-        CosNC,
-        UFFCosine,
-        FourierN
-    };
-    // Return enum options for form
-    static EnumOptions<Form> forms();
-    // Return parameters for specified form
-    static const std::vector<std::string> &parameters(Form form);
-    // Return nth parameter for the given form
-    static std::string parameter(Form form, int n);
-    // Return index of parameter in the given form
-    static std::optional<int> parameterIndex(Form form, std::string_view name);
-};
 
 // SpeciesTorsion Definition
 class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
