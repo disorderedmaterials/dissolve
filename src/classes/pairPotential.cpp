@@ -99,11 +99,11 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
 
     // Sanity check - do both atom types have valid short range functions set?
     if (!typeI->interactionPotential().hasValidForm())
-        return Messenger::error(
-            "Can't set parameters for PairPotential since atom type {} has no valid short range form.\n", typeI->name());
+        return Messenger::error("Can't set parameters for PairPotential since atom type {} has no valid short range form.\n",
+                                typeI->name());
     if (!typeJ->interactionPotential().hasValidForm())
-        return Messenger::error(
-            "Can't set parameters for PairPotential since atom type {} has no valid short range form.\n", typeJ->name());
+        return Messenger::error("Can't set parameters for PairPotential since atom type {} has no valid short range form.\n",
+                                typeJ->name());
 
     interactionPotential_ = ShortRangeFunctions::combine(typeI->interactionPotential(), typeJ->interactionPotential());
     if (!interactionPotential_.hasValidForm())
