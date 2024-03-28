@@ -14,7 +14,8 @@ namespace Functions
  * One-Dimensional Function Definition
  */
 
-FunctionDefinition1D::FunctionDefinition1D(std::vector<std::string> parameterNames, int properties, FunctionSetup setup,
+FunctionDefinition1D::FunctionDefinition1D(const std::vector<std::string> &parameterNames,
+                                           const Flags<FunctionProperties::FunctionProperty> &properties, FunctionSetup setup,
                                            Function1DXOmega y, Function1DXOmega yFT, Function1DOmega norm)
     : parameterNames_(parameterNames), properties_(properties), setup_(std::move(setup)), y_(std::move(y)),
       yFT_(std::move(yFT)), normaliser_(std::move(norm))
@@ -28,7 +29,7 @@ int FunctionDefinition1D::nParameters() const { return parameterNames_.size(); }
 const std::vector<std::string> &FunctionDefinition1D::parameterNames() const { return parameterNames_; }
 
 // Return properties of the function
-int FunctionDefinition1D::properties() const { return properties_; }
+const Flags<FunctionProperties::FunctionProperty> &FunctionDefinition1D::properties() const { return properties_; }
 
 // Return function for setup
 FunctionSetup FunctionDefinition1D::setup() const { return setup_; }
@@ -47,10 +48,10 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
     // No Function - always returns 1.0
     {Function1D::None,
      {{},
-      FunctionProperties::FourierTransform | FunctionProperties::Normalisation,
-      [](std::vector<double> p) { return p; },
-      [](double x, double omega, const std::vector<double> &p) { return 1.0; },
-      [](double x, double omega, const std::vector<double> &p) { return 1.0; }}},
+      {FunctionProperties::FourierTransform, FunctionProperties::Normalisation},
+      [](std::vector<double> params) { return params; },
+      [](double x, double omega, const std::vector<double> &params) { return 1.0; },
+      [](double x, double omega, const std::vector<double> &params) { return 1.0; }}},
     /*
      * Gaussian
      *
@@ -61,31 +62,31 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
      */
     {Function1D::Gaussian,
      {{"fwhm"},
-      FunctionProperties::FourierTransform | FunctionProperties::Normalisation,
-      [](std::vector<double> p)
+      {FunctionProperties::FourierTransform, FunctionProperties::Normalisation},
+      [](std::vector<double> params)
       {
-          p.push_back(p[0] / (2.0 * sqrt(2.0 * log(2.0))));
-          p.push_back(1.0 / p[1]);
-          return p;
+          params.push_back(params[0] / (2.0 * sqrt(2.0 * log(2.0))));
+          params.push_back(1.0 / params[1]);
+          return params;
       },
       /*
        *            (     x * x   )
        * f(x) = exp ( - --------- )
        * 	        (   2 * c * c )
        */
-      [](double x, double omega, const std::vector<double> &p) { return exp(-(0.5 * x * x * p[2] * p[2])); },
+      [](double x, double omega, const std::vector<double> &params) { return exp(-(0.5 * x * x * params[2] * params[2])); },
       /*
        *             (   x * x * c * c )
        * FT(x) = exp ( - ------------- )
        *             (         2       )
        */
-      [](double x, double omega, const std::vector<double> &p) { return exp(-(0.5 * x * x * p[1] * p[1])); },
+      [](double x, double omega, const std::vector<double> &params) { return exp(-(0.5 * x * x * params[1] * params[1])); },
       /*
        *             1
        * Norm = ------------
        *        c sqrt(2 pi)
        */
-      [](double omega, const std::vector<double> &p) { return p[2] / sqrt(2.0 * M_PI); }}},
+      [](double omega, const std::vector<double> &params) { return params[2] / sqrt(2.0 * M_PI); }}},
     /*
      * Gaussian with prefactor
      *
@@ -97,31 +98,33 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
      */
     {Function1D::ScaledGaussian,
      {{"A", "fwhm"},
-      FunctionProperties::FourierTransform | FunctionProperties::Normalisation,
-      [](std::vector<double> p)
+      {FunctionProperties::FourierTransform, FunctionProperties::Normalisation},
+      [](std::vector<double> params)
       {
-          p.push_back(p[1] / (2.0 * sqrt(2.0 * log(2.0))));
-          p.push_back(1.0 / p[2]);
-          return p;
+          params.push_back(params[1] / (2.0 * sqrt(2.0 * log(2.0))));
+          params.push_back(1.0 / params[2]);
+          return params;
       },
       /*
        *              (     x * x   )
        * f(x) = A exp ( - --------- )
        *              (   2 * c * c )
        */
-      [](double x, double omega, const std::vector<double> &p) { return p[0] * exp(-(0.5 * x * x * p[3] * p[3])); },
+      [](double x, double omega, const std::vector<double> &params)
+      { return params[0] * exp(-(0.5 * x * x * params[3] * params[3])); },
       /*
        *               (   x * x * c * c )
        * FT(x) = A exp ( - ------------- )
        *               (         2       )
        */
-      [](double x, double omega, const std::vector<double> &p) { return p[0] * exp(-(0.5 * x * x * p[2] * p[2])); },
+      [](double x, double omega, const std::vector<double> &params)
+      { return params[0] * exp(-(0.5 * x * x * params[2] * params[2])); },
       /*
        *              1
        * Norm = --------------
        *        A c sqrt(2 pi)
        */
-      [](double omega, const std::vector<double> &p) { return p[3] / (p[0] * sqrt(2.0 * M_PI)); }}},
+      [](double omega, const std::vector<double> &params) { return params[3] / (params[0] * sqrt(2.0 * M_PI)); }}},
     /*
      * Gaussian with omega-dependent fwhm
      *
@@ -132,33 +135,33 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
      */
     {Function1D::OmegaDependentGaussian,
      {{"fwhm(x)"},
-      FunctionProperties::FourierTransform | FunctionProperties::Normalisation,
-      [](std::vector<double> p)
+      {FunctionProperties::FourierTransform, FunctionProperties::Normalisation},
+      [](std::vector<double> params)
       {
-          p.push_back(p[0] / (2.0 * sqrt(2.0 * log(2.0))));
-          p.push_back(1.0 / p[1]);
-          return p;
+          params.push_back(params[0] / (2.0 * sqrt(2.0 * log(2.0))));
+          params.push_back(1.0 / params[1]);
+          return params;
       },
       /*
        *            (         x * x      )
        * f(x) = exp ( - ---------------- )
        *            (   2 * (c*omega)**2 )
        */
-      [](double x, double omega, const std::vector<double> &p)
-      { return exp(-(x * x) / (2.0 * (p[1] * omega) * (p[1] * omega))); },
+      [](double x, double omega, const std::vector<double> &params)
+      { return exp(-(x * x) / (2.0 * (params[1] * omega) * (params[1] * omega))); },
       /*
        *             (   x*x * (c*omega)**2 )
        * FT(x) = exp ( - ------------------ )
        *             (            2         )
        */
-      [](double x, double omega, const std::vector<double> &p)
-      { return exp(-(0.5 * x * x * (p[1] * omega) * (p[1] * omega))); },
+      [](double x, double omega, const std::vector<double> &params)
+      { return exp(-(0.5 * x * x * (params[1] * omega) * (params[1] * omega))); },
       /*
        *                1
        * Norm = ------------------
        *        c omega sqrt(2 pi)
        */
-      [](double omega, const std::vector<double> &p) { return 1.0 / (p[1] * omega * sqrt(2.0 * M_PI)); }}},
+      [](double omega, const std::vector<double> &params) { return 1.0 / (params[1] * omega * sqrt(2.0 * M_PI)); }}},
     /*
      * Gaussian with omega-independent and omega-dependent fwhm
      *
@@ -172,35 +175,36 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
      */
     {Function1D::GaussianC2,
      {{"fwhm", "fwhm(x)"},
-      FunctionProperties::FourierTransform,
-      [](std::vector<double> p)
+      {FunctionProperties::FourierTransform},
+      [](std::vector<double> params)
       {
-          p.push_back(p[0] / (2.0 * sqrt(2.0 * log(2.0))));
-          p.push_back(p[1] / (2.0 * sqrt(2.0 * log(2.0))));
-          p.push_back(1.0 / p[2]);
-          p.push_back(1.0 / p[3]);
-          return p;
+          params.push_back(params[0] / (2.0 * sqrt(2.0 * log(2.0))));
+          params.push_back(params[1] / (2.0 * sqrt(2.0 * log(2.0))));
+          params.push_back(1.0 / params[2]);
+          params.push_back(1.0 / params[3]);
+          return params;
       },
       /*
        *            (            x * x         )
        * f(x) = exp ( - ---------------------- )
        *            (   2 * (c1 + c2*omega)**2 )
        */
-      [](double x, double omega, const std::vector<double> &p)
-      { return exp(-(x * x) / (2.0 * (p[2] + p[3] * omega) * (p[2] + p[3] * omega))); },
+      [](double x, double omega, const std::vector<double> &params)
+      { return exp(-(x * x) / (2.0 * (params[2] + params[3] * omega) * (params[2] + params[3] * omega))); },
       /*
        *             (   x * x * (c1 + c2*omega)**2 )
        * FT(x) = exp ( - -------------------------- )
        *             (                2             )
        */
-      [](double x, double omega, const std::vector<double> &p)
-      { return exp(-(0.5 * x * x * (p[2] + p[3] * omega) * (p[2] + p[3] * omega))); },
+      [](double x, double omega, const std::vector<double> &params)
+      { return exp(-(0.5 * x * x * (params[2] + params[3] * omega) * (params[2] + params[3] * omega))); },
       /*
        *                    1
        * Norm = --------------------------
        *        (c1 + c2 omega) sqrt(2 pi)
        */
-      [](double omega, const std::vector<double> &p) { return 1.0 / ((p[2] + p[3] * omega) * sqrt(2.0 * M_PI)); }}}};
+      [](double omega, const std::vector<double> &params)
+      { return 1.0 / ((params[2] + params[3] * omega) * sqrt(2.0 * M_PI)); }}}};
 
 // Return enum option info for Function1D
 EnumOptions<Function1D> function1D()
@@ -235,7 +239,7 @@ std::vector<Function1D> matchingFunction1D(int properties)
  * One-Dimensional Function Wrapper
  */
 
-Function1DWrapper::Function1DWrapper(Function1D func, std::vector<double> params)
+Function1DWrapper::Function1DWrapper(Function1D func, const std::vector<double> &params)
     : type_(func), function_(functions1D_.at(func)), parameters_(params)
 {
     calculateInternalParameters();
@@ -245,7 +249,7 @@ Function1DWrapper::Function1DWrapper(Function1D func, std::vector<double> params
 void Function1DWrapper::calculateInternalParameters() { internalParameters_ = function_.setup()(parameters_); }
 
 // Set function type and parameters
-bool Function1DWrapper::setFunctionAndParameters(Function1D func, std::vector<double> params)
+bool Function1DWrapper::setFunctionAndParameters(Function1D func, const std::vector<double> &params)
 {
     type_ = func;
     function_ = functions1D_.at(type_);
@@ -254,7 +258,7 @@ bool Function1DWrapper::setFunctionAndParameters(Function1D func, std::vector<do
         return Messenger::error("1D function '{}' requires {} parameters, but {} were given.\n", function1D().keyword(type_),
                                 function_.nParameters(), params.size());
 
-    parameters_ = std::move(params);
+    parameters_ = params;
     calculateInternalParameters();
 
     return true;
@@ -272,7 +276,7 @@ void Function1DWrapper::setFunction(Function1D func)
 Function1D Function1DWrapper::type() const { return type_; }
 
 // Set current function parameters
-bool Function1DWrapper::setParameters(std::vector<double> params)
+bool Function1DWrapper::setParameters(const std::vector<double> &params)
 {
     if (params.size() != function_.nParameters())
         return Messenger::error("1D function '{}' requires {} parameters, but {} were given.\n", function1D().keyword(type_),
