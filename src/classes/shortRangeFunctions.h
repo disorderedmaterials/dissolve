@@ -4,6 +4,8 @@
 #pragma once
 
 #include "base/enumOptions.h"
+#include "classes/interactionPotential.h"
+#include <optional>
 
 // Short-range functional forms
 class ShortRangeFunctions
@@ -23,4 +25,12 @@ class ShortRangeFunctions
     static std::string parameter(Form form, int n);
     // Return index of parameter in the given form
     static std::optional<int> parameterIndex(Form form, std::string_view name);
+
+    /*
+     * Usage
+     */
+    public:
+    // Combine parameters for the two atom types using suitable rules
+    static InteractionPotential<ShortRangeFunctions> combine(const InteractionPotential<ShortRangeFunctions> &srI,
+                                                             const InteractionPotential<ShortRangeFunctions> &srJ);
 };

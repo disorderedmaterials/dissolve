@@ -30,3 +30,68 @@ std::optional<int> ShortRangeFunctions::parameterIndex(Form form, std::string_vi
 {
     return DissolveSys::indexOf(parameters(form), name);
 }
+
+/*
+ * Utility
+ */
+
+// Combine parameters for the two atom types using suitable rules
+InteractionPotential<ShortRangeFunctions> ShortRangeFunctions::combine(const InteractionPotential<ShortRangeFunctions> &srI,
+                                                                       const InteractionPotential<ShortRangeFunctions> &srJ)
+{
+    // Equivalent functional forms?
+    if (srI.form() == srJ.form())
+    {
+        switch (srI.form())
+        {
+            case (Form::None):
+                break;
+            case (Form::LennardJones):
+                /*
+                 * Combine parameters (Lorentz-Berthelot):
+                 * Parameter 0 = Epsilon
+                 * Parameter 1 = Sigma
+                 */
+                return {srI.form(), std::vector<double>{sqrt(srI.parameters()[0] * srJ.parameters()[0]),
+                                                        (srI.parameters()[1] + srJ.parameters()[1]) * 0.5}};
+            case (Form::LennardJonesGeometric):
+                /*
+                 * Combine parameters (Geometric):
+                 * Parameter 0 = Epsilon
+                 * Parameter 1 = Sigma
+                 */
+                return {srI.form(), std::vector<double>{sqrt(srI.parameters()[0] * srJ.parameters()[0]),
+                                                        sqrt(srI.parameters()[1] * srJ.parameters()[1])}};
+                break;
+            default:
+                throw(std::runtime_error(
+                    fmt::format("Short-range type {} is not accounted for in ShortRangeFunctions::combine().\n",
+                                forms().keyword(srI.form()))));
+        }
+    }
+    else
+    {
+        // In the case of combining LJ and LJGeometric, default to standard Lorentz-Berthelot rules
+        auto ljI = srI.form() == ShortRangeFunctions::Form::LennardJones ||
+                   srI.form() == ShortRangeFunctions::Form::LennardJonesGeometric;
+        auto ljJ = srJ.form() == ShortRangeFunctions::Form::LennardJones ||
+                   srJ.form() == ShortRangeFunctions::Form::LennardJonesGeometric;
+        if (ljI && ljJ)
+        {
+            Messenger::warn("Defaulting to Lorentz-Berthelot rules to combine parameters...\n");
+
+            /*
+             * Combine parameters (Lorentz-Berthelot):
+             * Parameter 0 = Epsilon
+             * Parameter 1 = Sigma
+             */
+            return {Form::LennardJones, std::vector<double>{sqrt(srI.parameters()[0] * srJ.parameters()[0]),
+                                                            (srI.parameters()[1] + srJ.parameters()[1]) * 0.5}};
+        }
+        else
+            Messenger::error("Can't combine parameters between dislike ShortRangeFunctions {} and {}.\n",
+                             forms().keyword(srI.form()), forms().keyword(srJ.form()));
+    }
+
+    return {};
+}
