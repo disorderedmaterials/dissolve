@@ -97,72 +97,17 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
     nameJ_ = typeJ->name();
     setData1DNames();
 
-    auto &paramsI = typeI->interactionPotential().parameters();
-    auto &paramsJ = typeJ->interactionPotential().parameters();
-    auto srI = typeI->interactionPotential().form(), srJ = typeJ->interactionPotential().form();
-
-    // Sanity check - are either of the parameter sets empty (i.e. have never been set with useful data)?
-    if ((paramsI.empty() || paramsJ.empty()) &&
-        (srI != ShortRangeFunctions::Form::None && srJ != ShortRangeFunctions::Form::None))
+    // Sanity check - do both atom types have valid short range functions set?
+    if (!typeI->interactionPotential().hasValidForm())
         return Messenger::error(
-            "Can't set parameters for PairPotential since there are {} ({}) and {} ({}) parameters set in the atom types.\n",
-            paramsI.size(), typeI->name(), paramsJ.size(), typeJ->name());
+            "Can't set parameters for PairPotential since atom type {} has no valid short range form.\n", typeI->name());
+    if (!typeJ->interactionPotential().hasValidForm())
+        return Messenger::error(
+            "Can't set parameters for PairPotential since atom type {} has no valid short range form.\n", typeJ->name());
 
-    // Combine / set parameters as necessary, depending on the short-range interaction types of the supplied AtomTypes
-    if (srI == srJ)
-    {
-        switch (srI)
-        {
-            case (ShortRangeFunctions::Form::None):
-                break;
-            case (ShortRangeFunctions::Form::LennardJones):
-                /*
-                 * Combine parameters (Lorentz-Berthelot):
-                 * Parameter 0 = Epsilon
-                 * Parameter 1 = Sigma
-                 */
-                interactionPotential_.setFormAndParameters(
-                    srI, std::vector<double>{sqrt(paramsI[0] * paramsJ[0]), (paramsI[1] + paramsJ[1]) * 0.5});
-                break;
-            case (ShortRangeFunctions::Form::LennardJonesGeometric):
-                /*
-                 * Combine parameters (Geometric):
-                 * Parameter 0 = Epsilon
-                 * Parameter 1 = Sigma
-                 */
-                interactionPotential_.setFormAndParameters(
-                    srI, std::vector<double>{sqrt(paramsI[0] * paramsJ[0]), sqrt(paramsI[1] * paramsJ[1])});
-                break;
-            default:
-                throw(std::runtime_error(fmt::format("Short-range type {} is not accounted for in PairPotential::setUp().\n",
-                                                     ShortRangeFunctions::forms().keyword(srI))));
-        }
-    }
-    else
-    {
-        // In the case of combining LJ and LJGeometric, default to standard Lorentz-Berthelot rules
-        auto ljI = srI == ShortRangeFunctions::Form::LennardJones || srI == ShortRangeFunctions::Form::LennardJonesGeometric;
-        auto ljJ = srJ == ShortRangeFunctions::Form::LennardJones || srJ == ShortRangeFunctions::Form::LennardJonesGeometric;
-        if (ljI && ljJ)
-        {
-            Messenger::warn("Defaulting to Lorentz-Berthelot rules to combine parameters between atom types '{}' and '{}.\n",
-                            typeI->name(), typeJ->name());
-
-            /*
-             * Combine parameters (Lorentz-Berthelot):
-             * Parameter 0 = Epsilon
-             * Parameter 1 = Sigma
-             */
-            interactionPotential_.setFormAndParameters(
-                ShortRangeFunctions::Form::LennardJones,
-                std::vector<double>{sqrt(paramsI[0] * paramsJ[0]), (paramsI[1] + paramsJ[1]) * 0.5});
-        }
-        else
-            return Messenger::error("Can't generate potential parameters between atom types '{}' and '{}', which have "
-                                    "short-range types {} and {}.\n",
-                                    typeI->name(), typeJ->name(), ShortRangeFunctions::forms().keyword(srI),
-                                    ShortRangeFunctions::forms().keyword(srJ));
-    }
+    interactionPotential_ = ShortRangeFunctions::combine(typeI->interactionPotential(), typeJ->interactionPotential());
+    if (!interactionPotential_.hasValidForm())
+        return false;
 
     // Set charges
     chargeI_ = includeAtomTypeCharges_ ? typeI->charge() : 0.0;
