@@ -202,7 +202,7 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
        */
       [](double omega, const std::vector<double> &p) { return 1.0 / ((p[2] + p[3] * omega) * sqrt(2.0 * M_PI)); }}}};
 
-// Return enum option info for AveragingScheme
+// Return enum option info for Function1D
 EnumOptions<Function1D> function1D()
 {
     return EnumOptions<Function1D>("Function1D", {{Function1D::None, "None"},
