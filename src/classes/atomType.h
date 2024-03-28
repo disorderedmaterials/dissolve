@@ -6,29 +6,10 @@
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "classes/interactionPotential.h"
+#include "classes/shortRangeFunctions.h"
 #include "data/elements.h"
 #include <map>
 #include <vector>
-
-// Short-range functional forms
-class ShortRangeFunctions
-{
-    public:
-    enum class Form
-    {
-        None,                 /* No short-range dispersive forces */
-        LennardJones,         /* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
-        LennardJonesGeometric /* Lennard-Jones 12-6 form with Geometric combination rules */
-    };
-    // Return enum options for form
-    static EnumOptions<Form> forms();
-    // Return parameters for specified form
-    static const std::vector<std::string> &parameters(Form form);
-    // Return nth parameter for the given form
-    static std::string parameter(Form form, int n);
-    // Return index of parameter in the given form
-    static std::optional<int> parameterIndex(Form form, std::string_view name);
-};
 
 // AtomType Definition
 class AtomType : public Serialisable<>
