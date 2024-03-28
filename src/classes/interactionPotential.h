@@ -14,24 +14,45 @@
 template <class Functions> class InteractionPotential
 {
     public:
-    explicit InteractionPotential(typename Functions::Form form) { setForm(form); };
+    InteractionPotential(std::optional<typename Functions::Form> form = {})
+    {
+        if (form)
+            setForm(*form);
+    };
     InteractionPotential(typename Functions::Form form, std::string_view params)
     {
         setForm(form);
         parseParameters(params);
     };
+    InteractionPotential(typename Functions::Form form, const std::vector<double> &params)
+    {
+        form_ = form;
+        parameters_ = params;
+    };
     virtual ~InteractionPotential() = default;
-    InteractionPotential(const InteractionPotential &source) = default;
-    InteractionPotential(InteractionPotential &&source) = delete;
-    InteractionPotential &operator=(const InteractionPotential &source) = default;
-    InteractionPotential &operator=(InteractionPotential &&source) = delete;
+    InteractionPotential(const InteractionPotential &source) { *this = source; };
+    InteractionPotential(InteractionPotential &&source) { *this = source; }
+    InteractionPotential &operator=(const InteractionPotential &source)
+    {
+        form_ = source.form_;
+        parameters_ = source.parameters_;
+        return *this;
+    }
+    InteractionPotential &operator=(InteractionPotential &&source)
+    {
+        form_ = source.form_;
+        parameters_ = source.parameters_;
+        source.form_ = {};
+        source.parameters_.clear();
+        return *this;
+    }
 
     /*
      * Parameter Data
      */
     protected:
     // Functional form of interaction
-    typename Functions::Form form_;
+    std::optional<typename Functions::Form> form_;
     // InteractionPotential for interaction
     std::vector<double> parameters_;
 
@@ -42,11 +63,13 @@ template <class Functions> class InteractionPotential
         form_ = form;
 
         // Resize parameter vector if necessary
-        if (!Functions::forms().validNArgs(form_, parameters_.size(), true))
-            parameters_.resize(Functions::forms().minArgs(form_).value_or(0), 0.0);
+        if (!Functions::forms().validNArgs(*form_, parameters_.size(), true))
+            parameters_.resize(Functions::forms().minArgs(*form_).value_or(0), 0.0);
     }
+    // Return whether the interaction has been given a valid form
+    bool hasValidForm() const { return form_.has_value(); }
     // Return functional form of interaction
-    typename Functions::Form form() const { return form_; }
+    typename Functions::Form form() const { return *form_; }
     // Parse supplied vector of terms
     bool parseParameters(std::vector<std::string> terms)
     {
