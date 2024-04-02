@@ -8,7 +8,7 @@
 #include <QSettings>
 
 // Set the input filename and the working directory of dissolve
-void DissolveWindow::setInputFilename(const QString filename)
+void DissolveWindow::setInputFilename(const QString &filename)
 {
     QFileInfo inputFileInfo(filename);
     QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
