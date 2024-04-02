@@ -20,7 +20,7 @@ runs:
   - name: Install Python Dependencies
     shell: bash
     run: |
-      pip3 install --user dmgbuild biplist
+      pip3 install dmgbuild biplist --break-system-packages
 
   - name: Install Custom Dependencies
     shell: bash
