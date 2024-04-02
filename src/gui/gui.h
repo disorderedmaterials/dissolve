@@ -126,6 +126,8 @@ class DissolveWindow : public QMainWindow
     const int recentFileLimit_;
 
     private:
+    // Set the input file path
+    void setInputFilename(const QString &filename);
     // Check whether current input needs to be saved and, if so, if it saved successfully
     bool checkSaveCurrentInput();
     // Clear all data and start new simulation afresh
