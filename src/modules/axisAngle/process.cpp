@@ -2,8 +2,8 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
-#include "analyser/dataNormaliser1D.h"
-#include "analyser/dataNormaliser2D.h"
+#include "analyser/dataOperator1D.h"
+#include "analyser/dataOperator2D.h"
 #include "analyser/siteSelector.h"
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
@@ -79,35 +79,35 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     // RDF(A-B)
     auto &rABNormalised = processingData.realise<Data1D>("RDF(AB)", name(), GenericItem::InRestartFileFlag);
     rABNormalised = rAB.accumulatedData();
-    DataNormaliser1D rABNormaliser(rABNormalised);
+    DataOperator1D rABNormaliser(rABNormalised);
 
     // Normalise by A site population
-    rABNormaliser.normaliseDivide(double(a.sites().size()));
+    rABNormaliser.divide(double(a.sites().size()));
     // Normalise by B site population density
-    rABNormaliser.normaliseDivide(double(b.sites().size()) / targetConfiguration_->box()->volume());
+    rABNormaliser.divide(double(b.sites().size()) / targetConfiguration_->box()->volume());
     // Normalise by spherical shell
     rABNormaliser.normaliseBySphericalShell();
 
     // AxisAngle(A-B)
     auto &aABNormalised = processingData.realise<Data1D>("AxisAngle(AB)", name(), GenericItem::InRestartFileFlag);
     aABNormalised = aAB.accumulatedData();
-    DataNormaliser1D aABNormaliser(aABNormalised);
+    DataOperator1D aABNormaliser(aABNormalised);
     // Normalise by value / sin(x)
-    aABNormaliser.normalise([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
+    aABNormaliser.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
     // Normalise to 1.0
-    aABNormaliser.normaliseTo();
+    aABNormaliser.normaliseSumTo();
 
     // DAxisAngle(A-B)
     auto &dAxisAngleNormalised = processingData.realise<Data2D>("DAxisAngle", name(), GenericItem::InRestartFileFlag);
     dAxisAngleNormalised = dAxisAngle.accumulatedData();
-    DataNormaliser2D dAxisAngleNormaliser(dAxisAngleNormalised);
+    DataOperator2D dAxisAngleNormaliser(dAxisAngleNormalised);
     // Normalise by value / sin(y) / sin(yDelta)
-    dAxisAngleNormaliser.normalise([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
-                                   { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
+    dAxisAngleNormaliser.operate([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+                                 { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
     // Normalise by A site population
-    dAxisAngleNormaliser.normaliseDivide(double(a.sites().size()));
+    dAxisAngleNormaliser.divide(double(a.sites().size()));
     // Normalise by B site population density
-    dAxisAngleNormaliser.normaliseDivide(double(b.sites().size()) / targetConfiguration_->box()->volume());
+    dAxisAngleNormaliser.divide(double(b.sites().size()) / targetConfiguration_->box()->volume());
     // Normalise by spherical shell
     dAxisAngleNormaliser.normaliseBySphericalShell();
 

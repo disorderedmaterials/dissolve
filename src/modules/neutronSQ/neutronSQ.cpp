@@ -23,7 +23,7 @@ NeutronSQModule::NeutronSQModule() : Module(ModuleTypes::NeutronSQ)
     keywords_.add<IsotopologueSetKeyword>("Isotopologue", "Set/add an isotopologue and its population for a particular species",
                                           isotopologueSet_);
     keywords_
-        .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>("NormaliseTo",
+        .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>("normaliseTo",
                                                                       "Normalisation to apply to total weighted F(Q)",
                                                                       normaliseTo_, StructureFactors::normalisationTypes())
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});

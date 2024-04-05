@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
-#include "analyser/dataNormaliser1D.h"
+#include "analyser/dataOperator1D.h"
 #include "analyser/siteSelector.h"
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
@@ -59,9 +59,9 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
     dataCN = hist.accumulatedData();
 
     // Normalise CN
-    DataNormaliser1D normaliserCN(dataCN);
+    DataOperator1D normaliserCN(dataCN);
     // Normalise by value
-    normaliserCN.normaliseTo();
+    normaliserCN.normaliseSumTo();
 
     // Save CN data?
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataCN, exportFileAndFormat_, moduleContext.processPool()))
