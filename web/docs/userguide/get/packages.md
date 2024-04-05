@@ -18,7 +18,16 @@ You can download the official installer from Microsoft at https://aka.ms/vs/17/r
 
 ### Mac OSX
 
-A disk image is available for recent versions of OSX.
+Starting from version 1.5.0 [(continuous release)](https://github.com/disorderedmaterials/dissolve/releases/tag/continuous) we provide a Dissolve DMG compatible with Apple Silicon (ARM64).
+
+On MacOS, after installing the application you must run these following commands:
+
+```
+cd /Applications
+xattr -rd com.apple.quarantine Dissolve-GUI-<Processor>.app
+xattr -rd com.apple.quarantine  Dissolve-GUI-<Processor>.app/Contents/MacOS/dissolve-gui
+chmod +x  Dissolve-GUI-<Processor>.app/Contents/MacOS/dissolve-gui
+```
 
 ### Linux
 
