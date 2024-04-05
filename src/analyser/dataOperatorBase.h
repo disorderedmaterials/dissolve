@@ -28,7 +28,7 @@ template <typename DataND, typename OperateFunction> class DataOperatorBase
     // Multiply the target data by the multiplier
     void multiply(double multiplier) { targetData_ *= multiplier; }
     // Generic operate function
-    virtual void operate(OperateFunction operator) = 0;
+    virtual void operate(OperateFunction operateFunction) = 0;
 
     /*
      * Normalisation Functions

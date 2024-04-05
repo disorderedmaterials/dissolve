@@ -20,7 +20,7 @@ class DataOperator1D : public DataOperatorBase<Data1D, OperateFunction1D>
      */
     public:
     // Generic operate function
-    void operate(OperateFunction1D operator) override;
+    void operate(OperateFunction1D operateFunction) override;
 
     /*
      * Normalisation Functions

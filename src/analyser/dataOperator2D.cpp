@@ -12,7 +12,7 @@ DataOperator2D::DataOperator2D(Data2D &targetData) : DataOperatorBase<Data2D, Op
  */
 
 // Generic operate function
-void DataOperator2D::operate(OperateFunction2D operator)
+void DataOperator2D::operate(OperateFunction2D operateFunction)
 {
     const auto &xs = targetData_.xAxis();
     const auto &ys = targetData_.yAxis();
@@ -25,7 +25,7 @@ void DataOperator2D::operate(OperateFunction2D operator)
     {
         for (auto j = 0; j < ys.size(); ++j)
         {
-            values[{i, j}] = operator(xs[i], xDelta, ys[j], yDelta, values[{i, j}]);
+            values[{i, j}] = operateFunction(xs[i], xDelta, ys[j], yDelta, values[{i, j}]);
         }
     }
 }
