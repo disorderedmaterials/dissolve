@@ -12,7 +12,7 @@ DataOperator1D::DataOperator1D(Data1D &targetData) : DataOperatorBase<Data1D, Op
  */
 
 // Generic operate function
-void DataOperator1D::operate(OperateFunction1D operator)
+void DataOperator1D::operate(OperateFunction1D operateFunction)
 {
     const auto &xs = targetData_.xAxis();
     auto &values = targetData_.values();
