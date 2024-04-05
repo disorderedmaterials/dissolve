@@ -56,7 +56,7 @@ void runParse(std::filesystem::path input, int steps = 1)
         CoreData coreData2;
         Dissolve repeat(coreData2);
         repeat.setInputFilename(std::string(filename));
-        EXPECT_NO_THROW(repeat.deserialise(toml));
+        EXPECT_NO_THROW_VERBOSE(repeat.deserialise(toml));
         auto toml2 = repeat.serialise();
 
         compare_toml("", toml, toml2);

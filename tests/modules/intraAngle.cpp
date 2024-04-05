@@ -15,7 +15,7 @@ class IntraAngleModuleTest : public ::testing::Test
 
 TEST_F(IntraAngleModuleTest, Water)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/intraAngle.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/intraAngle.txt"));
     ASSERT_TRUE(systemTest.iterateRestart(95));
 
     EXPECT_TRUE(systemTest.checkData1D(

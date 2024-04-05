@@ -12,7 +12,7 @@ class LudwigPy5ForcefieldTest : public ::testing::Test
     protected:
     DissolveSystemTest systemTest;
 
-    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp("dissolve/input/ff-ludwig-py5.txt")); }
+    void SetUp() override { ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/ff-ludwig-py5.txt")); }
 };
 
 TEST_F(LudwigPy5ForcefieldTest, Py5)

@@ -15,7 +15,7 @@ class QSpeciesModuleTest : public ::testing::Test
 
 TEST_F(QSpeciesModuleTest, Simple)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/qSpecies-simple.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/qSpecies-simple.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     EXPECT_TRUE(systemTest.checkData1D(

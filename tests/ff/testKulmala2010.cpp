@@ -12,7 +12,7 @@ class Kulmala2010ForcefieldTest : public ::testing::Test
     protected:
     DissolveSystemTest systemTest;
 
-    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp("dissolve/input/ff-kulmala2010.txt")); }
+    void SetUp() override { ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/ff-kulmala2010.txt")); }
 };
 
 TEST_F(Kulmala2010ForcefieldTest, Hydronium)

@@ -14,7 +14,7 @@ class AngleModuleTest : public ::testing::Test
 
 TEST_F(AngleModuleTest, Water)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/angle.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/angle.txt"));
     ASSERT_TRUE(systemTest.iterateRestart(95));
 
     EXPECT_TRUE(systemTest.checkData1D(

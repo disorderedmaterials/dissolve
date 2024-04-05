@@ -19,7 +19,7 @@ class EnergyModuleTest : public ::testing::Test
 
 TEST_F(EnergyModuleTest, DLPOLYWater3000Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-water3000.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -34,14 +34,14 @@ TEST_F(EnergyModuleTest, DLPOLYWater3000Full)
 
 TEST_F(EnergyModuleTest, DLPOLYWater3000VanDerWaals)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
-                                     [](Dissolve &D, CoreData &C)
-                                     {
-                                         D.setAtomTypeChargeSource(true);
-                                         D.setAutomaticChargeSource(false);
-                                         C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
-                                         C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
-                                     }));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
+                                             [](Dissolve &D, CoreData &C)
+                                             {
+                                                 D.setAtomTypeChargeSource(true);
+                                                 D.setAutomaticChargeSource(false);
+                                                 C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
+                                                 C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
+                                             }));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -52,14 +52,14 @@ TEST_F(EnergyModuleTest, DLPOLYWater3000VanDerWaals)
 
 TEST_F(EnergyModuleTest, DLPOLYWater3000Electrostatics)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
-                                     [](Dissolve &D, CoreData &C)
-                                     {
-                                         C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                         C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                         C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
-                                         C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
-                                     }));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
+                                             [](Dissolve &D, CoreData &C)
+                                             {
+                                                 C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                                 C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                                 C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
+                                                 C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
+                                             }));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
     auto &interEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Bulk//PairPotential");
@@ -75,13 +75,13 @@ TEST_F(EnergyModuleTest, DLPOLYWater3000Electrostatics)
 
 TEST_F(EnergyModuleTest, DLPOLYWater3000Bound)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
-                                     [](Dissolve &D, CoreData &C)
-                                     {
-                                         D.setAtomTypeChargeSource(true);
-                                         C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                         C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                     }));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
+                                             [](Dissolve &D, CoreData &C)
+                                             {
+                                                 D.setAtomTypeChargeSource(true);
+                                                 C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                                 C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                             }));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
     auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Bulk//Bound");
@@ -91,7 +91,7 @@ TEST_F(EnergyModuleTest, DLPOLYWater3000Bound)
 
 TEST_F(EnergyModuleTest, DLPOLYHexane1Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane1.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-hexane1.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -106,7 +106,7 @@ TEST_F(EnergyModuleTest, DLPOLYHexane1Full)
 
 TEST_F(EnergyModuleTest, DLPOLYHexane2Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane2.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-hexane2.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -121,7 +121,7 @@ TEST_F(EnergyModuleTest, DLPOLYHexane2Full)
 
 TEST_F(EnergyModuleTest, DLPOLYHexane200Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane200.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-hexane200.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -136,14 +136,14 @@ TEST_F(EnergyModuleTest, DLPOLYHexane200Full)
 
 TEST_F(EnergyModuleTest, DLPOLYHexane200Bound)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane200.txt",
-                                     [](Dissolve &D, CoreData &C)
-                                     {
-                                         for (auto at : C.atomTypes())
-                                             at->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                         D.setAtomTypeChargeSource(true);
-                                         D.setAutomaticChargeSource(false);
-                                     }));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-hexane200.txt",
+                                             [](Dissolve &D, CoreData &C)
+                                             {
+                                                 for (auto at : C.atomTypes())
+                                                     at->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                                 D.setAtomTypeChargeSource(true);
+                                                 D.setAutomaticChargeSource(false);
+                                             }));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -154,18 +154,18 @@ TEST_F(EnergyModuleTest, DLPOLYHexane200Bound)
 
 TEST_F(EnergyModuleTest, DLPOLYHexane200Torsions)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane200.txt",
-                                     [](Dissolve &D, CoreData &C)
-                                     {
-                                         for (auto at : C.atomTypes())
-                                             at->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                         D.setAtomTypeChargeSource(true);
-                                         D.setAutomaticChargeSource(false);
-                                         for (auto b : C.masterBonds())
-                                             b->setInteractionParameters("k=0.0 eq=0.0");
-                                         for (auto a : C.masterAngles())
-                                             a->setInteractionParameters("k=0.0 eq=0.0");
-                                     }));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-hexane200.txt",
+                                             [](Dissolve &D, CoreData &C)
+                                             {
+                                                 for (auto at : C.atomTypes())
+                                                     at->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                                 D.setAtomTypeChargeSource(true);
+                                                 D.setAutomaticChargeSource(false);
+                                                 for (auto b : C.masterBonds())
+                                                     b->setInteractionParameters("k=0.0 eq=0.0");
+                                                 for (auto a : C.masterAngles())
+                                                     a->setInteractionParameters("k=0.0 eq=0.0");
+                                             }));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -175,7 +175,7 @@ TEST_F(EnergyModuleTest, DLPOLYHexane200Torsions)
 
 TEST_F(EnergyModuleTest, DLPOLYBenzene181Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-benzene181.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-benzene181.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -190,18 +190,18 @@ TEST_F(EnergyModuleTest, DLPOLYBenzene181Full)
 
 TEST_F(EnergyModuleTest, DLPOLYBenzene181VanDerWaals)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
-                                     [](Dissolve &D, CoreData &C)
-                                     {
-                                         D.setAtomTypeChargeSource(true);
-                                         D.setAutomaticChargeSource(false);
-                                         for (auto &b : C.masterBonds())
-                                             b->setInteractionForm(BondFunctions::Form::None);
-                                         for (auto &a : C.masterAngles())
-                                             a->setInteractionForm(AngleFunctions::Form::None);
-                                         for (auto &t : C.masterTorsions())
-                                             t->setInteractionForm(TorsionFunctions::Form::None);
-                                     }));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
+                                             [](Dissolve &D, CoreData &C)
+                                             {
+                                                 D.setAtomTypeChargeSource(true);
+                                                 D.setAutomaticChargeSource(false);
+                                                 for (auto &b : C.masterBonds())
+                                                     b->setInteractionForm(BondFunctions::Form::None);
+                                                 for (auto &a : C.masterAngles())
+                                                     a->setInteractionForm(AngleFunctions::Form::None);
+                                                 for (auto &t : C.masterTorsions())
+                                                     t->setInteractionForm(TorsionFunctions::Form::None);
+                                             }));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -212,18 +212,18 @@ TEST_F(EnergyModuleTest, DLPOLYBenzene181VanDerWaals)
 
 TEST_F(EnergyModuleTest, DLPOLYBenzene181Electrostatics)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
-                                     [](Dissolve &D, CoreData &C)
-                                     {
-                                         C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                         C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                         for (auto &b : C.masterBonds())
-                                             b->setInteractionForm(BondFunctions::Form::None);
-                                         for (auto &a : C.masterAngles())
-                                             a->setInteractionForm(AngleFunctions::Form::None);
-                                         for (auto &t : C.masterTorsions())
-                                             t->setInteractionForm(TorsionFunctions::Form::None);
-                                     }));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
+                                             [](Dissolve &D, CoreData &C)
+                                             {
+                                                 C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                                 C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                                 for (auto &b : C.masterBonds())
+                                                     b->setInteractionForm(BondFunctions::Form::None);
+                                                 for (auto &a : C.masterAngles())
+                                                     a->setInteractionForm(AngleFunctions::Form::None);
+                                                 for (auto &t : C.masterTorsions())
+                                                     t->setInteractionForm(TorsionFunctions::Form::None);
+                                             }));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
     auto &interEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Bulk//PairPotential");
@@ -234,13 +234,13 @@ TEST_F(EnergyModuleTest, DLPOLYBenzene181Electrostatics)
 
 TEST_F(EnergyModuleTest, DLPOLYBenzene181Bound)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
-                                     [](Dissolve &D, CoreData &C)
-                                     {
-                                         D.setAtomTypeChargeSource(true);
-                                         C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                         C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                     }));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
+                                             [](Dissolve &D, CoreData &C)
+                                             {
+                                                 D.setAtomTypeChargeSource(true);
+                                                 C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                                 C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                             }));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
     auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Bulk//Bound");
@@ -252,7 +252,7 @@ TEST_F(EnergyModuleTest, DLPOLYBenzene181Bound)
 
 TEST_F(EnergyModuleTest, MoscitoPOETorsions)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-POE.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-POE.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -263,7 +263,7 @@ TEST_F(EnergyModuleTest, MoscitoPOETorsions)
 
 TEST_F(EnergyModuleTest, MoscitoPy4OHNTf2Torsions)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-Py4OH-NTf2.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py4OH-NTf2.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -274,7 +274,7 @@ TEST_F(EnergyModuleTest, MoscitoPy4OHNTf2Torsions)
 
 TEST_F(EnergyModuleTest, MoscitoPy4OHNTf2Impropers)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-Py4OH-NTf2-impropers.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py4OH-NTf2-impropers.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -285,7 +285,7 @@ TEST_F(EnergyModuleTest, MoscitoPy4OHNTf2Impropers)
 
 TEST_F(EnergyModuleTest, MoscitoPy5NTf2Torsions)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-Py5-NTf2.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py5-NTf2.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -296,7 +296,7 @@ TEST_F(EnergyModuleTest, MoscitoPy5NTf2Torsions)
 
 TEST_F(EnergyModuleTest, MoscitoPy5NTf2Impropers)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-Py5-NTf2-impropers.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py5-NTf2-impropers.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
