@@ -13,4 +13,4 @@ Please begin the title of your PR with one of the following tags, followed by a 
 
 When possible, also include within your title the name of the issue
 being worked on, prepended with a # and surrounded by
-parentheses. (for exame, (#1806) to reference issue 1806).
+parentheses. (for example, (#1806) to reference issue 1806).
