@@ -7,6 +7,7 @@
 #include "classes/configuration.h"
 #include "classes/coreData.h"
 #include "classes/pairPotential.h"
+#include "classes/pairPotentialOverride.h"
 #include "classes/potentialMap.h"
 #include "data/elements.h"
 #include "module/layer.h"
@@ -57,7 +58,7 @@ class Dissolve : public Serialisable<>
     // Whether charges from atom types are to be used (and included in PairPotentials)
     bool atomTypeChargeSource_;
     // Simulation PairPotentials
-    std::vector<std::unique_ptr<PairPotential>> pairPotentials_;
+    std::vector<PairPotential::Definition> pairPotentials_;
     // Map for PairPotentials
     PotentialMap potentialMap_;
 
@@ -89,12 +90,12 @@ class Dissolve : public Serialisable<>
     // Add new pair potential to list
     PairPotential *addPairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2);
     // Return PairPotentials list
-    const std::vector<std::unique_ptr<PairPotential>> &pairPotentials() const;
+    const std::vector<PairPotential::Definition> &pairPotentials() const;
     // Return nth PairPotential in list
     PairPotential *pairPotential(int n);
     // Return specified PairPotential (if defined)
     PairPotential *pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const;
-    PairPotential *pairPotential(std::string_view at1, std::string_view at2) const;
+    PairPotential *pairPotential(std::string_view at1Name, std::string_view at2Name) const;
     // Return map for PairPotentials
     const PotentialMap &potentialMap() const;
     // Clear and regenerate all PairPotentials, replacing those currently defined

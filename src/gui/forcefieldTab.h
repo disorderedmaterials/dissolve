@@ -12,6 +12,7 @@
 #include "gui/models/masterImproperModel.h"
 #include "gui/models/masterTorsionModel.h"
 #include "gui/models/pairPotentialModel.h"
+#include "gui/models/pairPotentialOverrideModel.h"
 #include "gui/ui_forcefieldTab.h"
 
 // Forcefield Tab
@@ -33,6 +34,7 @@ class ForcefieldTab : public QWidget, public MainTab
     // Models
     AtomTypeModel atomTypesModel_;
     PairPotentialModel pairPotentialModel_;
+    PairPotentialOverrideModel pairPotentialOverrideModel_;
 
     /*
      * MainTab Reimplementations
@@ -96,6 +98,11 @@ class ForcefieldTab : public QWidget, public MainTab
     void on_AutoUpdatePairPotentialsCheck_clicked(bool checked);
     void pairPotentialDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &);
     void pairPotentialSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
+    // Pair Potential Overrides
+    void on_OverrideAddButton_clicked(bool checked);
+    void on_OverrideRemoveButton_clicked(bool checked);
+    void on_OverrideDuplicateButton_clicked(bool checked);
+    void overrideDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &);
     // Master Terms
     void masterBondsDataChanged(const QModelIndex &, const QModelIndex &);
     void masterAnglesDataChanged(const QModelIndex &, const QModelIndex &);

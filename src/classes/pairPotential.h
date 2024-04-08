@@ -10,7 +10,6 @@
 
 // Forward Declarations
 class AtomType;
-class SerializablePairPotential;
 
 // PairPotential Definition
 class PairPotential
@@ -19,6 +18,8 @@ class PairPotential
 
     public:
     PairPotential();
+    PairPotential(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges);
+    PairPotential(std::string_view nameI, std::string_view nameJ, const InteractionPotential<ShortRangeFunctions> &potential);
     // Coulomb Truncation Scheme enum
     enum CoulombTruncationScheme
     {
@@ -30,12 +31,13 @@ class PairPotential
     // Short-Range Truncation Scheme enum
     enum ShortRangeTruncationScheme
     {
-        NoShortRangeTruncation,      /* No truncation scheme */
-        ShiftedShortRangeTruncation, /* Shifted and truncated */
-        CosineShortRangeTruncation   /* Cosine-multiplied truncation */
+        NoShortRangeTruncation,     /* No truncation scheme */
+        ShiftedShortRangeTruncation /* Shifted and truncated */
     };
     // Return enum options for ShortRangeTruncationScheme
     static EnumOptions<PairPotential::ShortRangeTruncationScheme> shortRangeTruncationSchemes();
+    // Typedefs
+    using Definition = std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, std::unique_ptr<PairPotential>>;
 
     /*
      * Seed Interaction Type
@@ -43,8 +45,6 @@ class PairPotential
     private:
     // Truncation scheme to apply to short-range part of potential
     static ShortRangeTruncationScheme shortRangeTruncationScheme_;
-    // Width of short-range potential over which to truncate (if scheme = Cosine)
-    static double shortRangeTruncationWidth_;
     // Short-range energy at cutoff distance (used by truncation scheme)
     double shortRangeEnergyAtCutoff_{0.0};
     // Short-range force at cutoff distance (used by truncation scheme)
@@ -63,10 +63,6 @@ class PairPotential
     static void setShortRangeTruncationScheme(ShortRangeTruncationScheme scheme);
     // Return short-ranged truncation scheme
     static ShortRangeTruncationScheme shortRangeTruncationScheme();
-    // Set width of short-range potential over which to truncate (if scheme = Cosine)
-    static void setShortRangeTruncationWidth(double width);
-    // Return width of short-range potential over which to truncate (if scheme = Cosine)
-    static double shortRangeTruncationWidth();
     // Set whether atom type charges should be included in the generated potential
     void setIncludeAtomTypeCharges(bool b);
     // Return whether atom type charges should be included in the generated potential
@@ -80,8 +76,8 @@ class PairPotential
      * Source Parameters
      */
     private:
-    // Original source AtomTypes
-    std::shared_ptr<AtomType> atomTypeI_, atomTypeJ_;
+    // Names reflecting source parameters
+    std::string nameI_, nameJ_;
     // Interaction potential
     InteractionPotential<ShortRangeFunctions> interactionPotential_;
     // Charge on I (taken from AtomType)
@@ -90,23 +86,19 @@ class PairPotential
     double chargeJ_{0.0};
 
     private:
+    // Set up PairPotential parameters from specified AtomTypes
+    bool setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges);
     // Set Data1D names from source AtomTypes
     void setData1DNames();
 
     public:
-    // Set up PairPotential parameters from specified AtomTypes
-    bool setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges);
+    // Return name for first source parameters
+    std::string_view nameI() const;
+    // Return name for second source parameters
+    std::string_view nameJ() const;
     // Return interaction potential
     InteractionPotential<ShortRangeFunctions> &interactionPotential();
     const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;
-    // Return first AtomType name
-    std::string_view atomTypeNameI() const;
-    // Return second AtomType name
-    std::string_view atomTypeNameJ() const;
-    // Return first source AtomType
-    std::shared_ptr<AtomType> atomTypeI() const;
-    // Return second source AtomType
-    std::shared_ptr<AtomType> atomTypeJ() const;
     // Set charge I
     void setChargeI(double value);
     // Return charge I
