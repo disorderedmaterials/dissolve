@@ -13,7 +13,9 @@ DaySuffix() {
 }
 
 usage() {
-  echo "Usage:  $0 <TARGET>"
+  echo "Usage:  $0 <TARGET> [-r] [-s X.Y.Z]"
+  echo "        -r	Calculate new version (only on release branch)"
+  echo "        -s	Set version explicitly to X.Y.Z"
   echo ""
   echo "TARGET is one of:     code - change version numbering in code, and installer and packaging scripts"
   echo "                   release - change release version value on web and date in README.md"
@@ -38,16 +40,49 @@ then
   exit 1
 fi
 
-# Get next version number from git-cliff
-PARTS=($(git cliff --bumped-version | tr "." " "))
+# Get current version number from correct target
+if [ "$TYPE" == "code" ]
+then
+  CURRENT_VERSION=$(grep '#define DISSOLVEVERSION' src/main/version.cpp | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g')
+elif [ "$TYPE" == "release" ]
+then
+  CURRENT_VERSION=$(grep 'releaseVersion' web/main.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g')
+else
+  CURRENT_VERSION=$(grep 'devVersion' web/main.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g')
+fi
+PARTS=($(echo $CURRENT_VERSION | tr "." " "))
 MAJOR=${PARTS[0]}
 MINOR=${PARTS[1]}
 PATCH=${PARTS[2]}
 CHECK="true"
+echo "Current major version (${TYPE}) is : ${MAJOR}"
+echo "Current minor version (${TYPE}) is : ${MINOR}"
+echo "Current patch version (${TYPE}) is : ${PATCH}"
 
-while getopts ":mMps:" opt
+while getopts ":rs:" opt
 do
   case $opt in
+    s) MAJOR=$(echo $OPTARG | cut -f1 -d.)
+       MINOR=$(echo $OPTARG | cut -f2 -d.)
+       PATCH=$(echo $OPTARG | cut -f3 -d.)
+       CHECK="false"
+       echo "Version will be set explicitly to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
+       ;;
+    r) BRANCH=$(git rev-parse --abbrev-ref HEAD)
+       if [ "$BRANCH" != "Release" ]
+       then
+	   echo "Version number can only be auto-calculated on the Release branch"
+	   exit 1
+       fi
+       # Get next version number from git-cliff
+       PARTS=($(git cliff --bumped-version | tr "." " "))
+       MAJOR=${PARTS[0]}
+       MINOR=${PARTS[1]}
+       PATCH=${PARTS[2]}
+       echo "Version will calculated to be MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
+       # Update Changelog
+       git cliff --bump v1.3.3..HEAD > ChangeLog.md
+       ;;
    \?) usage
        exit 1
        ;;
@@ -57,13 +92,6 @@ do
        ;;
   esac
 done
-
-####################
-# Update ChangeLog #
-####################
-
-git cliff --bump v1.3.3..HEAD > ChangeLog.md
-
 
 #########################################
 # Code / Installer / Packaging Versions #
