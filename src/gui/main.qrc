@@ -57,6 +57,7 @@
     <file>fonts/FreeSerif.ttf</file>
   </qresource>
   <qresource prefix="modules">
+    <file>icons/modules/modifierOSites.svg</file>
     <file>icons/modules/angle.svg</file>
     <file>icons/modules/exportCoordinates.svg</file>
     <file>icons/modules/exportPairPotentials.svg</file>
