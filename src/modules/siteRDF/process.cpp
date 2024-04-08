@@ -72,8 +72,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     DataOperator1D normaliserCN(dataCN);
     // Normalise by A site population
     normaliserCN.divide(double(a.sites().size()));
-    DataNormaliser1D normaliserRunningCN(runningCN);
-    normaliserRunningCN.normaliseDivide(double(a.sites().size()));
+
 
     const std::vector<std::string> rangeNames = {"A", "B", "C"};
     for (int i = 0; i < 3; ++i)
@@ -108,15 +107,14 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     auto instBinValues = histAB.data();
 
     // Normalise Data
-    DataNormaliser1D normaliserInstBinValues(instBinValues);
+    DataOperator1D normaliserInstBinValues(instBinValues);
 
     // Normalise by A site population
-    normaliserInstBinValues.normaliseDivide(double(a.sites().size()));
+    normaliserInstBinValues.divide(double(a.sites().size()));
 
     auto sum = 0.0;
     std::transform(instBinValues.values().begin(), instBinValues.values().end(), instBinValues.values().begin(),
-                   [&](const auto &currentBin)
-                   {
+                   [&](const auto &currentBin) {
                        sum += currentBin;
                        return sum;
                    });

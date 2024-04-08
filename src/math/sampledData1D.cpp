@@ -154,12 +154,12 @@ bool SampledData1D::deserialise(LineParser &parser)
     clear();
 
     // Read tag
-    if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
+    if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success)
         return false;
     tag_ = parser.line();
 
     // Read number of points and sample size
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+    if (parser.getArgsDelim(LineParser::KeepBlanks) != LineParser::Success)
         return false;
     auto nPoints = parser.argi(0);
     auto count = parser.argi(1);
@@ -172,7 +172,7 @@ bool SampledData1D::deserialise(LineParser &parser)
     m2.reserve(nPoints);
     for (auto n = 0; n < nPoints; ++n)
     {
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        if (parser.getArgsDelim(LineParser::KeepBlanks) != LineParser::Success)
             return false;
 
         x_.push_back(parser.argd(0));
