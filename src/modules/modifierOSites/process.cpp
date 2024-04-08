@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "analyser/dataNormaliser1D.h"
+#include "analyser/dataOperator1D.h"
 #include "analyser/siteFilter.h"
 #include "analyser/siteSelector.h"
 #include "main/dissolve.h"
@@ -120,27 +120,27 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
 
     // Normalise HistMFO
     Data1D dataNormalisedHistMFO = histMFO.accumulatedData();
-    DataNormaliser1D histMFONormaliser(dataNormalisedHistMFO);
+    DataOperator1D histMFONormaliser(dataNormalisedHistMFO);
     // Normalise by value
-    histMFONormaliser.normaliseTo();
+    histMFONormaliser.normaliseSumTo();
 
     // Normalise HistMNBO
     Data1D dataNormalisedHistMNBO = histMNBO.accumulatedData();
-    DataNormaliser1D histMNBONormaliser(dataNormalisedHistMNBO);
+    DataOperator1D histMNBONormaliser(dataNormalisedHistMNBO);
     // Normalise by value
-    histMNBONormaliser.normaliseTo();
+    histMNBONormaliser.normaliseSumTo();
 
     // Normalise HistMBO
     Data1D dataNormalisedHistMBO = histMBO.accumulatedData();
-    DataNormaliser1D histMBONormaliser(dataNormalisedHistMBO);
+    DataOperator1D histMBONormaliser(dataNormalisedHistMBO);
     // Normalise by value
-    histMBONormaliser.normaliseTo();
+    histMBONormaliser.normaliseSumTo();
 
     // Normalise HistMOtherO
     Data1D dataNormalisedHistMOtherO = histMOtherO.accumulatedData();
-    DataNormaliser1D histMOtherONormaliser(dataNormalisedHistMOtherO);
+    DataOperator1D histMOtherONormaliser(dataNormalisedHistMOtherO);
     // Normalise by value
-    histMOtherONormaliser.normaliseTo();
+    histMOtherONormaliser.normaliseSumTo();
 
     // Store the normalised data
     processingData.realise<Data1D>("OTypes", name(), GenericItem::InRestartFileFlag) = accumulatedData;
