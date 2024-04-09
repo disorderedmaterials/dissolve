@@ -5,7 +5,8 @@
 #include "base/lineParser.h"
 #include "templates/algorithms.h"
 
-Function1DKeyword::Function1DKeyword(Functions::Function1DWrapper &data, int functionProperties)
+Function1DKeyword::Function1DKeyword(Functions::Function1DWrapper &data,
+                                     const Flags<FunctionProperties::FunctionProperty> &functionProperties)
     : KeywordBase(typeid(this)), data_(data), functionProperties_(functionProperties)
 {
 }
@@ -24,7 +25,7 @@ bool Function1DKeyword::setData(const Functions::Function1DWrapper &data)
 }
 
 // Return requested function properties
-int Function1DKeyword::functionProperties() const { return functionProperties_; }
+const Flags<FunctionProperties::FunctionProperty> &Function1DKeyword::functionProperties() const { return functionProperties_; }
 
 /*
  * Arguments

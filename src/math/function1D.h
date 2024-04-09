@@ -79,9 +79,9 @@ EnumOptions<Functions::Function1D> function1D();
 // Return base function requested
 FunctionDefinition1D functionDefinition1D(Functions::Function1D func);
 // Check function properties against those supplied, returning truth if the function meets all requirements
-bool validFunction1DProperties(Function1D func, int properties);
+bool validFunction1DProperties(Functions::Function1D func, const Flags<FunctionProperties::FunctionProperty> &properties);
 // Return all available functions with properties matching those provided
-std::vector<Function1D> matchingFunction1D(int properties);
+std::vector<Functions::Function1D> matchingFunction1D(const Flags<FunctionProperties::FunctionProperty> &properties);
 
 // Function 1D Wrapper
 class Function1DWrapper

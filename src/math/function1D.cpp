@@ -220,13 +220,13 @@ EnumOptions<Function1D> function1D()
 FunctionDefinition1D functionDefinition1D(Functions::Function1D func) { return functions1D_.at(func); }
 
 // Check function properties against those supplied, returning truth if the function meets all requirements
-bool validFunction1DProperties(Function1D func, int properties)
+bool validFunction1DProperties(Function1D func, const Flags<FunctionProperties::FunctionProperty> &properties)
 {
     return properties == FunctionProperties::None || (functions1D_.at(func).properties() & properties) == properties;
 }
 
 // Return all available functions with properties matching those provided
-std::vector<Function1D> matchingFunction1D(int properties)
+std::vector<Function1D> matchingFunction1D(const Flags<FunctionProperties::FunctionProperty> &properties)
 {
     std::vector<Function1D> matches;
     for (auto n = 0; n < function1D().nOptions(); ++n)

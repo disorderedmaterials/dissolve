@@ -10,7 +10,8 @@
 class Function1DKeyword : public KeywordBase
 {
     public:
-    Function1DKeyword(Functions::Function1DWrapper &data, int functionProperties = FunctionProperties::None);
+    Function1DKeyword(Functions::Function1DWrapper &data,
+                      const Flags<FunctionProperties::FunctionProperty> &properties = {FunctionProperties::None});
     ~Function1DKeyword() override = default;
 
     /*
@@ -20,7 +21,7 @@ class Function1DKeyword : public KeywordBase
     // Reference to data
     Functions::Function1DWrapper &data_;
     // Requested function properties
-    int functionProperties_;
+    const Flags<FunctionProperties::FunctionProperty> &functionProperties_;
 
     public:
     // Return reference to data
@@ -28,7 +29,7 @@ class Function1DKeyword : public KeywordBase
     // Set data
     bool setData(const Functions::Function1DWrapper &data);
     // Return requested function properties
-    int functionProperties() const;
+    const Flags<FunctionProperties::FunctionProperty> &functionProperties() const;
 
     /*
      * Arguments
