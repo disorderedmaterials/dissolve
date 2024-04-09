@@ -201,7 +201,32 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        *        (c1 + c2 omega) sqrt(2 pi)
        */
       [](double omega, const std::vector<double> &params)
-      { return 1.0 / ((params[2] + params[3] * omega) * sqrt(2.0 * M_PI)); }}}};
+      { return 1.0 / ((params[2] + params[3] * omega) * sqrt(2.0 * M_PI)); }}},
+    /*
+     * Lennard-Jones 12-6 Potential
+     *
+     * Parameters:
+     *  INPUT  0 = epsilon
+     *  INPUT  1 = sigma
+     */
+    {Functions1D::Form::LennardJones126,
+     {{"epsilon", "sigma"},
+      {},
+      [](std::vector<double> params) { return params; },
+      /*
+       *                      ( sigma )**12   ( sigma )**6
+       * F(x) = 4 * epsilon * ( ----- )     - ( ----- )
+       *                      (   x   )       (   x   )
+       */
+      [](double x, double omega, const std::vector<double> &params)
+      {
+          auto sigmar = params[1] / x;
+          auto sigmar6 = pow(sigmar, 6.0);
+          auto sigmar12 = sigmar6 * sigmar6;
+          return 4.0 * params[0] * (sigmar12 - sigmar6);
+      },
+      {},
+      {}}}};
 
 // Return enum option info for forms
 EnumOptions<Functions1D::Form> Functions1D::forms()
@@ -210,7 +235,8 @@ EnumOptions<Functions1D::Form> Functions1D::forms()
                                                          {Functions1D::Form::Gaussian, "Gaussian"},
                                                          {Functions1D::Form::ScaledGaussian, "ScaledGaussian"},
                                                          {Functions1D::Form::OmegaDependentGaussian, "OmegaDependentGaussian"},
-                                                         {Functions1D::Form::GaussianC2, "GaussianC2"}});
+                                                         {Functions1D::Form::GaussianC2, "GaussianC2"},
+                                                         {Functions1D::Form::LennardJones126, "LennardJones126"}});
 }
 
 // Return parameters for specified form

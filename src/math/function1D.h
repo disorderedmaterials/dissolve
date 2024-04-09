@@ -73,7 +73,8 @@ class Functions1D
         Gaussian,
         ScaledGaussian,
         OmegaDependentGaussian,
-        GaussianC2
+        GaussianC2,
+        LennardJones126
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
