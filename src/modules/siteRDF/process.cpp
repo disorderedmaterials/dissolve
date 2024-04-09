@@ -113,8 +113,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
 
     auto sum = 0.0;
     std::transform(instBinValues.values().begin(), instBinValues.values().end(), instBinValues.values().begin(),
-                   [&](const auto &currentBin) 
-                   {
+                   [&](const auto &currentBin) {
                        sum += currentBin;
                        return sum;
                    });
