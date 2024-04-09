@@ -15,19 +15,19 @@ PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationSch
     PairPotential::ShiftedShortRangeTruncation;
 
 PairPotential::PairPotential()
-    : interactionPotential_(ShortRangeFunctions::Form::None), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
+    : interactionPotential_(Functions1D::Form::None), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
 {
 }
 
 PairPotential::PairPotential(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ,
                              bool includeCharges)
-    : interactionPotential_(ShortRangeFunctions::Form::None), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
+    : interactionPotential_(Functions1D::Form::None), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
 {
     setUp(typeI, typeJ, includeCharges);
 }
 
 PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ,
-                             const InteractionPotential<ShortRangeFunctions> &potential)
+                             const InteractionPotential<Functions1D> &potential)
     : includeAtomTypeCharges_(false), nameI_(nameI), nameJ_(nameJ), interactionPotential_(potential),
       uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
 {
