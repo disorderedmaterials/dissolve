@@ -14,7 +14,6 @@ namespace FunctionProperties
 {
 enum FunctionProperty
 {
-    None,
     FourierTransform,
     Normalisation
 };

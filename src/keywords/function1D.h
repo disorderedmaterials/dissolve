@@ -10,8 +10,7 @@
 class Function1DKeyword : public KeywordBase
 {
     public:
-    Function1DKeyword(Function1DWrapper &data,
-                      const Flags<FunctionProperties::FunctionProperty> &properties = {FunctionProperties::None});
+    Function1DKeyword(Function1DWrapper &data, const Flags<FunctionProperties::FunctionProperty> &properties = {});
     ~Function1DKeyword() override = default;
 
     /*

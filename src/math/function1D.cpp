@@ -221,7 +221,7 @@ Function1DDefinition Functions1D::functionDefinition1D(Functions1D::Form form) {
 bool Functions1D::validFunction1DProperties(Functions1D::Form form,
                                             const Flags<FunctionProperties::FunctionProperty> &properties)
 {
-    return properties == FunctionProperties::None || (functions1D_.at(form).properties() & properties) == properties;
+    return (functions1D_.at(form).properties() & properties) == properties;
 }
 
 // Return all available functions with properties matching those provided
