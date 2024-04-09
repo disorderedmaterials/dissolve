@@ -48,7 +48,9 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
      {{},
       {FunctionProperties::FourierTransform, FunctionProperties::Normalisation},
       [](std::vector<double> params) { return params; },
-      [](double x, double omega, const std::vector<double> &params) { return 0.0; }}},
+      [](double x, double omega, const std::vector<double> &params) { return 0.0; },
+      [](double x, double omega, const std::vector<double> &params) { return 0.0; },
+      [](double omega, const std::vector<double> &params) { return 0.0; }}},
     /*
      * Gaussian
      *
