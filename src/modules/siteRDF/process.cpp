@@ -73,7 +73,6 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     // Normalise by A site population
     normaliserCN.divide(double(a.sites().size()));
 
-
     const std::vector<std::string> rangeNames = {"A", "B", "C"};
     for (int i = 0; i < 3; ++i)
         if (rangeEnabled_[i])
