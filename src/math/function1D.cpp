@@ -204,14 +204,29 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
       [](double omega, const std::vector<double> &params)
       { return 1.0 / ((params[2] + params[3] * omega) * sqrt(2.0 * M_PI)); }}}};
 
-// Return enum option info for Function1D
-EnumOptions<Functions1D::Form> Functions1D::function1D()
+// Return enum option info for forms
+EnumOptions<Functions1D::Form> Functions1D::forms()
 {
     return EnumOptions<Functions1D::Form>("Function1D", {{Functions1D::Form::None, "None"},
                                                          {Functions1D::Form::Gaussian, "Gaussian"},
                                                          {Functions1D::Form::ScaledGaussian, "ScaledGaussian"},
                                                          {Functions1D::Form::OmegaDependentGaussian, "OmegaDependentGaussian"},
                                                          {Functions1D::Form::GaussianC2, "GaussianC2"}});
+}
+
+// Return parameters for specified form
+const std::vector<std::string> &Functions1D::parameters(Form form) { return functions1D_.at(form).parameterNames(); }
+
+// Return nth parameter for the given form
+std::string Functions1D::parameter(Form form, int n) { return functions1D_.at(form).parameterNames()[n]; }
+
+// Return index of parameter in the given form
+std::optional<int> Functions1D::parameterIndex(Form form, std::string_view name)
+{
+    auto it = std::find(functions1D_.at(form).parameterNames().begin(), functions1D_.at(form).parameterNames().end(), name);
+    if (it == functions1D_.at(form).parameterNames().end())
+        return {};
+    return it - functions1D_.at(form).parameterNames().begin();
 }
 
 // Return base function requested
@@ -228,9 +243,9 @@ bool Functions1D::validFunction1DProperties(Functions1D::Form form,
 std::vector<Functions1D::Form> Functions1D::matchingFunction1D(const Flags<FunctionProperties::FunctionProperty> &properties)
 {
     std::vector<Functions1D::Form> matches;
-    for (auto n = 0; n < function1D().nOptions(); ++n)
-        if (validFunction1DProperties(function1D().enumerationByIndex(n), properties))
-            matches.push_back(function1D().enumerationByIndex(n));
+    for (auto n = 0; n < forms().nOptions(); ++n)
+        if (validFunction1DProperties(forms().enumerationByIndex(n), properties))
+            matches.push_back(forms().enumerationByIndex(n));
     return matches;
 }
 
@@ -255,7 +270,7 @@ bool Function1DWrapper::setFormAndParameters(Functions1D::Form form, const std::
 
     if (params.size() != function_.nParameters())
         return Messenger::error("1D function '{}' requires {} parameters, but {} were given.\n",
-                                Functions1D::function1D().keyword(form_), function_.nParameters(), params.size());
+                                Functions1D::forms().keyword(form_), function_.nParameters(), params.size());
 
     parameters_ = params;
     calculateInternalParameters();
@@ -279,7 +294,7 @@ bool Function1DWrapper::setParameters(const std::vector<double> &params)
 {
     if (params.size() != function_.nParameters())
         return Messenger::error("1D function '{}' requires {} parameters, but {} were given.\n",
-                                Functions1D::function1D().keyword(form_), function_.nParameters(), params.size());
+                                Functions1D::forms().keyword(form_), function_.nParameters(), params.size());
 
     parameters_ = params;
     calculateInternalParameters();

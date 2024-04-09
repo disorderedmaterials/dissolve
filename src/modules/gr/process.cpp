@@ -40,7 +40,7 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
         Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
     else
         Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is {} ({}).",
-                         Functions1D::function1D().keyword(intraBroadening_.form()), intraBroadening_.parameterSummary());
+                         Functions1D::forms().keyword(intraBroadening_.form()), intraBroadening_.parameterSummary());
     Messenger::print("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(partialsMethod_));
     Messenger::print("RDF: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("RDF: Save original (unbroadened) g(r) is {}.\n", DissolveSys::onOff(saveOriginal_));

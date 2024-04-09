@@ -38,15 +38,15 @@ std::optional<int> Function1DKeyword::maxArguments() const { return std::nullopt
 bool Function1DKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Check function name
-    if (!Functions1D::function1D().isValid(parser.argsv(startArg)))
-        return Functions1D::function1D().errorAndPrintValid(parser.argsv(startArg));
-    auto func = Functions1D::function1D().enumeration(parser.argsv(startArg));
+    if (!Functions1D::forms().isValid(parser.argsv(startArg)))
+        return Functions1D::forms().errorAndPrintValid(parser.argsv(startArg));
+    auto func = Functions1D::forms().enumeration(parser.argsv(startArg));
 
     // Check properties
     if (!Functions1D::validFunction1DProperties(func, functionProperties_))
         return Messenger::error(
             "1D function type {} can't be set in keyword '{}' as it does not have the correct properties.\n",
-            Functions1D::function1D().keyword(func), name());
+            Functions1D::forms().keyword(func), name());
 
     // Get parameters if they were given
     auto params = parser.hasArg(startArg + 1) ? parser.argvd(startArg + 1) : std::vector<double>();
@@ -57,19 +57,19 @@ bool Function1DKeyword::deserialise(LineParser &parser, int startArg, const Core
 // Serialise data to specified LineParser
 bool Function1DKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    return parser.writeLineF("{}{}  '{}'  {}\n", prefix, keywordName, Functions1D::function1D().keyword(data_.form()),
+    return parser.writeLineF("{}{}  '{}'  {}\n", prefix, keywordName, Functions1D::forms().keyword(data_.form()),
                              joinStrings(data_.parameters(), "  "));
 }
 
 // Express as a serialisable value
 SerialisedValue Function1DKeyword::serialise() const
 {
-    return {{"type", Functions1D::function1D().serialise(data_.form())}, {"parameters", data_.parameters()}};
+    return {{"type", Functions1D::forms().serialise(data_.form())}, {"parameters", data_.parameters()}};
 }
 
 // Read values from a serialisable value
 void Function1DKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    data_.setFormAndParameters(Functions1D::function1D().deserialise(node.at("type")),
+    data_.setFormAndParameters(Functions1D::forms().deserialise(node.at("type")),
                                toml::find<std::vector<double>>(node, "parameters"));
 }

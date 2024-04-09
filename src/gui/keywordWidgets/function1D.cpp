@@ -41,8 +41,7 @@ Function1DKeywordWidget::Function1DKeywordWidget(QWidget *parent, Function1DKeyw
         auto i = 0;
         for (auto func : availableFunctions)
         {
-            ui_.FunctionCombo->addItem(QString::fromStdString(Functions1D::function1D().keyword(func)),
-                                       QVariant::fromValue(func));
+            ui_.FunctionCombo->addItem(QString::fromStdString(Functions1D::forms().keyword(func)), QVariant::fromValue(func));
             if (func == function.form())
                 ui_.FunctionCombo->setCurrentIndex(i);
             ++i;
@@ -149,6 +148,6 @@ void Function1DKeywordWidget::updateSummaryText()
     // Summary text on KeywordDropDown button
     setSummaryText(QString::fromStdString(
         function.nParameters() == 0
-            ? Functions1D::function1D().keyword(function.form())
-            : fmt::format("{} ({})", Functions1D::function1D().keyword(function.form()), function.parameterSummary())));
+            ? Functions1D::forms().keyword(function.form())
+            : fmt::format("{} ({})", Functions1D::forms().keyword(function.form()), function.parameterSummary())));
 }
