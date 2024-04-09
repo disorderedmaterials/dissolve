@@ -445,8 +445,7 @@ bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procP
 
 // Calculate smoothed/broadened partial g(r) from supplied partials
 bool GRModule::calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
-                                     PartialSet &unweightedgr, const Functions::Function1DWrapper intraBroadening,
-                                     int smoothing)
+                                     PartialSet &unweightedgr, const Function1DWrapper intraBroadening, int smoothing)
 {
     // If the unweightedgr is not yet initialised, copy the originalgr. Otherwise, just copy the values (in order to
     // maintain the incremental versioning of the data)

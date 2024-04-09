@@ -12,7 +12,7 @@ template <class EnumClass> class Flags
     Flags() : flags_{0} {};
     ~Flags() = default;
     explicit Flags(int flagMask) : flags_(flagMask) {}
-    Flags(EnumClass flag) : flags_{0} { flags_.set(flag); }
+    explicit Flags(EnumClass flag) : flags_{0} { flags_.set(flag); }
     Flags(const std::initializer_list<EnumClass> flags) : flags_{0}
     {
         for (auto &flag : flags)

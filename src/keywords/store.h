@@ -165,7 +165,7 @@ class KeywordStore
     bool set(std::string_view name, const double value);
     bool set(std::string_view name, const int value);
     bool set(std::string_view name, const std::string value);
-    bool set(std::string_view name, const Functions::Function1DWrapper value);
+    bool set(std::string_view name, const Function1DWrapper value);
     bool set(std::string_view name, const NodeValueProxy value);
     bool set(std::string_view name, const Vec3<double> value);
     bool set(std::string_view name, const Vec3<int> value);

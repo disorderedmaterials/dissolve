@@ -8,14 +8,12 @@
 
 #include <map>
 
-namespace Functions
-{
 /*
  * One-Dimensional Function Definition
  */
 
-FunctionDefinition1D::FunctionDefinition1D(const std::vector<std::string> &parameterNames,
-                                           const Flags<FunctionProperties::FunctionProperty> &properties, FunctionSetup setup,
+Function1DDefinition::Function1DDefinition(const std::vector<std::string> &parameterNames,
+                                           const Flags<FunctionProperties::FunctionProperty> &properties, Function1DSetup setup,
                                            Function1DXOmega y, Function1DXOmega yFT, Function1DOmega norm)
     : parameterNames_(parameterNames), properties_(properties), setup_(std::move(setup)), y_(std::move(y)),
       yFT_(std::move(yFT)), normaliser_(std::move(norm))
@@ -23,30 +21,30 @@ FunctionDefinition1D::FunctionDefinition1D(const std::vector<std::string> &param
 }
 
 // Return number of parameters the function requires
-int FunctionDefinition1D::nParameters() const { return parameterNames_.size(); }
+int Function1DDefinition::nParameters() const { return parameterNames_.size(); }
 
 // Return parameter names
-const std::vector<std::string> &FunctionDefinition1D::parameterNames() const { return parameterNames_; }
+const std::vector<std::string> &Function1DDefinition::parameterNames() const { return parameterNames_; }
 
 // Return properties of the function
-const Flags<FunctionProperties::FunctionProperty> &FunctionDefinition1D::properties() const { return properties_; }
+const Flags<FunctionProperties::FunctionProperty> &Function1DDefinition::properties() const { return properties_; }
 
 // Return function for setup
-FunctionSetup FunctionDefinition1D::setup() const { return setup_; }
+Function1DSetup Function1DDefinition::setup() const { return setup_; }
 
 // Return function for y value at specified x, omega
-Function1DXOmega FunctionDefinition1D::y() const { return y_; }
+Function1DXOmega Function1DDefinition::y() const { return y_; }
 
 // Return function for FT of y value at the specified x, omega
-Function1DXOmega FunctionDefinition1D::yFT() const { return yFT_; }
+Function1DXOmega Function1DDefinition::yFT() const { return yFT_; }
 
 // Return normalisation function
-Function1DOmega FunctionDefinition1D::normalisation() const { return normaliser_; }
+Function1DOmega Function1DDefinition::normalisation() const { return normaliser_; }
 
 // One-Dimensional Function Definitions
-static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
+static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
     // No Function - always returns 1.0
-    {Function1D::None,
+    {Functions1D::Form::None,
      {{},
       {FunctionProperties::FourierTransform, FunctionProperties::Normalisation},
       [](std::vector<double> params) { return params; },
@@ -60,7 +58,7 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
      *  CALC   1 = c = fwhm / (2 * sqrt(2 ln 2))
      *  CALC   2 = 1.0 / c
      */
-    {Function1D::Gaussian,
+    {Functions1D::Form::Gaussian,
      {{"fwhm"},
       {FunctionProperties::FourierTransform, FunctionProperties::Normalisation},
       [](std::vector<double> params)
@@ -96,7 +94,7 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
      *  CALC   2 = c = fwhm / (2 * sqrt(2 ln 2))
      *  CALC   3 = 1.0 / c
      */
-    {Function1D::ScaledGaussian,
+    {Functions1D::Form::ScaledGaussian,
      {{"A", "fwhm"},
       {FunctionProperties::FourierTransform, FunctionProperties::Normalisation},
       [](std::vector<double> params)
@@ -133,7 +131,7 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
      * CALC   1 = c = fwhm / (2 * sqrt(2 ln 2))
      * CALC   2 = 1.0 / c
      */
-    {Function1D::OmegaDependentGaussian,
+    {Functions1D::Form::OmegaDependentGaussian,
      {{"fwhm(x)"},
       {FunctionProperties::FourierTransform, FunctionProperties::Normalisation},
       [](std::vector<double> params)
@@ -173,7 +171,7 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
      *  CALC   4 = 1.0 / c1
      *  CALC   5 = 1.0 / c2
      */
-    {Function1D::GaussianC2,
+    {Functions1D::Form::GaussianC2,
      {{"fwhm", "fwhm(x)"},
       {FunctionProperties::FourierTransform},
       [](std::vector<double> params)
@@ -207,28 +205,29 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
       { return 1.0 / ((params[2] + params[3] * omega) * sqrt(2.0 * M_PI)); }}}};
 
 // Return enum option info for Function1D
-EnumOptions<Function1D> function1D()
+EnumOptions<Functions1D::Form> Functions1D::function1D()
 {
-    return EnumOptions<Function1D>("Function1D", {{Function1D::None, "None"},
-                                                  {Function1D::Gaussian, "Gaussian"},
-                                                  {Function1D::ScaledGaussian, "ScaledGaussian"},
-                                                  {Function1D::OmegaDependentGaussian, "OmegaDependentGaussian"},
-                                                  {Function1D::GaussianC2, "GaussianC2"}});
+    return EnumOptions<Functions1D::Form>("Function1D", {{Functions1D::Form::None, "None"},
+                                                         {Functions1D::Form::Gaussian, "Gaussian"},
+                                                         {Functions1D::Form::ScaledGaussian, "ScaledGaussian"},
+                                                         {Functions1D::Form::OmegaDependentGaussian, "OmegaDependentGaussian"},
+                                                         {Functions1D::Form::GaussianC2, "GaussianC2"}});
 }
 
 // Return base function requested
-FunctionDefinition1D functionDefinition1D(Functions::Function1D func) { return functions1D_.at(func); }
+Function1DDefinition Functions1D::functionDefinition1D(Functions1D::Form form) { return functions1D_.at(form); }
 
 // Check function properties against those supplied, returning truth if the function meets all requirements
-bool validFunction1DProperties(Function1D func, const Flags<FunctionProperties::FunctionProperty> &properties)
+bool Functions1D::validFunction1DProperties(Functions1D::Form form,
+                                            const Flags<FunctionProperties::FunctionProperty> &properties)
 {
-    return properties == FunctionProperties::None || (functions1D_.at(func).properties() & properties) == properties;
+    return properties == FunctionProperties::None || (functions1D_.at(form).properties() & properties) == properties;
 }
 
 // Return all available functions with properties matching those provided
-std::vector<Function1D> matchingFunction1D(const Flags<FunctionProperties::FunctionProperty> &properties)
+std::vector<Functions1D::Form> Functions1D::matchingFunction1D(const Flags<FunctionProperties::FunctionProperty> &properties)
 {
-    std::vector<Function1D> matches;
+    std::vector<Functions1D::Form> matches;
     for (auto n = 0; n < function1D().nOptions(); ++n)
         if (validFunction1DProperties(function1D().enumerationByIndex(n), properties))
             matches.push_back(function1D().enumerationByIndex(n));
@@ -239,8 +238,8 @@ std::vector<Function1D> matchingFunction1D(const Flags<FunctionProperties::Funct
  * One-Dimensional Function Wrapper
  */
 
-Function1DWrapper::Function1DWrapper(Function1D func, const std::vector<double> &params)
-    : type_(func), function_(functions1D_.at(func)), parameters_(params)
+Function1DWrapper::Function1DWrapper(Functions1D::Form form, const std::vector<double> &params)
+    : form_(form), function_(functions1D_.at(form)), parameters_(params)
 {
     calculateInternalParameters();
 }
@@ -249,14 +248,14 @@ Function1DWrapper::Function1DWrapper(Function1D func, const std::vector<double> 
 void Function1DWrapper::calculateInternalParameters() { internalParameters_ = function_.setup()(parameters_); }
 
 // Set function type and parameters
-bool Function1DWrapper::setFunctionAndParameters(Function1D func, const std::vector<double> &params)
+bool Function1DWrapper::setFormAndParameters(Functions1D::Form form, const std::vector<double> &params)
 {
-    type_ = func;
-    function_ = functions1D_.at(type_);
+    form_ = form;
+    function_ = functions1D_.at(form_);
 
     if (params.size() != function_.nParameters())
-        return Messenger::error("1D function '{}' requires {} parameters, but {} were given.\n", function1D().keyword(type_),
-                                function_.nParameters(), params.size());
+        return Messenger::error("1D function '{}' requires {} parameters, but {} were given.\n",
+                                Functions1D::function1D().keyword(form_), function_.nParameters(), params.size());
 
     parameters_ = params;
     calculateInternalParameters();
@@ -264,23 +263,23 @@ bool Function1DWrapper::setFunctionAndParameters(Function1D func, const std::vec
     return true;
 }
 
-// Set current function type
-void Function1DWrapper::setFunction(Function1D func)
+// Set current functional form
+void Function1DWrapper::setForm(Functions1D::Form form)
 {
-    type_ = func;
-    function_ = functions1D_.at(type_);
+    form_ = form;
+    function_ = functions1D_.at(form_);
     calculateInternalParameters();
 }
 
-// Return function type
-Function1D Function1DWrapper::type() const { return type_; }
+// Return functional form
+Functions1D::Form Function1DWrapper::form() const { return form_; }
 
 // Set current function parameters
 bool Function1DWrapper::setParameters(const std::vector<double> &params)
 {
     if (params.size() != function_.nParameters())
-        return Messenger::error("1D function '{}' requires {} parameters, but {} were given.\n", function1D().keyword(type_),
-                                function_.nParameters(), params.size());
+        return Messenger::error("1D function '{}' requires {} parameters, but {} were given.\n",
+                                Functions1D::function1D().keyword(form_), function_.nParameters(), params.size());
 
     parameters_ = params;
     calculateInternalParameters();
@@ -320,4 +319,3 @@ double Function1DWrapper::normalisation(double omega) const
 {
     return function_.normalisation() ? function_.normalisation()(omega, internalParameters_) : 1.0;
 }
-} // namespace Functions

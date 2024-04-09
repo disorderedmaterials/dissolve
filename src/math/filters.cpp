@@ -9,10 +9,10 @@
 namespace Filters
 {
 // Perform point-wise convolution of data with the supplied BroadeningFunction
-void convolve(Data1D &data, const Functions::Function1DWrapper function, bool variableOmega, bool normalise)
+void convolve(Data1D &data, const Function1DWrapper function, bool variableOmega, bool normalise)
 {
     // Check for no function specified
-    if (function.type() == Functions::Function1D::None)
+    if (function.form() == Functions1D::Form::None)
         return;
 
     // Grab x and y arrays
@@ -56,10 +56,10 @@ void convolve(Data1D &data, const Functions::Function1DWrapper function, bool va
 }
 
 // Perform convolution of the supplied delta function into the supplied data
-void convolve(double xCentre, double value, const Functions::Function1DWrapper function, Data1D &dest)
+void convolve(double xCentre, double value, const Function1DWrapper function, Data1D &dest)
 {
     // Check for no function specified
-    if (function.type() == Functions::Function1D::None)
+    if (function.form() == Functions1D::Form::None)
         return;
 
     // Grab x and y arrays

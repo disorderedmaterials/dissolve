@@ -16,8 +16,7 @@ class Function1DTest : public ::testing::Test
     public:
     Function1DTest() = default;
 
-    Data1D generate(Functions::Function1DWrapper f, double omega = 0.0, double xBegin = -5.0, double xEnd = 5.0,
-                    double xDelta = binWidth)
+    Data1D generate(Function1DWrapper f, double omega = 0.0, double xBegin = -5.0, double xEnd = 5.0, double xDelta = binWidth)
     {
         Data1D d;
         auto x = xBegin;
@@ -33,7 +32,7 @@ class Function1DTest : public ::testing::Test
 TEST_F(Function1DTest, Basic)
 {
     // Basic Gaussian, testing class behaviour
-    auto basicGaussian = generate(Functions::Function1DWrapper(Functions::Function1D::Gaussian, {0.2}));
+    auto basicGaussian = generate(Function1DWrapper(Functions1D::Form::Gaussian, {0.2}));
     auto c = 0.2 / (2.0 * sqrt(2.0 * log(2.0)));
     for (auto &&[x, y] : zip(basicGaussian.xAxis(), basicGaussian.values()))
         EXPECT_NEAR(y, exp(-(x * x) / (2 * c * c)), 1.0e-10);
@@ -44,21 +43,21 @@ TEST_F(Function1DTest, UnitIntegral)
     // Some random omega values for Q-dependency testing
     std::vector<double> omegas = {0.189, 0.78, 1.102, 3.22, 4.8};
 
-    Functions::Function1DWrapper f;
+    Function1DWrapper f;
     Data1D xy;
 
     // Gaussian
-    f.setFunctionAndParameters(Functions::Function1D::Gaussian, {0.2});
+    f.setFormAndParameters(Functions1D::Form::Gaussian, {0.2});
     xy = generate(f);
     EXPECT_NEAR(1.0 / binWidth, f.normalisation() * std::accumulate(xy.values().begin(), xy.values().end(), 0.0), 1.0e-10);
 
     // Scaled Gaussian
-    f.setFunctionAndParameters(Functions::Function1D::ScaledGaussian, {4.325215, 0.38});
+    f.setFormAndParameters(Functions1D::Form::ScaledGaussian, {4.325215, 0.38});
     xy = generate(f);
     EXPECT_NEAR(1.0 / binWidth, f.normalisation() * std::accumulate(xy.values().begin(), xy.values().end(), 0.0), 1.0e-10);
 
     // Omega-Dependent Gaussian
-    f.setFunctionAndParameters(Functions::Function1D::OmegaDependentGaussian, {0.189});
+    f.setFormAndParameters(Functions1D::Form::OmegaDependentGaussian, {0.189});
     for (auto omega : omegas)
     {
         xy = generate(f, omega);
@@ -74,7 +73,7 @@ TEST_F(Function1DTest, UnitIntegral)
     }
 
     // Scaled Gaussian
-    f.setFunctionAndParameters(Functions::Function1D::GaussianC2, {0.1, 0.3});
+    f.setFormAndParameters(Functions1D::Form::GaussianC2, {0.1, 0.3});
     for (auto omega : omegas)
     {
         xy = generate(f, omega);

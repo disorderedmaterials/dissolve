@@ -15,7 +15,7 @@ namespace Fourier
 // Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening
 // function, modification function, and window applied (if requested)
 bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction,
-            const Functions::Function1DWrapper &broadening)
+            const Function1DWrapper &broadening)
 {
     /*
      * Perform sine Fourier transform of current data. Function has no notion of forward or backwards transforms -

@@ -12,9 +12,9 @@ class Data1D;
 namespace Filters
 {
 // Perform point-wise convolution of data with the supplied BroadeningFunction
-void convolve(Data1D &data, const Functions::Function1DWrapper function, bool variableOmega = false, bool normalise = false);
+void convolve(Data1D &data, const Function1DWrapper function, bool variableOmega = false, bool normalise = false);
 // Perform convolution of the supplied delta function into the supplied data
-void convolve(double xCentre, double value, const Functions::Function1DWrapper function, Data1D &dest);
+void convolve(double xCentre, double value, const Function1DWrapper function, Data1D &dest);
 // Apply Kolmogorov–Zurbenko filter to data
 void kolmogorovZurbenko(Data1D &data, int k, int m, bool normalised = false);
 // Apply median filter to data

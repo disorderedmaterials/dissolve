@@ -20,23 +20,21 @@ enum FunctionProperty
 };
 };
 
-namespace Functions
-{
 // Function Types
 // -- Setup function parameters, returning vector augmented with any precalculated additional parameters
-using FunctionSetup = std::function<std::vector<double>(std::vector<double> parameters)>;
+using Function1DSetup = std::function<std::vector<double>(std::vector<double> parameters)>;
 // -- Function taking x and omega arguments and returning a value
 using Function1DXOmega = std::function<double(double x, double omega, const std::vector<double> &parameters)>;
 // -- Function taking omega argument and returning a value
 using Function1DOmega = std::function<double(double omega, const std::vector<double> &parameters)>;
 
 // One-Dimensional Function Definition
-class FunctionDefinition1D
+class Function1DDefinition
 {
     public:
-    FunctionDefinition1D(const std::vector<std::string> &parameterNames,
-                         const Flags<FunctionProperties::FunctionProperty> &properties, FunctionSetup setup, Function1DXOmega y,
-                         Function1DXOmega yFT = {}, Function1DOmega norm = {});
+    Function1DDefinition(const std::vector<std::string> &parameterNames,
+                         const Flags<FunctionProperties::FunctionProperty> &properties, Function1DSetup setup,
+                         Function1DXOmega y, Function1DXOmega yFT = {}, Function1DOmega norm = {});
 
     private:
     // Names of parameters defining the function
@@ -44,7 +42,7 @@ class FunctionDefinition1D
     // Properties of the function
     Flags<FunctionProperties::FunctionProperty> properties_;
     // Functions
-    FunctionSetup setup_;
+    Function1DSetup setup_;
     Function1DXOmega y_, yFT_;
     Function1DOmega normaliser_;
 
@@ -56,7 +54,7 @@ class FunctionDefinition1D
     // Return properties of the function
     const Flags<FunctionProperties::FunctionProperty> &properties() const;
     // Return function for setup
-    FunctionSetup setup() const;
+    Function1DSetup setup() const;
     // Return function for y value
     Function1DXOmega y() const;
     // Return function for FT of y value
@@ -65,38 +63,43 @@ class FunctionDefinition1D
     Function1DOmega normalisation() const;
 };
 
-// Function Types
-enum Function1D
+// One-Dimensional Functional Forms
+class Functions1D
 {
-    None,
-    Gaussian,
-    ScaledGaussian,
-    OmegaDependentGaussian,
-    GaussianC2
+    public:
+    // Functional Forms
+    enum Form
+    {
+        None,
+        Gaussian,
+        ScaledGaussian,
+        OmegaDependentGaussian,
+        GaussianC2
+    };
+    // Return enum options for form
+    static EnumOptions<Form> function1D();
+    // Return base function requested
+    static Function1DDefinition functionDefinition1D(Form func);
+    // Check function properties against those supplied, returning truth if the function meets all requirements
+    static bool validFunction1DProperties(Form func, const Flags<FunctionProperties::FunctionProperty> &properties);
+    // Return all available functions with properties matching those provided
+    static std::vector<Form> matchingFunction1D(const Flags<FunctionProperties::FunctionProperty> &properties);
 };
-// Return enum options for Function1D
-EnumOptions<Functions::Function1D> function1D();
-// Return base function requested
-FunctionDefinition1D functionDefinition1D(Functions::Function1D func);
-// Check function properties against those supplied, returning truth if the function meets all requirements
-bool validFunction1DProperties(Functions::Function1D func, const Flags<FunctionProperties::FunctionProperty> &properties);
-// Return all available functions with properties matching those provided
-std::vector<Functions::Function1D> matchingFunction1D(const Flags<FunctionProperties::FunctionProperty> &properties);
 
 // Function 1D Wrapper
 class Function1DWrapper
 {
     public:
-    Function1DWrapper(Function1D func = Function1D::None, const std::vector<double> &params = {});
+    Function1DWrapper(Functions1D::Form form = Functions1D::Form::None, const std::vector<double> &params = {});
 
     /*
      * Function
      */
     private:
-    // Function type
-    Function1D type_;
+    // Functional form
+    Functions1D::Form form_;
     // Function definition
-    FunctionDefinition1D function_;
+    Function1DDefinition function_;
     // Input arguments to function
     std::vector<double> parameters_;
     // Internal function parameters (input params followed by any calculated parameters)
@@ -108,11 +111,11 @@ class Function1DWrapper
 
     public:
     // Set function type and parameters
-    bool setFunctionAndParameters(Function1D func, const std::vector<double> &params);
-    // Set current function type
-    void setFunction(Function1D func);
-    // Return function type
-    Function1D type() const;
+    bool setFormAndParameters(Functions1D::Form form, const std::vector<double> &params);
+    // Set current functional form
+    void setForm(Functions1D::Form form);
+    // Return functional form
+    Functions1D::Form form() const;
     // Return number of parameters for current function
     int nParameters() const;
     // Set current function parameters
@@ -130,4 +133,3 @@ class Function1DWrapper
     // Return normalisation factor at specified omega
     double normalisation(double omega = 0.0) const;
 };
-} // namespace Functions
