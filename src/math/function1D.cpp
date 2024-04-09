@@ -43,13 +43,12 @@ Function1DOmega Function1DDefinition::normalisation() const { return normaliser_
 
 // One-Dimensional Function Definitions
 static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
-    // No Function - always returns 1.0
+    // No Function - returns zero
     {Functions1D::Form::None,
      {{},
       {FunctionProperties::FourierTransform, FunctionProperties::Normalisation},
       [](std::vector<double> params) { return params; },
-      [](double x, double omega, const std::vector<double> &params) { return 1.0; },
-      [](double x, double omega, const std::vector<double> &params) { return 1.0; }}},
+      [](double x, double omega, const std::vector<double> &params) { return 0.0; }}},
     /*
      * Gaussian
      *
