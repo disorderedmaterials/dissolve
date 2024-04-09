@@ -66,7 +66,7 @@ class FunctionDefinition1D
 };
 
 // Function Types
-enum class Function1D
+enum Function1D
 {
     None,
     Gaussian,
