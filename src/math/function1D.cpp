@@ -216,9 +216,9 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
       {},
       [](std::vector<double> params) { return params; },
       /*
-       *                      ( sigma )**12   ( sigma )**6
-       * F(x) = 4 * epsilon * ( ----- )     - ( ----- )
-       *                      (   x   )       (   x   )
+       *                      [ ( sigma )**12   ( sigma )**6 ]
+       * F(x) = 4 * epsilon * [ ( ----- )     - ( ----- )    ]
+       *                      [ (   x   )       (   x   )    ]
        */
       [](double x, double omega, const std::vector<double> &params)
       {
