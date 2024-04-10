@@ -15,7 +15,8 @@ namespace FunctionProperties
 enum FunctionProperty
 {
     FourierTransform,
-    Normalisation
+    Normalisation,
+    FirstDerivative
 };
 };
 
@@ -33,7 +34,7 @@ class Function1DDefinition
     public:
     Function1DDefinition(const std::vector<std::string> &parameterNames,
                          const Flags<FunctionProperties::FunctionProperty> &properties, Function1DSetup setup,
-                         Function1DXOmega y, Function1DXOmega yFT = {}, Function1DOmega norm = {});
+                         Function1DXOmega y, Function1DXOmega dYdX = {}, Function1DXOmega yFT = {}, Function1DOmega norm = {});
 
     private:
     // Names of parameters defining the function
@@ -42,7 +43,7 @@ class Function1DDefinition
     Flags<FunctionProperties::FunctionProperty> properties_;
     // Functions
     Function1DSetup setup_;
-    Function1DXOmega y_, yFT_;
+    Function1DXOmega y_, dYdX_, yFT_;
     Function1DOmega normaliser_;
 
     public:
@@ -56,6 +57,8 @@ class Function1DDefinition
     Function1DSetup setup() const;
     // Return function for y value
     Function1DXOmega y() const;
+    // Return function for first derivative
+    Function1DXOmega dYdX() const;
     // Return function for FT of y value
     Function1DXOmega yFT() const;
     // Return normalisation function
@@ -134,6 +137,8 @@ class Function1DWrapper
     std::string parameterSummary() const;
     // Return y value at specified x, omega
     double y(double x, double omega = 0.0) const;
+    // Return first derivative of y at specified x, omega
+    double dYdX(double x, double omega = 0.0) const;
     // Return Fourier transformed y value at specified x, omega
     double yFT(double x, double omega = 0.0) const;
     // Return normalisation factor at specified omega

@@ -14,9 +14,10 @@
 
 Function1DDefinition::Function1DDefinition(const std::vector<std::string> &parameterNames,
                                            const Flags<FunctionProperties::FunctionProperty> &properties, Function1DSetup setup,
-                                           Function1DXOmega y, Function1DXOmega yFT, Function1DOmega norm)
+                                           Function1DXOmega y, Function1DXOmega dYdX, Function1DXOmega yFT,
+                                           Function1DOmega norm)
     : parameterNames_(parameterNames), properties_(properties), setup_(std::move(setup)), y_(std::move(y)),
-      yFT_(std::move(yFT)), normaliser_(std::move(norm))
+      dYdX_(std::move(dYdX)), yFT_(std::move(yFT)), normaliser_(std::move(norm))
 {
 }
 
@@ -35,6 +36,9 @@ Function1DSetup Function1DDefinition::setup() const { return setup_; }
 // Return function for y value at specified x, omega
 Function1DXOmega Function1DDefinition::y() const { return y_; }
 
+// Return function for first derivative of y with respect to x (at specified omega)
+Function1DXOmega Function1DDefinition::dYdX() const { return dYdX_; }
+
 // Return function for FT of y value at the specified x, omega
 Function1DXOmega Function1DDefinition::yFT() const { return yFT_; }
 
@@ -46,8 +50,9 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
     // No Function - returns zero
     {Functions1D::Form::None,
      {{},
-      {FunctionProperties::FourierTransform, FunctionProperties::Normalisation},
+      {FunctionProperties::FourierTransform, FunctionProperties::Normalisation, FunctionProperties::FirstDerivative},
       [](std::vector<double> params) { return params; },
+      [](double x, double omega, const std::vector<double> &params) { return 0.0; },
       [](double x, double omega, const std::vector<double> &params) { return 0.0; },
       [](double x, double omega, const std::vector<double> &params) { return 0.0; },
       [](double omega, const std::vector<double> &params) { return 0.0; }}},
@@ -74,6 +79,8 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        * 	        (   2 * c * c )
        */
       [](double x, double omega, const std::vector<double> &params) { return exp(-(0.5 * x * x * params[2] * params[2])); },
+      // First derivative (not defined)
+      {},
       /*
        *             (   x * x * c * c )
        * FT(x) = exp ( - ------------- )
@@ -111,6 +118,8 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        */
       [](double x, double omega, const std::vector<double> &params)
       { return params[0] * exp(-(0.5 * x * x * params[3] * params[3])); },
+      // First derivative (not defined)
+      {},
       /*
        *               (   x * x * c * c )
        * FT(x) = A exp ( - ------------- )
@@ -148,6 +157,8 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        */
       [](double x, double omega, const std::vector<double> &params)
       { return exp(-(x * x) / (2.0 * (params[1] * omega) * (params[1] * omega))); },
+      // First derivative (not defined)
+      {},
       /*
        *             (   x*x * (c*omega)**2 )
        * FT(x) = exp ( - ------------------ )
@@ -190,6 +201,8 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        */
       [](double x, double omega, const std::vector<double> &params)
       { return exp(-(x * x) / (2.0 * (params[2] + params[3] * omega) * (params[2] + params[3] * omega))); },
+      // First derivative (not defined)
+      {},
       /*
        *             (   x * x * (c1 + c2*omega)**2 )
        * FT(x) = exp ( - -------------------------- )
@@ -213,7 +226,7 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
      */
     {Functions1D::Form::LennardJones126,
      {{"epsilon", "sigma"},
-      {},
+      {FunctionProperties::FirstDerivative},
       [](std::vector<double> params) { return params; },
       /*
        *                      [ ( sigma )**12   ( sigma )**6 ]
@@ -226,6 +239,17 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
           auto sigmar6 = pow(sigmar, 6.0);
           auto sigmar12 = sigmar6 * sigmar6;
           return 4.0 * params[0] * (sigmar12 - sigmar6);
+      },
+      /*
+       *                          [ ( sigma**12 )         ( sigma**6 ) ]
+       * dYdX(x) = 48 * epsilon * [ ( --------- ) - 0.5 * ( -------- ) ]
+       *                          [ (   x**13   )         (   x**7   ) ]
+       */
+      [](double x, double omega, const std::vector<double> &params)
+      {
+          auto sigmar = params[1] / x;
+          auto sigmar6 = pow(sigmar, 6.0);
+          return 48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / x;
       },
       {},
       {}}}};
@@ -349,6 +373,12 @@ std::string Function1DWrapper::parameterSummary() const
 
 // Return y value at specified x, omega
 double Function1DWrapper::y(double x, double omega) const { return function_.y()(x, omega, internalParameters_); }
+
+// Return first derivative of y at specified x, omega
+double Function1DWrapper::dYdX(double x, double omega) const
+{
+    return function_.dYdX() ? function_.dYdX()(x, omega, internalParameters_) : 0.0;
+}
 
 // Return Fourier transformed y value at specified x, omega
 double Function1DWrapper::yFT(double x, double omega) const

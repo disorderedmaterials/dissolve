@@ -175,8 +175,7 @@ double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRan
 double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeTruncationScheme truncation) const
 {
     // Assess stored potential function derivative at specified r
-    auto force = 0.0; // potentialFunction_.dy(r);
-    throw(std::runtime_error("Short-range interaction force needs implementing.\n"));
+    auto force = -potentialFunction_.dYdX(r);
 
     // Apply the selected truncation scheme
     if (truncation == PairPotential::ShiftedShortRangeTruncation)
