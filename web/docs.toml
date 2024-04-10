@@ -9,7 +9,6 @@ theme = ["github.com/google/docsy", "github.com/google/docsy/dependencies"]
 enableGitInfo = true
 enableInlineShortcodes = true
 relativeURLs = false
-disableKinds = ["taxonomy"]
 
 ## Configuration for BlackFriday markdown parser: https://github.com/russross/blackfriday
 [blackfriday]
