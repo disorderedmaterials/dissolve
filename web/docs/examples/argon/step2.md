@@ -3,21 +3,36 @@ title: Step 2 - Set up a Forcefield
 type: docs
 ---
 
-To simulate any system we need to supply suitable parameters to describe the interactions between atoms, both internally within the same species and externally between atoms of the same (and different) species. The {{< gui-tab type="ff" text="Forcefield">}} tab is always available, and summarises the atom types used over all defined species and the resulting pair potentials, as well as master intramolecular definitions (which we aren't using in this example). You can also set other important options, such as the range of the generated pair potentials and the truncation schemes.
+To simulate any system we need to supply suitable parameters to describe the interactions between atoms, both internally within the same species and externally between atoms of the same (and different) species. The {{<gui-tab type="ff" text="Forcefield">}} tab is always available, and summarises the atom types used over all defined species and the resulting pair potentials, as well as master intramolecular definitions (which we aren't using in this example). You can also set other important options, such as the range of the generated pair potentials and the truncation schemes.
 
 We'll now describe the interactions for your argon species by taking the terms from one of Dissolve's [built-in forcefields]({{< ref "ff" >}}).
 
 {{< action type="tabs" >}}Go to the {{< gui-tab type="species"  text="Ar" >}} species tab{{< /action >}}
 
-{{< step text="By selecting the tab containing the Argon species you are making it 'active', and so it will be the target of any actions triggered from the _Species_ menu." />}}
+{{< tip text="By selecting the tab containing the Argon species you are making it 'active', and so it will be the target of any actions triggered from the _Species_ menu." />}}
 
 {{< action type="menu" text="Species &#8680; Add Forcefield Terms..." />}}
 
-{{< step >}}From the available forcefields choose `OPLSAA2005/NobleGases` and click {{< gui-button text="Next" icon="arrowright" >}}{{< /step >}}
+{{< action type="mouse" >}}
+##### Forcefield selection
+From the available forcefields choose `OPLSAA2005/NobleGases` and click {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
 
-{{< step >}}Here we choose how to assign atom types to the species - the default option of _Determine atom types for all atoms_ uses connectivity descriptions in the forcefield to try and automatically choose which type to use. Leave this option selected and click {{< gui-button text="Next" icon="arrowright" >}}{{< /step >}}  
+{{< action type="mouse" >}}
+##### Assign atom types
+Here we choose how to assign atom types to the species - the default option of _Determine atom types for all atoms_ uses connectivity descriptions in the forcefield to try and automatically choose which type to use. 
 
-{{< step >}}There will be no conflicts between the proposed atom types and existing ones defined in the main simulation (since there aren't any) so click {{< gui-button text="Finish" icon="true" >}} to complete the wizard{{< /step >}}
+Leave this option selected and click {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}  
+
+{{< action type="mouse" >}}
+##### Check naming conflicts
+There will be no conflicts between the proposed atom types and existing ones defined in the main simulation (since there aren't any) so click {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+
+{{< action type="mouse" >}}
+##### Apply intramolecular terms
+We will let Dissolve apply intramolecular terms to the whole species, so leave this section as it is and click {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+
+{{< action type="mouse" >}}
+We are all done setting up the forcefield, click {{< gui-button text="Finish" icon="true" >}} to exit the wizard.{{< /action >}}
 
 {{< tip text="For more complicated (molecular) species the wizard also handles how _intra_-molecular terms are generated. You also may have to deal with potential naming conflicts with existing terms in the main simulation, which the _Add Forcefield Terms_ wizard will help you resolve." />}}
 
