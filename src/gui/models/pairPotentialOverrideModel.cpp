@@ -81,8 +81,7 @@ bool PairPotentialOverrideModel::setData(const QModelIndex &index, const QVarian
                 PairPotentialOverride::pairPotentialOverrideTypes().enumeration(value.toString().toStdString()));
             break;
         case (ColumnData::ShortRangeForm):
-            ppOverride->interactionPotential().setForm(
-                Functions1D::forms().enumeration(value.toString().toStdString()));
+            ppOverride->interactionPotential().setForm(Functions1D::forms().enumeration(value.toString().toStdString()));
             break;
         case (ColumnData::ShortRangeParameters):
             if (!ppOverride->interactionPotential().parseParameters(value.toString().toStdString()))

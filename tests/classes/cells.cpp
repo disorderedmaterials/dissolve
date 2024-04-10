@@ -33,11 +33,11 @@ TEST(CellsTest, Basic)
     oType->setName("OW");
     oType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
-    dissolve.addPairPotential(arType, arType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
-    dissolve.addPairPotential(hType, hType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
-    dissolve.addPairPotential(oType, oType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
-    dissolve.addPairPotential(hType, oType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
-    dissolve.addPairPotential(arType, hType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
+    dissolve.addPairPotential(arType, arType)->interactionPotential().setForm(Functions1D::Form::None);
+    dissolve.addPairPotential(hType, hType)->interactionPotential().setForm(Functions1D::Form::None);
+    dissolve.addPairPotential(oType, oType)->interactionPotential().setForm(Functions1D::Form::None);
+    dissolve.addPairPotential(hType, oType)->interactionPotential().setForm(Functions1D::Form::None);
+    dissolve.addPairPotential(arType, hType)->interactionPotential().setForm(Functions1D::Form::None);
 
     // Set up pseudo-species
     auto *argon = coreData.addSpecies();
@@ -69,7 +69,7 @@ TEST(CellsTest, Basic)
     // Prepare the main simulation, and update our specific Ar-OW potential
     EXPECT_TRUE(dissolve.prepare());
     auto *pp = dissolve.pairPotential(arType, oType);
-    pp->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.35 sigma=2.166");
+    pp->interactionPotential().setFormAndParameters(Functions1D::Form::LennardJones126, "epsilon=0.35 sigma=2.166");
     pp->tabulate(dissolve.pairPotentialRange(), dissolve.pairPotentialDelta());
 
     // Test consistency of energy calculation with DL_POLY reference energies

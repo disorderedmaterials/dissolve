@@ -48,9 +48,9 @@ TEST_F(PairPotentialOverridesTest, Water3000)
     EXPECT_TRUE(systemTest.checkDouble("zeroed van der Waals energy", interEnergy.values().back(), 0.0, 6.0e-2));
 
     // Reinstate our only potential (OW-OW) with an override ("Off" to begin with)
-    auto *owOverride = systemTest.coreData().addPairPotentialOverride(
-        "OW", "OW", PairPotentialOverride::PairPotentialOverrideType::Off,
-        {ShortRangeFunctions::Form::LennardJones, "epsilon=0.6503 sigma=3.165492"});
+    auto *owOverride =
+        systemTest.coreData().addPairPotentialOverride("OW", "OW", PairPotentialOverride::PairPotentialOverrideType::Off,
+                                                       {Functions1D::Form::LennardJones126, "epsilon=0.6503 sigma=3.165492"});
     EXPECT_TRUE(systemTest.dissolve().regeneratePairPotentials());
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
     EXPECT_TRUE(systemTest.checkDouble("overridden (Off) van der Waals energy", interEnergy.values().back(), 0.0, 6.0e-2));
