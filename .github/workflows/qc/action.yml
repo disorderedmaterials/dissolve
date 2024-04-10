@@ -17,7 +17,11 @@ runs:
     shell: bash
     run: |
       set -ex
-      echo ${{ github.event.pull_request.title }} | awk "/(^feat:)|(^fix:)|(^doc:)|(^perf:)|(^refactor:)|(^style:)|(^test:)|(^chore:)|(^revert:)|(^build:)/" | grep .
+      TITLE="${{ github.event.pull_request.title }}"
+      if [ -z "$TITLE" ]
+      TITLE=Continuous
+      fi
+      echo  | awk "/(Continuous)|(^feat:)|(^fix:)|(^doc:)|(^perf:)|(^refactor:)|(^style:)|(^test:)|(^chore:)|(^revert:)|(^build:)/" | grep .
 
   - name: C++ Formatting
     shell: bash
