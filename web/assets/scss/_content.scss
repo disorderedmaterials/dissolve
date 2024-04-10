@@ -277,7 +277,8 @@ $nodes: (
   "select",
   "sequence",
   "sum1d",
-  "transmute"
+  "transmute",
+  "temperature",
 );
 @include generate-node-link();
 
