@@ -14,6 +14,7 @@ runs:
 
   - name: Check Conventional Commits
     # Ensure that the PR title fits the conventional commits framework
+    if: github.event_name == 'pull_request'
     shell: bash
     run: |
       set -ex
