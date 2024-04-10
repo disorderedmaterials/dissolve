@@ -13,4 +13,4 @@ This document describes and defines the release cycle and versioning for the Dis
 
 ## Overview
 
-Dissolve is a scientific code with a well-defined underlying framework (which is likely to change slowly) upon which specific functionality is added in a [modular manner]({{< ref "moduledev" >}}). Each minor version increment (e.g. `0.7` to `0.8`) typically marks the introduction of a significant new feature or capability, with development priorities for each incremental version  decided by the [project management committee]({{< ref "pmc" >}}). Critical bugfixes and other usability issues are introduced as patched versions to minor releases (e.g. `0.8.1`, `0.8.2`).
+Dissolve follows the [semantic versioning](https://semver.org/) model.  Changes in the major release number (e.g. version 2 to version 3) indicate breaking changes that may invalidate old files.  Changes to the minor release number (e.g. version 1.12 to 1.13) indicate the addition of new features to the program.  Finally, changes in the patch number (e.g. version 1.4.1 to 1.4.2) indicate bug fixes and refactorings that do not fundamentally significantly change the behaviour of the program.

@@ -113,7 +113,7 @@ template <class Functions> class InteractionPotential
         form_ = form;
         parameters_ = params;
     }
-    bool setFormAndParameters(typename Functions::Form form, std::string paramString)
+    bool setFormAndParameters(typename Functions::Form form, std::string_view paramString)
     {
         form_ = form;
         return parseParameters(paramString);

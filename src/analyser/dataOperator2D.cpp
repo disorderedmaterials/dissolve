@@ -1,13 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "analyser/dataNormaliser2D.h"
+#include "analyser/dataOperator2D.h"
 #include "math/data2D.h"
 #include "math/integrator.h"
 
-DataNormaliser2D::DataNormaliser2D(Data2D &targetData) : DataNormaliserBase<Data2D, NormalisationFunction2D>(targetData) {}
+DataOperator2D::DataOperator2D(Data2D &targetData) : DataOperatorBase<Data2D, OperateFunction2D>(targetData) {}
 
-void DataNormaliser2D::normalise(NormalisationFunction2D normalisationFunction)
+/*
+ * Data Operation Functions
+ */
+
+// Generic operate function
+void DataOperator2D::operate(OperateFunction2D operateFunction)
 {
     const auto &xs = targetData_.xAxis();
     const auto &ys = targetData_.yAxis();
@@ -20,14 +25,20 @@ void DataNormaliser2D::normalise(NormalisationFunction2D normalisationFunction)
     {
         for (auto j = 0; j < ys.size(); ++j)
         {
-            values[{i, j}] = normalisationFunction(xs[i], xDelta, ys[j], yDelta, values[{i, j}]);
+            values[{i, j}] = operateFunction(xs[i], xDelta, ys[j], yDelta, values[{i, j}]);
         }
     }
 }
 
-void DataNormaliser2D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 2D data."); }
+/*
+ * Normalisation Functions
+ */
 
-void DataNormaliser2D::normaliseBySphericalShell()
+// Perform grid normalisation
+void DataOperator2D::normaliseByGrid() { Messenger::warn("Grid normalisation not implemented for 2D data."); }
+
+// Perform spherical shell normalisation
+void DataOperator2D::normaliseBySphericalShell()
 {
     // We expect x values to be centre-bin values, and regularly spaced
     const auto &xAxis = targetData_.xAxis();
@@ -64,7 +75,8 @@ void DataNormaliser2D::normaliseBySphericalShell()
     }
 }
 
-void DataNormaliser2D::normaliseTo(double value, bool absolute)
+// Normalise the target data to a given value
+void DataOperator2D::normaliseSumTo(double value, bool absolute)
 {
     auto sum = absolute ? Integrator::absSum(targetData_) : Integrator::sum(targetData_);
     targetData_ /= sum;

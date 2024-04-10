@@ -3,11 +3,10 @@
 
 #pragma once
 
-#include "classes/atomTypeMix.h"
+#include "classes/pairPotential.h"
 #include "templates/array2D.h"
 
 // Forward Declarations
-class PairPotential;
 class Atom;
 class Molecule;
 class SpeciesAtom;
@@ -35,7 +34,7 @@ class PotentialMap
     public:
     // Initialise map
     bool initialise(const std::vector<std::shared_ptr<AtomType>> &masterAtomTypes,
-                    const std::vector<std::unique_ptr<PairPotential>> &pairPotentials, double pairPotentialRange);
+                    const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange);
     // Return PairPotential range
     double range() const;
 

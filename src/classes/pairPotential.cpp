@@ -6,7 +6,6 @@
 #include "base/messenger.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
-#include "classes/coreData.h"
 #include "math/constants.h"
 #include <cmath>
 
@@ -14,10 +13,23 @@
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme_ =
     PairPotential::ShiftedShortRangeTruncation;
-double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
 PairPotential::PairPotential()
     : interactionPotential_(ShortRangeFunctions::Form::None), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
+{
+}
+
+PairPotential::PairPotential(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ,
+                             bool includeCharges)
+    : interactionPotential_(ShortRangeFunctions::Form::None), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
+{
+    setUp(typeI, typeJ, includeCharges);
+}
+
+PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ,
+                             const InteractionPotential<ShortRangeFunctions> &potential)
+    : includeAtomTypeCharges_(false), nameI_(nameI), nameJ_(nameJ), interactionPotential_(potential),
+      uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
 {
 }
 
@@ -32,10 +44,9 @@ EnumOptions<PairPotential::CoulombTruncationScheme> PairPotential::coulombTrunca
 // Return enum option info for ShortRangeTruncationScheme
 EnumOptions<PairPotential::ShortRangeTruncationScheme> PairPotential::shortRangeTruncationSchemes()
 {
-    return EnumOptions<PairPotential::ShortRangeTruncationScheme>("ShortRangeTruncationScheme",
-                                                                  {{PairPotential::NoShortRangeTruncation, "None"},
-                                                                   {PairPotential::ShiftedShortRangeTruncation, "Shifted"},
-                                                                   {PairPotential::CosineShortRangeTruncation, "Cosine"}});
+    return EnumOptions<PairPotential::ShortRangeTruncationScheme>(
+        "ShortRangeTruncationScheme",
+        {{PairPotential::NoShortRangeTruncation, "None"}, {PairPotential::ShiftedShortRangeTruncation, "Shifted"}});
 }
 
 /*
@@ -50,12 +61,6 @@ void PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTrunc
 
 // Return short-ranged truncation scheme
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme() { return shortRangeTruncationScheme_; }
-
-// Set width of short-range potential over which to truncate (if scheme = Cosine)
-void PairPotential::setShortRangeTruncationWidth(double width) { shortRangeTruncationWidth_ = width; }
-
-// Return width of short-range potential over which to truncate (if scheme = Cosine)
-double PairPotential::shortRangeTruncationWidth() { return shortRangeTruncationWidth_; }
 
 // Set whether atom type charges should be included in the generated potential
 void PairPotential::setIncludeAtomTypeCharges(bool b) { includeAtomTypeCharges_ = b; }
@@ -76,21 +81,6 @@ PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme() 
  * Source Parameters
  */
 
-// Set Data1D names from source AtomTypes
-void PairPotential::setData1DNames()
-{
-    // Check for NULL pointers
-    assert(atomTypeI_ && atomTypeJ_);
-
-    uFull_.setTag(fmt::format("{}-{}", atomTypeI_->name(), atomTypeJ_->name()));
-
-    uAdditional_.setTag(fmt::format("{}-{} (Add)", atomTypeI_->name(), atomTypeJ_->name()));
-
-    uOriginal_.setTag(fmt::format("{}-{} (Orig)", atomTypeI_->name(), atomTypeJ_->name()));
-
-    dUFull_.setTag(fmt::format("{}-{} (dU/dr)", atomTypeI_->name(), atomTypeJ_->name()));
-}
-
 // Set up PairPotential parameters from specified AtomTypes
 bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges)
 {
@@ -100,21 +90,23 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
     if (typeJ == nullptr)
         throw(std::runtime_error("Invalid AtomType pointer (typeJ) given to PairPotential::setUp().\n"));
 
-    atomTypeI_ = typeI;
-    atomTypeJ_ = typeJ;
     includeAtomTypeCharges_ = includeCharges;
     interactionPotential_.setFormAndParameters(ShortRangeFunctions::Form::None, "");
+
+    nameI_ = typeI->name();
+    nameJ_ = typeJ->name();
     setData1DNames();
-    auto &paramsI = atomTypeI_->interactionPotential().parameters();
-    auto &paramsJ = atomTypeJ_->interactionPotential().parameters();
-    auto srI = atomTypeI_->interactionPotential().form(), srJ = atomTypeJ_->interactionPotential().form();
+
+    auto &paramsI = typeI->interactionPotential().parameters();
+    auto &paramsJ = typeJ->interactionPotential().parameters();
+    auto srI = typeI->interactionPotential().form(), srJ = typeJ->interactionPotential().form();
 
     // Sanity check - are either of the parameter sets empty (i.e. have never been set with useful data)?
     if ((paramsI.empty() || paramsJ.empty()) &&
         (srI != ShortRangeFunctions::Form::None && srJ != ShortRangeFunctions::Form::None))
         return Messenger::error(
             "Can't set parameters for PairPotential since there are {} ({}) and {} ({}) parameters set in the atom types.\n",
-            paramsI.size(), atomTypeI_->name(), paramsJ.size(), atomTypeJ_->name());
+            paramsI.size(), typeI->name(), paramsJ.size(), typeJ->name());
 
     // Combine / set parameters as necessary, depending on the short-range interaction types of the supplied AtomTypes
     if (srI == srJ)
@@ -154,7 +146,7 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
         if (ljI && ljJ)
         {
             Messenger::warn("Defaulting to Lorentz-Berthelot rules to combine parameters between atom types '{}' and '{}.\n",
-                            atomTypeI_->name(), atomTypeJ_->name());
+                            typeI->name(), typeJ->name());
 
             /*
              * Combine parameters (Lorentz-Berthelot):
@@ -168,40 +160,38 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
         else
             return Messenger::error("Can't generate potential parameters between atom types '{}' and '{}', which have "
                                     "short-range types {} and {}.\n",
-                                    atomTypeI_->name(), atomTypeJ_->name(), ShortRangeFunctions::forms().keyword(srI),
+                                    typeI->name(), typeJ->name(), ShortRangeFunctions::forms().keyword(srI),
                                     ShortRangeFunctions::forms().keyword(srJ));
     }
 
     // Set charges
-    chargeI_ = includeAtomTypeCharges_ ? atomTypeI_->charge() : 0.0;
-    chargeJ_ = includeAtomTypeCharges_ ? atomTypeJ_->charge() : 0.0;
+    chargeI_ = includeAtomTypeCharges_ ? typeI->charge() : 0.0;
+    chargeJ_ = includeAtomTypeCharges_ ? typeJ->charge() : 0.0;
 
     return true;
 }
 
+// Set Data1D names from source AtomTypes
+void PairPotential::setData1DNames()
+{
+    uFull_.setTag(fmt::format("{}-{}", nameI_, nameJ_));
+
+    uAdditional_.setTag(fmt::format("{}-{} (Add)", nameI_, nameJ_));
+
+    uOriginal_.setTag(fmt::format("{}-{} (Orig)", nameI_, nameJ_));
+
+    dUFull_.setTag(fmt::format("{}-{} (dU/dr)", nameI_, nameJ_));
+}
+
+// Return name for first source parameters
+std::string_view PairPotential::nameI() const { return nameI_; }
+
+// Return name for second source parameters
+std::string_view PairPotential::nameJ() const { return nameJ_; };
+
 // Return interaction potential
 InteractionPotential<ShortRangeFunctions> &PairPotential::interactionPotential() { return interactionPotential_; }
 const InteractionPotential<ShortRangeFunctions> &PairPotential::interactionPotential() const { return interactionPotential_; }
-
-// Return first AtomType name
-std::string_view PairPotential::atomTypeNameI() const
-{
-    assert(atomTypeI_);
-    return atomTypeI_->name();
-}
-
-// Return second AtomType name
-std::string_view PairPotential::atomTypeNameJ() const
-{
-    assert(atomTypeJ_);
-    return atomTypeJ_->name();
-}
-
-// Return first source AtomType
-std::shared_ptr<AtomType> PairPotential::atomTypeI() const { return atomTypeI_; }
-
-// Return second source AtomType
-std::shared_ptr<AtomType> PairPotential::atomTypeJ() const { return atomTypeJ_; }
 
 // Set charge I
 void PairPotential::setChargeI(double value) { chargeI_ = value; }
@@ -224,45 +214,38 @@ double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRan
 {
     auto &params = interactionPotential_.parameters();
 
-    if (interactionPotential_.form() == ShortRangeFunctions::Form::None)
-        return 0.0;
-    else if ((interactionPotential_.form() == ShortRangeFunctions::Form::LennardJones) ||
-             (interactionPotential_.form() == ShortRangeFunctions::Form::LennardJonesGeometric))
+    auto energy = 0.0;
+    switch (interactionPotential_.form())
     {
-        /*
-         * Standard Lennard-Jones potential
-         * Parameter 0 = Epsilon
-         * Parameter 1 = Sigma
-         */
-        auto sigmar = params[1] / r;
-        auto sigmar6 = pow(sigmar, 6.0);
-        auto sigmar12 = sigmar6 * sigmar6;
-        auto energy = 4.0 * params[0] * (sigmar12 - sigmar6);
-
-        // Apply the selected truncation scheme
-        if (truncation == PairPotential::ShiftedShortRangeTruncation)
+        case (ShortRangeFunctions::Form::None):
+            break;
+        case (ShortRangeFunctions::Form::LennardJones):
+        case (ShortRangeFunctions::Form::LennardJonesGeometric):
         {
-            energy += -(r - range_) * shortRangeForceAtCutoff_ - shortRangeEnergyAtCutoff_;
+            /*
+             * Standard Lennard-Jones potential
+             * Parameter 0 = Epsilon
+             * Parameter 1 = Sigma
+             */
+            auto sigmar = params[1] / r;
+            auto sigmar6 = pow(sigmar, 6.0);
+            auto sigmar12 = sigmar6 * sigmar6;
+            energy = 4.0 * params[0] * (sigmar12 - sigmar6);
         }
-        else if (truncation == PairPotential::CosineShortRangeTruncation)
-        {
-            // Are we into the truncation strip?
-            auto truncr = r - (range_ - shortRangeTruncationWidth_);
-            if (truncr >= 0)
-            {
-                // Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
-                energy *= (cos(PI * (truncr / shortRangeTruncationWidth_)) + 1) * 0.5;
-            }
-        }
-
-        return energy;
+        break;
+        default:
+            throw(std::runtime_error(fmt::format(
+                "Short-range interaction type {} is not accounted for in PairPotential::analyticShortRangeEnergy().\n",
+                ShortRangeFunctions::forms().keyword(interactionPotential_.form()))));
     }
 
-    throw(std::runtime_error(
-        fmt::format("Short-range interaction type {} is not accounted for in PairPotential::analyticShortRangeEnergy().\n",
-                    ShortRangeFunctions::forms().keyword(interactionPotential_.form()))));
+    // Apply the selected truncation scheme
+    if (truncation == PairPotential::ShiftedShortRangeTruncation)
+    {
+        energy += -(r - range_) * shortRangeForceAtCutoff_ - shortRangeEnergyAtCutoff_;
+    }
 
-    return 0.0;
+    return energy;
 }
 
 // Return analytic short range force
@@ -270,52 +253,41 @@ double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRang
 {
     auto &params = interactionPotential_.parameters();
 
-    if (interactionPotential_.form() == ShortRangeFunctions::Form::None)
-        return 0.0;
-    else if ((interactionPotential_.form() == ShortRangeFunctions::Form::LennardJones) ||
-             (interactionPotential_.form() == ShortRangeFunctions::Form::LennardJonesGeometric))
+    auto force = 0.0;
+    switch (interactionPotential_.form())
     {
-        /*
-         * Standard Lennard-Jones potential
-         * Parameter 0 = Epsilon
-         * Parameter 1 = Sigma
-         */
-
-        // f = -48*epsilon*((sigma**12/x**13)-0.5*(sigma**6/x**7))
-
-        auto sigmar = params[1] / r;
-        auto sigmar6 = pow(sigmar, 6.0);
-        auto sigmar12 = sigmar6 * sigmar6;
-
-        // Apply the selected truncation scheme
-        if (truncation == PairPotential::NoShortRangeTruncation)
-            return 48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / r;
-        else if (truncation == PairPotential::ShiftedShortRangeTruncation)
+        case (ShortRangeFunctions::Form::None):
+            break;
+        case (ShortRangeFunctions::Form::LennardJones):
+        case (ShortRangeFunctions::Form::LennardJonesGeometric):
         {
-            return (48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / r) - shortRangeForceAtCutoff_;
+            /*
+             * Standard Lennard-Jones potential
+             * Parameter 0 = Epsilon
+             * Parameter 1 = Sigma
+             */
+
+            // f = -48*epsilon*((sigma**12/x**13)-0.5*(sigma**6/x**7))
+
+            auto sigmar = params[1] / r;
+            auto sigmar6 = pow(sigmar, 6.0);
+            auto sigmar12 = sigmar6 * sigmar6;
+            force = 48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / r;
         }
-        else if (truncation == PairPotential::CosineShortRangeTruncation)
-        {
-            // Are we into the truncation strip?
-            double truncr = r - (range_ - shortRangeTruncationWidth_);
-            if (truncr >= 0)
-            {
-                // Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
-                // d/dx = -PI*sin((PI*truncr)/shortRangeTruncationWidth_) / shortRangeTruncationWidth_
-                double de_t = (-48.0 * params[0] * ((sigmar12 / pow(r, 13.0)) - 0.5 * (sigmar6 / pow(r, 7.0)))) *
-                              (cos(PI * (truncr / shortRangeTruncationWidth_)) + 1) * 0.5;
-                double e_dt = (4.0 * params[0] * (sigmar12 - sigmar6)) * -PI * sin((PI * truncr) / shortRangeTruncationWidth_) /
-                              shortRangeTruncationWidth_;
-                return de_t * e_dt;
-            }
-            else
-                return 48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / r;
-        }
+        break;
+        default:
+            throw(std::runtime_error(fmt::format(
+                "Short-range interaction type {} is not accounted for in PairPotential::analyticShortRangeForce().\n",
+                ShortRangeFunctions::forms().keyword(interactionPotential_.form()))));
     }
 
-    throw(std::runtime_error(
-        fmt::format("Short-range interaction type {} is not accounted for in PairPotential::analyticShortRangeForce().\n",
-                    ShortRangeFunctions::forms().keyword(interactionPotential_.form()))));
+    // Apply the selected truncation scheme
+    if (truncation == PairPotential::ShiftedShortRangeTruncation)
+    {
+        force -= shortRangeForceAtCutoff_;
+    }
+
+    return force;
 }
 
 // Calculate full potential
@@ -373,13 +345,6 @@ void PairPotential::calculateDUFull()
 // Generate energy and force tables
 bool PairPotential::tabulate(double maxR, double delta)
 {
-    // Check that AtomType pointers were set at some pointer
-    if ((atomTypeI_ == nullptr) || (atomTypeJ_ == nullptr))
-    {
-        Messenger::error("NULL_POINTER - One or both AtomTypes in PairPotential are NULL.\n");
-        return false;
-    }
-
     // Determine nPoints_
     delta_ = delta;
     rDelta_ = 1.0 / delta_;
