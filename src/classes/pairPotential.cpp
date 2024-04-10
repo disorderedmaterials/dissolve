@@ -171,7 +171,7 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
     return true;
 }
 
-//  Set Data1D names from source AtomTypes
+// Set Data1D names from source AtomTypes
 void PairPotential::setData1DNames()
 {
     uFull_.setTag(fmt::format("{}-{}", nameI_, nameJ_));
