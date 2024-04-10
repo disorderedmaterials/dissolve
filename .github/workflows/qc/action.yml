@@ -19,7 +19,9 @@ runs:
       set -ex
       TITLE="${{ github.event.pull_request.title }}"
       if [ -z "$TITLE" ]
+      then
       TITLE=Continuous
+      fi
       fi
       echo  | awk "/(Continuous)|(^feat:)|(^fix:)|(^doc:)|(^perf:)|(^refactor:)|(^style:)|(^test:)|(^chore:)|(^revert:)|(^build:)/" | grep .
 
