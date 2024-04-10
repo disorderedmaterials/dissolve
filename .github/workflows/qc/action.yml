@@ -22,7 +22,7 @@ runs:
       then
       TITLE=Continuous
       fi
-      echo  | awk "/(Continuous)|(^feat:)|(^fix:)|(^doc:)|(^perf:)|(^refactor:)|(^style:)|(^test:)|(^chore:)|(^revert:)|(^build:)/" | grep .
+      echo $TITLE | awk "/(Continuous)|(^feat:)|(^fix:)|(^doc:)|(^perf:)|(^refactor:)|(^style:)|(^test:)|(^chore:)|(^revert:)|(^build:)/" | grep .
 
   - name: C++ Formatting
     shell: bash
