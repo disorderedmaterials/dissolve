@@ -1,5 +1,5 @@
 {{ $type := .Get "type" }}
-<div class="icon-text-container gui-tab">
+&nbsp;<span class="icon-text-container gui-tab">
     <img src="/img/{{$type}}.svg"></img>
     <span>
         {{ if .Get
@@ -9,4 +9,4 @@
         markdownify }}{{ else
         }}{{ $type | safeHTML | markdownify }}{{ end }}
     </span>
-</div>&nbsp;
+</span>&nbsp;
