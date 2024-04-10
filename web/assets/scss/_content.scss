@@ -60,32 +60,29 @@
  * GUI Element Indicators
  */
 
+.icon-text-container {
+  display: inline-flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.icon-text-container>img {
+  aspect-ratio: 1 / 1;
+}
+
 // Tab
 .gui-tab {
   border-radius: 2px;
   border: 1px solid #aebfcd;
   background-color: #eeefed;
-  padding: 1px 10px 1px 10px;
+  padding: 0.2em 0.4em;
   font-size: 85%;
-  margin: 5px 0 5px 0;
   position: relative;
   line-height: 1.0;
 }
 
-.gui-tab::before {
-  content: '';
-  width: 15px;
-  height: 15px;
-  left: 7px;
-  top: 1px;
-  position: absolute;
-  background-repeat: no-repeat;
-  background-size: 18px;
-  background-image: var(--icon);
-}
-
-.gui-tab::after {
-  content: '';
+.gui-tab>img {
+  height: 0.8em;
 }
 
 // Button
@@ -135,24 +132,11 @@
 
 // Module
 .module-link {
-  padding: 0px 0px 0px 1.2em;
   position: relative;
 }
 
-.module-link::before {
-  content: '';
-  background-image: var(--icon);
-  width: 1.1em;
+.module-link>img {
   height: 1.1em;
-  left: 0px;
-  top: 0px;
-  position: absolute;
-  background-repeat: no-repeat;
-  background-size: 1.1em;
-}
-
-.module-link::after {
-  content: '';
 }
 
 // Node
@@ -161,20 +145,8 @@
   position: relative;
 }
 
-.node-link::before {
-  content: '';
-  width: 1.1em;
+.node-link>img {
   height: 1.1em;
-  left: 0px;
-  top: 0px;
-  position: absolute;
-  background-image: var(--icon);
-  background-repeat: no-repeat;
-  background-size: 1.1em;
-}
-
-.node-link::after {
-  content: '';
 }
 
 /*
