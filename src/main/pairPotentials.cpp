@@ -125,7 +125,7 @@ bool Dissolve::regeneratePairPotentials()
     {
         Messenger::print("Pair potential override between '{}' and '{}' ({}, {}, '{}') ...\n", override->matchI(),
                          override->matchJ(), PairPotentialOverride::pairPotentialOverrideTypes().keyword(override->type()),
-                         ShortRangeFunctions::forms().keyword(override->interactionPotential().form()),
+                         Functions1D::forms().keyword(override->interactionPotential().form()),
                          override->interactionPotential().parametersAsString());
 
         // Is the override enabled?

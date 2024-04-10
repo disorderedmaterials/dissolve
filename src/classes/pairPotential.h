@@ -79,8 +79,9 @@ class PairPotential
     private:
     // Names reflecting source parameters
     std::string nameI_, nameJ_;
-    // Interaction potential
+    // Interaction potential and function
     InteractionPotential<Functions1D> interactionPotential_;
+    Function1DWrapper potentialFunction_;
     // Charge on I (taken from AtomType)
     double chargeI_{0.0};
     // Charge on J (taken from AtomType)
@@ -98,8 +99,8 @@ class PairPotential
     // Return name for second source parameters
     std::string_view nameJ() const;
     // Return interaction potential
-    InteractionPotential<ShortRangeFunctions> &interactionPotential();
-    const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;
+    InteractionPotential<Functions1D> &interactionPotential();
+    const InteractionPotential<Functions1D> &interactionPotential() const;
     // Set charge I
     void setChargeI(double value);
     // Return charge I

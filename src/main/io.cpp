@@ -390,7 +390,7 @@ bool Dissolve::saveInput(std::string_view filename)
                                PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::OverrideKeyword),
                                ppOverride->matchI(), ppOverride->matchJ(),
                                PairPotentialOverride::pairPotentialOverrideTypes().keyword(ppOverride->type()),
-                               ShortRangeFunctions::forms().keyword(ppOverride->interactionPotential().form()),
+                               Functions1D::forms().keyword(ppOverride->interactionPotential().form()),
                                ppOverride->interactionPotential().parametersAsString()))
             return false;
 

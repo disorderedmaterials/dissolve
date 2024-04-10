@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/atomType.h"
+#include "math/function1D.h"
 #include <memory>
 #include <string>
 
@@ -23,7 +24,7 @@ class PairPotentialOverride : public Serialisable<>
     PairPotentialOverride();
     PairPotentialOverride(std::string_view matchI, std::string_view matchJ,
                           PairPotentialOverride::PairPotentialOverrideType overrideType,
-                          const InteractionPotential<ShortRangeFunctions> &potential);
+                          const InteractionPotential<Functions1D> &potential);
 
     private:
     // AtomType names to match
@@ -31,7 +32,7 @@ class PairPotentialOverride : public Serialisable<>
     // Override type
     PairPotentialOverrideType type_{PairPotentialOverrideType::Add};
     // Interaction potential
-    InteractionPotential<ShortRangeFunctions> interactionPotential_;
+    InteractionPotential<Functions1D> interactionPotential_;
 
     public:
     // Set first AtomType name to match
@@ -47,8 +48,8 @@ class PairPotentialOverride : public Serialisable<>
     // Return override type
     PairPotentialOverrideType type() const;
     // Return interaction potential
-    InteractionPotential<ShortRangeFunctions> &interactionPotential();
-    const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;
+    InteractionPotential<Functions1D> &interactionPotential();
+    const InteractionPotential<Functions1D> &interactionPotential() const;
 
     /*
      * I/O

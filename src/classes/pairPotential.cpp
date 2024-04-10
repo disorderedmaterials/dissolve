@@ -26,8 +26,7 @@ PairPotential::PairPotential(const std::shared_ptr<AtomType> &typeI, const std::
     setUp(typeI, typeJ, includeCharges);
 }
 
-PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ,
-                             const InteractionPotential<Functions1D> &potential)
+PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ, const InteractionPotential<Functions1D> &potential)
     : includeAtomTypeCharges_(false), nameI_(nameI), nameJ_(nameJ), interactionPotential_(potential),
       uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
 {
@@ -91,7 +90,7 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
         throw(std::runtime_error("Invalid AtomType pointer (typeJ) given to PairPotential::setUp().\n"));
 
     includeAtomTypeCharges_ = includeCharges;
-    interactionPotential_.setFormAndParameters(ShortRangeFunctions::Form::None, "");
+    interactionPotential_.setFormAndParameters(Functions1D::Form::None, "");
 
     nameI_ = typeI->name();
     nameJ_ = typeJ->name();
@@ -105,7 +104,10 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
         return Messenger::error("Can't set parameters for PairPotential since atom type {} has no valid short range form.\n",
                                 typeJ->name());
 
+    // Combine the atom type parameters into potential function parameters
     interactionPotential_ = ShortRangeFunctions::combine(typeI->interactionPotential(), typeJ->interactionPotential());
+    potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
+
     if (!interactionPotential_.hasValidForm())
         return false;
 
@@ -135,8 +137,8 @@ std::string_view PairPotential::nameI() const { return nameI_; }
 std::string_view PairPotential::nameJ() const { return nameJ_; };
 
 // Return interaction potential
-InteractionPotential<ShortRangeFunctions> &PairPotential::interactionPotential() { return interactionPotential_; }
-const InteractionPotential<ShortRangeFunctions> &PairPotential::interactionPotential() const { return interactionPotential_; }
+InteractionPotential<Functions1D> &PairPotential::interactionPotential() { return interactionPotential_; }
+const InteractionPotential<Functions1D> &PairPotential::interactionPotential() const { return interactionPotential_; }
 
 // Set charge I
 void PairPotential::setChargeI(double value) { chargeI_ = value; }
@@ -157,32 +159,8 @@ double PairPotential::chargeJ() const { return chargeJ_; }
 // Return analytic short range potential energy
 double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRangeTruncationScheme truncation) const
 {
-    auto &params = interactionPotential_.parameters();
-
-    auto energy = 0.0;
-    switch (interactionPotential_.form())
-    {
-        case (ShortRangeFunctions::Form::None):
-            break;
-        case (ShortRangeFunctions::Form::LennardJones):
-        case (ShortRangeFunctions::Form::LennardJonesGeometric):
-        {
-            /*
-             * Standard Lennard-Jones potential
-             * Parameter 0 = Epsilon
-             * Parameter 1 = Sigma
-             */
-            auto sigmar = params[1] / r;
-            auto sigmar6 = pow(sigmar, 6.0);
-            auto sigmar12 = sigmar6 * sigmar6;
-            energy = 4.0 * params[0] * (sigmar12 - sigmar6);
-        }
-        break;
-        default:
-            throw(std::runtime_error(fmt::format(
-                "Short-range interaction type {} is not accounted for in PairPotential::analyticShortRangeEnergy().\n",
-                ShortRangeFunctions::forms().keyword(interactionPotential_.form()))));
-    }
+    // Assess stored potential function at specified r
+    auto energy = potentialFunction_.y(r);
 
     // Apply the selected truncation scheme
     if (truncation == PairPotential::ShiftedShortRangeTruncation)
@@ -196,40 +174,9 @@ double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRan
 // Return analytic short range force
 double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeTruncationScheme truncation) const
 {
-    auto &params = interactionPotential_.parameters();
-
-    auto force = 0.0;
-    switch (interactionPotential_.form())
-    {
-        case (ShortRangeFunctions::Form::None):
-            break;
-        case (ShortRangeFunctions::Form::LennardJones):
-        case (ShortRangeFunctions::Form::LennardJonesGeometric):
-        {
-            /*
-             * Standard Lennard-Jones potential
-             * Parameter 0 = Epsilon
-             * Parameter 1 = Sigma
-             */
-
-            /*
-             * dU/dr = -48*epsilon*((sigma**12/x**13)-0.5*(sigma**6/x**7))
-             *
-             *                        signa**6   (   sigma**6        )
-             *       = 48 * epsilon * -------- * ( - --------- + 0.5 ) * r**-1
-             *                          r**6     (     r**6          )
-             */
-
-            auto sigmar = params[1] / r;
-            auto sigmar6 = pow(sigmar, 6.0);
-            force = -48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / r;
-        }
-        break;
-        default:
-            throw(std::runtime_error(fmt::format(
-                "Short-range interaction type {} is not accounted for in PairPotential::analyticShortRangeForce().\n",
-                ShortRangeFunctions::forms().keyword(interactionPotential_.form()))));
-    }
+    // Assess stored potential function derivative at specified r
+    auto force = 0.0; // potentialFunction_.dy(r);
+    throw(std::runtime_error("Short-range interaction force needs implementing.\n"));
 
     // Apply the selected truncation scheme
     if (truncation == PairPotential::ShiftedShortRangeTruncation)
@@ -335,11 +282,12 @@ double PairPotential::delta() const { return delta_; }
 // (Re)generate potential from current parameters
 void PairPotential::calculateUOriginal(bool recalculateUFull)
 {
-    double r;
+    // Create a wrapper for the energy function
+    Function1DWrapper energyFunction(interactionPotential_.form(), interactionPotential_.parameters());
 
     for (auto n = 1; n < nPoints_; ++n)
     {
-        r = n * delta_;
+        auto r = n * delta_;
         uOriginal_.xAxis(n) = r;
 
         // Construct potential

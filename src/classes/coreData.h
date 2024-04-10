@@ -77,8 +77,7 @@ class CoreData
     PairPotentialOverride *addPairPotentialOverride(
         std::string_view matchI = "", std::string_view matchJ = "",
         PairPotentialOverride::PairPotentialOverrideType overrideType = PairPotentialOverride::PairPotentialOverrideType::Off,
-        const InteractionPotential<ShortRangeFunctions> &potential =
-            InteractionPotential<ShortRangeFunctions>(ShortRangeFunctions::Form::None));
+        const InteractionPotential<Functions1D> &potential = {});
     // Return defined overrides for PairPotentials
     std::vector<std::unique_ptr<PairPotentialOverride>> &pairPotentialOverrides();
     const std::vector<std::unique_ptr<PairPotentialOverride>> &pairPotentialOverrides() const;
