@@ -3,10 +3,10 @@
  */
 
 .td-navbar .navbar-brand {
-    svg {
-        margin: 5px 10px;
-        height: 35px;
-    }
+  svg {
+    margin: 5px 10px;
+    height: 35px;
+  }
 }
 
 .navbar {
@@ -18,42 +18,42 @@
  */
 
 .label {
-    border-radius: 5px;
-    display: inline-block;
-    margin: 5px auto 5px 0;
-    color: white;
-    padding: 3px 25px 3px 25px;
-    font-size: 14px;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 5px auto 5px 0;
+  color: white;
+  padding: 3px 25px 3px 25px;
+  font-size: 14px;
 }
 
 .label-blue {
-    background-color: #3176d9;
+  background-color: #3176d9;
 }
 
 .label-red {
-    background-color: red;
+  background-color: red;
 }
 
 .label.label-yellow {
-    background-color: #fff12c;
-    color: black;
+  background-color: #fff12c;
+  color: black;
 }
 
 .label.label-since {
-    background-color: #44e;
-    color: white;
+  background-color: #44e;
+  color: white;
 }
 
 .label.label-deprecated {
-    background-color: #e91;
-    color: white;
+  background-color: #e91;
+  color: white;
 }
 
 .label.label-small {
-    font-size: 10px;
-    font-weight: bold;
-    margin: 2px auto 2px 0;
-    padding: 1px 10px 1px 10px;
+  font-size: 10px;
+  font-weight: bold;
+  margin: 2px auto 2px 0;
+  padding: 1px 10px 1px 10px;
 }
 
 /*
@@ -62,14 +62,14 @@
 
 // Tab
 .gui-tab {
-   border-radius: 2px;
-   border: 1px solid #aebfcd;
-   background-color: #eeefed;
-   padding: 1px 10px 1px 30px;
-   font-size: 85%;
-   margin: 5px 0 5px 0;
-   position: relative;
-   line-height: 1.0;
+  border-radius: 2px;
+  border: 1px solid #aebfcd;
+  background-color: #eeefed;
+  padding: 1px 10px 1px 10px;
+  font-size: 85%;
+  margin: 5px 0 5px 0;
+  position: relative;
+  line-height: 1.0;
 }
 
 .gui-tab::before {
@@ -89,19 +89,20 @@
 
 // Button
 .gui-button {
-   display: inline-block;
-   border-radius: 5px;
-   border: 1px solid #aebfcd;
-   background-color: #edefed;
-   padding: 3px 10px 1px 25px;
-   font-size: 85%;
-   font-weight: bold;
-   position: relative;
-   margin: 2px 0 2px 0;
-   line-height: 1.0;
+  display: inline-block;
+  border-radius: 5px;
+  border: 1px solid #aebfcd;
+  background-color: #edefed;
+  padding: 3px 10px 1px 25px;
+  font-size: 85%;
+  font-weight: bold;
+  position: relative;
+  margin: 2px 0 2px 0;
+  line-height: 1.0;
 }
+
 .gui-button.gui-button-noicon {
-   padding: 3px 10px 1px 10px;
+  padding: 3px 10px 1px 10px;
 }
 
 .gui-button::before {
@@ -121,20 +122,20 @@
 
 // Icon
 .gui-icon {
-   display: inline-block;
-   margin: 0 0 2px 3px;
-   line-height: 17px;
-   height: 17px;
-   width: 25px;
-   vertical-align: middle;
-   background-repeat: no-repeat;
-   background-size: contain;
+  display: inline-block;
+  margin: 0 0 2px 3px;
+  line-height: 17px;
+  height: 17px;
+  width: 25px;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
 // Module
 .module-link {
-   padding: 0px 0px 0px 1.2em;
-   position: relative;
+  padding: 0px 0px 0px 1.2em;
+  position: relative;
 }
 
 .module-link::before {
@@ -153,22 +154,56 @@
 }
 
 @mixin module-link($module) {
-  .module-link.module-link-#{$module}::before{
-       background-image: url(/img/modules/#{$module}.svg);
+  .module-link.module-link-#{$module}::before {
+    background-image: url(/img/modules/#{$module}.svg);
   }
 }
-@mixin generate-module-link(){
-   @each $module in $modules{
-     @include module-link($module);
-   }
+
+@mixin generate-module-link() {
+  @each $module in $modules {
+    @include module-link($module);
+  }
 }
-$modules: ("accumulate", "analyse", "atomshake", "benchmark", "bragg", "calculateangle", "calculateavgmol", "calculateaxisangle", "calculatecn", "calculatedangle", "calculaterdf", "calculatesdf", "calibrate", "checkspecies", "checks", "datatest", "energy", "epsr", "exportcoordinates", "exportpairpotentials", "exporttrajectory", "forces", "geometryoptimisation", "importtrajectory", "intrashake", "md", "molshake", "neutronsq", "rdf", "sq", "xraysq");
+
+$modules: (
+  "accumulate",
+  "analyse",
+  "atomshake",
+  "benchmark",
+  "bragg",
+  "calculateangle",
+  "calculateavgmol",
+  "calculateaxisangle",
+  "calculatecn",
+  "calculatedangle",
+  "calculaterdf",
+  "calculatesdf",
+  "calibrate",
+  "checkspecies",
+  "checks",
+  "datatest",
+  "energy",
+  "epsr",
+  "exportcoordinates",
+  "exportpairpotentials",
+  "exporttrajectory",
+  "forces",
+  "geometryoptimisation",
+  "importtrajectory",
+  "intrashake",
+  "md",
+  "molshake",
+  "neutronsq",
+  "rdf",
+  "sq",
+  "xraysq"
+);
 @include generate-module-link();
 
 // Node
 .node-link {
-   padding: 0px 0px 0px 1.2em;
-   position: relative;
+  padding: 0px 0px 0px 1.2em;
+  position: relative;
 }
 
 .node-link::before {
@@ -187,16 +222,63 @@ $modules: ("accumulate", "analyse", "atomshake", "benchmark", "bragg", "calculat
 }
 
 @mixin node-link($node) {
-  .node-link.node-link-#{$node}::before{
-       background-image: url(/img/nodes/#{$node}.svg);
+  .node-link.node-link-#{$node}::before {
+    background-image: url(/img/nodes/#{$node}.svg);
   }
 }
-@mixin generate-node-link(){
-   @each $node in $nodes{
-     @include node-link($node);
-   }
+
+@mixin generate-node-link() {
+  @each $node in $nodes {
+    @include node-link($node);
+  }
 }
-$nodes: ("add", "aliases", "box", "calculateangle", "calculateaxisangle", "calculatebase", "calculatedistance", "calculatevector", "collect1d", "collect2d", "collect3d", "context", "coordinatesets", "cylindricalregion", "dynamicsite", "fit1d", "generalregion", "integrate1d", "node", "nodereference", "nodes", "operatebase", "operatedivide", "operateexpression", "operategridnormalise", "operatemultiply", "operatenormalise", "operatenumberdensitynormalise", "operatesitepopulationnormalise", "operatesphericalshellnormalise", "parameters", "pickbase", "pick", "pickproximity", "pickregion", "process1d", "process2d", "process3d", "regionbase", "remove", "select", "sequence", "sum1d", "transmute");
+
+$nodes: (
+  "add",
+  "aliases",
+  "box",
+  "calculateangle",
+  "calculateaxisangle",
+  "calculatebase",
+  "calculatedistance",
+  "calculatevector",
+  "collect1d",
+  "collect2d",
+  "collect3d",
+  "context",
+  "coordinatesets",
+  "cylindricalregion",
+  "dynamicsite",
+  "fit1d",
+  "generalregion",
+  "integrate1d",
+  "node",
+  "nodereference",
+  "nodes",
+  "operatebase",
+  "operatedivide",
+  "operateexpression",
+  "operategridnormalise",
+  "operatemultiply",
+  "operatenormalise",
+  "operatenumberdensitynormalise",
+  "operatesitepopulationnormalise",
+  "operatesphericalshellnormalise",
+  "parameters",
+  "pickbase",
+  "pick",
+  "pickproximity",
+  "pickregion",
+  "process1d",
+  "process2d",
+  "process3d",
+  "regionbase",
+  "remove",
+  "select",
+  "sequence",
+  "sum1d",
+  "transmute"
+);
 @include generate-node-link();
 
 /*
@@ -205,27 +287,28 @@ $nodes: ("add", "aliases", "box", "calculateangle", "calculateaxisangle", "calcu
 
 // Left-aligned navigation button
 .btn.left {
-    border-radius: 5px;
-    width: inherit;
-    margin: 5px auto 5px 0;
-    background-color: #3176d9;
-    color: white;
-    padding: auto;
+  border-radius: 5px;
+  width: inherit;
+  margin: 5px auto 5px 0;
+  background-color: #3176d9;
+  color: white;
+  padding: auto;
 }
 
 // Right-aligned navigation button
 .btn.right {
-    border-radius: 5px;
-    width: inherit;
-    margin: 5px auto 5px 0;
-    background-color: #3176d9;
-    color: white;
-    padding: auto;
-    float: right;
+  border-radius: 5px;
+  width: inherit;
+  margin: 5px auto 5px 0;
+  background-color: #3176d9;
+  color: white;
+  padding: auto;
+  float: right;
 }
 
-.btn.left:hover, .btn.right:hover{
-    background: #1e53a0 linear-gradient(180deg, #3176d9, #1e53a0) repeat-x;
+.btn.left:hover,
+.btn.right:hover {
+  background: #1e53a0 linear-gradient(180deg, #3176d9, #1e53a0) repeat-x;
 }
 
 /*
@@ -276,6 +359,7 @@ blockquote::after {
 blockquote.tip {
   border-left: 8px solid #78C0A8;
 }
+
 blockquote.tip::before {
   background-image: url(/img/block_tip.svg);
 }
@@ -284,6 +368,7 @@ blockquote.tip::before {
 blockquote.warn {
   border-left: 8px solid #fb9a49;
 }
+
 blockquote.warn::before {
   background-image: url(/img/block_warn.svg);
 }
@@ -292,6 +377,7 @@ blockquote.warn::before {
 blockquote.question {
   border-left: 8px solid #329819;
 }
+
 blockquote.question::before {
   background-image: url(/img/block_question.svg);
 }
@@ -307,16 +393,19 @@ blockquote.action {
   margin-bottom: 10px;
   border-left: 8px solid #478cc6;
 }
+
 blockquote.iconaction {
   width: 85%;
   margin-bottom: 10px;
   border-left: 8px solid #6947c6;
 }
+
 blockquote.step {
   width: 85%;
   margin-bottom: 10px;
   border-left: 16px solid #aebfcd;
 }
+
 blockquote.step::before {
   left: 5px;
   top: 10px;
@@ -328,6 +417,7 @@ blockquote.action-menu {
   font-weight: bold;
   border-left: 8px solid #478cc6;
 }
+
 blockquote.action-dissolve::before {
   background-image: url(/img/action_dissolve.svg);
 }
@@ -350,6 +440,7 @@ blockquote.action-groups::before {
 blockquote.action-menu {
   font-weight: bold;
 }
+
 blockquote.action-menu::before {
   left: 8px;
   background-image: url(/img/action_menu.svg);
@@ -366,6 +457,7 @@ blockquote.action-mouse::before {
 blockquote.action-key {
   font-weight: bold;
 }
+
 blockquote.action-key::before {
   left: 10px;
   top: 8px;
@@ -378,8 +470,8 @@ blockquote.action-edit::before {
 }
 
 // Action (Settings)
-blockquote.action-settings {
-}
+blockquote.action-settings {}
+
 blockquote.action-settings::before {
   background-image: url(/img/action_settings.svg);
 }
@@ -421,5 +513,5 @@ table {
 
 // Links
 a {
-	color: #454a8a;
+  color: #454a8a;
 }
