@@ -29,7 +29,7 @@ By default, Dissolve will generate all the necessary pair potentials for the cur
 
 Before we move on we need to set an option related to the charges to use. Along with van der Waals parameters, atomic charges are the second important component in describing interactions between atoms. In Dissolve these charges can either be taken from the atom types and included in the tabulated pair potentials, or located on species atoms and calculated analytically. Dissolve automatically detects the most appropriate scheme but is wary of systems or species where there are too many atoms with zero charge, as is the case here. As such, we must force a choice:
 
-{{< step >}}In the **Charge Source** group at the top-right of the {{< gui-tab type="ff" text="Forcefield" >}} tab deselect the _Choose Automatically_ option and enable the _Force Choice_ option below it.{{< /step >}}
+{{< action type="mouse" >}}In the **Charge Source** group at the top-right of the {{< gui-tab type="ff" text="Forcefield" >}} tab deselect the _Choose Automatically_ option and enable the _Force Choice_ option below it.{{< /action >}}
 
 The actual charge source (_Atom Types_ vs _Species Atoms_) is unimportant since charges are zero in both, but the default option is faster.
 
