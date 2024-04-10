@@ -81,6 +81,7 @@
   position: absolute;
   background-repeat: no-repeat;
   background-size: 18px;
+  background-image: var(--icon);
 }
 
 .gui-tab::after {
@@ -140,6 +141,7 @@
 
 .module-link::before {
   content: '';
+  background-image: var(--icon);
   width: 1.1em;
   height: 1.1em;
   left: 0px;
@@ -152,53 +154,6 @@
 .module-link::after {
   content: '';
 }
-
-@mixin module-link($module) {
-  .module-link.module-link-#{$module}::before {
-    background-image: url(/img/modules/#{$module}.svg);
-  }
-}
-
-@mixin generate-module-link() {
-  @each $module in $modules {
-    @include module-link($module);
-  }
-}
-
-$modules: (
-  "accumulate",
-  "analyse",
-  "atomshake",
-  "benchmark",
-  "bragg",
-  "calculateangle",
-  "calculateavgmol",
-  "calculateaxisangle",
-  "calculatecn",
-  "calculatedangle",
-  "calculaterdf",
-  "calculatesdf",
-  "calibrate",
-  "checkspecies",
-  "checks",
-  "datatest",
-  "energy",
-  "epsr",
-  "exportcoordinates",
-  "exportpairpotentials",
-  "exporttrajectory",
-  "forces",
-  "geometryoptimisation",
-  "importtrajectory",
-  "intrashake",
-  "md",
-  "molshake",
-  "neutronsq",
-  "rdf",
-  "sq",
-  "xraysq"
-);
-@include generate-module-link();
 
 // Node
 .node-link {
@@ -213,6 +168,7 @@ $modules: (
   left: 0px;
   top: 0px;
   position: absolute;
+  background-image: var(--icon);
   background-repeat: no-repeat;
   background-size: 1.1em;
 }
@@ -220,67 +176,6 @@ $modules: (
 .node-link::after {
   content: '';
 }
-
-@mixin node-link($node) {
-  .node-link.node-link-#{$node}::before {
-    background-image: url(/img/nodes/#{$node}.svg);
-  }
-}
-
-@mixin generate-node-link() {
-  @each $node in $nodes {
-    @include node-link($node);
-  }
-}
-
-$nodes: (
-  "add",
-  "aliases",
-  "box",
-  "calculateangle",
-  "calculateaxisangle",
-  "calculatebase",
-  "calculatedistance",
-  "calculatevector",
-  "collect1d",
-  "collect2d",
-  "collect3d",
-  "context",
-  "coordinatesets",
-  "cylindricalregion",
-  "dynamicsite",
-  "fit1d",
-  "generalregion",
-  "integrate1d",
-  "node",
-  "nodereference",
-  "nodes",
-  "operatebase",
-  "operatedivide",
-  "operateexpression",
-  "operategridnormalise",
-  "operatemultiply",
-  "operatenormalise",
-  "operatenumberdensitynormalise",
-  "operatesitepopulationnormalise",
-  "operatesphericalshellnormalise",
-  "parameters",
-  "pickbase",
-  "pick",
-  "pickproximity",
-  "pickregion",
-  "process1d",
-  "process2d",
-  "process3d",
-  "regionbase",
-  "remove",
-  "select",
-  "sequence",
-  "sum1d",
-  "transmute",
-  "temperature",
-);
-@include generate-node-link();
 
 /*
  * Buttons

@@ -1,6 +1,6 @@
 {{ $type := .Get "type" }}
-<span class="gui-tab gui-tab-{{ $type }}">
-    <img src="/img/{{ $type }}.svg" height="12px" style="display:inline-block;padding-right:5px;"></img>{{ if .Get
+<span class="gui-tab gui-tab-{{ $type }}" style="--icon: url(/img/{{ $type }}.svg)">
+    {{ if .Get
     "text"
     }}{{ .Get "text" |
     safeHTML |
