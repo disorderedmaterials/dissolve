@@ -22,7 +22,8 @@ Regardless of which version is being built, several external libraries are alway
 
 - [`libfmt`](https://github.com/fmtlib/fmt) >= v7, to provide flexible and type-safe output formatting
 - [`CLI11`](https://github.com/CLIUtils/CLI11) >= v1.9.1, to provide coherent handling of command line arguments
-- [`ANTLR4`](https://www.antlr.org/) >= v4.7.2, required to implement various grammars (e.g. NETA)
+- [`ANTLR4`](https://www.antlr.org/) >= v4.13.1, required to implement various grammars (e.g. NETA)
+- [`Java`](https://www.java.com/) >= v11, required to build ANTLR4
 
 Satisfying these dependencies is enough to build the serial version. For the parallel and GUI versions additional libraries are required, detailed in the following sections.
 
@@ -80,10 +81,10 @@ This will download and locally install necessary external packages locally to th
 
 ANTLR4 comprises two distinct parts - a generator tool, written in Java, used at build time to generate code implementing various parser/lexer structures, and a runtime library. The Java component is commonly-available on all operating systems, either as a vendor-provided package or as a straight download from the [ANTLR website](https://www.antlr.org). The runtime library is available for most platforms via conan, and is installed automatically in the previous step.
 
-If you have the ANTLR4 tool and/or runtime library installed on your system, but they can't be located by `cmake`, try the `ANTLR_DIR` option:
+If you have the ANTLR4 tool and/or runtime library installed on your system, but they can't be located by `cmake`, try the `ANTLR_EXECUTABLE` option:
 
 ```
--DANTLR_DIR:path=/here/is/my/ANTLR4
+-ANTLR_EXECUTABLE:path=/here/is/my/ANTLR4
 ```
 
 If you have downloaded the ANTLR4 Java tool and need to specify it explicitly, use the `ANTLR_EXECUTABLE` option. For example:
@@ -92,12 +93,18 @@ If you have downloaded the ANTLR4 Java tool and need to specify it explicitly, u
 -DANTLR_EXECUTABLE:path=/my/downloads/antlr-4.8-complete.jar
 ```
 
+You also might have to specify the location of your Java installation if it can't be located by `cmake`:
+
+```
+-DJava_JAVA_EXECUTABLE:path=/here/is/my/java
+```
+
 ### Full Example
 
 An example`cmake` command using Ninja to build both the command-line and GUI codes, building ANTLR4 as an external project, and locating the ANTLR4 Java tool in the build directory, would look like this:
 
 ```
-cmake ../ -G Ninja -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=./antlr-4.13.1-complete.jar
+cmake ../ -G Ninja -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=./antlr-4.13.1-complete.jar -DJava_JAVA_EXECUTABLE:path=/here/is/my/java
 ```
 
 ## Run the Build
@@ -126,11 +133,11 @@ Example: `-DANTLR_EXECUTABLE:path=/path/to/antlr-4.8-complete.jar`
 
 Default: `not set`
 
-#### `ANTLR_DIR`
+#### `Java_JAVA_EXECUTABLE`
 
-If the pre-installed ANTLR4 C++ runtime library and headers cannot be found easily by `cmake` (e.g. it is in a custom location) or you need to download and use a copy local to the build, the `ANTLR_DIR` can be used to specify an absolute path to the installation. The specified folder is expected to contain `lib` and `include` directories containing the relevant files.
+If your Java installation cannot be found by `cmake` the `Java_JAVA_EXECUTABLE` can be used to specify the absolute path to the `java` executable.
 
-Example: `-DANTLR_DIR:path=/path/to/antlr-runtime/`
+Example: `-DANTLR_EXECUTABLE:path=/path/to/java`
 
 Default: `not set`
 
