@@ -51,6 +51,40 @@ ColumnLayout {
             return Math.round(parseFloat(text) * decimalFactor);
         }
     }
+    SpinBox {
+        id: spinBox
+        readonly property int decimalFactor: Math.pow(10, decimals)
+        property int decimals: 2
+        property real realValue: value / 100
+
+        Layout.alignment: Qt.AlignRight
+        Layout.fillWidth: true
+        objectName: "scaleSpinBox"
+        editable: true
+        from: decimalToInt(-100)
+        stepSize: 1
+        to: decimalToInt(100)
+        value: decimalToInt(dialogModel.scaleValue)
+
+        validator: DoubleValidator {
+            bottom: Math.min(spinBox.from, spinBox.to)
+            top: Math.max(spinBox.from, spinBox.to)
+            decimals: spinBox.decimals
+            notation: DoubleValidator.StandardNotation
+        }
+
+        textFromValue: function(value) {
+            return String((parseFloat(value) / decimalFactor).toFixed(decimals));
+        }
+
+        valueFromText: function(text) {
+            return Math.round(parseFloat(text) * decimalFactor);
+        }
+
+        function decimalToInt(decimal) {
+            return decimal * decimalFactor;
+        }
+    }
     RowLayout {
         Layout.alignment: Qt.AlignRight
         spacing: 10
