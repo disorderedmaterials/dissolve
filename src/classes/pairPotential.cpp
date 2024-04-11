@@ -174,7 +174,7 @@ double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRan
 // Return analytic short range force
 double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeTruncationScheme truncation) const
 {
-    // Assess stored potential function derivative at specified r
+    // Assess stored potential function derivative at specified r and negate to get force
     auto force = -potentialFunction_.dYdX(r);
 
     // Apply the selected truncation scheme
