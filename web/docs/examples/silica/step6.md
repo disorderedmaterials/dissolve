@@ -11,7 +11,7 @@ Add the standard EPSR-style refinement layer to your simulation:
 Select the {{< module "EPSR" >}} module if it isn't already. We'll need to set a relatively high starting value for **EReq** as we are basically dealing with point charges in a box, and so whatever empirical potential is necessary to drive the structure of the system needs to grow large enough to have some effect against the strong Coulombic forces present.
 
 {{< action type="tabs">}}Go to the {{<gui-tab type="layer" text="Refine (EPSR)">}} tab {{</action>}}
-{{< action type="edit">}}In {{< gui-button text="Options" type="options" icon="options" >}} go to the **Control** settings group and set **EReq** to `50.0`" {{</action>}}
+{{< action type="edit">}}In {{< gui-button text="Options" type="options" icon="options" >}} go to the **Control** settings group and set **EReq** to `50.0`{{</action>}}
 If we run the simulation a bit longer:
 {{< action type="menu" text="Simulation &#8680; Run" />}}
 
