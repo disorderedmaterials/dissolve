@@ -11,7 +11,7 @@ So, let's create and prepare suitable layer:
 {{< action type="menu" text="Layer &#8680; Create &#8680; Analysis &#8680; RDF & Coordination Number" />}}
 {{< action type="tabs" >}}Go to the {{< gui-tab text="Analyse RDF/CN" type="Layer" >}} layer {{< /action >}}
 {{< action type="edit" >}}Double-click the "SiteRDF" module in the list and rename it to `RDF-CA`{{< /action >}}
-{{< action type="edit" >}}Change the **Range** maximum to `14.0` (slightly less than our half-cell length) {{< /action >}}
+{{< action type="edit" >}}Change the **DistanceRange** maximum to `14.0` (slightly less than our half-cell length) {{< /action >}}
 {{< action type="edit" >}}Set **SiteA** to `RingNN` on the cation {{< /action >}}
 {{< action type="edit" >}}Set **SiteB** to `COM` on the anion {{< /action >}}
 
@@ -21,11 +21,11 @@ Now to add on two more {{< module "SiteRDF" >}} modules for the other correlatio
 
 {{< action type="mouse">}}Drag a {{< module "SiteRDF" >}} module from the palette up to the module list{{< /action >}}
 {{< action type="mouse">}}Double-click the new {{< module "SiteRDF" >}} module and rename it to `RDF-CC`{{< /action >}}
-{{< action type="edit" >}}Change the **Range** maximum to `14.0` {{< /action >}}
+{{< action type="edit" >}}Change the **DistanceRange** maximum to `14.0` {{< /action >}}
 {{< action type="edit" >}}Set **SiteA** and **SiteB** to `RingNN` on the cation {{< /action >}}
 {{< action type="mouse">}}Drag another {{< module "SiteRDF" >}} module from the palette up to the module list{{< /action >}}
 {{< action type="mouse">}}Double-click the second new {{< module "SiteRDF" >}} module and rename it to `RDF-AA`{{< /action >}}
-{{< action type="edit" >}}Change the **Range** maximum to `14.0` {{< /action >}}
+{{< action type="edit" >}}Change the **DistanceRange** maximum to `14.0` {{< /action >}}
 {{< action type="edit" >}}Set **SiteA** and **SiteB** to `COM` on the anion {{< /action >}}
 
 Now start up the simulation again:
