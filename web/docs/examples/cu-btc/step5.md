@@ -6,7 +6,7 @@ weight: 1
 
 Let;s now turn our attention to the total radial distribution function:
 
-{{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
+{{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="G(r) / Neutron S(Q)" >}} layer tab{{< /action >}}
 {{< action type="mouse">}}Select the {{< module "NeutronSQ" >}} module and go to its {{< gui-button icon="output" text="Output">}} tab{{< /action >}}
 {{< action type="mouse">}}Click on {{< gui-button text="Total G(r)" >}}{{< /action >}}
 

@@ -10,7 +10,7 @@ Let's create our correlation layer:
 
 Recall that our {{< module "ImportTrajectory" >}} module is running every iteration, so our correlation calculation layer needs to do the same:
 
-{{< action type="tabs" >}}Go to the {{< gui-tab type="layer" text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
+{{< action type="tabs" >}}Go to the {{< gui-tab type="layer" text="G(r) / Neutron S(Q)" >}} layer tab{{< /action >}}
 {{< action type="edit" >}}Change the frequency in the _Layer Control_ at the top-left of the tab from `5` to `1`{{< /action >}}
 
 Let's do a quick, single iteration to make sure everything is working as expected:

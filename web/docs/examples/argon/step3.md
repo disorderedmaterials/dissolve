@@ -11,11 +11,24 @@ Configurations in Dissolve are created from a sequence of instructions that defi
 Dissolve has a wizard to guide you through the process of preparing standard configurations:
 
 {{< action type="menu" text="Configuration &#8680; Create..." />}}
-{{< action type="mouse" >}}The first step of the wizard is to select all of the species which will go in to it - we only have one (our argon atom) so highlight it in the list and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
-{{< action type="mouse" >}}The next choice is which type of configuration to generate. The available choices depend on the types of species selected - we can only make a random mix from the argon species, so press {{< gui-button text="Next" icon="arrowright" >}} to continue.{{< /action >}}
-{{< action type="mouse" >}}With our basic type of configuration chosen we must now decide on the size and geometry of the periodic box (unit cell). The two options are _Fixed Geometry, Undefined Size_ (where the final size of the box will depend on the how much and at what density we add in to it) and _Fixed Geometry and Size_ where we set both explicitly now. We will use the former choice here.{{< /action >}}
-{{< action type="mouse" >}}When selecting _Fixed Geometry, Undefined Size_ the axis lengths given are _relative_ since they will be scaled as species are added to the box. Setting them all to `1.0` and leaving the angles at `90` (the default) results in a cubic box which should be appropriate for most simulations. Press {{< gui-button text="Next" icon="arrowright" >}} to continue.{{< /action >}}
-{{< action type="edit" >}} On the final page of the wizard we set the populations of the species and, if we chose _Fixed Geometry, Undefined Size_, the required density of the system. Change the _Density_ to `0.0213` atoms/A3, then press {{< gui-button text="Finish" icon="true" >}} to complete the wizard.{{< /action >}}
+{{< action type="mouse" >}}
+##### Target Species
+The first step of the wizard is to select all of the species which will go in to it - we only have one (our argon atom) so highlight it in the list and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+
+{{< action type="mouse" >}}
+##### Configuration Type
+The next choice is which type of configuration to generate. The available choices depend on the types of species selected - we can only make a random mix from the argon species, so press {{< gui-button text="Next" icon="arrowright" >}} to continue.{{< /action >}}
+
+{{< action type="mouse" >}}
+##### Box Geometry
+With our basic type of configuration chosen we must now decide on the size and geometry of the periodic box (unit cell). The two options are _Fixed Geometry, Undefined Size_ (where the final size of the box will depend on the how much and at what density we add in to it) and _Fixed Geometry and Size_ where we set both explicitly now. We will use the former choice here.
+
+When selecting _Fixed Geometry, Undefined Size_ the axis lengths given are _relative_ since they will be scaled as species are added to the box. Setting them all to `1.0` and leaving the angles at `90` (the default) results in a cubic box which should be appropriate for most simulations. Press {{< gui-button text="Next" icon="arrowright" >}} to continue.{{< /action >}}
+
+{{< action type="edit" >}}
+##### Species Information
+
+On the final page of the wizard we set the populations of the species and, if we chose _Fixed Geometry, Undefined Size_, the required density of the system. Change the _Density_ to `0.0213` atoms/A3, then press {{< gui-button text="Finish" icon="true" >}} to complete the wizard.{{< /action >}}
 
 You will now see that the {{< gui-button text="Generator" icon="generator" >}} section has been populated with several steps, and a new configuration of atomic coordinates has been created based on these steps.  We'll go through these one-by-one in the order they appear. To see the settings for any step, click on it to show its options in the panel immediately below the list of steps.
 
@@ -32,7 +45,7 @@ In the {{< node "Add" >}} node note how we have referenced the "rho" parameter f
 
 Finally, we need to set the correct temperature for the configuration.
 
-{{< action type="mouse">}}Select the {{< node "Temperature" >}} node{{</action>}}
+{{< action type="groups">}}Select the {{< node "Temperature" >}} node{{</action>}}
 {{< action type="edit" text="Set the **Temperature** to 85 K to match that of the experimental measurement" />}}
 
 {{< tip >}}You can recreate a configuration at any time by clicking the {{< gui-button text="Generate" icon="repeat" >}} button, but bear in mind that other quantities calculated by modules may also need to be cleared. Remove all of this data to begin a 'clean' run with the **Clear Module Data** option in the **Simulation** menu.{{< /tip >}}

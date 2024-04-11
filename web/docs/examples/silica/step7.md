@@ -20,7 +20,7 @@ Now let's set it up.
 {{< action type="edit" text="Change the **AngleRange** _BinWidth_ to 5.0" />}}
 {{< action type="edit" text="Select the `Si` site for `SiteA` and `SiteC`" />}}
 {{< action type="edit" text="Select the `O` site for `SiteB`" />}}
-{{< action type="edit" text="Enable the **ExcludeSameSiteAC** option, as otherwise we'll get a spike at zero in the resulting angle data" />}}
+{{< action type="mouse" text="Enable the **ExcludeSameSiteAC** option, as otherwise we'll get a spike at zero in the resulting angle data" />}}
 
 
 Now we can start Dissolve running again and look at the calculated data:
