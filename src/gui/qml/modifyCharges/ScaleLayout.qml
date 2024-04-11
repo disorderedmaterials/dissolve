@@ -19,38 +19,7 @@ ColumnLayout {
         width: parent.width - 2 * parent.spacing
         wrapMode: Text.WordWrap
     }
-    SpinBox {
-        id: spinBox
-        Layout.alignment: Qt.AlignRight
-        Layout.fillWidth: true
-        objectName: "scaleSpinBox"
-        editable: true
-        from: decimalToInt(-100)
-        stepSize: 1
-        to: decimalToInt(100)
-        value: decimalToInt(dialogModel.scaleValue)
 
-        property int decimals: 2
-        property real realValue: value / 100
-        readonly property int decimalFactor: Math.pow(10, decimals)
-
-        function decimalToInt(decimal) {
-            return decimal * decimalFactor
-        }
-
-        validator: DoubleValidator {
-            bottom: Math.min(spinBox.from, spinBox.to)
-            top:  Math.max(spinBox.from, spinBox.to)
-            decimals: spinBox.decimals
-            notation: DoubleValidator.StandardNotation
-        }
-        textFromValue: function(value) {
-            return String((parseFloat(value) / decimalFactor).toFixed(decimals));
-        }
-        valueFromText: function(text) {
-            return Math.round(parseFloat(text) * decimalFactor);
-        }
-    }
     SpinBox {
         id: spinBox
         readonly property int decimalFactor: Math.pow(10, decimals)
