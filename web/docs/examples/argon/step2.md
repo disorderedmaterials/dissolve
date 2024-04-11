@@ -14,25 +14,20 @@ We'll now describe the interactions for your argon species by taking the terms f
 {{< action type="menu" text="Species &#8680; Add Forcefield Terms..." />}}
 
 {{< action type="mouse" >}}
-##### Forcefield selection
 From the available forcefields choose `OPLSAA2005/NobleGases` and click {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
 
-{{< action type="mouse" >}}
-##### Assign atom types
+{{< step >}}
 Here we choose how to assign atom types to the species - the default option of _Determine atom types for all atoms_ uses connectivity descriptions in the forcefield to try and automatically choose which type to use. 
 
-Leave this option selected and click {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}  
+Leave this option selected and click {{< gui-button text="Next" icon="arrowright" >}}{{< /step >}}  
 
-{{< action type="mouse" >}}
-##### Check naming conflicts
-There will be no conflicts between the proposed atom types and existing ones defined in the main simulation (since there aren't any) so click {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+{{< step >}}
+There will be no conflicts between the proposed atom types and existing ones defined in the main simulation (since there aren't any) so click {{< gui-button text="Next" icon="arrowright" >}}{{< /step >}}
 
-{{< action type="mouse" >}}
-##### Apply intramolecular terms
-We will let Dissolve apply intramolecular terms to the whole species, so leave this section as it is and click {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+{{< step >}}
+We will let Dissolve apply intramolecular terms to the whole species, so leave this section as it is and click {{< gui-button text="Next" icon="arrowright" >}}{{< /step >}}
 
-{{< action type="mouse" >}}
-We are all done setting up the forcefield, click {{< gui-button text="Finish" icon="true" >}} to exit the wizard.{{< /action >}}
+{{< step >}} Dissolve will check to see if there are naming conflicts between new and existing master terms, just as it did for the atom types. There will be none as, again, we had no master terms to start with, so click {{< gui-button text="Finish" icon="true" >}} to exit the wizard {{< /step >}}
 
 {{< tip text="For more complicated (molecular) species the wizard also handles how _intra_-molecular terms are generated. You also may have to deal with potential naming conflicts with existing terms in the main simulation, which the _Add Forcefield Terms_ wizard will help you resolve." />}}
 

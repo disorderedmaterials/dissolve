@@ -41,7 +41,7 @@ This broadening is a known parameter of the SANDALS instrument on which the expe
 
 Next, we will set up our calculation of the weighted structure factors. Since a {{< module "NeutronSQ" >}} module calculates the partial and total structure factors for a single isotopic composition, we will need to add two more since we have three reference datasets.
 
-{{< action type="mouse" >}}Show the module palette for the layer by clicking {{< gui-button text="Show Available Modules" >}} at the very bottom of the module list {{< /action >}}
+{{< action type="mouse" >}}Show the module palette for the layer by clicking {{< gui-button icon="palette" text="Show Available Modules" >}} at the very bottom of the module list {{< /action >}}
 {{< action type="mouse" >}}Drag a {{< module "NeutronSQ" >}} module from the list of available modules, placing it after the existing {{< module "NeutronSQ" >}} module. Alternatively, double-click the {{< module "NeutronSQ" >}} entry in the list of available modules to append one to the current list of modules {{< /action >}}
 {{< step >}}Add another {{< module "NeutronSQ" >}} module, ensuring all three are **after** the {{< module "SQ" >}} module {{< /step >}}
 
@@ -57,8 +57,8 @@ Note that each of the new {{< module "NeutronSQ" >}} modules has a unique name (
 
 {{< action type="mouse" >}}Click on the second {{< module "NeutronSQ" >}} module ("NeutronSQ01") to display its options{{< /step >}}
 {{< action type="edit" >}}Change its name from "NeutronSQ01" to "D2O"{{< /action >}}
-{{< action type="groups" >}}In the **Isotopes & Normalisation** section click the button for the **Isotopologue** option - it will currently say {{< gui-button text="&lt;Default to Natural&gt;" >}}{{< /action >}}
-{{< action type="mouse" >}}Press the {{< gui-button text="Species" >}} button to add a new isotopologue for each species present{{< /action >}}
+{{< action type="groups" >}}In the **Isotopes & Normalisation** section click the button for the **Isotopologue** option - it will currently say {{< gui-button icon="options" text="&lt;Default to Natural&gt;" >}}{{< /action >}}
+{{< action type="mouse" >}}Press the {{< gui-button icon="add" text="Species" >}} button to add a new isotopologue for each species present{{< /action >}}
 {{< step text="Change the isotopologue from `Natural` to `Deuterated`" />}}
 {{< action type="edit" >}}In the **Reference Data** settings group, for the **Reference** keyword select the file "SLS18502-D2O.mint01" and set the format of the data to `mint`{{< /step >}}
 
@@ -70,11 +70,11 @@ The HDO sample is a little different in respect of the isotopologue specificatio
 
 {{< action type="mouse" >}}Click on the third {{< module "NeutronSQ" >}} module ("NeutronSQ02") to display its options{{< /step >}}
 {{< action type="edit">}}Change its name from "NeutronSQ02" to "HDO"{{< /action >}}
-{{< action type="groups" >}}In the **Control** section click the button for the **Isotopologue** option{{< /action >}}
-{{< action type="mouse" >}}Press the {{< gui-button text="Species" >}} button to add the natural isotopologue for the water species{{< /action >}}
-{{< step >}}Select the entry for the water species, or its isotopologue, and click the {{< gui-button text="Isotopologue" >}} button to insert another isotopologue (the next unused isotopologue will be added - in this case, the `Deuterated` one) {{< /step >}}
-{{< action type="mouse" >}}Click the button for the **Exchangeable** option{{< /action >}}
-{{< step text=" Tick the `HW` atom type in the list" />}}
+{{< action type="groups" >}}In the **Isotopes & Normalisation** section click the button for the **Isotopologue** option - it will currently say {{< gui-button icon="options" text="&lt;Default to Natural&gt;" >}}{{< /action >}}{{< action type="mouse" >}}Press the {{< gui-button icon="add" text="Species" >}} button to add the natural isotopologue for the water species{{< /action >}}
+{{<action type="mouse">}}Select the **Water** species{{</action>}}
+{{< action type="mouse" >}}Click the {{< gui-button icon="add" text="Isotopologue" >}} button to insert another isotopologue (the next unused isotopologue will be added - in this case, the `Deuterated` one) {{< /action >}}
+{{< action type="groups" >}}In the **Isotopes & Normalisation** section click the button for the **Exchangeable** option - it will currently say {{< gui-button icon="options" text="&lt;None&gt;" >}}{{< /action >}}
+{{< action type="check" text=" Tick the `HW` atom type in the list" />}}
 {{< action type="edit" >}}In the **Reference Data** settings group, for the **Reference** keyword select the file "SLS18502-HDO5050.mint01" and set the format of the data to `mint`{{< /step >}}
 
 * * *

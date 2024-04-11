@@ -11,11 +11,10 @@ Examining the centre-of-mass RDF between molecules is often useful since it give
 
 If you don't already have a site `COM` representing the centre-of-mass of the molecule, perform the following steps:
 
-{{< action type="tabs" >}}Open the {{< gui-tab text="Water" type="Species" >}} and go to the **Analysis Sites** section {{< /action >}}
-{{< action type="mouse" >}}Click {{< gui-button text="Add" type="add" >}} to create a new site {{< /action >}}
+{{< action type="tabs" >}}Open the {{< gui-tab text="Water" type="Species" >}} species tab and go to the {{<gui-button icon="site" text="Sites">}} section {{< /action >}}
 {{< action type="mouse" text="In the species viewer to the right, click-drag with the left mouse button and draw a box around all three atoms of the water molecule to select them." />}}
-{{< action type="mouse" >}}Click the {{< gui-button text="Origin" >}} button in the toolbar of the viewer to set the currently-selected atoms as defining the origin{{< /action >}}
-{{< step text="Select the **Weight by mass** option in the **Origin Atom(s)** section" />}}
+{{< action type="mouse" >}}Right-click the selcted atoms and click {{< gui-button text="Create site from" >}} &#8680; {{< gui-button text="Atoms" >}}{{< /action >}}
+{{< action type="check" >}}In the {{<gui-button icon="site" text="Sites">}} section, under **Definition** select the **Weight origin by mass** option {{< /action >}}
 {{< action type="edit" text="Double-click on the new site in the list and change its name to `COM`" />}}
 
 You'll see the site represented in the species viewer as a 3D crosshair indicating the coordinates of the origin, surrounded by a small cube.
@@ -36,16 +35,16 @@ The new layer contains the following modules:
 We'll need to set up both of these modules to calculate exactly what we need.  First, {{< module "SiteRDF" >}}:
 
 {{< action type="mouse" >}}Select the {{< module "SiteRDF" >}} module and display its {{< gui-button text="Options" icon="options" >}}{{< /action >}}
-{{< action type="edit" text="Click the **SiteA** option and choose the `COM` site" />}}
-{{< action type="edit" text="Select the `COM` site for **SiteB** as well" />}}
-{{< action type="edit" text="Enable the **ExcludeSameMolecule** option" />}}
+{{< action type="check" text="Click the **SiteA** option and choose the `COM` site" />}}
+{{< action type="check" text="Select the `COM` site for **SiteB** as well" />}}
+{{< action type="check" text="Ensure that the **ExcludeSameMolecule** option is enabled" />}}
 
 Since we are calculating the RDF of a site around itself, the **ExcludeSameMolecule** option prevents consideration of the same site with itself (which would give a distance of zero and result in a large undesirable spike at the beginning of the RDF). The distance range over which to calculate the RDF can be set in the **Control** settings group, but the defaults (0 - 10 &#8491; with a step size of 0.05 &#8491;) are fine for what we need.
 
 For the coordination number calculation:
 
+{{< action type="check" text="Tick the **RangeAEnabled** option" />}}
 {{< action type="edit" text="Set the maximum for **RangeA** to 3.4 &#8491;" />}}
-{{< action type="edit" text="Tick the **RangeAEnabled** option" />}}
 
 We can specify up to three separate ranges over which to calculate coordination numbers but we will focus on the first coordination shell in this example.
 
