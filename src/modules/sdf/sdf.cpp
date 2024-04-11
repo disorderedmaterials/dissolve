@@ -17,7 +17,8 @@ SDFModule::SDFModule() : Module(ModuleTypes::SDF)
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     keywords_.setOrganisation("Options", "Sites", "Specify the central (A) and surrounding sites (B).");
-    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF", a_);
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF", a_,
+                                            true);
     keywords_.add<SpeciesSiteVectorKeyword>(
         "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated", b_);
 

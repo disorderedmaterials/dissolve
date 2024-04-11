@@ -18,7 +18,8 @@ OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF)
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     keywords_.setOrganisation("Options", "Sites", "Specify the central (A) and surrounding sites (B).");
-    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF", a_);
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF", a_,
+                                            true);
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisA", "Axis to use from site A", axisA_,
                                                               OrientedSite::siteAxis());
     keywords_.add<SpeciesSiteVectorKeyword>(
