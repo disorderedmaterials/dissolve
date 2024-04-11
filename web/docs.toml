@@ -52,6 +52,7 @@ releaseDate = "17th January 2024"
 github_repo = "https://github.com/disorderedmaterials/dissolve"
 github_subdir = "web"
 github_branch = "develop"
+offlineSearch = true
 
 # Documentation Index Description
 [params.docinfo]
