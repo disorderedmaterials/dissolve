@@ -212,11 +212,17 @@ double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRang
              * Parameter 1 = Sigma
              */
 
-            // f = -48*epsilon*((sigma**12/x**13)-0.5*(sigma**6/x**7))
+            /*
+             * dU/dr = -48*epsilon*((sigma**12/x**13)-0.5*(sigma**6/x**7))
+             *
+             *                        signa**6   (   sigma**6        )
+             *       = 48 * epsilon * -------- * ( - --------- + 0.5 ) * r**-1
+             *                          r**6     (     r**6          )
+             */
 
             auto sigmar = params[1] / r;
             auto sigmar6 = pow(sigmar, 6.0);
-            force = 48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / r;
+            force = -48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / r;
         }
         break;
         default:
@@ -436,11 +442,23 @@ double PairPotential::analyticForce(double qiqj, double r, double elecScale, dou
 // Return analytic coulomb force of specified charges
 double PairPotential::analyticCoulombForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation) const
 {
+    /*
+     * Derivative of Coulomb's Law is:
+     *
+     *           dU  q(i)*q(j)       q(i)*q(j)
+     *  dU/dr =  --  ---------  =  - ---------
+     *           dr      r              r*r
+     *
+     *                         q(i)*q(j)
+     * The force is -(dU/dr) = ---------
+     *                            r*r
+     */
+
     // Calculate based on truncation scheme
     if (truncation == PairPotential::NoCoulombTruncation)
-        return -COULCONVERT * qiqj / (r * r);
+        return COULCONVERT * qiqj / (r * r);
     else if (truncation == PairPotential::ShiftedCoulombTruncation)
-        return -COULCONVERT * qiqj * (1.0 / (r * r) - 1.0 / (range_ * range_));
+        return COULCONVERT * qiqj * (1.0 / (r * r) - 1.0 / (range_ * range_));
 
     return 0.0;
 }
