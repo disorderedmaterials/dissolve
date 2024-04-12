@@ -74,7 +74,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
 
         double magjisq, magji, magjk, dp, force, r;
         Atom *i, *j, *k, *l;
-        Vec3<double> vecji, vecjk, veckl, forcei, forcek;
+        Vec3<double> vecij, veckj, veclk, forcei, forcek;
         Vec3<double> xpj, xpk, temp;
         double du_dphi;
         std::shared_ptr<Molecule> molN, molM;
@@ -108,20 +108,20 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                         continue;
 
                     // Determine final forces
-                    vecji = box->minimumVector(i->r(), j->r());
-                    magjisq = vecji.magnitudeSq();
+                    vecij = box->minimumVector(i->r(), j->r());
+                    magjisq = vecij.magnitudeSq();
                     if (magjisq > cutoffSq)
                         continue;
                     r = sqrt(magjisq);
-                    vecji /= r;
+                    vecij /= r;
 
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                        vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r);
+                        vecij *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r);
                     else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                        vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r, elec14, vdw14);
+                        vecij *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r, elec14, vdw14);
 
-                    fInter[offsetN + ii] += vecji;
-                    fInter[offsetN + jj] -= vecji;
+                    fInter[offsetN + ii] -= vecij;
+                    fInter[offsetN + jj] += vecij;
                 }
             }
 
@@ -141,17 +141,17 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                         j = molM->atom(jj);
 
                         // Determine final forces
-                        vecji = box->minimumVector(i->r(), j->r());
-                        magjisq = vecji.magnitudeSq();
+                        vecij = box->minimumVector(i->r(), j->r());
+                        magjisq = vecij.magnitudeSq();
                         if (magjisq > cutoffSq)
                             continue;
                         r = sqrt(magjisq);
-                        vecji /= r;
+                        vecij /= r;
 
-                        vecji *= potentialMap.analyticForce(i, j, r);
+                        vecij *= potentialMap.analyticForce(i, j, r);
 
-                        fInter[offsetN + ii] += vecji;
-                        fInter[offsetM + jj] -= vecji;
+                        fInter[offsetN + ii] -= vecij;
+                        fInter[offsetM + jj] += vecij;
                     }
                 }
             }
@@ -164,12 +164,12 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                 j = molN->atom(bond.indexJ());
 
                 // Determine final forces
-                vecji = box->minimumVector(i->r(), j->r());
-                r = vecji.magAndNormalise();
-                vecji *= bond.force(r);
+                vecij = box->minimumVector(i->r(), j->r());
+                r = vecij.magAndNormalise();
+                vecij *= bond.force(r);
 
-                fIntra[offsetN + bond.indexI()] -= vecji;
-                fIntra[offsetN + bond.indexJ()] += vecji;
+                fIntra[offsetN + bond.indexI()] -= vecij;
+                fIntra[offsetN + bond.indexJ()] += vecij;
             }
 
             // Angle forces

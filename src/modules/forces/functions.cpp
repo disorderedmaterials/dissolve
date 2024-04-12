@@ -115,8 +115,8 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
             vecij *= potentialMap.force(&i, &j, r, elec14, vdw14);
 
         auto &fLocal = combinableUnbound.local();
-        fLocal[indexI] += vecij;
-        fLocal[indexJ] -= vecij;
+        fLocal[indexI] -= vecij;
+        fLocal[indexJ] += vecij;
     };
 
     // Calculate pairwise forces between atoms
