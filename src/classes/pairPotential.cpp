@@ -411,7 +411,7 @@ double PairPotential::force(double r)
 {
     assert(r >= 0);
 
-    return dUFullInterpolation_.y(r, r * rDelta_);
+    return -dUFullInterpolation_.y(r, r * rDelta_);
 }
 
 // Return analytic force at specified r
