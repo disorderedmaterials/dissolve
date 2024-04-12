@@ -375,11 +375,8 @@ double PairPotential::analyticEnergy(double r) const
     if (r > range_)
         return 0.0;
 
-    // Short-range potential
-    auto energy = analyticShortRangeEnergy(r);
-
-    // Coulomb contribution
-    energy += analyticCoulombEnergy(chargeI_ * chargeJ_, r);
+    // Short-range potential and Coulomb contribution
+    auto energy = analyticShortRangeEnergy(r) + analyticCoulombEnergy(chargeI_ * chargeJ_, r);
 
     return energy;
 }
@@ -420,11 +417,8 @@ double PairPotential::analyticForce(double r) const
     if (r > range_)
         return 0.0;
 
-    // Short-range potential
-    double force = analyticShortRangeForce(r);
-
-    // Coulomb contribution
-    force += analyticCoulombForce(chargeI_ * chargeJ_, r);
+    // Short-range potential and Coulomb contribution
+    auto force = analyticShortRangeForce(r) + analyticCoulombForce(chargeI_ * chargeJ_, r);
 
     return force;
 }
