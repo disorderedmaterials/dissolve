@@ -103,6 +103,12 @@
   padding: 3px 10px 1px 10px;
 }
 
+.gui-button.gui-button-notext {
+  margin-bottom: -4px;
+  height: 1.5em;
+  padding-right: 3px;
+}
+
 .gui-button::before {
   content: ' ';
   width: 15px;
