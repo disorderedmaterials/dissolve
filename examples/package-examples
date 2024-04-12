@@ -51,7 +51,10 @@ FILES=( $(find ./ -mindepth 2 -type f -not -regex '.*/_.*') )
 mkdir ${ARCHIVEDIR}
 for file in "${FILES[@]}"
 do
-  cp -v --parents "${file}" ${ARCHIVEDIR}
+  if [[file != "CMakeLists.txt"]]
+  then
+  	cp -v --parents "${file}" ${ARCHIVEDIR}
+  fi
 done
 
 # Create ZIP
