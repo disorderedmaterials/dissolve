@@ -72,11 +72,6 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
         const auto &potentialMap = moduleContext.dissolve().potentialMap();
         const auto cutoffSq = potentialMap.range() * potentialMap.range();
 
-        double magjisq, magji, magjk, dp, force, r;
-        Atom *i, *j, *k, *l;
-        Vec3<double> vecij, veckj, veclk, forcei, forcek;
-        Vec3<double> xpj, xpk, temp;
-        double du_dphi;
         std::shared_ptr<Molecule> molN, molM;
         const auto *box = targetConfiguration_->box();
 
@@ -95,11 +90,11 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
             // Intramolecular forces (excluding bound terms) in molecule N
             for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
             {
-                i = molN->atom(ii);
+                auto *i = molN->atom(ii);
 
                 for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
                 {
-                    j = molN->atom(jj);
+                    auto *j = molN->atom(jj);
 
                     // Get intramolecular scaling of atom pair
                     auto &&[scalingType, elec14, vdw14] = i->scaling(j);
@@ -108,11 +103,11 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                         continue;
 
                     // Determine final forces
-                    vecij = box->minimumVector(i->r(), j->r());
-                    magjisq = vecij.magnitudeSq();
+                    auto vecij = box->minimumVector(i->r(), j->r());
+                    auto magjisq = vecij.magnitudeSq();
                     if (magjisq > cutoffSq)
                         continue;
-                    r = sqrt(magjisq);
+                    auto r = sqrt(magjisq);
                     vecij /= r;
 
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
@@ -134,18 +129,18 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                 // Double loop over atoms
                 for (auto ii = 0; ii < molN->nAtoms(); ++ii)
                 {
-                    i = molN->atom(ii);
+                    auto *i = molN->atom(ii);
 
                     for (auto jj = 0; jj < molM->nAtoms(); ++jj)
                     {
-                        j = molM->atom(jj);
+                        auto *j = molM->atom(jj);
 
                         // Determine final forces
-                        vecij = box->minimumVector(i->r(), j->r());
-                        magjisq = vecij.magnitudeSq();
+                        auto vecij = box->minimumVector(i->r(), j->r());
+                        auto magjisq = vecij.magnitudeSq();
                         if (magjisq > cutoffSq)
                             continue;
-                        r = sqrt(magjisq);
+                        auto r = sqrt(magjisq);
                         vecij /= r;
 
                         vecij *= potentialMap.analyticForce(i, j, r);
@@ -160,12 +155,12 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
             for (const auto &bond : molN->species()->bonds())
             {
                 // Grab pointers to atoms involved in bond
-                i = molN->atom(bond.indexI());
-                j = molN->atom(bond.indexJ());
+                auto *i = molN->atom(bond.indexI());
+                auto *j = molN->atom(bond.indexJ());
 
                 // Determine final forces
-                vecij = box->minimumVector(i->r(), j->r());
-                r = vecij.magAndNormalise();
+                auto vecij = box->minimumVector(i->r(), j->r());
+                auto r = vecij.magAndNormalise();
                 vecij *= bond.force(r);
 
                 fIntra[offsetN + bond.indexI()] -= vecij;
@@ -176,21 +171,22 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
             for (const auto &angle : molN->species()->angles())
             {
                 // Grab pointers to atoms involved in angle
-                i = molN->atom(angle.indexI());
-                j = molN->atom(angle.indexJ());
-                k = molN->atom(angle.indexK());
+                auto *i = molN->atom(angle.indexI());
+                auto *j = molN->atom(angle.indexJ());
+                auto *k = molN->atom(angle.indexK());
 
                 // Get vectors 'j-i' and 'j-k'
-                vecji = box->minimumVector(j->r(), i->r());
-                vecjk = box->minimumVector(j->r(), k->r());
-                magji = vecji.magAndNormalise();
-                magjk = vecjk.magAndNormalise();
+                auto vecji = box->minimumVector(j->r(), i->r());
+                auto vecjk = box->minimumVector(j->r(), k->r());
+                auto magji = vecji.magAndNormalise();
+                auto magjk = vecjk.magAndNormalise();
 
                 // Determine Angle force vectors for atoms
-                force = angle.force(Box::angleInDegrees(vecji, vecjk, dp));
-                forcei = vecjk - vecji * dp;
+                double dp;
+                auto force = angle.force(Box::angleInDegrees(vecji, vecjk, dp));
+                auto forcei = vecjk - vecji * dp;
                 forcei *= force / magji;
-                forcek = vecji - vecjk * dp;
+                auto forcek = vecji - vecjk * dp;
                 forcek *= force / magjk;
 
                 // Store forces
@@ -203,19 +199,19 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
             for (const auto &torsion : molN->species()->torsions())
             {
                 // Grab pointers to atoms involved in angle
-                i = molN->atom(torsion.indexI());
-                j = molN->atom(torsion.indexJ());
-                k = molN->atom(torsion.indexK());
-                l = molN->atom(torsion.indexL());
+                auto *i = molN->atom(torsion.indexI());
+                auto *j = molN->atom(torsion.indexJ());
+                auto *k = molN->atom(torsion.indexK());
+                auto *l = molN->atom(torsion.indexL());
 
                 // Calculate vectors, ensuring we account for minimum image
-                vecji = box->minimumVector(i->r(), j->r());
-                vecjk = box->minimumVector(k->r(), j->r());
-                veckl = box->minimumVector(l->r(), k->r());
+                auto vecji = box->minimumVector(i->r(), j->r());
+                auto vecjk = box->minimumVector(k->r(), j->r());
+                auto veckl = box->minimumVector(l->r(), k->r());
 
                 // Calculate torsion force parameters
                 auto tp = GeometryKernel::calculateTorsionForceParameters(vecji, vecjk, veckl);
-                du_dphi = torsion.force(tp.phi_ * DEGRAD);
+                auto du_dphi = torsion.force(tp.phi_ * DEGRAD);
 
                 // Sum forces on Atoms
                 fIntra[offsetN + torsion.indexI()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
@@ -247,19 +243,19 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
             for (const auto &imp : molN->species()->impropers())
             {
                 // Grab pointers to atoms involved in angle
-                i = molN->atom(imp.indexI());
-                j = molN->atom(imp.indexJ());
-                k = molN->atom(imp.indexK());
-                l = molN->atom(imp.indexL());
+                auto *i = molN->atom(imp.indexI());
+                auto *j = molN->atom(imp.indexJ());
+                auto *k = molN->atom(imp.indexK());
+                auto *l = molN->atom(imp.indexL());
 
                 // Calculate vectors, ensuring we account for minimum image
-                vecji = box->minimumVector(i->r(), j->r());
-                vecjk = box->minimumVector(k->r(), j->r());
-                veckl = box->minimumVector(l->r(), k->r());
+                auto vecji = box->minimumVector(i->r(), j->r());
+                auto vecjk = box->minimumVector(k->r(), j->r());
+                auto veckl = box->minimumVector(l->r(), k->r());
 
                 // Calculate improper force parameters
                 auto tp = GeometryKernel::calculateTorsionForceParameters(vecji, vecjk, veckl);
-                du_dphi = imp.force(tp.phi_ * DEGRAD);
+                auto du_dphi = imp.force(tp.phi_ * DEGRAD);
 
                 // Sum forces on Atoms
                 fIntra[offsetN + imp.indexI()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
