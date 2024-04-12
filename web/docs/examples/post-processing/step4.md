@@ -17,7 +17,11 @@ Let's do a quick, single iteration to make sure everything is working as expecte
 
 {{< action type="key" >}}Ctrl-1{{< /action >}}
 
-What will have happened in this iteration is that a single frame will have been read in from the trajectory into the configuration and, if we've got everything else set up correctly, from which some sensible-looking radial distribution functions and (neutron-weighted) structure factors will have been calculated.  The latter total F(Q) should look like this:
+What will have happened in this iteration is that a single frame will have been read in from the trajectory into the configuration and, if we've got everything else set up correctly, from which some sensible-looking radial distribution functions and (neutron-weighted) structure factors will have been calculated. 
+
+{{< action type="groups" >}}Go to the {{< module "NeutronSQ" >}} module and open its {{<gui-button icon="output" text="Output">}} tab{{< /action >}}
+
+The total F(Q) should look like this:
 
 {{< cimage src="../first-fq.png" caption="Total neutron-weighted structure factor from the first frame of the reference trajectory" >}}
 

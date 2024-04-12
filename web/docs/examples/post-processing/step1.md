@@ -10,13 +10,20 @@ We can import the two species we need from some xyz datafiles supplied in the ex
 
 {{< action type="menu" text="Species &#8680; Import &#8680; From XYZ..." />}}
 {{< step text="Choose the `ipa.xyz` file." />}}
+{{< action type="edit">}}Change the name to `IPA` by double clicking the {{<gui-tab type="species" text="NewSpecies">}} tab{{</action>}}
+{{< action type="menu" text="Species &#8680; Add Forcefield Terms..." />}}
+{{< step >}} From the available forcefields choose `OPLS-AA/Alcohols` or `UFF` (your choice!) and click {{< gui-button text="Next" icon="arrowright" >}} {{< /step >}}
+{{< step >}}Leave all other settings as default and click {{< gui-button text="Next" icon="arrowright" >}} until finished{{< /step >}}
+
+Now for the water:
 
 {{< action type="menu" text="Species &#8680; Import &#8680; From XYZ..." />}}
-{{< step text="Choose the `water.xyz` file." />}}
+{{< action type="edit">}}Change the name to `water` by double clicking the {{<gui-tab type="species" text="NewSpecies">}} tab{{</action>}}
+{{< action type="menu" text="Species &#8680; Import &#8680; From XYZ..." />}}
+{{< step >}} From the available forcefields choose `SPC/Fw` and click {{< gui-button text="Next" icon="arrowright" >}} {{< /step >}}
+{{< step >}}Leave all other settings as default and click {{< gui-button text="Next" icon="arrowright" >}} until finished{{< /step >}}
 
-Each will need to have a suitable forcefield applied since Dissolve demands that, at the very least, atom types have been assigned to all atoms. The forcefield doesn't have to be "complete" in the sense of intramolecular terms, torsions, etc.
-
-So, apply perhaps the `SPC/Fw` model to the water, and either `OPLS-AA/Alcohols` or `UFF` to the IPA.
+Each species needs to have a suitable forcefield applied since Dissolve demands that, at the very least, atom types to be assigned to all atoms.
 
 ### Create Analysis Sites
 
