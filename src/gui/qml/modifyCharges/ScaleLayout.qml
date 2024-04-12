@@ -21,14 +21,35 @@ ColumnLayout {
     }
     SpinBox {
         id: spinBox
+        readonly property int decimalFactor: Math.pow(10, decimals)
+        property int decimals: 2
+        property real realValue: value / 100
+
         Layout.alignment: Qt.AlignRight
         Layout.fillWidth: true
         editable: true
-        from: -100
+        from: decimalToInt(-100)
         objectName: "scaleSpinBox"
         stepSize: 1
-        to: 100
-        value: dialogModel.scaleValue
+        textFromValue: function (value) {
+            return String((parseFloat(value) / decimalFactor).toFixed(decimals));
+        }
+        to: decimalToInt(100)
+        value: decimalToInt(dialogModel.scaleValue)
+        valueFromText: function (text) {
+            return Math.round(parseFloat(text) * decimalFactor);
+        }
+
+        function decimalToInt(decimal) {
+            return decimal * decimalFactor;
+        }
+
+        validator: DoubleValidator {
+            bottom: Math.min(spinBox.from, spinBox.to)
+            decimals: spinBox.decimals
+            notation: DoubleValidator.StandardNotation
+            top: Math.max(spinBox.from, spinBox.to)
+        }
     }
     RowLayout {
         Layout.alignment: Qt.AlignRight
@@ -41,7 +62,7 @@ ColumnLayout {
 
             onClicked: {
                 dialogModel.cancelSelection();
-                spinBox.value = dialogModel.scaleValue;
+                spinBox.realValue = dialogModel.scaleValue;
             }
         }
         D.Button {
@@ -51,7 +72,7 @@ ColumnLayout {
 
             onClicked: {
                 dialogModel.setScaleType(dialogModel.Scale);
-                dialogModel.updateScaleValue(spinBox.value);
+                dialogModel.updateScaleValue(spinBox.realValue);
                 dialogModel.acceptSelection();
             }
         }
@@ -62,7 +83,7 @@ ColumnLayout {
 
             onClicked: {
                 dialogModel.setScaleType(dialogModel.ScaleTo);
-                dialogModel.updateScaleValue(spinBox.value);
+                dialogModel.updateScaleValue(spinBox.realValue);
                 dialogModel.acceptSelection();
             }
         }
