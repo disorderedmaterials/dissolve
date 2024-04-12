@@ -19,25 +19,24 @@ ColumnLayout {
         width: parent.width - 2 * parent.spacing
         wrapMode: Text.WordWrap
     }
-
     SpinBox {
         id: spinBox
         readonly property int decimalFactor: Math.pow(10, decimals)
         property int decimals: 2
         property real realValue: value / 100
-        
+
         Layout.alignment: Qt.AlignRight
         Layout.fillWidth: true
         editable: true
         from: decimalToInt(-100)
         objectName: "scaleSpinBox"
         stepSize: 1
-        textFromValue: function(value) {
+        textFromValue: function (value) {
             return String((parseFloat(value) / decimalFactor).toFixed(decimals));
         }
         to: decimalToInt(100)
         value: decimalToInt(dialogModel.scaleValue)
-        valueFromText: function(text) {
+        valueFromText: function (text) {
             return Math.round(parseFloat(text) * decimalFactor);
         }
 
