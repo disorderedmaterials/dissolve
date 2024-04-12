@@ -42,7 +42,7 @@ FILES=()
 #                     Set File Targets                      #
 #-----------------------------------------------------------#
 
-FILES=( $(find ./ -mindepth 2 -type f -not -regex '.*/_.*') )
+FILES=( $(find ./ -mindepth 2 -type f -not -regex '.*/_.*' -not -name CMakeLists.txt) )
 
 #-----------------------------------------------------------#
 #                    Assemble Files                         #
