@@ -30,14 +30,15 @@ options {
 expression: expr EOF;
 
 // Expressions
-expr: OpenParenthesis expr CloseParenthesis                     #parentheses
-| Subtract expr                                                 #unaryMinus
-| expr Power expr                                               #power
-| expr op=(Multiply | Divide) expr                              #multiplyDivide
-| expr op=(Add | Subtract) expr                                 #addSubtract
-| Name OpenParenthesis (expr (Comma expr)*)? CloseParenthesis   #function
-| Name                                                          #variable
-| value                                                         #number
+expr: OpenParenthesis expr CloseParenthesis                     			#parentheses
+| Subtract expr                                                 			#unaryMinus
+| expr Power expr                                               			#power
+| expr op=(Multiply | Divide) expr                              			#multiplyDivide
+| expr op=(Add | Subtract) expr                                 			#addSubtract
+| expr op=(LessEqual | GreaterEqual | Equal | LessThan | GreaterThan) expr  #comparison
+| Name OpenParenthesis (expr (Comma expr)*)? CloseParenthesis   			#function
+| Name                                                          			#variable
+| value                                                         			#number
 ;
 
 // Numerical value

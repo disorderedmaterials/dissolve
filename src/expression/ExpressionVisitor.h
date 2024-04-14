@@ -43,6 +43,7 @@ class ExpressionVisitor : ExpressionParserBaseVisitor
     antlrcpp::Any visitPower(ExpressionParser::PowerContext *ctx) override;
     antlrcpp::Any visitMultiplyDivide(ExpressionParser::MultiplyDivideContext *ctx) override;
     antlrcpp::Any visitAddSubtract(ExpressionParser::AddSubtractContext *ctx) override;
+    antlrcpp::Any visitComparison(ExpressionParser::ComparisonContext *ctx) override;
     antlrcpp::Any visitFunction(ExpressionParser::FunctionContext *ctx) override;
     antlrcpp::Any visitVariable(ExpressionParser::VariableContext *ctx) override;
     antlrcpp::Any visitValue(ExpressionParser::ValueContext *ctx) override;

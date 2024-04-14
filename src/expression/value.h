@@ -13,11 +13,13 @@ class ExpressionValue : public Serialisable<>
     ExpressionValue();
     ExpressionValue(int value);
     ExpressionValue(double value);
+    explicit ExpressionValue(bool value);
     ~ExpressionValue() = default;
     ExpressionValue(const ExpressionValue &source);
     ExpressionValue &operator=(const ExpressionValue &source);
     ExpressionValue &operator=(int i);
     ExpressionValue &operator=(double d);
+    ExpressionValue &operator=(bool b);
 
     /*
      * Data
@@ -27,7 +29,8 @@ class ExpressionValue : public Serialisable<>
     enum class ValueType
     {
         Integer,
-        Double
+        Double,
+        Bool
     };
 
     private:
@@ -39,6 +42,8 @@ class ExpressionValue : public Serialisable<>
     int valueI_;
     // Double value (if type_ == DoubleType)
     double valueD_;
+    // Bool value (if type_ == BoolType)
+    bool valueB_;
 
     public:
     // Return the current result type
@@ -47,12 +52,16 @@ class ExpressionValue : public Serialisable<>
     int asInteger() const;
     // Return as double (regardless of current type)
     double asDouble() const;
+    // Return as bool (regardless of current type)
+    bool asBool() const;
     // Return result as a string
     std::string asString() const;
     // Return pointer to integer value
     int *integerPointer();
     // Return pointer to double value
     double *doublePointer();
+    // Return pointer to bool value
+    bool *boolPointer();
 
     /*
      * Tests
@@ -62,10 +71,14 @@ class ExpressionValue : public Serialisable<>
     bool isInteger() const;
     // Return whether the contained type is a double
     bool isDouble() const;
+    // Return whether the contained type is a bool
+    bool isBool() const;
     // Return the supplied ExpressionValues both contain integer types
     static bool bothIntegers(const ExpressionValue &a, const ExpressionValue &b);
     // Return the supplied ExpressionValues both contain double types
     static bool bothDoubles(const ExpressionValue &a, const ExpressionValue &b);
+    // Return the supplied ExpressionValues both contain bool types
+    static bool bothBools(const ExpressionValue &a, const ExpressionValue &b);
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value

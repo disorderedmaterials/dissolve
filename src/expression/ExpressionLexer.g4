@@ -46,5 +46,12 @@ Add: '+';
 Subtract: '-';
 Power: '^';
 
+// Boolean Operators
+LessEqual: '<=';
+GreaterEqual: '>=';
+Equal: '==';
+LessThan: '<';
+GreaterThan: '>';
+
 // Named Token
 Name: LETTER (LETTER | DIGIT | '.')*;

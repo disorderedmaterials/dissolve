@@ -122,6 +122,34 @@ antlrcpp::Any ExpressionVisitor::visitAddSubtract(ExpressionParser::AddSubtractC
     return result;
 }
 
+antlrcpp::Any ExpressionVisitor::visitComparison(ExpressionParser::ComparisonContext *ctx)
+{
+    ExpressionBinaryOperatorNode::BinaryOperator op;
+    if (ctx->LessEqual())
+        op = ExpressionBinaryOperatorNode::OperatorLessEqual;
+    else if (ctx->GreaterEqual())
+        op = ExpressionBinaryOperatorNode::OperatorGreaterEqual;
+    else if (ctx->Equal())
+        op = ExpressionBinaryOperatorNode::OperatorEqual;
+    else if (ctx->LessThan())
+        op = ExpressionBinaryOperatorNode::OperatorLessThan;
+    else if (ctx->GreaterThan())
+        op = ExpressionBinaryOperatorNode::OperatorGreaterThan;
+    else
+        throw(ExpressionExceptions::ExpressionSyntaxException("Invalid comparison operator."));
+
+    auto node = std::make_shared<ExpressionBinaryOperatorNode>(op);
+
+    currentContext()->addChild(node);
+
+    contextStack_.push_back(node);
+
+    auto result = visitChildren(ctx);
+
+    contextStack_.pop_back();
+
+    return result;
+}
 antlrcpp::Any ExpressionVisitor::visitFunction(ExpressionParser::FunctionContext *ctx)
 {
     // Check that the function name is valid

@@ -49,6 +49,7 @@ std::optional<ExpressionValue> ExpressionBinaryOperatorNode::evaluate() const
             if (ExpressionValue::bothIntegers(lhs, rhs))
                 result = lhs.asInteger() + rhs.asInteger();
             else
+                // TODO: do we need to consider the case where we have bools?
                 result = lhs.asDouble() + rhs.asDouble();
             break;
         case (OperatorDivide):
@@ -74,6 +75,36 @@ std::optional<ExpressionValue> ExpressionBinaryOperatorNode::evaluate() const
                 result = lhs.asInteger() * rhs.asInteger();
             else
                 result = lhs.asDouble() * rhs.asDouble();
+            break;
+        case (OperatorLessEqual):
+            if (ExpressionValue::bothIntegers(lhs, rhs))
+                result = lhs.asInteger() <= rhs.asInteger();
+            else
+                result = lhs.asDouble() <= rhs.asDouble();
+            break;
+        case (OperatorGreaterEqual):
+            if (ExpressionValue::bothIntegers(lhs, rhs))
+                result = lhs.asInteger() >= rhs.asInteger();
+            else
+                result = lhs.asDouble() >= rhs.asDouble();
+            break;
+        case (OperatorEqual):
+            if (ExpressionValue::bothIntegers(lhs, rhs))
+                result = lhs.asInteger() == rhs.asInteger();
+            else
+                result = lhs.asDouble() == rhs.asDouble();
+            break;
+        case (OperatorLessThan):
+            if (ExpressionValue::bothIntegers(lhs, rhs))
+                result = lhs.asInteger() < rhs.asInteger();
+            else
+                result = lhs.asDouble() < rhs.asDouble();
+            break;
+        case (OperatorGreaterThan):
+            if (ExpressionValue::bothIntegers(lhs, rhs))
+                result = lhs.asInteger() > rhs.asInteger();
+            else
+                result = lhs.asDouble() > rhs.asDouble();
             break;
         default:
             throw(std::runtime_error(fmt::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", operator_)));
@@ -105,6 +136,16 @@ std::string ExpressionBinaryOperatorNode::asString() const
             return fmt::format("{}^{}", lhs, rhs);
         case (OperatorMultiply):
             return fmt::format("{}*{}", lhs, rhs);
+        case (OperatorLessEqual):
+            return fmt::format("{}<={}", lhs, rhs);
+        case (OperatorGreaterEqual):
+            return fmt::format("{}>={}", lhs, rhs);
+        case (OperatorEqual):
+            return fmt::format("{}=={}", lhs, rhs);
+        case (OperatorLessThan):
+            return fmt::format("{}<{}", lhs, rhs);
+        case (OperatorGreaterThan):
+            return fmt::format("{}>{}", lhs, rhs);
         default:
             throw(std::runtime_error(fmt::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", operator_)));
     }

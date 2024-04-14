@@ -16,7 +16,12 @@ class ExpressionBinaryOperatorNode : public ExpressionNode
         OperatorDivide,
         OperatorMultiply,
         OperatorPow,
-        OperatorSubtract
+        OperatorSubtract,
+        OperatorLessEqual,
+        OperatorGreaterEqual,
+        OperatorEqual,
+        OperatorLessThan,
+        OperatorGreaterThan,
     };
     ExpressionBinaryOperatorNode(BinaryOperator op);
     ~ExpressionBinaryOperatorNode() override = default;
