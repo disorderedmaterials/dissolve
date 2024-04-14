@@ -13,7 +13,7 @@ class ExpressionValue : public Serialisable<>
     ExpressionValue();
     explicit ExpressionValue(int value);
     explicit ExpressionValue(double value);
-    ExpressionValue(bool value);
+    explicit ExpressionValue(bool value);
     ~ExpressionValue() = default;
     ExpressionValue(const ExpressionValue &source);
     ExpressionValue &operator=(const ExpressionValue &source);

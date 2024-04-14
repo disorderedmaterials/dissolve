@@ -108,18 +108,18 @@ TEST(ProcedureTest, Parameters)
 
     // Parameters (Small Things)
     auto smallThings = procedure.createRootNode<ParametersProcedureNode>("Small");
-    smallThings->addParameter("Egg", 1);
-    smallThings->addParameter("Marble", -5);
-    smallThings->addParameter("Pin", 11.22);
+    smallThings->addParameter("Egg", ExpressionValue(1));
+    smallThings->addParameter("Marble", ExpressionValue(-5));
+    smallThings->addParameter("Pin", ExpressionValue(11.22));
 
     // Add (Small)
     auto smallHole = procedure.createRootNode<AddProcedureNode>("SmallHole");
 
     // Parameters (Big Things)
     auto largeThings = procedure.createRootNode<ParametersProcedureNode>("Large");
-    largeThings->addParameter("Bus", 1);
-    largeThings->addParameter("MeaningOfLife", 2.0);
-    largeThings->addParameter("Family", 30);
+    largeThings->addParameter("Bus", ExpressionValue(1));
+    largeThings->addParameter("MeaningOfLife", ExpressionValue(2.0));
+    largeThings->addParameter("Family", ExpressionValue(30));
 
     // Add (Big Things)
     auto bigHole = procedure.createRootNode<AddProcedureNode>("BigHole");

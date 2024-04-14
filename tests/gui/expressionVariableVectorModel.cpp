@@ -17,15 +17,15 @@ TEST(ExpressionVariableVectorModelTest, Basic)
     // Create a simple procedure with a parameters node
     Procedure procedure(ProcedureNode::AnalysisContext);
     auto parameters = procedure.createRootNode<ParametersProcedureNode>({});
-    parameters->addParameter("Alpha", 1.2345);
-    parameters->addParameter("Beta", 99);
-    parameters->addParameter("Gamma", -10);
+    parameters->addParameter("Alpha", ExpressionValue(1.2345));
+    parameters->addParameter("Beta", ExpressionValue(99));
+    parameters->addParameter("Gamma", ExpressionValue(-10));
 
     // Create a second set of data since we can't get the ParametersProcedureNode data non-const
     std::vector<std::shared_ptr<ExpressionVariable>> data;
-    data.push_back(std::make_shared<ExpressionVariable>("alf", 5.4321));
-    data.push_back(std::make_shared<ExpressionVariable>("bert", 1));
-    data.push_back(std::make_shared<ExpressionVariable>("gemma", 10));
+    data.push_back(std::make_shared<ExpressionVariable>("alf", ExpressionValue(5.4321)));
+    data.push_back(std::make_shared<ExpressionVariable>("bert", ExpressionValue(1)));
+    data.push_back(std::make_shared<ExpressionVariable>("gemma", ExpressionValue(10)));
 
     // Set up the model, supplying our mutable data and the parameters node as the parent
     ExpressionVariableVectorModel model;

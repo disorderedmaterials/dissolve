@@ -203,8 +203,8 @@ void AddConfigurationDialog::finalise()
     // Create parameters node
     auto paramsNode = generator.createRootNode<ParametersProcedureNode>({});
     if (ui_.BoxGeometryUndefinedSizeRadio->isChecked())
-        paramsNode->addParameter("rho", ui_.SpeciesDensitySpin->value());
-    paramsNode->addParameter("multiplier", ui_.SpeciesMultiplierSpin->value());
+        paramsNode->addParameter("rho", ExpressionValue(ui_.SpeciesDensitySpin->value()));
+    paramsNode->addParameter("multiplier", ExpressionValue(ui_.SpeciesMultiplierSpin->value()));
 
     // Add mixture species
     auto rhoString = ui_.BoxGeometryUndefinedSizeRadio->isChecked() ? "rho" : "";

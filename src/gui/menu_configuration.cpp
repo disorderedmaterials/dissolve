@@ -36,7 +36,7 @@ std::vector<std::shared_ptr<AddProcedureNode>> createRelativeMix(const std::vect
         else
         {
             auto parameterName = fmt::format("ratio{}", char(65 + count));
-            paramsNode->addParameter(parameterName, 1);
+            paramsNode->addParameter(parameterName, ExpressionValue(1));
             popString = fmt::format("{}*populationA", parameterName);
         }
 
