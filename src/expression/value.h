@@ -11,9 +11,9 @@ class ExpressionValue : public Serialisable<>
 {
     public:
     ExpressionValue();
-    ExpressionValue(int value);
-    ExpressionValue(double value);
-    explicit ExpressionValue(bool value);
+    explicit ExpressionValue(int value);
+    explicit ExpressionValue(double value);
+    ExpressionValue(bool value);
     ~ExpressionValue() = default;
     ExpressionValue(const ExpressionValue &source);
     ExpressionValue &operator=(const ExpressionValue &source);

@@ -142,6 +142,16 @@ double ExpressionValue::asDouble() const
     else
         return valueB_ ? 1.0 : 0.0;
 }
+// Return result as bool (regardless of current type)
+bool ExpressionValue::asBool() const
+{
+    if (type_ == ValueType::Integer)
+        return valueI_ != 0;
+    else if (type_ == ValueType::Double)
+        return valueD_ != 0.0;
+    else
+        return valueB_;
+}
 
 // Return result as a string
 std::string ExpressionValue::asString() const

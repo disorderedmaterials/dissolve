@@ -56,7 +56,7 @@ bool IterateSelectionProcedureNode::execute(const ProcedureContext &procedureCon
     currentSite_ = std::nullopt;
 
     // Update parameters
-    nSelectedParameter_->setValue(int(sites.size()));
+    nSelectedParameter_->setValue(ExpressionValue(int(sites.size())));
 
     // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
     if (!forEachBranch_.empty())
@@ -65,9 +65,9 @@ bool IterateSelectionProcedureNode::execute(const ProcedureContext &procedureCon
         for (const auto &siteInfo : sites)
         {
             currentSite_ = std::get<0>(siteInfo);
-            siteIndexParameter_->setValue(std::get<1>(siteInfo));
-            stackIndexParameter_->setValue(std::get<2>(siteInfo));
-            indexParameter_->setValue(index++);
+            siteIndexParameter_->setValue(ExpressionValue(std::get<1>(siteInfo)));
+            stackIndexParameter_->setValue(ExpressionValue(std::get<2>(siteInfo)));
+            indexParameter_->setValue(ExpressionValue(index++));
 
             ++nCumulativeSites_;
 

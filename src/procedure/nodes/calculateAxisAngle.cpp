@@ -83,7 +83,7 @@ bool CalculateAxisAngleProcedureNode::execute(const ProcedureContext &procedureC
     if (symmetric_ && value_.x > 90.0)
         value_.x = 180.0 - value_.x;
 
-    angleParameter_->setValue(value_.x);
+    angleParameter_->setValue(ExpressionValue(value_.x));
 
     return true;
 }

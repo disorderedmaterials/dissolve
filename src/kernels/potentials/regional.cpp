@@ -40,13 +40,13 @@ RegionalPotentialVoxelKernel::RegionalPotentialVoxelKernel(std::string_view expr
 // Set voxel position variables
 void RegionalPotentialVoxelKernel::setVoxelPosition(const Box *box, Vec3<double> r) const
 {
-    x_->setValue(r.x);
-    y_->setValue(r.y);
-    z_->setValue(r.z);
+    x_->setValue(ExpressionValue(r.x));
+    y_->setValue(ExpressionValue(r.y));
+    z_->setValue(ExpressionValue(r.z));
     box->toFractional(r);
-    xFrac_->setValue(r.x);
-    yFrac_->setValue(r.y);
-    zFrac_->setValue(r.z);
+    xFrac_->setValue(ExpressionValue(r.x));
+    yFrac_->setValue(ExpressionValue(r.y));
+    zFrac_->setValue(ExpressionValue(r.z));
 }
 
 // Return current value of function, applying any threshold penalty

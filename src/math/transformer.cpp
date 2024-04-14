@@ -76,9 +76,9 @@ void Transformer::transformValues(Data1D &data)
     for (auto n = 0; n < data.nValues(); ++n)
     {
         // Set values in equations
-        x_->setValue(xAxis[n]);
-        y_->setValue(values[n]);
-        value_->setValue(values[n]);
+        x_->setValue(ExpressionValue(xAxis[n]));
+        y_->setValue(ExpressionValue(values[n]));
+        value_->setValue(ExpressionValue(values[n]));
 
         // Perform transform
         values[n] = equation_.asDouble();
@@ -101,15 +101,15 @@ void Transformer::transformValues(Data2D &data)
     for (auto i = 0; i < xAxis.size(); ++i)
     {
         // Set x value in equation
-        x_->setValue(xAxis[i]);
+        x_->setValue(ExpressionValue(xAxis[i]));
 
         // Loop over Y axis points
         for (auto j = 0; j < yAxis.size(); ++j)
         {
             // Set y and value (z) values in equation
-            y_->setValue(yAxis[j]);
-            z_->setValue(values[{i, j}]);
-            value_->setValue(values[{i, j}]);
+            y_->setValue(ExpressionValue(yAxis[j]));
+            z_->setValue(ExpressionValue(values[{i, j}]));
+            value_->setValue(ExpressionValue(values[{i, j}]));
 
             // Perform transform
             values[{i, j}] = equation_.asDouble();
@@ -134,19 +134,19 @@ void Transformer::transformValues(Data3D &data)
     for (auto i = 0; i < xAxis.size(); ++i)
     {
         // Set x value in equation
-        x_->setValue(xAxis[i]);
+        x_->setValue(ExpressionValue(xAxis[i]));
 
         // Loop over Y axis points
         for (auto j = 0; j < yAxis.size(); ++j)
         {
             // Set y and value (z) values in equation
-            y_->setValue(yAxis[j]);
+            y_->setValue(ExpressionValue(yAxis[j]));
 
             // Loop over z values
             for (auto k = 0; k < zAxis.size(); ++k)
             {
-                z_->setValue(values[std::tuple{i, j, k}]);
-                value_->setValue(values[std::tuple{i, j, k}]);
+                z_->setValue(ExpressionValue(values[std::tuple{i, j, k}]));
+                value_->setValue(ExpressionValue(values[std::tuple{i, j, k}]));
 
                 // Perform transform
                 values[std::tuple{i, j, k}] = equation_.asDouble();

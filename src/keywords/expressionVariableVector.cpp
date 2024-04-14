@@ -54,9 +54,9 @@ bool ExpressionVariableVectorKeyword::deserialise(LineParser &parser, int startA
     if (DissolveSys::isNumber(parser.argsv(startArg + 1), isFloatingPoint))
     {
         if (isFloatingPoint)
-            newVar->setValue(parser.argd(startArg + 1));
+            newVar->setValue(ExpressionValue(parser.argd(startArg + 1)));
         else
-            newVar->setValue(parser.argi(startArg + 1));
+            newVar->setValue(ExpressionValue(parser.argi(startArg + 1)));
     }
     else
         return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n",

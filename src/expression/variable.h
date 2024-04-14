@@ -10,7 +10,7 @@ class ExpressionVariable : public Serialisable<>
 {
     public:
     ExpressionVariable(const ExpressionValue &value = ExpressionValue());
-    ExpressionVariable(std::string_view baseName, const ExpressionValue &value = ExpressionValue());
+    ExpressionVariable(std::string_view baseName, const ExpressionValue &value = ExpressionValue(0));
     ~ExpressionVariable() = default;
 
     /*

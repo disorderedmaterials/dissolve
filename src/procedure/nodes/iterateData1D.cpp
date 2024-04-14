@@ -90,8 +90,8 @@ bool IterateData1DProcedureNode::execute(const ProcedureContext &procedureContex
 
         for (const auto &&[x, value] : zip(data.xAxis(), data.values()))
         {
-            xParameter_->setValue(x);
-            valueParameter_->setValue(value);
+            xParameter_->setValue(ExpressionValue(x));
+            valueParameter_->setValue(ExpressionValue(value));
 
             // If the branch fails at any point, return failure here.  Otherwise, continue the loop
             if (!forEachBranch_.execute(procedureContext))

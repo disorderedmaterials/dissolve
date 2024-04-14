@@ -111,9 +111,9 @@ bool ExpressionVariableVectorModel::setData(const QModelIndex &index, const QVar
         if (DissolveSys::isNumber(varValue, isFloatingPoint))
         {
             if (isFloatingPoint)
-                var->setValue(value.toDouble());
+                var->setValue(ExpressionValue(value.toDouble()));
             else
-                var->setValue(value.toInt());
+                var->setValue(ExpressionValue(value.toInt()));
         }
         else
             return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n", varValue,

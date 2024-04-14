@@ -36,13 +36,13 @@ bool OperateExpressionProcedureNode::setExpression(std::string_view expressionTe
 // Zero all variables
 void OperateExpressionProcedureNode::zeroVariables()
 {
-    x_->setValue(0.0);
-    y_->setValue(0.0);
-    z_->setValue(0.0);
-    xDelta_->setValue(0.0);
-    yDelta_->setValue(0.0);
-    zDelta_->setValue(0.0);
-    value_->setValue(0.0);
+    x_->setValue(ExpressionValue(0.0));
+    y_->setValue(ExpressionValue(0.0));
+    z_->setValue(ExpressionValue(0.0));
+    xDelta_->setValue(ExpressionValue(0.0));
+    yDelta_->setValue(ExpressionValue(0.0));
+    zDelta_->setValue(ExpressionValue(0.0));
+    value_->setValue(ExpressionValue(0.0));
 }
 
 /*
@@ -59,7 +59,7 @@ bool OperateExpressionProcedureNode::operateData1D(const ProcessPool &procPool, 
 
     // Set data-related quantities
     if (x.size() > 1)
-        xDelta_->setValue(x[1] - x[0]);
+        xDelta_->setValue(ExpressionValue(x[1] - x[0]));
     else
         Messenger::warn("OperateExpression: Not enough data to calculate x delta ({}).\n", targetData1D_->tag());
 
@@ -67,8 +67,8 @@ bool OperateExpressionProcedureNode::operateData1D(const ProcessPool &procPool, 
     for (auto i = 0; i < x.size(); ++i)
     {
         // Set variables in expression
-        x_->setValue(x[i]);
-        value_->setValue(values.at(i));
+        x_->setValue(ExpressionValue(x[i]));
+        value_->setValue(ExpressionValue(values.at(i)));
 
         // Evaluate and store new value
         values.at(i) = expression_.asDouble();
@@ -88,11 +88,11 @@ bool OperateExpressionProcedureNode::operateData2D(const ProcessPool &procPool, 
 
     // Set data-related quantities
     if (x.size() > 1)
-        xDelta_->setValue(x[1] - x[0]);
+        xDelta_->setValue(ExpressionValue(x[1] - x[0]));
     else
         Messenger::warn("OperateExpression: Not enough data to calculate x delta ({}).\n", targetData2D_->tag());
     if (y.size() > 1)
-        yDelta_->setValue(y[1] - y[0]);
+        yDelta_->setValue(ExpressionValue(y[1] - y[0]));
     else
         Messenger::warn("OperateExpression: Not enough data to calculate y delta ({}).\n", targetData2D_->tag());
 
@@ -100,13 +100,13 @@ bool OperateExpressionProcedureNode::operateData2D(const ProcessPool &procPool, 
     for (auto i = 0; i < x.size(); ++i)
     {
         // Set x value in expression
-        x_->setValue(x[i]);
+        x_->setValue(ExpressionValue(x[i]));
 
         for (auto j = 0; j < y.size(); ++j)
         {
             // Set y and value in expression
-            y_->setValue(y[j]);
-            value_->setValue(values[{i, j}]);
+            y_->setValue(ExpressionValue(y[j]));
+            value_->setValue(ExpressionValue(values[{i, j}]));
 
             // Evaluate and store new value
             values[{i, j}] = expression_.asDouble();
@@ -128,15 +128,15 @@ bool OperateExpressionProcedureNode::operateData3D(const ProcessPool &procPool, 
 
     // Set data-related quantities
     if (x.size() > 1)
-        xDelta_->setValue(x[1] - x[0]);
+        xDelta_->setValue(ExpressionValue(x[1] - x[0]));
     else
         Messenger::warn("OperateExpression: Not enough data to calculate x delta ({}).\n", targetData3D_->tag());
     if (y.size() > 1)
-        yDelta_->setValue(y[1] - y[0]);
+        yDelta_->setValue(ExpressionValue(y[1] - y[0]));
     else
         Messenger::warn("OperateExpression: Not enough data to calculate y delta ({}).\n", targetData3D_->tag());
     if (z.size() > 1)
-        zDelta_->setValue(y[1] - y[0]);
+        zDelta_->setValue(ExpressionValue(y[1] - y[0]));
     else
         Messenger::warn("OperateExpression: Not enough data to calculate z delta ({}).\n", targetData3D_->tag());
 
@@ -144,20 +144,20 @@ bool OperateExpressionProcedureNode::operateData3D(const ProcessPool &procPool, 
     for (auto i = 0; i < x.size(); ++i)
     {
         // Set x value in expression
-        x_->setValue(x[i]);
+        x_->setValue(ExpressionValue(x[i]));
 
         for (auto j = 0; j < y.size(); ++j)
         {
             // Set y value in expression
-            y_->setValue(y[j]);
+            y_->setValue(ExpressionValue(y[j]));
 
             for (auto k = 0; k < z.size(); ++k)
             {
                 // Set z and  value in expression
-                z_->setValue(z[k]);
+                z_->setValue(ExpressionValue(z[k]));
                 // TODO: Convert to a single loop when we have the
                 // iterator combiner
-                value_->setValue(values[std::tuple{i, j, k}]);
+                value_->setValue(ExpressionValue(values[std::tuple{i, j, k}]));
 
                 // Evaluate and store new value
                 values[std::tuple{i, j, k}] = expression_.asDouble();

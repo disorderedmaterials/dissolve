@@ -35,13 +35,13 @@ CustomRegionVoxelKernel::CustomRegionVoxelKernel(std::string_view expressionStri
 bool CustomRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
 {
     // Poke values into our variables
-    x_->setValue(r.x);
-    y_->setValue(r.y);
-    z_->setValue(r.z);
+    x_->setValue(ExpressionValue(r.x));
+    y_->setValue(ExpressionValue(r.y));
+    z_->setValue(ExpressionValue(r.z));
     auto rFrac = cfg->box()->getFractional(r);
-    xFrac_->setValue(rFrac.x);
-    yFrac_->setValue(rFrac.y);
-    zFrac_->setValue(rFrac.z);
+    xFrac_->setValue(ExpressionValue(rFrac.x));
+    yFrac_->setValue(ExpressionValue(rFrac.y));
+    zFrac_->setValue(ExpressionValue(rFrac.z));
 
     // Assess expression
     auto x = expression_.asDouble();
