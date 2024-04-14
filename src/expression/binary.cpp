@@ -94,6 +94,12 @@ std::optional<ExpressionValue> ExpressionBinaryOperatorNode::evaluate() const
             else
                 result = lhs.asDouble() == rhs.asDouble();
             break;
+        case (OperatorNotEqual):
+            if (ExpressionValue::bothIntegers(lhs, rhs))
+                result = lhs.asInteger() != rhs.asInteger();
+            else
+                result = lhs.asDouble() != rhs.asDouble();
+            break;
         case (OperatorLessThan):
             if (ExpressionValue::bothIntegers(lhs, rhs))
                 result = lhs.asInteger() < rhs.asInteger();
@@ -142,6 +148,8 @@ std::string ExpressionBinaryOperatorNode::asString() const
             return fmt::format("{}>={}", lhs, rhs);
         case (OperatorEqual):
             return fmt::format("{}=={}", lhs, rhs);
+        case (OperatorNotEqual):
+            return fmt::format("{}!={}", lhs, rhs);
         case (OperatorLessThan):
             return fmt::format("{}<{}", lhs, rhs);
         case (OperatorGreaterThan):

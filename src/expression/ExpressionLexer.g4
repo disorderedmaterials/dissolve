@@ -50,6 +50,7 @@ Power: '^';
 LessEqual: '<=';
 GreaterEqual: '>=';
 Equal: '==';
+NotEqual: '!=';
 LessThan: '<';
 GreaterThan: '>';
 

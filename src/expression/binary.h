@@ -20,6 +20,7 @@ class ExpressionBinaryOperatorNode : public ExpressionNode
         OperatorLessEqual,
         OperatorGreaterEqual,
         OperatorEqual,
+        OperatorNotEqual,
         OperatorLessThan,
         OperatorGreaterThan,
     };
