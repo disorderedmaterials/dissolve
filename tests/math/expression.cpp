@@ -24,8 +24,8 @@ class ExpressionTest : public ::testing::Test
     protected:
     void SetUp() override
     {
-        variables.emplace_back(std::make_shared<ExpressionVariable>("a", 1.0));
-        variables.emplace_back(std::make_shared<ExpressionVariable>("bee", 100.0));
+        variables.emplace_back(std::make_shared<ExpressionVariable>("a", ExpressionValue(1.0)));
+        variables.emplace_back(std::make_shared<ExpressionVariable>("bee", ExpressionValue(100.0)));
     }
 
     private:
@@ -38,6 +38,9 @@ class ExpressionTest : public ::testing::Test
         auto optResult = expression.evaluate();
         ASSERT_TRUE(optResult);
         auto result = (*optResult);
+        if (val.type() != result.type())
+            throw std::runtime_error(fmt::format("Expected: {}, Got: {} for expression {} and value {}", int(val.type()),
+                                                 int(result.type()), expr, val.asString()));
         ASSERT_TRUE(result.type() == val.type());
         switch (val.type())
         {
@@ -46,6 +49,9 @@ class ExpressionTest : public ::testing::Test
                 break;
             case (ExpressionValue::ValueType::Integer):
                 EXPECT_EQ(result.asInteger(), val.asInteger());
+                break;
+            case (ExpressionValue::ValueType::Bool):
+                EXPECT_EQ(result.asBool(), val.asBool());
                 break;
         }
     }
@@ -69,34 +75,46 @@ class ExpressionTest : public ::testing::Test
 
 TEST_F(ExpressionTest, BasicIntegerMath)
 {
-    exprTest("1-(3*2)", 1 - (3 * 2), false);
-    exprTest("1-3*2", 1 - 3 * 2, false);
-    exprTest("242/15", 242 / 15, false);
-    exprTest("-(6.5+7)", -(6.5 + 7), false);
-    exprTest("2+-7", 2 + -7, false);
-    exprTest("2--7", 2 - (-7), false);
-    exprTest("2++7", 0, true);
-    exprTest("2+7*", 0, true);
+    exprTest("1-(3*2)", ExpressionValue(1 - (3 * 2)), false);
+    exprTest("1-3*2", ExpressionValue(1 - 3 * 2), false);
+    exprTest("242/15", ExpressionValue(242 / 15), false);
+    exprTest("-(6.5+7)", ExpressionValue(-(6.5 + 7)), false);
+    exprTest("2+-7", ExpressionValue(2 + -7), false);
+    exprTest("2--7", ExpressionValue(2 - (-7)), false);
+    exprTest("2++7", ExpressionValue(0), true);
+    exprTest("2+7*", ExpressionValue(0), true);
 }
 
 TEST_F(ExpressionTest, BasicFloatMath)
 {
-    exprTest("1+24*3.4", 1.0 + 24 * 3.4, false);
-    exprTest("(9.231-4*89.4)/76.92+7", (9.231 - 4 * 89.4) / 76.92 + 7, false);
-    exprTest("-3^3", DissolveMath::power(-3, 3), false);
-    exprTest("cos(toRad(45))", cos(M_PI_4), false);
-    exprTest("exp(cos(toRad(45)))", exp(cos(M_PI_4)), false);
-    exprTest("sqrt(sin(toRad(78.9))*cos(toRad(45)))", sqrt(sin(78.9 * M_PI / 180.0) * cos(M_PI_4)), false);
-    exprTest("atan()", 0, true);
-    exprTest("ln(0.0, 1.0)", 0, true);
+    exprTest("1+24*3.4", ExpressionValue(1.0 + 24 * 3.4), false);
+    exprTest("(9.231-4*89.4)/76.92+7", ExpressionValue((9.231 - 4 * 89.4) / 76.92 + 7), false);
+    exprTest("-3^3", ExpressionValue(DissolveMath::power(-3, 3)), false);
+    exprTest("cos(toRad(45))", ExpressionValue(cos(M_PI_4)), false);
+    exprTest("exp(cos(toRad(45)))", ExpressionValue(exp(cos(M_PI_4))), false);
+    exprTest("sqrt(sin(toRad(78.9))*cos(toRad(45)))", ExpressionValue(sqrt(sin(78.9 * M_PI / 180.0) * cos(M_PI_4))), false);
+    exprTest("atan()", ExpressionValue(0), true);
+    exprTest("ln(0.0, 1.0)", ExpressionValue(0), true);
 }
 
 TEST_F(ExpressionTest, Variables)
 {
     auto a = variables[0];
     auto bee = variables[1];
-    exprTest("a/5", a->value().asDouble() / 5, false);
-    exprTest("a+sqrt(bee)", a->value().asDouble() + sqrt(bee->value().asDouble()), false);
-    exprTest("1.8*wasp", 0, true);
+    exprTest("a/5", ExpressionValue(a->value().asDouble() / 5), false);
+    exprTest("a+sqrt(bee)", ExpressionValue(a->value().asDouble() + sqrt(bee->value().asDouble())), false);
+    exprTest("1.8*wasp", ExpressionValue(0), true);
 }
+
+TEST_F(ExpressionTest, Boolean)
+{
+    exprTest("0<1", ExpressionValue(true), false);
+    exprTest("1>0", ExpressionValue(true), false);
+    exprTest("1==1", ExpressionValue(true), false);
+    exprTest("1<0", ExpressionValue(false), false);
+    exprTest("0>1", ExpressionValue(false), false);
+    exprTest("1.0==0.0", ExpressionValue(false), false);
+    exprTest("bee==wasp", ExpressionValue(false), false); // TODO: figure out why this test fails.
+}
+
 } // namespace UnitTest
