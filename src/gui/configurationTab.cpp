@@ -231,15 +231,7 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
 
 void ConfigurationTab::on_TemperatureToolButton_clicked(bool checked)
 {
-    auto ok = false;
-    auto temperature = QInputDialog::getDouble(this, "Set temperature for configuration",
-                                               "Enter the temperature (K) to apply to this configuration",
-                                               configuration_->temperature(), 0.0, 1000000.0, 3, &ok);
-    if (!ok)
-        return;
-
-    configuration_->setTemperature(temperature);
-    updateTemperatureLabel();
+    dissolveWindow_->on_ConfigurationAdjustTemperatureAction_triggered(checked);
 }
 
 // Density units changed
