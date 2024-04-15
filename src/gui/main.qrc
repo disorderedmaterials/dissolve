@@ -57,40 +57,41 @@
     <file>fonts/FreeSerif.ttf</file>
   </qresource>
   <qresource prefix="modules">
-    <file>icons/modules/modifierOSites.svg</file>
-    <file>icons/modules/angle.svg</file>
-    <file>icons/modules/exportCoordinates.svg</file>
-    <file>icons/modules/exportPairPotentials.svg</file>
-    <file>icons/modules/exportTrajectory.svg</file>
-    <file>icons/modules/importTrajectory.svg</file>
-    <file>icons/modules/qSpecies.svg</file>
+    <file>icons/modules/ModifierOSites.svg</file>
+    <file>icons/modules/Angle.svg</file>
+    <file>icons/modules/ExportCoordinates.svg</file>
+    <file>icons/modules/ExportPairPotentials.svg</file>
+    <file>icons/modules/ExportTrajectory.svg</file>
+    <file>icons/modules/ImportTrajectory.svg</file>
+    <file>icons/modules/QSpecies.svg</file>
     <file>icons/modules/SQ.svg</file>
-    <file>icons/modules/bragg.svg</file>
-    <file>icons/modules/avgMol.svg</file>
-    <file>icons/modules/accumulate.svg</file>
-    <file>icons/modules/orientedSDF.svg</file>
-    <file>icons/modules/axisAngle.svg</file>
-    <file>icons/modules/histogramCN.svg</file>
-    <file>icons/modules/dAngle.svg</file>
-    <file>icons/modules/intraDistance.svg</file>
-    <file>icons/modules/siteRDF.svg</file>
+    <file>icons/modules/Bragg.svg</file>
+    <file>icons/modules/AvgMol.svg</file>
+    <file>icons/modules/Accumulate.svg</file>
+    <file>icons/modules/OrientedSDF.svg</file>
+    <file>icons/modules/AxisAngle.svg</file>
+    <file>icons/modules/HistogramCN.svg</file>
+    <file>icons/modules/DAngle.svg</file>
+    <file>icons/modules/IntraDistance.svg</file>
+    <file>icons/modules/SiteRDF.svg</file>
     <file>icons/modules/SDF.svg</file>
-    <file>icons/modules/molShake.svg</file>
-    <file>icons/modules/analyse.svg</file>
-    <file>icons/modules/forces.svg</file>
-    <file>icons/modules/benchmark.svg</file>
+    <file>icons/modules/MolShake.svg</file>
+    <file>icons/modules/Analyse.svg</file>
+    <file>icons/modules/Forces.svg</file>
+    <file>icons/modules/Benchmark.svg</file>
     <file>icons/modules/EPSR.svg</file>
-    <file>icons/modules/energy.svg</file>
+    <file>icons/modules/EPSRManager.svg</file>
+    <file>icons/modules/Energy.svg</file>
     <file>icons/modules/MD.svg</file>
-    <file>icons/modules/xRaySQ.svg</file>
-    <file>icons/modules/atomShake.svg</file>
-    <file>icons/modules/calibrate.svg</file>
+    <file>icons/modules/XRaySQ.svg</file>
+    <file>icons/modules/AtomShake.svg</file>
+    <file>icons/modules/Calibrate.svg</file>
     <file>icons/modules/GR.svg</file>
-    <file>icons/modules/intraShake.svg</file>
-    <file>icons/modules/intraAngle.svg</file>
-    <file>icons/modules/neutronSQ.svg</file>
-    <file>icons/modules/geometryOptimisation.svg</file>
-    <file>icons/modules/compare.svg</file>
+    <file>icons/modules/IntraShake.svg</file>
+    <file>icons/modules/IntraAngle.svg</file>
+    <file>icons/modules/NeutronSQ.svg</file>
+    <file>icons/modules/GeometryOptimisation.svg</file>
+    <file>icons/modules/Compare.svg</file>
   </qresource>
   <qresource prefix="general">
     <file>icons/ff.svg</file>

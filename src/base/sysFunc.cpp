@@ -375,7 +375,7 @@ std::string DissolveSys::doubleChars(const std::string_view s, const std::string
 std::string DissolveSys::strip(const std::string_view s, char toStrip)
 {
     std::string result{s};
-    result.erase(std::remove_if(result.begin(), result.end(), [toStrip](const char c) { return c == toStrip; }), result.end());
+    result.erase(std::remove(result.begin(), result.end(), toStrip), result.end());
     return result;
 }
 
