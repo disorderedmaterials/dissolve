@@ -114,7 +114,6 @@ add_library(
   simpleGlobalPotential.h
   sizeFactor.h
   sum1D.h
-  temperature.h
   transmute.h
 )
 
