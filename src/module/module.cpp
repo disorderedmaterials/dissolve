@@ -53,14 +53,6 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
 
 // Return module type string for specified type enumeration
 std::string moduleType(ModuleTypes::ModuleType type) { return moduleTypes_.keyword(type); }
-// Return the lowerCamelCase name of the module type provided
-std::string lccModuleType(ModuleTypes::ModuleType type)
-{
-    auto lccModuleType = moduleTypes_.keyword(type);
-    if (!std::all_of(lccModuleType.begin(), lccModuleType.end(), [](const char c) { return std::isupper(c); }))
-        lccModuleType.front() = tolower(lccModuleType.front());
-    return lccModuleType;
-}
 // Return module type enumeration for specified module type string
 std::optional<ModuleTypes::ModuleType> moduleType(std::string_view keyword)
 {
