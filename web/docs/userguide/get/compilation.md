@@ -23,7 +23,7 @@ Regardless of which version is being built, several external libraries are alway
 - [`libfmt`](https://github.com/fmtlib/fmt) >= v7, to provide flexible and type-safe output formatting
 - [`CLI11`](https://github.com/CLIUtils/CLI11) >= v1.9.1, to provide coherent handling of command line arguments
 - [`ANTLR4`](https://www.antlr.org/) >= v4.13.1, required to implement various grammars (e.g. NETA)
-- [`Java`](https://www.java.com/) >= v11, required to build ANTLR4
+- [`Java`](https://www.java.com/) >= v11, required to build ANTLR4 grammars
 
 Satisfying these dependencies is enough to build the serial version. For the parallel and GUI versions additional libraries are required, detailed in the following sections.
 

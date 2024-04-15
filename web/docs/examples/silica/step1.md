@@ -12,7 +12,7 @@ We'll be setting up our silica system using atomic (ionic) species, rather than 
 
 {{< tip text="Atom types created in this way are named after the symbol of the relevant element." />}}
 
-This creates an "empty" atom type in the table, and which we'll now set some useful interaction parameters.
+This creates an empty atom type in the table, and which we'll now set some useful interaction parameters.
 
 {{< action type="edit" text="Change the \"Charge\" of the new atom type to `2`" />}}
 {{< action type="edit" text="Change the \"SR Form\" to `LJ` to request a Lennard-Jones short-range potential for the atom type" />}}

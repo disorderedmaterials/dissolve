@@ -12,9 +12,9 @@ Our new layer contains the following modules:
 
 | Module | Purpose |
 |--------|---------|
-| {{< module "atomShake" >}} | Performs standard Monte Carlo moves on individual atoms |
+| {{< module "AtomShake" >}} | Performs standard Monte Carlo moves on individual atoms |
 | {{< module "MD" >}} | Performs a number of molecular dynamics steps, evolving the system according to Newton's equations of motion |
-| {{< module "energy" >}} | Calculates the total energy, including contributions from intramolecular terms if present |
+| {{< module "Energy" >}} | Calculates the total energy, including contributions from intramolecular terms if present |
 
 Selecting any module in the list on the left will show its full options in the panel on the right - select the {{< module "AtomShake" >}} to see its list of options. {{< module "AtomShake" >}} performs standard atomic Monte Carlo on one or more target configurations. It tries to move each atom in the configuration in turn, randomly displacing it by a certain amount, and checking the energy to see if that displacement constituted a 'good' move. As such it has options like **TargetAcceptanceRate**, which governs the number of moves that can / should be accepted in any one cycle, and **StepSize** which indicates the maximum distance by which an atom can be moved in any translation attempt (over time this will change automatically to give the acceptance ratio requested).
 

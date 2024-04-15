@@ -25,13 +25,13 @@ Leave this option selected and click {{< gui-button text="Next" icon="arrowright
 There will be no conflicts between the proposed atom types and existing ones defined in the main simulation (since there aren't any) so click {{< gui-button text="Next" icon="arrowright" >}}{{< /step >}}
 
 {{< step >}}
-We will let Dissolve apply intramolecular terms to the whole species, so leave this section as it is and click {{< gui-button text="Next" icon="arrowright" >}}{{< /step >}}
+We will let Dissolve apply intramolecular terms to the whole species (there aren't any anyway), so leave this section as it is and click {{< gui-button text="Next" icon="arrowright" >}}{{< /step >}}
 
 {{< step >}} Dissolve will check to see if there are naming conflicts between new and existing master terms, just as it did for the atom types. There will be none as, again, we had no master terms to start with, so click {{< gui-button text="Finish" icon="true" >}} to exit the wizard {{< /step >}}
 
 {{< tip text="For more complicated (molecular) species the wizard also handles how _intra_-molecular terms are generated. You also may have to deal with potential naming conflicts with existing terms in the main simulation, which the _Add Forcefield Terms_ wizard will help you resolve." />}}
 
-If you now return to the {{< gui-tab type="ff" text="Forcefield" >}} tab you will see in the **Atom Types / Pair Potentials** section that we have an atom type for our argon atom which contains the necessary interaction parameters. The short range type (_SR Form_ in the table) specifies the functional form of the van der Waals interaction parameters for each atom type, which in our case is `LJGeometric` indicating that the parameters reflect a standard Lennard-Jones potential utilising [geometric combination rules]({{< ref "short-range" >}}). Those parameters (`epsilon` and `sigma`) are shown in the _SR Parameters_ column and describe how our argon atoms will interact with each other in the simulation.
+If you now return to the {{< gui-tab type="ff" text="Forcefield" >}} tab you will see in the **Atom Types** section that we have an atom type for our argon atom which contains the necessary interaction parameters. The short range type (_SR Form_ in the table) specifies the functional form of the van der Waals interaction parameters for each atom type, which in our case is `LJGeometric` indicating that the parameters reflect a standard Lennard-Jones potential utilising [geometric combination rules]({{< ref "short-range" >}}). Those parameters (`epsilon` and `sigma`) are shown in the _SR Parameters_ column and describe how our argon atoms will interact with each other in the simulation.
 
 {{< warn text="Atom types are strictly associated with a chemical element, and can only be applied to atoms of the same element." />}}
 
