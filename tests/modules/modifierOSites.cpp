@@ -24,15 +24,20 @@ TEST_F(ModifierOSitesModuleTest, Simple)
         "M//TotalOSites", {"dissolve/input/modifierTotalOSites.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-8));
 }
-TEST_F(ModifierOSitesModuleTest, TotalOSites)
+TEST_F(ModifierOSitesModuleTest, TotalOSitesWBondLengths)
 {
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/modifierOSites-test2.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
     EXPECT_TRUE(systemTest.checkData1D(
-        "M//OTypes", {"dissolve/input/modifierOSites-test2.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        "M//MFOBondLength", {"dissolve/input/FOBondLengthTest.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-8));
     EXPECT_TRUE(systemTest.checkData1D(
-        "M//TotalOSites",
-        {"dissolve/input/modifierTotalOSites-test2.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-8));
+        "M//MNBOBondLength", {"dissolve/input/NBOBondLengthTest.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        1.0e-8));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "M//MBOBondLength", {"dissolve/input/BOBondLengthTest.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        1.0e-8));
 }
+
 } // namespace UnitTest
