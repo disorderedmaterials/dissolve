@@ -135,7 +135,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>162</width>
+                <width>292</width>
                 <height>639</height>
                </rect>
               </property>
@@ -392,8 +392,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>407</width>
-                <height>675</height>
+                <width>296</width>
+                <height>625</height>
                </rect>
               </property>
               <attribute name="icon">
@@ -482,7 +482,7 @@
                      <string>Remove any water molecules or coordinated oxygens without hydrogens</string>
                     </property>
                     <property name="text">
-                     <string>Remove water and coordinated oxygen</string>
+                     <string>Remove water and coordinated oxygens</string>
                     </property>
                    </widget>
                   </item>
@@ -598,8 +598,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>407</width>
-                <height>675</height>
+                <width>276</width>
+                <height>93</height>
                </rect>
               </property>
               <attribute name="icon">
@@ -691,8 +691,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>407</width>
-                <height>675</height>
+                <width>96</width>
+                <height>78</height>
                </rect>
               </property>
               <attribute name="icon">
@@ -728,6 +728,14 @@
               </layout>
              </widget>
              <widget class="QWidget" name="DetectedSpeciesToolBoxPage">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>96</width>
+                <height>78</height>
+               </rect>
+              </property>
               <attribute name="icon">
                <iconset resource="main.qrc">
                 <normaloff>:/general/icons/threeSpecies.svg</normaloff>:/general/icons/threeSpecies.svg</iconset>
@@ -757,6 +765,14 @@
               </layout>
              </widget>
              <widget class="QWidget" name="SupercellToolBoxPage">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>167</width>
+                <height>142</height>
+               </rect>
+              </property>
               <attribute name="icon">
                <iconset resource="main.qrc">
                 <normaloff>:/general/icons/configuration.svg</normaloff>:/general/icons/configuration.svg</iconset>

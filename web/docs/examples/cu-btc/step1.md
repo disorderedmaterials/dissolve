@@ -22,7 +22,7 @@ The default options get us most of the way there, but it's instructive to take a
 
 Before we proceed, make sure that the default Cu-BTC groups (`Global/Default`, `B/Default`, and `A/1`) are the only ones enabled.
 
-Now, if you look closely at the crystal structure you'll see "extra" oxygen atoms attached to the copper sites:
+Now, if you look closely at the crystal structure you'll see some oxygen atoms floating around in space...
 
 {{< cimage src="../cu-btc-default-zoom.png" caption="Dangling oxygens on Cu sites" >}}
 
@@ -30,9 +30,9 @@ These are in fact from coordinated water molecules present when the crystal stru
 
 {{< action type="mouse" >}}Open the {{<gui-button icon="delete" text="Structure Cleanup">}} section{{< /action >}}
 
-The _Structure Cleanup_ page has several options for cleaning up various aspects of the structure we currently have, for example removing free atoms/ions. We want to use the option to remove water molecules, which will also remove terminal oxygen atoms based on the assumption that hydrogen positions were not available in the CIF. So:
+The _Structure Cleanup_ page has several options for cleaning up various aspects of the structure we currently have, for example removing free atoms/ions. There is a specific option for removing water molecules (_Remove water and coordinated oxygens_) which will also remove terminal oxygen atoms based on the assumption that hydrogen positions were not available in the CIF. Ours are just free atoms, however, so:
 
-{{< action type="check" >}}Enable the _Remove water and coordinated oxygen_ option{{< /action >}}
+{{< action type="check" >}}Enable the _Remove unbound atoms_ option{{< /action >}}
 
 You should see those terminal oxygen atoms disappear from the structure, leaving us with a "pure" Cu-BTC framework. There are a couple of pages left in the wizard which allow us to create a supercell from the unit cell,
 

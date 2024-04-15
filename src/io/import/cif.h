@@ -119,7 +119,7 @@ class CIFHandler
     // Bonding tolerance, if calculating bonding rather than using CIF definitions
     double bondingTolerance_{1.1};
     // Whether to prevent metallic bonding
-    bool preventMetallicBonds_{false};
+    bool preventMetallicBonds_{true};
     // Whether to remove free atomic moieties in clean-up
     bool removeAtomics_{false};
     // Whether to remove water and coordinated oxygen atoms in clean-up
