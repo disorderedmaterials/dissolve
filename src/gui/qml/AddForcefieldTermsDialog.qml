@@ -11,6 +11,7 @@ Page {
     palette.buttonText: palette.active.text
     palette.disabled.buttonText: palette.disabled.text
     visible: true
+    spacing: 10
 
     AddForcefieldDialogModel {
         id: dialogModel
