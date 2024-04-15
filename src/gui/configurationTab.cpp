@@ -10,6 +10,7 @@
 #include "gui/helpers/comboPopulator.h"
 #include "gui/keywordWidgets/producers.h"
 #include "main/dissolve.h"
+#include <QInputDialog>
 #include <QMessageBox>
 
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
@@ -129,13 +130,20 @@ void ConfigurationTab::updateDensityLabel()
     }
 }
 
+void ConfigurationTab::updateTemperatureLabel()
+{
+    if (!configuration_)
+        ui_.TemperatureLabel->setText("N/A");
+    else
+    {
+        ui_.TemperatureLabel->setText(QString::number(configuration_->temperature()).append(QString(" K")));
+    }
+}
+
 // Update controls in tab
 void ConfigurationTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
-
-    // Temperature
-    ui_.TemperatureLabel->setText(QString::number(configuration_->temperature()).append(QString(" K")));
 
     // Current Box
     const auto *box = configuration_->box();
@@ -148,6 +156,7 @@ void ConfigurationTab::updateControls()
     boxInfo += QString("<b>&#x3B3;:</b>  %1&#xb0;").arg(box->axisAngles().z);
     ui_.CurrentBoxFrame->setToolTip(boxInfo);
     updateDensityLabel();
+    updateTemperatureLabel();
 
     // Populations
     ui_.AtomPopulationLabel->setText(QString::number(configuration_->nAtoms()));
@@ -218,6 +227,19 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     // Update
     updateControls();
     dissolveWindow_->updateStatusBar();
+}
+
+void ConfigurationTab::on_TemperatureToolButton_clicked(bool checked)
+{
+    auto ok = false;
+    auto temperature = QInputDialog::getDouble(this, "Set temperature for configuration",
+                                               "Enter the temperature (K) to apply to this configuration",
+                                               configuration_->temperature(), 0.0, 1000000.0, 3, &ok);
+    if (!ok)
+        return;
+
+    configuration_->setTemperature(temperature);
+    updateTemperatureLabel();
 }
 
 // Density units changed

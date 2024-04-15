@@ -56,7 +56,6 @@ add_library(
   simpleGlobalPotential.cpp
   sizeFactor.cpp
   sum1D.cpp
-  temperature.cpp
   transmute.cpp
   add.h
   addPair.h
