@@ -23,6 +23,7 @@ enum ModuleType
     DataTest,
     Energy,
     EPSR,
+    EPSRManager,
     ExportCoordinates,
     ExportPairPotentials,
     ExportTrajectory,

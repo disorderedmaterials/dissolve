@@ -14,6 +14,7 @@
 #include "modules/dAngle/dAngle.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
+#include "modules/epsrManager/epsrManager.h"
 #include "modules/exportCoordinates/exportCoordinates.h"
 #include "modules/exportPairPotentials/exportPairPotentials.h"
 #include "modules/exportTrajectory/exportTrajectory.h"
@@ -55,6 +56,7 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<EnergyModule>(ModuleTypes::Energy, "Calculate the total energy of a Configuration", "Forcefield");
     registerProducer<EPSRModule>(ModuleTypes::EPSR, "Refine interatomic potentials in a manner consistent with EPSR",
                                  "Forcefield");
+    registerProducer<EPSRManagerModule>(ModuleTypes::EPSRManager, "Manage the EPSR module with more control", "Forcefield");
     registerProducer<ExportCoordinatesModule>(ModuleTypes::ExportCoordinates,
                                               "Export coordinates for one or more Configurations", "Export");
     registerProducer<ExportPairPotentialsModule>(ModuleTypes::ExportPairPotentials, "Export pair potentials", "Export");

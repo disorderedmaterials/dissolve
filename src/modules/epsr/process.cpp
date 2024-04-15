@@ -28,6 +28,9 @@
 // Run set-up stage
 bool EPSRModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
+    // Default to applying generated potentials - an associated EPSRManager may turn this off in its own setup stage
+    applyPotentials_ = true;
+
     // Check for exactly one Configuration referenced through target modules
     targetConfiguration_ = nullptr;
     std::optional<double> rho;
@@ -143,12 +146,17 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
                      expansionFunctionTypes().keyword(expansionFunction_));
     Messenger::print("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", ncoeffp, pSigma2_);
     if (modifyPotential_)
-        Messenger::print(
-            "EPSR: Perturbations to interatomic potentials will be generated and applied with a frequency of {}.\n",
-            *modifyPotential_);
+    {
+        Messenger::print("EPSR: Perturbations to interatomic potentials will be generated with a frequency of {}.\n",
+                         *modifyPotential_);
+        if (applyPotentials_)
+            Messenger::print("EPSR: Global pair potentials will be modified.\n");
+        else
+            Messenger::print("EPSR: Current potentials will not be modified.\n");
+    }
     else
-        Messenger::print("EPSR: Perturbations to interatomic potentials will be generated only (current potentials "
-                         "will not be modified).\n");
+        Messenger::warn("EPSR: Fluctuation coefficients and resulting potentials will not be modified.\n");
+
     Messenger::print("EPSR: Range for potential generation is {} < Q < {} Angstroms**-1.\n", qMin_, qMax_);
     Messenger::print("EPSR: Weighting factor used when applying fluctuation coefficients is {}\n", weighting_);
     if (fluctuationSmoothing_)

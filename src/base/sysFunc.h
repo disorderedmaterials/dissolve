@@ -91,6 +91,8 @@ class DissolveSys
 
         return uniqueName;
     }
+    // Return string with all occurrences of specified character stripped out
+    static std::string strip(const std::string_view s, char toStrip = ' ');
 
     /*
      * String Vectors
