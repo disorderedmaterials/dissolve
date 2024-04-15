@@ -12,6 +12,7 @@ First, the 1-ethyl-3-methylimidazolium cation, which we'll call "EMIM" for short
 
 {{< action type="menu" text="Species &#8680; Import &#8680; From XYZ..." />}}
 {{< step text="Choose the `emim.xyz` file." />}}
+{{<action type="edit">}}Rename the species to {{< gui-tab type="species" text="EMIM" >}} by double-clicking on the tab name{{</action>}}
 
 Once you've selected the xyz file Dissolve will allow you to perform any last minute edits to the structure should you need to. The principal reason might be to correct the bonding between atoms, which Dissolve automatically calculates when the xyz file is read in.
 
@@ -34,6 +35,7 @@ Second, the acetate anion, which we'll refer to as "OAc".
 {{< action type="menu" text="Species &#8680; Import &#8680; From XYZ..." />}}
 {{< step text="Choose the `oac.xyz` file." />}}
 {{< action type="mouse">}}Again, the structure in the file is fine as-is, so click {{< gui-button text="OK" >}} to accept the structure.{{< /step >}}
+{{<action type="edit">}}Rename the species to {{< gui-tab type="species" text="Acetate" >}} by double-clicking on the tab name{{</action>}}
 
 {{< cimage src="../oac.png" caption="The imported OAc anion structure" >}}
 

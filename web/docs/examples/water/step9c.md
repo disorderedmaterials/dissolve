@@ -20,11 +20,12 @@ We will define axes on our centre-of-mass site. In general, a system of referenc
 
 When defining a site within Dissolve it is your responsibility to provide atom indices for the origin and the representative _x_ and _y_ directions - Dissolve will do the rest. Thus:
 
-{{< action type="tabs" >}}Go to the {{< gui-tab text="Water" type="Species" >}} species tab and open the **Analysis Sites** section {{< /action >}}
-{{< action type="mouse" text="If you don't already have the `COM` site, click-drag with the left mouse button in the species viewer and draw a box around the whole molecule to select it, then press the **Create** button in the toolbar, and rename the new site to `COM`." />}}
-{{< step text="Make sure the `COM` site is selected in the list on the left" />}}
-{{< action type="mouse" >}}Select the oxygen atom and click the {{< gui-button text="X Axis" >}} button in the viewer toolbar{{< /action >}}
-{{< action type="mouse" >}}Select either one of the hydrogen atoms and click the {{< gui-button text="Y Axis" >}} button in the viewer toolbar{{< /action >}}
+{{< action type="tabs" >}}Open the {{< gui-tab text="Water" type="Species" >}} species tab and go to the {{<gui-button icon="site" text="Sites">}} section {{< /action >}}
+{{< action type="check" text="Make sure the `COM` site we created in **Step 9a** is selected in the list on the left" />}}
+{{< action type="mouse" >}}Select the oxygen atom{{< /action >}}
+{{< action type="mouse" >}}Right-click the oxygen atom and click {{< gui-button text="Modify current site" >}} &#8680; {{< gui-button text="Set X-Axis Atoms" >}}{{< /action >}}
+{{< action type="mouse" >}}Select either one of the hydrogen atoms{{< /action >}}
+{{< action type="mouse" >}}Right-click the selected hydrogen atom and click {{< gui-button text="Modify current site" >}} &#8680; {{< gui-button text="Set Y-Axis Atoms" >}}{{< /action >}}
 
 You'll note that, as soon as you pressed the {{< gui-button text="Y Axis" >}} button a set of axes appeared in the site viewer, letting you know that your definition is complete and showing you how your system of axes are oriented.
 
@@ -41,18 +42,19 @@ Along with the calculation of the SDF, it is useful to have the actual average g
 | {{< module "AvgMol" >}} | Calculates the average geometry of the parent species around a specified reference site |
 | {{< module "SDF" >}} | Calculates the spatial density function of a particular site around a central reference site |
 
-As the name implies, the {{< module "AvgMol" >}}) module will provide us with the average species geometry which we can use as a reference when we plot the spatial density function calculated from the {{< module "SDF" >}} module. The {{< module "SDF" >}} module takes two sites as input - the central site A about which the distribution of site B will be calculated. For both modules, the principal (central) site must have a system of axes defined.
+As the name implies, the {{< module "AvgMol" >}} module will provide us with the average species geometry which we can use as a reference when we plot the spatial density function calculated from the {{< module "SDF" >}} module. The {{< module "SDF" >}} module takes two sites as input - the central site A about which the distribution of site B will be calculated. For both modules, the principal (central) site must have a system of axes defined.
 
 Let's proceed and set up the two modules in the layer. First, {{< module "AvgMol" >}}:
 
-{{< action type="mouse" >}}Select the {{< module "AvgMol" >}} module to display its options{{< /action >}}
-{{< action type="edit" text="Find the **Control** settings group, and set the target **Site** for the average molecule calculation to be `COM` (it will be the only one available, since it is the only one which has a set of axes defined)" />}}
+{{< action type="mouse" >}}Select the {{< module "AvgMol" >}} module to display its {{<gui-button icon="options" text="Options">}}{{< /action >}}
+{{< action type="mouse" text="Find the **Control** settings group, and click the **Site** option." />}}
+{{< action type="edit">}}Set the {{<gui-button icon="species" text="Species">}} to **Water** and the {{<gui-button icon="site" text="Site">}} to **COM** for the average molecule calculation (it will be the only one available, since it is the only one which has a set of axes defined){{</action>}}
 
 And now {{< module "SDF" >}}:
 
-{{< action type="mouse" >}}Select the {{< module "SDF" >}} module to display its options{{< /action >}}
-{{< action type="edit" text="In the **Control** settings group set the central **SiteA** to `COM` (again, the only one available)" />}}
-{{< action type="mouse" text="Set the surrounding **SiteB** to `O`" />}}
+{{< action type="mouse" >}}Select the {{< module "SDF" >}} module to display its {{<gui-button icon="options" text="Options">}}{{< /action >}}
+{{< action type="check" text="In the **Control** settings group set the central **SiteA** to `COM`" />}}
+{{< action type="check" text="Set the surrounding **SiteB** to `O`" />}}
 
 * * *
 {{< button pos="left" text="Previous Step" path="step9b/">}}

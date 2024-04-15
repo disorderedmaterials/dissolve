@@ -21,17 +21,21 @@ Since we set up our simulation to use intramolecular master terms (via the **Add
 
 First of all, let's stop the simulation from running:
 
-{{< action type="menu" text="Simulation &#8680; Pause" />}}
+{{< action type="menu" text="Simulation &#8680; Stop" />}}
 ...or...
 {{< action type="key" text="Esc" />}}
 
 And now let's make the changes to our intramolecular terms:
 
-{{< action type="tabs" >}}Go to the {{< gui-tab text="Forcefield" type="ff" >}} tab and find the **Master Terms** section{{< /action >}}
-{{< action type="edit" text="Change the equilibrium bond length ('eq') of the `HW-OW` bond term from 1.0 to 0.976 &#8491;" />}}
-{{< action type="edit" text="Change the equilibrium angle ('eq') of the `HW-OW-HW` angle term from 113.24 to 107.134 &deg;" />}}
+{{< action type="tabs" >}}Go to the {{< gui-tab text="Forcefield" type="ff" >}} tab and find the {{< gui-button text="Master Terms" >}} tab{{< /action >}}
+{{< action type="edit" text="In the **Bonds** section, change the equilibrium bond length ('eq') of the `HW-OW` bond term from 1.0 to 0.976 &#8491;" />}}
+{{< action type="edit" text="In the **Angles** section the equilibrium angle ('eq') of the `HW-OW-HW` angle term from 113.24 to 107.134 &deg;" />}}
 
-Now run the simulation for a little longer and let the species adjust to their new geometry, and you should see a marked improvement in the comparison of the D<sub>2</sub>O total G(r) and structure factor.
+Now run the simulation for a little longer to let the species adjust to their new geometry:
+
+{{< action type="key" text="Ctrl-R" />}}
+
+You should see a marked improvement in the comparison of the D<sub>2</sub>O total G(r) and structure factor.
 
 {{< cimage src="../equilibrated-d2o-adjusted-gr.png" caption="Simulated (black), Fourier-transformed from simulated F(Q) (green), and experimental (red) G(r) for the equilibrated water (D<sub>2</sub>O) simulation with adjusted intramolecular parameters" >}}
 

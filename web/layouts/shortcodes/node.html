@@ -1,2 +1,7 @@
 {{ $type := index .Params 0 }}{{ $pageName := printf "%snode" $type }}
-<a href="{{ ref .Page $pageName }}"><span class="node-link node-link-{{ lower $type }}">{{ $type }}</span></a>
+<a href="{{ ref .Page $pageName }}" class="icon-text-container node-link">
+    <img src="/img/nodes/{{$type}}.svg"></img>
+    <span>
+        {{ $type}}
+    </span>
+</a>

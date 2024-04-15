@@ -26,19 +26,20 @@ We will now need to set a few parameters in the {{< module "NeutronSQ" >}} modul
 
 The {{< module "NeutronSQ" >}} module will use isotopic natural abundances to calculate the neutron weights for all species unless we tell it otherwise. We'll first define the correct isotopologue for our argon species, and then tell {{< module "NeutronSQ" >}} to use it. The experimental measurement was made using Ar<sup>36</sup> since its coherent scattering cross-section (24.9 fm) is considerably higher than that of the naturally-occurring mix (1.91 fm).
 
-{{< action type="tabs" >}}Go to the {{< gui-tab type="species"  text="Ar" >}} species tab, **Isotopologues** section{{< /action >}}
-{{< action type="mouse">}}Click {{< gui-button text="Add" >}} to create a new isotopologue definition assigning the default (natural) isotope to each atom type present in the species{{< /action >}}
+{{< action type="tabs" >}}Go to the {{< gui-tab type="species"  text="Ar" >}} species tab{{< /action >}}
+{{<action type="groups">}}Click on the {{<gui-tab text="Isotopologues" type="threeSpecies">}} section{{</action>}}
+{{< action type="mouse">}}Click {{< gui-button text="Add" icon="Add" >}} to create a new isotopologue definition assigning the default (natural) isotope to each atom type present in the species{{< /action >}}
 {{< action type="edit" text="Change the entry for the Ar atom type from `Natural (bc = 1.909 fm)` to `36 (bc = 24.9 fm)`" />}}
 {{< action type="edit" text="For sanity's sake, you may also want to double-click on the name of the isotopologue in order to change it to something more meaningful ('Ar36' perhaps)" />}}
 
 Now we'll go to our calculation layer and set the isotopologue for our {{< module "NeutronSQ" >}} module:
 
-{{< action type="tabs" >}}Go to the {{< gui-tab type="layer" text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
+{{< action type="tabs" >}}Go to the {{< gui-tab type="layer" text="G(r) / Neutron S(Q)" >}} layer tab{{< /action >}}
 {{< action type="groups" >}}Select the {{< module "NeutronSQ" >}} module and open its main {{< gui-button text="Options" icon="options" >}}{{< /action >}}
 {{< step >}}The **Isotopologue** keyword currently shows that all species will "Default to Natural" isotopologues{{< /step >}}
 {{< action type="mouse" >}}Click the button for the **Isotopologue** keyword to open its full options{{< /action >}}
-{{< step >}}Press the {{< gui-button text="Species" type="add" >}} button to populate the list with the default isotopic selection for each species{{< /step >}}
-{{< step text="Change the isotopologue for the argon species from `Natural` to `Ar36` (assuming that you changed the name earlier!)"/>}}
+{{< action type="mouse" >}}Press the {{< gui-button text="Species" icon="add" >}} button to populate the list with the default isotopic selection for each species{{< /action >}}
+{{< action type="edit" text="Change the isotopologue for the argon species from `Natural` to `Ar36` (assuming that you changed the name earlier!)"/>}}
 
 {{< tip text="The 'Natural' isotopologue for each species is defined internally by Dissolve, and is always available. It does not appear in the list of defined isotopologues on the species tab." />}}
 
@@ -46,7 +47,7 @@ Now we'll go to our calculation layer and set the isotopologue for our {{< modul
 
 The {{< module "NeutronSQ" >}} module itself looks after any related experimental reference data that we might wish to compare our calculated data to, and which we'll now set up.
 
-{{< action type="tabs" >}}Go to the {{< gui-tab type="layer" text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
+{{< action type="tabs" >}}Go to the {{< gui-tab type="layer" text="G(r) / Neutron S(Q)" >}} layer tab{{< /action >}}
 {{< action type="groups" >}}Select the {{< module "NeutronSQ" >}} module and look for the **Reference Data** settings group{{< /action >}}
 {{< action type="edit" >}}For the **Reference** keyword open the file `yarnell.sq`, and set the format of the data to `xy`{{< /action >}}
 

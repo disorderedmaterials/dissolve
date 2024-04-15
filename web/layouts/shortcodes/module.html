@@ -1,2 +1,4 @@
 {{ $type := index .Params 0 }}
-<a href="{{ ref .Page $type }}"><span class="module-link module-link-{{ lower $type }}">{{ $type }}</span></a>
+<a href="{{ ref .Page $type }}" class="icon-text-container module-link">
+    <img src="/img/modules/{{$type}}.svg"></img>
+    <span>{{ $type | title }}</span></a>

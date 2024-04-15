@@ -12,6 +12,8 @@ With our analysis modules set up we are now ready to restart the simulation and 
 
 When you're ready, restart the simulation and we can look at the quantities start to form as the data accumulates. Brief overviews of what to expect are given below.
 
+{{<action type="key" text="Ctrl + R" />}}
+
 ### Centre-of-Mass RDF
 
 The {{< module "SiteRDF" >}} module output shows a strong peak at around 2.8 &#8491; for the COM&ndash;COM distance in the liquid. Integrating the curve up to the first minimum (approximately 3.4 &#8491;) gives us a first shell coordination number of around 4.7 molecules (displayed in the panel below the graph).
@@ -31,10 +33,12 @@ There are three graphs on display here - the B&middot;&middot;&middot;C g(r) (to
 
 To make sense of the spatial distribution function output by the {{< module "SDF" >}} module we will need to set the central reference molecule to the average molecule we also requested, and adjust the cutoff to get a sensible surface.
 
+{{<action type="key" text="Esc" />}}
+
 {{< action type="tabs" >}}Go to the {{< gui-tab text="Analyse AvgMol/SDF" type="Layer" >}} layer {{< /action >}}
 {{< action type="mouse" >}}Click the {{< module "SDF" >}} module and go to the {{< gui-button text="Output" icon="output" >}} page{{< /action >}}
-{{< step text="Set the **Reference Molecule** to `COM@Water (AvgMol)`" />}}
-{{< step text="Change the **Lower** cutoff to 0.065" />}}
+{{< action type="edit" text="Set the **Reference Molecule** to `COM@Water (AvgMol)`" />}}
+{{< action type="edit" text="Change the **Lower** cutoff to 0.065" />}}
 
 {{< tip text="Cutoffs for the surface display are given in terms of the number density per cubic &#8491; of the surrounding molecule / site in the simulation box. In the present example we have 1000 water molecules in a cubic box of side length 31.0723 &#8491;, so the number density of water molecules is **1000 &divide; 31.0723<sup>3</sup> = 0.033**. The cutoff we will set below therefore gives a surface that represents twice the bulk density of water molecules, i.e. a higher than normal probability of finding water molecules." />}}
 

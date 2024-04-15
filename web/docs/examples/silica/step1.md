@@ -6,13 +6,13 @@ type: docs
 
 We'll be setting up our silica system using atomic (ionic) species, rather than creating an explicitly bound network. So, we need two atomic species for this simulation - an oxygen, and a silicon. First, however, we'll create some suitable atom types by hand - this is instead of applying a built-in forcefield or loading one in from elsewhere.
 
-{{< action type="tabs" text="**Forcefield** tab, **Atom Types** section" />}}
-{{< action type="mouse" >}}Click the {{< gui-button icon="add" text="Add" >}} button located at the top-right{{< /action >}}
-{{< step text="Select silicon in the periodic table dialog" />}}
+{{< action type="tabs">}}Select the {{<gui-tab type="ff" text="Forcefield">}} tab{{</action>}}
+{{< action type="mouse" >}}In the **Atom Types** group, click the {{< gui-button icon="add" text="Add" >}} button located at the top-right{{< /action >}}
+{{< action type="mouse" text="Select silicon in the periodic table dialog" />}}
 
 {{< tip text="Atom types created in this way are named after the symbol of the relevant element." />}}
 
-This creates for us an "empty" atom type in the table, and which we'll now set some useful interaction parameters.
+This creates an empty atom type in the table, and which we'll now set some useful interaction parameters.
 
 {{< action type="edit" text="Change the \"Charge\" of the new atom type to `2`" />}}
 {{< action type="edit" text="Change the \"SR Form\" to `LJ` to request a Lennard-Jones short-range potential for the atom type" />}}

@@ -23,8 +23,9 @@ Because of the stronger intermolecular interactions manifesting in a system of i
 For the present system a value of about 17 is optimal, and we'll put this in straight away:
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="Refine (EPSR)">}} layer tab{{< /action >}}
-{{< action type="mouse">}}Select the {{< module "EPSR" >}} module and show its {{< gui-button icon="output" text="Output" >}} tab{{< /action >}}
-{{< action type="edit" text="Change the **EReq** value to `17`" />}}
+{{< action type="mouse">}}Select the {{< module "EPSR" >}} module{{< /action >}}
+{{< action type="edit">}}In the module {{<gui-button icon="options" text="Options">}} change the **EReq** value to `17.0`{{</action>}}
+{{< action type="mouse">}}Click the {{< gui-button icon="output" text="Output" >}} tab{{< /action >}}
 
 Running the simulation for another 1000 iterations should give us a good refined structure:
 

@@ -18,9 +18,9 @@ Now let's set it up.
 {{< action type="edit" text="Change the **RangeAB** _Min_ and _Max_ values to 1.2 and 2.1 respectively, and corresponding to the range of the Si&ndash;O bonds" />}}
 {{< action type="edit" text="Change the **RangeBC** _Min_ and _Max_ values to 1.2 and 2.1 as well" />}}
 {{< action type="edit" text="Change the **AngleRange** _BinWidth_ to 5.0" />}}
-{{< action type="edit" text="Select the `Si` site for `SiteA` and `SiteC`" />}}
-{{< action type="edit" text="Select the `O` site for `SiteB`" />}}
-{{< action type="edit" text="Enable the **ExcludeSameSiteAC** option, as otherwise we'll get a spike at zero in the resulting angle data" />}}
+{{< action type="check" text="Select the `Si` site for `SiteA` and `SiteC`" />}}
+{{< action type="check" text="Select the `O` site for `SiteB`" />}}
+{{< action type="mouse" text="Enable the **ExcludeSameSiteAC** option, as otherwise we'll get a spike at zero in the resulting angle data" />}}
 
 
 Now we can start Dissolve running again and look at the calculated data:

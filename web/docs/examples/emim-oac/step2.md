@@ -8,7 +8,7 @@ Of course we need a forcefield to describe our ionic liquid, and we'll focus on 
 
 ### EMIM Cation
 
-{{< action type="tabs">}}Go to the {{< gui-tab type="species" text="1-Ethyl-3-methylimidazolium" >}} species tab{{< /action >}}
+{{< action type="tabs">}}Go to the {{< gui-tab type="species" text="EMIM" >}} species tab{{< /action >}}
 {{< action type="menu" text="Species &#8680; Add Forcefield Terms..." />}}
 {{< step >}} From the available forcefields choose `PCL2019/Cations` and click {{< gui-button text="Next" icon="arrowright" >}}{{< /step >}}
 {{< step >}} We will use the default _Determine atom types for all atoms_ option to add atom types for every atom in the species, so click {{< gui-button text="Next" icon="arrowright" >}}{{< /step >}}
@@ -31,10 +31,11 @@ Now for the anion:
 
 At this point you will see that there is a conflict between one of the atom types Dissolve wants to apply to the OAc species (`HC`) and those that we've just created on the cation. While from a forcefield perspective the atom type `HC` is transferable between the cation and the anion, when we're thinking about refining pair potentials against experimental data it is probably wise to separate it into two types so that we can allow both to vary independently in the refinement process. So:
 
-{{< action type="edit" text="Double-click the `HC` entry in the atom types list and change the name to `HCA` which will resolve the conflict." />}}
+{{< action type="mouse" text="Select the `HC` entry in the atom types list" />}}
+{{< action type="edit">}}Click the {{<gui-button text="Suffix">}} and type in `A`. Click {{<gui-button text="Ok">}} to change the name from `HC` to `HCA` to resolve the naming conflict. {{</action>}}
 {{< action type="mouse">}}Click {{< gui-button text="Next" icon="arrowright" >}} to continue{{< /action >}}
 {{< step >}} For the intramolecular terms we want to assign them and reduce to master terms (the default settings) so click {{< gui-button text="Next" icon="arrowright" >}} to proceed{{< /step >}}
-{{< step >}} There will be no conflicts with existing master terms, so click {{< gui-button text="Finish" icon="true" >}} to exit the wizard {{< /step >}}
+{{< step >}}Click {{< gui-button text="Finish" icon="true" >}} to exit the wizard {{< /step >}}
 
 * * *
 {{< button pos="left" text="Previous Step" path="step1/">}}

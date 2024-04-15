@@ -14,7 +14,7 @@ After just a few tens of steps you should see that the {{< module "MD" >}} is do
 
 If we take a look at the output of the {{< module "NeutronSQ" >}} we can see how our simulation compares to the experimental data:
 
-{{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
+{{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="G(r) / Neutron S(Q)" >}} layer tab{{< /action >}}
 {{< action type="mouse">}}Select the {{< module "NeutronSQ" >}} module and go to its {{< gui-button icon="output" text="Output">}} tab{{< /action >}}
 
 {{< cimage src="../baseline-fq.png" caption="Comparison of simulated (black) and reference (red) total structure factors" >}}

@@ -29,6 +29,8 @@ xattr -rd com.apple.quarantine  Dissolve-GUI-<Processor>.app/Contents/MacOS/diss
 chmod +x  Dissolve-GUI-<Processor>.app/Contents/MacOS/dissolve-gui
 ```
 
+You will also need to have [FTGL](https://formulae.brew.sh/formula/ftgleforge.net/projects/ftgl/) installed on your system, which is used for rendering fonts. The libraries should be installed using homebrew, as pre-built Dissolve is linked to the homebrew directories.
+
 ### Linux
 
 

@@ -7,19 +7,16 @@ Now let's generate our atomic species, assign the atom types that we created in 
 
 {{< action type="menu" text="Species &#8680; Create &#8680; Atomic..." />}}
 {{< step text=" Select silicon from the periodic table" />}}
-{{< action type="tabs" text=" **Si** species tab, **Forcefield** section" />}}
-{{< action type="edit" text="In the table of atoms change the _AtomType_ for the atom to `Si`" />}}
-{{< action type="tabs" text="**Si** species tab, **Analysis Sites** section" />}}
-{{< action type="mouse">}}Select the silicon atom in the viewer, and click {{< gui-button text="Create" >}} in the toolbar to create a site {{< /action >}}
+{{< action type="edit">}}In the {{<gui-tab text="Atoms" type="species">}} section, change the _AtomType_ (AT) for the atom to `Si`{{</action>}}
+{{< action type="mouse">}}With the atom selected in the table, right click the atom in the viewer and click {{< gui-button text="Create site from" >}} &#8680; {{< gui-button text="Atoms" >}}{{</action>}}
 
 And now, the oxygen:
 
 {{< action type="menu" text="Species &#8680; Create &#8680; Atomic..." />}}
 {{< step text="Select oxygen from the periodic table" />}}
-{{< action type="tabs" text="**O** species tab, **Forcefield** section" />}}
-{{< action type="edit" text="In the table of atoms change the _AtomType_ for the atom to `O`" />}}
-{{< action type="tabs" text="**O** species tab, **Analysis Sites** section" />}}
-{{< action type="mouse">}}Select the oxygen atom in the viewer, and click {{< gui-button text="Create" >}} in the toolbar to create a site {{< /action >}}
+{{< action type="tabs">}}Go to the {{<gui-tab type="ff" text="Forcefield">}} tab{{</action>}}
+{{< action type="edit">}}In the {{<gui-tab text="Atoms" type="species">}} section, change the _AtomType_ (AT) for the atom to `O`{{</action>}}
+{{< action type="mouse">}}With the atom selected in the table, right click the atom in the viewer and click {{< gui-button text="Create site from" >}} &#8680; {{< gui-button text="Atoms" >}}{{</action>}}
 
 
 * * *

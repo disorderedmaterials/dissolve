@@ -22,7 +22,7 @@ A new editor window opens in which we can create our new species.
 
 Finally, let's rename it:
 
-{{< step text="Double-click on the new species tab's title and change the name from `NewSpecies` to `Water`" />}}
+{{< action type="edit" text="Double-click on the new species tab's title and change the name from `NewSpecies` to `Water`" />}}
 
 
 {{< cimage src="../badwater.png" caption="A very badly drawn water molecule" >}}
@@ -36,11 +36,11 @@ You'll now have a water molecule that might look like its gone ten rounds with M
 {{< step >}} For the intramolecular terms we want to assign them and reduce to master terms, which again are the default settings, so hit {{< gui-button text="Next" icon="arrowright" >}} again {{< /step >}}
 {{< step >}} Dissolve will check to see if there are naming conflicts between new and existing master terms, just as it did for the atom types. There will be none as, again, we had no master terms to start with, so click {{< gui-button text="Finish" icon="true" >}} to exit the wizard {{< /step >}}
 
-Take a look at the **Forcefield** section for the species and you'll see that we now have atom types assigned to our atoms, and suitable intramolecular terms assigned to the bonds and angle. Note that the functional forms of the interactions are actually the names of master terms, and are preceded with `@` to distinguish them as such (e.g. `@HW-OW-HW`). Master terms are global and can be referenced by one or more species, and are particularly useful when molecules possess high symmetry as there is no need to repeat the same parameter definitions. Furthermore, as we shall see later, adjusting species geometry by modifying the master terms is much easier than modifying all the individual values within a species.
+Take a look at the {{<gui-tab text="Forcefield" type="ff">}} section for the species and you'll see that we now have atom types assigned to our atoms, and suitable intramolecular terms assigned to the bonds and angle. Note that the functional forms of the interactions are actually the names of master terms, and are preceded with `@` to distinguish them as such (e.g. `@HW-OW-HW`). Master terms are global and can be referenced by one or more species, and are particularly useful when molecules possess high symmetry as there is no need to repeat the same parameter definitions. Furthermore, as we shall see later, adjusting species geometry by modifying the master terms is much easier than modifying all the individual values within a species.
 
 We can now clean up the geometry of our molecule by doing a quick geometry optimisation.
 
-{{< action type="mouse" >}}Click the \"medic\" icon ![](/img/viewer_medic.png) in the species viewer toolbar to optimise the geometry of the molecule{{< /action >}}
+{{< action type="mouse" >}}Click the {{<gui-button icon="medic" text="medic">}} icon in the species viewer toolbar to optimise the geometry of the molecule{{< /action >}}
 
 * * *
 {{< button pos="left" text="Back to Overview" path="">}}

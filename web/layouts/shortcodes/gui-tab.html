@@ -1,1 +1,12 @@
-{{ $type := .Get "type"  }}<style> .gui-tab-{{ $type }}::before { background-image: url(/img/tabs_{{ $type }}.svg); background-size: cover; } </style><span class="gui-tab gui-tab-{{ $type }}">{{ if .Get "text" }}{{ .Get "text" | safeHTML | markdownify }}{{ else }}{{ $type | safeHTML | markdownify }}{{ end }}</span>
+{{ $type := .Get "type" }}
+&nbsp;<span class="icon-text-container gui-tab">
+    <img src="/img/{{$type}}.svg"></img>
+    <span>
+        {{ if .Get
+        "text"
+        }}{{ .Get "text" |
+        safeHTML |
+        markdownify }}{{ else
+        }}{{ $type | safeHTML | markdownify }}{{ end }}
+    </span>
+</span>&nbsp;

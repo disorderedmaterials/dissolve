@@ -17,8 +17,10 @@ A new editor window opens in which we can draw the rough geometry and connectivi
 {{< step text="Change the drawing element from `C` to `H` by clicking on the button next to the draw mode icon" />}}
 {{< step text="Connect a single hydrogen atom to each carbon by left-click-dragging from each carbon site" />}}
 {{< tip text="You can create bonds by left-click-dragging between two existing atoms." />}}
+Your final species will look something like this:
+{{< cimage src="../badbenzene.png" caption="A very badly drawn benzene molecule" >}}
 {{< step >}} Click {{< gui-button text="OK" >}} to close the editor and create the new species {{< /step >}}
-{{< action type="edit" text="Double-click on the new species' tab and change its name to `Benzene`" />}}
+{{< action type="edit">}}Double-click on the {{<gui-tab type="species" text="NewSpecies">}} tab and change its name to {{<gui-tab type="species" text="Benzene">}}{{</action>}}
 
 ### Apply a Forcefield
 
@@ -31,12 +33,12 @@ Time to make it a little prettier!  We'll assign a standard forcefield to it, an
 {{< step >}} There will be no conflicts with existing atom types as there are no atom types already defined, so click {{< gui-button text="Next" icon="arrowright" >}}{{< /step >}}
 {{< step >}} For the intramolecular terms we want to assign them and reduce to master terms (the default settings) so click {{< gui-button text="Next" icon="arrowright" >}} to proceed{{< /step >}}
 {{< step >}} There will be no conflicts with existing master terms, so click {{< gui-button text="Finish" icon="true" >}} to exit the wizard {{< /step >}}
-{{< iconaction type="viewer_medic" text="Click the \"medic\" icon in the species viewer toolbar to optimise the geometry of the molecule using the forcefield we've just applied" />}}
+{{< action type="mouse">}}Click the {{<gui-button icon="medic" text="Medic">}}icon in the species viewer toolbar to optimise the geometry of the molecule using the forcefield we've just applied{{</action>}}
 
 
 We will also get ahead here and edit the master terms to reflect the geometry observed in the experimental data, since the forcefield we've applied here doesn't get things quite right.
 
-{{< action type="tabs" >}} Go to the {{< gui-tab type="ff"  text="Forcefield" >}} tab, **Master Terms** section{{< /action >}}
+{{< action type="tabs" >}} Go to the {{< gui-tab type="ff"  text="Forcefield" >}} tab, {{< gui-button text="Master Terms" >}} section{{< /action >}}
 {{< action type="edit" text="In the **Bonds** table change the equilibrium bond length parameter (**eq**) of the 'CA-HA' bond term from `1.08` to `1.09` &#8491;" />}}
 {{< action type="edit" text="Change the equilibrium bond length of the 'CA-CA' bond term from `1.40` to `1.38` &#8491;" />}}
 
@@ -44,7 +46,7 @@ We will also get ahead here and edit the master terms to reflect the geometry ob
 
 Since some of the experimental data was measured on deuterated benzene, we'll need to create a suitable C<sub>6</sub>D<sub>6</sub> isotopologue:
 
-{{< action type="tabs" >}} Go to the {{< gui-tab type="species"  text="Benzene" >}} species tab, **Isotopologues** section {{< /action >}}
+{{< action type="tabs" >}} Go to the {{< gui-tab type="species"  text="Benzene" >}} species tab, and click on the {{< gui-button icon="threeSpecies"  text="Isotopologues" >}} section {{< /action >}}
 {{< action type="mouse" >}}Click {{< gui-button icon="add" text="Add" >}} to create a new isotopologue for the species{{< /action >}}
 {{< action type="edit" text="Change the isotope for the HA atom type from `Natural (bc = -3.739 fm)` to `2 (bc = 6.671 fm)` by clicking on the isotopologue entry and choosing from the drop-down menu" />}}
 {{< action type="edit" text="Change the name of the isotopologue to 'C6D6' (double-click on its name to do so)" />}}
@@ -58,11 +60,13 @@ We'll locate our analysis site at the centre of the benzene ring and give it som
 
 {{< cimage src="../site.png" caption="Origin (purple), x-axis (red) and y-axis (blue) atoms defining the oriented benzene site" >}}
 
-{{< action type="tabs" >}} Go to the {{< gui-tab type="species"  text="Benzene" >}} species tab, **Analysis Sites** section {{< /action >}}
-{{< action type="mouse" text="Select all six carbon atoms by clicking on them in the viewer (you may need to click _reset view_ first, to see the whole molecule)" />}}
-{{< step >}}Click {{< gui-button text="Create" >}} in the viewer toolbar to create a new site with the origin at the center between these six atoms{{< /step >}}
-{{< action type="mouse" >}}Now select the single carbon atom and click {{< gui-button text="X Axis" >}} in the toolbar to define the direction of the _x_ axis{{< /action >}}
-{{< step >}}Finally, select the pair of adjacent carbon atoms and click {{< gui-button text="Y Axis" >}} in the toolbar to define the direction of the _y_ axis {{< /step >}}
+{{< action type="tabs" >}} Go to the {{< gui-tab type="species"  text="Benzene" >}} species tab{{< /action >}}
+{{< action type="mouse" text="Select all six carbon atoms by shift-clicking on them in the viewer (you may need to click _reset view_ first, to see the whole molecule)" />}}
+{{< action type="mouse" >}}Right-click the selected atoms and click {{< gui-button text="Create site from" >}} &#8680; {{< gui-button text="Atoms" >}} This creates a new site with the Carbon atoms as the **Origin Atoms**{{< /action >}}
+{{< action type="mouse" >}}Now select the single carbon atom (as depicted in the image above) and right click it.{{< /action >}}
+{{< action type="mouse" >}}Click {{< gui-button text="Modify current site" >}} &#8680; {{< gui-button text="Set X-Axis Atoms" >}} to define the direction of the _x_ axis{{< /action >}}
+{{< action type="mouse" >}}Finally, shift-click the pair of adjacent carbon atoms and right click on them{{< /action >}} 
+{{< action type="mouse" >}}Click {{< gui-button text="Modify current site" >}} &#8680; {{< gui-button text="Set Y-Axis Atoms" >}} to define the direction of the _y_ axis {{< /step >}}
 {{< action type="edit" text="Rename the site to `COG` by double-clicking its name" />}}
 
 

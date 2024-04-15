@@ -8,16 +8,16 @@ Restart the simulation and monitor the progress of the r-factors and eReq value 
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="Refine (EPSR)">}} layer tab{{< /action >}}
 {{< action type="mouse">}}Select the {{< module "EPSR" >}} module and show its {{< gui-button icon="output" text="Output" >}} tab{{< /action >}}
-{{< action type="mouse" text="Click the _R Factors_ tab to display it" />}}
+{{< action type="mouse">}}Click the {{<gui-button text="R Factors" >}}tab to display the errors{{</action>}}
 
-You'll see here a graph of the individual r-factors for the three datasets, as well as the total (summed) R-factor. The current "strength" of applied potential is shown at the bottom-left of the plot (**Current EReq""). Once you've been running for a few hundred steps the ereq value should have increased to 3.0, and the fits might look something like this (on the _F(Q)_ tab of the {{< module "EPSR" >}} module):
+You'll see here a graph of the individual R-factors for the three datasets, as well as the total (summed) R-factor. The current "strength" of applied potential is shown at the bottom-left of the plot (**Current EReq**). Once you've been running for a few hundred steps the ereq value should have increased to 3.0, and the fits might look something like this (on the {{<gui-button text="F(Q)" >}} tab of the {{< module "EPSR" >}} module):
 
 {{< cimage src="../ereq3.png" caption="Comparison of reference vs simulated structure factors at ereq=3.0" >}}
 
 The fits should be really quite good, but you might observe some "ripples" in the simulated structure factors at lower $Q$ values, as is the case in the image above. These do not arise from structure in the system, but rather are high-frequency Fourier ripples caused by truncation of the partial radial distribution functions, made worse in the present case because our system isn't that large (100 molecules). We can remove some of that effect by introducing a window function into the Fourier transform when generating our structure factors:
 
 First, stop the simulation if it's running:
-{{< action type="key" text="Escape" />}}
+{{< action type="key" text="Esc" />}}
 
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="RDF / Neutron S(Q)">}} layer tab{{< /action >}}

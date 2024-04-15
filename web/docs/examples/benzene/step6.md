@@ -9,7 +9,7 @@ Time to refine. We'll need two processing layers - one to calculate the g(r) and
 As noted in the introduction we have neutron-weighted experimental data, so we need a layer to calculate g(r) and neutron-weighted S(Q) for our three experimental datasets:
 
 {{< action type="menu" text="Layer &#8680; Create &#8680; Correlations &#8680; RDF and Neutron S(Q)" />}}
-{{< action type="mouse">}}Open the module palette for the layer by clicking the {{< gui-button icon="palette" text="Show Palette" >}} button at the bottom left of the tab{{< /action >}}
+{{< action type="mouse">}}Open the module palette for the layer by clicking the {{< gui-button icon="palette" text="Show Avaliable Modules" >}} button at the bottom left of the tab{{< /action >}}
 {{< step >}}Drag two additional {{< module "NeutronSQ" >}} modules from the _Correlation Functions_ category to the module list, placing them after the existing {{< module "NeutronSQ" >}} module{{< /step >}}
 
 We need to set the instrumental broadening in the {{< module "SQ" >}} module first:

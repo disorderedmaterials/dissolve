@@ -7,9 +7,12 @@ type: docs
 To create our silica configuration we'll use the "relative random mix" generator as a basis.
 
 {{< action type="menu" text="Configuration &#8680; Create..." />}}
-{{< action type="mouse" >}}Choose both species and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
-{{< action type="mouse" >}}Leave the configuration type as _Mixture_ and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
-{{< action type="mouse" >}}Leave the box style as _Fixed Geometry, Undefined Size_ but set the angle **&gamma;** to `120` degrees (this will give us a monoclinic box) and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+{{< action type="mouse" >}}
+Choose both species and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+{{< action type="mouse" >}}
+Leave the configuration type as _Mixture_ and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+{{< action type="mouse" >}}
+Leave the box style as _Fixed Geometry, Undefined Size_ but set the angle **&gamma;** to `120` degrees (this will give us a monoclinic box) and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
 
 Now we need to set up a relative mix of our two species:
 
