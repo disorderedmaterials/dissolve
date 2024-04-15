@@ -6,17 +6,7 @@ weight: 1
 
 ### Create a Configuration
 
-Let's now set up a configuration for our simulation. We'll focus on just the Cu-BTC itself which means we essentially want to create a configuration with one copy of the Cu-BTC species in it, and which takes on its unit cell. Dissolve has a specific option for creating this kind of system:
-
-{{< action type="menu" text="Configuration &#8680; Create..." />}}
-{{< action type="mouse" >}}Choose the framework species and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
-{{< action type="mouse" >}}The configuration type is selected as _Framework + Mixture_ so press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
-{{< action type="mouse" >}}The box style is now restricted to _Fixed Geometry, Fixed Size_ and the box lengths and angles can't be changed, so press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
-{{< action type="mouse" >}}There is nothing to define on the species page, so click {{< gui-button text="Finish" icon="true" >}}{{< /action >}}
-{{< action type="edit" text="Double-click on the configuration tab's title and change its name to `MOF`" />}}
-
-
-If you click on the generator's {{< node "Add" >}} node for the framework species and look at its control parameters you will see that the **BoxAction** parameter is `Set`, meaning that the configuration's box is set from that defined in the species.
+When importing the original CIF file a configuration was automatically created, so in this example we're ready to go.  It might be instructive to look at the nodes in the generator, specifcally the {< node "Add" >}} node for the framework species. If you look at its control parameters you will see that the **BoxAction** parameter is `Set`, meaning that the configuration's box is set from that defined in the species.
 
 ### Set up Layers
 

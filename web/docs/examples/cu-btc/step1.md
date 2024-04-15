@@ -38,7 +38,7 @@ You should see those terminal oxygen atoms disappear from the structure, leaving
 
 {{< action type="mouse" >}}Click {{< gui-button text="ok">}} to complete the dialog and generate the Cu-BTC species{{< /action >}}
 
-Our new species not only contains the atoms of the framework, but also the unit cell (or supercell) definition - later on we can use this as our configuration's box rather than defining it ourselves.
+Our new species not only contains the atoms of the framework, but also the unit cell (or supercell) definition. You will also see that a Configuration has been added which represents the unit cell by referencing the periodic species.
 
 * * *
 {{< button pos="left" text="Back to Overview" path="./">}}
