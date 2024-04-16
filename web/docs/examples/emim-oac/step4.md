@@ -29,6 +29,7 @@ The final thing to do is change the temperature (our experimental data was measu
 {{< action type="mouse">}}Drag the {{<node "SizeFactor">}} node into the Node list{{< /action >}}
 {{< action type="groups">}}Select the {{< node "SizeFactor">}} node{{< /action >}}
 {{< action type="edit" >}}Set the SizeFactor to `10.0`{{< /action >}}
+{{< action type="mouse" >}}Click {{< gui-button text="Generate" icon="repeat" >}} to update the configuration.{{< /action >}}
 
 {{< cimage src="../initial_box.png" caption="Initial box of 1-ethyl-3-methylimidazolium acetate" >}}
 

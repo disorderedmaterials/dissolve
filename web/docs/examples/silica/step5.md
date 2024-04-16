@@ -9,6 +9,7 @@ To ensure that our silicon and oxygen atoms are well mixed and distributed we're
 {{< action type="tabs">}} Go to the {{<gui-tab text="Bulk" type="configuration">}} configuration tab {{</action >}}
 {{< action type="edit">}}Select the {{<node "Temperature">}} node {{</action>}}
 {{< action type="edit" text="Change the **Temperature** to 2000.0" />}}
+{{< action type="mouse" >}}Click {{< gui-button text="Generate" icon="repeat" >}} to update the configuration.{{< /action >}}
 
 
 Now we'll run for 250 steps:
@@ -27,6 +28,8 @@ We'll now reset the temperature of the box to 298 K and run a second equilibrati
 {{< action type="tabs">}} Go to the {{<gui-tab text="Bulk" type="configuration">}} configuration tab {{</action >}}
 {{< action type="edit">}}Select the {{<node "Temperature">}} node {{</action>}}
 {{< action type="edit" text="Change the **Temperature** to 298.0" />}}
+{{< action type="mouse" >}}Click {{< gui-button text="Generate" icon="repeat" >}} to update the configuration.{{< /action >}}
+
 {{< action type="menu" text="Simulation &#8680; Run For..." />}}
 {{< step >}}Set the number of steps to 250 and click {{< gui-button text="OK" >}}{{< /step >}}
 

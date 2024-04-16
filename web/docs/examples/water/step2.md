@@ -21,6 +21,7 @@ Before we proceed we'll tweak the temperature of the configuration.
 
 {{< action type="mouse">}}Select the {{<node "Temperature">}} node{{</action>}}
 {{< action type="edit" text="Set the **Temperature** to 298 K" />}}
+{{< action type="mouse" >}}Click {{< gui-button text="Generate" icon="repeat" >}} to update the configuration.{{< /action >}}
 
 {{< cimage src="../waterbox.png" caption="Initial, randomised water box containing 1000 molecules" >}}
 

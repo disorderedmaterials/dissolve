@@ -6,7 +6,7 @@ weight: 1
 
 ### Create a Configuration
 
-When importing the original CIF file a configuration was automatically created, so in this example we're ready to go.  It might be instructive to look at the nodes in the generator, specifcally the {< node "Add" >}} node for the framework species. If you look at its control parameters you will see that the **BoxAction** parameter is `Set`, meaning that the configuration's box is set from that defined in the species.
+When importing the original CIF file a configuration was automatically created, so in this example we're ready to go.  It might be instructive to look at the nodes in the generator, specifcally the {{< node "Add" >}} node for the framework species. If you look at its control parameters you will see that the **BoxAction** parameter is `Set`, meaning that the configuration's box is set from that defined in the species.
 
 ### Set up Layers
 
