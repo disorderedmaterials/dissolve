@@ -124,8 +124,6 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
     dissolve_ = &dissolve;
 
     temporaryDissolve_ = std::make_unique<Dissolve>(temporaryCoreData_);
-    auto node = dissolve_->coreData().serialiseMaster();
-    temporaryCoreData_.deserialiseMaster(node);
     masters_ = std::make_unique<MasterTermTreeModel>();
     masters_->setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(), temporaryCoreData_.masterTorsions(),
                       temporaryCoreData_.masterImpropers());
