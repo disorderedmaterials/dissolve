@@ -58,6 +58,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     ui_.TargetedPotentialsFrame->setHidden(true);
     connect(ui_.ConfigurationButtonGroup, SIGNAL(buttonToggled(QAbstractButton *, bool)), this,
             SLOT(buttonGroupToggled(QAbstractButton *, bool)));
+    connect(ui_.TemperatureToolButton, SIGNAL(clicked(bool)), dissolveWindow_,
+            SLOT(on_ConfigurationAdjustTemperatureAction_triggered(bool)));
 }
 
 /*
@@ -227,11 +229,6 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     // Update
     updateControls();
     dissolveWindow_->updateStatusBar();
-}
-
-void ConfigurationTab::on_TemperatureToolButton_clicked(bool checked)
-{
-    dissolveWindow_->on_ConfigurationAdjustTemperatureAction_triggered(checked);
 }
 
 // Density units changed

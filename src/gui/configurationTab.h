@@ -90,7 +90,5 @@ class ConfigurationTab : public QWidget, public MainTab
     void on_GenerateButton_clicked(bool checked);
     // Density units changed
     void on_DensityUnitsCombo_currentIndexChanged(int index);
-    // Temperature button pressed
-    void on_TemperatureToolButton_clicked(bool checked);
     void buttonGroupToggled(QAbstractButton *button, bool checked);
 };
