@@ -43,14 +43,14 @@ TEST_F(ForcefieldTabTest, PairPotentials)
 
     EXPECT_EQ(pairs.data(pairs.index(0, 0)).toString().toStdString(), "CA");
     EXPECT_EQ(pairs.data(pairs.index(0, 1)).toString().toStdString(), "CA");
-    EXPECT_EQ(pairs.data(pairs.index(0, 2)).toString().toStdString(), "LJGeometric");
+    EXPECT_EQ(pairs.data(pairs.index(0, 2)).toString().toStdString(), "LennardJones126");
     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, 3)).toDouble(), -0.115);
     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, 4)).toDouble(), -0.115);
     EXPECT_EQ(pairs.data(pairs.index(0, 5)).toString().toStdString(), "epsilon=0.29288 sigma=3.55");
 
     EXPECT_EQ(pairs.data(pairs.index(2, 0)).toString().toStdString(), "HA");
     EXPECT_EQ(pairs.data(pairs.index(2, 1)).toString().toStdString(), "HA");
-    EXPECT_EQ(pairs.data(pairs.index(2, 2)).toString().toStdString(), "LJGeometric");
+    EXPECT_EQ(pairs.data(pairs.index(2, 2)).toString().toStdString(), "LennardJones126");
     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(2, 3)).toDouble(), 0.115);
     EXPECT_DOUBLE_EQ(pairs.data(pairs.index(2, 4)).toDouble(), 0.115);
     EXPECT_EQ(pairs.data(pairs.index(2, 5)).toString().toStdString(), "epsilon=0.12552 sigma=2.42");
