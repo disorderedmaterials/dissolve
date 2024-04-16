@@ -45,7 +45,7 @@ InteractionPotential<Functions1D> ShortRangeFunctions::combine(const Interaction
         switch (srI.form())
         {
             case (Form::None):
-                break;
+                return {Functions1D::Form::None};
             case (Form::LennardJones):
                 /*
                  * Combine parameters (Lorentz-Berthelot):
