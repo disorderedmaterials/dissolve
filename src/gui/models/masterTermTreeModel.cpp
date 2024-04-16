@@ -35,22 +35,22 @@ void MasterTermTreeModel::setData(std::vector<std::shared_ptr<MasterBond>> &bond
 
 void MasterTermTreeModel::setBondIconFunction(std::function<bool(std::string_view termName)> func)
 {
-    bondModel_.setIconFunction(func);
+    bondModel_.setIconFunction(std::move(func));
 }
 
 void MasterTermTreeModel::setAngleIconFunction(std::function<bool(std::string_view termName)> func)
 {
-    angleModel_.setIconFunction(func);
+    angleModel_.setIconFunction(std::move(func));
 }
 
 void MasterTermTreeModel::setTorsionIconFunction(std::function<bool(std::string_view termName)> func)
 {
-    torsionModel_.setIconFunction(func);
+    torsionModel_.setIconFunction(std::move(func));
 }
 
 void MasterTermTreeModel::setImproperIconFunction(std::function<bool(std::string_view termName)> func)
 {
-    improperModel_.setIconFunction(func);
+    improperModel_.setIconFunction(std::move(func));
 }
 
 void MasterTermTreeModel::prefixNames(QList<QModelIndex> indices, QString prefix)
