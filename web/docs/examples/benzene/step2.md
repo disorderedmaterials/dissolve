@@ -23,7 +23,6 @@ In anticipation of some bad contacts:
 {{< action type="mouse">}}Drag the {{< node "SizeFactor" >}} node into the **Procedure** section to add it{{< /action >}}
 {{< action type="edit" text="Set the value for the _Size Factor_ to 10.0" />}}
 
-
 Finally, before we move on, we will have to reduce our pair potential range from the default of 15 &#8491; since this is larger than the half the maximum width of our simulation box.
 
 {{< action type="tabs">}} Go to the {{< gui-tab type="ff" text="Forcefield" >}} tab, {{<gui-button text="Pair Potentials">}} section{{< /action >}}

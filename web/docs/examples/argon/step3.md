@@ -45,7 +45,7 @@ In the {{< node "Add" >}} node note how we have referenced the "rho" parameter f
 
 Finally, we need to set the correct temperature for the configuration.
 
-{{< action type="groups">}}Select the {{< node "Temperature" >}} node{{</action>}}
+{{< action type="mouse">}}On the configuration viewer toolbar, click the {{< gui-button icon="temperature" text="Temperature" >}} button{{</action>}}
 {{< action type="edit" text="Set the **Temperature** to 85 K to match that of the experimental measurement" />}}
 
 {{< tip >}}You can recreate a configuration at any time by clicking the {{< gui-button text="Generate" icon="repeat" >}} button, but bear in mind that other quantities calculated by modules may also need to be cleared. Remove all of this data to begin a 'clean' run with the **Clear Module Data** option in the **Simulation** menu.{{< /tip >}}

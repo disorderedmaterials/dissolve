@@ -10,6 +10,7 @@
 #include "gui/helpers/comboPopulator.h"
 #include "gui/keywordWidgets/producers.h"
 #include "main/dissolve.h"
+#include <QInputDialog>
 #include <QMessageBox>
 
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
@@ -57,6 +58,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     ui_.TargetedPotentialsFrame->setHidden(true);
     connect(ui_.ConfigurationButtonGroup, SIGNAL(buttonToggled(QAbstractButton *, bool)), this,
             SLOT(buttonGroupToggled(QAbstractButton *, bool)));
+    connect(ui_.TemperatureToolButton, SIGNAL(clicked(bool)), dissolveWindow_,
+            SLOT(on_ConfigurationAdjustTemperatureAction_triggered(bool)));
 }
 
 /*
@@ -129,13 +132,20 @@ void ConfigurationTab::updateDensityLabel()
     }
 }
 
+void ConfigurationTab::updateTemperatureLabel()
+{
+    if (!configuration_)
+        ui_.TemperatureLabel->setText("N/A");
+    else
+    {
+        ui_.TemperatureLabel->setText(QString::number(configuration_->temperature()).append(QString(" K")));
+    }
+}
+
 // Update controls in tab
 void ConfigurationTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
-
-    // Temperature
-    ui_.TemperatureLabel->setText(QString::number(configuration_->temperature()).append(QString(" K")));
 
     // Current Box
     const auto *box = configuration_->box();
@@ -148,6 +158,7 @@ void ConfigurationTab::updateControls()
     boxInfo += QString("<b>&#x3B3;:</b>  %1&#xb0;").arg(box->axisAngles().z);
     ui_.CurrentBoxFrame->setToolTip(boxInfo);
     updateDensityLabel();
+    updateTemperatureLabel();
 
     // Populations
     ui_.AtomPopulationLabel->setText(QString::number(configuration_->nAtoms()));

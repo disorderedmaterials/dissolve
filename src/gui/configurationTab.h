@@ -71,6 +71,8 @@ class ConfigurationTab : public QWidget, public MainTab
     private:
     // Update density label
     void updateDensityLabel();
+    // Update temperature label
+    void updateTemperatureLabel();
 
     public:
     // Update controls in tab
