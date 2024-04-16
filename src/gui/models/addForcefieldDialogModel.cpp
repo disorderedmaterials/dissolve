@@ -421,5 +421,4 @@ void AddForcefieldDialogModel::assignIntramolecularTerms(const Forcefield *ff)
         if (!noMasterTerms_)
             modifiedSpecies_->reduceToMasterTerms(temporaryCoreData_, intramolecularRadio_ == Radio::Selected);
     }
-    return;
 }
