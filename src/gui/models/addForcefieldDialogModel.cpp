@@ -53,7 +53,8 @@ void AddForcefieldDialogModel::next()
             Q_EMIT assignErrors({});
             break;
         case AddForcefieldDialogModel::Page::AtomTypesPage:
-            if (!ff_) // No valud forcefield
+            // Must have a valid forcefield
+            if (!ff_)
                 return;
             modifiedSpecies_ = temporaryDissolve_->coreData().addSpecies();
             modifiedSpecies_->copyBasic(species_);
