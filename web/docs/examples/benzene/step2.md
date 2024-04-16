@@ -22,7 +22,6 @@ In anticipation of some bad contacts:
 {{< action type="groups">}}Click the {{< gui-button icon="palette" text="Show Available Nodes" >}} on the bottom-left of the window{{< /action >}}
 {{< action type="mouse">}}Drag the {{< node "SizeFactor" >}} node into the **Procedure** section to add it{{< /action >}}
 {{< action type="edit" text="Set the value for the _Size Factor_ to 10.0" />}}
-{{< action type="mouse" >}}Click {{< gui-button text="Generate" icon="repeat" >}} to update the configuration.{{< /action >}}
 
 Finally, before we move on, we will have to reduce our pair potential range from the default of 15 &#8491; since this is larger than the half the maximum width of our simulation box.
 

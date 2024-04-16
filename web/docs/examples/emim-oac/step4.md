@@ -23,13 +23,12 @@ We need to adjust our pair potential range which is currently set to 15 &#8491; 
 The final thing to do is change the temperature (our experimental data was measured at 323 K) and set a size factor for our box - since we have rings in our cation we need to apply a size factor during the initial equilibration to help prevent occurrences of interlocking rings.
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="configuration" text="Bulk" >}} configuration tab{{< /action >}}
-{{< action type="groups">}}Click the {{< node "Temperature">}} node{{< /action >}}
+{{< action type="mouse">}}On the configuration viewer toolbar, click the {{< gui-button icon="temperature" text="Temperature" >}} button{{</action>}}
 {{< action type="edit" >}}Set the **Temperature** to `323.0`{{< /action >}}
 {{< action type="groups">}}Click the {{< gui-button icon="palette" text="Show Avaliable Nodes">}} button{{< /action >}}
 {{< action type="mouse">}}Drag the {{<node "SizeFactor">}} node into the Node list{{< /action >}}
 {{< action type="groups">}}Select the {{< node "SizeFactor">}} node{{< /action >}}
 {{< action type="edit" >}}Set the SizeFactor to `10.0`{{< /action >}}
-{{< action type="mouse" >}}Click {{< gui-button text="Generate" icon="repeat" >}} to update the configuration.{{< /action >}}
 
 {{< cimage src="../initial_box.png" caption="Initial box of 1-ethyl-3-methylimidazolium acetate" >}}
 

@@ -7,10 +7,8 @@ type: docs
 To ensure that our silicon and oxygen atoms are well mixed and distributed we're going to "cook" the box at a high temperature to start with.
 
 {{< action type="tabs">}} Go to the {{<gui-tab text="Bulk" type="configuration">}} configuration tab {{</action >}}
-{{< action type="edit">}}Select the {{<node "Temperature">}} node {{</action>}}
+{{< action type="mouse">}}On the configuration viewer toolbar, click the {{< gui-button icon="temperature" text="Temperature" >}} button{{</action>}}
 {{< action type="edit" text="Change the **Temperature** to 2000.0" />}}
-{{< action type="mouse" >}}Click {{< gui-button text="Generate" icon="repeat" >}} to update the configuration.{{< /action >}}
-
 
 Now we'll run for 250 steps:
 
@@ -26,9 +24,8 @@ You can open the {{< module "NeutronSQ" >}} module in the _RDF / Neutron S(Q)_ l
 We'll now reset the temperature of the box to 298 K and run a second equilibration.
 
 {{< action type="tabs">}} Go to the {{<gui-tab text="Bulk" type="configuration">}} configuration tab {{</action >}}
-{{< action type="edit">}}Select the {{<node "Temperature">}} node {{</action>}}
+{{< action type="mouse">}}On the configuration viewer toolbar, click the {{< gui-button icon="temperature" text="Temperature" >}} button{{</action>}}
 {{< action type="edit" text="Change the **Temperature** to 298.0" />}}
-{{< action type="mouse" >}}Click {{< gui-button text="Generate" icon="repeat" >}} to update the configuration.{{< /action >}}
 
 {{< action type="menu" text="Simulation &#8680; Run For..." />}}
 {{< step >}}Set the number of steps to 250 and click {{< gui-button text="OK" >}}{{< /step >}}
