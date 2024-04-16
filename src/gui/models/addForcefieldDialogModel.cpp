@@ -413,8 +413,8 @@ void AddForcefieldDialogModel::assignIntramolecularTerms(const Forcefield *ff)
         if (intramolecularRadio_ == Radio::Selected)
             flags += Forcefield::SelectionOnlyFlag;
 
+        // Try to assign terms across the species
         if (!ff->assignIntramolecular(modifiedSpecies_, flags))
-            // Assigning failed
             return;
 
         // Reduce to master terms?
