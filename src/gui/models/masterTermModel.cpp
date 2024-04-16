@@ -53,7 +53,7 @@ QVariant MasterTermModel::data(const QModelIndex &index, int role) const
     if (role == MasterTermModelData::Roles::Icon && iconFunction_)
         return QIcon(iconFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString())
                          ? ":/general/icons/warn.svg"
-                         : ":/general/icons/warn.svg");
+                         : ":/general/icons/true.svg");
 
     if (role == MasterTermModelData::Roles::Display || role == MasterTermModelData::Roles::Edit)
         return getTermData(index.row(), static_cast<MasterTermModelData::DataType>(index.column()));
