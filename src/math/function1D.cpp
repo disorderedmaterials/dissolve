@@ -257,12 +257,13 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
 // Return enum option info for forms
 EnumOptions<Functions1D::Form> Functions1D::forms()
 {
-    return EnumOptions<Functions1D::Form>("Function1D", {{Functions1D::Form::None, "None"},
-                                                         {Functions1D::Form::Gaussian, "Gaussian"},
-                                                         {Functions1D::Form::ScaledGaussian, "ScaledGaussian"},
-                                                         {Functions1D::Form::OmegaDependentGaussian, "OmegaDependentGaussian"},
-                                                         {Functions1D::Form::GaussianC2, "GaussianC2"},
-                                                         {Functions1D::Form::LennardJones126, "LennardJones126"}});
+    return EnumOptions<Functions1D::Form>("Function1D",
+                                          {{Functions1D::Form::None, "None"},
+                                           {Functions1D::Form::Gaussian, "Gaussian", 1},
+                                           {Functions1D::Form::ScaledGaussian, "ScaledGaussian", 2},
+                                           {Functions1D::Form::OmegaDependentGaussian, "OmegaDependentGaussian", 1},
+                                           {Functions1D::Form::GaussianC2, "GaussianC2", 2},
+                                           {Functions1D::Form::LennardJones126, "LennardJones126", 2}});
 }
 
 // Return parameters for specified form
