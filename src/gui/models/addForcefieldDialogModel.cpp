@@ -105,6 +105,7 @@ void AddForcefieldDialogModel::next()
             index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
             break;
         case AddForcefieldDialogModel::Page::IntramolecularPage:
+            assignIntramolecularTerms(ff_);
             Q_EMIT mastersChanged();
             index_ = AddForcefieldDialogModel::Page::MasterTermsPage;
             break;
