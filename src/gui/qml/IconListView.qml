@@ -33,8 +33,8 @@ ListView {
             anchors.bottom: label.bottom
             anchors.left: parent.left
             anchors.top: label.top
-            source: icon ? "qrc:/general/icons/warn.svg" : "qrc:/general/icons/true.svg"
             height: 10
+            source: icon ? "qrc:/general/icons/warn.svg" : "qrc:/general/icons/true.svg"
             width: height
         }
         D.Text {

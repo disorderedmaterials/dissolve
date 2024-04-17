@@ -10,8 +10,8 @@ Page {
     font.pointSize: 10
     palette.buttonText: palette.active.text
     palette.disabled.buttonText: palette.disabled.text
-    visible: true
     spacing: 4
+    visible: true
 
     AddForcefieldDialogModel {
         id: dialogModel
