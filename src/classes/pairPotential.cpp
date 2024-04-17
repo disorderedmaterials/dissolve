@@ -30,6 +30,7 @@ PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ, con
     : includeAtomTypeCharges_(false), nameI_(nameI), nameJ_(nameJ), interactionPotential_(potential),
       uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
 {
+    potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
 }
 
 // Return enum option info for CoulombTruncationScheme
