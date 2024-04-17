@@ -7,6 +7,7 @@
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "math/integrator.h"
+#include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
@@ -97,6 +98,32 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
                 }
             }
         }
+
+    auto &dataRunningCN = processingData.realise<SampledData1D>("RunningCNTest", name(), GenericItem::InRestartFileFlag);
+    std::vector<double> runningCN;
+
+    // Accumulate instantaneous binValues
+    auto instBinValues = histAB.data();
+
+    // Normalise Data
+    DataOperator1D normaliserInstBinValues(instBinValues);
+
+    // Normalise by A site population
+    normaliserInstBinValues.divide(double(a.sites().size()));
+
+    auto sum = 0.0;
+    std::transform(instBinValues.values().begin(), instBinValues.values().end(), instBinValues.values().begin(),
+                   [&](const auto &currentBin)
+                   {
+                       sum += currentBin;
+                       return sum;
+                   });
+
+    // Add normalised data
+    dataRunningCN += instBinValues;
+
+    // Create the display data
+    processingData.realise<SampledData1D>("RunningCN", name(), GenericItem::InRestartFileFlag) = dataRunningCN;
 
     // Save RDF data?
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataRDF, exportFileAndFormat_, moduleContext.processPool()))

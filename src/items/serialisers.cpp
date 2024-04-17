@@ -111,6 +111,7 @@ GenericItemSerialiser::GenericItemSerialiser()
     registerSerialiser<NeutronWeights>(simpleSerialise<NeutronWeights>);
     registerSerialiser<PartialSet>(simpleSerialise<PartialSet>);
     registerSerialiser<PartialSetAccumulator>(simpleSerialise<PartialSetAccumulator>);
+    registerSerialiser<SampledData1D>(simpleSerialise<SampledData1D>);
     registerSerialiser<SampledDouble>(simpleSerialise<SampledDouble>);
     registerSerialiser<SampledVector>(simpleSerialise<SampledVector>);
     registerSerialiser<Vec3<int>>(

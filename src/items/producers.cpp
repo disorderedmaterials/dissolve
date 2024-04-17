@@ -46,6 +46,7 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<NeutronWeights>("NeutronWeights");
     registerProducer<PartialSet>("PartialSet");
     registerProducer<PartialSetAccumulator>("PartialSetAccumulator");
+    registerProducer<SampledData1D>("SampledData1D");
     registerProducer<SampledDouble>("SampledDouble");
     registerProducer<SampledVector>("SampledVector");
     registerProducer<Vec3<int>>("Vec3<int>");
