@@ -36,7 +36,8 @@ linkTitle = "Packages"
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon=" fab fa-apple" title="Mac OS" %}}
-{{< releaselink target="GUI" urlSuffix=".dmg" textSuffix="DMG" >}}
+{{< releaselink target="GUI" urlSuffix="-X64.dmg" textSuffix="DMG (Intel)" >}}
+{{< releaselink target="GUI" urlSuffix="-ARM64.dmg" textSuffix="DMG (Silicon)" >}}
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fab fa-windows" title="Windows" %}}
