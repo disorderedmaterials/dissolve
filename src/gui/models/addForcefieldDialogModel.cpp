@@ -247,9 +247,6 @@ void AddForcefieldDialogModel::finalise()
         original.setCharge(modified.charge());
     }
 
-    // Assign intramolecular terms if we need to
-    assignIntramolecularTerms(ff_);
-
     // Copy intramolecular terms
     if (intramolecularRadio_ != Radio::None)
     {
