@@ -25,13 +25,13 @@ TEST(CellsTest, Basic)
     // Add atom types and LJ pair potentials (only one real one - between Ar and OW
     auto arType = coreData.addAtomType(Elements::Ar);
     arType->setName("Ar");
-    arType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
+    arType->interactionPotential().setForm(ShortRangeFunctions::Form::None);
     auto hType = coreData.addAtomType(Elements::H);
     hType->setName("HW");
-    hType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
+    hType->interactionPotential().setForm(ShortRangeFunctions::Form::None);
     auto oType = coreData.addAtomType(Elements::O);
     oType->setName("OW");
-    oType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
+    oType->interactionPotential().setForm(ShortRangeFunctions::Form::None);
 
     dissolve.addPairPotential(arType, arType)->interactionPotential().setForm(Functions1D::Form::None);
     dissolve.addPairPotential(hType, hType)->interactionPotential().setForm(Functions1D::Form::None);
@@ -66,11 +66,12 @@ TEST(CellsTest, Basic)
         i.setCoordinates(r);
     cfg->updateObjectRelationships();
 
-    // Prepare the main simulation, and update our specific Ar-OW potential
+    // Create an override potential to describe the Ar-OW interaction
+    dissolve.coreData().addPairPotentialOverride("Ar", "OW", PairPotentialOverride::PairPotentialOverrideType::Replace,
+                                                 {Functions1D::Form::LennardJones126, "epsilon=0.35 sigma=2.166"});
+
+    // Prepare the main simulation
     EXPECT_TRUE(dissolve.prepare());
-    auto *pp = dissolve.pairPotential(arType, oType);
-    pp->interactionPotential().setFormAndParameters(Functions1D::Form::LennardJones126, "epsilon=0.35 sigma=2.166");
-    pp->tabulate(dissolve.pairPotentialRange(), dissolve.pairPotentialDelta());
 
     // Test consistency of energy calculation with DL_POLY reference energies
 
