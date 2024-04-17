@@ -21,10 +21,10 @@ RadioButton {
 
             anchors.left: padding.right
             fillMode: Image.PreserveAspectFit
-            width: 16
             height: width
             opacity: control.enabled ? 1.0 : 0.3
             source: control.source
+            width: 16
         }
         D.Text {
             id: instructions
