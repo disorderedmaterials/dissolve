@@ -51,7 +51,7 @@ PairPotentials
   Delta  0.0001
   Parameters  'OW'  O  0.0   LJGeometric   0.0       0.0
   Parameters  'HW'  H  0.0    LJGeometric  0.0       0.0
-  Override  'OW'  'OW'  Replace  LJ   0.6503    3.165492
+  Override  'OW'  'OW'  Replace  LennardJones126   0.6503    3.165492
   ManualChargeSource  True
   ForceChargeSource  True
   IncludeCoulomb  Off
