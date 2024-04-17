@@ -282,19 +282,14 @@ double PairPotential::delta() const { return delta_; }
 // (Re)generate potential from current parameters
 void PairPotential::calculateUOriginal(bool recalculateUFull)
 {
-    // Create a wrapper for the energy function
-    Function1DWrapper energyFunction(interactionPotential_.form(), interactionPotential_.parameters());
-
+    // Loop over points
     for (auto n = 1; n < nPoints_; ++n)
     {
         auto r = n * delta_;
         uOriginal_.xAxis(n) = r;
 
-        // Construct potential
-        uOriginal_.value(n) = 0.0;
-
-        // Short-range potential contribution
-        uOriginal_.value(n) += analyticShortRangeEnergy(r);
+        // Set short-range potential contribution
+        uOriginal_.value(n) = analyticShortRangeEnergy(r);
 
         // -- Add Coulomb contribution
         if (includeAtomTypeCharges_)
