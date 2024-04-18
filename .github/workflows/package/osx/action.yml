@@ -72,7 +72,7 @@ runs:
 
       # Collect artifacts
       mkdir packages
-      mv ${packageName}.dmg packages/
+      mv ${dmgName}.dmg packages/
 
   - name: Upload Package Artifacts
     uses: actions/upload-artifact@v4
