@@ -170,7 +170,7 @@ runs:
       cmake --build . --config Release --target keywordWidgets
       cmake --build . --config Release
       mkdir -p bin
-      cp $(find . -type f) bin/
+      cp *.exe *.dll bin/
       ninja install
       mkdir -p install
       cp $TEMPD/* install/
