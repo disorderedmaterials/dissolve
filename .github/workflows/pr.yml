@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, macos-14, windows-latest ]
+        os: [ windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -44,30 +44,30 @@ jobs:
       - name: "Build (${{ matrix.os }})"
         uses: "./.github/workflows/build"
 
-  BuildLinux:
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [ dissolve, dissolve-gui ]
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Setup
-      uses: "./.github/workflows/setup"
-    - name: Set Short Hash
-      uses: "./.github/workflows/set-short-hash"
-    - name: "Build, Test, Package (Linux, ${{ matrix.target }})"
-      uses: "./.github/workflows/build"
-      with:
-        target: ${{ matrix.target }}
+  # BuildLinux:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       target: [ dissolve, dissolve-gui ]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Checkout
+  #     uses: actions/checkout@v4
+  #   - name: Setup
+  #     uses: "./.github/workflows/setup"
+  #   - name: Set Short Hash
+  #     uses: "./.github/workflows/set-short-hash"
+  #   - name: "Build, Test, Package (Linux, ${{ matrix.target }})"
+  #     uses: "./.github/workflows/build"
+  #     with:
+  #       target: ${{ matrix.target }}
 
   Package:
     needs: Build
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, macos-14, windows-latest ]
+        os: [ windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
