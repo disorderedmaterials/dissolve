@@ -353,4 +353,11 @@ if(GUI)
             ${CORE_LINK_LIBS}
             ${THREADING_LINK_LIBS}
   )
+
+  qt_generate_deploy_app_script(
+    TARGET ${gui_target_name}
+    FILENAME_VARIABLE deplot_script
+    NO_UNSUPPORTED_PLATFORM_ERROR
+  )
+  install(SCRIPT ${deplot_script})
 endif(GUI)
