@@ -354,6 +354,14 @@ if(GUI)
             ${THREADING_LINK_LIBS}
   )
 
-  qt_generate_deploy_app_script(TARGET ${gui_target_name} FILENAME_VARIABLE deplot_script NO_UNSUPPORTED_PLATFORM_ERROR)
-  install(SCRIPT ${deplot_script})
+  qt_generate_deploy_qml_app_script(
+    TARGET
+    ${gui_target_name}
+    FILENAME_VARIABLE deploy_script
+    NO_UNSUPPORTED_PLATFORM_ERROR
+    MACOS_BUNDLE_POST_BUILD
+    NO_UNSUPPORTED_PLATFORM_ERROR
+    DEPLOY_USER_QML_MODULES_ON_UNSUPPORTED_PLATFORM
+  )
+  install(SCRIPT ${deploy_script})
 endif(GUI)

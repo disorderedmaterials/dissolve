@@ -167,8 +167,11 @@ runs:
       mkdir build && cd build
       cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true
       cmake --build . --config Release --target keywordWidgets
-      cmake --build . --config Release
+      TEMPD=$(mktemp -d)
+      cmake --build . --config Release -DCMAKE_INSTALL_PREFIX:PATH=$TEMPD
       ninja install
+      mkdir -p install
+      cp $TEMPD/* install/
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
