@@ -32,6 +32,8 @@ class CompareModule : public Module
      */
     private:
     DataSource<Data1D>::DataSourceType dataType_{};
+    // Reference for comparison file and format
+    Data1DImportFileFormat referenceData_;
     // Data stored in the keyword
     std::vector<DataSourceKeyword<Data1D>::DataPair> data1dSources_;
     // Method of error calculation to use

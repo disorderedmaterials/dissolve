@@ -4,14 +4,18 @@
 #include "modules/compare/compare.h"
 #include "classes/dataSource.h"
 #include "keywords/dataSource.h"
+#include "keywords/fileAndFormat.h"
 #include "keywords/rangeVector.h"
 
 CompareModule::CompareModule() : Module(ModuleTypes::Compare)
 {
-    keywords_.setOrganisation("Options");
+    keywords_.setOrganisation("Options", "Data Sources");
     keywords_.add<EnumOptionsKeyword<DataSource<Data1D>::DataSourceType>>(
         "DataType", "Specify whether the data is in Dissolve (Internal) or in the file system (External)", dataType_,
         DataSource<Data1D>::dataSourceTypes());
+    keywords_.add<FileAndFormatKeyword>("Reference", "F(Q) reference data", referenceData_, "EndReference")
+        ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
+    keywords_.setOrganisation("Options", "Errors");
     keywords_.add<DataSourceKeyword<Data1D>>("Data1D", "Specify one-dimensional test reference data", data1dSources_,
                                              "EndData1D");
     keywords_.add<EnumOptionsKeyword<Error::ErrorType>>("ErrorType", "Type of error calculation to use", errorType_,
