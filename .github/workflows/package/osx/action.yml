@@ -62,12 +62,13 @@ runs:
       appName=Dissolve-GUI-${{ runner.arch }}
       appDirName=${appName}.app
       packageName=Dissolve-GUI-${{ runner.arch }}-${{ env.dissolveVersion }}
+      dmgName=Dissolve-GUI-${{ env.dissolveVersion }}-${{ runner.arch }}
 
       # Fix icon name in plist
       sed -i -e "s/Dissolve.icns/${appName}.icns/g" ${packageName}/${appDirName}/Contents/Info.plist
 
       # Create DMG
-      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./${packageName}/${appDirName} -D icon=./Dissolve-GUI-${{ env.dissolveVersion }}/${appDirName}/Contents/Resources/${appName}.icns "Dissolve GUI" ${packageName}.dmg
+      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./${packageName}/${appDirName} -D icon=./Dissolve-GUI-${{ env.dissolveVersion }}/${appDirName}/Contents/Resources/${appName}.icns "Dissolve GUI" ${dmgName}.dmg
 
       # Collect artifacts
       mkdir packages
