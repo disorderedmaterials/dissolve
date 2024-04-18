@@ -32,18 +32,19 @@ linkTitle = "Packages"
 {{< releaselink target="GUI" urlSuffix="" textSuffix="Binary" >}}
 {{< releaselink target="GUI" urlSuffix=".sif" textSuffix="GUI Singularity Container" >}}
 {{< releaselink target="CLI" urlSuffix=".sif" textSuffix="CLI Singularity Container" >}}
-<a href='https://docs.projectdissolve.com/docs/get/singularity'>Singularity Usage Guide</a>
+<a href='https://docs.projectdissolve.com/userguide/get/packages/#linux'>Singularity Usage Guide</a>
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon=" fab fa-apple" title="Mac OS" %}}
 {{< releaselink target="GUI" urlSuffix="-X64.dmg" textSuffix="DMG (Intel)" >}}
 {{< releaselink target="GUI" urlSuffix="-ARM64.dmg" textSuffix="DMG (Silicon)" >}}
+<a href='https://docs.projectdissolve.com/userguide/get/packages/#mac-osx'>OSX Installation</a>
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fab fa-windows" title="Windows" %}}
 {{< releaselink target="GUI" urlSuffix="-Win64.exe" textSuffix="Installer" >}}
 {{< releaselink target="GUI" urlSuffix="-Win64.zip" textSuffix="Zip Archive" >}}
-<a href='https://docs.projectdissolve.com/docs/get/windows'>Windows Usage Guide</a>
+<a href='https://docs.projectdissolve.com/userguide/get/packages/#windows-10'>Windows Usage Guide</a>
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fa fa-archive" title="Example Data" %}}
