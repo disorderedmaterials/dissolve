@@ -187,7 +187,7 @@ double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRan
     // Apply the selected truncation scheme
     if (truncation == PairPotential::ShiftedShortRangeTruncation)
     {
-        energy += -(r - range_) * shortRangeForceAtCutoff_ - shortRangeEnergyAtCutoff_;
+        energy += (r - range_) * shortRangeForceAtCutoff_ - shortRangeEnergyAtCutoff_;
     }
 
     return energy;
