@@ -44,7 +44,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "{#DeployDir}\install\bin\*"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\install\plugins\*"; DestDir: "{app}\plugins""; Flags: recursesubdirs
+Source: "{#DeployDir}\install\plugins\*"; DestDir: "{app}\plugins"; Flags: recursesubdirs
 Source: "{#DeployDir}\install\qml\*"; DestDir: "{app}\qml""; Flags: recursesubdirs
 Source: "{#DeployDir}\install\translations\*"; DestDir: "{app}\translations"
 Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
