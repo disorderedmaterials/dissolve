@@ -357,7 +357,8 @@ if(GUI)
   qt_generate_deploy_qml_app_script(
     TARGET
     ${gui_target_name}
-    FILENAME_VARIABLE deploy_script
+    FILENAME_VARIABLE
+    deploy_script
     NO_UNSUPPORTED_PLATFORM_ERROR
     MACOS_BUNDLE_POST_BUILD
     NO_UNSUPPORTED_PLATFORM_ERROR
