@@ -15,6 +15,8 @@ add_library(
   configurationVector.cpp
   configurationVector.h
   configurationVector.ui
+  dataSource.cpp
+  dataSource.h
   dialog.cpp
   dialog.h
   dialog.ui
