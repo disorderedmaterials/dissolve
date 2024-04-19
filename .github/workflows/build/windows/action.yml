@@ -173,7 +173,7 @@ runs:
       cp bin/* $TEMPD/bin
       ninja install
       mkdir -p install
-      cp $TEMPD/* install/
+      cp -r $TEMPD/* install/
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
