@@ -181,5 +181,5 @@ runs:
     with:
       name: windows-build-artifacts
       path: |
-        ${{ github.workspace }}\build\install
+        ${{ github.workspace }}\build
       retention-days: 1

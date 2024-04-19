@@ -55,7 +55,7 @@ runs:
       export PATH="${Qt6_DIR}\bin;$PATH"
       export FREETYPE_DIR="${RUNNER_TEMP}\freetype-install\bin"
       export FTGL_DIR="${RUNNER_TEMP}\ftgl-install\bin"
-      export DISSOLVE_DIR="${GITHUB_WORKSPACE}\build\bin"
+      export DISSOLVE_DIR="${GITHUB_WORKSPACE}\build\install\bin"
       export DEPLOY_DIR="${GITHUB_WORKSPACE}\build"
 
       # Run Inno Setup Compiler

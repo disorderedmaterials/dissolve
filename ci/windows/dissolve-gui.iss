@@ -49,21 +49,6 @@ Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "{#FreetypeDir}\freetype.dll"; DestDir: "{app}\bin"
 Source: "{#FTGLDir}\ftgl.dll"; DestDir: "{app}\bin"
-Source: "{#QtDir}\bin\Qt6Gui.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6Core.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6OpenGL.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6Qml.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6QmlModels.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6QuickWidgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6Quick.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6Network.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6OpenGLWidgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6Svg.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6Widgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6PrintSupport.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\plugins\iconengines\qsvgicon.dll"; DestDir: "{app}\bin\iconengines"; Flags: ignoreversion
-Source: "{#QtDir}\plugins\platforms\qwindows.dll"; DestDir: "{app}\bin\platforms"; Flags: ignoreversion
-Source: "{#QtDir}\plugins\imageformats\*.dll"; DestDir: "{app}\bin\imageformats"; Flags: ignoreversion
 ; Windows 7
 ;Source: "C:\Windows\System32\D3DCompiler_43.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; Windows 10
@@ -74,6 +59,9 @@ Source: "{#DeployDir}\onetbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
 Source: "{#DeployDir}\onetbb\bin\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
 Source: "{#DeployDir}\onetbb\bin\tbbbind_2_5.dll"; DestDir: "{app}\bin"
 Source: "{#DeployDir}\antlr4-cppruntime\bin\antlr4-runtime.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\install\plugins"; DestDir: "{app}\plugins"
+Source: "{#DeployDir}\install\qml"; DestDir: "{app}\qml"
+Source: "{#DeployDir}\install\translations"; DestDir: "{app}\translations"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; IconFilename: "{app}\bin\Dissolve.ico"; Filename: "{app}\bin\{#MyAppExeName}"; WorkingDir: "{app}"
