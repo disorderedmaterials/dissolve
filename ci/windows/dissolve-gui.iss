@@ -43,25 +43,24 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#DissolveDir}\Dissolve.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#DissolveDir}\Dissolve-GUI.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#DeployDir}\install\bin"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\install\plugins"; DestDir: "{app}\plugins"
+Source: "{#DeployDir}\install\qml"; DestDir: "{app}\qml"
+Source: "{#DeployDir}\install\translations"; DestDir: "{app}\translations"
 Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "{#FreetypeDir}\freetype.dll"; DestDir: "{app}\bin"
 Source: "{#FTGLDir}\ftgl.dll"; DestDir: "{app}\bin"
 ; Windows 7
 ;Source: "C:\Windows\System32\D3DCompiler_43.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-; Windows 10
-Source: "C:\Windows\System32\D3DCompiler_47.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+; Windows 10 - Now handled by windeployqt
+; Source: "C:\Windows\System32\D3DCompiler_47.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; Conan Dependencies
 Source: "{#DeployDir}\onetbb\bin\tbb12.dll"; DestDir: "{app}\bin"
 Source: "{#DeployDir}\onetbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
 Source: "{#DeployDir}\onetbb\bin\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
 Source: "{#DeployDir}\onetbb\bin\tbbbind_2_5.dll"; DestDir: "{app}\bin"
 Source: "{#DeployDir}\antlr4-cppruntime\bin\antlr4-runtime.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\install\plugins"; DestDir: "{app}\plugins"
-Source: "{#DeployDir}\install\qml"; DestDir: "{app}\qml"
-Source: "{#DeployDir}\install\translations"; DestDir: "{app}\translations"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; IconFilename: "{app}\bin\Dissolve.ico"; Filename: "{app}\bin\{#MyAppExeName}"; WorkingDir: "{app}"
