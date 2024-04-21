@@ -8,6 +8,8 @@ add_library(
   dataOperator3D.cpp
   dataOperator3D.h
   dataOperatorBase.h
+  selectionProcessor.cpp
+  selectionProcessor.h
   siteFilter.cpp
   siteFilter.h
   siteSelector.cpp
