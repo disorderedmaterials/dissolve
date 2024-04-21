@@ -47,8 +47,8 @@ class SelectionProcessor
 
     public:
     bool
-    process(const Analyser::SiteVector &sitesA, std::optional<Analyser::SiteVector &> sitesB = std::nullopt,
-            std::optional<Analyser::SiteVector &> sitesC = std::nullopt, const Flags<SelectionRuleFlags> &flags = {},
+    process(const Analyser::SiteVector &sitesA, std::optional<Analyser::SiteVector> sitesB = std::nullopt,
+            std::optional<Analyser::SiteVector> sitesC = std::nullopt, const Flags<SelectionRuleFlags> &flags = {},
             std::function<bool(const Site *, std::optional<const Site *>, std::optional<const Site *>)> processFunction = {});
 
     private:

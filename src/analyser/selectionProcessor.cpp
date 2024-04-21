@@ -15,10 +15,13 @@ int SelectionProcessor::nCAvailable() const { return nCAvailable_; }
 int SelectionProcessor::nCCumulative() const { return nCCumulative_; }
 
 // First focus on getting the actual processing working, then we worry about multithreading afterwards.
+// TODO: verify selection statistics
+// TODO: implement multithreading
+// TODO: handle generic rule
 bool SelectionProcessor::process(
-    const Analyser::SiteVector &sitesA, std::optional<Analyser::SiteVector &> sitesB,
-    std::optional<Analyser::SiteVector &> sitesC, const Flags<SelectionRuleFlags> &flags,
-    std::function<bool(const Site *, std::optional<Site *>, std::optional<const Site *>)> processFunction)
+    const Analyser::SiteVector &sitesA, std::optional<Analyser::SiteVector> sitesB, std::optional<Analyser::SiteVector> sitesC,
+    const Flags<SelectionRuleFlags> &flags,
+    std::function<bool(const Site *, std::optional<const Site *>, std::optional<const Site *>)> processFunction)
 {
     reset();
     nASelections_ = 1;
@@ -77,6 +80,7 @@ bool SelectionProcessor::process(
         else
             processFunction(siteA, std::nullopt, std::nullopt);
     }
+    return true;
 }
 
 void SelectionProcessor::reset()
