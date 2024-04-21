@@ -3,6 +3,7 @@
 
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
+#include "analyser/selectionProcessor.h"
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
@@ -11,7 +12,6 @@
 #include "math/sampledDouble.h"
 #include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
-
 // Run main processing
 Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
 {
@@ -36,15 +36,17 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
     histAB.zeroBins();
 
-    for (const auto &[siteA, indexA] : a.sites())
-    {
-        for (const auto &[siteB, indexB] : b.sites())
-        {
-            if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
-                continue;
-            histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
-        }
-    }
+    SelectionProcessor selectionProcessor;
+    Flags<SelectionProcessor::SelectionRuleFlags> flags;
+    if (excludeSameMolecule_)
+        flags.setFlag(SelectionProcessor::MoleculeANEQMoleculeB);
+    selectionProcessor.process(a.sites(), b.sites(), {}, flags,
+                               [&](const Site *siteA, std::optional<const Site *> siteB, std::optional<const Site *> siteC)
+                               {
+                                   histAB.bin(
+                                       targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB.value()->origin()));
+                                   return true;
+                               });
 
     // Accumulate histogram
     histAB.accumulate();
