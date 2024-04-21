@@ -70,15 +70,16 @@ bool SelectionProcessor::process(
                         ++nCAvailable_;
                         ++nCCumulative_;
 
-                        processFunction(siteA, siteB, siteC);
+                        if (!processFunction(siteA, siteB, siteC))
+                            return false;
                     }
                 }
-                else
-                    processFunction(siteA, siteB, std::nullopt);
+                else if (!processFunction(siteA, siteB, std::nullopt))
+                    return false;
             }
         }
-        else
-            processFunction(siteA, std::nullopt, std::nullopt);
+        else if (!processFunction(siteA, std::nullopt, std::nullopt))
+            return false;
     }
     return true;
 }
