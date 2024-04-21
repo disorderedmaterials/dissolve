@@ -40,13 +40,18 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     Flags<SelectionProcessor::SelectionRuleFlags> flags;
     if (excludeSameMolecule_)
         flags.setFlag(SelectionProcessor::MoleculeANEQMoleculeB);
-    selectionProcessor.process(a.sites(), b.sites(), {}, flags,
-                               [&](const Site *siteA, std::optional<const Site *> siteB, std::optional<const Site *> siteC)
-                               {
-                                   histAB.bin(
-                                       targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB.value()->origin()));
-                                   return true;
-                               });
+    selectionProcessor.processMultithreaded(
+        a.sites(), b.sites(), {}, flags,
+        [&](const Site *siteA, std::optional<const Site *> siteB, std::optional<const Site *> siteC)
+        {
+            // if (!siteB.has_value() || !siteA)
+            //     return false;
+            histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB.value()->origin()));
+            return true;
+        });
+
+    // Messenger::print("Processed {} A sites and {} B sites.\n", selectionProcessor.nACumulative(),
+    //                  selectionProcessor.nBCumulative());
 
     // Accumulate histogram
     histAB.accumulate();
