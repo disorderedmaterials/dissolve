@@ -14,9 +14,16 @@ DataSourceKeywordWidget::DataSourceKeywordWidget(QWidget *parent, DataSourceKeyw
     : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword), coreData_(coreData)
 {
     // Add QWidget with Box Layout
-    //FileAndFormatKeyword *k = new FileAndFormatKeyword(std::forward<Data1DImportFileFormat>(&dataSource_.externalDataSource()), "EndExternal");
+    enumOptionsModel_.setData(dataSource_.dataSourceTypes());
     FileAndFormatKeyword k(dataSource_.externalDataSource(), "end");
     FileAndFormatKeywordWidget fileAndFormat(&ui_, &k, coreData);
-    internalLayout_.addWidget(&fileAndFormat);
-    ui_.setLayout(&internalLayout_);
+
+    if (dataSource_.dataName() == "External")
+    {
+        externalLayout_.addWidget(&fileAndFormat);
+        ui_.setLayout(&externalLayout_);
+    }
+    else if (dataSource_.dataName() == "Internal")
+    {
+    }
 }

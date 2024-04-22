@@ -5,6 +5,7 @@
 
 #include "gui/keywordWidgets/base.h"
 #include "gui/keywordWidgets/fileAndFormat.h"
+#include "gui/keywordWidgets/enumOptions.h"
 #include "gui/models/enumOptionsModel.h"
 #include "keywords/fileAndFormat.h"
 #include "io/import/data1D.h"

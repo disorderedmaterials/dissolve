@@ -7,6 +7,7 @@
 #include "gui/keywordWidgets/bool.h"
 #include "gui/keywordWidgets/configuration.h"
 #include "gui/keywordWidgets/configurationVector.h"
+#include "gui/keywordWidgets/dataSource.h"
 #include "gui/keywordWidgets/double.h"
 #include "gui/keywordWidgets/dropWidget.h"
 #include "gui/keywordWidgets/enumOptions.h"
