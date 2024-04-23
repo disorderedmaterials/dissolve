@@ -78,8 +78,8 @@ void SDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upd
     // Create SDF renderable if it doesn't already exist
     if (!sdfRenderable_)
     {
-        sdfRenderable_ = sdfGraph_->createRenderable<RenderableData3D>(fmt::format("{}//Process3D//SDF", module_->name()),
-                                                                       fmt::format("SDF"));
+        sdfRenderable_ =
+            sdfGraph_->createRenderable<RenderableData3D>(fmt::format("{}//SDF", module_->name()), fmt::format("SDF"));
         sdfRenderable_->setColour(StockColours::BlueStockColour);
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
