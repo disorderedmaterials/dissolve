@@ -43,31 +43,18 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#DissolveDir}\Dissolve.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#DissolveDir}\Dissolve-GUI.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#DeployDir}\install\bin\*"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\install\plugins\*"; DestDir: "{app}\plugins"; Flags: recursesubdirs
+Source: "{#DeployDir}\install\qml\*"; DestDir: "{app}\qml"; Flags: recursesubdirs
+Source: "{#DeployDir}\install\translations\*"; DestDir: "{app}\translations"
 Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "{#FreetypeDir}\freetype.dll"; DestDir: "{app}\bin"
 Source: "{#FTGLDir}\ftgl.dll"; DestDir: "{app}\bin"
-Source: "{#QtDir}\bin\Qt6Gui.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6Core.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6OpenGL.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6Qml.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6QmlModels.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6QuickWidgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6Quick.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6Network.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6OpenGLWidgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6Svg.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6Widgets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\bin\Qt6PrintSupport.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#QtDir}\plugins\iconengines\qsvgicon.dll"; DestDir: "{app}\bin\iconengines"; Flags: ignoreversion
-Source: "{#QtDir}\plugins\platforms\qwindows.dll"; DestDir: "{app}\bin\platforms"; Flags: ignoreversion
-Source: "{#QtDir}\plugins\imageformats\*.dll"; DestDir: "{app}\bin\imageformats"; Flags: ignoreversion
 ; Windows 7
 ;Source: "C:\Windows\System32\D3DCompiler_43.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-; Windows 10
-Source: "C:\Windows\System32\D3DCompiler_47.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+; Windows 10 - Now handled by windeployqt
+; Source: "C:\Windows\System32\D3DCompiler_47.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; Conan Dependencies
 Source: "{#DeployDir}\onetbb\bin\tbb12.dll"; DestDir: "{app}\bin"
 Source: "{#DeployDir}\onetbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
