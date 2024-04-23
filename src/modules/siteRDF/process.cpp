@@ -46,21 +46,15 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
             return histAB;
         });
 
-    std::vector<std::optional<double>> bins;
-    bins.resize(pairs.end() - pairs.begin());
-    dissolve::transform(ParallelPolicies::par, pairs.begin(), pairs.end(), bins.begin(), [this, &histAB, &a, &b](const auto& pair) -> std::optional<double> {
-        const auto &[siteA, indexA] = a.sites()[std::get<0>(pair)];
-        const auto &[siteB, indexB] = b.sites()[std::get<1>(pair)];
+    dissolve::for_each(ParallelPolicies::par, pairs.begin(), pairs.end(), [this, &combinableHistograms, &a, &b](const auto& pair) {
+        const auto [aIndex, bIndex] = pair;
+        const auto &[siteA, indexA] = a.sites()[aIndex];
+        const auto &[siteB, indexB] = b.sites()[bIndex];
         if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
-          return {};
-        return targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin());
+          return;
+        auto &hist = combinableHistograms.local();
+        hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
       });
-
-    dissolve::for_each(ParallelPolicies::par, bins.begin(), bins.end(), [&combinableHistograms](const auto bin) {
-      auto &hist = combinableHistograms.local();
-      if (bin)
-        hist.bin(*bin);
-    });
 
     histAB = combinableHistograms.finalize();
 
