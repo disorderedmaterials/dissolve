@@ -46,6 +46,7 @@ add_library(
   pairIterator.cpp
   partialSet.cpp
   partialSetAccumulator.cpp
+  productIterator.cpp
   region.cpp
   regionalDistributor.cpp
   scatteringMatrix.cpp

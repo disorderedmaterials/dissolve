@@ -3,6 +3,7 @@
 
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
+#include "classes/productIterator.h"
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
@@ -36,15 +37,16 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
     histAB.zeroBins();
 
-    for (const auto &[siteA, indexA] : a.sites())
-    {
-        for (const auto &[siteB, indexB] : b.sites())
-        {
-            if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
-                continue;
-            histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
-        }
-    }
+    ProductIterator pairs(a.sites().size(), b.sites().size());
+
+    dissolve::for_each(ParallelPolicies::seq, pairs.begin(), pairs.end(), [this, &histAB, &a, &b](auto pair) {
+      auto [aIndex, bIndex] = pair;
+      const auto &[siteA, indexA] = a.sites()[aIndex];
+      const auto &[siteB, indexB] = b.sites()[bIndex];
+      if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
+        return;
+      histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+    });
 
     // Accumulate histogram
     histAB.accumulate();
