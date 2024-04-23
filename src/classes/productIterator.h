@@ -9,6 +9,7 @@ class ProductIterator
 {
     private:
     int x_, y_, xSize_, ySize_;
+    std::tuple<int, int> internal_;
     int toIndex() const;
     void fromIndex(int);
 
@@ -24,7 +25,7 @@ class ProductIterator
 
     ProductIterator begin() const;
     ProductIterator end() const;
-    value_type operator*();
+    reference operator*();
     value_type operator[](difference_type i) const;
 
     difference_type operator-(const ProductIterator &it) const;

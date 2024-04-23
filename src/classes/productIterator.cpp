@@ -34,7 +34,10 @@ bool ProductIterator::operator==(const ProductIterator &other) const { return x_
 
 bool ProductIterator::operator!=(const ProductIterator &other) const { return x_ != other.x_ || y_ != other.y_; }
 
-ProductIterator::value_type ProductIterator::operator*() { return {x_, y_}; }
+ProductIterator::reference ProductIterator::operator*() {
+  internal_ = std::make_tuple<>(x_, y_);
+  return internal_;
+}
 
 ProductIterator &ProductIterator::operator++()
 {
