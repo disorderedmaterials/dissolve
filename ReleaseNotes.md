@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.5.1] - 23rd April 2024
+
+### 🐛 Bug Fixes
+
+- Fix display of surfaces in SDF module
+
+### 🔨️ Build Tools
+
+- Include correct QML-related libs in OSX package
+- Include correct QML-related libs in Windows package
+
 ## [1.5.0] - 17th April 2024
 
 ### 🚀 Features
