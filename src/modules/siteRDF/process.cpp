@@ -56,11 +56,13 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         return targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin());
       });
 
-    for (auto bin : bins)
-    {
-        if (bin)
-            histAB.bin(*bin);
-    }
+    dissolve::for_each(ParallelPolicies::par, bins.begin(), bins.end(), [&combinableHistograms](const auto bin) {
+      auto &hist = combinableHistograms.local();
+      if (bin)
+        hist.bin(*bin);
+    });
+
+    histAB = combinableHistograms.finalize();
 
     // Accumulate histogram
     histAB.accumulate();
