@@ -5,36 +5,88 @@
 #include <iterator>
 #include <tuple>
 
-class ProductIterator
+template <typename A, typename B> class ProductIterator
 {
     private:
-    int x_, y_, xSize_, ySize_;
-    std::tuple<int, int> internal_;
-    int toIndex() const;
-    void fromIndex(int);
+    A x_, xBegin_, xEnd_;
+    B y_, yBegin_, yEnd_;
 
     public:
-    using value = std::tuple<int, int>;
-    using value_type = std::tuple<int, int>;
+    using valueA = std::decay_t<decltype(*x_)>;
+    using valueB = std::decay_t<decltype(*y_)>;
+    using value = std::tuple<valueA, valueB>;
+    using value_type = std::tuple<valueA, valueB>;
     using difference_type = int;
-    using reference = std::tuple<int, int> &;
-    using pointer = std::tuple<int, int> *;
+    using reference = std::tuple<valueA, valueB> &;
+    using pointer = std::tuple<valueA, valueB> *;
     using iterator_category = std::random_access_iterator_tag;
 
-    ProductIterator(int xSize = 0, int ySize = 0, int index = 0);
+    private:
+    value internal_;
 
-    ProductIterator begin() const;
-    ProductIterator end() const;
-    reference operator*();
-    value_type operator[](difference_type i) const;
+    public:
+    int toIndex() const { return (x_ - xBegin_) * (yEnd_ - yBegin_) + (y_ - yBegin_); }
+    void fromIndex(int index)
+    {
+        auto ySize = yEnd_ - yBegin_;
+        x_ = xBegin_ + (index / ySize);
+        y_ = yBegin_ + (index % ySize);
+    }
 
-    difference_type operator-(const ProductIterator &it) const;
-    ProductIterator &operator+=(difference_type forward);
+    public:
+    ProductIterator(A xBegin, A xEnd, B yBegin, B yEnd, int index = 0)
+        : xBegin_(xBegin), xEnd_(xEnd), yBegin_(yBegin), yEnd_(yEnd)
+    {
+        if (index == 0)
+        {
+            x_ = xBegin_;
+            y_ = yBegin_;
+        }
+        else
+        {
+            fromIndex(index);
+        }
+    }
 
-    ProductIterator &operator-=(difference_type backward);
+    ProductIterator begin() const { return ProductIterator(xBegin_, xEnd_, yBegin_, yEnd_); }
+    ProductIterator end() const
+    {
+        ProductIterator it(xBegin_, xEnd_, yBegin_, yEnd_);
+        it.x_ = xEnd_;
+        it.y_ = yBegin_;
+        return it;
+    }
+    reference operator*()
+    {
+        internal_ = std::make_tuple<>(*x_, *y_);
+        return internal_;
+    }
+    value_type operator[](difference_type i) const { return *(*this + i); }
+
+    difference_type operator-(const ProductIterator &it) const { return toIndex() - it.toIndex(); }
+    ProductIterator &operator+=(difference_type forward)
+    {
+        fromIndex(forward + toIndex());
+        return *this;
+    }
+
+    ProductIterator &operator-=(difference_type backward)
+    {
+        fromIndex(toIndex() - backward);
+        return *this;
+    }
 
     // Operators : arithmetic
-    ProductIterator &operator++();
+    ProductIterator &operator++()
+    {
+        ++y_;
+        if (y_ >= yEnd_)
+        {
+            ++x_;
+            y_ = yBegin_;
+        }
+        return *this;
+    }
 
     ProductIterator &operator--();
 
@@ -42,13 +94,21 @@ class ProductIterator
 
     ProductIterator operator--(int);
 
-    ProductIterator operator+(difference_type forward) const;
+    ProductIterator operator+(difference_type forward) const
+    {
+        return ProductIterator(xBegin_, xEnd_, yBegin_, yEnd_, forward + toIndex());
+    }
     ProductIterator operator-(difference_type backward) const;
 
     // Operators : comparison
-    bool operator==(const ProductIterator &other) const;
-    bool operator!=(const ProductIterator &other) const;
-    bool operator<(const ProductIterator &other) const;
+    bool operator==(const ProductIterator &other) const { return x_ == other.x_ && y_ == other.y_; }
+    bool operator!=(const ProductIterator &other) const { return x_ != other.x_ || y_ != other.y_; }
+    bool operator<(const ProductIterator &other) const
+    {
+        if (x_ != other.x_)
+            return x_ < other.x_;
+        return y_ < other.y_;
+    }
     bool operator>(const ProductIterator &other) const;
     bool operator<=(const ProductIterator &other) const;
     bool operator>=(const ProductIterator &other) const;
