@@ -12,6 +12,8 @@
 #include "math/sampledDouble.h"
 #include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
+#include "templates/algorithms.h"
+#include "templates/combinable.h"
 
 // Run main processing
 Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
@@ -38,15 +40,27 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     histAB.zeroBins();
 
     ProductIterator pairs(a.sites().size(), b.sites().size());
+    auto combinableHistograms = dissolve::CombinableValue<Histogram1D>(
+        [&histAB]()
+        {
+            return histAB;
+        });
 
-    dissolve::for_each(ParallelPolicies::seq, pairs.begin(), pairs.end(), [this, &histAB, &a, &b](auto pair) {
-      auto [aIndex, bIndex] = pair;
-      const auto &[siteA, indexA] = a.sites()[aIndex];
-      const auto &[siteB, indexB] = b.sites()[bIndex];
-      if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
-        return;
-      histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
-    });
+    std::vector<std::optional<double>> bins;
+    bins.resize(pairs.end() - pairs.begin());
+    dissolve::transform(ParallelPolicies::par, pairs.begin(), pairs.end(), bins.begin(), [this, &histAB, &a, &b](const auto& pair) -> std::optional<double> {
+        const auto &[siteA, indexA] = a.sites()[std::get<0>(pair)];
+        const auto &[siteB, indexB] = b.sites()[std::get<1>(pair)];
+        if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
+          return {};
+        return targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin());
+      });
+
+    for (auto bin : bins)
+    {
+        if (bin)
+            histAB.bin(*bin);
+    }
 
     // Accumulate histogram
     histAB.accumulate();
