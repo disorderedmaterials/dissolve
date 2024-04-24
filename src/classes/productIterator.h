@@ -76,17 +76,10 @@ template <typename A, typename B> class ProductIterator
         return *this;
     }
 
-    ProductIterator &operator--();
-
-    ProductIterator operator++(int);
-
-    ProductIterator operator--(int);
-
     ProductIterator operator+(difference_type forward) const
     {
         return ProductIterator(xBegin_, xEnd_, yBegin_, yEnd_, forward + toIndex());
     }
-    ProductIterator operator-(difference_type backward) const;
 
     // Operators : comparison
     bool operator==(const ProductIterator &other) const { return x_ == other.x_ && y_ == other.y_; }
@@ -97,7 +90,4 @@ template <typename A, typename B> class ProductIterator
             return x_ < other.x_;
         return y_ < other.y_;
     }
-    bool operator>(const ProductIterator &other) const;
-    bool operator<=(const ProductIterator &other) const;
-    bool operator>=(const ProductIterator &other) const;
 };
