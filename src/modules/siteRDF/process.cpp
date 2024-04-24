@@ -39,21 +39,22 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
     histAB.zeroBins();
 
-    ProductIterator pairs(a.sites().begin(), a.sites().end(), b.sites().begin(), b.sites().end());
     auto combinableHistograms = dissolve::CombinableValue<Histogram1D>(
         [&histAB]()
         {
             return histAB;
         });
 
-    dissolve::for_each(std::execution::par_unseq, pairs.begin(), pairs.end(), [this, &combinableHistograms](const auto& pair) {
-        const auto [aIndex, bIndex] = pair;
-        const auto &[siteA, indexA] = aIndex;
-        const auto &[siteB, indexB] = bIndex;
-        if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
-          return;
+    dissolve::for_each(std::execution::seq, a.sites().begin(), a.sites().end(), [this,  &b, &combinableHistograms](const auto& pair) {
+        const auto &[siteA, indexA] = pair;
+
         auto &hist = combinableHistograms.local();
-        hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+        for (const auto &[siteB, indexB] : b.sites())
+        {
+            if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
+              continue;
+            hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+        }
       });
 
     histAB = combinableHistograms.finalize();
