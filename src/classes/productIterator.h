@@ -10,6 +10,7 @@ template <typename A, typename B> class ProductIterator
     private:
     A x_, xBegin_, xEnd_;
     B y_, yBegin_, yEnd_;
+    std::decay_t<decltype(yEnd_ - yBegin_)> ySize_;
 
     public:
     using valueA = std::decay_t<decltype(*x_)>;
@@ -17,32 +18,23 @@ template <typename A, typename B> class ProductIterator
     using value = std::tuple<valueA, valueB>;
     using value_type = std::tuple<valueA, valueB>;
     using difference_type = int;
-    using reference = std::tuple<valueA, valueB> &;
+    using reference = std::tuple<const valueA &, const valueB &>;
     using pointer = std::tuple<valueA, valueB> *;
     using iterator_category = std::random_access_iterator_tag;
 
-    private:
-    value internal_;
-
     public:
-    int toIndex() const { return (x_ - xBegin_) * (yEnd_ - yBegin_) + (y_ - yBegin_); }
+    int toIndex() const { return (x_ - xBegin_) * ySize_ + (y_ - yBegin_); }
     void fromIndex(int index)
     {
-        auto ySize = yEnd_ - yBegin_;
-        x_ = xBegin_ + (index / ySize);
-        y_ = yBegin_ + (index % ySize);
+        x_ = xBegin_ + (index / ySize_);
+        y_ = yBegin_ + (index % ySize_);
     }
 
     public:
     ProductIterator(A xBegin, A xEnd, B yBegin, B yEnd, int index = 0)
-        : xBegin_(xBegin), xEnd_(xEnd), yBegin_(yBegin), yEnd_(yEnd)
+        : xBegin_(xBegin), xEnd_(xEnd), yBegin_(yBegin), yEnd_(yEnd), ySize_(yEnd_ - yBegin_), x_(xBegin), y_(yBegin)
     {
-        if (index == 0)
-        {
-            x_ = xBegin_;
-            y_ = yBegin_;
-        }
-        else
+        if (index != 0)
         {
             fromIndex(index);
         }
@@ -56,12 +48,8 @@ template <typename A, typename B> class ProductIterator
         it.y_ = yBegin_;
         return it;
     }
-    reference operator*()
-    {
-        internal_ = std::make_tuple<>(*x_, *y_);
-        return internal_;
-    }
-    value_type operator[](difference_type i) const { return *(*this + i); }
+    reference operator*() { return std::tie(*x_, *y_); }
+    reference operator[](difference_type i) const { return *(*this + i); }
 
     difference_type operator-(const ProductIterator &it) const { return toIndex() - it.toIndex(); }
     ProductIterator &operator+=(difference_type forward)
