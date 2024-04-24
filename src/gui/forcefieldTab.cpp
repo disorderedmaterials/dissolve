@@ -67,6 +67,14 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
             SLOT(masterTorsionsDataChanged(const QModelIndex &, const QModelIndex &)));
     connect(&masterImpropersTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(masterImpropersDataChanged(const QModelIndex &, const QModelIndex &)));
+    connect(ui_.MasterBondsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(masterBondsSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    connect(ui_.MasterAnglesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(masterAnglesSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    connect(ui_.MasterTorsionsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(masterTorsionsSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    connect(ui_.MasterImpropersTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(masterImpropersSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     /*
      * Atom Types
@@ -283,10 +291,30 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked) 
+{ 
+    auto index = ui_.AtomTypesTable->currentIndex();
+    if (!index.isValid())
+        return;
+
+    // Get selected atomtype
+    auto at = atomTypesModel_.rawData(index);
+    if (!at)
+        return;
+
+    dissolve_.coreData().removeAtomType(at);
+
+    Locker refreshLocker(refreshLock_);
+
+    atomTypesModel_.setData(dissolve_.coreData().atomTypes());
+    ui_.AtomTypesTable->resizeColumnsToContents();
+
+    dissolveWindow_->setModified();
+}
 
 void ForcefieldTab::atomTypeSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
 {
+    ui_.AtomTypeRemoveButton->setEnabled(!current.empty());
     ui_.AtomTypeDuplicateButton->setEnabled(!current.empty());
 }
 
@@ -468,6 +496,26 @@ void ForcefieldTab::masterImpropersDataChanged(const QModelIndex &, const QModel
 {
     ui_.MasterImpropersTable->resizeColumnsToContents();
     dissolveWindow_->setModified();
+}
+
+void ForcefieldTab::masterBondsSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
+{
+    ui_.MasterTermRemoveBondButton->setEnabled(!current.empty());
+}
+
+void ForcefieldTab::masterAnglesSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
+{
+    ui_.MasterTermRemoveAngleButton->setEnabled(!current.empty());
+}
+
+void ForcefieldTab::masterTorsionsSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
+{
+    ui_.MasterTermRemoveTorsionButton->setEnabled(!current.empty());
+}
+
+void ForcefieldTab::masterImpropersSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
+{
+    ui_.MasterTermRemoveImproperButton->setEnabled(!current.empty());
 }
 
 void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
