@@ -29,7 +29,7 @@ T.Switch {
 
         font: Theme.normalFont
         text: control.text
-        color: Theme.getTextColour(control)
+        color: Theme.getForegroundColour(control)
         elide: Text.ElideRight
         verticalAlignment: Text.AlignVCenter
     }

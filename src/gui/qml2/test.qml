@@ -20,13 +20,14 @@ Pane {
         Row {
             spacing: 25
             CheckBox { text: "Checkbox" }
-            CheckBox { text: "Checkbox"; checked: true }
+            CheckBox { text: "Checkbox"; checked: true; enabled: false }
         }
 
         Row {
             spacing: 25
-            Switch {}
-            Switch { checked: true }
+            Switch { text: "Switch A" }
+            Switch { }
+            Switch { text: "Switch C"; checked: true; enabled: false }
         }
 
         Label { text: "Label" }

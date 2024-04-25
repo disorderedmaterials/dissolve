@@ -4,32 +4,19 @@
 import QtQuick
 import QtQuick.Templates as T
 import QtQuick.Controls.impl
-import QtQuick.Controls.Fusion
-import QtQuick.Controls.Fusion.impl
 
 Rectangle {
     id: indicator
 
     property T.AbstractButton control
-    readonly property color pressedColor: Fusion.mergedColors(control.palette.base, control.palette.windowText, 85)
-    readonly property color checkMarkColor: Qt.darker(control.palette.text, 1.2)
 
     implicitWidth: 40
     implicitHeight: 16
 
     radius: 2
-    border.color: Fusion.outline(control.palette)
+    border.color: Theme.colours.mid
 
-    gradient: Gradient {
-        GradientStop {
-            position: 0
-            color: Qt.darker(Fusion.grooveColor(indicator.control.palette), 1.1)
-        }
-        GradientStop {
-            position: 1
-            color: Qt.lighter(Fusion.grooveColor(indicator.control.palette), 1.1)
-        }
-    }
+    gradient: Theme.controlBackgroundGradient
 
     Rectangle {
         x: indicator.control.mirrored ? handle.x : 0
@@ -43,19 +30,10 @@ Rectangle {
         }
 
         radius: 2
-        border.color: Qt.darker(Fusion.highlightedOutline(indicator.control.palette), 1.1)
+        border.color: Theme.colours.mid
         border.width: indicator.control.enabled ? 1 : 0
 
-        gradient: Gradient {
-            GradientStop {
-                position: 0
-                color: Fusion.highlight(indicator.control.palette)
-            }
-            GradientStop {
-                position: 1
-                color: Qt.lighter(Fusion.highlight(indicator.control.palette), 1.2)
-            }
-        }
+        gradient: Theme.controlForegroundGradient
     }
 
     Rectangle {
@@ -66,25 +44,14 @@ Rectangle {
         height: 16
         radius: 2
 
-        gradient: Gradient {
-            GradientStop {
-                position: 0
-                color: Fusion.gradientStart(Fusion.buttonColor(indicator.control.palette,
-                    indicator.control.visualFocus, indicator.control.pressed, indicator.enabled && indicator.control.hovered))
-            }
-            GradientStop {
-                position: 1
-                color: Fusion.gradientStop(Fusion.buttonColor(indicator.control.palette,
-                    indicator.control.visualFocus, indicator.control.pressed, indicator.enabled && indicator.control.hovered))
-            }
-        }
+        gradient: Theme.getForegroundGradient(control)
         border.width: 1
         border.color: "transparent"
 
         Rectangle {
             width: parent.width
             height: parent.height
-            border.color: indicator.control.visualFocus ? Fusion.highlightedOutline(indicator.control.palette) : Fusion.outline(indicator.control.palette)
+            border.color: Theme.getForegroundColour(control)
             color: "transparent"
             radius: 2
 
@@ -92,7 +59,7 @@ Rectangle {
                 x: 1; y: 1
                 width: parent.width - 2
                 height: parent.height - 2
-                border.color: Fusion.innerContrastLine
+                border.color: Theme.colours.mid
                 color: "transparent"
                 radius: 2
             }

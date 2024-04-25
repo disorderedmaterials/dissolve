@@ -27,7 +27,7 @@ T.Button {
         icon: control.icon
         text: control.text
         font: Theme.normalFont
-        color: Theme.getTextColour(control)
+        color: Theme.getForegroundColour(control)
     }
 
     background: ButtonPanel {

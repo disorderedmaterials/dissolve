@@ -14,17 +14,17 @@ Rectangle {
 
     gradient: {
         if (!control.enabled) { Theme.disabledGradient }
-        else (control.down || control.checked ? Theme.buttonDownGradient : Theme.buttonUpGradient)
+        else (control.down || control.checked ? Theme.controlBackgroundGradient : Theme.controlForegroundGradient)
     }
 
     radius: 2
-    border.color: Theme.mid
+    border.color: Theme.colours.mid
 
     Rectangle {
         x: 1; y: 1
         width: parent.width - 2
         height: parent.height - 2
-        border.color: Theme.background
+        border.color: Theme.colours.background
         color: "transparent"
 
         radius: 2
