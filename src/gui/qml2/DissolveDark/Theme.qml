@@ -34,6 +34,11 @@ QtObject {
         1.0
     )
 
+    function getTextColour(control){
+            if (!control.enabled) { return Theme.disabledText }
+            else return (control.down || control.checked ? Theme.highlightedText : Theme.normalText)
+        }
+
     // Gradients
     property Gradient mainGradient: Gradient {
         GradientStop { position: 0.0; color: background }

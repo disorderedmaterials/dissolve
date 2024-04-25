@@ -27,10 +27,7 @@ T.Button {
         icon: control.icon
         text: control.text
         font: Theme.normalFont
-        color: {
-            if (!control.enabled) { Theme.disabledText }
-            else (control.down || control.checked ? Theme.highlightedText : Theme.normalText)
-        }
+        color: Theme.getTextColour(control)
     }
 
     background: ButtonPanel {

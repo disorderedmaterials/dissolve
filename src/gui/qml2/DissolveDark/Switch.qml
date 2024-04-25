@@ -27,8 +27,9 @@ T.Switch {
         leftPadding: control.indicator && !control.mirrored ? control.indicator.width + control.spacing : 0
         rightPadding: control.indicator && control.mirrored ? control.indicator.width + control.spacing : 0
 
+        font: Theme.normalFont
         text: control.text
-        color: Theme.palette.text
+        color: Theme.getTextColour(control)
         elide: Text.ElideRight
         verticalAlignment: Text.AlignVCenter
     }

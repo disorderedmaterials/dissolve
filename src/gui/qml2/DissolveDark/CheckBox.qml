@@ -29,7 +29,7 @@ T.CheckBox {
 
         text: control.text
         font: Theme.normalFont
-        color: Theme.palette.windowText
+        color: Theme.getTextColour(control)
         elide: Text.ElideRight
         verticalAlignment: Text.AlignVCenter
     }
