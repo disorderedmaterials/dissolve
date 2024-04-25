@@ -1,45 +1,63 @@
 import QtQuick 2.11
 import QtQuick.Controls 2.1
+import QtQuick.Layouts 2.1
 
 Pane {
     width: 600
     height: 600
 
-    Column {
+    Grid {
         anchors.fill: parent
+        columns: 3
 
         padding: 4
         spacing: 4
 
-        Row {
-            spacing: 4
-            Button { text: "Button A" }
-            Button { text: "Button B (Disabled)"; enabled: false }
-            Button { text: "Button C (Icon)"; icon.source: "icons/add.png" }
-            Button { text: "Button D (Icon, Disabled)"; enabled: false; icon.source: "icons/add.png" }
+        GroupBox {
+            title: "Button"
+            ColumnLayout {
+                spacing: 4
+                Button { text: "Normal" }
+                Button { text: "Disabled"; enabled: false }
+                Button { text: "Icon"; icon.source: "icons/add.png" }
+                Button { text: "Icon, Disabled"; enabled: false; icon.source: "icons/add.png" }
+                }
+            }
+
+        GroupBox {
+            title: "CheckBox"
+            ColumnLayout {
+                spacing: 4
+                CheckBox { text: "Normal" }
+                CheckBox { text: "Tristate"; tristate: true }
+                CheckBox { text: "Disabled"; checked: true; enabled: false }
+                CheckBox { text: "Disabled, Tristate"; tristate: true; checkState: Qt.PartiallyChecked; enabled: false }
+                }
+            }
+
+        GroupBox {
+            title: "Switch"
+            ColumnLayout {
+                spacing: 4
+                Switch { text: "Normal" }
+                Switch { text: "Disabled"; checked: true; enabled: false }
+            }
         }
 
-        Row {
-            spacing: 4
-            CheckBox { text: "Checkbox A" }
-            CheckBox { text: "Checkbox B (Tristate)"; tristate: true }
-            CheckBox { text: "Checkbox C (Disabled)"; checked: true; enabled: false }
-            CheckBox { text: "Checkbox D (Disabled, Tristate)"; tristate: true; checkState: Qt.PartiallyChecked; enabled: false }
+        GroupBox {
+            title: "SquareButton"
+            ColumnLayout {
+                spacing: 4
+                SquareButton { icon.source: "icons/warnBox.png"; text: "Test"; size: 64 }
+            }
         }
 
-        Row {
-            spacing: 4
-            Switch { text: "Switch A" }
-            Switch { }
-            Switch { text: "Switch C (Disabled)"; checked: true; enabled: false }
+        GroupBox {
+            title: "Label"
+            ColumnLayout {
+                spacing: 4
+                Label { text: "Label" }
+            }
         }
-
-        SquareButton {
-            icon.source: "icons/warnBox.png"
-            text: "Test"
-            size: 64
-        }
-
-        Label { text: "Label" }
     }
 }

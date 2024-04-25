@@ -42,7 +42,7 @@ QtObject {
     property Gradient mainGradient: Gradient {
         GradientStop { position: 0.0; color: colours.background }
         GradientStop { position: 0.9; color: colours.background }
-        GradientStop { position: 1.0; color: colours.principal }
+        GradientStop { position: 1.0; color: colours.extraDark(colours.principal) }
     }
     property Gradient disabledGradient: Gradient {
         GradientStop { position: 0.0; color: colours.extraDark(colours.principal) }
@@ -73,8 +73,8 @@ QtObject {
         GradientStop { position: 1.0; color: colours.darker(colours.principal) }
     }
     property Gradient controlBackgroundGradient: Gradient {
-        GradientStop { position: 0.0; color: colours.darker(colours.principal) }
-        GradientStop { position: 1.0; color: colours.extraDark(colours.principal) }
+        GradientStop { position: 0.0; color: colours.extraDark(colours.principal) }
+        GradientStop { position: 1.0; color: colours.background }
     }
 
     // Accent Gradients
