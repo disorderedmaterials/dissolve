@@ -8,11 +8,11 @@ Pane {
     Column {
         anchors.fill: parent
 
-        padding: 50
-        spacing: 25
+        padding: 4
+        spacing: 4
 
         Row {
-            spacing: 25
+            spacing: 4
             Button { text: "Button A" }
             Button { text: "Button B (Disabled)"; enabled: false }
             Button { text: "Button C (Icon)"; icon.source: "icons/add.png" }
@@ -20,7 +20,7 @@ Pane {
         }
 
         Row {
-            spacing: 25
+            spacing: 4
             CheckBox { text: "Checkbox A" }
             CheckBox { text: "Checkbox B (Tristate)"; tristate: true }
             CheckBox { text: "Checkbox C (Disabled)"; checked: true; enabled: false }
@@ -28,7 +28,7 @@ Pane {
         }
 
         Row {
-            spacing: 25
+            spacing: 4
             Switch { text: "Switch A" }
             Switch { }
             Switch { text: "Switch C (Disabled)"; checked: true; enabled: false }
