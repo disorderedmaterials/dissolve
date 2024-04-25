@@ -1,17 +1,12 @@
-// Copyright (C) 2017 The Qt Company Ltd.
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2024 Team Dissolve and contributors
 
 import QtQuick
-import QtQuick.Controls.impl
-import QtQuick.Controls.Fusion
-import QtQuick.Controls.Fusion.impl
 
 Rectangle {
     id: indicator
 
     property Item control
-    readonly property color pressedColor: Fusion.mergedColors(control.palette.base, control.palette.windowText, 85)
-    readonly property color checkMarkColor: Qt.darker(control.palette.text, 1.2)
 
     implicitWidth: 16
     implicitHeight: 16
