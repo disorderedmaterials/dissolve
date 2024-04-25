@@ -1,0 +1,11 @@
+module DissolveDark
+singleton Theme 1.0 Theme.qml
+ThemeColours 1.0 ThemeColours.qml
+Pane 1.0 Pane.qml
+Button 1.0 Button.qml
+ButtonPanel 1.0 ButtonPanel.qml
+CheckBox 1.0 CheckBox.qml
+CheckIndicator 1.0 CheckIndicator.qml
+Switch 1.0 Switch.qml
+SwitchIndicator 1.0 SwitchIndicator.qml
+Text 1.0 Text.qml
