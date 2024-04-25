@@ -14,9 +14,10 @@ class ShortRangeFunctions
     public:
     enum class Form
     {
-        None,                 /* No short-range dispersive forces */
-        LennardJones,         /* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
-        LennardJonesGeometric /* Lennard-Jones 12-6 form with Geometric combination rules */
+        None,                  /* No short-range dispersive forces */
+        LennardJones,          /* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
+        LennardJonesGeometric, /* Lennard-Jones 12-6 form with Geometric combination rules */
+        Buckingham             /* Buckingham form */
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
