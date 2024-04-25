@@ -8,6 +8,7 @@ ButtonPanel 1.0 ButtonPanel.qml
 CheckBox 1.0 CheckBox.qml
 CheckIndicator 1.0 CheckIndicator.qml
 GroupBox 1.0 GroupBox.qml
+Label 1.0 Label.qml
 Pane 1.0 Pane.qml
 Switch 1.0 Switch.qml
 SwitchIndicator 1.0 SwitchIndicator.qml

@@ -56,7 +56,8 @@ Pane {
             title: "Label"
             ColumnLayout {
                 spacing: 4
-                Label { text: "Label" }
+                Label { text: "Normal" }
+                Label { text: "Disabled"; enabled: false }
             }
         }
     }
