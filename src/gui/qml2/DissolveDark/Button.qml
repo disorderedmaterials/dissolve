@@ -3,6 +3,7 @@
 
 import QtQuick
 import QtQuick.Templates as T
+import QtQuick.Controls.impl
 
 T.Button {
     id: control
