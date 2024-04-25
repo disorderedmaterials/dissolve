@@ -13,8 +13,10 @@ Pane {
 
         Row {
             spacing: 25
-            Button { text: "Button" }
-            Button { text: "Button (Disabled)"; enabled: false }
+            Button { text: "Button A" }
+            Button { text: "Button B (Disabled)"; enabled: false }
+            Button { text: "Button C (Icon)"; icon.source: "icons/add.png" }
+            Button { text: "Button D (Icon, Disabled)"; enabled: false; icon.source: "icons/add.png" }
         }
 
         Row {
@@ -30,6 +32,12 @@ Pane {
             Switch { text: "Switch A" }
             Switch { }
             Switch { text: "Switch C (Disabled)"; checked: true; enabled: false }
+        }
+
+        SquareButton {
+            icon.source: "icons/warnBox.png"
+            text: "Test"
+            size: 64
         }
 
         Label { text: "Label" }

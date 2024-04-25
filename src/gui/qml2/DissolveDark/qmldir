@@ -10,4 +10,5 @@ CheckIndicator 1.0 CheckIndicator.qml
 Pane 1.0 Pane.qml
 Switch 1.0 Switch.qml
 SwitchIndicator 1.0 SwitchIndicator.qml
+SquareButton 1.0 SquareButton.qml
 Text 1.0 Text.qml
