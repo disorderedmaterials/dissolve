@@ -14,20 +14,22 @@ Pane {
         Row {
             spacing: 25
             Button { text: "Button" }
-            Button { text: "Button"; enabled: false }
+            Button { text: "Button (Disabled)"; enabled: false }
         }
 
         Row {
             spacing: 25
-            CheckBox { text: "Checkbox" }
-            CheckBox { text: "Checkbox"; checked: true; enabled: false }
+            CheckBox { text: "Checkbox A" }
+            CheckBox { text: "Checkbox B (Tristate)"; tristate: true }
+            CheckBox { text: "Checkbox C (Disabled)"; checked: true; enabled: false }
+            CheckBox { text: "Checkbox D (Disabled, Tristate)"; tristate: true; checkState: Qt.PartiallyChecked; enabled: false }
         }
 
         Row {
             spacing: 25
             Switch { text: "Switch A" }
             Switch { }
-            Switch { text: "Switch C"; checked: true; enabled: false }
+            Switch { text: "Switch C (Disabled)"; checked: true; enabled: false }
         }
 
         Label { text: "Label" }

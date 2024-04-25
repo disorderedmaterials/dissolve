@@ -30,10 +30,10 @@ Rectangle {
         }
 
         radius: 2
-        border.color: Theme.colours.mid
-        border.width: indicator.control.enabled ? 1 : 0
+        border.color: Theme.colours.background
+        //border.width: indicator.control.enabled ? 1 : 0
 
-        gradient: Theme.controlForegroundGradient
+        gradient: Theme.getAccentGradient(indicator.control)
     }
 
     Rectangle {

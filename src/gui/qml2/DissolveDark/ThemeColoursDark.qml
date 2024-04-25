@@ -10,14 +10,15 @@ QtObject {
     readonly property real extraDarkenFactor: darkenFactor*0.6
 
     // Core Colour Definitions
-    readonly property color foregroundBase: "#ddd"
+    readonly property color foreground: "#ddd"
     readonly property color background: "#101"
     readonly property color principal: "#313"
+    readonly property color accent: "#316549"
 
     // Derived Colours
-    readonly property color foregroundNormal: foregroundBase
-    readonly property color foregroundHighlighted: brighter(foregroundBase)
-    readonly property color foregroundDisabled: extraDark(foregroundBase)
+    readonly property color foregroundNormal: foreground
+    readonly property color foregroundHighlighted: brighter(foreground)
+    readonly property color foregroundDisabled: extraDark(foreground)
     readonly property color mid: Qt.rgba(
         (background.r + principal.r)*0.5,
         (background.g + principal.g)*0.5,

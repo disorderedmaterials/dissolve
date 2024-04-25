@@ -13,46 +13,36 @@ Rectangle {
     readonly property color pressedColor: Fusion.mergedColors(control.palette.base, control.palette.windowText, 85)
     readonly property color checkMarkColor: Qt.darker(control.palette.text, 1.2)
 
-    implicitWidth: 14
-    implicitHeight: 14
+    implicitWidth: 16
+    implicitHeight: 16
 
-    color: control.down ? indicator.pressedColor : control.palette.base
-    border.color: control.visualFocus ? Fusion.highlightedOutline(control.palette)
-                                      : Qt.lighter(Fusion.outline(control.palette), 1.1)
+    gradient: Theme.controlBackgroundGradient
+    border.color: Theme.colours.mid
 
     Rectangle {
         x: 1; y: 1
         width: parent.width - 2
-        height: 1
-        color: Fusion.topShadow
-        visible: indicator.control.enabled && !indicator.control.down
-    }
+        height: parent.width - 2
+        border.color: Theme.colours.background
+        gradient: Theme.controlBackgroundGradient
 
-    ColorImage {
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-        color: Color.transparent(indicator.checkMarkColor, 210 / 255)
-        source: "qrc:/qt-project.org/imports/QtQuick/Controls/Fusion/images/checkmark.png"
-        visible: indicator.control.checkState === Qt.Checked || (indicator.control.checked && indicator.control.checkState === undefined)
-    }
-
-    Rectangle {
-        x: 3; y: 3
-        width: parent.width - 6
-        height: parent.width - 6
-
-        visible: indicator.control.checkState === Qt.PartiallyChecked
-
-        gradient: Gradient {
-            GradientStop {
-                position: 0
-                color: Color.transparent(indicator.checkMarkColor, 80 / 255)
-            }
-            GradientStop {
-                position: 1
-                color: Color.transparent(indicator.checkMarkColor, 140 / 255)
-            }
+        Image {
+            x: 1; y: 1
+            width: parent.width - 2
+            height: parent.width - 2
+            visible: indicator.control.checkState === Qt.Checked
+            source: "assets/tick.png"
         }
-        border.color: Color.transparent(indicator.checkMarkColor, 180 / 255)
+
+        Rectangle {
+            x: 2; y: 2
+            width: parent.width - 4
+            height: parent.width - 4
+
+            visible: indicator.control.checkState === Qt.PartiallyChecked
+
+            gradient: Theme.getAccentGradient(indicator.control)
+            border.color: Theme.colours.background
+        }
     }
 }
