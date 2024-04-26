@@ -291,4 +291,11 @@ class KeywordStore
         for (auto *kwd : allKeywords_)
             kwd->removeReferencesTo(object);
     }
+
+    template <class P> void objectNoLongerValid(std::shared_ptr<P> object)
+    {
+        // Loop over all keyword objects and call their local functions
+        for (auto *kwd : allKeywords_)
+            kwd->removeReferencesTo(object);
+    }
 };

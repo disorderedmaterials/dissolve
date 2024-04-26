@@ -527,7 +527,26 @@ void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked) 
+{
+    ui_.MasterAnglesTable->currentIndex();
+    if (!index.isValid())
+        return;
+
+    // Get selected master bond
+    auto bond = masterBondsTableModel_.data(index);
+    if (!bond)
+        return;
+
+    dissolve_.coreData().removeMasterBond(bond);
+
+    Locker refreshLocker(refreshLock_);
+
+    masterBondsTableModel_.setData(dissolve_.coreData().masterBonds());
+    ui_.MasterBondsTable->resizeColumnsToContents();
+
+    dissolveWindow_->setModified();
+}
 
 void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked)
 {
@@ -538,7 +557,25 @@ void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked)
+{
+    if (!index.isValid())
+        return;
+
+    // Get selected master angle
+    auto angle = masterAnglesTableModel_.data(index);
+    if (!angle)
+        return;
+
+    dissolve_.coreData().removeMasterBond(angle);
+
+    Locker refreshLocker(refreshLock_);
+
+    masterAnglesTableModel_.setData(dissolve_.coreData().masterAngles());
+    ui_.MasterAnglesTable->resizeColumnsToContents();
+
+    dissolveWindow_->setModified();
+}
 
 void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked)
 {
@@ -549,7 +586,25 @@ void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked)
+{
+    if (!index.isValid())
+        return;
+
+    // Get selected master torsion
+    auto torsion = masterTorsionsTableModel_.data(index);
+    if (!torsion)
+        return;
+
+    dissolve_.coreData().removeMasterBond(torsion);
+
+    Locker refreshLocker(refreshLock_);
+
+    masterTorsionsTableModel_.setData(dissolve_.coreData().masterTorsions());
+    ui_.MasterTorsionsTable->resizeColumnsToContents();
+
+    dissolveWindow_->setModified();
+}
 
 void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked)
 {
@@ -560,4 +615,22 @@ void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked)
+{
+    if (!index.isValid())
+        return;
+
+    // Get selected master improper
+    auto improper = masterImpropersTableModel_.data(index);
+    if (!improper)
+        return;
+
+    dissolve_.coreData().removeMasterTorsion(improper);
+
+    Locker refreshLocker(refreshLock_);
+
+    masterImpropersTableModel_.setData(dissolve_.coreData().masterImpropers());
+    ui_.MasterImpropersTable->resizeColumnsToContents();
+
+    dissolveWindow_->setModified();
+}

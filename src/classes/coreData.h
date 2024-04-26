@@ -46,7 +46,7 @@ class CoreData
     // Add new AtomType
     std::shared_ptr<AtomType> addAtomType(Elements::Element Z);
     // Remove specified AtomType
-    void removeAtomType(const std::shared_ptr<AtomType> &at);
+    void removeAtomType(std::shared_ptr<AtomType> &at);
     // Return number of AtomTypes in list
     int nAtomTypes() const;
     // Return core AtomTypes list
@@ -114,6 +114,8 @@ class CoreData
     void deserialiseMaster(const SerialisedValue &node);
     // Add new master Bond parameters
     MasterBond &addMasterBond(std::string_view name);
+    // Remove specified master Bond
+    void removeMasterBond(const std::shared_ptr<MasterBond> &bond);
     // Return number of master Bond parameters in list
     int nMasterBonds() const;
     // Return list of master Bond parameters
@@ -124,6 +126,8 @@ class CoreData
     OptionalReferenceWrapper<const MasterBond> getMasterBond(std::string_view name) const;
     // Add new master Angle parameters
     MasterAngle &addMasterAngle(std::string_view name);
+    // Remove specified master Angle
+    void removeMasterAngle(const std::shared_ptr<MasterAngle> &angle);
     // Return number of master Angles parameters in list
     int nMasterAngles() const;
     // Return list of master Angle parameters
@@ -134,6 +138,8 @@ class CoreData
     OptionalReferenceWrapper<const MasterAngle> getMasterAngle(std::string_view name) const;
     // Add new master Torsion parameters
     MasterTorsion &addMasterTorsion(std::string_view name);
+    // Remove specified master Torsion
+    void removeMasterTorsion(const std::shared_ptr<MasterTorsion> &torsion);
     // Return number of master Torsions parameters in list
     int nMasterTorsions() const;
     // Return list of master Torsion parameters
@@ -144,6 +150,8 @@ class CoreData
     OptionalReferenceWrapper<const MasterTorsion> getMasterTorsion(std::string_view name) const;
     // Add new master Improper parameters
     MasterImproper &addMasterImproper(std::string_view name);
+    // Remove specified master Impropers
+    void removeMasterImproper(const std::shared_ptr<MasterImproper> &improper);
     // Return number of master Impropers parameters in list
     int nMasterImpropers() const;
     // Return list of master Improper parameters
@@ -274,4 +282,5 @@ class CoreData
     void removeReferencesTo(Module *data);
     void removeReferencesTo(Species *data);
     void removeReferencesTo(SpeciesSite *data);
+    void removeReferencesTo(std::shared_ptr<AtomType> data);
 };
