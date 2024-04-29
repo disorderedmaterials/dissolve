@@ -79,8 +79,18 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        * 	        (   2 * c * c )
        */
       [](double x, double omega, const std::vector<double> &params) { return exp(-(0.5 * x * x * params[2] * params[2])); },
-      // First derivative (not defined)
-      {},
+      /*
+       *
+       *             1             (     x * x   )
+       * dy/dx = - ----- * x * exp ( - --------- )
+       *           c**2            (   2 * c * c )
+       *
+       */
+      [](double x, double omega, const std::vector<double> &params)
+      {
+          auto c1 = (1 / params[2] * params[2]) * x;
+          return c1 * exp(-(0.5 * x * x * params[2] * params[2]));
+      },
       /*
        *             (   x * x * c * c )
        * FT(x) = exp ( - ------------- )
