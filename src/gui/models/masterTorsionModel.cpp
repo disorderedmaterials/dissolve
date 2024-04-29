@@ -106,3 +106,9 @@ bool MasterTorsionModel::setTermData(int row, MasterTermModelData::DataType data
 
     return true;
 }
+
+const std::shared_ptr<MasterTorsion> &MasterTorsionModel::rawData(const QModelIndex &index) const
+{
+    assert(sourceData_);
+    return sourceData_->get()[index.row()];
+}
