@@ -88,7 +88,7 @@ TEST_F(PairPotentialsTest, LennardJonesForm)
 
 TEST_F(PairPotentialsTest, Buckingham)
 {
-    //Values put in for TeO2 from https://pubs.rsc.org/en/content/articlelanding/2014/cp/c4cp01273a
+    // Values put in for TeO2 from https://pubs.rsc.org/en/content/articlelanding/2014/cp/c4cp01273a
     testEnergy(Functions1D::Form::Buckingham, "A=1595.266748  B=2.8912848  C=1", testRDelta_ * 5);
     testForce(Functions1D::Form::Buckingham, "A=82970.688434  B=6.211565  C=31.361954", testRDelta_ * 5);
 }
