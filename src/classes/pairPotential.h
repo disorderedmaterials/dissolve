@@ -154,8 +154,8 @@ class PairPotential
     double range() const;
     // Return spacing between points
     double delta() const;
-    // (Re)generate original potential (uOriginal) from current parameters
-    void calculateUOriginal(bool recalculateUFull = true);
+    // Calculate original potential (uOriginal) from current parameters
+    void calculateUOriginal();
     // Return potential at specified r
     double energy(double r);
     // Return analytic potential at specified r, including Coulomb term from local atomtype charges

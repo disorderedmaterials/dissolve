@@ -256,7 +256,7 @@ bool PairPotential::tabulate(double maxR, double delta)
 
     // Initialise original and additional potential arrays, and calculate original potential
     uOriginal_.initialise(nPoints_);
-    calculateUOriginal(false);
+    calculateUOriginal();
 
     // Set additional potential to zero and update full potential
     uAdditional_ = uOriginal_;
@@ -279,8 +279,8 @@ double PairPotential::range() const { return range_; }
 // Return spacing between points
 double PairPotential::delta() const { return delta_; }
 
-// (Re)generate potential from current parameters
-void PairPotential::calculateUOriginal(bool recalculateUFull)
+// Calculate original potential from current parameters
+void PairPotential::calculateUOriginal()
 {
     // Loop over points
     for (auto n = 1; n < nPoints_; ++n)
@@ -298,10 +298,6 @@ void PairPotential::calculateUOriginal(bool recalculateUFull)
 
     // Since the first point (at zero) risks being a nan, set it to ten times the second point instead
     uOriginal_.value(0) = 10.0 * uOriginal_.value(1);
-
-    // Update full potential (if not the first generation of the potential)
-    if (recalculateUFull)
-        calculateUFull();
 }
 
 // Return potential at specified r
