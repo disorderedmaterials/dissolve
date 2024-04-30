@@ -137,8 +137,14 @@ std::string_view PairPotential::nameI() const { return nameI_; }
 // Return name for second source parameters
 std::string_view PairPotential::nameJ() const { return nameJ_; };
 
+// Set interaction potential
+bool PairPotential::setInteractionPotential(Functions1D::Form form, std::string_view parameters)
+{
+    return interactionPotential_.setFormAndParameters(form, parameters) &&
+           potentialFunction_.setFormAndParameters(form, interactionPotential_.parameters());
+}
+
 // Return interaction potential
-InteractionPotential<Functions1D> &PairPotential::interactionPotential() { return interactionPotential_; }
 const InteractionPotential<Functions1D> &PairPotential::interactionPotential() const { return interactionPotential_; }
 
 // Set charge I

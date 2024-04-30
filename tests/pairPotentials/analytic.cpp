@@ -39,7 +39,7 @@ class PairPotentialsTest : public ::testing::Test
               const std::function<double(double)> &tabulated)
     {
         // Set up and tabulate pair potential
-        pairPotential_->interactionPotential().setFormAndParameters(form, parameters);
+        pairPotential_->setInteractionPotential(form, parameters);
         pairPotential_->tabulate(ppRange_, ppDelta_);
 
         // Test analytic vs tabulated values - do this by absolute value if less than 1.0, or by ratio if greater than 1.0.

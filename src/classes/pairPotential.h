@@ -98,8 +98,9 @@ class PairPotential
     std::string_view nameI() const;
     // Return name for second source parameters
     std::string_view nameJ() const;
+    // Set interaction potential
+    bool setInteractionPotential(Functions1D::Form form, std::string_view parameters);
     // Return interaction potential
-    InteractionPotential<Functions1D> &interactionPotential();
     const InteractionPotential<Functions1D> &interactionPotential() const;
     // Set charge I
     void setChargeI(double value);

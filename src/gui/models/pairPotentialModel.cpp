@@ -92,7 +92,7 @@ bool PairPotentialModel::setData(const QModelIndex &index, const QVariant &value
             break;
         // Short Range Parameters
         case (5):
-            if (!pair->interactionPotential().parseParameters(value.toString().toStdString()))
+            if (!pair->setInteractionPotential(pair->interactionPotential().form(), value.toString().toStdString()))
                 return false;
             break;
         default:

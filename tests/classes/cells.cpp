@@ -33,11 +33,11 @@ TEST(CellsTest, Basic)
     oType->setName("OW");
     oType->interactionPotential().setForm(ShortRangeFunctions::Form::None);
 
-    dissolve.addPairPotential(arType, arType)->interactionPotential().setForm(Functions1D::Form::None);
-    dissolve.addPairPotential(hType, hType)->interactionPotential().setForm(Functions1D::Form::None);
-    dissolve.addPairPotential(oType, oType)->interactionPotential().setForm(Functions1D::Form::None);
-    dissolve.addPairPotential(hType, oType)->interactionPotential().setForm(Functions1D::Form::None);
-    dissolve.addPairPotential(arType, hType)->interactionPotential().setForm(Functions1D::Form::None);
+    dissolve.addPairPotential(arType, arType)->setInteractionPotential(Functions1D::Form::None, "");
+    dissolve.addPairPotential(hType, hType)->setInteractionPotential(Functions1D::Form::None, "");
+    dissolve.addPairPotential(oType, oType)->setInteractionPotential(Functions1D::Form::None, "");
+    dissolve.addPairPotential(hType, oType)->setInteractionPotential(Functions1D::Form::None, "");
+    dissolve.addPairPotential(arType, hType)->setInteractionPotential(Functions1D::Form::None, "");
 
     // Set up pseudo-species
     auto *argon = coreData.addSpecies();
