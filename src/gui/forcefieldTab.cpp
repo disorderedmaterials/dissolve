@@ -73,8 +73,9 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
             this, SLOT(masterAnglesSelectionChanged(const QItemSelection &, const QItemSelection &)));
     connect(ui_.MasterTorsionsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(masterTorsionsSelectionChanged(const QItemSelection &, const QItemSelection &)));
-    connect(ui_.MasterImpropersTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            this, SLOT(masterImpropersSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    connect(ui_.MasterImpropersTable->selectionModel(),
+            SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
+            SLOT(masterImpropersSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     /*
      * Atom Types
@@ -291,8 +292,8 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked) 
-{ 
+void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
+{
     auto index = ui_.AtomTypesTable->currentIndex();
     if (!index.isValid())
         return;
@@ -527,7 +528,7 @@ void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked) 
+void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
 {
     auto index = ui_.MasterBondsTable->currentIndex();
     if (!index.isValid())
