@@ -162,6 +162,9 @@ MasterBond &CoreData::addMasterBond(std::string_view name)
 // Remove specified master Bond
 void CoreData::removeMasterBond(const std::shared_ptr<MasterBond> &bond)
 {
+    // Copy data into species-local instance
+    for (auto& species : species_) { species->addBond(bond->indexI(), bond->indexJ()); }
+
     masters_.bonds.erase(std::remove(masters_.bonds.begin(), masters_.bonds.end(), bond),
         masters_.bonds.end());
 }
@@ -211,6 +214,9 @@ MasterAngle &CoreData::addMasterAngle(std::string_view name)
 // Remove specified master Angle
 void CoreData::removeMasterAngle(const std::shared_ptr<MasterAngle> &angle)
 {
+    // Copy data into species-local instance
+    for (auto& species : species_) { species->addAngle(angle->indexI(), angle->indexJ(), angle->indexK()); }
+
     masters_.angles.erase(std::remove(masters_.angles.begin(), masters_.angles.end(), angle), 
         masters_.angles.end());
 }
@@ -260,6 +266,15 @@ MasterTorsion &CoreData::addMasterTorsion(std::string_view name)
 // Remove specified MasterTorsion
 void CoreData::removeMasterTorsion(const std::shared_ptr<MasterTorsion> &torsion)
 {
+    // Copy data into species-local instance
+    for (auto& species : species_) 
+    { 
+        species->addAngle(torsion->indexI(), 
+        torsion->indexJ(), 
+        torsion->indexK(), 
+        torsion->indexL()); 
+    }
+
     masters_.torsions.erase(std::remove(masters_.torsions.begin(), masters_.torsions.end(), torsion), 
         masters_.torsions.end());
 }
@@ -309,6 +324,15 @@ MasterImproper &CoreData::addMasterImproper(std::string_view name)
 // Remove specified master Improper
 void CoreData::removeMasterImproper(const std::shared_ptr<MasterImproper> &improper)
 {
+    // Copy data into species-local instance
+    for (auto& species : species_) 
+    { 
+        species->addAngle(improper->indexI(), 
+        improper->indexJ(), 
+        improper->indexK(), 
+        improper->indexL()); 
+    }
+
     masters_.impropers.erase(std::remove(masters_.impropers.begin(), masters_.impropers.end(), improper), 
         masters_.impropers.end());
 }
