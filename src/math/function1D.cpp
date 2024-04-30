@@ -292,14 +292,14 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        *  F(x)=A exp(-B * x) - -----
        *                       x**6
        */
-      [](double x, double A, const std::vector<double> &params)
+      [](double x, double omega, const std::vector<double> &params)
       {
           auto B = exp(-params[1] * x);
           auto C = params[2] * pow(x, 6.0);
           return params[0] * B + C;
       },
       // dy/dx = -B * A exp(-B * x) + 6 * C * x**-7
-      [](double x, double A, const std::vector<double> &params)
+      [](double x, double omega, const std::vector<double> &params)
       {
           auto expo = exp(-params[1] * x);
           auto C = 6 * params[2] * pow(x, -7.0);
