@@ -269,7 +269,7 @@ void CoreData::removeMasterTorsion(const std::shared_ptr<MasterTorsion> &torsion
     // Copy data into species-local instance
     for (auto& species : species_) 
     { 
-        species->addAngle(torsion->indexI(), 
+        species->addTorsion(torsion->indexI(), 
         torsion->indexJ(), 
         torsion->indexK(), 
         torsion->indexL()); 
@@ -327,7 +327,7 @@ void CoreData::removeMasterImproper(const std::shared_ptr<MasterImproper> &impro
     // Copy data into species-local instance
     for (auto& species : species_) 
     { 
-        species->addAngle(improper->indexI(), 
+        species->addImproper(improper->indexI(), 
         improper->indexJ(), 
         improper->indexK(), 
         improper->indexL()); 
