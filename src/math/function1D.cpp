@@ -79,18 +79,7 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        * 	        (   2 * c * c )
        */
       [](double x, double omega, const std::vector<double> &params) { return exp(-(0.5 * x * x * params[2] * params[2])); },
-      /*
-       *
-       *             1             (     x * x   )
-       * dy/dx = - ----- * x * exp ( - --------- )
-       *           c**2            (   2 * c * c )
-       *
-       */
-      [](double x, double omega, const std::vector<double> &params)
-      {
-          auto c1 = (1 / params[2] * params[2]) * x;
-          return c1 * exp(-(0.5 * x * x * params[2] * params[2]));
-      },
+      {},
       /*
        *             (   x * x * c * c )
        * FT(x) = exp ( - ------------- )
@@ -103,6 +92,35 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        *        c sqrt(2 pi)
        */
       [](double omega, const std::vector<double> &params) { return params[2] / sqrt(2.0 * M_PI); }}},
+    {Functions1D::Form::GaussianPotential,
+     {{"fwhm"},
+      {FunctionProperties::FirstDerivative},
+      [](std::vector<double> params)
+      {
+          params.push_back(params[0] / (2.0 * sqrt(2.0 * log(2.0))));
+          params.push_back(1.0 / params[1]);
+          return params;
+      },
+      /*
+       *            (     x * x   )
+       * f(x) = exp ( - --------- )
+       * 	        (   2 * c * c )
+       */
+      [](double x, double omega, const std::vector<double> &params) { return exp(-(0.5 * x * x * params[2] * params[2])); },
+      /*
+       *
+       *             1             (     x * x   )
+       * dy/dx = - ----- * x * exp ( - --------- )
+       *           c**2            (   2 * c * c )
+       *
+       */
+      [](double x, double omega, const std::vector<double> &params)
+      {
+          auto c1 = (1 / params[2] * params[2]) * x;
+          return c1 * exp(-(0.5 * x * x * params[2] * params[2]));
+      },
+      {},
+      {}}},
     /*
      * Gaussian with prefactor
      *
@@ -195,7 +213,7 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
      */
     {Functions1D::Form::GaussianC2,
      {{"fwhm", "fwhm(x)"},
-      {FunctionProperties::FirstDerivative, FunctionProperties::FourierTransform},
+      {FunctionProperties::FourierTransform},
       [](std::vector<double> params)
       {
           params.push_back(params[0] / (2.0 * sqrt(2.0 * log(2.0))));
@@ -211,20 +229,8 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        */
       [](double x, double omega, const std::vector<double> &params)
       { return exp(-(x * x) / (2.0 * (params[2] + params[3] * omega) * (params[2] + params[3] * omega))); },
-      /*
-       *
-       *                   1                 (   x * x * (c1 + c2*omega)**2 )
-       * dy/dx = --------------------- * exp ( - -------------------------- )
-       *         (c1 * c2 * omega)**2        (                2             )
-       *
-       */
-      [](double x, double omega, const std::vector<double> &params)
-      {
-          auto c1 = (params[2] * params[3] * omega);
-          auto c2 = 1 / pow(c1, 2);
-          return c2 * (exp(-(0.5 * x * x * (params[2] + params[3] * omega) * (params[2] + params[3] * omega))));
-          ;
-      },
+
+      {},
       /*
        *             (   x * x * (c1 + c2*omega)**2 )
        * FT(x) = exp ( - -------------------------- )

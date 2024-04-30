@@ -74,6 +74,7 @@ class Functions1D
     {
         None,
         Gaussian,
+        GaussianPotential,
         ScaledGaussian,
         OmegaDependentGaussian,
         GaussianC2,
