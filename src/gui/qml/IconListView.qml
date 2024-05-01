@@ -33,6 +33,7 @@ ListView {
             anchors.bottom: label.bottom
             anchors.left: parent.left
             anchors.top: label.top
+            height: 10
             source: icon ? "qrc:/general/icons/warn.svg" : "qrc:/general/icons/true.svg"
             width: height
         }

@@ -53,7 +53,8 @@ void AddForcefieldDialogModel::next()
             Q_EMIT assignErrors({});
             break;
         case AddForcefieldDialogModel::Page::AtomTypesPage:
-            if (!ff_) // No valud forcefield
+            // Must have a valid forcefield
+            if (!ff_)
                 return;
             modifiedSpecies_ = temporaryDissolve_->coreData().addSpecies();
             modifiedSpecies_->copyBasic(species_);
@@ -104,6 +105,7 @@ void AddForcefieldDialogModel::next()
             index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
             break;
         case AddForcefieldDialogModel::Page::IntramolecularPage:
+            assignIntramolecularTerms(ff_);
             Q_EMIT mastersChanged();
             index_ = AddForcefieldDialogModel::Page::MasterTermsPage;
             break;
@@ -122,8 +124,6 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
     dissolve_ = &dissolve;
 
     temporaryDissolve_ = std::make_unique<Dissolve>(temporaryCoreData_);
-    auto node = dissolve_->coreData().serialiseMaster();
-    temporaryCoreData_.deserialiseMaster(node);
     masters_ = std::make_unique<MasterTermTreeModel>();
     masters_->setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(), temporaryCoreData_.masterTorsions(),
                       temporaryCoreData_.masterImpropers());
@@ -247,9 +247,6 @@ void AddForcefieldDialogModel::finalise()
         original.setCharge(modified.charge());
     }
 
-    // Assign intramolecular terms if we need to
-    assignIntramolecularTerms(ff_);
-
     // Copy intramolecular terms
     if (intramolecularRadio_ != Radio::None)
     {
@@ -333,16 +330,16 @@ void AddForcefieldDialogModel::addMasterSuffix(int type, int index, QString suff
     switch (type)
     {
         case 0:
-            termData = masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
         case 1:
-            termData = masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
         case 2:
-            termData = masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
         case 3:
-            termData = masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
     };
 }
@@ -369,16 +366,16 @@ void AddForcefieldDialogModel::addMasterPrefix(int type, int index, QString pref
     switch (type)
     {
         case 0:
-            termData = masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
         case 1:
-            termData = masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
         case 2:
-            termData = masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
         case 3:
-            termData = masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
     };
 }
@@ -411,13 +408,12 @@ void AddForcefieldDialogModel::assignIntramolecularTerms(const Forcefield *ff)
         if (intramolecularRadio_ == Radio::Selected)
             flags += Forcefield::SelectionOnlyFlag;
 
+        // Try to assign terms across the species
         if (!ff->assignIntramolecular(modifiedSpecies_, flags))
-            // Assigning failed
             return;
 
         // Reduce to master terms?
         if (!noMasterTerms_)
             modifiedSpecies_->reduceToMasterTerms(temporaryCoreData_, intramolecularRadio_ == Radio::Selected);
     }
-    return;
 }
