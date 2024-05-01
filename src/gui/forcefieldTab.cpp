@@ -135,11 +135,13 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
         new ComboListDelegate(this, new ComboEnumOptionsItems<PairPotentialOverride::PairPotentialOverrideType>(
                                         PairPotentialOverride::pairPotentialOverrideTypes())));
     ui_.OverridesTable->setItemDelegateForColumn(
-        PairPotentialOverrideModel::ColumnData::ShortRangeForm,
-        new ComboListDelegate(this, new ComboEnumOptionsItems<ShortRangeFunctions::Form>(ShortRangeFunctions::forms())));
+        PairPotentialOverrideModel::ColumnData::Form,
+        new ComboListDelegate(this, new ComboEnumOptionsItems<Functions1D::Form>(Functions1D::forms())));
+    ui_.OverridesTable->setModel(&pairPotentialOverrideModel_);
     connect(&pairPotentialOverrideModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
             this, SLOT(overrideDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
-    ui_.OverridesTable->setModel(&pairPotentialOverrideModel_);
+    connect(ui_.OverridesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(overrideSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
 
 /*
@@ -468,12 +470,28 @@ void ForcefieldTab::pairPotentialSelectionChanged(const QItemSelection &current,
  * Pair Potential Overrides
  */
 
-// Pair Potential Overrides
-void ForcefieldTab::on_OverrideAddButton_clicked(bool checked) {}
+void ForcefieldTab::on_OverrideAddButton_clicked(bool checked)
+{
+    pairPotentialOverrideModel_.insertRows(dissolve_.coreData().pairPotentialOverrides().size(), 1);
+}
 
-void ForcefieldTab::on_OverrideRemoveButton_clicked(bool checked) {}
+void ForcefieldTab::on_OverrideRemoveButton_clicked(bool checked)
+{
+    auto row = ui_.OverridesTable->currentIndex().row();
+    if (row == -1)
+        return;
 
-void ForcefieldTab::on_OverrideDuplicateButton_clicked(bool checked) {}
+    pairPotentialOverrideModel_.removeRows(row, 1);
+}
+
+void ForcefieldTab::on_OverrideDuplicateButton_clicked(bool checked)
+{
+    auto row = ui_.OverridesTable->currentIndex().row();
+    if (row == -1)
+        return;
+
+    pairPotentialOverrideModel_.duplicateRow(row);
+}
 
 void ForcefieldTab::overrideDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &)
 {
@@ -481,6 +499,12 @@ void ForcefieldTab::overrideDataChanged(const QModelIndex &current, const QModel
 
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
         updatePairPotentials();
+}
+
+void ForcefieldTab::overrideSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
+{
+    ui_.OverrideDuplicateButton->setEnabled(!current.isEmpty());
+    ui_.OverrideRemoveButton->setEnabled(!current.isEmpty());
 }
 
 /*
