@@ -74,12 +74,12 @@ class Functions1D
     {
         None,
         Gaussian,
-        GaussianPotential,
         ScaledGaussian,
         OmegaDependentGaussian,
         GaussianC2,
         LennardJones126,
         Buckingham,
+        GaussianPotential
     };
     // Return enum options for form
     static EnumOptions<Form> forms();

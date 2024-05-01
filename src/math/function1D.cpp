@@ -92,35 +92,6 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        *        c sqrt(2 pi)
        */
       [](double omega, const std::vector<double> &params) { return params[2] / sqrt(2.0 * M_PI); }}},
-    {Functions1D::Form::GaussianPotential,
-     {{"fwhm"},
-      {FunctionProperties::FirstDerivative},
-      [](std::vector<double> params)
-      {
-          params.push_back(params[0] / (2.0 * sqrt(2.0 * log(2.0))));
-          params.push_back(1.0 / params[1]);
-          return params;
-      },
-      /*
-       *            (     x * x   )
-       * f(x) = exp ( - --------- )
-       * 	        (   2 * c * c )
-       */
-      [](double x, double omega, const std::vector<double> &params) { return exp(-(0.5 * x * x * params[2] * params[2])); },
-      /*
-       *
-       *             1             (     x * x   )
-       * dy/dx = - ----- * x * exp ( - --------- )
-       *           c**2            (   2 * c * c )
-       *
-       */
-      [](double x, double omega, const std::vector<double> &params)
-      {
-          auto c1 = (1 / params[2] * params[2]) * x;
-          return c1 * exp(-(0.5 * x * x * params[2] * params[2]));
-      },
-      {},
-      {}}},
     /*
      * Gaussian with prefactor
      *
@@ -312,6 +283,48 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
           return -params[1] * params[0] * expo + C;
       },
       {},
+      {}}},
+    /*
+     * GaussianPotential with prefactor, located at specific x.
+     * Intended for use as a potential override.
+     *
+     * Parameters:
+     *  INPUT  0 = A
+     *  INPUT  1 = fwhm
+     *  INPUT  2 = x0
+     *  CALC   3 = c = fwhm / (2 * sqrt(2 ln 2))
+     *  CALC   4 = 1.0 / c
+     */
+    {Functions1D::Form::GaussianPotential,
+     {{"A", "fwhm", "x0"},
+      {FunctionProperties::FirstDerivative},
+      [](std::vector<double> params)
+      {
+          params.push_back(params[1] / (2.0 * sqrt(2.0 * log(2.0))));
+          params.push_back(1.0 / params[3]);
+          return params;
+      },
+      /*
+       *            (     x * x   )
+       * f(x) = exp ( - --------- )
+       * 	        (   2 * c * c )
+       */
+      [](double x, double omega, const std::vector<double> &params)
+      { return params[0] * exp(-(0.5 * (x - params[2]) * (x - params[2]) * params[4] * params[4])); },
+      /*
+       *
+       *             1             (     x * x   )
+       * dy/dx = - ----- * x * exp ( - --------- )
+       *           c**2            (   2 * c * c )
+       *
+       */
+      [](double x, double omega, const std::vector<double> &params)
+      {
+          auto dx = x - params[2];
+          auto c1 = (1 / (params[3] * params[3])) * dx;
+          return -params[0] * c1 * exp(-(0.5 * dx * dx * params[4] * params[4]));
+      },
+      {},
       {}}}};
 
 // Return enum option info for forms
@@ -326,6 +339,7 @@ EnumOptions<Functions1D::Form> Functions1D::forms()
                                               {Functions1D::Form::GaussianC2, "GaussianC2", 2},
                                               {Functions1D::Form::LennardJones126, "LennardJones126", 2},
                                               {Functions1D::Form::Buckingham, "Buckingham", 3},
+                                              {Functions1D::Form::GaussianPotential, "GaussianPotential", 3},
                                           });
 }
 
