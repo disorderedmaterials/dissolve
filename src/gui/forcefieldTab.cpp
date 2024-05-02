@@ -304,7 +304,7 @@ void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
 
     if (queryBox.exec() != QMessageBox::Yes)
         return;
-    
+
     auto index = ui_.AtomTypesTable->currentIndex();
     if (!index.isValid())
         return;
