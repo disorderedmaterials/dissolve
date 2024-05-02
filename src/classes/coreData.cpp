@@ -750,7 +750,18 @@ void CoreData::removeReferencesTo(Species *data)
             cfg->empty();
 }
 void CoreData::removeReferencesTo(SpeciesSite *data) { objectNoLongerValid(this, data); }
-void CoreData::removeReferencesTo(std::shared_ptr<AtomType> data) { objectNoLongerValid(this, data); }
+void CoreData::removeReferencesTo(std::shared_ptr<AtomType> data) 
+{ 
+    for (auto &species : species_)
+    {
+        for (auto &atom : species->atoms())
+        {
+            if (atom.atomType() == data) { atom.setAtomType(nullptr); }
+        }
+    }
+
+    objectNoLongerValid(this, data); 
+}
 
 /*
  * Modules

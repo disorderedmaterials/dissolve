@@ -15,6 +15,7 @@
 #include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
 #include <QListWidgetItem>
+#include <QMessageBox>
 
 ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this), atomTypesModel_(dissolve.coreData()),
@@ -294,6 +295,16 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 
 void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
 {
+    QMessageBox queryBox;
+    queryBox.setWindowTitle(QString("Remove Atom Type"));
+    queryBox.setText(QString("This operation cannot be undone!"));
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+
+    if (queryBox.exec() != QMessageBox::Yes)
+        return;
+    
     auto index = ui_.AtomTypesTable->currentIndex();
     if (!index.isValid())
         return;
@@ -530,6 +541,16 @@ void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
 
 void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
 {
+    QMessageBox queryBox;
+    queryBox.setWindowTitle(QString("Remove Master Bond"));
+    queryBox.setText(QString("This operation cannot be undone!"));
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+
+    if (queryBox.exec() != QMessageBox::Yes)
+        return;
+
     auto index = ui_.MasterBondsTable->currentIndex();
     if (!index.isValid())
         return;
@@ -560,6 +581,16 @@ void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked)
 
 void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked)
 {
+    QMessageBox queryBox;
+    queryBox.setWindowTitle(QString("Remove Master Angle"));
+    queryBox.setText(QString("This operation cannot be undone!"));
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+
+    if (queryBox.exec() != QMessageBox::Yes)
+        return;
+
     auto index = ui_.MasterAnglesTable->currentIndex();
     if (!index.isValid())
         return;
@@ -590,6 +621,16 @@ void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked)
 
 void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked)
 {
+    QMessageBox queryBox;
+    queryBox.setWindowTitle(QString("Remove Master Torsion"));
+    queryBox.setText(QString("This operation cannot be undone!"));
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+
+    if (queryBox.exec() != QMessageBox::Yes)
+        return;
+
     auto index = ui_.MasterTorsionsTable->currentIndex();
     if (!index.isValid())
         return;
@@ -620,6 +661,16 @@ void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked)
 
 void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked)
 {
+    QMessageBox queryBox;
+    queryBox.setWindowTitle(QString("Remove Master Improper"));
+    queryBox.setText(QString("This operation cannot be undone!"));
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+
+    if (queryBox.exec() != QMessageBox::Yes)
+        return;
+
     auto index = ui_.MasterImpropersTable->currentIndex();
     if (!index.isValid())
         return;
