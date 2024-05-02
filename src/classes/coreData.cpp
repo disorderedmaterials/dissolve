@@ -161,10 +161,12 @@ MasterBond &CoreData::addMasterBond(std::string_view name)
 // Remove specified master Bond
 void CoreData::removeMasterBond(const std::shared_ptr<MasterBond> &bond)
 {
-    // Copy data into species-local instance
+    // Detach from master term
     for (auto &species : species_)
     {
-        species->addBond(bond->indexI(), bond->indexJ());
+        for (auto &b : species->bonds())
+            if (b.masterTerm() == bond.get())
+                b.detachFromMasterTerm();
     }
 
     masters_.bonds.erase(std::remove(masters_.bonds.begin(), masters_.bonds.end(), bond), masters_.bonds.end());
@@ -215,10 +217,12 @@ MasterAngle &CoreData::addMasterAngle(std::string_view name)
 // Remove specified master Angle
 void CoreData::removeMasterAngle(const std::shared_ptr<MasterAngle> &angle)
 {
-    // Copy data into species-local instance
+    // Detach from master term
     for (auto &species : species_)
     {
-        species->addAngle(angle->indexI(), angle->indexJ(), angle->indexK());
+        for (auto &a : species->angles())
+            if (a.masterTerm() == angle.get())
+                a.detachFromMasterTerm();
     }
 
     masters_.angles.erase(std::remove(masters_.angles.begin(), masters_.angles.end(), angle), masters_.angles.end());
@@ -269,10 +273,12 @@ MasterTorsion &CoreData::addMasterTorsion(std::string_view name)
 // Remove specified MasterTorsion
 void CoreData::removeMasterTorsion(const std::shared_ptr<MasterTorsion> &torsion)
 {
-    // Copy data into species-local instance
+    // Detach from master term
     for (auto &species : species_)
     {
-        species->addTorsion(torsion->indexI(), torsion->indexJ(), torsion->indexK(), torsion->indexL());
+        for (auto &t : species->torsions())
+            if (t.masterTerm() == torsion.get())
+                t.detachFromMasterTerm();
     }
 
     masters_.torsions.erase(std::remove(masters_.torsions.begin(), masters_.torsions.end(), torsion), masters_.torsions.end());
@@ -323,10 +329,12 @@ MasterImproper &CoreData::addMasterImproper(std::string_view name)
 // Remove specified master Improper
 void CoreData::removeMasterImproper(const std::shared_ptr<MasterImproper> &improper)
 {
-    // Copy data into species-local instance
+    // Detach from master term
     for (auto &species : species_)
     {
-        species->addImproper(improper->indexI(), improper->indexJ(), improper->indexK(), improper->indexL());
+        for (auto &i : species->impropers())
+            if (i.masterTerm() == improper.get())
+                i.detachFromMasterTerm();
     }
 
     masters_.impropers.erase(std::remove(masters_.impropers.begin(), masters_.impropers.end(), improper),
