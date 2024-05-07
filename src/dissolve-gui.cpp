@@ -37,7 +37,7 @@ int main(int args, char **argv)
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
-    const QUrl url(u"qrc:/dialogs/qml/DissolveMain.qml");
+    const QUrl url(u"qrc:/main/qml/DissolveMain.qml");
 
     QObject::connect(
         &engine,
