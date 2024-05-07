@@ -547,8 +547,8 @@ void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
 {
     QMessageBox queryBox;
     queryBox.setWindowTitle(QString("Remove Master Bond"));
-    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n")
-    + QString("Any uses of this term in species will be converted to a local definition."));
+    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n") + 
+                     QString("Any uses of this term in species will be converted to a local definition."));
     queryBox.setInformativeText("Proceed?");
     queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     queryBox.setDefaultButton(QMessageBox::No);
@@ -591,8 +591,8 @@ void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked)
 {
     QMessageBox queryBox;
     queryBox.setWindowTitle(QString("Remove Master Angle"));
-    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n")
-    + QString("Any uses of this term in species will be converted to a local definition."));
+    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n") + 
+                     QString("Any uses of this term in species will be converted to a local definition."));
     queryBox.setInformativeText("Proceed?");
     queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     queryBox.setDefaultButton(QMessageBox::No);
@@ -635,8 +635,8 @@ void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked)
 {
     QMessageBox queryBox;
     queryBox.setWindowTitle(QString("Remove Master Torsion"));
-    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n")
-    + QString("Any uses of this term in species will be converted to a local definition."));
+    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n") + 
+                     QString("Any uses of this term in species will be converted to a local definition."));
     queryBox.setInformativeText("Proceed?");
     queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     queryBox.setDefaultButton(QMessageBox::No);
@@ -679,8 +679,8 @@ void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked)
 {
     QMessageBox queryBox;
     queryBox.setWindowTitle(QString("Remove Master Improper"));
-    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n")
-    + QString("Any uses of this term in species will be converted to a local definition."));
+    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n") + 
+                     QString("Any uses of this term in species will be converted to a local definition."));
     queryBox.setInformativeText("Proceed?");
     queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     queryBox.setDefaultButton(QMessageBox::No);
