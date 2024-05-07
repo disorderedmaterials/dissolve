@@ -48,6 +48,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::SDF, "SDF"},
                                                                  {ModuleTypes::SiteRDF, "SiteRDF"},
                                                                  {ModuleTypes::SQ, "SQ"},
+                                                                 {ModuleTypes::TemperatureSchedule, "TemperatureSchedule"},
                                                                  {ModuleTypes::Test, "Test"},
                                                                  {ModuleTypes::XRaySQ, "XRaySQ"}});
 
