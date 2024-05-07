@@ -62,7 +62,18 @@
 	    "description": "Common settings for all GUI builds",
 	    "hidden": true,
             "cacheVariables": {
-                "GUI": "ON"
+                "GUI": "ON",
+				"QML": "OFF"
+	    }
+	},
+	{
+	    "name": "QML-base",
+	    "displayName": "QML based GUI build settings",
+	    "description": "Common settings for all QML GUI builds",
+	    "hidden": true,
+            "cacheVariables": {
+				"GUI": "OFF",
+                "QML": "ON"
 	    }
 	},
 	{

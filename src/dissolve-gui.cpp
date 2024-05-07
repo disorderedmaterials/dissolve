@@ -32,7 +32,7 @@ int main(int args, char **argv)
     QCoreApplication::setOrganizationDomain("www.projectdissolve.com");
     QCoreApplication::setApplicationName("Dissolve-GUI");
 
-    #ifdef QML_GUI
+    #ifdef QML
 
     QGuiApplication app(argc, argv);
 
