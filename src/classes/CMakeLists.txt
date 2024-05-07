@@ -1,10 +1,12 @@
 add_library(
   classes
+  angleFunctions.cpp
   array3DIterator.cpp
   atom.cpp
   atomType.cpp
   atomTypeData.cpp
   atomTypeMix.cpp
+  bondFunctions.cpp
   box.cpp
   boxCubic.cpp
   boxMonoclinicAlpha.cpp
@@ -49,6 +51,7 @@ add_library(
   region.cpp
   regionalDistributor.cpp
   scatteringMatrix.cpp
+  shortRangeFunctions.cpp
   site.cpp
   siteReference.cpp
   siteStack.cpp
@@ -67,13 +70,16 @@ add_library(
   speciesRing.cpp
   speciesSite.cpp
   speciesTorsion.cpp
+  torsionFunctions.cpp
   valueStore.cpp
   xRayWeights.cpp
+  angleFunctions.h
   array3DIterator.h
   atom.h
   atomTypeData.h
   atomType.h
   atomTypeMix.h
+  bondFunctions.h
   box.h
   braggReflection.h
   cell.h
@@ -105,6 +111,7 @@ add_library(
   region.h
   regionalDistributor.h
   scatteringMatrix.h
+  shortRangeFunctions.h
   site.h
   siteReference.h
   siteStack.h
@@ -117,6 +124,7 @@ add_library(
   speciesRing.h
   speciesSite.h
   speciesTorsion.h
+  torsionFunctions.h
   valueStore.h
   xRayWeights.h
 )

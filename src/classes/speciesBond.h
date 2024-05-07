@@ -5,8 +5,8 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "classes/bondFunctions.h"
 #include "classes/speciesIntra.h"
-
 #include <map>
 #include <vector>
 
@@ -14,27 +14,6 @@
 class SpeciesAtom;
 class Species;
 class CoreData;
-
-// Bond functional forms
-class BondFunctions
-{
-    public:
-    enum class Form
-    {
-        None,
-        Harmonic,
-        EPSR,
-        Morse
-    };
-    // Return enum options for form
-    static EnumOptions<Form> forms();
-    // Return parameters for specified form
-    static const std::vector<std::string> &parameters(Form form);
-    // Return nth parameter for the given form
-    static std::string parameter(Form form, int n);
-    // Return index of parameter in the given form
-    static std::optional<int> parameterIndex(Form form, std::string_view name);
-};
 
 // SpeciesBond Definition
 class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
@@ -122,8 +101,6 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
      * Interaction Parameters
      */
     public:
-    // Return fundamental frequency for the interaction
-    double fundamentalFrequency(double reducedMass) const override;
     // Return energy for specified distance
     double energy(double distance) const;
     // Return force multiplier for specified distance

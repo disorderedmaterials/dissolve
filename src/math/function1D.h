@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/enumOptions.h"
+#include "templates/flags.h"
 #include <functional>
 #include <string_view>
 #include <vector>
@@ -13,9 +14,9 @@ namespace FunctionProperties
 {
 enum FunctionProperty
 {
-    None = 0,
-    FourierTransform = 1,
-    Normalisation = 2
+    None,
+    FourierTransform,
+    Normalisation
 };
 };
 
@@ -33,14 +34,15 @@ using Function1DOmega = std::function<double(double omega, const std::vector<dou
 class FunctionDefinition1D
 {
     public:
-    FunctionDefinition1D(std::vector<std::string> parameterNames, int properties, FunctionSetup setup, Function1DXOmega y,
+    FunctionDefinition1D(const std::vector<std::string> &parameterNames,
+                         const Flags<FunctionProperties::FunctionProperty> &properties, FunctionSetup setup, Function1DXOmega y,
                          Function1DXOmega yFT = {}, Function1DOmega norm = {});
 
     private:
     // Names of parameters defining the function
     std::vector<std::string> parameterNames_;
     // Properties of the function
-    int properties_;
+    Flags<FunctionProperties::FunctionProperty> properties_;
     // Functions
     FunctionSetup setup_;
     Function1DXOmega y_, yFT_;
@@ -52,7 +54,7 @@ class FunctionDefinition1D
     // Return parameter names
     const std::vector<std::string> &parameterNames() const;
     // Return properties of the function
-    int properties() const;
+    const Flags<FunctionProperties::FunctionProperty> &properties() const;
     // Return function for setup
     FunctionSetup setup() const;
     // Return function for y value
@@ -85,7 +87,7 @@ std::vector<Function1D> matchingFunction1D(int properties);
 class Function1DWrapper
 {
     public:
-    Function1DWrapper(Function1D func = Function1D::None, std::vector<double> params = {});
+    Function1DWrapper(Function1D func = Function1D::None, const std::vector<double> &params = {});
 
     /*
      * Function
@@ -106,7 +108,7 @@ class Function1DWrapper
 
     public:
     // Set function type and parameters
-    bool setFunctionAndParameters(Function1D func, std::vector<double> params);
+    bool setFunctionAndParameters(Function1D func, const std::vector<double> &params);
     // Set current function type
     void setFunction(Function1D func);
     // Return function type
@@ -114,7 +116,7 @@ class Function1DWrapper
     // Return number of parameters for current function
     int nParameters() const;
     // Set current function parameters
-    bool setParameters(std::vector<double> params);
+    bool setParameters(const std::vector<double> &params);
     // Return current parameters
     const std::vector<double> &parameters() const;
     // Return name of nth parameter

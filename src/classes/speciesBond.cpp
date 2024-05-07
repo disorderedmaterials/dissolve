@@ -8,35 +8,6 @@
 #include "data/atomicMasses.h"
 #include <map>
 
-// Return enum options for BondFunction
-EnumOptions<BondFunctions::Form> BondFunctions::forms()
-{
-    return EnumOptions<BondFunctions::Form>("BondFunction", {{BondFunctions::Form::None, "None"},
-                                                             {BondFunctions::Form::Harmonic, "Harmonic", 2},
-                                                             {BondFunctions::Form::EPSR, "EPSR", 2},
-                                                             {BondFunctions::Form::Morse, "Morse", 3}});
-}
-
-// Return parameters for specified form
-const std::vector<std::string> &BondFunctions::parameters(Form form)
-{
-    static std::map<BondFunctions::Form, std::vector<std::string>> params_ = {
-        {BondFunctions::Form::None, {}},
-        {BondFunctions::Form::Harmonic, {"k", "eq"}},
-        {BondFunctions::Form::EPSR, {"C/2", "eq"}},
-        {BondFunctions::Form::Morse, {"D", "alpha", "eq"}}};
-    return params_[form];
-}
-
-// Return nth parameter for the given form
-std::string BondFunctions::parameter(Form form, int n) { return DissolveSys::stringAt(parameters(form), n); }
-
-// Return index of parameter in the given form
-std::optional<int> BondFunctions::parameterIndex(Form form, std::string_view name)
-{
-    return DissolveSys::indexOf(parameters(form), name);
-}
-
 SpeciesBond::SpeciesBond() : SpeciesIntra(BondFunctions::Form::None) {}
 
 SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(BondFunctions::Form::None) { assign(i, j); }
@@ -219,37 +190,6 @@ double SpeciesBond::bondOrder() const { return SpeciesBond::bondOrder(bondType_)
 /*
  * Interaction Parameters
  */
-
-// Return fundamental frequency for the interaction
-double SpeciesBond::fundamentalFrequency(double reducedMass) const
-{
-    // Get pointer to relevant parameters array
-    const auto &params = interactionParameters();
-    const auto bondForm = interactionForm();
-
-    double k = 0.0;
-    if (bondForm == BondFunctions::Form::Harmonic)
-        k = params[0];
-    else if (bondForm == BondFunctions::Form::EPSR)
-        k = params[0];
-    else
-    {
-        Messenger::error("Functional form of SpeciesBond term not set, or no force constant available, so can't "
-                         "determine fundamental frequency.\n");
-        return 0.0;
-    }
-
-    // Convert force constant from (assumed) kJ mol-1 A-2 into J m-2 (kg s-2)
-    k *= 1000.0 * 1.0e20 / AVOGADRO;
-
-    // Convert reduced mass from amu to kg
-    double mu = reducedMass / (AVOGADRO * 1000.0);
-
-    // Calculate fundamental frequency
-    double v = (1.0 / TWOPI) * sqrt(k / mu);
-
-    return v;
-}
 
 // Return energy for specified distance
 double SpeciesBond::energy(double distance) const

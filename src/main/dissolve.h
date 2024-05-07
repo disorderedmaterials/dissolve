@@ -88,7 +88,7 @@ class Dissolve : public Serialisable<>
     // Return number of defined PairPotentials
     int nPairPotentials() const;
     // Add new pair potential to list
-    PairPotential *addPairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2);
+    PairPotential *addPairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2);
     // Return PairPotentials list
     const std::vector<PairPotential::Definition> &pairPotentials() const;
     // Return nth PairPotential in list

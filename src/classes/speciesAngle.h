@@ -5,8 +5,8 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "classes/angleFunctions.h"
 #include "classes/speciesIntra.h"
-
 #include <map>
 #include <vector>
 
@@ -14,27 +14,6 @@
 class SpeciesAtom;
 class Species;
 class CoreData;
-
-// Angle functional forms
-class AngleFunctions
-{
-    public:
-    enum class Form
-    {
-        None,
-        Harmonic,
-        Cosine,
-        Cos2
-    };
-    // Return enum options for form
-    static EnumOptions<Form> forms();
-    // Return parameters for specified form
-    static const std::vector<std::string> &parameters(Form form);
-    // Return nth parameter for the given form
-    static std::string parameter(Form form, int n);
-    // Return index of parameter in the given form
-    static std::optional<int> parameterIndex(Form form, std::string_view name);
-};
 
 // SpeciesAngle Definition
 class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
@@ -93,8 +72,6 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
      * Interaction Parameters
      */
     public:
-    // Return fundamental frequency for the interaction
-    double fundamentalFrequency(double reducedMass) const override;
     // Return energy for specified angle
     double energy(double angleInDegrees) const;
     // Return force multiplier for specified angle
