@@ -35,7 +35,7 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 
     // Print parameter summary
     if (test_)
-        Messenger::print("Energy: Production energies will be tested against analytical equivaltnes.\n");
+        Messenger::print("Energy: Production energies will be tested against analytical equivalents.\n");
 
     Messenger::print("\n");
 
