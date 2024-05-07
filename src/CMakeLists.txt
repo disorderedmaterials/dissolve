@@ -17,4 +17,9 @@ if(GUI)
   add_subdirectory(gui)
 endif(GUI)
 
+if(QML_GUI)
+  add_subdirectory(gui)
+  add_subdirectory(qml-gui)
+endif(QML_GUI)
+
 add_subdirectory(modules)

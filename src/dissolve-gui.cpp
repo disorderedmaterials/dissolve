@@ -4,10 +4,12 @@
 #include "base/messenger.h"
 #include "base/processPool.h"
 #include "gui/gui.h"
-#include "gui/types.h"
+#include "gui/models/types.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
 #include <QSurfaceFormat>
 #include <clocale>
 
@@ -25,13 +27,30 @@ int main(int args, char **argv)
     // Initialise random seed
     srand(options.randomSeed().value_or((unsigned)time(nullptr)));
 
-    // Create the main QApplication
-    QApplication app(args, argv);
-
     Types::registerDissolveQmlTypes();
     QCoreApplication::setOrganizationName("Team Dissolve");
     QCoreApplication::setOrganizationDomain("www.projectdissolve.com");
     QCoreApplication::setApplicationName("Dissolve-GUI");
+
+    #ifdef QML_GUI
+
+    QGuiApplication app(argc, argv);
+
+    QQmlApplicationEngine engine;
+    const QUrl url(u"qrc:/dialogs/qml/DissolveMain.qml");
+
+    QObject::connect(
+        &engine,
+        &QQmlApplicationEngine::objectCreationFailed,
+        &app,
+        []() { QCoreApplication::exit(-1) },
+        Qt::QueuedConnection);
+    engine.load(url);
+
+    #else // We are running gui with widgets 
+
+    // Create the main QApplication
+    QApplication app(args, argv);
 
     // Set native siblings attribute to prevent odd rendering artefacts on some systems
     app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
@@ -90,6 +109,8 @@ int main(int args, char **argv)
 
     // Update the main window and exec the app
     dissolveWindow.fullUpdate();
+
+    #endif // end gui conditional
 
     auto result = app.exec();
 

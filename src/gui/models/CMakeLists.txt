@@ -149,10 +149,20 @@ qt6_wrap_cpp(
   xmlTorsionModel.h
 )
 
+add_library(
+  types
+
+  # QML type register
+  types.cpp
+  types.h
+)
+
+target_link_libraries(types PRIVATE Qt6::Qml Qt6::Core)
+
 add_library(models ${models_SRCS} ${models_MOC_SRCS})
 
 target_include_directories(
-  models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CONAN_INCLUDE_DIRS_PUGIXML} ${Qt6Widgets_INCLUDE_DIRS}
+  models types PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CONAN_INCLUDE_DIRS_PUGIXML} ${Qt6Widgets_INCLUDE_DIRS}
                  ${FREETYPE_INCLUDE_DIRS} ${Qt6Quick_INCLUDE_DIRS}
 )
 

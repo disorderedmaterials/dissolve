@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="dialogs">
+    <file>qml/DissolveMain.qml</file>
+  </qresource>
+ <RCC>
