@@ -30,10 +30,10 @@ bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotentia
 
     // Write header comment
     if (!parser.writeLineF("#{:9}  {:12}  {:12}  {:12}  {:12}  {:12}  {:12}\n", "", "Full", "Derivative", "Original",
-                           "Additional", "Exact(Orig)", "Exact(Deriv)"))
+                           "Additional", "Exact(Orig)", "Exact(Force)"))
         return false;
     if (!parser.writeLineF("#{:9}  {:12}  {:12}  {:12}  {:12}  {:12}  {:12}\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)",
-                           "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)"))
+                           "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "F(kJ/mol/Ang)"))
         return false;
 
     for (auto n = 0; n < nPoints; ++n)
