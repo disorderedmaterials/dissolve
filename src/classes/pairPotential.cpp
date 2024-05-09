@@ -376,9 +376,7 @@ double PairPotential::analyticEnergy(double r) const
         return 0.0;
 
     // Short-range potential and Coulomb contribution
-    auto energy = analyticShortRangeEnergy(r) + analyticCoulombEnergy(chargeI_ * chargeJ_, r);
-
-    return energy;
+    return analyticShortRangeEnergy(r) + analyticCoulombEnergy(chargeI_ * chargeJ_, r);
 }
 
 // Return analytic potential at specified r, including Coulomb term from supplied charge product
