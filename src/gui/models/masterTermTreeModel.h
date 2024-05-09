@@ -20,6 +20,9 @@ class MasterTermTreeModel : public QAbstractItemModel
     Q_OBJECT
 
     public:
+    explicit MasterTermTreeModel(CoreData &coreData);
+
+    public:
     // Term models
     MasterBondModel bondModel_;
     MasterAngleModel angleModel_;
@@ -30,9 +33,6 @@ class MasterTermTreeModel : public QAbstractItemModel
     MasterTermModel &modelForTopLevelRow(int row);
 
     public:
-    void setData(std::vector<std::shared_ptr<MasterBond>> &bonds, std::vector<std::shared_ptr<MasterAngle>> &angles,
-                 std::vector<std::shared_ptr<MasterTorsion>> &torsions,
-                 std::vector<std::shared_ptr<MasterImproper>> &impropers);
     void setBondIconFunction(std::function<bool(std::string_view termName)> func);
     void setAngleIconFunction(std::function<bool(std::string_view termName)> func);
     void setTorsionIconFunction(std::function<bool(std::string_view termName)> func);

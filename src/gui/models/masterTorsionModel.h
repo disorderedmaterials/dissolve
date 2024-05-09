@@ -20,15 +20,13 @@ class MasterTorsionModel : public MasterTermModel
     void modelsUpdated();
 
     public:
-    MasterTorsionModel(QObject *parent = nullptr);
+    explicit MasterTorsionModel(CoreData &coreData);
 
     private:
     // Source term data
-    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterTorsion>>> sourceData_;
+    std::vector<std::shared_ptr<MasterTorsion>> &sourceData_;
 
     public:
-    // Set source data
-    void setSourceData(std::vector<std::shared_ptr<MasterTorsion>> &terms);
     // Refresh model data
     void reset();
 

@@ -12,9 +12,7 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
 {
     dissolve_ = &dissolve;
     atomTypes_.setData(dissolve_->coreData().atomTypes());
-    masters_ = std::make_unique<MasterTermTreeModel>();
-    masters_->setData(dissolve_->coreData().masterBonds(), dissolve_->coreData().masterAngles(),
-                      dissolve_->coreData().masterTorsions(), dissolve_->coreData().masterImpropers());
+    masters_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
     speciesModel_.setData(dissolve_->coreData().species());
     configurationModel_.setData(dissolve_->coreData().configurations());
     moduleLayersModel_.setData(dissolve_->coreData().processingLayers(), &dissolve_->coreData());

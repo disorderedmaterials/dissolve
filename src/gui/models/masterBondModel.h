@@ -20,15 +20,13 @@ class MasterBondModel : public MasterTermModel
     void modelsUpdated();
 
     public:
-    MasterBondModel(QObject *parent = nullptr);
+    explicit MasterBondModel(CoreData &coreData);
 
     private:
     // Source term data
-    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterBond>>> sourceData_;
+    std::vector<std::shared_ptr<MasterBond>> &sourceData_;
 
     public:
-    // Set source data
-    void setSourceData(std::vector<std::shared_ptr<MasterBond>> &bonds);
     // Refresh model data
     void reset();
 

@@ -3,6 +3,11 @@
 
 #include "gui/models/masterTermTreeModel.h"
 
+MasterTermTreeModel::MasterTermTreeModel(CoreData &coreData)
+    : bondModel_(coreData), angleModel_(coreData), torsionModel_(coreData), improperModel_(coreData)
+{
+}
+
 MasterTermModel &MasterTermTreeModel::modelForTopLevelRow(int row)
 {
     switch (row)
@@ -18,19 +23,6 @@ MasterTermModel &MasterTermTreeModel::modelForTopLevelRow(int row)
         default:
             throw(std::runtime_error("Invalid row provided, so can't return top level model.\n"));
     }
-}
-
-void MasterTermTreeModel::setData(std::vector<std::shared_ptr<MasterBond>> &bonds,
-                                  std::vector<std::shared_ptr<MasterAngle>> &angles,
-                                  std::vector<std::shared_ptr<MasterTorsion>> &torsions,
-                                  std::vector<std::shared_ptr<MasterImproper>> &impropers)
-{
-    beginResetModel();
-    bondModel_.setSourceData(bonds);
-    angleModel_.setSourceData(angles);
-    torsionModel_.setSourceData(torsions);
-    improperModel_.setSourceData(impropers);
-    endResetModel();
 }
 
 void MasterTermTreeModel::setBondIconFunction(std::function<bool(std::string_view termName)> func)

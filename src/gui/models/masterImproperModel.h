@@ -20,15 +20,13 @@ class MasterImproperModel : public MasterTermModel
     void modelsUpdated();
 
     public:
-    MasterImproperModel(QObject *parent = nullptr);
+    explicit MasterImproperModel(CoreData &coreData);
 
     private:
     // Source term data
-    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterImproper>>> sourceData_;
+    std::vector<std::shared_ptr<MasterImproper>> &sourceData_;
 
     public:
-    // Set source data
-    void setSourceData(std::vector<std::shared_ptr<MasterImproper>> &bonds);
     // Refresh model data
     void reset();
 

@@ -3,14 +3,8 @@
 
 #include "gui/models/masterTorsionModel.h"
 
-MasterTorsionModel::MasterTorsionModel(QObject *parent) : MasterTermModel(parent) {}
-
-void MasterTorsionModel::setSourceData(std::vector<std::shared_ptr<MasterTorsion>> &terms)
+MasterTorsionModel::MasterTorsionModel(CoreData &coreData) : MasterTermModel(coreData), sourceData_(coreData.masterTorsions())
 {
-    beginResetModel();
-    sourceData_ = terms;
-    endResetModel();
-
     // Set connections
     modelUpdater.setModel(this);
     modelUpdater.connectModelSignals();
@@ -23,24 +17,16 @@ void MasterTorsionModel::reset()
     endResetModel();
 }
 
-int MasterTorsionModel::rowCount(const QModelIndex &parent) const
-{
-    return parent.isValid() ? 0 : (sourceData_ ? sourceData_->get().size() : 0);
-}
+int MasterTorsionModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
 
 int MasterTorsionModel::columnCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : 5; }
 
 QVariant MasterTorsionModel::getTermData(int row, MasterTermModelData::DataType dataType) const
 {
-    if (!sourceData_)
+    if (row < 0 || row >= sourceData_.size())
         return {};
 
-    auto &terms = sourceData_->get();
-
-    if (row < 0 || row >= terms.size())
-        return {};
-
-    auto &t = terms[row];
+    auto &t = sourceData_[row];
     switch (dataType)
     {
         case (MasterTermModelData::DataType::Name):
@@ -60,15 +46,10 @@ QVariant MasterTorsionModel::getTermData(int row, MasterTermModelData::DataType 
 
 bool MasterTorsionModel::setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value)
 {
-    if (!sourceData_)
+    if (row < 0 || row >= sourceData_.size())
         return false;
 
-    auto &terms = sourceData_->get();
-
-    if (row < 0 || row >= terms.size())
-        return false;
-
-    auto &t = terms[row];
+    auto &t = sourceData_[row];
 
     beginResetModel();
     switch (dataType)
@@ -110,5 +91,5 @@ bool MasterTorsionModel::setTermData(int row, MasterTermModelData::DataType data
 const std::shared_ptr<MasterTorsion> &MasterTorsionModel::rawData(const QModelIndex &index) const
 {
     assert(sourceData_);
-    return sourceData_->get()[index.row()];
+    return sourceData_[index.row()];
 }

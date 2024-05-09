@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/coreData.h"
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <QModelIndex>
@@ -35,7 +36,11 @@ class MasterTermModel : public QAbstractTableModel
     Q_OBJECT
 
     public:
-    MasterTermModel(QObject *parent = nullptr);
+    MasterTermModel(CoreData &coreData);
+
+    protected:
+    // CoreData object containing the master terms
+    CoreData &coreData_;
 
     protected:
     // Icon return function
