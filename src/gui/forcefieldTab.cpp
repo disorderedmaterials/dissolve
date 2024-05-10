@@ -295,6 +295,9 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 
 void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
 {
+    auto index = ui_.AtomTypesTable->currentIndex();
+    if (!index.isValid())
+        return;
 
     QMessageBox queryBox;
     queryBox.setWindowTitle(QString("Remove Atom Type"));
@@ -304,13 +307,6 @@ void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
     queryBox.setDefaultButton(QMessageBox::No);
 
     if (queryBox.exec() != QMessageBox::Yes)
-        return;
-
-    if (dissolve_.coreData().nAtomTypes() == 1)
-        ui_.AtomTypeRemoveButton->setEnabled(false);
-
-    auto index = ui_.AtomTypesTable->currentIndex();
-    if (!index.isValid())
         return;
 
     // Get selected atomtype
@@ -544,7 +540,11 @@ void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
 }
 
 void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
-{
+{    
+    auto index = ui_.MasterBondsTable->currentIndex();
+    if (!index.isValid())
+        return;
+
     QMessageBox queryBox;
     queryBox.setWindowTitle(QString("Remove Master Bond"));
     queryBox.setText(QString("Are you sure? This operation cannot be undone!\n") +
@@ -554,13 +554,6 @@ void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
     queryBox.setDefaultButton(QMessageBox::No);
 
     if (queryBox.exec() != QMessageBox::Yes)
-        return;
-
-    if (dissolve_.coreData().nMasterBonds() == 1)
-        ui_.MasterTermRemoveBondButton->setEnabled(false);
-
-    auto index = ui_.MasterBondsTable->currentIndex();
-    if (!index.isValid())
         return;
 
     // Get selected master bond
@@ -589,6 +582,10 @@ void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked)
 
 void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked)
 {
+    auto index = ui_.MasterAnglesTable->currentIndex();
+    if (!index.isValid())
+        return;
+
     QMessageBox queryBox;
     queryBox.setWindowTitle(QString("Remove Master Angle"));
     queryBox.setText(QString("Are you sure? This operation cannot be undone!\n") +
@@ -598,13 +595,6 @@ void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked)
     queryBox.setDefaultButton(QMessageBox::No);
 
     if (queryBox.exec() != QMessageBox::Yes)
-        return;
-
-    if (dissolve_.coreData().nMasterAngles() == 1)
-        ui_.MasterTermRemoveAngleButton->setEnabled(false);
-
-    auto index = ui_.MasterAnglesTable->currentIndex();
-    if (!index.isValid())
         return;
 
     // Get selected master angle
@@ -632,7 +622,11 @@ void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked)
 }
 
 void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked)
-{
+{    
+    auto index = ui_.MasterTorsionsTable->currentIndex();
+    if (!index.isValid())
+        return;
+
     QMessageBox queryBox;
     queryBox.setWindowTitle(QString("Remove Master Torsion"));
     queryBox.setText(QString("Are you sure? This operation cannot be undone!\n") +
@@ -642,13 +636,6 @@ void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked)
     queryBox.setDefaultButton(QMessageBox::No);
 
     if (queryBox.exec() != QMessageBox::Yes)
-        return;
-
-    if (dissolve_.coreData().nMasterTorsions() == 1)
-        ui_.MasterTermRemoveTorsionButton->setEnabled(false);
-
-    auto index = ui_.MasterTorsionsTable->currentIndex();
-    if (!index.isValid())
         return;
 
     // Get selected master torsion
@@ -676,7 +663,11 @@ void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked)
 }
 
 void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked)
-{
+{    
+    auto index = ui_.MasterImpropersTable->currentIndex();
+    if (!index.isValid())
+        return;
+
     QMessageBox queryBox;
     queryBox.setWindowTitle(QString("Remove Master Improper"));
     queryBox.setText(QString("Are you sure? This operation cannot be undone!\n") +
@@ -686,13 +677,6 @@ void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked)
     queryBox.setDefaultButton(QMessageBox::No);
 
     if (queryBox.exec() != QMessageBox::Yes)
-        return;
-
-    if (dissolve_.coreData().nMasterImpropers() == 1)
-        ui_.MasterTermRemoveImproperButton->setEnabled(false);
-
-    auto index = ui_.MasterImpropersTable->currentIndex();
-    if (!index.isValid())
         return;
 
     // Get selected master improper
