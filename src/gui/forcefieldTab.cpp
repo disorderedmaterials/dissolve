@@ -530,9 +530,10 @@ void ForcefieldTab::masterImpropersSelectionChanged(const QItemSelection &curren
 
 void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
 {
-    dissolve_.coreData().addMasterBond(
-        DissolveSys::uniqueName("NewTerm", dissolve_.coreData().masterBonds(), [](const auto &b) { return b->name(); }));
+    masterBondsTableModel_.insertRows(masterBondsTableModel_.rowCount(), 1, {});
+
     ui_.MasterBondsTable->resizeColumnsToContents();
+
     dissolveWindow_->setModified();
 }
 
@@ -557,13 +558,12 @@ void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
     if (!bond)
         return;
 
-    dissolve_.coreData().removeMasterBond(bond);
+    if (masterBondsTableModel_.removeRows(index.row(), 1, {}))
+    {
+        ui_.MasterBondsTable->resizeColumnsToContents();
 
-    Locker refreshLocker(refreshLock_);
-
-    ui_.MasterBondsTable->resizeColumnsToContents();
-
-    dissolveWindow_->setModified();
+        dissolveWindow_->setModified();
+    }
 }
 
 void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked)

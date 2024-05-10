@@ -148,14 +148,20 @@ const std::vector<std::unique_ptr<PairPotentialOverride>> &CoreData::pairPotenti
  */
 
 // Add new master Bond parameters
-MasterBond &CoreData::addMasterBond(std::string_view name)
+MasterBond &CoreData::addMasterBond(std::string_view name, std::optional<int> insertAtIndex)
 {
     // Check for existence of master Bond already
     if (getMasterBond(name))
         throw(std::runtime_error(
             fmt::format("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name)));
 
-    return *masters_.bonds.emplace_back(std::make_shared<MasterBond>(name));
+    auto newBond = std::make_shared<MasterBond>(name);
+    if (insertAtIndex)
+        masters_.bonds.insert(masters_.bonds.begin() + *insertAtIndex, newBond);
+    else
+        masters_.bonds.emplace_back(newBond);
+
+    return *newBond;
 }
 
 // Remove specified master Bond

@@ -81,3 +81,33 @@ const std::shared_ptr<MasterBond> &MasterBondModel::rawData(const QModelIndex &i
     assert(sourceData_);
     return sourceData_[index.row()];
 }
+
+bool MasterBondModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    Q_UNUSED(count);
+
+    beginInsertRows(parent, row, row);
+    coreData_.addMasterBond(
+        DissolveSys::uniqueName("NewBond", coreData_.masterBonds(), [](const auto &b) { return b->name(); }), row);
+    endInsertRows();
+
+    return true;
+}
+
+bool MasterBondModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    Q_UNUSED(count);
+    if (row >= rowCount() || row < 0)
+    {
+        return false;
+    }
+
+    // Need to get the bond at the specified row index in our vector and remove it via CoreData
+    auto &bond = sourceData_[row];
+
+    beginRemoveRows(parent, row, row);
+    coreData_.removeMasterBond(bond);
+    endRemoveRows();
+
+    return true;
+}
