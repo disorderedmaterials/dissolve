@@ -540,7 +540,7 @@ void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
 }
 
 void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
-{    
+{
     auto index = ui_.MasterBondsTable->currentIndex();
     if (!index.isValid())
         return;
@@ -622,7 +622,7 @@ void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked)
 }
 
 void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked)
-{    
+{
     auto index = ui_.MasterTorsionsTable->currentIndex();
     if (!index.isValid())
         return;
@@ -663,7 +663,7 @@ void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked)
 }
 
 void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked)
-{    
+{
     auto index = ui_.MasterImpropersTable->currentIndex();
     if (!index.isValid())
         return;
