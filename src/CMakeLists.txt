@@ -15,6 +15,7 @@ add_subdirectory(neta)
 
 if(GUI)
   add_subdirectory(gui)
+  add_subdirectory(gui-qml)
 endif(GUI)
 
 add_subdirectory(modules)
