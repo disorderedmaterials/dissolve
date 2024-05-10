@@ -36,8 +36,6 @@ QVariant MasterBondModel::getTermData(int row, MasterTermModelData::DataType dat
         default:
             return {};
     }
-
-    return {};
 }
 
 bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value)
@@ -47,7 +45,6 @@ bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataTyp
 
     auto &t = sourceData_[row];
 
-    beginResetModel();
     switch (dataType)
     {
         case (MasterTermModelData::DataType::Name):
@@ -71,7 +68,8 @@ bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataTyp
         default:
             return false;
     }
-    endResetModel();
+
+    Q_EMIT(dataChanged({}, {}));
 
     return true;
 }
