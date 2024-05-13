@@ -1,9 +1,5 @@
 # Target 'gui'
-add_library(
-  gui-qml
-  # Types for QML access
-  ../gui/types.cpp
-)
+add_library(gui-qml)
 
 target_include_directories(
   gui-qml
