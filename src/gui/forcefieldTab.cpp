@@ -15,6 +15,7 @@
 #include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
 #include <QListWidgetItem>
+#include <QMessageBox>
 
 ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this), atomTypesModel_(dissolve.coreData()),
@@ -67,6 +68,15 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
             SLOT(masterTorsionsDataChanged(const QModelIndex &, const QModelIndex &)));
     connect(&masterImpropersTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(masterImpropersDataChanged(const QModelIndex &, const QModelIndex &)));
+    connect(ui_.MasterBondsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(masterBondsSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    connect(ui_.MasterAnglesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(masterAnglesSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    connect(ui_.MasterTorsionsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(masterTorsionsSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    connect(ui_.MasterImpropersTable->selectionModel(),
+            SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
+            SLOT(masterImpropersSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     /*
      * Atom Types
@@ -283,10 +293,40 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
+{
+    auto index = ui_.AtomTypesTable->currentIndex();
+    if (!index.isValid())
+        return;
+
+    QMessageBox queryBox;
+    queryBox.setWindowTitle(QString("Remove Atom Type"));
+    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n"));
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+
+    if (queryBox.exec() != QMessageBox::Yes)
+        return;
+
+    // Get selected atomtype
+    auto at = atomTypesModel_.rawData(index);
+    if (!at)
+        return;
+
+    dissolve_.coreData().removeAtomType(at);
+
+    Locker refreshLocker(refreshLock_);
+
+    atomTypesModel_.setData(dissolve_.coreData().atomTypes());
+    ui_.AtomTypesTable->resizeColumnsToContents();
+
+    dissolveWindow_->setModified();
+}
 
 void ForcefieldTab::atomTypeSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
 {
+    ui_.AtomTypeRemoveButton->setEnabled(!current.empty());
     ui_.AtomTypeDuplicateButton->setEnabled(!current.empty());
 }
 
@@ -470,6 +510,26 @@ void ForcefieldTab::masterImpropersDataChanged(const QModelIndex &, const QModel
     dissolveWindow_->setModified();
 }
 
+void ForcefieldTab::masterBondsSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
+{
+    ui_.MasterTermRemoveBondButton->setEnabled(!current.empty());
+}
+
+void ForcefieldTab::masterAnglesSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
+{
+    ui_.MasterTermRemoveAngleButton->setEnabled(!current.empty());
+}
+
+void ForcefieldTab::masterTorsionsSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
+{
+    ui_.MasterTermRemoveTorsionButton->setEnabled(!current.empty());
+}
+
+void ForcefieldTab::masterImpropersSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
+{
+    ui_.MasterTermRemoveImproperButton->setEnabled(!current.empty());
+}
+
 void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
 {
     dissolve_.coreData().addMasterBond(
@@ -479,7 +539,37 @@ void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
+{
+    auto index = ui_.MasterBondsTable->currentIndex();
+    if (!index.isValid())
+        return;
+
+    QMessageBox queryBox;
+    queryBox.setWindowTitle(QString("Remove Master Bond"));
+    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n") +
+                     QString("Any uses of this term in species will be converted to a local definition."));
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+
+    if (queryBox.exec() != QMessageBox::Yes)
+        return;
+
+    // Get selected master bond
+    auto bond = masterBondsTableModel_.rawData(index);
+    if (!bond)
+        return;
+
+    dissolve_.coreData().removeMasterBond(bond);
+
+    Locker refreshLocker(refreshLock_);
+
+    masterBondsTableModel_.setSourceData(dissolve_.coreData().masterBonds());
+    ui_.MasterBondsTable->resizeColumnsToContents();
+
+    dissolveWindow_->setModified();
+}
 
 void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked)
 {
@@ -490,7 +580,37 @@ void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked)
+{
+    auto index = ui_.MasterAnglesTable->currentIndex();
+    if (!index.isValid())
+        return;
+
+    QMessageBox queryBox;
+    queryBox.setWindowTitle(QString("Remove Master Angle"));
+    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n") +
+                     QString("Any uses of this term in species will be converted to a local definition."));
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+
+    if (queryBox.exec() != QMessageBox::Yes)
+        return;
+
+    // Get selected master angle
+    auto angle = masterAnglesTableModel_.rawData(index);
+    if (!angle)
+        return;
+
+    dissolve_.coreData().removeMasterAngle(angle);
+
+    Locker refreshLocker(refreshLock_);
+
+    masterAnglesTableModel_.setSourceData(dissolve_.coreData().masterAngles());
+    ui_.MasterAnglesTable->resizeColumnsToContents();
+
+    dissolveWindow_->setModified();
+}
 
 void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked)
 {
@@ -501,7 +621,37 @@ void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked)
+{
+    auto index = ui_.MasterTorsionsTable->currentIndex();
+    if (!index.isValid())
+        return;
+
+    QMessageBox queryBox;
+    queryBox.setWindowTitle(QString("Remove Master Torsion"));
+    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n") +
+                     QString("Any uses of this term in species will be converted to a local definition."));
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+
+    if (queryBox.exec() != QMessageBox::Yes)
+        return;
+
+    // Get selected master torsion
+    auto torsion = masterTorsionsTableModel_.rawData(index);
+    if (!torsion)
+        return;
+
+    dissolve_.coreData().removeMasterTorsion(torsion);
+
+    Locker refreshLocker(refreshLock_);
+
+    masterTorsionsTableModel_.setSourceData(dissolve_.coreData().masterTorsions());
+    ui_.MasterTorsionsTable->resizeColumnsToContents();
+
+    dissolveWindow_->setModified();
+}
 
 void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked)
 {
@@ -512,4 +662,34 @@ void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked)
+{
+    auto index = ui_.MasterImpropersTable->currentIndex();
+    if (!index.isValid())
+        return;
+
+    QMessageBox queryBox;
+    queryBox.setWindowTitle(QString("Remove Master Improper"));
+    queryBox.setText(QString("Are you sure? This operation cannot be undone!\n") +
+                     QString("Any uses of this term in species will be converted to a local definition."));
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+
+    if (queryBox.exec() != QMessageBox::Yes)
+        return;
+
+    // Get selected master improper
+    auto improper = masterImpropersTableModel_.rawData(index);
+    if (!improper)
+        return;
+
+    dissolve_.coreData().removeMasterImproper(improper);
+
+    Locker refreshLocker(refreshLock_);
+
+    masterImpropersTableModel_.setSourceData(dissolve_.coreData().masterImpropers());
+    ui_.MasterImpropersTable->resizeColumnsToContents();
+
+    dissolveWindow_->setModified();
+}

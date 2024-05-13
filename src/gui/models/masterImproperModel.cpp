@@ -94,3 +94,9 @@ bool MasterImproperModel::setTermData(int row, MasterTermModelData::DataType dat
 
     return true;
 }
+
+const std::shared_ptr<MasterImproper> &MasterImproperModel::rawData(const QModelIndex &index) const
+{
+    assert(sourceData_);
+    return sourceData_->get()[index.row()];
+}

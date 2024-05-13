@@ -53,9 +53,11 @@ std::shared_ptr<AtomType> CoreData::addAtomType(Elements::Element Z)
 }
 
 // Remove specified AtomType
-void CoreData::removeAtomType(const std::shared_ptr<AtomType> &at)
+void CoreData::removeAtomType(std::shared_ptr<AtomType> &at)
 {
-    atomTypes_.erase(std::remove(atomTypes_.begin(), atomTypes_.end(), at));
+    removeReferencesTo(at);
+
+    atomTypes_.erase(std::remove(atomTypes_.begin(), atomTypes_.end(), at), atomTypes_.end());
 }
 
 // Return number of AtomTypes in list
@@ -156,6 +158,20 @@ MasterBond &CoreData::addMasterBond(std::string_view name)
     return *masters_.bonds.emplace_back(std::make_shared<MasterBond>(name));
 }
 
+// Remove specified master Bond
+void CoreData::removeMasterBond(const std::shared_ptr<MasterBond> &bond)
+{
+    // Detach from master term
+    for (auto &species : species_)
+    {
+        for (auto &b : species->bonds())
+            if (b.masterTerm() == bond.get())
+                b.detachFromMasterTerm();
+    }
+
+    masters_.bonds.erase(std::remove(masters_.bonds.begin(), masters_.bonds.end(), bond), masters_.bonds.end());
+}
+
 // Return number of master Bond parameters in list
 int CoreData::nMasterBonds() const { return masters_.bonds.size(); }
 
@@ -196,6 +212,20 @@ MasterAngle &CoreData::addMasterAngle(std::string_view name)
             fmt::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
 
     return *masters_.angles.emplace_back(std::make_shared<MasterAngle>(name));
+}
+
+// Remove specified master Angle
+void CoreData::removeMasterAngle(const std::shared_ptr<MasterAngle> &angle)
+{
+    // Detach from master term
+    for (auto &species : species_)
+    {
+        for (auto &a : species->angles())
+            if (a.masterTerm() == angle.get())
+                a.detachFromMasterTerm();
+    }
+
+    masters_.angles.erase(std::remove(masters_.angles.begin(), masters_.angles.end(), angle), masters_.angles.end());
 }
 
 // Return number of master Angle parameters in list
@@ -240,6 +270,20 @@ MasterTorsion &CoreData::addMasterTorsion(std::string_view name)
     return *masters_.torsions.emplace_back(std::make_shared<MasterTorsion>(name));
 }
 
+// Remove specified MasterTorsion
+void CoreData::removeMasterTorsion(const std::shared_ptr<MasterTorsion> &torsion)
+{
+    // Detach from master term
+    for (auto &species : species_)
+    {
+        for (auto &t : species->torsions())
+            if (t.masterTerm() == torsion.get())
+                t.detachFromMasterTerm();
+    }
+
+    masters_.torsions.erase(std::remove(masters_.torsions.begin(), masters_.torsions.end(), torsion), masters_.torsions.end());
+}
+
 // Return number of master Torsion parameters in list
 int CoreData::nMasterTorsions() const { return masters_.torsions.size(); }
 
@@ -280,6 +324,21 @@ MasterImproper &CoreData::addMasterImproper(std::string_view name)
             "Refused to add a new master Improper named '{}' since one with the same name already exists.\n", name)));
 
     return *masters_.impropers.emplace_back(std::make_shared<MasterImproper>(name));
+}
+
+// Remove specified master Improper
+void CoreData::removeMasterImproper(const std::shared_ptr<MasterImproper> &improper)
+{
+    // Detach from master term
+    for (auto &species : species_)
+    {
+        for (auto &i : species->impropers())
+            if (i.masterTerm() == improper.get())
+                i.detachFromMasterTerm();
+    }
+
+    masters_.impropers.erase(std::remove(masters_.impropers.begin(), masters_.impropers.end(), improper),
+                             masters_.impropers.end());
 }
 
 // Return number of master Improper parameters in list
@@ -677,6 +736,14 @@ template <class O> void objectNoLongerValid(CoreData *coreData, O *object)
             mod->keywords().objectNoLongerValid(object);
 }
 
+template <class P> void objectNoLongerValid(CoreData *coreData, std::shared_ptr<P> object)
+{
+    // Loop over all keyword objects and call their local functions
+    for (auto &layer : coreData->processingLayers())
+        for (auto &mod : layer->modules())
+            mod->keywords().objectNoLongerValid(object);
+}
+
 // Remove all references to the specified data
 void CoreData::removeReferencesTo(Module *data) { objectNoLongerValid(this, data); }
 void CoreData::removeReferencesTo(Isotopologue *data) { objectNoLongerValid(this, data); }
@@ -691,6 +758,21 @@ void CoreData::removeReferencesTo(Species *data)
             cfg->empty();
 }
 void CoreData::removeReferencesTo(SpeciesSite *data) { objectNoLongerValid(this, data); }
+void CoreData::removeReferencesTo(std::shared_ptr<AtomType> data)
+{
+    for (auto &species : species_)
+    {
+        for (auto &atom : species->atoms())
+        {
+            if (atom.atomType() == data)
+            {
+                atom.setAtomType(nullptr);
+            }
+        }
+    }
+
+    objectNoLongerValid(this, data);
+}
 
 /*
  * Modules

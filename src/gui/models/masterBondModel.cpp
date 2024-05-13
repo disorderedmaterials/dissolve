@@ -94,3 +94,9 @@ bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataTyp
 
     return true;
 }
+
+const std::shared_ptr<MasterBond> &MasterBondModel::rawData(const QModelIndex &index) const
+{
+    assert(sourceData_);
+    return sourceData_->get()[index.row()];
+}

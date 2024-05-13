@@ -108,6 +108,10 @@ class ForcefieldTab : public QWidget, public MainTab
     void masterAnglesDataChanged(const QModelIndex &, const QModelIndex &);
     void masterTorsionsDataChanged(const QModelIndex &, const QModelIndex &);
     void masterImpropersDataChanged(const QModelIndex &, const QModelIndex &);
+    void masterBondsSelectionChanged(const QItemSelection &, const QItemSelection &);
+    void masterAnglesSelectionChanged(const QItemSelection &, const QItemSelection &);
+    void masterTorsionsSelectionChanged(const QItemSelection &, const QItemSelection &);
+    void masterImpropersSelectionChanged(const QItemSelection &, const QItemSelection &);
     void on_MasterTermAddBondButton_clicked(bool checked);
     void on_MasterTermRemoveBondButton_clicked(bool checked);
     void on_MasterTermAddAngleButton_clicked(bool checked);

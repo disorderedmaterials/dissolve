@@ -39,6 +39,7 @@ class MasterBondModel : public MasterTermModel
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant getTermData(int row, MasterTermModelData::DataType dataType) const override;
     bool setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value) override;
+    const std::shared_ptr<MasterBond> &rawData(const QModelIndex &index) const;
 
     private:
     ModelUpdater modelUpdater;
