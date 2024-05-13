@@ -3,7 +3,7 @@
 
 #include "base/messenger.h"
 #include "base/processPool.h"
-#include "gui/gui.h"
+#include "gui/models/dissolveModel.h"
 #include "gui/types.h"
 #include "main/cli.h"
 #include "main/dissolve.h"

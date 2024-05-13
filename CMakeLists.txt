@@ -266,13 +266,8 @@ if(GUI)
     PRIVATE ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_BINARY_DIR}/src
             ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
-            ${FREETYPE_INCLUDE_DIRS}
             ${Qt6Core_INCLUDE_DIRS}
             ${Qt6Gui_INCLUDE_DIRS}
-            ${Qt6OpenGL_INCLUDE_DIRS}
-            ${Qt6Widgets_INCLUDE_DIRS}
-            ${Qt6OpenGL_INCLUDE_DIRS}
-            ${Qt6OpenGLWidgets_INCLUDE_DIRS}
   )
 
 endif(GUI)
@@ -381,24 +376,10 @@ if(GUI)
     PUBLIC ${WHOLE_ARCHIVE_FLAG}
             ${BASIC_LINK_LIBS}
             # Module gui libs
-            ${MODULEGUI_LINK_LIBS}
-            moduleWidgetProducer
-            # Main gui libs
-            render
-            widgets
-            keywordWidgets
-            delegates
-            models
-            gui
+            gui-qml
             ${NO_WHOLE_ARCHIVE_FLAG}
     PRIVATE # External libs
-            Qt6::Widgets
-            Qt6::Core
             Qt6::Qml
-            OpenGL::GL
-            ${GUI_LINK_LIBS}
-            ${FREETYPE_LIBRARIES}
-            ${FTGL_LIBRARIES}
             ${CORE_LINK_LIBS}
             ${THREADING_LINK_LIBS}
   )
