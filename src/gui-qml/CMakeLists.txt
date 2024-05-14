@@ -11,6 +11,7 @@ target_include_directories(
 target_link_libraries(
   gui-qml
   PRIVATE models
+          render
           base
           Qt6::QuickWidgets
 )
