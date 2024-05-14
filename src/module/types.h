@@ -45,6 +45,7 @@ enum ModuleType
     SiteRDF,
     Skeleton,
     SQ,
+    TemperatureSchedule,
     Test,
     XRaySQ
 };

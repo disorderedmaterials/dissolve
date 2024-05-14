@@ -35,6 +35,7 @@
 #include "modules/sdf/sdf.h"
 #include "modules/siteRDF/siteRDF.h"
 #include "modules/sq/sq.h"
+#include "modules/temperatureSchedule/temperatureSchedule.h"
 #include "modules/test/test.h"
 #include "modules/xRaySQ/xRaySQ.h"
 
@@ -88,6 +89,8 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<SDFModule>(ModuleTypes::SDF, "Calculate spatial density functions around oriented sites", "Analysis");
     registerProducer<SiteRDFModule>(ModuleTypes::SiteRDF, "Calculate radial distribution functions between sites", "Analysis");
     registerProducer<SQModule>(ModuleTypes::SQ, "Transform g(r) into unweighted S(Q)", "Correlation Functions");
+    registerProducer<TemperatureScheduleModule>(ModuleTypes::TemperatureSchedule,
+                                                "Adjust the temperature of a configuration during a simulation", "Evolution");
     registerProducer<TestModule>(ModuleTypes::Test, "Development Module");
     registerProducer<XRaySQModule>(ModuleTypes::XRaySQ, "Calculate x-ray-weighted S(Q)", "Correlation Functions");
 }

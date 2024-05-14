@@ -92,6 +92,7 @@
     <file>icons/modules/NeutronSQ.svg</file>
     <file>icons/modules/GeometryOptimisation.svg</file>
     <file>icons/modules/Compare.svg</file>
+    <file>icons/modules/TemperatureSchedule.svg</file>
   </qresource>
   <qresource prefix="general">
     <file>icons/ff.svg</file>
