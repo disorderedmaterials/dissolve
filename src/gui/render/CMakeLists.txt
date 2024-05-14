@@ -104,4 +104,4 @@ if(MSVC)
   target_compile_options(render PUBLIC /Zc:__cplusplus)
 endif(MSVC)
 
-target_link_libraries(render PRIVATE base)
+target_link_libraries(render PRIVATE base ${FTGL_LIBRARIES})
