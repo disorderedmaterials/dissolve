@@ -30,7 +30,7 @@ Function1DKeywordWidget::Function1DKeywordWidget(QWidget *parent, Function1DKeyw
     auto &function = keyword_->data();
 
     // Get relevant function types to show in combo
-    auto availableFunctions = Functions::matchingFunction1D(keyword_->functionProperties());
+    auto availableFunctions = Functions1D::matchingFunction1D(keyword_->functionProperties());
     if (availableFunctions.empty())
     {
         ui_.FunctionCombo->addItem("<None Available>");
@@ -41,9 +41,8 @@ Function1DKeywordWidget::Function1DKeywordWidget(QWidget *parent, Function1DKeyw
         auto i = 0;
         for (auto func : availableFunctions)
         {
-            ui_.FunctionCombo->addItem(QString::fromStdString(Functions::function1D().keyword(func)),
-                                       QVariant::fromValue(func));
-            if (func == function.type())
+            ui_.FunctionCombo->addItem(QString::fromStdString(Functions1D::forms().keyword(func)), QVariant::fromValue(func));
+            if (func == function.form())
                 ui_.FunctionCombo->setCurrentIndex(i);
             ++i;
         }
@@ -107,7 +106,7 @@ void Function1DKeywordWidget::updateWidgetsFromData()
     // Grab the target Function1D
     auto &function = keyword_->data();
 
-    ui_.FunctionCombo->setCurrentIndex(ui_.FunctionCombo->findData(QVariant::fromValue(function.type())));
+    ui_.FunctionCombo->setCurrentIndex(ui_.FunctionCombo->findData(QVariant::fromValue(function.form())));
 
     const auto nParams = function.nParameters();
     for (auto n = 0; n < MaxParams; ++n)
@@ -131,9 +130,9 @@ void Function1DKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutat
 void Function1DKeywordWidget::updateKeywordData()
 {
     // Get current data from widgets
-    auto func = ui_.FunctionCombo->currentData().value<Functions::Function1D>();
+    auto func = ui_.FunctionCombo->currentData().value<Functions1D::Form>();
     std::vector<double> newParams;
-    for (auto n = 0; n < Functions::functionDefinition1D(func).nParameters(); ++n)
+    for (auto n = 0; n < Functions1D::functionDefinition1D(func).nParameters(); ++n)
         newParams.push_back(spins_[n]->value());
 
     // Set new data
@@ -149,6 +148,6 @@ void Function1DKeywordWidget::updateSummaryText()
     // Summary text on KeywordDropDown button
     setSummaryText(QString::fromStdString(
         function.nParameters() == 0
-            ? Functions::function1D().keyword(function.type())
-            : fmt::format("{} ({})", Functions::function1D().keyword(function.type()), function.parameterSummary())));
+            ? Functions1D::forms().keyword(function.form())
+            : fmt::format("{} ({})", Functions1D::forms().keyword(function.form()), function.parameterSummary())));
 }

@@ -35,8 +35,8 @@ class PairPotentialsTest : public ::testing::Test
     static constexpr double testRDelta_{0.00173};
 
     private:
-    void test(ShortRangeFunctions::Form form, std::string_view parameters, double rStart,
-              const std::function<double(double)> &analytic, const std::function<double(double)> &tabulated)
+    void test(Functions1D::Form form, std::string_view parameters, double rStart, const std::function<double(double)> &analytic,
+              const std::function<double(double)> &tabulated)
     {
         // Set up and tabulate pair potential
         pairPotential_->interactionPotential().setFormAndParameters(form, parameters);
@@ -58,14 +58,14 @@ class PairPotentialsTest : public ::testing::Test
 
     public:
     // Test analytic vs tabulated energy for specified form and parameters
-    void testEnergy(ShortRangeFunctions::Form form, std::string_view parameters, double rStart = testRDelta_)
+    void testEnergy(Functions1D::Form form, std::string_view parameters, double rStart = testRDelta_)
     {
         test(
             form, parameters, rStart, [=](double r) { return pairPotential_->analyticEnergy(r); },
             [=](double r) { return pairPotential_->energy(r); });
     }
     // Test analytic vs tabulated force for specified form and parameters
-    void testForce(ShortRangeFunctions::Form form, std::string_view parameters, double rStart = testRDelta_)
+    void testForce(Functions1D::Form form, std::string_view parameters, double rStart = testRDelta_)
     {
         test(
             form, parameters, rStart, [=](double r) { return pairPotential_->analyticForce(r); },
@@ -75,15 +75,15 @@ class PairPotentialsTest : public ::testing::Test
 
 TEST_F(PairPotentialsTest, NoneForm)
 {
-    testEnergy(ShortRangeFunctions::Form::None, "");
-    testForce(ShortRangeFunctions::Form::None, "");
+    testEnergy(Functions1D::Form::None, "");
+    testForce(Functions1D::Form::None, "");
 }
 
 TEST_F(PairPotentialsTest, LennardJonesForm)
 {
     // Lennard-Jones is super steep at r -> 0 so start a little after that
-    testEnergy(ShortRangeFunctions::Form::LennardJones, "epsilon=0.35 sigma=2.166", testRDelta_ * 5);
-    testForce(ShortRangeFunctions::Form::LennardJones, "epsilon=0.35 sigma=2.166", testRDelta_ * 5);
+    testEnergy(Functions1D::Form::LennardJones126, "epsilon=0.35 sigma=2.166", testRDelta_ * 5);
+    testForce(Functions1D::Form::LennardJones126, "epsilon=0.35 sigma=2.166", testRDelta_ * 5);
 }
 
 } // namespace UnitTest

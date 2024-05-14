@@ -30,9 +30,9 @@ class SQModule : public Module
     // Weighting scheme to use when averaging partials
     Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Broadening function to apply to Bragg S(Q)
-    Functions::Function1DWrapper braggQBroadening_{Functions::Function1D::GaussianC2, {0.0, 0.02}};
+    Function1DWrapper braggQBroadening_{Functions1D::Form::GaussianC2, {0.0, 0.02}};
     // Broadening function to apply to S(Q)
-    Functions::Function1DWrapper qBroadening_;
+    Function1DWrapper qBroadening_;
     // Step size in Q for S(Q) calculation
     double qDelta_{0.05};
     // Maximum Q for calculated S(Q)
@@ -59,7 +59,7 @@ class SQModule : public Module
     // Calculate unweighted S(Q) from unweighted g(r)
     static bool calculateUnweightedSQ(const ProcessPool &procPool, const PartialSet &unweightedgr, PartialSet &unweightedsq,
                                       double qMin, double qDelta, double qMax, double rho, const WindowFunction &windowFunction,
-                                      Functions::Function1DWrapper broadening);
+                                      Function1DWrapper broadening);
 
     /*
      * Processing

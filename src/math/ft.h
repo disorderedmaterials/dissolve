@@ -15,6 +15,5 @@ namespace Fourier
 // Perform Fourier sine transform of supplied data, over range specified, and with specified window and broadening
 // functions applied
 bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double wMax,
-            WindowFunction windowFunction = WindowFunction(),
-            const Functions::Function1DWrapper &broadening = Functions::Function1DWrapper());
+            WindowFunction windowFunction = WindowFunction(), const Function1DWrapper &broadening = Function1DWrapper());
 }; // namespace Fourier

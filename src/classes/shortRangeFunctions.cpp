@@ -36,8 +36,8 @@ std::optional<int> ShortRangeFunctions::parameterIndex(Form form, std::string_vi
  */
 
 // Combine parameters for the two atom types using suitable rules
-InteractionPotential<ShortRangeFunctions> ShortRangeFunctions::combine(const InteractionPotential<ShortRangeFunctions> &srI,
-                                                                       const InteractionPotential<ShortRangeFunctions> &srJ)
+InteractionPotential<Functions1D> ShortRangeFunctions::combine(const InteractionPotential<ShortRangeFunctions> &srI,
+                                                               const InteractionPotential<ShortRangeFunctions> &srJ)
 {
     // Equivalent functional forms?
     if (srI.form() == srJ.form())
@@ -45,23 +45,23 @@ InteractionPotential<ShortRangeFunctions> ShortRangeFunctions::combine(const Int
         switch (srI.form())
         {
             case (Form::None):
-                break;
+                return {Functions1D::Form::None};
             case (Form::LennardJones):
                 /*
                  * Combine parameters (Lorentz-Berthelot):
                  * Parameter 0 = Epsilon
                  * Parameter 1 = Sigma
                  */
-                return {srI.form(), std::vector<double>{sqrt(srI.parameters()[0] * srJ.parameters()[0]),
-                                                        (srI.parameters()[1] + srJ.parameters()[1]) * 0.5}};
+                return {Functions1D::Form::LennardJones126,
+                        {sqrt(srI.parameters()[0] * srJ.parameters()[0]), (srI.parameters()[1] + srJ.parameters()[1]) * 0.5}};
             case (Form::LennardJonesGeometric):
                 /*
                  * Combine parameters (Geometric):
                  * Parameter 0 = Epsilon
                  * Parameter 1 = Sigma
                  */
-                return {srI.form(), std::vector<double>{sqrt(srI.parameters()[0] * srJ.parameters()[0]),
-                                                        sqrt(srI.parameters()[1] * srJ.parameters()[1])}};
+                return {Functions1D::Form::LennardJones126,
+                        {sqrt(srI.parameters()[0] * srJ.parameters()[0]), sqrt(srI.parameters()[1] * srJ.parameters()[1])}};
                 break;
             default:
                 throw(std::runtime_error(
@@ -85,8 +85,8 @@ InteractionPotential<ShortRangeFunctions> ShortRangeFunctions::combine(const Int
              * Parameter 0 = Epsilon
              * Parameter 1 = Sigma
              */
-            return {Form::LennardJones, std::vector<double>{sqrt(srI.parameters()[0] * srJ.parameters()[0]),
-                                                            (srI.parameters()[1] + srJ.parameters()[1]) * 0.5}};
+            return {Functions1D::Form::LennardJones126,
+                    {sqrt(srI.parameters()[0] * srJ.parameters()[0]), (srI.parameters()[1] + srJ.parameters()[1]) * 0.5}};
         }
         else
             Messenger::error("Can't combine parameters between dislike ShortRangeFunctions {} and {}.\n",

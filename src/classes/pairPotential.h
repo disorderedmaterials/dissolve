@@ -5,6 +5,7 @@
 
 #include "data/ff/ff.h"
 #include "math/data1D.h"
+#include "math/function1D.h"
 #include "math/interpolator.h"
 #include <memory>
 
@@ -19,7 +20,7 @@ class PairPotential
     public:
     PairPotential();
     PairPotential(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges);
-    PairPotential(std::string_view nameI, std::string_view nameJ, const InteractionPotential<ShortRangeFunctions> &potential);
+    PairPotential(std::string_view nameI, std::string_view nameJ, const InteractionPotential<Functions1D> &potential);
     // Coulomb Truncation Scheme enum
     enum CoulombTruncationScheme
     {
@@ -78,8 +79,9 @@ class PairPotential
     private:
     // Names reflecting source parameters
     std::string nameI_, nameJ_;
-    // Interaction potential
-    InteractionPotential<ShortRangeFunctions> interactionPotential_;
+    // Interaction potential and function
+    InteractionPotential<Functions1D> interactionPotential_;
+    Function1DWrapper potentialFunction_;
     // Charge on I (taken from AtomType)
     double chargeI_{0.0};
     // Charge on J (taken from AtomType)
@@ -97,8 +99,8 @@ class PairPotential
     // Return name for second source parameters
     std::string_view nameJ() const;
     // Return interaction potential
-    InteractionPotential<ShortRangeFunctions> &interactionPotential();
-    const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;
+    InteractionPotential<Functions1D> &interactionPotential();
+    const InteractionPotential<Functions1D> &interactionPotential() const;
     // Set charge I
     void setChargeI(double value);
     // Return charge I

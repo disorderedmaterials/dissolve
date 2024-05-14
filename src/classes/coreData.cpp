@@ -128,7 +128,7 @@ void CoreData::clearAtomTypes() { atomTypes_.clear(); }
 // Create new pair potential override
 PairPotentialOverride *CoreData::addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
                                                           PairPotentialOverride::PairPotentialOverrideType overrideType,
-                                                          const InteractionPotential<ShortRangeFunctions> &potential)
+                                                          const InteractionPotential<Functions1D> &potential)
 {
     auto &pp =
         pairPotentialOverrides_.emplace_back(std::make_unique<PairPotentialOverride>(matchI, matchJ, overrideType, potential));

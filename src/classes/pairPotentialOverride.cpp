@@ -4,11 +4,11 @@
 #include "classes/pairPotentialOverride.h"
 #include "classes/atomType.h"
 
-PairPotentialOverride::PairPotentialOverride() : interactionPotential_(ShortRangeFunctions::Form::None) {}
+PairPotentialOverride::PairPotentialOverride() : interactionPotential_(Functions1D::Form::None) {}
 
 PairPotentialOverride::PairPotentialOverride(std::string_view matchI, std::string_view matchJ,
                                              PairPotentialOverride::PairPotentialOverrideType overrideType,
-                                             const InteractionPotential<ShortRangeFunctions> &potential)
+                                             const InteractionPotential<Functions1D> &potential)
     : matchI_(matchI), matchJ_(matchJ), type_(overrideType), interactionPotential_(potential)
 {
 }
@@ -41,11 +41,8 @@ void PairPotentialOverride::setType(PairPotentialOverrideType overrideType) { ty
 PairPotentialOverride::PairPotentialOverrideType PairPotentialOverride::type() const { return type_; }
 
 // Return interaction potential
-InteractionPotential<ShortRangeFunctions> &PairPotentialOverride::interactionPotential() { return interactionPotential_; }
-const InteractionPotential<ShortRangeFunctions> &PairPotentialOverride::interactionPotential() const
-{
-    return interactionPotential_;
-}
+InteractionPotential<Functions1D> &PairPotentialOverride::interactionPotential() { return interactionPotential_; }
+const InteractionPotential<Functions1D> &PairPotentialOverride::interactionPotential() const { return interactionPotential_; }
 
 /*
  * I/O
@@ -60,12 +57,12 @@ SerialisedValue PairPotentialOverride::serialise() const
     value["matchJ"] = matchJ_;
     value["type"] = pairPotentialOverrideTypes().keyword(type_);
 
-    value["form"] = ShortRangeFunctions::forms().keyword(interactionPotential_.form());
+    value["form"] = Functions1D::forms().keyword(interactionPotential_.form());
     auto &values = interactionPotential().parameters();
     if (!values.empty())
     {
         SerialisedValue interactionParameters;
-        auto &parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
+        auto &parameters = Functions1D::parameters(interactionPotential_.form());
         for (auto &&[parameter, value] : zip(parameters, values))
             interactionParameters[parameter] = value;
         value["parameters"] = interactionParameters;
@@ -84,15 +81,15 @@ void PairPotentialOverride::deserialise(const SerialisedValue &node)
                              [this](const auto node)
                              { type_ = pairPotentialOverrideTypes().enumeration(std::string(node.as_string())); });
 
-    Serialisable::optionalOn(
-        node, "form",
-        [this](const auto node)
-        { interactionPotential_.setForm(ShortRangeFunctions::forms().enumeration(std::string(node.as_string()))); });
+    Serialisable::optionalOn(node, "form",
+                             [this](const auto node) {
+                                 interactionPotential_.setForm(Functions1D::forms().enumeration(std::string(node.as_string())));
+                             });
 
     Serialisable::optionalOn(node, "parameters",
                              [this](const auto node)
                              {
-                                 auto &parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
+                                 auto &parameters = Functions1D::parameters(interactionPotential_.form());
                                  std::vector<double> values;
                                  std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
                                                 [&node](const auto parameter) { return node.at(parameter).as_floating(); });

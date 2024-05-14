@@ -235,7 +235,7 @@ bool KeywordStore::set(std::string_view name, const std::string value)
     getKeyword<StringKeyword>(name, find(name))->data() = value;
     return true;
 }
-bool KeywordStore::set(std::string_view name, const Functions::Function1DWrapper value)
+bool KeywordStore::set(std::string_view name, const Function1DWrapper value)
 {
     return getKeyword<Function1DKeyword>(name, find(name))->setData(value);
 }

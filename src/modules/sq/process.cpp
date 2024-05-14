@@ -49,19 +49,19 @@ Module::ExecutionResult SQModule::process(ModuleContext &moduleContext)
                          Averaging::averagingSchemes().keyword(averagingScheme_));
     else
         Messenger::print("SQ: No averaging of partials will be performed.\n");
-    if (qBroadening_.type() == Functions::Function1D::None)
+    if (qBroadening_.form() == Functions1D::Form::None)
         Messenger::print("SQ: No broadening will be applied to calculated S(Q).");
     else
         Messenger::print("SQ: Broadening to be applied in calculated S(Q) is {} ({}).",
-                         Functions::function1D().keyword(qBroadening_.type()), qBroadening_.parameterSummary());
+                         Functions1D::forms().keyword(qBroadening_.form()), qBroadening_.parameterSummary());
     if (sourceBragg_)
     {
         Messenger::print("SQ: Bragg scattering from module '{}' will be included.\n", sourceBragg_->name());
-        if (braggQBroadening_.type() == Functions::Function1D::None)
+        if (braggQBroadening_.form() == Functions1D::Form::None)
             Messenger::print("SQ: No additional broadening will be applied to calculated Bragg S(Q).");
         else
             Messenger::print("SQ: Broadening to be applied in calculated Bragg S(Q) is {} ({}).",
-                             Functions::function1D().keyword(braggQBroadening_.type()), braggQBroadening_.parameterSummary());
+                             Functions1D::forms().keyword(braggQBroadening_.form()), braggQBroadening_.parameterSummary());
     }
     Messenger::print("SQ: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("\n");

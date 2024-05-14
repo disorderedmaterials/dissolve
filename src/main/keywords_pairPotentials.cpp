@@ -95,13 +95,13 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
 
                 // Check / set interaction potential
-                if (!ShortRangeFunctions::forms().isValid(parser.argsv(4)))
+                if (!Functions1D::forms().isValid(parser.argsv(4)))
                 {
-                    ShortRangeFunctions::forms().errorAndPrintValid(parser.argsv(4));
+                    Functions1D::forms().errorAndPrintValid(parser.argsv(4));
                     errorsEncountered = true;
                     break;
                 }
-                InteractionPotential<ShortRangeFunctions> potential(ShortRangeFunctions::forms().enumeration(parser.argsv(4)));
+                InteractionPotential<Functions1D> potential(Functions1D::forms().enumeration(parser.argsv(4)));
                 if (!potential.parseParameters(parser, 5))
                 {
                     errorsEncountered = true;

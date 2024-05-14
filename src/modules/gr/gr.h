@@ -48,7 +48,7 @@ class GRModule : public Module
     // Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop
     bool internalTest_{false};
     // Type of broadening to apply to intramolecular g(r)
-    Functions::Function1DWrapper intraBroadening_{Functions::Function1D::Gaussian, {0.18}};
+    Function1DWrapper intraBroadening_{Functions1D::Form::Gaussian, {0.18}};
     // Degree of smoothing to apply
     std::optional<int> nSmooths_;
     // Calculation method for partials
@@ -81,8 +81,7 @@ class GRModule : public Module
                      GRModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
     static bool calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
-                                      PartialSet &weightedgr, const Functions::Function1DWrapper intraBroadening,
-                                      int smoothing);
+                                      PartialSet &weightedgr, const Function1DWrapper intraBroadening, int smoothing);
     // Sum unweighted g(r) over the supplied Module's target Configurations
     static bool sumUnweightedGR(GenericList &processingData, const ProcessPool &procPool, std::string_view targetPrefix,
                                 std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,

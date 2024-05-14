@@ -48,7 +48,7 @@ QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
                 return QString::fromStdString(std::string(pp->nameJ()));
             // Form
             case (2):
-                return QString::fromStdString(ShortRangeFunctions::forms().keyword(pp->interactionPotential().form()));
+                return QString::fromStdString(Functions1D::forms().keyword(pp->interactionPotential().form()));
             // Charges
             case (3):
                 return pp->includeAtomTypeCharges() ? QString::number(pp->chargeI()) : QString();

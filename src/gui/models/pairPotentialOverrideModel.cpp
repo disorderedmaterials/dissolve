@@ -48,7 +48,7 @@ QVariant PairPotentialOverrideModel::data(const QModelIndex &index, int role) co
             case (ColumnData::OverrideType):
                 return QString::fromStdString(PairPotentialOverride::pairPotentialOverrideTypes().keyword(ppOverride->type()));
             case (ColumnData::ShortRangeForm):
-                return QString::fromStdString(ShortRangeFunctions::forms().keyword(ppOverride->interactionPotential().form()));
+                return QString::fromStdString(Functions1D::forms().keyword(ppOverride->interactionPotential().form()));
             case (ColumnData::ShortRangeParameters):
                 return QString::fromStdString(ppOverride->interactionPotential().parametersAsString());
             default:
@@ -81,8 +81,7 @@ bool PairPotentialOverrideModel::setData(const QModelIndex &index, const QVarian
                 PairPotentialOverride::pairPotentialOverrideTypes().enumeration(value.toString().toStdString()));
             break;
         case (ColumnData::ShortRangeForm):
-            ppOverride->interactionPotential().setForm(
-                ShortRangeFunctions::forms().enumeration(value.toString().toStdString()));
+            ppOverride->interactionPotential().setForm(Functions1D::forms().enumeration(value.toString().toStdString()));
             break;
         case (ColumnData::ShortRangeParameters):
             if (!ppOverride->interactionPotential().parseParameters(value.toString().toStdString()))

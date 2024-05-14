@@ -5,6 +5,7 @@
 
 #include "base/enumOptions.h"
 #include "classes/interactionPotential.h"
+#include "math/function1D.h"
 #include <optional>
 
 // Short-range functional forms
@@ -31,6 +32,6 @@ class ShortRangeFunctions
      */
     public:
     // Combine parameters for the two atom types using suitable rules
-    static InteractionPotential<ShortRangeFunctions> combine(const InteractionPotential<ShortRangeFunctions> &srI,
-                                                             const InteractionPotential<ShortRangeFunctions> &srJ);
+    static InteractionPotential<Functions1D> combine(const InteractionPotential<ShortRangeFunctions> &srI,
+                                                     const InteractionPotential<ShortRangeFunctions> &srJ);
 };

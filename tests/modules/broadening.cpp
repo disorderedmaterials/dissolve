@@ -32,7 +32,7 @@ TEST_F(BroadeningModuleTest, Dep2Indep1)
     auto *sqModule = systemTest.coreData().findModule("SQ01");
     ASSERT_TRUE(sqModule);
     ASSERT_NO_THROW_VERBOSE(
-        sqModule->keywords().set("QBroadening", Functions::Function1DWrapper(Functions::Function1D::GaussianC2, {0.1, 0.2})));
+        sqModule->keywords().set("QBroadening", Function1DWrapper(Functions1D::Form::GaussianC2, {0.1, 0.2})));
 
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -46,8 +46,8 @@ TEST_F(BroadeningModuleTest, Dep1)
     // Set QBroadening
     auto *sqModule = systemTest.coreData().findModule("SQ01");
     ASSERT_TRUE(sqModule);
-    ASSERT_NO_THROW_VERBOSE(sqModule->keywords().set(
-        "QBroadening", Functions::Function1DWrapper(Functions::Function1D::OmegaDependentGaussian, {0.1})));
+    ASSERT_NO_THROW_VERBOSE(
+        sqModule->keywords().set("QBroadening", Function1DWrapper(Functions1D::Form::OmegaDependentGaussian, {0.1})));
 
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -61,8 +61,8 @@ TEST_F(BroadeningModuleTest, Dep2)
     // Set QBroadening
     auto *sqModule = systemTest.coreData().findModule("SQ01");
     ASSERT_TRUE(sqModule);
-    ASSERT_NO_THROW_VERBOSE(sqModule->keywords().set(
-        "QBroadening", Functions::Function1DWrapper(Functions::Function1D::OmegaDependentGaussian, {0.2})));
+    ASSERT_NO_THROW_VERBOSE(
+        sqModule->keywords().set("QBroadening", Function1DWrapper(Functions1D::Form::OmegaDependentGaussian, {0.2})));
 
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -76,8 +76,7 @@ TEST_F(BroadeningModuleTest, Indep1)
     // Set QBroadening
     auto *sqModule = systemTest.coreData().findModule("SQ01");
     ASSERT_TRUE(sqModule);
-    ASSERT_NO_THROW_VERBOSE(
-        sqModule->keywords().set("QBroadening", Functions::Function1DWrapper(Functions::Function1D::Gaussian, {0.1})));
+    ASSERT_NO_THROW_VERBOSE(sqModule->keywords().set("QBroadening", Function1DWrapper(Functions1D::Form::Gaussian, {0.1})));
 
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -91,8 +90,7 @@ TEST_F(BroadeningModuleTest, Indep2)
     // Set QBroadening
     auto *sqModule = systemTest.coreData().findModule("SQ01");
     ASSERT_TRUE(sqModule);
-    ASSERT_NO_THROW_VERBOSE(
-        sqModule->keywords().set("QBroadening", Functions::Function1DWrapper(Functions::Function1D::Gaussian, {0.2})));
+    ASSERT_NO_THROW_VERBOSE(sqModule->keywords().set("QBroadening", Function1DWrapper(Functions1D::Form::Gaussian, {0.2})));
 
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
