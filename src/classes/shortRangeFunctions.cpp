@@ -68,9 +68,8 @@ InteractionPotential<Functions1D> ShortRangeFunctions::combine(const Interaction
                 /*
 
                 */
-                return {Functions1D::Form::Buckingham,
-                        {sqrt(srI.parameters()[0] * srJ.parameters()[0]), sqrt(srI.parameters()[1] * srJ.parameters()[1]),
-                         sqrt(srI.parameters()[2] * srI.parameters()[2])}};
+                return {Functions1D::Form::Buckingham};
+
                 break;
             default:
                 throw(std::runtime_error(
