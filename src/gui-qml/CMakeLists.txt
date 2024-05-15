@@ -14,8 +14,3 @@ target_link_libraries(
           base
           Qt6::QuickWidgets
 )
-
-if(APPLE)
-  #Don't link dead code on Apple
-  target_link_options(gui-qml PRIVATE --unresolved-symbols=ignore-all)
-endif(APPLE)

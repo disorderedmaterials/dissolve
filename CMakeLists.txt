@@ -270,6 +270,11 @@ if(GUI)
             ${Qt6Gui_INCLUDE_DIRS}
   )
 
+  if(APPLE)
+    #Don't link dead code on Apple
+    target_link_options(${qmlgui_target_name} PRIVATE --unresolved-symbols=ignore-all)
+  endif(APPLE)
+
 endif(GUI)
 
 # Set basic link libs for executables
