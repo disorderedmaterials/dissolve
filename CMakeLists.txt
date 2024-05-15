@@ -272,7 +272,7 @@ if(GUI)
 
   if(APPLE)
     #Don't link dead code on Apple
-    target_link_options(${qmlgui_target_name} PRIVATE "LINKER:-as-needed")
+    target_link_options(${qmlgui_target_name} PRIVATE "LINKER:-dead-strip,-undefined supress")
   endif(APPLE)
 
 endif(GUI)
