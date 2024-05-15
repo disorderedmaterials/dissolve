@@ -149,11 +149,8 @@ qt6_wrap_cpp(
   xmlTorsionModel.h
 )
 
-set(
-  # QML type register
-  types_SRCS
-  types.h
-  types.cpp
+set(# QML type register
+    types_SRCS types.h types.cpp
 )
 
 find_package(Qt6 REQUIRED COMPONENTS Core Qml)
