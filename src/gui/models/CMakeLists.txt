@@ -171,8 +171,3 @@ target_link_libraries(models PRIVATE Qt6::Core Qt6::Qml)
 if(MSVC)
   target_compile_options(models PUBLIC /Zc:__cplusplus)
 endif(MSVC)
-
-if(APPLE)
-  #Don't link dead code on Apple
-  target_link_options(models PRIVATE -dead_strip)
-endif(APPLE)
