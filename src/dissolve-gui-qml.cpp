@@ -31,14 +31,10 @@ int main(int args, char **argv)
 
     QQmlApplicationEngine engine;
     const QUrl url(u"qrc:/main/qml/DissolveMain.qml"_qs);
-    
+
     QObject::connect(
-        &engine,
-        &QQmlApplicationEngine::objectCreationFailed,
-        &app,
-        []() { QCoreApplication::exit(-1); },
-        Qt::QueuedConnection
-    );
+        &engine, &QQmlApplicationEngine::objectCreationFailed, &app, []() { QCoreApplication::exit(-1); },
+        Qt::QueuedConnection);
     engine.load(url);
 
     Types::registerDissolveQmlTypes();
@@ -66,10 +62,10 @@ int main(int args, char **argv)
 
     // Set restart file frequency
     dissolve.setRestartFileFrequency(options.noRestartFile() ? 0 : options.restartFileFrequency());
-    
+
     // If an input file was specified, load it here
-    if (options.inputFile())
-        // loadSuccessful = dissolveWindow.loadInputFile(options.inputFile().value());
+    // if (options.inputFile())
+    // loadSuccessful = dissolveWindow.loadInputFile(options.inputFile().value());
 
     // Load restart file if input file load was specified and loaded successfully
     if (options.inputFile() && loadSuccessful)
