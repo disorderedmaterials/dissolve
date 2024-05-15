@@ -9,6 +9,23 @@ ApplicationWindow {
     visible: true
     width: 819
 
+    TabBar {
+        id: tabBar
+        width: parent.width
+
+        // DEFAULT TABS
+        TabButton {
+            id: messagesTab
+            text: "Messages"
+            width: implicitWidth
+        }
+        TabButton {
+            id: forceFieldTab
+            text: "Forcefield"
+            width: implicitWidth
+        }
+    }
+
     menuBar: MenuBar {
         id: mainMenu
         Menu {
@@ -41,23 +58,6 @@ ApplicationWindow {
             MenuItem {
                 text: "Quit"
             }
-        }
-    }
-
-    TabBar {
-        id: tabBar
-        width: parent.width
-
-        // DEFAULT TABS
-        TabButton {
-            id: messagesTab
-            text: "Messages"
-            width: implicitWidth
-        }
-        TabButton {
-            id: forceFieldTab
-            text: "Forcefield"
-            width: implicitWidth
         }
     }
 }
