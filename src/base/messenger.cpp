@@ -24,6 +24,12 @@ std::string Messenger::outputPrefix_;
 // Split supplied text into lines (delimited by '\n') and send for output
 void Messenger::splitAndPrint(std::string_view s)
 {
+
+    // Remove final newline if there is one
+    // The outputText function will add the newlines for us
+    if (s.back() == '\n')
+        s.remove_suffix(1);
+
     // The created text may be over multiple lines (separated by '\n') so split it, prepending the prefix and/or process id to
     // each line as necessary
     size_t pos;
