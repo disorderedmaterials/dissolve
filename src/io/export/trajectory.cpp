@@ -33,7 +33,7 @@ bool TrajectoryExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
     for (const auto &i : cfg->atoms())
         if (extended)
         {
-            if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f} {:<6d} {}\n", Elements::symbol(i.speciesAtom()->Z()),
+            if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}  {:<6d}  {}\n", Elements::symbol(i.speciesAtom()->Z()),
                                    i.r().x, i.r().y, i.r().z, i.localTypeIndex(), i.speciesAtom()->atomType()->name()))
                 return false;
         }
