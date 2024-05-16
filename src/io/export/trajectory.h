@@ -15,7 +15,8 @@ class TrajectoryExportFileFormat : public FileAndFormat
     // Trajectory Export Formats
     enum class TrajectoryExportFormat
     {
-        XYZ
+      XYZ,
+      XYZExtended
     };
     TrajectoryExportFileFormat(std::string_view filename = "", TrajectoryExportFormat format = TrajectoryExportFormat::XYZ);
     ~TrajectoryExportFileFormat() override = default;
@@ -39,7 +40,7 @@ class TrajectoryExportFileFormat : public FileAndFormat
      */
     private:
     // Append XYZ frame to trajectory
-    bool exportXYZ(LineParser &parser, Configuration *cfg);
+    bool exportXYZ(LineParser &parser, Configuration *cfg, bool extended);
 
     public:
     // Append trajectory using current filename and format
