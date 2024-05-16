@@ -15,8 +15,8 @@ class TrajectoryExportFileFormat : public FileAndFormat
     // Trajectory Export Formats
     enum class TrajectoryExportFormat
     {
-      XYZ,
-      XYZExtended
+        XYZ,
+        XYZExtended
     };
     TrajectoryExportFileFormat(std::string_view filename = "", TrajectoryExportFormat format = TrajectoryExportFormat::XYZ);
     ~TrajectoryExportFileFormat() override = default;
