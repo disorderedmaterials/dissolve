@@ -149,12 +149,20 @@ qt6_wrap_cpp(
   xmlTorsionModel.h
 )
 
-add_library(models ${models_SRCS} ${models_MOC_SRCS})
+set(# QML type register
+    types_SRCS types.h types.cpp
+)
+
+find_package(Qt6 REQUIRED COMPONENTS Core Qml)
+
+add_library(models ${models_SRCS} ${models_MOC_SRCS} ${types_SRCS})
 
 target_include_directories(
   models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CONAN_INCLUDE_DIRS_PUGIXML} ${Qt6Widgets_INCLUDE_DIRS}
                  ${FREETYPE_INCLUDE_DIRS} ${Qt6Quick_INCLUDE_DIRS}
 )
+
+target_link_libraries(models PRIVATE Qt6::Core Qt6::Qml)
 
 # Because Qt has its own way of checking for C++17
 if(MSVC)

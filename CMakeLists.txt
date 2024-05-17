@@ -136,6 +136,7 @@ if(WIN32)
   else(PARALLEL)
     set(target_name Dissolve)
     set(gui_target_name Dissolve-GUI)
+    set(qmlgui_target_name Dissolve-GUI-QML)
   endif(PARALLEL)
 
   # Adjust external include directories for GUI
@@ -157,6 +158,7 @@ if(UNIX)
   else(PARALLEL)
     set(target_name dissolve)
     set(gui_target_name dissolve-gui)
+    set(qmlgui_target_name dissolve-gui-qml)
   endif(PARALLEL)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(UNIX)
@@ -176,6 +178,7 @@ if(APPLE)
   else(PARALLEL)
     set(target_name dissolve)
     set(gui_target_name dissolve-gui)
+    set(qmlgui_target_name dissolve-gui-qml)
   endif(PARALLEL)
 
   add_definitions(-D_MAC)
@@ -253,6 +256,20 @@ if(GUI)
             ${Qt6OpenGL_INCLUDE_DIRS}
             ${Qt6OpenGLWidgets_INCLUDE_DIRS}
   )
+
+  # Dissolve QML GUI
+  qt_add_executable(${qmlgui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui-qml.cpp ${SRCS}/gui-qml/resources.qrc)
+
+  # Set project-local include directories for target (we expect to need less of these dependencies over time)
+  target_include_directories(
+    ${qmlgui_target_name} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
+                                  ${Qt6Core_INCLUDE_DIRS} ${Qt6Gui_INCLUDE_DIRS}
+  )
+
+  if(APPLE)
+    # Don't link dead code on Apple
+    target_link_options(${qmlgui_target_name} PRIVATE "LINKER:-dead_strip")
+  endif(APPLE)
 
 endif(GUI)
 
@@ -352,6 +369,16 @@ if(GUI)
             ${FTGL_LIBRARIES}
             ${CORE_LINK_LIBS}
             ${THREADING_LINK_LIBS}
+  )
+
+  # Main Dissolve GUI
+  target_link_libraries(
+    ${qmlgui_target_name}
+    PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
+           # Module gui libs
+           gui-qml ${NO_WHOLE_ARCHIVE_FLAG}
+    PRIVATE # External libs
+            Qt6::Qml ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
   )
 
   qt_generate_deploy_qml_app_script(

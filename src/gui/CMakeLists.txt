@@ -169,9 +169,6 @@ add_library(
   stockColours.h
   thread.cpp
   thread.h
-  # QML type register
-  types.cpp
-  types.h
 )
 
 target_include_directories(

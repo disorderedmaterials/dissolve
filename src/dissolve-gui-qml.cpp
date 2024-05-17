@@ -3,11 +3,13 @@
 
 #include "base/messenger.h"
 #include "base/processPool.h"
-#include "gui/gui.h"
+#include "gui/models/dissolveModel.h"
 #include "gui/models/types.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
 #include <QSurfaceFormat>
 #include <clocale>
 
@@ -25,13 +27,20 @@ int main(int args, char **argv)
     // Initialise random seed
     srand(options.randomSeed().value_or((unsigned)time(nullptr)));
 
-    // Create the main QApplication
-    QApplication app(args, argv);
+    QGuiApplication app(args, argv);
+
+    QQmlApplicationEngine engine;
+    const QUrl url(u"qrc:/main/qml/DissolveMain.qml"_qs);
+
+    QObject::connect(
+        &engine, &QQmlApplicationEngine::objectCreationFailed, &app, []() { QCoreApplication::exit(-1); },
+        Qt::QueuedConnection);
+    engine.load(url);
 
     Types::registerDissolveQmlTypes();
     QCoreApplication::setOrganizationName("Team Dissolve");
     QCoreApplication::setOrganizationDomain("www.projectdissolve.com");
-    QCoreApplication::setApplicationName("Dissolve-GUI");
+    QCoreApplication::setApplicationName("Dissolve-GUI-QML");
 
     // Set native siblings attribute to prevent odd rendering artefacts on some systems
     app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
@@ -40,12 +49,8 @@ int main(int args, char **argv)
     setlocale(LC_NUMERIC, "C");
     QLocale::setDefault(QLocale::C);
 
-    // Create the main window
-    DissolveWindow dissolveWindow(dissolve);
-    dissolveWindow.show();
-
     // Print GPL license information
-    Messenger::print("Dissolve-GUI {} version {}, Copyright (C) 2024 Team Dissolve and contributors.\n", Version::appType(),
+    Messenger::print("Dissolve-GUI-QML {} version {}, Copyright (C) 2024 Team Dissolve and contributors.\n", Version::appType(),
                      Version::info());
     Messenger::print("Source repository: {}.\n", Version::repoUrl());
     Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
@@ -59,8 +64,8 @@ int main(int args, char **argv)
     dissolve.setRestartFileFrequency(options.noRestartFile() ? 0 : options.restartFileFrequency());
 
     // If an input file was specified, load it here
-    if (options.inputFile())
-        loadSuccessful = dissolveWindow.loadInputFile(options.inputFile().value());
+    // if (options.inputFile())
+    // loadSuccessful = dissolveWindow.loadInputFile(options.inputFile().value());
 
     // Load restart file if input file load was specified and loaded successfully
     if (options.inputFile() && loadSuccessful)
@@ -70,7 +75,7 @@ int main(int args, char **argv)
         else
         {
             auto actualRestartFile{options.restartFilename().value_or(std::string(dissolve.restartFilename()))};
-            loadSuccessful = dissolveWindow.loadRestartFile(actualRestartFile);
+            // loadSuccessful = dissolveWindow.loadRestartFile(actualRestartFile);
         }
 
         // Iterate before launching the GUI?
@@ -84,12 +89,6 @@ int main(int args, char **argv)
             dissolve.iterate(options.nIterations());
         }
     }
-
-    // Set device pixel ratio
-    BaseViewer::setDevicePixelRatio(dissolveWindow.devicePixelRatio());
-
-    // Update the main window and exec the app
-    dissolveWindow.fullUpdate();
 
     auto result = app.exec();
 
