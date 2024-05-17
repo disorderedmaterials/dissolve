@@ -12,7 +12,8 @@ TrajectoryExportFileFormat::TrajectoryExportFileFormat(std::string_view filename
     : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat>(
-        "TrajectoryExportFileFormat", {{TrajectoryExportFormat::XYZ, "xyz", "XYZ Trajectory"}});
+        "TrajectoryExportFileFormat", {{TrajectoryExportFormat::XYZ, "xyz", "XYZ Trajectory"},
+                                       {TrajectoryExportFormat::XYZExtended, "xyzExt", "XYZ Trajectory Extended"}});
 }
 
 /*
@@ -20,7 +21,7 @@ TrajectoryExportFileFormat::TrajectoryExportFileFormat(std::string_view filename
  */
 
 // Append XYZ frame to trajectory
-bool TrajectoryExportFileFormat::exportXYZ(LineParser &parser, Configuration *cfg)
+bool TrajectoryExportFileFormat::exportXYZ(LineParser &parser, Configuration *cfg, bool extended)
 {
     // Write number of atoms and title
     if (!parser.writeLineF("{}\n", cfg->nAtoms()))
@@ -30,9 +31,18 @@ bool TrajectoryExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
 
     // Write Atoms
     for (const auto &i : cfg->atoms())
-        if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", Elements::symbol(i.speciesAtom()->Z()), i.r().x,
-                               i.r().y, i.r().z))
-            return false;
+        if (extended)
+        {
+            if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}  {:<6d}  {}\n", Elements::symbol(i.speciesAtom()->Z()),
+                                   i.r().x, i.r().y, i.r().z, i.localTypeIndex(), i.speciesAtom()->atomType()->name()))
+                return false;
+        }
+        else
+        {
+            if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", Elements::symbol(i.speciesAtom()->Z()), i.r().x,
+                                   i.r().y, i.r().z))
+                return false;
+        }
 
     return true;
 }
@@ -60,7 +70,7 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
     {
         auto headerResult = false;
 
-        if (formats_.enumerationByIndex(*formatIndex_) == TrajectoryExportFormat::XYZ)
+        if (*formatIndex_ >= 0 && *formatIndex_ < formats_.nOptions())
             headerResult = true;
         else
             headerResult = Messenger::error("Unrecognised trajectory format so can't write header.\nKnown formats are:\n");
@@ -75,7 +85,10 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
     switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (TrajectoryExportFormat::XYZ):
-            frameResult = exportXYZ(parser, cfg);
+            frameResult = exportXYZ(parser, cfg, false);
+            break;
+        case (TrajectoryExportFormat::XYZExtended):
+            frameResult = exportXYZ(parser, cfg, true);
             break;
         default:
             throw(std::runtime_error(fmt::format("Trajectory format '{}' export has not been implemented.\n",
