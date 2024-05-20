@@ -249,8 +249,7 @@ void ForcefieldTab::on_AtomTypeDuplicateButton_clicked(bool checked)
 
     // Get selected atomtype
     auto at = atomTypesModel_.rawData(index);
-    if (!at)
-        return;
+    assert(at);
 
     // Generate a unique name before we duplicate
     auto newName =
@@ -309,8 +308,7 @@ void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
 
     // Get selected atomtype
     auto at = atomTypesModel_.rawData(index);
-    if (!at)
-        return;
+    assert(at);
 
     dissolve_.coreData().removeAtomType(at);
 
@@ -555,8 +553,7 @@ void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
 
     // Get selected master bond
     auto bond = masterBondsTableModel_.rawData(index);
-    if (!bond)
-        return;
+    assert(bond);
 
     if (masterBondsTableModel_.removeRows(index.row(), 1, {}))
     {
@@ -592,8 +589,7 @@ void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked)
 
     // Get selected master angle
     auto angle = masterAnglesTableModel_.rawData(index);
-    if (!angle)
-        return;
+    assert(angle);
 
     dissolve_.coreData().removeMasterAngle(angle);
 
@@ -631,8 +627,7 @@ void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked)
 
     // Get selected master torsion
     auto torsion = masterTorsionsTableModel_.rawData(index);
-    if (!torsion)
-        return;
+    assert(torsion);
 
     dissolve_.coreData().removeMasterTorsion(torsion);
 
@@ -670,8 +665,7 @@ void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked)
 
     // Get selected master improper
     auto improper = masterImpropersTableModel_.rawData(index);
-    if (!improper)
-        return;
+    assert(improper);
 
     dissolve_.coreData().removeMasterImproper(improper);
 
