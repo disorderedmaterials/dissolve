@@ -25,13 +25,13 @@ TEST(CellsTest, Basic)
     // Add atom types and LJ pair potentials (only one real one - between Ar and OW
     auto arType = coreData.addAtomType(Elements::Ar);
     arType->setName("Ar");
-    arType->interactionPotential().setForm(ShortRangeFunctions::Form::None);
+    arType->interactionPotential().setForm(ShortRangeFunctions::Form::Undefined);
     auto hType = coreData.addAtomType(Elements::H);
     hType->setName("HW");
-    hType->interactionPotential().setForm(ShortRangeFunctions::Form::None);
+    hType->interactionPotential().setForm(ShortRangeFunctions::Form::Undefined);
     auto oType = coreData.addAtomType(Elements::O);
     oType->setName("OW");
-    oType->interactionPotential().setForm(ShortRangeFunctions::Form::None);
+    oType->interactionPotential().setForm(ShortRangeFunctions::Form::Undefined);
 
     dissolve.addPairPotential(arType, arType)->setInteractionPotential(Functions1D::Form::None, "");
     dissolve.addPairPotential(hType, hType)->setInteractionPotential(Functions1D::Form::None, "");

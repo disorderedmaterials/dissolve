@@ -43,7 +43,7 @@ TEST_F(PairPotentialOverridesTest, Water3000)
 
     // Set the potentials to zero and check that the new energy is zero
     EXPECT_TRUE(ow->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0"));
-    EXPECT_TRUE(systemTest.dissolve().regeneratePairPotentials());
+    EXPECT_TRUE(systemTest.dissolve().updatePairPotentials());
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
     EXPECT_TRUE(systemTest.checkDouble("zeroed van der Waals energy", interEnergy.values().back(), 0.0, 6.0e-2));
 
@@ -51,7 +51,7 @@ TEST_F(PairPotentialOverridesTest, Water3000)
     auto *owOverride =
         systemTest.coreData().addPairPotentialOverride("OW", "OW", PairPotentialOverride::PairPotentialOverrideType::Off,
                                                        {Functions1D::Form::LennardJones126, "epsilon=0.6503 sigma=3.165492"});
-    EXPECT_TRUE(systemTest.dissolve().regeneratePairPotentials());
+    EXPECT_TRUE(systemTest.dissolve().updatePairPotentials());
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
     EXPECT_TRUE(systemTest.checkDouble("overridden (Off) van der Waals energy", interEnergy.values().back(), 0.0, 6.0e-2));
 
@@ -62,14 +62,14 @@ TEST_F(PairPotentialOverridesTest, Water3000)
 
     // Turn it on to Add
     owOverride->setType(PairPotentialOverride::PairPotentialOverrideType::Add);
-    EXPECT_TRUE(systemTest.dissolve().regeneratePairPotentials());
+    EXPECT_TRUE(systemTest.dissolve().updatePairPotentials());
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
     EXPECT_TRUE(systemTest.checkDouble("overridden (Add) van der Waals energy", interEnergy.values().back(),
                                        expectedVanDerWaalsEnergy, 6.0e-2));
 
     // And now to Replace
     owOverride->setType(PairPotentialOverride::PairPotentialOverrideType::Replace);
-    EXPECT_TRUE(systemTest.dissolve().regeneratePairPotentials());
+    EXPECT_TRUE(systemTest.dissolve().updatePairPotentials());
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
     EXPECT_TRUE(systemTest.checkDouble("overridden (Replace) van der Waals energy", interEnergy.values().back(),
                                        expectedVanDerWaalsEnergy, 6.0e-2));

@@ -16,12 +16,12 @@ class PairPotentialsTest : public ::testing::Test
 
         A_ = std::make_shared<AtomType>(Elements::H);
         A_->setName("A");
-        A_->interactionPotential().setForm(ShortRangeFunctions::Form::None);
+        A_->interactionPotential().setForm(ShortRangeFunctions::Form::Undefined);
         B_ = std::make_shared<AtomType>(Elements::H);
         B_->setName("B");
-        B_->interactionPotential().setForm(ShortRangeFunctions::Form::None);
+        B_->interactionPotential().setForm(ShortRangeFunctions::Form::Undefined);
 
-        pairPotential_ = std::make_shared<PairPotential>(A_, B_, false);
+        pairPotential_ = std::make_shared<PairPotential>("A", "B");
     }
 
     protected:
