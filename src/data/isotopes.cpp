@@ -400,7 +400,8 @@ static std::vector<IsotopeData> sears91Data_ = {
     {Isotope::Am_Natural, Elements::Am, 0, "5/2(-)", 243.06138, 8.3, 0, 8.7, 0.3, 9, 75},
     {Isotope::Am_244, Elements::Am, 244, "0(+)", 244.06275, 9.5, 0, 11.3, 0, 11.3, 16.2},
     {Isotope::Am_246, Elements::Am, 246, "0(+)", 246.06722, 9.3, 0, 10.9, 0, 10.9, 1.36},
-    {Isotope::Am_248, Elements::Am, 248, "0(+)", 248.07234, 7.7, 0, 7.5, 0, 7.5, 3}};
+    {Isotope::Am_248, Elements::Am, 248, "0(+)", 248.07234, 7.7, 0, 7.5, 0, 7.5, 3},
+    {Isotope::Art_Natural, Elements::Art, 0, "", 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}};
 
 /*
  * IsotopeData

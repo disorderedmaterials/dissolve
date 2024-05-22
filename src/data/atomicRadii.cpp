@@ -40,7 +40,8 @@ constexpr std::pair<int, double> radiusData_[] = {
     {Elements::Bk, 1.50},      {Elements::Cf, 1.50}, {Elements::Es, 1.50}, {Elements::Fm, 1.50}, {Elements::Md, 1.50},
     {Elements::No, 1.50},      {Elements::Lr, 1.50}, {Elements::Db, 1.50}, {Elements::Sg, 1.50}, {Elements::Bh, 1.50},
     {Elements::Hs, 1.50},      {Elements::Mt, 1.50}, {Elements::Rg, 1.50}, {Elements::Cn, 1.50}, {Elements::Nh, 1.50},
-    {Elements::Fl, 1.50},      {Elements::Mc, 1.50}, {Elements::Lv, 1.50}, {Elements::Ts, 1.50}, {Elements::Og, 1.50}};
+    {Elements::Fl, 1.50},      {Elements::Mc, 1.50}, {Elements::Lv, 1.50}, {Elements::Ts, 1.50}, {Elements::Og, 1.50},
+    {Elements::Art, 1.0}};
 
 // Return radius for specified Z
 double radius(Elements::Element Z) { return radiusData_[Z].second; }
