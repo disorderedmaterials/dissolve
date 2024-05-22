@@ -159,15 +159,9 @@ bool ForcefieldTab::canClose() const { return false; }
 // Update all pair potentials
 void ForcefieldTab::updatePairPotentials()
 {
-    // Mute output
-    Messenger::mute();
-
-    dissolve_.regeneratePairPotentials();
+    dissolve_.updatePairPotentials();
 
     resetPairPotentialModel();
-
-    // Reinstate output
-    Messenger::unMute();
 }
 
 // Reset pair potential model

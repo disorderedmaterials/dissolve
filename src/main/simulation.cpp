@@ -48,7 +48,7 @@ bool Dissolve::prepare()
     }
 
     // Make sure pair potentials are up-to-date
-    if (!regeneratePairPotentials())
+    if (!updatePairPotentials(automaticPairPotentials_))
         return false;
 
     // Check Configurations
@@ -171,7 +171,7 @@ bool Dissolve::prepare()
     }
 
     // Make sure pair potentials are up-to-date
-    if (!regeneratePairPotentials())
+    if (!updatePairPotentials(automaticPairPotentials_))
         return false;
 
     // Generate attached atom lists if IntraShake modules are present and enabled

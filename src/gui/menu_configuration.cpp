@@ -70,11 +70,7 @@ void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
 
     if (addConfigurationDialog.exec() == QDialog::Accepted)
     {
-
         auto newConfig = dissolve_.coreData().configurations().back().get();
-
-        // Make sure the potential map is up to date
-        dissolve_.regeneratePairPotentials();
 
         // Initialise the content
         newConfig->initialiseContent({dissolve_.worldPool(), dissolve_});

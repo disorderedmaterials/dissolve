@@ -47,6 +47,8 @@ class Dissolve : public Serialisable<>
      * Pair Potentials
      */
     private:
+    // Whether pair potentials are generated automatically through combination rules
+    bool automaticPairPotentials_;
     // Maximum distance for tabulated PairPotentials
     double pairPotentialRange_;
     // Delta to use in tabulation
@@ -98,8 +100,8 @@ class Dissolve : public Serialisable<>
     PairPotential *pairPotential(std::string_view at1Name, std::string_view at2Name) const;
     // Return map for PairPotentials
     const PotentialMap &potentialMap() const;
-    // Clear and regenerate all PairPotentials, replacing those currently defined
-    bool regeneratePairPotentials();
+    // Update all pair potentials
+    bool updatePairPotentials(std::optional<bool> autoCombineHint = {});
     // Revert potentials to reference state, clearing additional potentials
     void revertPairPotentials();
 

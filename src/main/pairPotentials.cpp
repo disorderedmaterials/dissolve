@@ -91,29 +91,49 @@ PairPotential *Dissolve::pairPotential(std::string_view at1Name, std::string_vie
 // Return map for PairPotentials
 const PotentialMap &Dissolve::potentialMap() const { return potentialMap_; }
 
-// Clear and regenerate all PairPotentials, replacing those currently defined
-bool Dissolve::regeneratePairPotentials()
+// Update all pair potentials
+bool Dissolve::updatePairPotentials(std::optional<bool> autoCombineHint)
 {
-    Messenger::print("Regenerating pair potentials...\n");
+    Messenger::print("Updating pair potentials...\n");
     potentialMap_.clear();
-    pairPotentials_.clear();
 
-    // First, tabulate the pair potentials defined by the parameters and form of the associated atom types
+    auto autoCombine = autoCombineHint.value_or(automaticPairPotentials_);
+
+    // First, add or update tabulated pair potentials defined by the parameters and form of the associated atom types
     if (!for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
                              [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool>
                              {
-                                 Messenger::printVerbose("Adding new PairPotential for interaction between '{}' and '{}'...\n",
-                                                         at1->name(), at2->name());
-                                 auto *pot = addPairPotential(at1, at2);
+                                 auto *pot = pairPotential(at1, at2);
 
-                                 // Tabulate the basic potential
-                                 if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_))
-                                     return false;
+                                 if (pot && autoCombine)
+                                 {
+                                     Messenger::print(
+                                         "Updating existing PairPotential for interaction between '{}' and '{}'...\n",
+                                         at1->name(), at2->name());
 
-                                 // Retrieve additional potential from the processing module data, if present
-                                 auto itemName = fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name());
-                                 if (processingModuleData_.contains(itemName, "Dissolve"))
-                                     pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve"));
+                                     // TODO
+                                     // TODO
+                                     // TODO Need to check for successful combination here....
+                                     // TODO OR whether an existing potential is still undefined
+                                     // TODO
+                                     // TODO
+                                     if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_))
+                                         return false;
+                                 }
+                                 else if (!pot)
+                                 {
+                                     Messenger::print("Adding new PairPotential for interaction between '{}' and '{}'...\n",
+                                                      at1->name(), at2->name());
+                                     pot = addPairPotential(at1, at2);
+
+                                     // TODO
+                                     // TODO
+                                     // TODO ... and here....
+                                     // TODO
+                                     // TODO
+                                     if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_))
+                                         return false;
+                                 }
 
                                  return EarlyReturn<bool>::Continue;
                              })
@@ -121,6 +141,7 @@ bool Dissolve::regeneratePairPotentials()
         return false;
 
     // Secondly, apply any overrides
+    Messenger::print("Applying pair potential overrides...\n");
     for (const auto &override : coreData_.pairPotentialOverrides())
     {
         Messenger::print("Pair potential override between '{}' and '{}' ({}, {}, '{}') ...\n", override->matchI(),
@@ -182,7 +203,7 @@ bool Dissolve::regeneratePairPotentials()
             pp->setUAdditional(processingModuleData_.retrieve<Data1D>(addPotName, "Dissolve"));
     }
 
-    // Update the potential map
+    // Reinitialise the potential map
     return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
 }
 

@@ -28,8 +28,8 @@ bool DissolveWindow::clearModuleData(bool queryUser)
         // Set iteration counter to zero
         dissolve_.resetIterationCounter();
 
-        // Regenerate pair potentials
-        dissolve_.regeneratePairPotentials();
+        // Revert pair potentials (so that any additional potential is removed)
+        dissolve_.revertPairPotentials();
 
         Renderable::setSourceDataAccessEnabled(true);
 
