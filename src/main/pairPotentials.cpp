@@ -91,12 +91,12 @@ PairPotential *Dissolve::pairPotential(std::string_view at1Name, std::string_vie
 const PotentialMap &Dissolve::potentialMap() const { return potentialMap_; }
 
 // Update all pair potentials
-bool Dissolve::updatePairPotentials(std::optional<bool> autoCombineHint)
+bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
 {
     Messenger::print("Updating pair potentials...\n");
     potentialMap_.clear();
 
-    auto autoCombine = autoCombineHint.value_or(autoCombinePairPotentials_);
+    auto useCombinationRules = useCombinationRulesHint.value_or(useCombinationRules_);
 
     // First step - add or update tabulated pair potentials defined by the parameters and form of the associated atom types
     if (!for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
@@ -120,8 +120,8 @@ bool Dissolve::updatePairPotentials(std::optional<bool> autoCombineHint)
                                  else
                                      pot->setNoIncludedCharges();
 
-                                 // Auto-update parameters?
-                                 if (autoCombine)
+                                 // Auto-update parameters using combination rules?
+                                 if (useCombinationRules)
                                  {
                                      // Combine the atom type parameters into potential function parameters
                                      auto optPotential =
