@@ -51,8 +51,7 @@ int Dissolve::nPairPotentials() const { return pairPotentials_.size(); }
 // Add new pair potential to list
 PairPotential *Dissolve::addPairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2)
 {
-    auto &&[atI, atJ, pp] =
-        pairPotentials_.emplace_back(at1, at2, std::make_unique<PairPotential>(at1, at2, atomTypeChargeSource_));
+    auto &&[atI, atJ, pp] = pairPotentials_.emplace_back(at1, at2, std::make_unique<PairPotential>(at1->name(), at2->name()));
 
     return pp.get();
 }
@@ -97,42 +96,40 @@ bool Dissolve::updatePairPotentials(std::optional<bool> autoCombineHint)
     Messenger::print("Updating pair potentials...\n");
     potentialMap_.clear();
 
-    auto autoCombine = autoCombineHint.value_or(automaticPairPotentials_);
+    auto autoCombine = autoCombineHint.value_or(autoCombinePairPotentials_);
 
-    // First, add or update tabulated pair potentials defined by the parameters and form of the associated atom types
+    // First step - add or update tabulated pair potentials defined by the parameters and form of the associated atom types
     if (!for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
                              [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool>
                              {
+                                 // Try to locate existing pair potential between these atom types
                                  auto *pot = pairPotential(at1, at2);
 
-                                 if (pot && autoCombine)
+                                 // If it doesn't exist we create it
+                                 if (!pot)
                                  {
-                                     Messenger::print(
-                                         "Updating existing PairPotential for interaction between '{}' and '{}'...\n",
-                                         at1->name(), at2->name());
-
-                                     // TODO
-                                     // TODO
-                                     // TODO Need to check for successful combination here....
-                                     // TODO OR whether an existing potential is still undefined
-                                     // TODO
-                                     // TODO
-                                     if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_))
-                                         return false;
-                                 }
-                                 else if (!pot)
-                                 {
-                                     Messenger::print("Adding new PairPotential for interaction between '{}' and '{}'...\n",
+                                     Messenger::print("Creating new PairPotential for interaction between '{}' and '{}'...\n",
                                                       at1->name(), at2->name());
                                      pot = addPairPotential(at1, at2);
+                                 }
 
-                                     // TODO
-                                     // TODO
-                                     // TODO ... and here....
-                                     // TODO
-                                     // TODO
-                                     if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_))
-                                         return false;
+                                 // Set / update basic parameters
+                                 pot->setNames(at1->name(), at2->name());
+                                 if (atomTypeChargeSource_)
+                                     pot->setIncludedCharges(at1->charge(), at2->charge());
+                                 else
+                                     pot->setNoIncludedCharges();
+
+                                 // Auto-update parameters?
+                                 if (autoCombine)
+                                 {
+                                     // Combine the atom type parameters into potential function parameters
+                                     auto optPotential =
+                                         ShortRangeFunctions::combine(at1->interactionPotential(), at2->interactionPotential());
+                                     if (optPotential)
+                                         pot->setInteractionPotential(*optPotential);
+                                     else
+                                         pot->setInteractionPotential(Functions1D::Form::None, "");
                                  }
 
                                  return EarlyReturn<bool>::Continue;
@@ -140,7 +137,17 @@ bool Dissolve::updatePairPotentials(std::optional<bool> autoCombineHint)
              .value_or(true))
         return false;
 
-    // Secondly, apply any overrides
+    // Re-tabulate the potentials to account for changes in charge inclusion/exclusion, range etc. as well as parameters
+    auto tabulationSucceeded = true;
+    for (auto &&[at1, at2, pot] : pairPotentials_)
+    {
+        if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_))
+            tabulationSucceeded = false;
+    }
+    if (!tabulationSucceeded)
+        return false;
+
+    // Second step - apply any overrides
     Messenger::print("Applying pair potential overrides...\n");
     for (const auto &override : coreData_.pairPotentialOverrides())
     {

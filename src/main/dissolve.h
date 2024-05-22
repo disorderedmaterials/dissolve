@@ -47,8 +47,8 @@ class Dissolve : public Serialisable<>
      * Pair Potentials
      */
     private:
-    // Whether pair potentials are generated automatically through combination rules
-    bool automaticPairPotentials_;
+    // Whether pair potentials are updated automatically through combination rules
+    bool autoCombinePairPotentials_;
     // Maximum distance for tabulated PairPotentials
     double pairPotentialRange_;
     // Delta to use in tabulation
