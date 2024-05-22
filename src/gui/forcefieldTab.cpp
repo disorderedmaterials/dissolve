@@ -14,6 +14,7 @@
 #include "gui/render/renderableData1D.h"
 #include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
+#include <QInputDialog>
 #include <QListWidgetItem>
 #include <QMessageBox>
 
@@ -102,12 +103,6 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     ComboEnumOptionsPopulator coulPopulator(ui_.CoulombTruncationCombo, PairPotential::coulombTruncationSchemes());
     ComboEnumOptionsPopulator shortPopulator(ui_.ShortRangeTruncationCombo, PairPotential::shortRangeTruncationSchemes());
 
-    // Set sensible lower limits and steps for range and delta
-    ui_.PairPotentialRangeSpin->setRange(1.0, 1.0e5);
-    ui_.PairPotentialRangeSpin->setSingleStep(1.0);
-    ui_.PairPotentialDeltaSpin->setRange(0.001, 1.0);
-    ui_.PairPotentialDeltaSpin->setSingleStep(0.001);
-
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.PairPotentialsTable->horizontalHeader()->setFont(font());
     ui_.PairPotentialsTable->horizontalHeader()->setVisible(true);
@@ -195,8 +190,8 @@ void ForcefieldTab::updateControls()
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // PairPotentials
-    ui_.PairPotentialRangeSpin->setValue(dissolve_.pairPotentialRange());
-    ui_.PairPotentialDeltaSpin->setValue(dissolve_.pairPotentialDelta());
+    ui_.PairPotentialRangeButton->setText(QString::number(dissolve_.pairPotentialRange()) + " Å");
+    ui_.PairPotentialDeltaButton->setText(QString::number(dissolve_.pairPotentialDelta()) + " Å");
     ui_.AutomaticChargeSourceCheck->setChecked(dissolve_.automaticChargeSource());
     ui_.PairPotentialsAtomTypeChargesRadio->setDisabled(dissolve_.automaticChargeSource());
     ui_.PairPotentialsSpeciesAtomChargesRadio->setDisabled(dissolve_.automaticChargeSource());
@@ -333,28 +328,44 @@ void ForcefieldTab::atomTypeDataChanged(const QModelIndex &current, const QModel
  * Pair Potentials
  */
 
-void ForcefieldTab::on_PairPotentialRangeSpin_valueChanged(double value)
+void ForcefieldTab::on_PairPotentialRangeButton_clicked(bool checked)
 {
-    if (refreshLock_.isLocked())
+    bool ok = false;
+    auto newRange = QInputDialog::getDouble(this, "Set Pair Potential Range",
+                                            "Enter a new pair potential range (in Angstroms).\nWarning: Setting this will "
+                                            "force all current processing data to be cleared!",
+                                            dissolve_.pairPotentialRange(), 5.0, 50.0, 1, &ok);
+    if (!ok || newRange == dissolve_.pairPotentialRange())
         return;
 
-    dissolve_.setPairPotentialRange(value);
+    dissolve_.setPairPotentialRange(newRange);
+    dissolve_.processingModuleData().clearAll();
 
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
         updatePairPotentials();
+
+    dissolveWindow_->fullUpdate();
 
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_PairPotentialDeltaSpin_valueChanged(double value)
+void ForcefieldTab::on_PairPotentialDeltaButton_clicked(bool checked)
 {
-    if (refreshLock_.isLocked())
+    bool ok = false;
+    auto newDelta = QInputDialog::getDouble(this, "Set Pair Potential Delta",
+                                            "Enter a new pair potential delta (in Angstroms).\nWarning: Setting this will "
+                                            "force all current processing data to be cleared!",
+                                            dissolve_.pairPotentialDelta(), 0.0001, 0.1, 4, &ok);
+    if (!ok || newDelta == dissolve_.pairPotentialDelta())
         return;
 
-    dissolve_.setPairPotentialDelta(value);
+    dissolve_.setPairPotentialDelta(newDelta);
+    dissolve_.processingModuleData().clearAll();
 
     if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
         updatePairPotentials();
+
+    dissolveWindow_->fullUpdate();
 
     dissolveWindow_->setModified();
 }

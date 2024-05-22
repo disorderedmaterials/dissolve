@@ -83,8 +83,8 @@ class ForcefieldTab : public QWidget, public MainTab
     void atomTypeSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void atomTypeDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &);
     // Pair Potentials
-    void on_PairPotentialRangeSpin_valueChanged(double value);
-    void on_PairPotentialDeltaSpin_valueChanged(double value);
+    void on_PairPotentialRangeButton_clicked(bool checked);
+    void on_PairPotentialDeltaButton_clicked(bool checked);
     void on_PairPotentialsAtomTypeChargesRadio_clicked(bool checked);
     void on_PairPotentialsSpeciesAtomChargesRadio_clicked(bool checked);
     void on_ShortRangeTruncationCombo_currentIndexChanged(int index);
