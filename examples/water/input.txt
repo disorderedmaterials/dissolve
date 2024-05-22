@@ -1,4 +1,4 @@
-# Input file written by Dissolve v1.2.0 at 09:11:59 on 05-04-2023.
+# Input file written by Dissolve v1.5.1 at 16:04:58 on 21-05-2024.
 
 #==============================================================================#
 #                                 Master Terms                                 #
@@ -48,6 +48,9 @@ Species 'Water'
   Site  'H2'
     Origin  3
   EndSite
+  Site  'Blah'
+    Origin  2
+  EndSite
 EndSpecies
 
 #==============================================================================#
@@ -72,8 +75,8 @@ Configuration  'Bulk'
 
   # Generator
   Generator
-    Temperature
-      Temperature  300
+    Temperature  'Temperature01'
+      Temperature  '300'
     EndTemperature
     Parameters  'Parameters01'
       Parameter  rho  0.1
@@ -94,11 +97,14 @@ Configuration  'Bulk'
       CoordinateSets  'Water_Sets'
       Population  '1000'
       Density  'rho'  atoms/A3
-      BoxAction  AddVolume
       Positioning  Random
       Rotate  True
+      BoxAction  AddVolume
     EndAdd
   EndGenerator
+
+  Temperature  300
+
 EndConfiguration
 
 #==============================================================================#
@@ -112,8 +118,6 @@ Layer  'Evolve (Standard)'
     Frequency  1
     Configuration  'Bulk'
     RotationStepSize  37.30483575426232
-    RotationStepSize  37.30483575426232
-    TranslationStepSize  0.4103953050595744
     TranslationStepSize  0.4103953050595744
   EndModule
 
@@ -144,15 +148,21 @@ Layer  'GR / Neutron S(Q)'
   Module  SQ  'SQ01'
     Frequency  1
     SourceGR  'GR01'
+    QBroadening  'None'  
+    WindowFunction  None
+    BraggQBroadening  'GaussianC2'  0  0.02
     Averaging  5
+    AveragingScheme  Linear
   EndModule
 
   Module  NeutronSQ  'H2O'
     Frequency  1
     SourceSQs  'SQ01'
     Isotopologue  'Water'  'Natural'  1
+    NormaliseTo  None
     Reference  mint  'data/SLS18498-H2O.mint01'
     EndReference
+    ReferenceNormalisedTo  None
     ReferenceWindowFunction  Lorch0
   EndModule
 
@@ -160,8 +170,10 @@ Layer  'GR / Neutron S(Q)'
     Frequency  1
     SourceSQs  'SQ01'
     Isotopologue  'Water'  'Deuterated'  1
+    NormaliseTo  None
     Reference  mint  'data/SLS18502-D2O.mint01'
     EndReference
+    ReferenceNormalisedTo  None
     ReferenceWindowFunction  Lorch0
   EndModule
 
@@ -171,8 +183,10 @@ Layer  'GR / Neutron S(Q)'
     Exchangeable  HW
     Isotopologue  'Water'  'Natural'  1
     Isotopologue  'Water'  'Deuterated'  1
+    NormaliseTo  None
     Reference  mint  'data/SLS18500-HDO5050.mint01'
     EndReference
+    ReferenceNormalisedTo  None
     ReferenceWindowFunction  Lorch0
   EndModule
 EndLayer

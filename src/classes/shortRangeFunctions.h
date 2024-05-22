@@ -14,7 +14,7 @@ class ShortRangeFunctions
     public:
     enum class Form
     {
-        None,                  /* No short-range dispersive forces */
+        Undefined,
         LennardJones,          /* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
         LennardJonesGeometric, /* Lennard-Jones 12-6 form with Geometric combination rules */
         Buckingham             /* Buckingham form */
@@ -33,6 +33,6 @@ class ShortRangeFunctions
      */
     public:
     // Combine parameters for the two atom types using suitable rules
-    static InteractionPotential<Functions1D> combine(const InteractionPotential<ShortRangeFunctions> &srI,
-                                                     const InteractionPotential<ShortRangeFunctions> &srJ);
+    static std::optional<InteractionPotential<Functions1D>> combine(const InteractionPotential<ShortRangeFunctions> &srI,
+                                                                    const InteractionPotential<ShortRangeFunctions> &srJ);
 };

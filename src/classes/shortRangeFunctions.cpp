@@ -7,7 +7,7 @@
 EnumOptions<ShortRangeFunctions::Form> ShortRangeFunctions::forms()
 {
     return EnumOptions<ShortRangeFunctions::Form>("ShortRangeType",
-                                                  {{ShortRangeFunctions::Form::None, "None"},
+                                                  {{ShortRangeFunctions::Form::Undefined, "Undefined"},
                                                    {ShortRangeFunctions::Form::LennardJones, "LJ", 2, 2},
                                                    {ShortRangeFunctions::Form::LennardJonesGeometric, "LJGeometric", 2, 2},
                                                    {ShortRangeFunctions::Form::Buckingham, "Buckingham", 3, 3}});
@@ -17,7 +17,7 @@ EnumOptions<ShortRangeFunctions::Form> ShortRangeFunctions::forms()
 const std::vector<std::string> &ShortRangeFunctions::parameters(Form form)
 {
     static std::map<ShortRangeFunctions::Form, std::vector<std::string>> params_ = {
-        {ShortRangeFunctions::Form::None, {}},
+        {ShortRangeFunctions::Form::Undefined, {}},
         {ShortRangeFunctions::Form::LennardJones, {"epsilon", "sigma"}},
         {ShortRangeFunctions::Form::LennardJonesGeometric, {"epsilon", "sigma"}},
         {ShortRangeFunctions::Form::Buckingham, {"A", "B", "C"}}};
@@ -38,43 +38,42 @@ std::optional<int> ShortRangeFunctions::parameterIndex(Form form, std::string_vi
  */
 
 // Combine parameters for the two atom types using suitable rules
-InteractionPotential<Functions1D> ShortRangeFunctions::combine(const InteractionPotential<ShortRangeFunctions> &srI,
-                                                               const InteractionPotential<ShortRangeFunctions> &srJ)
+std::optional<InteractionPotential<Functions1D>>
+ShortRangeFunctions::combine(const InteractionPotential<ShortRangeFunctions> &srI,
+                             const InteractionPotential<ShortRangeFunctions> &srJ)
 {
+    if (srI.form() == Form::Undefined || srJ.form() == Form::Undefined)
+    {
+        Messenger::error("Can't combine parameters since one or both short range functions are undefined.\n");
+        return {};
+    }
+
     // Equivalent functional forms?
     if (srI.form() == srJ.form())
     {
         switch (srI.form())
         {
-            case (Form::None):
-                return {Functions1D::Form::None};
             case (Form::LennardJones):
                 /*
                  * Combine parameters (Lorentz-Berthelot):
                  * Parameter 0 = Epsilon
                  * Parameter 1 = Sigma
                  */
-                return {Functions1D::Form::LennardJones126,
-                        {sqrt(srI.parameters()[0] * srJ.parameters()[0]), (srI.parameters()[1] + srJ.parameters()[1]) * 0.5}};
+                return InteractionPotential<Functions1D>(
+                    Functions1D::Form::LennardJones126,
+                    {sqrt(srI.parameters()[0] * srJ.parameters()[0]), (srI.parameters()[1] + srJ.parameters()[1]) * 0.5});
             case (Form::LennardJonesGeometric):
                 /*
                  * Combine parameters (Geometric):
                  * Parameter 0 = Epsilon
                  * Parameter 1 = Sigma
                  */
-                return {Functions1D::Form::LennardJones126,
-                        {sqrt(srI.parameters()[0] * srJ.parameters()[0]), sqrt(srI.parameters()[1] * srJ.parameters()[1])}};
-            case (Form::Buckingham):
-                /*
-
-                */
-                return {Functions1D::Form::Buckingham};
-
-                break;
+                return InteractionPotential<Functions1D>(
+                    Functions1D::Form::LennardJones126,
+                    {sqrt(srI.parameters()[0] * srJ.parameters()[0]), sqrt(srI.parameters()[1] * srJ.parameters()[1])});
             default:
-                throw(std::runtime_error(
-                    fmt::format("Short-range type {} is not accounted for in ShortRangeFunctions::combine().\n",
-                                forms().keyword(srI.form()))));
+                Messenger::error("Short-range type {} is not combinable.\n", forms().keyword(srI.form()));
+                return {};
         }
     }
     else
@@ -93,8 +92,9 @@ InteractionPotential<Functions1D> ShortRangeFunctions::combine(const Interaction
              * Parameter 0 = Epsilon
              * Parameter 1 = Sigma
              */
-            return {Functions1D::Form::LennardJones126,
-                    {sqrt(srI.parameters()[0] * srJ.parameters()[0]), (srI.parameters()[1] + srJ.parameters()[1]) * 0.5}};
+            return InteractionPotential<Functions1D>(
+                Functions1D::Form::LennardJones126,
+                {sqrt(srI.parameters()[0] * srJ.parameters()[0]), (srI.parameters()[1] + srJ.parameters()[1]) * 0.5});
         }
         else
             Messenger::error("Can't combine parameters between dislike ShortRangeFunctions {} and {}.\n",

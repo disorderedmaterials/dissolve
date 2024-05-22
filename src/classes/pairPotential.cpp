@@ -106,11 +106,11 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
                                 typeJ->name());
 
     // Combine the atom type parameters into potential function parameters
-    interactionPotential_ = ShortRangeFunctions::combine(typeI->interactionPotential(), typeJ->interactionPotential());
-    potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
-
-    if (!interactionPotential_.hasValidForm())
+    auto optPotential = ShortRangeFunctions::combine(typeI->interactionPotential(), typeJ->interactionPotential());
+    if (!optPotential)
         return false;
+    interactionPotential_ = *optPotential;
+    potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
 
     // Set charges
     chargeI_ = includeAtomTypeCharges_ ? typeI->charge() : 0.0;
