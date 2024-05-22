@@ -15,8 +15,6 @@ class AtomType;
 // PairPotential Definition
 class PairPotential
 {
-    friend class Dissolve;
-
     public:
     PairPotential();
     PairPotential(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges);
@@ -141,14 +139,14 @@ class PairPotential
     // Return analytic short range force
     double analyticShortRangeForce(
         double r, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme()) const;
-    // Calculate full potential
-    void calculateUFull();
-    // Calculate derivative of potential
-    void calculateDUFull();
 
     public:
     // Generate energy and force tables
     bool tabulate(double maxR, double delta);
+    // Calculate full potential
+    void calculateUFull();
+    // Calculate derivative of potential
+    void calculateDUFull();
     // Return number of tabulated points in potential
     int nPoints() const;
     // Return range of potential
