@@ -221,6 +221,9 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
     modified_ = false;
     dissolveIterating_ = false;
 
+    Messenger::banner("Updating Pair Potentials");
+    dissolve_.updatePairPotentials();
+
     Messenger::banner("Setting Up Processing Modules");
 
     if (!dissolve_.coreData().setUpProcessingLayerModules(dissolve_))
@@ -229,9 +232,6 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
     // Handle restart file loading?
     if (handleRestartFile)
     {
-        fullUpdate();
-
-        // Load / handle restart file
         SelectRestartFileDialog selectRestartFileDialog(this);
         auto restartFile = selectRestartFileDialog.getRestartFileName(inputFileInfo.filePath());
         if (!restartFile.isEmpty())
@@ -239,9 +239,9 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
             loadRestartFile(restartFile.toStdString());
             dissolve_.prepare();
         }
-
-        fullUpdate();
     }
+
+    fullUpdate();
 
     // Empty timer text
     elapsedTimer_.zero();
