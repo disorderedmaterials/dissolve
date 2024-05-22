@@ -71,10 +71,6 @@ class ForcefieldTab : public QWidget, public MainTab
     /*
      * Signals / Slots
      */
-    private:
-    // Signal that some AtomType parameter has been modified, so pair potentials should be regenerated
-    void atomTypeDataModified();
-
     private Q_SLOTS:
     // Atom Types
     void on_AtomTypeDuplicateButton_clicked(bool checked);
@@ -91,8 +87,7 @@ class ForcefieldTab : public QWidget, public MainTab
     void on_CoulombTruncationCombo_currentIndexChanged(int index);
     void on_AutomaticChargeSourceCheck_clicked(bool checked);
     void on_ForceChargeSourceCheck_clicked(bool checked);
-    void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
-    void on_AutoUpdatePairPotentialsCheck_clicked(bool checked);
+    void on_UseCombinationRulesCheck_clicked(bool checked);
     void pairPotentialDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &);
     void pairPotentialSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     // Pair Potential Overrides

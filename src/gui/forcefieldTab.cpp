@@ -190,6 +190,8 @@ void ForcefieldTab::updateControls()
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // PairPotentials
+    resetPairPotentialModel();
+    ui_.UseCombinationRulesCheck->setChecked(dissolve_.useCombinationRules());
     ui_.PairPotentialRangeButton->setText(QString::number(dissolve_.pairPotentialRange()) + " Å");
     ui_.PairPotentialDeltaButton->setText(QString::number(dissolve_.pairPotentialDelta()) + " Å");
     ui_.AutomaticChargeSourceCheck->setChecked(dissolve_.automaticChargeSource());
@@ -223,15 +225,6 @@ void ForcefieldTab::setTab(int index) { ui_.Tabs->setCurrentIndex(index); }
  * Atom Types
  */
 
-// Signal that some AtomType parameter has been modified, so pair potentials should be regenerated
-void ForcefieldTab::atomTypeDataModified()
-{
-    dissolve_.coreData().bumpAtomTypesVersion();
-
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-        updatePairPotentials();
-}
-
 void ForcefieldTab::on_AtomTypeDuplicateButton_clicked(bool checked)
 {
     auto index = ui_.AtomTypesTable->currentIndex();
@@ -259,6 +252,11 @@ void ForcefieldTab::on_AtomTypeDuplicateButton_clicked(bool checked)
     // Re-set the current index
     ui_.AtomTypesTable->setCurrentIndex(index);
 
+    dissolve_.updatePairPotentials();
+    resetPairPotentialModel();
+
+    updateControls();
+
     dissolveWindow_->setModified();
 }
 
@@ -277,6 +275,11 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 
     atomTypesModel_.setData(dissolve_.coreData().atomTypes());
     ui_.AtomTypesTable->resizeColumnsToContents();
+
+    dissolve_.updatePairPotentials();
+    resetPairPotentialModel();
+
+    updateControls();
 
     dissolveWindow_->setModified();
 }
@@ -308,6 +311,9 @@ void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
     atomTypesModel_.setData(dissolve_.coreData().atomTypes());
     ui_.AtomTypesTable->resizeColumnsToContents();
 
+    dissolve_.updatePairPotentials();
+    resetPairPotentialModel();
+
     dissolveWindow_->setModified();
 }
 
@@ -320,6 +326,9 @@ void ForcefieldTab::atomTypeSelectionChanged(const QItemSelection &current, cons
 void ForcefieldTab::atomTypeDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &)
 {
     ui_.AtomTypesTable->resizeColumnsToContents();
+
+    dissolve_.updatePairPotentials();
+    resetPairPotentialModel();
 
     dissolveWindow_->setModified();
 }
@@ -341,8 +350,8 @@ void ForcefieldTab::on_PairPotentialRangeButton_clicked(bool checked)
     dissolve_.setPairPotentialRange(newRange);
     dissolve_.processingModuleData().clearAll();
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-        updatePairPotentials();
+    updatePairPotentials();
+    resetPairPotentialModel();
 
     dissolveWindow_->fullUpdate();
 
@@ -362,8 +371,8 @@ void ForcefieldTab::on_PairPotentialDeltaButton_clicked(bool checked)
     dissolve_.setPairPotentialDelta(newDelta);
     dissolve_.processingModuleData().clearAll();
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-        updatePairPotentials();
+    updatePairPotentials();
+    resetPairPotentialModel();
 
     dissolveWindow_->fullUpdate();
 
@@ -377,8 +386,8 @@ void ForcefieldTab::on_PairPotentialsAtomTypeChargesRadio_clicked(bool checked)
 
     dissolve_.setAtomTypeChargeSource(checked);
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-        updatePairPotentials();
+    updatePairPotentials();
+    updateControls();
 
     dissolveWindow_->setModified();
 }
@@ -395,8 +404,8 @@ void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
 
     PairPotential::setShortRangeTruncationScheme((PairPotential::ShortRangeTruncationScheme)index);
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-        updatePairPotentials();
+    updatePairPotentials();
+    updateControls();
 
     dissolveWindow_->setModified();
 }
@@ -408,8 +417,8 @@ void ForcefieldTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
 
     PairPotential::setCoulombTruncationScheme((PairPotential::CoulombTruncationScheme)index);
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked() && dissolve_.atomTypeChargeSource())
-        updatePairPotentials();
+    updatePairPotentials();
+    updateControls();
 
     dissolveWindow_->setModified();
 }
@@ -436,12 +445,31 @@ void ForcefieldTab::on_ForceChargeSourceCheck_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked) { updatePairPotentials(); }
-
-void ForcefieldTab::on_AutoUpdatePairPotentialsCheck_clicked(bool checked)
+void ForcefieldTab::on_UseCombinationRulesCheck_clicked(bool checked)
 {
-    if (checked)
-        updatePairPotentials();
+    if (refreshLock_.isLocked())
+        return;
+
+    // Make sure this is really what the user wants to do - we will potentially destroy user-defined data otherwise
+    if (QMessageBox::warning(this, checked ? "Use Combination Rules?" : "Disable Combination Rules?",
+                             QString(checked
+                                         ? "This will enable automatic generation of pair potentials by employing combination "
+                                           "rules.\nThis will immediately overwrite any user-defined potentials in the list."
+                                         : "This will disable automatic generation and update of pair potentials with "
+                                           "combination rules, meaning you will need to define / adjust them by hand.") +
+                                 "\nAre you sure this is what you want to do?",
+                             QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No,
+                             QMessageBox::StandardButton::No) == QMessageBox::StandardButton::No)
+    {
+        Locker refreshLocker(refreshLock_);
+        ui_.UseCombinationRulesCheck->setChecked(!checked);
+        return;
+    }
+
+    dissolve_.setUseCombinationRules(checked);
+    resetPairPotentialModel();
+    dissolveWindow_->setModified();
+    updateControls();
 }
 
 void ForcefieldTab::pairPotentialDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &)
@@ -498,8 +526,8 @@ void ForcefieldTab::overrideDataChanged(const QModelIndex &current, const QModel
 {
     dissolveWindow_->setModified();
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-        updatePairPotentials();
+    updatePairPotentials();
+    updateControls();
 }
 
 void ForcefieldTab::overrideSelectionChanged(const QItemSelection &current, const QItemSelection &previous)

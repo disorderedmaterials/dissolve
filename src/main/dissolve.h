@@ -65,6 +65,10 @@ class Dissolve : public Serialisable<>
     PotentialMap potentialMap_;
 
     public:
+    // Set whether pair potentials are updated automatically through combination rules
+    void setUseCombinationRules(bool b);
+    // Return whether pair potentials are updated automatically through combination rules
+    bool useCombinationRules() const;
     // Set maximum distance for tabulated PairPotentials
     void setPairPotentialRange(double range);
     // Return maximum distance for tabulated PairPotentials

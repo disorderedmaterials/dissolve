@@ -6,6 +6,20 @@
 #include "classes/atomType.h"
 #include "main/dissolve.h"
 
+// Set whether pair potentials are updated automatically through combination rules
+void Dissolve::setUseCombinationRules(bool b)
+{
+    if (b == useCombinationRules_)
+        return;
+
+    useCombinationRules_ = b;
+
+    updatePairPotentials();
+}
+
+// Return whether pair potentials are updated automatically through combination rules
+bool Dissolve::useCombinationRules() const { return useCombinationRules_; }
+
 // Set maximum distance for tabulated PairPotentials
 void Dissolve::setPairPotentialRange(double range) { pairPotentialRange_ = range; }
 

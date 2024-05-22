@@ -224,28 +224,6 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_6">
                <item>
-                <widget class="QToolButton" name="RegenerateAllPairPotentialsButton">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Regenerate All</string>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                 <property name="toolButtonStyle">
-                  <enum>Qt::ToolButtonTextBesideIcon</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <spacer name="horizontalSpacer_5">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
@@ -259,9 +237,9 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QCheckBox" name="AutoUpdatePairPotentialsCheck">
+                <widget class="QCheckBox" name="UseCombinationRulesCheck">
                  <property name="text">
-                  <string>Auto</string>
+                  <string>Use Combination Rules</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
