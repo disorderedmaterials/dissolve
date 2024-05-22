@@ -98,7 +98,18 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
 
     auto useCombinationRules = useCombinationRulesHint.value_or(useCombinationRules_);
 
-    // First step - add or update tabulated pair potentials defined by the parameters and form of the associated atom types
+    // First step - remove any pair potentials which reference non-existent atom types
+    pairPotentials_.erase(std::remove_if(pairPotentials_.begin(), pairPotentials_.end(),
+                                         [&](const auto &pot)
+                                         {
+                                             return (std::find(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
+                                                               std::get<0>(pot)) == coreData_.atomTypes().end() ||
+                                                     std::find(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
+                                                               std::get<1>(pot)) == coreData_.atomTypes().end());
+                                         }),
+                          pairPotentials_.end());
+
+    // Second step - add or update tabulated pair potentials defined by the parameters and form of the associated atom types
     if (!for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
                              [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool>
                              {
@@ -147,7 +158,7 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     if (!tabulationSucceeded)
         return false;
 
-    // Second step - apply any overrides
+    // Third step - apply any overrides
     Messenger::print("Applying pair potential overrides...\n");
     for (const auto &override : coreData_.pairPotentialOverrides())
     {
@@ -201,7 +212,7 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
         Messenger::print(" ... matched {} potential(s) in total.\n", count);
     }
 
-    // Lastly, set any additional potential
+    // Fourth step - set any additional potential
     for (auto &&[at1, at2, pp] : pairPotentials_)
     {
         // Check processing module data for a named additional potential
