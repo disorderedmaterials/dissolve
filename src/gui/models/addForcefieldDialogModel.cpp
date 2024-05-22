@@ -239,7 +239,6 @@ void AddForcefieldDialogModel::finalise()
         {
             original.atomType()->interactionPotential() = modified.atomType()->interactionPotential();
             original.atomType()->setCharge(modified.atomType()->charge());
-            dissolve_->coreData().bumpAtomTypesVersion();
         }
 
         // Copy charge on species atom

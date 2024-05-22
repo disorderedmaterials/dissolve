@@ -39,8 +39,6 @@ class CoreData
     private:
     // Core AtomTypes list
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
-    // AtomTypes version
-    VersionCounter atomTypesVersion_;
 
     public:
     // Add new AtomType
@@ -56,10 +54,6 @@ class CoreData
     std::shared_ptr<AtomType> atomType(int n);
     // Search for AtomType by name
     std::shared_ptr<AtomType> findAtomType(std::string_view name) const;
-    // Bump AtomTypes version
-    void bumpAtomTypesVersion();
-    // Return AtomTypes version
-    int atomTypesVersion() const;
     // Remove any atom types that are unused across all species
     int removeUnusedAtomTypes();
     // Clear all atom types
