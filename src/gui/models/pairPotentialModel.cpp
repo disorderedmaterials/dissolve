@@ -59,10 +59,8 @@ QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
                 return pp->includeAtomTypeCharges() ? QString::number(pp->chargeI()) : QString();
             case (Columns::ChargeJColumn):
                 return pp->includeAtomTypeCharges() ? QString::number(pp->chargeJ()) : QString();
-            // Form
             case (Columns::ShortRangeFormColumn):
                 return QString::fromStdString(Functions1D::forms().keyword(pp->interactionPotential().form()));
-            // Short Range Parameters
             case (Columns::ShortRangeParametersColumn):
                 return QString::fromStdString(pp->interactionPotential().parametersAsString());
             default:
@@ -90,11 +88,9 @@ bool PairPotentialModel::setData(const QModelIndex &index, const QVariant &value
         case (Columns::ChargeIColumn):
         case (Columns::ChargeJColumn):
             return false;
-        // Short-Range Form
         case (Columns::ShortRangeFormColumn):
             pair->setInteractionPotentialForm(Functions1D::forms().enumeration(value.toString().toStdString()));
             break;
-        // Short Range Parameters
         case (Columns::ShortRangeParametersColumn):
             if (!pair->setInteractionPotential(pair->interactionPotential().form(), value.toString().toStdString()))
                 return false;
