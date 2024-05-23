@@ -1,0 +1,59 @@
+Master
+  Bond  'HW-OW'  Harmonic  k=4431.53 eq=1.012
+  Angle  'HW-OW-HW'  Harmonic  k=317.566 eq=113.24
+EndMaster
+
+# Define Water Molecule
+Species 'Water'
+  # Atoms
+  Atom    1    O     0.015   -0.009   -0.373   'OW'  -0.82
+  Atom    2    H     0.757    0.013    0.217   'HW'   0.41
+  Atom    3    H    -0.771   -0.003    0.157   'HW'   0.41
+
+  # Intramolecular Terms
+  Bond    1    2    @HW-OW
+  Bond    1    3    @HW-OW
+  Angle    2    1    3    @HW-OW-HW
+EndSpecies
+
+# Define Configuration
+Configuration  'Bulk'
+  Generator
+    Add
+      Density  9.99999642E-02 atoms/A3
+      Population  1000
+      Species  'Water'
+    EndAdd
+    ImportCoordinates  'InputCoordinates01'
+      File  dlpoly  'dlpoly/water3000_energyForce/CONFIG'
+      EndFile
+    EndImportCoordinates
+  EndGenerator
+
+EndConfiguration
+
+Layer  'Processing'
+
+  Module Energy  'Energy01'
+    Configuration  'Bulk'
+  EndModule
+
+  Module Forces  'Forces01'
+    Configuration  'Bulk'
+  EndModule
+
+EndLayer
+
+# Pair Potentials
+PairPotentials
+  Range  15.000000
+  ShortRangeTruncation  None
+  Delta  0.0001
+  Parameters  'OW'  O  0.0   LJGeometric  0.0       0.0
+  Parameters  'HW'  H  0.0   LJGeometric  0.0       0.0
+  UseCombinationRules  False
+  PairPotential  'OW'  'OW'  LennardJones126   0.6503    3.165492
+  ManualChargeSource  True
+  ForceChargeSource  True
+  IncludeCoulomb  Off
+EndPairPotentials
