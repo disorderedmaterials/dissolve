@@ -11,17 +11,22 @@
 EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::keywords()
 {
     return EnumOptions<PairPotentialsBlock::PairPotentialsKeyword>(
-        "PairPotentialsKeyword", {{PairPotentialsBlock::CoulombTruncationKeyword, "CoulombTruncation", 1},
-                                  {PairPotentialsBlock::DeltaKeyword, "Delta", 1},
-                                  {PairPotentialsBlock::EndPairPotentialsKeyword, "EndPairPotentials"},
-                                  {PairPotentialsBlock::ForceChargeSourceKeyword, "ForceChargeSource", 1},
-                                  {PairPotentialsBlock::IncludeCoulombKeyword, "IncludeCoulomb", 1},
-                                  {PairPotentialsBlock::ManualChargeSourceKeyword, "ManualChargeSource", 1},
-                                  {PairPotentialsBlock::OverrideKeyword, "Override", 5, OptionArguments::AnyNumber},
-                                  {PairPotentialsBlock::ParametersKeyword, "Parameters", 3, OptionArguments::AnyNumber},
-                                  {PairPotentialsBlock::RangeKeyword, "Range", 1},
-                                  {PairPotentialsBlock::ShortRangeTruncationKeyword, "ShortRangeTruncation", 1},
-                                  {PairPotentialsBlock::ShortRangeTruncationWidthKeyword, "ShortRangeTruncationWidth", 1}});
+        "PairPotentialsKeyword",
+        {
+            {PairPotentialsBlock::CoulombTruncationKeyword, "CoulombTruncation", 1},
+            {PairPotentialsBlock::DeltaKeyword, "Delta", 1},
+            {PairPotentialsBlock::EndPairPotentialsKeyword, "EndPairPotentials"},
+            {PairPotentialsBlock::ForceChargeSourceKeyword, "ForceChargeSource", 1},
+            {PairPotentialsBlock::IncludeCoulombKeyword, "IncludeCoulomb", 1},
+            {PairPotentialsBlock::ManualChargeSourceKeyword, "ManualChargeSource", 1},
+            {PairPotentialsBlock::OverrideKeyword, "Override", 5, OptionArguments::AnyNumber},
+            {PairPotentialsBlock::PairPotentialKeyword, "PairPotential", 3, OptionArguments::AnyNumber},
+            {PairPotentialsBlock::ParametersKeyword, "Parameters", 3, OptionArguments::AnyNumber},
+            {PairPotentialsBlock::RangeKeyword, "Range", 1},
+            {PairPotentialsBlock::ShortRangeTruncationKeyword, "ShortRangeTruncation", 1},
+            {PairPotentialsBlock::ShortRangeTruncationWidthKeyword, "ShortRangeTruncationWidth", 1},
+            {PairPotentialsBlock::UseCombinationRules, "UseCombinationRules", 1},
+        });
 }
 
 // Parse PairPotentials block
@@ -32,6 +37,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     std::shared_ptr<AtomType> at1;
     auto blockDone = false, errorsEncountered = false;
     Elements::Element Z;
+    PairPotential *pot;
     auto &coreData = dissolve->coreData();
 
     while (!parser.eofOrBlank())
@@ -113,6 +119,36 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                     PairPotentialOverride::pairPotentialOverrideTypes().enumeration(parser.argsv(3)), potential);
             }
             break;
+            case (PairPotentialsBlock::PairPotentialKeyword):
+            {
+                // Check atom types
+                if (!coreData.findAtomType(parser.argsv(1)) || !coreData.findAtomType(parser.argsv(2)))
+                {
+                    Messenger::error("Unrecognised atom type(s) '{}' / '{}' referenced in PairPotential.\n", parser.argsv(1),
+                                     parser.argsv(2));
+                    errorsEncountered = true;
+                    break;
+                }
+
+                // Check / set interaction potential
+                if (!Functions1D::forms().isValid(parser.argsv(3)))
+                {
+                    Functions1D::forms().errorAndPrintValid(parser.argsv(3));
+                    errorsEncountered = true;
+                    break;
+                }
+                InteractionPotential<Functions1D> potential(Functions1D::forms().enumeration(parser.argsv(3)));
+                if (!potential.parseParameters(parser, 4))
+                {
+                    errorsEncountered = true;
+                    break;
+                }
+
+                pot =
+                    dissolve->addPairPotential(coreData.findAtomType(parser.argsv(1)), coreData.findAtomType(parser.argsv(2)));
+                pot->setInteractionPotential(potential);
+            }
+            break;
             case (PairPotentialsBlock::ParametersKeyword):
                 // Sanity check element
                 Z = Elements::element(parser.argsv(2));
@@ -175,6 +211,9 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 break;
             case (PairPotentialsBlock::ShortRangeTruncationWidthKeyword):
                 Messenger::warn("The 'ShortRangeTruncationWidth' keyword will be deprecated in a future version.\n");
+                break;
+            case (PairPotentialsBlock::UseCombinationRules):
+                dissolve->setUseCombinationRules(parser.argb(1));
                 break;
             default:
                 Messenger::error("{} block keyword '{}' not accounted for.\n",

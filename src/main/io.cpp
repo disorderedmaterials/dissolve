@@ -384,6 +384,22 @@ bool Dissolve::saveInput(std::string_view filename)
                                atomType->interactionPotential().parametersAsString()))
             return false;
 
+    // Pair potentials (if we are not using combination rules)
+    if (!useCombinationRules_)
+    {
+        if (!parser.writeLineF("  # Pair Potentials\n"))
+            return false;
+        if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::UseCombinationRules),
+                               DissolveSys::btoa(false)))
+            return false;
+        for (const auto &[at1, at2, pot] : pairPotentials_)
+            if (!parser.writeLineF("  {}  '{}'  '{}'  {}  {}\n",
+                                   PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::PairPotentialKeyword),
+                                   at1->name(), at2->name(), Functions1D::forms().keyword(pot->interactionPotential().form()),
+                                   pot->interactionPotential().parametersAsString()))
+                return false;
+    }
+
     // Pair potential overrides
     for (const auto &ppOverride : coreData_.pairPotentialOverrides())
         if (!parser.writeLineF("  {}  '{}'  '{}'  {}  {}  {}\n",
