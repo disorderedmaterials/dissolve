@@ -106,7 +106,12 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.PairPotentialsTable->horizontalHeader()->setFont(font());
     ui_.PairPotentialsTable->horizontalHeader()->setVisible(true);
+    ui_.PairPotentialsTable->setItemDelegateForColumn(
+        PairPotentialModel::Columns::ShortRangeFormColumn,
+        new ComboListDelegate(this, new ComboEnumOptionsItems<Functions1D::Form>(Functions1D::forms())));
     ui_.PairPotentialsTable->setModel(&pairPotentialModel_);
+    connect(&pairPotentialModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
+            SLOT(pairPotentialDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
 
     DataViewer *viewer = ui_.PairPotentialsPlotWidget->dataViewer();
     viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
@@ -467,6 +472,7 @@ void ForcefieldTab::on_UseCombinationRulesCheck_clicked(bool checked)
     }
 
     dissolve_.setUseCombinationRules(checked);
+    pairPotentialModel_.setEditable(!checked);
     resetPairPotentialModel();
     dissolveWindow_->setModified();
     updateControls();
@@ -474,6 +480,10 @@ void ForcefieldTab::on_UseCombinationRulesCheck_clicked(bool checked)
 
 void ForcefieldTab::pairPotentialDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &)
 {
+    dissolve_.updatePairPotentials();
+
+    updateControls();
+
     dissolveWindow_->setModified();
 }
 

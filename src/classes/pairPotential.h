@@ -96,6 +96,8 @@ class PairPotential
     // Set interaction potential
     bool setInteractionPotential(Functions1D::Form form, std::string_view parameters);
     bool setInteractionPotential(const InteractionPotential<Functions1D> &potential);
+    // Set form of interaction potential
+    void setInteractionPotentialForm(Functions1D::Form form);
     // Return interaction potential
     const InteractionPotential<Functions1D> &interactionPotential() const;
     // Set included charges

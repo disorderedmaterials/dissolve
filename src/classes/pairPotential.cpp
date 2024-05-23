@@ -110,6 +110,13 @@ bool PairPotential::setInteractionPotential(const InteractionPotential<Functions
     return potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
 }
 
+// Set form of interaction potential
+void PairPotential::setInteractionPotentialForm(Functions1D::Form form)
+{
+    interactionPotential_.setForm(form);
+    potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
+}
+
 // Return interaction potential
 const InteractionPotential<Functions1D> &PairPotential::interactionPotential() const { return interactionPotential_; }
 
