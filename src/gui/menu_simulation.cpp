@@ -66,7 +66,7 @@ void DissolveWindow::on_SimulationClearAdditionalPotentialsAction_triggered(bool
                              QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No,
                              QMessageBox::StandardButton::No) == QMessageBox::StandardButton::Yes)
     {
-        dissolve_.revertPairPotentials();
+        dissolve_.clearAdditionalPotentials();
 
         fullUpdate();
     }

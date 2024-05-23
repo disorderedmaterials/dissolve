@@ -239,8 +239,8 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
 }
 
-// Revert potentials to reference state, clearing additional potentials
-void Dissolve::revertPairPotentials()
+// Clear additional potentials
+void Dissolve::clearAdditionalPotentials()
 {
     for (auto &&[at1, at2, pp] : pairPotentials_)
     {

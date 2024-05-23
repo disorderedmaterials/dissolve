@@ -106,8 +106,8 @@ class Dissolve : public Serialisable<>
     const PotentialMap &potentialMap() const;
     // Update all pair potentials
     bool updatePairPotentials(std::optional<bool> useCombinationRulesHint = {});
-    // Revert potentials to reference state, clearing additional potentials
-    void revertPairPotentials();
+    // Clear additional potentials
+    void clearAdditionalPotentials();
 
     /*
      * Processing Module Data
