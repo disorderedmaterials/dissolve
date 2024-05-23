@@ -77,7 +77,7 @@ QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
 
 bool PairPotentialModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role != Qt::EditRole)
+    if (role != Qt::EditRole || !editable_)
         return false;
 
     auto *pair = rawData(index);
