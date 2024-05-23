@@ -7,15 +7,7 @@
 #include "main/dissolve.h"
 
 // Set whether pair potentials are updated automatically through combination rules
-void Dissolve::setUseCombinationRules(bool b)
-{
-    if (b == useCombinationRules_)
-        return;
-
-    useCombinationRules_ = b;
-
-    updatePairPotentials();
-}
+void Dissolve::setUseCombinationRules(bool b) { useCombinationRules_ = b; }
 
 // Return whether pair potentials are updated automatically through combination rules
 bool Dissolve::useCombinationRules() const { return useCombinationRules_; }

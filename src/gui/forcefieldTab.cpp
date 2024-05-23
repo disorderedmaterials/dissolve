@@ -472,6 +472,7 @@ void ForcefieldTab::on_UseCombinationRulesCheck_clicked(bool checked)
     }
 
     dissolve_.setUseCombinationRules(checked);
+    dissolve_.updatePairPotentials();
     pairPotentialModel_.setEditable(!checked);
     resetPairPotentialModel();
     dissolveWindow_->setModified();
