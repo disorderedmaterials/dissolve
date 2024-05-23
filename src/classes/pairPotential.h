@@ -104,12 +104,8 @@ class PairPotential
     void setIncludedCharges(double qi, double qj);
     // Set no included charges
     void setNoIncludedCharges();
-    // Set charge I
-    void setChargeI(double value);
     // Return charge I
     double chargeI() const;
-    // Set charge J
-    void setChargeJ(double value);
     // Return charge J
     double chargeJ() const;
 

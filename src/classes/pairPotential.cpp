@@ -131,14 +131,8 @@ void PairPotential::setIncludedCharges(double qi, double qj)
 // Set no included charges
 void PairPotential::setNoIncludedCharges() { includeAtomTypeCharges_ = false; }
 
-// Set charge I
-void PairPotential::setChargeI(double value) { chargeI_ = value; }
-
 // Return charge I
 double PairPotential::chargeI() const { return chargeI_; }
-
-// Set charge J
-void PairPotential::setChargeJ(double value) { chargeJ_ = value; }
 
 // Return charge J
 double PairPotential::chargeJ() const { return chargeJ_; }
