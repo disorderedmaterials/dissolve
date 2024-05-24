@@ -59,6 +59,42 @@ namespace dissolve {
             return {};
     }
   }
+
+  template<>
+  bool writeTableRow(const QVariant& value, SpeciesAtom& item, int column, int role) {
+    if (role != Qt::EditRole)
+        return false;
+    switch (column)
+    {
+        case 0:
+            return false;
+        case 1:
+            // TODO
+            {
+                // auto atomType = coreData_.findAtomType(value.toString().toStdString());
+                // if (!atomType)
+                //     return false;
+                // item.setAtomType(atomType);
+                // species_.updateIsotopologues();
+                // Q_EMIT atomTypeChanged();
+            }
+            break;
+        case 2:
+        case 3:
+        case 4:
+        {
+            auto newR = item.r();
+            newR.set(column - 2, value.toDouble());
+            // species_.setAtomCoordinates(&item, newR);
+        }
+        break;
+        case 5:
+            // species_.setAtomCharge(&item, value.toDouble());
+            break;
+    }
+    // Q_EMIT dataChanged(index, index);
+    return true;
+  }
 }
 
 SpeciesAtomModel::SpeciesAtomModel(Species &species, const CoreData &coreData) : ReadVectorModel<SpeciesAtom>(species.atoms()) {}
@@ -69,44 +105,6 @@ Qt::ItemFlags SpeciesAtomModel::flags(const QModelIndex &index) const
     if (index.column() == 0)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
-}
-
-bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-  return false;
-    // if (role != Qt::EditRole)
-    //     return false;
-    // auto &item = species_.atom(index.row());
-    // switch (index.column())
-    // {
-    //     case 0:
-    //         return false;
-    //     case 1:
-    //         // TODO
-    //         {
-    //             auto atomType = coreData_.findAtomType(value.toString().toStdString());
-    //             if (!atomType)
-    //                 return false;
-    //             item.setAtomType(atomType);
-    //             species_.updateIsotopologues();
-    //             Q_EMIT atomTypeChanged();
-    //         }
-    //         break;
-    //     case 2:
-    //     case 3:
-    //     case 4:
-    //     {
-    //         auto newR = item.r();
-    //         newR.set(index.column() - 2, value.toDouble());
-    //         species_.setAtomCoordinates(&item, newR);
-    //     }
-    //     break;
-    //     case 5:
-    //         species_.setAtomCharge(&item, value.toDouble());
-    //         break;
-    // }
-    // Q_EMIT dataChanged(index, index);
-    // return true;
 }
 
 void SpeciesAtomModel::clear()
