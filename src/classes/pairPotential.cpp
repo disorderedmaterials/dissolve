@@ -189,11 +189,9 @@ void PairPotential::calculateDUFull()
 {
     dUFull_.initialise(uFull_);
 
-    if (nPoints_ < 2)
-        return;
-
+    const auto nPoints = dUFull_.nValues();
     double fprime;
-    for (auto n = 1; n < nPoints_ - 1; ++n)
+    for (auto n = 1; n < nPoints - 1; ++n)
     {
         /* Calculate numerical derivative with five-point stencil if possible. Otherwise use three-point stencil.
          * Assumes data are regularly-spaced (they should be, with gap of delta_)
@@ -201,7 +199,7 @@ void PairPotential::calculateDUFull()
          *    f'(x) = --------------------------------------
          *                           12 h
          */
-        if ((n == 1) || (n == (nPoints_ - 2)))
+        if ((n == 1) || (n == (nPoints - 2)))
         {
             // Three-point
             dUFull_.value(n) = -(uFull_.value(n - 1) - uFull_.value(n + 1)) / (2 * delta_);
@@ -217,7 +215,7 @@ void PairPotential::calculateDUFull()
 
     // Set first and last points
     dUFull_.value(0) = 10.0 * dUFull_.value(1);
-    dUFull_.value(nPoints_ - 1) = dUFull_.value(nPoints_ - 2) + (dUFull_.value(nPoints_ - 2) - dUFull_.value(nPoints_ - 3));
+    dUFull_.value(nPoints - 1) = dUFull_.value(nPoints - 2) + (dUFull_.value(nPoints - 2) - dUFull_.value(nPoints - 3));
 
     // Update interpolation
     dUFullInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
@@ -226,18 +224,17 @@ void PairPotential::calculateDUFull()
 // Generate energy and force tables
 bool PairPotential::tabulate(double maxR, double delta)
 {
-    // Determine nPoints_
+    // Determine
     delta_ = delta;
     rDelta_ = 1.0 / delta_;
     range_ = maxR;
-    nPoints_ = range_ / delta_;
 
     // Precalculate some quantities
     shortRangeEnergyAtCutoff_ = analyticShortRangeEnergy(range_, PairPotential::NoShortRangeTruncation);
     shortRangeForceAtCutoff_ = analyticShortRangeForce(range_, PairPotential::NoShortRangeTruncation);
 
     // Initialise original and additional potential arrays, and calculate original potential
-    uOriginal_.initialise(nPoints_);
+    uOriginal_.initialise(range_ / delta_);
     calculateUOriginal();
 
     // Set additional potential to zero and update full potential
@@ -246,14 +243,11 @@ bool PairPotential::tabulate(double maxR, double delta)
     calculateUFull();
 
     // Generate derivative data
-    dUFull_.initialise(nPoints_);
+    dUFull_.initialise(range_ / delta_);
     calculateDUFull();
 
     return true;
 }
-
-// Return number of tabulated points in potential
-int PairPotential::nPoints() const { return nPoints_; }
 
 // Return range of potential
 double PairPotential::range() const { return range_; }
@@ -265,7 +259,7 @@ double PairPotential::delta() const { return delta_; }
 void PairPotential::calculateUOriginal()
 {
     // Loop over points
-    for (auto n = 1; n < nPoints_; ++n)
+    for (auto n = 1; n < uOriginal_.nValues(); ++n)
     {
         auto r = n * delta_;
         uOriginal_.xAxis(n) = r;

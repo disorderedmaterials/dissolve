@@ -109,8 +109,6 @@ class PairPotential : Serialisable<>
      * Tabulated Potential
      */
     private:
-    // Number of points to tabulate
-    int nPoints_{0};
     // Maximum distance of potential
     double range_{0.0};
     // Distance between points in tabulated potentials
@@ -143,8 +141,6 @@ class PairPotential : Serialisable<>
     void calculateUFull();
     // Calculate derivative of potential
     void calculateDUFull();
-    // Return number of tabulated points in potential
-    int nPoints() const;
     // Return range of potential
     double range() const;
     // Return spacing between points
