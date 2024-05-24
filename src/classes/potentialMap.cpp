@@ -11,11 +11,6 @@
 #include "math/constants.h"
 #include <cmath>
 #include <new>
-using namespace std;
-
-PotentialMap::PotentialMap() = default;
-
-PotentialMap::~PotentialMap() = default;
 
 // Clear all data
 void PotentialMap::clear() { potentialMatrix_.clear(); }
