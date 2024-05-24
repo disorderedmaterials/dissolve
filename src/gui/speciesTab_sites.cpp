@@ -39,7 +39,7 @@ void SpeciesTab::setCurrentSiteFromViewer()
     ui_.SiteList->setCurrentIndex(sites_.index(index, 0));
     ui_.SitesPushButton->setChecked(true);
 
-    dissolveWindow_->setModified();
+    dissolveWindow_->setModified(DissolveSignals::SpeciesSiteMutated);
 
     dissolveWindow_->fullUpdate();
 }
