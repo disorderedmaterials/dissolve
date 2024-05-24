@@ -4,31 +4,20 @@
 #pragma once
 
 #include "classes/speciesAtom.h"
+#include "gui/models/readVectorModel.h"
 #include "main/dissolve.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
-class SpeciesAtomModel : public QAbstractTableModel
+class SpeciesAtomModel : public ReadVectorModel<SpeciesAtom>
 {
     Q_OBJECT
-
-    private:
-    Species &species_;
-    const CoreData &coreData_;
 
     Q_SIGNALS:
     void atomTypeChanged();
 
     public:
     SpeciesAtomModel(Species &species, const CoreData &coreData);
-
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 

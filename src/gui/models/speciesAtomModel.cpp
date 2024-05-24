@@ -1,56 +1,18 @@
 #include "gui/models/speciesAtomModel.h"
 #include "classes/atomType.h"
 
-SpeciesAtomModel::SpeciesAtomModel(Species &species, const CoreData &coreData) : species_(species), coreData_(coreData) {}
-
-int SpeciesAtomModel::rowCount(const QModelIndex &parent) const
-{
-    Q_UNUSED(parent);
-    return species_.atoms().size();
-}
-
-int SpeciesAtomModel::columnCount(const QModelIndex &parent) const
-{
-    Q_UNUSED(parent);
+namespace dissolve {
+  template <>
+  int tableColumns<SpeciesAtom>() {
     return 6;
-}
+  }
 
-QVariant SpeciesAtomModel::data(const QModelIndex &index, int role) const
-{
-    if (role == Qt::ToolTipRole)
-        return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
-
-    auto &item = species_.atom(index.row());
-
-    if (role == Qt::UserRole)
-        return QVariant::fromValue(&item);
-
-    if (role != Qt::DisplayRole && role != Qt::EditRole)
-        return {};
-
-    switch (index.column())
-    {
-        case 0:
-            return QString::fromStdString(std::string(Elements::symbol(item.Z())));
-        case 1:
-            return item.atomType() ? QString::fromStdString(std::string(item.atomType()->name())) : "";
-        case 2:
-        case 3:
-        case 4:
-            return item.r().get(index.column() - 2);
-        case 5:
-            return item.charge();
-        default:
-            return {};
-    }
-}
-
-QVariant SpeciesAtomModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
+  template <>
+  QVariant tableHeaders<SpeciesAtom>(int column, Qt::Orientation orientation, int role) {
     if (role != Qt::DisplayRole)
         return {};
     if (orientation == Qt::Horizontal)
-        switch (section)
+        switch (column)
         {
             case 0:
                 return "El";
@@ -68,8 +30,39 @@ QVariant SpeciesAtomModel::headerData(int section, Qt::Orientation orientation, 
                 return {};
         }
     else
-        return section + 1;
+        return column + 1;
+  }
+
+  QVariant asTableRow(SpeciesAtom &item, int column, int role) {
+    if (role == Qt::ToolTipRole)
+        return tableHeaders<SpeciesAtom>(column, Qt::Horizontal, Qt::DisplayRole);
+
+    if (role == Qt::UserRole)
+        return QVariant::fromValue(&item);
+
+    if (role != Qt::DisplayRole && role != Qt::EditRole)
+        return {};
+
+    switch (column)
+    {
+        case 0:
+            return QString::fromStdString(std::string(Elements::symbol(item.Z())));
+        case 1:
+            return item.atomType() ? QString::fromStdString(std::string(item.atomType()->name())) : "";
+        case 2:
+        case 3:
+        case 4:
+            return item.r().get(column - 2);
+        case 5:
+            return item.charge();
+        default:
+            return {};
+    }
+  }
 }
+
+SpeciesAtomModel::SpeciesAtomModel(Species &species, const CoreData &coreData) : ReadVectorModel<SpeciesAtom>(species.atoms()) {}
+
 
 Qt::ItemFlags SpeciesAtomModel::flags(const QModelIndex &index) const
 {
@@ -80,39 +73,40 @@ Qt::ItemFlags SpeciesAtomModel::flags(const QModelIndex &index) const
 
 bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role != Qt::EditRole)
-        return false;
-    auto &item = species_.atom(index.row());
-    switch (index.column())
-    {
-        case 0:
-            return false;
-        case 1:
-            // TODO
-            {
-                auto atomType = coreData_.findAtomType(value.toString().toStdString());
-                if (!atomType)
-                    return false;
-                item.setAtomType(atomType);
-                species_.updateIsotopologues();
-                Q_EMIT atomTypeChanged();
-            }
-            break;
-        case 2:
-        case 3:
-        case 4:
-        {
-            auto newR = item.r();
-            newR.set(index.column() - 2, value.toDouble());
-            species_.setAtomCoordinates(&item, newR);
-        }
-        break;
-        case 5:
-            species_.setAtomCharge(&item, value.toDouble());
-            break;
-    }
-    Q_EMIT dataChanged(index, index);
-    return true;
+  return false;
+    // if (role != Qt::EditRole)
+    //     return false;
+    // auto &item = species_.atom(index.row());
+    // switch (index.column())
+    // {
+    //     case 0:
+    //         return false;
+    //     case 1:
+    //         // TODO
+    //         {
+    //             auto atomType = coreData_.findAtomType(value.toString().toStdString());
+    //             if (!atomType)
+    //                 return false;
+    //             item.setAtomType(atomType);
+    //             species_.updateIsotopologues();
+    //             Q_EMIT atomTypeChanged();
+    //         }
+    //         break;
+    //     case 2:
+    //     case 3:
+    //     case 4:
+    //     {
+    //         auto newR = item.r();
+    //         newR.set(index.column() - 2, value.toDouble());
+    //         species_.setAtomCoordinates(&item, newR);
+    //     }
+    //     break;
+    //     case 5:
+    //         species_.setAtomCharge(&item, value.toDouble());
+    //         break;
+    // }
+    // Q_EMIT dataChanged(index, index);
+    // return true;
 }
 
 void SpeciesAtomModel::clear()
