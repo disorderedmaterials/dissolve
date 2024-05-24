@@ -51,10 +51,6 @@ class PairPotential : Serialisable<>
     bool includeAtomTypeCharges_{false};
     // Truncation scheme to apply to Coulomb part of potential
     static CoulombTruncationScheme coulombTruncationScheme_;
-    // Coulomb energy at cutoff distance (used by truncation scheme)
-    double coulombEnergyAtCutoff_{0.0};
-    // Coulomb force at cutoff distance (used by truncation scheme)
-    double coulombForceAtCutoff_{0.0};
 
     public:
     // Set short-ranged truncation scheme

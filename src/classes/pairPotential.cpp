@@ -232,11 +232,9 @@ bool PairPotential::tabulate(double maxR, double delta)
     range_ = maxR;
     nPoints_ = range_ / delta_;
 
-    // Calculate energies and forces at the cutoff distance, for later use in truncation schemes
+    // Precalculate some quantities
     shortRangeEnergyAtCutoff_ = analyticShortRangeEnergy(range_, PairPotential::NoShortRangeTruncation);
     shortRangeForceAtCutoff_ = analyticShortRangeForce(range_, PairPotential::NoShortRangeTruncation);
-    coulombEnergyAtCutoff_ = analyticCoulombEnergy(chargeI_ * chargeJ_, range_, PairPotential::NoCoulombTruncation);
-    coulombForceAtCutoff_ = analyticCoulombForce(chargeI_ * chargeJ_, range_, PairPotential::NoCoulombTruncation);
 
     // Initialise original and additional potential arrays, and calculate original potential
     uOriginal_.initialise(nPoints_);
