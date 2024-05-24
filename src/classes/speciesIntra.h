@@ -72,7 +72,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         if (masterTerm_)
             return Messenger::error("Refused to set intramolecular parameters since master parameters are referenced.\n");
 
-        std::vector<std::string> terms{DissolveSys::splitString(params)};
+        std::vector<std::string_view> terms{DissolveSys::splitString(params)};
         return interactionPotential_.parseParameters(terms);
     }
     bool setInteractionParameters(LineParser &parser, int startArg)

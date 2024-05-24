@@ -71,7 +71,7 @@ template <class Functions> class InteractionPotential
     // Return functional form of interaction
     typename Functions::Form form() const { return *form_; }
     // Parse supplied vector of terms
-    bool parseParameters(std::vector<std::string> terms)
+    bool parseParameters(std::vector<std::string_view> terms)
     {
         // Do we have a suitable number of parameters
         if (!Functions::forms().validNArgs(form(), terms.size()))
@@ -84,7 +84,8 @@ template <class Functions> class InteractionPotential
         {
             // Plain values
             parameters_.resize(terms.size(), 0.0);
-            std::transform(terms.begin(), terms.end(), parameters_.begin(), [](const auto &term) { return std::stod(term); });
+            std::transform(terms.begin(), terms.end(), parameters_.begin(),
+                           [](const auto &term) { return std::stod(std::string(term)); });
         }
         else if (nAssigned == terms.size())
         {
@@ -125,9 +126,9 @@ template <class Functions> class InteractionPotential
     bool parseParameters(const LineParser &parser, int startArg)
     {
         // Construct a vector of all remaining arguments on the line, starting from the argument offset
-        std::vector<std::string> terms;
+        std::vector<std::string_view> terms;
         for (auto n = startArg; n < parser.nArgs(); ++n)
-            terms.emplace_back(parser.args(n));
+            terms.emplace_back(parser.argsv(n));
         return parseParameters(terms);
     }
     // Set form and parameters
