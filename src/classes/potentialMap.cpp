@@ -8,9 +8,6 @@
 #include "classes/molecule.h"
 #include "classes/pairPotential.h"
 #include "classes/species.h"
-#include "math/constants.h"
-#include <cmath>
-#include <new>
 
 // Clear all data
 void PotentialMap::clear() { potentialMatrix_.clear(); }
