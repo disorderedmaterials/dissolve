@@ -143,6 +143,19 @@ SerialisedValue Dissolve::serialisePairPotentials() const
     if (atomTypeChargeSource_)
         pairPotentials["includeCoulomb"] = true;
     Serialisable::fromVectorToTable(coreData_.atomTypes(), "atomTypes", pairPotentials);
+    if (!useCombinationRules_)
+    {
+        pairPotentials["useCombinationRules"] = false;
+        SerialisedValue pots = SerialisedValue::array_type{};
+        for (const auto &[at1, at2, pot] : pairPotentials_)
+        {
+            SerialisedValue value = pot->serialise();
+            value["atomTypeI"] = at1->name();
+            value["atomTypeJ"] = at2->name();
+            pots.push_back(value);
+        }
+        pairPotentials["potentials"] = pots;
+    }
     return pairPotentials;
 }
 
@@ -187,6 +200,23 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
     toMap(node, "atomTypes",
           [this](const std::string &name, const auto &data)
           { coreData().atomTypes().emplace_back(std::make_unique<AtomType>(name))->deserialise(data); });
+
+    useCombinationRules_ = toml::find_or<bool>(node, "useCombinationRules", true);
+    if (!useCombinationRules_)
+    {
+        Serialisable::toVector(
+            node, "potentials",
+            [&](const SerialisedValue &potData)
+            {
+                // Get atom types
+                auto at1 = coreData_.findAtomType(toml::find<std::string>(potData, "atomTypeI"));
+                auto at2 = coreData_.findAtomType(toml::find<std::string>(potData, "atomTypeJ"));
+                if (!at1 || !at2)
+                    throw(toml::type_error("Non-existent atom type(s) used in pair potential.", potData.location()));
+                auto *pot = addPairPotential(at1, at2);
+                pot->deserialise(potData);
+            });
+    }
 }
 
 // Read values from a serialisable value
