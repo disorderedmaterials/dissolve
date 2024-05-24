@@ -49,8 +49,8 @@ PairPotentials
   Range  15.000000
   ShortRangeTruncation  None
   Delta  0.0001
-  Parameters  'OW'  O  0.0   LJGeometric  0.0       0.0
-  Parameters  'HW'  H  0.0   LJGeometric  0.0       0.0
+  Parameters  'OW'  O  0.0   Undefined
+  Parameters  'HW'  H  0.0   Undefined
   UseCombinationRules  False
   PairPotential  'OW'  'OW'  LennardJones126   0.6503    3.165492
   ManualChargeSource  True
