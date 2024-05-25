@@ -162,8 +162,8 @@ double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRang
     return force;
 }
 
-// Calculate full potential
-void PairPotential::calculateUFull()
+// Update totals
+void PairPotential::updateTotals()
 {
     // Update total energy
     for (auto &&[total, sr, coul, add] : zip(totalPotential_.values(), shortRangePotential_.values(),
@@ -172,13 +172,8 @@ void PairPotential::calculateUFull()
 
     // Recalculate interpolation
     totalPotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
-}
 
-// Calculate derivative of potential
-void PairPotential::calculateDUFull()
-{
-    derivative_.initialise(totalPotential_);
-
+    // Calculate derivative of total potential
     const auto nPoints = derivative_.nValues();
     double fprime;
     for (auto n = 1; n < nPoints - 1; ++n)
@@ -251,8 +246,7 @@ void PairPotential::tabulate(double maxR, double delta, double qi, double qj)
     std::fill(additionalPotential_.values().begin(), additionalPotential_.values().end(), 0);
 
     // Update totals
-    calculateUFull();
-    calculateDUFull();
+    updateTotals();
 }
 
 // Add supplied function to the short-range potential
@@ -265,8 +259,7 @@ void PairPotential::addShortRangePotential(const Function1DWrapper &potential, b
         sr += potential.y(r);
 
     // Update totals
-    calculateUFull();
-    calculateDUFull();
+    updateTotals();
 }
 
 // Return range of potential
@@ -387,8 +380,7 @@ void PairPotential::resetAdditionalPotential()
 {
     std::fill(additionalPotential_.values().begin(), additionalPotential_.values().end(), 0.0);
 
-    calculateUFull();
-    calculateDUFull();
+    updateTotals();
 }
 
 // Set additional potential
@@ -396,8 +388,7 @@ void PairPotential::setAdditionalPotential(Data1D &newUAdditional)
 {
     additionalPotential_ = newUAdditional;
 
-    calculateUFull();
-    calculateDUFull();
+    updateTotals();
 }
 
 /*

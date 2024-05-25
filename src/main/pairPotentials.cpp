@@ -203,9 +203,6 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
                         break;
                 }
 
-                pp->calculateUFull();
-                pp->calculateDUFull();
-
                 ++count;
             }
         }

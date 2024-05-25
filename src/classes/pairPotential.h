@@ -127,16 +127,14 @@ class PairPotential : Serialisable<>
     // Return analytic short range force
     double analyticShortRangeForce(
         double r, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme()) const;
+    // Update totals
+    void updateTotals();
 
     public:
     // Generate energy and force tables
     void tabulate(double maxR, double delta, double qi = 0.0, double qj = 0.0);
     // Add supplied function to the short-range potential
     void addShortRangePotential(const Function1DWrapper &potential, bool overwriteExisting = false);
-    // Calculate full potential
-    void calculateUFull();
-    // Calculate derivative of potential
-    void calculateDUFull();
     // Return range of potential
     double range() const;
     // Return spacing between points
