@@ -38,13 +38,12 @@ TEST_F(ForcefieldTabTest, PairPotentials)
     ASSERT_EQ(dissolve.nPairPotentials(), 3);
 
     // Test Pairs
-    EXPECT_EQ(pairs.columnCount(), 6);
+    EXPECT_EQ(pairs.columnCount(), 5);
     EXPECT_EQ(pairs.rowCount(), 3);
 
     EXPECT_EQ(pairs.data(pairs.index(0, PairPotentialModel::Columns::NameIColumn)).toString().toStdString(), "CA");
     EXPECT_EQ(pairs.data(pairs.index(0, PairPotentialModel::Columns::NameJColumn)).toString().toStdString(), "CA");
-    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, PairPotentialModel::Columns::ChargeIColumn)).toDouble(), -0.115);
-    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, PairPotentialModel::Columns::ChargeJColumn)).toDouble(), -0.115);
+    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(0, PairPotentialModel::Columns::ChargeProductColumn)).toDouble(), -0.115 * -0.115);
     EXPECT_EQ(pairs.data(pairs.index(0, PairPotentialModel::Columns::ShortRangeFormColumn)).toString().toStdString(),
               "LennardJones126");
     EXPECT_EQ(pairs.data(pairs.index(0, PairPotentialModel::Columns::ShortRangeParametersColumn)).toString().toStdString(),
@@ -52,15 +51,13 @@ TEST_F(ForcefieldTabTest, PairPotentials)
 
     EXPECT_EQ(pairs.data(pairs.index(1, PairPotentialModel::Columns::NameIColumn)).toString().toStdString(), "CA");
     EXPECT_EQ(pairs.data(pairs.index(1, PairPotentialModel::Columns::NameJColumn)).toString().toStdString(), "HA");
-    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(1, PairPotentialModel::Columns::ChargeIColumn)).toDouble(), -0.115);
-    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(1, PairPotentialModel::Columns::ChargeJColumn)).toDouble(), 0.115);
+    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(1, PairPotentialModel::Columns::ChargeProductColumn)).toDouble(), -0.115 * 0.115);
     EXPECT_EQ(pairs.data(pairs.index(1, PairPotentialModel::Columns::ShortRangeFormColumn)).toString().toStdString(),
               "LennardJones126");
 
     EXPECT_EQ(pairs.data(pairs.index(2, PairPotentialModel::Columns::NameIColumn)).toString().toStdString(), "HA");
     EXPECT_EQ(pairs.data(pairs.index(2, PairPotentialModel::Columns::NameJColumn)).toString().toStdString(), "HA");
-    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(2, PairPotentialModel::Columns::ChargeIColumn)).toDouble(), 0.115);
-    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(2, PairPotentialModel::Columns::ChargeJColumn)).toDouble(), 0.115);
+    EXPECT_DOUBLE_EQ(pairs.data(pairs.index(2, PairPotentialModel::Columns::ChargeProductColumn)).toDouble(), 0.115 * 0.115);
     EXPECT_EQ(pairs.data(pairs.index(2, PairPotentialModel::Columns::ShortRangeFormColumn)).toString().toStdString(),
               "LennardJones126");
     EXPECT_EQ(pairs.data(pairs.index(2, PairPotentialModel::Columns::ShortRangeParametersColumn)).toString().toStdString(),
@@ -69,8 +66,7 @@ TEST_F(ForcefieldTabTest, PairPotentials)
     // Try to set immutable data
     EXPECT_FALSE(pairs.setData(pairs.index(0, PairPotentialModel::Columns::NameIColumn), "XX"));
     EXPECT_FALSE(pairs.setData(pairs.index(1, PairPotentialModel::Columns::NameJColumn), "XX"));
-    EXPECT_FALSE(pairs.setData(pairs.index(2, PairPotentialModel::Columns::ChargeIColumn), 1.0));
-    EXPECT_FALSE(pairs.setData(pairs.index(2, PairPotentialModel::Columns::ChargeJColumn), -0.5));
+    EXPECT_FALSE(pairs.setData(pairs.index(2, PairPotentialModel::Columns::ChargeProductColumn), 1.0));
 
     // Set data - model is not set to editable yet, so these should also fail
     EXPECT_FALSE(pairs.setData(pairs.index(0, PairPotentialModel::Columns::ShortRangeFormColumn),

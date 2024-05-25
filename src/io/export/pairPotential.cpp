@@ -22,10 +22,11 @@ PairPotentialExportFileFormat::PairPotentialExportFileFormat(std::string_view fi
 bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotential *pp)
 {
     // Get array references for convenience
-    const auto &uOriginal = pp->uOriginal();
-    const auto &uAdditional = pp->uAdditional();
-    const auto &uFull = pp->uFull();
-    const auto &dUFull = pp->dUFull();
+    const auto &shortRange = pp->shortRangePotential();
+    const auto &coulomb = pp->coulombPotential();
+    const auto &additional = pp->additionalPotential();
+    const auto &total = pp->totalPotential();
+    const auto &derivative = pp->derivative();
 
     // Write header comment
     if (!parser.writeLineF("#{:9}  {:12}  {:12}  {:12}  {:12}  {:12}  {:12}\n", "", "Full", "Derivative", "Original",
@@ -35,10 +36,10 @@ bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotentia
                            "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "F(kJ/mol/Ang)"))
         return false;
 
-    for (auto &&[x, u, dU, orig, add] :
-         zip(uOriginal.xAxis(), uFull.values(), dUFull.values(), uOriginal.values(), uAdditional.values()))
-        if (!parser.writeLineF("{:10.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}\n", x, u, dU, orig, add,
-                               pp->analyticEnergy(x), pp->analyticForce(x)))
+    for (auto &&[r, tot, deriv, sr, coul, add] : zip(shortRange.xAxis(), total.values(), derivative.values(),
+                                                     shortRange.values(), coulomb.values(), additional.values()))
+        if (!parser.writeLineF("{:10.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}\n", r, tot, deriv,
+                               sr + coul, add, pp->analyticEnergy(r), pp->analyticForce(r)))
             return false;
 
     return true;
@@ -48,9 +49,9 @@ bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotentia
 bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotential *pp)
 {
     // Get array references for convenience
-    const auto &uFull = pp->uFull();
-    const auto &dUFull = pp->dUFull();
-    const auto nPoints = uFull.nValues();
+    const auto &total = pp->totalPotential();
+    const auto &derivative = pp->derivative();
+    const auto nPoints = total.nValues();
 
     // Write header (record 1)
     if (!parser.writeLineF("{:<72}\n", "TABLE file written by Dissolve"))
@@ -67,7 +68,7 @@ bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotenti
     // Write energy data
     for (auto n = 0; n < nPoints; ++n)
     {
-        if (!parser.writeLineF("{:17.12e} ", uFull.value(n)))
+        if (!parser.writeLineF("{:17.12e} ", total.value(n)))
             return false;
         if (((n + 1) % 4 == 0) || (n == (nPoints - 1)))
         {
@@ -79,7 +80,7 @@ bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotenti
     // Write force data
     for (auto n = 0; n < nPoints; ++n)
     {
-        if (!parser.writeLineF("{:17.12e} ", dUFull.value(n)))
+        if (!parser.writeLineF("{:17.12e} ", derivative.value(n)))
             return false;
         if (((n + 1) % 4 == 0) || (n == (nPoints - 1)))
         {
