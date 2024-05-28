@@ -133,8 +133,8 @@ double PotentialMap::analyticEnergy(const Atom &i, const Atom &j, double r) cons
     // types
     auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
     return PairPotential::includeAtomTypeCharges()
-               ? pp->analyticEnergy(r)
-               : pp->analyticEnergy(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r);
+               ? pp->analyticEnergy(r, 1.0, 1.0)
+               : pp->analyticEnergy(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r, 1.0, 1.0);
 }
 
 // Return analytic energy between Atom types at distance specified, scaling electrostatic and van der Waals components
@@ -147,7 +147,7 @@ double PotentialMap::analyticEnergy(const Atom &i, const Atom &j, double r, doub
     // types
     auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
     return PairPotential::includeAtomTypeCharges()
-               ? pp->analyticEnergy(r) * elecScale
+               ? pp->analyticEnergy(r, elecScale, vdwScale)
                : pp->analyticEnergy(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r, elecScale, vdwScale);
 }
 
@@ -212,8 +212,8 @@ double PotentialMap::analyticForce(const Atom &i, const Atom &j, double r) const
     // interpolated potential
     auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
     return PairPotential::includeAtomTypeCharges()
-               ? pp->analyticForce(r)
-               : pp->analyticForce(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r);
+               ? pp->analyticForce(r, 1.0, 1.0)
+               : pp->analyticForce(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r, 1.0, 1.0);
 }
 
 // Return analytic force between Atom types at distance specified, scaling electrostatic and van der Waals components
@@ -227,6 +227,6 @@ double PotentialMap::analyticForce(const Atom &i, const Atom &j, double r, doubl
     // interpolated potential
     auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
     return PairPotential::includeAtomTypeCharges()
-               ? pp->analyticForce(r) * elecScale
+               ? pp->analyticForce(r, elecScale, vdwScale)
                : pp->analyticForce(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r, elecScale, vdwScale);
 }

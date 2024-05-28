@@ -249,13 +249,13 @@ double PairPotential::energy(double r)
 }
 
 // Return analytic potential at specified r, including Coulomb term from local atomtype charges
-double PairPotential::analyticEnergy(double r) const
+double PairPotential::analyticEnergy(double r, double eScale, double vScale) const
 {
     if (r > range_)
         return 0.0;
 
     // Short-range potential and Coulomb contribution
-    return analyticShortRangeEnergy(r) + analyticCoulombEnergy(atomTypeChargeProduct_, r);
+    return vScale * analyticShortRangeEnergy(r) + eScale * analyticCoulombEnergy(atomTypeChargeProduct_, r);
 }
 
 // Return analytic potential at specified r, including Coulomb term from supplied charge product
@@ -289,13 +289,13 @@ double PairPotential::force(double r)
 }
 
 // Return analytic force at specified r
-double PairPotential::analyticForce(double r) const
+double PairPotential::analyticForce(double r, double eScale, double vScale) const
 {
     if (r > range_)
         return 0.0;
 
     // Short-range potential and Coulomb contribution
-    return analyticShortRangeForce(r) + analyticCoulombForce(atomTypeChargeProduct_, r);
+    return vScale * analyticShortRangeForce(r) + eScale * analyticCoulombForce(atomTypeChargeProduct_, r);
 }
 
 // Return analytic force at specified r, including Coulomb term from supplied charge product
