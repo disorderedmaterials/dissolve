@@ -189,9 +189,9 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
                     // Get intramolecular scaling of atom pair
                     auto &&[scalingType, elec14, vdw14] = i->scaling(j);
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                        correctSelfEnergy += potentialMap.analyticEnergy(i, j, r);
+                        correctSelfEnergy += potentialMap.analyticEnergy(*i, *j, r);
                     else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                        correctSelfEnergy += potentialMap.analyticEnergy(i, j, r, elec14, vdw14);
+                        correctSelfEnergy += potentialMap.analyticEnergy(*i, *j, r, elec14, vdw14);
                 }
             }
 
@@ -214,7 +214,7 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
                         if (r > cutoff)
                             continue;
 
-                        correctInterEnergy += potentialMap.analyticEnergy(i, j, r);
+                        correctInterEnergy += potentialMap.analyticEnergy(*i, *j, r);
                     }
                 }
             }
