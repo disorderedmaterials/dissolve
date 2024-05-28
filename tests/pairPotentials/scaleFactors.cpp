@@ -76,14 +76,14 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
         potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, ppRange);
     }
     // Return reference energy at distance r given specified charge product and scalings
-    double referenceEnergy(double r, double chargeProduct, double eScale = 1.0, double vScale = 1.0)
+    double referenceEnergy(double r, double chargeProduct, double elecScale = 1.0, double srScale = 1.0)
     {
-        return vScale * potentialWrapper_.y(r) + eScale * COULCONVERT * chargeProduct / r;
+        return srScale * potentialWrapper_.y(r) + elecScale * COULCONVERT * chargeProduct / r;
     }
     // Return reference force at distance r given specified charge product and scalings
-    double referenceForce(double r, double chargeProduct, double eScale = 1.0, double vScale = 1.0)
+    double referenceForce(double r, double chargeProduct, double elecScale = 1.0, double srScale = 1.0)
     {
-        return -vScale * potentialWrapper_.dYdX(r) + eScale * COULCONVERT * chargeProduct / (r * r);
+        return -srScale * potentialWrapper_.dYdX(r) + elecScale * COULCONVERT * chargeProduct / (r * r);
     }
     // Perform scaling tests on production routines
     template <class Particle> void testScalings(const Particle &i, const Particle &j, double r, double refChargeProduct)
@@ -92,20 +92,20 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
         EXPECT_NEAR(potentialMap_.energy(i, j, r), referenceEnergy(r, refChargeProduct), testTolerance_);
         EXPECT_NEAR(potentialMap_.force(i, j, r), referenceForce(r, refChargeProduct), testTolerance_);
 
-        auto eScale = 0.5, vScale = 0.5;
+        auto elecScale = 0.5, srScale = 0.5;
 
         // Equal scaling for short-range and electrostatics
-        EXPECT_NEAR(potentialMap_.energy(i, j, r, eScale, vScale), referenceEnergy(r, refChargeProduct, eScale, vScale),
+        EXPECT_NEAR(potentialMap_.energy(i, j, r, elecScale, srScale), referenceEnergy(r, refChargeProduct, elecScale, srScale),
                     testTolerance_);
-        EXPECT_NEAR(potentialMap_.force(i, j, r, eScale, vScale), referenceForce(r, refChargeProduct, eScale, vScale),
+        EXPECT_NEAR(potentialMap_.force(i, j, r, elecScale, srScale), referenceForce(r, refChargeProduct, elecScale, srScale),
                     testTolerance_);
 
         // Unlike scalings
-        eScale = 0.25;
-        vScale = 0.75;
-        EXPECT_NEAR(potentialMap_.energy(i, j, r, eScale, vScale), referenceEnergy(r, refChargeProduct, eScale, vScale),
+        elecScale = 0.25;
+        srScale = 0.75;
+        EXPECT_NEAR(potentialMap_.energy(i, j, r, elecScale, srScale), referenceEnergy(r, refChargeProduct, elecScale, srScale),
                     testTolerance_);
-        EXPECT_NEAR(potentialMap_.force(i, j, r, eScale, vScale), referenceForce(r, refChargeProduct, eScale, vScale),
+        EXPECT_NEAR(potentialMap_.force(i, j, r, elecScale, srScale), referenceForce(r, refChargeProduct, elecScale, srScale),
                     testTolerance_);
     }
     // Perform scaling tests on analytic routines
@@ -114,21 +114,21 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
         // No scaling
         EXPECT_NEAR(potentialMap_.analyticEnergy(i, j, r), referenceEnergy(r, refChargeProduct), testTolerance_);
         EXPECT_NEAR(potentialMap_.analyticForce(i, j, r), referenceForce(r, refChargeProduct), testTolerance_);
-        auto eScale = 0.5, vScale = 0.5;
+        auto elecScale = 0.5, srScale = 0.5;
 
         // Equal scaling for short-range and electrostatics
-        EXPECT_NEAR(potentialMap_.analyticEnergy(i, j, r, eScale, vScale), referenceEnergy(r, refChargeProduct, eScale, vScale),
-                    testTolerance_);
-        EXPECT_NEAR(potentialMap_.analyticForce(i, j, r, eScale, vScale), referenceForce(r, refChargeProduct, eScale, vScale),
-                    testTolerance_);
+        EXPECT_NEAR(potentialMap_.analyticEnergy(i, j, r, elecScale, srScale),
+                    referenceEnergy(r, refChargeProduct, elecScale, srScale), testTolerance_);
+        EXPECT_NEAR(potentialMap_.analyticForce(i, j, r, elecScale, srScale),
+                    referenceForce(r, refChargeProduct, elecScale, srScale), testTolerance_);
 
         // Unlike scalings
-        eScale = 0.25;
-        vScale = 0.75;
-        EXPECT_NEAR(potentialMap_.analyticEnergy(i, j, r, eScale, vScale), referenceEnergy(r, refChargeProduct, eScale, vScale),
-                    testTolerance_);
-        EXPECT_NEAR(potentialMap_.analyticForce(i, j, r, eScale, vScale), referenceForce(r, refChargeProduct, eScale, vScale),
-                    testTolerance_);
+        elecScale = 0.25;
+        srScale = 0.75;
+        EXPECT_NEAR(potentialMap_.analyticEnergy(i, j, r, elecScale, srScale),
+                    referenceEnergy(r, refChargeProduct, elecScale, srScale), testTolerance_);
+        EXPECT_NEAR(potentialMap_.analyticForce(i, j, r, elecScale, srScale),
+                    referenceForce(r, refChargeProduct, elecScale, srScale), testTolerance_);
     }
 
     protected:

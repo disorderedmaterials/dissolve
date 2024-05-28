@@ -249,23 +249,23 @@ double PairPotential::energy(double r)
 }
 
 // Return analytic potential at specified r, including Coulomb term from local atomtype charges
-double PairPotential::analyticEnergy(double r, double eScale, double vScale) const
+double PairPotential::analyticEnergy(double r, double elecScale, double srScale) const
 {
     if (r > range_)
         return 0.0;
 
     // Short-range potential and Coulomb contribution
-    return vScale * analyticShortRangeEnergy(r) + eScale * analyticCoulombEnergy(atomTypeChargeProduct_, r);
+    return srScale * analyticShortRangeEnergy(r) + elecScale * analyticCoulombEnergy(atomTypeChargeProduct_, r);
 }
 
 // Return analytic potential at specified r, including Coulomb term from supplied charge product
-double PairPotential::analyticEnergy(double qiqj, double r, double elecScale, double vdwScale,
+double PairPotential::analyticEnergy(double qiqj, double r, double elecScale, double srScale,
                                      PairPotential::CoulombTruncationScheme truncation) const
 {
     if (r > range_)
         return 0.0;
 
-    return analyticShortRangeEnergy(r) * vdwScale + analyticCoulombEnergy(qiqj, r, truncation) * elecScale;
+    return analyticShortRangeEnergy(r) * srScale + analyticCoulombEnergy(qiqj, r, truncation) * elecScale;
 }
 
 // Return analytic coulomb potential energy of specified charges
@@ -289,23 +289,23 @@ double PairPotential::force(double r)
 }
 
 // Return analytic force at specified r
-double PairPotential::analyticForce(double r, double eScale, double vScale) const
+double PairPotential::analyticForce(double r, double elecScale, double srScale) const
 {
     if (r > range_)
         return 0.0;
 
     // Short-range potential and Coulomb contribution
-    return vScale * analyticShortRangeForce(r) + eScale * analyticCoulombForce(atomTypeChargeProduct_, r);
+    return srScale * analyticShortRangeForce(r) + elecScale * analyticCoulombForce(atomTypeChargeProduct_, r);
 }
 
 // Return analytic force at specified r, including Coulomb term from supplied charge product
-double PairPotential::analyticForce(double qiqj, double r, double elecScale, double vdwScale,
+double PairPotential::analyticForce(double qiqj, double r, double elecScale, double srScale,
                                     PairPotential::CoulombTruncationScheme truncation) const
 {
     if (r > range_)
         return 0.0;
 
-    return analyticShortRangeForce(r) * vdwScale + analyticCoulombForce(qiqj, r) * elecScale;
+    return analyticShortRangeForce(r) * srScale + analyticCoulombForce(qiqj, r) * elecScale;
 }
 
 // Return analytic coulomb force of specified charges

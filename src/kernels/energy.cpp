@@ -67,9 +67,9 @@ EnergyKernel::EnergyKernel(const Configuration *cfg, const ProcessPool &procPool
 double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r) const { return potentialMap_.energy(i, j, r); }
 
 // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
-double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale) const
+double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const
 {
-    return potentialMap_.energy(i, j, r, elecScale, vdwScale);
+    return potentialMap_.energy(i, j, r, elecScale, srScale);
 }
 
 /*

@@ -192,12 +192,12 @@ bool SpeciesTorsion::isSelected() const
  */
 
 // Set 1-4 scaling factors
-bool SpeciesTorsion::set14ScalingFactors(double elecScale, double vdwScale)
+bool SpeciesTorsion::set14ScalingFactors(double elecScale, double srScale)
 {
     if (masterTerm_)
         return Messenger::error("Refused to set 1-4 scaling factors since master parameters are referenced.\n");
     electrostatic14Scaling_ = elecScale;
-    vdw14Scaling_ = vdwScale;
+    vdw14Scaling_ = srScale;
     return true;
 }
 

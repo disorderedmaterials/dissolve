@@ -83,7 +83,7 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
 
     public:
     // Set 1-4 scaling factors
-    bool set14ScalingFactors(double elecScale, double vdwScale);
+    bool set14ScalingFactors(double elecScale, double srScale);
     // Set electrostatic 1-4 scaling factor for the interaction
     bool setElectrostatic14Scaling(double scaling);
     // Return electrostatic 1-4 scaling factor for the interaction
