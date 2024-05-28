@@ -85,7 +85,7 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
     {
         return -vScale * potentialWrapper_.dYdX(r) + eScale * COULCONVERT * chargeProduct / (r * r);
     }
-    // Perform trio of scaling tests
+    // Perform scaling tests on production routines
     template <class Particle> void testScalings(const Particle &i, const Particle &j, double r, double refChargeProduct)
     {
         // No scaling
@@ -106,6 +106,28 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
         EXPECT_NEAR(potentialMap_.energy(i, j, r, eScale, vScale), referenceEnergy(r, refChargeProduct, eScale, vScale),
                     testTolerance_);
         EXPECT_NEAR(potentialMap_.force(i, j, r, eScale, vScale), referenceForce(r, refChargeProduct, eScale, vScale),
+                    testTolerance_);
+    }
+    // Perform scaling tests on analytic routines
+    void testAnalyticScalings(const Atom &i, const Atom &j, double r, double refChargeProduct)
+    {
+        // No scaling
+        EXPECT_NEAR(potentialMap_.analyticEnergy(i, j, r), referenceEnergy(r, refChargeProduct), testTolerance_);
+        EXPECT_NEAR(potentialMap_.analyticForce(i, j, r), referenceForce(r, refChargeProduct), testTolerance_);
+        auto eScale = 0.5, vScale = 0.5;
+
+        // Equal scaling for short-range and electrostatics
+        EXPECT_NEAR(potentialMap_.analyticEnergy(i, j, r, eScale, vScale), referenceEnergy(r, refChargeProduct, eScale, vScale),
+                    testTolerance_);
+        EXPECT_NEAR(potentialMap_.analyticForce(i, j, r, eScale, vScale), referenceForce(r, refChargeProduct, eScale, vScale),
+                    testTolerance_);
+
+        // Unlike scalings
+        eScale = 0.25;
+        vScale = 0.75;
+        EXPECT_NEAR(potentialMap_.analyticEnergy(i, j, r, eScale, vScale), referenceEnergy(r, refChargeProduct, eScale, vScale),
+                    testTolerance_);
+        EXPECT_NEAR(potentialMap_.analyticForce(i, j, r, eScale, vScale), referenceForce(r, refChargeProduct, eScale, vScale),
                     testTolerance_);
     }
 
@@ -156,6 +178,7 @@ TEST_F(PairPotentialsScaleFactorsTest, MoleculeEnergyWithAtomTypeCharges)
     auto &j = molecule_.localAtoms()[3];
 
     testScalings(i, j, (j.r() - i.r()).magnitude(), atC1_->charge() * atC1_->charge());
+    testAnalyticScalings(i, j, (j.r() - i.r()).magnitude(), atC1_->charge() * atC1_->charge());
 }
 
 TEST_F(PairPotentialsScaleFactorsTest, MoleculeEnergyWithSpeciesCharges)
@@ -166,6 +189,8 @@ TEST_F(PairPotentialsScaleFactorsTest, MoleculeEnergyWithSpeciesCharges)
     auto &j = molecule_.localAtoms()[3];
 
     testScalings(i, j, (j.r() - i.r()).magnitude(), fourSixthsBenzene_.atom(0).charge() * fourSixthsBenzene_.atom(3).charge());
+    testAnalyticScalings(i, j, (j.r() - i.r()).magnitude(),
+                         fourSixthsBenzene_.atom(0).charge() * fourSixthsBenzene_.atom(3).charge());
 }
 
 } // namespace UnitTest
