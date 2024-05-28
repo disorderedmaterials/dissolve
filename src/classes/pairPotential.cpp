@@ -191,7 +191,7 @@ void PairPotential::tabulate(double maxR, double delta, double qi, double qj)
     // Precalculate some quantities
     shortRangeEnergyAtCutoff_ = analyticShortRangeEnergy(range_, PairPotential::NoShortRangeTruncation);
     shortRangeForceAtCutoff_ = analyticShortRangeForce(range_, PairPotential::NoShortRangeTruncation);
-    atomTypeChargeProduct_ = qi * qj;
+    atomTypeChargeProduct_ = includeAtomTypeCharges_ ? qi * qj : 0.0;
 
     // Set up containers
     const auto nPoints = int(range_ / delta);
@@ -207,7 +207,7 @@ void PairPotential::tabulate(double maxR, double delta, double qi, double qj)
     for (auto &&[r, sr, coul] : zip(shortRangePotential_.xAxis(), shortRangePotential_.values(), coulombPotential_.values()))
     {
         sr = analyticShortRangeEnergy(r);
-        coul = includeAtomTypeCharges_ ? analyticCoulombEnergy(atomTypeChargeProduct_, r) : 0.0;
+        coul = analyticCoulombEnergy(atomTypeChargeProduct_, r);
     }
 
     // Since the first point at r = 0.0 risks being a nan, set it to ten times the second point instead
