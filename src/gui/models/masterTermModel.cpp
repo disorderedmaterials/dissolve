@@ -3,7 +3,7 @@
 
 #include "gui/models/masterTermModel.h"
 
-MasterTermModel::MasterTermModel(QObject *parent) : QAbstractTableModel(parent) {}
+MasterTermModel::MasterTermModel(CoreData &coreData) : QAbstractTableModel(), coreData_(coreData) {}
 
 void MasterTermModel::setIconFunction(std::function<bool(std::string_view termName)> func) { iconFunction_ = std::move(func); }
 

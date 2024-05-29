@@ -27,14 +27,13 @@ std::vector<Qt::ItemDataRole> roles = {Qt::DisplayRole, Qt::EditRole};
 
 TEST_F(MasterTermsTableModelTest, MasterBonds)
 {
-    std::vector<std::shared_ptr<MasterBond>> masterBonds;
-    auto &b1 = masterBonds.emplace_back(std::make_shared<MasterBond>("CA-CA"));
-    b1->setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3924.590   eq=1.400");
-    auto &b2 = masterBonds.emplace_back(std::make_shared<MasterBond>("CA-HA"));
-    b2->setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3071.060   eq=1.080");
+    CoreData coreData;
+    auto &b1 = coreData.addMasterBond("CA-CA");
+    b1.setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3924.590   eq=1.400");
+    auto &b2 = coreData.addMasterBond("CA-HA");
+    b2.setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3071.060   eq=1.080");
 
-    MasterBondModel model;
-    model.setSourceData(masterBonds);
+    MasterBondModel model(coreData);
 
     // test table structure
     EXPECT_EQ(model.columnCount(), 3);
@@ -70,14 +69,13 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
 
 TEST_F(MasterTermsTableModelTest, MasterAngles)
 {
-    std::vector<std::shared_ptr<MasterAngle>> masterAngles;
-    auto &a1 = masterAngles.emplace_back(std::make_shared<MasterAngle>("CA-CA-CA"));
-    a1->setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=527.184   eq=120.000");
-    auto &a2 = masterAngles.emplace_back(std::make_shared<MasterAngle>("CA-CA-HA"));
-    a2->setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=292.880   eq=120.000");
+    CoreData coreData;
+    auto &a1 = coreData.addMasterAngle("CA-CA-CA");
+    a1.setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=527.184   eq=120.000");
+    auto &a2 = coreData.addMasterAngle("CA-CA-HA");
+    a2.setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=292.880   eq=120.000");
 
-    MasterAngleModel model;
-    model.setSourceData(masterAngles);
+    MasterAngleModel model(coreData);
 
     // test table structure
     EXPECT_EQ(model.columnCount(), 3);
@@ -114,16 +112,15 @@ TEST_F(MasterTermsTableModelTest, MasterAngles)
 
 TEST_F(MasterTermsTableModelTest, MasterTorsions)
 {
-    std::vector<std::shared_ptr<MasterTorsion>> masterTorsions;
-    auto &t1 = masterTorsions.emplace_back(std::make_shared<MasterTorsion>("CA-CA-CA-CA"));
-    t1->setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     0.000");
-    auto &t2 = masterTorsions.emplace_back(std::make_shared<MasterTorsion>("CA-CA-CA-HA"));
-    t2->setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     1.000");
-    auto &t3 = masterTorsions.emplace_back(std::make_shared<MasterTorsion>("HA-CA-CA-HA"));
-    t3->setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     2.000");
+    CoreData coreData;
+    auto &t1 = coreData.addMasterTorsion("CA-CA-CA-CA");
+    t1.setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     0.000");
+    auto &t2 = coreData.addMasterTorsion("CA-CA-CA-HA");
+    t2.setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     1.000");
+    auto &t3 = coreData.addMasterTorsion("HA-CA-CA-HA");
+    t3.setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     2.000");
 
-    MasterTorsionModel model;
-    model.setSourceData(masterTorsions);
+    MasterTorsionModel model(coreData);
 
     // test table structure
     EXPECT_EQ(model.columnCount(), 5);

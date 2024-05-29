@@ -3,14 +3,9 @@
 
 #include "gui/models/masterImproperModel.h"
 
-MasterImproperModel::MasterImproperModel(QObject *parent) : MasterTermModel(parent) {}
-
-void MasterImproperModel::setSourceData(std::vector<std::shared_ptr<MasterImproper>> &terms)
+MasterImproperModel::MasterImproperModel(CoreData &coreData)
+    : MasterTermModel(coreData), sourceData_(coreData.masterImpropers())
 {
-    beginResetModel();
-    sourceData_ = terms;
-    endResetModel();
-
     // Set connections
     modelUpdater.setModel(this);
     modelUpdater.connectModelSignals();
@@ -23,22 +18,14 @@ void MasterImproperModel::reset()
     endResetModel();
 }
 
-int MasterImproperModel::rowCount(const QModelIndex &parent) const
-{
-    return parent.isValid() ? 0 : (sourceData_ ? sourceData_->get().size() : 0);
-}
+int MasterImproperModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
 
 QVariant MasterImproperModel::getTermData(int row, MasterTermModelData::DataType dataType) const
 {
-    if (!sourceData_)
+    if (row < 0 || row >= sourceData_.size())
         return {};
 
-    auto &terms = sourceData_->get();
-
-    if (row < 0 || row >= terms.size())
-        return {};
-
-    auto &t = terms[row];
+    auto &t = sourceData_[row];
     switch (dataType)
     {
         case (MasterTermModelData::DataType::Name):
@@ -56,15 +43,10 @@ QVariant MasterImproperModel::getTermData(int row, MasterTermModelData::DataType
 
 bool MasterImproperModel::setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value)
 {
-    if (!sourceData_)
+    if (row < 0 || row >= sourceData_.size())
         return false;
 
-    auto &terms = sourceData_->get();
-
-    if (row < 0 || row >= terms.size())
-        return false;
-
-    auto &t = terms[row];
+    auto &t = sourceData_[row];
 
     beginResetModel();
     switch (dataType)
@@ -97,6 +79,5 @@ bool MasterImproperModel::setTermData(int row, MasterTermModelData::DataType dat
 
 const std::shared_ptr<MasterImproper> &MasterImproperModel::rawData(const QModelIndex &index) const
 {
-    assert(sourceData_);
-    return sourceData_->get()[index.row()];
+    return sourceData_[index.row()];
 }

@@ -3,14 +3,8 @@
 
 #include "gui/models/masterBondModel.h"
 
-MasterBondModel::MasterBondModel(QObject *parent) : MasterTermModel(parent) {}
-
-void MasterBondModel::setSourceData(std::vector<std::shared_ptr<MasterBond>> &terms)
+MasterBondModel::MasterBondModel(CoreData &coreData) : MasterTermModel(coreData), sourceData_(coreData.masterBonds())
 {
-    beginResetModel();
-    sourceData_ = terms;
-    endResetModel();
-
     // Set connections
     modelUpdater.setModel(this);
     modelUpdater.connectModelSignals();
@@ -23,22 +17,14 @@ void MasterBondModel::reset()
     endResetModel();
 }
 
-int MasterBondModel::rowCount(const QModelIndex &parent) const
-{
-    return parent.isValid() ? 0 : (sourceData_ ? sourceData_->get().size() : 0);
-}
+int MasterBondModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
 
 QVariant MasterBondModel::getTermData(int row, MasterTermModelData::DataType dataType) const
 {
-    if (!sourceData_)
+    if (row < 0 || row >= sourceData_.size())
         return {};
 
-    auto &terms = sourceData_->get();
-
-    if (row < 0 || row >= terms.size())
-        return {};
-
-    auto &t = terms[row];
+    auto &t = sourceData_[row];
     switch (dataType)
     {
         case (MasterTermModelData::DataType::Name):
@@ -50,23 +36,15 @@ QVariant MasterBondModel::getTermData(int row, MasterTermModelData::DataType dat
         default:
             return {};
     }
-
-    return {};
 }
 
 bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value)
 {
-    if (!sourceData_)
+    if (row < 0 || row >= sourceData_.size())
         return false;
 
-    auto &terms = sourceData_->get();
+    auto &t = sourceData_[row];
 
-    if (row < 0 || row >= terms.size())
-        return false;
-
-    auto &t = terms[row];
-
-    beginResetModel();
     switch (dataType)
     {
         case (MasterTermModelData::DataType::Name):
@@ -90,7 +68,8 @@ bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataTyp
         default:
             return false;
     }
-    endResetModel();
+
+    Q_EMIT(dataChanged({}, {}));
 
     return true;
 }
@@ -98,5 +77,35 @@ bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataTyp
 const std::shared_ptr<MasterBond> &MasterBondModel::rawData(const QModelIndex &index) const
 {
     assert(sourceData_);
-    return sourceData_->get()[index.row()];
+    return sourceData_[index.row()];
+}
+
+bool MasterBondModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    Q_UNUSED(count);
+
+    beginInsertRows(parent, row, row);
+    coreData_.addMasterBond(
+        DissolveSys::uniqueName("NewBond", coreData_.masterBonds(), [](const auto &b) { return b->name(); }), row);
+    endInsertRows();
+
+    return true;
+}
+
+bool MasterBondModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    Q_UNUSED(count);
+    if (row >= rowCount() || row < 0)
+    {
+        return false;
+    }
+
+    // Need to get the bond at the specified row index in our vector and remove it via CoreData
+    auto &bond = sourceData_[row];
+
+    beginRemoveRows(parent, row, row);
+    coreData_.removeMasterBond(bond);
+    endRemoveRows();
+
+    return true;
 }

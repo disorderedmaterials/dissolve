@@ -20,15 +20,13 @@ class MasterBondModel : public MasterTermModel
     void modelsUpdated();
 
     public:
-    MasterBondModel(QObject *parent = nullptr);
+    explicit MasterBondModel(CoreData &coreData);
 
     private:
     // Source term data
-    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterBond>>> sourceData_;
+    std::vector<std::shared_ptr<MasterBond>> &sourceData_;
 
     public:
-    // Set source data
-    void setSourceData(std::vector<std::shared_ptr<MasterBond>> &bonds);
     // Refresh model data
     void reset();
 
@@ -40,6 +38,8 @@ class MasterBondModel : public MasterTermModel
     QVariant getTermData(int row, MasterTermModelData::DataType dataType) const override;
     bool setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value) override;
     const std::shared_ptr<MasterBond> &rawData(const QModelIndex &index) const;
+    bool insertRows(int row, int count, const QModelIndex &parent) override;
+    bool removeRows(int row, int count, const QModelIndex &parent) override;
 
     private:
     ModelUpdater modelUpdater;

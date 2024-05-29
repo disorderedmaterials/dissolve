@@ -3,14 +3,8 @@
 
 #include "gui/models/masterAngleModel.h"
 
-MasterAngleModel::MasterAngleModel(QObject *parent) : MasterTermModel(parent) {}
-
-void MasterAngleModel::setSourceData(std::vector<std::shared_ptr<MasterAngle>> &terms)
+MasterAngleModel::MasterAngleModel(CoreData &coreData) : MasterTermModel(coreData), sourceData_(coreData.masterAngles())
 {
-    beginResetModel();
-    sourceData_ = terms;
-    endResetModel();
-
     // Set connections
     modelUpdater.setModel(this);
     modelUpdater.connectModelSignals();
@@ -23,22 +17,14 @@ void MasterAngleModel::reset()
     endResetModel();
 }
 
-int MasterAngleModel::rowCount(const QModelIndex &parent) const
-{
-    return parent.isValid() ? 0 : (sourceData_ ? sourceData_->get().size() : 0);
-}
+int MasterAngleModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
 
 QVariant MasterAngleModel::getTermData(int row, MasterTermModelData::DataType dataType) const
 {
-    if (!sourceData_)
+    if (row < 0 || row >= sourceData_.size())
         return {};
 
-    auto &terms = sourceData_->get();
-
-    if (row < 0 || row >= terms.size())
-        return {};
-
-    auto &t = terms[row];
+    auto &t = sourceData_[row];
     switch (dataType)
     {
         case (MasterTermModelData::DataType::Name):
@@ -56,15 +42,10 @@ QVariant MasterAngleModel::getTermData(int row, MasterTermModelData::DataType da
 
 bool MasterAngleModel::setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value)
 {
-    if (!sourceData_)
+    if (row < 0 || row >= sourceData_.size())
         return false;
 
-    auto &terms = sourceData_->get();
-
-    if (row < 0 || row >= terms.size())
-        return false;
-
-    auto &t = terms[row];
+    auto &t = sourceData_[row];
 
     beginResetModel();
     switch (dataType)
@@ -98,5 +79,5 @@ bool MasterAngleModel::setTermData(int row, MasterTermModelData::DataType dataTy
 const std::shared_ptr<MasterAngle> &MasterAngleModel::rawData(const QModelIndex &index) const
 {
     assert(sourceData_);
-    return sourceData_->get()[index.row()];
+    return sourceData_[index.row()];
 }

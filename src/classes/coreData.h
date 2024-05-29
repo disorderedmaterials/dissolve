@@ -112,7 +112,7 @@ class CoreData
     // Read Master values from serialisable value
     void deserialiseMaster(const SerialisedValue &node);
     // Add new master Bond parameters
-    MasterBond &addMasterBond(std::string_view name);
+    MasterBond &addMasterBond(std::string_view name, std::optional<int> insertAtIndex = {});
     // Remove specified master Bond
     void removeMasterBond(const std::shared_ptr<MasterBond> &bond);
     // Return number of master Bond parameters in list

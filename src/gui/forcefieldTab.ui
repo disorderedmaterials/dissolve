@@ -37,7 +37,7 @@
    <item>
     <widget class="QTabWidget" name="Tabs">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="AtomTypesTab">
       <attribute name="title">
@@ -900,6 +900,12 @@
              <pointsize>10</pointsize>
             </font>
            </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
           </widget>
          </item>
         </layout>
@@ -1006,6 +1012,12 @@
             <font>
              <pointsize>10</pointsize>
             </font>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
            </property>
           </widget>
          </item>
@@ -1114,6 +1126,12 @@
              <pointsize>10</pointsize>
             </font>
            </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
           </widget>
          </item>
         </layout>
@@ -1220,6 +1238,12 @@
             <font>
              <pointsize>10</pointsize>
             </font>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
            </property>
           </widget>
          </item>

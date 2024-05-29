@@ -20,15 +20,13 @@ class MasterAngleModel : public MasterTermModel
     void modelsUpdated();
 
     public:
-    MasterAngleModel(QObject *parent = nullptr);
+    explicit MasterAngleModel(CoreData &coreData);
 
     private:
     // Source term data
-    OptionalReferenceWrapper<std::vector<std::shared_ptr<MasterAngle>>> sourceData_;
+    std::vector<std::shared_ptr<MasterAngle>> &sourceData_;
 
     public:
-    // Set source data
-    void setSourceData(std::vector<std::shared_ptr<MasterAngle>> &bonds);
     // Refresh model data
     void reset();
 

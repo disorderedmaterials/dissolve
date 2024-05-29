@@ -10,7 +10,7 @@
 #include <QInputDialog>
 
 ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
-    : WizardDialog(parent), dissolve_(dissolve), temporaryDissolve_(temporaryCoreData_)
+    : WizardDialog(parent), dissolve_(dissolve), temporaryDissolve_(temporaryCoreData_), masterTermModel_(dissolve.coreData())
 {
     ui_.setupUi(this);
 
@@ -92,8 +92,6 @@ bool ImportSpeciesDialog::prepareForNextPage(int currentIndex)
             speciesModel_.setData(temporaryDissolve_.coreData().species());
 
             updateAtomTypesPage();
-            masterTermModel_.setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(),
-                                     temporaryCoreData_.masterTorsions(), temporaryCoreData_.masterImpropers());
             ui_.MasterTermsTree->expandAll();
             ui_.MasterTermsTree->resizeColumnToContents(0);
             ui_.MasterTermsTree->resizeColumnToContents(1);
