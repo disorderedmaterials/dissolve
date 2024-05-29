@@ -13,7 +13,7 @@
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme_ =
     PairPotential::ShiftedShortRangeTruncation;
-bool PairPotential::includeAtomTypeCharges_ = false;
+bool PairPotential::includeCoulombPotential_ = false;
 
 PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ)
     : nameI_(nameI), nameJ_(nameJ), totalShortRangePotentialInterpolation_(referenceShortRangePotential_),
@@ -61,11 +61,11 @@ void PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTrunc
 // Return short-ranged truncation scheme
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme() { return shortRangeTruncationScheme_; }
 
-// Set whether atom type charges should be included in the generated potential
-void PairPotential::setIncludeAtomTypeCharges(bool b) { includeAtomTypeCharges_ = b; }
+// Set whether Coulomb contributions should be included in the generated potential
+void PairPotential::setIncludeCoulombPotential(bool b) { includeCoulombPotential_ = b; }
 
-// Return whether atom type charges should be included in the generated potential
-bool PairPotential::includeAtomTypeCharges() { return includeAtomTypeCharges_; }
+// Return whether Coulomb contributions should be included in the generated potential
+bool PairPotential::includeCoulombPotential() { return includeCoulombPotential_; }
 
 // Set Coulomb truncation scheme
 void PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme scheme)
@@ -88,7 +88,7 @@ void PairPotential::setData1DNames()
     additionalShortRangePotential_.setTag(fmt::format("{}-{} (Add SR)", nameI_, nameJ_));
     referenceShortRangePotential_.setTag(fmt::format("{}-{} (Ref SR)", nameI_, nameJ_));
 
-    coulombPotential_.setTag(fmt::format("{}-{} (Coul)", nameI_, nameJ_));
+    coulombPotential_.setTag(fmt::format("{}-{} (Elec)", nameI_, nameJ_));
 
     derivative_.setTag(fmt::format("{}-{} (dU/dr)", nameI_, nameJ_));
 }
@@ -129,8 +129,8 @@ void PairPotential::setInteractionPotentialForm(Functions1D::Form form)
 // Return interaction potential
 const InteractionPotential<Functions1D> &PairPotential::interactionPotential() const { return interactionPotential_; }
 
-// Return atom typeCharge product (if including Coulomb terms)
-double PairPotential::atomTypeChargeProduct() const { return atomTypeChargeProduct_; }
+// Return local charge product (if including Coulomb terms)
+double PairPotential::localChargeProduct() const { return localChargeProduct_; }
 
 /*
  * Tabulated PairPotential
@@ -169,8 +169,6 @@ double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRang
 // Update totals
 void PairPotential::updateTotals()
 {
-    // Update total short-range
-
     // Update total energy
     for (auto &&[total, totalSR, refSR, addSR, coul] :
          zip(totalPotential_.values(), totalShortRangePotential_.values(), referenceShortRangePotential_.values(),
@@ -193,7 +191,7 @@ void PairPotential::updateTotals()
 }
 
 // Generate energy and force tables
-void PairPotential::tabulate(double maxR, double delta, double qi, double qj)
+void PairPotential::tabulate(double maxR, double delta, double chargeProduct)
 {
     // Determine
     delta_ = delta;
@@ -203,7 +201,7 @@ void PairPotential::tabulate(double maxR, double delta, double qi, double qj)
     // Precalculate some quantities
     shortRangeEnergyAtCutoff_ = analyticShortRangeEnergy(range_, PairPotential::NoShortRangeTruncation);
     shortRangeForceAtCutoff_ = analyticShortRangeForce(range_, PairPotential::NoShortRangeTruncation);
-    atomTypeChargeProduct_ = includeAtomTypeCharges_ ? qi * qj : 0.0;
+    localChargeProduct_ = includeCoulombPotential_ ? chargeProduct : 0.0;
 
     // Set up containers
     const auto nPoints = int(range_ / delta);
@@ -221,7 +219,7 @@ void PairPotential::tabulate(double maxR, double delta, double qi, double qj)
          zip(referenceShortRangePotential_.xAxis(), referenceShortRangePotential_.values(), coulombPotential_.values()))
     {
         refSR = analyticShortRangeEnergy(r);
-        coul = analyticCoulombEnergy(atomTypeChargeProduct_, r);
+        coul = analyticCoulombEnergy(localChargeProduct_, r);
     }
 
     // Since the first point at r = 0.0 risks being a nan, set it to ten times the second point instead
@@ -276,7 +274,7 @@ double PairPotential::analyticEnergy(double r, double elecScale, double srScale)
         return 0.0;
 
     // Short-range potential and Coulomb contribution
-    return srScale * analyticShortRangeEnergy(r) + elecScale * analyticCoulombEnergy(atomTypeChargeProduct_, r);
+    return srScale * analyticShortRangeEnergy(r) + elecScale * analyticCoulombEnergy(localChargeProduct_, r);
 }
 
 // Return analytic potential at specified r, including Coulomb term from supplied charge product
@@ -316,7 +314,7 @@ double PairPotential::analyticForce(double r, double elecScale, double srScale) 
         return 0.0;
 
     // Short-range potential and Coulomb contribution
-    return srScale * analyticShortRangeForce(r) + elecScale * analyticCoulombForce(atomTypeChargeProduct_, r);
+    return srScale * analyticShortRangeForce(r) + elecScale * analyticCoulombForce(localChargeProduct_, r);
 }
 
 // Return analytic force at specified r, including Coulomb term from supplied charge product

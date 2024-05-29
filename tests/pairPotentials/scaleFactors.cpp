@@ -51,7 +51,7 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
 
         potentialMap_.clear();
         pairPotentials_.clear();
-        PairPotential::setIncludeAtomTypeCharges(useAtomTypeCharges);
+        PairPotential::setIncludeCoulombPotential(useAtomTypeCharges);
         PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
         PairPotential::setCoulombTruncationScheme(PairPotential::NoCoulombTruncation);
 
@@ -60,17 +60,17 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
                                                               std::make_unique<PairPotential>(atC1_->name(), atC1_->name())))
                          .get();
         pp11->setInteractionPotential(interactionPotential_);
-        pp11->tabulate(ppRange, ppDelta, atC1_->charge(), atC1_->charge());
+        pp11->tabulate(ppRange, ppDelta, atC1_->charge() * atC1_->charge());
         auto *pp12 = std::get<2>(pairPotentials_.emplace_back(atC1_, atC2_,
                                                               std::make_unique<PairPotential>(atC1_->name(), atC2_->name())))
                          .get();
         pp12->setInteractionPotential(interactionPotential_);
-        pp12->tabulate(ppRange, ppDelta, atC1_->charge(), atC2_->charge());
+        pp12->tabulate(ppRange, ppDelta, atC1_->charge() * atC2_->charge());
         auto *pp22 = std::get<2>(pairPotentials_.emplace_back(atC2_, atC2_,
                                                               std::make_unique<PairPotential>(atC2_->name(), atC2_->name())))
                          .get();
         pp22->setInteractionPotential(interactionPotential_);
-        pp22->tabulate(ppRange, ppDelta, atC2_->charge(), atC2_->charge());
+        pp22->tabulate(ppRange, ppDelta, atC2_->charge() * atC2_->charge());
 
         // Create PotentialMap
         potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, ppRange);

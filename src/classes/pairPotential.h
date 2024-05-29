@@ -47,8 +47,8 @@ class PairPotential : Serialisable<>
     double shortRangeEnergyAtCutoff_{0.0};
     // Short-range force at cutoff distance (used by truncation scheme)
     double shortRangeForceAtCutoff_{0.0};
-    // Whether atom type charges should be included in the generated potential
-    static bool includeAtomTypeCharges_;
+    // Whether Coulomb contributions should be included in the generated potential
+    static bool includeCoulombPotential_;
     // Truncation scheme to apply to Coulomb part of potential
     static CoulombTruncationScheme coulombTruncationScheme_;
 
@@ -57,10 +57,10 @@ class PairPotential : Serialisable<>
     static void setShortRangeTruncationScheme(ShortRangeTruncationScheme scheme);
     // Return short-ranged truncation scheme
     static ShortRangeTruncationScheme shortRangeTruncationScheme();
-    // Set whether atom type charges should be included in the generated potential
-    static void setIncludeAtomTypeCharges(bool b);
-    // Return whether atom type charges should be included in the generated potential
-    static bool includeAtomTypeCharges();
+    // Set whether Coulomb contributions should be included in the generated potential
+    static void setIncludeCoulombPotential(bool b);
+    // Return whether Coulomb contributions should be included in the generated potential
+    static bool includeCoulombPotential();
     // Set Coulomb truncation scheme
     static void setCoulombTruncationScheme(CoulombTruncationScheme scheme);
     // Return Coulomb truncation scheme
@@ -76,7 +76,7 @@ class PairPotential : Serialisable<>
     InteractionPotential<Functions1D> interactionPotential_;
     Function1DWrapper potentialFunction_;
     // Charge product (if including Coulomb terms)
-    double atomTypeChargeProduct_{0.0};
+    double localChargeProduct_{0.0};
 
     private:
     // Set Data1D names from source AtomTypes
@@ -96,8 +96,8 @@ class PairPotential : Serialisable<>
     void setInteractionPotentialForm(Functions1D::Form form);
     // Return interaction potential
     const InteractionPotential<Functions1D> &interactionPotential() const;
-    // Return atom typeCharge product (if including Coulomb terms)
-    double atomTypeChargeProduct() const;
+    // Return local charge product (if including Coulomb terms)
+    double localChargeProduct() const;
 
     /*
      * Tabulated Potential
@@ -134,7 +134,7 @@ class PairPotential : Serialisable<>
 
     public:
     // Generate energy and force tables
-    void tabulate(double maxR, double delta, double qi = 0.0, double qj = 0.0);
+    void tabulate(double maxR, double delta, double chargeProduct = 0.0);
     // Add supplied function to the reference short-range potential
     void addToReferenceShortRangePotential(const Function1DWrapper &potential, bool overwriteExisting = false);
     // Return range of potential
@@ -155,7 +155,7 @@ class PairPotential : Serialisable<>
                           PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme()) const;
     // Return derivative of potential at specified r
     double force(double r);
-    // Return analytic force at specified r, including Coulomb term from local atomtype charges
+    // Return analytic force at specified r, including Coulomb term from local charge product
     double analyticForce(double r, double elecScale, double srScale) const;
     // Return analytic force at specified r, including Coulomb term from supplied charge product
     double analyticForce(double qiqj, double r, double elecScale, double srScale,
