@@ -6,6 +6,7 @@ add_library(
   data1D.cpp
   data2D.cpp
   data3D.cpp
+  derivative.cpp
   doubleExp.cpp
   error.cpp
   filters.cpp
@@ -45,6 +46,7 @@ add_library(
   data3D.h
   data3DBase.h
   dataBase.h
+  derivative.h
   doubleExp.h
   error.h
   filters.h
