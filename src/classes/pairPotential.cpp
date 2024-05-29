@@ -3,7 +3,6 @@
 
 #include "classes/pairPotential.h"
 #include "base/lineParser.h"
-#include "base/messenger.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "math/constants.h"
