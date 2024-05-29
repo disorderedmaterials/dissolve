@@ -24,14 +24,14 @@ class PairPotentialOverrideModel : public QAbstractListModel
         MatchI,
         MatchJ,
         OverrideType,
-        ShortRangeForm,
-        ShortRangeParameters,
+        Form,
+        Parameters,
         nColumnData
     };
     PairPotentialOverrideModel(std::vector<std::unique_ptr<PairPotentialOverride>> &data_);
     ~PairPotentialOverrideModel() = default;
-    const PairPotentialOverride *rawData(const QModelIndex index) const;
-    PairPotentialOverride *rawData(const QModelIndex index);
+    const PairPotentialOverride *rawData(int row) const;
+    PairPotentialOverride *rawData(int row);
     // Update the table contents
     void reset();
 
@@ -45,4 +45,7 @@ class PairPotentialOverrideModel : public QAbstractListModel
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+    bool duplicateRow(int row);
 };

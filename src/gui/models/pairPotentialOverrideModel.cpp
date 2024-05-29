@@ -24,16 +24,13 @@ int PairPotentialOverrideModel::columnCount(const QModelIndex &parent) const
     return ColumnData::nColumnData;
 }
 
-const PairPotentialOverride *PairPotentialOverrideModel::rawData(const QModelIndex index) const
-{
-    return data_[index.row()].get();
-}
+const PairPotentialOverride *PairPotentialOverrideModel::rawData(int row) const { return data_[row].get(); }
 
-PairPotentialOverride *PairPotentialOverrideModel::rawData(const QModelIndex index) { return data_[index.row()].get(); }
+PairPotentialOverride *PairPotentialOverrideModel::rawData(int row) { return data_[row].get(); }
 
 QVariant PairPotentialOverrideModel::data(const QModelIndex &index, int role) const
 {
-    auto *ppOverride = rawData(index);
+    auto *ppOverride = rawData(index.row());
     if (!ppOverride)
         return {};
 
@@ -47,9 +44,9 @@ QVariant PairPotentialOverrideModel::data(const QModelIndex &index, int role) co
                 return QString::fromStdString(std::string(ppOverride->matchJ()));
             case (ColumnData::OverrideType):
                 return QString::fromStdString(PairPotentialOverride::pairPotentialOverrideTypes().keyword(ppOverride->type()));
-            case (ColumnData::ShortRangeForm):
+            case (ColumnData::Form):
                 return QString::fromStdString(Functions1D::forms().keyword(ppOverride->interactionPotential().form()));
-            case (ColumnData::ShortRangeParameters):
+            case (ColumnData::Parameters):
                 return QString::fromStdString(ppOverride->interactionPotential().parametersAsString());
             default:
                 return {};
@@ -66,7 +63,7 @@ bool PairPotentialOverrideModel::setData(const QModelIndex &index, const QVarian
     if (role != Qt::EditRole)
         return false;
 
-    auto *ppOverride = rawData(index);
+    auto *ppOverride = rawData(index.row());
 
     switch (index.column())
     {
@@ -80,10 +77,10 @@ bool PairPotentialOverrideModel::setData(const QModelIndex &index, const QVarian
             ppOverride->setType(
                 PairPotentialOverride::pairPotentialOverrideTypes().enumeration(value.toString().toStdString()));
             break;
-        case (ColumnData::ShortRangeForm):
+        case (ColumnData::Form):
             ppOverride->interactionPotential().setForm(Functions1D::forms().enumeration(value.toString().toStdString()));
             break;
-        case (ColumnData::ShortRangeParameters):
+        case (ColumnData::Parameters):
             if (!ppOverride->interactionPotential().parseParameters(value.toString().toStdString()))
                 return false;
             break;
@@ -114,9 +111,9 @@ QVariant PairPotentialOverrideModel::headerData(int section, Qt::Orientation ori
             return "Match J";
         case (ColumnData::OverrideType):
             return "Type";
-        case (ColumnData::ShortRangeForm):
+        case (ColumnData::Form):
             return "Form";
-        case (ColumnData::ShortRangeParameters):
+        case (ColumnData::Parameters):
             return "Parameters";
         default:
             return {};
@@ -128,4 +125,40 @@ void PairPotentialOverrideModel::reset()
 {
     beginResetModel();
     endResetModel();
+}
+
+bool PairPotentialOverrideModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    Q_UNUSED(count);
+    beginInsertRows(parent, row, row);
+    data_.insert(data_.begin() + row, std::make_unique<PairPotentialOverride>());
+    endInsertRows();
+    return true;
+}
+
+bool PairPotentialOverrideModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    Q_UNUSED(count);
+    if (row >= rowCount() || row < 0)
+    {
+        return false;
+    }
+
+    beginRemoveRows(parent, row, row);
+    data_.erase(data_.begin() + row);
+    endRemoveRows();
+
+    return true;
+}
+
+bool PairPotentialOverrideModel::duplicateRow(int row)
+{
+    auto *override = rawData(row);
+
+    beginInsertRows({}, row, row);
+    data_.insert(data_.begin() + row,
+                 std::make_unique<PairPotentialOverride>(override->matchI(), override->matchJ(), override->type(),
+                                                         override->interactionPotential()));
+    endInsertRows();
+    return true;
 }

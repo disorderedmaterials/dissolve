@@ -79,7 +79,6 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        * 	        (   2 * c * c )
        */
       [](double x, double omega, const std::vector<double> &params) { return exp(-(0.5 * x * x * params[2] * params[2])); },
-      // First derivative (not defined)
       {},
       /*
        *             (   x * x * c * c )
@@ -201,7 +200,7 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        */
       [](double x, double omega, const std::vector<double> &params)
       { return exp(-(x * x) / (2.0 * (params[2] + params[3] * omega) * (params[2] + params[3] * omega))); },
-      // First derivative (not defined)
+
       {},
       /*
        *             (   x * x * (c1 + c2*omega)**2 )
@@ -217,6 +216,7 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
        */
       [](double omega, const std::vector<double> &params)
       { return 1.0 / ((params[2] + params[3] * omega) * sqrt(2.0 * M_PI)); }}},
+
     /*
      * Lennard-Jones 12-6 Potential
      *
@@ -252,18 +252,95 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
           return 48.0 * params[0] * sigmar6 * (-sigmar6 + 0.5) / x;
       },
       {},
+      {}}},
+    /*
+     * Buckingham Potential
+     *
+     * Parameters:
+     *  INPUT  0 = A
+     *  INPUT  1 = B
+     *  INPUT  2 = C
+     */
+    {Functions1D::Form::Buckingham,
+     {{"A", "B", "C"},
+      {FunctionProperties::FirstDerivative},
+      [](std::vector<double> params) { return params; },
+      /*                         C
+       *  F(x)=A exp(-B * x) - -----
+       *                       x**6
+       */
+      [](double x, double omega, const std::vector<double> &params)
+      {
+          auto B = exp(-params[1] * x);
+          auto C = params[2] / pow(x, 6.0);
+          return params[0] * B - C;
+      },
+      // dy/dx = -B * A exp(-B * x) + 6 * C * x**-7
+      [](double x, double omega, const std::vector<double> &params)
+      {
+          auto expo = exp(-params[1] * x);
+          auto C = 6 * params[2] * pow(x, -7.0);
+          return -params[1] * params[0] * expo + C;
+      },
+      {},
+      {}}},
+    /*
+     * GaussianPotential with prefactor, located at specific x.
+     * Intended for use as a potential override.
+     *
+     * Parameters:
+     *  INPUT  0 = A
+     *  INPUT  1 = fwhm
+     *  INPUT  2 = x0
+     *  CALC   3 = c = fwhm / (2 * sqrt(2 ln 2))
+     *  CALC   4 = 1.0 / c
+     */
+    {Functions1D::Form::GaussianPotential,
+     {{"A", "fwhm", "x0"},
+      {FunctionProperties::FirstDerivative},
+      [](std::vector<double> params)
+      {
+          params.push_back(params[1] / (2.0 * sqrt(2.0 * log(2.0))));
+          params.push_back(1.0 / params[3]);
+          return params;
+      },
+      /*
+       *            (     x * x   )
+       * f(x) = exp ( - --------- )
+       * 	        (   2 * c * c )
+       */
+      [](double x, double omega, const std::vector<double> &params)
+      { return params[0] * exp(-(0.5 * (x - params[2]) * (x - params[2]) * params[4] * params[4])); },
+      /*
+       *
+       *             1             (     x * x   )
+       * dy/dx = - ----- * x * exp ( - --------- )
+       *           c**2            (   2 * c * c )
+       *
+       */
+      [](double x, double omega, const std::vector<double> &params)
+      {
+          auto dx = x - params[2];
+          auto c1 = (1 / (params[3] * params[3])) * dx;
+          return -params[0] * c1 * exp(-(0.5 * dx * dx * params[4] * params[4]));
+      },
+      {},
       {}}}};
 
 // Return enum option info for forms
 EnumOptions<Functions1D::Form> Functions1D::forms()
 {
     return EnumOptions<Functions1D::Form>("Function1D",
-                                          {{Functions1D::Form::None, "None"},
-                                           {Functions1D::Form::Gaussian, "Gaussian", 1},
-                                           {Functions1D::Form::ScaledGaussian, "ScaledGaussian", 2},
-                                           {Functions1D::Form::OmegaDependentGaussian, "OmegaDependentGaussian", 1},
-                                           {Functions1D::Form::GaussianC2, "GaussianC2", 2},
-                                           {Functions1D::Form::LennardJones126, "LennardJones126", 2}});
+                                          {
+                                              {Functions1D::Form::None, "None"},
+                                              {Functions1D::Form::Gaussian, "Gaussian", 1},
+                                              {Functions1D::Form::ScaledGaussian, "ScaledGaussian", 2},
+                                              {Functions1D::Form::OmegaDependentGaussian, "OmegaDependentGaussian", 1},
+                                              {Functions1D::Form::GaussianC2, "GaussianC2", 2},
+                                              {Functions1D::Form::LennardJones126, "LennardJones126", 2},
+                                              {Functions1D::Form::Buckingham, "Buckingham", 3},
+                                              {Functions1D::Form::GaussianPotential, "GaussianPotential", 3},
+                                          });
 }
 
 // Return parameters for specified form

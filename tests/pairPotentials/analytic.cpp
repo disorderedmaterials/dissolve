@@ -39,7 +39,7 @@ class PairPotentialsTest : public ::testing::Test
               const std::function<double(double)> &tabulated)
     {
         // Set up and tabulate pair potential
-        pairPotential_->interactionPotential().setFormAndParameters(form, parameters);
+        pairPotential_->setInteractionPotential(form, parameters);
         pairPotential_->tabulate(ppRange_, ppDelta_);
 
         // Test analytic vs tabulated values - do this by absolute value if less than 1.0, or by ratio if greater than 1.0.
@@ -86,4 +86,19 @@ TEST_F(PairPotentialsTest, LennardJonesForm)
     testForce(Functions1D::Form::LennardJones126, "epsilon=0.35 sigma=2.166", testRDelta_ * 5);
 }
 
+TEST_F(PairPotentialsTest, Buckingham)
+{
+    // Values put in for TeO2 from https://pubs.rsc.org/en/content/articlelanding/2014/cp/c4cp01273a
+    testEnergy(Functions1D::Form::Buckingham, "A=153919.5503  B=2.8912848  C=96.48514925", testRDelta_ * 5);
+    testForce(Functions1D::Form::Buckingham, "A=8005439.257  B=6.211565  C=3025.962812", testRDelta_ * 5);
+}
+
+TEST_F(PairPotentialsTest, Gaussian)
+{
+    testEnergy(Functions1D::Form::GaussianPotential, "A=1.0  fwhm=2.4  x0=0", testRDelta_ * 5);
+    testForce(Functions1D::Form::GaussianPotential, "A=1.0  fwhm=2.4  x0=0", testRDelta_ * 5);
+
+    testEnergy(Functions1D::Form::GaussianPotential, "A=10.0  fwhm=1.1  x0=5.0", testRDelta_ * 5);
+    testForce(Functions1D::Form::GaussianPotential, "A=10.0  fwhm=1.1  x0=5.0", testRDelta_ * 5);
+}
 } // namespace UnitTest

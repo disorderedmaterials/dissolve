@@ -100,6 +100,7 @@ class ForcefieldTab : public QWidget, public MainTab
     void on_OverrideRemoveButton_clicked(bool checked);
     void on_OverrideDuplicateButton_clicked(bool checked);
     void overrideDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &);
+    void overrideSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     // Master Terms
     void masterBondsDataChanged(const QModelIndex &, const QModelIndex &);
     void masterAnglesDataChanged(const QModelIndex &, const QModelIndex &);

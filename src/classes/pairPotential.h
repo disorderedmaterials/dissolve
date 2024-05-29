@@ -98,8 +98,9 @@ class PairPotential
     std::string_view nameI() const;
     // Return name for second source parameters
     std::string_view nameJ() const;
+    // Set interaction potential
+    bool setInteractionPotential(Functions1D::Form form, std::string_view parameters);
     // Return interaction potential
-    InteractionPotential<Functions1D> &interactionPotential();
     const InteractionPotential<Functions1D> &interactionPotential() const;
     // Set charge I
     void setChargeI(double value);
@@ -154,8 +155,8 @@ class PairPotential
     double range() const;
     // Return spacing between points
     double delta() const;
-    // (Re)generate original potential (uOriginal) from current parameters
-    void calculateUOriginal(bool recalculateUFull = true);
+    // Calculate original potential (uOriginal) from current parameters
+    void calculateUOriginal();
     // Return potential at specified r
     double energy(double r);
     // Return analytic potential at specified r, including Coulomb term from local atomtype charges

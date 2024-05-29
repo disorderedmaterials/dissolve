@@ -9,7 +9,8 @@ EnumOptions<ShortRangeFunctions::Form> ShortRangeFunctions::forms()
     return EnumOptions<ShortRangeFunctions::Form>("ShortRangeType",
                                                   {{ShortRangeFunctions::Form::None, "None"},
                                                    {ShortRangeFunctions::Form::LennardJones, "LJ", 2, 2},
-                                                   {ShortRangeFunctions::Form::LennardJonesGeometric, "LJGeometric", 2, 2}});
+                                                   {ShortRangeFunctions::Form::LennardJonesGeometric, "LJGeometric", 2, 2},
+                                                   {ShortRangeFunctions::Form::Buckingham, "Buckingham", 3, 3}});
 }
 
 // Return parameters for specified form
@@ -18,7 +19,8 @@ const std::vector<std::string> &ShortRangeFunctions::parameters(Form form)
     static std::map<ShortRangeFunctions::Form, std::vector<std::string>> params_ = {
         {ShortRangeFunctions::Form::None, {}},
         {ShortRangeFunctions::Form::LennardJones, {"epsilon", "sigma"}},
-        {ShortRangeFunctions::Form::LennardJonesGeometric, {"epsilon", "sigma"}}};
+        {ShortRangeFunctions::Form::LennardJonesGeometric, {"epsilon", "sigma"}},
+        {ShortRangeFunctions::Form::Buckingham, {"A", "B", "C"}}};
     return params_[form];
 }
 
@@ -62,6 +64,12 @@ InteractionPotential<Functions1D> ShortRangeFunctions::combine(const Interaction
                  */
                 return {Functions1D::Form::LennardJones126,
                         {sqrt(srI.parameters()[0] * srJ.parameters()[0]), sqrt(srI.parameters()[1] * srJ.parameters()[1])}};
+            case (Form::Buckingham):
+                /*
+
+                */
+                return {Functions1D::Form::Buckingham};
+
                 break;
             default:
                 throw(std::runtime_error(
