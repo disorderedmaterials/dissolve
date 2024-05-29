@@ -22,7 +22,8 @@ Data1D derivative(const Data1D &source)
     for (auto n = 1; n < nValues - 1; ++n)
     {
         /* Calculate numerical derivative with five-point stencil if possible. Otherwise use three-point stencil.
-         * Assumes data are regularly-spaced (they should be, with gap of delta_)
+         * Assumes data are regularly-spaced.
+         *
          *            -f(x+2) + 8 f(x+1) - 8 f(x-1) + f(x-2)
          *    f'(x) = --------------------------------------
          *                           12 h
