@@ -18,16 +18,17 @@ bool PairPotential::includeCoulombPotential_ = false;
 PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ)
     : nameI_(nameI), nameJ_(nameJ), totalShortRangePotentialInterpolation_(referenceShortRangePotential_),
       coulombPotentialInterpolation_(coulombPotential_), totalPotentialInterpolation_(totalPotential_),
-      derivativeInterpolation_(derivative_), interactionPotential_{Functions1D::Form::None, ""}, potentialFunction_{
-                                                                                                     Functions1D::Form::None,
-                                                                                                     {}}
+      totalShortRangeDerivativeInterpolation_(totalShortRangeDerivative_), coulombDerivativeInterpolation_(coulombDerivative_),
+      totalDerivativeInterpolation_(totalDerivative_), interactionPotential_{Functions1D::Form::None, ""},
+      potentialFunction_{Functions1D::Form::None, {}}
 {
 }
 
 PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ, const InteractionPotential<Functions1D> &potential)
     : nameI_(nameI), nameJ_(nameJ), interactionPotential_(potential),
       totalShortRangePotentialInterpolation_(referenceShortRangePotential_), coulombPotentialInterpolation_(coulombPotential_),
-      totalPotentialInterpolation_(totalPotential_), derivativeInterpolation_(derivative_)
+      totalPotentialInterpolation_(totalPotential_), totalShortRangeDerivativeInterpolation_(totalShortRangeDerivative_),
+      coulombDerivativeInterpolation_(coulombDerivative_), totalDerivativeInterpolation_(totalDerivative_)
 {
     potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
 }
@@ -90,7 +91,7 @@ void PairPotential::setData1DNames()
 
     coulombPotential_.setTag(fmt::format("{}-{} (Elec)", nameI_, nameJ_));
 
-    derivative_.setTag(fmt::format("{}-{} (dU/dr)", nameI_, nameJ_));
+    totalDerivative_.setTag(fmt::format("{}-{} (dU/dr)", nameI_, nameJ_));
 }
 
 // Set names reflecting target atom types for potential
@@ -183,11 +184,15 @@ void PairPotential::updateTotals()
     coulombPotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
     totalPotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
 
-    // Calculate derivative of total potential
-    derivative_ = Derivative::derivative(totalPotential_);
+    // Calculate derivatives
+    totalShortRangeDerivative_ = Derivative::derivative(totalShortRangePotential_);
+    coulombDerivative_ = Derivative::derivative(coulombPotential_);
+    totalDerivative_ = Derivative::derivative(totalPotential_);
 
-    // Update interpolation
-    derivativeInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
+    // Update interpolations for derivatives
+    totalShortRangeDerivativeInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
+    coulombDerivativeInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
+    totalDerivativeInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
 }
 
 // Generate energy and force tables
@@ -212,7 +217,7 @@ void PairPotential::tabulate(double maxR, double delta, double chargeProduct)
     additionalShortRangePotential_ = referenceShortRangePotential_;
     totalShortRangePotential_ = referenceShortRangePotential_;
     totalPotential_ = referenceShortRangePotential_;
-    derivative_ = referenceShortRangePotential_;
+    totalDerivative_ = referenceShortRangePotential_;
 
     // Tabulate reference short-range and coulomb energies
     for (auto &&[r, refSR, coul] :
@@ -304,7 +309,14 @@ double PairPotential::force(double r)
 {
     assert(r >= 0);
 
-    return -derivativeInterpolation_.y(r, r * rDelta_);
+    return -totalDerivativeInterpolation_.y(r, r * rDelta_);
+}
+double PairPotential::force(double r, double elecScale, double srScale)
+{
+    assert(r >= 0);
+
+    return -(totalShortRangeDerivativeInterpolation_.y(r, r * rDelta_) * srScale +
+             coulombDerivativeInterpolation_.y(r, r * rDelta_) * elecScale);
 }
 
 // Return analytic force at specified r
@@ -355,7 +367,7 @@ double PairPotential::analyticCoulombForce(double qiqj, double r, PairPotential:
 const Data1D &PairPotential::totalPotential() const { return totalPotential_; }
 
 // Return full tabulated derivative
-const Data1D &PairPotential::derivative() const { return derivative_; }
+const Data1D &PairPotential::derivative() const { return totalDerivative_; }
 
 // Return short-range potential
 const Data1D &PairPotential::shortRangePotential() const { return referenceShortRangePotential_; }

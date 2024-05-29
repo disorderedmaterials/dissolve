@@ -169,7 +169,7 @@ double PotentialMap::force(const Atom &i, const Atom &j, double r, double elecSc
     // interpolated potential
     auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
     return PairPotential::includeCoulombPotential()
-               ? pp->force(r) * elecScale
+               ? pp->force(r, elecScale, srScale)
                : pp->force(r) * srScale +
                      pp->analyticCoulombForce(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r) * elecScale;
 }
@@ -197,7 +197,7 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r,
     // interpolated potential
     auto *pp = potentialMatrix_[{i->atomType()->index(), j->atomType()->index()}];
     return PairPotential::includeCoulombPotential()
-               ? pp->force(r) * elecScale
+               ? pp->force(r, elecScale, srScale)
                : pp->force(r) * srScale + pp->analyticCoulombForce(i->charge() * j->charge(), r) * elecScale;
 }
 

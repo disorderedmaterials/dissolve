@@ -117,10 +117,10 @@ class PairPotential : Serialisable<>
     Data1D totalPotential_;
     // Interpolators for potentials
     Interpolator totalShortRangePotentialInterpolation_, coulombPotentialInterpolation_, totalPotentialInterpolation_;
-    // Tabulated derivative of full potential
-    Data1D derivative_;
+    // Tabulated derivative
+    Data1D totalDerivative_, totalShortRangeDerivative_, coulombDerivative_;
     // Interpolators for derivatives
-    Interpolator derivativeInterpolation_;
+    Interpolator totalShortRangeDerivativeInterpolation_, coulombDerivativeInterpolation_, totalDerivativeInterpolation_;
 
     private:
     // Return analytic short range potential energy
@@ -155,6 +155,7 @@ class PairPotential : Serialisable<>
                           PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme()) const;
     // Return derivative of potential at specified r
     double force(double r);
+    double force(double r, double elecScale, double srScale);
     // Return analytic force at specified r, including Coulomb term from local charge product
     double analyticForce(double r, double elecScale, double srScale) const;
     // Return analytic force at specified r, including Coulomb term from supplied charge product
