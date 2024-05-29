@@ -91,7 +91,7 @@ double PotentialMap::energy(const Atom &i, const Atom &j, double r, double elecS
     // interpolated potential
     auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
     return PairPotential::includeAtomTypeCharges()
-               ? pp->energy(r) * elecScale
+               ? pp->energy(r, elecScale, srScale)
                : pp->energy(r) * srScale +
                      pp->analyticCoulombEnergy(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r) * elecScale;
 }
@@ -119,7 +119,7 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
     // interpolated potential
     auto *pp = potentialMatrix_[{i->atomType()->index(), j->atomType()->index()}];
     return PairPotential::includeAtomTypeCharges()
-               ? pp->energy(r) * elecScale
+               ? pp->energy(r, elecScale, srScale)
                : pp->energy(r) * srScale + pp->analyticCoulombEnergy(i->charge() * j->charge(), r) * elecScale;
 }
 

@@ -196,10 +196,10 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
                     case (PairPotentialOverride::PairPotentialOverrideType::Off):
                         break;
                     case (PairPotentialOverride::PairPotentialOverrideType::Add):
-                        pp->addShortRangePotential(overridePotential);
+                        pp->addToReferenceShortRangePotential(overridePotential);
                         break;
                     case (PairPotentialOverride::PairPotentialOverrideType::Replace):
-                        pp->addShortRangePotential(overridePotential, true);
+                        pp->addToReferenceShortRangePotential(overridePotential, true);
                         break;
                 }
 

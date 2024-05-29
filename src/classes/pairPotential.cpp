@@ -16,14 +16,18 @@ PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationSch
 bool PairPotential::includeAtomTypeCharges_ = false;
 
 PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ)
-    : nameI_(nameI), nameJ_(nameJ), totalPotentialInterpolation_(totalPotential_), derivativeInterpolation_(derivative_),
-      interactionPotential_{Functions1D::Form::None, ""}, potentialFunction_{Functions1D::Form::None, {}}
+    : nameI_(nameI), nameJ_(nameJ), totalShortRangePotentialInterpolation_(referenceShortRangePotential_),
+      coulombPotentialInterpolation_(coulombPotential_), totalPotentialInterpolation_(totalPotential_),
+      derivativeInterpolation_(derivative_), interactionPotential_{Functions1D::Form::None, ""}, potentialFunction_{
+                                                                                                     Functions1D::Form::None,
+                                                                                                     {}}
 {
 }
 
 PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ, const InteractionPotential<Functions1D> &potential)
-    : nameI_(nameI), nameJ_(nameJ), interactionPotential_(potential), totalPotentialInterpolation_(totalPotential_),
-      derivativeInterpolation_(derivative_)
+    : nameI_(nameI), nameJ_(nameJ), interactionPotential_(potential),
+      totalShortRangePotentialInterpolation_(referenceShortRangePotential_), coulombPotentialInterpolation_(coulombPotential_),
+      totalPotentialInterpolation_(totalPotential_), derivativeInterpolation_(derivative_)
 {
     potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
 }
@@ -81,9 +85,9 @@ void PairPotential::setData1DNames()
 {
     totalPotential_.setTag(fmt::format("{}-{}", nameI_, nameJ_));
 
-    additionalPotential_.setTag(fmt::format("{}-{} (Add)", nameI_, nameJ_));
+    additionalShortRangePotential_.setTag(fmt::format("{}-{} (Add SR)", nameI_, nameJ_));
+    referenceShortRangePotential_.setTag(fmt::format("{}-{} (Ref SR)", nameI_, nameJ_));
 
-    shortRangePotential_.setTag(fmt::format("{}-{} (SR)", nameI_, nameJ_));
     coulombPotential_.setTag(fmt::format("{}-{} (Coul)", nameI_, nameJ_));
 
     derivative_.setTag(fmt::format("{}-{} (dU/dr)", nameI_, nameJ_));
@@ -165,12 +169,20 @@ double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRang
 // Update totals
 void PairPotential::updateTotals()
 {
-    // Update total energy
-    for (auto &&[total, sr, coul, add] : zip(totalPotential_.values(), shortRangePotential_.values(),
-                                             coulombPotential_.values(), additionalPotential_.values()))
-        total = sr + coul + add;
+    // Update total short-range
 
-    // Recalculate interpolation
+    // Update total energy
+    for (auto &&[total, totalSR, refSR, addSR, coul] :
+         zip(totalPotential_.values(), totalShortRangePotential_.values(), referenceShortRangePotential_.values(),
+             additionalShortRangePotential_.values(), coulombPotential_.values()))
+    {
+        totalSR = refSR + addSR;
+        total = totalSR + coul;
+    }
+
+    // Recalculate interpolations
+    totalShortRangePotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
+    coulombPotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
     totalPotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
 
     // Calculate derivative of total potential
@@ -195,39 +207,41 @@ void PairPotential::tabulate(double maxR, double delta, double qi, double qj)
 
     // Set up containers
     const auto nPoints = int(range_ / delta);
-    shortRangePotential_.initialise(nPoints);
+    referenceShortRangePotential_.initialise(nPoints);
     for (auto n = 0; n < nPoints; ++n)
-        shortRangePotential_.xAxis()[n] = n * delta_;
-    coulombPotential_ = shortRangePotential_;
-    additionalPotential_ = shortRangePotential_;
-    totalPotential_ = shortRangePotential_;
-    derivative_ = shortRangePotential_;
+        referenceShortRangePotential_.xAxis()[n] = n * delta_;
+    coulombPotential_ = referenceShortRangePotential_;
+    additionalShortRangePotential_ = referenceShortRangePotential_;
+    totalShortRangePotential_ = referenceShortRangePotential_;
+    totalPotential_ = referenceShortRangePotential_;
+    derivative_ = referenceShortRangePotential_;
 
-    // Tabulate short-range and coulomb energies
-    for (auto &&[r, sr, coul] : zip(shortRangePotential_.xAxis(), shortRangePotential_.values(), coulombPotential_.values()))
+    // Tabulate reference short-range and coulomb energies
+    for (auto &&[r, refSR, coul] :
+         zip(referenceShortRangePotential_.xAxis(), referenceShortRangePotential_.values(), coulombPotential_.values()))
     {
-        sr = analyticShortRangeEnergy(r);
+        refSR = analyticShortRangeEnergy(r);
         coul = analyticCoulombEnergy(atomTypeChargeProduct_, r);
     }
 
     // Since the first point at r = 0.0 risks being a nan, set it to ten times the second point instead
-    shortRangePotential_.value(0) = 10.0 * shortRangePotential_.value(1);
+    referenceShortRangePotential_.value(0) = 10.0 * referenceShortRangePotential_.value(1);
     coulombPotential_.value(0) = 10.0 * coulombPotential_.value(1);
 
     // Ensure additional potential is set to zero and update full potential
-    std::fill(additionalPotential_.values().begin(), additionalPotential_.values().end(), 0);
+    std::fill(additionalShortRangePotential_.values().begin(), additionalShortRangePotential_.values().end(), 0);
 
     // Update totals
     updateTotals();
 }
 
-// Add supplied function to the short-range potential
-void PairPotential::addShortRangePotential(const Function1DWrapper &potential, bool overwriteExisting)
+// Add supplied function to the reference short-range potential
+void PairPotential::addToReferenceShortRangePotential(const Function1DWrapper &potential, bool overwriteExisting)
 {
     if (overwriteExisting)
-        std::fill(shortRangePotential_.values().begin(), shortRangePotential_.values().end(), 0.0);
+        std::fill(referenceShortRangePotential_.values().begin(), referenceShortRangePotential_.values().end(), 0.0);
 
-    for (auto &&[r, sr] : zip(shortRangePotential_.xAxis(), shortRangePotential_.values()))
+    for (auto &&[r, sr] : zip(referenceShortRangePotential_.xAxis(), referenceShortRangePotential_.values()))
         sr += potential.y(r);
 
     // Update totals
@@ -246,6 +260,13 @@ double PairPotential::energy(double r)
     assert(r >= 0);
 
     return totalPotentialInterpolation_.y(r, r * rDelta_);
+}
+double PairPotential::energy(double r, double elecScale, double srScale)
+{
+    assert(r >= 0);
+
+    return totalShortRangePotentialInterpolation_.y(r, r * rDelta_) * srScale +
+           coulombPotentialInterpolation_.y(r, r * rDelta_) * elecScale;
 }
 
 // Return analytic potential at specified r, including Coulomb term from local atomtype charges
@@ -339,18 +360,18 @@ const Data1D &PairPotential::totalPotential() const { return totalPotential_; }
 const Data1D &PairPotential::derivative() const { return derivative_; }
 
 // Return short-range potential
-const Data1D &PairPotential::shortRangePotential() const { return shortRangePotential_; }
+const Data1D &PairPotential::shortRangePotential() const { return referenceShortRangePotential_; }
 
 // Return Coulomb potential
 const Data1D &PairPotential::coulombPotential() const { return coulombPotential_; }
 
 // Return additional potential
-const Data1D &PairPotential::additionalPotential() const { return additionalPotential_; }
+const Data1D &PairPotential::additionalPotential() const { return additionalShortRangePotential_; }
 
 // Zero additional potential
 void PairPotential::resetAdditionalPotential()
 {
-    std::fill(additionalPotential_.values().begin(), additionalPotential_.values().end(), 0.0);
+    std::fill(additionalShortRangePotential_.values().begin(), additionalShortRangePotential_.values().end(), 0.0);
 
     updateTotals();
 }
@@ -358,7 +379,7 @@ void PairPotential::resetAdditionalPotential()
 // Set additional potential
 void PairPotential::setAdditionalPotential(Data1D &newUAdditional)
 {
-    additionalPotential_ = newUAdditional;
+    additionalShortRangePotential_ = newUAdditional;
 
     updateTotals();
 }
