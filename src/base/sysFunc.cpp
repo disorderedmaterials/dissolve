@@ -318,10 +318,10 @@ std::string DissolveSys::replace(const std::string_view source, const std::strin
     return result;
 }
 
-// Split a string over a delimiter, returning a vector of elements
-std::vector<std::string> DissolveSys::splitString(std::string_view str, std::string_view delim)
+// Split a string over a delimiter, returning a vector of string view elements
+std::vector<std::string_view> DissolveSys::splitString(std::string_view str, std::string_view delim)
 {
-    std::vector<std::string> parts;
+    std::vector<std::string_view> parts;
     auto index = 0;
     while (true)
     {
@@ -341,16 +341,6 @@ std::vector<std::string> DissolveSys::splitString(std::string_view str, std::str
         index = found + delim.size();
     }
     return parts;
-}
-
-// Split a string over a delimiter, returning a vector of converted double values
-std::vector<double> DissolveSys::splitStringToDoubles(std::string_view str, std::string_view delim)
-{
-    std::vector<double> values;
-    std::vector<string> terms{splitString(str, delim)};
-    values.resize(terms.size());
-    std::transform(terms.begin(), terms.end(), values.begin(), [](const auto &term) { return std::stod(term); });
-    return values;
 }
 
 // Double any of the supplied characters in the string

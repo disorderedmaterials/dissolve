@@ -67,9 +67,7 @@ class DissolveSys
     // Replace all occurrences of search string with replace string
     static std::string replace(const std::string_view source, const std::string_view search, const std::string_view replace);
     // Split a string over a delimiter, returning a vector of elements
-    static std::vector<std::string> splitString(std::string_view str, std::string_view delim = " ");
-    // Split a string over a delimiter, returning a vector of converted double values
-    static std::vector<double> splitStringToDoubles(std::string_view str, std::string_view delim = ", ");
+    static std::vector<std::string_view> splitString(std::string_view str, std::string_view delim = " ");
     // Double any of the supplied characters in the string
     static std::string doubleChars(const std::string_view s, const std::string_view charsToDouble);
     // Return unique name for object

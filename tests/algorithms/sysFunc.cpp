@@ -93,8 +93,8 @@ TEST(SysFunc, StringManipulation)
     EXPECT_TRUE(DissolveSys::replace("Swap the AaA's", "A", "bee") == "Swap the beeabee's");
 
     // String splitting / joining
-    std::vector<std::string> v;
-    const std::vector<std::string> expected = {"arma", "dillo", "is", "in", "pieces"};
+    std::vector<std::string_view> v;
+    const std::vector<std::string_view> expected = {"arma", "dillo", "is", "in", "pieces"};
     // -- Empty string
     v = DissolveSys::splitString("", " ");
     EXPECT_EQ(v.size(), 0);
