@@ -48,6 +48,8 @@
           libglvnd.dev
           q.qtbase
           q.qtbase.dev
+          q.qtcharts
+          q.qtcharts.dev
           q.qtsvg
           q.qtshadertools
           q.qttools

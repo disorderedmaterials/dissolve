@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Dissolve
+import "charting" as C
 
 ApplicationWindow {
     id: dissolveWindow
@@ -8,6 +10,19 @@ ApplicationWindow {
     title: "Dissolve"
     visible: true
     width: 819
+
+    /*
+        Test chart in window
+    */
+    Window {        
+        id: chartWindow
+        height: dissolveWindow.height/2; width: dissolveWindow.width/2
+
+        C.Data1D {
+            id: data1DChart
+            height: parent.height; width: parent.width
+        }
+    }
 
     TabBar {
         id: tabBar
@@ -57,6 +72,15 @@ ApplicationWindow {
             }
             MenuItem {
                 text: "Quit"
+            }
+        }
+    
+        Menu {
+            title: "&TEST_CHART"
+            
+            MenuItem {
+                text: "&1D..."
+                onTriggered: chartWindow.show()
             }
         }
     }

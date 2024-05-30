@@ -378,7 +378,7 @@ if(GUI)
            # Module gui libs
            gui-qml ${NO_WHOLE_ARCHIVE_FLAG}
     PRIVATE # External libs
-            Qt6::Qml ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
+           Qt6::Qml Qt6::Widgets ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
   )
 
   qt_generate_deploy_qml_app_script(

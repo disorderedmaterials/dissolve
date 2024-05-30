@@ -8,7 +8,8 @@
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
-#include <QGuiApplication>
+#include <QApplication>
+//#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QSurfaceFormat>
 #include <clocale>
@@ -27,7 +28,9 @@ int main(int args, char **argv)
     // Initialise random seed
     srand(options.randomSeed().value_or((unsigned)time(nullptr)));
 
-    QGuiApplication app(args, argv);
+    Types::registerDissolveQmlTypes();
+
+    QApplication app(args, argv);
 
     QQmlApplicationEngine engine;
     const QUrl url(u"qrc:/main/qml/DissolveMain.qml"_qs);
@@ -37,7 +40,6 @@ int main(int args, char **argv)
         Qt::QueuedConnection);
     engine.load(url);
 
-    Types::registerDissolveQmlTypes();
     QCoreApplication::setOrganizationName("Team Dissolve");
     QCoreApplication::setOrganizationDomain("www.projectdissolve.com");
     QCoreApplication::setApplicationName("Dissolve-GUI-QML");
