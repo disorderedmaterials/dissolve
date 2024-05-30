@@ -186,6 +186,7 @@ void SpeciesTab::updateSitesTab()
             ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
             break;
     }
+
     // If the current site has changed, also regenerate the SpeciesSite renderable
     if (ui_.ViewerWidget->speciesViewer()->speciesSite() != site)
         ui_.ViewerWidget->setSite(site);
