@@ -342,6 +342,7 @@ const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::dynamicAtomTypes() co
 
 // Return fragment definition
 const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
+
 // Update fragment definition
 bool SpeciesSite::setFragmentDefinitionString(std::string_view definitionString)
 {
