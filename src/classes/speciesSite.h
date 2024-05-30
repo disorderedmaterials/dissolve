@@ -167,15 +167,15 @@ class SpeciesSite : public Serialisable<CoreData &>
 
     private:
     // Calculate geometric centre of atoms in the parent Species
-    Vec3<double> centreOfGeometry(std::vector<int> &indices) const;
+    Vec3<double> centreOfGeometry(const std::vector<int> &indices) const;
     // Calculate (mass-weighted) coordinate centre of atoms in the parent Species
-    Vec3<double> centreOfMass(std::vector<int> &indices) const;
+    Vec3<double> centreOfMass(const std::vector<int> &indices) const;
 
     public:
     // Create and return Site description from parent Species
     std::vector<std::shared_ptr<Site>> createFromParent() const;
-    // Generate unique sites
-    bool generateUniqueSites();
+    // Generate instances
+    bool generateInstances();
     // Return site instances
     const std::vector<SpeciesSiteInstance> &instances() const;
 
