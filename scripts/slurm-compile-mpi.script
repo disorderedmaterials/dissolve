@@ -18,7 +18,7 @@ echo "Base script dir is ${BASE_DIR}"
 # Check / download ANTLR4
 # -----------------------
 
-ANTLR_VERSION=4.8
+ANTLR_VERSION=4.13.1
 ANTLR_JAR=antlr-${ANTLR_VERSION}-complete.jar
 if [ -f ${ANTLR_JAR} ]
 then
@@ -40,7 +40,9 @@ fi
 # Load Necessary Modules
 # ----------------------
 module load foss
-module load CMake/3.16.4-GCCcore-9.3.0
+module load CMake/3.23.1-GCCcore-11.3.0
+module load Java/13.0.2
+
 
 # Set-up Build Dir
 # ---------------
@@ -48,10 +50,6 @@ BUILD_DIR="${BASE_DIR}/build-$SLURM_JOB_ID"
 echo "Build directory is '${BUILD_DIR}'"
 mkdir ${BUILD_DIR}
 cd ${BUILD_DIR}
-
-# Run Conan
-# ---------
-conan install ../../ -s compiler.libcxx=libstdc++11 -s compiler.version=9 --build=tbb -o tbb:shared=False -o antlr4-cppruntime:shared=False
 
 # Run CMake
 # ---------
