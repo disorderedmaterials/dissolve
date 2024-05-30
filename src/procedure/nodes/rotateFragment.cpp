@@ -57,7 +57,7 @@ bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureConte
 
     if (!site.hasAxes())
     {
-        Messenger::warn("FragmentSite '{}' has no axes to rotate about.", parent->name());
+        Messenger::warn("Fragment site '{}' has no axes to rotate about.", parent->name());
         return false;
     }
 
