@@ -3,7 +3,7 @@ import QtCharts
 
 ChartView {
     title: "1D Chart"
-    anchors.fill: true
+    anchors.fill: parent
     antialiasing: true
 
     LineSeries {
