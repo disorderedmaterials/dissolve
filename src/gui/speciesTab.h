@@ -134,6 +134,8 @@ class SpeciesTab : public QWidget, public MainTab
     private:
     // Return currently-selected SpeciesSite
     SpeciesSite *currentSite();
+    // Update instance count group
+    void updateInstanceCountGroup();
 
     private Q_SLOTS:
     void setCurrentSiteFromViewer();

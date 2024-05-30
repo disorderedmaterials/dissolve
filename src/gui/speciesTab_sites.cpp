@@ -16,6 +16,21 @@ SpeciesSite *SpeciesTab::currentSite()
     return sites_.data(ui_.SiteList->selectionModel()->currentIndex(), Qt::UserRole).value<SpeciesSite *>();
 }
 
+// Update instance count group
+void SpeciesTab::updateInstanceCountGroup()
+{
+    auto *site = currentSite();
+    if (!site)
+        ui_.InstanceCountLabel->setText("N/A");
+    else if (site->instances().empty())
+        ui_.InstanceCountLabel->setText("0 (no instances generated)");
+    else
+        ui_.InstanceCountLabel->setText(
+            QString("%1 (%2 atom%3 each)")
+                .arg(QString::number(site->instances().size()), QString::number(site->instances().front().allIndices().size()),
+                     QString::fromStdString(DissolveSys::plural(site->instances().front().allIndices().size()))));
+}
+
 /*
  * Private Slots
  */
@@ -102,6 +117,7 @@ void SpeciesTab::on_SiteFragmentDescriptionEdit_editingFinished()
     site->setFragmentDefinitionString(std::string_view(ui_.SiteFragmentDescriptionEdit->text().toStdString()));
     ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
 
+    updateInstanceCountGroup();
     ui_.ViewerWidget->setSite(site);
     ui_.ViewerWidget->postRedisplay();
 
@@ -186,6 +202,8 @@ void SpeciesTab::updateSitesTab()
             ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
             break;
     }
+
+    updateInstanceCountGroup();
 
     // If the current site has changed, also regenerate the SpeciesSite renderable
     if (ui_.ViewerWidget->speciesViewer()->speciesSite() != site)
