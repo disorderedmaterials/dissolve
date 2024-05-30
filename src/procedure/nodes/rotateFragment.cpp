@@ -39,7 +39,8 @@ bool RotateFragmentProcedureNode::mustBeNamed() const { return false; }
 
 bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureContext)
 {
-    assert(site_->currentSite());
+    if (!site_->currentSite())
+        return Messenger::error("No current site to act upon! Did you mean to put this in a loop?");
 
     auto &site = site_->currentSite()->get();
     auto parent = site.parent();
