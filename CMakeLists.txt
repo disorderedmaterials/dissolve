@@ -105,6 +105,7 @@ if(GUI)
   find_package(
     Qt6
     COMPONENTS Core
+               Charts
                DBusTools
                Gui
                Widgets
