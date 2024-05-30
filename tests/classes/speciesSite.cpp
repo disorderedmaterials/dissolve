@@ -170,15 +170,16 @@ TEST_F(SpeciesSiteTest, FragmentBasic)
     EXPECT_TRUE(site.setFragmentDefinitionString("?C, #origin, ring(C(-H),C(-H),C(-H),C(-H),C(-H),C(-H))"));
 
     // Expect a single unique site
-    EXPECT_EQ(site.nSites(), 1);
-    EXPECT_EQ(site.sitesAllAtomsIndices().size(), 1);
-    // There should be 12 atoms in the site
-    EXPECT_EQ(site.sitesAllAtomsIndices().front().size(), 12);
+    EXPECT_EQ(site.instances().size(), 1);
+    const auto &instance = site.instances().front();
+
+    // There should be 12 atoms in the site overall
+    EXPECT_EQ(instance.allIndices().size(), 12);
     // There should be a single defined origin atoms
-    EXPECT_EQ(site.sitesOriginAtomsIndices().size(), 1);
+    EXPECT_EQ(instance.originIndices().size(), 1);
     // There should be no defined x or y axis atoms
-    EXPECT_EQ(site.sitesXAxisAtomsIndices().size(), 0);
-    EXPECT_EQ(site.sitesYAxisAtomsIndices().size(), 0);
+    EXPECT_EQ(instance.xAxisIndices().size(), 0);
+    EXPECT_EQ(instance.yAxisIndices().size(), 0);
 }
 
 } // namespace UnitTest
