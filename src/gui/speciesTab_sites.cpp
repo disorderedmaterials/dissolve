@@ -102,23 +102,13 @@ void SpeciesTab::on_SiteFragmentDescriptionEdit_editingFinished()
     site->setFragmentDefinitionString(std::string_view(ui_.SiteFragmentDescriptionEdit->text().toStdString()));
     ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
 
+    ui_.ViewerWidget->setSite(site);
     ui_.ViewerWidget->postRedisplay();
 
     dissolveWindow_->setModified();
 }
 
-void SpeciesTab::on_SiteFragmentDescriptionEdit_returnPressed()
-{
-    auto *site = currentSite();
-    if (refreshLock_.isLocked() || (!site))
-        return;
-    site->setFragmentDefinitionString(std::string_view(ui_.SiteFragmentDescriptionEdit->text().toStdString()));
-    ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
-
-    ui_.ViewerWidget->postRedisplay();
-
-    dissolveWindow_->setModified();
-}
+void SpeciesTab::on_SiteFragmentDescriptionEdit_returnPressed() { on_SiteFragmentDescriptionEdit_editingFinished(); }
 
 /*
  * Public Functions
