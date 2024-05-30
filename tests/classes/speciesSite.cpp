@@ -166,10 +166,39 @@ TEST_F(SpeciesSiteTest, FragmentBasic)
 
     SpeciesSite site(&benzene, SpeciesSite::SiteType::Fragment);
 
-    // Set the NETA definition string.
+    // Set the NETA definition string - no origin
+    EXPECT_TRUE(site.setFragmentDefinitionString("?C"));
+
+    // No origin specified, so expect no instances
+    EXPECT_EQ(site.instances().size(), 0);
+
+    // Re-set with actual origin on the root match
+    EXPECT_TRUE(site.setFragmentDefinitionString("?C,#origin"));
+
+    // Expect six instances, one for each carbon
+    EXPECT_EQ(site.instances().size(), 6);
+    for (auto &instance : site.instances())
+    {
+        // There should be 1 atom in the site overall
+        EXPECT_EQ(instance.allIndices().size(), 1);
+        // There should be a single defined origin atoms
+        EXPECT_EQ(instance.originIndices().size(), 1);
+        // There should be no defined x or y axis atoms
+        EXPECT_EQ(instance.xAxisIndices().size(), 0);
+        EXPECT_EQ(instance.yAxisIndices().size(), 0);
+    }
+}
+
+TEST_F(SpeciesSiteTest, FragmentAdvanced)
+{
+    auto &benzene = benzeneSpecies();
+
+    SpeciesSite site(&benzene, SpeciesSite::SiteType::Fragment);
+
+    // Set the NETA definition string
     EXPECT_TRUE(site.setFragmentDefinitionString("?C, #origin, ring(C(-H),C(-H),C(-H),C(-H),C(-H),C(-H))"));
 
-    // Expect a single unique site
+    // Expect a single instance
     EXPECT_EQ(site.instances().size(), 1);
     const auto &instance = site.instances().front();
 
@@ -180,6 +209,28 @@ TEST_F(SpeciesSiteTest, FragmentBasic)
     // There should be no defined x or y axis atoms
     EXPECT_EQ(instance.xAxisIndices().size(), 0);
     EXPECT_EQ(instance.yAxisIndices().size(), 0);
+}
+
+TEST_F(SpeciesSiteTest, FragmentAdvancedAxes)
+{
+    auto &benzene = benzeneSpecies();
+
+    SpeciesSite site(&benzene, SpeciesSite::SiteType::Fragment);
+
+    // Set the NETA definition string
+    EXPECT_TRUE(site.setFragmentDefinitionString("?C, #origin, ring(C(-H),C(-H,#x),C(-H,#x),C(-H),C(-H(#y)),C(-H))"));
+
+    // Expect a single instance
+    EXPECT_EQ(site.instances().size(), 1);
+    const auto &instance = site.instances().front();
+
+    // There should be 12 atoms in the site overall
+    EXPECT_EQ(instance.allIndices().size(), 12);
+    // There should be a single defined origin atom
+    EXPECT_EQ(instance.originIndices().size(), 1);
+    // There should be two atoms defined for the x axis and one for the y
+    EXPECT_EQ(instance.xAxisIndices().size(), 2);
+    EXPECT_EQ(instance.yAxisIndices().size(), 1);
 }
 
 } // namespace UnitTest
