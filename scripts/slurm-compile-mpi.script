@@ -54,7 +54,7 @@ cd ${BUILD_DIR}
 # Run CMake
 # ---------
 MPI_ROOT=/apps/eb/software/OpenMPI/4.0.3-GCC-9.3.0/bin
-cmake ../../ -DMPI_C=${MPI_ROOT}/mpicc -DMPI_CXX=${MPI_ROOT}/mpic++ -DCMAKE_CXX_FLAGS:string="-std=c++17 -pthread" -DCMAKE_C_FLAGS:string="-pthread" -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=${BASE_DIR}/${ANTLR_JAR} -DBUILD_ANTLR_ZIPFILE:path=${BASE_DIR}/${ANTLR_ZIP}
+cmake ../../ -DMPI_C=${MPI_ROOT}/mpicc -DMPI_CXX=${MPI_ROOT}/mpic++ -DCMAKE_CXX_FLAGS:string="-std=c++17 -pthread" -DCMAKE_C_FLAGS:string="-pthread" -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=${BASE_DIR}/${ANTLR_JAR} -DBUILD_ANTLR_ZIPFILE:path=${BASE_DIR}/${ANTLR_ZIP} -DEXTRA_CONAN_OPTIONS:string="pugixml:header_only=True"
 
 # Make
 # ----

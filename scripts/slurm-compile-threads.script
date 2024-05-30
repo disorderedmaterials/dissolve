@@ -53,7 +53,7 @@ cd ${BUILD_DIR}
 
 # Run CMake
 # ---------
-cmake ../../ -DCMAKE_CXX_FLAGS:string="-std=c++17 -pthread" -DCMAKE_C_FLAGS:string="-pthread" -DMULTI_THREADING:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=${BASE_DIR}/${ANTLR_JAR} -DBUILD_ANTLR_ZIPFILE:path=${BASE_DIR}/${ANTLR_ZIP}
+cmake ../../ -DCMAKE_CXX_FLAGS:string="-std=c++17 -pthread" -DCMAKE_C_FLAGS:string="-pthread" -DMULTI_THREADING:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=${BASE_DIR}/${ANTLR_JAR} -DBUILD_ANTLR_ZIPFILE:path=${BASE_DIR}/${ANTLR_ZIP} -DEXTRA_CONAN_OPTIONS:string="pugixml:header_only=True"
 
 # Make
 # ----
