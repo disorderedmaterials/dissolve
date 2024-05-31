@@ -17,9 +17,11 @@ class SimpleGlobalPotentialProcedureNode : public ProcedureNode
      * Potential Function
      */
     private:
-    // Potential form and origin
+    // Potential form
     InteractionPotential<SimplePotentialFunctions> potential_;
+    // Origin coordinates
     Vec3<NodeValue> origin_;
+    bool originIsFractional_{false};
 
     /*
      * Execute

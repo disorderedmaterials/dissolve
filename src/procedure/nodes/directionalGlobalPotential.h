@@ -17,9 +17,12 @@ class DirectionalGlobalPotentialProcedureNode : public ProcedureNode
      * Potential Function
      */
     private:
-    // Potential form, origin and directional vector
+    // Potential form
     InteractionPotential<DirectionalPotentialFunctions> potential_;
+    // Origin coordinates
     Vec3<NodeValue> origin_;
+    bool originIsFractional_{false};
+    // Directional vector
     Vec3<NodeValue> vector_;
 
     /*
