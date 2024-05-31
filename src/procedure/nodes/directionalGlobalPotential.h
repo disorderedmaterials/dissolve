@@ -23,7 +23,7 @@ class DirectionalGlobalPotentialProcedureNode : public ProcedureNode
     Vec3<NodeValue> origin_;
     bool originIsFractional_{false};
     // Directional vector
-    Vec3<NodeValue> vector_;
+    Vec3<NodeValue> vector_{0.0, 0.0, 1.0};
 
     /*
      * Execute
