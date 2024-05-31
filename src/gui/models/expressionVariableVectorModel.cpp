@@ -6,7 +6,7 @@
 
 // Set source variable data
 void ExpressionVariableVectorModel::setData(std::vector<std::shared_ptr<ExpressionVariable>> &variables,
-                                            const ProcedureNode *parentNode)
+                                            ProcedureNode *parentNode)
 {
     beginResetModel();
     variables_ = variables;
@@ -121,5 +121,28 @@ bool ExpressionVariableVectorModel::setData(const QModelIndex &index, const QVar
     }
 
     Q_EMIT dataChanged(index, index);
+    return true;
+}
+
+bool ExpressionVariableVectorModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    Q_UNUSED(count);
+    beginInsertRows(parent, row, row);
+    parentNode_->addParameter("NewParameter", 0.0, row);
+    endInsertRows();
+    return true;
+}
+
+bool ExpressionVariableVectorModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    Q_UNUSED(count);
+    if (row >= rowCount(parent) || row < 0)
+    {
+        return false;
+    }
+
+    beginRemoveRows(parent, row, row);
+//    ranges_->get().erase(ranges_->get().begin() + row);
+    endRemoveRows();
     return true;
 }

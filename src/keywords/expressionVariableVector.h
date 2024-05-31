@@ -33,6 +33,7 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     std::vector<std::shared_ptr<ExpressionVariable>> &data();
     const std::vector<std::shared_ptr<ExpressionVariable>> &data() const;
     // Return parent ProcedureNode
+    ProcedureNode *parentNode();
     const ProcedureNode *parentNode() const;
 
     /*

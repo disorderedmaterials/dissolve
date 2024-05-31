@@ -23,6 +23,7 @@ std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeywor
 const std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() const { return data_; }
 
 // Return parent ProcedureNode
+ProcedureNode *ExpressionVariableVectorKeyword::parentNode() { return parentNode_; }
 const ProcedureNode *ExpressionVariableVectorKeyword::parentNode() const { return parentNode_; }
 
 /*

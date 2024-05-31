@@ -36,7 +36,10 @@ class ExpressionVariableVectorKeywordWidget : public QWidget, public KeywordWidg
     ExpressionVariableVectorModel variableModel_;
 
     private Q_SLOTS:
-    void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void variableDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void variableSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
+    void ui_AddVariableButton_clicked(bool checked);
+    void ui_RemoveVariableButton_clicked(bool checked);
 
     Q_SIGNALS:
     // Keyword data changed
