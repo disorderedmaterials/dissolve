@@ -4,137 +4,100 @@
 #include "gui/models/expressionVariableVectorModel.h"
 #include "procedure/nodes/node.h"
 
-// Set source variable data
-void ExpressionVariableVectorModel::setData(std::vector<std::shared_ptr<ExpressionVariable>> &variables,
-                                            ProcedureNode *parentNode)
+DataTableModelInterface::DataTableModelInterface(DataModelBase &dataModel) : dataModel_(dataModel) {}
+
+int DataTableModelInterface::rowCount(const QModelIndex &parent) const
 {
-    beginResetModel();
-    variables_ = variables;
-    parentNode_ = parentNode;
-    endResetModel();
+    return dataModel_.nChildren(parent.row(), parent.column());
 }
 
-int ExpressionVariableVectorModel::rowCount(const QModelIndex &parent) const
+int DataTableModelInterface::columnCount(const QModelIndex &parent) const
 {
-    if (parent.isValid())
-        return 0;
-    return variables_ ? variables_->get().size() : 0;
-}
-int ExpressionVariableVectorModel::columnCount(const QModelIndex &parent) const
-{
-    if (parent.isValid())
-        return 0;
-    return 3;
+    return dataModel_.nProperties(parent.row(), parent.column());
 }
 
-Qt::ItemFlags ExpressionVariableVectorModel::flags(const QModelIndex &index) const
+Qt::ItemFlags DataTableModelInterface::flags(const QModelIndex &index) const
 {
+    // TODO
     if (index.column() == 1)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     else
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
 }
 
-QVariant ExpressionVariableVectorModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant DataTableModelInterface::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (role != Qt::DisplayRole)
+    if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
         return {};
 
-    if (orientation == Qt::Horizontal)
-        switch (section)
-        {
-            case 0:
-                return "Name";
-            case 1:
-                return "Type";
-            case 2:
-                return "Value";
-            default:
-                return {};
-        }
-
-    return {};
+    return QString::fromStdString(dataModel_.propertyName(section));
 }
 
 // Bond model
-QVariant ExpressionVariableVectorModel::data(const QModelIndex &index, int role) const
+QVariant DataTableModelInterface::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || !variables_)
-        return {};
-
-    auto &vars = variables_->get();
-
-    if (index.row() >= vars.size() || index.row() < 0)
-        return {};
-
     if (role != Qt::DisplayRole && role != Qt::EditRole)
         return {};
 
-    auto &var = vars[index.row()];
+    // Get the specified data property
+    auto property = dataModel_.getProperty(index.row(), index.column());
 
-    switch (index.column())
+    switch (property.type())
     {
-        // Name
-        case 0:
-            return QString::fromStdString(std::string(var->baseName()));
-        case 1:
-            return var->value().type() == ExpressionValue::ValueType::Integer ? "Int" : "Real";
-        case 2:
-            return QString::fromStdString(var->value().asString());
+        case (PropertyType::Invalid):
+            return {};
+        case (PropertyType::Integer):
+            return property.intValue();
+        case (PropertyType::Double):
+            return property.doubleValue();
+        case (PropertyType::String):
+            return QString::fromStdString(property.stringValue());
         default:
             return {};
     }
-
-    return {};
 }
 
-bool ExpressionVariableVectorModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool DataTableModelInterface::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role != Qt::EditRole || !variables_ || index.column() == 1)
+    if (role != Qt::EditRole || dataModel_.isPropertyFlagSet(index.column(), PropertyFlag::ReadOnly))
         return false;
 
-    auto &var = variables_->get()[index.row()];
-
-    if (index.column() == 0)
+    // Set new value
+    bool success = false;
+    switch (dataModel_.propertyType(index.column()))
     {
-        // Name - must check for existing var in scope with the same name
-        auto p = parentNode_->getParameterInScope(value.toString().toStdString());
-        if (p && p != var)
-            return false;
-        var->setBaseName(value.toString().toStdString());
-    }
-    else if (index.column() == 2)
-    {
-        // Value - need to check type (int vs double)
-        auto varValue = value.toString().toStdString();
-        bool isFloatingPoint = false;
-        if (DissolveSys::isNumber(varValue, isFloatingPoint))
-        {
-            if (isFloatingPoint)
-                var->setValue(value.toDouble());
-            else
-                var->setValue(value.toInt());
-        }
-        else
-            return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n", varValue,
-                                    var->baseName());
+        case (PropertyType::Integer):
+            success = dataModel_.setProperty(index.row(), index.column(), DataItemValue(value.toInt()));
+            break;
+        case (PropertyType::Double):
+            success = dataModel_.setProperty(index.row(), index.column(), DataItemValue(value.toDouble()));
+            break;
+        case (PropertyType::String):
+            success = dataModel_.setProperty(index.row(), index.column(), DataItemValue(value.toString().toStdString()));
+            break;
+        default:
+            break;
     }
 
-    Q_EMIT dataChanged(index, index);
-    return true;
+    if (success)
+        Q_EMIT dataChanged(index, index);
+
+    return success;
 }
 
-bool ExpressionVariableVectorModel::insertRows(int row, int count, const QModelIndex &parent)
+bool DataTableModelInterface::insertRows(int row, int count, const QModelIndex &parent)
 {
+    // TODO
     Q_UNUSED(count);
     beginInsertRows(parent, row, row);
-    parentNode_->addParameter("NewParameter", 0.0, row);
+    //    parentNode_->addParameter("NewParameter", 0.0, row);
     endInsertRows();
     return true;
 }
 
-bool ExpressionVariableVectorModel::removeRows(int row, int count, const QModelIndex &parent)
+bool DataTableModelInterface::removeRows(int row, int count, const QModelIndex &parent)
 {
+    // TODO
     Q_UNUSED(count);
     if (row >= rowCount(parent) || row < 0)
     {
@@ -142,7 +105,7 @@ bool ExpressionVariableVectorModel::removeRows(int row, int count, const QModelI
     }
 
     beginRemoveRows(parent, row, row);
-//    ranges_->get().erase(ranges_->get().begin() + row);
+    //    ranges_->get().erase(ranges_->get().begin() + row);
     endRemoveRows();
     return true;
 }

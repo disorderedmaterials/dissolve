@@ -33,7 +33,7 @@ class ExpressionVariableVectorKeywordWidget : public QWidget, public KeywordWidg
     // Main form declaration
     Ui::ExpressionVariableVectorWidget ui_;
     // Model for table
-    ExpressionVariableVectorModel variableModel_;
+    DataTableModelInterface variableModel_;
 
     private Q_SLOTS:
     void variableDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);

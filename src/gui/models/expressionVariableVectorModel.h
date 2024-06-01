@@ -3,29 +3,23 @@
 
 #pragma once
 
-#include "expression/variable.h"
+#include "keywords/expressionVariableVector.h"
 #include "templates/optionalRef.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <vector>
 
-// Forward Declarations
-class ProcedureNode;
-
-// Expression Variable Vector Model
-class ExpressionVariableVectorModel : public QAbstractTableModel
+// Qt Interface to DataTableModel
+class DataTableModelInterface : public QAbstractTableModel
 {
     Q_OBJECT
 
-    private:
-    // Source variable data
-    OptionalReferenceWrapper<std::vector<std::shared_ptr<ExpressionVariable>>> variables_;
-    // Parent procedure node (to enable parameter search)
-    ProcedureNode *parentNode_{nullptr};
-
     public:
-    // Set source variable data
-    void setData(std::vector<std::shared_ptr<ExpressionVariable>> &variables, ProcedureNode *parentNode);
+    DataTableModelInterface(DataModelBase &dataModel);
+
+    private:
+    // Model with which to interface
+    DataModelBase &dataModel_;
 
     int rowCount(const QModelIndex &parent) const override;
     int columnCount(const QModelIndex &parent) const override;

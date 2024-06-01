@@ -9,13 +9,12 @@
 ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWidget *parent,
                                                                              ExpressionVariableVectorKeyword *keyword,
                                                                              const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword), variableModel_(keyword->dataModel())
 {
     // Create and set up the UI for our widget
     ui_.setupUi(this);
 
-    // Set up model
-    variableModel_.setData(keyword->data(), keyword->parentNode());
+    // Set model
     ui_.VariablesTable->setModel(&variableModel_);
 
     // Connect signals / slots
@@ -47,7 +46,7 @@ void ExpressionVariableVectorKeywordWidget::variableSelectionChanged(const QItem
     ui_.RemoveVariableButton->setEnabled(current.empty());
 }
 
-void ExpressionVariableVectorKeywordWidget::ui_AddVariableButton_clicked(bool checked) { }
+void ExpressionVariableVectorKeywordWidget::ui_AddVariableButton_clicked(bool checked) {}
 
 void ExpressionVariableVectorKeywordWidget::ui_RemoveVariableButton_clicked(bool checked) {}
 

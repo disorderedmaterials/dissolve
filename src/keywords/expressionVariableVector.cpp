@@ -14,15 +14,64 @@ enum ExpressionVariableProperties
     Type,
     Value
 };
-std::vector<DataItemProperty> expressionVariableProperties = {{ExpressionVariableProperties::Name, "Name", PropertyType::String, false},
-                                                              {ExpressionVariableProperties::Type, "Type", PropertyType::String, false},
-                                                              {ExpressionVariableProperties::Value, "Value", PropertyType::String, false}
-};
+std::vector<DataItemProperty> expressionVariableProperties = {
+    {ExpressionVariableProperties::Name, "Name", PropertyType::String, {}},
+    {ExpressionVariableProperties::Type, "Type", PropertyType::String, {PropertyFlag::ReadOnly}},
+    {ExpressionVariableProperties::Value, "Value", PropertyType::String, {}}};
 
 ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data,
                                                                  ProcedureNode *parentNode)
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), dataModel_(data_, expressionVariableProperties)
 {
+    dataModel_.setPropertyFunctions(
+        [&](const std::shared_ptr<ExpressionVariable> &var, int propertyIndex)
+        {
+            switch (propertyIndex)
+            {
+                case (ExpressionVariableProperties::Name):
+                    return DataItemValue(var->baseName());
+                case (ExpressionVariableProperties::Type):
+                    return DataItemValue(std::string(var->value().type() == ExpressionValue::ValueType::Integer ? "Int" : "Real"));
+                case (ExpressionVariableProperties::Value):
+                    return DataItemValue(var->value().asString());
+                default:
+                    return DataItemValue();
+            }
+        },
+        [&](std::shared_ptr<ExpressionVariable> &var, int propertyIndex, const DataItemValue &newValue)
+        {
+            switch (propertyIndex)
+            {
+                case (ExpressionVariableProperties::Name):
+                {
+                    // Must check for existing var in scope with the same name
+                    auto p = parentNode_->getParameter(newValue.stringValue());
+                    if (p && p != var)
+                        return false;
+                    var->setBaseName(newValue.stringValue());
+                }
+                break;
+                case (ExpressionVariableProperties::Value):
+                {
+                    // Value - need to check type (int vs double)
+                    bool isFloatingPoint = false;
+                    if (DissolveSys::isNumber(newValue.stringValue(), isFloatingPoint))
+                    {
+                        if (isFloatingPoint)
+                            var->setValue(std::stod(newValue.stringValue()));
+                        else
+                            var->setValue(std::stoi(newValue.stringValue()));
+                    }
+                    else
+                        return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n",
+                                                newValue.stringValue(), var->baseName());
+                }
+                break;
+                default:
+                    return false;
+            }
+            return true;
+        });
 }
 
 /*
@@ -32,6 +81,9 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std
 // Return reference to vector of data
 std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() { return data_; }
 const std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() const { return data_; }
+
+// Return data model
+DataTableModel<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::dataModel() { return dataModel_; }
 
 // Return parent ProcedureNode
 ProcedureNode *ExpressionVariableVectorKeyword::parentNode() { return parentNode_; }
