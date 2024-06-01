@@ -8,9 +8,20 @@
 #include "procedure/nodes/node.h"
 #include <memory>
 
+enum ExpressionVariableProperties
+{
+    Name,
+    Type,
+    Value
+};
+std::vector<DataItemProperty> expressionVariableProperties = {{ExpressionVariableProperties::Name, "Name", PropertyType::String, false},
+                                                              {ExpressionVariableProperties::Type, "Type", PropertyType::String, false},
+                                                              {ExpressionVariableProperties::Value, "Value", PropertyType::String, false}
+};
+
 ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data,
                                                                  ProcedureNode *parentNode)
-    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode)
+    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), dataModel_(data_, expressionVariableProperties)
 {
 }
 
