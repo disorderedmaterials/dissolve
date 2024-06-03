@@ -54,7 +54,7 @@ class Region
 
     public:
     // Generate region information
-    bool generate(const Configuration *cfg, double voxelSize,
+    bool generate(const Configuration *cfg, double voxelSize, bool invert,
                   const std::function<std::shared_ptr<VoxelKernel>(void)> &kernelGenerator);
     // Return whether the region is valid
     bool isValid() const;

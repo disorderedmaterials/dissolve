@@ -8,7 +8,7 @@
 Region::Region() : box_(nullptr) {}
 
 // Generate region information
-bool Region::generate(const Configuration *cfg, double voxelSize,
+bool Region::generate(const Configuration *cfg, double voxelSize, bool invert,
                       const std::function<std::shared_ptr<VoxelKernel>(void)> &kernelGenerator)
 {
     box_ = cfg->box();
@@ -26,9 +26,9 @@ bool Region::generate(const Configuration *cfg, double voxelSize,
     auto voxelCheckFunction = [&](auto triplet, auto x, auto y, auto z)
     {
         voxelMap_[triplet] = {Vec3<int>(x, y, z),
-                              voxelCombinable.local()->isVoxelValid(
-                                  cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
-                                                      (z + 0.5) * voxelSizeFrac_.z}))};
+                              invert != voxelCombinable.local()->isVoxelValid(
+                                            cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
+                                                                (z + 0.5) * voxelSizeFrac_.z}))};
     };
 
     // Iterate over voxels
