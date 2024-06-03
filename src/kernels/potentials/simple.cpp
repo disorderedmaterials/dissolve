@@ -40,13 +40,20 @@ std::optional<int> SimplePotentialFunctions::parameterIndex(Form form, std::stri
     return it - parameters(form).begin();
 }
 
-SimplePotential::SimplePotential()
-    : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Simple),
-      interactionPotential_(SimplePotentialFunctions::Form::Harmonic)
+SimplePotential::SimplePotential(const InteractionPotential<SimplePotentialFunctions> &interactionPotential,
+                                 const Vec3<double> &origin)
+    : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Simple), interactionPotential_(interactionPotential),
+      origin_(origin)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);
     keywords_.add<InteractionPotentialKeyword<SimplePotentialFunctions>>(
         "Form", "Functional form and parameters for the potential", interactionPotential_);
+}
+
+// Create and return a copy of this potential
+std::unique_ptr<ExternalPotential> SimplePotential::duplicate() const
+{
+    return std::make_unique<SimplePotential>(interactionPotential_, origin_);
 }
 
 /*

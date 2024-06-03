@@ -29,8 +29,12 @@ class SimplePotentialFunctions
 class SimplePotential : public ExternalPotential
 {
     public:
-    SimplePotential();
+    SimplePotential(
+        const InteractionPotential<SimplePotentialFunctions> &interactionPotential = {SimplePotentialFunctions::Form::Harmonic},
+        const Vec3<double> &origin = {0.0, 0.0, 0.0});
     ~SimplePotential() = default;
+    // Create and return a copy of this potential
+    std::unique_ptr<ExternalPotential> duplicate() const override;
 
     /*
      * Definition

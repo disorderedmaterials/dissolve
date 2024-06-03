@@ -28,8 +28,12 @@ class DirectionalPotentialFunctions
 class DirectionalPotential : public ExternalPotential
 {
     public:
-    DirectionalPotential();
+    DirectionalPotential(const InteractionPotential<DirectionalPotentialFunctions> &interactionPotential =
+                             {DirectionalPotentialFunctions::Form::LJCylinder},
+                         const Vec3<double> &origin = {0.0, 0.0, 0.0}, const Vec3<double> &vector = {0.0, 0.0, 1.0});
     ~DirectionalPotential() = default;
+    // Create and return a copy of this potential
+    std::unique_ptr<ExternalPotential> duplicate() const override;
 
     /*
      * Definition
@@ -40,7 +44,7 @@ class DirectionalPotential : public ExternalPotential
     // Coordinate origin of potential
     Vec3<double> origin_;
     // Direction of potential
-    Vec3<double> vector_{0.0, 0.0, 1.0};
+    Vec3<double> vector_;
 
     public:
     // Set potential form

@@ -18,6 +18,8 @@ class ExternalPotential
     public:
     explicit ExternalPotential(ExternalPotentialTypes::ExternalPotentialType type);
     ~ExternalPotential() = default;
+    // Create and return a copy of this potential
+    virtual std::unique_ptr<ExternalPotential> duplicate() const;
 
     /*
      * Type
