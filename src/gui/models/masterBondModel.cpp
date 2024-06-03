@@ -74,10 +74,7 @@ bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataTyp
     return true;
 }
 
-const std::shared_ptr<MasterBond> &MasterBondModel::rawData(const QModelIndex &index) const
-{
-    return sourceData_[index.row()];
-}
+const std::shared_ptr<MasterBond> &MasterBondModel::rawData(const QModelIndex &index) const { return sourceData_[index.row()]; }
 
 bool MasterBondModel::insertRows(int row, int count, const QModelIndex &parent)
 {
