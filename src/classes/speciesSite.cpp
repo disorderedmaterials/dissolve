@@ -338,6 +338,8 @@ const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
 // Update fragment definition
 bool SpeciesSite::setFragmentDefinitionString(std::string_view definitionString)
 {
+    instances_.clear();
+
     return fragment_.create(definitionString) && generateInstances();
 }
 
