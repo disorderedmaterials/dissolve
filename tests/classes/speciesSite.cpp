@@ -181,7 +181,7 @@ TEST_F(SpeciesSiteTest, FragmentBasic)
     {
         // There should be 1 atom in the site overall
         EXPECT_EQ(instance.allIndices().size(), 1);
-        // There should be a single defined origin atoms
+        // There should be a single defined origin atom
         EXPECT_EQ(instance.originIndices().size(), 1);
         // There should be no defined x or y axis atoms
         EXPECT_EQ(instance.xAxisIndices().size(), 0);
@@ -204,7 +204,7 @@ TEST_F(SpeciesSiteTest, FragmentAdvanced)
 
     // There should be 12 atoms in the site overall
     EXPECT_EQ(instance.allIndices().size(), 12);
-    // There should be a single defined origin atoms
+    // There should be a single defined origin atom
     EXPECT_EQ(instance.originIndices().size(), 1);
     // There should be no defined x or y axis atoms
     EXPECT_EQ(instance.xAxisIndices().size(), 0);
