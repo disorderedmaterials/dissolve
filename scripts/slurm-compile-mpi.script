@@ -18,7 +18,7 @@ echo "Base script dir is ${BASE_DIR}"
 # Check / download ANTLR4
 # -----------------------
 
-ANTLR_VERSION=4.8
+ANTLR_VERSION=4.13.1
 ANTLR_JAR=antlr-${ANTLR_VERSION}-complete.jar
 if [ -f ${ANTLR_JAR} ]
 then
@@ -40,7 +40,9 @@ fi
 # Load Necessary Modules
 # ----------------------
 module load foss
-module load CMake/3.16.4-GCCcore-9.3.0
+module load CMake/3.23.1-GCCcore-11.3.0
+module load Java/13.0.2
+
 
 # Set-up Build Dir
 # ---------------
@@ -49,14 +51,10 @@ echo "Build directory is '${BUILD_DIR}'"
 mkdir ${BUILD_DIR}
 cd ${BUILD_DIR}
 
-# Run Conan
-# ---------
-conan install ../../ -s compiler.libcxx=libstdc++11 -s compiler.version=9 --build=tbb -o tbb:shared=False -o antlr4-cppruntime:shared=False
-
 # Run CMake
 # ---------
 MPI_ROOT=/apps/eb/software/OpenMPI/4.0.3-GCC-9.3.0/bin
-cmake ../../ -DMPI_C=${MPI_ROOT}/mpicc -DMPI_CXX=${MPI_ROOT}/mpic++ -DCMAKE_CXX_FLAGS:string="-std=c++17 -pthread" -DCMAKE_C_FLAGS:string="-pthread" -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=${BASE_DIR}/${ANTLR_JAR} -DBUILD_ANTLR_ZIPFILE:path=${BASE_DIR}/${ANTLR_ZIP}
+cmake ../../ -DMPI_C=${MPI_ROOT}/mpicc -DMPI_CXX=${MPI_ROOT}/mpic++ -DCMAKE_CXX_FLAGS:string="-std=c++17 -pthread" -DCMAKE_C_FLAGS:string="-pthread" -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=${BASE_DIR}/${ANTLR_JAR} -DBUILD_ANTLR_ZIPFILE:path=${BASE_DIR}/${ANTLR_ZIP} -DEXTRA_CONAN_OPTIONS:string="pugixml:header_only=True"
 
 # Make
 # ----
