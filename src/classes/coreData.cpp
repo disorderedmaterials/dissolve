@@ -453,6 +453,7 @@ void CoreData::copyAtomType(const SpeciesAtom &sourceAtom, SpeciesAtom &destAtom
         at = addAtomType(sourceAtom.Z());
         at->setName(sourceAtom.atomType()->name());
         at->interactionPotential() = sourceAtom.atomType()->interactionPotential();
+        at->setCharge(sourceAtom.atomType()->charge());
     }
 
     destAtom.setAtomType(at);
