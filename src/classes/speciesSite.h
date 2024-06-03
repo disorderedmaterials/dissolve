@@ -7,10 +7,10 @@
 #include "base/serialiser.h"
 #include "base/version.h"
 #include "classes/atomType.h"
+#include "classes/speciesSiteInstance.h"
 #include "data/elements.h"
 #include "neta/neta.h"
 #include "templates/vector3.h"
-
 #include <map>
 #include <vector>
 
@@ -159,44 +159,25 @@ class SpeciesSite : public Serialisable<CoreData &>
     bool setFragmentDefinitionString(std::string_view definitionString);
 
     /*
-     * Advanced Sites
-     */
-    private:
-    // For each unique site, indices of atoms in the species that correspond to that site
-    std::vector<std::vector<int>> sitesAllAtomsIndices_;
-    // For each unique site, indices of atoms in the species which contribute to the origin of the site
-    std::vector<std::vector<int>> sitesOriginAtomsIndices_;
-    // For each unique site, indices of atoms in the species which indicate the x axis with the origin
-    std::vector<std::vector<int>> sitesXAxisAtomsIndices_;
-    // For each unique site, indices of atoms in the species which indicate the y axis with the origin, after orthogonalisation
-    std::vector<std::vector<int>> sitesYAxisAtomsIndices_;
-
-    public:
-    // Generate unique sites
-    bool generateUniqueSites();
-    // Number of unique sites
-    const int nSites() const;
-    // Return atom indices corresponding to unique sites
-    const std::vector<std::vector<int>> &sitesAllAtomsIndices() const;
-    // Return atom indices contributing to unique site origins
-    const std::vector<std::vector<int>> &sitesOriginAtomsIndices() const;
-    // Return atom indices indicating the x axis with the origins of unique sites.
-    const std::vector<std::vector<int>> &sitesXAxisAtomsIndices() const;
-    // Return atom indices indicating the y axis with the origins of unique sites.
-    const std::vector<std::vector<int>> &sitesYAxisAtomsIndices() const;
-
-    /*
      * Generation
      */
-    public:
-    // Create and return Site description from parent Species
-    std::vector<std::shared_ptr<Site>> createFromParent() const;
+    private:
+    // Instances for this site within the Species
+    std::vector<SpeciesSiteInstance> instances_;
 
     private:
     // Calculate geometric centre of atoms in the parent Species
-    Vec3<double> centreOfGeometry(std::vector<int> &indices) const;
+    Vec3<double> centreOfGeometry(const std::vector<int> &indices) const;
     // Calculate (mass-weighted) coordinate centre of atoms in the parent Species
-    Vec3<double> centreOfMass(std::vector<int> &indices) const;
+    Vec3<double> centreOfMass(const std::vector<int> &indices) const;
+
+    public:
+    // Create and return Site description from parent Species
+    std::vector<std::shared_ptr<Site>> createFromParent() const;
+    // Generate instances
+    bool generateInstances();
+    // Return site instances
+    const std::vector<SpeciesSiteInstance> &instances() const;
 
     /*
      * Read / Write

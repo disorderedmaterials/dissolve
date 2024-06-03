@@ -39,7 +39,8 @@ bool RotateFragmentProcedureNode::mustBeNamed() const { return false; }
 
 bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureContext)
 {
-    assert(site_->currentSite());
+    if (!site_->currentSite())
+        return Messenger::error("No current site to act upon! Did you mean to put this in a loop?");
 
     auto &site = site_->currentSite()->get();
     auto parent = site.parent();
@@ -57,7 +58,7 @@ bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureConte
 
     if (!site.hasAxes())
     {
-        Messenger::warn("FragmentSite '{}' has no axes to rotate about.", parent->name());
+        Messenger::warn("Fragment site '{}' has no axes to rotate about.", parent->name());
         return false;
     }
 
@@ -75,7 +76,7 @@ bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureConte
             break;
     }
 
-    for (auto index : parent->sitesAllAtomsIndices().at(parentIndex))
+    for (auto index : parent->instances()[parentIndex].allIndices())
     {
         auto atom = molecule->atom(index);
         atom->set(rotationMatrix.transform(box->minimumVector(site.origin(), atom->r())) + site.origin());

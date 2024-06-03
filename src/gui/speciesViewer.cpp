@@ -70,7 +70,7 @@ void SpeciesViewer::setSite(SpeciesSite *site)
     siteRenderable_ = nullptr;
 
     // Create a new Renderable for the SpeciesSite
-    if (site_ != nullptr && sitesVisible_)
+    if ((site_ != nullptr) && sitesVisible_)
     {
         siteRenderable_ = std::make_shared<RenderableSpeciesSite>(species_, site_);
         siteRenderable_->setName("Site");

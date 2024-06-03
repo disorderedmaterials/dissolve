@@ -78,6 +78,9 @@ void RenderableSpeciesSite::recreatePrimitives(const View &view, const ColourDef
             }
         }
     }
+
+    // Set the value transform data version here, since we don't use it
+    valuesTransformDataVersion_ = dataVersion();
 }
 
 // Send primitives for rendering

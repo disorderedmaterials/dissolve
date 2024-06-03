@@ -76,10 +76,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     sites_.clear();
     orientedSites_.clear();
 
-    auto originAtomsIndices = site->sitesOriginAtomsIndices();
-    auto xAxisAtomsIndices = site->sitesXAxisAtomsIndices();
-    auto yAxisAtomsIndices = site->sitesYAxisAtomsIndices();
-
+    const auto &instances = site->instances();
     auto *targetSpecies = site->parent();
 
     auto sPop = configuration_->speciesPopulation(targetSpecies);
@@ -87,9 +84,9 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
         return true;
 
     if (sitesHaveOrientation_)
-        orientedSites_.reserve(site->nSites() * sPop);
+        orientedSites_.reserve(instances.size() * sPop);
     else
-        sites_.reserve(site->nSites() * sPop);
+        sites_.reserve(instances.size() * sPop);
 
     Vec3<double> origin, x, y;
     const auto *box = configuration_->box();
@@ -99,25 +96,29 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
         if (molecule->species() != targetSpecies)
             continue;
 
-        for (auto i = 0; i < site->nSites(); ++i)
+        auto index = 0;
+        for (const auto &instance : instances)
         {
-            origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomsIndices.at(i))
-                                                        : centreOfGeometry(*molecule, box, originAtomsIndices.at(i));
+            origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, instance.originIndices())
+                                                        : centreOfGeometry(*molecule, box, instance.originIndices());
+
             if (sitesHaveOrientation_)
             {
                 // Get vector from site origin to x-axis reference point and normalise it
-                x = box->minimumVector(origin, centreOfGeometry(*molecule, box, xAxisAtomsIndices.at(i)));
+                x = box->minimumVector(origin, centreOfGeometry(*molecule, box, instance.xAxisIndices()));
                 x.normalise();
 
                 // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
-                y = box->minimumVector(origin, centreOfGeometry(*molecule, box, yAxisAtomsIndices.at(i)));
+                y = box->minimumVector(origin, centreOfGeometry(*molecule, box, instance.yAxisIndices()));
                 y.orthogonalise(x);
                 y.normalise();
 
-                orientedSites_.emplace_back(speciesSite_, i, molecule, origin, x, y, x * y);
+                orientedSites_.emplace_back(speciesSite_, index, molecule, origin, x, y, x * y);
             }
             else
-                sites_.emplace_back(speciesSite_, i, molecule, origin);
+                sites_.emplace_back(speciesSite_, index, molecule, origin);
+
+            ++index;
         }
     }
     return true;
