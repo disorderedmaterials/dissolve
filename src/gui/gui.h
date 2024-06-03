@@ -186,6 +186,7 @@ class DissolveWindow : public QMainWindow
     void on_SpeciesReduceChargesSigFigsAction_triggered(bool checked);
     // Configuration
     void on_ConfigurationCreateAction_triggered(bool checked);
+    void on_ConfigurationCreateEmptyAction_triggered(bool checked);
     void on_ConfigurationRenameAction_triggered(bool checked);
     void on_ConfigurationDeleteAction_triggered(bool checked);
     void on_ConfigurationExportToXYZAction_triggered(bool checked);
