@@ -34,7 +34,6 @@ class DirectionalPotential : public ExternalPotential
     /*
      * Definition
      */
-
     private:
     // Potential form
     InteractionPotential<DirectionalPotentialFunctions> interactionPotential_;
