@@ -21,7 +21,7 @@ template <ProblemType problem, Population population> static void BM_Region_Gene
     for (auto _ : state)
     {
         Region region;
-        region.generate(cfg, 1.0, []() { return std::make_shared<RandomVoxelKernel>(); });
+        region.generate(cfg, 1.0, false, []() { return std::make_shared<RandomVoxelKernel>(); });
     }
 }
 
