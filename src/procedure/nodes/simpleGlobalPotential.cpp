@@ -3,6 +3,7 @@
 
 #include "procedure/nodes/simpleGlobalPotential.h"
 #include "classes/configuration.h"
+#include "keywords/bool.h"
 #include "keywords/interactionPotential.h"
 #include "keywords/vec3NodeValue.h"
 
@@ -14,6 +15,8 @@ SimpleGlobalPotentialProcedureNode::SimpleGlobalPotentialProcedureNode()
     keywords_.add<InteractionPotentialKeyword<SimplePotentialFunctions>>("Potential", "Form of global potential to apply ",
                                                                          potential_);
     keywords_.add<Vec3NodeValueKeyword>("Origin", "Origin of global potential", origin_, this);
+    keywords_.add<BoolKeyword>("Fractional", "Whether the origin is specified in fractional cell coordinates",
+                               originIsFractional_);
 }
 
 /*
@@ -25,9 +28,15 @@ bool SimpleGlobalPotentialProcedureNode::execute(const ProcedureContext &procedu
 {
     auto *cfg = procedureContext.configuration();
 
+    // Set potential
     auto pot = std::make_unique<SimplePotential>();
     pot->setPotential(potential_);
-    pot->setOrigin({origin_.x.asDouble(), origin_.y.asDouble(), origin_.z.asDouble()});
+
+    // Set origin
+    Vec3<double> origin{origin_.x.asDouble(), origin_.y.asDouble(), origin_.z.asDouble()};
+    if (originIsFractional_)
+        cfg->box()->toReal(origin);
+    pot->setOrigin(origin);
 
     cfg->addGlobalPotential(std::unique_ptr<ExternalPotential>(std::move(pot)));
 
