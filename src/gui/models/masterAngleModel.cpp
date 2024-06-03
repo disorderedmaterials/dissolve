@@ -78,6 +78,5 @@ bool MasterAngleModel::setTermData(int row, MasterTermModelData::DataType dataTy
 
 const std::shared_ptr<MasterAngle> &MasterAngleModel::rawData(const QModelIndex &index) const
 {
-    assert(sourceData_);
     return sourceData_[index.row()];
 }
