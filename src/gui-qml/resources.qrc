@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="main">
     <file>qml/DissolveMain.qml</file>
+    <file>qml/charting/Data1D.qml</file>
   </qresource>
 </RCC>
