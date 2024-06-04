@@ -35,6 +35,8 @@ class CopyProcedureNode : public ProcedureNode
     Configuration *source_{nullptr};
     // Vector of Species to exclude from copy
     std::vector<const Species *> excludedSpecies_;
+    // Whether to copy global potentials
+    bool copyGlobalPotentials_{true};
 
     /*
      * Execute

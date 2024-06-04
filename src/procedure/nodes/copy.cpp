@@ -3,8 +3,7 @@
 
 #include "procedure/nodes/copy.h"
 #include "classes/configuration.h"
-#include "classes/coreData.h"
-#include "classes/species.h"
+#include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/speciesVector.h"
 #include <algorithm>
@@ -15,6 +14,8 @@ CopyProcedureNode::CopyProcedureNode(Configuration *cfg)
     keywords_.setOrganisation("Options", "Configuration");
     keywords_.add<ConfigurationKeyword>("Source", "Source configuration to copy", source_);
     keywords_.add<SpeciesVectorKeyword>("Exclude", "Species types to exclude from copy", excludedSpecies_);
+    keywords_.add<BoolKeyword>("CopyGlobalPotentials", "Whether to copy global potentials defined in the source configuration",
+                               copyGlobalPotentials_);
 }
 
 /*
@@ -72,6 +73,21 @@ bool CopyProcedureNode::execute(const ProcedureContext &procedureContext)
 
         // Copy the molecule
         cfg->copyMolecule(mol);
+    }
+
+    // Copy global potentials
+    if (copyGlobalPotentials_)
+    {
+        for (const auto &gpot : source_->globalPotentials())
+        {
+            if (gpot->type() == ExternalPotentialTypes::ExternalPotentialType::Regional)
+            {
+                Messenger::warn("Can't copy Regional-type global potentials - it will not exist in the new configuration.\n");
+                continue;
+            }
+
+            procedureContext.configuration()->addGlobalPotential(gpot->duplicate());
+        }
     }
 
     cfg->updateObjectRelationships();

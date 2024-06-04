@@ -41,14 +41,21 @@ std::optional<int> DirectionalPotentialFunctions::parameterIndex(Form form, std:
     return it - parameters(form).begin();
 }
 
-DirectionalPotential::DirectionalPotential()
+DirectionalPotential::DirectionalPotential(const InteractionPotential<DirectionalPotentialFunctions> &interactionPotential,
+                                           const Vec3<double> &origin, const Vec3<double> &vector)
     : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Directional),
-      interactionPotential_(DirectionalPotentialFunctions::Form::LJCylinder)
+      interactionPotential_(interactionPotential), origin_(origin), vector_(vector)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);
     keywords_.add<InteractionPotentialKeyword<DirectionalPotentialFunctions>>(
         "Form", "Functional form and parameters for the potential", interactionPotential_);
     keywords_.add<Vec3DoubleKeyword>("Vector", "Direction vector", vector_, Vec3Labels::LabelType::XYZLabels);
+}
+
+// Create and return a copy of this potential
+std::unique_ptr<ExternalPotential> DirectionalPotential::duplicate() const
+{
+    return std::make_unique<DirectionalPotential>(interactionPotential_, origin_, vector_);
 }
 
 /*

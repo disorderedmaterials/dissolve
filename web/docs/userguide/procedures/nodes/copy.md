@@ -24,3 +24,4 @@ The `Copy` node copies the box and all molecules from a source configuration int
 |:------|:--:|:-----:|-----------|
 |`Source`|`Configuration`|--|Source configuration to copy.|
 |`Exclude`|`Species ...`|--|Species to exclude from the copy.|
+|`CopyGlobalPotentials`|`bool`|`true`|Whether to copy any defined global potentials from the source configuration.|
