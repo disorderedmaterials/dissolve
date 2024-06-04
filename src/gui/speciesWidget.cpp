@@ -142,7 +142,7 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
         return;
 
     // Set up interatomic potentials
-    if (!dissolve_->regeneratePairPotentials())
+    if (!dissolve_->updatePairPotentials(true))
     {
         Messenger::error("Couldn't set up interatomic pair potentials - no optimisation performed!\n");
         return;

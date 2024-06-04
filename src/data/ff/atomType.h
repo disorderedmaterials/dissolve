@@ -16,7 +16,7 @@ class ForcefieldAtomType
     public:
     ForcefieldAtomType(Elements::Element Z = Elements::Unknown, int index = -1, std::string_view name = "",
                        std::string_view netaDefinition = "", std::string_view description = "", double q = 0.0,
-                       ShortRangeFunctions::Form parametersForm = ShortRangeFunctions::Form::None,
+                       ShortRangeFunctions::Form parametersForm = ShortRangeFunctions::Form::Undefined,
                        std::string_view parameterString = "", std::string_view equivalentName = "");
     ForcefieldAtomType(Elements::Element Z = Elements::Unknown, int index = -1, std::string_view name = "",
                        std::string_view netaDefinition = "", std::string_view description = "", double q = 0.0,

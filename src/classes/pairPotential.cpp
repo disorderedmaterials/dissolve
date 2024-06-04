@@ -14,21 +14,15 @@ PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ =
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme_ =
     PairPotential::ShiftedShortRangeTruncation;
 
-PairPotential::PairPotential()
-    : interactionPotential_(Functions1D::Form::None), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
+PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ)
+    : nameI_(nameI), nameJ_(nameJ), uFullInterpolation_(uFull_),
+      dUFullInterpolation_(dUFull_), interactionPotential_{Functions1D::Form::None, ""}, potentialFunction_{
+                                                                                             Functions1D::Form::None, {}}
 {
-}
-
-PairPotential::PairPotential(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ,
-                             bool includeCharges)
-    : interactionPotential_(Functions1D::Form::None), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
-{
-    setUp(typeI, typeJ, includeCharges);
 }
 
 PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ, const InteractionPotential<Functions1D> &potential)
-    : includeAtomTypeCharges_(false), nameI_(nameI), nameJ_(nameJ), interactionPotential_(potential),
-      uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
+    : nameI_(nameI), nameJ_(nameJ), interactionPotential_(potential), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
 {
     potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
 }
@@ -62,9 +56,6 @@ void PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTrunc
 // Return short-ranged truncation scheme
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme() { return shortRangeTruncationScheme_; }
 
-// Set whether atom type charges should be included in the generated potential
-void PairPotential::setIncludeAtomTypeCharges(bool b) { includeAtomTypeCharges_ = b; }
-
 // Return whether atom type charges should be included in the generated potential
 bool PairPotential::includeAtomTypeCharges() const { return includeAtomTypeCharges_; }
 
@@ -81,44 +72,6 @@ PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme() 
  * Source Parameters
  */
 
-// Set up PairPotential parameters from specified AtomTypes
-bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges)
-{
-    // Check for NULL pointers
-    if (typeI == nullptr)
-        throw(std::runtime_error("Invalid AtomType pointer (typeI) given to PairPotential::setUp().\n"));
-    if (typeJ == nullptr)
-        throw(std::runtime_error("Invalid AtomType pointer (typeJ) given to PairPotential::setUp().\n"));
-
-    includeAtomTypeCharges_ = includeCharges;
-    interactionPotential_.setFormAndParameters(Functions1D::Form::None, "");
-
-    nameI_ = typeI->name();
-    nameJ_ = typeJ->name();
-    setData1DNames();
-
-    // Sanity check - do both atom types have valid short range functions set?
-    if (!typeI->interactionPotential().hasValidForm())
-        return Messenger::error("Can't set parameters for PairPotential since atom type {} has no valid short range form.\n",
-                                typeI->name());
-    if (!typeJ->interactionPotential().hasValidForm())
-        return Messenger::error("Can't set parameters for PairPotential since atom type {} has no valid short range form.\n",
-                                typeJ->name());
-
-    // Combine the atom type parameters into potential function parameters
-    interactionPotential_ = ShortRangeFunctions::combine(typeI->interactionPotential(), typeJ->interactionPotential());
-    potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
-
-    if (!interactionPotential_.hasValidForm())
-        return false;
-
-    // Set charges
-    chargeI_ = includeAtomTypeCharges_ ? typeI->charge() : 0.0;
-    chargeJ_ = includeAtomTypeCharges_ ? typeJ->charge() : 0.0;
-
-    return true;
-}
-
 // Set Data1D names from source AtomTypes
 void PairPotential::setData1DNames()
 {
@@ -129,6 +82,14 @@ void PairPotential::setData1DNames()
     uOriginal_.setTag(fmt::format("{}-{} (Orig)", nameI_, nameJ_));
 
     dUFull_.setTag(fmt::format("{}-{} (dU/dr)", nameI_, nameJ_));
+}
+
+// Set names reflecting target atom types for potential
+void PairPotential::setNames(std::string_view nameI, std::string_view nameJ)
+{
+    nameI_ = nameI;
+    nameJ_ = nameJ;
+    setData1DNames();
 }
 
 // Return name for first source parameters
@@ -143,9 +104,25 @@ bool PairPotential::setInteractionPotential(Functions1D::Form form, std::string_
     return interactionPotential_.setFormAndParameters(form, parameters) &&
            potentialFunction_.setFormAndParameters(form, interactionPotential_.parameters());
 }
+bool PairPotential::setInteractionPotential(const InteractionPotential<Functions1D> &potential)
+{
+    interactionPotential_ = potential;
+    return potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
+}
 
 // Return interaction potential
 const InteractionPotential<Functions1D> &PairPotential::interactionPotential() const { return interactionPotential_; }
+
+// Set included charges
+void PairPotential::setIncludedCharges(double qi, double qj)
+{
+    chargeI_ = qi;
+    chargeJ_ = qj;
+    includeAtomTypeCharges_ = true;
+}
+
+// Set no included charges
+void PairPotential::setNoIncludedCharges() { includeAtomTypeCharges_ = false; }
 
 // Set charge I
 void PairPotential::setChargeI(double value) { chargeI_ = value; }

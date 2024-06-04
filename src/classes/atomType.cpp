@@ -6,10 +6,10 @@
 #include "templates/algorithms.h"
 #include <map>
 
-AtomType::AtomType(Elements::Element Z) : Z_(Z), interactionPotential_(ShortRangeFunctions::Form::None) {}
-AtomType::AtomType(std::string_view name) : name_(name), interactionPotential_(ShortRangeFunctions::Form::None) {}
+AtomType::AtomType(Elements::Element Z) : Z_(Z), interactionPotential_(ShortRangeFunctions::Form::Undefined) {}
+AtomType::AtomType(std::string_view name) : name_(name), interactionPotential_(ShortRangeFunctions::Form::Undefined) {}
 AtomType::AtomType(Elements::Element Z, std::string_view name)
-    : Z_(Z), name_(name), interactionPotential_(ShortRangeFunctions::Form::None)
+    : Z_(Z), name_(name), interactionPotential_(ShortRangeFunctions::Form::Undefined)
 {
 }
 

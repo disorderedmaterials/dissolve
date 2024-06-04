@@ -14,13 +14,13 @@ TEST(GeometryMinimisationTest, Water)
     // Set up CoreData
     CoreData coreData;
     auto atO = coreData.addAtomType(Elements::O);
-    atO->interactionPotential().setForm(ShortRangeFunctions::Form::None);
+    atO->interactionPotential().setForm(ShortRangeFunctions::Form::Undefined);
     auto atH = coreData.addAtomType(Elements::H);
-    atH->interactionPotential().setForm(ShortRangeFunctions::Form::None);
+    atH->interactionPotential().setForm(ShortRangeFunctions::Form::Undefined);
     std::vector<PairPotential::Definition> pairPotentials;
-    pairPotentials.emplace_back(atO, atO, std::make_unique<PairPotential>(atO, atO, false));
-    pairPotentials.emplace_back(atH, atH, std::make_unique<PairPotential>(atH, atH, false));
-    pairPotentials.emplace_back(atO, atH, std::make_unique<PairPotential>(atO, atH, false));
+    pairPotentials.emplace_back(atO, atO, std::make_unique<PairPotential>("O", "O"));
+    pairPotentials.emplace_back(atH, atH, std::make_unique<PairPotential>("H", "H"));
+    pairPotentials.emplace_back(atO, atH, std::make_unique<PairPotential>("O", "H"));
     PotentialMap potMap;
     potMap.initialise(coreData.atomTypes(), pairPotentials, 15.0);
 

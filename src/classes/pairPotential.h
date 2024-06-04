@@ -15,11 +15,8 @@ class AtomType;
 // PairPotential Definition
 class PairPotential
 {
-    friend class Dissolve;
-
     public:
-    PairPotential();
-    PairPotential(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges);
+    PairPotential(std::string_view nameI = {}, std::string_view nameJ = {});
     PairPotential(std::string_view nameI, std::string_view nameJ, const InteractionPotential<Functions1D> &potential);
     // Coulomb Truncation Scheme enum
     enum CoulombTruncationScheme
@@ -51,7 +48,7 @@ class PairPotential
     // Short-range force at cutoff distance (used by truncation scheme)
     double shortRangeForceAtCutoff_{0.0};
     // Whether atom type charges should be included in the generated potential
-    bool includeAtomTypeCharges_{true};
+    bool includeAtomTypeCharges_{false};
     // Truncation scheme to apply to Coulomb part of potential
     static CoulombTruncationScheme coulombTruncationScheme_;
     // Coulomb energy at cutoff distance (used by truncation scheme)
@@ -64,8 +61,6 @@ class PairPotential
     static void setShortRangeTruncationScheme(ShortRangeTruncationScheme scheme);
     // Return short-ranged truncation scheme
     static ShortRangeTruncationScheme shortRangeTruncationScheme();
-    // Set whether atom type charges should be included in the generated potential
-    void setIncludeAtomTypeCharges(bool b);
     // Return whether atom type charges should be included in the generated potential
     bool includeAtomTypeCharges() const;
     // Set Coulomb truncation scheme
@@ -77,7 +72,7 @@ class PairPotential
      * Source Parameters
      */
     private:
-    // Names reflecting source parameters
+    // Names reflecting target atom types for potential
     std::string nameI_, nameJ_;
     // Interaction potential and function
     InteractionPotential<Functions1D> interactionPotential_;
@@ -88,20 +83,25 @@ class PairPotential
     double chargeJ_{0.0};
 
     private:
-    // Set up PairPotential parameters from specified AtomTypes
-    bool setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges);
     // Set Data1D names from source AtomTypes
     void setData1DNames();
 
     public:
-    // Return name for first source parameters
+    // Set names reflecting target atom types for potential
+    void setNames(std::string_view nameI, std::string_view nameJ);
+    // Return name for first target atom type
     std::string_view nameI() const;
-    // Return name for second source parameters
+    // Return name for second target atom type
     std::string_view nameJ() const;
     // Set interaction potential
     bool setInteractionPotential(Functions1D::Form form, std::string_view parameters);
+    bool setInteractionPotential(const InteractionPotential<Functions1D> &potential);
     // Return interaction potential
     const InteractionPotential<Functions1D> &interactionPotential() const;
+    // Set included charges
+    void setIncludedCharges(double qi, double qj);
+    // Set no included charges
+    void setNoIncludedCharges();
     // Set charge I
     void setChargeI(double value);
     // Return charge I
@@ -141,14 +141,14 @@ class PairPotential
     // Return analytic short range force
     double analyticShortRangeForce(
         double r, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme()) const;
-    // Calculate full potential
-    void calculateUFull();
-    // Calculate derivative of potential
-    void calculateDUFull();
 
     public:
     // Generate energy and force tables
     bool tabulate(double maxR, double delta);
+    // Calculate full potential
+    void calculateUFull();
+    // Calculate derivative of potential
+    void calculateDUFull();
     // Return number of tabulated points in potential
     int nPoints() const;
     // Return range of potential

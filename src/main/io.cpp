@@ -135,9 +135,9 @@ SerialisedValue Dissolve::serialisePairPotentials() const
         {"range", pairPotentialRange_},
         {"delta", pairPotentialDelta_},
         {"autoChargeSource", automaticChargeSource_},
-        {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(PairPotential::coulombTruncationScheme_)},
+        {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(PairPotential::coulombTruncationScheme())},
         {"shortRangeTruncation",
-         PairPotential::shortRangeTruncationSchemes().serialise(PairPotential::shortRangeTruncationScheme_)}};
+         PairPotential::shortRangeTruncationSchemes().serialise(PairPotential::shortRangeTruncationScheme())}};
     if (forceChargeSource_)
         pairPotentials["forceChargeSource"] = true;
     if (atomTypeChargeSource_)
@@ -179,10 +179,10 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
     forceChargeSource_ = toml::find_or<bool>(node, "forceChargeSource", false);
     automaticChargeSource_ = toml::find_or<bool>(node, "autoChargeSource", true);
 
-    PairPotential::coulombTruncationScheme_ =
-        PairPotential::coulombTruncationSchemes().deserialise(toml::find_or<std::string>(node, "coulombTruncation", "Shifted"));
-    PairPotential::shortRangeTruncationScheme_ = PairPotential::shortRangeTruncationSchemes().deserialise(
-        toml::find_or<std::string>(node, "shortRangeTruncation", "Shifted"));
+    PairPotential::setCoulombTruncationScheme(PairPotential::coulombTruncationSchemes().deserialise(
+        toml::find_or<std::string>(node, "coulombTruncation", "Shifted")));
+    PairPotential::setShortRangeTruncationScheme(PairPotential::shortRangeTruncationSchemes().deserialise(
+        toml::find_or<std::string>(node, "shortRangeTruncation", "Shifted")));
 
     toMap(node, "atomTypes",
           [this](const std::string &name, const auto &data)
