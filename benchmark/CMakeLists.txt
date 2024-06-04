@@ -10,6 +10,7 @@ dissolve_benchmark(energy)
 dissolve_benchmark(forces)
 dissolve_benchmark(region)
 dissolve_benchmark(math)
+dissolve_benchmark(siterdf)
 
 # create a single benchmark executable
 add_executable(benchmarks benchmarks.cpp ${benchmark_files})
