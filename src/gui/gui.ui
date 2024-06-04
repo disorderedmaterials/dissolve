@@ -302,6 +302,7 @@
      <addaction name="ConfigurationExportToXYZAction"/>
     </widget>
     <addaction name="ConfigurationCreateAction"/>
+    <addaction name="ConfigurationCreateEmptyAction"/>
     <addaction name="ConfigurationRenameAction"/>
     <addaction name="ConfigurationDeleteAction"/>
     <addaction name="separator"/>
@@ -843,6 +844,11 @@
   <action name="ConfigurationAdjustTemperatureAction">
    <property name="text">
     <string>Adjust &amp;Temperature...</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateEmptyAction">
+   <property name="text">
+    <string>Create Empty</string>
    </property>
   </action>
  </widget>

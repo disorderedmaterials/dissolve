@@ -87,6 +87,17 @@ void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
     }
 }
 
+void DissolveWindow::on_ConfigurationCreateEmptyAction_triggered(bool checked)
+{
+    auto emptyCfg = dissolve_.coreData().addConfiguration();
+
+    // Fully update GUI
+    setModified();
+    fullUpdate();
+
+    ui_.MainTabs->setCurrentTab(emptyCfg);
+}
+
 void DissolveWindow::on_ConfigurationRenameAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a ConfigurationTab, then call its rename() function
