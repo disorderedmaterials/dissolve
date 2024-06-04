@@ -16,6 +16,7 @@
 #include "keywords/nodeVector.h"
 #include "keywords/range.h"
 #include "keywords/species.h"
+#include "keywords/speciesSiteVector.h"
 #include "keywords/stdString.h"
 #include "keywords/vec3Double.h"
 #include "keywords/vec3Integer.h"
@@ -188,6 +189,11 @@ bool KeywordStore::set(std::string_view name, const int value)
 bool KeywordStore::set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value)
 {
     return getKeyword<NodeKeyword<Collect1DProcedureNode>>(name, find(name))->setData(value);
+}
+bool KeywordStore::set(std::string_view name, const std::vector<const SpeciesSite *> value)
+{
+    getKeyword<SpeciesSiteVectorKeyword>(name, find(name))->data() = value;
+    return true;
 }
 bool KeywordStore::set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value)
 {
