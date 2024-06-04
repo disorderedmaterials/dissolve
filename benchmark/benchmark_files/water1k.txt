@@ -25,6 +25,10 @@ Species 'Water'
 
   # Angles
   Angle    3    1    2  @HW-OW-HW
+
+  Site  'O'
+    Origin  1
+  EndSite
 EndSpecies
 
 #------------------------------------------------------------------------------#
