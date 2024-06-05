@@ -351,16 +351,15 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
 EnumOptions<Functions1D::Form> Functions1D::forms()
 {
     return EnumOptions<Functions1D::Form>("Function1D",
-                                          {
-                                              {Functions1D::Form::None, "None"},
-                                              {Functions1D::Form::Gaussian, "Gaussian", 1},
-                                              {Functions1D::Form::ScaledGaussian, "ScaledGaussian", 2},
-                                              {Functions1D::Form::OmegaDependentGaussian, "OmegaDependentGaussian", 1},
-                                              {Functions1D::Form::GaussianC2, "GaussianC2", 2},
-                                              {Functions1D::Form::LennardJones126, "LennardJones126", 2},
-                                              {Functions1D::Form::Buckingham, "Buckingham", 3},
-                                              {Functions1D::Form::GaussianPotential, "GaussianPotential", 3},
-                                          });
+                                          {{Functions1D::Form::None, "None"},
+                                           {Functions1D::Form::Gaussian, "Gaussian", 1},
+                                           {Functions1D::Form::ScaledGaussian, "ScaledGaussian", 2},
+                                           {Functions1D::Form::OmegaDependentGaussian, "OmegaDependentGaussian", 1},
+                                           {Functions1D::Form::GaussianC2, "GaussianC2", 2},
+                                           {Functions1D::Form::LennardJones126, "LennardJones126", 2},
+                                           {Functions1D::Form::Buckingham, "Buckingham", 3},
+                                           {Functions1D::Form::GaussianPotential, "GaussianPotential", 3},
+                                           {Functions1D::Form::Harmonic, "Harmonic", 1}});
 }
 
 // Return parameters for specified form
