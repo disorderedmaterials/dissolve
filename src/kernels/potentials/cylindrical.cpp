@@ -39,10 +39,10 @@ void CylindricalPotential::setPotential(const InteractionPotential<Functions1D> 
 }
 
 // Set coordinate origin of potential
-void CylindricalPotential::setOrigin(Vec3<double> origin) { origin_ = origin; }
+void CylindricalPotential::setOrigin(const Vec3<double> &origin) { origin_ = origin; }
 
 // Set vector of potential
-void CylindricalPotential::setVector(Vec3<double> vector) { vector_ = vector; }
+void CylindricalPotential::setVector(const Vec3<double> &vector) { vector_ = vector; }
 
 // Return functional form of the potential, as a string
 const std::string CylindricalPotential::formString() const

@@ -31,7 +31,7 @@ class SphericalPotential : public ExternalPotential
     // Set potential form
     void setPotential(const InteractionPotential<Functions1D> &potential);
     // Set coordinate origin of potential
-    void setOrigin(Vec3<double> origin);
+    void setOrigin(const Vec3<double> &origin);
     // Return functional form of the potential, as a string
     const std::string formString() const override;
     // Return parameters of the potential, as a string

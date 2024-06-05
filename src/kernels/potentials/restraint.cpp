@@ -28,7 +28,7 @@ void RestraintPotential::setPotential(const InteractionPotential<Functions1D> &p
 }
 
 // Set coordinate origin of potential
-void RestraintPotential::setOrigin(Vec3<double> origin) { origin_ = origin; }
+void RestraintPotential::setOrigin(const Vec3<double> &origin) { origin_ = origin; }
 
 // Return functional form of the potential, as a string
 const std::string RestraintPotential::formString() const { return Functions1D::forms().keyword(interactionPotential_.form()); }

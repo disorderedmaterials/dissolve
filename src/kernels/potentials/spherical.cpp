@@ -35,7 +35,7 @@ void SphericalPotential::setPotential(const InteractionPotential<Functions1D> &p
 }
 
 // Set coordinate origin of potential
-void SphericalPotential::setOrigin(Vec3<double> origin) { origin_ = origin; }
+void SphericalPotential::setOrigin(const Vec3<double> &origin) { origin_ = origin; }
 
 // Return functional form of the potential, as a string
 const std::string SphericalPotential::formString() const { return Functions1D::forms().keyword(interactionPotential_.form()); }
