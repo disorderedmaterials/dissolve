@@ -101,6 +101,8 @@ void CylindricalPotential::force(const Atom &i, const Box *box, Vec3<double> &f)
     v.y = vector_.z * yzzy - vector_.x * xyyx;
     v.z = -vector_.x * xzzx - vector_.y * yzzy;
 
+    auto r = v.magAndNormalise();
+
     // Get force at minimum distance between the atom and a point on the line
-    f = v * -potentialFunction_.dYdX(v.magnitude());
+    f = v * -potentialFunction_.dYdX(r);
 }
