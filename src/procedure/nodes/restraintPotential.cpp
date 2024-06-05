@@ -10,11 +10,10 @@
 
 RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::RestraintPotential, {ProcedureNode::GenerationContext}),
-      potential_(RestraintPotentialFunctions::Form::Harmonic)
+      potential_(Functions1D::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
-    keywords_.add<InteractionPotentialKeyword<RestraintPotentialFunctions>>(
-        "Potential", "Potential to apply to individual atoms", potential_);
+    keywords_.add<InteractionPotentialKeyword<Functions1D>>("Potential", "Potential to apply to individual atoms", potential_);
 
     keywords_.setOrganisation("Options", "Targets");
     keywords_.add<SpeciesVectorKeyword>("Species", "Target species to apply atomic restraints to", speciesToRestrain_);

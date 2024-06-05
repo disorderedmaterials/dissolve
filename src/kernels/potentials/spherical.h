@@ -6,31 +6,11 @@
 #include "classes/interactionPotential.h"
 #include "kernels/potentials/base.h"
 
-// SphericalPotential functional forms
-class SphericalPotentialFunctions
-{
-    public:
-    enum class Form
-    {
-        Harmonic, /* Harmonic well potential */
-        LJ        /* Lennard-Jones potential */
-    };
-    // Return enum options for form
-    static EnumOptions<Form> forms();
-    // Return parameters for specified form
-    static const std::vector<std::string> &parameters(Form form);
-    // Return nth parameter for the given form
-    static std::string parameter(Form form, int n);
-    // Return index of parameter in the given form
-    static std::optional<int> parameterIndex(Form form, std::string_view name);
-};
-
 // Spherical Potential
 class SphericalPotential : public ExternalPotential
 {
     public:
-    SphericalPotential(const InteractionPotential<SphericalPotentialFunctions> &interactionPotential =
-                           {SphericalPotentialFunctions::Form::Harmonic},
+    SphericalPotential(const InteractionPotential<Functions1D> &interactionPotential = {Functions1D::Form::Harmonic},
                        const Vec3<double> &origin = {0.0, 0.0, 0.0});
     ~SphericalPotential() = default;
     // Create and return a copy of this potential
@@ -42,13 +22,14 @@ class SphericalPotential : public ExternalPotential
 
     private:
     // Potential form
-    InteractionPotential<SphericalPotentialFunctions> interactionPotential_;
+    InteractionPotential<Functions1D> interactionPotential_;
+    Function1DWrapper potentialFunction_;
     // Coordinate origin of potential
     Vec3<double> origin_;
 
     public:
     // Set potential form
-    void setPotential(const InteractionPotential<SphericalPotentialFunctions> &potential);
+    void setPotential(const InteractionPotential<Functions1D> &potential);
     // Set coordinate origin of potential
     void setOrigin(Vec3<double> origin);
     // Return functional form of the potential, as a string

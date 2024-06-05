@@ -23,7 +23,7 @@ class RestraintPotentialProcedureNode : public ProcedureNode
     // Species to remove
     std::vector<const Species *> speciesToRestrain_;
     // Potential form
-    InteractionPotential<RestraintPotentialFunctions> potential_;
+    InteractionPotential<Functions1D> potential_;
 
     /*
      * Execute

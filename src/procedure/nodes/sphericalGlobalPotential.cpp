@@ -9,11 +9,10 @@
 
 SphericalGlobalPotentialProcedureNode::SphericalGlobalPotentialProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::SphericalGlobalPotential, {ProcedureNode::GenerationContext}),
-      potential_(SphericalPotentialFunctions::Form::Harmonic)
+      potential_(Functions1D::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
-    keywords_.add<InteractionPotentialKeyword<SphericalPotentialFunctions>>("Potential", "Form of global potential to apply ",
-                                                                            potential_);
+    keywords_.add<InteractionPotentialKeyword<Functions1D>>("Potential", "Form of global potential to apply ", potential_);
     keywords_.add<Vec3NodeValueKeyword>("Origin", "Origin of global potential", origin_, this);
     keywords_.add<BoolKeyword>("Fractional", "Whether the origin is specified in fractional cell coordinates",
                                originIsFractional_);
