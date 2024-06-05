@@ -3,15 +3,6 @@ add_library(
   add.cpp
   addPair.cpp
   box.cpp
-  calculateAngle.cpp
-  calculateAxisAngle.cpp
-  calculateBase.cpp
-  calculateDistance.cpp
-  calculateExpression.cpp
-  calculateVector.cpp
-  collect1D.cpp
-  collect2D.cpp
-  collect3D.cpp
   context.cpp
   coordinateSets.cpp
   copy.cpp
@@ -19,31 +10,15 @@ add_library(
   cylindricalGlobalPotential.cpp
   cylindricalRegion.cpp
   generalRegion.cpp
-  ifValueInRange.cpp
   importCoordinates.cpp
-  integerCollect1D.cpp
-  integrate1D.cpp
-  iterateData1D.cpp
   iterateSelection.cpp
   node.cpp
   nodeReference.cpp
-  operateBase.cpp
-  operateDivide.cpp
-  operateExpression.cpp
-  operateGridNormalise.cpp
-  operateMultiply.cpp
-  operateNormalise.cpp
-  operateNumberDensityNormalise.cpp
-  operateSitePopulationNormalise.cpp
-  operateSphericalShellNormalise.cpp
   parameters.cpp
   pick.cpp
   pickBase.cpp
   pickProximity.cpp
   pickRegion.cpp
-  process1D.cpp
-  process2D.cpp
-  process3D.cpp
   regionBase.cpp
   regionalGlobalPotential.cpp
   registry.cpp
@@ -55,21 +30,11 @@ add_library(
   sequence.cpp
   sphericalGlobalPotential.cpp
   sizeFactor.cpp
-  sum1D.cpp
   temperature.cpp
   transmute.cpp
   add.h
   addPair.h
   box.h
-  calculateAngle.h
-  calculateAxisAngle.h
-  calculateBase.h
-  calculateDistance.h
-  calculateExpression.h
-  calculateVector.h
-  collect1D.h
-  collect2D.h
-  collect3D.h
   context.h
   coordinateSets.h
   copy.h
@@ -77,31 +42,15 @@ add_library(
   cylindricalGlobalPotential.h
   cylindricalRegion.h
   generalRegion.h
-  ifValueInRange.h
   importCoordinates.h
-  integerCollect1D.h
-  integrate1D.h
-  iterateData1D.h
   iterateSelection.h
   node.h
   nodeReference.h
-  operateBase.h
-  operateDivide.h
-  operateExpression.h
-  operateGridNormalise.h
-  operateMultiply.h
-  operateNormalise.h
-  operateNumberDensityNormalise.h
-  operateSitePopulationNormalise.h
-  operateSphericalShellNormalise.h
   parameters.h
   pick.h
   pickBase.h
   pickProximity.h
   pickRegion.h
-  process1D.h
-  process2D.h
-  process3D.h
   regionBase.h
   regionalGlobalPotential.h
   registry.h
@@ -113,7 +62,6 @@ add_library(
   sequence.h
   sphericalGlobalPotential.h
   sizeFactor.h
-  sum1D.h
   temperature.h
   transmute.h
 )
