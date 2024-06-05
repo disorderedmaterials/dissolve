@@ -13,7 +13,6 @@ add_library(
   importCoordinates.cpp
   iterateSelection.cpp
   node.cpp
-  nodeReference.cpp
   parameters.cpp
   pick.cpp
   pickBase.cpp
@@ -45,7 +44,6 @@ add_library(
   importCoordinates.h
   iterateSelection.h
   node.h
-  nodeReference.h
   parameters.h
   pick.h
   pickBase.h
