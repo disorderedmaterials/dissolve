@@ -1,7 +1,7 @@
 ---
-title: DirectionalGlobalPotential (Node)
-linkTitle: DirectionalGlobalPotential
-description: Create a directional global potential affecting all atoms
+title: CylindricalGlobalPotential (Node)
+linkTitle: CylindricalGlobalPotential
+description: Create a cylindrical global potential affecting all atoms
 ---
 
 {{< htable >}}
@@ -14,7 +14,7 @@ description: Create a directional global potential affecting all atoms
 
 ## Overview
 
-The `DirectionalGlobalPotential` node allows an additional, global potential to be defined in a configuration, acting on all atoms and in a specified direction.
+The `CylindricalGlobalPotential` node allows an additional, global potential with cylindrical shape to be defined in a configuration, acting on all atoms and in a specified direction.
 
 ## Options
 
@@ -22,7 +22,7 @@ The `DirectionalGlobalPotential` node allows an additional, global potential to 
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Potential`|[`DirectionalPotential`]({{< ref directionalpotential >}})|--|Functional form and associated parameters for the potential.|
+|`Potential`|[`Function1D`]({{< ref function1d >}})|--|Functional form and associated parameters for the potential.|
 |`Origin`|`Vec3<double>`|`0.0 0.0 0.0`|Coordinate origin of the potential.|
 |`Fractional`|`bool`|`false`|Whether the coordinate origin is specified in fractional cell coordinates.|
-|`Vector`|`Vec3<double>`|`0.0 0.0 1.0`|Directional vector along which the potential acts.|
+|`Vector`|`Vec3<double>`|`0.0 0.0 1.0`|Cylindrical vector along which the potential acts.|
