@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "procedure/nodes/directionalGlobalPotential.h"
+#include "procedure/nodes/cylindricalGlobalPotential.h"
 #include "classes/configuration.h"
-#include "kernels/potentials/directional.h"
+#include "kernels/potentials/cylindrical.h"
 #include "keywords/bool.h"
 #include "keywords/interactionPotential.h"
 #include "keywords/vec3NodeValue.h"
 
-DirectionalGlobalPotentialProcedureNode::DirectionalGlobalPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::DirectionalGlobalPotential, {ProcedureNode::GenerationContext}),
+CylindricalGlobalPotentialProcedureNode::CylindricalGlobalPotentialProcedureNode()
+    : ProcedureNode(ProcedureNode::NodeType::CylindricalGlobalPotential, {ProcedureNode::GenerationContext}),
       potential_(Functions1D::Form::LennardJones126)
 {
     keywords_.setOrganisation("Options", "Definition");
@@ -26,12 +26,12 @@ DirectionalGlobalPotentialProcedureNode::DirectionalGlobalPotentialProcedureNode
  */
 
 // Execute node
-bool DirectionalGlobalPotentialProcedureNode::execute(const ProcedureContext &procedureContext)
+bool CylindricalGlobalPotentialProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     auto *cfg = procedureContext.configuration();
 
     // Set potential
-    auto pot = std::make_unique<DirectionalPotential>();
+    auto pot = std::make_unique<CylindricalPotential>();
     pot->setPotential(potential_);
 
     // Set origin

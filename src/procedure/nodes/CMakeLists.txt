@@ -16,8 +16,8 @@ add_library(
   coordinateSets.cpp
   copy.cpp
   customRegion.cpp
+  cylindricalGlobalPotential.cpp
   cylindricalRegion.cpp
-  directionalGlobalPotential.cpp
   generalRegion.cpp
   ifValueInRange.cpp
   importCoordinates.cpp
@@ -74,8 +74,8 @@ add_library(
   coordinateSets.h
   copy.h
   customRegion.h
+  cylindricalGlobalPotential.h
   cylindricalRegion.h
-  directionalGlobalPotential.h
   generalRegion.h
   ifValueInRange.h
   importCoordinates.h

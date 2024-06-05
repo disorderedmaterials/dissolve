@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "kernels/potentials/directional.h"
+#include "kernels/potentials/cylindrical.h"
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "keywords/interactionPotential.h"
@@ -9,9 +9,9 @@
 #include "keywords/vec3Labels.h"
 #include "types.h"
 
-DirectionalPotential::DirectionalPotential(const InteractionPotential<Functions1D> &interactionPotential,
+CylindricalPotential::CylindricalPotential(const InteractionPotential<Functions1D> &interactionPotential,
                                            const Vec3<double> &origin, const Vec3<double> &vector)
-    : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Directional), origin_(origin), vector_(vector)
+    : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Cylindrical), origin_(origin), vector_(vector)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);
     keywords_.add<InteractionPotentialKeyword<Functions1D>>("Form", "Functional form and parameters for the potential",
@@ -22,9 +22,9 @@ DirectionalPotential::DirectionalPotential(const InteractionPotential<Functions1
 }
 
 // Create and return a copy of this potential
-std::unique_ptr<ExternalPotential> DirectionalPotential::duplicate() const
+std::unique_ptr<ExternalPotential> CylindricalPotential::duplicate() const
 {
-    return std::make_unique<DirectionalPotential>(interactionPotential_, origin_, vector_);
+    return std::make_unique<CylindricalPotential>(interactionPotential_, origin_, vector_);
 }
 
 /*
@@ -32,33 +32,33 @@ std::unique_ptr<ExternalPotential> DirectionalPotential::duplicate() const
  */
 
 // Set potential form
-void DirectionalPotential::setPotential(const InteractionPotential<Functions1D> &potential)
+void CylindricalPotential::setPotential(const InteractionPotential<Functions1D> &potential)
 {
     interactionPotential_ = potential;
     potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
 }
 
 // Set coordinate origin of potential
-void DirectionalPotential::setOrigin(Vec3<double> origin) { origin_ = origin; }
+void CylindricalPotential::setOrigin(Vec3<double> origin) { origin_ = origin; }
 
 // Set vector of potential
-void DirectionalPotential::setVector(Vec3<double> vector) { vector_ = vector; }
+void CylindricalPotential::setVector(Vec3<double> vector) { vector_ = vector; }
 
 // Return functional form of the potential, as a string
-const std::string DirectionalPotential::formString() const
+const std::string CylindricalPotential::formString() const
 {
     return Functions1D::forms().keyword(interactionPotential_.form());
 }
 
 // Return parameters of the potential, as a string
-const std::string DirectionalPotential::formParametersString() const { return interactionPotential_.parametersAsString(); }
+const std::string CylindricalPotential::formParametersString() const { return interactionPotential_.parametersAsString(); }
 
 /*
  * Potential Calculation
  */
 
 // Calculate energy on specified atom
-double DirectionalPotential::energy(const Atom &i, const Box *box) const
+double CylindricalPotential::energy(const Atom &i, const Box *box) const
 {
     // Vector between the position of the atom and the origin
     auto v = box->minimumVector(i.r(), origin_);
@@ -82,7 +82,7 @@ double DirectionalPotential::energy(const Atom &i, const Box *box) const
 }
 
 // Calculate force on specified atom, summing in to supplied vector
-void DirectionalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) const
+void CylindricalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) const
 {
     // Vector between the position of the atom and the origin
     auto v = box->minimumVector(i.r(), origin_);

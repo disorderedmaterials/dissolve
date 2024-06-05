@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "kernels/potentials/producer.h"
-#include "kernels/potentials/directional.h"
+#include "kernels/potentials/cylindrical.h"
 #include "kernels/potentials/regional.h"
 #include "kernels/potentials/simple.h"
 
@@ -16,8 +16,8 @@ std::unique_ptr<ExternalPotential> create(ExternalPotentialTypes::ExternalPotent
     {
         case (ExternalPotentialTypes::ExternalPotentialType::Simple):
             return std::make_unique<SimplePotential>();
-        case (ExternalPotentialTypes::ExternalPotentialType::Directional):
-            return std::make_unique<DirectionalPotential>();
+        case (ExternalPotentialTypes::ExternalPotentialType::Cylindrical):
+            return std::make_unique<CylindricalPotential>();
         case (ExternalPotentialTypes::ExternalPotentialType::Regional):
             return std::make_unique<RegionalPotential>();
         default:

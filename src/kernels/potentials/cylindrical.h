@@ -6,13 +6,13 @@
 #include "classes/interactionPotential.h"
 #include "kernels/potentials/base.h"
 
-// Directional Potential
-class DirectionalPotential : public ExternalPotential
+// Cylindrical Potential
+class CylindricalPotential : public ExternalPotential
 {
     public:
-    DirectionalPotential(const InteractionPotential<Functions1D> &interactionPotential = {Functions1D::Form::LennardJones126},
+    CylindricalPotential(const InteractionPotential<Functions1D> &interactionPotential = {Functions1D::Form::LennardJones126},
                          const Vec3<double> &origin = {0.0, 0.0, 0.0}, const Vec3<double> &vector = {0.0, 0.0, 1.0});
-    ~DirectionalPotential() = default;
+    ~CylindricalPotential() = default;
     // Create and return a copy of this potential
     std::unique_ptr<ExternalPotential> duplicate() const override;
 

@@ -13,7 +13,7 @@ namespace ExternalPotentialTypes
 enum class ExternalPotentialType
 {
     Simple,
-    Directional,
+    Cylindrical,
     Regional
 };
 // Return whether the supplied external potential type is valid

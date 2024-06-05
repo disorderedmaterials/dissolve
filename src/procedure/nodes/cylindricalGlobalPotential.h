@@ -3,15 +3,15 @@
 
 #pragma once
 
-#include "kernels/potentials/directional.h"
+#include "kernels/potentials/cylindrical.h"
 #include "procedure/nodes/node.h"
 
-// Directional Global Potential Procedure Node
-class DirectionalGlobalPotentialProcedureNode : public ProcedureNode
+// Cylindrical Global Potential Procedure Node
+class CylindricalGlobalPotentialProcedureNode : public ProcedureNode
 {
     public:
-    DirectionalGlobalPotentialProcedureNode();
-    ~DirectionalGlobalPotentialProcedureNode() override = default;
+    CylindricalGlobalPotentialProcedureNode();
+    ~CylindricalGlobalPotentialProcedureNode() override = default;
 
     /*
      * Potential Function
@@ -22,7 +22,7 @@ class DirectionalGlobalPotentialProcedureNode : public ProcedureNode
     // Origin coordinates
     Vec3<NodeValue> origin_;
     bool originIsFractional_{false};
-    // Directional vector
+    // Cylindrical vector
     Vec3<NodeValue> vector_{0.0, 0.0, 1.0};
 
     /*
