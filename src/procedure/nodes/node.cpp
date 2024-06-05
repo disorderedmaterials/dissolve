@@ -16,10 +16,8 @@
 // Return enum option info for NodeClass
 EnumOptions<ProcedureNode::NodeClass> ProcedureNode::nodeClasses()
 {
-    return EnumOptions<ProcedureNode::NodeClass>("NodeClass", {{ProcedureNode::NodeClass::None, "None"},
-                                                               {ProcedureNode::NodeClass::Calculate, "Calculate"},
-                                                               {ProcedureNode::NodeClass::Operate, "Operate"},
-                                                               {ProcedureNode::NodeClass::Region, "Region"}});
+    return EnumOptions<ProcedureNode::NodeClass>(
+        "NodeClass", {{ProcedureNode::NodeClass::None, "None"}, {ProcedureNode::NodeClass::Region, "Region"}});
 }
 
 // Return enum option info for NodeType

@@ -28,8 +28,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     enum class NodeClass
     {
         None,
-        Calculate,
-        Operate,
         Pick,
         Region
     };
