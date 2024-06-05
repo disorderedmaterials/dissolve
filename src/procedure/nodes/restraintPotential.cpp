@@ -3,7 +3,7 @@
 
 #include "procedure/nodes/restraintPotential.h"
 #include "classes/configuration.h"
-#include "kernels/potentials/restraint.h"
+#include "kernels/potentials/spherical.h"
 #include "keywords/interactionPotential.h"
 #include "keywords/node.h"
 #include "keywords/speciesVector.h"
@@ -30,7 +30,7 @@ void RestraintPotentialProcedureNode::restrainMoleculeAtoms(Configuration *cfg, 
 {
     for (auto &i : mol->atoms())
     {
-        auto pot = std::make_unique<RestraintPotential>();
+        auto pot = std::make_unique<SphericalPotential>();
         pot->setPotential(potential_);
         pot->setTargetAtomIndices({i->globalIndex()});
         pot->setOrigin(i->r());

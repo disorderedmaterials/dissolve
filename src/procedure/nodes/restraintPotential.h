@@ -3,7 +3,8 @@
 
 #pragma once
 
-#include "kernels/potentials/restraint.h"
+#include "classes/interactionPotential.h"
+#include "math/function1D.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/pickBase.h"
 
