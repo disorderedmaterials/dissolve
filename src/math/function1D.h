@@ -32,9 +32,8 @@ using Function1DOmega = std::function<double(double omega, const std::vector<dou
 class Function1DDefinition
 {
     public:
-    Function1DDefinition(const std::vector<std::string> &parameterNames,
-                         const Flags<FunctionProperties::FunctionProperty> &properties, Function1DSetup setup,
-                         Function1DXOmega y, Function1DXOmega dYdX = {}, Function1DXOmega yFT = {}, Function1DOmega norm = {});
+    Function1DDefinition() = default;
+    Function1DDefinition(const std::vector<std::string> &parameterNames, Function1DXOmega valueFunction);
 
     private:
     // Names of parameters defining the function
@@ -53,14 +52,22 @@ class Function1DDefinition
     const std::vector<std::string> &parameterNames() const;
     // Return properties of the function
     const Flags<FunctionProperties::FunctionProperty> &properties() const;
+    // Set setup function
+    void setSetupFunction(Function1DSetup func);
     // Return function for setup
     Function1DSetup setup() const;
     // Return function for y value
     Function1DXOmega y() const;
+    // Set derivative function
+    void setDerivativeFunction(Function1DXOmega func);
     // Return function for first derivative
     Function1DXOmega dYdX() const;
+    // Set FT function
+    void setFTFunction(Function1DXOmega func);
     // Return function for FT of y value
     Function1DXOmega yFT() const;
+    // Set normalisation function
+    void setNormalisationFunction(Function1DOmega func);
     // Return normalisation function
     Function1DOmega normalisation() const;
 };
