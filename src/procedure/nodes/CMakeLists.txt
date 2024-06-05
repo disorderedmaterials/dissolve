@@ -53,7 +53,7 @@ add_library(
   runLayer.cpp
   select.cpp
   sequence.cpp
-  simpleGlobalPotential.cpp
+  sphericalGlobalPotential.cpp
   sizeFactor.cpp
   sum1D.cpp
   temperature.cpp
@@ -111,7 +111,7 @@ add_library(
   runLayer.h
   select.h
   sequence.h
-  simpleGlobalPotential.h
+  sphericalGlobalPotential.h
   sizeFactor.h
   sum1D.h
   temperature.h

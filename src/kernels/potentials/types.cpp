@@ -7,7 +7,7 @@
 namespace ExternalPotentialTypes
 {
 // External Potential Types
-EnumOptions<ExternalPotentialType> types_("ExternalPotential", {{ExternalPotentialType::Simple, "Simple"},
+EnumOptions<ExternalPotentialType> types_("ExternalPotential", {{ExternalPotentialType::Spherical, "Spherical"},
                                                                 {ExternalPotentialType::Cylindrical, "Cylindrical"},
                                                                 {ExternalPotentialType::Regional, "Regional"}});
 

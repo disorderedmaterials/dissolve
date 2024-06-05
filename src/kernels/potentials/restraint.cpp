@@ -40,7 +40,7 @@ std::optional<int> RestraintPotentialFunctions::parameterIndex(Form form, std::s
 }
 
 RestraintPotential::RestraintPotential()
-    : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Simple),
+    : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Spherical),
       interactionPotential_(RestraintPotentialFunctions::Form::Harmonic)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);

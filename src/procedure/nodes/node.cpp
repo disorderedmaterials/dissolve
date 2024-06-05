@@ -72,7 +72,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::RunLayer, "RunLayer"},
                      {ProcedureNode::NodeType::Select, "Select"},
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
-                     {ProcedureNode::NodeType::SimpleGlobalPotential, "SimpleGlobalPotential"},
+                     {ProcedureNode::NodeType::SphericalGlobalPotential, "SphericalGlobalPotential"},
                      {ProcedureNode::NodeType::SizeFactor, "SizeFactor"},
                      {ProcedureNode::NodeType::Sum1D, "Sum1D"},
                      {ProcedureNode::NodeType::Temperature, "Temperature"},

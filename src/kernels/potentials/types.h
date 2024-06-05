@@ -12,7 +12,7 @@ namespace ExternalPotentialTypes
 // External Potential Types
 enum class ExternalPotentialType
 {
-    Simple,
+    Spherical,
     Cylindrical,
     Regional
 };

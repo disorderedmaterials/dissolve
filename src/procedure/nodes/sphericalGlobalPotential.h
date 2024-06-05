@@ -3,22 +3,22 @@
 
 #pragma once
 
-#include "kernels/potentials/simple.h"
+#include "kernels/potentials/spherical.h"
 #include "procedure/nodes/node.h"
 
-// Simple Global Potential Procedure Node
-class SimpleGlobalPotentialProcedureNode : public ProcedureNode
+// Spherical Global Potential Procedure Node
+class SphericalGlobalPotentialProcedureNode : public ProcedureNode
 {
     public:
-    SimpleGlobalPotentialProcedureNode();
-    ~SimpleGlobalPotentialProcedureNode() override = default;
+    SphericalGlobalPotentialProcedureNode();
+    ~SphericalGlobalPotentialProcedureNode() override = default;
 
     /*
      * Potential Function
      */
     private:
     // Potential form
-    InteractionPotential<SimplePotentialFunctions> potential_;
+    InteractionPotential<SphericalPotentialFunctions> potential_;
     // Origin coordinates
     Vec3<NodeValue> origin_;
     bool originIsFractional_{false};

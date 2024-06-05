@@ -6,8 +6,8 @@
 #include "classes/interactionPotential.h"
 #include "kernels/potentials/base.h"
 
-// SimplePotential functional forms
-class SimplePotentialFunctions
+// SphericalPotential functional forms
+class SphericalPotentialFunctions
 {
     public:
     enum class Form
@@ -25,14 +25,14 @@ class SimplePotentialFunctions
     static std::optional<int> parameterIndex(Form form, std::string_view name);
 };
 
-// Simple Potential
-class SimplePotential : public ExternalPotential
+// Spherical Potential
+class SphericalPotential : public ExternalPotential
 {
     public:
-    SimplePotential(
-        const InteractionPotential<SimplePotentialFunctions> &interactionPotential = {SimplePotentialFunctions::Form::Harmonic},
-        const Vec3<double> &origin = {0.0, 0.0, 0.0});
-    ~SimplePotential() = default;
+    SphericalPotential(const InteractionPotential<SphericalPotentialFunctions> &interactionPotential =
+                           {SphericalPotentialFunctions::Form::Harmonic},
+                       const Vec3<double> &origin = {0.0, 0.0, 0.0});
+    ~SphericalPotential() = default;
     // Create and return a copy of this potential
     std::unique_ptr<ExternalPotential> duplicate() const override;
 
@@ -42,13 +42,13 @@ class SimplePotential : public ExternalPotential
 
     private:
     // Potential form
-    InteractionPotential<SimplePotentialFunctions> interactionPotential_;
+    InteractionPotential<SphericalPotentialFunctions> interactionPotential_;
     // Coordinate origin of potential
     Vec3<double> origin_;
 
     public:
     // Set potential form
-    void setPotential(const InteractionPotential<SimplePotentialFunctions> &potential);
+    void setPotential(const InteractionPotential<SphericalPotentialFunctions> &potential);
     // Set coordinate origin of potential
     void setOrigin(Vec3<double> origin);
     // Return functional form of the potential, as a string

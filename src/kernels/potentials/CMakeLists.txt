@@ -5,14 +5,14 @@ add_library(
   producer.cpp
   regional.cpp
   restraint.cpp
-  simple.cpp
+  spherical.cpp
   types.cpp
   base.h
   cylindrical.h
   producer.h
   regional.h
   restraint.h
-  simple.h
+  spherical.h
   types.h
 )
 

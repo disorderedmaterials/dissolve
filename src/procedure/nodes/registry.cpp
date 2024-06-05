@@ -44,8 +44,8 @@
 #include "procedure/nodes/rotateFragment.h"
 #include "procedure/nodes/runLayer.h"
 #include "procedure/nodes/select.h"
-#include "procedure/nodes/simpleGlobalPotential.h"
 #include "procedure/nodes/sizeFactor.h"
+#include "procedure/nodes/sphericalGlobalPotential.h"
 #include "procedure/nodes/sum1D.h"
 #include "procedure/nodes/temperature.h"
 #include "procedure/nodes/transmute.h"
@@ -140,14 +140,15 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
 
     // Potentials
     registerProducer<CylindricalGlobalPotentialProcedureNode>(ProcedureNode::NodeType::CylindricalGlobalPotential,
-                                                              "Add a directional global potential affecting all atoms",
+                                                              "Add a cylindrical global potential affecting all atoms",
                                                               "Potentials");
     registerProducer<RegionalGlobalPotentialProcedureNode>(
         ProcedureNode::NodeType::RegionalGlobalPotential, "Add a voxelised global potential affecting all atoms", "Potentials");
     registerProducer<RestraintPotentialProcedureNode>(ProcedureNode::NodeType::RestraintPotential,
                                                       "Restraint atoms of molecules to their current positions", "Potentials");
-    registerProducer<SimpleGlobalPotentialProcedureNode>(ProcedureNode::NodeType::SimpleGlobalPotential,
-                                                         "Add a global potential affecting all atoms", "Potentials");
+    registerProducer<SphericalGlobalPotentialProcedureNode>(ProcedureNode::NodeType::SphericalGlobalPotential,
+                                                            "Add a spherical global potential affecting all atoms",
+                                                            "Potentials");
 
     // Sites
     registerProducer<RotateFragmentProcedureNode>(ProcedureNode::NodeType::RotateFragment, "Rotate fragment sites", "Sites");

@@ -84,7 +84,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         RunLayer,
         Select,
         Sequence,
-        SimpleGlobalPotential,
+        SphericalGlobalPotential,
         SizeFactor,
         Sum1D,
         Temperature,
