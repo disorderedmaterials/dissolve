@@ -21,9 +21,6 @@ TEST_F(HistogramCNModuleTest, Simple)
     EXPECT_TRUE(systemTest.checkData1D(
         "CN(X-Y)//Histogram", {"dissolve/input/histogramCN-simple.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3},
         1.0e-8));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "CN(X-Y)-Analyser//Process1D//CN",
-        {"dissolve/input/histogramCN-simple.dat", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-8));
 }
 
 TEST_F(HistogramCNModuleTest, Water)
@@ -33,9 +30,6 @@ TEST_F(HistogramCNModuleTest, Water)
 
     EXPECT_TRUE(systemTest.checkData1D(
         "CN(COM-COM)//Histogram",
-        {"dlpoly/water267-analysis/water-267-298K.cn11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 1.0e-8));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "CN(COM-COM)-Analyser//Process1D//CN",
         {"dlpoly/water267-analysis/water-267-298K.cn11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 1.0e-8));
 }
 

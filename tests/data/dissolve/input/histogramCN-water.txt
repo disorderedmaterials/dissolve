@@ -109,37 +109,4 @@ Module  HistogramCN  'CN(COM-COM)'
   DistanceRange  0.0  3.4
 EndModule
 
-# Oxygen-oxygen coordination number (using Analysis module)
-Module  Analyse  'CN(COM-COM)-Analyser'
-  Configuration  'Bulk'
-  Analyser
-    Select  'COM1'
-      Site  Water  'COM'
-      ForEach
-        Select  'COM2'
-          Site  Water  'COM'
-          ExcludeSameMolecule  'COM1'
-	  ReferenceSite  'COM1'
-          InclusiveRange  0.0  3.4
-        EndSelect
-        CalculateExpression  count
-          Expression  COM2.nSelected
-        EndCalculateExpression
-        IntegerCollect1D  'HistoCN'
-          QuantityX  'count'
-        EndIntegerCollect1D
-      EndForEach
-    EndSelect
-    Process1D  'CN'
-      SourceIntegerData  'HistoCN'
-      LabelValue  'gOO(r)'
-      LabelX  'r, Angstroms'
-      Normalisation
-        OperateNormalise
-        EndOperateNormalise
-      EndNormalisation
-    EndProcess1D
-  EndAnalyser
-EndModule
-
 EndLayer

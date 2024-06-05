@@ -101,97 +101,12 @@ Layer  'Processing'
     DistanceRange  0.000000e+00  2.000000e+01  1.000000e-02
   EndModule
 
-  Module  Analyse  'RDF(OW-OW)-Analyser'
-    Configuration  'Bulk'
-    Analyser
-      Select  'O1'
-        Site  'Water'  'O'
-        ForEach
-          Select  'O2'
-            Site  'Water'  'O'
-            ExcludeSameMolecule  'O1'
-            ForEach
-              CalculateDistance  'rOO'
-                I  'O1'
-                J  'O2'
-              EndCalculateDistance
-              Collect1D  'HistoOO'
-                QuantityX  'rOO'  0
-                RangeX  0.000000e+00  2.000000e+01  1.000000e-02
-              EndCollect1D
-            EndForEach
-          EndSelect
-        EndForEach
-      EndSelect
-      Process1D  'RDF'
-        SourceData  'HistoOO'
-        LabelValue  'gOO(r)'
-        LabelX  'r, Angstroms'
-        Normalisation
-          OperateSitePopulationNormalise  'OperateSitePopulationNormalise01'
-            Site  'O1'
-          EndOperateSitePopulationNormalise
-          OperateNumberDensityNormalise  'OperateNumberDensityNormalise01'
-            Site  'O2'
-            Population  Available
-          EndOperateNumberDensityNormalise
-          OperateSphericalShellNormalise  'OperateSphericalShellNormalise01'
-          EndOperateSphericalShellNormalise
-        EndNormalisation
-      EndProcess1D
-    EndAnalyser
-  EndModule
-
   Module  SiteRDF  'RDF(H1-H2)'
     Frequency  1
     Configuration  'Bulk'
     SiteA  'Water'  'H'
     SiteB  'Water'  'H'
     ExcludeSameMolecule  True
-  EndModule
-
-  Module  Analyse  'RDF(H1-H2)-Analyser'
-    Frequency  1
-    Configuration  'Bulk'
-    Analyser
-      Select  'A'
-        Site  'Water'  'H'
-        InclusiveRange  0.000000e+00  5.000000e+00
-        ForEach
-          Select  'B'
-            Site  'Water'  'H'
-            ExcludeSameMolecule  'A'
-            InclusiveRange  0.000000e+00  5.000000e+00
-            ForEach
-              CalculateDistance  'rHH'
-                I  'A'
-                J  'B'
-              EndCalculateDistance
-              Collect1D  'HistoHH'
-                QuantityX  'rHH'  0
-                RangeX  0.000000e+00  2.000000e+01  1.000000e-02
-              EndCollect1D
-            EndForEach
-          EndSelect
-        EndForEach
-      EndSelect
-      Process1D  'RDF'
-        SourceData  'HistoHH'
-        LabelValue  'gHH(r)'
-        LabelX  'r, Angstroms'
-        Normalisation
-          OperateSitePopulationNormalise  'OperateSitePopulationNormalise01'
-            Site  'A'
-          EndOperateSitePopulationNormalise
-          OperateNumberDensityNormalise  'OperateNumberDensityNormalise01'
-            Site  'B'
-            Population  Available
-          EndOperateNumberDensityNormalise
-          OperateSphericalShellNormalise  'OperateSphericalShellNormalise01'
-          EndOperateSphericalShellNormalise
-        EndNormalisation
-      EndProcess1D
-    EndAnalyser
   EndModule
 
   Module  SiteRDF  'RDF(COM-COM)'
@@ -204,48 +119,6 @@ Layer  'Processing'
     RangeB  3.3  5.6
     RangeBEnabled  True
     ExcludeSameMolecule  On
-  EndModule
-
-  Module  Analyse  'RDF(COM-COM)-Analyser'
-    Frequency  1
-    Configuration  'Bulk'
-    Analyser
-      Select  'A'
-        Site  'Water'  'COM'
-        ForEach
-          Select  'B'
-            Site  'Water'  'COM'
-            ExcludeSameMolecule  'A'
-            ForEach
-              CalculateDistance  'rCOMCOM'
-                I  'A'
-                J  'B'
-              EndCalculateDistance
-              Collect1D  'HistoCOMCOM'
-                QuantityX  'rCOMCOM'  0
-                RangeX  0.000000e+00  2.000000e+01  5.000000e-02
-              EndCollect1D
-            EndForEach
-          EndSelect
-        EndForEach
-      EndSelect
-      Process1D  'RDF'
-        SourceData  'HistoCOMCOM'
-        LabelValue  'gCOMCOM(r)'
-        LabelX  'r, Angstroms'
-        Normalisation
-          OperateSitePopulationNormalise  'OperateSitePopulationNormalise01'
-            Site  'A'
-          EndOperateSitePopulationNormalise
-          OperateNumberDensityNormalise  'OperateNumberDensityNormalise01'
-            Site  'B'
-            Population  Available
-          EndOperateNumberDensityNormalise
-          OperateSphericalShellNormalise  'OperateSphericalShellNormalise01'
-          EndOperateSphericalShellNormalise
-        EndNormalisation
-      EndProcess1D
-    EndAnalyser
   EndModule
 
 EndLayer

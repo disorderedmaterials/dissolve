@@ -91,30 +91,4 @@ Module  HistogramCN  'CN(X-Y)'
   DistanceRange  0.0  2
 EndModule
 
-# Oxygen-oxygen coordination number (using Analysis module)
-Module  Analyse  'CN(X-Y)-Analyser'
-  Configuration  'Bulk'
-  Analyser
-    Select  'X'
-      Site  Central  'X
-      ForEach
-        Select  'Y'
-          Site  Other  'Y'
-          ReferenceSite  'X'
-          InclusiveRange  0.0  2.0
-        EndSelect
-        CalculateExpression  count
-          Expression  Y.nSelected
-        EndCalculateExpression
-        IntegerCollect1D  'HistoCN'
-          QuantityX  'count'
-        EndIntegerCollect1D
-      EndForEach
-    EndSelect
-    Process1D  'CN'
-      SourceIntegerData  'HistoCN'
-    EndProcess1D
-  EndAnalyser
-EndModule
-
 EndLayer

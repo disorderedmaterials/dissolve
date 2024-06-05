@@ -113,47 +113,6 @@ Module  SiteRDF  'RDF(OW-OW)'
   DistanceRange  0.0  20.0  0.01
 EndModule
 
-# Oxygen-oxygen radial distribution function (using Analysis module)
-Module  Analyse  'RDF(OW-OW)-Analyser'
-  Configuration  'Bulk'
-  Analyser
-    Select  'O1'
-      Site  Water  'O'
-      ForEach
-        Select  'O2'
-          Site  Water  'O'
-          ExcludeSameMolecule  'O1'
-          ForEach
-            CalculateDistance  'rOO'
-              I  'O1'
-              J  'O2'
-            EndCalculateDistance
-            Collect1D  'HistoOO'
-              QuantityX  'rOO'
-              RangeX  0.0  20.0  0.01
-            EndCollect1D
-          EndForEach
-        EndSelect
-      EndForEach
-    EndSelect
-    Process1D  'RDF'
-      SourceData  'HistoOO'
-      LabelValue  'gOO(r)'
-      LabelX  'r, Angstroms'
-      Normalisation
-        OperateSitePopulationNormalise
-          Site  'O1'
-        EndOperateSitePopulationNormalise
-        OperateNumberDensityNormalise
-          Site  'O2'
-        EndOperateNumberDensityNormalise
-        OperateSphericalShellNormalise
-        EndOperateSphericalShellNormalise
-      EndNormalisation
-    EndProcess1D
-  EndAnalyser
-EndModule
-
 # Hydrogen-hydrogen (H1-H2, 1-3) radial distribution function, excluding intramolecular correlations
 Module  SiteRDF  'RDF(H1-H2)'
   Configuration  'Bulk'
@@ -161,47 +120,6 @@ Module  SiteRDF  'RDF(H1-H2)'
   SiteB  Water  'H2'
   ExcludeSameMolecule  On
   DistanceRange  0.0  20.0  0.01
-EndModule
-
-# Hydrogen-hydrogen (H1-H2, 1-3) radial distribution function, excluding intramolecular correlations, using analyser
-Module  Analyse  'RDF(H1-H2)-Analyser'
-  Configuration  'Bulk'
-  Analyser
-    Select  'A'
-      Site  Water  'H1'
-      ForEach
-        Select  'B'
-          Site  Water  'H2'
-          ExcludeSameMolecule  'A'
-          ForEach
-            CalculateDistance  'rHH'
-              I  'A'
-              J  'B'
-            EndCalculateDistance
-            Collect1D  'HistoHH'
-              QuantityX  'rHH'
-              RangeX  0.0  20.0  0.01
-            EndCollect1D
-          EndForEach
-        EndSelect
-      EndForEach
-    EndSelect
-    Process1D  'RDF'
-      SourceData  'HistoHH'
-      LabelValue  'gHH(r)'
-      LabelX  'r, Angstroms'
-      Normalisation
-        OperateSitePopulationNormalise
-          Site  'A'
-        EndOperateSitePopulationNormalise
-        OperateNumberDensityNormalise
-          Site  'B'
-        EndOperateNumberDensityNormalise
-        OperateSphericalShellNormalise
-        EndOperateSphericalShellNormalise
-      EndNormalisation
-    EndProcess1D
-  EndAnalyser
 EndModule
 
 # Center-of-mass radial distribution function
@@ -214,47 +132,6 @@ Module  SiteRDF  'RDF(COM-COM)'
   RangeA  0.0  3.3
   RangeB  3.3  5.6
   RangeBEnabled  True
-EndModule
-
-# Center-of-mass radial distribution function, with analyser
-Module  Analyse  'RDF(COM-COM)-Analyser'
-  Configuration  'Bulk'
-  Analyser
-    Select  'A'
-      Site  Water  'COM'
-      ForEach
-        Select  'B'
-          Site  Water  'COM'
-          ExcludeSameMolecule  'A'
-          ForEach
-            CalculateDistance  'rCOMCOM'
-              I  'A'
-              J  'B'
-            EndCalculateDistance
-            Collect1D  'HistoCOMCOM'
-              QuantityX  'rCOMCOM'
-              RangeX  0.0  20.0  0.05
-            EndCollect1D
-          EndForEach
-        EndSelect
-      EndForEach
-    EndSelect
-    Process1D  'RDF'
-      SourceData  'HistoCOMCOM'
-      LabelValue  'gCOMCOM(r)'
-      LabelX  'r, Angstroms'
-      Normalisation
-        OperateSitePopulationNormalise
-          Site  'A'
-        EndOperateSitePopulationNormalise
-        OperateNumberDensityNormalise
-          Site  'B'
-        EndOperateNumberDensityNormalise
-        OperateSphericalShellNormalise
-        EndOperateSphericalShellNormalise
-      EndNormalisation
-    EndProcess1D
-  EndAnalyser
 EndModule
 
 EndLayer
