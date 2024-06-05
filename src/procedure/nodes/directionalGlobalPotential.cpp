@@ -10,11 +10,11 @@
 
 DirectionalGlobalPotentialProcedureNode::DirectionalGlobalPotentialProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::DirectionalGlobalPotential, {ProcedureNode::GenerationContext}),
-      potential_(DirectionalPotentialFunctions::Form::LJCylinder)
+      potential_(Functions1D::Form::LennardJones126)
 {
     keywords_.setOrganisation("Options", "Definition");
-    keywords_.add<InteractionPotentialKeyword<DirectionalPotentialFunctions>>(
-        "Potential", "Form of directional global potential to apply ", potential_);
+    keywords_.add<InteractionPotentialKeyword<Functions1D>>("Potential", "Form of directional global potential to apply ",
+                                                            potential_);
     keywords_.add<Vec3NodeValueKeyword>("Origin", "Origin of global potential", origin_, this);
     keywords_.add<BoolKeyword>("Fractional", "Whether the origin is specified in fractional cell coordinates",
                                originIsFractional_);

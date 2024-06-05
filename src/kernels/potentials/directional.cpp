@@ -9,47 +9,16 @@
 #include "keywords/vec3Labels.h"
 #include "types.h"
 
-// Return enum options for DirectionalPotentialFunctions
-EnumOptions<DirectionalPotentialFunctions::Form> DirectionalPotentialFunctions::forms()
-{
-    return EnumOptions<DirectionalPotentialFunctions::Form>(
-        "DirectionalPotentialFunction", {{DirectionalPotentialFunctions::Form::LJCylinder, "LJCylinder", 2}});
-}
-
-// Return parameters for specified form
-const std::vector<std::string> &DirectionalPotentialFunctions::parameters(Form form)
-{
-    static std::map<DirectionalPotentialFunctions::Form, std::vector<std::string>> params_ = {
-        {DirectionalPotentialFunctions::Form::LJCylinder, {"epsilon", "sigma"}}};
-    return params_[form];
-}
-
-// Return nth parameter for the given form
-std::string DirectionalPotentialFunctions::parameter(Form form, int n)
-{
-    return (n < 0 || n >= parameters(form).size()) ? "" : parameters(form)[n];
-}
-
-// Return index of parameter in the given form
-std::optional<int> DirectionalPotentialFunctions::parameterIndex(Form form, std::string_view name)
-{
-    auto it = std::find_if(parameters(form).begin(), parameters(form).end(),
-                           [name](const auto &param) { return DissolveSys::sameString(name, param); });
-    if (it == parameters(form).end())
-        return {};
-
-    return it - parameters(form).begin();
-}
-
-DirectionalPotential::DirectionalPotential(const InteractionPotential<DirectionalPotentialFunctions> &interactionPotential,
+DirectionalPotential::DirectionalPotential(const InteractionPotential<Functions1D> &interactionPotential,
                                            const Vec3<double> &origin, const Vec3<double> &vector)
-    : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Directional),
-      interactionPotential_(interactionPotential), origin_(origin), vector_(vector)
+    : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Directional), origin_(origin), vector_(vector)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);
-    keywords_.add<InteractionPotentialKeyword<DirectionalPotentialFunctions>>(
-        "Form", "Functional form and parameters for the potential", interactionPotential_);
+    keywords_.add<InteractionPotentialKeyword<Functions1D>>("Form", "Functional form and parameters for the potential",
+                                                            interactionPotential_);
     keywords_.add<Vec3DoubleKeyword>("Vector", "Direction vector", vector_, Vec3Labels::LabelType::XYZLabels);
+
+    setPotential(interactionPotential);
 }
 
 // Create and return a copy of this potential
@@ -63,9 +32,10 @@ std::unique_ptr<ExternalPotential> DirectionalPotential::duplicate() const
  */
 
 // Set potential form
-void DirectionalPotential::setPotential(const InteractionPotential<DirectionalPotentialFunctions> &potential)
+void DirectionalPotential::setPotential(const InteractionPotential<Functions1D> &potential)
 {
     interactionPotential_ = potential;
+    potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
 }
 
 // Set coordinate origin of potential
@@ -77,7 +47,7 @@ void DirectionalPotential::setVector(Vec3<double> vector) { vector_ = vector; }
 // Return functional form of the potential, as a string
 const std::string DirectionalPotential::formString() const
 {
-    return DirectionalPotentialFunctions::forms().keyword(interactionPotential_.form());
+    return Functions1D::forms().keyword(interactionPotential_.form());
 }
 
 // Return parameters of the potential, as a string
@@ -107,22 +77,8 @@ double DirectionalPotential::energy(const Atom &i, const Box *box) const
     v.y = vector_.z * yzzy - vector_.x * xyyx;
     v.z = -vector_.x * xzzx - vector_.y * yzzy;
 
-    // Minimum distance between the atom and a point on the line
-    auto r = v.magnitude();
-
-    switch (interactionPotential_.form())
-    {
-        case (DirectionalPotentialFunctions::Form::LJCylinder):
-        {
-            auto sigmar = interactionPotential_.parameters()[1] / r;
-            auto sigmar6 = pow(sigmar, 6);
-            auto sigmar12 = sigmar6 * sigmar6;
-            return 4.0 * interactionPotential_.parameters()[0] * (sigmar12 - sigmar6);
-        }
-        default:
-            throw(std::runtime_error(
-                fmt::format("Requested functional form of DirectionalPotential has not been implemented.\n")));
-    }
+    // Return energy at minimum distance between the atom and a point on the line
+    return potentialFunction_.y(v.magnitude());
 }
 
 // Calculate force on specified atom, summing in to supplied vector
@@ -145,25 +101,6 @@ void DirectionalPotential::force(const Atom &i, const Box *box, Vec3<double> &f)
     v.y = vector_.z * yzzy - vector_.x * xyyx;
     v.z = -vector_.x * xzzx - vector_.y * yzzy;
 
-    // Minimum distance between the atom and a point on the line
-    auto r = v.magnitude();
-
-    // Calculate final force multiplier
-    auto forceMultiplier = 0.0;
-    switch (interactionPotential_.form())
-    {
-        case (DirectionalPotentialFunctions::Form::LJCylinder):
-        {
-            auto sigmar = interactionPotential_.parameters()[1] / r;
-            auto sigmar6 = pow(sigmar, 6.0);
-            forceMultiplier = -48.0 * interactionPotential_.parameters()[0] * sigmar6 * (-sigmar6 + 0.5) / r;
-            break;
-        }
-        default:
-            throw(std::runtime_error(
-                fmt::format("Requested functional form of DirectionalPotential has not been implemented.\n")));
-    }
-
-    // Sum in forces on the atom
-    f -= v * forceMultiplier;
+    // Get force at minimum distance between the atom and a point on the line
+    f = v * -potentialFunction_.dYdX(v.magnitude());
 }
