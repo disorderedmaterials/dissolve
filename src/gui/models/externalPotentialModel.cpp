@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2024 Team Dissolve and contributors
+
 #include "gui/models/externalPotentialModel.h"
 #include "kernels/potentials/directional.h"
 
