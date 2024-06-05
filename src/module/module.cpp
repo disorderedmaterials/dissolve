@@ -15,7 +15,6 @@ namespace ModuleTypes
 {
 // ENumerated Options for ModuleTypes
 EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::Accumulate, "Accumulate"},
-                                                                 {ModuleTypes::Analyse, "Analyse"},
                                                                  {ModuleTypes::Angle, "Angle"},
                                                                  {ModuleTypes::AtomShake, "AtomShake"},
                                                                  {ModuleTypes::AvgMol, "AvgMol"},

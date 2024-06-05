@@ -5,14 +5,8 @@
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "classes/coreData.h"
-#include "modules/analyse/analyse.h"
 
-ProcedureNodeReference::ProcedureNodeReference(ConstNodeRef node)
-{
-    node_ = node;
-
-    analyseModuleParent_ = nullptr;
-}
+ProcedureNodeReference::ProcedureNodeReference(ConstNodeRef node) { node_ = node; }
 
 /*
  * Data
@@ -55,33 +49,10 @@ bool ProcedureNodeReference::read(LineParser &parser, int startArg, const CoreDa
 {
     node_ = nullptr;
 
-    // If two arguments are provided, the second is the identifying name of an AnalyseModule
-    if (parser.nArgs() == (startArg + 2))
-    {
-        Module *module = coreData.findModule(parser.argsv(startArg + 1));
-        if (!module)
-            return Messenger::error("No Analyse module named '{}' exists.\n", parser.argsv(startArg + 1));
-        if (module->type() != ModuleTypes::Analyse)
-            return Messenger::error("Specified module '{}' must be an Analyse module.\n", parser.argsv(startArg + 1));
+    node_ = procedure->node(parser.argsv(startArg));
 
-        // Found the target AnalyseModule, so cast it up and search for the named node in its Analyser
-        analyseModuleParent_ = dynamic_cast<AnalyseModule *>(module);
-        if (!analyseModuleParent_)
-            return Messenger::error("Couldn't cast module into an AnalyseModule.\n");
-
-        node_ = analyseModuleParent_->analyser().node(parser.argsv(startArg));
-
-        if (!node_)
-            return Messenger::error("No node named '{}' exists in the Analyse module specified ({}).\n", parser.argsv(startArg),
-                                    parser.argsv(startArg + 1));
-    }
-    else
-    {
-        node_ = procedure->node(parser.argsv(startArg));
-
-        if (!node_)
-            return Messenger::error("No node named '{}' exists in the current Procedure.\n", parser.argsv(startArg));
-    }
+    if (!node_)
+        return Messenger::error("No node named '{}' exists in the current Procedure.\n", parser.argsv(startArg));
 
     // Check the type of the node
     if (std::find(allowedTypes_.begin(), allowedTypes_.end(), node_->type()) == allowedTypes_.end())
@@ -93,8 +64,5 @@ bool ProcedureNodeReference::read(LineParser &parser, int startArg, const CoreDa
 // Write structure to specified LineParser
 bool ProcedureNodeReference::write(LineParser &parser, std::string_view prefix)
 {
-    if (analyseModuleParent_)
-        return parser.writeLineF("{}  '{}'  '{}'\n", prefix, node_->name(), analyseModuleParent_->name());
-    else
-        return parser.writeLineF("{}  '{}'\n", prefix, node_->name());
+    return parser.writeLineF("{}  '{}'\n", prefix, node_->name());
 }

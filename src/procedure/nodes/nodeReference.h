@@ -6,7 +6,6 @@
 #include "procedure/nodes/node.h"
 
 // Forward Declarations
-class AnalyseModule;
 class CoreData;
 class Procedure;
 
@@ -23,8 +22,6 @@ class ProcedureNodeReference
     private:
     // Target node
     ConstNodeRef node_;
-    // Parent AnalyseModule owning the node (if relevant)
-    AnalyseModule *analyseModuleParent_;
     // Allowable node types (when reading / setting)
     std::vector<ProcedureNode::NodeType> allowedTypes_;
 
