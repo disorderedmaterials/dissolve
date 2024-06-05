@@ -6,42 +6,18 @@
     <file>icons/nodes/restraintPotential.svg</file>
     <file>icons/nodes/cylindricalGlobalPotential.svg</file>
     <file>icons/nodes/box.svg</file>
-    <file>icons/nodes/calculateAngle.svg</file>
-    <file>icons/nodes/calculateAxisAngle.svg</file>
-    <file>icons/nodes/calculateDistance.svg</file>
-    <file>icons/nodes/calculateExpression.svg</file>
-    <file>icons/nodes/calculateVector.svg</file>
-    <file>icons/nodes/collect1D.svg</file>
-    <file>icons/nodes/integerCollect1D.svg</file>
     <file>icons/nodes/customRegion.svg</file>
-    <file>icons/nodes/collect2D.svg</file>
-    <file>icons/nodes/collect3D.svg</file>
     <file>icons/nodes/coordinateSets.svg</file>
     <file>icons/nodes/addPair.svg</file>
     <file>icons/nodes/cylindricalRegion.svg</file>
     <file>icons/nodes/copy.svg</file>
-    <file>icons/nodes/fit1D.svg</file>
     <file>icons/nodes/generalRegion.svg</file>
-    <file>icons/nodes/integrate1D.svg</file>
-    <file>icons/nodes/operateDivide.svg</file>
-    <file>icons/nodes/operateExpression.svg</file>
-    <file>icons/nodes/operateGridNormalise.svg</file>
-    <file>icons/nodes/operateMultiply.svg</file>
-    <file>icons/nodes/operateNormalise.svg</file>
-    <file>icons/nodes/operateNumberDensityNormalise.svg</file>
-    <file>icons/nodes/operateSitePopulationNormalise.svg</file>
-    <file>icons/nodes/operateSphericalShellNormalise.svg</file>
     <file>icons/nodes/parameters.svg</file>
     <file>icons/nodes/pick.svg</file>
     <file>icons/nodes/pickProximity.svg</file>
     <file>icons/nodes/pickRegion.svg</file>
-    <file>icons/nodes/process1D.svg</file>
-    <file>icons/nodes/process2D.svg</file>
-    <file>icons/nodes/process3D.svg</file>
-    <file>icons/nodes/ifValueInRange.svg</file>
     <file>icons/nodes/remove.svg</file>
     <file>icons/nodes/select.svg</file>
-    <file>icons/nodes/sum1D.svg</file>
     <file>icons/nodes/transmute.svg</file>
     <file>icons/nodes/temperature.svg</file>
     <file>icons/nodes/sizeFactor.svg</file>
@@ -76,7 +52,6 @@
     <file>icons/modules/SiteRDF.svg</file>
     <file>icons/modules/SDF.svg</file>
     <file>icons/modules/MolShake.svg</file>
-    <file>icons/modules/Analyse.svg</file>
     <file>icons/modules/Forces.svg</file>
     <file>icons/modules/Benchmark.svg</file>
     <file>icons/modules/EPSR.svg</file>
