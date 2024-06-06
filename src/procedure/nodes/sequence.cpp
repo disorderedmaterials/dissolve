@@ -11,9 +11,8 @@
 #include "keywords/vec3NodeValue.h"
 #include "procedure/nodes/registry.h"
 
-ProcedureNodeSequence::ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
-                                             std::string_view blockKeyword)
-    : owner_(owner), context_(context), blockKeyword_(blockKeyword)
+ProcedureNodeSequence::ProcedureNodeSequence(OptionalReferenceWrapper<ProcedureNode> owner, std::string_view blockKeyword)
+    : owner_(owner), blockKeyword_(blockKeyword)
 {
 }
 
@@ -33,12 +32,6 @@ void ProcedureNodeSequence::appendNode(NodeRef node, std::optional<int> insertAt
 
     // Set us as its scope
     node->setScope(*this);
-
-    // Check context
-    if (!node->isContextRelevant(context()))
-        throw(std::runtime_error(fmt::format("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", node->name(),
-                                             ProcedureNode::nodeTypes().keyword(node->type()),
-                                             ProcedureNode::nodeContexts().keyword(context_))));
 
     // If the node hasn't been given a name, generate a unique one for it now based on its type. Otherwise, check for a clash
     if (node->name().empty())
@@ -150,12 +143,6 @@ ProcedureNodeSequence::searchParameters(std::string_view name,
 
 // Return this sequence's owner
 OptionalReferenceWrapper<ProcedureNode> ProcedureNodeSequence::owner() const { return owner_; }
-
-// Return the context of the sequence
-ProcedureNode::NodeContext ProcedureNodeSequence::context() const
-{
-    return context_ == ProcedureNode::NodeContext::InheritContext ? owner_->get().scopeContext() : context_;
-}
 
 // Return named node if present in this sequence, and which matches the (optional) type given
 ConstNodeRef ProcedureNodeSequence::node(std::string_view name, const ConstNodeRef &excludeNode,
@@ -378,11 +365,6 @@ bool ProcedureNodeSequence::check() const
         if (&node->scope()->get() != this)
             return Messenger::error("Node '{}' failed parent check ({} is not this {})\n", node->name(),
                                     fmt::ptr(node->parent()), fmt::ptr(this));
-
-        // Check context
-        if (!node->isContextRelevant(context()))
-            return Messenger::error("Node '{}' is not allowed in this context ({})\n", node->name(),
-                                    ProcedureNode::nodeContexts().keyword(context_));
 
         // Check node branch if present
         if (node->branch() && !node->branch()->get().check())

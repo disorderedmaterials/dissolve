@@ -15,10 +15,9 @@
 #include "procedure/nodes/sequence.h"
 #include <algorithm>
 
-SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, ProcedureNode::NodeContext forEachContext,
-                                         bool axesRequired)
-    : ProcedureNode(ProcedureNode::NodeType::Select, {ProcedureNode::AnalysisContext, ProcedureNode::GenerationContext}),
-      speciesSites_(std::move(sites)), axesRequired_(axesRequired), forEachBranch_(forEachContext, *this, "ForEach")
+SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, bool axesRequired)
+    : ProcedureNode(NodeType::Select), speciesSites_(std::move(sites)), axesRequired_(axesRequired),
+      forEachBranch_(*this, "ForEach")
 {
     keywords_.setOrganisation("Options", "Sites");
     keywords_.add<SpeciesSiteVectorKeyword>("Site", "Add target site(s) to the selection", speciesSites_, axesRequired_);
@@ -47,8 +46,6 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 
     keywords_.addHidden<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_);
 
-    // Need to make parameters_ private as a next step, to prevent direct initialisation like this... (use addParameter()
-    // instead)
     nSelectedParameter_ = addParameter("nSelected");
     siteIndexParameter_ = addParameter("siteIndex");
     stackIndexParameter_ = addParameter("stackIndex");

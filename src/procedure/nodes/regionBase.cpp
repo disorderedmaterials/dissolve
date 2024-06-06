@@ -5,8 +5,7 @@
 #include "keywords/bool.h"
 #include "keywords/double.h"
 
-RegionProcedureNodeBase::RegionProcedureNodeBase(ProcedureNode::NodeType nodeType)
-    : ProcedureNode(nodeType, {ProcedureNode::GenerationContext})
+RegionProcedureNodeBase::RegionProcedureNodeBase(ProcedureNode::NodeType nodeType) : ProcedureNode(nodeType)
 {
     keywords_.setOrganisation("Options", "Grid");
     keywords_.add<DoubleKeyword>("VoxelSize", "Voxel size (length) guiding the coarseness / detail of the region", voxelSize_,

@@ -82,9 +82,9 @@ class SelectProcedureNodeTest : public ::testing::Test
 
 TEST_F(SelectProcedureNodeTest, Simple)
 {
-    Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
-    auto selectN = testProcedure.createRootNode<SelectProcedureNode>(
-        "SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_}, ProcedureNode::NodeContext::AnalysisContext);
+    Procedure testProcedure;
+    auto selectN =
+        testProcedure.createRootNode<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
 
     testProcedure.execute({dissolve_.worldPool(), configuration_});
 
@@ -105,12 +105,10 @@ TEST_F(SelectProcedureNodeTest, Simple)
 
 TEST_F(SelectProcedureNodeTest, All)
 {
-    Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
-    auto selectAr = testProcedure.createRootNode<SelectProcedureNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_},
-                                                                      ProcedureNode::NodeContext::AnalysisContext);
+    Procedure testProcedure;
+    auto selectAr = testProcedure.createRootNode<SelectProcedureNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_});
     auto &forEachAr = selectAr->branch()->get();
-    auto selectN = forEachAr.create<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_},
-                                                         ProcedureNode::NodeContext::AnalysisContext);
+    auto selectN = forEachAr.create<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
 
     testProcedure.execute({dissolve_.worldPool(), configuration_});
 
@@ -120,12 +118,10 @@ TEST_F(SelectProcedureNodeTest, All)
 
 TEST_F(SelectProcedureNodeTest, Ranges)
 {
-    Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
-    auto selectAr = testProcedure.createRootNode<SelectProcedureNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_},
-                                                                      ProcedureNode::NodeContext::AnalysisContext);
+    Procedure testProcedure;
+    auto selectAr = testProcedure.createRootNode<SelectProcedureNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_});
     auto &forEachAr = selectAr->branch()->get();
-    auto selectN = forEachAr.create<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_},
-                                                         ProcedureNode::NodeContext::AnalysisContext);
+    auto selectN = forEachAr.create<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
     selectN->setDistanceReferenceSite(selectAr);
 
     for (auto rangeInt = 1; rangeInt <= nType_; ++rangeInt)
@@ -143,12 +139,10 @@ TEST_F(SelectProcedureNodeTest, Ranges)
 
 TEST_F(SelectProcedureNodeTest, Indices)
 {
-    Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
-    auto selectAr = testProcedure.createRootNode<SelectProcedureNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_},
-                                                                      ProcedureNode::NodeContext::AnalysisContext);
+    Procedure testProcedure;
+    auto selectAr = testProcedure.createRootNode<SelectProcedureNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_});
     auto &forEachAr = selectAr->branch()->get();
-    auto selectN = forEachAr.create<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_},
-                                                         ProcedureNode::NodeContext::AnalysisContext);
+    auto selectN = forEachAr.create<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
     selectN->setDistanceReferenceSite(selectAr);
 
     auto N = nType_ * 2;
@@ -180,12 +174,11 @@ TEST_F(SelectProcedureNodeTest, Indices)
 
 TEST_F(SelectProcedureNodeTest, Exclusions1)
 {
-    Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
-    auto selectN1 = testProcedure.createRootNode<SelectProcedureNode>("SelectN1", std::vector<const SpeciesSite *>{alphaSiteN_},
-                                                                      ProcedureNode::NodeContext::AnalysisContext);
+    Procedure testProcedure;
+    auto selectN1 =
+        testProcedure.createRootNode<SelectProcedureNode>("SelectN1", std::vector<const SpeciesSite *>{alphaSiteN_});
     auto &forEachN1 = selectN1->branch()->get();
-    auto selectN2 = forEachN1.create<SelectProcedureNode>("SelectN2", std::vector<const SpeciesSite *>{alphaSiteN_},
-                                                          ProcedureNode::NodeContext::AnalysisContext);
+    auto selectN2 = forEachN1.create<SelectProcedureNode>("SelectN2", std::vector<const SpeciesSite *>{alphaSiteN_});
 
     // No exclusions
     testProcedure.execute({dissolve_.worldPool(), configuration_});
@@ -215,12 +208,10 @@ TEST_F(SelectProcedureNodeTest, Exclusions1)
 
 TEST_F(SelectProcedureNodeTest, Exclusions2)
 {
-    Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
-    auto selectN = testProcedure.createRootNode<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSiteN_},
-                                                                     ProcedureNode::NodeContext::AnalysisContext);
+    Procedure testProcedure;
+    auto selectN = testProcedure.createRootNode<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSiteN_});
     auto &forEachN = selectN->branch()->get();
-    auto selectO = forEachN.create<SelectProcedureNode>("SelectO", std::vector<const SpeciesSite *>{alphaSiteO_},
-                                                        ProcedureNode::NodeContext::AnalysisContext);
+    auto selectO = forEachN.create<SelectProcedureNode>("SelectO", std::vector<const SpeciesSite *>{alphaSiteO_});
 
     // No exclusions
     testProcedure.execute({dissolve_.worldPool(), configuration_});
@@ -241,12 +232,10 @@ TEST_F(SelectProcedureNodeTest, Exclusions2)
 
 TEST_F(SelectProcedureNodeTest, Inclusions)
 {
-    Procedure testProcedure(ProcedureNode::NodeContext::AnalysisContext);
-    auto selectN = testProcedure.createRootNode<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSiteN_},
-                                                                     ProcedureNode::NodeContext::AnalysisContext);
+    Procedure testProcedure;
+    auto selectN = testProcedure.createRootNode<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSiteN_});
     auto &forEachN = selectN->branch()->get();
-    auto selectO = forEachN.create<SelectProcedureNode>("SelectO", std::vector<const SpeciesSite *>{alphaSiteO_},
-                                                        ProcedureNode::NodeContext::AnalysisContext);
+    auto selectO = forEachN.create<SelectProcedureNode>("SelectO", std::vector<const SpeciesSite *>{alphaSiteO_});
 
     // Require same molecule as first site
     selectO->keywords().set("SameMoleculeAsSite", selectN);

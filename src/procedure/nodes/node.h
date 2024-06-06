@@ -61,20 +61,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     static EnumOptions<NodeType> nodeTypes();
     // Return the lowerCamelCase name of the node type provided
     static std::string lccNodeType(NodeType nodeType);
-    // Node Contexts
-    enum NodeContext
-    {
-        NoContext = 0,
-        AnalysisContext = 1,
-        GenerationContext = 2,
-        OperateContext = 4,
-        ControlContext = 8,
-        AnyContext = 16,
-        InheritContext = 32,
-    };
-    // Return enum option info for NodeContext
-    static EnumOptions<NodeContext> nodeContexts();
-    ProcedureNode(NodeType nodeType, std::vector<NodeContext> relevantContexts);
+    ProcedureNode(NodeType nodeType);
     virtual ~ProcedureNode() = default;
 
     /*
@@ -83,16 +70,12 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     protected:
     // Node type
     NodeType type_;
-    // Relevant contexts for node
-    std::vector<NodeContext> relevantContexts_;
     // Node name
     std::string name_;
 
     public:
     // Return node type
     NodeType type() const;
-    // Return whether the supplied context is relevant for the current node
-    bool isContextRelevant(NodeContext targetContext) const;
     // Return whether a name for the node must be provided
     virtual bool mustBeNamed() const;
     // Set node name
@@ -126,8 +109,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     void setScope(ProcedureNodeSequence &scopeNode);
     // Return scope (ProcedureNodeSequence) in which this node exists
     OptionalReferenceWrapper<ProcedureNodeSequence> scope() const;
-    // Return context of scope in which this node exists
-    ProcedureNode::NodeContext scopeContext() const;
     // Return named node, optionally matching the type / class given, in or out of scope
     ConstNodeRef getNode(std::string_view name, bool onlyInScope, const ConstNodeRef &excludeNode = {},
                          const NodeTypeVector &allowedNodeTypes = {}) const;

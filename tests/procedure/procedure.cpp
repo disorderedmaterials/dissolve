@@ -12,42 +12,9 @@
 
 namespace UnitTest
 {
-
-TEST(ProcedureTest, Context)
-{
-    Procedure procedure(ProcedureNode::AnalysisContext);
-
-    // Select A
-    auto selectA = procedure.createRootNode<SelectProcedureNode>("A");
-    // -- Select nodes are valid in most contexts except "Operate"
-    EXPECT_TRUE(selectA->isContextRelevant(ProcedureNode::NodeContext::AnyContext));
-    EXPECT_TRUE(selectA->isContextRelevant(ProcedureNode::NodeContext::NoContext));
-    EXPECT_TRUE(selectA->isContextRelevant(ProcedureNode::NodeContext::AnalysisContext));
-    EXPECT_TRUE(selectA->isContextRelevant(ProcedureNode::NodeContext::GenerationContext));
-    EXPECT_FALSE(selectA->isContextRelevant(ProcedureNode::NodeContext::OperateContext));
-    auto &forEachA = selectA->branch()->get();
-    EXPECT_TRUE(procedure.rootSequence().check());
-
-    // Select B
-    auto selectB = forEachA.create<SelectProcedureNode>("B");
-    auto &forEachB = selectB->branch()->get();
-    EXPECT_TRUE(procedure.rootSequence().check());
-
-    // Wrong context type (in root node)
-    EXPECT_THROW(procedure.createRootNode<BoxProcedureNode>("Box"), std::runtime_error);
-    EXPECT_TRUE(procedure.rootSequence().check());
-
-    // Wrong context type (in sequence branch)
-    EXPECT_THROW(forEachB.create<BoxProcedureNode>("Box"), std::runtime_error);
-    EXPECT_TRUE(procedure.rootSequence().check());
-
-    // Node with same name as an existing one
-    EXPECT_THROW(procedure.createRootNode<BoxProcedureNode>("A"), std::runtime_error);
-}
-
 TEST(ProcedureTest, Scope)
 {
-    Procedure procedure(ProcedureNode::AnalysisContext);
+    Procedure procedure;
 
     // Select A
     auto selectA = procedure.createRootNode<SelectProcedureNode>("A");
@@ -96,7 +63,7 @@ TEST(ProcedureTest, Scope)
 
 TEST(ProcedureTest, Parameters)
 {
-    Procedure procedure(ProcedureNode::GenerationContext);
+    Procedure procedure;
 
     // Parameters (Small Things)
     auto smallThings = procedure.createRootNode<ParametersProcedureNode>("Small");

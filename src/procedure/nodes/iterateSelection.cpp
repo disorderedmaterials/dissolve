@@ -3,23 +3,16 @@
 
 #include "procedure/nodes/iterateSelection.h"
 #include "classes/configuration.h"
-#include "classes/coreData.h"
-#include "classes/siteReference.h"
 #include "classes/species.h"
 #include "expression/variable.h"
 #include "keywords/node.h"
-#include "keywords/nodeBranch.h"
-#include "keywords/nodeVector.h"
-#include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 #include <algorithm>
 
-IterateSelectionProcedureNode::IterateSelectionProcedureNode(ProcedureNode::NodeContext forEachContext)
-    : ProcedureNode(ProcedureNode::NodeType::IterateSelection,
-                    {ProcedureNode::AnalysisContext, ProcedureNode::GenerationContext}),
-      forEachBranch_(forEachContext, *this, "ForEach")
+IterateSelectionProcedureNode::IterateSelectionProcedureNode()
+    : ProcedureNode(NodeType::IterateSelection), forEachBranch_(*this, "ForEach")
 {
     // Keywords
     keywords_.add<NodeKeyword<SelectProcedureNode>>("Selection", "Target selection to iterate over", selection_, this,

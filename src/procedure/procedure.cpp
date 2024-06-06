@@ -6,11 +6,7 @@
 #include "base/sysFunc.h"
 #include "classes/configuration.h"
 
-Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockKeyword)
-    : rootSequence_(context, {}, blockKeyword)
-{
-    context_ = context;
-}
+Procedure::Procedure(std::string_view blockKeyword) : rootSequence_({}, blockKeyword) {}
 
 Procedure::~Procedure() = default;
 
@@ -20,9 +16,6 @@ Procedure::~Procedure() = default;
 
 // Clear all data
 void Procedure::clear() { rootSequence_.clear(); }
-
-// Return context for the main Procedure
-ProcedureNode::NodeContext Procedure::context() { return context_; }
 
 // Return root sequence
 ProcedureNodeSequence &Procedure::rootSequence() { return rootSequence_; }
@@ -50,29 +43,6 @@ bool Procedure::removeNode(NodeRef node) { return rootSequence_.removeNode(node)
 // Run procedure in the specified data context
 bool Procedure::execute(const ProcedureContext &context)
 {
-    // Depending on context, we may or may not operate on the supplied Configuration
-    if (context_ == ProcedureNode::AnalysisContext)
-    {
-        auto *cfg = context.configuration();
-
-        // Check that the Configuration has changed before we do any more analysis on it
-        auto ri = std::find_if(configurationPoints_.begin(), configurationPoints_.end(),
-                               [cfg](const auto pair) { return pair.first == cfg; });
-        if (ri != configurationPoints_.end())
-        {
-            // A Configuration we've processed before - check the index
-            if (cfg->contentsVersion() == ri->second)
-            {
-                Messenger::warn("Refusing to analyse Configuration '{}' since it has not changed.\n", cfg->name());
-                return true;
-            }
-            else
-                ri->second = cfg->contentsVersion();
-        }
-        else
-            configurationPoints_.emplace_back(cfg, cfg->contentsVersion());
-    }
-
     // Prepare the nodes
     if (!rootSequence_.prepare(context))
         return Messenger::error("Failed to prepare procedure for execution.\n");

@@ -7,8 +7,7 @@
 #include "keywords/double.h"
 #include "keywords/nodeValue.h"
 
-RegionalGlobalPotentialProcedureNode::RegionalGlobalPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::RegionalGlobalPotential, {ProcedureNode::GenerationContext})
+RegionalGlobalPotentialProcedureNode::RegionalGlobalPotentialProcedureNode() : ProcedureNode(NodeType::RegionalGlobalPotential)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<NodeValueKeyword>("Expression", "Expression describing region", expression_, this);

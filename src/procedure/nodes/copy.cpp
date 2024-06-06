@@ -8,8 +8,7 @@
 #include "keywords/speciesVector.h"
 #include <algorithm>
 
-CopyProcedureNode::CopyProcedureNode(Configuration *cfg)
-    : ProcedureNode(ProcedureNode::NodeType::Copy, {ProcedureNode::GenerationContext}), source_(cfg)
+CopyProcedureNode::CopyProcedureNode(Configuration *cfg) : ProcedureNode(NodeType::Copy), source_(cfg)
 {
     keywords_.setOrganisation("Options", "Configuration");
     keywords_.add<ConfigurationKeyword>("Source", "Source configuration to copy", source_);

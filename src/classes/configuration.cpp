@@ -12,10 +12,7 @@
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 
-Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "Generator")
-{
-    createBox({1.0, 1.0, 1.0}, {90, 90, 90}, false);
-}
+Configuration::Configuration() : generator_("Generator") { createBox({1.0, 1.0, 1.0}, {90, 90, 90}, false); }
 
 Configuration::~Configuration() { clear(); }
 

@@ -15,15 +15,13 @@ class LineParser;
 class Procedure : public Serialisable<const CoreData &>
 {
     public:
-    Procedure(ProcedureNode::NodeContext context, std::string_view blockTerminationKeyword = "EndProcedure");
+    Procedure(std::string_view blockTerminationKeyword = "EndProcedure");
     ~Procedure();
 
     /*
      * Data
      */
     private:
-    // Context for the main Procedure
-    ProcedureNode::NodeContext context_;
     // Sequence node from which the Procedure starts
     ProcedureNodeSequence rootSequence_;
 
@@ -35,8 +33,6 @@ class Procedure : public Serialisable<const CoreData &>
     {
         return rootSequence_.create<N>(name, args...);
     }
-    // Return context for the main Procedure
-    ProcedureNode::NodeContext context();
     // Return root sequence
     ProcedureNodeSequence &rootSequence();
     // Return named node if present (and matches the type / class given)

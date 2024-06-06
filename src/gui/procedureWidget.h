@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "gui/models/nodePaletteFilterProxy.h"
 #include "gui/models/nodePaletteModel.h"
 #include "gui/models/procedureModel.h"
 #include "gui/ui_procedureWidget.h"
@@ -34,8 +33,6 @@ class ProcedureWidget : public QWidget
     OptionalReferenceWrapper<Procedure> procedure_;
     // Model for procedure
     ProcedureModel procedureModel_;
-    // Filter proxy for node palette
-    NodePaletteFilterProxy nodePaletteFilterProxy_;
     // Model for node palette
     NodePaletteModel nodePaletteModel_;
 

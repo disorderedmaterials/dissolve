@@ -16,8 +16,7 @@
 
 AddPairProcedureNode::AddPairProcedureNode(const Species *spA, const Species *spB, const NodeValue &population,
                                            const NodeValue &density, Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::NodeType::AddPair, {ProcedureNode::GenerationContext}), density_{density, densityUnits},
-      population_(population), speciesA_(spA), speciesB_(spB)
+    : ProcedureNode(NodeType::AddPair), density_{density, densityUnits}, population_(population), speciesA_(spA), speciesB_(spB)
 {
     setUpKeywords();
 }

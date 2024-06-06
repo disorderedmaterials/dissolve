@@ -10,8 +10,7 @@
 #include "keywords/speciesVector.h"
 #include "procedure/nodes/pick.h"
 
-TransmuteProcedureNode::TransmuteProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::Transmute, {ProcedureNode::GenerationContext})
+TransmuteProcedureNode::TransmuteProcedureNode() : ProcedureNode(NodeType::Transmute)
 {
     keywords_.setOrganisation("Options", "Source");
     keywords_.add<SpeciesVectorKeyword>("Species", "Species types to transmute into the target species", speciesToTransmute_);

@@ -19,8 +19,7 @@ class SpeciesSite;
 class IterateSelectionProcedureNode : public ProcedureNode
 {
     public:
-    explicit IterateSelectionProcedureNode(
-        ProcedureNode::NodeContext forEachContext = ProcedureNode::NodeContext::AnalysisContext);
+    IterateSelectionProcedureNode();
 
     /*
      * Parameters

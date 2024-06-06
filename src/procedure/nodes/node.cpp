@@ -53,22 +53,7 @@ std::string ProcedureNode::lccNodeType(NodeType nodeType)
     return lccNodeName;
 }
 
-// Return enum option info for NodeContext
-EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
-{
-    return EnumOptions<ProcedureNode::NodeContext>("NodeContext", {{ProcedureNode::NoContext, "None"},
-                                                                   {ProcedureNode::AnalysisContext, "Analysis"},
-                                                                   {ProcedureNode::GenerationContext, "Generation"},
-                                                                   {ProcedureNode::ControlContext, "Control"},
-                                                                   {ProcedureNode::OperateContext, "Operate"},
-                                                                   {ProcedureNode::AnyContext, "Any"},
-                                                                   {ProcedureNode::InheritContext, "Inherit"}});
-}
-
-ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, std::vector<NodeContext> relevantContexts)
-    : type_(nodeType), relevantContexts_(std::move(relevantContexts))
-{
-}
+ProcedureNode::ProcedureNode(NodeType nodeType) : type_(nodeType) {}
 
 /*
  * Identity
@@ -76,23 +61,6 @@ ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, std::vector<NodeC
 
 // Return node type
 ProcedureNode::NodeType ProcedureNode::type() const { return type_; }
-
-// Return whether the supplied context is relevant for the current node
-bool ProcedureNode::isContextRelevant(NodeContext targetContext) const
-{
-    // Check for spurious context checks
-    if (targetContext == ProcedureNode::NodeContext::InheritContext)
-        throw(std::runtime_error(fmt::format("Attempted to context check node '{}' with an InheritedContext.\n",
-                                             name_.empty() ? nodeTypes().keyword(type_) : name_)));
-
-    // If the node is suitable in Any context, or if there is no context (None) return immediately
-    if (targetContext == ProcedureNode::NodeContext::NoContext || targetContext == ProcedureNode::NodeContext::AnyContext ||
-        std::find(relevantContexts_.begin(), relevantContexts_.end(), ProcedureNode::NodeContext::AnyContext) !=
-            relevantContexts_.end())
-        return true;
-
-    return std::find(relevantContexts_.begin(), relevantContexts_.end(), targetContext) != relevantContexts_.end();
-}
 
 // Return whether a name for the node must be provided
 bool ProcedureNode::mustBeNamed() const { return true; }
@@ -134,16 +102,6 @@ ProcedureNode *ProcedureNode::parent() const
 
 // Return scope (ProcedureNodeSequence) in which this node exists
 OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::scope() const { return scope_; }
-
-// Return context of scope in which this node exists
-ProcedureNode::NodeContext ProcedureNode::scopeContext() const
-{
-    if (!scope_)
-        return ProcedureNode::NoContext;
-
-    auto context = (*scope_).get().context();
-    return context == ProcedureNode::NodeContext::InheritContext ? parent()->scopeContext() : context;
-}
 
 // Return named node, optionally matching the type / class given, in or out of scope
 ConstNodeRef ProcedureNode::getNode(std::string_view name, bool onlyInScope, const ConstNodeRef &excludeNode,

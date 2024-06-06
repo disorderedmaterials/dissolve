@@ -16,16 +16,14 @@
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
                                    Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::NodeType::Add, {ProcedureNode::GenerationContext}), density_{density, densityUnits},
-      population_(population), species_(sp)
+    : ProcedureNode(NodeType::Add), density_{density, densityUnits}, population_(population), species_(sp)
 {
     setUpKeywords();
 }
 
 AddProcedureNode::AddProcedureNode(std::shared_ptr<const CoordinateSetsProcedureNode> sets, const NodeValue &population,
                                    const NodeValue &density, Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::NodeType::Add, {ProcedureNode::GenerationContext}),
-      coordinateSets_(std::move(sets)), density_{density, densityUnits}, population_(population)
+    : ProcedureNode(NodeType::Add), coordinateSets_(std::move(sets)), density_{density, densityUnits}, population_(population)
 {
     setUpKeywords();
 }

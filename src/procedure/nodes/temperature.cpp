@@ -6,8 +6,7 @@
 #include "keywords/nodeValue.h"
 #include "procedure/nodes/node.h"
 
-TemperatureProcedureNode::TemperatureProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::Temperature, {ProcedureNode::GenerationContext})
+TemperatureProcedureNode::TemperatureProcedureNode() : ProcedureNode(NodeType::Temperature)
 {
     keywords_.add<NodeValueKeyword>("Temperature", "Temperature (K)", temperature_, this);
 }

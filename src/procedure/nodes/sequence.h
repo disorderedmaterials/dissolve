@@ -11,8 +11,7 @@
 class ProcedureNodeSequence : public Serialisable<const CoreData &>
 {
     public:
-    ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
-                          std::string_view blockKeyword);
+    ProcedureNodeSequence(OptionalReferenceWrapper<ProcedureNode> owner, std::string_view blockKeyword);
     ~ProcedureNodeSequence();
 
     /*
@@ -84,8 +83,6 @@ class ProcedureNodeSequence : public Serialisable<const CoreData &>
     public:
     // Return this sequences owner
     OptionalReferenceWrapper<ProcedureNode> owner() const;
-    // Return the context of the sequence
-    ProcedureNode::NodeContext context() const;
     // Return named node if present (and matches the type / class given)
     ConstNodeRef node(std::string_view name, const ConstNodeRef &excludeNode = {},
                       const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;

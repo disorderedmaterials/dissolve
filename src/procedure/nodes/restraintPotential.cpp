@@ -9,8 +9,7 @@
 #include "keywords/speciesVector.h"
 
 RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::RestraintPotential, {ProcedureNode::GenerationContext}),
-      potential_(Functions1D::Form::Harmonic)
+    : ProcedureNode(NodeType::RestraintPotential), potential_(Functions1D::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<InteractionPotentialKeyword<Functions1D>>("Potential", "Potential to apply to individual atoms", potential_);

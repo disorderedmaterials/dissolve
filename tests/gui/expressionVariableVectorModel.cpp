@@ -15,7 +15,7 @@ TEST(ExpressionVariableVectorModelTest, Basic)
     Dissolve dissolve(coreData);
 
     // Create a simple procedure with a parameters node
-    Procedure procedure(ProcedureNode::AnalysisContext);
+    Procedure procedure;
     auto parameters = procedure.createRootNode<ParametersProcedureNode>({});
     parameters->addParameter("Alpha", 1.2345);
     parameters->addParameter("Beta", 99);
