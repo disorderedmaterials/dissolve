@@ -32,7 +32,7 @@ class TransmuteProcedureNode : public ProcedureNode
     // Existing selection from which to pick
     std::shared_ptr<const PickProcedureNodeBase> selection_;
     // Target species to transmute in to
-    const Species *targetSpecies_;
+    const Species *targetSpecies_{nullptr};
     // Species to transmute
     std::vector<const Species *> speciesToTransmute_;
 
