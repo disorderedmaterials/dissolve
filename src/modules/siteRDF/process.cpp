@@ -4,7 +4,6 @@
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
 #include "base/sysFunc.h"
-#include "classes/productIterator.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "math/integrator.h"
