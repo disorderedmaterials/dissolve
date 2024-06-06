@@ -91,6 +91,14 @@ class Module : public Serialisable<const CoreData &>
      * Processing
      */
     private:
+    // Configuration on which the module was last run and its version counter
+    std::map<const Configuration *, int> lastProcessedConfigurations_;
+
+    private:
+    // Get current target configurations
+    std::pair<std::vector<const Configuration *>,int> getCurrentTargetConfigurations();
+    // Check the current configurations targeted by the module
+    ExecutionResult checkConfigurationTargets(GenericList &processingModuleData);
     // Run main processing
     virtual ExecutionResult process(ModuleContext &moduleContext) = 0;
 

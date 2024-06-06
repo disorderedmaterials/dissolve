@@ -219,7 +219,6 @@ class KeywordStore
     const std::vector<Module *> &getVectorModule(std::string_view name) const;
     // Retrieve an Integer by keyword name
     int getInt(std::string_view name) const;
-
     // Get specified keyword data, casting as necessary
     template <class D, class K> std::optional<const D> get(std::string_view name) const
     {
