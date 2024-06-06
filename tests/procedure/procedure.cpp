@@ -86,9 +86,9 @@ TEST(ProcedureTest, Parameters)
     EXPECT_TRUE(procedure.rootSequence().check());
 
     // Check number of available parameters to each Add node
-    auto smallVars = smallHole->getParameters();
+    auto smallVars = smallHole->getParametersInScope();
     EXPECT_EQ(smallVars.size(), 3);
-    auto bigVars = bigHole->getParameters();
+    auto bigVars = bigHole->getParametersInScope();
     EXPECT_EQ(bigVars.size(), 6);
 
     // Set an equation in A via a NodeValueProxy

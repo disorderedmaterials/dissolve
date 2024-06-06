@@ -221,7 +221,7 @@ ConstNodeRef ProcedureNodeSequence::nodeInScope(ConstNodeRef queryingNode, std::
 
     // Not in our list. Recursively check our owner
     if (owner_)
-        return owner_->get().getNode(name, true, excludeNode, allowedNodeTypes);
+        return owner_->get().getNodeInScope(name, excludeNode, allowedNodeTypes);
 
     // Not found
     return nullptr;
@@ -251,7 +251,7 @@ std::vector<ConstNodeRef> ProcedureNodeSequence::nodesInScope(ConstNodeRef query
     // Not in our list. Recursively check our owner
     if (owner_)
     {
-        auto parentMatches = owner_->get().getNodes(true, allowedNodeTypes);
+        auto parentMatches = owner_->get().getNodesInScope(allowedNodeTypes);
         std::copy(parentMatches.begin(), parentMatches.end(), std::back_inserter(matches));
     }
 
@@ -288,7 +288,7 @@ ProcedureNodeSequence::parameterInScope(ConstNodeRef queryingNode, std::string_v
 
     // Not in our list. Recursively check our owner
     if (owner_)
-        return owner_->get().getParameter(name, true, excludeParameter);
+        return owner_->get().getParameterInScope(name, excludeParameter);
 
     // Not found
     return nullptr;
@@ -324,7 +324,7 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNodeSequence::paramete
     // Recursively check our owner
     if (owner_)
     {
-        auto otherParams = owner_->get().getParameters();
+        auto otherParams = owner_->get().getParametersInScope();
         parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
     }
 

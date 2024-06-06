@@ -36,8 +36,9 @@ bool RegionalGlobalPotentialProcedureNode::execute(const ProcedureContext &proce
     pot->setUp(cfg->box(), voxelSize_,
                [&]()
                {
-                   return std::make_shared<RegionalPotentialVoxelKernel>(expression_.asString(), getParameters(), minimumValue_,
-                                                                         maximumValue_, valueOffset_, penaltyPower_);
+                   return std::make_shared<RegionalPotentialVoxelKernel>(expression_.asString(), getParametersInScope(),
+                                                                         minimumValue_, maximumValue_, valueOffset_,
+                                                                         penaltyPower_);
                });
 
     cfg->addGlobalPotential(std::unique_ptr<ExternalPotential>(std::move(pot)));

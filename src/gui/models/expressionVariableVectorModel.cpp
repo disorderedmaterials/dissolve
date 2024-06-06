@@ -98,7 +98,7 @@ bool ExpressionVariableVectorModel::setData(const QModelIndex &index, const QVar
     if (index.column() == 0)
     {
         // Name - must check for existing var in scope with the same name
-        auto p = parentNode_->getParameter(value.toString().toStdString(), true);
+        auto p = parentNode_->getParameterInScope(value.toString().toStdString());
         if (p && p != var)
             return false;
         var->setBaseName(value.toString().toStdString());

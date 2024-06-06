@@ -103,49 +103,38 @@ ProcedureNode *ProcedureNode::parent() const
 OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::scope() const { return scope_; }
 
 // Return named node, optionally matching the type / class given, in or out of scope
-ConstNodeRef ProcedureNode::getNode(std::string_view name, bool onlyInScope, const ConstNodeRef &excludeNode,
-                                    const NodeTypeVector &allowedNodeTypes) const
+ConstNodeRef ProcedureNode::getNodeInScope(std::string_view name, const ConstNodeRef &excludeNode,
+                                           const NodeTypeVector &allowedNodeTypes) const
 {
     if (!scope_)
         return nullptr;
     const auto &scope = (*scope_).get();
 
-    return onlyInScope ? scope.nodeInScope(shared_from_this(), name, excludeNode, allowedNodeTypes)
-                       : scope.nodeExists(name, excludeNode, allowedNodeTypes);
+    return scope.nodeInScope(shared_from_this(), name, excludeNode, allowedNodeTypes);
 }
 
-// Return nodes, optionally matching the type / class given, in or out of scope
-std::vector<ConstNodeRef> ProcedureNode::getNodes(bool onlyInScope, const NodeTypeVector &allowedNodeTypes) const
+// Return nodes in scope, optionally matching the type / class given
+std::vector<ConstNodeRef> ProcedureNode::getNodesInScope(const NodeTypeVector &allowedNodeTypes) const
 {
     if (!scope_)
         return {};
 
-    if (onlyInScope)
-        return (*scope_).get().nodesInScope(shared_from_this(), allowedNodeTypes);
-
-    // Find the topmost (root) scope and search from there.
-    auto optScope = scope_;
-    while (optScope->get().owner() && optScope->get().owner()->get().scope())
-        optScope = optScope->get().owner()->get().scope();
-
-    return optScope->get().nodes(allowedNodeTypes);
+    return (*scope_).get().nodesInScope(shared_from_this(), allowedNodeTypes);
 }
 
-// Return the named parameter, in or out of scope
+// Return the named parameter in scope
 std::shared_ptr<ExpressionVariable>
-ProcedureNode::getParameter(std::string_view name, bool onlyInScope,
-                            const std::shared_ptr<ExpressionVariable> &excludeParameter) const
+ProcedureNode::getParameterInScope(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
     if (!scope_)
         return nullptr;
     auto &scope = (*scope_).get();
 
-    return onlyInScope ? scope.parameterInScope(shared_from_this(), name, excludeParameter)
-                       : scope.parameterExists(name, excludeParameter);
+    return scope.parameterInScope(shared_from_this(), name, excludeParameter);
 }
 
 // Return all parameters in scope
-std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::getParameters() const
+std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::getParametersInScope() const
 {
     if (!scope_)
         return {};

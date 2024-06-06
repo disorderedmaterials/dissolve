@@ -24,14 +24,14 @@ const ProcedureNode::NodeTypeVector &NodeKeywordUnderlay::allowedNodeTypes() con
 std::vector<ConstNodeRef> NodeKeywordUnderlay::allowedNodes() const
 {
     assert(parentNode_);
-    return parentNode_->getNodes(true, allowedNodeTypes_);
+    return parentNode_->getNodesInScope(allowedNodeTypes_);
 }
 
 // Find the named node, obeying scope
 ConstNodeRef NodeKeywordUnderlay::findNode(std::string_view name) const
 {
     assert(parentNode_);
-    return parentNode_->getNode(name, true);
+    return parentNode_->getNodeInScope(name);
 }
 
 // Return whether the node has valid type
@@ -48,7 +48,7 @@ bool NodeKeywordUnderlay::validNode(const ProcedureNode *node, std::string_view 
                                 joinStrings(allowedNodeTypes_, ", ",
                                             [](const auto nodeType) { return ProcedureNode::nodeTypes().keyword(nodeType); }));
 
-    if (!parentNode_->getNode(node->name(), true, {}, allowedNodeTypes_))
+    if (!parentNode_->getNodeInScope(node->name(), {}, allowedNodeTypes_))
         return Messenger::error("Node '{}' does not exist in scope, so the {} keyword cannot reference it.\n", node->name(),
                                 keywordName);
 

@@ -109,16 +109,16 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     void setScope(ProcedureNodeSequence &scopeNode);
     // Return scope (ProcedureNodeSequence) in which this node exists
     OptionalReferenceWrapper<ProcedureNodeSequence> scope() const;
-    // Return named node, optionally matching the type / class given, in or out of scope
-    ConstNodeRef getNode(std::string_view name, bool onlyInScope, const ConstNodeRef &excludeNode = {},
-                         const NodeTypeVector &allowedNodeTypes = {}) const;
-    // Return nodes, optionally matching the type / class given, in or out of scope
-    std::vector<ConstNodeRef> getNodes(bool onlyInScope, const NodeTypeVector &allowedNodeTypes = {}) const;
-    // Return the named parameter, in or out of scope
-    std::shared_ptr<ExpressionVariable> getParameter(std::string_view name, bool onlyInScope,
-                                                     const std::shared_ptr<ExpressionVariable> &excludeParameter = {}) const;
+    // Return named node which must optionally match one of the types given, in scope
+    ConstNodeRef getNodeInScope(std::string_view name, const ConstNodeRef &excludeNode = {},
+                                const NodeTypeVector &allowedNodeTypes = {}) const;
+    // Return nodes of the specified types in scope
+    std::vector<ConstNodeRef> getNodesInScope(const NodeTypeVector &allowedNodeTypes = {}) const;
+    // Return the named parameter in scope
+    std::shared_ptr<ExpressionVariable>
+    getParameterInScope(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = {}) const;
     // Return all parameters in scope
-    std::vector<std::shared_ptr<ExpressionVariable>> getParameters() const;
+    std::vector<std::shared_ptr<ExpressionVariable>> getParametersInScope() const;
 
     /*
      * Branch

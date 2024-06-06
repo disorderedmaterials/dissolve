@@ -22,7 +22,7 @@ const NodeValue &NodeValueKeyword::data() const { return data_; }
 bool NodeValueKeyword::setData(std::string_view expressionText)
 {
     // Get any variables currently in scope
-    auto vars = parentNode_->getParameters();
+    auto vars = parentNode_->getParametersInScope();
 
     return data_.set(expressionText, vars);
 }
@@ -59,7 +59,7 @@ SerialisedValue NodeValueKeyword::serialise() const { return data_; }
 // Read values from a serialisable value
 void NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &data)
 {
-    data_.deserialise(node, parentNode_->getParameters());
+    data_.deserialise(node, parentNode_->getParametersInScope());
 }
 
 // Has not changed from initial value
