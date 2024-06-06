@@ -10,7 +10,6 @@
 #include "procedure/nodes/sequence.h"
 #include <algorithm>
 #include <memory>
-#include <utility>
 
 // Return enum option info for NodeType
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()

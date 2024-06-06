@@ -15,7 +15,7 @@ RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(NodeType::Remove)
     keywords_.add<SpeciesVectorKeyword>("Species", "Target species to remove", speciesToRemove_);
     keywords_.add<NodeKeyword<PickProcedureNodeBase>>(
         "Selection", "Picked selection of molecules to remove", selection_, this,
-        NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion}, true);
+        NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion});
 }
 
 /*

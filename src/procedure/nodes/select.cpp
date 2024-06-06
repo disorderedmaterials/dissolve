@@ -27,18 +27,18 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
         "SameMoleculeAsSite",
         "Request that the selected site comes from the molecule containing the current site in the specified "
         "SelectNode",
-        sameMolecule_, this, NodeTypeVector{NodeType::Select}, true);
+        sameMolecule_, this, NodeTypeVector{NodeType::Select});
     keywords_.add<NodeVectorKeyword<SelectProcedureNode>>(
         "ExcludeSameMolecule",
         "Exclude sites from selection if they are present in the same molecule as the current site in the specified "
         "SelectNode(s)",
-        sameMoleculeExclusions_, this, NodeTypeVector{NodeType::Select}, true);
+        sameMoleculeExclusions_, this, NodeTypeVector{NodeType::Select});
     keywords_.add<NodeVectorKeyword<SelectProcedureNode>>(
         "ExcludeSameSite", "Exclude sites from selection if they are the current site in the specified SelectNode(s)",
-        sameSiteExclusions_, this, NodeTypeVector{NodeType::Select}, true);
+        sameSiteExclusions_, this, NodeTypeVector{NodeType::Select});
     keywords_.add<NodeKeyword<SelectProcedureNode>>("ReferenceSite",
                                                     "Site to use as reference point when determining inclusions / exclusions",
-                                                    distanceReferenceSite_, this, NodeTypeVector{NodeType::Select}, true);
+                                                    distanceReferenceSite_, this, NodeTypeVector{NodeType::Select});
     keywords_.add<RangeKeyword>(
         "InclusiveRange",
         "Distance range (from reference site) within which sites are selected (only if ReferenceSite is defined)",

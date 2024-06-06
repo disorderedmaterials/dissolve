@@ -10,7 +10,7 @@ PickProcedureNodeBase::PickProcedureNodeBase(ProcedureNode::NodeType nodeType) :
     keywords_.setOrganisation("Options", "Restrictions");
     keywords_.add<NodeKeyword<PickProcedureNodeBase>>(
         "From", "Existing picked selection of molecules from which to pick", selection_, this,
-        NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion}, true);
+        NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion});
 }
 
 /*

@@ -43,7 +43,7 @@ void AddPairProcedureNode::setUpKeywords()
         "Positioning", "Positioning type for individual molecules", positioningType_, positioningTypes());
     keywords_.add<NodeKeyword<RegionProcedureNodeBase>>(
         "Region", "Region into which to add the species", region_, this,
-        NodeTypeVector{NodeType::CustomRegion, NodeType::CylindricalRegion, NodeType::GeneralRegion}, true);
+        NodeTypeVector{NodeType::CustomRegion, NodeType::CylindricalRegion, NodeType::GeneralRegion});
     keywords_.add<BoolKeyword>("Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
 }
 
