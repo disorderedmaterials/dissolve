@@ -60,12 +60,12 @@ QVariant NodePaletteModel::data(const QModelIndex &index, int role) const
         switch (role)
         {
             case (Qt::DisplayRole):
-                return QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(nodeType)));
+                return QString::fromStdString(ProcedureNode::nodeTypes().keyword(nodeType));
             case (Qt::ToolTipRole):
                 return QString::fromStdString(brief);
             case (Qt::DecorationRole):
-                return QIcon(QPixmap(
-                    QString(":/nodes/icons/nodes/%1.svg").arg(QString::fromStdString(ProcedureNode::lccNodeType(nodeType)))));
+                return QIcon(QPixmap(QString(":/nodes/icons/nodes/%1.svg")
+                                         .arg(QString::fromStdString(ProcedureNode::nodeTypes().keyword(nodeType)))));
             default:
                 return {};
         }
