@@ -28,10 +28,10 @@ ProcedureNode::NodeContext Procedure::context() { return context_; }
 ProcedureNodeSequence &Procedure::rootSequence() { return rootSequence_; }
 
 // Return named node if present (and matches the type / class given)
-ConstNodeRef Procedure::node(std::string_view name, ConstNodeRef excludeNode,
+ConstNodeRef Procedure::node(std::string_view name, const ConstNodeRef &excludeNode,
                              const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
 {
-    return rootSequence_.node(name, std::move(excludeNode), allowedNodeTypes);
+    return rootSequence_.node(name, excludeNode, allowedNodeTypes);
 }
 
 // Return all nodes (matching the type / class given)

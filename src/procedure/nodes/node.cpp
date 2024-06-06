@@ -146,7 +146,7 @@ ProcedureNode::NodeContext ProcedureNode::scopeContext() const
 }
 
 // Return named node, optionally matching the type / class given, in or out of scope
-ConstNodeRef ProcedureNode::getNode(std::string_view name, bool onlyInScope, ConstNodeRef excludeNode,
+ConstNodeRef ProcedureNode::getNode(std::string_view name, bool onlyInScope, const ConstNodeRef &excludeNode,
                                     const NodeTypeVector &allowedNodeTypes) const
 {
     if (!scope_)
@@ -175,15 +175,16 @@ std::vector<ConstNodeRef> ProcedureNode::getNodes(bool onlyInScope, const NodeTy
 }
 
 // Return the named parameter, in or out of scope
-std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view name, bool onlyInScope,
-                                                                std::shared_ptr<ExpressionVariable> excludeParameter) const
+std::shared_ptr<ExpressionVariable>
+ProcedureNode::getParameter(std::string_view name, bool onlyInScope,
+                            const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
     if (!scope_)
         return nullptr;
     auto &scope = (*scope_).get();
 
-    return onlyInScope ? scope.parameterInScope(shared_from_this(), name, std::move(excludeParameter))
-                       : scope.parameterExists(name, std::move(excludeParameter));
+    return onlyInScope ? scope.parameterInScope(shared_from_this(), name, excludeParameter)
+                       : scope.parameterExists(name, excludeParameter);
 }
 
 // Return all parameters in scope
@@ -231,7 +232,7 @@ bool ProcedureNode::setParameter(std::vector<std::shared_ptr<ExpressionVariable>
 
 // Return the named parameter (if it exists)
 std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view name,
-                                                                std::shared_ptr<ExpressionVariable> excludeParameter)
+                                                                const std::shared_ptr<ExpressionVariable> &excludeParameter)
 {
     for (auto var : parameters_)
         if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))

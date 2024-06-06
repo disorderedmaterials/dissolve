@@ -129,13 +129,13 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     // Return context of scope in which this node exists
     ProcedureNode::NodeContext scopeContext() const;
     // Return named node, optionally matching the type / class given, in or out of scope
-    ConstNodeRef getNode(std::string_view name, bool onlyInScope, ConstNodeRef excludeNode = nullptr,
+    ConstNodeRef getNode(std::string_view name, bool onlyInScope, const ConstNodeRef &excludeNode = {},
                          const NodeTypeVector &allowedNodeTypes = {}) const;
     // Return nodes, optionally matching the type / class given, in or out of scope
     std::vector<ConstNodeRef> getNodes(bool onlyInScope, const NodeTypeVector &allowedNodeTypes = {}) const;
     // Return the named parameter, in or out of scope
     std::shared_ptr<ExpressionVariable> getParameter(std::string_view name, bool onlyInScope,
-                                                     std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
+                                                     const std::shared_ptr<ExpressionVariable> &excludeParameter = {}) const;
     // Return all parameters in scope
     std::vector<std::shared_ptr<ExpressionVariable>> getParameters() const;
 
@@ -161,7 +161,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     std::shared_ptr<ExpressionVariable> addParameter(std::string_view name, const ExpressionValue &initialValue = {});
     // Return the named parameter (if it exists)
     std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
-                                                     std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
+                                                     const std::shared_ptr<ExpressionVariable> &excludeParameter = {});
     // Return references to all parameters for this node
     const std::vector<std::shared_ptr<ExpressionVariable>> &parameters() const;
 

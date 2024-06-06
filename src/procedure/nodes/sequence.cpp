@@ -95,7 +95,7 @@ bool ProcedureNodeSequence::removeNode(NodeRef node)
  */
 
 // Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
-NodeRef ProcedureNodeSequence::searchNodes(std::string_view name, ConstNodeRef excludeNode,
+NodeRef ProcedureNodeSequence::searchNodes(std::string_view name, const ConstNodeRef &excludeNode,
                                            const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
 {
     for (const auto &node : sequence_)
@@ -158,7 +158,7 @@ ProcedureNode::NodeContext ProcedureNodeSequence::context() const
 }
 
 // Return named node if present in this sequence, and which matches the (optional) type given
-ConstNodeRef ProcedureNodeSequence::node(std::string_view name, ConstNodeRef excludeNode,
+ConstNodeRef ProcedureNodeSequence::node(std::string_view name, const ConstNodeRef &excludeNode,
                                          const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
 {
     for (const auto &node : sequence_)
@@ -207,7 +207,8 @@ std::vector<ConstNodeRef> ProcedureNodeSequence::nodes(const ProcedureNode::Node
 }
 
 // Return named node if it is currently in scope (and matches the type / class given)
-ConstNodeRef ProcedureNodeSequence::nodeInScope(ConstNodeRef queryingNode, std::string_view name, ConstNodeRef excludeNode,
+ConstNodeRef ProcedureNodeSequence::nodeInScope(ConstNodeRef queryingNode, std::string_view name,
+                                                const ConstNodeRef &excludeNode,
                                                 const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
 {
     // If one was given, start from the querying node and work backwards...
@@ -271,7 +272,7 @@ std::vector<ConstNodeRef> ProcedureNodeSequence::nodesInScope(ConstNodeRef query
 }
 
 // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
-ConstNodeRef ProcedureNodeSequence::nodeExists(std::string_view name, ConstNodeRef excludeNode,
+ConstNodeRef ProcedureNodeSequence::nodeExists(std::string_view name, const ConstNodeRef &excludeNode,
                                                const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
@@ -410,7 +411,7 @@ bool ProcedureNodeSequence::check() const
 bool ProcedureNodeSequence::prepare(const ProcedureContext &procedureContext)
 {
     // Loop over nodes in the list, preparing each in turn
-    for (auto node : sequence_)
+    for (const auto &node : sequence_)
         if (!node->prepare(procedureContext))
             return false;
 
@@ -425,7 +426,7 @@ bool ProcedureNodeSequence::execute(const ProcedureContext &procedureContext)
         return true;
 
     // Loop over nodes in the list, executing each in turn
-    for (auto node : sequence_)
+    for (const auto &node : sequence_)
         if (!node->execute(procedureContext))
             return false;
 
@@ -436,7 +437,7 @@ bool ProcedureNodeSequence::execute(const ProcedureContext &procedureContext)
 bool ProcedureNodeSequence::finalise(const ProcedureContext &procedureContext)
 {
     // Loop over nodes in the list, finalising each in turn
-    for (auto node : sequence_)
+    for (const auto &node : sequence_)
         if (!node->finalise(procedureContext))
             return false;
 
@@ -517,7 +518,7 @@ bool ProcedureNodeSequence::serialise(LineParser &parser, std::string_view prefi
     // to
 
     // Loop over nodes in this sequence
-    for (auto node : sequence_)
+    for (const auto &node : sequence_)
         if (!node->serialise(parser, prefix))
             return false;
 

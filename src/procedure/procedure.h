@@ -40,7 +40,7 @@ class Procedure : public Serialisable<const CoreData &>
     // Return root sequence
     ProcedureNodeSequence &rootSequence();
     // Return named node if present (and matches the type / class given)
-    ConstNodeRef node(std::string_view name, ConstNodeRef excludeNode = nullptr,
+    ConstNodeRef node(std::string_view name, const ConstNodeRef &excludeNode = {},
                       const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return all nodes matching the optional type(s) given
     std::vector<ConstNodeRef> nodes(const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
