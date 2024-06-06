@@ -56,7 +56,6 @@ add_library(
   module.h
   moduleVector.h
   node.h
-  nodeAndInteger.h
   nodeBranch.h
   nodeUnderlay.h
   nodeValue.h

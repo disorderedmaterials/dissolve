@@ -5,7 +5,6 @@
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "keywords/node.h"
-#include "keywords/nodeAndInteger.h"
 #include "keywords/nodeValue.h"
 #include "keywords/nodeValueEnumOptions.h"
 #include "keywords/nodeVector.h"
@@ -353,11 +352,6 @@ bool ProcedureNodeSequence::validateNodeKeywords()
     {
         // NodeKeyword
         for (auto &kwd : node->keywords().allOfType<NodeKeywordBase>())
-            if (!kwd->validate())
-                result = false;
-
-        // NodeAndIntegerKeywordKeyword
-        for (auto &kwd : node->keywords().allOfType<NodeAndIntegerKeywordBase>())
             if (!kwd->validate())
                 result = false;
 

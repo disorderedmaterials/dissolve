@@ -20,7 +20,6 @@
 #include "gui/keywordWidgets/module.h"
 #include "gui/keywordWidgets/moduleVector.h"
 #include "gui/keywordWidgets/node.h"
-#include "gui/keywordWidgets/nodeAndInteger.h"
 #include "gui/keywordWidgets/nodeValue.h"
 #include "gui/keywordWidgets/nodeValueEnumOptions.h"
 #include "gui/keywordWidgets/nodeVector.h"
@@ -66,7 +65,6 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<ModuleKeywordBase, ModuleKeywordWidget>();
     registerProducer<ModuleVectorKeyword, ModuleVectorKeywordWidget>();
     registerProducer<NodeKeywordBase, NodeKeywordWidget>();
-    registerProducer<NodeAndIntegerKeywordBase, NodeAndIntegerKeywordWidget>();
     registerProducer<NodeValueEnumOptionsBaseKeyword, NodeValueEnumOptionsKeywordWidget>();
     registerProducer<NodeValueKeyword, NodeValueKeywordWidget>();
     registerProducer<NodeVectorKeywordBase, NodeVectorKeywordWidget>();
