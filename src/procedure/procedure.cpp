@@ -29,17 +29,15 @@ ProcedureNodeSequence &Procedure::rootSequence() { return rootSequence_; }
 
 // Return named node if present (and matches the type / class given)
 ConstNodeRef Procedure::node(std::string_view name, ConstNodeRef excludeNode,
-                             std::optional<ProcedureNode::NodeType> optNodeType,
-                             std::optional<ProcedureNode::NodeClass> optNodeClass) const
+                             const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
 {
-    return rootSequence_.node(name, std::move(excludeNode), optNodeType, optNodeClass);
+    return rootSequence_.node(name, std::move(excludeNode), allowedNodeTypes);
 }
 
 // Return all nodes (matching the type / class given)
-std::vector<ConstNodeRef> Procedure::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
-                                           std::optional<ProcedureNode::NodeClass> optNodeClass) const
+std::vector<ConstNodeRef> Procedure::nodes(const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
 {
-    return rootSequence_.nodes(optNodeType, optNodeClass);
+    return rootSequence_.nodes(allowedNodeTypes);
 }
 
 // Remove a node

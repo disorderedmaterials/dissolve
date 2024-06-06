@@ -2,7 +2,6 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "procedure/nodes/node.h"
-
 #include "base/lineParser.h"
 #include "base/messenger.h"
 #include "base/sysFunc.h"
@@ -12,13 +11,6 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
-
-// Return enum option info for NodeClass
-EnumOptions<ProcedureNode::NodeClass> ProcedureNode::nodeClasses()
-{
-    return EnumOptions<ProcedureNode::NodeClass>(
-        "NodeClass", {{ProcedureNode::NodeClass::None, "None"}, {ProcedureNode::NodeClass::Region, "Region"}});
-}
 
 // Return enum option info for NodeType
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
@@ -73,9 +65,8 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
                                                                    {ProcedureNode::InheritContext, "Inherit"}});
 }
 
-ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, std::vector<NodeContext> relevantContexts,
-                             ProcedureNode::NodeClass classType)
-    : type_(nodeType), relevantContexts_(std::move(relevantContexts)), class_(classType)
+ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, std::vector<NodeContext> relevantContexts)
+    : type_(nodeType), relevantContexts_(std::move(relevantContexts))
 {
 }
 
@@ -102,9 +93,6 @@ bool ProcedureNode::isContextRelevant(NodeContext targetContext) const
 
     return std::find(relevantContexts_.begin(), relevantContexts_.end(), targetContext) != relevantContexts_.end();
 }
-
-// Return whether the node is of the specified class
-ProcedureNode::NodeClass ProcedureNode::nodeClass() const { return class_; }
 
 // Return whether a name for the node must be provided
 bool ProcedureNode::mustBeNamed() const { return true; }
@@ -159,33 +147,31 @@ ProcedureNode::NodeContext ProcedureNode::scopeContext() const
 
 // Return named node, optionally matching the type / class given, in or out of scope
 ConstNodeRef ProcedureNode::getNode(std::string_view name, bool onlyInScope, ConstNodeRef excludeNode,
-                                    std::optional<ProcedureNode::NodeType> optNodeType,
-                                    std::optional<ProcedureNode::NodeClass> optNodeClass) const
+                                    const NodeTypeVector &allowedNodeTypes) const
 {
     if (!scope_)
         return nullptr;
     const auto &scope = (*scope_).get();
 
-    return onlyInScope ? scope.nodeInScope(shared_from_this(), name, excludeNode, optNodeType, optNodeClass)
-                       : scope.nodeExists(name, excludeNode, optNodeType, optNodeClass);
+    return onlyInScope ? scope.nodeInScope(shared_from_this(), name, excludeNode, allowedNodeTypes)
+                       : scope.nodeExists(name, excludeNode, allowedNodeTypes);
 }
 
 // Return nodes, optionally matching the type / class given, in or out of scope
-std::vector<ConstNodeRef> ProcedureNode::getNodes(bool onlyInScope, std::optional<ProcedureNode::NodeType> optNodeType,
-                                                  std::optional<ProcedureNode::NodeClass> optNodeClass) const
+std::vector<ConstNodeRef> ProcedureNode::getNodes(bool onlyInScope, const NodeTypeVector &allowedNodeTypes) const
 {
     if (!scope_)
         return {};
 
     if (onlyInScope)
-        return (*scope_).get().nodesInScope(shared_from_this(), optNodeType, optNodeClass);
+        return (*scope_).get().nodesInScope(shared_from_this(), allowedNodeTypes);
 
     // Find the topmost (root) scope and search from there.
     auto optScope = scope_;
     while (optScope->get().owner() && optScope->get().owner()->get().scope())
         optScope = optScope->get().owner()->get().scope();
 
-    return optScope->get().nodes(optNodeType, optNodeClass);
+    return optScope->get().nodes(allowedNodeTypes);
 }
 
 // Return the named parameter, in or out of scope

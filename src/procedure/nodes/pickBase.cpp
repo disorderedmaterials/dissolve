@@ -6,11 +6,12 @@
 #include "keywords/node.h"
 
 PickProcedureNodeBase::PickProcedureNodeBase(ProcedureNode::NodeType nodeType)
-    : ProcedureNode(nodeType, {ProcedureNode::GenerationContext}, ProcedureNode::NodeClass::Pick), selection_(nullptr)
+    : ProcedureNode(nodeType, {ProcedureNode::GenerationContext}), selection_(nullptr)
 {
     keywords_.setOrganisation("Options", "Restrictions");
-    keywords_.add<NodeKeyword<PickProcedureNodeBase>>("From", "Existing picked selection of molecules from which to pick",
-                                                      selection_, this, ProcedureNode::NodeClass::Pick, true);
+    keywords_.add<NodeKeyword<PickProcedureNodeBase>>(
+        "From", "Existing picked selection of molecules from which to pick", selection_, this,
+        NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion}, true);
 }
 
 /*

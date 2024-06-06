@@ -13,12 +13,8 @@
 class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
-    NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, nodeType, onlyInScope), KeywordBase(typeid(this))
-    {
-    }
-    NodeVectorKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, nodeClass, onlyInScope), KeywordBase(typeid(this))
+    NodeVectorKeywordBase(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes, bool onlyInScope)
+        : NodeKeywordUnderlay(parentNode, allowedNodeTypes, onlyInScope), KeywordBase(typeid(this))
     {
     }
     ~NodeVectorKeywordBase() override = default;
@@ -52,12 +48,9 @@ class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
 {
     public:
-    NodeVectorKeyword(ConstNodeVector<N> &data, ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
-        : NodeVectorKeywordBase(parentNode, nodeType, onlyInScope), data_(data)
-    {
-    }
-    NodeVectorKeyword(ConstNodeVector<N> &data, ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
-        : NodeVectorKeywordBase(parentNode, nodeType, onlyInScope), data_(data)
+    NodeVectorKeyword(ConstNodeVector<N> &data, ProcedureNode *parentNode,
+                      const ProcedureNode::NodeTypeVector &allowedNodeTypes, bool onlyInScope)
+        : NodeVectorKeywordBase(parentNode, allowedNodeTypes, onlyInScope), data_(data)
     {
     }
     ~NodeVectorKeyword() override = default;
@@ -193,12 +186,5 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
      */
     protected:
     // Prune any references to the supplied ProcedureNode in the contained data
-    void removeReferencesTo(NodeRef node) override
-    {
-        // Check the node type
-        if (node->type() != nodeType())
-            return;
-
-        data_.erase(std::remove(data_.begin(), data_.end(), node), data_.end());
-    }
+    void removeReferencesTo(NodeRef node) override { data_.erase(std::remove(data_.begin(), data_.end(), node), data_.end()); }
 };

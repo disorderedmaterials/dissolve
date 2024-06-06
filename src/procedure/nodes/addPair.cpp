@@ -42,8 +42,9 @@ void AddPairProcedureNode::setUpKeywords()
     keywords_.setOrganisation("Options", "Target");
     keywords_.add<EnumOptionsKeyword<AddPairProcedureNode::PositioningType>>(
         "Positioning", "Positioning type for individual molecules", positioningType_, positioningTypes());
-    keywords_.add<NodeKeyword<RegionProcedureNodeBase>>("Region", "Region into which to add the species", region_, this,
-                                                        ProcedureNode::NodeClass::Region, true);
+    keywords_.add<NodeKeyword<RegionProcedureNodeBase>>(
+        "Region", "Region into which to add the species", region_, this,
+        NodeTypeVector{NodeType::CustomRegion, NodeType::CylindricalRegion, NodeType::GeneralRegion}, true);
     keywords_.add<BoolKeyword>("Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
 }
 

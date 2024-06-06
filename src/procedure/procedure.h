@@ -41,12 +41,9 @@ class Procedure : public Serialisable<const CoreData &>
     ProcedureNodeSequence &rootSequence();
     // Return named node if present (and matches the type / class given)
     ConstNodeRef node(std::string_view name, ConstNodeRef excludeNode = nullptr,
-                      std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                      std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
-    // Return all nodes (matching the type / class given)
-    std::vector<ConstNodeRef> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                                    std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
-
+                      const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
+    // Return all nodes matching the optional type(s) given
+    std::vector<ConstNodeRef> nodes(const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Remove a node
     bool removeNode(NodeRef node);
 

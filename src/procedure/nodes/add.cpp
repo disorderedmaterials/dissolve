@@ -5,7 +5,6 @@
 #include "base/randomBuffer.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/coreData.h"
 #include "classes/species.h"
 #include "keywords/bool.h"
 #include "keywords/node.h"
@@ -13,7 +12,6 @@
 #include "keywords/nodeValueEnumOptions.h"
 #include "keywords/species.h"
 #include "procedure/nodes/coordinateSets.h"
-#include "procedure/nodes/generalRegion.h"
 #include "procedure/nodes/regionBase.h"
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
@@ -38,7 +36,7 @@ void AddProcedureNode::setUpKeywords()
     keywords_.setOrganisation("Options", "Target");
     keywords_.add<SpeciesKeyword>("Species", "Target species to add", species_);
     keywords_.add<NodeKeyword<CoordinateSetsProcedureNode>>("CoordinateSets", "Target coordinate sets to add", coordinateSets_,
-                                                            this, ProcedureNode::NodeType::CoordinateSets, true);
+                                                            this, NodeTypeVector{NodeType::CoordinateSets}, true);
     keywords_.add<NodeValueKeyword>("Population", "Population of the target species to add", population_, this);
     keywords_.add<NodeValueEnumOptionsKeyword<Units::DensityUnits>>("Density", "Density at which to add the target species",
                                                                     density_, this, Units::densityUnits());
@@ -53,8 +51,9 @@ void AddProcedureNode::setUpKeywords()
     keywords_.setOrganisation("Options", "Target");
     keywords_.add<EnumOptionsKeyword<AddProcedureNode::PositioningType>>(
         "Positioning", "Positioning type for individual molecules", positioningType_, positioningTypes());
-    keywords_.add<NodeKeyword<RegionProcedureNodeBase>>("Region", "Region into which to add the species", region_, this,
-                                                        ProcedureNode::NodeClass::Region, true);
+    keywords_.add<NodeKeyword<RegionProcedureNodeBase>>(
+        "Region", "Region into which to add the species", region_, this,
+        NodeTypeVector{NodeType::CustomRegion, NodeType::CylindricalRegion, NodeType::GeneralRegion}, true);
     keywords_.add<BoolKeyword>("Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
 }
 

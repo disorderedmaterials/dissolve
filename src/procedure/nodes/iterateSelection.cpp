@@ -23,7 +23,7 @@ IterateSelectionProcedureNode::IterateSelectionProcedureNode(ProcedureNode::Node
 {
     // Keywords
     keywords_.add<NodeKeyword<SelectProcedureNode>>("Selection", "Target selection to iterate over", selection_, this,
-                                                    ProcedureNode::NodeType::Select, true);
+                                                    NodeTypeVector{NodeType::Select}, true);
 
     nSelectedParameter_ = addParameter("nSelected");
     siteIndexParameter_ = addParameter("siteIndex");

@@ -15,8 +15,9 @@ TransmuteProcedureNode::TransmuteProcedureNode()
 {
     keywords_.setOrganisation("Options", "Source");
     keywords_.add<SpeciesVectorKeyword>("Species", "Species types to transmute into the target species", speciesToTransmute_);
-    keywords_.add<NodeKeyword<PickProcedureNodeBase>>("Selection", "Picked selection of molecules to transmute", selection_,
-                                                      this, ProcedureNode::NodeClass::Pick, true);
+    keywords_.add<NodeKeyword<PickProcedureNodeBase>>(
+        "Selection", "Picked selection of molecules to transmute", selection_, this,
+        NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion}, true);
 
     keywords_.setOrganisation("Options", "Target");
     keywords_.add<SpeciesKeyword>("Target", "Target species to transmute selected molecules in to", targetSpecies_);

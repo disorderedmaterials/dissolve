@@ -17,9 +17,9 @@ RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
 
     keywords_.setOrganisation("Options", "Targets");
     keywords_.add<SpeciesVectorKeyword>("Species", "Target species to apply atomic restraints to", speciesToRestrain_);
-    keywords_.add<NodeKeyword<PickProcedureNodeBase>>("Selection",
-                                                      "Picked selection of molecules to apply atomic restraints to",
-                                                      selectionToRestrain_, this, ProcedureNode::NodeClass::Pick, true);
+    keywords_.add<NodeKeyword<PickProcedureNodeBase>>(
+        "Selection", "Picked selection of molecules to apply atomic restraints to", selectionToRestrain_, this,
+        NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion}, true);
 }
 
 /*
