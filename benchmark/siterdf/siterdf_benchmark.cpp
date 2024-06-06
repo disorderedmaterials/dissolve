@@ -6,8 +6,7 @@
 #include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
 
-template <ProblemType problem, Population population>
-static void BM_Module_SiteRDF(benchmark::State &state)
+template <ProblemType problem, Population population> static void BM_Module_SiteRDF(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
     SiteRDFModule module;
@@ -24,5 +23,7 @@ static void BM_Module_SiteRDF(benchmark::State &state)
     }
 }
 
-BENCHMARK_TEMPLATE(BM_Module_SiteRDF, ProblemType::smallMolecule, Population::small)->Unit(benchmark::kMillisecond);;
-BENCHMARK_TEMPLATE(BM_Module_SiteRDF, ProblemType::atomic, Population::large)->Unit(benchmark::kMillisecond);;
+BENCHMARK_TEMPLATE(BM_Module_SiteRDF, ProblemType::smallMolecule, Population::small)->Unit(benchmark::kMillisecond);
+;
+BENCHMARK_TEMPLATE(BM_Module_SiteRDF, ProblemType::atomic, Population::large)->Unit(benchmark::kMillisecond);
+;

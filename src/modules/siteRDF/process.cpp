@@ -3,8 +3,8 @@
 
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
-#include "classes/productIterator.h"
 #include "base/sysFunc.h"
+#include "classes/productIterator.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "math/integrator.h"
@@ -39,23 +39,21 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
     histAB.zeroBins();
 
-    auto combinableHistograms = dissolve::CombinableValue<Histogram1D>(
-        [&histAB]()
-        {
-            return histAB;
-        });
+    auto combinableHistograms = dissolve::CombinableValue<Histogram1D>([&histAB]() { return histAB; });
 
-    dissolve::for_each(std::execution::seq, a.sites().begin(), a.sites().end(), [this,  &b, &combinableHistograms](const auto& pair) {
-        const auto &[siteA, indexA] = pair;
+    dissolve::for_each(std::execution::seq, a.sites().begin(), a.sites().end(),
+                       [this, &b, &combinableHistograms](const auto &pair)
+                       {
+                           const auto &[siteA, indexA] = pair;
 
-        auto &hist = combinableHistograms.local();
-        for (const auto &[siteB, indexB] : b.sites())
-        {
-            if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
-              continue;
-            hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
-        }
-      });
+                           auto &hist = combinableHistograms.local();
+                           for (const auto &[siteB, indexB] : b.sites())
+                           {
+                               if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
+                                   continue;
+                               hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+                           }
+                       });
 
     histAB = combinableHistograms.finalize();
 
