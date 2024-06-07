@@ -325,22 +325,41 @@ static std::map<Functions1D::Form, Function1DDefinition> functions1D_ = {
           return -params[0] * c1 * exp(-(0.5 * dx * dx * params[4] * params[4]));
       },
       {},
+      {}}},
+    /*
+     * Harmonic Well Potential
+     *
+     * Parameters:
+     *  INPUT  0 = k
+     */
+    {Functions1D::Form::Harmonic,
+     {{"k"},
+      {FunctionProperties::FirstDerivative},
+      [](std::vector<double> params) { return params; },
+      /*
+       * f(x) = 0.5 * k * x^2
+       */
+      [](double x, double omega, const std::vector<double> &params) { return 0.5 * params[0] * x * x; },
+      /*
+       * dy/dx = k * x
+       */
+      [](double x, double omega, const std::vector<double> &params) { return params[0] * x; },
+      {},
       {}}}};
 
 // Return enum option info for forms
 EnumOptions<Functions1D::Form> Functions1D::forms()
 {
     return EnumOptions<Functions1D::Form>("Function1D",
-                                          {
-                                              {Functions1D::Form::None, "None"},
-                                              {Functions1D::Form::Gaussian, "Gaussian", 1},
-                                              {Functions1D::Form::ScaledGaussian, "ScaledGaussian", 2},
-                                              {Functions1D::Form::OmegaDependentGaussian, "OmegaDependentGaussian", 1},
-                                              {Functions1D::Form::GaussianC2, "GaussianC2", 2},
-                                              {Functions1D::Form::LennardJones126, "LennardJones126", 2},
-                                              {Functions1D::Form::Buckingham, "Buckingham", 3},
-                                              {Functions1D::Form::GaussianPotential, "GaussianPotential", 3},
-                                          });
+                                          {{Functions1D::Form::None, "None"},
+                                           {Functions1D::Form::Gaussian, "Gaussian", 1},
+                                           {Functions1D::Form::ScaledGaussian, "ScaledGaussian", 2},
+                                           {Functions1D::Form::OmegaDependentGaussian, "OmegaDependentGaussian", 1},
+                                           {Functions1D::Form::GaussianC2, "GaussianC2", 2},
+                                           {Functions1D::Form::LennardJones126, "LennardJones126", 2},
+                                           {Functions1D::Form::Buckingham, "Buckingham", 3},
+                                           {Functions1D::Form::GaussianPotential, "GaussianPotential", 3},
+                                           {Functions1D::Form::Harmonic, "Harmonic", 1}});
 }
 
 // Return parameters for specified form

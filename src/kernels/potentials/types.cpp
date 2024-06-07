@@ -7,8 +7,8 @@
 namespace ExternalPotentialTypes
 {
 // External Potential Types
-EnumOptions<ExternalPotentialType> types_("ExternalPotential", {{ExternalPotentialType::Simple, "Simple"},
-                                                                {ExternalPotentialType::Directional, "Directional"},
+EnumOptions<ExternalPotentialType> types_("ExternalPotential", {{ExternalPotentialType::Spherical, "Spherical"},
+                                                                {ExternalPotentialType::Cylindrical, "Cylindrical"},
                                                                 {ExternalPotentialType::Regional, "Regional"}});
 
 // Return whether the supplied external potential type is valid

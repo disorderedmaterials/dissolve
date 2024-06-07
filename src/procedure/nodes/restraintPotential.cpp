@@ -3,18 +3,17 @@
 
 #include "procedure/nodes/restraintPotential.h"
 #include "classes/configuration.h"
-#include "kernels/potentials/restraint.h"
+#include "kernels/potentials/spherical.h"
 #include "keywords/interactionPotential.h"
 #include "keywords/node.h"
 #include "keywords/speciesVector.h"
 
 RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::RestraintPotential, {ProcedureNode::GenerationContext}),
-      potential_(RestraintPotentialFunctions::Form::Harmonic)
+      potential_(Functions1D::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
-    keywords_.add<InteractionPotentialKeyword<RestraintPotentialFunctions>>(
-        "Potential", "Potential to apply to individual atoms", potential_);
+    keywords_.add<InteractionPotentialKeyword<Functions1D>>("Potential", "Potential to apply to individual atoms", potential_);
 
     keywords_.setOrganisation("Options", "Targets");
     keywords_.add<SpeciesVectorKeyword>("Species", "Target species to apply atomic restraints to", speciesToRestrain_);
@@ -31,7 +30,7 @@ void RestraintPotentialProcedureNode::restrainMoleculeAtoms(Configuration *cfg, 
 {
     for (auto &i : mol->atoms())
     {
-        auto pot = std::make_unique<RestraintPotential>();
+        auto pot = std::make_unique<SphericalPotential>();
         pot->setPotential(potential_);
         pot->setTargetAtomIndices({i->globalIndex()});
         pot->setOrigin(i->r());

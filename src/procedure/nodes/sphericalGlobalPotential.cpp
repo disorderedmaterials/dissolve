@@ -1,24 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "procedure/nodes/directionalGlobalPotential.h"
+#include "procedure/nodes/sphericalGlobalPotential.h"
 #include "classes/configuration.h"
-#include "kernels/potentials/directional.h"
 #include "keywords/bool.h"
 #include "keywords/interactionPotential.h"
 #include "keywords/vec3NodeValue.h"
 
-DirectionalGlobalPotentialProcedureNode::DirectionalGlobalPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::DirectionalGlobalPotential, {ProcedureNode::GenerationContext}),
-      potential_(DirectionalPotentialFunctions::Form::LJCylinder)
+SphericalGlobalPotentialProcedureNode::SphericalGlobalPotentialProcedureNode()
+    : ProcedureNode(ProcedureNode::NodeType::SphericalGlobalPotential, {ProcedureNode::GenerationContext}),
+      potential_(Functions1D::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
-    keywords_.add<InteractionPotentialKeyword<DirectionalPotentialFunctions>>(
-        "Potential", "Form of directional global potential to apply ", potential_);
+    keywords_.add<InteractionPotentialKeyword<Functions1D>>("Potential", "Form of global potential to apply ", potential_);
     keywords_.add<Vec3NodeValueKeyword>("Origin", "Origin of global potential", origin_, this);
     keywords_.add<BoolKeyword>("Fractional", "Whether the origin is specified in fractional cell coordinates",
                                originIsFractional_);
-    keywords_.add<Vec3NodeValueKeyword>("Vector", "Vector of global potential", vector_, this);
 }
 
 /*
@@ -26,12 +23,12 @@ DirectionalGlobalPotentialProcedureNode::DirectionalGlobalPotentialProcedureNode
  */
 
 // Execute node
-bool DirectionalGlobalPotentialProcedureNode::execute(const ProcedureContext &procedureContext)
+bool SphericalGlobalPotentialProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     auto *cfg = procedureContext.configuration();
 
     // Set potential
-    auto pot = std::make_unique<DirectionalPotential>();
+    auto pot = std::make_unique<SphericalPotential>();
     pot->setPotential(potential_);
 
     // Set origin
@@ -39,9 +36,6 @@ bool DirectionalGlobalPotentialProcedureNode::execute(const ProcedureContext &pr
     if (originIsFractional_)
         cfg->box()->toReal(origin);
     pot->setOrigin(origin);
-
-    // Set directional vector
-    pot->setVector({vector_.x.asDouble(), vector_.y.asDouble(), vector_.z.asDouble()});
 
     cfg->addGlobalPotential(std::unique_ptr<ExternalPotential>(std::move(pot)));
 

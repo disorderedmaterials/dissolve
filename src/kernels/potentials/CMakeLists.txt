@@ -1,18 +1,16 @@
 add_library(
   potentials
   base.cpp
-  directional.cpp
+  cylindrical.cpp
   producer.cpp
   regional.cpp
-  restraint.cpp
-  simple.cpp
+  spherical.cpp
   types.cpp
   base.h
-  directional.h
+  cylindrical.h
   producer.h
   regional.h
-  restraint.h
-  simple.h
+  spherical.h
   types.h
 )
 

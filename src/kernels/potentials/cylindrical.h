@@ -6,32 +6,13 @@
 #include "classes/interactionPotential.h"
 #include "kernels/potentials/base.h"
 
-// DirectionalPotential functional forms
-class DirectionalPotentialFunctions
+// Cylindrical Potential
+class CylindricalPotential : public ExternalPotential
 {
     public:
-    enum class Form
-    {
-        LJCylinder /* Lennard-Jones cylindrical potential */
-    };
-    // Return enum options for form
-    static EnumOptions<Form> forms();
-    // Return parameters for specified form
-    static const std::vector<std::string> &parameters(Form form);
-    // Return nth parameter for the given form
-    static std::string parameter(Form form, int n);
-    // Return index of parameter in the given form
-    static std::optional<int> parameterIndex(Form form, std::string_view name);
-};
-
-// Directional Potential
-class DirectionalPotential : public ExternalPotential
-{
-    public:
-    DirectionalPotential(const InteractionPotential<DirectionalPotentialFunctions> &interactionPotential =
-                             {DirectionalPotentialFunctions::Form::LJCylinder},
+    CylindricalPotential(const InteractionPotential<Functions1D> &interactionPotential = {Functions1D::Form::LennardJones126},
                          const Vec3<double> &origin = {0.0, 0.0, 0.0}, const Vec3<double> &vector = {0.0, 0.0, 1.0});
-    ~DirectionalPotential() = default;
+    ~CylindricalPotential() = default;
     // Create and return a copy of this potential
     std::unique_ptr<ExternalPotential> duplicate() const override;
 
@@ -39,8 +20,9 @@ class DirectionalPotential : public ExternalPotential
      * Definition
      */
     private:
-    // Potential form
-    InteractionPotential<DirectionalPotentialFunctions> interactionPotential_;
+    // Potential function
+    InteractionPotential<Functions1D> interactionPotential_;
+    Function1DWrapper potentialFunction_;
     // Coordinate origin of potential
     Vec3<double> origin_;
     // Direction of potential
@@ -48,11 +30,11 @@ class DirectionalPotential : public ExternalPotential
 
     public:
     // Set potential form
-    void setPotential(const InteractionPotential<DirectionalPotentialFunctions> &potential);
+    void setPotential(const InteractionPotential<Functions1D> &potential);
     // Set coordinate origin of potential
-    void setOrigin(Vec3<double> origin);
+    void setOrigin(const Vec3<double> &origin);
     // Set vector of potential
-    void setVector(Vec3<double> vector);
+    void setVector(const Vec3<double> &vector);
     // Return functional form of the potential, as a string
     const std::string formString() const override;
     // Return parameters of the potential, as a string

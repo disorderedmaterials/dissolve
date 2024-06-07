@@ -16,8 +16,8 @@ add_library(
   coordinateSets.cpp
   copy.cpp
   customRegion.cpp
+  cylindricalGlobalPotential.cpp
   cylindricalRegion.cpp
-  directionalGlobalPotential.cpp
   generalRegion.cpp
   ifValueInRange.cpp
   importCoordinates.cpp
@@ -53,7 +53,7 @@ add_library(
   runLayer.cpp
   select.cpp
   sequence.cpp
-  simpleGlobalPotential.cpp
+  sphericalGlobalPotential.cpp
   sizeFactor.cpp
   sum1D.cpp
   temperature.cpp
@@ -74,8 +74,8 @@ add_library(
   coordinateSets.h
   copy.h
   customRegion.h
+  cylindricalGlobalPotential.h
   cylindricalRegion.h
-  directionalGlobalPotential.h
   generalRegion.h
   ifValueInRange.h
   importCoordinates.h
@@ -111,7 +111,7 @@ add_library(
   runLayer.h
   select.h
   sequence.h
-  simpleGlobalPotential.h
+  sphericalGlobalPotential.h
   sizeFactor.h
   sum1D.h
   temperature.h

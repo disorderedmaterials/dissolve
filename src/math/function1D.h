@@ -79,7 +79,8 @@ class Functions1D
         GaussianC2,
         LennardJones126,
         Buckingham,
-        GaussianPotential
+        GaussianPotential,
+        Harmonic
     };
     // Return enum options for form
     static EnumOptions<Form> forms();

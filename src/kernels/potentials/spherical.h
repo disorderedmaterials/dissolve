@@ -6,45 +6,32 @@
 #include "classes/interactionPotential.h"
 #include "kernels/potentials/base.h"
 
-// RestraintPotential functional forms
-class RestraintPotentialFunctions
+// Spherical Potential
+class SphericalPotential : public ExternalPotential
 {
     public:
-    enum class Form
-    {
-        Harmonic, /* Harmonic well potential */
-    };
-    // Return enum options for form
-    static EnumOptions<Form> forms();
-    // Return parameters for specified form
-    static const std::vector<std::string> &parameters(Form form);
-    // Return nth parameter for the given form
-    static std::string parameter(Form form, int n);
-    // Return index of parameter in the given form
-    static std::optional<int> parameterIndex(Form form, std::string_view name);
-};
-
-// Simple Restraint Potential
-class RestraintPotential : public ExternalPotential
-{
-    public:
-    RestraintPotential();
-    ~RestraintPotential() = default;
+    SphericalPotential(const InteractionPotential<Functions1D> &interactionPotential = {Functions1D::Form::Harmonic},
+                       const Vec3<double> &origin = {0.0, 0.0, 0.0});
+    ~SphericalPotential() = default;
+    // Create and return a copy of this potential
+    std::unique_ptr<ExternalPotential> duplicate() const override;
 
     /*
      * Definition
      */
+
     private:
     // Potential form
-    InteractionPotential<RestraintPotentialFunctions> interactionPotential_;
+    InteractionPotential<Functions1D> interactionPotential_;
+    Function1DWrapper potentialFunction_;
     // Coordinate origin of potential
     Vec3<double> origin_;
 
     public:
     // Set potential form
-    void setPotential(const InteractionPotential<RestraintPotentialFunctions> &potential);
+    void setPotential(const InteractionPotential<Functions1D> &potential);
     // Set coordinate origin of potential
-    void setOrigin(Vec3<double> origin);
+    void setOrigin(const Vec3<double> &origin);
     // Return functional form of the potential, as a string
     const std::string formString() const override;
     // Return parameters of the potential, as a string

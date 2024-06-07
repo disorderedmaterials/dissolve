@@ -1,10 +1,10 @@
 <RCC>
   <qresource prefix="nodes">
     <file>icons/nodes/add.svg</file>
-    <file>icons/nodes/simpleGlobalPotential.svg</file>
+    <file>icons/nodes/sphericalGlobalPotential.svg</file>
     <file>icons/nodes/regionalGlobalPotential.svg</file>
     <file>icons/nodes/restraintPotential.svg</file>
-    <file>icons/nodes/directionalGlobalPotential.svg</file>
+    <file>icons/nodes/cylindricalGlobalPotential.svg</file>
     <file>icons/nodes/box.svg</file>
     <file>icons/nodes/calculateAngle.svg</file>
     <file>icons/nodes/calculateAxisAngle.svg</file>
