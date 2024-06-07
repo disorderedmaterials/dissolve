@@ -22,8 +22,7 @@ class PairPotentialModel : public QAbstractListModel
     {
         NameIColumn,
         NameJColumn,
-        ChargeIColumn,
-        ChargeJColumn,
+        ChargeProductColumn,
         ShortRangeFormColumn,
         ShortRangeParametersColumn,
         nDataColumns

@@ -55,10 +55,8 @@ QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
                 return QString::fromStdString(std::string(pp->nameI()));
             case (Columns::NameJColumn):
                 return QString::fromStdString(std::string(pp->nameJ()));
-            case (Columns::ChargeIColumn):
-                return pp->includeAtomTypeCharges() ? QString::number(pp->chargeI()) : QString("--");
-            case (Columns::ChargeJColumn):
-                return pp->includeAtomTypeCharges() ? QString::number(pp->chargeJ()) : QString("--");
+            case (Columns::ChargeProductColumn):
+                return PairPotential::includeAtomTypeCharges() ? QString::number(pp->atomTypeChargeProduct()) : QString("--");
             case (Columns::ShortRangeFormColumn):
                 return QString::fromStdString(Functions1D::forms().keyword(pp->interactionPotential().form()));
             case (Columns::ShortRangeParametersColumn):
@@ -85,8 +83,7 @@ bool PairPotentialModel::setData(const QModelIndex &index, const QVariant &value
         // Uneditable Columns
         case (Columns::NameIColumn):
         case (Columns::NameJColumn):
-        case (Columns::ChargeIColumn):
-        case (Columns::ChargeJColumn):
+        case (Columns::ChargeProductColumn):
             return false;
         case (Columns::ShortRangeFormColumn):
             pair->setInteractionPotentialForm(Functions1D::forms().enumeration(value.toString().toStdString()));
@@ -124,10 +121,8 @@ QVariant PairPotentialModel::headerData(int section, Qt::Orientation orientation
                 return "Type I";
             case (Columns::NameJColumn):
                 return "Type J";
-            case (Columns::ChargeIColumn):
-                return "Charge I";
-            case (Columns::ChargeJColumn):
-                return "Charge J";
+            case (Columns::ChargeProductColumn):
+                return "q(i)q(j)";
             case (Columns::ShortRangeFormColumn):
                 return "Form";
             case (Columns::ShortRangeParametersColumn):

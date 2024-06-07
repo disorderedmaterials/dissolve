@@ -771,7 +771,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
                                         Data1DExportFileFormat exportFormat(
                                             fmt::format("{}-EP-{}-{}.txt", name_, at1->name(), at2->name()));
-                                        if (!exportFormat.exportData(pp->uAdditional()))
+                                        if (!exportFormat.exportData(pp->additionalPotential()))
                                             return moduleContext.processPool().decideFalse();
                                         return std::nullopt;
                                     });

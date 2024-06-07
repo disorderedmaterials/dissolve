@@ -93,7 +93,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
         // Grab pointer to the relevant pair potential (if it exists)
         auto *pp = moduleContext.dissolve().pairPotential(epData.at1, epData.at2);
         if (pp)
-            pp->setUAdditional(epData.ep);
+            pp->setAdditionalPotential(epData.ep);
     }
 
     return ExecutionResult::Success;

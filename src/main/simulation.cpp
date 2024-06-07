@@ -308,7 +308,7 @@ bool Dissolve::iterate(int nIterations)
             for (auto &&[at1, at2, pot] : pairPotentials_)
             {
                 processingModuleData_.realise<Data1D>(fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()),
-                                                      "Dissolve", GenericItem::InRestartFileFlag) = pot->uAdditional();
+                                                      "Dissolve", GenericItem::InRestartFileFlag) = pot->additionalPotential();
             }
 
             // Check and remove restart file backup

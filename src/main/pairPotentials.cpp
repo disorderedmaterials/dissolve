@@ -104,6 +104,9 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
 
     auto useCombinationRules = useCombinationRulesHint.value_or(useCombinationRules_);
 
+    // Set the charge handling for all pair potentials
+    PairPotential::setIncludeAtomTypeCharges(atomTypeChargeSource_);
+
     // First step - remove any pair potentials which reference non-existent atom types
     pairPotentials_.erase(std::remove_if(pairPotentials_.begin(), pairPotentials_.end(),
                                          [&](const auto &pot)
@@ -130,12 +133,8 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
                                      pot = addPairPotential(at1, at2);
                                  }
 
-                                 // Set / update basic parameters
+                                 // Update basic parameters
                                  pot->setNames(at1->name(), at2->name());
-                                 if (atomTypeChargeSource_)
-                                     pot->setIncludedCharges(at1->charge(), at2->charge());
-                                 else
-                                     pot->setNoIncludedCharges();
 
                                  // Auto-update parameters using combination rules?
                                  if (useCombinationRules)
@@ -155,14 +154,10 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
         return false;
 
     // Re-tabulate the potentials to account for changes in charge inclusion/exclusion, range etc. as well as parameters
-    auto tabulationSucceeded = true;
     for (auto &&[at1, at2, pot] : pairPotentials_)
     {
-        if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_))
-            tabulationSucceeded = false;
+        pot->tabulate(pairPotentialRange_, pairPotentialDelta_, at1->charge(), at2->charge());
     }
-    if (!tabulationSucceeded)
-        return false;
 
     // Third step - apply any overrides
     Messenger::print("Applying pair potential overrides...\n");
@@ -180,10 +175,9 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
             continue;
         }
 
-        // Generate the potential
-        PairPotential overridePotential(override->matchI(), override->matchJ(), override->interactionPotential());
-        if (!overridePotential.tabulate(pairPotentialRange_, pairPotentialDelta_))
-            return false;
+        // Create a function wrapper for the potential
+        Function1DWrapper overridePotential(override->interactionPotential().form(),
+                                            override->interactionPotential().parameters());
 
         auto count = 0;
         for (auto &&[at1, at2, pp] : pairPotentials_)
@@ -202,15 +196,12 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
                     case (PairPotentialOverride::PairPotentialOverrideType::Off):
                         break;
                     case (PairPotentialOverride::PairPotentialOverrideType::Add):
-                        pp->uOriginal() += overridePotential.uOriginal();
+                        pp->addShortRangePotential(overridePotential);
                         break;
                     case (PairPotentialOverride::PairPotentialOverrideType::Replace):
-                        pp->uOriginal() = overridePotential.uOriginal();
+                        pp->addShortRangePotential(overridePotential, true);
                         break;
                 }
-
-                pp->calculateUFull();
-                pp->calculateDUFull();
 
                 ++count;
             }
@@ -224,7 +215,7 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
         // Check processing module data for a named additional potential
         auto addPotName = fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name());
         if (processingModuleData_.contains(addPotName, "Dissolve"))
-            pp->setUAdditional(processingModuleData_.retrieve<Data1D>(addPotName, "Dissolve"));
+            pp->setAdditionalPotential(processingModuleData_.retrieve<Data1D>(addPotName, "Dissolve"));
     }
 
     // Reinitialise the potential map
@@ -236,7 +227,7 @@ void Dissolve::clearAdditionalPotentials()
 {
     for (auto &&[at1, at2, pp] : pairPotentials_)
     {
-        pp->resetUAdditional();
+        pp->resetAdditionalPotential();
 
         // Clear entry in processing module data if it exists
         auto itemName = fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name());

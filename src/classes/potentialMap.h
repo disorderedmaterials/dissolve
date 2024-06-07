@@ -15,8 +15,8 @@ class SpeciesAtom;
 class PotentialMap
 {
     public:
-    PotentialMap();
-    ~PotentialMap();
+    PotentialMap() = default;
+    ~PotentialMap() = default;
     // Clear all data
     void clear();
 
