@@ -19,4 +19,6 @@ ForcesModule::ForcesModule() : Module(ModuleTypes::Forces)
     keywords_.add<BoolKeyword>("Test", "Test analytic forces against production values", test_);
     keywords_.add<DoubleKeyword>("TestThreshold", "Threshold of force (%) at which test comparison will fail", testThreshold_,
                                  0.0);
+
+    executeIfTargetsUnchanged_ = true;
 }

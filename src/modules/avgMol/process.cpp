@@ -52,13 +52,6 @@ bool AvgMolModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
 // Run main processing
 Module::ExecutionResult AvgMolModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Grab Box pointer
     const auto *box = targetConfiguration_->box();
 

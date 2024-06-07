@@ -28,4 +28,6 @@ EnergyModule::EnergyModule() : Module(ModuleTypes::Energy)
 
     keywords_.setOrganisation("Export");
     keywords_.add<BoolKeyword>("Save", "Save calculated energies to disk, one file per targeted configuration", save_);
+
+    executeIfTargetsUnchanged_ = true;
 }

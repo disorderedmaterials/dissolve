@@ -25,13 +25,6 @@ EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialS
 // Run main processing
 Module::ExecutionResult AccumulateModule::process(ModuleContext &moduleContext)
 {
-    // Get the modules and decide on the PartialSet data name we're looking for
-    if (targetModules_.empty())
-    {
-        Messenger::error("No target modules set.");
-        return ExecutionResult::Failed;
-    }
-
     Messenger::print("Accumulate: Target data to accumulate is '{}'.\n", targetPartialSet().keyword(targetPartialSet_));
     Messenger::print("Accumulate: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("\n");

@@ -14,4 +14,6 @@ ExportCoordinatesModule::ExportCoordinatesModule() : Module(ModuleTypes::ExportC
     keywords_.add<FileAndFormatKeyword>("Format", "File / format for coordinates", coordinatesFormat_, "EndFormat");
     keywords_.add<BoolKeyword>("TagWithIteration", "Whether to tag (suffix) the filename with the current iteration index",
                                tagWithIteration_);
+
+    executeIfTargetsUnchanged_ = true;
 }

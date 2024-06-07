@@ -7,17 +7,10 @@
 // Run main processing
 Module::ExecutionResult TemperatureScheduleModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Get the current configuration temperature
     auto currentT = targetConfiguration_->temperature();
 
-    // Get difference with tergat temperature
+    // Get difference with targat temperature
     auto diffT = targetTemperature_ - currentT;
 
     // Get move amount

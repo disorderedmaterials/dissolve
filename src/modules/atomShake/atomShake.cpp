@@ -27,4 +27,6 @@ AtomShakeModule::AtomShakeModule() : Module(ModuleTypes::AtomShake)
     keywords_.add<OptionalDoubleKeyword>(
         "CutoffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
         cutoffDistance_, 0.0, std::nullopt, 0.1, "Use PairPotential Range");
+
+    executeIfTargetsUnchanged_ = true;
 }

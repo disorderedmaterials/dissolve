@@ -14,4 +14,6 @@ TemperatureScheduleModule::TemperatureScheduleModule() : Module(ModuleTypes::Tem
                                  0.0);
     keywords_.add<DoubleKeyword>(
         "Rate", "Rate of temperature change, in Kelvin per iteration, to move towards target temperature", rate_, 0.0);
+
+    executeIfTargetsUnchanged_ = true;
 }

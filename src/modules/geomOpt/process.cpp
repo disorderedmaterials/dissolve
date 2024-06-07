@@ -15,13 +15,6 @@ Module::ExecutionResult GeometryOptimisationModule::process(ModuleContext &modul
     Messenger::print("Optimise: Initial step size to be used is {:e}.\n", initialStepSize_);
     Messenger::print("\n");
 
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Initialise working arrays for coordinates and forces
     rRef_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
     rTemp_.resize(targetConfiguration_->nAtoms(), Vec3<double>());

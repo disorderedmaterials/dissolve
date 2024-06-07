@@ -22,13 +22,6 @@ Module::ExecutionResult ExportCoordinatesModule::process(ModuleContext &moduleCo
         coordinatesFormat_.setFilename(
             fmt::format("{}.{}", coordinatesFormat_.filename(), moduleContext.dissolve().iteration()));
 
-    // Check for Configuration target
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Only the pool master saves the data
     if (moduleContext.processPool().isMaster())
     {

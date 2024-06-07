@@ -11,4 +11,6 @@ ImportTrajectoryModule::ImportTrajectoryModule() : Module(ModuleTypes::ImportTra
 
     keywords_.setOrganisation("Options", "File");
     keywords_.add<FileAndFormatKeyword>("Format", "File / format for trajectory", trajectoryFormat_, "EndFormat");
+
+    executeIfTargetsUnchanged_ = true;
 }

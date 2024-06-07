@@ -14,4 +14,6 @@ GeometryOptimisationModule::GeometryOptimisationModule() : Module(ModuleTypes::G
     keywords_.add<IntegerKeyword>("MaxCycles", "Maximum number of minimisation cycles to perform", maxCycles_, 1);
     keywords_.add<DoubleKeyword>("StepSize", "Initial step size to employ", initialStepSize_, 1.0e-10);
     keywords_.add<DoubleKeyword>("Tolerance", "Tolerance controlling convergence of algorithm)", tolerance_, 1.0e-10);
+
+    executeIfTargetsUnchanged_ = true;
 }

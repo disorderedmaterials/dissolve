@@ -14,13 +14,6 @@
 // Run main processing
 Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     auto &processingData = moduleContext.dissolve().processingModuleData();
 
     // Select site A

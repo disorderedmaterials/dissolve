@@ -54,6 +54,8 @@ MDModule::MDModule() : Module(ModuleTypes::MD)
     keywords_.addDeprecated<BoolKeyword>("VariableTimestep",
                                          "Whether a variable timestep should be used, determined from the maximal force vector",
                                          deprecatedBool_);
+
+    executeIfTargetsUnchanged_ = true;
 }
 
 // Return enum options for TimestepType

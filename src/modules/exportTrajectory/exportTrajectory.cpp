@@ -11,4 +11,6 @@ ExportTrajectoryModule::ExportTrajectoryModule() : Module(ModuleTypes::ExportTra
 
     keywords_.setOrganisation("Options", "File");
     keywords_.add<FileAndFormatKeyword>("Format", "File / format for trajectory", trajectoryFormat_, "EndFormat");
+
+    executeIfTargetsUnchanged_ = true;
 }
