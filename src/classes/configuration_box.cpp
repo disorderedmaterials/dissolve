@@ -63,6 +63,8 @@ void Configuration::scaleBox(Vec3<double> scaleFactors)
 {
     box_->scale(scaleFactors);
     cells_.scale(scaleFactors);
+
+    ++contentsVersion_;
 }
 
 // Set requested size factor for Box
@@ -147,6 +149,4 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
             break;
         }
     }
-
-    ++contentsVersion_;
 }

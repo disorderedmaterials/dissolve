@@ -304,4 +304,6 @@ void Configuration::scaleContents(Vec3<double> scaleFactors)
             mol->translate(newCog - oldCog);
         }
     }
+
+    ++contentsVersion_;
 }
