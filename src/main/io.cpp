@@ -146,15 +146,15 @@ SerialisedValue Dissolve::serialisePairPotentials() const
     if (!useCombinationRules_)
     {
         pairPotentials["useCombinationRules"] = false;
-        SerialisedValue pots = SerialisedValue::array_type{};
-        for (const auto &[at1, at2, pot] : pairPotentials_)
-        {
-            SerialisedValue value = pot->serialise();
-            value["atomTypeI"] = at1->name();
-            value["atomTypeJ"] = at2->name();
-            pots.push_back(value);
-        }
-        pairPotentials["potentials"] = pots;
+        Serialisable::fromVector(pairPotentials_, "potentials", pairPotentials,
+                                 [](const auto &term)
+                                 {
+                                     const auto &[at1, at2, pot] = term;
+                                     auto value = pot->serialise();
+                                     value["atomTypeI"] = at1->name();
+                                     value["atomTypeJ"] = at2->name();
+                                     return value;
+                                 });
     }
     return pairPotentials;
 }
