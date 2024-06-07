@@ -62,6 +62,8 @@ class Module : public Serialisable<const CoreData &>
     int frequency_;
     // Whether the Module is enabled
     bool enabled_;
+    // Whether the module runs on its targets if the targets haven't changed since last time
+    bool executeIfTargetsUnchanged_{false};
 
     public:
     // Module execution result

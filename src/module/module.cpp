@@ -223,7 +223,7 @@ Module::ExecutionResult Module::checkConfigurationTargets(GenericList &processin
                 processingModuleData.removeWithPrefix(name());
                 lastProcessedConfigurations_.clear();
             }
-            else
+            else if (!executeIfTargetsUnchanged_)
             {
                 // Targets are the same - are _all_ versions different?
                 if (std::any_of(currentTargets.begin(), currentTargets.end(),
