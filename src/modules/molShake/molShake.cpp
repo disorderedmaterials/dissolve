@@ -11,7 +11,8 @@
 
 MolShakeModule::MolShakeModule() : Module(ModuleTypes::MolShake)
 {
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Control", "Number of move attempts per atom and the target acceptance rate.");
     keywords_.add<IntegerKeyword>("ShakesPerMolecule", "Number of shakes to attempt per molecule", nShakesPerMolecule_, 1);

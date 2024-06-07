@@ -14,7 +14,8 @@ IntraDistanceModule::IntraDistanceModule() : Module(ModuleTypes::IntraDistance)
      * Keywords
      */
 
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Sites", "Specify sites defining the distance interaction A-B.");
     keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF", a_);

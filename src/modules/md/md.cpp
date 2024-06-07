@@ -12,7 +12,8 @@
 
 MDModule::MDModule() : Module(ModuleTypes::MD)
 {
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Simulation", "Length of simulation to run and the timestep to employ.");
     keywords_.add<IntegerKeyword>("NSteps", "Number of MD steps to perform", nSteps_, 1);

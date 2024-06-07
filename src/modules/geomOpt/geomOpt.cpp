@@ -8,7 +8,8 @@
 
 GeometryOptimisationModule::GeometryOptimisationModule() : Module(ModuleTypes::GeometryOptimisation)
 {
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Control");
     keywords_.add<IntegerKeyword>("MaxCycles", "Maximum number of minimisation cycles to perform", maxCycles_, 1);

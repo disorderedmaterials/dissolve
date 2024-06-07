@@ -14,7 +14,8 @@ AxisAngleModule::AxisAngleModule() : Module(ModuleTypes::AxisAngle)
      * Keywords
      */
 
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Sites", "Specify sites defining the axis angle interaction A-B...C.");
     keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Specify site(s) which represent 'A' in the interaction A-B...C", a_,

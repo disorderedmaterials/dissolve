@@ -84,13 +84,16 @@ class KeywordStore
     void setOrganisation(std::string_view sectionName, std::optional<std::string_view> groupName = {},
                          std::optional<std::string_view> groupDescription = {});
     // Add target keyword
-    template <class K, typename... Args> void addTarget(std::string_view name, std::string_view description, Args &&...args)
+    template <class K, typename... Args>
+    KeywordBase *addTarget(std::string_view name, std::string_view description, Args &&...args)
     {
         auto *k = createKeyword<K>(name, description, args...);
 
         auto optTargetsGroup = getGroup("Options", "Targets", {}, true);
 
         optTargetsGroup->get().addKeyword(k, KeywordBase::KeywordType::Target);
+
+        return k;
     }
     // Add hidden keyword (no group)
     template <class K, typename... Args>

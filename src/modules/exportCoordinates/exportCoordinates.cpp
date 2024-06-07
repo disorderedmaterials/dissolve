@@ -8,7 +8,8 @@
 
 ExportCoordinatesModule::ExportCoordinatesModule() : Module(ModuleTypes::ExportCoordinates)
 {
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "File");
     keywords_.add<FileAndFormatKeyword>("Format", "File / format for coordinates", coordinatesFormat_, "EndFormat");

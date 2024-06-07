@@ -57,7 +57,10 @@ void SiteRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
     ui_.RegionCResultFrame->setEnabled(rangeCOn);
 
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
+    {
         rdfGraph_->clearRenderables();
+        runningCNGraph_->clearRenderables();
+    }
 
     if (rdfGraph_->renderables().empty())
     {

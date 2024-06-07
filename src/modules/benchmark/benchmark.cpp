@@ -8,7 +8,8 @@
 
 BenchmarkModule::BenchmarkModule() : Module(ModuleTypes::Benchmark)
 {
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Control");
     keywords_.add<IntegerKeyword>("N", "Number of times to run each benchmark in order to form average", nRepeats_, 1);

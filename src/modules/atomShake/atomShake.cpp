@@ -9,7 +9,8 @@
 
 AtomShakeModule::AtomShakeModule() : Module(ModuleTypes::AtomShake)
 {
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Control", "Number of move attempts per atom and the target acceptance rate.");
     keywords_.add<IntegerKeyword>("ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_, 1);

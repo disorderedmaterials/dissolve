@@ -22,7 +22,8 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies)
      * Keywords
      */
 
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Sites",
                               "Specify sites representing the bonding oxygen (BO) and network forming (NF) sites.");
