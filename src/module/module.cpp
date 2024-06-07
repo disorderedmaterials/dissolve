@@ -159,7 +159,7 @@ bool Module::isDisabled() const { return !enabled_; }
  */
 
 // Get current target configurations
-std::pair<std::vector<const Configuration *>,int> Module::getCurrentTargetConfigurations()
+std::pair<std::vector<const Configuration *>, int> Module::getCurrentTargetConfigurations()
 {
     auto expectedTargetCount = 0;
     std::vector<const Configuration *> currentTargets;

@@ -95,7 +95,7 @@ class Module : public Serialisable<const CoreData &>
 
     private:
     // Get current target configurations
-    std::pair<std::vector<const Configuration *>,int> getCurrentTargetConfigurations();
+    std::pair<std::vector<const Configuration *>, int> getCurrentTargetConfigurations();
     // Check the current configurations targeted by the module
     ExecutionResult checkConfigurationTargets(GenericList &processingModuleData);
     // Run main processing
