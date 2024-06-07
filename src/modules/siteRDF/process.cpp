@@ -40,7 +40,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
 
     auto combinableHistograms = dissolve::CombinableValue<Histogram1D>([&histAB]() { return histAB; });
 
-    dissolve::for_each(std::execution::seq, a.sites().begin(), a.sites().end(),
+    dissolve::for_each(std::execution::par, a.sites().begin(), a.sites().end(),
                        [this, &b, &combinableHistograms](const auto &pair)
                        {
                            const auto &[siteA, indexA] = pair;
