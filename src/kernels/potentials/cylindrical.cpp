@@ -68,14 +68,14 @@ double CylindricalPotential::energy(const Atom &i, const Box *box) const
     // Cross product between the line and the position of the atom in the xy plane
     auto xyyx = vector_.x * v.y - vector_.y * v.x;
     // Cross product between the line and the position of the atom in the xz plane
-    auto xzzx = vector_.x * v.z - vector_.z * v.x;
+    auto zxxz = vector_.z * v.x - vector_.x * v.z;
     // Cross product between the line and the position of the atom in the yz plane
     auto yzzy = vector_.y * v.z - vector_.z * v.y;
 
     // Compute new components
-    v.x = vector_.y * xyyx + vector_.z * xzzx;
+    v.x = vector_.y * xyyx - vector_.z * zxxz;
     v.y = vector_.z * yzzy - vector_.x * xyyx;
-    v.z = -vector_.x * xzzx - vector_.y * yzzy;
+    v.z = vector_.x * zxxz - vector_.y * yzzy;
 
     // Return energy at minimum distance between the atom and a point on the line
     return potentialFunction_.y(v.magnitude());
@@ -92,14 +92,14 @@ void CylindricalPotential::force(const Atom &i, const Box *box, Vec3<double> &f)
     // Cross product between the line and the position of the atom in the xy plane
     auto xyyx = vector_.x * v.y - vector_.y * v.x;
     // Cross product between the line and the position of the atom in the xz plane
-    auto xzzx = vector_.x * v.z - vector_.z * v.x;
+    auto zxxz = vector_.z * v.x - vector_.x * v.z;
     // Cross product between the line and the position of the atom in the yz plane
     auto yzzy = vector_.y * v.z - vector_.z * v.y;
 
     // Compute new components
-    v.x = vector_.y * xyyx + vector_.z * xzzx;
+    v.x = vector_.y * xyyx - vector_.z * zxxz;
     v.y = vector_.z * yzzy - vector_.x * xyyx;
-    v.z = -vector_.x * xzzx - vector_.y * yzzy;
+    v.z = vector_.x * zxxz - vector_.y * yzzy;
 
     auto r = v.magAndNormalise();
 
