@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "classes/configuration.h"
+#include "main/dissolve.h"
+#include "module/context.h"
+#include "modules/siteRDF/siteRDF.h"
+#include "procedure/nodes/copy.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
-#include "module/context.h"
-#include "main/dissolve.h"
-#include "modules/siteRDF/siteRDF.h"
-#include "classes/configuration.h"
-#include "procedure/nodes/copy.h"
 #include <vector>
 
 namespace UnitTest
@@ -27,7 +27,7 @@ TEST_F(ModuleTest, ConfigurationTargets)
     ASSERT_TRUE(systemTest.iterateRestart(nIterations));
 
     // Check the processing module data
-    EXPECT_EQ(systemTest.dissolve().processingModuleData().version("Histo-AB", "RDF(COM-COM)"), nIterations-1);
+    EXPECT_EQ(systemTest.dissolve().processingModuleData().version("Histo-AB", "RDF(COM-COM)"), nIterations - 1);
 
     // Get the COM-COM SiteRDF module
     auto *siteRDF = systemTest.getModule<SiteRDFModule>("RDF(COM-COM)");
@@ -37,7 +37,7 @@ TEST_F(ModuleTest, ConfigurationTargets)
     EXPECT_EQ(siteRDF->executeProcessing(context), Module::ExecutionResult::NotExecuted);
 
     // Double-check the processing module data
-    EXPECT_EQ(systemTest.dissolve().processingModuleData().version("Histo-AB", "RDF(COM-COM)"), nIterations-1);
+    EXPECT_EQ(systemTest.dissolve().processingModuleData().version("Histo-AB", "RDF(COM-COM)"), nIterations - 1);
 
     // Switch the configuration for a copy of the original
     Configuration cfg;

@@ -218,13 +218,13 @@ Module::ExecutionResult Module::checkConfigurationTargets(GenericList &processin
                      [&](const auto *currentTarget)
                      {
                          return std::find_if(lastProcessedConfigurations_.begin(), lastProcessedConfigurations_.end(),
-                                             [currentTarget](const auto &pair) {
-                                                 return pair.first == currentTarget;
-                                             }) != lastProcessedConfigurations_.end();
+                                             [currentTarget](const auto &pair)
+                                             { return pair.first == currentTarget; }) != lastProcessedConfigurations_.end();
                      }))
     {
         Messenger::warn("Target configuration(s) have changed for module '{}' so processing data for that module will "
-                        "be cleared...\n", name());
+                        "be cleared...\n",
+                        name());
         processingModuleData.removeWithPrefix(name());
         lastProcessedConfigurations_.clear();
     }
