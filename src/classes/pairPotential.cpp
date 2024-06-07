@@ -110,6 +110,13 @@ bool PairPotential::setInteractionPotential(const InteractionPotential<Functions
     return potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
 }
 
+// Set form of interaction potential
+void PairPotential::setInteractionPotentialForm(Functions1D::Form form)
+{
+    interactionPotential_.setForm(form);
+    potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
+}
+
 // Return interaction potential
 const InteractionPotential<Functions1D> &PairPotential::interactionPotential() const { return interactionPotential_; }
 
@@ -124,14 +131,8 @@ void PairPotential::setIncludedCharges(double qi, double qj)
 // Set no included charges
 void PairPotential::setNoIncludedCharges() { includeAtomTypeCharges_ = false; }
 
-// Set charge I
-void PairPotential::setChargeI(double value) { chargeI_ = value; }
-
 // Return charge I
 double PairPotential::chargeI() const { return chargeI_; }
-
-// Set charge J
-void PairPotential::setChargeJ(double value) { chargeJ_ = value; }
 
 // Return charge J
 double PairPotential::chargeJ() const { return chargeJ_; }
@@ -419,4 +420,51 @@ void PairPotential::adjustUAdditional(const Data1D &u, double factor)
 
     calculateUFull();
     calculateDUFull();
+}
+
+/*
+ * I/O
+ */
+
+// Express as a serialisable value
+SerialisedValue PairPotential::serialise() const
+{
+    SerialisedValue result;
+    result["nameI"] = nameI_;
+    result["nameJ"] = nameJ_;
+    result["form"] = Functions1D::forms().keyword(interactionPotential_.form());
+
+    auto &values = interactionPotential().parameters();
+    if (!values.empty())
+    {
+        SerialisedValue potentialParameters;
+        auto &parameters = Functions1D::parameters(interactionPotential_.form());
+        for (auto &&[parameter, value] : zip(parameters, values))
+            potentialParameters[parameter] = value;
+        result["parameters"] = potentialParameters;
+    }
+    return result;
+}
+
+// Read values from a serialisable value
+void PairPotential::deserialise(const SerialisedValue &node)
+{
+    nameI_ = toml::find<std::string>(node, "nameI");
+    nameJ_ = toml::find<std::string>(node, "nameJ");
+
+    Functions1D::Form form;
+    Serialisable::optionalOn(node, "form",
+                             [&](const auto node) { form = Functions1D::forms().enumeration(std::string(node.as_string())); });
+
+    std::vector<double> parameters;
+    Serialisable::optionalOn(node, "parameters",
+                             [&](const auto node)
+                             {
+                                 auto &parameterNames = Functions1D::parameters(form);
+                                 std::transform(parameterNames.begin(), parameterNames.end(), std::back_inserter(parameters),
+                                                [&node](const auto parameterName)
+                                                { return node.at(parameterName).as_floating(); });
+                             });
+
+    setInteractionPotential({form, parameters});
 }

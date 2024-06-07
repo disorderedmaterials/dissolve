@@ -13,7 +13,7 @@
 class AtomType;
 
 // PairPotential Definition
-class PairPotential
+class PairPotential : Serialisable<>
 {
     public:
     PairPotential(std::string_view nameI = {}, std::string_view nameJ = {});
@@ -96,18 +96,16 @@ class PairPotential
     // Set interaction potential
     bool setInteractionPotential(Functions1D::Form form, std::string_view parameters);
     bool setInteractionPotential(const InteractionPotential<Functions1D> &potential);
+    // Set form of interaction potential
+    void setInteractionPotentialForm(Functions1D::Form form);
     // Return interaction potential
     const InteractionPotential<Functions1D> &interactionPotential() const;
     // Set included charges
     void setIncludedCharges(double qi, double qj);
     // Set no included charges
     void setNoIncludedCharges();
-    // Set charge I
-    void setChargeI(double value);
     // Return charge I
     double chargeI() const;
-    // Set charge J
-    void setChargeJ(double value);
     // Return charge J
     double chargeJ() const;
 
@@ -197,4 +195,13 @@ class PairPotential
     void setUAdditional(Data1D &newUAdditional);
     // Adjust additional potential, and recalculate UFull and dUFull
     void adjustUAdditional(const Data1D &deltaU, double factor = 1.0);
+
+    /*
+     * I/O
+     */
+    public:
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };

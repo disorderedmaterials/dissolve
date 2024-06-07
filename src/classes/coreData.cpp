@@ -46,9 +46,6 @@ std::shared_ptr<AtomType> CoreData::addAtomType(Elements::Element Z)
     newAtomType->setZ(Z);
     newAtomType->setIndex(nAtomTypes() - 1);
 
-    // Bump version
-    ++atomTypesVersion_;
-
     return newAtomType;
 }
 
@@ -80,12 +77,6 @@ std::shared_ptr<AtomType> CoreData::findAtomType(std::string_view name) const
         return nullptr;
     return *it;
 }
-
-// Bump AtomTypes version
-void CoreData::bumpAtomTypesVersion() { ++atomTypesVersion_; }
-
-// Return AtomTypes version
-int CoreData::atomTypesVersion() const { return atomTypesVersion_; }
 
 // Remove any atom types that are unused across all species
 int CoreData::removeUnusedAtomTypes()

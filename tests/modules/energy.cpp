@@ -53,14 +53,32 @@ TEST_F(EnergyModuleTest, DLPOLYWater3000VanDerWaals)
 
 TEST_F(EnergyModuleTest, DLPOLYWater3000VanDerWaalsOverrides)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000-overrides.txt",
-                                     [](Dissolve &D, CoreData &C)
-                                     {
-                                         D.setAtomTypeChargeSource(true);
-                                         D.setAutomaticChargeSource(false);
-                                         C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
-                                         C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
-                                     }));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-water3000-overrides.txt",
+                                             [](Dissolve &D, CoreData &C)
+                                             {
+                                                 D.setAtomTypeChargeSource(true);
+                                                 D.setAutomaticChargeSource(false);
+                                                 C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
+                                                 C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
+                                             }));
+    systemTest.setModuleEnabled("Forces01", false);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    auto &interEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Bulk//PairPotential");
+    EXPECT_TRUE(
+        systemTest.checkDouble("interatomic van der Waals energy", interEnergy.values().back(), 1770.1666370083758, 6.0e-2));
+}
+
+TEST_F(EnergyModuleTest, DLPOLYWater3000VanDerWaalsDefined)
+{
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-water3000-defined.txt",
+                                             [](Dissolve &D, CoreData &C)
+                                             {
+                                                 D.setAtomTypeChargeSource(true);
+                                                 D.setAutomaticChargeSource(false);
+                                                 C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
+                                                 C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
+                                             }));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 

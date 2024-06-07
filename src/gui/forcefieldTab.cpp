@@ -14,6 +14,7 @@
 #include "gui/render/renderableData1D.h"
 #include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
+#include <QInputDialog>
 #include <QListWidgetItem>
 #include <QMessageBox>
 
@@ -102,16 +103,15 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     ComboEnumOptionsPopulator coulPopulator(ui_.CoulombTruncationCombo, PairPotential::coulombTruncationSchemes());
     ComboEnumOptionsPopulator shortPopulator(ui_.ShortRangeTruncationCombo, PairPotential::shortRangeTruncationSchemes());
 
-    // Set sensible lower limits and steps for range and delta
-    ui_.PairPotentialRangeSpin->setRange(1.0, 1.0e5);
-    ui_.PairPotentialRangeSpin->setSingleStep(1.0);
-    ui_.PairPotentialDeltaSpin->setRange(0.001, 1.0);
-    ui_.PairPotentialDeltaSpin->setSingleStep(0.001);
-
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.PairPotentialsTable->horizontalHeader()->setFont(font());
     ui_.PairPotentialsTable->horizontalHeader()->setVisible(true);
+    ui_.PairPotentialsTable->setItemDelegateForColumn(
+        PairPotentialModel::Columns::ShortRangeFormColumn,
+        new ComboListDelegate(this, new ComboEnumOptionsItems<Functions1D::Form>(Functions1D::forms())));
     ui_.PairPotentialsTable->setModel(&pairPotentialModel_);
+    connect(&pairPotentialModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
+            SLOT(pairPotentialDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
 
     DataViewer *viewer = ui_.PairPotentialsPlotWidget->dataViewer();
     viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
@@ -195,8 +195,10 @@ void ForcefieldTab::updateControls()
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // PairPotentials
-    ui_.PairPotentialRangeSpin->setValue(dissolve_.pairPotentialRange());
-    ui_.PairPotentialDeltaSpin->setValue(dissolve_.pairPotentialDelta());
+    resetPairPotentialModel();
+    ui_.UseCombinationRulesCheck->setChecked(dissolve_.useCombinationRules());
+    ui_.PairPotentialRangeButton->setText(QString::number(dissolve_.pairPotentialRange()) + " Å");
+    ui_.PairPotentialDeltaButton->setText(QString::number(dissolve_.pairPotentialDelta()) + " Å");
     ui_.AutomaticChargeSourceCheck->setChecked(dissolve_.automaticChargeSource());
     ui_.PairPotentialsAtomTypeChargesRadio->setDisabled(dissolve_.automaticChargeSource());
     ui_.PairPotentialsSpeciesAtomChargesRadio->setDisabled(dissolve_.automaticChargeSource());
@@ -228,15 +230,6 @@ void ForcefieldTab::setTab(int index) { ui_.Tabs->setCurrentIndex(index); }
  * Atom Types
  */
 
-// Signal that some AtomType parameter has been modified, so pair potentials should be regenerated
-void ForcefieldTab::atomTypeDataModified()
-{
-    dissolve_.coreData().bumpAtomTypesVersion();
-
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-        updatePairPotentials();
-}
-
 void ForcefieldTab::on_AtomTypeDuplicateButton_clicked(bool checked)
 {
     auto index = ui_.AtomTypesTable->currentIndex();
@@ -264,6 +257,11 @@ void ForcefieldTab::on_AtomTypeDuplicateButton_clicked(bool checked)
     // Re-set the current index
     ui_.AtomTypesTable->setCurrentIndex(index);
 
+    dissolve_.updatePairPotentials();
+    resetPairPotentialModel();
+
+    updateControls();
+
     dissolveWindow_->setModified();
 }
 
@@ -282,6 +280,11 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 
     atomTypesModel_.setData(dissolve_.coreData().atomTypes());
     ui_.AtomTypesTable->resizeColumnsToContents();
+
+    dissolve_.updatePairPotentials();
+    resetPairPotentialModel();
+
+    updateControls();
 
     dissolveWindow_->setModified();
 }
@@ -313,6 +316,9 @@ void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
     atomTypesModel_.setData(dissolve_.coreData().atomTypes());
     ui_.AtomTypesTable->resizeColumnsToContents();
 
+    dissolve_.updatePairPotentials();
+    resetPairPotentialModel();
+
     dissolveWindow_->setModified();
 }
 
@@ -326,6 +332,9 @@ void ForcefieldTab::atomTypeDataChanged(const QModelIndex &current, const QModel
 {
     ui_.AtomTypesTable->resizeColumnsToContents();
 
+    dissolve_.updatePairPotentials();
+    resetPairPotentialModel();
+
     dissolveWindow_->setModified();
 }
 
@@ -333,28 +342,44 @@ void ForcefieldTab::atomTypeDataChanged(const QModelIndex &current, const QModel
  * Pair Potentials
  */
 
-void ForcefieldTab::on_PairPotentialRangeSpin_valueChanged(double value)
+void ForcefieldTab::on_PairPotentialRangeButton_clicked(bool checked)
 {
-    if (refreshLock_.isLocked())
+    bool ok = false;
+    auto newRange = QInputDialog::getDouble(this, "Set Pair Potential Range",
+                                            "Enter a new pair potential range (in Angstroms).\nWarning: Setting this will "
+                                            "force all current processing data to be cleared!",
+                                            dissolve_.pairPotentialRange(), 5.0, 50.0, 1, &ok);
+    if (!ok || newRange == dissolve_.pairPotentialRange())
         return;
 
-    dissolve_.setPairPotentialRange(value);
+    dissolve_.setPairPotentialRange(newRange);
+    dissolve_.processingModuleData().clearAll();
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-        updatePairPotentials();
+    updatePairPotentials();
+    resetPairPotentialModel();
+
+    dissolveWindow_->fullUpdate();
 
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_PairPotentialDeltaSpin_valueChanged(double value)
+void ForcefieldTab::on_PairPotentialDeltaButton_clicked(bool checked)
 {
-    if (refreshLock_.isLocked())
+    bool ok = false;
+    auto newDelta = QInputDialog::getDouble(this, "Set Pair Potential Delta",
+                                            "Enter a new pair potential delta (in Angstroms).\nWarning: Setting this will "
+                                            "force all current processing data to be cleared!",
+                                            dissolve_.pairPotentialDelta(), 0.0001, 0.1, 4, &ok);
+    if (!ok || newDelta == dissolve_.pairPotentialDelta())
         return;
 
-    dissolve_.setPairPotentialDelta(value);
+    dissolve_.setPairPotentialDelta(newDelta);
+    dissolve_.processingModuleData().clearAll();
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-        updatePairPotentials();
+    updatePairPotentials();
+    resetPairPotentialModel();
+
+    dissolveWindow_->fullUpdate();
 
     dissolveWindow_->setModified();
 }
@@ -366,8 +391,8 @@ void ForcefieldTab::on_PairPotentialsAtomTypeChargesRadio_clicked(bool checked)
 
     dissolve_.setAtomTypeChargeSource(checked);
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-        updatePairPotentials();
+    updatePairPotentials();
+    updateControls();
 
     dissolveWindow_->setModified();
 }
@@ -384,8 +409,8 @@ void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
 
     PairPotential::setShortRangeTruncationScheme((PairPotential::ShortRangeTruncationScheme)index);
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-        updatePairPotentials();
+    updatePairPotentials();
+    updateControls();
 
     dissolveWindow_->setModified();
 }
@@ -397,8 +422,8 @@ void ForcefieldTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
 
     PairPotential::setCoulombTruncationScheme((PairPotential::CoulombTruncationScheme)index);
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked() && dissolve_.atomTypeChargeSource())
-        updatePairPotentials();
+    updatePairPotentials();
+    updateControls();
 
     dissolveWindow_->setModified();
 }
@@ -425,16 +450,41 @@ void ForcefieldTab::on_ForceChargeSourceCheck_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked) { updatePairPotentials(); }
-
-void ForcefieldTab::on_AutoUpdatePairPotentialsCheck_clicked(bool checked)
+void ForcefieldTab::on_UseCombinationRulesCheck_clicked(bool checked)
 {
-    if (checked)
-        updatePairPotentials();
+    if (refreshLock_.isLocked())
+        return;
+
+    // Make sure this is really what the user wants to do - we will potentially destroy user-defined data otherwise
+    if (QMessageBox::warning(this, checked ? "Use Combination Rules?" : "Disable Combination Rules?",
+                             QString(checked
+                                         ? "This will enable automatic generation of pair potentials by employing combination "
+                                           "rules.\nThis will immediately overwrite any user-defined potentials in the list."
+                                         : "This will disable automatic generation and update of pair potentials with "
+                                           "combination rules, meaning you will need to define / adjust them by hand.") +
+                                 "\nAre you sure this is what you want to do?",
+                             QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No,
+                             QMessageBox::StandardButton::No) == QMessageBox::StandardButton::No)
+    {
+        Locker refreshLocker(refreshLock_);
+        ui_.UseCombinationRulesCheck->setChecked(!checked);
+        return;
+    }
+
+    dissolve_.setUseCombinationRules(checked);
+    dissolve_.updatePairPotentials();
+    pairPotentialModel_.setEditable(!checked);
+    resetPairPotentialModel();
+    dissolveWindow_->setModified();
+    updateControls();
 }
 
 void ForcefieldTab::pairPotentialDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &)
 {
+    dissolve_.updatePairPotentials();
+
+    updateControls();
+
     dissolveWindow_->setModified();
 }
 
@@ -487,8 +537,8 @@ void ForcefieldTab::overrideDataChanged(const QModelIndex &current, const QModel
 {
     dissolveWindow_->setModified();
 
-    if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
-        updatePairPotentials();
+    updatePairPotentials();
+    updateControls();
 }
 
 void ForcefieldTab::overrideSelectionChanged(const QItemSelection &current, const QItemSelection &previous)

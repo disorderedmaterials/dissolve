@@ -6,6 +6,12 @@
 #include "classes/atomType.h"
 #include "main/dissolve.h"
 
+// Set whether pair potentials are updated automatically through combination rules
+void Dissolve::setUseCombinationRules(bool b) { useCombinationRules_ = b; }
+
+// Return whether pair potentials are updated automatically through combination rules
+bool Dissolve::useCombinationRules() const { return useCombinationRules_; }
+
 // Set maximum distance for tabulated PairPotentials
 void Dissolve::setPairPotentialRange(double range) { pairPotentialRange_ = range; }
 
@@ -225,8 +231,8 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
 }
 
-// Revert potentials to reference state, clearing additional potentials
-void Dissolve::revertPairPotentials()
+// Clear additional potentials
+void Dissolve::clearAdditionalPotentials()
 {
     for (auto &&[at1, at2, pp] : pairPotentials_)
     {
