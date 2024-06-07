@@ -170,7 +170,10 @@ std::pair<std::vector<const Configuration *>, int> Module::getCurrentTargetConfi
             ++expectedTargetCount;
             auto optCfg = keywords_.get<Configuration *, ConfigurationKeyword>(keyword->name());
             if (optCfg)
-                currentTargets.push_back(*optCfg);
+            {
+                if (*optCfg != nullptr)
+                    currentTargets.push_back(*optCfg);
+            }
             else
                 throw(std::runtime_error("Failed to get data from ConfigurationKeyword when checking targets.\n"));
         }
@@ -197,7 +200,7 @@ Module::ExecutionResult Module::checkConfigurationTargets(GenericList &processin
     // If we are expecting targets, make sure we actually have them
     if (expectedTargetCount <= 0)
         return ExecutionResult::Success;
-    
+
     // Check basic target count
     if (currentTargets.size() < expectedTargetCount)
     {
