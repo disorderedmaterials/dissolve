@@ -195,47 +195,47 @@ Module::ExecutionResult Module::checkConfigurationTargets(GenericList &processin
     auto &&[currentTargets, expectedTargetCount] = getCurrentTargetConfigurations();
 
     // If we are expecting targets, make sure we actually have them
-    if (expectedTargetCount > 0)
+    if (expectedTargetCount <= 0)
+        return ExecutionResult::Success;
+    
+    // Check basic target count
+    if (currentTargets.size() < expectedTargetCount)
     {
-        // Check basic target count
-        if (currentTargets.size() < expectedTargetCount)
-        {
-            Messenger::error("Not enough configuration targets set for module '{}'.\n", name());
-            return ExecutionResult::Failed;
-        }
+        Messenger::error("Not enough configuration targets set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
-        // Check that the current targets are consistent with the ones we last used
-        if (!lastProcessedConfigurations_.empty())
+    // Check that the current targets are consistent with the ones we last used
+    if (lastProcessedConfigurations_.empty())
+        return ExecutionResult::Success;
+
+    // If the vector of previous targets isn't the same size as the current targets then we must clear our data
+    if (currentTargets.size() != lastProcessedConfigurations_.size() ||
+        !std::all_of(currentTargets.begin(), currentTargets.end(),
+                     [&](const auto *currentTarget)
+                     {
+                         return std::find_if(lastProcessedConfigurations_.begin(), lastProcessedConfigurations_.end(),
+                                             [currentTarget](const auto &pair) {
+                                                 return pair.first == currentTarget;
+                                             }) != lastProcessedConfigurations_.end();
+                     }))
+    {
+        Messenger::warn("Target configuration(s) have changed for module '{}' so processing data for that module will "
+                        "be cleared...\n");
+        processingModuleData.removeWithPrefix(name());
+        lastProcessedConfigurations_.clear();
+    }
+    else if (!executeIfTargetsUnchanged_)
+    {
+        // Targets are the same - are _all_ versions different?
+        if (std::any_of(currentTargets.begin(), currentTargets.end(),
+                        [&](const auto *currentTarget)
+                        { return lastProcessedConfigurations_[currentTarget] == currentTarget->contentsVersion(); }))
         {
-            // If the vector of previous targets isn't the same size as the current targets then we must clear our data
-            if (currentTargets.size() != lastProcessedConfigurations_.size() ||
-                !std::all_of(currentTargets.begin(), currentTargets.end(),
-                             [&](const auto *currentTarget)
-                             {
-                                 return std::find_if(lastProcessedConfigurations_.begin(), lastProcessedConfigurations_.end(),
-                                                     [currentTarget](const auto &pair) {
-                                                         return pair.first == currentTarget;
-                                                     }) != lastProcessedConfigurations_.end();
-                             }))
-            {
-                Messenger::warn("Target configuration(s) have changed for module '{}' so processing data for that module will "
-                                "be cleared...\n");
-                processingModuleData.removeWithPrefix(name());
-                lastProcessedConfigurations_.clear();
-            }
-            else if (!executeIfTargetsUnchanged_)
-            {
-                // Targets are the same - are _all_ versions different?
-                if (std::any_of(currentTargets.begin(), currentTargets.end(),
-                                [&](const auto *currentTarget)
-                                { return lastProcessedConfigurations_[currentTarget] == currentTarget->contentsVersion(); }))
-                {
-                    Messenger::warn("One or more target configurations have not changed since module '{}' was last run, so it "
-                                    "will not run in the current iteration.\n",
-                                    name());
-                    return ExecutionResult::NotExecuted;
-                }
-            }
+            Messenger::warn("One or more target configurations have not changed since module '{}' was last run, so it "
+                            "will not run in the current iteration.\n",
+                            name());
+            return ExecutionResult::NotExecuted;
         }
     }
 

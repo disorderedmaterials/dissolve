@@ -10,7 +10,7 @@ Module::ExecutionResult TemperatureScheduleModule::process(ModuleContext &module
     // Get the current configuration temperature
     auto currentT = targetConfiguration_->temperature();
 
-    // Get difference with targat temperature
+    // Get difference with target temperature
     auto diffT = targetTemperature_ - currentT;
 
     // Get move amount
