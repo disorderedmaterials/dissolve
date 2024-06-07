@@ -15,7 +15,6 @@ class Dissolve;
 class Configuration;
 class ModuleWidget;
 class ModuleContext;
-class QWidget;
 
 // Module
 class Module : public Serialisable<const CoreData &>
