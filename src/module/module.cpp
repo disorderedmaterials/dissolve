@@ -221,7 +221,7 @@ Module::ExecutionResult Module::checkConfigurationTargets(GenericList &processin
                      }))
     {
         Messenger::warn("Target configuration(s) have changed for module '{}' so processing data for that module will "
-                        "be cleared...\n");
+                        "be cleared...\n", name());
         processingModuleData.removeWithPrefix(name());
         lastProcessedConfigurations_.clear();
     }
