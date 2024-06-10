@@ -38,7 +38,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
     histAB.zeroBins();
 
-    auto combinableHistograms = dissolve::CombinableValue<Histogram1D>([&histAB]() { return histAB; });
+    auto combinableHistograms = dissolve::CombinableValue<Histogram1D>(histAB);
 
     dissolve::for_each(std::execution::par, a.sites().begin(), a.sites().end(),
                        [this, &b, &combinableHistograms](const auto &pair)
