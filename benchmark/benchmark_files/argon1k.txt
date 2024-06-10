@@ -5,6 +5,10 @@ Species 'Ball'
   # Atoms
   Atom    1    Ar     0.0  0.0  0.0  'Ar'
 
+  Site 'Ar'
+    Origin  1
+  EndSite
+
   Isotopologue  'Natural'
 EndSpecies
 

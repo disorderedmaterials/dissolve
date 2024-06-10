@@ -52,6 +52,7 @@ template <class ValueType> class CombinableValue
 {
     public:
     template <typename Lambda> CombinableValue(Lambda initializer) : combinable_(initializer) {}
+    CombinableValue(ValueType initial) : combinable_([initial]() { return initial; }) {}
     ValueType finalize() { return combinable_.combine(std::plus<ValueType>()); }
     ValueType &local() { return combinable_.local(); }
 

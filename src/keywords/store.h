@@ -172,6 +172,7 @@ class KeywordStore
     bool set(std::string_view name, const Vec3<NodeValue> value);
     bool set(std::string_view name, const Range value);
     bool set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value);
+    bool set(std::string_view name, const std::vector<const SpeciesSite *> value);
     bool set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value);
     bool set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value);
     bool set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value);
