@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include <tuple>
+#include <string>
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
 #include "analyser/dataOperator2D.h"
@@ -13,6 +15,8 @@
 #include "math/range.h"
 #include "module/context.h"
 #include "modules/angle/angle.h"
+#include "templates/algorithms.h"
+#include "templates/combinable.h"
 
 // Run main processing
 Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
@@ -67,21 +71,45 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
         dAngleABC.initialise(rangeAB_.x, rangeAB_.y, rangeAB_.z, rangeBC_.x, rangeBC_.y, rangeBC_.z, angleRange_.x,
                              angleRange_.y, angleRange_.z);
 
-    rAB.zeroBins();
-    rBC.zeroBins();
-    aABC.zeroBins();
-    dAngleAB.zeroBins();
-    dAngleBC.zeroBins();
-    dAngleABC.zeroBins();
-
-    auto nAAvailable = a.sites().size(), nACumulative = a.sites().size();
-    auto nASelections = 1;
-    auto nBAvailable = 0, nBCumulative = 0, nBSelections = 0;
-    auto nCAvailable = 0, nCCumulative = 0, nCSelections = 0;
-
-    for (const auto &[siteA, indexA] : a.sites())
+    auto initialiser = [](auto &hist)
     {
-        ++nBSelections;
+        hist.zeroBins();
+        return hist;
+    };
+
+    std::map<std::string, dissolve::CombinableValue<Histogram1D>> combinableHistogramMap;
+    for (auto &tup : {std::tuple<std::string, Histogram1D>{"rAB", rAB}, 
+                    std::tuple<std::string, Histogram1D>{"rBC", rBC},
+                    std::tuple<std::string, Histogram1D>{"aABC", aABC}})
+    {
+        combinableHistogramMap[std::get<0>(tup)] = dissolve::CombinableValue<Histogram1D>(initialiser(std::get<1>(tup)));
+    }
+
+    std::map<std::string, dissolve::CombinableValue<Histogram2D>> combinableHistogram1DMap;
+    for (auto &tup : {std::tuple<std::string, Histogram2D>{"DAngleAB", dAngleAB},
+                    std::tuple<std::string, Histogram2D>{"DAngleBC", dAngleBC}})
+    {
+        combinableHistogram2DMap[std::get<0>(tup)] = dissolve::CombinableValue<Histogram2D>(initialiser(std::get<1>(tup)));
+    }
+
+    auto combinableHistogram3D = dissolve::CombinableValue<Histogram3D>(initialiser(dAngleABC));
+
+    std::map<std::string, int> siteCounterMap{
+        {"nAAvailable", a.sites().size()}, {"nACumulative", a.sites().size()},
+        {"nASelections", 1}, {"nBAvailable", 0}, {"nBCumulative", 0}, {"nBSelections", 0},
+        {"nCAvailable", 0}, {"nCAvailable", 0}, {"nCCumulative", 0}, {"nCSelections", 0}  
+    };
+
+    auto unaryOp =
+        [this, &b, &combinableHistogram1DMap, &combinableHistogram2DMap, &combinableHistogram3D, &siteCounterMap](const auto &pair)
+    {
+        auto rAB = combinableHistogram1DMap["rAB"].local(), rBC = combinableHistogram1DMap["rBC"].local(), aABC = combinableHistogram1DMap["aABC"].local();
+        auto dAngleAB = combinableHistogram2DMap["DAngleAB"].local(), dAngleBC = combinableHistogram2DMap["DAngleBC"].local()
+        auto dAngleABC = combinableHistogram3D.local();
+        
+        const auto &[siteA, indexA] = pair;
+        
+        ++siteCounterMap["nBSelections"];
         for (const auto &[siteB, indexB] : b.sites())
         {
 
@@ -90,15 +118,15 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
 
             auto distAB = targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin());
 
-            ++nBAvailable;
+            ++siteCounterMap["nBAvailable"];
 
             if (!Range(rangeAB_.x, rangeAB_.y).contains(distAB))
                 continue;
 
             rAB.bin(distAB);
 
-            ++nBCumulative;
-            ++nCSelections;
+            ++siteCounterMap["nBCumulative"];
+            ++siteCounterMap["nCSelections"];
 
             for (const auto &[siteC, indexC] : c.sites())
             {
@@ -109,14 +137,14 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
                 if (excludeSameSiteAC_ && (siteC == siteA))
                     continue;
 
-                ++nCAvailable;
+                ++siteCounterMap["nCAvailable"];
 
                 auto distBC = targetConfiguration_->box()->minimumDistance(siteB->origin(), siteC->origin());
 
                 if (!Range(rangeBC_.x, rangeBC_.y).contains(distBC))
                     continue;
 
-                ++nCCumulative;
+                ++siteCounterMap["nCCumulative"];
 
                 auto angle = targetConfiguration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
                 if (symmetric_ && angle > 90.0)
@@ -129,15 +157,15 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
                 dAngleABC.bin(distAB, distBC, angle);
             }
         }
-    }
+    };
 
-    // Accumulate histograms
-    rAB.accumulate();
-    rBC.accumulate();
-    aABC.accumulate();
-    dAngleAB.accumulate();
-    dAngleBC.accumulate();
-    dAngleABC.accumulate();
+    dissolve::for_each(std::execution::par, a.sites.begin(), a.sites.end(), unaryOp);
+
+    for (const auto &hist : combinableHistogramMap)
+    {
+        hist.finalize();
+        hist.accumulate();
+    }
 
     // RDF(A-B)
     auto &normalisedAB = processingData.realise<Data1D>("RDF(AB)", name(), GenericItem::InRestartFileFlag);
