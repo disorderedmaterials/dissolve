@@ -195,6 +195,22 @@ void Histogram2D::operator=(const Histogram2D &source)
     averages_ = source.averages_;
 }
 
+Histogram2D Histogram2D::operator+(const Histogram2D &other) const
+{
+    assert(nBins_ == other.nBins_ && nXBins_ == other.nYBins_);
+
+    Histogram2D ret = *this;
+
+    std::transform(other.bins_.begin(), other.bins_.end(), ret.bins_.begin(), ret.bins_.begin(), std::plus<>());
+
+    ret.nBinned_ = this->nBinned_ + other.nBinned_;
+    ret.nMissed_ = this->nMissed_ + other.nMissed_;
+    ret.nXBins_ = this->nXBins_;
+    ret.nYBins_ = this->nYBins_;
+
+    return ret;
+}
+
 /*
  * Serialisation
  */
