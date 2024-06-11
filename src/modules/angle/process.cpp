@@ -88,26 +88,9 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     auto nBAvailable = 0, nBCumulative = 0, nBSelections = 0;
     auto nCAvailable = 0, nCCumulative = 0, nCSelections = 0;
 
-    auto unaryOp = [
-        this,
-        &b,
-        &c,
-        &nAAvailable,
-        &nACumulative,
-        &nASelections,
-        &nBAvailable,
-        &nBCumulative,
-        &nBSelections,
-        &nCAvailable,
-        &nCCumulative,
-        &nCSelections,
-        &combinableRAB,
-        &combinableRBC,
-        &combinableAABC,
-        &combinableDAngleAB,
-        &combinableDAngleBC,
-        &combinableDAngleABC
-    ](const auto &pair)
+    auto unaryOp = [this, &b, &c, &nAAvailable, &nACumulative, &nASelections, &nBAvailable, &nBCumulative, &nBSelections,
+                    &nCAvailable, &nCCumulative, &nCSelections, &combinableRAB, &combinableRBC, &combinableAABC,
+                    &combinableDAngleAB, &combinableDAngleBC, &combinableDAngleABC](const auto &pair)
     {
         const auto &[siteA, indexA] = pair;
 
@@ -116,7 +99,7 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
         auto &aABC = combinableAABC.local();
         auto &dAngleAB = combinableDAngleAB.local();
         auto &dAngleBC = combinableDAngleBC.local();
-        auto &dAngleABC = combinableDAngleABC.local(); 
+        auto &dAngleABC = combinableDAngleABC.local();
 
         ++nBSelections;
         for (const auto &[siteB, indexB] : b.sites())
@@ -176,7 +159,7 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     aABC = combinableAABC.finalize();
     dAngleAB = combinableDAngleAB.finalize();
     dAngleBC = combinableDAngleBC.finalize();
-    dAngleABC = combinableDAngleABC.finalize(); 
+    dAngleABC = combinableDAngleABC.finalize();
 
     // Accumulate histograms
     rAB.accumulate();
