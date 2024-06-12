@@ -197,7 +197,7 @@ void Histogram2D::operator=(const Histogram2D &source)
 
 Histogram2D Histogram2D::operator+(const Histogram2D &other) const
 {
-    assert(nBins_ == other.nBins_ && nXBins_ == other.nYBins_);
+    assert(nXBins_ == other.nXBins_ && nYBins_ == other.nYBins_);
 
     Histogram2D ret = *this;
 
