@@ -47,7 +47,7 @@ AtomTypeData &AtomTypeMix::add(std::shared_ptr<AtomType> atomType, double popula
         return *atd;
     }
 
-    return types_.emplace_back(types_.size(), atomType, population);
+    return types_.emplace_back(atomType, population);
 }
 
 // Add the AtomTypes in the supplied list into this one, increasing populations etc.
@@ -65,13 +65,6 @@ void AtomTypeMix::add(const AtomTypeMix &source)
             for (auto &topeData : otherType.isotopeData())
                 atd.add(topeData.isotope(), topeData.population());
     }
-}
-
-// Remove specified AtomType from the list
-void AtomTypeMix::remove(std::shared_ptr<AtomType> atomType)
-{
-    types_.erase(
-        std::remove_if(types_.begin(), types_.end(), [&atomType](const auto &atd) { return atd.atomType() == atomType; }));
 }
 
 // Add/increase this AtomType/Isotope pair
