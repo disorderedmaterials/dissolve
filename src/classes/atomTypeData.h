@@ -29,15 +29,15 @@ class AtomTypeData
     // Reference AtomType
     std::shared_ptr<AtomType> atomType_;
     // Whether the AtomType has been marked as exchangeable
-    bool exchangeable_;
+    bool exchangeable_{false};
     // Isotopes information (if any)
     std::vector<IsotopeData> isotopes_;
     // Total population
-    double population_;
+    double population_{0.0};
     // World fractional population over all Isotopes
-    double fraction_;
+    double fraction_{0.0};
     // Calculated bound coherent scattering over all Isotopes
-    double boundCoherent_;
+    double boundCoherent_{0.0};
 
     public:
     // Add to population

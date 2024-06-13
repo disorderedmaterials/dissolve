@@ -12,8 +12,7 @@
 #include "data/isotopes.h"
 
 AtomTypeData::AtomTypeData(std::shared_ptr<AtomType> type, double population, double fraction, double boundCoherent, int nIso)
-    : atomType_(std::move(type)), exchangeable_(false), population_(population), fraction_(fraction),
-      boundCoherent_(boundCoherent)
+    : atomType_(std::move(type)), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
 {
     isotopes_.resize(nIso, IsotopeData());
 }
@@ -24,8 +23,7 @@ AtomTypeData::AtomTypeData(const AtomTypeData &source) : listIndex_(source.listI
 }
 
 AtomTypeData::AtomTypeData(int listIndex, std::shared_ptr<AtomType> type, double population)
-    : listIndex_(listIndex), atomType_(std::move(type)), exchangeable_(false), population_(population), fraction_(0.0),
-      boundCoherent_(0.0)
+    : listIndex_(listIndex), atomType_(std::move(type)), population_(population)
 {
 }
 
