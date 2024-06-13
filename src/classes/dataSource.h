@@ -59,6 +59,9 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
     public:
     // Return data name
     std::string_view dataName() const { return dataName_; }
+    // Set Data Source Type
+    typename DataType::Formatter &externalDataSource() { return externalDataSource_; }
+
     // Return if data exists and has been initialised
     bool dataExists() const
     {
