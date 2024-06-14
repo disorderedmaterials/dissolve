@@ -55,6 +55,11 @@ void CoreData::removeAtomType(std::shared_ptr<AtomType> &at)
     removeReferencesTo(at);
 
     atomTypes_.erase(std::remove(atomTypes_.begin(), atomTypes_.end(), at), atomTypes_.end());
+
+    // Reassign AtomType indices
+    auto count = 0;
+    for (const auto &at : atomTypes_)
+        at->setIndex(count++);
 }
 
 // Return number of AtomTypes in list
