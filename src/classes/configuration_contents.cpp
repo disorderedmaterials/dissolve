@@ -236,8 +236,8 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
     // Update our typeIndex (non-isotopic) and set local and master type indices
     if (sourceAtom->atomType() != nullptr)
     {
-        AtomTypeData &atd = atomTypes_.add(sourceAtom->atomType(), 1);
-        newAtom.setLocalTypeIndex(atd.listIndex());
+        auto &&[atd, atdIndex] = atomTypes_.add(sourceAtom->atomType(), 1);
+        newAtom.setLocalTypeIndex(atdIndex);
         newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
     }
 

@@ -11,7 +11,8 @@
 #include "classes/isotopeData.h"
 #include "data/isotopes.h"
 
-AtomTypeData::AtomTypeData(const std::shared_ptr<AtomType> &type, double population, double fraction, double boundCoherent, int nIso)
+AtomTypeData::AtomTypeData(const std::shared_ptr<AtomType> &type, double population, double fraction, double boundCoherent,
+                           int nIso)
     : atomType_(type), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
 {
     isotopes_.resize(nIso, IsotopeData());

@@ -36,8 +36,8 @@ class AtomTypeMix
     void clear();
     // Zero populations of all types
     void zero();
-    // Add the specified AtomType, returning the AtomTypeData
-    AtomTypeData &add(std::shared_ptr<AtomType> atomType, double popAdd = 0);
+    // Add the specified AtomType to the list, returning data object and its index in the vector
+    std::pair<AtomTypeData &, int> add(std::shared_ptr<AtomType> atomType, double popAdd = 0);
     // Add the AtomTypes in the supplied object into this one, increasing populations etc.
     void add(const AtomTypeMix &source);
     // Add/increase this AtomType/Isotope pair, returning the index of the AtomType
