@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <vector>
-
 // Forward Declarations
 class Data1D;
 
