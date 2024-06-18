@@ -3,10 +3,10 @@
 
 #include "classes/pairPotential.h"
 #include "base/lineParser.h"
-#include "base/messenger.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "math/constants.h"
+#include "math/derivative.h"
 #include <cmath>
 
 // Static members
@@ -174,35 +174,7 @@ void PairPotential::updateTotals()
     totalPotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
 
     // Calculate derivative of total potential
-    const auto nPoints = derivative_.nValues();
-    double fprime;
-    for (auto n = 1; n < nPoints - 1; ++n)
-    {
-        /* Calculate numerical derivative with five-point stencil if possible. Otherwise use three-point stencil.
-         * Assumes data are regularly-spaced (they should be, with gap of delta_)
-         *            -f(x+2) + 8 f(x+1) - 8 f(x-1) + f(x-2)
-         *    f'(x) = --------------------------------------
-         *                           12 h
-         */
-        if ((n == 1) || (n == (nPoints - 2)))
-        {
-            // Three-point
-            derivative_.value(n) = -(totalPotential_.value(n - 1) - totalPotential_.value(n + 1)) / (2 * delta_);
-        }
-        else
-        {
-            // Five-point stencil
-            fprime = -totalPotential_.value(n + 2) + 8 * totalPotential_.value(n + 1) - 8 * totalPotential_.value(n - 1) +
-                     totalPotential_.value(n - 2);
-            fprime /= 12 * delta_;
-            derivative_.value(n) = fprime;
-        }
-    }
-
-    // Set first and last points
-    derivative_.value(0) = 10.0 * derivative_.value(1);
-    derivative_.value(nPoints - 1) =
-        derivative_.value(nPoints - 2) + (derivative_.value(nPoints - 2) - derivative_.value(nPoints - 3));
+    derivative_ = Derivative::derivative(totalPotential_);
 
     // Update interpolation
     derivativeInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
