@@ -47,7 +47,8 @@ std::pair<AtomTypeData &, int> AtomTypeMix::add(std::shared_ptr<AtomType> atomTy
         return {*atd, atd - types_.begin()};
     }
 
-    return {types_.emplace_back(atomType, population), types_.size()};
+    auto &newAtomTypeData = types_.emplace_back(atomType, population);
+    return {newAtomTypeData, types_.size() - 1};
 }
 
 // Add the AtomTypes in the supplied list into this one, increasing populations etc.

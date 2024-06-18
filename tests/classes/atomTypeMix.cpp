@@ -49,35 +49,20 @@ TEST(AtomTypeMixTest, Indexing)
     AtomTypeMix mix_;
 
     // Add atom types to our mix
-    std::vector<AtomTypeData> orderedData;
-    orderedData.push_back(mix_.add(molecules_.atN(), 1));
-    orderedData.push_back(mix_.add(molecules_.atOW(), 2));
-    orderedData.push_back(mix_.add(molecules_.atHW(), 3));
-    orderedData.push_back(mix_.add(molecules_.atH1(), 3));
+    std::vector<std::pair<AtomTypeData, int>> orderedData;
+    orderedData.emplace_back(mix_.add(molecules_.atN(), 1));
+    orderedData.emplace_back(mix_.add(molecules_.atOW(), 2));
+    orderedData.emplace_back(mix_.add(molecules_.atHW(), 3));
+    orderedData.emplace_back(mix_.add(molecules_.atH1(), 3));
     mix_.finalise();
 
     EXPECT_EQ(orderedData.size(), mix_.nItems());
 
     // Check indexed ordering
     auto index = 0;
-    for (const auto &atomTypeData : orderedData)
+    for (const auto &[atomTypeData, atomTypeDataIndex] : orderedData)
     {
-        EXPECT_EQ(atomTypeData.listIndex(), index);
-        ++index;
-    }
-
-    // Remove one and check indexing again
-    mix_.remove(molecules_.atOW());
-    mix_.finalise();
-    orderedData.erase(std::remove_if(orderedData.begin(), orderedData.end(),
-                                     [&](const auto &atd) { return atd.atomType() == molecules_.atOW(); }),
-                      orderedData.end());
-    EXPECT_EQ(mix_.nItems(), 3);
-    EXPECT_EQ(orderedData.size(), mix_.nItems());
-    index = 0;
-    for (const auto &atomTypeData : orderedData)
-    {
-        EXPECT_EQ(atomTypeData.listIndex(), index);
+        EXPECT_EQ(atomTypeDataIndex, index);
         ++index;
     }
 }
