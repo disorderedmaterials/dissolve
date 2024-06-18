@@ -23,8 +23,9 @@ runs:
 
       set -ex
       brew update-reset
+      ln -s $(which python3)/ $(brew --prefix)/Cellar/python3
       brew install ftgl ninja
-      brew install antlr
+      brew install antlr 
 
   - name: Install Python Dependencies
     shell: bash
