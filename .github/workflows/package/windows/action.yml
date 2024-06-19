@@ -39,7 +39,9 @@ runs:
 
   - name: Install Chocolatey Dependencies
     shell: bash
-    run: choco install -y zip innoextract
+    run: |
+      choco install -y innosetup --version=6.2.2 --allow-downgrade
+      choco install -y zip innoextract
 
   #
   # Create Packages
