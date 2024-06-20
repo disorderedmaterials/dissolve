@@ -74,7 +74,7 @@ runs:
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos
 
       # Find ANTLR4
-      ANTLR_EXE="${RUNNER_TEMP}\antlr-${{ env.antlrVersion }}-complete.jar"
+      ANTLR_EXE="${RUNNER_TEMP}/antlr-${{ env.antlrVersion }}-complete.jar"
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
 
       # Make sure we have a Java binary path - $JAVA_HOME_21_X64 does not appear to work on Silicon
