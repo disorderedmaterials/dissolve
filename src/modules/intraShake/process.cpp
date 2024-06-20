@@ -18,13 +18,6 @@
 // Run main processing
 Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Retrieve control parameters
     auto rCut = cutoffDistance_.value_or(moduleContext.dissolve().pairPotentialRange());
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());

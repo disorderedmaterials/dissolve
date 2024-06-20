@@ -11,7 +11,8 @@
 
 MolShakeModule::MolShakeModule() : Module(ModuleTypes::MolShake)
 {
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Control", "Number of move attempts per atom and the target acceptance rate.");
     keywords_.add<IntegerKeyword>("ShakesPerMolecule", "Number of shakes to attempt per molecule", nShakesPerMolecule_, 1);
@@ -47,4 +48,6 @@ MolShakeModule::MolShakeModule() : Module(ModuleTypes::MolShake)
     keywords_.add<OptionalDoubleKeyword>(
         "CutoffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
         cutoffDistance_, 0.0, std::nullopt, 0.1, "Use PairPotential Range");
+
+    executeIfTargetsUnchanged_ = true;
 }

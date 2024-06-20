@@ -9,7 +9,8 @@
 
 ForcesModule::ForcesModule() : Module(ModuleTypes::Forces)
 {
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Export");
     keywords_.add<FileAndFormatKeyword>("SaveForces", "Save calculated energies to the specified file / format",
@@ -19,4 +20,6 @@ ForcesModule::ForcesModule() : Module(ModuleTypes::Forces)
     keywords_.add<BoolKeyword>("Test", "Test analytic forces against production values", test_);
     keywords_.add<DoubleKeyword>("TestThreshold", "Threshold of force (%) at which test comparison will fail", testThreshold_,
                                  0.0);
+
+    executeIfTargetsUnchanged_ = true;
 }

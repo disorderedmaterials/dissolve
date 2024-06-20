@@ -15,13 +15,6 @@
 // Run main processing
 Module::ExecutionResult AtomShakeModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Retrieve control parameters from Configuration
     auto rCut = cutoffDistance_.value_or(moduleContext.dissolve().pairPotentialRange());
     const auto termScale = 1.0;

@@ -11,13 +11,6 @@
 // Run main processing
 Module::ExecutionResult ImportTrajectoryModule::process(ModuleContext &moduleContext)
 {
-    // Check for Configuration target
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     Messenger::print("Import: Reading trajectory file frame from '{}' into Configuration '{}'...\n",
                      trajectoryFormat_.filename(), targetConfiguration_->name());
 

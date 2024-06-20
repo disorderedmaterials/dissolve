@@ -13,13 +13,6 @@
 // Run main processing
 Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
 {
-    // Check for Configuration target
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     auto &processingData = moduleContext.dissolve().processingModuleData();
 
     // Select site A

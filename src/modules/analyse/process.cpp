@@ -9,13 +9,6 @@
 // Run main processing
 Module::ExecutionResult AnalyseModule::process(ModuleContext &moduleContext)
 {
-    // Check for Configuration target
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Execute the analysis
     if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
     {

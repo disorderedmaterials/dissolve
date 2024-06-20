@@ -18,13 +18,6 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
      * Partial calculation routines called by this routine are parallel.
      */
 
-    // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
-    {
-        Messenger::error("No configuration targets set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Print argument/parameter summary
     if (!requestedRange_)
         Messenger::print("RDF: Partials will be calculated up to the half-cell range limit.\n");

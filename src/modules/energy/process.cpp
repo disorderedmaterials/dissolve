@@ -26,13 +26,6 @@ bool EnergyModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
 // Run main processing
 Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Print parameter summary
     if (test_)
         Messenger::print("Energy: Production energies will be tested against analytical equivalents.\n");

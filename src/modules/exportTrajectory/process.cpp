@@ -19,13 +19,6 @@ Module::ExecutionResult ExportTrajectoryModule::process(ModuleContext &moduleCon
         return ExecutionResult::Failed;
     }
 
-    // Check for Configuration target
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Only the pool master saves the data
     if (moduleContext.processPool().isMaster())
     {

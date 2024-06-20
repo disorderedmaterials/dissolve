@@ -15,7 +15,6 @@ class Dissolve;
 class Configuration;
 class ModuleWidget;
 class ModuleContext;
-class QWidget;
 
 // Module
 class Module : public Serialisable<const CoreData &>
@@ -63,6 +62,8 @@ class Module : public Serialisable<const CoreData &>
     int frequency_;
     // Whether the Module is enabled
     bool enabled_;
+    // Whether the module runs on its targets if the targets haven't changed since last time
+    bool executeIfTargetsUnchanged_{false};
 
     public:
     // Module execution result
@@ -91,6 +92,14 @@ class Module : public Serialisable<const CoreData &>
      * Processing
      */
     private:
+    // Configuration on which the module was last run and its version counter
+    std::map<const Configuration *, int> lastProcessedConfigurations_;
+
+    private:
+    // Get current target configurations
+    std::pair<std::vector<const Configuration *>, int> getCurrentTargetConfigurations();
+    // Check the current configurations targeted by the module
+    ExecutionResult checkConfigurationTargets(GenericList &processingModuleData);
     // Run main processing
     virtual ExecutionResult process(ModuleContext &moduleContext) = 0;
 
