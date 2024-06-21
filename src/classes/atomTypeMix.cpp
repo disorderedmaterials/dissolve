@@ -57,7 +57,7 @@ void AtomTypeMix::add(const AtomTypeMix &source)
     // Loop over AtomTypes in the source list
     for (auto &otherType : source)
     {
-        auto &&[atd, std::ignore] = add(otherType.atomType());
+        auto &atd = std::get<0>(add(otherType.atomType()));
 
         // If no Isotope data are present, add the population now. Otherwise, add it via the isotopes...
         if (otherType.nIsotopes() == 0)
@@ -71,7 +71,7 @@ void AtomTypeMix::add(const AtomTypeMix &source)
 // Add/increase this AtomType/Isotope pair
 void AtomTypeMix::addIsotope(std::shared_ptr<AtomType> atomType, Sears91::Isotope tope, double popAdd)
 {
-    auto &&[atd, std::ignore] = add(std::move(atomType));
+    auto &atd = std::get<0>(add(std::move(atomType)));
     atd.add(tope, popAdd);
 }
 
