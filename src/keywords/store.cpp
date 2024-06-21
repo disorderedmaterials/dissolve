@@ -21,7 +21,6 @@
 #include "keywords/vec3Double.h"
 #include "keywords/vec3Integer.h"
 #include "keywords/vec3NodeValue.h"
-#include "procedure/nodes/collect1D.h"
 #include "procedure/nodes/regionBase.h"
 #include "procedure/nodes/select.h"
 
@@ -186,18 +185,10 @@ bool KeywordStore::set(std::string_view name, const int value)
 {
     return getKeyword<IntegerKeyword>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value)
-{
-    return getKeyword<NodeKeyword<Collect1DProcedureNode>>(name, find(name))->setData(value);
-}
 bool KeywordStore::set(std::string_view name, const std::vector<const SpeciesSite *> value)
 {
     getKeyword<SpeciesSiteVectorKeyword>(name, find(name))->data() = value;
     return true;
-}
-bool KeywordStore::set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value)
-{
-    return getKeyword<NodeVectorKeyword<Collect1DProcedureNode>>(name, find(name))->setData(value);
 }
 bool KeywordStore::set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value)
 {

@@ -6,8 +6,6 @@
 #include "gui/models/procedureModel.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/add.h"
-#include "procedure/nodes/calculateDistance.h"
-#include "procedure/nodes/collect1D.h"
 #include "procedure/nodes/select.h"
 #include <gtest/gtest.h>
 
@@ -25,15 +23,14 @@ TEST(ProcedureModelTest, Basic)
     auto selectB = forEachA.create<SelectProcedureNode>("B");
     auto &forEachB = selectB->branch()->get();
     auto selectC = forEachB.create<SelectProcedureNode>("C");
-    auto calcAB = procedure.createRootNode<CalculateDistanceProcedureNode>({}, selectA, selectB);
-    auto collect = procedure.createRootNode<Collect1DProcedureNode>({}, calcAB);
+
     EXPECT_TRUE(procedure.rootSequence().check());
 
     ProcedureModel model(procedure);
 
     // Check out model root
     EXPECT_EQ(model.columnCount(QModelIndex()), 2);
-    EXPECT_EQ(model.rowCount(QModelIndex()), 3);
+    EXPECT_EQ(model.rowCount(QModelIndex()), 1);
 
     // Check out "SelectA" child in root sequence
     auto selectAChild = model.index(0, 0);
@@ -55,15 +52,6 @@ TEST(ProcedureModelTest, Basic)
     EXPECT_EQ(model.rowCount(selectCChild), 0);
     EXPECT_EQ(model.data(selectCChild, Qt::DisplayRole).toString().toStdString(), "C (Select)");
     EXPECT_EQ(model.data(selectCChild, Qt::UserRole).value<NodeRef>(), selectC);
-
-    // Check out "Collect1D" child in root sequence
-    auto collectChild = model.index(2, 0);
-    EXPECT_EQ(model.columnCount(collectChild), 2);
-    EXPECT_EQ(model.rowCount(collectChild), 0);
-    EXPECT_EQ(model.data(collectChild, Qt::DisplayRole).toString().toStdString(), "Collect1D01 (Collect1D)");
-    EXPECT_EQ(model.data(collectChild, Qt::UserRole).value<NodeRef>(), collect);
-
-    EXPECT_EQ(model.parent(collectChild).isValid(), QModelIndex().isValid());
 }
 
 } // namespace UnitTest

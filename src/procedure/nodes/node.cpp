@@ -2,7 +2,6 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "procedure/nodes/node.h"
-
 #include "base/lineParser.h"
 #include "base/messenger.h"
 #include "base/sysFunc.h"
@@ -13,15 +12,6 @@
 #include <memory>
 #include <utility>
 
-// Return enum option info for NodeClass
-EnumOptions<ProcedureNode::NodeClass> ProcedureNode::nodeClasses()
-{
-    return EnumOptions<ProcedureNode::NodeClass>("NodeClass", {{ProcedureNode::NodeClass::None, "None"},
-                                                               {ProcedureNode::NodeClass::Calculate, "Calculate"},
-                                                               {ProcedureNode::NodeClass::Operate, "Operate"},
-                                                               {ProcedureNode::NodeClass::Region, "Region"}});
-}
-
 // Return enum option info for NodeType
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
@@ -29,14 +19,6 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
         "NodeType", {{ProcedureNode::NodeType::Add, "Add"},
                      {ProcedureNode::NodeType::AddPair, "AddPair"},
                      {ProcedureNode::NodeType::Box, "Box"},
-                     {ProcedureNode::NodeType::CalculateAngle, "CalculateAngle"},
-                     {ProcedureNode::NodeType::CalculateAxisAngle, "CalculateAxisAngle"},
-                     {ProcedureNode::NodeType::CalculateDistance, "CalculateDistance"},
-                     {ProcedureNode::NodeType::CalculateExpression, "CalculateExpression"},
-                     {ProcedureNode::NodeType::CalculateVector, "CalculateVector"},
-                     {ProcedureNode::NodeType::Collect1D, "Collect1D"},
-                     {ProcedureNode::NodeType::Collect2D, "Collect2D"},
-                     {ProcedureNode::NodeType::Collect3D, "Collect3D"},
                      {ProcedureNode::NodeType::CoordinateSets, "CoordinateSets"},
                      {ProcedureNode::NodeType::Copy, "Copy"},
                      {ProcedureNode::NodeType::CustomRegion, "CustomRegion"},
@@ -45,26 +27,11 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::DynamicSite, "DynamicSite"},
                      {ProcedureNode::NodeType::GeneralRegion, "GeneralRegion"},
                      {ProcedureNode::NodeType::ImportCoordinates, "ImportCoordinates"},
-                     {ProcedureNode::NodeType::IntegerCollect1D, "IntegerCollect1D"},
                      {ProcedureNode::NodeType::IterateSelection, "IterateSelection"},
-                     {ProcedureNode::NodeType::IfValueInRange, "IfValueInRange"},
-                     {ProcedureNode::NodeType::Integrate1D, "Integrate1D"},
-                     {ProcedureNode::NodeType::IterateData1D, "IterateData1D"},
-                     {ProcedureNode::NodeType::OperateDivide, "OperateDivide"},
-                     {ProcedureNode::NodeType::OperateExpression, "OperateExpression"},
-                     {ProcedureNode::NodeType::OperateGridNormalise, "OperateGridNormalise"},
-                     {ProcedureNode::NodeType::OperateMultiply, "OperateMultiply"},
-                     {ProcedureNode::NodeType::OperateNormalise, "OperateNormalise"},
-                     {ProcedureNode::NodeType::OperateNumberDensityNormalise, "OperateNumberDensityNormalise"},
-                     {ProcedureNode::NodeType::OperateSitePopulationNormalise, "OperateSitePopulationNormalise"},
-                     {ProcedureNode::NodeType::OperateSphericalShellNormalise, "OperateSphericalShellNormalise"},
                      {ProcedureNode::NodeType::Parameters, "Parameters"},
                      {ProcedureNode::NodeType::Pick, "Pick"},
                      {ProcedureNode::NodeType::PickProximity, "PickProximity"},
                      {ProcedureNode::NodeType::PickRegion, "PickRegion"},
-                     {ProcedureNode::NodeType::Process1D, "Process1D"},
-                     {ProcedureNode::NodeType::Process2D, "Process2D"},
-                     {ProcedureNode::NodeType::Process3D, "Process3D"},
                      {ProcedureNode::NodeType::RegionalGlobalPotential, "RegionalGlobalPotential"},
                      {ProcedureNode::NodeType::Remove, "Remove"},
                      {ProcedureNode::NodeType::RestraintPotential, "RestraintPotential"},
@@ -74,7 +41,6 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
                      {ProcedureNode::NodeType::SphericalGlobalPotential, "SphericalGlobalPotential"},
                      {ProcedureNode::NodeType::SizeFactor, "SizeFactor"},
-                     {ProcedureNode::NodeType::Sum1D, "Sum1D"},
                      {ProcedureNode::NodeType::Temperature, "Temperature"},
                      {ProcedureNode::NodeType::Transmute, "Transmute"}});
 }
@@ -99,9 +65,8 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
                                                                    {ProcedureNode::InheritContext, "Inherit"}});
 }
 
-ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, std::vector<NodeContext> relevantContexts,
-                             ProcedureNode::NodeClass classType)
-    : type_(nodeType), relevantContexts_(std::move(relevantContexts)), class_(classType)
+ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, std::vector<NodeContext> relevantContexts)
+    : type_(nodeType), relevantContexts_(std::move(relevantContexts))
 {
 }
 
@@ -128,9 +93,6 @@ bool ProcedureNode::isContextRelevant(NodeContext targetContext) const
 
     return std::find(relevantContexts_.begin(), relevantContexts_.end(), targetContext) != relevantContexts_.end();
 }
-
-// Return whether the node is of the specified class
-ProcedureNode::NodeClass ProcedureNode::nodeClass() const { return class_; }
 
 // Return whether a name for the node must be provided
 bool ProcedureNode::mustBeNamed() const { return true; }
@@ -185,33 +147,31 @@ ProcedureNode::NodeContext ProcedureNode::scopeContext() const
 
 // Return named node, optionally matching the type / class given, in or out of scope
 ConstNodeRef ProcedureNode::getNode(std::string_view name, bool onlyInScope, ConstNodeRef excludeNode,
-                                    std::optional<ProcedureNode::NodeType> optNodeType,
-                                    std::optional<ProcedureNode::NodeClass> optNodeClass) const
+                                    const NodeTypeVector &allowedNodeTypes) const
 {
     if (!scope_)
         return nullptr;
     const auto &scope = (*scope_).get();
 
-    return onlyInScope ? scope.nodeInScope(shared_from_this(), name, excludeNode, optNodeType, optNodeClass)
-                       : scope.nodeExists(name, excludeNode, optNodeType, optNodeClass);
+    return onlyInScope ? scope.nodeInScope(shared_from_this(), name, excludeNode, allowedNodeTypes)
+                       : scope.nodeExists(name, excludeNode, allowedNodeTypes);
 }
 
 // Return nodes, optionally matching the type / class given, in or out of scope
-std::vector<ConstNodeRef> ProcedureNode::getNodes(bool onlyInScope, std::optional<ProcedureNode::NodeType> optNodeType,
-                                                  std::optional<ProcedureNode::NodeClass> optNodeClass) const
+std::vector<ConstNodeRef> ProcedureNode::getNodes(bool onlyInScope, const NodeTypeVector &allowedNodeTypes) const
 {
     if (!scope_)
         return {};
 
     if (onlyInScope)
-        return (*scope_).get().nodesInScope(shared_from_this(), optNodeType, optNodeClass);
+        return (*scope_).get().nodesInScope(shared_from_this(), allowedNodeTypes);
 
     // Find the topmost (root) scope and search from there.
     auto optScope = scope_;
     while (optScope->get().owner() && optScope->get().owner()->get().scope())
         optScope = optScope->get().owner()->get().scope();
 
-    return optScope->get().nodes(optNodeType, optNodeClass);
+    return optScope->get().nodes(allowedNodeTypes);
 }
 
 // Return the named parameter, in or out of scope

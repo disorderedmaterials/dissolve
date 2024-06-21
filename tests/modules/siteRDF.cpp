@@ -23,27 +23,16 @@ TEST_F(SiteRDFModuleTest, Water)
         "RDF(OW-OW)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-2));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "RDF(OW-OW)-Analyser//Process1D//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
-        1.0e-2));
 
     // H1-H2 RDF, excluding intramolecular interactions
     EXPECT_TRUE(systemTest.checkData1D(
         "RDF(H1-H2)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         5.0e-3));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "RDF(H1-H2)-Analyser//Process1D//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
-        5.0e-3));
 
     // COM-COM RDF
     EXPECT_TRUE(systemTest.checkData1D(
         "RDF(COM-COM)//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "RDF(COM-COM)-Analyser//Process1D//RDF",
         {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
 
     // Coordination numbers
@@ -60,25 +49,16 @@ TEST_F(SiteRDFModuleTest, WaterNPT)
     EXPECT_TRUE(systemTest.checkData1D(
         "RDF(OW-OW)//RDF",
         {"dlpoly/water267-npt/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-2));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "RDF(OW-OW)-Analyser//Process1D//RDF",
-        {"dlpoly/water267-npt/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-2));
 
     // H1-H2 RDF, excluding intramolecular interactions
     EXPECT_TRUE(systemTest.checkData1D(
         "RDF(H1-H2)//RDF",
-        {"dlpoly/water267-npt/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-2));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "RDF(H1-H2)-Analyser//Process1D//RDF",
         {"dlpoly/water267-npt/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-2));
 
     // COM-COM RDF
     EXPECT_TRUE(systemTest.checkData1D(
         "RDF(COM-COM)//RDF", {"dlpoly/water267-npt/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         7.0e-3));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "RDF(COM-COM)-Analyser//Process1D//RDF",
-        {"dlpoly/water267-npt/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 7.0e-3));
 }
 
 TEST_F(SiteRDFModuleTest, WaterDynamic)
@@ -91,18 +71,10 @@ TEST_F(SiteRDFModuleTest, WaterDynamic)
         "RDF(OW-OW)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         9.0e-3));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "RDF(OW-OW)-Analyser//Process1D//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
-        9.0e-2));
 
     // H1-H2 RDF, excluding intramolecular interactions
     EXPECT_TRUE(systemTest.checkData1D(
         "RDF(H-H)//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf1_HHsum", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
-        3.0e-3));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "RDF(H-H)-Analyser//Process1D//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_HHsum", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         3.0e-3));
 }
@@ -117,27 +89,16 @@ TEST_F(SiteRDFModuleTest, WaterFragments)
         "RDF(OW-OW)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-2));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "RDF(OW-OW)-Analyser//Process1D//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
-        1.0e-2));
 
     // H1-H2 RDF, excluding intramolecular interactions
     EXPECT_TRUE(systemTest.checkData1D(
         "RDF(H1-H2)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_HHsum", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         5.0e-3));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "RDF(H1-H2)-Analyser//Process1D//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf1_HHsum", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
-        5.0e-3));
 
     // COM-COM RDF
     EXPECT_TRUE(systemTest.checkData1D(
         "RDF(COM-COM)//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
-    EXPECT_TRUE(systemTest.checkData1D(
-        "RDF(COM-COM)-Analyser//Process1D//RDF",
         {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
 
     // Coordination numbers

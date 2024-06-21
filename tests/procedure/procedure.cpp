@@ -5,7 +5,6 @@
 #include "keywords/node.h"
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
-#include "procedure/nodes/ifValueInRange.h"
 #include "procedure/nodes/parameters.h"
 #include "procedure/nodes/select.h"
 #include <gtest/gtest.h>
@@ -44,13 +43,6 @@ TEST(ProcedureTest, Context)
 
     // Node with same name as an existing one
     EXPECT_THROW(procedure.createRootNode<BoxProcedureNode>("A"), std::runtime_error);
-
-    // Create a new node with an InheritContext type
-    auto ifValue = forEachB.create<IfValueInRangeProcedureNode>("IfValue");
-    auto &ifThen = ifValue->branch()->get();
-    EXPECT_TRUE(procedure.rootSequence().check());
-    EXPECT_EQ(ifThen.context(), ProcedureNode::NodeContext::AnalysisContext);
-    EXPECT_TRUE(ifValue->isContextRelevant(forEachB.context()));
 }
 
 TEST(ProcedureTest, Scope)

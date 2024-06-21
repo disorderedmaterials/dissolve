@@ -13,12 +13,9 @@
 class NodeAndIntegerKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
-    NodeAndIntegerKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, nodeType, onlyInScope), KeywordBase(typeid(this))
-    {
-    }
-    NodeAndIntegerKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, nodeClass, onlyInScope), KeywordBase(typeid(this))
+    NodeAndIntegerKeywordBase(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes,
+                              bool onlyInScope)
+        : NodeKeywordUnderlay(parentNode, allowedNodeTypes, onlyInScope), KeywordBase(typeid(this))
     {
     }
     ~NodeAndIntegerKeywordBase() override = default;
@@ -67,13 +64,8 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 {
     public:
     NodeAndIntegerKeyword(std::pair<std::shared_ptr<const N>, int> &data, ProcedureNode *parentNode,
-                          ProcedureNode::NodeType nodeType, bool onlyInScope)
-        : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), data_(data)
-    {
-    }
-    NodeAndIntegerKeyword(std::pair<std::shared_ptr<const N>, int> &data, ProcedureNode *parentNode,
-                          ProcedureNode::NodeClass nodeClass, bool onlyInScope)
-        : NodeAndIntegerKeywordBase(parentNode, nodeClass, onlyInScope), data_(data)
+                          const ProcedureNode::NodeTypeVector &allowedNodeTypes, bool onlyInScope)
+        : NodeAndIntegerKeywordBase(parentNode, allowedNodeTypes, onlyInScope), data_(data)
     {
     }
     ~NodeAndIntegerKeyword() override = default;

@@ -9,7 +9,6 @@ namespace ModuleTypes
 enum ModuleType
 {
     Accumulate,
-    Analyse,
     Angle,
     AtomShake,
     AvgMol,

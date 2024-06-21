@@ -5,7 +5,6 @@
 
 #include "base/lock.h"
 #include "gui/ui_nodeControlWidget.h"
-#include "procedure/nodes/nodeReference.h"
 
 // Forward Declarations
 class Dissolve;

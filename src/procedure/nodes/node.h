@@ -24,31 +24,12 @@ class Site;
 class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public Serialisable<const CoreData &>
 {
     public:
-    // Node Classes
-    enum class NodeClass
-    {
-        None,
-        Calculate,
-        Operate,
-        Pick,
-        Region
-    };
-    // Return enum option info for NodeClass
-    static EnumOptions<NodeClass> nodeClasses();
     // Node Types
     enum class NodeType
     {
         Add,
         AddPair,
         Box,
-        CalculateAngle,
-        CalculateAxisAngle,
-        CalculateDistance,
-        CalculateExpression,
-        CalculateVector,
-        Collect1D,
-        Collect2D,
-        Collect3D,
         CoordinateSets,
         Copy,
         CustomRegion,
@@ -57,26 +38,11 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         DynamicSite,
         GeneralRegion,
         ImportCoordinates,
-        IntegerCollect1D,
-        IfValueInRange,
-        Integrate1D,
-        IterateData1D,
         IterateSelection,
-        OperateDivide,
-        OperateExpression,
-        OperateGridNormalise,
-        OperateMultiply,
-        OperateNormalise,
-        OperateNumberDensityNormalise,
-        OperateSitePopulationNormalise,
-        OperateSphericalShellNormalise,
         Parameters,
         Pick,
         PickProximity,
         PickRegion,
-        Process1D,
-        Process2D,
-        Process3D,
         RegionalGlobalPotential,
         Remove,
         RestraintPotential,
@@ -86,10 +52,11 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         Sequence,
         SphericalGlobalPotential,
         SizeFactor,
-        Sum1D,
         Temperature,
         Transmute
     };
+    // Typedef for node type vector
+    using NodeTypeVector = std::vector<ProcedureNode::NodeType>;
     // Return enum option info for NodeType
     static EnumOptions<NodeType> nodeTypes();
     // Return the lowerCamelCase name of the node type provided
@@ -107,7 +74,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     };
     // Return enum option info for NodeContext
     static EnumOptions<NodeContext> nodeContexts();
-    ProcedureNode(NodeType nodeType, std::vector<NodeContext> relevantContexts, NodeClass nodeClass = NodeClass::None);
+    ProcedureNode(NodeType nodeType, std::vector<NodeContext> relevantContexts);
     virtual ~ProcedureNode() = default;
 
     /*
@@ -118,8 +85,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     NodeType type_;
     // Relevant contexts for node
     std::vector<NodeContext> relevantContexts_;
-    // Node class
-    NodeClass class_;
     // Node name
     std::string name_;
 
@@ -128,8 +93,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     NodeType type() const;
     // Return whether the supplied context is relevant for the current node
     bool isContextRelevant(NodeContext targetContext) const;
-    // Return node class
-    NodeClass nodeClass() const;
     // Return whether a name for the node must be provided
     virtual bool mustBeNamed() const;
     // Set node name
@@ -167,11 +130,9 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     ProcedureNode::NodeContext scopeContext() const;
     // Return named node, optionally matching the type / class given, in or out of scope
     ConstNodeRef getNode(std::string_view name, bool onlyInScope, ConstNodeRef excludeNode = nullptr,
-                         std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                         std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+                         const NodeTypeVector &allowedNodeTypes = {}) const;
     // Return nodes, optionally matching the type / class given, in or out of scope
-    std::vector<ConstNodeRef> getNodes(bool onlyInScope, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                                       std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    std::vector<ConstNodeRef> getNodes(bool onlyInScope, const NodeTypeVector &allowedNodeTypes = {}) const;
     // Return the named parameter, in or out of scope
     std::shared_ptr<ExpressionVariable> getParameter(std::string_view name, bool onlyInScope,
                                                      std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;

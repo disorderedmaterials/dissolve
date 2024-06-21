@@ -6,7 +6,7 @@
 #include "keywords/double.h"
 
 RegionProcedureNodeBase::RegionProcedureNodeBase(ProcedureNode::NodeType nodeType)
-    : ProcedureNode(nodeType, {ProcedureNode::GenerationContext}, ProcedureNode::NodeClass::Region)
+    : ProcedureNode(nodeType, {ProcedureNode::GenerationContext})
 {
     keywords_.setOrganisation("Options", "Grid");
     keywords_.add<DoubleKeyword>("VoxelSize", "Voxel size (length) guiding the coarseness / detail of the region", voxelSize_,

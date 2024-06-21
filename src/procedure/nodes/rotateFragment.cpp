@@ -20,7 +20,7 @@ RotateFragmentProcedureNode::RotateFragmentProcedureNode(std::shared_ptr<SelectP
       site_(site)
 {
     keywords_.setOrganisation("Options", "Site");
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Site", "Site to be rotated", site_, this, ProcedureNode::NodeType::Select,
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Site", "Site to be rotated", site_, this, NodeTypeVector{NodeType::Select},
                                                     true);
     keywords_.add<NodeValueKeyword>("Rotation", "Rotation to perform", rotation_, this);
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Axis", "Axis for rotation", axis_, OrientedSite::siteAxis());

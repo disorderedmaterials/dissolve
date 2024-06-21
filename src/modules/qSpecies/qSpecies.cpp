@@ -8,12 +8,6 @@
 #include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
-#include "procedure/nodes/calculateExpression.h"
-#include "procedure/nodes/ifValueInRange.h"
-#include "procedure/nodes/integerCollect1D.h"
-#include "procedure/nodes/iterateData1D.h"
-#include "procedure/nodes/operateNormalise.h"
-#include "procedure/nodes/process1D.h"
 #include "procedure/nodes/select.h"
 
 QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies)
