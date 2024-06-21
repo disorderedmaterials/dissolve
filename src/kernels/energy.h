@@ -85,7 +85,7 @@ class EnergyKernel : public GeometryKernel
     // Return PairPotential energy between atoms
     virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r) const;
     // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
-    virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale) const;
+    virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const;
 
     /*
      * PairPotential Terms

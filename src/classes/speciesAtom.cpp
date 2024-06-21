@@ -220,12 +220,12 @@ void SpeciesAtom::setScaledInteractions()
     scaledInteractions_.clear();
 
     std::function<void(SpeciesAtom *, SpeciesAtom::ScaledInteraction, double, double)> addInteractionFunction =
-        [&](SpeciesAtom *j, SpeciesAtom::ScaledInteraction scaledType, double elecScale, double vdwScale)
+        [&](SpeciesAtom *j, SpeciesAtom::ScaledInteraction scaledType, double elecScale, double srScale)
     {
         auto it =
             std::find_if(scaledInteractions_.begin(), scaledInteractions_.end(), [j](const auto &p) { return p.first == j; });
         if (it == scaledInteractions_.end())
-            scaledInteractions_.emplace_back(j, ScaledInteractionDefinition{scaledType, elecScale, vdwScale});
+            scaledInteractions_.emplace_back(j, ScaledInteractionDefinition{scaledType, elecScale, srScale});
     };
 
     /*

@@ -105,7 +105,7 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     auto useCombinationRules = useCombinationRulesHint.value_or(useCombinationRules_);
 
     // Set the charge handling for all pair potentials
-    PairPotential::setIncludeAtomTypeCharges(atomTypeChargeSource_);
+    PairPotential::setIncludeCoulombPotential(atomTypeChargeSource_);
 
     // First step - remove any pair potentials which reference non-existent atom types
     pairPotentials_.erase(std::remove_if(pairPotentials_.begin(), pairPotentials_.end(),
@@ -156,7 +156,7 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     // Re-tabulate the potentials to account for changes in charge inclusion/exclusion, range etc. as well as parameters
     for (auto &&[at1, at2, pot] : pairPotentials_)
     {
-        pot->tabulate(pairPotentialRange_, pairPotentialDelta_, at1->charge(), at2->charge());
+        pot->tabulate(pairPotentialRange_, pairPotentialDelta_, at1->charge() * at2->charge());
     }
 
     // Third step - apply any overrides
@@ -196,10 +196,10 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
                     case (PairPotentialOverride::PairPotentialOverrideType::Off):
                         break;
                     case (PairPotentialOverride::PairPotentialOverrideType::Add):
-                        pp->addShortRangePotential(overridePotential);
+                        pp->addToReferenceShortRangePotential(overridePotential);
                         break;
                     case (PairPotentialOverride::PairPotentialOverrideType::Replace):
-                        pp->addShortRangePotential(overridePotential, true);
+                        pp->addToReferenceShortRangePotential(overridePotential, true);
                         break;
                 }
 

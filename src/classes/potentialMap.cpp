@@ -76,13 +76,13 @@ double PotentialMap::energy(const Atom &i, const Atom &j, double r) const
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
     auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
-    return pp->energy(r) + (PairPotential::includeAtomTypeCharges()
+    return pp->energy(r) + (PairPotential::includeCoulombPotential()
                                 ? 0
                                 : pp->analyticCoulombEnergy(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r));
 }
 
-// Return energy between Atoms at distance specified, scaling electrostatic and van der Waals components
-double PotentialMap::energy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale) const
+// Return energy between Atoms at distance specified, scaling electrostatic and short-range components
+double PotentialMap::energy(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const
 {
     assert(r >= 0.0);
     assert(i.speciesAtom() && j.speciesAtom());
@@ -90,9 +90,9 @@ double PotentialMap::energy(const Atom &i, const Atom &j, double r, double elecS
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
     auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
-    return PairPotential::includeAtomTypeCharges()
-               ? pp->energy(r) * elecScale
-               : pp->energy(r) * vdwScale +
+    return PairPotential::includeCoulombPotential()
+               ? pp->energy(r, elecScale, srScale)
+               : pp->energy(r) * srScale +
                      pp->analyticCoulombEnergy(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r) * elecScale;
 }
 
@@ -106,11 +106,11 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
     // interpolated potential
     auto *pp = potentialMatrix_[{i->atomType()->index(), j->atomType()->index()}];
     return pp->energy(r) +
-           (PairPotential::includeAtomTypeCharges() ? 0 : pp->analyticCoulombEnergy(i->charge() * j->charge(), r));
+           (PairPotential::includeCoulombPotential() ? 0 : pp->analyticCoulombEnergy(i->charge() * j->charge(), r));
 }
 
-// Return energy between SpeciesAtoms at distance specified, scaling electrostatic and van der Waals components
-double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r, double elecScale, double vdwScale) const
+// Return energy between SpeciesAtoms at distance specified, scaling electrostatic and short-range components
+double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r, double elecScale, double srScale) const
 {
     assert(r >= 0.0);
     assert(i && j);
@@ -118,37 +118,37 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
     auto *pp = potentialMatrix_[{i->atomType()->index(), j->atomType()->index()}];
-    return PairPotential::includeAtomTypeCharges()
-               ? pp->energy(r) * elecScale
-               : pp->energy(r) * vdwScale + pp->analyticCoulombEnergy(i->charge() * j->charge(), r) * elecScale;
+    return PairPotential::includeCoulombPotential()
+               ? pp->energy(r, elecScale, srScale)
+               : pp->energy(r) * srScale + pp->analyticCoulombEnergy(i->charge() * j->charge(), r) * elecScale;
 }
 
 // Return analytic energy between Atom types at distance specified
-double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) const
+double PotentialMap::analyticEnergy(const Atom &i, const Atom &j, double r) const
 {
     assert(r >= 0.0);
     assert(i && j);
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being local to the atom
     // types
-    auto *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
-    return PairPotential::includeAtomTypeCharges()
-               ? pp->analyticEnergy(r)
-               : pp->analyticEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r);
+    auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
+    return PairPotential::includeCoulombPotential()
+               ? pp->analyticEnergy(r, 1.0, 1.0)
+               : pp->analyticEnergy(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r, 1.0, 1.0);
 }
 
-// Return analytic energy between Atom types at distance specified, scaling electrostatic and van der Waals components
-double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r, double elecScale, double vdwScale) const
+// Return analytic energy between Atom types at distance specified, scaling electrostatic and short-range components
+double PotentialMap::analyticEnergy(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const
 {
     assert(r >= 0.0);
     assert(i && j);
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being local to the atom
     // types
-    auto *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
-    return PairPotential::includeAtomTypeCharges()
-               ? pp->analyticEnergy(r) * elecScale
-               : pp->analyticEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r, elecScale, vdwScale);
+    auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
+    return PairPotential::includeCoulombPotential()
+               ? pp->analyticEnergy(r, elecScale, srScale)
+               : pp->analyticEnergy(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r, elecScale, srScale);
 }
 
 // Return force between Atoms at distance specified
@@ -157,20 +157,20 @@ double PotentialMap::force(const Atom &i, const Atom &j, double r) const
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
     auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
-    return PairPotential::includeAtomTypeCharges()
+    return PairPotential::includeCoulombPotential()
                ? pp->force(r)
                : pp->force(r) + pp->analyticCoulombForce(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r);
 }
 
-// Return force between Atoms at distance specified, scaling electrostatic and van der Waals components
-double PotentialMap::force(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale) const
+// Return force between Atoms at distance specified, scaling electrostatic and short-range components
+double PotentialMap::force(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const
 {
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
     auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
-    return PairPotential::includeAtomTypeCharges()
-               ? pp->force(r) * elecScale
-               : pp->force(r) * vdwScale +
+    return PairPotential::includeCoulombPotential()
+               ? pp->force(r, elecScale, srScale)
+               : pp->force(r) * srScale +
                      pp->analyticCoulombForce(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r) * elecScale;
 }
 
@@ -183,12 +183,12 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r)
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
     auto *pp = potentialMatrix_[{i->atomType()->index(), j->atomType()->index()}];
-    return PairPotential::includeAtomTypeCharges() ? pp->force(r)
-                                                   : pp->force(r) + pp->analyticCoulombForce(i->charge() * j->charge(), r);
+    return PairPotential::includeCoulombPotential() ? pp->force(r)
+                                                    : pp->force(r) + pp->analyticCoulombForce(i->charge() * j->charge(), r);
 }
 
-// Return force between SpeciesAtoms at distance specified, scaling electrostatic and van der Waals components
-double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r, double elecScale, double vdwScale) const
+// Return force between SpeciesAtoms at distance specified, scaling electrostatic and short-range components
+double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r, double elecScale, double srScale) const
 {
     assert(r >= 0.0);
     assert(i && j);
@@ -196,13 +196,13 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r,
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
     auto *pp = potentialMatrix_[{i->atomType()->index(), j->atomType()->index()}];
-    return PairPotential::includeAtomTypeCharges()
-               ? pp->force(r) * elecScale
-               : pp->force(r) * vdwScale + pp->analyticCoulombForce(i->charge() * j->charge(), r) * elecScale;
+    return PairPotential::includeCoulombPotential()
+               ? pp->force(r, elecScale, srScale)
+               : pp->force(r) * srScale + pp->analyticCoulombForce(i->charge() * j->charge(), r) * elecScale;
 }
 
 // Return analytic force between Atom types at distance specified
-double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r) const
+double PotentialMap::analyticForce(const Atom &i, const Atom &j, double r) const
 {
     assert(r >= 0.0);
     assert(i && j);
@@ -210,14 +210,14 @@ double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r) const
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    auto *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
-    return PairPotential::includeAtomTypeCharges()
-               ? pp->analyticForce(r)
-               : pp->analyticForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r);
+    auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
+    return PairPotential::includeCoulombPotential()
+               ? pp->analyticForce(r, 1.0, 1.0)
+               : pp->analyticForce(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r, 1.0, 1.0);
 }
 
-// Return analytic force between Atom types at distance specified, scaling electrostatic and van der Waals components
-double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r, double elecScale, double vdwScale) const
+// Return analytic force between Atom types at distance specified, scaling electrostatic and short-range components
+double PotentialMap::analyticForce(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const
 {
     assert(r >= 0.0);
     assert(i && j);
@@ -225,8 +225,8 @@ double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r, doubl
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    auto *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
-    return PairPotential::includeAtomTypeCharges()
-               ? pp->analyticForce(r) * elecScale
-               : pp->analyticForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r, elecScale, vdwScale);
+    auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
+    return PairPotential::includeCoulombPotential()
+               ? pp->analyticForce(r, elecScale, srScale)
+               : pp->analyticForce(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r, elecScale, srScale);
 }

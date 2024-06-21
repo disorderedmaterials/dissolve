@@ -43,7 +43,7 @@ void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
 void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
-                                   double vdwScale) const
+                                   double srScale) const
 {
     auto vij = j.r() - i.r();
     auto distanceSq = vij.magnitudeSq();
@@ -51,7 +51,7 @@ void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int
         return;
     auto r = sqrt(distanceSq);
     vij /= r;
-    vij *= potentialMap_.force(i, j, r, elecScale, vdwScale);
+    vij *= potentialMap_.force(i, j, r, elecScale, srScale);
     f[indexI] -= vij;
     f[indexJ] += vij;
 }
@@ -72,7 +72,7 @@ void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int in
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
 void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
-                                double vdwScale) const
+                                double srScale) const
 {
     auto vij = box_->minimumVector(i.r(), j.r());
     auto distanceSq = vij.magnitudeSq();
@@ -80,7 +80,7 @@ void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int in
         return;
     auto r = sqrt(distanceSq);
     vij /= r;
-    vij *= potentialMap_.force(i, j, r, elecScale, vdwScale);
+    vij *= potentialMap_.force(i, j, r, elecScale, srScale);
     f[indexI] -= vij;
     f[indexJ] += vij;
 }

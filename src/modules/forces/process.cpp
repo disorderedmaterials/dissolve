@@ -104,9 +104,9 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                     vecij /= r;
 
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                        vecij *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r);
+                        vecij *= potentialMap.analyticForce(*molN->atom(ii), *molN->atom(jj), r);
                     else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                        vecij *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r, elec14, vdw14);
+                        vecij *= potentialMap.analyticForce(*molN->atom(ii), *molN->atom(jj), r, elec14, vdw14);
 
                     fInter[offsetN + ii] -= vecij;
                     fInter[offsetN + jj] += vecij;
@@ -136,7 +136,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                         auto r = sqrt(magjisq);
                         vecij /= r;
 
-                        vecij *= potentialMap.analyticForce(i, j, r);
+                        vecij *= potentialMap.analyticForce(*i, *j, r);
 
                         fInter[offsetN + ii] -= vecij;
                         fInter[offsetM + jj] += vecij;

@@ -56,7 +56,7 @@ QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
             case (Columns::NameJColumn):
                 return QString::fromStdString(std::string(pp->nameJ()));
             case (Columns::ChargeProductColumn):
-                return PairPotential::includeAtomTypeCharges() ? QString::number(pp->atomTypeChargeProduct()) : QString("--");
+                return PairPotential::includeCoulombPotential() ? QString::number(pp->localChargeProduct()) : QString("--");
             case (Columns::ShortRangeFormColumn):
                 return QString::fromStdString(Functions1D::forms().keyword(pp->interactionPotential().form()));
             case (Columns::ShortRangeParametersColumn):

@@ -7,10 +7,10 @@
 
 namespace UnitTest
 {
-class PairPotentialsTest : public ::testing::Test
+class PairPotentialsAnalyticTest : public ::testing::Test
 {
     public:
-    PairPotentialsTest()
+    PairPotentialsAnalyticTest()
     {
         PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
 
@@ -61,39 +61,39 @@ class PairPotentialsTest : public ::testing::Test
     void testEnergy(Functions1D::Form form, std::string_view parameters, double rStart = testRDelta_)
     {
         test(
-            form, parameters, rStart, [=](double r) { return pairPotential_->analyticEnergy(r); },
+            form, parameters, rStart, [=](double r) { return pairPotential_->analyticEnergy(r, 1.0, 1.0); },
             [=](double r) { return pairPotential_->energy(r); });
     }
     // Test analytic vs tabulated force for specified form and parameters
     void testForce(Functions1D::Form form, std::string_view parameters, double rStart = testRDelta_)
     {
         test(
-            form, parameters, rStart, [=](double r) { return pairPotential_->analyticForce(r); },
+            form, parameters, rStart, [=](double r) { return pairPotential_->analyticForce(r, 1.0, 1.0); },
             [=](double r) { return pairPotential_->force(r); });
     }
 };
 
-TEST_F(PairPotentialsTest, NoneForm)
+TEST_F(PairPotentialsAnalyticTest, NoneForm)
 {
     testEnergy(Functions1D::Form::None, "");
     testForce(Functions1D::Form::None, "");
 }
 
-TEST_F(PairPotentialsTest, LennardJonesForm)
+TEST_F(PairPotentialsAnalyticTest, LennardJonesForm)
 {
     // Lennard-Jones is super steep at r -> 0 so start a little after that
     testEnergy(Functions1D::Form::LennardJones126, "epsilon=0.35 sigma=2.166", testRDelta_ * 5);
     testForce(Functions1D::Form::LennardJones126, "epsilon=0.35 sigma=2.166", testRDelta_ * 5);
 }
 
-TEST_F(PairPotentialsTest, Buckingham)
+TEST_F(PairPotentialsAnalyticTest, Buckingham)
 {
     // Values put in for TeO2 from https://pubs.rsc.org/en/content/articlelanding/2014/cp/c4cp01273a
     testEnergy(Functions1D::Form::Buckingham, "A=153919.5503  B=2.8912848  C=96.48514925", testRDelta_ * 5);
     testForce(Functions1D::Form::Buckingham, "A=8005439.257  B=6.211565  C=3025.962812", testRDelta_ * 5);
 }
 
-TEST_F(PairPotentialsTest, Gaussian)
+TEST_F(PairPotentialsAnalyticTest, Gaussian)
 {
     testEnergy(Functions1D::Form::GaussianPotential, "A=1.0  fwhm=2.4  x0=0", testRDelta_ * 5);
     testForce(Functions1D::Form::GaussianPotential, "A=1.0  fwhm=2.4  x0=0", testRDelta_ * 5);

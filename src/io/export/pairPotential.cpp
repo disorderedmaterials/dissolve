@@ -39,7 +39,7 @@ bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotentia
     for (auto &&[r, tot, deriv, sr, coul, add] : zip(shortRange.xAxis(), total.values(), derivative.values(),
                                                      shortRange.values(), coulomb.values(), additional.values()))
         if (!parser.writeLineF("{:10.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}\n", r, tot, deriv,
-                               sr + coul, add, pp->analyticEnergy(r), pp->analyticForce(r)))
+                               sr + coul, add, pp->analyticEnergy(r, 1.0, 1.0), pp->analyticForce(r, 1.0, 1.0)))
             return false;
 
     return true;
