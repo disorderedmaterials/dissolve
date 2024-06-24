@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+#include "modules/gr/gr.h"
 #include "benchmark/benchmark.h"
 #include "common/problems.h"
-#include "modules/gr/gr.h"
 
-template <ProblemType problem, Population population, GRModule::PartialsMethod method>
+template <DissolveBenchmarks::SpeciesType speciesType, DissolveBenchmarks::Population population,
+          GRModule::PartialsMethod method>
 static void BM_CalculateGR(benchmark::State &state)
 {
-    Problem<problem, population> problemDef;
+    DissolveBenchmarks::Problem<speciesType, population> problemDef;
 
     // Setup the GR module
     auto grModule = std::make_unique<GRModule>();
@@ -24,22 +25,28 @@ static void BM_CalculateGR(benchmark::State &state)
     }
 }
 
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::small, GRModule::PartialsMethod::SimpleMethod)
+BENCHMARK_TEMPLATE(BM_CalculateGR, DissolveBenchmarks::SpeciesType::Atomic, DissolveBenchmarks::Population::Small,
+                   GRModule::PartialsMethod::SimpleMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::small, GRModule::PartialsMethod::CellsMethod)
+BENCHMARK_TEMPLATE(BM_CalculateGR, DissolveBenchmarks::SpeciesType::Atomic, DissolveBenchmarks::Population::Small,
+                   GRModule::PartialsMethod::CellsMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::medium, GRModule::PartialsMethod::SimpleMethod)
+BENCHMARK_TEMPLATE(BM_CalculateGR, DissolveBenchmarks::SpeciesType::Atomic, DissolveBenchmarks::Population::Medium,
+                   GRModule::PartialsMethod::SimpleMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::medium, GRModule::PartialsMethod::CellsMethod)
+BENCHMARK_TEMPLATE(BM_CalculateGR, DissolveBenchmarks::SpeciesType::Atomic, DissolveBenchmarks::Population::Medium,
+                   GRModule::PartialsMethod::CellsMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::large, GRModule::PartialsMethod::SimpleMethod)
+BENCHMARK_TEMPLATE(BM_CalculateGR, DissolveBenchmarks::SpeciesType::Atomic, DissolveBenchmarks::Population::Large,
+                   GRModule::PartialsMethod::SimpleMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::large, GRModule::PartialsMethod::CellsMethod)
+BENCHMARK_TEMPLATE(BM_CalculateGR, DissolveBenchmarks::SpeciesType::Atomic, DissolveBenchmarks::Population::Large,
+                   GRModule::PartialsMethod::CellsMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
 

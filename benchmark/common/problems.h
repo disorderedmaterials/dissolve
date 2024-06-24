@@ -9,80 +9,46 @@
 #include "main/dissolve.h"
 #include <string>
 
-namespace
+namespace DissolveBenchmarks
 {
 const char *FILEEXTENSION = ".txt";
-}
-enum ProblemType
+enum class SpeciesType
 {
-    atomic,
-    smallMolecule,
-    mediumMolecule,
-    frameworkMolecule,
+    Atomic,
+    SmallMolecule,
+    MediumMolecule,
+    FrameworkMolecule,
 };
 
-enum Population
+enum class Population
 {
-    single,
-    small,
-    medium,
-    large
+    Single,
+    Small,
+    Medium,
+    Large
 };
 
-template <Population population> std::string getFileName(const std::string &systemName)
+template <SpeciesType speciesType, Population moleculePopulation> std::string benchmarkFilePath()
 {
+    static std::map<SpeciesType, std::string> speciesTypes = {{SpeciesType::Atomic, "argon"},
+                                                              {SpeciesType::SmallMolecule, "water"},
+                                                              {SpeciesType::MediumMolecule, "hexane"},
+                                                              {SpeciesType::FrameworkMolecule, "mof5-3x3x3"}};
+    static std::map<Population, std::string> populationSizes = {
+        {Population::Single, "single"}, {Population::Small, "1k"}, {Population::Medium, "5k"}, {Population::Large, "10k"}};
+
     std::stringstream fileName;
-    fileName << benchmarkInputFilePath << systemName;
-    if constexpr (population == Population::single)
-    {
-        fileName << "single";
-    }
-    else if constexpr (population == Population::small)
-    {
-        fileName << "1k";
-    }
-    else if constexpr (population == Population::medium)
-    {
-        fileName << "5k";
-    }
-    else if constexpr (population == Population::large)
-    {
-        fileName << "10k";
-    }
-    fileName << FILEEXTENSION;
+    fileName << benchmarkInputFilePath << speciesTypes[speciesType] << populationSizes[moleculePopulation] << FILEEXTENSION;
     return fileName.str();
 }
 
-template <ProblemType problem, Population population> std::string benchmarkFilePath()
-{
-    if constexpr (problem == ProblemType::atomic)
-    {
-        return getFileName<population>("argon");
-    }
-    else if constexpr (problem == ProblemType::smallMolecule)
-    {
-        return getFileName<population>("water");
-    }
-    else if constexpr (problem == ProblemType::mediumMolecule)
-    {
-        return getFileName<population>("hexane");
-    }
-    else if constexpr (problem == ProblemType::frameworkMolecule)
-    {
-        return getFileName<population>("mof5-3x3x3");
-    }
-    else
-        return {};
-}
-
-template <ProblemType problem, Population population> class Problem
+template <SpeciesType speciesType, Population population> class Problem
 {
     public:
     Problem() : dissolve_(coreData_)
     {
         Messenger::setQuiet(true);
-        auto file = benchmarkFilePath<problem, population>();
-        dissolve_.loadInput(file);
+        dissolve_.loadInput(benchmarkFilePath<speciesType, population>());
         dissolve_.prepare();
     }
 
@@ -95,3 +61,5 @@ template <ProblemType problem, Population population> class Problem
     Dissolve &dissolve() { return dissolve_; }
     Configuration *configuration() { return coreData_.configurations().front().get(); }
 };
+
+} // namespace DissolveBenchmarks
