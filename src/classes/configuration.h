@@ -51,8 +51,8 @@ class Configuration : public Serialisable<const CoreData &>
     std::string name_;
     // Nice name (generated from name_) used for output files
     std::string niceName_;
-    // Procedure to generate the Configuration
-    Procedure generator_;
+    // Generator for the Configuration
+    Generator generator_;
     static constexpr double defaultTemperature_ = 300.0;
     // Temperature of this configuration (K)
     double temperature_{defaultTemperature_};
@@ -64,9 +64,9 @@ class Configuration : public Serialisable<const CoreData &>
     std::string_view name() const;
     // Return nice name of the Configuration
     std::string_view niceName() const;
-    // Return the current generator
-    Procedure &generator();
-    // Create the Configuration according to its generator Procedure
+    // Return the generator for the Configuration
+    Generator &generator();
+    // Create the Configuration according to its generator
     bool generate(const ProcedureContext &procedureContext);
     // Initialise (generate or load) the basic contents of the Configuration
     bool initialiseContent(const ProcedureContext &procedureContext);

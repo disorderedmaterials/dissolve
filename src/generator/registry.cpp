@@ -27,63 +27,63 @@
 #include "generator/temperature.h"
 #include "generator/transmute.h"
 
-ProcedureNodeRegistry::ProcedureNodeRegistry()
+GeneratorNodeRegistry::GeneratorNodeRegistry()
 {
     // Build
-    registerProducer<AddProcedureNode>(ProcedureNode::NodeType::Add, "Add molecules to a configuration", "Build");
-    registerProducer<AddPairProcedureNode>(ProcedureNode::NodeType::AddPair,
+    registerProducer<AddGeneratorNode>(GeneratorNode::NodeType::Add, "Add molecules to a configuration", "Build");
+    registerProducer<AddPairGeneratorNode>(GeneratorNode::NodeType::AddPair,
                                            "Add a correlated molecule pair to a configuration", "Build");
-    registerProducer<BoxProcedureNode>(ProcedureNode::NodeType::Box, "Define containing box for a configuration", "Build");
-    registerProducer<CoordinateSetsProcedureNode>(ProcedureNode::NodeType::CoordinateSets,
+    registerProducer<BoxGeneratorNode>(GeneratorNode::NodeType::Box, "Define containing box for a configuration", "Build");
+    registerProducer<CoordinateSetsGeneratorNode>(GeneratorNode::NodeType::CoordinateSets,
                                                   "Generate coordinate sets for a species", "Build");
-    registerProducer<CopyProcedureNode>(ProcedureNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
-    registerProducer<ImportCoordinatesProcedureNode>(ProcedureNode::NodeType::ImportCoordinates,
+    registerProducer<CopyGeneratorNode>(GeneratorNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
+    registerProducer<ImportCoordinatesGeneratorNode>(GeneratorNode::NodeType::ImportCoordinates,
                                                      "Import coordinates into a configuration", "Build");
-    registerProducer<RemoveProcedureNode>(ProcedureNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
-    registerProducer<SizeFactorProcedureNode>(ProcedureNode::NodeType::SizeFactor,
+    registerProducer<RemoveGeneratorNode>(GeneratorNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
+    registerProducer<SizeFactorGeneratorNode>(GeneratorNode::NodeType::SizeFactor,
                                               "Scale a configuration's contents with a size factor", "Build");
-    registerProducer<TemperatureProcedureNode>(ProcedureNode::NodeType::Temperature, "Set temperature for configuration",
+    registerProducer<TemperatureGeneratorNode>(GeneratorNode::NodeType::Temperature, "Set temperature for configuration",
                                                "Build");
-    registerProducer<TransmuteProcedureNode>(ProcedureNode::NodeType::Transmute,
+    registerProducer<TransmuteGeneratorNode>(GeneratorNode::NodeType::Transmute,
                                              "Turn molecules from one species type into another", "Build");
 
     // General
-    registerProducer<ParametersProcedureNode>(ProcedureNode::NodeType::Parameters, "Define parameters for use in expressions",
+    registerProducer<ParametersGeneratorNode>(GeneratorNode::NodeType::Parameters, "Define parameters for use in expressions",
                                               "General");
 
     // Regions
-    registerProducer<CustomRegionProcedureNode>(ProcedureNode::NodeType::CustomRegion,
+    registerProducer<CustomRegionGeneratorNode>(GeneratorNode::NodeType::CustomRegion,
                                                 "Generate a custom region based on an expression", "Regions");
-    registerProducer<CylindricalRegionProcedureNode>(ProcedureNode::NodeType::CylindricalRegion,
+    registerProducer<CylindricalRegionGeneratorNode>(GeneratorNode::NodeType::CylindricalRegion,
                                                      "Define a cylindrical region in a configuration", "Regions");
-    registerProducer<GeneralRegionProcedureNode>(ProcedureNode::NodeType::GeneralRegion,
+    registerProducer<GeneralRegionGeneratorNode>(GeneratorNode::NodeType::GeneralRegion,
                                                  "Define a general region in a configuration", "Regions");
 
     // Pick
-    registerProducer<PickProcedureNode>(ProcedureNode::NodeType::Pick, "Pick all molecules of a given species", "Pick");
-    registerProducer<PickProximityProcedureNode>(ProcedureNode::NodeType::PickProximity,
+    registerProducer<PickGeneratorNode>(GeneratorNode::NodeType::Pick, "Pick all molecules of a given species", "Pick");
+    registerProducer<PickProximityGeneratorNode>(GeneratorNode::NodeType::PickProximity,
                                                  "Pick molecules based on proximity to others", "Pick");
-    registerProducer<PickRegionProcedureNode>(ProcedureNode::NodeType::PickRegion, "Pick molecules within a specific region",
+    registerProducer<PickRegionGeneratorNode>(GeneratorNode::NodeType::PickRegion, "Pick molecules within a specific region",
                                               "Pick");
 
     // Potentials
-    registerProducer<CylindricalGlobalPotentialProcedureNode>(ProcedureNode::NodeType::CylindricalGlobalPotential,
+    registerProducer<CylindricalGlobalPotentialGeneratorNode>(GeneratorNode::NodeType::CylindricalGlobalPotential,
                                                               "Add a cylindrical global potential affecting all atoms",
                                                               "Potentials");
-    registerProducer<RegionalGlobalPotentialProcedureNode>(
-        ProcedureNode::NodeType::RegionalGlobalPotential, "Add a voxelised global potential affecting all atoms", "Potentials");
-    registerProducer<RestraintPotentialProcedureNode>(ProcedureNode::NodeType::RestraintPotential,
+    registerProducer<RegionalGlobalPotentialGeneratorNode>(
+        GeneratorNode::NodeType::RegionalGlobalPotential, "Add a voxelised global potential affecting all atoms", "Potentials");
+    registerProducer<RestraintPotentialGeneratorNode>(GeneratorNode::NodeType::RestraintPotential,
                                                       "Restraint atoms of molecules to their current positions", "Potentials");
-    registerProducer<SphericalGlobalPotentialProcedureNode>(ProcedureNode::NodeType::SphericalGlobalPotential,
+    registerProducer<SphericalGlobalPotentialGeneratorNode>(GeneratorNode::NodeType::SphericalGlobalPotential,
                                                             "Add a spherical global potential affecting all atoms",
                                                             "Potentials");
 
     // Sites
-    registerProducer<SelectProcedureNode>(ProcedureNode::NodeType::Select, "Rotate fragment sites", "Sites");
-    registerProducer<RotateFragmentProcedureNode>(ProcedureNode::NodeType::RotateFragment, "Rotate fragment sites", "Sites");
+    registerProducer<SelectGeneratorNode>(GeneratorNode::NodeType::Select, "Rotate fragment sites", "Sites");
+    registerProducer<RotateFragmentGeneratorNode>(GeneratorNode::NodeType::RotateFragment, "Rotate fragment sites", "Sites");
 
     // Control
-    registerProducer<RunLayerNode>(ProcedureNode::NodeType::RunLayer, "Run layer", "Control");
+    registerProducer<RunLayerNode>(GeneratorNode::NodeType::RunLayer, "Run layer", "Control");
 }
 
 /*
@@ -91,20 +91,20 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
  */
 
 // Produce node of specified type
-std::shared_ptr<ProcedureNode> ProcedureNodeRegistry::produce(ProcedureNode::NodeType nodeType) const
+std::shared_ptr<GeneratorNode> GeneratorNodeRegistry::produce(GeneratorNode::NodeType nodeType) const
 {
     auto it = producers_.find(nodeType);
     if (it == producers_.end())
         throw(std::runtime_error(
             fmt::format("A producer has not been registered for node type '{}', so a new instance cannot be created.\n",
-                        ProcedureNode::nodeTypes().keyword(nodeType))));
+                        GeneratorNode::nodeTypes().keyword(nodeType))));
 
     return (it->second.first)();
 }
 
 // Return categorised map of nodes
-const std::map<std::string, std::vector<ProcedureNodeRegistry::ProcedureNodeInfoData>> &
-ProcedureNodeRegistry::categories() const
+const std::map<std::string, std::vector<GeneratorNodeRegistry::GeneratorNodeInfoData>> &
+GeneratorNodeRegistry::categories() const
 {
     return categories_;
 }
@@ -114,25 +114,25 @@ ProcedureNodeRegistry::categories() const
  */
 
 // Return the producer instance
-const ProcedureNodeRegistry &ProcedureNodeRegistry::instance()
+const GeneratorNodeRegistry &GeneratorNodeRegistry::instance()
 {
-    static ProcedureNodeRegistry instance;
+    static GeneratorNodeRegistry instance;
 
     return instance;
 }
 
 /*
- * ProcedureNode Management
+ * GeneratorNode Management
  */
 
 // Return category map
-const std::map<std::string, std::vector<ProcedureNodeRegistry::ProcedureNodeInfoData>> &ProcedureNodeRegistry::categoryMap()
+const std::map<std::string, std::vector<GeneratorNodeRegistry::GeneratorNodeInfoData>> &GeneratorNodeRegistry::categoryMap()
 {
     return instance().categories();
 }
 
-// Create a ProcedureNode instance for the named ProcedureNode type
-std::shared_ptr<ProcedureNode> ProcedureNodeRegistry::create(ProcedureNode::NodeType nodeType)
+// Create a GeneratorNode instance for the named GeneratorNode type
+std::shared_ptr<GeneratorNode> GeneratorNodeRegistry::create(GeneratorNode::NodeType nodeType)
 {
-    return std::shared_ptr<ProcedureNode>(instance().produce(nodeType));
+    return std::shared_ptr<GeneratorNode>(instance().produce(nodeType));
 }

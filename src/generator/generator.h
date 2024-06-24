@@ -11,19 +11,19 @@
 class Configuration;
 class LineParser;
 
-// Procedure
-class Procedure : public Serialisable<const CoreData &>
+// Generator
+class Generator : public Serialisable<const CoreData &>
 {
     public:
-    Procedure(std::string_view blockTerminationKeyword = "EndProcedure");
-    ~Procedure();
+    Generator(std::string_view blockTerminationKeyword = "EndGenerator");
+    ~Generator();
 
     /*
      * Data
      */
     private:
-    // Sequence node from which the Procedure starts
-    ProcedureNodeSequence rootSequence_;
+    // Sequence node from which the Generator starts
+    GeneratorNodeSequence rootSequence_;
 
     public:
     // Clear all data
@@ -34,12 +34,12 @@ class Procedure : public Serialisable<const CoreData &>
         return rootSequence_.create<N>(name, args...);
     }
     // Return root sequence
-    ProcedureNodeSequence &rootSequence();
+    GeneratorNodeSequence &rootSequence();
     // Return named node if present (and matches the type / class given)
     ConstNodeRef node(std::string_view name, const ConstNodeRef &excludeNode = {},
-                      const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
+                      const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return all nodes matching the optional type(s) given
-    std::vector<ConstNodeRef> nodes(const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
+    std::vector<ConstNodeRef> nodes(const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Remove a node
     bool removeNode(NodeRef node);
 
@@ -51,16 +51,16 @@ class Procedure : public Serialisable<const CoreData &>
     std::vector<std::pair<Configuration *, int>> configurationPoints_;
 
     public:
-    // Run procedure in the specified data context
+    // Run generator in the specified data context
     bool execute(const ProcedureContext &context);
 
     /*
      * Read / Write
      */
     public:
-    // Read procedure from specified LineParser
+    // Read generator from specified LineParser
     bool deserialise(LineParser &parser, const CoreData &coreData);
-    // Write procedure to specified LineParser
+    // Write generator to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix);
     // Express as a serialisable value.
     SerialisedValue serialise() const override;

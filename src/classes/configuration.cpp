@@ -55,9 +55,9 @@ std::string_view Configuration::name() const { return name_; }
 std::string_view Configuration::niceName() const { return niceName_; }
 
 // Return the current generator
-Procedure &Configuration::generator() { return generator_; }
+Generator &Configuration::generator() { return generator_; }
 
-// Create the Configuration according to its generator Procedure
+// Create the Configuration according to its generator
 bool Configuration::generate(const ProcedureContext &procedureContext)
 {
     // Empty the current contents
@@ -99,7 +99,7 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
 
     appliedSizeFactor_ = std::nullopt;
 
-    // Run the generator Procedure
+    // Run the generator Generator
     if (!generate(procedureContext))
         return false;
 

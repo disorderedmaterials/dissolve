@@ -9,8 +9,8 @@
 #include "keywords/bool.h"
 #include "keywords/vec3NodeValue.h"
 
-BoxProcedureNode::BoxProcedureNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angles, bool nonPeriodic)
-    : ProcedureNode(NodeType::Box), angles_(std::move(angles)), lengths_(std::move(lengths)), nonPeriodic_(nonPeriodic)
+BoxGeneratorNode::BoxGeneratorNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angles, bool nonPeriodic)
+    : GeneratorNode(NodeType::Box), angles_(std::move(angles)), lengths_(std::move(lengths)), nonPeriodic_(nonPeriodic)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<Vec3NodeValueKeyword>("Lengths", "Box lengths", lengths_, this, Vec3Labels::ABCLabels);
@@ -23,17 +23,17 @@ BoxProcedureNode::BoxProcedureNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angl
  */
 
 // Return whether a name for the node must be provided
-bool BoxProcedureNode::mustBeNamed() const { return false; }
+bool BoxGeneratorNode::mustBeNamed() const { return false; }
 
 /*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool BoxProcedureNode::prepare(const ProcedureContext &procedureContext) { return true; }
+bool BoxGeneratorNode::prepare(const ProcedureContext &procedureContext) { return true; }
 
 // Execute node
-bool BoxProcedureNode::execute(const ProcedureContext &procedureContext)
+bool BoxGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     // Create a Box in the target Configuration with our lengths and angles
     procedureContext.configuration()->createBox({lengths_.x.asDouble(), lengths_.y.asDouble(), lengths_.z.asDouble()},

@@ -4,11 +4,11 @@
 #pragma once
 
 #include "generator/node.h"
-class SizeFactorProcedureNode : public ProcedureNode
+class SizeFactorGeneratorNode : public GeneratorNode
 {
     public:
-    SizeFactorProcedureNode();
-    ~SizeFactorProcedureNode() override = default;
+    SizeFactorGeneratorNode();
+    ~SizeFactorGeneratorNode() override = default;
 
     /*
      * Node Data

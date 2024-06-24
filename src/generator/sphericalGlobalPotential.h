@@ -6,12 +6,12 @@
 #include "generator/node.h"
 #include "kernels/potentials/spherical.h"
 
-// Spherical Global Potential Procedure Node
-class SphericalGlobalPotentialProcedureNode : public ProcedureNode
+// Spherical Global Potential
+class SphericalGlobalPotentialGeneratorNode : public GeneratorNode
 {
     public:
-    SphericalGlobalPotentialProcedureNode();
-    ~SphericalGlobalPotentialProcedureNode() override = default;
+    SphericalGlobalPotentialGeneratorNode();
+    ~SphericalGlobalPotentialGeneratorNode() override = default;
 
     /*
      * Potential Function

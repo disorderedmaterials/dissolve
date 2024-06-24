@@ -7,12 +7,12 @@
 #include "generator/nodeValue.h"
 
 // Box Node
-class BoxProcedureNode : public ProcedureNode
+class BoxGeneratorNode : public GeneratorNode
 {
     public:
-    BoxProcedureNode(Vec3<NodeValue> lengths = {1.0, 1.0, 1.0}, Vec3<NodeValue> angles = {90, 90, 90},
+    BoxGeneratorNode(Vec3<NodeValue> lengths = {1.0, 1.0, 1.0}, Vec3<NodeValue> angles = {90, 90, 90},
                      bool nonPeriodic = false);
-    ~BoxProcedureNode() override = default;
+    ~BoxGeneratorNode() override = default;
 
     /*
      * Identity

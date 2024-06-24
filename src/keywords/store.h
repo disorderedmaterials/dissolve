@@ -14,8 +14,8 @@
 #include <map>
 #include <typeindex>
 
-class SelectProcedureNode;
-class RegionProcedureNodeBase;
+class SelectGeneratorNode;
+class RegionGeneratorNodeBase;
 class SQModule;
 class RDFModule;
 class Configuration;
@@ -174,9 +174,9 @@ class KeywordStore
     bool set(std::string_view name, const Vec3<NodeValue> value);
     bool set(std::string_view name, const Range value);
     bool set(std::string_view name, const std::vector<const SpeciesSite *> value);
-    bool set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value);
-    bool set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value);
-    bool set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value);
+    bool set(std::string_view name, const std::shared_ptr<RegionGeneratorNodeBase> value);
+    bool set(std::string_view name, const std::shared_ptr<SelectGeneratorNode> value);
+    bool set(std::string_view name, const ConstNodeVector<SelectGeneratorNode> value);
     bool set(std::string_view name, const std::vector<Module *> value);
     bool set(std::string_view name, const Module *value);
     bool set(std::string_view name, Configuration *value);

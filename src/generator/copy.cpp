@@ -8,7 +8,7 @@
 #include "keywords/speciesVector.h"
 #include <algorithm>
 
-CopyProcedureNode::CopyProcedureNode(Configuration *cfg) : ProcedureNode(NodeType::Copy), source_(cfg)
+CopyGeneratorNode::CopyGeneratorNode(Configuration *cfg) : GeneratorNode(NodeType::Copy), source_(cfg)
 {
     keywords_.setOrganisation("Options", "Configuration");
     keywords_.add<ConfigurationKeyword>("Source", "Source configuration to copy", source_);
@@ -22,14 +22,14 @@ CopyProcedureNode::CopyProcedureNode(Configuration *cfg) : ProcedureNode(NodeTyp
  */
 
 // Return whether a name for the node must be provided
-bool CopyProcedureNode::mustBeNamed() const { return false; }
+bool CopyGeneratorNode::mustBeNamed() const { return false; }
 
 /*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool CopyProcedureNode::prepare(const ProcedureContext &procedureContext)
+bool CopyGeneratorNode::prepare(const ProcedureContext &procedureContext)
 {
     // Check for valid source configuration
     if (!source_)
@@ -41,7 +41,7 @@ bool CopyProcedureNode::prepare(const ProcedureContext &procedureContext)
 }
 
 // Execute node
-bool CopyProcedureNode::execute(const ProcedureContext &procedureContext)
+bool CopyGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     auto *cfg = procedureContext.configuration();
 

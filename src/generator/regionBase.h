@@ -14,11 +14,11 @@ class Box;
 class Configuration;
 
 // Region Node Base
-class RegionProcedureNodeBase : public ProcedureNode
+class RegionGeneratorNodeBase : public GeneratorNode
 {
     public:
-    explicit RegionProcedureNodeBase(ProcedureNode::NodeType nodeType);
-    ~RegionProcedureNodeBase() override = default;
+    explicit RegionGeneratorNodeBase(GeneratorNode::NodeType nodeType);
+    ~RegionGeneratorNodeBase() override = default;
 
     /*
      * Identity

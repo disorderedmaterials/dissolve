@@ -5,11 +5,11 @@
 #include "generator/regionBase.h"
 #include "keywords/node.h"
 
-PickRegionProcedureNode::PickRegionProcedureNode(std::shared_ptr<const RegionProcedureNodeBase> region)
-    : PickProcedureNodeBase(ProcedureNode::NodeType::PickRegion), region_(region)
+PickRegionGeneratorNode::PickRegionGeneratorNode(std::shared_ptr<const RegionGeneratorNodeBase> region)
+    : PickGeneratorNodeBase(GeneratorNode::NodeType::PickRegion), region_(region)
 {
     keywords_.setOrganisation("Options", "Pick Targets");
-    keywords_.add<NodeKeyword<RegionProcedureNodeBase>>(
+    keywords_.add<NodeKeyword<RegionGeneratorNodeBase>>(
         "Region", "Region containing molecules that should be picked", region_, this,
         NodeTypeVector{NodeType::CylindricalRegion, NodeType::GeneralRegion, NodeType::CustomRegion});
 }
@@ -19,7 +19,7 @@ PickRegionProcedureNode::PickRegionProcedureNode(std::shared_ptr<const RegionPro
  */
 
 // Prepare any necessary data, ready for execution
-bool PickRegionProcedureNode::prepare(const ProcedureContext &procedureContext)
+bool PickRegionGeneratorNode::prepare(const ProcedureContext &procedureContext)
 {
     if (!region_)
         return Messenger::error("A region must be supplied to PickRegion.\n");
@@ -28,7 +28,7 @@ bool PickRegionProcedureNode::prepare(const ProcedureContext &procedureContext)
 }
 
 // Execute node
-bool PickRegionProcedureNode::execute(const ProcedureContext &procedureContext)
+bool PickRegionGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     Messenger::print("[PickRegion] Molecules will be selected from {}.\n", moleculePoolName());
     Messenger::print("[PickRegion] Target region is '{}'.\n", region_->name());

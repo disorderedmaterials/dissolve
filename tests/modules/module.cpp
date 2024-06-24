@@ -41,7 +41,7 @@ TEST_F(ModuleTest, ConfigurationTargets)
 
     // Switch the configuration for a copy of the original
     Configuration cfg;
-    cfg.generator().createRootNode<CopyProcedureNode>("CopyConfig", systemTest.dissolve().coreData().configuration(0));
+    cfg.generator().createRootNode<CopyGeneratorNode>("CopyConfig", systemTest.dissolve().coreData().configuration(0));
     cfg.generate({systemTest.dissolve()});
     siteRDF->keywords().set("Configuration", &cfg);
 

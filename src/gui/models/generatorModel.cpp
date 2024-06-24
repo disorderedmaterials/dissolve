@@ -1,43 +1,43 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/models/procedureModel.h"
+#include "gui/models/generatorModel.h"
 #include "generator/generator.h"
 #include "generator/registry.h"
-#include "gui/models/procedureModelMimeData.h"
+#include "gui/models/generatorModelMimeData.h"
 #include <QIODevice>
 #include <QIcon>
 #include <QMimeData>
 
-ProcedureModel::ProcedureModel(OptionalReferenceWrapper<Procedure> procedure) : procedure_(procedure) {}
+GeneratorModel::GeneratorModel(OptionalReferenceWrapper<Generator> generator) : generator_(generator) {}
 
-// Set source Procedure
-void ProcedureModel::setData(Procedure &procedure)
+// Set source Generator
+void GeneratorModel::setData(Generator &generator)
 {
     beginResetModel();
-    procedure_ = procedure;
+    generator_ = generator;
     endResetModel();
 }
 
 // Reset model data, forcing update
-void ProcedureModel::reset()
+void GeneratorModel::reset()
 {
     beginResetModel();
     endResetModel();
 }
 
 // Return raw data for supplied index
-ProcedureNode *ProcedureModel::rawData(const QModelIndex &index) const
+GeneratorNode *GeneratorModel::rawData(const QModelIndex &index) const
 {
-    return static_cast<ProcedureNode *>(index.internalPointer());
+    return static_cast<GeneratorNode *>(index.internalPointer());
 }
 
 // Return sequence scope for supplied index
-OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureModel::getScope(const QModelIndex &index) const
+OptionalReferenceWrapper<GeneratorNodeSequence> GeneratorModel::getScope(const QModelIndex &index) const
 {
-    // If the index is invalid then we return the root sequence of the procedure. Otherwise, the index's branch.
+    // If the index is invalid then we return the root sequence of the generator. Otherwise, the index's branch.
     if (!index.isValid())
-        return procedure_->get().rootSequence();
+        return generator_->get().rootSequence();
 
     auto node = rawData(index);
     if (node)
@@ -50,34 +50,34 @@ OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureModel::getScope(const Q
  * QAbstractItemModel overrides
  */
 
-int ProcedureModel::rowCount(const QModelIndex &parent) const
+int GeneratorModel::rowCount(const QModelIndex &parent) const
 {
-    if (!procedure_)
+    if (!generator_)
         return 0;
 
     // If the index doesn't have a valid internal pointer we're probing the root of the model, so return the number of root
     // sequence nodes
     if (!parent.internalPointer())
-        return procedure_->get().rootSequence().nNodes();
+        return generator_->get().rootSequence().nNodes();
 
-    auto node = static_cast<ProcedureNode *>(parent.internalPointer());
+    auto node = static_cast<GeneratorNode *>(parent.internalPointer());
     if (node && node->branch())
         return node->branch()->get().nNodes();
 
     return 0;
 }
 
-int ProcedureModel::columnCount(const QModelIndex &parent) const
+int GeneratorModel::columnCount(const QModelIndex &parent) const
 {
-    if (!procedure_)
+    if (!generator_)
         return 0;
 
     return 1;
 }
 
-QVariant ProcedureModel::data(const QModelIndex &index, int role) const
+QVariant GeneratorModel::data(const QModelIndex &index, int role) const
 {
-    if (!procedure_ || index.column() != 0)
+    if (!generator_ || index.column() != 0)
         return {};
 
     // Cast the index internal pointer to a node
@@ -89,23 +89,23 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
     {
         case (Qt::DisplayRole):
             if (node->name().empty())
-                return QString::fromStdString(ProcedureNode::nodeTypes().keyword(node->type()));
+                return QString::fromStdString(GeneratorNode::nodeTypes().keyword(node->type()));
             else
                 return QString("%1 (%2)").arg(QString::fromStdString(std::string(node->name())),
-                                              QString::fromStdString(ProcedureNode::nodeTypes().keyword(node->type())));
+                                              QString::fromStdString(GeneratorNode::nodeTypes().keyword(node->type())));
         case (Qt::UserRole):
             return QVariant::fromValue(node->shared_from_this());
         case (Qt::DecorationRole):
             return QIcon(QPixmap(QString(":/nodes/icons/nodes/%1.svg")
-                                     .arg(QString::fromStdString(ProcedureNode::nodeTypes().keyword(node->type())))));
+                                     .arg(QString::fromStdString(GeneratorNode::nodeTypes().keyword(node->type())))));
         default:
             return {};
     }
 }
 
-bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool GeneratorModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (!procedure_)
+    if (!generator_)
         return false;
 
     if (role == Qt::EditRole)
@@ -115,7 +115,7 @@ bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, in
             return false;
 
         // Get a ConstNodeRef to the target node
-        auto nodeRef = procedure_->get().node(node->name());
+        auto nodeRef = generator_->get().node(node->name());
 
         auto oldName = std::string{node->name()}, newName = value.toString().toStdString();
 
@@ -126,7 +126,7 @@ bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, in
         // Ensure uniqueness of new name
         auto uniqueName = newName;
         auto suffix = 0;
-        while (procedure_->get().node(uniqueName, nodeRef))
+        while (generator_->get().node(uniqueName, nodeRef))
             uniqueName = fmt::format("{}{:02d}", newName, ++suffix);
 
         node->setName(uniqueName);
@@ -136,17 +136,17 @@ bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, in
 
         return true;
     }
-    else if (role == ProcedureModelAction::MoveInternal)
+    else if (role == GeneratorModelAction::MoveInternal)
     {
         // Nothing to set here - everything has already been handled by dropMimeData().
         // We just need to flag that the data have changed.
         Q_EMIT dataChanged(index, index);
         return true;
     }
-    else if (role == ProcedureModelAction::CreateNew)
+    else if (role == GeneratorModelAction::CreateNew)
     {
         // Probably indicates a drop operation - the variant contains the shared_ptr of our new node
-        auto newNode = value.value<std::shared_ptr<ProcedureNode>>();
+        auto newNode = value.value<std::shared_ptr<GeneratorNode>>();
         if (!newNode)
             return false;
 
@@ -160,7 +160,7 @@ bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, in
     return false;
 }
 
-QVariant ProcedureModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant GeneratorModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole || orientation != Qt::Horizontal || section != 0)
         return {};
@@ -168,26 +168,26 @@ QVariant ProcedureModel::headerData(int section, Qt::Orientation orientation, in
     return "Node";
 }
 
-QModelIndex ProcedureModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex GeneratorModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if (!procedure_)
+    if (!generator_)
         return {};
 
     // Check the parent's internal pointer - if null then it's a root sequence node
     if (!parent.internalPointer())
-        return createIndex(row, column, procedure_->get().rootSequence().sequence()[row].get());
+        return createIndex(row, column, generator_->get().rootSequence().sequence()[row].get());
 
     // Parent is another node, so it should have a branch/sequence that we can refer to
-    auto parentNode = static_cast<ProcedureNode *>(parent.internalPointer());
+    auto parentNode = static_cast<GeneratorNode *>(parent.internalPointer());
     if (!parentNode || !parentNode->branch())
         return {};
 
     return createIndex(row, column, parentNode->branch()->get().sequence()[row].get());
 }
 
-QModelIndex ProcedureModel::parent(const QModelIndex &index) const
+QModelIndex GeneratorModel::parent(const QModelIndex &index) const
 {
-    if (!procedure_)
+    if (!generator_)
         return {};
 
     auto node = rawData(index);
@@ -200,11 +200,11 @@ QModelIndex ProcedureModel::parent(const QModelIndex &index) const
         return createIndex(-1, -1, nullptr);
 
     // Otherwise we need to find the row index of the parent node in its sequence (i.e. its owner's branch)
-    // If the parent's parent is null then we retrieve a row index from the root procedure
+    // If the parent's parent is null then we retrieve a row index from the root generator
     auto nodeParentParent = nodeParent->parent();
     if (!nodeParentParent)
     {
-        auto &rootSeq = procedure_->get().rootSequence().sequence();
+        auto &rootSeq = generator_->get().rootSequence().sequence();
         auto it =
             std::find_if(rootSeq.begin(), rootSeq.end(), [nodeParent](const auto &node) { return node.get() == nodeParent; });
         return createIndex(it - rootSeq.begin(), 0, nodeParent);
@@ -220,9 +220,9 @@ QModelIndex ProcedureModel::parent(const QModelIndex &index) const
     }
 }
 
-bool ProcedureModel::hasChildren(const QModelIndex &parent) const
+bool GeneratorModel::hasChildren(const QModelIndex &parent) const
 {
-    if (!procedure_)
+    if (!generator_)
         return false;
 
     // If the internal pointer is null then we're questioning the root node, so return 'true'
@@ -230,37 +230,37 @@ bool ProcedureModel::hasChildren(const QModelIndex &parent) const
         return true;
 
     // Check the node for a branch
-    auto node = static_cast<ProcedureNode *>(parent.internalPointer());
+    auto node = static_cast<GeneratorNode *>(parent.internalPointer());
     return (node && node->branch());
 }
 
-Qt::ItemFlags ProcedureModel::flags(const QModelIndex &index) const
+Qt::ItemFlags GeneratorModel::flags(const QModelIndex &index) const
 {
     return index.column() == 0
                ? Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled
                : Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
 }
 
-Qt::DropActions ProcedureModel::supportedDragActions() const { return Qt::MoveAction; }
+Qt::DropActions GeneratorModel::supportedDragActions() const { return Qt::MoveAction; }
 
-Qt::DropActions ProcedureModel::supportedDropActions() const { return Qt::MoveAction | Qt::CopyAction; }
+Qt::DropActions GeneratorModel::supportedDropActions() const { return Qt::MoveAction | Qt::CopyAction; }
 
-QStringList ProcedureModel::mimeTypes() const
+QStringList GeneratorModel::mimeTypes() const
 {
     QStringList types;
-    types << "application/dissolve.procedure.existingNode";
-    types << "application/dissolve.procedure.newNode";
+    types << "application/dissolve.generator.existingNode";
+    types << "application/dissolve.generator.newNode";
     return types;
 }
 
-QMimeData *ProcedureModel::mimeData(const QModelIndexList &indexes) const
+QMimeData *GeneratorModel::mimeData(const QModelIndexList &indexes) const
 {
-    auto *mimeData = new ProcedureModelMimeData(indexes.front());
+    auto *mimeData = new GeneratorModelMimeData(indexes.front());
 
     return mimeData;
 }
 
-bool ProcedureModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
+bool GeneratorModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
                                      const QModelIndex &parent) const
 {
     Q_UNUSED(action);
@@ -271,10 +271,10 @@ bool ProcedureModel::canDropMimeData(const QMimeData *data, Qt::DropAction actio
         return false;
 
     // Move node internally
-    if (data->hasFormat("application/dissolve.procedure.existingNode"))
+    if (data->hasFormat("application/dissolve.generator.existingNode"))
     {
         // Cast up the provided data
-        auto mimeData = static_cast<const ProcedureModelMimeData *>(data);
+        auto mimeData = static_cast<const GeneratorModelMimeData *>(data);
         if (!mimeData)
             return false;
 
@@ -291,7 +291,7 @@ bool ProcedureModel::canDropMimeData(const QMimeData *data, Qt::DropAction actio
 
         // If there is a valid parent then the target scope belongs to that node. If the new row and column index are -1 then we
         // were dropped right on another node, so we add at the beginning of the target scope.
-        auto scope = parent.isValid() ? rawData(parent)->branch() : procedure_->get().rootSequence();
+        auto scope = parent.isValid() ? rawData(parent)->branch() : generator_->get().rootSequence();
         if (!scope)
             return false;
 
@@ -299,10 +299,10 @@ bool ProcedureModel::canDropMimeData(const QMimeData *data, Qt::DropAction actio
     }
 
     // Drag / drop node type from palette (create new item in model)
-    if (data->hasFormat("application/dissolve.procedure.newNode"))
+    if (data->hasFormat("application/dissolve.generator.newNode"))
     {
         // Cast up the provided data
-        auto mimeData = static_cast<const ProcedureModelMimeData *>(data);
+        auto mimeData = static_cast<const GeneratorModelMimeData *>(data);
         if (!mimeData || !mimeData->nodeType())
             return false;
 
@@ -320,7 +320,7 @@ bool ProcedureModel::canDropMimeData(const QMimeData *data, Qt::DropAction actio
     return false;
 }
 
-bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
+bool GeneratorModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
                                   const QModelIndex &newParent)
 {
     if (!canDropMimeData(data, action, row, column, newParent))
@@ -328,10 +328,10 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 
     if (action == Qt::IgnoreAction)
         return true;
-    else if (action == Qt::MoveAction && data->hasFormat("application/dissolve.procedure.existingNode"))
+    else if (action == Qt::MoveAction && data->hasFormat("application/dissolve.generator.existingNode"))
     {
         // Cast up the provided data
-        auto mimeData = static_cast<const ProcedureModelMimeData *>(data);
+        auto mimeData = static_cast<const GeneratorModelMimeData *>(data);
         if (!mimeData)
             return false;
 
@@ -378,12 +378,12 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 
         // Set the new data - we call this just to emit dataChanged() from the correct place.
         auto idx = index(insertAtRow, 0, newParent);
-        return setData(idx, QVariant::fromValue(mimeData->node()), ProcedureModelAction::MoveInternal);
+        return setData(idx, QVariant::fromValue(mimeData->node()), GeneratorModelAction::MoveInternal);
     }
-    else if (action == Qt::CopyAction && data->hasFormat("application/dissolve.procedure.newNode"))
+    else if (action == Qt::CopyAction && data->hasFormat("application/dissolve.generator.newNode"))
     {
         // Cast up the provided data
-        auto mimeData = static_cast<const ProcedureModelMimeData *>(data);
+        auto mimeData = static_cast<const GeneratorModelMimeData *>(data);
         if (!mimeData || !mimeData->node())
             return false;
 
@@ -403,15 +403,15 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         auto idx = index(insertAtRow, 0, newParent);
 
         // Call setData() so we emit the right signals
-        return setData(idx, QVariant::fromValue(mimeData->node()), ProcedureModelAction::CreateNew);
+        return setData(idx, QVariant::fromValue(mimeData->node()), GeneratorModelAction::CreateNew);
     }
 
     return false;
 }
 
-bool ProcedureModel::insertRows(int row, int count, const QModelIndex &parent)
+bool GeneratorModel::insertRows(int row, int count, const QModelIndex &parent)
 {
-    if (!procedure_)
+    if (!generator_)
         return false;
 
     // Get the scope associated to the parent index
@@ -425,9 +425,9 @@ bool ProcedureModel::insertRows(int row, int count, const QModelIndex &parent)
     return true;
 }
 
-bool ProcedureModel::removeRows(int row, int count, const QModelIndex &parent)
+bool GeneratorModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    if (!procedure_)
+    if (!generator_)
         return false;
 
     // Get the scope associated to the parent index
@@ -435,7 +435,7 @@ bool ProcedureModel::removeRows(int row, int count, const QModelIndex &parent)
 
     beginRemoveRows(parent, row, row + count - 1);
     for (auto i = 0; i < count; ++i)
-        scope->get().removeNode(data(index(row + i, 0), Qt::UserRole).value<std::shared_ptr<ProcedureNode>>());
+        scope->get().removeNode(data(index(row + i, 0), Qt::UserRole).value<std::shared_ptr<GeneratorNode>>());
     endRemoveRows();
 
     Q_EMIT(dataChanged(QModelIndex(), QModelIndex()));

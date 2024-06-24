@@ -10,7 +10,7 @@
 #include "keywords/speciesVector.h"
 #include "templates/algorithms.h"
 
-PickProximityProcedureNode::PickProximityProcedureNode() : PickProcedureNodeBase(ProcedureNode::NodeType::PickProximity)
+PickProximityGeneratorNode::PickProximityGeneratorNode() : PickGeneratorNodeBase(GeneratorNode::NodeType::PickProximity)
 {
     keywords_.setOrganisation("Options", "Proximal Species");
     keywords_.add<SpeciesVectorKeyword>("Species", "Species to count", speciesToPick_);
@@ -27,7 +27,7 @@ PickProximityProcedureNode::PickProximityProcedureNode() : PickProcedureNodeBase
  */
 
 // Execute node
-bool PickProximityProcedureNode::execute(const ProcedureContext &procedureContext)
+bool PickProximityGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     Messenger::print("[PickProximity] Molecules will be selected from {}.\n", moleculePoolName());
 

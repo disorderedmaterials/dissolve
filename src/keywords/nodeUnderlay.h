@@ -5,33 +5,33 @@
 
 #include "generator/node.h"
 
-// Underlay class for ProcedureNode-based Keywords
+// Underlay class for GeneratorNode-based Keywords
 class NodeKeywordUnderlay
 {
     public:
-    NodeKeywordUnderlay(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes);
+    NodeKeywordUnderlay(GeneratorNode *parentNode, const GeneratorNode::NodeTypeVector &allowedNodeTypes);
     virtual ~NodeKeywordUnderlay() = default;
 
     /*
      * Data
      */
     protected:
-    // Parent ProcedureNode
+    // Parent GeneratorNode
     NodeRef parentNode_;
     // Optional target node types to allow
-    ProcedureNode::NodeTypeVector allowedNodeTypes_;
+    GeneratorNode::NodeTypeVector allowedNodeTypes_;
 
     public:
-    // Return parent ProcedureNode
+    // Return parent GeneratorNode
     NodeRef parentNode() const;
     // Return optional target nodes type to allow
-    const ProcedureNode::NodeTypeVector &allowedNodeTypes() const;
+    const GeneratorNode::NodeTypeVector &allowedNodeTypes() const;
     // Return vector of possible nodes allowed based on class and type definitions
     std::vector<ConstNodeRef> allowedNodes() const;
     // Find the named node, obeying scope
     ConstNodeRef findNode(std::string_view name) const;
     // Return whether the supplied node has valid type
-    bool validNode(const ProcedureNode *node, std::string_view keywordName) const;
+    bool validNode(const GeneratorNode *node, std::string_view keywordName) const;
     // Validate current data, returning false if invalid data had to be pruned
     virtual bool validate() = 0;
 };

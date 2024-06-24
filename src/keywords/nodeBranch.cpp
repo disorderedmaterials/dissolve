@@ -6,7 +6,7 @@
 #include "generator/node.h"
 #include "generator/sequence.h"
 
-NodeBranchKeyword::NodeBranchKeyword(ProcedureNodeSequence &data) : KeywordBase(typeid(this)), data_(data) {}
+NodeBranchKeyword::NodeBranchKeyword(GeneratorNodeSequence &data) : KeywordBase(typeid(this)), data_(data) {}
 
 /*
  * Arguments

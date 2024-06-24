@@ -26,11 +26,11 @@ class CylindricalRegionVoxelKernel : public VoxelKernel
 };
 
 // Cylindrical Region
-class CylindricalRegionProcedureNode : public RegionProcedureNodeBase, CylindricalRegionVoxelKernel
+class CylindricalRegionGeneratorNode : public RegionGeneratorNodeBase, CylindricalRegionVoxelKernel
 {
     public:
-    CylindricalRegionProcedureNode();
-    ~CylindricalRegionProcedureNode() override = default;
+    CylindricalRegionGeneratorNode();
+    ~CylindricalRegionGeneratorNode() override = default;
 
     /*
      * Region Data

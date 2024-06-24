@@ -6,12 +6,12 @@
 #include "generator/node.h"
 #include "kernels/potentials/regional.h"
 
-// Regional Global Potential Procedure Node
-class RegionalGlobalPotentialProcedureNode : public RegionalPotentialVoxelKernel, public ProcedureNode
+// Regional Global Potential
+class RegionalGlobalPotentialGeneratorNode : public RegionalPotentialVoxelKernel, public GeneratorNode
 {
     public:
-    RegionalGlobalPotentialProcedureNode();
-    ~RegionalGlobalPotentialProcedureNode() override = default;
+    RegionalGlobalPotentialGeneratorNode();
+    ~RegionalGlobalPotentialGeneratorNode() override = default;
 
     private:
     // Guide voxel size (Angstroms)

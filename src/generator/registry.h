@@ -10,64 +10,64 @@
 class KeywordWidgetBase;
 class QWidget;
 
-// ProcedureNode Registry
-class ProcedureNodeRegistry
+// GeneratorNode Registry
+class GeneratorNodeRegistry
 {
     private:
-    ProcedureNodeRegistry();
+    GeneratorNodeRegistry();
 
     public:
-    ProcedureNodeRegistry(const ProcedureNodeRegistry &) = delete;
-    ProcedureNodeRegistry(ProcedureNodeRegistry &&) = delete;
-    ProcedureNodeRegistry &operator=(const ProcedureNodeRegistry &) = delete;
-    ProcedureNodeRegistry &operator=(ProcedureNodeRegistry &&) = delete;
+    GeneratorNodeRegistry(const GeneratorNodeRegistry &) = delete;
+    GeneratorNodeRegistry(GeneratorNodeRegistry &&) = delete;
+    GeneratorNodeRegistry &operator=(const GeneratorNodeRegistry &) = delete;
+    GeneratorNodeRegistry &operator=(GeneratorNodeRegistry &&) = delete;
 
     /*
      * Producers
      */
     private:
     // Producer function type
-    using ProducerFunction = std::function<std::shared_ptr<ProcedureNode>()>;
+    using ProducerFunction = std::function<std::shared_ptr<GeneratorNode>()>;
     // Typedefs
-    using ProcedureNodeRegistryData = std::pair<ProducerFunction, std::string>;
-    using ProcedureNodeInfoData = std::pair<ProcedureNode::NodeType, std::string>;
+    using GeneratorNodeRegistryData = std::pair<ProducerFunction, std::string>;
+    using GeneratorNodeInfoData = std::pair<GeneratorNode::NodeType, std::string>;
     // Producers for all node types
-    std::map<ProcedureNode::NodeType, ProcedureNodeRegistryData> producers_;
+    std::map<GeneratorNode::NodeType, GeneratorNodeRegistryData> producers_;
     // Categorised map of nodes
-    std::map<std::string, std::vector<ProcedureNodeRegistry::ProcedureNodeInfoData>> categories_;
+    std::map<std::string, std::vector<GeneratorNodeRegistry::GeneratorNodeInfoData>> categories_;
 
     private:
     // Register producer for node
-    template <class N> void registerProducer(ProcedureNode::NodeType nodeType, std::string brief, std::string category = "")
+    template <class N> void registerProducer(GeneratorNode::NodeType nodeType, std::string brief, std::string category = "")
     {
         // Check for duplicate node type
         if (producers_.find(nodeType) != producers_.end())
             throw(std::runtime_error(
-                fmt::format("A node producer for type '{}' already exists.\n", ProcedureNode::nodeTypes().keyword(nodeType))));
+                fmt::format("A node producer for type '{}' already exists.\n", GeneratorNode::nodeTypes().keyword(nodeType))));
 
-        producers_.emplace(nodeType, ProcedureNodeRegistryData([]() { return std::make_shared<N>(); }, brief));
+        producers_.emplace(nodeType, GeneratorNodeRegistryData([]() { return std::make_shared<N>(); }, brief));
 
         if (!category.empty())
-            categories_[category].emplace_back(ProcedureNodeInfoData(nodeType, brief));
+            categories_[category].emplace_back(GeneratorNodeInfoData(nodeType, brief));
     }
     // Produce node of specified type
-    std::shared_ptr<ProcedureNode> produce(ProcedureNode::NodeType nodeType) const;
+    std::shared_ptr<GeneratorNode> produce(GeneratorNode::NodeType nodeType) const;
     // Return categorised map of nodes
-    const std::map<std::string, std::vector<ProcedureNodeRegistry::ProcedureNodeInfoData>> &categories() const;
+    const std::map<std::string, std::vector<GeneratorNodeRegistry::GeneratorNodeInfoData>> &categories() const;
 
     /*
      * Instance
      */
     private:
     // Return the producer instance
-    static const ProcedureNodeRegistry &instance();
+    static const GeneratorNodeRegistry &instance();
 
     /*
-     * ProcedureNode Management
+     * GeneratorNode Management
      */
     public:
     // Return category map
-    static const std::map<std::string, std::vector<ProcedureNodeRegistry::ProcedureNodeInfoData>> &categoryMap();
+    static const std::map<std::string, std::vector<GeneratorNodeRegistry::GeneratorNodeInfoData>> &categoryMap();
     // Create new node
-    static std::shared_ptr<ProcedureNode> create(ProcedureNode::NodeType nodeType);
+    static std::shared_ptr<GeneratorNode> create(GeneratorNode::NodeType nodeType);
 };

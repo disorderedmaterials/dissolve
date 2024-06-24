@@ -7,19 +7,19 @@
 #include <QMimeData>
 #include <QModelIndex>
 
-// Procedure Model Mime Data
-class ProcedureModelMimeData : public QMimeData
+// Generator Model Mime Data
+class GeneratorModelMimeData : public QMimeData
 {
     public:
-    explicit ProcedureModelMimeData(const QModelIndex index);
-    explicit ProcedureModelMimeData(ProcedureNode::NodeType nodeType);
-    ~ProcedureModelMimeData() override = default;
+    explicit GeneratorModelMimeData(const QModelIndex index);
+    explicit GeneratorModelMimeData(GeneratorNode::NodeType nodeType);
+    ~GeneratorModelMimeData() override = default;
 
     private:
     // Stored model index
     std::optional<const QModelIndex> nodeIndex_;
     // Stored procedure node type
-    std::optional<ProcedureNode::NodeType> nodeType_;
+    std::optional<GeneratorNode::NodeType> nodeType_;
     // Stored procedure node (either new or existing)
     NodeRef node_;
 
@@ -27,7 +27,7 @@ class ProcedureModelMimeData : public QMimeData
     // Return stored model index
     std::optional<const QModelIndex> nodeIndex() const;
     // Return stored procedure node type
-    std::optional<ProcedureNode::NodeType> nodeType() const;
+    std::optional<GeneratorNode::NodeType> nodeType() const;
     // Return stored procedure node type
     NodeRef node() const;
 

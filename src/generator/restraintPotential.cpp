@@ -8,15 +8,15 @@
 #include "keywords/node.h"
 #include "keywords/speciesVector.h"
 
-RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
-    : ProcedureNode(NodeType::RestraintPotential), potential_(Functions1D::Form::Harmonic)
+RestraintPotentialGeneratorNode::RestraintPotentialGeneratorNode()
+    : GeneratorNode(NodeType::RestraintPotential), potential_(Functions1D::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<InteractionPotentialKeyword<Functions1D>>("Potential", "Potential to apply to individual atoms", potential_);
 
     keywords_.setOrganisation("Options", "Targets");
     keywords_.add<SpeciesVectorKeyword>("Species", "Target species to apply atomic restraints to", speciesToRestrain_);
-    keywords_.add<NodeKeyword<PickProcedureNodeBase>>(
+    keywords_.add<NodeKeyword<PickGeneratorNodeBase>>(
         "Selection", "Picked selection of molecules to apply atomic restraints to", selectionToRestrain_, this,
         NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion});
 }
@@ -25,7 +25,7 @@ RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
  * Execute
  */
 
-void RestraintPotentialProcedureNode::restrainMoleculeAtoms(Configuration *cfg, const std::shared_ptr<Molecule> &mol) const
+void RestraintPotentialGeneratorNode::restrainMoleculeAtoms(Configuration *cfg, const std::shared_ptr<Molecule> &mol) const
 {
     for (auto &i : mol->atoms())
     {
@@ -38,7 +38,7 @@ void RestraintPotentialProcedureNode::restrainMoleculeAtoms(Configuration *cfg, 
 }
 
 // Execute node
-bool RestraintPotentialProcedureNode::execute(const ProcedureContext &procedureContext)
+bool RestraintPotentialGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     auto *cfg = procedureContext.configuration();
 

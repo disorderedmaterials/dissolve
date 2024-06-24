@@ -7,12 +7,12 @@
 #include "expression/expression.h"
 #include "generator/node.h"
 
-// ProcedureNode Sequence
-class ProcedureNodeSequence : public Serialisable<const CoreData &>
+// GeneratorNode Sequence
+class GeneratorNodeSequence : public Serialisable<const CoreData &>
 {
     public:
-    ProcedureNodeSequence(OptionalReferenceWrapper<ProcedureNode> owner, std::string_view blockKeyword);
-    ~ProcedureNodeSequence();
+    GeneratorNodeSequence(OptionalReferenceWrapper<GeneratorNode> owner, std::string_view blockKeyword);
+    ~GeneratorNodeSequence();
 
     /*
      * Node Contents
@@ -69,34 +69,34 @@ class ProcedureNodeSequence : public Serialisable<const CoreData &>
      * Scope
      */
     private:
-    // ProcedureNode which owns this sequence
-    OptionalReferenceWrapper<ProcedureNode> owner_;
+    // GeneratorNode which owns this sequence
+    OptionalReferenceWrapper<GeneratorNode> owner_;
 
     private:
     // Return named node if it exists anywhere in our sequence or below (and matches the type / class given)
     NodeRef searchNodes(std::string_view name, const ConstNodeRef &excludeNode = {},
-                        const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
+                        const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Search through the Procedure for the named parameter
     std::shared_ptr<ExpressionVariable>
     searchParameters(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = {}) const;
 
     public:
     // Return this sequences owner
-    OptionalReferenceWrapper<ProcedureNode> owner() const;
+    OptionalReferenceWrapper<GeneratorNode> owner() const;
     // Return named node if present (and matches the type / class given)
     ConstNodeRef node(std::string_view name, const ConstNodeRef &excludeNode = {},
-                      const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
+                      const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return list of nodes (of specified type / class) present in the Procedure
-    std::vector<ConstNodeRef> nodes(const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
+    std::vector<ConstNodeRef> nodes(const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return named node if it is currently in scope (and matches the type / class given)
     ConstNodeRef nodeInScope(ConstNodeRef queryingNode, std::string_view name, const ConstNodeRef &excludeNode = {},
-                             const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
+                             const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return list of nodes in scope (and matching the type / class given)
     std::vector<ConstNodeRef> nodesInScope(ConstNodeRef queryingNode,
-                                           const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
+                                           const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
     ConstNodeRef nodeExists(std::string_view name, const ConstNodeRef &excludeNode = {},
-                            const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
+                            const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return the named parameter if it is currently in scope
     std::shared_ptr<ExpressionVariable> parameterInScope(ConstNodeRef queryingNode, std::string_view name,
                                                          const std::shared_ptr<ExpressionVariable> &excludeParameter = {});

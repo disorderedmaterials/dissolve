@@ -6,11 +6,11 @@
 #include "generator/node.h"
 #include "io/import/coordinates.h"
 
-class ImportCoordinatesProcedureNode : public ProcedureNode
+class ImportCoordinatesGeneratorNode : public GeneratorNode
 {
     public:
-    ImportCoordinatesProcedureNode();
-    ~ImportCoordinatesProcedureNode() override = default;
+    ImportCoordinatesGeneratorNode();
+    ~ImportCoordinatesGeneratorNode() override = default;
 
     /*
      * Identity

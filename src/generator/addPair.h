@@ -9,16 +9,16 @@
 
 // Forward Declarations
 class Species;
-class RegionProcedureNodeBase;
+class RegionGeneratorNodeBase;
 
 // AddPair Node
-class AddPairProcedureNode : public ProcedureNode
+class AddPairGeneratorNode : public GeneratorNode
 {
     public:
-    explicit AddPairProcedureNode(const Species *spA = nullptr, const Species *spB = nullptr, const NodeValue &population = 0,
+    explicit AddPairGeneratorNode(const Species *spA = nullptr, const Species *spB = nullptr, const NodeValue &population = 0,
                                   const NodeValue &density = 0.1,
                                   Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
-    ~AddPairProcedureNode() override = default;
+    ~AddPairGeneratorNode() override = default;
 
     private:
     // Set up keywords for node
@@ -58,15 +58,15 @@ class AddPairProcedureNode : public ProcedureNode
 
     private:
     // Action to take on the Box geometry / volume on addition of the species
-    AddPairProcedureNode::BoxActionStyle boxAction_{AddPairProcedureNode::BoxActionStyle::AddVolume};
+    AddPairGeneratorNode::BoxActionStyle boxAction_{AddPairGeneratorNode::BoxActionStyle::AddVolume};
     // Target density when adding molecules
     std::pair<NodeValue, Units::DensityUnits> density_{1.0, Units::GramsPerCentimetreCubedUnits};
     // Population of molecules to add
     NodeValue population_{1.0};
     // Positioning type for individual molecules
-    AddPairProcedureNode::PositioningType positioningType_{AddPairProcedureNode::PositioningType::Random};
+    AddPairGeneratorNode::PositioningType positioningType_{AddPairGeneratorNode::PositioningType::Random};
     // Region into which we will add molecules (if any)
-    std::shared_ptr<const RegionProcedureNodeBase> region_{nullptr};
+    std::shared_ptr<const RegionGeneratorNodeBase> region_{nullptr};
     // Whether to rotate molecules on insertion
     bool rotate_{true};
     // Flags controlling box axis scaling

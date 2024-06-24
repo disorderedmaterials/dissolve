@@ -6,12 +6,12 @@
 #include "generator/node.h"
 #include "kernels/potentials/cylindrical.h"
 
-// Cylindrical Global Potential Procedure Node
-class CylindricalGlobalPotentialProcedureNode : public ProcedureNode
+// Cylindrical Global Potential
+class CylindricalGlobalPotentialGeneratorNode : public GeneratorNode
 {
     public:
-    CylindricalGlobalPotentialProcedureNode();
-    ~CylindricalGlobalPotentialProcedureNode() override = default;
+    CylindricalGlobalPotentialGeneratorNode();
+    ~CylindricalGlobalPotentialGeneratorNode() override = default;
 
     /*
      * Potential Function

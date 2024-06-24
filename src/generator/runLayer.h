@@ -6,7 +6,7 @@
 #include "generator/node.h"
 class ModuleLayer;
 
-class RunLayerNode : public ProcedureNode
+class RunLayerNode : public GeneratorNode
 {
     public:
     explicit RunLayerNode(const ModuleLayer *layer = nullptr);

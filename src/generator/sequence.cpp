@@ -11,22 +11,22 @@
 #include "keywords/nodeVector.h"
 #include "keywords/vec3NodeValue.h"
 
-ProcedureNodeSequence::ProcedureNodeSequence(OptionalReferenceWrapper<ProcedureNode> owner, std::string_view blockKeyword)
+GeneratorNodeSequence::GeneratorNodeSequence(OptionalReferenceWrapper<GeneratorNode> owner, std::string_view blockKeyword)
     : owner_(owner), blockKeyword_(blockKeyword)
 {
 }
 
-ProcedureNodeSequence::~ProcedureNodeSequence() { clear(); }
+GeneratorNodeSequence::~GeneratorNodeSequence() { clear(); }
 
 /*
  * Node Contents
  */
 
 // Clear all data
-void ProcedureNodeSequence::clear() { sequence_.clear(); }
+void GeneratorNodeSequence::clear() { sequence_.clear(); }
 
 // Append specified node to the sequence, or optionally insert at index
-void ProcedureNodeSequence::appendNode(NodeRef node, std::optional<int> insertAtIndex)
+void GeneratorNodeSequence::appendNode(NodeRef node, std::optional<int> insertAtIndex)
 {
     assert(node);
 
@@ -37,9 +37,9 @@ void ProcedureNodeSequence::appendNode(NodeRef node, std::optional<int> insertAt
     if (node->name().empty())
     {
         auto n = 1;
-        while (nodeExists(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(node->type()), n)))
+        while (nodeExists(fmt::format("{}{:02d}", GeneratorNode::nodeTypes().keyword(node->type()), n)))
             ++n;
-        node->setName(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(node->type()), n));
+        node->setName(fmt::format("{}{:02d}", GeneratorNode::nodeTypes().keyword(node->type()), n));
     }
     else if (nodeExists(node->name()))
         throw(std::runtime_error(
@@ -52,7 +52,7 @@ void ProcedureNodeSequence::appendNode(NodeRef node, std::optional<int> insertAt
 }
 
 // Insert empty node at specified position
-void ProcedureNodeSequence::insertEmpty(int index)
+void GeneratorNodeSequence::insertEmpty(int index)
 {
     if (index >= sequence_.size())
         sequence_.push_back(nullptr);
@@ -61,17 +61,17 @@ void ProcedureNodeSequence::insertEmpty(int index)
 }
 
 // Return sequential node list
-std::vector<NodeRef> &ProcedureNodeSequence::sequence() { return sequence_; }
-const std::vector<NodeRef> &ProcedureNodeSequence::sequence() const { return sequence_; }
+std::vector<NodeRef> &GeneratorNodeSequence::sequence() { return sequence_; }
+const std::vector<NodeRef> &GeneratorNodeSequence::sequence() const { return sequence_; }
 
 // Return number of nodes in sequence
-int ProcedureNodeSequence::nNodes() const { return sequence_.size(); }
+int GeneratorNodeSequence::nNodes() const { return sequence_.size(); }
 
 // Return whether the sequence is empty
-bool ProcedureNodeSequence::empty() const { return sequence_.empty(); }
+bool GeneratorNodeSequence::empty() const { return sequence_.empty(); }
 
 // Remove a node
-bool ProcedureNodeSequence::removeNode(NodeRef node)
+bool GeneratorNodeSequence::removeNode(NodeRef node)
 {
     // Find the node in the sequence
     auto it = std::find_if(sequence_.begin(), sequence_.end(), [node](const auto &n) { return n.get() == node.get(); });
@@ -88,8 +88,8 @@ bool ProcedureNodeSequence::removeNode(NodeRef node)
  */
 
 // Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
-NodeRef ProcedureNodeSequence::searchNodes(std::string_view name, const ConstNodeRef &excludeNode,
-                                           const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
+NodeRef GeneratorNodeSequence::searchNodes(std::string_view name, const ConstNodeRef &excludeNode,
+                                           const GeneratorNode::NodeTypeVector &allowedNodeTypes) const
 {
     for (const auto &node : sequence_)
     {
@@ -119,7 +119,7 @@ NodeRef ProcedureNodeSequence::searchNodes(std::string_view name, const ConstNod
 
 // Search through the Procedure for the named parameter
 std::shared_ptr<ExpressionVariable>
-ProcedureNodeSequence::searchParameters(std::string_view name,
+GeneratorNodeSequence::searchParameters(std::string_view name,
                                         const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
     for (const auto &node : sequence_)
@@ -142,11 +142,11 @@ ProcedureNodeSequence::searchParameters(std::string_view name,
 }
 
 // Return this sequence's owner
-OptionalReferenceWrapper<ProcedureNode> ProcedureNodeSequence::owner() const { return owner_; }
+OptionalReferenceWrapper<GeneratorNode> GeneratorNodeSequence::owner() const { return owner_; }
 
 // Return named node if present in this sequence, and which matches the (optional) type given
-ConstNodeRef ProcedureNodeSequence::node(std::string_view name, const ConstNodeRef &excludeNode,
-                                         const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
+ConstNodeRef GeneratorNodeSequence::node(std::string_view name, const ConstNodeRef &excludeNode,
+                                         const GeneratorNode::NodeTypeVector &allowedNodeTypes) const
 {
     for (const auto &node : sequence_)
     {
@@ -171,7 +171,7 @@ ConstNodeRef ProcedureNodeSequence::node(std::string_view name, const ConstNodeR
 }
 
 // Return list of nodes (of specified type / class) present in the Procedure
-std::vector<ConstNodeRef> ProcedureNodeSequence::nodes(const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
+std::vector<ConstNodeRef> GeneratorNodeSequence::nodes(const GeneratorNode::NodeTypeVector &allowedNodeTypes) const
 {
     std::vector<ConstNodeRef> matches;
 
@@ -194,9 +194,9 @@ std::vector<ConstNodeRef> ProcedureNodeSequence::nodes(const ProcedureNode::Node
 }
 
 // Return named node if it is currently in scope (and matches the type / class given)
-ConstNodeRef ProcedureNodeSequence::nodeInScope(ConstNodeRef queryingNode, std::string_view name,
+ConstNodeRef GeneratorNodeSequence::nodeInScope(ConstNodeRef queryingNode, std::string_view name,
                                                 const ConstNodeRef &excludeNode,
-                                                const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
+                                                const GeneratorNode::NodeTypeVector &allowedNodeTypes) const
 {
     // If one was given, start from the querying node and work backwards...
     if (queryingNode)
@@ -228,8 +228,8 @@ ConstNodeRef ProcedureNodeSequence::nodeInScope(ConstNodeRef queryingNode, std::
 }
 
 // Return list of nodes in scope (and matching the type / class given)
-std::vector<ConstNodeRef> ProcedureNodeSequence::nodesInScope(ConstNodeRef queryingNode,
-                                                              const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
+std::vector<ConstNodeRef> GeneratorNodeSequence::nodesInScope(ConstNodeRef queryingNode,
+                                                              const GeneratorNode::NodeTypeVector &allowedNodeTypes) const
 {
     std::vector<ConstNodeRef> matches;
 
@@ -259,8 +259,8 @@ std::vector<ConstNodeRef> ProcedureNodeSequence::nodesInScope(ConstNodeRef query
 }
 
 // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
-ConstNodeRef ProcedureNodeSequence::nodeExists(std::string_view name, const ConstNodeRef &excludeNode,
-                                               const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
+ConstNodeRef GeneratorNodeSequence::nodeExists(std::string_view name, const ConstNodeRef &excludeNode,
+                                               const GeneratorNode::NodeTypeVector &allowedNodeTypes) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
     if (owner_)
@@ -272,7 +272,7 @@ ConstNodeRef ProcedureNodeSequence::nodeExists(std::string_view name, const Cons
 
 // Return the named parameter if it is currently in scope
 std::shared_ptr<ExpressionVariable>
-ProcedureNodeSequence::parameterInScope(ConstNodeRef queryingNode, std::string_view name,
+GeneratorNodeSequence::parameterInScope(ConstNodeRef queryingNode, std::string_view name,
                                         const std::shared_ptr<ExpressionVariable> &excludeParameter)
 {
     auto range = QueryRange(queryingNode, sequence_);
@@ -296,7 +296,7 @@ ProcedureNodeSequence::parameterInScope(ConstNodeRef queryingNode, std::string_v
 
 // Return whether the named parameter exists in this sequence or its children (branches)
 std::shared_ptr<ExpressionVariable>
-ProcedureNodeSequence::parameterExists(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter) const
+GeneratorNodeSequence::parameterExists(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
     if (owner_)
@@ -307,7 +307,7 @@ ProcedureNodeSequence::parameterExists(std::string_view name, const std::shared_
 }
 
 // Create and return reference list of parameters in scope
-std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNodeSequence::parametersInScope(ConstNodeRef queryingNode)
+std::vector<std::shared_ptr<ExpressionVariable>> GeneratorNodeSequence::parametersInScope(ConstNodeRef queryingNode)
 {
     auto range = QueryRange(queryingNode, sequence_);
     if (queryingNode)
@@ -332,7 +332,7 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNodeSequence::paramete
 }
 
 // Validate node-related keywords ensuring invalid (out-of-scope) data are un-set
-bool ProcedureNodeSequence::validateNodeKeywords()
+bool GeneratorNodeSequence::validateNodeKeywords()
 {
     auto result = true;
 
@@ -357,7 +357,7 @@ bool ProcedureNodeSequence::validateNodeKeywords()
 }
 
 // Check for node consistency
-bool ProcedureNodeSequence::check() const
+bool GeneratorNodeSequence::check() const
 {
     for (auto &node : sequence_)
     {
@@ -390,7 +390,7 @@ bool ProcedureNodeSequence::check() const
  */
 
 // Prepare any necessary data, ready for execution
-bool ProcedureNodeSequence::prepare(const ProcedureContext &procedureContext)
+bool GeneratorNodeSequence::prepare(const ProcedureContext &procedureContext)
 {
     // Loop over nodes in the list, preparing each in turn
     for (const auto &node : sequence_)
@@ -401,7 +401,7 @@ bool ProcedureNodeSequence::prepare(const ProcedureContext &procedureContext)
 }
 
 // Execute node
-bool ProcedureNodeSequence::execute(const ProcedureContext &procedureContext)
+bool GeneratorNodeSequence::execute(const ProcedureContext &procedureContext)
 {
     // If there are no nodes, just exit now
     if (sequence_.empty())
@@ -416,7 +416,7 @@ bool ProcedureNodeSequence::execute(const ProcedureContext &procedureContext)
 }
 
 // Finalise any necessary data after execution
-bool ProcedureNodeSequence::finalise(const ProcedureContext &procedureContext)
+bool GeneratorNodeSequence::finalise(const ProcedureContext &procedureContext)
 {
     // Loop over nodes in the list, finalising each in turn
     for (const auto &node : sequence_)
@@ -431,10 +431,10 @@ bool ProcedureNodeSequence::finalise(const ProcedureContext &procedureContext)
  */
 
 // Return block keyword for current context
-std::string_view ProcedureNodeSequence::blockKeyword() const { return blockKeyword_; }
+std::string_view GeneratorNodeSequence::blockKeyword() const { return blockKeyword_; }
 
 // Read structure from specified LineParser
-bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &coreData)
+bool GeneratorNodeSequence::deserialise(LineParser &parser, const CoreData &coreData)
 {
     const auto blockTerminationKeyword = fmt::format("End{}", blockKeyword_);
 
@@ -451,7 +451,7 @@ bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &core
             break;
 
         // Not a control keyword, so must be a node type
-        if (!ProcedureNode::nodeTypes().isValid(parser.argsv(0)))
+        if (!GeneratorNode::nodeTypes().isValid(parser.argsv(0)))
         {
             Messenger::error("Unrecognised node type '{}' found.\n", parser.argsv(0));
             errorsEncountered = true;
@@ -459,13 +459,13 @@ bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &core
         }
 
         // Create a new node of the specified type
-        auto newNode = ProcedureNodeRegistry::create(ProcedureNode::nodeTypes().enumeration(parser.argsv(0)));
+        auto newNode = GeneratorNodeRegistry::create(GeneratorNode::nodeTypes().enumeration(parser.argsv(0)));
 
         // Set the name of the node if it is required / provided
         if (newNode->mustBeNamed() && !parser.hasArg(1))
         {
             Messenger::error("A name must be given explicitly to a node of type {}.\n",
-                             ProcedureNode::nodeTypes().keyword(newNode->type()));
+                             GeneratorNode::nodeTypes().keyword(newNode->type()));
             errorsEncountered = true;
         }
 
@@ -494,7 +494,7 @@ bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &core
 }
 
 // Write structure to specified LineParser
-bool ProcedureNodeSequence::serialise(LineParser &parser, std::string_view prefix)
+bool GeneratorNodeSequence::serialise(LineParser &parser, std::string_view prefix)
 {
     // Block Start - should have already been written by the calling function, since we don't know the keyword we are linked
     // to
@@ -509,18 +509,18 @@ bool ProcedureNodeSequence::serialise(LineParser &parser, std::string_view prefi
     return true;
 }
 
-ProcedureNodeSequence::QueryRange::QueryRange(ConstNodeRef queryingNode, const std::vector<NodeRef> &seq)
+GeneratorNodeSequence::QueryRange::QueryRange(ConstNodeRef queryingNode, const std::vector<NodeRef> &seq)
 {
     start_ = std::find(seq.rbegin(), seq.rend(), queryingNode);
     stop_ = seq.rend();
 }
-std::vector<NodeRef>::const_reverse_iterator ProcedureNodeSequence::QueryRange::begin() { return start_; }
-std::vector<NodeRef>::const_reverse_iterator ProcedureNodeSequence::QueryRange::end() { return stop_; }
-bool ProcedureNodeSequence::QueryRange::empty() { return start_ == stop_; }
-void ProcedureNodeSequence::QueryRange::next() { start_++; }
+std::vector<NodeRef>::const_reverse_iterator GeneratorNodeSequence::QueryRange::begin() { return start_; }
+std::vector<NodeRef>::const_reverse_iterator GeneratorNodeSequence::QueryRange::end() { return stop_; }
+bool GeneratorNodeSequence::QueryRange::empty() { return start_ == stop_; }
+void GeneratorNodeSequence::QueryRange::next() { start_++; }
 
 // Express as a serialisable value
-SerialisedValue ProcedureNodeSequence::serialise() const
+SerialisedValue GeneratorNodeSequence::serialise() const
 {
     return fromVector(sequence_,
                       [](const auto item)
@@ -532,13 +532,13 @@ SerialisedValue ProcedureNodeSequence::serialise() const
 }
 
 // Read values from a serialisable value
-void ProcedureNodeSequence::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void GeneratorNodeSequence::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     toVector(node,
              [this, &coreData](const auto &value)
              {
-                 ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(value.at("type"));
-                 auto result = ProcedureNodeRegistry::create(type);
+                 GeneratorNode::NodeType type = GeneratorNode::nodeTypes().deserialise(value.at("type"));
+                 auto result = GeneratorNodeRegistry::create(type);
                  appendNode(result, {});
                  result->deserialise(value, coreData);
              });

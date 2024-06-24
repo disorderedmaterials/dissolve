@@ -8,19 +8,19 @@
 #include "generator/pickBase.h"
 #include "math/function1D.h"
 
-// Restraint Potential Procedure Node
-class RestraintPotentialProcedureNode : public ProcedureNode
+// Restraint Potential
+class RestraintPotentialGeneratorNode : public GeneratorNode
 {
     public:
-    RestraintPotentialProcedureNode();
-    ~RestraintPotentialProcedureNode() override = default;
+    RestraintPotentialGeneratorNode();
+    ~RestraintPotentialGeneratorNode() override = default;
 
     /*
      * Data
      */
     private:
     // Selection of molecules to remove
-    std::shared_ptr<const PickProcedureNodeBase> selectionToRestrain_;
+    std::shared_ptr<const PickGeneratorNodeBase> selectionToRestrain_;
     // Species to remove
     std::vector<const Species *> speciesToRestrain_;
     // Potential form

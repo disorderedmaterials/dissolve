@@ -11,11 +11,11 @@
 class Molecule;
 
 // Pick Node
-class PickProcedureNode : public PickProcedureNodeBase
+class PickGeneratorNode : public PickGeneratorNodeBase
 {
     public:
-    explicit PickProcedureNode(std::vector<const Species *> species = {});
-    ~PickProcedureNode() override = default;
+    explicit PickGeneratorNode(std::vector<const Species *> species = {});
+    ~PickGeneratorNode() override = default;
 
     /*
      * Control

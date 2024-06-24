@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ProcedureWidget</class>
- <widget class="QWidget" name="ProcedureWidget">
+ <class>GeneratorWidget</class>
+ <widget class="QWidget" name="GeneratorWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -35,9 +35,9 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="ProcedureGroup">
+    <widget class="QGroupBox" name="GeneratorGroup">
      <property name="title">
-      <string>Procedure</string>
+      <string>Generator</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">

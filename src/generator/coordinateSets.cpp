@@ -14,12 +14,12 @@
 #include "keywords/species.h"
 #include "modules/md/md.h"
 
-CoordinateSetsProcedureNode::CoordinateSetsProcedureNode(const Species *sp)
-    : ProcedureNode(NodeType::CoordinateSets), species_(sp)
+CoordinateSetsGeneratorNode::CoordinateSetsGeneratorNode(const Species *sp)
+    : GeneratorNode(NodeType::CoordinateSets), species_(sp)
 {
     keywords_.setOrganisation("Options", "Target");
     keywords_.add<SpeciesKeyword>("Species", "Target species", species_);
-    keywords_.add<EnumOptionsKeyword<CoordinateSetsProcedureNode::CoordinateSetSource>>(
+    keywords_.add<EnumOptionsKeyword<CoordinateSetsGeneratorNode::CoordinateSetSource>>(
         "Source", "Source of coordinate sets on addition of the species", source_, coordinateSetSources());
     keywords_.add<BoolKeyword>("Force", "Force generation of coordinates, even if existing sets exist", force_);
 
@@ -37,41 +37,41 @@ CoordinateSetsProcedureNode::CoordinateSetsProcedureNode(const Species *sp)
  */
 
 // Return whether a name for the node must be provided
-bool CoordinateSetsProcedureNode::mustBeNamed() const { return true; }
+bool CoordinateSetsGeneratorNode::mustBeNamed() const { return true; }
 
 /*
  * Node Data
  */
 
 // Return enum option info for SetCreationMethod
-EnumOptions<CoordinateSetsProcedureNode::CoordinateSetSource> CoordinateSetsProcedureNode::coordinateSetSources()
+EnumOptions<CoordinateSetsGeneratorNode::CoordinateSetSource> CoordinateSetsGeneratorNode::coordinateSetSources()
 {
-    return EnumOptions<CoordinateSetsProcedureNode::CoordinateSetSource>(
-        "SetCreationMethod", {{CoordinateSetsProcedureNode::CoordinateSetSource::File, "File"},
-                              {CoordinateSetsProcedureNode::CoordinateSetSource::MD, "MD"}});
+    return EnumOptions<CoordinateSetsGeneratorNode::CoordinateSetSource>(
+        "SetCreationMethod", {{CoordinateSetsGeneratorNode::CoordinateSetSource::File, "File"},
+                              {CoordinateSetsGeneratorNode::CoordinateSetSource::MD, "MD"}});
 }
 
 // Add new coordinate set
-std::vector<Vec3<double>> &CoordinateSetsProcedureNode::addSet()
+std::vector<Vec3<double>> &CoordinateSetsGeneratorNode::addSet()
 {
     assert(species_);
     return sets_.emplace_back(species_->nAtoms(), Vec3<double>());
 }
 
-void CoordinateSetsProcedureNode::setSets(std::vector<std::vector<Vec3<double>>> sets) { sets_ = std::move(sets); }
+void CoordinateSetsGeneratorNode::setSets(std::vector<std::vector<Vec3<double>>> sets) { sets_ = std::move(sets); }
 
 // Return number of available coordinates sets
-int CoordinateSetsProcedureNode::nSets() const { return sets_.size(); }
+int CoordinateSetsGeneratorNode::nSets() const { return sets_.size(); }
 
 // Return nth coordinate set
-const std::vector<Vec3<double>> &CoordinateSetsProcedureNode::set(int n) const { return sets_[n]; }
+const std::vector<Vec3<double>> &CoordinateSetsGeneratorNode::set(int n) const { return sets_[n]; }
 
 /*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool CoordinateSetsProcedureNode::prepare(const ProcedureContext &procedureContext)
+bool CoordinateSetsGeneratorNode::prepare(const ProcedureContext &procedureContext)
 {
     if (!species_)
         return Messenger::error("No Species set in CoordinateSets node.\n");
@@ -107,7 +107,7 @@ bool CoordinateSetsProcedureNode::prepare(const ProcedureContext &procedureConte
 }
 
 // Execute node
-bool CoordinateSetsProcedureNode::execute(const ProcedureContext &procedureContext)
+bool CoordinateSetsGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     // Do we need to generate new sets?
     if (!sets_.empty())

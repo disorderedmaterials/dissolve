@@ -6,7 +6,7 @@
 #include "generator/node.h"
 #include "keywords/nodeValue.h"
 
-TemperatureProcedureNode::TemperatureProcedureNode() : ProcedureNode(NodeType::Temperature)
+TemperatureGeneratorNode::TemperatureGeneratorNode() : GeneratorNode(NodeType::Temperature)
 {
     keywords_.add<NodeValueKeyword>("Temperature", "Temperature (K)", temperature_, this);
 }
@@ -16,14 +16,14 @@ TemperatureProcedureNode::TemperatureProcedureNode() : ProcedureNode(NodeType::T
  */
 
 // Return whether a name for the node must be provided
-bool TemperatureProcedureNode::mustBeNamed() const { return false; }
+bool TemperatureGeneratorNode::mustBeNamed() const { return false; }
 
 /*
  * Execute
  */
 
 // Execute node
-bool TemperatureProcedureNode::execute(const ProcedureContext &procedureContext)
+bool TemperatureGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     auto *cfg = procedureContext.configuration();
     cfg->setTemperature(temperature_.asDouble());

@@ -9,14 +9,14 @@
 
 // Forward Declarations
 class Species;
-class PickProcedureNodeBase;
+class PickGeneratorNodeBase;
 
 // Remove Node
-class RemoveProcedureNode : public ProcedureNode
+class RemoveGeneratorNode : public GeneratorNode
 {
     public:
-    RemoveProcedureNode();
-    ~RemoveProcedureNode() override = default;
+    RemoveGeneratorNode();
+    ~RemoveGeneratorNode() override = default;
 
     /*
      * Identity
@@ -30,7 +30,7 @@ class RemoveProcedureNode : public ProcedureNode
      */
     private:
     // Selection of molecules to remove
-    std::shared_ptr<const PickProcedureNodeBase> selection_;
+    std::shared_ptr<const PickGeneratorNodeBase> selection_;
     // Species to remove
     std::vector<const Species *> speciesToRemove_;
 

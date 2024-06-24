@@ -3,7 +3,7 @@
 
 #include "gui/models/nodePaletteModel.h"
 #include "generator/registry.h"
-#include "gui/models/procedureModelMimeData.h"
+#include "gui/models/generatorModelMimeData.h"
 #include <QIODevice>
 #include <QIcon>
 #include <QMimeData>
@@ -15,8 +15,8 @@
 int NodePaletteModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
-        return std::next(ProcedureNodeRegistry::categoryMap().begin(), parent.row())->second.size();
-    return ProcedureNodeRegistry::categoryMap().size();
+        return std::next(GeneratorNodeRegistry::categoryMap().begin(), parent.row())->second.size();
+    return GeneratorNodeRegistry::categoryMap().size();
 }
 
 int NodePaletteModel::columnCount(const QModelIndex &parent) const
@@ -56,22 +56,22 @@ QVariant NodePaletteModel::data(const QModelIndex &index, int role) const
             return {};
 
         auto [nodeType, brief] =
-            std::next(ProcedureNodeRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
+            std::next(GeneratorNodeRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
         switch (role)
         {
             case (Qt::DisplayRole):
-                return QString::fromStdString(ProcedureNode::nodeTypes().keyword(nodeType));
+                return QString::fromStdString(GeneratorNode::nodeTypes().keyword(nodeType));
             case (Qt::ToolTipRole):
                 return QString::fromStdString(brief);
             case (Qt::DecorationRole):
                 return QIcon(QPixmap(QString(":/nodes/icons/nodes/%1.svg")
-                                         .arg(QString::fromStdString(ProcedureNode::nodeTypes().keyword(nodeType)))));
+                                         .arg(QString::fromStdString(GeneratorNode::nodeTypes().keyword(nodeType)))));
             default:
                 return {};
         }
     }
     else if (role == Qt::DisplayRole && index.column() == 0)
-        return QString::fromStdString(std::next(ProcedureNodeRegistry::categoryMap().begin(), index.row())->first);
+        return QString::fromStdString(std::next(GeneratorNodeRegistry::categoryMap().begin(), index.row())->first);
     return {};
 }
 
@@ -114,8 +114,8 @@ QStringList NodePaletteModel::mimeTypes() const
 QMimeData *NodePaletteModel::mimeData(const QModelIndexList &indexes) const
 {
     auto index = indexes.front();
-    auto [nodeType, brief] = std::next(ProcedureNodeRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
-    auto *mimeData = new ProcedureModelMimeData(nodeType);
+    auto [nodeType, brief] = std::next(GeneratorNodeRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
+    auto *mimeData = new GeneratorModelMimeData(nodeType);
 
     return mimeData;
 }

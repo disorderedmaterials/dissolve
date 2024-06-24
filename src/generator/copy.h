@@ -15,10 +15,10 @@ class Species;
 class SpeciesSite;
 
 // Copy Node
-class CopyProcedureNode : public ProcedureNode
+class CopyGeneratorNode : public GeneratorNode
 {
     public:
-    explicit CopyProcedureNode(Configuration *cfg = nullptr);
+    explicit CopyGeneratorNode(Configuration *cfg = nullptr);
 
     /*
      * Identity

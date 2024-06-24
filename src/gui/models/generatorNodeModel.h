@@ -10,18 +10,18 @@
 
 #include <vector>
 
-class ProcedureNodeModel : public QAbstractListModel
+class GeneratorNodeModel : public QAbstractListModel
 {
     Q_OBJECT
 
     private:
-    // Source ProcedureNode data
+    // Source GeneratorNode data
     std::vector<ConstNodeRef> nodes_;
     // Node selected/deselected/presence functions
     std::function<bool(ConstNodeRef)> nodeSelectedFunction_, nodeDeselectedFunction_, nodePresenceFunction_;
 
     public:
-    // Set source ProcedureNode data
+    // Set source GeneratorNode data
     void setData(const std::vector<ConstNodeRef> &nodes);
     // Set node selected function
     void setNodeSelectedFunction(std::function<bool(ConstNodeRef)> nodeSelectedFunction);

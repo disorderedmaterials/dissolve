@@ -10,11 +10,11 @@
 #include "keywords/species.h"
 #include "keywords/speciesVector.h"
 
-TransmuteProcedureNode::TransmuteProcedureNode() : ProcedureNode(NodeType::Transmute)
+TransmuteGeneratorNode::TransmuteGeneratorNode() : GeneratorNode(NodeType::Transmute)
 {
     keywords_.setOrganisation("Options", "Source");
     keywords_.add<SpeciesVectorKeyword>("Species", "Species types to transmute into the target species", speciesToTransmute_);
-    keywords_.add<NodeKeyword<PickProcedureNodeBase>>(
+    keywords_.add<NodeKeyword<PickGeneratorNodeBase>>(
         "Selection", "Picked selection of molecules to transmute", selection_, this,
         NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion});
 
@@ -27,14 +27,14 @@ TransmuteProcedureNode::TransmuteProcedureNode() : ProcedureNode(NodeType::Trans
  */
 
 // Return whether a name for the node must be provided
-bool TransmuteProcedureNode::mustBeNamed() const { return false; }
+bool TransmuteGeneratorNode::mustBeNamed() const { return false; }
 
 /*
  * Execute
  */
 
 // Execute node
-bool TransmuteProcedureNode::execute(const ProcedureContext &procedureContext)
+bool TransmuteGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     // Check target species
     if (!targetSpecies_)
@@ -52,7 +52,7 @@ bool TransmuteProcedureNode::execute(const ProcedureContext &procedureContext)
     // Transmute molecules by selection
     if (selection_)
     {
-        auto pickNode = std::dynamic_pointer_cast<const PickProcedureNodeBase>(selection_);
+        auto pickNode = std::dynamic_pointer_cast<const PickGeneratorNodeBase>(selection_);
         assert(pickNode);
         std::copy(pickNode->pickedMolecules().begin(), pickNode->pickedMolecules().end(), std::back_inserter(targets));
     }

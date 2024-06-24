@@ -1,23 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/procedureWidget.h"
+#include "gui/generatorWidget.h"
 #include "gui/gui.h"
 #include "gui/keywordWidgets/widget.h"
 #include "gui/nodeControlWidget.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
 
-ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
+GeneratorWidget::GeneratorWidget(QWidget *parent) : QWidget(parent)
 {
     ui_.setupUi(this);
 
-    // Set up the procedure model
-    ui_.NodesTree->setModel(&procedureModel_);
+    // Set up the generator model
+    ui_.NodesTree->setModel(&generatorModel_);
     connect(ui_.NodesTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(selectedNodeChanged(const QItemSelection &)));
-    connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
-            SLOT(procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
+    connect(&generatorModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
+            SLOT(generatorDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
     // Set up the available nodes tree
     ui_.AvailableNodesTree->setModel(&nodePaletteModel_);
     ui_.AvailableNodesTree->expandAll();
@@ -25,12 +25,12 @@ ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
 }
 
 // Set up widget
-void ProcedureWidget::setUp(DissolveWindow *dissolveWindow, Procedure &proc)
+void GeneratorWidget::setUp(DissolveWindow *dissolveWindow, Generator &proc)
 {
     dissolveWindow_ = dissolveWindow;
-    procedure_ = proc;
+    generator_ = proc;
     ui_.AvailableNodesTree->expandAll();
-    procedureModel_.setData(proc);
+    generatorModel_.setData(proc);
     ui_.NodesTree->expandAll();
     ui_.NodesTree->resizeColumnToContents(0);
     ui_.NodesTree->resizeColumnToContents(1);
@@ -43,7 +43,7 @@ void ProcedureWidget::setUp(DissolveWindow *dissolveWindow, Procedure &proc)
  */
 
 // Return control widget for the specified node (if it exists)
-NodeControlWidget *ProcedureWidget::getControlWidget(ConstNodeRef node, bool setAsCurrent)
+NodeControlWidget *GeneratorWidget::getControlWidget(ConstNodeRef node, bool setAsCurrent)
 {
     for (auto n = 1; n < ui_.NodeControlsStack->count(); ++n)
     {
@@ -59,7 +59,7 @@ NodeControlWidget *ProcedureWidget::getControlWidget(ConstNodeRef node, bool set
 }
 
 // Remove control widget for the specified node (if it exists)
-void ProcedureWidget::removeControlWidget(ConstNodeRef node)
+void GeneratorWidget::removeControlWidget(ConstNodeRef node)
 {
     for (auto n = 1; n < ui_.NodeControlsStack->count(); ++n)
     {
@@ -75,7 +75,7 @@ void ProcedureWidget::removeControlWidget(ConstNodeRef node)
     }
 }
 
-void ProcedureWidget::selectedNodeChanged(const QItemSelection &selected)
+void GeneratorWidget::selectedNodeChanged(const QItemSelection &selected)
 {
     // In the case a row has been removed, the selection is out-of-date
     // For sanity, get the selection again.
@@ -92,7 +92,7 @@ void ProcedureWidget::selectedNodeChanged(const QItemSelection &selected)
     auto selectedIndex = actualSelected.indexes().front();
 
     // Get the selected node
-    auto node = procedureModel_.data(selectedIndex, Qt::UserRole).value<std::shared_ptr<ProcedureNode>>();
+    auto node = generatorModel_.data(selectedIndex, Qt::UserRole).value<std::shared_ptr<GeneratorNode>>();
     if (!node)
     {
         ui_.NodeControlsStack->setCurrentIndex(0);
@@ -118,11 +118,11 @@ void ProcedureWidget::selectedNodeChanged(const QItemSelection &selected)
         ncw->updateControls();
 }
 
-void ProcedureWidget::on_ExpandAllButton_clicked(bool checked) { ui_.NodesTree->expandAll(); }
+void GeneratorWidget::on_ExpandAllButton_clicked(bool checked) { ui_.NodesTree->expandAll(); }
 
-void ProcedureWidget::on_CollapseAllButton_clicked(bool checked) { ui_.NodesTree->collapseAll(); }
+void GeneratorWidget::on_CollapseAllButton_clicked(bool checked) { ui_.NodesTree->collapseAll(); }
 
-void ProcedureWidget::on_ShowContextButton_clicked(bool checked)
+void GeneratorWidget::on_ShowContextButton_clicked(bool checked)
 {
     if (checked)
         ui_.NodesTree->showColumn(1);
@@ -130,7 +130,7 @@ void ProcedureWidget::on_ShowContextButton_clicked(bool checked)
         ui_.NodesTree->hideColumn(1);
 }
 
-void ProcedureWidget::on_ShowAvailableNodesButton_clicked(bool checked)
+void GeneratorWidget::on_ShowAvailableNodesButton_clicked(bool checked)
 {
     // Toggle the visibility of the available nodes tree
     ui_.AvailableNodesTree->setVisible(!ui_.AvailableNodesTree->isVisible());
@@ -140,21 +140,21 @@ void ProcedureWidget::on_ShowAvailableNodesButton_clicked(bool checked)
                                                                               : "Show Available Nodes");
 }
 
-void ProcedureWidget::procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)
+void GeneratorWidget::generatorDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)
 {
-    if (!procedure_)
+    if (!generator_)
         return;
 
     // Node order may have changed, or node may have been deleted, so validate related data
-    procedure_.value().get().rootSequence().validateNodeKeywords();
+    generator_.value().get().rootSequence().validateNodeKeywords();
 
     updateControls();
     dissolveWindow_->setModified();
 }
 
-void ProcedureWidget::nodeNameChanged(const QModelIndex &index, const QString &oldName, const QString &newName)
+void GeneratorWidget::nodeNameChanged(const QModelIndex &index, const QString &oldName, const QString &newName)
 {
-    auto node = procedureModel_.data(index, Qt::UserRole).value<std::shared_ptr<ProcedureNode>>();
+    auto node = generatorModel_.data(index, Qt::UserRole).value<std::shared_ptr<GeneratorNode>>();
     assert(node);
 
     // Find the control widget for the node and update it
@@ -164,23 +164,23 @@ void ProcedureWidget::nodeNameChanged(const QModelIndex &index, const QString &o
 }
 
 // Update the node tree
-void ProcedureWidget::updateNodeTree()
+void GeneratorWidget::updateNodeTree()
 {
     // Refresh the node list
     std::optional<QModelIndex> selectedIndex;
     if (!ui_.NodesTree->selectionModel()->selection().indexes().empty())
         selectedIndex = ui_.NodesTree->selectionModel()->selection().indexes().front();
-    procedureModel_.reset();
+    generatorModel_.reset();
     if (selectedIndex)
         ui_.NodesTree->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
 }
 
-void ProcedureWidget::on_NodesTree_customContextMenuRequested(const QPoint &pos)
+void GeneratorWidget::on_NodesTree_customContextMenuRequested(const QPoint &pos)
 {
     auto index = ui_.NodesTree->indexAt(pos);
     if (!index.isValid())
         return;
-    auto node = procedureModel_.data(index, Qt::UserRole).value<std::shared_ptr<ProcedureNode>>();
+    auto node = generatorModel_.data(index, Qt::UserRole).value<std::shared_ptr<GeneratorNode>>();
     assert(node);
 
     QMenu menu;
@@ -188,25 +188,25 @@ void ProcedureWidget::on_NodesTree_customContextMenuRequested(const QPoint &pos)
     menu.setEnabled(!dissolveWindow_->dissolveIterating());
 }
 
-void ProcedureWidget::on_AvailableNodesTree_doubleClicked(const QModelIndex &index)
+void GeneratorWidget::on_AvailableNodesTree_doubleClicked(const QModelIndex &index)
 {
     //    nodeLayerModel_.appendNew(nodePaletteModel_.data(index, Qt::DisplayRole).toString());
 }
 
 // Delete the currently selected node, and its children
-void ProcedureWidget::on_DeleteNodeButton_clicked(bool checked)
+void GeneratorWidget::on_DeleteNodeButton_clicked(bool checked)
 {
     auto selectedIndex = ui_.NodesTree->selectionModel()->selectedIndexes().front();
 
     if (selectedIndex.isValid())
     {
-        procedureModel_.removeRow(selectedIndex.row(), procedureModel_.parent(selectedIndex));
+        generatorModel_.removeRow(selectedIndex.row(), generatorModel_.parent(selectedIndex));
         dissolveWindow_->setModified();
     }
 }
 
 // Remove all node control widgets
-void ProcedureWidget::removeControlWidgets()
+void GeneratorWidget::removeControlWidgets()
 {
     // Remove all stack pages but the first (which corresponds to the "No node Selected" widget)
     while (ui_.NodeControlsStack->count() > 1)
@@ -222,9 +222,9 @@ void ProcedureWidget::removeControlWidgets()
  */
 
 // Update controls in tab
-void ProcedureWidget::updateControls()
+void GeneratorWidget::updateControls()
 {
-    if (!procedure_)
+    if (!generator_)
         return;
 
     auto *ncw = dynamic_cast<NodeControlWidget *>(ui_.NodeControlsStack->currentWidget());
@@ -233,7 +233,7 @@ void ProcedureWidget::updateControls()
 }
 
 // Prevent editing within tab
-void ProcedureWidget::preventEditing()
+void GeneratorWidget::preventEditing()
 {
     ui_.NodesTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui_.NodesTree->setDragDropMode(QAbstractItemView::NoDragDrop);
@@ -247,7 +247,7 @@ void ProcedureWidget::preventEditing()
 }
 
 // Allow editing within tab
-void ProcedureWidget::allowEditing()
+void GeneratorWidget::allowEditing()
 {
     ui_.AvailableNodesTree->setEnabled(true);
     ui_.NodesTree->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);

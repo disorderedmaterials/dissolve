@@ -8,7 +8,7 @@
 #include "module/context.h"
 #include "module/layer.h"
 
-RunLayerNode::RunLayerNode(const ModuleLayer *layer) : ProcedureNode(NodeType::RunLayer), layer_(layer)
+RunLayerNode::RunLayerNode(const ModuleLayer *layer) : GeneratorNode(NodeType::RunLayer), layer_(layer)
 {
 
     keywords_.setOrganisation("Options", "Target");

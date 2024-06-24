@@ -9,32 +9,32 @@
 #include <QModelIndex>
 #include <vector>
 
-class ProcedureModel : public QAbstractItemModel
+class GeneratorModel : public QAbstractItemModel
 {
     Q_OBJECT
 
     public:
-    ProcedureModel(OptionalReferenceWrapper<Procedure> procedure = std::nullopt);
+    GeneratorModel(OptionalReferenceWrapper<Generator> generator = std::nullopt);
 
     private:
-    // Source ProcedureNode data
-    OptionalReferenceWrapper<Procedure> procedure_;
+    // Source GeneratorNode data
+    OptionalReferenceWrapper<Generator> generator_;
 
     public:
-    // Set source Procedure
-    void setData(Procedure &procedure);
+    // Set source Generator
+    void setData(Generator &generator);
     // Reset model data, forcing update
     void reset();
     // Return raw data for supplied index
-    ProcedureNode *rawData(const QModelIndex &index) const;
+    GeneratorNode *rawData(const QModelIndex &index) const;
     // Return sequence scope for supplied index
-    OptionalReferenceWrapper<ProcedureNodeSequence> getScope(const QModelIndex &index) const;
+    OptionalReferenceWrapper<GeneratorNodeSequence> getScope(const QModelIndex &index) const;
 
     /*
      * QAbstractItemModel overrides
      */
     private:
-    enum ProcedureModelAction
+    enum GeneratorModelAction
     {
         MoveInternal = Qt::UserRole,
         CreateNew

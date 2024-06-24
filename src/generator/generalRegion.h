@@ -21,11 +21,11 @@ class GeneralRegionVoxelKernel : public VoxelKernel
 };
 
 // General Region
-class GeneralRegionProcedureNode : public RegionProcedureNodeBase, GeneralRegionVoxelKernel
+class GeneralRegionGeneratorNode : public RegionGeneratorNodeBase, GeneralRegionVoxelKernel
 {
     public:
-    GeneralRegionProcedureNode();
-    ~GeneralRegionProcedureNode() override = default;
+    GeneralRegionGeneratorNode();
+    ~GeneralRegionGeneratorNode() override = default;
 
     /*
      * Control

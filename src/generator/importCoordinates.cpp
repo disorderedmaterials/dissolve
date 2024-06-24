@@ -5,7 +5,7 @@
 #include "classes/configuration.h"
 #include "keywords/fileAndFormat.h"
 
-ImportCoordinatesProcedureNode::ImportCoordinatesProcedureNode() : ProcedureNode(NodeType::ImportCoordinates)
+ImportCoordinatesGeneratorNode::ImportCoordinatesGeneratorNode() : GeneratorNode(NodeType::ImportCoordinates)
 {
     keywords_.setOrganisation("Options", "Source Data");
     keywords_.add<FileAndFormatKeyword>("File", "File / format for coordinates to read in", fileSource_, "EndFile");
@@ -16,14 +16,14 @@ ImportCoordinatesProcedureNode::ImportCoordinatesProcedureNode() : ProcedureNode
  */
 
 // Return whether a name for the node must be provided
-bool ImportCoordinatesProcedureNode::mustBeNamed() const { return false; }
+bool ImportCoordinatesGeneratorNode::mustBeNamed() const { return false; }
 
 /*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool ImportCoordinatesProcedureNode::prepare(const ProcedureContext &procedureContext)
+bool ImportCoordinatesGeneratorNode::prepare(const ProcedureContext &procedureContext)
 {
     if (!fileSource_.hasFilename())
         return Messenger::error("A suitable coordinate file and format must be supplied.\n");
@@ -33,7 +33,7 @@ bool ImportCoordinatesProcedureNode::prepare(const ProcedureContext &procedureCo
 }
 
 // Execute node
-bool ImportCoordinatesProcedureNode::execute(const ProcedureContext &procedureContext)
+bool ImportCoordinatesGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     return fileSource_.importData(procedureContext.configuration(), &procedureContext.processPool());
 }

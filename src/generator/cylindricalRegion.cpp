@@ -34,8 +34,8 @@ bool CylindricalRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const 
  * Cylindrical Region
  */
 
-CylindricalRegionProcedureNode::CylindricalRegionProcedureNode()
-    : RegionProcedureNodeBase(ProcedureNode::NodeType::CylindricalRegion)
+CylindricalRegionGeneratorNode::CylindricalRegionGeneratorNode()
+    : RegionGeneratorNodeBase(GeneratorNode::NodeType::CylindricalRegion)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<Vec3DoubleKeyword>("OriginFrac", "Origin of vector in fractional coordinates", originFrac_,
@@ -45,7 +45,7 @@ CylindricalRegionProcedureNode::CylindricalRegionProcedureNode()
 }
 
 // Return a new voxel check kernel
-std::shared_ptr<VoxelKernel> CylindricalRegionProcedureNode::createVoxelKernel()
+std::shared_ptr<VoxelKernel> CylindricalRegionGeneratorNode::createVoxelKernel()
 {
     return std::make_shared<CylindricalRegionVoxelKernel>(originFrac_, radius_, vector_);
 }

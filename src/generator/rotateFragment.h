@@ -6,11 +6,11 @@
 #include "classes/site.h"
 #include "generator/node.h"
 
-class RotateFragmentProcedureNode : public ProcedureNode
+class RotateFragmentGeneratorNode : public GeneratorNode
 {
     public:
-    RotateFragmentProcedureNode(std::shared_ptr<SelectProcedureNode> site = nullptr);
-    ~RotateFragmentProcedureNode() override = default;
+    RotateFragmentGeneratorNode(std::shared_ptr<SelectGeneratorNode> site = nullptr);
+    ~RotateFragmentGeneratorNode() override = default;
 
     /*
      * Identity
@@ -24,7 +24,7 @@ class RotateFragmentProcedureNode : public ProcedureNode
      */
     private:
     // Site to be rotated
-    std::shared_ptr<const SelectProcedureNode> site_;
+    std::shared_ptr<const SelectGeneratorNode> site_;
     // Rotation
     NodeValue rotation_{90.0};
     // Axis

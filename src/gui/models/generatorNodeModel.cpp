@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/models/procedureNodeModel.h"
+#include "gui/models/generatorNodeModel.h"
 
 // Set source node data
-void ProcedureNodeModel::setData(const std::vector<ConstNodeRef> &nodes)
+void GeneratorNodeModel::setData(const std::vector<ConstNodeRef> &nodes)
 {
     beginResetModel();
     nodes_ = nodes;
@@ -12,36 +12,36 @@ void ProcedureNodeModel::setData(const std::vector<ConstNodeRef> &nodes)
 }
 
 // Set node selected function
-void ProcedureNodeModel::setNodeSelectedFunction(std::function<bool(ConstNodeRef)> nodeSelectedFunction)
+void GeneratorNodeModel::setNodeSelectedFunction(std::function<bool(ConstNodeRef)> nodeSelectedFunction)
 {
     nodeSelectedFunction_ = std::move(nodeSelectedFunction);
 }
 
 // Set node selected function
-void ProcedureNodeModel::setNodeDeselectedFunction(std::function<bool(ConstNodeRef)> nodeDeselectedFunction)
+void GeneratorNodeModel::setNodeDeselectedFunction(std::function<bool(ConstNodeRef)> nodeDeselectedFunction)
 {
     nodeDeselectedFunction_ = std::move(nodeDeselectedFunction);
 }
 
 // Set node presence function
-void ProcedureNodeModel::setNodePresenceFunction(std::function<bool(ConstNodeRef)> nodePresenceFunction)
+void GeneratorNodeModel::setNodePresenceFunction(std::function<bool(ConstNodeRef)> nodePresenceFunction)
 {
     nodePresenceFunction_ = std::move(nodePresenceFunction);
 }
 
-ConstNodeRef ProcedureNodeModel::rawData(const QModelIndex &index) const { return nodes_[index.row()]; }
+ConstNodeRef GeneratorNodeModel::rawData(const QModelIndex &index) const { return nodes_[index.row()]; }
 
 /*
  * QAbstractItemModel overrides
  */
 
-int ProcedureNodeModel::rowCount(const QModelIndex &parent) const
+int GeneratorNodeModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return nodes_.size();
 }
 
-QVariant ProcedureNodeModel::data(const QModelIndex &index, int role) const
+QVariant GeneratorNodeModel::data(const QModelIndex &index, int role) const
 {
     auto node = rawData(index);
     switch (role)
@@ -64,7 +64,7 @@ QVariant ProcedureNodeModel::data(const QModelIndex &index, int role) const
     }
 }
 
-bool ProcedureNodeModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool GeneratorNodeModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (role == Qt::CheckStateRole)
     {
@@ -87,14 +87,14 @@ bool ProcedureNodeModel::setData(const QModelIndex &index, const QVariant &value
     return false;
 }
 
-Qt::ItemFlags ProcedureNodeModel::flags(const QModelIndex &index) const
+Qt::ItemFlags GeneratorNodeModel::flags(const QModelIndex &index) const
 {
     return nodeSelectedFunction_ && nodeDeselectedFunction_ && nodePresenceFunction_
                ? Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable
                : Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
-QVariant ProcedureNodeModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant GeneratorNodeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
         return {};

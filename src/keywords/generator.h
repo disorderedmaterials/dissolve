@@ -6,24 +6,24 @@
 #include "generator/generator.h"
 #include "keywords/base.h"
 
-// Keyword managing Procedure data
-class ProcedureKeyword : public KeywordBase
+// Keyword managing Generator data
+class GeneratorKeyword : public KeywordBase
 {
     public:
-    explicit ProcedureKeyword(Procedure &data);
-    ~ProcedureKeyword() override = default;
+    explicit GeneratorKeyword(Generator &data);
+    ~GeneratorKeyword() override = default;
 
     /*
      * Data
      */
     private:
     // Reference to data
-    Procedure &data_;
+    Generator &data_;
 
     public:
     // Return reference to data
-    Procedure &data();
-    const Procedure &data() const;
+    Generator &data();
+    const Generator &data() const;
 
     /*
      * Arguments

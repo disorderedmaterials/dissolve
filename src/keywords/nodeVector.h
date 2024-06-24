@@ -13,7 +13,7 @@
 class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
-    NodeVectorKeywordBase(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+    NodeVectorKeywordBase(GeneratorNode *parentNode, const GeneratorNode::NodeTypeVector &allowedNodeTypes)
         : NodeKeywordUnderlay(parentNode, allowedNodeTypes), KeywordBase(typeid(this))
     {
     }
@@ -29,7 +29,7 @@ class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     virtual bool removeNode(ConstNodeRef node) = 0;
     // Return whether specified node is currently in the vector
     virtual bool isPresent(ConstNodeRef node) const = 0;
-    // Return plain ProcedureNode vector
+    // Return plain GeneratorNode vector
     virtual std::vector<ConstNodeRef> nodes() const = 0;
     // Validate current data, returning false if invalid data had to be pruned
     bool validate() override
@@ -44,12 +44,12 @@ class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     SerialisedValue serialise() const override { throw std::runtime_error("Cannot serialise NodeVectorKeywordBase"); }
 };
 
-// Keyword managing vector of ProcedureNode
+// Keyword managing vector of GeneratorNode
 template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
 {
     public:
-    NodeVectorKeyword(ConstNodeVector<N> &data, ProcedureNode *parentNode,
-                      const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+    NodeVectorKeyword(ConstNodeVector<N> &data, GeneratorNode *parentNode,
+                      const GeneratorNode::NodeTypeVector &allowedNodeTypes)
         : NodeVectorKeywordBase(parentNode, allowedNodeTypes), data_(data)
     {
     }
@@ -103,7 +103,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     }
     // Return whether specified node is currently in the vector
     bool isPresent(ConstNodeRef node) const override { return std::find(data_.begin(), data_.end(), node) != data_.end(); }
-    // Return plain ProcedureNode vector
+    // Return plain GeneratorNode vector
     std::vector<ConstNodeRef> nodes() const override
     {
         std::vector<ConstNodeRef> result;
@@ -185,6 +185,6 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
      * Object Management
      */
     protected:
-    // Prune any references to the supplied ProcedureNode in the contained data
+    // Prune any references to the supplied GeneratorNode in the contained data
     void removeReferencesTo(NodeRef node) override { data_.erase(std::remove(data_.begin(), data_.end(), node), data_.end()); }
 };

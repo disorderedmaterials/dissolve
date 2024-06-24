@@ -16,12 +16,12 @@ class CoreData;
 class ExpressionVariable;
 class GenericList;
 class LineParser;
-class ProcedureNodeSequence;
+class GeneratorNodeSequence;
 class ProcessPool;
 class Site;
 
-// Procedure Node
-class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public Serialisable<const CoreData &>
+// Generator Node
+class GeneratorNode : public std::enable_shared_from_this<GeneratorNode>, public Serialisable<const CoreData &>
 {
     public:
     // Node Types
@@ -56,12 +56,13 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         Transmute
     };
     // Typedef for node type vector
-    using NodeTypeVector = std::vector<ProcedureNode::NodeType>;
+    using NodeTypeVector = std::vector<GeneratorNode::NodeType>;
     // Return enum option info for NodeType
     static EnumOptions<NodeType> nodeTypes();
-    ProcedureNode(NodeType nodeType);
-    virtual ~ProcedureNode() = default;
 
+    GeneratorNode(NodeType nodeType);
+    virtual ~GeneratorNode() = default;
+ 
     /*
      * Identity
      */
@@ -98,15 +99,15 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
      */
     private:
     // Scope (SequenceNode) in which this node exists
-    OptionalReferenceWrapper<ProcedureNodeSequence> scope_;
+    OptionalReferenceWrapper<GeneratorNodeSequence> scope_;
 
     public:
     // Return the parent node which owns this node
-    ProcedureNode *parent() const;
+    GeneratorNode *parent() const;
     // Set scope
-    void setScope(ProcedureNodeSequence &scopeNode);
-    // Return scope (ProcedureNodeSequence) in which this node exists
-    OptionalReferenceWrapper<ProcedureNodeSequence> scope() const;
+    void setScope(GeneratorNodeSequence &scopeNode);
+    // Return scope (GeneratorNodeSequence) in which this node exists
+    OptionalReferenceWrapper<GeneratorNodeSequence> scope() const;
     // Return named node which must optionally match one of the types given, in scope
     ConstNodeRef getNodeInScope(std::string_view name, const ConstNodeRef &excludeNode = {},
                                 const NodeTypeVector &allowedNodeTypes = {}) const;
@@ -123,7 +124,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
      */
     public:
     // Return the branch from this node (if it has one)
-    virtual OptionalReferenceWrapper<ProcedureNodeSequence> branch();
+    virtual OptionalReferenceWrapper<GeneratorNodeSequence> branch();
 
     /*
      * Parameters

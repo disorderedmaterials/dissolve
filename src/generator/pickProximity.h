@@ -11,11 +11,11 @@
 class Molecule;
 
 // Pick by Proximity Node
-class PickProximityProcedureNode : public PickProcedureNodeBase
+class PickProximityGeneratorNode : public PickGeneratorNodeBase
 {
     public:
-    explicit PickProximityProcedureNode();
-    ~PickProximityProcedureNode() override = default;
+    explicit PickProximityGeneratorNode();
+    ~PickProximityGeneratorNode() override = default;
 
     /*
      * Control

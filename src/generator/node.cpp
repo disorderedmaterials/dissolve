@@ -12,90 +12,90 @@
 #include <memory>
 
 // Return enum option info for NodeType
-EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
+EnumOptions<GeneratorNode::NodeType> GeneratorNode::nodeTypes()
 {
-    return EnumOptions<ProcedureNode::NodeType>(
-        "NodeType", {{ProcedureNode::NodeType::Add, "Add"},
-                     {ProcedureNode::NodeType::AddPair, "AddPair"},
-                     {ProcedureNode::NodeType::Box, "Box"},
-                     {ProcedureNode::NodeType::CoordinateSets, "CoordinateSets"},
-                     {ProcedureNode::NodeType::Copy, "Copy"},
-                     {ProcedureNode::NodeType::CustomRegion, "CustomRegion"},
-                     {ProcedureNode::NodeType::CylindricalGlobalPotential, "CylindricalGlobalPotential"},
-                     {ProcedureNode::NodeType::CylindricalRegion, "CylindricalRegion"},
-                     {ProcedureNode::NodeType::DynamicSite, "DynamicSite"},
-                     {ProcedureNode::NodeType::GeneralRegion, "GeneralRegion"},
-                     {ProcedureNode::NodeType::ImportCoordinates, "ImportCoordinates"},
-                     {ProcedureNode::NodeType::IterateSelection, "IterateSelection"},
-                     {ProcedureNode::NodeType::Parameters, "Parameters"},
-                     {ProcedureNode::NodeType::Pick, "Pick"},
-                     {ProcedureNode::NodeType::PickProximity, "PickProximity"},
-                     {ProcedureNode::NodeType::PickRegion, "PickRegion"},
-                     {ProcedureNode::NodeType::RegionalGlobalPotential, "RegionalGlobalPotential"},
-                     {ProcedureNode::NodeType::Remove, "Remove"},
-                     {ProcedureNode::NodeType::RestraintPotential, "RestraintPotential"},
-                     {ProcedureNode::NodeType::RotateFragment, "RotateFragment"},
-                     {ProcedureNode::NodeType::RunLayer, "RunLayer"},
-                     {ProcedureNode::NodeType::Select, "Select"},
-                     {ProcedureNode::NodeType::Sequence, "Sequence"},
-                     {ProcedureNode::NodeType::SphericalGlobalPotential, "SphericalGlobalPotential"},
-                     {ProcedureNode::NodeType::SizeFactor, "SizeFactor"},
-                     {ProcedureNode::NodeType::Temperature, "Temperature"},
-                     {ProcedureNode::NodeType::Transmute, "Transmute"}});
+    return EnumOptions<GeneratorNode::NodeType>(
+        "NodeType", {{GeneratorNode::NodeType::Add, "Add"},
+                     {GeneratorNode::NodeType::AddPair, "AddPair"},
+                     {GeneratorNode::NodeType::Box, "Box"},
+                     {GeneratorNode::NodeType::CoordinateSets, "CoordinateSets"},
+                     {GeneratorNode::NodeType::Copy, "Copy"},
+                     {GeneratorNode::NodeType::CustomRegion, "CustomRegion"},
+                     {GeneratorNode::NodeType::CylindricalGlobalPotential, "CylindricalGlobalPotential"},
+                     {GeneratorNode::NodeType::CylindricalRegion, "CylindricalRegion"},
+                     {GeneratorNode::NodeType::DynamicSite, "DynamicSite"},
+                     {GeneratorNode::NodeType::GeneralRegion, "GeneralRegion"},
+                     {GeneratorNode::NodeType::ImportCoordinates, "ImportCoordinates"},
+                     {GeneratorNode::NodeType::IterateSelection, "IterateSelection"},
+                     {GeneratorNode::NodeType::Parameters, "Parameters"},
+                     {GeneratorNode::NodeType::Pick, "Pick"},
+                     {GeneratorNode::NodeType::PickProximity, "PickProximity"},
+                     {GeneratorNode::NodeType::PickRegion, "PickRegion"},
+                     {GeneratorNode::NodeType::RegionalGlobalPotential, "RegionalGlobalPotential"},
+                     {GeneratorNode::NodeType::Remove, "Remove"},
+                     {GeneratorNode::NodeType::RestraintPotential, "RestraintPotential"},
+                     {GeneratorNode::NodeType::RotateFragment, "RotateFragment"},
+                     {GeneratorNode::NodeType::RunLayer, "RunLayer"},
+                     {GeneratorNode::NodeType::Select, "Select"},
+                     {GeneratorNode::NodeType::Sequence, "Sequence"},
+                     {GeneratorNode::NodeType::SphericalGlobalPotential, "SphericalGlobalPotential"},
+                     {GeneratorNode::NodeType::SizeFactor, "SizeFactor"},
+                     {GeneratorNode::NodeType::Temperature, "Temperature"},
+                     {GeneratorNode::NodeType::Transmute, "Transmute"}});
 }
 
-ProcedureNode::ProcedureNode(NodeType nodeType) : type_(nodeType) {}
+GeneratorNode::GeneratorNode(NodeType nodeType) : type_(nodeType) {}
 
 /*
  * Identity
  */
 
 // Return node type
-ProcedureNode::NodeType ProcedureNode::type() const { return type_; }
+GeneratorNode::NodeType GeneratorNode::type() const { return type_; }
 
 // Return whether a name for the node must be provided
-bool ProcedureNode::mustBeNamed() const { return true; }
+bool GeneratorNode::mustBeNamed() const { return true; }
 
 // Set node name
-void ProcedureNode::setName(std::string_view name)
+void GeneratorNode::setName(std::string_view name)
 {
     name_ = DissolveSys::niceName(name);
 
     // Re-set prefixes with the new node name, except if this is a Parameters-type node
-    if (type_ != ProcedureNode::NodeType::Parameters)
+    if (type_ != GeneratorNode::NodeType::Parameters)
         for (auto &par : parameters_)
             par->setNamePrefix(name_);
 }
 
 // Return node name
-std::string_view ProcedureNode::name() const { return name_; }
+std::string_view GeneratorNode::name() const { return name_; }
 
 /*
  * Keywords
  */
 
 // Return keywords for this node
-KeywordStore &ProcedureNode::keywords() { return keywords_; }
-const KeywordStore &ProcedureNode::keywords() const { return keywords_; }
+KeywordStore &GeneratorNode::keywords() { return keywords_; }
+const KeywordStore &GeneratorNode::keywords() const { return keywords_; }
 
 /*
  * Scope
  */
 
 // Set scope
-void ProcedureNode::setScope(ProcedureNodeSequence &scopeNode) { scope_ = scopeNode; }
+void GeneratorNode::setScope(GeneratorNodeSequence &scopeNode) { scope_ = scopeNode; }
 
 // Return the parent node which owns this node
-ProcedureNode *ProcedureNode::parent() const
+GeneratorNode *GeneratorNode::parent() const
 {
     return scope_ && (*scope_).get().owner() ? &((*scope_).get().owner()->get()) : nullptr;
 }
 
-// Return scope (ProcedureNodeSequence) in which this node exists
-OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::scope() const { return scope_; }
+// Return scope (GeneratorNodeSequence) in which this node exists
+OptionalReferenceWrapper<GeneratorNodeSequence> GeneratorNode::scope() const { return scope_; }
 
 // Return named node, optionally matching the type / class given, in or out of scope
-ConstNodeRef ProcedureNode::getNodeInScope(std::string_view name, const ConstNodeRef &excludeNode,
+ConstNodeRef GeneratorNode::getNodeInScope(std::string_view name, const ConstNodeRef &excludeNode,
                                            const NodeTypeVector &allowedNodeTypes) const
 {
     if (!scope_)
@@ -106,7 +106,7 @@ ConstNodeRef ProcedureNode::getNodeInScope(std::string_view name, const ConstNod
 }
 
 // Return nodes in scope, optionally matching the type / class given
-std::vector<ConstNodeRef> ProcedureNode::getNodesInScope(const NodeTypeVector &allowedNodeTypes) const
+std::vector<ConstNodeRef> GeneratorNode::getNodesInScope(const NodeTypeVector &allowedNodeTypes) const
 {
     if (!scope_)
         return {};
@@ -116,7 +116,7 @@ std::vector<ConstNodeRef> ProcedureNode::getNodesInScope(const NodeTypeVector &a
 
 // Return the named parameter in scope
 std::shared_ptr<ExpressionVariable>
-ProcedureNode::getParameterInScope(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter) const
+GeneratorNode::getParameterInScope(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
     if (!scope_)
         return nullptr;
@@ -126,7 +126,7 @@ ProcedureNode::getParameterInScope(std::string_view name, const std::shared_ptr<
 }
 
 // Return all parameters in scope
-std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::getParametersInScope() const
+std::vector<std::shared_ptr<ExpressionVariable>> GeneratorNode::getParametersInScope() const
 {
     if (!scope_)
         return {};
@@ -139,23 +139,23 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::getParametersInS
  */
 
 // Return the branch from this node (if it has one)
-OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::branch() { return {}; }
+OptionalReferenceWrapper<GeneratorNodeSequence> GeneratorNode::branch() { return {}; }
 
 /*
  * Parameters
  */
 
 // Add new parameter
-std::shared_ptr<ExpressionVariable> ProcedureNode::addParameter(std::string_view name, const ExpressionValue &initialValue)
+std::shared_ptr<ExpressionVariable> GeneratorNode::addParameter(std::string_view name, const ExpressionValue &initialValue)
 {
     auto &newVar = parameters_.emplace_back(std::make_shared<ExpressionVariable>(name, initialValue));
-    if (type_ != ProcedureNode::NodeType::Parameters)
+    if (type_ != GeneratorNode::NodeType::Parameters)
         newVar->setNamePrefix(name_);
     return newVar;
 }
 
 // Set named parameter in supplied vector
-bool ProcedureNode::setParameter(std::vector<std::shared_ptr<ExpressionVariable>> &parameters, std::string_view parameter,
+bool GeneratorNode::setParameter(std::vector<std::shared_ptr<ExpressionVariable>> &parameters, std::string_view parameter,
                                  ExpressionValue value)
 {
     auto it = std::find_if(parameters.begin(), parameters.end(),
@@ -169,7 +169,7 @@ bool ProcedureNode::setParameter(std::vector<std::shared_ptr<ExpressionVariable>
 }
 
 // Return the named parameter (if it exists)
-std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view name,
+std::shared_ptr<ExpressionVariable> GeneratorNode::getParameter(std::string_view name,
                                                                 const std::shared_ptr<ExpressionVariable> &excludeParameter)
 {
     for (auto var : parameters_)
@@ -180,27 +180,27 @@ std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view
 }
 
 // Return references to all parameters for this node
-const std::vector<std::shared_ptr<ExpressionVariable>> &ProcedureNode::parameters() const { return parameters_; }
+const std::vector<std::shared_ptr<ExpressionVariable>> &GeneratorNode::parameters() const { return parameters_; }
 
 /*
  * Execution
  */
 
 // Prepare any necessary data, ready for execution
-bool ProcedureNode::prepare(const ProcedureContext &procedureContext) { return true; }
+bool GeneratorNode::prepare(const ProcedureContext &procedureContext) { return true; }
 
 // Execute node
-bool ProcedureNode::execute(const ProcedureContext &procedureContext) { return true; }
+bool GeneratorNode::execute(const ProcedureContext &procedureContext) { return true; }
 
 // Finalise any necessary data after execution
-bool ProcedureNode::finalise(const ProcedureContext &procedureContext) { return true; }
+bool GeneratorNode::finalise(const ProcedureContext &procedureContext) { return true; }
 
 /*
  * Read / Write
  */
 
 // Read node data from specified LineParser
-bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
+bool GeneratorNode::deserialise(LineParser &parser, const CoreData &coreData)
 {
     // Read until we encounter the ending keyword (derived from the node type), or we fail for some reason
     auto errorsEncountered = false;
@@ -229,17 +229,17 @@ bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
 }
 
 // Write node data to specified LineParser
-bool ProcedureNode::serialise(LineParser &parser, std::string_view prefix)
+bool GeneratorNode::serialise(LineParser &parser, std::string_view prefix)
 {
     // Block Start - node type and name (if specified)
     if (name_.empty())
     {
-        if (!parser.writeLineF("{}{}\n", prefix, ProcedureNode::nodeTypes().keyword(type_)))
+        if (!parser.writeLineF("{}{}\n", prefix, GeneratorNode::nodeTypes().keyword(type_)))
             return false;
     }
     else
     {
-        if (!parser.writeLineF("{}{}  '{}'\n", prefix, ProcedureNode::nodeTypes().keyword(type_), name()))
+        if (!parser.writeLineF("{}{}  '{}'\n", prefix, GeneratorNode::nodeTypes().keyword(type_), name()))
             return false;
     }
 
@@ -258,7 +258,7 @@ bool ProcedureNode::serialise(LineParser &parser, std::string_view prefix)
 }
 
 // Express as a serialisable value
-SerialisedValue ProcedureNode::serialise() const
+SerialisedValue GeneratorNode::serialise() const
 {
     SerialisedValue result = {{"type", nodeTypes().keyword(type_)}};
     if (mustBeNamed())
@@ -267,7 +267,7 @@ SerialisedValue ProcedureNode::serialise() const
 }
 
 // Read values from a serialisable value
-void ProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
+void GeneratorNode::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     if (mustBeNamed())
         setName(toml::find<std::string>(node, "name"));

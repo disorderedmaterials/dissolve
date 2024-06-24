@@ -9,13 +9,13 @@
 #include "templates/vector3.h"
 
 // Forward Declarations
-class ProcedureNode;
+class GeneratorNode;
 
 // Keyword managing Vec3<NodeValue>
 class Vec3NodeValueKeyword : public KeywordBase
 {
     public:
-    Vec3NodeValueKeyword(Vec3<NodeValue> &data, ProcedureNode *parentNode,
+    Vec3NodeValueKeyword(Vec3<NodeValue> &data, GeneratorNode *parentNode,
                          Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
     ~Vec3NodeValueKeyword() override = default;
 
@@ -27,8 +27,8 @@ class Vec3NodeValueKeyword : public KeywordBase
     Vec3<NodeValue> default_;
     // Reference to data
     Vec3<NodeValue> &data_;
-    // Parent ProcedureNode
-    ProcedureNode *parentNode_;
+    // Parent GeneratorNode
+    GeneratorNode *parentNode_;
     // Label type to display in GUI
     Vec3Labels::LabelType labelType_;
 

@@ -15,28 +15,28 @@
 #include "keywords/speciesSiteVector.h"
 #include <algorithm>
 
-SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, bool axesRequired)
-    : ProcedureNode(NodeType::Select), speciesSites_(std::move(sites)), axesRequired_(axesRequired),
+SelectGeneratorNode::SelectGeneratorNode(std::vector<const SpeciesSite *> sites, bool axesRequired)
+    : GeneratorNode(NodeType::Select), speciesSites_(std::move(sites)), axesRequired_(axesRequired),
       forEachBranch_(*this, "ForEach")
 {
     keywords_.setOrganisation("Options", "Sites");
     keywords_.add<SpeciesSiteVectorKeyword>("Site", "Add target site(s) to the selection", speciesSites_, axesRequired_);
 
     keywords_.setOrganisation("Options", "Control");
-    keywords_.add<NodeKeyword<SelectProcedureNode>>(
+    keywords_.add<NodeKeyword<SelectGeneratorNode>>(
         "SameMoleculeAsSite",
         "Request that the selected site comes from the molecule containing the current site in the specified "
         "SelectNode",
         sameMolecule_, this, NodeTypeVector{NodeType::Select});
-    keywords_.add<NodeVectorKeyword<SelectProcedureNode>>(
+    keywords_.add<NodeVectorKeyword<SelectGeneratorNode>>(
         "ExcludeSameMolecule",
         "Exclude sites from selection if they are present in the same molecule as the current site in the specified "
         "SelectNode(s)",
         sameMoleculeExclusions_, this, NodeTypeVector{NodeType::Select});
-    keywords_.add<NodeVectorKeyword<SelectProcedureNode>>(
+    keywords_.add<NodeVectorKeyword<SelectGeneratorNode>>(
         "ExcludeSameSite", "Exclude sites from selection if they are the current site in the specified SelectNode(s)",
         sameSiteExclusions_, this, NodeTypeVector{NodeType::Select});
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("ReferenceSite",
+    keywords_.add<NodeKeyword<SelectGeneratorNode>>("ReferenceSite",
                                                     "Site to use as reference point when determining inclusions / exclusions",
                                                     distanceReferenceSite_, this, NodeTypeVector{NodeType::Select});
     keywords_.add<RangeKeyword>(
@@ -57,35 +57,35 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
  */
 
 // Return vector of sites to select
-std::vector<const SpeciesSite *> &SelectProcedureNode::speciesSites() { return speciesSites_; }
+std::vector<const SpeciesSite *> &SelectGeneratorNode::speciesSites() { return speciesSites_; }
 
 // Return whether sites must have a defined orientation
-bool SelectProcedureNode::axesRequired() { return axesRequired_; }
+bool SelectGeneratorNode::axesRequired() { return axesRequired_; }
 
 /*
  * Selection Control
  */
 
 // Set other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
-void SelectProcedureNode::setSameMoleculeExclusions(ConstNodeVector<SelectProcedureNode> exclusions)
+void SelectGeneratorNode::setSameMoleculeExclusions(ConstNodeVector<SelectGeneratorNode> exclusions)
 {
     sameMoleculeExclusions_ = std::move(exclusions);
 }
 
 // Set other sites (nodes) which will exclude one of our sites if it is the same site
-void SelectProcedureNode::setSameSiteExclusions(ConstNodeVector<SelectProcedureNode> exclusions)
+void SelectGeneratorNode::setSameSiteExclusions(ConstNodeVector<SelectGeneratorNode> exclusions)
 {
     sameSiteExclusions_ = std::move(exclusions);
 }
 
 // Return list of Molecules currently excluded from selection
-const std::vector<std::shared_ptr<const Molecule>> &SelectProcedureNode::excludedMolecules() const
+const std::vector<std::shared_ptr<const Molecule>> &SelectGeneratorNode::excludedMolecules() const
 {
     return excludedMolecules_;
 }
 
 // Return Molecule (from site) in which the site must exist
-std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
+std::shared_ptr<const Molecule> SelectGeneratorNode::sameMoleculeMolecule()
 {
     if (!sameMolecule_)
         return nullptr;
@@ -93,7 +93,7 @@ std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
     const auto site = sameMolecule_->currentSite();
     if (!site)
     {
-        Messenger::warn("Requested Molecule from SelectProcedureNode::sameMolecule_, but there is no current site.\n");
+        Messenger::warn("Requested Molecule from SelectGeneratorNode::sameMolecule_, but there is no current site.\n");
         return nullptr;
     }
 
@@ -101,57 +101,57 @@ std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
 }
 
 // Set site to use for distance check
-void SelectProcedureNode::setDistanceReferenceSite(std::shared_ptr<const SelectProcedureNode> site)
+void SelectGeneratorNode::setDistanceReferenceSite(std::shared_ptr<const SelectGeneratorNode> site)
 {
     distanceReferenceSite_ = site;
 }
 
 // Set range of distance to allow from distance reference site
-void SelectProcedureNode::setInclusiveDistanceRange(Range range) { inclusiveDistanceRange_ = range; }
+void SelectGeneratorNode::setInclusiveDistanceRange(Range range) { inclusiveDistanceRange_ = range; }
 
 /*
  * Selected Sites
  */
 
 // Return EnumOptions for SelectionPopulation
-EnumOptions<SelectProcedureNode::SelectionPopulation> SelectProcedureNode::selectionPopulations()
+EnumOptions<SelectGeneratorNode::SelectionPopulation> SelectGeneratorNode::selectionPopulations()
 {
-    return EnumOptions<SelectProcedureNode::SelectionPopulation>(
-        "SelectionPopulation", {{SelectProcedureNode::SelectionPopulation::Available, "Available"},
-                                {SelectProcedureNode::SelectionPopulation::Average, "Average"}});
+    return EnumOptions<SelectGeneratorNode::SelectionPopulation>(
+        "SelectionPopulation", {{SelectGeneratorNode::SelectionPopulation::Available, "Available"},
+                                {SelectGeneratorNode::SelectionPopulation::Average, "Average"}});
 }
 
 // Return vector of selected sites
-const std::vector<std::tuple<const Site &, int, int>> &SelectProcedureNode::sites() const { return sites_; }
+const std::vector<std::tuple<const Site &, int, int>> &SelectGeneratorNode::sites() const { return sites_; }
 
 // Return the number of available sites in the current stack, if any
-int SelectProcedureNode::nSitesInStack() const { return sites_.size(); }
+int SelectGeneratorNode::nSitesInStack() const { return sites_.size(); }
 
 // Return the average number of sites selected
-double SelectProcedureNode::nAverageSites() const { return double(nCumulativeSites_) / nSelections_; }
+double SelectGeneratorNode::nAverageSites() const { return double(nCumulativeSites_) / nSelections_; }
 
 // Return the cumulative number of sites ever selected
-unsigned long int SelectProcedureNode::nCumulativeSites() const { return nCumulativeSites_; }
+unsigned long int SelectGeneratorNode::nCumulativeSites() const { return nCumulativeSites_; }
 
 // Return average number of sites available per selection, before any distance pruning
-double SelectProcedureNode::nAvailableSitesAverage() const { return double(nAvailableSites_) / nSelections_; }
+double SelectGeneratorNode::nAvailableSitesAverage() const { return double(nAvailableSites_) / nSelections_; }
 
 // Return current site
-OptionalReferenceWrapper<const Site> SelectProcedureNode::currentSite() const { return currentSite_; }
+OptionalReferenceWrapper<const Site> SelectGeneratorNode::currentSite() const { return currentSite_; }
 
 /*
  * Branch
  */
 
 // Return the branch from this node (if it has one)
-OptionalReferenceWrapper<ProcedureNodeSequence> SelectProcedureNode::branch() { return forEachBranch_; }
+OptionalReferenceWrapper<GeneratorNodeSequence> SelectGeneratorNode::branch() { return forEachBranch_; }
 
 /*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool SelectProcedureNode::prepare(const ProcedureContext &procedureContext)
+bool SelectGeneratorNode::prepare(const ProcedureContext &procedureContext)
 {
     // Check for at least one site being defined
     if (speciesSites_.empty())
@@ -170,7 +170,7 @@ bool SelectProcedureNode::prepare(const ProcedureContext &procedureContext)
 }
 
 // Execute node
-bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
+bool SelectGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     // Create our site vector
     sites_.clear();
@@ -267,7 +267,7 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
 }
 
 // Finalise any necessary data after execution
-bool SelectProcedureNode::finalise(const ProcedureContext &procedureContext)
+bool SelectGeneratorNode::finalise(const ProcedureContext &procedureContext)
 {
     // If one exists, finalise the ForEach branch nodes
     if (!forEachBranch_.finalise(procedureContext))

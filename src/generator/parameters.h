@@ -10,11 +10,11 @@
 class ExpressionVariable;
 
 // Parameters Node
-class ParametersProcedureNode : public ProcedureNode
+class ParametersGeneratorNode : public GeneratorNode
 {
     public:
-    ParametersProcedureNode();
-    ~ParametersProcedureNode() override = default;
+    ParametersGeneratorNode();
+    ~ParametersGeneratorNode() override = default;
 
     /*
      * Identity

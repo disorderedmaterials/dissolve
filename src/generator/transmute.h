@@ -9,14 +9,14 @@
 
 // Forward Declarations
 class Species;
-class PickProcedureNodeBase;
+class PickGeneratorNodeBase;
 
 // Transmute Node
-class TransmuteProcedureNode : public ProcedureNode
+class TransmuteGeneratorNode : public GeneratorNode
 {
     public:
-    TransmuteProcedureNode();
-    ~TransmuteProcedureNode() override = default;
+    TransmuteGeneratorNode();
+    ~TransmuteGeneratorNode() override = default;
 
     /*
      * Identity
@@ -30,7 +30,7 @@ class TransmuteProcedureNode : public ProcedureNode
      */
     private:
     // Existing selection from which to pick
-    std::shared_ptr<const PickProcedureNodeBase> selection_;
+    std::shared_ptr<const PickGeneratorNodeBase> selection_;
     // Target species to transmute in to
     const Species *targetSpecies_{nullptr};
     // Species to transmute

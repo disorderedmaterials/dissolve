@@ -5,7 +5,7 @@
 #include "base/lineParser.h"
 #include "generator/node.h"
 
-NodeValueKeyword::NodeValueKeyword(NodeValue &data, ProcedureNode *parentNode)
+NodeValueKeyword::NodeValueKeyword(NodeValue &data, GeneratorNode *parentNode)
     : KeywordBase(typeid(this)), data_(data), default_(data), parentNode_(parentNode)
 {
 }

@@ -53,7 +53,7 @@ bool CustomRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3<
  * Custom Region
  */
 
-CustomRegionProcedureNode::CustomRegionProcedureNode() : RegionProcedureNodeBase(ProcedureNode::NodeType::CustomRegion)
+CustomRegionGeneratorNode::CustomRegionGeneratorNode() : RegionGeneratorNodeBase(GeneratorNode::NodeType::CustomRegion)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<NodeValueKeyword>("Expression", "Expression describing region", expression_, this);
@@ -61,7 +61,7 @@ CustomRegionProcedureNode::CustomRegionProcedureNode() : RegionProcedureNodeBase
     keywords_.add<DoubleKeyword>("Maximum", "Maximum value for descriptive function defining region", maximumValue_);
 }
 
-std::shared_ptr<VoxelKernel> CustomRegionProcedureNode::createVoxelKernel()
+std::shared_ptr<VoxelKernel> CustomRegionGeneratorNode::createVoxelKernel()
 {
     return std::make_shared<CustomRegionVoxelKernel>(expression_.asString(), getParametersInScope(), minimumValue_,
                                                      maximumValue_);

@@ -9,7 +9,7 @@
 #include <memory>
 
 ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data,
-                                                                 ProcedureNode *parentNode)
+                                                                 GeneratorNode *parentNode)
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode)
 {
 }
@@ -22,8 +22,8 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std
 std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() { return data_; }
 const std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() const { return data_; }
 
-// Return parent ProcedureNode
-const ProcedureNode *ExpressionVariableVectorKeyword::parentNode() const { return parentNode_; }
+// Return parent GeneratorNode
+const GeneratorNode *ExpressionVariableVectorKeyword::parentNode() const { return parentNode_; }
 
 /*
  * Arguments
@@ -39,7 +39,7 @@ std::optional<int> ExpressionVariableVectorKeyword::maxArguments() const { retur
 bool ExpressionVariableVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!parentNode_)
-        return Messenger::error("Parent ProcedureNode not set, so can't read ExpressionVariableVector data.\n");
+        return Messenger::error("Parent GeneratorNode not set, so can't read ExpressionVariableVector data.\n");
 
     // First argument is the name of the parameter to create - does it already exist in the node's current scope?
     if (parentNode_->getParameter(parser.argsv(startArg)))

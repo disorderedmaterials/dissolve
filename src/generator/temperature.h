@@ -6,11 +6,11 @@
 #include "generator/node.h"
 #include "keywords/nodeValue.h"
 
-class TemperatureProcedureNode : public ProcedureNode
+class TemperatureGeneratorNode : public GeneratorNode
 {
     public:
-    TemperatureProcedureNode();
-    ~TemperatureProcedureNode() override = default;
+    TemperatureGeneratorNode();
+    ~TemperatureGeneratorNode() override = default;
 
     /*
      * Identity

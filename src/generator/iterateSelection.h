@@ -16,10 +16,10 @@ class Species;
 class SpeciesSite;
 
 // Iterate Selection Node
-class IterateSelectionProcedureNode : public ProcedureNode
+class IterateSelectionGeneratorNode : public GeneratorNode
 {
     public:
-    IterateSelectionProcedureNode();
+    IterateSelectionGeneratorNode();
 
     /*
      * Parameters
@@ -28,7 +28,7 @@ class IterateSelectionProcedureNode : public ProcedureNode
     // Pointers to individual parameters
     std::shared_ptr<ExpressionVariable> nSelectedParameter_, siteIndexParameter_, stackIndexParameter_, indexParameter_;
     // Selection to iterate over
-    std::shared_ptr<const SelectProcedureNode> selection_;
+    std::shared_ptr<const SelectGeneratorNode> selection_;
 
     /*
      * Selected Sites
@@ -48,11 +48,11 @@ class IterateSelectionProcedureNode : public ProcedureNode
      */
     private:
     // Branch for ForEach
-    ProcedureNodeSequence forEachBranch_;
+    GeneratorNodeSequence forEachBranch_;
 
     public:
     // Return the branch from this node (if it has one)
-    OptionalReferenceWrapper<ProcedureNodeSequence> branch() override;
+    OptionalReferenceWrapper<GeneratorNodeSequence> branch() override;
 
     /*
      * Execute

@@ -6,21 +6,21 @@
 #include "generator/pickBase.h"
 
 // Forward Declarations
-class RegionProcedureNodeBase;
+class RegionGeneratorNodeBase;
 
 // Pick Region Node
-class PickRegionProcedureNode : public PickProcedureNodeBase
+class PickRegionGeneratorNode : public PickGeneratorNodeBase
 {
     public:
-    explicit PickRegionProcedureNode(std::shared_ptr<const RegionProcedureNodeBase> region = nullptr);
-    ~PickRegionProcedureNode() override = default;
+    explicit PickRegionGeneratorNode(std::shared_ptr<const RegionGeneratorNodeBase> region = nullptr);
+    ~PickRegionGeneratorNode() override = default;
 
     /*
      * Data
      */
     private:
     // Target region for the pick
-    std::shared_ptr<const RegionProcedureNodeBase> region_;
+    std::shared_ptr<const RegionGeneratorNodeBase> region_;
 
     /*
      * Execute

@@ -7,8 +7,8 @@
 #include "keywords/interactionPotential.h"
 #include "keywords/vec3NodeValue.h"
 
-SphericalGlobalPotentialProcedureNode::SphericalGlobalPotentialProcedureNode()
-    : ProcedureNode(NodeType::SphericalGlobalPotential), potential_(Functions1D::Form::Harmonic)
+SphericalGlobalPotentialGeneratorNode::SphericalGlobalPotentialGeneratorNode()
+    : GeneratorNode(NodeType::SphericalGlobalPotential), potential_(Functions1D::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<InteractionPotentialKeyword<Functions1D>>("Potential", "Form of global potential to apply ", potential_);
@@ -22,7 +22,7 @@ SphericalGlobalPotentialProcedureNode::SphericalGlobalPotentialProcedureNode()
  */
 
 // Execute node
-bool SphericalGlobalPotentialProcedureNode::execute(const ProcedureContext &procedureContext)
+bool SphericalGlobalPotentialGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     auto *cfg = procedureContext.configuration();
 

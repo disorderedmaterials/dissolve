@@ -20,11 +20,11 @@
  * Helper Functions
  */
 
-std::vector<std::shared_ptr<AddProcedureNode>> createRelativeMix(const std::vector<const Species *> &mixSpecies,
-                                                                 Procedure &generator,
-                                                                 std::shared_ptr<ParametersProcedureNode> &paramsNode)
+std::vector<std::shared_ptr<AddGeneratorNode>> createRelativeMix(const std::vector<const Species *> &mixSpecies,
+                                                                 Generator &generator,
+                                                                 std::shared_ptr<ParametersGeneratorNode> &paramsNode)
 {
-    std::vector<std::shared_ptr<AddProcedureNode>> addNodes;
+    std::vector<std::shared_ptr<AddGeneratorNode>> addNodes;
 
     auto count = 0;
     for (auto *sp : mixSpecies)
@@ -43,15 +43,15 @@ std::vector<std::shared_ptr<AddProcedureNode>> createRelativeMix(const std::vect
         // Set up coordinate set, but only if we have a suitable species
         if (sp->nAtoms() > 1)
         {
-            auto coordSets = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("{}_Sets", sp->name()), sp);
+            auto coordSets = generator.createRootNode<CoordinateSetsGeneratorNode>(fmt::format("{}_Sets", sp->name()), sp);
 
             // Create the Add node
-            addNodes.emplace_back(generator.createRootNode<AddProcedureNode>(sp->name(), coordSets,
+            addNodes.emplace_back(generator.createRootNode<AddGeneratorNode>(sp->name(), coordSets,
                                                                              NodeValue(popString, paramsNode->parameters()),
                                                                              NodeValue("rho", paramsNode->parameters())));
         }
         else
-            addNodes.emplace_back(generator.createRootNode<AddProcedureNode>(
+            addNodes.emplace_back(generator.createRootNode<AddGeneratorNode>(
                 sp->name(), sp, NodeValue(popString, paramsNode->parameters()), NodeValue("rho", paramsNode->parameters())));
 
         ++count;

@@ -6,7 +6,7 @@
 #include "gui/keywordWidgets/base.h"
 #include "gui/keywordWidgets/dropDown.h"
 #include "gui/keywordWidgets/ui_nodeVector.h"
-#include "gui/models/procedureNodeModel.h"
+#include "gui/models/generatorNodeModel.h"
 #include "keywords/nodeVector.h"
 #include <QWidget>
 
@@ -34,7 +34,7 @@ class NodeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
     // Allowed nodes to display in the model
     std::vector<ConstNodeRef> allowedNodes_;
     // Model for the node list
-    ProcedureNodeModel nodeModel_;
+    GeneratorNodeModel nodeModel_;
 
     private Q_SLOTS:
     void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);

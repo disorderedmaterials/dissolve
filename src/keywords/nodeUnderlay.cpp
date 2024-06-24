@@ -5,7 +5,7 @@
 #include "generator/generator.h"
 #include "templates/algorithms.h"
 
-NodeKeywordUnderlay::NodeKeywordUnderlay(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+NodeKeywordUnderlay::NodeKeywordUnderlay(GeneratorNode *parentNode, const GeneratorNode::NodeTypeVector &allowedNodeTypes)
     : parentNode_(parentNode), allowedNodeTypes_(allowedNodeTypes)
 {
 }
@@ -14,11 +14,11 @@ NodeKeywordUnderlay::NodeKeywordUnderlay(ProcedureNode *parentNode, const Proced
  * Data
  */
 
-// Parent ProcedureNode
+// Parent GeneratorNode
 NodeRef NodeKeywordUnderlay::parentNode() const { return parentNode_; }
 
 // Return optional target node types to allow
-const ProcedureNode::NodeTypeVector &NodeKeywordUnderlay::allowedNodeTypes() const { return allowedNodeTypes_; }
+const GeneratorNode::NodeTypeVector &NodeKeywordUnderlay::allowedNodeTypes() const { return allowedNodeTypes_; }
 
 // Return vector of possible nodes allowed in the vector
 std::vector<ConstNodeRef> NodeKeywordUnderlay::allowedNodes() const
@@ -35,7 +35,7 @@ ConstNodeRef NodeKeywordUnderlay::findNode(std::string_view name) const
 }
 
 // Return whether the node has valid type
-bool NodeKeywordUnderlay::validNode(const ProcedureNode *node, std::string_view keywordName) const
+bool NodeKeywordUnderlay::validNode(const GeneratorNode *node, std::string_view keywordName) const
 {
     // A null node is valid
     if (!node)
@@ -44,9 +44,9 @@ bool NodeKeywordUnderlay::validNode(const ProcedureNode *node, std::string_view 
     if (!allowedNodeTypes_.empty() &&
         std::find(allowedNodeTypes_.begin(), allowedNodeTypes_.end(), node->type()) == allowedNodeTypes_.end())
         return Messenger::error("Node '{}' is of type {}, but the {} keyword requires: {}.\n", node->name(),
-                                ProcedureNode::nodeTypes().keyword(node->type()), keywordName,
+                                GeneratorNode::nodeTypes().keyword(node->type()), keywordName,
                                 joinStrings(allowedNodeTypes_, ", ",
-                                            [](const auto nodeType) { return ProcedureNode::nodeTypes().keyword(nodeType); }));
+                                            [](const auto nodeType) { return GeneratorNode::nodeTypes().keyword(nodeType); }));
 
     if (!parentNode_->getNodeInScope(node->name(), {}, allowedNodeTypes_))
         return Messenger::error("Node '{}' does not exist in scope, so the {} keyword cannot reference it.\n", node->name(),

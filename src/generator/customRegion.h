@@ -30,11 +30,11 @@ class CustomRegionVoxelKernel : public VoxelKernel
 };
 
 // Custom Region
-class CustomRegionProcedureNode : public RegionProcedureNodeBase, CustomRegionVoxelKernel
+class CustomRegionGeneratorNode : public RegionGeneratorNodeBase, CustomRegionVoxelKernel
 {
     public:
-    CustomRegionProcedureNode();
-    ~CustomRegionProcedureNode() override = default;
+    CustomRegionGeneratorNode();
+    ~CustomRegionGeneratorNode() override = default;
 
     /*
      * Region Data

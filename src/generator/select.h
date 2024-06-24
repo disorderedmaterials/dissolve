@@ -16,10 +16,10 @@ class Species;
 class SpeciesSite;
 
 // Select Node
-class SelectProcedureNode : public ProcedureNode
+class SelectGeneratorNode : public GeneratorNode
 {
     public:
-    explicit SelectProcedureNode(std::vector<const SpeciesSite *> sites = {}, bool axesRequired = false);
+    explicit SelectGeneratorNode(std::vector<const SpeciesSite *> sites = {}, bool axesRequired = false);
 
     /*
      * Parameters
@@ -48,31 +48,31 @@ class SelectProcedureNode : public ProcedureNode
      */
     private:
     // Other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
-    ConstNodeVector<SelectProcedureNode> sameMoleculeExclusions_;
+    ConstNodeVector<SelectGeneratorNode> sameMoleculeExclusions_;
     // Molecules currently excluded from selection
     std::vector<std::shared_ptr<const Molecule>> excludedMolecules_;
     // Other sites (nodes) which will exclude one of our sites if it is the same site
-    ConstNodeVector<SelectProcedureNode> sameSiteExclusions_;
+    ConstNodeVector<SelectGeneratorNode> sameSiteExclusions_;
     // Sites currently excluded from selection
     std::set<const Site *> excludedSites_;
     // Molecule (from site) in which the site must exist
-    std::shared_ptr<const SelectProcedureNode> sameMolecule_;
+    std::shared_ptr<const SelectGeneratorNode> sameMolecule_;
     // Site to use for distance check
-    std::shared_ptr<const SelectProcedureNode> distanceReferenceSite_;
+    std::shared_ptr<const SelectGeneratorNode> distanceReferenceSite_;
     // Range of distance to allow from distance reference site (if limiting)
     Range inclusiveDistanceRange_{0.0, 5.0};
 
     public:
     // Set other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
-    void setSameMoleculeExclusions(ConstNodeVector<SelectProcedureNode> exclusions);
+    void setSameMoleculeExclusions(ConstNodeVector<SelectGeneratorNode> exclusions);
     // Set other sites (nodes) which will exclude one of our sites if it is the same site
-    void setSameSiteExclusions(ConstNodeVector<SelectProcedureNode> exclusions);
+    void setSameSiteExclusions(ConstNodeVector<SelectGeneratorNode> exclusions);
     // Return list of Molecules currently excluded from selection
     const std::vector<std::shared_ptr<const Molecule>> &excludedMolecules() const;
     // Return Molecule (from site) in which the site must exist
     std::shared_ptr<const Molecule> sameMoleculeMolecule();
     // Set site to use for distance check
-    void setDistanceReferenceSite(std::shared_ptr<const SelectProcedureNode> site);
+    void setDistanceReferenceSite(std::shared_ptr<const SelectGeneratorNode> site);
     // Set range of distance to allow from distance reference site
     void setInclusiveDistanceRange(Range range);
 
@@ -118,11 +118,11 @@ class SelectProcedureNode : public ProcedureNode
      */
     private:
     // Branch for ForEach
-    ProcedureNodeSequence forEachBranch_;
+    GeneratorNodeSequence forEachBranch_;
 
     public:
     // Return the branch from this node (if it has one)
-    OptionalReferenceWrapper<ProcedureNodeSequence> branch() override;
+    OptionalReferenceWrapper<GeneratorNodeSequence> branch() override;
 
     /*
      * Execute

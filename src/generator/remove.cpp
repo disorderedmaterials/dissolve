@@ -9,11 +9,11 @@
 #include "keywords/node.h"
 #include "keywords/speciesVector.h"
 
-RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(NodeType::Remove)
+RemoveGeneratorNode::RemoveGeneratorNode() : GeneratorNode(NodeType::Remove)
 {
     keywords_.setOrganisation("Options", "Targets");
     keywords_.add<SpeciesVectorKeyword>("Species", "Target species to remove", speciesToRemove_);
-    keywords_.add<NodeKeyword<PickProcedureNodeBase>>(
+    keywords_.add<NodeKeyword<PickGeneratorNodeBase>>(
         "Selection", "Picked selection of molecules to remove", selection_, this,
         NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion});
 }
@@ -23,14 +23,14 @@ RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(NodeType::Remove)
  */
 
 // Return whether a name for the node must be provided
-bool RemoveProcedureNode::mustBeNamed() const { return false; }
+bool RemoveGeneratorNode::mustBeNamed() const { return false; }
 
 /*
  * Execute
  */
 
 // Execute node
-bool RemoveProcedureNode::execute(const ProcedureContext &procedureContext)
+bool RemoveGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     // Store current molecule population
     auto nStartMolecules = procedureContext.configuration()->nMolecules();

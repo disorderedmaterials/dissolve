@@ -6,7 +6,7 @@
 
 // Set source variable data
 void ExpressionVariableVectorModel::setData(std::vector<std::shared_ptr<ExpressionVariable>> &variables,
-                                            const ProcedureNode *parentNode)
+                                            const GeneratorNode *parentNode)
 {
     beginResetModel();
     variables_ = variables;

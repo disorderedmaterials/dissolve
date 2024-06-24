@@ -14,11 +14,11 @@
 #include "keywords/nodeValueEnumOptions.h"
 #include "math/matrix3.h"
 
-RotateFragmentProcedureNode::RotateFragmentProcedureNode(std::shared_ptr<SelectProcedureNode> site)
-    : ProcedureNode(NodeType::RotateFragment), site_(site)
+RotateFragmentGeneratorNode::RotateFragmentGeneratorNode(std::shared_ptr<SelectGeneratorNode> site)
+    : GeneratorNode(NodeType::RotateFragment), site_(site)
 {
     keywords_.setOrganisation("Options", "Site");
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Site", "Site to be rotated", site_, this,
+    keywords_.add<NodeKeyword<SelectGeneratorNode>>("Site", "Site to be rotated", site_, this,
                                                     NodeTypeVector{NodeType::Select});
     keywords_.add<NodeValueKeyword>("Rotation", "Rotation to perform", rotation_, this);
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Axis", "Axis for rotation", axis_, OrientedSite::siteAxis());
@@ -29,13 +29,13 @@ RotateFragmentProcedureNode::RotateFragmentProcedureNode(std::shared_ptr<SelectP
  */
 
 // Return whether a name for the node must be provided
-bool RotateFragmentProcedureNode::mustBeNamed() const { return false; }
+bool RotateFragmentGeneratorNode::mustBeNamed() const { return false; }
 
 /*
  * Execute
  */
 
-bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureContext)
+bool RotateFragmentGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     if (!site_->currentSite())
         return Messenger::error("No current site to act upon! Did you mean to put this in a loop?");

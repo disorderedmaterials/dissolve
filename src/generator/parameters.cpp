@@ -5,7 +5,7 @@
 #include "expression/variable.h"
 #include "keywords/expressionVariableVector.h"
 
-ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(NodeType::Parameters)
+ParametersGeneratorNode::ParametersGeneratorNode() : GeneratorNode(NodeType::Parameters)
 {
     keywords_.setOrganisation("Options", "Data");
     keywords_.add<ExpressionVariableVectorKeyword>("Parameter", "Defined parameters", parameters_, this);
@@ -16,24 +16,24 @@ ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(NodeType::Par
  */
 
 // Return whether a name for the node must be provided
-bool ParametersProcedureNode::mustBeNamed() const { return false; }
+bool ParametersGeneratorNode::mustBeNamed() const { return false; }
 
 /*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool ParametersProcedureNode::prepare(const ProcedureContext &procedureContext) { return true; }
+bool ParametersGeneratorNode::prepare(const ProcedureContext &procedureContext) { return true; }
 
 // Execute node
-bool ParametersProcedureNode::execute(const ProcedureContext &procedureContext) { return true; }
+bool ParametersGeneratorNode::execute(const ProcedureContext &procedureContext) { return true; }
 
 /*
  * I/O
  */
 
 // Express as a serialisable value
-SerialisedValue ParametersProcedureNode::serialise() const
+SerialisedValue ParametersGeneratorNode::serialise() const
 {
     SerialisedValue result;
     for (auto &param : parameters_)
@@ -42,7 +42,7 @@ SerialisedValue ParametersProcedureNode::serialise() const
 }
 
 // Read values from a serialisable value
-void ParametersProcedureNode::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void ParametersGeneratorNode::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     toMap(node,
           [this](const auto &key, const auto &value)

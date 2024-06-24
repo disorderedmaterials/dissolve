@@ -7,8 +7,8 @@
 #include "gui/mainTab.h"
 #include "gui/models/enumOptionsModel.h"
 #include "gui/models/externalPotentialModel.h"
+#include "gui/models/generatorModel.h"
 #include "gui/models/globalPotentialFilterProxy.h"
-#include "gui/models/procedureModel.h"
 #include "gui/ui_configurationTab.h"
 #include <map>
 
@@ -52,8 +52,8 @@ class ConfigurationTab : public QWidget, public MainTab
     private:
     // Configuration data to display
     Configuration *configuration_;
-    // Procedure Model
-    ProcedureModel procedureModel_;
+    // Generator Model
+    GeneratorModel generatorModel_;
     // Global potential model
     ExternalPotentialModel globalPotentialModel_;
     // Global potential filter proxy

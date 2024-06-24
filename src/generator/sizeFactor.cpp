@@ -6,7 +6,7 @@
 #include "generator/node.h"
 #include "keywords/nodeValue.h"
 
-SizeFactorProcedureNode::SizeFactorProcedureNode() : ProcedureNode(NodeType::SizeFactor)
+SizeFactorGeneratorNode::SizeFactorGeneratorNode() : GeneratorNode(NodeType::SizeFactor)
 {
     keywords_.add<NodeValueKeyword>("SizeFactor", "Size factor scaling to apply to configuration", sizeFactor_, this);
 }
@@ -16,7 +16,7 @@ SizeFactorProcedureNode::SizeFactorProcedureNode() : ProcedureNode(NodeType::Siz
  */
 
 // Execute node
-bool SizeFactorProcedureNode::execute(const ProcedureContext &procedureContext)
+bool SizeFactorGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     auto *cfg = procedureContext.configuration();
     cfg->setRequestedSizeFactor(sizeFactor_.asDouble());

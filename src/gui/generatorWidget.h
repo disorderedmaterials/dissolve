@@ -3,42 +3,42 @@
 
 #pragma once
 
+#include "gui/models/generatorModel.h"
 #include "gui/models/nodePaletteModel.h"
-#include "gui/models/procedureModel.h"
-#include "gui/ui_procedureWidget.h"
+#include "gui/ui_generatorWidget.h"
 
 // Forward Declarations
 class DissolveWindow;
 class NodeControlWidget;
 
-// Procedure Widget
-class ProcedureWidget : public QWidget
+// Generator Widget
+class GeneratorWidget : public QWidget
 {
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT
 
     public:
-    ProcedureWidget(QWidget *parent = nullptr);
-    ~ProcedureWidget() override = default;
+    GeneratorWidget(QWidget *parent = nullptr);
+    ~GeneratorWidget() override = default;
 
     /*
      * UI
      */
     private:
     // Main form declaration
-    Ui::ProcedureWidget ui_;
+    Ui::GeneratorWidget ui_;
     // Pointer to the main Dissolve window
     DissolveWindow *dissolveWindow_{nullptr};
-    // Procedure to display
-    OptionalReferenceWrapper<Procedure> procedure_;
-    // Model for procedure
-    ProcedureModel procedureModel_;
+    // Generator to display
+    OptionalReferenceWrapper<Generator> generator_;
+    // Model for generator
+    GeneratorModel generatorModel_;
     // Model for node palette
     NodePaletteModel nodePaletteModel_;
 
     public:
     // Set up widget
-    void setUp(DissolveWindow *dissolveWindow, Procedure &proc);
+    void setUp(DissolveWindow *dissolveWindow, Generator &proc);
 
     /*
      * Widgets
@@ -56,7 +56,7 @@ class ProcedureWidget : public QWidget
     void on_ShowContextButton_clicked(bool checked);
     void on_ShowAvailableNodesButton_clicked(bool checked);
     void nodeNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
-    void procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
+    void generatorDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
     void updateNodeTree();
     void on_NodesTree_customContextMenuRequested(const QPoint &pos);
     void on_AvailableNodesTree_doubleClicked(const QModelIndex &index);
@@ -72,8 +72,8 @@ class ProcedureWidget : public QWidget
     protected:
     // Update controls
     void updateControls();
-    // Prevent procedure editing
+    // Prevent generator editing
     void preventEditing();
-    // Allow procedure editing
+    // Allow generator editing
     void allowEditing();
 };

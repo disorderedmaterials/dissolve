@@ -23,7 +23,7 @@ bool GeneralRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3
  * General Region
  */
 
-GeneralRegionProcedureNode::GeneralRegionProcedureNode() : RegionProcedureNodeBase(ProcedureNode::NodeType::GeneralRegion)
+GeneralRegionGeneratorNode::GeneralRegionGeneratorNode() : RegionGeneratorNodeBase(GeneratorNode::NodeType::GeneralRegion)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<DoubleKeyword>("Tolerance", "Distance threshold for avoiding existing atoms in the configuration", tolerance_,
@@ -31,7 +31,7 @@ GeneralRegionProcedureNode::GeneralRegionProcedureNode() : RegionProcedureNodeBa
 }
 
 // Return a new voxel check kernel
-std::shared_ptr<VoxelKernel> GeneralRegionProcedureNode::createVoxelKernel()
+std::shared_ptr<VoxelKernel> GeneralRegionGeneratorNode::createVoxelKernel()
 {
     return std::make_shared<GeneralRegionVoxelKernel>(tolerance_ * tolerance_);
 }

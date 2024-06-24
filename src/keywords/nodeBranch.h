@@ -14,7 +14,7 @@ class NodeValue;
 class NodeBranchKeyword : public KeywordBase
 {
     public:
-    NodeBranchKeyword(ProcedureNodeSequence &data);
+    NodeBranchKeyword(GeneratorNodeSequence &data);
     ~NodeBranchKeyword() override = default;
 
     /*
@@ -22,7 +22,7 @@ class NodeBranchKeyword : public KeywordBase
      */
     private:
     // Reference to data
-    ProcedureNodeSequence &data_;
+    GeneratorNodeSequence &data_;
 
     /*
      * Arguments

@@ -11,18 +11,18 @@
 class Molecule;
 
 // Pick Node Base
-class PickProcedureNodeBase : public ProcedureNode
+class PickGeneratorNodeBase : public GeneratorNode
 {
     public:
-    explicit PickProcedureNodeBase(ProcedureNode::NodeType nodeType);
-    ~PickProcedureNodeBase() override = default;
+    explicit PickGeneratorNodeBase(GeneratorNode::NodeType nodeType);
+    ~PickGeneratorNodeBase() override = default;
 
     /*
      * Picked Molecules
      */
     protected:
     // Existing selection from which to pick
-    std::shared_ptr<const PickProcedureNodeBase> selection_;
+    std::shared_ptr<const PickGeneratorNodeBase> selection_;
     // Vector of picked Molecules
     std::vector<std::shared_ptr<Molecule>> pickedMolecules_;
 

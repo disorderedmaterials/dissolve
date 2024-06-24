@@ -5,7 +5,7 @@
 #include "keywords/bool.h"
 #include "keywords/double.h"
 
-RegionProcedureNodeBase::RegionProcedureNodeBase(ProcedureNode::NodeType nodeType) : ProcedureNode(nodeType)
+RegionGeneratorNodeBase::RegionGeneratorNodeBase(GeneratorNode::NodeType nodeType) : GeneratorNode(nodeType)
 {
     keywords_.setOrganisation("Options", "Grid");
     keywords_.add<DoubleKeyword>("VoxelSize", "Voxel size (length) guiding the coarseness / detail of the region", voxelSize_,
@@ -18,21 +18,21 @@ RegionProcedureNodeBase::RegionProcedureNodeBase(ProcedureNode::NodeType nodeTyp
  */
 
 // Return whether a name for the node must be provided
-bool RegionProcedureNodeBase::mustBeNamed() const { return true; }
+bool RegionGeneratorNodeBase::mustBeNamed() const { return true; }
 
 /*
  * Region Data
  */
 
 // Return current region data
-const Region &RegionProcedureNodeBase::region() const { return region_; }
+const Region &RegionGeneratorNodeBase::region() const { return region_; }
 
 /*
  * Execute
  */
 
 // Execute node
-bool RegionProcedureNodeBase::execute(const ProcedureContext &procedureContext)
+bool RegionGeneratorNodeBase::execute(const ProcedureContext &procedureContext)
 {
     return region_.generate(procedureContext.configuration(), voxelSize_, invert_, [&]() { return createVoxelKernel(); });
 }

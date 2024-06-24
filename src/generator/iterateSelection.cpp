@@ -11,11 +11,11 @@
 #include "keywords/speciesSiteVector.h"
 #include <algorithm>
 
-IterateSelectionProcedureNode::IterateSelectionProcedureNode()
-    : ProcedureNode(NodeType::IterateSelection), forEachBranch_(*this, "ForEach")
+IterateSelectionGeneratorNode::IterateSelectionGeneratorNode()
+    : GeneratorNode(NodeType::IterateSelection), forEachBranch_(*this, "ForEach")
 {
     // Keywords
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Selection", "Target selection to iterate over", selection_, this,
+    keywords_.add<NodeKeyword<SelectGeneratorNode>>("Selection", "Target selection to iterate over", selection_, this,
                                                     NodeTypeVector{NodeType::Select});
 
     nSelectedParameter_ = addParameter("nSelected");
@@ -29,21 +29,21 @@ IterateSelectionProcedureNode::IterateSelectionProcedureNode()
  */
 
 // Return the branch from this node (if it has one)
-OptionalReferenceWrapper<ProcedureNodeSequence> IterateSelectionProcedureNode::branch() { return forEachBranch_; }
+OptionalReferenceWrapper<GeneratorNodeSequence> IterateSelectionGeneratorNode::branch() { return forEachBranch_; }
 
 /*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool IterateSelectionProcedureNode::prepare(const ProcedureContext &procedureContext)
+bool IterateSelectionGeneratorNode::prepare(const ProcedureContext &procedureContext)
 {
     // If one exists, prepare the ForEach branch nodes
     return forEachBranch_.prepare(procedureContext);
 }
 
 // Execute node
-bool IterateSelectionProcedureNode::execute(const ProcedureContext &procedureContext)
+bool IterateSelectionGeneratorNode::execute(const ProcedureContext &procedureContext)
 {
     const auto &sites = selection_->sites();
     currentSite_ = std::nullopt;
@@ -73,7 +73,7 @@ bool IterateSelectionProcedureNode::execute(const ProcedureContext &procedureCon
     return true;
 }
 
-bool IterateSelectionProcedureNode::finalise(const ProcedureContext &procedureContext)
+bool IterateSelectionGeneratorNode::finalise(const ProcedureContext &procedureContext)
 {
     auto selectionSize = selection_->sites().size();
     // If one exists, finalise the ForEach branch nodes

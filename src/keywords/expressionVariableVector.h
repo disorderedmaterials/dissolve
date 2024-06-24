@@ -8,13 +8,13 @@
 
 // Forward Declarations
 class ExpressionVariable;
-class ProcedureNode;
+class GeneratorNode;
 
 // Keyword managing vector of ExpressionVariable
 class ExpressionVariableVectorKeyword : public KeywordBase
 {
     public:
-    ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data, ProcedureNode *parentNode);
+    ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data, GeneratorNode *parentNode);
     ~ExpressionVariableVectorKeyword() override = default;
 
     /*
@@ -23,8 +23,8 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     private:
     // Reference to vector of data
     std::vector<std::shared_ptr<ExpressionVariable>> &data_;
-    // Parent ProcedureNode
-    ProcedureNode *parentNode_;
+    // Parent GeneratorNode
+    GeneratorNode *parentNode_;
 
     public:
     // Has not changed from initial value
@@ -32,8 +32,8 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     // Return reference to vector of data
     std::vector<std::shared_ptr<ExpressionVariable>> &data();
     const std::vector<std::shared_ptr<ExpressionVariable>> &data() const;
-    // Return parent ProcedureNode
-    const ProcedureNode *parentNode() const;
+    // Return parent GeneratorNode
+    const GeneratorNode *parentNode() const;
 
     /*
      * Arguments

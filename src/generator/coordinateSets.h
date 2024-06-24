@@ -12,11 +12,11 @@
 class Species;
 
 // MD Node
-class CoordinateSetsProcedureNode : public ProcedureNode
+class CoordinateSetsGeneratorNode : public GeneratorNode
 {
     public:
-    CoordinateSetsProcedureNode(const Species *sp = nullptr);
-    ~CoordinateSetsProcedureNode() override = default;
+    CoordinateSetsGeneratorNode(const Species *sp = nullptr);
+    ~CoordinateSetsGeneratorNode() override = default;
 
     /*
      * Identity
