@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.15)
-project(Dissolve)
+cmake_minimum_required(VERSION 3.24)
+project(Dissolve LANGUAGES CXX)
 
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Team Dissolve")
