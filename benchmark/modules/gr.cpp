@@ -3,6 +3,7 @@
 
 #include "benchmark/benchmark.h"
 #include "common/problems.h"
+#include "modules/gr/gr.h"
 
 template <ProblemType problem, Population population, GRModule::PartialsMethod method>
 static void BM_CalculateGR(benchmark::State &state)
@@ -23,22 +24,22 @@ static void BM_CalculateGR(benchmark::State &state)
     }
 }
 
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::small, Method::SimpleMethod)
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::small, GRModule::PartialsMethod::SimpleMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::small, Method::CellsMethod)
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::small, GRModule::PartialsMethod::CellsMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::medium, Method::SimpleMethod)
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::medium, GRModule::PartialsMethod::SimpleMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::medium, Method::CellsMethod)
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::medium, GRModule::PartialsMethod::CellsMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::large, Method::SimpleMethod)
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::large, GRModule::PartialsMethod::SimpleMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::large, Method::CellsMethod)
+BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::large, GRModule::PartialsMethod::CellsMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
 

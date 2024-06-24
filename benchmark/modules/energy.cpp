@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "classes/cell.h"
+#include "modules/energy/energy.h"
 #include "common/problems.h"
 #include "kernels/producer.h"
 #include <benchmark/benchmark.h>

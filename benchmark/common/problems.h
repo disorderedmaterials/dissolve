@@ -7,8 +7,6 @@
 #include "classes/box.h"
 #include "classes/coreData.h"
 #include "main/dissolve.h"
-#include "modules/energy/energy.h"
-#include "modules/gr/gr.h"
 #include <string>
 
 namespace
@@ -76,12 +74,6 @@ template <ProblemType problem, Population population> std::string benchmarkFileP
     else
         return {};
 }
-
-namespace Method
-{
-constexpr auto CellsMethod = GRModule::PartialsMethod::CellsMethod;
-constexpr auto SimpleMethod = GRModule::PartialsMethod::SimpleMethod;
-} // namespace Method
 
 template <ProblemType problem, Population population> class Problem
 {
