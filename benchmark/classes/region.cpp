@@ -7,6 +7,8 @@
 #include <benchmark/benchmark.h>
 #include <cmath>
 
+namespace Benchmarks
+{
 class RandomVoxelKernel : public VoxelKernel
 {
     public:
@@ -14,10 +16,9 @@ class RandomVoxelKernel : public VoxelKernel
     bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override { return DissolveMath::random() > 0.5; }
 };
 
-template <DissolveBenchmarks::SpeciesType speciesType, DissolveBenchmarks::Population population>
-static void BM_Region_Generate(benchmark::State &state)
+template <SpeciesType speciesType, SpeciesPopulation population> static void BM_Region_Generate(benchmark::State &state)
 {
-    DissolveBenchmarks::Problem<speciesType, population> problemDef;
+    Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
     for (auto _ : state)
     {
@@ -26,6 +27,7 @@ static void BM_Region_Generate(benchmark::State &state)
     }
 }
 
-BENCHMARK_TEMPLATE(BM_Region_Generate, DissolveBenchmarks::SpeciesType::MediumMolecule, DissolveBenchmarks::Population::Small);
+BENCHMARK_TEMPLATE(BM_Region_Generate, SpeciesType::MediumMolecule, SpeciesPopulation::Small);
+} // namespace Benchmarks
 
 BENCHMARK_MAIN();

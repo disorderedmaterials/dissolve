@@ -6,6 +6,8 @@
 #include <random>
 #include <vector>
 
+namespace Benchmarks
+{
 static void BM_Interpolator(benchmark::State &state)
 {
     int bytes = state.range(0);
@@ -34,5 +36,6 @@ static void BM_Interpolator(benchmark::State &state)
 }
 
 BENCHMARK(BM_Interpolator)->RangeMultiplier(4)->Range(1 << 10, 1 << 24);
+} // namespace Benchmarks
 
 BENCHMARK_MAIN();

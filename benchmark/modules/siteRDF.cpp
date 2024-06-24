@@ -6,10 +6,11 @@
 #include "module/context.h"
 #include <benchmark/benchmark.h>
 
-template <DissolveBenchmarks::SpeciesType speciesType, DissolveBenchmarks::Population population>
-static void BM_Module_SiteRDF(benchmark::State &state)
+namespace Benchmarks
 {
-    DissolveBenchmarks::Problem<speciesType, population> problemDef;
+template <SpeciesType speciesType, SpeciesPopulation population> static void BM_Module_SiteRDF(benchmark::State &state)
+{
+    Problem<speciesType, population> problemDef;
     SiteRDFModule module;
     std::vector<const SpeciesSite *> sites;
     sites.push_back(problemDef.dissolve().coreData().species().front()->sites().front().get());
@@ -24,9 +25,8 @@ static void BM_Module_SiteRDF(benchmark::State &state)
     }
 }
 
-BENCHMARK_TEMPLATE(BM_Module_SiteRDF, DissolveBenchmarks::SpeciesType::SmallMolecule, DissolveBenchmarks::Population::Small)
-    ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_Module_SiteRDF, DissolveBenchmarks::SpeciesType::Atomic, DissolveBenchmarks::Population::Large)
-    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_Module_SiteRDF, SpeciesType::SmallMolecule, SpeciesPopulation::Small)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_Module_SiteRDF, SpeciesType::Atomic, SpeciesPopulation::Large)->Unit(benchmark::kMillisecond);
+} // namespace Benchmarks
 
 BENCHMARK_MAIN();

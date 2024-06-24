@@ -6,6 +6,8 @@
 #include <numeric>
 #include <random>
 
+namespace Benchmarks
+{
 // Benchmarks random access into the Array3D structure
 static void BM_Array_3d(benchmark::State &state)
 {
@@ -41,5 +43,5 @@ static void BM_Array_3d(benchmark::State &state)
 }
 
 BENCHMARK(BM_Array_3d)->RangeMultiplier(4)->Range(1 << 10, 1 << 24);
-
+} // namespace Benchmarks
 BENCHMARK_MAIN();

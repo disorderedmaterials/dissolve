@@ -7,8 +7,10 @@
 #include "kernels/producer.h"
 #include <benchmark/benchmark.h>
 
-template <DissolveBenchmarks::SpeciesType speciesType, DissolveBenchmarks::Population population>
-std::unique_ptr<ForceKernel> createForceKernel(DissolveBenchmarks::Problem<speciesType, population> &problemDef)
+namespace Benchmarks
+{
+template <SpeciesType speciesType, SpeciesPopulation population>
+std::unique_ptr<ForceKernel> createForceKernel(Problem<speciesType, population> &problemDef)
 {
 
     auto &procPool = problemDef.dissolve().worldPool();
@@ -17,10 +19,10 @@ std::unique_ptr<ForceKernel> createForceKernel(DissolveBenchmarks::Problem<speci
     return KernelProducer::forceKernel(cfg, procPool, potentialMap);
 }
 
-template <DissolveBenchmarks::SpeciesType speciesType, DissolveBenchmarks::Population population>
+template <SpeciesType speciesType, SpeciesPopulation population>
 static void BM_CalculateForces_SpeciesBond(benchmark::State &state)
 {
-    DissolveBenchmarks::Problem<speciesType, population> problemDef;
+    Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
@@ -31,10 +33,10 @@ static void BM_CalculateForces_SpeciesBond(benchmark::State &state)
         forceKernel->bondForces(bond, bond.i()->r(), bond.j()->r(), forces);
 }
 
-template <DissolveBenchmarks::SpeciesType speciesType, DissolveBenchmarks::Population population>
+template <SpeciesType speciesType, SpeciesPopulation population>
 static void BM_CalculateForces_SpeciesAngle(benchmark::State &state)
 {
-    DissolveBenchmarks::Problem<speciesType, population> problemDef;
+    Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
@@ -43,10 +45,10 @@ static void BM_CalculateForces_SpeciesAngle(benchmark::State &state)
     for (auto _ : state)
         forceKernel->angleForces(angle, angle.i()->r(), angle.j()->r(), angle.k()->r(), forces);
 }
-template <DissolveBenchmarks::SpeciesType speciesType, DissolveBenchmarks::Population population>
+template <SpeciesType speciesType, SpeciesPopulation population>
 static void BM_CalculateForces_SpeciesTorsion(benchmark::State &state)
 {
-    DissolveBenchmarks::Problem<speciesType, population> problemDef;
+    Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
@@ -56,10 +58,10 @@ static void BM_CalculateForces_SpeciesTorsion(benchmark::State &state)
         forceKernel->torsionForces(torsion, torsion.i()->r(), torsion.j()->r(), torsion.k()->r(), torsion.l()->r(), forces);
 }
 
-template <DissolveBenchmarks::SpeciesType speciesType, DissolveBenchmarks::Population population>
+template <SpeciesType speciesType, SpeciesPopulation population>
 static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
 {
-    DissolveBenchmarks::Problem<speciesType, population> problemDef;
+    Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
@@ -69,10 +71,10 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
             {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
 }
 
-template <DissolveBenchmarks::SpeciesType speciesType, DissolveBenchmarks::Population population>
+template <SpeciesType speciesType, SpeciesPopulation population>
 static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
 {
-    DissolveBenchmarks::Problem<speciesType, population> problemDef;
+    Problem<speciesType, population> problemDef;
     auto &sp = problemDef.coreData().species().front();
     std::vector<Vec3<double>> forces(sp->nAtoms());
     auto &procPool = problemDef.dissolve().worldPool();
@@ -81,10 +83,10 @@ static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
         ForcesModule::totalForces(procPool, sp.get(), potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
 }
 
-template <DissolveBenchmarks::SpeciesType speciesType, DissolveBenchmarks::Population population>
+template <SpeciesType speciesType, SpeciesPopulation population>
 static void BM_CalculateForces_TotalInterAtomic(benchmark::State &state)
 {
-    DissolveBenchmarks::Problem<speciesType, population> problemDef;
+    Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
@@ -92,10 +94,10 @@ static void BM_CalculateForces_TotalInterAtomic(benchmark::State &state)
         forceKernel->totalForces(forces, forces, ProcessPool::PoolStrategy, ForceKernel::ExcludeGeometry);
 }
 
-template <DissolveBenchmarks::SpeciesType speciesType, DissolveBenchmarks::Population population>
+template <SpeciesType speciesType, SpeciesPopulation population>
 static void BM_CalculateForces_TotalForces(benchmark::State &state)
 {
-    DissolveBenchmarks::Problem<speciesType, population> problemDef;
+    Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto &procPool = problemDef.dissolve().worldPool();
@@ -104,47 +106,35 @@ static void BM_CalculateForces_TotalForces(benchmark::State &state)
         ForcesModule::totalForces(procPool, cfg, potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
 }
 // small molecule benchmarks
-BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesBond, DissolveBenchmarks::SpeciesType::SmallMolecule,
-                   DissolveBenchmarks::Population::Small);
-BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesAngle, DissolveBenchmarks::SpeciesType::SmallMolecule,
-                   DissolveBenchmarks::Population::Small);
-BENCHMARK_TEMPLATE(BM_CalculateForces_TotalIntraMolecular, DissolveBenchmarks::SpeciesType::SmallMolecule,
-                   DissolveBenchmarks::Population::Small)
+BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesBond, SpeciesType::SmallMolecule, SpeciesPopulation::Small);
+BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesAngle, SpeciesType::SmallMolecule, SpeciesPopulation::Small);
+BENCHMARK_TEMPLATE(BM_CalculateForces_TotalIntraMolecular, SpeciesType::SmallMolecule, SpeciesPopulation::Small)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateForces_TotalSpecies, DissolveBenchmarks::SpeciesType::SmallMolecule,
-                   DissolveBenchmarks::Population::Small);
-BENCHMARK_TEMPLATE(BM_CalculateForces_TotalInterAtomic, DissolveBenchmarks::SpeciesType::SmallMolecule,
-                   DissolveBenchmarks::Population::Small)
+BENCHMARK_TEMPLATE(BM_CalculateForces_TotalSpecies, SpeciesType::SmallMolecule, SpeciesPopulation::Small);
+BENCHMARK_TEMPLATE(BM_CalculateForces_TotalInterAtomic, SpeciesType::SmallMolecule, SpeciesPopulation::Small)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateForces_TotalForces, DissolveBenchmarks::SpeciesType::SmallMolecule,
-                   DissolveBenchmarks::Population::Small)
+BENCHMARK_TEMPLATE(BM_CalculateForces_TotalForces, SpeciesType::SmallMolecule, SpeciesPopulation::Small)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
 
 // medium molecule benchmarks
-BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesAngle, DissolveBenchmarks::SpeciesType::MediumMolecule,
-                   DissolveBenchmarks::Population::Small);
-BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesBond, DissolveBenchmarks::SpeciesType::MediumMolecule,
-                   DissolveBenchmarks::Population::Small);
-BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesTorsion, DissolveBenchmarks::SpeciesType::MediumMolecule,
-                   DissolveBenchmarks::Population::Small);
-BENCHMARK_TEMPLATE(BM_CalculateForces_TotalInterAtomic, DissolveBenchmarks::SpeciesType::MediumMolecule,
-                   DissolveBenchmarks::Population::Small)
+BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesAngle, SpeciesType::MediumMolecule, SpeciesPopulation::Small);
+BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesBond, SpeciesType::MediumMolecule, SpeciesPopulation::Small);
+BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesTorsion, SpeciesType::MediumMolecule, SpeciesPopulation::Small);
+BENCHMARK_TEMPLATE(BM_CalculateForces_TotalInterAtomic, SpeciesType::MediumMolecule, SpeciesPopulation::Small)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateForces_TotalSpecies, DissolveBenchmarks::SpeciesType::MediumMolecule,
-                   DissolveBenchmarks::Population::Small);
-BENCHMARK_TEMPLATE(BM_CalculateForces_TotalIntraMolecular, DissolveBenchmarks::SpeciesType::MediumMolecule,
-                   DissolveBenchmarks::Population::Small)
+BENCHMARK_TEMPLATE(BM_CalculateForces_TotalSpecies, SpeciesType::MediumMolecule, SpeciesPopulation::Small);
+BENCHMARK_TEMPLATE(BM_CalculateForces_TotalIntraMolecular, SpeciesType::MediumMolecule, SpeciesPopulation::Small)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_CalculateForces_TotalForces, DissolveBenchmarks::SpeciesType::MediumMolecule,
-                   DissolveBenchmarks::Population::Small)
+BENCHMARK_TEMPLATE(BM_CalculateForces_TotalForces, SpeciesType::MediumMolecule, SpeciesPopulation::Small)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
 
 // framework molecule benchmarks
 // BENCHMARK_TEMPLATE(BM_CalculateForces_TotalSpecies, ProblemType::frameworkMolecule, Population::single)
 //    ->Unit(benchmark::kMillisecond);
+} // namespace Benchmarks
 
 BENCHMARK_MAIN();

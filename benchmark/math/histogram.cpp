@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "benchmark/benchmark.h"
 #include "math/histogram1D.h"
 #include "math/histogram2D.h"
 #include "math/histogram3D.h"
+#include <benchmark/benchmark.h>
 #include <random>
 
+namespace Benchmarks
+{
 // Benchmark histograms
 
 // Creates a histogram 'x' bytes of data
@@ -62,3 +64,6 @@ static void BM_HistogramBinning_3d(benchmark::State &state)
 BENCHMARK(BM_HistogramBinning_1d)->RangeMultiplier(2)->Range(1 << 10, 1 << 24);
 BENCHMARK(BM_HistogramBinning_2d)->RangeMultiplier(2)->Range(1 << 10, 1 << 24);
 BENCHMARK(BM_HistogramBinning_3d)->RangeMultiplier(2)->Range(1 << 10, 1 << 24);
+} // namespace Benchmarks
+
+BENCHMARK_MAIN();

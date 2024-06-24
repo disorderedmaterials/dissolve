@@ -9,7 +9,7 @@
 #include "main/dissolve.h"
 #include <string>
 
-namespace DissolveBenchmarks
+namespace Benchmarks
 {
 const char *FILEEXTENSION = ".txt";
 enum class SpeciesType
@@ -20,7 +20,7 @@ enum class SpeciesType
     FrameworkMolecule,
 };
 
-enum class Population
+enum class SpeciesPopulation
 {
     Single,
     Small,
@@ -28,21 +28,23 @@ enum class Population
     Large
 };
 
-template <SpeciesType speciesType, Population moleculePopulation> std::string benchmarkFilePath()
+template <SpeciesType speciesType, SpeciesPopulation population> std::string benchmarkFilePath()
 {
     static std::map<SpeciesType, std::string> speciesTypes = {{SpeciesType::Atomic, "argon"},
                                                               {SpeciesType::SmallMolecule, "water"},
                                                               {SpeciesType::MediumMolecule, "hexane"},
                                                               {SpeciesType::FrameworkMolecule, "mof5-3x3x3"}};
-    static std::map<Population, std::string> populationSizes = {
-        {Population::Single, "single"}, {Population::Small, "1k"}, {Population::Medium, "5k"}, {Population::Large, "10k"}};
+    static std::map<SpeciesPopulation, std::string> populationSizes = {{SpeciesPopulation::Single, "single"},
+                                                                       {SpeciesPopulation::Small, "1k"},
+                                                                       {SpeciesPopulation::Medium, "5k"},
+                                                                       {SpeciesPopulation::Large, "10k"}};
 
     std::stringstream fileName;
-    fileName << benchmarkInputFilePath << speciesTypes[speciesType] << populationSizes[moleculePopulation] << FILEEXTENSION;
+    fileName << benchmarkInputFilePath << speciesTypes[speciesType] << populationSizes[population] << FILEEXTENSION;
     return fileName.str();
 }
 
-template <SpeciesType speciesType, Population population> class Problem
+template <SpeciesType speciesType, SpeciesPopulation population> class Problem
 {
     public:
     Problem() : dissolve_(coreData_)
@@ -61,5 +63,4 @@ template <SpeciesType speciesType, Population population> class Problem
     Dissolve &dissolve() { return dissolve_; }
     Configuration *configuration() { return coreData_.configurations().front().get(); }
 };
-
-} // namespace DissolveBenchmarks
+} // namespace Benchmarks

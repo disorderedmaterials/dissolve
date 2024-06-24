@@ -7,6 +7,8 @@
 #include <numeric>
 #include <random>
 
+namespace Benchmarks
+{
 // Benchmark Fourier routines
 static void BM_Fourier(benchmark::State &state)
 {
@@ -30,5 +32,6 @@ static void BM_Fourier(benchmark::State &state)
 }
 
 BENCHMARK(BM_Fourier)->RangeMultiplier(4)->Range(1 << 10, 1 << 18);
+} // namespace Benchmarks
 
 BENCHMARK_MAIN();

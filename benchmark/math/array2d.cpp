@@ -6,10 +6,9 @@
 #include <numeric>
 #include <random>
 
-// Benchmark array
-
-// Benchmarks random access into the array structures
-
+namespace Benchmarks
+{
+// Benchmarks random access into the Array2D structure
 static void BM_Array_2d(benchmark::State &state)
 {
     int bytes = state.range(0);
@@ -42,5 +41,6 @@ static void BM_Array_2d(benchmark::State &state)
 }
 
 BENCHMARK(BM_Array_2d)->RangeMultiplier(4)->Range(1 << 10, 1 << 24);
+} // namespace Benchmarks
 
 BENCHMARK_MAIN();

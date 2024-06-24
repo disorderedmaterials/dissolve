@@ -6,6 +6,8 @@
 #include <benchmark/benchmark.h>
 #include <cmath>
 
+namespace Benchmarks
+{
 template <typename BoxType> BoxType createTestBox()
 {
     if constexpr (std::is_same_v<BoxType, CubicBox>)
@@ -145,5 +147,6 @@ BENCHMARK_TEMPLATE(BM_Box_MinimumVector, TriclinicBox);
 BENCHMARK_TEMPLATE(BM_Box_RandomCoordinate, TriclinicBox);
 BENCHMARK_TEMPLATE(BM_Box_Fold, TriclinicBox);
 BENCHMARK_TEMPLATE(BM_Box_FoldFrac, TriclinicBox);
+} // namespace Benchmarks
 
 BENCHMARK_MAIN();
