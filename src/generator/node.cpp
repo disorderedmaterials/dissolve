@@ -35,7 +35,6 @@ EnumOptions<GeneratorNode::NodeType> GeneratorNode::nodeTypes()
                      {GeneratorNode::NodeType::Remove, "Remove"},
                      {GeneratorNode::NodeType::RestraintPotential, "RestraintPotential"},
                      {GeneratorNode::NodeType::RotateFragment, "RotateFragment"},
-                     {GeneratorNode::NodeType::RunLayer, "RunLayer"},
                      {GeneratorNode::NodeType::Select, "Select"},
                      {GeneratorNode::NodeType::Sequence, "Sequence"},
                      {GeneratorNode::NodeType::SphericalGlobalPotential, "SphericalGlobalPotential"},

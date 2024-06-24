@@ -20,7 +20,6 @@
 #include "generator/remove.h"
 #include "generator/restraintPotential.h"
 #include "generator/rotateFragment.h"
-#include "generator/runLayer.h"
 #include "generator/select.h"
 #include "generator/sizeFactor.h"
 #include "generator/sphericalGlobalPotential.h"
@@ -81,9 +80,6 @@ GeneratorNodeRegistry::GeneratorNodeRegistry()
     // Sites
     registerProducer<SelectGeneratorNode>(GeneratorNode::NodeType::Select, "Rotate fragment sites", "Sites");
     registerProducer<RotateFragmentGeneratorNode>(GeneratorNode::NodeType::RotateFragment, "Rotate fragment sites", "Sites");
-
-    // Control
-    registerProducer<RunLayerNode>(GeneratorNode::NodeType::RunLayer, "Run layer", "Control");
 }
 
 /*

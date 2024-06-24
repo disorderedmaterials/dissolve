@@ -52,8 +52,6 @@ add_library(
         restraintPotential.h
         rotateFragment.cpp
         rotateFragment.h
-        runLayer.cpp
-        runLayer.h
         select.cpp
         select.h
         sequence.cpp
