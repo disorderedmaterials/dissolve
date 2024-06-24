@@ -36,12 +36,10 @@ class AtomTypeMix
     void clear();
     // Zero populations of all types
     void zero();
-    // Add the specified AtomType, returning the AtomTypeData
-    AtomTypeData &add(std::shared_ptr<AtomType> atomType, double popAdd = 0);
+    // Add the specified AtomType to the list, returning data object and its index in the vector
+    std::pair<AtomTypeData &, int> add(std::shared_ptr<AtomType> atomType, double popAdd = 0);
     // Add the AtomTypes in the supplied object into this one, increasing populations etc.
     void add(const AtomTypeMix &source);
-    // Remove specified AtomType
-    void remove(std::shared_ptr<AtomType> atomType);
     // Add/increase this AtomType/Isotope pair, returning the index of the AtomType
     void addIsotope(std::shared_ptr<AtomType> atomType, Sears91::Isotope tope, double popAdd = 0);
     // Finalise, calculating fractional populations etc.

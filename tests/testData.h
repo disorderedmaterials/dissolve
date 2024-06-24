@@ -665,4 +665,72 @@ const Species &benzeneSpecies()
     return benzene_;
 }
 
+// Return small molecules data
+class SmallMolecules
+{
+    public:
+    SmallMolecules()
+    {
+        // Set up atom types
+        atHW_ = std::make_shared<AtomType>(Elements::H, "HW");
+        atOW_ = std::make_shared<AtomType>(Elements::O, "OW");
+        atN_ = std::make_shared<AtomType>(Elements::N, "N");
+        atH1_ = std::make_shared<AtomType>(Elements::H, "H1");
+
+        // Set up N2 species
+        n2_.addAtom(Elements::N, {});
+        n2_.addAtom(Elements::N, {1.2, 0.0, 0.0});
+        n2_.atom(0).setAtomType(atN_);
+        n2_.atom(1).setAtomType(atN_);
+        n2_.addBond(0, 1);
+        n2A15_ = n2_.addIsotopologue("N15");
+        n2A15_->setAtomTypeIsotope(atN_, Sears91::N_15);
+
+        // Set up H2 species
+        h2_.addAtom(Elements::H, {});
+        h2_.addAtom(Elements::H, {0.7, 0.0, 0.0});
+        h2_.atom(0).setAtomType(atH1_);
+        h2_.atom(1).setAtomType(atH1_);
+        h2_.addBond(0, 1);
+        d2_ = h2_.addIsotopologue("D2");
+        d2_->setAtomTypeIsotope(atH1_, Sears91::H_2);
+
+        // Set up H2O species
+        h2o_.addAtom(Elements::H, {1.0, 0.0, 0.0});
+        h2o_.addAtom(Elements::O, {});
+        h2o_.addAtom(Elements::H, {cos(107.4 / DEGRAD), sin(107.4 / DEGRAD), 0.0});
+        h2o_.atom(0).setAtomType(atHW_);
+        h2o_.atom(1).setAtomType(atOW_);
+        h2o_.atom(2).setAtomType(atHW_);
+        h2o_.addBond(0, 1);
+        h2o_.addBond(1, 2);
+        h2o_.addAngle(0, 1, 2);
+        d2o_ = h2o_.addIsotopologue("D2O");
+        d2o_->setAtomTypeIsotope(atHW_, Sears91::H_2);
+    }
+
+    private:
+    // Atom Types
+    std::shared_ptr<AtomType> atHW_, atOW_, atN_, atH1_;
+    // Species
+    Species n2_, h2_, h2o_;
+    // Isotopologues
+    Isotopologue *n2A15_{nullptr}, *d2_{nullptr}, *d2o_{nullptr};
+
+    public:
+    // Atom Types
+    std::shared_ptr<AtomType> atHW() { return atHW_; }
+    std::shared_ptr<AtomType> atOW() { return atOW_; }
+    std::shared_ptr<AtomType> atN() { return atN_; }
+    std::shared_ptr<AtomType> atH1() { return atH1_; }
+    // Species
+    Species &N2() { return n2_; }
+    Species &H2() { return h2_; }
+    Species &H2O() { return h2o_; }
+    // Isotopologues
+    Isotopologue *N2A15() { return n2A15_; }
+    Isotopologue *D2() { return d2_; }
+    Isotopologue *D2O() { return d2o_; }
+};
+
 } // namespace UnitTest

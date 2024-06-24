@@ -8,36 +8,31 @@
 
 // Forward Declarations
 class AtomType;
-class CoreData;
+class AtomTypeMix;
 
 // AtomTypeData Definition
 class AtomTypeData
 {
     public:
-    AtomTypeData(std::shared_ptr<AtomType> type, double population = 0, double fraction = 0, double boundCoherent = 0,
+    AtomTypeData(const std::shared_ptr<AtomType> &type, double population = 0, double fraction = 0, double boundCoherent = 0,
                  int nIso = 0);
-    AtomTypeData(const AtomTypeData &source);
-    AtomTypeData(int listIndex, std::shared_ptr<AtomType> atomType, double population);
-    void operator=(const AtomTypeData &source);
 
     /*
      * Properties
      */
     private:
-    // List index of AtomTypeData in AtomTypeList
-    int listIndex_;
     // Reference AtomType
     std::shared_ptr<AtomType> atomType_;
     // Whether the AtomType has been marked as exchangeable
-    bool exchangeable_;
+    bool exchangeable_{false};
     // Isotopes information (if any)
     std::vector<IsotopeData> isotopes_;
     // Total population
-    double population_;
+    double population_{0.0};
     // World fractional population over all Isotopes
-    double fraction_;
+    double fraction_{0.0};
     // Calculated bound coherent scattering over all Isotopes
-    double boundCoherent_;
+    double boundCoherent_{0.0};
 
     public:
     // Add to population
@@ -48,8 +43,6 @@ class AtomTypeData
     void setIsotope(Sears91::Isotope tope, double pop, double fraction);
     // Zero populations
     void zeroPopulations();
-    // Return list index of AtomTypeData in AtomTypeList
-    int listIndex() const;
     // Return reference AtomType
     std::shared_ptr<AtomType> atomType() const;
     // Set exchangeable flag

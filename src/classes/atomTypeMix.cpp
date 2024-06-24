@@ -33,8 +33,8 @@ void AtomTypeMix::zero()
         atd.zeroPopulations();
 }
 
-// Add the specified AtomType to the list, returning the index of the AtomType in the list
-AtomTypeData &AtomTypeMix::add(std::shared_ptr<AtomType> atomType, double population)
+// Add the specified AtomType to the list, returning data object and its index in the vector
+std::pair<AtomTypeData &, int> AtomTypeMix::add(std::shared_ptr<AtomType> atomType, double population)
 {
     // Search the list for the AtomType provided.
     auto atd =
@@ -44,10 +44,11 @@ AtomTypeData &AtomTypeMix::add(std::shared_ptr<AtomType> atomType, double popula
     if (atd != types_.end())
     {
         atd->add(population);
-        return *atd;
+        return {*atd, atd - types_.begin()};
     }
 
-    return types_.emplace_back(types_.size(), atomType, population);
+    auto &newAtomTypeData = types_.emplace_back(atomType, population);
+    return {newAtomTypeData, types_.size() - 1};
 }
 
 // Add the AtomTypes in the supplied list into this one, increasing populations etc.
@@ -56,7 +57,7 @@ void AtomTypeMix::add(const AtomTypeMix &source)
     // Loop over AtomTypes in the source list
     for (auto &otherType : source)
     {
-        AtomTypeData &atd = add(otherType.atomType());
+        auto &atd = std::get<0>(add(otherType.atomType()));
 
         // If no Isotope data are present, add the population now. Otherwise, add it via the isotopes...
         if (otherType.nIsotopes() == 0)
@@ -67,17 +68,10 @@ void AtomTypeMix::add(const AtomTypeMix &source)
     }
 }
 
-// Remove specified AtomType from the list
-void AtomTypeMix::remove(std::shared_ptr<AtomType> atomType)
-{
-    types_.erase(
-        std::remove_if(types_.begin(), types_.end(), [&atomType](const auto &atd) { return atd.atomType() == atomType; }));
-}
-
 // Add/increase this AtomType/Isotope pair
 void AtomTypeMix::addIsotope(std::shared_ptr<AtomType> atomType, Sears91::Isotope tope, double popAdd)
 {
-    auto &atd = add(std::move(atomType));
+    auto &atd = std::get<0>(add(std::move(atomType)));
     atd.add(tope, popAdd);
 }
 

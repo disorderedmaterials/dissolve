@@ -57,16 +57,15 @@ TEST_F(ExportTrajectoryTest, XYZ)
     EXPECT_EQ(version, cfg->contentsVersion());
 
     // Line by line analysis
+    std::string elem;
+    double x, y, z;
     for (auto atom : cfg->atoms())
     {
-        std::string elem;
-        double x, y, z;
         result >> elem >> x >> y >> z;
         EXPECT_EQ(elem, Elements::symbol(atom.speciesAtom()->Z()));
         EXPECT_NEAR(atom.x(), x, 1e-9);
         EXPECT_NEAR(atom.y(), y, 1e-9);
         EXPECT_NEAR(atom.z(), z, 1e-9);
-        break;
     }
 }
 
@@ -93,19 +92,20 @@ TEST_F(ExportTrajectoryTest, XYZExport)
     EXPECT_EQ(version, cfg->contentsVersion());
 
     // Line by line analysis
+    auto humanIndex = 0;
+    std::string elem, atomType;
+    double x, y, z;
+    int index;
     for (auto atom : cfg->atoms())
     {
-        std::string elem, atomType;
-        double x, y, z;
-        int index;
         result >> elem >> x >> y >> z >> index >> atomType;
         EXPECT_EQ(elem, Elements::symbol(atom.speciesAtom()->Z()));
         EXPECT_NEAR(atom.x(), x, 1e-9);
         EXPECT_NEAR(atom.y(), y, 1e-9);
         EXPECT_NEAR(atom.z(), z, 1e-9);
         EXPECT_EQ(atomType, atom.speciesAtom()->atomType()->name());
-        EXPECT_EQ(index, atom.localTypeIndex());
-        break;
+        EXPECT_EQ(index, humanIndex % 3 + 1);
+        ++humanIndex;
     }
 }
 

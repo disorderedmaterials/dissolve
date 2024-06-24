@@ -79,12 +79,10 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration 
     }
 
     // Export Atoms
-    const auto &atomTypes = cfg->atomTypes();
     auto n = 0;
     for (const auto &i : cfg->atoms())
-        if (!parser.writeLineF("{:<6}{:10d}{:20.10f}\n{:20.12f}{:20.12f}{:20.12f}\n",
-                               atomTypes[i.localTypeIndex()].atomTypeName(), n++ + 1, AtomicMass::mass(i.speciesAtom()->Z()),
-                               i.r().x, i.r().y, i.r().z))
+        if (!parser.writeLineF("{:<6}{:10d}{:20.10f}\n{:20.12f}{:20.12f}{:20.12f}\n", i.speciesAtom()->atomType()->name(),
+                               n++ + 1, AtomicMass::mass(i.speciesAtom()->Z()), i.r().x, i.r().y, i.r().z))
             return false;
 
     return true;
