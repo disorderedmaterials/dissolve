@@ -1,42 +1,39 @@
-macro(DISSOLVE_BENCHMARK NAME)
-  set(benchmark_files ${benchmark_files} ${CMAKE_CURRENT_SOURCE_DIR}/${NAME}/${NAME}_benchmark.cpp)
-endmacro(DISSOLVE_BENCHMARK)
+# CMakeLists.txt for Dissolve Benchmarks
 
-dissolve_benchmark(calculate_gr)
-dissolve_benchmark(box)
-dissolve_benchmark(histogram)
-dissolve_benchmark(array)
-dissolve_benchmark(energy)
-dissolve_benchmark(forces)
-dissolve_benchmark(region)
-dissolve_benchmark(math)
-dissolve_benchmark(siterdf)
+function(dissolve_add_benchmark)
 
-# create a single benchmark executable
-add_executable(benchmarks benchmarks.cpp ${benchmark_files})
+  # Parse arguments
+  set(options "")
+  set(oneValueArgs SRC "")
+  cmake_parse_arguments(DISSOLVE_BENCHMARK "${options}" "${oneValueArgs}" "" ${ARGN})
 
-target_include_directories(benchmarks PRIVATE ${PROJECT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+  # Check args
+  if(NOT DEFINED DISSOLVE_BENCHMARK_SRC)
+    message(FATAL_ERROR "Benchmark registered from directory '${CMAKE_CURRENT_LIST_DIR}' did not set a SRC file.")
+  endif(NOT DEFINED DISSOLVE_BENCHMARK_SRC)
+  # set(DISSOLVE_BENCHMARK_USE_TEST_DIRECTORY "${PROJECT_SOURCE_DIR}/benchmarks/data")
 
-target_link_libraries(
-  benchmarks
-  PRIVATE benchmark::benchmark
-  PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
-  PRIVATE ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
-)
+  # Strip path and extension from source file to get benchmark name
+  get_filename_component(benchmark_file ${DISSOLVE_BENCHMARK_SRC} NAME_WE)
+  get_filename_component(benchmark_file_dir "${CMAKE_CURRENT_LIST_DIR}" NAME)
+  set(BENCHMARK_NAME "${benchmark_file_dir}_${benchmark_file}")
+  message(STATUS "... Benchmark '${BENCHMARK_NAME}' from ${DISSOLVE_BENCHMARK_SRC} in directory '${CMAKE_CURRENT_LIST_DIR}'")
+  message(STATUS "    ... working directory = ${DISSOLVE_BENCHMARK_USE_TEST_DIRECTORY}")
 
-target_compile_options(benchmarks PRIVATE -O3)
+  # Register executable target
+  add_executable(${BENCHMARK_NAME} ${DISSOLVE_BENCHMARK_SRC})
+  target_compile_options(${BENCHMARK_NAME} PRIVATE -O3)
+  target_include_directories(${BENCHMARK_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-# Find all the input files
-file(
-  GLOB benchmarkFiles
-  RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_files/*.txt"
-)
+  # Configure target
+  target_include_directories(
+    ${BENCHMARK_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${PROJECT_SOURCE_DIR} ${CONAN_INCLUDE_DIRS_GTEST}
+                              ${CONAN_INCLUDE_DIRS_PUGIXML}
+  )
+  target_link_libraries(
+    ${BENCHMARK_NAME}
+    PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
+    PRIVATE ${CORE_LINK_LIBS} benchmark::benchmark
+  )
 
-# configure the input header to point to the directory containing the benchmark
-set(BENCHMARK_PATH \"${CMAKE_CURRENT_BINARY_DIR}/\")
-configure_file(benchmark_config.h.in benchmark_config.h @ONLY)
-
-foreach(benchmarkFile ${benchmarkFiles})
-  file(COPY ${benchmarkFile} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-endforeach(benchmarkFile)
+endfunction()
