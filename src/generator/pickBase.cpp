@@ -32,16 +32,3 @@ std::string PickGeneratorNodeBase::moleculePoolName() const
 // Return vector of picked Molecules
 std::vector<std::shared_ptr<Molecule>> &PickGeneratorNodeBase::pickedMolecules() { return pickedMolecules_; }
 const std::vector<std::shared_ptr<Molecule>> &PickGeneratorNodeBase::pickedMolecules() const { return pickedMolecules_; }
-
-/*
- * Execution
- */
-
-// Finalise any necessary data after execution
-bool PickGeneratorNodeBase::finalise(const ProcedureContext &procedureContext)
-{
-    // Clear picked molecules
-    pickedMolecules_.clear();
-
-    return true;
-}

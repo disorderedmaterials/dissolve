@@ -72,20 +72,3 @@ bool IterateSelectionGeneratorNode::execute(const ProcedureContext &procedureCon
 
     return true;
 }
-
-bool IterateSelectionGeneratorNode::finalise(const ProcedureContext &procedureContext)
-{
-    auto selectionSize = selection_->sites().size();
-    // If one exists, finalise the ForEach branch nodes
-    if (!forEachBranch_.finalise(procedureContext))
-        return false;
-
-    // Print out summary information
-    Messenger::print("[IterateSelection] - Site '{}': Number of selections made = {} (last contained {} sites).\n", name(),
-                     nSelections_, selectionSize);
-    Messenger::print("[IterateSelection] - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
-                     nSelections_ == 0 ? 0 : double(nCumulativeSites_) / nSelections_);
-    Messenger::print("[IterateSelection] - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);
-
-    return true;
-}

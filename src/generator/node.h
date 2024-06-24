@@ -11,14 +11,7 @@
 #include "templates/optionalRef.h"
 
 // Forward Declarations
-class Configuration;
-class CoreData;
-class ExpressionVariable;
-class GenericList;
-class LineParser;
 class GeneratorNodeSequence;
-class ProcessPool;
-class Site;
 
 // Generator Node
 class GeneratorNode : public std::enable_shared_from_this<GeneratorNode>, public Serialisable<const CoreData &>
@@ -153,8 +146,6 @@ class GeneratorNode : public std::enable_shared_from_this<GeneratorNode>, public
     virtual bool prepare(const ProcedureContext &procedureContext);
     // Execute node
     virtual bool execute(const ProcedureContext &procedureContext);
-    // Finalise any necessary data after execution
-    virtual bool finalise(const ProcedureContext &procedureContext);
 
     /*
      * Read / Write

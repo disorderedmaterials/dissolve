@@ -192,9 +192,6 @@ bool GeneratorNode::prepare(const ProcedureContext &procedureContext) { return t
 // Execute node
 bool GeneratorNode::execute(const ProcedureContext &procedureContext) { return true; }
 
-// Finalise any necessary data after execution
-bool GeneratorNode::finalise(const ProcedureContext &procedureContext) { return true; }
-
 /*
  * Read / Write
  */

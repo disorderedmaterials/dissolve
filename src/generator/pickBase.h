@@ -36,11 +36,4 @@ class PickGeneratorNodeBase : public GeneratorNode
     // Return vector of picked Molecules
     std::vector<std::shared_ptr<Molecule>> &pickedMolecules();
     const std::vector<std::shared_ptr<Molecule>> &pickedMolecules() const;
-
-    /*
-     * Execution
-     */
-    protected:
-    // Finalise any necessary data after execution
-    bool finalise(const ProcedureContext &procedureContext) override;
 };

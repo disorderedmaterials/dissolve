@@ -415,17 +415,6 @@ bool GeneratorNodeSequence::execute(const ProcedureContext &procedureContext)
     return true;
 }
 
-// Finalise any necessary data after execution
-bool GeneratorNodeSequence::finalise(const ProcedureContext &procedureContext)
-{
-    // Loop over nodes in the list, finalising each in turn
-    for (const auto &node : sequence_)
-        if (!node->finalise(procedureContext))
-            return false;
-
-    return true;
-}
-
 /*
  * Read / Write
  */

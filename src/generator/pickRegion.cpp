@@ -33,7 +33,7 @@ bool PickRegionGeneratorNode::execute(const ProcedureContext &procedureContext)
     Messenger::print("[PickRegion] Molecules will be selected from {}.\n", moleculePoolName());
     Messenger::print("[PickRegion] Target region is '{}'.\n", region_->name());
 
-    // Create our molecules vector
+    // Clear our molecules vector
     pickedMolecules_.clear();
 
     // Get the updated region

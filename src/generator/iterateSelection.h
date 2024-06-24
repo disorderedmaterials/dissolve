@@ -9,11 +9,7 @@
 #include <memory>
 
 // Forward Declarations
-class Element;
-class Molecule;
-class SiteStack;
-class Species;
-class SpeciesSite;
+class Site;
 
 // Iterate Selection Node
 class IterateSelectionGeneratorNode : public GeneratorNode
@@ -62,6 +58,4 @@ class IterateSelectionGeneratorNode : public GeneratorNode
     bool prepare(const ProcedureContext &procedureContext) override;
     // Execute node
     bool execute(const ProcedureContext &procedureContext) override;
-    // Finalise any necessary data after execution
-    bool finalise(const ProcedureContext &procedureContext) override;
 };

@@ -118,8 +118,6 @@ class GeneratorNodeSequence : public Serialisable<const CoreData &>
     bool prepare(const ProcedureContext &procedureContext);
     // Execute node
     bool execute(const ProcedureContext &procedureContext);
-    // Finalise any necessary data after execution
-    bool finalise(const ProcedureContext &procedureContext);
 
     /*
      * Read / Write

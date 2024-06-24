@@ -51,10 +51,6 @@ bool Generator::execute(const ProcedureContext &context)
     if (!rootSequence_.execute(context))
         return Messenger::error("Failed to execute generator.\n");
 
-    // Finalise any nodes that need it
-    if (!rootSequence_.finalise(context))
-        return Messenger::error("Failed to finalise generator after execution.\n");
-
     return true;
 }
 

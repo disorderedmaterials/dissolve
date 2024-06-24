@@ -237,6 +237,8 @@ bool SelectGeneratorNode::execute(const ProcedureContext &procedureContext)
         }
     }
 
+    Messenger::print("[Select] - Site '{}' has {} occurrence{}.\n", name(), sites_.size(), DissolveSys::plural(sites_.size()));
+
     // Increase selections counter
     ++nSelections_;
 
@@ -262,26 +264,6 @@ bool SelectGeneratorNode::execute(const ProcedureContext &procedureContext)
                 return false;
         }
     }
-
-    return true;
-}
-
-// Finalise any necessary data after execution
-bool SelectGeneratorNode::finalise(const ProcedureContext &procedureContext)
-{
-    // If one exists, finalise the ForEach branch nodes
-    if (!forEachBranch_.finalise(procedureContext))
-        return false;
-
-    // Print out summary information
-    Messenger::print("[Select] - Site '{}': Number of selections made = {} (last contained {} sites).\n", name(), nSelections_,
-                     sites_.size());
-    Messenger::print("[Select] - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
-                     nSelections_ == 0 ? 0 : double(nCumulativeSites_) / nSelections_);
-    Messenger::print("[Select] - Site '{}': Average number of sites available per selection = {:.2f}.\n", name(),
-                     nSelections_ == 0 ? 0 : double(nAvailableSites_) / nSelections_);
-
-    Messenger::print("[Select] - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);
 
     return true;
 }
