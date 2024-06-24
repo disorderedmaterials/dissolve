@@ -237,10 +237,15 @@ void LayerTab::moduleNameChanged(const QModelIndex &index, const QString &oldNam
     // Find the control widget for the module and update it
     auto *mcw = getControlWidget(module);
     if (mcw)
-        mcw->updateControls();
+        mcw->updateControls(ModuleWidget::RecreateRenderablesFlag);
 
     // Rename processing module data
     dissolve_.processingModuleData().renamePrefix(oldName.toStdString(), newName.toStdString());
+
+    if (mcw)
+        mcw->updateControls();
+
+    // another if to recreate controls
 }
 
 // Update the module list
