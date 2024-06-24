@@ -48,7 +48,7 @@ jobs:
           # Run individual benchmarks
           for bm in benchmark_*
           do
-            ${bm} --benchmark_format=json | tee ${bm}_result.json
+            ./${bm} --benchmark_format=json | tee ${bm}_result.json
           done
 
           # Combine benchmark results
