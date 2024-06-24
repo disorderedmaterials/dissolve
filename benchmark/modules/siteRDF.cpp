@@ -13,7 +13,7 @@ template <SpeciesType speciesType, SpeciesPopulation population> static void BM_
     Problem<speciesType, population> problemDef;
     SiteRDFModule module;
     std::vector<const SpeciesSite *> sites;
-    sites.push_back(problemDef.dissolve().coreData().species().front()->sites().front().get());
+    sites.push_back(problemDef.coreData().species().front()->sites().front().get());
     module.keywords().set("Configuration", problemDef.configuration());
     module.keywords().set("SiteA", sites);
     module.keywords().set("SiteB", sites);

@@ -29,6 +29,10 @@ Species 'Water'
   Site  'O'
     Origin  1
   EndSite
+  Site  'H'
+    Dynamic
+    Element  H
+  EndSite
 EndSpecies
 
 #------------------------------------------------------------------------------#
