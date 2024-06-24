@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "benchmark/benchmark.h"
+#include "modules/siteRDF/siteRDF.h"
 #include "common/problems.h"
 #include "module/context.h"
-#include "modules/siteRDF/siteRDF.h"
+#include <benchmark/benchmark.h>
 
 template <ProblemType problem, Population population> static void BM_Module_SiteRDF(benchmark::State &state)
 {
@@ -24,6 +24,6 @@ template <ProblemType problem, Population population> static void BM_Module_Site
 }
 
 BENCHMARK_TEMPLATE(BM_Module_SiteRDF, ProblemType::smallMolecule, Population::small)->Unit(benchmark::kMillisecond);
-;
 BENCHMARK_TEMPLATE(BM_Module_SiteRDF, ProblemType::atomic, Population::large)->Unit(benchmark::kMillisecond);
-;
+
+BENCHMARK_MAIN();

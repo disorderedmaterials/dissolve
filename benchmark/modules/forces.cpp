@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "benchmark/benchmark.h"
+#include "modules/forces/forces.h"
 #include "classes/cell.h"
 #include "common/problems.h"
 #include "kernels/producer.h"
-#include "modules/forces/forces.h"
+#include <benchmark/benchmark.h>
 
 template <ProblemType problem, Population population>
 std::unique_ptr<ForceKernel> createForceKernel(Problem<problem, population> &problemDef)
@@ -127,3 +127,5 @@ BENCHMARK_TEMPLATE(BM_CalculateForces_TotalForces, ProblemType::mediumMolecule, 
 // framework molecule benchmarks
 // BENCHMARK_TEMPLATE(BM_CalculateForces_TotalSpecies, ProblemType::frameworkMolecule, Population::single)
 //    ->Unit(benchmark::kMillisecond);
+
+BENCHMARK_MAIN();

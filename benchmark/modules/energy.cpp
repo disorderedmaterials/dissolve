@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "benchmark/benchmark.h"
 #include "classes/cell.h"
 #include "common/problems.h"
 #include "kernels/producer.h"
+#include <benchmark/benchmark.h>
 
 template <ProblemType problem, Population population>
 std::unique_ptr<EnergyKernel> createEnergyKernel(Problem<problem, population> &problemDef)
@@ -159,3 +159,5 @@ BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterMolecularEnergy, ProblemType::me
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterAtomicEnergy, ProblemType::mediumMolecule, Population::small)
     ->Unit(benchmark::kMillisecond)
     ->Iterations(5);
+
+BENCHMARK_MAIN();

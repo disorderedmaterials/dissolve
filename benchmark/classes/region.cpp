@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "benchmark/benchmark.h"
-#include "classes/box.h"
 #include "classes/region.h"
+#include "classes/box.h"
 #include "common/problems.h"
+#include <benchmark/benchmark.h>
 #include <cmath>
 
 class RandomVoxelKernel : public VoxelKernel
@@ -26,3 +26,5 @@ template <ProblemType problem, Population population> static void BM_Region_Gene
 }
 
 BENCHMARK_TEMPLATE(BM_Region_Generate, ProblemType::mediumMolecule, Population::small);
+
+BENCHMARK_MAIN();

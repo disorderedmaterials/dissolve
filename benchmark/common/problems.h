@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "benchmark_config.h"
+#include "benchmarkConfig.h"
 #include "classes/box.h"
 #include "classes/coreData.h"
 #include "main/dissolve.h"
@@ -34,7 +34,7 @@ enum Population
 template <Population population> std::string getFileName(const std::string &systemName)
 {
     std::stringstream fileName;
-    fileName << benchmark_path << systemName;
+    fileName << benchmarkInputFilePath << systemName;
     if constexpr (population == Population::single)
     {
         fileName << "single";

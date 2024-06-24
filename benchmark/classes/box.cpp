@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "benchmark/benchmark.h"
 #include "classes/box.h"
 #include "templates/vector3.h"
+#include <benchmark/benchmark.h>
 #include <cmath>
 
 template <typename BoxType> BoxType createTestBox()
@@ -145,3 +145,5 @@ BENCHMARK_TEMPLATE(BM_Box_MinimumVector, TriclinicBox);
 BENCHMARK_TEMPLATE(BM_Box_RandomCoordinate, TriclinicBox);
 BENCHMARK_TEMPLATE(BM_Box_Fold, TriclinicBox);
 BENCHMARK_TEMPLATE(BM_Box_FoldFrac, TriclinicBox);
+
+BENCHMARK_MAIN();
