@@ -48,17 +48,18 @@ jobs:
           # Run individual benchmarks
           for bm in benchmark_*
           do
-            ./${bm} --benchmark_format=json | tee ${bm}_result.json
+            ./${bm} --benchmark_format=json > ${bm}_result.json
           done
 
           # Combine benchmark results
-          jq -s '[.[] | to_entries] | flatten | reduce .[] as $dot ({}; .[$dot.key] += $dot.value)' *.json > benchmark_result.json
+          jq -s '[.[] | to_entries] | flatten | reduce .[] as $dot ({}; .[$dot.key] += $dot.value)' benchmark_*.json > all_benchmark_results.json
+          cat all_benchmark_results.json
       - name: Store benchmark result
         uses: rhysd/github-action-benchmark@v1
         if: ${{ github.ref_name == 'develop' }}
         with:
             tool: 'googlecpp'
-            output-file-path: benchmark_result.json
+            output-file-path: all_benchmark_results.json
             github-token: ${{ secrets.GITHUB_TOKEN }}
             auto-push: true
             comment-on-alert: true
