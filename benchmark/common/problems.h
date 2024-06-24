@@ -6,18 +6,17 @@
 #include "benchmarkConfig.h"
 #include "classes/box.h"
 #include "classes/coreData.h"
+#include "expression/variable.h"
 #include "main/dissolve.h"
 #include <string>
 
 namespace Benchmarks
 {
-const char *FILEEXTENSION = ".txt";
 enum class SpeciesType
 {
     Atomic,
     SmallMolecule,
-    MediumMolecule,
-    FrameworkMolecule,
+    MediumMolecule
 };
 
 enum class SpeciesPopulation
@@ -28,29 +27,40 @@ enum class SpeciesPopulation
     Large
 };
 
-template <SpeciesType speciesType, SpeciesPopulation population> std::string benchmarkFilePath()
-{
-    static std::map<SpeciesType, std::string> speciesTypes = {{SpeciesType::Atomic, "argon"},
-                                                              {SpeciesType::SmallMolecule, "water"},
-                                                              {SpeciesType::MediumMolecule, "hexane"},
-                                                              {SpeciesType::FrameworkMolecule, "mof5-3x3x3"}};
-    static std::map<SpeciesPopulation, std::string> populationSizes = {{SpeciesPopulation::Single, "single"},
-                                                                       {SpeciesPopulation::Small, "1k"},
-                                                                       {SpeciesPopulation::Medium, "5k"},
-                                                                       {SpeciesPopulation::Large, "10k"}};
-
-    std::stringstream fileName;
-    fileName << benchmarkInputFilePath << speciesTypes[speciesType] << populationSizes[population] << FILEEXTENSION;
-    return fileName.str();
-}
-
 template <SpeciesType speciesType, SpeciesPopulation population> class Problem
 {
     public:
     Problem() : dissolve_(coreData_)
     {
+        // Species Types
+        static std::map<SpeciesType, std::string> speciesTypes = {{SpeciesType::Atomic, "argon"},
+                                                                  {SpeciesType::SmallMolecule, "water"},
+                                                                  {SpeciesType::MediumMolecule, "hexane"}};
+
+        // Population Sizes
+        static std::map<SpeciesPopulation, int> populationSizes = {{SpeciesPopulation::Single, 1},
+                                                                   {SpeciesPopulation::Small, 1000},
+                                                                   {SpeciesPopulation::Medium, 5000},
+                                                                   {SpeciesPopulation::Large, 10000}};
         Messenger::setQuiet(true);
-        dissolve_.loadInput(benchmarkFilePath<speciesType, population>());
+
+        // Construct input filename and load it
+        std::stringstream fileName;
+        fileName << benchmarkInputFilePath << speciesTypes[speciesType] << ".txt";
+        dissolve_.loadInput(fileName.str());
+
+        // Grab the configuration
+        auto *cfg = coreData_.configurations().front().get();
+
+        // Set the population of the test species in a predefined Parameters node in the generator
+        auto populationParameter = cfg->generator().rootSequence().parameterExists("Population");
+        populationParameter->setValue(populationSizes[population]);
+
+        // Generate the configuration and set the pair potential range accordingly
+        cfg->generate({dissolve_});
+        dissolve_.setPairPotentialRange(std::min(cfg->box()->inscribedSphereRadius(), 15.0));
+
+        // Prepare the simulation
         dissolve_.prepare();
     }
 
