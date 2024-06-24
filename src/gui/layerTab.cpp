@@ -244,8 +244,6 @@ void LayerTab::moduleNameChanged(const QModelIndex &index, const QString &oldNam
 
     if (mcw)
         mcw->updateControls();
-
-    // another if to recreate controls
 }
 
 // Update the module list
