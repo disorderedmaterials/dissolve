@@ -11,14 +11,14 @@ template <ProblemType problem, Population population> static void BM_Module_Site
     Problem<problem, population> problemDef;
     SiteRDFModule module;
     std::vector<const SpeciesSite *> sites;
-    sites.push_back(problemDef.dissolve_.coreData().species().front()->sites().front().get());
-    module.keywords().set("Configuration", problemDef.cfg_);
+    sites.push_back(problemDef.dissolve().coreData().species().front()->sites().front().get());
+    module.keywords().set("Configuration", problemDef.configuration());
     module.keywords().set("SiteA", sites);
     module.keywords().set("SiteB", sites);
-    ModuleContext context(problemDef.dissolve_.worldPool(), problemDef.dissolve_);
+    ModuleContext context(problemDef.dissolve().worldPool(), problemDef.dissolve());
     for (auto _ : state)
     {
-        problemDef.cfg_->incrementContentsVersion();
+        problemDef.configuration()->incrementContentsVersion();
         module.executeProcessing(context);
     }
 }

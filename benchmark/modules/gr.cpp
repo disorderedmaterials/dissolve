@@ -8,8 +8,19 @@ template <ProblemType problem, Population population, GRModule::PartialsMethod m
 static void BM_CalculateGR(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
+
+    // Setup the GR module
+    auto grModule = std::make_unique<GRModule>();
+    grModule->keywords().set("Configurations", std::vector<Configuration *>{problemDef.configuration()});
+
+    double rdfRange = problemDef.configuration()->box()->inscribedSphereRadius();
+    bool upToDate = false;
     for (auto _ : state)
-        problemDef.template iterateGR<method>();
+    {
+        grModule->calculateGR(problemDef.dissolve().processingModuleData(), problemDef.dissolve().worldPool(),
+                              problemDef.configuration(), method, rdfRange, 0.05, upToDate);
+        problemDef.dissolve().processingModuleData().clearAll();
+    }
 }
 
 BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::small, Method::SimpleMethod)
@@ -30,3 +41,5 @@ BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::large, Metho
 BENCHMARK_TEMPLATE(BM_CalculateGR, ProblemType::atomic, Population::large, Method::CellsMethod)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
+
+BENCHMARK_MAIN();

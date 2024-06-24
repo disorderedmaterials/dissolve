@@ -34,3 +34,5 @@ static void BM_Interpolator(benchmark::State &state)
 }
 
 BENCHMARK(BM_Interpolator)->RangeMultiplier(4)->Range(1 << 10, 1 << 24);
+
+BENCHMARK_MAIN();

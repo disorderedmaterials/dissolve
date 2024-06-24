@@ -11,19 +11,19 @@ template <ProblemType problem, Population population>
 std::unique_ptr<ForceKernel> createForceKernel(Problem<problem, population> &problemDef)
 {
 
-    auto &procPool = problemDef.dissolve_.worldPool();
-    const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
-    auto *cfg = problemDef.cfg_;
+    auto &procPool = problemDef.dissolve().worldPool();
+    const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
+    auto *cfg = problemDef.configuration();
     return KernelProducer::forceKernel(cfg, procPool, potentialMap);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_SpeciesBond(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto *cfg = problemDef.cfg_;
+    auto *cfg = problemDef.configuration();
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
-    const auto &mol = problemDef.cfg_->molecules().front();
+    const auto &mol = problemDef.configuration()->molecules().front();
     const auto &bond = mol->species()->bonds().back();
 
     for (auto _ : state)
@@ -33,10 +33,10 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
 template <ProblemType problem, Population population> static void BM_CalculateForces_SpeciesAngle(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto *cfg = problemDef.cfg_;
+    auto *cfg = problemDef.configuration();
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
-    const auto &mol = problemDef.cfg_->molecules().front();
+    const auto &mol = problemDef.configuration()->molecules().front();
     const auto &angle = mol->species()->angles().back();
     for (auto _ : state)
         forceKernel->angleForces(angle, angle.i()->r(), angle.j()->r(), angle.k()->r(), forces);
@@ -44,10 +44,10 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
 template <ProblemType problem, Population population> static void BM_CalculateForces_SpeciesTorsion(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto *cfg = problemDef.cfg_;
+    auto *cfg = problemDef.configuration();
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
-    const auto &mol = problemDef.cfg_->molecules().front();
+    const auto &mol = problemDef.configuration()->molecules().front();
     const auto &torsion = mol->species()->torsions().back();
     for (auto _ : state)
         forceKernel->torsionForces(torsion, torsion.i()->r(), torsion.j()->r(), torsion.k()->r(), torsion.l()->r(), forces);
@@ -57,7 +57,7 @@ template <ProblemType problem, Population population>
 static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto *cfg = problemDef.cfg_;
+    auto *cfg = problemDef.configuration();
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
@@ -69,10 +69,10 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto &sp = problemDef.coreData_.species().front();
+    auto &sp = problemDef.coreData().species().front();
     std::vector<Vec3<double>> forces(sp->nAtoms());
-    auto &procPool = problemDef.dissolve_.worldPool();
-    const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
+    auto &procPool = problemDef.dissolve().worldPool();
+    const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     for (auto _ : state)
         ForcesModule::totalForces(procPool, sp.get(), potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
 }
@@ -80,7 +80,7 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalInterAtomic(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto *cfg = problemDef.cfg_;
+    auto *cfg = problemDef.configuration();
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
@@ -90,10 +90,10 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalForces(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto *cfg = problemDef.cfg_;
+    auto *cfg = problemDef.configuration();
     std::vector<Vec3<double>> forces(cfg->nAtoms());
-    auto &procPool = problemDef.dissolve_.worldPool();
-    const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
+    auto &procPool = problemDef.dissolve().worldPool();
+    const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     for (auto _ : state)
         ForcesModule::totalForces(procPool, cfg, potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
 }

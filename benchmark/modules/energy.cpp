@@ -10,9 +10,9 @@ template <ProblemType problem, Population population>
 std::unique_ptr<EnergyKernel> createEnergyKernel(Problem<problem, population> &problemDef)
 {
 
-    auto &procPool = problemDef.dissolve_.worldPool();
-    const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
-    auto *cfg = problemDef.cfg_;
+    auto &procPool = problemDef.dissolve().worldPool();
+    const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
+    auto *cfg = problemDef.configuration();
     return KernelProducer::energyKernel(cfg, procPool, potentialMap);
 }
 
@@ -20,7 +20,7 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
 {
     Problem<problem, population> problemDef;
     auto energyKernel = createEnergyKernel(problemDef);
-    auto &i = problemDef.cfg_->atom(0);
+    auto &i = problemDef.configuration()->atom(0);
     for (auto _ : state)
         energyKernel->totalEnergy(i);
 }
@@ -29,10 +29,10 @@ template <ProblemType problem, Population population>
 static void BM_CalculateEnergy_SpeciesInterAtomicEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto &usedSpecies = problemDef.cfg_->speciesPopulations();
+    auto &usedSpecies = problemDef.configuration()->speciesPopulations();
     auto *species = usedSpecies.back().first;
-    auto &procPool = problemDef.dissolve_.worldPool();
-    const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
+    auto &procPool = problemDef.dissolve().worldPool();
+    const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     for (auto _ : state)
         EnergyModule::pairPotentialEnergy(procPool, species, potentialMap);
 }
@@ -41,7 +41,7 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
 {
     Problem<problem, population> problemDef;
     auto energyKernel = createEnergyKernel(problemDef);
-    const auto mol = problemDef.cfg_->molecules().front();
+    const auto mol = problemDef.configuration()->molecules().front();
     for (auto _ : state)
     {
         double molecularEnergy = energyKernel->totalEnergy(*mol).total();
@@ -52,7 +52,7 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
 template <ProblemType problem, Population population> static void BM_CalculateEnergy_MoleculeBondEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    const auto &mol = problemDef.cfg_->molecules().front();
+    const auto &mol = problemDef.configuration()->molecules().front();
     const auto &bond = mol->species()->bonds().back();
     for (auto _ : state)
     {
@@ -65,7 +65,7 @@ template <ProblemType problem, Population population>
 static void BM_CalculateEnergy_MoleculeTorsionEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    const auto &mol = problemDef.cfg_->molecules().front();
+    const auto &mol = problemDef.configuration()->molecules().front();
     const auto &torsion = mol->species()->torsions().front();
     for (auto _ : state)
     {
@@ -77,7 +77,7 @@ template <ProblemType problem, Population population>
 static void BM_CalculateEnergy_MoleculeAngleEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    const auto &mol = problemDef.cfg_->molecules().front();
+    const auto &mol = problemDef.configuration()->molecules().front();
     const auto &angle = mol->species()->angles().front();
     for (auto _ : state)
     {
@@ -90,29 +90,29 @@ template <ProblemType problem, Population population>
 static void BM_CalculateEnergy_TotalIntraMolecularEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto &procPool = problemDef.dissolve_.worldPool();
-    const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
+    auto &procPool = problemDef.dissolve().worldPool();
+    const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     for (auto _ : state)
-        EnergyModule::intraMolecularEnergy(procPool, problemDef.cfg_, potentialMap);
+        EnergyModule::intraMolecularEnergy(procPool, problemDef.configuration(), potentialMap);
 }
 template <ProblemType problem, Population population>
 static void BM_CalculateEnergy_TotalInterAtomicEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto &procPool = problemDef.dissolve_.worldPool();
-    const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
+    auto &procPool = problemDef.dissolve().worldPool();
+    const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     for (auto _ : state)
-        EnergyModule::pairPotentialEnergy(procPool, problemDef.cfg_, potentialMap);
+        EnergyModule::pairPotentialEnergy(procPool, problemDef.configuration(), potentialMap);
 }
 
 template <ProblemType problem, Population population>
 static void BM_CalculateEnergy_TotalInterMolecularEnergy(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto &procPool = problemDef.dissolve_.worldPool();
-    const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
+    auto &procPool = problemDef.dissolve().worldPool();
+    const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     for (auto _ : state)
-        EnergyModule::interMolecularEnergy(procPool, problemDef.cfg_, potentialMap);
+        EnergyModule::interMolecularEnergy(procPool, problemDef.configuration(), potentialMap);
 }
 
 // Small molecule

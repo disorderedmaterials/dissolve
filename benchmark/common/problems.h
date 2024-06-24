@@ -83,37 +83,23 @@ constexpr auto CellsMethod = GRModule::PartialsMethod::CellsMethod;
 constexpr auto SimpleMethod = GRModule::PartialsMethod::SimpleMethod;
 } // namespace Method
 
-template <ProblemType problem, Population population> struct Problem
+template <ProblemType problem, Population population> class Problem
 {
+    public:
     Problem() : dissolve_(coreData_)
     {
         Messenger::setQuiet(true);
         auto file = benchmarkFilePath<problem, population>();
         dissolve_.loadInput(file);
         dissolve_.prepare();
-        cfg_ = coreData_.configurations().front().get();
-        setUpRDF();
     }
 
-    void setUpRDF()
-    {
-        rdfmodule_ = std::make_unique<GRModule>();
-        rdfmodule_->keywords().set("Configurations", std::vector<Configuration *>{cfg_});
-    }
-
-    template <GRModule::PartialsMethod method> void iterateGR()
-    {
-        double rdfRange = cfg_->box()->inscribedSphereRadius();
-        bool upToDate = false;
-        rdfmodule_->calculateGR(dissolve_.processingModuleData(), dissolve_.worldPool(), cfg_, method, rdfRange, 0.05,
-                                upToDate);
-        dissolve_.processingModuleData().clearAll();
-    }
-
+    private:
     CoreData coreData_;
     Dissolve dissolve_;
-    std::unique_ptr<GRModule> rdfmodule_;
-    std::unique_ptr<EnergyModule> energymodule_;
 
-    Configuration *cfg_;
+    public:
+    CoreData &coreData() { return coreData_; }
+    Dissolve &dissolve() { return dissolve_; }
+    Configuration *configuration() { return coreData_.configurations().front().get(); }
 };

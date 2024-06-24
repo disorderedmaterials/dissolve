@@ -17,7 +17,7 @@ class RandomVoxelKernel : public VoxelKernel
 template <ProblemType problem, Population population> static void BM_Region_Generate(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto *cfg = problemDef.cfg_;
+    auto *cfg = problemDef.configuration();
     for (auto _ : state)
     {
         Region region;
