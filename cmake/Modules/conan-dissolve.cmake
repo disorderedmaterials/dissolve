@@ -14,6 +14,7 @@ set(_conan_requires
     onedpl/2022.3.0
     toml11/3.7.0
     antlr4-cppruntime/4.13.1
+    ${EXTRA_CONAN_REQUIRES}
 )
 set(_conan_options
     fmt:header_only=True
