@@ -33,9 +33,8 @@ template <SpeciesType speciesType, SpeciesPopulation population> class Problem
     Problem() : dissolve_(coreData_)
     {
         // Species Types
-        static std::map<SpeciesType, std::string> speciesTypes = {{SpeciesType::Atomic, "argon"},
-                                                                  {SpeciesType::SmallMolecule, "water"},
-                                                                  {SpeciesType::MediumMolecule, "hexane"}};
+        static std::map<SpeciesType, std::string> speciesTypes = {
+            {SpeciesType::Atomic, "argon"}, {SpeciesType::SmallMolecule, "water"}, {SpeciesType::MediumMolecule, "hexane"}};
 
         // Population Sizes
         static std::map<SpeciesPopulation, int> populationSizes = {{SpeciesPopulation::Single, 1},
