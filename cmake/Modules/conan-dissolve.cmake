@@ -24,7 +24,6 @@ set(_conan_options
     fmt/*:header_only=True
     pugixml/*:header_only=False
     antlr4-cppruntime/*:shared=True
-    onetbb/*:shared=True
     ${EXTRA_CONAN_OPTIONS}
 )
 
