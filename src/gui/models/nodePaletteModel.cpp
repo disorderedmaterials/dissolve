@@ -2,8 +2,8 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/nodePaletteModel.h"
+#include "generator/registry.h"
 #include "gui/models/procedureModelMimeData.h"
-#include "procedure/nodes/registry.h"
 #include <QIODevice>
 #include <QIcon>
 #include <QMimeData>

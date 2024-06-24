@@ -2,10 +2,10 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "generator/copy.h"
 #include "main/dissolve.h"
 #include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
-#include "procedure/nodes/copy.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <vector>

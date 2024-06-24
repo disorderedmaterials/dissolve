@@ -4,9 +4,9 @@
 #pragma once
 
 #include "base/lineParser.h"
+#include "generator/node.h"
+#include "generator/nodeValue.h"
 #include "keywords/base.h"
-#include "procedure/nodeValue.h"
-#include "procedure/nodes/node.h"
 
 // Forward Declarations
 class ProcedureNode;

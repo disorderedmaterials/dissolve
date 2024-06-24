@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "procedure/procedure.h"
 #include "expression/variable.h"
+#include "generator/add.h"
+#include "generator/generator.h"
+#include "generator/select.h"
 #include "gui/models/procedureModel.h"
 #include "main/dissolve.h"
-#include "procedure/nodes/add.h"
-#include "procedure/nodes/select.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

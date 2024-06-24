@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "procedure/nodes/node.h"
+#include "generator/node.h"
 #include <QMimeData>
 #include <QModelIndex>
 

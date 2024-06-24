@@ -3,7 +3,7 @@
 
 #include "keywords/vec3NodeValue.h"
 #include "base/lineParser.h"
-#include "procedure/nodes/node.h"
+#include "generator/node.h"
 
 Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vec3<NodeValue> &data, ProcedureNode *parentNode, Vec3Labels::LabelType labelType)
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), labelType_(labelType)

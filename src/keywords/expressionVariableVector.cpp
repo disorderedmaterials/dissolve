@@ -5,7 +5,7 @@
 #include "base/lineParser.h"
 #include "classes/coreData.h"
 #include "expression/variable.h"
-#include "procedure/nodes/node.h"
+#include "generator/node.h"
 #include <memory>
 
 ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data,

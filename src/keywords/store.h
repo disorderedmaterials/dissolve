@@ -3,12 +3,12 @@
 
 #pragma once
 
+#include "generator/nodeValue.h"
 #include "keywords/base.h"
 #include "keywords/enumOptions.h"
 #include "keywords/organiser.h"
 #include "math/function1D.h"
 #include "math/range.h"
-#include "procedure/nodeValue.h"
 #include "templates/optionalRef.h"
 #include <any>
 #include <map>

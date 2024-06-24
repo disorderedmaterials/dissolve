@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "generator/node.h"
+#include "generator/sequence.h"
 #include "keywords/base.h"
-#include "procedure/nodes/node.h"
-#include "procedure/nodes/sequence.h"
 
 // Forward Declarations
 class NodeValue;

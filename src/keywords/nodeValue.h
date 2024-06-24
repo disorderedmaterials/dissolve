@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include "generator/nodeValue.h"
 #include "keywords/base.h"
-#include "procedure/nodeValue.h"
 
 // Forward Declarations
 class NodeValue;

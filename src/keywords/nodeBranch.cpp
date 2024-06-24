@@ -3,8 +3,8 @@
 
 #include "keywords/nodeBranch.h"
 #include "base/lineParser.h"
-#include "procedure/nodes/node.h"
-#include "procedure/nodes/sequence.h"
+#include "generator/node.h"
+#include "generator/sequence.h"
 
 NodeBranchKeyword::NodeBranchKeyword(ProcedureNodeSequence &data) : KeywordBase(typeid(this)), data_(data) {}
 

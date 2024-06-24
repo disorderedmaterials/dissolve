@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/procedureModelMimeData.h"
-#include "procedure/nodes/registry.h"
+#include "generator/registry.h"
 
 ProcedureModelMimeData::ProcedureModelMimeData(const QModelIndex index) : nodeIndex_(index)
 {

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "procedure/procedure.h"
+#include "generator/generator.h"
 #include "templates/optionalRef.h"
 #include <QAbstractItemModel>
 #include <QModelIndex>

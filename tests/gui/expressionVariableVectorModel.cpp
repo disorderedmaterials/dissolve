@@ -2,9 +2,9 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/expressionVariableVectorModel.h"
+#include "generator/generator.h"
+#include "generator/parameters.h"
 #include "main/dissolve.h"
-#include "procedure/nodes/parameters.h"
-#include "procedure/procedure.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

@@ -8,13 +8,13 @@
 #include "classes/coreData.h"
 #include "classes/empiricalFormula.h"
 #include "classes/species.h"
+#include "generator/add.h"
+#include "generator/box.h"
+#include "generator/coordinateSets.h"
 #include "io/import/CIFImportErrorListeners.h"
 #include "io/import/CIFImportVisitor.h"
 #include "io/import/cif.h"
 #include "neta/neta.h"
-#include "procedure/nodes/add.h"
-#include "procedure/nodes/box.h"
-#include "procedure/nodes/coordinateSets.h"
 #include "templates/algorithms.h"
 
 CIFHandler::CIFHandler()

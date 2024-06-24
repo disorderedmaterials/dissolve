@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include "generator/generator.h"
 #include "keywords/base.h"
-#include "procedure/procedure.h"
 
 // Keyword managing Procedure data
 class ProcedureKeyword : public KeywordBase

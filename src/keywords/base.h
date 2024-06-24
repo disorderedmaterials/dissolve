@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "procedure/nodes/aliases.h"
+#include "generator/aliases.h"
 #include "templates/flags.h"
 #include <memory>
 #include <optional>

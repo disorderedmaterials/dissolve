@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "generator/nodeValue.h"
 #include "keywords/base.h"
 #include "keywords/vec3Labels.h"
-#include "procedure/nodeValue.h"
 #include "templates/vector3.h"
 
 // Forward Declarations

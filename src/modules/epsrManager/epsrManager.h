@@ -4,9 +4,9 @@
 #pragma once
 
 #include "classes/scatteringMatrix.h"
+#include "generator/generator.h"
 #include "module/groups.h"
 #include "module/module.h"
-#include "procedure/procedure.h"
 #include <tuple>
 
 // EPSR Manager Module

@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "keywords/nodeUnderlay.h"
-#include "procedure/procedure.h"
+#include "generator/generator.h"
 #include "templates/algorithms.h"
 
 NodeKeywordUnderlay::NodeKeywordUnderlay(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes)

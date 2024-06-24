@@ -4,9 +4,9 @@
 #pragma once
 
 #include "base/lineParser.h"
+#include "generator/node.h"
 #include "keywords/base.h"
 #include "keywords/nodeUnderlay.h"
-#include "procedure/nodes/node.h"
 
 // Base class for NodeKeyword
 class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase

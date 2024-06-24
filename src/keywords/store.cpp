@@ -3,6 +3,8 @@
 
 #include "keywords/store.h"
 #include "base/lineParser.h"
+#include "generator/regionBase.h"
+#include "generator/select.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/configurationVector.h"
@@ -21,8 +23,6 @@
 #include "keywords/vec3Double.h"
 #include "keywords/vec3Integer.h"
 #include "keywords/vec3NodeValue.h"
-#include "procedure/nodes/regionBase.h"
-#include "procedure/nodes/select.h"
 
 /*
  * Keyword Data

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "procedure/nodes/node.h"
+#include "generator/node.h"
 #include "templates/optionalRef.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "procedure/nodes/select.h"
+#include "generator/select.h"
 #include "classes/configuration.h"
+#include "generator/generator.h"
 #include "main/dissolve.h"
-#include "procedure/procedure.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <string>

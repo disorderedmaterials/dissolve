@@ -3,7 +3,7 @@
 
 #include "keywords/nodeValue.h"
 #include "base/lineParser.h"
-#include "procedure/nodes/node.h"
+#include "generator/node.h"
 
 NodeValueKeyword::NodeValueKeyword(NodeValue &data, ProcedureNode *parentNode)
     : KeywordBase(typeid(this)), data_(data), default_(data), parentNode_(parentNode)

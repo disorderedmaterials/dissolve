@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "procedure/nodes/node.h"
+#include "generator/node.h"
 
 // Underlay class for ProcedureNode-based Keywords
 class NodeKeywordUnderlay

@@ -3,7 +3,7 @@
 
 #include "gui/keywordWidgets/nodeVector.h"
 #include "classes/coreData.h"
-#include "procedure/procedure.h"
+#include "generator/generator.h"
 #include "templates/algorithms.h"
 #include <QLabel>
 

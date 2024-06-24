@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "procedure/nodes/rotateFragment.h"
+#include "generator/rotateFragment.h"
 #include "classes/configuration.h"
+#include "generator/add.h"
+#include "generator/box.h"
+#include "generator/generator.h"
+#include "generator/select.h"
 #include "keywords/enumOptions.h"
 #include "keywords/nodeValue.h"
 #include "main/dissolve.h"
-#include "procedure/nodes/add.h"
-#include "procedure/nodes/box.h"
-#include "procedure/nodes/select.h"
-#include "procedure/procedure.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <string>

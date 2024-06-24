@@ -4,13 +4,13 @@
 #include "gui/addConfigurationDialog.h"
 #include "base/units.h"
 #include "classes/configuration.h"
+#include "generator/add.h"
+#include "generator/box.h"
+#include "generator/coordinateSets.h"
+#include "generator/generalRegion.h"
+#include "generator/parameters.h"
+#include "generator/temperature.h"
 #include "gui/helpers/comboPopulator.h"
-#include "procedure/nodes/add.h"
-#include "procedure/nodes/box.h"
-#include "procedure/nodes/coordinateSets.h"
-#include "procedure/nodes/generalRegion.h"
-#include "procedure/nodes/parameters.h"
-#include "procedure/nodes/temperature.h"
 #include <QInputDialog>
 #include <QMessageBox>
 

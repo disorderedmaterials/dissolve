@@ -11,6 +11,7 @@
 #include "classes/cellArray.h"
 #include "classes/molecule.h"
 #include "classes/siteStack.h"
+#include "generator/generator.h"
 #include "io/import/coordinates.h"
 #include "items/list.h"
 #include "kernels/potentials/base.h"
@@ -18,7 +19,6 @@
 #include "math/histogram1D.h"
 #include "math/interpolator.h"
 #include "module/layer.h"
-#include "procedure/procedure.h"
 #include "templates/vector3.h"
 #include <deque>
 #include <map>
