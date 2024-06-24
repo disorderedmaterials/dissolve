@@ -127,7 +127,6 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
 double PotentialMap::analyticEnergy(const Atom &i, const Atom &j, double r) const
 {
     assert(r >= 0.0);
-    assert(i && j);
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being local to the atom
     // types
@@ -141,7 +140,6 @@ double PotentialMap::analyticEnergy(const Atom &i, const Atom &j, double r) cons
 double PotentialMap::analyticEnergy(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const
 {
     assert(r >= 0.0);
-    assert(i && j);
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being local to the atom
     // types
@@ -205,8 +203,7 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r,
 double PotentialMap::analyticForce(const Atom &i, const Atom &j, double r) const
 {
     assert(r >= 0.0);
-    assert(i && j);
-    assert(i->speciesAtom() && j->speciesAtom());
+    assert(i.speciesAtom() && j.speciesAtom());
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
@@ -220,8 +217,7 @@ double PotentialMap::analyticForce(const Atom &i, const Atom &j, double r) const
 double PotentialMap::analyticForce(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const
 {
     assert(r >= 0.0);
-    assert(i && j);
-    assert(i->speciesAtom() && j->speciesAtom());
+    assert(i.speciesAtom() && j.speciesAtom());
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
