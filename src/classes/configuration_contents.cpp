@@ -247,6 +247,12 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
 // Return number of Atoms in Configuration
 int Configuration::nAtoms() const { return atoms_.size(); }
 
+// Return the number of artificial atoms in the Configuration
+int Configuration::nArtificialAtoms() const
+{
+    return std::count_if(atoms_.begin(), atoms_.end(), [](const auto &i) { return i.speciesAtom()->Z() == Elements::Art; });
+}
+
 // Return Atom array
 std::vector<Atom> &Configuration::atoms() { return atoms_; }
 

@@ -38,8 +38,11 @@ TEST_F(ArtificialAtomsTest, Basic)
     cfg->generate({ProcessPool(), dissolve});
 
     // Basic checks
+    EXPECT_EQ(artAr->nAtoms(), 5);
+    EXPECT_EQ(artAr->nArtificialAtoms(), 4);
     EXPECT_EQ(cfg->nMolecules(), nMolecules);
     EXPECT_EQ(cfg->nAtoms(), nMolecules * artAr->nAtoms());
+    EXPECT_EQ(cfg->nArtificialAtoms(), nMolecules * artAr->nArtificialAtoms());
 }
 
 TEST_F(ArtificialAtomsTest, Water)

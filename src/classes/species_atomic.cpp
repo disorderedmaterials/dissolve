@@ -116,6 +116,12 @@ void Species::removeAtoms(std::vector<int> indices)
 // Return the number of Atoms in the Species
 int Species::nAtoms() const { return atoms_.size(); }
 
+// Return the number of artificial atoms in the Species
+int Species::nArtificialAtoms() const
+{
+    return std::count_if(atoms_.begin(), atoms_.end(), [](const auto &i) { return i.Z() == Elements::Art; });
+}
+
 // Renumber atoms so they are sequential in the list
 void Species::renumberAtoms()
 {

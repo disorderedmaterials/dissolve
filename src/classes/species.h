@@ -79,6 +79,8 @@ class Species : public Serialisable<const CoreData &>
     void removeAtoms(std::vector<int> indices);
     // Return the number of atoms in the species
     int nAtoms() const;
+    // Return the number of artificial atoms in the Species
+    int nArtificialAtoms() const;
     // Renumber atoms so they are sequential in the list
     void renumberAtoms();
     // Return the nth atom in the Species
