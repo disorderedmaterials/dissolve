@@ -25,9 +25,9 @@ CylindricalGlobalPotentialGeneratorNode::CylindricalGlobalPotentialGeneratorNode
  */
 
 // Execute node
-bool CylindricalGlobalPotentialGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool CylindricalGlobalPotentialGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
-    auto *cfg = procedureContext.configuration();
+    auto *cfg = generatorContext.configuration();
 
     // Set potential
     auto pot = std::make_unique<CylindricalPotential>();

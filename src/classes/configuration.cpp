@@ -58,20 +58,20 @@ std::string_view Configuration::niceName() const { return niceName_; }
 Generator &Configuration::generator() { return generator_; }
 
 // Create the Configuration according to its generator
-bool Configuration::generate(const ProcedureContext &procedureContext)
+bool Configuration::generate(const GeneratorContext &generatorContext)
 {
     // Empty the current contents
     empty();
 
     // Generate the contents
     Messenger::print("\nExecuting generator procedure for Configuration '{}'...\n\n", niceName());
-    auto result = generator_.execute({procedureContext, this});
+    auto result = generator_.execute({generatorContext, this});
     if (!result)
         return Messenger::error("Failed to generate Configuration '{}'.\n", niceName());
     Messenger::print("\n");
 
     // Set-up Cells for the Box
-    cells_.generate(box_.get(), requestedCellDivisionLength_, procedureContext.potentialMap().range());
+    cells_.generate(box_.get(), requestedCellDivisionLength_, generatorContext.potentialMap().range());
 
     // Make sure all objects know about each other
     updateObjectRelationships();
@@ -92,7 +92,7 @@ bool Configuration::generate(const ProcedureContext &procedureContext)
 }
 
 // Initialise (generate or load) the basic contents of the Configuration
-bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
+bool Configuration::initialiseContent(const GeneratorContext &generatorContext)
 {
     // Clear existing content
     empty();
@@ -100,7 +100,7 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
     appliedSizeFactor_ = std::nullopt;
 
     // Run the generator Generator
-    if (!generate(procedureContext))
+    if (!generate(generatorContext))
         return false;
 
     updateAtomLocations(true);
@@ -110,10 +110,10 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
         return false;
 
     // Create cell array
-    updateCells(procedureContext.potentialMap().range());
+    updateCells(generatorContext.potentialMap().range());
 
     // Apply size factor scaling if required
-    applySizeFactor(procedureContext.processPool(), procedureContext.potentialMap());
+    applySizeFactor(generatorContext.processPool(), generatorContext.potentialMap());
 
     return true;
 }

@@ -35,7 +35,7 @@ bool RotateFragmentGeneratorNode::mustBeNamed() const { return false; }
  * Execute
  */
 
-bool RotateFragmentGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool RotateFragmentGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
     if (!site_->currentSite())
         return Messenger::error("No current site to act upon! Did you mean to put this in a loop?");
@@ -43,7 +43,7 @@ bool RotateFragmentGeneratorNode::execute(const ProcedureContext &procedureConte
     auto &site = site_->currentSite()->get();
     auto parent = site.parent();
     auto molecule = site.molecule();
-    auto box = procedureContext.configuration()->box();
+    auto box = generatorContext.configuration()->box();
 
     if (!site.uniqueSiteIndex().has_value())
     {

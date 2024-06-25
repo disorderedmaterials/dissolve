@@ -32,7 +32,7 @@ const Region &RegionGeneratorNodeBase::region() const { return region_; }
  */
 
 // Execute node
-bool RegionGeneratorNodeBase::execute(const ProcedureContext &procedureContext)
+bool RegionGeneratorNodeBase::execute(const GeneratorContext &generatorContext)
 {
-    return region_.generate(procedureContext.configuration(), voxelSize_, invert_, [&]() { return createVoxelKernel(); });
+    return region_.generate(generatorContext.configuration(), voxelSize_, invert_, [&]() { return createVoxelKernel(); });
 }

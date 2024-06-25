@@ -19,7 +19,7 @@ PickRegionGeneratorNode::PickRegionGeneratorNode(std::shared_ptr<const RegionGen
  */
 
 // Prepare any necessary data, ready for execution
-bool PickRegionGeneratorNode::prepare(const ProcedureContext &procedureContext)
+bool PickRegionGeneratorNode::prepare(const GeneratorContext &generatorContext)
 {
     if (!region_)
         return Messenger::error("A region must be supplied to PickRegion.\n");
@@ -28,7 +28,7 @@ bool PickRegionGeneratorNode::prepare(const ProcedureContext &procedureContext)
 }
 
 // Execute node
-bool PickRegionGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool PickRegionGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
     Messenger::print("[PickRegion] Molecules will be selected from {}.\n", moleculePoolName());
     Messenger::print("[PickRegion] Target region is '{}'.\n", region_->name());
@@ -45,8 +45,8 @@ bool PickRegionGeneratorNode::execute(const ProcedureContext &procedureContext)
     }
 
     // Loop over all molecules in supplied Configuration
-    for (const auto &mol : moleculePool(procedureContext.configuration()))
-        if (region.validCoordinate(mol->centreOfGeometry(procedureContext.configuration()->box())))
+    for (const auto &mol : moleculePool(generatorContext.configuration()))
+        if (region.validCoordinate(mol->centreOfGeometry(generatorContext.configuration()->box())))
             pickedMolecules_.push_back(mol);
 
     Messenger::print("[PickRegion] Total molecules picked = {}.\n", pickedMolecules_.size());

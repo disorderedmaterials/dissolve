@@ -16,9 +16,9 @@ SizeFactorGeneratorNode::SizeFactorGeneratorNode() : GeneratorNode(NodeType::Siz
  */
 
 // Execute node
-bool SizeFactorGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool SizeFactorGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
-    auto *cfg = procedureContext.configuration();
+    auto *cfg = generatorContext.configuration();
     cfg->setRequestedSizeFactor(sizeFactor_.asDouble());
     return true;
 }

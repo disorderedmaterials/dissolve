@@ -22,9 +22,9 @@ SphericalGlobalPotentialGeneratorNode::SphericalGlobalPotentialGeneratorNode()
  */
 
 // Execute node
-bool SphericalGlobalPotentialGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool SphericalGlobalPotentialGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
-    auto *cfg = procedureContext.configuration();
+    auto *cfg = generatorContext.configuration();
 
     // Set potential
     auto pot = std::make_unique<SphericalPotential>();

@@ -19,7 +19,7 @@ PickGeneratorNode::PickGeneratorNode(std::vector<const Species *> species)
  */
 
 // Prepare any necessary data, ready for execution
-bool PickGeneratorNode::prepare(const ProcedureContext &procedureContext)
+bool PickGeneratorNode::prepare(const GeneratorContext &generatorContext)
 {
     // Check for at least one site being defined
     if (speciesToPick_.empty())
@@ -29,7 +29,7 @@ bool PickGeneratorNode::prepare(const ProcedureContext &procedureContext)
 }
 
 // Execute node
-bool PickGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool PickGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
     Messenger::print("[Pick] Molecules will be selected from {}.\n", moleculePoolName());
 
@@ -37,7 +37,7 @@ bool PickGeneratorNode::execute(const ProcedureContext &procedureContext)
     pickedMolecules_.clear();
 
     // Loop over all molecules in supplied Configuration
-    for (const auto &mol : moleculePool(procedureContext.configuration()))
+    for (const auto &mol : moleculePool(generatorContext.configuration()))
     {
         // Check Species type
         if (std::find(speciesToPick_.begin(), speciesToPick_.end(), mol->species()) == speciesToPick_.end())

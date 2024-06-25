@@ -43,7 +43,7 @@ class CopyGeneratorNode : public GeneratorNode
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(const ProcedureContext &procedureContext) override;
+    bool prepare(const GeneratorContext &generatorContext) override;
     // Execute node
-    bool execute(const ProcedureContext &procedureContext) override;
+    bool execute(const GeneratorContext &generatorContext) override;
 };

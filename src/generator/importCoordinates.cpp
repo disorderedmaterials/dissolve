@@ -23,7 +23,7 @@ bool ImportCoordinatesGeneratorNode::mustBeNamed() const { return false; }
  */
 
 // Prepare any necessary data, ready for execution
-bool ImportCoordinatesGeneratorNode::prepare(const ProcedureContext &procedureContext)
+bool ImportCoordinatesGeneratorNode::prepare(const GeneratorContext &generatorContext)
 {
     if (!fileSource_.hasFilename())
         return Messenger::error("A suitable coordinate file and format must be supplied.\n");
@@ -33,7 +33,7 @@ bool ImportCoordinatesGeneratorNode::prepare(const ProcedureContext &procedureCo
 }
 
 // Execute node
-bool ImportCoordinatesGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool ImportCoordinatesGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
-    return fileSource_.importData(procedureContext.configuration(), &procedureContext.processPool());
+    return fileSource_.importData(generatorContext.configuration(), &generatorContext.processPool());
 }

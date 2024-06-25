@@ -23,10 +23,10 @@ bool ParametersGeneratorNode::mustBeNamed() const { return false; }
  */
 
 // Prepare any necessary data, ready for execution
-bool ParametersGeneratorNode::prepare(const ProcedureContext &procedureContext) { return true; }
+bool ParametersGeneratorNode::prepare(const GeneratorContext &generatorContext) { return true; }
 
 // Execute node
-bool ParametersGeneratorNode::execute(const ProcedureContext &procedureContext) { return true; }
+bool ParametersGeneratorNode::execute(const GeneratorContext &generatorContext) { return true; }
 
 /*
  * I/O

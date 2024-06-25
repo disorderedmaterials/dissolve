@@ -186,10 +186,10 @@ const std::vector<std::shared_ptr<ExpressionVariable>> &GeneratorNode::parameter
  */
 
 // Prepare any necessary data, ready for execution
-bool GeneratorNode::prepare(const ProcedureContext &procedureContext) { return true; }
+bool GeneratorNode::prepare(const GeneratorContext &generatorContext) { return true; }
 
 // Execute node
-bool GeneratorNode::execute(const ProcedureContext &procedureContext) { return true; }
+bool GeneratorNode::execute(const GeneratorContext &generatorContext) { return true; }
 
 /*
  * Read / Write

@@ -28,9 +28,9 @@ RegionalGlobalPotentialGeneratorNode::RegionalGlobalPotentialGeneratorNode() : G
  */
 
 // Execute node
-bool RegionalGlobalPotentialGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool RegionalGlobalPotentialGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
-    auto *cfg = procedureContext.configuration();
+    auto *cfg = generatorContext.configuration();
 
     auto pot = std::make_unique<RegionalPotential>();
     pot->setUp(cfg->box(), voxelSize_,

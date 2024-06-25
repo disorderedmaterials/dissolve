@@ -29,21 +29,21 @@ bool CopyGeneratorNode::mustBeNamed() const { return false; }
  */
 
 // Prepare any necessary data, ready for execution
-bool CopyGeneratorNode::prepare(const ProcedureContext &procedureContext)
+bool CopyGeneratorNode::prepare(const GeneratorContext &generatorContext)
 {
     // Check for valid source configuration
     if (!source_)
         return Messenger::error("No source configuration set in node '{}'.\n", name());
-    if (source_ == procedureContext.configuration())
+    if (source_ == generatorContext.configuration())
         return Messenger::error("Source configuration set in node '{}' is the same as the context target.\n", name());
 
     return true;
 }
 
 // Execute node
-bool CopyGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool CopyGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
-    auto *cfg = procedureContext.configuration();
+    auto *cfg = generatorContext.configuration();
 
     // Raise error if the destination configuration is not empty
     if (cfg->nMolecules() != 0)
@@ -61,7 +61,7 @@ bool CopyGeneratorNode::execute(const ProcedureContext &procedureContext)
             if (std::find(excludedSpecies_.begin(), excludedSpecies_.end(), mol->species()) == excludedSpecies_.end())
                 nAtoms += mol->nAtoms();
     }
-    procedureContext.configuration()->atoms().reserve(nAtoms);
+    generatorContext.configuration()->atoms().reserve(nAtoms);
 
     // Copy molecules
     for (const auto &mol : source_->molecules())
@@ -85,7 +85,7 @@ bool CopyGeneratorNode::execute(const ProcedureContext &procedureContext)
                 continue;
             }
 
-            procedureContext.configuration()->addGlobalPotential(gpot->duplicate());
+            generatorContext.configuration()->addGlobalPotential(gpot->duplicate());
         }
     }
 

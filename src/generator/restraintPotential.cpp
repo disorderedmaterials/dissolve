@@ -38,9 +38,9 @@ void RestraintPotentialGeneratorNode::restrainMoleculeAtoms(Configuration *cfg, 
 }
 
 // Execute node
-bool RestraintPotentialGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool RestraintPotentialGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
-    auto *cfg = procedureContext.configuration();
+    auto *cfg = generatorContext.configuration();
 
     // Apply to targeted species
     if (!speciesToRestrain_.empty())

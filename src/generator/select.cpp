@@ -151,7 +151,7 @@ OptionalReferenceWrapper<GeneratorNodeSequence> SelectGeneratorNode::branch() { 
  */
 
 // Prepare any necessary data, ready for execution
-bool SelectGeneratorNode::prepare(const ProcedureContext &procedureContext)
+bool SelectGeneratorNode::prepare(const GeneratorContext &generatorContext)
 {
     // Check for at least one site being defined
     if (speciesSites_.empty())
@@ -162,15 +162,15 @@ bool SelectGeneratorNode::prepare(const ProcedureContext &procedureContext)
     nCumulativeSites_ = 0;
     nAvailableSites_ = 0;
 
-    // If one exists, prepare the ForEach branch nodes
-    if (!forEachBranch_.prepare(procedureContext))
+    // Pepare the ForEach branch nodes
+    if (!forEachBranch_.prepare(generatorContext))
         return false;
 
     return true;
 }
 
 // Execute node
-bool SelectGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool SelectGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
     // Create our site vector
     sites_.clear();
@@ -198,7 +198,7 @@ bool SelectGeneratorNode::execute(const ProcedureContext &procedureContext)
     auto siteIndex = 0;
     for (auto *spSite : speciesSites_)
     {
-        const auto *siteStack = procedureContext.configuration()->siteStack(spSite);
+        const auto *siteStack = generatorContext.configuration()->siteStack(spSite);
         if (siteStack == nullptr)
             return false;
 
@@ -228,7 +228,7 @@ bool SelectGeneratorNode::execute(const ProcedureContext &procedureContext)
             if (distanceRef)
             {
                 if (!inclusiveDistanceRange_.contains(
-                        procedureContext.configuration()->box()->minimumDistance(site.origin(), distanceRef->get().origin())))
+                        generatorContext.configuration()->box()->minimumDistance(site.origin(), distanceRef->get().origin())))
                     continue;
             }
 
@@ -260,7 +260,7 @@ bool SelectGeneratorNode::execute(const ProcedureContext &procedureContext)
             ++nCumulativeSites_;
 
             // If the branch fails at any point, return failure here.  Otherwise, continue the loop
-            if (!forEachBranch_.execute(procedureContext))
+            if (!forEachBranch_.execute(generatorContext))
                 return false;
         }
     }

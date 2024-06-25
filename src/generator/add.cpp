@@ -91,7 +91,7 @@ EnumOptions<AddGeneratorNode::PositioningType> AddGeneratorNode::positioningType
  */
 
 // Prepare any necessary data, ready for execution
-bool AddGeneratorNode::prepare(const ProcedureContext &procedureContext)
+bool AddGeneratorNode::prepare(const GeneratorContext &generatorContext)
 {
     if (!species_ && !coordinateSets_)
         return Messenger::error("No target Species or coordinate sets specified in Add node.\n");
@@ -121,7 +121,7 @@ bool AddGeneratorNode::prepare(const ProcedureContext &procedureContext)
 }
 
 // Execute node
-bool AddGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
     // Get target species
     auto *sp = species_ ? species_ : coordinateSets_->keywords().getSpecies("Species");
@@ -135,7 +135,7 @@ bool AddGeneratorNode::execute(const ProcedureContext &procedureContext)
         return true;
     }
 
-    auto *cfg = procedureContext.configuration();
+    auto *cfg = generatorContext.configuration();
     const auto nAtomsToAdd = ipop * sp->nAtoms();
     auto rho = std::get<0>(density_).asDouble();
     auto rhoUnits = std::get<1>(density_);
@@ -257,7 +257,7 @@ bool AddGeneratorNode::execute(const ProcedureContext &procedureContext)
     }
 
     // Now we add the molecules
-    RandomBuffer randomBuffer(procedureContext.processPool(), ProcessPool::PoolProcessesCommunicator);
+    RandomBuffer randomBuffer(generatorContext.processPool(), ProcessPool::PoolProcessesCommunicator);
     Vec3<double> r, cog, newCentre, fr;
     auto coordinateSetIndex = 0;
     auto hasCoordinateSets = false;

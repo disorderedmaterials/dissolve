@@ -142,9 +142,9 @@ class GeneratorNode : public std::enable_shared_from_this<GeneratorNode>, public
      */
     public:
     // Prepare any necessary data, ready for execution
-    virtual bool prepare(const ProcedureContext &procedureContext);
+    virtual bool prepare(const GeneratorContext &generatorContext);
     // Execute node
-    virtual bool execute(const ProcedureContext &procedureContext);
+    virtual bool execute(const GeneratorContext &generatorContext);
 
     /*
      * Read / Write

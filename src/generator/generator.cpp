@@ -41,7 +41,7 @@ bool Generator::removeNode(NodeRef node) { return rootSequence_.removeNode(node)
  */
 
 // Run generator in the specified data context
-bool Generator::execute(const ProcedureContext &context)
+bool Generator::execute(const GeneratorContext &context)
 {
     // Prepare the nodes
     if (!rootSequence_.prepare(context))

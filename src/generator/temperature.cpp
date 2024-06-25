@@ -23,9 +23,9 @@ bool TemperatureGeneratorNode::mustBeNamed() const { return false; }
  */
 
 // Execute node
-bool TemperatureGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool TemperatureGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
-    auto *cfg = procedureContext.configuration();
+    auto *cfg = generatorContext.configuration();
     cfg->setTemperature(temperature_.asDouble());
     return true;
 }

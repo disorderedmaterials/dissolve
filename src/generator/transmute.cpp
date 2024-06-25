@@ -34,7 +34,7 @@ bool TransmuteGeneratorNode::mustBeNamed() const { return false; }
  */
 
 // Execute node
-bool TransmuteGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool TransmuteGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
     // Check target species
     if (!targetSpecies_)
@@ -45,7 +45,7 @@ bool TransmuteGeneratorNode::execute(const ProcedureContext &procedureContext)
 
     // Transmute molecules by Species type
     if (!speciesToTransmute_.empty())
-        for (const auto &mol : procedureContext.configuration()->molecules())
+        for (const auto &mol : generatorContext.configuration()->molecules())
             if (std::find(speciesToTransmute_.begin(), speciesToTransmute_.end(), mol->species()) != speciesToTransmute_.end())
                 targets.push_back(mol);
 
@@ -58,15 +58,15 @@ bool TransmuteGeneratorNode::execute(const ProcedureContext &procedureContext)
     }
 
     // Perform the magic
-    const auto *box = procedureContext.configuration()->box();
+    const auto *box = generatorContext.configuration()->box();
     for (const auto &mol : targets)
     {
-        auto newMol = procedureContext.configuration()->addMolecule(targetSpecies_);
+        auto newMol = generatorContext.configuration()->addMolecule(targetSpecies_);
         newMol->setCentreOfGeometry(box, mol->centreOfGeometry(box));
     }
 
     // Remove the old molecules
-    procedureContext.configuration()->removeMolecules(targets);
+    generatorContext.configuration()->removeMolecules(targets);
 
     Messenger::print("[Transmute] Transmuted {} molecules into '{}'.\n", targets.size(), targetSpecies_->name());
 

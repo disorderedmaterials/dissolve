@@ -390,18 +390,18 @@ bool GeneratorNodeSequence::check() const
  */
 
 // Prepare any necessary data, ready for execution
-bool GeneratorNodeSequence::prepare(const ProcedureContext &procedureContext)
+bool GeneratorNodeSequence::prepare(const GeneratorContext &generatorContext)
 {
     // Loop over nodes in the list, preparing each in turn
     for (const auto &node : sequence_)
-        if (!node->prepare(procedureContext))
+        if (!node->prepare(generatorContext))
             return false;
 
     return true;
 }
 
 // Execute node
-bool GeneratorNodeSequence::execute(const ProcedureContext &procedureContext)
+bool GeneratorNodeSequence::execute(const GeneratorContext &generatorContext)
 {
     // If there are no nodes, just exit now
     if (sequence_.empty())
@@ -409,7 +409,7 @@ bool GeneratorNodeSequence::execute(const ProcedureContext &procedureContext)
 
     // Loop over nodes in the list, executing each in turn
     for (const auto &node : sequence_)
-        if (!node->execute(procedureContext))
+        if (!node->execute(generatorContext))
             return false;
 
     return true;

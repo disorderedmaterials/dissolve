@@ -30,17 +30,17 @@ bool BoxGeneratorNode::mustBeNamed() const { return false; }
  */
 
 // Prepare any necessary data, ready for execution
-bool BoxGeneratorNode::prepare(const ProcedureContext &procedureContext) { return true; }
+bool BoxGeneratorNode::prepare(const GeneratorContext &generatorContext) { return true; }
 
 // Execute node
-bool BoxGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool BoxGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
     // Create a Box in the target Configuration with our lengths and angles
-    procedureContext.configuration()->createBox({lengths_.x.asDouble(), lengths_.y.asDouble(), lengths_.z.asDouble()},
+    generatorContext.configuration()->createBox({lengths_.x.asDouble(), lengths_.y.asDouble(), lengths_.z.asDouble()},
                                                 {angles_.x.asDouble(), angles_.y.asDouble(), angles_.z.asDouble()},
                                                 nonPeriodic_);
 
-    auto *box = procedureContext.configuration()->box();
+    auto *box = generatorContext.configuration()->box();
     Messenger::print("[Box] Volume is {} cubic Angstroms (reciprocal volume = {:e})\n", box->volume(), box->reciprocalVolume());
     auto lengths = box->axisLengths();
     auto angles = box->axisAngles();

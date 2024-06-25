@@ -27,7 +27,7 @@ PickProximityGeneratorNode::PickProximityGeneratorNode() : PickGeneratorNodeBase
  */
 
 // Execute node
-bool PickProximityGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool PickProximityGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
     Messenger::print("[PickProximity] Molecules will be selected from {}.\n", moleculePoolName());
 
@@ -52,10 +52,10 @@ bool PickProximityGeneratorNode::execute(const ProcedureContext &procedureContex
     else
         Messenger::print("[PickProximity] Allowed coordination count is N >= {}.\n", nMin);
 
-    const auto *box = procedureContext.configuration()->box();
+    const auto *box = generatorContext.configuration()->box();
 
     // Loop over all target molecules
-    for (const auto &molI : moleculePool(procedureContext.configuration()))
+    for (const auto &molI : moleculePool(generatorContext.configuration()))
     {
         auto count = 0;
 
@@ -63,7 +63,7 @@ bool PickProximityGeneratorNode::execute(const ProcedureContext &procedureContex
         auto iCog = molI->centreOfGeometry(box);
 
         // Loop over all molecules
-        for (const auto &molJ : procedureContext.configuration()->molecules())
+        for (const auto &molJ : generatorContext.configuration()->molecules())
         {
             // Count surrounding species (if defined)
             if (std::find(speciesToPick_.begin(), speciesToPick_.end(), molJ->species()) != speciesToPick_.end())

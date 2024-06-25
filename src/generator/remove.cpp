@@ -30,23 +30,23 @@ bool RemoveGeneratorNode::mustBeNamed() const { return false; }
  */
 
 // Execute node
-bool RemoveGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool RemoveGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
     // Store current molecule population
-    auto nStartMolecules = procedureContext.configuration()->nMolecules();
+    auto nStartMolecules = generatorContext.configuration()->nMolecules();
 
     // Remove molecules by Species type
     if (!speciesToRemove_.empty())
         for (auto *sp : speciesToRemove_)
-            procedureContext.configuration()->removeMolecules(sp);
+            generatorContext.configuration()->removeMolecules(sp);
 
     // Remove molecules by selection
     if (selection_)
-        procedureContext.configuration()->removeMolecules(selection_->pickedMolecules());
+        generatorContext.configuration()->removeMolecules(selection_->pickedMolecules());
 
     Messenger::print("[Remove] Removed {} molecules from configuration '{}'.\n",
-                     nStartMolecules - procedureContext.configuration()->nMolecules(),
-                     procedureContext.configuration()->name());
+                     nStartMolecules - generatorContext.configuration()->nMolecules(),
+                     generatorContext.configuration()->name());
 
     return true;
 }

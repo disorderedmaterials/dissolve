@@ -37,5 +37,5 @@ class PickProximityGeneratorNode : public PickGeneratorNodeBase
      */
     public:
     // Execute node
-    bool execute(const ProcedureContext &procedureContext) override;
+    bool execute(const GeneratorContext &generatorContext) override;
 };

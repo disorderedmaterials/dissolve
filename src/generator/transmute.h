@@ -41,5 +41,5 @@ class TransmuteGeneratorNode : public GeneratorNode
      */
     public:
     // Execute node
-    bool execute(const ProcedureContext &procedureContext) override;
+    bool execute(const GeneratorContext &generatorContext) override;
 };

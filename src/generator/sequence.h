@@ -115,9 +115,9 @@ class GeneratorNodeSequence : public Serialisable<const CoreData &>
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(const ProcedureContext &procedureContext);
+    bool prepare(const GeneratorContext &generatorContext);
     // Execute node
-    bool execute(const ProcedureContext &procedureContext);
+    bool execute(const GeneratorContext &generatorContext);
 
     /*
      * Read / Write

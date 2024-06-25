@@ -71,7 +71,7 @@ const std::vector<Vec3<double>> &CoordinateSetsGeneratorNode::set(int n) const {
  */
 
 // Prepare any necessary data, ready for execution
-bool CoordinateSetsGeneratorNode::prepare(const ProcedureContext &procedureContext)
+bool CoordinateSetsGeneratorNode::prepare(const GeneratorContext &generatorContext)
 {
     if (!species_)
         return Messenger::error("No Species set in CoordinateSets node.\n");
@@ -88,7 +88,7 @@ bool CoordinateSetsGeneratorNode::prepare(const ProcedureContext &procedureConte
             return Messenger::error("A suitable coordinate file and format must be supplied.\n");
 
         // Open the specified file
-        LineParser parser(&procedureContext.processPool());
+        LineParser parser(&generatorContext.processPool());
         if ((!parser.openInput(fileSource_.filename())) || (!parser.isFileGoodForReading()))
             return Messenger::error("Couldn't open coordinate sets file '{}'.\n", fileSource_.filename());
 
@@ -107,7 +107,7 @@ bool CoordinateSetsGeneratorNode::prepare(const ProcedureContext &procedureConte
 }
 
 // Execute node
-bool CoordinateSetsGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool CoordinateSetsGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
     // Do we need to generate new sets?
     if (!sets_.empty())
@@ -139,8 +139,8 @@ bool CoordinateSetsGeneratorNode::execute(const ProcedureContext &procedureConte
     }
 
     // Initialise the random number buffer for all processes
-    RandomBuffer randomBuffer(procedureContext.processPool(),
-                              ProcessPool::subDivisionStrategy(procedureContext.processPool().bestStrategy()));
+    RandomBuffer randomBuffer(generatorContext.processPool(),
+                              ProcessPool::subDivisionStrategy(generatorContext.processPool().bestStrategy()));
 
     // Initialise random velocities
     std::vector<Vec3<double>> velocities(species_->nAtoms());
@@ -161,7 +161,7 @@ bool CoordinateSetsGeneratorNode::execute(const ProcedureContext &procedureConte
     for (auto n = 0; n < nSets_.asInteger(); ++n)
     {
         // Evolve our coordinates
-        r = MDModule::evolve(procedureContext.processPool(), procedureContext.potentialMap(), species_, temperature_.asDouble(),
+        r = MDModule::evolve(generatorContext.processPool(), generatorContext.potentialMap(), species_, temperature_.asDouble(),
                              nSteps_.asInteger(), deltaT_.asDouble(), r, velocities);
 
         // Store a new set

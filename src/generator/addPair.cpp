@@ -83,7 +83,7 @@ EnumOptions<AddPairGeneratorNode::PositioningType> AddPairGeneratorNode::positio
  */
 
 // Prepare any necessary data, ready for execution
-bool AddPairGeneratorNode::prepare(const ProcedureContext &procedureContext)
+bool AddPairGeneratorNode::prepare(const GeneratorContext &generatorContext)
 {
     if (!speciesA_ || !speciesB_)
         return Messenger::error("One or both target species not specified in Add node.\n");
@@ -118,7 +118,7 @@ bool AddPairGeneratorNode::prepare(const ProcedureContext &procedureContext)
 }
 
 // Execute node
-bool AddPairGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
     // Can't add the Species if it has any missing core information
     if (!speciesA_->checkSetUp())
@@ -137,7 +137,7 @@ bool AddPairGeneratorNode::execute(const ProcedureContext &procedureContext)
         return true;
     }
 
-    auto *cfg = procedureContext.configuration();
+    auto *cfg = generatorContext.configuration();
 
     const auto nAtomsToAdd = ipop * (speciesA_->nAtoms() + speciesB_->nAtoms());
     auto rho = std::get<0>(density_).asDouble();
@@ -239,7 +239,7 @@ bool AddPairGeneratorNode::execute(const ProcedureContext &procedureContext)
     }
 
     // Now we add the molecules
-    RandomBuffer randomBuffer(procedureContext.processPool(), ProcessPool::PoolProcessesCommunicator);
+    RandomBuffer randomBuffer(generatorContext.processPool(), ProcessPool::PoolProcessesCommunicator);
     Vec3<double> r, cog, newCentre;
     Matrix3 transform;
     const auto *box = cfg->box();

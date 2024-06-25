@@ -36,14 +36,14 @@ OptionalReferenceWrapper<GeneratorNodeSequence> IterateSelectionGeneratorNode::b
  */
 
 // Prepare any necessary data, ready for execution
-bool IterateSelectionGeneratorNode::prepare(const ProcedureContext &procedureContext)
+bool IterateSelectionGeneratorNode::prepare(const GeneratorContext &generatorContext)
 {
-    // If one exists, prepare the ForEach branch nodes
-    return forEachBranch_.prepare(procedureContext);
+    // Prepare the ForEach branch nodes
+    return forEachBranch_.prepare(generatorContext);
 }
 
 // Execute node
-bool IterateSelectionGeneratorNode::execute(const ProcedureContext &procedureContext)
+bool IterateSelectionGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
     const auto &sites = selection_->sites();
     currentSite_ = std::nullopt;
@@ -65,7 +65,7 @@ bool IterateSelectionGeneratorNode::execute(const ProcedureContext &procedureCon
             ++nCumulativeSites_;
 
             // If the branch fails at any point, return failure here.  Otherwise, continue the loop
-            if (!forEachBranch_.execute(procedureContext))
+            if (!forEachBranch_.execute(generatorContext))
                 return false;
         }
     }

@@ -52,7 +52,7 @@ class Generator : public Serialisable<const CoreData &>
 
     public:
     // Run generator in the specified data context
-    bool execute(const ProcedureContext &context);
+    bool execute(const GeneratorContext &context);
 
     /*
      * Read / Write
