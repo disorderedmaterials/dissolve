@@ -1,18 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "classes/configuration.h"
-#include "procedure/procedure.h"
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
-#include <string>
+#include <vector>
 
 namespace UnitTest
 {
+class ArtificialAtomsTest : public ::testing::Test
+{
+    protected:
+    DissolveSystemTest systemTest;
+};
 
-TEST(ArtificialAtomsTest, Basic)
+TEST_F(ArtificialAtomsTest, Basic)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
@@ -38,4 +41,36 @@ TEST(ArtificialAtomsTest, Basic)
     EXPECT_EQ(cfg->nMolecules(), nMolecules);
     EXPECT_EQ(cfg->nAtoms(), nMolecules * artAr->nAtoms());
 }
+
+TEST_F(ArtificialAtomsTest, Water)
+{
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/water-with-artificial-atoms.txt"));
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    // Partial g(r) (unbound terms)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "GR01//Bulk//OriginalGR//OW-OW//Unbound",
+        {"epsr25/water1000-neutron/water.EPSR.g01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 6.0e-2));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "GR01//Bulk//OriginalGR//OW-HW//Unbound",
+        {"epsr25/water1000-neutron/water.EPSR.g01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 2.0e-2));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "GR01//Bulk//OriginalGR//HW-HW//Unbound",
+        {"epsr25/water1000-neutron/water.EPSR.g01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 2.0e-2));
+
+    // Partial g(r) (intramolecular terms)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "GR01//Bulk//OriginalGR//OW-HW//Bound",
+        {"epsr25/water1000-neutron/water.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 0.1));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "GR01//Bulk//OriginalGR//HW-HW//Bound",
+        {"epsr25/water1000-neutron/water.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.5e-2));
+
+    // Partial g(r) (intramolecular terms)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "GR01//Bulk//OriginalGR//OW-OW//Bound",
+        {"epsr25/water1000-neutron/water.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-5,
+        Error::ErrorType::RMSEError));
+}
+
 } // namespace UnitTest
