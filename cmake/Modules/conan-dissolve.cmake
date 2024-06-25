@@ -1,7 +1,12 @@
 # Fetch and include Conan-cmake integration if it doesn't exist
 if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-  message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-  file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/develop/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake")
+  message(STATUS "Downloading conan_provider.cmake from https://github.com/conan-io/cmake-conan")
+  file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/develop2/conan_provider.cmake" "${CMAKE_BINARY_DIR}/conan.cmake" STATUS DOWNLOAD_STATUS)
+  list(GET DOWNLOAD_STATUS 0 ERROR_CODE)
+  if (NOT ${ERROR_CODE} STREQUAL "0")
+    list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
+    message(FATAL_ERROR "Failed to download Conan2 CMake integration: ${ERROR_MESSAGE}")
+  endif()
 endif ()
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
@@ -16,9 +21,9 @@ set(_conan_requires
     antlr4-cppruntime/4.13.1
 )
 set(_conan_options
-    fmt:header_only=True
-    pugixml:header_only=False
-    antlr4-cppruntime:shared=True
+    fmt/*:header_only=True
+    pugixml/*:header_only=False
+    antlr4-cppruntime/*:shared=True
     ${EXTRA_CONAN_OPTIONS}
 )
 
