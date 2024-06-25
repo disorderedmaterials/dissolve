@@ -53,8 +53,8 @@ class Configuration : public Serialisable<const CoreData &>
     std::string niceName_;
     // Generator for the Configuration
     Generator generator_;
-    static constexpr double defaultTemperature_ = 300.0;
     // Temperature of this configuration (K)
+    static constexpr double defaultTemperature_ = 300.0;
     double temperature_{defaultTemperature_};
 
     public:
