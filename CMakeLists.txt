@@ -1,4 +1,16 @@
 cmake_minimum_required(VERSION 3.24)
+
+# Use Conan for dependency provision?
+option(CONAN "Use conan to find dependencies" ON)
+if(CONAN)
+  # Add local dirs to cmake Module search path
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
+  list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
+
+  list(APPEND CMAKE_PROJECT_TOP_LEVEL_INCLUDES  "cmake/Modules/conan-dissolve.cmake")
+endif(CONAN)
+
+# Set up the project
 project(Dissolve LANGUAGES CXX)
 
 set(DESCRIPTION "Dissolve")
@@ -25,16 +37,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Add our custom module search path
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
-
-# Include Conan Packages
-option(CONAN "Use conan to find dependencies" ON)
-if(CONAN)
-  # Add local dirs to cmake Module search path
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
-  list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
-
-  include(conan-dissolve)
-endif(CONAN)
 
 # Find core dependencies
 set(CORE_LINK_LIBS "")
