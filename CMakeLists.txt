@@ -120,7 +120,12 @@ if(GUI)
                Quick
                QuickWidgets
                QuickControls2
-               REQUIRED
+               Quick3D
+               3DCore
+               3DExtras
+               3DRender
+               3DExtras
+    REQUIRED
   )
   add_definitions(-DQT_NO_KEYWORDS)
 
@@ -336,6 +341,8 @@ target_link_libraries(
           ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
 )
 
+add_subdirectory(QuickPlot)
+
 # Build GUI target executables
 if(GUI)
 
@@ -373,7 +380,14 @@ if(GUI)
            # Module gui libs
            gui-qml ${NO_WHOLE_ARCHIVE_FLAG}
     PRIVATE # External libs
-            Qt6::Qml ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
+            Qt6::Qml
+            ${CORE_LINK_LIBS}
+            ${THREADING_LINK_LIBS}
+            Qt6::Widgets
+            Qt6::Gui
+            Qt6::Qml
+            Qt6::Core
+            Qt6::Quick3D
   )
 
   qt_generate_deploy_qml_app_script(
