@@ -117,7 +117,7 @@ NodeRef GeneratorNodeSequence::searchNodes(std::string_view name, const ConstNod
     return nullptr;
 }
 
-// Search through the Procedure for the named parameter
+// Search through the sequence for the named parameter
 std::shared_ptr<ExpressionVariable>
 GeneratorNodeSequence::searchParameters(std::string_view name,
                                         const std::shared_ptr<ExpressionVariable> &excludeParameter) const
@@ -170,7 +170,7 @@ ConstNodeRef GeneratorNodeSequence::node(std::string_view name, const ConstNodeR
     return nullptr;
 }
 
-// Return list of nodes (of specified type / class) present in the Procedure
+// Return list of nodes (of specified type / class) present in the sequence and its children
 std::vector<ConstNodeRef> GeneratorNodeSequence::nodes(const GeneratorNode::NodeTypeVector &allowedNodeTypes) const
 {
     std::vector<ConstNodeRef> matches;
@@ -258,11 +258,11 @@ std::vector<ConstNodeRef> GeneratorNodeSequence::nodesInScope(ConstNodeRef query
     return matches;
 }
 
-// Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
+// Return named node if it exists anywhere in the same Generator (and matches the type / class given)
 ConstNodeRef GeneratorNodeSequence::nodeExists(std::string_view name, const ConstNodeRef &excludeNode,
                                                const GeneratorNode::NodeTypeVector &allowedNodeTypes) const
 {
-    // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
+    // First, bubble up to the topmost sequence (which should be the Generator's rootSequence_)
     if (owner_)
         return owner_->get().scope()->get().nodeExists(name, excludeNode, allowedNodeTypes);
 
@@ -298,7 +298,7 @@ GeneratorNodeSequence::parameterInScope(ConstNodeRef queryingNode, std::string_v
 std::shared_ptr<ExpressionVariable>
 GeneratorNodeSequence::parameterExists(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
-    // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
+    // First, bubble up to the topmost sequence (which should be the Generator's rootSequence_)
     if (owner_)
         return owner_->get().scope()->get().parameterExists(name, excludeParameter);
 

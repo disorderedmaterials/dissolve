@@ -76,7 +76,7 @@ class GeneratorNodeSequence : public Serialisable<const CoreData &>
     // Return named node if it exists anywhere in our sequence or below (and matches the type / class given)
     NodeRef searchNodes(std::string_view name, const ConstNodeRef &excludeNode = {},
                         const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
-    // Search through the Procedure for the named parameter
+    // Search through the sequence and its children for the named parameter
     std::shared_ptr<ExpressionVariable>
     searchParameters(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = {}) const;
 
@@ -86,7 +86,7 @@ class GeneratorNodeSequence : public Serialisable<const CoreData &>
     // Return named node if present (and matches the type / class given)
     ConstNodeRef node(std::string_view name, const ConstNodeRef &excludeNode = {},
                       const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
-    // Return list of nodes (of specified type / class) present in the Procedure
+    // Return list of nodes (of specified type / class) present in the sequence and its children
     std::vector<ConstNodeRef> nodes(const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return named node if it is currently in scope (and matches the type / class given)
     ConstNodeRef nodeInScope(ConstNodeRef queryingNode, std::string_view name, const ConstNodeRef &excludeNode = {},
@@ -94,7 +94,7 @@ class GeneratorNodeSequence : public Serialisable<const CoreData &>
     // Return list of nodes in scope (and matching the type / class given)
     std::vector<ConstNodeRef> nodesInScope(ConstNodeRef queryingNode,
                                            const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
-    // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
+    // Return named node if it exists anywhere in the same Generator (and matches the type / class given)
     ConstNodeRef nodeExists(std::string_view name, const ConstNodeRef &excludeNode = {},
                             const GeneratorNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return the named parameter if it is currently in scope

@@ -13,7 +13,6 @@ class DissolveWindow;
 class KeywordsWidget;
 class Module;
 class ModuleWidget;
-class ProcedureWidget;
 
 // Module Control Widget
 class ModuleControlWidget : public QWidget
