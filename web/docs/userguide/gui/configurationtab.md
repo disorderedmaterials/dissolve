@@ -20,4 +20,4 @@ This option can be used to scale the positions of molecules within the box, incr
 
 #### Generator
 
-A configuration is created from a generator [procedure]({{< ref "procedures" >}}) allowing it to be reconstructed automatically on demand. The defined procedure can be viewed and edited directly here.
+A configuration is created from a [generatore]({{< ref "generators" >}}) allowing it to be reconstructed automatically on demand. The defined procedure can be viewed and edited directly here.
