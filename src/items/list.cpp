@@ -85,13 +85,43 @@ void GenericList::rename(std::string_view oldName, std::string_view oldPrefix, s
 void GenericList::renamePrefix(std::string_view oldPrefix, std::string_view newPrefix)
 {
     auto delimitedPrefix = fmt::format("{}//", oldPrefix);
-    for (auto &[key, value] : items_)
-        if (DissolveSys::startsWith(key, delimitedPrefix))
+
+    /*
+     * Because we are using a std::map there is no easy way to achieve a bulk renaming of keys. The only sane approach,
+     * avoiding copying data, is to extract the items into a separate map, rename them, then merge them back in to the
+     * original map.  This is complicated by the fact that as soon as we extract an item from the map we potentially
+     * invalidate iterators and cause segfaults or, at the very least, we don't actually rename all the target data.
+     * So, here we sequentially extract matching items, with the loop restarting after every match and running until we
+     * get no match. This obviously isn't terribly efficient but the function is sparingly used and so the general performance
+     * impact will be minimal.
+     */
+    std::map<std::string, GenericItem::Type> renamedItems;
+    auto found = true;
+    while (found)
+    {
+        found = false;
+        for (auto &[key, value] : items_)
         {
-            auto handle = items_.extract(key);
-            handle.key() = fmt::format("{}//{}", newPrefix, DissolveSys::afterString(key, "//"));
-            items_.insert(std::move(handle));
+            if (DissolveSys::startsWith(key, delimitedPrefix))
+            {
+                auto handle = items_.extract(key);
+                handle.key() = fmt::format("{}//{}", newPrefix, DissolveSys::afterString(key, "//"));
+                renamedItems.insert(std::move(handle));
+
+                found = true;
+            }
+            if (found)
+                break;
         }
+    }
+
+    // Move the renamed data back into our items_ map
+    while (!renamedItems.empty())
+    {
+        auto &&[key, value] = *renamedItems.begin();
+        auto handle = renamedItems.extract(key);
+        items_.insert(std::move(handle));
+    }
 }
 
 // Prune all items with '@suffix'
