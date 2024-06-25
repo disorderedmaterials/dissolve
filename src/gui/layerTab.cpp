@@ -242,6 +242,7 @@ void LayerTab::moduleNameChanged(const QModelIndex &index, const QString &oldNam
     // Rename processing module data
     dissolve_.processingModuleData().renamePrefix(oldName.toStdString(), newName.toStdString());
 
+    // Trigger another redraw of the widget in order to update any graph controls
     if (mcw)
         mcw->updateControls();
 }
