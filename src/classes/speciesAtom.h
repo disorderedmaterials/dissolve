@@ -64,9 +64,8 @@ class SpeciesAtom : public Serialisable<CoreData &>
     Presence presence_{Presence::Physical};
 
     public:
-    // Set basic atom properties
+    // Set basic properties
     void set(Elements::Element Z, double rx, double ry, double rz, double q = 0.0);
-    // Set basic atom properties
     void set(Elements::Element Z, const Vec3<double> &r, double q = 0.0);
     // Set atomic element
     void setZ(Elements::Element Z);

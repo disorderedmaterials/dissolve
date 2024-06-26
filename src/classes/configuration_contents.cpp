@@ -124,12 +124,12 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
     if (sourceCoordinates)
     {
         auto r = sourceCoordinates->get();
-        for (auto n = 0; n < sp->nAtoms({}); ++n)
+        for (auto n = 0; n < sp->nAtoms(); ++n)
             addAtom(&sp->atom(n), newMolecule, r[n]);
     }
     else
     {
-        for (auto n = 0; n < sp->nAtoms({}); ++n)
+        for (auto n = 0; n < sp->nAtoms(); ++n)
             addAtom(&sp->atom(n), newMolecule, sp->atom(n).r());
     }
 

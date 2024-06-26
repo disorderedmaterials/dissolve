@@ -10,8 +10,8 @@ Species 'Water'
   Atom    1  O    1.500000e-02  -9.000000e-03  -3.730000e-01  'OW'  0.000000e+00
   Atom    2  H    7.570000e-01  1.300000e-02  2.170000e-01  'HW'  0.000000e+00
   Atom    3  H    -7.710000e-01  -3.000000e-03  1.570000e-01  'HW'  0.000000e+00
-  Atom    4  Art  7.352000e-02  8.760680e-01  -1.006506e+00  'LP'  0.000000e+00
-  Atom    5  Art  9.057400e-02  -9.237860e-01  -9.608400e-01  'LP'  0.000000e+00
+  Atom    4  Phantom 7.352000e-02  8.760680e-01  -1.006506e+00  'LP'  0.000000e+00
+  Atom    5  Phantom 9.057400e-02  -9.237860e-01  -9.608400e-01  'LP'  0.000000e+00
 
   # Bonds
   NBonds  4
@@ -42,7 +42,7 @@ PairPotentials
   # Atom Type Parameters
   Parameters  OW  O  -8.200000e-01  LJGeometric  epsilon=0.6503 sigma=3.165492
   Parameters  HW  H  4.100000e-01  LJGeometric  epsilon=0 sigma=0
-  Parameters  LP  Art  0.000000e+00  Undefined  
+  Parameters  LP  Phantom  0.000000e+00  Undefined
   Range  15
   Delta  0.05
   ManualChargeSource  True

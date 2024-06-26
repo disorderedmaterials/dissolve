@@ -61,20 +61,18 @@ void SpeciesAtom::move(SpeciesAtom &source)
  * Properties
  */
 
-// Set basic SpeciesAtom properties
+// Set basic properties
 void SpeciesAtom::set(Elements::Element Z, double rx, double ry, double rz, double q)
 {
-    Z_ = Z;
-    r_.set(rx, ry, rz);
-    charge_ = q;
+    set(Z, {rx, ry, rz}, q);
 }
-
-// Set basic SpeciesAtom properties
 void SpeciesAtom::set(Elements::Element Z, const Vec3<double> &r, double q)
 {
     Z_ = Z;
     r_ = r;
     charge_ = q;
+
+    presence_ = Z_ == Elements::Phantom ? Presence::Phantom : Presence::Physical;
 }
 
 // Set atomic element
