@@ -71,7 +71,7 @@ bool GRModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg
     int *bins;
 
     n = 0;
-    for (auto &atd : cfg->atomTypes())
+    for (auto &atd : cfg->atomTypePopulations())
     {
         maxr[n] = atd.population();
         nr[n] = 0;
@@ -84,6 +84,8 @@ bool GRModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg
     for (auto &atom : cfg->atoms())
     {
         m = atom.localTypeIndex();
+        if (m == Atom::Artificial)
+            continue;
         r[m][nr[m]++] = atom.r();
     }
 
@@ -209,13 +211,20 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
         for (auto &i : atomsI)
         {
             auto typeI = i->localTypeIndex();
+            if (typeI == Atom::Artificial)
+                continue;
+
             auto &rI = i->r();
 
             for (auto &j : atomsJ)
             {
+                auto typeJ = j->localTypeIndex();
+                if (typeJ == Atom::Artificial)
+                    continue;
+
                 auto &rJ = j->r();
                 auto distance = box->minimumDistance(rJ, rI);
-                histograms[{typeI, j->localTypeIndex()}].bin(distance);
+                histograms[{typeI, typeJ}].bin(distance);
             }
         }
     };
@@ -226,6 +235,7 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
     auto histograms = combinableHistograms.finalize();
     addHistogramsToPartialSet(histograms, partialSet);
 
+    // Atoms within the same cell
     auto [start, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
     for (int n = start; n < end; ++n)
     {
@@ -234,18 +244,23 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
 
         // Add contributions between atoms in cellI
         PairIterator pairs(atomsI.size());
-        std::for_each(pairs.begin(), pairs.end(),
-                      [&atomsI, &partialSet](auto it)
-                      {
-                          auto [idx, jdx] = it;
-                          if (idx == jdx)
-                              return;
-                          auto &i = atomsI[idx];
-                          auto &j = atomsI[jdx];
-                          // No need to perform MIM since we're in the same cell
-                          double distance = (i->r() - j->r()).magnitude();
-                          partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-                      });
+        std::for_each(
+            pairs.begin(), pairs.end(),
+            [&atomsI, &partialSet](auto it)
+            {
+                auto [idx, jdx] = it;
+                if (idx == jdx)
+                    return;
+                auto &i = atomsI[idx];
+                auto typeI = i->localTypeIndex();
+                auto &j = atomsI[jdx];
+                auto typeJ = j->localTypeIndex();
+                if (typeI != Atom::Artificial && typeJ != Atom::Artificial)
+                {
+                    // No need to perform MIM since we're in the same cell
+                    partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin((i->r() - j->r()).magnitude());
+                }
+            });
     }
     return true;
 }
@@ -317,7 +332,7 @@ bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procP
                                                                  GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)
-        originalgr.setUp(cfg->atomTypes(), rdfRange, rdfBinWidth);
+        originalgr.setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
 
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
@@ -511,7 +526,7 @@ bool GRModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &p
         processingData.realise<AtomTypeMix>("SummedAtomTypes", parentPrefix, GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
     for (Configuration *cfg : parentCfgs)
-        combinedAtomTypes.add(cfg->atomTypes());
+        combinedAtomTypes.add(cfg->atomTypePopulations());
 
     // Finalise and save the combined AtomTypes matrix
     combinedAtomTypes.finalise();

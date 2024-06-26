@@ -76,7 +76,7 @@ bool EPSRModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordS
     {
         auto &estimatedSQ = moduleContext.dissolve().processingModuleData().realise<Array2D<Data1D>>(
             "EstimatedSQ", name_, GenericItem::InRestartFileFlag);
-        scatteringMatrix_.initialise(targetConfiguration_->atomTypes(), estimatedSQ);
+        scatteringMatrix_.initialise(targetConfiguration_->atomTypePopulations(), estimatedSQ);
     }
 
     // If a pcof file was provided, read in the parameters from it here

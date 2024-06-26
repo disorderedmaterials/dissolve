@@ -61,6 +61,8 @@ class SpeciesAtom : public Serialisable<CoreData &>
     void setZ(Elements::Element Z);
     // Return atomic element
     Elements::Element Z() const;
+    // Return whether the atom is artificial
+    bool isArtificial() const;
     // Return coordinates (read-only)
     const Vec3<double> &r() const;
     // Set charge of Atom

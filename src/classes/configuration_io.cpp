@@ -157,7 +157,7 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
     }
 
     // Finalise used AtomType list
-    atomTypes_.finalise();
+    atomTypePopulations_.finalise();
 
     // Scale box and cells according to the applied size factor
     auto appliedSF = appliedSizeFactor_.value_or(defaultSizeFactor_);

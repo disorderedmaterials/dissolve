@@ -82,6 +82,9 @@ void SpeciesAtom::setZ(Elements::Element Z) { Z_ = Z; }
 // Return atomic element
 Elements::Element SpeciesAtom::Z() const { return Z_; }
 
+// Return whether the atom is artificial
+bool SpeciesAtom::isArtificial() const { return Z_ == Elements::Art; }
+
 // Return coordinates
 const Vec3<double> &SpeciesAtom::r() const { return r_; }
 

@@ -44,6 +44,9 @@ int Atom::globalIndex() const
     return molecule_->globalAtomIndex(this);
 }
 
+// Return whether the atom is artificial
+bool Atom::isArtificial() const { return speciesAtom_->Z() == Elements::Art; }
+
 /*
  * Location
  */

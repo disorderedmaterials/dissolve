@@ -81,8 +81,8 @@ class Configuration : public Serialisable<const CoreData &>
     private:
     // Species populations present in the Configuration
     std::vector<std::pair<const Species *, int>> speciesPopulations_;
-    // AtomType mix, containing unique (non-isotopic) atom types over all Species used in this configuration
-    AtomTypeMix atomTypes_;
+    // AtomType populations in the configuration
+    AtomTypeMix atomTypePopulations_;
     // Contents version, incremented whenever Configuration content or Atom positions change
     VersionCounter contentsVersion_;
     // Molecule vector
@@ -95,10 +95,8 @@ class Configuration : public Serialisable<const CoreData &>
     void empty();
     // Return specified used type
     std::shared_ptr<AtomType> atomTypes(int index);
-    // Return AtomTypeMix for this Configuration
-    const AtomTypeMix &atomTypes() const;
-    // Return number of atom types used in this Configuration
-    int nAtomTypes() const;
+    // Return atom type populations for this Configuration
+    const AtomTypeMix &atomTypePopulations() const;
     // Adjust population of specified Species in the Configuration
     void adjustSpeciesPopulation(const Species *sp, int delta);
     // Return Species populations within the Configuration

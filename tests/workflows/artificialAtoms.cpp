@@ -21,7 +21,12 @@ TEST_F(ArtificialAtomsTest, Basic)
     Dissolve dissolve(coreData);
 
     // Set up species
+    auto arType = coreData.addAtomType(Elements::Ar);
+    auto artType = coreData.addAtomType(Elements::Art);
     auto *artAr = coreData.copySpecies(&tetrahedralArgonSpecies());
+    artAr->atom(0).setAtomType(arType);
+    for (auto n = 1; n < 5; ++n)
+        artAr->atom(n).setAtomType(artType);
 
     // Create a configuration
     auto *cfg = coreData.addConfiguration();
@@ -43,6 +48,10 @@ TEST_F(ArtificialAtomsTest, Basic)
     EXPECT_EQ(cfg->nMolecules(), nMolecules);
     EXPECT_EQ(cfg->nAtoms(), nMolecules * artAr->nAtoms());
     EXPECT_EQ(cfg->nArtificialAtoms(), nMolecules * artAr->nArtificialAtoms());
+
+    // Check density - should correspond to number density of non-artificial atoms only
+    EXPECT_NEAR(*cfg->atomicDensity(), (nMolecules * (artAr->nAtoms() - artAr->nArtificialAtoms())) / cfg->box()->volume(),
+                1.0e-5);
 }
 
 TEST_F(ArtificialAtomsTest, Water)

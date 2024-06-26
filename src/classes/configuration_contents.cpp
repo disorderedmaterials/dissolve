@@ -14,7 +14,7 @@ void Configuration::empty()
 {
     molecules_.clear();
     atoms_.clear();
-    atomTypes_.clear();
+    atomTypePopulations_.clear();
     appliedSizeFactor_ = std::nullopt;
     speciesPopulations_.clear();
     globalPotentials_.clear();
@@ -24,11 +24,8 @@ void Configuration::empty()
     ++contentsVersion_;
 }
 
-// Return AtomTypeMix for this Configuration
-const AtomTypeMix &Configuration::atomTypes() const { return atomTypes_; }
-
-// Return number of atom types used in this Configuration
-int Configuration::nAtomTypes() const { return atomTypes_.nItems(); }
+// Return atom type populations for this Configuration
+const AtomTypeMix &Configuration::atomTypePopulations() const { return atomTypePopulations_; }
 
 // Adjust population of specified Species in the Configuration
 void Configuration::adjustSpeciesPopulation(const Species *sp, int delta)
@@ -91,7 +88,7 @@ std::optional<double> Configuration::atomicDensity() const
     if (nAtoms() == 0)
         return {};
 
-    return nAtoms() / box_->volume();
+    return (nAtoms() - nArtificialAtoms()) / box_->volume();
 }
 
 // Return the chemical density (g/cm3) of the Configuration
@@ -233,13 +230,17 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
     // Set the position
     newAtom.setCoordinates(r);
 
-    // Update our typeIndex (non-isotopic) and set local and master type indices
-    if (sourceAtom->atomType() != nullptr)
+    // Update atom type population and set local type index
+    if (sourceAtom->isArtificial())
+        newAtom.setLocalTypeIndex(Atom::Artificial);
+    else
     {
-        auto &&[atd, atdIndex] = atomTypes_.add(sourceAtom->atomType(), 1);
+        auto &&[atd, atdIndex] = atomTypePopulations_.add(sourceAtom->atomType(), 1);
         newAtom.setLocalTypeIndex(atdIndex);
-        newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
     }
+
+    // Set master index for pair potential lookup
+    newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
 
     return newAtom;
 }
@@ -250,7 +251,7 @@ int Configuration::nAtoms() const { return atoms_.size(); }
 // Return the number of artificial atoms in the Configuration
 int Configuration::nArtificialAtoms() const
 {
-    return std::count_if(atoms_.begin(), atoms_.end(), [](const auto &i) { return i.speciesAtom()->Z() == Elements::Art; });
+    return std::count_if(atoms_.begin(), atoms_.end(), [](const auto &i) { return i.isArtificial(); });
 }
 
 // Return Atom array

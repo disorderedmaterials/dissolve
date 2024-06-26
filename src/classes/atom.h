@@ -28,6 +28,11 @@ class Atom
     int masterTypeIndex_{-1};
 
     public:
+    // Enumeration for special type indices
+    enum SpecialTypeIndex
+    {
+        Artificial = -1
+    };
     // Set coordinates
     void set(const Vec3<double> r);
     // Set coordinates
@@ -50,6 +55,8 @@ class Atom
     int masterTypeIndex() const;
     // Return global index of the atom
     int globalIndex() const;
+    // Return whether the atom is artificial
+    bool isArtificial() const;
 
     /*
      * Location
