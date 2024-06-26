@@ -68,7 +68,7 @@ Configuration  'Bulk'
       BoxAction  AddVolume
     EndAdd
     ImportCoordinates  'InputCoordinates01'
-      File  xyz  'dissolve/input/water-with-artificial-atoms.xyz'
+      File  xyz  'dissolve/input/water-with-phantom-atoms.xyz'
       EndFile
     EndImportCoordinates
   EndGenerator
