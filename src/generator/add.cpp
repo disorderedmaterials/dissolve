@@ -275,12 +275,6 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
     {
         // Add the Molecule - use coordinate set if one is available
         std::shared_ptr<Molecule> mol;
-
-        // The atom pointers need to be updated before
-        // setCentreOfGeometry is called, or else there can be a
-        // segfault due to pointer invalidation.  It would be nice if
-        // we could have a single lock for the whole loop, but that
-        // will require some thought.
         if (hasCoordinateSets)
         {
             mol = cfg->addMolecule(sp, coordinateSets_->set(coordinateSetIndex));

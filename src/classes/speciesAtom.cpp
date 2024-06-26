@@ -44,7 +44,7 @@ void SpeciesAtom::move(SpeciesAtom &source)
     for (auto &improper : impropers_)
         improper.get().switchAtom(&source, this);
 
-    // Tidy old element
+    // Tidy old data
     source.Z_ = Elements::Unknown;
     source.r_ = {};
     source.charge_ = 0.0;
