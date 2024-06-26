@@ -1,0 +1,33 @@
+Species 'Argon'
+  # Atoms
+  Atom    1    Ar     0.0  0.0  0.0  'Ar'
+
+  Site 'Ar'
+    Origin  1
+  EndSite
+
+  Isotopologue  'Natural'
+EndSpecies
+
+# Define Configuration
+Configuration  'Box'
+  Generator
+    Parameters
+      Parameter  population  1
+    EndParameters
+    Add
+      Density  0.05  atoms/A3
+      Population  'population'
+      Species  'Argon'
+    EndAdd
+  EndGenerator
+  CellDivisionLength  5.0
+
+EndConfiguration
+
+# Pair Potentials
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  Parameters  'Ar'  Ar 0.0  LJ  0.0  0.0
+EndPairPotentials
