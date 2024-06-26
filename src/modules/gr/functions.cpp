@@ -394,16 +394,23 @@ bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procP
     {
         const auto &atoms = (*it)->atoms();
 
-        dissolve::for_each_pair(
-            ParallelPolicies::seq, atoms.begin(), atoms.end(),
-            [box, &cells, &originalgr](int index, auto &i, int jndex, auto &j)
-            {
-                // Ignore atom on itself
-                if (index == jndex)
-                    return;
+        dissolve::for_each_pair(ParallelPolicies::seq, atoms.begin(), atoms.end(),
+                                [box, &originalgr](int index, auto &i, int jndex, auto &j)
+                                {
+                                    // Ignore atom on itself
+                                    if (index == jndex)
+                                        return;
 
-                originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(box->minimumDistance(i->r(), j->r()));
-            });
+                                    auto typeI = i->localTypeIndex();
+                                    if (typeI == AtomType::Ignore)
+                                        return;
+
+                                    auto typeJ = j->localTypeIndex();
+                                    if (typeJ == AtomType::Ignore)
+                                        return;
+
+                                    originalgr.boundHistogram(typeI, typeJ).bin(box->minimumDistance(i->r(), j->r()));
+                                });
     }
 
     timer.stop();

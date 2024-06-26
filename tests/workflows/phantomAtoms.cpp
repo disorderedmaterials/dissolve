@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "procedure/nodes/add.h"
-#include "procedure/nodes/box.h"
+#include "data/atomicMasses.h"
+#include "generator/add.h"
+#include "generator/box.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <vector>
@@ -32,24 +33,27 @@ TEST_F(PhantomAtomsTest, Basic)
     auto *cfg = coreData.addConfiguration();
     auto &procedure = cfg->generator();
     auto boxLength = 20.0;
-    auto box = procedure.createRootNode<BoxProcedureNode>("Box", Vec3<NodeValue>(boxLength, boxLength, boxLength),
+    auto box = procedure.createRootNode<BoxGeneratorNode>("Box", Vec3<NodeValue>(boxLength, boxLength, boxLength),
                                                           Vec3<NodeValue>(90, 90, 90));
 
     // Add in some artificial argon atoms
     const auto nMolecules = 100;
-    procedure.createRootNode<AddProcedureNode>("ArtAr", artAr, nMolecules);
+    procedure.createRootNode<AddGeneratorNode>("ArtAr", artAr, nMolecules);
 
     // Set up the prior configuration
     cfg->generate({ProcessPool(), dissolve});
 
-    // Basic checks
+    // Basic species checks
     EXPECT_EQ(artAr->nAtoms(), 5);
     EXPECT_EQ(artAr->nAtoms(SpeciesAtom::Presence::Phantom), 4);
+    EXPECT_DOUBLE_EQ(artAr->mass(), AtomicMass::mass(Elements::Ar));
+
+    // Basic configuration checks
     EXPECT_EQ(cfg->nMolecules(), nMolecules);
     EXPECT_EQ(cfg->nAtoms(), nMolecules * artAr->nAtoms());
     EXPECT_EQ(cfg->nAtoms(SpeciesAtom::Presence::Phantom), nMolecules * artAr->nAtoms(SpeciesAtom::Presence::Phantom));
 
-    // Check density - should correspond to number density of non-artificial atoms only
+    // Check density - should correspond to number density of physical atoms only
     EXPECT_NEAR(*cfg->atomicDensity(), (nMolecules * artAr->nAtoms(SpeciesAtom::Presence::Physical)) / cfg->box()->volume(),
                 1.0e-5);
 }

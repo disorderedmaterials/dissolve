@@ -78,8 +78,7 @@ void AtomTypeMix::addIsotope(std::shared_ptr<AtomType> atomType, Sears91::Isotop
 // Finalise list, calculating fractional populations etc.
 void AtomTypeMix::finalise()
 {
-    // Finalise AtomTypeData
-    double total = totalPopulation();
+    auto total = totalPopulation();
     for (auto &atd : types_)
         atd.finalise(total);
 }

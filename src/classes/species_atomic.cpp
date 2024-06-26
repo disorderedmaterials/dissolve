@@ -264,10 +264,9 @@ int Species::atomSelectionVersion() const { return atomSelectionVersion_; }
 // Return total atomic mass of Species
 double Species::mass() const
 {
-    auto m = 0.0;
-    for (const auto &i : atoms_)
-        m += AtomicMass::mass(i.Z());
-    return m;
+    return std::accumulate(atoms_.begin(), atoms_.end(), 0.0,
+                           [](const auto acc, const auto &i)
+                           { return acc + (i.isPresence(SpeciesAtom::Presence::Physical) ? AtomicMass::mass(i.Z()) : 0.0); });
 }
 
 // Calculate and return atom types used in the Species
