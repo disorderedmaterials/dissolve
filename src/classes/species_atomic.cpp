@@ -113,13 +113,13 @@ void Species::removeAtoms(std::vector<int> indices)
     ++version_;
 }
 
-// Return the number of Atoms in the Species
-int Species::nAtoms() const { return atoms_.size(); }
-
-// Return the number of artificial atoms in the Species
-int Species::nArtificialAtoms() const
+// Return the number of atoms in the species (or only those with the specified presence)
+int Species::nAtoms(SpeciesAtom::Presence withPresence) const
 {
-    return std::count_if(atoms_.begin(), atoms_.end(), [](const auto &i) { return i.isArtificial(); });
+    return withPresence == SpeciesAtom::Presence::Any
+               ? atoms_.size()
+               : std::count_if(atoms_.begin(), atoms_.end(),
+                               [withPresence](const auto &i) { return i.presence() == withPresence; });
 }
 
 // Renumber atoms so they are sequential in the list

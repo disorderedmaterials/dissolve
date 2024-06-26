@@ -24,7 +24,7 @@ SpeciesExportFileFormat::SpeciesExportFileFormat(std::string_view filename, Spec
 bool SpeciesExportFileFormat::exportXYZ(LineParser &parser, const Species *sp)
 {
     // Export number of atoms and title
-    if (!parser.writeLineF("{}\n", sp->nAtoms()))
+    if (!parser.writeLineF("{}\n", sp->nAtoms({})))
         return false;
     if (!parser.writeLineF("{}\n", sp->name()))
         return false;

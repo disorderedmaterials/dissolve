@@ -84,7 +84,7 @@ bool GRModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg
     for (auto &atom : cfg->atoms())
     {
         m = atom.localTypeIndex();
-        if (m == Atom::Artificial)
+        if (m == AtomType::Ignore)
             continue;
         r[m][nr[m]++] = atom.r();
     }
@@ -211,7 +211,7 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
         for (auto &i : atomsI)
         {
             auto typeI = i->localTypeIndex();
-            if (typeI == Atom::Artificial)
+            if (typeI == AtomType::Ignore)
                 continue;
 
             auto &rI = i->r();
@@ -219,7 +219,7 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
             for (auto &j : atomsJ)
             {
                 auto typeJ = j->localTypeIndex();
-                if (typeJ == Atom::Artificial)
+                if (typeJ == AtomType::Ignore)
                     continue;
 
                 auto &rJ = j->r();
@@ -255,7 +255,7 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
                 auto typeI = i->localTypeIndex();
                 auto &j = atomsI[jdx];
                 auto typeJ = j->localTypeIndex();
-                if (typeI != Atom::Artificial && typeJ != Atom::Artificial)
+                if (typeI != AtomType::Ignore && typeJ != AtomType::Ignore)
                 {
                     // No need to perform MIM since we're in the same cell
                     partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin((i->r() - j->r()).magnitude());

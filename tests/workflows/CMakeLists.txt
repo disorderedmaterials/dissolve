@@ -1,1 +1,1 @@
-dissolve_add_test(SRC artificialAtoms.cpp)
+dissolve_add_test(SRC phantomAtoms.cpp)

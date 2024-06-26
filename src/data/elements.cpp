@@ -162,7 +162,7 @@ static std::vector<ElementData> elementData_ = {{Elements::Unknown, "Unknown", "
                                                 {Elements::Lv, "Livermorium", "Lv", 16},
                                                 {Elements::Ts, "Tennessine", "Ts", 17},
                                                 {Elements::Og, "Oganesson", "Og", 18},
-                                                {Elements::Art, "Artificial", "Art", 0}
+                                                {Elements::Phantom, "Phantom", "Phantom", 0}
 
 };
 

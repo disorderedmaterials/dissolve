@@ -377,7 +377,7 @@ enum Isotope
     Am_244,
     Am_246,
     Am_248,
-    Art_Natural
+    Phantom_Natural
 };
 
 // Isotopic Neutron Scattering Data

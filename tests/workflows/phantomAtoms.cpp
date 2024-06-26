@@ -9,20 +9,20 @@
 
 namespace UnitTest
 {
-class ArtificialAtomsTest : public ::testing::Test
+class PhantomAtomsTest : public ::testing::Test
 {
     protected:
     DissolveSystemTest systemTest;
 };
 
-TEST_F(ArtificialAtomsTest, Basic)
+TEST_F(PhantomAtomsTest, Basic)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
 
     // Set up species
     auto arType = coreData.addAtomType(Elements::Ar);
-    auto artType = coreData.addAtomType(Elements::Art);
+    auto artType = coreData.addAtomType(Elements::Phantom);
     auto *artAr = coreData.copySpecies(&tetrahedralArgonSpecies());
     artAr->atom(0).setAtomType(arType);
     for (auto n = 1; n < 5; ++n)
@@ -44,19 +44,19 @@ TEST_F(ArtificialAtomsTest, Basic)
 
     // Basic checks
     EXPECT_EQ(artAr->nAtoms(), 5);
-    EXPECT_EQ(artAr->nArtificialAtoms(), 4);
+    EXPECT_EQ(artAr->nAtoms(SpeciesAtom::Presence::Phantom), 4);
     EXPECT_EQ(cfg->nMolecules(), nMolecules);
     EXPECT_EQ(cfg->nAtoms(), nMolecules * artAr->nAtoms());
-    EXPECT_EQ(cfg->nArtificialAtoms(), nMolecules * artAr->nArtificialAtoms());
+    EXPECT_EQ(cfg->nAtoms(SpeciesAtom::Presence::Phantom), nMolecules * artAr->nAtoms(SpeciesAtom::Presence::Phantom));
 
     // Check density - should correspond to number density of non-artificial atoms only
-    EXPECT_NEAR(*cfg->atomicDensity(), (nMolecules * (artAr->nAtoms() - artAr->nArtificialAtoms())) / cfg->box()->volume(),
+    EXPECT_NEAR(*cfg->atomicDensity(), (nMolecules * artAr->nAtoms(SpeciesAtom::Presence::Physical)) / cfg->box()->volume(),
                 1.0e-5);
 }
 
-TEST_F(ArtificialAtomsTest, Water)
+TEST_F(PhantomAtomsTest, Water)
 {
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/water-with-artificial-atoms.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/water-with-phantom-atoms.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Partial g(r) (unbound terms)

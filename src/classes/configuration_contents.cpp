@@ -88,7 +88,7 @@ std::optional<double> Configuration::atomicDensity() const
     if (nAtoms() == 0)
         return {};
 
-    return (nAtoms() - nArtificialAtoms()) / box_->volume();
+    return nAtoms(SpeciesAtom::Presence::Physical) / box_->volume();
 }
 
 // Return the chemical density (g/cm3) of the Configuration
@@ -124,12 +124,12 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
     if (sourceCoordinates)
     {
         auto r = sourceCoordinates->get();
-        for (auto n = 0; n < sp->nAtoms(); ++n)
+        for (auto n = 0; n < sp->nAtoms({}); ++n)
             addAtom(&sp->atom(n), newMolecule, r[n]);
     }
     else
     {
-        for (auto n = 0; n < sp->nAtoms(); ++n)
+        for (auto n = 0; n < sp->nAtoms({}); ++n)
             addAtom(&sp->atom(n), newMolecule, sp->atom(n).r());
     }
 
@@ -231,13 +231,13 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
     newAtom.setCoordinates(r);
 
     // Update atom type population and set local type index
-    if (sourceAtom->isArtificial())
-        newAtom.setLocalTypeIndex(Atom::Artificial);
-    else
+    if (sourceAtom->isPresence(SpeciesAtom::Presence::Physical))
     {
         auto &&[atd, atdIndex] = atomTypePopulations_.add(sourceAtom->atomType(), 1);
         newAtom.setLocalTypeIndex(atdIndex);
     }
+    else
+        newAtom.setLocalTypeIndex(AtomType::Ignore);
 
     // Set master index for pair potential lookup
     newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
@@ -245,13 +245,13 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
     return newAtom;
 }
 
-// Return number of Atoms in Configuration
-int Configuration::nAtoms() const { return atoms_.size(); }
-
-// Return the number of artificial atoms in the Configuration
-int Configuration::nArtificialAtoms() const
+// Return the number of atoms in the configuration (or only those with the specified presence)
+int Configuration::nAtoms(SpeciesAtom::Presence withPresence) const
 {
-    return std::count_if(atoms_.begin(), atoms_.end(), [](const auto &i) { return i.isArtificial(); });
+    return withPresence == SpeciesAtom::Presence::Any
+               ? atoms_.size()
+               : std::count_if(atoms_.begin(), atoms_.end(),
+                               [withPresence](const auto &i) { return i.isPresence(withPresence); });
 }
 
 // Return Atom array

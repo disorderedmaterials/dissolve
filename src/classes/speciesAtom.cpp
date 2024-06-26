@@ -27,6 +27,7 @@ void SpeciesAtom::move(SpeciesAtom &source)
     atomType_ = source.atomType_;
     selected_ = source.selected_;
     index_ = source.index_;
+    presence_ = source.presence_;
 
     bonds_ = std::move(source.bonds_);
     angles_ = std::move(source.angles_);
@@ -69,7 +70,7 @@ void SpeciesAtom::set(Elements::Element Z, double rx, double ry, double rz, doub
 }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(Elements::Element Z, const Vec3<double> r, double q)
+void SpeciesAtom::set(Elements::Element Z, const Vec3<double> &r, double q)
 {
     Z_ = Z;
     r_ = r;
@@ -82,8 +83,11 @@ void SpeciesAtom::setZ(Elements::Element Z) { Z_ = Z; }
 // Return atomic element
 Elements::Element SpeciesAtom::Z() const { return Z_; }
 
-// Return whether the atom is artificial
-bool SpeciesAtom::isArtificial() const { return Z_ == Elements::Art; }
+// Return whether the atom is of the presence specified
+bool SpeciesAtom::isPresence(SpeciesAtom::Presence presence) const
+{
+    return presence == SpeciesAtom::Presence::Any || presence_ == presence;
+}
 
 // Return coordinates
 const Vec3<double> &SpeciesAtom::r() const { return r_; }
@@ -125,6 +129,9 @@ void SpeciesAtom::setSelected(bool selected) { selected_ = selected; }
 
 // Return whether the atom is currently selected
 bool SpeciesAtom::isSelected() const { return selected_; }
+
+// Return presence of atom
+SpeciesAtom::Presence SpeciesAtom::presence() const { return presence_; }
 
 /*
  * Bond Information

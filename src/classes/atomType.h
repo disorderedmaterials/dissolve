@@ -51,6 +51,11 @@ class AtomType : public Serialisable<>
     int index_{-1};
 
     public:
+    // Enumeration for special type indices
+    enum SpecialTypeIndex
+    {
+        Ignore = -1
+    };
     // Return short-range interaction potential
     InteractionPotential<ShortRangeFunctions> &interactionPotential();
     const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;
@@ -65,6 +70,10 @@ class AtomType : public Serialisable<>
     // Return whether our parameters are the same as those provided
     bool sameParametersAs(const AtomType *other, bool checkCharge = false);
 
+    /*
+     * I/O
+     */
+    public:
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value

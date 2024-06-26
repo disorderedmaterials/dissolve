@@ -136,7 +136,7 @@ constexpr std::pair<int, double> massData_[] = {{Elements::Unknown, 0.0},    // 
                                                 {Elements::Lv, 293.0},      // Assumed mass (http://www.rsc.org/periodic-table)
                                                 {Elements::Ts, 294.0},      // Assumed mass (http://www.rsc.org/periodic-table)
                                                 {Elements::Og, 294.0},      // Assumed mass (http://www.rsc.org/periodic-table)
-                                                {Elements::Art, 1.0}};
+                                                {Elements::Phantom, 1.0}};
 
 // Return atomic mass for specified Z
 double mass(Elements::Element Z) { return massData_[Z].second; }

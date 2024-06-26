@@ -135,10 +135,8 @@ class Configuration : public Serialisable<const CoreData &>
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
     Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r = Vec3<double>());
-    // Return number of Atoms in Configuration
-    int nAtoms() const;
-    // Return the number of artificial atoms in the Configuration
-    int nArtificialAtoms() const;
+    // Return the number of atoms in the configuration (or only those with the specified presence)
+    int nAtoms(SpeciesAtom::Presence withPresence = SpeciesAtom::Presence::Any) const;
     // Return Atom array
     std::vector<Atom> &atoms();
     const std::vector<Atom> &atoms() const;

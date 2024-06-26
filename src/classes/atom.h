@@ -28,11 +28,6 @@ class Atom
     int masterTypeIndex_{-1};
 
     public:
-    // Enumeration for special type indices
-    enum SpecialTypeIndex
-    {
-        Artificial = -1
-    };
     // Set coordinates
     void set(const Vec3<double> r);
     // Set coordinates
@@ -55,8 +50,6 @@ class Atom
     int masterTypeIndex() const;
     // Return global index of the atom
     int globalIndex() const;
-    // Return whether the atom is artificial
-    bool isArtificial() const;
 
     /*
      * Location
@@ -74,6 +67,8 @@ class Atom
     void setSpeciesAtom(const SpeciesAtom *spAtom);
     // Return SpeciesAtom that this Atom represents
     const SpeciesAtom *speciesAtom() const;
+    // Return whether the atom's presence is that specified
+    bool isPresence(SpeciesAtom::Presence presence) const;
     // Set Molecule in which this Atom exists
     void setMolecule(std::shared_ptr<Molecule> mol);
     // Return Molecule in which this Atom exists

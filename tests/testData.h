@@ -740,10 +740,10 @@ const Species &tetrahedralArgonSpecies()
     {
         tetrahedralArgon_.setName("TetrahedralArgon");
         tetrahedralArgon_.addAtom(Elements::Ar, {0.0, 0.0, 0.0});
-        tetrahedralArgon_.addAtom(Elements::Art, {0.0, 1.420000, 0.0});
-        tetrahedralArgon_.addAtom(Elements::Art, {0.0, 0.474005, -1.338337});
-        tetrahedralArgon_.addAtom(Elements::Art, {1.159673, -0.472997, 0.669489});
-        tetrahedralArgon_.addAtom(Elements::Art, {-1.159590, -0.472997, 0.669489});
+        tetrahedralArgon_.addAtom(Elements::Phantom, {0.0, 1.420000, 0.0});
+        tetrahedralArgon_.addAtom(Elements::Phantom, {0.0, 0.474005, -1.338337});
+        tetrahedralArgon_.addAtom(Elements::Phantom, {1.159673, -0.472997, 0.669489});
+        tetrahedralArgon_.addAtom(Elements::Phantom, {-1.159590, -0.472997, 0.669489});
         tetrahedralArgon_.addBond(0, 1);
         tetrahedralArgon_.addBond(0, 2);
         tetrahedralArgon_.addBond(0, 3);

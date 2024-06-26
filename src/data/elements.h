@@ -131,7 +131,7 @@ enum Element
     Lv,
     Ts,
     Og,
-    Art,
+    Phantom,
     nElements
 };
 
