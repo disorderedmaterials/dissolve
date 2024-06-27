@@ -61,11 +61,12 @@ class AtomTypeMix
     // Return ending iterator
     std::vector<AtomTypeData>::const_iterator end() const;
     // Return index of AtomType
-    int indexOf(const std::shared_ptr<AtomType> &atomtype) const;
+    std::optional<int> indexOf(const std::shared_ptr<AtomType> &atomType) const;
     // Return indices of AtomType pair
-    std::pair<int, int> indexOf(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const;
+    std::optional<std::pair<int, int>> indexOf(const std::shared_ptr<AtomType> &at1,
+                                               const std::shared_ptr<AtomType> &at2) const;
     // Return index of named AtomType
-    int indexOf(std::string_view name) const;
+    std::optional<int> indexOf(std::string_view name) const;
     // Return total population of all types
     double totalPopulation() const;
     // Return nth referenced AtomType

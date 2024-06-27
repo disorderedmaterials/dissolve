@@ -87,6 +87,42 @@ TEST_F(PhantomAtomsTest, Water)
         "GR01//Bulk//OriginalGR//OW-OW//Bound",
         {"epsr25/water1000-neutron/water.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-5,
         Error::ErrorType::RMSEError));
+
+    // Partial S(Q) (unbound terms)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "SQ01//UnweightedSQ//OW-OW//Unbound",
+        {"epsr25/water1000-neutron/water.EPSR.f01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-3));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "SQ01//UnweightedSQ//OW-HW//Unbound",
+        {"epsr25/water1000-neutron/water.EPSR.f01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 3.0e-3));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "SQ01//UnweightedSQ//HW-HW//Unbound",
+        {"epsr25/water1000-neutron/water.EPSR.f01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 3.0e-3));
+
+    // Partial S(Q) (intramolecular terms)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "SQ01//UnweightedSQ//OW-HW//Bound",
+        {"epsr25/water1000-neutron/water.EPSR.s01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 1.0e-4));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "SQ01//UnweightedSQ//HW-HW//Bound",
+        {"epsr25/water1000-neutron/water.EPSR.s01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 4.0e-5));
+
+    // Partial S(Q) (intramolecular terms)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "SQ01//UnweightedSQ//OW-OW//Bound",
+        {"epsr25/water1000-neutron/water.EPSR.s01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-5,
+        Error::ErrorType::RMSEError));
+
+    // Total F(Q)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "D2O//WeightedSQ//Total",
+        {"epsr25/water1000-neutron/water.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 3.0e-4));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "H2O//WeightedSQ//Total",
+        {"epsr25/water1000-neutron/water.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 6.0e-4));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "HDO//WeightedSQ//Total",
+        {"epsr25/water1000-neutron/water.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 2.0e-5));
 }
 
 } // namespace UnitTest

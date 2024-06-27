@@ -310,36 +310,31 @@ void PartialSet::formPartials(double boxVolume)
 // Add in partials from source PartialSet to our own
 bool PartialSet::addPartials(PartialSet &source, double weighting)
 {
-    // Loop over partials in source set
-    int typeI, typeJ, localI, localJ;
-
     auto sourceNTypes = source.atomTypeMix_.nItems();
-    for (typeI = 0; typeI < sourceNTypes; ++typeI)
+    for (auto typeI = 0; typeI < sourceNTypes; ++typeI)
     {
         const auto atI = source.atomTypeMix_.atomType(typeI);
-        localI = atomTypeMix_.indexOf(atI);
-        if (localI == -1)
+        auto localI = atomTypeMix_.indexOf(atI);
+        if (!localI)
         {
-            Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
-                             atI->name());
-            return false;
+            return Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
+                                    atI->name());
         }
 
-        for (typeJ = typeI; typeJ < sourceNTypes; ++typeJ)
+        for (auto typeJ = typeI; typeJ < sourceNTypes; ++typeJ)
         {
             const auto atJ = source.atomTypeMix_.atomType(typeJ);
-            localJ = atomTypeMix_.indexOf(atJ);
-            if (localJ == -1)
+            auto localJ = atomTypeMix_.indexOf(atJ);
+            if (!localJ)
             {
-                Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
-                                 atJ->name());
-                return false;
+                return Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
+                                        atJ->name());
             }
 
             // Add interpolated source partials to our set
-            Interpolator::addInterpolated(source.partial(typeI, typeJ), partials_[{localI, localJ}], weighting);
-            Interpolator::addInterpolated(source.boundPartial(typeI, typeJ), boundPartials_[{localI, localJ}], weighting);
-            Interpolator::addInterpolated(source.unboundPartial(typeI, typeJ), unboundPartials_[{localI, localJ}], weighting);
+            Interpolator::addInterpolated(source.partial(typeI, typeJ), partials_[{*localI, *localJ}], weighting);
+            Interpolator::addInterpolated(source.boundPartial(typeI, typeJ), boundPartials_[{*localI, *localJ}], weighting);
+            Interpolator::addInterpolated(source.unboundPartial(typeI, typeJ), unboundPartials_[{*localI, *localJ}], weighting);
 
             // If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set
             // correctly
@@ -402,22 +397,14 @@ void PartialSet::operator+=(const PartialSet &source)
         ParallelPolicies::seq, types.begin(), types.end(),
         [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
         {
-            const auto atI = atd1.atomType();
-            const auto atJ = atd2.atomType();
-            int localI = atomTypeMix_.indexOf(atI);
-            int localJ = atomTypeMix_.indexOf(atJ);
-            if (localI == -1)
+            auto optPairIndex = atomTypeMix_.indexOf(atd1.atomType(), atd2.atomType());
+            if (!optPairIndex)
             {
-                Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
-                                 atI->name());
+                Messenger::error("AtomType pair '{}-{}' not present in this PartialSet, so can't add in the associated data.\n",
+                                 atd1.atomTypeName(), atd2.atomTypeName());
                 return;
             }
-            if (localJ == -1)
-            {
-                Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
-                                 atJ->name());
-                return;
-            }
+            auto &[localI, localJ] = *optPairIndex;
 
             // Add interpolated source partials to our set
             Interpolator::addInterpolated(source.partial(typeI, typeJ), partials_[{localI, localJ}]);

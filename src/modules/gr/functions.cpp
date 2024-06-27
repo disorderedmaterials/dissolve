@@ -285,7 +285,7 @@ std::optional<double> GRModule::effectiveDensity() const
 
         totalWeight += weight;
 
-        // ADd to sum
+        // Add to sum
         if (rho0)
             *rho0 += weight / *cfg->atomicDensity();
         else
@@ -673,25 +673,25 @@ bool GRModule::testReferencePartial(const PartialSet &partials, double testThres
         // Get indices of AtomTypes
         auto indexI = partials.atomTypeMix().indexOf(typeIorTotal);
         auto indexJ = partials.atomTypeMix().indexOf(typeJ);
-        if ((indexI == -1) || (indexJ == -1))
+        if (!indexI || !indexJ)
             return Messenger::error("Unrecognised test data name '{}'.\n", testData.tag());
 
         // AtomTypes are valid, so check the 'target'
         Error::ErrorReport errorReport;
         if (DissolveSys::sameString(target, "bound"))
         {
-            errorReport = Error::percent(partials.boundPartial(indexI, indexJ), testData);
+            errorReport = Error::percent(partials.boundPartial(*indexI, *indexJ), testData);
             Messenger::print(Error::errorReportString(errorReport));
         }
 
         else if (DissolveSys::sameString(target, "unbound"))
         {
-            errorReport = Error::percent(partials.unboundPartial(indexI, indexJ), testData);
+            errorReport = Error::percent(partials.unboundPartial(*indexI, *indexJ), testData);
             Messenger::print(Error::errorReportString(errorReport));
         }
         else if (DissolveSys::sameString(target, "full"))
         {
-            errorReport = Error::percent(partials.partial(indexI, indexJ), testData);
+            errorReport = Error::percent(partials.partial(*indexI, *indexJ), testData);
             Messenger::print(Error::errorReportString(errorReport));
         }
 
