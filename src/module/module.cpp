@@ -52,6 +52,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::TemperatureSchedule, "TemperatureSchedule"},
                                                                  {ModuleTypes::Test, "Test"},
                                                                  {ModuleTypes::VoxelDensity, "VoxelDensity"},
+                                                                 {ModuleTypes::TR, "TR"},
                                                                  {ModuleTypes::XRaySQ, "XRaySQ"}});
 
 // Return module type string for specified type enumeration
