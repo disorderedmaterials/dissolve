@@ -59,7 +59,7 @@ jobs:
         if: ${{ github.ref_name == 'develop' }}
         with:
             tool: 'googlecpp'
-            output-file-path: all_benchmark_results.json
+            output-file-path: build/all_benchmark_results.json
             github-token: ${{ secrets.GITHUB_TOKEN }}
             auto-push: true
             comment-on-alert: true
