@@ -123,6 +123,11 @@ TEST_F(PhantomAtomsTest, Water)
     EXPECT_TRUE(systemTest.checkData1D(
         "HDO//WeightedSQ//Total",
         {"epsr25/water1000-neutron/water.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 2.0e-5));
+
+    // Total x-ray F(Q)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "H2Oxray//WeightedSQ//Total",
+        {"epsr25/water1000-neutron-xray/water.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 8}, 2.0e-4));
 }
 
 } // namespace UnitTest

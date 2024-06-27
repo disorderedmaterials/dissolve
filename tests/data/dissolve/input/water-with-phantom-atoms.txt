@@ -131,4 +131,10 @@ Layer  'Processing'
     ReferenceNormalisedTo  None
     ReferenceWindowFunction  Lorch0
   EndModule
+
+  Module  XRaySQ  H2Oxray
+    SourceSQs  'SQ01'
+    Normalisation  AverageOfSquares
+  EndModule
+
 EndLayer

@@ -80,7 +80,8 @@ bool XRayWeights::setUp(std::vector<std::pair<const Species *, int>> &speciesPop
 void XRayWeights::addSpecies(const Species *sp, int population)
 {
     for (const auto &i : sp->atoms())
-        atomTypeMix_.add(i.atomType(), population);
+        if (i.isPresence(SpeciesAtom::Presence::Physical))
+            atomTypeMix_.add(i.atomType(), population);
 
     valid_ = false;
 }
