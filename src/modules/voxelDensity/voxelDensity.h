@@ -3,9 +3,6 @@
 
 #pragma once
 
-/*
-#include "io/import/trajectory.h"
-*/
 #include "module/module.h"
 
 // VoxelDensity Module
@@ -21,6 +18,16 @@ class VoxelDensityModule : public Module
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
+    // 3d bounds for unit cell region
+    Vec3<double> unitCellVoxelRegion_;
+    // Vector of species by which analysis is restricted
+    std::vector<const Species *> restrictToSpecies_;
+    // Analyse atomic number of unit cell region
+    bool atomicNumberSelected_{false};
+    // Analyse mass of unit cell region
+    bool massSelected_{false};
+    // Analyse scattering length density of unit cell region
+    bool scatteringLengthDensitySelected_{false};
 
     /*
      * Processing
