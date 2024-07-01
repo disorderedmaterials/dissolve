@@ -38,14 +38,7 @@ class VoxelDensityModule : public Module
     std::vector<const Species *> restrictToSpecies_;
     // Target property for analysis
     VoxelDensityModule::TargetPropertyType targetProperty_;
-    /*
-    // Analyse atomic number of unit cell region
-    bool atomicNumberSelected_{false};
-    // Analyse mass of unit cell region
-    bool massSelected_{false};
-    // Analyse scattering length density of unit cell region
-    bool scatteringLengthDensitySelected_{false};
-    */
+
     /*
      * Processing
      */
