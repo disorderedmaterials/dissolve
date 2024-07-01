@@ -6,8 +6,8 @@
 #include "gui/helpers/comboBoxController.h"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
-#include "modules/tr/tr.h"
 #include "modules/tr/gui/trWidget.h"
+#include "modules/tr/tr.h"
 #include "templates/algorithms.h"
 
 Q_DECLARE_METATYPE(Configuration *);
@@ -91,12 +91,6 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
 {
     refreshing_ = true;
 
-    const auto cfgs = module_->keywords().getVectorConfiguration("Configurations");
-
-    // Update partial set (Configuration) targets
-    auto optConfig =
-        combo_box_updater(ui_.ConfigurationTargetCombo, cfgs.begin(), cfgs.end(), [](auto *item) { return item->name(); });
-
     // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet and have just
     // located it
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || (!ui_.TotalsButton->isChecked() && !targetPartials_))
@@ -108,16 +102,6 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
             targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("UnweightedGR", module_->name());
             createPartialSetRenderables("UnweightedGR");
         }
-        else if (ui_.ConfigurationPartialsButton->isChecked())
-        {
-            auto targetPrefix = fmt::format("{}//UnweightedGR", (*optConfig)->niceName());
-            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>(targetPrefix, module_->name());
-            createPartialSetRenderables(targetPrefix);
-        }
-        else
-            for (auto *cfg : cfgs)
-                rdfGraph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//{}//UnweightedGR//Total", module_->name(), cfg->niceName()), cfg->niceName(), "Total");
     }
 
     // Validate renderables if they need it
