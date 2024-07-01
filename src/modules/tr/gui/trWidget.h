@@ -7,7 +7,6 @@
 #include "modules/widget.h"
 
 // Forward Declarations
-class Configuration;
 class Dissolve;
 class Module;
 class TRModule;
