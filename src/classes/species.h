@@ -13,6 +13,7 @@
 #include "classes/speciesBond.h"
 #include "classes/speciesImproper.h"
 #include "classes/speciesSite.h"
+#include "classes/speciesBead.h"
 #include "classes/speciesTorsion.h"
 #include "io/import/coordinates.h"
 #include <list>
@@ -326,6 +327,28 @@ class Species : public Serialisable<const CoreData &>
     SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr);
 
     /*
+     * Bead
+     */
+    private:
+    // Defined beads
+    std::vector<std::unique_ptr<SpeciesBead>> beads_;
+
+    public:
+    // Add a new SpeciesBead to this Species
+    SpeciesBead *addBead(std::string_view name = "");
+    // Remove specified SpeciesBead
+    void removeBead(SpeciesBead *bead);
+    // Return number of defined SpeciesBeads
+    int nBeads() const;
+    // Return SpeciesBead List
+    const std::vector<std::unique_ptr<SpeciesBead>> &beads() const;
+    std::vector<std::unique_ptr<SpeciesBead>> &beads();
+    // Generate unique bead name with base name provided
+    std::string uniqueBeadName(std::string_view base, const SpeciesBead *exclude = nullptr) const;
+    // Search for SpeciesBead by name
+    const SpeciesBead *findBead(std::string_view name, const SpeciesBead *exclude = nullptr) const;
+    SpeciesBead *findBead(std::string_view name, const SpeciesBead *exclude = nullptr);
+    /*
      * Transforms
      */
     public:
@@ -361,6 +384,7 @@ class Species : public Serialisable<const CoreData &>
         NTorsions,    /* 'NTorsions' - Hint at the total number of torsions in the Species */
         Scaling14,    /* 'Scaling14' - Specify 1-4 scaling factors for torsion terms */
         Site,         /* 'Site' - Define an analysis site within the Species */
+        Bead,         /* 'Bead' - Define bead within the Species */
         Torsion       /* 'Torsion' - Define a Torsion interaction between four atoms */
     };
     // Return enum option info for SpeciesKeyword

@@ -45,6 +45,7 @@ int main(int args, char **argv)
     Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
     Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
+    Messenger::banner("This is a test run for CG bead implementation");
     // Load input file
     Messenger::banner("Parse Input File");
     if (!dissolve.loadInput(options.inputFile().value()))

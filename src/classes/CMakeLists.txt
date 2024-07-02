@@ -6,6 +6,8 @@ add_library(
   atomType.cpp
   atomTypeData.cpp
   atomTypeMix.cpp
+  bead.cpp
+  beadReference.cpp
   bondFunctions.cpp
   box.cpp
   boxCubic.cpp
@@ -65,11 +67,14 @@ add_library(
   species_io.cpp
   species_isotopologues.cpp
   species_site.cpp
+  species_bead.cpp
   species_transform.cpp
   speciesImproper.cpp
   speciesRing.cpp
   speciesSite.cpp
   speciesSiteInstance.cpp
+  speciesBead.cpp
+  speciesBeadInstance.cpp
   speciesTorsion.cpp
   torsionFunctions.cpp
   valueStore.cpp
@@ -80,6 +85,8 @@ add_library(
   atomTypeData.h
   atomType.h
   atomTypeMix.h
+  bead.h
+  beadReference.h
   bondFunctions.h
   box.h
   braggReflection.h
@@ -125,6 +132,8 @@ add_library(
   speciesRing.h
   speciesSite.h
   speciesSiteInstance.h
+  speciesBead.h
+  speciesBeadInstance.h
   speciesTorsion.h
   torsionFunctions.h
   valueStore.h

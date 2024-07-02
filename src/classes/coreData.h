@@ -275,5 +275,6 @@ class CoreData
     void removeReferencesTo(Module *data);
     void removeReferencesTo(Species *data);
     void removeReferencesTo(SpeciesSite *data);
+    void removeReferencesTo(SpeciesBead *data);
     void removeReferencesTo(std::shared_ptr<AtomType> data);
 };

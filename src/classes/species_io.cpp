@@ -37,6 +37,7 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
                            {Species::SpeciesKeyword::NTorsions, "NTorsions", 1},
                            {Species::SpeciesKeyword::Scaling14, "Scaling14", 2, 2},
                            {Species::SpeciesKeyword::Site, "Site", 1},
+                           {Species::SpeciesKeyword::Bead, "Bead", 1},
                            {Species::SpeciesKeyword::Torsion, "Torsion", 4, OptionArguments::AnyNumber}});
 }
 
@@ -53,6 +54,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     OptionalReferenceWrapper<SpeciesImproper> imp;
     OptionalReferenceWrapper<SpeciesTorsion> torsion;
     SpeciesSite *site;
+    SpeciesBead *bead;
     BondFunctions::Form bf;
     AngleFunctions::Form af;
     TorsionFunctions::Form tf;
@@ -470,6 +472,21 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
                 site = addSite(parser.argsv(1));
                 if (!site->read(parser, coreData))
+                    errorsEncountered = true;
+                break;
+            case (Species::SpeciesKeyword::Bead):
+                // First argument is the name of the bead to create - make sure it doesn't exist already
+                bead = findBead(parser.argsv(1));
+                if (bead)
+                {
+                    Messenger::error("The bead '{}' already exists on Species '{}', and cannot be redefined.\n",
+                                     parser.argsv(1), name());
+                    errorsEncountered = true;
+                    break;
+                }
+
+                bead = addBead(parser.argsv(1));
+                if (!bead->read(parser, coreData))
                     errorsEncountered = true;
                 break;
             case (Species::SpeciesKeyword::Torsion):
