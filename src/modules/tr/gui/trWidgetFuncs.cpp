@@ -79,7 +79,12 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
     {
         ui_.TRPlotWidget->clearRenderableData();
 
-        if (ui_.PartialsButton->isChecked())
+        if (ui_.TotalButton->isChecked())
+        {
+            trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedTR//Total", module_->name()), "Total T(R)",
+                                                         "Calculated");
+        }
+        else if (ui_.PartialsButton->isChecked())
         {
             targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("WeightedTR");
             createPartialSetRenderables("WeightedTR");
