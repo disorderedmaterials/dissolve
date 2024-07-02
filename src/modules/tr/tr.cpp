@@ -2,9 +2,9 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "modules/tr/tr.h"
+#include "keywords/bool.h"
 #include "keywords/module.h"
 #include "modules/neutronSQ/neutronSQ.h"
-#include "keywords/bool.h"
 
 TRModule::TRModule() : Module(ModuleTypes::TR)
 {
