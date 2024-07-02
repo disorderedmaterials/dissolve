@@ -4,17 +4,14 @@
 #pragma once
 
 #include "classes/partialSet.h"
-#include "math/averaging.h"
-#include "math/function1D.h"
 #include "module/module.h"
 
 // Forward Declarations
 class Dissolve;
-class ModuleGroup;
 class PartialSet;
 class NeutronSQModule;
 
-// RDF Module
+// TR Module
 class TRModule : public Module
 {
     public:
@@ -28,12 +25,7 @@ class TRModule : public Module
     private:
     // Source module for calculation
     const NeutronSQModule *sourceNeutronSQ_{nullptr};
-    PartialSet unweightedtr;
-    PartialSet weightedtr;
 
-    /*
-     * Functions
-     */
     /*
      * Processing
      */

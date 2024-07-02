@@ -10,8 +10,6 @@
 #include "modules/tr/tr.h"
 #include "templates/algorithms.h"
 
-Q_DECLARE_METATYPE(Configuration *);
-
 TRModuleWidget::TRModuleWidget(QWidget *parent, TRModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)
 {
@@ -19,27 +17,19 @@ TRModuleWidget::TRModuleWidget(QWidget *parent, TRModule *module, Dissolve &diss
     ui_.setupUi(this);
 
     // Set up RDF graph
-    rdfGraph_ = ui_.RDFPlotWidget->dataViewer();
+    trGraph_ = ui_.TRPlotWidget->dataViewer();
     // -- Set view
-    rdfGraph_->view().setViewType(View::FlatXYView);
-    rdfGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-    rdfGraph_->view().axes().setMax(0, 10.0);
-    rdfGraph_->view().axes().setTitle(1, "G(r)");
-    rdfGraph_->view().axes().setMin(1, -1.0);
-    rdfGraph_->view().axes().setMax(1, 1.0);
-    rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
-    rdfGraph_->view().setAutoFollowType(View::AllAutoFollow);
+    trGraph_->view().setViewType(View::FlatXYView);
+    trGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+    trGraph_->view().axes().setMax(0, 10.0);
+    trGraph_->view().axes().setTitle(1, "T(r)");
+    trGraph_->view().axes().setMin(1, -1.0);
+    trGraph_->view().axes().setMax(1, 1.0);
+    trGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
+    trGraph_->view().setAutoFollowType(View::AllAutoFollow);
     // -- Set group styling
-    rdfGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
-    rdfGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
-    rdfGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
-    rdfGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
-    rdfGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
-    rdfGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
-    rdfGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
-    rdfGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
-    rdfGraph_->groupManager().setGroupColouring("Total", RenderableGroup::AutomaticIndividualColouring);
-    rdfGraph_->groupManager().setGroupVerticalShifting("Total", RenderableGroup::IndividualVerticalShifting);
+    trGraph_->groupManager().setGroupColouring("Total", RenderableGroup::AutomaticIndividualColouring);
+    trGraph_->groupManager().setGroupVerticalShifting("Total", RenderableGroup::IndividualVerticalShifting);
 
     refreshing_ = false;
 }
@@ -73,16 +63,8 @@ void TRModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
             continue;
 
         // Full partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
-                                                      fmt::format("{} (Full)", id), "Full");
-
-        // Bound partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
-                                                      fmt::format("{} (Bound)", id), "Bound");
-
-        // Unbound partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
-                                                      fmt::format("{} (Unbound)", id), "Unbound");
+        trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
+                                                     fmt::format("{} (Full)", id), "Full");
     }
 }
 
@@ -93,22 +75,22 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
 
     // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet and have just
     // located it
-    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || (!ui_.TotalsButton->isChecked() && !targetPartials_))
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || (!ui_.TotalButton->isChecked() && !targetPartials_))
     {
-        ui_.RDFPlotWidget->clearRenderableData();
+        ui_.TRPlotWidget->clearRenderableData();
 
-        if (ui_.SummedPartialsButton->isChecked())
+        if (ui_.PartialsButton->isChecked())
         {
-            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("UnweightedGR", module_->name());
-            createPartialSetRenderables("UnweightedGR");
+            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("WeightedTR");
+            createPartialSetRenderables("WeightedTR");
         }
     }
 
     // Validate renderables if they need it
-    rdfGraph_->validateRenderables(dissolve_.processingModuleData());
+    trGraph_->validateRenderables(dissolve_.processingModuleData());
 
-    rdfGraph_->postRedisplay();
-    ui_.RDFPlotWidget->updateToolbar();
+    trGraph_->postRedisplay();
+    ui_.TRPlotWidget->updateToolbar();
 
     refreshing_ = false;
 }
@@ -117,49 +99,24 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
  * Widgets / Functions
  */
 
-void TRModuleWidget::on_SummedPartialsButton_clicked(bool checked)
+void TRModuleWidget::on_PartialsButton_clicked(bool checked)
 {
     if (!checked)
         return;
 
-    ui_.ConfigurationTargetCombo->setEnabled(false);
-
-    rdfGraph_->view().axes().setTitle(1, "g(r)");
-    rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
+    trGraph_->view().axes().setTitle(1, "t(r)");
+    trGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 
     updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
-void TRModuleWidget::on_TotalsButton_clicked(bool checked)
+void TRModuleWidget::on_TotalButton_clicked(bool checked)
 {
     if (!checked)
         return;
 
-    ui_.ConfigurationTargetCombo->setEnabled(false);
-
-    rdfGraph_->view().axes().setTitle(1, "G(r)");
-    rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::OneVerticalShift);
-
-    updateControls(ModuleWidget::RecreateRenderablesFlag);
-}
-
-void TRModuleWidget::on_ConfigurationPartialsButton_clicked(bool checked)
-{
-    if (!checked)
-        return;
-
-    ui_.ConfigurationTargetCombo->setEnabled(true);
-
-    rdfGraph_->view().axes().setTitle(1, "g(r)");
-    rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
-
-    updateControls(ModuleWidget::RecreateRenderablesFlag);
-}
-
-void TRModuleWidget::on_ConfigurationTargetCombo_currentIndexChanged(int index)
-{
-    if (refreshing_)
-        return;
+    trGraph_->view().axes().setTitle(1, "T(r)");
+    trGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::OneVerticalShift);
 
     updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
