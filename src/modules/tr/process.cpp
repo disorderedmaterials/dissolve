@@ -15,18 +15,18 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     auto &moduleData = moduleContext.dissolve().processingModuleData();
 
     // Get NeutronSQ module
-    if (!moduleContext.dissolve().processingModuleData().contains("NeutronSQ", sourceNeutronSQ_->name()))
+    if (!moduleContext.dissolve().processingModuleData().contains("WeightedGR", sourceNeutronSQ_->name()))
     {
-        Messenger::error("Couldn't locate NeutronSQ data from the NeutronSQModule '{}'.\n", sourceNeutronSQ_->name());
+        Messenger::error("Couldn't locate Weighted data from the NeutronSQModule '{}'.\n", sourceNeutronSQ_->name());
         return ExecutionResult::Failed;
     }
     const auto &neutronSQ =
-        moduleContext.dissolve().processingModuleData().value<PartialSet>("NeutronSQ", sourceNeutronSQ_->name());
+        moduleContext.dissolve().processingModuleData().value<PartialSet>("WeightedGR", sourceNeutronSQ_->name());
 
     // Get dependent modules
     if (!sourceNeutronSQ_)
     {
-        Messenger::error("[SETUP {}] A source NewutronSQ module must be provided.\n", name_);
+        Messenger::error("A source NewutronSQ module must be provided.\n");
         return ExecutionResult::Failed;
     }
 
@@ -36,45 +36,47 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         sqModule = optSQModule.value();
     if (!sqModule)
     {
-        Messenger::error(
-            "[SETUP {}] Target '{}' doesn't source any S(Q) data, so it can't be used as a target for the EPSR module.", name_,
-            sourceNeutronSQ_->name());
+        Messenger::error("Target module '{}' doesn't source any S(Q) data, so it can't be used as a target for the TR module.",
+                         sourceNeutronSQ_->name());
         return ExecutionResult::Failed;
     }
 
     auto *grModule = sqModule->sourceGR();
     if (!sqModule)
     {
-        Messenger::error("[SETUP {}] A source GR module (in the SQ module) must be provided.\n", name_);
+        Messenger::error("A source GR module (in the target SQ module) must be set.\n");
         return ExecutionResult::Failed;
     }
 
     // Get effective atomic density of underlying g(r)
     const auto rho = grModule->effectiveDensity();
-    auto unweightedgr = moduleData.value<PartialSet>("UnweightedGR", sourceNeutronSQ_->name());
+    auto unweightedGR = moduleData.value<PartialSet>("UnweightedGR", grModule->name());
 
-    // Calculate and store weights
+    auto [weightedTR, wGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
+        "WeightedTR", name_, GenericItem::InRestartFileFlag);
+    if (wGRstatus == GenericItem::ItemStatus::Created)
+        weightedTR.setUpPartials(unweightedGR.atomTypeMix());
+
+    // Retrieve weights
     const auto &weights = moduleData.value<NeutronWeights>("FullWeights", sourceNeutronSQ_->name());
 
-    int typeI, typeJ;
-    for (typeI = 0; typeI < unweightedtr.nAtomTypes(); ++typeI)
+    for (auto typeI = 0; typeI < unweightedGR.nAtomTypes(); ++typeI)
     {
-        for (typeJ = typeI; typeJ < unweightedgr.nAtomTypes(); ++typeJ)
+        for (auto typeJ = typeI; typeJ < unweightedGR.nAtomTypes(); ++typeJ)
         {
             // Full partial, summing bound and unbound terms
-            weightedtr.partial(typeI, typeJ).copyArrays(unweightedgr.partial(typeI, typeJ));
-            weightedtr.partial(typeI, typeJ) += weightedtr.boundPartial(typeI, typeJ);
+            weightedTR.partial(typeI, typeJ).copyArrays(unweightedGR.partial(typeI, typeJ));
 
-            auto cj = weights.atomTypes()[typeJ].fraction();
-
-            for (auto &&[x, y] : zip(weightedtr.partial(typeI, typeJ).xAxis(), weightedtr.partial(typeI, typeJ).values()))
+            auto factor = 4.0 * PI * rho.value() * weights.atomTypes()[typeJ].fraction();
+            for (auto &&[x, y] : zip(weightedTR.partial(typeI, typeJ).xAxis(), weightedTR.partial(typeI, typeJ).values()))
             {
-                y *= 4.0 * PI * rho.value() * x * cj;
+                y *= x * factor;
             }
         }
     }
+
     // Sum into total
-    unweightedtr.formTotals(true);
+    weightedTR.formTotals(true);
 
     return ExecutionResult::Success;
 }

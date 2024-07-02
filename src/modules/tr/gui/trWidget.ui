@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>TRModuleWidget</class>
- <widget class="QWidget" name="GRModuleWidget">
+ <widget class="QWidget" name="TRModuleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -46,12 +46,12 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="TotalsButton">
+      <widget class="QPushButton" name="TotalButton">
        <property name="toolTip">
-        <string>Show the total G(r) formed from summation over all target configurations</string>
+        <string>Show the total T(r) formed from summation over all target configurations</string>
        </property>
        <property name="text">
-        <string>Total G(r)</string>
+        <string>Total T(r)</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -65,34 +65,18 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="SummedPartialsButton">
+      <widget class="QPushButton" name="PartialsButton">
        <property name="toolTip">
-        <string>Show the partial g(r) formed from summation over all target configurations</string>
+        <string>Show the partial t(r) formed from summation over all target configurations</string>
        </property>
        <property name="text">
-        <string>Partial g(r)</string>
+        <string>Partial t(r)</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
        <property name="checked">
         <bool>false</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ConfigurationPartialsButton">
-       <property name="toolTip">
-        <string>Show the partial g(r) from a single configuration</string>
-       </property>
-       <property name="text">
-        <string>Configuration g(r)</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
        </property>
        <property name="autoExclusive">
         <bool>true</bool>
@@ -171,7 +155,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QFrame" name="RDFPlotFrame">
+    <widget class="QFrame" name="TRPlotFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>6</horstretch>
@@ -204,7 +188,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="DataWidget" name="RDFPlotWidget" native="true">
+       <widget class="DataWidget" name="TRPlotWidget" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>

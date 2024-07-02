@@ -36,7 +36,7 @@ class TRModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::TRModuleWidget ui_;
     // DataViewer contained within this widget
-    DataViewer *rdfGraph_;
+    DataViewer *trGraph_;
 
     private:
     // Create renderables for current target PartialSet
@@ -50,10 +50,8 @@ class TRModuleWidget : public ModuleWidget
      * Widgets / Functions
      */
     private Q_SLOTS:
-    void on_SummedPartialsButton_clicked(bool checked);
-    void on_TotalsButton_clicked(bool checked);
-    void on_ConfigurationPartialsButton_clicked(bool checked);
-    void on_ConfigurationTargetCombo_currentIndexChanged(int index);
+    void on_PartialsButton_clicked(bool checked);
+    void on_TotalButton_clicked(bool checked);
     void on_FilterEdit_textChanged(QString text);
     void on_ClearFilterButton_clicked(bool checked);
 };
