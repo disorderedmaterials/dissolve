@@ -38,10 +38,10 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         Messenger::error("A source GR module (in the target SQ module) must be set.\n");
         return ExecutionResult::Failed;
     }
+    const auto unweightedGR = moduleData.value<PartialSet>("UnweightedGR", grModule->name());
 
     // Get effective atomic density of underlying g(r)
     const auto rho = grModule->effectiveDensity();
-    auto unweightedGR = moduleData.value<PartialSet>("UnweightedGR", grModule->name());
 
     auto [weightedTR, wGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
         "WeightedTR", name_, GenericItem::InRestartFileFlag);
@@ -55,10 +55,26 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     {
         for (auto typeJ = typeI; typeJ < unweightedGR.nAtomTypes(); ++typeJ)
         {
+            double intraWeight = weights.intramolecularWeight(typeI, typeJ);
+            auto factor = 4.0 * PI * rho.value() * weights.atomTypes()[typeJ].fraction();
+
+            // Bound (intramolecular) partial (multiplied by the bound term weight)
+            weightedTR.boundPartial(typeI, typeJ).copyArrays(unweightedGR.boundPartial(typeI, typeJ));
+            for (auto &&[x, y] :
+                 zip(weightedTR.boundPartial(typeI, typeJ).xAxis(), weightedTR.boundPartial(typeI, typeJ).values()))
+            {
+                y *= x * factor;
+            }
+            // Unbound partial (multiplied by the full weight)
+            weightedTR.unboundPartial(typeI, typeJ).copyArrays(unweightedGR.unboundPartial(typeI, typeJ));
+            for (auto &&[x, y] :
+                 zip(weightedTR.unboundPartial(typeI, typeJ).xAxis(), weightedTR.unboundPartial(typeI, typeJ).values()))
+            {
+                y *= x * factor;
+            }
             // Full partial, summing bound and unbound terms
             weightedTR.partial(typeI, typeJ).copyArrays(unweightedGR.partial(typeI, typeJ));
 
-            auto factor = 4.0 * PI * rho.value() * weights.atomTypes()[typeJ].fraction();
             for (auto &&[x, y] : zip(weightedTR.partial(typeI, typeJ).xAxis(), weightedTR.partial(typeI, typeJ).values()))
             {
                 y *= x * factor;

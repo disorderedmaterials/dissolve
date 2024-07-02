@@ -28,8 +28,14 @@ TRModuleWidget::TRModuleWidget(QWidget *parent, TRModule *module, Dissolve &diss
     trGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
     trGraph_->view().setAutoFollowType(View::AllAutoFollow);
     // -- Set group styling
-    trGraph_->groupManager().setGroupColouring("Total", RenderableGroup::AutomaticIndividualColouring);
-    trGraph_->groupManager().setGroupVerticalShifting("Total", RenderableGroup::IndividualVerticalShifting);
+    trGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
+    trGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
+    trGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
+    trGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
+    trGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
+    trGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
+    trGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
+    trGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 
     refreshing_ = false;
 }
@@ -65,6 +71,13 @@ void TRModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
         // Full partial
         trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
                                                      fmt::format("{} (Full)", id), "Full");
+        // Bound partial
+        trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
+                                                     fmt::format("{} (Bound)", id), "Bound");
+
+        // Unbound partial
+        trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
+                                                     fmt::format("{} (Unbound)", id), "Unbound");
     }
 }
 
@@ -83,6 +96,14 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
         {
             trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedTR//Total", module_->name()), "Total T(R)",
                                                          "Calculated");
+            auto boundTotal = trGraph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//WeightedTR//BoundTotal", module_->name()), "Bound T(R)", "Calculated");
+            boundTotal->setColour(StockColours::GreenStockColour);
+            boundTotal->lineStyle().setStipple(LineStipple::DotStipple);
+            auto unboundTotal = trGraph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//WeightedTR//UnboundTotal", module_->name()), "Unbound T(R)", "Calculated");
+            unboundTotal->setColour(StockColours::GreenStockColour);
+            unboundTotal->lineStyle().setStipple(LineStipple::HalfDashStipple);
         }
         else if (ui_.PartialsButton->isChecked())
         {
