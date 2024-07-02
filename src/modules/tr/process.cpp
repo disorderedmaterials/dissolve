@@ -14,15 +14,6 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
 {
     auto &moduleData = moduleContext.dissolve().processingModuleData();
 
-    // Get NeutronSQ module
-    if (!moduleContext.dissolve().processingModuleData().contains("WeightedGR", sourceNeutronSQ_->name()))
-    {
-        Messenger::error("Couldn't locate Weighted data from the NeutronSQModule '{}'.\n", sourceNeutronSQ_->name());
-        return ExecutionResult::Failed;
-    }
-    const auto &neutronSQ =
-        moduleContext.dissolve().processingModuleData().value<PartialSet>("WeightedGR", sourceNeutronSQ_->name());
-
     // Get dependent modules
     if (!sourceNeutronSQ_)
     {
