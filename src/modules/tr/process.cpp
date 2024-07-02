@@ -78,5 +78,9 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     // Sum into total
     weightedTR.formTotals(true);
 
+    // Save data if requested
+    if (saveTR_ && (!MPIRunMaster(moduleContext.processPool(), weightedTR.save(name_, "WeightedTR", "tr", "Q, 1/Angstroms"))))
+        return ExecutionResult::Failed;
+
     return ExecutionResult::Success;
 }
