@@ -25,7 +25,7 @@ class TRModule : public Module
     private:
     // Source module for calculation
     const NeutronSQModule *sourceNeutronSQ_{nullptr};
-
+    bool saveTR_{false};
     /*
      * Processing
      */
