@@ -107,7 +107,7 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
         }
         else if (ui_.PartialsButton->isChecked())
         {
-            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("WeightedTR");
+            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("WeightedTR", module_->name());
             createPartialSetRenderables("WeightedTR");
         }
     }
