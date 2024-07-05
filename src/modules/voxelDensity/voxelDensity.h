@@ -32,12 +32,16 @@ class VoxelDensityModule : public Module
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
-    // 3d bounds for unit cell region
-    Vec3<double> unitCellVoxelRegion_;
     // Vector of species by which analysis is restricted
     std::vector<const Species *> restrictToSpecies_;
     // Target property for analysis
     VoxelDensityModule::TargetPropertyType targetProperty_;
+    // Range (min, max, binwidth) of x distance binning
+    Vec3<double> xAxisRange_;
+    // Range (min, max, binwidth) of y distance binning
+    Vec3<double> yAxisRange_;
+    // Range (min, max, binwidth) of z distance binning
+    Vec3<double> zAxisRange_;
 
     /*
      * Processing
