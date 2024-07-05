@@ -25,6 +25,7 @@
           antlr4
           antlr4.runtime.cpp
           antlr4.runtime.cpp.dev
+          gbenchmark
           cmake
           cli11
           fmt_8
