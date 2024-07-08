@@ -33,6 +33,10 @@ if(CONAN)
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
   list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 
+  if(BUILD_BENCHMARKS)
+    list(APPEND EXTRA_CONAN_REQUIRES benchmark/1.8.4)
+  endif(BUILD_BENCHMARKS)
+
   include(conan-dissolve)
 endif(CONAN)
 
@@ -325,16 +329,8 @@ if(BUILD_TESTS)
 endif(BUILD_TESTS)
 
 if(BUILD_BENCHMARKS)
-  # The conan package of goooglebenchmark segfaults - so lets use fetch content
-  include(FetchContent)
+  find_package(benchmark REQUIRED)
   set(BENCHMARK_ENABLE_TESTING "OFF")
-  fetchcontent_declare(
-    googlebenchmark
-    GIT_REPOSITORY https://github.com/google/benchmark.git
-    GIT_TAG v1.5.4
-  )
-
-  fetchcontent_makeavailable(googlebenchmark)
   add_subdirectory(benchmark)
 endif(BUILD_BENCHMARKS)
 
