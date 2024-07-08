@@ -15,7 +15,7 @@
 #include "modules/md/md.h"
 
 CoordinateSetsProcedureNode::CoordinateSetsProcedureNode(const Species *sp)
-    : ProcedureNode(ProcedureNode::NodeType::CoordinateSets, {ProcedureNode::GenerationContext}), species_(sp)
+    : ProcedureNode(NodeType::CoordinateSets), species_(sp)
 {
     keywords_.setOrganisation("Options", "Target");
     keywords_.add<SpeciesKeyword>("Species", "Target species", species_);

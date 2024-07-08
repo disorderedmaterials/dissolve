@@ -5,8 +5,7 @@
 #include "classes/configuration.h"
 #include "keywords/fileAndFormat.h"
 
-ImportCoordinatesProcedureNode::ImportCoordinatesProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::ImportCoordinates, {ProcedureNode::GenerationContext})
+ImportCoordinatesProcedureNode::ImportCoordinatesProcedureNode() : ProcedureNode(NodeType::ImportCoordinates)
 {
     keywords_.setOrganisation("Options", "Source Data");
     keywords_.add<FileAndFormatKeyword>("File", "File / format for coordinates to read in", fileSource_, "EndFile");

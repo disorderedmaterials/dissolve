@@ -21,7 +21,6 @@ set(models_MOC_HDRS
     moduleLayerModel.h
     moduleLayersModel.h
     moduleModel.h
-    nodePaletteFilterProxy.h
     modulePaletteModel.h
     nodePaletteModel.h
     pairPotentialModel.h
@@ -85,7 +84,6 @@ set(models_SRCS
     moduleLayerModel.cpp
     moduleLayersModel.cpp
     moduleModel.cpp
-    nodePaletteFilterProxy.cpp
     modulePaletteModel.cpp
     nodePaletteModel.cpp
     pairPotentialModel.cpp

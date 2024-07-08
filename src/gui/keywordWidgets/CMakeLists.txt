@@ -53,9 +53,6 @@ add_library(
   moduleVector.cpp
   moduleVector.h
   moduleVector.ui
-  nodeAndInteger.cpp
-  nodeAndInteger.h
-  nodeAndInteger.ui
   node.cpp
   node.h
   node.ui

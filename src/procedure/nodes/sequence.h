@@ -11,8 +11,7 @@
 class ProcedureNodeSequence : public Serialisable<const CoreData &>
 {
     public:
-    ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
-                          std::string_view blockKeyword);
+    ProcedureNodeSequence(OptionalReferenceWrapper<ProcedureNode> owner, std::string_view blockKeyword);
     ~ProcedureNodeSequence();
 
     /*
@@ -72,42 +71,38 @@ class ProcedureNodeSequence : public Serialisable<const CoreData &>
     private:
     // ProcedureNode which owns this sequence
     OptionalReferenceWrapper<ProcedureNode> owner_;
-    // Context of the sequence
-    ProcedureNode::NodeContext context_;
 
     private:
     // Return named node if it exists anywhere in our sequence or below (and matches the type / class given)
-    NodeRef searchNodes(std::string_view name, ConstNodeRef excludeNode = nullptr,
+    NodeRef searchNodes(std::string_view name, const ConstNodeRef &excludeNode = {},
                         const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Search through the Procedure for the named parameter
     std::shared_ptr<ExpressionVariable>
-    searchParameters(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr) const;
+    searchParameters(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = {}) const;
 
     public:
     // Return this sequences owner
     OptionalReferenceWrapper<ProcedureNode> owner() const;
-    // Return the context of the sequence
-    ProcedureNode::NodeContext context() const;
     // Return named node if present (and matches the type / class given)
-    ConstNodeRef node(std::string_view name, ConstNodeRef excludeNode = nullptr,
+    ConstNodeRef node(std::string_view name, const ConstNodeRef &excludeNode = {},
                       const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return list of nodes (of specified type / class) present in the Procedure
     std::vector<ConstNodeRef> nodes(const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return named node if it is currently in scope (and matches the type / class given)
-    ConstNodeRef nodeInScope(ConstNodeRef queryingNode, std::string_view name, ConstNodeRef excludeNode = nullptr,
+    ConstNodeRef nodeInScope(ConstNodeRef queryingNode, std::string_view name, const ConstNodeRef &excludeNode = {},
                              const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return list of nodes in scope (and matching the type / class given)
     std::vector<ConstNodeRef> nodesInScope(ConstNodeRef queryingNode,
                                            const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
-    ConstNodeRef nodeExists(std::string_view name, ConstNodeRef excludeNode = nullptr,
+    ConstNodeRef nodeExists(std::string_view name, const ConstNodeRef &excludeNode = {},
                             const ProcedureNode::NodeTypeVector &allowedNodeTypes = {}) const;
     // Return the named parameter if it is currently in scope
     std::shared_ptr<ExpressionVariable> parameterInScope(ConstNodeRef queryingNode, std::string_view name,
-                                                         const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr);
+                                                         const std::shared_ptr<ExpressionVariable> &excludeParameter = {});
     // Return whether the named parameter exists in this sequence or its children (branches)
-    std::shared_ptr<ExpressionVariable>
-    parameterExists(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr) const;
+    std::shared_ptr<ExpressionVariable> parameterExists(std::string_view name,
+                                                        const std::shared_ptr<ExpressionVariable> &excludeParameter = {}) const;
     // Create and return reference list of parameters in scope
     std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope(ConstNodeRef queryingNode);
     // Validate node-related keywords ensuring invalid (out-of-scope) data are un-set

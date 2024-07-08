@@ -19,9 +19,7 @@ class SpeciesSite;
 class SelectProcedureNode : public ProcedureNode
 {
     public:
-    explicit SelectProcedureNode(std::vector<const SpeciesSite *> sites = {},
-                                 ProcedureNode::NodeContext forEachContext = ProcedureNode::NodeContext::AnalysisContext,
-                                 bool axesRequired = false);
+    explicit SelectProcedureNode(std::vector<const SpeciesSite *> sites = {}, bool axesRequired = false);
 
     /*
      * Parameters

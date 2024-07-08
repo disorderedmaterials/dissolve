@@ -5,8 +5,7 @@
 #include "expression/variable.h"
 #include "keywords/expressionVariableVector.h"
 
-ParametersProcedureNode::ParametersProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::Parameters, {ProcedureNode::AnyContext})
+ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(NodeType::Parameters)
 {
     keywords_.setOrganisation("Options", "Data");
     keywords_.add<ExpressionVariableVectorKeyword>("Parameter", "Defined parameters", parameters_, this);

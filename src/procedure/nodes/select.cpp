@@ -15,10 +15,9 @@
 #include "procedure/nodes/sequence.h"
 #include <algorithm>
 
-SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, ProcedureNode::NodeContext forEachContext,
-                                         bool axesRequired)
-    : ProcedureNode(ProcedureNode::NodeType::Select, {ProcedureNode::AnalysisContext, ProcedureNode::GenerationContext}),
-      speciesSites_(std::move(sites)), axesRequired_(axesRequired), forEachBranch_(forEachContext, *this, "ForEach")
+SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, bool axesRequired)
+    : ProcedureNode(NodeType::Select), speciesSites_(std::move(sites)), axesRequired_(axesRequired),
+      forEachBranch_(*this, "ForEach")
 {
     keywords_.setOrganisation("Options", "Sites");
     keywords_.add<SpeciesSiteVectorKeyword>("Site", "Add target site(s) to the selection", speciesSites_, axesRequired_);
@@ -28,18 +27,18 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
         "SameMoleculeAsSite",
         "Request that the selected site comes from the molecule containing the current site in the specified "
         "SelectNode",
-        sameMolecule_, this, NodeTypeVector{NodeType::Select}, true);
+        sameMolecule_, this, NodeTypeVector{NodeType::Select});
     keywords_.add<NodeVectorKeyword<SelectProcedureNode>>(
         "ExcludeSameMolecule",
         "Exclude sites from selection if they are present in the same molecule as the current site in the specified "
         "SelectNode(s)",
-        sameMoleculeExclusions_, this, NodeTypeVector{NodeType::Select}, true);
+        sameMoleculeExclusions_, this, NodeTypeVector{NodeType::Select});
     keywords_.add<NodeVectorKeyword<SelectProcedureNode>>(
         "ExcludeSameSite", "Exclude sites from selection if they are the current site in the specified SelectNode(s)",
-        sameSiteExclusions_, this, NodeTypeVector{NodeType::Select}, true);
+        sameSiteExclusions_, this, NodeTypeVector{NodeType::Select});
     keywords_.add<NodeKeyword<SelectProcedureNode>>("ReferenceSite",
                                                     "Site to use as reference point when determining inclusions / exclusions",
-                                                    distanceReferenceSite_, this, NodeTypeVector{NodeType::Select}, true);
+                                                    distanceReferenceSite_, this, NodeTypeVector{NodeType::Select});
     keywords_.add<RangeKeyword>(
         "InclusiveRange",
         "Distance range (from reference site) within which sites are selected (only if ReferenceSite is defined)",
@@ -47,8 +46,6 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 
     keywords_.addHidden<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_);
 
-    // Need to make parameters_ private as a next step, to prevent direct initialisation like this... (use addParameter()
-    // instead)
     nSelectedParameter_ = addParameter("nSelected");
     siteIndexParameter_ = addParameter("siteIndex");
     stackIndexParameter_ = addParameter("stackIndex");

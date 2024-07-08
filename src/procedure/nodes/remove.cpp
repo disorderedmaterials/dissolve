@@ -9,13 +9,13 @@
 #include "keywords/speciesVector.h"
 #include "procedure/nodes/pick.h"
 
-RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Remove, {ProcedureNode::GenerationContext})
+RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(NodeType::Remove)
 {
     keywords_.setOrganisation("Options", "Targets");
     keywords_.add<SpeciesVectorKeyword>("Species", "Target species to remove", speciesToRemove_);
     keywords_.add<NodeKeyword<PickProcedureNodeBase>>(
         "Selection", "Picked selection of molecules to remove", selection_, this,
-        NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion}, true);
+        NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion});
 }
 
 /*

@@ -9,8 +9,7 @@
 #include "keywords/vec3NodeValue.h"
 
 CylindricalGlobalPotentialProcedureNode::CylindricalGlobalPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::CylindricalGlobalPotential, {ProcedureNode::GenerationContext}),
-      potential_(Functions1D::Form::LennardJones126)
+    : ProcedureNode(NodeType::CylindricalGlobalPotential), potential_(Functions1D::Form::LennardJones126)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<InteractionPotentialKeyword<Functions1D>>("Potential", "Form of directional global potential to apply ",

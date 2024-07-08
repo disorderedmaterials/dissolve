@@ -30,7 +30,7 @@ bool Vec3NodeValueKeyword::setData(int index, std::string_view expressionText)
     assert(index >= 0 && index < 3);
     assert(parentNode_);
 
-    return data_[index].set(expressionText, parentNode_->getParameters());
+    return data_[index].set(expressionText, parentNode_->getParametersInScope());
 }
 
 // Return label type to display in GUI
@@ -55,7 +55,7 @@ bool Vec3NodeValueKeyword::deserialise(LineParser &parser, int startArg, const C
     if (parser.hasArg(startArg + 2))
     {
         // Get any variables currently in scope
-        auto vars = parentNode_->getParameters();
+        auto vars = parentNode_->getParametersInScope();
 
         if (!data_.x.set(parser.argsv(startArg), vars))
             return false;
@@ -83,7 +83,7 @@ SerialisedValue Vec3NodeValueKeyword::serialise() const { return data_; }
 // Read values from a serialisable value
 void Vec3NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    data_.deserialise(node, parentNode_->getParameters());
+    data_.deserialise(node, parentNode_->getParametersInScope());
 }
 
 // Has not changed from initial value
