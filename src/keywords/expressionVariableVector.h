@@ -5,6 +5,7 @@
 
 #include "expression/node.h"
 #include "keywords/base.h"
+#include <variant>
 
 // Forward Declarations
 class ExpressionVariable;
@@ -13,7 +14,6 @@ class ProcedureNode;
 // Data property types
 enum class PropertyType
 {
-    Invalid,
     Integer,
     Double,
     String
@@ -28,36 +28,36 @@ enum PropertyFlag
 // Index / Column ID, Name / Column Title, Data Type, ReadOnly?
 using DataItemProperty = std::tuple<int, std::string, PropertyType, Flags<PropertyFlag>>;
 
-class DataItemValue
+// Helper type for DataItemValue visitor
+template <class... Ts> struct DataItemVisitor : Ts...
 {
-    public:
-    DataItemValue() : type_(PropertyType::Invalid) {}
-    DataItemValue(int i) : type_(PropertyType::Integer), intValue_(i) {}
-    DataItemValue(double d) : type_(PropertyType::Double), doubleValue_(d) {}
-    DataItemValue(std::string_view sv) : type_(PropertyType::String), stringValue_(sv) {}
-    DataItemValue(std::string s) : type_(PropertyType::String), stringValue_(std::move(s)) {}
-
-    private:
-    PropertyType type_;
-    int intValue_{0};
-    double doubleValue_{0.0};
-    std::string stringValue_;
-
-    public:
-    // Return value type
-    PropertyType type() const { return type_; }
-    // Return integer value
-    int intValue() const { return intValue_; }
-    // Return double value
-    double doubleValue() const { return doubleValue_; }
-    // Return string value
-    std::string stringValue() const { return stringValue_; }
+    using Ts::operator()...;
 };
+// Explicit deduction guide for DataItemValue visitor
+template <class... Ts> DataItemVisitor(Ts...) -> DataItemVisitor<Ts...>;
 
 class DataModelBase
 {
     public:
     DataModelBase(const std::vector<DataItemProperty> &itemProperties) : itemProperties_(itemProperties) {}
+
+    /*
+     * Value Handling
+     */
+    public:
+    using DataItemValue = std::variant<int, double, std::string_view, std::string>;
+    // Return value as string
+    static std::string asString(const DataItemValue &value)
+    {
+        if (std::holds_alternative<int>(value))
+            return fmt::format("{}", std::get<int>(value));
+        else if (std::holds_alternative<double>(value))
+            return fmt::format("{}", std::get<double>(value));
+        else if (std::holds_alternative<std::string_view>(value))
+            return fmt::format("{}", std::get<std::string_view>(value));
+        else
+            return std::get<std::string>(value);
+    }
 
     /*
      * Properties

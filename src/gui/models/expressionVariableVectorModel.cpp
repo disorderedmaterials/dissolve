@@ -33,7 +33,6 @@ QVariant DataTableModelInterface::headerData(int section, Qt::Orientation orient
     return QString::fromStdString(dataModel_.propertyName(section));
 }
 
-// Bond model
 QVariant DataTableModelInterface::data(const QModelIndex &index, int role) const
 {
     if (role != Qt::DisplayRole && role != Qt::EditRole)
@@ -42,19 +41,11 @@ QVariant DataTableModelInterface::data(const QModelIndex &index, int role) const
     // Get the specified data property
     auto property = dataModel_.getProperty(index.row(), index.column());
 
-    switch (property.type())
-    {
-        case (PropertyType::Invalid):
-            return {};
-        case (PropertyType::Integer):
-            return property.intValue();
-        case (PropertyType::Double):
-            return property.doubleValue();
-        case (PropertyType::String):
-            return QString::fromStdString(property.stringValue());
-        default:
-            return {};
-    }
+    // Construct a QVariant from the contents of our std::variant
+    return std::visit(DataItemVisitor{[](int arg) { return QVariant(arg); }, [](double arg) { return QVariant(arg); },
+                                      [](std::string_view arg) { return QVariant(QString::fromStdString(std::string(arg))); },
+                                      [](std::string &arg) { return QVariant(QString::fromStdString(arg)); }},
+                      property);
 }
 
 bool DataTableModelInterface::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -67,13 +58,14 @@ bool DataTableModelInterface::setData(const QModelIndex &index, const QVariant &
     switch (dataModel_.propertyType(index.column()))
     {
         case (PropertyType::Integer):
-            success = dataModel_.setProperty(index.row(), index.column(), DataItemValue(value.toInt()));
+            success = dataModel_.setProperty(index.row(), index.column(), DataModelBase::DataItemValue(value.toInt()));
             break;
         case (PropertyType::Double):
-            success = dataModel_.setProperty(index.row(), index.column(), DataItemValue(value.toDouble()));
+            success = dataModel_.setProperty(index.row(), index.column(), DataModelBase::DataItemValue(value.toDouble()));
             break;
         case (PropertyType::String):
-            success = dataModel_.setProperty(index.row(), index.column(), DataItemValue(value.toString().toStdString()));
+            success = dataModel_.setProperty(index.row(), index.column(),
+                                             DataModelBase::DataItemValue(value.toString().toStdString()));
             break;
         default:
             break;

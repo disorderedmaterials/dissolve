@@ -29,42 +29,45 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std
             switch (propertyIndex)
             {
                 case (ExpressionVariableProperties::Name):
-                    return DataItemValue(var->baseName());
+                    return DataModelBase::DataItemValue(var->baseName());
                 case (ExpressionVariableProperties::Type):
-                    return DataItemValue(std::string(var->value().type() == ExpressionValue::ValueType::Integer ? "Int" : "Real"));
+                    return DataModelBase::DataItemValue(
+                        std::string(var->value().type() == ExpressionValue::ValueType::Integer ? "Int" : "Real"));
                 case (ExpressionVariableProperties::Value):
-                    return DataItemValue(var->value().asString());
+                    return DataModelBase::DataItemValue(var->value().asString());
                 default:
-                    return DataItemValue();
+                    return DataModelBase::DataItemValue();
             }
         },
-        [&](std::shared_ptr<ExpressionVariable> &var, int propertyIndex, const DataItemValue &newValue)
+        [&](std::shared_ptr<ExpressionVariable> &var, int propertyIndex, const DataModelBase::DataItemValue &newValue)
         {
             switch (propertyIndex)
             {
                 case (ExpressionVariableProperties::Name):
                 {
                     // Must check for existing var in scope with the same name
-                    auto p = parentNode_->getParameter(newValue.stringValue());
+                    auto newName = DataModelBase::asString(newValue);
+                    auto p = parentNode_->getParameter(newName);
                     if (p && p != var)
                         return false;
-                    var->setBaseName(newValue.stringValue());
+                    var->setBaseName(newName);
                 }
                 break;
                 case (ExpressionVariableProperties::Value):
                 {
                     // Value - need to check type (int vs double)
                     bool isFloatingPoint = false;
-                    if (DissolveSys::isNumber(newValue.stringValue(), isFloatingPoint))
+                    auto value = DataModelBase::asString(newValue);
+                    if (DissolveSys::isNumber(value, isFloatingPoint))
                     {
                         if (isFloatingPoint)
-                            var->setValue(std::stod(newValue.stringValue()));
+                            var->setValue(std::stod(value));
                         else
-                            var->setValue(std::stoi(newValue.stringValue()));
+                            var->setValue(std::stoi(value));
                     }
                     else
-                        return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n",
-                                                newValue.stringValue(), var->baseName());
+                        return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n", value,
+                                                var->baseName());
                 }
                 break;
                 default:
