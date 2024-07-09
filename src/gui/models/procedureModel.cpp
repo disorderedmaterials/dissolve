@@ -89,21 +89,18 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
     {
         case (Qt::DisplayRole):
             if (node->name().empty())
-                return QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type())));
+                return QString::fromStdString(ProcedureNode::nodeTypes().keyword(node->type()));
             else
-                return QString("%1 (%2)").arg(
-                    QString::fromStdString(std::string(node->name())),
-                    QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))));
+                return QString("%1 (%2)").arg(QString::fromStdString(std::string(node->name())),
+                                              QString::fromStdString(ProcedureNode::nodeTypes().keyword(node->type())));
         case (Qt::UserRole):
             return QVariant::fromValue(node->shared_from_this());
         case (Qt::DecorationRole):
-            return QIcon(QPixmap(
-                QString(":/nodes/icons/nodes/%1.svg").arg(QString::fromStdString(ProcedureNode::lccNodeType(node->type())))));
+            return QIcon(QPixmap(QString(":/nodes/icons/nodes/%1.svg")
+                                     .arg(QString::fromStdString(ProcedureNode::nodeTypes().keyword(node->type())))));
         default:
             return {};
     }
-
-    return {};
 }
 
 bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, int role)

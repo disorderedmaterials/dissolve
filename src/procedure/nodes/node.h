@@ -59,8 +59,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     using NodeTypeVector = std::vector<ProcedureNode::NodeType>;
     // Return enum option info for NodeType
     static EnumOptions<NodeType> nodeTypes();
-    // Return the lowerCamelCase name of the node type provided
-    static std::string lccNodeType(NodeType nodeType);
     ProcedureNode(NodeType nodeType);
     virtual ~ProcedureNode() = default;
 
