@@ -62,6 +62,7 @@ bool DataTableModelInterface::setData(const QModelIndex &index, const QVariant &
                                              DataModelBase::DataItemValue(value.toString().toStdString()));
             break;
         default:
+            Messenger::error("DataTableModelInterface doesn't know how to handle this PropertyType.\n");
             break;
     }
 
