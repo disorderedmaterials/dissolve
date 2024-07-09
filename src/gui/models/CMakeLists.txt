@@ -68,7 +68,6 @@ set(models_SRCS
     dissolveModelImageProvider.cpp
     dissolveModelImageProvider.h
     enumOptionsModel.cpp
-    expressionVariableVectorModel.cpp
     externalPotentialModel.cpp
     ffSortFilterModel.cpp
     forcefieldModel.cpp
@@ -124,7 +123,6 @@ qt6_wrap_cpp(
   braggReflectionModel.h
   dataManagerSimulationModel.h
   enumOptionsModel.h
-  expressionVariableVectorModel.h
   forcefieldModel.h
   isotopologueSetModel.h
   pairPotentialModel.h

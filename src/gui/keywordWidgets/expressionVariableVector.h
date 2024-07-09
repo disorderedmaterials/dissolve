@@ -5,7 +5,7 @@
 
 #include "gui/keywordWidgets/base.h"
 #include "gui/keywordWidgets/ui_expressionVariableVector.h"
-#include "gui/models/expressionVariableVectorModel.h"
+#include "gui/dataTableModelInterface.h"
 #include "keywords/expressionVariableVector.h"
 
 // Forward Declarations
