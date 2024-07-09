@@ -78,10 +78,10 @@ class DataModelBase
     }
 
     public:
-    // Return number of children (rows) for the specified index
-    virtual int nChildren(int dataIndex, int propertyIndex) = 0;
+    // Return number of data items (i.e. rows) for the specified index
+    virtual int nDataItems() = 0;
     // Return number of properties (i.e. columns) for the specified index
-    virtual int nProperties(int dataIndex, int propertyIndex) = 0;
+    virtual int nProperties() = 0;
     // Set property function
     virtual bool setProperty(int dataIndex, int propertyIndex, const DataItemValue &newValue) = 0;
     // Get property function
@@ -112,18 +112,12 @@ template <class DataItem> class DataTableModel : public DataModelBase
     {
         return dataIndex >= 0 && dataIndex < data_.size() && propertyIndex >= 0 && propertyIndex < itemProperties_.size();
     }
-    // Functions for accessing data extents (table style)
-    std::function<int(int row, int column)> childCountFunction_{[&](const int dataIndex, const int propertyIndex) {
-        return isIndexValid(dataIndex, propertyIndex) ? 0 : data_.size();
-    }};
-    std::function<int(int row, int column)> propertyCountFunction_{[&](const int dataIndex, const int propertyIndex)
-                                                                   { return itemProperties_.size(); }};
 
     public:
-    // Return number of children (rows) for the specified index
-    int nChildren(int dataIndex, int propertyIndex) final { return childCountFunction_(dataIndex, propertyIndex); }
-    // Return number of properties per child (i.e. columns) for the specified index
-    int nProperties(int dataIndex, int propertyIndex) final { return propertyCountFunction_(dataIndex, propertyIndex); }
+    // Return number of data items (rows) in the table
+    int nDataItems() final { return data_.size(); }
+    // Return number of properties per data item (i.e. columns) in the table
+    int nProperties() final { return itemProperties_.size(); }
 
     /*
      * Data Access

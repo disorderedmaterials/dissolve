@@ -6,15 +6,9 @@
 
 DataTableModelInterface::DataTableModelInterface(DataModelBase &dataModel) : dataModel_(dataModel) {}
 
-int DataTableModelInterface::rowCount(const QModelIndex &parent) const
-{
-    return dataModel_.nChildren(parent.row(), parent.column());
-}
+int DataTableModelInterface::rowCount(const QModelIndex &parent) const { return dataModel_.nDataItems(); }
 
-int DataTableModelInterface::columnCount(const QModelIndex &parent) const
-{
-    return dataModel_.nProperties(parent.row(), parent.column());
-}
+int DataTableModelInterface::columnCount(const QModelIndex &parent) const { return dataModel_.nProperties(); }
 
 Qt::ItemFlags DataTableModelInterface::flags(const QModelIndex &index) const
 {
