@@ -6,10 +6,17 @@
 
 DataTableModelInterface::DataTableModelInterface(DataModelBase &dataModel) : dataModel_(dataModel) {}
 
+/*
+ * QAbstractTableModel Overrides
+ */
+
+// Return row count
 int DataTableModelInterface::rowCount(const QModelIndex &parent) const { return dataModel_.nDataItems(); }
 
+// Return column count
 int DataTableModelInterface::columnCount(const QModelIndex &parent) const { return dataModel_.nProperties(); }
 
+// Return flags for the specified model index
 Qt::ItemFlags DataTableModelInterface::flags(const QModelIndex &index) const
 {
     // TODO
@@ -19,6 +26,7 @@ Qt::ItemFlags DataTableModelInterface::flags(const QModelIndex &index) const
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
 }
 
+// Return header data for the specified section, orientation, and role
 QVariant DataTableModelInterface::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
@@ -27,6 +35,7 @@ QVariant DataTableModelInterface::headerData(int section, Qt::Orientation orient
     return QString::fromStdString(dataModel_.propertyName(section));
 }
 
+// Return data for the index and role specified
 QVariant DataTableModelInterface::data(const QModelIndex &index, int role) const
 {
     if (role != Qt::DisplayRole && role != Qt::EditRole)
@@ -42,6 +51,7 @@ QVariant DataTableModelInterface::data(const QModelIndex &index, int role) const
                       property);
 }
 
+// Set data for the index and role specified
 bool DataTableModelInterface::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (role != Qt::EditRole || dataModel_.isPropertyFlagSet(index.column(), PropertyFlag::ReadOnly))
@@ -52,14 +62,14 @@ bool DataTableModelInterface::setData(const QModelIndex &index, const QVariant &
     switch (dataModel_.propertyType(index.column()))
     {
         case (PropertyType::Integer):
-            success = dataModel_.setProperty(index.row(), index.column(), DataModelBase::DataItemValue(value.toInt()));
+            success = dataModel_.setProperty(index.row(), index.column(), DataModelBase::PropertyValue(value.toInt()));
             break;
         case (PropertyType::Double):
-            success = dataModel_.setProperty(index.row(), index.column(), DataModelBase::DataItemValue(value.toDouble()));
+            success = dataModel_.setProperty(index.row(), index.column(), DataModelBase::PropertyValue(value.toDouble()));
             break;
         case (PropertyType::String):
             success = dataModel_.setProperty(index.row(), index.column(),
-                                             DataModelBase::DataItemValue(value.toString().toStdString()));
+                                             DataModelBase::PropertyValue(value.toString().toStdString()));
             break;
         default:
             Messenger::error("DataTableModelInterface doesn't know how to handle this PropertyType.\n");
@@ -72,16 +82,17 @@ bool DataTableModelInterface::setData(const QModelIndex &index, const QVariant &
     return success;
 }
 
+// Insert one or more rows at the specified position
 bool DataTableModelInterface::insertRows(int row, int count, const QModelIndex &parent)
 {
-    // TODO
-    Q_UNUSED(count);
-    beginInsertRows(parent, row, row);
-    //    parentNode_->addParameter("NewParameter", 0.0, row);
-    endInsertRows();
+    Q_UNUSED(parent);
+
+    dataModel_.createItems(row, count);
+
     return true;
 }
 
+// Remove one or more rows starting from the specified position
 bool DataTableModelInterface::removeRows(int row, int count, const QModelIndex &parent)
 {
     // TODO
