@@ -4,7 +4,11 @@
 #include "gui/dataTableModelInterface.h"
 #include "procedure/nodes/node.h"
 
-DataTableModelInterface::DataTableModelInterface(DataModelBase &dataModel) : dataModel_(dataModel) {}
+DataTableModelInterface::DataTableModelInterface(DataModelBase &dataModel) : dataModel_(dataModel)
+{
+    dataModel_.setMutationSignalFunction([this](DataModelBase::MutationSignal signal, int startIndex, int endIndex)
+                                         { dataMutated(signal, startIndex, endIndex); });
+}
 
 /*
  * QAbstractTableModel Overrides
@@ -106,4 +110,29 @@ bool DataTableModelInterface::removeRows(int row, int count, const QModelIndex &
     //    ranges_->get().erase(ranges_->get().begin() + row);
     endRemoveRows();
     return true;
+}
+
+/*
+ * Mutation Interface
+ */
+
+// React to a mutation in the model
+void DataTableModelInterface::dataMutated(DataModelBase::MutationSignal signal, int startIndex, int endIndex)
+{
+    printf("lkasjdflkasjk\n");
+    switch (signal)
+    {
+        case (DataModelBase::MutationSignal::DataCreationStarted):
+            beginInsertRows({}, startIndex, endIndex - startIndex + 1);
+            break;
+        case (DataModelBase::MutationSignal::DataCreationFinished):
+            endInsertRows();
+            break;
+        case (DataModelBase::MutationSignal::DataRemovalStarted):
+            beginRemoveRows({}, startIndex, endIndex - startIndex + 1);
+            break;
+        case (DataModelBase::MutationSignal::DataRemovalFinished):
+            endRemoveRows();
+            break;
+    }
 }

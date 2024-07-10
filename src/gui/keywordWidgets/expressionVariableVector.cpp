@@ -13,6 +13,7 @@ ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWi
 {
     // Create and set up the UI for our widget
     ui_.setupUi(this);
+    printf("hhuhhuhhuh\n");
 
     // Set model
     ui_.VariablesTable->setModel(&variableModel_);
@@ -46,7 +47,8 @@ void ExpressionVariableVectorKeywordWidget::variableSelectionChanged(const QItem
     ui_.RemoveVariableButton->setEnabled(current.empty());
 }
 
-void ExpressionVariableVectorKeywordWidget::ui_AddVariableButton_clicked(bool checked) {}
+void ExpressionVariableVectorKeywordWidget::ui_AddVariableButton_clicked(bool checked) {
+    printf("bbbbbboooppp\n"); variableModel_.insertRows(0, 1, {}); }
 
 void ExpressionVariableVectorKeywordWidget::ui_RemoveVariableButton_clicked(bool checked) {}
 

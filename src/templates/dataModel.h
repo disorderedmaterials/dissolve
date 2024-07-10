@@ -92,6 +92,25 @@ class DataModelBase
      * Item Management
      */
     public:
+    enum class MutationSignal
+    {
+        PropertyChanged,
+        DataCreationStarted,
+        DataCreationFinished,
+        DataRemovalStarted,
+        DataRemovalFinished
+    };
+    using DataMutationSignalFunction = std::function<void(MutationSignal, int, int)>;
+    DataMutationSignalFunction mutationSignalFunction_ = {};
+    void setMutationSignalFunction(DataMutationSignalFunction mutationSignalFunction)
+    {
+        mutationSignalFunction_ = std::move(mutationSignalFunction);
+    }
+    void emitMutationSignal(MutationSignal signal, int startIndex, int endIndex)
+    {
+        if (mutationSignalFunction_)
+            mutationSignalFunction_(signal, startIndex, endIndex);
+    }
     // Create new item(s) starting at specified vector index
     virtual void createItems(int index, int count) = 0;
 };
@@ -173,5 +192,17 @@ template <class DataItem> class DataTableModel : public DataModelBase
             return {};
         else
             return getPropertyFunction_(data_[dataIndex], std::get<0>(itemProperties_[propertyIndex]));
+    }
+
+    /*
+     * Item Management
+     */
+    public:
+    // Create new item(s) starting at specified vector index
+    void createItems(int index, int count) final
+    {
+        emitMutationSignal(DataModelBase::MutationSignal::DataCreationStarted, index, index + count);
+        data_.insert(data_.begin() + index, DataItem());
+        emitMutationSignal(DataModelBase::MutationSignal::DataCreationFinished, index, index + count);
     }
 };

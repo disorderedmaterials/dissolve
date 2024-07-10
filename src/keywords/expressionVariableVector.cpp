@@ -163,7 +163,3 @@ void ExpressionVariableVectorKeyword::deserialise(const SerialisedValue &node, c
     toMap(node,
           [this](const auto &key, const auto &value) { parentNode_->addParameter(key, toml::get<ExpressionValue>(value)); });
 }
-
-/*
- * Object Management
- */

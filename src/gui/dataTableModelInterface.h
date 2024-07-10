@@ -24,7 +24,7 @@ class DataTableModelInterface : public QAbstractTableModel
     /*
      * QAbstractTableModel Overrides
      */
-    private:
+    public:
     // Return row count
     int rowCount(const QModelIndex &parent) const override;
     // Return column count
@@ -41,4 +41,11 @@ class DataTableModelInterface : public QAbstractTableModel
     bool insertRows(int row, int count, const QModelIndex &parent) override;
     // Remove one or more rows starting from the specified position
     bool removeRows(int row, int count, const QModelIndex &parent) override;
+
+    /*
+     * Mutation Interface
+     */
+    private:
+    // React to a mutation in the model
+    void dataMutated(DataModelBase::MutationSignal signal, int startIndex, int endIndex);
 };
