@@ -24,12 +24,12 @@ enum PropertyFlag
 // Index / Column ID, Name / Column Title, Data Type, ReadOnly?
 using DataItemProperty = std::tuple<int, std::string, PropertyType, Flags<PropertyFlag>>;
 
-// Helper type for DataItemValue visitor
+// Helper type for PropertyValue visitor
 template <class... Ts> struct DataItemVisitor : Ts...
 {
     using Ts::operator()...;
 };
-// Explicit deduction guide for DataItemValue visitor
+// Explicit deduction guide for PropertyValue visitor
 template <class... Ts> DataItemVisitor(Ts...) -> DataItemVisitor<Ts...>;
 
 /*
@@ -42,12 +42,13 @@ class DataModelBase
     DataModelBase(const std::vector<DataItemProperty> &itemProperties) : itemProperties_(itemProperties) {}
 
     /*
-     * Value Handling
+     * Property Values
      */
     public:
-    using DataItemValue = std::variant<int, double, std::string_view, std::string>;
+    // Property value variant
+    using PropertyValue = std::variant<int, double, std::string_view, std::string>;
     // Return value as string
-    static std::string asString(const DataItemValue &value)
+    static std::string asString(const PropertyValue &value)
     {
         if (std::holds_alternative<int>(value))
             return fmt::format("{}", std::get<int>(value));
@@ -83,17 +84,24 @@ class DataModelBase
     // Return number of properties (i.e. columns) for the specified index
     virtual int nProperties() = 0;
     // Set property function
-    virtual bool setProperty(int dataIndex, int propertyIndex, const DataItemValue &newValue) = 0;
+    virtual bool setProperty(int dataIndex, int propertyIndex, const PropertyValue &newValue) = 0;
     // Get property function
-    virtual DataItemValue getProperty(int dataIndex, int propertyIndex) = 0;
+    virtual PropertyValue getProperty(int dataIndex, int propertyIndex) = 0;
+
+    /*
+     * Item Management
+     */
+    public:
+    // Create new item(s) starting at specified vector index
+    virtual void createItems(int index, int count) = 0;
 };
 
 template <class DataItem> class DataTableModel : public DataModelBase
 {
     public:
     // Data access functions
-    using PropertySetFunction = std::function<bool(DataItem &, int, DataItemValue)>;
-    using PropertyGetFunction = std::function<DataItemValue(const DataItem &, int)>;
+    using PropertySetFunction = std::function<bool(DataItem &, int, PropertyValue)>;
+    using PropertyGetFunction = std::function<PropertyValue(const DataItem &, int)>;
     DataTableModel(std::vector<DataItem> &data, const std::vector<DataItemProperty> &itemProperties)
         : DataModelBase(itemProperties), data_(data)
     {
@@ -135,7 +143,7 @@ template <class DataItem> class DataTableModel : public DataModelBase
         setPropertyFunction_ = std::move(setFunction);
     }
     // Set property
-    bool setProperty(int dataIndex, int propertyIndex, const DataItemValue &newValue) final
+    bool setProperty(int dataIndex, int propertyIndex, const PropertyValue &newValue) final
     {
         // Check index validity
         if (!isIndexValid(dataIndex, propertyIndex))
@@ -154,7 +162,7 @@ template <class DataItem> class DataTableModel : public DataModelBase
             return setPropertyFunction_(data_[dataIndex], std::get<0>(itemProperties_[propertyIndex]), newValue);
     }
     // Get property
-    DataItemValue getProperty(int dataIndex, int propertyIndex) final
+    PropertyValue getProperty(int dataIndex, int propertyIndex) final
     {
         // Check index validity
         if (!isIndexValid(dataIndex, propertyIndex))

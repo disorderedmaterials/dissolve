@@ -29,17 +29,17 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std
             switch (propertyIndex)
             {
                 case (ExpressionVariableProperties::Name):
-                    return DataModelBase::DataItemValue(var->baseName());
+                    return DataModelBase::PropertyValue(var->baseName());
                 case (ExpressionVariableProperties::Type):
-                    return DataModelBase::DataItemValue(
+                    return DataModelBase::PropertyValue(
                         std::string(var->value().type() == ExpressionValue::ValueType::Integer ? "Int" : "Real"));
                 case (ExpressionVariableProperties::Value):
-                    return DataModelBase::DataItemValue(var->value().asString());
+                    return DataModelBase::PropertyValue(var->value().asString());
                 default:
-                    return DataModelBase::DataItemValue();
+                    return DataModelBase::PropertyValue();
             }
         },
-        [&](std::shared_ptr<ExpressionVariable> &var, int propertyIndex, const DataModelBase::DataItemValue &newValue)
+        [&](std::shared_ptr<ExpressionVariable> &var, int propertyIndex, const DataModelBase::PropertyValue &newValue)
         {
             switch (propertyIndex)
             {
