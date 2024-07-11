@@ -4,8 +4,6 @@
     outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
-    # qt-idaaas.url = "github:disorderedmaterials/qt-idaaas";
-    # qt-idaaas.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs =
     { self, nixpkgs, outdated, home-manager, flake-utils, bundlers, nixGL-src }:
@@ -43,23 +41,21 @@
           (toml pkgs)
         ];
       gui_libs = system: pkgs:
-        # let q = qt-idaaas.packages.${system};
-        let q = pkgs.qt6;
-        in with pkgs; [
+        with pkgs; [
           glib
           freetype
           ftgl
           libGL.dev
           libglvnd
           libglvnd.dev
-          q.qtbase
-          q.qtbase.dev
-          q.qtsvg
-          q.qtshadertools
-          q.qttools
-          q.qtdeclarative
-          q.qtdeclarative.dev
-          q.wrapQtAppsHook
+          qt6.qtbase
+          qt6.qtbase.dev
+          qt6.qtsvg
+          qt6.qtshadertools
+          qt6.qttools
+          qt6.qtdeclarative
+          qt6.qtdeclarative.dev
+          qt6.wrapQtAppsHook
         ];
       check_libs = pkgs: with pkgs; [ gtest ];
 
@@ -171,8 +167,7 @@
               gtk3
               nixGL.nixGLIntel
               openmpi
-              # qt-idaaas.packages.${system}.qttools
-              pkgs.qt6.qttools
+              qt6.qttools
               tbb_2021_8
               valgrind
             ]);
@@ -203,8 +198,6 @@
             "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
-          # QML_IMPORT_PATH = "${qt-idaaas.packages.${system}.qtdeclarative}/lib/qt-6/qml/";
-          # QML2_IMPORT_PATH = "${qt-idaaas.packages.${system}.qtdeclarative}/lib/qt-6/qml/";
           QML_IMPORT_PATH = "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
           QML2_IMPORT_PATH = "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
         };
