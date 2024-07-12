@@ -12,8 +12,8 @@
 class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
-    NodeKeywordBase(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, allowedNodeTypes, onlyInScope), KeywordBase(typeid(this))
+    NodeKeywordBase(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+        : NodeKeywordUnderlay(parentNode, allowedNodeTypes), KeywordBase(typeid(this))
     {
     }
     ~NodeKeywordBase() override = default;
@@ -43,8 +43,8 @@ template <class N> class NodeKeyword : public NodeKeywordBase
 {
     public:
     NodeKeyword(std::shared_ptr<const N> &data, ProcedureNode *parentNode,
-                const ProcedureNode::NodeTypeVector &allowedNodeTypes, bool onlyInScope)
-        : NodeKeywordBase(parentNode, allowedNodeTypes, onlyInScope), data_(data)
+                const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+        : NodeKeywordBase(parentNode, allowedNodeTypes), data_(data)
     {
     }
     ~NodeKeyword() override = default;
@@ -106,15 +106,12 @@ template <class N> class NodeKeyword : public NodeKeywordBase
 
         return true;
     }
-
     // Has not changed from initial value
     bool isDefault() const override { return data_ == nullptr; }
-
     // Express as a serialisable value
     SerialisedValue serialise() const override { return data_->name(); }
-
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &coreData)
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
         auto child = findNode(std::string_view(std::string(node.as_string())));
         setData(child);

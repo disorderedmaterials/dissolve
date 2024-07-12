@@ -5,16 +5,14 @@
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "keywords/node.h"
-#include "keywords/nodeAndInteger.h"
 #include "keywords/nodeValue.h"
 #include "keywords/nodeValueEnumOptions.h"
 #include "keywords/nodeVector.h"
 #include "keywords/vec3NodeValue.h"
 #include "procedure/nodes/registry.h"
 
-ProcedureNodeSequence::ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
-                                             std::string_view blockKeyword)
-    : owner_(owner), context_(context), blockKeyword_(blockKeyword)
+ProcedureNodeSequence::ProcedureNodeSequence(OptionalReferenceWrapper<ProcedureNode> owner, std::string_view blockKeyword)
+    : owner_(owner), blockKeyword_(blockKeyword)
 {
 }
 
@@ -34,12 +32,6 @@ void ProcedureNodeSequence::appendNode(NodeRef node, std::optional<int> insertAt
 
     // Set us as its scope
     node->setScope(*this);
-
-    // Check context
-    if (!node->isContextRelevant(context()))
-        throw(std::runtime_error(fmt::format("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", node->name(),
-                                             ProcedureNode::nodeTypes().keyword(node->type()),
-                                             ProcedureNode::nodeContexts().keyword(context_))));
 
     // If the node hasn't been given a name, generate a unique one for it now based on its type. Otherwise, check for a clash
     if (node->name().empty())
@@ -96,7 +88,7 @@ bool ProcedureNodeSequence::removeNode(NodeRef node)
  */
 
 // Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
-NodeRef ProcedureNodeSequence::searchNodes(std::string_view name, ConstNodeRef excludeNode,
+NodeRef ProcedureNodeSequence::searchNodes(std::string_view name, const ConstNodeRef &excludeNode,
                                            const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
 {
     for (const auto &node : sequence_)
@@ -152,14 +144,8 @@ ProcedureNodeSequence::searchParameters(std::string_view name,
 // Return this sequence's owner
 OptionalReferenceWrapper<ProcedureNode> ProcedureNodeSequence::owner() const { return owner_; }
 
-// Return the context of the sequence
-ProcedureNode::NodeContext ProcedureNodeSequence::context() const
-{
-    return context_ == ProcedureNode::NodeContext::InheritContext ? owner_->get().scopeContext() : context_;
-}
-
 // Return named node if present in this sequence, and which matches the (optional) type given
-ConstNodeRef ProcedureNodeSequence::node(std::string_view name, ConstNodeRef excludeNode,
+ConstNodeRef ProcedureNodeSequence::node(std::string_view name, const ConstNodeRef &excludeNode,
                                          const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
 {
     for (const auto &node : sequence_)
@@ -208,7 +194,8 @@ std::vector<ConstNodeRef> ProcedureNodeSequence::nodes(const ProcedureNode::Node
 }
 
 // Return named node if it is currently in scope (and matches the type / class given)
-ConstNodeRef ProcedureNodeSequence::nodeInScope(ConstNodeRef queryingNode, std::string_view name, ConstNodeRef excludeNode,
+ConstNodeRef ProcedureNodeSequence::nodeInScope(ConstNodeRef queryingNode, std::string_view name,
+                                                const ConstNodeRef &excludeNode,
                                                 const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
 {
     // If one was given, start from the querying node and work backwards...
@@ -234,7 +221,7 @@ ConstNodeRef ProcedureNodeSequence::nodeInScope(ConstNodeRef queryingNode, std::
 
     // Not in our list. Recursively check our owner
     if (owner_)
-        return owner_->get().getNode(name, true, excludeNode, allowedNodeTypes);
+        return owner_->get().getNodeInScope(name, excludeNode, allowedNodeTypes);
 
     // Not found
     return nullptr;
@@ -264,7 +251,7 @@ std::vector<ConstNodeRef> ProcedureNodeSequence::nodesInScope(ConstNodeRef query
     // Not in our list. Recursively check our owner
     if (owner_)
     {
-        auto parentMatches = owner_->get().getNodes(true, allowedNodeTypes);
+        auto parentMatches = owner_->get().getNodesInScope(allowedNodeTypes);
         std::copy(parentMatches.begin(), parentMatches.end(), std::back_inserter(matches));
     }
 
@@ -272,7 +259,7 @@ std::vector<ConstNodeRef> ProcedureNodeSequence::nodesInScope(ConstNodeRef query
 }
 
 // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
-ConstNodeRef ProcedureNodeSequence::nodeExists(std::string_view name, ConstNodeRef excludeNode,
+ConstNodeRef ProcedureNodeSequence::nodeExists(std::string_view name, const ConstNodeRef &excludeNode,
                                                const ProcedureNode::NodeTypeVector &allowedNodeTypes) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
@@ -301,7 +288,7 @@ ProcedureNodeSequence::parameterInScope(ConstNodeRef queryingNode, std::string_v
 
     // Not in our list. Recursively check our owner
     if (owner_)
-        return owner_->get().getParameter(name, true, excludeParameter);
+        return owner_->get().getParameterInScope(name, excludeParameter);
 
     // Not found
     return nullptr;
@@ -337,7 +324,7 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNodeSequence::paramete
     // Recursively check our owner
     if (owner_)
     {
-        auto otherParams = owner_->get().getParameters();
+        auto otherParams = owner_->get().getParametersInScope();
         parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
     }
 
@@ -353,11 +340,6 @@ bool ProcedureNodeSequence::validateNodeKeywords()
     {
         // NodeKeyword
         for (auto &kwd : node->keywords().allOfType<NodeKeywordBase>())
-            if (!kwd->validate())
-                result = false;
-
-        // NodeAndIntegerKeywordKeyword
-        for (auto &kwd : node->keywords().allOfType<NodeAndIntegerKeywordBase>())
             if (!kwd->validate())
                 result = false;
 
@@ -383,11 +365,6 @@ bool ProcedureNodeSequence::check() const
         if (&node->scope()->get() != this)
             return Messenger::error("Node '{}' failed parent check ({} is not this {})\n", node->name(),
                                     fmt::ptr(node->parent()), fmt::ptr(this));
-
-        // Check context
-        if (!node->isContextRelevant(context()))
-            return Messenger::error("Node '{}' is not allowed in this context ({})\n", node->name(),
-                                    ProcedureNode::nodeContexts().keyword(context_));
 
         // Check node branch if present
         if (node->branch() && !node->branch()->get().check())
@@ -416,7 +393,7 @@ bool ProcedureNodeSequence::check() const
 bool ProcedureNodeSequence::prepare(const ProcedureContext &procedureContext)
 {
     // Loop over nodes in the list, preparing each in turn
-    for (auto node : sequence_)
+    for (const auto &node : sequence_)
         if (!node->prepare(procedureContext))
             return false;
 
@@ -431,7 +408,7 @@ bool ProcedureNodeSequence::execute(const ProcedureContext &procedureContext)
         return true;
 
     // Loop over nodes in the list, executing each in turn
-    for (auto node : sequence_)
+    for (const auto &node : sequence_)
         if (!node->execute(procedureContext))
             return false;
 
@@ -442,7 +419,7 @@ bool ProcedureNodeSequence::execute(const ProcedureContext &procedureContext)
 bool ProcedureNodeSequence::finalise(const ProcedureContext &procedureContext)
 {
     // Loop over nodes in the list, finalising each in turn
-    for (auto node : sequence_)
+    for (const auto &node : sequence_)
         if (!node->finalise(procedureContext))
             return false;
 
@@ -523,7 +500,7 @@ bool ProcedureNodeSequence::serialise(LineParser &parser, std::string_view prefi
     // to
 
     // Loop over nodes in this sequence
-    for (auto node : sequence_)
+    for (const auto &node : sequence_)
         if (!node->serialise(parser, prefix))
             return false;
 

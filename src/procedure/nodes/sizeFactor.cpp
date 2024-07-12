@@ -6,8 +6,7 @@
 #include "keywords/nodeValue.h"
 #include "procedure/nodes/node.h"
 
-SizeFactorProcedureNode::SizeFactorProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::SizeFactor, {ProcedureNode::GenerationContext})
+SizeFactorProcedureNode::SizeFactorProcedureNode() : ProcedureNode(NodeType::SizeFactor)
 {
     keywords_.add<NodeValueKeyword>("SizeFactor", "Size factor scaling to apply to configuration", sizeFactor_, this);
 }

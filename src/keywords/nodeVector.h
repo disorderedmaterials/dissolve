@@ -13,8 +13,8 @@
 class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
-    NodeVectorKeywordBase(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, allowedNodeTypes, onlyInScope), KeywordBase(typeid(this))
+    NodeVectorKeywordBase(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+        : NodeKeywordUnderlay(parentNode, allowedNodeTypes), KeywordBase(typeid(this))
     {
     }
     ~NodeVectorKeywordBase() override = default;
@@ -49,8 +49,8 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
 {
     public:
     NodeVectorKeyword(ConstNodeVector<N> &data, ProcedureNode *parentNode,
-                      const ProcedureNode::NodeTypeVector &allowedNodeTypes, bool onlyInScope)
-        : NodeVectorKeywordBase(parentNode, allowedNodeTypes, onlyInScope), data_(data)
+                      const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+        : NodeVectorKeywordBase(parentNode, allowedNodeTypes), data_(data)
     {
     }
     ~NodeVectorKeyword() override = default;

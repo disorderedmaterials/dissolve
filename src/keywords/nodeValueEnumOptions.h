@@ -72,7 +72,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
     {
         assert(parentNode_);
 
-        if (!data_.first.set(expressionText, parentNode_->getParameters()))
+        if (!data_.first.set(expressionText, parentNode_->getParametersInScope()))
             return false;
 
         return true;
@@ -130,7 +130,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
-        data_.first.deserialise(node.at("value"), parentNode_->getParameters());
+        data_.first.deserialise(node.at("value"), parentNode_->getParametersInScope());
         data_.second = optionData_.deserialise(node.at("option"));
     }
 };

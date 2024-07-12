@@ -2,8 +2,6 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "procedure/nodes/pickRegion.h"
-#include "classes/configuration.h"
-#include "classes/species.h"
 #include "keywords/node.h"
 #include "procedure/nodes/regionBase.h"
 
@@ -13,7 +11,7 @@ PickRegionProcedureNode::PickRegionProcedureNode(std::shared_ptr<const RegionPro
     keywords_.setOrganisation("Options", "Pick Targets");
     keywords_.add<NodeKeyword<RegionProcedureNodeBase>>(
         "Region", "Region containing molecules that should be picked", region_, this,
-        NodeTypeVector{NodeType::CylindricalRegion, NodeType::GeneralRegion, NodeType::CustomRegion}, true);
+        NodeTypeVector{NodeType::CylindricalRegion, NodeType::GeneralRegion, NodeType::CustomRegion});
 }
 
 /*

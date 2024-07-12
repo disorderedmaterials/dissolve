@@ -84,14 +84,29 @@ void GenericList::rename(std::string_view oldName, std::string_view oldPrefix, s
 // Rename prefix of items
 void GenericList::renamePrefix(std::string_view oldPrefix, std::string_view newPrefix)
 {
+    if (oldPrefix == newPrefix)
+        return;
+
+    /*
+     * Because we are using a std::map there is no easy way to achieve a bulk renaming of keys. Anecdotal evidence of odd
+     * behaviour indicates that extracting and re-inserting in one loop does not causing segfaults or, at the very least, we
+     * don't actually rename all the target data. So, here we extract and rename matching items, with the loop restarting after
+     * every match and running until we get no match. This obviously isn't terribly efficient but the function is sparingly used
+     * and so the general performance impact will be minimal.
+     */
     auto delimitedPrefix = fmt::format("{}//", oldPrefix);
-    for (auto &[key, value] : items_)
-        if (DissolveSys::startsWith(key, delimitedPrefix))
-        {
-            auto handle = items_.extract(key);
-            handle.key() = fmt::format("{}//{}", newPrefix, DissolveSys::afterString(key, "//"));
-            items_.insert(std::move(handle));
-        }
+    do
+    {
+        auto it =
+            std::find_if(items_.begin(), items_.end(),
+                         [delimitedPrefix](const auto &item) { return DissolveSys::startsWith(item.first, delimitedPrefix); });
+        if (it == items_.end())
+            break;
+
+        auto handle = items_.extract(it);
+        handle.key() = fmt::format("{}//{}", newPrefix, DissolveSys::afterString(it->first, "//"));
+        items_.insert(std::move(handle));
+    } while (true);
 }
 
 // Prune all items with '@suffix'

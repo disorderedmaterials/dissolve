@@ -18,8 +18,8 @@ NodeControlWidget::NodeControlWidget(DissolveWindow *dissolveWindow, NodeRef nod
     connect(dissolveWindow, SIGNAL(dataMutated(int)), this, SLOT(globalDataMutated(int)));
 
     // Set the icon label
-    ui_.NodeIconLabel->setPixmap(
-        QPixmap(QString(":/nodes/icons/nodes/%1.svg").arg(QString::fromStdString(ProcedureNode::lccNodeType(node->type())))));
+    ui_.NodeIconLabel->setPixmap(QPixmap(
+        QString(":/nodes/icons/nodes/%1.svg").arg(QString::fromStdString(ProcedureNode::nodeTypes().keyword(node->type())))));
 
     // Set up any keyword widgets we have
     if (!node_->keywords().sections().empty())
@@ -49,7 +49,7 @@ void NodeControlWidget::updateControls()
     // Ensure node name and icon status are up to date
     ui_.NodeNameLabel->setText(
         QString("%1 (%2)").arg(QString::fromStdString(std::string(node_->name())),
-                               QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node_->type())))));
+                               QString::fromStdString(ProcedureNode::nodeTypes().keyword(node_->type()))));
 
     // Update keywords
     ui_.NodeKeywordsWidget->updateControls();

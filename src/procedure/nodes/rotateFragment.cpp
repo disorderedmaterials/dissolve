@@ -15,13 +15,11 @@
 #include "procedure/nodes/select.h"
 
 RotateFragmentProcedureNode::RotateFragmentProcedureNode(std::shared_ptr<SelectProcedureNode> site)
-    : ProcedureNode(ProcedureNode::NodeType::RotateFragment,
-                    {ProcedureNode::GenerationContext, ProcedureNode::AnalysisContext}),
-      site_(site)
+    : ProcedureNode(NodeType::RotateFragment), site_(site)
 {
     keywords_.setOrganisation("Options", "Site");
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Site", "Site to be rotated", site_, this, NodeTypeVector{NodeType::Select},
-                                                    true);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Site", "Site to be rotated", site_, this,
+                                                    NodeTypeVector{NodeType::Select});
     keywords_.add<NodeValueKeyword>("Rotation", "Rotation to perform", rotation_, this);
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Axis", "Axis for rotation", axis_, OrientedSite::siteAxis());
 }

@@ -72,12 +72,12 @@ int ProcedureModel::columnCount(const QModelIndex &parent) const
     if (!procedure_)
         return 0;
 
-    return 2;
+    return 1;
 }
 
 QVariant ProcedureModel::data(const QModelIndex &index, int role) const
 {
-    if (!procedure_)
+    if (!procedure_ || index.column() != 0)
         return {};
 
     // Cast the index internal pointer to a node
@@ -85,43 +85,22 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
     if (!node)
         return {};
 
-    if (index.column() == 0)
-        switch (role)
-        {
-            case (Qt::DisplayRole):
-                if (node->name().empty())
-                    return QString::fromStdString(std::string(node->nodeTypes().keyword(node->type())));
-                else
-                    return QString("%1 (%2)").arg(
-                        QString::fromStdString(std::string(node->name())),
-                        QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))));
-            case (Qt::UserRole):
-                return QVariant::fromValue(node->shared_from_this());
-            case (Qt::DecorationRole):
-                return QIcon(QPixmap(QString(":/nodes/icons/nodes/%1.svg")
-                                         .arg(QString::fromStdString(ProcedureNode::lccNodeType(node->type())))));
-            default:
-                return {};
-        }
-    else if (index.column() == 1)
-        switch (role)
-        {
-            case (Qt::DisplayRole):
-                if (node->scope()->get().owner())
-                    return QString("%1 (%2 branch in %3)")
-                        .arg(QString::fromStdString(std::string(ProcedureNode::nodeContexts().keyword(node->scopeContext()))),
-                             QString::fromStdString(std::string(node->scope()->get().blockKeyword())),
-                             QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->parent()->type()))));
-                else
-                    return QString("%1 (in root sequence)")
-                        .arg(QString::fromStdString(std::string(ProcedureNode::nodeContexts().keyword(node->scopeContext()))));
-            case (Qt::UserRole):
-                return QVariant::fromValue(node->shared_from_this());
-            default:
-                return {};
-        }
-
-    return {};
+    switch (role)
+    {
+        case (Qt::DisplayRole):
+            if (node->name().empty())
+                return QString::fromStdString(ProcedureNode::nodeTypes().keyword(node->type()));
+            else
+                return QString("%1 (%2)").arg(QString::fromStdString(std::string(node->name())),
+                                              QString::fromStdString(ProcedureNode::nodeTypes().keyword(node->type())));
+        case (Qt::UserRole):
+            return QVariant::fromValue(node->shared_from_this());
+        case (Qt::DecorationRole):
+            return QIcon(QPixmap(QString(":/nodes/icons/nodes/%1.svg")
+                                     .arg(QString::fromStdString(ProcedureNode::nodeTypes().keyword(node->type())))));
+        default:
+            return {};
+    }
 }
 
 bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -183,15 +162,10 @@ bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, in
 
 QVariant ProcedureModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
+    if (role != Qt::DisplayRole || orientation != Qt::Horizontal || section != 0)
         return {};
 
-    if (section == 0)
-        return "Node";
-    else if (section == 1)
-        return "Context";
-
-    return {};
+    return "Node";
 }
 
 QModelIndex ProcedureModel::index(int row, int column, const QModelIndex &parent) const
@@ -321,10 +295,6 @@ bool ProcedureModel::canDropMimeData(const QMimeData *data, Qt::DropAction actio
         if (!scope)
             return false;
 
-        // Now check the suitability of the existing node in the target scope context.
-        if (!existingNode->isContextRelevant(scope->get().context()))
-            return false;
-
         return true;
     }
 
@@ -341,15 +311,10 @@ bool ProcedureModel::canDropMimeData(const QMimeData *data, Qt::DropAction actio
         if (!scope)
             return false;
 
-        // Now check the suitability of the dragged node in the target scope context. The mimeData should contain the new node
-        // for us.
+        // The mimeData should contain the new node
         auto newNode = mimeData->node();
-        if (!newNode)
-            return false;
-        if (!newNode->isContextRelevant(scope->get().context()))
-            return false;
-
-        return true;
+        if (newNode)
+            return true;
     }
 
     return false;

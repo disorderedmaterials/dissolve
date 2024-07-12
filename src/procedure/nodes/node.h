@@ -59,22 +59,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     using NodeTypeVector = std::vector<ProcedureNode::NodeType>;
     // Return enum option info for NodeType
     static EnumOptions<NodeType> nodeTypes();
-    // Return the lowerCamelCase name of the node type provided
-    static std::string lccNodeType(NodeType nodeType);
-    // Node Contexts
-    enum NodeContext
-    {
-        NoContext = 0,
-        AnalysisContext = 1,
-        GenerationContext = 2,
-        OperateContext = 4,
-        ControlContext = 8,
-        AnyContext = 16,
-        InheritContext = 32,
-    };
-    // Return enum option info for NodeContext
-    static EnumOptions<NodeContext> nodeContexts();
-    ProcedureNode(NodeType nodeType, std::vector<NodeContext> relevantContexts);
+    ProcedureNode(NodeType nodeType);
     virtual ~ProcedureNode() = default;
 
     /*
@@ -83,16 +68,12 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     protected:
     // Node type
     NodeType type_;
-    // Relevant contexts for node
-    std::vector<NodeContext> relevantContexts_;
     // Node name
     std::string name_;
 
     public:
     // Return node type
     NodeType type() const;
-    // Return whether the supplied context is relevant for the current node
-    bool isContextRelevant(NodeContext targetContext) const;
     // Return whether a name for the node must be provided
     virtual bool mustBeNamed() const;
     // Set node name
@@ -126,18 +107,16 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     void setScope(ProcedureNodeSequence &scopeNode);
     // Return scope (ProcedureNodeSequence) in which this node exists
     OptionalReferenceWrapper<ProcedureNodeSequence> scope() const;
-    // Return context of scope in which this node exists
-    ProcedureNode::NodeContext scopeContext() const;
-    // Return named node, optionally matching the type / class given, in or out of scope
-    ConstNodeRef getNode(std::string_view name, bool onlyInScope, ConstNodeRef excludeNode = nullptr,
-                         const NodeTypeVector &allowedNodeTypes = {}) const;
-    // Return nodes, optionally matching the type / class given, in or out of scope
-    std::vector<ConstNodeRef> getNodes(bool onlyInScope, const NodeTypeVector &allowedNodeTypes = {}) const;
-    // Return the named parameter, in or out of scope
-    std::shared_ptr<ExpressionVariable> getParameter(std::string_view name, bool onlyInScope,
-                                                     std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
+    // Return named node which must optionally match one of the types given, in scope
+    ConstNodeRef getNodeInScope(std::string_view name, const ConstNodeRef &excludeNode = {},
+                                const NodeTypeVector &allowedNodeTypes = {}) const;
+    // Return nodes of the specified types in scope
+    std::vector<ConstNodeRef> getNodesInScope(const NodeTypeVector &allowedNodeTypes = {}) const;
+    // Return the named parameter in scope
+    std::shared_ptr<ExpressionVariable>
+    getParameterInScope(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = {}) const;
     // Return all parameters in scope
-    std::vector<std::shared_ptr<ExpressionVariable>> getParameters() const;
+    std::vector<std::shared_ptr<ExpressionVariable>> getParametersInScope() const;
 
     /*
      * Branch
@@ -161,7 +140,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     std::shared_ptr<ExpressionVariable> addParameter(std::string_view name, const ExpressionValue &initialValue = {});
     // Return the named parameter (if it exists)
     std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
-                                                     std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
+                                                     const std::shared_ptr<ExpressionVariable> &excludeParameter = {});
     // Return references to all parameters for this node
     const std::vector<std::shared_ptr<ExpressionVariable>> &parameters() const;
 

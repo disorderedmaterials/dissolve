@@ -9,8 +9,7 @@
 #include "keywords/speciesVector.h"
 
 RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::RestraintPotential, {ProcedureNode::GenerationContext}),
-      potential_(Functions1D::Form::Harmonic)
+    : ProcedureNode(NodeType::RestraintPotential), potential_(Functions1D::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<InteractionPotentialKeyword<Functions1D>>("Potential", "Potential to apply to individual atoms", potential_);
@@ -19,7 +18,7 @@ RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
     keywords_.add<SpeciesVectorKeyword>("Species", "Target species to apply atomic restraints to", speciesToRestrain_);
     keywords_.add<NodeKeyword<PickProcedureNodeBase>>(
         "Selection", "Picked selection of molecules to apply atomic restraints to", selectionToRestrain_, this,
-        NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion}, true);
+        NodeTypeVector{NodeType::Pick, NodeType::PickProximity, NodeType::PickRegion});
 }
 
 /*

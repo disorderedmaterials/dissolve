@@ -16,16 +16,14 @@
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
                                    Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::NodeType::Add, {ProcedureNode::GenerationContext}), density_{density, densityUnits},
-      population_(population), species_(sp)
+    : ProcedureNode(NodeType::Add), density_{density, densityUnits}, population_(population), species_(sp)
 {
     setUpKeywords();
 }
 
 AddProcedureNode::AddProcedureNode(std::shared_ptr<const CoordinateSetsProcedureNode> sets, const NodeValue &population,
                                    const NodeValue &density, Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::NodeType::Add, {ProcedureNode::GenerationContext}),
-      coordinateSets_(std::move(sets)), density_{density, densityUnits}, population_(population)
+    : ProcedureNode(NodeType::Add), coordinateSets_(std::move(sets)), density_{density, densityUnits}, population_(population)
 {
     setUpKeywords();
 }
@@ -36,7 +34,7 @@ void AddProcedureNode::setUpKeywords()
     keywords_.setOrganisation("Options", "Target");
     keywords_.add<SpeciesKeyword>("Species", "Target species to add", species_);
     keywords_.add<NodeKeyword<CoordinateSetsProcedureNode>>("CoordinateSets", "Target coordinate sets to add", coordinateSets_,
-                                                            this, NodeTypeVector{NodeType::CoordinateSets}, true);
+                                                            this, NodeTypeVector{NodeType::CoordinateSets});
     keywords_.add<NodeValueKeyword>("Population", "Population of the target species to add", population_, this);
     keywords_.add<NodeValueEnumOptionsKeyword<Units::DensityUnits>>("Density", "Density at which to add the target species",
                                                                     density_, this, Units::densityUnits());
@@ -53,7 +51,7 @@ void AddProcedureNode::setUpKeywords()
         "Positioning", "Positioning type for individual molecules", positioningType_, positioningTypes());
     keywords_.add<NodeKeyword<RegionProcedureNodeBase>>(
         "Region", "Region into which to add the species", region_, this,
-        NodeTypeVector{NodeType::CustomRegion, NodeType::CylindricalRegion, NodeType::GeneralRegion}, true);
+        NodeTypeVector{NodeType::CustomRegion, NodeType::CylindricalRegion, NodeType::GeneralRegion});
     keywords_.add<BoolKeyword>("Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
 }
 

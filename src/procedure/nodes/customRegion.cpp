@@ -63,5 +63,6 @@ CustomRegionProcedureNode::CustomRegionProcedureNode() : RegionProcedureNodeBase
 
 std::shared_ptr<VoxelKernel> CustomRegionProcedureNode::createVoxelKernel()
 {
-    return std::make_shared<CustomRegionVoxelKernel>(expression_.asString(), getParameters(), minimumValue_, maximumValue_);
+    return std::make_shared<CustomRegionVoxelKernel>(expression_.asString(), getParametersInScope(), minimumValue_,
+                                                     maximumValue_);
 }

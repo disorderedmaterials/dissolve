@@ -9,7 +9,7 @@
 class NodeKeywordUnderlay
 {
     public:
-    NodeKeywordUnderlay(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes, bool onlyInScope);
+    NodeKeywordUnderlay(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes);
     virtual ~NodeKeywordUnderlay() = default;
 
     /*
@@ -20,16 +20,12 @@ class NodeKeywordUnderlay
     NodeRef parentNode_;
     // Optional target node types to allow
     ProcedureNode::NodeTypeVector allowedNodeTypes_;
-    // Whether to accept nodes within scope only
-    bool onlyInScope_;
 
     public:
     // Return parent ProcedureNode
     NodeRef parentNode() const;
     // Return optional target nodes type to allow
     const ProcedureNode::NodeTypeVector &allowedNodeTypes() const;
-    // Return whether to accept nodes within scope only
-    bool onlyInScope() const;
     // Return vector of possible nodes allowed based on class and type definitions
     std::vector<ConstNodeRef> allowedNodes() const;
     // Find the named node, obeying scope
