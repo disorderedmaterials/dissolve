@@ -3,17 +3,13 @@
 
 #pragma once
 
-#include "keywords/expressionVariableVector.h"
-#include "templates/optionalRef.h"
+#include "templates/dataModel.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
-#include <vector>
 
 // QAbstractTableModel Interface to DataTableModel
 class DataTableModelInterface : public QAbstractTableModel
 {
-    Q_OBJECT
-
     public:
     DataTableModelInterface(DataModelBase &dataModel);
 

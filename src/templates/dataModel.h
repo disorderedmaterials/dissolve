@@ -4,8 +4,11 @@
 #pragma once
 
 #include "templates/flags.h"
+#include <fmt/core.h>
+#include <functional>
 #include <string>
 #include <variant>
+#include <vector>
 
 // Data property types
 enum class PropertyType
