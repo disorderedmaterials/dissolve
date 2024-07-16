@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>194</width>
-    <height>99</height>
+    <height>106</height>
    </rect>
   </property>
   <property name="font">
@@ -50,6 +50,9 @@
      </property>
      <property name="selectionMode">
       <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
      </property>
     </widget>
    </item>

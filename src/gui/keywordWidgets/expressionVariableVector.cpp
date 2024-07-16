@@ -43,7 +43,7 @@ void ExpressionVariableVectorKeywordWidget::variableDataChanged(const QModelInde
 void ExpressionVariableVectorKeywordWidget::variableSelectionChanged(const QItemSelection &current,
                                                                      const QItemSelection &previous)
 {
-    ui_.RemoveVariableButton->setEnabled(current.empty());
+    ui_.RemoveVariableButton->setEnabled(!current.empty());
 }
 
 void ExpressionVariableVectorKeywordWidget::on_AddVariableButton_clicked(bool checked) { variableModel_.appendRows(1, {}); }
