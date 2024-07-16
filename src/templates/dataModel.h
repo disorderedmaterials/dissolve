@@ -6,6 +6,7 @@
 #include "templates/flags.h"
 #include <fmt/core.h>
 #include <functional>
+#include <optional>
 #include <string>
 #include <variant>
 #include <vector>
@@ -109,21 +110,20 @@ class DataModelBase
     {
         mutationSignalFunction_ = std::move(mutationSignalFunction);
     }
-    void emitMutationSignal(MutationSignal signal, int startIndex, int endIndex)
+    void emitMutationSignal(MutationSignal signal, int startIndex = 0, int endIndex = 0)
     {
         if (mutationSignalFunction_)
             mutationSignalFunction_(signal, startIndex, endIndex);
     }
     // Create new item(s) starting at specified vector index
     virtual void createItems(int index, int count) = 0;
+    // Append new item(s) to the end of the data
+    virtual void appendItems(int count) = 0;
 };
 
 template <class DataItem> class DataTableModel : public DataModelBase
 {
     public:
-    // Data access functions
-    using PropertySetFunction = std::function<bool(DataItem &, int, PropertyValue)>;
-    using PropertyGetFunction = std::function<PropertyValue(const DataItem &, int)>;
     DataTableModel(std::vector<DataItem> &data, const std::vector<DataItemProperty> &itemProperties)
         : DataModelBase(itemProperties), data_(data)
     {
@@ -153,8 +153,11 @@ template <class DataItem> class DataTableModel : public DataModelBase
      * Data Access
      */
     private:
-    // Set / get functions, unique per class
+    // Data setter function - unique to DataItem class
+    using PropertySetFunction = std::function<bool(DataItem &, int, PropertyValue)>;
     PropertySetFunction setPropertyFunction_;
+    // Data getter function - unique to DataItem class
+    using PropertyGetFunction = std::function<PropertyValue(const DataItem &, int)>;
     PropertyGetFunction getPropertyFunction_;
 
     public:
@@ -200,12 +203,40 @@ template <class DataItem> class DataTableModel : public DataModelBase
     /*
      * Item Management
      */
+    private:
+    // Creation function (if required) otherwise default constructor T() will be called
+    using CreateItemFunction = std::function<DataItem(std::optional<int>)>;
+    CreateItemFunction createItemFunction_;
+
+    public:
+    // Set data creation function
+    void setDataCreationFunction(CreateItemFunction function) { createItemFunction_ = std::move(function); }
+
     public:
     // Create new item(s) starting at specified vector index
     void createItems(int index, int count) final
     {
-        emitMutationSignal(DataModelBase::MutationSignal::DataCreationStarted, index, index + count);
-        data_.insert(data_.begin() + index, DataItem());
-        emitMutationSignal(DataModelBase::MutationSignal::DataCreationFinished, index, index + count);
+        emitMutationSignal(DataModelBase::MutationSignal::DataCreationStarted, index, index + count - 1);
+        for (auto n = 0; n < count; ++n)
+        {
+            if (createItemFunction_)
+                createItemFunction_(index + n);
+            else
+                data_.insert(data_.begin() + index, DataItem());
+        }
+        emitMutationSignal(DataModelBase::MutationSignal::DataCreationFinished);
+    }
+    // Append new item(s) to the end of the data
+    void appendItems(int count) final
+    {
+        emitMutationSignal(DataModelBase::MutationSignal::DataCreationStarted, data_.size(), data_.size() + count - 1);
+        for (auto n = 0; n < count; ++n)
+        {
+            if (createItemFunction_)
+                createItemFunction_({});
+            else
+                data_.emplace_back(DataItem());
+        }
+        emitMutationSignal(DataModelBase::MutationSignal::DataCreationFinished);
     }
 };

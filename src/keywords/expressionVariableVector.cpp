@@ -75,6 +75,14 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std
             }
             return true;
         });
+    dataModel_.setDataCreationFunction(
+        [&](std::optional<int> insertAt)
+        {
+            auto allParamters = parentNode_->getParametersInScope();
+            return parentNode_->addParameter(
+                DissolveSys::uniqueName("NewVariable", allParamters, [](const auto &var) { return var->name(); }), {},
+                insertAt);
+        });
 }
 
 /*

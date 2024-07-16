@@ -35,6 +35,8 @@ class DataTableModelInterface : public QAbstractTableModel
     bool setData(const QModelIndex &index, const QVariant &value, int role) override;
     // Insert one or more rows at the specified position
     bool insertRows(int row, int count, const QModelIndex &parent) override;
+    // Append one or more rows
+    bool appendRows(int count, const QModelIndex &parent);
     // Remove one or more rows starting from the specified position
     bool removeRows(int row, int count, const QModelIndex &parent) override;
 

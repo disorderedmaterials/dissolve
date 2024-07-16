@@ -96,6 +96,16 @@ bool DataTableModelInterface::insertRows(int row, int count, const QModelIndex &
     return true;
 }
 
+// Append one or more rows
+bool DataTableModelInterface::appendRows(int count, const QModelIndex &parent)
+{
+    Q_UNUSED(parent);
+
+    dataModel_.appendItems(count);
+
+    return true;
+}
+
 // Remove one or more rows starting from the specified position
 bool DataTableModelInterface::removeRows(int row, int count, const QModelIndex &parent)
 {
@@ -119,17 +129,16 @@ bool DataTableModelInterface::removeRows(int row, int count, const QModelIndex &
 // React to a mutation in the model
 void DataTableModelInterface::dataMutated(DataModelBase::MutationSignal signal, int startIndex, int endIndex)
 {
-    printf("lkasjdflkasjk\n");
     switch (signal)
     {
         case (DataModelBase::MutationSignal::DataCreationStarted):
-            beginInsertRows({}, startIndex, endIndex - startIndex + 1);
+            beginInsertRows({}, startIndex, endIndex);
             break;
         case (DataModelBase::MutationSignal::DataCreationFinished):
             endInsertRows();
             break;
         case (DataModelBase::MutationSignal::DataRemovalStarted):
-            beginRemoveRows({}, startIndex, endIndex - startIndex + 1);
+            beginRemoveRows({}, startIndex, endIndex);
             break;
         case (DataModelBase::MutationSignal::DataRemovalFinished):
             endRemoveRows();
