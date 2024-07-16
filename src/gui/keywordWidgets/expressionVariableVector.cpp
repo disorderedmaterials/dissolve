@@ -48,7 +48,10 @@ void ExpressionVariableVectorKeywordWidget::variableSelectionChanged(const QItem
 
 void ExpressionVariableVectorKeywordWidget::on_AddVariableButton_clicked(bool checked) { variableModel_.appendRows(1, {}); }
 
-void ExpressionVariableVectorKeywordWidget::on_RemoveVariableButton_clicked(bool checked) {}
+void ExpressionVariableVectorKeywordWidget::on_RemoveVariableButton_clicked(bool checked)
+{
+    variableModel_.removeRows(ui_.VariablesTable->selectionModel()->currentIndex().row(), 1, {});
+}
 
 // Update value displayed in widget
 void ExpressionVariableVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}

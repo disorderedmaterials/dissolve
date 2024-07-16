@@ -109,16 +109,10 @@ bool DataTableModelInterface::appendRows(int count, const QModelIndex &parent)
 // Remove one or more rows starting from the specified position
 bool DataTableModelInterface::removeRows(int row, int count, const QModelIndex &parent)
 {
-    // TODO
-    Q_UNUSED(count);
-    if (row >= rowCount(parent) || row < 0)
-    {
-        return false;
-    }
+    Q_UNUSED(parent);
 
-    beginRemoveRows(parent, row, row);
-    //    ranges_->get().erase(ranges_->get().begin() + row);
-    endRemoveRows();
+    dataModel_.removeItems(row, count);
+
     return true;
 }
 

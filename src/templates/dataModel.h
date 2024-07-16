@@ -119,6 +119,8 @@ class DataModelBase
     virtual void createItems(int index, int count) = 0;
     // Append new item(s) to the end of the data
     virtual void appendItems(int count) = 0;
+    // Remove item(s) starting at specified vector index
+    virtual void removeItems(int index, int count) = 0;
 };
 
 template <class DataItem> class DataTableModel : public DataModelBase
@@ -204,13 +206,18 @@ template <class DataItem> class DataTableModel : public DataModelBase
      * Item Management
      */
     private:
-    // Creation function (if required) otherwise default constructor T() will be called
+    // Item creation function (if required) otherwise default constructor T() will be called
     using CreateItemFunction = std::function<DataItem(std::optional<int>)>;
     CreateItemFunction createItemFunction_;
+    // Item removal function (if required)
+    using RemoveItemFunction = std::function<void(int)>;
+    RemoveItemFunction removeItemFunction_;
 
     public:
     // Set data creation function
     void setDataCreationFunction(CreateItemFunction function) { createItemFunction_ = std::move(function); }
+    // Set data removal function
+    void setDataRemovalFunction(RemoveItemFunction function) { removeItemFunction_ = std::move(function); }
 
     public:
     // Create new item(s) starting at specified vector index
@@ -238,5 +245,18 @@ template <class DataItem> class DataTableModel : public DataModelBase
                 data_.emplace_back(DataItem());
         }
         emitMutationSignal(DataModelBase::MutationSignal::DataCreationFinished);
+    }
+    // Remove item(s) starting at specified vector index
+    void removeItems(int index, int count) final
+    {
+        emitMutationSignal(DataModelBase::MutationSignal::DataRemovalStarted, index, index + count - 1);
+        if (removeItemFunction_)
+        {
+            for (auto n = 0; n < count; ++n)
+                removeItemFunction_(index);
+        }
+        else
+            data_.erase(data_.begin() + index, data_.begin() + index + count);
+        emitMutationSignal(DataModelBase::MutationSignal::DataRemovalFinished);
     }
 };
