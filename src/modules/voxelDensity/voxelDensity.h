@@ -36,16 +36,8 @@ class VoxelDensityModule : public Module
     std::vector<const Species *> restrictToSpecies_;
     // Target property for analysis
     VoxelDensityModule::TargetPropertyType targetProperty_;
-    // Density
+    // Number of analysis points
     int numPoints_;  
-    /*
-    // Range (min, max, binwidth) of x distance binning
-    Vec3<double> xAxisRange_{0.0, 10.0, 0.05};
-    // Range (min, max, binwidth) of y distance binning
-    Vec3<double> yAxisRange_{0.0, 10.0, 0.05};
-    // Range (min, max, binwidth) of z distance binning
-    Vec3<double> zAxisRange_{0.0, 10.0, 0.05};
-    */
 
     /*
      * Processing
