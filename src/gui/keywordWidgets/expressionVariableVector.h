@@ -8,9 +8,6 @@
 #include "gui/keywordWidgets/ui_expressionVariableVector.h"
 #include "keywords/expressionVariableVector.h"
 
-// Forward Declarations
-class QWidget;
-
 class ExpressionVariableVectorKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
@@ -38,8 +35,8 @@ class ExpressionVariableVectorKeywordWidget : public QWidget, public KeywordWidg
     private Q_SLOTS:
     void variableDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
     void variableSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
-    void ui_AddVariableButton_clicked(bool checked);
-    void ui_RemoveVariableButton_clicked(bool checked);
+    void on_AddVariableButton_clicked(bool checked);
+    void on_RemoveVariableButton_clicked(bool checked);
 
     Q_SIGNALS:
     // Keyword data changed
