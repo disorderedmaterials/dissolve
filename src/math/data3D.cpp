@@ -54,6 +54,9 @@ void Data3D::initialise(int xSize, int ySize, int zSize, bool withError)
     ++version_;
 }
 
+// Initialise arrays to specified uniform size
+void Data3D::initialise(int size, bool withError) { initialise(size, size, size, withError); }
+
 // Initialise bins and axes simultaneously
 void Data3D::initialise(int nx, double xMin, double xDelta, int ny, double yMin, double yDelta, int nz, double zMin,
                         double zDelta, bool withError)
@@ -119,6 +122,16 @@ void Data3D::zero()
 
 // Return data version
 int Data3D::version() const { return version_; }
+
+// Add new data point
+void Data3D::addPoint(double x, double y, double z, double value)
+{
+    x_.push_back(x), y_.push_back(y), z_.push_back(z);
+
+    values_[std::tuple{x, y, z}] = value;
+
+    ++version_;
+}
 
 // Return x value specified
 double &Data3D::xAxis(int index)
