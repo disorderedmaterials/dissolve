@@ -24,8 +24,8 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     auto unaryOp =
         [&density, &unitCell](const auto &atom)
     {
-        auto foldedFractionalAtomCoords = atom.set(unitCell->foldFractional(atom.r()));
-        auto x = foldedFractionalAtomCoords.x(), y = foldedFractionalAtomCoords.y(), z = foldedFractionalAtomCoords.z();
+        atom.set(unitCell->foldFractional(atom.r()));
+        auto x = atom.x(), y = atom.y(), z = atom.z();
         auto atomicNumber = atom.speciesAtom()->Z();
 
         double value;
