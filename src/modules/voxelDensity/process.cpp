@@ -64,4 +64,6 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     }
 
     dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), unaryOp);
+
+    return ExecutionResult::Success;
 }
