@@ -23,11 +23,13 @@ int DataTableModelInterface::columnCount(const QModelIndex &parent) const { retu
 // Return flags for the specified model index
 Qt::ItemFlags DataTableModelInterface::flags(const QModelIndex &index) const
 {
-    // TODO
-    if (index.column() == 1)
-        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    else
-        return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+    auto &propertyFlags = dataModel_.propertyFlags(index.column());
+    Qt::ItemFlags flags = Qt::ItemIsSelectable;
+    if (!propertyFlags.isSet(DataItemProperty::ReadOnly))
+        flags.setFlag(Qt::ItemIsEditable);
+    if (!propertyFlags.isSet(DataItemProperty::Disabled))
+        flags.setFlag(Qt::ItemIsEnabled);
+    return flags;
 }
 
 // Return header data for the specified section, orientation, and role

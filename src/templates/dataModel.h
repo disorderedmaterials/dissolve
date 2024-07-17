@@ -27,7 +27,8 @@ class DataItemProperty
     // Data property flags
     enum PropertyFlag
     {
-        ReadOnly
+        ReadOnly,
+        Disabled
     };
     DataItemProperty(std::string_view name, PropertyType type, Flags<PropertyFlag> flags = {})
         : name_{name}, type_(type), flags_(flags)
@@ -104,8 +105,13 @@ class DataModelBase
 
     // Return name of specified property
     std::string propertyName(int propertyIndex) { return itemProperties_[propertyIndex].name(); }
-    // Return property type for the specified column
+    // Return property type for the specified property
     DataItemProperty::PropertyType propertyType(int propertyIndex) { return itemProperties_[propertyIndex].type(); }
+    // Return all flags set for specified property
+    const Flags<DataItemProperty::PropertyFlag> &propertyFlags(int propertyIndex)
+    {
+        return itemProperties_[propertyIndex].flags();
+    }
     // Return whether the specified property flag is set
     bool isPropertyFlagSet(int propertyIndex, DataItemProperty::PropertyFlag flag)
     {

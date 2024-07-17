@@ -24,7 +24,7 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std
             var->setBaseName(DataModelBase::asString(newValue));
             return true;
         });
-    dataModel_.addProperty("Type", DataItemProperty::PropertyType::String, {},
+    dataModel_.addProperty("Type", DataItemProperty::PropertyType::String, {DataItemProperty::PropertyFlag::ReadOnly},
                            [&](const std::shared_ptr<ExpressionVariable> &var)
                            {
                                return DataModelBase::PropertyValue(
