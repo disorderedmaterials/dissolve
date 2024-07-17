@@ -4,13 +4,14 @@
 #include "math/matrix3.h"
 #include "data/atomicMasses.h"
 #include "data/isotopes.h"
+#include <cmath>
 
 Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 {
     auto &processingData = moduleContext.dissolve().processingModuleData();
 
     // Calculate target property density
-    auto [density, status] = processingData.realiseIf<Data3D>("Density", name(), GenericItem::InRestartFileFlag);
+    auto [density, status] = processingData.realiseIf<Data3D>("VoxelDensity", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created) { density.initialise(numPoints_); }
     density.zero();
 
@@ -19,40 +20,33 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
     auto unaryOp = [&density, &unitCell](const auto &atom)
     {
-        auto foldedAtomCoords = atom.set(unitCell->fold(atom.r()));
-        auto x = atom.x(), y = atom.y(), z = atom.z();
+        auto foldedFractionalAtomCoords = atom.set(unitCell->foldFractional(atom.r()));
+        auto x = foldedFractionalAtomCoords.x(), y = foldedFractionalAtomCoords.y(), z = foldedFractionalAtomCoords.z();
         auto atomicNumber = atom.speciesAtom()->Z();
+
+        double value;
 
         switch(targetProperty_)
         {
             case TargetPropertyType::Mass: 
             { 
-                auto atomicMass = AtomicMass::mass(atomicNumber);
-                density.addPoint(
-                    (double)x*numPoints_, 
-                    (double)y*numPoints_, 
-                    (double)z*numPoints_,
-                    atomicMass
-                );
+                // Atomic mass
+                value = AtomicMass::mass(atomicNumber);
+                break;
             }
             case TargetPropertyType::AtomicNumber: 
             {
-                density.addPoint(
-                    (double)x*numPoints_, 
-                    (double)y*numPoints_, 
-                    (double)z*numPoints_,
-                    atomicNumber
-                );
+                // Atomic number
+                value = atomicNumber;
+                break;
             }
             case TargetPropertyType::ScatteringLengthDensity:
             {
-                auto naturalIsotope = Sears91::naturalIsotope(atomicNumber)
-                density.addPoint(
-                    (double)x*numPoints_, 
-                    (double)y*numPoints_, 
-                    (double)z*numPoints_,
-                    Sears91::boundCoherent(naturalIsotope);
-                ); 
+                auto naturalIsotope = Sears91::naturalIsotope(atomicNumber);
+                
+                // Bound coherent natural isotope scattering length density 
+                value = Sears91::boundCoherent(naturalIsotope);
+                break;
             }
             default:
             {
@@ -60,6 +54,10 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
                 fmt::format("'{}' not a valid property.\n", targetProperty_)));
             }
         }
+
+        auto toIndex = [&numPoints_](const auto pos) { return (double)std::round(pos*numPoints_); }
+
+        density.addPoint(toIndex(x), toIndex(y), toIndex(z), value);
     }
     
     dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), unaryOp);
