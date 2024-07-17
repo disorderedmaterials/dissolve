@@ -8,79 +8,50 @@
 #include "procedure/nodes/node.h"
 #include <memory>
 
-enum ExpressionVariableProperties
-{
-    Name,
-    Type,
-    Value
-};
-std::vector<DataItemProperty> expressionVariableProperties = {
-    {ExpressionVariableProperties::Name, "Name", PropertyType::String, {}},
-    {ExpressionVariableProperties::Type, "Type", PropertyType::String, {PropertyFlag::ReadOnly}},
-    {ExpressionVariableProperties::Value, "Value", PropertyType::String, {}}};
-
 ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data,
                                                                  ProcedureNode *parentNode)
-    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), dataModel_(data_, expressionVariableProperties)
+    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), dataModel_(data_)
 {
-    dataModel_.setPropertyFunctions(
-        [&](const std::shared_ptr<ExpressionVariable> &var, int propertyIndex)
+    dataModel_.addProperty(
+        "Name", DataItemProperty::PropertyType::String, {},
+        [&](const std::shared_ptr<ExpressionVariable> &var) { return DataModelBase::PropertyValue(var->baseName()); },
+        [&](std::shared_ptr<ExpressionVariable> &var, const DataModelBase::PropertyValue &newValue)
         {
-            switch (propertyIndex)
-            {
-                case (ExpressionVariableProperties::Name):
-                    return DataModelBase::PropertyValue(var->baseName());
-                case (ExpressionVariableProperties::Type):
-                    return DataModelBase::PropertyValue(
-                        std::string(var->value().type() == ExpressionValue::ValueType::Integer ? "Int" : "Real"));
-                case (ExpressionVariableProperties::Value):
-                    return DataModelBase::PropertyValue(var->value().asString());
-                default:
-                    return DataModelBase::PropertyValue();
-            }
-        },
-        [&](std::shared_ptr<ExpressionVariable> &var, int propertyIndex, const DataModelBase::PropertyValue &newValue)
-        {
-            switch (propertyIndex)
-            {
-                case (ExpressionVariableProperties::Name):
-                {
-                    // Must check for existing var in scope with the same name
-                    auto newName = DataModelBase::asString(newValue);
-                    auto p = parentNode_->getParameter(newName);
-                    if (p && p != var)
-                        return false;
-                    var->setBaseName(newName);
-                }
-                break;
-                case (ExpressionVariableProperties::Value):
-                {
-                    // Value - need to check type (int vs double)
-                    bool isFloatingPoint = false;
-                    auto value = DataModelBase::asString(newValue);
-                    if (DissolveSys::isNumber(value, isFloatingPoint))
-                    {
-                        if (isFloatingPoint)
-                            var->setValue(std::stod(value));
-                        else
-                            var->setValue(std::stoi(value));
-                    }
-                    else
-                        return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n", value,
-                                                var->baseName());
-                }
-                break;
-                default:
-                    return false;
-            }
+            // Must check for existing var in scope with the same name
+            auto p = parentNode_->getParameter(DataModelBase::asString(newValue));
+            if (p && p != var)
+                return false;
+            var->setBaseName(DataModelBase::asString(newValue));
             return true;
         });
+    dataModel_.addProperty("Type", DataItemProperty::PropertyType::String, {},
+                           [&](const std::shared_ptr<ExpressionVariable> &var)
+                           {
+                               return DataModelBase::PropertyValue(
+                                   std::string(var->value().type() == ExpressionValue::ValueType::Integer ? "Int" : "Real"));
+                           });
+    dataModel_.addProperty(
+        "Value", DataItemProperty::PropertyType::String, {},
+        [&](const std::shared_ptr<ExpressionVariable> &var) { return DataModelBase::PropertyValue(var->value().asString()); },
+        [&](std::shared_ptr<ExpressionVariable> &var, const DataModelBase::PropertyValue &newValue)
+        {
+            // Need to check type (int vs double)
+            auto isFloatingPoint = false;
+            auto value = DataModelBase::asString(newValue);
+            if (!DissolveSys::isNumber(value, isFloatingPoint))
+                return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n", value,
+                                        var->baseName());
+
+            isFloatingPoint ? var->setValue(std::stod(value)) : var->setValue(std::stoi(value));
+            return true;
+        });
+
     dataModel_.setDataCreationFunction(
         [&](std::optional<int> insertAt)
         {
-            auto allParamters = parentNode_->getParametersInScope();
+            auto allParameters = parentNode_->getParametersInScope();
             return parentNode_->addParameter(
-                DissolveSys::uniqueName("NewVariable", allParamters, [](const auto &var) { return var->name(); }), {},
+                DissolveSys::uniqueName("NewVariable", allParameters, [](const auto &var) { return var->name(); }), {},
                 insertAt);
         });
 }

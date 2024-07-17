@@ -58,20 +58,20 @@ QVariant DataTableModelInterface::data(const QModelIndex &index, int role) const
 // Set data for the index and role specified
 bool DataTableModelInterface::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role != Qt::EditRole || dataModel_.isPropertyFlagSet(index.column(), PropertyFlag::ReadOnly))
+    if (role != Qt::EditRole || dataModel_.isPropertyFlagSet(index.column(), DataItemProperty::PropertyFlag::ReadOnly))
         return false;
 
     // Set new value
     bool success = false;
     switch (dataModel_.propertyType(index.column()))
     {
-        case (PropertyType::Integer):
+        case (DataItemProperty::PropertyType::Integer):
             success = dataModel_.setProperty(index.row(), index.column(), DataModelBase::PropertyValue(value.toInt()));
             break;
-        case (PropertyType::Double):
+        case (DataItemProperty::PropertyType::Double):
             success = dataModel_.setProperty(index.row(), index.column(), DataModelBase::PropertyValue(value.toDouble()));
             break;
-        case (PropertyType::String):
+        case (DataItemProperty::PropertyType::String):
             success = dataModel_.setProperty(index.row(), index.column(),
                                              DataModelBase::PropertyValue(value.toString().toStdString()));
             break;

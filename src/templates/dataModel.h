@@ -6,27 +6,50 @@
 #include "templates/flags.h"
 #include <fmt/core.h>
 #include <functional>
+#include <map>
 #include <optional>
 #include <string>
 #include <variant>
 #include <vector>
 
-// Data property types
-enum class PropertyType
-{
-    Integer,
-    Double,
-    String
-};
-
-// Data property flags
-enum PropertyFlag
-{
-    ReadOnly
-};
-
 // Index / Column ID, Name / Column Title, Data Type, ReadOnly?
-using DataItemProperty = std::tuple<int, std::string, PropertyType, Flags<PropertyFlag>>;
+class DataItemProperty
+{
+    public:
+    // Data property types
+    enum class PropertyType
+    {
+        Integer,
+        Double,
+        String
+    };
+
+    // Data property flags
+    enum PropertyFlag
+    {
+        ReadOnly
+    };
+    DataItemProperty(std::string_view name, PropertyType type, Flags<PropertyFlag> flags = {})
+        : name_{name}, type_(type), flags_(flags)
+    {
+    }
+
+    private:
+    // Property name
+    std::string name_;
+    // Property type
+    PropertyType type_;
+    // Property flags
+    Flags<PropertyFlag> flags_;
+
+    public:
+    // Return property name
+    const std::string &name() const { return name_; }
+    // Return property type
+    PropertyType type() const { return type_; }
+    // Return property flags
+    const Flags<PropertyFlag> &flags() const { return flags_; }
+};
 
 // Helper type for PropertyValue visitor
 template <class... Ts> struct DataItemVisitor : Ts...
@@ -38,12 +61,12 @@ template <class... Ts> DataItemVisitor(Ts...) -> DataItemVisitor<Ts...>;
 
 /*
  * DataModelBase - An abstract class intended to allow our custom C++ data classes to be accessed in a consistent
- * and simplified way through Qt's Model-View classes.
+ * and simplified way through Qt's Model-View classes, without the need for a specific Qt model for each.
  */
 class DataModelBase
 {
     public:
-    DataModelBase(const std::vector<DataItemProperty> &itemProperties) : itemProperties_(itemProperties) {}
+    DataModelBase() {}
 
     /*
      * Property Values
@@ -72,14 +95,21 @@ class DataModelBase
     std::vector<DataItemProperty> itemProperties_;
 
     public:
-    // Return name of specified property
-    std::string propertyName(int propertyIndex) { return std::get<1>(itemProperties_[propertyIndex]); }
-    // Return property type for the specified column
-    PropertyType propertyType(int propertyIndex) { return std::get<2>(itemProperties_[propertyIndex]); }
-    // Return whether the specified property flag is set
-    bool isPropertyFlagSet(int propertyIndex, PropertyFlag flag)
+    // Add item property
+    void addItemProperty(std::string_view name, DataItemProperty::PropertyType type,
+                         Flags<DataItemProperty::PropertyFlag> flags = {})
     {
-        return std::get<3>(itemProperties_[propertyIndex]).isSet(flag);
+        itemProperties_.emplace_back(name, type, flags);
+    }
+
+    // Return name of specified property
+    std::string propertyName(int propertyIndex) { return itemProperties_[propertyIndex].name(); }
+    // Return property type for the specified column
+    DataItemProperty::PropertyType propertyType(int propertyIndex) { return itemProperties_[propertyIndex].type(); }
+    // Return whether the specified property flag is set
+    bool isPropertyFlagSet(int propertyIndex, DataItemProperty::PropertyFlag flag)
+    {
+        return itemProperties_[propertyIndex].flags().isSet(flag);
     }
 
     public:
@@ -126,14 +156,37 @@ class DataModelBase
 template <class DataItem> class DataTableModel : public DataModelBase
 {
     public:
-    DataTableModel(std::vector<DataItem> &data, const std::vector<DataItemProperty> &itemProperties)
-        : DataModelBase(itemProperties), data_(data)
-    {
-    }
+    // Property get function
+    using PropertyGetFunction = std::function<PropertyValue(const DataItem &)>;
+    // Property set function
+    using PropertySetFunction = std::function<bool(DataItem &, PropertyValue)>;
 
+    DataTableModel(std::vector<DataItem> &data) : DataModelBase(), data_(data) {}
+
+    /*
+     * Target Data and Functions
+     */
     private:
     // Target data for the model
     std::vector<DataItem> &data_;
+    // Map of named properties to data getters
+    std::map<std::string, PropertyGetFunction> getters_;
+    // Map of named properties to data setters
+    std::map<std::string, PropertySetFunction> setters_;
+
+    public:
+    // Add item property for use in the model
+    void addProperty(const std::string &name, DataItemProperty::PropertyType type, Flags<DataItemProperty::PropertyFlag> flags,
+                     PropertyGetFunction getter, PropertySetFunction setter = {})
+    {
+        // Add the property base info - the order will be reflected in the table model
+        addItemProperty(name, type, flags);
+
+        // Store functions
+        getters_[name] = std::move(getter);
+        if (setter)
+            setters_[name] = std::move(setter);
+    }
 
     /*
      * Extent
@@ -154,21 +207,7 @@ template <class DataItem> class DataTableModel : public DataModelBase
     /*
      * Data Access
      */
-    private:
-    // Data setter function - unique to DataItem class
-    using PropertySetFunction = std::function<bool(DataItem &, int, PropertyValue)>;
-    PropertySetFunction setPropertyFunction_;
-    // Data getter function - unique to DataItem class
-    using PropertyGetFunction = std::function<PropertyValue(const DataItem &, int)>;
-    PropertyGetFunction getPropertyFunction_;
-
     public:
-    // Set property access functions
-    void setPropertyFunctions(PropertyGetFunction getFunction, PropertySetFunction setFunction)
-    {
-        getPropertyFunction_ = std::move(getFunction);
-        setPropertyFunction_ = std::move(setFunction);
-    }
     // Set property
     bool setProperty(int dataIndex, int propertyIndex, const PropertyValue &newValue) final
     {
@@ -176,17 +215,17 @@ template <class DataItem> class DataTableModel : public DataModelBase
         if (!isIndexValid(dataIndex, propertyIndex))
             return false;
 
-        if (std::get<3>(itemProperties_[propertyIndex]).isSet(PropertyFlag::ReadOnly))
+        if (itemProperties_[propertyIndex].flags().isSet(DataItemProperty::PropertyFlag::ReadOnly))
         {
-            fmt::print("Refusing to set data '{}' since it is read-only.\n", std::get<1>(itemProperties_[propertyIndex]));
+            fmt::print("Refusing to set data '{}' since it is read-only.\n", itemProperties_[propertyIndex].name());
             return false;
         }
 
         // Set the child at the specified index
-        if (!setPropertyFunction_)
+        if (setters_.find(itemProperties_[propertyIndex].name()) == setters_.end())
             return false;
         else
-            return setPropertyFunction_(data_[dataIndex], std::get<0>(itemProperties_[propertyIndex]), newValue);
+            return setters_[itemProperties_[propertyIndex].name()](data_[dataIndex], newValue);
     }
     // Get property
     PropertyValue getProperty(int dataIndex, int propertyIndex) final
@@ -195,11 +234,7 @@ template <class DataItem> class DataTableModel : public DataModelBase
         if (!isIndexValid(dataIndex, propertyIndex))
             return {};
 
-        // Set the child at the specified index
-        if (!getPropertyFunction_)
-            return {};
-        else
-            return getPropertyFunction_(data_[dataIndex], std::get<0>(itemProperties_[propertyIndex]));
+        return getters_[itemProperties_[propertyIndex].name()](data_[dataIndex]);
     }
 
     /*
