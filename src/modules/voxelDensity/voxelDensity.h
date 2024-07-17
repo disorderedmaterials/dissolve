@@ -37,7 +37,7 @@ class VoxelDensityModule : public Module
     // Target property for analysis
     VoxelDensityModule::TargetPropertyType targetProperty_;
     // Number of analysis points
-    int numPoints_;  
+    int numPoints_;
 
     /*
      * Processing

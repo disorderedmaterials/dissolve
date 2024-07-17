@@ -3,9 +3,9 @@
 
 #include "modules/voxelDensity/voxelDensity.h"
 #include "keywords/bool.h"
-#include "keywords/integer.h"
 #include "keywords/configuration.h"
 #include "keywords/fileAndFormat.h"
+#include "keywords/integer.h"
 #include "keywords/speciesVector.h"
 #include "keywords/vec3Double.h"
 
@@ -20,25 +20,19 @@ VoxelDensityModule::VoxelDensityModule() : Module(ModuleTypes::VoxelDensity)
 
     keywords_.setOrganisation("Options", "Density", "Number of points over which analysis is performed");
     keywords_.add<IntegerKeyword>("Density", "Number of points over which analysis is performed", numPoints_, 100);
-    
+
     keywords_.setOrganisation("Options", "TargetProperty", "Target property for analysis");
-    keywords_.add<EnumOptionsKeyword<VoxelDensityModule::TargetPropertyType>>("TargetProperty", 
-                                    "Target property for analysis", targetProperty_, VoxelDensityModule::targetPropertyTypes());
+    keywords_.add<EnumOptionsKeyword<VoxelDensityModule::TargetPropertyType>>(
+        "TargetProperty", "Target property for analysis", targetProperty_, VoxelDensityModule::targetPropertyTypes());
 }
 
 // Return enum option info for TargetPropertyType
 EnumOptions<VoxelDensityModule::TargetPropertyType> VoxelDensityModule::targetPropertyTypes()
 {
     return EnumOptions<VoxelDensityModule::TargetPropertyType>(
-        "TargetPropertyType", {
-            {TargetPropertyType::Mass, "Mass"},
-            {TargetPropertyType::AtomicNumber, "AtomicNumber"},
-            {TargetPropertyType::ScatteringLengthDensity, "ScatteringLengthDensity"}
-        }
-    );
+        "TargetPropertyType", {{TargetPropertyType::Mass, "Mass"},
+                               {TargetPropertyType::AtomicNumber, "AtomicNumber"},
+                               {TargetPropertyType::ScatteringLengthDensity, "ScatteringLengthDensity"}});
 }
 
-Module::ExecutionResult VoxelDensityModule::process(ModuleContext &moduleContext) 
-{
-    return ExecutionResult::NotExecuted;
-}
+Module::ExecutionResult VoxelDensityModule::process(ModuleContext &moduleContext) { return ExecutionResult::NotExecuted; }
