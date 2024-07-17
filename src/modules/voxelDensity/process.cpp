@@ -1,9 +1,9 @@
-#include "module/context.h"
-#include "voxelDensity.h"
-#include "math/data3D.h"
-#include "math/matrix3.h"
 #include "data/atomicMasses.h"
 #include "data/isotopes.h"
+#include "math/data3D.h"
+#include "math/matrix3.h"
+#include "module/context.h"
+#include "voxelDensity.h"
 #include <cmath>
 
 Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
@@ -12,13 +12,17 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
     // Calculate target property density
     auto [density, status] = processingData.realiseIf<Data3D>("VoxelDensity", name(), GenericItem::InRestartFileFlag);
-    if (status == GenericItem::ItemStatus::Created) { density.initialise(numPoints_); }
+    if (status == GenericItem::ItemStatus::Created)
+    {
+        density.initialise(numPoints_);
+    }
     density.zero();
 
     auto unitCell = targetConfiguration_->box();
     auto atoms = targetConfiguration_->atoms();
 
-    auto unaryOp = [&density, &unitCell](const auto &atom)
+    auto unaryOp =
+        [&density, &unitCell](const auto &atom)
     {
         auto foldedFractionalAtomCoords = atom.set(unitCell->foldFractional(atom.r()));
         auto x = foldedFractionalAtomCoords.x(), y = foldedFractionalAtomCoords.y(), z = foldedFractionalAtomCoords.z();
@@ -26,15 +30,15 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
         double value;
 
-        switch(targetProperty_)
+        switch (targetProperty_)
         {
-            case TargetPropertyType::Mass: 
-            { 
+            case TargetPropertyType::Mass:
+            {
                 // Atomic mass
                 value = AtomicMass::mass(atomicNumber);
                 break;
             }
-            case TargetPropertyType::AtomicNumber: 
+            case TargetPropertyType::AtomicNumber:
             {
                 // Atomic number
                 value = atomicNumber;
@@ -43,23 +47,21 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
             case TargetPropertyType::ScatteringLengthDensity:
             {
                 auto naturalIsotope = Sears91::naturalIsotope(atomicNumber);
-                
-                // Bound coherent natural isotope scattering length density 
+
+                // Bound coherent natural isotope scattering length density
                 value = Sears91::boundCoherent(naturalIsotope);
                 break;
             }
             default:
             {
-                throw(std::runtime_error(
-                fmt::format("'{}' not a valid property.\n", targetProperty_)));
+                throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", targetProperty_)));
             }
         }
 
-        auto toIndex = [&numPoints_](const auto pos) { return (double)std::round(pos*numPoints_); }
+        auto toIndex = [&numPoints_](const auto pos) { return (double)std::round(pos * numPoints_); }
 
-        density.addPoint(toIndex(x), toIndex(y), toIndex(z), value);
+                       density.addPoint(toIndex(x), toIndex(y), toIndex(z), value);
     }
-    
-    dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), unaryOp);
 
+    dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), unaryOp);
 }
