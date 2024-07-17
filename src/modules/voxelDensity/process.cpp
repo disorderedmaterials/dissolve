@@ -11,7 +11,9 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     auto &processingData = moduleContext.dissolve().processingModuleData();
 
     // Calculate target property density
-    auto [density, status] = processingData.realiseIf<Data3D>("VoxelDensity", name(), GenericItem::InRestartFileFlag);
+    auto [density, status] = processingData.realiseIf<Data3D>(
+        fmt::format("Voxel{}", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
+        GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
     {
         density.initialise(numPoints_);
