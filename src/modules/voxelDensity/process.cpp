@@ -56,7 +56,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
             }
             default:
             {
-                // throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", targetProperty_)));
+                throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", targetProperty_)));
             }
         }
 
