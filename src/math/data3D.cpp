@@ -137,8 +137,11 @@ void Data3D::addPoint(double x, double y, double z, double value)
 void Data3D::addToPoint(int x, int y, int z, double value)
 {
     if ((x_.size() < x) || (y_.size() < y) || (z_.size() < z))
+    {
         addPoint(x, y, z, value);
-
+        return;
+    }
+        
     x_[x] = x, y_[y] = y, z_[z] = z;
 
     values_[std::tuple{x, y, z}] += value;
