@@ -1,5 +1,6 @@
 #include "data/atomicMasses.h"
 #include "data/isotopes.h"
+#include "main/dissolve.h"
 #include "math/data3D.h"
 #include "math/matrix3.h"
 #include "module/context.h"
@@ -8,7 +9,7 @@
 
 Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = context.dissolve().processingModuleData();
 
     // Calculate target property density
     auto [density, status] = processingData.realiseIf<Data3D>(
@@ -24,9 +25,9 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     auto atoms = targetConfiguration_->atoms();
 
     auto unaryOp =
-        [&density, &unitCell](const auto &atom)
+        [this, &density, &unitCell](auto &atom)
     {
-        atom.set(unitCell->foldFractional(atom.r()));
+        atom.set(unitCell->foldFrac(atom.r()));
         auto x = atom.x(), y = atom.y(), z = atom.z();
         auto atomicNumber = atom.speciesAtom()->Z();
 
@@ -56,14 +57,14 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
             }
             default:
             {
-                throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", targetProperty_)));
+                // throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", targetProperty_)));
             }
         }
 
-        auto toIndex = [&numPoints_](const auto pos) { return static_cast<int> std::round(pos * numPoints_); }
+        auto toIndex = [&](const auto pos) { return static_cast<int>(std::round(pos * numPoints_)); };
 
-                       density.addToPoint(toIndex(x), x, toIndex(y), y, toIndex(z), z, value);
-    }
+        density.addToPoint(toIndex(x), x, toIndex(y), y, toIndex(z), z, value);
+    };
 
     dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), unaryOp);
 
