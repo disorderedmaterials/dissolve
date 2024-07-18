@@ -34,5 +34,3 @@ EnumOptions<VoxelDensityModule::TargetPropertyType> VoxelDensityModule::targetPr
                                {TargetPropertyType::AtomicNumber, "AtomicNumber"},
                                {TargetPropertyType::ScatteringLengthDensity, "ScatteringLengthDensity"}});
 }
-
-Module::ExecutionResult VoxelDensityModule::process(ModuleContext &moduleContext) { return ExecutionResult::NotExecuted; }
