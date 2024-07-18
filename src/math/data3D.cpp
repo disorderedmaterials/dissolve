@@ -133,6 +133,17 @@ void Data3D::addPoint(double x, double y, double z, double value)
     ++version_;
 }
 
+// Add data to point
+void Data3D::addToPoint(int x, int y, int z, double value)
+{
+    if ((x_.size() < x) || (y_.size() < y) (z_.size() < z))
+        addPoint(x, y, z, value);
+
+    values_[std::tuple{x, y, z}] += value;
+
+    ++version_;
+}
+
 // Return x value specified
 double &Data3D::xAxis(int index)
 {
