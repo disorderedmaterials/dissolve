@@ -24,8 +24,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     auto unitCell = targetConfiguration_->box();
     auto atoms = targetConfiguration_->atoms();
 
-    auto unaryOp =
-        [this, &density, &unitCell](auto &atom)
+    auto unaryOp = [this, &density, &unitCell](auto &atom)
     {
         atom.set(unitCell->foldFrac(atom.r()));
         auto x = atom.x(), y = atom.y(), z = atom.z();
