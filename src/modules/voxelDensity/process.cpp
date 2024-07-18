@@ -62,7 +62,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
         auto toIndex = [&numPoints_](const auto pos) { return static_cast<int>std::round(pos * numPoints_); }
 
-                       density.addPoint(toIndex(x), toIndex(y), toIndex(z), value);
+                       density.addToPoint(toIndex(x), toIndex(y), toIndex(z), value);
     }
 
     dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), unaryOp);
