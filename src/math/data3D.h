@@ -63,6 +63,8 @@ class Data3D : public Data3DBase
     int version() const override;
     // Add new data point
     void addPoint(double x, double y, double z, double value);
+    // Add data to point
+    void Data3D::addToPoint(int x, int y, int z, double value);
     // Return x axis value specified
     double &xAxis(int index);
     const double &xAxis(int index) const;
