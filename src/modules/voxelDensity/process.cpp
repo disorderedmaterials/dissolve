@@ -60,7 +60,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
             }
         }
 
-        auto toIndex = [&numPoints_](const auto pos) { return (double)std::round(pos * numPoints_); }
+        auto toIndex = [&numPoints_](const auto pos) { return static_cast<int>std::round(pos * numPoints_); }
 
                        density.addPoint(toIndex(x), toIndex(y), toIndex(z), value);
     }
