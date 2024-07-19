@@ -78,7 +78,9 @@ void ExpressionVariable::deserialise(const SerialisedValue &node)
  */
 
 // Return property getters and basic setters (if relevant)
-const std::vector<DataModel::Modelable<ExpressionVariable>::ModelableProperty> ExpressionVariable::modelableProperties()
+template <>
+const std::vector<DataModel::Modelable<ExpressionVariable>::ModelableProperty>
+DataModel::Modelable<ExpressionVariable>::modelableProperties()
 {
     return {{"Name",
              DataModel::ItemProperty::PropertyType::String,

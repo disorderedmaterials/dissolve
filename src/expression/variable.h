@@ -55,11 +55,4 @@ class ExpressionVariable : public Serialisable<>, public DataModel::Modelable<Ex
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node);
-
-    /*
-     * Modelable
-     */
-    public:
-    // Return basic property information including getter and setter (if relevant)
-    static const std::vector<ModelableProperty> modelableProperties();
 };

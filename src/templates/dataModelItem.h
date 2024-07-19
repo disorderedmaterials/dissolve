@@ -83,10 +83,11 @@ template <class D> class Modelable
                                          ModelableGetter, ModelableSetter>;
 
     /*
-     * The class D should derive from Modelable and subsequently define a static function or similar to return a vector of
-     * ModelableProperty definitions as they should appear in a model.
+     * We now define a static templated function to return a vector of ModelableProperty definitions for the target class D. The
+     * class D needs to provide this function as a templated function specialisation.
      */
+    public:
     // Return basic property information including getter and setter (if relevant)
-    // virtual const std::vector<ModelableProperty> modelableProperties();
+    static const std::vector<ModelableProperty> modelableProperties();
 };
 }; // namespace DataModel

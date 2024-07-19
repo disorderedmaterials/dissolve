@@ -10,8 +10,7 @@
 
 ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data,
                                                                  ProcedureNode *parentNode)
-    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode),
-      dataModel_(data_, ExpressionVariable::modelableProperties())
+    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), dataModel_(data_)
 {
     // Override the setter for the "Name" property in the model as we need to ensure unique naming in the same scope
     dataModel_.setSetter("Name",

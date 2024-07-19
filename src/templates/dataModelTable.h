@@ -18,10 +18,10 @@ template <class DataItemClass, class DataItem> class Table : public Base
     // Property set function
     using PropertySetFunction = std::function<bool(DataItemClass *, PropertyValue)>;
 
-    Table(std::vector<DataItem> &data, const ModelableProperties &properties) : Base(), data_(data)
+    Table(std::vector<DataItem> &data) : Base(), data_(data)
     {
-        // Add properties from the modelable target
-        for (auto &[name, type, flags, getter, setter] : properties)
+        // Add properties from the modelable base class
+        for (auto &[name, type, flags, getter, setter] : Modelable<DataItemClass>::modelableProperties())
         {
             addProperty(name, type, flags, getter, setter);
         }
