@@ -12,7 +12,11 @@
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 
-Configuration::Configuration() : generator_("Generator") { createBox({1.0, 1.0, 1.0}, {90, 90, 90}, false); }
+Configuration::Configuration()
+    : generator_("Generator"), globalPotentialsModel_(globalPotentials_), targetedPotentialsModel_(targetedPotentials_)
+{
+    createBox({1.0, 1.0, 1.0}, {90, 90, 90}, false);
+}
 
 Configuration::~Configuration() { clear(); }
 

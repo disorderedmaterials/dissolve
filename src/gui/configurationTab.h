@@ -4,9 +4,9 @@
 #pragma once
 
 #include "base/units.h"
+#include "gui/dataTableModelInterface.h"
 #include "gui/mainTab.h"
 #include "gui/models/enumOptionsModel.h"
-#include "gui/models/externalPotentialModel.h"
 #include "gui/models/globalPotentialFilterProxy.h"
 #include "gui/models/procedureModel.h"
 #include "gui/ui_configurationTab.h"
@@ -55,11 +55,11 @@ class ConfigurationTab : public QWidget, public MainTab
     // Procedure Model
     ProcedureModel procedureModel_;
     // Global potential model
-    ExternalPotentialModel globalPotentialModel_;
+    DataTableModelInterface globalPotentialModel_;
     // Global potential filter proxy
     GlobalPotentialFilterProxy globalPotentialFilterProxy_;
     // Restraint potential model
-    ExternalPotentialModel targetedPotentialModel_;
+    DataTableModelInterface targetedPotentialModel_;
 
     public:
     // Return displayed Configuration

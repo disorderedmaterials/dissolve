@@ -6,14 +6,15 @@
 #include "classes/interactionPotential.h"
 #include "kernels/potentials/types.h"
 #include "keywords/store.h"
+#include "templates/dataModelItem.h"
 
 // Forward Declarations
 class Atom;
 class Box;
 class LineParser;
 
-// Extended Potential Base Class
-class ExternalPotential
+// External Potential Base Class
+class ExternalPotential : public DataModel::Modelable<ExternalPotential>
 {
     public:
     explicit ExternalPotential(ExternalPotentialTypes::ExternalPotentialType type);
@@ -86,7 +87,7 @@ class ExternalPotential
     virtual void force(const Atom &i, const Box *box, Vec3<double> &f) const;
 
     /*
-     * Read / Write
+     * I/O
      */
     public:
     // Read data from specified LineParser

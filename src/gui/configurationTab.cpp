@@ -16,8 +16,8 @@
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
     : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this),
-      procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials()),
-      targetedPotentialModel_(cfg->targetedPotentials())
+      procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentialsModel()),
+      targetedPotentialModel_(cfg->targetedPotentialsModel())
 {
     ui_.setupUi(this);
 
@@ -170,9 +170,7 @@ void ConfigurationTab::updateControls()
     ui_.SizeFactorFrame->setVisible(configuration_->appliedSizeFactor().has_value());
 
     // Potentials
-    globalPotentialModel_.reset();
     ui_.GlobalPotentialsTable->resizeColumnsToContents();
-    targetedPotentialModel_.reset();
     ui_.TargetedPotentialsTable->resizeColumnsToContents();
 
     // Viewer

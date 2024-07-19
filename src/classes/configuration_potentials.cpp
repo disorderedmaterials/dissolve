@@ -13,6 +13,12 @@ void Configuration::addGlobalPotential(std::unique_ptr<ExternalPotential> potent
 // Return vector of defined global potentials
 const std::vector<std::unique_ptr<ExternalPotential>> &Configuration::globalPotentials() const { return globalPotentials_; }
 
+// Return model for defined global potentials
+DataModel::Table<ExternalPotential, std::unique_ptr<ExternalPotential>> &Configuration::globalPotentialsModel()
+{
+    return globalPotentialsModel_;
+}
+
 // Add targeted potential
 void Configuration::addTargetedPotential(std::unique_ptr<ExternalPotential> potential)
 {
@@ -21,6 +27,12 @@ void Configuration::addTargetedPotential(std::unique_ptr<ExternalPotential> pote
 
 // Return vector of defined targeted potentials
 const std::vector<std::unique_ptr<ExternalPotential>> &Configuration::targetedPotentials() const { return targetedPotentials_; }
+
+// Return model for defined targeted potentials
+DataModel::Table<ExternalPotential, std::unique_ptr<ExternalPotential>> &Configuration::targetedPotentialsModel()
+{
+    return targetedPotentialsModel_;
+}
 
 // Link targeted potentials to atoms
 void Configuration::linkTargetedPotentials()

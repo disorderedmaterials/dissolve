@@ -68,7 +68,6 @@ set(models_SRCS
     dissolveModelImageProvider.cpp
     dissolveModelImageProvider.h
     enumOptionsModel.cpp
-    externalPotentialModel.cpp
     ffSortFilterModel.cpp
     forcefieldModel.cpp
     globalPotentialFilterProxy.cpp
