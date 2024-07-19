@@ -24,10 +24,21 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     if (!restrictToSpecies_.empty())
     {
         auto cfgSpecies = targetConfiguration_->speciesPopulations();
-        for (const auto &spA : cfgSpecies)
+
+        for (const auto &[sp, N] : cfgSpecies)
         {
-            for (const auto &spB : restrictToSpecies_)
-                if (spA->name() == spB->name()) { targetConfiguration_->removeMolecules(spA) }
+            bool included = false;
+
+            for (const auto &spTarget : restrictToSpecies_)
+            {
+                if (sp->name() == spTarget->name())
+                {
+                    included = true; 
+                    break; 
+                }
+            } 
+            
+            if (included) { targetConfiguration_->removeMolecules(sp); }
         }
     }
 
