@@ -10,41 +10,9 @@
 
 ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data,
                                                                  ProcedureNode *parentNode)
-    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), dataModel_(data_)
+    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode),
+      dataModel_(data_, ExpressionVariable::modelableProperties())
 {
-    dataModel_.addProperty(
-        "Name", DataModel::ItemProperty::PropertyType::String, {},
-        [&](const std::shared_ptr<ExpressionVariable> &var) { return DataModel::PropertyValue(var->baseName()); },
-        [&](std::shared_ptr<ExpressionVariable> &var, const DataModel::PropertyValue &newValue)
-        {
-            // Must check for existing var in scope with the same name
-            auto p = parentNode_->getParameter(DataModel::propertyAsString(newValue));
-            if (p && p != var)
-                return false;
-            var->setBaseName(DataModel::propertyAsString(newValue));
-            return true;
-        });
-    dataModel_.addProperty("Type", DataModel::ItemProperty::PropertyType::String,
-                           {DataModel::ItemProperty::PropertyFlag::ReadOnly},
-                           [&](const std::shared_ptr<ExpressionVariable> &var) {
-                               return DataModel::PropertyValue(
-                                   std::string(var->value().type() == ExpressionValue::ValueType::Integer ? "Int" : "Real"));
-                           });
-    dataModel_.addProperty(
-        "Value", DataModel::ItemProperty::PropertyType::String, {},
-        [&](const std::shared_ptr<ExpressionVariable> &var) { return DataModel::PropertyValue(var->value().asString()); },
-        [&](std::shared_ptr<ExpressionVariable> &var, const DataModel::PropertyValue &newValue)
-        {
-            // Need to check type (int vs double)
-            auto isFloatingPoint = false;
-            auto value = DataModel::propertyAsString(newValue);
-            if (!DissolveSys::isNumber(value, isFloatingPoint))
-                return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n", value,
-                                        var->baseName());
-
-            isFloatingPoint ? var->setValue(std::stod(value)) : var->setValue(std::stoi(value));
-            return true;
-        });
 
     dataModel_.setDataCreationFunction(
         [&](std::optional<int> insertAt)
@@ -65,7 +33,10 @@ std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeywor
 const std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() const { return data_; }
 
 // Return data model
-DataModel::Table<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::dataModel() { return dataModel_; }
+DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::dataModel()
+{
+    return dataModel_;
+}
 
 // Return parent ProcedureNode
 ProcedureNode *ExpressionVariableVectorKeyword::parentNode() { return parentNode_; }

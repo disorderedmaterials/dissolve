@@ -72,4 +72,21 @@ template <class... Ts> struct PropertyVisitor : Ts...
 };
 // Explicit deduction guide for PropertyValue visitor
 template <class... Ts> PropertyVisitor(Ts...) -> PropertyVisitor<Ts...>;
+
+// Modelable - Provides declarations for use by a class defining its properties
+template <class D> class Modelable
+{
+    public:
+    using ModelableGetter = std::function<PropertyValue(const D *)>;
+    using ModelableSetter = std::function<bool(D *, PropertyValue)>;
+    using ModelableProperty = std::tuple<std::string, ItemProperty::PropertyType, Flags<ItemProperty::PropertyFlag>,
+                                         ModelableGetter, ModelableSetter>;
+
+    /*
+     * The class D should derive from Modelable and subsequently define a static function or similar to return a vector of
+     * ModelableProperty definitions as they should appear in a model.
+     */
+    // Return basic property information including getter and setter (if relevant)
+    // virtual const std::vector<ModelableProperty> modelableProperties();
+};
 }; // namespace DataModel

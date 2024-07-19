@@ -24,7 +24,7 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     private:
     // Reference to vector of data
     std::vector<std::shared_ptr<ExpressionVariable>> &data_;
-    DataModel::Table<std::shared_ptr<ExpressionVariable>> dataModel_;
+    DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> dataModel_;
     // Parent ProcedureNode
     ProcedureNode *parentNode_;
 
@@ -35,7 +35,7 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     std::vector<std::shared_ptr<ExpressionVariable>> &data();
     const std::vector<std::shared_ptr<ExpressionVariable>> &data() const;
     // Return data model
-    DataModel::Table<std::shared_ptr<ExpressionVariable>> &dataModel();
+    DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &dataModel();
     // Return parent ProcedureNode
     ProcedureNode *parentNode();
     const ProcedureNode *parentNode() const;

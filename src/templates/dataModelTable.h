@@ -7,16 +7,25 @@
 
 namespace DataModel
 {
-// Table Model for Data
-template <class DataItem> class Table : public Base
+// Table Model for Data based on std::vector
+template <class DataItemClass, class DataItem> class Table : public Base
 {
     public:
+    // Modelable properties
+    using ModelableProperties = std::vector<typename Modelable<DataItemClass>::ModelableProperty>;
     // Property get function
-    using PropertyGetFunction = std::function<PropertyValue(const DataItem &)>;
+    using PropertyGetFunction = std::function<PropertyValue(const DataItemClass *)>;
     // Property set function
-    using PropertySetFunction = std::function<bool(DataItem &, PropertyValue)>;
+    using PropertySetFunction = std::function<bool(DataItemClass *, PropertyValue)>;
 
-    Table(std::vector<DataItem> &data) : Base(), data_(data) {}
+    Table(std::vector<DataItem> &data, const ModelableProperties &properties) : Base(), data_(data)
+    {
+        // Add properties from the modelable target
+        for (auto &[name, type, flags, getter, setter] : properties)
+        {
+            addProperty(name, type, flags, getter, setter);
+        }
+    }
 
     /*
      * Target Data and Functions
@@ -29,7 +38,7 @@ template <class DataItem> class Table : public Base
     // Map of named properties to data setters
     std::map<std::string, PropertySetFunction> setters_;
 
-    public:
+    private:
     // Add item property for use in the model
     void addProperty(const std::string &name, ItemProperty::PropertyType type, Flags<ItemProperty::PropertyFlag> flags,
                      PropertyGetFunction getter, PropertySetFunction setter = {})
@@ -62,7 +71,35 @@ template <class DataItem> class Table : public Base
     /*
      * Data Access
      */
+    private:
+    // Call getter
+    PropertyValue callGetter(PropertyGetFunction &getter, DataItemClass &item) { return getter(&item); }
+    PropertyValue callGetter(PropertyGetFunction &getter, std::shared_ptr<DataItemClass> &item) { return getter(item.get()); }
+    PropertyValue callGetter(PropertyGetFunction &getter, std::unique_ptr<DataItemClass> &item) { return getter(item.get()); }
+    // Call setter
+    bool callSetter(PropertySetFunction &setter, DataItemClass &item, const PropertyValue &newValue)
+    {
+        return setter(&item, newValue);
+    }
+    bool callSetter(PropertySetFunction &setter, std::shared_ptr<DataItemClass> &item, const PropertyValue &newValue)
+    {
+        return setter(item.get(), newValue);
+    }
+    bool callSetter(PropertySetFunction &setter, std::unique_ptr<DataItemClass> &item, const PropertyValue &newValue)
+    {
+        return setter(item.get(), newValue);
+    }
+
     public:
+    // Get property
+    PropertyValue getProperty(int dataIndex, int propertyIndex) final
+    {
+        // Check index validity
+        if (!isIndexValid(dataIndex, propertyIndex))
+            return {};
+
+        return callGetter(getters_[itemProperties_[propertyIndex].name()], data_[dataIndex]);
+    }
     // Set property
     bool setProperty(int dataIndex, int propertyIndex, const PropertyValue &newValue) final
     {
@@ -80,16 +117,7 @@ template <class DataItem> class Table : public Base
         if (setters_.find(itemProperties_[propertyIndex].name()) == setters_.end())
             return false;
         else
-            return setters_[itemProperties_[propertyIndex].name()](data_[dataIndex], newValue);
-    }
-    // Get property
-    PropertyValue getProperty(int dataIndex, int propertyIndex) final
-    {
-        // Check index validity
-        if (!isIndexValid(dataIndex, propertyIndex))
-            return {};
-
-        return getters_[itemProperties_[propertyIndex].name()](data_[dataIndex]);
+            return callSetter(setters_[itemProperties_[propertyIndex].name()], data_[dataIndex], newValue);
     }
 
     /*

@@ -3,6 +3,7 @@
 
 #include "expression/variable.h"
 #include "base/messenger.h"
+#include "base/sysFunc.h"
 #include <cstring>
 
 ExpressionVariable::ExpressionVariable(const ExpressionValue &value)
@@ -58,6 +59,10 @@ const ExpressionValue &ExpressionVariable::value() const { return value_; }
 // Return pointer to value
 ExpressionValue *ExpressionVariable::valuePointer() { return &value_; }
 
+/*
+ * I/O
+ */
+
 // Express as a serialisable value
 SerialisedValue ExpressionVariable::serialise() const { return {{"name", baseName_}, {"value", value_}}; }
 
@@ -66,4 +71,46 @@ void ExpressionVariable::deserialise(const SerialisedValue &node)
 {
     value_ = toml::find<ExpressionValue>(node, "value");
     setBaseName(toml::find<std::string>(node, "name"));
+}
+
+/*
+ * Modelable
+ */
+
+// Return property getters and basic setters (if relevant)
+const std::vector<DataModel::Modelable<ExpressionVariable>::ModelableProperty> ExpressionVariable::modelableProperties()
+{
+    return {{"Name",
+             DataModel::ItemProperty::PropertyType::String,
+             {},
+             [&](const ExpressionVariable *var) { return DataModel::PropertyValue(var->baseName()); },
+             [&](ExpressionVariable *var, const DataModel::PropertyValue &newValue)
+             {
+                 var->setBaseName(DataModel::propertyAsString(newValue));
+                 return true;
+             }},
+            {"Type",
+             DataModel::ItemProperty::PropertyType::String,
+             {DataModel::ItemProperty::PropertyFlag::ReadOnly},
+             [&](const ExpressionVariable *var) {
+                 return DataModel::PropertyValue(
+                     std::string(var->value().type() == ExpressionValue::ValueType::Integer ? "Int" : "Real"));
+             },
+             [&](ExpressionVariable *var, const DataModel::PropertyValue &newValue) { return false; }},
+            {"Value",
+             DataModel::ItemProperty::PropertyType::String,
+             {},
+             [&](const ExpressionVariable *var) { return DataModel::PropertyValue(var->value().asString()); },
+             [&](ExpressionVariable *var, const DataModel::PropertyValue &newValue)
+             {
+                 // Need to check type (int vs double)
+                 auto isFloatingPoint = false;
+                 auto value = DataModel::propertyAsString(newValue);
+                 if (!DissolveSys::isNumber(value, isFloatingPoint))
+                     return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n", value,
+                                             var->baseName());
+
+                 isFloatingPoint ? var->setValue(std::stod(value)) : var->setValue(std::stoi(value));
+                 return true;
+             }}};
 }

@@ -4,12 +4,6 @@
 #pragma once
 
 #include "templates/dataModelItem.h"
-#include <functional>
-#include <map>
-#include <optional>
-#include <string>
-#include <variant>
-#include <vector>
 
 namespace DataModel
 {
@@ -29,13 +23,15 @@ class Base
     // Descriptions of relevant item properties within a single object in the container
     std::vector<ItemProperty> itemProperties_;
 
-    public:
+    protected:
     // Add item property
-    void addItemProperty(std::string_view name, ItemProperty::PropertyType type, Flags<ItemProperty::PropertyFlag> flags = {})
+    void addItemProperty(std::string_view name, ItemProperty::PropertyType type,
+                         const Flags<ItemProperty::PropertyFlag> &flags = {})
     {
         itemProperties_.emplace_back(name, type, flags);
     }
 
+    public:
     // Return name of specified property
     std::string propertyName(int propertyIndex) { return itemProperties_[propertyIndex].name(); }
     // Return property type for the specified property
