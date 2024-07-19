@@ -13,7 +13,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
     // Calculate target property density
     auto [data3d, status] = processingData.realiseIf<Data3D>(
-        fmt::format("Voxel{}", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
+        fmt::format("Voxel{}Data3D", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
         GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
     {
@@ -33,12 +33,15 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
             {
                 if (sp->name() == spTarget->name())
                 {
-                    included = true; 
-                    break; 
+                    included = true;
+                    break;
                 }
-            } 
-            
-            if (included) { targetConfiguration_->removeMolecules(sp); }
+            }
+
+            if (included)
+            {
+                targetConfiguration_->removeMolecules(sp);
+            }
         }
     }
 
@@ -87,6 +90,21 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     };
 
     dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), unaryOp);
+
+    // Calculate voxel density histogram
+    auto &hist = processingData.realise<Histogram1D>(
+        fmt::format("Voxel{}Hist1D", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
+        GenericItem::InRestartFileFlag);
+
+    auto max = data3d.maxValue(), min = normalisedData3d.minValue();
+    hist.initialise(min, max, (max - min) / numPoints_);
+    hist.zeroBins();
+
+    dissolve::for_each(std::execution::seq, data3d.values().begin(), data3d.values().end(),
+                       [&hist](auto &value) { hist.bin(value); });
+
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(hist, exportFileAndFormat_, moduleContext.processPool()))
+        return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
 }

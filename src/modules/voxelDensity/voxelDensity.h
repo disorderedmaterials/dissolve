@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/enumOptions.h"
+#include "io/export/data1D.h"
 #include "module/module.h"
 
 class Configuration;
@@ -38,6 +39,8 @@ class VoxelDensityModule : public Module
     VoxelDensityModule::TargetPropertyType targetProperty_;
     // Number of analysis points
     int numPoints_;
+    // Export target
+    Data1DExportFileFormat exportFileAndFormat_;
 
     /*
      * Processing

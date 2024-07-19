@@ -24,6 +24,10 @@ VoxelDensityModule::VoxelDensityModule() : Module(ModuleTypes::VoxelDensity)
     keywords_.setOrganisation("Options", "TargetProperty", "Target property for analysis");
     keywords_.add<EnumOptionsKeyword<VoxelDensityModule::TargetPropertyType>>(
         "TargetProperty", "Target property for analysis", targetProperty_, VoxelDensityModule::targetPropertyTypes());
+
+    keywords_.setOrganisation("Export");
+    keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated Histogram1D data",
+                                        exportFileAndFormat_, "EndExport");
 }
 
 // Return enum option info for TargetPropertyType
