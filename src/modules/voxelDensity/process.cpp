@@ -1,3 +1,4 @@
+#include "analyser/dataExporter.h"
 #include "data/atomicMasses.h"
 #include "data/isotopes.h"
 #include "main/dissolve.h"
@@ -12,19 +13,43 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     auto &processingData = context.dissolve().processingModuleData();
 
     // Calculate target property density
-    auto [density, status] = processingData.realiseIf<Data3D>(
-        fmt::format("Voxel{}", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
+    auto [data3d, status] = processingData.realiseIf<Data3D>(
+        fmt::format("Voxel{}Data3D", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
         GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
     {
-        density.initialise(numPoints_);
+        data3d.initialise(numPoints_);
     }
-    density.zero();
+    data3d.zero();
+
+    if (!restrictToSpecies_.empty())
+    {
+        auto cfgSpecies = targetConfiguration_->speciesPopulations();
+
+        for (const auto &[sp, N] : cfgSpecies)
+        {
+            bool included = false;
+
+            for (const auto &spTarget : restrictToSpecies_)
+            {
+                if (sp->name() == spTarget->name())
+                {
+                    included = true;
+                    break;
+                }
+            }
+
+            if (included)
+            {
+                targetConfiguration_->removeMolecules(sp);
+            }
+        }
+    }
 
     auto unitCell = targetConfiguration_->box();
     auto atoms = targetConfiguration_->atoms();
 
-    auto unaryOp = [this, &density, &unitCell](auto &atom)
+    auto unaryOp = [this, &data3d, &unitCell](auto &atom)
     {
         atom.set(unitCell->foldFrac(atom.r()));
         auto x = atom.x(), y = atom.y(), z = atom.z();
@@ -62,10 +87,26 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
         auto toIndex = [&](const auto pos) { return static_cast<int>(std::round(pos * numPoints_)); };
 
-        density.addToPoint(toIndex(x), x, toIndex(y), y, toIndex(z), z, value);
+        data3d.addToPoint(toIndex(x), x, toIndex(y), y, toIndex(z), z, value);
     };
 
     dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), unaryOp);
+
+    // Calculate voxel density histogram
+    auto &hist = processingData.realise<Histogram1D>(
+        fmt::format("Voxel{}Hist1D", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
+        GenericItem::InRestartFileFlag);
+
+    auto max = data3d.maxValue(), min = data3d.minValue();
+    hist.initialise(min, max, (max - min) / numPoints_);
+    hist.zeroBins();
+
+    dissolve::for_each(std::execution::seq, data3d.values().begin(), data3d.values().end(),
+                       [&hist](auto &value) { hist.bin(value); });
+
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(hist.accumulatedData(), exportFileAndFormat_,
+                                                                  context.processPool()))
+        return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
 }
