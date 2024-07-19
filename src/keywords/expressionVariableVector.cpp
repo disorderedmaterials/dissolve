@@ -13,31 +13,31 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), dataModel_(data_)
 {
     dataModel_.addProperty(
-        "Name", DataItemProperty::PropertyType::String, {},
-        [&](const std::shared_ptr<ExpressionVariable> &var) { return DataModelBase::PropertyValue(var->baseName()); },
-        [&](std::shared_ptr<ExpressionVariable> &var, const DataModelBase::PropertyValue &newValue)
+        "Name", DataModel::ItemProperty::PropertyType::String, {},
+        [&](const std::shared_ptr<ExpressionVariable> &var) { return DataModel::PropertyValue(var->baseName()); },
+        [&](std::shared_ptr<ExpressionVariable> &var, const DataModel::PropertyValue &newValue)
         {
             // Must check for existing var in scope with the same name
-            auto p = parentNode_->getParameter(DataModelBase::asString(newValue));
+            auto p = parentNode_->getParameter(DataModel::propertyAsString(newValue));
             if (p && p != var)
                 return false;
-            var->setBaseName(DataModelBase::asString(newValue));
+            var->setBaseName(DataModel::propertyAsString(newValue));
             return true;
         });
-    dataModel_.addProperty("Type", DataItemProperty::PropertyType::String, {DataItemProperty::PropertyFlag::ReadOnly},
-                           [&](const std::shared_ptr<ExpressionVariable> &var)
-                           {
-                               return DataModelBase::PropertyValue(
+    dataModel_.addProperty("Type", DataModel::ItemProperty::PropertyType::String,
+                           {DataModel::ItemProperty::PropertyFlag::ReadOnly},
+                           [&](const std::shared_ptr<ExpressionVariable> &var) {
+                               return DataModel::PropertyValue(
                                    std::string(var->value().type() == ExpressionValue::ValueType::Integer ? "Int" : "Real"));
                            });
     dataModel_.addProperty(
-        "Value", DataItemProperty::PropertyType::String, {},
-        [&](const std::shared_ptr<ExpressionVariable> &var) { return DataModelBase::PropertyValue(var->value().asString()); },
-        [&](std::shared_ptr<ExpressionVariable> &var, const DataModelBase::PropertyValue &newValue)
+        "Value", DataModel::ItemProperty::PropertyType::String, {},
+        [&](const std::shared_ptr<ExpressionVariable> &var) { return DataModel::PropertyValue(var->value().asString()); },
+        [&](std::shared_ptr<ExpressionVariable> &var, const DataModel::PropertyValue &newValue)
         {
             // Need to check type (int vs double)
             auto isFloatingPoint = false;
-            auto value = DataModelBase::asString(newValue);
+            auto value = DataModel::propertyAsString(newValue);
             if (!DissolveSys::isNumber(value, isFloatingPoint))
                 return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n", value,
                                         var->baseName());
@@ -65,7 +65,7 @@ std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeywor
 const std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() const { return data_; }
 
 // Return data model
-DataTableModel<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::dataModel() { return dataModel_; }
+DataModel::Table<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::dataModel() { return dataModel_; }
 
 // Return parent ProcedureNode
 ProcedureNode *ExpressionVariableVectorKeyword::parentNode() { return parentNode_; }

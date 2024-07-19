@@ -5,7 +5,7 @@
 
 #include "expression/node.h"
 #include "keywords/base.h"
-#include "templates/dataModel.h"
+#include "templates/dataModelTable.h"
 
 // Forward Declarations
 class ExpressionVariable;
@@ -24,7 +24,7 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     private:
     // Reference to vector of data
     std::vector<std::shared_ptr<ExpressionVariable>> &data_;
-    DataTableModel<std::shared_ptr<ExpressionVariable>> dataModel_;
+    DataModel::Table<std::shared_ptr<ExpressionVariable>> dataModel_;
     // Parent ProcedureNode
     ProcedureNode *parentNode_;
 
@@ -35,12 +35,12 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     std::vector<std::shared_ptr<ExpressionVariable>> &data();
     const std::vector<std::shared_ptr<ExpressionVariable>> &data() const;
     // Return data model
-    DataTableModel<std::shared_ptr<ExpressionVariable>> &dataModel();
+    DataModel::Table<std::shared_ptr<ExpressionVariable>> &dataModel();
     // Return parent ProcedureNode
     ProcedureNode *parentNode();
     const ProcedureNode *parentNode() const;
 
-    /*
+    /*c
      * Arguments
      */
     public:

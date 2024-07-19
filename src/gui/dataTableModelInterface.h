@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "templates/dataModel.h"
+#include "templates/dataModelBase.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
@@ -11,11 +11,11 @@
 class DataTableModelInterface : public QAbstractTableModel
 {
     public:
-    DataTableModelInterface(DataModelBase &dataModel);
+    DataTableModelInterface(DataModel::Base &dataModel);
 
     private:
     // Model with which to interface
-    DataModelBase &dataModel_;
+    DataModel::Base &dataModel_;
 
     /*
      * QAbstractTableModel Overrides
@@ -45,5 +45,5 @@ class DataTableModelInterface : public QAbstractTableModel
      */
     private:
     // React to a mutation in the model
-    void dataMutated(DataModelBase::MutationSignal signal, int startIndex, int endIndex);
+    void dataMutated(DataModel::Base::MutationSignal signal, int startIndex, int endIndex);
 };
