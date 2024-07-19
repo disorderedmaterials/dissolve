@@ -24,7 +24,7 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std
                              return true;
                          });
 
-    dataModel_.setDataCreationFunction(
+    dataModel_.setCreator(
         [&](std::optional<int> insertAt)
         {
             auto allParameters = parentNode_->getParametersInScope();

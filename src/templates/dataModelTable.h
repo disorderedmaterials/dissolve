@@ -137,9 +137,9 @@ template <class DataItemClass, class DataItem> class Table : public Base
 
     public:
     // Set data creation function
-    void setDataCreationFunction(CreateItemFunction function) { createItemFunction_ = std::move(function); }
+    void setCreator(CreateItemFunction function) { createItemFunction_ = std::move(function); }
     // Set data removal function
-    void setDataRemovalFunction(RemoveItemFunction function) { removeItemFunction_ = std::move(function); }
+    void setRemover(RemoveItemFunction function) { removeItemFunction_ = std::move(function); }
 
     public:
     // Create new item(s) starting at specified vector index
