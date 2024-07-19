@@ -13,6 +13,16 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode),
       dataModel_(data_, ExpressionVariable::modelableProperties())
 {
+    // Override the setter for the "Name" property in the model as we need to ensure unique naming in the same scope
+    dataModel_.setSetter("Name",
+                         [&](ExpressionVariable *var, const DataModel::PropertyValue &newValue)
+                         {
+                             auto p = parentNode_->getParameter(DataModel::propertyAsString(newValue));
+                             if (p && p.get() != var)
+                                 return false;
+                             var->setBaseName(DataModel::propertyAsString(newValue));
+                             return true;
+                         });
 
     dataModel_.setDataCreationFunction(
         [&](std::optional<int> insertAt)

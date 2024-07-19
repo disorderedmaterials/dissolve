@@ -52,6 +52,10 @@ template <class DataItemClass, class DataItem> class Table : public Base
             setters_[name] = std::move(setter);
     }
 
+    public:
+    // Add or override setter for specified property
+    void setSetter(std::string name, PropertySetFunction setter) { setters_[name] = std::move(setter); }
+
     /*
      * Extent
      */
