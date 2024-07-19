@@ -104,7 +104,8 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     dissolve::for_each(std::execution::seq, data3d.values().begin(), data3d.values().end(),
                        [&hist](auto &value) { hist.bin(value); });
 
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(hist.accumulatedData(), exportFileAndFormat_, context.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(hist.accumulatedData(), exportFileAndFormat_,
+                                                                  context.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
