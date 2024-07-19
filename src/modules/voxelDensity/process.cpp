@@ -1,3 +1,4 @@
+#include "analyser/dataExporter.h"
 #include "data/atomicMasses.h"
 #include "data/isotopes.h"
 #include "main/dissolve.h"
@@ -96,14 +97,14 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
         fmt::format("Voxel{}Hist1D", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
         GenericItem::InRestartFileFlag);
 
-    auto max = data3d.maxValue(), min = normalisedData3d.minValue();
+    auto max = data3d.maxValue(), min = data3d.minValue();
     hist.initialise(min, max, (max - min) / numPoints_);
     hist.zeroBins();
 
     dissolve::for_each(std::execution::seq, data3d.values().begin(), data3d.values().end(),
                        [&hist](auto &value) { hist.bin(value); });
 
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(hist, exportFileAndFormat_, moduleContext.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(hist.accumulatedData(), exportFileAndFormat_, context.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
