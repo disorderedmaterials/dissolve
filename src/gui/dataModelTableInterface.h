@@ -7,11 +7,11 @@
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
-// QAbstractTableModel Interface to DataTableModel
-class DataTableModelInterface : public QAbstractTableModel
+// QAbstractTableModel Interface to DataModel::Table
+class DataModelTableInterface : public QAbstractTableModel
 {
     public:
-    DataTableModelInterface(DataModel::Base &dataModel);
+    DataModelTableInterface(DataModel::Base &dataModel);
 
     private:
     // Model with which to interface

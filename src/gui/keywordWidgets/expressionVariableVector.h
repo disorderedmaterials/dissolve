@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/dataTableModelInterface.h"
+#include "gui/dataModelTableInterface.h"
 #include "gui/keywordWidgets/base.h"
 #include "gui/keywordWidgets/ui_expressionVariableVector.h"
 #include "keywords/expressionVariableVector.h"
@@ -30,7 +30,7 @@ class ExpressionVariableVectorKeywordWidget : public QWidget, public KeywordWidg
     // Main form declaration
     Ui::ExpressionVariableVectorWidget ui_;
     // Model for table
-    DataTableModelInterface variableModel_;
+    DataModelTableInterface variableModel_;
 
     private Q_SLOTS:
     void variableDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);

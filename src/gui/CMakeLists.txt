@@ -19,8 +19,8 @@ add_library(
   configurationViewerWidget.cpp
   configurationViewerWidget.h
   configurationViewerWidget.ui
-  dataTableModelInterface.cpp
-  dataTableModelInterface.h
+  dataModelTableInterface.cpp
+  dataModelTableInterface.h
   dataViewer.cpp
   dataViewer_input.cpp
   dataViewer_interaction.cpp
