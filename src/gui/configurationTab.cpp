@@ -172,6 +172,10 @@ void ConfigurationTab::updateControls()
     // Potentials
     ui_.GlobalPotentialsTable->resizeColumnsToContents();
     ui_.TargetedPotentialsTable->resizeColumnsToContents();
+    fmt::print("From ModelInterface - nRows = {}\n", globalPotentialModel_.rowCount({}));
+    fmt::print("From data, NGlobs = {}\n", configuration_->globalPotentials().size());
+    fmt::print("From model, NGlobs = {}\n", configuration_->globalPotentialsModel().nDataItems());
+    fmt::print("From model, NProps = {}\n", configuration_->globalPotentialsModel().nProperties());
 
     // Viewer
     ui_.ViewerWidget->postRedisplay();
