@@ -58,6 +58,18 @@ class Base
      * Item Management
      */
     public:
+    // Create new item(s) starting at specified vector index
+    virtual void createItems(int index, int count) = 0;
+    // Append new item(s) to the end of the data
+    virtual void appendItems(int count) = 0;
+    // Remove item(s) starting at specified vector index
+    virtual void removeItems(int index, int count) = 0;
+
+    /*
+     * Signalling
+     */
+    public:
+    // Mutation Signals
     enum class MutationSignal
     {
         PropertyChanged,
@@ -66,22 +78,23 @@ class Base
         DataRemovalStarted,
         DataRemovalFinished
     };
+
+    private:
+    // Mutation signal function used to notify an associated Qt model
     using DataMutationSignalFunction = std::function<void(MutationSignal, int, int)>;
     DataMutationSignalFunction mutationSignalFunction_ = {};
+
+    public:
+    // Set mutation signal function
     void setMutationSignalFunction(DataMutationSignalFunction mutationSignalFunction)
     {
         mutationSignalFunction_ = std::move(mutationSignalFunction);
     }
+    // Emit mutation signal
     void emitMutationSignal(MutationSignal signal, int startIndex = 0, int endIndex = 0)
     {
         if (mutationSignalFunction_)
             mutationSignalFunction_(signal, startIndex, endIndex);
     }
-    // Create new item(s) starting at specified vector index
-    virtual void createItems(int index, int count) = 0;
-    // Append new item(s) to the end of the data
-    virtual void appendItems(int count) = 0;
-    // Remove item(s) starting at specified vector index
-    virtual void removeItems(int index, int count) = 0;
 };
 } // namespace DataModel
