@@ -140,8 +140,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
 
     public:
     // Add new parameter
-    std::shared_ptr<ExpressionVariable> addParameter(std::string_view name, const ExpressionValue &initialValue = {},
-                                                     std::optional<int> insertAt = {});
+    std::shared_ptr<ExpressionVariable> addParameter(std::string_view name, const ExpressionValue &initialValue = {});
     // Return the named parameter (if it exists)
     std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
                                                      const std::shared_ptr<ExpressionVariable> &excludeParameter = {});

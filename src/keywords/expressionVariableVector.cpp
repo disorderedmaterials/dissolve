@@ -23,12 +23,17 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(
                         return true;
                     });
 
+    // Override the creator function since we need to ensure both name uniqueness and the correct prefixing
     data_.setCreator(
         [&]()
         {
             auto allParameters = parentNode_->getParametersInScope();
-            return parentNode_->addParameter(
-                DissolveSys::uniqueName("NewVariable", allParameters, [](const auto &var) { return var->name(); }), {});
+            auto newVar = std::make_shared<ExpressionVariable>();
+            newVar->setBaseName(
+                DissolveSys::uniqueName("NewVariable", allParameters, [](const auto &var) { return var->name(); }));
+            if (parentNode_->type() != ProcedureNode::NodeType::Parameters)
+                newVar->setNamePrefix(parentNode_->name());
+            return newVar;
         });
 }
 

@@ -208,6 +208,14 @@ template <class DataItemClass, class DataItem> class Table : public Base
             emitMutationSignal(Base::MutationSignal::DataCreationFinished);
         }
     }
+    // Append new item to the end of the data and return it
+    DataItem &appendItem()
+    {
+        emitMutationSignal(Base::MutationSignal::DataCreationStarted, data_.size(), data_.size());
+        newItem(data_);
+        emitMutationSignal(Base::MutationSignal::DataCreationFinished);
+        return data_.back();
+    }
     // Append new item(s) to the end of the data
     void appendItems(int count) final
     {
