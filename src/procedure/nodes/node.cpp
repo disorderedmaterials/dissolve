@@ -158,10 +158,7 @@ std::shared_ptr<ExpressionVariable> ProcedureNode::addParameter(std::string_view
                                                                 std::optional<int> insertAt)
 {
     auto newVar = std::make_shared<ExpressionVariable>(name, initialValue);
-    if (insertAt)
-        parameters_.insert(parameters_.begin() + *insertAt, newVar);
-    else
-        parameters_.emplace_back(newVar);
+    parameters_.insertThis(newVar, insertAt);
 
     if (type_ != ProcedureNode::NodeType::Parameters)
         newVar->setNamePrefix(name_);
@@ -195,7 +192,7 @@ std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view
 }
 
 // Return references to all parameters for this node
-const std::vector<std::shared_ptr<ExpressionVariable>> &ProcedureNode::parameters() const { return parameters_; }
+const std::vector<std::shared_ptr<ExpressionVariable>> &ProcedureNode::parameters() const { return parameters_.data(); }
 
 /*
  * Execution

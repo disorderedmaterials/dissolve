@@ -9,7 +9,7 @@
 ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWidget *parent,
                                                                              ExpressionVariableVectorKeyword *keyword,
                                                                              const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword), variableModel_(keyword->dataModel())
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword), variableModel_(keyword->data())
 {
     // Create and set up the UI for our widget
     ui_.setupUi(this);

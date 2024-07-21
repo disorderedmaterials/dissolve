@@ -4,6 +4,9 @@
 #pragma once
 
 #include "templates/dataModelBase.h"
+#include <map>
+#include <optional>
+#include <vector>
 
 namespace DataModel
 {
@@ -18,7 +21,7 @@ template <class DataItemClass, class DataItem> class Table : public Base
     // Property set function
     using PropertySetFunction = std::function<bool(DataItemClass *, PropertyValue)>;
 
-    Table(std::vector<DataItem> &data) : Base(), data_(data)
+    Table() : Base()
     {
         // Add properties from the modelable base class
         for (auto &[name, type, flags, getter, setter] : Modelable<DataItemClass>::modelableProperties())
@@ -28,11 +31,26 @@ template <class DataItemClass, class DataItem> class Table : public Base
     }
 
     /*
-     * Target Data and Functions
+     * Target Data and Vector Compatibility
      */
     private:
     // Target data for the model
-    std::vector<DataItem> &data_;
+    std::vector<DataItem> data_;
+
+    public:
+    // Return vector
+    const std::vector<DataItem> &data() const { return data_; }
+    // Return opening iterator for the data
+    typename std::vector<DataItem>::const_iterator begin() const { return data_.begin(); }
+    // Return ending iterator for the data
+    typename std::vector<DataItem>::const_iterator end() const { return data_.end(); }
+    // Return whether the data is empty
+    bool empty() const { return data_.empty(); }
+
+    /*
+     * Setters / Getters
+     */
+    private:
     // Map of named properties to data getters
     std::map<std::string, PropertyGetFunction> getters_;
     // Map of named properties to data setters
@@ -128,44 +146,74 @@ template <class DataItemClass, class DataItem> class Table : public Base
      * Item Management
      */
     private:
-    // Item creation function (if required) otherwise default constructor T() will be called
-    using CreateItemFunction = std::function<DataItem(std::optional<int>)>;
+    // Item creation function (if required) otherwise a suitable default constructor will be called
+    using CreateItemFunction = std::function<DataItem()>;
     CreateItemFunction createItemFunction_;
     // Item removal function (if required)
     using RemoveItemFunction = std::function<void(int)>;
     RemoveItemFunction removeItemFunction_;
+
+    private:
+    // Create new item
+    void newItem(std::vector<DataItemClass> &vector, std::optional<int> position = {})
+    {
+        if (position)
+            data_.insert(data_.begin() + *position, createItemFunction_ ? createItemFunction_() : DataItem());
+        else
+            data_.emplace_back(createItemFunction_ ? createItemFunction_() : DataItem());
+    }
+    void newItem(std::vector<std::shared_ptr<DataItemClass>> &vector, std::optional<int> position = {})
+    {
+        if (position)
+            data_.insert(data_.begin() + *position,
+                         createItemFunction_ ? createItemFunction_() : std::make_shared<DataItemClass>());
+        else
+            data_.emplace_back(createItemFunction_ ? createItemFunction_() : std::make_shared<DataItemClass>());
+    }
+    void newItem(std::vector<std::unique_ptr<DataItemClass>> &vector, std::optional<int> position = {})
+    {
+        if (position)
+            data_.insert(data_.begin() + *position,
+                         createItemFunction_ ? createItemFunction_() : std::make_unique<DataItemClass>());
+        else
+            data_.emplace_back(createItemFunction_ ? createItemFunction_() : std::make_unique<DataItemClass>());
+    }
 
     public:
     // Set data creation function
     void setCreator(CreateItemFunction function) { createItemFunction_ = std::move(function); }
     // Set data removal function
     void setRemover(RemoveItemFunction function) { removeItemFunction_ = std::move(function); }
-
-    public:
     // Create new item(s) starting at specified vector index
     void createItems(int index, int count) final
     {
         emitMutationSignal(Base::MutationSignal::DataCreationStarted, index, index + count - 1);
         for (auto n = 0; n < count; ++n)
-        {
-            if (createItemFunction_)
-                createItemFunction_(index + n);
-            else
-                data_.insert(data_.begin() + index, DataItem());
-        }
+            newItem(data_, index + n);
         emitMutationSignal(Base::MutationSignal::DataCreationFinished);
+    }
+    // Insert a specified item at back of the vector or a specified position
+    void insertThis(DataItem &newItem, std::optional<int> position = {})
+    {
+        if (position)
+        {
+            emitMutationSignal(Base::MutationSignal::DataCreationStarted, *position, *position);
+            data_.insert(data_.begin() + *position, newItem);
+            emitMutationSignal(Base::MutationSignal::DataCreationFinished);
+        }
+        else
+        {
+            emitMutationSignal(Base::MutationSignal::DataCreationStarted, data_.size(), data_.size());
+            data_.emplace_back(newItem);
+            emitMutationSignal(Base::MutationSignal::DataCreationFinished);
+        }
     }
     // Append new item(s) to the end of the data
     void appendItems(int count) final
     {
         emitMutationSignal(Base::MutationSignal::DataCreationStarted, data_.size(), data_.size() + count - 1);
         for (auto n = 0; n < count; ++n)
-        {
-            if (createItemFunction_)
-                createItemFunction_({});
-            else
-                data_.emplace_back(DataItem());
-        }
+            newItem(data_);
         emitMutationSignal(Base::MutationSignal::DataCreationFinished);
     }
     // Remove item(s) starting at specified vector index
@@ -179,6 +227,22 @@ template <class DataItemClass, class DataItem> class Table : public Base
         }
         else
             data_.erase(data_.begin() + index, data_.begin() + index + count);
+        emitMutationSignal(Base::MutationSignal::DataRemovalFinished);
+    }
+    // Clear all items
+    void clear() final
+    {
+        if (empty())
+            return;
+
+        emitMutationSignal(Base::MutationSignal::DataRemovalStarted, 0, data_.size() - 1);
+        if (removeItemFunction_)
+        {
+            for (auto n = 0; n < data_.size(); ++n)
+                removeItemFunction_(0);
+        }
+        else
+            data_.clear();
         emitMutationSignal(Base::MutationSignal::DataRemovalFinished);
     }
 };

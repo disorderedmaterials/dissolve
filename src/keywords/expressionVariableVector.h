@@ -15,7 +15,8 @@ class ProcedureNode;
 class ExpressionVariableVectorKeyword : public KeywordBase
 {
     public:
-    ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data, ProcedureNode *parentNode);
+    ExpressionVariableVectorKeyword(DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data,
+                                    ProcedureNode *parentNode);
     ~ExpressionVariableVectorKeyword() override = default;
 
     /*
@@ -23,8 +24,7 @@ class ExpressionVariableVectorKeyword : public KeywordBase
      */
     private:
     // Reference to vector of data
-    std::vector<std::shared_ptr<ExpressionVariable>> &data_;
-    DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> dataModel_;
+    DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data_;
     // Parent ProcedureNode
     ProcedureNode *parentNode_;
 
@@ -32,10 +32,8 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     // Has not changed from initial value
     bool isDefault() const override;
     // Return reference to vector of data
-    std::vector<std::shared_ptr<ExpressionVariable>> &data();
-    const std::vector<std::shared_ptr<ExpressionVariable>> &data() const;
-    // Return data model
-    DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &dataModel();
+    DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data();
+    const DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data() const;
     // Return parent ProcedureNode
     ProcedureNode *parentNode();
     const ProcedureNode *parentNode() const;

@@ -64,6 +64,8 @@ class Base
     virtual void appendItems(int count) = 0;
     // Remove item(s) starting at specified vector index
     virtual void removeItems(int index, int count) = 0;
+    // Clear all items
+    virtual void clear() = 0;
 
     /*
      * Signalling

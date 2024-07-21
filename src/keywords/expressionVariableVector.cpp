@@ -8,28 +8,27 @@
 #include "procedure/nodes/node.h"
 #include <memory>
 
-ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data,
-                                                                 ProcedureNode *parentNode)
-    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), dataModel_(data_)
+ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(
+    DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data, ProcedureNode *parentNode)
+    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode)
 {
     // Override the setter for the "Name" property in the model as we need to ensure unique naming in the same scope
-    dataModel_.setSetter("Name",
-                         [&](ExpressionVariable *var, const DataModel::PropertyValue &newValue)
-                         {
-                             auto p = parentNode_->getParameter(DataModel::propertyAsString(newValue));
-                             if (p && p.get() != var)
-                                 return false;
-                             var->setBaseName(DataModel::propertyAsString(newValue));
-                             return true;
-                         });
+    data_.setSetter("Name",
+                    [&](ExpressionVariable *var, const DataModel::PropertyValue &newValue)
+                    {
+                        auto p = parentNode_->getParameter(DataModel::propertyAsString(newValue));
+                        if (p && p.get() != var)
+                            return false;
+                        var->setBaseName(DataModel::propertyAsString(newValue));
+                        return true;
+                    });
 
-    dataModel_.setCreator(
-        [&](std::optional<int> insertAt)
+    data_.setCreator(
+        [&]()
         {
             auto allParameters = parentNode_->getParametersInScope();
             return parentNode_->addParameter(
-                DissolveSys::uniqueName("NewVariable", allParameters, [](const auto &var) { return var->name(); }), {},
-                insertAt);
+                DissolveSys::uniqueName("NewVariable", allParameters, [](const auto &var) { return var->name(); }), {});
         });
 }
 
@@ -37,14 +36,14 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std
  * Data
  */
 
-// Return reference to vector of data
-std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() { return data_; }
-const std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() const { return data_; }
-
-// Return data model
-DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::dataModel()
+// Return reference to data
+DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data()
 {
-    return dataModel_;
+    return data_;
+}
+const DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() const
+{
+    return data_;
 }
 
 // Return parent ProcedureNode
