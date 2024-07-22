@@ -22,11 +22,7 @@ DataModelTableInterface::~DataModelTableInterface()
  */
 
 // Return row count
-int DataModelTableInterface::rowCount(const QModelIndex &parent) const
-{
-    fmt::print("NDATA = {}\n", dataModel_.nDataItems());
-    return dataModel_.nDataItems();
-}
+int DataModelTableInterface::rowCount(const QModelIndex &parent) const { return dataModel_.nDataItems(); }
 
 // Return column count
 int DataModelTableInterface::columnCount(const QModelIndex &parent) const { return dataModel_.nProperties(); }

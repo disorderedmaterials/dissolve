@@ -16,8 +16,8 @@
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
     : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this),
-      procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentialsModel()),
-      targetedPotentialModel_(cfg->targetedPotentialsModel())
+      procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials()),
+      targetedPotentialModel_(cfg->targetedPotentials())
 {
     ui_.setupUi(this);
 
@@ -172,10 +172,6 @@ void ConfigurationTab::updateControls()
     // Potentials
     ui_.GlobalPotentialsTable->resizeColumnsToContents();
     ui_.TargetedPotentialsTable->resizeColumnsToContents();
-    fmt::print("From ModelInterface - nRows = {}\n", globalPotentialModel_.rowCount({}));
-    fmt::print("From data, NGlobs = {}\n", configuration_->globalPotentials().size());
-    fmt::print("From model, NGlobs = {}\n", configuration_->globalPotentialsModel().nDataItems());
-    fmt::print("From model, NProps = {}\n", configuration_->globalPotentialsModel().nProperties());
 
     // Viewer
     ui_.ViewerWidget->postRedisplay();

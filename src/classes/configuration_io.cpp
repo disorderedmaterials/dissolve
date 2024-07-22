@@ -173,8 +173,9 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
     // Read in global potentials
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    globalPotentials_.resize(parser.argi(0));
-    for (auto &pot : globalPotentials_)
+    auto &&[globalPotMutator, globalPots] = globalPotentials_.mutableData();
+    globalPots.resize(parser.argi(0));
+    for (auto &pot : globalPots)
     {
         // First line contains potential type
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -193,8 +194,9 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
     // Read in targeted potentials
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    targetedPotentials_.resize(parser.argi(0));
-    for (auto &pot : targetedPotentials_)
+    auto &&[targetedPotMutator, targetedPots] = targetedPotentials_.mutableData();
+    targetedPots.resize(parser.argi(0));
+    for (auto &pot : targetedPots)
     {
         // First line contains potential type
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
