@@ -86,9 +86,9 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
 
     public:
     // Return number of data items (rows) in the table
-    int nDataItems() final { return data_.size(); }
+    int nDataItems() const final { return data_.size(); }
     // Return number of properties per data item (i.e. columns) in the table
-    int nProperties() final { return itemProperties_.size(); }
+    int nProperties() const final { return itemProperties_.size(); }
 
     /*
      * Data Access
@@ -114,13 +114,13 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
 
     public:
     // Get property
-    PropertyValue getProperty(int dataIndex, int propertyIndex) final
+    PropertyValue getProperty(int dataIndex, int propertyIndex) const final
     {
         // Check index validity
         if (!isIndexValid(dataIndex, propertyIndex))
             return {};
 
-        return callGetter(getters_[itemProperties_[propertyIndex].name()], data_[dataIndex]);
+        return callGetter(getters_.at(itemProperties_[propertyIndex].name()), data_[dataIndex]);
     }
     // Set property
     bool setProperty(int dataIndex, int propertyIndex, const PropertyValue &newValue) final

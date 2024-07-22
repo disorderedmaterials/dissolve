@@ -46,13 +46,13 @@ class Base
 
     public:
     // Return number of data items (i.e. rows) for the specified index
-    virtual int nDataItems() = 0;
+    virtual int nDataItems() const = 0;
     // Return number of properties (i.e. columns) for the specified index
-    virtual int nProperties() = 0;
+    virtual int nProperties() const = 0;
     // Set property function
     virtual bool setProperty(int dataIndex, int propertyIndex, const PropertyValue &newValue) = 0;
     // Get property function
-    virtual PropertyValue getProperty(int dataIndex, int propertyIndex) = 0;
+    virtual PropertyValue getProperty(int dataIndex, int propertyIndex) const = 0;
 
     /*
      * Item Management
