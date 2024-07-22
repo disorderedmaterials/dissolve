@@ -55,10 +55,7 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
     // Return const data
     const std::vector<DataItem> &data() const { return data_; }
     // Return mutable data
-    std::pair<VectorMutator<DataItem>, std::vector<DataItem> &> mutableData()
-    {
-        return {VectorModelable(data_, &this), data_};
-    };
+    std::pair<VectorMutator<DataItem>, std::vector<DataItem> &> mutableData() { return {{data_, *this}, data_}; };
     // Return opening iterator for the data
     typename std::vector<DataItem>::const_iterator begin() const { return data_.begin(); }
     // Return ending iterator for the data
