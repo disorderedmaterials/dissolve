@@ -10,6 +10,20 @@
 
 namespace DataModel
 {
+// Mutator for Data based on std::vector
+template <class DataItem> class VectorMutator
+{
+    public:
+    VectorMutator(std::vector<DataItem> &data, Base &base) : data_(data), base_(base)
+    {
+        base_.emitMutationSignal(Base::MutationSignal::DataMutationStarted);
+    }
+    ~VectorMutator() { base_.emitMutationSignal(Base::MutationSignal::DataMutationFinished); }
+
+    private:
+    std::vector<DataItem> &data_;
+    Base &base_;
+};
 // Modelable for Data based on std::vector
 template <class DataItemClass, class DataItem> class VectorModelable : public Base
 {
@@ -38,8 +52,13 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
     std::vector<DataItem> data_;
 
     public:
-    // Return vector
+    // Return const data
     const std::vector<DataItem> &data() const { return data_; }
+    // Return mutable data
+    std::pair<VectorMutator<DataItem>, std::vector<DataItem> &> mutableData()
+    {
+        return {VectorModelable(data_, &this), data_};
+    };
     // Return opening iterator for the data
     typename std::vector<DataItem>::const_iterator begin() const { return data_.begin(); }
     // Return ending iterator for the data

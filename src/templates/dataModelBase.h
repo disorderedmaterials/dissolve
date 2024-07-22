@@ -74,7 +74,8 @@ class Base
     // Mutation Signals
     enum class MutationSignal
     {
-        PropertyChanged,
+        DataMutationStarted,
+        DataMutationFinished,
         DataCreationStarted,
         DataCreationFinished,
         DataRemovalStarted,

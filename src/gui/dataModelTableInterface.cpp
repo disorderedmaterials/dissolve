@@ -128,6 +128,12 @@ void DataModelTableInterface::dataMutated(DataModel::Base::MutationSignal signal
 {
     switch (signal)
     {
+        case (DataModel::Base::MutationSignal::DataMutationStarted):
+            beginResetModel();
+            break;
+        case (DataModel::Base::MutationSignal::DataMutationFinished):
+            endResetModel();
+            break;
         case (DataModel::Base::MutationSignal::DataCreationStarted):
             beginInsertRows({}, startIndex, endIndex);
             break;
