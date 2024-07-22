@@ -249,6 +249,13 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
             newItem(data_);
         emitMutationSignal(Base::MutationSignal::DataCreationFinished);
     }
+    // Emplace append the supplied item
+    void emplaceAppend(DataItem item)
+    {
+        emitMutationSignal(Base::MutationSignal::DataCreationStarted, data_.size(), data_.size());
+        data_.emplace_back(std::move(item));
+        emitMutationSignal(Base::MutationSignal::DataCreationFinished);
+    }
     // Remove item(s) starting at specified vector index
     void removeItems(int index, int count) final
     {
