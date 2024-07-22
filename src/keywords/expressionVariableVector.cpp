@@ -23,7 +23,7 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(
                         return true;
                     });
 
-    // Override the creator function since we need to ensure both name uniqueness and the correct prefixing
+    // Set the creator function - we need to ensure both name uniqueness and the correct prefixing
     data_.setCreator(
         [&]()
         {

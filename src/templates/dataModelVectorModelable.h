@@ -180,28 +180,17 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
 
     private:
     // Create new item
-    void newItem(std::vector<DataItemClass> &vector, std::optional<int> position = {})
+    void newItem(std::optional<int> position = {})
     {
+        if (!createItemFunction_)
+            throw(std::runtime_error(
+                fmt::format("No CreateItemFunction has been set in this VectorModelable({},{}) but newItem() was called.\n",
+                            typeid(DataItemClass).name(), typeid(DataItem).name())));
+
         if (position)
-            data_.insert(data_.begin() + *position, createItemFunction_ ? createItemFunction_() : DataItem());
+            data_.insert(data_.begin() + *position, createItemFunction_());
         else
-            data_.emplace_back(createItemFunction_ ? createItemFunction_() : DataItem());
-    }
-    void newItem(std::vector<std::shared_ptr<DataItemClass>> &vector, std::optional<int> position = {})
-    {
-        if (position)
-            data_.insert(data_.begin() + *position,
-                         createItemFunction_ ? createItemFunction_() : std::make_shared<DataItemClass>());
-        else
-            data_.emplace_back(createItemFunction_ ? createItemFunction_() : std::make_shared<DataItemClass>());
-    }
-    void newItem(std::vector<std::unique_ptr<DataItemClass>> &vector, std::optional<int> position = {})
-    {
-        if (position)
-            data_.insert(data_.begin() + *position,
-                         createItemFunction_ ? createItemFunction_() : std::make_unique<DataItemClass>());
-        else
-            data_.emplace_back(createItemFunction_ ? createItemFunction_() : std::make_unique<DataItemClass>());
+            data_.emplace_back(createItemFunction_());
     }
 
     public:
@@ -214,30 +203,14 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
     {
         emitMutationSignal(Base::MutationSignal::DataCreationStarted, index, index + count - 1);
         for (auto n = 0; n < count; ++n)
-            newItem(data_, index + n);
+            newItem(index + n);
         emitMutationSignal(Base::MutationSignal::DataCreationFinished);
-    }
-    // Insert a specified item at back of the vector or a specified position
-    void insertThis(DataItem &newItem, std::optional<int> position = {})
-    {
-        if (position)
-        {
-            emitMutationSignal(Base::MutationSignal::DataCreationStarted, *position, *position);
-            data_.insert(data_.begin() + *position, newItem);
-            emitMutationSignal(Base::MutationSignal::DataCreationFinished);
-        }
-        else
-        {
-            emitMutationSignal(Base::MutationSignal::DataCreationStarted, data_.size(), data_.size());
-            data_.emplace_back(newItem);
-            emitMutationSignal(Base::MutationSignal::DataCreationFinished);
-        }
     }
     // Append new item to the end of the data and return it
     DataItem &appendItem()
     {
         emitMutationSignal(Base::MutationSignal::DataCreationStarted, data_.size(), data_.size());
-        newItem(data_);
+        newItem();
         emitMutationSignal(Base::MutationSignal::DataCreationFinished);
         return data_.back();
     }
@@ -246,7 +219,7 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
     {
         emitMutationSignal(Base::MutationSignal::DataCreationStarted, data_.size(), data_.size() + count - 1);
         for (auto n = 0; n < count; ++n)
-            newItem(data_);
+            newItem();
         emitMutationSignal(Base::MutationSignal::DataCreationFinished);
     }
     // Emplace append the supplied item
