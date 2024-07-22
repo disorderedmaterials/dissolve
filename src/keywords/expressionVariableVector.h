@@ -5,7 +5,7 @@
 
 #include "expression/node.h"
 #include "keywords/base.h"
-#include "templates/dataModelTable.h"
+#include "templates/dataModelVectorModelable.h"
 
 // Forward Declarations
 class ExpressionVariable;
@@ -15,7 +15,7 @@ class ProcedureNode;
 class ExpressionVariableVectorKeyword : public KeywordBase
 {
     public:
-    ExpressionVariableVectorKeyword(DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data,
+    ExpressionVariableVectorKeyword(DataModel::VectorModelable<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data,
                                     ProcedureNode *parentNode);
     ~ExpressionVariableVectorKeyword() override = default;
 
@@ -23,8 +23,8 @@ class ExpressionVariableVectorKeyword : public KeywordBase
      * Data
      */
     private:
-    // Reference to vector of data
-    DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data_;
+    // Reference to vector modelable
+    DataModel::VectorModelable<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data_;
     // Parent ProcedureNode
     ProcedureNode *parentNode_;
 
@@ -32,8 +32,8 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     // Has not changed from initial value
     bool isDefault() const override;
     // Return reference to vector of data
-    DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data();
-    const DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data() const;
+    DataModel::VectorModelable<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data();
+    const DataModel::VectorModelable<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data() const;
     // Return parent ProcedureNode
     ProcedureNode *parentNode();
     const ProcedureNode *parentNode() const;

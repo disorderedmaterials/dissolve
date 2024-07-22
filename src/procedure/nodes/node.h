@@ -9,7 +9,7 @@
 #include "keywords/store.h"
 #include "procedure/nodes/aliases.h"
 #include "procedure/nodes/context.h"
-#include "templates/dataModelTable.h"
+#include "templates/dataModelVectorModelable.h"
 #include "templates/optionalRef.h"
 
 // Forward Declarations
@@ -133,7 +133,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
      */
     protected:
     // Defined parameters
-    DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> parameters_;
+    DataModel::VectorModelable<ExpressionVariable, std::shared_ptr<ExpressionVariable>> parameters_;
     // Set named parameter in supplied vector
     bool setParameter(std::vector<std::shared_ptr<ExpressionVariable>> &parameters, std::string_view parameter,
                       ExpressionValue value);

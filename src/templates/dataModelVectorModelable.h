@@ -10,8 +10,8 @@
 
 namespace DataModel
 {
-// Table Model for Data based on std::vector
-template <class DataItemClass, class DataItem> class Table : public Base
+// Modelable for Data based on std::vector
+template <class DataItemClass, class DataItem> class VectorModelable : public Base
 {
     public:
     // Modelable properties
@@ -21,7 +21,7 @@ template <class DataItemClass, class DataItem> class Table : public Base
     // Property set function
     using PropertySetFunction = std::function<bool(DataItemClass *, PropertyValue)>;
 
-    Table() : Base()
+    VectorModelable() : Base()
     {
         // Add properties from the modelable base class
         for (auto &[name, type, flags, getter, setter] : Modelable<DataItemClass>::modelableProperties())

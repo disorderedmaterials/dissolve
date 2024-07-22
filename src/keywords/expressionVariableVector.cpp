@@ -9,7 +9,7 @@
 #include <memory>
 
 ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(
-    DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data, ProcedureNode *parentNode)
+    DataModel::VectorModelable<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data, ProcedureNode *parentNode)
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode)
 {
     // Override the setter for the "Name" property in the model as we need to ensure unique naming in the same scope
@@ -42,11 +42,12 @@ ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(
  */
 
 // Return reference to data
-DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data()
+DataModel::VectorModelable<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data()
 {
     return data_;
 }
-const DataModel::Table<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() const
+const DataModel::VectorModelable<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &
+ExpressionVariableVectorKeyword::data() const
 {
     return data_;
 }
