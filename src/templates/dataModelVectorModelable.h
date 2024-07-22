@@ -114,9 +114,15 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
      */
     private:
     // Call getter
-    PropertyValue callGetter(PropertyGetFunction &getter, DataItemClass &item) { return getter(&item); }
-    PropertyValue callGetter(PropertyGetFunction &getter, std::shared_ptr<DataItemClass> &item) { return getter(item.get()); }
-    PropertyValue callGetter(PropertyGetFunction &getter, std::unique_ptr<DataItemClass> &item) { return getter(item.get()); }
+    PropertyValue callGetter(const PropertyGetFunction &getter, const DataItemClass &item) const { return getter(&item); }
+    PropertyValue callGetter(const PropertyGetFunction &getter, const std::shared_ptr<DataItemClass> &item) const
+    {
+        return getter(item.get());
+    }
+    PropertyValue callGetter(const PropertyGetFunction &getter, const std::unique_ptr<DataItemClass> &item) const
+    {
+        return getter(item.get());
+    }
     // Call setter
     bool callSetter(PropertySetFunction &setter, DataItemClass &item, const PropertyValue &newValue)
     {
