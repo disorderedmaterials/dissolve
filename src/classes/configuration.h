@@ -19,7 +19,7 @@
 #include "math/interpolator.h"
 #include "module/layer.h"
 #include "procedure/procedure.h"
-#include "templates/dataModelTable.h"
+#include "templates/dataModelVectorModelable.h"
 #include "templates/vector3.h"
 #include <deque>
 #include <map>
@@ -205,27 +205,21 @@ class Configuration : public Serialisable<const CoreData &>
      */
     private:
     // Defined global potentials
-    std::vector<std::unique_ptr<ExternalPotential>> globalPotentials_;
-    // Model for global potentials
-    DataModel::Table<ExternalPotential, std::unique_ptr<ExternalPotential>> globalPotentialsModel_;
+    DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> globalPotentials_;
     // Defined targeted potentials
-    std::vector<std::unique_ptr<ExternalPotential>> targetedPotentials_;
-    // Model for targeted potentials
-    DataModel::Table<ExternalPotential, std::unique_ptr<ExternalPotential>> targetedPotentialsModel_;
+    DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> targetedPotentials_;
 
     public:
     // Add global potential
     void addGlobalPotential(std::unique_ptr<ExternalPotential> potential);
-    // Return vector of defined global potentials
-    const std::vector<std::unique_ptr<ExternalPotential>> &globalPotentials() const;
-    // Return model for global potentials
-    DataModel::Table<ExternalPotential, std::unique_ptr<ExternalPotential>> &globalPotentialsModel();
+    // Return defined global potentials
+    DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &globalPotentials();
+    const DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &globalPotentials() const;
     // Add targeted potential
     void addTargetedPotential(std::unique_ptr<ExternalPotential> potential);
-    // Return vector of defined targeted potentials
-    const std::vector<std::unique_ptr<ExternalPotential>> &targetedPotentials() const;
-    // Model for targeted potentials
-    DataModel::Table<ExternalPotential, std::unique_ptr<ExternalPotential>> &targetedPotentialsModel();
+    // Return GRdefined targeted potentials
+    DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &targetedPotentials();
+    const DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &targetedPotentials() const;
     // Link targeted potentials to atoms
     void linkTargetedPotentials();
 

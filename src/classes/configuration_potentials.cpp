@@ -7,31 +7,34 @@
 // Add global potential
 void Configuration::addGlobalPotential(std::unique_ptr<ExternalPotential> potential)
 {
-    globalPotentials_.emplace_back(std::move(potential));
+    globalPotentials_.emplaceAppend(std::move(potential));
 }
 
-// Return vector of defined global potentials
-const std::vector<std::unique_ptr<ExternalPotential>> &Configuration::globalPotentials() const { return globalPotentials_; }
-
-// Return model for defined global potentials
-DataModel::Table<ExternalPotential, std::unique_ptr<ExternalPotential>> &Configuration::globalPotentialsModel()
+// Return defined global potentials
+DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &Configuration::globalPotentials()
 {
-    return globalPotentialsModel_;
+    return globalPotentials_;
+}
+const DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &Configuration::globalPotentials() const
+{
+    return globalPotentials_;
 }
 
 // Add targeted potential
 void Configuration::addTargetedPotential(std::unique_ptr<ExternalPotential> potential)
 {
-    targetedPotentials_.emplace_back(std::move(potential));
+    globalPotentials_.emplaceAppend(std::move(potential));
 }
 
-// Return vector of defined targeted potentials
-const std::vector<std::unique_ptr<ExternalPotential>> &Configuration::targetedPotentials() const { return targetedPotentials_; }
-
-// Return model for defined targeted potentials
-DataModel::Table<ExternalPotential, std::unique_ptr<ExternalPotential>> &Configuration::targetedPotentialsModel()
+// Return defined targeted potentials
+DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &Configuration::targetedPotentials()
 {
-    return targetedPotentialsModel_;
+    return targetedPotentials_;
+}
+const DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &
+Configuration::targetedPotentials() const
+{
+    return targetedPotentials_;
 }
 
 // Link targeted potentials to atoms

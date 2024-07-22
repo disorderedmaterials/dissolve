@@ -5,6 +5,7 @@
 
 #include "kernels/energy.h"
 #include "kernels/force.h"
+#include "templates/dataModelVectorModelable.h"
 
 // Forward Declarations
 class ExternalPotential;
@@ -25,7 +26,7 @@ class ExternalPotentialsEnergyKernel : public EnergyKernel
      */
     private:
     // Global potentials acting on all atoms
-    const std::vector<std::unique_ptr<ExternalPotential>> &globalPotentials_;
+    const DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &globalPotentials_;
 
     /*
      * Extended Terms
@@ -53,7 +54,7 @@ class ExternalPotentialsForceKernel : public ForceKernel
      */
     private:
     // Global potentials acting on all atoms
-    const std::vector<std::unique_ptr<ExternalPotential>> &globalPotentials_;
+    const DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &globalPotentials_;
 
     /*
      * Extended Terms

@@ -66,14 +66,14 @@ bool Configuration::serialise(LineParser &parser) const
         return true;
 
     // Write global potentials
-    if (!parser.writeLineF("{}  # nGlobalPotentials\n", globalPotentials_.size()))
+    if (!parser.writeLineF("{}  # nGlobalPotentials\n", globalPotentials_.nDataItems()))
         return false;
     for (auto &pot : globalPotentials_)
         if (!pot->serialise(parser, ""))
             return false;
 
     // Write targeted potentials
-    if (!parser.writeLineF("{}  # nTargetedPotentials\n", targetedPotentials_.size()))
+    if (!parser.writeLineF("{}  # nTargetedPotentials\n", targetedPotentials_.nDataItems()))
         return false;
     for (auto &pot : targetedPotentials_)
         if (!pot->serialise(parser, ""))
