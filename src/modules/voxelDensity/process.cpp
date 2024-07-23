@@ -97,15 +97,22 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
         fmt::format("Voxel{}Hist1D", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
         GenericItem::InRestartFileFlag);
 
-    auto max = data3d.maxValue(), min = data3d.minValue();
+    auto max = data3d.maxValue(), min = (numPoints_ == 1) ? 0 : data3d.minValue();
     hist.initialise(min, max, (max - min) / numPoints_);
     hist.zeroBins();
 
     dissolve::for_each(std::execution::seq, data3d.values().begin(), data3d.values().end(),
                        [&hist](auto &value) { hist.bin(value); });
 
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(hist.accumulatedData(), exportFileAndFormat_,
-                                                                  context.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(
+            [&hist, &numPoints_]()
+            {
+                // Normalise by voxel volume
+                hist.data().xAxis() *= std::pow(numPoints_, 3);
+                hist.updateAccumulatedData();
+                return hist.accumulatedData()
+            },
+            exportFileAndFormat_, context.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
