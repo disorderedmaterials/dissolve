@@ -55,7 +55,7 @@ void setProcessing(CoreData &coreData, VoxelDensityModule::TargetPropertyType ta
     auto moduleLayer = coreData.addProcessingLayer();
     auto module = moduleLayer.append(coreData, ModuleTypes::ModuleType::VoxelDensity, coreData.configurations());
     auto densitySet = module.keywords().set("Density", N);
-    module.keywords().setEnumeration < EnumOptionsKeyword<VoxelDensityModule::TargetPropertyType>("TargetProperty", target);
+    module.keywords().setEnumeration("TargetProperty", target);
 }
 
 TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicMass)
