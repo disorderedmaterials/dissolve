@@ -110,7 +110,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
                 // Normalise by voxel volume
                 hist.data().xAxis() *= std::pow(numPoints_, 3);
                 hist.updateAccumulatedData();
-                return hist.accumulatedData()
+                return hist.accumulatedData();
             },
             exportFileAndFormat_, context.processPool()))
         return ExecutionResult::Failed;
