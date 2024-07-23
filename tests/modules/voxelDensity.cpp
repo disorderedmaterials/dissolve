@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "data/elements.h"
-#include "classes/speciesAtom.h"
-#include "module/types.h"
 #include "modules/voxelDensity/voxelDensity.h"
+#include "classes/speciesAtom.h"
+#include "data/elements.h"
+#include "module/types.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <vector>
@@ -12,7 +12,7 @@
 namespace UnitTest
 {
 #define BOX_LENGTH 8
-#define NUM_ATOMS static_cast<int>std::pow(BOX_LENGTH, 3)
+#define NUM_ATOMS static_cast<int> std::pow(BOX_LENGTH, 3)
 
 class VoxelDensityModuleTest : public ::testing::Test
 {
@@ -28,10 +28,11 @@ void setProcessing(CoreData &coreData, VoxelDensityModule::TargetPropertyType ta
     auto cgf = systemTest.coreData().addConfiguration();
 
     cfg.createBox({BOX_LENGTH, BOX_LENGTH, BOX_LENGTH}, {90.0, 90.0, 90.0});
-    
+
     std::vector<SpeciesAtom> speciesAtoms(NUM_ATOMS);
 
-    auto addToAtoms = [&cfg](auto &atom, const auto &r)
+    auto addToAtoms =
+        [&cfg](auto &atom, const auto &r)
     {
         auto molecule = std::make_shared<Molecule>();
         atom.set(Element::Element::He);
@@ -40,19 +41,22 @@ void setProcessing(CoreData &coreData, VoxelDensityModule::TargetPropertyType ta
     }
 
     int at = 0;
-    for (double i=0.5; i < BOX_LENGTH; i++)
+    for (double i = 0.5; i < BOX_LENGTH; i++)
     {
-        for (double j=0.5; j < BOX_LENGTH; j++)
+        for (double j = 0.5; j < BOX_LENGTH; j++)
         {
-            for (double k=0.5; k < BOX_LENGTH; k++) { addToAtoms(speciesAtoms[at++], {i, j, k}); }
+            for (double k = 0.5; k < BOX_LENGTH; k++)
+            {
+                addToAtoms(speciesAtoms[at++], {i, j, k});
+            }
         }
     }
 
     auto moduleLayer = coreData.addProcessingLayer();
     auto module = moduleLayer.append(coreData, ModuleTypes::ModuleType::VoxelDensity, coreData.configurations());
     auto densitySet = module.keywords().set("Density", N);
-    module.keywords().setEnumeration<EnumOptionsKeyword<VoxelDensityModule::TargetPropertyType>("TargetProperty", target);
-} 
+    module.keywords().setEnumeration < EnumOptionsKeyword<VoxelDensityModule::TargetPropertyType>("TargetProperty", target);
+}
 
 TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicMass)
 {
@@ -111,4 +115,4 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxScatteringLengthDensity)
     // Assertions
 }
 
-}
+} // namespace UnitTest
