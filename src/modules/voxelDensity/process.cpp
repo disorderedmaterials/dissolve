@@ -111,7 +111,11 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     auto bins = hist.accumulatedData().xAxis();
     std::for_each(std::execution::seq, bins.begin(), bins.end(), [&voxelVolume](auto &value) { value *= voxelVolume; });
 
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(hist.accumulatedData(), exportFileAndFormat_,
+    // Voxel density
+    auto &data1d = processingData.realise<Data1D>("Voxel{}Data1D", name(), GenericItem::InRestartFileFlag);
+    data1d = hist.accumulatedData();
+
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(data1d, exportFileAndFormat_,
                                                                   context.processPool()))
         return ExecutionResult::Failed;
 
