@@ -95,7 +95,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
     // Calculate voxel density histogram
     auto &hist = processingData.realise<Histogram1D>(
-        fmt::format("Voxel{}Hist1D", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
+        fmt::format("Voxel{}Histogram1D", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
         GenericItem::InRestartFileFlag);
 
     auto max = data3d.maxValue(), min = (numPoints_ == 1) ? 0 : data3d.minValue();
