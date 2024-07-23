@@ -115,8 +115,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     auto &data1d = processingData.realise<Data1D>("Voxel{}Data1D", name(), GenericItem::InRestartFileFlag);
     data1d = hist.accumulatedData();
 
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(data1d, exportFileAndFormat_,
-                                                                  context.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(data1d, exportFileAndFormat_, context.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
