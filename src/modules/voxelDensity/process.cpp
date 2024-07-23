@@ -1,4 +1,5 @@
 #include "analyser/dataExporter.h"
+#include "analyser/dataOperator1D.h"
 #include "data/atomicMasses.h"
 #include "data/isotopes.h"
 #include "main/dissolve.h"
@@ -107,9 +108,14 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(
             [&hist, &numPoints_]()
             {
-                // Normalise by voxel volume
-                hist.data().xAxis() *= std::pow(numPoints_, 3);
                 hist.updateAccumulatedData();
+
+                // Normalise by voxel volume
+                auto voxelVolume = std::pow(numPoints_, 3);
+
+                DataOperator1D normaliser(hist.accumulatedData().xAxis());
+                normaliser.multiply(voxelVolume);
+
                 return hist.accumulatedData();
             },
             exportFileAndFormat_, context.processPool()))
