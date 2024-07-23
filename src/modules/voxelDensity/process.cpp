@@ -104,21 +104,15 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
     dissolve::for_each(std::execution::seq, data3d.values().begin(), data3d.values().end(),
                        [&hist](auto &value) { hist.bin(value); });
+                       
+    // Normalise by voxel volume
+    auto voxelVolume = std::pow(numPoints_, 3);
 
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(
-            [&hist, &numPoints_]()
-            {
-                hist.updateAccumulatedData();
+    auto bins = hist.accumulatedData().xAxis();
+    std::for_each(std::execution::seq, bins.begin(), bins.end(), [&voxelVolume](auto &value) { value*=voxelVolume; });
 
-                // Normalise by voxel volume
-                auto voxelVolume = std::pow(numPoints_, 3);
-
-                DataOperator1D normaliser(hist.accumulatedData().xAxis());
-                normaliser.multiply(voxelVolume);
-
-                return hist.accumulatedData();
-            },
-            exportFileAndFormat_, context.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(hist.accumulatedData(), exportFileAndFormat_,
+                                                                  context.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
