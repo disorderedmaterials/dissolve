@@ -11,6 +11,9 @@
 
 namespace UnitTest
 {
+#define BOX_LENGTH 8
+#define NUM_ATOMS static_cast<int>std::pow(BOX_LENGTH, 3)
+
 class VoxelDensityModuleTest : public ::testing::Test
 {
     protected:
@@ -24,24 +27,24 @@ void setProcessing(CoreData &coreData, VoxelDensityModule::TargetPropertyType ta
 
     auto cgf = systemTest.coreData().addConfiguration();
 
-    cfg.createBox({8, 8, 8}, {90.0, 90.0, 90.0});
+    cfg.createBox({BOX_LENGTH, BOX_LENGTH, BOX_LENGTH}, {90.0, 90.0, 90.0});
     
-    std::vector<SpeciesAtom> speciesAtoms(static_cast<int>std::pow(8, 3));
+    std::vector<SpeciesAtom> speciesAtoms(NUM_ATOMS);
 
-    auto addToAtoms = [&cfg](auto &atom)
+    auto addToAtoms = [&cfg](auto &atom, const auto &r)
     {
         auto molecule = std::make_shared<Molecule>();
         atom.set(Element::Element::He);
         molecule.addAtom(atom);
-        cfg.addAtom(atom, molecule);
+        cfg.addAtom(atom, molecule, Vec3<double>(r[0], r[1], r[2]));
     }
 
     int at = 0;
-    for (double i=0.5; i < length; i++)
+    for (double i=0.5; i < BOX_LENGTH; i++)
     {
-        for (double j=0.5; j < length; j++)
+        for (double j=0.5; j < BOX_LENGTH; j++)
         {
-            for (double k=0.5; k < length; k++) { addToAtoms(speciesAtoms[at++]); }
+            for (double k=0.5; k < BOX_LENGTH; k++) { addToAtoms(speciesAtoms[at++], {i, j, k}); }
         }
     }
 
