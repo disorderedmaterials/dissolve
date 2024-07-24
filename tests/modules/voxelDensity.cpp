@@ -3,6 +3,7 @@
 
 #include "modules/voxelDensity/voxelDensity.h"
 #include "classes/speciesAtom.h"
+#include "classes/atom.h"
 #include "data/elements.h"
 #include "module/types.h"
 #include "tests/testData.h"
@@ -12,7 +13,7 @@
 namespace UnitTest
 {
 #define BOX_LENGTH 8
-#define NUM_ATOMS static_cast<int> std::pow(BOX_LENGTH, 3)
+#define NUM_ATOMS static_cast<int>(std::pow(BOX_LENGTH, 3))
 
 class VoxelDensityModuleTest : public ::testing::Test
 {
@@ -25,20 +26,21 @@ void setProcessing(CoreData &coreData, VoxelDensityModule::TargetPropertyType ta
 {
     coreData.clear();
 
-    auto cgf = systemTest.coreData().addConfiguration();
+    auto cfg = coreData.addConfiguration();
 
-    cfg.createBox({BOX_LENGTH, BOX_LENGTH, BOX_LENGTH}, {90.0, 90.0, 90.0});
+    cfg->createBox({BOX_LENGTH, BOX_LENGTH, BOX_LENGTH}, {90.0, 90.0, 90.0});
 
     std::vector<SpeciesAtom> speciesAtoms(NUM_ATOMS);
 
     auto addToAtoms =
-        [&cfg](auto &atom, const auto &r)
+        [&cfg](const SpeciesAtom *spAtom, auto &i, auto &j, auto &k)
     {
-        auto molecule = std::make_shared<Molecule>();
-        atom.set(Element::Element::He);
-        molecule.addAtom(atom);
-        cfg.addAtom(atom, molecule, Vec3<double>(r[0], r[1], r[2]));
-    }
+        Molecule molecule;
+        Atom atom;
+        atom.setSpeciesAtom(spAtom);
+        molecule.addAtom(&atom);
+        cfg->addAtom(spAtom, std::make_shared<Molecule>(molecule), Vec3<double>(i, j, k));
+    };
 
     int at = 0;
     for (double i = 0.5; i < BOX_LENGTH; i++)
@@ -47,33 +49,40 @@ void setProcessing(CoreData &coreData, VoxelDensityModule::TargetPropertyType ta
         {
             for (double k = 0.5; k < BOX_LENGTH; k++)
             {
-                addToAtoms(speciesAtoms[at++], {i, j, k});
+                at++;
+                speciesAtoms[at].setZ(Elements::He);
+                addToAtoms(&speciesAtoms[at], i, j, k);
             }
         }
     }
 
     auto moduleLayer = coreData.addProcessingLayer();
-    auto module = moduleLayer.append(coreData, ModuleTypes::ModuleType::VoxelDensity, coreData.configurations());
-    auto densitySet = module.keywords().set("Density", N);
-    module.keywords().setEnumeration("TargetProperty", target);
+    auto module = moduleLayer->append(coreData, ModuleTypes::ModuleType::VoxelDensity, coreData.configurations());
+    module->setName("VoxelDensity");
+    auto densitySet = module->keywords().set("Density", N);
+    module->keywords().setEnumeration("TargetProperty", target);
 }
 
 TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicMass)
 {
     setProcessing(systemTest.coreData(), VoxelDensityModule::TargetPropertyType::Mass, 8);
     systemTest.dissolve().iterate(20);
+    const auto &data8bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//MassData1D")->get();
     // Assertions
 
     setProcessing(systemTest.coreData(), VoxelDensityModule::TargetPropertyType::Mass, 4);
     systemTest.dissolve().iterate(20);
+    const auto &data4bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//MassData1D")->get();
     // Assertions
 
     setProcessing(systemTest.coreData(), VoxelDensityModule::TargetPropertyType::Mass, 2);
     systemTest.dissolve().iterate(20);
+    const auto &data2bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//MassData1D")->get();
     // Assertions
 
     setProcessing(systemTest.coreData(), VoxelDensityModule::TargetPropertyType::Mass, 1);
     systemTest.dissolve().iterate(20);
+    const auto &data1bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//MassData1D")->get();
     // Assertions
 }
 
@@ -81,18 +90,22 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicNumber)
 {
     setProcessing(systemTest.coreData(), VoxelDensityModule::TargetPropertyType::AtomicNumber, 8);
     systemTest.dissolve().iterate(20);
+    const auto &data8bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//AtomicNumberData1D")->get();
     // Assertions
 
     setProcessing(systemTest.coreData(), VoxelDensityModule::TargetPropertyType::AtomicNumber, 4);
     systemTest.dissolve().iterate(20);
+    const auto &data4bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//AtomicNumberData1D")->get();
     // Assertions
 
     setProcessing(systemTest.coreData(), VoxelDensityModule::TargetPropertyType::AtomicNumber, 2);
     systemTest.dissolve().iterate(20);
+    const auto &data2bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//AtomicNumberData1D")->get();
     // Assertions
 
     setProcessing(systemTest.coreData(), VoxelDensityModule::TargetPropertyType::AtomicNumber, 1);
     systemTest.dissolve().iterate(20);
+    const auto &data1bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//AtomicNumberData1D")->get();
     // Assertions
 }
 
@@ -100,18 +113,22 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxScatteringLengthDensity)
 {
     setProcessing(systemTest.coreData(), VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity, 8);
     systemTest.dissolve().iterate(20);
+    const auto &data8bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensityData1D")->get();
     // Assertions
 
     setProcessing(systemTest.coreData(), VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity, 4);
     systemTest.dissolve().iterate(20);
+    const auto &data4bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensityData1D")->get();
     // Assertions
 
     setProcessing(systemTest.coreData(), VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity, 2);
     systemTest.dissolve().iterate(20);
+    const auto &data2bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensityData1D")->get();
     // Assertions
 
     setProcessing(systemTest.coreData(), VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity, 1);
     systemTest.dissolve().iterate(20);
+    const auto &data1bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensityData1D")->get();
     // Assertions
 }
 
