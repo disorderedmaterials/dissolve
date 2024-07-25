@@ -55,16 +55,8 @@ using PropertyValue = std::variant<int, double, std::string_view, std::string>;
 // Return value as string
 static std::string propertyAsString(const PropertyValue &value)
 {
-    return std::visit([](auto &arg) {return fmt::format("{}", arg);}, value);
+    return std::visit([](auto &arg) { return fmt::format("{}", arg); }, value);
 }
-
-// Helper type for PropertyValue visitor
-template <class... Ts> struct PropertyVisitor : Ts...
-{
-    using Ts::operator()...;
-};
-// Explicit deduction guide for PropertyValue visitor
-template <class... Ts> PropertyVisitor(Ts...) -> PropertyVisitor<Ts...>;
 
 // Modelable - Provides declarations for use by a class defining its properties
 template <class D> class Modelable
