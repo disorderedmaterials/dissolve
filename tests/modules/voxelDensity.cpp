@@ -32,10 +32,10 @@ class HeliumBox
     public:
     void reset()
     {
-        coreData_.clear(); 
+        coreData_.clear();
 
-        if ((speciesAtoms_.size()==0)||(molecules_.size()==0)||(atoms_.size()==0))
-            resizeAll();    
+        if ((speciesAtoms_.size() == 0) || (molecules_.size() == 0) || (atoms_.size() == 0))
+            resizeAll();
     }
 
     void resizeAll()
@@ -45,13 +45,8 @@ class HeliumBox
         atoms_.resize(numAtoms_);
     }
 
-    void addToAtoms(
-        Configuration *cfg, 
-        const SpeciesAtom *spAtom, 
-        std::shared_ptr<Molecule> molecule, 
-        Atom *atom, 
-        double i,  double j, double k
-    )
+    void addToAtoms(Configuration *cfg, const SpeciesAtom *spAtom, std::shared_ptr<Molecule> molecule, Atom *atom, double i,
+                    double j, double k)
     {
         atom->setSpeciesAtom(spAtom);
         molecule->addAtom(atom);
