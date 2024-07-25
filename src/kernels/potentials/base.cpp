@@ -144,24 +144,16 @@ const std::vector<DataModel::Modelable<ExternalPotential>::ModelableProperty>
 DataModel::Modelable<ExternalPotential>::modelableProperties()
 {
     return {
-        {"Type",
-         DataModel::ItemProperty::PropertyType::String,
-         {DataModel::ItemProperty::PropertyFlag::ReadOnly},
+        {{"Type", DataModel::ItemProperty::PropertyType::String, {DataModel::ItemProperty::PropertyFlag::ReadOnly}},
          [&](const ExternalPotential *pot) { return DataModel::PropertyValue(ExternalPotentialTypes::keyword(pot->type())); },
          ModelableSetter()},
-        {"Form",
-         DataModel::ItemProperty::PropertyType::String,
-         {DataModel::ItemProperty::PropertyFlag::ReadOnly},
+        {{"Form", DataModel::ItemProperty::PropertyType::String, {DataModel::ItemProperty::PropertyFlag::ReadOnly}},
          [&](const ExternalPotential *pot) { return DataModel::PropertyValue(pot->formString()); },
          ModelableSetter()},
-        {"Parameters",
-         DataModel::ItemProperty::PropertyType::String,
-         {DataModel::ItemProperty::PropertyFlag::ReadOnly},
+        {{"Parameters", DataModel::ItemProperty::PropertyType::String, {DataModel::ItemProperty::PropertyFlag::ReadOnly}},
          [&](const ExternalPotential *pot) { return DataModel::PropertyValue(pot->formParametersString()); },
          ModelableSetter()},
-        {"Targets",
-         DataModel::ItemProperty::PropertyType::String,
-         {DataModel::ItemProperty::PropertyFlag::ReadOnly},
+        {{"Targets", DataModel::ItemProperty::PropertyType::String, {DataModel::ItemProperty::PropertyFlag::ReadOnly}},
          [&](const ExternalPotential *pot)
          { return DataModel::PropertyValue(joinStrings(pot->targetAtomIndices(), "  ", [](const auto i) { return i + 1; })); },
          ModelableSetter()},

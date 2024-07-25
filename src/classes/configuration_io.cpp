@@ -173,7 +173,8 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
     // Read in global potentials
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    auto &&[globalPotMutator, globalPots] = globalPotentials_.mutableData();
+    auto globalPotMutator = globalPotentials_.mutableData();
+    auto &globalPots = globalPotMutator.data();
     globalPots.resize(parser.argi(0));
     for (auto &pot : globalPots)
     {
@@ -194,7 +195,8 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
     // Read in targeted potentials
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    auto &&[targetedPotMutator, targetedPots] = targetedPotentials_.mutableData();
+    auto targetedPotMutator = targetedPotentials_.mutableData();
+    auto &targetedPots = targetedPotMutator.data();
     targetedPots.resize(parser.argi(0));
     for (auto &pot : targetedPots)
     {
