@@ -18,10 +18,8 @@ VoxelDensityModule::VoxelDensityModule() : Module(ModuleTypes::VoxelDensity)
     keywords_.add<SpeciesVectorKeyword>("RestrictToSpecies", "Restrict the calculation to the specified Species",
                                         restrictToSpecies_);
 
-    keywords_.setOrganisation("Options", "Density", "Number of points over which analysis is performed");
-    keywords_.add<IntegerKeyword>("Density", "Number of points over which analysis is performed", numPoints_, 100);
-
-    keywords_.setOrganisation("Options", "TargetProperty", "Target property for analysis");
+    keywords_.setOrganisation("Options", "Analysis", "Set the voxel density and property for analysis");
+    keywords_.add<IntegerKeyword>("NumberOfPoints", "Number of points over which analysis is performed", numPoints_, 1);
     keywords_.add<EnumOptionsKeyword<VoxelDensityModule::TargetPropertyType>>(
         "TargetProperty", "Target property for analysis", targetProperty_, VoxelDensityModule::targetPropertyTypes());
 
