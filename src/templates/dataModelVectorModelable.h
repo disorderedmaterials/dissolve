@@ -153,7 +153,7 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
 
         if (itemProperties_[propertyIndex].flags().isSet(ItemProperty::PropertyFlag::ReadOnly))
         {
-            fmt::print("Refusing to set data '{}' since it is read-only.\n", itemProperties_[propertyIndex].name());
+            Messenger::error("Refusing to set data '{}' since it is read-only.\n", itemProperties_[propertyIndex].name());
             return false;
         }
 

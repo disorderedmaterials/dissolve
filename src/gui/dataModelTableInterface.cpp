@@ -52,9 +52,15 @@ QVariant DataModelTableInterface::data(const QModelIndex &index, int role) const
 
     // Construct a QVariant from the contents of our std::variant
     return std::visit(
-        DataModel::PropertyVisitor{[](int arg) { return QVariant(arg); }, [](double arg) { return QVariant(arg); },
-                                   [](std::string_view arg) { return QVariant(QString::fromStdString(std::string(arg))); },
-                                   [](std::string &arg) { return QVariant(QString::fromStdString(arg)); }},
+        [](auto arg) {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, std::string_view>)
+                return QVariant(QString::fromStdString(std::string(arg))); 
+            else if constexpr (std::is_same_v<T, std::string>)
+                return QVariant(QString::fromStdString(arg)); 
+            else
+                return QVariant(arg);
+        },
         property);
 }
 

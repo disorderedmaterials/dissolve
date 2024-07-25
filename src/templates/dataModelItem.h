@@ -55,14 +55,7 @@ using PropertyValue = std::variant<int, double, std::string_view, std::string>;
 // Return value as string
 static std::string propertyAsString(const PropertyValue &value)
 {
-    if (std::holds_alternative<int>(value))
-        return fmt::format("{}", std::get<int>(value));
-    else if (std::holds_alternative<double>(value))
-        return fmt::format("{}", std::get<double>(value));
-    else if (std::holds_alternative<std::string_view>(value))
-        return fmt::format("{}", std::get<std::string_view>(value));
-    else
-        return std::get<std::string>(value);
+    return std::visit([](auto &arg) {return fmt::format("{}", arg);}, value);
 }
 
 // Helper type for PropertyValue visitor
