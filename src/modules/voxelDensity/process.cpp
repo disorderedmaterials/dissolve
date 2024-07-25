@@ -15,7 +15,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
     // Calculate target property density
     auto [data3d, status] = processingData.realiseIf<Data3D>(
-        fmt::format("{}Data3D", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
+        fmt::format("{}Data3D", targetPropertyTypes().keywordByIndex(static_cast<int>(targetProperty_))), name(),
         GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
     {
@@ -95,7 +95,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
     // Calculate voxel density histogram
     auto &hist = processingData.realise<Histogram1D>(
-        fmt::format("{}Histogram1D", targetPropertyTypes().descriptionByIndex(static_cast<int>(targetProperty_))), name(),
+        fmt::format("{}Histogram1D", targetPropertyTypes().keywordByIndex(static_cast<int>(targetProperty_))), name(),
         GenericItem::InRestartFileFlag);
 
     auto max = data3d.maxValue(), min = (numPoints_ == 1) ? 0 : data3d.minValue();
