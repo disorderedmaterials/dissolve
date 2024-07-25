@@ -64,8 +64,7 @@ template <class D> class Modelable
     public:
     using ModelableGetter = std::function<PropertyValue(const D *)>;
     using ModelableSetter = std::function<bool(D *, PropertyValue)>;
-    using ModelableProperty = std::tuple<std::string, ItemProperty::PropertyType, Flags<ItemProperty::PropertyFlag>,
-                                         ModelableGetter, ModelableSetter>;
+    using ModelableProperty = std::tuple<ItemProperty, ModelableGetter, ModelableSetter>;
 
     /*
      * We now define a static templated function to return a vector of ModelableProperty definitions for the target class D. The
