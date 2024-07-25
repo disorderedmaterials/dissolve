@@ -38,9 +38,9 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
     VectorModelable() : Base()
     {
         // Add properties from the modelable base class
-        for (auto &[name, type, flags, getter, setter] : Modelable<DataItemClass>::modelableProperties())
+        for (auto &[itemProperty, getter, setter] : Modelable<DataItemClass>::modelableProperties())
         {
-            addProperty(name, type, flags, getter, setter);
+            addProperty(itemProperty, getter, setter);
         }
     }
 
@@ -74,16 +74,15 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
 
     private:
     // Add item property for use in the model
-    void addProperty(const std::string &name, ItemProperty::PropertyType type, Flags<ItemProperty::PropertyFlag> flags,
-                     PropertyGetFunction getter, PropertySetFunction setter = {})
+    void addProperty(const ItemProperty &property, PropertyGetFunction getter, PropertySetFunction setter = {})
     {
         // Add the property base info - the order will be reflected in the table model
-        addItemProperty(name, type, flags);
+        addItemProperty(property);
 
         // Store functions
-        getters_[name] = std::move(getter);
+        getters_[property.name()] = std::move(getter);
         if (setter)
-            setters_[name] = std::move(setter);
+            setters_[property.name()] = std::move(setter);
     }
 
     public:

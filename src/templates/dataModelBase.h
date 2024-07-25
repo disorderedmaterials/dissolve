@@ -25,11 +25,7 @@ class Base
 
     protected:
     // Add item property
-    void addItemProperty(std::string_view name, ItemProperty::PropertyType type,
-                         const Flags<ItemProperty::PropertyFlag> &flags = {})
-    {
-        itemProperties_.emplace_back(name, type, flags);
-    }
+    void addItemProperty(const ItemProperty &property) { itemProperties_.emplace_back(property); }
 
     public:
     // Return name of specified property

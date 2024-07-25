@@ -82,26 +82,20 @@ template <>
 const std::vector<DataModel::Modelable<ExpressionVariable>::ModelableProperty>
 DataModel::Modelable<ExpressionVariable>::modelableProperties()
 {
-    return {{"Name",
-             DataModel::ItemProperty::PropertyType::String,
-             {},
+    return {{{"Name", DataModel::ItemProperty::PropertyType::String, {}},
              [&](const ExpressionVariable *var) { return DataModel::PropertyValue(var->baseName()); },
              [&](ExpressionVariable *var, const DataModel::PropertyValue &newValue)
              {
                  var->setBaseName(DataModel::propertyAsString(newValue));
                  return true;
              }},
-            {"Type",
-             DataModel::ItemProperty::PropertyType::String,
-             {DataModel::ItemProperty::PropertyFlag::ReadOnly},
+            {{"Type", DataModel::ItemProperty::PropertyType::String, {DataModel::ItemProperty::PropertyFlag::ReadOnly}},
              [&](const ExpressionVariable *var) {
                  return DataModel::PropertyValue(
                      std::string(var->value().type() == ExpressionValue::ValueType::Integer ? "Int" : "Real"));
              },
              [&](ExpressionVariable *var, const DataModel::PropertyValue &newValue) { return false; }},
-            {"Value",
-             DataModel::ItemProperty::PropertyType::String,
-             {},
+            {{"Value", DataModel::ItemProperty::PropertyType::String, {}},
              [&](const ExpressionVariable *var) { return DataModel::PropertyValue(var->value().asString()); },
              [&](ExpressionVariable *var, const DataModel::PropertyValue &newValue)
              {
