@@ -102,8 +102,6 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
     public:
     // Return number of data items (rows) in the table
     int nDataItems() const final { return data_.size(); }
-    // Return number of properties per data item (i.e. columns) in the table
-    int nProperties() const final { return itemProperties_.size(); }
 
     /*
      * Data Access

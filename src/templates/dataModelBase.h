@@ -44,7 +44,7 @@ class Base
     // Return number of data items (i.e. rows) for the specified index
     virtual int nDataItems() const = 0;
     // Return number of properties (i.e. columns) for the specified index
-    virtual int nProperties() const = 0;
+    int nProperties() const { return itemProperties_.size(); }
     // Set property function
     virtual bool setProperty(int dataIndex, int propertyIndex, const PropertyValue &newValue) = 0;
     // Get property function
