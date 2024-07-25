@@ -21,8 +21,13 @@ template <class DataItem> class VectorMutator
     ~VectorMutator() { base_.emitMutationSignal(Base::MutationSignal::DataMutationFinished); }
 
     private:
+    // Data being mutated and the base model
     std::vector<DataItem> &data_;
     Base &base_;
+
+    public:
+    // Return mutable data
+    std::vector<DataItem> &data() { return data_; }
 };
 // Modelable for Data based on std::vector
 template <class DataItemClass, class DataItem> class VectorModelable : public Base
@@ -55,7 +60,7 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
     // Return const data
     const std::vector<DataItem> &data() const { return data_; }
     // Return mutable data
-    std::pair<VectorMutator<DataItem>, std::vector<DataItem> &> mutableData() { return {{data_, *this}, data_}; };
+    VectorMutator<DataItem> mutableData() { return {data_, *this}; };
     // Return opening iterator for the data
     typename std::vector<DataItem>::const_iterator begin() const { return data_.begin(); }
     // Return ending iterator for the data
