@@ -197,21 +197,15 @@ const std::vector<double> &Data1D::values() const { return values_; }
 // Return number of values present in whole dataset
 int Data1D::nValues() const { return x_.size(); }
 
-// Return number of non-zero values present in whole dataset
-std::vector<std::pair<double, double>> Data1D::nNonZeroValues() const
+// Return non-zero values present in whole dataset
+std::vector<std::tuple<double, double>> Data1D::nonZeroValues() const
 {
-    std::vector<std::pair<double, double>> pairs;
+    std::vector<std::tuple<double, double>> pairs;
 
-    int idx = 0;
-    std::for_each(std::execution::seq, values_.begin(), values_.end(),
-                  [this, &pairs, &idx](const auto &val)
-                  {
-                      if (val > 0)
-                      {
-                          pairs.push_back(std::make_pair(x_[idx], val));
-                      }
-                      idx++;
-                  });
+    auto xys = zip(x_, values_);
+
+    std::copy_if(std::execution::par_unseq, xys.begin(), xys.end(), std::back_inserter(pairs),
+                   [](const auto &val) { return std::get<1>(val) > 0; });
 
     return pairs;
 }
