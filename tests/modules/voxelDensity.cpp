@@ -23,6 +23,7 @@ class HeliumBox
 {
     public:
     HeliumBox(CoreData &coreData) : coreData_(coreData) {}
+    ~HeliumBox() { reset(); }
 
     private:
     CoreData &coreData_;
@@ -220,8 +221,6 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxScatteringLengthDensity)
 
 TEST_F(VoxelDensityModuleTest, Water)
 {
-    // systemTest.coreData().clear();
-
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-water.txt"));
     auto module = systemTest.getModule<VoxelDensityModule>("AtomicMass");
     ASSERT_TRUE(module->keywords().getInt("NumberOfPoints") == 1);
