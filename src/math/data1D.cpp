@@ -204,11 +204,11 @@ std::vector<std::pair<double, double>> Data1D::nNonZeroValues() const
 
     int idx = 0;
     std::for_each(std::execution::seq, values_.begin(), values_.end(),
-                  [&pairs, &idx](const auto &val)
+                  [this, &pairs, &idx](const auto &val)
                   {
                       if (val > 0)
                       {
-                          pairs.push_back({x_[idx], val});
+                          pairs.push_back(std::make_pair(x_[idx], val));
                       }
                       idx++;
                   });
@@ -235,15 +235,15 @@ double Data1D::maxValue() const
 }
 
 // Return index and corresponding maximum value over all data points
-std::pair<double, double> Data1D::maxValueAt() const
+std::pair<size_t, double> Data1D::maxValueAt()
 {
     if (values_.empty())
-        return 0.0;
+        return {0.0, 0.0};
 
-    std::vector<int>::iterator result = std::max_element(values_.begin(), values_.end());
+    std::vector<double>::iterator result = std::max_element(values_.begin(), values_.end());
 
     // { index, maxvalue }
-    return {std::distance(values_.begin(), result), *std::max_element(values_.begin(), values_.end())};
+    return {std::distance(values_.begin(), result), *result};
 }
 
 // Add / initialise errors array
