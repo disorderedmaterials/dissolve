@@ -119,7 +119,15 @@ runs:
       do
         echo "Creating pdf for example \"${example}\"..."
         cd ${example}/single/
-        pandoc --pdf-engine=xelatex -V 'mainfont:DejaVuSerif.ttf' -V 'sansfont:DejaVuSans.ttf' -V 'monofont:DejaVuSansMono.ttf' index.html -o ../${example}.pdf
+
+        # "Fix" image links
+        sed "s:/img:../../../static/img:g" index.html > index_pdf.html
+
+        pandoc --pdf-engine=xelatex -V 'mainfont:DejaVuSerif.ttf' -V 'sansfont:DejaVuSans.ttf' -V 'monofont:DejaVuSansMono.ttf' index_pdf.html -o ../${example}.pdf
+
+        # Tidy up
+        rm index_pdf.html
+
         cd ../../
       done
 
