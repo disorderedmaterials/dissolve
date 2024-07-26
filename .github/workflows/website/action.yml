@@ -95,7 +95,7 @@ runs:
     shell: bash
     run: |
       set -ex
-      for example in $(find ./web/public-docs/examples/ -mindepth 1 -maxdepth 1 -type d -not -iname previous)
+      for example in $(find ./web/docs/examples/ -mindepth 1 -maxdepth 1 -type d -not -iname previous)
       do
         ci/scripts/meld-example -d ${example}
       done
