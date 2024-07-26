@@ -235,7 +235,7 @@ double Data1D::maxValue() const
 }
 
 // Return index and corresponding maximum value over all data points
-std::pair<double> Data1D::maxValueAt() const
+std::pair<double, double> Data1D::maxValueAt() const
 {
     if (values_.empty())
         return 0.0;

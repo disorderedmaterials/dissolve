@@ -82,7 +82,7 @@ class Data1D : public Data1DBase, public Serialisable<>
     // Return maximum value over all data points
     double maxValue() const override;
     // Return index and corresponding maximum value over all data points
-    std::pair<double> maxValueAt() const
+    std::pair<double, double> maxValueAt() const;
     // Add / initialise errors array
     void addErrors();
     // Return whether the values have associated errors
