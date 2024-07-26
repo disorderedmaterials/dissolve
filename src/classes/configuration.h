@@ -217,7 +217,7 @@ class Configuration : public Serialisable<const CoreData &>
     const DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &globalPotentials() const;
     // Add targeted potential
     void addTargetedPotential(std::unique_ptr<ExternalPotential> potential);
-    // Return GRdefined targeted potentials
+    // Return defined targeted potentials
     DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &targetedPotentials();
     const DataModel::VectorModelable<ExternalPotential, std::unique_ptr<ExternalPotential>> &targetedPotentials() const;
     // Link targeted potentials to atoms
