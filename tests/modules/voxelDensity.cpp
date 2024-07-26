@@ -102,7 +102,7 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicMass)
     systemTest.dissolve().iterate(20);
     const auto &data8Bin =
         systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//Mass/A^3")->get();
-    ASSERT_TRUE(data8Bin.nNonZeroValues().size() == 1);
+    ASSERT_TRUE(data8Bin.nonZeroValues().size() == 1);
     auto max8Bin = const_cast<Data1D *>(&data8Bin)->maxValueAt();
     ASSERT_NEAR(max8Bin.first, MASS_HELIUM, 10e2);
     ASSERT_EQ(max8Bin.second, std::pow(8, 3));
@@ -111,7 +111,7 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicMass)
     systemTest.dissolve().iterate(20);
     const auto &data4Bin =
         systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//Mass/A^3")->get();
-    ASSERT_TRUE(data4Bin.nNonZeroValues().size() == 1);
+    ASSERT_TRUE(data4Bin.nonZeroValues().size() == 1);
     auto max4Bin = const_cast<Data1D *>(&data4Bin)->maxValueAt();
     ASSERT_NEAR(max4Bin.first, MASS_HELIUM, 10e2);
     ASSERT_EQ(max4Bin.second, std::pow(4, 3));
@@ -120,7 +120,7 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicMass)
     systemTest.dissolve().iterate(20);
     const auto &data2Bin =
         systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//Mas/A^3")->get();
-    ASSERT_TRUE(data2Bin.nNonZeroValues().size() == 1);
+    ASSERT_TRUE(data2Bin.nonZeroValues().size() == 1);
     auto max2Bin = const_cast<Data1D *>(&data2Bin)->maxValueAt();
     ASSERT_NEAR(max2Bin.first, MASS_HELIUM, 10e2);
     ASSERT_EQ(max2Bin.second, std::pow(2, 3));
@@ -129,7 +129,7 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicMass)
     systemTest.dissolve().iterate(20);
     const auto &data1Bin =
         systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//Mass/A^3")->get();
-    ASSERT_TRUE(data1Bin.nNonZeroValues().size() == 1);
+    ASSERT_TRUE(data1Bin.nonZeroValues().size() == 1);
     auto max1Bin = const_cast<Data1D *>(&data1Bin)->maxValueAt();
     ASSERT_NEAR(max1Bin.first, MASS_HELIUM, 10e2);
     ASSERT_EQ(max1Bin.second, 1);
@@ -143,7 +143,7 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicNumber)
     systemTest.dissolve().iterate(20);
     const auto &data8Bin =
         systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//AtomicNumber/A^3")->get();
-    ASSERT_TRUE(data8Bin.nNonZeroValues().size() == 1);
+    ASSERT_TRUE(data8Bin.nonZeroValues().size() == 1);
     auto max8Bin = const_cast<Data1D *>(&data8Bin)->maxValueAt();
     ASSERT_EQ(max8Bin.first, Z_HELIUM);
     ASSERT_EQ(max8Bin.second, std::pow(8, 3));
@@ -152,7 +152,7 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicNumber)
     systemTest.dissolve().iterate(20);
     const auto &data4Bin =
         systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//AtomicNumber/A^3")->get();
-    ASSERT_TRUE(data4Bin.nNonZeroValues().size() == 1);
+    ASSERT_TRUE(data4Bin.nonZeroValues().size() == 1);
     auto max4Bin = const_cast<Data1D *>(&data4Bin)->maxValueAt();
     ASSERT_EQ(max4Bin.first, Z_HELIUM);
     ASSERT_EQ(max4Bin.second, std::pow(4, 3));
@@ -161,7 +161,7 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicNumber)
     systemTest.dissolve().iterate(20);
     const auto &data2Bin =
         systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//AtomicNumber/A^3")->get();
-    ASSERT_TRUE(data2Bin.nNonZeroValues().size() == 1);
+    ASSERT_TRUE(data2Bin.nonZeroValues().size() == 1);
     auto max2Bin = const_cast<Data1D *>(&data2Bin)->maxValueAt();
     ASSERT_EQ(max2Bin.first, Z_HELIUM);
     ASSERT_EQ(max2Bin.second, std::pow(2, 3));
@@ -170,7 +170,7 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicNumber)
     systemTest.dissolve().iterate(20);
     const auto &data1Bin =
         systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//AtomicNumber/A^3")->get();
-    ASSERT_TRUE(data1Bin.nNonZeroValues().size() == 1);
+    ASSERT_TRUE(data1Bin.nonZeroValues().size() == 1);
     auto max1Bin = const_cast<Data1D *>(&data1Bin)->maxValueAt();
     ASSERT_EQ(max1Bin.first, Z_HELIUM);
     ASSERT_EQ(max1Bin.second, 1);
@@ -186,7 +186,7 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxScatteringLengthDensity)
                                .processingModuleData()
                                .search<const Data1D>("VoxelDensity//Data1D//ScatteringLengthDensity/A^3")
                                ->get();
-    ASSERT_TRUE(data8Bin.nNonZeroValues().size() == 1);
+    ASSERT_TRUE(data8Bin.nonZeroValues().size() == 1);
     auto max8Bin = const_cast<Data1D *>(&data8Bin)->maxValueAt();
     ASSERT_NEAR(max8Bin.first, SCATTERING_LENGTH_DENSITY_HELIUM, 10e2);
     ASSERT_EQ(max8Bin.second, std::pow(8, 3));
@@ -195,7 +195,7 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxScatteringLengthDensity)
     systemTest.dissolve().iterate(20);
     const auto &data4Bin =
         systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensity/A^3")->get();
-    ASSERT_TRUE(data4Bin.nNonZeroValues().size() == 1);
+    ASSERT_TRUE(data4Bin.nonZeroValues().size() == 1);
     auto max4Bin = const_cast<Data1D *>(&data4Bin)->maxValueAt();
     ASSERT_NEAR(max4Bin.first, SCATTERING_LENGTH_DENSITY_HELIUM, 10e2);
     ASSERT_EQ(max4Bin.second, std::pow(4, 3));
@@ -204,7 +204,7 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxScatteringLengthDensity)
     systemTest.dissolve().iterate(20);
     const auto &data2Bin =
         systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensity/A^3")->get();
-    ASSERT_TRUE(data2Bin.nNonZeroValues().size() == 1);
+    ASSERT_TRUE(data2Bin.nonZeroValues().size() == 1);
     auto max2Bin = const_cast<Data1D *>(&data2Bin)->maxValueAt();
     ASSERT_NEAR(max2Bin.first, SCATTERING_LENGTH_DENSITY_HELIUM, 10e2);
     ASSERT_EQ(max2Bin.second, std::pow(2, 3));
@@ -213,7 +213,7 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxScatteringLengthDensity)
     systemTest.dissolve().iterate(20);
     const auto &data1Bin =
         systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensity/A^3")->get();
-    ASSERT_TRUE(data1Bin.nNonZeroValues().size() == 1);
+    ASSERT_TRUE(data1Bin.nonZeroValues().size() == 1);
     auto max1Bin = const_cast<Data1D *>(&data1Bin)->maxValueAt();
     ASSERT_NEAR(max1Bin.first, SCATTERING_LENGTH_DENSITY_HELIUM, 10e2);
     ASSERT_EQ(max1Bin.second, 1);

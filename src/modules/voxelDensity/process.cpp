@@ -62,29 +62,20 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
         switch (targetProperty_)
         {
             case TargetPropertyType::Mass:
-            {
                 // Atomic mass
                 value = AtomicMass::mass(atomicNumber);
                 break;
-            }
             case TargetPropertyType::AtomicNumber:
-            {
                 // Atomic number
                 value = atomicNumber;
                 break;
-            }
             case TargetPropertyType::ScatteringLengthDensity:
-            {
                 auto naturalIsotope = Sears91::naturalIsotope(atomicNumber);
-
                 // Bound coherent natural isotope scattering length density
                 value = Sears91::boundCoherent(naturalIsotope);
                 break;
-            }
             default:
-            {
                 throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(targetProperty_))));
-            }
         }
 
         auto toIndex = [&](const auto pos) { return static_cast<int>(std::round(pos * numPoints_)); };
@@ -103,8 +94,8 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     hist.initialise(min, max, (max - min) / numPoints_);
     hist.zeroBins();
 
-    dissolve::for_each(std::execution::seq, data3D.values().begin(), data3D.values().end(),
-                       [&hist, &voxelVolume](auto &value) { hist.bin(value / voxelVolume); });
+    for (const auto &value : data3D.values())
+        hist.bin(value / voxelVolume);
 
     auto &data1D = processingData.realise<Data1D>(
         fmt::format("Data1D//{}/A^3", targetPropertyTypes().keywordByIndex(static_cast<int>(targetProperty_))), name(),

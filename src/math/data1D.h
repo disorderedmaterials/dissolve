@@ -75,8 +75,8 @@ class Data1D : public Data1DBase, public Serialisable<>
     const std::vector<double> &values() const override;
     // Return number of values present in whole dataset
     int nValues() const override;
-    // Return number of non-zero values present in whole dataset
-    std::vector<std::pair<double, double>> nNonZeroValues() const;
+    // Return non-zero values present in whole dataset
+    std::vector<std::tuple<double, double>> nonZeroValues() const;
     // Return minimum value over all data points
     double minValue() const override;
     // Return maximum value over all data points
