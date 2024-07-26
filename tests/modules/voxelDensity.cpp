@@ -5,6 +5,7 @@
 #include "classes/atom.h"
 #include "classes/speciesAtom.h"
 #include "data/elements.h"
+#include "keywords/integer.h"
 #include "module/types.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -14,6 +15,9 @@ namespace UnitTest
 {
 #define BOX_LENGTH 8
 #define NUM_ATOMS static_cast<int>(std::pow(BOX_LENGTH, 3))
+#define MASS_HELIUM 4.002602
+#define Z_HELIUM 2
+#define SCATTERING_LENGTH_DENSITY_HELIUM 4.0026
 
 class HeliumBox
 {
@@ -78,7 +82,7 @@ class HeliumBox
         auto moduleLayer = coreData_.addProcessingLayer();
         auto module = moduleLayer->append(coreData_, ModuleTypes::ModuleType::VoxelDensity, coreData_.configurations());
         module->setName("VoxelDensity");
-        auto densitySet = module->keywords().set("Density", numPoints);
+        auto densitySet = module->keywords().set("NumberOfPoints", numPoints);
         module->keywords().setEnumeration("TargetProperty", target);
     }
 };
@@ -95,23 +99,39 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicMass)
 
     box.setProcessing(VoxelDensityModule::TargetPropertyType::Mass, 8);
     systemTest.dissolve().iterate(20);
-    const auto &data8bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//MassData1D")->get();
-    // Assertions
+    const auto &data8Bin =
+        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//Mass/A^3")->get();
+    ASSERT_TRUE(data8Bin.nNonZeroValues().size() == 1);
+    auto max8Bin = data8Bin.maxValueAt();
+    ASSERT_NEAR(max8Bin.first, MASS_HELIUM);
+    ASSERT_NEAR(max8Bin.second, std::pow(8, 3));
 
     box.setProcessing(VoxelDensityModule::TargetPropertyType::Mass, 4);
     systemTest.dissolve().iterate(20);
-    const auto &data4bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//MassData1D")->get();
-    // Assertions
+    const auto &data4Bin =
+        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//Mass/A^3")->get();
+    ASSERT_TRUE(data4Bin.nNonZeroValues().size() == 1);
+    auto max4Bin = data4Bin.maxValueAt();
+    ASSERT_NEAR(max4Bin.first, MASS_HELIUM);
+    ASSERT_NEAR(max4Bin.second, std::pow(4, 3));
 
     box.setProcessing(VoxelDensityModule::TargetPropertyType::Mass, 2);
     systemTest.dissolve().iterate(20);
-    const auto &data2bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//MassData1D")->get();
-    // Assertions
+    const auto &data2Bin =
+        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//Mas/A^3")->get();
+    ASSERT_TRUE(data2Bin.nNonZeroValues().size() == 1);
+    auto max4Bin = data2Bin.maxValueAt();
+    ASSERT_NEAR(max2Bin.first, MASS_HELIUM);
+    ASSERT_NEAR(max2Bin.second, std::pow(2, 3));
 
     box.setProcessing(VoxelDensityModule::TargetPropertyType::Mass, 1);
     systemTest.dissolve().iterate(20);
-    const auto &data1bin = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//MassData1D")->get();
-    // Assertions
+    const auto &data1Bin =
+        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//Mass/A^3")->get();
+    ASSERT_TRUE(data2Bin.nNonZeroValues().size() == 1);
+    auto max1Bin = data1Bin.maxValueAt();
+    ASSERT_NEAR(max1Bin.first, MASS_HELIUM);
+    ASSERT_NEAR(max1Bin.second, 1);
 }
 
 TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicNumber)
@@ -120,27 +140,39 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxAtomicNumber)
 
     box.setProcessing(VoxelDensityModule::TargetPropertyType::AtomicNumber, 8);
     systemTest.dissolve().iterate(20);
-    const auto &data8bin =
-        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//AtomicNumberData1D")->get();
-    // Assertions
+    const auto &data8Bin =
+        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//AtomicNumber/A^3")->get();
+    ASSERT_TRUE(data8Bin.nNonZeroValues().size() == 1);
+    auto max8Bin = data8Bin.maxValueAt();
+    ASSERT_NEAR(max8Bin.first, Z_HELIUM);
+    ASSERT_NEAR(max8Bin.second, std::pow(8, 3));
 
     box.setProcessing(VoxelDensityModule::TargetPropertyType::AtomicNumber, 4);
     systemTest.dissolve().iterate(20);
     const auto &data4bin =
-        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//AtomicNumberData1D")->get();
-    // Assertions
+        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//AtomicNumber/A^3")->get();
+    ASSERT_TRUE(data8Bin.nNonZeroValues().size() == 1);
+    auto max8Bin = data8Bin.maxValueAt();
+    ASSERT_NEAR(max8Bin.first, Z_HELIUM);
+    ASSERT_NEAR(max8Bin.second, std::pow(4, 3));
 
     box.setProcessing(VoxelDensityModule::TargetPropertyType::AtomicNumber, 2);
     systemTest.dissolve().iterate(20);
     const auto &data2bin =
-        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//AtomicNumberData1D")->get();
-    // Assertions
+        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//AtomicNumber/A^3")->get();
+    ASSERT_TRUE(data8Bin.nNonZeroValues().size() == 1);
+    auto max8Bin = data8Bin.maxValueAt();
+    ASSERT_NEAR(max8Bin.first, Z_HELIUM);
+    ASSERT_NEAR(max8Bin.second, std::pow(2, 3));
 
     box.setProcessing(VoxelDensityModule::TargetPropertyType::AtomicNumber, 1);
     systemTest.dissolve().iterate(20);
     const auto &data1bin =
-        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//AtomicNumberData1D")->get();
-    // Assertions
+        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//AtomicNumber/A^3")->get();
+    ASSERT_TRUE(data8Bin.nNonZeroValues().size() == 1);
+    auto max8Bin = data8Bin.maxValueAt();
+    ASSERT_NEAR(max8Bin.first, Z_HELIUM);
+    ASSERT_NEAR(max8Bin.second, 1);
 }
 
 TEST_F(VoxelDensityModuleTest, HeliumBoxScatteringLengthDensity)
@@ -149,27 +181,50 @@ TEST_F(VoxelDensityModuleTest, HeliumBoxScatteringLengthDensity)
 
     box.setProcessing(VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity, 8);
     systemTest.dissolve().iterate(20);
-    const auto &data8bin =
-        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensityData1D")->get();
-    // Assertions
+    const auto &data8bin = systemTest.dissolve()
+                               .processingModuleData()
+                               .search<const Data1D>("VoxelDensity//Data1D//ScatteringLengthDensity/A^3")
+                               ->get();
+    ASSERT_TRUE(data8Bin.nNonZeroValues().size() == 1);
+    auto max8Bin = data8Bin.maxValueAt();
+    ASSERT_NEAR(max8Bin.first, SCATTERING_LENGTH_DENSITY_HELIUM);
+    ASSERT_NEAR(max8Bin.second, std::pow(8, 3));
 
     box.setProcessing(VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity, 4);
     systemTest.dissolve().iterate(20);
     const auto &data4bin =
-        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensityData1D")->get();
-    // Assertions
+        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensity/A^3")->get();
+    ASSERT_TRUE(data8Bin.nNonZeroValues().size() == 1);
+    auto max8Bin = data8Bin.maxValueAt();
+    ASSERT_NEAR(max8Bin.first, SCATTERING_LENGTH_DENSITY_HELIUM);
+    ASSERT_NEAR(max8Bin.second, std::pow(4, 3));
 
     box.setProcessing(VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity, 2);
     systemTest.dissolve().iterate(20);
     const auto &data2bin =
-        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensityData1D")->get();
-    // Assertions
+        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensity/A^3")->get();
+    ASSERT_TRUE(data8Bin.nNonZeroValues().size() == 1);
+    auto max8Bin = data8Bin.maxValueAt();
+    ASSERT_NEAR(max8Bin.first, SCATTERING_LENGTH_DENSITY_HELIUM);
+    ASSERT_NEAR(max8Bin.second, std::pow(2, 3));
 
     box.setProcessing(VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity, 1);
     systemTest.dissolve().iterate(20);
     const auto &data1bin =
-        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensityData1D")->get();
-    // Assertions
+        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//ScatteringLengthDensity/A^3")->get();
+    ASSERT_TRUE(data8Bin.nNonZeroValues().size() == 1);
+    auto max8Bin = data8Bin.maxValueAt();
+    ASSERT_NEAR(max8Bin.first, SCATTERING_LENGTH_DENSITY_HELIUM);
+    ASSERT_NEAR(max8Bin.second, 1);
+}
+
+TEST_F(VoxelDensityModuleTest, Water)
+{
+    // systemTest.coreData().clear();
+
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-water.txt"));
+    auto module = systemTest.getModule<VoxelDensityModule>("AtomicMass");
+    ASSERT_TRUE(module->keywords().getInt("NumberOfPoints") == 1);
 }
 
 } // namespace UnitTest
