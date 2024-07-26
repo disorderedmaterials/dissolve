@@ -13,7 +13,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 {
     auto &processingData = context.dissolve().processingModuleData();
 
-    // Calculate target property density
+    // Calculate target property 3d map over unit cell voxels
     auto [data3D, status] = processingData.realiseIf<Data3D>(
         fmt::format("Data3D//{}", targetPropertyTypes().keywordByIndex(static_cast<int>(targetProperty_))), name(),
         GenericItem::InRestartFileFlag);
@@ -104,7 +104,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     hist.zeroBins();
 
     dissolve::for_each(std::execution::seq, data3D.values().begin(), data3D.values().end(),
-                       [&hist](auto &value) { hist.bin(value / voxelVolume); });
+                       [&hist, &voxelVolume](auto &value) { hist.bin(value / voxelVolume); });
 
     auto &data1D = processingData.realise<Data1D>(
         fmt::format("Data1D//{}/A^3", targetPropertyTypes().keywordByIndex(static_cast<int>(targetProperty_))), name(),
