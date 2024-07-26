@@ -197,6 +197,25 @@ const std::vector<double> &Data1D::values() const { return values_; }
 // Return number of values present in whole dataset
 int Data1D::nValues() const { return x_.size(); }
 
+// Return number of non-zero values present in whole dataset
+std::vector<std::pair<double, double>> Data1D::nNonZeroValues() const
+{
+    std::vector<std::pair<double, double>> pairs;
+
+    int idx = 0;
+    std::for_each(std::execution::seq, values_.begin(), values_.end(),
+                  [&pairs, &idx](const auto &val)
+                  {
+                      if (val > 0)
+                      {
+                          pairs.push_back({x_[idx], val});
+                      }
+                      idx++;
+                  });
+
+    return pairs;
+}
+
 // Return minimum value over all data points
 double Data1D::minValue() const
 {
@@ -213,6 +232,18 @@ double Data1D::maxValue() const
         return 0.0;
 
     return *std::max_element(values_.begin(), values_.end());
+}
+
+// Return index and corresponding maximum value over all data points
+std::pair<double> Data1D::maxValueAt() const
+{
+    if (values_.empty())
+        return 0.0;
+
+    std::vector<int>::iterator result = std::max_element(values_.begin(), values_.end());
+
+    // { index, maxvalue }
+    return {std::distance(values_.begin(), result), *std::max_element(values_.begin(), values_.end())};
 }
 
 // Add / initialise errors array
