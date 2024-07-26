@@ -158,3 +158,9 @@ runs:
       chmod 0600 ./serverKey ./serverId
       rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_MAIN_DIR}
       rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/dev
+
+  - name: Upload Web Artifacts
+    uses: actions/upload-artifact@v4
+    with:
+      name: web-artifacts
+      path: ${{ github.workspace }}/web/public*
