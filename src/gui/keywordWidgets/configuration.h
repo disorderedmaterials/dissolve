@@ -5,7 +5,7 @@
 
 #include "gui/keywordWidgets/base.h"
 #include "gui/keywordWidgets/ui_configuration.h"
-#include "gui/models/configurationModel.h"
+#include "gui/dataModelTableInterface.h"
 #include "keywords/configuration.h"
 #include <QWidget>
 
@@ -31,7 +31,7 @@ class ConfigurationKeywordWidget : public QWidget, public KeywordWidgetBase
     // Main form declaration
     Ui::ConfigurationWidget ui_;
     // Model for combo box
-    ConfigurationModel configurationModel_;
+    DataModelTableInterface configurationModel_;
 
     private Q_SLOTS:
     void on_ConfigurationCombo_currentIndexChanged(int index);

@@ -149,3 +149,27 @@ void Configuration::deserialise(const SerialisedValue &node, const CoreData &dat
     requestedCellDivisionLength_ = toml::find_or<double>(node, "cellDivisionLength", defaultCellDivisionLength_);
     generator_.deserialise(node.at("generator"), data);
 }
+
+/*
+ * Modelable
+ */
+
+// Return property getters and basic setters (if relevant)
+template <>
+const std::vector<DataModel::Modelable<Configuration>::ModelableProperty>
+DataModel::Modelable<Configuration>::modelableProperties()
+{
+    return {{{"Name", DataModel::ItemProperty::PropertyType::String, {}},
+             [&](const Configuration *cfg) { return DataModel::PropertyValue(cfg->name()); },
+             [&](Configuration *cfg, const DataModel::PropertyValue &newValue)
+             {
+                 cfg->setName(DataModel::propertyAsString(newValue));
+                 return true;
+             }},
+            {{"NMolecules", DataModel::ItemProperty::PropertyType::Integer, {DataModel::ItemProperty::PropertyFlag::ReadOnly}},
+             [&](const Configuration *cfg) { return DataModel::PropertyValue(cfg->nMolecules()); },
+             {}},
+            {{"NAtoms", DataModel::ItemProperty::PropertyType::Integer, {DataModel::ItemProperty::PropertyFlag::ReadOnly}},
+             [&](const Configuration *cfg) { return DataModel::PropertyValue(cfg->nAtoms()); },
+             {}}};
+}

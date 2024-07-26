@@ -579,7 +579,7 @@ Species *CoreData::copySpecies(const Species *species)
 // Add new Configuration
 Configuration *CoreData::addConfiguration()
 {
-    auto &newConfiguration = configurations_.emplace_back(std::make_unique<Configuration>());
+    auto &newConfiguration = configurations_.appendItem();
 
     // Create a suitable unique name
     newConfiguration->setName(DissolveSys::uniqueName(
@@ -594,21 +594,16 @@ void CoreData::removeConfiguration(Configuration *cfg)
     // Remove references to the Configuration itself
     removeReferencesTo(cfg);
 
-    configurations_.erase(
-        std::remove_if(configurations_.begin(), configurations_.end(), [cfg](const auto &c) { return cfg == c.get(); }),
-        configurations_.end());
+    configurations_.removeItem([cfg](const auto &c) { return cfg == c.get(); });
 }
 
-// Return number of Configurations in list
-int CoreData::nConfigurations() const { return configurations_.size(); }
-
 // Return core Configurations list
-std::vector<std::unique_ptr<Configuration>> &CoreData::configurations() { return configurations_; }
+DataModel::VectorModelable<Configuration, std::unique_ptr<Configuration>> &CoreData::configurations() { return configurations_; }
 
-const std::vector<std::unique_ptr<Configuration>> &CoreData::configurations() const { return configurations_; }
+const DataModel::VectorModelable<Configuration, std::unique_ptr<Configuration>> &CoreData::configurations() const { return configurations_; }
 
 // Return nth Configuration in list
-Configuration *CoreData::configuration(int n) { return configurations_[n].get(); }
+Configuration *CoreData::configuration(int n) { return configurations_.data()[n].get(); }
 
 // Search for Configuration by name
 Configuration *CoreData::findConfiguration(std::string_view name) const

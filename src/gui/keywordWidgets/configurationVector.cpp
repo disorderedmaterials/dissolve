@@ -12,7 +12,7 @@
 
 ConfigurationVectorKeywordWidget::ConfigurationVectorKeywordWidget(QWidget *parent, ConfigurationVectorKeyword *keyword,
                                                                    const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)
+    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword), configurationsModel_(coreData.configurations())
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());

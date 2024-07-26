@@ -176,7 +176,7 @@ SerialisedValue Dissolve::serialise() const
 
     Serialisable::fromVector<>(coreData_.pairPotentialOverrides(), "pairPotentialOverrides", root);
 
-    Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
+    Serialisable::fromVectorToTable(coreData_.configurations().data(), "configurations", root);
 
     Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
 

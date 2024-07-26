@@ -4,12 +4,12 @@
 #pragma once
 
 #include "gui/models/atomTypeModel.h"
-#include "gui/models/configurationModel.h"
 #include "gui/models/masterTermTreeModel.h"
 #include "gui/models/moduleLayersModel.h"
 #include "gui/models/speciesModel.h"
 #include "main/dissolve.h"
 #include "templates/optionalRef.h"
+#include "gui/dataModelTableInterface.h"
 #include <memory>
 
 class DissolveModel : public QObject
@@ -38,7 +38,7 @@ class DissolveModel : public QObject
     // Master terms model
     std::unique_ptr<MasterTermTreeModel> masters_ = nullptr;
     SpeciesModel speciesModel_;
-    ConfigurationModel configurationModel_;
+    DataModelTableInterface configurationModel_;
     ModuleLayersModel moduleLayersModel_;
 
     Q_SIGNALS:
@@ -57,7 +57,7 @@ class DissolveModel : public QObject
     void moduleLayersChanged();
 
     public:
-    DissolveModel() = default;
+    DissolveModel(Dissolve &dissolve);
     ~DissolveModel() = default;
 
     // The Atom Type Model
@@ -83,7 +83,7 @@ class DissolveModel : public QObject
     // The Species Model
     SpeciesModel *speciesModel();
     // The Configurations Model
-    ConfigurationModel *configurationsModel();
+    DataModelTableInterface *configurationsModel();
     // The ModuleLayers Model
     ModuleLayersModel *moduleLayersModel();
 
@@ -92,11 +92,9 @@ class DissolveModel : public QObject
      */
     private:
     // The main Dissolve instance
-    Dissolve *dissolve_ = nullptr;
+    Dissolve &dissolve_;
 
     public:
-    // Set reference to Dissolve
-    void setDissolve(Dissolve &dissolve);
     // Update models
     void update();
 };

@@ -33,7 +33,7 @@ class ProcessPool;
 class Species;
 
 // Configuration
-class Configuration : public Serialisable<const CoreData &>
+class Configuration : public Serialisable<const CoreData &>, public DataModel::Modelable<Configuration>
 {
     public:
     Configuration();

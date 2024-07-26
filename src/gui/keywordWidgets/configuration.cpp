@@ -6,7 +6,7 @@
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
 
 ConfigurationKeywordWidget::ConfigurationKeywordWidget(QWidget *parent, ConfigurationKeyword *keyword, const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword), configurationModel_(coreData.configurations())
 {
     // Setup our UI
     ui_.setupUi(this);

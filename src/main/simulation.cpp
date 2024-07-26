@@ -76,7 +76,7 @@ bool Dissolve::prepare()
     }
 
     // If we have no configurations, check all species regardless
-    if (coreData_.nConfigurations() == 0)
+    if (coreData_.configurations().empty())
         for (const auto &sp : coreData_.species())
             globalUsedSpecies.emplace(sp.get());
 

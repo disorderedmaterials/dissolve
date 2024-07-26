@@ -6,12 +6,9 @@
 #include "gui/keywordWidgets/base.h"
 #include "gui/keywordWidgets/dropDown.h"
 #include "gui/keywordWidgets/ui_configurationVector.h"
-#include "gui/models/configurationModel.h"
+#include "gui/dataModelTableInterface.h"
 #include "keywords/configurationVector.h"
 #include <QWidget>
-
-// Forward Declarations
-class Configuration;
 
 class ConfigurationVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
@@ -34,8 +31,8 @@ class ConfigurationVectorKeywordWidget : public KeywordDropDown, public KeywordW
     private:
     // Main form declaration
     Ui::ConfigurationVectorWidget ui_;
-    // Model for Configuration
-    ConfigurationModel configurationModel_;
+    // Model for Configurations
+    DataModelTableInterface configurationsModel_;
 
     private Q_SLOTS:
     void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);

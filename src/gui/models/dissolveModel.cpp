@@ -3,21 +3,18 @@
 
 #include "gui/models/dissolveModel.h"
 
+DissolveModel::DissolveModel(Dissolve &dissolve) : dissolve_(dissolve), configurationModel_(dissolve.coreData().configurations())
+{
+    atomTypes_.setData(dissolve_.coreData().atomTypes());
+    masters_ = std::make_unique<MasterTermTreeModel>(dissolve_.coreData());
+    speciesModel_.setData(dissolve_.coreData().species());
+    moduleLayersModel_.setData(dissolve_.coreData().processingLayers(), &dissolve_.coreData());
+    Q_EMIT modelsUpdated();
+}
+
 /*
  * Data
  */
-
-// Set reference to Dissolve
-void DissolveModel::setDissolve(Dissolve &dissolve)
-{
-    dissolve_ = &dissolve;
-    atomTypes_.setData(dissolve_->coreData().atomTypes());
-    masters_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
-    speciesModel_.setData(dissolve_->coreData().species());
-    configurationModel_.setData(dissolve_->coreData().configurations());
-    moduleLayersModel_.setData(dissolve_->coreData().processingLayers(), &dissolve_->coreData());
-    Q_EMIT modelsUpdated();
-}
 
 // Update models
 void DissolveModel::update()
@@ -31,7 +28,6 @@ void DissolveModel::update()
         masters_->improperModel_.reset();
     }
     speciesModel_.reset();
-    configurationModel_.reset();
     moduleLayersModel_.reset();
     Q_EMIT modelsUpdated();
 }
@@ -110,7 +106,7 @@ int DissolveModel::nMasterImpropers()
 SpeciesModel *DissolveModel::speciesModel() { return &speciesModel_; }
 
 // The Configuration Model
-ConfigurationModel *DissolveModel::configurationsModel() { return &configurationModel_; }
+DataModelTableInterface *DissolveModel::configurationsModel() { return &configurationModel_; }
 
 // The ModuleLayers Model
 ModuleLayersModel *DissolveModel::moduleLayersModel() { return &moduleLayersModel_; }

@@ -9,6 +9,7 @@
 #include "classes/species.h"
 #include "data/elements.h"
 #include "module/types.h"
+#include "templates/dataModelVectorModelable.h"
 #include "templates/optionalRef.h"
 #include <list>
 #include <memory>
@@ -190,18 +191,16 @@ class CoreData
      */
     private:
     // Core Configurations list
-    std::vector<std::unique_ptr<Configuration>> configurations_;
+    DataModel::VectorModelable<Configuration, std::unique_ptr<Configuration>> configurations_;
 
     public:
     // Add new Configuration
     Configuration *addConfiguration();
     // Remove specified Configuration
     void removeConfiguration(Configuration *cfg);
-    // Return number of Configuration in list
-    int nConfigurations() const;
     // Return core Configuration list
-    std::vector<std::unique_ptr<Configuration>> &configurations();
-    const std::vector<std::unique_ptr<Configuration>> &configurations() const;
+    DataModel::VectorModelable<Configuration, std::unique_ptr<Configuration>> &configurations();
+    const DataModel::VectorModelable<Configuration, std::unique_ptr<Configuration>> &configurations() const;
     // Return nth Configuration in list
     Configuration *configuration(int n);
     // Search for Configuration by name

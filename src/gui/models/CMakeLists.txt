@@ -5,7 +5,6 @@ set(models_MOC_HDRS
     braggReflectionFilterProxy.h
     braggReflectionModel.h
     cifAssemblyModel.h
-    configurationModel.h
     dataManagerSimulationModel.h
     dissolveModel.h
     enumOptionsModel.h
@@ -62,7 +61,6 @@ set(models_SRCS
     braggReflectionFilterProxy.cpp
     braggReflectionModel.cpp
     cifAssemblyModel.cpp
-    configurationModel.cpp
     dataManagerSimulationModel.cpp
     dissolveModel.cpp
     dissolveModelImageProvider.cpp
