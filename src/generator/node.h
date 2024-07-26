@@ -54,7 +54,7 @@ class GeneratorNode : public std::enable_shared_from_this<GeneratorNode>, public
 
     GeneratorNode(NodeType nodeType);
     virtual ~GeneratorNode() = default;
- 
+
     /*
      * Identity
      */
