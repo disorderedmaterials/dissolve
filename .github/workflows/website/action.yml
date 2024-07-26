@@ -18,7 +18,7 @@ inputs:
     default: false
   pdfExamples:
     type: boolean
-    default: false
+    default: true
 
 runs:
   using: "composite"
