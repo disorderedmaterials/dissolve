@@ -9,18 +9,19 @@
 ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWidget *parent,
                                                                              ExpressionVariableVectorKeyword *keyword,
                                                                              const CoreData &coreData)
-    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword), variableModel_(keyword->dataModel())
 {
     // Create and set up the UI for our widget
     ui_.setupUi(this);
 
-    // Set up model
-    variableModel_.setData(keyword->data(), keyword->parentNode());
+    // Set model
     ui_.VariablesTable->setModel(&variableModel_);
 
     // Connect signals / slots
     connect(&variableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
-            SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
+            SLOT(variableDataChanged(const QModelIndex &, const QModelIndex &)));
+    connect(ui_.VariablesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(variableSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     // Add suitable delegate to the table
     ui_.VariablesTable->setItemDelegateForColumn(2, new ExponentialSpinDelegate(this));
@@ -31,13 +32,23 @@ ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWi
  */
 
 // Variable data changed
-void ExpressionVariableVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+void ExpressionVariableVectorKeywordWidget::variableDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
     if (refreshing_)
         return;
 
     Q_EMIT(keywordDataChanged(keyword_->editSignals()));
 }
+
+void ExpressionVariableVectorKeywordWidget::variableSelectionChanged(const QItemSelection &current,
+                                                                     const QItemSelection &previous)
+{
+    ui_.RemoveVariableButton->setEnabled(current.empty());
+}
+
+void ExpressionVariableVectorKeywordWidget::ui_AddVariableButton_clicked(bool checked) {}
+
+void ExpressionVariableVectorKeywordWidget::ui_RemoveVariableButton_clicked(bool checked) {}
 
 // Update value displayed in widget
 void ExpressionVariableVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}
