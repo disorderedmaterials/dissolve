@@ -232,6 +232,23 @@ void Histogram3D::operator=(const Histogram3D &source)
     averages_ = source.averages_;
 }
 
+Histogram3D Histogram3D::operator+(const Histogram3D &other) const
+{
+    assert(nXBins_ == other.nXBins_ && nYBins_ == other.nYBins_ && nZBins_ == other.nZBins_);
+
+    Histogram3D ret = *this;
+
+    std::transform(other.bins_.begin(), other.bins_.end(), ret.bins_.begin(), ret.bins_.begin(), std::plus<>());
+
+    ret.nBinned_ = this->nBinned_ + other.nBinned_;
+    ret.nMissed_ = this->nMissed_ + other.nMissed_;
+    ret.nXBins_ = this->nXBins_;
+    ret.nYBins_ = this->nYBins_;
+    ret.nZBins_ = this->nZBins_;
+
+    return ret;
+}
+
 /*
  * Serialisation
  */

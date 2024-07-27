@@ -13,6 +13,8 @@
 #include "math/range.h"
 #include "module/context.h"
 #include "modules/angle/angle.h"
+#include "templates/algorithms.h"
+#include "templates/combinable.h"
 
 // Run main processing
 Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
@@ -67,13 +69,31 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     dAngleBC.zeroBins();
     dAngleABC.zeroBins();
 
+    auto combinableRAB = dissolve::CombinableValue<Histogram1D>(rAB);
+    auto combinableRBC = dissolve::CombinableValue<Histogram1D>(rBC);
+    auto combinableAABC = dissolve::CombinableValue<Histogram1D>(aABC);
+    auto combinableDAngleAB = dissolve::CombinableValue<Histogram2D>(dAngleAB);
+    auto combinableDAngleBC = dissolve::CombinableValue<Histogram2D>(dAngleBC);
+    auto combinableDAngleABC = dissolve::CombinableValue<Histogram3D>(dAngleABC);
+
     auto nAAvailable = a.sites().size(), nACumulative = a.sites().size();
     auto nASelections = 1;
     auto nBAvailable = 0, nBCumulative = 0, nBSelections = 0;
     auto nCAvailable = 0, nCCumulative = 0, nCSelections = 0;
 
-    for (const auto &[siteA, indexA] : a.sites())
+    auto unaryOp = [this, &b, &c, &nAAvailable, &nACumulative, &nASelections, &nBAvailable, &nBCumulative, &nBSelections,
+                    &nCAvailable, &nCCumulative, &nCSelections, &combinableRAB, &combinableRBC, &combinableAABC,
+                    &combinableDAngleAB, &combinableDAngleBC, &combinableDAngleABC](const auto &pair)
     {
+        const auto &[siteA, indexA] = pair;
+
+        auto &rAB = combinableRAB.local();
+        auto &rBC = combinableRBC.local();
+        auto &aABC = combinableAABC.local();
+        auto &dAngleAB = combinableDAngleAB.local();
+        auto &dAngleBC = combinableDAngleBC.local();
+        auto &dAngleABC = combinableDAngleABC.local();
+
         ++nBSelections;
         for (const auto &[siteB, indexB] : b.sites())
         {
@@ -122,7 +142,17 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
                 dAngleABC.bin(distAB, distBC, angle);
             }
         }
-    }
+    };
+
+    dissolve::for_each(std::execution::par, a.sites().begin(), a.sites().end(), unaryOp);
+
+    // Finalize combinable histograms
+    rAB = combinableRAB.finalize();
+    rBC = combinableRBC.finalize();
+    aABC = combinableAABC.finalize();
+    dAngleAB = combinableDAngleAB.finalize();
+    dAngleBC = combinableDAngleBC.finalize();
+    dAngleABC = combinableDAngleABC.finalize();
 
     // Accumulate histograms
     rAB.accumulate();

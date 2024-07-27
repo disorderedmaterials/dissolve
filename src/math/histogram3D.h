@@ -122,6 +122,7 @@ class Histogram3D
      */
     public:
     void operator=(const Histogram3D &source);
+    Histogram3D operator+(const Histogram3D &other) const;
 
     /*
      * Serialisation
