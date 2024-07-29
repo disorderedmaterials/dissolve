@@ -11,6 +11,7 @@
 #include "classes/cellArray.h"
 #include "classes/molecule.h"
 #include "classes/siteStack.h"
+#include "generator/generator.h"
 #include "io/import/coordinates.h"
 #include "items/list.h"
 #include "kernels/potentials/base.h"
@@ -18,7 +19,6 @@
 #include "math/histogram1D.h"
 #include "math/interpolator.h"
 #include "module/layer.h"
-#include "procedure/procedure.h"
 #include "templates/vector3.h"
 #include <deque>
 #include <map>
@@ -51,10 +51,10 @@ class Configuration : public Serialisable<const CoreData &>
     std::string name_;
     // Nice name (generated from name_) used for output files
     std::string niceName_;
-    // Procedure to generate the Configuration
-    Procedure generator_;
-    static constexpr double defaultTemperature_ = 300.0;
+    // Generator for the Configuration
+    Generator generator_;
     // Temperature of this configuration (K)
+    static constexpr double defaultTemperature_ = 300.0;
     double temperature_{defaultTemperature_};
 
     public:
@@ -64,12 +64,12 @@ class Configuration : public Serialisable<const CoreData &>
     std::string_view name() const;
     // Return nice name of the Configuration
     std::string_view niceName() const;
-    // Return the current generator
-    Procedure &generator();
-    // Create the Configuration according to its generator Procedure
-    bool generate(const ProcedureContext &procedureContext);
+    // Return the generator for the Configuration
+    Generator &generator();
+    // Create the Configuration according to its generator
+    bool generate(const GeneratorContext &generatorContext);
     // Initialise (generate or load) the basic contents of the Configuration
-    bool initialiseContent(const ProcedureContext &procedureContext);
+    bool initialiseContent(const GeneratorContext &generatorContext);
     // Set configuration temperature
     void setTemperature(double t);
     // Return configuration temperature

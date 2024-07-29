@@ -5,8 +5,8 @@
 #include "base/units.h"
 #include "classes/empiricalFormula.h"
 #include "classes/pairIterator.h"
+#include "generator/box.h"
 #include "gui/helpers/comboPopulator.h"
-#include "procedure/nodes/box.h"
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>

@@ -13,7 +13,6 @@ class DissolveWindow;
 class KeywordsWidget;
 class Module;
 class ModuleWidget;
-class ProcedureWidget;
 
 // Module Control Widget
 class ModuleControlWidget : public QWidget
@@ -61,8 +60,6 @@ class ModuleControlWidget : public QWidget
     Ui::ModuleControlWidget ui_;
     // Additional controls widget for the Module (if any)
     ModuleWidget *moduleWidget_{nullptr};
-    // Procedure widget for the module (if any)
-    ProcedureWidget *procedureWidget_{nullptr};
     // Keyword widgets for the module (if any)
     std::vector<KeywordsWidget *> keywordWidgets_;
     // Map of button widgets to related stack indices
@@ -72,7 +69,6 @@ class ModuleControlWidget : public QWidget
     void switchControlStackPage(QPushButton *button);
     void keywordGroupButtonClicked(bool checked);
     void on_ModuleWidgetButton_clicked(bool checked);
-    void on_ProcedureWidgetButton_clicked(bool checked);
 
     public:
     // Prepare widget for deletion

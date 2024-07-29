@@ -4,12 +4,12 @@
 #pragma once
 
 #include "base/lineParser.h"
+#include "generator/node.h"
+#include "generator/nodeValue.h"
 #include "keywords/base.h"
-#include "procedure/nodeValue.h"
-#include "procedure/nodes/node.h"
 
 // Forward Declarations
-class ProcedureNode;
+class GeneratorNode;
 
 // Keyword managing NodeValue and EnumOptions base class
 class NodeValueEnumOptionsBaseKeyword : public KeywordBase
@@ -44,7 +44,7 @@ class NodeValueEnumOptionsBaseKeyword : public KeywordBase
 template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword
 {
     public:
-    NodeValueEnumOptionsKeyword(std::pair<NodeValue, E> &data, ProcedureNode *parentNode, EnumOptions<E> optionData)
+    NodeValueEnumOptionsKeyword(std::pair<NodeValue, E> &data, GeneratorNode *parentNode, EnumOptions<E> optionData)
         : NodeValueEnumOptionsBaseKeyword(optionData_), data_(data), default_(data), parentNode_(parentNode),
           optionData_(optionData)
     {
@@ -59,8 +59,8 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
     std::pair<NodeValue, E> &data_;
     // Initial Value
     const std::pair<NodeValue, E> default_;
-    // Parent ProcedureNode
-    const ProcedureNode *parentNode_;
+    // Parent GeneratorNode
+    const GeneratorNode *parentNode_;
     // Related EnumOptions data
     EnumOptions<E> optionData_;
 

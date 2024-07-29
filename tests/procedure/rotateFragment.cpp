@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "procedure/nodes/rotateFragment.h"
+#include "generator/rotateFragment.h"
 #include "classes/configuration.h"
+#include "generator/add.h"
+#include "generator/box.h"
+#include "generator/generator.h"
+#include "generator/select.h"
 #include "keywords/enumOptions.h"
 #include "keywords/nodeValue.h"
 #include "main/dissolve.h"
-#include "procedure/nodes/add.h"
-#include "procedure/nodes/box.h"
-#include "procedure/nodes/select.h"
-#include "procedure/procedure.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <string>
@@ -17,7 +17,7 @@
 namespace UnitTest
 {
 
-TEST(RotateFragmentProcedureNodeTest, Benzene)
+TEST(RotateFragmentGeneratorNodeTest, Benzene)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
@@ -36,13 +36,13 @@ TEST(RotateFragmentProcedureNodeTest, Benzene)
     auto &procedure = cfg->generator();
     auto boxLength = 20.0;
     const Vec3<double> cellCentre(boxLength / 2, boxLength / 2, boxLength / 2);
-    auto box = procedure.createRootNode<BoxProcedureNode>("Box", Vec3<NodeValue>(boxLength, boxLength, boxLength),
+    auto box = procedure.createRootNode<BoxGeneratorNode>("Box", Vec3<NodeValue>(boxLength, boxLength, boxLength),
                                                           Vec3<NodeValue>(90, 90, 90));
 
     // Add a single Benzene molecule at the centre of the cell - this way, rotations will not break it across box boundaries
-    auto add = procedure.createRootNode<AddProcedureNode>("Benzene", benzene, 1);
-    add->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Central);
-    add->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
+    auto add = procedure.createRootNode<AddGeneratorNode>("Benzene", benzene, 1);
+    add->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Central);
+    add->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::None);
     add->keywords().set("Rotate", false);
 
     // Set up the prior configuration
@@ -57,10 +57,10 @@ TEST(RotateFragmentProcedureNodeTest, Benzene)
                    [&cellCentre](const auto &at) { return at->r() - cellCentre; });
 
     // Select the site
-    auto select = procedure.createRootNode<SelectProcedureNode>("BenzeneSite", sites);
+    auto select = procedure.createRootNode<SelectGeneratorNode>("BenzeneSite", sites);
     // Rotate Benzene around the Z-Axis of the site (which is defined at the COG, which is at the origin)
     auto &forEachB = select->branch()->get();
-    auto rotate = forEachB.create<RotateFragmentProcedureNode>("RotateBenzene", select);
+    auto rotate = forEachB.create<RotateFragmentGeneratorNode>("RotateBenzene", select);
     rotate->keywords().setEnumeration("Axis", OrientedSite::SiteAxis::ZAxis);
 
     for (auto x = 90.0; x <= 360.0; x += 90.0)

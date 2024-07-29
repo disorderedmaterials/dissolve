@@ -169,32 +169,6 @@
           <layout class="QHBoxLayout" name="KeywordGroupButtonsLayout"/>
          </item>
          <item>
-          <widget class="QPushButton" name="ProcedureWidgetButton">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="text">
-            <string>Procedure</string>
-           </property>
-           <property name="icon">
-            <iconset resource="main.qrc">
-             <normaloff>:/general/icons/procedure.svg</normaloff>:/general/icons/procedure.svg</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-           <property name="autoExclusive">
-            <bool>true</bool>
-           </property>
-           <property name="flat">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="ModuleWidgetButton">
            <property name="enabled">
             <bool>true</bool>

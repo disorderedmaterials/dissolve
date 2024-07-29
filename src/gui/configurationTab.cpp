@@ -16,7 +16,7 @@
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
     : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this),
-      procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials()),
+      generatorModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials()),
       targetedPotentialModel_(cfg->targetedPotentials())
 {
     ui_.setupUi(this);
@@ -31,8 +31,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     // Set target for ConfigurationViewer
     ui_.ViewerWidget->setConfiguration(configuration_);
 
-    // Set-up the generator procedure editor
-    ui_.GeneratorWidget->setUp(dissolveWindow_, configuration_->generator());
+    // Set-up the generator editor
+    ui_.GeneratorEditor->setUp(dissolveWindow_, configuration_->generator());
 
     // Set warning for Size Factor indicator
     ui_.SizeFactorIndicator->setWarning();
@@ -182,14 +182,14 @@ void ConfigurationTab::updateControls()
 // Prevent editing within tab
 void ConfigurationTab::preventEditing()
 {
-    ui_.GeneratorWidget->setEnabled(false);
+    ui_.GeneratorEditor->setEnabled(false);
     ui_.GenerateButton->setEnabled(false);
 }
 
 // Allow editing within tab
 void ConfigurationTab::allowEditing()
 {
-    ui_.GeneratorWidget->setEnabled(true);
+    ui_.GeneratorEditor->setEnabled(true);
     ui_.GenerateButton->setEnabled(true);
 }
 

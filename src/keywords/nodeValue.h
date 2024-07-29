@@ -3,18 +3,18 @@
 
 #pragma once
 
+#include "generator/nodeValue.h"
 #include "keywords/base.h"
-#include "procedure/nodeValue.h"
 
 // Forward Declarations
 class NodeValue;
-class ProcedureNode;
+class GeneratorNode;
 
 // Keyword managing NodeValue
 class NodeValueKeyword : public KeywordBase
 {
     public:
-    NodeValueKeyword(NodeValue &value, ProcedureNode *parentNode);
+    NodeValueKeyword(NodeValue &value, GeneratorNode *parentNode);
     ~NodeValueKeyword() override = default;
 
     /*
@@ -25,8 +25,8 @@ class NodeValueKeyword : public KeywordBase
     NodeValue &data_;
     // Initial value
     const NodeValue default_;
-    // Parent ProcedureNode
-    ProcedureNode *parentNode_;
+    // Parent GeneratorNode
+    GeneratorNode *parentNode_;
 
     public:
     // Return reference to data

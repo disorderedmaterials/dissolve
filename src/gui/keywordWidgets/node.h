@@ -5,7 +5,7 @@
 
 #include "gui/keywordWidgets/base.h"
 #include "gui/keywordWidgets/ui_node.h"
-#include "gui/models/procedureNodeModel.h"
+#include "gui/models/generatorNodeModel.h"
 #include "keywords/node.h"
 #include <QWidget>
 
@@ -33,7 +33,7 @@ class NodeKeywordWidget : public QWidget, public KeywordWidgetBase
     // Allowed nodes to display in the model
     std::vector<ConstNodeRef> allowedNodes_;
     // Model for the node list
-    ProcedureNodeModel nodeModel_;
+    GeneratorNodeModel nodeModel_;
 
     private Q_SLOTS:
     void on_NodeCombo_currentIndexChanged(int index);

@@ -2,11 +2,11 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/expressionVariableVectorModel.h"
-#include "procedure/nodes/node.h"
+#include "generator/node.h"
 
 // Set source variable data
 void ExpressionVariableVectorModel::setData(std::vector<std::shared_ptr<ExpressionVariable>> &variables,
-                                            const ProcedureNode *parentNode)
+                                            const GeneratorNode *parentNode)
 {
     beginResetModel();
     variables_ = variables;

@@ -291,8 +291,7 @@ set(BASIC_LINK_LIBS
     import
     neta
     analyser
-    procedure
-    procedureNodes
+    generator
     keywords
     expression
     items

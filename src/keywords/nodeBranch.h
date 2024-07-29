@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "generator/node.h"
+#include "generator/sequence.h"
 #include "keywords/base.h"
-#include "procedure/nodes/node.h"
-#include "procedure/nodes/sequence.h"
 
 // Forward Declarations
 class NodeValue;
@@ -14,7 +14,7 @@ class NodeValue;
 class NodeBranchKeyword : public KeywordBase
 {
     public:
-    NodeBranchKeyword(ProcedureNodeSequence &data);
+    NodeBranchKeyword(GeneratorNodeSequence &data);
     ~NodeBranchKeyword() override = default;
 
     /*
@@ -22,7 +22,7 @@ class NodeBranchKeyword : public KeywordBase
      */
     private:
     // Reference to data
-    ProcedureNodeSequence &data_;
+    GeneratorNodeSequence &data_;
 
     /*
      * Arguments

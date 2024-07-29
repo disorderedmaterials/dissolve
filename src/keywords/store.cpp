@@ -3,6 +3,8 @@
 
 #include "keywords/store.h"
 #include "base/lineParser.h"
+#include "generator/regionBase.h"
+#include "generator/select.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/configurationVector.h"
@@ -21,8 +23,6 @@
 #include "keywords/vec3Double.h"
 #include "keywords/vec3Integer.h"
 #include "keywords/vec3NodeValue.h"
-#include "procedure/nodes/regionBase.h"
-#include "procedure/nodes/select.h"
 
 /*
  * Keyword Data
@@ -190,17 +190,17 @@ bool KeywordStore::set(std::string_view name, const std::vector<const SpeciesSit
     getKeyword<SpeciesSiteVectorKeyword>(name, find(name))->data() = value;
     return true;
 }
-bool KeywordStore::set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value)
+bool KeywordStore::set(std::string_view name, const std::shared_ptr<RegionGeneratorNodeBase> value)
 {
-    return getKeyword<NodeKeyword<RegionProcedureNodeBase>>(name, find(name))->setData(value);
+    return getKeyword<NodeKeyword<RegionGeneratorNodeBase>>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value)
+bool KeywordStore::set(std::string_view name, const std::shared_ptr<SelectGeneratorNode> value)
 {
-    return getKeyword<NodeKeyword<SelectProcedureNode>>(name, find(name))->setData(value);
+    return getKeyword<NodeKeyword<SelectGeneratorNode>>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value)
+bool KeywordStore::set(std::string_view name, const ConstNodeVector<SelectGeneratorNode> value)
 {
-    return getKeyword<NodeVectorKeyword<SelectProcedureNode>>(name, find(name))->setData(value);
+    return getKeyword<NodeVectorKeyword<SelectGeneratorNode>>(name, find(name))->setData(value);
 }
 bool KeywordStore::set(std::string_view name, const std::vector<Module *> value)
 {

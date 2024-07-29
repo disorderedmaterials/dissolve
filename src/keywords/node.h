@@ -4,15 +4,15 @@
 #pragma once
 
 #include "base/lineParser.h"
+#include "generator/node.h"
 #include "keywords/base.h"
 #include "keywords/nodeUnderlay.h"
-#include "procedure/nodes/node.h"
 
 // Base class for NodeKeyword
 class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
-    NodeKeywordBase(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+    NodeKeywordBase(GeneratorNode *parentNode, const GeneratorNode::NodeTypeVector &allowedNodeTypes)
         : NodeKeywordUnderlay(parentNode, allowedNodeTypes), KeywordBase(typeid(this))
     {
     }
@@ -38,12 +38,12 @@ class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     }
 };
 
-// Keyword managing ProcedureNode
+// Keyword managing GeneratorNode
 template <class N> class NodeKeyword : public NodeKeywordBase
 {
     public:
-    NodeKeyword(std::shared_ptr<const N> &data, ProcedureNode *parentNode,
-                const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+    NodeKeyword(std::shared_ptr<const N> &data, GeneratorNode *parentNode,
+                const GeneratorNode::NodeTypeVector &allowedNodeTypes)
         : NodeKeywordBase(parentNode, allowedNodeTypes), data_(data)
     {
     }
@@ -121,7 +121,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase
      * Object Management
      */
     protected:
-    // Prune any references to the supplied ProcedureNode in the contained data
+    // Prune any references to the supplied GeneratorNode in the contained data
     void removeReferencesTo(NodeRef node) override
     {
         if (data_ == node)

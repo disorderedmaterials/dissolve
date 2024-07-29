@@ -1,89 +1,89 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "procedure/procedure.h"
+#include "generator/add.h"
+#include "generator/box.h"
+#include "generator/generator.h"
+#include "generator/parameters.h"
+#include "generator/select.h"
 #include "keywords/node.h"
-#include "procedure/nodes/add.h"
-#include "procedure/nodes/box.h"
-#include "procedure/nodes/parameters.h"
-#include "procedure/nodes/select.h"
 #include <gtest/gtest.h>
 #include <string>
 
 namespace UnitTest
 {
-TEST(ProcedureTest, Scope)
+TEST(GeneratorTest, Scope)
 {
-    Procedure procedure;
+    Generator generator;
 
     // Select A
-    auto selectA = procedure.createRootNode<SelectProcedureNode>("A");
+    auto selectA = generator.createRootNode<SelectGeneratorNode>("A");
     auto forEachA = selectA->branch()->get();
-    EXPECT_TRUE(procedure.rootSequence().check());
+    EXPECT_TRUE(generator.rootSequence().check());
 
     // Select B
-    auto selectB = forEachA.create<SelectProcedureNode>("B");
+    auto selectB = forEachA.create<SelectGeneratorNode>("B");
     auto forEachB = selectB->branch()->get();
-    EXPECT_TRUE(procedure.rootSequence().check());
+    EXPECT_TRUE(generator.rootSequence().check());
 
     // Select C
-    auto selectC = procedure.createRootNode<SelectProcedureNode>("C");
+    auto selectC = generator.createRootNode<SelectGeneratorNode>("C");
 
-    // Node external to procedure
-    auto selectExternal = std::make_shared<SelectProcedureNode>();
+    // Node external to generator
+    auto selectExternal = std::make_shared<SelectGeneratorNode>();
     selectExternal->setName("X");
 
     // Valid node keyword argument (in scope)
-    EXPECT_TRUE(selectB->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA}));
+    EXPECT_TRUE(selectB->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectGeneratorNode>{selectA}));
     EXPECT_TRUE(selectC->keywords().set("ReferenceSite", selectA));
 
     // Invalid node arguments (out of scope)
     // -- Out of scope (node appears subsequently in sequence)
-    EXPECT_FALSE(selectA->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectB}));
+    EXPECT_FALSE(selectA->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectGeneratorNode>{selectB}));
     // -- Out of scope (node is in a branch in a previous node)
     EXPECT_FALSE(selectC->keywords().set("ReferenceSite", selectB));
-    // -- Out of scope (not in same procedure)
-    EXPECT_FALSE(selectB->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectExternal}));
+    // -- Out of scope (not in same generator)
+    EXPECT_FALSE(selectB->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectGeneratorNode>{selectExternal}));
 
     // Check removal of bad node references
     // -- Confirm current keyword data
     auto keywordNode = selectC->keywords()
-                           .get<std::shared_ptr<const SelectProcedureNode>, NodeKeyword<SelectProcedureNode>>("ReferenceSite")
+                           .get<std::shared_ptr<const SelectGeneratorNode>, NodeKeyword<SelectGeneratorNode>>("ReferenceSite")
                            .value();
     EXPECT_EQ(keywordNode, selectA);
     // -- Move 'C' so it is before 'A'
-    std::swap(procedure.rootSequence().sequence()[0], procedure.rootSequence().sequence()[1]);
-    // -- Validate procedure and re-check keyword data
-    procedure.rootSequence().validateNodeKeywords();
+    std::swap(generator.rootSequence().sequence()[0], generator.rootSequence().sequence()[1]);
+    // -- Validate generator and re-check keyword data
+    generator.rootSequence().validateNodeKeywords();
     keywordNode = selectC->keywords()
-                      .get<std::shared_ptr<const SelectProcedureNode>, NodeKeyword<SelectProcedureNode>>("ReferenceSite")
+                      .get<std::shared_ptr<const SelectGeneratorNode>, NodeKeyword<SelectGeneratorNode>>("ReferenceSite")
                       .value();
     EXPECT_EQ(keywordNode, nullptr);
 }
 
-TEST(ProcedureTest, Parameters)
+TEST(GeneratorTest, Parameters)
 {
-    Procedure procedure;
+    Generator generator;
 
     // Parameters (Small Things)
-    auto smallThings = procedure.createRootNode<ParametersProcedureNode>("Small");
+    auto smallThings = generator.createRootNode<ParametersGeneratorNode>("Small");
     smallThings->addParameter("Egg", 1);
     smallThings->addParameter("Marble", -5);
     smallThings->addParameter("Pin", 11.22);
 
     // Add (Small)
-    auto smallHole = procedure.createRootNode<AddProcedureNode>("SmallHole");
+    auto smallHole = generator.createRootNode<AddGeneratorNode>("SmallHole");
 
     // Parameters (Big Things)
-    auto largeThings = procedure.createRootNode<ParametersProcedureNode>("Large");
+    auto largeThings = generator.createRootNode<ParametersGeneratorNode>("Large");
     largeThings->addParameter("Bus", 1);
     largeThings->addParameter("MeaningOfLife", 2.0);
     largeThings->addParameter("Family", 30);
 
     // Add (Big Things)
-    auto bigHole = procedure.createRootNode<AddProcedureNode>("BigHole");
+    auto bigHole = generator.createRootNode<AddGeneratorNode>("BigHole");
 
-    EXPECT_TRUE(procedure.rootSequence().check());
+    EXPECT_TRUE(generator.rootSequence().check());
 
     // Check number of available parameters to each Add node
     auto smallVars = smallHole->getParametersInScope();

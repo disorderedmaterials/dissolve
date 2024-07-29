@@ -3,9 +3,9 @@
 
 #include "keywords/vec3NodeValue.h"
 #include "base/lineParser.h"
-#include "procedure/nodes/node.h"
+#include "generator/node.h"
 
-Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vec3<NodeValue> &data, ProcedureNode *parentNode, Vec3Labels::LabelType labelType)
+Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vec3<NodeValue> &data, GeneratorNode *parentNode, Vec3Labels::LabelType labelType)
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), labelType_(labelType)
 {
 }
@@ -50,7 +50,7 @@ std::optional<int> Vec3NodeValueKeyword::maxArguments() const { return 3; }
 bool Vec3NodeValueKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!parentNode_)
-        return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n", name());
+        return Messenger::error("Can't read keyword {} since the parent GeneratorNode has not been set.\n", name());
 
     if (parser.hasArg(startArg + 2))
     {

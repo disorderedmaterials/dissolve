@@ -2,13 +2,13 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "modules/modifierOSites/modifierOSites.h"
+#include "generator/select.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/fileAndFormat.h"
 #include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
-#include "procedure/nodes/select.h"
 
 ModifierOSitesModule::ModifierOSitesModule() : Module(ModuleTypes::ModifierOSites)
 {

@@ -1,32 +1,32 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "procedure/procedure.h"
 #include "expression/variable.h"
-#include "gui/models/procedureModel.h"
+#include "generator/add.h"
+#include "generator/generator.h"
+#include "generator/select.h"
+#include "gui/models/generatorModel.h"
 #include "main/dissolve.h"
-#include "procedure/nodes/add.h"
-#include "procedure/nodes/select.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
 {
-TEST(ProcedureModelTest, Basic)
+TEST(GeneratorModelTest, Basic)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    // Create a simple procedure with a parameters node
-    Procedure procedure;
-    auto selectA = procedure.createRootNode<SelectProcedureNode>("A");
+    // Create a simple generator with a parameters node
+    Generator generator;
+    auto selectA = generator.createRootNode<SelectGeneratorNode>("A");
     auto &forEachA = selectA->branch()->get();
-    auto selectB = forEachA.create<SelectProcedureNode>("B");
+    auto selectB = forEachA.create<SelectGeneratorNode>("B");
     auto &forEachB = selectB->branch()->get();
-    auto selectC = forEachB.create<SelectProcedureNode>("C");
+    auto selectC = forEachB.create<SelectGeneratorNode>("C");
 
-    EXPECT_TRUE(procedure.rootSequence().check());
+    EXPECT_TRUE(generator.rootSequence().check());
 
-    ProcedureModel model(procedure);
+    GeneratorModel model(generator);
 
     // Check out model root
     EXPECT_EQ(model.columnCount(QModelIndex()), 1);

@@ -10,7 +10,7 @@
 #include <vector>
 
 // Forward Declarations
-class ProcedureNode;
+class GeneratorNode;
 
 // Expression Variable Vector Model
 class ExpressionVariableVectorModel : public QAbstractTableModel
@@ -21,11 +21,11 @@ class ExpressionVariableVectorModel : public QAbstractTableModel
     // Source variable data
     OptionalReferenceWrapper<std::vector<std::shared_ptr<ExpressionVariable>>> variables_;
     // Parent procedure node (to enable parameter search)
-    const ProcedureNode *parentNode_{nullptr};
+    const GeneratorNode *parentNode_{nullptr};
 
     public:
     // Set source variable data
-    void setData(std::vector<std::shared_ptr<ExpressionVariable>> &variables, const ProcedureNode *parentNode);
+    void setData(std::vector<std::shared_ptr<ExpressionVariable>> &variables, const GeneratorNode *parentNode);
 
     int rowCount(const QModelIndex &parent) const override;
     int columnCount(const QModelIndex &parent) const override;

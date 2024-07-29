@@ -42,8 +42,8 @@
 #include "keywords/dataSource.h"
 #include "keywords/elementVector.h"
 #include "keywords/expression.h"
+#include "keywords/generator.h"
 #include "keywords/nodeBranch.h"
-#include "keywords/procedure.h"
 #include <ios>
 
 KeywordWidgetProducer::KeywordWidgetProducer()
@@ -87,7 +87,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerNullProducer<ElementVectorKeyword>();
     registerNullProducer<ExpressionKeyword>();
     registerNullProducer<NodeBranchKeyword>();
-    registerNullProducer<ProcedureKeyword>();
+    registerNullProducer<GeneratorKeyword>();
 }
 
 /*

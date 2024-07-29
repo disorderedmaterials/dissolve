@@ -58,9 +58,9 @@ add_library(
   nodeControlWidget.cpp
   nodeControlWidget.h
   nodeControlWidget.ui
-  procedureWidget.cpp
-  procedureWidget.h
-  procedureWidget.ui
+  generatorWidget.cpp
+  generatorWidget.h
+  generatorWidget.ui
   selectAtomTypeWidget.cpp
   selectAtomTypeWidget.h
   selectAtomTypeWidget.ui

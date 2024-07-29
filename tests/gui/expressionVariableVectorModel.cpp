@@ -2,9 +2,9 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/expressionVariableVectorModel.h"
+#include "generator/generator.h"
+#include "generator/parameters.h"
 #include "main/dissolve.h"
-#include "procedure/nodes/parameters.h"
-#include "procedure/procedure.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -14,14 +14,14 @@ TEST(ExpressionVariableVectorModelTest, Basic)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    // Create a simple procedure with a parameters node
-    Procedure procedure;
-    auto parameters = procedure.createRootNode<ParametersProcedureNode>({});
+    // Create a simple generator with a parameters node
+    Generator generator;
+    auto parameters = generator.createRootNode<ParametersGeneratorNode>({});
     parameters->addParameter("Alpha", 1.2345);
     parameters->addParameter("Beta", 99);
     parameters->addParameter("Gamma", -10);
 
-    // Create a second set of data since we can't get the ParametersProcedureNode data non-const
+    // Create a second set of data since we can't get the ParametersGeneratorNode data non-const
     std::vector<std::shared_ptr<ExpressionVariable>> data;
     data.push_back(std::make_shared<ExpressionVariable>("alf", 5.4321));
     data.push_back(std::make_shared<ExpressionVariable>("bert", 1));

@@ -2,10 +2,10 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "generator/copy.h"
 #include "main/dissolve.h"
 #include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
-#include "procedure/nodes/copy.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <vector>
@@ -41,7 +41,7 @@ TEST_F(ModuleTest, ConfigurationTargets)
 
     // Switch the configuration for a copy of the original
     Configuration cfg;
-    cfg.generator().createRootNode<CopyProcedureNode>("CopyConfig", systemTest.dissolve().coreData().configuration(0));
+    cfg.generator().createRootNode<CopyGeneratorNode>("CopyConfig", systemTest.dissolve().coreData().configuration(0));
     cfg.generate({systemTest.dissolve()});
     siteRDF->keywords().set("Configuration", &cfg);
 

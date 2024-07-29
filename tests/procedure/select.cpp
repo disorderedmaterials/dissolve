@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "procedure/nodes/select.h"
+#include "generator/select.h"
 #include "classes/configuration.h"
+#include "generator/generator.h"
 #include "main/dissolve.h"
-#include "procedure/procedure.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <string>
 
 namespace UnitTest
 {
-class SelectProcedureNodeTest : public ::testing::Test
+class SelectGeneratorNodeTest : public ::testing::Test
 {
     public:
-    SelectProcedureNodeTest() : dissolve_(coreData_)
+    SelectGeneratorNodeTest() : dissolve_(coreData_)
     {
         // Set up species
         alphaSpecies_ = coreData_.copySpecies(&diatomicSpecies());
@@ -80,13 +80,13 @@ class SelectProcedureNodeTest : public ::testing::Test
     void SetUp() override {}
 };
 
-TEST_F(SelectProcedureNodeTest, Simple)
+TEST_F(SelectGeneratorNodeTest, Simple)
 {
-    Procedure testProcedure;
+    Generator testGenerator;
     auto selectN =
-        testProcedure.createRootNode<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
+        testGenerator.createRootNode<SelectGeneratorNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
 
-    testProcedure.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({dissolve_.worldPool(), configuration_});
 
     auto N = nType_ * 2;
     EXPECT_EQ(selectN->nSitesInStack(), N * 2);
@@ -103,32 +103,32 @@ TEST_F(SelectProcedureNodeTest, Simple)
     }
 }
 
-TEST_F(SelectProcedureNodeTest, All)
+TEST_F(SelectGeneratorNodeTest, All)
 {
-    Procedure testProcedure;
-    auto selectAr = testProcedure.createRootNode<SelectProcedureNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_});
+    Generator testGenerator;
+    auto selectAr = testGenerator.createRootNode<SelectGeneratorNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_});
     auto &forEachAr = selectAr->branch()->get();
-    auto selectN = forEachAr.create<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
+    auto selectN = forEachAr.create<SelectGeneratorNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
 
-    testProcedure.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({dissolve_.worldPool(), configuration_});
 
     EXPECT_EQ(selectAr->nSitesInStack(), 1);
     EXPECT_EQ(selectN->nSitesInStack(), nType_ * 2 * 2);
 }
 
-TEST_F(SelectProcedureNodeTest, Ranges)
+TEST_F(SelectGeneratorNodeTest, Ranges)
 {
-    Procedure testProcedure;
-    auto selectAr = testProcedure.createRootNode<SelectProcedureNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_});
+    Generator testGenerator;
+    auto selectAr = testGenerator.createRootNode<SelectGeneratorNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_});
     auto &forEachAr = selectAr->branch()->get();
-    auto selectN = forEachAr.create<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
+    auto selectN = forEachAr.create<SelectGeneratorNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
     selectN->setDistanceReferenceSite(selectAr);
 
     for (auto rangeInt = 1; rangeInt <= nType_; ++rangeInt)
     {
         selectN->setInclusiveDistanceRange({0.0, rangeInt * 1.0});
 
-        testProcedure.execute({dissolve_.worldPool(), configuration_});
+        testGenerator.execute({dissolve_.worldPool(), configuration_});
 
         EXPECT_EQ(selectAr->nSitesInStack(), 1);
         EXPECT_EQ(selectN->nSitesInStack(), rangeInt * 2 * 2);
@@ -137,12 +137,12 @@ TEST_F(SelectProcedureNodeTest, Ranges)
     }
 }
 
-TEST_F(SelectProcedureNodeTest, Indices)
+TEST_F(SelectGeneratorNodeTest, Indices)
 {
-    Procedure testProcedure;
-    auto selectAr = testProcedure.createRootNode<SelectProcedureNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_});
+    Generator testGenerator;
+    auto selectAr = testGenerator.createRootNode<SelectGeneratorNode>("SelectAr", std::vector<const SpeciesSite *>{argonSite_});
     auto &forEachAr = selectAr->branch()->get();
-    auto selectN = forEachAr.create<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
+    auto selectN = forEachAr.create<SelectGeneratorNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
     selectN->setDistanceReferenceSite(selectAr);
 
     auto N = nType_ * 2;
@@ -151,7 +151,7 @@ TEST_F(SelectProcedureNodeTest, Indices)
     {
         selectN->setInclusiveDistanceRange({0.0, rangeInt * 1.0});
 
-        testProcedure.execute({dissolve_.worldPool(), configuration_});
+        testGenerator.execute({dissolve_.worldPool(), configuration_});
 
         EXPECT_EQ(selectAr->nSitesInStack(), 1);
         EXPECT_EQ(selectN->nSitesInStack(), rangeInt * 2 * 2);
@@ -172,16 +172,16 @@ TEST_F(SelectProcedureNodeTest, Indices)
     }
 }
 
-TEST_F(SelectProcedureNodeTest, Exclusions1)
+TEST_F(SelectGeneratorNodeTest, Exclusions1)
 {
-    Procedure testProcedure;
+    Generator testGenerator;
     auto selectN1 =
-        testProcedure.createRootNode<SelectProcedureNode>("SelectN1", std::vector<const SpeciesSite *>{alphaSiteN_});
+        testGenerator.createRootNode<SelectGeneratorNode>("SelectN1", std::vector<const SpeciesSite *>{alphaSiteN_});
     auto &forEachN1 = selectN1->branch()->get();
-    auto selectN2 = forEachN1.create<SelectProcedureNode>("SelectN2", std::vector<const SpeciesSite *>{alphaSiteN_});
+    auto selectN2 = forEachN1.create<SelectGeneratorNode>("SelectN2", std::vector<const SpeciesSite *>{alphaSiteN_});
 
     // No exclusions
-    testProcedure.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({dissolve_.worldPool(), configuration_});
     EXPECT_EQ(selectN1->nSitesInStack(), nType_);
     EXPECT_EQ(selectN2->nSitesInStack(), nType_);
     EXPECT_DOUBLE_EQ(selectN1->nAvailableSitesAverage(), double(nType_));
@@ -189,8 +189,8 @@ TEST_F(SelectProcedureNodeTest, Exclusions1)
     configuration_->incrementContentsVersion();
 
     // Exclude same site
-    selectN2->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectN1});
-    testProcedure.execute({dissolve_.worldPool(), configuration_});
+    selectN2->keywords().set("ExcludeSameSite", ConstNodeVector<SelectGeneratorNode>{selectN1});
+    testGenerator.execute({dissolve_.worldPool(), configuration_});
     EXPECT_EQ(selectN1->nSitesInStack(), nType_);
     EXPECT_EQ(selectN2->nSitesInStack(), nType_ - 1);
     EXPECT_DOUBLE_EQ(selectN1->nAvailableSitesAverage(), double(nType_));
@@ -198,23 +198,23 @@ TEST_F(SelectProcedureNodeTest, Exclusions1)
     configuration_->incrementContentsVersion();
 
     // Exclude same molecule as well (no effect)
-    selectN2->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectN1});
-    testProcedure.execute({dissolve_.worldPool(), configuration_});
+    selectN2->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectGeneratorNode>{selectN1});
+    testGenerator.execute({dissolve_.worldPool(), configuration_});
     EXPECT_EQ(selectN1->nSitesInStack(), nType_);
     EXPECT_EQ(selectN2->nSitesInStack(), nType_ - 1);
     EXPECT_DOUBLE_EQ(selectN1->nAvailableSitesAverage(), double(nType_));
     EXPECT_DOUBLE_EQ(selectN2->nAvailableSitesAverage(), double(nType_ - 1));
 }
 
-TEST_F(SelectProcedureNodeTest, Exclusions2)
+TEST_F(SelectGeneratorNodeTest, Exclusions2)
 {
-    Procedure testProcedure;
-    auto selectN = testProcedure.createRootNode<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSiteN_});
+    Generator testGenerator;
+    auto selectN = testGenerator.createRootNode<SelectGeneratorNode>("SelectN", std::vector<const SpeciesSite *>{alphaSiteN_});
     auto &forEachN = selectN->branch()->get();
-    auto selectO = forEachN.create<SelectProcedureNode>("SelectO", std::vector<const SpeciesSite *>{alphaSiteO_});
+    auto selectO = forEachN.create<SelectGeneratorNode>("SelectO", std::vector<const SpeciesSite *>{alphaSiteO_});
 
     // No exclusions
-    testProcedure.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({dissolve_.worldPool(), configuration_});
     EXPECT_EQ(selectN->nSitesInStack(), nType_);
     EXPECT_EQ(selectO->nSitesInStack(), nType_);
     EXPECT_DOUBLE_EQ(selectN->nAvailableSitesAverage(), double(nType_));
@@ -222,24 +222,24 @@ TEST_F(SelectProcedureNodeTest, Exclusions2)
     configuration_->incrementContentsVersion();
 
     // Exclude same molecule
-    selectO->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectN});
-    testProcedure.execute({dissolve_.worldPool(), configuration_});
+    selectO->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectGeneratorNode>{selectN});
+    testGenerator.execute({dissolve_.worldPool(), configuration_});
     EXPECT_EQ(selectN->nSitesInStack(), nType_);
     EXPECT_EQ(selectO->nSitesInStack(), nType_ - 1);
     EXPECT_DOUBLE_EQ(selectN->nAvailableSitesAverage(), double(nType_));
     EXPECT_DOUBLE_EQ(selectO->nAvailableSitesAverage(), double(nType_ - 1));
 }
 
-TEST_F(SelectProcedureNodeTest, Inclusions)
+TEST_F(SelectGeneratorNodeTest, Inclusions)
 {
-    Procedure testProcedure;
-    auto selectN = testProcedure.createRootNode<SelectProcedureNode>("SelectN", std::vector<const SpeciesSite *>{alphaSiteN_});
+    Generator testGenerator;
+    auto selectN = testGenerator.createRootNode<SelectGeneratorNode>("SelectN", std::vector<const SpeciesSite *>{alphaSiteN_});
     auto &forEachN = selectN->branch()->get();
-    auto selectO = forEachN.create<SelectProcedureNode>("SelectO", std::vector<const SpeciesSite *>{alphaSiteO_});
+    auto selectO = forEachN.create<SelectGeneratorNode>("SelectO", std::vector<const SpeciesSite *>{alphaSiteO_});
 
     // Require same molecule as first site
     selectO->keywords().set("SameMoleculeAsSite", selectN);
-    testProcedure.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({dissolve_.worldPool(), configuration_});
     EXPECT_EQ(selectN->nSitesInStack(), nType_);
     EXPECT_EQ(selectO->nSitesInStack(), 1);
     EXPECT_DOUBLE_EQ(selectN->nAvailableSitesAverage(), double(nType_));

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "procedure/nodes/aliases.h"
+#include "generator/aliases.h"
 #include "templates/flags.h"
 #include <memory>
 #include <optional>
@@ -20,7 +20,7 @@ class CoreData;
 class Isotopologue;
 class LineParser;
 class Module;
-class ProcedureNode;
+class GeneratorNode;
 class Species;
 class SpeciesSite;
 
@@ -137,6 +137,6 @@ class KeywordBase : public Serialisable<CoreData const &>
     virtual void removeReferencesTo(Species *sp);
     // Prune any references to the supplied SpeciesSite in the contained data
     virtual void removeReferencesTo(SpeciesSite *spSite);
-    // Prune any references to the supplied ProcedureNode in the contained data
+    // Prune any references to the supplied GeneratorNode in the contained data
     virtual void removeReferencesTo(NodeRef node);
 };

@@ -8,13 +8,13 @@
 #include "classes/coreData.h"
 #include "classes/empiricalFormula.h"
 #include "classes/species.h"
+#include "generator/add.h"
+#include "generator/box.h"
+#include "generator/coordinateSets.h"
 #include "io/import/CIFImportErrorListeners.h"
 #include "io/import/CIFImportVisitor.h"
 #include "io/import/cif.h"
 #include "neta/neta.h"
-#include "procedure/nodes/add.h"
-#include "procedure/nodes/box.h"
-#include "procedure/nodes/coordinateSets.h"
 #include "templates/algorithms.h"
 
 CIFHandler::CIFHandler()
@@ -920,7 +920,7 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
             auto &generator = configuration->generator();
 
             // Add Box
-            auto boxNode = generator.createRootNode<BoxProcedureNode>({});
+            auto boxNode = generator.createRootNode<BoxGeneratorNode>({});
             auto cellLengths = supercellConfiguration_.box()->axisLengths();
             auto cellAngles = supercellConfiguration_.box()->axisAngles();
             boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
@@ -949,16 +949,16 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
 
                 // CoordinateSets
                 auto coordsNode =
-                    generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
-                coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
+                    generator.createRootNode<CoordinateSetsGeneratorNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
+                coordsNode->keywords().setEnumeration("Source", CoordinateSetsGeneratorNode::CoordinateSetSource::File);
                 coordsNode->setSets(cifMolecularSp.allInstanceCoordinates());
 
                 // Add
-                auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
+                auto addNode = generator.createRootNode<AddGeneratorNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
                 addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp.instances().size())));
-                addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+                addNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Current);
                 addNode->keywords().set("Rotate", false);
-                addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
+                addNode->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::None);
             }
         }
         else
@@ -991,18 +991,18 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
             auto &generator = configuration->generator();
 
             // Add Box
-            auto boxNode = generator.createRootNode<BoxProcedureNode>({});
+            auto boxNode = generator.createRootNode<BoxGeneratorNode>({});
             auto cellLengths = supercellConfiguration_.box()->axisLengths();
             auto cellAngles = supercellConfiguration_.box()->axisAngles();
             boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
             boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
 
             // Add
-            auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", sp->name()), sp);
+            auto addNode = generator.createRootNode<AddGeneratorNode>(fmt::format("Add_{}", sp->name()), sp);
             addNode->keywords().set("Population", NodeValueProxy(1));
-            addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+            addNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Current);
             addNode->keywords().set("Rotate", false);
-            addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
+            addNode->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::None);
         }
     }
 }
