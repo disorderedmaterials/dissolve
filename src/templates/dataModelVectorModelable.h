@@ -228,6 +228,17 @@ template <class DataItemClass, class DataItem> class VectorModelable : public Ba
         data_.emplace_back(std::move(item));
         emitMutationSignal(Base::MutationSignal::DataCreationFinished);
     }
+    // Remove item using the supplied lamba match function
+    void removeItem(std::function<bool(const DataItem &item)> matchFunction)
+    {
+        auto it = std::find_if(data_.begin(), data_.end(), matchFunction);
+        if (it == data_.end())
+            return;
+
+        emitMutationSignal(Base::MutationSignal::DataRemovalStarted, it - data_.begin(), it - data_.begin());
+        data_.erase(it);
+        emitMutationSignal(Base::MutationSignal::DataRemovalFinished);
+    }
     // Remove item(s) starting at specified vector index
     void removeItems(int index, int count) final
     {
