@@ -12,6 +12,7 @@ class DataModelTableInterface : public QAbstractTableModel
 {
     public:
     DataModelTableInterface(DataModel::Base &dataModel);
+    ~DataModelTableInterface();
 
     private:
     // Model with which to interface

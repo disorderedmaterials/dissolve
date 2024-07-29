@@ -6,8 +6,15 @@
 
 DataModelTableInterface::DataModelTableInterface(DataModel::Base &dataModel) : dataModel_(dataModel)
 {
-    dataModel_.setMutationSignalFunction([this](DataModel::Base::MutationSignal signal, int startIndex, int endIndex)
+    // Receive signals from the underyling model
+    dataModel_.addMutationSignalFunction(this, [this](DataModel::Base::MutationSignal signal, int startIndex, int endIndex)
                                          { dataMutated(signal, startIndex, endIndex); });
+}
+
+DataModelTableInterface::~DataModelTableInterface()
+{
+    // Remove our signal from the underlying model
+    dataModel_.removeMutationSignalFunction(this);
 }
 
 /*

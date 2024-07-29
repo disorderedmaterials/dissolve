@@ -4,6 +4,7 @@
 #pragma once
 
 #include "templates/dataModelItem.h"
+#include <map>
 
 namespace DataModel
 {
@@ -81,19 +82,26 @@ class Base
     private:
     // Mutation signal function used to notify an associated Qt model
     using DataMutationSignalFunction = std::function<void(MutationSignal, int, int)>;
-    DataMutationSignalFunction mutationSignalFunction_ = {};
+    std::map<void *, DataMutationSignalFunction> mutationSignalFunctions_;
 
     public:
-    // Set mutation signal function
-    void setMutationSignalFunction(DataMutationSignalFunction mutationSignalFunction)
+    // Add mutation signal function
+    void addMutationSignalFunction(void *object, const DataMutationSignalFunction &mutationSignalFunction)
     {
-        mutationSignalFunction_ = std::move(mutationSignalFunction);
+        mutationSignalFunctions_[object] = mutationSignalFunction;
+    }
+    // Remove mutation signal function for specified object
+    void removeMutationSignalFunction(void *object)
+    {
+        auto it = mutationSignalFunctions_.find(object);
+        if (it != mutationSignalFunctions_.end())
+            mutationSignalFunctions_.erase(it);
     }
     // Emit mutation signal
     void emitMutationSignal(MutationSignal signal, int startIndex = 0, int endIndex = 0)
     {
-        if (mutationSignalFunction_)
-            mutationSignalFunction_(signal, startIndex, endIndex);
+        for (const auto &[object, func] : mutationSignalFunctions_)
+            func(signal, startIndex, endIndex);
     }
 };
 } // namespace DataModel
