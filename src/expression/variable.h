@@ -4,9 +4,10 @@
 #pragma once
 
 #include "expression/value.h"
+#include "templates/dataModelItem.h"
 
 // Variable
-class ExpressionVariable : public Serialisable<>
+class ExpressionVariable : public Serialisable<>, public DataModel::Modelable<ExpressionVariable>
 {
     public:
     ExpressionVariable(const ExpressionValue &value = ExpressionValue());
@@ -45,6 +46,11 @@ class ExpressionVariable : public Serialisable<>
     const ExpressionValue &value() const;
     // Return pointer to value
     ExpressionValue *valuePointer();
+
+    /*
+     * I/O
+     */
+    public:
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value

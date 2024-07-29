@@ -8,21 +8,52 @@
 #include "procedure/nodes/node.h"
 #include <memory>
 
-ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data,
-                                                                 ProcedureNode *parentNode)
+ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(
+    DataModel::VectorModelable<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &data, ProcedureNode *parentNode)
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode)
 {
+    // Override the setter for the "Name" property in the model as we need to ensure unique naming in the same scope
+    data_.setSetter("Name",
+                    [&](ExpressionVariable *var, const DataModel::PropertyValue &newValue)
+                    {
+                        auto p = parentNode_->getParameter(DataModel::propertyAsString(newValue));
+                        if (p && p.get() != var)
+                            return false;
+                        var->setBaseName(DataModel::propertyAsString(newValue));
+                        return true;
+                    });
+
+    // Set the creator function - we need to ensure both name uniqueness and the correct prefixing
+    data_.setCreator(
+        [&]()
+        {
+            auto allParameters = parentNode_->getParametersInScope();
+            auto newVar = std::make_shared<ExpressionVariable>();
+            newVar->setBaseName(
+                DissolveSys::uniqueName("NewVariable", allParameters, [](const auto &var) { return var->name(); }));
+            if (parentNode_->type() != ProcedureNode::NodeType::Parameters)
+                newVar->setNamePrefix(parentNode_->name());
+            return newVar;
+        });
 }
 
 /*
  * Data
  */
 
-// Return reference to vector of data
-std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() { return data_; }
-const std::vector<std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data() const { return data_; }
+// Return reference to data
+DataModel::VectorModelable<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &ExpressionVariableVectorKeyword::data()
+{
+    return data_;
+}
+const DataModel::VectorModelable<ExpressionVariable, std::shared_ptr<ExpressionVariable>> &
+ExpressionVariableVectorKeyword::data() const
+{
+    return data_;
+}
 
 // Return parent ProcedureNode
+ProcedureNode *ExpressionVariableVectorKeyword::parentNode() { return parentNode_; }
 const ProcedureNode *ExpressionVariableVectorKeyword::parentNode() const { return parentNode_; }
 
 /*
@@ -96,7 +127,3 @@ void ExpressionVariableVectorKeyword::deserialise(const SerialisedValue &node, c
     toMap(node,
           [this](const auto &key, const auto &value) { parentNode_->addParameter(key, toml::get<ExpressionValue>(value)); });
 }
-
-/*
- * Object Management
- */

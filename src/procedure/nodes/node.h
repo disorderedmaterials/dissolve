@@ -5,15 +5,16 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "expression/variable.h"
 #include "keywords/store.h"
 #include "procedure/nodes/aliases.h"
 #include "procedure/nodes/context.h"
+#include "templates/dataModelVectorModelable.h"
 #include "templates/optionalRef.h"
 
 // Forward Declarations
 class Configuration;
 class CoreData;
-class ExpressionVariable;
 class GenericList;
 class LineParser;
 class ProcedureNodeSequence;
@@ -130,7 +131,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
      */
     protected:
     // Defined parameters
-    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
+    DataModel::VectorModelable<ExpressionVariable, std::shared_ptr<ExpressionVariable>> parameters_;
     // Set named parameter in supplied vector
     bool setParameter(std::vector<std::shared_ptr<ExpressionVariable>> &parameters, std::string_view parameter,
                       ExpressionValue value);
