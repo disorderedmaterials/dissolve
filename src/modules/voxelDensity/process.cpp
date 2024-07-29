@@ -56,7 +56,8 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
         atom.set(unitCell->foldFrac(atom.r()));
         auto x = atom.x(), y = atom.y(), z = atom.z();
         auto atomicNumber = atom.speciesAtom()->Z();
-
+        auto naturalIsotope = Sears91::naturalIsotope(atomicNumber);
+        auto scatteringLengthDensity = Sears91::boundCoherent(naturalIsotope);
         double value;
 
         switch (targetProperty_)
@@ -70,9 +71,8 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
                 value = atomicNumber;
                 break;
             case TargetPropertyType::ScatteringLengthDensity:
-                auto naturalIsotope = Sears91::naturalIsotope(atomicNumber);
                 // Bound coherent natural isotope scattering length density
-                value = Sears91::boundCoherent(naturalIsotope);
+                value = scatteringLengthDensity;
                 break;
             default:
                 throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(targetProperty_))));
