@@ -95,7 +95,7 @@ runs:
     shell: bash
     run: |
       set -ex
-      for example in $(find ./web/content-docs/examples/ -mindepth 1 -maxdepth 1 -type d -not -iname previous)
+      for example in $(find ./web/docs/examples/ -mindepth 1 -maxdepth 1 -type d -not -iname previous)
       do
         ci/scripts/meld-example -d ${example}
       done
@@ -119,7 +119,15 @@ runs:
       do
         echo "Creating pdf for example \"${example}\"..."
         cd ${example}/single/
-        pandoc --pdf-engine=xelatex -V 'mainfont:DejaVuSerif.ttf' -V 'sansfont:DejaVuSans.ttf' -V 'monofont:DejaVuSansMono.ttf' index.html -o ../${example}.pdf
+
+        # "Fix" image links
+        sed "s:/img:../../../static/img:g" index.html > index_pdf.html
+
+        pandoc --pdf-engine=xelatex -V 'mainfont:DejaVuSerif.ttf' -V 'sansfont:DejaVuSans.ttf' -V 'monofont:DejaVuSansMono.ttf' index_pdf.html -o ../${example}.pdf
+
+        # Tidy up
+        rm index_pdf.html
+
         cd ../../
       done
 
@@ -150,3 +158,9 @@ runs:
       chmod 0600 ./serverKey ./serverId
       rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_MAIN_DIR}
       rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/dev
+
+  - name: Upload Web Artifacts
+    uses: actions/upload-artifact@v4
+    with:
+      name: web-artifacts
+      path: ${{ github.workspace }}/web/public*
