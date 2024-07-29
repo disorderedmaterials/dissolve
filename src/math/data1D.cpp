@@ -204,7 +204,7 @@ std::vector<std::tuple<double, double>> Data1D::nonZeroValues() const
 
     auto xys = zip(x_, values_);
 
-    std::copy_if(std::execution::par_unseq, xys.begin(), xys.end(), std::back_inserter(pairs),
+    std::copy_if(xys.begin(), xys.end(), std::back_inserter(pairs),
                    [](const auto &val) { return std::get<1>(val) > 0; });
 
     return pairs;
