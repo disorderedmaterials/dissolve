@@ -97,7 +97,6 @@ class DissolveSystemTest
     // Set up simulation ready for running, calling any additional setup function if already set
     template <int flags = 0> void setUp(std::string_view inputFile)
     {
-
         dissolve_.clear();
         if constexpr (Dissolve::toml_testing_flag || !(flags & TomlFailure))
         {
