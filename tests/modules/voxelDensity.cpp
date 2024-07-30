@@ -48,7 +48,7 @@ TEST_F(VoxelDensityModuleTest, Mass)
 
         // Grab module and perform setup
         auto *module = systemTest.getModule<VoxelDensityModule>("VoxelDensity");
-        module->keywords().set("NumberOfPoints", nPartitions);
+        module->keywords().set("NVoxels", nPartitions);
         module->keywords().setEnumeration("TargetProperty", VoxelDensityModule::TargetPropertyType::Mass);
 
         // Iterate
@@ -153,7 +153,7 @@ TEST_F(VoxelDensityModuleTest, Water)
 {
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-water.txt"));
     auto module = systemTest.getModule<VoxelDensityModule>("AtomicMass");
-    ASSERT_TRUE(module->keywords().getInt("NumberOfPoints") == 1);
+    ASSERT_TRUE(module->keywords().getInt("NVoxels") == 1);
 }
 
 } // namespace UnitTest

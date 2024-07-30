@@ -42,7 +42,7 @@ Layer  'Processing'
 # Atomic mass voxel density
 Module  VoxelDensity  'VoxelDensity'
     Configuration 'Bulk'
-    NumberOfPoints 1
+    NVoxels 1
     TargetProperty Mass
 EndModule
 

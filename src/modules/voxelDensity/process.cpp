@@ -15,11 +15,11 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
     // Calculate target property 3d map over unit cell voxels
     auto [data3D, status] = processingData.realiseIf<Data3D>(
-        fmt::format("Data3D//{}", targetPropertyTypes().keywordByIndex(static_cast<int>(targetProperty_))), name(),
+        "Data3D", name(),
         GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
     {
-        data3D.initialise(numPoints_);
+        data3D.initialise(nVoxels_);
     }
     data3D.zero();
 
@@ -48,7 +48,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     }
 
     auto unitCell = targetConfiguration_->box();
-    auto voxelVolume = unitCell->volume() / std::pow(numPoints_, 3);
+    auto voxelVolume = unitCell->volume() / std::pow(nVoxels_, 3);
     auto atoms = targetConfiguration_->atoms();
 
     auto unaryOp = [this, &data3D, &unitCell](auto &atom)
@@ -78,7 +78,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
                 throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(targetProperty_))));
         }
 
-        auto toIndex = [&](const auto pos) { return static_cast<int>(std::round(pos * numPoints_)); };
+        auto toIndex = [&](const auto pos) { return static_cast<int>(std::round(pos * nVoxels_)); };
 
         data3D.addToPoint(toIndex(x), x, toIndex(y), y, toIndex(z), z, value);
     };
@@ -87,18 +87,18 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
     // Calculate voxel density histogram, normalising bin values by voxel volume (property/cubic angstrom)
     auto &hist = processingData.realise<Histogram1D>(
-        fmt::format("Histogram1D//{}/A^3", targetPropertyTypes().keywordByIndex(static_cast<int>(targetProperty_))), name(),
+        "Histogram1D", name(),
         GenericItem::InRestartFileFlag);
 
-    auto max = data3D.maxValue(), min = ((numPoints_ == 1) || (max == data3D.minValue())) ? 0 : data3D.minValue();
-    hist.initialise(min, max, (max - min) / numPoints_);
+    auto max = data3D.maxValue(), min = ((nVoxels_ == 1) || (max == data3D.minValue())) ? 0 : data3D.minValue();
+    hist.initialise(min, max, (max - min) / nVoxels_);
     hist.zeroBins();
 
     for (const auto &value : data3D.values())
         hist.bin(value / voxelVolume);
 
     auto &data1D = processingData.realise<Data1D>(
-        fmt::format("Data1D//{}/A^3", targetPropertyTypes().keywordByIndex(static_cast<int>(targetProperty_))), name(),
+        "Data1D", name(),
         GenericItem::InRestartFileFlag);
     data1D = hist.accumulatedData();
 
