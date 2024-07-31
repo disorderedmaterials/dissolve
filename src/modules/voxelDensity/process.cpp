@@ -3,25 +3,37 @@
 #include "data/atomicMasses.h"
 #include "data/isotopes.h"
 #include "main/dissolve.h"
-#include "math/data3D.h"
 #include "math/matrix3.h"
 #include "module/context.h"
+#include "templates/array3D.h"
 #include "voxelDensity.h"
 #include <cmath>
+
+void addValue(const int N, Vec3<double> coords, double value, Array3D<double> &array)
+{
+    auto t = std::make_tuple((int)std::round(coords.x * N), (int)std::round(coords.z * N), (int)std::round(coords.z * N));
+    array[t] += value;
+}
+
+Vec3<double> foldedCoordinates(Atom &atom, const Box *unitCell)
+{
+    atom.set(unitCell->foldFrac(atom.r()));
+    auto x = atom.x(), y = atom.y(), z = atom.z();
+    return Vec3<double>(x, y, z);
+}
+
+double scatteringLengthDensity(Elements::Element Z) { return Sears91::boundCoherent(Sears91::naturalIsotope(Z)); }
 
 Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 {
     auto &processingData = context.dissolve().processingModuleData();
 
     // Calculate target property 3d map over unit cell voxels
-    auto [data3D, status] = processingData.realiseIf<Data3D>(
-        "Data3D", name(),
-        GenericItem::InRestartFileFlag);
+    auto [array3D, status] = processingData.realiseIf<Array3D<double>>("Array3D", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
     {
-        data3D.initialise(nVoxels_);
+        array3D.initialise(nVoxels_, nVoxels_, nVoxels_);
     }
-    data3D.zero();
 
     if (!restrictToSpecies_.empty())
     {
@@ -51,55 +63,45 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     auto voxelVolume = unitCell->volume() / std::pow(nVoxels_, 3);
     auto atoms = targetConfiguration_->atoms();
 
-    auto unaryOp = [this, &data3D, &unitCell](auto &atom)
+    auto massOp = [this, &array3D, &unitCell](auto &atom)
+    { addValue(nVoxels_, foldedCoordinates(atom, unitCell), AtomicMass::mass(atom.speciesAtom()->Z()), array3D); };
+
+    auto atomicNumberOp = [this, &array3D, &unitCell](auto &atom)
+    { addValue(nVoxels_, foldedCoordinates(atom, unitCell), atom.speciesAtom()->Z(), array3D); };
+
+    auto scatteringLengthDensityOp = [this, &array3D, &unitCell](auto &atom)
+    { addValue(nVoxels_, foldedCoordinates(atom, unitCell), scatteringLengthDensity(atom.speciesAtom()->Z()), array3D); };
+
+    switch (targetProperty_)
     {
-        atom.set(unitCell->foldFrac(atom.r()));
-        auto x = atom.x(), y = atom.y(), z = atom.z();
-        auto atomicNumber = atom.speciesAtom()->Z();
-        auto naturalIsotope = Sears91::naturalIsotope(atomicNumber);
-        auto scatteringLengthDensity = Sears91::boundCoherent(naturalIsotope);
-        double value;
-
-        switch (targetProperty_)
-        {
-            case TargetPropertyType::Mass:
-                // Atomic mass
-                value = AtomicMass::mass(atomicNumber);
-                break;
-            case TargetPropertyType::AtomicNumber:
-                // Atomic number
-                value = atomicNumber;
-                break;
-            case TargetPropertyType::ScatteringLengthDensity:
-                // Bound coherent natural isotope scattering length density
-                value = scatteringLengthDensity;
-                break;
-            default:
-                throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(targetProperty_))));
-        }
-
-        auto toIndex = [&](const auto pos) { return static_cast<int>(std::round(pos * nVoxels_)); };
-
-        data3D.addToPoint(toIndex(x), x, toIndex(y), y, toIndex(z), z, value);
-    };
-
-    dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), unaryOp);
+        case TargetPropertyType::Mass:
+            dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), massOp);
+            break;
+        case TargetPropertyType::AtomicNumber:
+            dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), atomicNumberOp);
+            break;
+        case TargetPropertyType::ScatteringLengthDensity:
+            dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), scatteringLengthDensityOp);
+            break;
+        default:
+            throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(targetProperty_))));
+    }
 
     // Calculate voxel density histogram, normalising bin values by voxel volume (property/cubic angstrom)
-    auto &hist = processingData.realise<Histogram1D>(
-        "Histogram1D", name(),
-        GenericItem::InRestartFileFlag);
+    auto &hist = processingData.realise<Histogram1D>("Histogram1D", name(), GenericItem::InRestartFileFlag);
 
-    auto max = data3D.maxValue(), min = ((nVoxels_ == 1) || (max == data3D.minValue())) ? 0 : data3D.minValue();
+    auto values = array3D.values();
+    auto max = *std::max_element(values.begin(), values.end());
+    constexpr static auto findMin = [](const auto &v) { return *std::min_element(v.begin(), v.end()); };
+    auto min = ((nVoxels_ == 1) || (max == findMin(values))) ? (double)0 : findMin(values);
+
     hist.initialise(min, max, (max - min) / nVoxels_);
     hist.zeroBins();
 
-    for (const auto &value : data3D.values())
+    for (const auto &value : array3D.values())
         hist.bin(value / voxelVolume);
 
-    auto &data1D = processingData.realise<Data1D>(
-        "Data1D", name(),
-        GenericItem::InRestartFileFlag);
+    auto &data1D = processingData.realise<Data1D>("Data1D", name(), GenericItem::InRestartFileFlag);
     data1D = hist.accumulatedData();
 
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(data1D, exportFileAndFormat_, context.processPool()))
