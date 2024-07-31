@@ -11,7 +11,7 @@
 
 void addValue(const int N, Vec3<double> coords, double value, Array3D<double> &array)
 {
-    auto t = std::make_tuple((int)std::round(coords.x * N), (int)std::round(coords.z * N), (int)std::round(coords.z * N));
+    auto t = std::make_tuple((int)std::round(coords.x * N), (int)std::round(coords.y * N), (int)std::round(coords.z * N));
     array[t] += value;
 }
 
