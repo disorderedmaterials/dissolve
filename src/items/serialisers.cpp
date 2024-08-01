@@ -100,6 +100,17 @@ GenericItemSerialiser::GenericItemSerialiser()
                     return false;
             return true;
         });
+    registerSerialiser<Array3D<double>>(
+        [](const std::any &a, LineParser &parser)
+        {
+            const auto &v = std::any_cast<const Array3D<double> &>(a);
+            if (!parser.writeLineF("{}  {}  {}\n", v.nX(), v.nY(), v.nZ()))
+                return false;
+            for (auto &n : v)
+                if (!parser.writeLineF("{}\n", n))
+                    return false;
+            return true;
+        });
     registerSerialiser<AtomTypeMix>(simpleSerialise<AtomTypeMix>);
     registerSerialiser<Data1D>(simpleSerialise<Data1D>);
     registerSerialiser<Data2D>(simpleSerialise<Data2D>);

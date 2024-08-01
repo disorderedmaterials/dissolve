@@ -35,6 +35,7 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<Array2D<double>>("Array2D<double>");
     registerProducer<Array2D<std::vector<double>>>("Array2D<std::vector<double>>");
     registerProducer<Array2D<Data1D>>("Array2D<Data1D>");
+    registerProducer<Array3D<double>>("Array3D<double>");
     registerProducer<AtomTypeMix>("AtomTypeMix");
     registerProducer<Data1D>("Data1D");
     registerProducer<Data2D>("Data2D");
