@@ -29,11 +29,8 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     auto &processingData = context.dissolve().processingModuleData();
 
     // Calculate target property 3d map over unit cell voxels
-    auto [array3D, status] = processingData.realiseIf<Array3D<double>>("Array3D", name(), GenericItem::InRestartFileFlag);
-    if (status == GenericItem::ItemStatus::Created)
-    {
-        array3D.initialise(nVoxels_, nVoxels_, nVoxels_);
-    }
+    auto array3D = processingData.realise<Array3D<double>>("Array3D", name());
+    array3D.initialise(nVoxels_, nVoxels_, nVoxels_);
 
     if (!restrictToSpecies_.empty())
     {
