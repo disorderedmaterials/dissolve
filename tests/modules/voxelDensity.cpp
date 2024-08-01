@@ -39,9 +39,9 @@ TEST_F(VoxelDensityModuleTest, ConfigurationTest)
 
 TEST_F(VoxelDensityModuleTest, Mass)
 {
-    for (auto i = 0; i < 4; ++i)
+    for (auto n = 0; n < 4; ++n)
     {
-        const auto nPartitions = DissolveMath::power(2, i);
+        const auto nPartitions = DissolveMath::power(2, n);
 
         ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium.txt"));
 
@@ -54,12 +54,12 @@ TEST_F(VoxelDensityModuleTest, Mass)
         ASSERT_TRUE(systemTest.iterateRestart(1));
 
         // Check data
-        const auto &data8Bin =
-            systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D//Mass/A^3")->get();
-        ASSERT_TRUE(data8Bin.nonZeroValues().size() == 1);
-        auto maxBin = const_cast<Data1D *>(&data8Bin)->maxValueAt();
+        const auto &data =
+            systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D")->get();
+        ASSERT_TRUE(data.nonZeroValues().size() == 1);
+        auto maxBin = const_cast<Data1D *>(&data)->maxValueAt();
         ASSERT_NEAR(maxBin.first, MASS_HELIUM, 10e2);
-        ASSERT_EQ(maxBin.second, std::pow(8, 3));
+        ASSERT_EQ(maxBin.second, std::pow(nPartitions, 3));
     }
 }
 
