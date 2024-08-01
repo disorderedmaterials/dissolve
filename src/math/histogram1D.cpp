@@ -112,6 +112,8 @@ int Histogram1D::nBins() const { return nBins_; }
 bool Histogram1D::bin(double x)
 {
     // Calculate target bin
+    if (nBins_==1) { bin(0); }
+
     auto bin = int((x - minimum_) / binWidth_);
 
     // Check bin range
