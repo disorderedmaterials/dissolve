@@ -88,17 +88,19 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     auto &hist = processingData.realise<Histogram1D>("Histogram1D", name(), GenericItem::InRestartFileFlag);
 
     auto values = array3D.values();
-    auto max = *std::max_element(values.begin(), values.end());
-    constexpr static auto findMin = [](const auto &v) { return *std::min_element(v.begin(), v.end()); };
-    auto min = ((nVoxels_ == 1) || (max == findMin(values))) ? (double)0 : findMin(values);
+    auto max = *std::max_element(values.begin(), values.end()) / voxelVolume;
+    constexpr static auto findMin = [](const std::vector<double> &v) { return *std::min_element(v.begin(), v.end()); };
+    auto min = ((nVoxels_ == 1) || (max == findMin(values))) ? double(0) : findMin(values) / voxelVolume;
+    auto binWidth = max - min;
 
-    hist.initialise(min, max, (max - min) / nVoxels_);
+    hist.initialise(min, max, binWidth);
     hist.zeroBins();
 
     for (const auto &value : array3D.values())
         hist.bin(value / voxelVolume);
 
     auto &data1D = processingData.realise<Data1D>("Data1D", name(), GenericItem::InRestartFileFlag);
+    hist.accumulate();
     data1D = hist.accumulatedData();
 
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(data1D, exportFileAndFormat_, context.processPool()))
