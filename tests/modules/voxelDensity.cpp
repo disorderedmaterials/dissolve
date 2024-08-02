@@ -11,6 +11,7 @@
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <vector>
+#include <cmath>
 
 namespace UnitTest
 {
@@ -60,9 +61,8 @@ TEST_F(VoxelDensityModuleTest, Mass)
         const auto &data = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D")->get();
         auto maxBin = const_cast<Data1D *>(&data)->maxValueAt();
         auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange").value_or(defaultBinRange);
-        ASSERT_NEAR(maxBin.first * binRange.z, MASS_HELIUM, 10e3);
-        auto nVoxels = DissolveMath::power(nAxisVoxels, 3);
-        ASSERT_EQ(maxBin.second, nVoxels);
+        ASSERT_NEAR(maxBin.first * binRange.z, MASS_HELIUM, 10e2);
+        ASSERT_EQ(maxBin.second, std::pow(nAxisVoxels, 3));
     }
 }
 
