@@ -18,8 +18,12 @@ VoxelDensityModule::VoxelDensityModule() : Module(ModuleTypes::VoxelDensity)
     keywords_.add<SpeciesVectorKeyword>("RestrictToSpecies", "Restrict the calculation to the specified Species",
                                         restrictToSpecies_);
 
+    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.add<Vec3DoubleKeyword>("BinRange", "Range (min, max, delta) of voxel axis", binRange_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);
+
     keywords_.setOrganisation("Options", "Analysis", "Set the voxel density and property for analysis");
-    keywords_.add<IntegerKeyword>("NVoxels", "Number of points over which analysis is performed", nVoxels_, 1);
+    keywords_.add<IntegerKeyword>("NAxisVoxels", "Number of points per axis over which analysis is performed", nAxisVoxels_, 1);
     keywords_.add<EnumOptionsKeyword<VoxelDensityModule::TargetPropertyType>>(
         "TargetProperty", "Target property for analysis", targetProperty_, VoxelDensityModule::targetPropertyTypes());
 

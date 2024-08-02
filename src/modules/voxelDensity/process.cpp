@@ -30,7 +30,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
     // Calculate target property 3d map over unit cell voxels
     auto array3D = processingData.realise<Array3D<double>>("Array3D", name());
-    array3D.initialise(nVoxels_, nVoxels_, nVoxels_);
+    array3D.initialise(nAxisVoxels_, nAxisVoxels_, nAxisVoxels_);
 
     if (!restrictToSpecies_.empty())
     {
@@ -57,17 +57,17 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     }
 
     auto unitCell = targetConfiguration_->box();
-    auto voxelVolume = unitCell->volume() / std::pow(nVoxels_, 3);
+    auto voxelVolume = unitCell->volume() / std::pow(nAxisVoxels_, 3);
     auto atoms = targetConfiguration_->atoms();
 
     auto massOp = [this, &array3D, &unitCell](auto &atom)
-    { addValue(nVoxels_, foldedCoordinates(atom, unitCell), AtomicMass::mass(atom.speciesAtom()->Z()), array3D); };
+    { addValue(nAxisVoxels_, foldedCoordinates(atom, unitCell), AtomicMass::mass(atom.speciesAtom()->Z()), array3D); };
 
     auto atomicNumberOp = [this, &array3D, &unitCell](auto &atom)
-    { addValue(nVoxels_, foldedCoordinates(atom, unitCell), atom.speciesAtom()->Z(), array3D); };
+    { addValue(nAxisVoxels_, foldedCoordinates(atom, unitCell), atom.speciesAtom()->Z(), array3D); };
 
     auto scatteringLengthDensityOp = [this, &array3D, &unitCell](auto &atom)
-    { addValue(nVoxels_, foldedCoordinates(atom, unitCell), scatteringLengthDensity(atom.speciesAtom()->Z()), array3D); };
+    { addValue(nAxisVoxels_, foldedCoordinates(atom, unitCell), scatteringLengthDensity(atom.speciesAtom()->Z()), array3D); };
 
     switch (targetProperty_)
     {
@@ -87,13 +87,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     // Calculate voxel density histogram, normalising bin values by voxel volume (property/cubic angstrom)
     auto &hist = processingData.realise<Histogram1D>("Histogram1D", name(), GenericItem::InRestartFileFlag);
 
-    auto values = array3D.values();
-    auto max = *std::max_element(values.begin(), values.end()) / voxelVolume;
-    constexpr static auto findMin = [](const std::vector<double> &v) { return *std::min_element(v.begin(), v.end()); };
-    auto min = ((nVoxels_ == 1) || (max == findMin(values))) ? double(0) : findMin(values) / voxelVolume;
-    auto binWidth = max - min;
-
-    hist.initialise(min, max, binWidth);
+    hist.initialise(binRange_.x, binRange_.y, binRange_.z);
     hist.zeroBins();
 
     for (const auto &value : array3D.values())
