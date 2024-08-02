@@ -40,7 +40,7 @@ TEST_F(VoxelDensityModuleTest, ConfigurationTest)
 
 TEST_F(VoxelDensityModuleTest, Mass)
 {
-    // Test for number of voxels along each axis = 1, 2, 4, 8, 16      
+    // Test for number of voxels along each axis = 1, 2, 4, 8, 16
     for (auto n = 0; n < 4; ++n)
     {
         const auto nAxisVoxels = DissolveMath::power(2, n);
@@ -57,8 +57,7 @@ TEST_F(VoxelDensityModuleTest, Mass)
         ASSERT_TRUE(systemTest.iterateRestart(1));
 
         // Check data
-        const auto &data =
-            systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D")->get();
+        const auto &data = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D")->get();
         auto maxBin = const_cast<Data1D *>(&data)->maxValueAt();
         auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange").value_or(defaultBinRange);
         ASSERT_NEAR(maxBin.first * binRange.z, MASS_HELIUM, 10e3);
