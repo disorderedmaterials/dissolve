@@ -31,6 +31,8 @@ class VoxelDensityModule : public Module
     static EnumOptions<VoxelDensityModule::TargetPropertyType> targetPropertyTypes();
 
     private:
+    // Range (min, max, delta) of voxel histogram axis
+    Vec3<double> binRange_;
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
     // Vector of species by which analysis is restricted
@@ -38,7 +40,7 @@ class VoxelDensityModule : public Module
     // Target property for analysis
     VoxelDensityModule::TargetPropertyType targetProperty_;
     // Number of analysis points
-    int nVoxels_;
+    int nAxisVoxels_;
     // Export target
     Data1DExportFileFormat exportFileAndFormat_;
 
