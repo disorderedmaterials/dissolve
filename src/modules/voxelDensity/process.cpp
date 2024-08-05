@@ -8,7 +8,8 @@
 
 void VoxelDensityModule::addValue(Vec3<double> coords, double value, Array3D<double> &array)
 {
-    auto t = std::make_tuple((int)std::floor(coords.x * nAxisVoxels_), (int)std::floor(coords.y * nAxisVoxels_), (int)std::floor(coords.z * nAxisVoxels_));
+    auto t = std::make_tuple((int)std::floor(coords.x * nAxisVoxels_), (int)std::floor(coords.y * nAxisVoxels_),
+                             (int)std::floor(coords.z * nAxisVoxels_));
     array[t] += value;
 }
 
