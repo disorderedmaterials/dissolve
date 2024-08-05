@@ -93,7 +93,11 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     hist.accumulate();
     data1D = hist.accumulatedData();
 
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData((fitGaussian_) ? GaussFit(data1D).approximation(FunctionSpace::RealSpace, 1.0, binRange_.x, binRange_.z, binRange_.y) : data1D, exportFileAndFormat_, context.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(
+            (fitGaussian_)
+                ? GaussFit(data1D).approximation(FunctionSpace::RealSpace, 1.0, binRange_.x, binRange_.z, binRange_.y)
+                : data1D,
+            exportFileAndFormat_, context.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
