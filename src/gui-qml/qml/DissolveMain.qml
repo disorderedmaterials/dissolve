@@ -17,42 +17,6 @@ ApplicationWindow {
     visible: true
     width: 819
 
-    menuBar: MenuBar {
-        id: mainMenu
-
-        Menu {
-            title: "&File"
-
-            MenuItem {
-                text: "&New"
-            }
-            MenuItem {
-                text: "&Open..."
-            }
-            MenuItem {
-                text: "Open R&ecent"
-            }
-            MenuItem {
-                text: "Save"
-            }
-            MenuItem {
-                text: "Save As..."
-            }
-            MenuItem {
-                text: "Load Restart Point..."
-            }
-            MenuItem {
-                text: "Save Restart Point..."
-            }
-            MenuItem {
-                text: "Close"
-            }
-            MenuItem {
-                text: "Quit"
-            }
-        }
-    }
-
     TabBar {
         id: tabBar
 
@@ -146,6 +110,42 @@ ApplicationWindow {
             onWheel: function (event) {
                 xAxis.nudge(0.01 * event.pixelDelta.x);
                 yAxis.nudge(-0.01 * event.pixelDelta.y);
+            }
+        }
+    }
+
+    menuBar: MenuBar {
+        id: mainMenu
+
+        Menu {
+            title: "&File"
+
+            MenuItem {
+                text: "&New"
+            }
+            MenuItem {
+                text: "&Open..."
+            }
+            MenuItem {
+                text: "Open R&ecent"
+            }
+            MenuItem {
+                text: "Save"
+            }
+            MenuItem {
+                text: "Save As..."
+            }
+            MenuItem {
+                text: "Load Restart Point..."
+            }
+            MenuItem {
+                text: "Save Restart Point..."
+            }
+            MenuItem {
+                text: "Close"
+            }
+            MenuItem {
+                text: "Quit"
             }
         }
     }
