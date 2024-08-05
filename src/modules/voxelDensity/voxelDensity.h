@@ -46,6 +46,8 @@ class VoxelDensityModule : public Module
     VoxelDensityModule::TargetPropertyType targetProperty_;
     // Number of analysis points
     int nAxisVoxels_;
+    // Fit a Gaussian function to the data
+    bool fitGaussian_{false};
     // Export target
     Data1DExportFileFormat exportFileAndFormat_;
 
