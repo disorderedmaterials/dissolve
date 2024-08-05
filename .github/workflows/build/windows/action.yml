@@ -43,7 +43,8 @@ runs:
     if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
-      aqt install-qt --outputdir ${RUNNER_TEMP}/qt windows desktop ${{ env.qtVersion }} win64_msvc2019_64 -m qtquick3d qt3d
+      aqt install-qt --outputdir ${RUNNER_TEMP}/qt windows desktop ${{ env.qtVersion }} win64_msvc2019_64 -m qt3d
+      aqt install-qt --outputdir ${{ runner.temp }}/qt mac desktop ${{ env.qtVersion }} -m qtquick3d
 
   - name: Setup MSVC Compiler
     uses: ilammy/msvc-dev-cmd@v1
