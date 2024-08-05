@@ -46,7 +46,6 @@ TEST_F(VoxelDensityModuleTest, Mass)
     {
         const auto nAxisVoxels = DissolveMath::power(2, n);
         auto nVoxels = DissolveMath::power(nAxisVoxels, 3);
-        Vec3<double> defaultBinRange(0.0, 10.0, 0.05);
 
         ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium.txt"));
 
