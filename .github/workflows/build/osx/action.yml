@@ -44,11 +44,11 @@ runs:
       path: ${{ runner.temp }}/qt
 
   - name: Install Qt
-    if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
+    if: ${{ steps.cache-qt.outputs.cache-hit == 'true' }}
     shell: bash
     run: |
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
-      aqt install-qt -m qtquick3d -m qt3d --outputdir ${{ runner.temp }}/qt mac desktop ${{ env.qtVersion }}
+      aqt install-qt --outputdir ${{ runner.temp }}/qt mac desktop ${{ env.qtVersion }} -m qt3d qtquick3d
 
   #
   # Main Build
