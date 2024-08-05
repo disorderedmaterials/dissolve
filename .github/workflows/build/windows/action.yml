@@ -40,7 +40,7 @@ runs:
       path: ${{ runner.temp }}\qt
 
   - name: Install Qt
-    if: ${{ steps.cache-qt.outputs.cache-hit == 'true' }}
+    if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
       aqt install-qt --outputdir ${RUNNER_TEMP}/qt windows desktop ${{ env.qtVersion }} win64_msvc2019_64 -m qtquick3d qt3d
