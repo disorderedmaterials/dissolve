@@ -59,9 +59,9 @@ ApplicationWindow {
         AxisModel {
             color: "black"
             scl: dissolveWindow.scale
+
             axis: Axis {
                 id: xAxis
-
                 direction: true
                 maximum: 2.0
                 minimum: -2.0
@@ -71,9 +71,9 @@ ApplicationWindow {
         AxisModel {
             color: "black"
             scl: dissolveWindow.scale
+
             axis: Axis {
                 id: yAxis
-
                 direction: false
                 maximum: 2.0
                 minimum: -2.0
@@ -100,7 +100,6 @@ ApplicationWindow {
 
         camera: OrthographicCamera {
             id: cameraOrthographicLeft
-
             z: 600
         }
     }
