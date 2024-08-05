@@ -3,6 +3,11 @@
 
 #pragma once
 
+#include "data/atomicMasses.h"
+#include "data/isotopes.h"
+#include "classes/box.h"
+#include "classes/atom.h"
+#include "templates/array3D.h"
 #include "base/enumOptions.h"
 #include "io/export/data1D.h"
 #include "module/module.h"
@@ -48,6 +53,12 @@ class VoxelDensityModule : public Module
      * Processing
      */
     private:
+    // Add value to array
+    void addValue(Vec3<double> coords, double value, Array3D<double> &array);
+    // Return atomic coordinates folded into unit cell
+    Vec3<double> foldedCoordinates(Atom &atom, const Box *unitCell);
+    // Return bound-coherent natural isotope scattering length density for element
+    double scatteringLengthDensity(Elements::Element Z) { return Sears91::boundCoherent(Sears91::naturalIsotope(Z)); }
     // Run main processing
     Module::ExecutionResult process(ModuleContext &moduleContext) override;
 };
