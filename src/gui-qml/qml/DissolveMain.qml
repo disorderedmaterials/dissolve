@@ -9,7 +9,6 @@ import "../../ProjectDissolve"
 
 ApplicationWindow {
     id: dissolveWindow
-
     property vector3d scale: Qt.vector3d(Math.min(graphView.width / 2.5, graphView.height / 2.5), Math.min(graphView.width / 2.5, graphView.height / 2.5), 200)
 
     height: 743
@@ -19,26 +18,22 @@ ApplicationWindow {
 
     TabBar {
         id: tabBar
-
         width: parent.width
 
         // DEFAULT TABS
         TabButton {
             id: messagesTab
-
             text: "Messages"
             width: implicitWidth
         }
         TabButton {
             id: forceFieldTab
-
             text: "Forcefield"
             width: implicitWidth
         }
     }
     Node {
         id: standAloneScene
-
         DirectionalLight {
             ambientColor: Qt.rgba(0.5, 0.5, 0.5, 1.0)
             brightness: 1.0
@@ -46,7 +41,6 @@ ApplicationWindow {
         }
         ScatterModel {
             id: plotLine
-
             color: "red"
             scale: dissolveWindow.scale
             thickness: 0.1
@@ -65,7 +59,6 @@ ApplicationWindow {
         AxisModel {
             color: "black"
             scl: dissolveWindow.scale
-
             axis: Axis {
                 id: xAxis
 
@@ -78,7 +71,6 @@ ApplicationWindow {
         AxisModel {
             color: "black"
             scl: dissolveWindow.scale
-
             axis: Axis {
                 id: yAxis
 
@@ -91,18 +83,11 @@ ApplicationWindow {
     }
     View3D {
         id: graphView
-
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: tabBar.bottom
         importScene: standAloneScene
-
-        camera: OrthographicCamera {
-            id: cameraOrthographicLeft
-
-            z: 600
-        }
 
         MouseArea {
             anchors.fill: parent
@@ -112,11 +97,16 @@ ApplicationWindow {
                 yAxis.nudge(-0.01 * event.pixelDelta.y);
             }
         }
+
+        camera: OrthographicCamera {
+            id: cameraOrthographicLeft
+
+            z: 600
+        }
     }
 
     menuBar: MenuBar {
         id: mainMenu
-
         Menu {
             title: "&File"
 
