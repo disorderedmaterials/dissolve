@@ -49,7 +49,7 @@ runs:
       # Build Singularity target
       target=${{ inputs.target }}
       singularityTarget=${target/dissolve/singularity}
-      nix build -L .#$singularityTarget
+      nix build -L ".?submodules=1#$singularityTarget"
 
       # Assemble artifacts
       mkdir packages-sif
