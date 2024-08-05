@@ -1,28 +1,23 @@
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
-#include "data/atomicMasses.h"
-#include "data/isotopes.h"
 #include "main/dissolve.h"
 #include "math/matrix3.h"
 #include "module/context.h"
-#include "templates/array3D.h"
 #include "voxelDensity.h"
 #include <cmath>
 
-void addValue(const int N, Vec3<double> coords, double value, Array3D<double> &array)
+void VoxelDensityModule::addValue(Vec3<double> coords, double value, Array3D<double> &array)
 {
-    auto t = std::make_tuple((int)std::round(coords.x * N), (int)std::round(coords.y * N), (int)std::round(coords.z * N));
+    auto t = std::make_tuple((int)std::floor(coords.x * nAxisVoxels_), (int)std::floor(coords.y * nAxisVoxels_), (int)std::floor(coords.z * nAxisVoxels_));
     array[t] += value;
 }
 
-Vec3<double> foldedCoordinates(Atom &atom, const Box *unitCell)
+Vec3<double> VoxelDensityModule::foldedCoordinates(Atom &atom, const Box *unitCell)
 {
     atom.set(unitCell->foldFrac(atom.r()));
     auto x = atom.x(), y = atom.y(), z = atom.z();
     return Vec3<double>(x, y, z);
 }
-
-double scatteringLengthDensity(Elements::Element Z) { return Sears91::boundCoherent(Sears91::naturalIsotope(Z)); }
 
 Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 {
@@ -61,13 +56,13 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     auto atoms = targetConfiguration_->atoms();
 
     auto massOp = [this, &array3D, &unitCell](auto &atom)
-    { addValue(nAxisVoxels_, foldedCoordinates(atom, unitCell), AtomicMass::mass(atom.speciesAtom()->Z()), array3D); };
+    { addValue(foldedCoordinates(atom, unitCell), AtomicMass::mass(atom.speciesAtom()->Z()), array3D); };
 
     auto atomicNumberOp = [this, &array3D, &unitCell](auto &atom)
-    { addValue(nAxisVoxels_, foldedCoordinates(atom, unitCell), atom.speciesAtom()->Z(), array3D); };
+    { addValue(foldedCoordinates(atom, unitCell), atom.speciesAtom()->Z(), array3D); };
 
     auto scatteringLengthDensityOp = [this, &array3D, &unitCell](auto &atom)
-    { addValue(nAxisVoxels_, foldedCoordinates(atom, unitCell), scatteringLengthDensity(atom.speciesAtom()->Z()), array3D); };
+    { addValue(foldedCoordinates(atom, unitCell), scatteringLengthDensity(atom.speciesAtom()->Z()), array3D); };
 
     switch (targetProperty_)
     {
