@@ -125,7 +125,7 @@ if(GUI)
                3DExtras
                QuickWidgets
                QuickControls2
-    REQUIRED
+               REQUIRED
   )
   add_definitions(-DQT_NO_KEYWORDS)
 
