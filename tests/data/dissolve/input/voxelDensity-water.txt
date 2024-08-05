@@ -96,9 +96,9 @@ EndConfiguration
 Layer  'Processing'
 
 # Atomic mass voxel density
-Module  VoxelDensity  'AtomicMass'
+Module  VoxelDensity  'VoxelDensity'
     Configuration 'Bulk'
-    NVoxels 1
+    NAxisVoxels 1
     TargetProperty Mass
 EndModule
 
