@@ -95,7 +95,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(
             (fitGaussian_)
-                ? GaussFit(data1D).approximation(FunctionSpace::RealSpace, 1.0, binRange_.x, binRange_.z, binRange_.y)
+                ? GaussFit(data1D).approximation(FunctionSpace::RealSpace, 1.0, hist.minimum(), hist.binWidth(), hist.maximum())
                 : data1D,
             exportFileAndFormat_, context.processPool()))
         return ExecutionResult::Failed;
