@@ -48,7 +48,7 @@ runs:
     shell: bash
     run: |
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
-      aqt install-qt -m qtquick3d --outputdir ${{ runner.temp }}/qt mac desktop ${{ env.qtVersion }}
+      aqt install-qt -m qtquick3d -m qtquick3druntimerender --outputdir ${{ runner.temp }}/qt mac desktop ${{ env.qtVersion }}
 
   #
   # Main Build
