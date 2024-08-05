@@ -60,7 +60,7 @@ TEST_F(VoxelDensityModuleTest, Mass)
         const auto &data = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D")->get();
         auto maxBin = const_cast<Data1D *>(&data)->maxValueAt();
         auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
-        ASSERT_NEAR(maxBin.first * (*binRange).z, VoxelDensityModuleTest::massHelium, 10e2);
+        ASSERT_NEAR(maxBin.first * (*binRange).z, VoxelDensityModuleTest::massHelium, 10e-2);
         ASSERT_EQ(maxBin.second, nVoxels);
     }
 }
