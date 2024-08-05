@@ -100,6 +100,7 @@ Module  VoxelDensity  'VoxelDensity'
     Configuration 'Bulk'
     NAxisVoxels 1
     TargetProperty Mass
+    FitGaussian true
 EndModule
 
 EndLayer

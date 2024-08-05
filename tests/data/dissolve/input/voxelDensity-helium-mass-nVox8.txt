@@ -45,6 +45,7 @@ Module  VoxelDensity  'VoxelDensity'
     Configuration 'Bulk'
     NAxisVoxels 8
     TargetProperty Mass
+    FitGaussian false
 EndModule
 
 EndLayer
