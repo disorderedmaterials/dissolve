@@ -9,31 +9,17 @@ import "../../ProjectDissolve"
 
 ApplicationWindow {
     id: dissolveWindow
+
+    property vector3d scale: Qt.vector3d(Math.min(graphView.width / 2.5, graphView.height / 2.5), Math.min(graphView.width / 2.5, graphView.height / 2.5), 200)
+
     height: 743
     title: "Dissolve"
     visible: true
     width: 819
-    property vector3d scale: Qt.vector3d(Math.min(graphView.width / 2.5, graphView.height / 2.5), Math.min(graphView.width / 2.5, graphView.height / 2.5), 200)
-
-    TabBar {
-        id: tabBar
-        width: parent.width
-
-        // DEFAULT TABS
-        TabButton {
-            id: messagesTab
-            text: "Messages"
-            width: implicitWidth
-        }
-        TabButton {
-            id: forceFieldTab
-            text: "Forcefield"
-            width: implicitWidth
-        }
-    }
 
     menuBar: MenuBar {
         id: mainMenu
+
         Menu {
             title: "&File"
 
@@ -67,6 +53,25 @@ ApplicationWindow {
         }
     }
 
+    TabBar {
+        id: tabBar
+
+        width: parent.width
+
+        // DEFAULT TABS
+        TabButton {
+            id: messagesTab
+
+            text: "Messages"
+            width: implicitWidth
+        }
+        TabButton {
+            id: forceFieldTab
+
+            text: "Forcefield"
+            width: implicitWidth
+        }
+    }
     Node {
         id: standAloneScene
 
@@ -101,9 +106,9 @@ ApplicationWindow {
                 id: xAxis
 
                 direction: true
-                thickness: 0.01
                 maximum: 2.0
                 minimum: -2.0
+                thickness: 0.01
             }
         }
         AxisModel {
