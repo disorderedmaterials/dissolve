@@ -3,7 +3,8 @@
 
 #pragma once
 
-//#include "modules/voxelDensityWidget/gui/ui_voxelDensityWidget.h"
+#include "modules/voxelDensityWidget/gui/ui_voxelDensityWidget.h"
+#include "modules/voxelDensity/voxelDensity.h"
 #include "modules/widget.h"
 
 // Forward Declarations
@@ -21,7 +22,7 @@ class VoxelDensityModuleWidget : public ModuleWidget
     VoxelDensityModule *module_;
 
     public:
-    VoxelDensityModuleWidget(QWidget *parent, VoxelDensityModule *module, Dissolve &dissolve) {}
+    VoxelDensityModuleWidget(QWidget *parent, VoxelDensityModule *module, Dissolve &dissolve)
 
     /*
      * UI
@@ -30,7 +31,19 @@ class VoxelDensityModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::VoxelDensityModuleWidget ui_;
     // DataViewers contained within this widget
-    DataViewer *rdfGraph_, *angleGraph_, *dAngleGraph_;
+    DataViewer *voxelDensityGraph_;
+    // Get the horizontal axis label for the module 1D data
+    std::optional<std::string> getData1DAxisLabel()
+    {
+        auto type = module_->getCurrentProperty();
+        switch ()
+        {
+            case VoxelDensityModule::TargetPropertyType::Mass: return "Atomic mass unit, u";
+            case VoxelDensityModule::TargetPropertyType::AtomicNumber: return "Z";
+            case VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity: return "Scattering length density, cm^-2";
+            default: throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(type))));
+        }
+    };
 
     public:
     // Update controls within widget
