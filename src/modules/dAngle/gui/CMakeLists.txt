@@ -1,1 +1,1 @@
-dissolve_add_module_gui(voxelDensity)
+dissolve_add_module_gui(dAngle)
