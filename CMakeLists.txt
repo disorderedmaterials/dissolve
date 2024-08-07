@@ -341,10 +341,10 @@ target_link_libraries(
           ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
 )
 
-add_subdirectory(QuickPlot/src)
-
 # Build GUI target executables
 if(GUI)
+
+  add_subdirectory(QuickPlot/src)
 
   # Main Dissolve GUI
   target_link_libraries(
