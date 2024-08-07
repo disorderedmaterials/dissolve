@@ -43,7 +43,7 @@ class VoxelDensityModule : public Module
     // Vector of species by which analysis is restricted
     std::vector<const Species *> restrictToSpecies_;
     // Target property for analysis
-    VoxelDensityModule::TargetPropertyType targetProperty_;
+    VoxelDensityModule::TargetPropertyType targetProperty_{TargetPropertyType::Mass};
     // Number of analysis points
     int nAxisVoxels_;
     // Fit a Gaussian function to the data
