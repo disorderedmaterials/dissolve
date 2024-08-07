@@ -46,6 +46,8 @@ runs:
       set -ex
       git submodule update --init --recursive
 
+      nix --version
+
       # Build Singularity target
       target=${{ inputs.target }}
       singularityTarget=${target/dissolve/singularity}

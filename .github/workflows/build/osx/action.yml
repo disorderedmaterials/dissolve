@@ -70,8 +70,6 @@ runs:
       set -ex
       git submodule update --init --recursive
 
-      nix --version
-
       # Setup paths
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
       Qt6_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/lib/cmake/Qt6
