@@ -40,24 +40,29 @@ TEST_F(VoxelDensityModuleTest, ConfigurationTest)
 
 TEST_F(VoxelDensityModuleTest, Mass)
 {
-    // Test for number of voxels along each axis = 8
-    const auto nAxisVoxels = DissolveMath::power(2, 3);
-    auto nVoxels = DissolveMath::power(nAxisVoxels, 3);
+    // Test for number of voxels along each axis = 1, 2, 4, 8, 16
+    for (auto n = 0; n < 4; ++n)
+    {
+        const auto nAxisVoxels = DissolveMath::power(2, n);
+        auto nVoxels = DissolveMath::power(nAxisVoxels, 3);
 
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium-mass-nVox8.txt"));
+        ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium-config.txt"));
 
-    // Grab module and perform setup
-    auto *module = systemTest.getModule<VoxelDensityModule>("VoxelDensity");
+        // Grab module and perform setup
+        auto *module = systemTest.getModule<VoxelDensityModule>("VoxelDensity");
+        module->keywords().set("NAxisVoxels", nAxisVoxels);
+        module->keywords().setEnumeration("TargetProperty", VoxelDensityModule::TargetPropertyType::Mass);
 
-    // Iterate
-    ASSERT_TRUE(systemTest.iterateRestart(1));
+        // Iterate
+        ASSERT_TRUE(systemTest.iterateRestart(1));
 
-    // Check data
-    const auto &data = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D")->get();
-    auto maxBin = const_cast<Data1D *>(&data)->maxValueAt();
-    auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
-    ASSERT_NEAR(maxBin.first * (*binRange).z, VoxelDensityModuleTest::massHelium, 10e-2);
-    ASSERT_EQ(maxBin.second, nVoxels);
+        // Check data
+        const auto &data = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity//Data1D")->get();
+        auto maxBin = const_cast<Data1D *>(&data)->maxValueAt();
+        auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
+        ASSERT_NEAR(maxBin.first * (*binRange).z, VoxelDensityModuleTest::massHelium, 10e-2);
+        ASSERT_EQ(maxBin.second, nVoxels);
+    }
 }
 
 TEST_F(VoxelDensityModuleTest, AtomicNumber)
