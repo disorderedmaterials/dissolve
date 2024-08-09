@@ -37,7 +37,7 @@ class VoxelDensityModule : public Module
 
     private:
     // Range (min, max, delta) of voxel histogram axis
-    Vec3<double> binRange_;
+    Vec3<double> binRange_{0.0, 10.0, 0.05};
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
     // Vector of species by which analysis is restricted
@@ -45,7 +45,7 @@ class VoxelDensityModule : public Module
     // Target property for analysis
     VoxelDensityModule::TargetPropertyType targetProperty_{TargetPropertyType::Mass};
     // Number of analysis points
-    int nAxisVoxels_;
+    int nAxisVoxels_{100};
     // Fit a Gaussian function to the data
     bool fitGaussian_{false};
     // Export target
