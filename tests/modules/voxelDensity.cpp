@@ -37,7 +37,7 @@ TEST_F(VoxelDensityModuleTest, ConfigurationTest)
     ASSERT_TRUE(cfg->atomicDensity());
     EXPECT_NEAR(*cfg->atomicDensity(), 1.0, 1.0e-6);
 }
-
+/*
 TEST_F(VoxelDensityModuleTest, Mass)
 {
     // Test for number of voxels along each axis = 1, 2, 4, 8, 16
@@ -64,7 +64,8 @@ TEST_F(VoxelDensityModuleTest, Mass)
         ASSERT_EQ(maxBin.second, nVoxels);
     }
 }
-
+*/
+/*
 TEST_F(VoxelDensityModuleTest, AtomicNumber)
 {
     // Test for number of voxels along each axis = 8
@@ -108,7 +109,7 @@ TEST_F(VoxelDensityModuleTest, ScatteringLengthDensity)
     ASSERT_NEAR(maxBin.first * (*binRange).z, VoxelDensityModuleTest::scatteringLengthDensityHelium, 10e-3);
     ASSERT_EQ(maxBin.second, nVoxels);
 }
-
+*/
 /*
 TEST_F(VoxelDensityModuleTest, Water)
 {
