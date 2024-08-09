@@ -40,17 +40,15 @@ TEST_F(VoxelDensityModuleTest, ConfigurationTest)
 
 TEST_F(VoxelDensityModuleTest, Mass)
 {
-    //ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium-mass-nVox8.txt"));
+    // ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium-mass-nVox8.txt"));
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium-mass.txt"));
 
     // Grab module and perform setup
-    VoxelDensityModule* modules[] = {
-        systemTest.getModule<VoxelDensityModule>("VoxelDensity(1-bin)"),
-        systemTest.getModule<VoxelDensityModule>("VoxelDensity(2-bin)"),
-        systemTest.getModule<VoxelDensityModule>("VoxelDensity(4-bin)"),
-        systemTest.getModule<VoxelDensityModule>("VoxelDensity(8-bin)"),
-        systemTest.getModule<VoxelDensityModule>("VoxelDensity(16-bin)")
-    };
+    VoxelDensityModule *modules[] = {systemTest.getModule<VoxelDensityModule>("VoxelDensity(1-bin)"),
+                                     systemTest.getModule<VoxelDensityModule>("VoxelDensity(2-bin)"),
+                                     systemTest.getModule<VoxelDensityModule>("VoxelDensity(4-bin)"),
+                                     systemTest.getModule<VoxelDensityModule>("VoxelDensity(8-bin)"),
+                                     systemTest.getModule<VoxelDensityModule>("VoxelDensity(16-bin)")};
 
     // Iterate
     ASSERT_TRUE(systemTest.iterateRestart(1));
@@ -61,14 +59,14 @@ TEST_F(VoxelDensityModuleTest, Mass)
     for (int n = 0; n <= 4; n++)
     {
         auto nAxisVoxels = DissolveMath::power(2, n);
-        const auto &data = systemTest.dissolve().processingModuleData().search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))->get();
-        auto maxBin = const_cast<Data1D *>(&data)->maxValueAt();
-        auto binRange = modules[n]->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
+        const auto &data = systemTest.dissolve().processingModuleData().search<const
+    Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))->get(); auto maxBin = const_cast<Data1D
+    *>(&data)->maxValueAt(); auto binRange = modules[n]->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
         ASSERT_NEAR(maxBin.first * (*binRange).z, VoxelDensityModuleTest::massHelium, 10e-2);
         ASSERT_EQ(maxBin.second, DissolveMath::power(nAxisVoxels, 3));
     }
     */
-    
+
     // Check data
     const auto &data1 = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity(1-bin)//Data1D")->get();
     auto maxBin1 = const_cast<Data1D *>(&data1)->maxValueAt();
@@ -99,7 +97,8 @@ TEST_F(VoxelDensityModuleTest, Mass)
 
     // THIS FAILS
     // Check data
-    const auto &data16 = systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity(16-bin)//Data1D")->get();
+    const auto &data16 =
+        systemTest.dissolve().processingModuleData().search<const Data1D>("VoxelDensity(16-bin)//Data1D")->get();
     auto maxBin16 = const_cast<Data1D *>(&data16)->maxValueAt();
     auto binRange16 = modules[4]->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
     ASSERT_NEAR(maxBin16.first * (*binRange16).z, VoxelDensityModuleTest::massHelium, 10e-2);
