@@ -39,36 +39,36 @@ EndConfiguration
 
 Layer  'Processing'
 
-# Atomic mass voxel density
+# Atomic number voxel density
 Module  VoxelDensity  'VoxelDensity(1-bin)'
     BinRange  0.0  10.0  0.05 
     Configuration 'Bulk'
     NAxisVoxels 1
-    TargetProperty Mass
+    TargetProperty AtomicNumber
 EndModule
 
-# Atomic mass voxel density
+# Atomic number voxel density
 Module  VoxelDensity  'VoxelDensity(2-bin)'
     BinRange  0.0  10.0  0.05 
     Configuration 'Bulk'
     NAxisVoxels 2
-    TargetProperty Mass
+    TargetProperty AtomicNumber
 EndModule
 
-# Atomic mass voxel density
+# Atomic number voxel density
 Module  VoxelDensity  'VoxelDensity(4-bin)'
     BinRange  0.0  10.0  0.05 
     Configuration 'Bulk'
     NAxisVoxels 4
-    TargetProperty Mass
+    TargetProperty AtomicNumber
 EndModule
 
-# Atomic mass voxel density
+# Atomic number voxel density
 Module  VoxelDensity  'VoxelDensity(8-bin)'
     BinRange  0.0  10.0  0.05 
     Configuration 'Bulk'
     NAxisVoxels 8
-    TargetProperty Mass
+    TargetProperty AtomicNumber
 EndModule
 
 EndLayer
