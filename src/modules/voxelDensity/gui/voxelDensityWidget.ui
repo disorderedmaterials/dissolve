@@ -26,7 +26,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="DataWidget" name="RDFPlotWidget" native="true">
+    <widget class="DataWidget" name="VoxelDensityPlotWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -36,14 +36,6 @@
     </widget>
    </item>
    <item>
-    <widget class="DataWidget" name="RunningCNPlotWidget" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox">
@@ -94,20 +86,6 @@
           <number>4</number>
          </property>
          <item>
-          <widget class="SampledDoubleLabel" name="RegionAResultFrame">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>
@@ -146,20 +124,6 @@
           <number>4</number>
          </property>
          <item>
-          <widget class="SampledDoubleLabel" name="RegionBResultFrame">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>
@@ -192,20 +156,6 @@
           <number>4</number>
          </property>
          <item>
-          <widget class="SampledDoubleLabel" name="RegionCResultFrame">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>

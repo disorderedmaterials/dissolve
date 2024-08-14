@@ -65,6 +65,6 @@ void VoxelDensityModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFl
     // Validate renderables if they need it
     voxelDensityGraph_->validateRenderables(dissolve_.processingModuleData());
 
-    ui_.voxelDensityPlotWidget->updateToolbar();
+    ui_.VoxelDensityPlotWidget->updateToolbar();
     voxelDensityGraph_->postRedisplay();
 }

@@ -22,7 +22,7 @@ class VoxelDensityModuleWidget : public ModuleWidget
     VoxelDensityModule *module_;
 
     public:
-    VoxelDensityModuleWidget(QWidget *parent, VoxelDensityModule *module, Dissolve &dissolve)
+    VoxelDensityModuleWidget(QWidget *parent, VoxelDensityModule *module, Dissolve &dissolve);
 
     /*
      * UI
