@@ -34,6 +34,8 @@ class VoxelDensityModule : public Module
     };
     // Return enum option info for TargetPropertyType
     static EnumOptions<VoxelDensityModule::TargetPropertyType> targetPropertyTypes();
+    // Target property for analysis
+    VoxelDensityModule::TargetPropertyType getCurrentProperty() { return targetProperty_; }
 
     private:
     // Range (min, max, delta) of voxel histogram axis

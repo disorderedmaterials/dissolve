@@ -14,7 +14,7 @@ VoxelDensityModuleWidget::VoxelDensityModuleWidget(QWidget *parent, VoxelDensity
     ui_.setupUi(this);
 
     // Set up voxel density graph
-    voxelDensityGraph_ = ui_.RDFPlotWidget->dataViewer();
+    voxelDensityGraph_ = ui_.VoxelDensityPlotWidget->dataViewer();
     // -- Set view
     voxelDensityGraph_->view().setViewType(View::FlatXYView);
     voxelDensityGraph_->view().axes().setTitle(0, getData1DAxisLabel().value_or(""));
@@ -27,7 +27,7 @@ VoxelDensityModuleWidget::VoxelDensityModuleWidget(QWidget *parent, VoxelDensity
 }
 
 // Get the horizontal axis label for the module 1D data
-std::optional<std::string> getData1DAxisLabel()
+std::optional<std::string> VoxelDensityModuleWidget::getData1DAxisLabel()
 {
     auto type = module_->getCurrentProperty();
     switch (type)
