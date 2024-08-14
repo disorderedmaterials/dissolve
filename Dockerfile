@@ -8,4 +8,5 @@ RUN /root/.nix-profile/bin/nix build github:disorderedmaterials/dissolve#devShel
 VOLUME /dissolve
 WORKDIR /dissolve
 
-CMD "/root/.nix-profile/bin/nix" "develop" "--extra-experimental-features" "nix-command" "--extra-experimental-features" "flakes" "/dissolve#"
+ARG DEV_SHELL="default"
+CMD "/root/.nix-profile/bin/nix" "develop" ".#$DEV_SHELL" "--extra-experimental-features" "nix-command" "--extra-experimental-features" "flakes" "/dissolve#"
