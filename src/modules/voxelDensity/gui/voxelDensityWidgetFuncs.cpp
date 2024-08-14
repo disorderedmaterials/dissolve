@@ -32,13 +32,13 @@ std::optional<std::string> getData1DAxisLabel()
     auto type = module_->getCurrentProperty();
     switch (type)
     {
-        case (VoxelDensityModule::TargetPropertyType::Mass): 
+        case (VoxelDensityModule::TargetPropertyType::Mass):
             return "Atomic mass unit, u";
-        case (VoxelDensityModule::TargetPropertyType::AtomicNumber): 
+        case (VoxelDensityModule::TargetPropertyType::AtomicNumber):
             return "Z";
-        case (VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity): 
+        case (VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity):
             return "Scattering length density, cm^-2";
-        default: 
+        default:
             throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(type))));
     }
 }
