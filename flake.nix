@@ -22,13 +22,13 @@
           (if gui then "dissolve-gui" else "dissolve");
       cmake-bool = x: if x then "ON" else "OFF";
       version = "1.6.0";
-      base_libs = pkgs:
+      base_libs = { pkgs, cmakeSource ? pkgs }:
         with pkgs; [
           antlr4
           antlr4.runtime.cpp
           antlr4.runtime.cpp.dev
           gbenchmark
-          cmake
+          cmakeSource.cmake
           cli11
           fmt_8
           fmt_8.dev
@@ -63,6 +63,7 @@
 
       let
         pkgs = import nixpkgs { inherit system; };
+        past = import outdated { inherit system; };
         nixGL = import nixGL-src { inherit pkgs; };
         dissolve =
           { mpi ? false, gui ? false, threading ? true, checks ? true }:
@@ -77,7 +78,8 @@
                 type != "directory" || builtins.baseNameOf path
                 != ".azure-pipelines" || builtins.baseNameOf path != "web";
             };
-            buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
+            buildInputs = base_libs { inherit pkgs; }
+              ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs system pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optionals threading [
@@ -126,6 +128,64 @@
                 exe-name mpi gui
               } $@";
           };
+        mkDevShell = { cmakeSource ? pkgs }:
+          pkgs.mkShell {
+            name = "dissolve-shell";
+            buildInputs = base_libs { inherit pkgs cmakeSource; }
+              ++ gui_libs system pkgs ++ check_libs pkgs ++ (with pkgs; [
+                (pkgs.clang-tools.override {
+                  llvmPackages = pkgs.llvmPackages_13;
+                })
+
+                (onedpl pkgs)
+
+                ccache
+                ccls
+                cmakeSource.cmakeWithGui
+                cmakeSource.cmake-format
+                cmakeSource.cmake-language-server
+                conan
+                distcc
+                direnv
+                gdb
+                gtk3
+                nixGL.nixGLIntel
+                openmpi
+                qt6.qttools
+                tbb_2021_8
+                valgrind
+              ]);
+            shellHook = ''
+              export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_DATA_DIRS
+              export LIBGL_DRIVERS_PATH=${
+                pkgs.lib.makeSearchPathOutput "lib" "lib/dri"
+                [ pkgs.mesa.drivers ]
+              }
+              export LIBVA_DRIVERS_PATH=${
+                pkgs.lib.makeSearchPathOutput "out" "lib/dri"
+                [ pkgs.mesa.drivers ]
+              }
+              export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa.drivers}/share/glvnd/egl_vendor.d/50_mesa.json
+              export LD_LIBRARY_PATH=${
+                pkgs.lib.makeLibraryPath [ pkgs.mesa.drivers ]
+              }:${
+                pkgs.lib.makeSearchPathOutput "lib" "lib/vdpau"
+                [ pkgs.libvdpau ]
+              }:${
+                pkgs.lib.makeLibraryPath [ pkgs.libglvnd ]
+              }"''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+              export QT_PLUGIN_PATH="${pkgs.qt6.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
+            '';
+
+            CMAKE_CXX_COMPILER_LAUNCHER =
+              "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
+            CMAKE_C_COMPILER_LAUNCHER =
+              "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
+            CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
+            CXXL = "${pkgs.stdenv.cc.cc.lib}";
+            QML_IMPORT_PATH = "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
+            QML2_IMPORT_PATH = "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
+          };
       in {
         checks.dissolve = dissolve { checks = true; };
         checks.dissolve-gui = dissolve {
@@ -145,62 +205,8 @@
 
         defaultPackage = self.packages.${system}.dissolve;
 
-        devShells.default = pkgs.mkShell {
-          name = "dissolve-shell";
-          buildInputs = base_libs pkgs ++ gui_libs system pkgs
-            ++ check_libs pkgs ++ (with pkgs; [
-              (pkgs.clang-tools.override {
-                llvmPackages = pkgs.llvmPackages_13;
-              })
-
-              (onedpl pkgs)
-
-              ccache
-              ccls
-              cmakeWithGui
-              cmake-format
-              cmake-language-server
-              conan
-              distcc
-              direnv
-              gdb
-              gtk3
-              nixGL.nixGLIntel
-              openmpi
-              qt6.qttools
-              tbb_2021_8
-              valgrind
-            ]);
-          shellHook = ''
-            export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_DATA_DIRS
-            export LIBGL_DRIVERS_PATH=${
-              pkgs.lib.makeSearchPathOutput "lib" "lib/dri"
-              [ pkgs.mesa.drivers ]
-            }
-            export LIBVA_DRIVERS_PATH=${
-              pkgs.lib.makeSearchPathOutput "out" "lib/dri"
-              [ pkgs.mesa.drivers ]
-            }
-            export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa.drivers}/share/glvnd/egl_vendor.d/50_mesa.json
-            export LD_LIBRARY_PATH=${
-              pkgs.lib.makeLibraryPath [ pkgs.mesa.drivers ]
-            }:${
-              pkgs.lib.makeSearchPathOutput "lib" "lib/vdpau" [ pkgs.libvdpau ]
-            }:${
-              pkgs.lib.makeLibraryPath [ pkgs.libglvnd ]
-            }"''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-            export QT_PLUGIN_PATH="${pkgs.qt6.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
-          '';
-
-          CMAKE_CXX_COMPILER_LAUNCHER =
-            "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
-          CMAKE_C_COMPILER_LAUNCHER =
-            "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
-          CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
-          CXXL = "${pkgs.stdenv.cc.cc.lib}";
-          QML_IMPORT_PATH = "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
-          QML2_IMPORT_PATH = "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
-        };
+        devShells.default = mkDevShell { };
+        devShells.windows_docker = mkDevShell { cmakeSource = past; };
 
         apps = {
           dissolve-app =
