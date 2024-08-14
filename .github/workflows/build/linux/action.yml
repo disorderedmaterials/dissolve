@@ -44,14 +44,13 @@ runs:
     shell: bash
     run: |
       set -ex
-      git submodule update --init --recursive
 
       nix --version
 
       # Build Singularity target
       target=${{ inputs.target }}
       singularityTarget=${target/dissolve/singularity}
-      nix build -L ".?submodules=1#$singularityTarget"
+      nix build --impure -L ".?submodules=1#$singularityTarget"
 
       # Assemble artifacts
       mkdir packages-sif
