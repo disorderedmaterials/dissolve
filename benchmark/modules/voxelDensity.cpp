@@ -25,14 +25,23 @@ static void BM_Module_VoxelDensity(benchmark::State &state)
     }
 }
 
-BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small, VoxelDensityModule::Mass)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::Atomic, SpeciesPopulation::Large, VoxelDensityModule::Mass)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small, VoxelDensityModule::Mass)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::Atomic, SpeciesPopulation::Large, VoxelDensityModule::Mass)
+    ->Unit(benchmark::kMillisecond);
 
-BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small, VoxelDensityModule::AtomicNumber)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::Atomic, SpeciesPopulation::Large, VoxelDensityModule::AtomicNumber)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small,
+                   VoxelDensityModule::AtomicNumber)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::Atomic, SpeciesPopulation::Large, VoxelDensityModule::AtomicNumber)
+    ->Unit(benchmark::kMillisecond);
 
-BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small, VoxelDensityModule::ScatteringLengthDensity)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::Atomic, SpeciesPopulation::Large, VoxelDensityModule::ScatteringLengthDensity)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small,
+                   VoxelDensityModule::ScatteringLengthDensity)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::Atomic, SpeciesPopulation::Large,
+                   VoxelDensityModule::ScatteringLengthDensity)
+    ->Unit(benchmark::kMillisecond);
 } // namespace Benchmarks
 
 BENCHMARK_MAIN();

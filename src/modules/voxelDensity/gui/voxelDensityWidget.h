@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "modules/voxelDensityWidget/gui/ui_voxelDensityWidget.h"
 #include "modules/voxelDensity/voxelDensity.h"
+#include "modules/voxelDensityWidget/gui/ui_voxelDensityWidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations
