@@ -7,7 +7,6 @@
 #include "main/dissolve.h"
 #include "modules/voxelDensity/gui/voxelDensityWidget.h"
 
-
 VoxelDensityModuleWidget::VoxelDensityModuleWidget(QWidget *parent, VoxelDensityModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)
 {
@@ -33,13 +32,14 @@ std::optional<std::string> getData1DAxisLabel()
     auto type = module_->getCurrentProperty();
     switch (type)
     {
-        case VoxelDensityModule::TargetPropertyType::Mass: 
+        case (VoxelDensityModule::TargetPropertyType::Mass): 
             return "Atomic mass unit, u";
-        case VoxelDensityModule::TargetPropertyType::AtomicNumber: 
+        case (VoxelDensityModule::TargetPropertyType::AtomicNumber): 
             return "Z";
-        case VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity: 
+        case (VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity): 
             return "Scattering length density, cm^-2";
-        default: throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(type))));
+        default: 
+            throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(type))));
     }
 }
 
@@ -52,14 +52,13 @@ void VoxelDensityModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFl
 {
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
         voxelDensityGraph_->clearRenderables();
-    
 
     if (voxelDensityGraph_->renderables().empty())
     {
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
             voxelDensityGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Data1D", module_->name()),
-                                                          fmt::format("Data1D//{}", cfg->niceName()), cfg->niceName());
+                                                                   fmt::format("Data1D//{}", cfg->niceName()), cfg->niceName());
     }
 
     // Validate renderables if they need it
