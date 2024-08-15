@@ -44,7 +44,11 @@ runs:
     shell: bash
     run: |
       set -ex
-      cat .gitmodules
+      git submodule update --init --recursive
+      rm .gitmodules
+      rm -rf QuickPlot/.git
+      git add -r QuickPlot
+      git commit -m "Eat the submodule"
 
       nix --version
 
