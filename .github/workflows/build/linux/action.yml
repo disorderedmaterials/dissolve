@@ -49,9 +49,9 @@ runs:
       rm .gitmodules
       rm -rf QuickPlot/.git
       git add QuickPlot
-      git commit -m "Eat the submodule"
       git config --global user.email "no_one@example.com"
       git config --global user.name "GitHub Actions"
+      git commit -m "Eat the submodule"
 
       nix --version
 
