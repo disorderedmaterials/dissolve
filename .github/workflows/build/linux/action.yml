@@ -47,7 +47,7 @@ runs:
       git submodule update --init --recursive
       rm .gitmodules
       rm -rf QuickPlot/.git
-      git add -r QuickPlot
+      git add QuickPlot
       git commit -m "Eat the submodule"
 
       nix --version
