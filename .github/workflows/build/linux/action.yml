@@ -46,12 +46,18 @@ runs:
       set -ex
 
       git submodule update --init --recursive
-      rm .gitmodules
-      rm -rf QuickPlot/.git
-      git add QuickPlot
       git config --global user.email "no_one@example.com"
       git config --global user.name "GitHub Actions"
-      git commit -m "Eat the submodule"
+      git rm .gitmodules
+
+      cp -r QuickPlot QuickPlot.bak
+      rm -rf QuickPlot.bak/.git
+      git rm -r QuickPlot
+      git commit -m "Kill submodule"
+
+      mv QuickPlot.bak QuickPlot
+      git add QuickPlot
+      git commit -m "Resurrect submodule"
 
       nix --version
 
