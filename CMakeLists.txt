@@ -344,7 +344,7 @@ target_link_libraries(
 # Build GUI target executables
 if(GUI)
 
-  add_subdirectory(QuickPlot/src)
+  add_subdirectory(QuickPlot)
 
   # Main Dissolve GUI
   target_link_libraries(
