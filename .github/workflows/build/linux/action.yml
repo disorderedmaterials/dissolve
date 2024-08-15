@@ -45,7 +45,7 @@ runs:
     run: |
       set -ex
       git submodule update --init --recursive
-      ls QuickPlot
+      cat /etc/nix/nix.conf
 
       nix --version
 
