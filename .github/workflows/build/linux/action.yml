@@ -44,6 +44,8 @@ runs:
     shell: bash
     run: |
       set -ex
+      git submodule update --init --recursive
+      ls QuickPlot
 
       nix --version
 
