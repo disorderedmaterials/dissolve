@@ -25,22 +25,22 @@ static void BM_Module_VoxelDensity(benchmark::State &state)
     }
 }
 
-BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small, VoxelDensityModule::Mass)
+BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small, VoxelDensityModule::TargetPropertyType::Mass)
     ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::Atomic, SpeciesPopulation::Large, VoxelDensityModule::Mass)
-    ->Unit(benchmark::kMillisecond);
-
-BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small,
-                   VoxelDensityModule::AtomicNumber)
-    ->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::Atomic, SpeciesPopulation::Large, VoxelDensityModule::AtomicNumber)
+BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::Atomic, SpeciesPopulation::Large, VoxelDensityModule::TargetPropertyType::Mass)
     ->Unit(benchmark::kMillisecond);
 
 BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small,
-                   VoxelDensityModule::ScatteringLengthDensity)
+                   VoxelDensityModule::TargetPropertyType::AtomicNumber)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::Atomic, SpeciesPopulation::Large, VoxelDensityModule::TargetPropertyType::AtomicNumber)
+    ->Unit(benchmark::kMillisecond);
+
+BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small,
+                   VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity)
     ->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::Atomic, SpeciesPopulation::Large,
-                   VoxelDensityModule::ScatteringLengthDensity)
+                   VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity)
     ->Unit(benchmark::kMillisecond);
 } // namespace Benchmarks
 
