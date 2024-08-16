@@ -26,10 +26,10 @@ static void BM_Module_VoxelDensity(benchmark::State &state)
 }
 
 BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small,
-                      VoxelDensityModule::TargetPropertyType::Mass)
+                   VoxelDensityModule::TargetPropertyType::Mass)
     ->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::Atomic, SpeciesPopulation::Large,
-                      VoxelDensityModule::TargetPropertyType::Mass)
+                   VoxelDensityModule::TargetPropertyType::Mass)
     ->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_Module_VoxelDensity, SpeciesType::SmallMolecule, SpeciesPopulation::Small,
                    VoxelDensityModule::TargetPropertyType::AtomicNumber)
