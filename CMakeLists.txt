@@ -267,7 +267,17 @@ if(GUI)
   )
 
   # Dissolve QML GUI
-  qt_add_executable(${qmlgui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui-qml.cpp ${SRCS}/gui-qml/resources.qrc)
+  qt_add_executable(${qmlgui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui-qml.cpp)
+  set_source_files_properties(${SRCS}/gui-qml/qml/DissolveMain.qml PROPERTIES QT_RESOURCE_ALIAS qml/DissolveMain.qml)
+  qt_add_qml_module(
+    ${qmlgui_target_name}
+    VERSION
+    0.1
+    URI
+    Dissolve
+    QML_FILES
+    ${SRCS}/gui-qml/qml/DissolveMain.qml
+  )
 
   # Set project-local include directories for target (we expect to need less of these dependencies over time)
   target_include_directories(
