@@ -16,7 +16,7 @@ static void BM_Module_VoxelDensity(benchmark::State &state)
     module.keywords().set("Configuration", problemDef.configuration());
     module.keywords().set("BinRange", Vec3<double>(0.0, 10.0, 0.05));
     module.keywords().set("NAxisVoxels", 100);
-    module.keywords().set("TargetProperty", property);
+    module.keywords().setEnumeration("TargetProperty", property);
     ModuleContext context(problemDef.dissolve().worldPool(), problemDef.dissolve());
     for (auto _ : state)
     {
