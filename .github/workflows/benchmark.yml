@@ -1,7 +1,7 @@
 name: Benchmarks
 
 on:
-  pull_request:
+  push:
     branches:
       - '*'
     paths-ignore:
