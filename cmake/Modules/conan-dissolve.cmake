@@ -41,7 +41,7 @@ conan_cmake_configure(
     ${_conan_options}
 )
 
-conan_cmake_autodetect(settings)
+conan_cmake_autodetect(settings BUILD_TYPE ${CMAKE_BUILD_TYPE})
 
 conan_cmake_install(PATH_OR_REFERENCE .
                     BUILD missing
