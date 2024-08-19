@@ -54,6 +54,8 @@
 #include "modules/sq/sq.h"
 #include "modules/test/gui/testWidget.h"
 #include "modules/test/test.h"
+#include "modules/voxelDensity/gui/voxelDensityWidget.h"
+#include "modules/voxelDensity/voxelDensity.h"
 #include "modules/xRaySQ/gui/xRaySQWidget.h"
 #include "modules/xRaySQ/xRaySQ.h"
 #include <ios>
@@ -86,6 +88,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<SiteRDFModule, SiteRDFModuleWidget>();
     registerProducer<SQModule, SQModuleWidget>();
     registerProducer<TestModule, TestModuleWidget>();
+    registerProducer<VoxelDensityModule, VoxelDensityModuleWidget>();
     registerProducer<XRaySQModule, XRaySQModuleWidget>();
 }
 

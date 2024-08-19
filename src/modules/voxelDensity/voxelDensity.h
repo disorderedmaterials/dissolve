@@ -47,7 +47,7 @@ class VoxelDensityModule : public Module
     // Target property for analysis
     VoxelDensityModule::TargetPropertyType targetProperty_{TargetPropertyType::Mass};
     // Number of analysis points
-    int nAxisVoxels_{100};
+    int nAxisVoxels_{20};
     // Fit a Gaussian function to the data
     bool fitGaussian_{false};
     // Export target
