@@ -4,8 +4,8 @@
 #pragma once
 
 #include <tuple>
-#include <vector>
 #include <utility>
+#include <vector>
 
 // Data Limits
 namespace DissolveLimits
@@ -15,4 +15,4 @@ template <typename X, typename Y> std::vector<std::tuple<X, Y>> nonZeroValues(st
 
 // Return index and corresponding maximum value over all data points
 template <typename T> std::pair<std::size_t, T> maxValueAt(std::vector<T> values);
-}
+}; // namespace DissolveLimits
