@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "math/limits.h"
+#include "math/limitsFunc.h"
 #include "modules/voxelDensity/voxelDensity.h"
 #include "classes/atom.h"
 #include "classes/speciesAtom.h"
@@ -60,7 +60,7 @@ TEST_F(VoxelDensityModuleTest, Mass)
                                .processingModuleData()
                                .search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))
                                ->get();
-        auto maxBin = Limits::maxValueAt<double>(const_cast<Data1D *>(&data)->values());
+        auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data)->values());
         auto binRange = modules[n]->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
         ASSERT_NEAR(maxBin.first * (*binRange).z, VoxelDensityModuleTest::massHelium, 10e-2);
         ASSERT_EQ(maxBin.second, DissolveMath::power(nAxisVoxels, 3));
@@ -88,7 +88,7 @@ TEST_F(VoxelDensityModuleTest, AtomicNumber)
                                .processingModuleData()
                                .search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))
                                ->get();
-        auto maxBin = Limits::maxValueAt<double>(const_cast<Data1D *>(&data)->values());
+        auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data)->values());
         auto binRange = modules[n]->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
         ASSERT_EQ(maxBin.first * (*binRange).z, VoxelDensityModuleTest::zHelium);
         ASSERT_EQ(maxBin.second, DissolveMath::power(nAxisVoxels, 3));
@@ -116,7 +116,7 @@ TEST_F(VoxelDensityModuleTest, ScatteringLengthDensity)
                                .processingModuleData()
                                .search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))
                                ->get();
-        auto maxBin = Limits::maxValueAt<double>(const_cast<Data1D *>(&data)->values());
+        auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data)->values());
         auto binRange = modules[n]->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
         ASSERT_NEAR(maxBin.first * (*binRange).z, VoxelDensityModuleTest::scatteringLengthDensityHelium, 10e-3);
         ASSERT_EQ(maxBin.second, DissolveMath::power(nAxisVoxels, 3));

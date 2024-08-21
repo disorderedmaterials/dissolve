@@ -1,9 +1,9 @@
-#include "math/limits.h"
+#include "math/limitsFunc.h"
 #include "templates/algorithms.h"
 #include <algorithm>
 #include <iterator>
 
-namespace Limits 
+namespace DissolveLimits 
 {
 // Return non-zero values present in whole dataset
 template <typename X, typename Y> std::vector<std::tuple<X, Y>> nonZeroValues(std::vector<X> x, std::vector<Y> values)
@@ -18,15 +18,15 @@ template <typename X, typename Y> std::vector<std::tuple<X, Y>> nonZeroValues(st
 }
 
 // Return index and corresponding maximum value over all data points
-template <typename T> std::pair<size_t, T> maxValueAt(std::vector<T> values)
+template <typename T> std::pair<std::size_t, T> maxValueAt(std::vector<T> values)
 {
     if (values.empty())
         return {0, 0.0};
 
-    std::vector<double>::iterator result = std::max_element(values_.begin(), values_.end());
+    std::vector<double>::iterator result = std::max_element(values.begin(), values.end());
 
     // { index, maxvalue }
-    return {std::distance(values_.begin(), result), *result};
+    return {std::distance(values.begin(), result), *result};
 }
 
-} // namespace Limits
+} // namespace DissolveLimits

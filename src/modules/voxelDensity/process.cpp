@@ -13,7 +13,7 @@ void VoxelDensityModule::addValue(Vec3<double> coords, double value, Array3D<dou
     array[t] += value;
 }
 
-Vec3<double> VoxelDensityModule::foldedCoordinates(const Vec3<double> r, const Box *unitCell) { return unitCell->foldFrac(r); }
+Vec3<double> VoxelDensityModule::foldedCoordinates(const Vec3<double> &r, const Box *unitCell) { return unitCell->foldFrac(r); }
 
 Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 {
@@ -83,7 +83,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     hist.zeroBins();
 
     for (const auto &value : array3D.values())
-        hist.bin(value / voxelVolume);
+        hist.bin(value / voxelVolume_);
 
     auto &data1D = processingData.realise<Data1D>("Data1D", name(), GenericItem::InRestartFileFlag);
     hist.accumulate();
