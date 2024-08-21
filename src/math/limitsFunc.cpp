@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <iterator>
 
-namespace DissolveLimits 
+namespace DissolveLimits
 {
 // Return non-zero values present in whole dataset
 template <typename X, typename Y> std::vector<std::tuple<X, Y>> nonZeroValues(std::vector<X> x, std::vector<Y> values)
