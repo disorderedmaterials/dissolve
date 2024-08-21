@@ -20,6 +20,7 @@ add_library(
   integerHistogram1D.cpp
   integrator.cpp
   interpolator.cpp
+  limits.cpp
   mathFunc.cpp
   matrix3.cpp
   matrix4.cpp
@@ -61,6 +62,7 @@ add_library(
   integerHistogram1D.h
   integrator.h
   interpolator.h
+  limits.h
   mathFunc.h
   matrix3.h
   matrix4.h

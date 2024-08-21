@@ -123,32 +123,6 @@ void Data3D::zero()
 // Return data version
 int Data3D::version() const { return version_; }
 
-// Add new data point
-void Data3D::addPoint(double x, double y, double z, double value)
-{
-    x_.push_back(x), y_.push_back(y), z_.push_back(z);
-
-    values_[std::tuple{x, y, z}] = value;
-
-    ++version_;
-}
-
-// Add data to point
-void Data3D::addToPoint(int x, double xDelta, int y, double yDelta, int z, double zDelta, double value)
-{
-    if ((x_.size() < x) || (y_.size() < y) || (z_.size() < z))
-    {
-        addPoint(xDelta, yDelta, zDelta, value);
-        return;
-    }
-
-    x_[x] = xDelta, y_[y] = yDelta, z_[z] = zDelta;
-
-    values_[std::tuple{x, y, z}] += value;
-
-    ++version_;
-}
-
 // Return x value specified
 double &Data3D::xAxis(int index)
 {

@@ -12,6 +12,8 @@
 #include "module/module.h"
 #include "templates/array3D.h"
 
+// Forward declarations
+
 class Configuration;
 
 // VoxelDensity Module
@@ -36,6 +38,8 @@ class VoxelDensityModule : public Module
     static EnumOptions<VoxelDensityModule::TargetPropertyType> targetPropertyTypes();
     // Target property for analysis
     VoxelDensityModule::TargetPropertyType getCurrentProperty() { return targetProperty_; }
+    // Voxel volume (cubic angstroms)
+    const double voxelVolume() { return voxelVolume_; }
 
     private:
     // Range (min, max, delta) of voxel histogram axis
@@ -48,6 +52,8 @@ class VoxelDensityModule : public Module
     VoxelDensityModule::TargetPropertyType targetProperty_{TargetPropertyType::Mass};
     // Number of analysis points
     int nAxisVoxels_{20};
+    // Voxel volume (cubic angstroms)
+    double voxelVolume_{1.0};
     // Fit a Gaussian function to the data
     bool fitGaussian_{false};
     // Export target

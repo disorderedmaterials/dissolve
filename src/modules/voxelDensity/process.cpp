@@ -13,12 +13,7 @@ void VoxelDensityModule::addValue(Vec3<double> coords, double value, Array3D<dou
     array[t] += value;
 }
 
-Vec3<double> VoxelDensityModule::foldedCoordinates(Atom &atom, const Box *unitCell)
-{
-    atom.set(unitCell->foldFrac(atom.r()));
-    auto x = atom.x(), y = atom.y(), z = atom.z();
-    return Vec3<double>(x, y, z);
-}
+Vec3<double> VoxelDensityModule::foldedCoordinates(const Vec3<double> r, const Box *unitCell) { return unitCell->foldFrac(r); }
 
 Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 {
@@ -53,17 +48,18 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     }
 
     auto unitCell = targetConfiguration_->box();
-    auto voxelVolume = unitCell->volume() / std::pow(nAxisVoxels_, 3);
-    auto atoms = targetConfiguration_->atoms();
+    voxelVolume_ = unitCell->volume() / std::pow(nAxisVoxels_, 3);
+    Messenger::print("Volume of unit cell voxels: {}.\n", voxelVolume());
+    const auto &atoms = targetConfiguration_->atoms();
 
     auto massOp = [this, &array3D, &unitCell](auto &atom)
-    { addValue(foldedCoordinates(atom, unitCell), AtomicMass::mass(atom.speciesAtom()->Z()), array3D); };
+    { addValue(foldedCoordinates(atom.r(), unitCell), AtomicMass::mass(atom.speciesAtom()->Z()), array3D); };
 
     auto atomicNumberOp = [this, &array3D, &unitCell](auto &atom)
-    { addValue(foldedCoordinates(atom, unitCell), atom.speciesAtom()->Z(), array3D); };
+    { addValue(foldedCoordinates(atom.r(), unitCell), atom.speciesAtom()->Z(), array3D); };
 
     auto scatteringLengthDensityOp = [this, &array3D, &unitCell](auto &atom)
-    { addValue(foldedCoordinates(atom, unitCell), scatteringLengthDensity(atom.speciesAtom()->Z()), array3D); };
+    { addValue(foldedCoordinates(atom.r(), unitCell), scatteringLengthDensity(atom.speciesAtom()->Z()), array3D); };
 
     switch (targetProperty_)
     {

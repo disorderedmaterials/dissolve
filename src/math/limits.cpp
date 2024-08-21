@@ -1,7 +1,12 @@
-#include "limits.h"
+#include "math/limits.h"
+#include "templates/algorithms.h"
+#include <algorithm>
+#include <iterator>
 
+namespace Limits 
+{
 // Return non-zero values present in whole dataset
-template <typename X, typename Y> std::vector<std::tuple<X, Y>> Limits::nonZeroValues(std::vector<X> x, std::vector<Y> values)
+template <typename X, typename Y> std::vector<std::tuple<X, Y>> nonZeroValues(std::vector<X> x, std::vector<Y> values)
 {
     std::vector<std::tuple<X, Y>> pairs;
 
@@ -13,7 +18,7 @@ template <typename X, typename Y> std::vector<std::tuple<X, Y>> Limits::nonZeroV
 }
 
 // Return index and corresponding maximum value over all data points
-template <typename T> std::pair<size_t, T> Limits::maxValueAt(std::vector<T> values)
+template <typename T> std::pair<size_t, T> maxValueAt(std::vector<T> values)
 {
     if (values.empty())
         return {0, 0.0};
@@ -23,3 +28,5 @@ template <typename T> std::pair<size_t, T> Limits::maxValueAt(std::vector<T> val
     // { index, maxvalue }
     return {std::distance(values_.begin(), result), *result};
 }
+
+} // namespace Limits

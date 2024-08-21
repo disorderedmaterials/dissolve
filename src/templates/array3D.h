@@ -86,10 +86,9 @@ template <class A> class Array3D
             resize(nX, nY, nZ);
     }
 
-    // Return const reference to values
+    // Return reference to values
     const std::vector<A> &values() const { return array_; }
 
-    // Return modifiable reference to values
     std::vector<A> &values() { return array_; }
 
     // Return specified element as modifiable reference
