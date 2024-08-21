@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "math/limitsFunc.h"
 #include "modules/voxelDensity/voxelDensity.h"
 #include "classes/atom.h"
 #include "classes/speciesAtom.h"
 #include "data/elements.h"
 #include "keywords/integer.h"
 #include "keywords/vec3Double.h"
+#include "math/limitsFunc.h"
 #include "module/types.h"
 #include "tests/testData.h"
 #include <cmath>
