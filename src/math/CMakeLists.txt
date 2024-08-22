@@ -20,7 +20,6 @@ add_library(
   integerHistogram1D.cpp
   integrator.cpp
   interpolator.cpp
-  limitsFunc.cpp
   mathFunc.cpp
   matrix3.cpp
   matrix4.cpp
