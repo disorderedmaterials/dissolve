@@ -25,7 +25,7 @@ template <typename X, typename Y> std::vector<std::tuple<X, Y>> nonZeroValues(st
     return pairs;
 }
 
-// Return index and corresponding maximum value over all data points 
+// Return index and corresponding maximum value over all data points
 template <typename T> std::pair<std::size_t, T> maxValueAt(std::vector<T> values)
 {
     if (values.empty())
