@@ -56,10 +56,12 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         for (auto typeJ = typeI; typeJ < unweightedGR.nAtomTypes(); ++typeJ)
         {
             double intraWeight = weights.intramolecularWeight(typeI, typeJ);
-            auto factor = 4.0 * PI * rho.value() * weights.boundCoherentProduct(typeI, typeJ);
+            auto cj = weights.atomTypes()[typeJ].fraction();
+            auto factor = 4.0 * PI * rho.value() * cj;
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             weightedTR.boundPartial(typeI, typeJ).copyArrays(unweightedGR.boundPartial(typeI, typeJ));
+
             for (auto &&[x, y] :
                  zip(weightedTR.boundPartial(typeI, typeJ).xAxis(), weightedTR.boundPartial(typeI, typeJ).values()))
             {
@@ -83,7 +85,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     }
 
     // Sum into total
-    weightedTR.formTotals(true);
+    weightedTR.formTRTotals(weights);
 
     // Save data if requested
     if (saveTR_ && (!MPIRunMaster(moduleContext.processPool(), weightedTR.save(name_, "WeightedTR", "tr", "Q, 1/Angstroms"))))
