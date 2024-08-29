@@ -220,22 +220,22 @@ void PartialSet::formTRTotals(NeutronWeights weights)
     std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
 
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
-                            [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
-                                // Set weighting factor if requested
-                                auto factor = at1.fraction() * weights.boundCoherentProduct(typeI, typeJ);
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
+        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
+            // Set weighting factor if requested
+            auto factor = at1.fraction() * weights.boundCoherentProduct(typeI, typeJ) * (typeI == typeJ ? 1.0 : 2.0);
 
-                                // Sum bound term
-                                std::transform(boundTotal_.values().begin(), boundTotal_.values().end(),
-                                               boundPartials_[{typeI, typeJ}].values().begin(), boundTotal_.values().begin(),
-                                               [=](auto total, auto partial) { return total + partial * factor; });
+            // Sum bound term
+            std::transform(boundTotal_.values().begin(), boundTotal_.values().end(),
+                           boundPartials_[{typeI, typeJ}].values().begin(), boundTotal_.values().begin(),
+                           [=](auto total, auto partial) { return total + partial * factor; });
 
-                                // Sum unbound term
-                                std::transform(unboundTotal_.values().begin(), unboundTotal_.values().end(),
-                                               unboundPartials_[{typeI, typeJ}].values().begin(),
-                                               unboundTotal_.values().begin(),
-                                               [=](auto total, auto partial) { return total + partial * factor; });
-                            });
+            // Sum unbound term
+            std::transform(unboundTotal_.values().begin(), unboundTotal_.values().end(),
+                           unboundPartials_[{typeI, typeJ}].values().begin(), unboundTotal_.values().begin(),
+                           [=](auto total, auto partial) { return total + partial * factor; });
+        });
 
     total_ += boundTotal_;
     total_ += unboundTotal_;
