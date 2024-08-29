@@ -89,4 +89,20 @@ double sgn(double a, double signOf) { return signOf >= 0.0 ? fabs(a) : -fabs(a);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i) { return (i % 3); }
 
+/*
+ * Logaritmic Functions
+*/
+// Natural (base-e) logarithm of n
+int log(int n) { return int(std::log(n)); }
+// Natural (base-e) logarithm of x
+double log(double x) { return std::log(x); }
+// Base-2 logarithm of n
+int log2(int n) { return int(std::log2(n)); }
+// Base-2 logarithm of x
+double log2(double x) { return std::log2(x); }
+// Base-10 logarithm of n
+int log10(int n) { return int(std::log10(n)); }
+// Base-2 logarithm of x
+double log10(double x) { return std::log10(x); }
+
 } // namespace DissolveMath

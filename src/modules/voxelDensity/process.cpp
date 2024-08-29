@@ -4,12 +4,11 @@
 #include "math/gaussFit.h"
 #include "module/context.h"
 #include "voxelDensity.h"
-#include <cmath>
 
 void VoxelDensityModule::addValue(Vec3<double> coords, double value, Array3D<double> &array)
 {
-    auto t = std::make_tuple((int)std::floor(coords.x * nAxisVoxels_), (int)std::floor(coords.y * nAxisVoxels_),
-                             (int)std::floor(coords.z * nAxisVoxels_));
+    auto t = std::make_tuple((int)std::floor(coords.x * nAxisVoxels_.x), (int)std::floor(coords.y * nAxisVoxels_.y),
+                             (int)std::floor(coords.z * nAxisVoxels_.z));
     array[t] += value;
 }
 
@@ -19,9 +18,20 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 {
     auto &processingData = context.dissolve().processingModuleData();
 
+    // Define voxels
+    auto unitCell = targetConfiguration_->box();
+    const double boxX = unitCell->axisLengths().x, boxY = unitCell->axisLengths().y, boxZ = unitCell->axisLengths().z;
+    voxelVolume_ = voxelSideLength(boxX) * voxelSideLength(boxY) * voxelSideLength(boxZ);
+    nAxisVoxels_.x = int(round(boxX / voxelSideLength(boxX)));
+    nAxisVoxels_.y = int(round(boxY / voxelSideLength(boxY)));
+    nAxisVoxels_.z = int(round(boxZ / voxelSideLength(boxZ)));
+
+    Messenger::print("Volume of unit cell voxels: {}.\n", voxelVolume_);
+    Messenger::print("Number of voxels along each axis: nX={}, nY={}, nZ={}.\n", nAxisVoxels_.x, nAxisVoxels_.y, nAxisVoxels_.z);
+
     // Calculate target property 3d map over unit cell voxels
     auto array3D = processingData.realise<Array3D<double>>("Array3D", name());
-    array3D.initialise(nAxisVoxels_, nAxisVoxels_, nAxisVoxels_);
+    array3D.initialise(nAxisVoxels_.x, nAxisVoxels_.y, nAxisVoxels_.z);
 
     if (!restrictToSpecies_.empty())
     {
@@ -47,9 +57,6 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
         }
     }
 
-    auto unitCell = targetConfiguration_->box();
-    voxelVolume_ = unitCell->volume() / std::pow(nAxisVoxels_, 3);
-    Messenger::print("Volume of unit cell voxels: {}.\n", voxelVolume());
     const auto &atoms = targetConfiguration_->atoms();
 
     auto massOp = [this, &array3D, &unitCell](auto &atom)
@@ -79,7 +86,9 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     // Calculate voxel density histogram, normalising bin values by voxel volume (property/cubic angstrom)
     auto &hist = processingData.realise<Histogram1D>("Histogram1D", name(), GenericItem::InRestartFileFlag);
 
-    hist.initialise(binRange_.x, binRange_.y, binRange_.z);
+    const auto min = binRange_.x, max = binRange_.y, binWidth = binRange_.z;
+
+    hist.initialise(min, max, binWidth);
     hist.zeroBins();
 
     for (const auto &value : array3D.values())
@@ -89,11 +98,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     hist.accumulate();
     data1D = hist.accumulatedData();
 
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(
-            (fitGaussian_)
-                ? GaussFit(data1D).approximation(FunctionSpace::RealSpace, 1.0, hist.minimum(), hist.binWidth(), hist.maximum())
-                : data1D,
-            exportFileAndFormat_, context.processPool()))
+    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(data1D, exportFileAndFormat_, context.processPool()))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

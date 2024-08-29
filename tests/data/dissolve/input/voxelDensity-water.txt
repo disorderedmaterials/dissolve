@@ -95,12 +95,29 @@ EndConfiguration
 
 Layer  'Processing'
 
-# Atomic mass voxel density
-Module  VoxelDensity  'VoxelDensity'
+# Trajectory Processing
+Module  ImportTrajectory  'ImportTrajectory01'
+  Configuration  'Bulk'
+
+  # Trajectory file contains 95 frames
+  Format  xyz  'dlpoly/water267-analysis/water-267-298K.xyz'
+  EndFormat
+EndModule
+
+# Gaussian atomic mass voxel density
+Module  VoxelDensity  'VoxelDensity(Mass)'
+    BinRange  0.0  10.0  0.05
     Configuration 'Bulk'
-    NAxisVoxels 1
+    VoxelSideLength 20.0083
     TargetProperty Mass
-    FitGaussian true
+EndModule
+
+# Atomic number voxel density
+Module  VoxelDensity  'VoxelDensity(AtomicNumber)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 20.0083
+    TargetProperty AtomicNumber
 EndModule
 
 EndLayer

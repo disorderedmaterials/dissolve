@@ -40,18 +40,10 @@ EndConfiguration
 Layer  'Processing'
 
 # Scattering length density voxel density
-Module  VoxelDensity  'VoxelDensity(1-bin)'
+Module  VoxelDensity  'VoxelDensity(8-bin)'
     BinRange  0.0  10.0  0.05 
     Configuration 'Bulk'
-    NAxisVoxels 1
-    TargetProperty ScatteringLengthDensity
-EndModule
-
-# Scattering length density voxel density
-Module  VoxelDensity  'VoxelDensity(2-bin)'
-    BinRange  0.0  10.0  0.05 
-    Configuration 'Bulk'
-    NAxisVoxels 2
+    VoxelSideLength 1.0
     TargetProperty ScatteringLengthDensity
 EndModule
 
@@ -59,15 +51,23 @@ EndModule
 Module  VoxelDensity  'VoxelDensity(4-bin)'
     BinRange  0.0  10.0  0.05 
     Configuration 'Bulk'
-    NAxisVoxels 4
+    VoxelSideLength 2.0
     TargetProperty ScatteringLengthDensity
 EndModule
 
 # Scattering length density voxel density
-Module  VoxelDensity  'VoxelDensity(8-bin)'
+Module  VoxelDensity  'VoxelDensity(2-bin)'
     BinRange  0.0  10.0  0.05 
     Configuration 'Bulk'
-    NAxisVoxels 8
+    VoxelSideLength 4.0
+    TargetProperty ScatteringLengthDensity
+EndModule
+
+# Scattering length density voxel density
+Module  VoxelDensity  'VoxelDensity(1-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 8.0
     TargetProperty ScatteringLengthDensity
 EndModule
 

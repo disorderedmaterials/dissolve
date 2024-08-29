@@ -6,6 +6,7 @@
 #include "gui/render/renderableData2D.h"
 #include "main/dissolve.h"
 #include "modules/voxelDensity/gui/voxelDensityWidget.h"
+#include <cmath>
 
 VoxelDensityModuleWidget::VoxelDensityModuleWidget(QWidget *parent, VoxelDensityModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)
@@ -37,7 +38,7 @@ std::optional<std::string> VoxelDensityModuleWidget::getData1DAxisLabel()
         case (VoxelDensityModule::TargetPropertyType::AtomicNumber):
             return "Z";
         case (VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity):
-            return "Scattering length density, cm^-2";
+            return "Scattering length density, cm\\sup{-2}";
         default:
             throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(type))));
     }
@@ -61,6 +62,15 @@ void VoxelDensityModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFl
                                                                    fmt::format("Data1D//{}", cfg->niceName()), cfg->niceName());
     }
 
+    voxelDensityGraph_->view().axes().setTitle(0, getData1DAxisLabel().value_or(""));
+    
+    if (module_)
+    {
+        auto voxelVolume = std::ceil(module_->voxelVolume()*std::pow(10.0, 3))/std::pow(10, 3);
+        std::string yAxisTitle = "N Voxels [of volume=" + std::string(fmt::format("{}", voxelVolume)) + " \\sym{angstrom}\\sup{3}" +"]";
+        voxelDensityGraph_->view().axes().setTitle(1, yAxisTitle);
+    }
+        
     // Validate renderables if they need it
     voxelDensityGraph_->validateRenderables(dissolve_.processingModuleData());
 

@@ -11,6 +11,7 @@
 #include "io/export/data1D.h"
 #include "module/module.h"
 #include "templates/array3D.h"
+#include <cmath>
 
 // Forward declarations
 
@@ -50,12 +51,12 @@ class VoxelDensityModule : public Module
     std::vector<const Species *> restrictToSpecies_;
     // Target property for analysis
     VoxelDensityModule::TargetPropertyType targetProperty_{TargetPropertyType::Mass};
-    // Number of analysis points
-    int nAxisVoxels_{20};
+    // Requested ideal side length of a single analysis voxel (angstroms)
+    double idealVoxelSideLength_{1.0};
+    // Number of analysis points along each axis of the unit cell
+    Vec3<int> nAxisVoxels_{1, 1, 1};
     // Voxel volume (cubic angstroms)
     double voxelVolume_{1.0};
-    // Fit a Gaussian function to the data
-    bool fitGaussian_{false};
     // Export target
     Data1DExportFileFormat exportFileAndFormat_;
 
@@ -69,6 +70,8 @@ class VoxelDensityModule : public Module
     Vec3<double> foldedCoordinates(const Vec3<double> &r, const Box *unitCell);
     // Return bound-coherent natural isotope scattering length density for element
     double scatteringLengthDensity(Elements::Element Z) { return Sears91::boundCoherent(Sears91::naturalIsotope(Z)); }
+    // Actual side length of a single analysis voxel (angstroms), calculated to suit the given unit cell axis
+    const double voxelSideLength(const double axisLength) { return axisLength / round(axisLength / idealVoxelSideLength_); }
     // Run main processing
     Module::ExecutionResult process(ModuleContext &moduleContext) override;
 };
