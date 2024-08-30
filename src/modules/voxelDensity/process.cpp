@@ -6,7 +6,7 @@
 #include "voxelDensity.h"
 
 void VoxelDensityModule::addValue(Vec3<double> coords, double value, Array3D<double> &array)
-{   
+{
     if (nAxisVoxels_.x == 1 && nAxisVoxels_.y == 1 && nAxisVoxels_.z == 1)
     {
         array.values()[0] += value;
