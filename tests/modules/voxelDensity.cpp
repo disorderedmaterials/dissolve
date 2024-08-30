@@ -33,11 +33,14 @@ class VoxelDensityModuleTest : public ::testing::Test
         int Z;
         double scatteringLengthDensity;
         VoxelDensityModule *modules[4];
-        Helium(VoxelDensityModuleTest &test) : boxSideLength(8), mass(4.002602), Z(2), scatteringLengthDensity(3.26), modules
-                        {test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(8-bin)"),
-                         test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(4-bin)"),
-                         test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(2-bin)"),
-                         test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(1-bin)")} {}
+        Helium(VoxelDensityModuleTest &test)
+            : boxSideLength(8), mass(4.002602), Z(2),
+              scatteringLengthDensity(3.26), modules{test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(8-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(4-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(2-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(1-bin)")}
+        {
+        }
     };
 
     // Water test constants
@@ -47,13 +50,16 @@ class VoxelDensityModuleTest : public ::testing::Test
         double mass;
         int Z;
         VoxelDensityModule *modules[2];
-        Water(VoxelDensityModuleTest &test) : boxSideLength(20.0083), mass(18.015), Z(10), modules
-                        {test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(Mass)"),
-                         test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(AtomicNumber)")} {}
+        Water(VoxelDensityModuleTest &test)
+            : boxSideLength(20.0083), mass(18.015),
+              Z(10), modules{test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(Mass)"),
+                             test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(AtomicNumber)")}
+        {
+        }
     };
 
     // Return instance of test constants
-    template<class T> const T constants() { return T(*this); }
+    template <class T> const T constants() { return T(*this); }
 };
 
 TEST_F(VoxelDensityModuleTest, ConfigurationTest)
@@ -86,7 +92,7 @@ TEST_F(VoxelDensityModuleTest, Mass)
         auto expectedVoxelSideLength = module->keywords().get<double, DoubleKeyword>("VoxelSideLength");
         EXPECT_EQ((*expectedVoxelSideLength), double(DissolveMath::power(2, n)));
 
-        auto nAxisVoxels = DissolveMath::power(2, 3-start);
+        auto nAxisVoxels = DissolveMath::power(2, 3 - start);
         const auto &data = systemTest.dissolve()
                                .processingModuleData()
                                .search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))
@@ -118,7 +124,7 @@ TEST_F(VoxelDensityModuleTest, AtomicNumber)
         auto expectedVoxelSideLength = module->keywords().get<double, DoubleKeyword>("VoxelSideLength");
         EXPECT_EQ((*expectedVoxelSideLength), double(DissolveMath::power(2, n)));
 
-        auto nAxisVoxels = DissolveMath::power(2, 3-start);
+        auto nAxisVoxels = DissolveMath::power(2, 3 - start);
         const auto &data = systemTest.dissolve()
                                .processingModuleData()
                                .search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))
@@ -150,7 +156,7 @@ TEST_F(VoxelDensityModuleTest, ScatteringLengthDensity)
         auto expectedVoxelSideLength = module->keywords().get<double, DoubleKeyword>("VoxelSideLength");
         EXPECT_EQ((*expectedVoxelSideLength), double(DissolveMath::power(2, n)));
 
-        auto nAxisVoxels = DissolveMath::power(2, 3-start);
+        auto nAxisVoxels = DissolveMath::power(2, 3 - start);
         const auto &data = systemTest.dissolve()
                                .processingModuleData()
                                .search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))
@@ -176,22 +182,20 @@ TEST_F(VoxelDensityModuleTest, Water)
     auto moduleMass = testData.modules[0];
     auto moduleZ = testData.modules[1];
 
-    const auto &dataMass = systemTest.dissolve()
-                        .processingModuleData()
-                        .search<const Data1D>(fmt::format("VoxelDensity(Mass)//Data1D"))
-                        ->get();
+    const auto &dataMass =
+        systemTest.dissolve().processingModuleData().search<const Data1D>(fmt::format("VoxelDensity(Mass)//Data1D"))->get();
     auto maxBinMass = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&dataMass)->values());
     auto binWidthMass = (*moduleMass->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange")).z;
     EXPECT_EQ(maxBinMass.second, 1.0);
-    ASSERT_NEAR(maxBinMass.first * binWidthMass, testData.mass*cfg->nMolecules()/(moduleMass->voxelVolume()), 10e-2);
+    ASSERT_NEAR(maxBinMass.first * binWidthMass, testData.mass * cfg->nMolecules() / (moduleMass->voxelVolume()), 10e-2);
 
     const auto &dataZ = systemTest.dissolve()
-                        .processingModuleData()
-                        .search<const Data1D>(fmt::format("VoxelDensity(AtomicNumber)//Data1D"))
-                        ->get();
+                            .processingModuleData()
+                            .search<const Data1D>(fmt::format("VoxelDensity(AtomicNumber)//Data1D"))
+                            ->get();
     auto maxBinZ = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&dataZ)->values());
     auto binWidthZ = (*moduleZ->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange")).z;
     EXPECT_EQ(maxBinZ.second, 1.0);
-    ASSERT_NEAR(maxBinZ.first * binWidthZ, testData.Z*cfg->nMolecules()/(moduleZ->voxelVolume()), 10e-2);
+    ASSERT_NEAR(maxBinZ.first * binWidthZ, testData.Z * cfg->nMolecules() / (moduleZ->voxelVolume()), 10e-2);
 }
 } // namespace UnitTest

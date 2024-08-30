@@ -39,7 +39,7 @@ int cp3(int i);
 
 /*
  * Logaritmic Functions
-*/
+ */
 // Natural (base-e) logarithm of n
 int log(int n);
 // Natural (base-e) logarithm of x

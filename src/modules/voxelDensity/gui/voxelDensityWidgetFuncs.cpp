@@ -63,14 +63,15 @@ void VoxelDensityModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFl
     }
 
     voxelDensityGraph_->view().axes().setTitle(0, getData1DAxisLabel().value_or(""));
-    
+
     if (module_)
     {
-        auto voxelVolume = std::ceil(module_->voxelVolume()*std::pow(10.0, 3))/std::pow(10, 3);
-        std::string yAxisTitle = "N Voxels [of volume=" + std::string(fmt::format("{}", voxelVolume)) + " \\sym{angstrom}\\sup{3}" +"]";
+        auto voxelVolume = std::ceil(module_->voxelVolume() * std::pow(10.0, 3)) / std::pow(10, 3);
+        std::string yAxisTitle =
+            "N Voxels [of volume=" + std::string(fmt::format("{}", voxelVolume)) + " \\sym{angstrom}\\sup{3}" + "]";
         voxelDensityGraph_->view().axes().setTitle(1, yAxisTitle);
     }
-        
+
     // Validate renderables if they need it
     voxelDensityGraph_->validateRenderables(dissolve_.processingModuleData());
 

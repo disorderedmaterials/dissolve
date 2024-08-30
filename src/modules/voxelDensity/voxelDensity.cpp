@@ -24,7 +24,8 @@ VoxelDensityModule::VoxelDensityModule() : Module(ModuleTypes::VoxelDensity)
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);
 
     keywords_.setOrganisation("Options", "Analysis", "Set the voxel density and property for analysis");
-    keywords_.add<DoubleKeyword>("VoxelSideLength", "Side length of a single analysis voxel (angstroms)", idealVoxelSideLength_, 0.1);
+    keywords_.add<DoubleKeyword>("VoxelSideLength", "Side length of a single analysis voxel (angstroms)", idealVoxelSideLength_,
+                                 0.1);
     keywords_.add<EnumOptionsKeyword<VoxelDensityModule::TargetPropertyType>>(
         "TargetProperty", "Target property for analysis", targetProperty_, VoxelDensityModule::targetPropertyTypes());
 

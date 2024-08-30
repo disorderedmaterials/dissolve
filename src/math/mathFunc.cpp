@@ -91,7 +91,7 @@ int cp3(int i) { return (i % 3); }
 
 /*
  * Logaritmic Functions
-*/
+ */
 // Natural (base-e) logarithm of n
 int log(int n) { return int(std::log(n)); }
 // Natural (base-e) logarithm of x

@@ -27,7 +27,8 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     nAxisVoxels_.z = int(round(boxZ / voxelSideLength(boxZ)));
 
     Messenger::print("Volume of unit cell voxels: {}.\n", voxelVolume_);
-    Messenger::print("Number of voxels along each axis: nX={}, nY={}, nZ={}.\n", nAxisVoxels_.x, nAxisVoxels_.y, nAxisVoxels_.z);
+    Messenger::print("Number of voxels along each axis: nX={}, nY={}, nZ={}.\n", nAxisVoxels_.x, nAxisVoxels_.y,
+                     nAxisVoxels_.z);
 
     // Calculate target property 3d map over unit cell voxels
     auto array3D = processingData.realise<Array3D<double>>("Array3D", name());
