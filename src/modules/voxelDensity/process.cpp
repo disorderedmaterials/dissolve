@@ -6,7 +6,13 @@
 #include "voxelDensity.h"
 
 void VoxelDensityModule::addValue(Vec3<double> coords, double value, Array3D<double> &array)
-{
+{   
+    if (nAxisVoxels_.x == 1 && nAxisVoxels_.y == 1 && nAxisVoxels_.z == 1)
+    {
+        array.values()[0] += value;
+        return;
+    }
+
     auto t = std::make_tuple((int)std::floor(coords.x * nAxisVoxels_.x), (int)std::floor(coords.y * nAxisVoxels_.y),
                              (int)std::floor(coords.z * nAxisVoxels_.z));
     array[t] += value;

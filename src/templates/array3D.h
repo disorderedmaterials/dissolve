@@ -94,10 +94,11 @@ template <class A> class Array3D
     // Return specified element as modifiable reference
     A &operator[](std::tuple<int, int, int> index)
     {
+        /*
         // Check if array is a single point (sides of length 1)
         if (nX_ == 1 && nY_ == 1 && nZ_ == 1)
             return array_[0];
-
+        */
         auto [x, y, z] = index;
         assert(x >= 0 && x < nX_);
         assert(y >= 0 && y < nY_);
