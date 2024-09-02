@@ -37,8 +37,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
                      nAxisVoxels_.z);
 
     // Calculate target property 3d map over unit cell voxels
-    auto array3D = processingData.realise<Array3D<double>>("Array3D", name());
-    array3D.initialise(nAxisVoxels_.x, nAxisVoxels_.y, nAxisVoxels_.z);
+    array3D_.initialise(nAxisVoxels_.x, nAxisVoxels_.y, nAxisVoxels_.z);
 
     if (!restrictToSpecies_.empty())
     {
@@ -55,14 +54,14 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
     const auto &atoms = targetConfiguration_->atoms();
 
-    auto massOp = [this, &array3D, &unitCell](auto &atom)
-    { addValue(foldedCoordinates(atom.r(), unitCell), AtomicMass::mass(atom.speciesAtom()->Z()), array3D); };
+    auto massOp = [this, &unitCell](auto &atom)
+    { addValue(foldedCoordinates(atom.r(), unitCell), AtomicMass::mass(atom.speciesAtom()->Z()), array3D_); };
 
-    auto atomicNumberOp = [this, &array3D, &unitCell](auto &atom)
-    { addValue(foldedCoordinates(atom.r(), unitCell), atom.speciesAtom()->Z(), array3D); };
+    auto atomicNumberOp = [this, &unitCell](auto &atom)
+    { addValue(foldedCoordinates(atom.r(), unitCell), atom.speciesAtom()->Z(), array3D_); };
 
-    auto scatteringLengthDensityOp = [this, &array3D, &unitCell](auto &atom)
-    { addValue(foldedCoordinates(atom.r(), unitCell), scatteringLengthDensity(atom.speciesAtom()->Z()), array3D); };
+    auto scatteringLengthDensityOp = [this, &unitCell](auto &atom)
+    { addValue(foldedCoordinates(atom.r(), unitCell), scatteringLengthDensity(atom.speciesAtom()->Z()), array3D_); };
 
     switch (targetProperty_)
     {
@@ -87,7 +86,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     hist.initialise(min, max, binWidth);
     hist.zeroBins();
 
-    for (const auto &value : array3D.values())
+    for (const auto &value : array3D_.values())
         hist.bin(value / voxelVolume_);
 
     auto &data1D = processingData.realise<Data1D>("Data1D", name(), GenericItem::InRestartFileFlag);

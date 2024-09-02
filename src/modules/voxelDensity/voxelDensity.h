@@ -43,6 +43,8 @@ class VoxelDensityModule : public Module
     double voxelVolume() const;
 
     private:
+    // 3D array for voxelising unit cell
+    Array3D<double> array3D_;
     // Range (min, max, delta) of voxel histogram axis
     Vec3<double> binRange_{0.0, 10.0, 0.05};
     // Target configuration
