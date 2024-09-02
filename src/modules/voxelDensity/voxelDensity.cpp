@@ -42,3 +42,15 @@ EnumOptions<VoxelDensityModule::TargetPropertyType> VoxelDensityModule::targetPr
                                {TargetPropertyType::AtomicNumber, "AtomicNumber"},
                                {TargetPropertyType::ScatteringLengthDensity, "ScatteringLengthDensity"}});
 }
+
+// Target property for analysis
+VoxelDensityModule::TargetPropertyType VoxelDensityModule::getCurrentProperty() const { return targetProperty_; }
+
+// Voxel volume (cubic angstroms)
+double VoxelDensityModule::voxelVolume() const { return voxelVolume_; }
+
+// Actual side length of a single analysis voxel (angstroms), calculated to suit the given unit cell axis
+double VoxelDensityModule::voxelSideLength(const double axisLength) const { return axisLength / round(axisLength / idealVoxelSideLength_); }
+
+// Return bound-coherent natural isotope scattering length density for element
+double VoxelDensityModule::scatteringLengthDensity(Elements::Element Z) { return Sears91::boundCoherent(Sears91::naturalIsotope(Z)); }

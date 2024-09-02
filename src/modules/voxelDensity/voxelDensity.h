@@ -38,9 +38,9 @@ class VoxelDensityModule : public Module
     // Return enum option info for TargetPropertyType
     static EnumOptions<VoxelDensityModule::TargetPropertyType> targetPropertyTypes();
     // Target property for analysis
-    VoxelDensityModule::TargetPropertyType getCurrentProperty() { return targetProperty_; }
+    VoxelDensityModule::TargetPropertyType getCurrentProperty() const;
     // Voxel volume (cubic angstroms)
-    const double voxelVolume() { return voxelVolume_; }
+    double voxelVolume() const;
 
     private:
     // Range (min, max, delta) of voxel histogram axis
@@ -69,9 +69,9 @@ class VoxelDensityModule : public Module
     // Return atomic coordinates folded into unit cell
     Vec3<double> foldedCoordinates(const Vec3<double> &r, const Box *unitCell);
     // Return bound-coherent natural isotope scattering length density for element
-    double scatteringLengthDensity(Elements::Element Z) { return Sears91::boundCoherent(Sears91::naturalIsotope(Z)); }
+    double scatteringLengthDensity(Elements::Element Z);
     // Actual side length of a single analysis voxel (angstroms), calculated to suit the given unit cell axis
-    const double voxelSideLength(const double axisLength) { return axisLength / round(axisLength / idealVoxelSideLength_); }
+    double voxelSideLength(const double axisLength) const;
     // Run main processing
     Module::ExecutionResult process(ModuleContext &moduleContext) override;
 };
