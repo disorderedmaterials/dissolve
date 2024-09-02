@@ -34,7 +34,7 @@ template <typename T> std::pair<std::size_t, T> maxValueAt(std::vector<T> values
     std::vector<double>::iterator result = std::max_element(values.begin(), values.end());
 
     // { index, maxvalue }
-    return {std::distance(values.begin(), result), *result};
+    return {result - values.begin(), *result};
 }
 
 }; // namespace DissolveLimits
