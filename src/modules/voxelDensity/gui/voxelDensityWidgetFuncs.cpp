@@ -34,11 +34,11 @@ std::optional<std::string> VoxelDensityModuleWidget::getData1DAxisLabel()
     switch (type)
     {
         case (VoxelDensityModule::TargetPropertyType::Mass):
-            return "Atomic mass unit, u";
+            return "Atomic mass unit, u \\sym{angstrom}\\sup{-3}";
         case (VoxelDensityModule::TargetPropertyType::AtomicNumber):
-            return "Z";
+            return "Z \\sym{angstrom}\\sup{-3}";
         case (VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity):
-            return "Scattering length density, cm\\sup{-2}";
+            return "Scattering length density, cm\\sup{-2} \\sym{angstrom}\\sup{3}";
         default:
             throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(type))));
     }
