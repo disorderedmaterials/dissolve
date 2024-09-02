@@ -38,7 +38,7 @@ std::optional<std::string> VoxelDensityModuleWidget::getData1DAxisLabel()
         case (VoxelDensityModule::TargetPropertyType::AtomicNumber):
             return "Z \\sym{angstrom}\\sup{-3}";
         case (VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity):
-            return "Scattering length density, cm\\sup{-2} \\sym{angstrom}\\sup{3}";
+            return "Scattering length density, cm\\sup{-2} \\sym{angstrom}\\sup{-3}";
         default:
             throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(type))));
     }

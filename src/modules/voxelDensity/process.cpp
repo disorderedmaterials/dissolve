@@ -58,9 +58,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
             }
 
             if (included)
-            {
                 targetConfiguration_->removeMolecules(sp);
-            }
         }
     }
 
