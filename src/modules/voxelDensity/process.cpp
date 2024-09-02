@@ -46,16 +46,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 
         for (const auto &[sp, N] : cfgSpecies)
         {
-            bool included = false;
-
-            for (const auto &spTarget : restrictToSpecies_)
-            {
-                if (sp->name() == spTarget->name())
-                {
-                    included = true;
-                    break;
-                }
-            }
+            bool included = std::any_of(restricToToSpecies_.begin(), restrictToSpecies_.end(), [sp](auto &spTarget) { return sp->name() == spTarget->name(); });
 
             if (included)
                 targetConfiguration_->removeMolecules(sp);
