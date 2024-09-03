@@ -45,6 +45,25 @@ runs:
     run: |
       set -ex
 
+      ### Begin unholy hack
+      ###
+      ### For reasons unknown, when nix is run under GitHub actions,
+      ### it ignores the submodules flag, meaning that flakes with
+      ### submodules cannot be built
+      ###
+      ### As a blasphemous workaround, I've added a step to bring the
+      ### submodule into the main repo.  Hopefully, submodules are
+      ### made the default flake behaviour in the upcoming release,
+      ### this will no longer be necessary.  If not, we might have to
+      ### make the submodule an extra input to the flake, but that
+      ### will take some extra time.
+      ###
+      ### If you are reading this comment in 2026, try removing this
+      ### entire hack and see if the problem fixed itself.  You may
+      ### also need to update the action that installs nix in the
+      ### first place.  If that doesn't solve the problem, then we
+      ### should go ahead and just make the submodule a flake input.
+
       git submodule update --init --recursive
       git config --global user.email "no_one@example.com"
       git config --global user.name "GitHub Actions"
@@ -59,7 +78,7 @@ runs:
       git add QuickPlot
       git commit -m "Resurrect submodule"
 
-      nix --version
+      ### End unholy hack
 
       # Build Singularity target
       target=${{ inputs.target }}
