@@ -50,7 +50,13 @@ VoxelDensityModule::TargetPropertyType VoxelDensityModule::getCurrentProperty() 
 double VoxelDensityModule::voxelVolume() const { return voxelVolume_; }
 
 // Actual side length of a single analysis voxel (angstroms), calculated to suit the given unit cell axis
-double VoxelDensityModule::voxelSideLength(const double axisLength) const { return axisLength / round(axisLength / idealVoxelSideLength_); }
+double VoxelDensityModule::voxelSideLength(const double axisLength) const
+{
+    return axisLength / round(axisLength / idealVoxelSideLength_);
+}
 
 // Return bound-coherent natural isotope scattering length density for element
-double VoxelDensityModule::scatteringLengthDensity(Elements::Element Z) { return Sears91::boundCoherent(Sears91::naturalIsotope(Z)); }
+double VoxelDensityModule::scatteringLengthDensity(Elements::Element Z)
+{
+    return Sears91::boundCoherent(Sears91::naturalIsotope(Z));
+}
