@@ -32,13 +32,21 @@ class VoxelDensityModuleTest : public ::testing::Test
         double mass;
         int Z;
         double scatteringLengthDensity;
-        VoxelDensityModule *modules[4];
+        VoxelDensityModule *modules[12];
         Helium(VoxelDensityModuleTest &test)
             : boxSideLength(8), mass(4.002602), Z(2),
-              scatteringLengthDensity(3.26), modules{test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(8-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(4-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(2-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(1-bin)")}
+              scatteringLengthDensity(3.26), modules{test.systemTest.getModule<VoxelDensityModule>("Mass(8-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("Mass(4-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("Mass(2-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("Mass(1-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("Z(8-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("Z(4-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("Z(2-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("Z(1-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("ScatteringLengthDensity(8-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("ScatteringLengthDensity(4-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("ScatteringLengthDensity(2-bin)"),
+                                                     test.systemTest.getModule<VoxelDensityModule>("ScatteringLengthDensity(1-bin)")}
         {
         }
     };
@@ -75,7 +83,7 @@ TEST_F(VoxelDensityModuleTest, ConfigurationTest)
 
 TEST_F(VoxelDensityModuleTest, Mass)
 {
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium-mass.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium.txt"));
 
     // Iterate
     ASSERT_TRUE(systemTest.iterateRestart(1));
@@ -95,7 +103,7 @@ TEST_F(VoxelDensityModuleTest, Mass)
         auto nAxisVoxels = DissolveMath::power(2, 3 - start);
         const auto &data1D = systemTest.dissolve()
                                .processingModuleData()
-                               .search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))
+                               .search<const Data1D>(fmt::format("Mass({}-bin)//Data1D", nAxisVoxels))
                                ->get();
         auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1D)->values());
         auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
@@ -107,7 +115,10 @@ TEST_F(VoxelDensityModuleTest, Mass)
 
 TEST_F(VoxelDensityModuleTest, AtomicNumber)
 {
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium-Z.txt"));
+    // Apply an offset to modules in the dissolve input file for this test case
+    int offset = 4;
+
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium.txt"));
 
     // Iterate
     ASSERT_TRUE(systemTest.iterateRestart(1));
@@ -118,7 +129,7 @@ TEST_F(VoxelDensityModuleTest, AtomicNumber)
     // Check data for each module instance containing different numbers of voxels (1, 8, 64, 512)
     for (int n = start; n > 0; --n)
     {
-        auto module = consts.modules[n];
+        auto module = consts.modules[n + offset];
 
         // Check that the voxel side length is as expected for each case
         auto expectedVoxelSideLength = module->keywords().get<double, DoubleKeyword>("VoxelSideLength");
@@ -127,7 +138,7 @@ TEST_F(VoxelDensityModuleTest, AtomicNumber)
         auto nAxisVoxels = DissolveMath::power(2, 3 - start);
         const auto &data1D = systemTest.dissolve()
                                .processingModuleData()
-                               .search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))
+                               .search<const Data1D>(fmt::format("Z({}-bin)//Data1D", nAxisVoxels))
                                ->get();
         auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1D)->values());
         auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
@@ -139,7 +150,10 @@ TEST_F(VoxelDensityModuleTest, AtomicNumber)
 
 TEST_F(VoxelDensityModuleTest, ScatteringLengthDensity)
 {
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium-sLD.txt"));
+    // Apply an offset to modules in the dissolve input file for this test case
+    int offset = 8;
+
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-helium.txt"));
 
     // Iterate
     ASSERT_TRUE(systemTest.iterateRestart(1));
@@ -150,7 +164,7 @@ TEST_F(VoxelDensityModuleTest, ScatteringLengthDensity)
     // Check data for each module instance containing different numbers of voxels (1, 8, 64, 512)
     for (int n = start; n > 0; --n)
     {
-        auto module = consts.modules[n];
+        auto module = consts.modules[n + offset];
 
         // Check that the voxel side length is as expected for each case
         auto expectedVoxelSideLength = module->keywords().get<double, DoubleKeyword>("VoxelSideLength");
@@ -159,7 +173,7 @@ TEST_F(VoxelDensityModuleTest, ScatteringLengthDensity)
         auto nAxisVoxels = DissolveMath::power(2, 3 - start);
         const auto &data1D = systemTest.dissolve()
                                .processingModuleData()
-                               .search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))
+                               .search<const Data1D>(fmt::format("ScatteringLengthDensity({}-bin)//Data1D", nAxisVoxels))
                                ->get();
         auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1D)->values());
         auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
