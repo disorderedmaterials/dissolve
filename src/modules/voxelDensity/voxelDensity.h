@@ -67,7 +67,7 @@ class VoxelDensityModule : public Module
      */
     private:
     // Add value to array
-    void addValue(Vec3<double> coords, double value, Array3D<double> &array);
+    void addValue(Vec3<double> coords, double value);
     // Return atomic coordinates folded into unit cell
     Vec3<double> foldedCoordinates(const Vec3<double> &r, const Box *unitCell);
     // Return bound-coherent natural isotope scattering length density for element
