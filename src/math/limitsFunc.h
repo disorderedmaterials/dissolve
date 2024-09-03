@@ -31,7 +31,7 @@ template <typename T> std::pair<std::size_t, T> maxValueAt(std::vector<T> values
     if (values.empty())
         return {0, 0.0};
 
-    std::vector<double>::iterator result = std::max_element(values.begin(), values.end());
+    auto result = std::max_element(values.begin(), values.end());
 
     // { index, maxvalue }
     return {result - values.begin(), *result};
