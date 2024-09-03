@@ -14,7 +14,7 @@ description: Store numerical reference parameters
 
 ## Overview
 
-The `Parameters` node stores zero or more named numerical values that may be referenced in [expressions]({{< ref "expressions" >}}) within nodes contained in the same encompassing [procedure]({{< ref "procedures" >}}).
+The `Parameters` node stores zero or more named numerical values that may be referenced in [expressions]({{< ref "expressions" >}}) within nodes contained in the same encompassing [generator]({{< ref "generators" >}}).
 
 ## Description
 

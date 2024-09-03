@@ -21,7 +21,7 @@ With all of this ready to go, the first step is equilibrating the system.
 
 ## Equilibration
 
-Typically, Dissolve will construct your initial configuration box from a defined generator [procedure]({{< ref "procedures" >}}) and which will most likely involve adding molecules at random positions and rotations. The first step is to equilibrate this high-energy system to a state where the energy is stable and there are no bad overlaps between atoms left in the system. The energy is of course completely defined by the forcefield you've used on your species, so we need to make a further assumption here that it is a reasonable forcefield!
+Typically, Dissolve will construct your initial configuration box from a defined [generator]({{< ref "generators" >}}) and which will most likely involve adding molecules at random positions and rotations. The first step is to equilibrate this high-energy system to a state where the energy is stable and there are no bad overlaps between atoms left in the system. The energy is of course completely defined by the forcefield you've used on your species, so we need to make a further assumption here that it is a reasonable forcefield!
 
 For bulk liquid systems it is generally a good idea to apply a size factor to the box during these initial stages - this scales the box volume and the positions of the molecules, and greatly helps in the removal of overlapping molecules. You can find this option on the [configuration tab]({{< ref "configurationtab" >}}), and a reasonable value to use is `10`.
 
