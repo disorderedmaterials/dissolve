@@ -34,19 +34,19 @@ class VoxelDensityModuleTest : public ::testing::Test
         double scatteringLengthDensity;
         VoxelDensityModule *modules[12];
         Helium(VoxelDensityModuleTest &test)
-            : boxSideLength(8), mass(4.002602), Z(2),
-              scatteringLengthDensity(3.26), modules{test.systemTest.getModule<VoxelDensityModule>("Mass(8-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("Mass(4-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("Mass(2-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("Mass(1-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("Z(8-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("Z(4-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("Z(2-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("Z(1-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("ScatteringLengthDensity(8-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("ScatteringLengthDensity(4-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("ScatteringLengthDensity(2-bin)"),
-                                                     test.systemTest.getModule<VoxelDensityModule>("ScatteringLengthDensity(1-bin)")}
+            : boxSideLength(8), mass(4.002602), Z(2), scatteringLengthDensity(3.26),
+              modules{test.systemTest.getModule<VoxelDensityModule>("Mass(8-bin)"),
+                      test.systemTest.getModule<VoxelDensityModule>("Mass(4-bin)"),
+                      test.systemTest.getModule<VoxelDensityModule>("Mass(2-bin)"),
+                      test.systemTest.getModule<VoxelDensityModule>("Mass(1-bin)"),
+                      test.systemTest.getModule<VoxelDensityModule>("Z(8-bin)"),
+                      test.systemTest.getModule<VoxelDensityModule>("Z(4-bin)"),
+                      test.systemTest.getModule<VoxelDensityModule>("Z(2-bin)"),
+                      test.systemTest.getModule<VoxelDensityModule>("Z(1-bin)"),
+                      test.systemTest.getModule<VoxelDensityModule>("ScatteringLengthDensity(8-bin)"),
+                      test.systemTest.getModule<VoxelDensityModule>("ScatteringLengthDensity(4-bin)"),
+                      test.systemTest.getModule<VoxelDensityModule>("ScatteringLengthDensity(2-bin)"),
+                      test.systemTest.getModule<VoxelDensityModule>("ScatteringLengthDensity(1-bin)")}
         {
         }
     };
@@ -102,9 +102,9 @@ TEST_F(VoxelDensityModuleTest, Mass)
 
         auto nAxisVoxels = DissolveMath::power(2, 3 - start);
         const auto &data1D = systemTest.dissolve()
-                               .processingModuleData()
-                               .search<const Data1D>(fmt::format("Mass({}-bin)//Data1D", nAxisVoxels))
-                               ->get();
+                                 .processingModuleData()
+                                 .search<const Data1D>(fmt::format("Mass({}-bin)//Data1D", nAxisVoxels))
+                                 ->get();
         auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1D)->values());
         auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
         auto binWidth = (*binRange).z;
@@ -137,9 +137,9 @@ TEST_F(VoxelDensityModuleTest, AtomicNumber)
 
         auto nAxisVoxels = DissolveMath::power(2, 3 - start);
         const auto &data1D = systemTest.dissolve()
-                               .processingModuleData()
-                               .search<const Data1D>(fmt::format("Z({}-bin)//Data1D", nAxisVoxels))
-                               ->get();
+                                 .processingModuleData()
+                                 .search<const Data1D>(fmt::format("Z({}-bin)//Data1D", nAxisVoxels))
+                                 ->get();
         auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1D)->values());
         auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
         auto binWidth = (*binRange).z;
@@ -172,9 +172,9 @@ TEST_F(VoxelDensityModuleTest, ScatteringLengthDensity)
 
         auto nAxisVoxels = DissolveMath::power(2, 3 - start);
         const auto &data1D = systemTest.dissolve()
-                               .processingModuleData()
-                               .search<const Data1D>(fmt::format("ScatteringLengthDensity({}-bin)//Data1D", nAxisVoxels))
-                               ->get();
+                                 .processingModuleData()
+                                 .search<const Data1D>(fmt::format("ScatteringLengthDensity({}-bin)//Data1D", nAxisVoxels))
+                                 ->get();
         auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1D)->values());
         auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
         auto binWidth = (*binRange).z;
@@ -204,9 +204,9 @@ TEST_F(VoxelDensityModuleTest, Water)
     ASSERT_NEAR(maxBinMass.first * binWidthMass, consts.mass * cfg->nMolecules() / (moduleMass->voxelVolume()), 10e-2);
 
     const auto &data1DZ = systemTest.dissolve()
-                            .processingModuleData()
-                            .search<const Data1D>(fmt::format("VoxelDensity(AtomicNumber)//Data1D"))
-                            ->get();
+                              .processingModuleData()
+                              .search<const Data1D>(fmt::format("VoxelDensity(AtomicNumber)//Data1D"))
+                              ->get();
     auto maxBinZ = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1DZ)->values());
     auto binWidthZ = (*moduleZ->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange")).z;
     EXPECT_EQ(maxBinZ.second, 1.0);
