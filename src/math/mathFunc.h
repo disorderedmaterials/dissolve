@@ -37,20 +37,4 @@ double sgn(double a, double signOf);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i);
 
-/*
- * Logaritmic Functions
- */
-// Natural (base-e) logarithm of n
-int log(int n);
-// Natural (base-e) logarithm of x
-double log(double x);
-// Base-2 logarithm of n
-int log2(int n);
-// Base-2 logarithm of x
-double log2(double x);
-// Base-10 logarithm of n
-int log10(int n);
-// Base-2 logarithm of x
-double log10(double x);
-
 }; // namespace DissolveMath

@@ -80,27 +80,27 @@ TEST_F(VoxelDensityModuleTest, Mass)
     // Iterate
     ASSERT_TRUE(systemTest.iterateRestart(1));
 
-    auto testData = constants<VoxelDensityModuleTest::Helium>();
-    auto start = DissolveMath::log2(testData.boxSideLength);
+    auto consts = constants<VoxelDensityModuleTest::Helium>();
+    auto start = int(std::log2(consts.boxSideLength));
 
     // Check data for each module instance containing different numbers of voxels (1, 8, 64, 512)
     for (int n = start; n > 0; --n)
     {
-        auto module = testData.modules[n];
+        auto module = consts.modules[n];
 
         // Check that the voxel side length is as expected for each case
         auto expectedVoxelSideLength = module->keywords().get<double, DoubleKeyword>("VoxelSideLength");
         EXPECT_EQ((*expectedVoxelSideLength), double(DissolveMath::power(2, n)));
 
         auto nAxisVoxels = DissolveMath::power(2, 3 - start);
-        const auto &data = systemTest.dissolve()
+        const auto &data1D = systemTest.dissolve()
                                .processingModuleData()
                                .search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))
                                ->get();
-        auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data)->values());
+        auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1D)->values());
         auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
         auto binWidth = (*binRange).z;
-        ASSERT_NEAR(maxBin.first * binWidth, testData.mass, 10e-2);
+        ASSERT_NEAR(maxBin.first * binWidth, consts.mass, 10e-2);
         ASSERT_EQ(maxBin.second, DissolveMath::power(nAxisVoxels, 3));
     }
 }
@@ -112,27 +112,27 @@ TEST_F(VoxelDensityModuleTest, AtomicNumber)
     // Iterate
     ASSERT_TRUE(systemTest.iterateRestart(1));
 
-    auto testData = constants<VoxelDensityModuleTest::Helium>();
-    auto start = DissolveMath::log2(testData.boxSideLength);
+    auto consts = constants<VoxelDensityModuleTest::Helium>();
+    auto start = int(std::log2(consts.boxSideLength));
 
     // Check data for each module instance containing different numbers of voxels (1, 8, 64, 512)
     for (int n = start; n > 0; --n)
     {
-        auto module = testData.modules[n];
+        auto module = consts.modules[n];
 
         // Check that the voxel side length is as expected for each case
         auto expectedVoxelSideLength = module->keywords().get<double, DoubleKeyword>("VoxelSideLength");
         EXPECT_EQ((*expectedVoxelSideLength), double(DissolveMath::power(2, n)));
 
         auto nAxisVoxels = DissolveMath::power(2, 3 - start);
-        const auto &data = systemTest.dissolve()
+        const auto &data1D = systemTest.dissolve()
                                .processingModuleData()
                                .search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))
                                ->get();
-        auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data)->values());
+        auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1D)->values());
         auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
         auto binWidth = (*binRange).z;
-        ASSERT_EQ(maxBin.first * binWidth, testData.Z);
+        ASSERT_EQ(maxBin.first * binWidth, consts.Z);
         ASSERT_EQ(maxBin.second, DissolveMath::power(nAxisVoxels, 3));
     }
 }
@@ -144,27 +144,27 @@ TEST_F(VoxelDensityModuleTest, ScatteringLengthDensity)
     // Iterate
     ASSERT_TRUE(systemTest.iterateRestart(1));
 
-    auto testData = constants<VoxelDensityModuleTest::Helium>();
-    auto start = DissolveMath::log2(testData.boxSideLength);
+    auto consts = constants<VoxelDensityModuleTest::Helium>();
+    auto start = int(std::log2(consts.boxSideLength));
 
     // Check data for each module instance containing different numbers of voxels (1, 8, 64, 512)
     for (int n = start; n > 0; --n)
     {
-        auto module = testData.modules[n];
+        auto module = consts.modules[n];
 
         // Check that the voxel side length is as expected for each case
         auto expectedVoxelSideLength = module->keywords().get<double, DoubleKeyword>("VoxelSideLength");
         EXPECT_EQ((*expectedVoxelSideLength), double(DissolveMath::power(2, n)));
 
         auto nAxisVoxels = DissolveMath::power(2, 3 - start);
-        const auto &data = systemTest.dissolve()
+        const auto &data1D = systemTest.dissolve()
                                .processingModuleData()
                                .search<const Data1D>(fmt::format("VoxelDensity({}-bin)//Data1D", nAxisVoxels))
                                ->get();
-        auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data)->values());
+        auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1D)->values());
         auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
         auto binWidth = (*binRange).z;
-        ASSERT_NEAR(maxBin.first * binWidth, testData.scatteringLengthDensity, 10e-3);
+        ASSERT_NEAR(maxBin.first * binWidth, consts.scatteringLengthDensity, 10e-3);
         ASSERT_EQ(maxBin.second, DissolveMath::power(nAxisVoxels, 3));
     }
 }
@@ -178,24 +178,24 @@ TEST_F(VoxelDensityModuleTest, Water)
     // Iterate for 95 frames
     ASSERT_TRUE(systemTest.iterateRestart(95));
 
-    auto testData = constants<VoxelDensityModuleTest::Water>();
-    auto moduleMass = testData.modules[0];
-    auto moduleZ = testData.modules[1];
+    auto consts = constants<VoxelDensityModuleTest::Water>();
+    auto moduleMass = consts.modules[0];
+    auto moduleZ = consts.modules[1];
 
-    const auto &dataMass =
+    const auto &data1DMass =
         systemTest.dissolve().processingModuleData().search<const Data1D>(fmt::format("VoxelDensity(Mass)//Data1D"))->get();
-    auto maxBinMass = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&dataMass)->values());
+    auto maxBinMass = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1DMass)->values());
     auto binWidthMass = (*moduleMass->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange")).z;
     EXPECT_EQ(maxBinMass.second, 1.0);
-    ASSERT_NEAR(maxBinMass.first * binWidthMass, testData.mass * cfg->nMolecules() / (moduleMass->voxelVolume()), 10e-2);
+    ASSERT_NEAR(maxBinMass.first * binWidthMass, consts.mass * cfg->nMolecules() / (moduleMass->voxelVolume()), 10e-2);
 
-    const auto &dataZ = systemTest.dissolve()
+    const auto &data1DZ = systemTest.dissolve()
                             .processingModuleData()
                             .search<const Data1D>(fmt::format("VoxelDensity(AtomicNumber)//Data1D"))
                             ->get();
-    auto maxBinZ = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&dataZ)->values());
+    auto maxBinZ = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1DZ)->values());
     auto binWidthZ = (*moduleZ->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange")).z;
     EXPECT_EQ(maxBinZ.second, 1.0);
-    ASSERT_NEAR(maxBinZ.first * binWidthZ, testData.Z * cfg->nMolecules() / (moduleZ->voxelVolume()), 10e-2);
+    ASSERT_NEAR(maxBinZ.first * binWidthZ, consts.Z * cfg->nMolecules() / (moduleZ->voxelVolume()), 10e-2);
 }
 } // namespace UnitTest
