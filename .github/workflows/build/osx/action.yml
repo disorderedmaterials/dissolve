@@ -44,7 +44,7 @@ runs:
       path: ${{ runner.temp }}/qt
 
   - name: Install Qt
-    # if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
+    if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
