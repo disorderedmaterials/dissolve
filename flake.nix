@@ -48,8 +48,10 @@
           libGL.dev
           libglvnd
           libglvnd.dev
+          qt6.qt3d
           qt6.qtbase
           qt6.qtbase.dev
+          qt6.qtquick3d
           qt6.qtsvg
           qt6.qtshadertools
           qt6.qttools
@@ -70,13 +72,7 @@
           pkgs.stdenv.mkDerivation ({
             inherit version;
             pname = exe-name mpi gui;
-            src = builtins.path {
-              path = ./.;
-              name = "dissolve-src";
-              filter = path: type:
-                type != "directory" || builtins.baseNameOf path
-                != ".azure-pipelines" || builtins.baseNameOf path != "web";
-            };
+            src = ./. ;
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs system pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
@@ -189,7 +185,8 @@
             }:${
               pkgs.lib.makeLibraryPath [ pkgs.libglvnd ]
             }"''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-            export QT_PLUGIN_PATH="${pkgs.qt6.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
+            # export QT_PLUGIN_PATH="${pkgs.qt6.qt3d}/lib/qt-6/plugins:${pkgs.qt6.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
+            export QT_PLUGIN_PATH="${pkgs.qt6.qtquick3d}/lib/qt-6/plugins:${pkgs.qt6.qt3d}/lib/qt-6/plugins:${pkgs.qt6.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
           '';
 
           CMAKE_CXX_COMPILER_LAUNCHER =
@@ -198,8 +195,9 @@
             "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
-          QML_IMPORT_PATH = "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
-          QML2_IMPORT_PATH = "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
+          Qt6Quick3D_DIR = "${pkgs.qt6.qtquick3d}/lib/";
+          QML_IMPORT_PATH = "${pkgs.qt6.qtquick3d}/lib/qt-6/qml:${pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
+          QML2_IMPORT_PATH = "$${pkgs.qt6.qtquick3d}/lib/qt-6/qml:{pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
         };
 
         apps = {

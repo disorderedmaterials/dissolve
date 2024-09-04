@@ -48,7 +48,7 @@ runs:
     shell: bash
     run: |
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
-      aqt install-qt --outputdir ${{ runner.temp }}/qt mac desktop ${{ env.qtVersion }}
+      aqt install-qt --outputdir ${{ runner.temp }}/qt mac desktop ${{ env.qtVersion }} -m all
 
   #
   # Main Build
@@ -68,6 +68,7 @@ runs:
     shell: bash
     run: |
       set -ex
+      git submodule update --init --recursive
 
       # Setup paths
       export PATH="$(python3 -m site --user-base)/bin:$PATH"

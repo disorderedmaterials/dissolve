@@ -26,6 +26,7 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install ninja-build python3-setuptools uuid uuid-dev
+          git submodule update --init --recursive
       - name: Install Conan
         run: |
           sudo pip3 install wheel

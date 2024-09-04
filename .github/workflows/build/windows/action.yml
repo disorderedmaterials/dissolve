@@ -40,10 +40,10 @@ runs:
       path: ${{ runner.temp }}\qt
 
   - name: Install Qt
-    if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
+    # if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
-      aqt install-qt --outputdir ${RUNNER_TEMP}/qt windows desktop ${{ env.qtVersion }} win64_msvc2019_64
+      aqt install-qt --outputdir ${RUNNER_TEMP}/qt windows desktop ${{ env.qtVersion }} win64_msvc2019_64 -m all
 
   - name: Setup MSVC Compiler
     uses: ilammy/msvc-dev-cmd@v1
@@ -150,6 +150,7 @@ runs:
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
+      git submodule update --init --recursive
       # Setup environment
       Qt6_DIR="${RUNNER_TEMP}\qt\${{ env.qtVersion }}\msvc2019_64"
       ANTLR_EXE="${RUNNER_TEMP}\antlr-${{ env.antlrVersion }}-complete.jar"

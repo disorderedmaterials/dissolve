@@ -118,6 +118,11 @@ if(GUI)
                QmlModels
                QmlTools
                Quick
+               Quick3D
+               3DCore
+               3DExtras
+               3DRender
+               3DExtras
                QuickWidgets
                QuickControls2
                REQUIRED
@@ -262,7 +267,17 @@ if(GUI)
   )
 
   # Dissolve QML GUI
-  qt_add_executable(${qmlgui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui-qml.cpp ${SRCS}/gui-qml/resources.qrc)
+  qt_add_executable(${qmlgui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui-qml.cpp)
+  set_source_files_properties(${SRCS}/gui-qml/qml/DissolveMain.qml PROPERTIES QT_RESOURCE_ALIAS qml/DissolveMain.qml)
+  qt_add_qml_module(
+    ${qmlgui_target_name}
+    VERSION
+    0.1
+    URI
+    Dissolve
+    QML_FILES
+    ${SRCS}/gui-qml/qml/DissolveMain.qml
+  )
 
   # Set project-local include directories for target (we expect to need less of these dependencies over time)
   target_include_directories(
@@ -339,6 +354,8 @@ target_link_libraries(
 # Build GUI target executables
 if(GUI)
 
+  add_subdirectory(QuickPlot/src)
+
   # Main Dissolve GUI
   target_link_libraries(
     ${gui_target_name}
@@ -371,9 +388,9 @@ if(GUI)
     ${qmlgui_target_name}
     PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
            # Module gui libs
-           gui-qml ${NO_WHOLE_ARCHIVE_FLAG}
+           gui-qml ${NO_WHOLE_ARCHIVE_FLAG} QuickPlotplugin
     PRIVATE # External libs
-            Qt6::Qml ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
+            Qt6::Quick3D Qt6::Qml ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
   )
 
   qt_generate_deploy_qml_app_script(

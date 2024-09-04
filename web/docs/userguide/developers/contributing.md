@@ -64,6 +64,7 @@ Resolving deltas: 100% (27682/27682), done.
 Checking out files: 100% (2309/2309), done.
 
 bob@linux:~> cd dissolve
+bob@linux:~> git submodule update --init --recursive
 bob@linux:~> ls
 
 AUTHORS     changeversion   commit        dissolve.kdev4  extra        NEWS    tests

@@ -30,7 +30,7 @@ int main(int args, char **argv)
     QGuiApplication app(args, argv);
 
     QQmlApplicationEngine engine;
-    const QUrl url(u"qrc:/main/qml/DissolveMain.qml"_qs);
+    const QUrl url(u"qrc:/Dissolve/qml/DissolveMain.qml"_qs);
 
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app, []() { QCoreApplication::exit(-1); },

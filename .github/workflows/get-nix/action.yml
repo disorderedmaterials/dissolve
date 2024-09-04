@@ -13,5 +13,7 @@ runs:
     uses: cachix/install-nix-action@v25
     with:
       nix_path: nixpkgs=channel:nixos-unstable
-      extra_nix_config: "system-features = nixos-test benchmark big-parallel kvm"
+      extra_nix_config: |
+        system-features = nixos-test benchmark big-parallel kvm
+        experimental-features = configurable-impure-env nix-command flakes
 
