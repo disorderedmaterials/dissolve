@@ -44,6 +44,8 @@
 #include "modules/orientedSDF/orientedSDF.h"
 #include "modules/qSpecies/gui/qSpeciesWidget.h"
 #include "modules/qSpecies/qSpecies.h"
+#include "modules/ringPopulations/gui/ringPopulationsWidget.h"
+#include "modules/ringPopulations/ringPopulations.h"
 #include "modules/sdf/gui/sdfWidget.h"
 #include "modules/sdf/sdf.h"
 #include "modules/siteRDF/gui/siteRDFWidget.h"
@@ -81,6 +83,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<NeutronSQModule, NeutronSQModuleWidget>();
     registerProducer<OrientedSDFModule, OrientedSDFModuleWidget>();
     registerProducer<QSpeciesModule, QSpeciesModuleWidget>();
+    registerProducer<RingPopulationsModule, RingPopulationsModuleWidget>();
     registerProducer<SDFModule, SDFModuleWidget>();
     registerProducer<SkeletonModule, SkeletonModuleWidget>();
     registerProducer<SiteRDFModule, SiteRDFModuleWidget>();
