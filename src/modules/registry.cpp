@@ -85,7 +85,8 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ModifierOSitesModule>(ModuleTypes::ModifierOSites,
                                            "Calculate the percentage FO, BO and NBO bonded to a modifier atom", "Analysis");
     registerProducer<QSpeciesModule>(ModuleTypes::QSpecies, "Calculate QSpecies of a network former", "Analysis");
-    registerProducer<RingPopulationsModule>(ModuleTypes::RingPopulations, "Calculate the size of rings in a system");
+    registerProducer<RingPopulationsModule>(ModuleTypes::RingPopulations, "Calculate the size of rings in a system",
+                                            "Analysis");
     registerProducer<SDFModule>(ModuleTypes::SDF, "Calculate spatial density functions around oriented sites", "Analysis");
     registerProducer<SiteRDFModule>(ModuleTypes::SiteRDF, "Calculate radial distribution functions between sites", "Analysis");
     registerProducer<SQModule>(ModuleTypes::SQ, "Transform g(r) into unweighted S(Q)", "Correlation Functions");
