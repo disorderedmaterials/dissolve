@@ -15,10 +15,6 @@ VoxelDensityModule::VoxelDensityModule() : Module(ModuleTypes::VoxelDensity)
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
         ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
-    keywords_.setOrganisation("Options", "Species");
-    keywords_.add<SpeciesVectorKeyword>("RestrictToSpecies", "Restrict the calculation to the specified Species",
-                                        restrictToSpecies_);
-
     keywords_.setOrganisation("Options", "Ranges");
     keywords_.add<Vec3DoubleKeyword>("BinRange", "Range (min, max, delta) of voxel axis", binRange_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);

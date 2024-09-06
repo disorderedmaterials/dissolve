@@ -14,7 +14,6 @@
 #include <cmath>
 
 // Forward declarations
-
 class Configuration;
 
 // VoxelDensity Module
@@ -49,8 +48,6 @@ class VoxelDensityModule : public Module
     Vec3<double> binRange_{0.0, 10.0, 0.05};
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
-    // Vector of species by which analysis is restricted
-    std::vector<const Species *> restrictToSpecies_;
     // Target property for analysis
     VoxelDensityModule::TargetPropertyType targetProperty_{TargetPropertyType::Mass};
     // Requested ideal side length of a single analysis voxel (angstroms)

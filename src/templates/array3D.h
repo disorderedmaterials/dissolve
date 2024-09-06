@@ -88,7 +88,6 @@ template <class A> class Array3D
 
     // Return reference to values
     const std::vector<A> &values() const { return array_; }
-
     std::vector<A> &values() { return array_; }
 
     // Return specified element as modifiable reference

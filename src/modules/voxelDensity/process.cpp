@@ -33,20 +33,6 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     // Calculate target property 3d map over unit cell voxels
     array3D_.initialise(nAxisVoxels_.x, nAxisVoxels_.y, nAxisVoxels_.z);
 
-    if (!restrictToSpecies_.empty())
-    {
-        auto cfgSpecies = targetConfiguration_->speciesPopulations();
-
-        for (const auto &[sp, N] : cfgSpecies)
-        {
-            bool included = std::any_of(restrictToSpecies_.begin(), restrictToSpecies_.end(),
-                                        [sp](auto &spTarget) { return sp->name() == spTarget->name(); });
-
-            if (included)
-                targetConfiguration_->removeMolecules(sp);
-        }
-    }
-
     const auto &atoms = targetConfiguration_->atoms();
 
     auto massOp = [this, &unitCell](auto &atom)
