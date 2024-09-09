@@ -210,6 +210,11 @@ ApplicationWindow {
                     source: 0
                     destination: 2
                 }
+
+                ListElement {
+                    source: 2
+                    destination: 1
+                }
             }
 
             GraphView {
