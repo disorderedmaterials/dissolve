@@ -6,6 +6,7 @@ import QtQuick3D.Helpers
 import QtQuick.Controls
 import ProjectDissolve
 import "../../ProjectDissolve"
+import "../../Dissolve"
 
 ApplicationWindow {
     id: dissolveWindow
@@ -171,40 +172,24 @@ ApplicationWindow {
                 ListElement {
                     posX: 100
                     posY: 300
-                    title: "Source"
+                    name: "Source"
+                    type: "int"
+                    value: 7
                 }
 
                 ListElement {
                     posX: 600
                     posY: 400
-                    title: "Destination"
+                    name: "Destination"
+                    type: "point2d"
+                    px: 3.5
+                    py: 7.4
                 }
             }
 
-            Repeater {
+            GraphView {
                 anchors.fill: parent
                 model: exampleGraphModel
-                delegate:
-                Rectangle {
-                    x: posX
-                    y: posY
-                    width: 300
-                    height: 400
-                    border.color: "green"
-                    Rectangle {
-                        width: parent.width
-                        height: nodeTitleText.height
-                        anchors.top: parent.top
-                        border.color: "green"
-                        Text {
-                            id: nodeTitleText
-                            text: title
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            font.pointSize: 14
-                        }
-                    }
-                }
             }
         }
     }
