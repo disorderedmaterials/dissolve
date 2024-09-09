@@ -286,6 +286,8 @@ if(GUI)
     URI
     Dissolve
     QML_FILES
+    ${SRCS}/gui-qml/qml/GraphView.qml
+    ${SRCS}/gui-qml/qml/NodeBox.qml
     ${SRCS}/gui-qml/qml/DissolveMain.qml
   )
 
