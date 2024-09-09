@@ -15,15 +15,23 @@ Pane {
         Shape {
             z: -1
             ShapePath {
+                fillColor: "transparent"
                 strokeWidth: 4
-                strokeColor: "red"
-                strokeStyle: ShapePath.DashLine
+                strokeColor: "black"
+                /* strokeStyle: ShapePath.DashLine */
                 dashPattern: [ 1, 4 ]
                 startX: nodeRepeater.itemAt(source).x + nodeRepeater.itemAt(source).width
                 startY: nodeRepeater.itemAt(source).y + nodeRepeater.itemAt(source).height/2
-                PathLine {
+                PathCubic {
                     x: nodeRepeater.itemAt(destination).x
                     y: nodeRepeater.itemAt(destination).y + nodeRepeater.itemAt(destination).height/2
+
+                    control1X: nodeRepeater.itemAt(source).x + nodeRepeater.itemAt(source).width + 250
+                    control1Y: nodeRepeater.itemAt(source).y + nodeRepeater.itemAt(source).height/2
+
+                    control2X: x - 250
+                    control2Y: y
+
                 }
             }
         }
