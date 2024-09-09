@@ -165,6 +165,47 @@ ApplicationWindow {
         }
         Item {
             id: exampleGraphTab
+            ListModel {
+                id: exampleGraphModel
+
+                ListElement {
+                    posX: 100
+                    posY: 300
+                    title: "Source"
+                }
+
+                ListElement {
+                    posX: 600
+                    posY: 400
+                    title: "Destination"
+                }
+            }
+
+            Repeater {
+                anchors.fill: parent
+                model: exampleGraphModel
+                delegate:
+                Rectangle {
+                    x: posX
+                    y: posY
+                    width: 300
+                    height: 400
+                    border.color: "green"
+                    Rectangle {
+                        width: parent.width
+                        height: nodeTitleText.height
+                        anchors.top: parent.top
+                        border.color: "green"
+                        Text {
+                            id: nodeTitleText
+                            text: title
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            font.pointSize: 14
+                        }
+                    }
+                }
+            }
         }
     }
 }
