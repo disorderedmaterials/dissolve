@@ -6,18 +6,32 @@ import Qt.labs.qmlmodels
 
 Pane {
     property variant nodeModel;
-    Shape {
-        z: -1
-        ShapePath {
-            strokeWidth: 4
-            strokeColor: "red"
-            strokeStyle: ShapePath.DashLine
-            dashPattern: [ 1, 4 ]
-            startX: 100; startY: 300
-            PathLine { x: 600; y: 400 }
+    property variant edgeModel;
+
+    // Edge connections
+    Repeater {
+        model: edgeModel
+        delegate:
+        Shape {
+            z: -1
+            ShapePath {
+                strokeWidth: 4
+                strokeColor: "red"
+                strokeStyle: ShapePath.DashLine
+                dashPattern: [ 1, 4 ]
+                startX: nodeRepeater.itemAt(source).x + nodeRepeater.itemAt(source).width
+                startY: nodeRepeater.itemAt(source).y + nodeRepeater.itemAt(source).height/2
+                PathLine {
+                    x: nodeRepeater.itemAt(destination).x
+                    y: nodeRepeater.itemAt(destination).y + nodeRepeater.itemAt(destination).height/2
+                }
+            }
         }
     }
+
+    // Actual nodes
     Repeater {
+        id: nodeRepeater
         model: nodeModel
         delegate:
         DelegateChooser {

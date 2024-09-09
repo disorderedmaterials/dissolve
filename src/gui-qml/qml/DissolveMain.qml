@@ -169,7 +169,7 @@ ApplicationWindow {
         Item {
             id: exampleGraphTab
             ListModel {
-                id: exampleGraphModel
+                id: exampleNodeModel
 
                 ListElement {
                     posX: 100
@@ -189,9 +189,19 @@ ApplicationWindow {
                 }
             }
 
+            ListModel {
+                id: exampleEdgeModel
+
+                ListElement {
+                    source: 0
+                    destination: 1
+                }
+            }
+
             GraphView {
                 anchors.fill: parent
-                nodeModel: exampleGraphModel
+                nodeModel: exampleNodeModel
+                edgeModel: exampleEdgeModel
             }
         }
     }
