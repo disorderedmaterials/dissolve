@@ -19,13 +19,9 @@ RingPopulationsModule::RingPopulationsModule() : Module(ModuleTypes::RingPopulat
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
         ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
-    keywords_.setOrganisation("Options", "Sites",
-                              "Specify sites representing the bonding oxygen (BO) and network forming (NF) sites.");
-    keywords_.add<SpeciesSiteVectorKeyword>("BondingOxygen", "Set the site(s) 'BO' which are to represent the bonding oxygen",
-                                            bridgingOxygenSpeciesSites_);
-    keywords_.add<SpeciesSiteVectorKeyword>(
-        "NetworkFormer", "Set the site(s) 'NF' for which the distribution around the origin sites 'A' should be calculated",
-        networkFormerSpeciesSites_);
+    keywords_.setOrganisation("Options", "Sites", "Specify sites representing the ring former and bidging site.");
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) which represent the ring formers", a_);
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteB", "Set the site(s) which represents the bridging sites", b_);
 
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<RangeKeyword>("DistanceRange",

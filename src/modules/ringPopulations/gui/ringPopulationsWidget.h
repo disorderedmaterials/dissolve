@@ -31,7 +31,7 @@ class RingPopulationsModuleWidget : public ModuleWidget
     Ui::RingPopulationsModuleWidget ui_;
 
     // DataViewer contained within this widget
-    DataViewer *qSpeciesGraph_;
+    DataViewer *ringPopulationsGraph_;
 
     public:
     // Update controls within widget

@@ -16,9 +16,9 @@ RingPopulationsModuleWidget::RingPopulationsModuleWidget(QWidget *parent, RingPo
     ui_.setupUi(this);
 
     // Set up RDF graph
-    qSpeciesGraph_ = ui_.RingPopulationsPlotWidget->dataViewer();
+    ringPopulationsGraph_ = ui_.RingPopulationsPlotWidget->dataViewer();
 
-    auto &view = qSpeciesGraph_->view();
+    auto &view = ringPopulationsGraph_->view();
     view.setViewType(View::FlatXYView);
     view.axes().setTitle(0, "Qn");
     view.axes().setMax(0, 10.0);
@@ -34,15 +34,15 @@ RingPopulationsModuleWidget::RingPopulationsModuleWidget(QWidget *parent, RingPo
 void RingPopulationsModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
-        qSpeciesGraph_->clearRenderables();
+        ringPopulationsGraph_->clearRenderables();
 
-    if (qSpeciesGraph_->renderables().empty())
-        qSpeciesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//QSpecies", module_->name()), "Q-Species");
+    if (ringPopulationsGraph_->renderables().empty())
+        ringPopulationsGraph_->createRenderable<RenderableData1D>(fmt::format("{}//QSpecies", module_->name()), "Q-Species");
 
     // Validate renderables if they need it
-    qSpeciesGraph_->validateRenderables(dissolve_.processingModuleData());
+    ringPopulationsGraph_->validateRenderables(dissolve_.processingModuleData());
 
     ui_.RingPopulationsPlotWidget->updateToolbar();
 
-    qSpeciesGraph_->postRedisplay();
+    ringPopulationsGraph_->postRedisplay();
 }

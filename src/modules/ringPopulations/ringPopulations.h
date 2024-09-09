@@ -22,7 +22,7 @@ class RingPopulationsModule : public Module
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
     // Target SpeciesSite definitions
-    std::vector<const SpeciesSite *> bridgingOxygenSpeciesSites_, networkFormerSpeciesSites_;
+    std::vector<const SpeciesSite *> a_, b_;
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{false};
     // Distance range for calculation
