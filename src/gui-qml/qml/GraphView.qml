@@ -49,6 +49,7 @@ Pane {
                 delegate: NodeBox {
                     x: posX
                     y: posY
+                    image: icon
                     nodeType: name
                     Text {
                         width: contentWidth
@@ -64,6 +65,7 @@ Pane {
                 delegate: NodeBox {
                     x: posX
                     y: posY
+                    image: icon
                     nodeType: name
                     ColumnLayout {
                         anchors.fill: parent
