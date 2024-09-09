@@ -189,7 +189,7 @@ ApplicationWindow {
 
             GraphView {
                 anchors.fill: parent
-                model: exampleGraphModel
+                nodeModel: exampleGraphModel
             }
         }
     }
