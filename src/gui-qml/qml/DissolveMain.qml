@@ -185,6 +185,14 @@ ApplicationWindow {
                     px: 3.5
                     py: 7.4
                 }
+
+                ListElement {
+                    posX: 400
+                    posY: 600
+                    name: "Count"
+                    type: "int"
+                    value: 7
+                }
             }
 
             ListModel {
@@ -193,6 +201,11 @@ ApplicationWindow {
                 ListElement {
                     source: 0
                     destination: 1
+                }
+
+                ListElement {
+                    source: 0
+                    destination: 2
                 }
             }
 
