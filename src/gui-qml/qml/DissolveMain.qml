@@ -174,6 +174,7 @@ ApplicationWindow {
                     posY: 300
                     name: "Source"
                     type: "int"
+                    icon: "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"
                     value: 7
                 }
 
@@ -182,6 +183,7 @@ ApplicationWindow {
                     posY: 400
                     name: "Destination"
                     type: "point2d"
+                    icon: "file:/home/adam/Code/dissolve/src/gui/icons/options.svg"
                     px: 3.5
                     py: 7.4
                 }
@@ -191,6 +193,7 @@ ApplicationWindow {
                     posY: 600
                     name: "Count"
                     type: "int"
+                    icon: "file:/home/adam/Code/dissolve/src/gui/icons/stop.svg"
                     value: 7
                 }
             }
