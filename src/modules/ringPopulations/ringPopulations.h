@@ -27,6 +27,8 @@ class RingPopulationsModule : public Module
     bool excludeSameMolecule_{false};
     // Distance range for calculation
     Range distanceRange_{0.0, 2.5};
+    // Maximum ring size to consider
+    std::optional<int> maxRingSize_{10};
     // Export target
     Data1DExportFileFormat exportFileAndFormat_;
     bool export_{false};

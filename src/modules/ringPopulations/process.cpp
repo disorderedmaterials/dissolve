@@ -22,5 +22,24 @@ Module::ExecutionResult RingPopulationsModule::process(ModuleContext &moduleCont
     // Select all bridging sites between rings
     SiteSelector bridingingSites(targetConfiguration_, b_);
 
+    /*
+     * Algorithm as suggested in Phys. Rev. B 1991, 44, 4925, section VI
+     *	1) Select an arbitrary vertex (atom) z
+     *	2) Generate each ring containing z, of max length m, and test if it is an SP ring
+     * 	3) Delete z
+     * 	4) Repeat 1) - 3) until no vertices remain.
+     */
+
+    // Step 1)
+    for (auto &z : allRingFormerSites.sites())
+    {
+        int nOk, ringSize, diameter, scope;
+        bool odd;
+
+        // Step 2)
+        for (int n = 0; n < maxRingSize_; ++n)
+            n + 1;
+    }
+
     return ExecutionResult::Success;
 }

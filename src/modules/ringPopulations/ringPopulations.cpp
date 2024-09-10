@@ -6,6 +6,7 @@
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/fileAndFormat.h"
+#include "keywords/optionalInt.h"
 #include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
@@ -27,6 +28,8 @@ RingPopulationsModule::RingPopulationsModule() : Module(ModuleTypes::RingPopulat
     keywords_.add<RangeKeyword>("DistanceRange",
                                 "Distance range (min, max) over which to calculate Q-Species from central site", distanceRange_,
                                 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<OptionalIntegerKeyword>("Max Ring Size", "Maximum Ring Size to compute", maxRingSize_, 1, std::nullopt, 1,
+                                          "Off");
 
     keywords_.setOrganisation("Export");
     keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated QSpecies data",
