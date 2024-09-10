@@ -203,17 +203,23 @@ ApplicationWindow {
 
                 ListElement {
                     source: 0
+                    sourceIndex: 0
                     destination: 1
+                    destIndex: 0
                 }
 
                 ListElement {
                     source: 0
+                    sourceIndex: 0
                     destination: 2
+                    destIndex: 0
                 }
 
                 ListElement {
                     source: 2
+                    sourceIndex: 0
                     destination: 1
+                    destIndex: 1
                 }
             }
 

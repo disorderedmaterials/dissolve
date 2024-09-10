@@ -7,8 +7,11 @@ GroupBox {
     id: root
     property string nodeType;
     property string image;
+    property double basey;
+    basey: header.height
     label:
     RowLayout {
+        id: header
         Image {
             clip: true
             sourceSize.width: titleLabel.height
