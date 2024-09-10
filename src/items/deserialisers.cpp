@@ -157,6 +157,22 @@ GenericItemDeserialiser::GenericItemDeserialiser()
                     return false;
             return true;
         });
+    registerDeserialiser<Array3D<double>>(
+        [](std::any &a, LineParser &parser, const CoreData &coreData)
+        {
+            auto &v = std::any_cast<Array3D<double> &>(a);
+            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+                return false;
+            auto nX = parser.argi(0), nY = parser.argi(1), nZ = parser.argi(2);
+            v.initialise(nX, nY, nZ);
+            for (auto &n : v)
+            {
+                if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+                    return false;
+                n = parser.argd(0);
+            }
+            return true;
+        });
     registerDeserialiser<AtomTypeMix>(simpleDeserialiseCore<AtomTypeMix>);
     registerDeserialiser<Data1D>(simpleDeserialise<Data1D>);
     registerDeserialiser<Data2D>(simpleDeserialise<Data2D>);

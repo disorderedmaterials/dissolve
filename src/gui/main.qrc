@@ -68,6 +68,7 @@
     <file>icons/modules/GeometryOptimisation.svg</file>
     <file>icons/modules/Compare.svg</file>
     <file>icons/modules/TemperatureSchedule.svg</file>
+    <file>icons/modules/VoxelDensity.svg</file>
   </qresource>
   <qresource prefix="general">
     <file>icons/ff.svg</file>

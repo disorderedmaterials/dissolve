@@ -1,0 +1,135 @@
+Species 'Helium''
+  # Atoms
+  Atom    1    He    0.0  0.0  0.0  'He' 
+EndSpecies
+
+#------------------------#
+#     Pair Potentials    #
+#------------------------#
+
+PairPotentials
+  Range  3.5
+  Delta  0.050000
+  Parameters  'He'  He  0.00   LJGeometric    0.0      0.0
+  ManualChargeSource  True
+  ForceChargeSource  True
+EndPairPotentials
+
+#------------------------#
+#  Define Configuration  #
+#------------------------#
+
+Configuration  'Bulk'
+  Generator
+    Add
+      Density  1  atoms/A3
+      Population  512
+      Species  'Helium'
+    EndAdd
+    ImportCoordinates
+      File  xyz  'dissolve/input/voxelDensity-helium.xyz'
+      EndFile
+    EndImportCoordinates
+  EndGenerator
+EndConfiguration
+
+#------------------------#
+#   Define Processing    #
+#------------------------#
+
+Layer  'Processing'
+
+# Test case:
+# Atomic mass voxel density
+#
+Module  VoxelDensity  'Mass(8-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 1.0
+    TargetProperty Mass
+EndModule
+
+Module  VoxelDensity  'Mass(4-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 2.0
+    TargetProperty Mass
+EndModule
+
+Module  VoxelDensity  'Mass(2-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 4.0
+    TargetProperty Mass
+EndModule
+
+Module  VoxelDensity  'Mass(1-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 8.0
+    TargetProperty Mass
+EndModule
+
+# Test case:
+# Atomic number voxel density
+#
+Module  VoxelDensity  'Z(8-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 1.0
+    TargetProperty AtomicNumber
+EndModule
+
+Module  VoxelDensity  'Z(4-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 2.0
+    TargetProperty AtomicNumber
+EndModule
+
+Module  VoxelDensity  'Z(2-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 4.0
+    TargetProperty AtomicNumber
+EndModule
+
+Module  VoxelDensity  'Z(1-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 8.0
+    TargetProperty AtomicNumber
+EndModule
+
+# Test case:
+# Scattering length density voxel density
+#
+Module  VoxelDensity  'ScatteringLengthDensity(8-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 1.0
+    TargetProperty ScatteringLengthDensity
+EndModule
+
+Module  VoxelDensity  'ScatteringLengthDensity(4-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 2.0
+    TargetProperty ScatteringLengthDensity
+EndModule
+
+Module  VoxelDensity  'ScatteringLengthDensity(2-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 4.0
+    TargetProperty ScatteringLengthDensity
+EndModule
+
+Module  VoxelDensity  'ScatteringLengthDensity(1-bin)'
+    BinRange  0.0  10.0  0.05 
+    Configuration 'Bulk'
+    VoxelSideLength 8.0
+    TargetProperty ScatteringLengthDensity
+EndModule
+
+EndLayer

@@ -61,6 +61,7 @@ add_library(
   integerHistogram1D.h
   integrator.h
   interpolator.h
+  limitsFunc.h
   mathFunc.h
   matrix3.h
   matrix4.h

@@ -86,6 +86,10 @@ template <class A> class Array3D
             resize(nX, nY, nZ);
     }
 
+    // Return reference to values
+    const std::vector<A> &values() const { return array_; }
+    std::vector<A> &values() { return array_; }
+
     // Return specified element as modifiable reference
     A &operator[](std::tuple<int, int, int> index)
     {

@@ -36,4 +36,5 @@ int sgn(double x);
 double sgn(double a, double signOf);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i);
+
 }; // namespace DissolveMath
