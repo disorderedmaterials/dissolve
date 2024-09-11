@@ -11,6 +11,7 @@
 #include "modules/bragg/bragg.h"
 #include "modules/compare/compare.h"
 #include "modules/dAngle/dAngle.h"
+#include "modules/drivenMD/drivenMD.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
 #include "modules/epsrManager/epsrManager.h"
@@ -53,6 +54,7 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<BraggModule>(ModuleTypes::Bragg, "Calculate Bragg intensities", "Correlation Functions");
     registerProducer<CompareModule>(ModuleTypes::Compare, "Compare data sets and calculate errors", "Checks & Tests");
     registerProducer<DAngleModule>(ModuleTypes::DAngle, "Calculate distance/angle maps", "Analysis");
+    registerProducer<DrivenMDModule>(ModuleTypes::DrivenMD, "SAXS/SAND driven molecular dynamics test", "Forcefield");
     registerProducer<EnergyModule>(ModuleTypes::Energy, "Calculate the total energy of a Configuration", "Forcefield");
     registerProducer<EPSRModule>(ModuleTypes::EPSR, "Refine interatomic potentials in a manner consistent with EPSR",
                                  "Forcefield");

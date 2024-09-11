@@ -26,6 +26,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::Compare, "Compare"},
                                                                  {ModuleTypes::DAngle, "DAngle"},
                                                                  {ModuleTypes::DataTest, "DataTest"},
+                                                                 {ModuleTypes::DrivenMD, "DrivenMD"},
                                                                  {ModuleTypes::Energy, "Energy"},
                                                                  {ModuleTypes::EPSR, "EPSR"},
                                                                  {ModuleTypes::EPSRManager, "EPSRManager"},
