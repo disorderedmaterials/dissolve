@@ -53,27 +53,26 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
     for (auto &&[key, epData] : potentials)
         epData.ep /= epData.count;
 
-    // Vector of averaged potentials over multiple iterations
-    std::vector<std::map<std::string, EPData>> averagedPotentialsStore;
     std::map<std::string, EPData> averagedPotentials = potentials;
+
+    averagedPotentialsStore.emplace_back(potentials);
     // Check if ran the right amount of iterations before averaging
-    if (averagedPotentialsStore.size() < averagingLength_)
+    if (averagedPotentialsStore.size() > averagingLength_)
     {
-        // If not then add data to vector
-        averagedPotentialsStore.emplace_back(potentials);
+        averagedPotentialsStore.pop_back();
     }
-    else
+
+    // Average the potentials and replace the map with the new averaged
+    for (const auto &pots : averagedPotentialsStore)
     {
-        // If yes then average the potentials and replace the map with the new averaged
-        for (auto n : averagedPotentialsStore)
+        for (auto &&[key, epData] : pots)
         {
-            for (auto &&[key, epData] : n)
-            {
-                averagedPotentials[key].ep += epData.ep;
-            }
+            averagedPotentials[key].ep += epData.ep;
+            averagedPotentials[key].ep /= averagingLength_.value();
         }
     }
     potentials = averagedPotentials;
+
     // Apply potential scalings
     auto scalings = DissolveSys::splitString(potentialScalings_, ",");
     for (const auto &scaling : scalings)
