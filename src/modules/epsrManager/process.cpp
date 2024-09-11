@@ -48,29 +48,32 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
             }
         }
     }
-    if (averagingLength_)
-        Messenger::print("EPSRManager: Potentials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value(),
-                         Averaging::averagingSchemes().keyword(averagingScheme_));
-    else
-        Messenger::print("EPSRManager: No averaging of potentials will be performed.\n");
-
-    /*     // Perform averaging of unweighted potentials if requested, and if we're not already up-to-date
-        if (averagingLength_)
-        {
-            // Store the current fingerprint, since we must ensure we retain it in the averaged data.
-            std::string currentFingerprint{unweightedsq.fingerprint()};
-
-            Averaging::average<PartialSet>(moduleContext.dissolve().processingModuleData(), "UnweightedSQ", name_,
-                                           averagingLength_.value(), averagingScheme_);
-
-            // Re-set the object names and fingerprints of the partials
-            unweightedsq.setFingerprint(currentFingerprint);
-        } */
 
     // Form averages
     for (auto &&[key, epData] : potentials)
         epData.ep /= epData.count;
 
+    // Vector of averaged potentials over multiple iterations
+    std::vector<std::map<std::string, EPData>> averagedPotentialsStore;
+    std::map<std::string, EPData> averagedPotentials = potentials;
+    // Check if ran the right amount of iterations before averaging
+    if (averagedPotentialsStore.size() < averagingLength_)
+    {
+        // If not then add data to vector
+        averagedPotentialsStore.emplace_back(potentials);
+    }
+    else
+    {
+        // If yes then average the potentials and replace the map with the new averaged
+        for (auto n : averagedPotentialsStore)
+        {
+            for (auto &&[key, epData] : n)
+            {
+                averagedPotentials[key].ep += epData.ep;
+            }
+        }
+    }
+    potentials = averagedPotentials;
     // Apply potential scalings
     auto scalings = DissolveSys::splitString(potentialScalings_, ",");
     for (const auto &scaling : scalings)
