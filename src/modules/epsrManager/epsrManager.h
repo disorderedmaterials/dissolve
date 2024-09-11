@@ -40,6 +40,8 @@ class EPSRManagerModule : public Module
     std::optional<int> averagingLength_;
     // Weighting scheme to use when averaging partials
     Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
+    // Vector of averaged potentials over multiple iterations
+    std::vector<std::map<std::string, EPData>> averagedPotentialsStore;
 
     /*
      * Functions
