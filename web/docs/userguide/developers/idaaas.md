@@ -114,6 +114,14 @@ This means that one of our custom libraries hasn't been properly pulled
 from cache and it will need some time to compile. Thankfully, this will
 only ever need to happen once.
 
+### Download the Submodules
+
+We now need to download the git submodules.
+
+``` shell
+git submodule update --init --recursive
+```
+
 ### Build Dissolve
 
 We can now configure Dissolve.
