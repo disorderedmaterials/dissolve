@@ -5,6 +5,8 @@
 #include <iterator>
 #include <tuple>
 
+// Iterate over every unordered pair of values (i.e. (2, 3) and (3, 2)
+// are considered the same value and only one is visited)
 class PairIterator
 {
     private:

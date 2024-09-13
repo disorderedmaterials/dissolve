@@ -3,6 +3,7 @@
 #pragma once
 
 #include "classes/array3DIterator.h"
+#include "classes/fullPairIterator.h"
 #include "classes/pairIterator.h"
 #include "templates/parallelDefs.h"
 #include <fmt/format.h>
@@ -216,11 +217,24 @@ void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
     dissolve::for_each(begin, end, unaryOp);
 }
 
-// Perform an operation on every pair of elements in a container
+// Perform an operation on every unordered pair of elements in a container
 template <typename ParallelPolicy, class Iter, class Lam>
 void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
 {
     PairIterator start(end - begin), stop(end - begin, ((end - begin) * (end - begin + 1)) / 2);
+    for_each(policy, start, stop,
+             [&lambda, &begin](const auto pair)
+             {
+                 auto &[i, j] = pair;
+                 lambda(i, begin[i], j, begin[j]);
+             });
+}
+
+// Perform an operation on every ordered pair of elements in a container
+template <typename ParallelPolicy, class Iter, class Lam>
+void for_each_full_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
+{
+    FullPairIterator start(end - begin), stop(end - begin, (end - begin) * (end - begin));
     for_each(policy, start, stop,
              [&lambda, &begin](const auto pair)
              {
@@ -240,10 +254,22 @@ void for_each_triplet(ParalellPolicy policy, Iter begin, Iter end, Lam lambda)
              });
 }
 
-// Perform an operation on every pair of elements in a range (begin <= i < end)
+// Perform an operation on every unordered pair of elements in a range (begin <= i < end)
 template <typename ParallelPolicy, class Lam> void for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda)
 {
     PairIterator start(end), stop(end, end * (end + 1) / 2);
+    for_each(policy, start, stop,
+             [&lambda](const auto pair)
+             {
+                 auto [i, j] = pair;
+                 lambda(i, j);
+             });
+}
+
+// Perform an operation on every ordered pair of elements in a range (begin <= i < end)
+template <typename ParallelPolicy, class Lam> void for_each_full_pair(ParallelPolicy policy, int begin, int end, Lam lambda)
+{
+    FullPairIterator start(end - begin), stop(end - begin, (end - begin) * (end - begin));
     for_each(policy, start, stop,
              [&lambda](const auto pair)
              {
