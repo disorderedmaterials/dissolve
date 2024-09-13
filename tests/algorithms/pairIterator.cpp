@@ -14,18 +14,26 @@ namespace UnitTest
 
 TEST(PairIterTest, Pairs)
 {
-    int x, y, size = 100;
-    PairIterator it(100);
-    for (x = 0; x < size; ++x)
+    const int size = 100;
+    PairIterator it(size);
+
+    Array2D<int> store(size, size, true);
+
+    std::random_device rd;                           // a seed source for the random number engine
+    std::mt19937 gen(rd());                          // mersenne_twister_engine seeded with rd()
+    std::uniform_int_distribution<> distrib(1, 100); // Generate a random number in [1, 100]
+
+    int total = 0;
+    for (auto &item : store)
     {
-        for (y = x; y < size; ++y)
-        {
-            auto [i, j] = *it;
-            EXPECT_EQ(i, x);
-            EXPECT_EQ(j, y);
-            ++it;
-        }
+        item = distrib(gen);
+        total += item;
     }
+
+    auto sum =
+        std::accumulate(it.begin(), it.end(), 0, [&store](const auto acc, const auto index) { return acc + store[index]; });
+
+    EXPECT_EQ(total, sum);
 }
 
 TEST(PairIterTest, FullPairs)
