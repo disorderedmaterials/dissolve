@@ -35,8 +35,7 @@ FullPairIterator::value_type FullPairIterator::operator*() { return {x_, y_}; }
 
 FullPairIterator &FullPairIterator::operator++()
 {
-    y_++;
-    if (y_ >= size_)
+    if (++y_ >= size_)
     {
         x_ += 1;
         y_ = 0;
