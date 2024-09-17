@@ -10,6 +10,7 @@ add_library(
   doubleExp.cpp
   error.cpp
   filters.cpp
+  fitFunc.cpp
   ft.cpp
   function1D.cpp
   gaussFit.cpp
@@ -50,6 +51,7 @@ add_library(
   doubleExp.h
   error.h
   filters.h
+  fitFunc.h
   ft.h
   function1D.h
   functionSpace.h
