@@ -1,0 +1,67 @@
+[
+    {
+        "name": "antlr4-cppruntime",
+        "version": "4.13.1", 
+        "libs": ["base", "gui"]
+    },
+    {
+        "name": "antlr4",
+        "version": "4.13.1", 
+        "libs": ["base", "gui"]
+    },
+    {
+        "name": "benchmark",
+        "version": "1.8.4",    
+        "libs": ["tests"]
+    },
+    {
+        "name": "cli11",
+        "version": "1.9.1", 
+        "libs": ["base", "gui", "tests"]
+    },
+    {
+        "name": "fmt",
+        "version": "8.1.1", 
+        "libs": ["base", "gui"]
+    },
+    {
+        "name": "freetype",
+        "version": "2.13.2", 
+        "libs": ["base", "gui"]
+    },
+    {
+        "name": "glib",
+        "version": "2.81.0",    
+        "libs": ["base", "gui"]
+    },
+    {
+        "name": "gtest",
+        "version": "1.10.0",    
+        "libs": ["tests"]
+    },
+    {
+        "name": "onedpl",
+        "version": "2022.3.0",    
+        "libs": ["base", "gui", "tests"]
+    },      
+    {
+        "name": "pkgconf",
+        "version": "2.2.0",
+        "libs": ["base"]
+    },
+    {
+        "name": "pugixml",
+        "version": "1.14",    
+        "libs": ["base", "gui", "tests"]
+    },
+    {
+        "name": "qt",
+        "version": "6.7.1",
+        "libs": ["gui"]
+    },
+    {
+        "name": "toml11",
+        "version": "4.2.0",
+        "libs": ["base", "gui", "tests"]
+    }
+]
