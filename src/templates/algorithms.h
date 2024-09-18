@@ -3,6 +3,7 @@
 #pragma once
 
 #include "classes/array3DIterator.h"
+#include "classes/fullPairIterator.h"
 #include "classes/pairIterator.h"
 #include "templates/parallelDefs.h"
 #include <fmt/format.h>
@@ -43,7 +44,62 @@ template <typename T> class EarlyReturn
     std::optional<T> value() const { return value_; }
 };
 
-// Perform an operation on every pair of elements in a container
+// Perform an operation on every ordered pair of elements in a container
+// Please note that this can *not* be transformed to use the
+// FullPairIterator, since it would prevent using `Break` to move to
+// the next loop iteration
+template <class Iter, class Lam>
+auto for_each_full_pair_early(Iter begin, Iter end, Lam lambda) -> decltype(lambda(0, *begin, 0, *end).value())
+{
+    int i = 0;
+    for (auto elem1 = begin; elem1 != end; ++elem1, ++i)
+    {
+        int j = 0;
+        for (auto elem2 = begin; elem2 != end; ++elem2, ++j)
+        {
+            auto result = lambda(i, *elem1, j, *elem2);
+            switch (result.type())
+            {
+                case EarlyReturn<typename decltype(result)::inner>::Return:
+                    return result.value();
+                case EarlyReturn<typename decltype(result)::inner>::Break:
+                    break;
+                case EarlyReturn<typename decltype(result)::inner>::Continue:
+                    continue;
+            }
+        }
+    }
+    return std::nullopt;
+}
+
+// Perform an operation on every ordered pair of elements in a range
+// Please note that this can *not* be transformed to use the
+// FullPairIterator, since it would prevent using `Break` to move to
+// the next loop iteration
+template <class Lam> auto for_each_full_pair_early(int begin, int end, Lam lambda) -> decltype(lambda(0, 0).value())
+{
+    for (auto i = begin; i < end; ++i)
+        for (auto j = begin; j < end; ++j)
+        {
+            auto result = lambda(i, j);
+            switch (result.type())
+            {
+                case EarlyReturn<typename decltype(result)::inner>::Return:
+                    return result.value();
+                case EarlyReturn<typename decltype(result)::inner>::Break:
+                    break;
+                case EarlyReturn<typename decltype(result)::inner>::Continue:
+                    continue;
+            }
+        }
+
+    return std::nullopt;
+}
+
+// Perform an operation on every unordered pair of elements in a container
+// Please note that this can *not* be transformed to use the
+// FullPairIterator, since it would prevent using `Break` to move to
+// the next loop iteration
 template <class Iter, class Lam>
 auto for_each_pair_early(Iter begin, Iter end, Lam lambda) -> decltype(lambda(0, *begin, 0, *end).value())
 {
@@ -68,7 +124,10 @@ auto for_each_pair_early(Iter begin, Iter end, Lam lambda) -> decltype(lambda(0,
     return std::nullopt;
 }
 
-// Perform an operation on every pair of elements in a range
+// Perform an operation on every unordered pair of elements in a range
+// Please note that this can *not* be transformed to use the
+// FullPairIterator, since it would prevent using `Break` to move to
+// the next loop iteration
 template <class Lam> auto for_each_pair_early(int begin, int end, Lam lambda) -> decltype(lambda(0, 0).value())
 {
     for (auto i = begin; i < end; ++i)
@@ -216,11 +275,24 @@ void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
     dissolve::for_each(begin, end, unaryOp);
 }
 
-// Perform an operation on every pair of elements in a container
+// Perform an operation on every unordered pair of elements in a container
 template <typename ParallelPolicy, class Iter, class Lam>
 void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
 {
     PairIterator start(end - begin), stop(end - begin, ((end - begin) * (end - begin + 1)) / 2);
+    for_each(policy, start, stop,
+             [&lambda, &begin](const auto pair)
+             {
+                 auto &[i, j] = pair;
+                 lambda(i, begin[i], j, begin[j]);
+             });
+}
+
+// Perform an operation on every ordered pair of elements in a container
+template <typename ParallelPolicy, class Iter, class Lam>
+void for_each_full_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
+{
+    FullPairIterator start(end - begin), stop(end - begin, (end - begin) * (end - begin));
     for_each(policy, start, stop,
              [&lambda, &begin](const auto pair)
              {
@@ -240,10 +312,22 @@ void for_each_triplet(ParalellPolicy policy, Iter begin, Iter end, Lam lambda)
              });
 }
 
-// Perform an operation on every pair of elements in a range (begin <= i < end)
+// Perform an operation on every unordered pair of elements in a range (begin <= i < end)
 template <typename ParallelPolicy, class Lam> void for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda)
 {
     PairIterator start(end), stop(end, end * (end + 1) / 2);
+    for_each(policy, start, stop,
+             [&lambda](const auto pair)
+             {
+                 auto [i, j] = pair;
+                 lambda(i, j);
+             });
+}
+
+// Perform an operation on every ordered pair of elements in a range (begin <= i < end)
+template <typename ParallelPolicy, class Lam> void for_each_full_pair(ParallelPolicy policy, int begin, int end, Lam lambda)
+{
+    FullPairIterator start(end - begin), stop(end - begin, (end - begin) * (end - begin));
     for_each(policy, start, stop,
              [&lambda](const auto pair)
              {
