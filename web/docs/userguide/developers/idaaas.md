@@ -1,12 +1,13 @@
 ---
-title: Developing on IDAaaS
-description: Instructions for creating a nix environment for developing Dissolve on IDAaaS
+title: Setting up a nix-based Development Environment
+description: Instructions for creating a nix environment for Dissolve development.
 ---
+
 ## Introduction
 
 The goal of this document is to enable you to setup a working
-development environment on [IDAaaS](https://isis.analysis.stfc.ac.uk). It isn\'t specific to IDAaaS and
-should work on any Linux system to which you have sudo access.
+development environment, this tutorial is for developers on [IDAaaS](https://dev.analysis.stfc.ac.uk) 
+as well as any Linux system to which you have sudo access, including WSL 2 on Windows.
 
 ## Setting up nix
 
@@ -19,8 +20,21 @@ for building Dissolve.
 First, we need to run the nix installer. It will ask a series of
 questions, to which the answer is always **yes**.
 
-``` shell
+#### Linux
+
+Install Nix with the [multi-user installation](https://nixos.org/manual/nix/stable/installation/multi-user.html):
+
+```shell
 sh <(curl -L https://nixos.org/nix/install) --daemon
+```
+
+### WSL 2
+
+Install Nix with the [single-user installation](https://nixos.org/manual/nix/stable/installation/single-user.html).
+Run this under your user account and not as `root`.
+
+```shell
+curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
 ```
 
 ### Enable Flake support
@@ -31,13 +45,13 @@ need to tell nix that we will need flake support
 
 First, we need to create the directory for the nix configuration file
 
-``` shell
+```shell
 mkdir -p ~/.config/nix
 ```
 
 Now we need to add the `nix-command` and `flakes` features to nix
 
-``` shell
+```shell
 echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 ```
 
@@ -47,9 +61,19 @@ So as not to waste hours recompiling code, we\'ll be downloading some of
 our dependencies from a cache. We will need to add our cache to the
 default one.
 
-``` shell
+#### Linux
+
+```shell
 echo "substituters = https://cache.nixos.org https://dissolve-nix.cachix.org" | sudo tee -a /etc/nix/nix.conf
 echo "trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= dissolve-nix.cachix.org-1:b7kp954+mmuowr7XZsAIBugv+xp7+n3aSF/5obidRDE=" | sudo tee -a /etc/nix/nix.conf
+sudo pkill nix-daemon
+```
+
+#### WSL 2
+
+```shell
+echo "substituters = https://cache.nixos.org https://dissolve-nix.cachix.org" | sudo tee -a ~/.config/nix/nix.conf
+echo "trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= dissolve-nix.cachix.org-1:b7kp954+mmuowr7XZsAIBugv+xp7+n3aSF/5obidRDE=" | sudo tee -a ~/.config/nix/nix.conf
 sudo pkill nix-daemon
 ```
 
@@ -64,7 +88,7 @@ not take full effect until you start a fresh session.
 IDAaaS has an outdated git version which runs into some issues with nix
 accessing the latest dissolve version.
 
-``` shell
+```shell
 nix-env -i git
 ```
 
@@ -74,7 +98,7 @@ We'll need an ssh key to get the source from GitHub and push our
 changes. If you have an existing key, you can put that in the standard
 place. Otherwise, you'll want to generate a new key.
 
-``` shell
+```shell
 ssh-keygen -t ecdsa
 cat ~/.ssh/id_ecdsa.pub
 ```
@@ -87,7 +111,7 @@ for your GitHub key. You\'ll need to add this as a new key on the
 
 We download the source to Dissolve
 
-``` shell
+```shell
 git clone git@github.com:disorderedmaterials/dissolve.git
 ```
 
@@ -98,13 +122,13 @@ access to all of the tools we need to build Dissolve.
 
 First, make sure that we're in the Dissolve source directory.
 
-``` shell
+```shell
 cd dissolve
 ```
 
 Now we start a development shell.
 
-``` shell
+```shell
 nix develop
 ```
 
@@ -126,7 +150,7 @@ git submodule update --init --recursive
 
 We can now configure Dissolve.
 
-``` shell
+```shell
 mkdir build && cd build
 cmake --preset GUI-nix ..
 cd ..
@@ -134,13 +158,13 @@ cd ..
 
 And build
 
-``` shell
+```shell
 cmake --build build
 ```
 
 Finally, test that Dissolve correctly compiled by running it
 
-``` shell
+```shell
 ./build/bin/dissolve-gui
 ```
 
@@ -148,7 +172,7 @@ We can also run the test framework. Below, we use `-j8` because the default IDAa
 different machine, adjust the number to match the number of physical
 cores on your machine.
 
-``` shell
+```shell
 cd build
 ctest -j8
 ```
@@ -162,13 +186,13 @@ applications.
 
 We can install home-manager in the same way we installed git.
 
-``` shell
+```shell
 nix-env -i home-manager
 ```
 
 We then need to activate the home-manager environment for dissolve.
 
-``` shell
+```shell
 home-manager .#dissolve
 ```
 
@@ -177,34 +201,34 @@ improvements for Dissolve development.
 
 [direnv](https://direnv.net/)
 
-:   A utility for attaching settings to individual folders. With direnv
-    installed, it will no longer be necessary to run \`nix develop\` to
-    set all the shell variables. Instead, simply entering the
-    \`dissolve\` directory will cause the settings to load and leaving
-    the directoy will unload them.
+: A utility for attaching settings to individual folders. With direnv
+installed, it will no longer be necessary to run \`nix develop\` to
+set all the shell variables. Instead, simply entering the
+\`dissolve\` directory will cause the settings to load and leaving
+the directoy will unload them.
 
 [VS Code](https://code.visualstudio.com/)
 
-:   A popular, multi-language IDE. We've pre-configured
+: A popular, multi-language IDE.
 
 [Ripgrep](https://github.com/BurntSushi/ripgrep)
 
-:   A fast and convenient utility for searching files. A simple \`rg
-    chart\` will display every instance of the word \`chart\` in all of
-    the source files in the project.
+: A fast and convenient utility for searching files. A simple \`rg
+chart\` will display every instance of the word \`chart\` in all of
+the source files in the project.
 
 [Tealdeer](https://github.com/dbrgn/tealdeer)
 
-:   A quick reference for command line utilities. For example, \`tldr
-    rg\` will explain the basics of using ripgrep.
+: A quick reference for command line utilities. For example, \`tldr
+rg\` will explain the basics of using ripgrep.
 
 [Zoxide](https://github.com/ajeetdsouza/zoxide)
 
-:   A utility to quickly jump to other directories. If you have ever
-    visited the directory \`dissolve/src/data/ff/ludwig\`, then you can
-    immediately jump there with a simple \`z lud\`.
+: A utility to quickly jump to other directories. If you have ever
+visited the directory \`dissolve/src/data/ff/ludwig\`, then you can
+immediately jump there with a simple \`z lud\`.
 
 [noti](https://github.com/variadico/noti)
-:   Get notifications when a process finished. Run \`noti cmake --build
-    build\` and go check your e-mail. When the compile has finished, a
-    notification will pop up on the screen and inform you.
+: Get notifications when a process finished. Run \`noti cmake --build
+build\` and go check your e-mail. When the compile has finished, a
+notification will pop up on the screen and inform you.
