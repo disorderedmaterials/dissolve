@@ -157,7 +157,6 @@
               cmake-format
               cmake-language-server
               conan
-              distcc
               direnv
               gdb
               gtk3
@@ -190,9 +189,9 @@
           '';
 
           CMAKE_CXX_COMPILER_LAUNCHER =
-            "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
+            "${pkgs.ccache}/bin/ccache";
           CMAKE_C_COMPILER_LAUNCHER =
-            "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
+            "${pkgs.ccache}/bin/ccache";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
           Qt6Quick3D_DIR = "${pkgs.qt6.qtquick3d}/lib/";
