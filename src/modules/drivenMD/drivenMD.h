@@ -12,11 +12,7 @@
 #include "templates/array3D.h"
 #include <tuple>
 
-// Forward Declarations
-class AtomType;
-class PartialSet;
-
-// SAXSDrivenMD Module
+// DrivenMD Module
 class DrivenMDModule : public Module
 {
     public:
@@ -30,24 +26,12 @@ class DrivenMDModule : public Module
     private:
     // Vector storing atom pairs and associated potentials
     std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> empiricalPotentials_;
-    // Frequency at which to apply generated perturbations to interatomic potentials
-    std::optional<int> modifyPotential_{1};
-    // Whether to apply this module's generated potentials to the global pair potentials
-    bool applyPotentials_{true};
     // Target Modules containing data to refine against
     std::vector<Module *> targets_;
-    // Weightings for targets (if not 1.0)
-    std::vector<std::pair<Module *, double>> targetWeights_;
-    // Ranges to calculate rFactor over
-    std::vector<Range> ranges_;
-    // Scattering matrix
-    ScatteringMatrix scatteringMatrix_;
 
     public:
     // Return list of target Modules / data for refinement
     const std::vector<Module *> &targets() const;
-    // Return current scattering matrix
-    const ScatteringMatrix &scatteringMatrix() const;
     // Set whether to apply this module's generated potentials to the global pair potentials
     void setApplyPotentials(bool b);
 
@@ -57,15 +41,12 @@ class DrivenMDModule : public Module
     private:
     // Target Configuration (determined from target modules)
     Configuration *targetConfiguration_{nullptr};
-
+    // Calculate partial g(r) in serial with simple double-loop
+    PartialSet calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet);
     /*
      * Processing
      */
     private:
     // Run main processing
     Module::ExecutionResult process(ModuleContext &moduleContext) override;
-
-    public:
-    // Run set-up stage
-    bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
 };

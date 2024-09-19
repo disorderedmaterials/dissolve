@@ -2,112 +2,108 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
-#include "classes/neutronWeights.h"
-#include "classes/partialSet.h"
-#include "classes/scatteringMatrix.h"
-#include "classes/xRayWeights.h"
-#include "io/export/data1D.h"
 #include "keywords/module.h"
 #include "main/dissolve.h"
-#include "math/error.h"
-#include "math/filters.h"
 #include "math/ft.h"
-#include "math/gaussFit.h"
-#include "math/poissonFit.h"
 #include "module/context.h"
 #include "module/group.h"
 #include "modules/drivenMD/drivenMD.h"
-#include "modules/energy/energy.h"
 #include "modules/gr/gr.h"
-#include "modules/neutronSQ/neutronSQ.h"
-#include "modules/sq/sq.h"
-#include "templates/algorithms.h"
-#include "templates/array3D.h"
 #include <functional>
-
-// Run set-up stage
-bool DrivenMDModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
-{
-    // Default to applying generated potentials - an associated EPSRManager may turn this off in its own setup stage
-    applyPotentials_ = true;
-
-    // Check for exactly one Configuration referenced through target modules
-    targetConfiguration_ = nullptr;
-    std::optional<double> rho;
-    for (auto *module : targets_)
-    {
-        // Retrieve source SQ module, and then the related RDF module
-        auto optSQModule = module->keywords().get<const SQModule *, ModuleKeyword<const SQModule>>("SourceSQs");
-        const SQModule *sqModule = nullptr;
-        if (optSQModule)
-            sqModule = optSQModule.value();
-        if (!sqModule)
-            return Messenger::error(
-                "[SETUP {}] Target '{}' doesn't source any S(Q) data, so it can't be used as a target for the EPSR module.",
-                name_, module->name());
-
-        auto *grModule = sqModule->sourceGR();
-        if (!grModule)
-            return Messenger::error(
-                "[SETUP {}] Target '{}'s S(Q) module doesn't reference a GRModule, it can't be used as a target "
-                "for the EPSR module.",
-                name_, module->name());
-        // Check for number of targets, or different target if there's only 1
-        auto rdfConfigs = grModule->keywords().getVectorConfiguration("Configurations");
-        if (rdfConfigs.size() != 1)
-            return Messenger::error(
-                "[SETUP {}] GR module '{}' targets multiple configurations, which is not permitted when using "
-                "its data in the EPSR module.",
-                name_, grModule->name());
-
-        if ((targetConfiguration_ != nullptr) && (targetConfiguration_ != rdfConfigs.front()))
-            return Messenger::error("[SETUP {}] GR module '{}' targets a configuration which is different from another target "
-                                    "module, and which is not permitted when using its data in the EPSR module.",
-                                    name_, grModule->name());
-
-        else
-            targetConfiguration_ = rdfConfigs.front();
-
-        rho = targetConfiguration_->atomicDensity();
-    }
-
-    // Realise storage for generated S(Q), and initialise a scattering matrix, but only if we have a valid configuration
-    if (targetConfiguration_)
-    {
-        auto &estimatedSQ = moduleContext.dissolve().processingModuleData().realise<Array2D<Data1D>>(
-            "EstimatedSQ", name_, GenericItem::InRestartFileFlag);
-        scatteringMatrix_.initialise(targetConfiguration_->atomTypes(), estimatedSQ);
-    }
-
-    return true;
-}
 
 // Run main processing
 Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
 {
-    std::string testDataName;
+    auto &processingData = moduleContext.dissolve().processingModuleData();
 
     /*
-     * Do we have targets to refine against?
+     * 1) Loop over a site
+     * 2) Move in the x, y and z direction
+     * 3) Calculate gr at each step
+     * 4) FT gr-1 to F(Q) and weight by scattering length
+     * 5) Take the negative gradient of the difference between the gr and the F(Q) which corresponds to the derived force
+     * that we then apply to MD simulation
      */
-    if (targets_.empty())
-    {
-        Messenger::error("At least one Module target containing suitable data must be provided.\n");
-        return ExecutionResult::Failed;
-    }
 
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No target configuration is set.\n");
-        return ExecutionResult::Failed;
-    }
+    std::vector<PartialSet> forces;
+    PartialSet totalGR;
+    PartialSet referenceData;
 
-    if (!targetConfiguration_->atomicDensity())
+    // Does a PartialSet already exist for this Configuration?
+    auto originalGRObject = processingData.realiseIf<PartialSet>(
+        fmt::format("{}//OriginalGR", targetConfiguration_->niceName()), name_, GenericItem::InRestartFileFlag);
+    auto &originalgr = originalGRObject.first;
+    double delta{0.1};
+    auto atoms = targetConfiguration_->atoms();
+    forces.resize(atoms.size());
+
+    for (auto &i : atoms)
     {
-        Messenger::error("No density available for target configuration '{}'\n", targetConfiguration_->name());
-        return ExecutionResult::Failed;
+        for (auto n = 0; n < 3; ++n)
+        {
+            double newPosition{};
+            switch (n)
+            {
+                // Move x
+                case 1:
+                    // Get position, change via delta then set
+                    newPosition = i.x() - delta;
+                    i.set(newPosition, i.y(), i.z());
+                    // Calculate GR
+                    totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
+                    // FT to structure factor
+                    Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
+                                    WindowFunction::Form::Lorch0);
+                    // Store Error here
+                    //  forces.emplace_back(referenceData.total().values() - totalGR.total().values());
+                    newPosition = i.x() + (2 * delta);
+                    i.set(newPosition, i.y(), i.z());
+                    totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
+                    Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
+                                    WindowFunction::Form::Lorch0);
+                    // Store Error here
+                    //  forces.emplace_back(referenceData.total().values() - totalGR.total().values());
+                    // Reset position
+                    newPosition = i.x() - delta;
+                    i.set(newPosition, i.y(), i.z());
+                    break;
+                // Move y
+                case 2:
+                    newPosition = i.y() - delta;
+                    i.set(i.x(), newPosition, i.z());
+                    totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
+                    Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
+                                    WindowFunction::Form::Lorch0);
+                    //  forces.emplace_back(referenceData.total().values() - totalGR.total().values());
+                    newPosition = i.y() + (2 * delta);
+                    i.set(i.x(), newPosition, i.z());
+                    totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
+                    Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
+                                    WindowFunction::Form::Lorch0);
+                    //  forces.emplace_back(referenceData.total().values() - totalGR.total().values());
+                    newPosition = i.y() - delta;
+                    i.set(i.x(), newPosition, i.z());
+                    break;
+                // Move z
+                case 3:
+                    newPosition = i.z() - delta;
+                    i.set(i.x(), i.y(), newPosition);
+                    totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
+                    Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
+                                    WindowFunction::Form::Lorch0);
+                    //  forces.emplace_back(referenceData.total().values() - totalGR.total().values());
+                    newPosition = i.z() + (2 * delta);
+                    i.set(i.x(), i.y(), newPosition);
+                    totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
+                    Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
+                                    WindowFunction::Form::Lorch0);
+                    //  forces.emplace_back(referenceData.total().values() - totalGR.total().values());
+                    newPosition = i.z() - delta;
+                    i.set(i.x(), i.y(), newPosition);
+                    break;
+            }
+        }
     }
-    auto rho = *targetConfiguration_->atomicDensity();
 
     return ExecutionResult::Success;
 }
