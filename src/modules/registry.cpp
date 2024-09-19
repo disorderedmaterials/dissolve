@@ -54,7 +54,7 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<BraggModule>(ModuleTypes::Bragg, "Calculate Bragg intensities", "Correlation Functions");
     registerProducer<CompareModule>(ModuleTypes::Compare, "Compare data sets and calculate errors", "Checks & Tests");
     registerProducer<DAngleModule>(ModuleTypes::DAngle, "Calculate distance/angle maps", "Analysis");
-    registerProducer<DrivenMDModule>(ModuleTypes::DrivenMD, "SAXS/SAND driven molecular dynamics test", "Forcefield");
+    registerProducer<DrivenMDModule>(ModuleTypes::DrivenMD, "SAXS/SANS driven molecular dynamics test", "Forcefield");
     registerProducer<EnergyModule>(ModuleTypes::Energy, "Calculate the total energy of a Configuration", "Forcefield");
     registerProducer<EPSRModule>(ModuleTypes::EPSR, "Refine interatomic potentials in a manner consistent with EPSR",
                                  "Forcefield");
