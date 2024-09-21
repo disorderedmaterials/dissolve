@@ -3,7 +3,7 @@
 
 #include "main/dissolve.h"
 #include "modules/drivenMD/drivenMD.h"
-#include "modules/drivenMD/gui/epsrManagerWidget.h"
+#include "modules/drivenMD/gui/drivenMDWidget.h"
 
 DrivenMDModuleWidget::DrivenMDModuleWidget(QWidget *parent, DrivenMDModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)
