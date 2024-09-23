@@ -18,7 +18,7 @@ runs:
     shell: bash
     run: |
       set -ex
-      echo '${{ github.event.pull_request.title }}' | awk "/(^feat:)|(^fix:)|(^doc:)|(^perf:)|(^refactor:)|(^style:)|(^test:)|(^chore:)|(^revert:)|(^build:)/" | grep .
+      echo '${{ github.event.pull_request.title }}' | awk '/((^feat)|(^fix)|(^doc)|(^perf)|(^refactor)|(^style)|(^test)|(^chore)|(^revert)|(^build))!?:/' | grep .
 
   - name: C++ Formatting
     shell: bash
