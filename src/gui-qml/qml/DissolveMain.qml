@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick3D
 import QtQuick3D.Helpers
 import QtQuick.Controls
+import Dissolve
 import ProjectDissolve
 import "../../ProjectDissolve"
 import "../../Dissolve"
@@ -198,35 +199,15 @@ ApplicationWindow {
                 }
             }
 
-            ListModel {
-                id: exampleEdgeModel
-
-                ListElement {
-                    source: 0
-                    sourceIndex: 0
-                    destination: 1
-                    destIndex: 0
-                }
-
-                ListElement {
-                    source: 0
-                    sourceIndex: 0
-                    destination: 2
-                    destIndex: 0
-                }
-
-                ListElement {
-                    source: 2
-                    sourceIndex: 0
-                    destination: 1
-                    destIndex: 1
-                }
+            GraphModel {
+                id: graphModel
             }
 
             GraphView {
                 anchors.fill: parent
-                nodeModel: exampleNodeModel
-                edgeModel: exampleEdgeModel
+                nodeModel: graphModel.nodes
+
+                edgeModel: graphModel.edges
             }
         }
     }

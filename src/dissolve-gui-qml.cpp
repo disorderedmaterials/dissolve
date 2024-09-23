@@ -5,6 +5,7 @@
 #include "base/processPool.h"
 #include "gui/models/dissolveModel.h"
 #include "gui/models/types.h"
+#include "gui/models/graphModel.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
@@ -31,13 +32,13 @@ int main(int args, char **argv)
 
     QQmlApplicationEngine engine;
     const QUrl url(u"qrc:/Dissolve/qml/DissolveMain.qml"_qs);
+    Types::registerDissolveQmlTypes();
 
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app, []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     engine.load(url);
 
-    Types::registerDissolveQmlTypes();
     QCoreApplication::setOrganizationName("Team Dissolve");
     QCoreApplication::setOrganizationDomain("www.projectdissolve.com");
     QCoreApplication::setApplicationName("Dissolve-GUI-QML");

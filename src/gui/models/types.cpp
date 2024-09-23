@@ -7,6 +7,7 @@
 #include "gui/models/configurationModel.h"
 #include "gui/models/dataManagerSimulationModel.h"
 #include "gui/models/dissolveModel.h"
+#include "gui/models/graphModel.h"
 #include "gui/models/masterTermTreeModel.h"
 #include "gui/models/modifyChargesModel.h"
 #include "gui/models/moduleLayersModel.h"
@@ -30,4 +31,5 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<MasterTorsionModel>(PROJECT, 1, 0, "MasterTorsionModel");
     qmlRegisterType<ModifyChargesModel>(PROJECT, 1, 0, "ModifyChargesModel");
     qmlRegisterType<SortFilterProxy>(PROJECT, 1, 0, "SortFilterProxy");
+    qmlRegisterType<GraphModel>(PROJECT, 1, 0, "GraphModel");
 }
