@@ -46,8 +46,8 @@ enum ModuleType
     SQ,
     TemperatureSchedule,
     Test,
-    VoxelDensity,
     TR,
+    VoxelDensity,
     XRaySQ
 };
 
