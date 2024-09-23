@@ -10,6 +10,7 @@ set(models_MOC_HDRS
     dissolveModel.h
     enumOptionsModel.h
     forcefieldModel.h
+    graphModel.h
     isotopologueSetModel.h
     masterAngleModel.h
     masterBondModel.h
@@ -73,6 +74,7 @@ set(models_SRCS
     ffSortFilterModel.cpp
     forcefieldModel.cpp
     globalPotentialFilterProxy.cpp
+    graphModel.cpp
     isotopologueSetModel.cpp
     masterAngleModel.cpp
     masterBondModel.cpp
