@@ -4,6 +4,9 @@
 #pragma once
 
 #include <QAbstractListModel>
+#include <qtmetamacros.h>
+
+#include <vector>
 
 class GraphModel;
 
@@ -47,6 +50,18 @@ class GraphNodeModel : public QAbstractListModel
     GraphModel *parent_;
 };
 
+class NodeWrapper
+{
+    public:
+    NodeWrapper(int value);
+    std::string name, type, icon;
+    int posx, posy;
+    QVariant value();
+
+    private:
+    int value_;
+};
+
 class GraphModel : public QObject
 {
     Q_OBJECT;
@@ -55,12 +70,15 @@ class GraphModel : public QObject
 
     public:
     GraphModel();
+    std::vector<NodeWrapper> items;
 
     public:
-    GraphNodeModel nodes_;
-    GraphEdgeModel edges_;
     GraphEdgeModel *edges();
     GraphNodeModel *nodes();
+
+    private:
+    GraphNodeModel nodes_;
+    GraphEdgeModel edges_;
 
     Q_SIGNALS:
     void graphChanged();
