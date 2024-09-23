@@ -53,7 +53,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
 
     for (auto typeI = 0; typeI < unweightedGR.nAtomTypes(); ++typeI)
     {
-        for (auto typeJ = typeI; typeJ < unweightedGR.nAtomTypes(); ++typeJ)
+        for (auto typeJ = 0; typeJ < unweightedGR.nAtomTypes(); ++typeJ)
         {
             double intraWeight = weights.intramolecularWeight(typeI, typeJ);
             auto cj = weights.atomTypes()[typeJ].fraction();
