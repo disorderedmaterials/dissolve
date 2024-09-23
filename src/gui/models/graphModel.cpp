@@ -3,6 +3,7 @@
 
 #include "gui/models/graphModel.h"
 #include <qnamespace.h>
+#include <qvariant.h>
 
 GraphEdgeModel::GraphEdgeModel(GraphModel *parent) : parent_(parent) {}
 GraphEdgeModel::GraphEdgeModel(const GraphEdgeModel &other) : parent_(other.parent_) {}
@@ -52,7 +53,7 @@ GraphNodeModel::GraphNodeModel(const GraphNodeModel &other) : parent_(other.pare
 
 bool GraphNodeModel::operator!=(const GraphNodeModel &other) { return &parent_ != &other.parent_; }
 
-int GraphNodeModel::rowCount(const QModelIndex &parent) const { return 2; }
+int GraphNodeModel::rowCount(const QModelIndex &parent) const { return parent_->items.size(); }
 
 QHash<int, QByteArray> GraphNodeModel::roleNames() const
 {
@@ -63,66 +64,26 @@ QHash<int, QByteArray> GraphNodeModel::roleNames() const
     roles[Qt::UserRole + 3] = "type";
     roles[Qt::UserRole + 4] = "icon";
     roles[Qt::UserRole + 5] = "value";
-    roles[Qt::UserRole + 6] = "px";
-    roles[Qt::UserRole + 7] = "py";
     return roles;
 }
 
 QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
 {
+    auto &item = parent_->items.at(index.row());
     switch (role - Qt::UserRole)
     {
         case 0:
-            if (index.row() == 0)
-            {
-                return "Source";
-            }
-            else
-            {
-                return "Destination";
-            }
+            return item.name.c_str();
         case 1:
-            if (index.row() == 0)
-            {
-                return 100;
-            }
-            else
-            {
-                return 600;
-            }
+            return item.posx;
         case 2:
-            if (index.row() == 0)
-            {
-                return 300;
-            }
-            else
-            {
-                return 400;
-            }
+            return item.posy;
         case 3:
-            if (index.row() == 0)
-            {
-                return "int";
-            }
-            else
-            {
-                return "point2d";
-            }
+            return item.type.c_str();
         case 4:
-            if (index.row() == 0)
-            {
-                return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
-            }
-            else
-            {
-                return "file:/home/adam/Code/dissolve/src/gui/icons/options.svg";
-            }
+            return item.icon.c_str();
         case 5:
-            return 7;
-        case 6:
-            return 3.5;
-        case 7:
-            return 7.5;
+            return item.value();
     }
     return {};
 }
@@ -135,9 +96,27 @@ GraphNodeModel &GraphNodeModel::operator=(const GraphNodeModel &other)
 
 // Graph Model
 
-GraphModel::GraphModel() : nodes_(this), edges_(this) {}
+GraphModel::GraphModel() : nodes_(this), edges_(this)
+{
+    auto &first = items.emplace_back(7);
+    first.name = "Source";
+    first.icon = "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
+    first.posx = 100;
+    first.posy = 300;
+    first.type = "int";
+
+    auto &second = items.emplace_back(12);
+    second.name = "Destination";
+    second.icon = "file:/home/adam/Code/dissolve/src/gui/icons/options.svg";
+    second.posx = 600;
+    second.posy = 400;
+    second.type = "int";
+}
 
 GraphEdgeModel *GraphModel::edges() { return &edges_; }
 GraphNodeModel *GraphModel::nodes() { return &nodes_; }
 
 IntNode::IntNode() {}
+
+NodeWrapper::NodeWrapper(int value) : value_(value) {}
+QVariant NodeWrapper::value() { return value_; }
