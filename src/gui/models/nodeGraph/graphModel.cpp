@@ -5,29 +5,7 @@
 #include <qnamespace.h>
 #include <qvariant.h>
 
-GraphEdgeModel *GraphModel::edges() { return &edges_; }
-GraphNodeModel *GraphModel::nodes() { return &nodes_; }
+GraphModelBase::GraphModelBase() {}
 
-std::string GraphModel::typeName(nodeValue &value)
-{
-    switch (value.index())
-    {
-        case 0:
-        case 1:
-            return "number";
-        default:
-            return "";
-    }
-}
-
-std::string GraphModel::typeIcon(nodeValue &value)
-{
-    switch (value.index())
-    {
-        case 0:
-        case 1:
-            return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
-        default:
-            return "";
-    }
-}
+QAbstractListModel *GraphModelBase::edges() {return nullptr;}
+QAbstractListModel *GraphModelBase::nodes() {return nullptr;}

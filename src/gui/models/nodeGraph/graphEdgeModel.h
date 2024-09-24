@@ -5,23 +5,49 @@
 
 #include <QAbstractListModel>
 
-class GraphModel;
+template <typename T> class GraphModel;
 
 /** A list model that provides the tick labels of the axis */
-class GraphEdgeModel : public QAbstractListModel
+template <typename T> class GraphEdgeModel : public QAbstractListModel
 {
-    Q_OBJECT
-
     public:
-    GraphEdgeModel(GraphModel *parent = nullptr);
-    GraphEdgeModel(const GraphEdgeModel &other);
+    GraphEdgeModel(GraphModel<T> *parent = nullptr) : parent_(parent) {}
+    GraphEdgeModel(const GraphEdgeModel<T> &other) : parent_(other.parent_) {}
 
-    GraphEdgeModel &operator=(const GraphEdgeModel &other);
-    bool operator!=(const GraphEdgeModel &other);
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    QHash<int, QByteArray> roleNames() const override;
+    GraphEdgeModel<T> &operator=(const GraphEdgeModel<T> &other)
+    {
+        parent_ = other.parent_;
+        return *this;
+    }
+    bool operator!=(const GraphEdgeModel<T> &other) { return parent_ != other.parent_; }
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override { return 1; }
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
+    {
+
+        switch (role - Qt::UserRole)
+        {
+            case 0:
+                return 0;
+            case 1:
+                return 0;
+            case 2:
+                return 1;
+            case 3:
+                return 0;
+            default:
+                return {};
+        }
+    }
+    QHash<int, QByteArray> roleNames() const override
+    {
+        QHash<int, QByteArray> roles;
+        roles[Qt::UserRole] = "source";
+        roles[Qt::UserRole + 1] = "sourceIndex";
+        roles[Qt::UserRole + 2] = "destination";
+        roles[Qt::UserRole + 3] = "destIndex";
+        return roles;
+    }
 
     private:
-    GraphModel *parent_;
+    GraphModel<T> *parent_;
 };
