@@ -22,3 +22,6 @@ class NodeWrapper
     private:
     nodeValue value_;
 };
+
+template <typename T> std::string nodeTypeName(T &value);
+template <typename T> std::string nodeTypeIcon(T &value);

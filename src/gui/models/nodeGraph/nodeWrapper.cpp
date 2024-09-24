@@ -19,3 +19,27 @@ double getValue(nodeValue value)
 {
     return std::visit(overloaded{[](double arg) { return arg; }, [](double *arg) { return *arg; }}, value);
 }
+
+template <> std::string nodeTypeName<nodeValue>(nodeValue &value)
+{
+    switch (value.index())
+    {
+        case 0:
+        case 1:
+            return "number";
+        default:
+            return "";
+    }
+}
+
+template <> std::string nodeTypeIcon<nodeValue>(nodeValue &value)
+{
+    switch (value.index())
+    {
+        case 0:
+        case 1:
+            return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
+        default:
+            return "";
+    }
+}
