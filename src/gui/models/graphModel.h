@@ -59,9 +59,10 @@ class NodeWrapper
 {
     public:
     NodeWrapper(nodeValue value);
-    std::string name, type, icon;
+    std::string name;
     int posx, posy;
     QVariant value();
+    nodeValue &rawValue();
 
     private:
     nodeValue value_;
@@ -80,6 +81,8 @@ class GraphModel : public QObject
     public:
     GraphEdgeModel *edges();
     GraphNodeModel *nodes();
+    std::string typeName(nodeValue &);
+    std::string typeIcon(nodeValue &);
 
     private:
     GraphNodeModel nodes_;
