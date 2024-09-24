@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/models/graphModel.h"
+#include "gui/models/nodeGraph/graphModel.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <qnamespace.h>
