@@ -6,6 +6,7 @@
 #include <QAbstractListModel>
 #include <qtmetamacros.h>
 
+#include <variant>
 #include <vector>
 
 class GraphModel;
@@ -50,16 +51,20 @@ class GraphNodeModel : public QAbstractListModel
     GraphModel *parent_;
 };
 
+typedef std::variant<double, double *> nodeValue;
+
+double getValue(nodeValue value);
+
 class NodeWrapper
 {
     public:
-    NodeWrapper(int value);
+    NodeWrapper(nodeValue value);
     std::string name, type, icon;
     int posx, posy;
     QVariant value();
 
     private:
-    int value_;
+    nodeValue value_;
 };
 
 class GraphModel : public QObject
