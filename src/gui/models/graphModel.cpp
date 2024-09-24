@@ -116,8 +116,6 @@ GraphModel::GraphModel() : nodes_(this), edges_(this)
 GraphEdgeModel *GraphModel::edges() { return &edges_; }
 GraphNodeModel *GraphModel::nodes() { return &nodes_; }
 
-IntNode::IntNode() {}
-
 NodeWrapper::NodeWrapper(nodeValue value) : value_(value) {}
 QVariant NodeWrapper::value() { return getValue(value_); }
 

@@ -88,25 +88,3 @@ class GraphModel : public QObject
     Q_SIGNALS:
     void graphChanged();
 };
-
-class IntNode : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(QString name MEMBER name_ NOTIFY nodeChanged);
-    Q_PROPERTY(double x MEMBER x_ NOTIFY nodeChanged);
-    Q_PROPERTY(double y MEMBER y_ NOTIFY nodeChanged);
-    Q_PROPERTY(QString type MEMBER type_ NOTIFY nodeChanged);
-    Q_PROPERTY(QString icon MEMBER icon_ NOTIFY nodeChanged);
-    Q_PROPERTY(int value MEMBER value_ NOTIFY nodeChanged);
-
-    public:
-    IntNode();
-
-    private:
-    QString name_, type_, icon_;
-    double x_, y_;
-    int value_;
-
-    Q_SIGNALS:
-    void nodeChanged();
-};
