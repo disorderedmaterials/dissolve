@@ -79,9 +79,9 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
         case 2:
             return item.posy;
         case 3:
-            return item.type.c_str();
+            return parent_->typeName(item.rawValue()).c_str();
         case 4:
-            return item.icon.c_str();
+            return parent_->typeIcon(item.rawValue()).c_str();
         case 5:
             return item.value();
     }
@@ -100,17 +100,37 @@ GraphModel::GraphModel() : nodes_(this), edges_(this)
 {
     auto &first = items.emplace_back(7.5);
     first.name = "Source";
-    first.icon = "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
     first.posx = 100;
     first.posy = 300;
-    first.type = "number";
 
     auto &second = items.emplace_back(12.5);
     second.name = "Destination";
-    second.icon = "file:/home/adam/Code/dissolve/src/gui/icons/options.svg";
     second.posx = 600;
     second.posy = 400;
-    second.type = "number";
+}
+
+std::string GraphModel::typeName(nodeValue &value)
+{
+    switch (value.index())
+    {
+        case 0:
+        case 1:
+            return "number";
+        default:
+            return "";
+    }
+}
+
+std::string GraphModel::typeIcon(nodeValue &value)
+{
+    switch (value.index())
+    {
+        case 0:
+        case 1:
+            return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
+        default:
+            return "";
+    }
 }
 
 GraphEdgeModel *GraphModel::edges() { return &edges_; }
@@ -118,6 +138,7 @@ GraphNodeModel *GraphModel::nodes() { return &nodes_; }
 
 NodeWrapper::NodeWrapper(nodeValue value) : value_(value) {}
 QVariant NodeWrapper::value() { return getValue(value_); }
+nodeValue &NodeWrapper::rawValue() { return value_; }
 
 // helper type for the visitor #4
 template <class... Ts> struct overloaded : Ts...

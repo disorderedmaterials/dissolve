@@ -50,7 +50,7 @@ TEST(GraphModelTest, GraphModel)
   EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 3).toString(),
             "number");
   EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 4).toString(),
-            "file:/home/adam/Code/dissolve/src/gui/icons/options.svg");
+            "file:/home/adam/Code/dissolve/src/gui/icons/open.svg");
   EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 5).toDouble(),
             12.5);
   
