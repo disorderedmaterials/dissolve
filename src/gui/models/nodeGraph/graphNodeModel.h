@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "nodeWrapper.h"
 #include <QAbstractListModel>
 
 template <typename T> class GraphModel;
@@ -45,9 +46,9 @@ template <typename T> class GraphNodeModel : public QAbstractListModel
             case 2:
                 return item.posy;
             case 3:
-                return parent_->typeName(item.rawValue()).c_str();
+                return nodeTypeName(item.rawValue()).c_str();
             case 4:
-                return parent_->typeIcon(item.rawValue()).c_str();
+                return nodeTypeIcon(item.rawValue()).c_str();
             case 5:
                 return item.value();
         }

@@ -45,28 +45,6 @@ template <typename T> class GraphModel : public GraphModelBase
     public:
     QAbstractListModel *edges() override { return &edges_; }
     QAbstractListModel *nodes() override { return &nodes_; }
-    std::string typeName(nodeValue &value)
-    {
-        switch (value.index())
-        {
-            case 0:
-            case 1:
-                return "number";
-            default:
-                return "";
-        }
-    }
-    std::string typeIcon(nodeValue &value)
-    {
-        switch (value.index())
-        {
-            case 0:
-            case 1:
-                return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
-            default:
-                return "";
-        }
-    }
 
     private:
     GraphNodeModel<T> nodes_;
