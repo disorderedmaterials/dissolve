@@ -5,7 +5,7 @@
 #include "base/processPool.h"
 #include "gui/models/dissolveModel.h"
 #include "gui/models/types.h"
-#include "gui/models/graphModel.h"
+#include "gui/models/nodeGraph/graphModel.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
