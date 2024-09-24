@@ -38,8 +38,8 @@ TEST(GraphModelTest, GraphModel)
             "int");
   EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 4).toString(),
             "file:/home/adam/Code/dissolve/src/gui/icons/open.svg");
-  EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 5).toInt(),
-            7);
+  EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 5).toDouble(),
+            7.5);
 
   EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole).toString(),
             "Destination");
@@ -51,8 +51,8 @@ TEST(GraphModelTest, GraphModel)
             "int");
   EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 4).toString(),
             "file:/home/adam/Code/dissolve/src/gui/icons/options.svg");
-  EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 5).toInt(),
-            12);
+  EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 5).toDouble(),
+            12.5);
   
 }
 

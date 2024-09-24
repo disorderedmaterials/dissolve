@@ -98,14 +98,14 @@ GraphNodeModel &GraphNodeModel::operator=(const GraphNodeModel &other)
 
 GraphModel::GraphModel() : nodes_(this), edges_(this)
 {
-    auto &first = items.emplace_back(7);
+    auto &first = items.emplace_back(7.5);
     first.name = "Source";
     first.icon = "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
     first.posx = 100;
     first.posy = 300;
     first.type = "int";
 
-    auto &second = items.emplace_back(12);
+    auto &second = items.emplace_back(12.5);
     second.name = "Destination";
     second.icon = "file:/home/adam/Code/dissolve/src/gui/icons/options.svg";
     second.posx = 600;
@@ -118,5 +118,18 @@ GraphNodeModel *GraphModel::nodes() { return &nodes_; }
 
 IntNode::IntNode() {}
 
-NodeWrapper::NodeWrapper(int value) : value_(value) {}
-QVariant NodeWrapper::value() { return value_; }
+NodeWrapper::NodeWrapper(nodeValue value) : value_(value) {}
+QVariant NodeWrapper::value() { return getValue(value_); }
+
+// helper type for the visitor #4
+template <class... Ts> struct overloaded : Ts...
+{
+    using Ts::operator()...;
+};
+// explicit deduction guide (not needed as of C++20)
+template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+double getValue(nodeValue value)
+{
+    return std::visit(overloaded{[](double arg) { return arg; }, [](double *arg) { return *arg; }}, value);
+}
