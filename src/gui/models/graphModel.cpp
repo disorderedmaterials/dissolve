@@ -103,14 +103,14 @@ GraphModel::GraphModel() : nodes_(this), edges_(this)
     first.icon = "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
     first.posx = 100;
     first.posy = 300;
-    first.type = "int";
+    first.type = "number";
 
     auto &second = items.emplace_back(12.5);
     second.name = "Destination";
     second.icon = "file:/home/adam/Code/dissolve/src/gui/icons/options.svg";
     second.posx = 600;
     second.posy = 400;
-    second.type = "int";
+    second.type = "number";
 }
 
 GraphEdgeModel *GraphModel::edges() { return &edges_; }
