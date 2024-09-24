@@ -5,24 +5,56 @@
 
 #include <QAbstractListModel>
 
-class GraphModel;
+template <typename T> class GraphModel;
 
 /** A list model that provides the tick labels of the axis */
-class GraphNodeModel : public QAbstractListModel
+template <typename T> class GraphNodeModel : public QAbstractListModel
 {
-    Q_OBJECT
-
     public:
-    GraphNodeModel(GraphModel *parent = nullptr);
-    GraphNodeModel(const GraphNodeModel &other);
+    GraphNodeModel(GraphModel<T> *parent = nullptr) : parent_(parent) {}
+    GraphNodeModel(const GraphNodeModel<T> &other) : parent_(other.parent_) {}
 
-    GraphNodeModel &operator=(const GraphNodeModel &other);
-    bool operator!=(const GraphNodeModel &other);
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QHash<int, QByteArray> roleNames() const override;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    GraphNodeModel<T> &operator=(const GraphNodeModel<T> &other)
+    {
+        parent_ = other.parent_;
+        return *this;
+    }
+    bool operator!=(const GraphNodeModel<T> &other) { return &parent_ != &other.parent_; }
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override { return parent_->items.size(); }
+    QHash<int, QByteArray> roleNames() const override
+    {
+        QHash<int, QByteArray> roles;
+        roles[Qt::UserRole] = "name";
+        roles[Qt::UserRole + 1] = "posX";
+        roles[Qt::UserRole + 2] = "posY";
+        roles[Qt::UserRole + 3] = "type";
+        roles[Qt::UserRole + 4] = "icon";
+        roles[Qt::UserRole + 5] = "value";
+        return roles;
+    }
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
+    {
+
+        auto &item = parent_->items.at(index.row());
+        switch (role - Qt::UserRole)
+        {
+            case 0:
+                return item.name.c_str();
+            case 1:
+                return item.posx;
+            case 2:
+                return item.posy;
+            case 3:
+                return parent_->typeName(item.rawValue()).c_str();
+            case 4:
+                return parent_->typeIcon(item.rawValue()).c_str();
+            case 5:
+                return item.value();
+        }
+        return {};
+    }
     /** Function to reset the model (and trigger redrawing all labels */
 
     private:
-    GraphModel *parent_;
+    GraphModel<T> *parent_;
 };

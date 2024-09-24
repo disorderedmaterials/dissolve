@@ -11,7 +11,7 @@ namespace UnitTest
 
 TEST(GraphModelTest, GraphModel)
 {
-  GraphModel model;
+  GraphModel<NodeWrapper> model;
 
   auto& edges = *model.edges();
   auto& nodes = *model.nodes();

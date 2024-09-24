@@ -3,33 +3,72 @@
 
 #pragma once
 
+#include "graphEdgeModel.h"
+#include "graphNodeModel.h"
+#include "nodeWrapper.h"
 #include <QAbstractListModel>
 #include <qtmetamacros.h>
 #include <vector>
-#include "graphNodeModel.h"
-#include "graphEdgeModel.h"
-#include "nodeWrapper.h"
 
-class GraphModel : public QObject
+class GraphModelBase : public QObject
 {
     Q_OBJECT;
-    Q_PROPERTY(GraphNodeModel *nodes READ nodes NOTIFY graphChanged);
-    Q_PROPERTY(GraphEdgeModel *edges READ edges NOTIFY graphChanged);
+    Q_PROPERTY(QAbstractListModel *nodes READ nodes NOTIFY graphChanged);
+    Q_PROPERTY(QAbstractListModel *edges READ edges NOTIFY graphChanged);
 
     public:
-    GraphModel();
-    std::vector<NodeWrapper> items;
-
-    public:
-    GraphEdgeModel *edges();
-    GraphNodeModel *nodes();
-    std::string typeName(nodeValue &);
-    std::string typeIcon(nodeValue &);
-
-    private:
-    GraphNodeModel nodes_;
-    GraphEdgeModel edges_;
+    GraphModelBase();
+    virtual QAbstractListModel *edges();
+    virtual QAbstractListModel *nodes();
 
     Q_SIGNALS:
     void graphChanged();
+};
+
+template <typename T> class GraphModel : public GraphModelBase
+{
+    public:
+    GraphModel() : nodes_(this), edges_(this)
+    {
+        auto &first = items.emplace_back(7.5);
+        first.name = "Source";
+        first.posx = 100;
+        first.posy = 300;
+
+        auto &second = items.emplace_back(12.5);
+        second.name = "Destination";
+        second.posx = 600;
+        second.posy = 400;
+    }
+    std::vector<NodeWrapper> items;
+
+    public:
+    QAbstractListModel *edges() override { return &edges_; }
+    QAbstractListModel *nodes() override { return &nodes_; }
+    std::string typeName(nodeValue &value)
+    {
+        switch (value.index())
+        {
+            case 0:
+            case 1:
+                return "number";
+            default:
+                return "";
+        }
+    }
+    std::string typeIcon(nodeValue &value)
+    {
+        switch (value.index())
+        {
+            case 0:
+            case 1:
+                return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
+            default:
+                return "";
+        }
+    }
+
+    private:
+    GraphNodeModel<T> nodes_;
+    GraphEdgeModel<T> edges_;
 };
