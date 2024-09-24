@@ -22,24 +22,12 @@ double getValue(nodeValue value)
 
 template <> std::string nodeTypeName<nodeValue>(nodeValue &value)
 {
-    switch (value.index())
-    {
-        case 0:
-        case 1:
-            return "number";
-        default:
-            return "";
-    }
+    return std::visit(overloaded{[](double arg) { return "number"; }, [](double *arg) { return "number"; }}, value);
 }
 
 template <> std::string nodeTypeIcon<nodeValue>(nodeValue &value)
 {
-    switch (value.index())
-    {
-        case 0:
-        case 1:
-            return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
-        default:
-            return "";
-    }
+    return std::visit(overloaded{[](double arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; },
+                                 [](double *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; }},
+                      value);
 }
