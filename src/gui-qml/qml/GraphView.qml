@@ -46,7 +46,7 @@ Pane {
         DelegateChooser {
             role: "type"
             DelegateChoice {
-                roleValue: "int"
+                roleValue: "number"
                 delegate: NodeBox {
                     property double startX
                     property double endX
