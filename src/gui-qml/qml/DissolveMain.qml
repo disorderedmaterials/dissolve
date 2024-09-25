@@ -167,44 +167,42 @@ ApplicationWindow {
         }
         Item {
             id: exampleGraphTab
-            ListModel {
-                id: exampleNodeModel
-
-                ListElement {
-                    posX: 100
-                    posY: 300
-                    name: "Source"
-                    type: "int"
-                    icon: "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"
-                    value: 7
-                }
-
-                ListElement {
-                    posX: 600
-                    posY: 400
-                    name: "Destination"
-                    type: "point2d"
-                    icon: "file:/home/adam/Code/dissolve/src/gui/icons/options.svg"
-                    px: 3.5
-                    py: 7.4
-                }
-
-                ListElement {
-                    posX: 400
-                    posY: 600
-                    name: "Count"
-                    type: "int"
-                    icon: "file:/home/adam/Code/dissolve/src/gui/icons/stop.svg"
-                    value: 7
-                }
-            }
-
             GraphModel {
                 id: graphModel
             }
 
+            Pane {
+                id: toolBar
+
+                RowLayout {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    Label {
+                        text: "Title"
+                    }
+                    TextField {
+                        id: nodeNameInput
+                        placeholderText: "Node Name"
+                    }
+                    Button {
+                        id: addButton
+                        text: "Add Node"
+                        onClicked: {
+                            var px = Math.floor(Math.random() * (graph.width - 50))
+                            var py = Math.floor(Math.random() * (graph.height - 50))
+                            graphModel.emplace_back(nodeNameInput.text, px, py, 7.5)
+                        }
+                    }
+                }
+            }
+
             GraphView {
-                anchors.fill: parent
+                id: graph
+                anchors.top: toolBar.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
                 nodeModel: graphModel.nodes
 
                 edgeModel: graphModel.edges

@@ -3,7 +3,15 @@
 
 #include "nodeWrapper.h"
 
-NodeWrapper::NodeWrapper(nodeValue value) : value_(value) {}
+NodeWrapper::NodeWrapper(QVariant value)
+{
+    switch (value.typeId())
+    {
+        case QMetaType::Double:
+            value_ = value.toDouble();
+            break;
+    }
+}
 QVariant NodeWrapper::value() { return getValue(value_); }
 nodeValue &NodeWrapper::rawValue() { return value_; }
 

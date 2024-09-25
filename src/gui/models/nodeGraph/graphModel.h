@@ -23,28 +23,29 @@ class GraphModelBase : public QObject
 
     Q_SIGNALS:
     void graphChanged();
+
+    public Q_SLOTS:
+    virtual void emplace_back(QString name, int x, int y, QVariant value) {}
 };
 
 template <typename T> class GraphModel : public GraphModelBase
 {
     public:
-    GraphModel() : nodes_(this), edges_(this)
-    {
-        auto &first = items.emplace_back(7.5);
-        first.name = "Source";
-        first.posx = 100;
-        first.posy = 300;
-
-        auto &second = items.emplace_back(12.5);
-        second.name = "Destination";
-        second.posx = 600;
-        second.posy = 400;
-    }
-    std::vector<NodeWrapper> items;
+    GraphModel() : nodes_(this), edges_(this) {}
+    std::vector<T> items;
 
     public:
     QAbstractListModel *edges() override { return &edges_; }
     QAbstractListModel *nodes() override { return &nodes_; }
+    void emplace_back(QString name, int x, int y, QVariant value) override
+    {
+        nodes_.beginInsertRows({}, items.size(), items.size() + 11);
+        auto &item = items.emplace_back(value);
+        item.name = name.toStdString();
+        item.posx = x;
+        item.posy = y;
+        nodes_.endInsertRows();
+    }
 
     private:
     GraphNodeModel<T> nodes_;

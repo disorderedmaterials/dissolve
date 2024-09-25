@@ -13,6 +13,9 @@ TEST(GraphModelTest, GraphModel)
 {
   GraphModel<NodeWrapper> model;
 
+  model.emplace_back("Source", 100, 300, 7.5);
+  model.emplace_back("Destination", 600, 400, 12.5);
+
   auto& edges = *model.edges();
   auto& nodes = *model.nodes();
 
