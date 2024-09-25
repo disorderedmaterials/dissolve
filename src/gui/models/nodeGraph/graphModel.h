@@ -39,7 +39,7 @@ template <typename T> class GraphModel : public GraphModelBase
     QAbstractListModel *nodes() override { return &nodes_; }
     void emplace_back(QString name, int x, int y, QVariant value) override
     {
-        nodes_.beginInsertRows({}, items.size(), items.size() + 11);
+        nodes_.beginInsertRows({}, items.size(), items.size() + 1);
         auto &item = items.emplace_back(value);
         item.name = name.toStdString();
         item.posx = x;

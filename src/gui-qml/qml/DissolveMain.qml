@@ -186,6 +186,7 @@ ApplicationWindow {
                     TextField {
                         id: nodeNameInput
                         placeholderText: "Node Name"
+                        onAccepted: addButton.clicked()
                     }
                     Button {
                         id: addButton
