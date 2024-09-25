@@ -5,6 +5,7 @@
 
 #include "nodeWrapper.h"
 #include <QAbstractListModel>
+#include <qvariant.h>
 
 template <typename T> class GraphModel;
 
@@ -55,6 +56,22 @@ template <typename T> class GraphNodeModel : public QAbstractListModel
                 return item.value();
         }
         return {};
+    }
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override
+    {
+        auto &item = parent_->items.at(index.row());
+        switch (role - Qt::UserRole)
+        {
+            case 1:
+                item.posx = value.toInt();
+                return true;
+            case 2:
+                item.posy = value.toInt();
+                return true;
+            default:
+                return false;
+        }
+        return false;
     }
     /** Function to reset the model (and trigger redrawing all labels */
 

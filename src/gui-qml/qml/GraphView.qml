@@ -65,6 +65,12 @@ Pane {
                         anchors.fill: parent
                         text: value
                     }
+
+                    DragHandler {
+                        target: null
+                        xAxis.onActiveValueChanged: (delta) => posX += delta
+                        yAxis.onActiveValueChanged: (delta) => posY += delta
+                    }
                 }
             }
 
