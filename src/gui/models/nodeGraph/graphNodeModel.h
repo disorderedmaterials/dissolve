@@ -43,7 +43,7 @@ template <typename T> class GraphNodeModel : public QAbstractListModel
         switch (role - Qt::UserRole)
         {
             case 0:
-                return item.name.c_str();
+                return nodeName(item.rawValue()).c_str();
             case 1:
                 return item.posx;
             case 2:

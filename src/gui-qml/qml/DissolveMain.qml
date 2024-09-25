@@ -178,21 +178,13 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    Label {
-                        text: "Title"
-                    }
-                    TextField {
-                        id: nodeNameInput
-                        placeholderText: "Node Name"
-                        onAccepted: addButton.clicked()
-                    }
                     Button {
                         id: addButton
                         text: "Add Node"
                         onClicked: {
                             var px = Math.floor(Math.random() * (graph.width - 50))
                             var py = Math.floor(Math.random() * (graph.height - 50))
-                            graphModel.emplace_back(nodeNameInput.text, px, py, 7.5)
+                            graphModel.emplace_back(px, py, 7.5)
                         }
                     }
                 }

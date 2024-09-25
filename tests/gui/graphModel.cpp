@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "gui/models/nodeGraph/graphModel.h"
+#include "gui/models/nodeGraph/nodeWrapper.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <qnamespace.h>
@@ -11,10 +12,13 @@ namespace UnitTest
 
 TEST(GraphModelTest, GraphModel)
 {
-  GraphModel<NodeWrapper> model;
+  GraphModel<nodeValue> model;
 
-  model.emplace_back("Source", 100, 300, 7.5);
-  model.emplace_back("Destination", 600, 400, 12.5);
+  model.emplace_back(100, 300, 7.5);
+  model.emplace_back(600, 400, 12.5);
+
+  EXPECT_EQ(std::get<double>(model.items[0].rawValue().value), 7.5);
+  EXPECT_EQ(std::get<double>(model.items[1].rawValue().value), 12.5);
 
   auto& edges = *model.edges();
   auto& nodes = *model.nodes();
@@ -31,8 +35,8 @@ TEST(GraphModelTest, GraphModel)
   EXPECT_EQ(edges.data(nodes.index(0, 0), Qt::UserRole+3).toInt(),
             0);
 
-  EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole).toString(),
-            "Source");
+  // EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole).toString(),
+  //           "Source");
   EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 1).toInt(),
             100);
   EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 2).toInt(),
@@ -44,8 +48,8 @@ TEST(GraphModelTest, GraphModel)
   EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 5).toDouble(),
             7.5);
 
-  EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole).toString(),
-            "Destination");
+  // EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole).toString(),
+  //           "Destination");
   EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 1).toInt(),
             600);
   EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 2).toInt(),

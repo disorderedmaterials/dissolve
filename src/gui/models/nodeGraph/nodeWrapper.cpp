@@ -3,18 +3,6 @@
 
 #include "nodeWrapper.h"
 
-NodeWrapper::NodeWrapper(QVariant value)
-{
-    switch (value.typeId())
-    {
-        case QMetaType::Double:
-            value_ = value.toDouble();
-            break;
-    }
-}
-QVariant NodeWrapper::value() { return getValue(value_); }
-nodeValue &NodeWrapper::rawValue() { return value_; }
-
 // helper type for the visitor #4
 template <class... Ts> struct overloaded : Ts...
 {
@@ -23,19 +11,23 @@ template <class... Ts> struct overloaded : Ts...
 // explicit deduction guide (not needed as of C++20)
 template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
-double getValue(nodeValue value)
+template <> QVariant nodeGetValue<nodeValue>(const nodeValue value)
 {
-    return std::visit(overloaded{[](double arg) { return arg; }, [](double *arg) { return *arg; }}, value);
+    return std::visit(overloaded{[](double arg) { return arg; }, [](double *arg) { return *arg; }}, value.value);
 }
 
-template <> std::string nodeTypeName<nodeValue>(nodeValue &value)
+template <> std::string nodeTypeName<nodeValue>(const nodeValue &value)
 {
-    return std::visit(overloaded{[](double arg) { return "number"; }, [](double *arg) { return "number"; }}, value);
+    return std::visit(overloaded{[](double arg) { return "number"; }, [](double *arg) { return "number"; }}, value.value);
 }
 
-template <> std::string nodeTypeIcon<nodeValue>(nodeValue &value)
+template <> std::string nodeTypeIcon<nodeValue>(const nodeValue &value)
 {
     return std::visit(overloaded{[](double arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; },
                                  [](double *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; }},
-                      value);
+                      value.value);
 }
+
+template <> std::string nodeName<nodeValue>(const nodeValue &value) { return value.name; }
+
+nodeValue::nodeValue(QVariant var) : value(var.toDouble()) {}

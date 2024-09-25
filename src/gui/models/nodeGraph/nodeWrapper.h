@@ -6,22 +6,27 @@
 #include <QAbstractListModel>
 #include <variant>
 
-typedef std::variant<double, double *> nodeValue;
-
-double getValue(nodeValue value);
-
-class NodeWrapper
+class nodeValue
 {
     public:
-    NodeWrapper(QVariant value);
+    nodeValue(QVariant var);
     std::string name;
-    int posx, posy;
-    QVariant value();
-    nodeValue &rawValue();
-
-    private:
-    nodeValue value_;
+    std::variant<double, double *> value;
 };
 
-template <typename T> std::string nodeTypeName(T &value);
-template <typename T> std::string nodeTypeIcon(T &value);
+template <typename T> std::string nodeTypeName(const T &value);
+template <typename T> std::string nodeTypeIcon(const T &value);
+template <typename T> std::string nodeName(const T &value);
+template <typename T> QVariant nodeGetValue(const nodeValue value);
+
+template <typename T> class NodeWrapper
+{
+    public:
+    NodeWrapper(QVariant value) : value_(value) {}
+    int posx, posy;
+    QVariant value() { return nodeGetValue<T>(value_); }
+    T &rawValue() { return value_; }
+
+    private:
+    T value_;
+};

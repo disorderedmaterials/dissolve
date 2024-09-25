@@ -25,23 +25,22 @@ class GraphModelBase : public QObject
     void graphChanged();
 
     public Q_SLOTS:
-    virtual void emplace_back(QString name, int x, int y, QVariant value) {}
+    virtual void emplace_back(int x, int y, QVariant value) {}
 };
 
 template <typename T> class GraphModel : public GraphModelBase
 {
     public:
     GraphModel() : nodes_(this), edges_(this) {}
-    std::vector<T> items;
+    std::vector<NodeWrapper<T>> items;
 
     public:
     QAbstractListModel *edges() override { return &edges_; }
     QAbstractListModel *nodes() override { return &nodes_; }
-    void emplace_back(QString name, int x, int y, QVariant value) override
+    void emplace_back(int x, int y, QVariant value) override
     {
         nodes_.beginInsertRows({}, items.size(), items.size() + 1);
         auto &item = items.emplace_back(value);
-        item.name = name.toStdString();
         item.posx = x;
         item.posy = y;
         nodes_.endInsertRows();
