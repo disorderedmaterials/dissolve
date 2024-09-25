@@ -45,6 +45,8 @@ template <typename T> class GraphModel : public GraphModelBase
         item.posx = x;
         item.posy = y;
         nodes_.endInsertRows();
+        edges_.beginResetModel();
+        edges_.endResetModel();
     }
 
     private:

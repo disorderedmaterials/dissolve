@@ -10,6 +10,8 @@ template <typename T> class GraphModel;
 /** A list model that provides the tick labels of the axis */
 template <typename T> class GraphEdgeModel : public QAbstractListModel
 {
+    friend GraphModel<T>;
+
     public:
     GraphEdgeModel(GraphModel<T> *parent = nullptr) : parent_(parent) {}
     GraphEdgeModel(const GraphEdgeModel<T> &other) : parent_(other.parent_) {}
