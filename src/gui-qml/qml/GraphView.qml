@@ -53,6 +53,8 @@ Pane {
                     property double midY
                     x: posX
                     y: posY
+                    px: posX
+                    py: posY
                     startX: x + width
                     endX: x
                     midY: y + basey + root.y + root.height/2 + 10
@@ -64,12 +66,6 @@ Pane {
                         height: contentHeight
                         anchors.fill: parent
                         text: value
-                    }
-
-                    DragHandler {
-                        target: null
-                        xAxis.onActiveValueChanged: (delta) => posX += delta
-                        yAxis.onActiveValueChanged: (delta) => posY += delta
                     }
                 }
             }
