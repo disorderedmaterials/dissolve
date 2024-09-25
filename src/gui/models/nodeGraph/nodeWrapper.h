@@ -13,7 +13,7 @@ double getValue(nodeValue value);
 class NodeWrapper
 {
     public:
-    NodeWrapper(nodeValue value);
+    NodeWrapper(QVariant value);
     std::string name;
     int posx, posy;
     QVariant value();

@@ -11,6 +11,8 @@ template <typename T> class GraphModel;
 /** A list model that provides the tick labels of the axis */
 template <typename T> class GraphNodeModel : public QAbstractListModel
 {
+    friend GraphModel<T>;
+
     public:
     GraphNodeModel(GraphModel<T> *parent = nullptr) : parent_(parent) {}
     GraphNodeModel(const GraphNodeModel<T> &other) : parent_(other.parent_) {}
