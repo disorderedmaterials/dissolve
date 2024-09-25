@@ -8,6 +8,8 @@ GroupBox {
     property string nodeType;
     property string image;
     property double basey;
+    property int px;
+    property int py;
     basey: header.height
     label:
     RowLayout {
@@ -23,6 +25,11 @@ GroupBox {
             id: titleLabel
             text: root.nodeType
             font.pointSize: 14
+        }
+        DragHandler {
+            target: null
+            xAxis.onActiveValueChanged: (delta) => posX += delta
+            yAxis.onActiveValueChanged: (delta) => posY += delta
         }
     }
 }
