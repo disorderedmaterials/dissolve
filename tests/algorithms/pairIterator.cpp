@@ -32,7 +32,11 @@ void for_each_test(bool unordered)
 
     int sum = 0;
     dissolve::for_each_pair(
-        ParallelPolicies::seq, 0, size, [&sum, &store](const auto i, const auto j) { sum += store[i, j]; }, unordered);
+        ParallelPolicies::seq, 0, size,
+        [&sum, &store](const auto i, const auto j) {
+            sum += store[{i, j}];
+        },
+        unordered);
 
     EXPECT_EQ(total, sum);
 }
