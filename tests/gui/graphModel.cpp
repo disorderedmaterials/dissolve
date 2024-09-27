@@ -60,6 +60,19 @@ TEST(GraphModelTest, GraphModel)
             "file:/home/adam/Code/dissolve/src/gui/icons/open.svg");
   EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 5).toDouble(),
             12.5);
+
+  model.deleteNode(0);
+  EXPECT_EQ(nodes.rowCount(), 1);
+  EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 1).toInt(),
+            600);
+  EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 2).toInt(),
+            400);
+  EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 3).toString(),
+            "number");
+  EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 4).toString(),
+            "file:/home/adam/Code/dissolve/src/gui/icons/open.svg");
+  EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 5).toDouble(),
+            12.5);
   
 }
 

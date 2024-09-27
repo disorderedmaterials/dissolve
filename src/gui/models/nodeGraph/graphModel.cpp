@@ -9,3 +9,4 @@ GraphModelBase::GraphModelBase() {}
 
 QAbstractListModel *GraphModelBase::edges() {return nullptr;}
 QAbstractListModel *GraphModelBase::nodes() {return nullptr;}
+int GraphModelBase::count() {return 0;}

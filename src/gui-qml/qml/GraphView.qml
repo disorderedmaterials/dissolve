@@ -5,6 +5,7 @@ import QtQuick.Shapes
 import Qt.labs.qmlmodels
 
 Pane {
+    property variant rootModel;
     property variant nodeModel;
     property variant edgeModel;
     property double curveOffset: 125;
@@ -60,6 +61,7 @@ Pane {
                     midY: y + basey + root.y + root.height/2 + 10
                     image: icon
                     nodeType: name
+                    onDeleted: rootModel.deleteNode(index)
                     Text {
                         id: root
                         width: contentWidth
