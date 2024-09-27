@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "math/data1D.h"
 #include "math/peaks.h"
+#include "math/data1D.h"
 #include "math/interpolator.h"
 #include "templates/algorithms.h"
 #include <algorithm>

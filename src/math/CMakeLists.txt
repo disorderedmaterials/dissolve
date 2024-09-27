@@ -10,7 +10,6 @@ add_library(
   doubleExp.cpp
   error.cpp
   filters.cpp
-  peaks.cpp
   ft.cpp
   function1D.cpp
   gaussFit.cpp
@@ -25,9 +24,10 @@ add_library(
   matrix3.cpp
   matrix4.cpp
   mc.cpp
-  praxis.cpp
+  peaks.cpp
   poissonFit.cpp
   polynomial.cpp
+  praxis.cpp
   range.cpp
   regression.cpp
   sampledData1D.cpp
@@ -51,7 +51,6 @@ add_library(
   doubleExp.h
   error.h
   filters.h
-  peaks.h
   ft.h
   function1D.h
   functionSpace.h
@@ -68,6 +67,7 @@ add_library(
   matrix3.h
   matrix4.h
   mc.h
+  peaks.h
   polynomial.h
   poissonFit.h
   praxis.h
