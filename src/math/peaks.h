@@ -47,7 +47,7 @@ class Peaks
         Peak1D(double peak, double valueAt, int index) : peak(peak), valueAt(valueAt), index(index) {}
     };
 
-    // Container for a rominence occuring in 1D data
+    // Container for a prominence occuring in 1D data
     struct Prominence1D : public Peak1D
     {
         double prominence;

@@ -80,7 +80,6 @@ std::vector<Peaks::Peak1D> Peaks::top(int n, std::vector<Peaks::Peak1D> peaks)
         bool withinRadius = std::any_of(isolatedPeaks.begin(), isolatedPeaks.end(),
                                         [this, &peak](const auto &p)
                                         {
-                                            // return compare(p, peak);
                                             return (p.index != peak.index) && ((p.valueAt > peak.valueAt - isolation_) &&
                                                                                (p.valueAt < peak.valueAt + isolation_));
                                         });

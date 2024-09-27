@@ -13,10 +13,10 @@
 namespace UnitTest
 {
 
-class FitTest : public ::testing::Test
+class PeaksTest : public ::testing::Test
 {
     public:
-    FitTest()
+    PeaksTest()
     {
         /*
          * Peaks: test data
@@ -127,7 +127,7 @@ class FitTest : public ::testing::Test
     }
 };
 
-TEST_F(FitTest, BasicPeaks)
+TEST_F(PeaksTest, BasicPeaks)
 {
     Peaks analyser(cleanGaussianY_, gaussianX_);
 
@@ -155,7 +155,7 @@ TEST_F(FitTest, BasicPeaks)
     EXPECT_TRUE(analyserMulti.find().size() == 1);
 }
 
-TEST_F(FitTest, DynamicPeaks)
+TEST_F(PeaksTest, DynamicPeaks)
 {
     // Multiply peaks with a cosine over the domain [0, 3]
     auto signal = cleanMultiPeaksY_, domain = multiPeaksX_;
@@ -203,7 +203,7 @@ TEST_F(FitTest, DynamicPeaks)
     ASSERT_NEAR(dynamicPeaks[0].peak, 0.42, 10e-3);
 }
 
-TEST_F(FitTest, NoisyPeaks)
+TEST_F(PeaksTest, NoisyPeaks)
 {
     auto x = multiPeaksX_;
 
@@ -215,7 +215,7 @@ TEST_F(FitTest, NoisyPeaks)
     };
 
     // Added noise of amplitude 0.5
-    auto y = FitTest::addNoise(cleanMultiPeaksY_, 0.5);
+    auto y = PeaksTest::addNoise(cleanMultiPeaksY_, 0.5);
 
     Peaks analyserNoise(y, x);
     analyserNoise.setIsolation(3.0 / 8);
@@ -230,7 +230,7 @@ TEST_F(FitTest, NoisyPeaks)
     ASSERT_TRUE(containsPeakNearIndex(peaksNoise, 150, 5));
 
     // Added noise of amplitude 1.0
-    auto y1 = FitTest::addNoise(cleanMultiPeaksY_);
+    auto y1 = PeaksTest::addNoise(cleanMultiPeaksY_);
 
     Peaks analyserNoiseLevel1(y1, x);
     analyserNoiseLevel1.setIsolation(3.0 / 8);
@@ -245,7 +245,7 @@ TEST_F(FitTest, NoisyPeaks)
     ASSERT_TRUE(containsPeakNearIndex(peaksNoiseLevel1, 150, 5));
 
     // Added noise of amplitude 2.0
-    auto y2 = FitTest::addNoise(cleanMultiPeaksY_, 2.0);
+    auto y2 = PeaksTest::addNoise(cleanMultiPeaksY_, 2.0);
 
     Peaks analyserNoiseLevel2(y2, x);
     analyserNoiseLevel2.setIsolation(3.0 / 8);
@@ -260,14 +260,14 @@ TEST_F(FitTest, NoisyPeaks)
     ASSERT_TRUE(containsPeakNearIndex(peaksNoiseLevel2, 150, 10));
 }
 
-TEST_F(FitTest, Prominences)
+TEST_F(PeaksTest, Prominences)
 {
     // Multiply peaks with a cosine over the domain [0, 3]
-    auto signal = cleanMultiPeaksY_, domain = multiPeaksX_;
+    auto y = cleanMultiPeaksY_, x = multiPeaksX_;
     for (int i = 0; i < 200; i++)
-        signal[i] *= cos(domain[i]);
+        y[i] *= cos(x[i]);
 
-    Peaks analyser(signal, domain);
+    Peaks analyser(y, x);
 
     auto proms = analyser.prominences();
 
