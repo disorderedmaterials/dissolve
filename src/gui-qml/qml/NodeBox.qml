@@ -10,6 +10,7 @@ GroupBox {
     property double basey;
     property int px;
     property int py;
+    signal deleted;
     basey: header.height
     label:
     RowLayout {
@@ -26,6 +27,16 @@ GroupBox {
             text: root.nodeType
             font.pointSize: 14
         }
+        Button {
+            contentItem: Image {
+                sourceSize.width: titleLabel.height
+                sourceSize.height: titleLabel.height
+                fillMode: Image.PreserveAspectFit
+                source: "qrc:/Dissolve/icons/cross.svg"
+            }
+            onClicked: root.deleted()
+        }
+
         DragHandler {
             target: null
             xAxis.onActiveValueChanged: (delta) => posX += delta
