@@ -58,7 +58,7 @@ bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix)
     emptyBoundPartials_ = false;
 
     // Set up array matrices for partials
-    dissolve::for_each_full_pair(
+    dissolve::for_each_pair(
         ParallelPolicies::par, atomTypeMix_.begin(), atomTypeMix_.end(),
         [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
         {
@@ -89,13 +89,13 @@ void PartialSet::setUpHistograms(double rdfRange, double binWidth)
     boundHistograms_.initialise(nTypes, nTypes, true);
     unboundHistograms_.initialise(nTypes, nTypes, true);
 
-    dissolve::for_each_full_pair(ParallelPolicies::par, 0, nTypes,
-                                 [&](int i, int j)
-                                 {
-                                     fullHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-                                     boundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-                                     unboundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-                                 });
+    dissolve::for_each_pair(ParallelPolicies::par, 0, nTypes,
+                            [&](int i, int j)
+                            {
+                                fullHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
+                                boundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
+                                unboundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
+                            });
 }
 
 // Reset partial arrays
@@ -111,7 +111,7 @@ void PartialSet::reset()
         }
 
     // Zero partials
-    dissolve::for_each_full_pair(
+    dissolve::for_each_pair(
         ParallelPolicies::par, 0, atomTypeMix_.nItems(),
         [&](int i, int j)
         {
@@ -185,7 +185,7 @@ void PartialSet::formTotals(bool applyConcentrationWeights)
     std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
 
-    dissolve::for_each_full_pair(
+    dissolve::for_each_pair(
         ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
         [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2)
         {
@@ -227,7 +227,7 @@ void PartialSet::formTRTotals(NeutronWeights weights)
     std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
 
-    dissolve::for_each_full_pair(
+    dissolve::for_each_pair(
         ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
         [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2)
         {
@@ -270,29 +270,29 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
     LineParser parser;
 
     // Write partials
-    for_each_full_pair_early(
-        atomTypeMix_.begin(), atomTypeMix_.end(),
-        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool>
-        {
-            // Open file and check that we're OK to proceed writing to it
-            std::string filename{fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
-            Messenger::printVerbose("Writing partial file '{}'...\n", filename);
+    for_each_pair_early(atomTypeMix_.begin(), atomTypeMix_.end(),
+                        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool>
+                        {
+                            // Open file and check that we're OK to proceed writing to it
+                            std::string filename{
+                                fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
+                            Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
-            parser.openOutput(filename, true);
-            if (!parser.isFileGoodForWriting())
-                return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
+                            parser.openOutput(filename, true);
+                            if (!parser.isFileGoodForWriting())
+                                return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
-            auto &full = partials_[{typeI, typeJ}];
-            auto &bound = boundPartials_[{typeI, typeJ}];
-            auto &unbound = unboundPartials_[{typeI, typeJ}];
-            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound", "Unbound");
-            for (auto n = 0; n < full.nValues(); ++n)
-                parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), bound.value(n),
-                                  unbound.value(n));
-            parser.closeFiles();
+                            auto &full = partials_[{typeI, typeJ}];
+                            auto &bound = boundPartials_[{typeI, typeJ}];
+                            auto &unbound = unboundPartials_[{typeI, typeJ}];
+                            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound", "Unbound");
+                            for (auto n = 0; n < full.nValues(); ++n)
+                                parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n),
+                                                  bound.value(n), unbound.value(n));
+                            parser.closeFiles();
 
-            return EarlyReturn<bool>::Continue;
-        });
+                            return EarlyReturn<bool>::Continue;
+                        });
 
     Messenger::printVerbose("Writing total file '{}'...\n", total_.tag());
     if (!Data1DExportFileFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(total_))
@@ -316,13 +316,13 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
 // Adjust all partials, adding specified delta to each
 void PartialSet::adjust(double delta)
 {
-    dissolve::for_each_full_pair(ParallelPolicies::par, atomTypeMix_.begin(), atomTypeMix_.end(),
-                                 [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
-                                 {
-                                     partials_[{n, m}] += delta;
-                                     boundPartials_[{n, m}] += delta;
-                                     unboundPartials_[{n, m}] += delta;
-                                 });
+    dissolve::for_each_pair(ParallelPolicies::par, atomTypeMix_.begin(), atomTypeMix_.end(),
+                            [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
+                            {
+                                partials_[{n, m}] += delta;
+                                boundPartials_[{n, m}] += delta;
+                                unboundPartials_[{n, m}] += delta;
+                            });
 
     total_ += delta;
     boundTotal_ += delta;
@@ -332,21 +332,21 @@ void PartialSet::adjust(double delta)
 // Form partials from stored Histogram data
 void PartialSet::formPartials(double boxVolume)
 {
-    dissolve::for_each_full_pair(ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
-                                 [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
-                                 {
-                                     // Calculate RDFs from histogram data
-                                     calculateRDF(partials_[{n, m}], fullHistograms_[{n, m}], boxVolume, at1.population(),
-                                                  at2.population(), &at1 == &at2 ? 2.0 : 1.0);
-                                     calculateRDF(boundPartials_[{n, m}], boundHistograms_[{n, m}], boxVolume, at1.population(),
-                                                  at2.population(), &at1 == &at2 ? 2.0 : 1.0);
-                                     calculateRDF(unboundPartials_[{n, m}], unboundHistograms_[{n, m}], boxVolume,
-                                                  at1.population(), at2.population(), &at1 == &at2 ? 2.0 : 1.0);
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
+                            [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
+                            {
+                                // Calculate RDFs from histogram data
+                                calculateRDF(partials_[{n, m}], fullHistograms_[{n, m}], boxVolume, at1.population(),
+                                             at2.population(), &at1 == &at2 ? 2.0 : 1.0);
+                                calculateRDF(boundPartials_[{n, m}], boundHistograms_[{n, m}], boxVolume, at1.population(),
+                                             at2.population(), &at1 == &at2 ? 2.0 : 1.0);
+                                calculateRDF(unboundPartials_[{n, m}], unboundHistograms_[{n, m}], boxVolume, at1.population(),
+                                             at2.population(), &at1 == &at2 ? 2.0 : 1.0);
 
-                                     // Set flags for bound partials specifying if they are empty (i.e. there are no
-                                     // contributions of that type)
-                                     emptyBoundPartials_[{n, m}] = boundHistograms_[{n, m}].nBinned() == 0;
-                                 });
+                                // Set flags for bound partials specifying if they are empty (i.e. there are no
+                                // contributions of that type)
+                                emptyBoundPartials_[{n, m}] = boundHistograms_[{n, m}].nBinned() == 0;
+                            });
 }
 
 // Add in partials from source PartialSet to our own
@@ -435,7 +435,7 @@ void PartialSet::operator+=(const PartialSet &source)
 
     // Loop over partials in source set
     const auto &types = source.atomTypeMix();
-    dissolve::for_each_full_pair(
+    dissolve::for_each_pair(
         ParallelPolicies::seq, types.begin(), types.end(),
         [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
         {
@@ -466,13 +466,13 @@ void PartialSet::operator-=(const double delta) { adjust(-delta); }
 
 void PartialSet::operator*=(const double factor)
 {
-    dissolve::for_each_full_pair(ParallelPolicies::par, 0, atomTypeMix_.nItems(),
-                                 [&](auto n, auto m)
-                                 {
-                                     partials_[{n, m}] *= factor;
-                                     boundPartials_[{n, m}] *= factor;
-                                     unboundPartials_[{n, m}] *= factor;
-                                 });
+    dissolve::for_each_pair(ParallelPolicies::par, 0, atomTypeMix_.nItems(),
+                            [&](auto n, auto m)
+                            {
+                                partials_[{n, m}] *= factor;
+                                boundPartials_[{n, m}] *= factor;
+                                unboundPartials_[{n, m}] *= factor;
+                            });
 
     total_ *= factor;
     boundTotal_ *= factor;
@@ -636,7 +636,7 @@ bool PartialSet::serialise(LineParser &parser) const
     auto nTypes = atomTypeMix_.nItems();
 
     // Write individual Data1D
-    auto success = for_each_full_pair_early(
+    auto success = for_each_pair_early(
         0, nTypes,
         [&](int typeI, int typeJ) -> EarlyReturn<bool>
         {
