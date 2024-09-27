@@ -343,8 +343,8 @@ void PartialSet::formPartials(double boxVolume)
                                 calculateRDF(unboundPartials_[{n, m}], unboundHistograms_[{n, m}], boxVolume, at1.population(),
                                              at2.population(), &at1 == &at2 ? 2.0 : 1.0);
 
-                                // Set flags for bound partials specifying if they are empty (i.e. there are no contributions of
-                                // that type)
+                                // Set flags for bound partials specifying if they are empty (i.e. there are no
+                                // contributions of that type)
                                 emptyBoundPartials_[{n, m}] = boundHistograms_[{n, m}].nBinned() == 0;
                             });
 }
