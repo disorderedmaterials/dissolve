@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "math/data1D.h"
-#include "math/fitFunc.h"
+#include "math/peaks.h"
 #include "math/interpolator.h"
 #include "templates/algorithms.h"
 #include <algorithm>
@@ -129,7 +129,7 @@ class FitTest : public ::testing::Test
 
 TEST_F(FitTest, BasicPeaks)
 {
-    DissolveFit::Peaks analyser(cleanGaussianY_, gaussianX_);
+    Peaks analyser(cleanGaussianY_, gaussianX_);
 
     auto peaks = analyser.find();
 
@@ -141,7 +141,7 @@ TEST_F(FitTest, BasicPeaks)
     EXPECT_TRUE(analyser.find().size() == 0);
 
     // Find multiple peaks
-    DissolveFit::Peaks analyserMulti(cleanMultiPeaksY_, multiPeaksX_);
+    Peaks analyserMulti(cleanMultiPeaksY_, multiPeaksX_);
 
     auto multiPeaks = analyserMulti.find();
 
@@ -162,7 +162,7 @@ TEST_F(FitTest, DynamicPeaks)
     for (int i = 0; i < 200; i++)
         signal[i] *= cos(domain[i]);
 
-    DissolveFit::Peaks analyser(signal, domain);
+    Peaks analyser(signal, domain);
 
     auto peaks = analyser.find();
 
@@ -191,7 +191,7 @@ TEST_F(FitTest, DynamicPeaks)
         y.push_back(xI * cos(30 * xI));
     }
 
-    DissolveFit::Peaks signalAnalyser(y, x);
+    Peaks signalAnalyser(y, x);
 
     // Isolate peaks by a delta of 0.6
     signalAnalyser.setThreshold(0);
@@ -217,7 +217,7 @@ TEST_F(FitTest, NoisyPeaks)
     // Added noise of amplitude 0.5
     auto y = FitTest::addNoise(cleanMultiPeaksY_, 0.5);
 
-    DissolveFit::Peaks analyserNoise(y, x);
+    Peaks analyserNoise(y, x);
     analyserNoise.setIsolation(3.0 / 8);
 
     auto peaksNoise = analyserNoise.find();
@@ -232,7 +232,7 @@ TEST_F(FitTest, NoisyPeaks)
     // Added noise of amplitude 1.0
     auto y1 = FitTest::addNoise(cleanMultiPeaksY_);
 
-    DissolveFit::Peaks analyserNoiseLevel1(y1, x);
+    Peaks analyserNoiseLevel1(y1, x);
     analyserNoiseLevel1.setIsolation(3.0 / 8);
 
     auto peaksNoiseLevel1 = analyserNoiseLevel1.find();
@@ -247,7 +247,7 @@ TEST_F(FitTest, NoisyPeaks)
     // Added noise of amplitude 2.0
     auto y2 = FitTest::addNoise(cleanMultiPeaksY_, 2.0);
 
-    DissolveFit::Peaks analyserNoiseLevel2(y2, x);
+    Peaks analyserNoiseLevel2(y2, x);
     analyserNoiseLevel2.setIsolation(3.0 / 8);
 
     auto peaksNoiseLevel2 = analyserNoiseLevel2.find();
@@ -267,7 +267,7 @@ TEST_F(FitTest, Prominences)
     for (int i = 0; i < 200; i++)
         signal[i] *= cos(domain[i]);
 
-    DissolveFit::Peaks analyser(signal, domain);
+    Peaks analyser(signal, domain);
 
     auto proms = analyser.prominences();
 

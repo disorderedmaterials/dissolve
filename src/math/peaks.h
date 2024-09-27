@@ -9,9 +9,6 @@
 
 // Forward declarations
 
-// Data fitting functions
-namespace DissolveFit
-{
 /*
  * Peaks
  */
@@ -81,5 +78,3 @@ class Peaks
     std::vector<Prominence1D> prominences(bool heightOrder = false);
     std::vector<Prominence1D> prominences(const std::vector<Peak1D> &peaks, bool heightOrder = false);
 };
-
-}; // namespace DissolveFit

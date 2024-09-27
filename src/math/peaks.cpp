@@ -1,15 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "math/fitFunc.h"
+#include "math/peaks.h"
 #include "math/mathFunc.h"
 #include <algorithm>
-
-namespace DissolveFit
-{
-/*
- * Regression1D
- */
 
 /*
  * Peaks
@@ -143,37 +137,46 @@ std::vector<Peaks::Prominence1D> Peaks::prominences(const std::vector<Peaks::Pea
     for (const auto &peak : peaks)
     {
         int iLeft = peak.index - 1, iRight = peak.index + 1;
-        double heightRef = 0;
-        while (heightRef == 0)
+        double heightRefLeft = 0, heightRefRight = 0;
+
+        while (iLeft > 0)
         {
             double pointsLeft[3] = {values_[iLeft + 1], values_[iLeft], values_[iLeft - 1]};
-            double pointsRight[3] = {values_[iRight - 1], values_[iRight], values_[iRight + 1]};
 
-            if ((iLeft > 0) && (isLocalMinimum(pointsLeft) || isInflectionPoint(pointsLeft)))
+            if (isLocalMinimum(pointsLeft) || isInflectionPoint(pointsLeft))
             {
-                heightRef += iLeft;
-                break;
-            }
-            else if ((iRight < values_.size()) && (isLocalMinimum(pointsRight) || isInflectionPoint(pointsRight)))
-            {
-                heightRef += iRight;
-                break;
-            }
-            else if ((iLeft <= 0) && (iRight >= values_.size()))
-            {
-                Messenger::print("Could not calculate reference height for prominence of peak at index {} (no local minima or "
-                                 "inflection point found in either direction)\n",
-                                 peak.index);
+                heightRefLeft += values_[iLeft];
                 break;
             }
             else
-                iLeft--, iRight++;
+                iLeft--;
         }
-        auto prominence = abs(values_[heightRef] - peak.peak);
+
+        while (iRight < values_.size())
+        {
+            double pointsRight[3] = {values_[iRight - 1], values_[iRight], values_[iRight + 1]};
+
+            if (isLocalMinimum(pointsRight) || isInflectionPoint(pointsRight))
+            {
+                heightRefRight += values_[iRight];
+                break;
+            }
+            else
+                iRight++;
+        }
+
+        if ((heightRefLeft == 0) && (heightRefRight == 0))
+        {
+            Messenger::print("Could not calculate reference height for prominence of peak at index {} (no local minima or "
+                             "inflection point found in either direction)\n",
+                             peak.index);
+            break;
+        }
+
+        auto prominence = std::min(abs(heightRefLeft - peak.peak), abs(heightRefRight - peak.peak));
         proms.emplace_back(&peak, prominence);
     }
     if (!heightOrder)
         sortIndices<Prominence1D>(proms);
     return proms;
 }
-} // namespace DissolveFit
