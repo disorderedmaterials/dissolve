@@ -40,6 +40,7 @@ enum ModuleType
     NeutronSQ,
     OrientedSDF,
     QSpecies,
+    RingPopulations,
     SDF,
     SiteRDF,
     Skeleton,
