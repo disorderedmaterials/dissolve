@@ -337,6 +337,28 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
          */
         functions[Functions1D::Form::Harmonic].setDerivativeFunction(
             [](double x, double omega, const std::vector<double> &params) { return params[0] * x; });
+
+        /*
+         * Coulombic Potential
+         *
+         * Parameters:
+         * INPUT  0 = k
+         * INPUT  1 = q1
+         * INPUT  2 = q2
+         *
+         *          q1 * q2
+         * F(x)=k - -------
+         *           x * x
+         */
+        functions[Functions1D::Form::Coulombic] =
+            Function1DDefinition({"k", "q1", "q2"}, [](double x, double omega, const std::vector<double> &params)
+                                 { return (params[0] * params[1] * params[2]) / pow(x, 2.0); });
+        /*
+         * dYdX(x) = -2 * k * q1 * q2 * r**-3
+         */
+        functions[Functions1D::Form::Coulombic].setDerivativeFunction(
+            [](double x, double omega, const std::vector<double> &params)
+            { return (-2 * params[0] * params[1] * params[2]) / pow(x, 3.0); });
     }
 
     return functions;
@@ -354,7 +376,8 @@ EnumOptions<Functions1D::Form> Functions1D::forms()
                                            {Functions1D::Form::LennardJones126, "LennardJones126", 2},
                                            {Functions1D::Form::Buckingham, "Buckingham", 3},
                                            {Functions1D::Form::GaussianPotential, "GaussianPotential", 3},
-                                           {Functions1D::Form::Harmonic, "Harmonic", 1}});
+                                           {Functions1D::Form::Harmonic, "Harmonic", 1},
+                                           {Functions1D::Form::Coulombic, "Coulombic", 3}});
 }
 
 // Return parameters for specified form

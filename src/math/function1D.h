@@ -87,7 +87,8 @@ class Functions1D
         LennardJones126,
         Buckingham,
         GaussianPotential,
-        Harmonic
+        Harmonic,
+        Coulombic
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
