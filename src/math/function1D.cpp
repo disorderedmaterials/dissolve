@@ -3,6 +3,7 @@
 
 #define _USE_MATH_DEFINES
 #include "math/function1D.h"
+#include "math/constants.h"
 #include "templates/algorithms.h"
 #include <math.h>
 
@@ -347,18 +348,18 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
          * INPUT  2 = q2
          *
          *          q1 * q2
-         * F(x)=k - -------
-         *           x * x
+         * F(x)=k * -------
+         *             x
          */
         functions[Functions1D::Form::Coulombic] =
             Function1DDefinition({"k", "q1", "q2"}, [](double x, double omega, const std::vector<double> &params)
-                                 { return (params[0] * params[1] * params[2]) / pow(x, 2.0); });
+                                 { return (COULCONVERT * params[0] * params[1] * params[2]) / x; });
         /*
-         * dYdX(x) = -2 * k * q1 * q2 * r**-3
+         * dYdX(x) = - k * q1 * q2 * r**-2
          */
         functions[Functions1D::Form::Coulombic].setDerivativeFunction(
             [](double x, double omega, const std::vector<double> &params)
-            { return (-2 * params[0] * params[1] * params[2]) / pow(x, 3.0); });
+            { return (-COULCONVERT * params[0] * params[1] * params[2]) / pow(x, 2); });
     }
 
     return functions;
