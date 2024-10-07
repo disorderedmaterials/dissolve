@@ -73,6 +73,32 @@ Pane {
             }
 
             DelegateChoice {
+                roleValue: "number_ptr"
+                delegate: NodeBox {
+                    property double startX
+                    property double endX
+                    property double midY
+                    x: posX
+                    y: posY
+                    px: posX
+                    py: posY
+                    startX: x + width
+                    endX: x
+                    midY: y + basey + root.y + root.height/2 + 10
+                    image: icon
+                    nodeType: name
+                    onDeleted: rootModel.deleteNode(index)
+                    Text {
+                        id: root
+                        width: contentWidth
+                        height: contentHeight
+                        anchors.fill: parent
+                        text: value ? value : "unlinked"
+                    }
+                }
+            }
+
+            DelegateChoice {
                 roleValue: "point2d"
                 delegate: NodeBox {
                     property double startX

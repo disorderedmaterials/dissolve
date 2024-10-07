@@ -13,12 +13,20 @@ template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 template <> QVariant nodeGetValue<nodeValue>(const nodeValue value)
 {
-    return std::visit(overloaded{[](double arg) { return arg; }, [](double *arg) { return *arg; }}, value.value);
+    return std::visit(overloaded{[](double arg) { return QVariant::fromValue(arg); },
+                                 [](double *arg)
+                                 {
+                                     if (arg)
+                                         return QVariant::fromValue(*arg);
+                                     QVariant empty;
+                                     return empty;
+                                 }},
+                      value.value);
 }
 
 template <> std::string nodeTypeName<nodeValue>(const nodeValue &value)
 {
-    return std::visit(overloaded{[](double arg) { return "number"; }, [](double *arg) { return "number"; }}, value.value);
+    return std::visit(overloaded{[](double arg) { return "number"; }, [](double *arg) { return "number_ptr"; }}, value.value);
 }
 
 template <> std::string nodeTypeIcon<nodeValue>(const nodeValue &value)
@@ -30,4 +38,10 @@ template <> std::string nodeTypeIcon<nodeValue>(const nodeValue &value)
 
 template <> std::string nodeName<nodeValue>(const nodeValue &value) { return value.name; }
 
-nodeValue::nodeValue(QVariant var) : value(var.toDouble()) {}
+nodeValue::nodeValue(QVariant var)
+{
+    if (var.isNull())
+        value = nullptr;
+    else
+        value = var.toDouble();
+}

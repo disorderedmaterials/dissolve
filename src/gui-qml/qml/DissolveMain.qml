@@ -184,7 +184,7 @@ ApplicationWindow {
                         onClicked: {
                             var px = Math.floor(Math.random() * (graph.width - 50))
                             var py = Math.floor(Math.random() * (graph.height - 50))
-                            graphModel.emplace_back(px, py, 7.5)
+                            graphModel.emplace_back(px, py, null)
                         }
                     }
                 }
