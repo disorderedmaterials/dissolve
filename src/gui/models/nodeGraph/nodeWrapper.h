@@ -9,7 +9,7 @@
 class nodeValue
 {
     public:
-    nodeValue(QVariant var);
+    nodeValue(QVariant var = {});
     std::string name;
     std::variant<double, double *> value;
 };
