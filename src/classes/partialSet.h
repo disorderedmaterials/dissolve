@@ -44,12 +44,14 @@ class PartialSet
     Array2D<char> emptyBoundPartials_;
     // Total functions
     Data1D boundTotal_, unboundTotal_, total_;
+    // Bool for half matrix
+    bool half_ = true;
 
     public:
     // Set up PartialSet, including initialising histograms for g(r) use
     bool setUp(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth);
     // Set up PartialSet without initialising histogram arrays
-    bool setUpPartials(const AtomTypeMix &atomTypMix);
+    bool setUpPartials(const AtomTypeMix &atomTypMix, bool unordered = true);
     // Set up histogram arrays for g(r) calculation
     void setUpHistograms(double rdfRange, double binWidth);
     // Reset partial arrays
@@ -93,7 +95,8 @@ class PartialSet
     Data1D &unboundTotal();
     const Data1D &unboundTotal() const;
     // Save all partials and total
-    bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits) const;
+    bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits,
+              bool unordered = true) const;
     // Name all object based on the supplied prefix
     void setObjectTags(std::string_view prefix, std::string_view suffix = "");
     // Return prefix applied to object names
