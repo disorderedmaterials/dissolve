@@ -8,6 +8,7 @@
 #include "nodeWrapper.h"
 #include <QAbstractListModel>
 #include <qtmetamacros.h>
+#include <variant>
 #include <vector>
 
 class GraphModelBase : public QObject
@@ -22,6 +23,7 @@ class GraphModelBase : public QObject
     virtual QAbstractListModel *edges();
     virtual QAbstractListModel *nodes();
     virtual int count();
+    std::vector<std::array<int, 4>> edgeCache;
 
     Q_SIGNALS:
     void graphChanged();
@@ -29,6 +31,7 @@ class GraphModelBase : public QObject
     public Q_SLOTS:
     virtual void emplace_back(int x, int y, QVariant value) {}
     virtual void deleteNode(int index) {}
+    virtual bool connect(int source, int sourceIndex, int destination, int destinationIndex);
 };
 
 template <typename T> class GraphModel : public GraphModelBase
@@ -48,8 +51,6 @@ template <typename T> class GraphModel : public GraphModelBase
         item.posx = x;
         item.posy = y;
         nodes_.endInsertRows();
-        edges_.beginResetModel();
-        edges_.endResetModel();
         graphChanged();
     }
     void deleteNode(int index) override
@@ -57,9 +58,26 @@ template <typename T> class GraphModel : public GraphModelBase
         nodes_.beginRemoveRows({}, index, index);
         items.erase(items.begin() + index);
         nodes_.endRemoveRows();
-        edges_.beginResetModel();
-        edges_.endResetModel();
         graphChanged();
+    }
+
+    bool connect(int source, int sourceIndex, int destination, int destinationIndex) override
+    {
+        auto &src = items[source].rawValue();
+        if (!std::holds_alternative<double>(src.value))
+            // Doesn't have a raw value
+            return false;
+
+        auto &newEdge = edgeCache.emplace_back();
+        newEdge[0] = source;
+        newEdge[1] = sourceIndex;
+        newEdge[2] = destination;
+        newEdge[3] = destinationIndex;
+
+        edges_.beginResetModel();
+        items[destination].rawValue().value = &src;
+        edges_.endResetModel();
+        return true;
     }
 
     private:

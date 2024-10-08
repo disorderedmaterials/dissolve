@@ -14,10 +14,10 @@ template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 template <> QVariant nodeGetValue<nodeValue>(const nodeValue value)
 {
     return std::visit(overloaded{[](double arg) { return QVariant::fromValue(arg); },
-                                 [](double *arg)
+                                 [](nodeValue *arg)
                                  {
                                      if (arg)
-                                         return QVariant::fromValue(*arg);
+                                         return nodeGetValue<nodeValue>(*arg);
                                      QVariant empty;
                                      return empty;
                                  }},
@@ -26,13 +26,13 @@ template <> QVariant nodeGetValue<nodeValue>(const nodeValue value)
 
 template <> std::string nodeTypeName<nodeValue>(const nodeValue &value)
 {
-    return std::visit(overloaded{[](double arg) { return "number"; }, [](double *arg) { return "number_ptr"; }}, value.value);
+    return std::visit(overloaded{[](double arg) { return "number"; }, [](nodeValue *arg) { return "ptr"; }}, value.value);
 }
 
 template <> std::string nodeTypeIcon<nodeValue>(const nodeValue &value)
 {
     return std::visit(overloaded{[](double arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; },
-                                 [](double *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; }},
+                                 [](nodeValue *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; }},
                       value.value);
 }
 

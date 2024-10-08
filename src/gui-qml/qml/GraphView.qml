@@ -73,7 +73,7 @@ Pane {
             }
 
             DelegateChoice {
-                roleValue: "number_ptr"
+                roleValue: "ptr"
                 delegate: NodeBox {
                     property double startX
                     property double endX
