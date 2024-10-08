@@ -94,6 +94,7 @@ Pane {
                         height: contentHeight
                         anchors.fill: parent
                         text: value ? value : "unlinked"
+                        color: value ? "black" : "red"
                     }
                 }
             }
