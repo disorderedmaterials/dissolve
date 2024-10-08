@@ -359,6 +359,28 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
         functions[Functions1D::Form::Coulombic].setDerivativeFunction(
             [](double x, double omega, const std::vector<double> &params)
             { return (-COULCONVERT * params[0] * params[1]) / pow(x, 2); });
+
+        /*
+         * Shifted Coulomb Truncation Potential
+         *
+         * Parameters:
+         * INPUT  0 = q1
+         * INPUT  1 = q2
+         * INPUT  2 = range
+         *
+         *          q1 * q2
+         * F(x)=k * -------
+         *             x
+         */
+        functions[Functions1D::Form::ShiftedCoulombTruncation] = Function1DDefinition(
+            {"q1", "q2", "range"}, [](double x, double omega, const std::vector<double> &params)
+            { return COULCONVERT * params[0] * params[1] * (1.0 / x + x / (params[2] * params[2]) - 2.0 / params[2]); });
+        /*
+         * dYdX(x) = - k * q1 * q2 * r**-2
+         */
+        functions[Functions1D::Form::ShiftedCoulombTruncation].setDerivativeFunction(
+            [](double x, double omega, const std::vector<double> &params)
+            { return COULCONVERT * params[0] * params[1] * (1.0 / (x * x) - 1.0 / (params[2] * params[2])); });
     }
 
     return functions;
@@ -377,7 +399,8 @@ EnumOptions<Functions1D::Form> Functions1D::forms()
                                            {Functions1D::Form::Buckingham, "Buckingham", 3},
                                            {Functions1D::Form::GaussianPotential, "GaussianPotential", 3},
                                            {Functions1D::Form::Harmonic, "Harmonic", 1},
-                                           {Functions1D::Form::Coulombic, "Coulombic", 2}});
+                                           {Functions1D::Form::Coulombic, "Coulombic", 2},
+                                           {Functions1D::Form::ShiftedCoulombTruncation, "ShiftedCoulombTruncation", 3}});
 }
 
 // Return parameters for specified form
