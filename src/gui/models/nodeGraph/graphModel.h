@@ -55,6 +55,43 @@ template <typename T> class GraphModel : public GraphModelBase
     }
     void deleteNode(int index) override
     {
+        // List of edges to remove
+        std::vector<int> deadEdges;
+
+        // Find connected edges and update nodes
+        for (auto i = 0; i < edgeCache.size(); ++i)
+        {
+            if (edgeCache[i][0] == index)
+            {
+                deadEdges.emplace_back(i);
+                auto destination = edgeCache[i][2];
+                items[destination].rawValue().value = nullptr;
+                Q_EMIT(nodes_.dataChanged(nodes_.index(destination), nodes_.index(destination)));
+            }
+            else if (edgeCache[i][2] == index)
+            {
+                deadEdges.emplace_back(i);
+            }
+
+            // Update indices
+            if (edgeCache[i][0] > index)
+                --edgeCache[i][0];
+            if (edgeCache[i][2] > index)
+                --edgeCache[i][2];
+        }
+
+        // Remove dead edges
+        if (!deadEdges.empty())
+        {
+            for (int i = deadEdges.size() - 1; i >= 0; --i)
+            {
+                auto edge = deadEdges[i];
+                edges_.beginRemoveRows({}, edge, edge);
+                edgeCache.erase(edgeCache.begin() + edge);
+                edges_.endRemoveRows();
+            }
+        }
+
         nodes_.beginRemoveRows({}, index, index);
         items.erase(items.begin() + index);
         nodes_.endRemoveRows();
