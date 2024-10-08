@@ -69,14 +69,15 @@ template <typename T> class GraphModel : public GraphModelBase
             return false;
 
         auto &newEdge = edgeCache.emplace_back();
+        edges_.beginResetModel();
         newEdge[0] = source;
         newEdge[1] = sourceIndex;
         newEdge[2] = destination;
         newEdge[3] = destinationIndex;
-
-        edges_.beginResetModel();
-        items[destination].rawValue().value = &src;
         edges_.endResetModel();
+
+        items[destination].rawValue().value = &src;
+        Q_EMIT(nodes_.dataChanged(nodes_.index(destination), nodes_.index(destination)));
         return true;
     }
 
