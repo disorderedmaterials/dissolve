@@ -11,7 +11,7 @@ class nodeValue
     public:
     nodeValue(QVariant var = {});
     std::string name;
-    std::variant<double, double *> value;
+    std::variant<double, nodeValue *> value;
 };
 
 template <typename T> std::string nodeTypeName(const T &value);

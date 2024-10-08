@@ -4,6 +4,8 @@
 #pragma once
 
 #include <QAbstractListModel>
+#include <qnamespace.h>
+#include <variant>
 
 template <typename T> class GraphModel;
 
@@ -22,21 +24,21 @@ template <typename T> class GraphEdgeModel : public QAbstractListModel
         return *this;
     }
     bool operator!=(const GraphEdgeModel<T> &other) { return parent_ != other.parent_; }
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override { return parent_->items.size() / 2; }
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override { return parent_->edgeCache.size(); }
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
     {
         auto row = index.row();
+        if (row >= parent_->edgeCache.size())
+            return {};
+        auto &edge = parent_->edgeCache[row];
 
         switch (role - Qt::UserRole)
         {
             case 0:
-                return row * 2;
             case 1:
-                return 0;
             case 2:
-                return row * 2 + 1;
             case 3:
-                return 0;
+                return edge[role - Qt::UserRole];
             default:
                 return {};
         }

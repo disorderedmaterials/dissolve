@@ -178,13 +178,46 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.top: parent.top
+                    SpinBox {
+                        id: nodeValue
+                        from: 0
+                    }
                     Button {
-                        id: addButton
-                        text: "Add Node"
+                        text: "Add Raw Value"
+                        onClicked: {
+                            var px = Math.floor(Math.random() * (graph.width - 50))
+                            var py = Math.floor(Math.random() * (graph.height - 50))
+                            graphModel.emplace_back(px, py, nodeValue.value)
+                        }
+                    }
+                    Button {
+                        text: "Add Pointer"
                         onClicked: {
                             var px = Math.floor(Math.random() * (graph.width - 50))
                             var py = Math.floor(Math.random() * (graph.height - 50))
                             graphModel.emplace_back(px, py, null)
+                        }
+                    }
+                    Label { text: "Source" }
+                    SpinBox {
+                        id: conSrc
+                        from: 0
+                    }
+                    Label { text: "Destination" }
+                    SpinBox {
+                        id: conDest
+                        from: 0
+                    }
+                    Button {
+                        id: connectButton
+                        text: "Connect"
+                        onClicked: {
+                            let success = graphModel.connect(conSrc.value, 0, conDest.value, 0);
+                            if (!success) {
+                                text = "Bad Connect"
+                            } else {
+                                text = "Good Connect"
+                            }
                         }
                     }
                 }
