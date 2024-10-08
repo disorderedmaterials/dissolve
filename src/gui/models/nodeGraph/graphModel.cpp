@@ -10,4 +10,5 @@ GraphModelBase::GraphModelBase() {}
 QAbstractListModel *GraphModelBase::edges() {return nullptr;}
 QAbstractListModel *GraphModelBase::nodes() {return nullptr;}
 bool GraphModelBase::connect(int source, int sourceIndex, int destination, int destinationIndex) { return false; }
+bool GraphModelBase::disconnect(int source, int sourceIndex, int destination, int destinationIndex) { return false; }
 int GraphModelBase::count() {return 0;}

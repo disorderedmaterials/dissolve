@@ -26,6 +26,11 @@ TEST(GraphModelTest, GraphModel)
     EXPECT_EQ(nodes.rowCount(), 2);
     EXPECT_EQ(edges.rowCount(), 1);
 
+    model.disconnect(0, 0, 1, 0);
+    EXPECT_EQ(nodes.rowCount(), 2);
+    EXPECT_EQ(edges.rowCount(), 0);
+    model.connect(0, 0, 1, 0);
+
     EXPECT_EQ(edges.data(nodes.index(0, 0), Qt::UserRole).toInt(), 0);
     EXPECT_EQ(edges.data(nodes.index(0, 0), Qt::UserRole + 1).toInt(), 0);
     EXPECT_EQ(edges.data(nodes.index(0, 0), Qt::UserRole + 2).toInt(), 1);

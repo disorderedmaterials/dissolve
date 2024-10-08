@@ -220,6 +220,18 @@ ApplicationWindow {
                             }
                         }
                     }
+                    Button {
+                        id: disconnectButton
+                        text: "Disconnect"
+                        onClicked: {
+                            let success = graphModel.disconnect(conSrc.value, 0, conDest.value, 0);
+                            if (!success) {
+                                text = "Bad Disconnect"
+                            } else {
+                                text = "Good Disconnect"
+                            }
+                        }
+                    }
                 }
             }
 

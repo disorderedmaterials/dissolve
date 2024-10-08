@@ -32,6 +32,7 @@ class GraphModelBase : public QObject
     virtual void emplace_back(int x, int y, QVariant value) {}
     virtual void deleteNode(int index) {}
     virtual bool connect(int source, int sourceIndex, int destination, int destinationIndex);
+    virtual bool disconnect(int source, int sourceIndex, int destination, int destinationIndex);
 };
 
 template <typename T> class GraphModel : public GraphModelBase
@@ -115,6 +116,27 @@ template <typename T> class GraphModel : public GraphModelBase
 
         items[destination].rawValue().value = &src;
         Q_EMIT(nodes_.dataChanged(nodes_.index(destination), nodes_.index(destination)));
+        return true;
+    }
+    bool disconnect(int source, int sourceIndex, int destination, int destinationIndex) override
+    {
+
+        for (int i = edgeCache.size() - 1; i >= 0; --i)
+        {
+            auto edge = edgeCache[i];
+
+            // Skip wrong edges
+            if (source != edge[0] || sourceIndex != edge[1] || destination != edge[2] || destinationIndex != edge[3])
+                continue;
+
+            items[destination].rawValue().value = nullptr;
+            Q_EMIT(nodes_.dataChanged(nodes_.index(destination), nodes_.index(destination)));
+
+            edges_.beginRemoveRows({}, i, i);
+            edgeCache.erase(edgeCache.begin() + i);
+            edges_.endRemoveRows();
+        }
+
         return true;
     }
 
