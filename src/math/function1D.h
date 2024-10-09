@@ -89,7 +89,7 @@ class Functions1D
         GaussianPotential,
         Harmonic,
         Coulombic,
-        ShiftedCoulombTruncation
+        ShiftedCoulomb
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
