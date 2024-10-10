@@ -45,8 +45,9 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
 
     auto [weightedTR, wGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
         "WeightedTR", name_, GenericItem::InRestartFileFlag);
+    weightedTR.setFullMatrix();
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedTR.setUpPartials(unweightedGR.atomTypeMix(), false);
+        weightedTR.setUpPartials(unweightedGR.atomTypeMix());
 
     // Retrieve weights
     const auto &weights = moduleData.value<NeutronWeights>("FullWeights", sourceNeutronSQ_->name());
@@ -88,8 +89,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     weightedTR.formTRTotals(weights);
 
     // Save data if requested
-    if (saveTR_ &&
-        (!MPIRunMaster(moduleContext.processPool(), weightedTR.save(name_, "WeightedTR", "tr", "Q, 1/Angstroms", false))))
+    if (saveTR_ && (!MPIRunMaster(moduleContext.processPool(), weightedTR.save(name_, "WeightedTR", "tr", "Q, 1/Angstroms"))))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

@@ -51,7 +51,7 @@ class PartialSet
     // Set up PartialSet, including initialising histograms for g(r) use
     bool setUp(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth);
     // Set up PartialSet without initialising histogram arrays
-    bool setUpPartials(const AtomTypeMix &atomTypMix, bool unordered = true);
+    bool setUpPartials(const AtomTypeMix &atomTypMix);
     // Set up histogram arrays for g(r) calculation
     void setUpHistograms(double rdfRange, double binWidth);
     // Reset partial arrays
@@ -95,8 +95,7 @@ class PartialSet
     Data1D &unboundTotal();
     const Data1D &unboundTotal() const;
     // Save all partials and total
-    bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits,
-              bool unordered = true) const;
+    bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits) const;
     // Name all object based on the supplied prefix
     void setObjectTags(std::string_view prefix, std::string_view suffix = "");
     // Return prefix applied to object names
@@ -117,6 +116,8 @@ class PartialSet
     // Calculate RDF from supplied Histogram and normalisation data
     static void calculateRDF(Data1D &destination, const Histogram1D &histogram, double boxVolume, int nCentres,
                              int nSurrounding, double multiplier);
+    // set to full matrix
+    void setFullMatrix();
 
     /*
      * Operators

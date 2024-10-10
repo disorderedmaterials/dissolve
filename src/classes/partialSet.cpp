@@ -45,7 +45,7 @@ bool PartialSet::setUp(const AtomTypeMix &atomTypeMix, double rdfRange, double b
 }
 
 // Set up PartialSet without initialising histogram arrays
-bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix, bool half_)
+bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix)
 {
     // Copy type array
     atomTypeMix_ = atomTypeMix;
@@ -277,8 +277,8 @@ Data1D &PartialSet::unboundTotal() { return unboundTotal_; }
 const Data1D &PartialSet::unboundTotal() const { return unboundTotal_; }
 
 // Save all partials and total
-bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits,
-                      bool half_) const
+bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix,
+                      std::string_view abscissaUnits) const
 {
     assert(!prefix.empty());
 
@@ -466,6 +466,8 @@ void PartialSet::calculateRDF(Data1D &destination, const Histogram1D &histogram,
         lowerShellLimit += delta;
     }
 }
+
+void PartialSet::setFullMatrix() { half_ = false; }
 
 /*
  * Operators
