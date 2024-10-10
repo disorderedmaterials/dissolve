@@ -581,7 +581,7 @@ int readDataPoint(int argIndex, LineParser &parser, Data1D &data)
 bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
 {
     fingerprint_ = parser.argsv(0);
-    half_ = parser.argb(1);
+    parser.hasArg(1) ? half_ = parser.argb(1) : half_ = true;
     // Read atom types
     atomTypeMix_.clear();
     if (!atomTypeMix_.deserialise(parser, coreData))
