@@ -32,8 +32,9 @@ class GraphModelBase : public QObject
     GraphEdgeModel edges_;
 
     private:
-    virtual bool isValidEdgeSource_(int source, int sourceIndex);
+    virtual bool isValidEdgeSource_(int source, int sourceIndex, int destination, int destinationIndex);
     virtual bool connect_(int source, int sourceIndex, int destination, int destinationIndex);
+    virtual bool disconnect_(int source, int sourceIndex, int destination, int destinationIndex);
 
     Q_SIGNALS:
     void graphChanged();
@@ -42,7 +43,7 @@ class GraphModelBase : public QObject
     virtual void emplace_back(int x, int y, QVariant value) {}
     virtual void deleteNode(int index) {}
     bool connect(int source, int sourceIndex, int destination, int destinationIndex);
-    virtual bool disconnect(int source, int sourceIndex, int destination, int destinationIndex);
+    bool disconnect(int source, int sourceIndex, int destination, int destinationIndex);
 };
 
 template <typename T> class GraphModel : public GraphModelBase
@@ -114,28 +115,13 @@ template <typename T> class GraphModel : public GraphModelBase
         return true;
     }
 
-    bool disconnect(int source, int sourceIndex, int destination, int destinationIndex)
+    bool disconnect_(int source, int sourceIndex, int destination, int destinationIndex) override
     {
-        auto &edgeCache = edges_.edgeCache();
-
-        for (int i = edgeCache.size() - 1; i >= 0; --i)
-        {
-            auto edge = edgeCache[i];
-
-            // Skip wrong edges
-            if (source != edge[0] || sourceIndex != edge[1] || destination != edge[2] || destinationIndex != edge[3])
-                continue;
-
-            items[destination].rawValue().value = nullptr;
-            Q_EMIT(nodes_.dataChanged(nodes_.index(destination), nodes_.index(destination)));
-
-            edges_.dropEdge(i);
-        }
-
+        items[destination].rawValue().value = nullptr;
         return true;
     }
 
-    bool isValidEdgeSource_(int source, int sourceIndex) override
+    bool isValidEdgeSource_(int source, int sourceIndex, int destination, int destinationIndex) override
     {
         auto &src = items[source].rawValue();
         return std::holds_alternative<double>(src.value);
