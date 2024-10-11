@@ -1,10 +1,10 @@
-set(nodeGraphModels_MOC_HDRS graphEdgeModel.h graphNodeModel.h nodeWrapper.h)
+set(nodeGraphModels_MOC_HDRS graphModelBase.h graphEdgeModel.h graphNodeModel.h nodeWrapper.h)
 
 qt6_wrap_cpp(nodeGraphModel_MOC_SRCS ${nodeGraphModel_MOC_HDRS})
 
-set(nodeGraphModel_SRCS graphModel.cpp nodeWrapper.cpp)
+set(nodeGraphModel_SRCS graphModelBase.cpp graphModel.cpp nodeWrapper.cpp)
 
-qt6_wrap_cpp(nodeGraphModel_SRCS graphEdgeModel.h graphNodeModel.h nodeWrapper.h)
+qt6_wrap_cpp(nodeGraphModel_SRCS graphModelBase.h graphEdgeModel.h graphNodeModel.h nodeWrapper.h)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Qml)
 
