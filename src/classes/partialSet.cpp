@@ -207,6 +207,48 @@ void PartialSet::formTotals(bool applyConcentrationWeights)
     total_ += unboundTotal_;
 }
 
+// Sum partials into total for TR
+void PartialSet::formTRTotals(NeutronWeights weights)
+{
+    auto nTypes = atomTypeMix_.nItems();
+    if (nTypes == 0)
+    {
+        total_.clear();
+        boundTotal_.clear();
+        unboundTotal_.clear();
+        return;
+    }
+
+    // Copy x and y arrays from one of the partials, and zero the latter
+    boundTotal_.initialise(partials_[{0, 0}]);
+    unboundTotal_.initialise(partials_[{0, 0}]);
+    total_.initialise(partials_[{0, 0}]);
+    std::fill(boundTotal_.values().begin(), boundTotal_.values().end(), 0.0);
+    std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
+    std::fill(total_.values().begin(), total_.values().end(), 0.0);
+
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
+        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2)
+        {
+            // Set weighting factor if requested
+            auto factor = at1.fraction() * weights.boundCoherentProduct(typeI, typeJ) * (typeI == typeJ ? 1.0 : 2.0);
+
+            // Sum bound term
+            std::transform(boundTotal_.values().begin(), boundTotal_.values().end(),
+                           boundPartials_[{typeI, typeJ}].values().begin(), boundTotal_.values().begin(),
+                           [=](auto total, auto partial) { return total + partial * factor; });
+
+            // Sum unbound term
+            std::transform(unboundTotal_.values().begin(), unboundTotal_.values().end(),
+                           unboundPartials_[{typeI, typeJ}].values().begin(), unboundTotal_.values().begin(),
+                           [=](auto total, auto partial) { return total + partial * factor; });
+        });
+
+    total_ += boundTotal_;
+    total_ += unboundTotal_;
+}
+
 // Return total function
 Data1D &PartialSet::total() { return total_; }
 const Data1D &PartialSet::total() const { return total_; }
@@ -301,8 +343,8 @@ void PartialSet::formPartials(double boxVolume)
                                 calculateRDF(unboundPartials_[{n, m}], unboundHistograms_[{n, m}], boxVolume, at1.population(),
                                              at2.population(), &at1 == &at2 ? 2.0 : 1.0);
 
-                                // Set flags for bound partials specifying if they are empty (i.e. there are no contributions of
-                                // that type)
+                                // Set flags for bound partials specifying if they are empty (i.e. there are no
+                                // contributions of that type)
                                 emptyBoundPartials_[{n, m}] = boundHistograms_[{n, m}].nBinned() == 0;
                             });
 }

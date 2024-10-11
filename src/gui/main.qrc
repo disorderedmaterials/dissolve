@@ -69,6 +69,7 @@
     <file>icons/modules/Compare.svg</file>
     <file>icons/modules/TemperatureSchedule.svg</file>
     <file>icons/modules/VoxelDensity.svg</file>
+    <file>icons/modules/TR.svg</file>    
   </qresource>
   <qresource prefix="general">
     <file>icons/ff.svg</file>
