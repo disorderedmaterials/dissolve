@@ -591,10 +591,10 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     auto nTypes = atomTypeMix_.nItems();
 
     // Read partials
-    partials_.initialise(nTypes, nTypes, true);
-    boundPartials_.initialise(nTypes, nTypes, true);
-    unboundPartials_.initialise(nTypes, nTypes, true);
-    emptyBoundPartials_.initialise(nTypes, nTypes, true);
+    partials_.initialise(nTypes, nTypes, half_);
+    boundPartials_.initialise(nTypes, nTypes, half_);
+    unboundPartials_.initialise(nTypes, nTypes, half_);
+    emptyBoundPartials_.initialise(nTypes, nTypes, half_);
     emptyBoundPartials_ = false;
 
     for (auto typeI = 0; typeI < nTypes; ++typeI)
