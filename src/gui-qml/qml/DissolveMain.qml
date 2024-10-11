@@ -178,6 +178,8 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.top: parent.top
+                    Label {text: "Nodes: " + graphModel.nodeCount}
+                    Label {text: "Edges: " + graphModel.edgeCount}
                     SpinBox {
                         id: nodeValue
                         from: 0

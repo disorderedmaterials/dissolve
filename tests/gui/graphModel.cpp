@@ -14,21 +14,26 @@ TEST(GraphModelTest, GraphModel)
 {
     GraphModel<nodeValue> model;
 
+    GraphEdgeModel &edges = *model.edges();
+    auto &nodes = *model.nodes();
+
+    EXPECT_EQ(nodes.rowCount(), 0);
+    EXPECT_EQ(edges.rowCount(), 0);
+
     model.emplace_back(100, 300, 7.5);
     model.emplace_back(600, 400, {});
     model.connect(0, 0, 1, 0);
 
     EXPECT_EQ(std::get<double>(model.items[0].rawValue().value), 7.5);
 
-    auto &edges = *model.edges();
-    auto &nodes = *model.nodes();
-
     EXPECT_EQ(nodes.rowCount(), 2);
+    EXPECT_EQ(model.nEdges(), 1);
     EXPECT_EQ(edges.rowCount(), 1);
 
-    model.disconnect(0, 0, 1, 0);
-    EXPECT_EQ(nodes.rowCount(), 2);
+    EXPECT_EQ(model.disconnect(0, 0, 1, 0), true);
+    EXPECT_EQ(model.nEdges(), 0);
     EXPECT_EQ(edges.rowCount(), 0);
+    EXPECT_EQ(nodes.rowCount(), 2);
     model.connect(0, 0, 1, 0);
 
     EXPECT_EQ(edges.data(nodes.index(0, 0), Qt::UserRole).toInt(), 0);
