@@ -7,30 +7,46 @@
 #include <qnamespace.h>
 #include <variant>
 
-template <typename T> class GraphModel;
-
 /** A list model that provides the tick labels of the axis */
-template <typename T> class GraphEdgeModel : public QAbstractListModel
+class GraphEdgeModel : public QAbstractListModel
 {
-    friend GraphModel<T>;
-
     public:
-    GraphEdgeModel(GraphModel<T> *parent = nullptr) : parent_(parent) {}
-    GraphEdgeModel(const GraphEdgeModel<T> &other) : parent_(other.parent_) {}
+    GraphEdgeModel() {}
+    GraphEdgeModel(const GraphEdgeModel &other) : edgeCache_(other.edgeCache_) {}
 
-    GraphEdgeModel<T> &operator=(const GraphEdgeModel<T> &other)
+    std::vector<std::array<int, 4>> &edgeCache() { return edgeCache_; }
+
+    void dropEdge(int edge)
     {
-        parent_ = other.parent_;
+        beginRemoveRows({}, edge, edge);
+        edgeCache_.erase(edgeCache_.begin() + edge);
+        endRemoveRows();
+    }
+
+    void addEdge(int source, int sourceIndex, int destination, int destinationIndex)
+    {
+        beginInsertRows({}, edgeCache_.size(), edgeCache_.size());
+        auto &newEdge = edgeCache_.emplace_back();
+        newEdge[0] = source;
+        newEdge[1] = sourceIndex;
+        newEdge[2] = destination;
+        newEdge[3] = destinationIndex;
+        endInsertRows();
+    }
+
+    GraphEdgeModel &operator=(const GraphEdgeModel &other)
+    {
+        edgeCache_ = other.edgeCache_;
         return *this;
     }
-    bool operator!=(const GraphEdgeModel<T> &other) { return parent_ != other.parent_; }
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override { return parent_->edgeCache.size(); }
+    bool operator!=(const GraphEdgeModel &other) { return edgeCache_ != other.edgeCache_; }
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override { return edgeCache_.size(); }
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
     {
         auto row = index.row();
-        if (row >= parent_->edgeCache.size())
+        if (row >= edgeCache_.size())
             return {};
-        auto &edge = parent_->edgeCache[row];
+        auto &edge = edgeCache_[row];
 
         switch (role - Qt::UserRole)
         {
@@ -54,5 +70,5 @@ template <typename T> class GraphEdgeModel : public QAbstractListModel
     }
 
     private:
-    GraphModel<T> *parent_;
+    std::vector<std::array<int, 4>> edgeCache_;
 };

@@ -11,19 +11,29 @@
 #include <variant>
 #include <vector>
 
+class GraphEdgeModel;
+
 class GraphModelBase : public QObject
 {
     Q_OBJECT;
     Q_PROPERTY(QAbstractListModel *nodes READ nodes NOTIFY graphChanged);
-    Q_PROPERTY(QAbstractListModel *edges READ edges NOTIFY graphChanged);
+    Q_PROPERTY(GraphEdgeModel *edges READ edges NOTIFY graphChanged);
     Q_PROPERTY(int nodeCount READ count NOTIFY graphChanged);
+    Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
 
     public:
     GraphModelBase();
-    virtual QAbstractListModel *edges();
+    GraphEdgeModel *edges();
     virtual QAbstractListModel *nodes();
     virtual int count();
-    std::vector<std::array<int, 4>> edgeCache;
+    int nEdges();
+
+    protected:
+    GraphEdgeModel edges_;
+
+    private:
+    virtual bool isValidEdgeSource_(int source, int sourceIndex);
+    virtual bool connect_(int source, int sourceIndex, int destination, int destinationIndex);
 
     Q_SIGNALS:
     void graphChanged();
@@ -31,18 +41,17 @@ class GraphModelBase : public QObject
     public Q_SLOTS:
     virtual void emplace_back(int x, int y, QVariant value) {}
     virtual void deleteNode(int index) {}
-    virtual bool connect(int source, int sourceIndex, int destination, int destinationIndex);
+    bool connect(int source, int sourceIndex, int destination, int destinationIndex);
     virtual bool disconnect(int source, int sourceIndex, int destination, int destinationIndex);
 };
 
 template <typename T> class GraphModel : public GraphModelBase
 {
     public:
-    GraphModel() : nodes_(this), edges_(this) {}
+    GraphModel() : nodes_(this) {}
     std::vector<NodeWrapper<T>> items;
 
     public:
-    QAbstractListModel *edges() override { return &edges_; }
     QAbstractListModel *nodes() override { return &nodes_; }
     int count() override { return nodes_.rowCount(); }
     void emplace_back(int x, int y, QVariant value) override
@@ -58,6 +67,7 @@ template <typename T> class GraphModel : public GraphModelBase
     {
         // List of edges to remove
         std::vector<int> deadEdges;
+        auto &edgeCache = edges_.edgeCache();
 
         // Find connected edges and update nodes
         for (auto i = 0; i < edgeCache.size(); ++i)
@@ -87,9 +97,7 @@ template <typename T> class GraphModel : public GraphModelBase
             for (int i = deadEdges.size() - 1; i >= 0; --i)
             {
                 auto edge = deadEdges[i];
-                edges_.beginRemoveRows({}, edge, edge);
-                edgeCache.erase(edgeCache.begin() + edge);
-                edges_.endRemoveRows();
+                edges_.dropEdge(edge);
             }
         }
 
@@ -99,27 +107,16 @@ template <typename T> class GraphModel : public GraphModelBase
         graphChanged();
     }
 
-    bool connect(int source, int sourceIndex, int destination, int destinationIndex) override
+    bool connect_(int source, int sourceIndex, int destination, int destinationIndex) override
     {
-        auto &src = items[source].rawValue();
-        if (!std::holds_alternative<double>(src.value))
-            // Doesn't have a raw value
-            return false;
 
-        auto &newEdge = edgeCache.emplace_back();
-        edges_.beginResetModel();
-        newEdge[0] = source;
-        newEdge[1] = sourceIndex;
-        newEdge[2] = destination;
-        newEdge[3] = destinationIndex;
-        edges_.endResetModel();
-
-        items[destination].rawValue().value = &src;
-        Q_EMIT(nodes_.dataChanged(nodes_.index(destination), nodes_.index(destination)));
+        items[destination].rawValue().value = &items[source].rawValue();
         return true;
     }
-    bool disconnect(int source, int sourceIndex, int destination, int destinationIndex) override
+
+    bool disconnect(int source, int sourceIndex, int destination, int destinationIndex)
     {
+        auto &edgeCache = edges_.edgeCache();
 
         for (int i = edgeCache.size() - 1; i >= 0; --i)
         {
@@ -132,15 +129,18 @@ template <typename T> class GraphModel : public GraphModelBase
             items[destination].rawValue().value = nullptr;
             Q_EMIT(nodes_.dataChanged(nodes_.index(destination), nodes_.index(destination)));
 
-            edges_.beginRemoveRows({}, i, i);
-            edgeCache.erase(edgeCache.begin() + i);
-            edges_.endRemoveRows();
+            edges_.dropEdge(i);
         }
 
         return true;
     }
 
+    bool isValidEdgeSource_(int source, int sourceIndex) override
+    {
+        auto &src = items[source].rawValue();
+        return std::holds_alternative<double>(src.value);
+    }
+
     private:
     GraphNodeModel<T> nodes_;
-    GraphEdgeModel<T> edges_;
 };
