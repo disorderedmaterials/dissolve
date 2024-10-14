@@ -237,7 +237,7 @@ void NeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr<A
             for (const auto &i : topes.species()->atoms())
                 if (i.isPresence(SpeciesAtom::Presence::Physical))
                     atomTypes_.addIsotope(i.atomType(), top->atomTypeIsotope(i.atomType()),
-                                      isoWeight.weight() * topes.speciesPopulation());
+                                          isoWeight.weight() * topes.speciesPopulation());
         }
     }
     atomTypes_.finalise(exchangeableTypes);
