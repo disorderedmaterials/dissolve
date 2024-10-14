@@ -248,9 +248,10 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
 // Return the number of atoms in the configuration (or only those with the specified presence)
 int Configuration::nAtoms(SpeciesAtom::Presence withPresence) const
 {
-    return withPresence == SpeciesAtom::Presence::Any
-               ? atoms_.size()
-               : std::count_if(atoms_.begin(), atoms_.end(),
+    if (withPresence == SpeciesAtom::Presence::Any) {
+        return atoms_.size();
+    }
+    return std::count_if(atoms_.begin(), atoms_.end(),
                                [withPresence](const auto &i) { return i.isPresence(withPresence); });
 }
 

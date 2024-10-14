@@ -183,14 +183,14 @@ std::optional<std::pair<int, int>> AtomTypeMix::indexOf(const std::shared_ptr<At
             if (index == -1)
                 index = count;
             else
-                return std::pair<int, int>{count, index};
+                return {{count, index}};
         }
         if (atd.atomType() == at2)
         {
             if (index == -1)
                 index = count;
             else
-                return std::pair<int, int>{index, count};
+                return {{index, count}};
         }
         ++count;
     }
