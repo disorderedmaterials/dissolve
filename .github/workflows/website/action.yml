@@ -2,8 +2,6 @@ name: Website
 description: Build and publish website
 
 inputs:
-  hugoVersion:
-    default: "0.98.0"
   isRelease:
     type: boolean
     default: false
@@ -74,7 +72,7 @@ runs:
     shell: bash
     run: |
       set -ex
-      wget https://github.com/gohugoio/hugo/releases/download/v${{ inputs.hugoVersion }}/hugo_extended_${{ inputs.hugoVersion }}_Linux-64bit.deb -O '${{ github.workspace }}/hugo.deb'
+      wget https://github.com/gohugoio/hugo/releases/download/v${{ env.hugoVersion }}/hugo_extended_${{ env.hugoVersion }}_Linux-64bit.deb -O '${{ github.workspace }}/hugo.deb'
       sudo dpkg -i ${{ github.workspace }}/hugo*.deb
 
   - name: 'Install pandoc / xetex'
