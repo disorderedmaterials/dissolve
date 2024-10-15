@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
-#include "gui/models/nodeGraph/graphModel.h"
-#include "gui/models/nodeGraph/nodeWrapper.h"
+#include "gui/models/nodeGraph/exampleGraphModel.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <qnamespace.h>
@@ -12,7 +11,7 @@ namespace UnitTest
 
 TEST(GraphModelTest, GraphModel)
 {
-    GraphModel<nodeValue> model;
+    ExampleGraphModel model;
 
     GraphEdgeModel &edges = *model.edges();
     auto &nodes = *model.nodes();

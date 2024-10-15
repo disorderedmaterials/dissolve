@@ -25,7 +25,7 @@ template <typename T> class GraphModel : public GraphModelBase
         auto &item = items.emplace_back(value);
         item.posx = x;
         item.posy = y;
-        item.rawValue().name = "";
+        setNodeName(item.rawValue(), "Unnamed");
         nodes_.endInsertRows();
         graphChanged();
     }
@@ -75,21 +75,17 @@ template <typename T> class GraphModel : public GraphModelBase
 
     bool connect_(int source, int sourceIndex, int destination, int destinationIndex) override
     {
-
-        items[destination].rawValue().value = &items[source].rawValue();
-        return true;
+        return nodeConnect(items[source].rawValue(), sourceIndex, items[destination].rawValue(), destinationIndex);
     }
 
     bool disconnect_(int source, int sourceIndex, int destination, int destinationIndex) override
     {
-        items[destination].rawValue().value = nullptr;
-        return true;
+        return nodeDisconnect(items[source].rawValue(), sourceIndex, items[destination].rawValue(), destinationIndex);
     }
 
     bool isValidEdgeSource_(int source, int sourceIndex, int destination, int destinationIndex) override
     {
-        auto &src = items[source].rawValue();
-        return std::holds_alternative<double>(src.value);
+        return nodeConnectable(items[source].rawValue(), sourceIndex, items[destination].rawValue(), destinationIndex);
     }
 
     private:
