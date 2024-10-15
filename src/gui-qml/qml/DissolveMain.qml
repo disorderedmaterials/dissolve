@@ -204,11 +204,13 @@ ApplicationWindow {
                     SpinBox {
                         id: conSrc
                         from: 0
+                        to: graphModel.nodeCount - 1
                     }
                     Label { text: "Destination" }
                     SpinBox {
                         id: conDest
                         from: 0
+                        to: graphModel.nodeCount - 1
                     }
                     Button {
                         id: connectButton
