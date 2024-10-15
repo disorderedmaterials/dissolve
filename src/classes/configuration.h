@@ -81,8 +81,8 @@ class Configuration : public Serialisable<const CoreData &>
     private:
     // Species populations present in the Configuration
     std::vector<std::pair<const Species *, int>> speciesPopulations_;
-    // AtomType mix, containing unique (non-isotopic) atom types over all Species used in this configuration
-    AtomTypeMix atomTypes_;
+    // AtomType populations in the configuration
+    AtomTypeMix atomTypePopulations_;
     // Contents version, incremented whenever Configuration content or Atom positions change
     VersionCounter contentsVersion_;
     // Molecule vector
@@ -95,10 +95,8 @@ class Configuration : public Serialisable<const CoreData &>
     void empty();
     // Return specified used type
     std::shared_ptr<AtomType> atomTypes(int index);
-    // Return AtomTypeMix for this Configuration
-    const AtomTypeMix &atomTypes() const;
-    // Return number of atom types used in this Configuration
-    int nAtomTypes() const;
+    // Return atom type populations for this Configuration
+    const AtomTypeMix &atomTypePopulations() const;
     // Adjust population of specified Species in the Configuration
     void adjustSpeciesPopulation(const Species *sp, int delta);
     // Return Species populations within the Configuration
@@ -137,8 +135,8 @@ class Configuration : public Serialisable<const CoreData &>
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
     Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r = Vec3<double>());
-    // Return number of Atoms in Configuration
-    int nAtoms() const;
+    // Return the number of atoms in the configuration (or only those with the specified presence)
+    int nAtoms(SpeciesAtom::Presence withPresence = SpeciesAtom::Presence::Any) const;
     // Return Atom array
     std::vector<Atom> &atoms();
     const std::vector<Atom> &atoms() const;

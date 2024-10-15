@@ -136,7 +136,6 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
     }
 
     auto *cfg = generatorContext.configuration();
-    const auto nAtomsToAdd = ipop * sp->nAtoms();
     auto rho = std::get<0>(density_).asDouble();
     auto rhoUnits = std::get<1>(density_);
 
@@ -154,7 +153,7 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
         // Determine volume required to contain the population of the specified Species at the requested density
         auto requiredVolume = 0.0;
         if (rhoUnits == Units::AtomsPerAngstromUnits)
-            requiredVolume = nAtomsToAdd / rho;
+            requiredVolume = (ipop * sp->nAtoms(SpeciesAtom::Presence::Physical)) / rho;
         else
             requiredVolume = ((sp->mass() * ipop) / AVOGADRO) / (rho / 1.0E24);
 
@@ -195,7 +194,7 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
         // Determine volume required to contain the population of the specified Species at the requested density
         auto requiredVolume = 0.0;
         if (rhoUnits == Units::AtomsPerAngstromUnits)
-            requiredVolume = nAtomsToAdd / rho;
+            requiredVolume = (ipop * sp->nAtoms(SpeciesAtom::Presence::Physical)) / rho;
         else
             requiredVolume = ((sp->mass() * ipop) / AVOGADRO) / (rho / 1.0E24);
 
@@ -275,12 +274,6 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
     {
         // Add the Molecule - use coordinate set if one is available
         std::shared_ptr<Molecule> mol;
-
-        // The atom pointers need to be updated before
-        // setCentreOfGeometry is called, or else there can be a
-        // segfault due to pointer invalidation.  It would be nice if
-        // we could have a single lock for the whole loop, but that
-        // will require some thought.
         if (hasCoordinateSets)
         {
             mol = cfg->addMolecule(sp, coordinateSets_->set(coordinateSetIndex));

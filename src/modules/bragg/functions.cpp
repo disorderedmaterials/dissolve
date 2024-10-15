@@ -41,8 +41,8 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
 
     // Grab some useful values
     const auto *box = cfg->box();
-    auto nTypes = cfg->nAtomTypes();
-    auto nAtoms = cfg->nAtoms();
+    auto nTypes = cfg->atomTypePopulations().nItems();
+    auto nAtoms = cfg->nAtoms(SpeciesAtom::Presence::Physical);
     auto &atoms = cfg->atoms();
 
     // Set up reciprocal axes and lengths - take those from the Box and scale based on the multiplicity
@@ -179,6 +179,10 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
     Vec3<double> v, rI;
     for (n = 0; n < nAtoms; ++n)
     {
+        // Skip unphysical atoms
+        if (!atoms[n].isPresence(SpeciesAtom::Presence::Physical))
+            continue;
+
         // Calculate reciprocal lattice atom coordinates
         // TODO CHECK Test this in a non-cubic system!
         v = atoms[n].r();
@@ -246,8 +250,13 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
     timer.start();
     for (n = 0; n < nAtoms; ++n)
     {
+        // Skip unphysical atoms
+        if (!atoms[n].isPresence(SpeciesAtom::Presence::Physical))
+            continue;
+
         // Grab localTypeIndex and array pointers for this atom
         localTypeIndex = atoms[n].localTypeIndex();
+
         cosTermsH = braggAtomVectorXCos.pointerAt(n, 0);
         cosTermsK = braggAtomVectorYCos.pointerAt(n, 0);
         cosTermsL = braggAtomVectorZCos.pointerAt(n, 0);
@@ -306,7 +315,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, const Process
     const auto nReflections = braggReflections.size();
 
     // Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
-    const auto nTypes = cfg->nAtomTypes();
+    const auto nTypes = cfg->atomTypePopulations().nItems();
     auto braggPartialsObject = moduleData.realiseIf<Array2D<Data1D>>("OriginalBragg", name(), GenericItem::InRestartFileFlag);
     auto &braggPartials = braggPartialsObject.first;
     if (braggPartialsObject.second == GenericItem::ItemStatus::Created)
@@ -337,7 +346,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, const Process
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
     double qCentre;
     int bin;
-    auto &types = cfg->atomTypes();
+    auto &types = cfg->atomTypePopulations();
     dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
                             [&](int typeI, auto &atd1, int typeJ, auto &atd2)
                             {
@@ -373,7 +382,7 @@ bool BraggModule::reBinReflections(GenericList &moduleData, const ProcessPool &p
     const auto &braggReflections = moduleData.value<std::vector<BraggReflection>>("Reflections", name());
     const auto nReflections = braggReflections.size();
 
-    const auto nTypes = cfg->nAtomTypes();
+    const auto nTypes = cfg->atomTypePopulations().nItems();
 
     // Create a temporary Data1D into which we will generate individual Bragg peak contributions
     const auto qDelta = braggPartials[{0, 0}].xAxis(1) - braggPartials[{0, 0}].xAxis(0);
@@ -397,7 +406,7 @@ bool BraggModule::reBinReflections(GenericList &moduleData, const ProcessPool &p
         ++nAdded[bin];
 
         // Loop over pairs of atom types, binning intensity contributions from this reflection
-        auto &types = cfg->atomTypes();
+        auto &types = cfg->atomTypePopulations();
         int typeI = 0;
         for (auto atd1 = types.begin(); atd1 != types.end(); typeI++, atd1++)
         {

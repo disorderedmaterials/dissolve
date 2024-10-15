@@ -38,6 +38,15 @@ class SpeciesAtom : public Serialisable<CoreData &>
     /*
      * Properties
      */
+    public:
+    // Presence
+    enum class Presence
+    {
+        Phantom = -1,
+        Physical,
+        Any
+    };
+
     private:
     // Atomic element
     Elements::Element Z_{Elements::Unknown};
@@ -51,16 +60,19 @@ class SpeciesAtom : public Serialisable<CoreData &>
     int index_{-1};
     // Whether the atom is currently selected
     bool selected_{false};
+    // Presence of atom
+    Presence presence_{Presence::Physical};
 
     public:
-    // Set basic atom properties
+    // Set basic properties
     void set(Elements::Element Z, double rx, double ry, double rz, double q = 0.0);
-    // Set basic atom properties
-    void set(Elements::Element Z, const Vec3<double> r, double q = 0.0);
+    void set(Elements::Element Z, const Vec3<double> &r, double q = 0.0);
     // Set atomic element
     void setZ(Elements::Element Z);
     // Return atomic element
     Elements::Element Z() const;
+    // Return whether the atom is of the presence specified
+    bool isPresence(SpeciesAtom::Presence presence) const;
     // Return coordinates (read-only)
     const Vec3<double> &r() const;
     // Set charge of Atom
@@ -81,6 +93,8 @@ class SpeciesAtom : public Serialisable<CoreData &>
     void setSelected(bool selected);
     // Return whether the atom is currently selected
     bool isSelected() const;
+    // Return presence of atom
+    Presence presence() const;
 
     /*
      * Intramolecular Information

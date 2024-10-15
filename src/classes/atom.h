@@ -67,6 +67,8 @@ class Atom
     void setSpeciesAtom(const SpeciesAtom *spAtom);
     // Return SpeciesAtom that this Atom represents
     const SpeciesAtom *speciesAtom() const;
+    // Return whether the atom's presence is that specified
+    bool isPresence(SpeciesAtom::Presence presence) const;
     // Set Molecule in which this Atom exists
     void setMolecule(std::shared_ptr<Molecule> mol);
     // Return Molecule in which this Atom exists

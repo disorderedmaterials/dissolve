@@ -32,11 +32,11 @@ Module::ExecutionResult BraggModule::process(ModuleContext &moduleContext)
                      multiplicity_.z);
     Messenger::print("\n");
 
-    // Realise an AtomTypeList containing the sum of atom types over all target configurations (currently only one)
+    // Realise an AtomTypeMix containing the sum of atom types over all target configurations (currently only one)
     auto &combinedAtomTypes = moduleContext.dissolve().processingModuleData().realise<AtomTypeMix>(
         "SummedAtomTypes", name_, GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
-    combinedAtomTypes.add(targetConfiguration_->atomTypes());
+    combinedAtomTypes.add(targetConfiguration_->atomTypePopulations());
 
     // Store unit cell information
     auto &unitCellVolume =
@@ -90,7 +90,7 @@ Module::ExecutionResult BraggModule::process(ModuleContext &moduleContext)
         braggParser.closeFiles();
 
         // Save intensity data
-        auto &types = targetConfiguration_->atomTypes();
+        auto &types = targetConfiguration_->atomTypePopulations();
         auto success = for_each_pair_early(
             types.begin(), types.end(),
             [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) -> EarlyReturn<bool>

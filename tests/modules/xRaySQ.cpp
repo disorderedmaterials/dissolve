@@ -19,8 +19,9 @@ TEST_F(XRaySQModuleTest, Water)
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Total F(Q)
-    EXPECT_TRUE(systemTest.checkData1D("H2Oxray//WeightedSQ//Total", {"epsr25/water1000-neutron-xray/water.EPSR.u01",
-                                                                      Data1DImportFileFormat::Data1DImportFormat::XY, 1, 8}));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "H2Oxray//WeightedSQ//Total",
+        {"epsr25/water1000-neutron-xray/water.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 8}, 2.0e-4));
 }
 
 } // namespace UnitTest

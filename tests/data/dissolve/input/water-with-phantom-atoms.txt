@@ -1,0 +1,140 @@
+# Input file written by Dissolve v1.6.0 at 14:01:15 on 25-06-2024.
+
+#==============================================================================#
+#                                   Species                                    #
+#==============================================================================#
+
+Species 'Water'
+  # Atoms
+  NAtoms  5
+  Atom    1  O    1.500000e-02  -9.000000e-03  -3.730000e-01  'OW'  0.000000e+00
+  Atom    2  H    7.570000e-01  1.300000e-02  2.170000e-01  'HW'  0.000000e+00
+  Atom    3  H    -7.710000e-01  -3.000000e-03  1.570000e-01  'HW'  0.000000e+00
+  Atom    4  Phantom 7.352000e-02  8.760680e-01  -1.006506e+00  'LP'  0.000000e+00
+  Atom    5  Phantom 9.057400e-02  -9.237860e-01  -9.608400e-01  'LP'  0.000000e+00
+
+  # Bonds
+  NBonds  4
+  Bond    1    2  Harmonic k=3000 eq=0.995
+  Bond    1    3  Harmonic k=3000 eq=0.995
+  Bond    1    4  Harmonic k=300 eq=0.995
+  Bond    1    5  Harmonic k=300 eq=0.995
+
+  # Angles
+  NAngles  6
+  Angle    2    1    3  Harmonic  k=400 eq=109.5
+  Angle    2    1    4  Harmonic  k=40 eq=109.5
+  Angle    2    1    5  Harmonic  k=40 eq=109.5
+  Angle    3    1    4  Harmonic  k=40 eq=109.5
+  Angle    3    1    5  Harmonic  k=40 eq=109.5
+  Angle    4    1    5  Harmonic  k=40 eq=109.5
+
+  # Isotopologues
+  Isotopologue  'Protiated'
+  Isotopologue  'Deuteriated'  HW=2
+EndSpecies
+
+#==============================================================================#
+#                               Pair Potentials                                #
+#==============================================================================#
+
+PairPotentials
+  # Atom Type Parameters
+  Parameters  OW  O  -8.200000e-01  LJGeometric  epsilon=0.6503 sigma=3.165492
+  Parameters  HW  H  4.100000e-01  LJGeometric  epsilon=0 sigma=0
+  Parameters  LP  Phantom  0.000000e+00  Undefined
+  Range  15
+  Delta  0.05
+  ManualChargeSource  True
+  IncludeCoulomb  True
+  ForceChargeSource  True
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
+EndPairPotentials
+
+#==============================================================================#
+#                                Configurations                                #
+#==============================================================================#
+
+Configuration  'Bulk'
+
+  # Generator
+  Generator
+    Add  'Add01'
+      Species  'Water'
+      Population  '1000'
+      Density  '0.0999999642'  atoms/A3
+      Positioning  Random
+      BoxAction  AddVolume
+    EndAdd
+    ImportCoordinates  'InputCoordinates01'
+      File  xyz  'dissolve/input/water-with-phantom-atoms.xyz'
+      EndFile
+    EndImportCoordinates
+  EndGenerator
+
+  Temperature  300
+
+EndConfiguration
+
+#==============================================================================#
+#                              Processing Layers                               #
+#==============================================================================#
+
+Layer  'Processing'
+  Frequency  1
+
+  Module  GR  'GR01'
+    Frequency  1
+    Configurations  'Bulk'
+    BinWidth  0.03
+    AveragingScheme  Linear
+    IntraBroadening  'None'  
+    Method  Auto
+  EndModule
+
+  Module  SQ  'SQ01'
+    Frequency  1
+    SourceGR  'GR01'
+    QMin  0.05
+    QBroadening  'OmegaDependentGaussian'  0.02
+    WindowFunction  None
+    BraggQBroadening  'GaussianC2'  0  0.02
+    AveragingScheme  Linear
+  EndModule
+
+  Module  NeutronSQ  'D2O'
+    Frequency  1
+    SourceSQs  'SQ01'
+    Isotopologue  'Water'  'Deuteriated'  1
+    NormaliseTo  None
+    ReferenceNormalisedTo  None
+    ReferenceWindowFunction  Lorch0
+  EndModule
+
+  Module  NeutronSQ  'H2O'
+    Frequency  1
+    SourceSQs  'SQ01'
+    Isotopologue  'Water'  'Protiated'  1
+    NormaliseTo  None
+    ReferenceNormalisedTo  None
+    ReferenceWindowFunction  Lorch0
+  EndModule
+
+  Module  NeutronSQ  'HDO'
+    Frequency  1
+    SourceSQs  'SQ01'
+    Exchangeable  HW
+    Isotopologue  'Water'  'Protiated'  0.5
+    Isotopologue  'Water'  'Deuteriated'  0.5
+    NormaliseTo  None
+    ReferenceNormalisedTo  None
+    ReferenceWindowFunction  Lorch0
+  EndModule
+
+  Module  XRaySQ  H2Oxray
+    SourceSQs  'SQ01'
+    Normalisation  AverageOfSquares
+  EndModule
+
+EndLayer

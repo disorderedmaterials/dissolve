@@ -113,8 +113,14 @@ void Species::removeAtoms(std::vector<int> indices)
     ++version_;
 }
 
-// Return the number of Atoms in the Species
-int Species::nAtoms() const { return atoms_.size(); }
+// Return the number of atoms in the species (or only those with the specified presence)
+int Species::nAtoms(SpeciesAtom::Presence withPresence) const
+{
+    return withPresence == SpeciesAtom::Presence::Any
+               ? atoms_.size()
+               : std::count_if(atoms_.begin(), atoms_.end(),
+                               [withPresence](const auto &i) { return i.isPresence(withPresence); });
+}
 
 // Renumber atoms so they are sequential in the list
 void Species::renumberAtoms()
@@ -258,10 +264,9 @@ int Species::atomSelectionVersion() const { return atomSelectionVersion_; }
 // Return total atomic mass of Species
 double Species::mass() const
 {
-    auto m = 0.0;
-    for (const auto &i : atoms_)
-        m += AtomicMass::mass(i.Z());
-    return m;
+    return std::accumulate(atoms_.begin(), atoms_.end(), 0.0,
+                           [](const auto acc, const auto &i)
+                           { return acc + (i.isPresence(SpeciesAtom::Presence::Physical) ? AtomicMass::mass(i.Z()) : 0.0); });
 }
 
 // Calculate and return atom types used in the Species
