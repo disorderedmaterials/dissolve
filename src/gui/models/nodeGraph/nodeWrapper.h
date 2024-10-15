@@ -6,19 +6,14 @@
 #include <QAbstractListModel>
 #include <variant>
 
-class nodeValue
-{
-    public:
-    nodeValue(QVariant var = {});
-    std::string name;
-    std::variant<double, nodeValue *> value;
-};
-
 template <typename T> std::string nodeTypeName(const T &value);
 template <typename T> std::string nodeTypeIcon(const T &value);
 template <typename T> std::string nodeName(const T &value);
 template <typename T> void setNodeName(T &value, const std::string);
-template <typename T> QVariant nodeGetValue(const nodeValue value);
+template <typename T> QVariant nodeGetValue(const T value);
+template <typename T> bool nodeConnect(T &source, int sourceIndex, T &destination, int destinationIndex);
+template <typename T> bool nodeConnectable(const T &source, int sourceIndex, const T &destination, int destinationIndex);
+template <typename T> bool nodeDisconnect(T &source, int sourceIndex, T &destination, int destinationIndex);
 
 template <typename T> class NodeWrapper
 {

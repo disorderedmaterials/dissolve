@@ -13,6 +13,7 @@
 #include "gui/models/moduleLayersModel.h"
 #include "gui/models/sortFilterProxy.h"
 #include "gui/models/speciesModel.h"
+#include "nodeGraph/exampleGraphModel.h"
 #include <QQmlEngine>
 #include <QSortFilterProxyModel>
 
@@ -31,5 +32,5 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<MasterTorsionModel>(PROJECT, 1, 0, "MasterTorsionModel");
     qmlRegisterType<ModifyChargesModel>(PROJECT, 1, 0, "ModifyChargesModel");
     qmlRegisterType<SortFilterProxy>(PROJECT, 1, 0, "SortFilterProxy");
-    qmlRegisterType<GraphModel<nodeValue>>(PROJECT, 1, 0, "GraphModel");
+    qmlRegisterType<ExampleGraphModel>(PROJECT, 1, 0, "ExampleGraphModel");
 }

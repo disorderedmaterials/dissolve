@@ -167,7 +167,7 @@ ApplicationWindow {
         }
         Item {
             id: exampleGraphTab
-            GraphModel {
+            ExampleGraphModel {
                 id: graphModel
             }
 
