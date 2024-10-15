@@ -93,8 +93,8 @@ Pane {
                         width: contentWidth
                         height: contentHeight
                         anchors.fill: parent
-                        text: value ? value : "unlinked"
-                        color: value ? "black" : "red"
+                        text: value != null ? value : "unlinked"
+                        color: value != null ? "black" : "red"
                     }
                 }
             }
