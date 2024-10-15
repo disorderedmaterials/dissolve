@@ -62,6 +62,9 @@ template <typename T> class GraphNodeModel : public QAbstractListModel
         auto &item = parent_->items.at(index.row());
         switch (role - Qt::UserRole)
         {
+            case 0:
+                setNodeName(item.rawValue(), value.toString().toStdString());
+                return true;
             case 1:
                 item.posx = value.toInt();
                 return true;

@@ -17,6 +17,7 @@ class nodeValue
 template <typename T> std::string nodeTypeName(const T &value);
 template <typename T> std::string nodeTypeIcon(const T &value);
 template <typename T> std::string nodeName(const T &value);
+template <typename T> void setNodeName(T &value, const std::string);
 template <typename T> QVariant nodeGetValue(const nodeValue value);
 
 template <typename T> class NodeWrapper

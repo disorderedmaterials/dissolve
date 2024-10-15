@@ -38,6 +38,8 @@ template <> std::string nodeTypeIcon<nodeValue>(const nodeValue &value)
 
 template <> std::string nodeName<nodeValue>(const nodeValue &value) { return value.name; }
 
+template <> void setNodeName<nodeValue>(nodeValue &value, const std::string name) { value.name = name; }
+
 nodeValue::nodeValue(QVariant var)
 {
     if (var.isNull())
