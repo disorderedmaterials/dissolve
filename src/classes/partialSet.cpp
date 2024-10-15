@@ -33,7 +33,7 @@ PartialSet::~PartialSet()
 bool PartialSet::setUp(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth)
 {
     // Set up partial arrays
-    if (!setUpPartials(atomTypeMix))
+    if (!setUpPartials(atomTypeMix, half_))
         return false;
 
     // Initialise histograms for g(r) calculation
@@ -45,8 +45,10 @@ bool PartialSet::setUp(const AtomTypeMix &atomTypeMix, double rdfRange, double b
 }
 
 // Set up PartialSet without initialising histogram arrays
-bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix)
+bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix, bool half)
 {
+    // Check for full matrix
+    half_ = half;
     // Copy type array
     atomTypeMix_ = atomTypeMix;
     auto nTypes = atomTypeMix_.nItems();
@@ -57,29 +59,16 @@ bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix)
     emptyBoundPartials_.initialise(nTypes, nTypes, half_);
     emptyBoundPartials_ = false;
 
-    if (half_)
-    { // Set up array matrices for partials
-        dissolve::for_each_pair(
-            ParallelPolicies::par, atomTypeMix_.begin(), atomTypeMix_.end(),
-            [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
-            {
-                partials_[{n, m}].setTag(fmt::format("{}-{}//Full", at1.atomTypeName(), at2.atomTypeName()));
-                boundPartials_[{n, m}].setTag(fmt::format("{}-{}//Bound", at1.atomTypeName(), at2.atomTypeName()));
-                unboundPartials_[{n, m}].setTag(fmt::format("{}-{}//Unbound", at1.atomTypeName(), at2.atomTypeName()));
-            });
-    }
-    else
-    { // Set up array matrices for full partials
-        dissolve::for_each_pair(
-            ParallelPolicies::par, atomTypeMix_.begin(), atomTypeMix_.end(),
-            [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
-            {
-                partials_[{n, m}].setTag(fmt::format("{}-{}//Full", at1.atomTypeName(), at2.atomTypeName()));
-                boundPartials_[{n, m}].setTag(fmt::format("{}-{}//Bound", at1.atomTypeName(), at2.atomTypeName()));
-                unboundPartials_[{n, m}].setTag(fmt::format("{}-{}//Unbound", at1.atomTypeName(), at2.atomTypeName()));
-            },
-            false);
-    }
+    // Set up array matrices for full partials
+    dissolve::for_each_pair(
+        ParallelPolicies::par, atomTypeMix_.begin(), atomTypeMix_.end(),
+        [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
+        {
+            partials_[{n, m}].setTag(fmt::format("{}-{}//Full", at1.atomTypeName(), at2.atomTypeName()));
+            boundPartials_[{n, m}].setTag(fmt::format("{}-{}//Bound", at1.atomTypeName(), at2.atomTypeName()));
+            unboundPartials_[{n, m}].setTag(fmt::format("{}-{}//Unbound", at1.atomTypeName(), at2.atomTypeName()));
+        },
+        half_);
 
     // Set up arrays for totals
     total_.setTag("Total");
@@ -103,13 +92,15 @@ void PartialSet::setUpHistograms(double rdfRange, double binWidth)
     boundHistograms_.initialise(nTypes, nTypes, true);
     unboundHistograms_.initialise(nTypes, nTypes, true);
 
-    dissolve::for_each_pair(ParallelPolicies::par, 0, nTypes,
-                            [&](int i, int j)
-                            {
-                                fullHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-                                boundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-                                unboundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-                            });
+    dissolve::for_each_pair(
+        ParallelPolicies::par, 0, nTypes,
+        [&](int i, int j)
+        {
+            fullHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
+            boundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
+            unboundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
+        },
+        half_);
 }
 
 // Reset partial arrays
@@ -133,7 +124,8 @@ void PartialSet::reset()
             std::fill(boundPartials_[{i, j}].values().begin(), boundPartials_[{i, j}].values().end(), 0.0);
             std::fill(unboundPartials_[{i, j}].values().begin(), unboundPartials_[{i, j}].values().end(), 0.0);
             emptyBoundPartials_[{i, j}] = true;
-        });
+        },
+        half_);
 
     // Zero totals
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
@@ -283,62 +275,31 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
     assert(!prefix.empty());
 
     LineParser parser;
-    if (half_)
-    {
-        // Write partials
-        for_each_pair_early(atomTypeMix_.begin(), atomTypeMix_.end(),
-                            [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool>
-                            {
-                                // Open file and check that we're OK to proceed writing to it
-                                std::string filename{
-                                    fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
-                                Messenger::printVerbose("Writing partial file '{}'...\n", filename);
+    // Write partials
+    for_each_pair_early(
+        atomTypeMix_.begin(), atomTypeMix_.end(),
+        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool>
+        {
+            // Open file and check that we're OK to proceed writing to it
+            std::string filename{fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
+            Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
-                                parser.openOutput(filename, true);
-                                if (!parser.isFileGoodForWriting())
-                                    return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
+            parser.openOutput(filename, true);
+            if (!parser.isFileGoodForWriting())
+                return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
-                                auto &full = partials_[{typeI, typeJ}];
-                                auto &bound = boundPartials_[{typeI, typeJ}];
-                                auto &unbound = unboundPartials_[{typeI, typeJ}];
-                                parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound",
-                                                  "Unbound");
-                                for (auto n = 0; n < full.nValues(); ++n)
-                                    parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n),
-                                                      bound.value(n), unbound.value(n));
-                                parser.closeFiles();
+            auto &full = partials_[{typeI, typeJ}];
+            auto &bound = boundPartials_[{typeI, typeJ}];
+            auto &unbound = unboundPartials_[{typeI, typeJ}];
+            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound", "Unbound");
+            for (auto n = 0; n < full.nValues(); ++n)
+                parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), bound.value(n),
+                                  unbound.value(n));
+            parser.closeFiles();
 
-                                return EarlyReturn<bool>::Continue;
-                            });
-    }
-    else
-    { // Write partials
-        for_each_pair_early(
-            atomTypeMix_.begin(), atomTypeMix_.end(),
-            [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool>
-            {
-                // Open file and check that we're OK to proceed writing to it
-                std::string filename{
-                    fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
-                Messenger::printVerbose("Writing partial file '{}'...\n", filename);
-
-                parser.openOutput(filename, true);
-                if (!parser.isFileGoodForWriting())
-                    return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
-
-                auto &full = partials_[{typeI, typeJ}];
-                auto &bound = boundPartials_[{typeI, typeJ}];
-                auto &unbound = unboundPartials_[{typeI, typeJ}];
-                parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound", "Unbound");
-                for (auto n = 0; n < full.nValues(); ++n)
-                    parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), bound.value(n),
-                                      unbound.value(n));
-                parser.closeFiles();
-
-                return EarlyReturn<bool>::Continue;
-            },
-            false);
-    }
+            return EarlyReturn<bool>::Continue;
+        },
+        half_);
 
     Messenger::printVerbose("Writing total file '{}'...\n", total_.tag());
     if (!Data1DExportFileFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(total_))
@@ -362,13 +323,15 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
 // Adjust all partials, adding specified delta to each
 void PartialSet::adjust(double delta)
 {
-    dissolve::for_each_pair(ParallelPolicies::par, atomTypeMix_.begin(), atomTypeMix_.end(),
-                            [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
-                            {
-                                partials_[{n, m}] += delta;
-                                boundPartials_[{n, m}] += delta;
-                                unboundPartials_[{n, m}] += delta;
-                            });
+    dissolve::for_each_pair(
+        ParallelPolicies::par, atomTypeMix_.begin(), atomTypeMix_.end(),
+        [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
+        {
+            partials_[{n, m}] += delta;
+            boundPartials_[{n, m}] += delta;
+            unboundPartials_[{n, m}] += delta;
+        },
+        half_);
 
     total_ += delta;
     boundTotal_ += delta;
@@ -466,8 +429,6 @@ void PartialSet::calculateRDF(Data1D &destination, const Histogram1D &histogram,
         lowerShellLimit += delta;
     }
 }
-
-void PartialSet::setFullMatrix() { half_ = false; }
 
 /*
  * Operators
@@ -585,7 +546,7 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     fingerprint_ = parser.argsv(0);
-    parser.hasArg(1) ? half_ = parser.argb(1) : half_ = true;
+    half_ = parser.hasArg(1) ? parser.argb(1) : true;
     // Read atom types
     atomTypeMix_.clear();
     if (!atomTypeMix_.deserialise(parser, coreData))
@@ -698,73 +659,37 @@ bool PartialSet::serialise(LineParser &parser) const
     // Write out AtomTypes first
     atomTypeMix_.serialise(parser);
     auto nTypes = atomTypeMix_.nItems();
-    if (half_)
-    { // Write individual Data1D
-        auto success = for_each_pair_early(
-            0, nTypes,
-            [&](int typeI, int typeJ) -> EarlyReturn<bool>
+    // Write individual Data1D
+    auto success = for_each_pair_early(
+        0, nTypes,
+        [&](int typeI, int typeJ) -> EarlyReturn<bool>
+        {
+            const auto &part = partials_[{typeI, typeJ}];
+            const auto &bound = boundPartials_[{typeI, typeJ}];
+            const auto &unbound = unboundPartials_[{typeI, typeJ}];
+
+            // Write tag
+            if (!parser.writeLineF("'{}' '{}' '{}'\n", part.tag(), bound.tag(), unbound.tag()))
+                return false;
+
+            // Write axis size and errors flag
+            if (!parser.writeLineF("{} {} {} {}\n", part.xAxis().size(), DissolveSys::btoa(part.valuesHaveErrors()),
+                                   DissolveSys::btoa(bound.valuesHaveErrors()), DissolveSys::btoa(unbound.valuesHaveErrors())))
+                return false;
+
+            for (auto i = 0; i < part.xAxis().size(); ++i)
             {
-                const auto &part = partials_[{typeI, typeJ}];
-                const auto &bound = boundPartials_[{typeI, typeJ}];
-                const auto &unbound = unboundPartials_[{typeI, typeJ}];
-
-                // Write tag
-                if (!parser.writeLineF("'{}' '{}' '{}'\n", part.tag(), bound.tag(), unbound.tag()))
+                if (!parser.writeLineF("{} {} {} {}\n", part.xAxis(i), writeDataPoint(i, part), writeDataPoint(i, bound),
+                                       writeDataPoint(i, unbound)))
                     return false;
+            }
 
-                // Write axis size and errors flag
-                if (!parser.writeLineF("{} {} {} {}\n", part.xAxis().size(), DissolveSys::btoa(part.valuesHaveErrors()),
-                                       DissolveSys::btoa(bound.valuesHaveErrors()),
-                                       DissolveSys::btoa(unbound.valuesHaveErrors())))
-                    return false;
+            return EarlyReturn<bool>::Continue;
+        },
+        half_);
 
-                for (auto i = 0; i < part.xAxis().size(); ++i)
-                {
-                    if (!parser.writeLineF("{} {} {} {}\n", part.xAxis(i), writeDataPoint(i, part), writeDataPoint(i, bound),
-                                           writeDataPoint(i, unbound)))
-                        return false;
-                }
-
-                return EarlyReturn<bool>::Continue;
-            });
-
-        if (!success.value_or(true))
-            return false;
-    }
-    else
-    { // Write individual Data1D
-        auto success = for_each_pair_early(
-            0, nTypes,
-            [&](int typeI, int typeJ) -> EarlyReturn<bool>
-            {
-                const auto &part = partials_[{typeI, typeJ}];
-                const auto &bound = boundPartials_[{typeI, typeJ}];
-                const auto &unbound = unboundPartials_[{typeI, typeJ}];
-
-                // Write tag
-                if (!parser.writeLineF("'{}' '{}' '{}'\n", part.tag(), bound.tag(), unbound.tag()))
-                    return false;
-
-                // Write axis size and errors flag
-                if (!parser.writeLineF("{} {} {} {}\n", part.xAxis().size(), DissolveSys::btoa(part.valuesHaveErrors()),
-                                       DissolveSys::btoa(bound.valuesHaveErrors()),
-                                       DissolveSys::btoa(unbound.valuesHaveErrors())))
-                    return false;
-
-                for (auto i = 0; i < part.xAxis().size(); ++i)
-                {
-                    if (!parser.writeLineF("{} {} {} {}\n", part.xAxis(i), writeDataPoint(i, part), writeDataPoint(i, bound),
-                                           writeDataPoint(i, unbound)))
-                        return false;
-                }
-
-                return EarlyReturn<bool>::Continue;
-            },
-            false);
-
-        if (!success.value_or(true))
-            return false;
-    }
+    if (!success.value_or(true))
+        return false;
 
     // Write totals
     if (!total_.serialise(parser))

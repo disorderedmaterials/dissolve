@@ -51,7 +51,7 @@ class PartialSet
     // Set up PartialSet, including initialising histograms for g(r) use
     bool setUp(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth);
     // Set up PartialSet without initialising histogram arrays
-    bool setUpPartials(const AtomTypeMix &atomTypMix);
+    bool setUpPartials(const AtomTypeMix &atomTypMix, bool half = true);
     // Set up histogram arrays for g(r) calculation
     void setUpHistograms(double rdfRange, double binWidth);
     // Reset partial arrays
@@ -116,8 +116,6 @@ class PartialSet
     // Calculate RDF from supplied Histogram and normalisation data
     static void calculateRDF(Data1D &destination, const Histogram1D &histogram, double boxVolume, int nCentres,
                              int nSurrounding, double multiplier);
-    // set to full matrix
-    void setFullMatrix();
 
     /*
      * Operators
