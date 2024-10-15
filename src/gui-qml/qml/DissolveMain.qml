@@ -173,6 +173,10 @@ ApplicationWindow {
                 id: graphModel
             }
 
+            ExampleDelegate {
+                id: exampleDelegate
+            }
+
             Pane {
                 id: toolBar
 
@@ -251,6 +255,7 @@ ApplicationWindow {
                 nodeModel: graphModel.nodes
 
                 edgeModel: graphModel.edges
+                delegate: exampleDelegate.delegate;
             }
         }
     }
