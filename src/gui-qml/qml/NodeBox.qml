@@ -22,7 +22,7 @@ GroupBox {
             fillMode: Image.PreserveAspectFit
             source: image
         }
-        Text {
+        TextField {
             id: titleLabel
             text: root.nodeType
             font.pointSize: 14

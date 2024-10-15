@@ -25,6 +25,7 @@ template <typename T> class GraphModel : public GraphModelBase
         auto &item = items.emplace_back(value);
         item.posx = x;
         item.posy = y;
+        item.rawValue().name = "";
         nodes_.endInsertRows();
         graphChanged();
     }
