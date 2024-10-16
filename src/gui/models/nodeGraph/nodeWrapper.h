@@ -6,6 +6,7 @@
 #include <QAbstractListModel>
 #include <variant>
 
+template <typename T> QHash<int, QByteArray> nodeRoleNames();
 template <typename T> std::string nodeTypeName(const T &value);
 template <typename T> std::string nodeTypeIcon(const T &value);
 template <typename T> std::string nodeName(const T &value);
@@ -20,9 +21,13 @@ template <typename T> class NodeWrapper
     public:
     NodeWrapper(QVariant value) : value_(value) {}
     int posx, posy;
-    QVariant value() { return nodeGetValue<T>(value_); }
+    QVariant value() const { return nodeGetValue<T>(value_); }
     T &rawValue() { return value_; }
+    const T &rawValue() const { return value_; }
 
     private:
     T value_;
 };
+
+template <typename T> QVariant nodeData(const NodeWrapper<T>&, int role);
+template <typename T> bool nodeSetData(NodeWrapper<T>&, const QVariant &value, int role);
