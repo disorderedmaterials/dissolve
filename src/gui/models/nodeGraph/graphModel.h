@@ -42,7 +42,7 @@ template <typename T> class GraphModel : public GraphModelBase
             {
                 deadEdges.emplace_back(i);
                 auto destination = edgeCache[i][2];
-                items[destination].rawValue().value = nullptr;
+                disconnect_(edgeCache[i][0], edgeCache[i][1], edgeCache[i][2], edgeCache[i][3]);
                 Q_EMIT(nodes_.dataChanged(nodes_.index(destination), nodes_.index(destination)));
             }
             else if (edgeCache[i][2] == index)
