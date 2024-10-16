@@ -6,7 +6,7 @@
 #include <QAbstractListModel>
 #include <variant>
 
-template <typename T> QHash<int, QByteArray> nodeRoleNames();
+template <typename T> QHash<int, QByteArray> &nodeRoleNames(QHash<int, QByteArray> &base, int startingIndex);
 template <typename T> std::string nodeTypeName(const T &value);
 template <typename T> std::string nodeTypeIcon(const T &value);
 template <typename T> std::string nodeName(const T &value);
