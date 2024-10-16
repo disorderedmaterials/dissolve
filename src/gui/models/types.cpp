@@ -14,6 +14,7 @@
 #include "gui/models/sortFilterProxy.h"
 #include "gui/models/speciesModel.h"
 #include "nodeGraph/exampleGraphModel.h"
+#include "nodeGraph/generatorGraphModel.h"
 #include <QQmlEngine>
 #include <QSortFilterProxyModel>
 
@@ -33,4 +34,5 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<ModifyChargesModel>(PROJECT, 1, 0, "ModifyChargesModel");
     qmlRegisterType<SortFilterProxy>(PROJECT, 1, 0, "SortFilterProxy");
     qmlRegisterType<ExampleGraphModel>(PROJECT, 1, 0, "ExampleGraphModel");
+    qmlRegisterType<GeneratorGraphModel>(PROJECT, 1, 0, "ModuleGraphModel");
 }
