@@ -173,6 +173,7 @@ ApplicationWindow {
 
             ExampleDelegate {
                 id: exampleDelegate
+                rootModel: graphModel
             }
 
             Pane {

@@ -5,6 +5,7 @@ import Qt.labs.qmlmodels
 
 
 Item {
+    property variant rootModel;
     property variant delegate: DelegateChooser {
         role: "type"
         DelegateChoice {
