@@ -167,11 +167,11 @@ ApplicationWindow {
         }
         Item {
             id: exampleGraphTab
-            ExampleGraphModel {
+            ModuleGraphModel {
                 id: graphModel
             }
 
-            ExampleDelegate {
+            GeneratorDelegate {
                 id: exampleDelegate
                 rootModel: graphModel
             }

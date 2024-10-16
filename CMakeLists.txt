@@ -278,6 +278,7 @@ if(GUI)
     Dissolve
     QML_FILES
     ${SRCS}/gui-qml/qml/ExampleDelegate.qml
+    ${SRCS}/gui-qml/qml/GeneratorDelegate.qml
     ${SRCS}/gui-qml/qml/GraphView.qml
     ${SRCS}/gui-qml/qml/NodeBox.qml
     ${SRCS}/gui-qml/qml/DissolveMain.qml
