@@ -3,6 +3,7 @@
 
 #include "exampleGraphModel.h"
 #include <variant>
+#include "templates/overload_visitor.h"
 
 template <> QVariant nodeGetValue<nodeValue>(const nodeValue value)
 {
