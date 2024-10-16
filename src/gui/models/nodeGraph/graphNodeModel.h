@@ -27,21 +27,56 @@ template <typename T> class GraphNodeModel : public QAbstractListModel
     int rowCount(const QModelIndex &parent = QModelIndex()) const override { return parent_->items.size(); }
     QHash<int, QByteArray> roleNames() const override
     {
-      return nodeRoleNames<T>();
+
+        QHash<int, QByteArray> roles;
+        roles[Qt::UserRole] = "name";
+        roles[Qt::UserRole + 1] = "posX";
+        roles[Qt::UserRole + 2] = "posY";
+        roles[Qt::UserRole + 3] = "type";
+        roles[Qt::UserRole + 4] = "icon";
+        return nodeRoleNames<T>(roles, Qt::UserRole + ownedRoles);
     }
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
     {
 
         auto &item = parent_->items.at(index.row());
-        return nodeData(item, role);
+        switch (role - Qt::UserRole)
+        {
+            case 0:
+                return nodeName(item.rawValue()).c_str();
+            case 1:
+                return item.posx;
+            case 2:
+                return item.posy;
+            case 3:
+                return nodeTypeName(item.rawValue()).c_str();
+            case 4:
+                return nodeTypeIcon(item.rawValue()).c_str();
+            default:
+                return nodeData(item, role - Qt::UserRole - ownedRoles);
+        }
     }
     bool setData(const QModelIndex &index, const QVariant &value, int role) override
     {
         auto &item = parent_->items.at(index.row());
-        return nodeSetData(item, value, role);
+        switch (role - Qt::UserRole)
+        {
+            case 0:
+                setNodeName(item.rawValue(), value.toString().toStdString());
+                return true;
+            case 1:
+                item.posx = value.toInt();
+                return true;
+            case 2:
+                item.posy = value.toInt();
+                return true;
+            default:
+                return nodeSetData(item, value, role - Qt::UserRole - ownedRoles);
+        }
     }
     /** Function to reset the model (and trigger redrawing all labels */
 
     private:
     GraphModel<T> *parent_;
+    const int ownedRoles = 5;
 };

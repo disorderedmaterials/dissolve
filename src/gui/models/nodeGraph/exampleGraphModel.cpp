@@ -52,56 +52,24 @@ template <> bool nodeDisconnect<nodeValue>(nodeValue &source, int sourceIndex, n
     return true;
 }
 
-template <> QHash<int, QByteArray> nodeRoleNames<nodeValue>()
+template <> QHash<int, QByteArray> &nodeRoleNames<nodeValue>(QHash<int, QByteArray> &roles, int index)
 {
-    QHash<int, QByteArray> roles;
-    roles[Qt::UserRole] = "name";
-    roles[Qt::UserRole + 1] = "posX";
-    roles[Qt::UserRole + 2] = "posY";
-    roles[Qt::UserRole + 3] = "type";
-    roles[Qt::UserRole + 4] = "icon";
-    roles[Qt::UserRole + 5] = "value";
+    roles[index++] = "value";
     return roles;
 }
 
 template <> QVariant nodeData<nodeValue>(const NodeWrapper<nodeValue> &item, int role)
 {
-    switch (role - Qt::UserRole)
+    switch (role)
     {
         case 0:
-            return nodeName(item.rawValue()).c_str();
-        case 1:
-            return item.posx;
-        case 2:
-            return item.posy;
-        case 3:
-            return nodeTypeName(item.rawValue()).c_str();
-        case 4:
-            return nodeTypeIcon(item.rawValue()).c_str();
-        case 5:
             return item.value();
+        default:
+            return {};
     }
-    return {};
 }
 
-template <> bool nodeSetData<nodeValue>(NodeWrapper<nodeValue> &item, const QVariant &value, int role)
-{
-    switch (role - Qt::UserRole)
-    {
-        case 0:
-            setNodeName(item.rawValue(), value.toString().toStdString());
-            return true;
-        case 1:
-            item.posx = value.toInt();
-            return true;
-        case 2:
-            item.posy = value.toInt();
-            return true;
-        default:
-            return false;
-    }
-    return false;
-}
+template <> bool nodeSetData<nodeValue>(NodeWrapper<nodeValue> &item, const QVariant &value, int role) { return false; }
 
 nodeValue::nodeValue(QVariant var)
 {
