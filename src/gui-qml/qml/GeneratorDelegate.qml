@@ -9,7 +9,7 @@ Item {
     property variant delegate: DelegateChooser {
         role: "type"
         DelegateChoice {
-            roleValue: "GRModule"
+            roleValue: "AddGeneratorNode"
             delegate: NodeBox {
                 property double startX
                 property double endX
@@ -29,7 +29,7 @@ Item {
                     width: contentWidth
                     height: contentHeight
                     anchors.fill: parent
-                    text: value.name
+                    text: population
                 }
             }
         }

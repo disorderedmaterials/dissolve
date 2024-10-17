@@ -2,6 +2,8 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "generatorGraphModel.h"
+#include "expression/variable.h"
+#include "generator/add.h"
 #include "modules/gr/gr.h"
 #include "nodeWrapper.h"
 #include "templates/overload_visitor.h"
@@ -66,20 +68,30 @@ GeneratorGraphNode::GeneratorGraphNode(QVariant var)
     if (var.isNull())
         value.emplace<GeneratorGraphNode *>(nullptr);
     else
-        value.emplace<AddGeneratorNode *>(nullptr);
+    {
+        // FIXME: This leaks like a sieve.  It'll need to be replaced
+        // before being in real code.  It's just a demo for the GUI
+        // work.
+        auto next = new AddGeneratorNode;
+        std::cout << next->name() << std::endl;
+        value.emplace<AddGeneratorNode *>(new AddGeneratorNode);
+    }
 }
 
-template <> bool nodeSetData<GeneratorGraphNode>(NodeWrapper<GeneratorGraphNode> &, const QVariant &value, int role)
-{
-    return false;
-}
+template <> bool nodeSetData<GeneratorGraphNode>(GeneratorGraphNode &item, const QVariant &value, int role) { return false; }
 
-template <> QVariant nodeData(const NodeWrapper<GeneratorGraphNode> &item, int role)
+template <> QVariant nodeData(const GeneratorGraphNode &item, int role)
 {
     switch (role)
     {
         case 0:
-            return item.value();
+            return nodeGetValue(item);
+        case 1:
+        {
+            auto view = std::get<AddGeneratorNode *>(item.value)->name();
+            std::string s = {view.begin(), view.end()};
+            return s.c_str();
+        }
         default:
             return {};
     }
@@ -88,5 +100,6 @@ template <> QVariant nodeData(const NodeWrapper<GeneratorGraphNode> &item, int r
 template <> QHash<int, QByteArray> &nodeRoleNames<GeneratorGraphNode>(QHash<int, QByteArray> &roles, int index)
 {
     roles[index++] = "value";
+    roles[index++] = "population";
     return roles;
 }
