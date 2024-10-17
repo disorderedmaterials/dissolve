@@ -53,7 +53,7 @@ template <typename T> class GraphNodeModel : public QAbstractListModel
             case 4:
                 return nodeTypeIcon(item.rawValue()).c_str();
             default:
-                return nodeData(item, role - Qt::UserRole - ownedRoles);
+                return nodeData(item.rawValue(), role - Qt::UserRole - ownedRoles);
         }
     }
     bool setData(const QModelIndex &index, const QVariant &value, int role) override
@@ -71,7 +71,7 @@ template <typename T> class GraphNodeModel : public QAbstractListModel
                 item.posy = value.toInt();
                 return true;
             default:
-                return nodeSetData(item, value, role - Qt::UserRole - ownedRoles);
+                return nodeSetData(item.rawValue(), value, role - Qt::UserRole - ownedRoles);
         }
     }
     /** Function to reset the model (and trigger redrawing all labels */

@@ -58,18 +58,18 @@ template <> QHash<int, QByteArray> &nodeRoleNames<nodeValue>(QHash<int, QByteArr
     return roles;
 }
 
-template <> QVariant nodeData<nodeValue>(const NodeWrapper<nodeValue> &item, int role)
+template <> QVariant nodeData<nodeValue>(const nodeValue &item, int role)
 {
     switch (role)
     {
         case 0:
-            return item.value();
+            return nodeGetValue(item);
         default:
             return {};
     }
 }
 
-template <> bool nodeSetData<nodeValue>(NodeWrapper<nodeValue> &item, const QVariant &value, int role) { return false; }
+template <> bool nodeSetData<nodeValue>(nodeValue &item, const QVariant &value, int role) { return false; }
 
 nodeValue::nodeValue(QVariant var)
 {
