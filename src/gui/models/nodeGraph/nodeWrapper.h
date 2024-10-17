@@ -29,5 +29,5 @@ template <typename T> class NodeWrapper
     T value_;
 };
 
-template <typename T> QVariant nodeData(const NodeWrapper<T>&, int role);
-template <typename T> bool nodeSetData(NodeWrapper<T>&, const QVariant &value, int role);
+template <typename T> QVariant nodeData(const T&, int role);
+template <typename T> bool nodeSetData(T&, const QVariant &value, int role);
