@@ -54,12 +54,6 @@ github_subdir = "web"
 github_branch = "develop"
 offlineSearch = true
 
-# Documentation Index Description
-[params.docinfo]
-release = "Here you can find the user guide and examples for the current release of Dissolve (vMAJOR.MINOR). Updated documentation for the current development version is [available here](/dev), and documentation for the previous release series can be [found here](/legacy)."
-development = "Here you can find the user guide and examples for the current development version of Dissolve (vMAJOR.MINOR), describing any exciting and upcoming new features."
-legacy = "Here you can find the user guide and examples for the previous major release series of Dissolve (vMAJOR.MINOR). This should be considered as legacy documentation and will be removed at some point."
-
 # User interface configuration
 [params.ui]
 # Set to true to disable breadcrumb navigation.

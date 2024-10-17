@@ -11,6 +11,9 @@ inputs:
   nixOSVersion:
     type: string
     default: 22.11
+  hugoVersion:
+    type: string
+    default: "0.135.0"
   conanfile:
     type: string
     default: cmake/Modules/conan-dissolve.cmake
@@ -26,6 +29,7 @@ runs:
         echo "qtVersion=${{ inputs.qtVersion }}" >> ${GITHUB_ENV}
         echo "nixVersion=${{ inputs.nixVersion }}" >> ${GITHUB_ENV}
         echo "nixOSVersion=${{ inputs.nixOSVersion }}" >> ${GITHUB_ENV}
+        echo "hugoVersion=${{ inputs.hugoVersion }}" >> ${GITHUB_ENV}
 
     - name: Get code version
       shell: bash

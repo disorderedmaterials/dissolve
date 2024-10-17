@@ -2,8 +2,6 @@ name: Website
 description: Build and publish website
 
 inputs:
-  hugoVersion:
-    default: "0.98.0"
   isRelease:
     type: boolean
     default: false
@@ -32,17 +30,18 @@ runs:
     if: ${{ inputs.isRelease == 'true' && inputs.isLegacy == 'false' }}
     shell: bash
     run: |
-      # Set version in docs index
-      sed -i 's/vMAJOR.MINOR/Release v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
+      # Set version and tip visibility in docs index
+      sed -i 's/RELEASETYPE version MAJOR.MINOR/Release v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
+      sed -i "/RELEASE TIP/d" web/docs/_index.md
       head -n 10 web/docs/_index.md
 
   - name: 'Apply Development Release Styling'
     if: ${{ inputs.isDevelopment == 'true' }}
     shell: bash
     run: |
-      # Set version and shortcode target in docs index
-      sed -i 's/vMAJOR.MINOR/Development v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
-      sed -i 's/documentationinfo target=".*"/documentationinfo target="development"/g' web/docs/_index.md
+      # Set version and tip visibility in docs index
+      sed -i 's/RELEASETYPE version MAJOR.MINOR/Development version ${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
+      sed -i "/DEVELOPMENT TIP/d" web/docs/_index.md
       head -n 10 web/docs/_index.md
 
       # Change base url
@@ -57,9 +56,9 @@ runs:
     if: ${{ inputs.isLegacy == 'true' }}
     shell: bash
     run: |
-      # Set version and shortcode target in docs index
-      sed -i 's/vMAJOR.MINOR/Legacy v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
-      sed -i 's/documentationinfo target=".*"/documentationinfo target="legacy"/g' web/docs/_index.md
+      # Set version and tip visibility in docs index
+      sed -i 's/RELEASETYPE version MAJOR.MINOR/Legacy version ${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
+      sed -i "/LEGACY TIP/d" web/docs/_index.md
       head -n 10 web/docs/_index.md
 
       # Change base url
@@ -74,7 +73,7 @@ runs:
     shell: bash
     run: |
       set -ex
-      wget https://github.com/gohugoio/hugo/releases/download/v${{ inputs.hugoVersion }}/hugo_extended_${{ inputs.hugoVersion }}_Linux-64bit.deb -O '${{ github.workspace }}/hugo.deb'
+      wget https://github.com/gohugoio/hugo/releases/download/v${{ env.hugoVersion }}/hugo_extended_${{ env.hugoVersion }}_linux-amd64.deb -O '${{ github.workspace }}/hugo.deb'
       sudo dpkg -i ${{ github.workspace }}/hugo*.deb
 
   - name: 'Install pandoc / xetex'
