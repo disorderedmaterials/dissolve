@@ -170,7 +170,7 @@ ApplicationWindow {
 
             ModuleGraphModel {
                 id: graphModel
-                world: dissolve
+                world: dissolve.configurationModel
             }
 
             GeneratorDelegate {
