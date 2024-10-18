@@ -5,12 +5,14 @@
 #include "base/processPool.h"
 #include "gui/models/dissolveModel.h"
 #include "gui/models/types.h"
+#include "gui/models/dissolveModel.h"
 #include "gui/models/nodeGraph/graphModel.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <QSurfaceFormat>
 #include <clocale>
 
@@ -19,6 +21,9 @@ int main(int args, char **argv)
     // Instantiate main classes
     CoreData coreData;
     Dissolve dissolve(coreData);
+
+    DissolveModel dissolveModel;
+    dissolveModel.setDissolve(dissolve);
 
     // Parse CLI options
     CLIOptions options;
@@ -31,6 +36,7 @@ int main(int args, char **argv)
     QGuiApplication app(args, argv);
 
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("dissolve", &dissolveModel);
     const QUrl url(u"qrc:/Dissolve/qml/DissolveMain.qml"_qs);
     Types::registerDissolveQmlTypes();
 

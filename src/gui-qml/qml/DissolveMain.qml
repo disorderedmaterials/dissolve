@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick3D
 import QtQuick3D.Helpers
-import QtQuick.Controls
+import QtQuick.Dialogs
 import Dissolve
 import ProjectDissolve
 import "../../ProjectDissolve"
@@ -167,8 +167,10 @@ ApplicationWindow {
         }
         Item {
             id: exampleGraphTab
+
             ModuleGraphModel {
                 id: graphModel
+                world: dissolve
             }
 
             GeneratorDelegate {
@@ -183,6 +185,20 @@ ApplicationWindow {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.top: parent.top
+
+                    FileDialog {
+                        id: openDialog
+                        onAccepted: {
+                            dissolve.file = selectedFile
+                        }
+
+                    }
+
+                    Button {
+                        icon.source:  "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
+                        onClicked: openDialog.open()
+                    }
+
                     Label {text: "Nodes: " + graphModel.nodeCount}
                     Label {text: "Edges: " + graphModel.edgeCount}
                     SpinBox {
