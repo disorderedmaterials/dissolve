@@ -114,3 +114,9 @@ ConfigurationModel *DissolveModel::configurationsModel() { return &configuration
 
 // The ModuleLayers Model
 ModuleLayersModel *DissolveModel::moduleLayersModel() { return &moduleLayersModel_; }
+
+// Getter for filename
+QUrl DissolveModel::fileName() { return QUrl(dissolve_->inputFilename().data()); }
+
+// Setter for filename
+void DissolveModel::loadInput(QUrl filename) { dissolve_->loadInput(filename.toLocalFile().toStdString()); }

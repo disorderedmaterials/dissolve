@@ -5,6 +5,7 @@
 
 #include "generator/add.h"
 #include "graphModel.h"
+#include "gui/models/dissolveModel.h"
 #include "nodeWrapper.h"
 
 class GeneratorGraphNode
@@ -14,4 +15,11 @@ class GeneratorGraphNode
     std::variant<AddGeneratorNode *, GeneratorGraphNode *> value;
 };
 
-typedef GraphModel<GeneratorGraphNode> GeneratorGraphModel;
+class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
+{
+    Q_OBJECT
+    Q_PROPERTY(DissolveModel *world MEMBER world_);
+
+    private:
+    DissolveModel *world_;
+};

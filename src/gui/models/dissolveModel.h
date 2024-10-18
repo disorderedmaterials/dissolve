@@ -10,6 +10,7 @@
 #include "gui/models/speciesModel.h"
 #include "main/dissolve.h"
 #include "templates/optionalRef.h"
+#include <QUrl>
 #include <memory>
 
 class DissolveModel : public QObject
@@ -31,6 +32,7 @@ class DissolveModel : public QObject
     Q_PROPERTY(const ConfigurationModel *configurationsModel READ configurationsModel NOTIFY configurationsChanged)
     // The ModuleLayers Model
     Q_PROPERTY(const ModuleLayersModel *moduleLayersModel READ moduleLayersModel NOTIFY moduleLayersChanged)
+    Q_PROPERTY(QUrl file READ fileName WRITE loadInput);
 
     private:
     // The Atom Type Model
@@ -40,6 +42,11 @@ class DissolveModel : public QObject
     SpeciesModel speciesModel_;
     ConfigurationModel configurationModel_;
     ModuleLayersModel moduleLayersModel_;
+
+    // Getter for filename
+    QUrl fileName();
+    // Setter for filename
+    void loadInput(QUrl filename);
 
     Q_SIGNALS:
     // The models might've been updated
