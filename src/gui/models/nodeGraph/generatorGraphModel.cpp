@@ -103,3 +103,9 @@ template <> QHash<int, QByteArray> &nodeRoleNames<GeneratorGraphNode>(QHash<int,
     roles[index++] = "population";
     return roles;
 }
+
+// Dissolve Model Setter
+void GeneratorGraphModel::setWorld(ConfigurationModel *value) { world_ = value; }
+
+// Dissolve Model Getter
+ConfigurationModel *GeneratorGraphModel::world() { return world_; }

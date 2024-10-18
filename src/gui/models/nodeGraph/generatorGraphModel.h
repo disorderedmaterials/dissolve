@@ -5,7 +5,7 @@
 
 #include "generator/add.h"
 #include "graphModel.h"
-#include "gui/models/dissolveModel.h"
+#include "gui/models/configurationModel.h"
 #include "nodeWrapper.h"
 
 class GeneratorGraphNode
@@ -18,8 +18,12 @@ class GeneratorGraphNode
 class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
 {
     Q_OBJECT
-    Q_PROPERTY(DissolveModel *world MEMBER world_);
+    Q_PROPERTY(ConfigurationModel *world READ world WRITE setWorld);
 
     private:
-    DissolveModel *world_;
+    // Dissolve Model Getter
+    ConfigurationModel *world();
+    // Dissolve Model Setter
+    void setWorld(ConfigurationModel *value);
+    ConfigurationModel *world_;
 };
