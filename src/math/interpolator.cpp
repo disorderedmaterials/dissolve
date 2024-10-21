@@ -404,7 +404,7 @@ double Interpolator::y(double x, int interval)
 // Approximate data at specified x value using three-point interpolation
 double Interpolator::approximate(const Data1D &data, double x)
 {
-    // Grab xand y arrays
+    // Grab x and y arrays
     const auto &xData = data.xAxis();
     const auto &yData = data.values();
 
