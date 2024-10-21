@@ -44,19 +44,18 @@ template <typename T> class EarlyReturn
     std::optional<T> value() const { return value_; }
 };
 
-// Perform an operation on every unordered pair of elements in a container
+// Perform an operation on every pair of elements in a container, or the half-matrix only ([i,j] == [j,i])
 // Please note that this can *not* be transformed to use the
 // FullPairIterator, since it would prevent using `Break` to move to
 // the next loop iteration
 template <class Iter, class Lam>
-auto for_each_pair_early(Iter begin, Iter end, Lam lambda, bool unordered = true)
-    -> decltype(lambda(0, *begin, 0, *end).value())
+auto for_each_pair_early(Iter begin, Iter end, Lam lambda, bool half = true) -> decltype(lambda(0, *begin, 0, *end).value())
 {
     int i = 0;
     for (auto elem1 = begin; elem1 != end; ++elem1, ++i)
     {
-        int j = unordered ? i : 0;
-        for (auto elem2 = unordered ? elem1 : begin; elem2 != end; ++elem2, ++j)
+        int j = half ? i : 0;
+        for (auto elem2 = half ? elem1 : begin; elem2 != end; ++elem2, ++j)
         {
             auto result = lambda(i, *elem1, j, *elem2);
             switch (result.type())
@@ -73,15 +72,15 @@ auto for_each_pair_early(Iter begin, Iter end, Lam lambda, bool unordered = true
     return std::nullopt;
 }
 
-// Perform an operation on every unordered pair of elements in a range
+// Perform an operation on every pair of elements in a range, or the half-matrix only ([i,j] == [j,i])
 // Please note that this can *not* be transformed to use the
 // FullPairIterator, since it would prevent using `Break` to move to
 // the next loop iteration
 template <class Lam>
-auto for_each_pair_early(int begin, int end, Lam lambda, bool unordered = true) -> decltype(lambda(0, 0).value())
+auto for_each_pair_early(int begin, int end, Lam lambda, bool half = true) -> decltype(lambda(0, 0).value())
 {
     for (auto i = begin; i < end; ++i)
-        for (auto j = unordered ? begin : i; j < end; ++j)
+        for (auto j = half ? i : begin; j < end; ++j)
         {
             auto result = lambda(i, j);
             switch (result.type())
@@ -225,16 +224,16 @@ void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
     dissolve::for_each(begin, end, unaryOp);
 }
 
-// Perform an operation on every unordered pair of elements in a container
+// Perform an operation on every pair of elements in a contained, or the half-matrix only ([i,j] == [j,i])
 template <typename ParallelPolicy, class Iter, class Lam>
-void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda, bool unordered = true)
+void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda, bool half = true)
 {
     auto actions = [&lambda, &begin](const auto pair)
     {
         auto &[i, j] = pair;
         lambda(i, begin[i], j, begin[j]);
     };
-    if (unordered)
+    if (half)
     {
         PairIterator start(end - begin), stop(end - begin, ((end - begin) * (end - begin + 1)) / 2);
         for_each(policy, start, stop, actions);
@@ -257,16 +256,16 @@ void for_each_triplet(ParalellPolicy policy, Iter begin, Iter end, Lam lambda)
              });
 }
 
-// Perform an operation on every unordered pair of elements in a range (begin <= i < end)
+// Perform an operation on every pair of elements in a range, or the half-matrix only ([i,j] == [j,i])
 template <typename ParallelPolicy, class Lam>
-void for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda, bool unordered = true)
+void for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda, bool half = true)
 {
     auto actions = [&lambda](const auto pair)
     {
         auto [i, j] = pair;
         lambda(i, j);
     };
-    if (unordered)
+    if (half)
     {
         PairIterator start(end), stop(end, end * (end + 1) / 2);
         for_each(policy, start, stop, actions);
