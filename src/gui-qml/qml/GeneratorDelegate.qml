@@ -9,7 +9,7 @@ Item {
     property variant delegate: DelegateChooser {
         role: "type"
         DelegateChoice {
-            roleValue: "AddGeneratorNode"
+            roleValue: "Configuration"
             delegate: NodeBox {
                 property double startX
                 property double endX
@@ -24,12 +24,16 @@ Item {
                 image: icon
                 nodeType: name
                 onDeleted: rootModel.deleteNode(index)
-                Text {
-                    id: root
-                    width: contentWidth
-                    height: contentHeight
-                    anchors.fill: parent
-                    text: population
+                Grid {
+                    columns: 2
+                    spacing: 2
+                    Text {
+                        text: "Temperature"
+                    }
+                    TextField {
+                        id: root
+                        text: temperature
+                    }
                 }
             }
         }

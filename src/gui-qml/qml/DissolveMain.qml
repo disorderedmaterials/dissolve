@@ -172,7 +172,15 @@ ApplicationWindow {
 
             ModuleGraphModel {
                 id: graphModel
-                world: dissolve.configurationModel
+                world: dissolve.configurationsModel
+            }
+
+            Connections {
+                target: dissolve.configurationsModel
+
+                function onModelReset() {
+                    graphModel.handleReset();
+                }
             }
 
             GeneratorDelegate {

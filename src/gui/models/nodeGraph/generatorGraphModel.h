@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "generator/add.h"
+#include "classes/configuration.h"
 #include "graphModel.h"
 #include "gui/models/configurationModel.h"
 #include "nodeWrapper.h"
@@ -12,13 +12,16 @@ class GeneratorGraphNode
 {
     public:
     GeneratorGraphNode(QVariant var = {});
-    std::variant<AddGeneratorNode *, GeneratorGraphNode *> value;
+    std::variant<Configuration *, GeneratorGraphNode *> value;
 };
 
 class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
 {
     Q_OBJECT
     Q_PROPERTY(ConfigurationModel *world READ world WRITE setWorld);
+
+    public Q_SLOTS:
+    void handleReset();
 
     private:
     // Dissolve Model Getter

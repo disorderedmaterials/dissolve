@@ -88,6 +88,6 @@ template <typename T> class GraphModel : public GraphModelBase
         return nodeConnectable(items[source].rawValue(), sourceIndex, items[destination].rawValue(), destinationIndex);
     }
 
-    private:
+    protected:
     GraphNodeModel<T> nodes_;
 };
