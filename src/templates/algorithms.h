@@ -245,8 +245,8 @@ void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda, bool
     }
 }
 
-template <typename ParalellPolicy, class Iter, class Lam>
-void for_each_triplet(ParalellPolicy policy, Iter begin, Iter end, Lam lambda)
+template <typename ParallelPolicy, class Iter, class Lam>
+void for_each_triplet(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
 {
     for_each(policy, begin, end,
              [&lambda](const auto triplet)
