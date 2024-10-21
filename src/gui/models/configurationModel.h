@@ -18,6 +18,8 @@ class ConfigurationModel : public QAbstractListModel
     OptionalReferenceWrapper<const std::vector<std::unique_ptr<Configuration>>> configuration_;
     // Vector containing checked items (if relevant)
     OptionalReferenceWrapper<std::vector<Configuration *>> checkedItems_;
+
+    public:
     // Return object represented by specified model index
     Configuration *rawData(const QModelIndex &index) const;
 

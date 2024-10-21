@@ -119,4 +119,8 @@ ModuleLayersModel *DissolveModel::moduleLayersModel() { return &moduleLayersMode
 QUrl DissolveModel::fileName() { return QUrl(dissolve_->inputFilename().data()); }
 
 // Setter for filename
-void DissolveModel::loadInput(QUrl filename) { dissolve_->loadInput(filename.toLocalFile().toStdString()); }
+void DissolveModel::loadInput(QUrl filename)
+{
+    dissolve_->loadInput(filename.toLocalFile().toStdString());
+    configurationModel_.reset();
+}
