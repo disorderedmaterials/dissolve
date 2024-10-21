@@ -44,7 +44,8 @@ template <typename T> class EarlyReturn
     std::optional<T> value() const { return value_; }
 };
 
-// Perform an operation on every pair of elements in a container, or the half-matrix only ([i,j] == [j,i])
+// Perform an operation on every pair of elements in a container,
+// or the half-matrix only ([i,j] == [j,i])
 // Please note that this can *not* be transformed to use the
 // FullPairIterator, since it would prevent using `Break` to move to
 // the next loop iteration
