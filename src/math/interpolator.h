@@ -56,8 +56,6 @@ class Interpolator
     double y(double x);
     // Return interpolated y value for supplied x, specifying containing interval
     double y(double x, int interval);
-    // Return interpolated y values for all supplied x values
-    std::vector<double> y(const std::vector<double> &xs);
 
     /*
      * Static Functions
