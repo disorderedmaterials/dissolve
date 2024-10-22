@@ -5,6 +5,7 @@
 
 #include "classes/scatteringMatrix.h"
 #include "generator/generator.h"
+#include "math/averaging.h"
 #include "module/groups.h"
 #include "module/module.h"
 #include <tuple>
@@ -35,6 +36,12 @@ class EPSRManagerModule : public Module
     };
     // Potential scalings
     std::string potentialScalings_;
+    // Number of historical partial sets to combine into final partials
+    std::optional<int> averagingLength_;
+    // Weighting scheme to use when averaging partials
+    Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
+    // Vector of averaged potentials over multiple iterations
+    std::vector<std::map<std::string, EPData>> averagedPotentialsStore;
 
     /*
      * Functions
