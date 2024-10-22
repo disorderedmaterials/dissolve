@@ -295,6 +295,13 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         differenceData *= -1.0;
         Interpolator::addInterpolated(originalReferenceData, differenceData);
 
+        // Zero the difference function for points outside of the reference data range
+        auto originalXMin = originalReferenceData.xAxis().front();
+        auto originalXMax = originalReferenceData.xAxis().back();
+        for (auto &&[x, y] : zip(differenceData.xAxis(), differenceData.values()))
+            if (x < originalXMin || x > originalXMax)
+                y = 0.0;
+
         // Calculate r-factor over fit range and store
         auto tempRefData = originalReferenceData;
         Filters::trim(tempRefData, qMin_, qMax_);
