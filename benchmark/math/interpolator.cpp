@@ -2,6 +2,8 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "math/interpolator.h"
+#include "math/data1D.h"
+#include <algorithm>
 #include <benchmark/benchmark.h>
 #include <random>
 #include <vector>
@@ -12,23 +14,28 @@ static void BM_Interpolator(benchmark::State &state)
 {
     int bytes = state.range(0);
     int numVals = (bytes / sizeof(double));
-    std::vector<double> xs(numVals), ys(numVals), samples(numVals);
 
+    // Set up rng
     std::uniform_real_distribution<double> unif(-100, 100);
     std::default_random_engine re;
 
-    for (auto &x : xs)
-        x = unif(re);
-    for (auto &y : ys)
-        y = unif(re);
+    // Generate data
+    Data1D data;
+    data.initialise(numVals);
+    std::iota(data.xAxis().begin(), data.xAxis().end(), 0.0);
+    std::generate(data.values().begin(), data.values().end(), [&]() { return unif(re); });
+
+    // Generate sampling
+    std::vector<double> samples(numVals);
     for (auto &s : samples)
         s = unif(re);
 
-    Interpolator interp(xs, ys, Interpolator::SplineInterpolation);
+    Interpolator interp(data, Interpolator::SplineInterpolation);
 
     for (auto _ : state)
     {
-        auto result = interp.y(samples);
+        for (auto s : samples)
+            auto result = interp.y(s);
     }
 
     state.SetBytesProcessed(long(state.iterations()) * (long(bytes)));
