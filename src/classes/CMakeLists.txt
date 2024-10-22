@@ -46,6 +46,7 @@ add_library(
   pairPotential.cpp
   pairPotentialOverride.cpp
   potentialMap.cpp
+  potentialSet.cpp
   pairIterator.cpp
   partialSet.cpp
   partialSetAccumulator.cpp
