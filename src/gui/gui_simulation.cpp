@@ -3,6 +3,7 @@
 
 #include "gui/gui.h"
 #include "main/dissolve.h"
+#include "gui/pairPotentialCheckDialog.h"
 #include <QMessageBox>
 
 // Clear all module data
@@ -50,6 +51,16 @@ void DissolveWindow::setupIteration(int count)
 
     // Clear the messages tab
     clearMessages();
+
+    // Check if pair potential range is too large for configuration box, ask to auto adjust if so
+    if (PairPotentialCheck::checkPairPotential(dissolve_.coreData().configurations(), dissolve_.pairPotentialRange())) {
+
+        if (PairPotentialCheck::displayPairPotentialWarning()) {
+
+            dissolve_.setPairPotentialRange(PairPotentialCheck::radius);
+            Messenger::print("Pair potential range updated to {}", PairPotentialCheck::radius);
+        }
+    }
 
     // Prepare the simulation
     if (!dissolve_.prepare())
