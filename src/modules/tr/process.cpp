@@ -46,7 +46,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     auto [weightedTR, wGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
         "WeightedTR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedTR.setUpPartials(unweightedGR.atomTypeMix());
+        weightedTR.setUpPartials(unweightedGR.atomTypeMix(), false);
 
     // Retrieve weights
     const auto &weights = moduleData.value<NeutronWeights>("FullWeights", sourceNeutronSQ_->name());
@@ -82,7 +82,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
                 y *= x * factor;
             }
         },
-        true);
+        false);
 
     // Sum into total
     weightedTR.formTRTotals(weights);
