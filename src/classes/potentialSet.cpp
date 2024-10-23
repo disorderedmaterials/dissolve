@@ -15,31 +15,6 @@ PotentialSet::PotentialSet() { fingerprint_ = "NO_FINGERPRINT"; }
 
 PotentialSet::~PotentialSet() { potentials_.clear(); }
 
-/*
- * Set of Partials
- */
-
-// Set up PartialSet
-bool PotentialSet::setUp(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth)
-{
-    // Set up partial arrays
-    if (!setUpPotentials(atomTypeMix))
-        return false;
-
-    fingerprint_ = "NO_FINGERPRINT";
-
-    return true;
-}
-
-// Set up PartialSet without initialising histogram arrays
-bool PotentialSet::setUpPotentials(const AtomTypeMix &atomTypeMix)
-{
-
-    fingerprint_ = "NO_FINGERPRINT";
-
-    return true;
-}
-
 // Reset partial arrays
 void PotentialSet::reset()
 {
@@ -58,7 +33,13 @@ const std::map<std::string, PotentialSet::EPData> &PotentialSet::potential() con
  * Operators
  */
 
-void PotentialSet::operator+=(const double delta) {}
+void PotentialSet::operator+=(const double delta)
+{
+    for (auto &[key, potential] : potentials_)
+    {
+        potential.ep += delta;
+    }
+}
 
 void PotentialSet::operator+=(const PotentialSet &source) {}
 

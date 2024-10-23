@@ -38,10 +38,6 @@ class PotentialSet
     std::map<std::string, EPData> potentials_;
 
     public:
-    // Set up PartialSet, including initialising histograms for g(r) use
-    bool setUp(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth);
-    // Set up PartialSet without initialising histogram arrays
-    bool setUpPotentials(const AtomTypeMix &atomTypMix);
     // Reset partial arrays
     void reset();
     // Set new fingerprint
