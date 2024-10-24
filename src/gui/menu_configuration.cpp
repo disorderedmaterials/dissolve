@@ -81,6 +81,9 @@ void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
 
         ui_.MainTabs->setCurrentTab(newConfig);
     }
+
+    // Check pair potential range against box geometry
+    checkPairPotential();
 }
 
 void DissolveWindow::on_ConfigurationCreateEmptyAction_triggered(bool checked)

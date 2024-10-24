@@ -220,6 +220,9 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     // Clear the messages
     dissolveWindow_->clearMessages();
 
+    // Check maximum potential range against box geometries
+    dissolveWindow_->checkPairPotential();
+
     // Make sure the potential map is up to date
     dissolve_.updatePairPotentials();
 
