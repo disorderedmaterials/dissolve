@@ -458,3 +458,33 @@ void DissolveWindow::statusLabelLinkClicked(const QString &link)
     if (DissolveSys::sameString(link.toStdString(), "Messages"))
         ui_.MainTabs->setCurrentIndex(0);
 }
+
+/*
+ * Check functions
+ */
+
+// Returns maximum pair potential range given all present box geometries
+void DissolveWindow::checkPairPotential(QWidget *parent) {
+
+    std::optional<double> radius;
+    QMessageBox::StandardButton reply;
+
+    // Return smallest inscribed sphere radius if less than current pair potential range
+    for (const auto& config : dissolve_.coreData().configurations()) {
+        
+        if (config->box()->inscribedSphereRadius() < radius.value_or(dissolve_.pairPotentialRange())) {
+
+            radius = config->box()->inscribedSphereRadius();
+        }
+    }
+
+    // Prompt to auto-adjust
+    if (radius.has_value()) {
+
+        reply = QMessageBox::question(parent, "Warning!", QString("Maximum pair potential range exceeds smallest box inradius! Adjust pair potential range to %1?").arg(radius.value()),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+        
+        if (reply == QMessageBox::Yes)
+            dissolve_.setPairPotentialRange(radius.value());
+    }
+}
