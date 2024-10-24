@@ -45,7 +45,7 @@ class PartialSet
     // Total functions
     Data1D boundTotal_, unboundTotal_, total_;
     // Check for full or half matrix
-    bool half_ = true;
+    bool half_{true};
 
     public:
     // Set up PartialSet, including initialising histograms for g(r) use
