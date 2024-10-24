@@ -57,28 +57,29 @@ void TRModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
     if (!ui_.FilterEdit->text().isEmpty())
         filterText = ui_.FilterEdit->text().toStdString();
 
-    PairIterator pairs(ps.atomTypeMix().nItems());
-    for (auto [first, second] : pairs)
-    {
-        auto &at1 = ps.atomTypeMix()[first];
-        auto &at2 = ps.atomTypeMix()[second];
-        const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+    // Set up array matrices for partials
+    dissolve::for_each_pair(
+        ParallelPolicies::par, ps.atomTypeMix().begin(), ps.atomTypeMix().end(),
+        [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
+        {
+            const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
-        // Filtering - does this 'id' match our filter?
-        if (filterText && id.find(filterText.value()) == std::string::npos)
-            continue;
+            // Filtering - does this 'id' match our filter?
+            if (filterText && id.find(filterText.value()) == std::string::npos)
+                return;
 
-        // Full partial
-        trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
-                                                     fmt::format("{} (Full)", id), "Full");
-        // Bound partial
-        trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
-                                                     fmt::format("{} (Bound)", id), "Bound");
+            // Full partial
+            trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
+                                                         fmt::format("{} (Full)", id), "Full");
+            // Bound partial
+            trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
+                                                         fmt::format("{} (Bound)", id), "Bound");
 
-        // Unbound partial
-        trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
-                                                     fmt::format("{} (Unbound)", id), "Unbound");
-    }
+            // Unbound partial
+            trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
+                                                         fmt::format("{} (Unbound)", id), "Unbound");
+        },
+        false);
 }
 
 // Update controls within widget
