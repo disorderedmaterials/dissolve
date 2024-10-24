@@ -110,8 +110,6 @@ add_library(
   intramolecularTermsDialog.ui
   modifyChargesDialog.cpp
   modifyChargesDialog.h
-  pairPotentialCheckDialog.cpp
-  pairPotentialCheckDialog.h
   selectAtomTypeDialog.cpp
   selectAtomTypeDialog.h
   selectAtomTypeDialog.ui
