@@ -679,7 +679,8 @@ bool PartialSet::serialise(LineParser &parser) const
             }
 
             return EarlyReturn<bool>::Continue;
-        });
+        },
+        half_);
 
     if (!success.value_or(true))
         return false;
