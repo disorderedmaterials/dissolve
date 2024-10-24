@@ -24,9 +24,10 @@ add_library(
   matrix3.cpp
   matrix4.cpp
   mc.cpp
-  praxis.cpp
+  peaks.cpp
   poissonFit.cpp
   polynomial.cpp
+  praxis.cpp
   range.cpp
   regression.cpp
   sampledData1D.cpp
@@ -66,6 +67,7 @@ add_library(
   matrix3.h
   matrix4.h
   mc.h
+  peaks.h
   polynomial.h
   poissonFit.h
   praxis.h
