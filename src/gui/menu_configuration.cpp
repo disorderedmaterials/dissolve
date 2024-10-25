@@ -80,10 +80,10 @@ void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
         fullUpdate();
 
         ui_.MainTabs->setCurrentTab(newConfig);
-    }
 
-    // Check pair potential range against box geometry
-    checkPairPotential();
+        // Check pair potential range against box geometry
+        checkPairPotentialRange();
+    }
 }
 
 void DissolveWindow::on_ConfigurationCreateEmptyAction_triggered(bool checked)

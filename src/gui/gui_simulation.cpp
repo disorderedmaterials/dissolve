@@ -52,7 +52,7 @@ void DissolveWindow::setupIteration(int count)
     clearMessages();
 
     // Check if pair potential range is too large for configuration box, ask to auto adjust if so
-    checkPairPotential();
+    checkPairPotentialRange();
 
     // Prepare the simulation
     if (!dissolve_.prepare())
