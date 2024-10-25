@@ -52,7 +52,7 @@ bool PotentialSet::deserialise(LineParser &parser, const CoreData &coreData)
 {
     if (parser.readNextLine(LineParser::Defaults, fingerprint_) != LineParser::Success)
         return false;
-    
+
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     auto size = parser.argli(0);
@@ -65,10 +65,10 @@ bool PotentialSet::deserialise(LineParser &parser, const CoreData &coreData)
         value.count = parser.argi(1);
         value.at1 = coreData.findAtomType(parser.args(2));
         value.at2 = coreData.findAtomType(parser.args(3));
-        
+
         if (!value.ep.deserialise(parser))
             return false;
-            
+
         potentials_[key] = value;
     }
 
@@ -80,7 +80,7 @@ bool PotentialSet::serialise(LineParser &parser) const
 {
     if (!parser.writeLineF("{}\n", fingerprint_))
         return false;
-    if (!parser.writeLineF("{}\n", potentials_.size())
+    if (!parser.writeLineF("{}\n", potentials_.size()))
         return false;
     for (auto &[key, value] : potentials_)
     {
