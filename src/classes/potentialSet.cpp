@@ -77,6 +77,25 @@ bool PotentialSet::deserialise(LineParser &parser, const CoreData &coreData)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
+        EPData value;
+        auto key = parser.args(0);
+        value.count = parser.argi(1);
+        value.at1 = coreData.findAtomType(parser.args(2));
+        value.at2 = coreData.findAtomType(parser.args(3));
+
+        if (!value.ep.deserialise(parser))
+            return false;
+
+        potentials_[key] = value;
+    }
+
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return false;
+    auto size = parser.argli(0);
+    for (auto n = 0; n < size; ++n)
+    {
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return false;
         PotentialData value;
         auto key = parser.args(0);
         value.count = parser.argi(1);
