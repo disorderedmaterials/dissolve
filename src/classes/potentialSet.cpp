@@ -52,6 +52,25 @@ bool PotentialSet::deserialise(LineParser &parser, const CoreData &coreData)
 {
     if (parser.readNextLine(LineParser::Defaults, fingerprint_) != LineParser::Success)
         return false;
+    
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return false;
+    auto size = parser.argli(0);
+    for (auto n = 0; n < size; ++n)
+    {
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return false;
+        EPData value;
+        auto key = parser.args(0);
+        value.count = parser.argi(1);
+        value.at1 = coreData.findAtomType(parser.args(2));
+        value.at2 = coreData.findAtomType(parser.args(3));
+        
+        if (!value.ep.deserialise(parser))
+            return false;
+            
+        potentials_[key] = value;
+    }
 
     return true;
 }
@@ -61,6 +80,14 @@ bool PotentialSet::serialise(LineParser &parser) const
 {
     if (!parser.writeLineF("{}\n", fingerprint_))
         return false;
-
+    if (!parser.writeLineF("{}\n", potentials_.size())
+        return false;
+    for (auto &[key, value] : potentials_)
+    {
+        if (!parser.writeLineF("{} {} {} {}\n", key, value.count, value.at1->name(), value.at2->name()))
+            return false;
+        if (!value.ep.serialise(parser))
+            return false;
+    }
     return true;
 }
