@@ -554,12 +554,10 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     emptyBoundPartials_.initialise(nTypes, nTypes, half_);
     emptyBoundPartials_ = false;
 
-    for (auto typeI = 0; typeI < nTypes; ++typeI)
-    {
-        for (auto typeJ = 0; typeJ < nTypes; ++typeJ)
+    for_each_pair_early(
+        0, nTypes,
+        [&](int typeI, int typeJ) -> EarlyReturn<bool>
         {
-            if (half_ && typeJ < typeI)
-                continue;
             auto &part = partials_[{typeI, typeJ}];
             auto &bound = boundPartials_[{typeI, typeJ}];
             auto &unbound = unboundPartials_[{typeI, typeJ}];
@@ -609,8 +607,9 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
                 argIndex = readDataPoint(argIndex, parser, bound);
                 argIndex = readDataPoint(argIndex, parser, unbound);
             }
-        }
-    }
+            return EarlyReturn<bool>::Continue;
+        },
+        half_);
 
     // Read totals
     if (!total_.deserialise(parser))
