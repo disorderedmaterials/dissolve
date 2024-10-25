@@ -480,10 +480,8 @@ void DissolveWindow::checkPairPotential(QWidget *parent) {
     // Prompt to auto-adjust
     if (radius.has_value()) {
 
-        reply = QMessageBox::question(parent, "Warning!", QString("Maximum pair potential range exceeds smallest box inradius! Adjust pair potential range to %1?").arg(radius.value()),
-                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-        
-        if (reply == QMessageBox::Yes)
+        if (QMessageBox::question(parent, "Warning!", QString("Maximum pair potential range exceeds smallest allowed by current Configurations! Adjust pair potential range to %1?").arg(radius.value()),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
             dissolve_.setPairPotentialRange(radius.value());
     }
 }
