@@ -259,6 +259,6 @@ class DissolveWindow : public QMainWindow
     * Checks
     */
     public:
-    // Returns maximum pair potential range given all present box geometries
+    // Checks pair potential range against all present box geometries
     void checkPairPotential(QWidget *parent = nullptr);
 };
