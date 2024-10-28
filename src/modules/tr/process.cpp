@@ -46,14 +46,14 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     auto [weightedTR, wGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
         "WeightedTR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedTR.setUpPartials(unweightedGR.atomTypeMix());
+        weightedTR.setUpPartials(unweightedGR.atomTypeMix(), false);
 
     // Retrieve weights
     const auto &weights = moduleData.value<NeutronWeights>("FullWeights", sourceNeutronSQ_->name());
 
-    for (auto typeI = 0; typeI < unweightedGR.nAtomTypes(); ++typeI)
-    {
-        for (auto typeJ = 0; typeJ < unweightedGR.nAtomTypes(); ++typeJ)
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, 0, unweightedGR.nAtomTypes(),
+        [&weights, &rho, &unweightedGR, &weightedTR](const auto typeI, const auto typeJ)
         {
             double intraWeight = weights.intramolecularWeight(typeI, typeJ);
             auto cj = weights.atomTypes()[typeJ].fraction();
@@ -81,8 +81,8 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
             {
                 y *= x * factor;
             }
-        }
-    }
+        },
+        false);
 
     // Sum into total
     weightedTR.formTRTotals(weights);
