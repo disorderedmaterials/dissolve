@@ -52,9 +52,10 @@ template <> bool nodeDisconnect<nodeValue>(nodeValue &source, int sourceIndex, n
     return true;
 }
 
-template <> QHash<int, QByteArray> &nodeRoleNames<nodeValue>(QHash<int, QByteArray> &roles, int index)
+template <> QHash<int, QByteArray> &nodeRoleNames<nodeValue>(QHash<int, QByteArray> &roles)
 {
-    roles[index++] = "value";
+    const auto base = Qt::UserRole + GraphNodeModel<nodeValue>::ownedRoles;
+    roles[base] = "value";
     return roles;
 }
 

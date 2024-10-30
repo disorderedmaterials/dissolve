@@ -8,17 +8,27 @@
 #include "gui/models/configurationModel.h"
 #include "nodeWrapper.h"
 
+using GeneratorGraphInnerType = std::variant<Configuration *, Generator *>;
+
 class GeneratorGraphNode
 {
     public:
     GeneratorGraphNode(QVariant var = {});
-    std::variant<Configuration *, Generator *, GeneratorGraphNode *> value;
+    GeneratorGraphInnerType value;
 };
 
 class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
 {
     Q_OBJECT
     Q_PROPERTY(ConfigurationModel *world READ world WRITE setWorld);
+
+    public:
+    enum PropertyIndex
+    {
+        Value = 0,
+        Temperature,
+        AtomicDensity,
+    };
 
     public Q_SLOTS:
     void handleReset();
@@ -29,5 +39,5 @@ class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
     // Dissolve Model Setter
     void setWorld(ConfigurationModel *value);
     ConfigurationModel *world_;
-    void emplace_back(int x, int y, std::variant<Configuration *, Generator *, GeneratorGraphNode *> value);
+    void emplace_back(int x, int y, GeneratorGraphInnerType value);
 };

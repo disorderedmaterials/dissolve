@@ -65,40 +65,31 @@ template <> std::string nodeTypeIcon<GeneratorGraphNode>(const GeneratorGraphNod
 
 template <> std::string nodeName<GeneratorGraphNode>(const GeneratorGraphNode &value)
 {
-    return std::visit(overloaded{[](Configuration *arg)
-                                 {
-                                     if (!arg)
-                                         return std::string("Null");
-                                     std::string s = {arg->niceName().begin(), arg->niceName().end()};
-                                     return s;
-                                 },
-                                 [](Generator *arg) -> std::string { return std::string("Generator"); },
-                                 [](GeneratorGraphNode *arg)
-                                 {
-                                     if (arg)
-                                         return nodeName(*arg);
-                                     else
-                                         return std::string("Unlinked");
-                                 }},
-                      value.value);
+    return std::visit(
+        overloaded{
+            [](Configuration *arg)
+            {
+                if (!arg)
+                    return std::string("Null");
+                std::string s = {arg->niceName().begin(), arg->niceName().end()};
+                return s;
+            },
+            [](Generator *arg) -> std::string { return std::string("Generator"); },
+        },
+        value.value);
     return "Generator Name";
 }
 
 template <> void setNodeName<GeneratorGraphNode>(GeneratorGraphNode &value, const std::string name) {}
 
-GeneratorGraphNode::GeneratorGraphNode(QVariant var)
-{
-    if (var.isNull())
-        value.emplace<GeneratorGraphNode *>(nullptr);
-    else
-        value.emplace<Configuration *>(var.value<Configuration *>());
-}
+GeneratorGraphNode::GeneratorGraphNode(QVariant var) {}
 
 template <> bool nodeSetData<GeneratorGraphNode>(GeneratorGraphNode &item, const QVariant &value, int role)
 {
+    using names = GeneratorGraphModel::PropertyIndex;
     switch (role)
     {
-        case 1:
+        case names::Temperature:
             std::get<Configuration *>(item.value)->setTemperature(value.toDouble());
             return true;
         default:
@@ -109,54 +100,48 @@ template <> bool nodeSetData<GeneratorGraphNode>(GeneratorGraphNode &item, const
 template <> QVariant nodeData(const GeneratorGraphNode &item, int role)
 {
     std::cout << "Item Index: " << item.value.index() << "\t" << role << std::endl;
-    return std::visit(overloaded{[role](Configuration *arg) -> QVariant
-                                 {
-                                     if (!arg)
-                                         return {};
-                                     switch (role)
-                                     {
-                                         case 0:
-                                             return QVariant::fromValue(arg);
-                                         case 1:
-                                             return arg->temperature();
-                                         case 2:
-                                             return arg->atomicDensity().value_or(0.0);
-                                         default:
-                                             return {};
-                                     }
-                                 },
-                                 [role](Generator *arg) -> QVariant
-                                 {
-                                     if (!arg)
-                                         return {};
-                                     switch (role)
-                                     {
-                                         case 0:
-                                             return QVariant::fromValue(arg);
-                                         default:
-                                             return {};
-                                     }
-                                 },
-                                 [role](GeneratorGraphNode *arg) -> QVariant
-                                 {
-                                     if (!arg)
-                                         return {};
-                                     switch (role)
-                                     {
-                                         case 0:
-                                             return QVariant::fromValue(arg);
-                                         default:
-                                             return {};
-                                     }
-                                 }},
-                      item.value);
+    using names = GeneratorGraphModel::PropertyIndex;
+    return std::visit(
+        overloaded{
+            [role](Configuration *arg) -> QVariant
+            {
+                if (!arg)
+                    return {};
+                switch (role)
+                {
+                    case names::Value:
+                        return QVariant::fromValue(arg);
+                    case names::Temperature:
+                        return arg->temperature();
+                    case names::AtomicDensity:
+                        return arg->atomicDensity().value_or(0.0);
+                    default:
+                        return {};
+                }
+            },
+            [role](Generator *arg) -> QVariant
+            {
+                if (!arg)
+                    return {};
+                switch (role)
+                {
+                    case names::Value:
+                        return QVariant::fromValue(arg);
+                    default:
+                        return {};
+                }
+            },
+        },
+        item.value);
 }
 
-template <> QHash<int, QByteArray> &nodeRoleNames<GeneratorGraphNode>(QHash<int, QByteArray> &roles, int index)
+template <> QHash<int, QByteArray> &nodeRoleNames<GeneratorGraphNode>(QHash<int, QByteArray> &roles)
 {
-    roles[index++] = "value";
-    roles[index++] = "temperature";
-    roles[index++] = "atomicDensity";
+    auto base = Qt::UserRole + GraphNodeModel<GeneratorGraphNode>::ownedRoles;
+    using names = GeneratorGraphModel::PropertyIndex;
+    roles[base + names::Value] = "value";
+    roles[base + names::Temperature] = "temperature";
+    roles[base + names::AtomicDensity] = "atomicDensity";
     return roles;
 }
 
@@ -206,7 +191,7 @@ void GeneratorGraphModel::handleReset()
     graphChanged();
 }
 
-void GeneratorGraphModel::emplace_back(int x, int y, std::variant<Configuration *, Generator *, GeneratorGraphNode *> value)
+void GeneratorGraphModel::emplace_back(int x, int y, GeneratorGraphInnerType value)
 {
     GeneratorGraphNode temp;
     temp.value = value;

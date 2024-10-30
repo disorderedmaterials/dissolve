@@ -18,6 +18,8 @@ template <typename T> class GraphNodeModel : public QAbstractListModel
     GraphNodeModel(GraphModel<T> *parent = nullptr) : parent_(parent) {}
     GraphNodeModel(const GraphNodeModel<T> &other) : parent_(other.parent_) {}
 
+    static const int ownedRoles = 5;
+
     GraphNodeModel<T> &operator=(const GraphNodeModel<T> &other)
     {
         parent_ = other.parent_;
@@ -34,7 +36,7 @@ template <typename T> class GraphNodeModel : public QAbstractListModel
         roles[Qt::UserRole + 2] = "posY";
         roles[Qt::UserRole + 3] = "type";
         roles[Qt::UserRole + 4] = "icon";
-        return nodeRoleNames<T>(roles, Qt::UserRole + ownedRoles);
+        return nodeRoleNames<T>(roles);
     }
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
     {
@@ -80,5 +82,4 @@ template <typename T> class GraphNodeModel : public QAbstractListModel
 
     private:
     GraphModel<T> *parent_;
-    const int ownedRoles = 5;
 };
