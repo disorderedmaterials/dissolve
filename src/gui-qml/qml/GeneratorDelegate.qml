@@ -34,6 +34,42 @@ Item {
                         id: root
                         text: temperature
                     }
+                    Text {
+                        text: "Atomic Density"
+                    }
+                    Text {
+                        text: atomicDensity
+                    }
+                }
+            }
+        }
+
+        DelegateChoice {
+            roleValue: "Generator"
+            delegate: NodeBox {
+                property double startX
+                property double endX
+                property double midY
+                x: posX
+                y: posY
+                px: posX
+                py: posY
+                startX: x + width
+                endX: x
+                midY: y + basey + root.y + root.height/2 + 10
+                image: icon
+                nodeType: name
+                onDeleted: rootModel.deleteNode(index)
+                Grid {
+                    columns: 2
+                    spacing: 2
+                    Text {
+                        id: root
+                        text: "Foo"
+                    }
+                    Text {
+                        text: "Bar"
+                    }
                 }
             }
         }

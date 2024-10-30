@@ -20,6 +20,7 @@ template <typename T> class NodeWrapper
 {
     public:
     NodeWrapper(QVariant value) : value_(value) {}
+    NodeWrapper(T value) : value_(value) {}
     int posx, posy;
     QVariant value() const { return nodeGetValue<T>(value_); }
     T &rawValue() { return value_; }

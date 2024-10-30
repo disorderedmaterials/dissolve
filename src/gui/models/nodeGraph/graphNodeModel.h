@@ -74,7 +74,9 @@ template <typename T> class GraphNodeModel : public QAbstractListModel
                 return nodeSetData(item.rawValue(), value, role - Qt::UserRole - ownedRoles);
         }
     }
-    /** Function to reset the model (and trigger redrawing all labels */
+
+    void beginInsert(int count = 1) { beginInsertRows({}, parent_->items.size(), parent_->items.size() + count); }
+    void endInsert() { endInsertRows(); }
 
     private:
     GraphModel<T> *parent_;

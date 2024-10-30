@@ -10,10 +10,12 @@
 #include <variant>
 
 Q_DECLARE_METATYPE(Configuration *)
+Q_DECLARE_METATYPE(Generator *)
 
 template <> QVariant nodeGetValue<GeneratorGraphNode>(const GeneratorGraphNode value)
 {
     return std::visit(overloaded{[](Configuration *arg) { return QVariant::fromValue(arg); },
+                                 [](Generator *arg) { return QVariant::fromValue(arg); },
                                  [](GeneratorGraphNode *arg)
                                  {
                                      if (arg)
@@ -26,9 +28,9 @@ template <> QVariant nodeGetValue<GeneratorGraphNode>(const GeneratorGraphNode v
 
 template <> std::string nodeTypeName<GeneratorGraphNode>(const GeneratorGraphNode &value)
 {
-    return std::visit(
-        overloaded{[](Configuration *arg) { return "Configuration"; }, [](GeneratorGraphNode *arg) { return "ptr"; }},
-        value.value);
+    return std::visit(overloaded{[](Configuration *arg) { return "Configuration"; }, [](Generator *arg) { return "Generator"; },
+                                 [](GeneratorGraphNode *arg) { return "ptr"; }},
+                      value.value);
 }
 
 template <>
@@ -54,10 +56,11 @@ bool nodeDisconnect<GeneratorGraphNode>(GeneratorGraphNode &source, int sourceIn
 
 template <> std::string nodeTypeIcon<GeneratorGraphNode>(const GeneratorGraphNode &value)
 {
-    return std::visit(overloaded{[](Configuration *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; },
-                                 [](GeneratorGraphNode *arg)
-                                 { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; }},
-                      value.value);
+    return std::visit(
+        overloaded{[](Configuration *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/configuration.svg"; },
+                   [](Generator *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/generator.svg"; },
+                   [](GeneratorGraphNode *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; }},
+        value.value);
 }
 
 template <> std::string nodeName<GeneratorGraphNode>(const GeneratorGraphNode &value)
@@ -66,9 +69,10 @@ template <> std::string nodeName<GeneratorGraphNode>(const GeneratorGraphNode &v
                                  {
                                      if (!arg)
                                          return std::string("Null");
-                                     std::string s = {arg->niceName().begin(), arg->name().end()};
+                                     std::string s = {arg->niceName().begin(), arg->niceName().end()};
                                      return s;
                                  },
+                                 [](Generator *arg) -> std::string { return std::string("Generator"); },
                                  [](GeneratorGraphNode *arg)
                                  {
                                      if (arg)
@@ -104,21 +108,55 @@ template <> bool nodeSetData<GeneratorGraphNode>(GeneratorGraphNode &item, const
 
 template <> QVariant nodeData(const GeneratorGraphNode &item, int role)
 {
-    switch (role)
-    {
-        case 0:
-            return nodeGetValue(item);
-        case 1:
-            return std::get<Configuration *>(item.value)->temperature();
-        default:
-            return {};
-    }
+    std::cout << "Item Index: " << item.value.index() << "\t" << role << std::endl;
+    return std::visit(overloaded{[role](Configuration *arg) -> QVariant
+                                 {
+                                     if (!arg)
+                                         return {};
+                                     switch (role)
+                                     {
+                                         case 0:
+                                             return QVariant::fromValue(arg);
+                                         case 1:
+                                             return arg->temperature();
+                                         case 2:
+                                             return arg->atomicDensity().value_or(0.0);
+                                         default:
+                                             return {};
+                                     }
+                                 },
+                                 [role](Generator *arg) -> QVariant
+                                 {
+                                     if (!arg)
+                                         return {};
+                                     switch (role)
+                                     {
+                                         case 0:
+                                             return QVariant::fromValue(arg);
+                                         default:
+                                             return {};
+                                     }
+                                 },
+                                 [role](GeneratorGraphNode *arg) -> QVariant
+                                 {
+                                     if (!arg)
+                                         return {};
+                                     switch (role)
+                                     {
+                                         case 0:
+                                             return QVariant::fromValue(arg);
+                                         default:
+                                             return {};
+                                     }
+                                 }},
+                      item.value);
 }
 
 template <> QHash<int, QByteArray> &nodeRoleNames<GeneratorGraphNode>(QHash<int, QByteArray> &roles, int index)
 {
     roles[index++] = "value";
     roles[index++] = "temperature";
+    roles[index++] = "atomicDensity";
     return roles;
 }
 
@@ -132,7 +170,7 @@ void GeneratorGraphModel::setWorld(ConfigurationModel *value)
         return;
     int index = 50;
     auto nodes = world_->rawData(world_->index(0))->generator().nodes();
-    // nodes_.beginInsertRows({}, items.size(), items.size() + nodes.size());
+    nodes_.beginInsert(nodes.size());
     for (auto node : nodes)
     {
         QVariant empty = {};
@@ -143,7 +181,7 @@ void GeneratorGraphModel::setWorld(ConfigurationModel *value)
         setNodeName(item.rawValue(), name);
         index += 20;
     }
-    // nodes_.endInsertRows();
+    nodes_.endInsert();
     graphChanged();
 }
 
@@ -155,11 +193,24 @@ void GeneratorGraphModel::handleReset()
     items.clear();
 
     int index = 50;
+    nodes_.beginInsert();
     for (auto i = 0; i < world_->rowCount(); ++i)
     {
         auto config = world_->rawData(world_->index(i));
-        QVariant variant;
-        variant.setValue(config);
-        emplace_back(index, index, variant);
+        std::cout << "Config:\t" << config << std::endl;
+        emplace_back(index, index, config);
+        std::cout << "Generator:\t" << &config->generator() << std::endl;
+        emplace_back(index, index, &config->generator());
     }
+    nodes_.endInsert();
+    graphChanged();
+}
+
+void GeneratorGraphModel::emplace_back(int x, int y, std::variant<Configuration *, Generator *, GeneratorGraphNode *> value)
+{
+    GeneratorGraphNode temp;
+    temp.value = value;
+    auto &item = items.emplace_back(temp);
+    item.posx = x;
+    item.posy = y;
 }

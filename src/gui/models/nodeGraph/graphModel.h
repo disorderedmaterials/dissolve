@@ -69,6 +69,8 @@ template <typename T> class GraphModel : public GraphModelBase
 
         nodes_.beginRemoveRows({}, index, index);
         items.erase(items.begin() + index);
+        //FIXME: After erasing the item, we need to delete the actual
+        //value
         nodes_.endRemoveRows();
         graphChanged();
     }

@@ -12,7 +12,7 @@ class GeneratorGraphNode
 {
     public:
     GeneratorGraphNode(QVariant var = {});
-    std::variant<Configuration *, GeneratorGraphNode *> value;
+    std::variant<Configuration *, Generator *, GeneratorGraphNode *> value;
 };
 
 class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
@@ -29,4 +29,5 @@ class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
     // Dissolve Model Setter
     void setWorld(ConfigurationModel *value);
     ConfigurationModel *world_;
+    void emplace_back(int x, int y, std::variant<Configuration *, Generator *, GeneratorGraphNode *> value);
 };
