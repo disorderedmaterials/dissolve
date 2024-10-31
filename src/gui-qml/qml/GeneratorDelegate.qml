@@ -75,6 +75,36 @@ Item {
         }
 
         DelegateChoice {
+            roleValue: "GeneratorNode"
+            delegate: NodeBox {
+                property double startX
+                property double endX
+                property double midY
+                x: posX
+                y: posY
+                px: posX
+                py: posY
+                startX: x + width
+                endX: x
+                midY: y + basey + root.y + root.height/2 + 10
+                image: icon
+                nodeType: name
+                onDeleted: rootModel.deleteNode(index)
+                Grid {
+                    columns: 2
+                    spacing: 2
+                    Text {
+                        id: root
+                        text: "name"
+                    }
+                    Text {
+                        text: "size"
+                    }
+                }
+            }
+        }
+
+        DelegateChoice {
             roleValue: "ptr"
             delegate: NodeBox {
                 property double startX

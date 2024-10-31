@@ -8,7 +8,7 @@
 #include "gui/models/configurationModel.h"
 #include "nodeWrapper.h"
 
-using GeneratorGraphInnerType = std::variant<Configuration *, Generator *>;
+using GeneratorGraphInnerType = std::variant<Configuration *, Generator *, GeneratorNode *>;
 
 class GeneratorGraphNode
 {

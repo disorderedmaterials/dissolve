@@ -11,25 +11,26 @@
 
 Q_DECLARE_METATYPE(Configuration *)
 Q_DECLARE_METATYPE(Generator *)
+Q_DECLARE_METATYPE(GeneratorNode *)
 
 template <> QVariant nodeGetValue<GeneratorGraphNode>(const GeneratorGraphNode value)
 {
-    return std::visit(overloaded{[](Configuration *arg) { return QVariant::fromValue(arg); },
-                                 [](Generator *arg) { return QVariant::fromValue(arg); },
-                                 [](GeneratorGraphNode *arg)
-                                 {
-                                     if (arg)
-                                         return nodeGetValue<GeneratorGraphNode>(*arg);
-                                     QVariant empty;
-                                     return empty;
-                                 }},
-                      value.value);
+    return std::visit(
+        overloaded{
+            [](auto *arg) -> QVariant
+            {
+                if (arg)
+                    return QVariant::fromValue(arg);
+                return {};
+            },
+        },
+        value.value);
 }
 
 template <> std::string nodeTypeName<GeneratorGraphNode>(const GeneratorGraphNode &value)
 {
     return std::visit(overloaded{[](Configuration *arg) { return "Configuration"; }, [](Generator *arg) { return "Generator"; },
-                                 [](GeneratorGraphNode *arg) { return "ptr"; }},
+                                 [](GeneratorNode *arg) { return "GeneratorNode"; }},
                       value.value);
 }
 
@@ -56,11 +57,11 @@ bool nodeDisconnect<GeneratorGraphNode>(GeneratorGraphNode &source, int sourceIn
 
 template <> std::string nodeTypeIcon<GeneratorGraphNode>(const GeneratorGraphNode &value)
 {
-    return std::visit(
-        overloaded{[](Configuration *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/configuration.svg"; },
-                   [](Generator *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/generator.svg"; },
-                   [](GeneratorGraphNode *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; }},
-        value.value);
+    return std::visit(overloaded{[](Configuration *arg)
+                                 { return "file:/home/adam/Code/dissolve/src/gui/icons/configuration.svg"; },
+                                 [](Generator *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/generator.svg"; },
+                                 [](GeneratorNode *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; }},
+                      value.value);
 }
 
 template <> std::string nodeName<GeneratorGraphNode>(const GeneratorGraphNode &value)
@@ -75,6 +76,7 @@ template <> std::string nodeName<GeneratorGraphNode>(const GeneratorGraphNode &v
                 return s;
             },
             [](Generator *arg) -> std::string { return std::string("Generator"); },
+            [](GeneratorNode *arg) -> std::string { return std::string("Node"); },
         },
         value.value);
 }
@@ -99,40 +101,49 @@ template <> bool nodeSetData<GeneratorGraphNode>(GeneratorGraphNode &item, const
 template <> QVariant nodeData(const GeneratorGraphNode &item, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
-    return std::visit(
-        overloaded{
-            [role](Configuration *arg) -> QVariant
-            {
-                if (!arg)
-                    return {};
-                switch (role)
-                {
-                    case names::Value:
-                        return QVariant::fromValue(arg);
-                    case names::Temperature:
-                        return arg->temperature();
-                    case names::AtomicDensity:
-                        return arg->atomicDensity().value_or(0.0);
-                    default:
-                        return {};
-                }
-            },
-            [role](Generator *arg) -> QVariant
-            {
-                if (!arg)
-                    return {};
-                switch (role)
-                {
-                    case names::Value:
-                        return QVariant::fromValue(arg);
-                    case names::Size:
-                        return QVariant::fromValue(arg->rootSequence().nNodes());
-                    default:
-                        return {};
-                }
-            },
-        },
-        item.value);
+    return std::visit(overloaded{[role](Configuration *arg) -> QVariant
+                                 {
+                                     if (!arg)
+                                         return {};
+                                     switch (role)
+                                     {
+                                         case names::Value:
+                                             return QVariant::fromValue(arg);
+                                         case names::Temperature:
+                                             return arg->temperature();
+                                         case names::AtomicDensity:
+                                             return arg->atomicDensity().value_or(0.0);
+                                         default:
+                                             return {};
+                                     }
+                                 },
+                                 [role](Generator *arg) -> QVariant
+                                 {
+                                     if (!arg)
+                                         return {};
+                                     switch (role)
+                                     {
+                                         case names::Value:
+                                             return QVariant::fromValue(arg);
+                                         case names::Size:
+                                             return QVariant::fromValue(arg->rootSequence().nNodes());
+                                         default:
+                                             return {};
+                                     }
+                                 },
+                                 [role](GeneratorNode *arg) -> QVariant
+                                 {
+                                     if (!arg)
+                                         return {};
+                                     switch (role)
+                                     {
+                                         case names::Value:
+                                             return QVariant::fromValue(arg);
+                                         default:
+                                             return {};
+                                     }
+                                 }},
+                      item.value);
 }
 
 template <> QHash<int, QByteArray> &nodeRoleNames<GeneratorGraphNode>(QHash<int, QByteArray> &roles)
@@ -179,20 +190,27 @@ void GeneratorGraphModel::handleReset()
     items.clear();
 
     int index = 1;
-    std::vector<int> edges;
-    nodes_.beginInsert();
+    std::vector<std::pair<int, int>> edges;
     for (auto i = 0; i < world_->rowCount(); ++i)
     {
         auto config = world_->rawData(world_->index(i));
-        auto size = nodes_.rowCount();
+        const auto size = nodes_.rowCount();
+        nodes_.beginInsert(config->generator().rootSequence().sequence().size() + 2);
         emplace_back(90 * index++, 60 * index++, config);
         emplace_back(90 * index++, 60 * index++, &config->generator());
-        edges.emplace_back(size);
+        edges.emplace_back(size, size + 1);
+        int count = size + 1;
+        for (auto genNode : config->generator().rootSequence().sequence())
+        {
+            emplace_back(90 * index++, 60 * index++, genNode.get());
+            edges.emplace_back(count, count + 1);
+            count++;
+        }
+        nodes_.endInsert();
     }
-    nodes_.endInsert();
-    for (auto edge : edges)
+    for (auto [front, back] : edges)
     {
-        edges_.addEdge(edge, 0, edge + 1, 0);
+        edges_.addEdge(front, 0, back, 0);
     }
     graphChanged();
 }
