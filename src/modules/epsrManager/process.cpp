@@ -25,9 +25,19 @@ bool EPSRManagerModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::K
 // Run main processing
 Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
 {
+    if (averagingLength_)
+        Messenger::print("Potentials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value(),
+                         Averaging::averagingSchemes().keyword(averagingScheme_));
+    else
+        Messenger::print("Potentials: No averaging of potentials will be performed.\n");
+
     auto &moduleData = moduleContext.dissolve().processingModuleData();
 
-    std::map<std::string, EPData> potentials;
+    // Does a PotentialSet already exist for this Configuration?
+    auto originalPotentialsObject =
+        moduleData.realiseIf<PotentialSet>(fmt::format("AveragingPotentials"), name_, GenericItem::InRestartFileFlag);
+
+    PotentialSet potentials = originalPotentialsObject.first;
 
     // Loop over target data
     for (auto *module : target_)
@@ -38,40 +48,45 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
         for (auto &&[at1, at2, ep] : eps)
         {
             auto key = EPSRManagerModule::pairKey(at1, at2);
-            auto keyIt = potentials.find(key);
-            if (keyIt == potentials.end())
-                potentials[key] = {ep, 1, at1, at2};
+            auto keyIt = potentials.potential().find(key);
+            if (keyIt == potentials.potential().end())
+                potentials.potential()[key] = {ep, 1, at1, at2};
             else
             {
-                Interpolator::addInterpolated(ep, potentials[key].ep, 1.0);
-                ++potentials[key].count;
+                Interpolator::addInterpolated(ep, potentials.potential()[key].ep, 1.0);
+                ++potentials.potential()[key].count;
             }
         }
     }
 
-    // Form averages
-    for (auto &&[key, epData] : potentials)
-        epData.ep /= epData.count;
+    // Perform averaging of potentials data if requested
+    if (averagingLength_)
+        Averaging::average<std::vector<PotentialSet>>(moduleContext.dissolve().processingModuleData(), "AveragingPotentials",
+                                                      name(), averagingLength_.value(), averagingScheme_);
 
-    std::map<std::string, EPData> averagedPotentials = potentials;
+    /*    // Form averages
+       for (auto &&[key, epData] : potentials)
+           epData.ep /= epData.count;
 
-    averagedPotentialsStore.emplace_back(potentials);
-    // Check if ran the right amount of iterations before averaging
-    if (averagedPotentialsStore.size() > averagingLength_)
-    {
-        averagedPotentialsStore.pop_back();
-    }
+       std::map<std::string, EPData> averagedPotentials = potentials;
 
-    // Average the potentials and replace the map with the new averaged
-    for (const auto &pots : averagedPotentialsStore)
-    {
-        for (auto &&[key, epData] : pots)
-        {
-            averagedPotentials[key].ep += epData.ep;
-            averagedPotentials[key].ep /= averagingLength_.value();
-        }
-    }
-    potentials = averagedPotentials;
+       averagedPotentialsStore.emplace_back(potentials);
+       // Check if ran the right amount of iterations before averaging
+       if (averagedPotentialsStore.size() > averagingLength_)
+       {
+           averagedPotentialsStore.pop_back();
+       }
+
+       // Average the potentials and replace the map with the new averaged
+       for (const auto &pots : averagedPotentialsStore)
+       {
+           for (auto &&[key, epData] : pots)
+           {
+               averagedPotentials[key].ep += epData.ep;
+               averagedPotentials[key].ep /= averagingLength_.value();
+           }
+       }
+       potentials = averagedPotentials; */
 
     // Apply potential scalings
     auto scalings = DissolveSys::splitString(potentialScalings_, ",");
@@ -91,7 +106,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
 
         Messenger::print("Apply scaling factor of {} to potential(s) {}-{}...\n", scaleFactor, typeA, typeB);
         auto count = 0;
-        for (auto &&[key, epData] : potentials)
+        for (auto &&[key, epData] : potentials.potential())
         {
             // Is this potential a match
             if ((DissolveSys::sameWildString(typeA, epData.at1->name()) &&
@@ -108,7 +123,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
     }
 
     // Adjust global potentials
-    for (auto &&[key, epData] : potentials)
+    for (auto &&[key, epData] : potentials.potential())
     {
         // Grab pointer to the relevant pair potential (if it exists)
         auto *pp = moduleContext.dissolve().pairPotential(epData.at1, epData.at2);

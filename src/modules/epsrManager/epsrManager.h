@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/potentialSet.h"
 #include "classes/scatteringMatrix.h"
 #include "generator/generator.h"
 #include "math/averaging.h"
@@ -28,20 +29,12 @@ class EPSRManagerModule : public Module
     std::optional<int> modifyPotential_{1};
     // Vector storing atom pairs and associated potentials
     std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> potentials_;
-    struct EPData
-    {
-        Data1D ep;
-        double count{0};
-        std::shared_ptr<AtomType> at1, at2;
-    };
     // Potential scalings
     std::string potentialScalings_;
     // Number of historical partial sets to combine into final partials
     std::optional<int> averagingLength_;
     // Weighting scheme to use when averaging partials
     Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
-    // Vector of averaged potentials over multiple iterations
-    std::vector<std::map<std::string, EPData>> averagedPotentialsStore;
 
     /*
      * Functions
