@@ -178,15 +178,22 @@ void GeneratorGraphModel::handleReset()
 {
     items.clear();
 
-    int index = 50;
+    int index = 1;
+    std::vector<int> edges;
     nodes_.beginInsert();
     for (auto i = 0; i < world_->rowCount(); ++i)
     {
         auto config = world_->rawData(world_->index(i));
-        emplace_back(index, index, config);
-        emplace_back(index, index, &config->generator());
+        auto size = nodes_.rowCount();
+        emplace_back(90 * index++, 60 * index++, config);
+        emplace_back(90 * index++, 60 * index++, &config->generator());
+        edges.emplace_back(size);
     }
     nodes_.endInsert();
+    for (auto edge : edges)
+    {
+        edges_.addEdge(edge, 0, edge + 1, 0);
+    }
     graphChanged();
 }
 
