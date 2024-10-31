@@ -30,9 +30,9 @@ void Peaks::setIsolation(double radius) { isolation_ = radius; }
 void Peaks::resetConstraints() { threshold_ = -10e9, isolation_ = 0; }
 
 // Check if neighbouring points correspond to a local maximum
-bool Peaks::isLocalMaximum(const std::array<double, 3> &points) 
-{ 
-    return (points[1] - points[0] > 0) && (points[2] - points[1] <= 0); 
+bool Peaks::isLocalMaximum(const std::array<double, 3> &points)
+{
+    return (points[1] - points[0] > 0) && (points[2] - points[1] <= 0);
 }
 
 // Check if neighbouring points correspond to a local minimum
