@@ -99,7 +99,6 @@ template <> bool nodeSetData<GeneratorGraphNode>(GeneratorGraphNode &item, const
 
 template <> QVariant nodeData(const GeneratorGraphNode &item, int role)
 {
-    std::cout << "Item Index: " << item.value.index() << "\t" << role << std::endl;
     using names = GeneratorGraphModel::PropertyIndex;
     return std::visit(
         overloaded{
@@ -185,9 +184,7 @@ void GeneratorGraphModel::handleReset()
     for (auto i = 0; i < world_->rowCount(); ++i)
     {
         auto config = world_->rawData(world_->index(i));
-        std::cout << "Config:\t" << config << std::endl;
         emplace_back(index, index, config);
-        std::cout << "Generator:\t" << &config->generator() << std::endl;
         emplace_back(index, index, &config->generator());
     }
     nodes_.endInsert();
