@@ -128,7 +128,7 @@ std::vector<Peaks::Prominence1D> Peaks::prominences(bool heightOrder)
     return prominences(peaks, heightOrder);
 }
 
-std::vector<Peaks::Prominence1D> Peaks::prominences(const std::vector<Peaks::Peak1D> &peaks, bool heightOrder)
+std::vector<Peaks::Prominence1D> Peaks::prominences(std::vector<Peaks::Peak1D> peaks, bool heightOrder)
 {
     std::vector<Peaks::Prominence1D> proms;
     proms.reserve(peaks.size());

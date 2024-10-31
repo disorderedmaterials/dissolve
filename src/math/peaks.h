@@ -72,10 +72,10 @@ class Peaks
     // Set horizontal threshold for peaks
     void setIsolation(double range);
     // Get top n peaks
-    std::vector<Peak1D> top(std::size_t n, std::vector<Peak1D> &peaks);
+    std::vector<Peak1D> top(std::size_t n, std::vector<Peak1D> peaks);
     // Find the peaks (local maxima) of data
     std::vector<Peak1D> find(bool heightOrder = false);
     // Calculate prominences of peaks
     std::vector<Prominence1D> prominences(bool heightOrder = false);
-    std::vector<Prominence1D> prominences(const std::vector<Peak1D> &peaks, bool heightOrder = false);
+    std::vector<Prominence1D> prominences(std::vector<Peak1D> peaks, bool heightOrder = false);
 };
