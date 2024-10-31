@@ -77,7 +77,6 @@ template <> std::string nodeName<GeneratorGraphNode>(const GeneratorGraphNode &v
             [](Generator *arg) -> std::string { return std::string("Generator"); },
         },
         value.value);
-    return "Generator Name";
 }
 
 template <> void setNodeName<GeneratorGraphNode>(GeneratorGraphNode &value, const std::string name) {}
