@@ -54,6 +54,7 @@ class PotentialSet
     public:
     void operator+=(const double delta);
     void operator+=(const PotentialSet &source);
+    void operator*=(const double factor);
 
     /*
      * Serialisation

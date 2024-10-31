@@ -43,6 +43,14 @@ void PotentialSet::operator+=(const double delta)
 
 void PotentialSet::operator+=(const PotentialSet &source) {}
 
+void PotentialSet::operator*=(const double factor)
+{
+    for (auto &[key, potential] : potentials_)
+    {
+        potential.ep *= factor;
+    }
+}
+
 /*
  * Serialisation
  */
