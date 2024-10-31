@@ -26,6 +26,7 @@ class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
     enum PropertyIndex
     {
         Value = 0,
+        Size,
         Temperature,
         AtomicDensity,
     };

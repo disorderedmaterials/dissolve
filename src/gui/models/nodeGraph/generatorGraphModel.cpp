@@ -127,6 +127,8 @@ template <> QVariant nodeData(const GeneratorGraphNode &item, int role)
                 {
                     case names::Value:
                         return QVariant::fromValue(arg);
+                    case names::Size:
+                        return QVariant::fromValue(arg->rootSequence().nNodes());
                     default:
                         return {};
                 }
@@ -140,6 +142,7 @@ template <> QHash<int, QByteArray> &nodeRoleNames<GeneratorGraphNode>(QHash<int,
     auto base = Qt::UserRole + GraphNodeModel<GeneratorGraphNode>::ownedRoles;
     using names = GeneratorGraphModel::PropertyIndex;
     roles[base + names::Value] = "value";
+    roles[base + names::Size] = "size";
     roles[base + names::Temperature] = "temperature";
     roles[base + names::AtomicDensity] = "atomicDensity";
     return roles;

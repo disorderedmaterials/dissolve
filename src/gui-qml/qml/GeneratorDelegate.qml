@@ -65,10 +65,10 @@ Item {
                     spacing: 2
                     Text {
                         id: root
-                        text: "Foo"
+                        text: name
                     }
                     Text {
-                        text: "Bar"
+                        text: size
                     }
                 }
             }
