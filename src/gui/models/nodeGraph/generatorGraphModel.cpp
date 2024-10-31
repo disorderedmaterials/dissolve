@@ -60,7 +60,22 @@ template <> std::string nodeTypeIcon<GeneratorGraphNode>(const GeneratorGraphNod
     return std::visit(overloaded{[](Configuration *arg)
                                  { return "file:/home/adam/Code/dissolve/src/gui/icons/configuration.svg"; },
                                  [](Generator *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/generator.svg"; },
-                                 [](GeneratorNode *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; }},
+                                 [](GeneratorNode *arg)
+                                 {
+                                     switch (arg->type())
+                                     {
+                                         case GeneratorNode::NodeType::Add:
+                                             return "file:/home/adam/Code/dissolve/src/gui/icons/nodes/Add.svg";
+                                         case GeneratorNode::NodeType::Box:
+                                             return "file:/home/adam/Code/dissolve/src/gui/icons/nodes/Box.svg";
+                                         case GeneratorNode::NodeType::Parameters:
+                                             return "file:/home/adam/Code/dissolve/src/gui/icons/nodes/Parameters.svg";
+                                         case GeneratorNode::NodeType::Temperature:
+                                             return "file:/home/adam/Code/dissolve/src/gui/icons/nodes/Temperature.svg";
+                                         default:
+                                             return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
+                                     }
+                                 }},
                       value.value);
 }
 
