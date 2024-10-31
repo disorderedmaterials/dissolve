@@ -57,24 +57,14 @@ bool nodeDisconnect<GeneratorGraphNode>(GeneratorGraphNode &source, int sourceIn
 
 template <> std::string nodeTypeIcon<GeneratorGraphNode>(const GeneratorGraphNode &value)
 {
-    return std::visit(overloaded{[](Configuration *arg)
+    return std::visit(overloaded{[](Configuration *arg) -> std::string
                                  { return "file:/home/adam/Code/dissolve/src/gui/icons/configuration.svg"; },
-                                 [](Generator *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/generator.svg"; },
-                                 [](GeneratorNode *arg)
+                                 [](Generator *arg) -> std::string
+                                 { return "file:/home/adam/Code/dissolve/src/gui/icons/generator.svg"; },
+                                 [](GeneratorNode *arg) -> std::string
                                  {
-                                     switch (arg->type())
-                                     {
-                                         case GeneratorNode::NodeType::Add:
-                                             return "file:/home/adam/Code/dissolve/src/gui/icons/nodes/Add.svg";
-                                         case GeneratorNode::NodeType::Box:
-                                             return "file:/home/adam/Code/dissolve/src/gui/icons/nodes/Box.svg";
-                                         case GeneratorNode::NodeType::Parameters:
-                                             return "file:/home/adam/Code/dissolve/src/gui/icons/nodes/Parameters.svg";
-                                         case GeneratorNode::NodeType::Temperature:
-                                             return "file:/home/adam/Code/dissolve/src/gui/icons/nodes/Temperature.svg";
-                                         default:
-                                             return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
-                                     }
+                                     auto name = GeneratorNode::nodeTypes().keyword(arg->type());
+                                     return "file:/home/adam/Code/dissolve/src/gui/icons/nodes/" + name + ".svg";
                                  }},
                       value.value);
 }
@@ -91,7 +81,11 @@ template <> std::string nodeName<GeneratorGraphNode>(const GeneratorGraphNode &v
                 return s;
             },
             [](Generator *arg) -> std::string { return std::string("Generator"); },
-            [](GeneratorNode *arg) -> std::string { return std::string("Node"); },
+            [](GeneratorNode *arg) -> std::string
+            {
+                std::string result = {arg->name().begin(), arg->name().end()};
+                return result;
+            },
         },
         value.value);
 }
