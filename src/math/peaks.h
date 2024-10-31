@@ -5,6 +5,7 @@
 
 #include "math/data1D.h"
 #include "templates/vector3.h"
+#include <array>
 #include <variant>
 
 // Forward declarations
@@ -31,11 +32,11 @@ class Peaks
     // Characterise only peaks occuring above a given horizontal isolation
     double isolation_;
     // Check if neighbouring points correspond to a local maximum
-    bool isLocalMaximum(double *points);
+    bool isLocalMaximum(const std::array<double, 3> &points);
     // Check if neighbouring points correspond to a local minimum
-    bool isLocalMinimum(double *points);
+    bool isLocalMinimum(const std::array<double, 3> &points);
     // Check if neighbouring points correspond to an inflection point
-    bool isInflectionPoint(double *points);
+    bool isInflectionPoint(const std::array<double, 3> &points);
 
     public:
     // Container for a peak occuring in 1D data
@@ -71,7 +72,7 @@ class Peaks
     // Set horizontal threshold for peaks
     void setIsolation(double range);
     // Get top n peaks
-    std::vector<Peak1D> top(int n, std::vector<Peak1D>);
+    std::vector<Peak1D> top(std::size_t n, std::vector<Peak1D> &peaks);
     // Find the peaks (local maxima) of data
     std::vector<Peak1D> find(bool heightOrder = false);
     // Calculate prominences of peaks

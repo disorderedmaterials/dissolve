@@ -30,17 +30,17 @@ void Peaks::setIsolation(double radius) { isolation_ = radius; }
 void Peaks::resetConstraints() { threshold_ = -10e9, isolation_ = 0; }
 
 // Check if neighbouring points correspond to a local maximum
-bool Peaks::isLocalMaximum(double *points) { return (points[1] - points[0] > 0) && (points[2] - points[1] <= 0); }
+bool Peaks::isLocalMaximum(const std::array<double, 3> &points) { return (points[1] - points[0] > 0) && (points[2] - points[1] <= 0); }
 
 // Check if neighbouring points correspond to a local minimum
-bool Peaks::isLocalMinimum(double *points)
+bool Peaks::isLocalMinimum(const std::array<double, 3> &points)
 {
-    double invertedPoints[3] = {-1.0 * points[0], -1.0 * points[1], -1.0 * points[2]};
+    std::array<double, 3> invertedPoints = {-1.0 * points[0], -1.0 * points[1], -1.0 * points[2]};
     return isLocalMaximum(invertedPoints);
 }
 
 // Check if neighbouring points correspond to an inflection point
-bool Peaks::isInflectionPoint(double *points)
+bool Peaks::isInflectionPoint(const std::array<double, 3> &points)
 {
     return (((points[1] - points[0] > 0) || ((points[1] - points[0] < 0))) && (points[2] - points[1] == 0)) ||
            (((points[2] - points[1] > 0) || ((points[2] - points[1] < 0))) && (points[1] - points[0] == 0));
@@ -65,11 +65,11 @@ void Peaks::sortProminences(std::vector<Peaks::Prominence1D> &proms)
 }
 
 // Get top n peaks
-std::vector<Peaks::Peak1D> Peaks::top(int n, std::vector<Peaks::Peak1D> peaks)
+std::vector<Peaks::Peak1D> Peaks::top(std::size_t n, std::vector<Peaks::Peak1D> peaks)
 {
     sortPeaks(peaks);
 
-    if (abs(n) == peaks.size())
+    if (n == peaks.size())
         return peaks;
 
     std::vector<Peaks::Peak1D> isolatedPeaks;
@@ -86,7 +86,8 @@ std::vector<Peaks::Peak1D> Peaks::top(int n, std::vector<Peaks::Peak1D> peaks)
         if (!withinRadius)
             isolatedPeaks.push_back(peak);
 
-        if (isolatedPeaks.size() == abs(n))
+        // Break if we exceed specified number peaks
+        if (isolatedPeaks.size() >= n)
             break;
     }
     return isolatedPeaks;
@@ -101,7 +102,7 @@ std::vector<Peaks::Peak1D> Peaks::find(bool heightOrder)
     for (int i = 1; i < values_.size() - 1; i++)
     {
         // Check if the gradients either side show this is a local maximum
-        double neighbours[3] = {values_[i - 1], values_[i], values_[i + 1]};
+        std::array<double, 3> neighbours = {values_[i - 1], values_[i], values_[i + 1]};
 
         if (values_[i] > threshold_ && isLocalMaximum(neighbours))
         {
@@ -139,7 +140,7 @@ std::vector<Peaks::Prominence1D> Peaks::prominences(const std::vector<Peaks::Pea
 
         while (iLeft > 0)
         {
-            double pointsLeft[3] = {values_[iLeft + 1], values_[iLeft], values_[iLeft - 1]};
+            std::array<double, 3> pointsLeft = {values_[iLeft + 1], values_[iLeft], values_[iLeft - 1]};
 
             if (isLocalMinimum(pointsLeft) || isInflectionPoint(pointsLeft))
             {
@@ -152,7 +153,7 @@ std::vector<Peaks::Prominence1D> Peaks::prominences(const std::vector<Peaks::Pea
 
         while (iRight < values_.size())
         {
-            double pointsRight[3] = {values_[iRight - 1], values_[iRight], values_[iRight + 1]};
+            std::array<double, 3> pointsRight = {values_[iRight - 1], values_[iRight], values_[iRight + 1]};
 
             if (isLocalMinimum(pointsRight) || isInflectionPoint(pointsRight))
             {
