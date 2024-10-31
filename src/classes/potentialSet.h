@@ -45,8 +45,8 @@ class PotentialSet
     // Return fingerprint of partials
     std::string_view fingerprint() const;
     // Return full atom-atom partial specified
-    std::map<std::string, EPData> &potential();
-    const std::map<std::string, EPData> &potential() const;
+    std::map<std::string, EPData> &potentialMap();
+    const std::map<std::string, EPData> &potentialMap() const;
 
     /*
      * Operators

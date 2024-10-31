@@ -25,9 +25,9 @@ void PotentialSet::reset()
 // Set new fingerprint
 void PotentialSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = fingerprint; }
 
-// Return full atom-atom partial specified
-std::map<std::string, PotentialSet::EPData> &PotentialSet::potential() { return potentials_; }
-const std::map<std::string, PotentialSet::EPData> &PotentialSet::potential() const { return potentials_; }
+// Return full map of potentials specified
+std::map<std::string, PotentialSet::EPData> &PotentialSet::potentialMap() { return potentials_; }
+const std::map<std::string, PotentialSet::EPData> &PotentialSet::potentialMap() const { return potentials_; }
 
 /*
  * Operators
@@ -41,7 +41,13 @@ void PotentialSet::operator+=(const double delta)
     }
 }
 
-void PotentialSet::operator+=(const PotentialSet &source) {}
+void PotentialSet::operator+=(const PotentialSet &source)
+{
+    for (auto &[key, potential] : source.potentialMap())
+    {
+        potentials_[key].ep += potential.ep;
+    }
+}
 
 void PotentialSet::operator*=(const double factor)
 {
