@@ -66,7 +66,7 @@ class Peaks
     // Sort peaks in place by index, from first to last
     template <typename T> void sortIndices(std::vector<T> &items);
     // Sort prominences in place by prominence value, from highest to lowest
-    void sortProminences(std::vector<Prominence1D> &proms);
+    void sortProminences(std::vector<Prominence1D> &prominences);
     // Sort peaks in place by index, from first to last
     void setThreshold(double range);
     // Set horizontal threshold for peaks

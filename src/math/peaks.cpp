@@ -62,9 +62,9 @@ template <typename T> void Peaks::sortIndices(std::vector<T> &items)
 }
 
 // Sort prominences in place by prominence value, from highest to lowest
-void Peaks::sortProminences(std::vector<Peaks::Prominence1D> &proms)
+void Peaks::sortProminences(std::vector<Peaks::Prominence1D> &prominences)
 {
-    std::sort(proms.begin(), proms.end(), [](const auto &a, const auto &b) { return a.prominence > b.prominence; });
+    std::sort(prominences.begin(), prominences.end(), [](const auto &a, const auto &b) { return a.prominence > b.prominence; });
 }
 
 // Get top n peaks
@@ -133,8 +133,8 @@ std::vector<Peaks::Prominence1D> Peaks::prominences(bool heightOrder)
 
 std::vector<Peaks::Prominence1D> Peaks::prominences(std::vector<Peaks::Peak1D> peaks, bool heightOrder)
 {
-    std::vector<Peaks::Prominence1D> proms;
-    proms.reserve(peaks.size());
+    std::vector<Peaks::Prominence1D> prominences;
+    prominences.reserve(peaks.size());
 
     for (const auto &peak : peaks)
     {
@@ -176,9 +176,9 @@ std::vector<Peaks::Prominence1D> Peaks::prominences(std::vector<Peaks::Peak1D> p
         }
 
         auto prominence = std::min(abs(heightRefLeft - peak.peak), abs(heightRefRight - peak.peak));
-        proms.emplace_back(&peak, prominence);
+        prominences.emplace_back(&peak, prominence);
     }
     if (!heightOrder)
-        sortIndices<Prominence1D>(proms);
-    return proms;
+        sortIndices<Prominence1D>(prominences);
+    return prominences;
 }
