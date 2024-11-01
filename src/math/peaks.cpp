@@ -124,61 +124,50 @@ std::vector<Peaks::Peak1D> Peaks::find(bool heightOrder)
     return peaks;
 }
 
-// Calculate prominences of peaks
+/*
+ * Calculate the prominence of peaks.
+ * Prominence is defined by the height of the peak relative to a reference height.
+ * This reference is determined by the heighest minimum of two intervals either side bound by either the end of the data 
+ * or a higher data point.
+*/
 std::vector<Peaks::Prominence1D> Peaks::prominences(bool heightOrder)
 {
     auto peaks = find(heightOrder);
     return prominences(peaks, heightOrder);
 }
 
-std::vector<Peaks::Prominence1D> Peaks::prominences(std::vector<Peaks::Peak1D> peaks, bool heightOrder)
+std::vector<Peaks::Prominence1D> Peaks::prominences(const std::vector<Peaks::Peak1D> &peaks, bool heightOrder)
 {
     std::vector<Peaks::Prominence1D> prominences;
     prominences.reserve(peaks.size());
 
     for (const auto &peak : peaks)
     {
-        int iLeft = peak.index - 1, iRight = peak.index + 1;
-        double heightRefLeft = 0, heightRefRight = 0;
+        auto iLeft = peak.index - 1, iRight = peak.index + 1;
 
-        while (iLeft > 0)
-        {
-            std::array<double, 3> pointsLeft = {values_[iLeft + 1], values_[iLeft], values_[iLeft - 1]};
-
-            if (isLocalMinimum(pointsLeft) || isInflectionPoint(pointsLeft))
-            {
-                heightRefLeft += values_[iLeft];
+        // Get interval to left of peak and find its minimum
+        for (; iLeft > 0; iLeft--)
+            if (values_[iLeft] >= peak.peak)
                 break;
-            }
-            else
-                iLeft--;
-        }
 
-        while (iRight < values_.size())
-        {
-            std::array<double, 3> pointsRight = {values_[iRight - 1], values_[iRight], values_[iRight + 1]};
+        auto heightRefLeft = *std::min_element(values_.begin() + iLeft, values_.begin() + peak.index);
 
-            if (isLocalMinimum(pointsRight) || isInflectionPoint(pointsRight))
-            {
-                heightRefRight += values_[iRight];
+        // Get interval to right of peak and find its minimum
+        for (; iRight < values_.size(); iRight++)
+            if (values_[iRight] >= peak.peak)
                 break;
-            }
-            else
-                iRight++;
-        }
 
-        if ((heightRefLeft == 0) && (heightRefRight == 0))
-        {
-            Messenger::print("Could not calculate reference height for prominence of peak at index {} (no local minima or "
-                             "inflection point found in either direction)\n",
-                             peak.index);
-            break;
-        }
+        auto heightRefRight = *std::min_element(values_.begin() + peak.index, values_.begin() + iRight);
 
-        auto prominence = std::min(abs(heightRefLeft - peak.peak), abs(heightRefRight - peak.peak));
+        // Calculate reference height for prominence from the heighest of the two minima
+        auto referenceHeight = std::max(heightRefLeft, heightRefRight);
+
+        auto prominence = peak.peak - referenceHeight;
         prominences.emplace_back(&peak, prominence);
     }
-    if (!heightOrder)
-        sortIndices<Prominence1D>(prominences);
+
+    if (heightOrder)
+        sortProminences(prominences);
+
     return prominences;
 }
