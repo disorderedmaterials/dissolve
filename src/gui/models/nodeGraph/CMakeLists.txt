@@ -2,7 +2,7 @@ set(nodeGraphModels_MOC_HDRS exampleGraphModel.h graphModelBase.h graphEdgeModel
 
 qt6_wrap_cpp(nodeGraphModel_MOC_SRCS ${nodeGraphModel_MOC_HDRS})
 
-set(nodeGraphModel_SRCS exampleGraphModel.cpp graphModelBase.cpp graphModel.cpp generatorGraphModel.cpp nodeWrapper.cpp)
+set(nodeGraphModel_SRCS exampleGraphModel.cpp graphModelBase.cpp graphModel.cpp generatorGraphModel.cpp nodeWrapper.cpp instances/configuration.cpp instances/generator.cpp instances/generatorNode.cpp)
 
 qt6_wrap_cpp(nodeGraphModel_SRCS exampleGraphModel.h graphModelBase.h graphEdgeModel.h graphNodeModel.h generatorGraphModel.h nodeWrapper.h)
 

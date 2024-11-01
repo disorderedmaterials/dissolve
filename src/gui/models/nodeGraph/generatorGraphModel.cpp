@@ -29,9 +29,14 @@ template <> QVariant nodeGetValue<GeneratorGraphNode>(const GeneratorGraphNode v
 
 template <> std::string nodeTypeName<GeneratorGraphNode>(const GeneratorGraphNode &value)
 {
-    return std::visit(overloaded{[](Configuration *arg) { return "Configuration"; }, [](Generator *arg) { return "Generator"; },
-                                 [](GeneratorNode *arg) { return "GeneratorNode"; }},
-                      value.value);
+    return std::visit(
+        [](auto *arg) -> std::string
+        {
+            if (arg)
+                return nodeTypeName(arg);
+            return "Null Pointer!";
+        },
+        value.value);
 }
 
 template <>
@@ -57,16 +62,7 @@ bool nodeDisconnect<GeneratorGraphNode>(GeneratorGraphNode &source, int sourceIn
 
 template <> std::string nodeTypeIcon<GeneratorGraphNode>(const GeneratorGraphNode &value)
 {
-    return std::visit(overloaded{[](Configuration *arg) -> std::string
-                                 { return "file:/home/adam/Code/dissolve/src/gui/icons/configuration.svg"; },
-                                 [](Generator *arg) -> std::string
-                                 { return "file:/home/adam/Code/dissolve/src/gui/icons/generator.svg"; },
-                                 [](GeneratorNode *arg) -> std::string
-                                 {
-                                     auto name = GeneratorNode::nodeTypes().keyword(arg->type());
-                                     return "file:/home/adam/Code/dissolve/src/gui/icons/nodes/" + name + ".svg";
-                                 }},
-                      value.value);
+    return std::visit([](auto *arg) -> std::string { return nodeTypeIcon(arg); }, value.value);
 }
 
 template <> std::string nodeName<GeneratorGraphNode>(const GeneratorGraphNode &value)
