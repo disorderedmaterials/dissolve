@@ -98,7 +98,7 @@ Item {
                         text: "name"
                     }
                     Text {
-                        text: "size"
+                        text: temperature
                     }
                 }
             }
