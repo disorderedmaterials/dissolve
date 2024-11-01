@@ -72,9 +72,6 @@ std::vector<Peaks::Peak1D> Peaks::top(std::size_t n, std::vector<Peaks::Peak1D> 
 {
     sortPeaks(peaks);
 
-    if (n == peaks.size())
-        return peaks;
-
     std::vector<Peaks::Peak1D> isolatedPeaks;
     isolatedPeaks.reserve(peaks.size());
 

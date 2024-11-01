@@ -153,6 +153,12 @@ TEST_F(PeaksTest, BasicPeaks)
     // Skip two lowest peaks
     analyserMulti.setThreshold(3.64);
     EXPECT_TRUE(analyserMulti.find().size() == 1);
+
+    // Reset and return top two peaks
+    analyserMulti.setThreshold(0);
+    auto top = analyserMulti.top(2, analyserMulti.find());
+    EXPECT_TRUE(top.size()==2);
+    ASSERT_TRUE(top[0].peak > top[1].peak);
 }
 
 TEST_F(PeaksTest, DynamicPeaks)
