@@ -157,7 +157,7 @@ TEST_F(PeaksTest, BasicPeaks)
     // Reset and return top two peaks
     analyserMulti.setThreshold(0);
     auto top = analyserMulti.top(2, analyserMulti.find());
-    EXPECT_TRUE(top.size()==2);
+    EXPECT_TRUE(top.size() == 2);
     ASSERT_TRUE(top[0].peak > top[1].peak);
 }
 
