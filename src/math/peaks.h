@@ -76,11 +76,11 @@ class Peaks
     // Find the peaks (local maxima) of data
     std::vector<Peak1D> find(bool heightOrder = false);
     /*
-    * Calculate the prominence of peaks.
-    * Prominence is defined by the height of the peak relative to a reference height.
-    * This reference is determined by the heighest minimum of two intervals (bound by either the end of the data
-    * or a higher data point), either side of the peak itself.
-    */
+     * Calculate the prominence of peaks.
+     * Prominence is defined by the height of the peak relative to a reference height.
+     * This reference is determined by the heighest minimum of two intervals (bound by either the end of the data
+     * or a higher data point), either side of the peak itself.
+     */
     std::vector<Prominence1D> prominences(bool heightOrder = false);
     std::vector<Prominence1D> prominences(const std::vector<Peak1D> &peaks, bool heightOrder = false);
 };
