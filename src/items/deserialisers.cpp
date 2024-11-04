@@ -8,6 +8,7 @@
 #include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/partialSetAccumulator.h"
+#include "classes/potentialSet.h"
 #include "classes/xRayWeights.h"
 #include "items/legacy.h"
 #include "math/data1D.h"
@@ -184,6 +185,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     registerDeserialiser<NeutronWeights>(simpleDeserialiseCore<NeutronWeights>);
     registerDeserialiser<PartialSet>(simpleDeserialiseCore<PartialSet>);
     registerDeserialiser<PartialSetAccumulator>(simpleDeserialise<PartialSetAccumulator>);
+    registerDeserialiser<PotentialSet>(simpleDeserialiseCore<PotentialSet>);
     registerDeserialiser<SampledData1D>(simpleDeserialise<SampledData1D>);
     registerDeserialiser<SampledDouble>(simpleDeserialise<SampledDouble>);
     registerDeserialiser<SampledVector>(simpleDeserialise<SampledVector>);
