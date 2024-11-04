@@ -8,6 +8,7 @@
 #include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/partialSetAccumulator.h"
+#include "classes/potentialSet.h"
 #include "classes/xRayWeights.h"
 #include "math/data1D.h"
 #include "math/data2D.h"
@@ -122,6 +123,7 @@ GenericItemSerialiser::GenericItemSerialiser()
     registerSerialiser<NeutronWeights>(simpleSerialise<NeutronWeights>);
     registerSerialiser<PartialSet>(simpleSerialise<PartialSet>);
     registerSerialiser<PartialSetAccumulator>(simpleSerialise<PartialSetAccumulator>);
+    registerSerialiser<PotentialSet>(simpleSerialise<PotentialSet>);
     registerSerialiser<SampledData1D>(simpleSerialise<SampledData1D>);
     registerSerialiser<SampledDouble>(simpleSerialise<SampledDouble>);
     registerSerialiser<SampledVector>(simpleSerialise<SampledVector>);
