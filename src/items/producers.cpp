@@ -7,6 +7,7 @@
 #include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/partialSetAccumulator.h"
+#include "classes/potentialSet.h"
 #include "classes/xRayWeights.h"
 #include "items/legacy.h"
 #include "math/data1D.h"
@@ -47,6 +48,7 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<NeutronWeights>("NeutronWeights");
     registerProducer<PartialSet>("PartialSet");
     registerProducer<PartialSetAccumulator>("PartialSetAccumulator");
+    registerProducer<PotentialSet>("PotentialSet");
     registerProducer<SampledData1D>("SampledData1D");
     registerProducer<SampledDouble>("SampledDouble");
     registerProducer<SampledVector>("SampledVector");

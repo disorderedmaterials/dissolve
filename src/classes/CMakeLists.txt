@@ -111,6 +111,7 @@ add_library(
   potentialMap.h
   partialSet.h
   partialSetAccumulator.h
+  potentialSet.h
   region.h
   regionalDistributor.h
   scatteringMatrix.h
