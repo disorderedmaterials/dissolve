@@ -48,21 +48,21 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
         for (auto &&[at1, at2, ep] : eps)
         {
             auto key = EPSRManagerModule::pairKey(at1, at2);
-            auto keyIt = potentials.potential().find(key);
-            if (keyIt == potentials.potential().end())
-                potentials.potential()[key] = {ep, 1, at1, at2};
+            auto keyIt = potentials.potentialMap().find(key);
+            if (keyIt == potentials.potentialMap().end())
+                potentials.potentialMap()[key] = {ep, 1, at1, at2};
             else
             {
-                Interpolator::addInterpolated(ep, potentials.potential()[key].ep, 1.0);
-                ++potentials.potential()[key].count;
+                Interpolator::addInterpolated(ep, potentials.potentialMap()[key].ep, 1.0);
+                ++potentials.potentialMap()[key].count;
             }
         }
     }
 
     // Perform averaging of potentials data if requested
     if (averagingLength_)
-        Averaging::average<std::vector<PotentialSet>>(moduleContext.dissolve().processingModuleData(), "AveragingPotentials",
-                                                      name(), averagingLength_.value(), averagingScheme_);
+        Averaging::average<PotentialSet>(moduleContext.dissolve().processingModuleData(), "AveragingPotentials", name(),
+                                         averagingLength_.value(), averagingScheme_);
 
     /*    // Form averages
        for (auto &&[key, epData] : potentials)
@@ -106,7 +106,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
 
         Messenger::print("Apply scaling factor of {} to potential(s) {}-{}...\n", scaleFactor, typeA, typeB);
         auto count = 0;
-        for (auto &&[key, epData] : potentials.potential())
+        for (auto &&[key, epData] : potentials.potentialMap())
         {
             // Is this potential a match
             if ((DissolveSys::sameWildString(typeA, epData.at1->name()) &&
@@ -123,7 +123,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
     }
 
     // Adjust global potentials
-    for (auto &&[key, epData] : potentials.potential())
+    for (auto &&[key, epData] : potentials.potentialMap())
     {
         // Grab pointer to the relevant pair potential (if it exists)
         auto *pp = moduleContext.dissolve().pairPotential(epData.at1, epData.at2);
