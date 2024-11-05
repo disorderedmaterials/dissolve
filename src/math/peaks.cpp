@@ -112,8 +112,8 @@ std::vector<Peaks::Peak1D> Peaks::find(bool heightOrder)
 
     if (isolation_ > 0)
     {
-        auto maxX = *std::max_element(domain_.begin(), domain_.end());
-        auto isolatedPeaks = top(std::round(maxX / isolation_), peaks);
+        auto dx = abs(peaks.back().valueAt - peaks.front().valueAt);
+        auto isolatedPeaks = top(std::round(dx / isolation_), peaks);
         if (!heightOrder)
             sortIndices<Peak1D>(isolatedPeaks);
         return isolatedPeaks;

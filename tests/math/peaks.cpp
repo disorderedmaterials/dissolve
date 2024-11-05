@@ -199,14 +199,14 @@ TEST_F(PeaksTest, DynamicPeaks)
 
     Peaks signalAnalyser(y, x);
 
-    // Isolate peaks by a delta of 0.6
+    // Isolate peaks by a radius of dx=0.3, expect 8 peaks out of 15 to remain
     signalAnalyser.setThreshold(0);
-    signalAnalyser.setIsolation(0.6);
+    signalAnalyser.setIsolation(0.3);
     auto dynamicPeaks = signalAnalyser.find();
 
-    EXPECT_TRUE(dynamicPeaks.size() == 5);
-    ASSERT_NEAR(dynamicPeaks[4].peak, 2.93, 10e-3);
-    ASSERT_NEAR(dynamicPeaks[0].peak, 0.42, 10e-3);
+    EXPECT_TRUE(dynamicPeaks.size() == 8);
+    ASSERT_NEAR(dynamicPeaks[7].peak, 2.93, 10e-3);
+    ASSERT_NEAR(dynamicPeaks[0].peak, 0.018, 10e-3);
 }
 
 TEST_F(PeaksTest, NoisyPeaks)
