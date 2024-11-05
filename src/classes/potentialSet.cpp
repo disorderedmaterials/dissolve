@@ -33,28 +33,25 @@ const std::map<std::string, PotentialSet::EPData> &PotentialSet::potentialMap() 
  * Operators
  */
 
-void PotentialSet::operator+=(const double delta)
+PotentialSet& PotentialSet::operator+=(const double delta)
 {
     for (auto &[key, potential] : potentials_)
-    {
         potential.ep += delta;
-    }
+    return (*this);
 }
 
-void PotentialSet::operator+=(const PotentialSet &source)
+PotentialSet& PotentialSet::operator+=(const PotentialSet &source)
 {
     for (auto &[key, potential] : source.potentialMap())
-    {
         potentials_[key].ep += potential.ep;
-    }
+    return (*this);
 }
 
-void PotentialSet::operator*=(const double factor)
+PotentialSet& PotentialSet::operator*=(const double factor)
 {
     for (auto &[key, potential] : potentials_)
-    {
         potential.ep *= factor;
-    }
+    return (*this);
 }
 
 /*
