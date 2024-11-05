@@ -60,12 +60,11 @@ PotentialSet &PotentialSet::operator*=(const double factor)
     return (*this);
 }
 
-void PotentialSet::operator*=(const double factor)
+PotentialSet &PotentialSet::operator*=(const double factor)
 {
     for (auto &[key, potential] : potentials_)
-    {
         potential.ep *= factor;
-    }
+    return (*this);
 }
 
 /*
