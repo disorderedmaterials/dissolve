@@ -52,9 +52,9 @@ class PotentialSet
      * Operators
      */
     public:
-    PotentialSet& operator+=(const double delta);
-    PotentialSet& operator+=(const PotentialSet &source);
-    PotentialSet& operator*=(const double factor);
+    PotentialSet &operator+=(const double delta);
+    PotentialSet &operator+=(const PotentialSet &source);
+    PotentialSet &operator*=(const double factor);
 
     /*
      * Serialisation
