@@ -33,6 +33,7 @@
           fmt_8
           fmt_8.dev
           freetype
+          gsl
           inetutils # for rsh
           ninja
           jre
