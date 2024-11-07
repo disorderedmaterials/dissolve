@@ -44,7 +44,6 @@ Pane {
     // Actual nodes
     Repeater {
         id: nodeRepeater
-
         delegate: graphRoot.delegate
         model: nodeModel
     }

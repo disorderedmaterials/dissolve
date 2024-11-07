@@ -16,7 +16,6 @@ GroupBox {
 
     label: RowLayout {
         id: header
-
         Image {
             clip: true
             fillMode: Image.PreserveAspectFit
@@ -26,7 +25,6 @@ GroupBox {
         }
         TextField {
             id: titleLabel
-
             font.pointSize: 14
             text: root.nodeType
         }

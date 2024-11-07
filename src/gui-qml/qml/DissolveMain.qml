@@ -21,7 +21,6 @@ ApplicationWindow {
 
     menuBar: MenuBar {
         id: mainMenu
-
         Menu {
             title: "&File"
 
@@ -57,7 +56,6 @@ ApplicationWindow {
 
     TabBar {
         id: tabBar
-
         width: parent.width
 
         // DEFAULT TABS
@@ -86,24 +84,20 @@ ApplicationWindow {
 
         Item {
             id: messagesTab
-
             Text {
                 text: "Messages"
             }
         }
         Item {
             id: forcefieldTab
-
             Text {
                 text: "Forcefields"
             }
         }
         Item {
             id: examplePlotTab
-
             Node {
                 id: standAloneScene
-
                 DirectionalLight {
                     ambientColor: Qt.rgba(0.5, 0.5, 0.5, 1.0)
                     brightness: 1.0
@@ -111,7 +105,6 @@ ApplicationWindow {
                 }
                 ScatterModel {
                     id: plotLine
-
                     color: "red"
                     scale: dissolveWindow.scale
                     thickness: 0.1
@@ -133,7 +126,6 @@ ApplicationWindow {
 
                     axis: Axis {
                         id: xAxis
-
                         direction: true
                         maximum: 2.0
                         minimum: -2.0
@@ -146,7 +138,6 @@ ApplicationWindow {
 
                     axis: Axis {
                         id: yAxis
-
                         direction: false
                         maximum: 2.0
                         minimum: -2.0
@@ -156,13 +147,11 @@ ApplicationWindow {
             }
             View3D {
                 id: graphView
-
                 anchors.fill: parent
                 importScene: standAloneScene
 
                 camera: OrthographicCamera {
                     id: cameraOrthographicLeft
-
                     z: 600
                 }
 
@@ -178,10 +167,8 @@ ApplicationWindow {
         }
         Item {
             id: exampleGraphTab
-
             ModuleGraphModel {
                 id: graphModel
-
                 world: dissolve.configurationsModel
             }
             Connections {
@@ -193,12 +180,10 @@ ApplicationWindow {
             }
             GeneratorDelegate {
                 id: exampleDelegate
-
                 rootModel: graphModel
             }
             Pane {
                 id: toolBar
-
                 RowLayout {
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -206,7 +191,6 @@ ApplicationWindow {
 
                     FileDialog {
                         id: openDialog
-
                         onAccepted: {
                             dissolve.file = selectedFile;
                         }
@@ -224,7 +208,6 @@ ApplicationWindow {
                     }
                     SpinBox {
                         id: nodeValue
-
                         from: 0
                     }
                     Button {
@@ -250,7 +233,6 @@ ApplicationWindow {
                     }
                     SpinBox {
                         id: conSrc
-
                         from: 0
                         to: graphModel.nodeCount - 1
                     }
@@ -259,13 +241,11 @@ ApplicationWindow {
                     }
                     SpinBox {
                         id: conDest
-
                         from: 0
                         to: graphModel.nodeCount - 1
                     }
                     Button {
                         id: connectButton
-
                         text: "Connect"
 
                         onClicked: {
@@ -279,7 +259,6 @@ ApplicationWindow {
                     }
                     Button {
                         id: disconnectButton
-
                         text: "Disconnect"
 
                         onClicked: {
@@ -295,7 +274,6 @@ ApplicationWindow {
             }
             GraphView {
                 id: graph
-
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right

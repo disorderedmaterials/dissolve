@@ -33,7 +33,6 @@ Item {
                     }
                     TextField {
                         id: root
-
                         text: temperature
                     }
                     Text {
@@ -68,7 +67,6 @@ Item {
 
                     Text {
                         id: root
-
                         text: name
                     }
                     Text {
@@ -100,7 +98,6 @@ Item {
 
                     Text {
                         id: root
-
                         text: "name"
                     }
                     Text {
@@ -128,7 +125,6 @@ Item {
 
                 Text {
                     id: root
-
                     anchors.fill: parent
                     color: value != null ? "black" : "red"
                     height: contentHeight
@@ -153,19 +149,16 @@ Item {
 
                 ColumnLayout {
                     id: root
-
                     anchors.fill: parent
 
                     Text {
                         id: xnode
-
                         height: contentHeight
                         text: "X: " + px
                         width: contentWidth
                     }
                     Text {
                         id: ynode
-
                         height: contentHeight
                         text: "Y: " + py
                         width: contentWidth
