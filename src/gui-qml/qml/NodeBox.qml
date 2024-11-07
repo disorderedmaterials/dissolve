@@ -5,7 +5,6 @@ import Qt.labs.qmlmodels
 
 GroupBox {
     id: root
-
     property double basey: header.height
     property string image
     property string nodeType
@@ -29,20 +28,20 @@ GroupBox {
             text: root.nodeType
         }
         Button {
+            onClicked: root.deleted()
+
             contentItem: Image {
                 fillMode: Image.PreserveAspectFit
                 source: "qrc:/Dissolve/icons/cross.svg"
                 sourceSize.height: titleLabel.height
                 sourceSize.width: titleLabel.height
             }
-
-            onClicked: root.deleted()
         }
         DragHandler {
             target: null
 
-            xAxis.onActiveValueChanged: delta => posX += delta
-            yAxis.onActiveValueChanged: delta => posY += delta
+            xAxis.onActiveValueChanged: delta => posX += delta;
+            yAxis.onActiveValueChanged: delta => posY += delta;
         }
     }
 }

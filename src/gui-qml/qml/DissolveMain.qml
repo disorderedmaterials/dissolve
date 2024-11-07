@@ -11,48 +11,12 @@ import "../../Dissolve"
 
 ApplicationWindow {
     id: dissolveWindow
-
     property vector3d scale: Qt.vector3d(Math.min(graphView.width / 2.5, graphView.height / 2.5), Math.min(graphView.width / 2.5, graphView.height / 2.5), 200)
 
     height: 743
     title: "Dissolve"
     visible: true
     width: 819
-
-    menuBar: MenuBar {
-        id: mainMenu
-        Menu {
-            title: "&File"
-
-            MenuItem {
-                text: "&New"
-            }
-            MenuItem {
-                text: "&Open..."
-            }
-            MenuItem {
-                text: "Open R&ecent"
-            }
-            MenuItem {
-                text: "Save"
-            }
-            MenuItem {
-                text: "Save As..."
-            }
-            MenuItem {
-                text: "Load Restart Point..."
-            }
-            MenuItem {
-                text: "Save Restart Point..."
-            }
-            MenuItem {
-                text: "Close"
-            }
-            MenuItem {
-                text: "Quit"
-            }
-        }
-    }
 
     TabBar {
         id: tabBar
@@ -150,11 +114,6 @@ ApplicationWindow {
                 anchors.fill: parent
                 importScene: standAloneScene
 
-                camera: OrthographicCamera {
-                    id: cameraOrthographicLeft
-                    z: 600
-                }
-
                 MouseArea {
                     anchors.fill: parent
 
@@ -162,6 +121,11 @@ ApplicationWindow {
                         xAxis.nudge(0.01 * event.pixelDelta.x);
                         yAxis.nudge(-0.01 * event.pixelDelta.y);
                     }
+                }
+
+                camera: OrthographicCamera {
+                    id: cameraOrthographicLeft
+                    z: 600
                 }
             }
         }
@@ -172,11 +136,11 @@ ApplicationWindow {
                 world: dissolve.configurationsModel
             }
             Connections {
+                target: dissolve.configurationsModel
+
                 function onModelReset() {
                     graphModel.handleReset();
                 }
-
-                target: dissolve.configurationsModel
             }
             GeneratorDelegate {
                 id: exampleDelegate
@@ -282,6 +246,41 @@ ApplicationWindow {
                 edgeModel: graphModel.edges
                 nodeModel: graphModel.nodes
                 rootModel: graphModel
+            }
+        }
+    }
+
+    menuBar: MenuBar {
+        id: mainMenu
+        Menu {
+            title: "&File"
+
+            MenuItem {
+                text: "&New"
+            }
+            MenuItem {
+                text: "&Open..."
+            }
+            MenuItem {
+                text: "Open R&ecent"
+            }
+            MenuItem {
+                text: "Save"
+            }
+            MenuItem {
+                text: "Save As..."
+            }
+            MenuItem {
+                text: "Load Restart Point..."
+            }
+            MenuItem {
+                text: "Save Restart Point..."
+            }
+            MenuItem {
+                text: "Close"
+            }
+            MenuItem {
+                text: "Quit"
             }
         }
     }

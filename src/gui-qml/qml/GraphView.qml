@@ -6,7 +6,6 @@ import Qt.labs.qmlmodels
 
 Pane {
     id: graphRoot
-
     property double curveOffset: 125
     property variant delegate
     property variant edgeModel
