@@ -6,36 +6,36 @@ import Qt.labs.qmlmodels
 
 Pane {
     id: graphRoot
-    property variant rootModel;
-    property variant nodeModel;
-    property variant edgeModel;
-    property variant delegate;
-    property double curveOffset: 125;
+
+    property double curveOffset: 125
+    property variant delegate
+    property variant edgeModel
+    property variant nodeModel
+    property variant rootModel
 
     // Edge connections
     Repeater {
         model: edgeModel
-        delegate:
-        Shape {
+
+        delegate: Shape {
             z: -1
+
             ShapePath {
-                fillColor: "transparent"
-                strokeWidth: 4
-                strokeColor: "black"
                 /* strokeStyle: ShapePath.DashLine */
-                dashPattern: [ 1, 4 ]
+                dashPattern: [1, 4]
+                fillColor: "transparent"
                 startX: nodeRepeater.itemAt(source).startX
                 startY: nodeRepeater.itemAt(source).midY
-                PathCubic {
-                    x: nodeRepeater.itemAt(destination).endX
-                    y: destIndex == 0 ? nodeRepeater.itemAt(destination).midY : nodeRepeater.itemAt(destination).midY2
+                strokeColor: "black"
+                strokeWidth: 4
 
+                PathCubic {
                     control1X: nodeRepeater.itemAt(source).startX + curveOffset
                     control1Y: nodeRepeater.itemAt(source).midY
-
                     control2X: x - curveOffset
                     control2Y: y
-
+                    x: nodeRepeater.itemAt(destination).endX
+                    y: destIndex == 0 ? nodeRepeater.itemAt(destination).midY : nodeRepeater.itemAt(destination).midY2
                 }
             }
         }
@@ -44,7 +44,8 @@ Pane {
     // Actual nodes
     Repeater {
         id: nodeRepeater
-        model: nodeModel
+
         delegate: graphRoot.delegate
+        model: nodeModel
     }
 }

@@ -57,6 +57,7 @@ ApplicationWindow {
 
     TabBar {
         id: tabBar
+
         width: parent.width
 
         // DEFAULT TABS
@@ -77,28 +78,32 @@ ApplicationWindow {
             width: implicitWidth
         }
     }
-
     StackLayout {
-        width: parent.width
-        anchors.top: tabBar.bottom
         anchors.bottom: parent.bottom
+        anchors.top: tabBar.bottom
         currentIndex: tabBar.currentIndex
+        width: parent.width
+
         Item {
             id: messagesTab
+
             Text {
                 text: "Messages"
             }
         }
         Item {
             id: forcefieldTab
+
             Text {
                 text: "Forcefields"
             }
         }
         Item {
             id: examplePlotTab
+
             Node {
                 id: standAloneScene
+
                 DirectionalLight {
                     ambientColor: Qt.rgba(0.5, 0.5, 0.5, 1.0)
                     brightness: 1.0
@@ -106,6 +111,7 @@ ApplicationWindow {
                 }
                 ScatterModel {
                     id: plotLine
+
                     color: "red"
                     scale: dissolveWindow.scale
                     thickness: 0.1
@@ -127,6 +133,7 @@ ApplicationWindow {
 
                     axis: Axis {
                         id: xAxis
+
                         direction: true
                         maximum: 2.0
                         minimum: -2.0
@@ -139,6 +146,7 @@ ApplicationWindow {
 
                     axis: Axis {
                         id: yAxis
+
                         direction: false
                         maximum: 2.0
                         minimum: -2.0
@@ -148,8 +156,15 @@ ApplicationWindow {
             }
             View3D {
                 id: graphView
+
+                anchors.fill: parent
                 importScene: standAloneScene
-                anchors.fill:parent
+
+                camera: OrthographicCamera {
+                    id: cameraOrthographicLeft
+
+                    z: 600
+                }
 
                 MouseArea {
                     anchors.fill: parent
@@ -159,35 +174,28 @@ ApplicationWindow {
                         yAxis.nudge(-0.01 * event.pixelDelta.y);
                     }
                 }
-
-                camera: OrthographicCamera {
-                    id: cameraOrthographicLeft
-                    z: 600
-                }
             }
-
         }
         Item {
             id: exampleGraphTab
 
             ModuleGraphModel {
                 id: graphModel
+
                 world: dissolve.configurationsModel
             }
-
             Connections {
-                target: dissolve.configurationsModel
-
                 function onModelReset() {
                     graphModel.handleReset();
                 }
-            }
 
+                target: dissolve.configurationsModel
+            }
             GeneratorDelegate {
                 id: exampleDelegate
+
                 rootModel: graphModel
             }
-
             Pane {
                 id: toolBar
 
@@ -198,89 +206,104 @@ ApplicationWindow {
 
                     FileDialog {
                         id: openDialog
+
                         onAccepted: {
-                            dissolve.file = selectedFile
+                            dissolve.file = selectedFile;
                         }
-
                     }
-
                     Button {
-                        icon.source:  "file:/home/adam/Code/dissolve/src/gui/icons/open.svg";
+                        icon.source: "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"
+
                         onClicked: openDialog.open()
                     }
-
-                    Label {text: "Nodes: " + graphModel.nodeCount}
-                    Label {text: "Edges: " + graphModel.edgeCount}
+                    Label {
+                        text: "Nodes: " + graphModel.nodeCount
+                    }
+                    Label {
+                        text: "Edges: " + graphModel.edgeCount
+                    }
                     SpinBox {
                         id: nodeValue
+
                         from: 0
                     }
                     Button {
                         text: "Add Raw Value"
+
                         onClicked: {
-                            var px = Math.floor(Math.random() * (graph.width - 50))
-                            var py = Math.floor(Math.random() * (graph.height - 50))
-                            graphModel.emplace_back(px, py, nodeValue.value)
+                            var px = Math.floor(Math.random() * (graph.width - 50));
+                            var py = Math.floor(Math.random() * (graph.height - 50));
+                            graphModel.emplace_back(px, py, nodeValue.value);
                         }
                     }
                     Button {
                         text: "Add Pointer"
+
                         onClicked: {
-                            var px = Math.floor(Math.random() * (graph.width - 50))
-                            var py = Math.floor(Math.random() * (graph.height - 50))
-                            graphModel.emplace_back(px, py, null)
+                            var px = Math.floor(Math.random() * (graph.width - 50));
+                            var py = Math.floor(Math.random() * (graph.height - 50));
+                            graphModel.emplace_back(px, py, null);
                         }
                     }
-                    Label { text: "Source" }
+                    Label {
+                        text: "Source"
+                    }
                     SpinBox {
                         id: conSrc
+
                         from: 0
                         to: graphModel.nodeCount - 1
                     }
-                    Label { text: "Destination" }
+                    Label {
+                        text: "Destination"
+                    }
                     SpinBox {
                         id: conDest
+
                         from: 0
                         to: graphModel.nodeCount - 1
                     }
                     Button {
                         id: connectButton
+
                         text: "Connect"
+
                         onClicked: {
                             let success = graphModel.connect(conSrc.value, 0, conDest.value, 0);
                             if (!success) {
-                                text = "Bad Connect"
+                                text = "Bad Connect";
                             } else {
-                                text = "Good Connect"
+                                text = "Good Connect";
                             }
                         }
                     }
                     Button {
                         id: disconnectButton
+
                         text: "Disconnect"
+
                         onClicked: {
                             let success = graphModel.disconnect(conSrc.value, 0, conDest.value, 0);
                             if (!success) {
-                                text = "Bad Disconnect"
+                                text = "Bad Disconnect";
                             } else {
-                                text = "Good Disconnect"
+                                text = "Good Disconnect";
                             }
                         }
                     }
                 }
             }
-
             GraphView {
                 id: graph
-                anchors.top: toolBar.bottom
+
+                anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                rootModel: graphModel
-                nodeModel: graphModel.nodes
-
+                anchors.top: toolBar.bottom
+                delegate: exampleDelegate.delegate
                 edgeModel: graphModel.edges
-                delegate: exampleDelegate.delegate;
+                nodeModel: graphModel.nodes
+                rootModel: graphModel
             }
         }
     }
