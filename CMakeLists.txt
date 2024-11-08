@@ -53,7 +53,7 @@ find_package(pugixml REQUIRED)
 include_directories(${pugixml_INCLUDE_DIRS})
 list(APPEND CORE_LINK_LIBS "pugixml::pugixml")
 
-# find_package(GSL REQUIRED)
+find_package(GSL REQUIRED)
 # set(GSL_LIBS GSL::gsl GSL::gslcblas)
 # list(APPEND CORE_LINK_LIBS ${GSL_LIBS})
 
