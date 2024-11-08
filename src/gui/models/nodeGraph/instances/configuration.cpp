@@ -6,7 +6,7 @@ template <> std::string nodeTypeName<Configuration *>(Configuration *const &valu
 
 template <> std::string nodeTypeIcon<Configuration *>(Configuration *const &value)
 {
-    return "file:/home/adam/Code/dissolve/src/gui/icons/configuration.svg";
+    return "qrc:/Dissolve/icons/configuration.svg";
 }
 
 template <> std::string nodeName<Configuration *>(Configuration *const &value)

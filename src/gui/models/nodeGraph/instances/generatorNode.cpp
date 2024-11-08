@@ -9,7 +9,7 @@ template <> std::string nodeTypeName<GeneratorNode *>(GeneratorNode *const &valu
 template <> std::string nodeTypeIcon<GeneratorNode *>(GeneratorNode *const &value)
 {
     auto name = GeneratorNode::nodeTypes().keyword(value->type());
-    return "file:/home/adam/Code/dissolve/src/gui/icons/nodes/" + name + ".svg";
+    return "qrc:/Dissolve/icons/nodes/" + name + ".svg";
 }
 
 template <> std::string nodeName<GeneratorNode *>(GeneratorNode *const &value)

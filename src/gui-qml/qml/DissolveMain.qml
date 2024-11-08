@@ -160,7 +160,7 @@ ApplicationWindow {
                         }
                     }
                     Button {
-                        icon.source: "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"
+                        icon.source: "qrc:/Dissolve/icons/open.svg"
 
                         onClicked: openDialog.open()
                     }

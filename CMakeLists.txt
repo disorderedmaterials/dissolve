@@ -279,7 +279,136 @@ if(GUI)
   # Dissolve QML GUI
   qt_add_executable(${qmlgui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui-qml.cpp)
   set_source_files_properties(${SRCS}/gui-qml/qml/DissolveMain.qml PROPERTIES QT_RESOURCE_ALIAS qml/DissolveMain.qml)
+
   set_source_files_properties(${SRCS}/gui/icons/cross.svg PROPERTIES QT_RESOURCE_ALIAS icons/cross.svg)
+  set_source_files_properties(${SRCS}/gui/icons/add.svg PROPERTIES QT_RESOURCE_ALIAS icons/add.svg)
+  set_source_files_properties(${SRCS}/gui/icons/advanced.svg PROPERTIES QT_RESOURCE_ALIAS icons/advanced.svg)
+  set_source_files_properties(${SRCS}/gui/icons/arrowLeft.svg PROPERTIES QT_RESOURCE_ALIAS icons/arrowLeft.svg)
+  set_source_files_properties(${SRCS}/gui/icons/arrowRight.svg PROPERTIES QT_RESOURCE_ALIAS icons/arrowRight.svg)
+  set_source_files_properties(${SRCS}/gui/icons/arrowSown.svg PROPERTIES QT_RESOURCE_ALIAS icons/arrowSown.svg)
+  set_source_files_properties(${SRCS}/gui/icons/arrowUp.svg PROPERTIES QT_RESOURCE_ALIAS icons/arrowUp.svg)
+  set_source_files_properties(${SRCS}/gui/icons/axes.svg PROPERTIES QT_RESOURCE_ALIAS icons/axes.svg)
+  set_source_files_properties(${SRCS}/gui/icons/axes_on.svg PROPERTIES QT_RESOURCE_ALIAS icons/axes_on.svg)
+  set_source_files_properties(${SRCS}/gui/icons/book.svg PROPERTIES QT_RESOURCE_ALIAS icons/book.svg)
+  set_source_files_properties(${SRCS}/gui/icons/bothOn.svg PROPERTIES QT_RESOURCE_ALIAS icons/bothOn.svg)
+  set_source_files_properties(${SRCS}/gui/icons/calculateBonds.svg PROPERTIES QT_RESOURCE_ALIAS icons/calculateBonds.svg)
+  set_source_files_properties(${SRCS}/gui/icons/charge.svg PROPERTIES QT_RESOURCE_ALIAS icons/charge.svg)
+  set_source_files_properties(${SRCS}/gui/icons/clear.svg PROPERTIES QT_RESOURCE_ALIAS icons/clear.svg)
+  set_source_files_properties(${SRCS}/gui/icons/clock.svg PROPERTIES QT_RESOURCE_ALIAS icons/clock.svg)
+  set_source_files_properties(${SRCS}/gui/icons/collapseAll.svg PROPERTIES QT_RESOURCE_ALIAS icons/collapseAll.svg)
+  set_source_files_properties(${SRCS}/gui/icons/configuration.svg PROPERTIES QT_RESOURCE_ALIAS icons/configuration.svg)
+  set_source_files_properties(${SRCS}/gui/icons/connect.svg PROPERTIES QT_RESOURCE_ALIAS icons/connect.svg)
+  set_source_files_properties(${SRCS}/gui/icons/context.svg PROPERTIES QT_RESOURCE_ALIAS icons/context.svg)
+  set_source_files_properties(${SRCS}/gui/icons/copy.svg PROPERTIES QT_RESOURCE_ALIAS icons/copy.svg)
+  set_source_files_properties(${SRCS}/gui/icons/data.svg PROPERTIES QT_RESOURCE_ALIAS icons/data.svg)
+  set_source_files_properties(${SRCS}/gui/icons/dataStack.svg PROPERTIES QT_RESOURCE_ALIAS icons/dataStack.svg)
+  set_source_files_properties(${SRCS}/gui/icons/delete.svg PROPERTIES QT_RESOURCE_ALIAS icons/delete.svg)
+  set_source_files_properties(${SRCS}/gui/icons/density.svg PROPERTIES QT_RESOURCE_ALIAS icons/density.svg)
+  set_source_files_properties(${SRCS}/gui/icons/documents.svg PROPERTIES QT_RESOURCE_ALIAS icons/documents.svg)
+  set_source_files_properties(${SRCS}/gui/icons/edit.svg PROPERTIES QT_RESOURCE_ALIAS icons/edit.svg)
+  set_source_files_properties(${SRCS}/gui/icons/edit_on.svg PROPERTIES QT_RESOURCE_ALIAS icons/edit_on.svg)
+  set_source_files_properties(${SRCS}/gui/icons/expandAll.svg PROPERTIES QT_RESOURCE_ALIAS icons/expandAll.svg)
+  set_source_files_properties(${SRCS}/gui/icons/false.svg PROPERTIES QT_RESOURCE_ALIAS icons/false.svg)
+  set_source_files_properties(${SRCS}/gui/icons/ff.svg PROPERTIES QT_RESOURCE_ALIAS icons/ff.svg)
+  set_source_files_properties(${SRCS}/gui/icons/filter.svg PROPERTIES QT_RESOURCE_ALIAS icons/filter.svg)
+  set_source_files_properties(${SRCS}/gui/icons/followAll.svg PROPERTIES QT_RESOURCE_ALIAS icons/followAll.svg)
+  set_source_files_properties(${SRCS}/gui/icons/followAll_on.svg PROPERTIES QT_RESOURCE_ALIAS icons/followAll_on.svg)
+  set_source_files_properties(${SRCS}/gui/icons/followX.svg PROPERTIES QT_RESOURCE_ALIAS icons/followX.svg)
+  set_source_files_properties(${SRCS}/gui/icons/followX_on.svg PROPERTIES QT_RESOURCE_ALIAS icons/followX_on.svg)
+  set_source_files_properties(${SRCS}/gui/icons/font.svg PROPERTIES QT_RESOURCE_ALIAS icons/font.svg)
+  set_source_files_properties(${SRCS}/gui/icons/frameworkMixture.svg PROPERTIES QT_RESOURCE_ALIAS icons/frameworkMixture.svg)
+  set_source_files_properties(${SRCS}/gui/icons/frequency.svg PROPERTIES QT_RESOURCE_ALIAS icons/frequency.svg)
+  set_source_files_properties(${SRCS}/gui/icons/generator.svg PROPERTIES QT_RESOURCE_ALIAS icons/generator.svg)
+  set_source_files_properties(${SRCS}/gui/icons/graph.svg PROPERTIES QT_RESOURCE_ALIAS icons/graph.svg)
+  set_source_files_properties(${SRCS}/gui/icons/heartBeat.svg PROPERTIES QT_RESOURCE_ALIAS icons/heartBeat.svg)
+  set_source_files_properties(${SRCS}/gui/icons/interact.svg PROPERTIES QT_RESOURCE_ALIAS icons/interact.svg)
+  set_source_files_properties(${SRCS}/gui/icons/interact_on.svg PROPERTIES QT_RESOURCE_ALIAS icons/interact_on.svg)
+  set_source_files_properties(${SRCS}/gui/icons/layer.svg PROPERTIES QT_RESOURCE_ALIAS icons/layer.svg)
+  set_source_files_properties(${SRCS}/gui/icons/layer_disabled.svg PROPERTIES QT_RESOURCE_ALIAS icons/layer_disabled.svg)
+  set_source_files_properties(${SRCS}/gui/icons/leftOn.svg PROPERTIES QT_RESOURCE_ALIAS icons/leftOn.svg)
+  set_source_files_properties(${SRCS}/gui/icons/lightBulb.svg PROPERTIES QT_RESOURCE_ALIAS icons/lightBulb.svg)
+  set_source_files_properties(${SRCS}/gui/icons/link.svg PROPERTIES QT_RESOURCE_ALIAS icons/link.svg)
+  set_source_files_properties(${SRCS}/gui/icons/local.svg PROPERTIES QT_RESOURCE_ALIAS icons/local.svg)
+  set_source_files_properties(${SRCS}/gui/icons/locked.svg PROPERTIES QT_RESOURCE_ALIAS icons/locked.svg)
+  set_source_files_properties(${SRCS}/gui/icons/medic.svg PROPERTIES QT_RESOURCE_ALIAS icons/medic.svg)
+  set_source_files_properties(${SRCS}/gui/icons/messages.svg PROPERTIES QT_RESOURCE_ALIAS icons/messages.svg)
+  set_source_files_properties(${SRCS}/gui/icons/module.svg PROPERTIES QT_RESOURCE_ALIAS icons/module.svg)
+  set_source_files_properties(${SRCS}/gui/icons/monitor.svg PROPERTIES QT_RESOURCE_ALIAS icons/monitor.svg)
+  set_source_files_properties(${SRCS}/gui/icons/moveModule.svg PROPERTIES QT_RESOURCE_ALIAS icons/moveModule.svg)
+  set_source_files_properties(${SRCS}/gui/icons/new.svg PROPERTIES QT_RESOURCE_ALIAS icons/new.svg)
+  set_source_files_properties(${SRCS}/gui/icons/node.svg PROPERTIES QT_RESOURCE_ALIAS icons/node.svg)
+  set_source_files_properties(${SRCS}/gui/icons/open.svg PROPERTIES QT_RESOURCE_ALIAS icons/open.svg)
+  set_source_files_properties(${SRCS}/gui/icons/options.svg PROPERTIES QT_RESOURCE_ALIAS icons/options.svg)
+  set_source_files_properties(${SRCS}/gui/icons/output.svg PROPERTIES QT_RESOURCE_ALIAS icons/output.svg)
+  set_source_files_properties(${SRCS}/gui/icons/palette.svg PROPERTIES QT_RESOURCE_ALIAS icons/palette.svg)
+  set_source_files_properties(${SRCS}/gui/icons/pause.svg PROPERTIES QT_RESOURCE_ALIAS icons/pause.svg)
+  set_source_files_properties(${SRCS}/gui/icons/periodicTable.svg PROPERTIES QT_RESOURCE_ALIAS icons/periodicTable.svg)
+  set_source_files_properties(${SRCS}/gui/icons/play.svg PROPERTIES QT_RESOURCE_ALIAS icons/play.svg)
+  set_source_files_properties(${SRCS}/gui/icons/procedure.svg PROPERTIES QT_RESOURCE_ALIAS icons/procedure.svg)
+  set_source_files_properties(${SRCS}/gui/icons/recent.svg PROPERTIES QT_RESOURCE_ALIAS icons/recent.svg)
+  set_source_files_properties(${SRCS}/gui/icons/remove.svg PROPERTIES QT_RESOURCE_ALIAS icons/remove.svg)
+  set_source_files_properties(${SRCS}/gui/icons/repeat.svg PROPERTIES QT_RESOURCE_ALIAS icons/repeat.svg)
+  set_source_files_properties(${SRCS}/gui/icons/reset.svg PROPERTIES QT_RESOURCE_ALIAS icons/reset.svg)
+  set_source_files_properties(${SRCS}/gui/icons/rightOn.svg PROPERTIES QT_RESOURCE_ALIAS icons/rightOn.svg)
+  set_source_files_properties(${SRCS}/gui/icons/save.svg PROPERTIES QT_RESOURCE_ALIAS icons/save.svg)
+  set_source_files_properties(${SRCS}/gui/icons/screen.svg PROPERTIES QT_RESOURCE_ALIAS icons/screen.svg)
+  set_source_files_properties(${SRCS}/gui/icons/selectedAtoms.svg PROPERTIES QT_RESOURCE_ALIAS icons/selectedAtoms.svg)
+  set_source_files_properties(${SRCS}/gui/icons/site.svg PROPERTIES QT_RESOURCE_ALIAS icons/site.svg)
+  set_source_files_properties(${SRCS}/gui/icons/site_alt.svg PROPERTIES QT_RESOURCE_ALIAS icons/site_alt.svg)
+  set_source_files_properties(${SRCS}/gui/icons/slider-off.svg PROPERTIES QT_RESOURCE_ALIAS icons/slider-off.svg)
+  set_source_files_properties(${SRCS}/gui/icons/slider-on.svg PROPERTIES QT_RESOURCE_ALIAS icons/slider-on.svg)
+  set_source_files_properties(${SRCS}/gui/icons/snapshot.svg PROPERTIES QT_RESOURCE_ALIAS icons/snapshot.svg)
+  set_source_files_properties(${SRCS}/gui/icons/species.svg PROPERTIES QT_RESOURCE_ALIAS icons/species.svg)
+  set_source_files_properties(${SRCS}/gui/icons/spheres.svg PROPERTIES QT_RESOURCE_ALIAS icons/spheres.svg)
+  set_source_files_properties(${SRCS}/gui/icons/spheres_on.svg PROPERTIES QT_RESOURCE_ALIAS icons/spheres_on.svg)
+  set_source_files_properties(${SRCS}/gui/icons/step.svg PROPERTIES QT_RESOURCE_ALIAS icons/step.svg)
+  set_source_files_properties(${SRCS}/gui/icons/stop.svg PROPERTIES QT_RESOURCE_ALIAS icons/stop.svg)
+  set_source_files_properties(${SRCS}/gui/icons/temperature.svg PROPERTIES QT_RESOURCE_ALIAS icons/temperature.svg)
+  set_source_files_properties(${SRCS}/gui/icons/threeSpecies.svg PROPERTIES QT_RESOURCE_ALIAS icons/threeSpecies.svg)
+  set_source_files_properties(${SRCS}/gui/icons/togglePanel.svg PROPERTIES QT_RESOURCE_ALIAS icons/togglePanel.svg)
+  set_source_files_properties(${SRCS}/gui/icons/tools.svg PROPERTIES QT_RESOURCE_ALIAS icons/tools.svg)
+  set_source_files_properties(${SRCS}/gui/icons/trash.svg PROPERTIES QT_RESOURCE_ALIAS icons/trash.svg)
+  set_source_files_properties(${SRCS}/gui/icons/true.svg PROPERTIES QT_RESOURCE_ALIAS icons/true.svg)
+  set_source_files_properties(${SRCS}/gui/icons/tutorials.svg PROPERTIES QT_RESOURCE_ALIAS icons/tutorials.svg)
+  set_source_files_properties(${SRCS}/gui/icons/unknown.svg PROPERTIES QT_RESOURCE_ALIAS icons/unknown.svg)
+  set_source_files_properties(${SRCS}/gui/icons/unlocked.svg PROPERTIES QT_RESOURCE_ALIAS icons/unlocked.svg)
+  set_source_files_properties(${SRCS}/gui/icons/view.svg PROPERTIES QT_RESOURCE_ALIAS icons/view.svg)
+  set_source_files_properties(${SRCS}/gui/icons/waiting.svg PROPERTIES QT_RESOURCE_ALIAS icons/waiting.svg)
+  set_source_files_properties(${SRCS}/gui/icons/warn.svg PROPERTIES QT_RESOURCE_ALIAS icons/warn.svg)
+  set_source_files_properties(${SRCS}/gui/icons/wizard.svg PROPERTIES QT_RESOURCE_ALIAS icons/wizard.svg)
+
+  set_source_files_properties(${SRCS}/gui/icons/nodes/Add.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/Add.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/PickProximity.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/PickProximity.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/AddPair.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/AddPair.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/PickRegion.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/PickRegion.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/Box.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/Box.svg)
+  set_source_files_properties(
+    ${SRCS}/gui/icons/nodes/RegionalGlobalPotential.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/RegionalGlobalPotential.svg
+  )
+  set_source_files_properties(${SRCS}/gui/icons/nodes/CoordinateSets.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/CoordinateSets.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/Remove.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/Remove.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/Copy.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/Copy.svg)
+  set_source_files_properties(
+    ${SRCS}/gui/icons/nodes/RestraintPotential.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/RestraintPotential.svg
+  )
+  set_source_files_properties(${SRCS}/gui/icons/nodes/CustomRegion.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/CustomRegion.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/RotateFragment.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/RotateFragment.svg)
+  set_source_files_properties(
+    ${SRCS}/gui/icons/nodes/CylindricalGlobalPotential.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/CylindricalGlobalPotential.svg
+  )
+  set_source_files_properties(${SRCS}/gui/icons/nodes/Select.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/Select.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/CylindricalRegion.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/CylindricalRegion.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/SizeFactor.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/SizeFactor.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/GeneralRegion.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/GeneralRegion.svg)
+  set_source_files_properties(
+    ${SRCS}/gui/icons/nodes/SphericalGlobalPotential.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/SphericalGlobalPotential.svg
+  )
+  set_source_files_properties(${SRCS}/gui/icons/nodes/ImportCoordinates.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/ImportCoordinates.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/Temperature.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/Temperature.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/Parameters.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/Parameters.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/Transmute.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/Transmute.svg)
+  set_source_files_properties(${SRCS}/gui/icons/nodes/Pick.svg PROPERTIES QT_RESOURCE_ALIAS icons/nodes/Pick.svg)
+
   qt_add_qml_module(
     ${qmlgui_target_name}
     VERSION
@@ -293,7 +422,125 @@ if(GUI)
     ${SRCS}/gui-qml/qml/NodeBox.qml
     ${SRCS}/gui-qml/qml/DissolveMain.qml
     RESOURCES
+    ${SRCS}/gui/icons/add.svg
+    ${SRCS}/gui/icons/advanced.svg
+    ${SRCS}/gui/icons/arrowLeft.svg
+    ${SRCS}/gui/icons/arrowRight.svg
+    ${SRCS}/gui/icons/arrowSown.svg
+    ${SRCS}/gui/icons/arrowUp.svg
+    ${SRCS}/gui/icons/axes.svg
+    ${SRCS}/gui/icons/axes_on.svg
+    ${SRCS}/gui/icons/book.svg
+    ${SRCS}/gui/icons/bothOn.svg
+    ${SRCS}/gui/icons/calculateBonds.svg
+    ${SRCS}/gui/icons/charge.svg
+    ${SRCS}/gui/icons/clear.svg
+    ${SRCS}/gui/icons/clock.svg
+    ${SRCS}/gui/icons/collapseAll.svg
+    ${SRCS}/gui/icons/configuration.svg
+    ${SRCS}/gui/icons/connect.svg
+    ${SRCS}/gui/icons/context.svg
+    ${SRCS}/gui/icons/copy.svg
     ${SRCS}/gui/icons/cross.svg
+    ${SRCS}/gui/icons/data.svg
+    ${SRCS}/gui/icons/dataStack.svg
+    ${SRCS}/gui/icons/delete.svg
+    ${SRCS}/gui/icons/density.svg
+    ${SRCS}/gui/icons/documents.svg
+    ${SRCS}/gui/icons/edit.svg
+    ${SRCS}/gui/icons/edit_on.svg
+    ${SRCS}/gui/icons/expandAll.svg
+    ${SRCS}/gui/icons/false.svg
+    ${SRCS}/gui/icons/ff.svg
+    ${SRCS}/gui/icons/filter.svg
+    ${SRCS}/gui/icons/followAll.svg
+    ${SRCS}/gui/icons/followAll_on.svg
+    ${SRCS}/gui/icons/followX.svg
+    ${SRCS}/gui/icons/followX_on.svg
+    ${SRCS}/gui/icons/font.svg
+    ${SRCS}/gui/icons/frameworkMixture.svg
+    ${SRCS}/gui/icons/frequency.svg
+    ${SRCS}/gui/icons/generator.svg
+    ${SRCS}/gui/icons/graph.svg
+    ${SRCS}/gui/icons/heartBeat.svg
+    ${SRCS}/gui/icons/interact.svg
+    ${SRCS}/gui/icons/interact_on.svg
+    ${SRCS}/gui/icons/layer.svg
+    ${SRCS}/gui/icons/layer_disabled.svg
+    ${SRCS}/gui/icons/leftOn.svg
+    ${SRCS}/gui/icons/lightBulb.svg
+    ${SRCS}/gui/icons/link.svg
+    ${SRCS}/gui/icons/local.svg
+    ${SRCS}/gui/icons/locked.svg
+    ${SRCS}/gui/icons/medic.svg
+    ${SRCS}/gui/icons/messages.svg
+    ${SRCS}/gui/icons/module.svg
+    ${SRCS}/gui/icons/monitor.svg
+    ${SRCS}/gui/icons/moveModule.svg
+    ${SRCS}/gui/icons/new.svg
+    ${SRCS}/gui/icons/node.svg
+    ${SRCS}/gui/icons/open.svg
+    ${SRCS}/gui/icons/options.svg
+    ${SRCS}/gui/icons/output.svg
+    ${SRCS}/gui/icons/palette.svg
+    ${SRCS}/gui/icons/pause.svg
+    ${SRCS}/gui/icons/periodicTable.svg
+    ${SRCS}/gui/icons/play.svg
+    ${SRCS}/gui/icons/procedure.svg
+    ${SRCS}/gui/icons/recent.svg
+    ${SRCS}/gui/icons/remove.svg
+    ${SRCS}/gui/icons/repeat.svg
+    ${SRCS}/gui/icons/reset.svg
+    ${SRCS}/gui/icons/rightOn.svg
+    ${SRCS}/gui/icons/save.svg
+    ${SRCS}/gui/icons/screen.svg
+    ${SRCS}/gui/icons/selectedAtoms.svg
+    ${SRCS}/gui/icons/site.svg
+    ${SRCS}/gui/icons/site_alt.svg
+    ${SRCS}/gui/icons/slider-off.svg
+    ${SRCS}/gui/icons/slider-on.svg
+    ${SRCS}/gui/icons/snapshot.svg
+    ${SRCS}/gui/icons/species.svg
+    ${SRCS}/gui/icons/spheres.svg
+    ${SRCS}/gui/icons/spheres_on.svg
+    ${SRCS}/gui/icons/step.svg
+    ${SRCS}/gui/icons/stop.svg
+    ${SRCS}/gui/icons/temperature.svg
+    ${SRCS}/gui/icons/threeSpecies.svg
+    ${SRCS}/gui/icons/togglePanel.svg
+    ${SRCS}/gui/icons/tools.svg
+    ${SRCS}/gui/icons/trash.svg
+    ${SRCS}/gui/icons/true.svg
+    ${SRCS}/gui/icons/tutorials.svg
+    ${SRCS}/gui/icons/unknown.svg
+    ${SRCS}/gui/icons/unlocked.svg
+    ${SRCS}/gui/icons/view.svg
+    ${SRCS}/gui/icons/waiting.svg
+    ${SRCS}/gui/icons/warn.svg
+    ${SRCS}/gui/icons/wizard.svg
+    ${SRCS}/gui/icons/nodes/Add.svg
+    ${SRCS}/gui/icons/nodes/PickProximity.svg
+    ${SRCS}/gui/icons/nodes/AddPair.svg
+    ${SRCS}/gui/icons/nodes/PickRegion.svg
+    ${SRCS}/gui/icons/nodes/Box.svg
+    ${SRCS}/gui/icons/nodes/RegionalGlobalPotential.svg
+    ${SRCS}/gui/icons/nodes/CoordinateSets.svg
+    ${SRCS}/gui/icons/nodes/Remove.svg
+    ${SRCS}/gui/icons/nodes/Copy.svg
+    ${SRCS}/gui/icons/nodes/RestraintPotential.svg
+    ${SRCS}/gui/icons/nodes/CustomRegion.svg
+    ${SRCS}/gui/icons/nodes/RotateFragment.svg
+    ${SRCS}/gui/icons/nodes/CylindricalGlobalPotential.svg
+    ${SRCS}/gui/icons/nodes/Select.svg
+    ${SRCS}/gui/icons/nodes/CylindricalRegion.svg
+    ${SRCS}/gui/icons/nodes/SizeFactor.svg
+    ${SRCS}/gui/icons/nodes/GeneralRegion.svg
+    ${SRCS}/gui/icons/nodes/SphericalGlobalPotential.svg
+    ${SRCS}/gui/icons/nodes/ImportCoordinates.svg
+    ${SRCS}/gui/icons/nodes/Temperature.svg
+    ${SRCS}/gui/icons/nodes/Parameters.svg
+    ${SRCS}/gui/icons/nodes/Transmute.svg
+    ${SRCS}/gui/icons/nodes/Pick.svg
   )
 
   # Set project-local include directories for target (we expect to need less of these dependencies over time)

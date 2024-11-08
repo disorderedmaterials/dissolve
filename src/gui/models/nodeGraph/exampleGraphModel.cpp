@@ -25,8 +25,8 @@ template <> std::string nodeTypeName<nodeValue>(const nodeValue &value)
 
 template <> std::string nodeTypeIcon<nodeValue>(const nodeValue &value)
 {
-    return std::visit(overloaded{[](double arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; },
-                                 [](nodeValue *arg) { return "file:/home/adam/Code/dissolve/src/gui/icons/open.svg"; }},
+    return std::visit(overloaded{[](double arg) { return "qrc:/Dissolve/icons/open.svg"; },
+                                 [](nodeValue *arg) { return "qrc:/Dissolve/icons/open.svg"; }},
                       value.value);
 }
 

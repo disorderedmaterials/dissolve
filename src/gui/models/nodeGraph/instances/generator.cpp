@@ -6,7 +6,7 @@ template <> std::string nodeTypeName<Generator *>(Generator *const &value) { ret
 
 template <> std::string nodeTypeIcon<Generator *>(Generator *const &value)
 {
-    return "file:/home/adam/Code/dissolve/src/gui/icons/generator.svg";
+    return "qrc:/Dissolve/icons/generator.svg";
 }
 
 template <> std::string nodeName<Generator *>(Generator *const &value) { return "Generator"; }
