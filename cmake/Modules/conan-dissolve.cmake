@@ -9,8 +9,7 @@ include(${CMAKE_BINARY_DIR}/conan.cmake)
 set(_conan_requires
     cli11/1.9.1
     fmt/8.1.1
-    gsl/2.7
-    libtool/2.4.6
+    gsl/2.7.1
     pugixml/1.11
     onetbb/2021.10.0
     onedpl/2022.3.0
