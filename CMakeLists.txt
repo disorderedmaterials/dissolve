@@ -303,11 +303,11 @@ if(GUI)
     URI
     Dissolve
     QML_FILES
-    ${SRCS}/gui-qml/qml/ExampleDelegate.qml
-    ${SRCS}/gui-qml/qml/GeneratorDelegate.qml
-    ${SRCS}/gui-qml/qml/GraphView.qml
-    ${SRCS}/gui-qml/qml/NodeBox.qml
     ${SRCS}/gui-qml/qml/DissolveMain.qml
+    ${SRCS}/gui/qml/nodeGraph/ExampleDelegate.qml
+    ${SRCS}/gui/qml/nodeGraph/GeneratorDelegate.qml
+    ${SRCS}/gui/qml/nodeGraph/GraphView.qml
+    ${SRCS}/gui/qml/nodeGraph/NodeBox.qml
     RESOURCES
     ${REAL_ICONS}
   )
