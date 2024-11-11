@@ -6,9 +6,12 @@
 #include <QAbstractListModel>
 #include <variant>
 
+class CoreData;
+
 template <typename T> QHash<int, QByteArray> &nodeRoleNames(QHash<int, QByteArray> &base);
 template <typename T> std::string nodeTypeName(const T &value);
 template <typename T> std::string nodeTypeIcon(const T &value);
+template <typename T> bool nodeDelete(T &value, CoreData &coreData);
 template <typename T> std::string nodeName(const T &value);
 template <typename T> void setNodeName(T &value, const std::string);
 template <typename T> QVariant nodeGetValue(const T value);

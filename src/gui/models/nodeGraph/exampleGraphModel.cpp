@@ -54,7 +54,7 @@ template <> bool nodeDisconnect<nodeValue>(nodeValue &source, int sourceIndex, n
 
 template <> QHash<int, QByteArray> &nodeRoleNames<nodeValue>(QHash<int, QByteArray> &roles)
 {
-    const auto base = Qt::UserRole + GraphNodeModel<nodeValue>::ownedRoles;
+    const auto base = Qt::UserRole + GraphNodeModelBase::ownedRoles;
     roles[base] = "value";
     return roles;
 }
@@ -79,3 +79,5 @@ nodeValue::nodeValue(QVariant var)
     else
         value = var.toDouble();
 }
+
+template <> bool nodeDelete<nodeValue>(nodeValue &value, CoreData &context) { return true; }

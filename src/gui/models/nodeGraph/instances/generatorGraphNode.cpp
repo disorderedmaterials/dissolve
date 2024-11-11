@@ -73,11 +73,16 @@ template <> QVariant nodeData(const GeneratorGraphNode &item, int role)
 
 template <> QHash<int, QByteArray> &nodeRoleNames<GeneratorGraphNode>(QHash<int, QByteArray> &roles)
 {
-    auto base = Qt::UserRole + GraphNodeModel<GeneratorGraphNode>::ownedRoles;
+    auto base = Qt::UserRole + GraphNodeModelBase::ownedRoles;
     using names = GeneratorGraphModel::PropertyIndex;
     roles[base + names::Value] = "value";
     roles[base + names::Size] = "size";
     roles[base + names::Temperature] = "temperature";
     roles[base + names::AtomicDensity] = "atomicDensity";
     return roles;
+}
+
+template <> bool nodeDelete<GeneratorGraphNode>(GeneratorGraphNode &item, CoreData &coreData)
+{
+    return std::visit([&](auto *arg) -> bool { return nodeDelete(arg, coreData); }, item.value);
 }

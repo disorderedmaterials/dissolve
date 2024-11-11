@@ -48,3 +48,9 @@ template <> bool nodeSetData(Configuration *&item, const QVariant &value, int ro
             return false;
     }
 }
+
+template <> bool nodeDelete(Configuration *&item, CoreData &coreData)
+{
+  coreData.removeConfiguration(item);
+  return true;
+}

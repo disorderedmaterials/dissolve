@@ -10,11 +10,14 @@
 #include <variant>
 #include <vector>
 
-template <typename T> class GraphModel : public GraphModelBase
+template <typename T, typename Context> class GraphModel : public GraphModelBase
 {
     public:
     GraphModel() : nodes_(this) {}
     std::vector<NodeWrapper<T>> items;
+
+    private:
+    Context *context_;
 
     public:
     QAbstractListModel *nodes() override { return &nodes_; }
@@ -68,9 +71,8 @@ template <typename T> class GraphModel : public GraphModelBase
         }
 
         nodes_.beginRemoveRows({}, index, index);
-        items.erase(items.begin() + index);
-        // FIXME: After erasing the item, we need to delete the actual
-        // value
+        if (nodeDelete((items.begin() + index)->rawValue(), *context_))
+            items.erase(items.begin() + index);
         nodes_.endRemoveRows();
         graphChanged();
     }
@@ -91,5 +93,5 @@ template <typename T> class GraphModel : public GraphModelBase
     }
 
     protected:
-    GraphNodeModel<T> nodes_;
+    GraphNodeModel<T, Context> nodes_;
 };

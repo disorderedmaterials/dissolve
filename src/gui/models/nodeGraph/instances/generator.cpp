@@ -4,10 +4,7 @@
 
 template <> std::string nodeTypeName<Generator *>(Generator *const &value) { return "Generator"; }
 
-template <> std::string nodeTypeIcon<Generator *>(Generator *const &value)
-{
-    return "qrc:/Dissolve/icons/generator.svg";
-}
+template <> std::string nodeTypeIcon<Generator *>(Generator *const &value) { return "qrc:/Dissolve/icons/generator.svg"; }
 
 template <> std::string nodeName<Generator *>(Generator *const &value) { return "Generator"; }
 
@@ -28,3 +25,5 @@ template <> QVariant nodeData(Generator *const &value, int role)
 }
 
 template <> bool nodeSetData(Generator *&item, const QVariant &value, int role) { return false; }
+
+template <> bool nodeDelete(Generator *&item, CoreData &coreData) { return false; }

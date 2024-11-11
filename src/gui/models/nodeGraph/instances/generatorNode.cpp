@@ -51,3 +51,12 @@ template <> QVariant nodeData(GeneratorNode *const &value, int role)
 }
 
 template <> bool nodeSetData(GeneratorNode *&item, const QVariant &value, int role) { return false; }
+
+template <> bool nodeDelete(GeneratorNode *&item, CoreData &coreData)
+{
+  for (auto &conf : coreData.configurations())
+  {
+    conf->generator().removeNode(item->shared_from_this());
+  }
+  return true;
+}

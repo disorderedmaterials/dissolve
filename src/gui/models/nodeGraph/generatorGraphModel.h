@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/configuration.h"
+#include "classes/coreData.h"
 #include "graphModel.h"
 #include "gui/models/configurationModel.h"
 #include "nodeWrapper.h"
@@ -17,7 +18,7 @@ class GeneratorGraphNode
     GeneratorGraphInnerType value;
 };
 
-class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
+class GeneratorGraphModel : public GraphModel<GeneratorGraphNode, CoreData>
 {
     Q_OBJECT
     Q_PROPERTY(ConfigurationModel *world READ world WRITE setWorld);

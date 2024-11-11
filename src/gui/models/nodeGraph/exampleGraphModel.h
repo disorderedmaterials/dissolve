@@ -6,6 +6,8 @@
 #include "graphModel.h"
 #include "nodeWrapper.h"
 
+class CoreData;
+
 class nodeValue
 {
     public:
@@ -14,4 +16,4 @@ class nodeValue
     std::variant<double, nodeValue *> value;
 };
 
-typedef GraphModel<nodeValue> ExampleGraphModel;
+typedef GraphModel<nodeValue, CoreData> ExampleGraphModel;
