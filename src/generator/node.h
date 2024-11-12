@@ -21,6 +21,7 @@ class GeneratorNode : public std::enable_shared_from_this<GeneratorNode>, public
     enum class NodeType
     {
         Add,
+        AddOnSphere,
         AddPair,
         Box,
         CoordinateSets,

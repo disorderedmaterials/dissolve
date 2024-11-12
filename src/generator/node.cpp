@@ -16,6 +16,7 @@ EnumOptions<GeneratorNode::NodeType> GeneratorNode::nodeTypes()
 {
     return EnumOptions<GeneratorNode::NodeType>(
         "NodeType", {{GeneratorNode::NodeType::Add, "Add"},
+                     {GeneratorNode::NodeType::AddOnSphere, "AddOnSphere"},
                      {GeneratorNode::NodeType::AddPair, "AddPair"},
                      {GeneratorNode::NodeType::Box, "Box"},
                      {GeneratorNode::NodeType::CoordinateSets, "CoordinateSets"},

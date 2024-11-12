@@ -3,6 +3,7 @@
 
 #include "generator/registry.h"
 #include "generator/add.h"
+#include "generator/addOnSphere.h"
 #include "generator/addPair.h"
 #include "generator/box.h"
 #include "generator/coordinateSets.h"
@@ -30,6 +31,9 @@ GeneratorNodeRegistry::GeneratorNodeRegistry()
 {
     // Build
     registerProducer<AddGeneratorNode>(GeneratorNode::NodeType::Add, "Add molecules to a configuration", "Build");
+    registerProducer<AddOnSphereGeneratorNode>(GeneratorNode::NodeType::AddOnSphere,
+                                               "Add molecules to a configuration, placing them on the surface of a sphere",
+                                               "Build");
     registerProducer<AddPairGeneratorNode>(GeneratorNode::NodeType::AddPair,
                                            "Add a correlated molecule pair to a configuration", "Build");
     registerProducer<BoxGeneratorNode>(GeneratorNode::NodeType::Box, "Define containing box for a configuration", "Build");

@@ -4,6 +4,8 @@ add_library(
   add.h
   addBase.cpp
   addBase.h
+  addOnSphere.cpp
+  addOnSphere.h
   addPair.cpp
   addPair.h
   box.cpp
