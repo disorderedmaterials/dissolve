@@ -600,7 +600,7 @@
                     </sizepolicy>
                    </property>
                    <property name="text">
-                    <string>van der Waals</string>
+                    <string>Short Range</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
