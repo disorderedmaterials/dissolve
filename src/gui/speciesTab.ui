@@ -758,13 +758,6 @@
                <number>4</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="SiteOriginMassWeightedCheck">
-                <property name="text">
-                 <string>Weight origin by mass</string>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QStackedWidget" name="SiteDefinitionStack">
                 <property name="currentIndex">
                  <number>0</number>
@@ -1118,6 +1111,13 @@
                   </item>
                  </layout>
                 </widget>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="SiteOriginMassWeightedCheck">
+                <property name="text">
+                 <string>Weight origin by mass</string>
+                </property>
                </widget>
               </item>
              </layout>
