@@ -122,7 +122,7 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
 
     // Now we add the molecules
     RandomBuffer randomBuffer(generatorContext.processPool(), ProcessPool::PoolProcessesCommunicator);
-    Vec3<double> r, cog, newCentre, fr;
+    Vec3<double> newCentre, fr;
     auto coordinateSetIndex = 0;
     auto hasCoordinateSets = false;
     if (coordinateSets_)
