@@ -26,13 +26,6 @@ class AddPairGeneratorNode : public AddGeneratorNodeBase
     void setUpKeywords();
 
     /*
-     * Identity
-     */
-    public:
-    // Return whether a name for the node must be provided
-    bool mustBeNamed() const override;
-
-    /*
      * Node Data
      */
     private:

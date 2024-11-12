@@ -33,13 +33,6 @@ void AddPairGeneratorNode::setUpKeywords()
 }
 
 /*
- * Identity
- */
-
-// Return whether a name for the node must be provided
-bool AddPairGeneratorNode::mustBeNamed() const { return false; }
-
-/*
  * Execute
  */
 

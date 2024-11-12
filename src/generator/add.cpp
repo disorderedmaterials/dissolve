@@ -41,13 +41,6 @@ void AddGeneratorNode::setUpKeywords()
 }
 
 /*
- * Identity
- */
-
-// Return whether a name for the node must be provided
-bool AddGeneratorNode::mustBeNamed() const { return false; }
-
-/*
  * Execute
  */
 
