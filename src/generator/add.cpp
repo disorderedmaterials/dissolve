@@ -60,25 +60,17 @@ bool AddGeneratorNode::prepare(const GeneratorContext &generatorContext)
     if (species_ && coordinateSets_)
         return Messenger::error("Specify either target Species or target coordinate sets, but not both.\n");
 
-    // If positioningType_ type is 'Region', must have a suitable node defined
-    if (positioningType_ == AddGeneratorNodeBase::PositioningType::Region && !region_)
-        return Messenger::error("A valid region must be specified with the 'Region' keyword.\n");
-    else if (positioningType_ != AddGeneratorNodeBase::PositioningType::Region && region_)
-        Messenger::warn(
-            "A region has been specified ({}) but the positioning type is set to '{}' (rather than targetting the region).\n",
-            region_->name(), AddGeneratorNodeBase::positioningTypes().keyword(positioningType_));
+    // Check for a periodic species in the case of boxAction_ == Set
+    if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::Set)
+    {
+        if (species_->box()->type() == Box::BoxType::NonPeriodic)
+            return Messenger::error("Target species '{}' is not periodic!.\n", species_->name());
 
-    // Check scalable axes definitions
-    if (!scaleA_ && !scaleB_ && !scaleC_)
-        return Messenger::error("Must have at least one scalable box axis!\n");
+        if (population_.asInteger() != 1)
+            return Messenger::error("Target population must be set to 1.\n");
+    }
 
-    // If the positioning type is 'Central', don't allow more than one molecule to be added
-    if (positioningType_ == AddGeneratorNodeBase::PositioningType::Central && population_.asInteger() > 1)
-        return Messenger::error(
-            "Positioning type is set to be the centre of the box, but the requested population is greater than 1 ({}).\n",
-            population_.asInteger());
-
-    return true;
+    return prepareBase(generatorContext);
 }
 
 // Execute node
@@ -97,90 +89,11 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
     }
 
     auto *cfg = generatorContext.configuration();
-    auto rho = std::get<0>(density_).asDouble();
-    auto rhoUnits = std::get<1>(density_);
 
-    // If a density was not given, just add new molecules to the current box without adjusting its size
-    Vec3<bool> scalableAxes(scaleA_, scaleB_, scaleC_);
-    if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::None)
-        Messenger::print("[Add] Current box geometry / volume will remain as-is.\n");
-    else if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::AddVolume)
+    // Set / adjust target box volume
+    if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::Set)
     {
-        Messenger::print("[Add] Current box volume will be increased to accommodate volume of new species.\n");
-
-        // Get current cell volume
-        auto currentVolume = cfg->box()->volume();
-
-        // Determine volume required to contain the population of the specified Species at the requested density
-        auto requiredVolume = 0.0;
-        if (rhoUnits == Units::AtomsPerAngstromUnits)
-            requiredVolume = (ipop * sp->nAtoms(SpeciesAtom::Presence::Physical)) / rho;
-        else
-            requiredVolume = ((sp->mass() * ipop) / AVOGADRO) / (rho / 1.0E24);
-
-        Messenger::print("[Add] Density for new species is {} {}.\n", rho, Units::densityUnits().keyword(rhoUnits));
-        Messenger::print("[Add] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
-
-        // If the current box has no atoms in it, absorb the current volume rather than adding to it
-        if (cfg->nAtoms() > 0)
-            requiredVolume += currentVolume;
-        else
-            Messenger::print("[Add] Current box is empty, so new volume will be set to exactly {} cubic Angstroms.\n",
-                             requiredVolume);
-
-        auto scaleFactors = cfg->box()->scaleFactors(requiredVolume, scalableAxes);
-
-        // Scale existing contents
-        cfg->scaleContents(scaleFactors);
-
-        // Scale the current Box so there is enough space for our new species
-        cfg->scaleBox(scaleFactors);
-
-        Messenger::print("[Add] New box volume is {:e} cubic Angstroms - scale factors were ({},{},{}).\n",
-                         cfg->box()->volume(), scaleFactors.x, scaleFactors.y, scaleFactors.z);
-    }
-    else if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::ScaleVolume)
-    {
-        Messenger::print("[Add] Box volume will be set to give supplied density.\n");
-
-        // Get volume required to hold current cell contents at the requested density
-        double existingRequiredVolume = 0.0;
-        if (rhoUnits == Units::AtomsPerAngstromUnits)
-            existingRequiredVolume = cfg->nAtoms() / rho;
-        else
-            existingRequiredVolume = cfg->atomicMass() / (rho / 1.0E24);
-        Messenger::print("[Add] Existing contents requires volume of {} cubic Angstroms at specified density.\n",
-                         existingRequiredVolume);
-
-        // Determine volume required to contain the population of the specified Species at the requested density
-        auto requiredVolume = 0.0;
-        if (rhoUnits == Units::AtomsPerAngstromUnits)
-            requiredVolume = (ipop * sp->nAtoms(SpeciesAtom::Presence::Physical)) / rho;
-        else
-            requiredVolume = ((sp->mass() * ipop) / AVOGADRO) / (rho / 1.0E24);
-
-        Messenger::print("[Add] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
-
-        // Add on required volume for existing box contents
-        if (cfg->nAtoms() > 0)
-            requiredVolume += existingRequiredVolume;
-
-        auto scaleFactors = cfg->box()->scaleFactors(requiredVolume, scalableAxes);
-
-        // Scale existing contents
-        cfg->scaleContents(scaleFactors);
-
-        // Scale the current Box so there is enough space for our new species
-        cfg->scaleBox(scaleFactors);
-
-        Messenger::print("[Add] Current box scaled by ({},{},{}) - new volume is {:e} cubic Angstroms.\n", scaleFactors.x,
-                         scaleFactors.y, scaleFactors.z, cfg->box()->volume());
-    }
-    else if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::Set)
-    {
-        Messenger::print("[Add] Box geometry will be set from the species box definition.\n");
-        if (sp->box()->type() == Box::BoxType::NonPeriodic)
-            return Messenger::error("Target species '{}' is not periodic!.\n", sp->name());
+        Messenger::print("[Add}] Box geometry will be set from the species box definition.\n");
 
         cfg->createBox(sp->box()->axisLengths(), sp->box()->axisAngles());
         auto *box = cfg->box();
@@ -189,14 +102,9 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
                          "{:10.4e} gamma = {:10.4e}\n",
                          Box::boxTypes().keyword(box->type()), box->axisLengths().x, box->axisLengths().y, box->axisLengths().z,
                          box->axisAngles().x, box->axisAngles().y, box->axisAngles().z);
-
-        // Check on the requestedPopulation - we can have exactly one copy and no more
-        if (ipop > 1)
-        {
-            Messenger::warn("Population for species '{}' reset to 1.\n", sp->name());
-            ipop = 0;
-        }
     }
+    else
+        adjustBoxVolume(cfg, ipop, sp->nAtoms(SpeciesAtom::Presence::Physical), sp->mass());
 
     // Get the positioningType_ type and rotation flag
     Messenger::print("[Add] Positioning type is '{}' and rotation is {}.\n",
@@ -205,10 +113,6 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
     // Checks for regional positioning
     if (positioningType_ == AddGeneratorNodeBase::PositioningType::Region)
     {
-        if (!region_)
-            return Messenger::error("Positioning type set to '{}' but no region was given.\n",
-                                    AddGeneratorNodeBase::positioningTypes().keyword(positioningType_));
-
         if (!region_->region().isValid())
             return Messenger::error("Region '{}' is invalid, probably because it contains no free space.\n", region_->name());
 

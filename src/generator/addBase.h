@@ -75,4 +75,15 @@ class AddGeneratorNodeBase : public GeneratorNode
     static constexpr bool defaultScale_{true};
     // iFlags controlling box axis scaling
     bool scaleA_{defaultScale_}, scaleB_{defaultScale_}, scaleC_{defaultScale_};
+
+    protected:
+    // Adjust or set box volume ready for addition
+    void adjustBoxVolume(Configuration *cfg, int nCopies, int nAtomsPerCopy, double massPerCopy) const;
+
+    /*
+     * Execute
+     */
+    protected:
+    // Prepare any necessary data, ready for execution in the base class
+    bool prepareBase(const GeneratorContext &generatorContext);
 };
