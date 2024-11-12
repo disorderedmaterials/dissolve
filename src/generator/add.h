@@ -36,7 +36,6 @@ class AddGeneratorNode : public AddGeneratorNodeBase
     /*
      * Node Data
      */
-
     private:
     // Species to be added
     const Species *species_{nullptr};
