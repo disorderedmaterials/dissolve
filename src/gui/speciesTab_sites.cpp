@@ -169,6 +169,8 @@ void SpeciesTab::updateSitesTab()
             // Set origin atom indices
             ui_.SiteOriginAtomsEdit->setText(QString::fromStdString(
                 joinStrings(site->staticOriginAtoms(), " ", [](const auto &i) { return siteName(*i); })));
+
+            // Set mass weighted option
             ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
 
             // Set x axis atom indices
@@ -200,9 +202,16 @@ void SpeciesTab::updateSitesTab()
 
             // Determine if description is valid
             ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
+
+            // Set mass weighted option
+            ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
             break;
     }
 
+    // Set visibility of origin mass weighted check
+    ui_.SiteOriginMassWeightedCheck->setVisible(site->type() != SpeciesSite::SiteType::Dynamic);
+
+    // Update the instance counts
     updateInstanceCountGroup();
 
     // If the current site has changed, also regenerate the SpeciesSite renderable
