@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/units.h"
-#include "generator/add.h"
+#include "generator/addBase.h"
 #include "generator/node.h"
 #include "generator/nodeValue.h"
 
@@ -13,7 +13,7 @@ class Species;
 class RegionGeneratorNodeBase;
 
 // AddPair Node
-class AddPairGeneratorNode : public GeneratorNode
+class AddPairGeneratorNode : public AddGeneratorNodeBase
 {
     public:
     explicit AddPairGeneratorNode(const Species *spA = nullptr, const Species *spB = nullptr, const NodeValue &population = 0,
@@ -36,22 +36,12 @@ class AddPairGeneratorNode : public GeneratorNode
      * Node Data
      */
     private:
-    // Action to take on the Box geometry / volume on addition of the species
-    AddGeneratorNode::BoxActionStyle boxAction_{AddGeneratorNode::BoxActionStyle::AddVolume};
-    // Target density when adding molecules
-    std::pair<NodeValue, Units::DensityUnits> density_{1.0, Units::GramsPerCentimetreCubedUnits};
-    // Population of molecules to add
-    NodeValue population_{1.0};
-    // Positioning type for individual molecules
-    AddGeneratorNode::PositioningType positioningType_{AddGeneratorNode::PositioningType::Random};
-    // Region into which we will add molecules (if any)
-    std::shared_ptr<const RegionGeneratorNodeBase> region_{nullptr};
+    // Species to be added
+    const Species *speciesA_{nullptr}, *speciesB_{nullptr};
     // Whether to rotate molecules on insertion
     bool rotate_{true};
     // Flags controlling box axis scaling
     bool scaleA_{true}, scaleB_{true}, scaleC_{true};
-    // Species to be added
-    const Species *speciesA_{nullptr}, *speciesB_{nullptr};
 
     /*
      * Execute

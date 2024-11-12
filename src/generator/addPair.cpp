@@ -16,7 +16,7 @@
 
 AddPairGeneratorNode::AddPairGeneratorNode(const Species *spA, const Species *spB, const NodeValue &population,
                                            const NodeValue &density, Units::DensityUnits densityUnits)
-    : GeneratorNode(NodeType::AddPair), density_{density, densityUnits}, population_(population), speciesA_(spA), speciesB_(spB)
+    : AddGeneratorNodeBase(NodeType::AddPair, population, density, densityUnits), speciesA_(spA), speciesB_(spB)
 {
     setUpKeywords();
 }
@@ -27,25 +27,9 @@ void AddPairGeneratorNode::setUpKeywords()
     keywords_.setOrganisation("Options", "Targets");
     keywords_.add<SpeciesKeyword>("SpeciesA", "Target species A to add", speciesA_);
     keywords_.add<SpeciesKeyword>("SpeciesB", "Target species B to add", speciesB_);
-    keywords_.add<NodeValueKeyword>("Population", "Population of the target species to add", population_, this);
-    keywords_.add<NodeValueEnumOptionsKeyword<Units::DensityUnits>>("Density", "Density at which to add the target species",
-                                                                    density_, this, Units::densityUnits());
-
-    keywords_.setOrganisation("Options", "Box Modification");
-    keywords_.add<EnumOptionsKeyword<AddGeneratorNode::BoxActionStyle>>(
-        "BoxAction", "Action to take on the Box geometry / volume on addition of the species", boxAction_,
-        AddGeneratorNode::boxActionStyles());
-    keywords_.add<BoolKeyword>("ScaleA", "Scale box length A when modifying volume", scaleA_);
-    keywords_.add<BoolKeyword>("ScaleB", "Scale box length B when modifying volume", scaleB_);
-    keywords_.add<BoolKeyword>("ScaleC", "Scale box length C when modifying volume", scaleC_);
-
-    keywords_.setOrganisation("Options", "Target");
-    keywords_.add<EnumOptionsKeyword<AddGeneratorNode::PositioningType>>(
-        "Positioning", "Positioning type for individual molecules", positioningType_, AddGeneratorNode::positioningTypes());
-    keywords_.add<NodeKeyword<RegionGeneratorNodeBase>>(
-        "Region", "Region into which to add the species", region_, this,
-        NodeTypeVector{NodeType::CustomRegion, NodeType::CylindricalRegion, NodeType::GeneralRegion});
     keywords_.add<BoolKeyword>("Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
+
+    setUpBaseKeywords();
 }
 
 /*
@@ -66,15 +50,15 @@ bool AddPairGeneratorNode::prepare(const GeneratorContext &generatorContext)
         return Messenger::error("One or both target species not specified in Add node.\n");
 
     // If positioningType_ type is 'Region', must have a suitable node defined
-    if (positioningType_ == AddGeneratorNode::PositioningType::Region && !region_)
+    if (positioningType_ == AddGeneratorNodeBase::PositioningType::Region && !region_)
         return Messenger::error("A valid region must be specified with the 'Region' keyword.\n");
-    else if (positioningType_ != AddGeneratorNode::PositioningType::Region && region_)
+    else if (positioningType_ != AddGeneratorNodeBase::PositioningType::Region && region_)
         Messenger::warn(
             "A region has been specified ({}) but the positioning type is set to '{}' (rather than targetting the region).\n",
-            region_->name(), AddGeneratorNode::positioningTypes().keyword(positioningType_));
+            region_->name(), AddGeneratorNodeBase::positioningTypes().keyword(positioningType_));
 
     // Can't set box
-    if (boxAction_ == AddGeneratorNode::BoxActionStyle::Set)
+    if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::Set)
         return Messenger::error("Can't set periodic box when using AddPair.\n");
 
     // Can't do this for periodic species
@@ -86,7 +70,7 @@ bool AddPairGeneratorNode::prepare(const GeneratorContext &generatorContext)
         return Messenger::error("Must have at least one scalable box axis!\n");
 
     // If the positioning type is 'Central', don't allow more than one molecule to be added
-    if (positioningType_ == AddGeneratorNode::PositioningType::Central && population_.asInteger() > 1)
+    if (positioningType_ == AddGeneratorNodeBase::PositioningType::Central && population_.asInteger() > 1)
         return Messenger::error(
             "Positioning type is set to be the centre of the box, but the requested population is greater than 1 ({}).\n",
             population_.asInteger());
@@ -122,9 +106,9 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
 
     // If a density was not given, just add new molecules to the current box without adjusting its size
     Vec3<bool> scalableAxes(scaleA_, scaleB_, scaleC_);
-    if (boxAction_ == AddGeneratorNode::BoxActionStyle::None)
+    if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::None)
         Messenger::print("[AddPair] Current box geometry / volume will remain as-is.\n");
-    else if (boxAction_ == AddGeneratorNode::BoxActionStyle::AddVolume)
+    else if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::AddVolume)
     {
         Messenger::print("[AddPair] Current box volume will be increased to accommodate volume of new species.\n");
 
@@ -159,7 +143,7 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
         Messenger::print("[AddPair] New box volume is {:e} cubic Angstroms - scale factors were ({},{},{}).\n",
                          cfg->box()->volume(), scaleFactors.x, scaleFactors.y, scaleFactors.z);
     }
-    else if (boxAction_ == AddGeneratorNode::BoxActionStyle::ScaleVolume)
+    else if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::ScaleVolume)
     {
         Messenger::print("[AddPair] Box volume will be set to give supplied density.\n");
 
@@ -199,14 +183,14 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
 
     // Get the positioningType_ type and rotation flag
     Messenger::print("[AddPair] Positioning type is '{}' and rotation is {}.\n",
-                     AddGeneratorNode::positioningTypes().keyword(positioningType_), rotate_ ? "on" : "off");
+                     AddGeneratorNodeBase::positioningTypes().keyword(positioningType_), rotate_ ? "on" : "off");
 
     // Checks for regional positioning
-    if (positioningType_ == AddGeneratorNode::PositioningType::Region)
+    if (positioningType_ == AddGeneratorNodeBase::PositioningType::Region)
     {
         if (!region_)
             return Messenger::error("Positioning type set to '{}' but no region was given.\n",
-                                    AddGeneratorNode::positioningTypes().keyword(positioningType_));
+                                    AddGeneratorNodeBase::positioningTypes().keyword(positioningType_));
 
         if (!region_->region().isValid())
             return Messenger::error("Region '{}' is invalid, probably because it contains no free space.\n", region_->name());
@@ -239,20 +223,20 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
         // Set / generate position of pair
         switch (positioningType_)
         {
-            case (AddGeneratorNode::PositioningType::Random):
+            case (AddGeneratorNodeBase::PositioningType::Random):
                 newCentre = box->getReal({randomBuffer.random(), randomBuffer.random(), randomBuffer.random()});
                 break;
-            case (AddGeneratorNode::PositioningType::Region):
+            case (AddGeneratorNodeBase::PositioningType::Region):
                 newCentre = region_->region().randomCoordinate();
                 break;
-            case (AddGeneratorNode::PositioningType::Central):
+            case (AddGeneratorNodeBase::PositioningType::Central):
                 newCentre = box->getReal({0.5, 0.5, 0.5});
                 break;
-            case (AddGeneratorNode::PositioningType::Current):
+            case (AddGeneratorNodeBase::PositioningType::Current):
                 break;
             default:
                 throw(std::runtime_error(fmt::format("Positioning type {} not handled.\n",
-                                                     AddGeneratorNode::positioningTypes().keyword(positioningType_))));
+                                                     AddGeneratorNodeBase::positioningTypes().keyword(positioningType_))));
         }
 
         // Move the molecule pair
