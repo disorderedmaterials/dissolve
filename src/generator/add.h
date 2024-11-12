@@ -50,8 +50,8 @@ class AddGeneratorNode : public GeneratorNode
     // Positioning Type
     enum class PositioningType
     {
-        Central, /* Position the Species at the centre of the Box */
-        Current, /* Use current Species coordinates */
+        Central, /* Position at the centre of the Box */
+        Current, /* Use current coordinates */
         Random,  /* Set position randomly */
         Region   /* Set position randomly within a specified region */
     };
