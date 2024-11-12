@@ -25,10 +25,13 @@ void SpeciesTab::updateInstanceCountGroup()
     else if (site->instances().empty())
         ui_.InstanceCountLabel->setText("0 (no instances generated)");
     else
+    {
         ui_.InstanceCountLabel->setText(
-            QString("%1 (%2 atom%3 each)")
-                .arg(QString::number(site->instances().size()), QString::number(site->instances().front().allIndices().size()),
-                     QString::fromStdString(DissolveSys::plural(site->instances().front().allIndices().size()))));
+            QString("%1 (%2 origin atom%3 each)")
+                .arg(QString::number(site->instances().size()),
+                     QString::number(site->instances().front().originIndices().size()),
+                     QString::fromStdString(DissolveSys::plural(site->instances().front().originIndices().size()))));
+    }
 }
 
 /*
