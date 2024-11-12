@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/units.h"
+#include "generator/add.h"
 #include "generator/node.h"
 #include "generator/nodeValue.h"
 
@@ -34,37 +35,15 @@ class AddPairGeneratorNode : public GeneratorNode
     /*
      * Node Data
      */
-    public:
-    // Box Action Style
-    enum class BoxActionStyle
-    {
-        None,        /* Box geometry / volume will remain unchanged */
-        AddVolume,   /* Increase Box volume to accommodate new species, according to supplied density */
-        ScaleVolume, /* Scale current Box volume to give, after addition of the current species, the supplied density */
-        Set          /* Set the Box geometry to that specified in the Species */
-    };
-    // Return enum option info for BoxActionStyle
-    static EnumOptions<BoxActionStyle> boxActionStyles();
-    // Positioning Type
-    enum class PositioningType
-    {
-        Central, /* Position the Species at the centre of the Box */
-        Current, /* Use current Species coordinates */
-        Random,  /* Set position randomly */
-        Region   /* Set position randomly within a specified region */
-    };
-    // Return enum option info for PositioningType
-    static EnumOptions<PositioningType> positioningTypes();
-
     private:
     // Action to take on the Box geometry / volume on addition of the species
-    AddPairGeneratorNode::BoxActionStyle boxAction_{AddPairGeneratorNode::BoxActionStyle::AddVolume};
+    AddGeneratorNode::BoxActionStyle boxAction_{AddGeneratorNode::BoxActionStyle::AddVolume};
     // Target density when adding molecules
     std::pair<NodeValue, Units::DensityUnits> density_{1.0, Units::GramsPerCentimetreCubedUnits};
     // Population of molecules to add
     NodeValue population_{1.0};
     // Positioning type for individual molecules
-    AddPairGeneratorNode::PositioningType positioningType_{AddPairGeneratorNode::PositioningType::Random};
+    AddGeneratorNode::PositioningType positioningType_{AddGeneratorNode::PositioningType::Random};
     // Region into which we will add molecules (if any)
     std::shared_ptr<const RegionGeneratorNodeBase> region_{nullptr};
     // Whether to rotate molecules on insertion
