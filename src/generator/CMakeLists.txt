@@ -2,6 +2,8 @@ add_library(
   generator
   add.cpp
   add.h
+  addBase.cpp
+  addBase.h
   addPair.cpp
   addPair.h
   box.cpp
