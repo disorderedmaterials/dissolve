@@ -55,7 +55,7 @@ runs:
     - name: Install Dependencies (OSX)
       if: ${{ runner.os == 'macos' }}
       shell: bash
-      run: brew install coreutils gawk
+      run: brew install coreutils gawk gsl
 
     - name: Get nix hash
       shell: bash
