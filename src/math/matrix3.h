@@ -11,6 +11,7 @@ class Matrix3
 {
     public:
     Matrix3();
+    Matrix3(const Vec3<double> &x, const Vec3<double> &y, const Vec3<double> &z);
 
     private:
     // Matrix

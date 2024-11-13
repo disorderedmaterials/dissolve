@@ -7,6 +7,19 @@
 
 Matrix3::Matrix3() { setIdentity(); }
 
+Matrix3::Matrix3(const Vec3<double> &x, const Vec3<double> &y, const Vec3<double> &z)
+{
+    matrix_[0] = x.x;
+    matrix_[1] = x.y;
+    matrix_[2] = x.z;
+    matrix_[3] = y.x;
+    matrix_[4] = y.y;
+    matrix_[5] = y.z;
+    matrix_[6] = z.x;
+    matrix_[7] = z.y;
+    matrix_[8] = z.z;
+}
+
 /*
  * Operators
  */
