@@ -21,7 +21,7 @@ RotateFragmentGeneratorNode::RotateFragmentGeneratorNode(std::shared_ptr<SelectG
     keywords_.add<NodeKeyword<SelectGeneratorNode>>("Site", "Site to be rotated", site_, this,
                                                     NodeTypeVector{NodeType::Select});
     keywords_.add<NodeValueKeyword>("Rotation", "Rotation to perform", rotation_, this);
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Axis", "Axis for rotation", axis_, OrientedSite::siteAxis());
+    keywords_.add<EnumOptionsKeyword<Site::SiteAxis>>("Axis", "Axis for rotation", axis_, Site::siteAxis());
 }
 
 /*
@@ -63,13 +63,13 @@ bool RotateFragmentGeneratorNode::execute(const GeneratorContext &generatorConte
     Matrix3 rotationMatrix;
     switch (axis_)
     {
-        case (OrientedSite::SiteAxis::XAxis):
+        case (Site::SiteAxis::XAxis):
             rotationMatrix.createRotationAxis(site.axes().columnAsVec3(0), rotation_.asDouble(), false);
             break;
-        case (OrientedSite::SiteAxis::YAxis):
+        case (Site::SiteAxis::YAxis):
             rotationMatrix.createRotationAxis(site.axes().columnAsVec3(1), rotation_.asDouble(), false);
             break;
-        case (OrientedSite::SiteAxis::ZAxis):
+        case (Site::SiteAxis::ZAxis):
             rotationMatrix.createRotationAxis(site.axes().columnAsVec3(2), rotation_.asDouble(), false);
             break;
     }

@@ -56,10 +56,8 @@ class SiteStack
     bool sitesInMolecules_;
     // Whether the current stack contains local axes information
     bool sitesHaveOrientation_;
-    // Basic site array (if no local axes are defined)
+    // Site array
     std::vector<Site> sites_;
-    // Oriented site array (if local axes are defined)
-    std::vector<OrientedSite> orientedSites_;
 
     public:
     // Return number of sites in the stack

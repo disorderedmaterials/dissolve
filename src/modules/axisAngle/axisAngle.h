@@ -35,7 +35,7 @@ class AxisAngleModule : public Module
     // Target SpeciesSite definitions
     std::vector<const SpeciesSite *> a_, b_;
     // Axes to use for sites
-    OrientedSite::SiteAxis axisA_{OrientedSite::SiteAxis::XAxis}, axisB_{OrientedSite::SiteAxis::XAxis};
+    Site::SiteAxis axisA_{Site::SiteAxis::XAxis}, axisB_{Site::SiteAxis::XAxis};
     // Export file and format for RDF
     Data1DExportFileFormat exportFileAndFormatRDF_;
     // Export file and format for AxisAngle

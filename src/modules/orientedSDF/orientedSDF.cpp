@@ -21,12 +21,10 @@ OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF)
     keywords_.setOrganisation("Options", "Sites", "Specify the central (A) and surrounding sites (B).");
     keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF", a_,
                                             true);
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisA", "Axis to use from site A", axisA_,
-                                                              OrientedSite::siteAxis());
+    keywords_.add<EnumOptionsKeyword<Site::SiteAxis>>("AxisA", "Axis to use from site A", axisA_, Site::siteAxis());
     keywords_.add<SpeciesSiteVectorKeyword>(
         "SiteB", "Set the site(s) 'B' for which the distribution around the origin site(s) 'A' should be calculated", b_);
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisB", "Axis to use from site B", axisB_,
-                                                              OrientedSite::siteAxis());
+    keywords_.add<EnumOptionsKeyword<Site::SiteAxis>>("AxisB", "Axis to use from site B", axisB_, Site::siteAxis());
 
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<RangeKeyword>("AngleRange", "Axis angle range required to permit a site to be binned in the SDF",

@@ -23,7 +23,7 @@ class OrientedSDFModule : public Module
     // Target SpeciesSite definitions
     std::vector<const SpeciesSite *> a_, b_;
     // Axes to use for sites
-    OrientedSite::SiteAxis axisA_{OrientedSite::SiteAxis::XAxis}, axisB_{OrientedSite::SiteAxis::XAxis};
+    Site::SiteAxis axisA_{Site::SiteAxis::XAxis}, axisB_{Site::SiteAxis::XAxis};
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{true};
     // Range along X axis

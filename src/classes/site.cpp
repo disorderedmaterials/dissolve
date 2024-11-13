@@ -6,17 +6,23 @@
 #include "base/messenger.h"
 #include <utility>
 
-/*
- * Site
- */
-
 Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
            const Vec3<double> &origin)
+    : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule)), origin_(origin)
 {
-    parent_ = parent;
-    uniqueSiteIndex_ = uniqueSiteIndex;
-    molecule_ = std::move(molecule);
-    origin_ = origin;
+}
+
+Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
+           const Matrix3 &axes, const Vec3<double> &origin)
+    : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule)), origin_(origin), axes_(axes),
+      hasAxes_(true)
+{
+}
+
+// Return enum options for SiteAxis
+EnumOptions<Site::SiteAxis> Site::siteAxis()
+{
+    return EnumOptions<Site::SiteAxis>("SiteAxis", {{Site::XAxis, "X"}, {Site::YAxis, "Y"}, {Site::ZAxis, "Z"}});
 }
 
 // Return the parent
@@ -35,36 +41,4 @@ std::shared_ptr<const Molecule> Site::molecule() const { return molecule_; }
 bool Site::hasAxes() const { return false; }
 
 // Return local axes
-const Matrix3 &Site::axes() const
-{
-    static Matrix3 dummy;
-    Messenger::warn("Returning empty axes for this Site, since it doesn't have any.\n");
-    return dummy;
-}
-
-/*
- * Oriented Site
- */
-
-OrientedSite::OrientedSite(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex,
-                           std::shared_ptr<const Molecule> molecule, const Vec3<double> &origin, const Vec3<double> &xAxis,
-                           const Vec3<double> &yAxis, const Vec3<double> &zAxis)
-    : Site(parent, uniqueSiteIndex, std::move(molecule), origin)
-{
-    axes_.setColumn(0, xAxis);
-    axes_.setColumn(1, yAxis);
-    axes_.setColumn(2, zAxis);
-}
-
-// Return whether local axes are present
-bool OrientedSite::hasAxes() const { return true; }
-
-// Return enum options for SiteAxis
-EnumOptions<OrientedSite::SiteAxis> OrientedSite::siteAxis()
-{
-    return EnumOptions<OrientedSite::SiteAxis>(
-        "SiteAxis", {{OrientedSite::XAxis, "X"}, {OrientedSite::YAxis, "Y"}, {OrientedSite::ZAxis, "Z"}});
-}
-
-// Return local axes
-const Matrix3 &OrientedSite::axes() const { return axes_; }
+const Matrix3 &Site::axes() const { return axes_; }

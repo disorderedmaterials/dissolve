@@ -61,7 +61,7 @@ TEST(RotateFragmentGeneratorNodeTest, Benzene)
     // Rotate Benzene around the Z-Axis of the site (which is defined at the COG, which is at the origin)
     auto &forEachB = select->branch()->get();
     auto rotate = forEachB.create<RotateFragmentGeneratorNode>("RotateBenzene", select);
-    rotate->keywords().setEnumeration("Axis", OrientedSite::SiteAxis::ZAxis);
+    rotate->keywords().setEnumeration("Axis", Site::SiteAxis::ZAxis);
 
     for (auto x = 90.0; x <= 360.0; x += 90.0)
     {

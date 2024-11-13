@@ -28,7 +28,7 @@ class RotateFragmentGeneratorNode : public GeneratorNode
     // Rotation
     NodeValue rotation_{90.0};
     // Axis
-    OrientedSite::SiteAxis axis_{OrientedSite::SiteAxis::XAxis};
+    Site::SiteAxis axis_{Site::SiteAxis::XAxis};
 
     /*
      * Execute

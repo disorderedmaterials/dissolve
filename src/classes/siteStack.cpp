@@ -74,7 +74,6 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     // Set new index and clear old arrays
     configurationIndex_ = configuration_->contentsVersion();
     sites_.clear();
-    orientedSites_.clear();
 
     const auto &instances = site->instances();
     auto *targetSpecies = site->parent();
@@ -83,10 +82,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     if (sPop == 0)
         return true;
 
-    if (sitesHaveOrientation_)
-        orientedSites_.reserve(instances.size() * sPop);
-    else
-        sites_.reserve(instances.size() * sPop);
+    sites_.reserve(instances.size() * sPop);
 
     Vec3<double> origin, x, y;
     const auto *box = configuration_->box();
@@ -113,7 +109,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
                 y.orthogonalise(x);
                 y.normalise();
 
-                orientedSites_.emplace_back(speciesSite_, index, molecule, origin, x, y, x * y);
+                sites_.emplace_back(speciesSite_, index, molecule, Matrix3(x, y, x * y), origin);
             }
             else
                 sites_.emplace_back(speciesSite_, index, molecule, origin);
@@ -129,7 +125,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
  */
 
 // Return number of sites in the stack
-int SiteStack::nSites() const { return (sitesHaveOrientation_ ? orientedSites_.size() : sites_.size()); }
+int SiteStack::nSites() const { return sites_.size(); }
 
 // Return site with index specified
-const Site &SiteStack::site(int index) const { return (sitesHaveOrientation_ ? orientedSites_.at(index) : sites_.at(index)); }
+const Site &SiteStack::site(int index) const { return sites_.at(index); }

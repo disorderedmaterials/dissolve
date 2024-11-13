@@ -492,7 +492,7 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
             y.orthogonalise(x);
             y.normalise();
 
-            sites.push_back(std::make_shared<OrientedSite>(this, index, nullptr, origin, x, y, x * y));
+            sites.push_back(std::make_shared<Site>(this, index, nullptr, Matrix3(x, y, x * y), origin));
         }
         else
             sites.push_back(std::make_shared<Site>(this, index, nullptr, origin));
