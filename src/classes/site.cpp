@@ -11,7 +11,7 @@
  */
 
 Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
-           Vec3<double> origin)
+           const Vec3<double> &origin)
 {
     parent_ = parent;
     uniqueSiteIndex_ = uniqueSiteIndex;
@@ -47,8 +47,8 @@ const Matrix3 &Site::axes() const
  */
 
 OrientedSite::OrientedSite(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex,
-                           std::shared_ptr<const Molecule> molecule, Vec3<double> origin, Vec3<double> xAxis,
-                           Vec3<double> yAxis, Vec3<double> zAxis)
+                           std::shared_ptr<const Molecule> molecule, const Vec3<double> &origin, const Vec3<double> &xAxis,
+                           const Vec3<double> &yAxis, const Vec3<double> &zAxis)
     : Site(parent, uniqueSiteIndex, std::move(molecule), origin)
 {
     axes_.setColumn(0, xAxis);

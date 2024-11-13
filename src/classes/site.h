@@ -17,7 +17,7 @@ class Site
 {
     public:
     Site(const SpeciesSite *parent = nullptr, std::optional<int> uniqueSiteIndex = {},
-         std::shared_ptr<const Molecule> molecule = nullptr, Vec3<double> origin = Vec3<double>());
+         std::shared_ptr<const Molecule> molecule = {}, const Vec3<double> &origin = {});
     ~Site() = default;
     Site &operator=(const Site &source) = default;
     Site(const Site &source) = default;
@@ -56,8 +56,8 @@ class OrientedSite : public Site
 {
     public:
     OrientedSite(const SpeciesSite *parent = nullptr, std::optional<int> uniqueSiteIndex = {},
-                 std::shared_ptr<const Molecule> molecule = nullptr, Vec3<double> origin = Vec3<double>(),
-                 Vec3<double> xAxis = Vec3<double>(), Vec3<double> yAxis = Vec3<double>(), Vec3<double> zAxis = Vec3<double>());
+                 std::shared_ptr<const Molecule> molecule = {}, const Vec3<double> &origin = {}, const Vec3<double> &xAxis = {},
+                 const Vec3<double> &yAxis = {}, const Vec3<double> &zAxis = {});
     OrientedSite &operator=(const OrientedSite &source) = default;
     OrientedSite(const OrientedSite &source) = default;
     OrientedSite(OrientedSite &&source) = default;
