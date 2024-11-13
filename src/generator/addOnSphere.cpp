@@ -54,6 +54,10 @@ bool AddOnSphereGeneratorNode::prepare(const GeneratorContext &generatorContext)
     if (!speciesSite_)
         return Messenger::error("No target species site specified in AddOnSphere node.\n");
 
+    // Check site multiplicity
+    if (speciesSite_->instances().size() > 1)
+        return Messenger::error("Site must have a single instance - i.e. be unique in the parent species.\n");
+
     // If positioningType_ type is 'Region', must have a suitable node defined
     if (positioningType_ == AddGeneratorNode::PositioningType::Region && !region_)
         return Messenger::error("A valid region must be specified with the 'Region' keyword.\n");
@@ -130,6 +134,9 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
     // Add space for the new molecules
     cfg->atoms().reserve(cfg->atoms().size() + ipop * sp->nAtoms());
 
+    // Get the first (only) instance details for the site
+    auto siteInstance = speciesSite_->instances().front();
+
     // Now we add the molecules at points on the sphere
     Vec3<double> rLocal;
     const auto psi = 0.5 * (1.0 + sqrt(5.0));
@@ -167,6 +174,10 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
         // Calculate cartesian coordinates
         rLocal.set(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
         rLocal *= r;
+
+        // Generate a working site from the molecule
+        Site site(speciesSite_, {}, mol, Vec3<double>());
+        site.createFromInstance(siteInstance, box);
 
         mol->setCentreOfGeometry(box, sphereCentre + rLocal);
 
