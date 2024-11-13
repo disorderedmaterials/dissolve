@@ -27,6 +27,7 @@ void AddOnSphereGeneratorNode::setUpKeywords()
     keywords_.add<EnumOptionsKeyword<AddOnSphereGeneratorNode::PointDistributionStyle>>(
         "Distribution", "Method for distributing points on the underlying sphere", pointDistributionStyle_,
         pointDistributionStyles());
+    keywords_.add<NodeValueKeyword>("Variance", "Random variance to add to distributed points on the sphere", variance_, this);
 
     setUpBaseKeywords();
 }
@@ -133,6 +134,7 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
     Vec3<double> rLocal;
     const auto psi = 0.5 * (1.0 + sqrt(5.0));
     const auto r = radius_.asDouble();
+    const auto variance = variance_.asDouble();
     for (auto n = 0; n < ipop; ++n)
     {
         // Add the Molecule
@@ -153,6 +155,13 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
                 break;
             default:
                 throw(std::runtime_error("PointDistributionStyle not handled in switch.\n"));
+        }
+
+        // Apply variance
+        if (variance > 0.0)
+        {
+            theta += randomBuffer.randomPlusMinusOne() * variance;
+            phi += randomBuffer.randomPlusMinusOne() * 2.0 * variance;
         }
 
         // Calculate cartesian coordinates

@@ -44,6 +44,8 @@ class AddOnSphereGeneratorNode : public AddGeneratorNodeBase
     const SpeciesSite *speciesSite_{nullptr};
     // Radius of the underlying sphere
     NodeValue radius_{5.0};
+    // Random variance to apply to distributed points on the sphere
+    NodeValue variance_{0.0};
     // Distribution style for points on the sphere
     PointDistributionStyle pointDistributionStyle_{PointDistributionStyle::Fibonacci};
 
