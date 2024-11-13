@@ -6,12 +6,9 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "generator/coordinateSets.h"
 #include "generator/regionBase.h"
-#include "keywords/bool.h"
 #include "keywords/node.h"
 #include "keywords/nodeValue.h"
-#include "keywords/nodeValueEnumOptions.h"
 #include "keywords/speciesSite.h"
 
 AddOnSphereGeneratorNode::AddOnSphereGeneratorNode(const SpeciesSite *site, const NodeValue &population,
@@ -26,8 +23,24 @@ void AddOnSphereGeneratorNode::setUpKeywords()
 {
     keywords_.setOrganisation("Options", "Target");
     keywords_.add<SpeciesSiteKeyword>("Site", "Target species site to use as anchor point", speciesSite_, false);
+    keywords_.add<NodeValueKeyword>("Radius", "Radius of the sphere upon which molecules will be placed", radius_, this);
+    keywords_.add<EnumOptionsKeyword<AddOnSphereGeneratorNode::PointDistributionStyle>>(
+        "Distribution", "Method for distributing points on the underlying sphere", pointDistributionStyle_,
+        pointDistributionStyles());
 
     setUpBaseKeywords();
+}
+
+/*
+ * Node Data
+ */
+
+// Return enum option info for PointDistributionStyle
+EnumOptions<AddOnSphereGeneratorNode::PointDistributionStyle> AddOnSphereGeneratorNode::pointDistributionStyles()
+{
+    return EnumOptions<AddOnSphereGeneratorNode::PointDistributionStyle>(
+        "BoxAction", {{AddOnSphereGeneratorNode::PointDistributionStyle::Random, "Random"},
+                      {AddOnSphereGeneratorNode::PointDistributionStyle::Fibonacci, "Fibonacci"}});
 }
 
 /*
@@ -117,23 +130,36 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
     cfg->atoms().reserve(cfg->atoms().size() + ipop * sp->nAtoms());
 
     // Now we add the molecules at points on the sphere
-    auto sphereRadius = 5.0;
     Vec3<double> rLocal;
+    const auto psi = 0.5 * (1.0 + sqrt(5.0));
+    const auto r = radius_.asDouble();
     for (auto n = 0; n < ipop; ++n)
     {
         // Add the Molecule
         auto mol = cfg->addMolecule(sp);
 
-        // Generate a point on the sphere
-        if (true)
+        // Calculate spherical coordinates of point in radians
+        auto theta = 0.0, phi = 0.0;
+        switch (pointDistributionStyle_)
         {
-            auto theta = randomBuffer.random() * M_PI;
-            auto psi = randomBuffer.random() * 2.0 * M_PI;
-            rLocal.set(sin(theta) * cos(psi), sin(theta) * sin(psi), cos(theta));
-            rLocal *= sphereRadius;
-
-            mol->setCentreOfGeometry(box, sphereCentre + rLocal);
+            case (PointDistributionStyle::Random):
+                theta = randomBuffer.random() * M_PI;
+                phi = randomBuffer.random() * 2.0 * M_PI;
+                break;
+            case (PointDistributionStyle::Fibonacci):
+                // Map theta as (i+1)/(N+1) to avoid point at pole and give better distribution
+                theta = asin(2.0 * (double(n + 1.0) / (ipop + 1.0)) - 1.0) + M_PI_2;
+                phi = 2.0 * M_PI * n / psi;
+                break;
+            default:
+                throw(std::runtime_error("PointDistributionStyle not handled in switch.\n"));
         }
+
+        // Calculate cartesian coordinates
+        rLocal.set(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
+        rLocal *= r;
+
+        mol->setCentreOfGeometry(box, sphereCentre + rLocal);
 
         //        // Generate and apply a random rotation matrix
         //        if (rotate_)

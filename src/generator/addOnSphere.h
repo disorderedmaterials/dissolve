@@ -29,13 +29,23 @@ class AddOnSphereGeneratorNode : public AddGeneratorNodeBase
     /*
      * Node Data
      */
+    public:
+    // Point Distribution Style
+    enum class PointDistributionStyle
+    {
+        Random,   /* Points are generated randomly */
+        Fibonacci /* Points are generated on a Fibonacci lattice */
+    };
+    // Return enum option info for PointDistributionStyle
+    static EnumOptions<PointDistributionStyle> pointDistributionStyles();
+
     private:
-    // The default scaling settings
-    static constexpr bool defaultScale_{true};
-    // iFlags controlling box axis scaling
-    bool scaleA_{defaultScale_}, scaleB_{defaultScale_}, scaleC_{defaultScale_};
     // Site representing anchor point (and implicitly the target species)
     const SpeciesSite *speciesSite_{nullptr};
+    // Radius of the underlying sphere
+    NodeValue radius_{5.0};
+    // Distribution style for points on the sphere
+    PointDistributionStyle pointDistributionStyle_{PointDistributionStyle::Fibonacci};
 
     /*
      * Execute
