@@ -38,7 +38,7 @@ const Vec3<double> &Site::origin() const { return origin_; }
 std::shared_ptr<const Molecule> Site::molecule() const { return molecule_; }
 
 // Return whether local axes are present
-bool Site::hasAxes() const { return false; }
+bool Site::hasAxes() const { return hasAxes_; }
 
 // Return local axes
 const Matrix3 &Site::axes() const { return axes_; }
