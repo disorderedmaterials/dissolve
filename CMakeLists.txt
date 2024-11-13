@@ -26,7 +26,7 @@ set(CMAKE_CXX_STANDARD 17)
 # Add our custom module search path
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 
-OPTION(CONAN_GSL OFF)
+option(CONAN_GSL OFF)
 
 # Include Conan Packages
 option(CONAN "Use conan to find dependencies" ON)
@@ -142,7 +142,7 @@ endif(GUI)
 
 # Perform system-specific setup -- Windows
 if(WIN32)
-  OPTION(CONAN_GSL ON)
+  option(CONAN_GSL ON)
   if(PARALLEL)
     set(target_name Dissolve-MPI)
   else(PARALLEL)
@@ -165,7 +165,7 @@ endif(WIN32)
 
 # -- Unix
 if(UNIX)
-  OPTION(CONAN_GSL ON)
+  option(CONAN_GSL ON)
   if(PARALLEL)
     set(target_name dissolve-mpi)
   else(PARALLEL)
@@ -182,6 +182,7 @@ if(CONAN_GSL)
 endif(CONAN_GSL)
 
 find_package(GSL REQUIRED)
+include_directories(${GSL_INCLUDE_DIR})
 set(GSL_LIBS GSL::gsl GSL::gslcblas)
 list(APPEND CORE_LINK_LIBS ${GSL_LIBS})
 
