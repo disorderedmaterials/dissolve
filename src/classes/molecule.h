@@ -73,7 +73,7 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     // Un-fold molecule so it is not cut by box boundaries, returning the centre of geometry
     Vec3<double> unFold(const Box *box);
     // Set centre of geometry
-    void setCentreOfGeometry(const Box *box, const Vec3<double> newCentre);
+    void setCentreOfGeometry(const Box *box, const Vec3<double> &newCentre);
     // Calculate and return centre of geometry
     Vec3<double> centreOfGeometry(const Box *box) const;
     // Calculate and return centre of geometry over supplied atom indices
@@ -88,7 +88,7 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     void transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin,
                    const std::vector<int> &targetAtoms);
     // Translate whole molecule by the delta specified
-    void translate(const Vec3<double> delta);
+    void translate(const Vec3<double> &delta);
     // Translate specified atoms by the delta specified
     void translate(const Vec3<double> &delta, const std::vector<int> &targetAtoms);
 };

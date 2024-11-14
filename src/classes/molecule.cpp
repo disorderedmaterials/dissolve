@@ -144,7 +144,7 @@ Vec3<double> Molecule::unFold(const Box *box)
 }
 
 // Set centre of geometry of molecule
-void Molecule::setCentreOfGeometry(const Box *box, const Vec3<double> newCentre)
+void Molecule::setCentreOfGeometry(const Box *box, const Vec3<double> &newCentre)
 {
     // Calculate Molecule centre of geometry
     Vec3<double> newR;
@@ -232,7 +232,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 }
 
 // Translate whole molecule by the delta specified
-void Molecule::translate(const Vec3<double> delta)
+void Molecule::translate(const Vec3<double> &delta)
 {
     for (auto n = 0; n < nAtoms(); ++n)
         atom(n)->translateCoordinates(delta);
