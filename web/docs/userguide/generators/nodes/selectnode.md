@@ -4,14 +4,6 @@ linkTitle: Select
 description: Select a list of pre-defined sites on molecules
 ---
 
-{{< htable >}}
-| | |
-|-|-|
-|Context|Analysis|
-|Name Required?|Yes|
-|Branches|`ForEach`|
-{{< /htable >}}
-
 ## Overview
 
 The `Select` node assembles a list of [sites]({{< ref "siteblock" >}}) from a species, and which can then be iterated over and reference by other nodes (e.g. the `Calculate*` nodes).

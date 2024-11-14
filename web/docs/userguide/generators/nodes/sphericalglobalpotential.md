@@ -4,14 +4,6 @@ linkTitle: SphericalGlobalPotential
 description: Create a spherical, global potential affecting all atoms
 ---
 
-{{< htable >}}
-| | |
-|--------|----------|
-|Context|Generation|
-|Name Required?|No|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `SphericalGlobalPotential` node allows an additional, global potential to be defined in a configuration, acting on all atoms.

@@ -4,14 +4,6 @@ linkTitle: RotateFragment
 description: Rotate fragment sites about their local axes
 ---
 
-{{< htable >}}
-| | |
-|-|-|
-|Context|Analysis, Generation|
-|Name Required?|No|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `RotateFragment` node performs a rotation on a fragment site indicated by a {{< node "Select" >}} nodes.

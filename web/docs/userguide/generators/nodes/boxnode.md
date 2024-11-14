@@ -4,14 +4,6 @@ linkTitle: Box
 description: Define / create a unit cell
 ---
 
-{{< htable >}}
-| | |
-|-|-|
-|Context|Generation|
-|Name Required?|No|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `Box` node creates a unit cell for the current configuration.

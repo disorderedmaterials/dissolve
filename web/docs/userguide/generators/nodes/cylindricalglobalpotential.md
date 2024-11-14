@@ -4,14 +4,6 @@ linkTitle: CylindricalGlobalPotential
 description: Create a cylindrical global potential affecting all atoms
 ---
 
-{{< htable >}}
-| | |
-|--------|----------|
-|Context|Generation|
-|Name Required?|No|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `CylindricalGlobalPotential` node allows an additional, global potential with cylindrical shape to be defined in a configuration, acting on all atoms and in a specified direction.

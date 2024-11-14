@@ -4,14 +4,6 @@ linkTitle: Pick
 description: Pick species molecules from anywhere inside a box
 ---
 
-{{< htable >}}
-| | |
-|--------|----------|
-|Context|Generation|
-|Name Required?|Yes|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `Pick` node picks (selects) all molecules of a given species type from the current configuration, for further processing by other nodes.

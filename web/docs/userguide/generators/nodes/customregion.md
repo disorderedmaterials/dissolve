@@ -4,14 +4,6 @@ linkTitle: CustomRegion
 description: Constructs a custom region according to a specified equation
 ---
 
-{{< htable >}}
-| | |
-|-|-|
-|Context|Generation|
-|Name Required?|Yes|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `CustomRegion` node generates a region defined by an arbitrary equation.

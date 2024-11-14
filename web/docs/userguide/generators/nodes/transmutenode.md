@@ -4,14 +4,6 @@ linkTitle: Transmute
 description: Transmute molecules in a selection into another species
 ---
 
-{{< htable >}}
-| | |
-|--------|----------|
-|Context|Generation|
-|Name Required?|No|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `Transmute` node transmutes all molecules in the supplied selection into molecules of the specified type.

@@ -4,14 +4,6 @@ linkTitle: PickProximity
 description: Pick species molecules near to other molecules
 ---
 
-{{< htable >}}
-| | |
-|--------|----------|
-|Context|Generation|
-|Name Required?|Yes|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `PickProximity` node picks (selects) molecules of any species type if they are near to a given number of molecules of another type.

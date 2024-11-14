@@ -4,14 +4,6 @@ linkTitle: PickRegion
 description: Pick species molecules from a specific region
 ---
 
-{{< htable >}}
-| | |
-|--------|----------|
-|Context|Generation|
-|Name Required?|Yes|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `PickRegion` node picks (selects) all molecules of any species type from a specified region, for further processing by other nodes.

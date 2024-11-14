@@ -4,14 +4,6 @@ linkTitle: CylindricalRegion
 description: Constructs a cylindrical region
 ---
 
-{{< htable >}}
-| | |
-|-|-|
-|Context|Generation|
-|Name Required?|Yes|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `GeneralRegion` node generates a region encapsulating the free or void space within a box - it is therefore particularly suitable as a region for the insertion of new molecules by an {{< node "Add" >}} node.

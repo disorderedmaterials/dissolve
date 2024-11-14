@@ -4,14 +4,6 @@ linkTitle: Parameters
 description: Store numerical reference parameters
 ---
 
-{{< htable >}}
-| | |
-|-|-|
-|Context|Any|
-|Name Required?|No|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `Parameters` node stores zero or more named numerical values that may be referenced in [expressions]({{< ref "expressions" >}}) within nodes contained in the same encompassing [generator]({{< ref "generators" >}}).

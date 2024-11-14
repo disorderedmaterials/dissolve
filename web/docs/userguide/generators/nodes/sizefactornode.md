@@ -4,14 +4,6 @@ linkTitle: SizeFactor
 description: Apply a size factor to a configuration
 ---
 
-{{< htable >}}
-| | |
-|--------|----------|
-|Context|Generation|
-|Name Required?|No|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `SizeFactor` node applies a "size factor" scaling (to use the terminology of the original EPSR) to the current configuration, effectively scaling the box lengths and the centres of mass of molecules in order to move them apart. The intent of this operation is typically to prevent any rings within, for instance, aromatic species from being interlocked following the random initial insertion of molecules, but can be useful in the initial creation of many systems.

@@ -4,14 +4,6 @@ linkTitle: AddPair
 description: Insert correlated molecule pair into a box
 ---
 
-{{< htable >}}
-| | |
-|--------|----------|
-|Context|Generation|
-|Name Required?|No|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `AddPair` node is a companion to the {{< node "Add" >}} node, but instead operates on a pair of species. The population refers to a population of pairs of species which are added at their current coordinates, then translated / rotated uniformly in order to maintain their relative coordinates.

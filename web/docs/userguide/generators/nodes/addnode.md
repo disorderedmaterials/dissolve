@@ -4,14 +4,6 @@ linkTitle: Add
 description: Insert molecules into a box
 ---
 
-{{< htable >}}
-| | |
-|--------|----------|
-|Context|Generation|
-|Name Required?|No|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `Add` node is a core component of nearly all configuration generators requiring the initial construction of a suitable starting point. It adds a number of copies of a given target species to the current box, either at specific or random coordinates. By default, the box is resized to accommodate the new population of molecules based on a supplied density.

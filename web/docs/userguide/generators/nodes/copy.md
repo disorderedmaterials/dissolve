@@ -4,14 +4,6 @@ linkTitle: Copy
 description: Copy a configuration
 ---
 
-{{< htable >}}
-| | |
-|--------|----------|
-|Context|Generation|
-|Name Required?|No|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `Copy` node copies the box and all molecules from a source configuration into the current one, providing e.g. a basis for further editing.

@@ -4,14 +4,6 @@ linkTitle: CoordinateSets
 description: Generate a population of molecules from a Species
 ---
 
-{{< htable >}}
-| | |
-|--------|----------|
-|Context|Generation|
-|Name Required?|Yes|
-|Branches|--|
-{{< /htable >}}
-
 ## Overview
 
 The `CoordinateSets` node generates a population of molecules from a reference species.
