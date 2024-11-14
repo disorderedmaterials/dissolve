@@ -8,7 +8,7 @@ description: Calculate total correlation functions between all atom types
 
 The `TR` module calculates a full set of partial total distribution functions, $t_{ij}(r)$ for each unique pair of atom types $i$ and $j$ present in the target configuration(s).
 
-The `TR` module uses equations from Keen, D. A. (2001) and the numbered equations are referenced from there.
+The `TR` module uses equations from Keen, [D. A. (2001)](https://journals.iucr.org/paper?S0021889800019993) and the numbered equations are referenced from there.
 
 ## Description
 
@@ -21,4 +21,4 @@ Where $t_{ij}(r)$ is calculated via:
 $$ t_{ij}(r) = 4 \pi r c_j \rho_0 g_{ij}  (33)$$
 
 ## Note
-The partial tr that is output from the module does not include the scaling before the summation is done. It is recommended for comparison of the partials to the total TR that the user scales them via equation 31. This includes multiplying the partial output from Dissolve by $c_i$, $b_i$ and $b_j$.
+The partial $t(r)$ that are output from the module do not include the scaling before the summation is done. It is recommended for comparison of the partials to the total $T(R)$ that the user scales them via equation 31. This includes multiplying the partial output from Dissolve by $c_i$, $b_i$ and $b_j$.
