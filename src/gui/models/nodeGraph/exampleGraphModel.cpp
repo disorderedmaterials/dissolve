@@ -3,32 +3,60 @@
 
 #include "exampleGraphModel.h"
 #include "nodeWrapper.h"
-#include "templates/overload_visitor.h"
+#include <type_traits>
 #include <variant>
 
 template <> QVariant nodeGetValue<nodeValue>(const nodeValue value)
 {
-    return std::visit(overloaded{[](double arg) { return QVariant::fromValue(arg); },
-                                 [](nodeValue *arg)
-                                 {
-                                     if (arg)
-                                         return nodeGetValue<nodeValue>(*arg);
-                                     QVariant empty;
-                                     return empty;
-                                 }},
-                      value.value);
-}
+    return std::visit(
+        [](auto arg) -> QVariant
+        {
+            if constexpr (std::is_same_v<decltype(arg), double>)
+            {
+                return QVariant::fromValue(arg);
+            }
+            else
+            {
+                if (arg)
+                    return nodeGetValue<nodeValue>(*arg);
+                return {};
+            }
+        },
+        value.value);
+};
 
 template <> std::string nodeTypeName<nodeValue>(const nodeValue &value)
 {
-    return std::visit(overloaded{[](double arg) { return "number"; }, [](nodeValue *arg) { return "ptr"; }}, value.value);
+    return std::visit(
+        [](auto arg) -> std::string
+        {
+            if constexpr (std::is_same_v<decltype(arg), double>)
+            {
+                return "number";
+            }
+            else
+            {
+                return "ptr";
+            }
+        },
+        value.value);
 }
 
 template <> std::string nodeTypeIcon<nodeValue>(const nodeValue &value)
 {
-    return std::visit(overloaded{[](double arg) { return "qrc:/Dissolve/icons/open.svg"; },
-                                 [](nodeValue *arg) { return "qrc:/Dissolve/icons/open.svg"; }},
-                      value.value);
+    return std::visit(
+        [](auto arg) -> std::string
+        {
+            if constexpr (std::is_same_v<decltype(arg), double>)
+            {
+                return "qrc:/Dissolve/icons/open.svg";
+            }
+            else
+            {
+                return "qrc:/Dissolve/icons/cross.svg";
+            }
+        },
+        value.value);
 }
 
 template <> std::string nodeName<nodeValue>(const nodeValue &value) { return value.name; }
