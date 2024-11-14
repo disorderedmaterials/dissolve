@@ -98,6 +98,7 @@ bool Configuration::initialiseContent(const GeneratorContext &generatorContext)
     empty();
 
     appliedSizeFactor_ = std::nullopt;
+    requestedSizeFactor_ = defaultSizeFactor_;
 
     // Run the generator Generator
     if (!generate(generatorContext))
