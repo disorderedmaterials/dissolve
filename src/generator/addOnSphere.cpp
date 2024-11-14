@@ -58,18 +58,6 @@ bool AddOnSphereGeneratorNode::prepare(const GeneratorContext &generatorContext)
     if (speciesSite_->instances().size() > 1)
         return Messenger::error("Site must have a single instance - i.e. be unique in the parent species.\n");
 
-    // If positioningType_ type is 'Region', must have a suitable node defined
-    if (positioningType_ == AddGeneratorNode::PositioningType::Region && !region_)
-        return Messenger::error("A valid region must be specified with the 'Region' keyword.\n");
-    else if (positioningType_ != AddGeneratorNode::PositioningType::Region && region_)
-        Messenger::warn(
-            "A region has been specified ({}) but the positioning type is set to '{}' (rather than targetting the region).\n",
-            region_->name(), AddGeneratorNode::positioningTypes().keyword(positioningType_));
-
-    // Check scalable axes definitions
-    if (!scaleA_ && !scaleB_ && !scaleC_)
-        return Messenger::error("Must have at least one scalable box axis!\n");
-
     return true;
 }
 
