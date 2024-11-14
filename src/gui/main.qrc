@@ -9,6 +9,7 @@
     <file>icons/nodes/CustomRegion.svg</file>
     <file>icons/nodes/CoordinateSets.svg</file>
     <file>icons/nodes/AddPair.svg</file>
+    <file>icons/nodes/AddOnSphere.svg</file>
     <file>icons/nodes/CylindricalRegion.svg</file>
     <file>icons/nodes/Copy.svg</file>
     <file>icons/nodes/GeneralRegion.svg</file>
@@ -69,7 +70,7 @@
     <file>icons/modules/Compare.svg</file>
     <file>icons/modules/TemperatureSchedule.svg</file>
     <file>icons/modules/VoxelDensity.svg</file>
-    <file>icons/modules/TR.svg</file>    
+    <file>icons/modules/TR.svg</file>
   </qresource>
   <qresource prefix="general">
     <file>icons/ff.svg</file>
