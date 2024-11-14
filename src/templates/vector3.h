@@ -310,7 +310,7 @@ template <class T> class Vec3 : public Serialisable<typename SerialisableContext
     // Normalise the vector to unity
     void normalise()
     {
-        double mag = sqrt(x * x + y * y + z * z);
+        auto mag = sqrt(x * x + y * y + z * z);
         if (mag < 1.0E-8)
             zero();
         else
