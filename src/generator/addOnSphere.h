@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/units.h"
+#include "classes/site.h"
 #include "generator/add.h"
 #include "generator/node.h"
 #include "generator/nodeValue.h"
@@ -48,6 +49,10 @@ class AddOnSphereGeneratorNode : public AddGeneratorNodeBase
     NodeValue variance_{0.0};
     // Distribution style for points on the sphere
     PointDistributionStyle pointDistributionStyle_{PointDistributionStyle::Fibonacci};
+    // Whether to orient sites on the sphere
+    bool orient_{false};
+    // Axis on site to orient along sphere tangent
+    Site::SiteAxis axis_{Site::SiteAxis::XAxis};
 
     /*
      * Execute

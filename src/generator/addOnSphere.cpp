@@ -7,6 +7,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "generator/regionBase.h"
+#include "keywords/bool.h"
 #include "keywords/node.h"
 #include "keywords/nodeValue.h"
 #include "keywords/speciesSite.h"
@@ -27,6 +28,9 @@ void AddOnSphereGeneratorNode::setUpKeywords()
     keywords_.add<EnumOptionsKeyword<AddOnSphereGeneratorNode::PointDistributionStyle>>(
         "Distribution", "Method for distributing points on the underlying sphere", pointDistributionStyle_,
         pointDistributionStyles());
+    keywords_.add<BoolKeyword>("Orient", "Whether to orient the site on the surface", orient_);
+    keywords_.add<EnumOptionsKeyword<Site::SiteAxis>>("Axis", "Site axis to orient along surface tangent", axis_,
+                                                      Site::siteAxis());
     keywords_.add<NodeValueKeyword>("Variance", "Random variance to add to distributed points on the sphere", variance_, this);
 
     setUpBaseKeywords();
@@ -57,6 +61,10 @@ bool AddOnSphereGeneratorNode::prepare(const GeneratorContext &generatorContext)
     // Check site multiplicity
     if (speciesSite_->instances().size() > 1)
         return Messenger::error("Site must have a single instance - i.e. be unique in the parent species.\n");
+
+    // Check for axes on the site if orientation was requested
+    if (orient_ && !speciesSite_->hasAxes())
+        return Messenger::error("Orientation requested, but the selected site has no defined axes.\n");
 
     return true;
 }
@@ -164,17 +172,24 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
         rLocal *= r;
 
         // Generate a working site from the molecule
-        Site site(speciesSite_, {}, mol, Vec3<double>());
-        site.createFromInstance(siteInstance, box);
+        Site site(speciesSite_, {}, mol, siteInstance, box);
 
-        mol->setCentreOfGeometry(box, sphereCentre + rLocal);
+        // Locate the site on the sphere
+        mol->translate((sphereCentre + rLocal) - site.origin());
 
-        //        // Generate and apply a random rotation matrix
-        //        if (rotate_)
-        //        {
-        //            transform.createRotationXY(randomBuffer.randomPlusMinusOne() * 180.0, randomBuffer.randomPlusMinusOne() *
-        //            180.0); mol->transform(box, transform);
-        //        }
+        // Orient the site?
+        if (orient_)
+        {
+            // Set up the target matrix
+            Matrix3 target;
+            target.createFromVector(rLocal.normalised(), axis_);
+
+            // Copy the site matrix and invert it
+            Matrix3 source = site.axes();
+            source.invert();
+
+            mol->transform(box, target * source, sphereCentre + rLocal);
+        }
     }
 
     Messenger::print("[AddOnSphere] New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n",
