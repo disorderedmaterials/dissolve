@@ -3,6 +3,7 @@
 
 #include "generatorGraphModel.h"
 #include "expression/variable.h"
+#include "gui/models/nodeGraph/instances/all.h"
 #include "modules/gr/gr.h"
 #include "nodeWrapper.h"
 #include "templates/overload_visitor.h"

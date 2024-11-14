@@ -8,7 +8,7 @@
 #include <qabstractitemmodel.h>
 #include <qvariant.h>
 
-template <typename T, typename Context> class GraphModel;
+template <typename T> class GraphModel;
 
 class GraphNodeModelBase : public QAbstractListModel
 {
@@ -17,20 +17,20 @@ class GraphNodeModelBase : public QAbstractListModel
 };
 
 /** A list model that provides the tick labels of the axis */
-template <typename T, typename Context> class GraphNodeModel : public GraphNodeModelBase
+template <typename T> class GraphNodeModel : public GraphNodeModelBase
 {
-    friend GraphModel<T, Context>;
+    friend GraphModel<T>;
 
     public:
-    GraphNodeModel(GraphModel<T, Context> *parent = nullptr) : parent_(parent) {}
-    GraphNodeModel(const GraphNodeModel<T, Context> &other) : parent_(other.parent_) {}
+    GraphNodeModel(GraphModel<T> *parent = nullptr) : parent_(parent) {}
+    GraphNodeModel(const GraphNodeModel<T> &other) : parent_(other.parent_) {}
 
-    GraphNodeModel<T, Context> &operator=(const GraphNodeModel<T, Context> &other)
+    GraphNodeModel<T> &operator=(const GraphNodeModel<T> &other)
     {
         parent_ = other.parent_;
         return *this;
     }
-    bool operator!=(const GraphNodeModel<T, Context> &other) { return &parent_ != &other.parent_; }
+    bool operator!=(const GraphNodeModel<T> &other) { return &parent_ != &other.parent_; }
     int rowCount(const QModelIndex &parent = QModelIndex()) const override { return parent_->items.size(); }
     QHash<int, QByteArray> roleNames() const override
     {
@@ -86,5 +86,5 @@ template <typename T, typename Context> class GraphNodeModel : public GraphNodeM
     void endInsert() { endInsertRows(); }
 
     private:
-    GraphModel<T, Context> *parent_;
+    GraphModel<T> *parent_;
 };

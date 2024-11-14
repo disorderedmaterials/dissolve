@@ -1,4 +1,5 @@
 #include "generator/generator.h"
+#include "generator.h"
 #include "gui/models/nodeGraph/generatorGraphModel.h"
 #include "gui/models/nodeGraph/nodeWrapper.h"
 
@@ -26,4 +27,4 @@ template <> QVariant nodeData(Generator *const &value, int role)
 
 template <> bool nodeSetData(Generator *&item, const QVariant &value, int role) { return false; }
 
-template <> bool nodeDelete(Generator *&item, CoreData &coreData) { return false; }
+template <> bool nodeDelete(Generator *&item, typename GraphNodeContext<Generator *>::type &coreData) { return false; }

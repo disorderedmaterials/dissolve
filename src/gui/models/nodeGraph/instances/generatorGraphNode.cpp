@@ -1,6 +1,7 @@
+#include "generatorGraphNode.h"
 #include "generator/node.h"
 #include "gui/models/nodeGraph/generatorGraphModel.h"
-#include "gui/models/nodeGraph/nodeWrapper.h"
+// #include "gui/models/nodeGraph/nodeWrapper.h"
 
 template <> QVariant nodeGetValue<GeneratorGraphNode>(const GeneratorGraphNode value)
 {
@@ -82,7 +83,8 @@ template <> QHash<int, QByteArray> &nodeRoleNames<GeneratorGraphNode>(QHash<int,
     return roles;
 }
 
-template <> bool nodeDelete<GeneratorGraphNode>(GeneratorGraphNode &item, CoreData &coreData)
+template <>
+bool nodeDelete<GeneratorGraphNode>(GeneratorGraphNode &item, typename GraphNodeContext<GeneratorGraphNode>::type &coreData)
 {
     return std::visit([&](auto *arg) -> bool { return nodeDelete(arg, coreData); }, item.value);
 }

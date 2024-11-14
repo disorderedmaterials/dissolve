@@ -2,6 +2,7 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "exampleGraphModel.h"
+#include "nodeWrapper.h"
 #include "templates/overload_visitor.h"
 #include <variant>
 
@@ -80,4 +81,4 @@ nodeValue::nodeValue(QVariant var)
         value = var.toDouble();
 }
 
-template <> bool nodeDelete<nodeValue>(nodeValue &value, CoreData &context) { return true; }
+template <> bool nodeDelete<nodeValue>(nodeValue &value, GraphNodeContext<nodeValue>::type &context) { return true; }

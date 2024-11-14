@@ -7,6 +7,7 @@
 #include "classes/coreData.h"
 #include "graphModel.h"
 #include "gui/models/configurationModel.h"
+#include "gui/models/nodeGraph/instances/all.h"
 #include "nodeWrapper.h"
 
 using GeneratorGraphInnerType = std::variant<Configuration *, Generator *, GeneratorNode *>;
@@ -18,7 +19,12 @@ class GeneratorGraphNode
     GeneratorGraphInnerType value;
 };
 
-class GeneratorGraphModel : public GraphModel<GeneratorGraphNode, CoreData>
+template <> struct GraphNodeContext<GeneratorGraphNode>
+{
+    using type = CoreData *;
+};
+
+class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
 {
     Q_OBJECT
     Q_PROPERTY(ConfigurationModel *world READ world WRITE setWorld);

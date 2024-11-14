@@ -1,6 +1,7 @@
 #include "classes/configuration.h"
 #include "gui/models/nodeGraph/generatorGraphModel.h"
 #include "gui/models/nodeGraph/nodeWrapper.h"
+#include "configuration.h"
 
 template <> std::string nodeTypeName<Configuration *>(Configuration *const &value) { return "Configuration"; }
 
@@ -49,8 +50,8 @@ template <> bool nodeSetData(Configuration *&item, const QVariant &value, int ro
     }
 }
 
-template <> bool nodeDelete(Configuration *&item, CoreData &coreData)
+template <> bool nodeDelete(Configuration *&item, typename GraphNodeContext<Configuration *>::type &coreData)
 {
-  coreData.removeConfiguration(item);
+  coreData->removeConfiguration(item);
   return true;
 }

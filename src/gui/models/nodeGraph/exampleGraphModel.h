@@ -16,4 +16,4 @@ class nodeValue
     std::variant<double, nodeValue *> value;
 };
 
-typedef GraphModel<nodeValue, CoreData> ExampleGraphModel;
+typedef GraphModel<nodeValue> ExampleGraphModel;
