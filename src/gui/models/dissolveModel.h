@@ -43,6 +43,7 @@ class DissolveModel : public QObject
     ConfigurationModel configurationModel_;
     ModuleLayersModel moduleLayersModel_;
 
+    public:
     // Getter for filename
     QUrl fileName();
     // Setter for filename

@@ -41,7 +41,7 @@ class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
     public Q_SLOTS:
     void handleReset();
 
-    private:
+    public:
     // Dissolve Model Getter
     DissolveModel *world();
     // Dissolve Model Setter

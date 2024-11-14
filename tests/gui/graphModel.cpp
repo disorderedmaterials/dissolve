@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2024 Team Dissolve and contributors
 
+
+#include "gui/models/dissolveModel.h"
 #include "gui/models/nodeGraph/exampleGraphModel.h"
+#include "gui/models/nodeGraph/generatorGraphModel.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <qnamespace.h>
@@ -9,7 +12,7 @@
 namespace UnitTest
 {
 
-TEST(GraphModelTest, GraphModel)
+TEST(GraphModelTest, ExampleGraphModel)
 {
     ExampleGraphModel model;
 
@@ -62,6 +65,71 @@ TEST(GraphModelTest, GraphModel)
     EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 4).toString(),
               "qrc:/Dissolve/icons/open.svg");
     EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 5).toDouble(), 7.5);
+}
+
+TEST(GraphModelTest, GeneratorGraphModel)
+{
+    DissolveModel dissolveModel;
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+    dissolveModel.setDissolve(dissolve);
+
+    GeneratorGraphModel ggm;
+    ggm.setWorld(&dissolveModel);
+
+    dissolveModel.loadInput(QUrl("file:dissolve/input/broadening-argon.txt"));
+    ggm.handleReset();
+
+    EXPECT_EQ(ggm.nEdges(), 4);
+
+    auto nodes = ggm.nodes();
+    EXPECT_EQ(nodes->rowCount(), 5);
+
+    // Flip the hash to get the roles by name
+    QHash<QByteArray, int> flipped;
+    for (auto [k, v] : nodes->roleNames().asKeyValueRange())
+        flipped.insert(v, k);
+
+    //Ensure that necessary roeslare present
+    ASSERT_NE(flipped["type"], 0);
+    ASSERT_NE(flipped["name"], 0);
+    ASSERT_NE(flipped["icon"], 0);
+    ASSERT_NE(flipped["temperature"], 0);
+    ASSERT_NE(flipped["atomicDensity"], 0);
+
+    // Bulk Configuration
+    EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["type"]).toString().toStdString(),
+              std::string("Configuration"));
+    EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["name"]).toString().toStdString(),
+              std::string("liquid"));
+    EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["temperature"]).toDouble(),
+              300.0);
+    EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["atomicDensity"]).toDouble(),
+              0.0);
+
+    // Main Generator
+    EXPECT_EQ(nodes->data(nodes->index(1, 0), flipped["type"]).toString().toStdString(),
+              std::string("Generator"));
+
+    // Box Node
+    EXPECT_EQ(nodes->data(nodes->index(2, 0), flipped["type"]).toString().toStdString(),
+              std::string("GeneratorNode"));
+    EXPECT_EQ(nodes->data(nodes->index(2, 0), flipped["icon"]).toString().toStdString(),
+              "qrc:/Dissolve/icons/nodes/Box.svg");
+
+    // Add Node
+    EXPECT_EQ(nodes->data(nodes->index(3, 0), flipped["type"]).toString().toStdString(),
+              std::string("GeneratorNode"));
+    EXPECT_EQ(nodes->data(nodes->index(3, 0), flipped["icon"]).toString().toStdString(),
+              "qrc:/Dissolve/icons/nodes/Add.svg");
+
+    // Import Node
+    EXPECT_EQ(nodes->data(nodes->index(4, 0), flipped["type"]).toString().toStdString(),
+              std::string("GeneratorNode"));
+    EXPECT_EQ(nodes->data(nodes->index(4, 0), flipped["icon"]).toString().toStdString(),
+              "qrc:/Dissolve/icons/nodes/ImportCoordinates.svg");
+
+
 }
 
 } // namespace UnitTest
