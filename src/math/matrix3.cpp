@@ -127,6 +127,30 @@ void Matrix3::print() const
 // Set zero matrix
 void Matrix3::zero() { std::fill(matrix_.begin(), matrix_.end(), 0.0); }
 
+// Create orthogonal matrix around supplied single column vector
+void Matrix3::createFromVector(const Vec3<double> &v, int columnIndex)
+{
+    setColumn(columnIndex, v);
+    const auto v2 = v.orthogonal();
+    switch (columnIndex)
+    {
+        case 0:
+            setColumn(1, v2);
+            setColumn(2, v * v2);
+            break;
+        case 1:
+            setColumn(0, v2);
+            setColumn(2, v * v2);
+            break;
+        case 2:
+            setColumn(0, v2);
+            setColumn(1, v * v2);
+            break;
+        default:
+            throw(std::runtime_error("Invalid column index.\n"));
+    }
+}
+
 // Return transpose of current matrix
 Matrix3 &Matrix3::transpose() const
 {

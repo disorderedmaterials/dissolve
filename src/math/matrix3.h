@@ -42,6 +42,8 @@ class Matrix3
     void print() const;
     // Set the zero matrix
     void zero();
+    // Create orthogonal matrix around supplied single column vector
+    void createFromVector(const Vec3<double> &v, int columnIndex);
     // Return transpose of current matrix
     Matrix3 &transpose() const;
     // Transform the supplied vector by the transpose of the current matrix
