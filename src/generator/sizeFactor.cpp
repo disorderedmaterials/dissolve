@@ -12,6 +12,13 @@ SizeFactorGeneratorNode::SizeFactorGeneratorNode() : GeneratorNode(NodeType::Siz
 }
 
 /*
+ * Identity
+ */
+
+// Return whether a name for the node must be provided
+bool SizeFactorGeneratorNode::mustBeNamed() const { return false; }
+
+/*
  * Execute
  */
 

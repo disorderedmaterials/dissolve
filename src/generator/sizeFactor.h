@@ -17,6 +17,13 @@ class SizeFactorGeneratorNode : public GeneratorNode
     NodeValue sizeFactor_{10.0};
 
     /*
+     * Identity
+     */
+    public:
+    // Return whether a name for the node must be provided
+    bool mustBeNamed() const override;
+
+    /*
      * Execute
      */
     public:
