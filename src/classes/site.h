@@ -70,6 +70,4 @@ class Site
     bool hasAxes() const;
     // Return local axes
     const Matrix3 &axes() const;
-    // Rotate about axis
-    void rotate(double angle, Site::SiteAxis axis);
 };
