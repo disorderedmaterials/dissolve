@@ -6,6 +6,7 @@
 #include "classes/box.h"
 #include "classes/species.h"
 #include "classes/speciesBond.h"
+#include "data/atomicMasses.h"
 #include "templates/algorithms.h"
 
 /*
@@ -167,6 +168,30 @@ Vec3<double> Molecule::centreOfGeometry(const Box *box) const
     traverseLocal(box, [&cog](auto *j, auto rJ) { cog += rJ; });
 
     return cog / nAtoms();
+}
+
+// Calculate and return centre of geometry over supplied atom indices
+Vec3<double> Molecule::centreOfGeometry(const Box *box, const std::vector<int> &indices) const
+{
+    const auto ref = atoms_[indices.front()]->r();
+    return std::accumulate(std::next(indices.begin()), indices.end(), ref,
+                           [&](const auto &acc, const auto idx) { return acc + box->minimumImage(atoms_[idx]->r(), ref); }) /
+           indices.size();
+}
+
+// Calculate and return centre of mass over supplied atom indices
+Vec3<double> Molecule::centreOfMass(const Box *box, const std::vector<int> &indices) const
+{
+    auto mass = AtomicMass::mass(atoms_[indices.front()]->speciesAtom()->Z());
+    const auto ref = atoms_[indices.front()]->r();
+    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
+                                [&](const auto &acc, const auto idx)
+                                {
+                                    auto mass = AtomicMass::mass(atoms_[idx]->speciesAtom()->Z());
+                                    return std::pair<Vec3<double>, double>(
+                                        acc.first + box->minimumImage(atoms_[idx]->r(), ref) * mass, acc.second + mass);
+                                });
+    return sums.first / sums.second;
 }
 
 // Transform molecule with supplied matrix, using centre of geometry as the origin

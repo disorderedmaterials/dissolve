@@ -76,6 +76,10 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     void setCentreOfGeometry(const Box *box, const Vec3<double> newCentre);
     // Calculate and return centre of geometry
     Vec3<double> centreOfGeometry(const Box *box) const;
+    // Calculate and return centre of geometry over supplied atom indices
+    Vec3<double> centreOfGeometry(const Box *box, const std::vector<int> &indices) const;
+    // Calculate and return centre of mass over supplied atom indices
+    Vec3<double> centreOfMass(const Box *box, const std::vector<int> &indices) const;
     // Transform molecule with supplied matrix, using centre of geometry as the origin
     void transform(const Box *box, const Matrix3 &transformationMatrix);
     // Transform molecule with supplied matrix about specified origin
