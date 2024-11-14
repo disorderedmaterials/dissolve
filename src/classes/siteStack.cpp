@@ -69,26 +69,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
         auto index = 0;
         for (const auto &instance : instances)
         {
-            origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, instance.originIndices())
-                                                        : centreOfGeometry(*molecule, box, instance.originIndices());
-
-            if (sitesHaveOrientation_)
-            {
-                // Get vector from site origin to x-axis reference point and normalise it
-                x = box->minimumVector(origin, centreOfGeometry(*molecule, box, instance.xAxisIndices()));
-                x.normalise();
-
-                // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
-                y = box->minimumVector(origin, centreOfGeometry(*molecule, box, instance.yAxisIndices()));
-                y.orthogonalise(x);
-                y.normalise();
-
-                sites_.emplace_back(speciesSite_, index, molecule, Matrix3(x, y, x * y), origin);
-            }
-            else
-                sites_.emplace_back(speciesSite_, index, molecule, origin);
-
-            ++index;
+            sites_.emplace_back(speciesSite_, index++, molecule, instance, box);
         }
     }
     return true;

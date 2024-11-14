@@ -9,8 +9,10 @@
 #include <optional>
 
 // Forward Declarations
+class Box;
 class Molecule;
 class SpeciesSite;
+class SpeciesSiteInstance;
 
 // Site Definition
 class Site
@@ -20,6 +22,8 @@ class Site
          std::shared_ptr<const Molecule> molecule = {}, const Vec3<double> &origin = {});
     Site(const SpeciesSite *parent = nullptr, std::optional<int> uniqueSiteIndex = {},
          std::shared_ptr<const Molecule> molecule = {}, const Matrix3 &axes = {}, const Vec3<double> &origin = {});
+    Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
+         const SpeciesSiteInstance &instance, const Box *box);
     ~Site() = default;
     Site &operator=(const Site &source) = default;
     Site(const Site &source) = default;

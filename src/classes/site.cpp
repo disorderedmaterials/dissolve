@@ -2,8 +2,11 @@
 // Copyright (c) 2024 Team Dissolve and contributors
 
 #include "classes/site.h"
-
 #include "base/messenger.h"
+#include "classes/box.h"
+#include "classes/molecule.h"
+#include "classes/speciesSite.h"
+#include "classes/speciesSiteInstance.h"
 #include <utility>
 
 Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
@@ -17,6 +20,34 @@ Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::s
     : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule)), origin_(origin), axes_(axes),
       hasAxes_(true)
 {
+}
+
+Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
+           const SpeciesSiteInstance &instance, const Box *box)
+    : parent_(parent), molecule_(std::move(molecule))
+{
+    origin_ = parent_->originMassWeighted() ? molecule_->centreOfMass(box, instance.originIndices())
+                                            : molecule_->centreOfGeometry(box, instance.originIndices());
+
+    if (parent_->hasAxes())
+    {
+        // Get vector from site origin to x-axis reference point and normalise it
+        auto x = box->minimumVector(origin_, molecule_->centreOfGeometry(box, instance.xAxisIndices()));
+        x.normalise();
+
+        axes_.setColumn(0, x);
+
+        // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
+        auto y = box->minimumVector(origin_, molecule_->centreOfGeometry(box, instance.yAxisIndices()));
+        y.orthogonalise(x);
+        y.normalise();
+
+        axes_.setColumn(1, y);
+
+        axes_.setColumn(2, x * y);
+
+        hasAxes_ = true;
+    }
 }
 
 // Return enum options for SiteAxis
