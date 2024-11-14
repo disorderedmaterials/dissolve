@@ -17,15 +17,17 @@ Q_DECLARE_METATYPE(GeneratorNode *)
 GeneratorGraphNode::GeneratorGraphNode(QVariant var) {}
 
 // Dissolve Model Setter
-void GeneratorGraphModel::setWorld(ConfigurationModel *value)
+void GeneratorGraphModel::setWorld(DissolveModel *value)
 {
     if (!value)
         return;
     world_ = value;
-    if (world_->rowCount() == 0)
+    context_ = &value->dissolve()->coreData();
+    auto config = world_->configurationsModel();
+    if (config->rowCount() == 0)
         return;
     int index = 50;
-    auto nodes = world_->rawData(world_->index(0))->generator().nodes();
+    auto nodes = config->rawData(config->index(0))->generator().nodes();
     nodes_.beginInsert(nodes.size());
     for (auto node : nodes)
     {
@@ -42,7 +44,7 @@ void GeneratorGraphModel::setWorld(ConfigurationModel *value)
 }
 
 // Dissolve Model Getter
-ConfigurationModel *GeneratorGraphModel::world() { return world_; }
+DissolveModel *GeneratorGraphModel::world() { return world_; }
 
 void GeneratorGraphModel::handleReset()
 {
@@ -50,9 +52,11 @@ void GeneratorGraphModel::handleReset()
 
     int index = 1;
     std::vector<std::pair<int, int>> edges;
-    for (auto i = 0; i < world_->rowCount(); ++i)
+
+    auto configuration = world_->configurationsModel();
+    for (auto i = 0; i < configuration->rowCount(); ++i)
     {
-        auto config = world_->rawData(world_->index(i));
+        auto config = configuration->rawData(configuration->index(i));
         const auto size = nodes_.rowCount();
         nodes_.beginInsert(config->generator().rootSequence().sequence().size() + 2);
         emplace_back(90 * index++, 60 * index++, config);

@@ -133,7 +133,7 @@ ApplicationWindow {
             id: exampleGraphTab
             ModuleGraphModel {
                 id: graphModel
-                world: dissolve.configurationsModel
+                world: dissolve
             }
             Connections {
                 target: dissolve.configurationsModel

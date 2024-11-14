@@ -16,7 +16,7 @@ template <typename T> class GraphModel : public GraphModelBase
     GraphModel() : nodes_(this) {}
     std::vector<NodeWrapper<T>> items;
 
-    private:
+    protected:
     typename GraphNodeContext<T>::type context_;
 
     public:

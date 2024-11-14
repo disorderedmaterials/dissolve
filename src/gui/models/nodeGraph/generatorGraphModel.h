@@ -6,7 +6,7 @@
 #include "classes/configuration.h"
 #include "classes/coreData.h"
 #include "graphModel.h"
-#include "gui/models/configurationModel.h"
+#include "gui/models/dissolveModel.h"
 #include "gui/models/nodeGraph/instances/all.h"
 #include "nodeWrapper.h"
 
@@ -27,7 +27,7 @@ template <> struct GraphNodeContext<GeneratorGraphNode>
 class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
 {
     Q_OBJECT
-    Q_PROPERTY(ConfigurationModel *world READ world WRITE setWorld);
+    Q_PROPERTY(DissolveModel *world READ world WRITE setWorld);
 
     public:
     enum PropertyIndex
@@ -43,9 +43,9 @@ class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
 
     private:
     // Dissolve Model Getter
-    ConfigurationModel *world();
+    DissolveModel *world();
     // Dissolve Model Setter
-    void setWorld(ConfigurationModel *value);
-    ConfigurationModel *world_;
+    void setWorld(DissolveModel *value);
+    DissolveModel *world_;
     void emplace_back(int x, int y, GeneratorGraphInnerType value);
 };

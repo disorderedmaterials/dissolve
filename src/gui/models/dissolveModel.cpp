@@ -7,6 +7,9 @@
  * Data
  */
 
+// Get reference to Dissolve
+Dissolve *DissolveModel::dissolve() { return dissolve_; }
+
 // Set reference to Dissolve
 void DissolveModel::setDissolve(Dissolve &dissolve)
 {
