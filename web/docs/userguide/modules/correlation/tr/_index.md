@@ -21,4 +21,4 @@ Where $t_{ij}(r)$ is calucluated via:
 $$ t_{ij}(r) = 4 \pi r c_j \rho_0 g_{ij}  (33)$$
 
 ## Note
-It is reccomended to compare the partials to the total that the user scales them via eqution 31.
+The partial tr that is output from the module does not include the scaling before the summation is done. It is reccomended for comparison of the partials to the total TR that the user scales them via eqution 31. This includes multiplying the partial output from Dissolve by $c_i$, $b_i$ and $b_j$.
