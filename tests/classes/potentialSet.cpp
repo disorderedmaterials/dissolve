@@ -19,9 +19,9 @@ TEST(PotentialSetTest, SimpleAddition)
     pots.potentialMap()["A-C"].ep = x;
 
     pots += pots;
-    EXPECT_EQ(4, pots.potentialMap()["A-A"].ep.value(0));
-    EXPECT_EQ(4, pots.potentialMap()["A-B"].ep.value(0));
-    EXPECT_EQ(4, pots.potentialMap()["A-C"].ep.value(0));
+    EXPECT_EQ(4.0, pots.potentialMap()["A-A"].ep.value(0));
+    EXPECT_EQ(4.0, pots.potentialMap()["A-B"].ep.value(0));
+    EXPECT_EQ(4.0, pots.potentialMap()["A-C"].ep.value(0));
 }
 
 TEST(PotentialSetTest, Multiplication)
@@ -35,9 +35,32 @@ TEST(PotentialSetTest, Multiplication)
     pots.potentialMap()["A-C"].ep = x;
 
     pots *= 2;
-    EXPECT_EQ(6, pots.potentialMap()["A-A"].ep.value(0));
-    EXPECT_EQ(6, pots.potentialMap()["A-B"].ep.value(0));
-    EXPECT_EQ(6, pots.potentialMap()["A-C"].ep.value(0));
+    EXPECT_EQ(6.0, pots.potentialMap()["A-A"].ep.value(0));
+    EXPECT_EQ(6.0, pots.potentialMap()["A-B"].ep.value(0));
+    EXPECT_EQ(6.0, pots.potentialMap()["A-C"].ep.value(0));
+}
+
+TEST(PotentialSetTest, ComplexAddition)
+{
+    PotentialSet pots;
+    PotentialSet pots2;
+    Data1D x;
+    const auto value = 2.0;
+    x.addPoint(1, value);
+    pots.potentialMap()["A-A"].ep = x;
+    pots.potentialMap()["A-B"].ep = x;
+    pots.potentialMap()["A-C"].ep = x;
+
+    pots2.potentialMap()["A-A"].ep = x;
+    pots2.potentialMap()["A-B"].ep = x;
+    pots2.potentialMap()["A-C"].ep = x;
+    pots2.potentialMap()["A-D"].ep = x;
+
+    pots += pots2;
+    EXPECT_EQ(4.0, pots.potentialMap()["A-A"].ep.value(0));
+    EXPECT_EQ(4.0, pots.potentialMap()["A-B"].ep.value(0));
+    EXPECT_EQ(4.0, pots.potentialMap()["A-C"].ep.value(0));
+    EXPECT_EQ(2.0, pots.potentialMap()["A-D"].ep.value(0));
 }
 
 } // namespace UnitTest
