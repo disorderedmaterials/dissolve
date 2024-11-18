@@ -28,6 +28,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
     std::vector<PartialSet> forces;
     PartialSet totalGR;
     PartialSet referenceData;
+    std::vector<PartialSet> storedSQ;
 
     // Does a PartialSet already exist for this Configuration?
     auto originalGRObject = processingData.realiseIf<PartialSet>(
@@ -54,18 +55,19 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                     // FT to structure factor
                     Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                     WindowFunction::Form::Lorch0);
-                    // Store Error here
-                    //  forces.emplace_back(referenceData.total().values() - totalGR.total().values());
+                    storedSQ[0] = (totalGR);
                     newPosition = i.x() + (2 * delta);
                     i.set(newPosition, i.y(), i.z());
                     totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
                     Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                     WindowFunction::Form::Lorch0);
-                    // Store Error here
-                    //  forces.emplace_back(referenceData.total().values() - totalGR.total().values());
+                    storedSQ[1] = (totalGR);
                     // Reset position
                     newPosition = i.x() - delta;
                     i.set(newPosition, i.y(), i.z());
+                    // Calculate difference and gradient
+                    storedSQ[1].total() -= storedSQ[0].total();
+                    storedSQ[1].total() /= ((i.x() + delta) - (i.x() - delta));
                     break;
                 // Move y
                 case 2:
