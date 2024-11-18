@@ -25,7 +25,8 @@ int main(int args, char **argv)
         return 1;
 
     // Initialise random seed
-    srand(options.randomSeed().value_or((unsigned)time(nullptr)));
+    if (options.randomSeed())
+        DissolveMath::setRandomSeed(*options.randomSeed());
 
     QGuiApplication app(args, argv);
 

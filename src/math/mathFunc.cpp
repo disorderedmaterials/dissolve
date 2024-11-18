@@ -40,8 +40,8 @@ double erf(double x) { return (1.0 - erfc(x)); }
 pcg32 rng_(pcg_extras::seed_seq_from<std::random_device>{});
 constexpr double rngMax_ = double(pcg32::max() - 1);
 
-// Initialise the random number generator
-void randomInit(int seed) { rng_.seed(seed); }
+// Set random number generator seed
+void setRandomSeed(int seed) { rng_.seed(seed); }
 
 // Return a random number between 0.0 and 1.0 inclusive
 double random() { return rng_() / rngMax_; }

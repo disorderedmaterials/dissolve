@@ -6,12 +6,9 @@
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
-
+#include "math/mathFunc.h"
 int main(int args, char **argv)
 {
-    // Initialise random seed before we do anything else - it might get re-initialised if a specific seed is provided
-    srand((unsigned)time(nullptr));
-
 #ifdef PARALLEL
     // Initialise parallel communication
     ProcessPool::initialiseMPI(&args, &argv);
@@ -30,9 +27,9 @@ int main(int args, char **argv)
         return 1;
 #endif
 
-    // Re-initialise random seed
+    // Initialise random seed
     if (options.randomSeed())
-        srand(*options.randomSeed());
+        DissolveMath::setRandomSeed(*options.randomSeed());
 
     // Enable redirect if requested
     if (options.redirectionBasename())

@@ -18,8 +18,8 @@ double erf(double);
 /*
  * Random Number Generation
  */
-// Initialise the random number generator
-void randomInit(int seed = -1);
+// Set random number generator seed
+void setRandomSeed(int seed);
 // Return a random number between 0.0 and 1.0 inclusive
 double random();
 // Return a random number between -1.0 and 1.0 inclusive
