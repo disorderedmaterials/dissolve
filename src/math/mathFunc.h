@@ -18,10 +18,14 @@ double erf(double);
 /*
  * Random Number Generation
  */
+// Initialise the random number generator
+void randomInit(int seed = -1);
+// Return a random number between 0.0 and 1.0 inclusive
 double random();
+// Return a random number between -1.0 and 1.0 inclusive
 double randomPlusMinusOne();
-int randomimax();
-int randomi(int range);
+// Return a random integer between 0 and N-1 inclusive
+int randomi(int N);
 
 /*
  * Integer Functions
