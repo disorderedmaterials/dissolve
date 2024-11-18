@@ -14,9 +14,6 @@ endif()
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# Make sure CMake won't try to generate rules for moc (we will do it ourselves)
-set(CMAKE_AUTOMOC ON)
-
 # Set policy for automatic linkage of Qt libs to project
 cmake_policy(SET CMP0020 NEW)
 
