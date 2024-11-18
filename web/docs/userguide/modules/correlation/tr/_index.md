@@ -8,7 +8,7 @@ description: Calculate total correlation functions between all atom types
 
 The `TR` module calculates a full set of partial total distribution functions, $t_{ij}(r)$ for each unique pair of atom types $i$ and $j$ present in the target configuration(s).
 
-The `TR` module uses equations from Keen, [D. A. (2001)](https://journals.iucr.org/paper?S0021889800019993) and the numbered equations are referenced from there.
+The `TR` module uses equations from [Keen, D. A. (2001)](https://journals.iucr.org/paper?S0021889800019993) and the numbered equations are referenced from there.
 
 ## Description
 
