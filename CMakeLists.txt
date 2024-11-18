@@ -127,7 +127,6 @@ if(GUI)
                QuickControls2
                REQUIRED
   )
-  add_definitions(-DQT_NO_KEYWORDS)
 
   # Make sure we enable automated handling of Qt files
   set(CMAKE_AUTOMOC ON)
