@@ -38,13 +38,12 @@ double erf(double x) { return (1.0 - erfc(x)); }
 
 // Main RNG object
 pcg32 rng_(pcg_extras::seed_seq_from<std::random_device>{});
-constexpr double rngMax_ = double(pcg32::max() - 1);
 
 // Set random number generator seed
 void setRandomSeed(int seed) { rng_.seed(seed); }
 
 // Return a random number between 0.0 and 1.0 inclusive
-double random() { return rng_() / rngMax_; }
+double random() { return double(rng_()) / (pcg32::max() - 1); }
 
 // Return a random number between -1.0 and 1.0 inclusive
 double randomPlusMinusOne() { return (random() - 0.5) * 2.0; }
