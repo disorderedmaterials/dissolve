@@ -33,12 +33,10 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
 
     auto &moduleData = moduleContext.dissolve().processingModuleData();
 
+    PotentialSet potentials;
     // Does a PotentialSet already exist for this Configuration?
     auto originalPotentialsObject =
-        moduleData.realiseIf<PotentialSet>(fmt::format("AveragingPotentials"), name_, GenericItem::InRestartFileFlag);
-
-    PotentialSet potentials = originalPotentialsObject.first;
-
+        moduleData.realiseIf<PotentialSet>(fmt::format("PotentialSet"), name_, GenericItem::InRestartFileFlag);
     // Loop over target data
     for (auto *module : target_)
     {
@@ -58,11 +56,11 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
             }
         }
     }
-
-    // Perform averaging of potentials data if requested
-    if (averagingLength_)
-        Averaging::average<PotentialSet>(moduleContext.dissolve().processingModuleData(), "AveragingPotentials", name(),
-                                         averagingLength_.value(), averagingScheme_);
+    // Set restart equal to changes
+    originalPotentialsObject.first = potentials;
+    printf("Error");
+    Averaging::average<PotentialSet>(moduleContext.dissolve().processingModuleData(), "PotentialSet", name(),
+                                     averagingLength_.value(), averagingScheme_);
 
     /*    // Form averages
        for (auto &&[key, epData] : potentials)
