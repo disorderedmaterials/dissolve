@@ -27,7 +27,7 @@ set(CMAKE_CXX_STANDARD 17)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 
 # Install GSL (GNU Scientific Library) with Conan for Windows and Unix-like systems
-option(CONAN_GSL ON)
+option(CONAN_GSL "Use conan to find GSL" ON)
 
 # Include Conan Packages
 option(CONAN "Use conan to find dependencies" ON)
