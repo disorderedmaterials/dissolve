@@ -22,7 +22,7 @@ EPSRManagerModule::EPSRManagerModule() : Module(ModuleTypes::EPSRManager)
                                  potentialScalings_);
     keywords_.setOrganisation("Options", "Averaging");
     keywords_.add<OptionalIntegerKeyword>("Averaging", "Number of historical potential sets to combine into final potentials",
-                                          averagingLength_, 1, std::nullopt, 1, "Off");
+                                          averagingLength_, 0, std::nullopt, 1, "Off");
     keywords_.add<EnumOptionsKeyword<Averaging::AveragingScheme>>("AveragingScheme",
                                                                   "Weighting scheme to use when averaging potentials",
                                                                   averagingScheme_, Averaging::averagingSchemes());
