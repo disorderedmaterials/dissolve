@@ -22,7 +22,7 @@ AtomShakeModule::AtomShakeModule() : Module(ModuleTypes::AtomShake)
                               "the calculation proceeds in order to approximate the specified acceptance rate.");
     keywords_.addRestartable<DoubleKeyword>("StepSize", "Step size in Angstroms to use in Monte Carlo moves", stepSize_, 0.001);
     keywords_.add<DoubleKeyword>("StepSizeMax", "Maximum allowed value for step size, in Angstroms", stepSizeMax_, 0.01);
-    keywords_.add<DoubleKeyword>("StepSizeMin", "Minimum allowed value for step size, in Angstroms", stepSizeMin_, 0.001);
+    keywords_.add<DoubleKeyword>("StepSizeMin", "Minimum allowed value for step size, in Angstroms", stepSizeMin_, 1.0e-4);
 
     keywords_.setOrganisation("Advanced");
     keywords_.add<OptionalDoubleKeyword>(
