@@ -31,7 +31,7 @@ template <typename T> class GraphNodeModel : public GraphNodeModelBase
         return *this;
     }
     bool operator!=(const GraphNodeModel<T> &other) { return &parent_ != &other.parent_; }
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override { return parent_->items.size(); }
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override { return parent_->items().size(); }
     QHash<int, QByteArray> roleNames() const override
     {
 
@@ -46,7 +46,7 @@ template <typename T> class GraphNodeModel : public GraphNodeModelBase
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
     {
 
-        auto &item = parent_->items.at(index.row());
+        auto &item = parent_->items().at(index.row());
         switch (role - Qt::UserRole)
         {
             case 0:
@@ -65,7 +65,7 @@ template <typename T> class GraphNodeModel : public GraphNodeModelBase
     }
     bool setData(const QModelIndex &index, const QVariant &value, int role) override
     {
-        auto &item = parent_->items.at(index.row());
+        auto &item = parent_->items().at(index.row());
         switch (role - Qt::UserRole)
         {
             case 0:
@@ -82,7 +82,7 @@ template <typename T> class GraphNodeModel : public GraphNodeModelBase
         }
     }
 
-    void beginInsert(int count = 1) { beginInsertRows({}, parent_->items.size(), parent_->items.size() + count); }
+    void beginInsert(int count = 1) { beginInsertRows({}, parent_->items().size(), parent_->items().size() + count); }
     void endInsert() { endInsertRows(); }
 
     private:

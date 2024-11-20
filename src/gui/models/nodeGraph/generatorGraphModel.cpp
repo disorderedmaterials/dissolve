@@ -31,7 +31,7 @@ void GeneratorGraphModel::setWorld(DissolveModel *value)
     for (auto node : nodes)
     {
         QVariant empty = {};
-        auto &item = items.emplace_back(empty);
+        auto &item = items().emplace_back(empty);
         item.posx = index;
         item.posy = index;
         std::string name = {node->name().begin(), node->name().end()};
@@ -47,7 +47,7 @@ DissolveModel *GeneratorGraphModel::world() { return world_; }
 
 void GeneratorGraphModel::handleReset()
 {
-    items.clear();
+    items().clear();
 
     int index = 1;
     std::vector<std::pair<int, int>> edges;
@@ -81,7 +81,7 @@ void GeneratorGraphModel::emplace_back(int x, int y, GeneratorGraphInnerType val
 {
     GeneratorGraphNode temp;
     temp.value = value;
-    auto &item = items.emplace_back(temp);
+    auto &item = items().emplace_back(temp);
     item.posx = x;
     item.posy = y;
 }

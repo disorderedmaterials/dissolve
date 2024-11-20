@@ -25,7 +25,7 @@ TEST(GraphModelTest, ExampleGraphModel)
     model.emplace_back(600, 400, {});
     model.connect(0, 0, 1, 0);
 
-    EXPECT_EQ(std::get<double>(model.items[0].rawValue().value), 7.5);
+    EXPECT_EQ(std::get<double>(model.items()[0].rawValue().value), 7.5);
 
     EXPECT_EQ(nodes.rowCount(), 2);
     EXPECT_EQ(model.nEdges(), 1);
