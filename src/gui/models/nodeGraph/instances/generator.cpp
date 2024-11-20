@@ -1,6 +1,6 @@
 #include "generator/generator.h"
-#include "generator.h"
 #include "gui/models/nodeGraph/generatorGraphModel.h"
+#include "gui/models/nodeGraph/instances/generator.h"
 #include "gui/models/nodeGraph/nodeWrapper.h"
 
 template <> std::string nodeTypeName<Generator *>(Generator *const &value) { return "Generator"; }

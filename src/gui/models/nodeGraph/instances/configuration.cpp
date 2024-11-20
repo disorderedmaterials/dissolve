@@ -1,6 +1,6 @@
 #include "classes/configuration.h"
-#include "configuration.h"
 #include "gui/models/nodeGraph/generatorGraphModel.h"
+#include "gui/models/nodeGraph/instances/configuration.h"
 #include "gui/models/nodeGraph/nodeWrapper.h"
 
 template <> std::string nodeTypeName<Configuration *>(Configuration *const &value) { return "Configuration"; }

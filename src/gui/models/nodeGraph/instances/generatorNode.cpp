@@ -1,4 +1,4 @@
-#include "generatorNode.h"
+#include "gui/models/nodeGraph/instances/generatorNode.h"
 #include "generator/node.h"
 #include "gui/models/nodeGraph/generatorGraphModel.h"
 #include "gui/models/nodeGraph/nodeWrapper.h"
