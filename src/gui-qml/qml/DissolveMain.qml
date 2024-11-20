@@ -259,9 +259,10 @@ ApplicationWindow {
                 text: "&New"
             }
             Action {
-                text: "&Open..."
-                onTriggered: openDialog.open()
                 shortcut: "Ctrl+O"
+                text: "&Open..."
+
+                onTriggered: openDialog.open()
             }
             MenuItem {
                 text: "Open R&ecent"
@@ -282,9 +283,10 @@ ApplicationWindow {
                 text: "Close"
             }
             Action {
-                text: "&Quit"
-                onTriggered: Qt.quit()
                 shortcut: "Ctrl+Q"
+                text: "&Quit"
+
+                onTriggered: Qt.quit()
             }
         }
     }
