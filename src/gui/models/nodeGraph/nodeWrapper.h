@@ -59,12 +59,17 @@ template <typename T> class NodeWrapper
     public:
     NodeWrapper(QVariant value) : value_(value) {}
     NodeWrapper(T value) : value_(value) {}
+    // The X and Y coordinates of the node on the screen.
     int posx, posy;
+
+    // Get the value wrapped in a QVariant (needed for QML)
     QVariant value() const { return nodeGetValue<T>(value_); }
+    // Get the actual value of the node
     T &rawValue() { return value_; }
     const T &rawValue() const { return value_; }
 
     private:
+    // The actual value of the node
     T value_;
 };
 
