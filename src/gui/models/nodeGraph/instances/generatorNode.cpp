@@ -1,5 +1,5 @@
-#include "generator/node.h"
 #include "generatorNode.h"
+#include "generator/node.h"
 #include "gui/models/nodeGraph/generatorGraphModel.h"
 #include "gui/models/nodeGraph/nodeWrapper.h"
 #include "keywords/double.h"
@@ -55,9 +55,9 @@ template <> bool nodeSetData(GeneratorNode *&item, const QVariant &value, int ro
 
 template <> bool nodeDelete(GeneratorNode *&item, typename GraphNodeContext<GeneratorNode *>::type &coreData)
 {
-  for (auto &conf : coreData->configurations())
-  {
-    conf->generator().removeNode(item->shared_from_this());
-  }
-  return true;
+    for (auto &conf : coreData->configurations())
+    {
+        conf->generator().removeNode(item->shared_from_this());
+    }
+    return true;
 }
