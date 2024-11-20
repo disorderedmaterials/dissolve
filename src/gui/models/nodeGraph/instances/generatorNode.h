@@ -5,6 +5,8 @@
 
 #include "gui/models/nodeGraph/generatorGraphModel.h"
 
+// GeneratorNodes need access to the CoreData to access all of their
+// children.
 template <> struct GraphNodeContext<GeneratorNode *>
 {
     using type = CoreData *;

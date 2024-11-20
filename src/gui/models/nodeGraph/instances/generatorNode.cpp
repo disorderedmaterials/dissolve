@@ -5,20 +5,24 @@
 #include "keywords/double.h"
 #include "keywords/nodeValue.h"
 
+// The name of the type (for delegate dispatch)
 template <> std::string nodeTypeName<GeneratorNode *>(GeneratorNode *const &value) { return "GeneratorNode"; }
 
+// The path to the icon for the node
 template <> std::string nodeTypeIcon<GeneratorNode *>(GeneratorNode *const &value)
 {
     auto name = GeneratorNode::nodeTypes().keyword(value->type());
     return "qrc:/Dissolve/icons/nodes/" + name + ".svg";
 }
 
+// The title of the node
 template <> std::string nodeName<GeneratorNode *>(GeneratorNode *const &value)
 {
     std::string result = {value->name().begin(), value->name().end()};
     return result;
 }
 
+// Get a specific piece of information from a node by index
 template <> QVariant nodeData(GeneratorNode *const &value, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
@@ -33,26 +37,22 @@ template <> QVariant nodeData(GeneratorNode *const &value, int role)
             auto temp = value->keywords().find("Temperature");
             // Check that we found a keyword
             if (!temp)
-            {
-                std::cout << "Temperature not found in " << value->name() << " " << value->keywords().nVisibleKeywords()
-                          << std::endl;
-                for (auto x : value->keywords().targetKeywords())
-                    std::cout << x << std::endl;
                 return {};
-            }
             auto as_double = dynamic_cast<NodeValueKeyword *>(temp.value().first);
-            if (as_double)
-                return QVariant::fromValue(as_double->data().asDouble());
-            std::cout << "Temperature is not a NodeValue in " << value->name() << std::endl;
-            return {};
+            // Check that the value is a double
+            if (!as_double)
+                return {};
+            return QVariant::fromValue(as_double->data().asDouble());
         }
         default:
             return {};
     }
 }
 
+// Set a specific piece of information from a node by index
 template <> bool nodeSetData(GeneratorNode *&item, const QVariant &value, int role) { return false; }
 
+// Delete the node
 template <> bool nodeDelete(GeneratorNode *&item, typename GraphNodeContext<GeneratorNode *>::type &coreData)
 {
     for (auto &conf : coreData->configurations())

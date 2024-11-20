@@ -6,7 +6,6 @@ set(nodeGraphModel_SRCS
     exampleGraphModel.cpp
     graphModelBase.cpp
     generatorGraphModel.cpp
-    nodeWrapper.cpp
     instances/configuration.cpp
     instances/generator.cpp
     instances/generatorGraphNode.cpp

@@ -3,13 +3,16 @@
 #include "gui/models/nodeGraph/instances/configuration.h"
 #include "gui/models/nodeGraph/nodeWrapper.h"
 
+// The name of the type (for delegate dispatch)
 template <> std::string nodeTypeName<Configuration *>(Configuration *const &value) { return "Configuration"; }
 
+// The path to the icon for the node
 template <> std::string nodeTypeIcon<Configuration *>(Configuration *const &value)
 {
     return "qrc:/Dissolve/icons/configuration.svg";
 }
 
+// The title of the node
 template <> std::string nodeName<Configuration *>(Configuration *const &value)
 {
 
@@ -19,6 +22,7 @@ template <> std::string nodeName<Configuration *>(Configuration *const &value)
     return s;
 }
 
+// Get a specific piece of information from a node by index
 template <> QVariant nodeData(Configuration *const &value, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
@@ -37,6 +41,7 @@ template <> QVariant nodeData(Configuration *const &value, int role)
     }
 }
 
+// Set a specific piece of information from a node by index
 template <> bool nodeSetData(Configuration *&item, const QVariant &value, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
@@ -50,6 +55,7 @@ template <> bool nodeSetData(Configuration *&item, const QVariant &value, int ro
     }
 }
 
+// Delete the node
 template <> bool nodeDelete(Configuration *&item, typename GraphNodeContext<Configuration *>::type &coreData)
 {
     coreData->removeConfiguration(item);

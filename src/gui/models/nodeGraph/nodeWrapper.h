@@ -6,6 +6,27 @@
 #include <QAbstractListModel>
 #include <variant>
 
+/**
+   This file contains a series of templates that need to be overloaded
+   to allow a type to be displayed as a node.  This is essentially a
+   C++ Concept, but without all the compiler checks and niceties that
+   we will get with C++20.
+
+   A concept was chosen over class methods because:
+
+   1) This allows raw types (e.g. `double`) to be used as nodes.
+   Using class methods requires that all data must be wrapped in a
+   class.
+
+   2) The GUI constraints aren't needed for the command line version.
+   If we used class methods, then the node methods would need to be
+   part of the class even in the command line version.  As some of the
+   methods require Qt types (e.g. QHash, QVariant), then Qt would
+   suddenly become a dependency of the command line code.
+ **/
+
+// A template that we can specialise to associate a a context type
+// with a type.
 template <typename T> struct GraphNodeContext
 {
     using type = GraphNodeContext<void>;

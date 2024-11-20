@@ -3,12 +3,16 @@
 #include "gui/models/nodeGraph/instances/generator.h"
 #include "gui/models/nodeGraph/nodeWrapper.h"
 
+// The name of the type (for delegate dispatch)
 template <> std::string nodeTypeName<Generator *>(Generator *const &value) { return "Generator"; }
 
+// The path to the icon for the node
 template <> std::string nodeTypeIcon<Generator *>(Generator *const &value) { return "qrc:/Dissolve/icons/generator.svg"; }
 
+// The title of the node
 template <> std::string nodeName<Generator *>(Generator *const &value) { return "Generator"; }
 
+// Get a specific piece of information from a node by index
 template <> QVariant nodeData(Generator *const &value, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
@@ -25,6 +29,8 @@ template <> QVariant nodeData(Generator *const &value, int role)
     }
 }
 
+// Set a specific piece of information from a node by index
 template <> bool nodeSetData(Generator *&item, const QVariant &value, int role) { return false; }
 
+// Delete the node
 template <> bool nodeDelete(Generator *&item, typename GraphNodeContext<Generator *>::type &coreData) { return false; }
