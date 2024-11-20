@@ -51,7 +51,7 @@ TEST(GraphModelTest, ExampleGraphModel)
     EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 1).toInt(), 600);
     EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 2).toInt(), 400);
     EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 3).toString(), "ptr");
-    EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 4).toString(), "qrc:/Dissolve/icons/open.svg");
+    EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 4).toString(), "qrc:/Dissolve/icons/cross.svg");
     EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 5).toDouble(), 7.5);
 
     model.deleteNode(1);
