@@ -1,0 +1,11 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2024 Team Dissolve and contributors
+
+#pragma once
+
+#include "gui/models/nodeGraph/generatorGraphModel.h"
+
+template <> struct GraphNodeContext<GeneratorNode *>
+{
+    using type = CoreData *;
+};
