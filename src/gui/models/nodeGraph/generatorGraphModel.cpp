@@ -21,7 +21,7 @@ void GeneratorGraphModel::setWorld(DissolveModel *value)
     if (!value)
         return;
     world_ = value;
-    context_ = &value->dissolve()->coreData();
+    context_ = &value->dissolve().coreData();
     auto config = world_->configurationsModel();
     if (config->rowCount() == 0)
         return;

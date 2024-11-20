@@ -8,7 +8,13 @@
  */
 
 // Get reference to Dissolve
-Dissolve *DissolveModel::dissolve() { return dissolve_; }
+Dissolve &DissolveModel::dissolve()
+{
+    if (!dissolve_)
+        throw std::runtime_error("DissolveModel is lacking a backend.  This should *never* happen, so please contact the "
+                                 "Dissolve developers to inform them of the issue.");
+    return *dissolve_;
+}
 
 // Set reference to Dissolve
 void DissolveModel::setDissolve(Dissolve &dissolve)

@@ -103,7 +103,8 @@ class DissolveModel : public QObject
     Dissolve *dissolve_ = nullptr;
 
     public:
-    Dissolve *dissolve();
+    // Access dissolve reference
+    Dissolve &dissolve();
     // Set reference to Dissolve
     void setDissolve(Dissolve &dissolve);
     // Update models
