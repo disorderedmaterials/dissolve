@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <variant>
 
+// The value of the node
 template <> QVariant nodeGetValue<nodeValue>(const nodeValue value)
 {
     return std::visit(
@@ -25,6 +26,7 @@ template <> QVariant nodeGetValue<nodeValue>(const nodeValue value)
         value.value);
 };
 
+// The name of the type (for delegate dispatch)
 template <> std::string nodeTypeName<nodeValue>(const nodeValue &value)
 {
     return std::visit(
@@ -42,6 +44,7 @@ template <> std::string nodeTypeName<nodeValue>(const nodeValue &value)
         value.value);
 }
 
+// The path to the icon for the node
 template <> std::string nodeTypeIcon<nodeValue>(const nodeValue &value)
 {
     return std::visit(
@@ -59,28 +62,34 @@ template <> std::string nodeTypeIcon<nodeValue>(const nodeValue &value)
         value.value);
 }
 
+// The title of the node
 template <> std::string nodeName<nodeValue>(const nodeValue &value) { return value.name; }
 
+// Change the title of the node
 template <> void setNodeName<nodeValue>(nodeValue &value, const std::string name) { value.name = name; }
 
+// Link an indexed position on the source to an indexed position on the destination
 template <> bool nodeConnect<nodeValue>(nodeValue &source, int sourceIndex, nodeValue &destionation, int destinationIndex)
 {
     destionation.value = &source;
     return true;
 }
 
+// Confirm that a connection is possible (e.g. types match and index isn't already connected)
 template <>
 bool nodeConnectable<nodeValue>(const nodeValue &source, int sourceIndex, const nodeValue &destination, int destinationIndex)
 {
     return std::holds_alternative<double>(source.value) && std::holds_alternative<nodeValue *>(destination.value);
 }
 
+// Unlink an indexed position on the source to an indexed position on the destination
 template <> bool nodeDisconnect<nodeValue>(nodeValue &source, int sourceIndex, nodeValue &destination, int destinationIndex)
 {
     destination.value = nullptr;
     return true;
 }
 
+// Append the roles for the type onto the QHash
 template <> QHash<int, QByteArray> &nodeRoleNames<nodeValue>(QHash<int, QByteArray> &roles)
 {
     const auto base = Qt::UserRole + GraphNodeModelBase::ownedRoles;
@@ -88,6 +97,7 @@ template <> QHash<int, QByteArray> &nodeRoleNames<nodeValue>(QHash<int, QByteArr
     return roles;
 }
 
+// Get a specific piece of information from a node by index
 template <> QVariant nodeData<nodeValue>(const nodeValue &item, int role)
 {
     switch (role)
@@ -99,8 +109,13 @@ template <> QVariant nodeData<nodeValue>(const nodeValue &item, int role)
     }
 }
 
+// Set a specific piece of information from a node by index
 template <> bool nodeSetData<nodeValue>(nodeValue &item, const QVariant &value, int role) { return false; }
 
+// Delete the node
+template <> bool nodeDelete<nodeValue>(nodeValue &value, GraphNodeContext<nodeValue>::type &context) { return true; }
+
+// Create node from variant
 nodeValue::nodeValue(QVariant var)
 {
     if (var.isNull())
@@ -108,5 +123,3 @@ nodeValue::nodeValue(QVariant var)
     else
         value = var.toDouble();
 }
-
-template <> bool nodeDelete<nodeValue>(nodeValue &value, GraphNodeContext<nodeValue>::type &context) { return true; }
