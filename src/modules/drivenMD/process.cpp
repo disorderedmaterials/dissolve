@@ -4,6 +4,7 @@
 #include "base/sysFunc.h"
 #include "keywords/module.h"
 #include "main/dissolve.h"
+#include "math/error.h"
 #include "math/ft.h"
 #include "module/context.h"
 #include "module/group.h"
@@ -25,7 +26,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
      * that we then apply to MD simulation
      */
 
-    std::vector<PartialSet> forces;
+    std::vector<Vec3<double>> forces;
     PartialSet totalGR;
 
     // Does a PartialSet already exist for this Configuration?
@@ -34,7 +35,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
     auto &originalgr = originalGRObject.first;
     double delta{0.1};
     auto atoms = targetConfiguration_->atoms();
-    forces.resize(atoms.size());
+    forces.reserve(atoms.size());
 
     for (auto *module : targets_)
     {
@@ -48,6 +49,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
 
         for (auto &i : atoms)
         {
+            auto &f = forces.emplace_back(i.r());
             for (auto n = 0; n < 3; ++n)
             {
                 double newPosition{};
@@ -63,35 +65,34 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         // FT to structure factor
                         Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
-                        totalGR.total() -= originalReferenceData;
+                        // Store the error in a vector
+                        f.x = Error::rmse(totalGR.total(), originalReferenceData).error;
+                        // Set new position (needs 2x to get +x from original)
                         newPosition = i.x() + (2 * delta);
                         i.set(newPosition, i.y(), i.z());
                         totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
-
-                        totalGR.total() -= originalReferenceData;
+                        // Calculate new error
+                        f.x -= Error::rmse(totalGR.total(), originalReferenceData).error;
                         // Reset position
                         newPosition = i.x() - delta;
                         i.set(newPosition, i.y(), i.z());
-                        // Calculate difference and gradient
-                        storedSQ[1].total() -= storedSQ[0].total();
-                        storedSQ[1].total() /= ((i.x() + delta) - (i.x() - delta));
                         break;
-                    // Move y
+                    // Move y and repeat
                     case 2:
                         newPosition = i.y() - delta;
                         i.set(i.x(), newPosition, i.z());
                         totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
-                        //  forces.emplace_back(referenceData.total().values() - totalGR.total().values());
+                        f.y = Error::rmse(totalGR.total(), originalReferenceData).error;
                         newPosition = i.y() + (2 * delta);
                         i.set(i.x(), newPosition, i.z());
                         totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
-                        //  forces.emplace_back(referenceData.total().values() - totalGR.total().values());
+                        f.y -= Error::rmse(totalGR.total(), originalReferenceData).error;
                         newPosition = i.y() - delta;
                         i.set(i.x(), newPosition, i.z());
                         break;
@@ -102,13 +103,13 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
-                        //  forces.emplace_back(referenceData.total().values() - totalGR.total().values());
+                        f.z = Error::rmse(totalGR.total(), originalReferenceData).error;
                         newPosition = i.z() + (2 * delta);
                         i.set(i.x(), i.y(), newPosition);
                         totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
-                        //  forces.emplace_back(referenceData.total().values() - totalGR.total().values());
+                        f.z -= Error::rmse(totalGR.total(), originalReferenceData).error;
                         newPosition = i.z() - delta;
                         i.set(i.x(), i.y(), newPosition);
                         break;
