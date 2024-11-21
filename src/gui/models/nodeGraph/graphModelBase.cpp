@@ -15,44 +15,46 @@ GraphEdgeModel *GraphModelBase::edges() { return &edges_; }
 QAbstractListModel *GraphModelBase::nodes() { return nullptr; }
 
 // Connect two nodes
-bool GraphModelBase::connect_(int source, int sourceIndex, int destination, int destinationIndex) { return false; }
+bool GraphModelBase::connect_(GraphRawEdge &edge) { return false; }
 
 // Remove a connection
-bool GraphModelBase::disconnect_(int source, int sourceIndex, int destination, int destinationIndex) { return false; }
+bool GraphModelBase::disconnect_(GraphRawEdge &edge) { return false; }
 
 // Public wrapper of disconnect_
 bool GraphModelBase::disconnect(int source, int sourceIndex, int destination, int destinationIndex)
 {
     auto &edgeCache = edges_.edgeCache();
+    GraphRawEdge edge{source, sourceIndex, destination, destinationIndex};
 
     for (int i = edgeCache.size() - 1; i >= 0; --i)
     {
-        auto edge = edgeCache[i];
+        auto e = edgeCache[i];
 
-        // Skip wrong edges
-        if (source != edge[0] || sourceIndex != edge[1] || destination != edge[2] || destinationIndex != edge[3])
-            continue;
+        if (edge == e)
+        {
 
-        disconnect_(source, sourceIndex, destination, destinationIndex);
-        Q_EMIT(nodes()->dataChanged(nodes()->index(destination), nodes()->index(destination)));
-        edges_.dropEdge(i);
+            disconnect_(edge);
+            Q_EMIT(nodes()->dataChanged(nodes()->index(destination), nodes()->index(destination)));
+            edges_.dropEdge(i);
+        }
     }
 
     return true;
 }
 
 // Check whether a given source and destination can be connected
-bool GraphModelBase::isValidEdgeSource_(int source, int sourceIndex, int destination, int destinationIndex) { return false; }
+bool GraphModelBase::isValidEdgeSource_(GraphRawEdge &edge) { return false; }
 
 // public wrapper of connect_
 bool GraphModelBase::connect(int source, int sourceIndex, int destination, int destinationIndex)
 {
-    if (!isValidEdgeSource_(source, sourceIndex, destination, destinationIndex))
+    GraphRawEdge edge{source, sourceIndex, destination, destinationIndex};
+    if (!isValidEdgeSource_(edge))
         return false;
 
-    edges()->addEdge(source, sourceIndex, destination, destinationIndex);
+    edges()->addEdge(edge);
 
-    connect_(source, sourceIndex, destination, destinationIndex);
+    connect_(edge);
 
     Q_EMIT(nodes()->dataChanged(nodes()->index(destination), nodes()->index(destination)));
     return true;

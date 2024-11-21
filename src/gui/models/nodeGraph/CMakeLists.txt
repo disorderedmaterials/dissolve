@@ -4,6 +4,7 @@ qt6_wrap_cpp(nodeGraphModel_MOC_SRCS ${nodeGraphModel_MOC_HDRS})
 
 set(nodeGraphModel_SRCS
     exampleGraphModel.cpp
+    graphEdgeModel.cpp
     graphModelBase.cpp
     generatorGraphModel.cpp
     instances/configuration.cpp

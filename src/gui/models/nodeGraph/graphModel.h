@@ -3,7 +3,9 @@
 
 #pragma once
 
-#include "graphModelBase.h"
+#include "graphEdgeModel.h"
+#include "gui/models/nodeGraph/graphModelBase.h"
+#include "gui/models/nodeGraph/graphNodeModel.h"
 #include "nodeWrapper.h"
 #include <QAbstractListModel>
 #include <qtmetamacros.h>
@@ -68,23 +70,23 @@ template <typename T> class GraphModel : public GraphModelBase
         // Find connected edges and update nodes
         for (auto i = 0; i < edgeCache.size(); ++i)
         {
-            if (edgeCache[i][0] == index)
+            if (edgeCache[i].source == index)
             {
                 deadEdges.emplace_back(i);
-                auto destination = edgeCache[i][2];
-                disconnect_(edgeCache[i][0], edgeCache[i][1], edgeCache[i][2], edgeCache[i][3]);
+                auto destination = edgeCache[i].destination;
+                disconnect_(edgeCache[i]);
                 Q_EMIT(nodes_.dataChanged(nodes_.index(destination), nodes_.index(destination)));
             }
-            else if (edgeCache[i][2] == index)
+            else if (edgeCache[i].destination == index)
             {
                 deadEdges.emplace_back(i);
             }
 
             // Update indices
-            if (edgeCache[i][0] > index)
-                --edgeCache[i][0];
-            if (edgeCache[i][2] > index)
-                --edgeCache[i][2];
+            if (edgeCache[i].source > index)
+                --edgeCache[i].source;
+            if (edgeCache[i].destination > index)
+                --edgeCache[i].destination;
         }
 
         // Remove dead edges
@@ -104,19 +106,22 @@ template <typename T> class GraphModel : public GraphModelBase
         graphChanged();
     }
 
-    bool connect_(int source, int sourceIndex, int destination, int destinationIndex) override
+    bool connect_(GraphRawEdge &edge) override
     {
-        return nodeConnect(items_[source].rawValue(), sourceIndex, items_[destination].rawValue(), destinationIndex);
+        return nodeConnect(items_[edge.source].rawValue(), edge.sourceIndex, items_[edge.destination].rawValue(),
+                           edge.destinationIndex);
     }
 
-    bool disconnect_(int source, int sourceIndex, int destination, int destinationIndex) override
+    bool disconnect_(GraphRawEdge &edge) override
     {
-        return nodeDisconnect(items_[source].rawValue(), sourceIndex, items_[destination].rawValue(), destinationIndex);
+        return nodeDisconnect(items_[edge.source].rawValue(), edge.sourceIndex, items_[edge.destination].rawValue(),
+                              edge.destinationIndex);
     }
 
-    bool isValidEdgeSource_(int source, int sourceIndex, int destination, int destinationIndex) override
+    bool isValidEdgeSource_(GraphRawEdge &edge) override
     {
-        return nodeConnectable(items_[source].rawValue(), sourceIndex, items_[destination].rawValue(), destinationIndex);
+        return nodeConnectable(items_[edge.source].rawValue(), edge.sourceIndex, items_[edge.destination].rawValue(),
+                               edge.destinationIndex);
     }
 
     protected:

@@ -36,11 +36,11 @@ class GraphModelBase : public QObject
 
     private:
     // Check whether a given source and destination can be connected
-    virtual bool isValidEdgeSource_(int source, int sourceIndex, int destination, int destinationIndex);
+    virtual bool isValidEdgeSource_(GraphRawEdge &edge);
     // Connect two nodes
-    virtual bool connect_(int source, int sourceIndex, int destination, int destinationIndex);
+    virtual bool connect_(GraphRawEdge &edge);
     // Remove a connection
-    virtual bool disconnect_(int source, int sourceIndex, int destination, int destinationIndex);
+    virtual bool disconnect_(GraphRawEdge &edge);
 
     Q_SIGNALS:
     void graphChanged();

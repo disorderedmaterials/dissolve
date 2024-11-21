@@ -4,71 +4,62 @@
 #pragma once
 
 #include <QAbstractListModel>
+#include <algorithm>
 #include <qnamespace.h>
 #include <variant>
 
-/** A list model that provides the tick labels of the axis */
+/** A structure that represents the connection between two nodes **/
+struct GraphRawEdge
+{
+    // The node index of the source node
+    int source;
+    // The index of the specific data *within* the source node
+    int sourceIndex;
+    // The node index of the destination node
+    int destination;
+    // The index of the specific data *within* the destination node
+    int destinationIndex;
+    // Equality comparison (we get these for free in C++20
+    bool operator==(const GraphRawEdge &other) const;
+};
+
+/** A model to keep track of the edges between the nodes in the graph.
+ * Note that the model only maintains a record of the *existing* edges
+ * between nodes in the model.  The GraphNodeModel is the source of
+ * truth and this class just caches all of the edges.**/
 class GraphEdgeModel : public QAbstractListModel
 {
     public:
-    GraphEdgeModel() {}
-    GraphEdgeModel(const GraphEdgeModel &other) : edgeCache_(other.edgeCache_) {}
+    GraphEdgeModel();
+    GraphEdgeModel(const GraphEdgeModel &other);
 
-    std::vector<std::array<int, 4>> &edgeCache() { return edgeCache_; }
+    std::vector<GraphRawEdge> &edgeCache();
 
-    void dropEdge(int edge)
-    {
-        beginRemoveRows({}, edge, edge);
-        edgeCache_.erase(edgeCache_.begin() + edge);
-        endRemoveRows();
-    }
+    // Remove an edge from the model (by index). Returns false if edge does not exist
+    bool dropEdge(std::size_t edge);
 
-    void addEdge(int source, int sourceIndex, int destination, int destinationIndex)
-    {
-        beginInsertRows({}, edgeCache_.size(), edgeCache_.size());
-        auto &newEdge = edgeCache_.emplace_back();
-        newEdge[0] = source;
-        newEdge[1] = sourceIndex;
-        newEdge[2] = destination;
-        newEdge[3] = destinationIndex;
-        endInsertRows();
-    }
+    // Remove an edge by value
+    bool dropEdge(GraphRawEdge &edge);
 
-    GraphEdgeModel &operator=(const GraphEdgeModel &other)
-    {
-        edgeCache_ = other.edgeCache_;
-        return *this;
-    }
-    bool operator!=(const GraphEdgeModel &other) { return edgeCache_ != other.edgeCache_; }
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override { return edgeCache_.size(); }
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
-    {
-        auto row = index.row();
-        if (row >= edgeCache_.size())
-            return {};
-        auto &edge = edgeCache_[row];
+    // Create a new edge
+    void addEdge(int source, int sourceIndex, int destination, int destinationIndex);
 
-        switch (role - Qt::UserRole)
-        {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-                return edge[role - Qt::UserRole];
-            default:
-                return {};
-        }
-    }
-    QHash<int, QByteArray> roleNames() const override
-    {
-        QHash<int, QByteArray> roles;
-        roles[Qt::UserRole] = "source";
-        roles[Qt::UserRole + 1] = "sourceIndex";
-        roles[Qt::UserRole + 2] = "destination";
-        roles[Qt::UserRole + 3] = "destIndex";
-        return roles;
-    }
+    // Create a new edge
+    void addEdge(GraphRawEdge newEdge);
+
+    GraphEdgeModel &operator=(const GraphEdgeModel &other);
+
+    bool operator!=(const GraphEdgeModel &other);
+
+    // Return number of edges (required by QAbstractListModel)
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    // Access edge by QModelIndex.  The correct role can be found in the roleNames function.
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+    // Return the mapping between role index and QML value name.  This is required by QAbstractListModel
+    QHash<int, QByteArray> roleNames() const override;
 
     private:
-    std::vector<std::array<int, 4>> edgeCache_;
+    std::vector<GraphRawEdge> edgeCache_;
 };
