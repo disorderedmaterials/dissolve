@@ -25,7 +25,12 @@ void GeneratorGraphModel::setWorld(DissolveModel *value)
     auto config = world_->configurationsModel();
     if (config->rowCount() == 0)
         return;
+
+    // Starting position for new nodes.  This should eventually be
+    // replaced by inserting the nodes at random positions and then
+    // calling a function to automatically rearrange the nodes.
     int index = 50;
+
     auto nodes = config->rawData(config->index(0))->generator().nodes();
     nodes_.beginInsert(nodes.size());
     for (auto node : nodes)
@@ -45,11 +50,14 @@ void GeneratorGraphModel::setWorld(DissolveModel *value)
 // Dissolve Model Getter
 DissolveModel *GeneratorGraphModel::world() { return world_; }
 
+// Clear model and repopulate data from Dissolve
 void GeneratorGraphModel::handleReset()
 {
     items().clear();
 
     int index = 1;
+    // A queue to store all of the edges (which will be processed once
+    // all of the nodes are added to prevent rerendering).
     std::vector<std::pair<int, int>> edges;
 
     auto configuration = world_->configurationsModel();
@@ -58,10 +66,14 @@ void GeneratorGraphModel::handleReset()
         auto config = configuration->rawData(configuration->index(i));
         const auto size = nodes_.rowCount();
         nodes_.beginInsert(config->generator().rootSequence().sequence().size() + 2);
+        // Again, these positions should eventually be randomised and
+        // replaced with with an auto-arranger call
         emplace_back(90 * index++, 60 * index++, config);
         emplace_back(90 * index++, 60 * index++, &config->generator());
+        // Add an edge between the configuration and its generator
         edges.emplace_back(size, size + 1);
         int count = size + 1;
+        // Connect each generator node in sequence
         for (auto genNode : config->generator().rootSequence().sequence())
         {
             emplace_back(90 * index++, 60 * index++, genNode.get());
@@ -77,6 +89,7 @@ void GeneratorGraphModel::handleReset()
     graphChanged();
 }
 
+// Add a node to the model as a specific location
 void GeneratorGraphModel::emplace_back(int x, int y, GeneratorGraphInnerType value)
 {
     GeneratorGraphNode temp;
