@@ -49,8 +49,14 @@ template <typename T> class GraphModel : public GraphModelBase
     public:
     // Access the acutal nodes in the model
     std::vector<NodeWrapper<T>> &items() { return items_; }
+
+    // Access the GraphNodeModel
     QAbstractListModel *nodes() override { return &nodes_; }
+
+    // The number of nodes
     int count() override { return nodes_.rowCount(); }
+
+    // Add a new node at a specific position
     void emplace_back(int x, int y, QVariant value) override
     {
         nodes_.beginInsertRows({}, items_.size(), items_.size() + 1);
@@ -61,6 +67,8 @@ template <typename T> class GraphModel : public GraphModelBase
         nodes_.endInsertRows();
         graphChanged();
     }
+
+    // Remove a node
     void deleteNode(int index) override
     {
         // List of edges to remove
@@ -80,18 +88,22 @@ template <typename T> class GraphModel : public GraphModelBase
         graphChanged();
     }
 
+    // Create a connection.  Returns true if the connection was made
     bool connect_(GraphRawEdge &edge) override
     {
         return nodeConnect(items_[edge.source].rawValue(), edge.sourceIndex, items_[edge.destination].rawValue(),
                            edge.destinationIndex);
     }
 
+    // Remove a connection.  Returns true if the edge was successfully
+    // removed.
     bool disconnect_(GraphRawEdge &edge) override
     {
         return nodeDisconnect(items_[edge.source].rawValue(), edge.sourceIndex, items_[edge.destination].rawValue(),
                               edge.destinationIndex);
     }
 
+    // Determine if two nodes can be connected in the desired way
     bool isValidEdgeSource_(GraphRawEdge &edge) override
     {
         return nodeConnectable(items_[edge.source].rawValue(), edge.sourceIndex, items_[edge.destination].rawValue(),
@@ -99,5 +111,6 @@ template <typename T> class GraphModel : public GraphModelBase
     }
 
     protected:
+    // The abstract data model for the nodes
     GraphNodeModel<T> nodes_;
 };
