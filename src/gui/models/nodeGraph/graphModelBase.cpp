@@ -8,14 +8,19 @@
 
 GraphModelBase::GraphModelBase() {}
 
+// The model for the edges in the graph
 GraphEdgeModel *GraphModelBase::edges() { return &edges_; }
 
+// The modelfor the nodes in the graph
 QAbstractListModel *GraphModelBase::nodes() { return nullptr; }
 
+// Connect two nodes
 bool GraphModelBase::connect_(int source, int sourceIndex, int destination, int destinationIndex) { return false; }
 
+// Remove a connection
 bool GraphModelBase::disconnect_(int source, int sourceIndex, int destination, int destinationIndex) { return false; }
 
+// Public wrapper of disconnect_
 bool GraphModelBase::disconnect(int source, int sourceIndex, int destination, int destinationIndex)
 {
     auto &edgeCache = edges_.edgeCache();
@@ -34,12 +39,12 @@ bool GraphModelBase::disconnect(int source, int sourceIndex, int destination, in
     }
 
     return true;
-
-    return false;
 }
 
+// Check whether a given source and destination can be connected
 bool GraphModelBase::isValidEdgeSource_(int source, int sourceIndex, int destination, int destinationIndex) { return false; }
 
+// public wrapper of connect_
 bool GraphModelBase::connect(int source, int sourceIndex, int destination, int destinationIndex)
 {
     if (!isValidEdgeSource_(source, sourceIndex, destination, destinationIndex))
@@ -53,6 +58,8 @@ bool GraphModelBase::connect(int source, int sourceIndex, int destination, int d
     return true;
 }
 
+// The total number of nodes in the graph
 int GraphModelBase::count() { return 0; }
 
+// The total number of edges in the graph
 int GraphModelBase::nEdges() { return edges_.rowCount(); }
