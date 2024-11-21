@@ -33,8 +33,6 @@ class GraphEdgeModel : public QAbstractListModel
     GraphEdgeModel();
     GraphEdgeModel(const GraphEdgeModel &other);
 
-    std::vector<GraphRawEdge> &edgeCache();
-
     // Remove an edge from the model (by index). Returns false if edge does not exist
     bool dropEdge(std::size_t edge);
 
@@ -43,6 +41,30 @@ class GraphEdgeModel : public QAbstractListModel
 
     // Create a new edge
     void addEdge(int source, int sourceIndex, int destination, int destinationIndex);
+
+    // Get all edges connected to a node
+    std::vector<GraphRawEdge> connectedTo(std::size_t index)
+    {
+        std::vector<GraphRawEdge> result;
+        std::copy_if(edgeCache_.begin(), edgeCache_.end(), std::back_inserter(result),
+                     [index](auto edge) { return index == edge.source || index == edge.destination; });
+        return result;
+    }
+
+    std::vector<GraphRawEdge> deleteNode(std::size_t index)
+    {
+        auto result = connectedTo(index);
+        for (auto &edge : result)
+            dropEdge(edge);
+        for (auto &edge : edgeCache_)
+        {
+            if (edge.source > index)
+                edge.source--;
+            if (edge.destination > index)
+                edge.destination--;
+        }
+        return result;
+    }
 
     // Create a new edge
     void addEdge(GraphRawEdge newEdge);

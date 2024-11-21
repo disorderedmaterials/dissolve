@@ -13,8 +13,6 @@ GraphEdgeModel::GraphEdgeModel() {}
 
 GraphEdgeModel::GraphEdgeModel(const GraphEdgeModel &other) : edgeCache_(other.edgeCache_) {}
 
-std::vector<GraphRawEdge> &GraphEdgeModel::edgeCache() { return edgeCache_; }
-
 // Remove an edge from the model (by index). Returns false if edge does not exist
 bool GraphEdgeModel::dropEdge(std::size_t edge)
 {

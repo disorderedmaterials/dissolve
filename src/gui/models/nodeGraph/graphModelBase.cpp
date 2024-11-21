@@ -23,21 +23,11 @@ bool GraphModelBase::disconnect_(GraphRawEdge &edge) { return false; }
 // Public wrapper of disconnect_
 bool GraphModelBase::disconnect(int source, int sourceIndex, int destination, int destinationIndex)
 {
-    auto &edgeCache = edges_.edgeCache();
     GraphRawEdge edge{source, sourceIndex, destination, destinationIndex};
 
-    for (int i = edgeCache.size() - 1; i >= 0; --i)
-    {
-        auto e = edgeCache[i];
-
-        if (edge == e)
-        {
-
-            disconnect_(edge);
-            Q_EMIT(nodes()->dataChanged(nodes()->index(destination), nodes()->index(destination)));
-            edges_.dropEdge(i);
-        }
-    }
+    disconnect_(edge);
+    edges_.dropEdge(edge);
+    Q_EMIT(nodes()->dataChanged(nodes()->index(destination), nodes()->index(destination)));
 
     return true;
 }
