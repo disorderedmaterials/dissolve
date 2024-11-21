@@ -25,8 +25,8 @@ struct GraphRawEdge
 
 /** A model to keep track of the edges between the nodes in the graph.
  * Note that the model only maintains a record of the *existing* edges
- * between nodes in the model.  The GraphNodeModel is the source of
- * truth and this class just caches all of the edges.**/
+ * between nodes in the model.  The GraphModel is the source of truth
+ * and this class just caches all of the edges.**/
 class GraphEdgeModel : public QAbstractListModel
 {
     public:
