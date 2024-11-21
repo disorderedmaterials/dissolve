@@ -80,7 +80,7 @@ sudo pkill nix-daemon
 ## Setting up the environment
 
 If you have not done so already, close your terminal and start a new
-session. The [*nix installer*]({{< ref "idaaas#install-nix" >}}) does
+session. The [*nix installer*]({{< ref "nix#install-nix" >}}) does
 not take full effect until you start a fresh session.
 
 ### Upgrade `git`
