@@ -7,7 +7,7 @@
 #include "templates/algorithms.h"
 
 // Calculate partial g(r) in serial with simple double-loop
-PartialSet DrivenMDModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet)
+void DrivenMDModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet)
 {
     // Calculate radial distribution functions with a simple double loop, in serial then return the partial set!!!!!!!
     const auto *box = cfg->box();
@@ -25,6 +25,4 @@ PartialSet DrivenMDModule::calculateGRTestSerial(Configuration *cfg, PartialSet 
 
     // Sum total functions
     partialSet.formTotals(true);
-
-    return partialSet;
 }

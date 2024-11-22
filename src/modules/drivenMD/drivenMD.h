@@ -42,7 +42,7 @@ class DrivenMDModule : public Module
     // Target Configuration (determined from target modules)
     Configuration *targetConfiguration_{nullptr};
     // Calculate partial g(r) in serial with simple double-loop
-    PartialSet calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet);
+    void calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet);
     /*
      * Processing
      */
