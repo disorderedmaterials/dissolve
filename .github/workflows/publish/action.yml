@@ -45,8 +45,8 @@ runs:
     shell: bash
     run: |
       echo "Release tag/name will be: ${{ env.dissolveVersion }}"
-      #export GITHUB_TOKEN=${{ github.token }}
-      #./update-release -r disorderedmaterials/dissolve -t ${{ env.dissolveVersion }} -n "${{ env.dissolveVersion }}" -f ReleaseNotes.md packages/* examples/*.zip examples/*.tar.gz
+      export GITHUB_TOKEN=${{ github.token }}
+      ./update-release -r disorderedmaterials/dissolve -t ${{ env.dissolveVersion }} -n "${{ env.dissolveVersion }}" -f ReleaseNotes.md packages/* examples/*.zip examples/*.tar.gz
 
   - name: Publish on GitHub (Continuous)
     if: ${{ inputs.publishType == 'continuous' }}
@@ -54,13 +54,13 @@ runs:
     run: |
       echo "Release tag will be: continuous"
       echo "Release name will be: 'Continuous (${{ env.dissolveVersion }} @ ${{ env.dissolveShortHash }})'"
-      #export GITHUB_TOKEN=${{ github.token }}
-      #./update-release -r disorderedmaterials/dissolve -t continuous -p -e -u -n "Continuous (${{ env.dissolveVersion }} @ ${{ env.dissolveShortHash }})" -b "Continuous release from \`develop\` branch @ ${{ env.dissolveShortHash }}. Built $(date)." packages/*
+      export GITHUB_TOKEN=${{ github.token }}
+      ./update-release -r disorderedmaterials/dissolve -t continuous -p -e -u -n "Continuous (${{ env.dissolveVersion }} @ ${{ env.dissolveShortHash }})" -b "Continuous release from \`develop\` branch @ ${{ env.dissolveShortHash }}. Built $(date)." packages/*
 
   - name: Publish on Harbor
     if: ${{ inputs.publishType != 'none' }}
     shell: bash
     run: |
       echo "Publishing to Harbor, tagged as [${{ inputs.publishType }}]..."
-      #apptainer remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
-      #apptainer push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:${{ inputs.publishType }}
+      apptainer remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
+      apptainer push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:${{ inputs.publishType }}
