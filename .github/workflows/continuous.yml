@@ -92,8 +92,7 @@ jobs:
       - name: Publish
         uses: "./.github/workflows/publish"
         with:
-          isRelease: false
-          publish: true
+          releaseType: 'continuous'
         env:
           HARBOR_USER: ${{ secrets.HARBOR_USER }}
           HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}

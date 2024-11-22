@@ -90,8 +90,7 @@ jobs:
       - name: Publish
         uses: "./.github/workflows/publish"
         with:
-          isRelease: true
-          publish: ${{ ! endsWith(github.ref, 'pre') }}
+          releaseType: 'release'
         env:
           HARBOR_USER: ${{ secrets.HARBOR_USER }}
           HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
