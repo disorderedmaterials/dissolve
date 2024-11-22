@@ -115,7 +115,10 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         break;
                 }
             }
+            i.translateCoordinates(f);
+            targetConfiguration_->updateAtomLocation(&i);
         }
+        targetConfiguration_->updateObjectRelationships();
     }
     return ExecutionResult::Success;
 }
