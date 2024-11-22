@@ -33,6 +33,15 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
     auto originalGRObject = processingData.realiseIf<PartialSet>(
         fmt::format("{}//OriginalGR", targetConfiguration_->niceName()), name_, GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
+    auto rdfRange = targetConfiguration_->box()->inscribedSphereRadius();
+    auto binWidth = 0.025;
+    rdfRange = int(rdfRange / binWidth) * binWidth;
+    if (originalGRObject.second == GenericItem::ItemStatus::Created)
+        originalgr.setUp(targetConfiguration_->atomTypes(), rdfRange, binWidth);
+
+    originalgr.setUpHistograms(rdfRange, binWidth);
+    originalgr.reset();
+
     double delta{0.1};
     auto atoms = targetConfiguration_->atoms();
     forces.reserve(atoms.size());
@@ -49,65 +58,68 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
 
         for (auto &i : atoms)
         {
-            auto &f = forces.emplace_back(i.r());
+            auto &f = forces.emplace_back(Vec3<double>(0.0,0.0,0.0));
+            fmt::print("Atom {}\n", i.globalIndex());
             for (auto n = 0; n < 3; ++n)
             {
                 double newPosition{};
                 switch (n)
                 {
                     // Move x
-                    case 1:
+                    case 0:
                         // Get position, change via delta then set
                         newPosition = i.x() - delta;
                         i.set(newPosition, i.y(), i.z());
                         // Calculate GR
-                        totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
+                        calculateGRTestSerial(targetConfiguration_, originalgr);
                         // FT to structure factor
-                        Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
+                        Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
                         // Store the error in a vector
                         f.x = Error::rmse(totalGR.total(), originalReferenceData).error;
+                        fmt::print("X+ = {}\n", Error::rmse(totalGR.total(), originalReferenceData).error);
                         // Set new position (needs 2x to get +x from original)
                         newPosition = i.x() + (2 * delta);
                         i.set(newPosition, i.y(), i.z());
                         totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
-                        Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
+                        Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
                         // Calculate new error
                         f.x -= Error::rmse(totalGR.total(), originalReferenceData).error;
+                        fmt::print("X+ = {}\n", Error::rmse(totalGR.total(), originalReferenceData).error);
                         // Reset position
                         newPosition = i.x() - delta;
                         i.set(newPosition, i.y(), i.z());
                         break;
                     // Move y and repeat
-                    case 2:
+                    case 1:
                         newPosition = i.y() - delta;
                         i.set(i.x(), newPosition, i.z());
                         totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
-                        Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
+                        Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
                         f.y = Error::rmse(totalGR.total(), originalReferenceData).error;
                         newPosition = i.y() + (2 * delta);
                         i.set(i.x(), newPosition, i.z());
                         totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
-                        Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
+                        Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
                         f.y -= Error::rmse(totalGR.total(), originalReferenceData).error;
                         newPosition = i.y() - delta;
                         i.set(i.x(), newPosition, i.z());
                         break;
                     // Move z
-                    case 3:
+                    case 2:
                         newPosition = i.z() - delta;
                         i.set(i.x(), i.y(), newPosition);
                         totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
-                        Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
+                        Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
                         f.z = Error::rmse(totalGR.total(), originalReferenceData).error;
                         newPosition = i.z() + (2 * delta);
                         i.set(i.x(), i.y(), newPosition);
                         totalGR = calculateGRTestSerial(targetConfiguration_, originalgr);
-                        Fourier::sineFT(totalGR.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
+                        Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
                         f.z -= Error::rmse(totalGR.total(), originalReferenceData).error;
                         newPosition = i.z() - delta;
@@ -115,10 +127,15 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         break;
                 }
             }
+
             i.translateCoordinates(f);
+            f.print();
             targetConfiguration_->updateAtomLocation(&i);
+
         }
-        targetConfiguration_->updateObjectRelationships();
     }
+
+    targetConfiguration_->updateObjectRelationships();
+
     return ExecutionResult::Success;
 }

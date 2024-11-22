@@ -20,5 +20,11 @@ PartialSet DrivenMDModule::calculateGRTestSerial(Configuration *cfg, PartialSet 
                 partialSet.fullHistogram(ii.localTypeIndex(), jj.localTypeIndex()).bin(box->minimumDistance(ii.r(), jj.r()));
         });
 
+    // Transform histogram data into radial distribution functions
+    partialSet.formPartials(box->volume());
+
+    // Sum total functions
+    partialSet.formTotals(true);
+
     return partialSet;
 }
