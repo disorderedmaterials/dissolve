@@ -2,7 +2,7 @@ name: Publish
 description: Publish artifacts online
 
 inputs:
-  releaseType:
+  publishType:
     type: choice
     default: 'none'
     options:
@@ -41,7 +41,7 @@ runs:
       ./package-examples -v ${{ env.dissolveVersion }}
 
   - name: Publish on GitHub (Release)
-    if: ${{ inputs.releaseType == 'release' }}
+    if: ${{ inputs.publishType == 'release' }}
     shell: bash
     run: |
       echo "Release tag/name will be: ${{ env.dissolveVersion }}"
@@ -49,7 +49,7 @@ runs:
       #./update-release -r disorderedmaterials/dissolve -t ${{ env.dissolveVersion }} -n "${{ env.dissolveVersion }}" -f ReleaseNotes.md packages/* examples/*.zip examples/*.tar.gz
 
   - name: Publish on GitHub (Continuous)
-    if: ${{ inputs.releaseType == 'continuous' }}
+    if: ${{ inputs.publishType == 'continuous' }}
     shell: bash
     run: |
       echo "Release tag will be: continuous"
@@ -58,9 +58,9 @@ runs:
       #./update-release -r disorderedmaterials/dissolve -t continuous -p -e -u -n "Continuous (${{ env.dissolveVersion }} @ ${{ env.dissolveShortHash }})" -b "Continuous release from \`develop\` branch @ ${{ env.dissolveShortHash }}. Built $(date)." packages/*
 
   - name: Publish on Harbor
-    if: ${{ inputs.releaseType != 'none' }}
+    if: ${{ inputs.publishType != 'none' }}
     shell: bash
     run: |
-      echo "Publishing to Harbor, tagged as [${{ inputs.releaseType }}]..."
+      echo "Publishing to Harbor, tagged as [${{ inputs.publishType }}]..."
       #apptainer remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
-      #apptainer push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:${{ inputs.releaseType }}
+      #apptainer push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:${{ inputs.publishType }}
