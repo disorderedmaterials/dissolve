@@ -2,12 +2,14 @@ name: Publish
 description: Publish artifacts online
 
 inputs:
-  isRelease:
-    type: boolean
-    default: false
-  publish:
-    type: boolean
-    default: true
+  releaseType:
+    type: choice
+    default: 'none'
+    options:
+      - none
+      - continuous
+      - release
+      - legacy
 
 runs:
   using: "composite"
@@ -39,35 +41,26 @@ runs:
       ./package-examples -v ${{ env.dissolveVersion }}
 
   - name: Publish on GitHub (Release)
-    if: ${{ inputs.publish == 'true' && inputs.isRelease == 'true' }}
+    if: ${{ inputs.releaseType != 'release' }}
     shell: bash
     run: |
-      echo "Release tag will be: ${{ env.dissolveVersion }}"
-      echo "Release name will be: ${{ env.dissolveVersion }}"
-      export GITHUB_TOKEN=${{ github.token }}
-      ./update-release -r disorderedmaterials/dissolve -t ${{ env.dissolveVersion }} -n "${{ env.dissolveVersion }}" -f ReleaseNotes.md packages/* examples/*.zip examples/*.tar.gz
+      echo "Release tag/name will be: ${{ env.dissolveVersion }}"
+      #export GITHUB_TOKEN=${{ github.token }}
+      #./update-release -r disorderedmaterials/dissolve -t ${{ env.dissolveVersion }} -n "${{ env.dissolveVersion }}" -f ReleaseNotes.md packages/* examples/*.zip examples/*.tar.gz
 
   - name: Publish on GitHub (Continuous)
-    if: ${{ inputs.publish == 'true' && inputs.isRelease == 'false' }}
+    if: ${{ inputs.releaseType != 'continuous' }}
     shell: bash
     run: |
       echo "Release tag will be: continuous"
       echo "Release name will be: 'Continuous (${{ env.dissolveVersion }} @ ${{ env.dissolveShortHash }})'"
-      export GITHUB_TOKEN=${{ github.token }}
-      ./update-release -r disorderedmaterials/dissolve -t continuous -p -e -u -n "Continuous (${{ env.dissolveVersion }} @ ${{ env.dissolveShortHash }})" -b "Continuous release from \`develop\` branch @ ${{ env.dissolveShortHash }}. Built $(date)." packages/*
+      #export GITHUB_TOKEN=${{ github.token }}
+      #./update-release -r disorderedmaterials/dissolve -t continuous -p -e -u -n "Continuous (${{ env.dissolveVersion }} @ ${{ env.dissolveShortHash }})" -b "Continuous release from \`develop\` branch @ ${{ env.dissolveShortHash }}. Built $(date)." packages/*
 
-  - name: Publish on Harbor (Release)
-    if: ${{ inputs.publish == 'true' && inputs.isRelease == 'true' }}
+  - name: Publish on Harbor
+    if: ${{ inputs.releaseType != 'none' }}
     shell: bash
     run: |
-      echo "Release tag will be: latest"
-      apptainer remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
-      apptainer push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:latest
-
-  - name: Publish on Harbor (Continuous)
-    if: ${{ inputs.publish == 'true' && inputs.isRelease == 'false' }}
-    shell: bash
-    run: |
-      echo "Release tag will be: continuous"
-      apptainer remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
-      apptainer push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:continuous
+      echo "Publishing to Harbor, tagged as [${{ inputs.releaseType }}]..."
+      #apptainer remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
+      #apptainer push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:${{ inputs.releaseType }}
