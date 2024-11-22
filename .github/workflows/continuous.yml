@@ -96,3 +96,24 @@ jobs:
         env:
           HARBOR_USER: ${{ secrets.HARBOR_USER }}
           HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
+
+  Web:
+    needs: [ Package, BuildLinux ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: "./.github/workflows/setup"
+      - name: Build Website
+        uses: "./.github/workflows/website"
+        with:
+          publishType: 'continuous'
+        env:
+          SERVER_ID: ${{ secrets.SERVER_ID }}
+          SERVER_KEY: ${{ secrets.SERVER_KEY }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SERVER_DOCS_DIR: ${{ secrets.SERVER_DOCS_DIR }}
+          SERVER_MAIN_DIR: ${{ secrets.SERVER_MAIN_DIR }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
