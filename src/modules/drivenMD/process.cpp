@@ -72,6 +72,8 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         newPosition = i.x() - delta;
                         i.set(newPosition, i.y(), i.z());
                         fmt::print("X coord = {}\n", i.x());
+                        // Reset GR
+                        originalgr.reset();
                         // Calculate GR
                         calculateGRTestSerial(targetConfiguration_, originalgr);
                         // FT to structure factor
@@ -84,6 +86,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         newPosition = i.x() + (2 * delta);
                         i.set(newPosition, i.y(), i.z());
                         fmt::print("X coord = {}\n", i.x());
+                        originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
@@ -101,6 +104,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         newPosition = i.y() - delta;
                         i.set(i.x(), newPosition, i.z());
                         fmt::print("Y coord = {}\n", i.y());
+                        originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
@@ -109,6 +113,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         newPosition = i.y() + (2 * delta);
                         i.set(i.x(), newPosition, i.z());
                         fmt::print("Y coord = {}\n", i.y());
+                        originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
@@ -124,6 +129,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         newPosition = i.z() - delta;
                         i.set(i.x(), i.y(), newPosition);
                         fmt::print("Z coord = {}\n", i.z());
+                        originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
@@ -132,6 +138,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         newPosition = i.z() + (2 * delta);
                         i.set(i.x(), i.y(), newPosition);
                         fmt::print("Z coord = {}\n", i.z());
+                        originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
@@ -143,13 +150,17 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         break;
                 }
             }
-            fmt::print("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
-            i.translateCoordinates(f);
-            f.print();
-            targetConfiguration_->updateAtomLocation(&i);
-            printf("We've moved\n");
-            fmt::print("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
         }
+    }
+
+    for (auto &&[i, f] : zip(atoms, forces))
+    {
+        fmt::print("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
+        i.translateCoordinates(f);
+        f.print();
+        targetConfiguration_->updateAtomLocation(&i);
+        printf("We've moved\n");
+        fmt::print("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
     }
 
     targetConfiguration_->updateObjectRelationships();
