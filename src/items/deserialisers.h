@@ -6,7 +6,7 @@
 #include "base/lineParser.h"
 #include "classes/coreData.h"
 #include <any>
-#include <fmt/format.h>
+#include <format>
 #include <functional>
 #include <typeindex>
 #include <unordered_map>

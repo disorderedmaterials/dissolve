@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/outputHandler.h"
-#include <fmt/format.h>
+#include <format>
 #include <functional>
 
 // Forward Declarations
@@ -61,7 +61,7 @@ class Messenger
         if (quiet_ || muted_)
             return;
 
-        splitAndPrint(fmt::format(format, args...));
+        splitAndPrint(std::format(format, args...));
     }
     // Print verbose message
     template <typename... Args> static void printVerbose(std::string_view format, Args... args)
@@ -69,7 +69,7 @@ class Messenger
         if (quiet_ || muted_ || (!verbose_))
             return;
 
-        splitAndPrint(fmt::format(format, args...));
+        splitAndPrint(std::format(format, args...));
     }
     // Print error message
     template <typename... Args> static bool error(std::string_view format, Args... args)
@@ -82,7 +82,7 @@ class Messenger
             outputHandler_->styleForError();
         setOutputPrefix("***  ERROR");
         outputBlank();
-        splitAndPrint(fmt::format(format, args...));
+        splitAndPrint(std::vformat(format, std::make_format_args(args...)));
         outputBlank();
         clearOutputPrefix();
         if (outputHandler_)
@@ -103,7 +103,7 @@ class Messenger
             outputHandler_->styleForWarning();
         setOutputPrefix("***  WARN ");
         outputBlank();
-        splitAndPrint(fmt::format(format, args...));
+        splitAndPrint(std::format(format, args...));
         outputBlank();
         clearOutputPrefix();
         if (outputHandler_)
@@ -120,11 +120,11 @@ class Messenger
         const auto bannerWidth = 80;
         static std::string bannerBorder(bannerWidth, '=');
 
-        std::string bannerText = fmt::format(format, args...);
+        std::string bannerText = std::format(format, args...);
 
         outputBlank();
         outputText(bannerBorder);
-        outputText(fmt::format("*{:^78}*", bannerText));
+        outputText(std::format("*{:^78}*", bannerText));
         outputText(bannerBorder);
         outputBlank();
     }
@@ -137,10 +137,10 @@ class Messenger
         const auto headingWidth = 80;
         static std::string headingBorder(headingWidth, '-');
 
-        std::string headingText = fmt::format(format, args...);
+        std::string headingText = std::format(format, args...);
 
         outputBlank();
-        outputText(fmt::format("{:^80}", headingText));
+        outputText(std::format("{:^80}", headingText));
         outputText(headingBorder);
         outputBlank();
     }

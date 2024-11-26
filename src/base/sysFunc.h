@@ -4,7 +4,7 @@
 #pragma once
 
 #include <algorithm>
-#include <fmt/core.h>
+#include <format>
 #include <optional>
 #include <string_view>
 #include <vector>
@@ -85,7 +85,7 @@ class DissolveSys
                                 return !nameFunction(object).empty() &&
                                        DissolveSys::sameString(nameFunction(object), uniqueName);
                             }) != objects.end())
-            uniqueName = fmt::format("{}{:02d}", base, ++suffix);
+          uniqueName = std::vformat("{}{:02d}", std::make_format_args(base, ++suffix));
 
         return uniqueName;
     }

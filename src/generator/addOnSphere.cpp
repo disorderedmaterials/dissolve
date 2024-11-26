@@ -124,7 +124,7 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Positioning type {} not handled.\n", positioningTypes().keyword(positioningType_))));
+                std::format("Positioning type {} not handled.\n", positioningTypes().keyword(positioningType_))));
     }
 
     // Add space for the new molecules

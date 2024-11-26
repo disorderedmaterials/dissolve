@@ -44,7 +44,7 @@ antlrcpp::Any CIFImportVisitor::visitLoopedData(CIFImportParser::LoopedDataConte
 {
     // Sanity check table data size
     if (ctx->loop()->values.size() % ctx->loop()->columns.size())
-        throw(std::runtime_error(fmt::format("CIF table has {} columns (first is '{}') but {} values (and C%V != 0).\n",
+        throw(std::runtime_error(std::format("CIF table has {} columns (first is '{}') but {} values (and C%V != 0).\n",
                                              ctx->loop()->columns.size(), ctx->loop()->columns.front()->getText(),
                                              ctx->loop()->values.size())));
 

@@ -76,7 +76,7 @@ std::optional<ExpressionValue> ExpressionBinaryOperatorNode::evaluate() const
                 result = lhs.asDouble() * rhs.asDouble();
             break;
         default:
-            throw(std::runtime_error(fmt::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", operator_)));
+            throw(std::runtime_error(std::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", operator_)));
     }
 
     return result;
@@ -96,17 +96,17 @@ std::string ExpressionBinaryOperatorNode::asString() const
     switch (operator_)
     {
         case (OperatorAdd):
-            return fmt::format("{}+{}", lhs, rhs);
+            return std::format("{}+{}", lhs, rhs);
         case (OperatorDivide):
-            return fmt::format("{}/{}", lhs, rhs);
+            return std::format("{}/{}", lhs, rhs);
         case (OperatorSubtract):
-            return fmt::format("{}-{}", lhs, rhs);
+            return std::format("{}-{}", lhs, rhs);
         case (OperatorPow):
-            return fmt::format("{}^{}", lhs, rhs);
+            return std::format("{}^{}", lhs, rhs);
         case (OperatorMultiply):
-            return fmt::format("{}*{}", lhs, rhs);
+            return std::format("{}*{}", lhs, rhs);
         default:
-            throw(std::runtime_error(fmt::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", operator_)));
+            throw(std::runtime_error(std::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", operator_)));
     }
 
     return "";

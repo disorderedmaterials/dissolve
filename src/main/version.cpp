@@ -2,7 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "main/version.h"
-#include <fmt/format.h>
+#include <format>
 #include <iostream>
 
 #define DISSOLVEVERSION "1.6.0"

@@ -8,7 +8,7 @@
 #include "expression/reference.h"
 #include "expression/variable.h"
 #include "math/mathFunc.h"
-#include <fmt/format.h>
+#include <format>
 #include <gtest/gtest.h>
 #include <string_view>
 #include <vector>

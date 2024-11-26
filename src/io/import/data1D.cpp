@@ -89,7 +89,7 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Data1D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+                std::format("Data1D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     // If we failed, may as well return now

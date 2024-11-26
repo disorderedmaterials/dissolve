@@ -6,7 +6,7 @@
 #include "classes/fullPairIterator.h"
 #include "classes/pairIterator.h"
 #include "templates/parallelDefs.h"
-#include <fmt/format.h>
+#include <format>
 #include <functional>
 #include <optional>
 #include <sstream>
@@ -285,8 +285,8 @@ template <typename Iterator> std::string joinStrings(Iterator begin, Iterator en
     if (begin == end)
         return std::string();
     std::stringstream stream;
-    stream << fmt::format("{}", *begin);
-    std::for_each(std::next(begin), end, [&stream, &delim](const auto value) { stream << delim << fmt::format("{}", value); });
+    stream << std::format("{}", *begin);
+    std::for_each(std::next(begin), end, [&stream, &delim](const auto value) { stream << delim << std::format("{}", value); });
     return stream.str();
 }
 template <typename Iterator, class Lam> std::string joinStrings(Iterator begin, Iterator end, std::string delim, Lam lambda)
@@ -294,9 +294,9 @@ template <typename Iterator, class Lam> std::string joinStrings(Iterator begin, 
     if (begin == end)
         return std::string();
     std::stringstream stream;
-    stream << fmt::format("{}", lambda(*begin));
+    stream << std::format("{}", lambda(*begin));
     std::for_each(std::next(begin), end,
-                  [&stream, &lambda, &delim](const auto &value) { stream << delim << fmt::format("{}", lambda(value)); });
+                  [&stream, &lambda, &delim](const auto &value) { stream << delim << std::format("{}", lambda(value)); });
     return stream.str();
 }
 template <class Class> std::string joinStrings(Class range, std::string delim = ", ")

@@ -84,7 +84,7 @@ bool Data2DExportFileFormat::exportData(const Data2DBase &data)
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Data2D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+                std::format("Data2D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

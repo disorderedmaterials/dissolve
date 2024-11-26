@@ -3,7 +3,7 @@
 
 #include "gui/models/rangeVectorModel.h"
 #include <QBrush>
-#include <fmt/format.h>
+#include <format>
 
 // set range data
 void RangeVectorModel::setData(std::vector<Range> &ranges)

@@ -244,7 +244,7 @@ bool ProcessPool::assignProcessesToGroups()
         {
             auto wr = worldRanks_[localRank];
             group.addProcess(localRank, wr);
-            rankString += fmt::format(" {}", wr);
+            rankString += std::format(" {}", wr);
 
             // If this process is the current worldRank_ we are considering, set its group membership
             if (wr == worldRank_)

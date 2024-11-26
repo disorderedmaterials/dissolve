@@ -65,7 +65,7 @@ bool Data2DImportFileFormat::importData(LineParser &parser, Data2D &data)
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Data2D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+                std::format("Data2D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

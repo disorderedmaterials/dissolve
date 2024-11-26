@@ -6,7 +6,7 @@
 #include "items/serialisers.h"
 #include "main/version.h"
 #include <cassert>
-#include <fmt/format.h>
+#include <format>
 #include <typeindex>
 
 // Static Singletons

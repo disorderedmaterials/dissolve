@@ -63,7 +63,7 @@ bool Data1DExportFileFormat::exportData(const Data1DBase &data)
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Data1D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+                std::format("Data1D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

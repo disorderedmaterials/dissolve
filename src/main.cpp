@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include <format>
 #include "base/messenger.h"
 #include "base/processPool.h"
 #include "main/cli.h"
@@ -33,7 +34,7 @@ int main(int args, char **argv)
 
     // Enable redirect if requested
     if (options.redirectionBasename())
-        Messenger::enableRedirect(fmt::format("{}.{}", options.redirectionBasename().value(), ProcessPool::worldRank()));
+        Messenger::enableRedirect(std::format("{}.{}", options.redirectionBasename().value(), ProcessPool::worldRank()));
 
     Messenger::print("Dissolve-{} version {}, Copyright (C) 2024 Team Dissolve and contributors.\n", Version::appType(),
                      Version::info());

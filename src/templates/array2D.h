@@ -305,7 +305,7 @@ template <class A> class Array2D
         {
             std::string line;
             for (auto column = 0; column < nColumns_; ++column)
-                line += fmt::format(" {:e}", (*this)[{row, column}]);
+                line += std::format(" {:e}", (*this)[{row, column}]);
             Messenger::print("R{:2d} :{}\n", row, line);
         }
     }

@@ -61,7 +61,7 @@ bool SpeciesExportFileFormat::exportData(const Species *sp)
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Species format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+                std::format("Species format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

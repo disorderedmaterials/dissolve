@@ -40,5 +40,5 @@ std::string ExpressionRootNode::asString() const
 {
     if (children_.size() == 0)
         return "";
-    return parenthesesEnclosed_ ? fmt::format("({})", children_[0]->asString()) : children_[0]->asString();
+    return parenthesesEnclosed_ ? std::format("({})", children_[0]->asString()) : children_[0]->asString();
 }

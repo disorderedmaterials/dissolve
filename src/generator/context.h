@@ -4,7 +4,7 @@
 #pragma once
 
 #include "templates/optionalRef.h"
-#include <fmt/format.h>
+#include <format>
 #include <stdexcept>
 #include <string>
 
@@ -48,7 +48,7 @@ class GeneratorContext
     template <class T> void set(T obj)
     {
         throw(std::runtime_error(
-            fmt::format("Invalid object type ({}) passed to GeneratorContext set().\n", typeid(obj).name())));
+            std::format("Invalid object type ({}) passed to GeneratorContext set().\n", typeid(obj).name())));
     }
 
     public:

@@ -208,7 +208,7 @@ bool GeneratorNode::deserialise(LineParser &parser, const CoreData &coreData)
             return false;
 
         // Is this the end of the node block?
-        if (DissolveSys::sameString(parser.argsv(0), fmt::format("End{}", nodeTypes().keyword(type_))))
+        if (DissolveSys::sameString(parser.argsv(0), std::format("End{}", nodeTypes().keyword(type_))))
             return !errorsEncountered;
 
         // Try to parse this line as a keyword
@@ -241,7 +241,7 @@ bool GeneratorNode::serialise(LineParser &parser, std::string_view prefix)
     }
 
     // Create new prefix
-    std::string newPrefix = fmt::format("  {}", prefix);
+    std::string newPrefix = std::format("  {}", prefix);
 
     // Write keywords
     if (!keywords_.serialise(parser, newPrefix, true))

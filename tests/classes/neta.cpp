@@ -6,8 +6,7 @@
 #include "data/elements.h"
 #include "data/ff/ff.h"
 #include "tests/testData.h"
-#include <fmt/format.h>
-#include <fmt/ranges.h>
+#include <format>
 #include <gtest/gtest.h>
 
 namespace UnitTest

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <fmt/format.h>
+#include <format>
 #include <map>
 #include <toml11/toml.hpp>
 
@@ -57,7 +57,7 @@ template <> struct from<Geometry::GeometryType>
             return Geometry::GeometryType::TorsionType;
         else
             throw toml::type_error(
-                fmt::format("Unhandled geometry type '{}' - can't convert from TOML value.\n", std::string(typeString)),
+                std::format("Unhandled geometry type '{}' - can't convert from TOML value.\n", std::string(typeString)),
                 node.location());
     }
 };

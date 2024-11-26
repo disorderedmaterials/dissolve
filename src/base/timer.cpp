@@ -3,7 +3,7 @@
 
 #include "base/timer.h"
 #include "base/sysFunc.h"
-#include <fmt/format.h>
+#include <format>
 
 Timer::Timer(bool immediateStart)
 {
@@ -77,12 +77,12 @@ std::string Timer::timeString(double duration, bool truncate)
     auto seconds = duration - hours * 3600 - minutes * 60;
 
     if (hours != 0)
-        return fmt::format("{} hour{}, {} minute{}, and {:0.0f} seconds", hours, DissolveSys::plural(hours), minutes,
+        return std::format("{} hour{}, {} minute{}, and {:0.0f} seconds", hours, DissolveSys::plural(hours), minutes,
                            DissolveSys::plural(minutes), seconds);
     else if (minutes != 0)
-        return fmt::format("{} minute{} and {:0.0f} seconds", minutes, DissolveSys::plural(minutes), seconds);
+        return std::format("{} minute{} and {:0.0f} seconds", minutes, DissolveSys::plural(minutes), seconds);
     else if (truncate)
-        return fmt::format("{:0.0f} seconds", seconds);
+        return std::format("{:0.0f} seconds", seconds);
     else
-        return fmt::format("{:0.1f} seconds", seconds);
+        return std::format("{:0.1f} seconds", seconds);
 }

@@ -2,7 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/wizard.h"
-#include <fmt/format.h>
+#include <format>
 #include <stdexcept>
 
 WizardDialog::WizardDialog(QWidget *parent)

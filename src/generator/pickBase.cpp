@@ -26,7 +26,7 @@ const std::vector<std::shared_ptr<Molecule>> &PickGeneratorNodeBase::moleculePoo
 // Return source molecule pool name
 std::string PickGeneratorNodeBase::moleculePoolName() const
 {
-    return selection_ ? fmt::format("picked selection '{}'", selection_->name()) : "configuration";
+    return selection_ ? std::format("picked selection '{}'", selection_->name()) : "configuration";
 }
 
 // Return vector of picked Molecules

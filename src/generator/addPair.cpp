@@ -130,7 +130,7 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
             case (AddGeneratorNodeBase::PositioningType::Current):
                 break;
             default:
-                throw(std::runtime_error(fmt::format("Positioning type {} not handled.\n",
+                throw(std::runtime_error(std::format("Positioning type {} not handled.\n",
                                                      AddGeneratorNodeBase::positioningTypes().keyword(positioningType_))));
         }
 

@@ -126,7 +126,7 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Expression function '{}' has not been implemented.\n", internalFunctions().keyword(function_))));
+                std::format("Expression function '{}' has not been implemented.\n", internalFunctions().keyword(function_))));
     }
 
     return result;
@@ -141,7 +141,7 @@ std::string ExpressionFunctionNode::asString() const
         return "";
 
     if (!nArgs)
-        return fmt::format("{}()", internalFunctions().keyword(function_));
+        return std::format("{}()", internalFunctions().keyword(function_));
 
     // Evaluate the arguments
     std::vector<std::string> args;
@@ -153,5 +153,5 @@ std::string ExpressionFunctionNode::asString() const
         args.emplace_back(optArg);
     }
 
-    return fmt::format("{}({})", internalFunctions().keyword(function_), args[0]);
+    return std::format("{}({})", internalFunctions().keyword(function_), args[0]);
 }

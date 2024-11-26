@@ -166,7 +166,7 @@ bool CIFHandler::read(std::string_view filename)
     for (auto n = 0; n < atomSiteFractX.size(); ++n)
     {
         // Get standard information
-        auto label = n < atomSiteLabel.size() ? atomSiteLabel[n] : fmt::format("{}{}", atomSiteTypeSymbol[n], n);
+        auto label = n < atomSiteLabel.size() ? atomSiteLabel[n] : std::format("{}{}", atomSiteTypeSymbol[n], n);
         auto Z = n < atomSiteTypeSymbol.size()
                      ? Elements::element(atomSiteTypeSymbol[n])
                      : (n < atomSiteLabel.size() ? Elements::element(atomSiteLabel[n]) : Elements::Unknown);
@@ -940,21 +940,21 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
                     auto root = generator.nodes().back();
                     auto suffix = 0;
 
-                    while (generator.rootSequence().nodeInScope(root, fmt::format("SymmetryCopies_{}", uniqueSuffix)) !=
+                    while (generator.rootSequence().nodeInScope(root, std::format("SymmetryCopies_{}", uniqueSuffix)) !=
                            nullptr)
-                        uniqueSuffix = fmt::format("{}_{:02d}", base, ++suffix);
+                        uniqueSuffix = std::format("{}_{:02d}", base, ++suffix);
                 }
 
                 // We use 'CoordinateSets' here, because in this instance we are working with (CoordinateSet, Add) pairs
 
                 // CoordinateSets
                 auto coordsNode =
-                    generator.createRootNode<CoordinateSetsGeneratorNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
+                    generator.createRootNode<CoordinateSetsGeneratorNode>(std::format("SymmetryCopies_{}", uniqueSuffix), sp);
                 coordsNode->keywords().setEnumeration("Source", CoordinateSetsGeneratorNode::CoordinateSetSource::File);
                 coordsNode->setSets(cifMolecularSp.allInstanceCoordinates());
 
                 // Add
-                auto addNode = generator.createRootNode<AddGeneratorNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
+                auto addNode = generator.createRootNode<AddGeneratorNode>(std::format("Add_{}", uniqueSuffix), coordsNode);
                 addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp.instances().size())));
                 addNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Current);
                 addNode->keywords().set("Rotate", false);
@@ -998,7 +998,7 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
             boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
 
             // Add
-            auto addNode = generator.createRootNode<AddGeneratorNode>(fmt::format("Add_{}", sp->name()), sp);
+            auto addNode = generator.createRootNode<AddGeneratorNode>(std::format("Add_{}", sp->name()), sp);
             addNode->keywords().set("Population", NodeValueProxy(1));
             addNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Current);
             addNode->keywords().set("Rotate", false);

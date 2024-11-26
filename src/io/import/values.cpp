@@ -63,7 +63,7 @@ bool ValueImportFileFormat::importData(std::vector<double> &data, LineParser &cu
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Value format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+                std::format("Value format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     if (!readFromCurrent)

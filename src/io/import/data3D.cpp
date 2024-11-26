@@ -57,7 +57,7 @@ bool Data3DImportFileFormat::importData(LineParser &parser, Data3D &data)
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Data3D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+                std::format("Data3D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

@@ -19,7 +19,7 @@ void CIFImportLexerErrorListener::syntaxError(antlr4::Recognizer *recognizer, an
     // The actual error message can contain braces, so escape those to avoid breaking fmt
     auto escaped = DissolveSys::replace(DissolveSys::replace(message, "{", "{{"), "}", "}}");
 
-    throw CIFImportExceptions::CIFImportSyntaxException(fmt::format("Syntax Error: {}", escaped));
+    throw CIFImportExceptions::CIFImportSyntaxException(std::format("Syntax Error: {}", escaped));
 }
 
 /*
@@ -36,5 +36,5 @@ void CIFImportParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, a
     // The actual error message can contain braces, so escape those to avoid breaking fmt
     auto escaped = DissolveSys::replace(DissolveSys::replace(message, "{", "{{"), "}", "}}");
 
-    throw CIFImportExceptions::CIFImportSyntaxException(fmt::format("Syntax Error: {}", escaped));
+    throw CIFImportExceptions::CIFImportSyntaxException(std::format("Syntax Error: {}", escaped));
 }

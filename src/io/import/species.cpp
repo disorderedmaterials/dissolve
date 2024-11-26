@@ -68,7 +68,7 @@ bool SpeciesImportFileFormat::importData(LineParser &parser, Species *sp)
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Species format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+                std::format("Species format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

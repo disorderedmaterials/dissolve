@@ -70,7 +70,7 @@ bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vec3<doub
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Force format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+                std::format("Force format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     // Apply factor to data

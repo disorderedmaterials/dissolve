@@ -117,7 +117,7 @@ void Messenger::outputText(std::string_view s)
         {
             // Not redirecting - has an OutputHandler been defined?
             if (outputHandler_)
-                outputHandler_->outputText(fmt::format("{} {}", outputPrefix_, s));
+                outputHandler_->outputText(std::format("{} {}", outputPrefix_, s));
             else
                 std::cout << outputPrefix_ << " " << s << std::endl;
         }

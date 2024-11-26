@@ -88,7 +88,7 @@ bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3
             result = importXYZ(parser, r);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Coordinate format '{}' import has not been implemented.\n",
+            throw(std::runtime_error(std::format("Coordinate format '{}' import has not been implemented.\n",
                                                  formats_.keywordByIndex(*formatIndex_))));
     }
 

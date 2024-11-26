@@ -6,7 +6,7 @@
 #include "classes/speciesBond.h"
 #include "classes/speciesImproper.h"
 #include "classes/speciesTorsion.h"
-#include <fmt/format.h>
+#include <format>
 #include <gtest/gtest.h>
 
 namespace UnitTest

@@ -146,7 +146,7 @@ bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, std::string_view 
 // Write options and end block
 bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) const
 {
-    return keywords_.serialise(parser, fmt::format("{}  ", prefix));
+    return keywords_.serialise(parser, std::format("{}  ", prefix));
 }
 
 // Express as a serialisable value
