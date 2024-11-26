@@ -58,7 +58,7 @@ bool ForceExportFileFormat::exportData(const std::vector<Vec3<double>> &f)
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Forces format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+                std::format("Forces format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

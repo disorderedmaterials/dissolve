@@ -352,7 +352,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, const Process
                             {
                                 // Retrieve partial container and make sure its tag is set
                                 auto &partial = braggPartials[{typeI, typeJ}];
-                                partial.setTag(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
+                                partial.setTag(std::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
 
                                 // Loop over defined Bragg reflections
                                 for (auto n = 0; n < nReflections; ++n)

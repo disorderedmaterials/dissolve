@@ -73,5 +73,5 @@ void SpeciesSiteVectorKeywordWidget::updateSummaryText()
     else
         setSummaryText(QString::fromStdString(
             joinStrings(keyword_->data(), ", ",
-                        [](const auto &site) { return fmt::format("{} ({})", site->name(), site->parent()->name()); })));
+                        [](const auto &site) { return std::format("{} ({})", site->name(), site->parent()->name()); })));
 }

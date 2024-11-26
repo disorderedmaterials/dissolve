@@ -84,15 +84,15 @@ QVariant XmlTreeModel::data(const QModelIndex &index, int role) const
         switch (index.row())
         {
             case 0:
-                return QString::fromStdString(fmt::format("Atom Types ({})", atoms_.rowCount()));
+                return QString::fromStdString(std::format("Atom Types ({})", atoms_.rowCount()));
             case 1:
-                return QString::fromStdString(fmt::format("Bonds ({})", bonds_.rowCount()));
+                return QString::fromStdString(std::format("Bonds ({})", bonds_.rowCount()));
             case 2:
-                return QString::fromStdString(fmt::format("Angles ({})", angles_.rowCount()));
+                return QString::fromStdString(std::format("Angles ({})", angles_.rowCount()));
             case 3:
-                return QString::fromStdString(fmt::format("Torsions ({})", torsions_.rowCount()));
+                return QString::fromStdString(std::format("Torsions ({})", torsions_.rowCount()));
             case 4:
-                return QString::fromStdString(fmt::format("Impropers ({})", impropers_.rowCount()));
+                return QString::fromStdString(std::format("Impropers ({})", impropers_.rowCount()));
             default:
                 return {};
         }

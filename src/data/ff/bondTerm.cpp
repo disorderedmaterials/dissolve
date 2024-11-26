@@ -11,7 +11,7 @@ ForcefieldBondTerm::ForcefieldBondTerm(std::string_view typeI, std::string_view 
 {
     InteractionPotential<BondFunctions> potential(form);
     if (!potential.parseParameters(parameterString))
-        throw(std::runtime_error(fmt::format("Failed to parse parameter string '{}' when constructing bond term '{}-{}'.\n",
+        throw(std::runtime_error(std::format("Failed to parse parameter string '{}' when constructing bond term '{}-{}'.\n",
                                              parameterString, typeI_, typeJ_)));
     parameters_ = potential.parameters();
 }

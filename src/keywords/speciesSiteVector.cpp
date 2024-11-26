@@ -70,7 +70,7 @@ bool SpeciesSiteVectorKeyword::serialise(LineParser &parser, std::string_view ke
 
     std::string sites;
     for (auto *site : data_)
-        sites += fmt::format("  '{}'  '{}'", site->parent()->name(), site->name());
+        sites += std::format("  '{}'  '{}'", site->parent()->name(), site->name());
 
     if (!parser.writeLineF("{}{}{}\n", prefix, keywordName, sites))
         return false;
@@ -117,11 +117,11 @@ void SpeciesSiteVectorKeyword::deserialise(const SerialisedValue &node, const Co
                      if (site)
                          data_.push_back(site);
                      else
-                         throw toml::type_error(fmt::format("Cannot find Site {}", toml::find<std::string>(item, "site")),
+                         throw toml::type_error(std::format("Cannot find Site {}", toml::find<std::string>(item, "site")),
                                                 item.location());
                  }
                  else
-                     toml::type_error(fmt::format("Cannot find Species {}", toml::find<std::string>(item, "species")),
+                     toml::type_error(std::format("Cannot find Species {}", toml::find<std::string>(item, "species")),
                                       item.location());
              });
 }

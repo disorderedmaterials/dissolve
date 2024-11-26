@@ -213,7 +213,7 @@ void AddConfigurationDialog::finalise()
     for (const auto &spInfo : mixSpecies_)
     {
         // Set the population equation
-        auto popString = fmt::format("{}*multiplier", spInfo.requestedPopulation());
+        auto popString = std::format("{}*multiplier", spInfo.requestedPopulation());
 
         // Add coordinate sets only for suitable species - atomics, those with lone molecule population, or "large" molecules
         // don't get a coordinate sets node
@@ -224,7 +224,7 @@ void AddConfigurationDialog::finalise()
                                                                  NodeValue(rhoString, paramsNode->parameters()), rhoUnits);
         else
         {
-            auto coordSets = generator.createRootNode<CoordinateSetsGeneratorNode>(fmt::format("{}_Sets", sp->name()), sp);
+            auto coordSets = generator.createRootNode<CoordinateSetsGeneratorNode>(std::format("{}_Sets", sp->name()), sp);
 
             addNode = generator.createRootNode<AddGeneratorNode>(sp->name(), coordSets,
                                                                  NodeValue(popString, paramsNode->parameters()),

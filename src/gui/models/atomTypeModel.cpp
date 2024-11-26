@@ -243,7 +243,7 @@ QHash<int, QByteArray> AtomTypeModel::roleNames() const
 void AtomTypeModel::addSuffix(int row, QString suffix)
 {
     auto &data = atomTypes_->get()[row];
-    data->setName(fmt::format("{}{}", data->name(), suffix.toStdString()));
+    data->setName(std::format("{}{}", data->name(), suffix.toStdString()));
     auto idx = index(row, 0);
     Q_EMIT dataChanged(idx, idx);
 }
@@ -251,7 +251,7 @@ void AtomTypeModel::addSuffix(int row, QString suffix)
 void AtomTypeModel::addPrefix(int row, QString prefix)
 {
     auto &data = atomTypes_->get()[row];
-    data->setName(fmt::format("{}{}", prefix.toStdString(), data->name()));
+    data->setName(std::format("{}{}", prefix.toStdString(), data->name()));
     auto idx = index(row, 0);
     Q_EMIT dataChanged(idx, idx);
 }

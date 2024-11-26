@@ -114,7 +114,7 @@ bool CoordinateExportFileFormat::exportData(Configuration *cfg)
             result = exportDLPOLY(parser, cfg);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Coordinates format '{}' export has not been implemented.\n",
+            throw(std::runtime_error(std::format("Coordinates format '{}' export has not been implemented.\n",
                                                  formats_.keywordByIndex(*formatIndex_))));
     }
 

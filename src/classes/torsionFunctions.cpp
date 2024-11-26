@@ -41,11 +41,11 @@ const std::vector<std::string> &TorsionFunctions::parameters(Form form)
 std::string TorsionFunctions::parameter(Form form, int n)
 {
     if (form == TorsionFunctions::Form::CosN)
-        return fmt::format("k{}", n + 1);
+        return std::format("k{}", n + 1);
     else if (form == TorsionFunctions::Form::CosNC)
-        return fmt::format("k{}", n);
+        return std::format("k{}", n);
     else if (form == TorsionFunctions::Form::FourierN)
-        return n == 0 ? "k" : fmt::format("C{}", n);
+        return n == 0 ? "k" : std::format("C{}", n);
     else
         return (n < 0 || n >= parameters(form).size()) ? "" : parameters(form)[n];
 }

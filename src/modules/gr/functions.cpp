@@ -328,7 +328,7 @@ bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procP
                            bool &alreadyUpToDate)
 {
     // Does a PartialSet already exist for this Configuration?
-    auto originalGRObject = processingData.realiseIf<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), name_,
+    auto originalGRObject = processingData.realiseIf<PartialSet>(std::format("{}//OriginalGR", cfg->niceName()), name_,
                                                                  GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)
@@ -337,7 +337,7 @@ bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procP
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
     alreadyUpToDate = false;
-    if (DissolveSys::sameString(originalgr.fingerprint(), fmt::format("{}", cfg->contentsVersion())) &&
+    if (DissolveSys::sameString(originalgr.fingerprint(), std::format("{}", cfg->contentsVersion())) &&
         (method != GRModule::TestMethod))
     {
         Messenger::print("Partial g(r) are up-to-date for Configuration '{}'.\n", cfg->name());
@@ -460,7 +460,7 @@ bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procP
      * Partials are now up-to-date
      */
 
-    originalgr.setFingerprint(fmt::format("{}", cfg->contentsVersion()));
+    originalgr.setFingerprint(std::format("{}", cfg->contentsVersion()));
 
     return true;
 }
@@ -574,15 +574,15 @@ bool GRModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &p
 
         // Update fingerprint
         fingerprint +=
-            fingerprint.empty() ? fmt::format("{}", cfg->contentsVersion()) : fmt::format("_{}", cfg->contentsVersion());
+            fingerprint.empty() ? std::format("{}", cfg->contentsVersion()) : fmt::format("_{}", cfg->contentsVersion());
 
         // Calculate weighting factor
         double weight = ((cfgWeight / totalWeight) * *cfg->atomicDensity()) / rho0;
 
         // Grab partials for Configuration and add into our set
-        if (!processingData.contains(fmt::format("{}//UnweightedGR", cfg->niceName()), targetPrefix))
+        if (!processingData.contains(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-        auto cfgPartialGR = processingData.value<PartialSet>(fmt::format("{}//UnweightedGR", cfg->niceName()), targetPrefix);
+        auto cfgPartialGR = processingData.value<PartialSet>(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix);
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);

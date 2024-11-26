@@ -66,7 +66,7 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
         switch (role)
         {
             case (Qt::DisplayRole):
-                return QString::fromStdString(fmt::format("{} [{}]", module->name(), ModuleTypes::moduleType(module->type())));
+                return QString::fromStdString(std::format("{} [{}]", module->name(), ModuleTypes::moduleType(module->type())));
             case (Qt::EditRole):
                 return QString::fromStdString(std::string(module->name()));
             case (Qt::DecorationRole):

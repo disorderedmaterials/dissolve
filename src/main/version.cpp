@@ -14,7 +14,7 @@ namespace Version
 // Return semantic version number
 std::string_view semantic()
 {
-    static std::string versionString = fmt::format("{}", DISSOLVEVERSION);
+    static std::string versionString = std::format("{}", DISSOLVEVERSION);
     return versionString;
 }
 
@@ -28,7 +28,7 @@ std::string_view info()
         if (std::string_view(DISSOLVESHORTHASH).empty())
             versionString = DISSOLVEVERSION;
         else
-            versionString = fmt::format("{} @ {}", DISSOLVEVERSION, DISSOLVESHORTHASH);
+            versionString = std::format("{} @ {}", DISSOLVEVERSION, DISSOLVESHORTHASH);
     }
 
     return versionString;
@@ -77,7 +77,7 @@ bool DissolveVersion::operator==(const DissolveVersion &other) const
 
 std::ostream &operator<<(std::ostream &os, const DissolveVersion &version)
 {
-    os << fmt::format("{}.{}.{}", version.major_, version.minor_, version.patch_);
+    os << std::format("{}.{}.{}", version.major_, version.minor_, version.patch_);
     return os;
 }
 }; // namespace Version

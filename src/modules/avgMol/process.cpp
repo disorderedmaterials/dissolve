@@ -38,7 +38,7 @@ bool AvgMolModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
 
     // Set name and object tag for average species
     averageSpecies_.setName(
-        fmt::format("{}@{}", targetSite_ ? targetSite_->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
+        std::format("{}@{}", targetSite_ ? targetSite_->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
 
     // Realise arrays
     updateArrays(moduleContext.dissolve().processingModuleData());

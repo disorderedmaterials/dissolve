@@ -307,12 +307,12 @@ bool Dissolve::iterate(int nIterations)
             // -- Pair Potentials
             for (auto &&[at1, at2, pot] : pairPotentials_)
             {
-                processingModuleData_.realise<Data1D>(fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()),
+                processingModuleData_.realise<Data1D>(std::format("Potential_{}-{}_Additional", at1->name(), at2->name()),
                                                       "Dissolve", GenericItem::InRestartFileFlag) = pot->additionalPotential();
             }
 
             // Check and remove restart file backup
-            std::string restartFileBackup = fmt::format("{}.prev", restartFilename_);
+            std::string restartFileBackup = std::format("{}.prev", restartFilename_);
             if (DissolveSys::fileExists(restartFileBackup) && (std::remove(restartFileBackup.c_str()) != 0))
             {
                 Messenger::error("Could not remove old restart file backup.\n");
@@ -432,7 +432,7 @@ void Dissolve::printTiming()
         {
             SampledDouble timingInfo = module->processTimes();
             Messenger::print("      --> {:>20}  {:<{}}  {:7.2g} s/iter  ({} iterations)",
-                             ModuleTypes::moduleType(module->type()), fmt::format("({})", module->name()), maxLength,
+                             ModuleTypes::moduleType(module->type()), std::format("({})", module->name()), maxLength,
                              timingInfo.value(), timingInfo.count());
         }
 

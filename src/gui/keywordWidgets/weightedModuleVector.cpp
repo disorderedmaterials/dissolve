@@ -80,5 +80,5 @@ void WeightedModuleVectorKeywordWidget::updateSummaryText()
         setSummaryText("<None>");
     else
         setSummaryText(QString::fromStdString(joinStrings(
-            keyword_->data(), ", ", [](const auto &item) { return fmt::format("{} ({})", item.first->name(), item.second); })));
+            keyword_->data(), ", ", [](const auto &item) { return std::format("{} ({})", item.first->name(), item.second); })));
 }

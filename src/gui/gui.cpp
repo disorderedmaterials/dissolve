@@ -321,7 +321,7 @@ void DissolveWindow::updateStatusBar()
     {
         statusLabel_->setText("Stopped");
         statusIndicator_->setPixmap(QPixmap(":/general/icons/true.svg"));
-        timerLabel_->setText(QString::fromStdString(fmt::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
+        timerLabel_->setText(QString::fromStdString(std::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
     }
     else if (ui_.MainStack->currentIndex() == 1)
     {
@@ -425,7 +425,7 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
     // Text is set to time elapsed if iterating indefinitely
     if (iterationsRemaining == -1)
     {
-        timerLabel_->setText(QString::fromStdString(fmt::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
+        timerLabel_->setText(QString::fromStdString(std::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
     }
     // Set ETA text if we can
     else

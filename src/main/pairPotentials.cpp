@@ -213,7 +213,7 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     for (auto &&[at1, at2, pp] : pairPotentials_)
     {
         // Check processing module data for a named additional potential
-        auto addPotName = fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name());
+        auto addPotName = std::format("Potential_{}-{}_Additional", at1->name(), at2->name());
         if (processingModuleData_.contains(addPotName, "Dissolve"))
             pp->setAdditionalPotential(processingModuleData_.retrieve<Data1D>(addPotName, "Dissolve"));
     }
@@ -230,7 +230,7 @@ void Dissolve::clearAdditionalPotentials()
         pp->resetAdditionalPotential();
 
         // Clear entry in processing module data if it exists
-        auto itemName = fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name());
+        auto itemName = std::format("Potential_{}-{}_Additional", at1->name(), at2->name());
         if (processingModuleData_.contains(itemName, "Dissolve"))
             processingModuleData_.remove(itemName, "Dissolve");
     }

@@ -220,7 +220,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     calculatedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
     dissolve::for_each_pair(ParallelPolicies::par, atomTypes.begin(), atomTypes.end(),
                             [&](int i, auto at1, int j, auto at2) {
-                                calculatedUnweightedSQ[{i, j}].setTag(fmt::format("{}-{}", at1->name(), at2->name()));
+                                calculatedUnweightedSQ[{i, j}].setTag(std::format("{}-{}", at1->name(), at2->name()));
                             });
 
     // Is our scattering matrix fully set-up and just requiring updated data?
@@ -281,7 +281,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
         // Realise the r-factor array and make sure its object name is set
         auto &errors =
-            moduleData.realise<Data1D>(fmt::format("RFactor//{}", module->name()), name_, GenericItem::InRestartFileFlag);
+            moduleData.realise<Data1D>(std::format("RFactor//{}", module->name()), name_, GenericItem::InRestartFileFlag);
 
         /*
          * Calculate difference functions and current percentage errors in calculated vs reference target data.
@@ -290,7 +290,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
         // Get difference data container and form the difference between the reference and calculated data
         auto &differenceData =
-            moduleData.realise<Data1D>(fmt::format("Difference//{}", module->name()), name(), GenericItem::InRestartFileFlag);
+            moduleData.realise<Data1D>(std::format("Difference//{}", module->name()), name(), GenericItem::InRestartFileFlag);
         differenceData = weightedSQ.total();
         differenceData *= -1.0;
         Interpolator::addInterpolated(originalReferenceData, differenceData);
@@ -330,9 +330,9 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
         // Get difference and fit function objects
         auto &deltaFQ =
-            moduleData.realise<Data1D>(fmt::format("DeltaFQ//{}", module->name()), name_, GenericItem::InRestartFileFlag);
+            moduleData.realise<Data1D>(std::format("DeltaFQ//{}", module->name()), name_, GenericItem::InRestartFileFlag);
         auto &deltaFQFit =
-            moduleData.realise<Data1D>(fmt::format("DeltaFQFit//{}", module->name()), name_, GenericItem::InRestartFileFlag);
+            moduleData.realise<Data1D>(std::format("DeltaFQFit//{}", module->name()), name_, GenericItem::InRestartFileFlag);
 
         // Copy the original difference data and "invert" it
         deltaFQ = differenceData;
@@ -344,7 +344,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from
         // those.
         auto [fitCoefficients, status] = moduleData.realiseIf<std::vector<double>>(
-            fmt::format("FitCoefficients_{}", module->name()), name_, GenericItem::InRestartFileFlag);
+            std::format("FitCoefficients_{}", module->name()), name_, GenericItem::InRestartFileFlag);
 
         auto fitError = 0.0;
         auto nIterations = nPItSs_.value_or(0);
@@ -412,7 +412,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
         // Retrieve the storage object
         auto &simulatedFR =
-            moduleData.realise<Data1D>(fmt::format("SimulatedFR//{}", module->name()), name_, GenericItem::InRestartFileFlag);
+            moduleData.realise<Data1D>(std::format("SimulatedFR//{}", module->name()), name_, GenericItem::InRestartFileFlag);
 
         // Copy the total calculated F(Q) and trim to the same range as the experimental data before FT
         simulatedFR = weightedSQ.total();
@@ -516,7 +516,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         {
             if (moduleContext.processPool().isMaster())
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-Diff.q", module->name()));
+                Data1DExportFileFormat exportFormat(std::format("{}-Diff.q", module->name()));
                 if (exportFormat.exportData(differenceData))
                     moduleContext.processPool().decideTrue();
                 else
@@ -527,7 +527,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
             if (moduleContext.processPool().isMaster())
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-DiffFit.q", module->name()));
+                Data1DExportFileFormat exportFormat(std::format("{}-DiffFit.q", module->name()));
                 if (exportFormat.exportData(deltaFQFit))
                     moduleContext.processPool().decideTrue();
                 else
@@ -540,7 +540,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         {
             if (moduleContext.processPool().isMaster())
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-SimulatedFR.r", module->name()));
+                Data1DExportFileFormat exportFormat(std::format("{}-SimulatedFR.r", module->name()));
                 if (exportFormat.exportData(simulatedFR))
                     moduleContext.processPool().decideTrue();
                 else
@@ -575,7 +575,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         {
             // Copy and rename the data for clarity
             auto data = calculatedUnweightedSQ[{i, j}];
-            data.setTag(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
+            data.setTag(std::format("Simulated {}-{}", at1->name(), at2->name()));
 
             // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
             if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(data, 1.0 - feedback_)
@@ -620,7 +620,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         {
             for (auto &sq : estimatedSQ)
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-EstSQ-{}.txt", name_, sq.tag()));
+                Data1DExportFileFormat exportFormat(std::format("{}-EstSQ-{}.txt", name_, sq.tag()));
                 if (!exportFormat.exportData(sq))
                     return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
             }
@@ -639,7 +639,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
                             [&](int i, auto at1, int j, auto at2)
                             {
                                 auto &expGR = estimatedGR[{i, j}];
-                                expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
+                                expGR.setTag(std::format("{}-{}", at1->name(), at2->name()));
 
                                 // Copy experimental S(Q) and FT it
                                 expGR = estimatedSQ[{i, j}];
@@ -658,7 +658,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     {
         // For this Module, retrieve the coefficients of the fit performed above.
         const auto &fitCoefficients =
-            moduleData.value<std::vector<double>>(fmt::format("FitCoefficients_{}", module->name()), name_);
+            moduleData.value<std::vector<double>>(std::format("FitCoefficients_{}", module->name()), name_);
 
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
         dissolve::for_each_pair(
@@ -777,7 +777,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
                                         PairPotential *pp = moduleContext.dissolve().pairPotential(at1, at2);
 
                                         Data1DExportFileFormat exportFormat(
-                                            fmt::format("{}-EP-{}-{}.txt", name_, at1->name(), at2->name()));
+                                            std::format("{}-EP-{}-{}.txt", name_, at1->name(), at2->name()));
                                         if (!exportFormat.exportData(pp->additionalPotential()))
                                             return moduleContext.processPool().decideFalse();
                                         return std::nullopt;
@@ -801,7 +801,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
                     auto &potCoeff = coefficients[{i, j}];
 
                     LineParser fileParser;
-                    if (!fileParser.openOutput(fmt::format("{}-PCof-{}-{}.txt", name_, at1->name(), at2->name())))
+                    if (!fileParser.openOutput(std::format("{}-PCof-{}-{}.txt", name_, at1->name(), at2->name())))
                         return moduleContext.processPool().decideFalse();
                     for (auto n : potCoeff)
                         if (!fileParser.writeLineF("{}\n", n))

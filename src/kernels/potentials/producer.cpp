@@ -21,7 +21,7 @@ std::unique_ptr<ExternalPotential> create(ExternalPotentialTypes::ExternalPotent
         case (ExternalPotentialTypes::ExternalPotentialType::Regional):
             return std::make_unique<RegionalPotential>();
         default:
-            throw(std::runtime_error(fmt::format("Creation of external potential type '{}' not implemented.\n",
+            throw(std::runtime_error(std::format("Creation of external potential type '{}' not implemented.\n",
                                                  ExternalPotentialTypes::keyword(type))));
     }
 }

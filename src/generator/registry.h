@@ -43,7 +43,7 @@ class GeneratorNodeRegistry
         // Check for duplicate node type
         if (producers_.find(nodeType) != producers_.end())
             throw(std::runtime_error(
-                fmt::format("A node producer for type '{}' already exists.\n", GeneratorNode::nodeTypes().keyword(nodeType))));
+                std::format("A node producer for type '{}' already exists.\n", GeneratorNode::nodeTypes().keyword(nodeType))));
 
         producers_.emplace(nodeType, GeneratorNodeRegistryData([]() { return std::make_shared<N>(); }, brief));
 

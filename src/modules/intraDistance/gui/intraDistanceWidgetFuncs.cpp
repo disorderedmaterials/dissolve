@@ -38,8 +38,8 @@ void IntraDistanceModuleWidget::updateControls(const Flags<ModuleWidget::UpdateF
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
             rdfGraph_
-                ->createRenderable<RenderableData1D>(fmt::format("{}//NormalisedHistogram", module_->name()),
-                                                     fmt::format("RDF//{}", cfg->niceName()), cfg->niceName())
+                ->createRenderable<RenderableData1D>(std::format("{}//NormalisedHistogram", module_->name()),
+                                                     std::format("RDF//{}", cfg->niceName()), cfg->niceName())
                 ->setColour(StockColours::BlueStockColour);
     }
 

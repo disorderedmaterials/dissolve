@@ -89,7 +89,7 @@ FTBBox FontInstance::boundingBox(std::string_view text) const
 
     // Need to be a little careful here - we will put a '.' either side of the text so we get the full width of strings with
     // trailing spaces..
-    FTBBox box = font_->BBox(fmt::format(".{}.", text).c_str());
+    FTBBox box = font_->BBox(std::format(".{}.", text).c_str());
     return FTBBox(box.Lower(), FTPoint(box.Upper().X() - dotWidth_, box.Upper().Y()));
 }
 

@@ -65,33 +65,33 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 
     // Store current energies in the Configuration in case somebody else needs them
     auto &interData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//PairPotential", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//PairPotential", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     interData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.total());
     auto &intraData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Bound", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Bound", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     intraData.addPoint(moduleContext.dissolve().iteration(), boundEnergy);
     auto &bondData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Bond", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Bond", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     bondData.addPoint(moduleContext.dissolve().iteration(), bondEnergy);
     auto &angleData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Angle", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Angle", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     angleData.addPoint(moduleContext.dissolve().iteration(), angleEnergy);
     auto &torsionData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Torsion", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Torsion", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     torsionData.addPoint(moduleContext.dissolve().iteration(), torsionEnergy);
     auto &improperData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Improper", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Improper", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     improperData.addPoint(moduleContext.dissolve().iteration(), improperEnergy);
     auto &cohesiveData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Cohesive", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Cohesive", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     cohesiveData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.interMolecular());
     auto &intraPPData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//IntraPP", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//IntraPP", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     intraPPData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.intraMolecular());
 
     // Append to arrays of total energies
     auto &totalEnergyArray = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Total", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Total", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     totalEnergyArray.addPoint(moduleContext.dissolve().iteration(), ppEnergy.total() + boundEnergy);
 
     // Determine stability of energy
@@ -122,7 +122,7 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
     if (save_)
     {
         LineParser parser;
-        std::string filename = fmt::format("{}.energy.txt", targetConfiguration_->niceName());
+        std::string filename = std::format("{}.energy.txt", targetConfiguration_->niceName());
 
         if (!DissolveSys::fileExists(filename))
         {

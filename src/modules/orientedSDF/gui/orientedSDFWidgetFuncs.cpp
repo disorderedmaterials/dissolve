@@ -61,10 +61,10 @@ void OrientedSDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFla
     // -- Find available AvgMol results
     auto avgMolModules = dissolve_.coreData().allOfType<AvgMolModule>();
     for (AvgMolModule *module : avgMolModules)
-        refMolecules.emplace_back(&module->averageSpecies(), fmt::format("{} (AvgMol)", module->averageSpecies().name()));
+        refMolecules.emplace_back(&module->averageSpecies(), std::format("{} (AvgMol)", module->averageSpecies().name()));
     // -- Add on current species
     for (const auto &sp : dissolve_.coreData().species())
-        refMolecules.emplace_back(sp.get(), fmt::format("{} (Species)", sp->name()));
+        refMolecules.emplace_back(sp.get(), std::format("{} (Species)", sp->name()));
     ComboBoxUpdater<Species> refMoleculeUpdater(ui_.ReferenceMoleculeCombo, refMolecules, referenceMolecule_, 1, 0);
 
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || sdfGraph_->renderables().empty())
@@ -78,7 +78,7 @@ void OrientedSDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFla
     if (!sdfRenderable_)
     {
         sdfRenderable_ =
-            sdfGraph_->createRenderable<RenderableData3D>(fmt::format("{}//SDF", module_->name()), fmt::format("SDF"));
+            sdfGraph_->createRenderable<RenderableData3D>(std::format("{}//SDF", module_->name()), fmt::format("SDF"));
         sdfRenderable_->setColour(StockColours::BlueStockColour);
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)

@@ -77,7 +77,7 @@ bool XRaySQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
                     break;
                 default:
                     throw(std::runtime_error(
-                        fmt::format("Unhandled StructureFactor::NormalisationType ({}).\n",
+                        std::format("Unhandled StructureFactor::NormalisationType ({}).\n",
                                     StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_))));
             }
 
@@ -125,10 +125,10 @@ bool XRaySQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
         {
             if (moduleContext.processPool().isMaster())
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-ReferenceData.q", name()));
+                Data1DExportFileFormat exportFormat(std::format("{}-ReferenceData.q", name()));
                 if (!exportFormat.exportData(storedData))
                     return moduleContext.processPool().decideFalse();
-                Data1DExportFileFormat exportFormatFT(fmt::format("{}-ReferenceData.r", name()));
+                Data1DExportFileFormat exportFormatFT(std::format("{}-ReferenceData.r", name()));
                 if (!exportFormatFT.exportData(storedDataFT))
                     return moduleContext.processPool().decideFalse();
                 moduleContext.processPool().decideTrue();
@@ -231,7 +231,7 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext &moduleContext)
                     {
                         Data1D atomicData = unweightedSQ.partial(i, i);
                         atomicData.values() = weights.formFactor(i, atomicData.xAxis());
-                        Data1DExportFileFormat exportFormat(fmt::format("{}-{}.form", name(), at1.atomTypeName()));
+                        Data1DExportFileFormat exportFormat(std::format("{}-{}.form", name(), at1.atomTypeName()));
                         if (!exportFormat.exportData(atomicData))
                             return moduleContext.processPool().decideFalse();
                         moduleContext.processPool().decideTrue();
@@ -245,7 +245,7 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext &moduleContext)
                     Data1D ffData = unweightedSQ.partial(i, j);
                     ffData.values() = weights.weight(i, j, ffData.xAxis());
                     Data1DExportFileFormat exportFormat(
-                        fmt::format("{}-{}-{}.form", name(), at1.atomTypeName(), at2.atomTypeName()));
+                        std::format("{}-{}-{}.form", name(), at1.atomTypeName(), at2.atomTypeName()));
                     if (!exportFormat.exportData(ffData))
                         return moduleContext.processPool().decideFalse();
                     moduleContext.processPool().decideTrue();
@@ -317,7 +317,7 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext &moduleContext)
     {
         if (moduleContext.processPool().isMaster())
         {
-            Data1DExportFileFormat exportFormat(fmt::format("{}-weighted-total.gr.broad", name_));
+            Data1DExportFileFormat exportFormat(std::format("{}-weighted-total.gr.broad", name_));
             if (exportFormat.exportData(repGR))
                 moduleContext.processPool().decideTrue();
             else

@@ -13,7 +13,7 @@ ForcefieldAtomType::ForcefieldAtomType(Elements::Element Z, int index, std::stri
     InteractionPotential<ShortRangeFunctions> srPotential(parametersForm);
     if (!srPotential.parseParameters(parameterString))
         throw(std::runtime_error(
-            fmt::format("Failed to parse parameters string '{}' when constructing atom type '{}'.\n", parameterString, name_)));
+            std::format("Failed to parse parameters string '{}' when constructing atom type '{}'.\n", parameterString, name_)));
     parameters_ = srPotential.parameters();
 
     neta_.setDefinitionString(netaDefinition);

@@ -136,7 +136,7 @@ void SpeciesSiteKeywordWidget::updateSummaryText()
 {
     if (keyword_->data())
         setSummaryText(
-            QString::fromStdString(fmt::format("{} ({})", keyword_->data()->name(), keyword_->data()->parent()->name())));
+            QString::fromStdString(std::format("{} ({})", keyword_->data()->name(), keyword_->data()->parent()->name())));
     else
         setSummaryText("<None>");
 }

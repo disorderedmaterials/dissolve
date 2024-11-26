@@ -190,7 +190,7 @@ std::vector<ForcefieldTorsionTerm> XmlTorsionModel::toVector()
         auto index = 0;
         for (auto n : ns)
         {
-            paramString += fmt::format("k{}={} ", n, (phases[index] > 3.14 && phases[index] < 3.15 ? -1 : 1) * ks[index]);
+            paramString += std::format("k{}={} ", n, (phases[index] > 3.14 && phases[index] < 3.15 ? -1 : 1) * ks[index]);
 
             ++index;
         }

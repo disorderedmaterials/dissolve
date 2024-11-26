@@ -151,6 +151,6 @@ template <class Functions> class InteractionPotential
     {
         auto id = 0;
         return joinStrings(parameters(), " ",
-                           [&](const auto &value) { return fmt::format("{}={}", Functions::parameter(form(), id++), value); });
+                           [&](const auto &value) { return std::format("{}={}", Functions::parameter(form(), id++), value); });
     }
 };

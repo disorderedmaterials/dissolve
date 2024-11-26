@@ -43,7 +43,7 @@ std::string_view Forcefield_OPLSAA2005_Alkenes::name() const { return "OPLSAA200
 // Return description for Forcefield
 std::string_view Forcefield_OPLSAA2005_Alkenes::description() const
 {
-    static std::string desc = fmt::format("Alkenes from OPLS-AA (2005), covering alkenes and dienes.<br/><br/>References: {}",
+    static std::string desc = std::format("Alkenes from OPLS-AA (2005), covering alkenes and dienes.<br/><br/>References: {}",
                                           publicationReferences());
 
     return desc;

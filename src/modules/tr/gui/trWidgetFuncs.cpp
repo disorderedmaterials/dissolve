@@ -62,22 +62,22 @@ void TRModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
         ParallelPolicies::seq, ps.atomTypeMix().begin(), ps.atomTypeMix().end(),
         [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
         {
-            const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+            const std::string id = std::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
             // Filtering - does this 'id' match our filter?
             if (filterText && id.find(filterText.value()) == std::string::npos)
                 return;
 
             // Full partial
-            trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
-                                                         fmt::format("{} (Full)", id), "Full");
+            trGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
+                                                         std::format("{} (Full)", id), "Full");
             // Bound partial
-            trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
-                                                         fmt::format("{} (Bound)", id), "Bound");
+            trGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
+                                                         std::format("{} (Bound)", id), "Bound");
 
             // Unbound partial
-            trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
-                                                         fmt::format("{} (Unbound)", id), "Unbound");
+            trGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
+                                                         std::format("{} (Unbound)", id), "Unbound");
         },
         false);
 }
@@ -95,14 +95,14 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
 
         if (ui_.TotalButton->isChecked())
         {
-            trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedTR//Total", module_->name()), "Total T(R)",
+            trGraph_->createRenderable<RenderableData1D>(std::format("{}//WeightedTR//Total", module_->name()), "Total T(R)",
                                                          "Calculated");
             auto boundTotal = trGraph_->createRenderable<RenderableData1D>(
-                fmt::format("{}//WeightedTR//BoundTotal", module_->name()), "Bound T(R)", "Calculated");
+                std::format("{}//WeightedTR//BoundTotal", module_->name()), "Bound T(R)", "Calculated");
             boundTotal->setColour(StockColours::GreenStockColour);
             boundTotal->lineStyle().setStipple(LineStipple::DotStipple);
             auto unboundTotal = trGraph_->createRenderable<RenderableData1D>(
-                fmt::format("{}//WeightedTR//UnboundTotal", module_->name()), "Unbound T(R)", "Calculated");
+                std::format("{}//WeightedTR//UnboundTotal", module_->name()), "Unbound T(R)", "Calculated");
             unboundTotal->setColour(StockColours::GreenStockColour);
             unboundTotal->lineStyle().setStipple(LineStipple::HalfDashStipple);
         }

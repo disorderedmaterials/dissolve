@@ -210,7 +210,7 @@ bool EPSRModule::readFitCoefficients(Dissolve &dissolve, const ProcessPool &proc
             return Messenger::error("Number of potential coefficients ({}) does not match ncoeffp ({}).\n", parser.nArgs(),
                                     nCoeff);
         auto &fitCoefficients = dissolve.processingModuleData().realise<std::vector<double>>(
-            fmt::format("FitCoefficients_{}", target->name()), name_, GenericItem::InRestartFileFlag);
+            std::format("FitCoefficients_{}", target->name()), name_, GenericItem::InRestartFileFlag);
         fitCoefficients.resize(nCoeff);
         for (auto i = 0; i < nCoeff; ++i)
             fitCoefficients[i] = parser.argd(i);

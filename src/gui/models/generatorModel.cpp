@@ -127,7 +127,7 @@ bool GeneratorModel::setData(const QModelIndex &index, const QVariant &value, in
         auto uniqueName = newName;
         auto suffix = 0;
         while (generator_->get().node(uniqueName, nodeRef))
-            uniqueName = fmt::format("{}{:02d}", newName, ++suffix);
+            uniqueName = std::format("{}{:02d}", newName, ++suffix);
 
         node->setName(uniqueName);
 

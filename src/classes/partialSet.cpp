@@ -63,9 +63,9 @@ bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix, bool half)
         ParallelPolicies::par, atomTypeMix_.begin(), atomTypeMix_.end(),
         [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
         {
-            partials_[{n, m}].setTag(fmt::format("{}-{}//Full", at1.atomTypeName(), at2.atomTypeName()));
-            boundPartials_[{n, m}].setTag(fmt::format("{}-{}//Bound", at1.atomTypeName(), at2.atomTypeName()));
-            unboundPartials_[{n, m}].setTag(fmt::format("{}-{}//Unbound", at1.atomTypeName(), at2.atomTypeName()));
+            partials_[{n, m}].setTag(std::format("{}-{}//Full", at1.atomTypeName(), at2.atomTypeName()));
+            boundPartials_[{n, m}].setTag(std::format("{}-{}//Bound", at1.atomTypeName(), at2.atomTypeName()));
+            unboundPartials_[{n, m}].setTag(std::format("{}-{}//Unbound", at1.atomTypeName(), at2.atomTypeName()));
         },
         half_);
 
@@ -282,7 +282,7 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
         [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool>
         {
             // Open file and check that we're OK to proceed writing to it
-            std::string filename{fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
+            std::string filename{std::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
             Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
             parser.openOutput(filename, true);
@@ -303,15 +303,15 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
         half_);
 
     Messenger::printVerbose("Writing total file '{}'...\n", total_.tag());
-    if (!Data1DExportFileFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(total_))
+    if (!Data1DExportFileFormat(std::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(total_))
         return false;
 
     Messenger::printVerbose("Writing bound total file '{}'...\n", boundTotal_.tag());
-    if (!Data1DExportFileFormat(fmt::format("{}-{}-bound.{}", prefix, tag, suffix)).exportData(boundTotal_))
+    if (!Data1DExportFileFormat(std::format("{}-{}-bound.{}", prefix, tag, suffix)).exportData(boundTotal_))
         return false;
 
     Messenger::printVerbose("Writing unbound total file '{}'...\n", unboundTotal_.tag());
-    if (!Data1DExportFileFormat(fmt::format("{}-{}-unbound.{}", prefix, tag, suffix)).exportData(unboundTotal_))
+    if (!Data1DExportFileFormat(std::format("{}-{}-unbound.{}", prefix, tag, suffix)).exportData(unboundTotal_))
         return false;
 
     return true;
@@ -638,9 +638,9 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
 std::string writeDataPoint(int i, Data1D data)
 {
     if (data.valuesHaveErrors())
-        return fmt::format("{} {}", data.value(i), data.error(i));
+        return std::format("{} {}", data.value(i), data.error(i));
     else
-        return fmt::format("{}", data.value(i));
+        return std::format("{}", data.value(i));
 }
 
 // Write data through specified LineParser

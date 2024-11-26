@@ -22,7 +22,7 @@ void TextPrimitiveLexerErrorListener::syntaxError(antlr4::Recognizer *recognizer
     // The actual error message can contain braces, so escape those to avoid breaking fmt
     auto escaped = DissolveSys::replace(DissolveSys::replace(message, "{", "{{"), "}", "}}");
 
-    throw TextPrimitiveExceptions::TextPrimitiveSyntaxException(fmt::format("Syntax Error: {}", escaped));
+    throw TextPrimitiveExceptions::TextPrimitiveSyntaxException(std::format("Syntax Error: {}", escaped));
 }
 
 /*
@@ -42,5 +42,5 @@ void TextPrimitiveParserErrorListener::syntaxError(antlr4::Recognizer *recognize
     // The actual error message can contain braces, so escape those to avoid breaking fmt
     auto escaped = DissolveSys::replace(DissolveSys::replace(message, "{", "{{"), "}", "}}");
 
-    throw TextPrimitiveExceptions::TextPrimitiveSyntaxException(fmt::format("Syntax Error: {}", escaped));
+    throw TextPrimitiveExceptions::TextPrimitiveSyntaxException(std::format("Syntax Error: {}", escaped));
 }

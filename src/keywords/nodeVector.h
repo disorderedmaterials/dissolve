@@ -143,7 +143,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
             return true;
 
         if (!parser.writeLineF("{}{}  {}\n", prefix, name(),
-                               joinStrings(data_, " ", [](const auto node) { return fmt::format("'{}'", node->name()); })))
+                               joinStrings(data_, " ", [](const auto node) { return std::format("'{}'", node->name()); })))
             return false;
 
         return true;
@@ -167,12 +167,12 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
 
                      ConstNodeRef noderef = findNode(nodeName);
                      if (!noderef)
-                         throw toml::type_error(fmt::format("Node '{}' given to keyword {} doesn't exist.\n",
+                         throw toml::type_error(std::format("Node '{}' given to keyword {} doesn't exist.\n",
                                                             std::string(item.as_string()), name()),
                                                 item.location());
 
                      if (!validNode(noderef.get(), name()))
-                         throw toml::type_error(fmt::format("Invalid node: {}", name()), item.location());
+                         throw toml::type_error(std::format("Invalid node: {}", name()), item.location());
 
                      data_.push_back(std::dynamic_pointer_cast<const N>(noderef));
                  });

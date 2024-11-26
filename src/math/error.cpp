@@ -25,7 +25,7 @@ EnumOptions<ErrorType> errorTypes()
 
 std::string errorReportString(const ErrorReport &errorReport)
 {
-    return fmt::format("{} error between datasets is {:e} over {:e} < x < {:e} ({} points).\n",
+    return std::format("{} error between datasets is {:e} over {:e} < x < {:e} ({} points).\n",
                        errorTypes().keyword(errorReport.errorType), errorReport.error, errorReport.firstX, errorReport.lastX,
                        errorReport.nPointsConsidered);
 }
@@ -49,7 +49,7 @@ ErrorReport error(ErrorType errorType, const Data1D &A, const Data1D &B, Optiona
         return euclidean(A, B, range);
 
     throw(
-        std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
+        std::runtime_error(std::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
                                        errorTypes().keyword(errorType))));
 }
 
@@ -85,7 +85,7 @@ ErrorReport error(ErrorType errorType, const std::vector<double> &vecA, const st
         return euclidean(A, B);
 
     throw(
-        std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
+        std::runtime_error(std::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
                                        errorTypes().keyword(errorType))));
 }
 

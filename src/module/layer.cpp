@@ -40,7 +40,7 @@ std::string ModuleLayer::frequencyDetails(int iteration) const
     if (nToGo == 1)
         return "next iteration";
 
-    return fmt::format("in {} steps time", nToGo);
+    return std::format("in {} steps time", nToGo);
 }
 
 // Return whether the layer should execute this iteration

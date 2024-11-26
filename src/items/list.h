@@ -65,7 +65,7 @@ class GenericList
                                                       int flags = GenericItem::NoFlags)
     {
         // Construct full name
-        std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name);
+        std::string varName = prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name);
 
         auto it = items_.find(varName);
         if (it != items_.end())
@@ -73,9 +73,9 @@ class GenericList
             // Check type before we attempt to cast it
             if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
                 throw(std::runtime_error(
-                    fmt::format("GenericList::realise() - Item named '{}' exists, but has a different type "
+                    std::format("GenericList::realise() - Item named '{}' exists, but has a different type "
                                 "to that requested ('{}' vs '{}').\n",
-                                prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                                prefix.empty() ? name : std::format("{}//{}", prefix, name),
                                 std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
             // Bump version of the item and return it
@@ -97,16 +97,16 @@ class GenericList
     // Return named (const) item as templated type
     template <class T> const T &value(std::string_view name, std::string_view prefix = "") const
     {
-        auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
+        auto it = items_.find(prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name));
         if (it == items_.end())
-            throw(std::runtime_error(fmt::format("GenericList::value() - Item named '{}' does not exist.\n",
-                                                 prefix.empty() ? name : fmt::format("{}//{}", prefix, name))));
+            throw(std::runtime_error(std::format("GenericList::value() - Item named '{}' does not exist.\n",
+                                                 prefix.empty() ? name : std::format("{}//{}", prefix, name))));
 
         // Check type before we attempt to cast it
         if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
             throw(std::runtime_error(fmt::format(
                 "GenericList::value() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
-                prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                prefix.empty() ? name : std::format("{}//{}", prefix, name),
                 std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
         return std::any_cast<const T &>(std::get<GenericItem::AnyObject>(it->second));
@@ -114,7 +114,7 @@ class GenericList
     // Return copy of named item as templated type, or a default value
     template <class T> T valueOr(std::string_view name, std::string_view prefix, T valueIfNotFound) const
     {
-        auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
+        auto it = items_.find(prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name));
         if (it == items_.end())
             return valueIfNotFound;
 
@@ -122,7 +122,7 @@ class GenericList
         if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
             throw(std::runtime_error(fmt::format(
                 "GenericList::value() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
-                prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                prefix.empty() ? name : std::format("{}//{}", prefix, name),
                 std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
         return std::any_cast<const T>(std::get<GenericItem::AnyObject>(it->second));
@@ -130,7 +130,7 @@ class GenericList
     // Return named (const) item as templated type, if it exists
     template <class T> OptionalReferenceWrapper<const T> valueIf(std::string_view name, std::string_view prefix = "") const
     {
-        auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
+        auto it = items_.find(prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name));
         if (it == items_.end())
             return {};
 
@@ -138,7 +138,7 @@ class GenericList
         if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
             throw(std::runtime_error(fmt::format(
                 "GenericList::valueIf() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
-                prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                prefix.empty() ? name : std::format("{}//{}", prefix, name),
                 std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
         return std::any_cast<const T &>(std::get<GenericItem::AnyObject>(it->second));
@@ -146,17 +146,17 @@ class GenericList
     // Retrieve named item as templated type, assuming that it is going to be modified
     template <class T> T &retrieve(std::string_view name, std::string_view prefix = "")
     {
-        auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
+        auto it = items_.find(prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name));
         if (it == items_.end())
-            throw(std::runtime_error(fmt::format("GenericList::retrieve() - Item named '{}' does not exist.\n",
-                                                 prefix.empty() ? name : fmt::format("{}//{}", prefix, name))));
+            throw(std::runtime_error(std::format("GenericList::retrieve() - Item named '{}' does not exist.\n",
+                                                 prefix.empty() ? name : std::format("{}//{}", prefix, name))));
 
         // Check type before we attempt to cast it
         if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
             throw(
-                std::runtime_error(fmt::format("GenericList::retrieve() - Item named '{}' exists, but has a different type "
+                std::runtime_error(std::format("GenericList::retrieve() - Item named '{}' exists, but has a different type "
                                                "to that requested ('{}' vs '{}').\n",
-                                               prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                                               prefix.empty() ? name : std::format("{}//{}", prefix, name),
                                                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
         ++std::get<GenericItem::Version>(it->second);
@@ -208,7 +208,7 @@ class GenericList
     // Search for an object or child of the specified name
     template <class T> OptionalReferenceWrapper<const T> search(std::string_view name, std::string_view prefix = "") const
     {
-        auto varName = prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name);
+        auto varName = prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name);
         auto varNamePath = varName + "//";
         for (auto &[key, value] : items_)
         {
@@ -217,9 +217,9 @@ class GenericList
             {
                 // Check type before we attempt to cast it
                 if (std::get<GenericItem::AnyObject>(value).type() != typeid(T))
-                    throw(std::runtime_error(fmt::format("GenericList::search() - Item named '{}' exists, but has a different "
+                    throw(std::runtime_error(std::format("GenericList::search() - Item named '{}' exists, but has a different "
                                                          "type to that requested ('{}' vs '{}').\n",
-                                                         prefix.empty() ? name : fmt::format("{}//{}", prefix, name),
+                                                         prefix.empty() ? name : std::format("{}//{}", prefix, name),
                                                          std::get<GenericItem::AnyObject>(value).type().name(),
                                                          typeid(T).name())));
 
@@ -246,7 +246,7 @@ class GenericList
         OptionalReferenceWrapper<const B> base = dynamic_cast<const B &>(a);
         if (!base)
             throw(
-                std::runtime_error(fmt::format("GenericList::convertBase() - Item named '{}' exists, but cannot be cast to the"
+                std::runtime_error(std::format("GenericList::convertBase() - Item named '{}' exists, but cannot be cast to the"
                                                "requested base type '{}' (item type is '{}').\n",
                                                varName, typeid(B).name(), typeid(T).name())));
         return base->get();
@@ -255,7 +255,7 @@ class GenericList
     template <class B, class T1, class T2>
     OptionalReferenceWrapper<const B> searchBase(std::string_view name, std::string_view prefix = "") const
     {
-        auto varName = prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name);
+        auto varName = prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name);
         auto varNamePath = varName + "//";
         for (auto &[key, value] : items_)
         {
@@ -272,7 +272,7 @@ class GenericList
                 // If we have no valid result, then throw since the data type is not valid
                 if (!optRef)
                     throw(std::runtime_error(
-                        fmt::format("GenericList::searchBase() - Item named '{}' exists, but has a different "
+                        std::format("GenericList::searchBase() - Item named '{}' exists, but has a different "
                                     "type to those allowed requested ('{}' vs '{}' or '{}').\n",
                                     varName, object.type().name(), typeid(T1).name(), typeid(T2).name())));
                 return optRef;

@@ -31,7 +31,7 @@ Module::ExecutionResult ExportPairPotentialsModule::process(ModuleContext &modul
                              pairPotentialFormat_.formatDescription(), at1->name(), at2->name());
 
             // Generate filename
-            pairPotentialFormat_.setFilename(fmt::format("{}-{}-{}.pp", rootPPName, at1->name(), at2->name()));
+            pairPotentialFormat_.setFilename(std::format("{}-{}-{}.pp", rootPPName, at1->name(), at2->name()));
 
             // Append pair potential
             if (!pairPotentialFormat_.exportData(pp.get()))

@@ -43,7 +43,7 @@ std::string_view Forcefield_OPLSAA2005_Alcohols::name() const { return "OPLSAA20
 // Return description for Forcefield
 std::string_view Forcefield_OPLSAA2005_Alcohols::description() const
 {
-    static std::string desc = fmt::format("Alcohols from OPLS-AA (2005), covering mono-alcohols only.<br/><br/>References: {}",
+    static std::string desc = std::format("Alcohols from OPLS-AA (2005), covering mono-alcohols only.<br/><br/>References: {}",
                                           publicationReferences());
 
     return desc;

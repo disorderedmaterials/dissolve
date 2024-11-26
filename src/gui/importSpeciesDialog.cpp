@@ -227,7 +227,7 @@ void ImportSpeciesDialog::on_AtomTypesPrefixButton_clicked(bool checked)
     for (auto &i : selectedItems)
     {
         auto *at = atomTypesModel_.data(i, Qt::UserRole).value<AtomType *>();
-        at->setName(fmt::format("{}{}", prefix.toStdString(), at->name()));
+        at->setName(std::format("{}{}", prefix.toStdString(), at->name()));
     }
 
     updateAtomTypesPage();
@@ -245,7 +245,7 @@ void ImportSpeciesDialog::on_AtomTypesSuffixButton_clicked(bool checked)
     for (auto &i : selectedItems)
     {
         auto *at = atomTypesModel_.data(i, Qt::UserRole).value<AtomType *>();
-        at->setName(fmt::format("{}{}", suffix.toStdString(), at->name()));
+        at->setName(std::format("{}{}", suffix.toStdString(), at->name()));
     }
 
     updateAtomTypesPage();

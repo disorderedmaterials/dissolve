@@ -39,7 +39,7 @@ void IntraAngleModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
 
     // Calculated angle histogram
     if (angleGraph_->renderables().empty())
-        angleGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Angle(ABC)", module_->name()), "A-B...C Angle")
+        angleGraph_->createRenderable<RenderableData1D>(std::format("{}//Angle(ABC)", module_->name()), "A-B...C Angle")
             ->setColour(StockColours::RedStockColour);
 
     ui_.AnglePlotWidget->updateToolbar();

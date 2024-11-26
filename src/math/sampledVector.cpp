@@ -93,7 +93,7 @@ SampledVector &SampledVector::operator+=(const std::vector<double> &source)
     // Check vector size consistency
     if (mean_.size() != source.size())
         throw(std::runtime_error(
-            fmt::format("Vector passed to SampledVector::operator+= has a different size ({}) to the current data ({}).\n",
+            std::format("Vector passed to SampledVector::operator+= has a different size ({}) to the current data ({}).\n",
                         source.size(), mean_.size())));
 
     // Increase sample size counter

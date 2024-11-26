@@ -35,7 +35,7 @@ std::string_view Forcefield_OPLSAA2005_NobleGases::name() const { return "OPLSAA
 // Return description for Forcefield
 std::string_view Forcefield_OPLSAA2005_NobleGases::description() const
 {
-    static std::string desc = fmt::format("Noble gases from OPLS-AA (2005).<br/><br/>References: {}", publicationReferences());
+    static std::string desc = std::format("Noble gases from OPLS-AA (2005).<br/><br/>References: {}", publicationReferences());
 
     return desc;
 }

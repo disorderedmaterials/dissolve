@@ -72,7 +72,7 @@ std::any GenericItemProducer::produce(const std::type_info &objectType) const
     auto it = producers_.find(objectType);
     if (it == producers_.end())
         throw(std::runtime_error(
-            fmt::format("A producer has not been registered for type '{}', so a new object of this type cannot be created.\n",
+            std::format("A producer has not been registered for type '{}', so a new object of this type cannot be created.\n",
                         objectType.name())));
 
     return (it->second)();
@@ -97,7 +97,7 @@ std::string GenericItemProducer::className(const std::type_info &objectType) con
 {
     auto it = classNames_.find(objectType);
     if (it == classNames_.end())
-        throw(std::runtime_error(fmt::format("Class name has not been registered for type '{}'.\n", objectType.name())));
+        throw(std::runtime_error(std::format("Class name has not been registered for type '{}'.\n", objectType.name())));
 
     return it->second;
 }

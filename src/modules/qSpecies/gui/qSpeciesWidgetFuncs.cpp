@@ -37,7 +37,7 @@ void QSpeciesModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags>
         qSpeciesGraph_->clearRenderables();
 
     if (qSpeciesGraph_->renderables().empty())
-        qSpeciesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//QSpecies", module_->name()), "Q-Species");
+        qSpeciesGraph_->createRenderable<RenderableData1D>(std::format("{}//QSpecies", module_->name()), "Q-Species");
 
     // Update Oxygen Sites Labels
     auto oSitesHistogram = dissolve_.processingModuleData().valueOr("OSitesHistogram", module_->name(), IntegerHistogram1D());

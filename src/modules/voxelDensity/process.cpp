@@ -56,7 +56,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
             dissolve::for_each(std::execution::seq, atoms.begin(), atoms.end(), scatteringLengthDensityOp);
             break;
         default:
-            throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(targetProperty_))));
+            throw(std::runtime_error(std::format("'{}' not a valid property.\n", static_cast<int>(targetProperty_))));
     }
 
     // Calculate voxel density histogram, normalising bin values by voxel volume (property/cubic angstrom)

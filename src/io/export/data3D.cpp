@@ -142,7 +142,7 @@ bool Data3DExportFileFormat::exportData(const Data3DBase &data)
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Data3D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+                std::format("Data3D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

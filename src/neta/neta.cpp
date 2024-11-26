@@ -106,8 +106,8 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const std::option
     path.push_back(i);
 
     auto neta = flags.isSet(NETADefinition::NETACreationFlags::IncludeRootElement) && currentDepth == 0
-                    ? fmt::format("?{}, nbonds={}", Elements::symbol(i->Z()), i->nBonds())
-                    : fmt::format("nbonds={}", i->nBonds());
+                    ? std::format("?{}, nbonds={}", Elements::symbol(i->Z()), i->nBonds())
+                    : std::format("nbonds={}", i->nBonds());
 
     // Add on each connected atom, provided it is not already in the path
     auto nH = 0;
@@ -127,13 +127,13 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const std::option
             continue;
 
         if (!maxDepth || currentDepth < *maxDepth)
-            neta += fmt::format(",-{}({})", Elements::symbol(j->Z()), netaString(j, currentDepth + 1, maxDepth, path, flags));
+            neta += std::format(",-{}({})", Elements::symbol(j->Z()), netaString(j, currentDepth + 1, maxDepth, path, flags));
         else
-            neta += fmt::format(",-{}", Elements::symbol(j->Z()));
+            neta += std::format(",-{}", Elements::symbol(j->Z()));
     }
 
     if (!flags.isSet(NETADefinition::NETACreationFlags::ExplicitHydrogens) && i->Z() != Elements::H)
-        neta += fmt::format(",nh={}", nH);
+        neta += std::format(",nh={}", nH);
     return neta;
 }
 

@@ -36,7 +36,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "Generator"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "Generator"),
                           "Configuration generator", timing, save_);
     }
 
@@ -62,7 +62,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RDFCells"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RDFCells"),
                           "RDF (Cells) to half-cell limit", timing, save_);
     }
 
@@ -88,7 +88,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RDFSimple"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RDFSimple"),
                           "RDF (Simple) to half-cell limit", timing, save_);
     }
 
@@ -107,7 +107,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "IntraEnergy"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "IntraEnergy"),
                           "Intramolecular energy", timing, save_);
     }
 
@@ -126,7 +126,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "InterEnergy"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "InterEnergy"),
                           "Interatomic energy", timing, save_);
     }
 
@@ -164,7 +164,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RegionalDist"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RegionalDist"),
                           "Distributor (regional)", timing, save_);
     }
 

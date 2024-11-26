@@ -92,7 +92,7 @@ Module::ExecutionResult SQModule::process(ModuleContext &moduleContext)
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(
             unweightedsq.fingerprint(),
-            fmt::format("{}/{}", moduleContext.dissolve().processingModuleData().version("UnweightedGR", sourceGR_->name()),
+            std::format("{}/{}", moduleContext.dissolve().processingModuleData().version("UnweightedGR", sourceGR_->name()),
                         sourceBragg_
                             ? moduleContext.dissolve().processingModuleData().version("Reflections", sourceBragg_->name())
                             : -1)))

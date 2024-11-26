@@ -80,17 +80,17 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     for (int i = 0; i < 3; ++i)
         if (rangeEnabled_[i])
         {
-            auto &sumN = processingData.realise<SampledDouble>(fmt::format("CN//{}", rangeNames[i]), name(),
+            auto &sumN = processingData.realise<SampledDouble>(std::format("CN//{}", rangeNames[i]), name(),
                                                                GenericItem::InRestartFileFlag);
             sumN += Integrator::sum(dataCN, range_[i]);
             if (instantaneous_)
             {
-                auto &sumNInst = processingData.realise<Data1D>(fmt::format("CN//{}Inst", rangeNames[i]), name(),
+                auto &sumNInst = processingData.realise<Data1D>(std::format("CN//{}Inst", rangeNames[i]), name(),
                                                                 GenericItem::InRestartFileFlag);
                 sumNInst.addPoint(moduleContext.dissolve().iteration(), sumN.value());
                 if (exportInstantaneous_)
                 {
-                    Data1DExportFileFormat exportFormat(fmt::format("{}_Sum{}.txt", name(), rangeNames[i]));
+                    Data1DExportFileFormat exportFormat(std::format("{}_Sum{}.txt", name(), rangeNames[i]));
                     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(sumNInst, exportFormat,
                                                                                   moduleContext.processPool()))
                     {

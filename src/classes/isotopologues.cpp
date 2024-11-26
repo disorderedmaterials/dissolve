@@ -51,7 +51,7 @@ void Isotopologues::set(const Isotopologue *iso, double relativeWeight)
 
     if (it == mix_.end())
         throw(std::runtime_error(
-            fmt::format("Warning: Isotopologues does not contain the Isotopologue '{}', so its relative weight can't be set.\n",
+            std::format("Warning: Isotopologues does not contain the Isotopologue '{}', so its relative weight can't be set.\n",
                         iso->name())));
 
     it->setWeight(relativeWeight);
@@ -182,7 +182,7 @@ void Isotopologues::deserialise(const SerialisedValue &node, const CoreData &cor
                         {
                             auto iso = species_->findIsotopologue(name);
                             if (!iso)
-                                throw toml::type_error(fmt::format("Cannot find iso {}", name), location);
+                                throw toml::type_error(std::format("Cannot find iso {}", name), location);
                             add(iso, item.as_floating());
                         });
 }

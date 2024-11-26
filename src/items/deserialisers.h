@@ -69,7 +69,7 @@ class GenericItemDeserialiser
         auto it = deserialisers_.find(typeid(T));
         if (it == deserialisers_.end())
             throw(std::runtime_error(
-                fmt::format("Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n",
+                std::format("Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n",
                             typeid(T).name())));
 
         auto a = std::make_any<T>(object);

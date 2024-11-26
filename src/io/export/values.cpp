@@ -56,7 +56,7 @@ bool ValueExportFileFormat::exportData(const std::vector<double> &data, LinePars
             break;
         default:
             throw(std::runtime_error(
-                fmt::format("Value format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+                std::format("Value format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

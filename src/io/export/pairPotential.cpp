@@ -114,7 +114,7 @@ bool PairPotentialExportFileFormat::exportData(PairPotential *pp)
             result = exportDLPOLY(parser, pp);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Pairpotential format '{}' export has not been implemented.\n",
+            throw(std::runtime_error(std::format("Pairpotential format '{}' export has not been implemented.\n",
                                                  formats_.keywordByIndex(*formatIndex_))));
     }
 

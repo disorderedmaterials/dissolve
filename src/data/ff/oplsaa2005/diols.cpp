@@ -41,7 +41,7 @@ std::string_view Forcefield_OPLSAA2005_Diols::name() const { return "OPLSAA2005/
 std::string_view Forcefield_OPLSAA2005_Diols::description() const
 {
     static std::string desc =
-        fmt::format("Alcohols from OPLS-AA (2005), covering diols only.<br/><br/>References: {}", publicationReferences());
+        std::format("Alcohols from OPLS-AA (2005), covering diols only.<br/><br/>References: {}", publicationReferences());
 
     return desc;
 }

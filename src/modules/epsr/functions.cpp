@@ -111,7 +111,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averaged
             {
                 // Set the additional potential in the main processing data
                 dissolve.processingModuleData().realise<Data1D>(
-                    fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
+                    std::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
                     GenericItem::InRestartFileFlag) = ep;
 
                 // Grab pointer to the relevant pair potential (if it exists)

@@ -696,10 +696,10 @@ std::string formattedInformation(SpaceGroupId sgid)
         return {};
 
     if (symbols_[sgid].code().empty())
-        return fmt::format("{}  {}  ({})", symbols_[sgid].internationalTableIndex(), symbols_[sgid].hermannMauginnSymbol(),
+        return std::format("{}  {}  ({})", symbols_[sgid].internationalTableIndex(), symbols_[sgid].hermannMauginnSymbol(),
                            symbols_[sgid].hallSymbol());
     else
-        return fmt::format("{}  {} [{}]  ({})", symbols_[sgid].internationalTableIndex(), symbols_[sgid].hermannMauginnSymbol(),
+        return std::format("{}  {} [{}]  ({})", symbols_[sgid].internationalTableIndex(), symbols_[sgid].hermannMauginnSymbol(),
                            symbols_[sgid].code(), symbols_[sgid].hallSymbol());
 }
 

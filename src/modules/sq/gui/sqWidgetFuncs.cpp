@@ -62,23 +62,23 @@ void SQModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
     {
         auto &at1 = ps.atomTypeMix()[first];
         auto &at2 = ps.atomTypeMix()[second];
-        const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+        const std::string id = std::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
         // Filtering - does this 'id' match our filter?
         if (filterText && id.find(filterText.value()) == std::string::npos)
             continue;
 
         // Full partial
-        sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
-                                                     fmt::format("{} (Full)", id), "Full");
+        sqGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
+                                                     std::format("{} (Full)", id), "Full");
 
         // Bound partial
-        sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
-                                                     fmt::format("{} (Bound)", id), "Bound");
+        sqGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
+                                                     std::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
-                                                     fmt::format("{} (Unbound)", id), "Unbound");
+        sqGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
+                                                     std::format("{} (Unbound)", id), "Unbound");
     }
 }
 
@@ -99,7 +99,7 @@ void SQModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
             createPartialSetRenderables("UnweightedSQ");
         }
         else
-            sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//Total", module_->name()), "Total",
+            sqGraph_->createRenderable<RenderableData1D>(std::format("{}//UnweightedSQ//Total", module_->name()), "Total",
                                                          "Calc");
     }
 

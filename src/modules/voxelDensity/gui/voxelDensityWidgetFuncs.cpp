@@ -40,7 +40,7 @@ std::optional<std::string> VoxelDensityModuleWidget::getData1DAxisLabel()
         case (VoxelDensityModule::TargetPropertyType::ScatteringLengthDensity):
             return "Scattering length density, cm\\sup{-2} \\sym{angstrom}\\sup{-3}";
         default:
-            throw(std::runtime_error(fmt::format("'{}' not a valid property.\n", static_cast<int>(type))));
+            throw(std::runtime_error(std::format("'{}' not a valid property.\n", static_cast<int>(type))));
     }
 }
 
@@ -58,8 +58,8 @@ void VoxelDensityModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFl
     {
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
-            voxelDensityGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Data1D", module_->name()),
-                                                                   fmt::format("Data1D//{}", cfg->niceName()), cfg->niceName());
+            voxelDensityGraph_->createRenderable<RenderableData1D>(std::format("{}//Data1D", module_->name()),
+                                                                   std::format("Data1D//{}", cfg->niceName()), cfg->niceName());
     }
 
     voxelDensityGraph_->view().axes().setTitle(0, getData1DAxisLabel().value_or(""));
@@ -68,7 +68,7 @@ void VoxelDensityModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFl
     {
         auto voxelVolume = std::ceil(module_->voxelVolume() * std::pow(10.0, 3)) / std::pow(10, 3);
         std::string yAxisTitle =
-            "N Voxels [of volume=" + std::string(fmt::format("{}", voxelVolume)) + " \\sym{angstrom}\\sup{3}" + "]";
+            "N Voxels [of volume=" + std::string(std::format("{}", voxelVolume)) + " \\sym{angstrom}\\sup{3}" + "]";
         voxelDensityGraph_->view().axes().setTitle(1, yAxisTitle);
     }
 

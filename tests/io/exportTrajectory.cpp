@@ -27,7 +27,7 @@ std::string exportFile(DissolveSystemTest &systemTest, std::string outfile,
 
     auto *cfg = systemTest.coreData().configuration(0);
 
-    auto output_path = fmt::format("{}/{}", DissolveSys::beforeLastChar(inputFile, '/'), outfile);
+    auto output_path = std::format("{}/{}", DissolveSys::beforeLastChar(inputFile, '/'), outfile);
     TrajectoryExportFileFormat exporter(output_path, format);
     EXPECT_TRUE(exporter.exportData(cfg));
 

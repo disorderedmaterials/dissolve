@@ -218,7 +218,7 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
             {
                 auto i = parser.argi(n);
                 if (i < 0 || i >= atoms_.size())
-                    throw(std::runtime_error(fmt::format("Atom index {} for targeted potential is out of range.\n", i)));
+                    throw(std::runtime_error(std::format("Atom index {} for targeted potential is out of range.\n", i)));
                 pot->addTargetAtomIndex(i);
             }
             else if (coreData.findAtomType(parser.args(n)))
@@ -226,7 +226,7 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
             else if (coreData.findSpecies(parser.args(n)))
                 pot->addTargetSpecies(coreData.findSpecies(parser.args(n)));
             else
-                throw(std::runtime_error(fmt::format("Unrecognised target '{}' for potential.\n", parser.args(n))));
+                throw(std::runtime_error(std::format("Unrecognised target '{}' for potential.\n", parser.args(n))));
         }
 
         // Read in the rest of the potential

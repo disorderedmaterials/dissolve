@@ -51,7 +51,7 @@ void compareToml(std::string location, SerialisedValue toml, SerialisedValue tom
         for (auto &[k, v] : toml.as_table())
         {
             ASSERT_TRUE(toml2.contains(k)) << location << "." << k << std::endl << "Expected:" << std::endl << toml[k];
-            compareToml(fmt::format("{}.{}", location, k), v, toml2.at(k));
+            compareToml(std::format("{}.{}", location, k), v, toml2.at(k));
         }
     }
     else if (toml.is_array())
@@ -60,7 +60,7 @@ void compareToml(std::string location, SerialisedValue toml, SerialisedValue tom
         auto arr2 = toml2.as_array();
         ASSERT_EQ(arr.size(), arr2.size()) << location << std::endl << "Expected" << std::endl << toml;
         for (int i = 0; i < arr.size(); ++i)
-            compareToml(fmt::format("{}[{}]", location, i), arr[i], arr2[i]);
+            compareToml(std::format("{}[{}]", location, i), arr[i], arr2[i]);
     }
     else
     {
@@ -106,18 +106,18 @@ class DissolveSystemTest
                 Dissolve otherDissolve{otherCoreData};
 
                 if (!otherDissolve.loadInput(inputFile))
-                    throw(std::runtime_error(fmt::format("Input file '{}' failed to load correctly.\n", inputFile)));
+                    throw(std::runtime_error(std::format("Input file '{}' failed to load correctly.\n", inputFile)));
                 if (rewriteCheck_)
                 {
-                    auto newInput = fmt::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
+                    auto newInput = std::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
                                                 DissolveSys::afterLastChar(inputFile, '/'),
                                                 ::testing::UnitTest::GetInstance()->current_test_info()->name());
                     if (!otherDissolve.saveInput(newInput))
-                        throw(std::runtime_error(fmt::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
+                        throw(std::runtime_error(std::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
 
                     otherDissolve.clear();
                     if (!otherDissolve.loadInput(newInput))
-                        throw(std::runtime_error(fmt::format("Input file '{}' failed to reload correctly.\n", newInput)));
+                        throw(std::runtime_error(std::format("Input file '{}' failed to reload correctly.\n", newInput)));
                 }
 
                 // Run any other additional setup functions
@@ -146,18 +146,18 @@ class DissolveSystemTest
         else
         {
             if (!dissolve_.loadInput(inputFile))
-                throw(std::runtime_error(fmt::format("Input file '{}' failed to load correctly.\n", inputFile)));
+                throw(std::runtime_error(std::format("Input file '{}' failed to load correctly.\n", inputFile)));
             if (rewriteCheck_)
             {
-                auto newInput = fmt::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
+                auto newInput = std::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
                                             DissolveSys::afterLastChar(inputFile, '/'),
                                             ::testing::UnitTest::GetInstance()->current_test_info()->name());
                 if (!dissolve_.saveInput(newInput))
-                    throw(std::runtime_error(fmt::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
+                    throw(std::runtime_error(std::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
 
                 dissolve_.clear();
                 if (!dissolve_.loadInput(newInput))
-                    throw(std::runtime_error(fmt::format("Input file '{}' failed to reload correctly.\n", newInput)));
+                    throw(std::runtime_error(std::format("Input file '{}' failed to reload correctly.\n", newInput)));
             }
 
             // Run any other additional setup functions
@@ -179,7 +179,7 @@ class DissolveSystemTest
     void loadRestart(std::string_view restartFile)
     {
         if (!dissolve_.loadRestart(restartFile))
-            throw(std::runtime_error(fmt::format("Restart file '{}' failed to load correctly.\n", restartFile)));
+            throw(std::runtime_error(std::format("Restart file '{}' failed to load correctly.\n", restartFile)));
     }
 
     /*
@@ -232,7 +232,7 @@ class DissolveSystemTest
     {
         auto *module = coreData_.findModule(name);
         if (!module)
-            throw(std::runtime_error(fmt::format("Module '{}' does not exist.\n", name)));
+            throw(std::runtime_error(std::format("Module '{}' does not exist.\n", name)));
         module->setEnabled(enabled);
     }
     // Find and return named module
@@ -240,11 +240,11 @@ class DissolveSystemTest
     {
         auto *module = coreData_.findModule(name);
         if (!module)
-            throw(std::runtime_error(fmt::format("Module '{}' does not exist.\n", name)));
+            throw(std::runtime_error(std::format("Module '{}' does not exist.\n", name)));
         auto *castModule = dynamic_cast<M *>(module);
         if (!castModule)
             throw(std::runtime_error(
-                fmt::format("Module '{}' did not cast to the target type '{}' (it is of Module type '{}').\n", name,
+                std::format("Module '{}' did not cast to the target type '{}' (it is of Module type '{}').\n", name,
                             typeid(M).name(), ModuleTypes::moduleType(module->type()))));
         return castModule;
     }
@@ -288,11 +288,11 @@ class DissolveSystemTest
     {
         auto optDataA = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagA);
         if (!optDataA)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagA)));
 
         Data1D dataB;
         if (!externalFileFormat.fileExists() || !externalFileFormat.importData(dataB))
-            throw(std::runtime_error(fmt::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
+            throw(std::runtime_error(std::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
 
         return checkData1D(optDataA->get(), tagA, dataB, externalFileFormat.filename(), tolerance, errorType);
     }
@@ -302,11 +302,11 @@ class DissolveSystemTest
     {
         auto optDataA = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagA);
         if (!optDataA)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagA)));
 
         auto optDataB = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagB);
         if (!optDataB)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagB)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagB)));
 
         return checkData1D(optDataA->get(), tagA, optDataB->get(), tagB, tolerance, errorType);
     }
@@ -329,11 +329,11 @@ class DissolveSystemTest
     {
         auto optDataA = dissolve_.processingModuleData().search<const Data3D>(tagA);
         if (!optDataA)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagA)));
 
         Data3D dataB;
         if (!externalFileFormat.fileExists() || !externalFileFormat.importData(dataB))
-            throw(std::runtime_error(fmt::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
+            throw(std::runtime_error(std::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
 
         return checkData3D(*optDataA, tagA, dataB, externalFileFormat.filename(), tolerance, errorType);
     }
@@ -343,11 +343,11 @@ class DissolveSystemTest
     {
         auto optDataA = dissolve_.processingModuleData().search<const Data3D>(tagA);
         if (!optDataA)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagA)));
 
         auto optDataB = dissolve_.processingModuleData().search<const Data3D>(tagB);
         if (!optDataB)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagB)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagB)));
 
         return checkData3D(optDataA->get(), tagA, optDataB->get(), tagB, tolerance, errorType);
     }
@@ -359,7 +359,7 @@ class DissolveSystemTest
         // Locate the target reference data
         auto optData = dissolve_.processingModuleData().search<const SampledVector>(tag);
         if (!optData)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tag)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tag)));
         const auto &data = optData->get();
 
         // Generate the error estimate and compare against the threshold value
@@ -419,8 +419,8 @@ class DissolveSystemTest
         ASSERT_TRUE(atoms.size() == 2);
         const auto &b = sp->getBond(atoms[0], atoms[1]);
         if (!b)
-            throw(std::runtime_error(fmt::format("No bond {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
-        checkIntramolecularTerms(fmt::format("bond {}", joinStrings(atoms, "-")), expectedParams,
+            throw(std::runtime_error(std::format("No bond {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
+        checkIntramolecularTerms(std::format("bond {}", joinStrings(atoms, "-")), expectedParams,
                                  b->get().interactionPotential(), tolerance);
     }
     // Test species angle term
@@ -431,8 +431,8 @@ class DissolveSystemTest
         const auto &a = sp->getAngle(atoms[0], atoms[1], atoms[2]);
         if (!a)
             throw(
-                std::runtime_error(fmt::format("No angle {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
-        checkIntramolecularTerms(fmt::format("angle {}", joinStrings(atoms, "-")), expectedParams,
+                std::runtime_error(std::format("No angle {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
+        checkIntramolecularTerms(std::format("angle {}", joinStrings(atoms, "-")), expectedParams,
                                  a->get().interactionPotential(), tolerance);
     }
     // Test species torsion / improper term
@@ -444,12 +444,12 @@ class DissolveSystemTest
         const auto &i = sp->getImproper(atoms[0], atoms[1], atoms[2], atoms[3]);
         if (!t && !i)
             throw(std::runtime_error(
-                fmt::format("No torsion or improper {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
+                std::format("No torsion or improper {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
         else if (t)
-            checkIntramolecularTerms(fmt::format("torsion {}", joinStrings(atoms, "-")), expectedParams,
+            checkIntramolecularTerms(std::format("torsion {}", joinStrings(atoms, "-")), expectedParams,
                                      t->get().interactionPotential(), tolerance);
         else
-            checkIntramolecularTerms(fmt::format("improper {}", joinStrings(atoms, "-")), expectedParams,
+            checkIntramolecularTerms(std::format("improper {}", joinStrings(atoms, "-")), expectedParams,
                                      i->get().interactionPotential(), tolerance);
     }
 };

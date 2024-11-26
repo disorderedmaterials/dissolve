@@ -112,15 +112,15 @@ double NodeValue::asDouble() const
 std::string NodeValue::asString(bool addQuotesIfRequired) const
 {
     if (type_ == IntegerNodeValue)
-        return fmt::format("{}", valueI_);
+        return std::format("{}", valueI_);
     else if (type_ == DoubleNodeValue)
-        return fmt::format("{}", valueD_);
+        return std::format("{}", valueD_);
     else
     {
         if (addQuotesIfRequired)
-            return fmt::format("'{}'", expression_.expressionString());
+            return std::format("'{}'", expression_.expressionString());
         else
-            return fmt::format("{}", expression_.expressionString());
+            return std::format("{}", expression_.expressionString());
     }
 }
 
@@ -209,14 +209,14 @@ NodeValueProxy::NodeValueProxy(std::string_view expressionText)
 std::string NodeValueProxy::asString(bool addQuotesIfRequired) const
 {
     if (type_ == IntegerNodeValue)
-        return fmt::format("{}", valueI_);
+        return std::format("{}", valueI_);
     else if (type_ == DoubleNodeValue)
-        return fmt::format("{}", valueD_);
+        return std::format("{}", valueD_);
     else
     {
         if (addQuotesIfRequired)
-            return fmt::format("'{}'", expressionString_);
+            return std::format("'{}'", expressionString_);
         else
-            return fmt::format("{}", expressionString_);
+            return std::format("{}", expressionString_);
     }
 }

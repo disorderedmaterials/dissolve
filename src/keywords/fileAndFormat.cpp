@@ -50,7 +50,7 @@ bool FileAndFormatKeyword::serialise(LineParser &parser, std::string_view keywor
     if (!data_.hasFilename())
         return true;
 
-    if (!data_.writeFilenameAndFormat(parser, fmt::format("{}{}  ", prefix, keywordName)))
+    if (!data_.writeFilenameAndFormat(parser, std::format("{}{}  ", prefix, keywordName)))
         return false;
     if (!data_.writeBlock(parser, prefix))
         return false;

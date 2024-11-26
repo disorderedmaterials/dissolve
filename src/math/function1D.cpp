@@ -508,7 +508,7 @@ std::string Function1DWrapper::parameterSummary() const
 {
     std::string summary;
     for (const auto &[name, p] : zip(function_.parameterNames(), parameters_))
-        summary += fmt::format("{}{} = {}", summary.empty() ? "" : ", ", name, p);
+        summary += std::format("{}{} = {}", summary.empty() ? "" : ", ", name, p);
     return summary;
 }
 

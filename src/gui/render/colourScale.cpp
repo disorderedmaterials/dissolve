@@ -133,7 +133,7 @@ QColor ColourScale::colour(double value) const
     if (it != deltas_.end())
         return interpolated_ ? it->colour(value) : it->startColour();
 
-    throw(std::runtime_error(fmt::format("Failed to find a colour to return from the ColourScale.\n")));
+    throw(std::runtime_error(std::format("Failed to find a colour to return from the ColourScale.\n")));
 }
 
 // Get colour associated with value supplied, setting as GLfloat[4]

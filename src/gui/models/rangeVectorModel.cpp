@@ -55,7 +55,7 @@ QVariant RangeVectorModel::data(const QModelIndex &index, int role) const
             switch (index.column())
             {
                 case (0):
-                    return QString::fromStdString(fmt::format("Range {}", index.row() + 1));
+                    return QString::fromStdString(std::format("Range {}", index.row() + 1));
                 case (1):
                     if (range)
                     {

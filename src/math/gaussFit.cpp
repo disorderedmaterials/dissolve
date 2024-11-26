@@ -134,7 +134,7 @@ bool GaussFit::saveFTGaussians(std::string_view filenamePrefix, double xStep) co
     for (auto n = 0; n < nGaussians_; ++n)
     {
         LineParser parser;
-        if (!parser.openOutput(fmt::format("{}-{:03d}.gauss", filenamePrefix, n)))
+        if (!parser.openOutput(std::format("{}-{:03d}.gauss", filenamePrefix, n)))
             return false;
 
         auto xCentre = x_[n];

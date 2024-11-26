@@ -102,7 +102,7 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
 
     // Read in or assign random velocities
     auto [velocities, status] = moduleContext.dissolve().processingModuleData().realiseIf<std::vector<Vec3<double>>>(
-        fmt::format("{}//Velocities", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Velocities", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     if ((status == GenericItem::ItemStatus::Created || randomVelocities_ ||
          velocities.size() != targetConfiguration_->nAtoms()) &&
         !intramolecularForcesOnly_)
@@ -176,7 +176,7 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
     LineParser trajParser;
     if (trajectoryFrequency_.value_or(0) > 0)
     {
-        std::string trajectoryFile = fmt::format("{}.md.xyz", targetConfiguration_->name());
+        std::string trajectoryFile = std::format("{}.md.xyz", targetConfiguration_->name());
         if (moduleContext.processPool().isMaster())
         {
             if ((!trajParser.appendOutput(trajectoryFile)) || (!trajParser.isFileGoodForWriting()))
@@ -343,9 +343,9 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
                 trajParser.writeLineF("{}\n", targetConfiguration_->nAtoms());
 
                 // Construct and write header
-                std::string header = fmt::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps_, tInstant, ke);
+                std::string header = std::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps_, tInstant, ke);
                 if (energyFrequency_ && (step % energyFrequency_.value() == 0))
-                    header += fmt::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound,
+                    header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound,
                                           ke + pePP.total() + peBound);
                 if (!trajParser.writeLine(header))
                 {

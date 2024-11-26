@@ -20,7 +20,7 @@ Module::ExecutionResult ExportCoordinatesModule::process(ModuleContext &moduleCo
     std::string originalFilename{coordinatesFormat_.filename()};
     if (tagWithIteration_)
         coordinatesFormat_.setFilename(
-            fmt::format("{}.{}", coordinatesFormat_.filename(), moduleContext.dissolve().iteration()));
+            std::format("{}.{}", coordinatesFormat_.filename(), moduleContext.dissolve().iteration()));
 
     // Only the pool master saves the data
     if (moduleContext.processPool().isMaster())

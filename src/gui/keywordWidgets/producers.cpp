@@ -99,7 +99,7 @@ std::pair<QWidget *, KeywordWidgetBase *> KeywordWidgetProducer::produce(Keyword
 {
     auto it = producers_.find(keyword->typeIndex());
     if (it == producers_.end())
-        throw(std::runtime_error(fmt::format("A producer has not been registered for type '{}' (keyword name is '{}'), so a "
+        throw(std::runtime_error(std::format("A producer has not been registered for type '{}' (keyword name is '{}'), so a "
                                              "new widget for this keyword cannot be created.\n",
                                              keyword->typeIndex().name(), keyword->name())));
 

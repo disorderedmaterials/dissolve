@@ -71,7 +71,7 @@ bool NeutronSQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Key
                     break;
                 default:
                     throw(std::runtime_error(
-                        fmt::format("Unhandled StructureFactor::NormalisationType ({}).\n",
+                        std::format("Unhandled StructureFactor::NormalisationType ({}).\n",
                                     StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_))));
             }
 
@@ -118,10 +118,10 @@ bool NeutronSQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Key
         {
             if (moduleContext.processPool().isMaster())
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-ReferenceData.q", name()));
+                Data1DExportFileFormat exportFormat(std::format("{}-ReferenceData.q", name()));
                 if (!exportFormat.exportData(storedData))
                     return moduleContext.processPool().decideFalse();
-                Data1DExportFileFormat exportFormatFT(fmt::format("{}-ReferenceData.r", name()));
+                Data1DExportFileFormat exportFormatFT(std::format("{}-ReferenceData.r", name()));
                 if (!exportFormatFT.exportData(storedDataFT))
                     return moduleContext.processPool().decideFalse();
                 moduleContext.processPool().decideTrue();
@@ -271,7 +271,7 @@ Module::ExecutionResult NeutronSQModule::process(ModuleContext &moduleContext)
     {
         if (moduleContext.processPool().isMaster())
         {
-            Data1DExportFileFormat exportFormat(fmt::format("{}-weighted-total.gr.broad", name_));
+            Data1DExportFileFormat exportFormat(std::format("{}-weighted-total.gr.broad", name_));
             if (exportFormat.exportData(repGR))
                 moduleContext.processPool().decideTrue();
             else

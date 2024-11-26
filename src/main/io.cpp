@@ -363,7 +363,7 @@ bool Dissolve::saveInput(std::string_view filename)
         {
             // Write new 1-4 scale factor line if this torsion has different values
             if ((t->electrostatic14Scaling() != elec14Scaling || t->vanDerWaals14Scaling() != vdw14Scaling) &&
-                !parser.writeLineF(fmt::format("  {}  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::Scaling14Keyword),
+                !parser.writeLineF(std::format("  {}  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::Scaling14Keyword),
                                                t->electrostatic14Scaling(), t->vanDerWaals14Scaling())))
                 return false;
 
@@ -702,7 +702,7 @@ bool Dissolve::saveRestart(std::string_view filename)
             for (const auto &group : section.groups())
                 for (const auto &[keyword, keywordType] : group.keywords())
                     if (keywordType == KeywordBase::KeywordType::Restartable &&
-                        !keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->name(), keyword->name())))
+                        !keyword->serialise(parser, std::format("Keyword  {}  {}  ", module->name(), keyword->name())))
                         return false;
     }
 
@@ -746,7 +746,7 @@ void Dissolve::setInputFilename(std::string_view filename)
     inputFilename_ = filename;
     coreData_.setInputFilename(filename);
 
-    restartFilename_ = fmt::format("{}.restart", inputFilename_);
+    restartFilename_ = std::format("{}.restart", inputFilename_);
 }
 
 // Return current input filename

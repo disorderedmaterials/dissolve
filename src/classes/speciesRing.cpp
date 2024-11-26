@@ -55,8 +55,8 @@ int SpeciesRing::size() const { return atoms_.size(); }
 // Print ring information
 void SpeciesRing::print() const
 {
-    std::string s = fmt::format("Ring({}) :", atoms_.size());
+    std::string s = std::format("Ring({}) :", atoms_.size());
     for (const auto *atom : atoms_)
-        s += fmt::format(" {}({})", atom->userIndex(), Elements::symbol(atom->Z()));
+        s += std::format(" {}({})", atom->userIndex(), Elements::symbol(atom->Z()));
     Messenger::print(s);
 }

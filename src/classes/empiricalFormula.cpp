@@ -17,14 +17,14 @@ std::string EmpiricalFormula::formula(const EmpiricalFormulaMap &elementCounts, 
         }
         else if (count == 1)
         {
-            empiricalFormula += fmt::format("{}", Elements::symbol(Z));
+            empiricalFormula += std::format("{}", Elements::symbol(Z));
         }
         else
         {
             if (richText)
-                empiricalFormula += fmt::format("{}<sub>{}</sub>", Elements::symbol(Z), count);
+                empiricalFormula += std::format("{}<sub>{}</sub>", Elements::symbol(Z), count);
             else
-                empiricalFormula += fmt::format("{}{}", Elements::symbol(Z), count);
+                empiricalFormula += std::format("{}{}", Elements::symbol(Z), count);
         }
     }
 

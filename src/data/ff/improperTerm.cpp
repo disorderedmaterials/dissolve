@@ -13,7 +13,7 @@ ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::stri
     InteractionPotential<TorsionFunctions> potential(form);
     if (!potential.parseParameters(parameterString))
         throw(std::runtime_error(
-            fmt::format("Failed to parse parameter string '{}' when constructing improper term '{}-{}-{}-{}'.\n",
+            std::format("Failed to parse parameter string '{}' when constructing improper term '{}-{}-{}-{}'.\n",
                         parameterString, typeI_, typeJ_, typeK_, typeL_)));
     parameters_ = potential.parameters();
 }

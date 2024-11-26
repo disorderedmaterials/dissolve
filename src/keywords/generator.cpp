@@ -40,7 +40,7 @@ bool GeneratorKeyword::serialise(LineParser &parser, std::string_view keywordNam
         return false;
 
     // Increase the indent
-    std::string newPrefix = fmt::format("{}  ", prefix);
+    std::string newPrefix = std::format("{}  ", prefix);
 
     // Write the node data
     if (!data_.serialise(parser, newPrefix))

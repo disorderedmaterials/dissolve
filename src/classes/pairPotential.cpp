@@ -84,14 +84,14 @@ PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme() 
 // Set Data1D names from source AtomTypes
 void PairPotential::setData1DNames()
 {
-    totalPotential_.setTag(fmt::format("{}-{}", nameI_, nameJ_));
+    totalPotential_.setTag(std::format("{}-{}", nameI_, nameJ_));
 
-    additionalShortRangePotential_.setTag(fmt::format("{}-{} (Add SR)", nameI_, nameJ_));
-    referenceShortRangePotential_.setTag(fmt::format("{}-{} (Ref SR)", nameI_, nameJ_));
+    additionalShortRangePotential_.setTag(std::format("{}-{} (Add SR)", nameI_, nameJ_));
+    referenceShortRangePotential_.setTag(std::format("{}-{} (Ref SR)", nameI_, nameJ_));
 
-    coulombPotential_.setTag(fmt::format("{}-{} (Elec)", nameI_, nameJ_));
+    coulombPotential_.setTag(std::format("{}-{} (Elec)", nameI_, nameJ_));
 
-    totalDerivative_.setTag(fmt::format("{}-{} (dU/dr)", nameI_, nameJ_));
+    totalDerivative_.setTag(std::format("{}-{} (dU/dr)", nameI_, nameJ_));
 }
 
 // Set names reflecting target atom types for potential

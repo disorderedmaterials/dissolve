@@ -149,7 +149,7 @@ MasterBond &CoreData::addMasterBond(std::string_view name, std::optional<int> in
     // Check for existence of master Bond already
     if (getMasterBond(name))
         throw(std::runtime_error(
-            fmt::format("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name)));
+            std::format("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name)));
 
     auto newBond = std::make_shared<MasterBond>(name);
     if (insertAtIndex)
@@ -211,7 +211,7 @@ MasterAngle &CoreData::addMasterAngle(std::string_view name)
     // Check for existence of master Angle already
     if (getMasterAngle(name))
         throw(std::runtime_error(
-            fmt::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
+            std::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
 
     return *masters_.angles.emplace_back(std::make_shared<MasterAngle>(name));
 }

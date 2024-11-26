@@ -35,15 +35,15 @@ std::vector<std::shared_ptr<AddGeneratorNode>> createRelativeMix(const std::vect
             popString = "populationA";
         else
         {
-            auto parameterName = fmt::format("ratio{}", char(65 + count));
+            auto parameterName = std::format("ratio{}", char(65 + count));
             paramsNode->addParameter(parameterName, 1);
-            popString = fmt::format("{}*populationA", parameterName);
+            popString = std::format("{}*populationA", parameterName);
         }
 
         // Set up coordinate set, but only if we have a suitable species
         if (sp->nAtoms() > 1)
         {
-            auto coordSets = generator.createRootNode<CoordinateSetsGeneratorNode>(fmt::format("{}_Sets", sp->name()), sp);
+            auto coordSets = generator.createRootNode<CoordinateSetsGeneratorNode>(std::format("{}_Sets", sp->name()), sp);
 
             // Create the Add node
             addNodes.emplace_back(generator.createRootNode<AddGeneratorNode>(sp->name(), coordSets,

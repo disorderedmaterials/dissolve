@@ -149,5 +149,5 @@ void Function1DKeywordWidget::updateSummaryText()
     setSummaryText(QString::fromStdString(
         function.nParameters() == 0
             ? Functions1D::forms().keyword(function.form())
-            : fmt::format("{} ({})", Functions1D::forms().keyword(function.form()), function.parameterSummary())));
+            : std::format("{} ({})", Functions1D::forms().keyword(function.form()), function.parameterSummary())));
 }

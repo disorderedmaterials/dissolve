@@ -97,7 +97,7 @@ bool PartialSetAccumulator::save(std::string_view prefix, std::string_view tag, 
     for (auto &&[full, bound, unbound] : zip(partials_, boundPartials_, unboundPartials_))
     {
         // Open file and check that we're OK to proceed writing to it
-        std::string filename{fmt::format("{}-{}-{}.{}", prefix, tag, DissolveSys::niceName(full.tag()), suffix)};
+        std::string filename{std::format("{}-{}-{}.{}", prefix, tag, DissolveSys::niceName(full.tag()), suffix)};
         Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
         parser.openOutput(filename, true);
@@ -112,7 +112,7 @@ bool PartialSetAccumulator::save(std::string_view prefix, std::string_view tag, 
         parser.closeFiles();
     }
 
-    Data1DExportFileFormat exportFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
+    Data1DExportFileFormat exportFormat(std::format("{}-{}-total.{}", prefix, tag, suffix));
     Messenger::printVerbose("Writing total file '{}'...\n", exportFormat.filename());
     return exportFormat.exportData(total_);
 }
