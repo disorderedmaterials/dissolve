@@ -79,7 +79,7 @@ void SDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upd
     if (!sdfRenderable_)
     {
         sdfRenderable_ =
-            sdfGraph_->createRenderable<RenderableData3D>(std::format("{}//SDF", module_->name()), fmt::format("SDF"));
+            sdfGraph_->createRenderable<RenderableData3D>(std::format("{}//SDF", module_->name()), std::format("SDF"));
         sdfRenderable_->setColour(StockColours::BlueStockColour);
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)

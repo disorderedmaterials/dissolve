@@ -219,7 +219,7 @@ void ScatteringMatrix::printInverse(double q) const
     auto nColsWritten = 0;
     for (auto [i, j] : typePairs_)
     {
-        line += std::format("{:10} ", fmt::format("{}-{}", i->name(), j->name()));
+        line += std::format("{:10} ", std::format("{}-{}", i->name(), j->name()));
 
         // Limit output to sensible length
         if (line.length() >= 80)

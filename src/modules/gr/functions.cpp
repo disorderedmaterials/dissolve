@@ -574,7 +574,7 @@ bool GRModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &p
 
         // Update fingerprint
         fingerprint +=
-            fingerprint.empty() ? std::format("{}", cfg->contentsVersion()) : fmt::format("_{}", cfg->contentsVersion());
+            fingerprint.empty() ? std::format("{}", cfg->contentsVersion()) : std::format("_{}", cfg->contentsVersion());
 
         // Calculate weighting factor
         double weight = ((cfgWeight / totalWeight) * *cfg->atomicDensity()) / rho0;

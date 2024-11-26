@@ -135,7 +135,7 @@ void SpeciesTab::on_SiteFragmentDescriptionEdit_returnPressed() { on_SiteFragmen
 
 std::string siteName(const SpeciesAtom &i)
 {
-    return i.atomType() ? std::format("{} [{}]", i.index() + 1, i.atomType()->name()) : fmt::format("{}", i.index() + 1);
+    return i.atomType() ? std::format("{} [{}]", i.index() + 1, i.atomType()->name()) : std::format("{}", i.index() + 1);
 }
 
 // Update sites tab

@@ -31,7 +31,7 @@ int pruneOldData(GenericList &processingData, std::string_view name, std::string
         --nStored;
     }
     for (auto n = nStored; n > 0; --n)
-        processingData.rename(std::format("{}//{}", name, n), prefix, fmt::format("{}//{}", name, n + 1), prefix);
+        processingData.rename(std::format("{}//{}", name, n), prefix, std::format("{}//{}", name, n + 1), prefix);
 
     return nStored;
 }
