@@ -18,7 +18,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 cmake_policy(SET CMP0020 NEW)
 
 # Request C++17 Standard Support (Required for std::optional and auto types in lambda parameters)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # Add our custom module search path
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
