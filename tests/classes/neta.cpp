@@ -5,6 +5,7 @@
 #include "classes/species.h"
 #include "data/elements.h"
 #include "data/ff/ff.h"
+#include "templates/algorithms.h"
 #include "tests/testData.h"
 #include <format>
 #include <gtest/gtest.h>
@@ -19,7 +20,8 @@ class NETATest : public ::testing::Test
                   const std::vector<int> &matchingIndices)
     {
         std::cout << std::format("Testing: {}...", title) << std::endl;
-        std::cout << std::format("-- Species '{}', expected matching atoms: {}", sp.name(), matchingIndices) << std::endl;
+        auto indexString = joinStrings(matchingIndices, ", ");
+        std::cout << std::format("-- Species '{}', expected matching atoms: ({})", sp.name(), indexString) << std::endl;
 
         for (const auto &i : sp.atoms())
         {
@@ -37,7 +39,8 @@ class NETATest : public ::testing::Test
                                        int targetAtomIndex, const std::vector<int> &matchingIndices)
     {
         std::cout << std::format("Path Test: {}, atom {}...", title, targetAtomIndex) << std::endl;
-        std::cout << std::format("-- Species '{}', expected matched atom set : {}", sp.name(), matchingIndices) << std::endl;
+        auto indexString = joinStrings(matchingIndices, ", ");
+        std::cout << std::format("-- Species '{}', expected matched atom set : {}", sp.name(), indexString) << std::endl;
 
         auto matchedPath = neta.matchedPath(&sp.atom(targetAtomIndex));
         std::cout << std::format("-- Actual matched atom set : {}",
@@ -54,7 +57,9 @@ class NETATest : public ::testing::Test
     void testIdentifiers(const NETAMatchedGroup &matchedPath, std::string idName, const std::vector<int> &matchingIndices)
     {
         std::cout << std::format("Identifier Test: {}", idName) << std::endl;
-        std::cout << std::format("-- Expected identified atoms : {}", matchingIndices) << std::endl;
+        auto indexString = joinStrings(matchingIndices, ", ");
+
+        std::cout << std::format("-- Expected identified atoms : {}", indexString) << std::endl;
         auto &ids = matchedPath.identifiers();
         auto it = ids.find(idName);
         EXPECT_TRUE(it != ids.end());
