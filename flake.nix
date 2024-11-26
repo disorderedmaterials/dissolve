@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
@@ -13,7 +13,7 @@
       onedpl = pkgs:
         ((import ./nix/onedpl.nix) {
           inherit (pkgs) lib stdenv fetchFromGitHub fetchpatch cmake;
-          tbb = pkgs.tbb_2021_8;
+          tbb = pkgs.tbb_2021_11;
         });
       exe-name = mpi: gui:
         if mpi then
@@ -76,7 +76,7 @@
               ++ pkgs.lib.optionals gui (gui_libs system pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optionals threading [
-                pkgs.tbb_2021_8
+                pkgs.tbb_2021_11
                 (onedpl pkgs)
                 (onedpl pkgs).dev
               ];
@@ -144,9 +144,7 @@
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs system pkgs
             ++ check_libs pkgs ++ (with pkgs; [
-              (pkgs.clang-tools.override {
-                llvmPackages = pkgs.llvmPackages_13;
-              })
+              clang-tools
 
               (onedpl pkgs)
 
@@ -162,7 +160,7 @@
               nixGL.nixGLIntel
               openmpi
               qt6.qttools
-              tbb_2021_8
+              tbb_2021_11
               valgrind
             ]);
           shellHook = ''
