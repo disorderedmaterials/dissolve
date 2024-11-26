@@ -3,6 +3,7 @@
 
 #include "praxis.h"
 #include "base/messenger.h"
+#include <cmath>
 #include <iomanip>
 #include <limits>
 

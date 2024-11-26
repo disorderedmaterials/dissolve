@@ -14,4 +14,7 @@ class SortFilterProxy : public QSortFilterProxyModel
     public:
     SortFilterProxy(QObject *parent = nullptr);
     void setModel(const QAbstractItemModel *model);
+
+    Q_SIGNALS:
+    void read();
 };
