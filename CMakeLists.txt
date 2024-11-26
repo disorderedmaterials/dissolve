@@ -45,9 +45,6 @@ endif(CONAN)
 
 # Find core dependencies
 set(CORE_LINK_LIBS "")
-find_package(fmt REQUIRED)
-include_directories(${fmt_INCLUDE_DIRS})
-add_compile_definitions(FMT_HEADER_ONLY)
 find_package(CLI11 REQUIRED)
 include_directories(${CLI11_INCLUDE_DIRS})
 find_package(toml11 REQUIRED)
