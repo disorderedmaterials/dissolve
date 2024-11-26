@@ -170,5 +170,5 @@ template <class T> class Vec4
     }
 
     // Print
-    void print() const { std::print("vec(xyzw) = {} {} {} {}\n", x, y, z, w); }
+    void print() const { std::cout << std::format("vec(xyzw) = {} {} {} {}", x, y, z, w) << std::endl; }
 };

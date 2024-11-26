@@ -191,7 +191,7 @@ class LineParser
         // Finally, print the banner
         if (!writeLineF("\n{}\n", bannerBorder))
             return false;
-        if (!writeLineF("#{:^{}}#", std::format(format, args...), bannerWidth - 2))
+        if (!writeLineF("#{:^{}}#", std::vformat(format, std::make_format_args(args...)), bannerWidth - 2))
             return false;
         if (!writeLineF("\n{}\n", bannerBorder))
             return false;

@@ -45,7 +45,7 @@ void AtomTypeData::setIsotope(Sears91::Isotope tope, double pop, double fraction
 {
     if (std::find_if(isotopes_.begin(), isotopes_.end(), [tope](const auto &topeData) { return topeData.isotope() == tope; }) !=
         isotopes_.end())
-        throw(std::runtime_error(fmt::format(
+        throw(std::runtime_error(std::format(
             "Tried to set IsotopeData for isotope A = {} in AtomTypeData for AtomType '{}', but existing data is present.\n",
             tope, Sears91::A(tope), atomTypeName())));
 

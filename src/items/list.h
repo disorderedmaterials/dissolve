@@ -104,7 +104,7 @@ class GenericList
 
         // Check type before we attempt to cast it
         if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
-            throw(std::runtime_error(fmt::format(
+            throw(std::runtime_error(std::format(
                 "GenericList::value() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
                 prefix.empty() ? name : std::format("{}//{}", prefix, name),
                 std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
@@ -120,7 +120,7 @@ class GenericList
 
         // Check type before we attempt to cast it
         if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
-            throw(std::runtime_error(fmt::format(
+            throw(std::runtime_error(std::format(
                 "GenericList::value() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
                 prefix.empty() ? name : std::format("{}//{}", prefix, name),
                 std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
@@ -136,7 +136,7 @@ class GenericList
 
         // Check type before we attempt to cast it
         if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
-            throw(std::runtime_error(fmt::format(
+            throw(std::runtime_error(std::format(
                 "GenericList::valueIf() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
                 prefix.empty() ? name : std::format("{}//{}", prefix, name),
                 std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
