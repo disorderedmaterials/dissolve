@@ -11,7 +11,7 @@
 template <class T> class Vec4
 {
     public:
-    Vec4<T>(T xx = 0, T yy = 0, T zz = 0, T ww = 0)
+    Vec4(T xx = 0, T yy = 0, T zz = 0, T ww = 0)
     {
         x = xx;
         y = yy;
