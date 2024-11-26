@@ -96,7 +96,7 @@ bool Expression::create(std::string_view expressionString,
     }
     catch (ExpressionExceptions::ExpressionSyntaxException &ex)
     {
-        std::print(ex.what());
+        std::cout << ex.what();
         clearNodes();
         return Messenger::error(ex.what());
     };
@@ -109,7 +109,7 @@ bool Expression::create(std::string_view expressionString,
     }
     catch (std::exception &ex)
     {
-        std::print(ex.what());
+        std::cout << ex.what();
         clearNodes();
         return Messenger::error(ex.what());
     }
