@@ -31,10 +31,10 @@ OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData
 OptionalReferenceWrapper<const FormFactorData> wk1995Data(Elements::Element Z, int formalCharge = 0);
 }; // namespace XRayFormFactors
 
-template <>
-struct std::formatter<XRayFormFactors::XRayFormFactorData> : std::formatter<std::string> {
-  auto format(XRayFormFactors::XRayFormFactorData x, format_context& ctx) const {
-    return formatter<string>::format(
-      std::format("{}", x), ctx);
-  }
+template <> struct std::formatter<XRayFormFactors::XRayFormFactorData> : std::formatter<std::string>
+{
+    auto format(XRayFormFactors::XRayFormFactorData x, format_context &ctx) const
+    {
+        return formatter<string>::format(std::format("{}", x), ctx);
+    }
 };

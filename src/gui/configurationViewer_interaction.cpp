@@ -53,7 +53,9 @@ void ConfigurationViewer::startInteraction()
             case (ConfigurationViewer::InteractionMode::Default):
                 break;
             default:
-              std::cout << std::format("Unhandled primary mode {} in ConfigurationViewer::startInteraction().", (int)interactionMode_) << std::endl;
+                std::cout << std::format("Unhandled primary mode {} in ConfigurationViewer::startInteraction().",
+                                         (int)interactionMode_)
+                          << std::endl;
                 break;
         }
     }
@@ -76,7 +78,9 @@ void ConfigurationViewer::endInteraction()
                 case (ConfigurationViewer::InteractionMode::Default):
                     break;
                 default:
-                  std::cout << std::format("Unhandled primary mode {} in ConfigurationViewer::endInteraction().", (int)interactionMode_) << std::endl;
+                    std::cout << std::format("Unhandled primary mode {} in ConfigurationViewer::endInteraction().",
+                                             (int)interactionMode_)
+                              << std::endl;
                     break;
             }
             break;
@@ -86,7 +90,8 @@ void ConfigurationViewer::endInteraction()
             break;
         default:
             std::cout << std::format("Unhandled secondary mode {} in ConfigurationViewer::endInteraction().",
-                                     (int)transientInteractionMode_) << std::endl;
+                                     (int)transientInteractionMode_)
+                      << std::endl;
             break;
     }
 

@@ -8,8 +8,8 @@
 
 OptionalIntegerKeyword::OptionalIntegerKeyword(std::optional<int> &data, int minValue, std::optional<int> maxValue,
                                                int valueDelta, std::string_view textWhenNull)
-    : KeywordBase(typeid(this)), data_(data), minimumLimit_{minValue}, maximumLimit_{maxValue},
-      valueDelta_(valueDelta), textWhenNull_{textWhenNull}
+    : KeywordBase(typeid(this)), data_(data), minimumLimit_{minValue}, maximumLimit_{maxValue}, valueDelta_(valueDelta),
+      textWhenNull_{textWhenNull}
 {
 }
 

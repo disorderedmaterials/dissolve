@@ -49,8 +49,9 @@ class ImportCIFTest : public ::testing::Test
                 auto spAtomIt = std::find_if(referenceCoordinates.atoms().begin(), referenceCoordinates.atoms().end(),
                                              [box, instanceR](const auto &refAtom)
                                              { return box->minimumDistance(refAtom.r(), instanceR) < 0.01; });
-                std::cout << std::format("{}  {} {} {}", Elements::symbol(speciesAtom.Z()), instanceAtom.r().x, instanceAtom.r().y,
-                                         instanceAtom.r().z) << std::endl;
+                std::cout << std::format("{}  {} {} {}", Elements::symbol(speciesAtom.Z()), instanceAtom.r().x,
+                                         instanceAtom.r().y, instanceAtom.r().z)
+                          << std::endl;
                 ASSERT_NE(spAtomIt, referenceCoordinates.atoms().end());
                 EXPECT_EQ(spAtomIt->Z(), speciesAtom.Z());
             }

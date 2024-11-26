@@ -378,7 +378,7 @@ template <class T> class Vec3 : public Serialisable<typename SerialisableContext
         *this = newvec;
     }
     // Prints the contents of the vector
-  void print() const { std::cout << std::format("{} {} {}", x, y, z) << std::endl; }
+    void print() const { std::cout << std::format("{} {} {}", x, y, z) << std::endl; }
     // Generate random unit vector
     void randomUnit()
     {

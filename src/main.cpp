@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include <format>
 #include "base/messenger.h"
 #include "base/processPool.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
 #include "math/mathFunc.h"
+#include <format>
 int main(int args, char **argv)
 {
 #ifdef PARALLEL

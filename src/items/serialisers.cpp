@@ -31,7 +31,7 @@ GenericItemSerialiser::GenericItemSerialiser()
     registerSerialiser<std::string>([](const std::any &a, LineParser &parser)
                                     { return parser.writeLineF("{}\n", std::any_cast<std::string>(a)); });
     registerSerialiser<std::streampos>([](const std::any &a, LineParser &parser)
-    { return parser.writeLineF("{}\n", (std::size_t)(std::any_cast<std::streampos>(a))); });
+                                       { return parser.writeLineF("{}\n", (std::size_t)(std::any_cast<std::streampos>(a))); });
     registerSerialiser<std::vector<double>>(
         [](const std::any &a, LineParser &parser)
         {

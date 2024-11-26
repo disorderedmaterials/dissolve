@@ -1333,7 +1333,7 @@ double PrAxisMinimiser::r8_uniform_01(int &seed)
     {
         seed = seed + i4_huge;
     }
-    r = (double)(seed)*4.656612875E-10;
+    r = (double)(seed) * 4.656612875E-10;
     return r;
 }
 //****************************************************************************80

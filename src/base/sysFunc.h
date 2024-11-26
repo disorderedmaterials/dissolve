@@ -85,7 +85,7 @@ class DissolveSys
                                 return !nameFunction(object).empty() &&
                                        DissolveSys::sameString(nameFunction(object), uniqueName);
                             }) != objects.end())
-          uniqueName = std::vformat("{}{:02d}", std::make_format_args(base, ++suffix));
+            uniqueName = std::vformat("{}{:02d}", std::make_format_args(base, ++suffix));
 
         return uniqueName;
     }

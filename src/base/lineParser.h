@@ -171,9 +171,9 @@ class LineParser
 
             // Format the line and store it
             if (directOutput_)
-              (*outputFile_) << std::vformat(format, std::make_format_args(args...));
+                (*outputFile_) << std::vformat(format, std::make_format_args(args...));
             else
-              (*cachedFile_) << std::vformat(format, std::make_format_args(args...));
+                (*cachedFile_) << std::vformat(format, std::make_format_args(args...));
         }
 
         // Broadcast result of write

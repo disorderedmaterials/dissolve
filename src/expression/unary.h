@@ -41,10 +41,10 @@ class ExpressionUnaryOperatorNode : public ExpressionNode
     std::string asString() const override;
 };
 
-template <>
-struct std::formatter<ExpressionUnaryOperatorNode::UnaryOperator> : std::formatter<std::string> {
-  auto format(ExpressionUnaryOperatorNode::UnaryOperator u, format_context& ctx) const {
-    return formatter<string>::format(
-      std::format("{}", u), ctx);
-  }
+template <> struct std::formatter<ExpressionUnaryOperatorNode::UnaryOperator> : std::formatter<std::string>
+{
+    auto format(ExpressionUnaryOperatorNode::UnaryOperator u, format_context &ctx) const
+    {
+        return formatter<string>::format(std::format("{}", u), ctx);
+    }
 };

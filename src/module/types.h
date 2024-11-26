@@ -57,10 +57,10 @@ std::string moduleType(ModuleTypes::ModuleType type);
 std::optional<ModuleTypes::ModuleType> moduleType(std::string_view keyword);
 }; // namespace ModuleTypes
 
-template <>
-struct std::formatter<ModuleTypes::ModuleType> : std::formatter<std::string> {
-  auto format(ModuleTypes::ModuleType m, format_context& ctx) const {
-    return formatter<string>::format(
-      std::format("{}", m), ctx);
-  }
+template <> struct std::formatter<ModuleTypes::ModuleType> : std::formatter<std::string>
+{
+    auto format(ModuleTypes::ModuleType m, format_context &ctx) const
+    {
+        return formatter<string>::format(std::format("{}", m), ctx);
+    }
 };
