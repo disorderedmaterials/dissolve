@@ -340,7 +340,7 @@ void NETAVisitor::visitOption(NETAParser::OptionContext *context, NETANode *cont
             std::format("'{}' is not a valid comparison operator.\n", context->comparisonOperator()->getText())));
     NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->comparisonOperator()->getText());
     if (op != NETANode::ComparisonOperator::EqualTo && op != NETANode::ComparisonOperator::NotEqualTo)
-        throw(NETAExceptions::NETASyntaxException(fmt::format(
+        throw(NETAExceptions::NETASyntaxException(std::format(
             "Option '{}' may only use the equal to ('=') or not equal to ('!=') operators.", context->opt->getText())));
 
     if (contextNode->isValidOption(context->opt->getText()))

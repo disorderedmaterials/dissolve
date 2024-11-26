@@ -431,7 +431,7 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
     else
     {
         auto estimatedTime = dissolve_.estimateRequiredTime(iterationsRemaining);
-        timerLabel_->setText(estimatedTime ? QString::fromStdString(fmt::format(
+        timerLabel_->setText(estimatedTime ? QString::fromStdString(std::format(
                                                  "Time remaining: {}", Timer::timeString(estimatedTime.value(), false)))
                                            : defaultTimerText);
     }

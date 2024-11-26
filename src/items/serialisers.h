@@ -55,7 +55,7 @@ class GenericItemSerialiser
         // Find a suitable serialiser and call it
         auto it = serialisers_.find(typeid(T));
         if (it == serialisers_.end())
-            throw(std::runtime_error(fmt::format(
+            throw(std::runtime_error(std::format(
                 "Item of type '{}' cannot be serialised as no suitable serialiser has been registered.\n", typeid(T).name())));
 
         return (it->second)(object, parser);

@@ -224,7 +224,7 @@ Module::ExecutionResult SQModule::process(ModuleContext &moduleContext)
     }
 
     // Set fingerprint
-    unweightedsq.setFingerprint(fmt::format(
+    unweightedsq.setFingerprint(std::format(
         "{}/{}", moduleContext.dissolve().processingModuleData().version("UnweightedGR", sourceGR_->name()),
         sourceBragg_ ? moduleContext.dissolve().processingModuleData().version("Reflections", sourceBragg_->name()) : -1));
 

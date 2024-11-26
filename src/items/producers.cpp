@@ -84,7 +84,7 @@ std::any GenericItemProducer::produce(const std::string_view className) const
     auto it =
         std::find_if(classNames_.begin(), classNames_.end(), [className](auto &item) { return item.second == className; });
     if (it == classNames_.end())
-        throw(std::runtime_error(fmt::format(
+        throw(std::runtime_error(std::format(
             "A producer has not been registered for class name '{}', so a new object of this type cannot be created.\n",
             className)));
 

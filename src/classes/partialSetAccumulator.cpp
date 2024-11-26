@@ -41,21 +41,21 @@ void PartialSetAccumulator::operator+=(const PartialSet &source)
                             {
                                 // Full partials
                                 if (partials_[{i, j}].tag() != source.partial(i, j).tag())
-                                    throw(std::runtime_error(fmt::format(
+                                    throw(std::runtime_error(std::format(
                                         "Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
                                         partials_[{i, j}].tag(), source.partial(i, j).tag())));
                                 partials_[{i, j}] += source.partial(i, j);
 
                                 // Bound partials
                                 if (boundPartials_[{i, j}].tag() != source.boundPartial(i, j).tag())
-                                    throw(std::runtime_error(fmt::format(
+                                    throw(std::runtime_error(std::format(
                                         "Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
                                         boundPartials_[{i, j}].tag(), source.boundPartial(i, j).tag())));
                                 boundPartials_[{i, j}] += source.boundPartial(i, j);
 
                                 // Unbound partials
                                 if (unboundPartials_[{i, j}].tag() != source.unboundPartial(i, j).tag())
-                                    throw(std::runtime_error(fmt::format(
+                                    throw(std::runtime_error(std::format(
                                         "Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
                                         unboundPartials_[{i, j}].tag(), source.unboundPartial(i, j).tag())));
                                 unboundPartials_[{i, j}] += source.unboundPartial(i, j);
