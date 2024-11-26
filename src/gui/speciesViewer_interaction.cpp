@@ -93,7 +93,8 @@ void SpeciesViewer::startInteraction()
                     speciesRenderable_->clearInteractionPrimitive();
                 break;
             default:
-                std::cout << std::format("Unhandled primary mode {} in SpeciesViewer::startInteraction().", interactionMode_)
+                std::cout << std::format("Unhandled primary mode {} in SpeciesViewer::startInteraction().",
+                                         (int)interactionMode_)
                           << std::endl;
                 break;
         }
@@ -244,7 +245,8 @@ void SpeciesViewer::endInteraction()
                     postRedisplay();
                     break;
                 default:
-                    std::cout << std::format("Unhandled primary mode {} in SpeciesViewer::endInteraction().", interactionMode_)
+                    std::cout << std::format("Unhandled primary mode {} in SpeciesViewer::endInteraction().",
+                                             (int)interactionMode_)
                               << std::endl;
                     break;
             }
@@ -255,7 +257,7 @@ void SpeciesViewer::endInteraction()
             break;
         default:
             std::cout << std::format("Unhandled secondary mode {} in SpeciesViewer::endInteraction().",
-                                     transientInteractionMode_)
+                                     (int)transientInteractionMode_)
                       << std::endl;
             break;
     }
