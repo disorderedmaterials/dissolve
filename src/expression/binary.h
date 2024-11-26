@@ -44,3 +44,11 @@ class ExpressionBinaryOperatorNode : public ExpressionNode
     // Return string representation of node
     std::string asString() const override;
 };
+
+template <> struct std::formatter<ExpressionBinaryOperatorNode::BinaryOperator> : std::formatter<std::string>
+{
+    auto format(ExpressionBinaryOperatorNode::BinaryOperator b, format_context &ctx) const
+    {
+        return formatter<string>::format(std::format("{}", b), ctx);
+    }
+};

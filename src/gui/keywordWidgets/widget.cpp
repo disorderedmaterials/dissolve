@@ -56,7 +56,7 @@ void KeywordsWidget::setUp(const KeywordStoreSection &keywordSection, CoreData &
             auto [widget, base] = KeywordWidgetProducer::create(keyword, coreData);
             if (!widget || !base)
             {
-                fmt::print("No widget created for keyword '{}'.\n", keyword->name());
+                std::cout << std::format("No widget created for keyword '{}'.", keyword->name()) << std::endl;
                 continue;
             }
 

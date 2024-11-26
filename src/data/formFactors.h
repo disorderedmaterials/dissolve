@@ -30,3 +30,11 @@ OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData
 // Return Waasmaier & Kirfel (1995) form factor data for given element and formal charge (if it exists)
 OptionalReferenceWrapper<const FormFactorData> wk1995Data(Elements::Element Z, int formalCharge = 0);
 }; // namespace XRayFormFactors
+
+template <>
+struct std::formatter<XRayFormFactors::XRayFormFactorData> : std::formatter<std::string> {
+  auto format(XRayFormFactors::XRayFormFactorData x, format_context& ctx) const {
+    return formatter<string>::format(
+      std::format("{}", x), ctx);
+  }
+};

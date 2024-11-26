@@ -56,3 +56,11 @@ std::string moduleType(ModuleTypes::ModuleType type);
 // Return module type enumeration for specified module type string
 std::optional<ModuleTypes::ModuleType> moduleType(std::string_view keyword);
 }; // namespace ModuleTypes
+
+template <>
+struct std::formatter<ModuleTypes::ModuleType> : std::formatter<std::string> {
+  auto format(ModuleTypes::ModuleType m, format_context& ctx) const {
+    return formatter<string>::format(
+      std::format("{}", m), ctx);
+  }
+};

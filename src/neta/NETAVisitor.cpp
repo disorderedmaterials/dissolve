@@ -285,7 +285,7 @@ antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *
     }
 
     throw(NETAExceptions::NETASyntaxException(
-        std::format("'{]' is not an element symbol, type name, or type index.", context->getText())));
+        std::format("'{}' is not an element symbol, type name, or type index.", context->getText())));
 }
 
 antlrcpp::Any NETAVisitor::visitTargetList(NETAParser::TargetListContext *context, NETANode *contextNode)

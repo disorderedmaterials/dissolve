@@ -62,7 +62,7 @@ RenderableGroup &RenderableGroupManager::addToGroup(const std::shared_ptr<Render
         auto &group = renderable->group()->get();
         if (group.name() == groupName)
         {
-            fmt::print("Renderable '{}' already associated to group '{}'...\n", renderable->name(), group.name());
+          std::cout << std::format("Renderable '{}' already associated to group '{}'...", renderable->name(), group.name()) << std::endl;
             return group;
         }
 

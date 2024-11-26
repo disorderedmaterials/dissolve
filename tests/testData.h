@@ -208,7 +208,7 @@ class DissolveSystemTest
             // Clear and reload restart file
             if (iterationsDone != nIterations)
             {
-                fmt::print("Resetting at iteration {}...\n", iterationsDone);
+                std::cout << std::format("Resetting at iteration {}...", iterationsDone) << std::endl;
                 setUp<flags>(inputFile);
                 loadRestart(restartFile);
             }

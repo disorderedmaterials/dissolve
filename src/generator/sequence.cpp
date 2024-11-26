@@ -364,7 +364,7 @@ bool GeneratorNodeSequence::check() const
         // Check ownership
         if (&node->scope()->get() != this)
             return Messenger::error("Node '{}' failed parent check ({} is not this {})\n", node->name(),
-                                    std::ptr(node->parent()), std::ptr(this));
+                                    static_cast<const void *>(node->parent()), static_cast<const void *>(this));
 
         // Check node branch if present
         if (node->branch() && !node->branch()->get().check())

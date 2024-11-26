@@ -149,7 +149,8 @@ void DataViewer::contextMenuRequested(QPoint pos)
         auto rend = renderableWithTag(queryObjectInfo());
         if (!rend)
         {
-            fmt::print("Couldn't locate renderable with tag '{}' in the DataViewer...", queryObjectInfo());
+            std::cout << std::format("Couldn't locate renderable with tag '{}' in the DataViewer...", queryObjectInfo())
+                      << std::endl;
             return;
         }
 
