@@ -1,3 +1,8 @@
+# Use existing Qt installation (requires Qt6_DIR environment variable to be set)
+param (
+    [switch]$systemqt = $true
+)
+
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
 
 $projectDir = Get-Location
@@ -25,17 +30,21 @@ New-Item -ItemType Directory -Path $qtInstallationDir -ErrorAction SilentlyConti
 
 aqt install-qt --outputdir $qtInstallationDir windows desktop $qtVersion win64_msvc2019_64 -m all
 
-$qt6Dir = Join-Path -Path $dependencies -ChildPath "qt\$qtVersion\msvc_2019_64"
-$qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
+if (-not $systemqt) {
+    # Export Qt6_DIR to system environment variables
+    $qt6Dir = Join-Path -Path $dependencies -ChildPath "qt\$qtVersion\msvc_2019_64"
+    $qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
+    
 
-$systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
+    $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
-#if ($systemPath -notmatch [regex]::Escape($qt6BinDir)) {
-#    [Environment]::SetEnvironmentVariable("PATH", "$qt6BinDir;$systemPath", [EnvironmentVariableTarget]::Machine)
-#    Write-Output "Qt6 binary directory path added to system PATH."
-#} else {
-#    Write-Output "Did not write to PATH: Qt6 binary directory path already exists in system PATH."
-#}
+    if ($systemPath -notmatch [regex]::Escape($qt6BinDir)) {
+        [Environment]::SetEnvironmentVariable("PATH", "$qt6BinDir;$systemPath", [EnvironmentVariableTarget]::Machine)
+        Write-Output "Qt6 binary directory path added to system PATH."
+    } else {
+        Write-Output "Did not write to PATH: Qt6 binary directory path already exists in system PATH."
+    }
+}
 
 # Build/retrieve Freetype
 $freetypeVersion = "2.12.1"
