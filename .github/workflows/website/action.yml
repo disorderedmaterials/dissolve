@@ -144,7 +144,7 @@ runs:
       chmod 0600 ./serverKey ./serverId
       rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/legacy
 
-  - name: 'SSH Deploy to Server (Development)'
+  - name: 'SSH Deploy to Server (Continuous)'
     if: ${{ inputs.publishType == 'continuous' }}
     shell: bash
     run: |
