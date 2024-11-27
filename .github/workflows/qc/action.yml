@@ -9,8 +9,8 @@ runs:
     run: |
       set -ex
       sudo apt-get update
-      sudo apt-get install --yes clang-format-13 qt6-declarative-dev-tools
-      pip install cmake_format==0.6.9
+      sudo apt-get install --yes clang-format-17 qt6-declarative-dev-tools
+      pip install cmake_format==0.6.13
 
   - name: Check Conventional Commits
     # Ensure that the PR title fits the conventional commits framework
