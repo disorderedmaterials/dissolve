@@ -155,6 +155,10 @@ if(WIN32)
     include_directories(${FTGL_INCLUDE_DIRS})
   endif(GUI)
 
+  # By default, Visual Studio lies about what C++ version it's using unless you pass it a flag to tell it not to lie.  This breaks the
+  # TOML11 library, since it checks to C++ version to see if `std::result_of` has been deprecated.
+  add_definitions(/Zc:__cplusplus)
+
   # Add defines for Windows systems - NOMINMAX to prevent conflicts with std::min() and std::max() - NOGDI to prevent conflicts arising from
   # Windows defining ERROR as a global macro (used in ANTLR4)
   add_definitions(-DNOMINMAX -DNOGDI)
