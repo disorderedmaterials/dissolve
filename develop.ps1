@@ -23,14 +23,14 @@ python -m venv msvc-env
 python -m pip install --upgrade pip
 python -m pip install conan aqtinstall conan==1.*
 
-# Install Qt6
-$qtVersion = "6.4.2"
-$qtInstallationDir = Join-Path -Path $dependencies -ChildPath "qt"
-New-Item -ItemType Directory -Path $qtInstallationDir -ErrorAction SilentlyContinue
-
-aqt install-qt --outputdir $qtInstallationDir windows desktop $qtVersion win64_msvc2019_64 -m all
-
 if (-not $systemqt) {
+    # Install Qt6
+    $qtVersion = "6.4.2"
+    $qtInstallationDir = Join-Path -Path $dependencies -ChildPath "qt"
+    New-Item -ItemType Directory -Path $qtInstallationDir -ErrorAction SilentlyContinue
+
+    aqt install-qt --outputdir $qtInstallationDir windows desktop $qtVersion win64_msvc2019_64 -m all
+
     # Export Qt6_DIR to system environment variables
     $qt6Dir = Join-Path -Path $dependencies -ChildPath "qt\$qtVersion\msvc_2019_64"
     $qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
