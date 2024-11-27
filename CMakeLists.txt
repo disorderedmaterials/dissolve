@@ -155,6 +155,9 @@ if(WIN32)
     include_directories(${FTGL_INCLUDE_DIRS})
   endif(GUI)
 
+  # Format requires on MSVC std:c++latest, so we have to ask for C++23, despite the fact it's part of the C++20 standard.
+  set(CMAKE_CXX_STANDARD 23)
+
   # By default, Visual Studio lies about what C++ version it's using unless you pass it a flag to tell it not to lie.  This breaks the
   # TOML11 library, since it checks to C++ version to see if `std::result_of` has been deprecated.
   add_definitions(/Zc:__cplusplus)
