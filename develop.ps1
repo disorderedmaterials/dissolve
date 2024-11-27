@@ -146,28 +146,24 @@ $presets = @(
         displayName = "CLI Release Build"
         description = "The preset for a CLI production build without tests on MSVC"
         inherits = @("CLI-Release")
-        #cacheVariables = @{}
     },
     [PSCustomObject]@{
         name = "CLI-Debug-MSVC"
         displayName = "CLI Debug Build"
         description = "The preset for a CLI debug build with tests on MSVC"
         inherits = @("CLI-Debug")
-        #cacheVariables = @{}
     },
     [PSCustomObject]@{
         name = "GUI-Release-MSVC"
         displayName = "GUI Release Build"
         description = "The preset for a GUI production build without tests on MSVC"
         inherits = @("GUI-Release")
-        #cacheVariables = @{}
     },
     [PSCustomObject]@{
         name = "GUI-Debug-MSVC"
         displayName = "GUI Debug Build"
         description = "The preset for a GUI debug build with tests on MSVC"
         inherits = @("GUI-Debug")
-        #cacheVariables = @{}
     }
 )
 
