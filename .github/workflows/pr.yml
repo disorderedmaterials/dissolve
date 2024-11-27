@@ -19,5 +19,4 @@ on:
 jobs:
 
   CoreBuild:
-    steps:
-      - uses: "./.github/workflows/core"
+    uses: "./.github/workflows/core.yml"
