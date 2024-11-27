@@ -4,6 +4,7 @@
 #include "main/version.h"
 #include <format>
 #include <iostream>
+#include <string>
 
 #define DISSOLVEVERSION "1.6.0"
 #define DISSOLVESHORTHASH ""
