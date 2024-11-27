@@ -180,6 +180,7 @@ endif(UNIX)
 
 # -- OSX
 if(APPLE)
+  set(CMAKE_OSX_DEPLOYMENT_TARGET 13.3)
 
   list(APPEND CMAKE_BUILD_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
   # Set some specific C++11 related options here (set_property below does not seem to persist)
