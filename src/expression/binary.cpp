@@ -76,7 +76,7 @@ std::optional<ExpressionValue> ExpressionBinaryOperatorNode::evaluate() const
                 result = lhs.asDouble() * rhs.asDouble();
             break;
         default:
-            throw(std::runtime_error(std::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", operator_)));
+            throw(std::runtime_error(std::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", (int)operator_)));
     }
 
     return result;

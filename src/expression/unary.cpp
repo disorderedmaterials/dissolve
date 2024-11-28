@@ -69,7 +69,7 @@ std::string ExpressionUnaryOperatorNode::asString() const
         case (OperatorNegate):
             return std::format("-{}", rhs);
         default:
-            throw(std::runtime_error(std::format("ExpressionUnaryOperatorNode - unhandled operator {}.\n", operator_)));
+            throw(std::runtime_error(std::format("ExpressionUnaryOperatorNode - unhandled operator {}.\n", (int)operator_)));
     }
 
     return "";
