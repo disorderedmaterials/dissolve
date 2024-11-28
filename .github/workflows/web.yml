@@ -27,7 +27,7 @@ jobs:
       uses: "./.github/workflows/setup"
 
     - name: Build Website - Test Only
-      if: ${{ github.ref_name == 'pull_request' }}
+      if: ${{ github.event_name == 'pull_request' }}
       uses: "./.github/workflows/website"
       with:
         publishType: 'none'
