@@ -3,8 +3,8 @@
 
 #include "praxis.h"
 #include "base/messenger.h"
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 #include <limits>
 
 PrAxisMinimiser::PrAxisMinimiser(MinimiserCostFunction costFunction, bool pokeBeforeCost)

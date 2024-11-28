@@ -64,10 +64,10 @@ template <class E> class EnumOptions : public EnumOptionsBase
     {
         std::string validValueString;
         for (auto n = 0; n < options_.size(); ++n)
-          if (n == 0)
-            validValueString += std::format("{}", options_[n].keyword());
-          else
-            validValueString += std::format(", {}", options_[n].keyword());
+            if (n == 0)
+                validValueString += std::format("{}", options_[n].keyword());
+            else
+                validValueString += std::format(", {}", options_[n].keyword());
 
         return Messenger::error("'{}' is not a valid {}.\nValid options are:  {}", badKeyword, name_, validValueString);
     }
