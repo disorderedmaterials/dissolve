@@ -4,13 +4,24 @@ runs:
   using: "composite"
   steps:
 
-  - name: Install Dependencies
+  - name: Install nix
+    uses: "./.github/workflows/get-nix"
+    with:
+      target: ${{ inputs.target }}
+
+  - name: Cache Nix Store
+    uses: actions/cache@v4
+    id: nix-cache
+    with:
+      path: /tmp/nixcache
+      key: ${{ runner.os }}-${{ env.nixHash }}-nix-cache
+
+  - name: Import Nix Store Cache
+    if: "steps.nix-cache.outputs.cache-hit == 'true'"
     shell: bash
     run: |
-      set -ex
-      sudo apt-get update
-      sudo apt-get install --yes clang-format qt6-declarative-dev-tools
-      pip install cmake_format==0.6.13
+      nix-store --import < /tmp/nixcache
+      sudo rm -rf /tmp/nixcache
 
   - name: Check Conventional Commits
     # Ensure that the PR title fits the conventional commits framework
