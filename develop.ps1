@@ -1,6 +1,6 @@
-# Use existing Qt installation (requires Qt6_DIR environment variable to be set)
+# Flag: Use existing Qt installation (requires Qt6_DIR environment variable to be set)
 param (
-    [switch]$systemqt = $true
+    [switch]$systemqt = $false
 )
 
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
