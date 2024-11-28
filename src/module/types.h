@@ -61,6 +61,6 @@ template <> struct std::formatter<ModuleTypes::ModuleType> : std::formatter<std:
 {
     auto format(ModuleTypes::ModuleType m, format_context &ctx) const
     {
-        return formatter<string>::format(std::format("{}", m), ctx);
+        return formatter<string>::format(std::vformat("{}", std::make_format_args(m)), ctx);
     }
 };
