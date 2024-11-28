@@ -62,7 +62,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
                 return Messenger::error("Module '{}' given to keyword {} is of the wrong type ({}) - only a module of "
                                         "type '{}' can be accepted.\n",
                                         module->name(), KeywordBase::name(), ModuleTypes::moduleType(module->type()),
-                                        moduleType());
+                                        ModuleTypes::moduleType(moduleType()));
 
             data_ = dynamic_cast<const M *>(module);
             assert(data_);
