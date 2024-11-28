@@ -25,7 +25,7 @@ OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData
         case (XRayFormFactors::WaasmaierKirfel1995):
             return wk1995Data(Z, formalCharge);
         default:
-            Messenger::error("Form factor data set type {} not recognised.\n", dataSet);
+            Messenger::error("Form factor data set type {} not recognised.\n", (int)dataSet);
     }
 
     return {};
