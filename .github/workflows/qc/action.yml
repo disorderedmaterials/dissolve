@@ -38,7 +38,7 @@ runs:
     run: |
       set -ex
       nix develop --command clang-format --version
-      find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\|hui\)' -exec nix develop --command clang-format-13 -i {} +
+      find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\|hui\)' -exec nix develop --command clang-format -i {} +
       git diff
       git diff --quiet
 
