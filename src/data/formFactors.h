@@ -39,6 +39,6 @@ template <> struct std::formatter<XRayFormFactors::XRayFormFactorData> : std::fo
         // value needs be in a variable so it can be called as a
         // reference.
         int refable = x;
-        return formatter<string>::format(std::vformat("{}", std::make_format_args(x)), ctx);
+        return formatter<string>::format(std::vformat("{}", std::make_format_args(refable)), ctx);
     }
 };
