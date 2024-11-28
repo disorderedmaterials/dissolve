@@ -35,6 +35,10 @@ template <> struct std::formatter<XRayFormFactors::XRayFormFactorData> : std::fo
 {
     auto format(XRayFormFactors::XRayFormFactorData x, format_context &ctx) const
     {
+        // We need to cast the form factor data to an int, but the
+        // value needs be in a variable so it can be called as a
+        // reference.
+        int refable = x;
         return formatter<string>::format(std::vformat("{}", std::make_format_args(x)), ctx);
     }
 };

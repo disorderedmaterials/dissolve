@@ -61,6 +61,9 @@ template <> struct std::formatter<ModuleTypes::ModuleType> : std::formatter<std:
 {
     auto format(ModuleTypes::ModuleType m, format_context &ctx) const
     {
-        return formatter<string>::format(std::vformat("{}", std::make_format_args((int)m)), ctx);
+        // We need to cast the module type to an int, but the value
+        // needs be in a variable so it can be called as a reference.
+        int refable = m;
+        return formatter<string>::format(std::vformat("{}", std::make_format_args(refable)), ctx);
     }
 };
