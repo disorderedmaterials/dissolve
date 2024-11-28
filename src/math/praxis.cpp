@@ -4,7 +4,7 @@
 #include "praxis.h"
 #include "base/messenger.h"
 #include <cmath>
-#include <iomanip>
+#include <algorithm>
 #include <limits>
 
 PrAxisMinimiser::PrAxisMinimiser(MinimiserCostFunction costFunction, bool pokeBeforeCost)
