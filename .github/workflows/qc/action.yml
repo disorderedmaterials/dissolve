@@ -26,7 +26,7 @@ runs:
     shell: bash
     run: |
       set -ex
-      clang-format-13 --version
+      clang-format --version
       find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\|hui\)' -exec clang-format-13 -i {} +
       git diff
       git diff --quiet
