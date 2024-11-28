@@ -57,7 +57,7 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
                          [module](const auto &type) { return type == module->type(); }) == moduleTypes_.cend())
             return Messenger::error("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
                                     parser.argsv(n), ModuleTypes::moduleType(module->type()), name(),
-                                    joinStrings(moduleTypes_));
+                                    joinStrings(moduleTypes_, ", ", [](auto m) { return ModuleTypes::moduleType(m); }));
         if (!data_.empty() && std::find(data_.cbegin(), data_.cend(), module) != data_.cend())
             Messenger::warn("Module '{}' has already been added to keyword '{}'.\n", parser.argsv(n), name());
         else
@@ -112,7 +112,8 @@ void ModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreDat
                                   [module](const auto &s) { return s == module->type(); }) == moduleTypes_.cend())
                      throw toml::type_error(
                          std::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
-                                     title, module->type(), name(), joinStrings(moduleTypes_)),
+                                     title, ModuleTypes::moduleType(module->type()), name(),
+                                     joinStrings(moduleTypes_, ", ", [](auto m) { return ModuleTypes::moduleType(m); })),
                          item.location());
                  data_.push_back(module);
              });

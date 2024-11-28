@@ -48,7 +48,7 @@ std::optional<ExpressionValue> ExpressionUnaryOperatorNode::evaluate() const
                 result = -rhs.asDouble();
             break;
         default:
-            throw(std::runtime_error(std::format("ExpressionUnaryOperatorNode - unhandled operator {}.\n", operator_)));
+            throw(std::runtime_error(std::format("ExpressionUnaryOperatorNode - unhandled operator {}.\n", asString())));
     }
 
     return result;

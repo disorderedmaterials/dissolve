@@ -106,7 +106,7 @@ std::string ExpressionBinaryOperatorNode::asString() const
         case (OperatorMultiply):
             return std::format("{}*{}", lhs, rhs);
         default:
-            throw(std::runtime_error(std::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", operator_)));
+            throw(std::runtime_error(std::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", (int)operator_)));
     }
 
     return "";
