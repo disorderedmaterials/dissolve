@@ -4,6 +4,7 @@ import "widgets" as D
 
 Item {
     id: control
+
     property variant dialogModel
 
     signal selected
@@ -23,6 +24,7 @@ Item {
 
         TextField {
             id: ffFilter
+
             anchors.right: parent.right
             anchors.top: parent.top
             placeholderText: qsTr("Filter")
@@ -44,6 +46,7 @@ Item {
 
             D.PrettyListView {
                 id: ffList
+
                 anchors.fill: parent
                 clip: true
                 currentIndex: -1

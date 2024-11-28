@@ -5,6 +5,7 @@ import "widgets" as D
 
 Item {
     id: origin
+
     property int currentModel: 0
     property variant dialogModel
 
@@ -24,6 +25,7 @@ Item {
         }
         IconListView {
             id: bonds
+
             Layout.fillHeight: origin.currentModel == 0
             Layout.fillWidth: true
             clip: true
@@ -41,6 +43,7 @@ Item {
         }
         IconListView {
             id: angles
+
             Layout.fillHeight: origin.currentModel == 1
             Layout.fillWidth: true
             clip: true
@@ -58,6 +61,7 @@ Item {
         }
         IconListView {
             id: torsions
+
             Layout.fillHeight: origin.currentModel == 2
             Layout.fillWidth: true
             clip: true
@@ -75,6 +79,7 @@ Item {
         }
         IconListView {
             id: impropers
+
             Layout.fillHeight: origin.currentModel == 3
             Layout.fillWidth: true
             clip: true
@@ -87,6 +92,7 @@ Item {
     }
     D.Button {
         id: prefixButton
+
         anchors.right: parent.right
         anchors.top: parent.top
         enabled: bonds.currentIndex >= 0
@@ -96,6 +102,7 @@ Item {
     }
     Dialog {
         id: prefixDialog
+
         standardButtons: Dialog.Ok | Dialog.Cancel
         title: "Prefix Dialog"
 
@@ -118,11 +125,13 @@ Item {
 
         TextField {
             id: prefixField
+
             placeholderText: "Prefix"
         }
     }
     D.Button {
         id: suffixButton
+
         anchors.right: parent.right
         anchors.top: prefixButton.bottom
         enabled: bonds.currentIndex >= 0
@@ -132,6 +141,7 @@ Item {
     }
     Dialog {
         id: suffixDialog
+
         standardButtons: Dialog.Ok | Dialog.Cancel
         title: "Suffix Dialog"
 
@@ -154,6 +164,7 @@ Item {
 
         TextField {
             id: suffixField
+
             placeholderText: "Suffix"
         }
     }
