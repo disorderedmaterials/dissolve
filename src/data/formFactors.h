@@ -35,6 +35,6 @@ template <> struct std::formatter<XRayFormFactors::XRayFormFactorData> : std::fo
 {
     auto format(XRayFormFactors::XRayFormFactorData x, format_context &ctx) const
     {
-        return formatter<string>::format(std::format("{}", x), ctx);
+        return formatter<string>::format(std::vformat("{}", std::make_format_args(x)), ctx);
     }
 };
