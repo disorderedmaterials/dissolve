@@ -37,8 +37,8 @@ runs:
     shell: bash
     run: |
       set -ex
-      clang-format --version
-      find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\|hui\)' -exec clang-format-13 -i {} +
+      nix develop --command clang-format --version
+      find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\|hui\)' -exec nix develop --command clang-format-13 -i {} +
       git diff
       git diff --quiet
 
@@ -46,8 +46,8 @@ runs:
     shell: bash
     run: |
       set -ex
-      cmake-format --version
-      find . -type f -name CMakeLists.txt -exec cmake-format -i '{}' \;
+      nix develop --command cmake-format --version
+      find . -type f -name CMakeLists.txt -exec nix develop --command cmake-format -i '{}' \;
       git diff
       git diff --quiet
 
@@ -55,8 +55,8 @@ runs:
     shell: bash
     run: |
       set -ex
-      /usr/lib/qt6/bin/qmlformat --version
-      find . -type f -regex '.*\.qml' -exec /usr/lib/qt6/bin/qmlformat -inw 4 '{}' \;
+      nix develop --command qmlformat --version
+      find . -type f -regex '.*\.qml' -exec nix develop --command qmlformat -inw 4 '{}' \;
       git diff
       git diff --quiet
 
