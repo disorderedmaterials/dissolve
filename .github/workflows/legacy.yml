@@ -1,0 +1,17 @@
+name: Legacy
+
+on:
+  push:
+    tags:
+    - 'legacy'
+
+jobs:
+
+  BuildAndPackage:
+    uses: "./.github/workflows/_build_and_package.yml"
+
+  Publish:
+    needs: [BuildAndPackage]
+    uses: "./.github/workflows/_publishing.yml"
+    with:
+      publishType: 'legacy'
