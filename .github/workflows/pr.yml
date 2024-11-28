@@ -1,4 +1,5 @@
 name: Pull Request
+description: Pull request
 
 on:
   pull_request:
@@ -19,4 +20,6 @@ on:
 jobs:
 
   CoreBuild:
-    uses: "./.github/workflows/core.yml"
+    uses: "./.github/workflows/_build_and_package.yml"
+    with:
+      checkout_ref: ${{ github.event.pull_request.head.sha }}

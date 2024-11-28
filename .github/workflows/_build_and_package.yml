@@ -1,6 +1,11 @@
-name: Core Build
+name: Build and Package
+
 on:
   workflow_call:
+    inputs:
+      checkout_ref:
+        required: true
+        type: string
 
 jobs:
 
@@ -10,7 +15,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
-        ref: ${{ github.event.pull_request.head.sha }}
+        ref: ${{ inputs.checkout_ref }}
     - name: Setup
       uses: "./.github/workflows/setup"
     - name: Quality Control
@@ -26,7 +31,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ inputs.checkout_ref }}
       - name: Setup
         uses: "./.github/workflows/setup"
       - name: Set Short Hash
@@ -44,7 +49,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
-        ref: ${{ github.event.pull_request.head.sha }}
+        ref: ${{ inputs.checkout_ref }}
     - name: Setup
       uses: "./.github/workflows/setup"
     - name: Set Short Hash
@@ -65,7 +70,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ inputs.checkout_ref }}
       - name: Setup
         uses: "./.github/workflows/setup"
       - name: "Package (${{ matrix.os }})"
