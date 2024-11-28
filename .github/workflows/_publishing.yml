@@ -9,14 +9,24 @@ on:
 
 jobs:
 
-  QC2:
+  Publish:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.checkout_ref }}
-    - name: Setup
-      uses: "./.github/workflows/setup"
-    - name: Quality Control
-      uses: "./.github/workflows/qc"
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: "./.github/workflows/setup"
+      - name: Set Short Hash
+        uses: "./.github/workflows/set-short-hash"
+      - name: Publish
+        uses: "./.github/workflows/publish"
+        with:
+          publishType: ${{ inputs.publishType }}
+        env:
+          HARBOR_USER: ${{ secrets.HARBOR_USER }}
+          HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
+      - name: Update Version Information
+        uses: "./.github/workflows/update-release-info"
+        with:
+          createPR: ${{ ! endsWith(github.ref, 'pre') }}
+          releaseVersion: ${{ env.dissolveVersion }}

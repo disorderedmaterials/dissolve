@@ -23,9 +23,3 @@ jobs:
     uses: "./.github/workflows/_build_and_package.yml"
     with:
       checkoutRef: ${{ github.event.pull_request.head.sha }}
-
-  Test:
-    needs: [BuildAndPackage]
-    uses: "./.github/workflows/_publishing.yml"
-    with:
-      publishType: "none"
