@@ -92,7 +92,7 @@ runs:
       conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
 
       # Set minimum deployment target version
-      export MACOSX_DEPLOYMENT_TARGET=10.15
+      export MACOSX_DEPLOYMENT_TARGET=13.3
 
       # Build
       mkdir build && cd build
