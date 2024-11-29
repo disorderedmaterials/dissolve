@@ -91,7 +91,7 @@ $ftglRepoPath = (Join-Path -Path $dependencies -ChildPath "ftgl-latest")
 Set-Location -Path $projectDir
 
 $ftglLibPath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\lib"
-$ftglIncludePath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\include\FTGL"
+$ftglIncludePath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\include"
 
 $freetypeBinDir = Join-Path -Path $freetypeInstallDir -ChildPath "bin"
 $freetypeLibDir = Join-Path -Path $freetypeInstallDir -ChildPath "lib"
