@@ -120,7 +120,7 @@ Expand-Archive -Path $javaOutput -DestinationPath . -Force
 Remove-Item -Path $javaOutput -Force
 
 $javaSDKPath = Join-Path -Path $projectDir -ChildPath "$dependencies\jdk-$jdkVersion"
-$javaExePath = Join-Path -Path $javaSDKPath -ChildPath "bin"
+$javaExePath = Join-Path -Path $javaSDKPath -ChildPath "bin\java"
 
 $antlrExePath = "$(Join-Path -Path $projectDir -ChildPath "$dependencies")\$antlrOutput"
 New-Item -ItemType Directory -Path $antlrExePath -ErrorAction SilentlyContinue
