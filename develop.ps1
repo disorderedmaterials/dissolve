@@ -91,6 +91,7 @@ $ftglRepoPath = (Join-Path -Path $dependencies -ChildPath "ftgl-latest")
 Set-Location -Path $projectDir
 
 $ftglLibPath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\lib"
+$ftglBinPath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\bin"
 $ftglIncludePath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\include"
 
 $freetypeBinDir = Join-Path -Path $freetypeInstallDir -ChildPath "bin"
@@ -137,7 +138,7 @@ $out = Join-Path -Path $projectDir -ChildPath "build"
 $cacheVariables = @{
     CMAKE_C_COMPILER = "cl"
     CMAKE_CXX_COMPILER = "cl"
-    FTGL_LIBRARY = $ftglLibPath
+    FTGL_LIBRARY = "$ftglLibPath\ftgl.lib;$ftglBinPath\ftgl.dll"
     FTGL_INCLUDE_DIR = $ftglIncludePath
     ANTLR_EXECUTABLE = $antlrExePath
     Java_JAVA_EXECUTABLE = $javaExePath
