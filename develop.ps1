@@ -90,6 +90,9 @@ $ftglRepoPath = (Join-Path -Path $dependencies -ChildPath "ftgl-latest")
 
 Set-Location -Path $projectDir
 
+$ftglLibPath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\lib"
+$ftglIncludePath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\include\FTGL"
+
 $freetypeBinDir = Join-Path -Path $freetypeInstallDir -ChildPath "bin"
 $freetypeLibDir = Join-Path -Path $freetypeInstallDir -ChildPath "lib"
 
@@ -119,7 +122,7 @@ Remove-Item -Path $javaOutput -Force
 $javaSDKPath = Join-Path -Path $projectDir -ChildPath "$dependencies\jdk-$jdkVersion"
 $javaExePath = Join-Path -Path $javaSDKPath -ChildPath "bin"
 
-$antlrExePath = Join-Path -Path $projectDir -ChildPath "$dependencies\antlr"
+$antlrExePath = "$(Join-Path -Path $projectDir -ChildPath "$dependencies")\$antlrOutput"
 New-Item -ItemType Directory -Path $antlrExePath -ErrorAction SilentlyContinue
 Move-Item -Path $antlrOutput -Destination $antlrExePath
 
@@ -133,9 +136,11 @@ conan profile update settings.compiler.version=17 default
 $out = Join-Path -Path $projectDir -ChildPath "build"
 $cacheVariables = @{
     CMAKE_C_COMPILER = "cl"
+    CMAKE_CXX_COMPILER = "cl"
+    FTGL_LIBRARY = $ftglLibPath
+    FTGL_INCLUDE_DIR = $ftglLibPath
     ANTLR_EXECUTABLE = $antlrExePath
     Java_JAVA_EXECUTABLE = $javaExePath
-    CMAKE_CXX_COMPILER = "cl"
     MULTI_THREADING = $threading
     CMAKE_INSTALL_PREFIX = $out
 }
