@@ -187,13 +187,12 @@ foreach ($preset in $presets) {
 }
 
 $cmakeUserPresetsJson = $cmakeUserPresets | ConvertTo-Json -Depth 10 -Compress
-$unformattedJson = "presets.json"
 
-Set-Content -Path $unformattedJson -Value $cmakeUserPresetsJson -Encoding UTF8
+Set-Content -Path "userpresets.json" -Value $cmakeUserPresetsJson -Encoding UTF8
 
-python -c "from pprintjson import pprintjson; import json, sys; pprintjson(json.load(open('$unformattedJson')), indent=4)" > CMakeUserPresets.json
+python -c "from pprintjson import pprintjson; import json, sys; pprintjson(json.load(open('userpresets.json')), indent=4)" > CMakeUserPresets.json
 
-Remove-Item -Path $unformattedJson -Force
+Remove-Item -Path "userpresets.json" -Force
 
 
 
