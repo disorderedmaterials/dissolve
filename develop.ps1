@@ -21,7 +21,7 @@ $gitExePath = where.exe git
 python -m venv msvc-env
 ./msvc-env/Scripts/Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install conan aqtinstall conan==1.*
+python -m pip install pprintjson conan aqtinstall conan==1.*
 
 if (-not $systemqt) {
     # Install Qt6
@@ -187,10 +187,13 @@ foreach ($preset in $presets) {
 }
 
 $cmakeUserPresetsJson = $cmakeUserPresets | ConvertTo-Json -Depth 10 -Compress
+$unformattedJson = "presets.json"
 
-Set-Content -Path "CMakeUserPresets.json" -Value $cmakeUserPresetsJson -Encoding UTF8
+Set-Content -Path $unformattedJson -Value $cmakeUserPresetsJson -Encoding UTF8
 
+python -c "from pprintjson import pprintjson; import json, sys; pprintjson(json.load(open('$unformattedJson')), indent=4)" > CMakeUserPresets.json
 
+Remove-Item -Path $unformattedJson -Force
 
 
 
