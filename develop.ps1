@@ -19,11 +19,22 @@ $gitExePath = where.exe git
 
 # Setup Python packages
 python -m venv msvc-env
-./msvc-env/Scripts/Activate.ps1
+
+if ($(python -c "import sys; print(sys.version)") -match "MSC v\.\d+") 
+{ 
+    $pythonEnvSourceDir = "Scripts" 
+}
+else 
+{ 
+    $pythonEnvSourceDir = "bin" 
+}
+
+./msvc-env/$pythonEnvSourceDir/Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install pprintjson conan aqtinstall conan==1.*
 
-if (-not $systemqt) {
+if (-not $systemqt) 
+{
     # Install Qt6
     $qtVersion = "6.4.2"
     $qtInstallationDir = Join-Path -Path $dependencies -ChildPath "qt"
