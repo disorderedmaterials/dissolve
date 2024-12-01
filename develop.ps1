@@ -3,6 +3,11 @@ param (
     [switch]$systemqt = $false
 )
 
+$colors = @{
+    ForegroundColor = "White"
+    BackgroundColor = "Cyan"
+}
+
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
 
 $projectDir = Get-Location
@@ -13,24 +18,34 @@ $dependencies = "dependencies"
 New-Item -ItemType Directory -Path $dependencies -ErrorAction SilentlyContinue
 
 #Install key dependencies with Chocolatey
+Write-Host "Installing key dependencies with Chocolatey... " @colors
 choco install -y git ninja wget pkgconfiglite
 
+Write-Host "Locating git executable... " @colors
 $gitExePath = where.exe git
 
 # Setup Python packages
+Write-Host "Creating a local Python virtual environment... " @colors
 python -m venv msvc-env
 
+Write-Host "Checking Python compiler type... " @colors
 if ($(python -c "import sys; print(sys.version)") -match "MSC v\.\d+") 
 { 
+    Write-Host " Python...compiler type evaluated to MSC"
     $pythonEnvSourceDir = "Scripts" 
 }
 else 
 { 
+    Write-Host " Python...compiler type is not MSC"
     $pythonEnvSourceDir = "bin" 
 }
 
 $activate = "./msvc-env/$pythonEnvSourceDir/Activate.ps1"
+
+Write-Host "Activating virtual environment with the command: $activate... " @colors
 & $activate
+
+Write-Host "Installing Python packages... " @colors
 python -m pip install --upgrade pip
 python -m pip install pprintjson conan aqtinstall conan==1.*
 
@@ -41,20 +56,22 @@ if (-not $systemqt)
     $qtInstallationDir = Join-Path -Path $dependencies -ChildPath "qt"
     New-Item -ItemType Directory -Path $qtInstallationDir -ErrorAction SilentlyContinue
 
+    Write-Host "Installing Qt6... " @colors
     aqt install-qt --outputdir $qtInstallationDir windows desktop $qtVersion win64_msvc2019_64 -m all
 
     # Export Qt6_DIR to system environment variables
     $qt6Dir = Join-Path -Path $dependencies -ChildPath "qt\$qtVersion\msvc_2019_64"
     $qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
     
-
+    Write-Host "Locating system PATH... " @colors
     $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
+    Write-Host "Adding Qt6 directory to system PATH... " @colors
     if ($systemPath -notmatch [regex]::Escape($qt6BinDir)) {
         [Environment]::SetEnvironmentVariable("PATH", "$qt6BinDir;$systemPath", [EnvironmentVariableTarget]::Machine)
-        Write-Output "Qt6 binary directory path added to system PATH."
+        Write-Host "Qt6 binary directory path added to system PATH." @colors
     } else {
-        Write-Output "Did not write to PATH: Qt6 binary directory path already exists in system PATH."
+        Write-Host "Did not write to PATH: Qt6 binary directory path already exists in system PATH." @colors
     }
 }
 
@@ -71,13 +88,16 @@ New-Item -ItemType Directory -Path $freetypeInstallDir -ErrorAction SilentlyCont
 $freetypeBuildDir = (Join-Path -Path $dependencies -ChildPath "freetype-build")
 New-Item -ItemType Directory -Path $freetypeBuildDir -ErrorAction SilentlyContinue
 
+Write-Host "Downloading freetype archive... " @colors
 Invoke-WebRequest -Uri $freetypeArchive -OutFile $freetypeOutput
 
+Write-Host "Unpacking freetype... " @colors
 tar -zxvf $freetypeOutput -C $dependencies
 
 Remove-Item -Path $freetypeOutput -Force
 Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion") -NewName $freetypeRepo
 
+Write-Host "Building freetype (from location: $freetypeBuildDir)... " @colors
 Set-Location -Path $freetypeBuildDir
 
 cmake ../$freetypeRepo -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../$freetypeInstall
@@ -98,6 +118,8 @@ $ftglBuildDir = (Join-Path -Path $dependencies -ChildPath "ftgl-build")
 New-Item -ItemType Directory -Path $ftglBuildDir -ErrorAction SilentlyContinue
 
 $ftglRepoPath = (Join-Path -Path $dependencies -ChildPath "ftgl-latest")
+
+Write-Host "Cloning FTGL (DisorderedMaterials fork) repo... " @colors
 & "$gitExePath" clone $ftglUri $ftglRepoPath
 
 Set-Location -Path $projectDir
@@ -109,6 +131,7 @@ $ftglIncludePath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$
 $freetypeBinDir = Join-Path -Path $freetypeInstallDir -ChildPath "bin"
 $freetypeLibDir = Join-Path -Path $freetypeInstallDir -ChildPath "lib"
 
+Write-Host "Building FTGL (from location: $ftglBuildDir)... " @colors
 Set-Location -Path $ftglBuildDir
 
 cmake ../$ftglRepo -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../$ftglInstall -DFREETYPE_LIBRARY=../$freetypeInstall/lib -DFREETYPE_INCLUDE_DIRS="$(Join-Path -Path $projectDir -ChildPath $freetypeInstallDir)\include\freetype2"
@@ -127,8 +150,13 @@ $jdkVersion = "21.0.5"
 
 Set-Location -Path $dependencies
 
+Write-Host "Downloading ANTLR... " @colors
 Invoke-WebRequest -Uri $antlrUri -OutFile $antlrOutput
+
+Write-Host "Downloading Java... " @colors
 Invoke-WebRequest -Uri $javaUri -OutFile $javaOutput
+
+Write-Host "Unpacking Java... " @colors
 Expand-Archive -Path $javaOutput -DestinationPath . -Force
 Remove-Item -Path $javaOutput -Force
 
@@ -141,6 +169,8 @@ Move-Item -Path $antlrOutput -Destination $antlrExePath
 
 # Set Conan
 Set-Location -Path $projectDir
+
+Write-Host "Setting up Conan profile... " @colors
 conan profile new default --detect
 conan profile update settings.compiler="Visual Studio" default
 conan profile update settings.compiler.version=17 default
@@ -199,6 +229,7 @@ foreach ($preset in $presets) {
     $cmakeUserPresets.configurePresets += $preset
 }
 
+Write-Host "Outputting CMakeUserPresets Json for Dissolve MSVC configuration... " @colors
 $cmakeUserPresetsJson = $cmakeUserPresets | ConvertTo-Json -Depth 10 -Compress
 
 Set-Content -Path "CMakeUserPresets.json" -Value $cmakeUserPresetsJson -Encoding UTF8
