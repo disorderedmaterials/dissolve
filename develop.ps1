@@ -31,12 +31,12 @@ python -m venv msvc-env
 Write-Host "Checking Python compiler type... " @colors
 if ($(python -c "import sys; print(sys.version)") -match "MSC v\.\d+") 
 { 
-    Write-Host " Python...compiler type evaluated to MSC"
+    Write-Host " Python...compiler type evaluated to MSC" @colors
     $pythonEnvSourceDir = "Scripts" 
 }
 else 
 { 
-    Write-Host " Python...compiler type is not MSC"
+    Write-Host " Python...compiler type is not MSC" @colors
     $pythonEnvSourceDir = "bin" 
 }
 
