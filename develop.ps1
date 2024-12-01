@@ -106,14 +106,12 @@ $ftglLibPath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftgl
 $ftglBinPath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\bin"
 $ftglIncludePath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\include"
 
-#$freetypeBinDir = Join-Path -Path $freetypeInstallDir -ChildPath "bin"
-#$freetypeLibDir = Join-Path -Path $freetypeInstallDir -ChildPath "lib"
-
-$freetypeLibPath = "$(Join-Path -Path $projectDir -ChildPath $freetypeInstallDir)\lib\freetype;$(Join-Path -Path $projectDir -ChildPath $freetypeInstallDir)\bin\freetype"
+$freetypeBinDir = Join-Path -Path $freetypeInstallDir -ChildPath "bin"
+$freetypeLibDir = Join-Path -Path $freetypeInstallDir -ChildPath "lib"
 
 Set-Location -Path $ftglBuildDir
 
-cmake ../$ftglRepo -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../$ftglInstall -DFREETYPE_LIBRARY=$freetypeLibPath -DFREETYPE_INCLUDE_DIRS="$(Join-Path -Path $projectDir -ChildPath $freetypeInstallDir)\include\freetype2"
+cmake ../$ftglRepo -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../$ftglInstall -DFREETYPE_LIBRARY=../$freetypeInstall/lib -DFREETYPE_INCLUDE_DIRS="$(Join-Path -Path $projectDir -ChildPath $freetypeInstallDir)\include\freetype2"
 cmake --build . --target install --config Release
 
 # Get ANTLR and Java
