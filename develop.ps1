@@ -29,7 +29,8 @@ else
     $pythonEnvSourceDir = "bin" 
 }
 
-./msvc-env/$pythonEnvSourceDir/Activate.ps1
+$activate = "./msvc-env/$pythonEnvSourceDir/Activate.ps1"
+& $activate
 python -m pip install --upgrade pip
 python -m pip install pprintjson conan aqtinstall conan==1.*
 
