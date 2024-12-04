@@ -47,6 +47,8 @@ jobs:
           set -ex
           export LD_LIBRARY_PATH=`pwd`/build/onetbb/lib
 
+          nix build .#benchmarks
+
           nix run .#benchmarks > all_benchmark_results.json
 
           cat all_benchmark_results.json
