@@ -24,3 +24,6 @@ jobs:
     uses: "./.github/workflows/_publishing.yml"
     with:
       publishType: 'release'
+    secrets:
+      HARBOR_USER: ${{ secrets.HARBOR_USER }}
+      HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}

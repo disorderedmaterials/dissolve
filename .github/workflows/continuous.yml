@@ -26,3 +26,6 @@ jobs:
     uses: "./.github/workflows/_publishing.yml"
     with:
       publishType: 'continuous'
+    secrets:
+      HARBOR_USER: ${{ secrets.HARBOR_USER }}
+      HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}

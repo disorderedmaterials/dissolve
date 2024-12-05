@@ -6,6 +6,11 @@ on:
       publishType:
         required: true
         type: string
+    secrets:
+      HARBOR_USER:
+        description: "Username for Harbor access"
+      HARBOR_SECRET:
+        description: "Key for Harbor access"
 
 jobs:
 
