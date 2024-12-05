@@ -62,15 +62,13 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
             fmt::print("Atom {}\n", i.globalIndex());
             for (auto n = 0; n < 3; ++n)
             {
-                double newPosition{};
                 switch (n)
                 {
                     // Move x
                     case 0:
                         // Get position, change via delta then set
                         fmt::print("X coord = {}\n", i.x());
-                        newPosition = i.x() - delta;
-                        i.set(newPosition, i.y(), i.z());
+                        i.translateCoordinates(-delta, 0, 0);
                         fmt::print("X coord = {}\n", i.x());
                         // Reset GR
                         originalgr.reset();
@@ -83,8 +81,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         f.x = Error::rmse(originalgr.total(), originalReferenceData).error;
                         fmt::print("X+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
                         // Set new position (needs 2x to get +x from original)
-                        newPosition = i.x() + (2 * delta);
-                        i.set(newPosition, i.y(), i.z());
+                        i.translateCoordinates(2 * delta, 0, 0);
                         fmt::print("X coord = {}\n", i.x());
                         originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
@@ -94,15 +91,13 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                         f.x -= Error::rmse(originalgr.total(), originalReferenceData).error;
                         fmt::print("X+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
                         // Reset position
-                        newPosition = i.x() - delta;
-                        i.set(newPosition, i.y(), i.z());
+                        i.translateCoordinates(-delta, 0, 0);
                         fmt::print("X coord = {}\n", i.x());
                         break;
                     // Move y and repeat
                     case 1:
                         fmt::print("Y coord = {}\n", i.y());
-                        newPosition = i.y() - delta;
-                        i.set(i.x(), newPosition, i.z());
+                        i.translateCoordinates(0, -delta, 0);
                         fmt::print("Y coord = {}\n", i.y());
                         originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
@@ -110,8 +105,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                                         WindowFunction::Form::Lorch0);
                         f.y = Error::rmse(originalgr.total(), originalReferenceData).error;
                         fmt::print("Y+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
-                        newPosition = i.y() + (2 * delta);
-                        i.set(i.x(), newPosition, i.z());
+                        i.translateCoordinates(0, 2 * delta, 0);
                         fmt::print("Y coord = {}\n", i.y());
                         originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
@@ -119,15 +113,13 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                                         WindowFunction::Form::Lorch0);
                         f.y -= Error::rmse(originalgr.total(), originalReferenceData).error;
                         fmt::print("Y+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
-                        newPosition = i.y() - delta;
-                        i.set(i.x(), newPosition, i.z());
+                        i.translateCoordinates(0, -delta, 0);
                         fmt::print("Y coord = {}\n", i.y());
                         break;
                     // Move z
                     case 2:
                         fmt::print("Z coord = {}\n", i.z());
-                        newPosition = i.z() - delta;
-                        i.set(i.x(), i.y(), newPosition);
+                        i.translateCoordinates(0, 0, -delta);
                         fmt::print("Z coord = {}\n", i.z());
                         originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
@@ -135,8 +127,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                                         WindowFunction::Form::Lorch0);
                         f.z = Error::rmse(originalgr.total(), originalReferenceData).error;
                         fmt::print("Z+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
-                        newPosition = i.z() + (2 * delta);
-                        i.set(i.x(), i.y(), newPosition);
+                        i.translateCoordinates(0, 0, 2 * delta);
                         fmt::print("Z coord = {}\n", i.z());
                         originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
@@ -144,8 +135,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                                         WindowFunction::Form::Lorch0);
                         f.z -= Error::rmse(originalgr.total(), originalReferenceData).error;
                         fmt::print("Z+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
-                        newPosition = i.z() - delta;
-                        i.set(i.x(), i.y(), newPosition);
+                        i.translateCoordinates(0, 0, -delta);
                         fmt::print("Z coord = {}\n", i.z());
                         break;
                 }
@@ -158,7 +148,6 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
         fmt::print("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
         i.translateCoordinates(f);
         f.print();
-        targetConfiguration_->updateAtomLocation(&i);
         printf("We've moved\n");
         fmt::print("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
     }
