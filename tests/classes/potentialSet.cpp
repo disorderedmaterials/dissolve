@@ -70,6 +70,14 @@ TEST(PotentialSetTest, Averaging)
     auto originalPotentialsObject =
         moduleData.realiseIf<PotentialSet>(fmt::format("PotentialSet"), "module", GenericItem::InRestartFileFlag);
 
+    std::string filename_{"test_restart.txt"};
+    // Open the file
+    LineParser parser;
+    if (!parser.openOutput(filename_))
+    {
+        parser.closeFiles();
+    }
+
     Data1D x;
     Data1D y;
     const auto value = 2.0;
@@ -127,6 +135,8 @@ TEST(PotentialSetTest, Averaging)
         EXPECT_EQ(2.0, pots.potentialMap()["A-B"].ep.value(0));
         EXPECT_EQ(4.0, pots.potentialMap()["A-C"].ep.value(0));
         EXPECT_EQ(4.0, pots.potentialMap()["A-D"].ep.value(0));
+
+        pots.serialise(parser);
     }
 }
 
