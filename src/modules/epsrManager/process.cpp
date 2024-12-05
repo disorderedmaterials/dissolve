@@ -58,7 +58,6 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
     }
     // Set restart equal to changes
     originalPotentialsObject.first = potentials;
-    printf("Error");
     Averaging::average<PotentialSet>(moduleContext.dissolve().processingModuleData(), "PotentialSet", name(),
                                      averagingLength_.value(), averagingScheme_);
 
