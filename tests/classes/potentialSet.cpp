@@ -145,12 +145,12 @@ TEST(PotentialSetTest, Averaging)
     GenericList moduleData;
     auto originalPotentialsObject =
         moduleData.realiseIf<PotentialSet>(fmt::format("PotentialSet"), "module", GenericItem::InRestartFileFlag);
-    PotentialSet pots;
 
     Data1D x;
     Data1D y;
     const auto value = 2.0;
     const auto value2 = 4.0;
+    const auto averagingLength = 10;
 
     auto A = std::make_shared<AtomType>();
     auto B = std::make_shared<AtomType>();
@@ -165,42 +165,45 @@ TEST(PotentialSetTest, Averaging)
     x.addPoint(1, value);
     y.addPoint(1, value2);
 
-    pots.potentialMap()["A-A"].at1 = A;
-    pots.potentialMap()["A-A"].at2 = A;
-    pots.potentialMap()["A-A"].ep = x;
+    for (auto n = 0; n <= 2 * averagingLength; n++)
+    {
+        PotentialSet pots;
+        pots.potentialMap()["A-A"].at1 = A;
+        pots.potentialMap()["A-A"].at2 = A;
+        pots.potentialMap()["A-A"].ep = x;
 
-    pots.potentialMap()["A-B"].at1 = A;
-    pots.potentialMap()["A-B"].at2 = B;
-    pots.potentialMap()["A-B"].ep = x;
+        pots.potentialMap()["A-B"].at1 = A;
+        pots.potentialMap()["A-B"].at2 = B;
+        pots.potentialMap()["A-B"].ep = x;
 
-    pots.potentialMap()["A-C"].at1 = A;
-    pots.potentialMap()["A-C"].at2 = C;
-    pots.potentialMap()["A-C"].ep = y;
+        pots.potentialMap()["A-C"].at1 = A;
+        pots.potentialMap()["A-C"].at2 = C;
+        pots.potentialMap()["A-C"].ep = y;
 
-    pots.potentialMap()["A-D"].at1 = A;
-    pots.potentialMap()["A-D"].at2 = D;
-    pots.potentialMap()["A-D"].ep = y;
+        pots.potentialMap()["A-D"].at1 = A;
+        pots.potentialMap()["A-D"].at2 = D;
+        pots.potentialMap()["A-D"].ep = y;
 
-    EXPECT_EQ(A, pots.potentialMap()["A-A"].at1);
-    EXPECT_EQ(A, pots.potentialMap()["A-A"].at2);
-    originalPotentialsObject.first = pots;
+        originalPotentialsObject.first = pots;
+        fmt::print("Run {}\n", n);
+        Averaging::average<PotentialSet>(moduleData, "PotentialSet", "module", averagingLength,
+                                         Averaging::AveragingScheme::LinearAveraging);
 
-    Averaging::average<PotentialSet>(moduleData, "PotentialSet", "module", 2, Averaging::AveragingScheme::LinearAveraging);
+        EXPECT_EQ(A, pots.potentialMap()["A-A"].at1);
+        EXPECT_EQ(A, pots.potentialMap()["A-A"].at2);
+        EXPECT_EQ(A, pots.potentialMap()["A-B"].at1);
+        EXPECT_EQ(B, pots.potentialMap()["A-B"].at2);
+        EXPECT_EQ(A, pots.potentialMap()["A-C"].at1);
+        EXPECT_EQ(C, pots.potentialMap()["A-C"].at2);
+        EXPECT_EQ(A, pots.potentialMap()["A-D"].at1);
+        EXPECT_EQ(D, pots.potentialMap()["A-D"].at2);
 
-    EXPECT_EQ(A, pots.potentialMap()["A-A"].at1);
-    EXPECT_EQ(A, pots.potentialMap()["A-A"].at2);
-    EXPECT_EQ(A, pots.potentialMap()["A-B"].at1);
-    EXPECT_EQ(B, pots.potentialMap()["A-B"].at2);
-    EXPECT_EQ(A, pots.potentialMap()["A-C"].at1);
-    EXPECT_EQ(C, pots.potentialMap()["A-C"].at2);
-    EXPECT_EQ(A, pots.potentialMap()["A-D"].at1);
-    EXPECT_EQ(D, pots.potentialMap()["A-D"].at2);
-
-    EXPECT_EQ(2.0, pots.potentialMap()["A-A"].ep.value(0));
-    EXPECT_EQ(2.0, pots.potentialMap()["A-A"].ep.value(0));
-    EXPECT_EQ(2.0, pots.potentialMap()["A-B"].ep.value(0));
-    EXPECT_EQ(4.0, pots.potentialMap()["A-C"].ep.value(0));
-    EXPECT_EQ(4.0, pots.potentialMap()["A-D"].ep.value(0));
+        EXPECT_EQ(2.0, pots.potentialMap()["A-A"].ep.value(0));
+        EXPECT_EQ(2.0, pots.potentialMap()["A-A"].ep.value(0));
+        EXPECT_EQ(2.0, pots.potentialMap()["A-B"].ep.value(0));
+        EXPECT_EQ(4.0, pots.potentialMap()["A-C"].ep.value(0));
+        EXPECT_EQ(4.0, pots.potentialMap()["A-D"].ep.value(0));
+    }
 }
 
 } // namespace UnitTest
