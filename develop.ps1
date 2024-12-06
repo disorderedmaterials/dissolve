@@ -273,9 +273,8 @@ $presets = @(
 )
 
 foreach ($preset in $presets) {
-    $installPrefix = Join-Path -Path $out -ChildPath "install\$($preset.name)"
     $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value ($cacheVariables + @{
-        CMAKE_INSTALL_PREFIX = $installPrefix
+        CONFIG = "$($preset.name)-x64"
     })
     $cmakeUserPresets.configurePresets += $preset
 }
