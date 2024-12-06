@@ -133,7 +133,7 @@ $freetypeIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$f
 
 $include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
 
-if ($lib -notlike "*$freetypeRepo*") {
+if ($include -notlike "*$freetypeRepo*") {
     Write-Host "Setting INCLUDE environment variable with Freetype includes... " @colors
     [System.Environment]::SetEnvironmentVariable("INCLUDE", "$freetypeIncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
 }
@@ -192,7 +192,7 @@ $ftglIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglI
 
 $include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
 
-if ($lib -notlike "*$ftglInclude*") {
+if ($include -notlike "*$ftglInclude*") {
     Write-Host "Setting INCLUDE environment variable with FTGL includes... " @colors
     [System.Environment]::SetEnvironmentVariable("INCLUDE", "$ftglIncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
 }
