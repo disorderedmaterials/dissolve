@@ -1,12 +1,23 @@
 # Flag: Use existing Qt installation (requires Qt6_DIR environment variable to be set)
 param (
-    [switch]$systemqt = $false
+    [switch]$systemqt = $false,
+    [switch]$release = $false
 )
+
+$build = "Debug"
+$binSuffix = "d"
+
+if ($release) {
+    $build = "Release"
+    $binSuffix = ""
+}
 
 $colors = @{
     ForegroundColor = "White"
     BackgroundColor = "Cyan"
 }
+
+Write-Host "Building dependencies in $build configuration... " @colors
 
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
 
@@ -31,12 +42,12 @@ python -m venv msvc-env
 Write-Host "Checking Python compiler type... " @colors
 if ($(python -c "import sys; print(sys.version)") -match "MSC v\.\d+") 
 { 
-    Write-Host " Python...compiler type evaluated to MSC" @colors
+    Write-Host " ...Python compiler type evaluated to MSC" @colors
     $pythonEnvSourceDir = "Scripts" 
 }
 else 
 { 
-    Write-Host " Python...compiler type is not MSC" @colors
+    Write-Host " ...Python compiler type is not MSC" @colors
     $pythonEnvSourceDir = "bin" 
 }
 
@@ -73,12 +84,14 @@ if (-not $systemqt)
     } else {
         Write-Host "Did not write to PATH: Qt6 binary directory path already exists in system PATH." @colors
     }
-}
+} else {
+    Write-Host "Attempting to use existing system installation of Qt6... " @colors
+} 
 
 # Build/retrieve Freetype
 $freetypeVersion = "2.12.1"
 $freetypeArchive = "https://download.savannah.gnu.org/releases/freetype/freetype-$freetypeVersion.tar.gz"
-$freetypeRepo = "freetype-latest"
+$freetypeRepo = "freetype-repo"
 $freetypeInstall = "freetype-install"
 $freetypeOutput = "freetype.tgz"
 
@@ -100,14 +113,36 @@ Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeV
 Write-Host "Building freetype (from location: $freetypeBuildDir)... " @colors
 Set-Location -Path $freetypeBuildDir
 
-cmake ../$freetypeRepo -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../$freetypeInstall
-cmake --build . --target install --config Release
+cmake ../$freetypeRepo -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE:STRING=$build -DCMAKE_C_COMPILER=cl -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../$freetypeInstall
+cmake --build . --target install --config $build
+
+$freetypeLib = "$freetypeInstall\lib"
+$freetypeBin = "$freetypeInstall\bin"
+
+$freetypeLibPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeLib"
+$freetypeBinPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeBin"
+
+$lib = [System.Environment]::GetEnvironmentVariable("LIB", [System.EnvironmentVariableTarget]::Machine)
+
+if ($lib -notlike "*$freetypeInstall*") {
+    Write-Host "Setting LIB environment variable with Freetype library... " @colors
+    [System.Environment]::SetEnvironmentVariable("LIB", "$freetypeLibPath;$freetypeBinPath;$lib", [System.EnvironmentVariableTarget]::Machine)
+}
+
+$freetypeIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeRepo"
+
+$include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
+
+if ($lib -notlike "*$freetypeRepo*") {
+    Write-Host "Setting INCLUDE environment variable with Freetype includes... " @colors
+    [System.Environment]::SetEnvironmentVariable("INCLUDE", "$freetypeIncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
+}
 
 # Build/retrieve FTGL
 Set-Location -Path $projectDir
 
 $ftglUri = "https://github.com/disorderedmaterials/ftgl-2.4.0.git"
-$ftglRepo = "ftgl-latest"
+$ftglRepo = "ftgl-repo"
 $ftglInstall = "ftgl-install"
 $freetypeRepoPath = (Join-Path -Path $dependencies -ChildPath $freetypeRepo)
 
@@ -117,7 +152,7 @@ New-Item -ItemType Directory -Path $ftglInstallDir -ErrorAction SilentlyContinue
 $ftglBuildDir = (Join-Path -Path $dependencies -ChildPath "ftgl-build")
 New-Item -ItemType Directory -Path $ftglBuildDir -ErrorAction SilentlyContinue
 
-$ftglRepoPath = (Join-Path -Path $dependencies -ChildPath "ftgl-latest")
+$ftglRepoPath = (Join-Path -Path $dependencies -ChildPath "ftgl-repo")
 
 Write-Host "Cloning FTGL (DisorderedMaterials fork) repo... " @colors
 & "$gitExePath" clone $ftglUri $ftglRepoPath
@@ -128,14 +163,39 @@ $ftglLibPath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftgl
 $ftglBinPath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\bin"
 $ftglIncludePath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\include"
 
-$freetypeBinDir = Join-Path -Path $freetypeInstallDir -ChildPath "bin"
-$freetypeLibDir = Join-Path -Path $freetypeInstallDir -ChildPath "lib"
-
 Write-Host "Building FTGL (from location: $ftglBuildDir)... " @colors
+
+if (-not $release) {
+    Copy-Item -Path "$freetypeLibPath\freetyped.lib" -Destination "$freetypeLibPath\freetype.lib"
+}
+    
 Set-Location -Path $ftglBuildDir
 
-cmake ../$ftglRepo -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../$ftglInstall -DFREETYPE_LIBRARY=../$freetypeInstall/lib -DFREETYPE_INCLUDE_DIRS="$(Join-Path -Path $projectDir -ChildPath $freetypeInstallDir)\include\freetype2"
-cmake --build . --target install --config Release
+cmake ../$ftglRepo -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE:STRING=$build -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../$ftglInstall -DFREETYPE_LIBRARY=../$freetypeInstall/lib -DFREETYPE_INCLUDE_DIRS="$(Join-Path -Path $projectDir -ChildPath $freetypeInstallDir)\include\freetype2"
+cmake --build . --target install --config $build
+
+$ftglLib = "$ftglInstall\lib"
+$ftglBin = "$ftglInstall\bin"
+
+$ftglLibPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglLib"
+$ftglBinPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglBin"
+
+$lib = [System.Environment]::GetEnvironmentVariable("LIB", [System.EnvironmentVariableTarget]::Machine)
+
+if ($lib -notlike "*$ftglInstall*") {
+    Write-Host "Setting LIB environment variable with FTGL library... " @colors
+    [System.Environment]::SetEnvironmentVariable("LIB", "$ftglLibPath;$ftglBinPath;$lib", [System.EnvironmentVariableTarget]::Machine)
+}
+
+$ftglInclude = "$ftglRepo\src"
+$ftglIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglInclude"
+
+$include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
+
+if ($lib -notlike "*$ftglInclude*") {
+    Write-Host "Setting INCLUDE environment variable with FTGL includes... " @colors
+    [System.Environment]::SetEnvironmentVariable("INCLUDE", "$ftglIncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
+}
 
 # Get ANTLR and Java
 Set-Location -Path $projectDir
@@ -180,12 +240,12 @@ $out = Join-Path -Path $projectDir -ChildPath "build"
 $cacheVariables = @{
     CMAKE_C_COMPILER = "cl"
     CMAKE_CXX_COMPILER = "cl"
-    FTGL_LIBRARY = "$ftglLibPath\ftgl.lib;$ftglBinPath\ftgl.dll"
+    FTGL_LIBRARY = "$ftglLibPath\ftgl$binSuffix.lib"
     FTGL_INCLUDE_DIR = $ftglIncludePath
     ANTLR_EXECUTABLE = $antlrExePath
     Java_JAVA_EXECUTABLE = $javaExePath
     MULTI_THREADING = $threading
-    CMAKE_INSTALL_PREFIX = $out
+    MSVC_DEV = "ON"
 }
 
 $cmakeUserPresets = [PSCustomObject]@{
@@ -199,33 +259,24 @@ $cmakeUserPresets = [PSCustomObject]@{
 
 $presets = @(
     [PSCustomObject]@{
-        name = "CLI-Release-MSVC"
-        displayName = "CLI Release Build"
-        description = "The preset for a CLI production build without tests on MSVC"
-        inherits = @("CLI-Release")
+        name = "CLI-$build-MSVC"
+        displayName = "CLI $build Build"
+        description = "The preset for a CLI $build build on MSVC"
+        inherits = @("CLI-$build")
     },
     [PSCustomObject]@{
-        name = "CLI-Debug-MSVC"
-        displayName = "CLI Debug Build"
-        description = "The preset for a CLI debug build with tests on MSVC"
-        inherits = @("CLI-Debug")
-    },
-    [PSCustomObject]@{
-        name = "GUI-Release-MSVC"
-        displayName = "GUI Release Build"
-        description = "The preset for a GUI production build without tests on MSVC"
-        inherits = @("GUI-Release")
-    },
-    [PSCustomObject]@{
-        name = "GUI-Debug-MSVC"
-        displayName = "GUI Debug Build"
-        description = "The preset for a GUI debug build with tests on MSVC"
-        inherits = @("GUI-Debug")
+        name = "GUI-$build-MSVC"
+        displayName = "GUI $build Build"
+        description = "The preset for a GUI $build build on MSVC"
+        inherits = @("GUI-$build")
     }
 )
 
 foreach ($preset in $presets) {
-    $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value $cacheVariables
+    $installPrefix = Join-Path -Path $out -ChildPath "install\$($preset.name)"
+    $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value ($cacheVariables + @{
+        CMAKE_INSTALL_PREFIX = $installPrefix
+    })
     $cmakeUserPresets.configurePresets += $preset
 }
 
