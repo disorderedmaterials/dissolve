@@ -32,6 +32,7 @@ jobs:
           HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
       - name: Update Version Information
         uses: "./.github/workflows/update-release-info"
+        if: ${{ inputs.publishType == 'release' }}
         with:
           createPR: ${{ ! endsWith(github.ref, 'pre') }}
           releaseVersion: ${{ env.dissolveVersion }}
