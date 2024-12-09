@@ -8,6 +8,7 @@
 #include "main/version.h"
 #include "math/mathFunc.h"
 #include <format>
+
 int main(int args, char **argv)
 {
 #ifdef PARALLEL
