@@ -10,6 +10,7 @@
 #include "base/messenger.h"
 #include "base/serialiser.h"
 #include "base/sysFunc.h"
+#include "templates/algorithms.h"
 #include <cassert>
 
 // Enum Options
@@ -62,14 +63,8 @@ template <class E> class EnumOptions : public EnumOptionsBase
     // Raise error, printing valid options
     bool errorAndPrintValid(std::string_view badKeyword) const
     {
-        std::string validValueString;
-        for (auto n = 0; n < options_.size(); ++n)
-            if (n == 0)
-                validValueString += std::format("{}", options_[n].keyword());
-            else
-                validValueString += std::format(", {}", options_[n].keyword());
-
-        return Messenger::error("'{}' is not a valid {}.\nValid options are:  {}", badKeyword, name_, validValueString);
+        return Messenger::error("'{}' is not a valid {}.\nValid options are:  {}", badKeyword, name_,
+                                joinStrings(options_, ", ", [](auto opt) { return opt.keyword(); }));
     }
 
     /*
