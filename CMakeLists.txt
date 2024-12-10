@@ -23,6 +23,9 @@ set(CMAKE_CXX_STANDARD 17)
 # Add our custom module search path
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 
+# We are setting up a development environment in MSVC
+option(MSVC_DEV "Configuration is for a Visual Studio 2022 dev environment" OFF)
+
 # Install GSL (GNU Scientific Library) with Conan for Windows and Unix-like systems
 option(CONAN_GSL "Use conan to find GSL" ON)
 
@@ -410,3 +413,34 @@ if(GUI)
   )
   install(SCRIPT ${deploy_script})
 endif(GUI)
+
+# Install for MSVC
+if(MSVC_DEV)
+    set(SEARCH_IN "${CMAKE_BINARY_DIR}")
+
+    set(INSTALLATION_DIR "${SEARCH_IN}/out/${CONFIG}")
+
+    file(GLOB DISSOLVE_BUILD_PRODUCTS "${SEARCH_IN}/*.exe" "${SEARCH_IN}/*.lib" "${SEARCH_IN}/*.dll")
+
+    install(FILES ${DISSOLVE_BUILD_PRODUCTS} DESTINATION "${INSTALLATION_DIR}")
+    
+    set(CONAN_DEPS ${_conan_requires})
+    list(APPEND CONAN_DEPS ${EXTRA_CONAN_REQUIRES})
+
+    # Find exe, dll and lib paths from conan packages
+    foreach (DEPENDENCY IN LISTS CONAN_DEPS)
+        string(FIND ${DEPENDENCY} "/" SUBSTRING_AT)
+        string(SUBSTRING ${DEPENDENCY} 0 "${SUBSTRING_AT}" SUB_DIR)
+
+        set(SEARCH_IN ${CMAKE_BINARY_DIR}/${SUB_DIR})
+
+        file(GLOB CONAN_BIN "${SEARCH_IN}/bin/*.exe" "${SEARCH_IN}/bin/*.dll")
+        file(GLOB CONAN_LIB "${SEARCH_IN}/lib/*.dll")
+
+        set(CONAN_FILES ${CONAN_BIN})
+        list(APPEND CONAN_FILES ${CONAN_LIB})
+
+        install(FILES ${CONAN_FILES} DESTINATION "${INSTALLATION_DIR}")
+    endforeach()
+
+endif(MSVC_DEV)
