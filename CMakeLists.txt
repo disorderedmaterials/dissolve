@@ -418,12 +418,10 @@ endif(GUI)
 if(MSVC_DEV)
     set(SEARCH_IN "${CMAKE_BINARY_DIR}")
 
-    set(INSTALLATION_DIR "${SEARCH_IN}/out/${CONFIG}")
+    set(INSTALLATION_DIR "${SEARCH_IN}")
 
-    file(GLOB DISSOLVE_BUILD_PRODUCTS "${SEARCH_IN}/*.exe" "${SEARCH_IN}/*.lib" "${SEARCH_IN}/*.dll")
+    set(ALL_INSTALL_FILES "")
 
-    install(FILES ${DISSOLVE_BUILD_PRODUCTS} DESTINATION "${INSTALLATION_DIR}")
-    
     set(CONAN_DEPS ${_conan_requires})
     list(APPEND CONAN_DEPS ${EXTRA_CONAN_REQUIRES})
 
@@ -435,12 +433,19 @@ if(MSVC_DEV)
         set(SEARCH_IN ${CMAKE_BINARY_DIR}/${SUB_DIR})
 
         file(GLOB CONAN_BIN "${SEARCH_IN}/bin/*.exe" "${SEARCH_IN}/bin/*.dll")
-        file(GLOB CONAN_LIB "${SEARCH_IN}/lib/*.dll")
+        file(GLOB CONAN_LIB "${SEARCH_IN}/lib/*.lib")
 
         set(CONAN_FILES ${CONAN_BIN})
         list(APPEND CONAN_FILES ${CONAN_LIB})
 
-        install(FILES ${CONAN_FILES} DESTINATION "${INSTALLATION_DIR}")
+        list(APPEND ALL_INSTALL_FILES ${CONAN_FILES})
     endforeach()
 
+    if(GUI)
+        set(INSTALLATION_DIR "${SEARCH_IN}/bin")
+    endif()
+
+    foreach(DEPENDENCY IN LISTS ALL_INSTALL_FILES)
+        file(COPY ${DEPENDENCY} DESTINATION "${INSTALLATION_DIR}")
+    endforeach()
 endif(MSVC_DEV)
