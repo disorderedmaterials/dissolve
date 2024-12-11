@@ -43,7 +43,13 @@ PotentialSet &PotentialSet::operator+=(const double delta)
 PotentialSet &PotentialSet::operator+=(const PotentialSet &source)
 {
     for (auto &[key, potential] : source.potentialMap())
-        potentials_[key].ep += potential.ep;
+    {
+        auto it = potentials_.find(key);
+        if (it != potentials_.end())
+            it->second.ep += potential.ep;
+        else
+            potentials_[key] = potential;
+    }
     return (*this);
 }
 
