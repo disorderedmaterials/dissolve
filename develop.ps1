@@ -12,12 +12,17 @@ if ($release) {
     $binSuffix = ""
 }
 
-$colors = @{
+$info_colors = @{
     ForegroundColor = "White"
     BackgroundColor = "Cyan"
 }
 
-Write-Host "Building dependencies in $build configuration... " @colors
+$warn_colors = @{
+    ForegroundColor = "White"
+    BackgroundColor = "Red"
+}
+
+Write-Host "Building dependencies in $build configuration... " @info_colors
 
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
 
@@ -29,34 +34,34 @@ $dependencies = "dependencies"
 New-Item -ItemType Directory -Path $dependencies -ErrorAction SilentlyContinue
 
 #Install key dependencies with Chocolatey
-Write-Host "Installing key dependencies with Chocolatey... " @colors
+Write-Host "Installing key dependencies with Chocolatey... " @info_colors
 choco install -y git ninja wget pkgconfiglite
 
-Write-Host "Locating git executable... " @colors
+Write-Host "Locating git executable... " @info_colors
 $gitExePath = where.exe git
 
 # Setup Python packages
-Write-Host "Creating a local Python virtual environment... " @colors
+Write-Host "Creating a local Python virtual environment... " @info_colors
 python -m venv msvc-env
 
-Write-Host "Checking Python compiler type... " @colors
+Write-Host "Checking Python compiler type... " @info_colors
 if ($(python -c "import sys; print(sys.version)") -match "MSC v\.\d+") 
 { 
-    Write-Host " ...Python compiler type evaluated to MSC" @colors
+    Write-Host " ...Python compiler type evaluated to MSC" @info_colors
     $pythonEnvSourceDir = "Scripts" 
 }
 else 
 { 
-    Write-Host " ...Python compiler type is not MSC" @colors
+    Write-Host " ...Python compiler type is not MSC" @info_colors
     $pythonEnvSourceDir = "bin" 
 }
 
 $activate = "./msvc-env/$pythonEnvSourceDir/Activate.ps1"
 
-Write-Host "Activating virtual environment with the command: $activate... " @colors
+Write-Host "Activating virtual environment with the command: $activate... " @info_colors
 & $activate
 
-Write-Host "Installing Python packages... " @colors
+Write-Host "Installing Python packages... " @info_colors
 python -m pip install --upgrade pip
 python -m pip install pprintjson conan aqtinstall conan==1.*
 
@@ -67,25 +72,30 @@ if (-not $systemqt)
     $qtInstallationDir = Join-Path -Path $dependencies -ChildPath "qt"
     New-Item -ItemType Directory -Path $qtInstallationDir -ErrorAction SilentlyContinue
 
-    Write-Host "Installing Qt6... " @colors
+    Write-Host "Installing Qt6... " @info_colors
     aqt install-qt --outputdir $qtInstallationDir windows desktop $qtVersion win64_msvc2019_64 -m all
 
     # Export Qt6_DIR to system environment variables
     $qt6Dir = Join-Path -Path $dependencies -ChildPath "qt\$qtVersion\msvc_2019_64"
     $qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
     
-    Write-Host "Locating system PATH... " @colors
+    Write-Host "Locating system PATH... " @info_colors
     $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
-    Write-Host "Adding Qt6 directory to system PATH... " @colors
+    Write-Host "Adding Qt6 directory to system PATH... " @info_colors
     if ($systemPath -notmatch [regex]::Escape($qt6BinDir)) {
-        [Environment]::SetEnvironmentVariable("PATH", "$qt6BinDir;$systemPath", [EnvironmentVariableTarget]::Machine)
-        Write-Host "Qt6 binary directory path added to system PATH." @colors
+        [Environment]::SetEnvironmentVariable("PATH", "$(Join-Path -Path $projectDir -ChildPath $qt6BinDir);$systemPath", [EnvironmentVariableTarget]::Machine)
+        Write-Host "Qt6 binary directory path added to system PATH." @info_colors
     } else {
-        Write-Host "Did not write to PATH: Qt6 binary directory path already exists in system PATH." @colors
+        Write-Host "Did not write to PATH: Qt6 binary directory path already exists in system PATH." @info_colors
     }
 } else {
-    Write-Host "Attempting to use existing system installation of Qt6... " @colors
+    Write-Host "Attempting to use existing system installation of Qt6... " @info_colors
+    $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
+
+    if ($systemPath -notmatch [regex]::Escape($qtVersion)) {
+        Write-Host "Found Qt6 version that is NOT ${qtVersion} in system PATH. It is strongly recommended to use Qt ${qtVersion}" @warn_colors
+    }
 } 
 
 # Build/retrieve Freetype
@@ -101,16 +111,16 @@ New-Item -ItemType Directory -Path $freetypeInstallDir -ErrorAction SilentlyCont
 $freetypeBuildDir = (Join-Path -Path $dependencies -ChildPath "freetype-build")
 New-Item -ItemType Directory -Path $freetypeBuildDir -ErrorAction SilentlyContinue
 
-Write-Host "Downloading freetype archive... " @colors
+Write-Host "Downloading freetype archive... " @info_colors
 Invoke-WebRequest -Uri $freetypeArchive -OutFile $freetypeOutput
 
-Write-Host "Unpacking freetype... " @colors
+Write-Host "Unpacking freetype... " @info_colors
 tar -zxvf $freetypeOutput -C $dependencies
 
 Remove-Item -Path $freetypeOutput -Force
 Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion") -NewName $freetypeRepo
 
-Write-Host "Building freetype (from location: $freetypeBuildDir)... " @colors
+Write-Host "Building freetype (from location: $freetypeBuildDir)... " @info_colors
 Set-Location -Path $freetypeBuildDir
 
 cmake ../$freetypeRepo -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE:STRING=$build -DCMAKE_C_COMPILER=cl -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../$freetypeInstall
@@ -125,7 +135,7 @@ $freetypeBinPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freet
 $lib = [System.Environment]::GetEnvironmentVariable("LIB", [System.EnvironmentVariableTarget]::Machine)
 
 if ($lib -notlike "*$freetypeInstall*") {
-    Write-Host "Setting LIB environment variable with Freetype library... " @colors
+    Write-Host "Setting LIB environment variable with Freetype library... " @info_colors
     [System.Environment]::SetEnvironmentVariable("LIB", "$freetypeLibPath;$freetypeBinPath;$lib", [System.EnvironmentVariableTarget]::Machine)
 }
 
@@ -134,7 +144,7 @@ $freetypeIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$f
 $include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
 
 if ($include -notlike "*$freetypeRepo*") {
-    Write-Host "Setting INCLUDE environment variable with Freetype includes... " @colors
+    Write-Host "Setting INCLUDE environment variable with Freetype includes... " @info_colors
     [System.Environment]::SetEnvironmentVariable("INCLUDE", "$freetypeIncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
 }
 
@@ -154,7 +164,7 @@ New-Item -ItemType Directory -Path $ftglBuildDir -ErrorAction SilentlyContinue
 
 $ftglRepoPath = (Join-Path -Path $dependencies -ChildPath "ftgl-repo")
 
-Write-Host "Cloning FTGL (DisorderedMaterials fork) repo... " @colors
+Write-Host "Cloning FTGL (DisorderedMaterials fork) repo... " @info_colors
 & "$gitExePath" clone $ftglUri $ftglRepoPath
 
 Set-Location -Path $projectDir
@@ -163,7 +173,7 @@ $ftglLibPath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftgl
 $ftglBinPath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\bin"
 $ftglIncludePath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\include"
 
-Write-Host "Building FTGL (from location: $ftglBuildDir)... " @colors
+Write-Host "Building FTGL (from location: $ftglBuildDir)... " @info_colors
 
 if (-not $release) {
     Copy-Item -Path "$freetypeLibPath\freetyped.lib" -Destination "$freetypeLibPath\freetype.lib"
@@ -183,7 +193,7 @@ $ftglBinPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglBin"
 $lib = [System.Environment]::GetEnvironmentVariable("LIB", [System.EnvironmentVariableTarget]::Machine)
 
 if ($lib -notlike "*$ftglInstall*") {
-    Write-Host "Setting LIB environment variable with FTGL library... " @colors
+    Write-Host "Setting LIB environment variable with FTGL library... " @info_colors
     [System.Environment]::SetEnvironmentVariable("LIB", "$ftglLibPath;$ftglBinPath;$lib", [System.EnvironmentVariableTarget]::Machine)
 }
 
@@ -193,7 +203,7 @@ $ftglIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglI
 $include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
 
 if ($include -notlike "*$ftglInclude*") {
-    Write-Host "Setting INCLUDE environment variable with FTGL includes... " @colors
+    Write-Host "Setting INCLUDE environment variable with FTGL includes... " @info_colors
     [System.Environment]::SetEnvironmentVariable("INCLUDE", "$ftglIncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
 }
 
@@ -210,13 +220,13 @@ $jdkVersion = "21.0.5"
 
 Set-Location -Path $dependencies
 
-Write-Host "Downloading ANTLR... " @colors
+Write-Host "Downloading ANTLR... " @info_colors
 Invoke-WebRequest -Uri $antlrUri -OutFile $antlrOutput
 
-Write-Host "Downloading Java... " @colors
+Write-Host "Downloading Java... " @info_colors
 Invoke-WebRequest -Uri $javaUri -OutFile $javaOutput
 
-Write-Host "Unpacking Java... " @colors
+Write-Host "Unpacking Java... " @info_colors
 Expand-Archive -Path $javaOutput -DestinationPath . -Force
 Remove-Item -Path $javaOutput -Force
 
@@ -230,7 +240,7 @@ Move-Item -Path $antlrOutput -Destination $antlrExePath
 # Set Conan
 Set-Location -Path $projectDir
 
-Write-Host "Setting up Conan profile... " @colors
+Write-Host "Setting up Conan profile... " @info_colors
 conan profile new default --detect
 conan profile update settings.compiler="Visual Studio" default
 conan profile update settings.compiler.version=17 default
@@ -279,7 +289,7 @@ foreach ($preset in $presets) {
     $cmakeUserPresets.configurePresets += $preset
 }
 
-Write-Host "Outputting CMakeUserPresets Json for Dissolve MSVC configuration... " @colors
+Write-Host "Outputting CMakeUserPresets Json for Dissolve MSVC configuration... " @info_colors
 $cmakeUserPresetsJson = $cmakeUserPresets | ConvertTo-Json -Depth 10 -Compress
 
 Set-Content -Path "CMakeUserPresets.json" -Value $cmakeUserPresetsJson -Encoding UTF8
