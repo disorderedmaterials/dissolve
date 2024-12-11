@@ -34,8 +34,11 @@ $dependencies = "dependencies"
 New-Item -ItemType Directory -Path $dependencies -ErrorAction SilentlyContinue
 
 #Install key dependencies with Chocolatey
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
 Write-Host "Installing key dependencies with Chocolatey... " @info_colors
-choco install -y git ninja wget pkgconfiglite
+choco install -y git ninja pkgconfiglite
 
 Write-Host "Locating git executable... " @info_colors
 $gitExePath = where.exe git
