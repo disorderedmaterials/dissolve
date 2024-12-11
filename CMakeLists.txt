@@ -416,6 +416,6 @@ endif(GUI)
 
 # Install for MSVC
 if(MSVC_DEV)
-    include(msvc-dissolve-dev)
-    setup_msvc()
+  include(msvc-dissolve-dev)
+  setup_msvc()
 endif(MSVC_DEV)
