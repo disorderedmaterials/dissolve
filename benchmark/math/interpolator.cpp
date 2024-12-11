@@ -7,6 +7,7 @@
 #include <benchmark/benchmark.h>
 #include <random>
 #include <vector>
+#include <numeric>
 
 namespace Benchmarks
 {
