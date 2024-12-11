@@ -5,9 +5,9 @@
 #include "math/data1D.h"
 #include <algorithm>
 #include <benchmark/benchmark.h>
+#include <numeric>
 #include <random>
 #include <vector>
-#include <numeric>
 
 namespace Benchmarks
 {
