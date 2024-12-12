@@ -67,7 +67,7 @@ linkTitle = "Packages"
 {{< blocks/section color="secondary" >}}
 
 <div class="mx-auto">
-<p>Packages built dynamically from the <a href="https://github.com/disorderedmaterials/dissolve">development branch</a> can be <a href="https://github.com/disorderedmaterials/dissolve/releases/tag/continuous">found on GitHub</a>. These packages contain the most up-to-date functionality, but may also contain bugs and other undocumented features. If you use these versions and discover a bug, please <a href="https://github.com/disorderedmaterials/dissolve/issues/new/choose">submit an issue</a> to highlight it. Please include the unique hash value of the version you were using in your report.</p>
+<p>Packages built dynamically from the <a href="https://github.com/disorderedmaterials/dissolve/commits/develop">development branch</a> can be <a href="https://github.com/disorderedmaterials/dissolve/releases/tag/continuous">found on GitHub</a>. These packages contain the most up-to-date functionality, but may also contain bugs and other undocumented features. If you use these versions and discover a bug, please <a href="https://github.com/disorderedmaterials/dissolve/issues/new/choose">submit an issue</a> to highlight it. Please include the unique hash value of the version you were using in your report.</p>
 </div>
 
 {{< /blocks/section >}}
@@ -75,16 +75,20 @@ linkTitle = "Packages"
 {{< blocks/section color="secondary" >}}
 {{< /blocks/section >}}
 
+</a>
+
 <a name="archive">
 
 {{< blocks/section color="white" >}}
 <div class="mx-auto">
-<h2>Older Versions</h2>
+<h2>Legacy Versions</h2>
 </div>
 {{< /blocks/section >}}
 
 {{< blocks/section color="white" >}}
-{{< include "./static/include/old_releases.md" >}}
+<div class="mx-auto">
+<p>Older versions of Dissolve can be found on the <a href="https://github.com/disorderedmaterials/dissolve/releases">releases page on GitHub</a>.
+</div>
 {{< /blocks/section >}}
 
 {{< blocks/section color="white" >}}
