@@ -66,7 +66,7 @@ Write-Host "Activating virtual environment with the command: $activate... " @inf
 
 Write-Host "Installing Python packages... " @info_colors
 python -m pip install --upgrade pip
-python -m pip install pprintjson conan aqtinstall conan==1.*
+python -m pip install conan aqtinstall conan==1.*
 
 if (-not $systemqt) 
 {
