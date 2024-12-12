@@ -79,7 +79,7 @@ if (-not $systemqt)
     aqt install-qt --outputdir $qtInstallationDir windows desktop $qtVersion win64_msvc2019_64 -m all
 
     # Export Qt6_DIR to system environment variables
-    $qt6Dir = Join-Path -Path $dependencies -ChildPath "qt\$qtVersion\msvc_2019_64"
+    $qt6Dir = Join-Path -Path $dependencies -ChildPath "qt\$qtVersion\msvc2019_64"
     $qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
     
     Write-Host "Locating system PATH... " @info_colors
