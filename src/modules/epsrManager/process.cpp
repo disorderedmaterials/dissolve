@@ -58,8 +58,9 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
     }
     // Set restart equal to changes
     originalPotentialsObject.first = potentials;
-    Averaging::average<PotentialSet>(moduleContext.dissolve().processingModuleData(), "PotentialSet", name(),
-                                     averagingLength_.value(), averagingScheme_);
+    if (averagingLength_)
+        Averaging::average<PotentialSet>(moduleContext.dissolve().processingModuleData(), "PotentialSet", name(),
+                                         averagingLength_.value(), averagingScheme_);
 
     // Apply potential scalings
     auto scalings = DissolveSys::splitString(potentialScalings_, ",");
