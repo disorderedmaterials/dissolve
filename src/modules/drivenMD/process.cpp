@@ -152,6 +152,7 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
         fmt::print("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
     }
 
+    targetConfiguration_->incrementContentsVersion();
     targetConfiguration_->updateObjectRelationships();
 
     return ExecutionResult::Success;
