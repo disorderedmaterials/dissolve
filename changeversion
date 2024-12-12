@@ -19,7 +19,6 @@ usage() {
   echo ""
   echo "TARGET is one of:     code - change version numbering in code, and installer and packaging scripts"
   echo "                   release - change release version value on web and date in README.md"
-  echo "                   develop - change development version value on web"
   echo ""
   echo "If no options are specified the default behaviour is to print current versions across relevant files."
 }
@@ -34,9 +33,9 @@ fi
 # Get target type and shift to next option
 TYPE=$1
 shift
-if [ "$TYPE" != "code" ] && [ "$TYPE" != "release" ] && [ "$TYPE" != "develop" ]
+if [ "$TYPE" != "code" ] && [ "$TYPE" != "release" ]
 then
-  echo "Invalid target '${TYPE}' given (must be 'code', 'release', 'develop'"
+  echo "Invalid target '${TYPE}' given (must be 'code', 'release'"
   exit 1
 fi
 
@@ -176,18 +175,6 @@ then
   echo -n "           docs.toml    (Release Date) : "
   grep 'releaseDate' web/docs.toml | sed -e 's/releaseDate = "\(.*\)"/\1/g'
 fi
-
-if [ "$TYPE" = "develop" ]
-then
-  # Website (web/main.toml)
-  if [ "$CHECK" = "false" ]
-  then
-    sed -i -e "s/devVersion = \"[0-9\.]*\"/devVersion = \"$MAJOR.$MINOR.$PATCH\"/g" web/main.toml
-  fi
-  echo -n "           main.toml (Develop Version) : "
-  grep 'devVersion' web/main.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g'
-fi
-
 
 #############
 # README.md #
