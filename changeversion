@@ -12,11 +12,16 @@ DaySuffix() {
   esac
 }
 
+# Retrieve the current code version from src/main/version.cpp
+GetCurrentVersion() {
+  echo $(grep '#define DISSOLVEVERSION' src/main/version.cpp | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g')
+}
+
 usage() {
   echo "Usage:  $0 <TARGET> [-r] [-s X.Y.Z]"
   echo "        -r	Calculate new version (only on release branch)"
   echo "        -s	Set version explicitly to X.Y.Z"
-  echo ""
+  echo "        -c      Show current code version (from src/main/version.cpp)"
   echo "TARGET is one of:     code - change version numbering in code, and installer and packaging scripts"
   echo "                   release - change release version value on web and date in README.md"
   echo ""
@@ -26,7 +31,8 @@ usage() {
 # Check for no args provided
 if [ $# == 0 ]
 then
-  usage
+	echo $(GetCurrentVersion)
+  #usage
   exit 1
 fi
 
@@ -46,8 +52,6 @@ then
 elif [ "$TYPE" == "release" ]
 then
   CURRENT_VERSION=$(grep 'releaseVersion' web/main.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g')
-else
-  CURRENT_VERSION=$(grep 'devVersion' web/main.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g')
 fi
 PARTS=($(echo $CURRENT_VERSION | tr "." " "))
 MAJOR=${PARTS[0]}
@@ -185,15 +189,23 @@ then
   # README.md
   if [ "$CHECK" = "false" ]
   then
+  fi
+fi
+
+# Set web release version
+SetWebReleaseInfo() {
+    # Get today's date, nicely formatted
     DAYSUFFIX=$(DaySuffix)
     TODAY=$(date "+%A %-d${DAYSUFFIX} %B %Y")
+
+    # Modify the Last Release in the repository's root README.md
     sed -i -e "s/Last Release: [0-9\.]*, \(.*\)_/Last Release: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README.md
-  fi
-  echo -n "           README.md (Release Version) : "
-  grep 'Last Release:' README.md | sed -e 's/.*Release: \([0-9\.]*\),.*/\1/g'
-  echo -n "           README.md    (Release Date) : "
-  grep 'Last Release:' README.md | sed -e "s/.*Release: .*, \(.*\)_/\1/g"
-fi
+    echo -n "           README.md (Release Version) : "
+    grep 'Last Release:' README.md | sed -e 's/.*Release: \([0-9\.]*\),.*/\1/g'
+    echo -n "           README.md    (Release Date) : "
+    grep 'Last Release:' README.md | sed -e "s/.*Release: .*, \(.*\)_/\1/g"
+
+}
 
 exit 0
 
