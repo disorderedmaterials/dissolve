@@ -1,0 +1,26 @@
+name: Latest Release Point
+
+on:
+  push:
+    branches:
+    - 'develop'
+    paths:
+    - 'README.md'
+
+jobs:
+
+  SetTag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        if: startsWith(${{ github.event.push.head_commit.message }}, "[Latest Release]")
+        uses: actions/checkout@v4
+      - name: Move Tag
+        if: startsWith(${{ github.event.push.head_commit.message }}, "[Latest Release]")
+        shell: bash
+        run: |
+           git tag -d latest-release-point
+           git tag latest-release-point ${{ github.event.push.head_commit }}
+           git show latest-release-point
+           git push --force origin latest-release-point
+

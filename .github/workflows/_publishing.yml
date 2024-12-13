@@ -30,9 +30,8 @@ jobs:
         env:
           HARBOR_USER: ${{ secrets.HARBOR_USER }}
           HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
-      - name: Update Version Information
-        uses: "./.github/workflows/update-release-info"
+      - name: Submit PR with Updated Version Information
+        uses: "./.github/workflows/set-latest-release-point"
         if: ${{ inputs.publishType == 'release' }}
         with:
-          createPR: ${{ ! endsWith(github.ref, 'pre') }}
           releaseVersion: ${{ env.dissolveVersion }}

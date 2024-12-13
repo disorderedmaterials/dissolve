@@ -90,6 +90,7 @@ GetCodeVersion() {
 #  echo -n "    dissolve-gui.iss (Output Filename) : "
 #  grep 'OutputBaseFilename' ci/windows/dissolve-gui.iss | sed -e 's/OutputBaseFilename=Dissolve-GUI-\([0-9\.]*\)-Win64/\1/g'
 
+
 # Set web release version and date
 SetWebReleaseInfo() {
   # Must have new version string as argument
@@ -103,9 +104,6 @@ SetWebReleaseInfo() {
   DAYSUFFIX=$(DaySuffix)
   TODAY=$(date "+%A %-d${DAYSUFFIX} %B %Y")
 
-  # Set the Last Release in the repository's root README.md
-  sed -i -e "s/Last Release: [0-9\.]*, \(.*\)_/Last Release: $1, ${TODAY}_/g" README.md
-
   # Set releaseVersion and releaseDat on Website (web/main.toml)
   sed -i -e "s/releaseVersion = \"[0-9\.]*\"/releaseVersion = \"$1\"/g" web/main.toml
   sed -i -e "s/releaseDate = \".*\"/releaseDate = \"${TODAY}\"/g" web/main.toml
@@ -113,12 +111,6 @@ SetWebReleaseInfo() {
 
 # Get web release version and date
 GetWebReleaseInfo() {
-  # Last Release in the repository's root README.md
-  README_VERSION=$(grep 'Last Release:' README.md | sed -e 's/.*Release: \([0-9\.]*\),.*/\1/g')
-  README_DATE=$(grep 'Last Release:' README.md | sed -e "s/.*Release: .*, \(.*\)_/\1/g")
-  echo "           README.md (Version) : ${README_VERSION}"
-  echo "           README.md    (Date) : ${README_DATE}"
-
   # Release version on Website (web/main.toml)
   WEB_VERSION=$(grep 'releaseVersion' web/main.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g')
   WEB_DATE=$(grep 'releaseDate' web/main.toml | sed -e 's/releaseDate = "\(.*\)"/\1/g')
@@ -126,19 +118,45 @@ GetWebReleaseInfo() {
   echo "           main.toml    (Date) : ${WEB_DATE}"
 
   # Check Version?
-  if [ $# == 1 ]
+  if [ $# == 1 ] && [ ${WEB_VERSION} != "$1" ]
   then
-    if [ ${README_VERSION} != "$1" ]
-    then
-      echo "!!! Version mismatch in README.md: ${README_VERSION} != $1"
-      return 1
-    fi
+    echo "!!! Version mismatch in web/main.toml: ${WEB_VERSION} != $1"
+    return 1
+  fi
 
-    if [ ${WEB_VERSION} != "$1" ]
-    then
-      echo "!!! Version mismatch in web/main.toml: ${WEB_VERSION} != $1"
-      return 1
-    fi
+  return 0
+}
+
+# Set README.md version and date
+SetReadMeInfo() {
+  # Must have new version string as argument
+  if [ $# == 0 ]
+  then
+    echo "Must pass version string as argument to SetReadMeInfo()."
+    exit 1
+  fi
+
+  # Get today's date, nicely formatted
+  DAYSUFFIX=$(DaySuffix)
+  TODAY=$(date "+%A %-d${DAYSUFFIX} %B %Y")
+
+  # Set the Last Release in the repository's root README.md
+  sed -i -e "s/Last Release: [0-9\.]*, \(.*\)_/Last Release: $1, ${TODAY}_/g" README.md
+}
+
+# Get README.md version and date
+GetReadMeInfo() {
+  # Last Release in the repository's root README.md
+  README_VERSION=$(grep 'Last Release:' README.md | sed -e 's/.*Release: \([0-9\.]*\),.*/\1/g')
+  README_DATE=$(grep 'Last Release:' README.md | sed -e "s/.*Release: .*, \(.*\)_/\1/g")
+  echo "           README.md (Version) : ${README_VERSION}"
+  echo "           README.md    (Date) : ${README_DATE}"
+
+  # Check Version?
+  if [ $# == 1 ] && [ ${README_VERSION} != "$1" ]
+  then
+    echo "!!! Version mismatch in web/main.toml: ${WEB_VERSION} != $1"
+    return 1
   fi
 
   return 0
@@ -154,9 +172,9 @@ ConsistencyCheck() {
 }
 
 PrintUsage() {
-  echo "Usage:  $0 [-c] [-k] [-r] [-s X.Y.Z]"
-  echo "        -r	Calculate new version (only on release branch)"
-  echo "        -s	Set version explicitly to X.Y.Z"
+  echo "Usage:  $0 [-c] [-k] [-r X.Y.Z] [-s X.Y.Z]"
+  echo "        -r  Explicitly set release version and date inREADME.md"
+  echo "        -s  Set version explicitly to X.Y.Z"
   echo "        -c  Show current code version (from src/main/version.cpp)"
   echo "        -k  Check consistency of other files with current code version"
 }
@@ -168,19 +186,27 @@ then
   exit 1
 fi
 
-while getopts ":rs:ck" opt
+while getopts ":r:s:ck" opt
 do
   case $opt in
     s) PARTS=($(echo $OPTARG | tr "." " "))
        MAJOR=${PARTS[0]}
        MINOR=${PARTS[1]}
        PATCH=${PARTS[2]}
-       echo "Version will be set explicitly to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
+       echo "Code and web version will be set explicitly to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
        SetCodeVersion $OPTARG
        SetWebReleaseInfo $OPTARG
        ConsistencyCheck
        ;;
-    r) BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    r) PARTS=($(echo $OPTARG | tr "." " "))
+       MAJOR=${PARTS[0]}
+       MINOR=${PARTS[1]}
+       PATCH=${PARTS[2]}
+       echo "Release version will be set explicitly to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
+       SetReadMeInfo $OPTARG
+       GetReadMeInfo
+       ;;
+    b) BRANCH=$(git rev-parse --abbrev-ref HEAD)
        if [ "$BRANCH" != "Release" ]
        then
 	   echo "Version number can only be auto-calculated on the Release branch"
