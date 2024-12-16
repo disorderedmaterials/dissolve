@@ -66,7 +66,7 @@ bool CIFHandler::parse(std::string_view filename, CIFHandler::CIFTags &tags) con
     }
     catch (CIFImportExceptions::CIFImportSyntaxException &ex)
     {
-        Messenger::error(ex.what());
+        Messenger::error("{}", ex.what());
         return false;
     }
 
@@ -78,7 +78,7 @@ bool CIFHandler::parse(std::string_view filename, CIFHandler::CIFTags &tags) con
     }
     catch (CIFImportExceptions::CIFImportSyntaxException &ex)
     {
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     }
 
     return true;

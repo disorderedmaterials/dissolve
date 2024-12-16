@@ -126,7 +126,7 @@ int SpeciesBond::index(int n) const
     else if (n == 1)
         return indexJ();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesBond::index(int). Returning 0...\n");
+    Messenger::error("SpeciesAtom index {} is out of range in SpeciesBond::index(int). Returning 0...\n", n);
     return 0;
 }
 

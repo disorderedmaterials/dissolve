@@ -97,7 +97,7 @@ bool Expression::create(std::string_view expressionString,
     {
         std::cout << ex.what();
         clearNodes();
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     };
 
     // Visit the nodes in the AST
@@ -110,7 +110,7 @@ bool Expression::create(std::string_view expressionString,
     {
         std::cout << ex.what();
         clearNodes();
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     }
 
     return true;

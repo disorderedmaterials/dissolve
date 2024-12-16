@@ -62,7 +62,8 @@ bool ValueImportFileFormat::importData(std::vector<double> &data, LineParser &cu
             result = importSimple(parser, data);
             break;
         default:
-          Messenger::exception("Value format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_));
+            Messenger::exception("Value format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     if (!readFromCurrent)

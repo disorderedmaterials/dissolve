@@ -166,7 +166,7 @@ bool GenericList::serialiseAll(LineParser &parser, std::string_view headerPrefix
         // Find a suitable serialiser and call it
         auto &data = std::get<GenericItem::AnyObject>(value);
         if (!GenericItemSerialiser::serialise(data, parser))
-            return Messenger::error(std::format("Serialisation of item '{}' failed.\n", key));
+            return Messenger::error("Serialisation of item '{}' failed.\n", key);
     }
 
     return true;
@@ -182,7 +182,7 @@ bool GenericList::deserialise(LineParser &parser, CoreData &coreData, const std:
 
     // Find its deserialiser and call it
     if (!GenericItemDeserialiser::deserialise(data, parser, coreData))
-        return Messenger::error(std::format("Deserialisation of item '{}' failed.\n", name));
+        return Messenger::error("Deserialisation of item '{}' failed.\n", name);
 
     // Check for legacy objects - we don't store them in the items_ map
     if (GenericItemDeserialiser::isLegacyObject(data))

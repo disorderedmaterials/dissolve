@@ -1786,7 +1786,7 @@ void PrAxisMinimiser::r8vec_print(int n, double a[], std::string_view title)
     Messenger::print("{}\n", title);
     for (i = 0; i < n; i++)
     {
-        Messenger::print("  {:8i}: {:14.6e}\n", i, a[i]);
+        Messenger::print("  {:8}: {:14.6e}\n", i, a[i]);
     }
 
     return;

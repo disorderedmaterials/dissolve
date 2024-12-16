@@ -60,7 +60,7 @@ bool TextPrimitive::set(FontInstance *fontInstance, QString text, Vec3<double> a
     }
     catch (TextPrimitiveExceptions::TextPrimitiveSyntaxException &ex)
     {
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     };
 
     // Visit the nodes in the AST
@@ -71,7 +71,7 @@ bool TextPrimitive::set(FontInstance *fontInstance, QString text, Vec3<double> a
     }
     catch (TextPrimitiveExceptions::TextPrimitiveSyntaxException &ex)
     {
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     }
 
     anchorPoint_ = anchorPoint;

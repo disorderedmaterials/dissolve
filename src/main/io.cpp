@@ -596,7 +596,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             auto result = module->keywords().deserialise(parser, coreData_, 2);
             if (result == KeywordBase::ParseResult::Unrecognised)
             {
-                Messenger::error("Module '{}' has no keyword '{}'.\n", parser.argsv(2));
+                Messenger::error("Module '{}' has no keyword '{}'.\n", module->name(), parser.argsv(2));
                 error = true;
                 break;
             }

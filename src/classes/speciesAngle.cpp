@@ -138,7 +138,7 @@ int SpeciesAngle::index(int n) const
     else if (n == 2)
         return indexK();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesAngle::index(int). Returning 0...\n");
+    Messenger::error("SpeciesAtom index {} is out of range in SpeciesAngle::index(int). Returning 0...\n", n);
     return 0;
 }
 

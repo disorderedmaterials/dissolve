@@ -71,7 +71,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
     }
     catch (NETAExceptions::NETASyntaxException &ex)
     {
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     };
 
     // Visit the nodes in the AST
@@ -82,7 +82,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
     }
     catch (NETAExceptions::NETASyntaxException &ex)
     {
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     }
 
     valid_ = true;

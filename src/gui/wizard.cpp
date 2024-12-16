@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/wizard.h"
+#include "base/messenger.h"
 #include <format>
 #include <stdexcept>
 

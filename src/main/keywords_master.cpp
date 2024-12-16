@@ -89,7 +89,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 }
                 catch (const std::runtime_error &e)
                 {
-                    Messenger::error(e.what());
+                    Messenger::error("{}", e.what());
                     errorsEncountered = true;
                 }
                 break;
@@ -129,7 +129,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 }
                 catch (const std::runtime_error &e)
                 {
-                    Messenger::error(e.what());
+                    Messenger::error("{}", e.what());
                     errorsEncountered = true;
                 }
                 break;
@@ -173,7 +173,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 }
                 catch (const std::runtime_error &e)
                 {
-                    Messenger::error(e.what());
+                    Messenger::error("{}", e.what());
                     errorsEncountered = true;
                 }
                 break;
@@ -220,7 +220,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 }
                 catch (const std::runtime_error &e)
                 {
-                    Messenger::error(e.what());
+                    Messenger::error("{}", e.what());
                     errorsEncountered = true;
                 }
                 break;

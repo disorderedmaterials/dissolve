@@ -56,20 +56,20 @@ class Messenger
     // Print normal message (no formatters)
     static void print(std::string_view s);
     // Print normal message
-    template <typename... Args> static void print(std::string_view format, Args... args)
+    template <typename... Args> static void print(std::format_string<Args...> format, Args... args)
     {
         if (quiet_ || muted_)
             return;
 
-        splitAndPrint(std::vformat(format, std::make_format_args(args...)));
+        splitAndPrint(std::format(format, std::forward<Args>(args)...));
     }
     // Print verbose message
-    template <typename... Args> static void printVerbose(std::string_view format, Args... args)
+    template <typename... Args> static void printVerbose(std::format_string<Args...> format, Args... args)
     {
         if (quiet_ || muted_ || (!verbose_))
             return;
 
-        splitAndPrint(std::vformat(format, std::make_format_args(args...)));
+        splitAndPrint(std::format(format, std::forward<Args>(args)...));
     }
     // Throw a runtime exception
     template <typename... Args> [[noreturn]] static void exception(std::format_string<Args...> format, Args &&...args)
@@ -77,7 +77,7 @@ class Messenger
         throw std::runtime_error(std::format(format, std::forward<Args>(args)...));
     }
     // Print error message
-    template <typename... Args> static bool error(std::string_view format, Args... args)
+    template <typename... Args> static bool error(std::format_string<Args...> format, Args... args)
     {
         if (quiet_ || muted_)
             return false;
@@ -87,7 +87,7 @@ class Messenger
             outputHandler_->styleForError();
         setOutputPrefix("***  ERROR");
         outputBlank();
-        splitAndPrint(std::vformat(format, std::make_format_args(args...)));
+        splitAndPrint(std::format(format, std::forward<Args>(args)...));
         outputBlank();
         clearOutputPrefix();
         if (outputHandler_)
@@ -99,7 +99,7 @@ class Messenger
         return false;
     }
     // Print warn message
-    template <typename... Args> static void warn(std::string_view format, Args... args)
+    template <typename... Args> static void warn(std::format_string<Args...> format, Args... args)
     {
         if (quiet_ || muted_)
             return;
@@ -108,7 +108,7 @@ class Messenger
             outputHandler_->styleForWarning();
         setOutputPrefix("***  WARN ");
         outputBlank();
-        splitAndPrint(std::vformat(format, std::make_format_args(args...)));
+        splitAndPrint(std::format(format, std::forward<Args>(args)...));
         outputBlank();
         clearOutputPrefix();
         if (outputHandler_)
@@ -117,7 +117,7 @@ class Messenger
         ++nWarnings_;
     }
     // Print banner message
-    template <typename... Args> static void banner(std::string_view format, Args... args)
+    template <typename... Args> static void banner(std::format_string<Args...> format, Args... args)
     {
         if (quiet_ || muted_)
             return;
@@ -125,7 +125,7 @@ class Messenger
         const auto bannerWidth = 80;
         static std::string bannerBorder(bannerWidth, '=');
 
-        std::string bannerText = std::vformat(format, std::make_format_args(args...));
+        std::string bannerText = std::format(format, std::forward<Args>(args)...);
 
         outputBlank();
         outputText(bannerBorder);
@@ -134,7 +134,7 @@ class Messenger
         outputBlank();
     }
     // Print heading message
-    template <typename... Args> static void heading(std::string_view format, Args... args)
+    template <typename... Args> static void heading(std::format_string<Args...> format, Args... args)
     {
         if (quiet_ || muted_)
             return;
@@ -142,7 +142,7 @@ class Messenger
         const auto headingWidth = 80;
         static std::string headingBorder(headingWidth, '-');
 
-        std::string headingText = std::vformat(format, std::make_format_args(args...));
+        std::string headingText = std::format(format, std::forward<Args>(args)...);
 
         outputBlank();
         outputText(std::format("{:^80}", headingText));

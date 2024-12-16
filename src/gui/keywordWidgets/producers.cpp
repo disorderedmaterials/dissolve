@@ -99,9 +99,9 @@ std::pair<QWidget *, KeywordWidgetBase *> KeywordWidgetProducer::produce(Keyword
 {
     auto it = producers_.find(keyword->typeIndex());
     if (it == producers_.end())
-      Messenger::exception("A producer has not been registered for type '{}' (keyword name is '{}'), so a "
-                                             "new widget for this keyword cannot be created.\n",
-                                             keyword->typeIndex().name(), keyword->name());
+        Messenger::exception("A producer has not been registered for type '{}' (keyword name is '{}'), so a "
+                             "new widget for this keyword cannot be created.\n",
+                             keyword->typeIndex().name(), keyword->name());
 
     return (it->second)(keyword, coreData);
 }

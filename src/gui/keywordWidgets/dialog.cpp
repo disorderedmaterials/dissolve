@@ -15,7 +15,8 @@ KeywordsDialog::KeywordsDialog(QWidget *parent, const KeywordStore &keywordStore
 
     // We can only display a single section of widgets at present
     if (keywordStore.sections().size() != 1)
-        Messenger::warn("There are {} keyword sections defined, but only one can be displayed. Tell the developer!\n");
+        Messenger::warn("There are {} keyword sections defined, but only one can be displayed. Tell the developer!\n",
+                        keywordStore.sections().size());
 
     ui_.Keywords->setUp(keywordStore.sections().front(), coreData);
 
