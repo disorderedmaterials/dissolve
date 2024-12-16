@@ -57,8 +57,8 @@ bool ForceExportFileFormat::exportData(const std::vector<Vec3<double>> &f)
             result = exportSimple(parser, f);
             break;
         default:
-            throw(std::runtime_error(
-                std::format("Forces format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Forces format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

@@ -42,8 +42,7 @@ class ModuleRegistry
     {
         // Check for duplicate module type
         if (producers_.find(moduleType) != producers_.end())
-            throw(std::runtime_error(
-                std::format("A module producer for type '{}' already exists.\n", ModuleTypes::moduleType(moduleType))));
+            Messenger::exception("A module producer for type '{}' already exists.\n", ModuleTypes::moduleType(moduleType));
 
         producers_.emplace(moduleType, ModuleRegistryData([]() { return new M(); }, brief));
 

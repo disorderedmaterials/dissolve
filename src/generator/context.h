@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/messenger.h"
 #include "templates/optionalRef.h"
 #include <format>
 #include <stdexcept>
@@ -47,8 +48,7 @@ class GeneratorContext
     // Catch any unrecognised object type
     template <class T> void set(T obj)
     {
-        throw(std::runtime_error(
-            std::format("Invalid object type ({}) passed to GeneratorContext set().\n", typeid(obj).name())));
+        Messenger::exception("Invalid object type ({}) passed to GeneratorContext set().\n", typeid(obj).name());
     }
 
     public:

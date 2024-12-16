@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/messenger.h"
 #include "base/serialiser.h"
 #include "math/constants.h"
 #include "math/mathFunc.h"
@@ -83,7 +84,7 @@ template <class T> class Vec3 : public Serialisable<typename SerialisableContext
         else if (index == 2)
             return z;
 
-        throw(std::runtime_error(std::format("Vec3 - element index {} is out of bounds.", index)));
+        Messenger::exception("Vec3 - element index {} is out of bounds.", index);
         return T();
     }
 
@@ -183,7 +184,7 @@ template <class T> class Vec3 : public Serialisable<typename SerialisableContext
         else if (index == 2)
             return z;
 
-        throw(std::runtime_error(std::format("Vec3 - array access failed - index {} is out of bounds.", index)));
+        Messenger::exception("Vec3 - array access failed - index {} is out of bounds.", index);
     }
 
     /*
@@ -427,7 +428,7 @@ template <class T> class Vec3 : public Serialisable<typename SerialisableContext
         else if (index == 2)
             return Vec3<T>(0, 0, 1);
 
-        throw(std::runtime_error(std::format("Vec3 - unit() generation failed - index {} is out of bounds.", index)));
+        Messenger::exception("Vec3 - unit() generation failed - index {} is out of bounds.", index);
         return Vec3<T>();
     }
     // Swap the two specified elements

@@ -94,8 +94,8 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
             frameResult = exportXYZ(parser, cfg, true);
             break;
         default:
-            throw(std::runtime_error(std::format("Trajectory format '{}' export has not been implemented.\n",
-                                                 formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Trajectory format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     parser.closeFiles();

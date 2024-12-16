@@ -159,8 +159,8 @@ bool GenericItemSerialiser::serialiseObject(const std::any &a, LineParser &parse
     // Find a suitable serialiser and call it
     auto it = serialisers_.find(a.type());
     if (it == serialisers_.end())
-        throw(std::runtime_error(std::format(
-            "Item of type '{}' cannot be serialised as no suitable serialiser has been registered.\n", a.type().name())));
+        Messenger::exception("Item of type '{}' cannot be serialised as no suitable serialiser has been registered.\n",
+                             a.type().name());
 
     return (it->second)(a, parser);
 }

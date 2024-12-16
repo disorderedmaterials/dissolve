@@ -148,8 +148,8 @@ MasterBond &CoreData::addMasterBond(std::string_view name, std::optional<int> in
 {
     // Check for existence of master Bond already
     if (getMasterBond(name))
-        throw(std::runtime_error(
-            std::format("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name)));
+        Messenger::exception("Refused to add a new master Bond named '{}' since one with the same name already exists.\n",
+                             name);
 
     auto newBond = std::make_shared<MasterBond>(name);
     if (insertAtIndex)
@@ -210,8 +210,8 @@ MasterAngle &CoreData::addMasterAngle(std::string_view name)
 {
     // Check for existence of master Angle already
     if (getMasterAngle(name))
-        throw(std::runtime_error(
-            std::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
+        Messenger::exception("Refused to add a new master Angle named '{}' since one with the same name already exists.\n",
+                             name);
 
     return *masters_.angles.emplace_back(std::make_shared<MasterAngle>(name));
 }
@@ -266,8 +266,8 @@ MasterTorsion &CoreData::addMasterTorsion(std::string_view name)
 {
     // Check for existence of master Torsion already
     if (getMasterTorsion(name))
-        throw(std::runtime_error(std::format(
-            "Refused to add a new master Torsion named '{}' since one with the same name already exists.\n", name)));
+        Messenger::exception("Refused to add a new master Torsion named '{}' since one with the same name already exists.\n",
+                             name);
 
     return *masters_.torsions.emplace_back(std::make_shared<MasterTorsion>(name));
 }
@@ -322,8 +322,8 @@ MasterImproper &CoreData::addMasterImproper(std::string_view name)
 {
     // Check for existence of master Improper already
     if (getMasterImproper(name))
-        throw(std::runtime_error(std::format(
-            "Refused to add a new master Improper named '{}' since one with the same name already exists.\n", name)));
+        Messenger::exception("Refused to add a new master Improper named '{}' since one with the same name already exists.\n",
+                             name);
 
     return *masters_.impropers.emplace_back(std::make_shared<MasterImproper>(name));
 }

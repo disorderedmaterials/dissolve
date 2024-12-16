@@ -11,8 +11,8 @@ ForcefieldAngleTerm::ForcefieldAngleTerm(std::string_view typeI, std::string_vie
 {
     InteractionPotential<AngleFunctions> potential(form);
     if (!potential.parseParameters(parameterString))
-        throw(std::runtime_error(std::format("Failed to parse parameter string '{}' when constructing angle term '{}-{}-{}'.\n",
-                                             parameterString, typeI_, typeJ_, typeK_)));
+        Messenger::exception("Failed to parse parameter string '{}' when constructing angle term '{}-{}-{}'.\n",
+                             parameterString, typeI_, typeJ_, typeK_);
     parameters_ = potential.parameters();
 }
 

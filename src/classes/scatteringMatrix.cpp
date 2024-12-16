@@ -69,7 +69,7 @@ void ScatteringMatrix::generateMatrices()
     qZeroMatrix_ = matrix(0.0);
     qZeroInverse_ = qZeroMatrix_;
     if (!SVD::pseudoinverse(qZeroInverse_))
-        throw(std::runtime_error("Failed to invert the scattering matrix at Q = 0.0.\n"));
+        Messenger::exception("Failed to invert the scattering matrix at Q = 0.0.");
 
     // Generate Q-dependent matrices if we need them
     qMatrices_.clear();
@@ -88,7 +88,7 @@ void ScatteringMatrix::generateMatrices()
             mat = matrix(q);
             inv = mat;
             if (!SVD::pseudoinverse(inv))
-                throw(std::runtime_error(std::format("Failed to invert the scattering matrix at Q = {}.\n", q)));
+                Messenger::exception("Failed to invert the scattering matrix at Q = {}.\n", q);
         }
     }
 }
@@ -125,14 +125,12 @@ Array2D<double> ScatteringMatrix::matrix(double q) const
         {
             auto ffi = XRayFormFactors::formFactorData(weights.formFactors(), i->Z());
             if (!ffi)
-                throw(std::runtime_error(std::format("No form factor data available for element {} in dataset {}.",
-                                                     Elements::name(i->Z()),
-                                                     XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()))));
+                Messenger::exception("No form factor data available for element {} in dataset {}.", Elements::name(i->Z()),
+                                     XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()));
             auto ffj = XRayFormFactors::formFactorData(weights.formFactors(), j->Z());
             if (!ffj)
-                throw(std::runtime_error(std::format("No form factor data available for element {} in dataset {}.",
-                                                     Elements::name(j->Z()),
-                                                     XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()))));
+                Messenger::exception("No form factor data available for element {} in dataset {}.", Elements::name(j->Z()),
+                                     XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()));
 
             m[{row, col}] *= ffi->get().magnitude(q) * ffj->get().magnitude(q) / normFactor;
 

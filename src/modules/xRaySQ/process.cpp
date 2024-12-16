@@ -76,9 +76,8 @@ bool XRaySQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
                                        std::divides<>());
                     break;
                 default:
-                    throw(std::runtime_error(
-                        std::format("Unhandled StructureFactor::NormalisationType ({}).\n",
-                                    StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_))));
+                    Messenger::exception("Unhandled StructureFactor::NormalisationType ({}).\n",
+                                         StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_));
             }
 
             // Apply normalisation factors to the data

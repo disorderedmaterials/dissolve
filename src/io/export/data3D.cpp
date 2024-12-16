@@ -141,8 +141,8 @@ bool Data3DExportFileFormat::exportData(const Data3DBase &data)
             result = exportPDens(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
             break;
         default:
-            throw(std::runtime_error(
-                std::format("Data3D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data3D format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

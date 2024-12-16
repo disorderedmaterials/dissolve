@@ -36,8 +36,7 @@ std::shared_ptr<ExpressionVariable> Expression::addLocalVariable(std::string_vie
     if (std::find_if(localVariables_.begin(), localVariables_.end(),
                      [name](const auto &var)
                      { return DissolveSys::sameString(name, var->baseName()); }) != localVariables_.end())
-        throw(std::runtime_error(
-            std::format("Tried to create local variable '{}' in Expression, but it already exists.\n", name)));
+        Messenger::exception("Tried to create local variable '{}' in Expression, but it already exists.\n", name);
 
     return localVariables_.emplace_back(std::make_shared<ExpressionVariable>(name));
 }
@@ -142,7 +141,7 @@ int Expression::asInteger() const
 {
     auto result = evaluate();
     if (!result)
-        throw(std::runtime_error(std::format("Failed to evaluate expression '{}'.", expressionString())));
+        Messenger::exception("Failed to evaluate expression '{}'.", expressionString());
 
     return (*result).asInteger();
 }
@@ -152,7 +151,7 @@ double Expression::asDouble() const
 {
     auto result = evaluate();
     if (!result)
-        throw(std::runtime_error(std::format("Failed to evaluate expression '{}'.", expressionString())));
+        Messenger::exception("Failed to evaluate expression '{}'.", expressionString());
 
     return (*result).asDouble();
 }

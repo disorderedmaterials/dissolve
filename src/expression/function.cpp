@@ -125,8 +125,8 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
             result = DissolveMath::random();
             break;
         default:
-            throw(std::runtime_error(
-                std::format("Expression function '{}' has not been implemented.\n", internalFunctions().keyword(function_))));
+            Messenger::exception("Expression function '{}' has not been implemented.\n",
+                                 internalFunctions().keyword(function_));
     }
 
     return result;

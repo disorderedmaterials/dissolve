@@ -48,7 +48,7 @@ std::optional<ExpressionValue> ExpressionUnaryOperatorNode::evaluate() const
                 result = -rhs.asDouble();
             break;
         default:
-            throw(std::runtime_error(std::format("ExpressionUnaryOperatorNode - unhandled operator {}.\n", asString())));
+            Messenger::exception("ExpressionUnaryOperatorNode - unhandled operator {}.\n", asString());
     }
 
     return result;
@@ -69,7 +69,7 @@ std::string ExpressionUnaryOperatorNode::asString() const
         case (OperatorNegate):
             return std::format("-{}", rhs);
         default:
-            throw(std::runtime_error(std::format("ExpressionUnaryOperatorNode - unhandled operator {}.\n", (int)operator_)));
+            Messenger::exception("ExpressionUnaryOperatorNode - unhandled operator {}.\n", (int)operator_);
     }
 
     return "";

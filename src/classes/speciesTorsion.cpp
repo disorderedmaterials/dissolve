@@ -352,8 +352,8 @@ double SpeciesTorsion::energy(double angleInDegrees, TorsionFunctions::Form form
         return U;
     }
 
-    throw(std::runtime_error(std::format("Torsion functional form '{}' not accounted for, so can't calculate energy.\n",
-                                         TorsionFunctions::forms().keyword(form))));
+    Messenger::exception("Torsion functional form '{}' not accounted for, so can't calculate energy.\n",
+                         TorsionFunctions::forms().keyword(form));
 }
 
 // Return energy for specified angle
@@ -515,8 +515,8 @@ double SpeciesTorsion::force(double angleInDegrees, TorsionFunctions::Form form,
         return -dU_dphi * dphi_dcosphi;
     }
 
-    throw(std::runtime_error(std::format("Torsion functional form '{}' not accounted for, so can't calculate force.\n",
-                                         TorsionFunctions::forms().keyword(form))));
+    Messenger::exception("Torsion functional form '{}' not accounted for, so can't calculate force.\n",
+                         TorsionFunctions::forms().keyword(form));
 }
 
 // Return force multiplier for specified angle

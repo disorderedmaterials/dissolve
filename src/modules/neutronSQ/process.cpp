@@ -70,9 +70,8 @@ bool NeutronSQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Key
                         factor /= weights.boundCoherentSquareOfAverage();
                     break;
                 default:
-                    throw(std::runtime_error(
-                        std::format("Unhandled StructureFactor::NormalisationType ({}).\n",
-                                    StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_))));
+                    Messenger::exception("Unhandled StructureFactor::NormalisationType ({}).\n",
+                                         StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_));
             }
 
             // Apply normalisation factors to the data

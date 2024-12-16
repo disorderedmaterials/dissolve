@@ -185,8 +185,8 @@ void Box::scale(Vec3<double> scaleFactors)
         auto abSame = (fabs(scaleFactors.x - scaleFactors.y) < 1.0e-5);
         auto acSame = (fabs(scaleFactors.x - scaleFactors.z) < 1.0e-5);
         if (!abSame || !acSame)
-            throw(std::runtime_error(std::format("Irregular scaling of cubic box requested (scale factors = {}, {}, {}\n",
-                                                 scaleFactors.x, scaleFactors.y, scaleFactors.z)));
+            Messenger::exception("Irregular scaling of cubic box requested (scale factors = {}, {}, {}\n", scaleFactors.x,
+                                 scaleFactors.y, scaleFactors.z);
     }
 
     // Scale lengths
@@ -326,7 +326,7 @@ std::unique_ptr<Box> Box::generate(Vec3<double> lengths, Vec3<double> angles)
 {
     auto boxType = type(lengths, angles);
     if (!boxType)
-        throw(std::runtime_error("Suitable box type couldn't be determined, so no Box can be generated.\n"));
+        Messenger::exception("Suitable box type couldn't be determined, so no Box can be generated.");
 
     switch (*boxType)
     {
@@ -343,7 +343,7 @@ std::unique_ptr<Box> Box::generate(Vec3<double> lengths, Vec3<double> angles)
         case (BoxType::Triclinic):
             return std::make_unique<TriclinicBox>(lengths, angles);
         default:
-            throw(std::runtime_error(std::format("Unrecognised box type encountered - generation failed.\n")));
+            Messenger::exception("Unrecognised box type encountered - generation failed.");
     }
 }
 

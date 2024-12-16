@@ -130,8 +130,8 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
             case (AddGeneratorNodeBase::PositioningType::Current):
                 break;
             default:
-                throw(std::runtime_error(std::format("Positioning type {} not handled.\n",
-                                                     AddGeneratorNodeBase::positioningTypes().keyword(positioningType_))));
+                Messenger::exception("Positioning type {} not handled.\n",
+                                     AddGeneratorNodeBase::positioningTypes().keyword(positioningType_));
         }
 
         // Move the molecule pair

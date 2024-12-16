@@ -20,7 +20,7 @@ void Species::removeSite(SpeciesSite *site)
     assert(site);
     auto it = std::find_if(sites_.begin(), sites_.end(), [&](const auto &p) { return p.get() == site; });
     if (it == sites_.end())
-        throw(std::runtime_error(std::format("Site '{}' doesn't exist in Species '{}'.\n", site->name(), name_)));
+        Messenger::exception("Site '{}' doesn't exist in Species '{}'.\n", site->name(), name_);
 
     Messenger::print("Removing site '{}' from species '{}'...\n", site->name(), name_);
     sites_.erase(it);

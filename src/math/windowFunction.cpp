@@ -84,7 +84,7 @@ double WindowFunction::y(double x, double omega) const
              */
             return sin(x * (PI / xMax_)) / (x * (PI / xMax_));
         default:
-            throw(std::runtime_error(std::format("Window function enumeration {} not implemented.\n", (int)form_)));
+            Messenger::exception("Window function enumeration {} not implemented.\n", (int)form_);
     }
 
     return 0.0;

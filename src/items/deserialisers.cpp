@@ -226,8 +226,8 @@ bool GenericItemDeserialiser::deserialiseObject(std::any &a, LineParser &parser,
     if (it == deserialisers_.end())
         it = legacyDeserialisers_.find(a.type());
     if (it == legacyDeserialisers_.end())
-        throw(std::runtime_error(std::format(
-            "Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n", a.type().name())));
+        Messenger::exception("Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n",
+                             a.type().name());
 
     return (it->second)(a, parser, coreData);
 }

@@ -35,8 +35,7 @@ void Configuration::adjustSpeciesPopulation(const Species *sp, int delta)
     if (it == speciesPopulations_.end())
     {
         if (delta < 0)
-            throw(std::runtime_error(
-                std::format("Can't decrease population of Species '{}' as it is not in the list.\n", sp->name())));
+            Messenger::exception("Can't decrease population of Species '{}' as it is not in the list.\n", sp->name());
         speciesPopulations_.emplace_back(sp, delta);
     }
     else

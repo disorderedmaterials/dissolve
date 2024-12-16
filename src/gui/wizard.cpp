@@ -227,7 +227,7 @@ void WizardDialog::goToPage(int index)
 
     // Instruct the derived class to switch pages
     if (!displayPage(index))
-        throw(std::runtime_error(std::format("Failed to go to and display page id {}.\n", index)));
+        Messenger::exception("Failed to go to and display page id {}.\n", index);
 
     // Add this page to our history
     history_.push_back(index);
@@ -250,7 +250,7 @@ void WizardDialog::goBack()
 
     // Instruct the derived class to switch pages
     if (!displayPage(currentPageID_.value()))
-        throw(std::runtime_error(std::format("Failed to go back to and display page id {}.\n", currentPageID_.value())));
+        Messenger::exception("Failed to go back to and display page id {}.\n", currentPageID_.value());
 
     // Update the header and footer
     updateHeaderAndFooter(getPage(currentPageID_.value()));

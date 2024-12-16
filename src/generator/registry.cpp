@@ -95,9 +95,8 @@ std::shared_ptr<GeneratorNode> GeneratorNodeRegistry::produce(GeneratorNode::Nod
 {
     auto it = producers_.find(nodeType);
     if (it == producers_.end())
-        throw(std::runtime_error(
-            std::format("A producer has not been registered for node type '{}', so a new instance cannot be created.\n",
-                        GeneratorNode::nodeTypes().keyword(nodeType))));
+        Messenger::exception("A producer has not been registered for node type '{}', so a new instance cannot be created.\n",
+                             GeneratorNode::nodeTypes().keyword(nodeType));
 
     return (it->second.first)();
 }

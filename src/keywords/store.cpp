@@ -165,10 +165,10 @@ bool KeywordStore::serialise(LineParser &parser, std::string_view prefix, bool o
 template <typename K> K *getKeyword(std::string_view name, std::optional<KeywordStoreEntry> optKeyword)
 {
     if (!optKeyword)
-        throw(std::runtime_error(std::format("Keyword '{}' cannot be retrieved as it doesn't exist.\n", name)));
+        Messenger::exception("Keyword '{}' cannot be retrieved as it doesn't exist.\n", name);
     K *keyword = dynamic_cast<K *>(optKeyword->first);
     if (!keyword)
-        throw(std::runtime_error(std::format("Keyword '{}' is not of type '{}'.\n", name, typeid(K).name())));
+        Messenger::exception("Keyword '{}' is not of type '{}'.\n", name, typeid(K).name());
     return keyword;
 }
 

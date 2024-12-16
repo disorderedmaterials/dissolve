@@ -222,8 +222,8 @@ double SpeciesAngle::energy(double angleInDegrees) const
         return params[0] * (params[1] + params[2] * cos(angleInRadians) + params[3] * cos(2.0 * angleInRadians));
     }
 
-    throw(std::runtime_error(std::format("Angle functional form '{}' not accounted for, so can't calculate energy.\n",
-                                         AngleFunctions::forms().keyword(angleForm))));
+    Messenger::exception("Angle functional form '{}' not accounted for, so can't calculate energy.\n",
+                         AngleFunctions::forms().keyword(angleForm));
 }
 
 // Return force multiplier for specified angle
@@ -292,8 +292,8 @@ double SpeciesAngle::force(double angleInDegrees) const
                sin(angleInRadians);
     }
 
-    throw(std::runtime_error(std::format("Angle functional form '{}' not accounted for, so can't calculate force.\n",
-                                         AngleFunctions::forms().keyword(angleForm))));
+    Messenger::exception("Angle functional form '{}' not accounted for, so can't calculate force.\n",
+                         AngleFunctions::forms().keyword(angleForm));
 }
 
 // Express as a serialisable value

@@ -50,9 +50,9 @@ void Isotopologues::set(const Isotopologue *iso, double relativeWeight)
     auto it = std::find_if(mix_.begin(), mix_.end(), [iso](auto &isoWeight) { return isoWeight.isotopologue() == iso; });
 
     if (it == mix_.end())
-        throw(std::runtime_error(
-            std::format("Warning: Isotopologues does not contain the Isotopologue '{}', so its relative weight can't be set.\n",
-                        iso->name())));
+        Messenger::exception(
+            "Warning: Isotopologues does not contain the Isotopologue '{}', so its relative weight can't be set.\n",
+            iso->name());
 
     it->setWeight(relativeWeight);
 }

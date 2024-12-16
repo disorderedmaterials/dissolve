@@ -83,8 +83,8 @@ bool Data2DExportFileFormat::exportData(const Data2DBase &data)
             result = exportCartesian(parser, data.xAxis(), data.yAxis(), data.values());
             break;
         default:
-            throw(std::runtime_error(
-                std::format("Data2D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data2D format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

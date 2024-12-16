@@ -48,9 +48,8 @@ ErrorReport error(ErrorType errorType, const Data1D &A, const Data1D &B, Optiona
     else if (errorType == EuclideanError)
         return euclidean(A, B, range);
 
-    throw(
-        std::runtime_error(std::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
-                                       errorTypes().keyword(errorType))));
+    Messenger::exception("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
+                         errorTypes().keyword(errorType));
 }
 
 // Return error of specified type between supplied double vectors
@@ -84,9 +83,8 @@ ErrorReport error(ErrorType errorType, const std::vector<double> &vecA, const st
     else if (errorType == EuclideanError)
         return euclidean(A, B);
 
-    throw(
-        std::runtime_error(std::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
-                                       errorTypes().keyword(errorType))));
+    Messenger::exception("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
+                         errorTypes().keyword(errorType));
 }
 
 /*

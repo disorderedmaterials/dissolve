@@ -42,8 +42,8 @@ void GeneratorNodeSequence::appendNode(NodeRef node, std::optional<int> insertAt
         node->setName(std::format("{}{:02d}", GeneratorNode::nodeTypes().keyword(node->type()), n));
     }
     else if (nodeExists(node->name()))
-        throw(std::runtime_error(
-            std::format("Can't have duplicate node names in the same procedure - node '{}' already exists.\n", node->name())));
+        Messenger::exception("Can't have duplicate node names in the same procedure - node '{}' already exists.\n",
+                             node->name());
 
     if (insertAtIndex)
         sequence_.insert(sequence_.begin() + *insertAtIndex, node);
@@ -363,8 +363,8 @@ bool GeneratorNodeSequence::check() const
     {
         // Check ownership
         if (&node->scope()->get() != this)
-            throw std::runtime_error(std::format("Node '{}' failed parent check ({} is not this {})\n", node->name(),
-                                                 static_cast<const void *>(node->parent()), static_cast<const void *>(this)));
+            Messenger::exception("Node '{}' failed parent check ({} is not this {})\n", node->name(),
+                                 static_cast<const void *>(node->parent()), static_cast<const void *>(this));
 
         // Check node branch if present
         if (node->branch() && !node->branch()->get().check())

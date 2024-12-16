@@ -72,11 +72,10 @@ class GenericList
         {
             // Check type before we attempt to cast it
             if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
-                throw(std::runtime_error(
-                    std::format("GenericList::realise() - Item named '{}' exists, but has a different type "
-                                "to that requested ('{}' vs '{}').\n",
-                                prefix.empty() ? name : std::format("{}//{}", prefix, name),
-                                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
+                Messenger::exception("GenericList::realise() - Item named '{}' exists, but has a different type "
+                                     "to that requested ('{}' vs '{}').\n",
+                                     prefix.empty() ? name : std::format("{}//{}", prefix, name),
+                                     std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name());
 
             // Bump version of the item and return it
             ++std::get<GenericItem::Version>(it->second);
@@ -99,15 +98,15 @@ class GenericList
     {
         auto it = items_.find(prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name));
         if (it == items_.end())
-            throw(std::runtime_error(std::format("GenericList::value() - Item named '{}' does not exist.\n",
-                                                 prefix.empty() ? name : std::format("{}//{}", prefix, name))));
+            Messenger::exception("GenericList::value() - Item named '{}' does not exist.\n",
+                                 prefix.empty() ? name : std::format("{}//{}", prefix, name));
 
         // Check type before we attempt to cast it
         if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
-            throw(std::runtime_error(std::format(
+            Messenger::exception(
                 "GenericList::value() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
                 prefix.empty() ? name : std::format("{}//{}", prefix, name),
-                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
+                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name());
 
         return std::any_cast<const T &>(std::get<GenericItem::AnyObject>(it->second));
     }
@@ -120,10 +119,10 @@ class GenericList
 
         // Check type before we attempt to cast it
         if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
-            throw(std::runtime_error(std::format(
+            Messenger::exception(
                 "GenericList::value() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
                 prefix.empty() ? name : std::format("{}//{}", prefix, name),
-                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
+                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name());
 
         return std::any_cast<const T>(std::get<GenericItem::AnyObject>(it->second));
     }
@@ -136,10 +135,10 @@ class GenericList
 
         // Check type before we attempt to cast it
         if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
-            throw(std::runtime_error(std::format(
+            Messenger::exception(
                 "GenericList::valueIf() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
                 prefix.empty() ? name : std::format("{}//{}", prefix, name),
-                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
+                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name());
 
         return std::any_cast<const T &>(std::get<GenericItem::AnyObject>(it->second));
     }
@@ -148,16 +147,15 @@ class GenericList
     {
         auto it = items_.find(prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name));
         if (it == items_.end())
-            throw(std::runtime_error(std::format("GenericList::retrieve() - Item named '{}' does not exist.\n",
-                                                 prefix.empty() ? name : std::format("{}//{}", prefix, name))));
+            Messenger::exception("GenericList::retrieve() - Item named '{}' does not exist.\n",
+                                 prefix.empty() ? name : std::format("{}//{}", prefix, name));
 
         // Check type before we attempt to cast it
         if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
-            throw(
-                std::runtime_error(std::format("GenericList::retrieve() - Item named '{}' exists, but has a different type "
-                                               "to that requested ('{}' vs '{}').\n",
-                                               prefix.empty() ? name : std::format("{}//{}", prefix, name),
-                                               std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
+            Messenger::exception("GenericList::retrieve() - Item named '{}' exists, but has a different type "
+                                 "to that requested ('{}' vs '{}').\n",
+                                 prefix.empty() ? name : std::format("{}//{}", prefix, name),
+                                 std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name());
 
         ++std::get<GenericItem::Version>(it->second);
         return std::any_cast<T &>(std::get<GenericItem::AnyObject>(it->second));
@@ -217,11 +215,10 @@ class GenericList
             {
                 // Check type before we attempt to cast it
                 if (std::get<GenericItem::AnyObject>(value).type() != typeid(T))
-                    throw(std::runtime_error(std::format("GenericList::search() - Item named '{}' exists, but has a different "
-                                                         "type to that requested ('{}' vs '{}').\n",
-                                                         prefix.empty() ? name : std::format("{}//{}", prefix, name),
-                                                         std::get<GenericItem::AnyObject>(value).type().name(),
-                                                         typeid(T).name())));
+                    Messenger::exception("GenericList::search() - Item named '{}' exists, but has a different "
+                                         "type to that requested ('{}' vs '{}').\n",
+                                         prefix.empty() ? name : std::format("{}//{}", prefix, name),
+                                         std::get<GenericItem::AnyObject>(value).type().name(), typeid(T).name());
 
                 return std::any_cast<const T &>(std::get<GenericItem::AnyObject>(value));
             }
@@ -245,10 +242,9 @@ class GenericList
         // Perform dynamic_cast to base class (B) and check
         OptionalReferenceWrapper<const B> base = dynamic_cast<const B &>(a);
         if (!base)
-            throw(
-                std::runtime_error(std::format("GenericList::convertBase() - Item named '{}' exists, but cannot be cast to the"
-                                               "requested base type '{}' (item type is '{}').\n",
-                                               varName, typeid(B).name(), typeid(T).name())));
+            Messenger::exception("GenericList::convertBase() - Item named '{}' exists, but cannot be cast to the"
+                                 "requested base type '{}' (item type is '{}').\n",
+                                 varName, typeid(B).name(), typeid(T).name());
         return base->get();
     }
     // Search for an object or child of the specified name and possible types, casting to the given base class
@@ -271,10 +267,9 @@ class GenericList
 
                 // If we have no valid result, then throw since the data type is not valid
                 if (!optRef)
-                    throw(std::runtime_error(
-                        std::format("GenericList::searchBase() - Item named '{}' exists, but has a different "
-                                    "type to those allowed requested ('{}' vs '{}' or '{}').\n",
-                                    varName, object.type().name(), typeid(T1).name(), typeid(T2).name())));
+                    Messenger::exception("GenericList::searchBase() - Item named '{}' exists, but has a different "
+                                         "type to those allowed requested ('{}' vs '{}' or '{}').\n",
+                                         varName, object.type().name(), typeid(T1).name(), typeid(T2).name());
                 return optRef;
             }
 

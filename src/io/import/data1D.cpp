@@ -88,8 +88,8 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
             result = importGudrunMint(parser, data);
             break;
         default:
-            throw(std::runtime_error(
-                std::format("Data1D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data1D format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     // If we failed, may as well return now

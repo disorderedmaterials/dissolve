@@ -56,8 +56,8 @@ bool Data3DImportFileFormat::importData(LineParser &parser, Data3D &data)
             result = importPDens(parser, data);
             break;
         default:
-            throw(std::runtime_error(
-                std::format("Data3D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data3D format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

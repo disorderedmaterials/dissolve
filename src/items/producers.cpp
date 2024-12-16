@@ -71,9 +71,9 @@ std::any GenericItemProducer::produce(const std::type_info &objectType) const
 {
     auto it = producers_.find(objectType);
     if (it == producers_.end())
-        throw(std::runtime_error(
-            std::format("A producer has not been registered for type '{}', so a new object of this type cannot be created.\n",
-                        objectType.name())));
+        Messenger::exception(
+            "A producer has not been registered for type '{}', so a new object of this type cannot be created.\n",
+            objectType.name());
 
     return (it->second)();
 }
@@ -84,9 +84,9 @@ std::any GenericItemProducer::produce(const std::string_view className) const
     auto it =
         std::find_if(classNames_.begin(), classNames_.end(), [className](auto &item) { return item.second == className; });
     if (it == classNames_.end())
-        throw(std::runtime_error(std::format(
+        Messenger::exception(
             "A producer has not been registered for class name '{}', so a new object of this type cannot be created.\n",
-            className)));
+            className);
 
     auto producer = producers_.find(it->first);
     return (producer->second)();
@@ -97,7 +97,7 @@ std::string GenericItemProducer::className(const std::type_info &objectType) con
 {
     auto it = classNames_.find(objectType);
     if (it == classNames_.end())
-        throw(std::runtime_error(std::format("Class name has not been registered for type '{}'.\n", objectType.name())));
+        Messenger::exception("Class name has not been registered for type '{}'.\n", objectType.name());
 
     return it->second;
 }

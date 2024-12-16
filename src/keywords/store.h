@@ -60,7 +60,7 @@ class KeywordStore
     {
         // Check for keyword of this name already
         if (find(name))
-            throw(std::runtime_error(std::format("Keyword named '{}' already exists, and can't be added again.", name)));
+            Messenger::exception("Keyword named '{}' already exists, and can't be added again.", name);
 
         // Create new keyword using the supplied arguments
         K *k = new K(std::forward<Args>(args)...);
@@ -187,13 +187,11 @@ class KeywordStore
     {
         auto optKeyword = find(name);
         if (!optKeyword)
-            throw(std::runtime_error(
-                std::format("Enumerated keyword '{}' cannot be set as no suitable setter has been registered.\n", name)));
+            Messenger::exception("Enumerated keyword '{}' cannot be set as no suitable setter has been registered.\n", name);
 
         auto *k = dynamic_cast<EnumOptionsKeyword<E> *>(optKeyword->first);
         if (!k)
-            throw(std::runtime_error(
-                std::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));
+            Messenger::exception("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name());
 
         k->data() = data;
     }
@@ -230,7 +228,7 @@ class KeywordStore
         // Cast the keyword
         const K *keyword = dynamic_cast<const K *>(optKeyword->first);
         if (!keyword)
-            throw(std::runtime_error(std::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name())));
+            Messenger::exception("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name());
 
         return keyword->data();
     }
@@ -243,7 +241,7 @@ class KeywordStore
         // Cast the keyword
         K *keyword = dynamic_cast<K *>(optKeyword->first);
         if (!keyword)
-            throw(std::runtime_error(std::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name())));
+            Messenger::exception("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name());
 
         return keyword->data();
     }
@@ -257,8 +255,7 @@ class KeywordStore
         // Cast the keyword
         const auto *keyword = dynamic_cast<const EnumOptionsKeyword<E> *>(optKeyword->first);
         if (!keyword)
-            throw(std::runtime_error(
-                std::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));
+            Messenger::exception("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name());
 
         return keyword->data();
     }

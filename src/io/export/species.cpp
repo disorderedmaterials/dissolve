@@ -60,8 +60,8 @@ bool SpeciesExportFileFormat::exportData(const Species *sp)
             result = exportXYZ(parser, sp);
             break;
         default:
-            throw(std::runtime_error(
-                std::format("Species format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Species format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

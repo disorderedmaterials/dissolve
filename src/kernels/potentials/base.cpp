@@ -12,7 +12,7 @@ ExternalPotential::ExternalPotential(ExternalPotentialTypes::ExternalPotentialTy
 // Create and return a copy of this potential
 std::unique_ptr<ExternalPotential> ExternalPotential::duplicate() const
 {
-    throw(std::runtime_error(std::format("Can't duplicate() an ExternalPotential of this type.\n")));
+    Messenger::exception("Can't duplicate() an ExternalPotential of this type.\n");
 }
 
 /*

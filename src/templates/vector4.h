@@ -81,7 +81,7 @@ template <class T> class Vec4
         else if (index == 3)
             return w;
 
-        throw std::runtime_error(std::format("Vec4 - array access failed - index {} is out of bounds.", index));
+        Messenger::exception("Vec4 - array access failed - index {} is out of bounds.", index);
 
         return T();
     }
@@ -146,7 +146,7 @@ template <class T> class Vec4
         else if (index == 3)
             return w;
 
-        throw std::runtime_error(std::format("Vec4 - array access failed - index {} is out of bounds.", index));
+        Messenger::exception("Vec4 - array access failed - index {} is out of bounds.", index);
         return 0;
     }
 

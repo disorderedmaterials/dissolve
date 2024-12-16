@@ -48,8 +48,8 @@ void GenericList::remove(std::string_view name, std::string_view prefix)
 {
     auto it = items_.find(prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name));
     if (it == items_.end())
-        throw(std::runtime_error(std::format("GenericList::remove() - No item named '{}' exists.\n",
-                                             prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name))));
+        Messenger::exception("GenericList::remove() - No item named '{}' exists.\n",
+                             prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name));
 
     items_.erase(it);
 }
@@ -74,7 +74,7 @@ void GenericList::rename(std::string_view oldName, std::string_view oldPrefix, s
 
     auto it = items_.find(oldVarName);
     if (it == items_.end())
-        throw(std::runtime_error(std::format("GenericList::rename() - No item named '{}' exists.\n", oldVarName)));
+        Messenger::exception("GenericList::rename() - No item named '{}' exists.\n", oldVarName);
 
     auto handle = items_.extract(oldVarName);
     handle.key() = newVarName;

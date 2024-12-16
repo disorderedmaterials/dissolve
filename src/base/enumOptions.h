@@ -79,7 +79,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
         if (it != options_.cend())
             return it->enumeration();
 
-        throw(std::runtime_error(std::format("Option '{}' is not recognised, so can't return its enumeration.\n", keyword)));
+        Messenger::exception("Option '{}' is not recognised, so can't return its enumeration.\n", keyword);
     }
     // Return enumerated keyword
     std::string keyword(E enumeration) const
@@ -87,8 +87,8 @@ template <class E> class EnumOptions : public EnumOptionsBase
         auto it = std::find_if(options_.cbegin(), options_.cend(),
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
         if (it == options_.cend())
-            throw(std::runtime_error(std::format(
-                "Enumerated options '{}' missing enumeration {}, so can't return its keyword.\n", name_, (int)enumeration)));
+            Messenger::exception("Enumerated options '{}' missing enumeration {}, so can't return its keyword.\n", name_,
+                                 (int)enumeration);
 
         return it->keyword();
     }
@@ -98,9 +98,8 @@ template <class E> class EnumOptions : public EnumOptionsBase
         auto it = std::find_if(options_.cbegin(), options_.cend(),
                                [uncastEnumeration](auto &option) { return uncastEnumeration == option.enumeration(); });
         if (it == options_.cend())
-            throw(std::runtime_error(
-                std::format("Enumerated options '{}' missing (uncast) enumeration {}, so can't return its keyword.\n", name_,
-                            uncastEnumeration)));
+            Messenger::exception("Enumerated options '{}' missing (uncast) enumeration {}, so can't return its keyword.\n",
+                                 name_, uncastEnumeration);
 
         return it->keyword();
     }
@@ -110,7 +109,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
         auto it = std::find_if(options_.cbegin(), options_.cend(),
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
         if (it == options_.cend())
-            throw(std::runtime_error(std::format("No option set for enumeration '{}'.\n", (int)enumeration)));
+            Messenger::exception("No option set for enumeration '{}'.\n", (int)enumeration);
         return *it;
     }
     // Return minimum number of arguments for the specified enumeration
@@ -119,7 +118,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
         auto it = std::find_if(options_.begin(), options_.end(),
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
         if (it == options_.end())
-            throw(std::runtime_error(std::format("No option set for enumeration '{}'.\n", (int)enumeration)));
+            Messenger::exception("No option set for enumeration '{}'.\n", (int)enumeration);
         return it->minArgs();
     }
     // Return maximum number of arguments for the specified enumeration
@@ -128,7 +127,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
         auto it = std::find_if(options_.begin(), options_.end(),
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
         if (it == options_.end())
-            throw(std::runtime_error(std::format("No option set for enumeration '{}'.\n", (int)enumeration)));
+            Messenger::exception("No option set for enumeration '{}'.\n", (int)enumeration);
         return it->maxArgs();
     }
     // Check number of arguments provided to keyword

@@ -62,8 +62,8 @@ bool Data1DExportFileFormat::exportData(const Data1DBase &data)
                 result = exportXY(parser, data.xAxis(), data.values());
             break;
         default:
-            throw(std::runtime_error(
-                std::format("Data1D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data1D format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

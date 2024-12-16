@@ -64,8 +64,8 @@ bool Data2DImportFileFormat::importData(LineParser &parser, Data2D &data)
             result = importCartesian(parser, data);
             break;
         default:
-            throw(std::runtime_error(
-                std::format("Data2D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data2D format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;
