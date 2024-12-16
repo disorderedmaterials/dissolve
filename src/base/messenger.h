@@ -71,6 +71,11 @@ class Messenger
 
         splitAndPrint(std::vformat(format, std::make_format_args(args...)));
     }
+    // Throw a runtime exception
+    template <typename... Args> [[noreturn]] static void exception(std::format_string<Args...> format, Args &&...args)
+    {
+        throw std::runtime_error(std::format(format, std::forward<Args>(args)...));
+    }
     // Print error message
     template <typename... Args> static bool error(std::string_view format, Args... args)
     {
