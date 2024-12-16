@@ -18,10 +18,6 @@ runs:
   using: "composite"
   steps:
 
-  - name: 'Set Version in Main Config'
-    shell: bash
-    run: sed -i "s/MAJOR.MINOR/${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g" web/docs.toml
-
   - name: 'Apply Main Release Styling'
     if: ${{ inputs.publishType == 'release' }}
     shell: bash
