@@ -171,12 +171,26 @@ ConsistencyCheck() {
   exit $(( RETURN ))
 }
 
+GetBumpedVersion() {
+  BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  if [ "$BRANCH" == "develop" ]
+  then
+    BUMPED=$(git cliff --bumped-version latest-release-point..HEAD)
+  else
+    BUMPED=$(git cliff --bumped-version latest..HEAD)
+  fi
+  echo ${BUMPED}
+}
+
 PrintUsage() {
-  echo "Usage:  $0 [-c] [-k] [-r X.Y.Z] [-s X.Y.Z]"
-  echo "        -r  Explicitly set release version and date inREADME.md"
+  echo "Usage:  $0 [-v] [-k] [-t] [-q] [-r X.Y.Z] [-s X.Y.Z]"
+  echo "        -r  Explicitly set release version and date in README.md"
   echo "        -s  Set version explicitly to X.Y.Z"
-  echo "        -c  Show current code version (from src/main/version.cpp)"
-  echo "        -k  Check consistency of other files with current code version"
+  echo "        -v  Get authoritative code version (from src/main/version.cpp)"
+  echo "        -k  Check consistency of other files with current authoritative version"
+  echo "        -q  Determine bumped version using git-cliff"
+  echo "        -b  Determine bumped version using git-cliff and set new authoritative version"
+  echo "        -l  Determine bumped version using git-cliff and generate ChangeLog.md"
 }
 
 # Check for no args provided
@@ -186,7 +200,7 @@ then
   exit 1
 fi
 
-while getopts ":r:s:ck" opt
+while getopts ":r:s:vkqb" opt
 do
   case $opt in
     s) PARTS=($(echo $OPTARG | tr "." " "))
@@ -206,22 +220,27 @@ do
        SetReadMeInfo $OPTARG
        GetReadMeInfo
        ;;
-    b) BRANCH=$(git rev-parse --abbrev-ref HEAD)
-       if [ "$BRANCH" != "Release" ]
+    q) GetBumpedVersion
+       exit 0
+       ;;
+    b) BUMPED=$(GetBumpedVersion)
+       SetCodeVersion ${BUMPED}
+       SetWebReleaseInfo ${BUMPED}
+       ;;
+    l) BRANCH=$(git rev-parse --abbrev-ref HEAD)
+       if [ "$BRANCH" == "develop" ]
        then
-	   echo "Version number can only be auto-calculated on the Release branch"
-	   exit 1
+         git cliff --bump latest-release-point..HEAD > ChangeLog.md
+       else
+         git cliff --bump latest..HEAD > ChangeLog.md
        fi
-       # Get next version number from git-cliff
-       PARTS=($(git cliff --bumped-version | tr "." " "))
+       PARTS=($(echo $BUMPED | tr "." " "))
        MAJOR=${PARTS[0]}
        MINOR=${PARTS[1]}
        PATCH=${PARTS[2]}
-       echo "Version will calculated to be MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
-       # Update Changelog
-       git cliff --bump v1.3.3..HEAD > ChangeLog.md
+       echo "Version auto-bumped to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
        ;;
-    c) GetAuthoritativeVersion
+    v) GetAuthoritativeVersion
        exit 0
        ;;
     k) ConsistencyCheck
