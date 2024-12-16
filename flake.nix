@@ -163,6 +163,7 @@
               qt6.qttools
               tbb_2021_11
               valgrind
+              weggli
             ]);
           shellHook = ''
             export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_DATA_DIRS
