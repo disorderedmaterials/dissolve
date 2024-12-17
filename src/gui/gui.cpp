@@ -471,7 +471,6 @@ void DissolveWindow::checkPairPotentialRange(QWidget *parent)
     // Return smallest inscribed sphere radius if less than current pair potential range
     for (const auto &config : dissolve_.coreData().configurations())
     {
-
         if (config->box()->inscribedSphereRadius() < radius.value_or(dissolve_.pairPotentialRange()))
         {
             radius = config->box()->inscribedSphereRadius();
