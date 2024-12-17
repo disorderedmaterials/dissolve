@@ -475,7 +475,6 @@ void DissolveWindow::checkPairPotentialRange(QWidget *parent)
 
         if (config->box()->inscribedSphereRadius() < radius.value_or(dissolve_.pairPotentialRange()))
         {
-
             radius = config->box()->inscribedSphereRadius();
         }
     }
