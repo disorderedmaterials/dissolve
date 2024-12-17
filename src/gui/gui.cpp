@@ -466,7 +466,6 @@ void DissolveWindow::statusLabelLinkClicked(const QString &link)
 // Checks pair potential range against all present box geometries
 void DissolveWindow::checkPairPotentialRange(QWidget *parent)
 {
-
     std::optional<double> radius;
 
     // Return smallest inscribed sphere radius if less than current pair potential range
