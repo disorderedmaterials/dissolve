@@ -8,8 +8,8 @@
 
 OptionalDoubleKeyword::OptionalDoubleKeyword(std::optional<double> &data, double minValue, std::optional<double> maxValue,
                                              double valueDelta, std::string_view textWhenNull)
-    : KeywordBase(typeid(this)), data_(data), minimumLimit_{minValue}, maximumLimit_{maxValue},
-      valueDelta_(valueDelta), textWhenNull_{textWhenNull}
+    : KeywordBase(typeid(this)), data_(data), minimumLimit_{minValue}, maximumLimit_{maxValue}, valueDelta_(valueDelta),
+      textWhenNull_{textWhenNull}
 {
 }
 

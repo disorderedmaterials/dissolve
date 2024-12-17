@@ -145,7 +145,7 @@ extern "C"
                              "Tetragonal", "Trigonal",  "Hexagonal",  "Cubic"};
 #endif
 
-#define Make_PG_Code(i, p, l) (((i)*33 + (p)) * 12 + (l))
+#define Make_PG_Code(i, p, l) (((i) * 33 + (p)) * 12 + (l))
 #define PG_Unknown Make_PG_Code(0, 0, 0)
 #define PG_1 Make_PG_Code(1, 1, 1)
 #define PG_1b Make_PG_Code(2, 2, 1)
