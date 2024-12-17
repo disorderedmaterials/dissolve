@@ -681,16 +681,15 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             {
                 // Write new 1-4 scale factor line if this torsion has different values
                 if ((torsion.electrostatic14Scaling() != elec14Scaling || torsion.vanDerWaals14Scaling() != vdw14Scaling) &&
-                    !parser.writeLineF(std::format("{}{}  {}  {}\n", newPrefix,
-                                                   keywords().keyword(Species::SpeciesKeyword::Scaling14),
-                                                   torsion.electrostatic14Scaling(), torsion.vanDerWaals14Scaling())))
+                    !parser.writeLineF("{}{}  {}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::Scaling14),
+                                       torsion.electrostatic14Scaling(), torsion.vanDerWaals14Scaling()))
                     return false;
 
-                if (!parser.writeLineF(std::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
-                                                   keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
-                                                   torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
-                                                   TorsionFunctions::forms().keyword(torsion.interactionForm()),
-                                                   torsion.interactionPotential().parametersAsString())))
+                if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
+                                       keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
+                                       torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
+                                       TorsionFunctions::forms().keyword(torsion.interactionForm()),
+                                       torsion.interactionPotential().parametersAsString()))
                     return false;
 
                 elec14Scaling = torsion.electrostatic14Scaling();

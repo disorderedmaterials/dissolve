@@ -363,8 +363,8 @@ bool Dissolve::saveInput(std::string_view filename)
         {
             // Write new 1-4 scale factor line if this torsion has different values
             if ((t->electrostatic14Scaling() != elec14Scaling || t->vanDerWaals14Scaling() != vdw14Scaling) &&
-                !parser.writeLineF(std::format("  {}  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::Scaling14Keyword),
-                                               t->electrostatic14Scaling(), t->vanDerWaals14Scaling())))
+                !parser.writeLineF("  {}  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::Scaling14Keyword),
+                                   t->electrostatic14Scaling(), t->vanDerWaals14Scaling()))
                 return false;
 
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),

@@ -142,7 +142,7 @@ class LineParser
     // Write line to file
     bool writeLine(std::string_view s) const;
     // Write formatted line to file
-    template <typename... Args> bool writeLineF(std::string_view format, Args... args) const
+    template <typename... Args> bool writeLineF(std::format_string<Args...> format, Args... args) const
     {
         auto result = true;
 
@@ -171,9 +171,9 @@ class LineParser
 
             // Format the line and store it
             if (directOutput_)
-                (*outputFile_) << std::vformat(format, std::make_format_args(args...));
+                (*outputFile_) << std::format(format, std::forward<Args>(args)...);
             else
-                (*cachedFile_) << std::vformat(format, std::make_format_args(args...));
+                (*cachedFile_) << std::format(format, std::forward<Args>(args)...);
         }
 
         // Broadcast result of write
@@ -183,7 +183,7 @@ class LineParser
         return result;
     }
     // Print banner comment of fixed width
-    template <typename... Args> bool writeBannerComment(std::string_view format, Args... args)
+    template <typename... Args> bool writeBannerComment(std::format_string<Args...> format, Args... args)
     {
         const auto bannerWidth = 80;
         static std::string bannerBorder = std::format("#{0:=^{1}}#", "", bannerWidth - 2);
@@ -191,7 +191,7 @@ class LineParser
         // Finally, print the banner
         if (!writeLineF("\n{}\n", bannerBorder))
             return false;
-        if (!writeLineF("#{:^{}}#", std::vformat(format, std::make_format_args(args...)), bannerWidth - 2))
+        if (!writeLineF("#{:^{}}#", std::format(format, std::forward<Args>(args)...), bannerWidth - 2))
             return false;
         if (!writeLineF("\n{}\n", bannerBorder))
             return false;
