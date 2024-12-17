@@ -9,7 +9,7 @@ runs:
     run: |
       set -ex
       sudo apt-get update
-      sudo apt-get install --yes clang-format-13 qt6-declarative-dev-tools
+      sudo apt-get install --yes clang-format-17 qt6-declarative-dev-tools
       pip install cmake_format==0.6.9
 
   - name: Check Conventional Commits
@@ -26,8 +26,8 @@ runs:
     shell: bash
     run: |
       set -ex
-      clang-format-13 --version
-      find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\|hui\)' -exec clang-format-13 -i {} +
+      clang-format-17 --version
+      find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\|hui\)' -exec clang-format-17 -i {} +
       git diff
       git diff --quiet
 
