@@ -59,9 +59,9 @@ class VoxelDensityModuleTest : public ::testing::Test
         int Z;
         VoxelDensityModule *modules[2];
         Water(VoxelDensityModuleTest &test)
-            : boxSideLength(20.0083), mass(18.015),
-              Z(10), modules{test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(Mass)"),
-                             test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(AtomicNumber)")}
+            : boxSideLength(20.0083), mass(18.015), Z(10),
+              modules{test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(Mass)"),
+                      test.systemTest.getModule<VoxelDensityModule>("VoxelDensity(AtomicNumber)")}
         {
         }
     };
