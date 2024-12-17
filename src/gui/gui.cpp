@@ -483,7 +483,6 @@ void DissolveWindow::checkPairPotentialRange(QWidget *parent)
     // Prompt to auto-adjust
     if (radius.has_value())
     {
-
         if (QMessageBox::question(parent, "Warning!",
                                   QString("Maximum pair potential range exceeds smallest allowed by current Configurations! "
                                           "Adjust pair potential range to %1?")
