@@ -147,7 +147,7 @@
           buildInputs = base_libs pkgs ++ gui_libs system pkgs
             ++ check_libs pkgs ++ (with pkgs; [
               (pkgs.clang-tools.override {
-                llvmPackages = pkgs.llvmPackages_13;
+                llvmPackages = pkgs.llvmPackages_17;
               })
 
               (onedpl pkgs)
