@@ -6,6 +6,7 @@ import "widgets" as D
 
 Page {
     id: root
+
     anchors.fill: parent
     font.pointSize: 10
     palette.buttonText: palette.active.text
@@ -14,10 +15,12 @@ Page {
 
     AddForcefieldDialogModel {
         id: dialogModel
+
         objectName: "dialogModel"
     }
     StackLayout {
         id: stack
+
         anchors.bottom: nextButton.top
         anchors.left: parent.left
         anchors.right: parent.right
@@ -26,6 +29,7 @@ Page {
 
         ForceFieldPicker {
             id: ffList
+
             dialogModel: dialogModel
 
             onSelected: nextButton.clicked()
@@ -35,6 +39,7 @@ Page {
         }
         ForceFieldAtomTypes {
             id: ffAtomTypes
+
             dialogModel: dialogModel
         }
         ForceFieldIntra {
@@ -55,6 +60,7 @@ Page {
     }
     D.Button {
         id: nextButton
+
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         enabled: dialogModel.progressionAllowed

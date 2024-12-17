@@ -6,6 +6,7 @@ import "widgets" as D
 
 D.GroupBox {
     id: control
+
     property variant dialogModel
 
     clip: true
@@ -17,16 +18,17 @@ D.GroupBox {
         value: chargesCheck.checked
     }
     Connections {
-        target: control.dialogModel
-
         function onAssignErrors(indices) {
             ffErrorIcon.visible = indices.length != 0;
             ffErrorText.visible = indices.length != 0;
             ffErrorText.text = "No matching atom types for indices " + indices.join(", ");
         }
+
+        target: control.dialogModel
     }
     ColumnLayout {
         id: radioChoice
+
         spacing: 10
 
         ImageRadio {
@@ -58,6 +60,7 @@ D.GroupBox {
     }
     Image {
         id: ffErrorIcon
+
         anchors.bottom: ffErrorText.bottom
         anchors.left: parent.left
         anchors.top: ffErrorText.top
@@ -67,6 +70,7 @@ D.GroupBox {
     }
     D.Text {
         id: ffErrorText
+
         anchors.bottom: optionsBox.top
         anchors.left: ffErrorIcon.right
         anchors.right: parent.right
@@ -77,6 +81,7 @@ D.GroupBox {
     }
     D.GroupBox {
         id: optionsBox
+
         anchors.bottom: parent.bottom
         clip: true
         title: "Options"
@@ -84,6 +89,7 @@ D.GroupBox {
 
         CheckBox {
             id: chargesCheck
+
             text: "Don't overwrite changes on species atoms"
         }
     }

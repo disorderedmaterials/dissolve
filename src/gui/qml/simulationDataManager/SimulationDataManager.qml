@@ -6,9 +6,6 @@ import "../widgets" as D
 
 Page {
     id: root
-    height: 500
-    visible: true
-    width: 670
 
     function filterByRegExp(proxy, text) {
         proxy.filterRegularExpression = RegExp(text);
@@ -21,13 +18,19 @@ Page {
         return headerArray;
     }
 
+    height: 500
+    visible: true
+    width: 670
+
     SortFilterProxy {
         id: proxy
+
         filterRegularExpression: RegExp(searchBox.text)
         model: simModel
     }
     D.GroupBox {
         id: gb
+
         anchors.fill: parent
         title: "Current Module Data"
 
@@ -36,12 +39,14 @@ Page {
 
             TextField {
                 id: searchBox
+
                 Layout.alignment: Qt.AlignRight
                 Layout.preferredWidth: gb.width / 4
                 placeholderText: qsTr("Search...")
             }
             HorizontalHeaderView {
                 id: header
+
                 Layout.fillWidth: true
                 Layout.preferredHeight: contentHeight
                 Layout.preferredWidth: contentWidth
@@ -52,6 +57,7 @@ Page {
             }
             TableView {
                 id: table
+
                 property variant colWidths: [300, 300, 50]
 
                 Layout.fillHeight: true
@@ -72,6 +78,7 @@ Page {
 
                     D.Text {
                         id: tableText
+
                         padding: 12
                         text: display
                     }
@@ -79,6 +86,7 @@ Page {
             }
             D.Button {
                 id: closeButton
+
                 Layout.alignment: Qt.AlignRight
                 text: "Close"
 

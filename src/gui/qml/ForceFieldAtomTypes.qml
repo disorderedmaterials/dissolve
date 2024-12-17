@@ -4,6 +4,7 @@ import "widgets" as D
 
 Item {
     id: control
+
     property variant dialogModel
 
     Component.onCompleted: atList.forceActiveFocus()
@@ -18,12 +19,14 @@ Item {
 
         IconListView {
             id: atList
+
             anchors.fill: parent
             model: control.dialogModel.atomTypes
         }
     }
     D.Button {
         id: prefixButton
+
         anchors.right: parent.right
         anchors.top: parent.top
         enabled: atList.currentIndex >= 0
@@ -33,6 +36,7 @@ Item {
     }
     Dialog {
         id: prefixDialog
+
         standardButtons: Dialog.Ok | Dialog.Cancel
         title: "Prefix Dialog"
 
@@ -40,11 +44,13 @@ Item {
 
         TextField {
             id: prefixField
+
             placeholderText: "Prefix"
         }
     }
     D.Button {
         id: suffixButton
+
         anchors.right: parent.right
         anchors.top: prefixButton.bottom
         enabled: atList.currentIndex >= 0
@@ -54,6 +60,7 @@ Item {
     }
     Dialog {
         id: suffixDialog
+
         standardButtons: Dialog.Ok | Dialog.Cancel
         title: "Suffix Dialog"
 
@@ -61,17 +68,20 @@ Item {
 
         TextField {
             id: suffixField
+
             placeholderText: "Suffix"
         }
     }
     CheckBox {
         id: overwrite
+
         anchors.bottom: indicator.top
         anchors.left: parent.left
         text: "Overwrite Parameters in existing atom types"
     }
     Image {
         id: indicatorImage
+
         anchors.bottom: indicator.bottom
         anchors.left: parent.left
         anchors.top: indicator.top
@@ -80,6 +90,7 @@ Item {
     }
     D.Text {
         id: indicator
+
         anchors.bottom: parent.bottom
         anchors.left: indicatorImage.right
         anchors.right: parent.right
@@ -87,11 +98,11 @@ Item {
         wrapMode: Text.Wrap
     }
     Connections {
-        target: control.dialogModel.atomTypes
-
         function onDataChanged(topLeft, bottomRight) {
             control.dialogModel.atomTypesIndicatorChanged();
         }
+
+        target: control.dialogModel.atomTypes
     }
     Binding {
         property: "overwriteParametersCheck"

@@ -3,25 +3,12 @@ import "widgets" as D
 
 ListView {
     id: control
-    signal selected
 
-    /* Border */
-    Rectangle {
-        anchors.fill: parent
-        border.color: palette.active.dark
-        border.width: 2
-        color: "#00000000"
-        z: 1
-    }
-    /* Background */
-    Rectangle {
-        anchors.fill: parent
-        color: palette.active.base
-        z: -11
-    }
+    signal selected
 
     delegate: Rectangle {
         id: disp
+
         property bool picked: ListView.isCurrentItem
 
         color: disp.picked ? palette.active.highlight : palette.active.base
@@ -30,6 +17,7 @@ ListView {
 
         Image {
             id: image
+
             anchors.bottom: label.bottom
             anchors.left: parent.left
             anchors.top: label.top
@@ -38,6 +26,7 @@ ListView {
         }
         D.Text {
             id: label
+
             property variant fullData: model
 
             anchors.left: image.right
@@ -60,5 +49,20 @@ ListView {
                 }
             }
         }
+    }
+
+    /* Border */
+    Rectangle {
+        anchors.fill: parent
+        border.color: palette.active.dark
+        border.width: 2
+        color: "#00000000"
+        z: 1
+    }
+    /* Background */
+    Rectangle {
+        anchors.fill: parent
+        color: palette.active.base
+        z: -11
     }
 }

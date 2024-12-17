@@ -6,6 +6,7 @@ import "widgets" as D
 
 Item {
     id: control
+
     property variant dialogModel
 
     D.GroupBox {
@@ -48,14 +49,17 @@ Item {
         ColumnLayout {
             CheckBox {
                 id: noMasterTerms
+
                 text: "Don't reduce master terms"
             }
             CheckBox {
                 id: noImproperTerms
+
                 text: "Don't generate improper terms"
             }
             CheckBox {
                 id: ignoreCurrentTypes
+
                 text: "Ignore current atom type"
             }
         }
