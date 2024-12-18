@@ -131,7 +131,7 @@ if(GUI)
                3DExtras
                QuickWidgets
                QuickControls2
-               REQUIRED
+    REQUIRED
   )
 
   # Make sure we enable automated handling of Qt files
