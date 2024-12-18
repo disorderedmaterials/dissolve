@@ -22,45 +22,42 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup
         uses: "./.github/workflows/setup"
-      - name: Install Prerequisites
+
+      - name: Install nix
+        uses: "./.github/workflows/get-nix"
+        with:
+          target: ${{ inputs.target }}
+
+      - name: Cache Nix Store
+        uses: actions/cache@v4
+        id: nix-cache
+        with:
+          path: /tmp/nixcache
+          key: ${{ runner.os }}-${{ env.nixHash }}-nix-cache
+
+      - name: Import Nix Store Cache
+        if: "steps.nix-cache.outputs.cache-hit == 'true'"
+        shell: bash
         run: |
-          sudo apt-get update -q
-          sudo apt-get install ninja-build python3-setuptools uuid uuid-dev
-          git submodule update --init --recursive
-      - name: Install Conan
-        run: |
-          sudo pip3 install wheel
-          sudo pip3 install conan==1.*
-      - name: Retrieve ANTLR4 Java
-        run: |
-          wget https://www.antlr.org/download/antlr-${{ env.antlrVersion }}-complete.jar -O antlr4.jar
-      - name: Build
-        run: |
-          set -ex
-          mkdir build && cd build
-          cmake ../ -G "Ninja" -DBUILD_BENCHMARKS:bool=true -DANTLR_EXECUTABLE:path=`pwd`/../antlr4.jar
-          ninja
+          nix-store --import < /tmp/nixcache
+          sudo rm -rf /tmp/nixcache
+
       - name: Run benchmarks
         run: |
           set -ex
           export LD_LIBRARY_PATH=`pwd`/build/onetbb/lib
-          cd build
 
-          # Run individual benchmarks
-          for bm in benchmark_*
-          do
-            ./${bm} --benchmark_format=json > ${bm}_result.json
-          done
+          nix build -L .#benchmarks
 
-          # Combine benchmark results
-          jq -s '[.[] | to_entries] | flatten | reduce .[] as $dot ({}; .[$dot.key] += $dot.value)' benchmark_*.json > all_benchmark_results.json
+          nix run .#benchmarks > all_benchmark_results.json
+
           cat all_benchmark_results.json
       - name: Store benchmark result
         uses: rhysd/github-action-benchmark@v1
         if: ${{ github.ref_name == 'develop' }}
         with:
             tool: 'googlecpp'
-            output-file-path: build/all_benchmark_results.json
+            output-file-path: all_benchmark_results.json
             github-token: ${{ secrets.GITHUB_TOKEN }}
             auto-push: true
             comment-on-alert: true
