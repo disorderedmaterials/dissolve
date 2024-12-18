@@ -171,15 +171,14 @@ ConsistencyCheck() {
   exit $(( RETURN ))
 }
 
-GetBumpedVersion() {
+GetReferenceTag() {
   BRANCH=$(git rev-parse --abbrev-ref HEAD)
-  if [ "$BRANCH" == "develop" ]
+  if [ "${BRANCH}" == "develop" ]
   then
-    BUMPED=$(git cliff --bumped-version latest-release-point..HEAD)
+    echo "latest-release-point"
   else
-    BUMPED=$(git cliff --bumped-version latest..HEAD)
+    echo "latest"
   fi
-  echo ${BUMPED}
 }
 
 PrintUsage() {
@@ -220,19 +219,37 @@ do
        SetReadMeInfo $OPTARG
        GetReadMeInfo
        ;;
-    q) GetBumpedVersion
-       exit 0
+    q) REFTAG=$(GetReferenceTag)
+       if [ $(git tag -l ${REFTAG}) ]
+       then
+         git cliff --bumped-version ${REFTAG}..HEAD
+       else
+         echo "Error: Reference tag '${REFTAG}' does not exist on branch $(git rev-parse --abbrev-ref HEAD)."
+         exit 1
+       fi
        ;;
-    b) BUMPED=$(GetBumpedVersion)
+    b) REFTAG=$(GetReferenceTag)
+       if [ $(git tag -l ${REFTAG}) ]
+       then
+         BUMPED=$(git cliff --bumped-version ${REFTAG}..HEAD)
+         if [ "${BUMPED}x" == "x" ]
+         then
+           echo "Error: Failed to auto-bump version."
+           exit 1
+	  fi
+       else
+         echo "Error: Reference tag '${REFTAG}' does not exist on branch $(git rev-parse --abbrev-ref HEAD)."
+         exit 1
+       fi
        SetCodeVersion ${BUMPED}
        SetWebReleaseInfo ${BUMPED}
        ;;
     l) BRANCH=$(git rev-parse --abbrev-ref HEAD)
        if [ "$BRANCH" == "develop" ]
        then
-         git cliff --bump latest-release-point..HEAD > ChangeLog.md
+         git cliff --bump latest-release-point..HEAD -o ChangeLog.md
        else
-         git cliff --bump latest..HEAD > ChangeLog.md
+         git cliff --bump latest..HEAD -o ChangeLog.md
        fi
        PARTS=($(echo $BUMPED | tr "." " "))
        MAJOR=${PARTS[0]}
