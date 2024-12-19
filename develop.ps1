@@ -14,7 +14,7 @@ if ($release) {
 
 $info_colors = @{
     ForegroundColor = "White"
-    BackgroundColor = "Cyan"
+    BackgroundColor = "Black"
 }
 
 $warn_colors = @{
