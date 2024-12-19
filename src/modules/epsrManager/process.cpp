@@ -32,40 +32,42 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
         Messenger::print("Potentials: No averaging of potentials will be performed.\n");
 
     auto &moduleData = moduleContext.dissolve().processingModuleData();
-    // Potential Set
-    PotentialSet potentials;
-    // Loop over target data
+
+    // Loop over target data and form summed / averaged potentials
+    PotentialSet newPotentials;
     for (auto *module : target_)
     {
         auto *epsrModule = dynamic_cast<EPSRModule *>(module);
         auto eps = epsrModule->empiricalPotentials();
-        potentials.reset();
 
         for (auto &&[at1, at2, ep] : eps)
         {
             auto key = EPSRManagerModule::pairKey(at1, at2);
-            auto keyIt = potentials.potentialMap().find(key);
-            if (keyIt == potentials.potentialMap().end())
-                potentials.potentialMap()[key] = {ep, 1, at1, at2};
+            auto keyIt = newPotentials.potentialMap().find(key);
+            if (keyIt == newPotentials.potentialMap().end())
+                newPotentials.potentialMap()[key] = {ep, 1, at1, at2};
             else
             {
-                Interpolator::addInterpolated(ep, potentials.potentialMap()[key].ep, 1.0);
-                ++potentials.potentialMap()[key].count;
+                Interpolator::addInterpolated(ep, newPotentials.potentialMap()[key].ep, 1.0);
+                ++newPotentials.potentialMap()[key].count;
             }
         }
     }
+    for (auto &&[key, epData] : newPotentials.potentialMap())
+        epData.ep /= newPotentials.potentialMap()[key].count;
+
     // Does a PotentialSet already exist for this Configuration?
     auto originalPotentialsObject =
         moduleData.realiseIf<PotentialSet>(fmt::format("PotentialSet"), name_, GenericItem::InRestartFileFlag);
     // Set restart equal to changes
-    originalPotentialsObject.first = potentials;
+    originalPotentialsObject.first = newPotentials;
+    // Reference to the current potentials
+    auto &currentPotentials =
+        moduleData.realise<PotentialSet>(fmt::format("PotentialSet"), name_, GenericItem::InRestartFileFlag);
     // Average the Potentials
     if (averagingLength_)
         Averaging::average<PotentialSet>(moduleContext.dissolve().processingModuleData(), "PotentialSet", name(),
                                          averagingLength_.value(), averagingScheme_);
-
-    for (auto &&[key, epData] : potentials.potentialMap())
-        epData.ep /= potentials.potentialMap()[key].count;
 
     // Apply potential scalings
     auto scalings = DissolveSys::splitString(potentialScalings_, ",");
@@ -85,7 +87,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
 
         Messenger::print("Apply scaling factor of {} to potential(s) {}-{}...\n", scaleFactor, typeA, typeB);
         auto count = 0;
-        for (auto &&[key, epData] : potentials.potentialMap())
+        for (auto &&[key, epData] : newPotentials.potentialMap())
         {
             // Is this potential a match
             if ((DissolveSys::sameWildString(typeA, epData.at1->name()) &&
@@ -102,7 +104,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
     }
 
     // Adjust global potentials
-    for (auto &&[key, epData] : potentials.potentialMap())
+    for (auto &&[key, epData] : currentPotentials.potentialMap())
     {
         // Grab pointer to the relevant pair potential (if it exists)
         auto *pp = moduleContext.dissolve().pairPotential(epData.at1, epData.at2);
