@@ -32,16 +32,14 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
         Messenger::print("Potentials: No averaging of potentials will be performed.\n");
 
     auto &moduleData = moduleContext.dissolve().processingModuleData();
-
+    // Potential Set
     PotentialSet potentials;
-    // Does a PotentialSet already exist for this Configuration?
-    auto originalPotentialsObject =
-        moduleData.realiseIf<PotentialSet>(fmt::format("PotentialSet"), name_, GenericItem::InRestartFileFlag);
     // Loop over target data
     for (auto *module : target_)
     {
         auto *epsrModule = dynamic_cast<EPSRModule *>(module);
         auto eps = epsrModule->empiricalPotentials();
+        potentials.reset();
 
         for (auto &&[at1, at2, ep] : eps)
         {
@@ -56,11 +54,18 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
             }
         }
     }
+    // Does a PotentialSet already exist for this Configuration?
+    auto originalPotentialsObject =
+        moduleData.realiseIf<PotentialSet>(fmt::format("PotentialSet"), name_, GenericItem::InRestartFileFlag);
     // Set restart equal to changes
     originalPotentialsObject.first = potentials;
+    // Average the Potentials
     if (averagingLength_)
         Averaging::average<PotentialSet>(moduleContext.dissolve().processingModuleData(), "PotentialSet", name(),
                                          averagingLength_.value(), averagingScheme_);
+
+    for (auto &&[key, epData] : potentials.potentialMap())
+        epData.ep /= potentials.potentialMap()[key].count;
 
     // Apply potential scalings
     auto scalings = DissolveSys::splitString(potentialScalings_, ",");
