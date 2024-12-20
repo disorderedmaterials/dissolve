@@ -37,38 +37,56 @@ New-Item -ItemType Directory -Path $dependencies -ErrorAction SilentlyContinue
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
 iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-Write-Host "Installing key dependencies with Chocolatey... " @info_colors
-choco install -y git ninja pkgconfiglite
+Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
 
-Write-Host "Locating git executable... " @info_colors
-$gitExePath = where.exe git
+Write-Host "Installing key dependencies with Chocolatey... " @info_colors
+choco install -y ninja pkgconfiglite
+
+# Find git, install if not found
+try {
+    & "git" --version
+    Write-Output "Found system Git..."
+} catch {
+    Write-Output "Could not find system Git - installing with Chocolatey..."
+    choco install -y git
+}
+
+# Find python, install if not found
+try {
+    & "python" --version
+    Write-Output "Found system Python..." @info_colors
+    $pythonVersion = $(python -c "import sys; v = sys.version_info; print(v.major == 3, v.minor >= 10)")
+    $versionParts = $pythonVersion -split " "
+    if (-not ($versionParts[0] -eq "True" -and $versionParts[1] -eq "True")) {
+        Write-Output "System Python is version $(python --version) and it is recommended to be >= 3.10 - installing with Chocolatey..." @warn_colors
+        choco install -y python
+    }
+} catch {
+    Write-Output "Could not find system Python - installing with Chocolatey..." @info_colors
+    choco install -y python
+}
+
+refreshenv
 
 # Setup Python packages
 Write-Host "Creating a local Python virtual environment... " @info_colors
 python -m venv msvc-env
 
-Write-Host "Checking Python compiler type... " @info_colors
-if ($(python -c "import sys; print(sys.version)") -match "MSC v\.\d+") 
-{ 
-    Write-Host " ...Python compiler type evaluated to MSC" @info_colors
-    $pythonEnvSourceDir = "Scripts" 
-}
-else 
-{ 
-    Write-Host " ...Python compiler type is not MSC" @info_colors
-    $pythonEnvSourceDir = "bin" 
-}
+$activate = "./msvc-env/Scripts/Activate.ps1"
 
-$activate = "./msvc-env/$pythonEnvSourceDir/Activate.ps1"
-
-Write-Host "Activating virtual environment with the command: $activate... " @info_colors
+Write-Host "Activating Python virtual environment... " @info_colors
 & $activate
 
 Write-Host "Installing Python packages... " @info_colors
 python -m pip install --upgrade pip
-python -m pip install conan aqtinstall conan==1.*
+python -m pip install aqtinstall conan==1.*
 
-if (-not $systemqt) 
+$systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
+
+[Environment]::SetEnvironmentVariable("PATH", "$(Join-Path -Path $projectDir -ChildPath "msvc-env\Scripts");$systemPath", [EnvironmentVariableTarget]::Machine)
+Write-Host "Python packages directory path added to system PATH." @info_colors
+
+if (-not $systemqt)
 {
     # Install Qt6
     $qtVersion = "6.4.2"
@@ -168,7 +186,7 @@ New-Item -ItemType Directory -Path $ftglBuildDir -ErrorAction SilentlyContinue
 $ftglRepoPath = (Join-Path -Path $dependencies -ChildPath "ftgl-repo")
 
 Write-Host "Cloning FTGL (DisorderedMaterials fork) repo... " @info_colors
-& "$gitExePath" clone $ftglUri $ftglRepoPath
+git clone $ftglUri $ftglRepoPath
 
 Set-Location -Path $projectDir
 
