@@ -72,7 +72,19 @@ refreshenv
 Write-Host "Creating a local Python virtual environment... " @info_colors
 python -m venv msvc-env
 
-$activate = "./msvc-env/Scripts/Activate.ps1"
+Write-Host "Checking Python compiler type... " @info_colors
+if ($(python -c "import sys; print(sys.version)") -match "MSC v\.\d+") 
+{ 
+    Write-Host " ...Python compiler type evaluated to MSC" @info_colors
+    $pythonEnvSourceDir = "Scripts"
+}
+else 
+{ 
+    Write-Host " ...Python compiler type is not MSC" @info_colors
+    $pythonEnvSourceDir = "bin"
+}
+
+$activate = "./msvc-env/$pythonEnvSourceDir/Activate.ps1"
 
 Write-Host "Activating Python virtual environment... " @info_colors
 & $activate
@@ -83,7 +95,7 @@ python -m pip install aqtinstall conan==1.*
 
 $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
-[Environment]::SetEnvironmentVariable("PATH", "$(Join-Path -Path $projectDir -ChildPath "msvc-env\Scripts");$systemPath", [EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("PATH", "$(Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir");$systemPath", [EnvironmentVariableTarget]::Machine)
 Write-Host "Python packages directory path added to system PATH." @info_colors
 
 if (-not $systemqt)
