@@ -51,7 +51,7 @@ int main(int args, char **argv)
     QLocale::setDefault(QLocale::C);
 
     // Print GPL license information
-    Messenger::print("Dissolve-GUI-QML {} version {}, Copyright (C) 2024 Team Dissolve and contributors.\n", Version::appType(),
+    Messenger::print("Dissolve-GUI-QML {} version {}, Copyright (C) 2025 Team Dissolve and contributors.\n", Version::appType(),
                      Version::info());
     Messenger::print("Source repository: {}.\n", Version::repoUrl());
     Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
