@@ -13,7 +13,7 @@ Here you can find the user guide and examples for the RELEASETYPE version MAJOR.
 
 ## Copyright / Contributors
 
-&copy; 2024 Team Dissolve and contributors
+&copy; 2025 Team Dissolve and contributors
 - Dr T. Youngs
 - Dr A. Washington (January 2020 - present)
 - Dr R. Buchanan (September 2023 - present)
