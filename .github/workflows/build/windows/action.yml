@@ -7,7 +7,7 @@ inputs:
   freeTypeArchive:
     default: https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.gz
   ftglRepo:
-    default: https://github.com/frankheckenbach/ftgl.git
+    default: https://github.com/disorderedmaterials/ftgl-2.4.0
   cacheOnly:
     type: boolean
     default: false
