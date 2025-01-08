@@ -71,7 +71,10 @@
           pkgs.stdenv.mkDerivation ({
             inherit version;
             pname = exe-name mpi gui;
-            src = ./.;
+            src = builtins.path {
+              path = ./.;
+              name = "dissolve-src";
+            };
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs system pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
