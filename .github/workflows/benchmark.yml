@@ -53,7 +53,7 @@ jobs:
 
           touch  all_benchmark_results.json
 
-          nix run .#benchmarks
+          nix run -L .#benchmarks
 
           cat all_benchmark_results.json
       - name: Store benchmark result
