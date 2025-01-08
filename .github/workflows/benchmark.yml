@@ -49,6 +49,8 @@ jobs:
 
           nix build -L .#benchmarks
 
+          rm result
+
           nix run .#benchmarks > all_benchmark_results.json
 
           cat all_benchmark_results.json
