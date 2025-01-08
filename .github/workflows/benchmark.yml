@@ -51,7 +51,9 @@ jobs:
 
           rm result
 
-          nix run .#benchmarks > all_benchmark_results.json
+          touch  all_benchmark_results.json
+
+          nix run -L .#benchmarks
 
           cat all_benchmark_results.json
       - name: Store benchmark result
