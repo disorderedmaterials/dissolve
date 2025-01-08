@@ -54,11 +54,11 @@ try {
     $versionParts = $pythonVersion -split " "
     if (-not ($versionParts[0] -eq "True" -and $versionParts[1] -eq "True")) {
         Write-Output "System Python is version $(python --version) and it is recommended to be == 3.12 - installing with Chocolatey..." @info_colors
-        choco install -y python --version==3.12.0
+        choco install -y python --version=3.12.0
     }
 } catch {
     Write-Output "Could not find system Python - installing with Chocolatey..." @info_colors
-    choco install -y python --version==3.12.0
+    choco install -y python --version=3.12.0
 }
 
 refreshenv
