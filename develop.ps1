@@ -93,6 +93,8 @@ $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariable
 [Environment]::SetEnvironmentVariable("PATH", "$(Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir");$systemPath", [EnvironmentVariableTarget]::Machine)
 Write-Host "Python packages directory path added to system PATH." @info_colors
 
+$qt6Dir = ""
+
 if (-not $systemqt)
 {
     # Install Qt6
@@ -168,12 +170,13 @@ if ($lib -notlike "*$freetypeInstall*") {
 }
 
 $freetypeIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeRepo"
+$freetype2IncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeInstall\include\freetype2"
 
 $include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
 
 if ($include -notlike "*$freetypeRepo*") {
     Write-Host "Setting INCLUDE environment variable with Freetype includes... " @info_colors
-    [System.Environment]::SetEnvironmentVariable("INCLUDE", "$freetypeIncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
+    [System.Environment]::SetEnvironmentVariable("INCLUDE", "$freetypeIncludePath;$freetype2IncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
 }
 
 # Build/retrieve FTGL
@@ -281,10 +284,13 @@ $cacheVariables = @{
     CMAKE_CXX_COMPILER = "cl"
     FTGL_LIBRARY = "$ftglLibPath\ftgl$binSuffix.lib"
     FTGL_INCLUDE_DIR = $ftglIncludePath
+    FREETYPE_LIBRARY = "$freetypelLibPath\freetype$binSuffix.lib"
+    FREETYPE_INCLUDE_DIRS = "$freetypeIncludePath;$freetype2IncludePath"
     ANTLR_EXECUTABLE = $antlrExePath
     Java_JAVA_EXECUTABLE = $javaExePath
     MULTI_THREADING = $threading
     MSVC_DEV = "ON"
+    CMAKE_PREFIX_PATH = "$qt6Dir"
 }
 
 $cmakeUserPresets = [PSCustomObject]@{
