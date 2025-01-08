@@ -17,11 +17,6 @@ $info_colors = @{
     BackgroundColor = "Black"
 }
 
-$warn_colors = @{
-    ForegroundColor = "White"
-    BackgroundColor = "Red"
-}
-
 Write-Host "Building dependencies in $build configuration... " @info_colors
 
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
@@ -40,7 +35,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
 Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
 
 Write-Host "Installing key dependencies with Chocolatey... " @info_colors
-choco install -y ninja pkgconfiglite
+choco install -y ninja pkgconfiglite cmake
 
 # Find git, install if not found
 try {
@@ -55,15 +50,15 @@ try {
 try {
     & "python" --version
     Write-Output "Found system Python..." @info_colors
-    $pythonVersion = $(python -c "import sys; v = sys.version_info; print(v.major == 3, v.minor >= 10)")
+    $pythonVersion = $(python -c "import sys; v = sys.version_info; print(v.major == 3, v.minor == 12)")
     $versionParts = $pythonVersion -split " "
     if (-not ($versionParts[0] -eq "True" -and $versionParts[1] -eq "True")) {
-        Write-Output "System Python is version $(python --version) and it is recommended to be >= 3.10 - installing with Chocolatey..." @warn_colors
-        choco install -y python
+        Write-Output "System Python is version $(python --version) and it is recommended to be == 3.12 - installing with Chocolatey..." @info_colors
+        choco install -y python --version==3.12.0
     }
 } catch {
     Write-Output "Could not find system Python - installing with Chocolatey..." @info_colors
-    choco install -y python
+    choco install -y python --version==3.12.0
 }
 
 refreshenv
@@ -127,7 +122,7 @@ if (-not $systemqt)
     $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
     if ($systemPath -notmatch [regex]::Escape($qtVersion)) {
-        Write-Host "Found Qt6 version that is NOT ${qtVersion} in system PATH. It is strongly recommended to use Qt ${qtVersion}" @warn_colors
+        Write-Host "Found Qt6 version that is NOT ${qtVersion} in system PATH. It is strongly recommended to use Qt ${qtVersion}" @info_colors
     }
 } 
 
