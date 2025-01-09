@@ -49,6 +49,7 @@ runs:
       run: |
         Set-Location ${{ github.workspace }}
         #cmake --preset GUI-Debug-MSVC 
+        mkdir build
         cmake --build build --config CLI-Debug-MSVC
 
 #    - name: 'Build Dissolve for Visual Studio using CMake'
