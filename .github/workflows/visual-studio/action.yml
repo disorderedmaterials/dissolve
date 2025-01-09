@@ -35,7 +35,7 @@ runs:
           exit 1
         }
     
-    - name: 'Find dependencies'
+    - name: 'Find CMake user presets'
       shell: pwsh
       run: |
         Set-Location ${{ github.workspace }}
@@ -47,3 +47,11 @@ runs:
           Write-Host "Could NOT find CMakeUserPresets.json"
           exit 1
         }
+
+    - name: 'Configure Dissolve for Visual Studio using CMake'
+      shell: pwsh
+      run: cmake --preset GUI-Debug-MSVC
+
+    - name: 'Build Dissolve for Visual Studio using CMake'
+      shell: pwsh
+      run: cmake --build ./out/build
