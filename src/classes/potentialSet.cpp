@@ -84,13 +84,13 @@ bool PotentialSet::deserialise(LineParser &parser, const CoreData &coreData)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        EPData value;
+        PotentialData value;
         auto key = parser.args(0);
         value.count = parser.argi(1);
         value.at1 = coreData.findAtomType(parser.args(2));
         value.at2 = coreData.findAtomType(parser.args(3));
 
-        if (!value.ep.deserialise(parser))
+        if (!value.potential.deserialise(parser))
             return false;
 
         potentials_[key] = value;
