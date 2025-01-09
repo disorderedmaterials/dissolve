@@ -50,8 +50,12 @@ runs:
 
     - name: 'Configure Dissolve for Visual Studio using CMake'
       shell: pwsh
-      run: cmake --preset GUI-Debug-MSVC
+      run: |
+        Set-Location ${{ github.workspace }}
+        cmake --preset GUI-Debug-MSVC -DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl 
 
     - name: 'Build Dissolve for Visual Studio using CMake'
       shell: pwsh
-      run: cmake --build ./out/build
+      run: |
+        Set-Location ${{ github.workspace }}
+        cmake --build ./out/build
