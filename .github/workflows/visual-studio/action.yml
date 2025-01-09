@@ -48,10 +48,11 @@ runs:
       shell: pwsh
       run: |
         Set-Location ${{ github.workspace }}
-        cmake --preset GUI-Debug-MSVC 
+        #cmake --preset GUI-Debug-MSVC 
+        cmake --build build --config CLI-Debug-MSVC
 
-    - name: 'Build Dissolve for Visual Studio using CMake'
-      shell: pwsh
-      run: |
-        Set-Location ${{ github.workspace }}
-        cmake --build ./out/build
+#    - name: 'Build Dissolve for Visual Studio using CMake'
+#      shell: pwsh
+#      run: |
+#        Set-Location ${{ github.workspace }}
+#        cmake --build ./out/build
