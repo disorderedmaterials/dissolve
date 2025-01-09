@@ -1,0 +1,27 @@
+name: Test MSVC (Visual Studio 2022) Developer Build
+
+on:
+  pull_request:
+    paths:
+    - 'develop.ps1'
+    branches:
+    - '*'
+
+  push:
+    paths:
+    - 'develop.ps1'
+    branches:
+    - 'develop'
+    - 'release/**'
+
+jobs:
+
+  BuildWeb:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Develop MSVC
+      uses: "./.github/workflows/visual-studio"
+      with:
+        publishType: 'none'

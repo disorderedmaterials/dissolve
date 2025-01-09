@@ -1,3 +1,17 @@
+<#
+    .SYNOPSIS
+        Script to install dependencies for Dissolve development environment in Visual Studio.
+    .DESCRIPTION
+        Installs the following dependencies for Dissolve (separate and prior to Conan-managed packages):
+            - Qt 6.4.2
+            - Freetype
+            - FTGL
+            - Antlr4 (Java backend)
+            - Java JDK
+        
+        These packages are installed into a folder called 'dependencies'.
+#>
+
 # Flag: Use existing Qt installation (requires Qt6_DIR environment variable to be set)
 param (
     [switch]$systemqt = $false,
