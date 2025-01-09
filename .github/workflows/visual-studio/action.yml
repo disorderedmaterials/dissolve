@@ -26,7 +26,7 @@ runs:
     - name: 'Find dependencies'
       shell: pwsh
       run: |
-        Set-Location build
+        Set-Location ${{ github.workspace }}
 
         if (Test-Path "./dependencies") {
           Write-Host "Found dependencies."

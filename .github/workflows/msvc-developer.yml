@@ -16,7 +16,7 @@ on:
 
 jobs:
 
-  BuildWeb:
+  Develop:
     runs-on: windows-latest
     steps:
     - name: Checkout
