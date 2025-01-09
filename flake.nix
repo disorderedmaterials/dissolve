@@ -211,6 +211,7 @@
               for bm in ${self.packages.${system}.benchmarks}/bin/benchmark_*
               do
                 export BENCHNAME=$(basename ${"$"}{bm})_result.json
+                >&2 echo Running ${"$"}{BENCHNAME}
                 ${"$"}{bm} --benchmark_format=json > $TMP/${"$"}{BENCHNAME}
               done
               ${pkgs.jq}/bin/jq -s '[.[] | to_entries] | flatten | reduce .[] as $dot ({}; .[$dot.key] += $dot.value)' $TMP/benchmark_*.json > $TMP/all_benchmark_results.json
