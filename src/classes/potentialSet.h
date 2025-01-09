@@ -15,7 +15,7 @@
 class Configuration;
 class Interpolator;
 
-// Set of Partials
+// Set of Potentials
 class PotentialSet
 {
     public:
@@ -28,25 +28,25 @@ class PotentialSet
     private:
     // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
     std::string fingerprint_;
-    struct EPData
+    struct PotentialData
     {
-        Data1D ep;
+        Data1D potential;
         double count{0};
         std::shared_ptr<AtomType> at1, at2;
     };
-    // Pair matrix, containing full atom-atom partial
-    std::map<std::string, EPData> potentials_;
+    // Map of named potentials to data
+    std::map<std::string, PotentialData> potentials_;
 
     public:
-    // Reset partial arrays
+    // Reset Potentials
     void reset();
     // Set new fingerprint
     void setFingerprint(std::string_view fingerprint);
-    // Return fingerprint of partials
+    // Return fingerprint of potentials
     std::string_view fingerprint() const;
-    // Return full atom-atom partial specified
-    std::map<std::string, EPData> &potentialMap();
-    const std::map<std::string, EPData> &potentialMap() const;
+    // Return full map of potentials specified
+    std::map<std::string, PotentialData> &potentialMap();
+    const std::map<std::string, PotentialData> &potentialMap() const;
 
     /*
      * Operators

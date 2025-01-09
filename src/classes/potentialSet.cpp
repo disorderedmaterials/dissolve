@@ -15,7 +15,7 @@ PotentialSet::PotentialSet() { fingerprint_ = "NO_FINGERPRINT"; }
 
 PotentialSet::~PotentialSet() { potentials_.clear(); }
 
-// Reset partial arrays
+// Reset Potentials
 void PotentialSet::reset()
 {
     potentials_.clear();
@@ -26,8 +26,8 @@ void PotentialSet::reset()
 void PotentialSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = fingerprint; }
 
 // Return full map of potentials specified
-std::map<std::string, PotentialSet::EPData> &PotentialSet::potentialMap() { return potentials_; }
-const std::map<std::string, PotentialSet::EPData> &PotentialSet::potentialMap() const { return potentials_; }
+std::map<std::string, PotentialSet::PotentialData> &PotentialSet::potentialMap() { return potentials_; }
+const std::map<std::string, PotentialSet::PotentialData> &PotentialSet::potentialMap() const { return potentials_; }
 
 /*
  * Operators
@@ -35,28 +35,28 @@ const std::map<std::string, PotentialSet::EPData> &PotentialSet::potentialMap() 
 
 PotentialSet &PotentialSet::operator+=(const double delta)
 {
-    for (auto &[key, potential] : potentials_)
-        potential.ep += delta;
+    for (auto &[key, pot] : potentials_)
+        pot.potential += delta;
     return (*this);
 }
 
 PotentialSet &PotentialSet::operator+=(const PotentialSet &source)
 {
-    for (auto &[key, potential] : source.potentialMap())
+    for (auto &[key, pot] : source.potentialMap())
     {
         auto it = potentials_.find(key);
         if (it != potentials_.end())
-            it->second.ep += potential.ep;
+            it->second.potential += pot.potential;
         else
-            potentials_[key] = potential;
+            potentials_[key] = pot;
     }
     return (*this);
 }
 
 PotentialSet &PotentialSet::operator*=(const double factor)
 {
-    for (auto &[key, potential] : potentials_)
-        potential.ep *= factor;
+    for (auto &[key, pot] : potentials_)
+        pot.potential *= factor;
     return (*this);
 }
 
@@ -77,13 +77,13 @@ bool PotentialSet::deserialise(LineParser &parser, const CoreData &coreData)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        EPData value;
+        PotentialData value;
         auto key = parser.args(0);
         value.count = parser.argi(1);
         value.at1 = coreData.findAtomType(parser.args(2));
         value.at2 = coreData.findAtomType(parser.args(3));
 
-        if (!value.ep.deserialise(parser))
+        if (!value.potential.deserialise(parser))
             return false;
 
         potentials_[key] = value;
@@ -103,7 +103,7 @@ bool PotentialSet::serialise(LineParser &parser) const
     {
         if (!parser.writeLineF("{} {} {} {}\n", key, value.count, value.at1->name(), value.at2->name()))
             return false;
-        if (!value.ep.serialise(parser))
+        if (!value.potential.serialise(parser))
             return false;
     }
     return true;
