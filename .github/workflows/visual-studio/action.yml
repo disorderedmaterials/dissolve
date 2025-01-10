@@ -29,6 +29,6 @@ runs:
     - name: 'Configure and build with CMake'
       shell: cmd
       run: |
-        cmd /c "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxillary/Build/vcvars64.bat"
+        cmd /c "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxillary\Build\vcvars64.bat"
         cmake --preset CLI-Debug-MSVC
         cmake --build build
