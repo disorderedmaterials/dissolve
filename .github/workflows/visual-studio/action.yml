@@ -17,6 +17,8 @@ runs:
 
     - name: 'Set up MSVC toolchain'
       uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
       
     - name: 'Install dependencies'
       shell: pwsh
@@ -24,23 +26,14 @@ runs:
         Set-Location ${{ github.workspace }}
         ./develop.ps1 -systemqt
 
-    - name: 'Retrieve Conan Cache'
-      id: cache-conan
-      uses: actions/cache@v4
-      with:
-          key: windows-conan-${{ env.conanHash }}
-          path: |
-            ~\.conan
-            ~\.conancache
-
     - name: 'Configure and build with CMake'
-      shell: pwsh
-      run: | 
-        Set-Location ${{ github.workspace }}
-        
-        # Set conan cache location
-        conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
+      shell: cmd
+      run: |
+        # Initialise x64 environment
+        cmd /c "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxillary/Build/vcvars64.bat"
 
-        # Configure and build
+        # Configure
         cmake --preset CLI-Debug-MSVC
+
+        # Build
         cmake --build build
