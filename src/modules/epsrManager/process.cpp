@@ -40,21 +40,21 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
         auto *epsrModule = dynamic_cast<EPSRModule *>(module);
         auto eps = epsrModule->empiricalPotentials();
 
-        for (auto &&[at1, at2, ep] : eps)
+        for (auto &&[at1, at2, potential] : eps)
         {
             auto key = EPSRManagerModule::pairKey(at1, at2);
             auto keyIt = newPotentials.potentialMap().find(key);
             if (keyIt == newPotentials.potentialMap().end())
-                newPotentials.potentialMap()[key] = {ep, 1, at1, at2};
+                newPotentials.potentialMap()[key] = {potential, 1, at1, at2};
             else
             {
-                Interpolator::addInterpolated(ep, newPotentials.potentialMap()[key].ep, 1.0);
+                Interpolator::addInterpolated(potential, newPotentials.potentialMap()[key].potential, 1.0);
                 ++newPotentials.potentialMap()[key].count;
             }
         }
     }
     for (auto &&[key, epData] : newPotentials.potentialMap())
-        epData.ep /= newPotentials.potentialMap()[key].count;
+        epData.potential /= newPotentials.potentialMap()[key].count;
 
     // Does a PotentialSet already exist for this Configuration?
     auto originalPotentialsObject =
@@ -96,7 +96,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
                  DissolveSys::sameWildString(typeA, epData.at2->name())))
             {
                 Messenger::print(" ... matched and scaled potential {}-{}\n", epData.at1->name(), epData.at2->name());
-                epData.ep *= scaleFactor;
+                epData.potential *= scaleFactor;
                 ++count;
             }
         }
@@ -109,7 +109,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
         // Grab pointer to the relevant pair potential (if it exists)
         auto *pp = moduleContext.dissolve().pairPotential(epData.at1, epData.at2);
         if (pp)
-            pp->setAdditionalPotential(epData.ep);
+            pp->setAdditionalPotential(epData.potential);
     }
 
     return ExecutionResult::Success;

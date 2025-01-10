@@ -102,19 +102,19 @@ TEST(PotentialSetTest, Averaging)
         PotentialSet pots;
         pots.potentialMap()["A-A"].at1 = A;
         pots.potentialMap()["A-A"].at2 = A;
-        pots.potentialMap()["A-A"].ep = x;
+        pots.potentialMap()["A-A"].potential = x;
 
         pots.potentialMap()["A-B"].at1 = A;
         pots.potentialMap()["A-B"].at2 = B;
-        pots.potentialMap()["A-B"].ep = x;
+        pots.potentialMap()["A-B"].potential = x;
 
         pots.potentialMap()["A-C"].at1 = A;
         pots.potentialMap()["A-C"].at2 = C;
-        pots.potentialMap()["A-C"].ep = y;
+        pots.potentialMap()["A-C"].potential = y;
 
         pots.potentialMap()["A-D"].at1 = A;
         pots.potentialMap()["A-D"].at2 = D;
-        pots.potentialMap()["A-D"].ep = y;
+        pots.potentialMap()["A-D"].potential = y;
 
         originalPotentialsObject.first = pots;
         fmt::print("Run {}\n", n);
@@ -130,17 +130,17 @@ TEST(PotentialSetTest, Averaging)
         EXPECT_EQ(A, pots.potentialMap()["A-D"].at1);
         EXPECT_EQ(D, pots.potentialMap()["A-D"].at2);
 
-        EXPECT_EQ(2.0, pots.potentialMap()["A-A"].ep.value(0));
-        EXPECT_EQ(2.0, pots.potentialMap()["A-A"].ep.value(0));
-        EXPECT_EQ(2.0, pots.potentialMap()["A-B"].ep.value(0));
-        EXPECT_EQ(4.0, pots.potentialMap()["A-C"].ep.value(0));
-        EXPECT_EQ(4.0, pots.potentialMap()["A-D"].ep.value(0));
+        EXPECT_EQ(2.0, pots.potentialMap()["A-A"].potential.value(0));
+        EXPECT_EQ(2.0, pots.potentialMap()["A-A"].potential.value(0));
+        EXPECT_EQ(2.0, pots.potentialMap()["A-B"].potential.value(0));
+        EXPECT_EQ(4.0, pots.potentialMap()["A-C"].potential.value(0));
+        EXPECT_EQ(4.0, pots.potentialMap()["A-D"].potential.value(0));
 
         pots.serialise(parser);
     }
 }
 
-TEST(PotentialSetTest, Averaging)
+TEST(PotentialSetTest, Averaging2)
 {
     GenericList moduleData;
     auto originalPotentialsObject =
@@ -178,19 +178,19 @@ TEST(PotentialSetTest, Averaging)
         PotentialSet pots;
         pots.potentialMap()["A-A"].at1 = A;
         pots.potentialMap()["A-A"].at2 = A;
-        pots.potentialMap()["A-A"].ep = x;
+        pots.potentialMap()["A-A"].potential = x;
 
         pots.potentialMap()["A-B"].at1 = A;
         pots.potentialMap()["A-B"].at2 = B;
-        pots.potentialMap()["A-B"].ep = x;
+        pots.potentialMap()["A-B"].potential = x;
 
         pots.potentialMap()["A-C"].at1 = A;
         pots.potentialMap()["A-C"].at2 = C;
-        pots.potentialMap()["A-C"].ep = y;
+        pots.potentialMap()["A-C"].potential = y;
 
         pots.potentialMap()["A-D"].at1 = A;
         pots.potentialMap()["A-D"].at2 = D;
-        pots.potentialMap()["A-D"].ep = y;
+        pots.potentialMap()["A-D"].potential = y;
 
         originalPotentialsObject.first = pots;
         fmt::print("Run {}\n", n);
@@ -206,11 +206,11 @@ TEST(PotentialSetTest, Averaging)
         EXPECT_EQ(A, pots.potentialMap()["A-D"].at1);
         EXPECT_EQ(D, pots.potentialMap()["A-D"].at2);
 
-        EXPECT_EQ(2.0, pots.potentialMap()["A-A"].ep.value(0));
-        EXPECT_EQ(2.0, pots.potentialMap()["A-A"].ep.value(0));
-        EXPECT_EQ(2.0, pots.potentialMap()["A-B"].ep.value(0));
-        EXPECT_EQ(4.0, pots.potentialMap()["A-C"].ep.value(0));
-        EXPECT_EQ(4.0, pots.potentialMap()["A-D"].ep.value(0));
+        EXPECT_EQ(2.0, pots.potentialMap()["A-A"].potential.value(0));
+        EXPECT_EQ(2.0, pots.potentialMap()["A-A"].potential.value(0));
+        EXPECT_EQ(2.0, pots.potentialMap()["A-B"].potential.value(0));
+        EXPECT_EQ(4.0, pots.potentialMap()["A-C"].potential.value(0));
+        EXPECT_EQ(4.0, pots.potentialMap()["A-D"].potential.value(0));
 
         pots.serialise(parser);
     }
