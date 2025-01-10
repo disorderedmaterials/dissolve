@@ -25,26 +25,8 @@
    <string>RDF Controls</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>4</number>
-   </property>
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
      <item>
       <widget class="QPushButton" name="TotalButton">
        <property name="toolTip">
@@ -84,6 +66,44 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="BroadTotalButton">
+       <property name="toolTip">
+        <string>Show the partial t(r) formed from summation over all target configurations</string>
+       </property>
+       <property name="text">
+        <string>Broad Total T(r)</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="BroadPartialsButton">
+       <property name="toolTip">
+        <string>Show the partial t(r) formed from summation over all target configurations</string>
+       </property>
+       <property name="text">
+        <string>Broad Partial t(r)</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QComboBox" name="ConfigurationTargetCombo">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -100,8 +120,8 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>13</width>
+         <height>17</height>
         </size>
        </property>
       </spacer>
