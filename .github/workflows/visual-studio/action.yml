@@ -23,12 +23,5 @@ runs:
       run: | 
         Set-Location ${{ github.workspace }}
         ./develop.ps1 -systemqt
-
-        Write-Output "Machine env vars:"
-        Write-Output "$([Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine))"
-        
-        Write-Output "Process env vars"        
-        Write-Output "$([Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Process))"
-
-        cmake --preset CLI-Debug-MSVC
+        cmake --preset CLI-Debug-MSVC -DCONAN_BIN="${{ github.workspace }}\msvc-env\Scripts"
         cmake --build build
