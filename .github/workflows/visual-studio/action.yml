@@ -29,5 +29,4 @@ runs:
       run: | 
         Set-Location ${{ github.workspace }}
         cmake --preset CLI-Debug-MSVC
-        mkdir build
         cmake --build build
