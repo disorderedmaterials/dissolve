@@ -143,21 +143,6 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         },
         false);
 
-    for (auto n : weightedTR.atomTypeMix())
-    {
-        fmt::print("weightedTR atomTypes = {}\n", n.atomTypeName());
-        fmt::print("weightedTR population = {}\n", n.population());
-    }
-    fmt::print("weightedTR nValues = {}\n", weightedTR.total().nValues());
-
-    for (auto n : broadenedTR.atomTypeMix())
-    {
-        fmt::print("broadenedTR atomTypes = {}\n", n.atomTypeName());
-        fmt::print("broadenedTR population = {}\n", n.population());
-    }
-
-    fmt::print("broadenedTR nValues = {}\n", broadenedTR.total().nValues());
-
     // Sum into total
     weightedTR.formTRTotals(weights);
     broadenedTR.formTRTotals(weights);

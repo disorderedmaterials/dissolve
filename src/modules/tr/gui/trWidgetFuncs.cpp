@@ -111,6 +111,24 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
             targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("WeightedTR", module_->name());
             createPartialSetRenderables("WeightedTR");
         }
+        else if (ui_.BroadTotalButton->isChecked())
+        {
+            trGraph_->createRenderable<RenderableData1D>(fmt::format("{}//BroadenedTR//Total", module_->name()), "Total T(R)",
+                                                         "Calculated");
+            auto boundTotal = trGraph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//BroadenedTR//BoundTotal", module_->name()), "Bound T(R)", "Calculated");
+            boundTotal->setColour(StockColours::GreenStockColour);
+            boundTotal->lineStyle().setStipple(LineStipple::DotStipple);
+            auto unboundTotal = trGraph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//BroadenedTR//UnboundTotal", module_->name()), "Unbound T(R)", "Calculated");
+            unboundTotal->setColour(StockColours::GreenStockColour);
+            unboundTotal->lineStyle().setStipple(LineStipple::HalfDashStipple);
+        }
+        else if (ui_.BroadPartialsButton->isChecked())
+        {
+            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("BroadenedTR", module_->name());
+            createPartialSetRenderables("BroadenedTR");
+        }
     }
 
     // Validate renderables if they need it
@@ -138,6 +156,28 @@ void TRModuleWidget::on_PartialsButton_clicked(bool checked)
 }
 
 void TRModuleWidget::on_TotalButton_clicked(bool checked)
+{
+    if (!checked)
+        return;
+
+    trGraph_->view().axes().setTitle(1, "T(r)");
+    trGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::OneVerticalShift);
+
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
+}
+
+void TRModuleWidget::on_BroadPartialsButton_clicked(bool checked)
+{
+    if (!checked)
+        return;
+
+    trGraph_->view().axes().setTitle(1, "t(r)");
+    trGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
+
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
+}
+
+void TRModuleWidget::on_BroadTotalButton_clicked(bool checked)
 {
     if (!checked)
         return;
