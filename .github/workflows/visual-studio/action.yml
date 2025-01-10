@@ -24,11 +24,23 @@ runs:
         Set-Location ${{ github.workspace }}
         ./develop.ps1 -systemqt
 
-    - name: 'Configure and build'
+    - name: 'Retrieve Conan Cache'
+      id: cache-conan
+      uses: actions/cache@v4
+      with:
+          key: windows-conan-${{ env.conanHash }}
+          path: |
+            ~\.conan
+            ~\.conancache
+
+    - name: 'Configure and build with CMake'
       shell: pwsh
       run: | 
         Set-Location ${{ github.workspace }}
-        $conanPath = "${{ github.workspace }}\msvc-env\Scripts"
-        Write-Output "CONAN PATH ---> $($conanPath)"
-        cmake --preset CLI-Debug-MSVC -DCMAKE_PREFIX_PATH=$conanPath
+        
+        # Set conan cache location
+        conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
+
+        # Configure and build
+        cmake --preset CLI-Debug-MSVC
         cmake --build build
