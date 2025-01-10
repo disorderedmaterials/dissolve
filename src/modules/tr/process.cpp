@@ -51,11 +51,19 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         "WeightedTR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedTR.setUpPartials(unweightedGR.atomTypeMix(), false);
+
     dissolve::for_each_pair(
         ParallelPolicies::par, 0, weightedSQ.nAtomTypes(),
         [&](int n, int m)
         {
+            weightedGR.boundPartial(n, m).copyArrays(weightedSQ.boundPartial(n, m));
+            weightedGR.unboundPartial(n, m).copyArrays(weightedSQ.unboundPartial(n, m));
             weightedGR.partial(n, m).copyArrays(weightedSQ.partial(n, m));
+
+            Fourier::sineFT(weightedGR.boundPartial(n, m), 4.0 * PI * rho.value(), qMin_, qDelta_, qMax_, windowFunction_,
+                            qBroadening_);
+            Fourier::sineFT(weightedGR.unboundPartial(n, m), 4.0 * PI * rho.value(), qMin_, qDelta_, qMax_, windowFunction_,
+                            qBroadening_);
             Fourier::sineFT(weightedGR.partial(n, m), 4.0 * PI * rho.value(), qMin_, qDelta_, qMax_, windowFunction_,
                             qBroadening_);
         },
@@ -110,6 +118,21 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
             auto cj = weights.atomTypes()[typeJ].fraction();
             auto factor = 4.0 * PI * rho.value() * cj;
 
+            // Bound (intramolecular) partial (multiplied by the bound term weight)
+            broadenedTR.boundPartial(typeI, typeJ).copyArrays(weightedGR.boundPartial(typeI, typeJ));
+
+            for (auto &&[x, y] :
+                 zip(broadenedTR.boundPartial(typeI, typeJ).xAxis(), broadenedTR.boundPartial(typeI, typeJ).values()))
+            {
+                y *= x * factor;
+            }
+            // Unbound partial (multiplied by the full weight)
+            broadenedTR.unboundPartial(typeI, typeJ).copyArrays(weightedGR.unboundPartial(typeI, typeJ));
+            for (auto &&[x, y] :
+                 zip(broadenedTR.unboundPartial(typeI, typeJ).xAxis(), broadenedTR.unboundPartial(typeI, typeJ).values()))
+            {
+                y *= x * factor;
+            }
             // Full partial, summing bound and unbound terms
             broadenedTR.partial(typeI, typeJ).copyArrays(weightedGR.partial(typeI, typeJ));
 
@@ -125,7 +148,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         fmt::print("weightedTR atomTypes = {}\n", n.atomTypeName());
         fmt::print("weightedTR population = {}\n", n.population());
     }
-    fmt::print("weightedTR data = {}\n", weightedTR.total().nValues());
+    fmt::print("weightedTR nValues = {}\n", weightedTR.total().nValues());
 
     for (auto n : broadenedTR.atomTypeMix())
     {
@@ -133,7 +156,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         fmt::print("broadenedTR population = {}\n", n.population());
     }
 
-    fmt::print("broadenedTR nValues = {}", broadenedTR.total().nValues());
+    fmt::print("broadenedTR nValues = {}\n", broadenedTR.total().nValues());
 
     // Sum into total
     weightedTR.formTRTotals(weights);
