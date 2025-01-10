@@ -24,9 +24,11 @@ runs:
         Set-Location ${{ github.workspace }}
         ./develop.ps1 -systemqt
 
-    - name: 'Configure and build dissolve'
-      shell: pwsh
-      run: | 
-        Set-Location ${{ github.workspace }}
+        Write-Output "Machine env vars:"
+        Write-Output "$([Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine))"
+        
+        Write-Output "Process env vars"        
+        Write-Output "$([Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Process))"
+
         cmake --preset CLI-Debug-MSVC
         cmake --build build
