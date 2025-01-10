@@ -19,13 +19,13 @@ runs:
       uses: ilammy/msvc-dev-cmd@v1
       
     - name: 'Install dependencies'
-      uses: pwsh
+      shell: pwsh
       run: | 
         Set-Location ${{ github.workspace }}
         ./develop.ps1 -systemqt
 
     - name: 'Configure and build dissolve'
-      uses: pwsh
+      shell: pwsh
       run: | 
         Set-Location ${{ github.workspace }}
         cmake --preset CLI-Debug-MSVC
