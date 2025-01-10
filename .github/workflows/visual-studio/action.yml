@@ -15,43 +15,19 @@ runs:
     using: "composite"
     steps:
 
-    - name: 'Run developer powershell script'
-      shell: pwsh
-      run: ./develop.ps1 -systemqt
-
-    - name: 'Find dependencies'
-      shell: pwsh
-      run: |
+    - name: 'Set up MSVC toolchain'
+      uses: ilammy/msvc-dev-cmd@v1
+      
+    - name: 'Install dependencies'
+      uses: pwsh
+      run: | 
         Set-Location ${{ github.workspace }}
+        ./develop.ps1 -systemqt
 
-        if (Test-Path "./dependencies") {
-          Write-Host "Found dependencies."
-        } else {
-          Write-Host "Could NOT find dependencies."
-          exit 1
-        }
-    
-    - name: 'Find CMake user presets'
-      shell: pwsh
-      run: |
+    - name: 'Configure and build dissolve'
+      uses: pwsh
+      run: | 
         Set-Location ${{ github.workspace }}
-
-        if (Test-Path "CMakeUserPresets.json") {
-          Write-Host "Found CMakeUserPresets.json - Content: "
-          Get-Content "CMakeUserPresets.json" | ConvertFrom-Json | ConvertTo-Json -Depth 10
-        } else {
-          Write-Host "Could NOT find CMakeUserPresets.json"
-          exit 1
-        }
-
-    - name: 'Configure Dissolve for Visual Studio using CMake'
-      shell: pwsh
-      run: |
-        Set-Location ${{ github.workspace }}
-        cmake --preset GUI-Debug-MSVC
-
-    - name: 'Build Dissolve for Visual Studio using CMake'
-      shell: pwsh
-      run: |
-        Set-Location ${{ github.workspace }}
-        cmake --build ./out/build
+        cmake --preset CLI-Debug-MSVC
+        mkdir build
+        cmake --build build
