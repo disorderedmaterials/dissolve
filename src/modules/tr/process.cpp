@@ -40,7 +40,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
     const auto unweightedGR = moduleData.value<PartialSet>("UnweightedGR", grModule->name());
-    auto weightedSQ = moduleData.value<PartialSet>("WeightedSQ", sourceNeutronSQ_->name());
+    auto weightedSQ = moduleData.value<PartialSet>("UnweightedSQ", sqModule->name());
     PartialSet weightedGR;
     weightedGR.setUpPartials(weightedSQ.atomTypeMix(), false);
 
@@ -62,10 +62,13 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
 
             Fourier::sineFT(weightedGR.boundPartial(n, m), 4.0 * PI * rho.value(), qMin_, qDelta_, qMax_, windowFunction_,
                             qBroadening_);
+            weightedGR.boundPartial(n, m) += 1;
             Fourier::sineFT(weightedGR.unboundPartial(n, m), 4.0 * PI * rho.value(), qMin_, qDelta_, qMax_, windowFunction_,
                             qBroadening_);
+            weightedGR.unboundPartial(n, m) += 1;
             Fourier::sineFT(weightedGR.partial(n, m), 4.0 * PI * rho.value(), qMin_, qDelta_, qMax_, windowFunction_,
                             qBroadening_);
+            weightedGR.partial(n, m) += 1;
         },
         false);
 
