@@ -3,8 +3,27 @@
 
 #pragma once
 
+#include <QVariant>
 #include "configuration.h"
 #include "generator.h"
 #include "generatorNode.h"
 
-// This file exists to easily include all of the templated methods for all of the types for the Node Graph
+// The variant of all of the types that we will examine
+using GeneratorGraphInnerType = std::variant<Configuration *, Generator *, GeneratorNode *>;
+
+// A class to contain the inner type, since we need a constructor that
+// take a QVariant
+class GeneratorGraphNode
+{
+    public:
+    GeneratorGraphNode(QVariant var = {});
+    GeneratorGraphInnerType value;
+};
+
+// All of these types may require access to CoreData
+template <> struct GraphNodeContext<GeneratorGraphNode>
+{
+    using type = CoreData *;
+};
+
+std::string nodeName(GeneratorGraphNode &value);

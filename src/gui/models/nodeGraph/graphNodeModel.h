@@ -8,7 +8,7 @@
 #include <qabstractitemmodel.h>
 #include <qvariant.h>
 
-template <typename T> class GraphModel;
+template <Graphable T> class GraphModel;
 
 // A base to add a static terms or properties to GraphNodeModel
 class GraphNodeModelBase : public QAbstractListModel
@@ -22,7 +22,7 @@ class GraphNodeModelBase : public QAbstractListModel
 
 // The model for accessing the node data (which is *held* in the
 // GraphModel class)
-template <typename T> class GraphNodeModel : public GraphNodeModelBase
+template <Graphable T> class GraphNodeModel : public GraphNodeModelBase
 {
     friend GraphModel<T>;
 

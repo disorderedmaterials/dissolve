@@ -10,24 +10,6 @@
 #include "gui/models/nodeGraph/instances/all.h"
 #include "nodeWrapper.h"
 
-// The variant of all of the types that we will examine
-using GeneratorGraphInnerType = std::variant<Configuration *, Generator *, GeneratorNode *>;
-
-// A class to contain the inner type, since we need a constructor that
-// take a QVariant
-class GeneratorGraphNode
-{
-    public:
-    GeneratorGraphNode(QVariant var = {});
-    GeneratorGraphInnerType value;
-};
-
-// All of these types may require access to CoreData
-template <> struct GraphNodeContext<GeneratorGraphNode>
-{
-    using type = CoreData *;
-};
-
 // A graph node model for looking at the generators on a configuration
 class GeneratorGraphModel : public GraphModel<GeneratorGraphNode>
 {

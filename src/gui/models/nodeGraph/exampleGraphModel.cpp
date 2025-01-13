@@ -63,7 +63,7 @@ template <> std::string nodeTypeIcon<nodeValue>(const nodeValue &value)
 }
 
 // The title of the node
-template <> std::string nodeName<nodeValue>(const nodeValue &value) { return value.name; }
+std::string nodeName(const nodeValue &value) { return value.name; }
 
 // Change the title of the node
 template <> void setNodeName<nodeValue>(nodeValue &value, const std::string name) { value.name = name; }

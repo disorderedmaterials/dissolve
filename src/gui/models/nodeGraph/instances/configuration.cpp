@@ -13,7 +13,7 @@ template <> std::string nodeTypeIcon<Configuration *>(Configuration *const &valu
 }
 
 // The title of the node
-template <> std::string nodeName<Configuration *>(Configuration *const &value)
+std::string nodeName(Configuration *const &value)
 {
 
     if (!value)

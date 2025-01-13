@@ -4,7 +4,9 @@
 #pragma once
 
 #include <QAbstractListModel>
+#include <concepts>
 #include <variant>
+#include "gui/models/nodeGraph/instances/all.h"
 
 /**
    This file contains a series of templates that need to be overloaded
@@ -25,13 +27,6 @@
    suddenly become a dependency of the command line code.
  **/
 
-// A template that we can specialise to associate a a context type
-// with a type.
-template <typename T> struct GraphNodeContext
-{
-    using type = GraphNodeContext<void>;
-};
-
 // Append the roles for the type onto the QHash
 template <typename T> QHash<int, QByteArray> &nodeRoleNames(QHash<int, QByteArray> &base);
 // The name of the type (for delegate dispatch)
@@ -40,8 +35,6 @@ template <typename T> std::string nodeTypeName(const T &value);
 template <typename T> std::string nodeTypeIcon(const T &value);
 // Delete the node
 template <typename T> bool nodeDelete(T &value, typename GraphNodeContext<T>::type &context);
-// The title of the node
-template <typename T> std::string nodeName(const T &value);
 // Change the title of the node
 template <typename T> void setNodeName(T &value, const std::string);
 // The value of the node
@@ -53,8 +46,13 @@ template <typename T> bool nodeConnectable(const T &source, int sourceIndex, con
 // Unlink an indexed position on the source to an indexed position on the destination
 template <typename T> bool nodeDisconnect(T &source, int sourceIndex, T &destination, int destinationIndex);
 
+template <typename T>
+concept Graphable = requires(T a) {
+  { nodeName(a) } -> std::same_as<std::string>;
+};
+
 // A wrapper with supplemental information for a node
-template <typename T> class NodeWrapper
+template <Graphable T> class NodeWrapper
 {
     public:
     NodeWrapper(QVariant value) : value_(value) {}

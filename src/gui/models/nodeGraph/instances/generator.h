@@ -4,7 +4,7 @@
 #pragma once
 
 #include "generator/generator.h"
-#include "gui/models/nodeGraph/nodeWrapper.h"
+#include "gui/models/nodeGraph/graphNodeContext.h"
 
 // Generators need access to the CoreData to access all of their
 // children.
@@ -12,3 +12,5 @@ template <> struct GraphNodeContext<Generator *>
 {
     using type = CoreData *;
 };
+
+std::string nodeName(Generator *const &value);

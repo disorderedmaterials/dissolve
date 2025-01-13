@@ -59,7 +59,7 @@ template <> std::string nodeTypeIcon<GeneratorGraphNode>(const GeneratorGraphNod
 }
 
 // The title of the node
-template <> std::string nodeName<GeneratorGraphNode>(const GeneratorGraphNode &value)
+std::string nodeName(GeneratorGraphNode &value)
 {
     return std::visit([](auto *arg) { return nodeName(arg); }, value.value);
 }

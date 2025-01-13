@@ -16,7 +16,7 @@ template <> std::string nodeTypeIcon<GeneratorNode *>(GeneratorNode *const &valu
 }
 
 // The title of the node
-template <> std::string nodeName<GeneratorNode *>(GeneratorNode *const &value)
+std::string nodeName(GeneratorNode *const &value)
 {
     std::string result = {value->name().begin(), value->name().end()};
     return result;

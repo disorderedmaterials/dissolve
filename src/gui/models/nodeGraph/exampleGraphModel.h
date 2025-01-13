@@ -29,5 +29,7 @@ class nodeValue
     std::variant<double, nodeValue *> value;
 };
 
+std::string nodeName(const nodeValue &value);
+
 // The graph model for the example
 typedef GraphModel<nodeValue> ExampleGraphModel;

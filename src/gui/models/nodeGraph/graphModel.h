@@ -37,7 +37,7 @@
 **/
 
 // This is the base class for any node graph type
-template <typename T> class GraphModel : public GraphModelBase
+template <Graphable T> class GraphModel : public GraphModelBase
 {
     public:
     GraphModel() : nodes_(this) {}
