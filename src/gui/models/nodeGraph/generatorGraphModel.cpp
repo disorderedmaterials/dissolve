@@ -58,7 +58,7 @@ void GeneratorGraphModel::handleReset()
     int index = 1;
     // A queue to store all of the edges (which will be processed once
     // all of the nodes are added to prevent rerendering).
-    std::vector<std::pair<int, int>> edges;
+    std::vector<std::pair<std::string, std::string>> edges;
 
     auto configuration = world_->configurationsModel();
     for (auto i = 0; i < configuration->rowCount(); ++i)
@@ -71,14 +71,14 @@ void GeneratorGraphModel::handleReset()
         emplace_back(90 * index++, 60 * index++, config);
         emplace_back(90 * index++, 60 * index++, &config->generator());
         // Add an edge between the configuration and its generator
-        edges.emplace_back(size, size + 1);
-        int count = size + 1;
+        edges.emplace_back(nodeName(config), nodeName(&config->generator()));
+        std::string current = nodeName(&config->generator());
         // Connect each generator node in sequence
         for (auto genNode : config->generator().rootSequence().sequence())
         {
             emplace_back(90 * index++, 60 * index++, genNode.get());
-            edges.emplace_back(count, count + 1);
-            count++;
+            edges.emplace_back(current, nodeName(genNode.get()));
+            current = nodeName(genNode.get());
         }
         nodes_.endInsert();
     }

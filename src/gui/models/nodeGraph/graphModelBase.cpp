@@ -21,13 +21,13 @@ bool GraphModelBase::connect_(GraphRawEdge &edge) { return false; }
 bool GraphModelBase::disconnect_(GraphRawEdge &edge) { return false; }
 
 // Public wrapper of disconnect_
-bool GraphModelBase::disconnect(int source, int sourceIndex, int destination, int destinationIndex)
+bool GraphModelBase::disconnect(std::string source, int sourceIndex, std::string destination, int destinationIndex)
 {
     GraphRawEdge edge{source, sourceIndex, destination, destinationIndex};
 
     disconnect_(edge);
     edges_.dropEdge(edge);
-    Q_EMIT(nodes()->dataChanged(nodes()->index(destination), nodes()->index(destination)));
+    Q_EMIT(nodes()->dataChanged(nodes()->index(indexByName(destination)), nodes()->index(indexByName(destination))));
 
     return true;
 }
@@ -36,7 +36,7 @@ bool GraphModelBase::disconnect(int source, int sourceIndex, int destination, in
 bool GraphModelBase::isValidEdgeSource_(GraphRawEdge &edge) { return false; }
 
 // public wrapper of connect_
-bool GraphModelBase::connect(int source, int sourceIndex, int destination, int destinationIndex)
+bool GraphModelBase::connect(std::string source, int sourceIndex, std::string destination, int destinationIndex)
 {
     GraphRawEdge edge{source, sourceIndex, destination, destinationIndex};
     if (!isValidEdgeSource_(edge))
@@ -46,7 +46,7 @@ bool GraphModelBase::connect(int source, int sourceIndex, int destination, int d
 
     connect_(edge);
 
-    Q_EMIT(nodes()->dataChanged(nodes()->index(destination), nodes()->index(destination)));
+    Q_EMIT(nodes()->dataChanged(nodes()->index(indexByName(destination)), nodes()->index(indexByName(destination))));
     return true;
 }
 

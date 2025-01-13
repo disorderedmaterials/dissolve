@@ -11,6 +11,7 @@ Pane {
     property variant edgeModel
     property variant nodeModel
     property variant rootModel
+    property var nameLookup: ({})
 
     // Edge connections
     Repeater {
@@ -23,18 +24,18 @@ Pane {
                 /* strokeStyle: ShapePath.DashLine */
                 dashPattern: [1, 4]
                 fillColor: "transparent"
-                startX: nodeRepeater.itemAt(source).startX
-                startY: nodeRepeater.itemAt(source).midY
+                startX: nodeRepeater.itemAt(nameLookup[source]).startX
+                startY: nodeRepeater.itemAt(nameLookup[source]).midY
                 strokeColor: "black"
                 strokeWidth: 4
 
                 PathCubic {
-                    control1X: nodeRepeater.itemAt(source).startX + curveOffset
-                    control1Y: nodeRepeater.itemAt(source).midY
+                    control1X: nodeRepeater.itemAt(nameLookup[source]).startX + curveOffset
+                    control1Y: nodeRepeater.itemAt(nameLookup[source]).midY
                     control2X: x - curveOffset
                     control2Y: y
-                    x: nodeRepeater.itemAt(destination).endX
-                    y: destIndex == 0 ? nodeRepeater.itemAt(destination).midY : nodeRepeater.itemAt(destination).midY2
+                    x: nodeRepeater.itemAt(nameLookup[destination]).endX
+                    y: destIndex == 0 ? nodeRepeater.itemAt(nameLookup[destination]).midY : nodeRepeater.itemAt(nameLookup[destination]).midY2
                 }
             }
         }
@@ -45,5 +46,8 @@ Pane {
         id: nodeRepeater
         delegate: graphRoot.delegate
         model: nodeModel
+        onItemAdded: function(index, item) {
+            nameLookup[item.nodeType] = index;
+        }
     }
 }

@@ -37,7 +37,7 @@ bool GraphEdgeModel::dropEdge(GraphRawEdge &edge)
 }
 
 // Create a new edge
-void GraphEdgeModel::addEdge(int source, int sourceIndex, int destination, int destinationIndex)
+void GraphEdgeModel::addEdge(std::string source, int sourceIndex, std::string destination, int destinationIndex)
 {
     GraphRawEdge edge{source, sourceIndex, destination, destinationIndex};
     addEdge(edge);
@@ -71,11 +71,11 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
     switch (role - Qt::UserRole)
     {
         case 0:
-            return edge.source;
+            return QString(edge.source.c_str());
         case 1:
             return edge.sourceIndex;
         case 2:
-            return edge.destination;
+            return QString(edge.destination.c_str());
         case 3:
             return edge.destinationIndex;
         default:

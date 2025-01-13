@@ -22,8 +22,10 @@ TEST(GraphModelTest, ExampleGraphModel)
     EXPECT_EQ(edges.rowCount(), 0);
 
     model.emplace_back(100, 300, 7.5);
+    model.items().back().rawValue().name = "First";
     model.emplace_back(600, 400, {});
-    model.connect(0, 0, 1, 0);
+    model.items().back().rawValue().name = "Last";
+    model.connect("First", 0, "Last", 0);
 
     EXPECT_EQ(std::get<double>(model.items()[0].rawValue().value), 7.5);
 
@@ -31,15 +33,15 @@ TEST(GraphModelTest, ExampleGraphModel)
     EXPECT_EQ(model.nEdges(), 1);
     EXPECT_EQ(edges.rowCount(), 1);
 
-    EXPECT_EQ(model.disconnect(0, 0, 1, 0), true);
+    EXPECT_EQ(model.disconnect("First", 0, "Last", 0), true);
     EXPECT_EQ(model.nEdges(), 0);
     EXPECT_EQ(edges.rowCount(), 0);
     EXPECT_EQ(nodes.rowCount(), 2);
-    model.connect(0, 0, 1, 0);
+    model.connect("First", 0, "Last", 0);
 
-    EXPECT_EQ(edges.data(nodes.index(0, 0), Qt::UserRole).toInt(), 0);
+    EXPECT_EQ(edges.data(nodes.index(0, 0), Qt::UserRole).toString(), "First");
     EXPECT_EQ(edges.data(nodes.index(0, 0), Qt::UserRole + 1).toInt(), 0);
-    EXPECT_EQ(edges.data(nodes.index(0, 0), Qt::UserRole + 2).toInt(), 1);
+    EXPECT_EQ(edges.data(nodes.index(0, 0), Qt::UserRole + 2).toString(), "Last");
     EXPECT_EQ(edges.data(nodes.index(0, 0), Qt::UserRole + 3).toInt(), 0);
 
     EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 1).toInt(), 100);
@@ -54,7 +56,7 @@ TEST(GraphModelTest, ExampleGraphModel)
     EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 4).toString(), "qrc:/Dissolve/icons/cross.svg");
     EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 5).toDouble(), 7.5);
 
-    model.deleteNode(1);
+    model.deleteNode("Last");
     EXPECT_EQ(nodes.rowCount(), 1);
     EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 1).toInt(), 100);
     EXPECT_EQ(nodes.data(nodes.index(0, 0), Qt::UserRole + 2).toInt(), 300);

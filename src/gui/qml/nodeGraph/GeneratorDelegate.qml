@@ -100,9 +100,6 @@ Item {
                         id: root
                         text: "name"
                     }
-                    Text {
-                        text: temperature
-                    }
                 }
             }
         }

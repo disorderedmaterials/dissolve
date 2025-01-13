@@ -33,6 +33,8 @@ class GraphModelBase : public QObject
 
     protected:
     GraphEdgeModel edges_;
+    // Get index of name
+    virtual int indexByName(std::string name) { return -1; }
 
     private:
     // Check whether a given source and destination can be connected
@@ -49,9 +51,9 @@ class GraphModelBase : public QObject
     // Add a new node at a specific location
     virtual void emplace_back(int x, int y, QVariant value) {}
     // Remove a node
-    virtual void deleteNode(int index) {}
+    virtual void deleteNode(std::string index) {}
     // public wrapper of connect_
-    bool connect(int source, int sourceIndex, int destination, int destinationIndex);
+    bool connect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
     // Public wrapper of disconnect_
-    bool disconnect(int source, int sourceIndex, int destination, int destinationIndex);
+    bool disconnect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
 };

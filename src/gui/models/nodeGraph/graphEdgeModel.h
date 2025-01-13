@@ -12,11 +12,11 @@
 struct GraphRawEdge
 {
     // The node index of the source node
-    int source;
+    std::string source;
     // The index of the specific data *within* the source node
     int sourceIndex;
     // The node index of the destination node
-    int destination;
+    std::string destination;
     // The index of the specific data *within* the destination node
     int destinationIndex;
     // Equality comparison (we get these for free in C++20
@@ -40,10 +40,10 @@ class GraphEdgeModel : public QAbstractListModel
     bool dropEdge(GraphRawEdge &edge);
 
     // Create a new edge
-    void addEdge(int source, int sourceIndex, int destination, int destinationIndex);
+    void addEdge(std::string source, int sourceIndex, std::string destination, int destinationIndex);
 
     // Get all edges connected to a node
-    std::vector<GraphRawEdge> connectedTo(std::size_t index)
+    std::vector<GraphRawEdge> connectedTo(std::string index)
     {
         std::vector<GraphRawEdge> result;
         std::copy_if(edgeCache_.begin(), edgeCache_.end(), std::back_inserter(result),
@@ -51,18 +51,11 @@ class GraphEdgeModel : public QAbstractListModel
         return result;
     }
 
-    std::vector<GraphRawEdge> deleteNode(std::size_t index)
+    std::vector<GraphRawEdge> deleteNode(std::string index)
     {
         auto result = connectedTo(index);
         for (auto &edge : result)
             dropEdge(edge);
-        for (auto &edge : edgeCache_)
-        {
-            if (edge.source > index)
-                edge.source--;
-            if (edge.destination > index)
-                edge.destination--;
-        }
         return result;
     }
 

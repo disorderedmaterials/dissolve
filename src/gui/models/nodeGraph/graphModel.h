@@ -8,6 +8,7 @@
 #include "gui/models/nodeGraph/graphNodeModel.h"
 #include "nodeWrapper.h"
 #include <QAbstractListModel>
+#include <algorithm>
 #include <qtmetamacros.h>
 #include <variant>
 #include <vector>
@@ -45,6 +46,12 @@ template <typename T> class GraphModel : public GraphModelBase
     typename GraphNodeContext<T>::type context_;
     // The nodes in the model
     std::vector<NodeWrapper<T>> items_;
+    // Get index of name
+    int indexByName(std::string name) override
+    {
+        auto it = std::find_if(items_.begin(), items_.end(), [&name](auto item) { return nodeName(item.rawValue()) == name; });
+        return it - items_.begin();
+    }
 
     public:
     // Access the acutal nodes in the model
@@ -69,7 +76,7 @@ template <typename T> class GraphModel : public GraphModelBase
     }
 
     // Remove a node
-    void deleteNode(int index) override
+    void deleteNode(std::string index) override
     {
         // List of edges to remove
         auto deadEdges = edges_.deleteNode(index);
@@ -77,13 +84,14 @@ template <typename T> class GraphModel : public GraphModelBase
         for (auto &edge : deadEdges)
         {
             if (edge.source == index)
-                Q_EMIT(nodes_.dataChanged(nodes_.index(edge.destination), nodes_.index(edge.destination)));
+                Q_EMIT(nodes_.dataChanged(nodes_.index(indexByName(edge.destination)),
+                                          nodes_.index(indexByName(edge.destination))));
             disconnect_(edge);
         }
 
-        nodes_.beginRemoveRows({}, index, index);
-        if (nodeDelete((items_.begin() + index)->rawValue(), context_))
-            items_.erase(items_.begin() + index);
+        nodes_.beginRemoveRows({}, indexByName(index), indexByName(index));
+        if (nodeDelete((items_.begin() + indexByName(index))->rawValue(), context_))
+            items_.erase(items_.begin() + indexByName(index));
         nodes_.endRemoveRows();
         graphChanged();
     }
@@ -91,23 +99,23 @@ template <typename T> class GraphModel : public GraphModelBase
     // Create a connection.  Returns true if the connection was made
     bool connect_(GraphRawEdge &edge) override
     {
-        return nodeConnect(items_[edge.source].rawValue(), edge.sourceIndex, items_[edge.destination].rawValue(),
-                           edge.destinationIndex);
+        return nodeConnect(items_[indexByName(edge.source)].rawValue(), edge.sourceIndex,
+                           items_[indexByName(edge.destination)].rawValue(), edge.destinationIndex);
     }
 
     // Remove a connection.  Returns true if the edge was successfully
     // removed.
     bool disconnect_(GraphRawEdge &edge) override
     {
-        return nodeDisconnect(items_[edge.source].rawValue(), edge.sourceIndex, items_[edge.destination].rawValue(),
-                              edge.destinationIndex);
+        return nodeDisconnect(items_[indexByName(edge.source)].rawValue(), edge.sourceIndex,
+                              items_[indexByName(edge.destination)].rawValue(), edge.destinationIndex);
     }
 
     // Determine if two nodes can be connected in the desired way
     bool isValidEdgeSource_(GraphRawEdge &edge) override
     {
-        return nodeConnectable(items_[edge.source].rawValue(), edge.sourceIndex, items_[edge.destination].rawValue(),
-                               edge.destinationIndex);
+        return nodeConnectable(items_[indexByName(edge.source)].rawValue(), edge.sourceIndex,
+                               items_[indexByName(edge.destination)].rawValue(), edge.destinationIndex);
     }
 
     protected:
