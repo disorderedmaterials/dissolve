@@ -3,6 +3,7 @@
 
 #include "expression/binary.h"
 #include "math/mathFunc.h"
+#include <cmath>
 
 ExpressionBinaryOperatorNode::ExpressionBinaryOperatorNode(BinaryOperator op) : ExpressionNode(), operator_(op) {}
 
