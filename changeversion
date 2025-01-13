@@ -171,25 +171,18 @@ ConsistencyCheck() {
   exit $(( RETURN ))
 }
 
-GetReferenceTag() {
-  BRANCH=$(git rev-parse --abbrev-ref HEAD)
-  if [ "${BRANCH}" == "develop" ]
-  then
-    echo "latest-release-point"
-  else
-    echo "latest"
-  fi
-}
-
 PrintUsage() {
   echo "Usage:  $0 [-v] [-k] [-t] [-q] [-r X.Y.Z] [-s X.Y.Z]"
   echo "        -r  Explicitly set release version and date in README.md"
   echo "        -s  Set version explicitly to X.Y.Z"
   echo "        -v  Get authoritative code version (from src/main/version.cpp)"
+  echo "        -x  Get authoritative code version (from src/main/version.cpp) with patch version as X"
   echo "        -k  Check consistency of other files with current authoritative version"
   echo "        -q  Determine bumped version using git-cliff"
+  echo "        -t  Determine type (major, minor, patch, or none) of bumped version using git-cliff"
   echo "        -b  Determine bumped version using git-cliff and set new authoritative version"
-  echo "        -l  Determine bumped version using git-cliff and generate ChangeLog.md"
+  echo "        -l  Generate ChangeLog.md containing unreleased changes since last major/minor/patch release"
+  echo "        -L  Generate ChangeLog.md over the current branch history"
 }
 
 # Check for no args provided
@@ -199,7 +192,7 @@ then
   exit 1
 fi
 
-while getopts ":r:s:vkqb" opt
+while getopts "r:s:vkqblLxt" opt
 do
   case $opt in
     s) PARTS=($(echo $OPTARG | tr "." " "))
@@ -219,48 +212,50 @@ do
        SetReadMeInfo $OPTARG
        GetReadMeInfo
        ;;
-    q) REFTAG=$(GetReferenceTag)
-       if [ $(git tag -l ${REFTAG}) ]
-       then
-         git cliff --bumped-version ${REFTAG}..HEAD
-       else
-         echo "Error: Reference tag '${REFTAG}' does not exist on branch $(git rev-parse --abbrev-ref HEAD)."
-         exit 1
-       fi
+    q) git cliff --bumped-version
        ;;
-    b) REFTAG=$(GetReferenceTag)
-       if [ $(git tag -l ${REFTAG}) ]
+    b) BUMPED=$(git cliff --bumped-version)
+       if [ "${BUMPED}x" == "x" ]
        then
-         BUMPED=$(git cliff --bumped-version ${REFTAG}..HEAD)
-         if [ "${BUMPED}x" == "x" ]
-         then
-           echo "Error: Failed to auto-bump version."
-           exit 1
-	  fi
-       else
-         echo "Error: Reference tag '${REFTAG}' does not exist on branch $(git rev-parse --abbrev-ref HEAD)."
+         echo "Error: Failed to auto-bump version."
          exit 1
        fi
        SetCodeVersion ${BUMPED}
        SetWebReleaseInfo ${BUMPED}
        ;;
-    l) BRANCH=$(git rev-parse --abbrev-ref HEAD)
-       if [ "$BRANCH" == "develop" ]
-       then
-         git cliff --bump latest-release-point..HEAD -o ChangeLog.md
-       else
-         git cliff --bump latest..HEAD -o ChangeLog.md
-       fi
-       PARTS=($(echo $BUMPED | tr "." " "))
-       MAJOR=${PARTS[0]}
-       MINOR=${PARTS[1]}
-       PATCH=${PARTS[2]}
-       echo "Version auto-bumped to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
+    l) git cliff --bump -u
+       ;;
+    L) git cliff --bump
        ;;
     v) GetAuthoritativeVersion
        exit 0
        ;;
+    x) CURRENT=$(GetAuthoritativeVersion)
+       PARTS=($(echo $CURRENT | tr "." " "))
+       MAJOR=${PARTS[0]}
+       MINOR=${PARTS[1]}
+       echo "${MAJOR}.${MINOR}.X"
+       exit 0
+       ;;
     k) ConsistencyCheck
+       ;;
+    t) CURRENT=$(GetAuthoritativeVersion)
+       CURRENT_PARTS=($(echo $CURRENT | tr "." " "))
+       BUMPED=$(git cliff --bumped-version)
+       BUMPED_PARTS=($(echo $BUMPED | tr "." " "))
+       if [ "${CURRENT_PARTS[0]}" != "${BUMPED_PARTS[0]}" ]
+       then
+         echo "major"
+       elif [ "${CURRENT_PARTS[1]}" != "${BUMPED_PARTS[1]}" ]
+       then
+         echo "minor"
+       elif [ "${CURRENT_PARTS[2]}" != "${BUMPED_PARTS[2]}" ]
+       then
+         echo "patch"
+       else
+         echo "none"
+       fi
+       exit 0
        ;;
    \?) PrintUsage
        exit 1
