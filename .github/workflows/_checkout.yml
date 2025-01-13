@@ -1,0 +1,155 @@
+name: Checkout
+description: Checks out the source and packages the source as an artifact for use by other workflow steps. Reversioning of the source to a git-cliff bumped version is performed if the "bump" flag is set. Tags are created / moved according to the value of 'publishType'.
+
+on:
+  workflow_call:
+    inputs:
+      publishType:
+        default: 'none'
+        type: string
+      checkoutRef:
+        default: ''
+        type: string
+      bump:
+        default: false
+        type: boolean
+    outputs:
+      currentVersion:
+        description: "Full version (MAJOR.MINOR.PATCH) determined from source, and after any reversioning"
+        value: ${{ jobs.Checkout.outputs.currentVersion }}
+      currentVersionMajor:
+        description: "MAJOR version determined from source, and after any reversioning"
+        value: ${{ jobs.Checkout.outputs.currentVersionMajor }}
+      currentVersionMinor:
+        description: "MINOR version determined from source, and after any reversioning"
+        value: ${{ jobs.Checkout.outputs.currentVersionMinor }}
+      currentVersionPatch:
+        description: "PATCH version determined from source, and after any reversioning"
+        value: ${{ jobs.Checkout.outputs.currentVersionPatch }}
+      currentShortHash:
+        description: "Short hash of the current HEAD commit"
+        value: ${{ jobs.Checkout.outputs.currentShortHash }}
+
+jobs:
+
+  Checkout:
+    runs-on: ubuntu-latest
+    outputs:
+      currentVersion: ${{ steps.authVersion.outputs.currentVersion }}
+      currentVersionMajor: ${{ steps.authVersion.outputs.currentVersionMajor }}
+      currentVersionMinor: ${{ steps.authVersion.outputs.currentVersionMinor }}
+      currentVersionPatch: ${{ steps.authVersion.outputs.currentVersionPatch }}
+      currentShortHash: ${{ steps.authVersion.outputs.currentShortHash }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.checkoutRef }}
+          fetch-depth: 0
+
+      - name: Get Cliff
+        uses: "./.github/workflows/get-cliff"
+
+      - name: Generate ChangeLog.md
+        shell: bash
+        run: |
+          set -ex
+          ./changeversion -l > ChangeLog.md
+
+      - name: Bump Version
+        if: inputs.bump == true
+        shell: bash
+        run: |
+          set -ex
+          ./changeversion -b
+          ./changeversion -k
+
+      - name: Tag Continuous
+        if: inputs.publishType == 'continuous'
+        shell: bash
+        run: |
+           set -ex
+
+           # Move 'continuous' tag to the current HEAD
+           if [ $(git tag -l continuous) ]
+           then
+             echo "Tag 'continuous' exists and will be moved."
+             git tag --delete continuous
+           else
+             echo "Tag 'continuous' doesn't yet exist - it will be created."
+           fi
+           git tag continuous ${{ github.event.pull_request.merge_commit_sha }}
+           git show continuous
+           git push origin -f continuous
+
+      - name: Tag Release
+        if: inputs.publishType == 'release'
+        shell: bash
+        run: |
+           set -ex
+
+           # Get authoritative version at this point
+           CURRENT=$(./changeversion -v)
+           echo "Current version determined to be ${CURRENT}"
+
+           BUMPED=$(./changeversion -q)
+           echo "Bumped version determined to be ${BUMPED}"
+
+           # If the current and bumped versions differ then there is an issue...
+           if [ ${BUMPED} != ${CURRENT} ]
+           then
+             echo "Error: Current and bumped versions are different. Is this a valid release branch / point? Stopping here."
+             exit 1
+           fi
+
+           # Create the new version tag
+           if [ $(git tag -l ${BUMPED}) ]
+           then
+             echo "Error: Version tag ${BUMPED} alread exists."
+             exit 1
+           fi
+           git tag ${BUMPED} ${{ github.event.pull_request.merge_commit_sha }}
+           git show ${BUMPED}
+           git push origin ${BUMPED}
+
+      - name: Create / Check Release Root Branch
+        if: inputs.publishType == 'release'
+        shell: bash
+        run: |
+           set -ex
+
+           # Get the root release branch name - version as MAJOR.MINOR.X
+           BRANCH="release/$(./changeversion -x)"
+
+           # Create root release branch if it doesn't already exist
+           if git rev-parse --verify ${BRANCH} 2>/dev/null
+           then
+             echo "Release branch ${BRANCH} already exists."
+           else
+             git config user.name "${{ env.USER }}"
+             git config user.email "${{ env.EMAIL }}"
+             git checkout -b ${BRANCH}
+
+             git push --set-upstream origin ${BRANCH}
+           fi
+
+      - name: Get Authoritative Version Information
+        id: authVersion
+        shell: bash
+        run: |
+           set -ex
+           CURRENT=$(./changeversion -v)
+           echo "currentVersion=${CURRENT}" >> $GITHUB_OUTPUT
+           PARTS=($(echo ${CURRENT} | tr "." " "))
+           echo "currentVersionMajor=${PARTS[0]}" >> $GITHUB_OUTPUT
+           echo "currentVersionMinor=${PARTS[1]}" >> $GITHUB_OUTPUT
+           echo "currentVersionPatch=${PARTS[2]}" >> $GITHUB_OUTPUT
+           echo "currentShortHash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Create Versioned Source Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: versioned-source
+          path: ${{ github.workspace }}
+          include-hidden-files: true
+          retention-days: 1

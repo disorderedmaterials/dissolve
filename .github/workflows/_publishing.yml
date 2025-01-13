@@ -6,6 +6,22 @@ on:
       publishType:
         required: true
         type: string
+        description: "Publishing type"
+      releaseName:
+        type: string
+        description: "Name of the release as it will appear on GitHub"
+      releaseBody:
+        type: string
+        default: ''
+        description: "Body text of the release as it will appear on GitHub"
+      releaseBodyFile:
+        type: string
+        default: ''
+        description: "Body file to use for body text, used in preference to releaseBody if provided"
+      releaseTag:
+        type: string
+        default: ''
+        description: "Existing tag which the release will be associated to on GitHub"
     secrets:
       HARBOR_USER:
         description: "Username for Harbor access"
@@ -17,21 +33,22 @@ jobs:
   Publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup
-        uses: "./.github/workflows/setup"
+      - name: Download Versioned Source
+        uses: actions/download-artifact@v4
+        with:
+          name: versioned-source
+
       - name: Set Short Hash
         uses: "./.github/workflows/set-short-hash"
+
       - name: Publish
         uses: "./.github/workflows/publish"
         with:
           publishType: ${{ inputs.publishType }}
+          releaseTag: ${{ inputs.releaseTag }}
+          releaseName: ${{ inputs.releaseName }}
+          releaseBody: ${{ inputs.releaseBody }}
+          releaseBodyFile: ${{ inputs.releaseBodyFile }}
         env:
           HARBOR_USER: ${{ secrets.HARBOR_USER }}
           HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
-      - name: Submit PR with Updated Version Information
-        uses: "./.github/workflows/set-latest-release-point"
-        if: ${{ inputs.publishType == 'release' }}
-        with:
-          releaseVersion: ${{ env.dissolveVersion }}

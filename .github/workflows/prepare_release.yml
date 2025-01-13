@@ -1,0 +1,110 @@
+name: Prepare Release
+description: A purely workflow dispatch action that should be run on a branch containing some sort of versioned history, the top commits of which are to be included in a version-bumped release.
+
+on:
+  workflow_dispatch:
+    inputs:
+      cacheOnly:
+        type: boolean
+        default: false
+
+jobs:
+
+  PrepareRelease:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache Rust
+        uses: actions/cache@v4
+        id: rust-cache
+        with:
+          path: ~/.cargo
+          key: ${{ runner.os }}-rust-cache
+
+      - name: Install Prerequisites
+        shell: bash
+        run: |
+          set -ex
+          rustup default
+          cargo install git-cliff
+
+      - name: Zero Change Check
+        if: ${{ inputs.cacheOnly != 'true' }}
+        shell: bash
+        run: |
+          set -ex
+          if [ "$(./changeversion -t)" == "none" ]
+          then
+            echo "::error::Current and bumped versions are the same - no changes have been made, and no release will be generated."
+            exit 1
+          fi
+
+      - name: Check Patch on Develop
+        if: inputs.cacheOnly != 'true' && github.ref == 'refs/heads/develop'
+        shell: bash
+        run: |
+          set -ex
+          if [ "$(./changeversion -t)" == "patch" ]
+          then
+            echo "::error::Patch versions can't be released on the develop branch."
+            exit 1
+          fi
+
+      - name: Check No Patch on Release
+        if: inputs.cacheOnly != 'true' && startsWith(github.ref, 'refs/heads/release/')
+        shell: bash
+        run: |
+          set -ex
+          if [ "$(./changeversion -t)" != "patch" ]
+          then
+            echo "::error::Can't release a major / minor version on an existing release branch."
+            exit 1
+          fi
+
+      - name: Determine Current Version
+        if: ${{ inputs.cacheOnly != 'true' }}
+        id: prep
+        shell: bash
+        run: |
+          set -ex
+
+          # Get the current authoritative version from the code. On develop this will
+          # be the same as the last released version.
+          CURRENT=$(./changeversion -v)
+          echo "Current version determined to be ${CURRENT}"
+
+          # Get the next bumped version
+          BUMPED=$(./changeversion -q)
+          echo "Bumped version determined to be ${BUMPED}"
+          echo "version=${BUMPED}" >> "$GITHUB_OUTPUT"
+
+          # Get name for PR branch
+          BRANCH="make-release/${BUMPED}"
+          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
+          if git show-ref --quiet refs/heads/${BRANCH}
+          then
+            echo "::error::PR branch ${BRANCH} already exists!"
+            exit 1
+          fi
+
+          # Before we change the version we generate the ChangeLog.md inathe  temp dir so we don't commit it
+          ./changeversion -l > ${{ runner.temp }}/ChangeLog.md
+
+          # Set new version, check authoritative, and check consistency
+          ./changeversion -b
+          ./changeversion -v
+          ./changeversion -k
+
+      - name: Create Update PR
+        if: ${{ inputs.cacheOnly != 'true' }}
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: ${{ steps.prep.outputs.branch }}
+          title: "[Release] ${{ steps.prep.outputs.version }}"
+          body-path: ${{ runner.temp }}/ChangeLog.md
+          reviewers: trisyoungs
+          sign-commits: true
