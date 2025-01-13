@@ -61,15 +61,15 @@ class PairPotentialsAnalyticTest : public ::testing::Test
     void testEnergy(Functions1D::Form form, std::string_view parameters, double rStart = testRDelta_)
     {
         test(
-            form, parameters, rStart, [=](double r) { return pairPotential_->analyticEnergy(r, 1.0, 1.0); },
-            [=](double r) { return pairPotential_->energy(r); });
+            form, parameters, rStart, [this](double r) { return pairPotential_->analyticEnergy(r, 1.0, 1.0); },
+            [this](double r) { return pairPotential_->energy(r); });
     }
     // Test analytic vs tabulated force for specified form and parameters
     void testForce(Functions1D::Form form, std::string_view parameters, double rStart = testRDelta_)
     {
         test(
-            form, parameters, rStart, [=](double r) { return pairPotential_->analyticForce(r, 1.0, 1.0); },
-            [=](double r) { return pairPotential_->force(r); });
+            form, parameters, rStart, [this](double r) { return pairPotential_->analyticForce(r, 1.0, 1.0); },
+            [this](double r) { return pairPotential_->force(r); });
     }
 };
 
