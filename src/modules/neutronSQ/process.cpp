@@ -55,9 +55,9 @@ bool NeutronSQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Key
             switch (referenceNormalisedTo_)
             {
                 case (StructureFactors::NoNormalisation):
-                    factor = 1.0 / normaliseTo_ == StructureFactors::SquareOfAverageNormalisation
-                                 ? weights.boundCoherentSquareOfAverage()
-                                 : weights.boundCoherentAverageOfSquares();
+                    factor = 1.0 / (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation
+                                        ? weights.boundCoherentSquareOfAverage()
+                                        : weights.boundCoherentAverageOfSquares());
                     break;
                 case (StructureFactors::SquareOfAverageNormalisation):
                     factor = weights.boundCoherentSquareOfAverage();
