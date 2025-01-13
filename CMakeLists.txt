@@ -178,7 +178,7 @@ if(UNIX)
     set(gui_target_name dissolve-gui)
     set(qmlgui_target_name dissolve-gui-qml)
   endif(PARALLEL)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -fconcepts-diagnostics-depth=2")
 endif(UNIX)
 
 # -- OSX
