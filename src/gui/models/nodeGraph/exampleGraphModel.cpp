@@ -69,21 +69,21 @@ std::string nodeName(const nodeValue &value) { return value.name; }
 void setNodeName(nodeValue &value, const std::string name) { value.name = name; }
 
 // Link an indexed position on the source to an indexed position on the destination
-template <> bool nodeConnect<nodeValue>(nodeValue &source, int sourceIndex, nodeValue &destionation, int destinationIndex)
+bool nodeConnect(nodeValue &source, int sourceIndex, nodeValue &destionation, int destinationIndex)
 {
     destionation.value = &source;
     return true;
 }
 
 // Confirm that a connection is possible (e.g. types match and index isn't already connected)
-template <>
-bool nodeConnectable<nodeValue>(const nodeValue &source, int sourceIndex, const nodeValue &destination, int destinationIndex)
+
+bool nodeConnectable(const nodeValue &source, int sourceIndex, const nodeValue &destination, int destinationIndex)
 {
     return std::holds_alternative<double>(source.value) && std::holds_alternative<nodeValue *>(destination.value);
 }
 
 // Unlink an indexed position on the source to an indexed position on the destination
-template <> bool nodeDisconnect<nodeValue>(nodeValue &source, int sourceIndex, nodeValue &destination, int destinationIndex)
+bool nodeDisconnect(nodeValue &source, int sourceIndex, nodeValue &destination, int destinationIndex)
 {
     destination.value = nullptr;
     return true;

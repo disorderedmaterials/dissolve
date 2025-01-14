@@ -16,3 +16,7 @@ template <> struct GraphNodeContext<Configuration *>
 std::string nodeName(Configuration *const &value);
 std::string nodeTypeName(Configuration *const &value);
 std::string nodeTypeIcon(Configuration *const &value);
+
+bool nodeConnect(Configuration *&source, int sourceIndex, Configuration *&destionation, int destinationIndex);
+bool nodeConnectable(const Configuration *&source, int sourceIndex, const Configuration *&destination, int destinationIndex);
+bool nodeDisconnect(Configuration *&source, int sourceIndex, Configuration *&destination, int destinationIndex);

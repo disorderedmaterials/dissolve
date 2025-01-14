@@ -29,25 +29,20 @@ std::string nodeTypeName(const GeneratorGraphNode &value)
 }
 
 // Link an indexed position on the source to an indexed position on the destination
-template <>
-bool nodeConnect<GeneratorGraphNode>(GeneratorGraphNode &source, int sourceIndex, GeneratorGraphNode &destination,
-                                     int destinationIndex)
+bool nodeConnect(GeneratorGraphNode &source, int sourceIndex, GeneratorGraphNode &destination, int destinationIndex)
 {
     return false;
 }
 
 // Confirm that a connection is possible (e.g. types match and index isn't already connected)
-template <>
-bool nodeConnectable<GeneratorGraphNode>(const GeneratorGraphNode &source, int sourceIndex,
-                                         const GeneratorGraphNode &destination, int destinationIndex)
+bool nodeConnectable(const GeneratorGraphNode &source, int sourceIndex, const GeneratorGraphNode &destination,
+                     int destinationIndex)
 {
     return false;
 }
 
 // Unlink an indexed position on the source to an indexed position on the destination
-template <>
-bool nodeDisconnect<GeneratorGraphNode>(GeneratorGraphNode &source, int sourceIndex, GeneratorGraphNode &destination,
-                                        int destinationIndex)
+bool nodeDisconnect(GeneratorGraphNode &source, int sourceIndex, GeneratorGraphNode &destination, int destinationIndex)
 {
     return true;
 }

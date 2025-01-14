@@ -34,6 +34,9 @@ std::string nodeTypeName(const nodeValue &value);
 std::string nodeTypeIcon(const nodeValue &value);
 void setNodeName(nodeValue &value, std::string);
 QVariant nodeGetValue(const nodeValue &value);
+bool nodeConnect(nodeValue &source, int sourceIndex, nodeValue &destionation, int destinationIndex);
+bool nodeConnectable(const nodeValue &source, int sourceIndex, const nodeValue &destination, int destinationIndex);
+bool nodeDisconnect(nodeValue &source, int sourceIndex, nodeValue &destination, int destinationIndex);
 
 // The graph model for the example
 typedef GraphModel<nodeValue> ExampleGraphModel;

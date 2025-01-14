@@ -31,3 +31,6 @@ std::string nodeTypeName(const GeneratorGraphNode &value);
 std::string nodeTypeIcon(const GeneratorGraphNode &value);
 void setNodeName(GeneratorGraphNode &value, std::string);
 QVariant nodeGetValue(const GeneratorGraphNode &value);
+bool nodeConnect(GeneratorGraphNode &source, int sourceIndex, GeneratorGraphNode &destionation, int destinationIndex);
+bool nodeConnectable(const GeneratorGraphNode &source, int sourceIndex, const GeneratorGraphNode &destination, int destinationIndex);
+bool nodeDisconnect(GeneratorGraphNode &source, int sourceIndex, GeneratorGraphNode &destination, int destinationIndex);

@@ -3,10 +3,10 @@
 
 #pragma once
 
+#include "gui/models/nodeGraph/instances/all.h"
 #include <QAbstractListModel>
 #include <concepts>
 #include <variant>
-#include "gui/models/nodeGraph/instances/all.h"
 
 /**
    This file contains a series of templates that need to be overloaded
@@ -29,24 +29,35 @@
 
 // Append the roles for the type onto the QHash
 template <typename T> QHash<int, QByteArray> &nodeRoleNames(QHash<int, QByteArray> &base);
-// The path to the icon for the node
-template <typename T> std::string nodeTypeIcon(const T &value);
 // Delete the node
 template <typename T> bool nodeDelete(T &value, typename GraphNodeContext<T>::type &context);
-// Link an indexed position on the source to an indexed position on the destination
-template <typename T> bool nodeConnect(T &source, int sourceIndex, T &destination, int destinationIndex);
-// Confirm that a connection is possible (e.g. types match and index isn't already connected)
-template <typename T> bool nodeConnectable(const T &source, int sourceIndex, const T &destination, int destinationIndex);
-// Unlink an indexed position on the source to an indexed position on the destination
-template <typename T> bool nodeDisconnect(T &source, int sourceIndex, T &destination, int destinationIndex);
 
 template <typename T>
-concept Graphable = requires(T a, const std::string name) {
-  { nodeName(a) } -> std::same_as<std::string>;
-  { nodeTypeName(a) } -> std::same_as<std::string>;
-  { nodeTypeIcon(a) } -> std::same_as<std::string>;
-  { setNodeName(a, name) };
-  { nodeGetValue(a) } -> std::same_as<QVariant>;
+concept Graphable = requires(T a, const std::string name, T b, int sourceIndex, int destinationIndex) {
+    {
+        nodeName(a)
+    } -> std::same_as<std::string>;
+    {
+        nodeTypeName(a)
+    } -> std::same_as<std::string>;
+    {
+        nodeTypeIcon(a)
+    } -> std::same_as<std::string>;
+    {
+        setNodeName(a, name)
+    };
+    {
+        nodeGetValue(a)
+    } -> std::same_as<QVariant>;
+    {
+        nodeConnect(a, sourceIndex, b, destinationIndex)
+    } -> std::same_as<bool>;
+    {
+        nodeConnectable(a, sourceIndex, b, destinationIndex)
+    } -> std::same_as<bool>;
+    {
+        nodeDisconnect(a, sourceIndex, b, destinationIndex)
+    } -> std::same_as<bool>;
 };
 
 // A wrapper with supplemental information for a node
