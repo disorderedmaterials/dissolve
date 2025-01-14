@@ -32,4 +32,5 @@ runs:
         Get-ChildItem
         Write-Output "$(Join-Path -Path ${{ github.workspace }} -ChildPath "msvc-env\Scripts" )"
         cl
-        where.exe conan
+        cd msvc-env/Scripts
+        Get-ChildItem
