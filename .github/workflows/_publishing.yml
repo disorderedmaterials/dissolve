@@ -36,9 +36,6 @@ jobs:
     - name: Setup
       uses: "./.github/workflows/setup"
 
-    - name: Set Short Hash
-      uses: "./.github/workflows/set-short-hash"
-
     - name: Publish
       uses: "./.github/workflows/publish"
       with:

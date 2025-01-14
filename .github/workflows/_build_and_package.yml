@@ -20,9 +20,6 @@ jobs:
     - name: Setup
       uses: "./.github/workflows/setup"
 
-    - name: Set Short Hash
-      uses: "./.github/workflows/set-short-hash"
-
     - name: "Build (${{ matrix.os }})"
       uses: "./.github/workflows/build"
 
@@ -40,9 +37,6 @@ jobs:
 
     - name: Setup
       uses: "./.github/workflows/setup"
-
-    - name: Set Short Hash
-      uses: "./.github/workflows/set-short-hash"
 
     - name: "Build, Test, Package (Linux, ${{ matrix.target }})"
       uses: "./.github/workflows/build"

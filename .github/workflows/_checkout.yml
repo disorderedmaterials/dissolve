@@ -47,6 +47,15 @@ jobs:
           ref: ${{ inputs.checkoutRef }}
           fetch-depth: 0
 
+      - name: Set Short Hash
+        shell: bash
+        run: |
+          set -ex
+          SHORT_HASH=$(git rev-parse --short HEAD)
+          echo "Current short hash is ${SHORT_HASH}"
+          sed -i -e "s/DISSOLVESHORTHASH \".*\"/DISSOLVESHORTHASH \"${SHORT_HASH}\"/g" src/main/version.cpp
+          cat src/main/version.cpp
+
       - name: Get Cliff
         uses: "./.github/workflows/get-cliff"
 
