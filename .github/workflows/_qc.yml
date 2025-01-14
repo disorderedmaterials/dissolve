@@ -5,7 +5,7 @@ on:
 
 jobs:
 
-  QC:
+  Formatting:
     runs-on: ubuntu-latest
     steps:
     - name: Download Versioned Source
