@@ -9,3 +9,7 @@ template <typename T> struct GraphNodeContext
 {
     using type = GraphNodeContext<void>;
 };
+
+template <typename T> struct Proxy
+{
+};

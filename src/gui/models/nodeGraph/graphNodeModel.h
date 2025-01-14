@@ -43,13 +43,14 @@ template <Graphable T> class GraphNodeModel : public GraphNodeModelBase
     // Labels for QML roles (required by QAbstractListModel)
     QHash<int, QByteArray> roleNames() const override
     {
+        Proxy<T> proxy;
         QHash<int, QByteArray> roles;
         roles[Qt::UserRole] = "name";
         roles[Qt::UserRole + 1] = "posX";
         roles[Qt::UserRole + 2] = "posY";
         roles[Qt::UserRole + 3] = "type";
         roles[Qt::UserRole + 4] = "icon";
-        return nodeRoleNames<T>(roles);
+        return nodeRoleNames(proxy, roles);
     }
 
     // Data accessor (required by QAbstractListModel)

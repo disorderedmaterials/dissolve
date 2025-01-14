@@ -37,6 +37,7 @@ QVariant nodeGetValue(const nodeValue &value);
 bool nodeConnect(nodeValue &source, int sourceIndex, nodeValue &destionation, int destinationIndex);
 bool nodeConnectable(const nodeValue &source, int sourceIndex, const nodeValue &destination, int destinationIndex);
 bool nodeDisconnect(nodeValue &source, int sourceIndex, nodeValue &destination, int destinationIndex);
+QHash<int, QByteArray> &nodeRoleNames(Proxy<nodeValue> proxy, QHash<int, QByteArray> &roles);
 
 // The graph model for the example
 typedef GraphModel<nodeValue> ExampleGraphModel;

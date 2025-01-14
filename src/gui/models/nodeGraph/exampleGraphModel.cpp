@@ -90,7 +90,7 @@ bool nodeDisconnect(nodeValue &source, int sourceIndex, nodeValue &destination, 
 }
 
 // Append the roles for the type onto the QHash
-template <> QHash<int, QByteArray> &nodeRoleNames<nodeValue>(QHash<int, QByteArray> &roles)
+QHash<int, QByteArray> &nodeRoleNames(Proxy<nodeValue> proxy, QHash<int, QByteArray> &roles)
 {
     const auto base = Qt::UserRole + GraphNodeModelBase::ownedRoles;
     roles[base] = "value";

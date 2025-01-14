@@ -27,13 +27,15 @@
    suddenly become a dependency of the command line code.
  **/
 
-// Append the roles for the type onto the QHash
-template <typename T> QHash<int, QByteArray> &nodeRoleNames(QHash<int, QByteArray> &base);
 // Delete the node
 template <typename T> bool nodeDelete(T &value, typename GraphNodeContext<T>::type &context);
 
 template <typename T>
-concept Graphable = requires(T a, const std::string name, T b, int sourceIndex, int destinationIndex) {
+concept Graphable = requires(T a, const std::string name, T b, int sourceIndex, int destinationIndex, Proxy<T> proxy,
+                             QHash<int, QByteArray> &baseHash) {
+    {
+        nodeRoleNames(proxy, baseHash)
+    } -> std::same_as<QHash<int, QByteArray> &>;
     {
         nodeName(a)
     } -> std::same_as<std::string>;

@@ -77,7 +77,7 @@ template <> QVariant nodeData(const GeneratorGraphNode &item, int role)
 }
 
 // Append the roles for the type onto the QHash
-template <> QHash<int, QByteArray> &nodeRoleNames<GeneratorGraphNode>(QHash<int, QByteArray> &roles)
+QHash<int, QByteArray> &nodeRoleNames(Proxy<GeneratorGraphNode> proxy, QHash<int, QByteArray> &roles)
 {
     auto base = Qt::UserRole + GraphNodeModelBase::ownedRoles;
     using names = GeneratorGraphModel::PropertyIndex;
