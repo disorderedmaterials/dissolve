@@ -30,3 +30,5 @@ runs:
       shell: pwsh
       run: |
         Get-ChildItem
+        Write-Output "$(Join-Path -Path ${{ github.workspace }} -ChildPath "msvc-env\Scripts" )"
+        cl
