@@ -7,6 +7,11 @@ inputs:
   cacheOnly:
     type: boolean
     default: false
+  currentVersion:
+    type: string
+  nixHash:
+    type: string
+    required: true
 
 runs:
   using: "composite"
@@ -31,7 +36,7 @@ runs:
     id: nix-cache
     with:
       path: /tmp/nixcache
-      key: ${{ runner.os }}-${{ env.nixHash }}-nix-cache
+      key: ${{ runner.os }}-${{ inputs.nixHash }}-nix-cache
 
   - name: Import Nix Store Cache
     if: "steps.nix-cache.outputs.cache-hit == 'true'"
@@ -87,7 +92,7 @@ runs:
 
       # Assemble artifacts
       mkdir packages-sif
-      cp -v result packages-sif/${{ inputs.target }}-${{ env.dissolveVersion }}.sif
+      cp -v result packages-sif/${{ inputs.target }}-${{ inputs.currentVersion }}.sif
 
   - name: Bundle Executable
     shell: bash
@@ -98,7 +103,7 @@ runs:
 
       # Assemble artifacts
       mkdir packages-binary
-      cp -v binary packages-binary/${{ inputs.target }}-${{ env.dissolveVersion }}
+      cp -v binary packages-binary/${{ inputs.target }}-${{ inputs.currentVersion }}
 
   - name: Tidy nix Store
     if: ${{ inputs.cacheOnly == 'true' }}

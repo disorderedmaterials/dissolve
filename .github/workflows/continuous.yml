@@ -31,6 +31,8 @@ jobs:
   BuildAndPackage:
     needs: [Checkout]
     uses: "./.github/workflows/_build_and_package.yml"
+    with:
+      currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
 
   Web:
     needs: [Checkout]
