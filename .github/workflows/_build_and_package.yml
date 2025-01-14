@@ -20,9 +20,6 @@ on:
         type: string
         required: true
 
-runs:
-  using: "composite"
-
 jobs:
 
   Build:
