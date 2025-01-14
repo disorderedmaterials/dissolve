@@ -31,3 +31,4 @@ runs:
       run: |
         export PATH="${{ github.workspace }}\msvc-env\Scripts;$PATH"
         cmake --preset CLI-Debug-MSVC
+        cmake --build build
