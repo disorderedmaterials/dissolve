@@ -27,10 +27,7 @@ runs:
         ./develop.ps1 -systemqt
 
     - name: 'Configure and build with CMake'
-      shell: pwsh
+      shell: bash
       run: |
-        Get-ChildItem
-        Write-Output "$(Join-Path -Path ${{ github.workspace }} -ChildPath "msvc-env\Scripts" )"
-        cl
-        cd msvc-env/Scripts
-        Get-ChildItem
+        export PATH="${{ github.workspace }}\msvc-env\Scripts;$PATH"
+        cmake --preset CLI-Debug-MSVC
