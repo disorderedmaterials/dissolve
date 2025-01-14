@@ -33,10 +33,6 @@ template <typename T> QHash<int, QByteArray> &nodeRoleNames(QHash<int, QByteArra
 template <typename T> std::string nodeTypeIcon(const T &value);
 // Delete the node
 template <typename T> bool nodeDelete(T &value, typename GraphNodeContext<T>::type &context);
-// Change the title of the node
-template <typename T> void setNodeName(T &value, const std::string);
-// The value of the node
-template <typename T> QVariant nodeGetValue(const T value);
 // Link an indexed position on the source to an indexed position on the destination
 template <typename T> bool nodeConnect(T &source, int sourceIndex, T &destination, int destinationIndex);
 // Confirm that a connection is possible (e.g. types match and index isn't already connected)
@@ -45,10 +41,12 @@ template <typename T> bool nodeConnectable(const T &source, int sourceIndex, con
 template <typename T> bool nodeDisconnect(T &source, int sourceIndex, T &destination, int destinationIndex);
 
 template <typename T>
-concept Graphable = requires(T a) {
+concept Graphable = requires(T a, const std::string name) {
   { nodeName(a) } -> std::same_as<std::string>;
   { nodeTypeName(a) } -> std::same_as<std::string>;
   { nodeTypeIcon(a) } -> std::same_as<std::string>;
+  { setNodeName(a, name) };
+  { nodeGetValue(a) } -> std::same_as<QVariant>;
 };
 
 // A wrapper with supplemental information for a node

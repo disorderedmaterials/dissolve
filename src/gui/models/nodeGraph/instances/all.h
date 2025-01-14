@@ -29,3 +29,5 @@ template <> struct GraphNodeContext<GeneratorGraphNode>
 std::string nodeName(const GeneratorGraphNode &value);
 std::string nodeTypeName(const GeneratorGraphNode &value);
 std::string nodeTypeIcon(const GeneratorGraphNode &value);
+void setNodeName(GeneratorGraphNode &value, std::string);
+QVariant nodeGetValue(const GeneratorGraphNode &value);

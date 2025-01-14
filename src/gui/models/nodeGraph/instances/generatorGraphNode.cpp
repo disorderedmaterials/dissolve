@@ -65,7 +65,7 @@ std::string nodeName(const GeneratorGraphNode &value)
 }
 
 // Change the title of the node
-template <> void setNodeName<GeneratorGraphNode>(GeneratorGraphNode &value, const std::string name) {}
+void setNodeName(GeneratorGraphNode &value, const std::string name) {}
 
 // Set a specific piece of information from a node by index
 template <> bool nodeSetData<GeneratorGraphNode>(GeneratorGraphNode &item, const QVariant &value, int role)

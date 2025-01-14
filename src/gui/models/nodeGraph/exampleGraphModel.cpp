@@ -7,7 +7,7 @@
 #include <variant>
 
 // The value of the node
-template <> QVariant nodeGetValue<nodeValue>(const nodeValue value)
+QVariant nodeGetValue(const nodeValue &value)
 {
     return std::visit(
         [](auto arg) -> QVariant
@@ -19,7 +19,7 @@ template <> QVariant nodeGetValue<nodeValue>(const nodeValue value)
             else
             {
                 if (arg)
-                    return nodeGetValue<nodeValue>(*arg);
+                    return nodeGetValue(*arg);
                 return {};
             }
         },
@@ -66,7 +66,7 @@ std::string nodeTypeIcon(const nodeValue &value)
 std::string nodeName(const nodeValue &value) { return value.name; }
 
 // Change the title of the node
-template <> void setNodeName<nodeValue>(nodeValue &value, const std::string name) { value.name = name; }
+void setNodeName(nodeValue &value, const std::string name) { value.name = name; }
 
 // Link an indexed position on the source to an indexed position on the destination
 template <> bool nodeConnect<nodeValue>(nodeValue &source, int sourceIndex, nodeValue &destionation, int destinationIndex)
