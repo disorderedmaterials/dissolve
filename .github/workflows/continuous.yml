@@ -32,8 +32,22 @@ jobs:
     needs: [Checkout]
     uses: "./.github/workflows/_build_and_package.yml"
 
+  Web:
+    needs: [Checkout]
+    uses: "./.github/workflows/website"
+    with:
+      publishType: 'continuous'
+    env:
+      SERVER_ID: ${{ secrets.SERVER_ID }}
+      SERVER_KEY: ${{ secrets.SERVER_KEY }}
+      SERVER_USER: ${{ secrets.SERVER_USER }}
+      SERVER_IP: ${{ secrets.SERVER_IP }}
+      SERVER_DOCS_DIR: ${{ secrets.SERVER_DOCS_DIR }}
+      SERVER_MAIN_DIR: ${{ secrets.SERVER_MAIN_DIR }}
+      SERVER_PORT: ${{ secrets.SERVER_PORT }}
+
   Publish:
-    needs: [Checkout,BuildAndPackage]
+    needs: [Checkout,BuildAndPackage,Web]
     uses: "./.github/workflows/_publishing.yml"
     with:
       publishType: 'continuous'

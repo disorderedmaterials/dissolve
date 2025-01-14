@@ -32,3 +32,9 @@ jobs:
   BuildAndPackage:
     needs: [Checkout]
     uses: "./.github/workflows/_build_and_package.yml"
+
+  Web:
+    needs: [Checkout]
+    uses: "./.github/workflows/website"
+    with:
+      publishType: 'none'
