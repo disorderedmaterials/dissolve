@@ -12,6 +12,10 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: versioned-source
+
+    - name: Setup
+      uses: "./.github/workflows/setup"
+
     - name: Code Formatting
       uses: "./.github/workflows/qc"
 
@@ -23,6 +27,10 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: versioned-source
+
+    - name: Setup
+      uses: "./.github/workflows/setup"
+
     - name: Conventional Commits
       shell: bash
       env:

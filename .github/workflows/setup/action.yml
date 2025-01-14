@@ -1,4 +1,4 @@
-name: Basic Setup
+name: Setup Environment
 description: Set up environment variables
 
 inputs:

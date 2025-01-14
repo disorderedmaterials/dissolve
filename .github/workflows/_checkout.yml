@@ -147,9 +147,15 @@ jobs:
            echo "currentShortHash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Create Versioned Source Artifact
+        shell: bash
+        run: |
+          set -ex
+          tar -cvf ${{ runner.temp }}/versioned-source.tar ./
+          mv ${{ runner.temp }}/versioned-source.tar ./
+
+      - name: Upload Versioned Source Artifact
         uses: actions/upload-artifact@v4
         with:
           name: versioned-source
-          path: ${{ github.workspace }}
-          include-hidden-files: true
+          path: versioned-source.tar
           retention-days: 1
