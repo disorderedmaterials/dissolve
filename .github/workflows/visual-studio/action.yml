@@ -29,6 +29,7 @@ runs:
     - name: 'Configure and build with CMake'
       shell: bash
       run: |
-        export PATH="${{ github.workspace }}\msvc-env\Scripts;$PATH"
-        cmake --preset CLI-Debug-MSVC
-        cmake --build build
+        echo "$PATH"
+        #export PATH="${{ github.workspace }}\msvc-env\Scripts;$PATH"
+        #cmake --preset CLI-Debug-MSVC
+        #cmake --build build
