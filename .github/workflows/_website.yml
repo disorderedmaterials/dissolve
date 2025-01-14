@@ -44,9 +44,6 @@ jobs:
       with:
         name: versioned-source
   
-    - name: Setup
-      uses: "./.github/workflows/setup"
-  
     - name: 'Apply Main Release Styling'
       if: ${{ inputs.publishType == 'release' }}
       shell: bash
