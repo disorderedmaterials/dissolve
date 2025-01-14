@@ -28,12 +28,12 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: versioned-source
-      - name: Setup
-        uses: "./.github/workflows/setup"
-      - name: Set Short Hash
-        uses: "./.github/workflows/set-short-hash"
-      - name: "Build (${{ matrix.os }})"
-        uses: "./.github/workflows/build"
+    - name: Setup
+      uses: "./.github/workflows/setup"
+    - name: Set Short Hash
+      uses: "./.github/workflows/set-short-hash"
+    - name: "Build (${{ matrix.os }})"
+      uses: "./.github/workflows/build"
 
   BuildLinux:
     strategy:
