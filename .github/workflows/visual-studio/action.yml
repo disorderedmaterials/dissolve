@@ -26,27 +26,27 @@ runs:
         Set-Location ${{ github.workspace }}
 
         # Run installation script
-        ./develop.ps1 -systemqt
+        ./develop.ps1
         
         # Check paths are correct
         $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
         Write-Output "$systemPath"
-        $qt6Path = "dissolve\dependencies\qt\qt\${{ env.qtVersion }}\msvc2019_64"
+        $qt6Path = "dissolve\dependencies\qt\${{ env.qtVersion }}\msvc2019_64"
         $pythonEnvPath = "dissolve\dependencies\msvc-env\Scripts"
-
-        if ($systemPath -notlike "*$qt6Path*") {
-            Write-Output "Qt6 not found in PATH"
-            exit 1
-        }
 
         if ($systemPath -notlike "*$pythonEnvPath*") {
             Write-Output "Python env not found in PATH"
             exit 1
         }
 
-#    - name: 'Configure and build with CMake'
-#      shell: bash
-#      run: |
-#        export PATH="${{ github.workspace }}\msvc-env\Scripts;$PATH"
-#        cmake --preset CLI-Debug-MSVC
-#        cmake --build build
+        if ($systemPath -notlike "*$qt6Path*") {
+            Write-Output "Qt6 not found in PATH"
+            exit 1
+        }
+
+    - name: 'Configure and build with CMake'
+      shell: bash
+      run: |
+        export PATH="${{ github.workspace }}\msvc-env\Scripts;${{ github.workspace }}\dependencies\qt\${{ env.qtVersion }}\msvc2019_64;$PATH"
+        cmake --preset GUI-Debug-MSVC
+        cmake --build build
