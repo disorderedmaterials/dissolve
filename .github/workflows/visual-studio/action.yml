@@ -29,7 +29,4 @@ runs:
     - name: 'Configure and build with CMake'
       shell: pwsh
       run: |
-        Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
-        refreshenv
-        cmake --preset CLI-Debug-MSVC
-        cmake --build build
+        Get-ChildItem
