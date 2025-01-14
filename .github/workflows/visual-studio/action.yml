@@ -28,11 +28,11 @@ runs:
         # Run installation script
         ./develop.ps1
         
-        # Check paths are correct
+        # Check paths have been exported
         $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
         Write-Output "$systemPath"
         $qt6Path = "dissolve\dependencies\qt\${{ env.qtVersion }}\msvc2019_64"
-        $pythonEnvPath = "dissolve\dependencies\msvc-env\Scripts"
+        $pythonEnvPath = "dissolve\msvc-env\Scripts"
 
         if ($systemPath -notlike "*$pythonEnvPath*") {
             Write-Output "Python env not found in PATH"
