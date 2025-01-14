@@ -19,7 +19,16 @@ on:
 
 jobs:
 
-  BuildAndPackage:
-    uses: "./.github/workflows/_build_and_package.yml"
+  Checkout:
+    uses: "./.github/workflows/_checkout.yml"
     with:
+      bump: true
       checkoutRef: ${{ github.event.pull_request.head.sha }}
+
+  QC:
+    needs: [Checkout]
+    uses: "./.github/workflows/_qc.yml"
+
+  BuildAndPackage:
+    needs: [Checkout]
+    uses: "./.github/workflows/_build_and_package.yml"

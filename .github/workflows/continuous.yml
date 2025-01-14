@@ -22,17 +22,22 @@ jobs:
     uses: "./.github/workflows/_checkout.yml"
     with:
       bump: true
+      publishType: 'continuous'
+
+  QC:
+    needs: [Checkout]
+    uses: "./.github/workflows/_qc.yml"
 
   BuildAndPackage:
     needs: [Checkout]
     uses: "./.github/workflows/_build_and_package.yml"
 
   Publish:
-    needs: [BuildAndPackage]
+    needs: [Checkout,BuildAndPackage]
     uses: "./.github/workflows/_publishing.yml"
     with:
       publishType: 'continuous'
-      releaseTag: ${{ needs.Checkout.outputs.currentVersion }}
-      releaseName: "Release ${{ needs.Checkout.outputs.currentVersion }}"
-      releaseBody: ${{ github.event.pull_request.body }}
+      releaseTag: 'continuous'
+      releaseName: "Development Release ${{ needs.Checkout.outputs.currentVersion }} @ ${{ needs.Checkout.outputs.currentShortHash }}"
+      releaseBodyFile: ./ChangeLog.md
     secrets: inherit

@@ -2,20 +2,16 @@ name: Build and Package
 
 on:
   workflow_call:
-    inputs:
-      checkoutRef:
-        default: ''
-        type: string
 
 jobs:
 
   QC:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    - name: Download Versioned Source
+      uses: actions/download-artifact@v4
       with:
-        ref: ${{ inputs.checkoutRef }}
+        name: versioned-source
     - name: Setup
       uses: "./.github/workflows/setup"
     - name: Quality Control
@@ -28,10 +24,10 @@ jobs:
         os: [ macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.checkoutRef }}
+    - name: Download Versioned Source
+      uses: actions/download-artifact@v4
+      with:
+        name: versioned-source
       - name: Setup
         uses: "./.github/workflows/setup"
       - name: Set Short Hash
@@ -46,10 +42,10 @@ jobs:
         target: [ dissolve, dissolve-gui ]
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    - name: Download Versioned Source
+      uses: actions/download-artifact@v4
       with:
-        ref: ${{ inputs.checkoutRef }}
+        name: versioned-source
     - name: Setup
       uses: "./.github/workflows/setup"
     - name: Set Short Hash
@@ -67,11 +63,11 @@ jobs:
         os: [ macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.checkoutRef }}
-      - name: Setup
-        uses: "./.github/workflows/setup"
-      - name: "Package (${{ matrix.os }})"
-        uses: "./.github/workflows/package"
+    - name: Download Versioned Source
+      uses: actions/download-artifact@v4
+      with:
+        name: versioned-source
+    - name: Setup
+      uses: "./.github/workflows/setup"
+    - name: "Package (${{ matrix.os }})"
+      uses: "./.github/workflows/package"
