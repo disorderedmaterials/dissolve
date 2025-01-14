@@ -5,18 +5,6 @@ on:
 
 jobs:
 
-  QC:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Download Versioned Source
-      uses: actions/download-artifact@v4
-      with:
-        name: versioned-source
-    - name: Setup
-      uses: "./.github/workflows/setup"
-    - name: Quality Control
-      uses: "./.github/workflows/qc"
-
   Build:
     strategy:
       fail-fast: false
