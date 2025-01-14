@@ -30,6 +30,8 @@ class nodeValue
 };
 
 std::string nodeName(const nodeValue &value);
+std::string nodeTypeName(const nodeValue &value);
+std::string nodeTypeIcon(const nodeValue &value);
 
 // The graph model for the example
 typedef GraphModel<nodeValue> ExampleGraphModel;

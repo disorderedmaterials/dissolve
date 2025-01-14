@@ -3,7 +3,7 @@
 #include "gui/models/nodeGraph/generatorGraphModel.h"
 
 // The value of the node
-template <> QVariant nodeGetValue<GeneratorGraphNode>(const GeneratorGraphNode value)
+QVariant nodeGetValue(const GeneratorGraphNode value)
 {
     return std::visit(
         [](auto *arg) -> QVariant
@@ -16,7 +16,7 @@ template <> QVariant nodeGetValue<GeneratorGraphNode>(const GeneratorGraphNode v
 }
 
 // The name of the type (for delegate dispatch)
-template <> std::string nodeTypeName<GeneratorGraphNode>(const GeneratorGraphNode &value)
+std::string nodeTypeName(const GeneratorGraphNode &value)
 {
     return std::visit(
         [](auto *arg) -> std::string
@@ -53,13 +53,13 @@ bool nodeDisconnect<GeneratorGraphNode>(GeneratorGraphNode &source, int sourceIn
 }
 
 // The path to the icon for the node
-template <> std::string nodeTypeIcon<GeneratorGraphNode>(const GeneratorGraphNode &value)
+std::string nodeTypeIcon(const GeneratorGraphNode &value)
 {
     return std::visit([](auto *arg) { return nodeTypeIcon(arg); }, value.value);
 }
 
 // The title of the node
-std::string nodeName(GeneratorGraphNode &value)
+std::string nodeName(const GeneratorGraphNode &value)
 {
     return std::visit([](auto *arg) { return nodeName(arg); }, value.value);
 }

@@ -4,10 +4,10 @@
 #include "gui/models/nodeGraph/nodeWrapper.h"
 
 // The name of the type (for delegate dispatch)
-template <> std::string nodeTypeName<Generator *>(Generator *const &value) { return "Generator"; }
+std::string nodeTypeName(Generator *const &value) { return "Generator"; }
 
 // The path to the icon for the node
-template <> std::string nodeTypeIcon<Generator *>(Generator *const &value) { return "qrc:/Dissolve/icons/generator.svg"; }
+std::string nodeTypeIcon(Generator *const &value) { return "qrc:/Dissolve/icons/generator.svg"; }
 
 // The title of the node
 std::string nodeName(Generator *const &value) { return "Generator"; }

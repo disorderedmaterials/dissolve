@@ -6,10 +6,10 @@
 #include "keywords/nodeValue.h"
 
 // The name of the type (for delegate dispatch)
-template <> std::string nodeTypeName<GeneratorNode *>(GeneratorNode *const &value) { return "GeneratorNode"; }
+std::string nodeTypeName(GeneratorNode *const &value) { return "GeneratorNode"; }
 
 // The path to the icon for the node
-template <> std::string nodeTypeIcon<GeneratorNode *>(GeneratorNode *const &value)
+std::string nodeTypeIcon(GeneratorNode *const &value)
 {
     auto name = GeneratorNode::nodeTypes().keyword(value->type());
     return "qrc:/Dissolve/icons/nodes/" + name + ".svg";

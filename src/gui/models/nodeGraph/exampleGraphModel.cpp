@@ -27,7 +27,7 @@ template <> QVariant nodeGetValue<nodeValue>(const nodeValue value)
 };
 
 // The name of the type (for delegate dispatch)
-template <> std::string nodeTypeName<nodeValue>(const nodeValue &value)
+std::string nodeTypeName(const nodeValue &value)
 {
     return std::visit(
         [](auto arg) -> std::string
@@ -45,7 +45,7 @@ template <> std::string nodeTypeName<nodeValue>(const nodeValue &value)
 }
 
 // The path to the icon for the node
-template <> std::string nodeTypeIcon<nodeValue>(const nodeValue &value)
+std::string nodeTypeIcon(const nodeValue &value)
 {
     return std::visit(
         [](auto arg) -> std::string

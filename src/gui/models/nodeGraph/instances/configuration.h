@@ -14,3 +14,5 @@ template <> struct GraphNodeContext<Configuration *>
 };
 
 std::string nodeName(Configuration *const &value);
+std::string nodeTypeName(Configuration *const &value);
+std::string nodeTypeIcon(Configuration *const &value);

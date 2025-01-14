@@ -29,8 +29,6 @@
 
 // Append the roles for the type onto the QHash
 template <typename T> QHash<int, QByteArray> &nodeRoleNames(QHash<int, QByteArray> &base);
-// The name of the type (for delegate dispatch)
-template <typename T> std::string nodeTypeName(const T &value);
 // The path to the icon for the node
 template <typename T> std::string nodeTypeIcon(const T &value);
 // Delete the node
@@ -49,6 +47,8 @@ template <typename T> bool nodeDisconnect(T &source, int sourceIndex, T &destina
 template <typename T>
 concept Graphable = requires(T a) {
   { nodeName(a) } -> std::same_as<std::string>;
+  { nodeTypeName(a) } -> std::same_as<std::string>;
+  { nodeTypeIcon(a) } -> std::same_as<std::string>;
 };
 
 // A wrapper with supplemental information for a node

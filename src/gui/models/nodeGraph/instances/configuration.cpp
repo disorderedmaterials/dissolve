@@ -4,10 +4,10 @@
 #include "gui/models/nodeGraph/nodeWrapper.h"
 
 // The name of the type (for delegate dispatch)
-template <> std::string nodeTypeName<Configuration *>(Configuration *const &value) { return "Configuration"; }
+std::string nodeTypeName(Configuration *const &value) { return "Configuration"; }
 
 // The path to the icon for the node
-template <> std::string nodeTypeIcon<Configuration *>(Configuration *const &value)
+std::string nodeTypeIcon(Configuration *const &value)
 {
     return "qrc:/Dissolve/icons/configuration.svg";
 }

@@ -26,4 +26,6 @@ template <> struct GraphNodeContext<GeneratorGraphNode>
     using type = CoreData *;
 };
 
-std::string nodeName(GeneratorGraphNode &value);
+std::string nodeName(const GeneratorGraphNode &value);
+std::string nodeTypeName(const GeneratorGraphNode &value);
+std::string nodeTypeIcon(const GeneratorGraphNode &value);
