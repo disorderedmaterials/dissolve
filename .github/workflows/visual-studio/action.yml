@@ -22,8 +22,6 @@ runs:
       
     - name: 'Install dependencies'
       shell: pwsh
-      with:    
-        key: windows-qt-${{ env.qtVersion }}
       run: | 
         Set-Location ${{ github.workspace }}
 
