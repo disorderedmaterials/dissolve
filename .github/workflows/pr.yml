@@ -35,6 +35,8 @@ jobs:
 
   Web:
     needs: [Checkout]
-    uses: "./.github/workflows/website"
+    uses: "./.github/workflows/_website.yml"
     with:
       publishType: 'none'
+      displayMajorVersion: ${{ needs.Checkout.outputs.majorVersion }}
+      displayMinorVersion: ${{ needs.Checkout.outputs.minorVersion }}

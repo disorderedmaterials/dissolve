@@ -16,22 +16,16 @@ jobs:
 
   Web:
     needs: [Checkout]
-    uses: "./.github/workflows/website"
+    uses: "./.github/workflows/_website.yml"
     with:
       publishType: 'legacy'
-    env:
-      SERVER_ID: ${{ secrets.SERVER_ID }}
-      SERVER_KEY: ${{ secrets.SERVER_KEY }}
-      SERVER_USER: ${{ secrets.SERVER_USER }}
-      SERVER_IP: ${{ secrets.SERVER_IP }}
-      SERVER_DOCS_DIR: ${{ secrets.SERVER_DOCS_DIR }}
-      SERVER_MAIN_DIR: ${{ secrets.SERVER_MAIN_DIR }}
+    secrets: inherit
 
   Publish:
     needs: [Checkout,BuildAndPackage,Web]
     uses: "./.github/workflows/_publishing.yml"
     with:
       publishType: 'legacy'
-    secrets:
-      HARBOR_USER: ${{ secrets.HARBOR_USER }}
-      HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
+      displayMajorVersion: ${{ needs.Checkout.outputs.majorVersion }}
+      displayMinorVersion: ${{ needs.Checkout.outputs.minorVersion }}
+    secrets: inherit

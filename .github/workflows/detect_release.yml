@@ -22,16 +22,12 @@ jobs:
 
   Web:
     needs: [Checkout]
-    uses: "./.github/workflows/website"
+    uses: "./.github/workflows/_website.yml"
     with:
       publishType: 'release'
-    env:
-      SERVER_ID: ${{ secrets.SERVER_ID }}
-      SERVER_KEY: ${{ secrets.SERVER_KEY }}
-      SERVER_USER: ${{ secrets.SERVER_USER }}
-      SERVER_IP: ${{ secrets.SERVER_IP }}
-      SERVER_DOCS_DIR: ${{ secrets.SERVER_DOCS_DIR }}
-      SERVER_MAIN_DIR: ${{ secrets.SERVER_MAIN_DIR }}
+      displayMajorVersion: ${{ needs.Checkout.outputs.majorVersion }}
+      displayMinorVersion: ${{ needs.Checkout.outputs.minorVersion }}
+    secrets: inherit
 
   Publish:
     needs: [Checkout,BuildAndPackage,Web]
