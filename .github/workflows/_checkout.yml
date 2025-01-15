@@ -118,6 +118,7 @@ jobs:
         uses: "./.github/workflows/get-cliff"
 
       - name: Generate ChangeLog.md
+        if: inputs.publishType != 'none'
         shell: bash
         run: |
           set -ex
