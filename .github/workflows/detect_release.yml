@@ -37,7 +37,7 @@ jobs:
 
   Publish:
     needs: [Checkout,BuildAndPackage,Web]
-    uses: "./.github/workflows/_publishing.yml"
+    uses: "./.github/workflows/_publish.yml"
     with:
       publishType: 'release'
       releaseTag: ${{ needs.Checkout.outputs.currentVersion }}

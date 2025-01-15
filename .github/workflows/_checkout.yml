@@ -10,6 +10,9 @@ on:
       hugoVersion:
         type: string
         default: "0.135.0"
+      apptainerVersion:
+        type: string
+        default: "1.2.5"
       conanfile:
         type: string
         default: cmake/Modules/conan-dissolve.cmake
@@ -47,6 +50,9 @@ on:
       hugoVersion:
         description: "Version of Hugo required for building website"
         value: ${{ jobs.Checkout.outputs.hugoVersion }}
+      apptainerVersion:
+        description: "Version of Apptainer required for uploading to Harbor"
+        value: ${{ jobs.Checkout.outputs.apptainerVersion }}
       nixHash:
         description: "Hash of the current nix files (flake.lock and flake.nix)"
         value: ${{ jobs.Checkout.outputs.nixHash }}
@@ -67,6 +73,7 @@ jobs:
       qtVersion: ${{ steps.versions.outputs.qtVersion }}
       antlrVersion: ${{ steps.versions.outputs.antlrVersion }}
       hugoVersion: ${{ steps.versions.outputs.hugoVersion }}
+      hugoVersion: ${{ steps.versions.outputs.apptainerVersion }}
       nixHash: ${{ steps.hashes.outputs.nixHash }}
       conanHash: ${{ steps.hashes.outputs.conanHash }}
     steps:
@@ -89,6 +96,7 @@ jobs:
           set -ex
           echo "qtVersion=${{ inputs.qtVersion }}" >> $GITHUB_OUTPUT
           echo "hugoVersion=${{ inputs.hugoVersion }}" >> $GITHUB_OUTPUT
+          echo "apptainerVersion=${{ inputs.apptainerVersion }}" >> $GITHUB_OUTPUT
 
           ANTLR_VERSION=$(cat ${{ inputs.conanfile }}  | sed -n -e 's%^.*antlr4-cppruntime/%%p')
           echo "antlrVersion=${ANTLR_VERSION}" >> $GITHUB_OUTPUT

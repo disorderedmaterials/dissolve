@@ -25,13 +25,14 @@ jobs:
     uses: "./.github/workflows/_website.yml"
     with:
       publishType: 'legacy'
+      displayMajorVersion: ${{ needs.Checkout.outputs.majorVersion }}
+      displayMinorVersion: ${{ needs.Checkout.outputs.minorVersion }}
     secrets: inherit
 
   Publish:
     needs: [Checkout,BuildAndPackage,Web]
-    uses: "./.github/workflows/_publishing.yml"
+    uses: "./.github/workflows/_publish.yml"
     with:
       publishType: 'legacy'
-      displayMajorVersion: ${{ needs.Checkout.outputs.majorVersion }}
-      displayMinorVersion: ${{ needs.Checkout.outputs.minorVersion }}
+      apptainerVersion: ${{ needs.Checkout.outputs.apptainerVersion }}
     secrets: inherit

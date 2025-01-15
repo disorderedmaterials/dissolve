@@ -1,0 +1,90 @@
+name: Publishing
+
+on:
+  workflow_call:
+    inputs:
+      publishType:
+        required: true
+        type: string
+        description: "Publishing type"
+      apptainerVersion:
+        required: true
+        type: string
+        description: "Apptainer version to install and use"
+      currentVersion:
+        type: string
+        description: "Version being published"
+      releaseName:
+        type: string
+        description: "Name of the release as it will appear on GitHub"
+      releaseBody:
+        type: string
+        default: ''
+        description: "Body text of the release as it will appear on GitHub"
+      releaseBodyFile:
+        type: string
+        default: ''
+        description: "Body file to use for body text, used in preference to releaseBody if provided"
+      releaseTag:
+        type: string
+        default: ''
+        description: "Existing tag which the release will be associated to on GitHub"
+    secrets:
+      HARBOR_USER:
+        description: "Username for Harbor access"
+      HARBOR_SECRET:
+        description: "Key for Harbor access"
+
+jobs:
+
+  Publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Download Source Tarfiles'
+      uses: actions/download-artifact@v4
+      with:
+        name: source
+
+    - name: 'Unpack Source'
+      shell: bash
+      run: tar -xvf dissolve-versioned-source.tar
+
+    - name: 'Install Apptainer'
+      if: inputs.publishType != 'none'
+      uses: eWaterCycle/setup-apptainer@v2
+      with:
+        apptainer-version: ${{ inputs.apptainerVersion }}
+
+    - name: 'Download Artifacts'
+      uses: actions/download-artifact@v4
+      with:
+        pattern: packages-*
+        merge-multiple: true
+        path: ${{ github.workspace }}/packages
+
+    - name: 'Package Examples'
+      shell: bash
+      run: |
+        set -ex
+        cd ./examples
+        ./package-examples -v ${{ inputs.currentVersion }}
+
+    - name: 'Publish on GitHub'
+      if: inputs.publishType == 'release' || inputs.publishType == 'continuous'
+      uses: "./.github/workflows/create-release"
+      with:
+        releaseTag: ${{ inputs.releaseTag }}
+        releaseName: ${{ inputs.releaseName }}
+        releaseBody: ${{ inputs.releaseBody }}
+        releaseBodyFile: ${{ inputs.releaseBodyFile }}
+        releaseAssetsDirectory: "${{ github.workspace }}/packages"
+        updateRelease: ${{ inputs.publishType == 'continuous' }}
+        isPreRelease: ${{ inputs.publishType == 'continuous' }}
+
+    - name: 'Publish on Harbor'
+      if: inputs.publishType != 'none'
+      shell: bash
+      run: |
+        echo "Publishing to Harbor, tagged as [${{ inputs.publishType }}]..."
+        apptainer remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
+        apptainer push packages/dissolve-gui-${{ inputs.currentVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:${{ inputs.publishType }}
