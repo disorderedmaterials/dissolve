@@ -81,7 +81,7 @@ filter_commits = false
 # regex for skipping tags
 # skip_tags = ""
 # regex for ignoring tags
-# ignore_tags = ""
+ignore_tags = "continuous|legacy"
 # sort the tags topologically
 topo_order = false
 # sort the commits inside sections by oldest/newest order
