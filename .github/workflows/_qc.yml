@@ -24,15 +24,6 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-    - name: Download Versioned Source
-      uses: actions/download-artifact@v4
-      with:
-        name: versioned-source
-
-    - name: Unpack Source
-      shell: bash
-      run: tar -xvf versioned-source.tar
-
     - name: Conventional Commits
       shell: bash
       env:
