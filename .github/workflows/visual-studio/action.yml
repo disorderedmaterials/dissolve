@@ -30,6 +30,7 @@ runs:
     - name: 'Configure and build with CMake'
       shell: bash
       run: |
+        git submodule update --init --recursive
         export PATH="${{ github.workspace }}\msvc-env\Scripts;${{ github.workspace }}\dependencies\qt\${{ env.qtVersion }}\msvc2019_64\bin;$PATH"
         cmake --preset GUI-Debug-MSVC
         cmake --build build
