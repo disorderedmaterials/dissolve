@@ -44,6 +44,10 @@ jobs:
       with:
         name: versioned-source
   
+    - name: 'Unpack Source'
+      shell: bash
+      run: tar -xvf versioned-source.tar
+
     - name: 'Apply Main Release Styling'
       if: ${{ inputs.publishType == 'release' }}
       shell: bash
