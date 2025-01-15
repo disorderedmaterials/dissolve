@@ -73,7 +73,7 @@ jobs:
       qtVersion: ${{ steps.versions.outputs.qtVersion }}
       antlrVersion: ${{ steps.versions.outputs.antlrVersion }}
       hugoVersion: ${{ steps.versions.outputs.hugoVersion }}
-      hugoVersion: ${{ steps.versions.outputs.apptainerVersion }}
+      apptainerVersion: ${{ steps.versions.outputs.apptainerVersion }}
       nixHash: ${{ steps.hashes.outputs.nixHash }}
       conanHash: ${{ steps.hashes.outputs.conanHash }}
     steps:
