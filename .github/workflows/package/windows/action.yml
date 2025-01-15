@@ -5,6 +5,9 @@ inputs:
   qtVersion:
     type: string
     required: true
+  currentVersion:
+    type: string
+    required: true
 
 runs:
   using: "composite"
@@ -64,6 +67,7 @@ runs:
       export FTGL_DIR="${RUNNER_TEMP}\ftgl-install\bin"
       export DISSOLVE_DIR="${GITHUB_WORKSPACE}\build\install\bin"
       export DEPLOY_DIR="${GITHUB_WORKSPACE}\build"
+      export DISSOLVE_VERSION="${{ inputs.currentVersion }}"
 
       # Run Inno Setup Compiler
       iscc.exe -O./ ./ci/windows/dissolve-gui.iss
