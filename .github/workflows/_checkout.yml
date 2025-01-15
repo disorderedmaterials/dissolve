@@ -217,7 +217,7 @@ jobs:
         shell: bash
         run: |
           set -ex
-          tar -cvf ${{ runner.temp }}/dissolve-dissolve-versioned-source.tar ./
+          tar -cvf ${{ runner.temp }}/dissolve-versioned-source.tar ./
 
       - name: Upload Versioned Source Artifact
         uses: actions/upload-artifact@v4
