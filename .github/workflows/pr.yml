@@ -22,7 +22,6 @@ jobs:
   Checkout:
     uses: "./.github/workflows/_checkout.yml"
     with:
-      bump: true
       checkoutRef: ${{ github.event.pull_request.head.sha }}
 
   QC:
