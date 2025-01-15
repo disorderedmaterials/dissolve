@@ -41,7 +41,6 @@ jobs:
     - name: "Build (${{ matrix.os }})"
       uses: "./.github/workflows/build"
       with:
-        currentVersion: ${{ inputs.currentVersion }}
         qtVersion: ${{ inputs.qtVersion }}
         antlrVersion: ${{ inputs.antlrVersion }}
         conanHash: ${{ inputs.conanHash }}
