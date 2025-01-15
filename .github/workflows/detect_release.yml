@@ -21,6 +21,10 @@ jobs:
     uses: "./.github/workflows/_build_and_package.yml"
     with:
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+      qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
+      antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
+      conanHash: ${{ needs.Checkout.outputs.conanHash }}
+      nixHash: ${{ needs.Checkout.outputs.nixHash }}
 
   Web:
     needs: [Checkout]
