@@ -133,7 +133,6 @@ runs:
       wget https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.zip -Ojava.zip
       unzip java.zip
       
-
   #
   # Main Build
   #
@@ -151,7 +150,7 @@ runs:
     if: ${{ steps.cache-conan.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
-      conan profile new default --detect
+      conan profile new default --detect --force
       conan profile update settings.compiler="Visual Studio" default
       conan profile update settings.compiler.version=17 default
 
