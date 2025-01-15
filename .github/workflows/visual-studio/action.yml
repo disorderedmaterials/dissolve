@@ -24,7 +24,7 @@ runs:
       shell: pwsh
       run: | 
         Set-Location ${{ github.workspace }}
-        ./develop.ps1
+        ./develop.ps1 -release
         
 
     - name: 'Configure and build with CMake'
@@ -32,5 +32,5 @@ runs:
       run: |
         git submodule update --init --recursive
         export PATH="${{ github.workspace }}\msvc-env\Scripts;${{ github.workspace }}\dependencies\qt\${{ env.qtVersion }}\msvc2019_64\bin;$PATH"
-        cmake --preset GUI-Debug-MSVC
+        cmake --preset GUI-Release-MSVC
         cmake --build build
