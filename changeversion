@@ -215,6 +215,7 @@ do
     q) git cliff --bumped-version
        ;;
     b) BUMPED=$(git cliff --bumped-version)
+       echo "BUMPED = ${BUMPED}"
        if [ "${BUMPED}x" == "x" ]
        then
          echo "Error: Failed to auto-bump version."
