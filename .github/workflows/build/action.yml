@@ -41,7 +41,6 @@ runs:
     uses: "./.github/workflows/build/osx"
     with:
       cacheOnly: ${{ inputs.cacheOnly }}
-      currentVersion: ${{ inputs.currentVersion }}
       conanHash: ${{ inputs.conanHash }}
       qtVersion: ${{ inputs.qtVersion }}
       antlrVersion: ${{ inputs.antlrVersion }}
@@ -51,7 +50,6 @@ runs:
     uses: "./.github/workflows/build/windows"
     with:
       cacheOnly: ${{ inputs.cacheOnly }}
-      currentVersion: ${{ inputs.currentVersion }}
       conanHash: ${{ inputs.conanHash }}
       qtVersion: ${{ inputs.qtVersion }}
       antlrVersion: ${{ inputs.antlrVersion }}
