@@ -76,6 +76,12 @@ jobs:
           ref: ${{ inputs.checkoutRef }}
           fetch-depth: 0
 
+      - name: Create Original Source Artifact
+        shell: bash
+        run: |
+          set -ex
+          tar -cvf ${{ runner.temp }}/dissolve-original-source.tar ./
+
       - name: Set Required Versions
         id: versions
         shell: bash
@@ -211,12 +217,11 @@ jobs:
         shell: bash
         run: |
           set -ex
-          tar -cvf ${{ runner.temp }}/versioned-source.tar ./
-          mv ${{ runner.temp }}/versioned-source.tar ./
+          tar -cvf ${{ runner.temp }}/dissolve-dissolve-versioned-source.tar ./
 
       - name: Upload Versioned Source Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: versioned-source
-          path: versioned-source.tar
+          name: source
+          path: ${{ runner.temp }}/dissolve-*-source.tar
           retention-days: 1
