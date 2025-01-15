@@ -1,8 +1,5 @@
 ![Dissolve's Logo](icon/logo.png)
 
-_Last Release: 1.6.0, Monday 9th December 2024_
-
-_Release Build::_ [![Release Build Status](https://github.com/disorderedmaterials/dissolve/actions/workflows/release.yml/badge.svg)](https://github.com/disorderedmaterials/dissolve/actions/workflows/release.yml)
 _Development Build::_ [![Development Build Status](https://github.com/disorderedmaterials/dissolve/actions/workflows/continuous.yml/badge.svg)](https://github.com/disorderedmaterials/dissolve/actions/workflows/continuous.yml)
 
 ## Overview
