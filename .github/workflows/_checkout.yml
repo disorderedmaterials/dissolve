@@ -87,8 +87,8 @@ jobs:
         shell: bash
         run: |
           set -ex
-          echo "qtVersion=${{ inputs.qtVersion }}" > $GITHUB_OUTPUT
-          echo "hugoVersion=${{ inputs.hugoVersion }}" > $GITHUB_OUTPUT
+          echo "qtVersion=${{ inputs.qtVersion }}" >> $GITHUB_OUTPUT
+          echo "hugoVersion=${{ inputs.hugoVersion }}" >> $GITHUB_OUTPUT
 
           ANTLR_VERSION=$(cat ${{ inputs.conanfile }}  | sed -n -e 's%^.*antlr4-cppruntime/%%p')
           echo "antlrVersion=${ANTLR_VERSION}" >> $GITHUB_OUTPUT
