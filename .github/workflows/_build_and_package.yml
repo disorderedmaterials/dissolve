@@ -29,7 +29,7 @@ jobs:
         os: [ macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
-    - name: 'Download Versioned Source'
+    - name: 'Download Source Tarfiles'
       uses: actions/download-artifact@v4
       with:
         name: source
@@ -52,7 +52,7 @@ jobs:
         target: [ dissolve, dissolve-gui ]
     runs-on: ubuntu-latest
     steps:
-    - name: 'Download Versioned Source'
+    - name: 'Download Source Tarfiles'
       uses: actions/download-artifact@v4
       with:
         name: source
@@ -76,7 +76,7 @@ jobs:
         os: [ macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
-    - name: 'Download Versioned Source'
+    - name: 'Download Source Tarfiles'
       uses: actions/download-artifact@v4
       with:
         name: source

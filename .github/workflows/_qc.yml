@@ -8,7 +8,7 @@ jobs:
   Formatting:
     runs-on: ubuntu-latest
     steps:
-    - name: 'Download Versioned Source'
+    - name: 'Download Source Tarfiles'
       uses: actions/download-artifact@v4
       with:
         name: source
