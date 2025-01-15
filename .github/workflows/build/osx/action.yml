@@ -31,7 +31,7 @@ runs:
     run: |
       set -ex
       brew update-reset
-      brew install ftgl ninja
+      brew install ftgl ninja gsl
 
   - name: Get ANTLR
     working-directory: ${{ runner.temp }}
