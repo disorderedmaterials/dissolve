@@ -52,6 +52,9 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedTR.setUpPartials(unweightedGR.atomTypeMix(), false);
 
+    // Retrieve weights
+    const auto &weights = moduleData.value<NeutronWeights>("FullWeights", sourceNeutronSQ_->name());
+
     dissolve::for_each_pair(
         ParallelPolicies::par, 0, weightedSQ.nAtomTypes(),
         [&](int n, int m)
@@ -62,23 +65,36 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
 
             Fourier::sineFT(weightedGR.boundPartial(n, m), 4.0 * PI * rho.value(), qMin_, qDelta_, qMax_, windowFunction_,
                             qBroadening_);
-            weightedGR.boundPartial(n, m) += 1;
+            weightedGR.boundPartial(n, m);
             Fourier::sineFT(weightedGR.unboundPartial(n, m), 4.0 * PI * rho.value(), qMin_, qDelta_, qMax_, windowFunction_,
                             qBroadening_);
             weightedGR.unboundPartial(n, m) += 1;
             Fourier::sineFT(weightedGR.partial(n, m), 4.0 * PI * rho.value(), qMin_, qDelta_, qMax_, windowFunction_,
                             qBroadening_);
             weightedGR.partial(n, m) += 1;
+
+            // Weight the GR
+            double weight = weights.weight(n, m);
+            double intraWeight = weights.intramolecularWeight(n, m);
+
+            // Bound (intramolecular) partial (multiplied by the bound term weight)
+            weightedGR.boundPartial(n, m) *= intraWeight;
+
+            // Unbound partial (multiplied by the full weight)
+            weightedGR.unboundPartial(n, m) *= weight;
+
+            // Full partial, summing bound and unbound terms
+            weightedGR.partial(n, m) += weightedGR.boundPartial(n, m);
         },
         false);
+
+    // Calculate and normalise total to form factor if requested
+    weightedGR.formTotals(false);
 
     auto [broadenedTR, bGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
         "BroadenedTR", name_, GenericItem::InRestartFileFlag);
     if (bGRstatus == GenericItem::ItemStatus::Created)
         broadenedTR.setUpPartials(weightedGR.atomTypeMix(), false);
-
-    // Retrieve weights
-    const auto &weights = moduleData.value<NeutronWeights>("FullWeights", sourceNeutronSQ_->name());
 
     dissolve::for_each_pair(
         ParallelPolicies::seq, 0, unweightedGR.nAtomTypes(),
@@ -119,7 +135,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         {
             double intraWeight = weights.intramolecularWeight(typeI, typeJ);
             auto cj = weights.atomTypes()[typeJ].fraction();
-            auto factor = 4.0 * PI * rho.value() * cj;
+            auto factor = 4.0 * PI * rho.value();
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             broadenedTR.boundPartial(typeI, typeJ).copyArrays(weightedGR.boundPartial(typeI, typeJ));
