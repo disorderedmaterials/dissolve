@@ -2,10 +2,10 @@ name: Package
 description: Package Windows artifacts
 
 inputs:
-  qtVersion:
+  currentVersion:
     type: string
     required: true
-  currentVersion:
+  qtVersion:
     type: string
     required: true
 
