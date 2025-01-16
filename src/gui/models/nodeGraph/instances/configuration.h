@@ -13,10 +13,11 @@ template <> struct GraphNodeContext<Configuration *>
     using type = CoreData *;
 };
 
-std::string nodeName(Configuration *const &value);
-std::string nodeTypeName(Configuration *const &value);
-std::string nodeTypeIcon(Configuration *const &value);
+std::string nodeName(const Configuration *value);
+std::string nodeTypeName(const Configuration *value);
+std::string nodeTypeIcon(const Configuration *value);
 
-bool nodeConnect(Configuration *&source, int sourceIndex, Configuration *&destionation, int destinationIndex);
-bool nodeConnectable(const Configuration *&source, int sourceIndex, const Configuration *&destination, int destinationIndex);
-bool nodeDisconnect(Configuration *&source, int sourceIndex, Configuration *&destination, int destinationIndex);
+bool nodeConnect(Configuration *source, int sourceIndex, Configuration *destination, int destinationIndex);
+bool nodeConnectable(const Configuration *source, int sourceIndex, const Configuration *destination, int destinationIndex);
+bool nodeDisconnect(Configuration *source, int sourceIndex, Configuration *destination, int destinationIndex);
+bool nodeDelete(Configuration *item, CoreData *coreData);

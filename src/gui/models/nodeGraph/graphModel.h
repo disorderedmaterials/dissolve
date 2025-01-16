@@ -37,15 +37,17 @@
 **/
 
 // This is the base class for any node graph type
-template <Graphable T> class GraphModel : public GraphModelBase
+template <typename T, typename Context>
+    requires Graphable<T, Context>
+class GraphModel : public GraphModelBase
 {
     public:
     GraphModel() : nodes_(this) {}
 
     protected:
-    typename GraphNodeContext<T>::type context_;
+    Context context_;
     // The nodes in the model
-    std::vector<NodeWrapper<T>> items_;
+    std::vector<NodeWrapper<T, Context>> items_;
     // Get index of name
     int indexByName(std::string name) override
     {
@@ -55,7 +57,7 @@ template <Graphable T> class GraphModel : public GraphModelBase
 
     public:
     // Access the acutal nodes in the model
-    std::vector<NodeWrapper<T>> &items() { return items_; }
+    std::vector<NodeWrapper<T, Context>> &items() { return items_; }
 
     // Access the GraphNodeModel
     QAbstractListModel *nodes() override { return &nodes_; }
@@ -120,5 +122,5 @@ template <Graphable T> class GraphModel : public GraphModelBase
 
     protected:
     // The abstract data model for the nodes
-    GraphNodeModel<T> nodes_;
+    GraphNodeModel<T, Context> nodes_;
 };

@@ -38,6 +38,7 @@ bool nodeConnect(nodeValue &source, int sourceIndex, nodeValue &destionation, in
 bool nodeConnectable(const nodeValue &source, int sourceIndex, const nodeValue &destination, int destinationIndex);
 bool nodeDisconnect(nodeValue &source, int sourceIndex, nodeValue &destination, int destinationIndex);
 QHash<int, QByteArray> &nodeRoleNames(Proxy<nodeValue> proxy, QHash<int, QByteArray> &roles);
+bool nodeDelete(nodeValue &value, Proxy<nodeValue> &context);
 
 // The graph model for the example
-typedef GraphModel<nodeValue> ExampleGraphModel;
+typedef GraphModel<nodeValue, Proxy<nodeValue>> ExampleGraphModel;

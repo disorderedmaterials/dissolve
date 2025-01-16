@@ -113,7 +113,7 @@ template <> QVariant nodeData<nodeValue>(const nodeValue &item, int role)
 template <> bool nodeSetData<nodeValue>(nodeValue &item, const QVariant &value, int role) { return false; }
 
 // Delete the node
-template <> bool nodeDelete<nodeValue>(nodeValue &value, GraphNodeContext<nodeValue>::type &context) { return true; }
+bool nodeDelete(nodeValue &value, Proxy<nodeValue> &context) { return true; }
 
 // Create node from variant
 nodeValue::nodeValue(QVariant var)

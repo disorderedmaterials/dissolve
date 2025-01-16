@@ -33,4 +33,4 @@ template <> QVariant nodeData(Generator *const &value, int role)
 template <> bool nodeSetData(Generator *&item, const QVariant &value, int role) { return false; }
 
 // Delete the node
-template <> bool nodeDelete(Generator *&item, typename GraphNodeContext<Generator *>::type &coreData) { return false; }
+bool nodeDelete(Generator *item, CoreData *coreData) { return false; }

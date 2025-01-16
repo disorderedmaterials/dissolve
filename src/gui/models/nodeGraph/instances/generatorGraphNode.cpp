@@ -89,8 +89,7 @@ QHash<int, QByteArray> &nodeRoleNames(Proxy<GeneratorGraphNode> proxy, QHash<int
 }
 
 // Delete the node
-template <>
-bool nodeDelete<GeneratorGraphNode>(GeneratorGraphNode &item, typename GraphNodeContext<GeneratorGraphNode>::type &coreData)
+bool nodeDelete(GeneratorGraphNode &item, CoreData *coreData)
 {
     return std::visit([&](auto *arg) -> bool { return nodeDelete(arg, coreData); }, item.value);
 }

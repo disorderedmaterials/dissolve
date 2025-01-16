@@ -4,16 +4,16 @@
 #include "gui/models/nodeGraph/nodeWrapper.h"
 
 // The name of the type (for delegate dispatch)
-std::string nodeTypeName(Configuration *const &value) { return "Configuration"; }
+std::string nodeTypeName(const Configuration *value) { return "Configuration"; }
 
 // The path to the icon for the node
-std::string nodeTypeIcon(Configuration *const &value)
+std::string nodeTypeIcon(const Configuration *value)
 {
     return "qrc:/Dissolve/icons/configuration.svg";
 }
 
 // The title of the node
-std::string nodeName(Configuration *const &value)
+std::string nodeName(const Configuration *value)
 {
 
     if (!value)
@@ -56,7 +56,7 @@ template <> bool nodeSetData(Configuration *&item, const QVariant &value, int ro
 }
 
 // Delete the node
-template <> bool nodeDelete(Configuration *&item, typename GraphNodeContext<Configuration *>::type &coreData)
+bool nodeDelete(Configuration *item, CoreData *coreData)
 {
     coreData->removeConfiguration(item);
     return true;

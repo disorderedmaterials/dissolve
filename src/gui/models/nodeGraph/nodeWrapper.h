@@ -28,11 +28,14 @@
  **/
 
 // Delete the node
-template <typename T> bool nodeDelete(T &value, typename GraphNodeContext<T>::type &context);
+// template <typename T> bool nodeDelete(T &value, typename GraphNodeContext<T>::type &context);
 
-template <typename T>
-concept Graphable = requires(T a, const std::string name, T b, int sourceIndex, int destinationIndex, Proxy<T> proxy,
-                             QHash<int, QByteArray> &baseHash) {
+template <typename T, typename Context>
+concept Graphable = requires(T a, Context context, const std::string name, T b, int sourceIndex, int destinationIndex,
+                             Proxy<T> proxy, QHash<int, QByteArray> &baseHash) {
+    {
+        nodeDelete(a, context)
+    } -> std::same_as<bool>;
     {
         nodeRoleNames(proxy, baseHash)
     } -> std::same_as<QHash<int, QByteArray> &>;
@@ -63,7 +66,9 @@ concept Graphable = requires(T a, const std::string name, T b, int sourceIndex, 
 };
 
 // A wrapper with supplemental information for a node
-template <Graphable T> class NodeWrapper
+template <typename T, typename Context>
+    requires Graphable<T, Context>
+class NodeWrapper
 {
     public:
     NodeWrapper(QVariant value) : value_(value) {}

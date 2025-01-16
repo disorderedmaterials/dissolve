@@ -16,3 +16,4 @@ template <> struct GraphNodeContext<Generator *>
 std::string nodeName(Generator *const &value);
 std::string nodeTypeName(Generator *const &value);
 std::string nodeTypeIcon(Generator *const &value);
+bool nodeDelete(Generator *item, CoreData *coreData);

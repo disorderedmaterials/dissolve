@@ -8,7 +8,9 @@
 #include <qabstractitemmodel.h>
 #include <qvariant.h>
 
-template <Graphable T> class GraphModel;
+template <typename T, typename Context>
+    requires Graphable<T, Context>
+class GraphModel;
 
 // A base to add a static terms or properties to GraphNodeModel
 class GraphNodeModelBase : public QAbstractListModel
@@ -22,20 +24,22 @@ class GraphNodeModelBase : public QAbstractListModel
 
 // The model for accessing the node data (which is *held* in the
 // GraphModel class)
-template <Graphable T> class GraphNodeModel : public GraphNodeModelBase
+template <typename T, typename Context>
+    requires Graphable<T, Context>
+class GraphNodeModel : public GraphNodeModelBase
 {
-    friend GraphModel<T>;
+    friend GraphModel<T, Context>;
 
     public:
-    GraphNodeModel(GraphModel<T> *parent = nullptr) : parent_(parent) {}
-    GraphNodeModel(const GraphNodeModel<T> &other) : parent_(other.parent_) {}
+    GraphNodeModel(GraphModel<T, Context> *parent = nullptr) : parent_(parent) {}
+    GraphNodeModel(const GraphNodeModel<T, Context> &other) : parent_(other.parent_) {}
 
-    GraphNodeModel<T> &operator=(const GraphNodeModel<T> &other)
+    GraphNodeModel<T, Context> &operator=(const GraphNodeModel<T, Context> &other)
     {
         parent_ = other.parent_;
         return *this;
     }
-    bool operator!=(const GraphNodeModel<T> &other) { return &parent_ != &other.parent_; }
+    bool operator!=(const GraphNodeModel<T, Context> &other) { return &parent_ != &other.parent_; }
 
     // Number of nodes (required by QAbstractListModel)
     int rowCount(const QModelIndex &parent = QModelIndex()) const override { return parent_->items().size(); }
@@ -102,5 +106,5 @@ template <Graphable T> class GraphNodeModel : public GraphNodeModelBase
 
     private:
     // The GraphModel that this is part of (which will hold the actual vector of nodes
-    GraphModel<T> *parent_;
+    GraphModel<T, Context> *parent_;
 };
