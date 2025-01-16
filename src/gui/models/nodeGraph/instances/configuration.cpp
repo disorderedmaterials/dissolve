@@ -7,10 +7,7 @@
 std::string nodeTypeName(const Configuration *value) { return "Configuration"; }
 
 // The path to the icon for the node
-std::string nodeTypeIcon(const Configuration *value)
-{
-    return "qrc:/Dissolve/icons/configuration.svg";
-}
+std::string nodeTypeIcon(const Configuration *value) { return "qrc:/Dissolve/icons/configuration.svg"; }
 
 // The title of the node
 std::string nodeName(const Configuration *value)

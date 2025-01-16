@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <QVariant>
-#include "gui/models/nodeGraph/phantom.h"
 #include "classes/coreData.h"
+#include "gui/models/nodeGraph/phantom.h"
+#include <QVariant>
 
 class GeneratorNode;
 

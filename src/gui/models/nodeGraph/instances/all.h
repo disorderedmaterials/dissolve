@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include <QVariant>
 #include "configuration.h"
 #include "generator.h"
 #include "generatorNode.h"
+#include <QVariant>
 
 // The variant of all of the types that we will examine
 using GeneratorGraphInnerType = std::variant<Configuration *, Generator *, GeneratorNode *>;
@@ -26,7 +26,8 @@ std::string nodeTypeIcon(const GeneratorGraphNode &value);
 void setNodeName(GeneratorGraphNode &value, std::string);
 QVariant nodeGetValue(const GeneratorGraphNode &value);
 bool nodeConnect(GeneratorGraphNode &source, int sourceIndex, GeneratorGraphNode &destionation, int destinationIndex);
-bool nodeConnectable(const GeneratorGraphNode &source, int sourceIndex, const GeneratorGraphNode &destination, int destinationIndex);
+bool nodeConnectable(const GeneratorGraphNode &source, int sourceIndex, const GeneratorGraphNode &destination,
+                     int destinationIndex);
 bool nodeDisconnect(GeneratorGraphNode &source, int sourceIndex, GeneratorGraphNode &destination, int destinationIndex);
 QHash<int, QByteArray> &nodeRoleNames(Phantom<GeneratorGraphNode> proxy, QHash<int, QByteArray> &roles);
 bool nodeDelete(GeneratorGraphNode &item, CoreData *coreData);

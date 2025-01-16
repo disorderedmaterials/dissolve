@@ -11,7 +11,7 @@
 #include "nodeWrapper.h"
 
 // A graph node model for looking at the generators on a configuration
-class GeneratorGraphModel : public GraphModel<GeneratorGraphNode, CoreData*>
+class GeneratorGraphModel : public GraphModel<GeneratorGraphNode, CoreData *>
 {
     Q_OBJECT
     // The Dissolve Model that contains the Dissolve object instance we
