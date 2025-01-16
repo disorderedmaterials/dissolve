@@ -6,12 +6,13 @@ import Qt.labs.qmlmodels
 
 Pane {
     id: graphRoot
+
     property double curveOffset: 125
     property variant delegate
     property variant edgeModel
+    property var nameLookup: ({})
     property variant nodeModel
     property variant rootModel
-    property var nameLookup: ({})
 
     // Edge connections
     Repeater {
@@ -44,9 +45,11 @@ Pane {
     // Actual nodes
     Repeater {
         id: nodeRepeater
+
         delegate: graphRoot.delegate
         model: nodeModel
-        onItemAdded: function(index, item) {
+
+        onItemAdded: function (index, item) {
             nameLookup[item.nodeType] = index;
         }
     }
