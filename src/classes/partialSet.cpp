@@ -214,7 +214,7 @@ void PartialSet::formTotals(bool applyConcentrationWeights)
 }
 
 // Sum partials into total for TR
-void PartialSet::formTRTotals(bool applyWeights, NeutronWeights weights)
+void PartialSet::formTRTotals(NeutronWeights weights)
 {
     auto nTypes = atomTypeMix_.nItems();
     if (nTypes == 0)
@@ -238,7 +238,7 @@ void PartialSet::formTRTotals(bool applyWeights, NeutronWeights weights)
         [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2)
         {
             // Set weighting factor if requested
-            auto factor = applyWeights ? at1.fraction() * weights.boundCoherentProduct(typeI, typeJ) : 1.0;
+            auto factor = at1.fraction() * weights.boundCoherentProduct(typeI, typeJ);
 
             // Sum bound term
             std::transform(boundTotal_.values().begin(), boundTotal_.values().end(),
