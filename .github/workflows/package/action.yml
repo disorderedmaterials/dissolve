@@ -1,6 +1,7 @@
 name: Package
 description: Stub action for package creation
 
+inputs:
   currentVersion:
     type: string
     description: "Version used for labelling packages and other artifacts"
