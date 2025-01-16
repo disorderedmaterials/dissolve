@@ -9,10 +9,12 @@
 #include <variant>
 
 /**
-   This file contains a series of templates that need to be overloaded
-   to allow a type to be displayed as a node.  This is essentially a
-   C++ Concept, but without all the compiler checks and niceties that
-   we will get with C++20.
+   This file contains a C++20 concept which defines whether a type can
+   be shown as a graph.  Any type T which contains implementations for
+   all of the functions listed below can be displayed in a graph.  A
+   second template parameter Context was also necessary to implement
+   deletion as most nodes would need to know *where* they were being
+   deleted from.
 
    A concept was chosen over class methods because:
 
@@ -25,10 +27,13 @@
    part of the class even in the command line version.  As some of the
    methods require Qt types (e.g. QHash, QVariant), then Qt would
    suddenly become a dependency of the command line code.
- **/
 
-// Delete the node
-// template <typename T> bool nodeDelete(T &value, typename GraphNodeContext<T>::type &context);
+   This code is a direct conversion of the template code that came
+   before.  Truth be told, the connection functions should likely be
+   split out into a separate Concept (allowing us to check for
+   connection correctness as compile time), but that is outside of the
+   scope of this PR.
+ **/
 
 template <typename T, typename Context>
 concept Graphable = requires(T a, Context context, const std::string name, T b, int sourceIndex, int destinationIndex,
