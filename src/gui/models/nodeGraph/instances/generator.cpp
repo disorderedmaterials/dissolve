@@ -13,7 +13,7 @@ std::string nodeTypeIcon(Generator *const &value) { return "qrc:/Dissolve/icons/
 std::string nodeName(Generator *const &value) { return "Generator"; }
 
 // Get a specific piece of information from a node by index
-template <> QVariant nodeData(Generator *const &value, int role)
+QVariant nodeData(const Generator *value, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
     if (!value)
@@ -30,7 +30,7 @@ template <> QVariant nodeData(Generator *const &value, int role)
 }
 
 // Set a specific piece of information from a node by index
-template <> bool nodeSetData(Generator *&item, const QVariant &value, int role) { return false; }
+bool nodeSetData(Generator *item, const QVariant &value, int role) { return false; }
 
 // Delete the node
 bool nodeDelete(Generator *item, CoreData *coreData) { return false; }

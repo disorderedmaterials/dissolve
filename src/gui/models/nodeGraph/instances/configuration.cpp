@@ -23,7 +23,7 @@ std::string nodeName(const Configuration *value)
 }
 
 // Get a specific piece of information from a node by index
-template <> QVariant nodeData(Configuration *const &value, int role)
+QVariant nodeData(const Configuration *value, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
     if (!value)
@@ -42,7 +42,7 @@ template <> QVariant nodeData(Configuration *const &value, int role)
 }
 
 // Set a specific piece of information from a node by index
-template <> bool nodeSetData(Configuration *&item, const QVariant &value, int role)
+bool nodeSetData(Configuration *item, const QVariant &value, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
     switch (role)

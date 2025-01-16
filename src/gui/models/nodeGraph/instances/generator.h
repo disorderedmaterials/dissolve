@@ -17,3 +17,5 @@ std::string nodeName(Generator *const &value);
 std::string nodeTypeName(Generator *const &value);
 std::string nodeTypeIcon(Generator *const &value);
 bool nodeDelete(Generator *item, CoreData *coreData);
+QVariant nodeData(const Generator *value, int role);
+bool nodeSetData(Generator *item, const QVariant &value, int role);

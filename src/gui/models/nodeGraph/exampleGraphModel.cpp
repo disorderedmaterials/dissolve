@@ -98,7 +98,7 @@ QHash<int, QByteArray> &nodeRoleNames(Proxy<nodeValue> proxy, QHash<int, QByteAr
 }
 
 // Get a specific piece of information from a node by index
-template <> QVariant nodeData<nodeValue>(const nodeValue &item, int role)
+QVariant nodeData(const nodeValue &item, int role)
 {
     switch (role)
     {
@@ -110,7 +110,7 @@ template <> QVariant nodeData<nodeValue>(const nodeValue &item, int role)
 }
 
 // Set a specific piece of information from a node by index
-template <> bool nodeSetData<nodeValue>(nodeValue &item, const QVariant &value, int role) { return false; }
+bool nodeSetData(nodeValue &item, const QVariant &value, int role) { return false; }
 
 // Delete the node
 bool nodeDelete(nodeValue &value, Proxy<nodeValue> &context) { return true; }

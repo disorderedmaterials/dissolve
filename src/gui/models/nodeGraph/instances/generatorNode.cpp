@@ -23,7 +23,7 @@ std::string nodeName(GeneratorNode *const &value)
 }
 
 // Get a specific piece of information from a node by index
-template <> QVariant nodeData(GeneratorNode *const &value, int role)
+QVariant nodeData(const GeneratorNode *value, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
     if (!value)
@@ -50,7 +50,7 @@ template <> QVariant nodeData(GeneratorNode *const &value, int role)
 }
 
 // Set a specific piece of information from a node by index
-template <> bool nodeSetData(GeneratorNode *&item, const QVariant &value, int role) { return false; }
+bool nodeSetData(GeneratorNode *item, const QVariant &value, int role) { return false; }
 
 // Delete the node
 bool nodeDelete(GeneratorNode *item, CoreData *coreData)

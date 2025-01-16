@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <QVariant>
 #include "gui/models/nodeGraph/graphNodeContext.h"
 #include "classes/coreData.h"
 
@@ -19,5 +20,6 @@ template <> struct GraphNodeContext<GeneratorNode *>
 std::string nodeName(GeneratorNode *const &value);
 std::string nodeTypeName(GeneratorNode *const &value);
 std::string nodeTypeIcon(GeneratorNode *const &value);
-
 bool nodeDelete(GeneratorNode *item, CoreData *coreData);
+QVariant nodeData(const GeneratorNode *value, int role);
+bool nodeSetData(GeneratorNode *item, const QVariant &value, int role);

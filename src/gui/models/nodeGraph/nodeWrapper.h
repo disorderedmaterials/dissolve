@@ -32,7 +32,7 @@
 
 template <typename T, typename Context>
 concept Graphable = requires(T a, Context context, const std::string name, T b, int sourceIndex, int destinationIndex,
-                             Proxy<T> proxy, QHash<int, QByteArray> &baseHash) {
+                             Proxy<T> proxy, QHash<int, QByteArray> &baseHash, int role, QVariant value) {
     {
         nodeDelete(a, context)
     } -> std::same_as<bool>;
@@ -63,6 +63,12 @@ concept Graphable = requires(T a, Context context, const std::string name, T b, 
     {
         nodeDisconnect(a, sourceIndex, b, destinationIndex)
     } -> std::same_as<bool>;
+    {
+        nodeData(a, role)
+    } -> std::convertible_to<QVariant>;
+    {
+        nodeSetData(a, value, role)
+    } -> std::convertible_to<bool>;
 };
 
 // A wrapper with supplemental information for a node
@@ -86,9 +92,3 @@ class NodeWrapper
     // The actual value of the node
     T value_;
 };
-
-// Get a specific piece of information from a node by index
-template <typename T> QVariant nodeData(const T &, int role);
-
-// Set a specific piece of information from a node by index
-template <typename T> bool nodeSetData(T &, const QVariant &value, int role);

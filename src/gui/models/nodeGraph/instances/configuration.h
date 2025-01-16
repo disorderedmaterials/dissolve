@@ -21,3 +21,5 @@ bool nodeConnect(Configuration *source, int sourceIndex, Configuration *destinat
 bool nodeConnectable(const Configuration *source, int sourceIndex, const Configuration *destination, int destinationIndex);
 bool nodeDisconnect(Configuration *source, int sourceIndex, Configuration *destination, int destinationIndex);
 bool nodeDelete(Configuration *item, CoreData *coreData);
+QVariant nodeData(const Configuration *value, int role);
+bool nodeSetData(Configuration *item, const QVariant &value, int role);

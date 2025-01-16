@@ -63,14 +63,14 @@ std::string nodeName(const GeneratorGraphNode &value)
 void setNodeName(GeneratorGraphNode &value, const std::string name) {}
 
 // Set a specific piece of information from a node by index
-template <> bool nodeSetData<GeneratorGraphNode>(GeneratorGraphNode &item, const QVariant &value, int role)
+bool nodeSetData(GeneratorGraphNode &item, const QVariant &value, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
     return std::visit([&value, role](auto *arg) { return nodeSetData(arg, value, role); }, item.value);
 }
 
 // Get a specific piece of information from a node by index
-template <> QVariant nodeData(const GeneratorGraphNode &item, int role)
+QVariant nodeData(const GeneratorGraphNode &item, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
     return std::visit([role](auto *arg) -> QVariant { return nodeData(arg, role); }, item.value);
