@@ -22,9 +22,12 @@ runs:
       
     - name: 'Install dependencies'
       shell: pwsh
+      env:
+        qtVersion: ${{ env.qtVersion }}
+        antlrVersion: ${{ env.antlrVersion }}
       run: | 
         Set-Location ${{ github.workspace }}
-        ./develop.ps1 -release -qtVersion ${{ env.qtVersion }} -antlrVersion ${{ env.antlrVersion }}
+        ./develop.ps1 -release -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion }}
         
 
     - name: 'Configure and build with CMake'
