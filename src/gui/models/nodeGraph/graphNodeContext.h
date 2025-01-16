@@ -3,13 +3,6 @@
 
 #pragma once
 
-// A template that we can specialise to associate a a context type
-// with a type.
-template <typename T> struct GraphNodeContext
-{
-    using type = GraphNodeContext<void>;
-};
-
 template <typename T> struct Proxy
 {
 };

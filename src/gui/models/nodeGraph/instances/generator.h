@@ -6,16 +6,9 @@
 #include "generator/generator.h"
 #include "gui/models/nodeGraph/graphNodeContext.h"
 
-// Generators need access to the CoreData to access all of their
-// children.
-template <> struct GraphNodeContext<Generator *>
-{
-    using type = CoreData *;
-};
-
 std::string nodeName(Generator *const &value);
 std::string nodeTypeName(Generator *const &value);
 std::string nodeTypeIcon(Generator *const &value);
 bool nodeDelete(Generator *item, CoreData *coreData);
-QVariant nodeData(const Generator *value, int role);
+QVariant nodeData(Generator *value, int role);
 bool nodeSetData(Generator *item, const QVariant &value, int role);

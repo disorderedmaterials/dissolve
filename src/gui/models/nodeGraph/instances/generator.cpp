@@ -13,7 +13,7 @@ std::string nodeTypeIcon(Generator *const &value) { return "qrc:/Dissolve/icons/
 std::string nodeName(Generator *const &value) { return "Generator"; }
 
 // Get a specific piece of information from a node by index
-QVariant nodeData(const Generator *value, int role)
+QVariant nodeData(Generator *value, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
     if (!value)

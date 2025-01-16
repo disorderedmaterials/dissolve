@@ -9,14 +9,6 @@
 
 class GeneratorNode;
 
-
-// GeneratorNodes need access to the CoreData to access all of their
-// children.
-template <> struct GraphNodeContext<GeneratorNode *>
-{
-    using type = CoreData *;
-};
-
 std::string nodeName(GeneratorNode *const &value);
 std::string nodeTypeName(GeneratorNode *const &value);
 std::string nodeTypeIcon(GeneratorNode *const &value);
