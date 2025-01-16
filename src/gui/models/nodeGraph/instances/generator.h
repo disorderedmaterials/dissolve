@@ -4,7 +4,7 @@
 #pragma once
 
 #include "generator/generator.h"
-#include "gui/models/nodeGraph/graphNodeContext.h"
+#include "gui/models/nodeGraph/phantom.h"
 
 std::string nodeName(Generator *const &value);
 std::string nodeTypeName(Generator *const &value);

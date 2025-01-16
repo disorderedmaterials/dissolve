@@ -47,7 +47,7 @@ class GraphNodeModel : public GraphNodeModelBase
     // Labels for QML roles (required by QAbstractListModel)
     QHash<int, QByteArray> roleNames() const override
     {
-        Proxy<T> proxy;
+        Phantom<T> proxy;
         QHash<int, QByteArray> roles;
         roles[Qt::UserRole] = "name";
         roles[Qt::UserRole + 1] = "posX";

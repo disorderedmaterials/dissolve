@@ -37,10 +37,10 @@ QVariant nodeGetValue(const nodeValue &value);
 bool nodeConnect(nodeValue &source, int sourceIndex, nodeValue &destionation, int destinationIndex);
 bool nodeConnectable(const nodeValue &source, int sourceIndex, const nodeValue &destination, int destinationIndex);
 bool nodeDisconnect(nodeValue &source, int sourceIndex, nodeValue &destination, int destinationIndex);
-QHash<int, QByteArray> &nodeRoleNames(Proxy<nodeValue> proxy, QHash<int, QByteArray> &roles);
-bool nodeDelete(nodeValue &value, Proxy<nodeValue> &context);
+QHash<int, QByteArray> &nodeRoleNames(Phantom<nodeValue> proxy, QHash<int, QByteArray> &roles);
+bool nodeDelete(nodeValue &value, Phantom<nodeValue> &context);
 QVariant nodeData(const nodeValue &item, int role);
 bool nodeSetData(nodeValue &item, const QVariant &value, int role);
 
 // The graph model for the example
-typedef GraphModel<nodeValue, Proxy<nodeValue>> ExampleGraphModel;
+typedef GraphModel<nodeValue, Phantom<nodeValue>> ExampleGraphModel;

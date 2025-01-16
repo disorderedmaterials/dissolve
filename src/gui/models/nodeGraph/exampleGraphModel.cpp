@@ -90,7 +90,7 @@ bool nodeDisconnect(nodeValue &source, int sourceIndex, nodeValue &destination, 
 }
 
 // Append the roles for the type onto the QHash
-QHash<int, QByteArray> &nodeRoleNames(Proxy<nodeValue> proxy, QHash<int, QByteArray> &roles)
+QHash<int, QByteArray> &nodeRoleNames(Phantom<nodeValue> proxy, QHash<int, QByteArray> &roles)
 {
     const auto base = Qt::UserRole + GraphNodeModelBase::ownedRoles;
     roles[base] = "value";
@@ -113,7 +113,7 @@ QVariant nodeData(const nodeValue &item, int role)
 bool nodeSetData(nodeValue &item, const QVariant &value, int role) { return false; }
 
 // Delete the node
-bool nodeDelete(nodeValue &value, Proxy<nodeValue> &context) { return true; }
+bool nodeDelete(nodeValue &value, Phantom<nodeValue> &context) { return true; }
 
 // Create node from variant
 nodeValue::nodeValue(QVariant var)

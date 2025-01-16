@@ -4,7 +4,7 @@
 #pragma once
 
 #include <QVariant>
-#include "gui/models/nodeGraph/graphNodeContext.h"
+#include "gui/models/nodeGraph/phantom.h"
 #include "classes/coreData.h"
 
 class GeneratorNode;

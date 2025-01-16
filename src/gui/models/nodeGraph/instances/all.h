@@ -28,7 +28,7 @@ QVariant nodeGetValue(const GeneratorGraphNode &value);
 bool nodeConnect(GeneratorGraphNode &source, int sourceIndex, GeneratorGraphNode &destionation, int destinationIndex);
 bool nodeConnectable(const GeneratorGraphNode &source, int sourceIndex, const GeneratorGraphNode &destination, int destinationIndex);
 bool nodeDisconnect(GeneratorGraphNode &source, int sourceIndex, GeneratorGraphNode &destination, int destinationIndex);
-QHash<int, QByteArray> &nodeRoleNames(Proxy<GeneratorGraphNode> proxy, QHash<int, QByteArray> &roles);
+QHash<int, QByteArray> &nodeRoleNames(Phantom<GeneratorGraphNode> proxy, QHash<int, QByteArray> &roles);
 bool nodeDelete(GeneratorGraphNode &item, CoreData *coreData);
 QVariant nodeData(const GeneratorGraphNode &item, int role);
 bool nodeSetData(GeneratorGraphNode &item, const QVariant &value, int role);

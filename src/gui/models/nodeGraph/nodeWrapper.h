@@ -32,7 +32,7 @@
 
 template <typename T, typename Context>
 concept Graphable = requires(T a, Context context, const std::string name, T b, int sourceIndex, int destinationIndex,
-                             Proxy<T> proxy, QHash<int, QByteArray> &baseHash, int role, QVariant value) {
+                             Phantom<T> proxy, QHash<int, QByteArray> &baseHash, int role, QVariant value) {
     {
         nodeDelete(a, context)
     } -> std::same_as<bool>;

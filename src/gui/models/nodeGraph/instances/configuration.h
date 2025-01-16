@@ -4,7 +4,7 @@
 #pragma once
 
 #include "classes/configuration.h"
-#include "gui/models/nodeGraph/graphNodeContext.h"
+#include "gui/models/nodeGraph/phantom.h"
 
 std::string nodeName(const Configuration *value);
 std::string nodeTypeName(const Configuration *value);
