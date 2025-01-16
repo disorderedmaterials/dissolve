@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/partialSet.h"
-#include "data/structureFactors.h"
 #include "math/windowFunction.h"
 #include "module/module.h"
 
@@ -28,13 +27,11 @@ class TRModule : public Module
     // Step size in Q for S(Q) calculation
     double qDelta_{0.05};
     // Maximum Q for calculated S(Q)
-    double qMax_{50.0};
+    double qMax_{30.0};
     // Minimum Q for calculated S(Q)
     double qMin_{0.01};
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
-    WindowFunction::Form windowFunction_{WindowFunction::Form::Lorch0};
-    // Normalisation to apply to calculated total F(Q)
-    StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
+    WindowFunction::Form windowFunction_{WindowFunction::Form::None};
     // Broadening function to apply to S(Q)
     Function1DWrapper qBroadening_;
     // Source module for calculation
