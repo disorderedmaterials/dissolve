@@ -14,7 +14,8 @@
 
 # Flag: Use existing Qt installation (requires Qt6_DIR environment variable to be set)
 param (
-    [switch]$systemqt = $false,
+    [string]$qtVersion,
+    [string]$antlrVersion = "4.13.1", 
     [switch]$release = $false
 )
 
@@ -109,7 +110,7 @@ Write-Host "Python packages directory path added to system PATH." @info_colors
 
 $qt6Dir = ""
 
-if (-not $systemqt)
+if (-not [string]::IsNullOrEmpty($qtVersion))
 {
     # Install Qt6
     $qtVersion = "6.4.2"
@@ -256,7 +257,6 @@ if ($include -notlike "*$ftglInclude*") {
 # Get ANTLR and Java
 Set-Location -Path $projectDir
 
-$antlrVersion = "4.13.1"
 $antlrUri = "https://www.antlr.org/download/antlr-$antlrVersion-complete.jar"
 $antlrOutput = "antlr-$antlrVersion-complete.jar"
 

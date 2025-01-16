@@ -24,7 +24,7 @@ runs:
       shell: pwsh
       run: | 
         Set-Location ${{ github.workspace }}
-        ./develop.ps1 -release
+        ./develop.ps1 -release -qtVersion ${{ env.qtVersion }} -antlrVersion ${{ env.antlrVersion }}
         
 
     - name: 'Configure and build with CMake'
