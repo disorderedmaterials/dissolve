@@ -27,7 +27,7 @@ class TRModule : public Module
     // Step size in Q for S(Q) calculation
     double qDelta_{0.05};
     // Maximum Q for calculated S(Q)
-    double qMax_{30.0};
+    double qMax_{50.0};
     // Minimum Q for calculated S(Q)
     double qMin_{0.01};
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
