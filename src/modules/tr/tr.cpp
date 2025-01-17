@@ -3,6 +3,7 @@
 
 #include "modules/tr/tr.h"
 #include "keywords/bool.h"
+#include "keywords/function1D.h"
 #include "keywords/module.h"
 #include "modules/neutronSQ/neutronSQ.h"
 
@@ -10,6 +11,10 @@ TRModule::TRModule() : Module(ModuleTypes::TR)
 {
     keywords_.addTarget<ModuleKeyword<const NeutronSQModule>>(
         "SourceNeutronSQs", "Source NeutronSQ to calculate total T(r) from", sourceNeutronSQ_, ModuleTypes::NeutronSQ);
+    keywords_.setOrganisation("Options", "Broadening & Windowing",
+                              "Broadening and windowing to apply when Fourier transforming the g(r) into S(Q).");
+    keywords_.add<Function1DKeyword>("QBroadening", "Instrument broadening function to apply when calculating S(Q)",
+                                     qBroadening_);
     keywords_.setOrganisation("Export");
     keywords_.add<BoolKeyword>("SaveTR", "Save weighted g(r) and G(r)", saveTR_);
 }
