@@ -56,4 +56,5 @@ jobs:
       releaseTag: 'continuous'
       releaseName: "Development Release ${{ needs.Checkout.outputs.currentVersion }} @ ${{ needs.Checkout.outputs.currentShortHash }}"
       releaseBodyFile: ./ChangeLog.md
+      apptainerVersion: ${{ needs.Checkout.outputs.apptainerVersion }}
     secrets: inherit
