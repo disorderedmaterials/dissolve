@@ -36,9 +36,9 @@ class EPSRManagerModule : public Module
     };
     // Potential scalings
     std::string potentialScalings_;
-    // Number of historical partial sets to combine into final partials
+    // Number of historical potential sets to combine into final potential
     std::optional<int> averagingLength_;
-    // Weighting scheme to use when averaging partials
+    // Weighting scheme to use when averaging potential
     Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Vector of averaged potentials over multiple iterations
     std::vector<std::map<std::string, EPData>> averagedPotentialsStore;

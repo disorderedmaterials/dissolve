@@ -26,7 +26,7 @@ class PotentialSet
      * Potentials Data
      */
     private:
-    // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
+    // Fingerprint for these potentials
     std::string fingerprint_;
     struct PotentialData
     {
