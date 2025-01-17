@@ -27,6 +27,7 @@ jobs:
       publishType: 'legacy'
       displayMajorVersion: ${{ needs.Checkout.outputs.majorVersion }}
       displayMinorVersion: ${{ needs.Checkout.outputs.minorVersion }}
+      hugoVersion: ${{ needs.Checkout.outputs.hugoVersion }}
     secrets: inherit
 
   Publish:
