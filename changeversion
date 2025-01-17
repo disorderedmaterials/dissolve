@@ -176,7 +176,7 @@ PrintUsage() {
   echo "        -r  Explicitly set release version and date in README.md"
   echo "        -s  Set version explicitly to X.Y.Z"
   echo "        -v  Get authoritative code version (from src/main/version.cpp)"
-  echo "        -x  Get authoritative code version (from src/main/version.cpp) with patch version as X"
+  echo "        -x  Get authoritative code version (from src/main/version.cpp) with patch version set to a literal 'X'"
   echo "        -k  Check consistency of other files with current authoritative version"
   echo "        -q  Determine bumped version using git-cliff"
   echo "        -t  Determine type (major, minor, patch, or none) of bumped version using git-cliff"
