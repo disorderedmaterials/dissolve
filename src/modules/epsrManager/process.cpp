@@ -57,13 +57,11 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
         epData.potential /= newPotentials.potentialMap()[key].count;
 
     // Does a PotentialSet already exist for this Configuration?
-    auto originalPotentialsObject =
-        moduleData.realiseIf<PotentialSet>(fmt::format("PotentialSet"), name_, GenericItem::InRestartFileFlag);
+    auto originalPotentialsObject = moduleData.realiseIf<PotentialSet>("PotentialSet", name_, GenericItem::InRestartFileFlag);
     // Set restart equal to changes
     originalPotentialsObject.first = newPotentials;
     // Reference to the current potentials
-    auto &currentPotentials =
-        moduleData.realise<PotentialSet>(fmt::format("PotentialSet"), name_, GenericItem::InRestartFileFlag);
+    auto &currentPotentials = moduleData.realise<PotentialSet>("PotentialSet", name_, GenericItem::InRestartFileFlag);
     // Average the Potentials
     if (averagingLength_)
         Averaging::average<PotentialSet>(moduleContext.dissolve().processingModuleData(), "PotentialSet", name(),
