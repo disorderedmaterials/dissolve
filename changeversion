@@ -47,6 +47,11 @@ GetCodeVersion() {
   MAIN_VERSION=$(grep '#define DISSOLVEVERSION' src/main/version.cpp | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g')
   echo "         version.cpp : ${MAIN_VERSION}"
 
+  if [[ ! "${MAIN_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "!!! Malformed version (or no version at all) found in version.cpp."
+    return 1
+  fi
+
   # Flake (flake.nix)
   FLAKE_VERSION=$(grep " version =" flake.nix | sed -e "s/\W*version = \"\(.*\)\";/\1/")
   echo "           flake.nix : ${FLAKE_VERSION}"
@@ -116,6 +121,12 @@ GetWebReleaseInfo() {
   WEB_DATE=$(grep 'releaseDate' web/main.toml | sed -e 's/releaseDate = "\(.*\)"/\1/g')
   echo "           main.toml (Version) : ${WEB_VERSION}"
   echo "           main.toml    (Date) : ${WEB_DATE}"
+
+  # Did we get a sensible version out of the file?
+  if [[ ! "${WEB_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "!!! Malformed version (or no version at all) found in main.toml."
+    return 1
+  fi
 
   # Check Version?
   if [ $# == 1 ] && [ ${WEB_VERSION} != "$1" ]
