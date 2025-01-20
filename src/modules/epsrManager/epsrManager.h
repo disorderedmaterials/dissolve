@@ -31,9 +31,9 @@ class EPSRManagerModule : public Module
     std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> potentials_;
     // Potential scalings
     std::string potentialScalings_;
-    // Number of historical partial sets to combine into final partials
+    // Number of historical potentials sets to combine into final potentials
     std::optional<int> averagingLength_{};
-    // Weighting scheme to use when averaging partials
+    // Weighting scheme to use when averaging potentials
     Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
 
     /*
