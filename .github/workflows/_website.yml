@@ -156,29 +156,29 @@ jobs:
       if: ${{ inputs.publishType == 'release' }}
       shell: bash
       run: |
-        echo "${SERVER_ID}" > ./serverId
-        echo "${SERVER_KEY}" > ./serverKey
+        echo "${{ secrets.SERVER_ID }}" > ./serverId
+        echo "${{ secrets.SERVER_KEY }}" > ./serverKey
         chmod 0600 ./serverKey ./serverId
-        rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_MAIN_DIR}
-        rsync -avz --delete --exclude=dev --exclude=legacy -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}
+        rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${{ secrets.SERVER_PORT }} -l ${{ secrets.SERVER_USER }}" web/public/ ${{ secrets.SERVER_IP }}:${{ secrets.SERVER_MAIN_DIR }}
+        rsync -avz --delete --exclude=dev --exclude=legacy -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${{ secrets.SERVER_PORT }} -l ${{ secrets.SERVER_USER }}" web/public-docs/ ${{ secrets.SERVER_IP }}:${{ secrets.SERVER_DOCS_DIR }}
   
     - name: 'SSH Deploy to Server (Legacy) (Docs only)'
       if: ${{ inputs.publishType == 'legacy' }}
       shell: bash
       run: |
-        echo "${SERVER_ID}" > ./serverId
-        echo "${SERVER_KEY}" > ./serverKey
+        echo "${{ secrets.SERVER_ID }}" > ./serverId
+        echo "${{ secrets.SERVER_KEY }}" > ./serverKey
         chmod 0600 ./serverKey ./serverId
-        rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/legacy
+        rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${{ secrets.SERVER_PORT }} -l ${{ secrets.SERVER_USER }}" web/public-docs/ ${{ secrets.SERVER_IP }}:${{ secrets.SERVER_DOCS_DIR }}/legacy
   
     - name: 'SSH Deploy to Server (Continuous) (Docs only)'
       if: ${{ inputs.publishType == 'continuous' }}
       shell: bash
       run: |
-        echo "${SERVER_ID}" > ./serverId
-        echo "${SERVER_KEY}" > ./serverKey
+        echo "${{ secrets.SERVER_ID }}" > ./serverId
+        echo "${{ secrets.SERVER_KEY }}" > ./serverKey
         chmod 0600 ./serverKey ./serverId
-        rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/dev
+        rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${{ secrets.SERVER_PORT }} -l ${{ secrets.SERVER_USER }}" web/public-docs/ ${{ secrets.SERVER_IP }}:${{ secrets.SERVER_DOCS_DIR }}/dev
   
     - name: Upload Web Artifacts
       uses: actions/upload-artifact@v4
