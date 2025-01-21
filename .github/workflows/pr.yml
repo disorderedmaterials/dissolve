@@ -24,6 +24,8 @@ jobs:
   QC:
     needs: [Checkout]
     uses: "./.github/workflows/_qc.yml"
+    with:
+      nixHash: ${{ needs.Checkout.outputs.nixHash }}
 
   BuildAndPackage:
     needs: [Checkout]
