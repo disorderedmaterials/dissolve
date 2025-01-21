@@ -217,8 +217,8 @@ do
        ;;
     q) git cliff --bumped-version
        ;;
-    b) BUMPED=$(git cliff --bumped-version)
-       echo "BUMPED = ${BUMPED}"
+    b) CURRENT=$(GetAuthoritativeVersion)
+       BUMPED=$(git cliff --bumped-version)
        if [ "${BUMPED}x" == "x" ]
        then
          echo "Error: Failed to auto-bump version."
@@ -226,6 +226,7 @@ do
        fi
        SetCodeVersion ${BUMPED}
        SetWebReleaseInfo ${BUMPED}
+       echo "Version auto-bumped to ${BUMPED} (from ${CURRENT})"
        ;;
     l) git cliff --bump -u
        ;;
