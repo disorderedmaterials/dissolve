@@ -1,16 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
+#include "gui/models/nodeGraph/instances/all.h"
 #include <QAbstractListModel>
+#include <concepts>
 #include <variant>
 
 /**
-   This file contains a series of templates that need to be overloaded
-   to allow a type to be displayed as a node.  This is essentially a
-   C++ Concept, but without all the compiler checks and niceties that
-   we will get with C++20.
+   This file contains a C++20 concept which defines whether a type can
+   be shown as a graph.  Any type T which contains implementations for
+   all of the functions listed below can be displayed in a graph.  A
+   second template parameter Context was also necessary to implement
+   deletion as most nodes would need to know *where* they were being
+   deleted from.
 
    A concept was chosen over class methods because:
 
@@ -23,38 +27,59 @@
    part of the class even in the command line version.  As some of the
    methods require Qt types (e.g. QHash, QVariant), then Qt would
    suddenly become a dependency of the command line code.
+
+   This code is a direct conversion of the template code that came
+   before.  Truth be told, the connection functions should likely be
+   split out into a separate Concept (allowing us to check for
+   connection correctness as compile time), but that is outside of the
+   scope of this PR.
  **/
 
-// A template that we can specialise to associate a a context type
-// with a type.
-template <typename T> struct GraphNodeContext
-{
-    using type = GraphNodeContext<void>;
+template <typename T, typename Context>
+concept Graphable = requires(T a, Context context, const std::string name, T b, int sourceIndex, int destinationIndex,
+                             Phantom<T> proxy, QHash<int, QByteArray> &baseHash, int role, QVariant value) {
+    {
+        nodeDelete(a, context)
+    } -> std::same_as<bool>;
+    {
+        nodeRoleNames(proxy, baseHash)
+    } -> std::same_as<QHash<int, QByteArray> &>;
+    {
+        nodeName(a)
+    } -> std::same_as<std::string>;
+    {
+        nodeTypeName(a)
+    } -> std::same_as<std::string>;
+    {
+        nodeTypeIcon(a)
+    } -> std::same_as<std::string>;
+    {
+        setNodeName(a, name)
+    };
+    {
+        nodeGetValue(a)
+    } -> std::same_as<QVariant>;
+    {
+        nodeConnect(a, sourceIndex, b, destinationIndex)
+    } -> std::same_as<bool>;
+    {
+        nodeConnectable(a, sourceIndex, b, destinationIndex)
+    } -> std::same_as<bool>;
+    {
+        nodeDisconnect(a, sourceIndex, b, destinationIndex)
+    } -> std::same_as<bool>;
+    {
+        nodeData(a, role)
+    } -> std::convertible_to<QVariant>;
+    {
+        nodeSetData(a, value, role)
+    } -> std::convertible_to<bool>;
 };
 
-// Append the roles for the type onto the QHash
-template <typename T> QHash<int, QByteArray> &nodeRoleNames(QHash<int, QByteArray> &base);
-// The name of the type (for delegate dispatch)
-template <typename T> std::string nodeTypeName(const T &value);
-// The path to the icon for the node
-template <typename T> std::string nodeTypeIcon(const T &value);
-// Delete the node
-template <typename T> bool nodeDelete(T &value, typename GraphNodeContext<T>::type &context);
-// The title of the node
-template <typename T> std::string nodeName(const T &value);
-// Change the title of the node
-template <typename T> void setNodeName(T &value, const std::string);
-// The value of the node
-template <typename T> QVariant nodeGetValue(const T value);
-// Link an indexed position on the source to an indexed position on the destination
-template <typename T> bool nodeConnect(T &source, int sourceIndex, T &destination, int destinationIndex);
-// Confirm that a connection is possible (e.g. types match and index isn't already connected)
-template <typename T> bool nodeConnectable(const T &source, int sourceIndex, const T &destination, int destinationIndex);
-// Unlink an indexed position on the source to an indexed position on the destination
-template <typename T> bool nodeDisconnect(T &source, int sourceIndex, T &destination, int destinationIndex);
-
 // A wrapper with supplemental information for a node
-template <typename T> class NodeWrapper
+template <typename T, typename Context>
+    requires Graphable<T, Context>
+class NodeWrapper
 {
     public:
     NodeWrapper(QVariant value) : value_(value) {}
@@ -72,9 +97,3 @@ template <typename T> class NodeWrapper
     // The actual value of the node
     T value_;
 };
-
-// Get a specific piece of information from a node by index
-template <typename T> QVariant nodeData(const T &, int role);
-
-// Set a specific piece of information from a node by index
-template <typename T> bool nodeSetData(T &, const QVariant &value, int role);

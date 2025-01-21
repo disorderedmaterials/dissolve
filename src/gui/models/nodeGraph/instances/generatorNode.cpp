@@ -6,24 +6,24 @@
 #include "keywords/nodeValue.h"
 
 // The name of the type (for delegate dispatch)
-template <> std::string nodeTypeName<GeneratorNode *>(GeneratorNode *const &value) { return "GeneratorNode"; }
+std::string nodeTypeName(GeneratorNode *const &value) { return "GeneratorNode"; }
 
 // The path to the icon for the node
-template <> std::string nodeTypeIcon<GeneratorNode *>(GeneratorNode *const &value)
+std::string nodeTypeIcon(GeneratorNode *const &value)
 {
     auto name = GeneratorNode::nodeTypes().keyword(value->type());
     return "qrc:/Dissolve/icons/nodes/" + name + ".svg";
 }
 
 // The title of the node
-template <> std::string nodeName<GeneratorNode *>(GeneratorNode *const &value)
+std::string nodeName(GeneratorNode *const &value)
 {
     std::string result = {value->name().begin(), value->name().end()};
     return result;
 }
 
 // Get a specific piece of information from a node by index
-template <> QVariant nodeData(GeneratorNode *const &value, int role)
+QVariant nodeData(const GeneratorNode *value, int role)
 {
     using names = GeneratorGraphModel::PropertyIndex;
     if (!value)
@@ -50,10 +50,10 @@ template <> QVariant nodeData(GeneratorNode *const &value, int role)
 }
 
 // Set a specific piece of information from a node by index
-template <> bool nodeSetData(GeneratorNode *&item, const QVariant &value, int role) { return false; }
+bool nodeSetData(GeneratorNode *item, const QVariant &value, int role) { return false; }
 
 // Delete the node
-template <> bool nodeDelete(GeneratorNode *&item, typename GraphNodeContext<GeneratorNode *>::type &coreData)
+bool nodeDelete(GeneratorNode *item, CoreData *coreData)
 {
     for (auto &conf : coreData->configurations())
     {

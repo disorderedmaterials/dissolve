@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
-
-#include "gui/models/nodeGraph/generatorGraphModel.h"
-#include "gui/models/nodeGraph/nodeWrapper.h"
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
+
+#include "gui/models/nodeGraph/generatorGraphModel.h"

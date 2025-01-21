@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -29,5 +29,18 @@ class nodeValue
     std::variant<double, nodeValue *> value;
 };
 
+std::string nodeName(const nodeValue &value);
+std::string nodeTypeName(const nodeValue &value);
+std::string nodeTypeIcon(const nodeValue &value);
+void setNodeName(nodeValue &value, std::string);
+QVariant nodeGetValue(const nodeValue &value);
+bool nodeConnect(nodeValue &source, int sourceIndex, nodeValue &destionation, int destinationIndex);
+bool nodeConnectable(const nodeValue &source, int sourceIndex, const nodeValue &destination, int destinationIndex);
+bool nodeDisconnect(nodeValue &source, int sourceIndex, nodeValue &destination, int destinationIndex);
+QHash<int, QByteArray> &nodeRoleNames(Phantom<nodeValue> proxy, QHash<int, QByteArray> &roles);
+bool nodeDelete(nodeValue &value, Phantom<nodeValue> &context);
+QVariant nodeData(const nodeValue &item, int role);
+bool nodeSetData(nodeValue &item, const QVariant &value, int role);
+
 // The graph model for the example
-typedef GraphModel<nodeValue> ExampleGraphModel;
+typedef GraphModel<nodeValue, Phantom<nodeValue>> ExampleGraphModel;

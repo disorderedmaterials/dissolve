@@ -47,7 +47,7 @@ function(dissolve_add_test)
     target_include_directories(${TEST_NAME} PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
     target_link_libraries(
       ${TEST_NAME}
-      PUBLIC keywordWidgets models widgets render delegates
+      PUBLIC keywordWidgets models widgets render delegates nodeGraphModel
       PRIVATE Qt6::Core Qt6::Widgets
     )
   endif(DISSOLVE_UNIT_TEST_GUI)
