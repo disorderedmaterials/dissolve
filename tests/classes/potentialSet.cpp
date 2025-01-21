@@ -68,7 +68,7 @@ TEST(PotentialSetTest, Averaging)
 {
     GenericList moduleData;
     auto originalPotentialsObject =
-        moduleData.realiseIf<PotentialSet>(fmt::format("PotentialSet"), "module", GenericItem::InRestartFileFlag);
+        moduleData.realiseIf<PotentialSet>("PotentialSet", "module", GenericItem::InRestartFileFlag);
 
     std::string filename_{"test_restart.txt"};
     // Open the file
@@ -117,7 +117,6 @@ TEST(PotentialSetTest, Averaging)
         pots.potentialMap()["A-D"].potential = y;
 
         originalPotentialsObject.first = pots;
-        fmt::print("Run {}\n", n);
         Averaging::average<PotentialSet>(moduleData, "PotentialSet", "module", averagingLength,
                                          Averaging::AveragingScheme::LinearAveraging);
 
@@ -144,7 +143,7 @@ TEST(PotentialSetTest, Averaging2)
 {
     GenericList moduleData;
     auto originalPotentialsObject =
-        moduleData.realiseIf<PotentialSet>(fmt::format("PotentialSet"), "module", GenericItem::InRestartFileFlag);
+        moduleData.realiseIf<PotentialSet>("PotentialSet", "module", GenericItem::InRestartFileFlag);
 
     std::string filename_{"test_restart.txt"};
     // Open the file
@@ -193,7 +192,6 @@ TEST(PotentialSetTest, Averaging2)
         pots.potentialMap()["A-D"].potential = y;
 
         originalPotentialsObject.first = pots;
-        fmt::print("Run {}\n", n);
         Averaging::average<PotentialSet>(moduleData, "PotentialSet", "module", averagingLength,
                                          Averaging::AveragingScheme::LinearAveraging);
 
