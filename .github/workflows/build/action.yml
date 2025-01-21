@@ -41,8 +41,8 @@ runs:
       cacheOnly: ${{ inputs.cacheOnly }}
       currentVersion: ${{ inputs.currentVersion }}
       nixHash: ${{ inputs.nixHash }}
-      benchmark: ${{ inputs.benchmark && target == 'dissolve' }}
-      publishBenchmarks: ${{ inputs.publishBenchmarks && target == 'dissolve' }}
+      benchmark: ${{ inputs.benchmark && inputs.target == 'dissolve' }}
+      publishBenchmarks: ${{ inputs.publishBenchmarks && inputs.target == 'dissolve' }}
 
   - name: Build (OSX)
     if: runner.os == 'MacOS'
