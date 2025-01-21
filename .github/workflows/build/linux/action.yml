@@ -113,6 +113,7 @@ runs:
 
   - name: Run benchmarks
     if: inputs.benchmark == 'true'
+    shell: bash
     run: |
       set -ex
       export LD_LIBRARY_PATH=`pwd`/build/onetbb/lib
