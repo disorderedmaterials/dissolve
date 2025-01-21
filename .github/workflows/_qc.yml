@@ -2,6 +2,10 @@ name: Quality Control
 
 on:
   workflow_call:
+    inputs:
+      nixHash:
+        type: string
+        required: true
 
 jobs:
 
@@ -19,6 +23,8 @@ jobs:
 
     - name: Code Formatting
       uses: "./.github/workflows/qc"
+      with:
+        nixHash: ${{ inputs.nixHash }}
 
   ConventionalCommits:
     if: github.event_name == 'pull_request'
