@@ -28,9 +28,6 @@ inputs:
   publishBenchmarks:
     type: boolean
     default: false
-secrets:
-  GITHUB_TOKEN:
-    description: "GitHub credentials token"
 
 runs:
   using: "composite"
@@ -46,8 +43,6 @@ runs:
       nixHash: ${{ inputs.nixHash }}
       benchmark: {{ inputs.benchmark && target == 'dissolve' }}
       publishBenchmarks: ${{ inputs.publishBenchmarks && target == 'dissolve' }}
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   - name: Build (OSX)
     if: runner.os == 'MacOS'

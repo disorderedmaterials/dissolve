@@ -18,9 +18,6 @@ inputs:
   publishBenchmarks:
     type: boolean
     default: false
-secrets:
-  GITHUB_TOKEN:
-    description: "GitHub credentials token"
 
 runs:
   using: "composite"
@@ -132,7 +129,7 @@ runs:
     with:
       tool: 'googlecpp'
       output-file-path: all_benchmark_results.json
-      github-token: ${{ secrets.GITHUB_TOKEN }}
+      github-token: ${{ github.token }}
       auto-push: true
       comment-on-alert: true
       alert-threshold: '200%'
