@@ -19,6 +19,15 @@ on:
       nixHash:
         type: string
         required: true
+      benchmark:
+        type: boolean
+        default: false
+      publishBenchmarks:
+        type: boolean
+        default: false
+    secrets:
+      GITHUB_TOKEN:
+        description: "GitHub credentials token"
 
 jobs:
 
@@ -67,6 +76,10 @@ jobs:
         target: ${{ matrix.target }}
         currentVersion: ${{ inputs.currentVersion }}
         nixHash: ${{ inputs.nixHash }}
+        benchmark: ${{ inputs.benchmark }}
+        publishBenchmarks: ${{ inputs.publishBenchmarks }}
+      secrets:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   Package:
     needs: Build

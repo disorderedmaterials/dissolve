@@ -32,11 +32,14 @@ jobs:
     needs: [Checkout]
     uses: "./.github/workflows/_build_and_package.yml"
     with:
+      benchmark: true
+      publishBenchmarks: true
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
       conanHash: ${{ needs.Checkout.outputs.conanHash }}
       nixHash: ${{ needs.Checkout.outputs.nixHash }}
+    secrets: inherit
 
   Web:
     needs: [Checkout]
