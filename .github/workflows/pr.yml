@@ -31,7 +31,7 @@ jobs:
     needs: [Checkout]
     uses: "./.github/workflows/_build_and_package.yml"
     with:
-      benchmark: false
+      benchmark: true
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
