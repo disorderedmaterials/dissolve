@@ -6,7 +6,7 @@ description: Modify and average the empirical potential.
 
 ## Overview
 
-The `EPSR Manager` module allows for the modification, by a fixed multiplier, and averaging over a set number of iterations, of the empirial potential that is calculated via the `EPSR` module.
+The `EPSR Manager` module allows for the modification, by a fixed multiplier, and averaging over a set number of iterations, of empirial potentials that is calculated via the {{< module "EPSR" >}} module. It can also be used to combine the potentials from several {{< module "EPSR" >}} modules.
 
 ## Options
 

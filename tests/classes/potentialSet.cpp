@@ -70,13 +70,10 @@ TEST(PotentialSetTest, Averaging)
     auto originalPotentialsObject =
         moduleData.realiseIf<PotentialSet>("PotentialSet", "module", GenericItem::InRestartFileFlag);
 
-    std::string filename_{"test_restart.txt"};
+    std::string filename{std::format("{}.restart.txt", ::testing::UnitTest::GetInstance()->current_test_info()->name())};
     // Open the file
     LineParser parser;
-    if (!parser.openOutput(filename_))
-    {
-        parser.closeFiles();
-    }
+    ASSERT_TRUE(parser.openOutput(filename));
 
     Data1D x;
     Data1D y;
@@ -145,10 +142,11 @@ TEST(PotentialSetTest, Averaging2)
     auto originalPotentialsObject =
         moduleData.realiseIf<PotentialSet>("PotentialSet", "module", GenericItem::InRestartFileFlag);
 
-    std::string filename_{"test_restart.txt"};
+    std::string filename{std::format("{}.restart.txt", ::testing::UnitTest::GetInstance()->current_test_info()->name())};
+
     // Open the file
     LineParser parser;
-    if (!parser.openOutput(filename_))
+    if (!parser.openOutput(filename))
     {
         parser.closeFiles();
     }
