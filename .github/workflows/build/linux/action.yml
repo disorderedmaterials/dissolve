@@ -124,6 +124,9 @@ runs:
 
       cat all_benchmark_results.json
 
+      # Must reset to HEAD here otherwise the benchmark publishing step will (rightly) fail
+      git reset HEAD --hard
+
   - name: Store benchmark result
     uses: rhysd/github-action-benchmark@v1
     if: inputs.publishBenchmarks == 'true' && inputs.benchmark == 'true'
