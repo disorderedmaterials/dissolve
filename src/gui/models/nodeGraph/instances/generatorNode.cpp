@@ -6,7 +6,7 @@
 #include "keywords/nodeValue.h"
 
 // The name of the type (for delegate dispatch)
-std::string nodeTypeName(GeneratorNode *const &value) { return "GeneratorNode"; }
+std::string nodeTypeName(GeneratorNode *const &value) { return value->nodeTypes().keyword(value->type()); }
 
 // The path to the icon for the node
 std::string nodeTypeIcon(GeneratorNode *const &value)
@@ -84,4 +84,11 @@ bool nodeDisconnect(const GeneratorNode *source, int sourceIndex, const Generato
     return false;
 }
 
-QHash<int, QByteArray> &nodeRoleNames(Phantom<GeneratorNode *> proxy, QHash<int, QByteArray> &roles) { return roles; }
+QHash<int, QByteArray> &nodeRoleNames(Phantom<GeneratorNode *> proxy, QHash<int, QByteArray> &roles)
+{
+
+    using names = GeneratorGraphModel::PropertyIndex;
+    const auto base = Qt::UserRole + GraphNodeModelBase::ownedRoles;
+    roles[base + names::Temperature] = "temperature";
+    return roles;
+}
