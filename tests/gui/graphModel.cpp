@@ -21,12 +21,14 @@ TEST(GraphModelTest, ExampleGraphModel)
     EXPECT_EQ(nodes.rowCount(), 0);
     EXPECT_EQ(edges.rowCount(), 0);
 
-    model.emplace_back(100, 300, 7.5);
+    nodeValue temp(7.5);
+    model.emplace_back(100, 300, QVariant::fromValue(temp));
     model.items().back().rawValue().name = "First";
     model.emplace_back(600, 400, {});
     model.items().back().rawValue().name = "Last";
     model.connect("First", 0, "Last", 0);
 
+    EXPECT_EQ(model.items()[0].rawValue().value.index(), 0);
     EXPECT_EQ(std::get<double>(model.items()[0].rawValue().value), 7.5);
 
     EXPECT_EQ(nodes.rowCount(), 2);
@@ -54,7 +56,6 @@ TEST(GraphModelTest, ExampleGraphModel)
     EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 2).toInt(), 400);
     EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 3).toString(), "ptr");
     EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 4).toString(), "qrc:/Dissolve/icons/cross.svg");
-    EXPECT_EQ(nodes.data(nodes.index(1, 0), Qt::UserRole + 5).toDouble(), 7.5);
 
     model.deleteNode("Last");
     EXPECT_EQ(nodes.rowCount(), 1);
@@ -78,10 +79,10 @@ TEST(GraphModelTest, GeneratorGraphModel)
     dissolveModel.loadInput(QUrl("file:dissolve/input/broadening-argon.txt"));
     ggm.handleReset();
 
-    EXPECT_EQ(ggm.nEdges(), 4);
+    EXPECT_EQ(ggm.nEdges(), 2);
 
     auto nodes = ggm.nodes();
-    EXPECT_EQ(nodes->rowCount(), 5);
+    EXPECT_EQ(nodes->rowCount(), 3);
 
     // Flip the hash to get the roles by name
     QHash<QByteArray, int> flipped;
@@ -92,29 +93,18 @@ TEST(GraphModelTest, GeneratorGraphModel)
     ASSERT_NE(flipped["type"], 0);
     ASSERT_NE(flipped["name"], 0);
     ASSERT_NE(flipped["icon"], 0);
-    ASSERT_NE(flipped["temperature"], 0);
-    ASSERT_NE(flipped["atomicDensity"], 0);
-
-    // Bulk Configuration
-    EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["type"]).toString().toStdString(), std::string("Configuration"));
-    EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["name"]).toString().toStdString(), std::string("liquid"));
-    EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["temperature"]).toDouble(), 300.0);
-    EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["atomicDensity"]).toDouble(), 0.0);
-
-    // Main Generator
-    EXPECT_EQ(nodes->data(nodes->index(1, 0), flipped["type"]).toString().toStdString(), std::string("Generator"));
 
     // Box Node
-    EXPECT_EQ(nodes->data(nodes->index(2, 0), flipped["type"]).toString().toStdString(), std::string("GeneratorNode"));
-    EXPECT_EQ(nodes->data(nodes->index(2, 0), flipped["icon"]).toString().toStdString(), "qrc:/Dissolve/icons/nodes/Box.svg");
+    EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["type"]).toString().toStdString(), std::string("GeneratorNode"));
+    EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["icon"]).toString().toStdString(), "qrc:/Dissolve/icons/nodes/Box.svg");
 
     // Add Node
-    EXPECT_EQ(nodes->data(nodes->index(3, 0), flipped["type"]).toString().toStdString(), std::string("GeneratorNode"));
-    EXPECT_EQ(nodes->data(nodes->index(3, 0), flipped["icon"]).toString().toStdString(), "qrc:/Dissolve/icons/nodes/Add.svg");
+    EXPECT_EQ(nodes->data(nodes->index(1, 0), flipped["type"]).toString().toStdString(), std::string("GeneratorNode"));
+    EXPECT_EQ(nodes->data(nodes->index(1, 0), flipped["icon"]).toString().toStdString(), "qrc:/Dissolve/icons/nodes/Add.svg");
 
     // Import Node
-    EXPECT_EQ(nodes->data(nodes->index(4, 0), flipped["type"]).toString().toStdString(), std::string("GeneratorNode"));
-    EXPECT_EQ(nodes->data(nodes->index(4, 0), flipped["icon"]).toString().toStdString(),
+    EXPECT_EQ(nodes->data(nodes->index(2, 0), flipped["type"]).toString().toStdString(), std::string("GeneratorNode"));
+    EXPECT_EQ(nodes->data(nodes->index(2, 0), flipped["icon"]).toString().toStdString(),
               "qrc:/Dissolve/icons/nodes/ImportCoordinates.svg");
 }
 

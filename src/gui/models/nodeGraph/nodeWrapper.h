@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/models/nodeGraph/instances/all.h"
+#include "gui/models/nodeGraph/instances/generatorNode.h"
 #include <QAbstractListModel>
 #include <concepts>
 #include <variant>
@@ -82,13 +82,13 @@ template <typename T, typename Context>
 class NodeWrapper
 {
     public:
-    NodeWrapper(QVariant value) : value_(value) {}
+    NodeWrapper(QVariant value) : value_(value.value<T>()) {}
     NodeWrapper(T value) : value_(value) {}
     // The X and Y coordinates of the node on the screen.
     int posx, posy;
 
     // Get the value wrapped in a QVariant (needed for QML)
-    QVariant value() const { return nodeGetValue<T>(value_); }
+    QVariant value() const { return nodeGetValue(value_); }
     // Get the actual value of the node
     T &rawValue() { return value_; }
     const T &rawValue() const { return value_; }

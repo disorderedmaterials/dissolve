@@ -22,6 +22,8 @@ std::string nodeName(GeneratorNode *const &value)
     return result;
 }
 
+void setNodeName(GeneratorNode *value, std::string name) { value->setName(name); }
+
 // Get a specific piece of information from a node by index
 QVariant nodeData(const GeneratorNode *value, int role)
 {
@@ -61,3 +63,25 @@ bool nodeDelete(GeneratorNode *item, CoreData *coreData)
     }
     return true;
 }
+
+QVariant nodeGetValue(const GeneratorNode *value) { return QVariant::fromValue(value); }
+
+bool nodeConnect(const GeneratorNode *source, int sourceIndex, const GeneratorNode *destionation, int destinationIndex)
+{
+    // Connections not yet implemented
+    return false;
+}
+
+bool nodeConnectable(const GeneratorNode *source, int sourceIndex, const GeneratorNode *destination, int destinationIndex)
+{
+    // Connections not yet implemented
+    return false;
+}
+
+bool nodeDisconnect(const GeneratorNode *source, int sourceIndex, const GeneratorNode *destination, int destinationIndex)
+{
+    // Connections not yet implemented
+    return false;
+}
+
+QHash<int, QByteArray> &nodeRoleNames(Phantom<GeneratorNode *> proxy, QHash<int, QByteArray> &roles) { return roles; }

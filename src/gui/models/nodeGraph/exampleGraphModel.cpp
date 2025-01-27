@@ -9,21 +9,7 @@
 // The value of the node
 QVariant nodeGetValue(const nodeValue &value)
 {
-    return std::visit(
-        [](auto arg) -> QVariant
-        {
-            if constexpr (std::is_same_v<decltype(arg), double>)
-            {
-                return QVariant::fromValue(arg);
-            }
-            else
-            {
-                if (arg)
-                    return nodeGetValue(*arg);
-                return {};
-            }
-        },
-        value.value);
+    return std::visit([](auto arg) -> QVariant { return QVariant::fromValue(arg); }, value.value);
 };
 
 // The name of the type (for delegate dispatch)

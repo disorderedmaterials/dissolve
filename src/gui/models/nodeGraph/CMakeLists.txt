@@ -9,7 +9,6 @@ set(nodeGraphModel_SRCS
     generatorGraphModel.cpp
     instances/configuration.cpp
     instances/generator.cpp
-    instances/generatorGraphNode.cpp
     instances/generatorNode.cpp
 )
 
