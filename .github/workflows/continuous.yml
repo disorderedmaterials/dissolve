@@ -55,6 +55,7 @@ jobs:
     uses: "./.github/workflows/_publish.yml"
     with:
       publishType: 'continuous'
+      currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
       releaseTag: 'continuous'
       releaseName: "Development Release ${{ needs.Checkout.outputs.currentVersion }} @ ${{ needs.Checkout.outputs.currentShortHash }}"
       releaseBodyFile: ./ChangeLog.md

@@ -12,8 +12,13 @@ on:
         type: string
         description: "Apptainer version to install and use"
       currentVersion:
+        required: true
         type: string
         description: "Version being published"
+      releaseTag:
+        type: string
+        default: ''
+        description: "Existing tag which the release will be associated to on GitHub"
       releaseName:
         type: string
         description: "Name of the release as it will appear on GitHub"
@@ -25,10 +30,6 @@ on:
         type: string
         default: ''
         description: "Body file to use for body text, used in preference to releaseBody if provided"
-      releaseTag:
-        type: string
-        default: ''
-        description: "Existing tag which the release will be associated to on GitHub"
     secrets:
       HARBOR_USER:
         description: "Username for Harbor access"

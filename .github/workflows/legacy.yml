@@ -35,5 +35,6 @@ jobs:
     uses: "./.github/workflows/_publish.yml"
     with:
       publishType: 'legacy'
+      currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
       apptainerVersion: ${{ needs.Checkout.outputs.apptainerVersion }}
     secrets: inherit

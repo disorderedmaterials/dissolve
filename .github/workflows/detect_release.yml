@@ -41,6 +41,7 @@ jobs:
     uses: "./.github/workflows/_publish.yml"
     with:
       publishType: 'release'
+      currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
       releaseTag: ${{ needs.Checkout.outputs.currentVersion }}
       releaseName: "Release ${{ needs.Checkout.outputs.currentVersion }}"
       releaseBody: ${{ github.event.pull_request.body }}
