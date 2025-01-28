@@ -28,7 +28,9 @@ class GeneratorGraphModel : public GraphModel<GeneratorNode*, CoreData *>
         Value = 0,
         Size,
         Temperature,
-        AtomicDensity,
+        Lengths,
+        Angles,
+        NonPeriodic
     };
 
     public Q_SLOTS:

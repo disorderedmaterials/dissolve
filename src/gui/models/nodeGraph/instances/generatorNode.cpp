@@ -2,8 +2,10 @@
 #include "generator/node.h"
 #include "gui/models/nodeGraph/generatorGraphModel.h"
 #include "gui/models/nodeGraph/nodeWrapper.h"
+#include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/nodeValue.h"
+#include "keywords/vec3NodeValue.h"
 
 // The name of the type (for delegate dispatch)
 std::string nodeTypeName(GeneratorNode *const &value) { return value->nodeTypes().keyword(value->type()); }
@@ -24,6 +26,76 @@ std::string nodeName(GeneratorNode *const &value)
 
 void setNodeName(GeneratorNode *value, std::string name) { value->setName(name); }
 
+template <GeneratorGraphModel::PropertyIndex T> QVariant unlockKeyword(const KeywordStore &keywords);
+
+template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::Temperature>(const KeywordStore &keywords)
+{
+    auto temp = keywords.find("Temperature");
+    // Check that we found a keyword
+    if (!temp)
+    {
+        std::cout << "Cannot Find Temperature:" << keywords.nVisibleKeywords() << std::endl;
+        return {};
+    }
+    auto as_double = dynamic_cast<NodeValueKeyword *>(temp.value().first);
+    // Check that the value is a double
+    if (!as_double)
+    {
+        std::cout << "Cannot Convert To Double" << std::endl;
+        return {};
+    }
+    return QVariant::fromValue(as_double->data().asDouble());
+}
+
+template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::Lengths>(const KeywordStore &keywords)
+{
+    auto temp = keywords.find("Lengths");
+    // Check that we found a keyword
+    if (!temp)
+        return {};
+    auto as_double = dynamic_cast<Vec3NodeValueKeyword *>(temp.value().first);
+    // Check that the value is a double
+    if (!as_double)
+        return {};
+    auto data = as_double->data();
+    auto result = std::format("{}, {}, {}", data.get(0).asDouble(), data.get(1).asDouble(), data.get(2).asDouble());
+    return QString::fromStdString(result);
+}
+
+template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::Angles>(const KeywordStore &keywords)
+{
+    auto temp = keywords.find("Angles");
+    // Check that we found a keyword
+    if (!temp)
+        return {};
+    auto as_double = dynamic_cast<Vec3NodeValueKeyword *>(temp.value().first);
+    // Check that the value is a double
+    if (!as_double)
+        return {};
+    auto data = as_double->data();
+    auto result = std::format("{}, {}, {}", data.get(0).asDouble(), data.get(1).asDouble(), data.get(2).asDouble());
+    return QString::fromStdString(result);
+}
+
+template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::NonPeriodic>(const KeywordStore &keywords)
+{
+    auto temp = keywords.find("NonPeriodic");
+    // Check that we found a keyword
+    if (!temp)
+    {
+        std::cout << "Cannot find Non Periodic" << std::endl;
+        return {};
+    }
+    auto as_double = dynamic_cast<BoolKeyword *>(temp.value().first);
+    // Check that the value is a double
+    if (!as_double)
+    {
+        std::cout << "Cannot cast to Bool" << std::endl;
+        return {};
+    }
+    return QVariant::fromValue(as_double->data());
+}
+
 // Get a specific piece of information from a node by index
 QVariant nodeData(const GeneratorNode *value, int role)
 {
@@ -35,17 +107,13 @@ QVariant nodeData(const GeneratorNode *value, int role)
         case names::Value:
             return QVariant::fromValue(value);
         case names::Temperature:
-        {
-            auto temp = value->keywords().find("Temperature");
-            // Check that we found a keyword
-            if (!temp)
-                return {};
-            auto as_double = dynamic_cast<NodeValueKeyword *>(temp.value().first);
-            // Check that the value is a double
-            if (!as_double)
-                return {};
-            return QVariant::fromValue(as_double->data().asDouble());
-        }
+            return unlockKeyword<names::Temperature>(value->keywords());
+        case names::Lengths:
+            return unlockKeyword<names::Lengths>(value->keywords());
+        case names::Angles:
+            return unlockKeyword<names::Angles>(value->keywords());
+        case names::NonPeriodic:
+            return unlockKeyword<names::NonPeriodic>(value->keywords());
         default:
             return {};
     }
@@ -90,5 +158,8 @@ QHash<int, QByteArray> &nodeRoleNames(Phantom<GeneratorNode *> proxy, QHash<int,
     using names = GeneratorGraphModel::PropertyIndex;
     const auto base = Qt::UserRole + GraphNodeModelBase::ownedRoles;
     roles[base + names::Temperature] = "temperature";
+    roles[base + names::Lengths] = "lengths";
+    roles[base + names::Angles] = "angles";
+    roles[base + names::NonPeriodic] = "nonPeriodic";
     return roles;
 }

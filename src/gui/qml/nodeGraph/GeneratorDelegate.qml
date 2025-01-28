@@ -60,12 +60,18 @@ Item {
 
                     Text {text: "Lengths"}
 
+                    Text {text: lengths}
+
                     Text {text: "Angles"}
+
+                    Text {text: angles}
 
                     Text {
                         id: root
                         text: "Non-Periodic"
                     }
+
+                    CheckBox {checked: nonPeriodic}
                 }
             }
         }
