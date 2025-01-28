@@ -106,6 +106,10 @@ Item {
                     }
 
                     Text {
+                        text: species
+                    }
+
+                    Text {
                         text: "Population"
                     }
                 }

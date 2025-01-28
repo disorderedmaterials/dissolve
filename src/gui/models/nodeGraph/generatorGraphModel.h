@@ -34,7 +34,8 @@ class GeneratorGraphModel : public GraphModel<GeneratorNode*, CoreData *>
         AnglesA,
         AnglesB,
         AnglesC,
-        NonPeriodic
+        NonPeriodic,
+        Species,
     };
 
     public Q_SLOTS:

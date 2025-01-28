@@ -95,15 +95,15 @@ TEST(GraphModelTest, GeneratorGraphModel)
     ASSERT_NE(flipped["icon"], 0);
 
     // Box Node
-    EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["type"]).toString().toStdString(), std::string("GeneratorNode"));
+    EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["type"]).toString().toStdString(), std::string("Box"));
     EXPECT_EQ(nodes->data(nodes->index(0, 0), flipped["icon"]).toString().toStdString(), "qrc:/Dissolve/icons/nodes/Box.svg");
 
     // Add Node
-    EXPECT_EQ(nodes->data(nodes->index(1, 0), flipped["type"]).toString().toStdString(), std::string("GeneratorNode"));
+    EXPECT_EQ(nodes->data(nodes->index(1, 0), flipped["type"]).toString().toStdString(), std::string("Add"));
     EXPECT_EQ(nodes->data(nodes->index(1, 0), flipped["icon"]).toString().toStdString(), "qrc:/Dissolve/icons/nodes/Add.svg");
 
     // Import Node
-    EXPECT_EQ(nodes->data(nodes->index(2, 0), flipped["type"]).toString().toStdString(), std::string("GeneratorNode"));
+    EXPECT_EQ(nodes->data(nodes->index(2, 0), flipped["type"]).toString().toStdString(), std::string("ImportCoordinates"));
     EXPECT_EQ(nodes->data(nodes->index(2, 0), flipped["icon"]).toString().toStdString(),
               "qrc:/Dissolve/icons/nodes/ImportCoordinates.svg");
 }
