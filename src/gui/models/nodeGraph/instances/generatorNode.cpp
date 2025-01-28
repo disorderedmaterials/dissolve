@@ -33,21 +33,15 @@ template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::Temperatu
     auto temp = keywords.find("Temperature");
     // Check that we found a keyword
     if (!temp)
-    {
-        std::cout << "Cannot Find Temperature:" << keywords.nVisibleKeywords() << std::endl;
         return {};
-    }
     auto as_double = dynamic_cast<NodeValueKeyword *>(temp.value().first);
     // Check that the value is a double
     if (!as_double)
-    {
-        std::cout << "Cannot Convert To Double" << std::endl;
         return {};
-    }
     return QVariant::fromValue(as_double->data().asDouble());
 }
 
-template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::Lengths>(const KeywordStore &keywords)
+template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::LengthsA>(const KeywordStore &keywords)
 {
     auto temp = keywords.find("Lengths");
     // Check that we found a keyword
@@ -58,11 +52,38 @@ template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::Lengths>(
     if (!as_double)
         return {};
     auto data = as_double->data();
-    auto result = std::format("{}, {}, {}", data.get(0).asDouble(), data.get(1).asDouble(), data.get(2).asDouble());
-    return QString::fromStdString(result);
+    return QVariant::fromValue(data.get(0).asDouble());
 }
 
-template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::Angles>(const KeywordStore &keywords)
+template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::LengthsB>(const KeywordStore &keywords)
+{
+    auto temp = keywords.find("Lengths");
+    // Check that we found a keyword
+    if (!temp)
+        return {};
+    auto as_double = dynamic_cast<Vec3NodeValueKeyword *>(temp.value().first);
+    // Check that the value is a double
+    if (!as_double)
+        return {};
+    auto data = as_double->data();
+    return QVariant::fromValue(data.get(1).asDouble());
+}
+
+template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::LengthsC>(const KeywordStore &keywords)
+{
+    auto temp = keywords.find("Lengths");
+    // Check that we found a keyword
+    if (!temp)
+        return {};
+    auto as_double = dynamic_cast<Vec3NodeValueKeyword *>(temp.value().first);
+    // Check that the value is a double
+    if (!as_double)
+        return {};
+    auto data = as_double->data();
+    return QVariant::fromValue(data.get(2).asDouble());
+}
+
+template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::AnglesA>(const KeywordStore &keywords)
 {
     auto temp = keywords.find("Angles");
     // Check that we found a keyword
@@ -73,8 +94,35 @@ template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::Angles>(c
     if (!as_double)
         return {};
     auto data = as_double->data();
-    auto result = std::format("{}, {}, {}", data.get(0).asDouble(), data.get(1).asDouble(), data.get(2).asDouble());
-    return QString::fromStdString(result);
+    return QVariant::fromValue(data.get(0).asDouble());
+}
+
+template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::AnglesB>(const KeywordStore &keywords)
+{
+    auto temp = keywords.find("Angles");
+    // Check that we found a keyword
+    if (!temp)
+        return {};
+    auto as_double = dynamic_cast<Vec3NodeValueKeyword *>(temp.value().first);
+    // Check that the value is a double
+    if (!as_double)
+        return {};
+    auto data = as_double->data();
+    return QVariant::fromValue(data.get(1).asDouble());
+}
+
+template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::AnglesC>(const KeywordStore &keywords)
+{
+    auto temp = keywords.find("Angles");
+    // Check that we found a keyword
+    if (!temp)
+        return {};
+    auto as_double = dynamic_cast<Vec3NodeValueKeyword *>(temp.value().first);
+    // Check that the value is a double
+    if (!as_double)
+        return {};
+    auto data = as_double->data();
+    return QVariant::fromValue(data.get(2).asDouble());
 }
 
 template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::NonPeriodic>(const KeywordStore &keywords)
@@ -82,17 +130,11 @@ template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::NonPeriod
     auto temp = keywords.find("NonPeriodic");
     // Check that we found a keyword
     if (!temp)
-    {
-        std::cout << "Cannot find Non Periodic" << std::endl;
         return {};
-    }
     auto as_double = dynamic_cast<BoolKeyword *>(temp.value().first);
     // Check that the value is a double
     if (!as_double)
-    {
-        std::cout << "Cannot cast to Bool" << std::endl;
         return {};
-    }
     return QVariant::fromValue(as_double->data());
 }
 
@@ -108,10 +150,18 @@ QVariant nodeData(const GeneratorNode *value, int role)
             return QVariant::fromValue(value);
         case names::Temperature:
             return unlockKeyword<names::Temperature>(value->keywords());
-        case names::Lengths:
-            return unlockKeyword<names::Lengths>(value->keywords());
-        case names::Angles:
-            return unlockKeyword<names::Angles>(value->keywords());
+        case names::LengthsA:
+            return unlockKeyword<names::LengthsA>(value->keywords());
+        case names::LengthsB:
+            return unlockKeyword<names::LengthsB>(value->keywords());
+        case names::LengthsC:
+            return unlockKeyword<names::LengthsC>(value->keywords());
+        case names::AnglesA:
+            return unlockKeyword<names::AnglesA>(value->keywords());
+        case names::AnglesB:
+            return unlockKeyword<names::AnglesB>(value->keywords());
+        case names::AnglesC:
+            return unlockKeyword<names::AnglesC>(value->keywords());
         case names::NonPeriodic:
             return unlockKeyword<names::NonPeriodic>(value->keywords());
         default:
@@ -158,8 +208,12 @@ QHash<int, QByteArray> &nodeRoleNames(Phantom<GeneratorNode *> proxy, QHash<int,
     using names = GeneratorGraphModel::PropertyIndex;
     const auto base = Qt::UserRole + GraphNodeModelBase::ownedRoles;
     roles[base + names::Temperature] = "temperature";
-    roles[base + names::Lengths] = "lengths";
-    roles[base + names::Angles] = "angles";
+    roles[base + names::LengthsA] = "lengthsA";
+    roles[base + names::LengthsB] = "lengthsB";
+    roles[base + names::LengthsC] = "lengthsC";
+    roles[base + names::AnglesA] = "anglesA";
+    roles[base + names::AnglesB] = "anglesB";
+    roles[base + names::AnglesC] = "anglesC";
     roles[base + names::NonPeriodic] = "nonPeriodic";
     return roles;
 }

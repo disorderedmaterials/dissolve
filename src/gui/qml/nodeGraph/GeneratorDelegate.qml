@@ -55,16 +55,20 @@ Item {
                 onDeleted: rootModel.deleteNode(index)
 
                 Grid {
-                    columns: 2
+                    columns: 4
                     spacing: 2
 
                     Text {text: "Lengths"}
 
-                    Text {text: lengths}
+                    Text {text: lengthsA}
+                    Text {text: lengthsB}
+                    Text {text: lengthsC}
 
                     Text {text: "Angles"}
 
-                    Text {text: angles}
+                    Text {text: anglesA}
+                    Text {text: anglesB}
+                    Text {text: anglesC}
 
                     Text {
                         id: root

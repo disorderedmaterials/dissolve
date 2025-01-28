@@ -28,8 +28,12 @@ class GeneratorGraphModel : public GraphModel<GeneratorNode*, CoreData *>
         Value = 0,
         Size,
         Temperature,
-        Lengths,
-        Angles,
+        LengthsA,
+        LengthsB,
+        LengthsC,
+        AnglesA,
+        AnglesB,
+        AnglesC,
         NonPeriodic
     };
 
