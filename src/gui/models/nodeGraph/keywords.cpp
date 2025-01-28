@@ -31,12 +31,22 @@ template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::Temperatu
     return QVariant::fromValue(result->asDouble());
 }
 
+template <> bool updateKeyword<GeneratorGraphModel::PropertyIndex::Temperature>(KeywordStore &keywords, QVariant value)
+{
+    return keywords.set("Temperature", value.toDouble());
+}
+
 template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::LengthsA>(const KeywordStore &keywords)
 {
     auto result = asKeyword<Vec3NodeValueKeyword>(keywords, "Lengths");
     if (!result)
         return {};
     return QVariant::fromValue(result->get(0).asDouble());
+}
+
+template <> bool updateKeyword<GeneratorGraphModel::PropertyIndex::LengthsA>(KeywordStore &keywords, QVariant value)
+{
+    return false;
 }
 
 template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::LengthsB>(const KeywordStore &keywords)
@@ -47,12 +57,22 @@ template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::LengthsB>
     return QVariant::fromValue(result->get(1).asDouble());
 }
 
+template <> bool updateKeyword<GeneratorGraphModel::PropertyIndex::LengthsB>(KeywordStore &keywords, QVariant value)
+{
+    return false;
+}
+
 template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::LengthsC>(const KeywordStore &keywords)
 {
     auto result = asKeyword<Vec3NodeValueKeyword>(keywords, "Lengths");
     if (!result)
         return {};
     return QVariant::fromValue(result->get(2).asDouble());
+}
+
+template <> bool updateKeyword<GeneratorGraphModel::PropertyIndex::LengthsC>(KeywordStore &keywords, QVariant value)
+{
+    return false;
 }
 
 template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::AnglesA>(const KeywordStore &keywords)
@@ -63,12 +83,22 @@ template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::AnglesA>(
     return QVariant::fromValue(result->get(0).asDouble());
 }
 
+template <> bool updateKeyword<GeneratorGraphModel::PropertyIndex::AnglesA>(KeywordStore &keywords, QVariant value)
+{
+    return false;
+}
+
 template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::AnglesB>(const KeywordStore &keywords)
 {
     auto result = asKeyword<Vec3NodeValueKeyword>(keywords, "Angles");
     if (!result)
         return {};
     return QVariant::fromValue(result->get(1).asDouble());
+}
+
+template <> bool updateKeyword<GeneratorGraphModel::PropertyIndex::AnglesB>(KeywordStore &keywords, QVariant value)
+{
+    return false;
 }
 
 template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::AnglesC>(const KeywordStore &keywords)
@@ -79,12 +109,22 @@ template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::AnglesC>(
     return QVariant::fromValue(result->get(2).asDouble());
 }
 
+template <> bool updateKeyword<GeneratorGraphModel::PropertyIndex::AnglesC>(KeywordStore &keywords, QVariant value)
+{
+    return false;
+}
+
 template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::NonPeriodic>(const KeywordStore &keywords)
 {
     auto result = asKeyword<BoolKeyword>(keywords, "NonPeriodic");
     if (!result)
         return {};
     return QVariant::fromValue(result);
+}
+
+template <> bool updateKeyword<GeneratorGraphModel::PropertyIndex::NonPeriodic>(KeywordStore &keywords, QVariant value)
+{
+    return keywords.set("NonPeriodic", value.toBool());
 }
 
 template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::Species>(const KeywordStore &keywords)
@@ -95,4 +135,9 @@ template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::Species>(
     if (!*result) // null pointer check
         return {};
     return QString::fromUtf8((*result)->name());
+}
+
+template <> bool updateKeyword<GeneratorGraphModel::PropertyIndex::Species>(KeywordStore &keywords, QVariant value)
+{
+    return false;
 }

@@ -57,7 +57,37 @@ QVariant nodeData(const GeneratorNode *value, int role)
 }
 
 // Set a specific piece of information from a node by index
-bool nodeSetData(GeneratorNode *item, const QVariant &value, int role) { return false; }
+bool nodeSetData(GeneratorNode *item, const QVariant &value, int role)
+{
+    using names = GeneratorGraphModel::PropertyIndex;
+    if (!item)
+        return {};
+    switch (role)
+    {
+        case names::Value:
+            return false;
+        case names::Temperature:
+            return updateKeyword<names::Temperature>(item->keywords(), value);
+        case names::LengthsA:
+            return updateKeyword<names::LengthsA>(item->keywords(), value);
+        case names::LengthsB:
+            return updateKeyword<names::LengthsB>(item->keywords(), value);
+        case names::LengthsC:
+            return updateKeyword<names::LengthsC>(item->keywords(), value);
+        case names::AnglesA:
+            return updateKeyword<names::AnglesA>(item->keywords(), value);
+        case names::AnglesB:
+            return updateKeyword<names::AnglesB>(item->keywords(), value);
+        case names::AnglesC:
+            return updateKeyword<names::AnglesC>(item->keywords(), value);
+        case names::NonPeriodic:
+            return updateKeyword<names::NonPeriodic>(item->keywords(), value);
+        case names::Species:
+            return updateKeyword<names::Species>(item->keywords(), value);
+        default:
+            return {};
+    }
+}
 
 // Delete the node
 bool nodeDelete(GeneratorNode *item, CoreData *coreData)

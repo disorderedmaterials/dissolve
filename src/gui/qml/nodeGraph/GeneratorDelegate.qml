@@ -30,7 +30,7 @@ Item {
 
                     Text {text: "Temperature"}
 
-                    Text {
+                    TextInput {
                         id: root
                         text: temperature
                     }
