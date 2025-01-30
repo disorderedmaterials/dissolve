@@ -10,9 +10,14 @@
             - Java JDK
         
         These packages are installed into a folder called 'dependencies'.
+    .PARAMETER qtVersion
+        Qt version to install. Defaults to existing system Qt6 installation if none specified.
+    .PARAMETER antlrVersion
+        ANTLR version to install. Defaults to ANTLR 4.13.1.
+    .PARAMETER release
+        Flag - install packages for release, otherwise debug.
 #>
 
-# Flag: Use existing Qt installation (requires Qt6_DIR environment variable to be set)
 param (
     [string]$qtVersion,
     [string]$antlrVersion = "4.13.1", 
