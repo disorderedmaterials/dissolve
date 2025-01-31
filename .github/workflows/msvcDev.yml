@@ -23,7 +23,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Develop MSVC
-        if: contains(${{ steps.changed-files.outputs.all_changed_files }}, 'develop.ps1')
+        if: contains(steps.changed-files.outputs.all_changed_files, 'develop.ps1')
         uses: "./.github/workflows/visual-studio"
         with:
           qtVersion: ${{ inputs.qtVersion }}
