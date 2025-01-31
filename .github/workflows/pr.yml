@@ -48,9 +48,13 @@ jobs:
       displayMinorVersion: ${{ needs.Checkout.outputs.minorVersion }}
       hugoVersion: ${{ needs.Checkout.outputs.hugoVersion }}
 
+  ChangedFiles:
+    uses: tj-actions/changed-files@v45
+
   MsvcDev:
-    needs: [Checkout]
+    needs: [Checkout, ChangedFiles]
     uses: "./.github/workflows/msvcDev.yml"
+    if: contains(needs.ChangedFiles.outputs.all_changed_files, 'develop.ps1')
     with:
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}

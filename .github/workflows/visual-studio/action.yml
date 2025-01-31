@@ -8,9 +8,6 @@ inputs:
   antlrVersion:
     type: string
     required: true
-  files:
-    type: string
-    required: true
 
 runs:
   using: composite
