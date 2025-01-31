@@ -6,7 +6,6 @@ on:
     - '*'
     paths:
     - 'develop.ps1'
-    - './.github/workflows/visual-studio'
 
 jobs:
 
