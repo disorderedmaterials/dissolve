@@ -20,8 +20,6 @@ runs:
       env:
         qtVersion: ${{ inputs.qtVersion }}
         antlrVersion: ${{ inputs.antlrVersion }}
-        files: ${{ inputs.files }}
       run: |
         Write-Output "Qt version is $env:qtVersion"
         Write-Output "ANTLR version is $env:antlrVersion"
-        Write-Output "Changed files are $env:files"
