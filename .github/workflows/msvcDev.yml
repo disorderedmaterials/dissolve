@@ -1,8 +1,7 @@
 name: Test MSVC (Visual Studio 2022) Developer Build
 
 on:
-  workflow_dispatch:
-  push:
+  pull_request:
     branches:
     - '*'
     paths:
