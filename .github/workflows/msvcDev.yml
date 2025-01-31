@@ -9,6 +9,9 @@ on:
       antlrVersion:
         type: string
         required: true
+      changedFiles:
+        type: string
+        required: true
 
 jobs:
 
@@ -22,5 +25,6 @@ jobs:
       - name: "Develop MSVC"
         uses: "./.github/workflows/visual-studio"
         with:
+          changedFiles: ${{ inputs.changed_files }}
           qtVersion: ${{ inputs.qtVersion }}
           antlrVersion: ${{ inputs.antlrVersion }}

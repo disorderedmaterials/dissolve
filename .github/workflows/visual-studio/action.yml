@@ -8,6 +8,9 @@ inputs:
   antlrVersion:
     type: string
     required: true
+  changedFiles:
+    type: string
+    required: true
 
 runs:
   using: composite
@@ -17,6 +20,8 @@ runs:
       env:
         qtVersion: ${{ inputs.qtVersion }}
         antlrVersion: ${{ inputs.antlrVersion }}
+        changedFiles: ${{ inputs.changedFiles }}
       run: |
         Write-Output "Qt version is $env:qtVersion"
         Write-Output "ANTLR version is $env:antlrVersion"
+        Write-Output "The files changed in this PR are $env:changedFiles"

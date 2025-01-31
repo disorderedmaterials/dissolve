@@ -53,3 +53,4 @@ jobs:
     with:
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
+      changedFiles: ${{ github.event.pull_request.changed_files }}
