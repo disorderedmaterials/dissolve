@@ -83,4 +83,4 @@ runs:
       set -ex
       MAX_ERRORS=2
       MAX_WARNINGS=1
-      nix develop --command scripts/cppCheckTest.sh $MAX_ERRORS $MAX_WARNINGS
+      nix develop -L --command scripts/cppCheckTest.sh $MAX_ERRORS $MAX_WARNINGS
