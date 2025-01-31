@@ -10,7 +10,7 @@ fi
 MAX_ERRORS=$1
 MAX_WARNINGS=$2
 
-cppcheck --check-level=exhaustive src 2> check.log
+cppcheck --check-level=exhaustive src 2> check.log || true
 ERRORS=$( cat check.log | grep -c "error:" )
 WARNINGS=$( cat check.log | grep -c "warning:" )
 
