@@ -50,7 +50,7 @@ jobs:
   MsvcDev:
     needs: [Checkout]
     uses: "./.github/workflows/msvcDev.yml"
+    if: contains(github.event.pull_request.changed_files, 'develop.ps1')
     with:
-      publishType: 'none'
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}

@@ -1,19 +1,14 @@
 name: Test MSVC (Visual Studio 2022) Developer Build
 
 on:
-  pull_request:
-    branches:
-    - '*'
-    paths:
-    - 'develop.ps1'
   workflow_call:
     inputs:
-        qtVersion:
-          type: string
-          required: true
-        antlrVersion:
-          type: string
-          required: true
+      qtVersion:
+        type: string
+        required: true
+      antlrVersion:
+        type: string
+        required: true
 
 jobs:
 
