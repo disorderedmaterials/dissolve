@@ -14,6 +14,9 @@ runs:
   steps:
     - name: 'Check env vars'
       shell: pwsh
+      env:
+        qtVersion: ${{ inputs.qtVersion }}
+        antlrVersion: ${{ inputs.antlrVersion }}
       run: |
         Write-Output "Qt version is $env:qtVersion"
         Write-Output "ANTLR version is $env:antlrVersion"
