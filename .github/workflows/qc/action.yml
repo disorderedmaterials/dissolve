@@ -76,3 +76,9 @@ runs:
       git diff
       # Run quiet diff to fail the job if any changes were made (see man git-diff)
       git diff --quiet
+
+  - name: Cpp Check
+    shell: bash
+    run: |
+      set -ex
+      nix develop --command scripts/cppCheckTest.sh 0 1
