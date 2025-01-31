@@ -5,10 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef APP_INCLUDE
-#include APP_INCLUDE
-#endif
-
 #ifndef AppMalloc
 #define AppMalloc(ptr, n) (ptr) = malloc((n) * sizeof(*(ptr)))
 #endif
