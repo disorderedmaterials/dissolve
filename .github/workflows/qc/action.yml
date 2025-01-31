@@ -83,10 +83,4 @@ runs:
       set -ex
       MAX_ERRORS=2
       MAX_WARNINGS=1
-      if nix develop -L --command scripts/cppCheckTest.sh $MAX_ERRORS $MAX_WARNINGS; then
-          true
-      else
-          cat check.log
-          echo "Expected onl $MAX_ERRORS errors and $MAX_WARNINGS warnings"
-          false
-      fi
+      nix develop -L --command scripts/cppCheckTest.sh $MAX_ERRORS $MAX_WARNINGS

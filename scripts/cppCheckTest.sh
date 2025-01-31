@@ -10,7 +10,9 @@ fi
 MAX_ERRORS=$1
 MAX_WARNINGS=$2
 
+# Use or true because the script should continue even if cppcheck fails
 cppcheck --check-level=exhaustive src 2> check.log || true
+
 ERRORS=$( cat check.log | grep -c "error:" )
 WARNINGS=$( cat check.log | grep -c "warning:" )
 
