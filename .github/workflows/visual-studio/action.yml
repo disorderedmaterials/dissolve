@@ -1,0 +1,18 @@
+name: Develop MSVC
+description: Set up Dissolve CLI and GUI Visual Studio dev environment.
+
+inputs:
+  qtVersion:
+    type: string
+    required: true
+  antlrVersion:
+    type: string
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: 'Check env vars'
+      run: |
+        Write-Output "Qt version is $env:qtVersion"
+        Write-Output "ANTLR version is $env:antlrVersion"

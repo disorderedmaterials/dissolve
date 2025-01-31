@@ -1,0 +1,23 @@
+name: Test MSVC (Visual Studio 2022) Developer Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - '*'
+    paths:
+    - 'develop.ps1'
+
+jobs:
+
+  MsvcDev:
+    strategy:
+      fail-fast: false
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: "Develop MSVC"
+        uses: "./.github/workflows/visual-studio"
+        with:
+          publishType: 'none'
