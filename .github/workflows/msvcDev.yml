@@ -6,6 +6,14 @@ on:
     - '*'
     paths:
     - 'develop.ps1'
+  workflow_call:
+    inputs:
+        qtVersion:
+          type: string
+          required: true
+        antlrVersion:
+          type: string
+          required: true
 
 jobs:
 
@@ -19,4 +27,5 @@ jobs:
       - name: "Develop MSVC"
         uses: "./.github/workflows/visual-studio"
         with:
-          publishType: 'none'
+          qtVersion: ${{ inputs.qtVersion }}
+          antlrVersion: ${{ inputs.antlrVersion }}
