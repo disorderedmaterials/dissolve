@@ -158,6 +158,7 @@
               cmake-format
               cmake-language-server
               conan
+              cppcheck
               direnv
               gdb
               gtk3
