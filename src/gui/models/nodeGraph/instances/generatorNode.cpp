@@ -51,6 +51,8 @@ QVariant nodeData(const GeneratorNode *value, int role)
             return unlockKeyword<names::NonPeriodic>(value->keywords());
         case names::Species:
             return unlockKeyword<names::Species>(value->keywords());
+        case names::Population:
+            return unlockKeyword<names::Population>(value->keywords());
         default:
             return {};
     }
@@ -133,5 +135,6 @@ QHash<int, QByteArray> &nodeRoleNames(Phantom<GeneratorNode *> proxy, QHash<int,
     roles[base + names::AnglesC] = "anglesC";
     roles[base + names::NonPeriodic] = "nonPeriodic";
     roles[base + names::Species] = "species";
+    roles[base + names::Population] = "population";
     return roles;
 }

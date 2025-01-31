@@ -141,3 +141,11 @@ template <> bool updateKeyword<GeneratorGraphModel::PropertyIndex::Species>(Keyw
 {
     return false;
 }
+
+template <> QVariant unlockKeyword<GeneratorGraphModel::PropertyIndex::Population>(const KeywordStore &keywords)
+{
+    auto result = asKeyword<NodeValueKeyword>(keywords, "Population");
+    if (!result)
+        return {};
+    return QVariant::fromValue(result->asInteger());
+}
