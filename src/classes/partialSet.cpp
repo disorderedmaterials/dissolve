@@ -119,9 +119,9 @@ void PartialSet::reset()
         ParallelPolicies::par, 0, atomTypeMix_.nItems(),
         [&](int i, int j)
         {
-            std::fill(partials_[{i, j}].values().begin(), partials_[{i, j}].values().end(), 0.0);
-            std::fill(boundPartials_[{i, j}].values().begin(), boundPartials_[{i, j}].values().end(), 0.0);
-            std::fill(unboundPartials_[{i, j}].values().begin(), unboundPartials_[{i, j}].values().end(), 0.0);
+            std::ranges::fill(partials_[{i, j}].values(), 0.0);
+            std::ranges::fill(boundPartials_[{i, j}].values(), 0.0);
+            std::ranges::fill(unboundPartials_[{i, j}].values(), 0.0);
             emptyBoundPartials_[{i, j}] = true;
         },
         half_);
