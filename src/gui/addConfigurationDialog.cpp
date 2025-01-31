@@ -189,7 +189,7 @@ void AddConfigurationDialog::finalise()
         // Add a GeneralRegion node
         regionNode = generator.createRootNode<GeneralRegionGeneratorNode>({});
         if (!regionNode)
-          Messenger::exception("Failed to create root node");
+            Messenger::exception("Failed to create root node");
         regionNode->keywords().set("Tolerance", 5.0);
     }
     else
