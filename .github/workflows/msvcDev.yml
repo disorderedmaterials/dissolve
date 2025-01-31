@@ -9,9 +9,6 @@ on:
       antlrVersion:
         type: string
         required: true
-      changedFiles:
-        type: string
-        required: true
 
 jobs:
 
@@ -20,11 +17,14 @@ jobs:
       fail-fast: false
     runs-on: windows-latest
     steps:
+      - name: Changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
       - name: Checkout
         uses: actions/checkout@v4
-      - name: "Develop MSVC"
+      - name: Develop MSVC
         uses: "./.github/workflows/visual-studio"
         with:
-          changedFiles: ${{ inputs.changed_files }}
           qtVersion: ${{ inputs.qtVersion }}
           antlrVersion: ${{ inputs.antlrVersion }}
+          files: ${{ steps.changed-files.outputs.all_changed_files }}

@@ -8,20 +8,20 @@ inputs:
   antlrVersion:
     type: string
     required: true
-  changedFiles:
+  files:
     type: string
     required: true
 
 runs:
   using: composite
   steps:
-    - name: 'Check env vars'
+    - name: Check env vars
       shell: pwsh
       env:
         qtVersion: ${{ inputs.qtVersion }}
         antlrVersion: ${{ inputs.antlrVersion }}
-        changedFiles: ${{ inputs.changedFiles }}
+        files: ${{ inputs.files }}
       run: |
         Write-Output "Qt version is $env:qtVersion"
         Write-Output "ANTLR version is $env:antlrVersion"
-        Write-Output "The files changed in this PR are $env:changedFiles"
+        Write-Output "Changed files are $env:files"

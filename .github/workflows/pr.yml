@@ -6,6 +6,7 @@ on:
     branches:
     - '*'
     paths-ignore:
+    - 'develop.ps1'
     - '.github/workflows/cacheConan.yml'
     - '.github/workflows/cacheNix.yml'
     - '.github/workflows/continuous.yml'
@@ -53,4 +54,3 @@ jobs:
     with:
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
-      changedFiles: ${{ github.event.pull_request.changed_files }}
