@@ -43,6 +43,6 @@ jobs:
     uses: "./.github/workflows/_website.yml"
     with:
       publishType: 'none'
-      displayMajorVersion: ${{ needs.Checkout.outputs.majorVersion }}
-      displayMinorVersion: ${{ needs.Checkout.outputs.minorVersion }}
+      displayMajorVersion: ${{ needs.Checkout.outputs.currentVersionMajor }}
+      displayMinorVersion: ${{ needs.Checkout.outputs.currentVersionMinor }}
       hugoVersion: ${{ needs.Checkout.outputs.hugoVersion }}

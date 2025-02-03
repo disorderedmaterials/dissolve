@@ -31,8 +31,8 @@ jobs:
     uses: "./.github/workflows/_website.yml"
     with:
       publishType: 'release'
-      displayMajorVersion: ${{ needs.Checkout.outputs.majorVersion }}
-      displayMinorVersion: ${{ needs.Checkout.outputs.minorVersion }}
+      displayMajorVersion: ${{ needs.Checkout.outputs.currentVersionMajor }}
+      displayMinorVersion: ${{ needs.Checkout.outputs.currentVersionMinor }}
       hugoVersion: ${{ needs.Checkout.outputs.hugoVersion }}
     secrets: inherit
 
