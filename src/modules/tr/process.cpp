@@ -46,7 +46,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     const auto unweightedGR = moduleData.value<PartialSet>("UnweightedGR", grModule->name());
     auto unweightedSQ = moduleData.value<PartialSet>("UnweightedSQ", sqModule->name());
     PartialSet weightedGR;
-    weightedGR.setUpPartials(unweightedSQ.atomTypeMix(), true);
+    weightedGR.setUpPartials(unweightedSQ.atomTypeMix(), false);
 
     // Get effective atomic density of underlying g(r)
     const auto rho = grModule->effectiveDensity();
@@ -91,14 +91,12 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
                         weightedGR.partial(n, m).copyArrays(weightedGR.unboundPartial(n, m));
                         weightedGR.partial(n, m) += weightedGR.boundPartial(n, m); */
         },
-        true);
-
-    weightedGR.formTotals(true);
+        false);
 
     auto [broadenedTR, bGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
         "BroadenedTR", name_, GenericItem::InRestartFileFlag);
     if (bGRstatus == GenericItem::ItemStatus::Created)
-        broadenedTR.setUpPartials(weightedGR.atomTypeMix(), true);
+        broadenedTR.setUpPartials(weightedGR.atomTypeMix(), false);
 
     dissolve::for_each_pair(
         ParallelPolicies::par, 0, weightedGR.nAtomTypes(),
@@ -112,7 +110,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
             broadenedTR.unboundPartial(typeI, typeJ).copyArrays(weightedGR.unboundPartial(typeI, typeJ));
             broadenedTR.partial(typeI, typeJ).copyArrays(weightedGR.partial(typeI, typeJ));
 
-            /* broadenedTR.boundPartial(typeI, typeJ).copyArrays(weightedGR.boundPartial(typeI, typeJ));
+            broadenedTR.boundPartial(typeI, typeJ).copyArrays(weightedGR.boundPartial(typeI, typeJ));
             for (auto &&[x, y] :
                  zip(broadenedTR.boundPartial(typeI, typeJ).xAxis(), broadenedTR.boundPartial(typeI, typeJ).values()))
             {
@@ -131,9 +129,9 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
             for (auto &&[x, y] : zip(broadenedTR.partial(typeI, typeJ).xAxis(), broadenedTR.partial(typeI, typeJ).values()))
             {
                 y *= x * factor;
-            } */
+            }
         },
-        true);
+        false);
 
     dissolve::for_each_pair(
         ParallelPolicies::seq, 0, unweightedGR.nAtomTypes(),
@@ -170,7 +168,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
 
     // Sum into total
     weightedTR.formTRTotals(weights);
-    broadenedTR.formTotals(true);
+    broadenedTR.formTRTotals(weights);
     // broadenedTR.formTRTotals(weights);
     //  Save data if requested
     if (saveTR_ && (!MPIRunMaster(moduleContext.processPool(), weightedTR.save(name_, "WeightedTR", "tr", "Q, 1/Angstroms"))))

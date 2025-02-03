@@ -45,7 +45,7 @@ TRModuleWidget::TRModuleWidget(QWidget *parent, TRModule *module, Dissolve &diss
  */
 
 // Create renderables for current target PartialSet
-void TRModuleWidget::createPartialSetRenderables(std::string_view targetPrefix, bool half)
+void TRModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
 {
     if (!targetPartials_)
         return;
@@ -79,7 +79,7 @@ void TRModuleWidget::createPartialSetRenderables(std::string_view targetPrefix, 
             trGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
                                                          std::format("{} (Unbound)", id), "Unbound");
         },
-        half);
+        false);
 }
 
 // Update controls within widget
@@ -109,7 +109,7 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
         else if (ui_.PartialsButton->isChecked())
         {
             targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("WeightedTR", module_->name());
-            createPartialSetRenderables("WeightedTR", false);
+            createPartialSetRenderables("WeightedTR");
         }
         else if (ui_.BroadTotalButton->isChecked())
         {
@@ -127,7 +127,7 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
         else if (ui_.BroadPartialsButton->isChecked())
         {
             targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("BroadenedTR", module_->name());
-            createPartialSetRenderables("BroadenedTR", true);
+            createPartialSetRenderables("BroadenedTR");
         }
     }
 
