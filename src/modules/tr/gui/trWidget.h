@@ -40,7 +40,7 @@ class TRModuleWidget : public ModuleWidget
 
     private:
     // Create renderables for current target PartialSet
-    void createPartialSetRenderables(std::string_view targetPrefix, bool half);
+    void createPartialSetRenderables(std::string_view targetPrefix);
 
     public:
     // Update controls within widget
