@@ -30,13 +30,13 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
 
     // Does a PartialSet already exist for this Configuration?
     auto originalGRObject = processingData.realiseIf<PartialSet>(
-        fmt::format("{}//OriginalGR", targetConfiguration_->niceName()), name_, GenericItem::InRestartFileFlag);
+        std::format("{}//OriginalGR", targetConfiguration_->niceName()), name_, GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     auto rdfRange = targetConfiguration_->box()->inscribedSphereRadius();
     auto binWidth = 0.025;
     rdfRange = int(rdfRange / binWidth) * binWidth;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)
-        originalgr.setUp(targetConfiguration_->atomTypes(), rdfRange, binWidth);
+        originalgr.setUp(targetConfiguration_->atomTypePopulations(), rdfRange, binWidth);
 
     originalgr.setUpHistograms(rdfRange, binWidth);
     originalgr.reset();
@@ -57,9 +57,9 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
 
         for (auto &i : atoms)
         {
-            fmt::print("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
+            std::format("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
             auto &f = forces.emplace_back(Vec3<double>(0.0, 0.0, 0.0));
-            fmt::print("Atom {}\n", i.globalIndex());
+            std::format("Atom {}\n", i.globalIndex());
             for (auto n = 0; n < 3; ++n)
             {
                 switch (n)
@@ -67,9 +67,9 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                     // Move x
                     case 0:
                         // Get position, change via delta then set
-                        fmt::print("X coord = {}\n", i.x());
+                        std::format("X coord = {}\n", i.x());
                         i.translateCoordinates(-delta, 0, 0);
-                        fmt::print("X coord = {}\n", i.x());
+                        std::format("X coord = {}\n", i.x());
                         // Reset GR
                         originalgr.reset();
                         // Calculate GR
@@ -79,64 +79,64 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
                                         WindowFunction::Form::Lorch0);
                         // Store the error in a vector
                         f.x = Error::rmse(originalgr.total(), originalReferenceData).error;
-                        fmt::print("X+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
+                        std::format("X+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
                         // Set new position (needs 2x to get +x from original)
                         i.translateCoordinates(2 * delta, 0, 0);
-                        fmt::print("X coord = {}\n", i.x());
+                        std::format("X coord = {}\n", i.x());
                         originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
                         // Calculate new error
                         f.x -= Error::rmse(originalgr.total(), originalReferenceData).error;
-                        fmt::print("X+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
+                        std::format("X+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
                         // Reset position
                         i.translateCoordinates(-delta, 0, 0);
-                        fmt::print("X coord = {}\n", i.x());
+                        std::format("X coord = {}\n", i.x());
                         break;
                     // Move y and repeat
                     case 1:
-                        fmt::print("Y coord = {}\n", i.y());
+                        std::format("Y coord = {}\n", i.y());
                         i.translateCoordinates(0, -delta, 0);
-                        fmt::print("Y coord = {}\n", i.y());
+                        std::format("Y coord = {}\n", i.y());
                         originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
                         f.y = Error::rmse(originalgr.total(), originalReferenceData).error;
-                        fmt::print("Y+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
+                        std::format("Y+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
                         i.translateCoordinates(0, 2 * delta, 0);
-                        fmt::print("Y coord = {}\n", i.y());
+                        std::format("Y coord = {}\n", i.y());
                         originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
                         f.y -= Error::rmse(originalgr.total(), originalReferenceData).error;
-                        fmt::print("Y+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
+                        std::format("Y+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
                         i.translateCoordinates(0, -delta, 0);
-                        fmt::print("Y coord = {}\n", i.y());
+                        std::format("Y coord = {}\n", i.y());
                         break;
                     // Move z
                     case 2:
-                        fmt::print("Z coord = {}\n", i.z());
+                        std::format("Z coord = {}\n", i.z());
                         i.translateCoordinates(0, 0, -delta);
-                        fmt::print("Z coord = {}\n", i.z());
+                        std::format("Z coord = {}\n", i.z());
                         originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
                         f.z = Error::rmse(originalgr.total(), originalReferenceData).error;
-                        fmt::print("Z+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
+                        std::format("Z+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
                         i.translateCoordinates(0, 0, 2 * delta);
-                        fmt::print("Z coord = {}\n", i.z());
+                        std::format("Z coord = {}\n", i.z());
                         originalgr.reset();
                         calculateGRTestSerial(targetConfiguration_, originalgr);
                         Fourier::sineFT(originalgr.total(), 1.0 / (2.0 * PI * PI * 1.39), 0.05, 0.05, 30.0,
                                         WindowFunction::Form::Lorch0);
                         f.z -= Error::rmse(originalgr.total(), originalReferenceData).error;
-                        fmt::print("Z+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
+                        std::format("Z+ = {}\n", Error::rmse(originalgr.total(), originalReferenceData).error);
                         i.translateCoordinates(0, 0, -delta);
-                        fmt::print("Z coord = {}\n", i.z());
+                        std::format("Z coord = {}\n", i.z());
                         break;
                 }
             }
@@ -145,11 +145,11 @@ Module::ExecutionResult DrivenMDModule::process(ModuleContext &moduleContext)
 
     for (auto &&[i, f] : zip(atoms, forces))
     {
-        fmt::print("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
+        std::format("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
         i.translateCoordinates(f);
         f.print();
-        printf("We've moved\n");
-        fmt::print("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
+        std::format("We've moved\n");
+        std::format("X coord = {}, Y coord = {}, Z coord = {}\n", i.x(), i.y(), i.z());
     }
 
     targetConfiguration_->incrementContentsVersion();
