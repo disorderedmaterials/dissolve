@@ -87,5 +87,5 @@ jobs:
       shell: bash
       run: |
         echo "Publishing to Harbor, tagged as [${{ inputs.publishType }}]..."
-        apptainer remote login --username ${{ secrets.HARBOR_USER }} --password ${{ secrets.HARBOR_SECRET }} docker://harbor.stfc.ac.uk
+        apptainer remote login --username '${{ secrets.HARBOR_USER }}' --password ${{ secrets.HARBOR_SECRET }} docker://harbor.stfc.ac.uk
         apptainer push packages/dissolve-gui-${{ inputs.currentVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:${{ inputs.publishType }}
