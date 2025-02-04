@@ -6,7 +6,7 @@ on:
     branches:
     - '*'
     paths-ignore:
-    - 'develop.ps1'
+    - '.github/workflows/_msvc.yml'
     - '.github/workflows/cacheConan.yml'
     - '.github/workflows/cacheNix.yml'
     - '.github/workflows/continuous.yml'
