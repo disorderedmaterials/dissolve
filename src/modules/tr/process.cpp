@@ -44,9 +44,9 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     const auto &weights = moduleData.value<NeutronWeights>("FullWeights", sourceNeutronSQ_->name());
     // Retrieve GR and SQ
     const auto unweightedGR = moduleData.value<PartialSet>("UnweightedGR", grModule->name());
-    auto unweightedSQ = moduleData.value<PartialSet>("UnweightedSQ", sqModule->name());
+    auto referenceSQ = moduleData.value<Data1D>("ReferenceData", sourceNeutronSQ_->name());
     PartialSet weightedGR;
-    weightedGR.setUpPartials(unweightedSQ.atomTypeMix(), false);
+    weightedGR.setUpPartials(referenceSQ.atomTypeMix(), false);
 
     // Get effective atomic density of underlying g(r)
     const auto rho = grModule->effectiveDensity();
@@ -64,7 +64,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         Messenger::print("[SETUP {}] Window function to be applied in Fourier transform of S(Q) is {}.", name_,
                          WindowFunction::forms().keyword(windowFunction_));
     dissolve::for_each_pair(
-        ParallelPolicies::par, 0, unweightedSQ.nAtomTypes(),
+        ParallelPolicies::par, 0, referenceSQ.nAtomTypes(),
         [&](int n, int m)
         {
             // Total partial
