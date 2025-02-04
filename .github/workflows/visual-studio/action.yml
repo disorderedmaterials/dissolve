@@ -22,9 +22,11 @@ runs:
       
   - name: 'Install dependencies'
     shell: pwsh
+    env:
+      qtVersion: ${{ inputs.qtVersion }}
+      antlrVersion: ${{ inputs.antlrVersion }}
     run: | 
       Set-Location ${{ github.workspace }}
-      $env:qtVersion = "${{ env.qtVersion }}"
       Write-Output "Qt version is: $env:qtVersion"
       $env:antlrVersion = "${{ env.antlrVersion }}"
       Write-Output "ANTLR version is: $env:antlrVersion"
@@ -34,6 +36,6 @@ runs:
     shell: bash
     run: |
       git submodule update --init --recursive
-      export PATH="${{ github.workspace }}\msvc-env\Scripts;${{ github.workspace }}\dependencies\qt\${{ env.qtVersion }}\msvc2019_64\bin;$PATH"
+      export PATH="${{ github.workspace }}\msvc-env\Scripts;${{ github.workspace }}\dependencies\qt\${{ inputs.qtVersion }}\msvc2019_64\bin;$PATH"
       cmake --preset GUI-Release-MSVC
       cmake --build build
