@@ -1,5 +1,5 @@
-name: Pull Request
-description: Pull request
+name: MSVC
+description: MSVC
 
 on:
   pull_request:
@@ -10,20 +10,9 @@ on:
 
 jobs:
 
-  Checkout:
-    uses: "./.github/workflows/_checkout.yml"
-    with:
-      checkoutRef: ${{ github.event.pull_request.head.sha }}
-
-  QC:
-    needs: [Checkout]
-    uses: "./.github/workflows/_qc.yml"
-    with:
-      nixHash: ${{ needs.Checkout.outputs.nixHash }}
-
   MsvcDev:
     needs: [Checkout]
-    uses: "./.github/workflows/msvcDev.yml"
+    uses: "./.github/workflows/visual_studio"
     with:
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
