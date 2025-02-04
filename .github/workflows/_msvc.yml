@@ -10,6 +10,11 @@ on:
 
 jobs:
 
+  Checkout:
+    uses: "./.github/workflows/_checkout.yml"
+    with:
+      checkoutRef: ${{ github.event.pull_request.head.sha }}
+
   MsvcDev:
     needs: [Checkout]
     uses: "./.github/workflows/visual_studio"
