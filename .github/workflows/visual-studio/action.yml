@@ -5,18 +5,35 @@ inputs:
   qtVersion:
     type: string
     required: true
+    description: "Qt version required in the package (same as build version)"
   antlrVersion:
     type: string
     required: true
+    description: "ANTLR version required in the package (same as build version)"
 
 runs:
   using: composite
   steps:
-    - name: Check env vars
-      shell: pwsh
-      env:
-        qtVersion: ${{ inputs.qtVersion }}
-        antlrVersion: ${{ inputs.antlrVersion }}
-      run: |
-        Write-Output "Qt version is $env:qtVersion"
-        Write-Output "ANTLR version is $env:antlrVersion"
+
+  - name: 'Set up MSVC toolchain'
+    uses: ilammy/msvc-dev-cmd@v1
+    with:
+      arch: x64
+      
+  - name: 'Install dependencies'
+    shell: pwsh
+    run: | 
+      Set-Location ${{ github.workspace }}
+      $env:qtVersion = "${{ env.qtVersion }}"
+      Write-Output "Qt version is: $env:qtVersion"
+      $env:antlrVersion = "${{ env.antlrVersion }}"
+      Write-Output "ANTLR version is: $env:antlrVersion"
+      ./develop.ps1 -release -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion
+        
+  - name: 'Configure and build with CMake'
+    shell: bash
+    run: |
+      git submodule update --init --recursive
+      export PATH="${{ github.workspace }}\msvc-env\Scripts;${{ github.workspace }}\dependencies\qt\${{ env.qtVersion }}\msvc2019_64\bin;$PATH"
+      cmake --preset GUI-Release-MSVC
+      cmake --build build
