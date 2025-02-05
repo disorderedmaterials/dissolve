@@ -55,41 +55,34 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         "WeightedTR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedTR.setUpPartials(unweightedGR.atomTypeMix(), false);
-
+    // Get Q-range and window function to use for transformation of F(Q) to G(r)
+    auto ftQMin = qMin_.value_or(0.0);
+    auto ftQMax = qMax_.value();
+    if (windowFunction_ == WindowFunction::Form::None)
+        Messenger::print("[SETUP {}] No window function will be applied in Fourier transform of S(Q) to g(r).", name_);
+    else
+        Messenger::print("[SETUP {}] Window function to be applied in Fourier transform of S(Q) is {}.", name_,
+                         WindowFunction::forms().keyword(windowFunction_));
     dissolve::for_each_pair(
         ParallelPolicies::par, 0, unweightedSQ.nAtomTypes(),
         [&](int n, int m)
         {
             // Total partial
             weightedGR.partial(n, m).copyArrays(unweightedSQ.partial(n, m));
-            Fourier::sineFT(weightedGR.partial(n, m), 4.0 * PI * rho.value(), qMin_, qDelta_, qMax_, windowFunction_,
+            Fourier::sineFT(weightedGR.partial(n, m), 4.0 * PI * rho.value(), ftQMin, qDelta_, ftQMax, windowFunction_,
                             qBroadening_);
             weightedGR.partial(n, m) += 1.0;
 
             // Bound partial
             weightedGR.boundPartial(n, m).copyArrays(unweightedSQ.boundPartial(n, m));
-            Fourier::sineFT(weightedGR.boundPartial(n, m), 4.0 * PI * rho.value(), qMin_, qDelta_, qMax_, windowFunction_,
+            Fourier::sineFT(weightedGR.boundPartial(n, m), 4.0 * PI * rho.value(), ftQMin, qDelta_, ftQMax, windowFunction_,
                             qBroadening_);
 
             // Unbound partial
             weightedGR.unboundPartial(n, m).copyArrays(unweightedSQ.unboundPartial(n, m));
-            Fourier::sineFT(weightedGR.unboundPartial(n, m), 4.0 * PI * rho.value(), qMin_, qDelta_, qMax_, windowFunction_,
+            Fourier::sineFT(weightedGR.unboundPartial(n, m), 4.0 * PI * rho.value(), ftQMin, qDelta_, ftQMax, windowFunction_,
                             qBroadening_);
             weightedGR.unboundPartial(n, m) += 1.0;
-
-            /*             // Weight bound and unbound S(Q) and sum into full partial
-                        double weight = weights.weight(n, m);
-                        double boundWeight = weights.intramolecularWeight(n, m);
-
-                        // Bound (intramolecular) partial (multiplied by the bound term weight)
-                        weightedGR.boundPartial(n, m) *= boundWeight;
-
-                        // Unbound partial (multiplied by the full weight)
-                        weightedGR.unboundPartial(n, m) *= weight;
-
-                        // Full partial (sum of bound and unbound terms)
-                        weightedGR.partial(n, m).copyArrays(weightedGR.unboundPartial(n, m));
-                        weightedGR.partial(n, m) += weightedGR.boundPartial(n, m); */
         },
         false);
 
