@@ -16,7 +16,7 @@ jobs:
 
   MsvcDev:
     needs: [Checkout]
-    uses: "./.github/workflows/visual-studio/action.yml"
+    uses: "./.github/workflows/visual-studio"
     with:
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
