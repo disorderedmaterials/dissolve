@@ -1,5 +1,4 @@
 name: MSVC
-description: MSVC
 
 on:
   pull_request:
