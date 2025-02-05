@@ -48,10 +48,3 @@ jobs:
       displayMajorVersion: ${{ needs.Checkout.outputs.majorVersion }}
       displayMinorVersion: ${{ needs.Checkout.outputs.minorVersion }}
       hugoVersion: ${{ needs.Checkout.outputs.hugoVersion }}
-
-#  MsvcDev:
-#    needs: [Checkout]
-#    uses: "./.github/workflows/msvcDev.yml"
-#    with:
-#      qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
-#      antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
