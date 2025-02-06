@@ -113,7 +113,7 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
         }
         else if (ui_.BroadTotalButton->isChecked())
         {
-            trGraph_->createRenderable<RenderableData1D>(std::format("{}//ReferencdeCalcTR", module_->name()),
+            trGraph_->createRenderable<RenderableData1D>(std::format("{}//ReferenceCalcTR", module_->name()),
                                                          "Reference T(r) (via FT)", "Reference");
         }
     }
