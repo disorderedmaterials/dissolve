@@ -69,19 +69,19 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         {
             // Total partial
             weightedGR.partial(n, m).copyArrays(unweightedSQ.partial(n, m));
-            Fourier::sineFT(weightedGR.partial(n, m), 4.0 * PI * rho.value(), ftQMin, qDelta_, ftQMax, windowFunction_,
-                            qBroadening_);
+            Fourier::sineFT(weightedGR.partial(n, m), 1.0 / (2 * PI * PI * rho.value()), ftQMin, qDelta_, ftQMax,
+                            windowFunction_, qBroadening_);
             weightedGR.partial(n, m) += 1.0;
 
             // Bound partial
             weightedGR.boundPartial(n, m).copyArrays(unweightedSQ.boundPartial(n, m));
-            Fourier::sineFT(weightedGR.boundPartial(n, m), 4.0 * PI * rho.value(), ftQMin, qDelta_, ftQMax, windowFunction_,
-                            qBroadening_);
+            Fourier::sineFT(weightedGR.boundPartial(n, m), 1.0 / (2 * PI * PI * rho.value()), ftQMin, qDelta_, ftQMax,
+                            windowFunction_, qBroadening_);
 
             // Unbound partial
             weightedGR.unboundPartial(n, m).copyArrays(unweightedSQ.unboundPartial(n, m));
-            Fourier::sineFT(weightedGR.unboundPartial(n, m), 4.0 * PI * rho.value(), ftQMin, qDelta_, ftQMax, windowFunction_,
-                            qBroadening_);
+            Fourier::sineFT(weightedGR.unboundPartial(n, m), 1.0 / (2 * PI * PI * rho.value()), ftQMin, qDelta_, ftQMax,
+                            windowFunction_, qBroadening_);
             weightedGR.unboundPartial(n, m) += 1.0;
         },
         false);
