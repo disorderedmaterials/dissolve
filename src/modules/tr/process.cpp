@@ -45,8 +45,6 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     // Retrieve GR and SQ
     const auto unweightedGR = moduleData.value<PartialSet>("UnweightedGR", grModule->name());
     auto referenceSQ = moduleData.value<Data1D>("ReferenceData", sourceNeutronSQ_->name());
-    PartialSet weightedGR;
-    weightedGR.setUpPartials(referenceSQ.atomTypeMix(), false);
 
     // Get effective atomic density of underlying g(r)
     const auto rho = grModule->effectiveDensity();
@@ -63,68 +61,20 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     else
         Messenger::print("[SETUP {}] Window function to be applied in Fourier transform of S(Q) is {}.", name_,
                          WindowFunction::forms().keyword(windowFunction_));
-    dissolve::for_each_pair(
-        ParallelPolicies::par, 0, referenceSQ.nAtomTypes(),
-        [&](int n, int m)
-        {
-            // Total partial
-            weightedGR.partial(n, m).copyArrays(unweightedSQ.partial(n, m));
-            Fourier::sineFT(weightedGR.partial(n, m), 1.0 / (2 * PI * PI * rho.value()), ftQMin, qDelta_, ftQMax,
-                            windowFunction_, qBroadening_);
-            weightedGR.partial(n, m) += 1.0;
 
-            // Bound partial
-            weightedGR.boundPartial(n, m).copyArrays(unweightedSQ.boundPartial(n, m));
-            Fourier::sineFT(weightedGR.boundPartial(n, m), 1.0 / (2 * PI * PI * rho.value()), ftQMin, qDelta_, ftQMax,
-                            windowFunction_, qBroadening_);
+    // FT Reference data
+    Fourier::sineFT(referenceSQ, 4.0 * PI * rho.value(), ftQMin, qDelta_, ftQMax, windowFunction_, qBroadening_);
 
-            // Unbound partial
-            weightedGR.unboundPartial(n, m).copyArrays(unweightedSQ.unboundPartial(n, m));
-            Fourier::sineFT(weightedGR.unboundPartial(n, m), 1.0 / (2 * PI * PI * rho.value()), ftQMin, qDelta_, ftQMax,
-                            windowFunction_, qBroadening_);
-            weightedGR.unboundPartial(n, m) += 1.0;
-        },
-        false);
+    auto [referenceCalcTR, bGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<Data1D>(
+        "ReferencdeCalcTR", name_, GenericItem::InRestartFileFlag);
 
-    auto [broadenedTR, bGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
-        "BroadenedTR", name_, GenericItem::InRestartFileFlag);
-    if (bGRstatus == GenericItem::ItemStatus::Created)
-        broadenedTR.setUpPartials(weightedGR.atomTypeMix(), false);
-
-    dissolve::for_each_pair(
-        ParallelPolicies::par, 0, weightedGR.nAtomTypes(),
-        [&](const auto typeI, const auto typeJ)
-        {
-            double intraWeight = weights.intramolecularWeight(typeI, typeJ);
-            auto cj = weights.atomTypes()[typeJ].fraction();
-            auto factor = 4.0 * PI * rho.value() * cj;
-
-            broadenedTR.boundPartial(typeI, typeJ).copyArrays(weightedGR.boundPartial(typeI, typeJ));
-            broadenedTR.unboundPartial(typeI, typeJ).copyArrays(weightedGR.unboundPartial(typeI, typeJ));
-            broadenedTR.partial(typeI, typeJ).copyArrays(weightedGR.partial(typeI, typeJ));
-
-            broadenedTR.boundPartial(typeI, typeJ).copyArrays(weightedGR.boundPartial(typeI, typeJ));
-            for (auto &&[x, y] :
-                 zip(broadenedTR.boundPartial(typeI, typeJ).xAxis(), broadenedTR.boundPartial(typeI, typeJ).values()))
-            {
-                y *= x * factor;
-            }
-            // Unbound partial (multiplied by the full weight)
-            broadenedTR.unboundPartial(typeI, typeJ).copyArrays(weightedGR.unboundPartial(typeI, typeJ));
-            for (auto &&[x, y] :
-                 zip(broadenedTR.unboundPartial(typeI, typeJ).xAxis(), broadenedTR.unboundPartial(typeI, typeJ).values()))
-            {
-                y *= x * factor;
-            }
-            // Full partial, summing bound and unbound terms
-            broadenedTR.partial(typeI, typeJ).copyArrays(weightedGR.partial(typeI, typeJ));
-
-            for (auto &&[x, y] : zip(broadenedTR.partial(typeI, typeJ).xAxis(), broadenedTR.partial(typeI, typeJ).values()))
-            {
-                y *= x * factor;
-            }
-        },
-        false);
+    referenceCalcTR.copyArrays(referenceSQ);
+    // T(r)=4 * PI * x * rho * (G(r) + BCAS)
+    // 1) (G(r) + BCAS)
+    referenceCalcTR += weights.boundCoherentAverageOfSquares();
+    // 2) 4 * PI * x * rho
+    referenceCalcTR *= 4 * PI * rho.value();
+    referenceCalcTR *= referenceCalcTR.xAxis();
 
     dissolve::for_each_pair(
         ParallelPolicies::seq, 0, unweightedGR.nAtomTypes(),
@@ -161,7 +111,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
 
     // Sum into total
     weightedTR.formTRTotals(weights);
-    broadenedTR.formTRTotals(weights);
+
     // broadenedTR.formTRTotals(weights);
     //  Save data if requested
     if (saveTR_ && (!MPIRunMaster(moduleContext.processPool(), weightedTR.save(name_, "WeightedTR", "tr", "Q, 1/Angstroms"))))
