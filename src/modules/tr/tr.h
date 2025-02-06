@@ -27,13 +27,21 @@ class TRModule : public Module
     // Step size in Q for S(Q) calculation
     double qDelta_{0.05};
     // Maximum Q for calculated S(Q)
-    std::optional<double> qMax_{30.0};
+    std::optional<double> refQMax_{30.0};
     // Minimum Q for calculated S(Q)
-    std::optional<double> qMin_{0.3};
+    std::optional<double> refQMin_{0.3};
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
-    WindowFunction::Form windowFunction_{WindowFunction::Form::None};
+    WindowFunction::Form refWindowFunction_{WindowFunction::Form::None};
     // Broadening function to apply to S(Q)
-    Function1DWrapper qBroadening_;
+    Function1DWrapper refQBroadening_;
+    // Maximum Q for calculated S(Q)
+    std::optional<double> repQMax_{30.0};
+    // Minimum Q for calculated S(Q)
+    std::optional<double> repQMin_{0.3};
+    // Window function to use when Fourier-transforming reference S(Q) to g(r))
+    WindowFunction::Form repWindowFunction_{WindowFunction::Form::None};
+    // Broadening function to apply to S(Q)
+    Function1DWrapper repQBroadening_;
     // Source module for calculation
     const NeutronSQModule *sourceNeutronSQ_{nullptr};
     bool saveTR_{false};

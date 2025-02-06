@@ -106,18 +106,18 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
                 std::format("{}//WeightedTR//UnboundTotal", module_->name()), "Unbound T(R)", "Calculated");
             unboundTotal->lineStyle().setStipple(LineStipple::HalfDashStipple);
             auto refTR = trGraph_->createRenderable<RenderableData1D>(std::format("{}//ReferenceTR", module_->name()),
-                                                                      "Reference T(r) (via FT)", "Reference");
+                                                                      "Reference T(r)", "Reference");
             refTR->setColour(StockColours::RedStockColour);
             auto repTR = trGraph_->createRenderable<RenderableData1D>(
-                std::format("{}//RepresentativeTR//Total", module_->name()), "Total T(R)", "Calculated");
+                std::format("{}//RepresentativeTR//Total", module_->name()), "Via FT T(R)", "Calculated");
             repTR->lineStyle().setStipple(LineStipple::HalfDashStipple);
             repTR->setColour(StockColours::GreenStockColour);
             auto repBoundTotal = trGraph_->createRenderable<RenderableData1D>(
-                std::format("{}//RepresentativeTR//BoundTotal", module_->name()), "Bound T(R)", "Calculated");
+                std::format("{}//RepresentativeTR//BoundTotal", module_->name()), "Via FT Bound T(R)", "Calculated");
             repBoundTotal->setColour(StockColours::GreenStockColour);
             repBoundTotal->lineStyle().setStipple(LineStipple::DotStipple);
             auto repUnboundTotal = trGraph_->createRenderable<RenderableData1D>(
-                std::format("{}//RepresentativeTR//UnboundTotal", module_->name()), "Unbound T(R)", "Calculated");
+                std::format("{}//RepresentativeTR//UnboundTotal", module_->name()), "Via FT Unbound T(R)", "Calculated");
             repUnboundTotal->setColour(StockColours::GreenStockColour);
             repUnboundTotal->lineStyle().setStipple(LineStipple::HalfDashStipple);
         }
