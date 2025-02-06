@@ -63,10 +63,10 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
                          WindowFunction::forms().keyword(windowFunction_));
 
     // FT Reference data
-    Fourier::sineFT(referenceSQ, 4.0 * PI * rho.value(), ftQMin, qDelta_, ftQMax, windowFunction_, qBroadening_);
+    Fourier::sineFT(referenceSQ, 1.0 / (2 * PI * PI * rho.value()), ftQMin, qDelta_, ftQMax, windowFunction_, qBroadening_);
 
     auto [referenceCalcTR, bGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<Data1D>(
-        "ReferencdeCalcTR", name_, GenericItem::InRestartFileFlag);
+        "ReferenceCalcTR", name_, GenericItem::InRestartFileFlag);
 
     referenceCalcTR.copyArrays(referenceSQ);
     // T(r)=4 * PI * x * rho * (G(r) + BCAS)
