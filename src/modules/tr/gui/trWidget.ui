@@ -66,31 +66,12 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="BroadTotalButton">
+      <widget class="QPushButton" name="RepresentativePartialsButton">
        <property name="toolTip">
         <string>Show the partial t(r) formed from summation over all target configurations</string>
        </property>
        <property name="text">
-        <string>Broad Total T(r)</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="BroadPartialsButton">
-       <property name="toolTip">
-        <string>Show the partial t(r) formed from summation over all target configurations</string>
-       </property>
-       <property name="text">
-        <string>Broad Partial t(r)</string>
+        <string>Representative Partial t(r)</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -116,7 +97,7 @@
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -186,10 +167,10 @@
       <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Shape::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Shadow::Sunken</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <property name="spacing">

@@ -16,8 +16,6 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget *parent, NeutronSQModule *m
     // Set up user interface
     ui_.setupUi(this);
 
-    refreshing_ = true;
-
     // Set up graph (defaulting to total F(Q))
     graph_ = ui_.PlotWidget->dataViewer();
     // -- Set view

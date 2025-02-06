@@ -95,8 +95,8 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         false);
 
     // Calculate TR from GR
-    auto [referenceCalcTR, bGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<Data1D>(
-        "ReferenceCalcTR", name_, GenericItem::InRestartFileFlag);
+    auto [referenceCalcTR, bGRstatus] =
+        moduleContext.dissolve().processingModuleData().realiseIf<Data1D>("ReferenceTR", name_, GenericItem::InRestartFileFlag);
 
     referenceCalcTR.copyArrays(referenceSQ);
     // T(r)=4 * PI * x * rho * (G(r) + BCAS)
