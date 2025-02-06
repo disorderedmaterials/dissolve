@@ -115,6 +115,21 @@ void TRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
         {
             trGraph_->createRenderable<RenderableData1D>(std::format("{}//ReferenceCalcTR", module_->name()),
                                                          "Reference T(r) (via FT)", "Reference");
+            trGraph_->createRenderable<RenderableData1D>(std::format("{}//RepresentativeTR//Total", module_->name()),
+                                                         "Total T(R)", "Calculated");
+            auto boundTotal = trGraph_->createRenderable<RenderableData1D>(
+                std::format("{}//RepresentativeTR//BoundTotal", module_->name()), "Bound T(R)", "Calculated");
+            boundTotal->setColour(StockColours::GreenStockColour);
+            boundTotal->lineStyle().setStipple(LineStipple::DotStipple);
+            auto unboundTotal = trGraph_->createRenderable<RenderableData1D>(
+                std::format("{}//RepresentativeTR//UnboundTotal", module_->name()), "Unbound T(R)", "Calculated");
+            unboundTotal->setColour(StockColours::GreenStockColour);
+            unboundTotal->lineStyle().setStipple(LineStipple::HalfDashStipple);
+        }
+        else if (ui_.BroadPartialsButton->isChecked())
+        {
+            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("RepresentativeTR", module_->name());
+            createPartialSetRenderables("RepresentativeTR");
         }
     }
 

@@ -21,7 +21,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         Messenger::error("A source NewutronSQ module must be provided.\n");
         return ExecutionResult::Failed;
     }
-
+    // Get target SQ module
     auto optSQModule = sourceNeutronSQ_->keywords().get<const SQModule *, ModuleKeyword<const SQModule>>("SourceSQs");
     const SQModule *sqModule{nullptr};
     if (optSQModule)
@@ -32,7 +32,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
                          sourceNeutronSQ_->name());
         return ExecutionResult::Failed;
     }
-
+    // Get target gr module
     auto *grModule = sqModule->sourceGR();
     if (!sqModule)
     {
@@ -44,15 +44,20 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     const auto &weights = moduleData.value<NeutronWeights>("FullWeights", sourceNeutronSQ_->name());
     // Retrieve GR and SQ
     const auto unweightedGR = moduleData.value<PartialSet>("UnweightedGR", grModule->name());
+    auto unweightedSQ = moduleData.value<PartialSet>("UnweightedSQ", sqModule->name());
     auto referenceSQ = moduleData.value<Data1D>("ReferenceData", sourceNeutronSQ_->name());
+    // Make weightedGR Partial set
+    PartialSet weightedGR;
+    weightedGR.setUpPartials(unweightedSQ.atomTypeMix(), false);
 
     // Get effective atomic density of underlying g(r)
     const auto rho = grModule->effectiveDensity();
-
+    // Create weightedTR PartialSet in rtstart file
     auto [weightedTR, wGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
         "WeightedTR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedTR.setUpPartials(unweightedGR.atomTypeMix(), false);
+
     // Get Q-range and window function to use for transformation of F(Q) to G(r)
     auto ftQMin = qMin_.value_or(0.0);
     auto ftQMax = qMax_.value();
@@ -62,9 +67,34 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         Messenger::print("[SETUP {}] Window function to be applied in Fourier transform of S(Q) is {}.", name_,
                          WindowFunction::forms().keyword(windowFunction_));
 
-    // FT Reference data
+    // FT Reference data to ReresentativeTotalGR
     Fourier::sineFT(referenceSQ, 1.0 / (2 * PI * PI * rho.value()), ftQMin, qDelta_, ftQMax, windowFunction_, qBroadening_);
 
+    // FT unweightedSQ to unweightedGR to get better representation of calculations
+    dissolve::for_each_pair(
+        ParallelPolicies::par, 0, unweightedSQ.nAtomTypes(),
+        [&](int n, int m)
+        {
+            // Total partial
+            weightedGR.partial(n, m).copyArrays(unweightedSQ.partial(n, m));
+            Fourier::sineFT(weightedGR.partial(n, m), 1.0 / (2 * PI * PI * rho.value()), ftQMin, qDelta_, ftQMax,
+                            windowFunction_, qBroadening_);
+            weightedGR.partial(n, m) += 1.0;
+
+            // Bound partial
+            weightedGR.boundPartial(n, m).copyArrays(unweightedSQ.boundPartial(n, m));
+            Fourier::sineFT(weightedGR.boundPartial(n, m), 1.0 / (2 * PI * PI * rho.value()), ftQMin, qDelta_, ftQMax,
+                            windowFunction_, qBroadening_);
+
+            // Unbound partial
+            weightedGR.unboundPartial(n, m).copyArrays(unweightedSQ.unboundPartial(n, m));
+            Fourier::sineFT(weightedGR.unboundPartial(n, m), 1.0 / (2 * PI * PI * rho.value()), ftQMin, qDelta_, ftQMax,
+                            windowFunction_, qBroadening_);
+            weightedGR.unboundPartial(n, m) += 1.0;
+        },
+        false);
+
+    // Calculate TR from GR
     auto [referenceCalcTR, bGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<Data1D>(
         "ReferenceCalcTR", name_, GenericItem::InRestartFileFlag);
 
@@ -76,6 +106,46 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     referenceCalcTR *= 4 * PI * rho.value();
     referenceCalcTR *= referenceCalcTR.xAxis();
 
+    // Calculate RepresentativeTR
+    auto [representativeTR, rTRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
+        "RepresentativeTR", name_, GenericItem::InRestartFileFlag);
+    if (rTRstatus == GenericItem::ItemStatus::Created)
+        representativeTR.setUpPartials(weightedGR.atomTypeMix(), false);
+
+    dissolve::for_each_pair(
+        ParallelPolicies::par, 0, weightedGR.nAtomTypes(),
+        [&](const auto typeI, const auto typeJ)
+        {
+            double intraWeight = weights.intramolecularWeight(typeI, typeJ);
+            auto cj = weights.atomTypes()[typeJ].fraction();
+            auto factor = 4.0 * PI * rho.value() * cj;
+            representativeTR.boundPartial(typeI, typeJ).copyArrays(weightedGR.boundPartial(typeI, typeJ));
+            representativeTR.unboundPartial(typeI, typeJ).copyArrays(weightedGR.unboundPartial(typeI, typeJ));
+            representativeTR.partial(typeI, typeJ).copyArrays(weightedGR.partial(typeI, typeJ));
+            representativeTR.boundPartial(typeI, typeJ).copyArrays(weightedGR.boundPartial(typeI, typeJ));
+            for (auto &&[x, y] :
+                 zip(representativeTR.boundPartial(typeI, typeJ).xAxis(), representativeTR.boundPartial(typeI, typeJ).values()))
+            {
+                y *= x * factor;
+            }
+            // Unbound partial (multiplied by the full weight)
+            representativeTR.unboundPartial(typeI, typeJ).copyArrays(weightedGR.unboundPartial(typeI, typeJ));
+            for (auto &&[x, y] : zip(representativeTR.unboundPartial(typeI, typeJ).xAxis(),
+                                     representativeTR.unboundPartial(typeI, typeJ).values()))
+            {
+                y *= x * factor;
+            }
+            // Full partial, summing bound and unbound terms
+            representativeTR.partial(typeI, typeJ).copyArrays(weightedGR.partial(typeI, typeJ));
+            for (auto &&[x, y] :
+                 zip(representativeTR.partial(typeI, typeJ).xAxis(), representativeTR.partial(typeI, typeJ).values()))
+            {
+                y *= x * factor;
+            }
+        },
+        false);
+
+    // Calculate weightedTR
     dissolve::for_each_pair(
         ParallelPolicies::seq, 0, unweightedGR.nAtomTypes(),
         [&weights, &rho, &unweightedGR, &weightedTR](const auto typeI, const auto typeJ)
@@ -109,10 +179,10 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         },
         false);
 
-    // Sum into total
+    // Sum into totals
     weightedTR.formTRTotals(weights);
+    representativeTR.formTRTotals(weights);
 
-    // broadenedTR.formTRTotals(weights);
     //  Save data if requested
     if (saveTR_ && (!MPIRunMaster(moduleContext.processPool(), weightedTR.save(name_, "WeightedTR", "tr", "Q, 1/Angstroms"))))
         return ExecutionResult::Failed;
