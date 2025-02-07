@@ -50,8 +50,8 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     auto referenceSQ = moduleData.value<Data1D>("ReferenceData", sourceNeutronSQ_->name());
 
     // Make weightedGR Partial set
-    PartialSet weightedGR;
-    weightedGR.setUpPartials(unweightedSQ.atomTypeMix(), false);
+    PartialSet representativeGR;
+    representativeGR.setUpPartials(unweightedSQ.atomTypeMix(), false);
 
     // Get effective atomic density of underlying g(r)
     const auto rho = grModule->effectiveDensity();
@@ -89,21 +89,21 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         [&](int n, int m)
         {
             // Total partial
-            weightedGR.partial(n, m).copyArrays(unweightedSQ.partial(n, m));
-            Fourier::sineFT(weightedGR.partial(n, m), 1.0 / (2 * PI * PI * rho.value()), repftQMin, qDelta_, repftQMax,
+            representativeGR.partial(n, m).copyArrays(unweightedSQ.partial(n, m));
+            Fourier::sineFT(representativeGR.partial(n, m), 1.0 / (2 * PI * PI * rho.value()), repftQMin, qDelta_, repftQMax,
                             WindowFunction::Form::None, repQBroadening_);
-            weightedGR.partial(n, m) += 1.0;
+            representativeGR.partial(n, m) += 1.0;
 
             // Bound partial
-            weightedGR.boundPartial(n, m).copyArrays(unweightedSQ.boundPartial(n, m));
-            Fourier::sineFT(weightedGR.boundPartial(n, m), 1.0 / (2 * PI * PI * rho.value()), repftQMin, qDelta_, repftQMax,
-                            WindowFunction::Form::None, repQBroadening_);
+            representativeGR.boundPartial(n, m).copyArrays(unweightedSQ.boundPartial(n, m));
+            Fourier::sineFT(representativeGR.boundPartial(n, m), 1.0 / (2 * PI * PI * rho.value()), repftQMin, qDelta_,
+                            repftQMax, WindowFunction::Form::None, repQBroadening_);
 
             // Unbound partial
-            weightedGR.unboundPartial(n, m).copyArrays(unweightedSQ.unboundPartial(n, m));
-            Fourier::sineFT(weightedGR.unboundPartial(n, m), 1.0 / (2 * PI * PI * rho.value()), repftQMin, qDelta_, repftQMax,
-                            WindowFunction::Form::None, repQBroadening_);
-            weightedGR.unboundPartial(n, m) += 1.0;
+            representativeGR.unboundPartial(n, m).copyArrays(unweightedSQ.unboundPartial(n, m));
+            Fourier::sineFT(representativeGR.unboundPartial(n, m), 1.0 / (2 * PI * PI * rho.value()), repftQMin, qDelta_,
+                            repftQMax, WindowFunction::Form::None, repQBroadening_);
+            representativeGR.unboundPartial(n, m) += 1.0;
         },
         false);
 
@@ -123,33 +123,33 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     auto [representativeTR, rTRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
         "RepresentativeTR", name_, GenericItem::InRestartFileFlag);
     if (rTRstatus == GenericItem::ItemStatus::Created)
-        representativeTR.setUpPartials(weightedGR.atomTypeMix(), false);
+        representativeTR.setUpPartials(representativeGR.atomTypeMix(), false);
 
     dissolve::for_each_pair(
-        ParallelPolicies::par, 0, weightedGR.nAtomTypes(),
-        [&](const auto typeI, const auto typeJ)
+        ParallelPolicies::par, 0, representativeGR.nAtomTypes(),
+        [&weights, &rho, &representativeGR, &representativeTR](const auto typeI, const auto typeJ)
         {
             double intraWeight = weights.intramolecularWeight(typeI, typeJ);
             auto cj = weights.atomTypes()[typeJ].fraction();
             auto factor = 4.0 * PI * rho.value() * cj;
-            representativeTR.boundPartial(typeI, typeJ).copyArrays(weightedGR.boundPartial(typeI, typeJ));
-            representativeTR.unboundPartial(typeI, typeJ).copyArrays(weightedGR.unboundPartial(typeI, typeJ));
-            representativeTR.partial(typeI, typeJ).copyArrays(weightedGR.partial(typeI, typeJ));
-            representativeTR.boundPartial(typeI, typeJ).copyArrays(weightedGR.boundPartial(typeI, typeJ));
+            representativeTR.boundPartial(typeI, typeJ).copyArrays(representativeGR.boundPartial(typeI, typeJ));
+            representativeTR.unboundPartial(typeI, typeJ).copyArrays(representativeGR.unboundPartial(typeI, typeJ));
+            representativeTR.partial(typeI, typeJ).copyArrays(representativeGR.partial(typeI, typeJ));
+            representativeTR.boundPartial(typeI, typeJ).copyArrays(representativeGR.boundPartial(typeI, typeJ));
             for (auto &&[x, y] :
                  zip(representativeTR.boundPartial(typeI, typeJ).xAxis(), representativeTR.boundPartial(typeI, typeJ).values()))
             {
                 y *= x * factor;
             }
             // Unbound partial (multiplied by the full weight)
-            representativeTR.unboundPartial(typeI, typeJ).copyArrays(weightedGR.unboundPartial(typeI, typeJ));
+            representativeTR.unboundPartial(typeI, typeJ).copyArrays(representativeGR.unboundPartial(typeI, typeJ));
             for (auto &&[x, y] : zip(representativeTR.unboundPartial(typeI, typeJ).xAxis(),
                                      representativeTR.unboundPartial(typeI, typeJ).values()))
             {
                 y *= x * factor;
             }
             // Full partial, summing bound and unbound terms
-            representativeTR.partial(typeI, typeJ).copyArrays(weightedGR.partial(typeI, typeJ));
+            representativeTR.partial(typeI, typeJ).copyArrays(representativeGR.partial(typeI, typeJ));
             for (auto &&[x, y] :
                  zip(representativeTR.partial(typeI, typeJ).xAxis(), representativeTR.partial(typeI, typeJ).values()))
             {
