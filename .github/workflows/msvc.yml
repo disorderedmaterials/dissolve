@@ -28,14 +28,11 @@ jobs:
       
     - name: 'Install dependencies'
       shell: pwsh
+      working-directory: ${{ github.workspace }}
       env:
         qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
         antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
       run: | 
-        Set-Location ${{ github.workspace }}
-        Write-Output "Qt version is: $env:qtVersion"
-        $env:antlrVersion = "${{ env.antlrVersion }}"
-        Write-Output "ANTLR version is: $env:antlrVersion"
         ./develop.ps1 -release -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion
         
     - name: 'Configure and build with CMake'
