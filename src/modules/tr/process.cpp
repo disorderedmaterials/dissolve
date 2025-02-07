@@ -21,6 +21,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         Messenger::error("A source NewutronSQ module must be provided.\n");
         return ExecutionResult::Failed;
     }
+
     // Get target SQ module
     auto optSQModule = sourceNeutronSQ_->keywords().get<const SQModule *, ModuleKeyword<const SQModule>>("SourceSQs");
     const SQModule *sqModule{nullptr};
@@ -32,6 +33,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
                          sourceNeutronSQ_->name());
         return ExecutionResult::Failed;
     }
+
     // Get target gr module
     auto *grModule = sqModule->sourceGR();
     if (!sqModule)
@@ -40,44 +42,46 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
-    // Retrieve weights
+    // Retrieve weights, GR and SQ
     const auto &weights = moduleData.value<NeutronWeights>("FullWeights", sourceNeutronSQ_->name());
     // Retrieve GR and SQ
     const auto unweightedGR = moduleData.value<PartialSet>("UnweightedGR", grModule->name());
     auto unweightedSQ = moduleData.value<PartialSet>("UnweightedSQ", sqModule->name());
     auto referenceSQ = moduleData.value<Data1D>("ReferenceData", sourceNeutronSQ_->name());
+
     // Make weightedGR Partial set
     PartialSet weightedGR;
     weightedGR.setUpPartials(unweightedSQ.atomTypeMix(), false);
 
     // Get effective atomic density of underlying g(r)
     const auto rho = grModule->effectiveDensity();
+
     // Create weightedTR PartialSet in rtstart file
     auto [weightedTR, wGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
         "WeightedTR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedTR.setUpPartials(unweightedGR.atomTypeMix(), false);
 
-    // Get Q-range and window function to use for transformation of F(Q) to G(r)
+    // Get Q-range and window function to use for transformation of reference F(Q) to G(r)
     auto refftQMin = refQMin_.value_or(0.0);
     auto refftQMax = refQMax_.value();
     if (refWindowFunction_ == WindowFunction::Form::None)
-        Messenger::print("[SETUP {}] No window function will be applied in Fourier transform of S(Q) to g(r).", name_);
+        Messenger::print("TR: No window function will be applied in Fourier transform of S(Q) to g(r).");
     else
-        Messenger::print("[SETUP {}] Window function to be applied in Fourier transform of S(Q) is {}.", name_,
+        Messenger::print("TR: Window function to be applied in Fourier transform of S(Q) is {}.",
                          WindowFunction::forms().keyword(refWindowFunction_));
 
     // FT Reference data to ReresentativeTotalGR
     Fourier::sineFT(referenceSQ, 1.0 / (2 * PI * PI * rho.value()), refftQMin, qDelta_, refftQMax, refWindowFunction_,
                     refQBroadening_);
 
-    // Get Q-range and window function to use for transformation of F(Q) to G(r)
+    // Get Q-range and window function to use for transformation of total F(Q) to G(r)
     auto repftQMin = repQMin_.value_or(0.0);
     auto repftQMax = repQMax_.value();
     if (repWindowFunction_ == WindowFunction::Form::None)
-        Messenger::print("[SETUP {}] No window function will be applied in Fourier transform of S(Q) to g(r).", name_);
+        Messenger::print("TR: No window function will be applied in Fourier transform of S(Q) to g(r).");
     else
-        Messenger::print("[SETUP {}] Window function to be applied in Fourier transform of S(Q) is {}.", name_,
+        Messenger::print("TR: Window function to be applied in Fourier transform of S(Q) is {}.",
                          WindowFunction::forms().keyword(repWindowFunction_));
     // FT unweightedSQ to unweightedGR to get better representation of calculations
     dissolve::for_each_pair(
@@ -192,8 +196,12 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     weightedTR.formTRTotals(weights);
     representativeTR.formTRTotals(weights);
 
-    //  Save data if requested
+    // Save data if requested
     if (saveTR_ && (!MPIRunMaster(moduleContext.processPool(), weightedTR.save(name_, "WeightedTR", "tr", "Q, 1/Angstroms"))))
+        return ExecutionResult::Failed;
+    // Save data if requested
+    if (saveRepTR_ &&
+        (!MPIRunMaster(moduleContext.processPool(), representativeTR.save(name_, "RepresentativeTR", "tr", "Q, 1/Angstroms"))))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
