@@ -43,9 +43,6 @@ jobs:
       run: |
         git submodule update --init --recursive
         export PATH="${{ github.workspace }}\msvc-env\Scripts;${{ github.workspace }}\dependencies\qt\${{ inputs.qtVersion }}\msvc2019_64\bin;$PATH"
-        
-        cd dependencies
-        ls -R
-        
-        #cmake --preset GUI-Release-MSVC
-        #cmake --build build
+        cmake --preset GUI-Release-MSVC
+        cmake --build build
+

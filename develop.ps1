@@ -268,7 +268,7 @@ $antlrOutput = "antlr-$antlrVersion-complete.jar"
 
 $javaUri = "https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.zip"
 $javaOutput = "java.zip"
-$jdkVersion = "21.0.5"
+$jdkVersion = $(Get-ChildItem -Path $dependencies -Directory | Where-Object { $_.Name -match "^jdk-\d+\.\d+\.\d+$" } | Select-Object -ExpandProperty Name).split("-")[1]
 
 Set-Location -Path $dependencies
 
