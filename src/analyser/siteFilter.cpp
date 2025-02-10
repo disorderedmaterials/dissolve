@@ -17,7 +17,8 @@ SiteFilter::SiteFilter(Configuration *cfg, const Analyser::SiteVector &sitesToFi
 std::pair<Analyser::SiteVector, Analyser::SiteMap>
 SiteFilter::filterBySiteProximity(const Analyser::SiteVector &otherSites, Range range, int minCount, int maxCount) const
 {
-    Analyser::SiteVector filteredSites(targetSites_.size()), neighbours;
+    Analyser::SiteVector filteredSites, neighbours;
+    filteredSites.reserve(targetSites_.size());
     Analyser::SiteMap filteredSiteMap;
     const auto *box = configuration_->box();
     for (auto &&[site, index] : targetSites_)
