@@ -17,6 +17,15 @@ jobs:
     needs: [Checkout]
     runs-on: ubuntu-latest
     steps:
+      - name: 'Download Source Tarfiles'
+        uses: actions/download-artifact@v4
+        with:
+          name: source
+
+      - name: 'Unpack Source'
+        shell: bash
+        run: tar -xvf dissolve-original-source.tar
+
       - name: "Build (Cache Only) (ubuntu-latest)"
         uses: "./.github/workflows/build"
         with:

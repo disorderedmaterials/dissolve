@@ -22,6 +22,15 @@ jobs:
         target: [dissolve-gui]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: 'Download Source Tarfiles'
+        uses: actions/download-artifact@v4
+        with:
+          name: source
+
+      - name: 'Unpack Source'
+        shell: bash
+        run: tar -xvf dissolve-original-source.tar
+
       - name: "Build (Cache Only) (${{ matrix.os }})"
         uses: "./.github/workflows/build"
         with:
