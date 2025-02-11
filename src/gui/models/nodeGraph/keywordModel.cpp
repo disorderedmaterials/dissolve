@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "keywordModel.h"
+#include "keywords/bool.h"
 
 KeywordModel::KeywordModel(KeywordStore *source) : source_(source) {}
 
@@ -45,7 +46,16 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
     switch (role)
     {
         case Qt::DisplayRole:
-            return "Column";
+        {
+            auto typeIndex = keyword->typeIndex();
+            if (typeIndex == std::type_index(typeid(BoolKeyword *)))
+            {
+                auto boolKeyword = static_cast<BoolKeyword *>(keyword);
+                return boolKeyword->data();
+            }
+            else
+                return QString::fromStdString(typeIndex.name());
+        }
         case Qt::ToolTipRole:
             return {};
         default:
