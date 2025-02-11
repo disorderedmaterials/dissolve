@@ -124,12 +124,9 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
     dissolve_ = &dissolve;
 
     temporaryDissolve_ = std::make_unique<Dissolve>(temporaryCoreData_);
-    // OLD auto node = dissolve_->coreData().serialiseMaster();
-    // OLD temporaryCoreData_.deserialiseMaster(node);
-    // OLD masters_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
-    masters_ = std::make_unique<MasterTermTreeModel>();
-    masters_->setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(), temporaryCoreData_.masterTorsions(),
-                      temporaryCoreData_.masterImpropers());
+    auto node = dissolve_->coreData().serialiseMaster();
+    temporaryCoreData_.deserialiseMaster(node);
+    masters_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
 
     // Set model and signals for the master terms tree
     atomTypes_.setIconFunction([this](const auto type) { return dissolve_->coreData().findAtomType(type->name()) != nullptr; });
