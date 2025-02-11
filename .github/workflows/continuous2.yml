@@ -1,4 +1,4 @@
-name: Continuous
+name: Dissolve2
 description: Continuous build workflow specifically for Dissolve 2.0 (develop2)
 
 on:
