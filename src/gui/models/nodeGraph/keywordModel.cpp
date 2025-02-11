@@ -2,7 +2,10 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "keywordModel.h"
+#include "classes/species.h"
 #include "keywords/bool.h"
+#include "keywords/nodeValue.h"
+#include "keywords/species.h"
 
 KeywordModel::KeywordModel(KeywordStore *source) : source_(source) {}
 
@@ -52,6 +55,16 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
             {
                 auto boolKeyword = static_cast<BoolKeyword *>(keyword);
                 return boolKeyword->data();
+            }
+            else if (typeIndex == std::type_index(typeid(SpeciesKeyword *)))
+            {
+                auto speciesKeyword = static_cast<SpeciesKeyword *>(keyword);
+                return QString::fromStdString(std::string(speciesKeyword->data()->name()));
+            }
+            else if (typeIndex == std::type_index(typeid(NodeValueKeyword *)))
+            {
+                auto node = static_cast<NodeValueKeyword *>(keyword);
+                return QString::fromStdString(node->data().asString());
             }
             else
                 return QString::fromStdString(typeIndex.name());
