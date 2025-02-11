@@ -34,6 +34,7 @@ class DissolveModel : public QObject
     Q_PROPERTY(const ModuleLayersModel *moduleLayersModel READ moduleLayersModel NOTIFY moduleLayersChanged)
     Q_PROPERTY(QUrl file READ fileName WRITE loadInput);
 
+
     private:
     // The Atom Type Model
     AtomTypeModel atomTypes_;
@@ -63,6 +64,10 @@ class DissolveModel : public QObject
     void configurationsChanged();
     // ModuleLayers model has been replaced
     void moduleLayersChanged();
+
+    public Q_SLOTS:
+    // Save to a file
+    void save(QUrl file);
 
     public:
     DissolveModel() = default;

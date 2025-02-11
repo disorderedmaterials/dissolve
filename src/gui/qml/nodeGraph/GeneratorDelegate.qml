@@ -53,8 +53,10 @@ Item {
                     DelegateChoice {
                         roleValue: "bool";
                         CheckBox {
-                            checkable: true
                             checked: checkedState
+                            onCheckedChanged: {
+                                checkedState = !checkedState
+                            }
                         }
                     }
                     DelegateChoice {

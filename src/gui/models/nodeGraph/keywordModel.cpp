@@ -74,7 +74,6 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
                 auto boolKeyword = static_cast<BoolKeyword *>(keyword);
                 return QVariant(boolKeyword->data());
             }
-            std::cout << "Unknown" << std::endl;
             return QVariant(false);
         case Qt::DisplayRole:
         {
@@ -143,7 +142,27 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
     // return QString::fromStdString(std::string(keyword.first->name()));
 }
 
-bool KeywordModel::setData(const QModelIndex &index, const QVariant &value, int role) { return false; }
+bool KeywordModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (role == Qt::CheckStateRole)
+    {
+        const int row = index.row();
+
+        auto [keyword, type] = source_->at(row);
+        auto typeIndex = keyword->typeIndex();
+
+        if (typeIndex == std::type_index(typeid(BoolKeyword *)))
+        {
+            auto boolKeyword = dynamic_cast<BoolKeyword *>(keyword);
+            if (!boolKeyword)
+                return false;
+            boolKeyword->setData(value.toBool());
+            Q_EMIT dataChanged(index, index);
+            return true;
+        }
+    }
+    return false;
+}
 
 // Qt::ItemFlags KeywordModel::flags(const QModelIndex &index) const override;
 
@@ -168,4 +187,13 @@ QHash<int, QByteArray> KeywordModel::roleNames() const
     roles[Qt::CheckStateRole] = "checkedState";
     roles[Qt::UserRole] = "type";
     return roles;
+}
+
+Qt::ItemFlags KeywordModel::flags(const QModelIndex &index) const
+{
+    const int row = index.row();
+    if (index.column() == 0)
+        return Qt::NoItemFlags;
+
+    return Qt::ItemIsUserCheckable | Qt::ItemIsEditable;
 }

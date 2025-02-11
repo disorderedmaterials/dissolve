@@ -133,3 +133,6 @@ void DissolveModel::loadInput(QUrl filename)
     dissolve_->loadInput(filename.toLocalFile().toStdString());
     configurationModel_.reset();
 }
+
+// Save to a file
+void DissolveModel::save(QUrl filename) { dissolve_->saveInput(filename.toLocalFile().toStdString()); }
