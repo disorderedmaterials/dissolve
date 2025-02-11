@@ -5,9 +5,12 @@
 #include "base/units.h"
 #include "classes/species.h"
 #include "generator/addBase.h"
+#include "generator/coordinateSets.h"
 #include "keywords/bool.h"
 #include "keywords/enumOptions.h"
+#include "keywords/node.h"
 #include "keywords/nodeValue.h"
+#include "keywords/nodeValueEnumOptions.h"
 #include "keywords/species.h"
 #include "keywords/vec3NodeValue.h"
 
@@ -78,10 +81,23 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
                     return "Bad cast";
                 return QString::fromStdString(AddGeneratorNodeBase::positioningTypes().keyword(value->data()));
             }
-            else if (typeIndex == std::type_index(typeid(EnumOptionsKeyword<Units::DensityUnits> *)))
+            else if (typeIndex == std::type_index(typeid(NodeValueEnumOptionsBaseKeyword *)))
             {
-                auto value = static_cast<EnumOptionsKeyword<Units::DensityUnits> *>(keyword);
-                return QString::fromStdString(Units::densityUnits().keyword(value->data()));
+                auto node = dynamic_cast<NodeValueEnumOptionsKeyword<Units::DensityUnits> *>(keyword);
+                if (!node)
+                    return "Bad cast";
+                auto magnitude = node->value().asString();
+                auto units = Units::densityUnits().keywordByIndex(node->enumerationIndex());
+                return QString::fromStdString(std::format("{} ({})", magnitude, units));
+            }
+            else if (typeIndex == std::type_index(typeid(NodeKeywordBase *)))
+            {
+                auto node = dynamic_cast<NodeKeyword<CoordinateSetsGeneratorNode> *>(keyword);
+                if (!node)
+                    return "Bad cast";
+                if (!node->data())
+                    return "Null pointer";
+                return QString::fromStdString(std::string(node->data()->name()));
             }
             else if (typeIndex == std::type_index(typeid(Vec3NodeValueKeyword *)))
             {
