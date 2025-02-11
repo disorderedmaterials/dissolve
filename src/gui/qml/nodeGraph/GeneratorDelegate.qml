@@ -17,27 +17,23 @@ Item {
             py: posY
             x: posX
             y: posY
+            width: 50 * keywordModel.columnCount() + 20
+            height: 50 * (keywordModel.rowCount() + 1) + 10
 
             onDeleted: rootModel.deleteNode(index)
 
-            Text {
-                text: "World!"
-            }
-
             TableView {
                 id: root
-                width: 400
-                height: 800
+                anchors.fill: parent
 
                 /* clip: true */
                 delegate: Rectangle {
-                    width: 100
-                    height: 50
 
                     color: "white"
                     border.width: 1
 
                     Text {
+                        anchors.fill: parent
                         text: display
                     }
                 }
