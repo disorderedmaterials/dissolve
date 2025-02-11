@@ -4,10 +4,12 @@
 #include "keywordModel.h"
 #include "base/units.h"
 #include "classes/species.h"
+#include "expression/variable.h"
 #include "generator/addBase.h"
 #include "generator/coordinateSets.h"
 #include "keywords/bool.h"
 #include "keywords/enumOptions.h"
+#include "keywords/expressionVariableVector.h"
 #include "keywords/node.h"
 #include "keywords/nodeValue.h"
 #include "keywords/nodeValueEnumOptions.h"
@@ -80,6 +82,11 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
                 if (!value)
                     return "Bad cast";
                 return QString::fromStdString(AddGeneratorNodeBase::positioningTypes().keyword(value->data()));
+            }
+            else if (typeIndex == std::type_index(typeid(ExpressionVariableVectorKeyword *)))
+            {
+                auto data = static_cast<ExpressionVariableVectorKeyword *>(keyword)->data();
+                return QString::fromStdString(std::format("{} = {}", data[0]->name(), data[0]->value().asString()));
             }
             else if (typeIndex == std::type_index(typeid(NodeValueEnumOptionsBaseKeyword *)))
             {
