@@ -29,12 +29,28 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
 {
     const int row = index.row();
 
-    if (index.column() == 1)
-        return row;
-
     auto [keyword, type] = source_->at(row);
-    return QString::fromStdString(std::string(keyword->name()));
 
+    if (index.column() == 0)
+        switch (role)
+        {
+            case Qt::DisplayRole:
+                return QString::fromStdString(std::string(keyword->name()));
+            case Qt::ToolTipRole:
+                return QString::fromStdString(std::string(keyword->description()));
+            default:
+                return "Unknown Role";
+        }
+
+    switch (role)
+    {
+        case Qt::DisplayRole:
+            return "Column";
+        case Qt::ToolTipRole:
+            return {};
+        default:
+            return "Unknown Role";
+    }
     // return QString::fromStdString(std::string(keyword.first->name()));
 }
 
@@ -53,4 +69,12 @@ QVariant KeywordModel::headerData(int section, Qt::Orientation orientation, int 
         default:
             return "ERROR";
     }
+}
+
+QHash<int, QByteArray> KeywordModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[Qt::DisplayRole] = "display";
+    roles[Qt::ToolTipRole] = "tooltip";
+    return roles;
 }

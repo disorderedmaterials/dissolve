@@ -34,9 +34,19 @@ Item {
                     color: "white"
                     border.width: 1
 
+                    MouseArea {
+                        id: hoverCatcher
+                        anchors.fill: parent
+                        hoverEnabled: true
+                    }
+
                     Text {
                         anchors.fill: parent
                         text: display
+
+                        ToolTip.visible: tooltip != null && hoverCatcher.containsMouse;
+                        ToolTip.text: tooltip;
+                        ToolTip.delay: 600;
                     }
                 }
                 model: keywordModel
