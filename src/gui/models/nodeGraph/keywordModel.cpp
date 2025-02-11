@@ -2,10 +2,14 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "keywordModel.h"
+#include "base/units.h"
 #include "classes/species.h"
+#include "generator/addBase.h"
 #include "keywords/bool.h"
+#include "keywords/enumOptions.h"
 #include "keywords/nodeValue.h"
 #include "keywords/species.h"
+#include "keywords/vec3NodeValue.h"
 
 KeywordModel::KeywordModel(KeywordStore *source) : source_(source) {}
 
@@ -65,6 +69,27 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
             {
                 auto node = static_cast<NodeValueKeyword *>(keyword);
                 return QString::fromStdString(node->data().asString());
+            }
+            else if (typeIndex == std::type_index(typeid(EnumOptionsBaseKeyword *)))
+            {
+                auto value = dynamic_cast<EnumOptionsKeyword<AddGeneratorNodeBase::PositioningType> *>(keyword);
+                // FIXME: I need a way of accessing the inner type of the EnumOptionsKeys
+                if (!value)
+                    return "Bad cast";
+                return QString::fromStdString(AddGeneratorNodeBase::positioningTypes().keyword(value->data()));
+            }
+            else if (typeIndex == std::type_index(typeid(EnumOptionsKeyword<Units::DensityUnits> *)))
+            {
+                auto value = static_cast<EnumOptionsKeyword<Units::DensityUnits> *>(keyword);
+                return QString::fromStdString(Units::densityUnits().keyword(value->data()));
+            }
+            else if (typeIndex == std::type_index(typeid(Vec3NodeValueKeyword *)))
+            {
+                auto vec3 = static_cast<Vec3NodeValueKeyword *>(keyword)->data();
+                auto x = vec3.x.asString();
+                auto y = vec3.y.asString();
+                auto z = vec3.z.asString();
+                return QString::fromStdString(std::format("{}, {}, {}", x, y, z));
             }
             else
                 return QString::fromStdString(typeIndex.name());
