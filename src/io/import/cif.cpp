@@ -976,11 +976,12 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
         if (flags.isSet(OutputFlags::OutputSupermolecule))
         {
             sp->removePeriodicBonds();
-            sp->updateIntramolecularTerms();
             sp->removeBox();
         }
         else
             sp->createBox(supercellSpecies_.box()->axisLengths(), supercellSpecies_.box()->axisAngles());
+
+        sp->updateIntramolecularTerms();
 
         if (flags.isSet(OutputFlags::OutputConfiguration))
         {
