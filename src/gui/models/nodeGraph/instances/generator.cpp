@@ -22,8 +22,6 @@ QVariant nodeData(Generator *value, int role)
     {
         case names::Value:
             return QVariant::fromValue(value);
-        case names::Size:
-            return QVariant::fromValue(value->rootSequence().nNodes());
         default:
             return {};
     }

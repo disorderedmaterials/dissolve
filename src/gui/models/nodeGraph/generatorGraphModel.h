@@ -26,17 +26,7 @@ class GeneratorGraphModel : public GraphModel<GeneratorNode*, CoreData *>
     enum PropertyIndex
     {
         Value = 0,
-        Size,
-        Temperature,
-        LengthsA,
-        LengthsB,
-        LengthsC,
-        AnglesA,
-        AnglesB,
-        AnglesC,
-        NonPeriodic,
-        Species,
-        Population,
+        KeywordModel,
     };
 
     public Q_SLOTS:

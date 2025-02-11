@@ -4,150 +4,47 @@ import QtQuick.Layouts
 import Qt.labs.qmlmodels
 
 Item {
-    property variant delegate: DelegateChooser {
-        role: "type"
+    property variant delegate: Component {
+        NodeBox {
+            property double endX: x
+            property double midY: y + basey + root.y + root.height / 2 + 10
+            property double startX: x + width
 
-        DelegateChoice {
-            roleValue: "Temperature"
+            visible: name != null
+            image: icon
+            nodeType: name
+            px: posX
+            py: posY
+            x: posX
+            y: posY
 
-            delegate: NodeBox {
-                property double endX: x
-                property double midY: y + basey + root.y + root.height / 2 + 10
-                property double startX: x + width
+            onDeleted: rootModel.deleteNode(index)
 
-                image: icon
-                nodeType: name
-                px: posX
-                py: posY
-                x: posX
-                y: posY
-
-                onDeleted: rootModel.deleteNode(index)
-
-                Grid {
-                    columns: 2
-                    spacing: 2
-
-                    Text {text: "Temperature"}
-
-                    Text {
-                        id: root
-                        text: temperature
-                    }
-                }
+            Text {
+                text: "World!"
             }
-        }
-        DelegateChoice {
-            roleValue: "Box"
 
-            delegate: NodeBox {
-                property double endX: x
-                property double midY: y + basey + root.y + root.height / 2 + 10
-                property double startX: x + width
+            TableView {
+                id: root
+                width: 400
+                height: 800
 
-                image: icon
-                nodeType: name
-                px: posX
-                py: posY
-                x: posX
-                y: posY
+                /* clip: true */
+                delegate: Rectangle {
+                    width: 100
+                    height: 50
 
-                onDeleted: rootModel.deleteNode(index)
-
-                Grid {
-                    columns: 4
-                    spacing: 2
-
-                    Text {text: "Lengths"}
-
-                    Text {text: lengthsA}
-                    Text {text: lengthsB}
-                    Text {text: lengthsC}
-
-                    Text {text: "Angles"}
-
-                    Text {text: anglesA}
-                    Text {text: anglesB}
-                    Text {text: anglesC}
+                    color: "white"
+                    border.width: 1
 
                     Text {
-                        id: root
-                        text: "Non-Periodic"
-                    }
-
-                    CheckBox {checked: nonPeriodic}
-                }
-            }
-        }
-        DelegateChoice {
-            roleValue: "Add"
-
-            delegate: NodeBox {
-                property double endX: x
-                property double midY: y + basey + root.y + root.height / 2 + 10
-                property double startX: x + width
-
-                image: icon
-                nodeType: name
-                px: posX
-                py: posY
-                x: posX
-                y: posY
-
-                onDeleted: rootModel.deleteNode(index)
-
-                Grid {
-                    columns: 2
-                    spacing: 2
-
-                    Text {
-                        id: root
-                        text: "Species"
-                    }
-
-                    Text {
-                        text: species
-                    }
-
-                    Text {
-                        text: "Population"
-                    }
-
-                    Text {
-                        text: population
+                        text: display
                     }
                 }
-            }
-        }
-        DelegateChoice {
-            roleValue: "Parameters"
-
-            delegate: NodeBox {
-                property double endX: x
-                property double midY: y + basey + root.y + root.height / 2 + 10
-                property double startX: x + width
-
-                image: icon
-                nodeType: name
-                px: posX
-                py: posY
-                x: posX
-                y: posY
-
-                onDeleted: rootModel.deleteNode(index)
-
-                Grid {
-                    columns: 2
-                    spacing: 2
-
-                    Text {text: "Name"}
-                    Text {
-                        id: root
-                        text: "Value"
-                    }
-                }
+                model: keywordModel
             }
         }
     }
+
     property variant rootModel
 }

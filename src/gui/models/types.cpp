@@ -15,6 +15,7 @@
 #include "gui/models/speciesModel.h"
 #include "nodeGraph/exampleGraphModel.h"
 #include "nodeGraph/generatorGraphModel.h"
+#include "nodeGraph/keywordModel.h"
 #include <QQmlEngine>
 #include <QSortFilterProxyModel>
 
@@ -35,4 +36,5 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<SortFilterProxy>(PROJECT, 1, 0, "SortFilterProxy");
     qmlRegisterType<ExampleGraphModel>(PROJECT, 1, 0, "ExampleGraphModel");
     qmlRegisterType<GeneratorGraphModel>(PROJECT, 1, 0, "ModuleGraphModel");
+    qmlRegisterType<KeywordModel>(PROJECT, 1, 0, "KeywordModel");
 }

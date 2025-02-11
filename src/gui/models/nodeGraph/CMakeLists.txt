@@ -1,4 +1,4 @@
-set(nodeGraphModels_MOC_HDRS exampleGraphModel.h graphModelBase.h graphEdgeModel.h graphNodeModel.h generatorGraphModel.h nodeWrapper.h)
+set(nodeGraphModels_MOC_HDRS exampleGraphModel.h graphModelBase.h graphEdgeModel.h graphNodeModel.h generatorGraphModel.h keywordModel.h nodeWrapper.h)
 
 qt6_wrap_cpp(nodeGraphModel_MOC_SRCS ${nodeGraphModel_MOC_HDRS})
 
@@ -8,6 +8,7 @@ set(nodeGraphModel_SRCS
     graphModelBase.cpp
     generatorGraphModel.cpp
     keywords.cpp
+    keywordModel.cpp
     instances/generator.cpp
     instances/generatorNode.cpp
 )
@@ -19,6 +20,7 @@ qt6_wrap_cpp(
   graphEdgeModel.h
   graphNodeModel.h
   generatorGraphModel.h
+  keywordModel.h
   nodeWrapper.h
 )
 
