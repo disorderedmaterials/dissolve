@@ -317,3 +317,13 @@ void KeywordStore::deserialiseFrom(const SerialisedValue &node, const CoreData &
                 if (node.contains(toml_format(keyword->name())))
                     keyword->deserialise(node.at(toml_format(keyword->name())), coreData);
 }
+
+// Access keyword by index
+KeywordStoreEntry KeywordStore::at(size_t index) {
+  size_t total = 0;
+  for (const auto& section: sections_)
+    for (const auto &group: section.groups())
+      for (const auto &data: group.keywords())
+        if (total++ == index)
+          return data;
+}

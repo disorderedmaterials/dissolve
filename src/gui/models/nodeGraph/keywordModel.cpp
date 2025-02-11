@@ -32,8 +32,8 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
     if (index.column() == 1)
         return row;
 
-    auto keyword = source_->sections()[0].groups();
-    return QVariant::fromValue(keyword.size());
+    auto [keyword, type] = source_->at(row);
+    return QString::fromStdString(std::string(keyword->name()));
 
     // return QString::fromStdString(std::string(keyword.first->name()));
 }

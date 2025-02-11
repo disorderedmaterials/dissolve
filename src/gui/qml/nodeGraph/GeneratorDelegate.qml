@@ -17,8 +17,8 @@ Item {
             py: posY
             x: posX
             y: posY
-            width: 50 * keywordModel.columnCount() + 20
-            height: 50 * (keywordModel.rowCount() + 1) + 10
+            width: 100 * keywordModel.columnCount() + 20
+            height: 30 * (keywordModel.rowCount() + 1) + 10
 
             onDeleted: rootModel.deleteNode(index)
 
@@ -28,6 +28,8 @@ Item {
 
                 /* clip: true */
                 delegate: Rectangle {
+                    implicitWidth: 100
+                    implicitHeight: 30
 
                     color: "white"
                     border.width: 1

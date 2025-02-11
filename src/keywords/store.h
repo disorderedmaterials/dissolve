@@ -79,6 +79,8 @@ class KeywordStore
                                                          bool createIfRequired = false);
 
     public:
+    // Access keyword by index
+    KeywordStoreEntry at(size_t index);
     // Set current group and section organisation
     void setOrganisation(std::string_view sectionName, std::optional<std::string_view> groupName = {},
                          std::optional<std::string_view> groupDescription = {});
