@@ -43,6 +43,17 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
     const int row = index.row();
 
     auto [keyword, type] = source_->at(row);
+    auto typeIndex = keyword->typeIndex();
+
+    // Return delegate type
+    if (role == Qt::UserRole)
+    {
+        if (index.column() == 0)
+            return "header";
+        if (typeIndex == std::type_index(typeid(BoolKeyword *)))
+            return "bool";
+        return "default";
+    }
 
     if (index.column() == 0)
         switch (role)
@@ -57,9 +68,16 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
 
     switch (role)
     {
+        case Qt::CheckStateRole:
+            if (typeIndex == std::type_index(typeid(BoolKeyword *)))
+            {
+                auto boolKeyword = static_cast<BoolKeyword *>(keyword);
+                return QVariant(boolKeyword->data());
+            }
+            std::cout << "Unknown" << std::endl;
+            return QVariant(false);
         case Qt::DisplayRole:
         {
-            auto typeIndex = keyword->typeIndex();
             if (typeIndex == std::type_index(typeid(BoolKeyword *)))
             {
                 auto boolKeyword = static_cast<BoolKeyword *>(keyword);
@@ -147,5 +165,7 @@ QHash<int, QByteArray> KeywordModel::roleNames() const
     QHash<int, QByteArray> roles;
     roles[Qt::DisplayRole] = "display";
     roles[Qt::ToolTipRole] = "tooltip";
+    roles[Qt::CheckStateRole] = "checkedState";
+    roles[Qt::UserRole] = "type";
     return roles;
 }

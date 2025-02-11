@@ -27,26 +27,61 @@ Item {
                 anchors.fill: parent
 
                 /* clip: true */
-                delegate: Rectangle {
-                    implicitWidth: 100
-                    implicitHeight: 30
+                delegate: DelegateChooser {
+                    role: "type"
+                    DelegateChoice {
+                        roleValue: "default";
+                        Rectangle {
+                            implicitWidth: 100
+                            implicitHeight: 30
 
-                    color: "white"
-                    border.width: 1
+                            color: "white"
+                            border.width: 1
 
-                    MouseArea {
-                        id: hoverCatcher
-                        anchors.fill: parent
-                        hoverEnabled: true
+                            MouseArea {
+                                id: hoverCatcher
+                                anchors.fill: parent
+                                hoverEnabled: true
+                            }
+
+                            Text {
+                                anchors.fill: parent
+                                text: display
+                            }
+                        }
                     }
+                    DelegateChoice {
+                        roleValue: "bool";
+                        CheckBox {
+                            checkable: true
+                            checked: checkedState
+                        }
+                    }
+                    DelegateChoice {
+                        roleValue: "header";
+                        Rectangle {
+                            implicitWidth: 100
+                            implicitHeight: 30
 
-                    Text {
-                        anchors.fill: parent
-                        text: display
+                            color: "white"
+                            border.width: 1
 
-                        ToolTip.visible: tooltip != null && hoverCatcher.containsMouse;
-                        ToolTip.text: tooltip;
-                        ToolTip.delay: 600;
+                            MouseArea {
+                                id: hoverCatcher
+                                anchors.fill: parent
+                                hoverEnabled: true
+                            }
+
+                            Text {
+                                anchors.fill: parent
+                                text: display
+                                font.bold: true
+
+                                ToolTip.visible: tooltip != null && hoverCatcher.containsMouse;
+                                ToolTip.text: tooltip;
+                                ToolTip.delay: 600;
+                            }
+                        }
                     }
                 }
                 model: keywordModel
