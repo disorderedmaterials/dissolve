@@ -25,24 +25,24 @@ MasterTermModel &MasterTermTreeModel::modelForTopLevelRow(int row)
     }
 }
 
-void MasterTermTreeModel::setBondIconFunction(std::function<bool(std::string_view termName)> func)
+void MasterTermTreeModel::setBondQueryFunction(std::function<bool(std::string_view termName)> func)
 {
-    bondModel_.setIconFunction(std::move(func));
+    bondModel_.setQueryFunction(std::move(func));
 }
 
-void MasterTermTreeModel::setAngleIconFunction(std::function<bool(std::string_view termName)> func)
+void MasterTermTreeModel::setAngleQueryFunction(std::function<bool(std::string_view termName)> func)
 {
-    angleModel_.setIconFunction(std::move(func));
+    angleModel_.setQueryFunction(std::move(func));
 }
 
-void MasterTermTreeModel::setTorsionIconFunction(std::function<bool(std::string_view termName)> func)
+void MasterTermTreeModel::setTorsionQueryFunction(std::function<bool(std::string_view termName)> func)
 {
-    torsionModel_.setIconFunction(std::move(func));
+    torsionModel_.setQueryFunction(std::move(func));
 }
 
-void MasterTermTreeModel::setImproperIconFunction(std::function<bool(std::string_view termName)> func)
+void MasterTermTreeModel::setImproperQueryFunction(std::function<bool(std::string_view termName)> func)
 {
-    improperModel_.setIconFunction(std::move(func));
+    improperModel_.setQueryFunction(std::move(func));
 }
 
 void MasterTermTreeModel::prefixNames(QList<QModelIndex> indices, QString prefix)

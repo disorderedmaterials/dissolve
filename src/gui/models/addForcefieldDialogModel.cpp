@@ -127,15 +127,16 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
     masters_ = std::make_unique<MasterTermTreeModel>(temporaryCoreData_);
 
     // Set model and signals for the master terms tree
-    atomTypes_.setIconFunction([this](const auto type) { return dissolve_->coreData().findAtomType(type->name()) != nullptr; });
-    masters_->setBondIconFunction([this](std::string_view name)
-                                  { return dissolve_->coreData().getMasterBond(name).has_value(); });
-    masters_->setAngleIconFunction([this](std::string_view name)
-                                   { return dissolve_->coreData().getMasterAngle(name).has_value(); });
-    masters_->setTorsionIconFunction([this](std::string_view name)
-                                     { return dissolve_->coreData().getMasterTorsion(name).has_value(); });
-    masters_->setImproperIconFunction([this](std::string_view name)
-                                      { return dissolve_->coreData().getMasterImproper(name).has_value(); });
+    atomTypes_.setQueryFunction([this](const auto type)
+                                { return dissolve_->coreData().findAtomType(type->name()) != nullptr; });
+    masters_->setBondQueryFunction([this](std::string_view name)
+                                   { return dissolve_->coreData().getMasterBond(name).has_value(); });
+    masters_->setAngleQueryFunction([this](std::string_view name)
+                                    { return dissolve_->coreData().getMasterAngle(name).has_value(); });
+    masters_->setTorsionQueryFunction([this](std::string_view name)
+                                      { return dissolve_->coreData().getMasterTorsion(name).has_value(); });
+    masters_->setImproperQueryFunction([this](std::string_view name)
+                                       { return dissolve_->coreData().getMasterImproper(name).has_value(); });
 }
 
 // Supply the species to operate on

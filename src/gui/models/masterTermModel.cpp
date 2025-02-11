@@ -5,7 +5,10 @@
 
 MasterTermModel::MasterTermModel(CoreData &coreData) : QAbstractTableModel(), coreData_(coreData) {}
 
-void MasterTermModel::setIconFunction(std::function<bool(std::string_view termName)> func) { iconFunction_ = std::move(func); }
+void MasterTermModel::setQueryFunction(std::function<bool(std::string_view termName)> func)
+{
+    queryFunction_ = std::move(func);
+}
 
 int MasterTermModel::columnCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : 3; }
 
@@ -47,11 +50,11 @@ QVariant MasterTermModel::data(const QModelIndex &index, int role) const
     if (index.row() < 0 || index.row() >= rowCount())
         return {};
 
-    if (role == MasterTermModelData::Roles::HasMaster && iconFunction_)
-        return iconFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString());
+    if (role == MasterTermModelData::Roles::HasMaster && queryFunction_)
+        return queryFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString());
 
-    if (role == MasterTermModelData::Roles::Icon && iconFunction_)
-        return QIcon(iconFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString())
+    if (role == MasterTermModelData::Roles::Icon && queryFunction_)
+        return QIcon(queryFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString())
                          ? ":/general/icons/warn.svg"
                          : ":/general/icons/true.svg");
 

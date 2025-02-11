@@ -33,10 +33,10 @@ class MasterTermTreeModel : public QAbstractItemModel
     MasterTermModel &modelForTopLevelRow(int row);
 
     public:
-    void setBondIconFunction(std::function<bool(std::string_view termName)> func);
-    void setAngleIconFunction(std::function<bool(std::string_view termName)> func);
-    void setTorsionIconFunction(std::function<bool(std::string_view termName)> func);
-    void setImproperIconFunction(std::function<bool(std::string_view termName)> func);
+    void setBondQueryFunction(std::function<bool(std::string_view termName)> func);
+    void setAngleQueryFunction(std::function<bool(std::string_view termName)> func);
+    void setTorsionQueryFunction(std::function<bool(std::string_view termName)> func);
+    void setImproperQueryFunction(std::function<bool(std::string_view termName)> func);
     void prefixNames(QList<QModelIndex> indices, QString prefix);
     void suffixNames(QList<QModelIndex> indices, QString suffix);
 
