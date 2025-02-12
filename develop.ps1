@@ -126,7 +126,7 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
     aqt install-qt --outputdir $qtInstallationDir windows desktop $qtVersion win64_msvc2019_64 -m all
 
     # Export Qt6_DIR to system environment variables
-    $qt6Dir = Join-Path -Path $dependencies -ChildPath "qt\$qtVersion\msvc2019_64"
+    $qt6Dir = Join-Path -Path "$projectDir\$dependencies" -ChildPath "qt\$qtVersion\msvc2019_64"
     $qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
     $qt6CMakeDir = Join-Path -Path $qt6Dir -ChildPath "lib\cmake"
     
@@ -135,7 +135,7 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
 
     Write-Host "Adding Qt6 directory to system PATH... " @info_colors
     if ($systemPath -notmatch [regex]::Escape($qt6BinDir)) {
-        [Environment]::SetEnvironmentVariable("PATH", "$(Join-Path -Path $projectDir -ChildPath $qt6BinDir);$systemPath", [EnvironmentVariableTarget]::Machine)
+        [Environment]::SetEnvironmentVariable("PATH", "$qt6BinDir;$systemPath", [EnvironmentVariableTarget]::Machine)
         Write-Host "Qt6 binary directory path added to system PATH." @info_colors
     } else {
         Write-Host "Did not write to PATH: Qt6 binary directory path already exists in system PATH." @info_colors
@@ -311,7 +311,7 @@ $cacheVariables = @{
     Java_JAVA_EXECUTABLE = $javaExePath
     MULTI_THREADING = $threading
     MSVC_DEV = "ON"
-    CMAKE_PREFIX_PATH = "$(Join-Path -Path $projectDir -ChildPath $qt6CMakeDir)"
+    CMAKE_PREFIX_PATH = "$qt6CMakeDir"
 }
 
 $cmakeUserPresets = [PSCustomObject]@{
