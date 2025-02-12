@@ -45,6 +45,13 @@ template <typename Enum> bool checkEnumOptionType(KeywordBase *keyword, std::typ
             static_cast<EnumOptionsBaseKeyword *>(keyword)->innerEnum() == std::type_index(typeid(Enum)));
 }
 
+// Helper function for checking casts to EnumOptionKeyword
+template <typename Enum> bool checkNodeValueEnumOptionType(KeywordBase *keyword, std::type_index typeIndex)
+{
+    return (typeIndex == std::type_index(typeid(NodeValueEnumOptionsBaseKeyword *)) &&
+            static_cast<NodeValueEnumOptionsBaseKeyword *>(keyword)->innerEnum() == std::type_index(typeid(Enum)));
+}
+
 QVariant KeywordModel::data(const QModelIndex &index, int role) const
 {
     const int row = index.row();
@@ -134,11 +141,9 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
                 auto data = static_cast<ExpressionVariableVectorKeyword *>(keyword)->data();
                 return QString::fromStdString(std::format("{} = {}", data[0]->name(), data[0]->value().asString()));
             }
-            else if (typeIndex == std::type_index(typeid(NodeValueEnumOptionsBaseKeyword *)))
+            else if (checkNodeValueEnumOptionType<Units::DensityUnits>(keyword, typeIndex))
             {
-                auto node = dynamic_cast<NodeValueEnumOptionsKeyword<Units::DensityUnits> *>(keyword);
-                if (!node)
-                    return "Bad cast";
+                auto node = static_cast<NodeValueEnumOptionsKeyword<Units::DensityUnits> *>(keyword);
                 auto magnitude = node->value().asString();
                 auto units = Units::densityUnits().keywordByIndex(node->enumerationIndex());
                 return QString::fromStdString(std::format("{} ({})", magnitude, units));

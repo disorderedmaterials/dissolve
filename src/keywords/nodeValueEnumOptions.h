@@ -15,7 +15,10 @@ class GeneratorNode;
 class NodeValueEnumOptionsBaseKeyword : public KeywordBase
 {
     public:
-    NodeValueEnumOptionsBaseKeyword(EnumOptionsBase &baseOptions) : KeywordBase(typeid(this)), baseOptions_(baseOptions) {}
+    NodeValueEnumOptionsBaseKeyword(EnumOptionsBase &baseOptions)
+        : KeywordBase(typeid(this)), baseOptions_(baseOptions), innerEnum_(std::type_index(typeid(void)))
+    {
+    }
 
     /*
      * Data
@@ -23,6 +26,8 @@ class NodeValueEnumOptionsBaseKeyword : public KeywordBase
     protected:
     // Reference to EnumBaseOptions
     EnumOptionsBase &baseOptions_;
+    // Inner enum type of templated subclasses
+    std::type_index innerEnum_;
 
     public:
     // Return data
@@ -38,6 +43,8 @@ class NodeValueEnumOptionsBaseKeyword : public KeywordBase
     virtual void setEnumeration(int optionIndex) = 0;
     // Set new option by name
     virtual bool setEnumeration(std::string_view keyword) = 0;
+    // Returns the type of the enum for the enum options
+    std::type_index innerEnum() { return innerEnum_; }
 };
 
 // Keyword managing NodeValue and EnumOptions
@@ -48,6 +55,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
         : NodeValueEnumOptionsBaseKeyword(optionData_), data_(data), default_(data), parentNode_(parentNode),
           optionData_(optionData)
     {
+        innerEnum_ = std::type_index(typeid(E));
     }
     ~NodeValueEnumOptionsKeyword() override = default;
 

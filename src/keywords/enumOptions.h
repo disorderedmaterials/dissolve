@@ -30,6 +30,8 @@ class EnumOptionsBaseKeyword : public KeywordBase
     public:
     // Return EnumBaseOptions
     const EnumOptionsBase &baseOptions() const { return baseOptions_; }
+    // Returns the type of the enum for the enum options
+    std::type_index innerEnum() { return innerEnum_; }
 
     /*
      * Set
@@ -39,8 +41,6 @@ class EnumOptionsBaseKeyword : public KeywordBase
     virtual int enumerationByIndex() const = 0;
     // Set new option index, informing KeywordBase
     virtual void setEnumerationByIndex(int optionIndex) = 0;
-    // Returns the type of the enum for the enum options
-    std::type_index innerEnum() { return innerEnum_; }
 };
 
 // Keyword based on EnumOptions
