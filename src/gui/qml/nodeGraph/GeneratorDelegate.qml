@@ -17,8 +17,8 @@ Item {
             py: posY
             x: posX
             y: posY
-            width: 100 * keywordModel.columnCount() + 20
-            height: 30 * (keywordModel.rowCount() + 1) + 10
+            width: root.contentWidth + 20
+            height: root.contentHeight + 60
 
             onDeleted: rootModel.deleteNode(index)
 
