@@ -11,7 +11,10 @@
 class EnumOptionsBaseKeyword : public KeywordBase
 {
     public:
-    explicit EnumOptionsBaseKeyword(EnumOptionsBase &baseOptions) : KeywordBase(typeid(this)), baseOptions_(baseOptions) {}
+    explicit EnumOptionsBaseKeyword(EnumOptionsBase &baseOptions)
+        : KeywordBase(typeid(this)), baseOptions_(baseOptions), innerEnum_(std::type_index(typeid(void)))
+    {
+    }
 
     /*
      * Source Options
@@ -19,6 +22,10 @@ class EnumOptionsBaseKeyword : public KeywordBase
     private:
     // Source EnumBaseOptions
     EnumOptionsBase &baseOptions_;
+
+    protected:
+    // Inner enum type of templated subclasses
+    std::type_index innerEnum_;
 
     public:
     // Return EnumBaseOptions
@@ -32,6 +39,8 @@ class EnumOptionsBaseKeyword : public KeywordBase
     virtual int enumerationByIndex() const = 0;
     // Set new option index, informing KeywordBase
     virtual void setEnumerationByIndex(int optionIndex) = 0;
+    // Returns the type of the enum for the enum options
+    std::type_index innerEnum() { return innerEnum_; }
 };
 
 // Keyword based on EnumOptions
@@ -41,6 +50,9 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     explicit EnumOptionsKeyword(E &data, EnumOptions<E> optionData)
         : EnumOptionsBaseKeyword(optionData_), data_(data), default_(data), optionData_(optionData)
     {
+
+        innerEnum_ = std::type_index(typeid(E));
+
         // Set our array of valid values
         for (auto n = 0; n < optionData_.nOptions(); ++n)
             validKeywords_.emplace_back(std::string(optionData_.keywordByIndex(n)));

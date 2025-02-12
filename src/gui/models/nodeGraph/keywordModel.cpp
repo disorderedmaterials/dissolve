@@ -38,6 +38,13 @@ int KeywordModel::columnCount(const QModelIndex &parent) const
     return 2;
 }
 
+// Helper function for checking casts to EnumOptionKeyword
+template <typename Enum> bool checkEnumOptionType(KeywordBase *keyword, std::type_index typeIndex)
+{
+    return (typeIndex == std::type_index(typeid(EnumOptionsBaseKeyword *)) &&
+            static_cast<EnumOptionsBaseKeyword *>(keyword)->innerEnum() == std::type_index(typeid(Enum)));
+}
+
 QVariant KeywordModel::data(const QModelIndex &index, int role) const
 {
     const int row = index.row();
@@ -112,13 +119,15 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
                 auto node = static_cast<NodeValueKeyword *>(keyword);
                 return QString::fromStdString(node->data().asString());
             }
-            else if (typeIndex == std::type_index(typeid(EnumOptionsBaseKeyword *)))
+            else if (checkEnumOptionType<AddGeneratorNodeBase::PositioningType>(keyword, typeIndex))
             {
-                auto value = dynamic_cast<EnumOptionsKeyword<AddGeneratorNodeBase::PositioningType> *>(keyword);
-                // FIXME: I need a way of accessing the inner type of the EnumOptionsKeys
-                if (!value)
-                    return "Bad cast";
+                auto value = static_cast<EnumOptionsKeyword<AddGeneratorNodeBase::PositioningType> *>(keyword);
                 return QString::fromStdString(AddGeneratorNodeBase::positioningTypes().keyword(value->data()));
+            }
+            else if (checkEnumOptionType<AddGeneratorNodeBase::BoxActionStyle>(keyword, typeIndex))
+            {
+                auto value = static_cast<EnumOptionsKeyword<AddGeneratorNodeBase::BoxActionStyle> *>(keyword);
+                return QString::fromStdString(AddGeneratorNodeBase::boxActionStyles().keyword(value->data()));
             }
             else if (typeIndex == std::type_index(typeid(ExpressionVariableVectorKeyword *)))
             {
