@@ -114,7 +114,7 @@ $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariable
 [Environment]::SetEnvironmentVariable("PATH", "$(Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir");$systemPath", [EnvironmentVariableTarget]::Machine)
 Write-Host "Python packages directory path added to system PATH." @info_colors
 
-$qt6Dir = ""
+$qt6CMakeDir = ""
 
 if (-not [string]::IsNullOrEmpty($qtVersion))
 {
@@ -128,6 +128,7 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
     # Export Qt6_DIR to system environment variables
     $qt6Dir = Join-Path -Path $dependencies -ChildPath "qt\$qtVersion\msvc2019_64"
     $qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
+    $qt6CMakeDir = Join-Path -Path $qt6Dir -ChildPath "lib\cmake"
     
     Write-Host "Locating system PATH... " @info_colors
     $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
@@ -310,7 +311,7 @@ $cacheVariables = @{
     Java_JAVA_EXECUTABLE = $javaExePath
     MULTI_THREADING = $threading
     MSVC_DEV = "ON"
-    CMAKE_PREFIX_PATH = "$qt6Dir"
+    CMAKE_PREFIX_PATH = "$(Join-Path -Path $projectDir -ChildPath $qt6CMakeDir)"
 }
 
 $cmakeUserPresets = [PSCustomObject]@{
