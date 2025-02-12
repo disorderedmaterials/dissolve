@@ -3,7 +3,7 @@
         Script to install dependencies for Dissolve development environment in Visual Studio.
     .DESCRIPTION
         Installs the following dependencies for Dissolve (separate and prior to Conan-managed packages):
-            - Qt 6.4.2
+            - Qt6 <VERSION>
             - Freetype
             - FTGL
             - Antlr4 (Java backend)
@@ -119,7 +119,6 @@ $qt6Dir = ""
 if (-not [string]::IsNullOrEmpty($qtVersion))
 {
     # Install Qt6
-    $qtVersion = "6.4.2"
     $qtInstallationDir = Join-Path -Path $dependencies -ChildPath "qt"
     New-Item -ItemType Directory -Path $qtInstallationDir -ErrorAction SilentlyContinue
 
