@@ -52,6 +52,8 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
             return "header";
         if (typeIndex == std::type_index(typeid(BoolKeyword *)))
             return "bool";
+        if (typeIndex == std::type_index(typeid(NodeValueKeyword *)))
+            return "string";
         return "default";
     }
 
@@ -157,6 +159,28 @@ bool KeywordModel::setData(const QModelIndex &index, const QVariant &value, int 
             if (!boolKeyword)
                 return false;
             boolKeyword->setData(value.toBool());
+            Q_EMIT dataChanged(index, index);
+            return true;
+        }
+    }
+    if (role == Qt::DisplayRole)
+    {
+        const int row = index.row();
+
+        auto [keyword, type] = source_->at(row);
+        auto typeIndex = keyword->typeIndex();
+
+        if (typeIndex == std::type_index(typeid(NodeValueKeyword *)))
+        {
+            auto node = dynamic_cast<NodeValueKeyword *>(keyword);
+            if (!node)
+                return false;
+            if (value.canConvert<int>())
+                node->setData(NodeValue(value.toInt()));
+            else if (value.canConvert<double>())
+                node->setData(NodeValue(value.toDouble()));
+            else
+                node->setData(NodeValue(value.toString().toStdString()));
             Q_EMIT dataChanged(index, index);
             return true;
         }

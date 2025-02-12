@@ -60,6 +60,15 @@ Item {
                         }
                     }
                     DelegateChoice {
+                        roleValue: "string";
+                        TextField {
+                            text: display
+                            onTextEdited: {
+                                display = text
+                            }
+                        }
+                    }
+                    DelegateChoice {
                         roleValue: "header";
                         Rectangle {
                             implicitWidth: 100
