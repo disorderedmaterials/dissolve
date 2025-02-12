@@ -69,6 +69,29 @@ Item {
                         }
                     }
                     DelegateChoice {
+                        roleValue: "vec3NodeValue";
+                        Grid {
+                            TextField {
+                                text: displayX
+                                onTextEdited: {
+                                    displayX = text
+                                }
+                            }
+                            TextField {
+                                text: displayY
+                                onTextEdited: {
+                                    displayY = text
+                                }
+                            }
+                            TextField {
+                                text: displayZ
+                                onTextEdited: {
+                                    displayZ = text
+                                }
+                            }
+                        }
+                    }
+                    DelegateChoice {
                         roleValue: "header";
                         Rectangle {
                             implicitWidth: 100

@@ -50,11 +50,14 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
     {
         if (index.column() == 0)
             return "header";
-        if (typeIndex == std::type_index(typeid(BoolKeyword *)))
+        else if (typeIndex == std::type_index(typeid(BoolKeyword *)))
             return "bool";
-        if (typeIndex == std::type_index(typeid(NodeValueKeyword *)))
+        else if (typeIndex == std::type_index(typeid(NodeValueKeyword *)))
             return "string";
-        return "default";
+        else if (typeIndex == std::type_index(typeid(Vec3NodeValueKeyword *)))
+            return "vec3NodeValue";
+        else
+            return "default";
     }
 
     if (index.column() == 0)
@@ -77,6 +80,21 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
                 return QVariant(boolKeyword->data());
             }
             return QVariant(false);
+        // DisplayX
+        case Qt::UserRole + 1:
+            if (typeIndex == std::type_index(typeid(Vec3NodeValueKeyword *)))
+                return QString::fromStdString(static_cast<Vec3NodeValueKeyword *>(keyword)->data().x.asString());
+            return "No X Value";
+        // DisplayY
+        case Qt::UserRole + 2:
+            if (typeIndex == std::type_index(typeid(Vec3NodeValueKeyword *)))
+                return QString::fromStdString(static_cast<Vec3NodeValueKeyword *>(keyword)->data().y.asString());
+            return "No Y Value";
+        // DisplayZ
+        case Qt::UserRole + 3:
+            if (typeIndex == std::type_index(typeid(Vec3NodeValueKeyword *)))
+                return QString::fromStdString(static_cast<Vec3NodeValueKeyword *>(keyword)->data().z.asString());
+            return "No X Value";
         case Qt::DisplayRole:
         {
             if (typeIndex == std::type_index(typeid(BoolKeyword *)))
@@ -146,13 +164,13 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
 
 bool KeywordModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    const int row = index.row();
+
+    auto [keyword, type] = source_->at(row);
+    auto typeIndex = keyword->typeIndex();
+
     if (role == Qt::CheckStateRole)
     {
-        const int row = index.row();
-
-        auto [keyword, type] = source_->at(row);
-        auto typeIndex = keyword->typeIndex();
-
         if (typeIndex == std::type_index(typeid(BoolKeyword *)))
         {
             auto boolKeyword = dynamic_cast<BoolKeyword *>(keyword);
@@ -163,13 +181,29 @@ bool KeywordModel::setData(const QModelIndex &index, const QVariant &value, int 
             return true;
         }
     }
+    // displayX
+    if (role == Qt::UserRole + 1 || role == Qt::UserRole + 2 || role == Qt::UserRole + 3)
+    {
+        if (typeIndex == std::type_index(typeid(Vec3NodeValueKeyword *)))
+        {
+            auto vec = dynamic_cast<Vec3NodeValueKeyword *>(keyword);
+            if (!vec)
+                return false;
+            Vec3<NodeValue> copy = vec->data();
+            NodeValue &item = (role == Qt::UserRole + 1) ? copy.x : (role == Qt::UserRole + 2 ? copy.y : copy.z);
+            if (value.canConvert<int>())
+                item.set(value.toInt());
+            else if (value.canConvert<double>())
+                item.set(value.toDouble());
+            else
+                item.set(value.toString().toStdString());
+            vec->setData(copy);
+            Q_EMIT dataChanged(index, index);
+            return true;
+        }
+    }
     if (role == Qt::DisplayRole)
     {
-        const int row = index.row();
-
-        auto [keyword, type] = source_->at(row);
-        auto typeIndex = keyword->typeIndex();
-
         if (typeIndex == std::type_index(typeid(NodeValueKeyword *)))
         {
             auto node = dynamic_cast<NodeValueKeyword *>(keyword);
@@ -210,6 +244,9 @@ QHash<int, QByteArray> KeywordModel::roleNames() const
     roles[Qt::ToolTipRole] = "tooltip";
     roles[Qt::CheckStateRole] = "checkedState";
     roles[Qt::UserRole] = "type";
+    roles[Qt::UserRole + 1] = "displayX";
+    roles[Qt::UserRole + 2] = "displayY";
+    roles[Qt::UserRole + 3] = "displayZ";
     return roles;
 }
 
