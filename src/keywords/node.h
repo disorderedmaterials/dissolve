@@ -13,10 +13,15 @@ class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
     NodeKeywordBase(GeneratorNode *parentNode, const GeneratorNode::NodeTypeVector &allowedNodeTypes)
-        : NodeKeywordUnderlay(parentNode, allowedNodeTypes), KeywordBase(typeid(this))
+        : NodeKeywordUnderlay(parentNode, allowedNodeTypes), KeywordBase(typeid(this)),
+          innerEnum_(std::type_index(typeid(void)))
     {
     }
     ~NodeKeywordBase() override = default;
+
+    protected:
+    // Inner enum type of templated subclasses
+    std::type_index innerEnum_;
 
     /*
      * Data
@@ -36,6 +41,8 @@ class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 
         return false;
     }
+    // Returns the type of the enum for the enum options
+    std::type_index innerEnum() { return innerEnum_; }
 };
 
 // Keyword managing GeneratorNode
@@ -46,6 +53,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase
                 const GeneratorNode::NodeTypeVector &allowedNodeTypes)
         : NodeKeywordBase(parentNode, allowedNodeTypes), data_(data)
     {
+        innerEnum_ = std::type_index(typeid(N));
     }
     ~NodeKeyword() override = default;
 

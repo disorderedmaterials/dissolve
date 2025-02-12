@@ -7,6 +7,7 @@
 #include "expression/variable.h"
 #include "generator/addBase.h"
 #include "generator/coordinateSets.h"
+#include "generator/regionBase.h"
 #include "keywords/bool.h"
 #include "keywords/enumOptions.h"
 #include "keywords/expressionVariableVector.h"
@@ -43,6 +44,13 @@ template <typename Enum> bool checkEnumOptionType(KeywordBase *keyword, std::typ
 {
     return (typeIndex == std::type_index(typeid(EnumOptionsBaseKeyword *)) &&
             static_cast<EnumOptionsBaseKeyword *>(keyword)->innerEnum() == std::type_index(typeid(Enum)));
+}
+
+// Helper function for checking casts to EnumOptionKeyword
+template <typename Node> bool checkNodeKeywordType(KeywordBase *keyword, std::type_index typeIndex)
+{
+    return (typeIndex == std::type_index(typeid(NodeKeywordBase *)) &&
+            static_cast<NodeKeywordBase *>(keyword)->innerEnum() == std::type_index(typeid(Node)));
 }
 
 // Helper function for checking casts to EnumOptionKeyword
@@ -148,11 +156,16 @@ QVariant KeywordModel::data(const QModelIndex &index, int role) const
                 auto units = Units::densityUnits().keywordByIndex(node->enumerationIndex());
                 return QString::fromStdString(std::format("{} ({})", magnitude, units));
             }
-            else if (typeIndex == std::type_index(typeid(NodeKeywordBase *)))
+            else if (checkNodeKeywordType<CoordinateSetsGeneratorNode>(keyword, typeIndex))
             {
-                auto node = dynamic_cast<NodeKeyword<CoordinateSetsGeneratorNode> *>(keyword);
-                if (!node)
-                    return "Bad cast";
+                auto node = static_cast<NodeKeyword<CoordinateSetsGeneratorNode> *>(keyword);
+                if (!node->data())
+                    return "Null pointer";
+                return QString::fromStdString(std::string(node->data()->name()));
+            }
+            else if (checkNodeKeywordType<RegionGeneratorNodeBase>(keyword, typeIndex))
+            {
+                auto node = static_cast<NodeKeyword<RegionGeneratorNodeBase> *>(keyword);
                 if (!node->data())
                     return "Null pointer";
                 return QString::fromStdString(std::string(node->data()->name()));
