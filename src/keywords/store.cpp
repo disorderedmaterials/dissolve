@@ -326,4 +326,5 @@ KeywordStoreEntry KeywordStore::at(size_t index) {
       for (const auto &data: group.keywords())
         if (total++ == index)
           return data;
+  throw std::out_of_range(std::format("Cannot access index {} from a Keyword Store with only {} entries", index, total));
 }
