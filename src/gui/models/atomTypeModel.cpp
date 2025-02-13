@@ -34,7 +34,7 @@ void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTy
 // Set query function for item
 void AtomTypeModel::setQueryFunction(std::function<bool(const std::shared_ptr<AtomType> &atomType)> func)
 {
-    queryFunction_ = func;
+    queryFunction_ = std::move(func);
 }
 
 // Set vector containing checked items
