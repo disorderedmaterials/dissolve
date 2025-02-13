@@ -12,6 +12,20 @@
 
 #include <vector>
 
+namespace AtomTypeModelData
+{
+// Enumerated data items for terms
+enum DataType
+{
+    Name = 0,
+    Element = 1,
+    Charge = 2,
+    ShortRangeForm = 3,
+    ShortRangeParameters = 4
+};
+}; // namespace AtomTypeModelData
+
+// AtomType Model
 class AtomTypeModel : public QAbstractListModel
 {
     Q_OBJECT

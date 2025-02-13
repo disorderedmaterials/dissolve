@@ -87,23 +87,18 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
     {
         switch (index.column())
         {
-            // Name
-            case (0):
+            case (AtomTypeModelData::Name):
                 return QString::fromStdString(std::string(rawData(index)->name()));
-            // Element
-            case (1):
+            case (AtomTypeModelData::Element):
                 if (role == Qt::EditRole)
                     return {};
                 return QString::fromStdString(std::string(Elements::symbol(rawData(index)->Z())));
-            // Charge
-            case (2):
+            case (AtomTypeModelData::Charge):
                 return QString::number(rawData(index)->charge());
-            // Short Range Form
-            case (3):
+            case (AtomTypeModelData::ShortRangeForm):
                 return QString::fromStdString(
                     ShortRangeFunctions::forms().keyword(rawData(index)->interactionPotential().form()));
-            // Short Range Parameters
-            case (4):
+            case (AtomTypeModelData::ShortRangeParameters):
                 return QString::fromStdString(rawData(index)->interactionPotential().parametersAsString());
             default:
                 return {};
@@ -147,8 +142,7 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
 
         switch (index.column())
         {
-            // Name
-            case (0):
+            case (AtomTypeModelData::Name):
                 // Ensure uniqueness of name if we have a reference CoreData
                 if (coreData_)
                     atomType->setName(DissolveSys::uniqueName(value.toString().toStdString(), coreData_->get().atomTypes(),
@@ -157,20 +151,16 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
                 else
                     atomType->setName(value.toString().toStdString());
                 break;
-            // Element
-            case (1):
+            case (AtomTypeModelData::Element):
                 return false;
-            // Charge
-            case (2):
+            case (AtomTypeModelData::Charge):
                 atomType->setCharge(value.toDouble());
                 break;
-            // Short Range Form
-            case (3):
+            case (AtomTypeModelData::ShortRangeForm):
                 atomType->interactionPotential().setForm(
                     ShortRangeFunctions::forms().enumeration(value.toString().toStdString()));
                 break;
-            // Short Range Parameters
-            case (4):
+            case (AtomTypeModelData::ShortRangeParameters):
                 if (!atomType->interactionPotential().parseParameters(value.toString().toStdString()))
                     return false;
                 break;
@@ -193,14 +183,14 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
 Qt::ItemFlags AtomTypeModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() == 0)
+    if (index.column() == AtomTypeModelData::Name)
     {
         if (coreData_)
             flags |= Qt::ItemIsEditable;
         if (checkedItems_)
             flags |= Qt::ItemIsUserCheckable;
     }
-    else if (index.column() != 1)
+    else if (index.column() != AtomTypeModelData::Element)
         flags |= Qt::ItemIsEditable;
 
     return flags;
@@ -214,15 +204,15 @@ QVariant AtomTypeModel::headerData(int section, Qt::Orientation orientation, int
     if (orientation == Qt::Horizontal)
         switch (section)
         {
-            case (0):
+            case (AtomTypeModelData::Name):
                 return "Name";
-            case (1):
+            case (AtomTypeModelData::Element):
                 return "Element";
-            case (2):
+            case (AtomTypeModelData::Charge):
                 return "Charge";
-            case (3):
+            case (AtomTypeModelData::ShortRangeForm):
                 return "SR Form";
-            case (4):
+            case (AtomTypeModelData::ShortRangeParameters):
                 return "SR Parameters";
             default:
                 return {};
