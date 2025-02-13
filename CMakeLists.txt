@@ -420,7 +420,7 @@ if(GUI)
     ${qmlgui_target_name}
     PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
            # Module gui libs
-           gui-qml ${QML_GUI_LIBS} ${NO_WHOLE_ARCHIVE_FLAG} ${QML_PLUGINS}
+           gui-qml ${QML_GUI_LIBS} ${NO_WHOLE_ARCHIVE_FLAG} QuickPlotplugin
     PRIVATE # External libs
             Qt6::Quick3D Qt6::Qml Qt6::Widgets ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
   )
