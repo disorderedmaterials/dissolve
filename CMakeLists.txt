@@ -391,6 +391,7 @@ if(GUI)
     PRIVATE # External libs
             Qt6::Widgets
             Qt6::Core
+            Qt6::Quick3D
             OpenGL::GL
             ${GUI_LINK_LIBS}
             ${FREETYPE_LIBRARIES}
@@ -401,12 +402,17 @@ if(GUI)
 
   set_target_properties(${qmlgui_target_name} PROPERTIES QML_IMPORT_PATH ${QT_QML_OUTPUT_DIRECTORY})
 
+  # Link to models when developing QML Dissolve in Visual Studio
+  if(MSVC_DEV)
+    set(QML_GUI_LIBS models)
+  endif(MSVC_DEV)
+
   # Main Dissolve GUI
   target_link_libraries(
     ${qmlgui_target_name}
     PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
            # Module gui libs
-           gui-qml models ${NO_WHOLE_ARCHIVE_FLAG} QuickPlotplugin
+           gui-qml ${QML_GUI_LIBS} ${NO_WHOLE_ARCHIVE_FLAG} QuickPlotplugin
     PRIVATE # External libs
             Qt6::Quick3D Qt6::Qml Qt6::Widgets ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
   )
