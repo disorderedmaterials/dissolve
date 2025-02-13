@@ -21,10 +21,10 @@ ListView {
             anchors.bottom: label.bottom
             anchors.left: parent.left
             anchors.top: label.top
-            height: 12
-            width: 12
             fillMode: Image.PreserveAspectFit
+            height: 12
             source: query ? "qrc:/general/icons/warn.svg" : "qrc:/general/icons/true.svg"
+            width: 12
         }
         D.Text {
             id: label
