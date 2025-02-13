@@ -80,7 +80,7 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
             case Qt::UserRole + 1:
                 return QString::fromStdString(std::string(data->name()));
             case Qt::UserRole + 2:
-                return QVariant(queryFunction_(rawData(index)));
+                return queryFunction_(rawData(index));
         }
     }
     if (role == Qt::DisplayRole || role == Qt::EditRole)
