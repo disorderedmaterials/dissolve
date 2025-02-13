@@ -22,7 +22,7 @@ ListView {
             anchors.left: parent.left
             anchors.top: label.top
             height: 10
-            source: icon ? "qrc:/general/icons/warn.svg" : "qrc:/general/icons/true.svg"
+            source: query ? "qrc:/general/icons/warn.svg" : "qrc:/general/icons/true.svg"
             width: height
         }
         D.Text {

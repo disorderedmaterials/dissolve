@@ -23,6 +23,12 @@ enum DataType
     ShortRangeForm = 3,
     ShortRangeParameters = 4
 };
+
+enum Roles
+{
+    Raw = Qt::UserRole,
+    Query = Qt::UserRole + 1
+};
 }; // namespace AtomTypeModelData
 
 // AtomType Model

@@ -23,10 +23,8 @@ enum DataType
 
 enum Roles
 {
-    Display = Qt::DisplayRole,
-    Edit = Qt::EditRole,
-    Icon = Qt::DecorationRole,
-    HasMaster = Qt::UserRole
+    Raw = Qt::UserRole,
+    Query = Qt::UserRole + 1
 };
 }; // namespace MasterTermModelData
 

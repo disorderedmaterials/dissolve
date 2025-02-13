@@ -50,15 +50,15 @@ QVariant MasterTermModel::data(const QModelIndex &index, int role) const
     if (index.row() < 0 || index.row() >= rowCount())
         return {};
 
-    if (role == MasterTermModelData::Roles::HasMaster && queryFunction_)
+    if (role == MasterTermModelData::Roles::Query && queryFunction_)
         return queryFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString());
 
-    if (role == MasterTermModelData::Roles::Icon && queryFunction_)
+    if (role == Qt::DecorationRole && queryFunction_)
         return QIcon(queryFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString())
                          ? ":/general/icons/warn.svg"
                          : ":/general/icons/true.svg");
 
-    if (role == MasterTermModelData::Roles::Display || role == MasterTermModelData::Roles::Edit)
+    if (role == Qt::DisplayRole || role == Qt::EditRole)
         return getTermData(index.row(), static_cast<MasterTermModelData::DataType>(index.column()));
 
     return {};
@@ -81,6 +81,6 @@ QHash<int, QByteArray> MasterTermModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[Qt::DisplayRole] = "display";
-    roles[Qt::DecorationRole] = "icon";
+    roles[MasterTermModelData::Query] = "query";
     return roles;
 }

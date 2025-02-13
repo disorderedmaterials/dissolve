@@ -70,48 +70,49 @@ int AtomTypeModel::columnCount(const QModelIndex &parent) const
 
 QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
 {
-    if (role >= Qt::UserRole)
+    switch (role)
     {
-        auto data = rawData(index);
-        switch (role)
-        {
-            case Qt::UserRole:
-                return QVariant::fromValue(data);
-            case Qt::UserRole + 1:
-                return QString::fromStdString(std::string(data->name()));
-            case Qt::UserRole + 2:
-                return queryFunction_(rawData(index));
-        }
-    }
-    if (role == Qt::DisplayRole || role == Qt::EditRole)
-    {
-        switch (index.column())
-        {
-            case (AtomTypeModelData::Name):
-                return QString::fromStdString(std::string(rawData(index)->name()));
-            case (AtomTypeModelData::Element):
-                if (role == Qt::EditRole)
-                    return {};
-                return QString::fromStdString(std::string(Elements::symbol(rawData(index)->Z())));
-            case (AtomTypeModelData::Charge):
-                return QString::number(rawData(index)->charge());
-            case (AtomTypeModelData::ShortRangeForm):
-                return QString::fromStdString(
-                    ShortRangeFunctions::forms().keyword(rawData(index)->interactionPotential().form()));
-            case (AtomTypeModelData::ShortRangeParameters):
-                return QString::fromStdString(rawData(index)->interactionPotential().parametersAsString());
-            default:
-                return {};
-        }
-    }
-    else if (role == Qt::DecorationRole && queryFunction_)
-        return QIcon(queryFunction_(rawData(index)) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg");
-    else if (role == Qt::CheckStateRole && checkedItems_)
-        return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) == checkedItems_->get().end()
-                   ? Qt::Unchecked
-                   : Qt::Checked;
+        case (AtomTypeModelData::Raw):
+            return QVariant::fromValue(rawData(index));
+        case (AtomTypeModelData::Query):
+            return queryFunction_(rawData(index));
 
-    return {};
+        case (Qt::DisplayRole):
+        case (Qt::EditRole):
+            switch (index.column())
+            {
+                case (AtomTypeModelData::Name):
+                    return QString::fromStdString(std::string(rawData(index)->name()));
+                case (AtomTypeModelData::Element):
+                    if (role == Qt::EditRole)
+                        return {};
+                    return QString::fromStdString(std::string(Elements::symbol(rawData(index)->Z())));
+                case (AtomTypeModelData::Charge):
+                    return QString::number(rawData(index)->charge());
+                case (AtomTypeModelData::ShortRangeForm):
+                    return QString::fromStdString(
+                        ShortRangeFunctions::forms().keyword(rawData(index)->interactionPotential().form()));
+                case (AtomTypeModelData::ShortRangeParameters):
+                    return QString::fromStdString(rawData(index)->interactionPotential().parametersAsString());
+                default:
+                    return {};
+            }
+        case (Qt::DecorationRole):
+            if (queryFunction_)
+                return QIcon(queryFunction_(rawData(index)) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg");
+            else
+                return {};
+        case (Qt::CheckStateRole):
+            if (checkedItems_)
+                return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) ==
+                               checkedItems_->get().end()
+                           ? Qt::Unchecked
+                           : Qt::Checked;
+            else
+                return {};
+        default:
+            return {};
+    }
 }
 
 bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -225,8 +226,8 @@ QHash<int, QByteArray> AtomTypeModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[Qt::UserRole] = "raw";
-    roles[Qt::UserRole + 1] = "display";
-    roles[Qt::UserRole + 2] = "icon";
+    roles[Qt::DisplayRole] = "display";
+    roles[AtomTypeModelData::Query] = "query";
     return roles;
 }
 
