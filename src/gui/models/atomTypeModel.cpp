@@ -110,7 +110,7 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
         }
     }
     else if (role == Qt::DecorationRole && queryFunction_)
-        return QIcon(queryFunction_(rawData(index)) ? ":/general/icons/warn.svg" : ":/general/icons/warn.svg");
+        return QIcon(queryFunction_(rawData(index)) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg");
     else if (role == Qt::CheckStateRole && checkedItems_)
         return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) == checkedItems_->get().end()
                    ? Qt::Unchecked
