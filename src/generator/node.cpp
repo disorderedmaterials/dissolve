@@ -41,7 +41,8 @@ EnumOptions<GeneratorNode::NodeType> GeneratorNode::nodeTypes()
                      {GeneratorNode::NodeType::SphericalGlobalPotential, "SphericalGlobalPotential"},
                      {GeneratorNode::NodeType::SizeFactor, "SizeFactor"},
                      {GeneratorNode::NodeType::Temperature, "Temperature"},
-                     {GeneratorNode::NodeType::Transmute, "Transmute"}});
+                     {GeneratorNode::NodeType::Transmute, "Transmute"},
+                     {GeneratorNode::NodeType::Array, "Array"}});
 }
 
 GeneratorNode::GeneratorNode(NodeType nodeType) : type_(nodeType) {}
@@ -206,6 +207,31 @@ bool GeneratorNode::deserialise(LineParser &parser, const CoreData &coreData)
         // Read and parse the next line
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
+        
+        if (type_ == GeneratorNode::NodeType::Array)
+        {
+            auto arrayNode = std::make_shared<ArrayNode>(type_);
+        
+            while (!parser.eofOrBlank())
+            {
+                if (parser.getArgsDelim() != LineParser::Success)
+                    return false;
+        
+                // Check for end of ArrayNode
+                if (DissolveSys::sameString(parser.argsv(0), "EndArray"))
+                    break;
+        
+                // If it's a site definition, add it to the ArrayNode
+                if (DissolveSys::sameString(parser.argsv(0), "Site"))
+                {
+                    Vector3D position = parser.readVector3D();
+                    arrayNode->addSite(Site(position));
+                }
+            }
+        
+            // Successfully parsed ArrayNode
+            return true;
+        }
 
         // Is this the end of the node block?
         if (DissolveSys::sameString(parser.argsv(0), std::format("End{}", nodeTypes().keyword(type_))))
@@ -238,6 +264,25 @@ bool GeneratorNode::serialise(LineParser &parser, std::string_view prefix)
     {
         if (!parser.writeLineF("{}{}  '{}'\n", prefix, GeneratorNode::nodeTypes().keyword(type_), name()))
             return false;
+    }
+
+    if (type_ == GeneratorNode::NodeType::Array)
+    {
+        // Write the ArrayNode identifier
+        if (!parser.writeLineF("{}Array\n", prefix))
+            return false;
+
+        // Cast this to an ArrayNode and retrieve stored sites
+        auto *arrayNode = static_cast<ArrayNode*>(this);
+        for (const auto &site : arrayNode->getSites())
+        {
+            // Write each site's position
+            if (!parser.writeLineF("{}  Site {}\n", prefix, site.position()))
+                return false;
+        }
+
+        // Write the end of the ArrayNode
+        return parser.writeLineF("{}EndArray\n", prefix);
     }
 
     // Create new prefix
