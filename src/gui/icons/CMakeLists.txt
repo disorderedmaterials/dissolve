@@ -6,12 +6,12 @@ file(
   "./*.svg"
 )
 file(
-  GLOB node_icons 
+  GLOB node_icons
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
   "./nodes/*.svg"
 )
 file(
-  GLOB module_icons 
+  GLOB module_icons
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
   "./modules/*.svg"
 )

@@ -409,10 +409,10 @@ if(GUI)
 
   # Dissolve2 QML plugins
   set(QML_PLUGINS
-    # QtQuick plotting library
-    QuickPlotplugin
-    # Icons (.svg)
-    icons_moduleplugin
+      # QtQuick plotting library
+      QuickPlotplugin
+      # Icons (.svg)
+      icons_moduleplugin
   )
 
   # Main Dissolve GUI
