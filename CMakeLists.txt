@@ -411,7 +411,6 @@ if(GUI)
   set(QML_PLUGINS
     # QtQuick plotting library
     QuickPlotplugin
-
     # Icons (.svg)
     icons_moduleplugin
   )
