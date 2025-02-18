@@ -407,6 +407,15 @@ if(GUI)
     set(QML_GUI_LIBS models)
   endif(MSVC_DEV)
 
+  # Dissolve2 QML plugins
+  set(QML_PLUGINS
+    # QtQuick plotting library
+    QuickPlotplugin
+
+    # Icons (.svg)
+    icons_moduleplugin
+  )
+
   # Main Dissolve GUI
   target_link_libraries(
     ${qmlgui_target_name}
