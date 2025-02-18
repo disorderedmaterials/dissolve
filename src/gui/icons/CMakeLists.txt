@@ -17,12 +17,12 @@ file(
 )
 
 qt_add_qml_module(
- icons_module
- URI
- "IconsModule"
- VERSION 1.0
- RESOURCES
- ${basic_icons}
- ${node_icons}
- ${module_icons}
+  icons_module
+  URI
+  "IconsModule"
+  VERSION 1.0
+  RESOURCES
+  ${basic_icons}
+  ${node_icons}
+  ${module_icons}
 )
