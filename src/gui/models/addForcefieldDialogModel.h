@@ -105,11 +105,11 @@ class AddForcefieldDialogModel : public QObject
     std::vector<std::string> originalAtomTypeNames_;
     // The Atom Type Model
     AtomTypeModel atomTypes_;
-    bool keepSpeciesAtomChargesCheck_;
-    bool overwriteParametersCheck_;
-    bool noMasterTerms_;
-    bool noImproperTerms_;
-    bool ignoreCurrentTypes_;
+    bool keepSpeciesAtomChargesCheck_{false};
+    bool overwriteParametersCheck_{false};
+    bool noMasterTerms_{false};
+    bool noImproperTerms_{false};
+    bool ignoreCurrentTypes_{true};
     std::unique_ptr<ForcefieldModel> ffModel_;
     ForcefieldSortFilterModel ffSort_;
     // The choice for how to handle atom types
