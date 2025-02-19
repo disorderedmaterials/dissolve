@@ -90,7 +90,8 @@ D.GroupBox {
         CheckBox {
             id: chargesCheck
 
-            text: "Don't overwrite changes on species atoms"
+            checked: control.dialogModel.keepSpeciesAtomChargesCheck
+            text: "Don't overwrite charges on species atoms"
         }
     }
 }

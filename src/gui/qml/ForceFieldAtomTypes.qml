@@ -77,7 +77,8 @@ Item {
 
         anchors.bottom: indicator.top
         anchors.left: parent.left
-        text: "Overwrite Parameters in existing atom types"
+        checked: control.dialogModel.overwriteParametersCheck
+        text: "Overwrite parameters in existing atom types"
     }
     Image {
         id: indicatorImage
