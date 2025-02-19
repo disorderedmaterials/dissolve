@@ -20,7 +20,7 @@ qt_add_qml_module(
   icons_module
   URI
   "IconsModule"
-  VERSION 
+  VERSION
   1.0
   RESOURCES
   ${basic_icons}
