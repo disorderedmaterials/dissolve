@@ -405,12 +405,20 @@ if(GUI)
     set(QML_GUI_LIBS models)
   endif(MSVC_DEV)
 
+  # Dissolve2 QML plugins
+  set(QML_PLUGINS
+      # QtQuick plotting library
+      QuickPlotplugin
+      # Icons (.svg)
+      icons_moduleplugin
+  )
+
   # Main Dissolve GUI
   target_link_libraries(
     ${qmlgui_target_name}
     PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
            # Module gui libs
-           gui-qml ${QML_GUI_LIBS} ${NO_WHOLE_ARCHIVE_FLAG} QuickPlotplugin
+           gui-qml ${QML_GUI_LIBS} ${NO_WHOLE_ARCHIVE_FLAG} ${QML_PLUGINS}
     PRIVATE # External libs
             Qt6::Quick3D Qt6::Qml Qt6::Widgets ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
   )
