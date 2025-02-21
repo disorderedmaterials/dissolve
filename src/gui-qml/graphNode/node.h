@@ -25,23 +25,6 @@ namespace GraphNode
 // Parameter list type alias
 using ParameterList = std::vector<Parameter>;
 
-// Node type enum
-enum class NodeType
-{
-    Module,
-    Generator,
-    Vec3Decomposition
-    // etc...
-};
-
-// Node type index
-const std::unordered_map<std::type_index, NodeType> typeIndex{
-    {std::type_info(Module), NodeType::Module},
-    {std::type_info(GeneratorNode), NodeType::Generator},
-    {std::type_info(Vec3Decomposition), NodeType::Vec3Decomposition}
-    // etc...
-};
-
 // Node registry
 struct Attributes
 {
@@ -55,10 +38,10 @@ struct Attributes
     }
 };
 
-const std::map<NodeType, Attributes> registry{
-    {NodeType::Module, Attributes("Module", QUrl("EXAMPLE"), ParameterList{})},
-    {NodeType::Generator, Attributes("Generator", QUrl("EXAMPLE"), ParameterList{})},
-    {NodeType::Vec3Decomposition, Attributes("Vec3Decomposition", QUrl("EXAMPLE"), ParameterList{})}
+const std::unordered_map<std::type_index, Attributes> registry{
+    {std::type_info(Module), Attributes("Module", QUrl("EXAMPLE"), ParameterList{})},
+    {std::type_info(Generator), Attributes("Generator", QUrl("EXAMPLE"), ParameterList{})},
+    {std::type_info(Vec3Decomposition), Attributes("Vec3Decomposition", QUrl("EXAMPLE"), ParameterList{})}
     // etc...
 }
 

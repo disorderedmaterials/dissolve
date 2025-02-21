@@ -12,7 +12,7 @@
 class Node : public std::enable_shared_from_this<Node>, Serialisable<const CoreData &>
 {
     public:
-    explicit Node(const std::type_index typeIndex); 
+    explicit Node(const std::type_index typeIndex) : attributes_(GraphNode::registry[typeIndex]) {};
     virtual ~Node() = default;
 
     /*

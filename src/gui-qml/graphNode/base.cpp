@@ -3,12 +3,6 @@
 
 #include "base.h"
 
-Node::Node(const std::type_index typeIndex)
-{
-	auto id = GraphNode::typeIndex[typeIndex];
-    attributes_ = GraphNode::registry[id];
-}
-
 /*
  * Getters
  */
