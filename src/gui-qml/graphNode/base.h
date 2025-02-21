@@ -36,6 +36,7 @@ class Node : public std::enable_shared_from_this<Node>, Serialisable<const CoreD
     private:
     // Display name of node
     GraphNode::Attributes attributes_;
-    // Edge definition
+    // Edge definition - NOTE: I don't think the pointer to the object containing all connections belongs here, 
+    // most likely we only need the incoming/outoging connections relevant to the Node
     GraphNode::EdgeDefinition *edgeDefinition_;
 };
