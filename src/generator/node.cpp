@@ -207,20 +207,20 @@ bool GeneratorNode::deserialise(LineParser &parser, const CoreData &coreData)
         // Read and parse the next line
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
-        
+
         if (type_ == GeneratorNode::NodeType::Array)
         {
             auto arrayNode = std::make_shared<ArrayNode>(type_);
-        
+
             while (!parser.eofOrBlank())
             {
                 if (parser.getArgsDelim() != LineParser::Success)
                     return false;
-        
+
                 // Check for end of ArrayNode
                 if (DissolveSys::sameString(parser.argsv(0), "EndArray"))
                     break;
-        
+
                 // If it's a site definition, add it to the ArrayNode
                 if (DissolveSys::sameString(parser.argsv(0), "Site"))
                 {
@@ -228,7 +228,7 @@ bool GeneratorNode::deserialise(LineParser &parser, const CoreData &coreData)
                     arrayNode->addSite(Site(position));
                 }
             }
-        
+
             // Successfully parsed ArrayNode
             return true;
         }
@@ -273,7 +273,7 @@ bool GeneratorNode::serialise(LineParser &parser, std::string_view prefix)
             return false;
 
         // Cast this to an ArrayNode and retrieve stored sites
-        auto *arrayNode = static_cast<ArrayNode*>(this);
+        auto *arrayNode = static_cast<ArrayNode *>(this);
         for (const auto &site : arrayNode->getSites())
         {
             // Write each site's position

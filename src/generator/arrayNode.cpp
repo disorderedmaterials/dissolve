@@ -5,19 +5,13 @@
 
 ArrayNode::ArrayNode(NodeType nodeType) : GeneratorNode(nodeType) {}
 
-void ArrayNode::addSite(const Site &site)
-{
-    sites_.push_back(site);
-}
+void ArrayNode::addSite(const Site &site) { sites_.push_back(site); }
 
-void ArrayNode::setSubNode(std::shared_ptr<GeneratorNode> subNode)
-{
-    subNode_ = subNode;
-}
+void ArrayNode::setSubNode(std::shared_ptr<GeneratorNode> subNode) { subNode_ = subNode; }
 
 bool ArrayNode::execute(const GeneratorContext &generatorContext)
 {
-    if (!subNode_)  // Ensure a subnode exists
+    if (!subNode_) // Ensure a subnode exists
         return false;
 
     for (auto &site : sites_)

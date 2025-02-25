@@ -4,13 +4,13 @@
 #ifndef ARRAY_NODE_H
 #define ARRAY_NODE_H
 
-#include "generator/node.h"
 #include "classes/site.h"
+#include "generator/node.h"
 #include <vector>
 
 class ArrayNode : public GeneratorNode
 {
-public:
+    public:
     // Constructor
     ArrayNode(NodeType nodeType);
 
@@ -23,9 +23,9 @@ public:
     // Set the subnode that operates on each site
     void setSubNode(std::shared_ptr<GeneratorNode> subNode);
 
-private:
-    std::vector<Site> sites_;  // List of sites
-    std::shared_ptr<GeneratorNode> subNode_;  // The subnode applied to each site
+    private:
+    std::vector<Site> sites_;                // List of sites
+    std::shared_ptr<GeneratorNode> subNode_; // The subnode applied to each site
 };
 
 #endif // ARRAY_NODE_H
