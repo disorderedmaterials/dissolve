@@ -24,6 +24,7 @@ ui_*
 moc_*
 *.kdev4
 build/
+!/.github/workflows/build
 build-*/
 *.exe
 
