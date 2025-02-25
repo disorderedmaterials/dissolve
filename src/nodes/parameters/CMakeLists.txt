@@ -1,13 +1,5 @@
 add_library(
   parameters
-  # configuration.cpp
-  # configuration.h
-  # double.cpp
-  # double.h
-  # integer.cpp
-  # integer.h
-  # optionalDouble.cpp
-  # optionalDouble.h
   parameter.h
 )
 
