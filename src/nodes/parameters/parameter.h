@@ -8,6 +8,8 @@
 #include <typeindex>
 #include <vector>
 
+template <typename T> class Parameter;
+
 // Base type for all parameter templates to inherit from
 class ParameterBase
 {
@@ -32,6 +34,15 @@ class ParameterBase
     // Return whether the contained data represents the default value
     virtual bool isDefault() const = 0;
 
+    // Access the full parameter from the base
+    template <typename T> std::shared_ptr<Parameter<T>> upcast()
+    {
+        if (std::type_index(typeid(T)) != type_)
+            return nullptr;
+        auto casted = static_cast<Parameter<T> *>(this);
+        return casted->shared_from_this();
+    }
+
     /*
      * I/O
      */
@@ -43,7 +54,7 @@ class ParameterBase
 };
 
 // Primary type for a Parameter to a value of type T
-template <typename T> class Parameter : public ParameterBase
+template <typename T> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<T>>
 {
     public:
     Parameter(std::string_view name, std::string_view description, T &value, T defValue)

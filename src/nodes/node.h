@@ -28,7 +28,7 @@ class Node
      */
     private:
     // Input parameters
-    std::vector<std::unique_ptr<ParameterBase>> inputs_;
+    std::vector<std::shared_ptr<ParameterBase>> inputs_;
 
     public:
     // Add input parameter
@@ -58,7 +58,7 @@ class Node
         inputs_.emplace_back(new BoundedParameter<T>(name, description, data, defValue, lower, upper, step));
     }
     // Return input parameters
-    std::vector<std::unique_ptr<ParameterBase>> &inputs();
+    std::vector<std::shared_ptr<ParameterBase>> &inputs() { return inputs_; };
 
     /*
      * Processing
