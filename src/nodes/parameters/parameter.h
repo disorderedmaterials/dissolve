@@ -69,7 +69,7 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     const T default_;
 
     public:
-    bool isDefault() const { return data_ == default_; }
+    bool isDefault() const override { return data_ == default_; }
 
     SerialisedValue serialise() const
     {
