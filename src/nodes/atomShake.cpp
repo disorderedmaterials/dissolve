@@ -10,7 +10,8 @@ AtomShakeNode::AtomShakeNode()
 
     //    keywords_.setOrganisation("Options", "Control", "Number of move attempts per atom and the target acceptance rate.");
     addInput<int>("ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_, 1);
-    addInput<double>("TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", targetAcceptanceRate_, 0.01);
+    addBoundedInput<double>("TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", targetAcceptanceRate_, 0.01,
+                            0, 1);
 
     //    keywords_.setOrganisation("Options", "Step Size",
     //                              "Current step size and limits for the Monte Carlo move. The step size is dynamically updated

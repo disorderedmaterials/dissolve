@@ -81,3 +81,34 @@ template <typename T> class Parameter : public ParameterBase
         }
     }
 };
+
+template <class T>
+concept Numeric = std::integral<T> || std::floating_point<T>;
+
+template <Numeric T> class BoundedParameter : public Parameter<T>
+{
+    public:
+    BoundedParameter(std::string_view name, std::string_view description, T &value, T defValue, std::optional<T> lower = {},
+                     std::optional<T> upper = {}, std::optional<T> step = {})
+        : Parameter<T>(name, description, value, defValue), lower_(lower), upper_(upper), step_(step)
+    {
+    }
+
+    private:
+    std::optional<T> lower_, upper_, step_;
+
+    public:
+    std::optional<T> getLower() { return lower_; }
+    std::optional<T> getUpper() { return upper_; }
+    std::optional<T> getStep() { return step_; }
+    void setLower(std::optional<T> value) { lower_ = value; }
+    void setUpper(std::optional<T> value) { upper_ = value; }
+    void setStep(std::optional<T> value) { step_ = value; }
+    void increment()
+    {
+        if (step_)
+            this->data_ += *step_;
+        if (this->data_ > *upper_)
+            this->data_ = *upper_;
+    }
+};
