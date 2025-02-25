@@ -13,7 +13,6 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <QUrl>
 
 class Node;
 class Module;
@@ -29,10 +28,10 @@ using ParameterList = std::vector<Parameter>;
 struct Attributes
 {
     const std::string typeName;
-    const QUrl iconPath;
+    const std::string iconPath;
     std::string displayName; // Defaults to untitled-<typeName>
     ParameterList parameters;
-    Attributes(const std::string &typeName, const QUrl &iconPath, const ParameterList &parameters, const std::string &displayName = "untitled")
+    Attributes(const std::string &typeName, const std::string &iconPath, const ParameterList &parameters, const std::string &displayName = "untitled")
         : typeName(typeName), iconPath(iconPath), parameters(parameters), displayName(displayName + "-" + typeName)
     {
     }

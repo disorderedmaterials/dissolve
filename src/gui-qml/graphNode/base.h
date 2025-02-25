@@ -22,7 +22,7 @@ class Node : public std::enable_shared_from_this<Node>, Serialisable<const CoreD
     // Display name of node
     std::string &displayName() const;
     // Icon url for node
-    const QUrl &iconPath() const;
+    const std::string &iconPath() const;
     // Parameters
     GraphNode::ParameterList &parameters() const;
 
