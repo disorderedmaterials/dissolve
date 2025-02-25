@@ -8,6 +8,7 @@
 #include <typeindex>
 #include <vector>
 
+// Base type for all parameter templates to inherit from
 class ParameterBase
 {
     public:
@@ -41,6 +42,7 @@ class ParameterBase
     virtual void deserialise(const SerialisedValue &node) = 0;
 };
 
+// Primary type for a Parameter to a value of type T
 template <typename T> class Parameter : public ParameterBase
 {
     public:
@@ -63,7 +65,10 @@ template <typename T> class Parameter : public ParameterBase
         SerialisedValue result = {};
         result["name"] = name_;
         result["description"] = description_;
-        result["data"] = data_;
+
+        // Serialise non-pointer values
+        if constexpr (!std::is_pointer<T>::value)
+            result["data"] = data_;
         return result;
     };
 
@@ -82,9 +87,11 @@ template <typename T> class Parameter : public ParameterBase
     }
 };
 
+// A concept to capture numerical types
 template <class T>
 concept Numeric = std::integral<T> || std::floating_point<T>;
 
+// Parameters which are bounded and might sit in a gui spinbox
 template <Numeric T> class BoundedParameter : public Parameter<T>
 {
     public:
@@ -104,11 +111,20 @@ template <Numeric T> class BoundedParameter : public Parameter<T>
     void setLower(std::optional<T> value) { lower_ = value; }
     void setUpper(std::optional<T> value) { upper_ = value; }
     void setStep(std::optional<T> value) { step_ = value; }
+    // Increase the parameter value
     void increment()
     {
         if (step_)
             this->data_ += *step_;
         if (this->data_ > *upper_)
             this->data_ = *upper_;
+    }
+    // Decrease the parameter value
+    void decrement()
+    {
+        if (step_)
+            this->data_ -= *step_;
+        if (this->data_ < *lower_)
+            this->data_ = *lower_;
     }
 };
