@@ -5,35 +5,24 @@
 
 #include "base/serialiser.h"
 #include <string>
+#include <typeindex>
 #include <vector>
 
-class Parameter
+class ParameterBase
 {
-public:
-    Parameter();
-    virtual ~Parameter() = default;
-
-/*
- * Basic Definition
- */
-public:
-    enum ParameterDataType
+    public:
+    ParameterBase(std::string_view name, std::string_view description, std::type_index type)
+        : name_(name), description_(description), type_(type)
     {
-        None,
-        Number,
-        String,
-        ThreeVector,
-        ConfigurationPointer,
-        ModulePointer
-    };
+    }
 
-protected:
+    protected:
     // Name of the parameter
-    std::string name_;
+    std::string_view name_;
     // Description of parameter (used as tooltip in the GUI)
-    std::string description_;
+    std::string_view description_;
     // Type of the parameter
-    ParameterDataType type_{ParameterDataType::None};
+    std::type_index type_;
 
     /*
      * Data
@@ -43,16 +32,6 @@ protected:
     virtual bool isDefault() const = 0;
 
     /*
-     * Node Interaction
-     */
-    public:
-    // Get data from edge connection(s)?
-    // void getDataFromEdges();
-    // ...or...
-    // Update value from any edge connection(s)?
-    // void updateFromEdges();
-
-    /*
      * I/O
      */
     public:
@@ -60,4 +39,45 @@ protected:
     virtual SerialisedValue serialise() const = 0;
     // Read from a serialised value
     virtual void deserialise(const SerialisedValue &node) = 0;
+};
+
+template <typename T> class Parameter : public ParameterBase
+{
+    public:
+    Parameter(std::string_view name, std::string_view description, T &value, T defValue)
+        : ParameterBase(name, description, std::type_index(typeid(T))), data_(value), default_(defValue)
+    {
+    }
+
+    protected:
+    // Reference to target data
+    T &data_;
+    // Initial value
+    const T default_;
+
+    public:
+    bool isDefault() const { return data_ == default_; }
+
+    SerialisedValue serialise() const
+    {
+        SerialisedValue result = {};
+        result["name"] = name_;
+        result["description"] = description_;
+        result["data"] = data_;
+        return result;
+    };
+
+    void deserialise(const SerialisedValue &node)
+    {
+        name_ = toml::find<std::string>(node, "name");
+        description_ = toml::find<std::string>(node, "description");
+        if constexpr (std::is_pointer<T>::value)
+        {
+            data_ = nullptr;
+        }
+        else
+        {
+            data_ = toml::find<T>(node, "data");
+        }
+    }
 };

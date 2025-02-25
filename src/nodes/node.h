@@ -11,7 +11,7 @@
 class Node
 {
     public:
-    Node();
+    Node() {}
     virtual ~Node() = default;
 
     /*
@@ -28,24 +28,23 @@ class Node
      */
     private:
     // Input parameters
-    std::vector<Parameter*> inputs_;
+    std::vector<std::unique_ptr<ParameterBase>> inputs_;
 
     public:
     // Add input parameter
-    template <class P, typename... Args> void addInput(std::string_view name, std::string_view description, Args &&...args)
+    template <class T> void addInput(std::string_view name, std::string_view description, T &data, T defValue)
     {
         // Check for keyword of this name already
-//        if (find(name))
-//            Messenger::exception("Keyword named '{}' already exists, and can't be added again.", name);
+        //        if (find(name))
+        //            Messenger::exception("Keyword named '{}' already exists, and can't be added again.", name);
 
         // Create new parameter using the supplied arguments
-        P *parameter = new P(std::forward<Args>(args)...);
-        parameter->setBaseInfo(name, description);
+        // parameter->setBaseInfo(name, description);
 
-        inputs_.push_back(parameter);
+        inputs_.emplace_back(new Parameter<T>(name, description, data, defValue));
     }
     // Return input parameters
-    std::vector<Parameter*> &inputs();
+    std::vector<std::unique_ptr<ParameterBase>> &inputs();
 
     /*
      * Processing
