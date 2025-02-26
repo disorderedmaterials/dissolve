@@ -53,6 +53,7 @@ class ParameterBase
     public:
     // Return whether the contained data represents the default value
     virtual bool isDefault() const = 0;
+    std::type_index type() const;
 
     // Access the full parameter from the base
     template <typename T> std::shared_ptr<Parameter<T>> upcast()
