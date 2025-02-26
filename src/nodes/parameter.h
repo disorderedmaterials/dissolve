@@ -14,11 +14,11 @@ template <typename T> class Parameter;
 class ParameterBase
 {
     public:
-    ParameterBase(std::string_view name, std::string_view description, std::type_index type)
-        : name_(name), description_(description), type_(type)
-    {
-    }
+    ParameterBase(std::string_view name, std::string_view description, std::type_index type);
 
+    /*
+     * Definition
+     */
     protected:
     // Name of the parameter
     std::string_view name_;
@@ -26,6 +26,14 @@ class ParameterBase
     std::string_view description_;
     // Type of the parameter
     std::type_index type_;
+
+    public:
+    // Return the parameter name
+    std::string_view name() const;
+    // Return the parameter description
+    std::string_view description() const;
+    // Return the parameter type
+    std::type_index type() const;
 
     /*
      * Data
@@ -150,9 +158,9 @@ template <typename T> class BoundedParameter : public Parameter<T>
     void set(const T &value) override
     {
         if (lower_ && value < *lower_)
-            data_ = *lower_;
+            this->data_ = *lower_;
         else if (upper_ && value > upper_)
-            data_ = *upper_;
+            this->data_ = *upper_;
     }
     // Return lower bound
     std::optional<T> lowerBound() { return lower_; }

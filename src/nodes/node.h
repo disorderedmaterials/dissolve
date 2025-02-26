@@ -3,7 +3,8 @@
 
 #pragma once
 
-#include "nodes/parameters/parameter.h"
+#include "base/messenger.h"
+#include "nodes/parameter.h"
 #include <string>
 #include <vector>
 
@@ -24,7 +25,7 @@ class Node
     virtual std::string_view summary() = 0;
 
     /*
-     * Inputs & Outputs
+     * Inputs
      */
     private:
     // Input parameters
@@ -34,9 +35,8 @@ class Node
     // Add input parameter
     template <class T> void addInput(std::string_view name, std::string_view description, T &data)
     {
-        // Check for keyword of this name already
-        //        if (find(name))
-        //            Messenger::exception("Keyword named '{}' already exists, and can't be added again.", name);
+        if (findInput(name))
+            Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
         inputs_.emplace_back(new Parameter<T>(name, description, data));
     }
@@ -45,17 +45,15 @@ class Node
     void addBoundedInput(std::string_view name, std::string_view description, T &data, std::optional<T> lower = {},
                          std::optional<T> upper = {}, std::optional<T> step = {})
     {
-        // Check for keyword of this name already
-        //        if (find(name))
-        //            Messenger::exception("Keyword named '{}' already exists, and can't be added again.", name);
-
-        // Create new parameter using the supplied arguments
-        // parameter->setBaseInfo(name, description);
+        if (findInput(name))
+            Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
         inputs_.emplace_back(new BoundedParameter<T>(name, description, data, lower, upper, step));
     }
+    // Return named input parameter if it exists
+    std::shared_ptr<ParameterBase> findInput(std::string_view name) const;
     // Return input parameters
-    std::vector<std::shared_ptr<ParameterBase>> &inputs() { return inputs_; };
+    std::vector<std::shared_ptr<ParameterBase>> &inputs();
 
     /*
      * Processing
