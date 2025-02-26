@@ -78,8 +78,15 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         result["description"] = description_;
 
         // Serialise non-pointer values
-        if constexpr (!std::is_pointer<T>::value)
+        if constexpr (std::is_convertible<T, double>::value)
             result["data"] = data_;
+        else if constexpr (std::is_convertible<T, std::string>::value)
+            result["data"] = data_;
+        else if constexpr (std::is_convertible<T, std::optional<double>>::value)
+        {
+            if (data_)
+                result["data"] = *data_;
+        }
         return result;
     };
 
@@ -91,6 +98,13 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         {
             data_ = nullptr;
         }
+        else if constexpr (std::is_convertible<T, std::optional<double>>::value)
+        {
+            if (node.contains("data"))
+                data_ = toml::find<double>(node, "data");
+            else
+                data_ = {};
+        }
         else
         {
             data_ = toml::find<T>(node, "data");
@@ -98,12 +112,8 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     }
 };
 
-// A concept to capture numerical types
-template <class T>
-concept Numeric = std::integral<T> || std::floating_point<T>;
-
 // Parameters which are bounded and might sit in a gui spinbox
-template <Numeric T> class BoundedParameter : public Parameter<T>
+template <typename T> class BoundedParameter : public Parameter<T>
 {
     public:
     BoundedParameter(std::string_view name, std::string_view description, T &value, std::optional<T> lower = {},
@@ -122,20 +132,4 @@ template <Numeric T> class BoundedParameter : public Parameter<T>
     void setLower(std::optional<T> value) { lower_ = value; }
     void setUpper(std::optional<T> value) { upper_ = value; }
     void setStep(std::optional<T> value) { step_ = value; }
-    // Increase the parameter value
-    void increment()
-    {
-        if (step_)
-            this->data_ += *step_;
-        if (this->data_ > *upper_)
-            this->data_ = *upper_;
-    }
-    // Decrease the parameter value
-    void decrement()
-    {
-        if (step_)
-            this->data_ -= *step_;
-        if (this->data_ < *lower_)
-            this->data_ = *lower_;
-    }
 };
