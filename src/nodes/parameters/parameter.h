@@ -62,6 +62,9 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     {
     }
 
+    /*
+     * Data
+     */
     protected:
     // Reference to target data
     T &data_;
@@ -69,9 +72,20 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     const T default_;
 
     public:
+    // Set the parameter value
+    virtual void set(const T &value) { data_ = value; }
+    // Return the parameter value
+    T &get() { return data_; }
+    const T &get() const { return data_; }
+    // Return whether the contained data represents the default value
     bool isDefault() const override { return data_ == default_; }
 
-    SerialisedValue serialise() const
+    /*
+     * I/O
+     */
+    public:
+    // Express as a serialised value
+    SerialisedValue serialise() const override
     {
         SerialisedValue result = {};
         result["name"] = name_;
@@ -89,8 +103,8 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         }
         return result;
     };
-
-    void deserialise(const SerialisedValue &node)
+    // Read from a serialised value
+    void deserialise(const SerialisedValue &node) override
     {
         name_ = toml::find<std::string>(node, "name");
         description_ = toml::find<std::string>(node, "description");
@@ -122,14 +136,28 @@ template <typename T> class BoundedParameter : public Parameter<T>
     {
     }
 
+    /*
+     * Data
+     */
     private:
-    std::optional<T> lower_, upper_, step_;
+    // Bounds to apply
+    std::optional<T> lower_, upper_;
+    // Stepsize for UI controls
+    std::optional<T> step_;
 
     public:
-    std::optional<T> getLower() { return lower_; }
-    std::optional<T> getUpper() { return upper_; }
-    std::optional<T> getStep() { return step_; }
-    void setLower(std::optional<T> value) { lower_ = value; }
-    void setUpper(std::optional<T> value) { upper_ = value; }
-    void setStep(std::optional<T> value) { step_ = value; }
+    // Set the parameter value
+    void set(const T &value) override
+    {
+        if (lower_ && value < *lower_)
+            data_ = *lower_;
+        else if (upper_ && value > upper_)
+            data_ = *upper_;
+    }
+    // Return lower bound
+    std::optional<T> lowerBound() { return lower_; }
+    // Return upper bound
+    std::optional<T> upperBound() { return upper_; }
+    // Return step size
+    std::optional<T> stepSize() { return step_; }
 };
