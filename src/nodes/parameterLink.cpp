@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/parameters/parameterLink.h"
+#include "nodes/parameterLink.h"
 
 ParameterLink::ParameterLink(ParameterBase &source, ParameterBase &sink) : source_(source), sink_(sink) {}
 
