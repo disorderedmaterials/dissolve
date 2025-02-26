@@ -32,17 +32,17 @@ class Node
 
     public:
     // Add input parameter
-    template <class T> void addInput(std::string_view name, std::string_view description, T &data, T defValue)
+    template <class T> void addInput(std::string_view name, std::string_view description, T &data)
     {
         // Check for keyword of this name already
         //        if (find(name))
         //            Messenger::exception("Keyword named '{}' already exists, and can't be added again.", name);
 
-        inputs_.emplace_back(new Parameter<T>(name, description, data, defValue));
+        inputs_.emplace_back(new Parameter<T>(name, description, data));
     }
     // Add bounded input parameter
     template <class T>
-    void addBoundedInput(std::string_view name, std::string_view description, T &data, T defValue, std::optional<T> lower = {},
+    void addBoundedInput(std::string_view name, std::string_view description, T &data, std::optional<T> lower = {},
                          std::optional<T> upper = {}, std::optional<T> step = {})
     {
         // Check for keyword of this name already
@@ -52,7 +52,7 @@ class Node
         // Create new parameter using the supplied arguments
         // parameter->setBaseInfo(name, description);
 
-        inputs_.emplace_back(new BoundedParameter<T>(name, description, data, defValue, lower, upper, step));
+        inputs_.emplace_back(new BoundedParameter<T>(name, description, data, lower, upper, step));
     }
     // Return input parameters
     std::vector<std::shared_ptr<ParameterBase>> &inputs() { return inputs_; };

@@ -57,8 +57,8 @@ class ParameterBase
 template <typename T> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<T>>
 {
     public:
-    Parameter(std::string_view name, std::string_view description, T &value, T defValue)
-        : ParameterBase(name, description, std::type_index(typeid(T))), data_(value), default_(defValue)
+    Parameter(std::string_view name, std::string_view description, T &value)
+        : ParameterBase(name, description, std::type_index(typeid(T))), data_(value), default_(value)
     {
     }
 
@@ -106,9 +106,9 @@ concept Numeric = std::integral<T> || std::floating_point<T>;
 template <Numeric T> class BoundedParameter : public Parameter<T>
 {
     public:
-    BoundedParameter(std::string_view name, std::string_view description, T &value, T defValue, std::optional<T> lower = {},
+    BoundedParameter(std::string_view name, std::string_view description, T &value, std::optional<T> lower = {},
                      std::optional<T> upper = {}, std::optional<T> step = {})
-        : Parameter<T>(name, description, value, defValue), lower_(lower), upper_(upper), step_(step)
+        : Parameter<T>(name, description, value), lower_(lower), upper_(upper), step_(step)
     {
     }
 
