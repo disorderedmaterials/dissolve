@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "nodes/node.h"
 #include "classes/configuration.h"
+#include "nodes/node.h"
 
 // AtomShake Node
 class AtomShakeNode : public Node
