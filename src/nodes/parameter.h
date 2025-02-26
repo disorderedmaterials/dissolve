@@ -147,7 +147,7 @@ template <typename T> class BoundedParameter : public Parameter<T>
     /*
      * Data
      */
-    private:
+    protected:
     // Bounds to apply
     std::optional<T> lower_, upper_;
     // Stepsize for UI controls
@@ -168,4 +168,36 @@ template <typename T> class BoundedParameter : public Parameter<T>
     std::optional<T> upperBound() { return upper_; }
     // Return step size
     std::optional<T> stepSize() { return step_; }
+};
+
+// Parameters which are bounded and have a text value when at the lower limit to represent the null state
+template <typename T> class BoundedOptionalParameter : public BoundedParameter<T>
+{
+    public:
+    BoundedOptionalParameter(std::string_view name, std::string_view description, T &value, T lower,
+                             std::string_view textWhenNull, T upper = {}, T step = {})
+        : BoundedParameter<T>(name, description, value, lower, upper, step), textWhenNull_{textWhenNull}
+    {
+    }
+
+    /*
+     * Data
+     */
+    private:
+    // Text to display when at lower limit / no value in optional
+    std::string textWhenNull_;
+
+    public:
+    // Set the parameter value
+    void set(const T &value) override
+    {
+        if (!value)
+            this->data_ = {};
+        else if (value < *(this->lower_))
+            this->data_ = {};
+        else if (this->upper_ && value > *(this->upper_))
+            this->data_ = *(this->upper_);
+    }
+    // Return text to display when null
+    std::string_view textWhenNull() const { return textWhenNull_; }
 };

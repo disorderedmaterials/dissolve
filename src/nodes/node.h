@@ -50,6 +50,16 @@ class Node
 
         inputs_.emplace_back(new BoundedParameter<T>(name, description, data, lower, upper, step));
     }
+    // Add bounded optional input parameter
+    template <class T>
+    void addBoundedOptionalInput(std::string_view name, std::string_view description, T &data, T lower,
+                                 std::string_view textWhenNull, T upper = {}, T step = {})
+    {
+        if (findInput(name))
+            Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
+
+        inputs_.emplace_back(new BoundedOptionalParameter<T>(name, description, data, lower, textWhenNull, upper, step));
+    }
     // Return named input parameter if it exists
     std::shared_ptr<ParameterBase> findInput(std::string_view name) const;
     // Return input parameters

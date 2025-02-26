@@ -23,12 +23,9 @@ AtomShakeNode::AtomShakeNode()
 
     // THIS KEYWORD HAS NEVER BEEN USED AFAIK, SO I THINK IT (AND OTHERS) CAN BE REMOVED AS WE MOVE FORWARD
     //    keywords_.setOrganisation("Advanced");
-    //    keywords_.add<OptionalDoubleKeyword>(
-    //        "CutoffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
-    //        cutoffDistance_, 0.0, std::nullopt, 0.1, "Use PairPotential Range");
-    addBoundedInput<std::optional<double>>(
+    addBoundedOptionalInput<std::optional<double>>(
         "CuttOffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
-        cutoffDistance_, 0.0, {}, 0.1);
+        cutoffDistance_, 0.0, "Use PairPotential Range", {}, 0.1);
 
     // executeIfTargetsUnchanged_ = true;
 }
