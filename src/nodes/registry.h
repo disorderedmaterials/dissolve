@@ -7,7 +7,15 @@
 
 using NodeProducer = std::function<std::unique_ptr<Node>(void)>;
 
+// Makes unique pointer to derived node instance
+template <typename T> NodeProducer makeDerivedNode()
+{
+    auto nodeLambda = []() -> std::unique_ptr<Node> { return std::make_unique<T>(); };
+    return nodeLambda;
+}
+
+// Node registry
 const std::map<std::string, NodeProducer> registry{
-	{"AtomShake", []() -> std::unique_ptr<Node> { return std::make_unique<AtomShakeNode>(); }},
+    {"AtomShake", makeDerivedNode<AtomShakeNode>()},
     // etc...
 }
