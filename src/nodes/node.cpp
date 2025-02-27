@@ -11,12 +11,9 @@
 // Return named input parameter if it exists
 std::shared_ptr<ParameterBase> Node::findInput(std::string_view name) const
 {
-    auto it = std::find_if(inputs_.begin(), inputs_.end(),
-                           [name](const auto &p) { return DissolveSys::sameString(p->name(), name); });
-    if (it == inputs_.end())
-        return {};
-    else
-        return *it;
+  if (!inputs_.contains(std::string(name)))
+    return {};
+  return inputs_.at(std::string(name));
 }
 
 /*
@@ -24,4 +21,4 @@ std::shared_ptr<ParameterBase> Node::findInput(std::string_view name) const
  */
 
 // Return input parameters
-std::vector<std::shared_ptr<ParameterBase>> &Node::inputs() { return inputs_; };
+std::map<std::string, std::shared_ptr<ParameterBase>> &Node::inputs() { return inputs_; };
