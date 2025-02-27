@@ -11,9 +11,9 @@
 // Return named input parameter if it exists
 std::shared_ptr<ParameterBase> Node::findInput(std::string_view name) const
 {
-  if (!inputs_.contains(name))
-    return {};
-  return inputs_.at(name);
+    if (!inputs_.contains(name))
+        return {};
+    return inputs_.at(name);
 }
 
 /*
