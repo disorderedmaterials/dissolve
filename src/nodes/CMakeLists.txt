@@ -6,6 +6,8 @@ add_library(
   node.h
   parameter.cpp
   parameter.h
+  parameterLink.cpp
+  parameterLink.h
 )
 
 target_include_directories(nodes PRIVATE ${PROJECT_SOURCE_DIR}/src)

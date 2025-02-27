@@ -1,0 +1,62 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
+#include "module/module.h"
+#include "nodes/node.h"
+#include "nodes/parameter.h"
+#include "nodes/parameterLink.h"
+
+#include <gtest/gtest.h>
+
+namespace UnitTest
+{
+
+class AddNode : public Node
+{
+    public:
+    AddNode()
+    {
+        addInput<double>("A", "First Value", a);
+        addInput<double>("B", "Second Value", b);
+        addInput<double>("Total", "Combined Value", sum);
+    }
+
+    std::string_view name() override { return "Add Node"; }
+    std::string_view summary() override { return "Add two doubles together"; };
+
+    Module::ExecutionResult process() override
+    {
+        preprocess();
+        sum = a + b;
+        return Module::ExecutionResult::Success;
+    }
+
+    double a{0}, b{0}, sum{0};
+};
+
+TEST(NodeEdgeTest, SimpleTest)
+{
+    AddNode x, y, z;
+
+    // Set-up earlier nodes
+    x.a = 2;
+    x.b = 3;
+    y.a = 5;
+    y.b = 7;
+    z.a = 0;
+    z.b = 0;
+
+    // Confirm that Z initially returns zero
+    z.process();
+    EXPECT_EQ(z.sum, 0);
+
+    // Link the inputs of Z to X and Y
+    z.link("A", *x.inputs()["Total"]);
+    z.link("B", *y.inputs()["Total"]);
+
+    // Confirm that we now add all the nodes
+    z.process();
+    EXPECT_EQ(z.sum, 17);
+}
+
+} // namespace UnitTest
