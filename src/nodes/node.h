@@ -64,9 +64,6 @@ class Node
         if (findInput(name))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
-        // Create new parameter using the supplied arguments
-        // parameter->setBaseInfo(name, description);
-
         return inputs_.emplace(std::make_pair(name, new BoundedParameter<T>(this, name, description, data, lower, upper, step)))
             .first->second;
     }
