@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include "templates/flags.h"
 #include <string>
 #include <typeindex>
 #include <vector>
@@ -15,6 +16,11 @@ class ParameterBase
 {
     public:
     ParameterBase(std::string_view name, std::string_view description, std::type_index type);
+    // Parameter Flags
+    enum ParameterFlags
+    {
+        Invalidates /* Indicates that the node's data is invalidated if the parameter is changed */
+    };
 
     /*
      * Definition
@@ -26,6 +32,8 @@ class ParameterBase
     std::string_view description_;
     // Type of the parameter
     std::type_index type_;
+    // Flags for the parameter
+    Flags<ParameterBase::ParameterFlags> flags_;
 
     public:
     // Return the parameter name
@@ -34,6 +42,10 @@ class ParameterBase
     std::string_view description() const;
     // Return the parameter type
     std::type_index type() const;
+    // Set flag(s) for the parameter
+    void setFlags(const Flags<ParameterBase::ParameterFlags> &flags);
+    // Return current flags
+    const Flags<ParameterBase::ParameterFlags> &flags() const;
 
     /*
      * Data

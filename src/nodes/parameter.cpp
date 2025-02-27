@@ -20,3 +20,9 @@ std::string_view ParameterBase::description() const { return description_; }
 
 // Return the parameter type
 std::type_index ParameterBase::type() const { return type_; }
+
+// Set flag(s) for the parameter
+void ParameterBase::setFlags(const Flags<ParameterBase::ParameterFlags> &flags) { flags_ += flags; }
+
+// Return current flags
+const Flags<ParameterBase::ParameterFlags> &ParameterBase::flags() const { return flags_; }

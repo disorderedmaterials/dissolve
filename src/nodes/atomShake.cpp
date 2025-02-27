@@ -5,8 +5,8 @@
 
 AtomShakeNode::AtomShakeNode()
 {
-    addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_);
-    //        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
+    addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setFlags(ParameterBase::Invalidates);
 
     //    keywords_.setOrganisation("Options", "Control", "Number of move attempts per atom and the target acceptance rate.");
     addInput<int>("ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_);

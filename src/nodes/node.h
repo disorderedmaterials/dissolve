@@ -33,32 +33,33 @@ class Node
 
     public:
     // Add input parameter
-    template <class T> void addInput(std::string_view name, std::string_view description, T &data)
+    template <class T> std::shared_ptr<ParameterBase> addInput(std::string_view name, std::string_view description, T &data)
     {
         if (findInput(name))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
-        inputs_.emplace_back(new Parameter<T>(name, description, data));
+        return inputs_.emplace_back(new Parameter<T>(name, description, data));
     }
     // Add bounded input parameter
     template <class T>
-    void addBoundedInput(std::string_view name, std::string_view description, T &data, std::optional<T> lower = {},
-                         std::optional<T> upper = {}, std::optional<T> step = {})
+    std::shared_ptr<ParameterBase> addBoundedInput(std::string_view name, std::string_view description, T &data,
+                                                   std::optional<T> lower = {}, std::optional<T> upper = {},
+                                                   std::optional<T> step = {})
     {
         if (findInput(name))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
-        inputs_.emplace_back(new BoundedParameter<T>(name, description, data, lower, upper, step));
+        return inputs_.emplace_back(new BoundedParameter<T>(name, description, data, lower, upper, step));
     }
     // Add bounded optional input parameter
     template <class T>
-    void addBoundedOptionalInput(std::string_view name, std::string_view description, T &data, T lower,
-                                 std::string_view textWhenNull, T upper = {}, T step = {})
+    std::shared_ptr<ParameterBase> addBoundedOptionalInput(std::string_view name, std::string_view description, T &data,
+                                                           T lower, std::string_view textWhenNull, T upper = {}, T step = {})
     {
         if (findInput(name))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
-        inputs_.emplace_back(new BoundedOptionalParameter<T>(name, description, data, lower, textWhenNull, upper, step));
+        return inputs_.emplace_back(new BoundedOptionalParameter<T>(name, description, data, lower, textWhenNull, upper, step));
     }
     // Return named input parameter if it exists
     std::shared_ptr<ParameterBase> findInput(std::string_view name) const;
