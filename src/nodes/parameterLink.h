@@ -32,5 +32,7 @@ class ParameterLink
     // A factory method to create a link between two parameters.
     // Returns the null option if the link cannot be created.
     static std::optional<ParameterLink> link(ParameterBase &source, ParameterBase &sink);
+    const ParameterBase &sink() const;
+    const ParameterBase &source() const;
     bool updateSource();
 };

@@ -19,3 +19,6 @@ bool ParameterLink::updateSource()
         return false;
     return sink_.assign(&source_);
 }
+
+const ParameterBase &ParameterLink::sink() const { return sink_; }
+const ParameterBase &ParameterLink::source() const { return source_; }
