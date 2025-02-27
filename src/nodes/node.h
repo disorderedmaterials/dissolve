@@ -33,13 +33,13 @@ class Node
      */
     private:
     // Input parameters
-    std::map<std::string, std::shared_ptr<ParameterBase>> inputs_;
+    std::map<std::string_view, std::shared_ptr<ParameterBase>> inputs_;
     // Inbound Links
-    std::map<std::string, ParameterLink> links_;
+    std::map<std::string_view, ParameterLink> links_;
 
     public:
     // Link an input
-    bool link(std::string name, ParameterBase &source)
+    bool link(std::string_view name, ParameterBase &source)
     {
         auto link = ParameterLink::link(source, *inputs_[name]);
         if (!link)
@@ -86,7 +86,7 @@ class Node
     // Return named input parameter if it exists
     std::shared_ptr<ParameterBase> findInput(std::string_view name) const;
     // Return input parameters
-    std::map<std::string, std::shared_ptr<ParameterBase>> &inputs();
+    std::map<std::string_view, std::shared_ptr<ParameterBase>> &inputs();
 
     /*
      * Processing
