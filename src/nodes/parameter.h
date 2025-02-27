@@ -57,6 +57,7 @@ class ParameterBase
     public:
     // Return whether the contained data represents the default value
     virtual bool isDefault() const = 0;
+    // Ensure that parameters are using the latest values
     bool runUpdate() const;
 
     // Assign the value of another parameter to this one.
@@ -107,6 +108,7 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     const T &get() const { return data_; }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return data_ == default_; }
+    // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override
     {
         auto upcasted = other->upcast<T>();

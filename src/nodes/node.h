@@ -41,17 +41,19 @@ class Node
     // Link an input
     bool link(std::string_view name, ParameterBase &source)
     {
-        // Get the destination parameter
 
+        // Confirm that this node hasn't already been linked
         if (std::find_if(links_.begin(), links_.end(), [name](const auto &it) { return name == it.second.sink().name(); }) !=
             links_.end())
             return false;
 
-        auto sink = inputs_[name];
+        // Create link
+        auto link = ParameterLink::link(source, *inputs_[name]);
 
-        auto link = ParameterLink::link(source, *sink);
+        // Ensure link is value
         if (!link)
             return false;
+
         links_.emplace(std::make_pair(name, *link));
         return true;
     }
