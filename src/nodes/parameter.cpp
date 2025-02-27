@@ -28,4 +28,5 @@ void ParameterBase::setFlags(const Flags<ParameterBase::ParameterFlags> &flags) 
 // Return current flags
 const Flags<ParameterBase::ParameterFlags> &ParameterBase::flags() const { return flags_; }
 
+// Ensure that parameters are using the latest values
 bool ParameterBase::runUpdate() const { return parent_->process() == Module::ExecutionResult::Success; }
