@@ -342,6 +342,8 @@ set(BASIC_LINK_LIBS
     ${FF_LINK_LIBS}
     # Modules
     ${MODULE_LINK_LIBS}
+    # Nodes
+    nodes
 )
 
 # Set linker options for complete/no archive
