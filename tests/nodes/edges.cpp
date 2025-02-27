@@ -46,15 +46,20 @@ TEST(NodeEdgeTest, SimpleTest)
     z.a = 0;
     z.b = 0;
 
+    // Confirm that X and Y are zero *before running*
+    EXPECT_EQ(x.sum, 0);
+    EXPECT_EQ(y.sum, 0);
+
     // Confirm that Z initially returns zero
     z.process();
     EXPECT_EQ(z.sum, 0);
 
     // Link the inputs of Z to X and Y
-    z.link("A", *x.inputs()["Total"]);
-    z.link("B", *y.inputs()["Total"]);
+    z.link("A", *x.findInput("Total"));
+    z.link("B", *y.findInput("Total"));
 
     // Confirm that we now add all the nodes
+    // Note that we did *not* need to explicitly run X or Y
     z.process();
     EXPECT_EQ(z.sum, 17);
 }
