@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
+#include "nodes/parameter.h"
+
+ParameterBase::ParameterBase(std::string_view name, std::string_view description, std::type_index type)
+    : name_(name), description_(description), type_(type)
+{
+}
+
+/*
+ * Definition
+ */
+
+// Return the parameter name
+std::string_view ParameterBase::name() const { return name_; }
+
+// Return the parameter description
+std::string_view ParameterBase::description() const { return description_; }
+
+// Return the parameter type
+std::type_index ParameterBase::type() const { return type_; }
+
+// Set flag(s) for the parameter
+void ParameterBase::setFlags(const Flags<ParameterBase::ParameterFlags> &flags) { flags_ += flags; }
+
+// Return current flags
+const Flags<ParameterBase::ParameterFlags> &ParameterBase::flags() const { return flags_; }
