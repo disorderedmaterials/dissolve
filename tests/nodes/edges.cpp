@@ -55,8 +55,11 @@ TEST(NodeEdgeTest, SimpleTest)
     EXPECT_EQ(z.sum, 0);
 
     // Link the inputs of Z to X and Y
-    z.link("A", *x.findInput("Total"));
-    z.link("B", *y.findInput("Total"));
+    EXPECT_TRUE(z.link("A", *x.findInput("Total")));
+    EXPECT_TRUE(z.link("B", *y.findInput("Total")));
+
+    // System should prevent double linking a sink
+    EXPECT_FALSE(z.link("A", *y.findInput("Total")));
 
     // Confirm that we now add all the nodes
     // Note that we did *not* need to explicitly run X or Y
