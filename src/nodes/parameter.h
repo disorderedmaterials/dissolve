@@ -57,6 +57,10 @@ class ParameterBase
     public:
     // Return whether the contained data represents the default value
     virtual bool isDefault() const = 0;
+    bool runUpdate() const;
+
+    // Assign the value of another parameter to this one.
+    virtual bool assign(ParameterBase *other) = 0;
 
     // Access the full parameter from the base
     template <typename T> std::shared_ptr<Parameter<T>> upcast()
@@ -103,7 +107,14 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     const T &get() const { return data_; }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return data_ == default_; }
-
+    bool assign(ParameterBase *other) override
+    {
+        auto upcasted = other->upcast<T>();
+        if (!upcasted)
+            return false;
+        set(upcasted->get());
+        return true;
+    }
     /*
      * I/O
      */

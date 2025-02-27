@@ -4,7 +4,9 @@
 #pragma once
 
 #include "base/messenger.h"
+#include "module/module.h"
 #include "nodes/parameter.h"
+#include "nodes/parameterLink.h"
 #include <string>
 #include <vector>
 
@@ -23,6 +25,8 @@ class Node
     virtual std::string_view name() = 0;
     // Return short summary of the node's purpose
     virtual std::string_view summary() = 0;
+    // Perform processing
+    virtual Module::ExecutionResult process() { return Module::ExecutionResult::Failed; }
 
     /*
      * Inputs
@@ -30,8 +34,19 @@ class Node
     private:
     // Input parameters
     std::map<std::string, std::shared_ptr<ParameterBase>> inputs_;
+    // Inbound Links
+    std::map<std::string, ParameterLink> links_;
 
     public:
+    // Link an input
+    bool link(std::string name, ParameterBase &source)
+    {
+        auto link = ParameterLink::link(source, *inputs_[name]);
+        if (!link)
+            return false;
+        links_.emplace(std::make_pair(name, *link));
+        return true;
+    }
     // Add input parameter
     template <class T> std::shared_ptr<ParameterBase> addInput(std::string_view name, std::string_view description, T &data)
     {
@@ -76,6 +91,13 @@ class Node
     /*
      * Processing
      */
-    private:
-    // TODO
+    protected:
+    // Prepare for processing
+    bool preprocess()
+    {
+        for (auto &[key, link] : links_)
+            if (!link.updateSource())
+                return false;
+        return true;
+    }
 };
