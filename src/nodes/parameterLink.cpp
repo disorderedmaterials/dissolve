@@ -11,3 +11,11 @@ std::optional<ParameterLink> ParameterLink::link(ParameterBase &source, Paramete
         return {};
     return ParameterLink(source, sink);
 }
+
+bool ParameterLink::updateSource()
+{
+    auto update = source_.runUpdate();
+    if (!update)
+        return false;
+    return sink_.assign(&source_);
+}

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "module/module.h"
 #include "nodes/parameter.h"
 
 // A link between two parameters
@@ -17,4 +18,5 @@ class ParameterLink
 
     public:
     static std::optional<ParameterLink> link(ParameterBase &source, ParameterBase &sink);
+    bool updateSource();
 };

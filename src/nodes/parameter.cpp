@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/parameter.h"
+#include "nodes/node.h"
 
 ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index type)
   : parent_(parent), name_(name), description_(description), type_(type)
@@ -26,3 +27,7 @@ void ParameterBase::setFlags(const Flags<ParameterBase::ParameterFlags> &flags) 
 
 // Return current flags
 const Flags<ParameterBase::ParameterFlags> &ParameterBase::flags() const { return flags_; }
+
+bool ParameterBase::runUpdate() const {
+  return parent_->process() == Module::ExecutionResult::Success;
+}
