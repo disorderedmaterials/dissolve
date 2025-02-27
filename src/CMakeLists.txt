@@ -19,3 +19,5 @@ if(GUI)
 endif(GUI)
 
 add_subdirectory(modules)
+
+add_subdirectory(nodes)
