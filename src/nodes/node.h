@@ -29,7 +29,7 @@ class Node
      */
     private:
     // Input parameters
-    std::vector<std::shared_ptr<ParameterBase>> inputs_;
+    std::map<std::string, std::shared_ptr<ParameterBase>> inputs_;
 
     public:
     // Add input parameter
@@ -38,7 +38,7 @@ class Node
         if (findInput(name))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
-        return inputs_.emplace_back(new Parameter<T>(name, description, data));
+        return inputs_.emplace(std::make_pair(name, new Parameter<T>(this, name, description, data))).first->second;
     }
     // Add bounded input parameter
     template <class T>
@@ -49,7 +49,11 @@ class Node
         if (findInput(name))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
-        return inputs_.emplace_back(new BoundedParameter<T>(name, description, data, lower, upper, step));
+        // Create new parameter using the supplied arguments
+        // parameter->setBaseInfo(name, description);
+
+        return inputs_.emplace(std::make_pair(name, new BoundedParameter<T>(this, name, description, data, lower, upper, step)))
+            .first->second;
     }
     // Add bounded optional input parameter
     template <class T>
@@ -59,12 +63,15 @@ class Node
         if (findInput(name))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
-        return inputs_.emplace_back(new BoundedOptionalParameter<T>(name, description, data, lower, textWhenNull, upper, step));
+        return inputs_
+            .emplace(std::make_pair(
+                name, new BoundedOptionalParameter<T>(this, name, description, data, lower, textWhenNull, upper, step)))
+            .first->second;
     }
     // Return named input parameter if it exists
     std::shared_ptr<ParameterBase> findInput(std::string_view name) const;
     // Return input parameters
-    std::vector<std::shared_ptr<ParameterBase>> &inputs();
+    std::map<std::string, std::shared_ptr<ParameterBase>> &inputs();
 
     /*
      * Processing

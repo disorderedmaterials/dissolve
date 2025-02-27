@@ -9,13 +9,15 @@
 #include <typeindex>
 #include <vector>
 
+class Node;
+
 template <typename T> class Parameter;
 
 // Base type for all parameter templates to inherit from
 class ParameterBase
 {
     public:
-    ParameterBase(std::string_view name, std::string_view description, std::type_index type);
+    ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index type);
     // Parameter Flags
     enum ParameterFlags
     {
@@ -34,6 +36,8 @@ class ParameterBase
     std::type_index type_;
     // Flags for the parameter
     Flags<ParameterBase::ParameterFlags> flags_;
+    // The owner the parameter
+    Node *parent_;
 
     public:
     // Return the parameter name
@@ -53,7 +57,6 @@ class ParameterBase
     public:
     // Return whether the contained data represents the default value
     virtual bool isDefault() const = 0;
-    std::type_index type() const;
 
     // Access the full parameter from the base
     template <typename T> std::shared_ptr<Parameter<T>> upcast()
@@ -78,8 +81,8 @@ class ParameterBase
 template <typename T> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<T>>
 {
     public:
-    Parameter(std::string_view name, std::string_view description, T &value)
-        : ParameterBase(name, description, std::type_index(typeid(T))), data_(value), default_(value)
+    Parameter(Node *parent, std::string_view name, std::string_view description, T &value)
+        : ParameterBase(parent, name, description, std::type_index(typeid(T))), data_(value), default_(value)
     {
     }
 
@@ -151,9 +154,9 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
 template <typename T> class BoundedParameter : public Parameter<T>
 {
     public:
-    BoundedParameter(std::string_view name, std::string_view description, T &value, std::optional<T> lower = {},
+    BoundedParameter(Node *parent, std::string_view name, std::string_view description, T &value, std::optional<T> lower = {},
                      std::optional<T> upper = {}, std::optional<T> step = {})
-        : Parameter<T>(name, description, value), lower_(lower), upper_(upper), step_(step)
+        : Parameter<T>(parent, name, description, value), lower_(lower), upper_(upper), step_(step)
     {
     }
 
@@ -187,9 +190,9 @@ template <typename T> class BoundedParameter : public Parameter<T>
 template <typename T> class BoundedOptionalParameter : public BoundedParameter<T>
 {
     public:
-    BoundedOptionalParameter(std::string_view name, std::string_view description, T &value, T lower,
+    BoundedOptionalParameter(Node *parent, std::string_view name, std::string_view description, T &value, T lower,
                              std::string_view textWhenNull, T upper = {}, T step = {})
-        : BoundedParameter<T>(name, description, value, lower, upper, step), textWhenNull_{textWhenNull}
+        : BoundedParameter<T>(parent, name, description, value, lower, upper, step), textWhenNull_{textWhenNull}
     {
     }
 
