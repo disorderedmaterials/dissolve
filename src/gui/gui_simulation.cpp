@@ -57,6 +57,7 @@ void DissolveWindow::setupIteration(int count)
     // Prepare the simulation
     if (!dissolve_.prepare())
     {
+        checkPairPotentialRange();
         updateStatusBar();
         return;
     }
