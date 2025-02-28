@@ -26,33 +26,19 @@ class AddNode : public Node
 
     Module::ExecutionResult process() override
     {
-        preprocess();
+        EXPECT_TRUE(preprocess());
+        run_count++;
         sum = a + b;
+        validate();
         return Module::ExecutionResult::Success;
     }
 
-    double a{0}, b{0}, sum{0};
+    double a{0}, b{0}, sum{0}, run_count{0};
 };
 
 TEST(NodeEdgeTest, SimpleTest)
 {
     AddNode x, y, z;
-
-    // Set-up earlier nodes
-    x.a = 2;
-    x.b = 3;
-    y.a = 5;
-    y.b = 7;
-    z.a = 0;
-    z.b = 0;
-
-    // Confirm that X and Y are zero *before running*
-    EXPECT_EQ(x.sum, 0);
-    EXPECT_EQ(y.sum, 0);
-
-    // Confirm that Z initially returns zero
-    z.process();
-    EXPECT_EQ(z.sum, 0);
 
     // Link the inputs of Z to X and Y
     EXPECT_TRUE(z.link("A", *x.findInput("Total")));
@@ -61,10 +47,107 @@ TEST(NodeEdgeTest, SimpleTest)
     // System should prevent double linking a sink
     EXPECT_FALSE(z.link("A", *y.findInput("Total")));
 
-    // Confirm that we now add all the nodes
-    // Note that we did *not* need to explicitly run X or Y
+    // Confirm that X and Y are zero *before running*
+    EXPECT_EQ(x.sum, 0);
+    EXPECT_EQ(y.sum, 0);
+
+    EXPECT_FALSE(x.isSatisfied());
+    EXPECT_FALSE(y.isSatisfied());
+    EXPECT_FALSE(z.isSatisfied());
+
+    // Confirm that Z initially returns zero
     z.process();
-    EXPECT_EQ(z.sum, 17);
+    EXPECT_EQ(x.sum, 0);
+    EXPECT_EQ(y.sum, 0);
+    EXPECT_EQ(z.sum, 0);
+    EXPECT_EQ(x.run_count, 0);
+    EXPECT_EQ(y.run_count, 0);
+    EXPECT_EQ(z.run_count, 1);
+    EXPECT_FALSE(x.isSatisfied());
+    EXPECT_FALSE(y.isSatisfied());
+    EXPECT_TRUE(z.isSatisfied());
+
+    // Set parameters within module *without* explicitly invalidating
+    x.a = 1;
+    x.b = 9;
+
+    // Nothing has changed, so children should not rerun
+    z.process();
+    EXPECT_EQ(x.sum, 0);
+    EXPECT_EQ(y.sum, 0);
+    EXPECT_EQ(z.sum, 0);
+    EXPECT_EQ(x.run_count, 0);
+    EXPECT_EQ(y.run_count, 0);
+    EXPECT_EQ(z.run_count, 2);
+    EXPECT_FALSE(x.isSatisfied());
+    EXPECT_FALSE(y.isSatisfied());
+    EXPECT_TRUE(z.isSatisfied());
+
+    // Mark x as needing update
+    x.invalidate();
+
+    // X still should *NOT* update, because "A" is not an invalidating
+    // parameter
+    z.process();
+    EXPECT_EQ(x.sum, 0);
+    EXPECT_EQ(y.sum, 0);
+    EXPECT_EQ(z.sum, 0);
+    EXPECT_EQ(x.run_count, 0);
+    EXPECT_EQ(y.run_count, 0);
+    EXPECT_EQ(z.run_count, 3);
+    EXPECT_FALSE(x.isSatisfied());
+    EXPECT_FALSE(y.isSatisfied());
+    EXPECT_TRUE(z.isSatisfied());
+
+    // Declare that parameters invalidate
+    x.findInput("A")->setFlags(ParameterBase::Invalidates);
+    x.findInput("B")->setFlags(ParameterBase::Invalidates);
+    y.findInput("A")->setFlags(ParameterBase::Invalidates);
+    y.findInput("B")->setFlags(ParameterBase::Invalidates);
+    z.findInput("A")->setFlags(ParameterBase::Invalidates);
+    z.findInput("B")->setFlags(ParameterBase::Invalidates);
+
+    // All should update
+    z.process();
+    EXPECT_EQ(x.sum, 10);
+    EXPECT_EQ(y.sum, 0);
+    EXPECT_EQ(z.sum, 10);
+    EXPECT_EQ(x.run_count, 1);
+    EXPECT_EQ(y.run_count, 1);
+    EXPECT_EQ(z.run_count, 4);
+    EXPECT_TRUE(x.isSatisfied());
+    EXPECT_TRUE(y.isSatisfied());
+    EXPECT_TRUE(z.isSatisfied());
+
+    // Running the process again should NOT rerun x and y, since they
+    // are satisfied
+    z.process();
+    EXPECT_EQ(x.sum, 10);
+    EXPECT_EQ(y.sum, 0);
+    EXPECT_EQ(z.sum, 10);
+    EXPECT_EQ(x.run_count, 1);
+    EXPECT_EQ(y.run_count, 1);
+    EXPECT_EQ(z.run_count, 5);
+    EXPECT_TRUE(x.isSatisfied());
+    EXPECT_TRUE(y.isSatisfied());
+    EXPECT_TRUE(z.isSatisfied());
+
+    // Set the parameters with setters.  This should automatically
+    // invalidate Y
+    y.findInput("A")->upcast<double>()->set(2);
+    y.findInput("B")->upcast<double>()->set(7);
+
+    // Confirm that only Y is rerun in the recalculation of Z
+    z.process();
+    EXPECT_EQ(x.sum, 10);
+    EXPECT_EQ(y.sum, 9);
+    EXPECT_EQ(z.sum, 19);
+    EXPECT_EQ(x.run_count, 1);
+    EXPECT_EQ(y.run_count, 2);
+    EXPECT_EQ(z.run_count, 6);
+    EXPECT_TRUE(x.isSatisfied());
+    EXPECT_TRUE(y.isSatisfied());
+    EXPECT_TRUE(z.isSatisfied());
 }
 
 } // namespace UnitTest
