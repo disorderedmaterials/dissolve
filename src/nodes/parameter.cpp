@@ -30,3 +30,7 @@ const Flags<ParameterBase::ParameterFlags> &ParameterBase::flags() const { retur
 
 // Ensure that parameters are using the latest values
 bool ParameterBase::runUpdate() const { return parent_->process() == Module::ExecutionResult::Success; }
+
+Node *ParameterBase::parent() const { return parent_; }
+
+void ParameterBase::invalidate() const { parent_->invalidate(); }

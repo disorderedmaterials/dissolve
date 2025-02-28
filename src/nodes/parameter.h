@@ -38,6 +38,8 @@ class ParameterBase
     Flags<ParameterBase::ParameterFlags> flags_;
     // The owner the parameter
     Node *parent_;
+    // Tell the owner to invalidate
+    void invalidate() const;
 
     public:
     // Return the parameter name
@@ -46,6 +48,8 @@ class ParameterBase
     std::string_view description() const;
     // Return the parameter type
     std::type_index type() const;
+    // Return the owner of the parameter
+    Node *parent() const;
     // Set flag(s) for the parameter
     void setFlags(const Flags<ParameterBase::ParameterFlags> &flags);
     // Return current flags
@@ -102,7 +106,15 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
 
     public:
     // Set the parameter value
-    virtual void set(const T &value) { data_ = value; }
+    virtual void set(const T &value)
+    {
+        if (data_ != value)
+        {
+            data_ = value;
+            if (flags_.isSet(Invalidates))
+                invalidate();
+        }
+    }
     // Return the parameter value
     T &get() { return data_; }
     const T &get() const { return data_; }

@@ -27,6 +27,10 @@ class Node
     virtual std::string_view summary() = 0;
     // Perform processing
     virtual Module::ExecutionResult process() { return Module::ExecutionResult::Failed; }
+    // Confirm that node data is up to date
+    bool isSatisfied();
+    // Tell node to recalculate results
+    void invalidate();
 
     /*
      * Inputs
@@ -36,6 +40,8 @@ class Node
     std::map<std::string_view, std::shared_ptr<ParameterBase>> inputs_;
     // Inbound Links
     std::map<std::string_view, ParameterLink> links_;
+    // Whether node needs to run to account for updated data
+    bool satisfied_{false};
 
     public:
     // Link an input
@@ -99,12 +105,8 @@ class Node
      * Processing
      */
     protected:
+    // Tell node that results are up to date
+    void validate();
     // Prepare for processing
-    bool preprocess()
-    {
-        for (auto &[key, link] : links_)
-            if (!link.updateSource())
-                return false;
-        return true;
-    }
+    bool preprocess();
 };
