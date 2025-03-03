@@ -6,7 +6,7 @@ description: Perform Monte Carlo on intramolecular terms
 
 ## Overview
 
-The `IntraShake` module performs Monte Carlo "shakes" of intramolecular terms within molecules, covering defined bond, angle, and torsions. All moves take into account both the full intermolecular and intramolecular energies of the atoms.
+The `IntraShake` module performs Monte Carlo "shakes" of intramolecular terms within molecules, covering defined bond, angle, and torsions. All moves take into account both the full intermolecular and intramolecular energies of the atoms in the molecule. This encompasses the full pair potential energy within the cutoff range of the molecule's atoms, as well as any intramolecular pair potential energy contributions.
 
 ## Description
 
@@ -27,15 +27,14 @@ The basic algorithm is the same as documented for the {{< module "AtomShake" >}}
 |`RestrictToSpecies`|`Species ...`|--|Restrict Monte Carlo moves to only molecules of the specified species. Molecules of other species types remain at their current positions.|
 |`ShakesPerTerm`|`int`|`1`|Number of shakes $n$ to attempt per term|
 |`TargetAcceptanceRate`|`alpha`|`0.33`|Target acceptance rate $\alpha$ for Monte Carlo moves|
-|`TermEnergyOnly`|`bool`|`false`|Whether to ignore all interatomic pair potential energy in the procedure, focussing entirely on the energy of the intramolecular term|
 
 ### Bonds
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`AdjustBonds`|`bool`|`true`|Whether bond terms should be shaken|
-|`BondStepSize`|`delta`|`0.05`|Step size $\delta$ in Angstroms to use in Monte Carlo moves over bonds. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
-|`BondStepSizeMax`|`deltamax`|`1.0`|Maximum allowed value for bond step size, $\delta_{max}$, in Angstroms|
+|`BondStepSize`|`delta`|`0.01`|Step size $\delta$ in Angstroms to use in Monte Carlo moves over bonds. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
+|`BondStepSizeMax`|`deltamax`|`0.2`|Maximum allowed value for bond step size, $\delta_{max}$, in Angstroms|
 |`BondStepSizeMin`|`deltamin`|`0.001`|Minimum allowed value for bond step size, $\delta_{min}$, in Angstroms|
 
 ### Angles
@@ -43,18 +42,18 @@ The basic algorithm is the same as documented for the {{< module "AtomShake" >}}
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`AdjustAngles`|`bool`|`true`|Whether angle terms should be shaken|
-|`AngleStepSize`|`delta`|`0.05`|Step size $\delta$ in Angstroms to use in Monte Carlo moves over angles. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
-|`AngleStepSizeMax`|`deltamax`|`1.0`|Maximum allowed value for angle step size, $\delta_{max}$, in Angstroms|
-|`AngleStepSizeMin`|`deltamin`|`0.001`|Minimum allowed value for angle step size, $\delta_{min}$, in Angstroms|
+|`AngleStepSize`|`delta`|`5.0`|Step size $\delta$ in Angstroms to use in Monte Carlo moves over angles. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
+|`AngleStepSizeMax`|`deltamax`|`20.0`|Maximum allowed value for angle step size, $\delta_{max}$, in Angstroms|
+|`AngleStepSizeMin`|`deltamin`|`0.01`|Minimum allowed value for angle step size, $\delta_{min}$, in Angstroms|
 
 ### Torsions
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`AdjustTorsions`|`bool`|`true`|Whether torsion terms should be shaken|
-|`TorsionStepSize`|`delta`|`0.05`|Step size $\delta$ in Angstroms to use in Monte Carlo moves over torsions. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
-|`TorsionStepSizeMax`|`deltamax`|`1.0`|Maximum allowed value for torsion step size, $\delta_{max}$, in Angstroms|
-|`TorsionStepSizeMin`|`deltamin`|`0.001`|Minimum allowed value for torsion step size, $\delta_{min}$, in Angstroms|
+|`TorsionStepSize`|`delta`|`10.0`|Step size $\delta$ in Angstroms to use in Monte Carlo moves over torsions. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
+|`TorsionStepSizeMax`|`deltamax`|`45.0`|Maximum allowed value for torsion step size, $\delta_{max}$, in Angstroms|
+|`TorsionStepSizeMin`|`deltamin`|`0.5`|Minimum allowed value for torsion step size, $\delta_{min}$, in Angstroms|
 
 ### Advanced
 
