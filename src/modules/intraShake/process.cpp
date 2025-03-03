@@ -223,10 +223,8 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                         continue;
 
                     // Get Atom pointers
-                    auto i = mol->atom(torsion.indexI());
                     auto j = mol->atom(torsion.indexJ());
                     auto k = mol->atom(torsion.indexK());
-                    auto l = mol->atom(torsion.indexL());
 
                     // Select random terminus
                     auto terminus = randomBuffer.random() > 0.5 ? 1 : 0;
