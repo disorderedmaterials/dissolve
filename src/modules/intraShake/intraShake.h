@@ -42,8 +42,6 @@ class IntraShakeModule : public Module
     int nShakesPerTerm_{1};
     // Target acceptance rate for Monte Carlo moves
     double targetAcceptanceRate_{0.33};
-    // Whether only the energy of the intramolecular term is calculated and assessed
-    bool termEnergyOnly_{false};
     // Step size for torsion adjustments (degrees)
     double torsionStepSize_{10.0};
     // Minimum step size for torsion adjustments (degrees)

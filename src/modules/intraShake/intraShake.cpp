@@ -18,8 +18,6 @@ IntraShakeModule::IntraShakeModule() : Module(ModuleTypes::IntraShake)
     keywords_.add<IntegerKeyword>("ShakesPerTerm", "Number of shakes per term", nShakesPerTerm_, 1);
     keywords_.add<DoubleKeyword>("TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", targetAcceptanceRate_,
                                  0.001, 1.0);
-    keywords_.add<BoolKeyword>(
-        "TermEnergyOnly", "Whether only the energy of the intramolecular term is calculated and assessed", termEnergyOnly_);
     keywords_.add<SpeciesVectorKeyword>("RestrictToSpecies", "Restrict the calculation to the specified Species",
                                         restrictToSpecies_);
 

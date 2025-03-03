@@ -38,9 +38,6 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                          "is {} <= delta <= {}).\n",
                          torsionStepSize_, torsionStepSizeMin_, torsionStepSizeMax_);
     Messenger::print("IntraShake: Target acceptance rate is {}.\n", targetAcceptanceRate_);
-    if (termEnergyOnly_)
-        Messenger::print("IntraShake: Only term energy will be considered (interactions with the rest of the"
-                         "system will be ignored).\n");
     if (!restrictToSpecies_.empty())
         Messenger::print("IntraShake: Calculation will be restricted to species: {}\n",
                          joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
@@ -223,15 +220,6 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                 {
                     // Refuse to change a torsion which is in a cycle
                     if (torsion.inCycle())
-                        continue;
-
-                    if (torsion.indexI() != 2)
-                        continue;
-                    if (torsion.indexJ() != 0)
-                        continue;
-                    if (torsion.indexK() != 1)
-                        continue;
-                    if (torsion.indexL() != 3)
                         continue;
 
                     // Get Atom pointers
