@@ -758,10 +758,10 @@ std::string_view Dissolve::restartFilename() const { return restartFilename_; }
 // Return whether a restart filename has been set
 bool Dissolve::hasRestartFilename() const { return (!restartFilename_.empty()); }
 
-// Return container of nodes
+// Add nodes
 void Dissolve::addNode(std::unique_ptr<Node> node, std::string_view name) { nodes_.insert(std::make_pair(name, node)); }
 
-// Return container of parameter links between nodes
+// Add parameter link between nodes
 void Dissolve::addEdge(Node::Edge &edge) { edges_.push_back(edge); }
 
 // Return container of nodes

@@ -135,9 +135,9 @@ class Dissolve : public Serialisable<>
     Edges edges_{};
 
     public:
-    // Return container of nodes
+    // Add node
     void addNode(std::unique_ptr<Node> node, std::string_view name);
-    // Return container of parameter links between nodes
+    // Add parameter link between nodes
     void addEdge(Node::Edge &edge);
     // Return container of nodes
     Nodes &nodes();
