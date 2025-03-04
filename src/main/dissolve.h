@@ -12,6 +12,8 @@
 #include "data/elements.h"
 #include "module/layer.h"
 #include "module/module.h"
+#include "nodes/node.h"
+#include <map>
 
 // Forward Declarations
 class Atom;
@@ -119,6 +121,28 @@ class Dissolve : public Serialisable<>
     public:
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
+
+    /*
+     * Nodes and edges
+     */
+    using Nodes = std::map<std::string_view, std::unique_ptr<Node>>;
+    using Edges = std::vector<Node::Edge>;
+
+    private:
+    // Container of nodes
+    Nodes nodes_{};
+    // Container of parameter links between nodes
+    Edges edges_{};
+
+    public:
+    // Return container of nodes
+    void addNode(std::unique_ptr<Node> node, std::string_view name);
+    // Return container of parameter links between nodes
+    void addEdge(Node::Edge &edge);
+    // Return container of nodes
+    Nodes &nodes();
+    // Return container of parameter links between nodes
+    Edges &edges();
 
     /*
      * Simulation

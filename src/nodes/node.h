@@ -7,6 +7,7 @@
 #include "module/module.h"
 #include "nodes/parameter.h"
 #include "nodes/parameterLink.h"
+#include <map>
 #include <string>
 #include <vector>
 
@@ -16,6 +17,8 @@ class Node
     public:
     Node() {}
     virtual ~Node() = default;
+
+    using Edge = std::map<std::string_view, ParameterLink>;
 
     /*
      * Definition (Virtuals)
@@ -39,7 +42,7 @@ class Node
     // Input parameters
     std::map<std::string_view, std::shared_ptr<ParameterBase>> inputs_;
     // Inbound Links
-    std::map<std::string_view, ParameterLink> links_;
+    Edge links_;
     // Whether node needs to run to account for updated data
     bool satisfied_{false};
 
