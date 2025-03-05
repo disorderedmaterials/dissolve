@@ -7,14 +7,15 @@
 #include "nodes/node.h"
 #include "nodes/registry.h"
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
 // Graph
-class Graph
+class Graph : public Node
 {
     public:
-    Graph() {};
+    explicit Graph(std::unique_ptr<Node> parent) : parent_(parent) {};
     ~Graph() = default;
 
     /*
@@ -24,6 +25,8 @@ class Graph
     using Edges = std::vector<Node::Edge>;
 
     private:
+    // Parent node
+    std::unique_ptr<Node> parent_;
     // Container of nodes
     Nodes nodes_{};
     // Container of parameter links between nodes
