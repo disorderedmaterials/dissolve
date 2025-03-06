@@ -26,7 +26,7 @@ std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::inputs() { ret
 // Prepare for processing
 bool Node::preprocess()
 {
-    for (auto &[key, link] : links_)
+    for (auto &[key, link] : inputLinks_)
     {
         // Ignore parameters that don't invalidate
         if (!link.sink().flags().isSet(ParameterBase::Invalidates))

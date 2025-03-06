@@ -18,7 +18,7 @@ class Node
     Node() {}
     virtual ~Node() = default;
 
-    using Edge = std::map<std::string_view, ParameterLink>;
+    using LinkMap = std::map<std::string_view, ParameterLink>;
 
     /*
      * Definition (Virtuals)
@@ -42,7 +42,7 @@ class Node
     // Input parameters
     std::map<std::string_view, std::shared_ptr<ParameterBase>> inputs_;
     // Inbound Links
-    Edge links_;
+    LinkMap inputLinks_;
     // Whether node needs to run to account for updated data
     bool satisfied_{false};
 
@@ -52,8 +52,8 @@ class Node
     {
 
         // Confirm that this node hasn't already been linked
-        if (std::find_if(links_.begin(), links_.end(), [name](const auto &it) { return name == it.second.sink().name(); }) !=
-            links_.end())
+        if (std::find_if(inputLinks_.begin(), inputLinks_.end(), [name](const auto &it) { return name == it.second.sink().name(); }) !=
+            inputLinks_.end())
             return false;
 
         // Create link
@@ -63,7 +63,7 @@ class Node
         if (!link)
             return false;
 
-        links_.emplace(std::make_pair(name, *link));
+        inputLinks_.emplace(std::make_pair(name, *link));
         return true;
     }
     // Add input parameter

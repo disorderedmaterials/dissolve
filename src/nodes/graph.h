@@ -22,7 +22,7 @@ class Graph : public Node
      * Nodes and edges
      */
     using Nodes = std::map<std::string_view, std::unique_ptr<Node>>;
-    using Edges = std::vector<Node::Edge>;
+    using Edges = std::vector<Node::LinkMap>;
 
     private:
     // Parent node
@@ -38,7 +38,7 @@ class Graph : public Node
     // Add node
     void addNode(std::unique_ptr<Node> node, std::string_view name);
     // Add parameter link between nodes
-    void addEdge(Node::Edge &edge);
+    void addEdge(Node::LinkMap &linkMap);
     // Return container of nodes
     Nodes &nodes();
     // Return container of parameter links between nodes
