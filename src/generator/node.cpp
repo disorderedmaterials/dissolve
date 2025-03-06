@@ -41,7 +41,8 @@ EnumOptions<GeneratorNode::NodeType> GeneratorNode::nodeTypes()
                      {GeneratorNode::NodeType::SphericalGlobalPotential, "SphericalGlobalPotential"},
                      {GeneratorNode::NodeType::SizeFactor, "SizeFactor"},
                      {GeneratorNode::NodeType::Temperature, "Temperature"},
-                     {GeneratorNode::NodeType::Transmute, "Transmute"}});
+                     {GeneratorNode::NodeType::Transmute, "Transmute"},
+                     {GeneratorNode::NodeType::Array, "Array"}});
 }
 
 GeneratorNode::GeneratorNode(NodeType nodeType) : type_(nodeType) {}

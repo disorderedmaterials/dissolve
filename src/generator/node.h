@@ -46,7 +46,8 @@ class GeneratorNode : public std::enable_shared_from_this<GeneratorNode>, public
         SphericalGlobalPotential,
         SizeFactor,
         Temperature,
-        Transmute
+        Transmute,
+        Array
     };
     // Typedef for node type vector
     using NodeTypeVector = std::vector<GeneratorNode::NodeType>;

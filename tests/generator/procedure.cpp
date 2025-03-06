@@ -106,4 +106,33 @@ TEST(GeneratorTest, Parameters)
     EXPECT_TRUE(bigHole->keywords().set("Population", busMeaning));
 }
 
+TEST(GeneratorTest, ArrayNode)
+{
+    Generator generator;
+
+    // Create ArrayNode
+    auto arrayNode = generator.createRootNode<ArrayNode>(GeneratorNode::NodeType::Array);
+
+    // Add sites to ArrayNode
+    arrayNode->addSite(Site(Vector3D(0.0, 0.0, 0.0)));
+    arrayNode->addSite(Site(Vector3D(1.0, 1.0, 1.0)));
+    arrayNode->addSite(Site(Vector3D(2.0, 2.0, 2.0)));
+
+    // Create AddGeneratorNode as subnode
+    auto addNode = std::make_shared<AddGeneratorNode>(nullptr, NodeValue(1), NodeValue(1.0), Units::DensityUnits::g_per_cm3);
+    arrayNode->setSubNode(addNode);
+
+    // Execute ArrayNode
+    GeneratorContext context;
+    EXPECT_TRUE(arrayNode->execute(context));
+
+    // Verify that the subnode was executed for each site
+    auto parameters = addNode->parameters();
+    EXPECT_EQ(parameters.size(), 3);
+    EXPECT_EQ(parameters[0]->name(), "position");
+    EXPECT_EQ(parameters[0]->value().asVector3D(), Vector3D(0.0, 0.0, 0.0));
+    EXPECT_EQ(parameters[1]->value().asVector3D(), Vector3D(1.0, 1.0, 1.0));
+    EXPECT_EQ(parameters[2]->value().asVector3D(), Vector3D(2.0, 2.0, 2.0));
+}
+
 } // namespace UnitTest
