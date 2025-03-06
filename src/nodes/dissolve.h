@@ -1,0 +1,27 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
+#pragma once
+
+#include "classes/configuration.h"
+#include "nodes/node.h"
+
+// AtomShake Node
+class DissolveNode : public Node
+{
+    public:
+    DissolveNode() {};
+    ~DissolveNode() override = default;
+
+    /*
+     * Definition
+     */
+    private:
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    Module::ExecutionResult process(ModuleContext &moduleContext);
+};

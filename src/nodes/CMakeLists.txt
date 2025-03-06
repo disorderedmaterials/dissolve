@@ -2,6 +2,7 @@ add_library(
   nodes
   atomShake.cpp
   atomShake.h
+  dissolve.h
   graph.cpp
   graph.h
   node.cpp
