@@ -11,14 +11,21 @@
 #include <string>
 #include <vector>
 
+class Graph
+
 // Node Base
 class Node
 {
     public:
     Node() {}
+    explicit Node(Graph* parentGraph) : parentGraph_(parentGraph) {}
     virtual ~Node() = default;
 
     using LinkMap = std::map<std::string_view, ParameterLink>;
+
+    private:
+    // Node parent graph
+    Graph *parentGraph_;
 
     /*
      * Definition (Virtuals)
@@ -103,6 +110,10 @@ class Node
     std::shared_ptr<ParameterBase> findInput(std::string_view name) const;
     // Return input parameters
     std::map<std::string_view, std::shared_ptr<ParameterBase>> &inputs();
+    // Set the node parent graph
+    void setParentGraph(Graph *parentGraph);
+    // Returns the node parent graph
+    Graph *parentGraph() const;
 
     /*
      * Processing

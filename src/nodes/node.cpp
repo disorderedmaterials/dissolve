@@ -49,6 +49,12 @@ bool Node::isSatisfied()
     return satisfied_;
 }
 
+// Set the node parent graph
+void Node::setParentGraph(Graph* parentGraph) { parentGraph_ = parentGraph; }
+
+// Returns the node parent graph
+Graph *Node::parentGraph() const { return parentGraph_; }
+
 // Tell node to recalculate results
 void Node::invalidate() { satisfied_ = false; }
 

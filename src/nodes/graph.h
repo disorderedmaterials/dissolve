@@ -15,7 +15,7 @@
 class Graph : public Node
 {
     public:
-    explicit Graph(std::unique_ptr<Node> parent) : parent_(parent) {};
+    explicit Graph(std::unique_ptr<Node> parent) : Node(this), parent_(parent) {}
     ~Graph() = default;
 
     /*

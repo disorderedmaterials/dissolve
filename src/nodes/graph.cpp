@@ -1,7 +1,11 @@
 #include "nodes/graph.h"
 
 // Add nodes
-void Graph::addNode(std::unique_ptr<Node> node, std::string_view name) { nodes_.insert(std::make_pair(name, node)); }
+void Graph::addNode(std::unique_ptr<Node> node, std::string_view name)
+{
+	node->setParentGraph(this);
+	nodes_.insert(std::make_pair(name, node));
+}
 
 // Add parameter link between nodes
 void Graph::addEdge(Node::Edge &linkMap) { edges_.push_back(linkMap); }
