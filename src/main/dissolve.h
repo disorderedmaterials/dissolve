@@ -12,6 +12,7 @@
 #include "data/elements.h"
 #include "module/layer.h"
 #include "module/module.h"
+#include "nodes/node.h"
 
 // Forward Declarations
 class Atom;
@@ -119,6 +120,17 @@ class Dissolve : public Serialisable<>
     public:
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
+
+    /*
+     * Graph node
+     */
+    public:
+    // Set the Dissolve graph node
+    void setGraph();
+
+    private:
+    // Dissolve graph node
+    std::unique_ptr<Node> graphNode_;
 
     /*
      * Simulation

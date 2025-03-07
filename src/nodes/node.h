@@ -7,15 +7,25 @@
 #include "module/module.h"
 #include "nodes/parameter.h"
 #include "nodes/parameterLink.h"
+#include <map>
 #include <string>
 #include <vector>
+
+class Graph
 
 // Node Base
 class Node
 {
     public:
     Node() {}
+    explicit Node(Graph* parentGraph) : parentGraph_(parentGraph) {}
     virtual ~Node() = default;
+
+    using LinkMap = std::map<std::string_view, ParameterLink>;
+
+    private:
+    // Node parent graph
+    Graph *parentGraph_;
 
     /*
      * Definition (Virtuals)
@@ -39,7 +49,7 @@ class Node
     // Input parameters
     std::map<std::string_view, std::shared_ptr<ParameterBase>> inputs_;
     // Inbound Links
-    std::map<std::string_view, ParameterLink> links_;
+    LinkMap inputLinks_;
     // Whether node needs to run to account for updated data
     bool satisfied_{false};
 
@@ -49,8 +59,8 @@ class Node
     {
 
         // Confirm that this node hasn't already been linked
-        if (std::find_if(links_.begin(), links_.end(), [name](const auto &it) { return name == it.second.sink().name(); }) !=
-            links_.end())
+        if (std::find_if(inputLinks_.begin(), inputLinks_.end(), [name](const auto &it) { return name == it.second.sink().name(); }) !=
+            inputLinks_.end())
             return false;
 
         // Create link
@@ -60,7 +70,7 @@ class Node
         if (!link)
             return false;
 
-        links_.emplace(std::make_pair(name, *link));
+        inputLinks_.emplace(std::make_pair(name, *link));
         return true;
     }
     // Add input parameter
@@ -100,6 +110,10 @@ class Node
     std::shared_ptr<ParameterBase> findInput(std::string_view name) const;
     // Return input parameters
     std::map<std::string_view, std::shared_ptr<ParameterBase>> &inputs();
+    // Set the node parent graph
+    void setParentGraph(Graph *parentGraph);
+    // Returns the node parent graph
+    Graph *parentGraph() const;
 
     /*
      * Processing

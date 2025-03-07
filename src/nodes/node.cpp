@@ -26,7 +26,7 @@ std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::inputs() { ret
 // Prepare for processing
 bool Node::preprocess()
 {
-    for (auto &[key, link] : links_)
+    for (auto &[key, link] : inputLinks_)
     {
         // Ignore parameters that don't invalidate
         if (!link.sink().flags().isSet(ParameterBase::Invalidates))
@@ -48,6 +48,12 @@ bool Node::isSatisfied()
             satisfied_ = false;
     return satisfied_;
 }
+
+// Set the node parent graph
+void Node::setParentGraph(Graph* parentGraph) { parentGraph_ = parentGraph; }
+
+// Returns the node parent graph
+Graph *Node::parentGraph() const { return parentGraph_; }
 
 // Tell node to recalculate results
 void Node::invalidate() { satisfied_ = false; }

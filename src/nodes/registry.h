@@ -1,4 +1,5 @@
 #include "atomShake.h"
+#include "dissolve.h"
 #include "node.h"
 #include <functional>
 #include <map>
@@ -18,5 +19,6 @@ template <typename T> NodeProducer makeDerivedNode()
 const std::map<std::string, NodeProducer> registry
 {
     {"AtomShake", makeDerivedNode<AtomShakeNode>()},
+    {"Dissolve", makeDerivedNode<DissolveNode>()},
     // etc...
 }
