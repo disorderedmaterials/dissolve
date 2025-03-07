@@ -38,6 +38,8 @@
 #include "modules/intraDistance/intraDistance.h"
 #include "modules/modifierOSites/gui/modifierOSitesWidget.h"
 #include "modules/modifierOSites/modifierOSites.h"
+#include "modules/moleculeTorsion/gui/moleculeTorsionWidget.h"
+#include "modules/moleculeTorsion/moleculeTorsion.h"
 #include "modules/neutronSQ/gui/neutronSQWidget.h"
 #include "modules/neutronSQ/neutronSQ.h"
 #include "modules/orientedSDF/gui/orientedSDFWidget.h"
@@ -82,6 +84,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<IntraAngleModule, IntraAngleModuleWidget>();
     registerProducer<IntraDistanceModule, IntraDistanceModuleWidget>();
     registerProducer<ModifierOSitesModule, ModifierOSitesModuleWidget>();
+    registerProducer<MoleculeTorsionModule, MoleculeTorsionModuleWidget>();
     registerProducer<NeutronSQModule, NeutronSQModuleWidget>();
     registerProducer<OrientedSDFModule, OrientedSDFModuleWidget>();
     registerProducer<QSpeciesModule, QSpeciesModuleWidget>();

@@ -30,7 +30,7 @@ class MoleculeTorsionModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::MoleculeTorsionModuleWidget ui_;
     // DataViewer contained within this widget
-    DataViewer *rdfGraph_;
+    DataViewer *histogramGraph_;
 
     public:
     // Update controls within widget

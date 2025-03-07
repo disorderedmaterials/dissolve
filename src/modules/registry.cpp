@@ -28,6 +28,7 @@
 #include "modules/md/md.h"
 #include "modules/modifierOSites/modifierOSites.h"
 #include "modules/molShake/molShake.h"
+#include "modules/moleculeTorsion/moleculeTorsion.h"
 #include "modules/neutronSQ/neutronSQ.h"
 #include "modules/orientedSDF/orientedSDF.h"
 #include "modules/qSpecies/qSpecies.h"
@@ -78,6 +79,8 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<IntraShakeModule>(ModuleTypes::IntraShake,
                                        "Perform Monte Carlo shakes on intramolecular terms within molecules", "Evolution");
     registerProducer<MDModule>(ModuleTypes::MD, "Evolve a Configuration using molecular dynamics", "Evolution");
+    registerProducer<MoleculeTorsionModule>(ModuleTypes::MoleculeTorsion,
+                                            "Calculate a specific torsion distribution in a molecule type", "Analysis");
     registerProducer<MolShakeModule>(ModuleTypes::MolShake, "Perform molecular Monte Carlo moves", "Evolution");
     registerProducer<NeutronSQModule>(ModuleTypes::NeutronSQ, "Calculate neutron-weighted S(Q)", "Correlation Functions");
     registerProducer<OrientedSDFModule>(

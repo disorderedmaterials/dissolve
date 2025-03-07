@@ -2,12 +2,16 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "modules/moleculeTorsion/moleculeTorsion.h"
+#include "analyser/dataExporter.h"
+#include "analyser/dataOperator1D.h"
 #include "classes/species.h"
+#include "io/export/data1D.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/fileAndFormat.h"
 #include "keywords/integer.h"
 #include "keywords/species.h"
+#include "main/dissolve.h"
 #include "module/context.h"
 
 MoleculeTorsionModule::MoleculeTorsionModule() : Module(ModuleTypes::MoleculeTorsion)
@@ -54,43 +58,38 @@ Module::ExecutionResult MoleculeTorsionModule::process(ModuleContext &moduleCont
 {
     auto &processingData = moduleContext.dissolve().processingModuleData();
 
-    // Select site A
-    SiteSelector a(targetConfiguration_, a_);
-
-    // Select site B
-    SiteSelector b(targetConfiguration_, b_);
-
-    // Calculate rAB
-    auto [histAB, status] = processingData.realiseIf<Histogram1D>("Histo-AB", name(), GenericItem::InRestartFileFlag);
+    // Calculate phi(ijkl)
+    auto [histIJKL, status] = processingData.realiseIf<Histogram1D>("Histo-IJKL", name(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
-        histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
-    histAB.zeroBins();
+        histIJKL.initialise(-180.0, 180.0, 1.0);
+    histIJKL.zeroBins();
 
-    for (const auto &[siteA, indexA] : a.sites())
+    // Loop over molecules in the Configuration
+    const auto *box = targetConfiguration_->box();
+    for (const auto &mol : targetConfiguration_->molecules())
     {
-        for (const auto &[siteB, indexB] : b.sites())
-        {
-            if (siteB->molecule() != siteA->molecule())
-                continue;
-            if (siteB == siteA)
-                continue;
-            histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
-        }
+        if (mol->species() != species_)
+            continue;
+
+        auto rj = mol->atom(j_ - 1)->r();
+        auto rk = mol->atom(k_ - 1)->r();
+        histIJKL.bin(Box::torsionInDegrees(box->minimumVector(rj, mol->atom(i_ - 1)->r()), box->minimumVector(rj, rk),
+                                           box->minimumVector(rk, mol->atom(l_ - 1)->r())));
     }
 
     // Accumulate histogram
-    histAB.accumulate();
+    histIJKL.accumulate();
 
     // Distance(A-B)
     auto &dataNormalisedHisto = processingData.realise<Data1D>("NormalisedHistogram", name(), GenericItem::InRestartFileFlag);
-    dataNormalisedHisto = histAB.accumulatedData();
+    dataNormalisedHisto = histIJKL.accumulatedData();
 
     // Normalise
     DataOperator1D histogramNormaliser(dataNormalisedHisto);
     // Normalise by value
     histogramNormaliser.normaliseSumTo();
 
-    // Save Distance(A-B) data?
+    // Save phi(ijkl) data?
     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataNormalisedHisto, exportFileAndFormat_,
                                                                   moduleContext.processPool()))
         return ExecutionResult::Failed;

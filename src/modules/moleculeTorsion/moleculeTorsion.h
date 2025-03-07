@@ -20,7 +20,7 @@ class MoleculeTorsionModule : public Module
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
     // Target Species
-    Species *species_{nullptr};
+    const Species *species_{nullptr};
     // Target atom indices in user index space (1 -> N)
     int i_{1}, j_{2}, k_{3}, l_{4};
     // Export target

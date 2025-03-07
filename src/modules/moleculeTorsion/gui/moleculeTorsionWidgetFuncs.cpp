@@ -13,11 +13,11 @@ MoleculeTorsionModuleWidget::MoleculeTorsionModuleWidget(QWidget *parent, Molecu
     ui_.setupUi(this);
 
     // Set up RDF graph
-    rdfGraph_ = ui_.RDFPlotWidget->dataViewer();
+    histogramGraph_ = ui_.HistogramPlotWidget->dataViewer();
 
-    auto &view = rdfGraph_->view();
+    auto &view = histogramGraph_->view();
     view.setViewType(View::FlatXYView);
-    view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+    view.axes().setTitle(0, "Torsion, \\sym{degree}");
     view.axes().setMax(0, 10.0);
     view.axes().setTitle(1, "Normalised Frequency");
     view.axes().setMin(1, 0.0);
@@ -31,21 +31,21 @@ MoleculeTorsionModuleWidget::MoleculeTorsionModuleWidget(QWidget *parent, Molecu
 void MoleculeTorsionModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
-        rdfGraph_->clearRenderables();
+        histogramGraph_->clearRenderables();
 
-    if (rdfGraph_->renderables().empty())
+    if (histogramGraph_->renderables().empty())
     {
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
-            rdfGraph_
+            histogramGraph_
                 ->createRenderable<RenderableData1D>(std::format("{}//NormalisedHistogram", module_->name()),
                                                      std::format("RDF//{}", cfg->niceName()), cfg->niceName())
                 ->setColour(StockColours::BlueStockColour);
     }
 
     // Validate renderables if they need it
-    rdfGraph_->validateRenderables(dissolve_.processingModuleData());
+    histogramGraph_->validateRenderables(dissolve_.processingModuleData());
 
-    ui_.RDFPlotWidget->updateToolbar();
-    rdfGraph_->postRedisplay();
+    ui_.HistogramPlotWidget->updateToolbar();
+    histogramGraph_->postRedisplay();
 }
