@@ -24,7 +24,7 @@ std::shared_ptr<ParameterBase> Node::findInput(std::string_view name) const
 std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::inputs() { return inputs_; };
 
 // Prepare for processing
-bool Node::preprocess()
+Node::Readiness Node::preprocess()
 {
     for (auto &[key, link] : inputLinks_)
     {
@@ -33,9 +33,9 @@ bool Node::preprocess()
             continue;
         // Update unsatisfied sources
         if (!(link.source().parent()->isSatisfied() || link.updateSource()))
-            return false;
+          return Node::Readiness::MissingComponent;
     }
-    return true;
+    return Node::Readiness::Ready;
 }
 
 // Confirm that node data is up to date

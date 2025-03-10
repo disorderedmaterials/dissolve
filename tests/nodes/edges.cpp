@@ -26,7 +26,7 @@ class AddNode : public Node
 
     Module::ExecutionResult process() override
     {
-        EXPECT_TRUE(preprocess());
+        EXPECT_EQ(preprocess(), Node::Readiness::Ready);
         run_count++;
         sum = a + b;
         validate();

@@ -23,6 +23,12 @@ class Node
 
     using LinkMap = std::map<std::string_view, ParameterLink>;
 
+    enum class Readiness
+    {
+        Ready,
+        MissingComponent,
+    };
+
     private:
     // Node parent graph
     Graph *parentGraph_;
@@ -122,5 +128,5 @@ class Node
     // Tell node that results are up to date
     void validate();
     // Prepare for processing
-    bool preprocess();
+    Readiness preprocess();
 };
