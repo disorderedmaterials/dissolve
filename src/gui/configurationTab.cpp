@@ -220,14 +220,14 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     // Clear the messages
     dissolveWindow_->clearMessages();
 
-    // Check pair potential range against box geometries
-    dissolveWindow_->checkPairPotentialRange();
-
     // Make sure the potential map is up to date
     dissolve_.updatePairPotentials();
 
     // Initialise the content
     configuration_->initialiseContent({dissolve_.worldPool(), dissolve_});
+
+    // Check pair potential range against box geometries
+    dissolveWindow_->checkPairPotentialRange();
 
     // Update
     updateControls();

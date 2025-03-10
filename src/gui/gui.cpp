@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "gui/gui.h"
 #include "base/lineParser.h"
 #include "base/messenger.h"
 #include "gui/configurationTab.h"
+#include "gui/gui.h"
 #include "gui/layerTab.h"
 #include "gui/mainTab.h"
 #include "gui/selectRestartFileDialog.h"
@@ -471,10 +471,10 @@ void DissolveWindow::checkPairPotentialRange(QWidget *parent)
     // Return smallest inscribed sphere radius if less than current pair potential range
     for (const auto &config : dissolve_.coreData().configurations())
     {
-        if (config->box()->inscribedSphereRadius() < radius.value_or(dissolve_.pairPotentialRange()) && config->nAtoms() > 0)
-        {
-            radius = config->box()->inscribedSphereRadius();
-        }
+        // Accounting for size factors
+        double reducedRadius = config->box()->inscribedSphereRadius() / config->requestedSizeFactor().value_or(1.0);
+        if (reducedRadius < radius.value_or(dissolve_.pairPotentialRange()) && config->nAtoms() > 0)
+            radius = reducedRadius;
     }
 
     // Prompt to auto-adjust
@@ -485,6 +485,9 @@ void DissolveWindow::checkPairPotentialRange(QWidget *parent)
                                           "Adjust pair potential range to %1?")
                                       .arg(radius.value()),
                                   QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+        {
             dissolve_.setPairPotentialRange(radius.value());
+            dissolve_.updatePairPotentials();
+        }
     }
 }
