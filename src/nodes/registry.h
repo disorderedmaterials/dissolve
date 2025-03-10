@@ -16,9 +16,9 @@ template <typename T> NodeProducer makeDerivedNode()
 }
 
 // Node registry
-const std::map<std::string, NodeProducer> registry
+const std::map<std::string_view, NodeProducer> registry
 {
     {"AtomShake", makeDerivedNode<AtomShakeNode>()},
     {"Dissolve", makeDerivedNode<DissolveNode>()},
     // etc...
-}
+};

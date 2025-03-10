@@ -11,14 +11,14 @@
 #include <string>
 #include <vector>
 
-class Graph
+class Graph;
 
 // Node Base
 class Node
 {
     public:
     Node() {}
-    explicit Node(Graph* parentGraph) : parentGraph_(parentGraph) {}
+    explicit Node(Graph *parentGraph) : parentGraph_(parentGraph) {}
     virtual ~Node() = default;
 
     using LinkMap = std::map<std::string_view, ParameterLink>;
@@ -59,8 +59,8 @@ class Node
     {
 
         // Confirm that this node hasn't already been linked
-        if (std::find_if(inputLinks_.begin(), inputLinks_.end(), [name](const auto &it) { return name == it.second.sink().name(); }) !=
-            inputLinks_.end())
+        if (std::find_if(inputLinks_.begin(), inputLinks_.end(),
+                         [name](const auto &it) { return name == it.second.sink().name(); }) != inputLinks_.end())
             return false;
 
         // Create link

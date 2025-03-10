@@ -72,8 +72,4 @@ GenericList &Dissolve::processingModuleData() { return processingModuleData_; }
  */
 
 // Set the Dissolve graph node
-void Dissolve::setGraph()
-{
-    auto parentNode = Graph::produceNode("DissolveNode");
-    graphNode_ = std::make_unique<Graph>(parentNode);
-}
+void Dissolve::setGraph() { graphNode_ = std::move(Graph::produceNode("DissolveNode")); }

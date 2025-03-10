@@ -10,14 +10,17 @@
 class DissolveNode : public Node
 {
     public:
-    DissolveNode() {};
+    DissolveNode(){};
     ~DissolveNode() override = default;
+
+    public:
+    std::string_view name() override { return "Dissolve"; }
+    std::string_view summary() override { return "Parent node of all simulations"; }
 
     /*
      * Definition
      */
     private:
-
     /*
      * Processing
      */

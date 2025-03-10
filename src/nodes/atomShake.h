@@ -13,6 +13,10 @@ class AtomShakeNode : public Node
     AtomShakeNode();
     ~AtomShakeNode() override = default;
 
+    public:
+    std::string_view name() override;
+    std::string_view summary() override;
+
     /*
      * Definition
      */

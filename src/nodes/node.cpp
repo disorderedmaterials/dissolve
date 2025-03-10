@@ -43,7 +43,7 @@ bool Node::isSatisfied()
 {
     if (satisfied_)
         return true;
-    for (auto &[name, link] : links_)
+    for (auto &[name, link] : inputLinks_)
         if (!link.source().parent()->isSatisfied())
             satisfied_ = false;
     return satisfied_;
