@@ -14,6 +14,8 @@ inputs:
   qtVersion:
     type: string
     required: true
+  antlr4Repo:
+    default: https://github.com/antlr/antlr4.git
   antlrVersion:
     type: string
     required: true
