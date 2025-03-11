@@ -20,8 +20,7 @@ TEST_F(MoleculeTorsionModuleTest, Water)
 
     EXPECT_TRUE(systemTest.checkData1D(
         "MoleculeTorsion01//NormalisedHistogram",
-        {"dlpoly/benzene181/benzene181.01-03-05-07.tors", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3},
-        6.0e-4));
+        {"dlpoly/benzene181/benzene181.01-03-05-07.tors", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 6.0e-4));
 }
 
 } // namespace UnitTest
