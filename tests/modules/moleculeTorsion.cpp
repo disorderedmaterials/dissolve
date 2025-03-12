@@ -13,14 +13,14 @@ class MoleculeTorsionModuleTest : public ::testing::Test
     DissolveSystemTest systemTest;
 };
 
-TEST_F(MoleculeTorsionModuleTest, Water)
+TEST_F(MoleculeTorsionModuleTest, Benzene)
 {
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/moleculeTorsion.txt"));
+    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/moleculeTorsion-benzene.txt"));
     ASSERT_TRUE(systemTest.iterateRestart(80));
 
     EXPECT_TRUE(systemTest.checkData1D(
         "MoleculeTorsion01//NormalisedHistogram",
-        {"dlpoly/benzene181/benzene181.01-03-05-07.tors", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 6.0e-4));
+        {"dlpoly/benzene181/benzene181.01-03-05-07.tors.norm", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-3));
 }
 
 } // namespace UnitTest

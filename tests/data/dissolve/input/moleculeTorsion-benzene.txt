@@ -1,4 +1,4 @@
-# Input file written by Dissolve v1.3.0 at 10:46:09 on 26-06-2023.
+# Input file written by Dissolve v1.6.0 at 11:36:48 on 12-03-2025.
 
 #==============================================================================#
 #                                 Master Terms                                 #
@@ -97,8 +97,9 @@ Species 'Benzene'
   Torsion   10    9   11    1  @CA-CA-CA-HA
   Torsion   10    9   11   12  @HA-CA-CA-HA
 
-  Site  Ring
-    Origin  1 7
+  # Sites
+  Site  'Ring'
+    Origin  1  7
     XAxis  7
     YAxis  11 9    # Set to mirror pdens SDF (inverted y axis)
   EndSite
@@ -113,7 +114,7 @@ PairPotentials
   Parameters  CA  C  -1.150000e-01  LJGeometric  epsilon=0.29288 sigma=3.55
   Parameters  HA  H  1.150000e-01  LJGeometric  epsilon=0.12552 sigma=2.42
   Range  12
-  Delta  0.0005
+  Delta  5e-04
   CoulombTruncation  Shifted
   ShortRangeTruncation  None
 EndPairPotentials
@@ -147,24 +148,22 @@ EndConfiguration
 #==============================================================================#
 
 Layer  'Processing'
-
-# Trajectory Processing
-Module  ImportTrajectory
-  Configuration  'Bulk'
-
-  # Trajectory file contains 80 frames
-  Format  xyz  'dlpoly/benzene181/benzene181.xyz'
-  EndFormat
-EndModule
-
-Module  MoleculeTorsion  'MoleculeTorsion01'
   Frequency  1
-  Configuration  'Bulk'
-  Species  'Benzene'
-  I  1
-  J  3
-  K  5
-  L  7
-EndModule
 
+  Module  ImportTrajectory  'ImportTrajectory'
+    Frequency  1
+    Configuration  'Bulk'
+    Format  xyz  'dlpoly/benzene181/benzene181.xyz'
+    EndFormat
+  EndModule
+
+  Module  MoleculeTorsion  'MoleculeTorsion01'
+    Frequency  1
+    Configuration  'Bulk'
+    Species  'Benzene'
+    I  1
+    J  3
+    K  5
+    L  7
+  EndModule
 EndLayer
