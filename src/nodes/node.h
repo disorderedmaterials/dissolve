@@ -69,6 +69,14 @@ class Node
                          [name](const auto &it) { return name == it.second.sink().name(); }) != inputLinks_.end())
             return false;
 
+        // Confirm that the source is actually a source
+        if (!source.flags().isSet(ParameterBase::ParameterFlags::Output))
+            return Messenger::error("{} does not output data", source.name());
+
+        // Confirm that the destination is actually a sink
+        if (inputs_[name]->flags().isSet(ParameterBase::ParameterFlags::Output))
+            return Messenger::error("{} does not accept data", source.name());
+
         // Create link
         auto link = ParameterLink::link(source, *inputs_[name]);
 
@@ -82,10 +90,20 @@ class Node
     // Add input parameter
     template <class T> std::shared_ptr<ParameterBase> addInput(std::string_view name, std::string_view description, T &data)
     {
-        if (findInput(name))
+        if (findParameter(name))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
         return inputs_.emplace(std::make_pair(name, new Parameter<T>(this, name, description, data))).first->second;
+    }
+    // Add output parameter
+    template <class T> std::shared_ptr<ParameterBase> addOutput(std::string_view name, std::string_view description, T &data)
+    {
+        if (findParameter(name))
+            Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
+
+        auto param = inputs_.emplace(std::make_pair(name, new Parameter<T>(this, name, description, data))).first->second;
+        param->setFlags(ParameterBase::ParameterFlags::Output);
+        return param;
     }
     // Add bounded input parameter
     template <class T>
@@ -93,7 +111,7 @@ class Node
                                                    std::optional<T> lower = {}, std::optional<T> upper = {},
                                                    std::optional<T> step = {})
     {
-        if (findInput(name))
+        if (findParameter(name))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
         return inputs_.emplace(std::make_pair(name, new BoundedParameter<T>(this, name, description, data, lower, upper, step)))
@@ -104,7 +122,7 @@ class Node
     std::shared_ptr<ParameterBase> addBoundedOptionalInput(std::string_view name, std::string_view description, T &data,
                                                            T lower, std::string_view textWhenNull, T upper = {}, T step = {})
     {
-        if (findInput(name))
+        if (findParameter(name))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
         return inputs_
@@ -113,9 +131,9 @@ class Node
             .first->second;
     }
     // Return named input parameter if it exists
-    std::shared_ptr<ParameterBase> findInput(std::string_view name) const;
+    std::shared_ptr<ParameterBase> findParameter(std::string_view name) const;
     // Return input parameters
-    std::map<std::string_view, std::shared_ptr<ParameterBase>> &inputs();
+    std::map<std::string_view, std::shared_ptr<ParameterBase>> &parameters();
     // Get the links owned by this node
     LinkMap &links();
     // Set the node parent graph

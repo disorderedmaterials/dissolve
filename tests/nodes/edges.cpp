@@ -19,7 +19,7 @@ class AddNode : public Node
     {
         addInput<double>("A", "First Value", a);
         addInput<double>("B", "Second Value", b);
-        addInput<double>("Total", "Combined Value", sum);
+        addOutput<double>("Total", "Combined Value", sum);
     }
 
     std::string_view name() override { return "Add Node"; }
@@ -112,12 +112,12 @@ TEST(NodeEdgeTest, SimpleTest)
     EXPECT_TRUE(z.isSatisfied());
 
     // Declare that parameters invalidate
-    x.findInput("A")->setFlags(ParameterBase::Invalidates);
-    x.findInput("B")->setFlags(ParameterBase::Invalidates);
-    y.findInput("A")->setFlags(ParameterBase::Invalidates);
-    y.findInput("B")->setFlags(ParameterBase::Invalidates);
-    z.findInput("A")->setFlags(ParameterBase::Invalidates);
-    z.findInput("B")->setFlags(ParameterBase::Invalidates);
+    x.findParameter("A")->setFlags(ParameterBase::Invalidates);
+    x.findParameter("B")->setFlags(ParameterBase::Invalidates);
+    y.findParameter("A")->setFlags(ParameterBase::Invalidates);
+    y.findParameter("B")->setFlags(ParameterBase::Invalidates);
+    z.findParameter("A")->setFlags(ParameterBase::Invalidates);
+    z.findParameter("B")->setFlags(ParameterBase::Invalidates);
 
     // All should update
     z.process();
@@ -146,8 +146,8 @@ TEST(NodeEdgeTest, SimpleTest)
 
     // Set the parameters with setters.  This should automatically
     // invalidate Y
-    y.findInput("A")->upcast<double>()->set(2);
-    y.findInput("B")->upcast<double>()->set(7);
+    y.findParameter("A")->upcast<double>()->set(2);
+    y.findParameter("B")->upcast<double>()->set(7);
 
     // Confirm that only Y is rerun in the recalculation of Z
     z.process();

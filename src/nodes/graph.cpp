@@ -10,7 +10,7 @@ void Graph::addNode(std::unique_ptr<Node> &&node, std::string_view name)
 // Add parameter link between nodes
 bool Graph::addEdge(Graph::Edge edge)
 {
-    auto source = nodes_[edge.source]->findInput(edge.sourceParam);
+    auto source = nodes_[edge.source]->findParameter(edge.sourceParam);
     auto &sink = nodes_[edge.edge];
     return sink->link(edge.edgeParam, *source);
 }

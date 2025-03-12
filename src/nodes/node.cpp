@@ -9,7 +9,7 @@
  */
 
 // Return named input parameter if it exists
-std::shared_ptr<ParameterBase> Node::findInput(std::string_view name) const
+std::shared_ptr<ParameterBase> Node::findParameter(std::string_view name) const
 {
     if (!inputs_.contains(name))
         return {};
@@ -21,7 +21,7 @@ std::shared_ptr<ParameterBase> Node::findInput(std::string_view name) const
  */
 
 // Return input parameters
-std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::inputs() { return inputs_; };
+std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::parameters() { return inputs_; };
 
 // Prepare for processing
 Node::Readiness Node::preprocess()

@@ -21,7 +21,8 @@ class ParameterBase
     // Parameter Flags
     enum ParameterFlags
     {
-        Invalidates /* Indicates that the node's data is invalidated if the parameter is changed */
+        Invalidates, /* Indicates that the node's data is invalidated if the parameter is changed */
+        Output,      /* Indicates that the parameter is meant to be a source of data and not a sink */
     };
 
     /*
