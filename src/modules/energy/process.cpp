@@ -285,14 +285,16 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         Timer moleculeTimer;
         auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
                                                    moduleContext.dissolve().potentialMap(), cutoff);
-        auto molecularPPEnergy = kernel->totalMoleculePairPotentialEnergy(false).total();
-        molecularPPEnergy += correctSelfEnergy;
+        auto molecularPPEnergyInter = kernel->totalMoleculePairPotentialEnergy(false).total();
+        auto molecularPPEnergyFull = kernel->totalMoleculePairPotentialEnergy(true).total();
         moleculeTimer.stop();
 
         Messenger::print("Production interatomic pairpotential energy is {:15.9e} kJ/mol\n", ppEnergy.total());
         Messenger::print("Production intramolecular energy is {:15.9e} kJ/mol\n", boundEnergy);
         Messenger::print("Total production energy is {:15.9e} kJ/mol\n", ppEnergy.total() + boundEnergy);
-        Messenger::print("Molecular energy (excluding bound terms) is {:15.9e} kJ/mol\n", molecularPPEnergy);
+        Messenger::print("Molecular pairpotential energy (excluding intramolecular terms) is {:15.9e} kJ/mol\n",
+                         molecularPPEnergyInter);
+        Messenger::print("Molecular pairpotential energy (full) is {:15.9e} kJ/mol\n", molecularPPEnergyFull);
         Messenger::print("Time to do interatomic energy was {}.\n", interTimer.totalTimeString());
         Messenger::print("Time to do intramolecular energy was {}.\n", intraTimer.totalTimeString());
         Messenger::print("Time to do intermolecular energy was {}.\n", moleculeTimer.totalTimeString());
@@ -300,18 +302,22 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         // Compare production vs 'correct' values
         auto interDelta = correctInterEnergy - ppEnergy.total();
         auto intraDelta = correctIntraEnergy - boundEnergy;
-        auto moleculeDelta = correctInterEnergy - molecularPPEnergy;
+        auto moleculeDeltaA = correctInterEnergy - molecularPPEnergyFull;
+        auto moleculeDeltaB = correctInterEnergy - (molecularPPEnergyInter + correctSelfEnergy);
         Messenger::print("Comparing 'correct' with production values...\n");
         Messenger::print("Interatomic energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n", interDelta,
                          fabs(interDelta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
         Messenger::print("Intramolecular energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
                          intraDelta, fabs(intraDelta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-        Messenger::print("Intermolecular energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
-                         moleculeDelta, fabs(moleculeDelta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+        Messenger::print("Molecular pairpotential energy A delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
+                         moleculeDeltaA, fabs(moleculeDeltaA) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+        Messenger::print("Molecular pairpotential energy B delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
+                         moleculeDeltaB, fabs(moleculeDeltaB) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
 
         // All OK?
         if (!moduleContext.processPool().allTrue((fabs(interDelta) < testThreshold_) && (fabs(intraDelta) < testThreshold_) &&
-                                                 (fabs(moleculeDelta) < testThreshold_)))
+                                                 (fabs(moleculeDeltaA) < testThreshold_) &&
+                                                 (fabs(moleculeDeltaB) < testThreshold_)))
             return ExecutionResult::Failed;
     }
 

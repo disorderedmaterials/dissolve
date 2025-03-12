@@ -363,11 +363,8 @@ PairPotentialEnergyValue EnergyKernel::totalMoleculePairPotentialEnergy(bool inc
         molecularEnergy += pairPotentialEnergy(*mol, includeIntraMolecular);
 
     // In the typical case where there is more than one molecule, our sum will contain double the intermolecular
-    // pairpotential energy, and zero intramolecular energy
-    if (mols.size() > 1)
-        molecularEnergy *= 0.5;
-
-    return molecularEnergy;
+    // pairpotential energy
+    return {molecularEnergy.interMolecular() * 0.5, molecularEnergy.intraMolecular()};
 }
 
 // Return total energy of supplied atom with the world
