@@ -9,7 +9,7 @@ AtomShakeNode::AtomShakeNode()
         ->setFlags(ParameterBase::Invalidates);
 
     //    keywords_.setOrganisation("Options", "Control", "Number of move attempts per atom and the target acceptance rate.");
-    addOptionalInput<int>("ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_);
+    addInput<int>("ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_);
     addBoundedInput<double>("TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", targetAcceptanceRate_, 0,
                             1);
 
