@@ -4,8 +4,13 @@
 #pragma once
 
 #include "atomShake.h"
+#include "derivative.h"
 #include "dissolve.h"
+#include "dotProduct.h"
+#include "integrator.h"
 #include "node.h"
+#include "vec3Assembly.h"
+#include "vec3Decomposition.h"
 #include <functional>
 #include <map>
 #include <memory>
@@ -22,6 +27,12 @@ template <typename T> NodeProducer makeDerivedNode()
 
 // Node registry
 const std::map<std::string_view, NodeProducer> registry{
-    {"AtomShake", makeDerivedNode<AtomShakeNode>()}, {"Dissolve", makeDerivedNode<DissolveNode>()},
+    {"AtomShake", makeDerivedNode<AtomShakeNode>()},
+    {"Derivative", makeDerivedNode<DerivativeNode>()},
+    {"Dissolve", makeDerivedNode<DissolveNode>()},
+    {"DotProduct", makeDerivedNode<DotProductNode>()},
+    {"Integrator", makeDerivedNode<Integrator1DNode>()},
+    {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
+    {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()},
     // etc...
 };

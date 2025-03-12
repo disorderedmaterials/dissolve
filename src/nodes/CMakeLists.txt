@@ -2,11 +2,20 @@ add_library(
   nodes
   atomShake.cpp
   atomShake.h
+  derivative.cpp
+  derivative.h
   dissolve.h
+  dotProduct.cpp
+  dotProduct.h
+  integrator.h
   graph.cpp
   graph.h
   node.cpp
   node.h
+  vec3Assembly.cpp
+  vec3Assembly.h
+  vec3Decomposition.cpp
+  vec3Decomposition.h
   parameter.cpp
   parameter.h
   parameterLink.cpp
