@@ -85,7 +85,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
 
         Messenger::print("Apply scaling factor of {} to potential(s) {}-{}...\n", scaleFactor, typeA, typeB);
         auto count = 0;
-        for (auto &&[key, epData] : newPotentials.potentialMap())
+        for (auto &&[key, epData] : currentPotentials.potentialMap())
         {
             // Is this potential a match
             if ((DissolveSys::sameWildString(typeA, epData.at1->name()) &&
