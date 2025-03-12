@@ -238,6 +238,16 @@ double SpeciesBond::energy(double distance) const
         auto oneMinusE = 1.0 - exp(-params[1] * (distance - params[2]));
         return params[0] * oneMinusE * oneMinusE;
     }
+    else if (bondForm == BondFunctions::Form::Buckingham)
+    {
+        /*
+         * Parameters:
+         * 0 : A
+         * 1 : B
+         * 2 : C
+         */
+        return params[0] * exp(-params[1] * distance) - params[2] / pow(distance, 6.0);
+    }
 
     Messenger::exception("Bond functional form '{}' not accounted for, so can't calculate energy.\n",
                          BondFunctions::forms().keyword(bondForm));
@@ -286,6 +296,16 @@ double SpeciesBond::force(double distance) const
          */
         auto e = exp(-params[1] * (distance - params[2]));
         return -2.0 * params[0] * params[1] * (1.0 - e) * e;
+    }
+    else if (bondForm == BondFunctions::Form::Buckingham)
+    {
+        /*
+         * Parameters:
+         * 0 : A
+         * 1 : B
+         * 2 : C
+         */
+        return -params[1] * params[0] * exp(-params[1] * distance) + 6 * params[2] * pow(distance, -7.0);
     }
 
     Messenger::exception("Bond functional form '{}' not accounted for, so can't calculate force.\n",

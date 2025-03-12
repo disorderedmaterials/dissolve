@@ -9,7 +9,8 @@ EnumOptions<BondFunctions::Form> BondFunctions::forms()
     return EnumOptions<BondFunctions::Form>("BondFunction", {{BondFunctions::Form::None, "None"},
                                                              {BondFunctions::Form::Harmonic, "Harmonic", 2},
                                                              {BondFunctions::Form::EPSR, "EPSR", 2},
-                                                             {BondFunctions::Form::Morse, "Morse", 3}});
+                                                             {BondFunctions::Form::Morse, "Morse", 3},
+                                                             {BondFunctions::Form::Buckingham, "Buckingham", 3}});
 }
 
 // Return parameters for specified form
@@ -19,7 +20,8 @@ const std::vector<std::string> &BondFunctions::parameters(Form form)
         {BondFunctions::Form::None, {}},
         {BondFunctions::Form::Harmonic, {"k", "eq"}},
         {BondFunctions::Form::EPSR, {"C/2", "eq"}},
-        {BondFunctions::Form::Morse, {"D", "alpha", "eq"}}};
+        {BondFunctions::Form::Morse, {"D", "alpha", "eq"}},
+        {BondFunctions::Form::Buckingham, {"A", "B", "C"}}};
     return params_[form];
 }
 

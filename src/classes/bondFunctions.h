@@ -14,7 +14,8 @@ class BondFunctions
         None,
         Harmonic,
         EPSR,
-        Morse
+        Morse,
+        Buckingham
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
