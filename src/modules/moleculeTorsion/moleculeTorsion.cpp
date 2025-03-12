@@ -50,6 +50,14 @@ bool MoleculeTorsionModule::setUp(ModuleContext &moduleContext, Flags<KeywordBas
     if (l_ > species_->nAtoms())
         return Messenger::error("[MoleculeTorsion] Torsion atom index l={} is out of range.\n", l_);
 
+    std::set<int> atoms;
+    atoms.insert(i_);
+    atoms.insert(j_);
+    atoms.insert(k_);
+    atoms.insert(l_);
+    if (atoms.size() != 4)
+        return Messenger::error("[MoleculeTorsion] Atoms defining torsion must be unique.");
+
     return true;
 }
 
