@@ -33,7 +33,12 @@ Graph::Edges Graph::edges()
                                           auto &[key, value] = it;
                                           return value.get() == source;
                                       });
-            edges.emplace_back(entry->first, link.source().name(), sink, link.sink().name());
+
+            // For some reason, clang can't deduce the correct
+            // constructor if I pass everything into emplace_back, so
+            // I have to make this wrapper.
+            Graph::Edge newedge = {entry->first, link.source().name(), sink, link.sink().name()};
+            edges.emplace_back(newedge);
         }
     }
     return edges;
