@@ -32,4 +32,7 @@ AtomShakeNode::AtomShakeNode()
 
 std::string_view AtomShakeNode::name() { return "Atom Shake"; }
 
-std::string_view AtomShakeNode::summary() { return "Perform an atomic Monte Carlo \"shake\" of every atom in each target configuration."; }
+std::string_view AtomShakeNode::summary()
+{
+    return "Perform an atomic Monte Carlo \"shake\" of every atom in each target configuration.";
+}

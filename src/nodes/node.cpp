@@ -33,7 +33,7 @@ Node::Readiness Node::preprocess()
             continue;
         // Update unsatisfied sources
         if (!(link.source().parent()->isSatisfied() || link.updateSource()))
-          return Node::Readiness::MissingComponent;
+            return Node::Readiness::MissingComponent;
     }
     return Node::Readiness::Ready;
 }
@@ -50,7 +50,7 @@ bool Node::isSatisfied()
 }
 
 // Set the node parent graph
-void Node::setParentGraph(Graph* parentGraph) { parentGraph_ = parentGraph; }
+void Node::setParentGraph(Graph *parentGraph) { parentGraph_ = parentGraph; }
 
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }
