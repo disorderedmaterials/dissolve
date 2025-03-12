@@ -116,6 +116,8 @@ class Node
     std::shared_ptr<ParameterBase> findInput(std::string_view name) const;
     // Return input parameters
     std::map<std::string_view, std::shared_ptr<ParameterBase>> &inputs();
+    // Get the links owned by this node
+    LinkMap &links();
     // Set the node parent graph
     void setParentGraph(Graph *parentGraph);
     // Returns the node parent graph

@@ -60,3 +60,5 @@ void Node::invalidate() { satisfied_ = false; }
 
 // Tell node that results are up to date
 void Node::validate() { satisfied_ = true; }
+
+Node::LinkMap &Node::links() { return inputLinks_; }

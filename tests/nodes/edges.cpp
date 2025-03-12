@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "module/module.h"
+#include "nodes/graph.h"
 #include "nodes/node.h"
 #include "nodes/parameter.h"
 #include "nodes/parameterLink.h"
@@ -38,14 +39,25 @@ class AddNode : public Node
 
 TEST(NodeEdgeTest, SimpleTest)
 {
-    AddNode x, y, z;
+    Graph graph(nullptr);
+
+    graph.addNode(std::make_unique<AddNode>(), "x");
+    graph.addNode(std::make_unique<AddNode>(), "y");
+    graph.addNode(std::make_unique<AddNode>(), "z");
+
+    Graph::Edges declaredEdges = {{"y", "Total", "z", "B"}, {"x", "Total", "z", "B"}, {"x", "Total", "z", "A"}};
 
     // Link the inputs of Z to X and Y
-    EXPECT_TRUE(z.link("A", *x.findInput("Total")));
-    EXPECT_TRUE(z.link("B", *y.findInput("Total")));
+    EXPECT_TRUE(graph.addEdge(declaredEdges[0]));
 
     // System should prevent double linking a sink
-    EXPECT_FALSE(z.link("A", *y.findInput("Total")));
+    EXPECT_FALSE(graph.addEdge(declaredEdges[1]));
+    EXPECT_TRUE(graph.addEdge(declaredEdges[2]));
+
+    // Create simple references to the various nodes we've created
+    auto &x = *static_cast<AddNode *>(graph.nodes()["x"].get());
+    auto &y = *static_cast<AddNode *>(graph.nodes()["y"].get());
+    auto &z = *static_cast<AddNode *>(graph.nodes()["z"].get());
 
     // Confirm that X and Y are zero *before running*
     EXPECT_EQ(x.sum, 0);
