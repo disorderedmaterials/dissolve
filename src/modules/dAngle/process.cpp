@@ -49,8 +49,9 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     auto nASelections = 1;
     auto nAAvailable = a.sites().size(), nACumulative = a.sites().size();
     auto nBSelections = nAAvailable;
-    auto nBAvailable = 0, nBCumulative = 0;
-    auto nCSelections = 0, nCAvailable = 0, nCCumulative = 0;
+    auto nBAvailable = 0l, nBCumulative = 0l;
+    auto nCSelections = 0;
+    auto nCAvailable = 0l, nCCumulative = 0l;
 
     for (const auto &[siteA, indexA] : a.sites())
     {
