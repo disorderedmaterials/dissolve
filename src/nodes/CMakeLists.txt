@@ -1,5 +1,6 @@
 add_library(
   nodes
+  add.h
   atomShake.cpp
   atomShake.h
   derivative.cpp
@@ -10,6 +11,7 @@ add_library(
   integrator.h
   graph.cpp
   graph.h
+  multiply.h
   node.cpp
   node.h
   vec3Assembly.cpp
