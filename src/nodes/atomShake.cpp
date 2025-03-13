@@ -30,9 +30,9 @@ AtomShakeNode::AtomShakeNode()
     // executeIfTargetsUnchanged_ = true;
 }
 
-std::string_view AtomShakeNode::name() { return "Atom Shake"; }
+std::string_view AtomShakeNode::name() const { return "Atom Shake"; }
 
-std::string_view AtomShakeNode::summary()
+std::string_view AtomShakeNode::summary() const
 {
     return "Perform an atomic Monte Carlo \"shake\" of every atom in each target configuration.";
 }

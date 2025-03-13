@@ -45,7 +45,7 @@ Graph::Edges Graph::edges()
 }
 
 // Return short name of the node
-std::string_view Graph::name() { return "Graph"; }
+std::string_view Graph::name() const { return "Graph"; }
 
 // Return short summary of the node's purpose
 std::string_view Graph::summary() { return "A node which contains its own inner graph"; }

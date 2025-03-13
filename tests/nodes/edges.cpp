@@ -22,8 +22,8 @@ class AddNode : public Node
         addOutput<double>("Total", "Combined Value", sum);
     }
 
-    std::string_view name() override { return "Add Node"; }
-    std::string_view summary() override { return "Add two doubles together"; };
+    std::string_view name() const override { return "Add"; }
+    std::string_view summary() const override { return "Add two doubles together"; };
 
     Module::ExecutionResult process() override
     {

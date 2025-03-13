@@ -38,9 +38,9 @@ class Node
      */
     public:
     // Return short name of the node
-    virtual std::string_view name() = 0;
+    virtual std::string_view name() const = 0;
     // Return short summary of the node's purpose
-    virtual std::string_view summary() = 0;
+    virtual std::string_view summary() const = 0;
     // Perform processing
     virtual Module::ExecutionResult process() { return Module::ExecutionResult::Failed; }
     // Confirm that node data is up to date
