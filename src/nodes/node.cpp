@@ -73,3 +73,45 @@ void Node::invalidate() { satisfied_ = false; }
 void Node::validate() { satisfied_ = true; }
 
 Node::LinkMap &Node::links() { return inputLinks_; }
+
+// Express as a serialisable value
+SerialisedValue Node::serialise() const
+{
+    SerialisedValue result, inputs, options;
+    result["name"] = name();
+
+    if (!inputs_.empty())
+    {
+        for (auto &[k, v] : inputs_)
+            inputs[std::string(k)] = *v;
+        result["inputs"] = inputs;
+    }
+    if (!options_.empty())
+    {
+        for (auto &[k, v] : options_)
+            options[std::string(k)] = *v;
+        result["options"] = options;
+    }
+    return result;
+}
+
+// Read values from a serialisable value
+void Node::deserialise(const SerialisedValue &node)
+{
+    toMap(node, "inputs",
+          [this](const auto &k, const auto &v)
+          {
+              if (inputs_.contains(k))
+                  inputs_[k]->deserialise(v);
+              else
+                  Messenger::exception("Node {} does not contain a parameter {}", name(), k);
+          });
+    toMap(node, "options",
+          [this](const auto &k, const auto &v)
+          {
+              if (options_.contains(k))
+                  options_[k]->deserialise(v);
+              else
+                  Messenger::exception("Node {} does not contain an option {}", name(), k);
+          });
+}

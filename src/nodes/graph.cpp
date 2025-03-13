@@ -48,4 +48,30 @@ Graph::Edges Graph::edges()
 std::string_view Graph::name() const { return "Graph"; }
 
 // Return short summary of the node's purpose
-std::string_view Graph::summary() { return "A node which contains its own inner graph"; }
+std::string_view Graph::summary() const { return "A node which contains its own inner graph"; }
+
+// Express as a serialisable value
+SerialisedValue Graph::serialise() const
+{
+    SerialisedValue graph, result = Node::serialise();
+    for (auto &[k, v] : nodes_)
+        graph[std::string(k)] = *v;
+    result["graph"] = graph;
+    return result;
+}
+
+// Read values from a serialisable value
+void Graph::deserialise(const SerialisedValue &node)
+{
+    Node::deserialise(node);
+    toMap(node, "graph",
+          [this](const auto name, const auto &value)
+          {
+              std::string kind = toml::find<std::string>(value, "name");
+              if (!registry.contains(kind))
+                  Messenger::exception("Attempted to create node of unknown kind: {}", kind);
+              auto child = registry.at(kind)();
+              child->deserialise(value);
+              addNode(std::move(child), name);
+          });
+}

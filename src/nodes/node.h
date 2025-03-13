@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/messenger.h"
+#include "base/serialiser.h"
 #include "module/module.h"
 #include "nodes/parameter.h"
 #include "nodes/parameterLink.h"
@@ -14,7 +15,7 @@
 class Graph;
 
 // Node Base
-class Node
+class Node : public Serialisable<>
 {
     public:
     Node() {}
@@ -154,6 +155,11 @@ class Node
     void setParentGraph(Graph *parentGraph);
     // Returns the node parent graph
     Graph *parentGraph() const;
+
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 
     /*
      * Processing

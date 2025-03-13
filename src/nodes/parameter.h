@@ -14,7 +14,7 @@ class Node;
 template <typename T> class Parameter;
 
 // Base type for all parameter templates to inherit from
-class ParameterBase
+class ParameterBase : public Serialisable<>
 {
     public:
     ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index type);
@@ -76,15 +76,6 @@ class ParameterBase
         auto casted = static_cast<Parameter<T> *>(this);
         return casted->shared_from_this();
     }
-
-    /*
-     * I/O
-     */
-    public:
-    // Express as a serialised value
-    virtual SerialisedValue serialise() const = 0;
-    // Read from a serialised value
-    virtual void deserialise(const SerialisedValue &node) = 0;
 };
 
 // Primary type for a Parameter to a value of type T
@@ -138,8 +129,6 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     SerialisedValue serialise() const override
     {
         SerialisedValue result = {};
-        result["name"] = name_;
-        result["description"] = description_;
 
         // Serialise non-pointer values
         if constexpr (std::is_convertible<T, double>::value)
@@ -156,8 +145,6 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     // Read from a serialised value
     void deserialise(const SerialisedValue &node) override
     {
-        name_ = toml::find<std::string>(node, "name");
-        description_ = toml::find<std::string>(node, "description");
         if constexpr (std::is_pointer<T>::value)
         {
             data_ = nullptr;

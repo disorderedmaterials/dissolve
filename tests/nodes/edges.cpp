@@ -160,6 +160,14 @@ TEST(NodeEdgeTest, SimpleTest)
     EXPECT_TRUE(x.isSatisfied());
     EXPECT_TRUE(y.isSatisfied());
     EXPECT_TRUE(z.isSatisfied());
+
+    Graph copy(nullptr);
+    auto serialised = graph.serialise();
+    std::cout << serialised << std::endl;
+
+    // For now, expect throws because AddNode is not registered
+    EXPECT_THROW(copy.deserialise(serialised), std::runtime_error);
+    // EXPECT_EQ(graph.nodes(), copy.nodes());
 }
 
 } // namespace UnitTest

@@ -50,4 +50,9 @@ class Graph : public Node
     Nodes &nodes();
     // Return container of parameter links between nodes
     Edges edges();
+
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };
