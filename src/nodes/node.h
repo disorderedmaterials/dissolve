@@ -54,6 +54,8 @@ class Node
     private:
     // Input parameters
     std::map<std::string_view, std::shared_ptr<ParameterBase>> inputs_;
+    // Keyword options
+    std::map<std::string_view, std::shared_ptr<ParameterBase>> options_;
     // Inbound Links
     LinkMap inputLinks_;
     // Whether node needs to run to account for updated data
@@ -86,6 +88,14 @@ class Node
 
         inputLinks_.emplace(std::make_pair(name, *link));
         return true;
+    }
+    // Add input parameter
+    template <class T> std::shared_ptr<ParameterBase> addOption(std::string_view name, std::string_view description, T &data)
+    {
+        if (findParameter(name))
+            Messenger::exception("Option '{}' already exists, and can't be added again.", name);
+
+        return options_.emplace(std::make_pair(name, new Parameter<T>(this, name, description, data))).first->second;
     }
     // Add input parameter
     template <class T> std::shared_ptr<ParameterBase> addInput(std::string_view name, std::string_view description, T &data)
@@ -134,6 +144,10 @@ class Node
     std::shared_ptr<ParameterBase> findParameter(std::string_view name) const;
     // Return input parameters
     std::map<std::string_view, std::shared_ptr<ParameterBase>> &parameters();
+    // Return named option if it exists
+    std::shared_ptr<ParameterBase> findOption(std::string_view name) const;
+    // Return options
+    std::map<std::string_view, std::shared_ptr<ParameterBase>> &options();
     // Get the links owned by this node
     LinkMap &links();
     // Set the node parent graph

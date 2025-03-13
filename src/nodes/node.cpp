@@ -16,12 +16,23 @@ std::shared_ptr<ParameterBase> Node::findParameter(std::string_view name) const
     return inputs_.at(name);
 }
 
+// Return named input parameter if it exists
+std::shared_ptr<ParameterBase> Node::findOption(std::string_view name) const
+{
+    if (!options_.contains(name))
+        return {};
+    return options_.at(name);
+}
+
 /*
  * Inputs
  */
 
 // Return input parameters
 std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::parameters() { return inputs_; };
+
+// Return Options
+std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::options() { return options_; };
 
 // Prepare for processing
 Node::Readiness Node::preprocess()
