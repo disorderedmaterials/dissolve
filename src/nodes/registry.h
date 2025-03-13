@@ -3,12 +3,15 @@
 
 #pragma once
 
+#include "add.h"
 #include "atomShake.h"
 #include "derivative.h"
 #include "dissolve.h"
 #include "dotProduct.h"
 #include "integrator.h"
+#include "multiply.h"
 #include "node.h"
+#include "subtract.h"
 #include "vec3Assembly.h"
 #include "vec3Decomposition.h"
 #include <functional>
