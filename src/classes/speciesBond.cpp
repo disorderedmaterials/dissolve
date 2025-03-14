@@ -305,7 +305,7 @@ double SpeciesBond::force(double distance) const
          * 1 : B
          * 2 : C
          */
-        return params[1] * params[0] * exp(-params[1] * distance) + 6 * params[2] * pow(distance, -7.0);
+        return params[1] * params[0] * exp(-params[1] * distance) - 6 * params[2] * pow(distance, -7.0);
     }
 
     Messenger::exception("Bond functional form '{}' not accounted for, so can't calculate force.\n",
