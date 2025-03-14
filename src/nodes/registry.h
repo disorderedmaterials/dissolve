@@ -3,9 +3,17 @@
 
 #pragma once
 
+#include "add.h"
 #include "atomShake.h"
+#include "derivative.h"
 #include "dissolve.h"
+#include "dotProduct.h"
+#include "integrator.h"
+#include "multiply.h"
 #include "node.h"
+#include "subtract.h"
+#include "vec3Assembly.h"
+#include "vec3Decomposition.h"
 #include <functional>
 #include <map>
 #include <memory>
@@ -22,6 +30,18 @@ template <typename T> NodeProducer makeDerivedNode()
 
 // Node registry
 const std::map<std::string_view, NodeProducer> registry{
-    {"AtomShake", makeDerivedNode<AtomShakeNode>()}, {"Dissolve", makeDerivedNode<DissolveNode>()},
+    {"AddDouble", makeDerivedNode<AddDouble>()},
+    {"AddInt", makeDerivedNode<AddInt>()},
+    {"AtomShake", makeDerivedNode<AtomShakeNode>()},
+    {"Derivative", makeDerivedNode<DerivativeNode>()},
+    {"Dissolve", makeDerivedNode<DissolveNode>()},
+    {"DotProduct", makeDerivedNode<DotProductNode>()},
+    {"Integrator", makeDerivedNode<Integrator1DNode>()},
+    {"MultiplyDouble", makeDerivedNode<MultiplyDouble>()},
+    {"MultiplyInt", makeDerivedNode<MultiplyInt>()},
+    {"SubtractDouble", makeDerivedNode<SubtractDouble>()},
+    {"SubtractInt", makeDerivedNode<SubtractInt>()},
+    {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
+    {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()},
     // etc...
 };
