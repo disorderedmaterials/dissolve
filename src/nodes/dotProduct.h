@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "templates/vector3.h"
 #include "nodes/node.h"
+#include "templates/vector3.h"
 
 // DotProductNode Node
 class DotProductNode : public Node

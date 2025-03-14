@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "nodes/node.h"
 #include "math/data1D.h"
+#include "nodes/node.h"
 
 // DerivativeNode Node
 class DerivativeNode : public Node

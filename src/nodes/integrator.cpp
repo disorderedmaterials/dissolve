@@ -8,16 +8,16 @@ Integrator1DNode::Integrator1DNode()
 }
 
 // Return enum options for form
-EnumOptions<Integrator1DNode::Method> Integrator1DNode::types() 
-{ 
-    return EnumOptions<Integrator1DNode::Method>("Integrator1DNode", {
-            {Integrator1DNode::Method::Trapezoidal, "Trapezoidal"},
-            {Integrator1DNode::Method::AbsoluteTrapezoidal, "AbsoluteTrapezoidal"},
-            {Integrator1DNode::Method::Sum, "Sum"},
-            {Integrator1DNode::Method::AbsoluteSum, "AbsoluteSum"},
-            {Integrator1DNode::Method::SumOfSquares, "SumOfSquares"},
-        }
-    ); 
+EnumOptions<Integrator1DNode::Method> Integrator1DNode::types()
+{
+    return EnumOptions<Integrator1DNode::Method>("Integrator1DNode",
+                                                 {
+                                                     {Integrator1DNode::Method::Trapezoidal, "Trapezoidal"},
+                                                     {Integrator1DNode::Method::AbsoluteTrapezoidal, "AbsoluteTrapezoidal"},
+                                                     {Integrator1DNode::Method::Sum, "Sum"},
+                                                     {Integrator1DNode::Method::AbsoluteSum, "AbsoluteSum"},
+                                                     {Integrator1DNode::Method::SumOfSquares, "SumOfSquares"},
+                                                 });
 }
 
 std::string_view Integrator1DNode::name() const { return "Integrator"; }
@@ -47,7 +47,7 @@ Module::ExecutionResult Integrator1DNode::process(ModuleContext &moduleContext)
             integral_ = Integrator::sumOfSquares(inputData_);
 
         default:
-          return Module::ExecutionResult::Failed;
+            return Module::ExecutionResult::Failed;
     }
 
     validate();
