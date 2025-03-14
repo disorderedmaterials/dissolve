@@ -4,6 +4,7 @@ Integrator1DNode::Integrator1DNode()
 {
     addInput<Data1D>("InputData", "Input 1D data series", inputData_);
     addInput<std::string_view>("IntegrationMethod", "Method to use for integration", type_);
+    addOutput<double>("Integral", "The integration of the input data series", integral_);
 }
 
 // Return enum options for form
@@ -49,5 +50,6 @@ Module::ExecutionResult Integrator1DNode::process(ModuleContext &moduleContext)
           return Module::ExecutionResult::Failed;
     }
 
+    validate();
     return Module::ExecutionResult::Success;
 }

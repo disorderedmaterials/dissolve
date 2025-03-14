@@ -5,8 +5,12 @@
 
 #include "nodes/node.h"
 
-const std::map<std::type_index, std::string_view> AddNodeNames = {{std::type_index(typeid(double)), "AddDouble"},
-                                                                  {std::type_index(typeid(int)), "AddInt"}};
+namespace NodeNames
+{
+
+const std::map<std::type_index, std::string_view> Add = {{std::type_index(typeid(double)), "AddDouble"},
+                                                         {std::type_index(typeid(int)), "AddInt"}};
+};
 
 // AddNode Node
 template <typename T> class AddNode : public Node
@@ -16,11 +20,12 @@ template <typename T> class AddNode : public Node
     {
         addInput<T>("A", "First operand to the addition", a_);
         addInput<T>("B", "Second operand to the addition", b_);
+        addOutput<T>("Total", "The sum of the operands", sum_);
     }
     ~AddNode() override = default;
 
     public:
-    std::string_view name() const override { return AddNodeNames.at(std::type_index(typeid(T))); }
+    std::string_view name() const override { return NodeNames::Add.at(std::type_index(typeid(T))); }
     std::string_view summary() const override { return "Performs addition of operands A and B"; }
 
     /*
@@ -42,7 +47,7 @@ template <typename T> class AddNode : public Node
     Module::ExecutionResult process(ModuleContext &moduleContext)
     {
         sum_ = std::plus<T>(a_, b_);
-
+        validate();
         return Module::ExecutionResult::Success;
     }
 };
