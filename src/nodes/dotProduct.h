@@ -14,8 +14,8 @@ class DotProductNode : public Node
     ~DotProductNode() override = default;
 
     public:
-    std::string_view name() override;
-    std::string_view summary() override;
+    std::string_view name() const override;
+    std::string_view summary() const override;
 
     /*
      * Definition

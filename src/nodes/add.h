@@ -5,6 +5,9 @@
 
 #include "nodes/node.h"
 
+const std::map<std::type_index, std::string_view> AddNodeNames = {{std::type_index(typeid(double)), "AddDouble"},
+                                                                  {std::type_index(typeid(int)), "AddInt"}};
+
 // AddNode Node
 template <typename T> class AddNode : public Node
 {
@@ -17,8 +20,8 @@ template <typename T> class AddNode : public Node
     ~AddNode() override = default;
 
     public:
-    std::string_view name() override { return "Add"; }
-    std::string_view summary() override { return "Performs addition of operands A and B"; }
+    std::string_view name() const override { return AddNodeNames.at(std::type_index(typeid(T))); }
+    std::string_view summary() const override { return "Performs addition of operands A and B"; }
 
     /*
      * Definition
@@ -40,6 +43,9 @@ template <typename T> class AddNode : public Node
     {
         sum_ = std::plus<T>(a_, b_);
 
-        return ExecutionResult::Success;
+        return Module::ExecutionResult::Success;
     }
 };
+
+using AddDouble = AddNode<double>;
+using AddInt = AddNode<int>;

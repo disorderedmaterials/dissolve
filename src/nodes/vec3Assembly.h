@@ -14,8 +14,8 @@ class Vec3AssemblyNode : public Node
     ~Vec3AssemblyNode() override = default;
 
     public:
-    std::string_view name() override;
-    std::string_view summary() override;
+    std::string_view name() const override;
+    std::string_view summary() const override;
 
     /*
      * Definition
@@ -28,7 +28,7 @@ class Vec3AssemblyNode : public Node
     // Input z
     double z_;
     // Output vector
-    Vec3<Double> outputVector_;
+    Vec3<double> outputVector_;
 
     /*
      * Processing

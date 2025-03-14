@@ -37,6 +37,6 @@ template <typename T> class SubractNode : public Node
     {
         result_ = std::minus<T>(a_, b_);
 
-        return ExecutionResult::Success;
+        return Module::ExecutionResult::Success;
     }
 };

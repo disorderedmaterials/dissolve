@@ -7,14 +7,14 @@ Vec3AssemblyNode::Vec3AssemblyNode()
     addInput<double>("z", "The z value of the assembled vector", z_);
 }
 
-std::string_view Vec3AssemblyNode::name() { return "Vector3 Assembly"; }
+std::string_view Vec3AssemblyNode::name() const { return "Vector3 Assembly"; }
 
-std::string_view Vec3AssemblyNode::summary() { return "Assemble a 3-vector from x, y, and z values."; }
+std::string_view Vec3AssemblyNode::summary() const { return "Assemble a 3-vector from x, y, and z values."; }
 
 // Run main processing
 Module::ExecutionResult Vec3AssemblyNode::process(ModuleContext &moduleContext)
 {
     outputVector_.set(x_, y_, z_);
 
-    return ExecutionResult::Success;
+    return Module::ExecutionResult::Success;
 }

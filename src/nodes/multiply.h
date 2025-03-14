@@ -5,6 +5,9 @@
 
 #include "nodes/node.h"
 
+const std::map<std::type_index, std::string_view> MultiplyNodeNames = {{std::type_index(typeid(double)), "MultiplyDouble"},
+                                                                  {std::type_index(typeid(int)), "MultiplyInt"}};
+
 // MultiplyNode Node
 template <typename T> class MultiplyNode : public Node
 {
@@ -17,8 +20,8 @@ template <typename T> class MultiplyNode : public Node
     ~MultiplyNode() override = default;
 
     public:
-    std::string_view name() override { return "Multiply"; }
-    std::string_view summary() override { return "Performs multiplication of factors A and B"; }
+    std::string_view name() const override { return MultiplyNodeNames.at(std::type_index(typeid(T))); }
+    std::string_view summary() const override { return "Performs multiplication of factors A and B"; }
 
     /*
      * Definition
@@ -40,6 +43,9 @@ template <typename T> class MultiplyNode : public Node
     {
         product_ = std::multiplies<T>(a_, b_);
 
-        return ExecutionResult::Success;
+        return Module::ExecutionResult::Success;
     }
 };
+
+using MultiplyDouble = MultiplyNode<double>;
+using MultiplyInt = MultiplyNode<int>;

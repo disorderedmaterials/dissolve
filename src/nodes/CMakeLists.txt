@@ -8,6 +8,7 @@ add_library(
   dissolve.h
   dotProduct.cpp
   dotProduct.h
+  integrator.cpp
   integrator.h
   graph.cpp
   graph.h

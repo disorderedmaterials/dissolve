@@ -7,7 +7,7 @@ Integrator1DNode::Integrator1DNode()
 }
 
 // Return enum options for form
-static EnumOptions<Integrator1DNode::Method> Integrator1DNode::types() 
+EnumOptions<Integrator1DNode::Method> Integrator1DNode::types() 
 { 
     return EnumOptions<Integrator1DNode::Method>("Integrator1DNode", {
             {Integrator1DNode::Method::Trapezoidal, "Trapezoidal"},
@@ -19,9 +19,9 @@ static EnumOptions<Integrator1DNode::Method> Integrator1DNode::types()
     ); 
 }
 
-std::string_view Integrator1DNode::name() { return "Integrator"; }
+std::string_view Integrator1DNode::name() const { return "Integrator"; }
 
-std::string_view Integrator1DNode::summary() { return "Computes the integral for a 1D data series"; }
+std::string_view Integrator1DNode::summary() const { return "Computes the integral for a 1D data series"; }
 
 // Run main processing
 Module::ExecutionResult Integrator1DNode::process(ModuleContext &moduleContext)
@@ -30,24 +30,24 @@ Module::ExecutionResult Integrator1DNode::process(ModuleContext &moduleContext)
 
     switch (typeEnum)
     {
-        case static_cast<int>(Method::Trapezoidal):
+        case Method::Trapezoidal:
             integral_ = Integrator::trapezoid(inputData_);
 
-        case static_cast<int>(Method::AbsoluteTrapezoidal):
+        case Method::AbsoluteTrapezoidal:
             integral_ = Integrator::absTrapezoid(inputData_);
 
-        case static_cast<int>(Method::Sum):
+        case Method::Sum:
             integral_ = Integrator::sum(inputData_);
 
-        case static_cast<int>(Method::AbsoluteSum):
+        case Method::AbsoluteSum:
             integral_ = Integrator::absSum(inputData_);
 
-        case static_cast<int>(Method::SumOfSquares):
+        case Method::SumOfSquares:
             integral_ = Integrator::sumOfSquares(inputData_);
 
         default:
-            return ExecutionResult::Failure;
+          return Module::ExecutionResult::Failed;
     }
 
-    return ExecutionResult::Success;
+    return Module::ExecutionResult::Success;
 }
