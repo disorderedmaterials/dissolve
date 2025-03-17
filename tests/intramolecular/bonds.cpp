@@ -37,7 +37,7 @@ class BondFunctionsAnalyticTest : public ::testing::Test
     {
         // Set the bond potential parameters
         ij_.setInteractionForm(form);
-        ij_.setInteractionParameters(parameters);
+        ASSERT_TRUE(ij_.setInteractionParameters(parameters));
 
         // Construct tabulated energy and force
         Data1D energy;
