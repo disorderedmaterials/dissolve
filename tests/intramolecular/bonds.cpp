@@ -67,10 +67,7 @@ class BondFunctionsAnalyticTest : public ::testing::Test
     }
 };
 
-TEST_F(BondFunctionsAnalyticTest, NoneForm)
-{
-    test(BondFunctions::Form::None, "");
-}
+TEST_F(BondFunctionsAnalyticTest, NoneForm) { test(BondFunctions::Form::None, ""); }
 
 TEST_F(BondFunctionsAnalyticTest, HarmonicForm)
 {
@@ -84,8 +81,5 @@ TEST_F(BondFunctionsAnalyticTest, MorseForm)
     test(BondFunctions::Form::Morse, "D=970.0 alpha=0.1 eq=1.624");
 }
 
-TEST_F(BondFunctionsAnalyticTest, BuckinghamForm)
-{
-    test(BondFunctions::Form::Buckingham, "A=12345.1 B=3.3 C=1000.0");
-}
+TEST_F(BondFunctionsAnalyticTest, BuckinghamForm) { test(BondFunctions::Form::Buckingham, "A=12345.1 B=3.3 C=1000.0"); }
 } // namespace UnitTest
