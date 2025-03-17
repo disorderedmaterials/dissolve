@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
 #include "math/data1D.h"
 #include "math/derivative.h"
@@ -13,18 +12,9 @@ namespace UnitTest
 class BondFunctionsAnalyticTest : public ::testing::Test
 {
     public:
-    BondFunctionsAnalyticTest()
-    {
-        // Set up dummy atoms and bond, equilibrium bond length = 1.5 Angstroms
-        i_.setCoordinates(-0.75, 0.0, 0.0);
-        j_.setCoordinates(0.75, 0.0, 0.0);
-
-        ij_.assign(&i_, &j_);
-    }
+    BondFunctionsAnalyticTest() {}
 
     protected:
-    // Atoms
-    SpeciesAtom i_, j_;
     // Bond
     SpeciesBond ij_;
     // Constants

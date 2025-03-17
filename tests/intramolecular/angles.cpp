@@ -3,7 +3,6 @@
 
 #include "classes/box.h"
 #include "classes/speciesAngle.h"
-#include "classes/speciesAtom.h"
 #include "math/data1D.h"
 #include "math/derivative.h"
 #include "math/interpolator.h"
@@ -14,18 +13,9 @@ namespace UnitTest
 class AngleFunctionsAnalyticTest : public ::testing::Test
 {
     public:
-    AngleFunctionsAnalyticTest()
-    {
-        // Set up dummy atoms and angle, equilibrium angle length = 100.0 degrees
-        i_.setCoordinates(cos(100.0 / DEGRAD), sin(100.0 / DEGRAD), 0.0);
-        j_.setCoordinates(0.0, 0.0, 0.0);
-        k_.setCoordinates(1.0, 0.0, 0.0);
-        ijk_.assign(&i_, &j_, &k_);
-    }
+    AngleFunctionsAnalyticTest() {}
 
     protected:
-    // Atoms
-    SpeciesAtom i_, j_, k_;
     // Angle
     SpeciesAngle ijk_;
     // Constants
@@ -73,7 +63,7 @@ TEST_F(AngleFunctionsAnalyticTest, NoneForm) { test(AngleFunctions::Form::None, 
 TEST_F(AngleFunctionsAnalyticTest, HarmonicForm)
 {
     test(AngleFunctions::Form::Harmonic, "k=200.2 eq=100.0");
-    //    test(AngleFunctions::Form::Harmonic, "k=187.2 eq=97.35");
+    test(AngleFunctions::Form::Harmonic, "k=187.2 eq=97.35");
 }
 
 TEST_F(AngleFunctionsAnalyticTest, CosineForm) { test(AngleFunctions::Form::Cosine, "k=100.0 n=3.0 eq=100.0 s=1.0"); }
