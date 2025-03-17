@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "expression/variable.h"
 #include "base/messenger.h"
@@ -9,8 +9,8 @@ ExpressionVariable::ExpressionVariable(const ExpressionValue &value)
 {
     // Private variables
     static int count = 0;
-    baseName_ = fmt::format("_ExpressionVariable{:02d}", count++);
-    name_ = fmt::format("_ExpressionVariable{:02d}", count++);
+    baseName_ = std::format("_ExpressionVariable{:02d}", count++);
+    name_ = std::format("_ExpressionVariable{:02d}", count++);
     value_ = value;
 }
 
@@ -26,7 +26,7 @@ void ExpressionVariable::updateName()
     if (namePrefix_.empty())
         name_ = baseName_;
     else
-        name_ = fmt::format("{}{}{}", namePrefix_, separator, baseName_);
+        name_ = std::format("{}{}{}", namePrefix_, separator, baseName_);
 }
 
 // Set name of variable

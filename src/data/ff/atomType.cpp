@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/ff/atomType.h"
 #include "data/ff/ff.h"
@@ -12,8 +12,8 @@ ForcefieldAtomType::ForcefieldAtomType(Elements::Element Z, int index, std::stri
 {
     InteractionPotential<ShortRangeFunctions> srPotential(parametersForm);
     if (!srPotential.parseParameters(parameterString))
-        throw(std::runtime_error(
-            fmt::format("Failed to parse parameters string '{}' when constructing atom type '{}'.\n", parameterString, name_)));
+        Messenger::exception("Failed to parse parameters string '{}' when constructing atom type '{}'.\n", parameterString,
+                             name_);
     parameters_ = srPotential.parameters();
 
     neta_.setDefinitionString(netaDefinition);

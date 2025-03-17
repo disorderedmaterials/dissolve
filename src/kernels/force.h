@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -50,12 +50,12 @@ class ForceKernel : public GeometryKernel
     void forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const;
     // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
     void forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
-                          double vdwScale) const;
+                          double srScale) const;
     // Calculate inter-particle forces between Atoms provided
     void forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const;
     // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
     void forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
-                       double vdwScale) const;
+                       double srScale) const;
     // Calculate forces between two cells
     void cellToCellPairPotentialForces(const Cell *cell, const Cell *otherCell, bool applyMim, ForceVector &f) const;
 

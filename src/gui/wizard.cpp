@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/wizard.h"
-#include <fmt/format.h>
+#include "base/messenger.h"
+#include <format>
 #include <stdexcept>
 
 WizardDialog::WizardDialog(QWidget *parent)
@@ -227,7 +228,7 @@ void WizardDialog::goToPage(int index)
 
     // Instruct the derived class to switch pages
     if (!displayPage(index))
-        throw(std::runtime_error(fmt::format("Failed to go to and display page id {}.\n", index)));
+        Messenger::exception("Failed to go to and display page id {}.\n", index);
 
     // Add this page to our history
     history_.push_back(index);
@@ -250,7 +251,7 @@ void WizardDialog::goBack()
 
     // Instruct the derived class to switch pages
     if (!displayPage(currentPageID_.value()))
-        throw(std::runtime_error(fmt::format("Failed to go back to and display page id {}.\n", currentPageID_.value())));
+        Messenger::exception("Failed to go back to and display page id {}.\n", currentPageID_.value());
 
     // Update the header and footer
     updateHeaderAndFooter(getPage(currentPageID_.value()));

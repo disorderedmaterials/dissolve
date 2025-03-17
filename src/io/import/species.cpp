@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/import/species.h"
 #include "base/lineParser.h"
@@ -67,8 +67,8 @@ bool SpeciesImportFileFormat::importData(LineParser &parser, Species *sp)
             result = importXYZ(parser, sp);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Species format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Species format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

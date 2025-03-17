@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/coreData.h"
 #include "base/sysFunc.h"
@@ -46,9 +46,6 @@ std::shared_ptr<AtomType> CoreData::addAtomType(Elements::Element Z)
     newAtomType->setZ(Z);
     newAtomType->setIndex(nAtomTypes() - 1);
 
-    // Bump version
-    ++atomTypesVersion_;
-
     return newAtomType;
 }
 
@@ -58,6 +55,11 @@ void CoreData::removeAtomType(std::shared_ptr<AtomType> &at)
     removeReferencesTo(at);
 
     atomTypes_.erase(std::remove(atomTypes_.begin(), atomTypes_.end(), at), atomTypes_.end());
+
+    // Reassign AtomType indices
+    auto count = 0;
+    for (const auto &at : atomTypes_)
+        at->setIndex(count++);
 }
 
 // Return number of AtomTypes in list
@@ -80,12 +82,6 @@ std::shared_ptr<AtomType> CoreData::findAtomType(std::string_view name) const
         return nullptr;
     return *it;
 }
-
-// Bump AtomTypes version
-void CoreData::bumpAtomTypesVersion() { ++atomTypesVersion_; }
-
-// Return AtomTypes version
-int CoreData::atomTypesVersion() const { return atomTypesVersion_; }
 
 // Remove any atom types that are unused across all species
 int CoreData::removeUnusedAtomTypes()
@@ -152,8 +148,8 @@ MasterBond &CoreData::addMasterBond(std::string_view name, std::optional<int> in
 {
     // Check for existence of master Bond already
     if (getMasterBond(name))
-        throw(std::runtime_error(
-            fmt::format("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name)));
+        Messenger::exception("Refused to add a new master Bond named '{}' since one with the same name already exists.\n",
+                             name);
 
     auto newBond = std::make_shared<MasterBond>(name);
     if (insertAtIndex)
@@ -214,8 +210,8 @@ MasterAngle &CoreData::addMasterAngle(std::string_view name)
 {
     // Check for existence of master Angle already
     if (getMasterAngle(name))
-        throw(std::runtime_error(
-            fmt::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
+        Messenger::exception("Refused to add a new master Angle named '{}' since one with the same name already exists.\n",
+                             name);
 
     return *masters_.angles.emplace_back(std::make_shared<MasterAngle>(name));
 }
@@ -270,8 +266,8 @@ MasterTorsion &CoreData::addMasterTorsion(std::string_view name)
 {
     // Check for existence of master Torsion already
     if (getMasterTorsion(name))
-        throw(std::runtime_error(fmt::format(
-            "Refused to add a new master Torsion named '{}' since one with the same name already exists.\n", name)));
+        Messenger::exception("Refused to add a new master Torsion named '{}' since one with the same name already exists.\n",
+                             name);
 
     return *masters_.torsions.emplace_back(std::make_shared<MasterTorsion>(name));
 }
@@ -326,8 +322,8 @@ MasterImproper &CoreData::addMasterImproper(std::string_view name)
 {
     // Check for existence of master Improper already
     if (getMasterImproper(name))
-        throw(std::runtime_error(fmt::format(
-            "Refused to add a new master Improper named '{}' since one with the same name already exists.\n", name)));
+        Messenger::exception("Refused to add a new master Improper named '{}' since one with the same name already exists.\n",
+                             name);
 
     return *masters_.impropers.emplace_back(std::make_shared<MasterImproper>(name));
 }

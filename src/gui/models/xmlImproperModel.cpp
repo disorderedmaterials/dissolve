@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/models/xmlImproperModel.h"
 #include <pugixml.hpp>
@@ -189,7 +189,7 @@ std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector()
         auto index = 0;
         for (auto n : ns)
         {
-            paramString += fmt::format("k{}={} ", n, (phases[index] > 3.14 && phases[index] < 3.15 ? -1 : 1) * ks[index]);
+            paramString += std::format("k{}={} ", n, (phases[index] > 3.14 && phases[index] < 3.15 ? -1 : 1) * ks[index]);
 
             ++index;
         }

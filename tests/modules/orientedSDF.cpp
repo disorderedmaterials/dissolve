@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -21,6 +21,5 @@ TEST_F(OrientedSDFModuleTest, Benzene)
     EXPECT_TRUE(systemTest.checkData3D(
         "OrientedSDF(R-R)//SDF",
         {"dlpoly/benzene181/benzene181.11.pdens.zOrient0_10", Data3DImportFileFormat::Data3DImportFormat::PDens}, 0.09));
-    EXPECT_TRUE(systemTest.checkData3D("OrientedSDF(R-R)//SDF", "OrientedSDF(R-R)_Analyser//Process3D//SDF", 1.0e-5));
 }
 } // namespace UnitTest

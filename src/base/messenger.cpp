@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/messenger.h"
 #include "base/lineParser.h"
@@ -117,7 +117,7 @@ void Messenger::outputText(std::string_view s)
         {
             // Not redirecting - has an OutputHandler been defined?
             if (outputHandler_)
-                outputHandler_->outputText(fmt::format("{} {}", outputPrefix_, s));
+                outputHandler_->outputText(std::format("{} {}", outputPrefix_, s));
             else
                 std::cout << outputPrefix_ << " " << s << std::endl;
         }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -140,7 +140,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
         {
             // Read the supplied arguments
             auto readResult = externalDataSource_.read(parser, startArg + 1,
-                                                       fmt::format("End{}", dataSourceTypes().keyword(External)), coreData);
+                                                       std::format("End{}", dataSourceTypes().keyword(External)), coreData);
             if (readResult == FileAndFormat::ReadResult::UnrecognisedFormat ||
                 readResult == FileAndFormat::ReadResult::UnrecognisedOption)
             {
@@ -204,7 +204,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
             }
 
             // Write extra keywords
-            if (!externalDataSource_.writeBlock(parser, fmt::format("  {}", prefix)))
+            if (!externalDataSource_.writeBlock(parser, std::format("  {}", prefix)))
             {
                 return false;
             }

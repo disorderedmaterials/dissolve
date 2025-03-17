@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "keywords/moduleVector.h"
 #include "base/lineParser.h"
@@ -57,7 +57,7 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
                          [module](const auto &type) { return type == module->type(); }) == moduleTypes_.cend())
             return Messenger::error("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
                                     parser.argsv(n), ModuleTypes::moduleType(module->type()), name(),
-                                    joinStrings(moduleTypes_));
+                                    joinStrings(moduleTypes_, ", ", [](auto m) { return ModuleTypes::moduleType(m); }));
         if (!data_.empty() && std::find(data_.cbegin(), data_.cend(), module) != data_.cend())
             Messenger::warn("Module '{}' has already been added to keyword '{}'.\n", parser.argsv(n), name());
         else
@@ -104,15 +104,16 @@ void ModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreDat
                  auto title = toml::get<std::string>(item);
                  auto *module = coreData.findModule(title);
                  if (!module)
-                     throw toml::type_error(fmt::format("No Module named '{}' exists.\n", title), item.location());
+                     throw toml::type_error(std::format("No Module named '{}' exists.\n", title), item.location());
 
                  // Check the module's type if we can
                  if (!moduleTypes_.empty() &&
                      std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(),
                                   [module](const auto &s) { return s == module->type(); }) == moduleTypes_.cend())
                      throw toml::type_error(
-                         fmt::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
-                                     title, module->type(), name(), joinStrings(moduleTypes_)),
+                         std::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
+                                     title, ModuleTypes::moduleType(module->type()), name(),
+                                     joinStrings(moduleTypes_, ", ", [](auto m) { return ModuleTypes::moduleType(m); })),
                          item.location());
                  data_.push_back(module);
              });

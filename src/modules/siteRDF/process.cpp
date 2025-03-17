@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
@@ -11,17 +11,12 @@
 #include "math/sampledDouble.h"
 #include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
+#include "templates/algorithms.h"
+#include "templates/combinable.h"
 
 // Run main processing
 Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     auto &processingData = moduleContext.dissolve().processingModuleData();
 
     // Select site A
@@ -36,15 +31,23 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
         histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
     histAB.zeroBins();
 
-    for (const auto &[siteA, indexA] : a.sites())
-    {
-        for (const auto &[siteB, indexB] : b.sites())
-        {
-            if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
-                continue;
-            histAB.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
-        }
-    }
+    auto combinableHistograms = dissolve::CombinableValue<Histogram1D>(histAB);
+
+    dissolve::for_each(std::execution::par, a.sites().begin(), a.sites().end(),
+                       [this, &b, &combinableHistograms](const auto &pair)
+                       {
+                           const auto &[siteA, indexA] = pair;
+
+                           auto &hist = combinableHistograms.local();
+                           for (const auto &[siteB, indexB] : b.sites())
+                           {
+                               if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
+                                   continue;
+                               hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+                           }
+                       });
+
+    histAB = combinableHistograms.finalize();
 
     // Accumulate histogram
     histAB.accumulate();
@@ -77,17 +80,17 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     for (int i = 0; i < 3; ++i)
         if (rangeEnabled_[i])
         {
-            auto &sumN = processingData.realise<SampledDouble>(fmt::format("CN//{}", rangeNames[i]), name(),
+            auto &sumN = processingData.realise<SampledDouble>(std::format("CN//{}", rangeNames[i]), name(),
                                                                GenericItem::InRestartFileFlag);
             sumN += Integrator::sum(dataCN, range_[i]);
             if (instantaneous_)
             {
-                auto &sumNInst = processingData.realise<Data1D>(fmt::format("CN//{}Inst", rangeNames[i]), name(),
+                auto &sumNInst = processingData.realise<Data1D>(std::format("CN//{}Inst", rangeNames[i]), name(),
                                                                 GenericItem::InRestartFileFlag);
                 sumNInst.addPoint(moduleContext.dissolve().iteration(), sumN.value());
                 if (exportInstantaneous_)
                 {
-                    Data1DExportFileFormat exportFormat(fmt::format("{}_Sum{}.txt", name(), rangeNames[i]));
+                    Data1DExportFileFormat exportFormat(std::format("{}_Sum{}.txt", name(), rangeNames[i]));
                     if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(sumNInst, exportFormat,
                                                                                   moduleContext.processPool()))
                     {

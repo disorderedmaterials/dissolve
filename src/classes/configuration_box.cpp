@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "classes/cell.h"
@@ -63,6 +63,8 @@ void Configuration::scaleBox(Vec3<double> scaleFactors)
 {
     box_->scale(scaleFactors);
     cells_.scale(scaleFactors);
+
+    ++contentsVersion_;
 }
 
 // Set requested size factor for Box
@@ -147,6 +149,4 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
             break;
         }
     }
-
-    ++contentsVersion_;
 }

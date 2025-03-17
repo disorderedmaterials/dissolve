@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/ff/improperTerm.h"
 #include "data/ff/atomType.h"
@@ -12,9 +12,8 @@ ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::stri
 {
     InteractionPotential<TorsionFunctions> potential(form);
     if (!potential.parseParameters(parameterString))
-        throw(std::runtime_error(
-            fmt::format("Failed to parse parameter string '{}' when constructing improper term '{}-{}-{}-{}'.\n",
-                        parameterString, typeI_, typeJ_, typeK_, typeL_)));
+        Messenger::exception("Failed to parse parameter string '{}' when constructing improper term '{}-{}-{}-{}'.\n",
+                             parameterString, typeI_, typeJ_, typeK_, typeL_);
     parameters_ = potential.parameters();
 }
 

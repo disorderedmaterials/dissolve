@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/ff/oplsaa2005/diols.h"
 
@@ -41,7 +41,7 @@ std::string_view Forcefield_OPLSAA2005_Diols::name() const { return "OPLSAA2005/
 std::string_view Forcefield_OPLSAA2005_Diols::description() const
 {
     static std::string desc =
-        fmt::format("Alcohols from OPLS-AA (2005), covering diols only.<br/><br/>References: {}", publicationReferences());
+        std::format("Alcohols from OPLS-AA (2005), covering diols only.<br/><br/>References: {}", publicationReferences());
 
     return desc;
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/speciesSiteVector.h"
 #include "classes/coreData.h"
@@ -73,5 +73,5 @@ void SpeciesSiteVectorKeywordWidget::updateSummaryText()
     else
         setSummaryText(QString::fromStdString(
             joinStrings(keyword_->data(), ", ",
-                        [](const auto &site) { return fmt::format("{} ({})", site->name(), site->parent()->name()); })));
+                        [](const auto &site) { return std::format("{} ({})", site->name(), site->parent()->name()); })));
 }

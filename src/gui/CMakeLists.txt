@@ -58,9 +58,9 @@ add_library(
   nodeControlWidget.cpp
   nodeControlWidget.h
   nodeControlWidget.ui
-  procedureWidget.cpp
-  procedureWidget.h
-  procedureWidget.ui
+  generatorWidget.cpp
+  generatorWidget.h
+  generatorWidget.ui
   selectAtomTypeWidget.cpp
   selectAtomTypeWidget.h
   selectAtomTypeWidget.ui
@@ -175,11 +175,11 @@ target_include_directories(
   gui
   PRIVATE ${PROJECT_SOURCE_DIR}/src
           ${PROJECT_BINARY_DIR}/src
-          ${Qt6Widgets_INCLUDE_DIRS}
           ${FREETYPE_INCLUDE_DIRS}
-          Qt6::OpenGL
-          Qt6::OpenGLWidgets
-          Qt6::Core
+          ${Qt6Core_INCLUDE_DIRS}
+          ${Qt6OpenGL_INCLUDE_DIRS}
+          ${Qt6OpenGLWidgets_INCLUDE_DIRS}
+          ${Qt6Widgets_INCLUDE_DIRS}
 )
 
 target_link_libraries(

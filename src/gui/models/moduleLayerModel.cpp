@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/models/moduleLayerModel.h"
 #include "main/dissolve.h"
@@ -66,7 +66,7 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
         switch (role)
         {
             case (Qt::DisplayRole):
-                return QString::fromStdString(fmt::format("{} [{}]", module->name(), ModuleTypes::moduleType(module->type())));
+                return QString::fromStdString(std::format("{} [{}]", module->name(), ModuleTypes::moduleType(module->type())));
             case (Qt::EditRole):
                 return QString::fromStdString(std::string(module->name()));
             case (Qt::DecorationRole):

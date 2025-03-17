@@ -10,7 +10,11 @@ on:
 
 jobs:
 
+  Checkout:
+    uses: "./.github/workflows/_checkout.yml"
+
   CacheConan:
+    needs: [Checkout]
     strategy:
       fail-fast: false
       matrix:
@@ -18,13 +22,22 @@ jobs:
         target: [dissolve-gui]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup
-        uses: "./.github/workflows/setup"
+      - name: 'Download Source Tarfiles'
+        uses: actions/download-artifact@v4
+        with:
+          name: source
+
+      - name: 'Unpack Source'
+        shell: bash
+        run: tar -xvf dissolve-original-source.tar
+
       - name: "Build (Cache Only) (${{ matrix.os }})"
         uses: "./.github/workflows/build"
         with:
           target: ${{ matrix.target }}
           cacheOnly: true
+          currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+          qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
+          antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
+          conanHash: ${{ needs.Checkout.outputs.conanHash }}
 

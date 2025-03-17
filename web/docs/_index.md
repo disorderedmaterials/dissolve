@@ -1,22 +1,26 @@
 ---
-title: "Documentation for vMAJOR.MINOR"
-linkTitle: "Documentation (vMAJOR.MINOR)"
+title: "Documentation for RELEASETYPE version MAJOR.MINOR"
+linkTitle: "Documentation (RELEASETYPE version MAJOR.MINOR)"
 cascade:
   - type: "docs"
 ---
 
-{{< documentationinfo target="release" >}}
+Here you can find the user guide and examples for the RELEASETYPE version MAJOR.MINOR of Dissolve.
 
+{{< tip text="Documentation for the current release version is [available here](/)" />}} <!-- RELEASE TIP -->
+{{< tip text="Updated documentation for the current development version is [available here](/dev)" />}} <!-- DEVELOPMENT TIP -->
+{{< tip text="Documentation for the most recent legacy relese series is [available here](/legacy)." />}} <!-- LEGACY TIP -->
 
 ## Copyright / Contributors
 
-&copy; 2024 Team Dissolve and contributors
+&copy; 2025 Team Dissolve and contributors
 - Dr T. Youngs
 - Dr A. Washington (January 2020 - present)
+- Dr R. Buchanan (September 2023 - present)
 - D. Nixon (January 2020 - present)
 - D. Bradley (January 2023 - present)
-- J. Swift (June 2023 - present)
-- N. Spitz (July 2023 - present)
+- J. Swift (June 2023 - September 2024)
+- N. Spitz (July 2023 - July 2024)
 - V. Ionica (February 2022 - May 2022)
 - S. Smith (March 2021 - June 2021)
 - E. Devlin (August 2021), C. Green (August 2020 - August 2021), Simona (September 2019 - August 2020), J. Busch (October 2019 - December 2019)

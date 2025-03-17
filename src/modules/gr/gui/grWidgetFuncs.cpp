@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/isotopeData.h"
 #include "gui/dataViewer.h"
@@ -66,23 +66,23 @@ void GRModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
     {
         auto &at1 = ps.atomTypeMix()[first];
         auto &at2 = ps.atomTypeMix()[second];
-        const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+        const std::string id = std::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
         // Filtering - does this 'id' match our filter?
         if (filterText && id.find(filterText.value()) == std::string::npos)
             continue;
 
         // Full partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
-                                                      fmt::format("{} (Full)", id), "Full");
+        rdfGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
+                                                      std::format("{} (Full)", id), "Full");
 
         // Bound partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
-                                                      fmt::format("{} (Bound)", id), "Bound");
+        rdfGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
+                                                      std::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
-                                                      fmt::format("{} (Unbound)", id), "Unbound");
+        rdfGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
+                                                      std::format("{} (Unbound)", id), "Unbound");
     }
 }
 
@@ -110,14 +110,14 @@ void GRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
         }
         else if (ui_.ConfigurationPartialsButton->isChecked())
         {
-            auto targetPrefix = fmt::format("{}//UnweightedGR", (*optConfig)->niceName());
+            auto targetPrefix = std::format("{}//UnweightedGR", (*optConfig)->niceName());
             targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>(targetPrefix, module_->name());
             createPartialSetRenderables(targetPrefix);
         }
         else
             for (auto *cfg : cfgs)
                 rdfGraph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//{}//UnweightedGR//Total", module_->name(), cfg->niceName()), cfg->niceName(), "Total");
+                    std::format("{}//{}//UnweightedGR//Total", module_->name(), cfg->niceName()), cfg->niceName(), "Total");
     }
 
     // Validate renderables if they need it

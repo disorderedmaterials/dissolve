@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
 #include "classes/partialSetAccumulator.h"
@@ -25,13 +25,6 @@ EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialS
 // Run main processing
 Module::ExecutionResult AccumulateModule::process(ModuleContext &moduleContext)
 {
-    // Get the modules and decide on the PartialSet data name we're looking for
-    if (targetModules_.empty())
-    {
-        Messenger::error("No target modules set.");
-        return ExecutionResult::Failed;
-    }
-
     Messenger::print("Accumulate: Target data to accumulate is '{}'.\n", targetPartialSet().keyword(targetPartialSet_));
     Messenger::print("Accumulate: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("\n");
@@ -78,7 +71,7 @@ Module::ExecutionResult AccumulateModule::process(ModuleContext &moduleContext)
         // Save data if requested
         std::vector<std::string> suffixes = {"gr", "sq", "gr"};
         std::vector<std::string> units = {"r, Angstroms", "Q, Angstroms**-1", "r, Angstroms"};
-        if (save_ && !(MPIRunMaster(procPool, accumulated.save(fmt::format("{}-{}", name(), targetModule->name()), dataName,
+        if (save_ && !(MPIRunMaster(procPool, accumulated.save(std::format("{}-{}", name(), targetModule->name()), dataName,
                                                                suffixes[targetPartialSet_], units[targetPartialSet_]))))
             return ExecutionResult::Failed;
     }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/export/coordinates.h"
 #include "base/lineParser.h"
@@ -79,12 +79,10 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration 
     }
 
     // Export Atoms
-    const auto &atomTypes = cfg->atomTypes();
     auto n = 0;
     for (const auto &i : cfg->atoms())
-        if (!parser.writeLineF("{:<6}{:10d}{:20.10f}\n{:20.12f}{:20.12f}{:20.12f}\n",
-                               atomTypes[i.localTypeIndex()].atomTypeName(), n++ + 1, AtomicMass::mass(i.speciesAtom()->Z()),
-                               i.r().x, i.r().y, i.r().z))
+        if (!parser.writeLineF("{:<6}{:10d}{:20.10f}\n{:20.12f}{:20.12f}{:20.12f}\n", i.speciesAtom()->atomType()->name(),
+                               n++ + 1, AtomicMass::mass(i.speciesAtom()->Z()), i.r().x, i.r().y, i.r().z))
             return false;
 
     return true;
@@ -116,8 +114,8 @@ bool CoordinateExportFileFormat::exportData(Configuration *cfg)
             result = exportDLPOLY(parser, cfg);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Coordinates format '{}' export has not been implemented.\n",
-                                                 formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Coordinates format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

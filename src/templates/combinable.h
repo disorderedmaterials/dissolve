@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "templates/parallelDefs.h"
 
@@ -52,6 +52,7 @@ template <class ValueType> class CombinableValue
 {
     public:
     template <typename Lambda> CombinableValue(Lambda initializer) : combinable_(initializer) {}
+    CombinableValue(ValueType initial) : combinable_([initial]() { return initial; }) {}
     ValueType finalize() { return combinable_.combine(std::plus<ValueType>()); }
     ValueType &local() { return combinable_.local(); }
 

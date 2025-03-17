@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/randomBuffer.h"
 #include "base/timer.h"
@@ -15,13 +15,6 @@
 // Run main processing
 Module::ExecutionResult AtomShakeModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Retrieve control parameters from Configuration
     auto rCut = cutoffDistance_.value_or(moduleContext.dissolve().pairPotentialRange());
     const auto termScale = 1.0;

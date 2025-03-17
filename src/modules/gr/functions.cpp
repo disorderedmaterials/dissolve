@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/atom.h"
 #include "classes/atomType.h"
@@ -71,7 +71,7 @@ bool GRModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg
     int *bins;
 
     n = 0;
-    for (auto &atd : cfg->atomTypes())
+    for (auto &atd : cfg->atomTypePopulations())
     {
         maxr[n] = atd.population();
         nr[n] = 0;
@@ -84,6 +84,8 @@ bool GRModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg
     for (auto &atom : cfg->atoms())
     {
         m = atom.localTypeIndex();
+        if (m == AtomType::Ignore)
+            continue;
         r[m][nr[m]++] = atom.r();
     }
 
@@ -209,13 +211,20 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
         for (auto &i : atomsI)
         {
             auto typeI = i->localTypeIndex();
+            if (typeI == AtomType::Ignore)
+                continue;
+
             auto &rI = i->r();
 
             for (auto &j : atomsJ)
             {
+                auto typeJ = j->localTypeIndex();
+                if (typeJ == AtomType::Ignore)
+                    continue;
+
                 auto &rJ = j->r();
                 auto distance = box->minimumDistance(rJ, rI);
-                histograms[{typeI, j->localTypeIndex()}].bin(distance);
+                histograms[{typeI, typeJ}].bin(distance);
             }
         }
     };
@@ -226,6 +235,7 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
     auto histograms = combinableHistograms.finalize();
     addHistogramsToPartialSet(histograms, partialSet);
 
+    // Atoms within the same cell
     auto [start, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
     for (int n = start; n < end; ++n)
     {
@@ -234,18 +244,23 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
 
         // Add contributions between atoms in cellI
         PairIterator pairs(atomsI.size());
-        std::for_each(pairs.begin(), pairs.end(),
-                      [&atomsI, &partialSet](auto it)
-                      {
-                          auto [idx, jdx] = it;
-                          if (idx == jdx)
-                              return;
-                          auto &i = atomsI[idx];
-                          auto &j = atomsI[jdx];
-                          // No need to perform MIM since we're in the same cell
-                          double distance = (i->r() - j->r()).magnitude();
-                          partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-                      });
+        std::for_each(
+            pairs.begin(), pairs.end(),
+            [&atomsI, &partialSet](auto it)
+            {
+                auto [idx, jdx] = it;
+                if (idx == jdx)
+                    return;
+                auto &i = atomsI[idx];
+                auto typeI = i->localTypeIndex();
+                auto &j = atomsI[jdx];
+                auto typeJ = j->localTypeIndex();
+                if (typeI != AtomType::Ignore && typeJ != AtomType::Ignore)
+                {
+                    // No need to perform MIM since we're in the same cell
+                    partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin((i->r() - j->r()).magnitude());
+                }
+            });
     }
     return true;
 }
@@ -270,7 +285,7 @@ std::optional<double> GRModule::effectiveDensity() const
 
         totalWeight += weight;
 
-        // ADd to sum
+        // Add to sum
         if (rho0)
             *rho0 += weight / *cfg->atomicDensity();
         else
@@ -313,16 +328,16 @@ bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procP
                            bool &alreadyUpToDate)
 {
     // Does a PartialSet already exist for this Configuration?
-    auto originalGRObject = processingData.realiseIf<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), name_,
+    auto originalGRObject = processingData.realiseIf<PartialSet>(std::format("{}//OriginalGR", cfg->niceName()), name_,
                                                                  GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)
-        originalgr.setUp(cfg->atomTypes(), rdfRange, rdfBinWidth);
+        originalgr.setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
 
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
     alreadyUpToDate = false;
-    if (DissolveSys::sameString(originalgr.fingerprint(), fmt::format("{}", cfg->contentsVersion())) &&
+    if (DissolveSys::sameString(originalgr.fingerprint(), std::format("{}", cfg->contentsVersion())) &&
         (method != GRModule::TestMethod))
     {
         Messenger::print("Partial g(r) are up-to-date for Configuration '{}'.\n", cfg->name());
@@ -379,16 +394,23 @@ bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procP
     {
         const auto &atoms = (*it)->atoms();
 
-        dissolve::for_each_pair(
-            ParallelPolicies::seq, atoms.begin(), atoms.end(),
-            [box, &cells, &originalgr](int index, auto &i, int jndex, auto &j)
-            {
-                // Ignore atom on itself
-                if (index == jndex)
-                    return;
+        dissolve::for_each_pair(ParallelPolicies::seq, atoms.begin(), atoms.end(),
+                                [box, &originalgr](int index, auto &i, int jndex, auto &j)
+                                {
+                                    // Ignore atom on itself
+                                    if (index == jndex)
+                                        return;
 
-                originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(box->minimumDistance(i->r(), j->r()));
-            });
+                                    auto typeI = i->localTypeIndex();
+                                    if (typeI == AtomType::Ignore)
+                                        return;
+
+                                    auto typeJ = j->localTypeIndex();
+                                    if (typeJ == AtomType::Ignore)
+                                        return;
+
+                                    originalgr.boundHistogram(typeI, typeJ).bin(box->minimumDistance(i->r(), j->r()));
+                                });
     }
 
     timer.stop();
@@ -438,7 +460,7 @@ bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procP
      * Partials are now up-to-date
      */
 
-    originalgr.setFingerprint(fmt::format("{}", cfg->contentsVersion()));
+    originalgr.setFingerprint(std::format("{}", cfg->contentsVersion()));
 
     return true;
 }
@@ -511,7 +533,7 @@ bool GRModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &p
         processingData.realise<AtomTypeMix>("SummedAtomTypes", parentPrefix, GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
     for (Configuration *cfg : parentCfgs)
-        combinedAtomTypes.add(cfg->atomTypes());
+        combinedAtomTypes.add(cfg->atomTypePopulations());
 
     // Finalise and save the combined AtomTypes matrix
     combinedAtomTypes.finalise();
@@ -552,15 +574,15 @@ bool GRModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &p
 
         // Update fingerprint
         fingerprint +=
-            fingerprint.empty() ? fmt::format("{}", cfg->contentsVersion()) : fmt::format("_{}", cfg->contentsVersion());
+            fingerprint.empty() ? std::format("{}", cfg->contentsVersion()) : std::format("_{}", cfg->contentsVersion());
 
         // Calculate weighting factor
         double weight = ((cfgWeight / totalWeight) * *cfg->atomicDensity()) / rho0;
 
         // Grab partials for Configuration and add into our set
-        if (!processingData.contains(fmt::format("{}//UnweightedGR", cfg->niceName()), targetPrefix))
+        if (!processingData.contains(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-        auto cfgPartialGR = processingData.value<PartialSet>(fmt::format("{}//UnweightedGR", cfg->niceName()), targetPrefix);
+        auto cfgPartialGR = processingData.value<PartialSet>(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix);
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);
@@ -651,25 +673,25 @@ bool GRModule::testReferencePartial(const PartialSet &partials, double testThres
         // Get indices of AtomTypes
         auto indexI = partials.atomTypeMix().indexOf(typeIorTotal);
         auto indexJ = partials.atomTypeMix().indexOf(typeJ);
-        if ((indexI == -1) || (indexJ == -1))
+        if (!indexI || !indexJ)
             return Messenger::error("Unrecognised test data name '{}'.\n", testData.tag());
 
         // AtomTypes are valid, so check the 'target'
         Error::ErrorReport errorReport;
         if (DissolveSys::sameString(target, "bound"))
         {
-            errorReport = Error::percent(partials.boundPartial(indexI, indexJ), testData);
+            errorReport = Error::percent(partials.boundPartial(*indexI, *indexJ), testData);
             Messenger::print(Error::errorReportString(errorReport));
         }
 
         else if (DissolveSys::sameString(target, "unbound"))
         {
-            errorReport = Error::percent(partials.unboundPartial(indexI, indexJ), testData);
+            errorReport = Error::percent(partials.unboundPartial(*indexI, *indexJ), testData);
             Messenger::print(Error::errorReportString(errorReport));
         }
         else if (DissolveSys::sameString(target, "full"))
         {
-            errorReport = Error::percent(partials.partial(indexI, indexJ), testData);
+            errorReport = Error::percent(partials.partial(*indexI, *indexJ), testData);
             Messenger::print(Error::errorReportString(errorReport));
         }
 

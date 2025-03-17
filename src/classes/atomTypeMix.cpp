@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/atomTypeMix.h"
 #include "base/lineParser.h"
@@ -33,8 +33,8 @@ void AtomTypeMix::zero()
         atd.zeroPopulations();
 }
 
-// Add the specified AtomType to the list, returning the index of the AtomType in the list
-AtomTypeData &AtomTypeMix::add(std::shared_ptr<AtomType> atomType, double population)
+// Add the specified AtomType to the list, returning data object and its index in the vector
+std::pair<AtomTypeData &, int> AtomTypeMix::add(std::shared_ptr<AtomType> atomType, double population)
 {
     // Search the list for the AtomType provided.
     auto atd =
@@ -44,10 +44,11 @@ AtomTypeData &AtomTypeMix::add(std::shared_ptr<AtomType> atomType, double popula
     if (atd != types_.end())
     {
         atd->add(population);
-        return *atd;
+        return {*atd, atd - types_.begin()};
     }
 
-    return types_.emplace_back(types_.size(), atomType, population);
+    auto &newAtomTypeData = types_.emplace_back(atomType, population);
+    return {newAtomTypeData, types_.size() - 1};
 }
 
 // Add the AtomTypes in the supplied list into this one, increasing populations etc.
@@ -56,7 +57,7 @@ void AtomTypeMix::add(const AtomTypeMix &source)
     // Loop over AtomTypes in the source list
     for (auto &otherType : source)
     {
-        AtomTypeData &atd = add(otherType.atomType());
+        auto &atd = std::get<0>(add(otherType.atomType()));
 
         // If no Isotope data are present, add the population now. Otherwise, add it via the isotopes...
         if (otherType.nIsotopes() == 0)
@@ -67,25 +68,17 @@ void AtomTypeMix::add(const AtomTypeMix &source)
     }
 }
 
-// Remove specified AtomType from the list
-void AtomTypeMix::remove(std::shared_ptr<AtomType> atomType)
-{
-    types_.erase(
-        std::remove_if(types_.begin(), types_.end(), [&atomType](const auto &atd) { return atd.atomType() == atomType; }));
-}
-
 // Add/increase this AtomType/Isotope pair
 void AtomTypeMix::addIsotope(std::shared_ptr<AtomType> atomType, Sears91::Isotope tope, double popAdd)
 {
-    auto &atd = add(std::move(atomType));
+    auto &atd = std::get<0>(add(std::move(atomType)));
     atd.add(tope, popAdd);
 }
 
 // Finalise list, calculating fractional populations etc.
 void AtomTypeMix::finalise()
 {
-    // Finalise AtomTypeData
-    double total = totalPopulation();
+    auto total = totalPopulation();
     for (auto &atd : types_)
         atd.finalise(total);
 }
@@ -126,7 +119,6 @@ void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchang
 // Make all AtomTypeData in the list reference only their natural isotope
 void AtomTypeMix::naturalise()
 {
-    // Loop over AtomTypes in the source list
     for (auto &atd : types_)
         atd.naturalise();
 }
@@ -134,11 +126,8 @@ void AtomTypeMix::naturalise()
 // Check for presence of AtomType
 bool AtomTypeMix::contains(const std::shared_ptr<AtomType> &atomType) const
 {
-    for (auto &atd : types_)
-        if (atd.atomType() == atomType)
-            return true;
-
-    return false;
+    return std::find_if(types_.begin(), types_.end(), [atomType](const auto &atd) { return atd.atomType() == atomType; }) !=
+           types_.end();
 }
 
 // Check for presence of AtomType/Isotope pair
@@ -162,35 +151,29 @@ std::vector<AtomTypeData>::const_iterator AtomTypeMix::begin() const { return ty
 std::vector<AtomTypeData>::const_iterator AtomTypeMix::end() const { return types_.end(); }
 
 // Return index of AtomType
-int AtomTypeMix::indexOf(const std::shared_ptr<AtomType> &atomtype) const
+std::optional<int> AtomTypeMix::indexOf(const std::shared_ptr<AtomType> &atomType) const
 {
-    auto count = 0;
-    for (auto &atd : types_)
-    {
-        if (atd.atomType() == atomtype)
-            return count;
-        ++count;
-    }
-
-    return -1;
+    auto it = std::find_if(types_.begin(), types_.end(), [atomType](const auto &atd) { return atd.atomType() == atomType; });
+    if (it == types_.end())
+        return {};
+    else
+        return it - types_.begin();
 }
 
 // Return index of names AtomType
-int AtomTypeMix::indexOf(std::string_view name) const
+std::optional<int> AtomTypeMix::indexOf(std::string_view name) const
 {
-    auto count = 0;
-    for (auto &atd : types_)
-    {
-        if (DissolveSys::sameString(atd.atomType()->name(), name))
-            return count;
-        ++count;
-    }
-
-    return -1;
+    auto it = std::find_if(types_.begin(), types_.end(),
+                           [name](const auto &atd) { return DissolveSys::sameString(atd.atomType()->name(), name); });
+    if (it == types_.end())
+        return {};
+    else
+        return it - types_.begin();
 }
 
 // Return indices of AtomType pair
-std::pair<int, int> AtomTypeMix::indexOf(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const
+std::optional<std::pair<int, int>> AtomTypeMix::indexOf(const std::shared_ptr<AtomType> &at1,
+                                                        const std::shared_ptr<AtomType> &at2) const
 {
     auto count = 0, index = -1;
     for (auto &atd : types_)
@@ -200,19 +183,19 @@ std::pair<int, int> AtomTypeMix::indexOf(const std::shared_ptr<AtomType> &at1, c
             if (index == -1)
                 index = count;
             else
-                return {count, index};
+                return {{count, index}};
         }
         if (atd.atomType() == at2)
         {
             if (index == -1)
                 index = count;
             else
-                return {index, count};
+                return {{index, count}};
         }
         ++count;
     }
 
-    return {-1, -1};
+    return {};
 }
 
 // Return total population of all types

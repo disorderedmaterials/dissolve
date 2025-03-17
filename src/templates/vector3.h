@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
+#include "base/messenger.h"
 #include "base/serialiser.h"
 #include "math/constants.h"
 #include "math/mathFunc.h"
 #include <cmath>
-#include <fmt/format.h>
+#include <format>
+#include <iostream>
 #include <stdexcept>
 
 class NodeValue;
@@ -22,8 +24,8 @@ template <> struct SerialisableContext<NodeValue>
 template <class T> class Vec3 : public Serialisable<typename SerialisableContext<T>::type>
 {
     public:
-    Vec3<T>() : x(T()), y(T()), z(T()){};
-    Vec3<T>(T xx, T yy, T zz) : x(xx), y(yy), z(zz){};
+    Vec3() : x(T()), y(T()), z(T()){};
+    Vec3(T xx, T yy, T zz) : x(xx), y(yy), z(zz){};
     // Components of vector
     T x, y, z;
 
@@ -82,7 +84,7 @@ template <class T> class Vec3 : public Serialisable<typename SerialisableContext
         else if (index == 2)
             return z;
 
-        throw(std::runtime_error(fmt::format("Vec3 - element index {} is out of bounds.", index)));
+        Messenger::exception("Vec3 - element index {} is out of bounds.", index);
         return T();
     }
 
@@ -182,7 +184,7 @@ template <class T> class Vec3 : public Serialisable<typename SerialisableContext
         else if (index == 2)
             return z;
 
-        throw(std::runtime_error(fmt::format("Vec3 - array access failed - index {} is out of bounds.", index)));
+        Messenger::exception("Vec3 - array access failed - index {} is out of bounds.", index);
     }
 
     /*
@@ -310,7 +312,7 @@ template <class T> class Vec3 : public Serialisable<typename SerialisableContext
     // Normalise the vector to unity
     void normalise()
     {
-        double mag = sqrt(x * x + y * y + z * z);
+        auto mag = sqrt(x * x + y * y + z * z);
         if (mag < 1.0E-8)
             zero();
         else
@@ -319,6 +321,12 @@ template <class T> class Vec3 : public Serialisable<typename SerialisableContext
             y /= mag;
             z /= mag;
         }
+    }
+    // Return the normalised vector
+    Vec3<double> normalised()
+    {
+        auto mag = sqrt(x * x + y * y + z * z);
+        return {x / mag, y / mag, z / mag};
     }
     // Returns an orthogonal, normalised unit vector
     Vec3<T> orthogonal() const
@@ -371,7 +379,7 @@ template <class T> class Vec3 : public Serialisable<typename SerialisableContext
         *this = newvec;
     }
     // Prints the contents of the vector
-    void print() const { fmt::print("{} {} {}\n", x, y, z); }
+    void print() const { std::cout << std::format("{} {} {}", x, y, z) << std::endl; }
     // Generate random unit vector
     void randomUnit()
     {
@@ -420,7 +428,7 @@ template <class T> class Vec3 : public Serialisable<typename SerialisableContext
         else if (index == 2)
             return Vec3<T>(0, 0, 1);
 
-        throw(std::runtime_error(fmt::format("Vec3 - unit() generation failed - index {} is out of bounds.", index)));
+        Messenger::exception("Vec3 - unit() generation failed - index {} is out of bounds.", index);
         return Vec3<T>();
     }
     // Swap the two specified elements

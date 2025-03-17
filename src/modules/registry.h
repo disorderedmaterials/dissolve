@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -42,8 +42,7 @@ class ModuleRegistry
     {
         // Check for duplicate module type
         if (producers_.find(moduleType) != producers_.end())
-            throw(std::runtime_error(
-                fmt::format("A module producer for type '{}' already exists.\n", ModuleTypes::moduleType(moduleType))));
+            Messenger::exception("A module producer for type '{}' already exists.\n", ModuleTypes::moduleType(moduleType));
 
         producers_.emplace(moduleType, ModuleRegistryData([]() { return new M(); }, brief));
 

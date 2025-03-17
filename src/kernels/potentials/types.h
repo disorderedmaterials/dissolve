@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -12,8 +12,8 @@ namespace ExternalPotentialTypes
 // External Potential Types
 enum class ExternalPotentialType
 {
-    Simple,
-    Directional,
+    Spherical,
+    Cylindrical,
     Regional
 };
 // Return whether the supplied external potential type is valid

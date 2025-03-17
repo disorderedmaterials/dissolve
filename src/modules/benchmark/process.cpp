@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
 #include "classes/box.h"
@@ -15,13 +15,6 @@
 // Run main processing
 Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Get options
     Messenger::print("Benchmark: Test timings will be averaged over {} {}.\n", nRepeats_, nRepeats_ == 1 ? "run" : "runs");
     Messenger::print("Benchmark: Test timings {} be saved to disk.\n", save_ ? "will" : "will not");
@@ -43,7 +36,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "Generator"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "Generator"),
                           "Configuration generator", timing, save_);
     }
 
@@ -69,7 +62,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RDFCells"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RDFCells"),
                           "RDF (Cells) to half-cell limit", timing, save_);
     }
 
@@ -95,7 +88,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RDFSimple"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RDFSimple"),
                           "RDF (Simple) to half-cell limit", timing, save_);
     }
 
@@ -114,7 +107,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "IntraEnergy"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "IntraEnergy"),
                           "Intramolecular energy", timing, save_);
     }
 
@@ -133,7 +126,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "InterEnergy"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "InterEnergy"),
                           "Interatomic energy", timing, save_);
     }
 
@@ -171,7 +164,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RegionalDist"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RegionalDist"),
                           "Distributor (regional)", timing, save_);
     }
 

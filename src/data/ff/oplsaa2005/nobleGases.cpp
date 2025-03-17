@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/ff/oplsaa2005/nobleGases.h"
 
@@ -35,7 +35,7 @@ std::string_view Forcefield_OPLSAA2005_NobleGases::name() const { return "OPLSAA
 // Return description for Forcefield
 std::string_view Forcefield_OPLSAA2005_NobleGases::description() const
 {
-    static std::string desc = fmt::format("Noble gases from OPLS-AA (2005).<br/><br/>References: {}", publicationReferences());
+    static std::string desc = std::format("Noble gases from OPLS-AA (2005).<br/><br/>References: {}", publicationReferences());
 
     return desc;
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/dataViewer.h"
 #include <QMenu>
@@ -149,7 +149,8 @@ void DataViewer::contextMenuRequested(QPoint pos)
         auto rend = renderableWithTag(queryObjectInfo());
         if (!rend)
         {
-            fmt::print("Couldn't locate renderable with tag '{}' in the DataViewer...", queryObjectInfo());
+            std::cout << std::format("Couldn't locate renderable with tag '{}' in the DataViewer...", queryObjectInfo())
+                      << std::endl;
             return;
         }
 

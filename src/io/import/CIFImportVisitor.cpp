@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/import/CIFImportVisitor.h"
 #include "base/messenger.h"
@@ -44,9 +44,8 @@ antlrcpp::Any CIFImportVisitor::visitLoopedData(CIFImportParser::LoopedDataConte
 {
     // Sanity check table data size
     if (ctx->loop()->values.size() % ctx->loop()->columns.size())
-        throw(std::runtime_error(fmt::format("CIF table has {} columns (first is '{}') but {} values (and C%V != 0).\n",
-                                             ctx->loop()->columns.size(), ctx->loop()->columns.front()->getText(),
-                                             ctx->loop()->values.size())));
+        Messenger::exception("CIF table has {} columns (first is '{}') but {} values (and C%V != 0).\n",
+                             ctx->loop()->columns.size(), ctx->loop()->columns.front()->getText(), ctx->loop()->values.size());
 
     // Construct / retrieve dictionary elements for columns
     std::vector<std::reference_wrapper<std::vector<std::string>>> columns;

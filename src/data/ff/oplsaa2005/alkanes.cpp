@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/ff/oplsaa2005/alkanes.h"
 
@@ -36,7 +36,7 @@ std::string_view Forcefield_OPLSAA2005_Alkanes::name() const { return "OPLSAA200
 // Return description for Forcefield
 std::string_view Forcefield_OPLSAA2005_Alkanes::description() const
 {
-    static std::string desc = fmt::format(
+    static std::string desc = std::format(
         "Alkanes from OPLS-AA (2005), covering linear and branched alkanes.<br/><br/>References: {}", publicationReferences());
 
     return desc;

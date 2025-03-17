@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/models/pairPotentialModel.h"
 #include "base/sysFunc.h"
@@ -20,7 +20,18 @@ int PairPotentialModel::rowCount(const QModelIndex &parent) const
 int PairPotentialModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 6;
+    return Columns::nDataColumns;
+}
+
+// Set whether the data is editable or not
+void PairPotentialModel::setEditable(bool b)
+{
+    if (editable_ == b)
+        return;
+
+    editable_ = b;
+
+    reset();
 }
 
 const PairPotential *PairPotentialModel::rawData(const QModelIndex index) const
@@ -40,22 +51,15 @@ QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
     {
         switch (index.column())
         {
-            // Name
-            case (0):
+            case (Columns::NameIColumn):
                 return QString::fromStdString(std::string(pp->nameI()));
-            // Element
-            case (1):
+            case (Columns::NameJColumn):
                 return QString::fromStdString(std::string(pp->nameJ()));
-            // Form
-            case (2):
+            case (Columns::ChargeProductColumn):
+                return PairPotential::includeCoulombPotential() ? QString::number(pp->localChargeProduct()) : QString("--");
+            case (Columns::ShortRangeFormColumn):
                 return QString::fromStdString(Functions1D::forms().keyword(pp->interactionPotential().form()));
-            // Charges
-            case (3):
-                return pp->includeAtomTypeCharges() ? QString::number(pp->chargeI()) : QString();
-            case (4):
-                return pp->includeAtomTypeCharges() ? QString::number(pp->chargeJ()) : QString();
-            // Short Range Parameters
-            case (5):
+            case (Columns::ShortRangeParametersColumn):
                 return QString::fromStdString(pp->interactionPotential().parametersAsString());
             default:
                 return {};
@@ -67,31 +71,24 @@ QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
     return {};
 }
 
-// This function is extraneous right now, since none of the cells are
-// editable, but they're included for completeness.
 bool PairPotentialModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role != Qt::EditRole)
+    if (role != Qt::EditRole || !editable_)
         return false;
 
     auto *pair = rawData(index);
-    std::vector<double> values;
 
     switch (index.column())
     {
-        // Name
-        case (0):
-        case (1):
-        case (2):
+        // Uneditable Columns
+        case (Columns::NameIColumn):
+        case (Columns::NameJColumn):
+        case (Columns::ChargeProductColumn):
             return false;
-        case (3):
-            pair->setChargeI(value.toDouble());
+        case (Columns::ShortRangeFormColumn):
+            pair->setInteractionPotentialForm(Functions1D::forms().enumeration(value.toString().toStdString()));
             break;
-        case (4):
-            pair->setChargeJ(value.toDouble());
-            break;
-        // Short Range Parameters
-        case (5):
+        case (Columns::ShortRangeParametersColumn):
             if (!pair->setInteractionPotential(pair->interactionPotential().form(), value.toString().toStdString()))
                 return false;
             break;
@@ -104,7 +101,13 @@ bool PairPotentialModel::setData(const QModelIndex &index, const QVariant &value
     return true;
 }
 
-Qt::ItemFlags PairPotentialModel::flags(const QModelIndex &index) const { return Qt::ItemIsSelectable | Qt::ItemIsEnabled; }
+Qt::ItemFlags PairPotentialModel::flags(const QModelIndex &index) const
+{
+    return editable_ &&
+                   (index.column() == Columns::ShortRangeFormColumn || index.column() == Columns::ShortRangeParametersColumn)
+               ? Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable
+               : Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+}
 
 QVariant PairPotentialModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -114,17 +117,15 @@ QVariant PairPotentialModel::headerData(int section, Qt::Orientation orientation
     if (orientation == Qt::Horizontal)
         switch (section)
         {
-            case (0):
+            case (Columns::NameIColumn):
                 return "Type I";
-            case (1):
+            case (Columns::NameJColumn):
                 return "Type J";
-            case (2):
+            case (Columns::ChargeProductColumn):
+                return "q(i)q(j)";
+            case (Columns::ShortRangeFormColumn):
                 return "Form";
-            case (3):
-                return "Charge I";
-            case (4):
-                return "Charge J";
-            case (5):
+            case (Columns::ShortRangeParametersColumn):
                 return "Parameters";
             default:
                 return {};

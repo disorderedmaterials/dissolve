@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "classes/atom.h"
@@ -20,14 +20,7 @@ Module::ExecutionResult ExportCoordinatesModule::process(ModuleContext &moduleCo
     std::string originalFilename{coordinatesFormat_.filename()};
     if (tagWithIteration_)
         coordinatesFormat_.setFilename(
-            fmt::format("{}.{}", coordinatesFormat_.filename(), moduleContext.dissolve().iteration()));
-
-    // Check for Configuration target
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
+            std::format("{}.{}", coordinatesFormat_.filename(), moduleContext.dissolve().iteration()));
 
     // Only the pool master saves the data
     if (moduleContext.processPool().isMaster())

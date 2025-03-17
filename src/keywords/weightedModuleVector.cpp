@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "keywords/weightedModuleVector.h"
 #include "base/lineParser.h"
@@ -48,7 +48,8 @@ bool WeightedModuleVectorKeyword::deserialise(LineParser &parser, int startArg, 
         std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(),
                      [module](const auto &type) { return type == module->type(); }) == moduleTypes_.cend())
         return Messenger::error("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
-                                module->name(), ModuleTypes::moduleType(module->type()), name(), joinStrings(moduleTypes_));
+                                module->name(), ModuleTypes::moduleType(module->type()), name(),
+                                joinStrings(moduleTypes_, ", ", [](auto m) { return ModuleTypes::moduleType(m); }));
 
     // Check if module is already in the vector
     if (std::find_if(data_.cbegin(), data_.cend(), [module](const auto &item) { return item.first == module; }) != data_.cend())
@@ -99,15 +100,16 @@ void WeightedModuleVectorKeyword::deserialise(const SerialisedValue &node, const
                  auto moduleName = toml::find<std::string>(item, "target");
                  auto *module = coreData.findModule(moduleName);
                  if (!module)
-                     throw toml::type_error(fmt::format("No Module named '{}' exists.\n", moduleName), item.location());
+                     throw toml::type_error(std::format("No Module named '{}' exists.\n", moduleName), item.location());
 
                  // Check the module's type if we can
                  if (!moduleTypes_.empty() &&
                      std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(),
                                   [module](const auto &s) { return s == module->type(); }) == moduleTypes_.cend())
                      throw toml::type_error(
-                         fmt::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
-                                     moduleName, module->type(), name(), joinStrings(moduleTypes_)),
+                         std::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
+                                     moduleName, ModuleTypes::moduleType(module->type()), name(),
+                                     joinStrings(moduleTypes_, ", ", [](auto m) { return ModuleTypes::moduleType(m); })),
                          item.location());
 
                  data_.emplace_back(module, toml::find<double>(item, "weight"));

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/speciesAngle.h"
 #include "classes/coreData.h"
@@ -138,7 +138,7 @@ int SpeciesAngle::index(int n) const
     else if (n == 2)
         return indexK();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesAngle::index(int). Returning 0...\n");
+    Messenger::error("SpeciesAtom index {} is out of range in SpeciesAngle::index(int). Returning 0...\n", n);
     return 0;
 }
 
@@ -222,8 +222,8 @@ double SpeciesAngle::energy(double angleInDegrees) const
         return params[0] * (params[1] + params[2] * cos(angleInRadians) + params[3] * cos(2.0 * angleInRadians));
     }
 
-    throw(std::runtime_error(fmt::format("Angle functional form '{}' not accounted for, so can't calculate energy.\n",
-                                         AngleFunctions::forms().keyword(angleForm))));
+    Messenger::exception("Angle functional form '{}' not accounted for, so can't calculate energy.\n",
+                         AngleFunctions::forms().keyword(angleForm));
 }
 
 // Return force multiplier for specified angle
@@ -292,8 +292,8 @@ double SpeciesAngle::force(double angleInDegrees) const
                sin(angleInRadians);
     }
 
-    throw(std::runtime_error(fmt::format("Angle functional form '{}' not accounted for, so can't calculate force.\n",
-                                         AngleFunctions::forms().keyword(angleForm))));
+    Messenger::exception("Angle functional form '{}' not accounted for, so can't calculate force.\n",
+                         AngleFunctions::forms().keyword(angleForm));
 }
 
 // Express as a serialisable value

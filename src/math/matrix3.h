@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -11,6 +11,7 @@ class Matrix3
 {
     public:
     Matrix3();
+    Matrix3(const Vec3<double> &x, const Vec3<double> &y, const Vec3<double> &z);
 
     private:
     // Matrix
@@ -41,6 +42,8 @@ class Matrix3
     void print() const;
     // Set the zero matrix
     void zero();
+    // Create orthogonal matrix around supplied single column vector
+    void createFromVector(const Vec3<double> &v, int columnIndex);
     // Return transpose of current matrix
     Matrix3 &transpose() const;
     // Transform the supplied vector by the transpose of the current matrix

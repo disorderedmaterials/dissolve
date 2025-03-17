@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/layerTab.h"
 #include "base/lineParser.h"
@@ -237,10 +237,14 @@ void LayerTab::moduleNameChanged(const QModelIndex &index, const QString &oldNam
     // Find the control widget for the module and update it
     auto *mcw = getControlWidget(module);
     if (mcw)
-        mcw->updateControls();
+        mcw->updateControls(ModuleWidget::RecreateRenderablesFlag);
 
     // Rename processing module data
     dissolve_.processingModuleData().renamePrefix(oldName.toStdString(), newName.toStdString());
+
+    // Trigger another redraw of the widget in order to update any graph controls
+    if (mcw)
+        mcw->updateControls();
 }
 
 // Update the module list

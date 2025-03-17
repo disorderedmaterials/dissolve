@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "praxis.h"
 #include "base/messenger.h"
-#include <iomanip>
+#include <algorithm>
+#include <cmath>
 #include <limits>
 
 PrAxisMinimiser::PrAxisMinimiser(MinimiserCostFunction costFunction, bool pokeBeforeCost)
@@ -1332,7 +1333,7 @@ double PrAxisMinimiser::r8_uniform_01(int &seed)
     {
         seed = seed + i4_huge;
     }
-    r = (double)(seed)*4.656612875E-10;
+    r = (double)(seed) * 4.656612875E-10;
     return r;
 }
 //****************************************************************************80
@@ -1785,7 +1786,7 @@ void PrAxisMinimiser::r8vec_print(int n, double a[], std::string_view title)
     Messenger::print("{}\n", title);
     for (i = 0; i < n; i++)
     {
-        Messenger::print("  {:8i}: {:14.6e}\n", i, a[i]);
+        Messenger::print("  {:8}: {:14.6e}\n", i, a[i]);
     }
 
     return;

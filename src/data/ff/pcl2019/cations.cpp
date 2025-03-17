@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/ff/pcl2019/cations.h"
 
@@ -127,7 +127,7 @@ std::string_view Forcefield_PCL2019_Cations::name() const { return "PCL2019/Cati
 std::string_view Forcefield_PCL2019_Cations::description() const
 {
     static std::string desc =
-        fmt::format("Ionic liquid cations forcefield of Padua & Canongia Lopes (and contributors), 19 June 2019 "
+        std::format("Ionic liquid cations forcefield of Padua & Canongia Lopes (and contributors), 19 June 2019 "
                     "version, covering .<br/><br/>References: {}",
                     publicationReferences());
     return desc;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/export/data2D.h"
 #include "base/lineParser.h"
@@ -83,8 +83,8 @@ bool Data2DExportFileFormat::exportData(const Data2DBase &data)
             result = exportCartesian(parser, data.xAxis(), data.yAxis(), data.values());
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Data2D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data2D format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

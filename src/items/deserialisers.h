@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/lineParser.h"
 #include "classes/coreData.h"
 #include <any>
-#include <fmt/format.h>
+#include <format>
 #include <functional>
 #include <typeindex>
 #include <unordered_map>
@@ -68,9 +68,8 @@ class GenericItemDeserialiser
         // Find a suitable deserialiser and call it
         auto it = deserialisers_.find(typeid(T));
         if (it == deserialisers_.end())
-            throw(std::runtime_error(
-                fmt::format("Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n",
-                            typeid(T).name())));
+            Messenger::exception("Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n",
+                                 typeid(T).name());
 
         auto a = std::make_any<T>(object);
         if (!(it->second)(a, parser, coreData))

@@ -6,6 +6,7 @@ add_library(
   data1D.cpp
   data2D.cpp
   data3D.cpp
+  derivative.cpp
   doubleExp.cpp
   error.cpp
   filters.cpp
@@ -23,9 +24,10 @@ add_library(
   matrix3.cpp
   matrix4.cpp
   mc.cpp
-  praxis.cpp
+  peaks.cpp
   poissonFit.cpp
   polynomial.cpp
+  praxis.cpp
   range.cpp
   regression.cpp
   sampledData1D.cpp
@@ -45,6 +47,7 @@ add_library(
   data3D.h
   data3DBase.h
   dataBase.h
+  derivative.h
   doubleExp.h
   error.h
   filters.h
@@ -59,10 +62,12 @@ add_library(
   integerHistogram1D.h
   integrator.h
   interpolator.h
+  limitsFunc.h
   mathFunc.h
   matrix3.h
   matrix4.h
   mc.h
+  peaks.h
   polynomial.h
   poissonFit.h
   praxis.h

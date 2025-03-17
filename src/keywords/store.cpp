@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "keywords/store.h"
 #include "base/lineParser.h"
+#include "generator/regionBase.h"
+#include "generator/select.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/configurationVector.h"
@@ -16,13 +18,11 @@
 #include "keywords/nodeVector.h"
 #include "keywords/range.h"
 #include "keywords/species.h"
+#include "keywords/speciesSiteVector.h"
 #include "keywords/stdString.h"
 #include "keywords/vec3Double.h"
 #include "keywords/vec3Integer.h"
 #include "keywords/vec3NodeValue.h"
-#include "procedure/nodes/collect1D.h"
-#include "procedure/nodes/regionBase.h"
-#include "procedure/nodes/select.h"
 
 /*
  * Keyword Data
@@ -165,10 +165,10 @@ bool KeywordStore::serialise(LineParser &parser, std::string_view prefix, bool o
 template <typename K> K *getKeyword(std::string_view name, std::optional<KeywordStoreEntry> optKeyword)
 {
     if (!optKeyword)
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be retrieved as it doesn't exist.\n", name)));
+        Messenger::exception("Keyword '{}' cannot be retrieved as it doesn't exist.\n", name);
     K *keyword = dynamic_cast<K *>(optKeyword->first);
     if (!keyword)
-        throw(std::runtime_error(fmt::format("Keyword '{}' is not of type '{}'.\n", name, typeid(K).name())));
+        Messenger::exception("Keyword '{}' is not of type '{}'.\n", name, typeid(K).name());
     return keyword;
 }
 
@@ -185,25 +185,22 @@ bool KeywordStore::set(std::string_view name, const int value)
 {
     return getKeyword<IntegerKeyword>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value)
+bool KeywordStore::set(std::string_view name, const std::vector<const SpeciesSite *> value)
 {
-    return getKeyword<NodeKeyword<Collect1DProcedureNode>>(name, find(name))->setData(value);
+    getKeyword<SpeciesSiteVectorKeyword>(name, find(name))->data() = value;
+    return true;
 }
-bool KeywordStore::set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value)
+bool KeywordStore::set(std::string_view name, const std::shared_ptr<RegionGeneratorNodeBase> value)
 {
-    return getKeyword<NodeVectorKeyword<Collect1DProcedureNode>>(name, find(name))->setData(value);
+    return getKeyword<NodeKeyword<RegionGeneratorNodeBase>>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value)
+bool KeywordStore::set(std::string_view name, const std::shared_ptr<SelectGeneratorNode> value)
 {
-    return getKeyword<NodeKeyword<RegionProcedureNodeBase>>(name, find(name))->setData(value);
+    return getKeyword<NodeKeyword<SelectGeneratorNode>>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value)
+bool KeywordStore::set(std::string_view name, const ConstNodeVector<SelectGeneratorNode> value)
 {
-    return getKeyword<NodeKeyword<SelectProcedureNode>>(name, find(name))->setData(value);
-}
-bool KeywordStore::set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value)
-{
-    return getKeyword<NodeVectorKeyword<SelectProcedureNode>>(name, find(name))->setData(value);
+    return getKeyword<NodeVectorKeyword<SelectGeneratorNode>>(name, find(name))->setData(value);
 }
 bool KeywordStore::set(std::string_view name, const std::vector<Module *> value)
 {

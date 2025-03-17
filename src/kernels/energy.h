@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -85,7 +85,7 @@ class EnergyKernel : public GeometryKernel
     // Return PairPotential energy between atoms
     virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r) const;
     // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
-    virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale) const;
+    virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const;
 
     /*
      * PairPotential Terms

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -54,7 +54,7 @@ class Region
 
     public:
     // Generate region information
-    bool generate(const Configuration *cfg, double voxelSize,
+    bool generate(const Configuration *cfg, double voxelSize, bool invert,
                   const std::function<std::shared_ptr<VoxelKernel>(void)> &kernelGenerator);
     // Return whether the region is valid
     bool isValid() const;

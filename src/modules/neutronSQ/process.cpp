@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "classes/configuration.h"
@@ -55,9 +55,9 @@ bool NeutronSQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Key
             switch (referenceNormalisedTo_)
             {
                 case (StructureFactors::NoNormalisation):
-                    factor = 1.0 / normaliseTo_ == StructureFactors::SquareOfAverageNormalisation
-                                 ? weights.boundCoherentSquareOfAverage()
-                                 : weights.boundCoherentAverageOfSquares();
+                    factor = 1.0 / (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation
+                                        ? weights.boundCoherentSquareOfAverage()
+                                        : weights.boundCoherentAverageOfSquares());
                     break;
                 case (StructureFactors::SquareOfAverageNormalisation):
                     factor = weights.boundCoherentSquareOfAverage();
@@ -70,9 +70,8 @@ bool NeutronSQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Key
                         factor /= weights.boundCoherentSquareOfAverage();
                     break;
                 default:
-                    throw(std::runtime_error(
-                        fmt::format("Unhandled StructureFactor::NormalisationType ({}).\n",
-                                    StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_))));
+                    Messenger::exception("Unhandled StructureFactor::NormalisationType ({}).\n",
+                                         StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_));
             }
 
             // Apply normalisation factors to the data
@@ -118,10 +117,10 @@ bool NeutronSQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Key
         {
             if (moduleContext.processPool().isMaster())
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-ReferenceData.q", name()));
+                Data1DExportFileFormat exportFormat(std::format("{}-ReferenceData.q", name()));
                 if (!exportFormat.exportData(storedData))
                     return moduleContext.processPool().decideFalse();
-                Data1DExportFileFormat exportFormatFT(fmt::format("{}-ReferenceData.r", name()));
+                Data1DExportFileFormat exportFormatFT(std::format("{}-ReferenceData.r", name()));
                 if (!exportFormatFT.exportData(storedDataFT))
                     return moduleContext.processPool().decideFalse();
                 moduleContext.processPool().decideTrue();
@@ -271,7 +270,7 @@ Module::ExecutionResult NeutronSQModule::process(ModuleContext &moduleContext)
     {
         if (moduleContext.processPool().isMaster())
         {
-            Data1DExportFileFormat exportFormat(fmt::format("{}-weighted-total.gr.broad", name_));
+            Data1DExportFileFormat exportFormat(std::format("{}-weighted-total.gr.broad", name_));
             if (exportFormat.exportData(repGR))
                 moduleContext.processPool().decideTrue();
             else

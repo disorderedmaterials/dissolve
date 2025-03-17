@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/export/data1D.h"
 #include "base/lineParser.h"
@@ -62,8 +62,8 @@ bool Data1DExportFileFormat::exportData(const Data1DBase &data)
                 result = exportXY(parser, data.xAxis(), data.values());
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Data1D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data1D format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

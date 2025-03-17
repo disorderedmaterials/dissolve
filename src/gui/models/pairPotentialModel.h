@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -14,14 +14,30 @@ class PairPotentialModel : public QAbstractListModel
 {
     Q_OBJECT
 
+    public:
+    PairPotentialModel(const std::vector<PairPotential::Definition> &data);
+    ~PairPotentialModel() = default;
+
+    enum Columns
+    {
+        NameIColumn,
+        NameJColumn,
+        ChargeProductColumn,
+        ShortRangeFormColumn,
+        ShortRangeParametersColumn,
+        nDataColumns
+    };
+
     private:
     // Source pair potential data
     const std::vector<PairPotential::Definition> &data_;
+    // Whether the pair potential is editable
+    bool editable_{false};
 
     public:
-    // Set source pair potential data
-    PairPotentialModel(const std::vector<PairPotential::Definition> &data);
-    ~PairPotentialModel() = default;
+    // Set whether the data is editable or not
+    void setEditable(bool b);
+    // Retrieve raw data for model
     const PairPotential *rawData(const QModelIndex index) const;
     PairPotential *rawData(const QModelIndex index);
     // Update the table contents

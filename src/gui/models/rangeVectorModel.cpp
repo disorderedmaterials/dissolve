@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/models/rangeVectorModel.h"
 #include <QBrush>
-#include <fmt/format.h>
+#include <format>
 
 // set range data
 void RangeVectorModel::setData(std::vector<Range> &ranges)
@@ -55,7 +55,7 @@ QVariant RangeVectorModel::data(const QModelIndex &index, int role) const
             switch (index.column())
             {
                 case (0):
-                    return QString::fromStdString(fmt::format("Range {}", index.row() + 1));
+                    return QString::fromStdString(std::format("Range {}", index.row() + 1));
                 case (1):
                     if (range)
                     {

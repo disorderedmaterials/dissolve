@@ -12,201 +12,263 @@ DaySuffix() {
   esac
 }
 
-usage() {
-  echo "Usage:  $0 <TARGET> [-r] [-s X.Y.Z]"
-  echo "        -r	Calculate new version (only on release branch)"
-  echo "        -s	Set version explicitly to X.Y.Z"
-  echo ""
-  echo "TARGET is one of:     code - change version numbering in code, and installer and packaging scripts"
-  echo "                   release - change release version value on web and date in README.md"
-  echo "                   develop - change development version value on web"
-  echo ""
-  echo "If no options are specified the default behaviour is to print current versions across relevant files."
+# Retrieve the authoritative code version from src/main/version.cpp
+GetAuthoritativeVersion() {
+  echo $(grep '#define DISSOLVEVERSION' src/main/version.cpp | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g')
+}
+
+# Set versions in build files
+SetCodeVersion() {
+  # Must have new version string as argument
+  if [ $# == 0 ]
+  then
+    echo "Must pass version string as argument to SetWebReleaseInfo()."
+    exit 1
+  fi
+
+  # Program (main/version.h)
+  sed -i -e "s/#define DISSOLVEVERSION \"[0-9\.]\+\(.*\)\"/#define DISSOLVEVERSION \"$1\"\1/g" src/main/version.cpp
+
+  # Flake (flake.nix)
+  sed -i -e "s/version = \".*\"/version = \"$1\"/" flake.nix
+
+  # Root ./CMakeLists.txt
+  PARTS=($(echo $1 | tr "." " "))
+  MAJOR=${PARTS[0]}
+  MINOR=${PARTS[1]}
+  PATCH=${PARTS[2]}
+  sed -i -e "s/set(VERSION_MAJOR \"\([0-9\.]\+\)\")/set(VERSION_MAJOR \"$MAJOR\")/g" -e "s/set(VERSION_MINOR \"\([0-9a-z\.]\+\)\")/set(VERSION_MINOR \"$MINOR\")/g" -e "s/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/set(VERSION_PATCH \"$PATCH\")/g" CMakeLists.txt
+
+}
+
+# Get / check code versions in build files
+GetCodeVersion() {
+  # Program (main/version.h)
+  MAIN_VERSION=$(grep '#define DISSOLVEVERSION' src/main/version.cpp | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g')
+  echo "         version.cpp : ${MAIN_VERSION}"
+
+  if [[ ! "${MAIN_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "!!! Malformed version (or no version at all) found in version.cpp."
+    return 1
+  fi
+
+  # Flake (flake.nix)
+  FLAKE_VERSION=$(grep " version =" flake.nix | sed -e "s/\W*version = \"\(.*\)\";/\1/")
+  echo "           flake.nix : ${FLAKE_VERSION}"
+
+  # Root ./CMakeLists.txt
+  CMAKE_MAJOR=$(grep 'set(VERSION_MAJOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MAJOR \"\([0-9a-z\.]\+\)\")/\1/g')
+  CMAKE_MINOR=$(grep 'set(VERSION_MINOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MINOR \"\([0-9a-z\.]\+\)\")/\1/g')
+  CMAKE_PATCH=$(grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/\1/g')
+  CMAKE_VERSION="${CMAKE_MAJOR}.${CMAKE_MINOR}.${CMAKE_PATCH}"
+  echo "    ./CMakeLists.txt : ${CMAKE_VERSION}"
+
+  # Check Version?
+  if [ $# == 1 ]
+  then
+    if [ ${MAIN_VERSION} != "$1" ]
+    then
+      echo "!!! Version mismatch in version.cpp: ${MAIN_VERSION} != $1"
+      return 1
+    fi
+
+    if [ ${FLAKE_VERSION} != "$1" ]
+    then
+      echo "!!! Version mismatch in flake.nix: ${FLAKE_VERSION} != $1"
+      return 1
+    fi
+
+    if [ ${CMAKE_VERSION} != "$1" ]
+    then
+      echo "!!! Version mismatch in CMakeLists.cpp: ${CMAKE_VERSION} != $1"
+      return 1
+    fi
+  fi
+
+  return 0
+}
+
+# Set web release version and date
+SetWebReleaseInfo() {
+  # Must have new version string as argument
+  if [ $# == 0 ]
+  then
+    echo "Must pass version string as argument to SetWebReleaseInfo()."
+    exit 1
+  fi
+
+  # Get today's date, nicely formatted
+  DAYSUFFIX=$(DaySuffix)
+  TODAY=$(date "+%A %-d${DAYSUFFIX} %B %Y")
+
+  # Set releaseVersion and releaseDat on Website (web/main.toml)
+  sed -i -e "s/releaseVersion = \"[0-9\.]*\"/releaseVersion = \"$1\"/g" web/main.toml
+  sed -i -e "s/releaseDate = \".*\"/releaseDate = \"${TODAY}\"/g" web/main.toml
+}
+
+# Get web release version and date
+GetWebReleaseInfo() {
+  # Release version on Website (web/main.toml)
+  WEB_VERSION=$(grep 'releaseVersion' web/main.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g')
+  WEB_DATE=$(grep 'releaseDate' web/main.toml | sed -e 's/releaseDate = "\(.*\)"/\1/g')
+  echo "           main.toml (Version) : ${WEB_VERSION}"
+  echo "           main.toml    (Date) : ${WEB_DATE}"
+
+  # Did we get a sensible version out of the file?
+  if [[ ! "${WEB_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "!!! Malformed version (or no version at all) found in main.toml."
+    return 1
+  fi
+
+  # Check Version?
+  if [ $# == 1 ] && [ ${WEB_VERSION} != "$1" ]
+  then
+    echo "!!! Version mismatch in web/main.toml: ${WEB_VERSION} != $1"
+    return 1
+  fi
+
+  return 0
+}
+
+# Set README.md version and date
+SetReadMeInfo() {
+  # Must have new version string as argument
+  if [ $# == 0 ]
+  then
+    echo "Must pass version string as argument to SetReadMeInfo()."
+    exit 1
+  fi
+
+  # Get today's date, nicely formatted
+  DAYSUFFIX=$(DaySuffix)
+  TODAY=$(date "+%A %-d${DAYSUFFIX} %B %Y")
+
+  # Set the Last Release in the repository's root README.md
+  sed -i -e "s/Last Release: [0-9\.]*, \(.*\)_/Last Release: $1, ${TODAY}_/g" README.md
+}
+
+# Get README.md version and date
+GetReadMeInfo() {
+  # Last Release in the repository's root README.md
+  README_VERSION=$(grep 'Last Release:' README.md | sed -e 's/.*Release: \([0-9\.]*\),.*/\1/g')
+  README_DATE=$(grep 'Last Release:' README.md | sed -e "s/.*Release: .*, \(.*\)_/\1/g")
+  echo "           README.md (Version) : ${README_VERSION}"
+  echo "           README.md    (Date) : ${README_DATE}"
+
+  # Check Version?
+  if [ $# == 1 ] && [ ${README_VERSION} != "$1" ]
+  then
+    echo "!!! Version mismatch in web/main.toml: ${WEB_VERSION} != $1"
+    return 1
+  fi
+
+  return 0
+}
+
+ConsistencyCheck() {
+  RETURN=0
+  # Get authoritative source code version
+  SRC_VERSION=$(GetAuthoritativeVersion)
+  if ! GetWebReleaseInfo ${SRC_VERSION}; then RETURN=1; fi
+  if ! GetCodeVersion ${SRC_VERSION}; then RETURN=1; fi
+  exit $(( RETURN ))
+}
+
+PrintUsage() {
+  echo "Usage:  $0 [-v] [-k] [-t] [-q] [-r X.Y.Z] [-s X.Y.Z]"
+  echo "        -r  Explicitly set release version and date in README.md"
+  echo "        -s  Set version explicitly to X.Y.Z"
+  echo "        -v  Get authoritative code version (from src/main/version.cpp)"
+  echo "        -x  Get authoritative code version (from src/main/version.cpp) with patch version set to a literal 'X'"
+  echo "        -k  Check consistency of other files with current authoritative version"
+  echo "        -q  Determine bumped version using git-cliff"
+  echo "        -t  Determine type (major, minor, patch, or none) of bumped version using git-cliff"
+  echo "        -b  Determine bumped version using git-cliff and set new authoritative version"
+  echo "        -l  Generate ChangeLog.md containing unreleased changes since last major/minor/patch release"
+  echo "        -L  Generate ChangeLog.md over the current branch history"
 }
 
 # Check for no args provided
 if [ $# == 0 ]
 then
-  usage
+  PrintUsage
   exit 1
 fi
 
-# Get target type and shift to next option
-TYPE=$1
-shift
-if [ "$TYPE" != "code" ] && [ "$TYPE" != "release" ] && [ "$TYPE" != "develop" ]
-then
-  echo "Invalid target '${TYPE}' given (must be 'code', 'release', 'develop'"
-  exit 1
-fi
-
-# Get current version number from correct target
-if [ "$TYPE" == "code" ]
-then
-  CURRENT_VERSION=$(grep '#define DISSOLVEVERSION' src/main/version.cpp | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g')
-elif [ "$TYPE" == "release" ]
-then
-  CURRENT_VERSION=$(grep 'releaseVersion' web/main.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g')
-else
-  CURRENT_VERSION=$(grep 'devVersion' web/main.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g')
-fi
-PARTS=($(echo $CURRENT_VERSION | tr "." " "))
-MAJOR=${PARTS[0]}
-MINOR=${PARTS[1]}
-PATCH=${PARTS[2]}
-CHECK="true"
-echo "Current major version (${TYPE}) is : ${MAJOR}"
-echo "Current minor version (${TYPE}) is : ${MINOR}"
-echo "Current patch version (${TYPE}) is : ${PATCH}"
-
-while getopts ":rs:" opt
+while getopts "r:s:vkqblLxt" opt
 do
   case $opt in
-    s) MAJOR=$(echo $OPTARG | cut -f1 -d.)
-       MINOR=$(echo $OPTARG | cut -f2 -d.)
-       PATCH=$(echo $OPTARG | cut -f3 -d.)
-       CHECK="false"
-       echo "Version will be set explicitly to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
-       ;;
-    r) BRANCH=$(git rev-parse --abbrev-ref HEAD)
-       if [ "$BRANCH" != "Release" ]
-       then
-	   echo "Version number can only be auto-calculated on the Release branch"
-	   exit 1
-       fi
-       # Get next version number from git-cliff
-       PARTS=($(git cliff --bumped-version | tr "." " "))
+    s) PARTS=($(echo $OPTARG | tr "." " "))
        MAJOR=${PARTS[0]}
        MINOR=${PARTS[1]}
        PATCH=${PARTS[2]}
-       echo "Version will calculated to be MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
-       # Update Changelog
-       git cliff --bump v1.3.3..HEAD > ChangeLog.md
+       echo "Code and web version will be set explicitly to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
+       SetCodeVersion $OPTARG
+       SetWebReleaseInfo $OPTARG
+       ConsistencyCheck
        ;;
-   \?) usage
+    r) PARTS=($(echo $OPTARG | tr "." " "))
+       MAJOR=${PARTS[0]}
+       MINOR=${PARTS[1]}
+       PATCH=${PARTS[2]}
+       echo "Release version will be set explicitly to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
+       SetReadMeInfo $OPTARG
+       GetReadMeInfo
+       ;;
+    q) git cliff --bumped-version
+       ;;
+    b) CURRENT=$(GetAuthoritativeVersion)
+       BUMPED=$(git cliff --bumped-version)
+       if [ "${BUMPED}x" == "x" ]
+       then
+         echo "Error: Failed to auto-bump version."
+         exit 1
+       fi
+       SetCodeVersion ${BUMPED}
+       SetWebReleaseInfo ${BUMPED}
+       echo "Version auto-bumped to ${BUMPED} (from ${CURRENT})"
+       ;;
+    l) git cliff --bump -u
+       ;;
+    L) git cliff --bump
+       ;;
+    v) GetAuthoritativeVersion
+       exit 0
+       ;;
+    x) CURRENT=$(GetAuthoritativeVersion)
+       PARTS=($(echo $CURRENT | tr "." " "))
+       MAJOR=${PARTS[0]}
+       MINOR=${PARTS[1]}
+       echo "${MAJOR}.${MINOR}.X"
+       exit 0
+       ;;
+    k) ConsistencyCheck
+       ;;
+    t) CURRENT=$(GetAuthoritativeVersion)
+       CURRENT_PARTS=($(echo $CURRENT | tr "." " "))
+       BUMPED=$(git cliff --bumped-version)
+       BUMPED_PARTS=($(echo $BUMPED | tr "." " "))
+       if [ "${CURRENT_PARTS[0]}" != "${BUMPED_PARTS[0]}" ]
+       then
+         echo "major"
+       elif [ "${CURRENT_PARTS[1]}" != "${BUMPED_PARTS[1]}" ]
+       then
+         echo "minor"
+       elif [ "${CURRENT_PARTS[2]}" != "${BUMPED_PARTS[2]}" ]
+       then
+         echo "patch"
+       else
+         echo "none"
+       fi
+       exit 0
+       ;;
+   \?) PrintUsage
        exit 1
        ;;
     *) echo "Error: Extra operands given."
-       usage
+       PrintUsage
        exit 1
        ;;
   esac
 done
-
-#########################################
-# Code / Installer / Packaging Versions #
-#########################################
-
-if [ "$TYPE" = "code" ]
-then
-  # Program (main/version.h)
-  if [ "$CHECK" = "false" ]
-  then
-    sed -i -e "s/#define DISSOLVEVERSION \"[0-9\.]\+\(.*\)\"/#define DISSOLVEVERSION \"$MAJOR.$MINOR.$PATCH\"\1/g" src/main/version.cpp
-  fi
-  echo -n "         version.cpp (Program Version) : "
-  grep '#define DISSOLVEVERSION' src/main/version.cpp | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g'
-  
-  
-  # Flake (flake.nix)
-  if [ "$CHECK" = "false" ]
-  then
-    sed -i -e "s/version = \".*\"/version = \"$MAJOR.$MINOR.$PATCH\"/" flake.nix
-  fi
-  echo -n "           flake.nix (Program Version) : "
-  grep " version =" flake.nix | sed -e "s/\W*version = \"\(.*\)\";/\1/"
-
-
-  # ./CMakeLists.txt
-  if [ "$CHECK" = "false" ]
-  then
-    sed -i -e "s/set(VERSION_MAJOR \"\([0-9\.]\+\)\")/set(VERSION_MAJOR \"$MAJOR\")/g" -e "s/set(VERSION_MINOR \"\([0-9a-z\.]\+\)\")/set(VERSION_MINOR \"$MINOR\")/g" -e "s/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/set(VERSION_PATCH \"$PATCH\")/g" CMakeLists.txt
-  fi
-  echo -n "      ./CMakeLists.txt (Major Version) : "
-  grep 'set(VERSION_MAJOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MAJOR \"\([0-9a-z\.]\+\)\")/\1/g'
-  echo -n "                       (Minor Version) : "
-  grep 'set(VERSION_MINOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MINOR \"\([0-9a-z\.]\+\)\")/\1/g'
-  echo -n "                       (Patch Version) : "
-  grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/\1/g'
-
-
-  # Windows build files
-  if [ "$CHECK" = "false" ]
-  then
-    sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=Dissolve-GUI-[0-9\.]*-Win64/OutputBaseFilename=Dissolve-GUI-$MAJOR.$MINOR.$PATCH-Win64/g" ci/windows/dissolve-gui.iss
-  fi
-  echo -n "    dissolve-gui.iss (Program Version) : "
-  grep 'define MyAppVersion' ci/windows/dissolve-gui.iss | sed -e 's/#define MyAppVersion \"\([0-9\.]*\)\"/\1/g'
-  echo -n "    dissolve-gui.iss (Output Filename) : "
-  grep 'OutputBaseFilename' ci/windows/dissolve-gui.iss | sed -e 's/OutputBaseFilename=Dissolve-GUI-\([0-9\.]*\)-Win64/\1/g'
-
-fi
-
-
-##########################
-# Website Version / Date #
-##########################
-
-if [ "$TYPE" = "release" ]
-then
-  # Website (web/main.toml)
-  if [ "$CHECK" = "false" ]
-  then
-    sed -i -e "s/releaseVersion = \"[0-9\.]*\"/releaseVersion = \"$MAJOR.$MINOR.$PATCH\"/g" web/main.toml
-
-    DAYSUFFIX=$(DaySuffix)
-    TODAY=$(date "+%-d${DAYSUFFIX} %B %Y")
-    sed -i -e "s/releaseDate = \".*\"/releaseDate = \"${TODAY}\"/g" web/main.toml
-  fi
-  echo -n "           main.toml (Release Version) : "
-  grep 'releaseVersion' web/main.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g'
-  echo -n "           main.toml    (Release Date) : "
-  grep 'releaseDate' web/main.toml | sed -e 's/releaseDate = "\(.*\)"/\1/g'
-  # Website (web/docs.toml)
-  if [ "$CHECK" = "false" ]
-  then
-    sed -i -e "s/releaseVersion = \"[0-9\.]*\"/releaseVersion = \"$MAJOR.$MINOR.$PATCH\"/g" web/docs.toml
-
-    DAYSUFFIX=$(DaySuffix)
-    TODAY=$(date "+%-d${DAYSUFFIX} %B %Y")
-    sed -i -e "s/releaseDate = \".*\"/releaseDate = \"${TODAY}\"/g" web/docs.toml
-  fi
-  echo -n "           docs.toml (Release Version) : "
-  grep 'releaseVersion' web/docs.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g'
-  echo -n "           docs.toml    (Release Date) : "
-  grep 'releaseDate' web/docs.toml | sed -e 's/releaseDate = "\(.*\)"/\1/g'
-fi
-
-if [ "$TYPE" = "develop" ]
-then
-  # Website (web/main.toml)
-  if [ "$CHECK" = "false" ]
-  then
-    sed -i -e "s/devVersion = \"[0-9\.]*\"/devVersion = \"$MAJOR.$MINOR.$PATCH\"/g" web/main.toml
-  fi
-  echo -n "           main.toml (Develop Version) : "
-  grep 'devVersion' web/main.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g'
-fi
-
-
-#############
-# README.md #
-#############
-
-if [ "$TYPE" = "release" ]
-then
-  # README.md
-  if [ "$CHECK" = "false" ]
-  then
-    DAYSUFFIX=$(DaySuffix)
-    TODAY=$(date "+%A %-d${DAYSUFFIX} %B %Y")
-    sed -i -e "s/Last Release: [0-9\.]*, \(.*\)_/Last Release: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README.md
-  fi
-  echo -n "           README.md (Release Version) : "
-  grep 'Last Release:' README.md | sed -e 's/.*Release: \([0-9\.]*\),.*/\1/g'
-  echo -n "           README.md    (Release Date) : "
-  grep 'Last Release:' README.md | sed -e "s/.*Release: .*, \(.*\)_/\1/g"
-fi
-
-exit 0
 

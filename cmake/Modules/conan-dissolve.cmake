@@ -8,12 +8,12 @@ include(${CMAKE_BINARY_DIR}/conan.cmake)
 # Set basic requirements and options
 set(_conan_requires
     cli11/1.9.1
-    fmt/8.1.1
     pugixml/1.11
     onetbb/2021.10.0
     onedpl/2022.3.0
     toml11/3.7.0
     antlr4-cppruntime/4.13.1
+    ${EXTRA_CONAN_REQUIRES}
 )
 set(_conan_options
     fmt:header_only=True
@@ -40,7 +40,7 @@ conan_cmake_configure(
     ${_conan_options}
 )
 
-conan_cmake_autodetect(settings)
+conan_cmake_autodetect(settings BUILD_TYPE ${CMAKE_BUILD_TYPE})
 
 conan_cmake_install(PATH_OR_REFERENCE .
                     BUILD missing

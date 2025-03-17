@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "classes/species.h"
@@ -17,13 +17,6 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
      * This is a serial routine, with each process constructing its own copy of the data.
      * Partial calculation routines called by this routine are parallel.
      */
-
-    // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
-    {
-        Messenger::error("No configuration targets set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
 
     // Print argument/parameter summary
     if (!requestedRange_)
@@ -83,7 +76,7 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
         calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), cfg, partialsMethod_,
                     rdfRange, binWidth_, alreadyUpToDate);
         auto &originalgr = moduleContext.dissolve().processingModuleData().retrieve<PartialSet>(
-            fmt::format("{}//OriginalGR", cfg->niceName()), name_);
+            std::format("{}//OriginalGR", cfg->niceName()), name_);
 
         // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
         if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
@@ -92,7 +85,7 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
             std::string currentFingerprint{originalgr.fingerprint()};
 
             Averaging::average<PartialSet>(moduleContext.dissolve().processingModuleData(),
-                                           fmt::format("{}//OriginalGR", cfg->niceName()), name_, averagingLength_.value(),
+                                           std::format("{}//OriginalGR", cfg->niceName()), name_, averagingLength_.value(),
                                            averagingScheme_);
 
             // Re-set the object names and fingerprints of the partials
@@ -112,7 +105,7 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
 
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_ / intramolecular broadening
         auto &unweightedgr = moduleContext.dissolve().processingModuleData().realise<PartialSet>(
-            fmt::format("{}//UnweightedGR", cfg->niceName()), name_, GenericItem::InRestartFileFlag);
+            std::format("{}//UnweightedGR", cfg->niceName()), name_, GenericItem::InRestartFileFlag);
         calculateUnweightedGR(moduleContext.processPool(), cfg, originalgr, unweightedgr, intraBroadening_,
                               nSmooths_.value_or(0));
 

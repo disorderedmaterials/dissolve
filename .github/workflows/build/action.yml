@@ -7,6 +7,27 @@ inputs:
   cacheOnly:
     type: boolean
     default: false
+  currentVersion:
+    type: string
+    description: "Version used for labelling packages and other artifacts"
+  qtVersion:
+    type: string
+    default: 'UNKNOWN'
+  antlrVersion:
+    type: string
+    default: 'UNKNOWN'
+  conanHash:
+    type: string
+    default: 'UNKNOWN'
+  nixHash:
+    type: string
+    default: 'UNKNOWN'
+  benchmark:
+    type: boolean
+    default: false
+  publishBenchmarks:
+    type: boolean
+    default: false
 
 runs:
   using: "composite"
@@ -18,15 +39,25 @@ runs:
     with:
       target: ${{ inputs.target }}
       cacheOnly: ${{ inputs.cacheOnly }}
+      currentVersion: ${{ inputs.currentVersion }}
+      nixHash: ${{ inputs.nixHash }}
+      benchmark: ${{ inputs.benchmark && inputs.target == 'dissolve' }}
+      publishBenchmarks: ${{ inputs.publishBenchmarks && inputs.target == 'dissolve' }}
 
   - name: Build (OSX)
     if: runner.os == 'MacOS'
     uses: "./.github/workflows/build/osx"
     with:
       cacheOnly: ${{ inputs.cacheOnly }}
+      conanHash: ${{ inputs.conanHash }}
+      qtVersion: ${{ inputs.qtVersion }}
+      antlrVersion: ${{ inputs.antlrVersion }}
 
   - name: Build (Windows)
     if: runner.os == 'Windows'
     uses: "./.github/workflows/build/windows"
     with:
       cacheOnly: ${{ inputs.cacheOnly }}
+      conanHash: ${{ inputs.conanHash }}
+      qtVersion: ${{ inputs.qtVersion }}
+      antlrVersion: ${{ inputs.antlrVersion }}

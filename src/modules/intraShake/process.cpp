@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/randomBuffer.h"
 #include "base/sysFunc.h"
@@ -18,13 +18,6 @@
 // Run main processing
 Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Retrieve control parameters
     auto rCut = cutoffDistance_.value_or(moduleContext.dissolve().pairPotentialRange());
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
@@ -45,9 +38,6 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                          "is {} <= delta <= {}).\n",
                          torsionStepSize_, torsionStepSizeMin_, torsionStepSizeMax_);
     Messenger::print("IntraShake: Target acceptance rate is {}.\n", targetAcceptanceRate_);
-    if (termEnergyOnly_)
-        Messenger::print("IntraShake: Only term energy will be considered (interactions with the rest of the"
-                         "system will be ignored).\n");
     if (!restrictToSpecies_.empty())
         Messenger::print("IntraShake: Calculation will be restricted to species: {}\n",
                          joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
@@ -93,15 +83,11 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
         }
     }
 
-    int shake, nBondAttempts = 0, nAngleAttempts = 0, nTorsionAttempts = 0, nBondAccepted = 0, nAngleAccepted = 0,
-               nTorsionAccepted = 0;
-    int terminus;
-    bool accept;
-    double ppEnergy, newPPEnergy, intraEnergy, newIntraEnergy, delta, totalDelta = 0.0;
-    Vec3<double> vji, vjk, v;
+    auto shake = 0, nBondAttempts = 0, nAngleAttempts = 0, nTorsionAttempts = 0, nBondAccepted = 0, nAngleAccepted = 0,
+         nTorsionAccepted = 0;
+    auto totalDelta = 0.0;
     Matrix3 transform;
     const auto *box = targetConfiguration_->box();
-    Atom *i, *j, *k, *l;
 
     Timer timer;
     while (distributor.cycle())
@@ -133,29 +119,25 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
             // Set current atom targets in ChangeStore (whole molecule)
             changeStore.add(mol);
 
-            // Calculate reference non-geometry energy for Molecule
-            ppEnergy = termEnergyOnly_ ? 0.0 : kernel->totalEnergy(*mol, EnergyKernel::ExcludeGeometry).total();
+            // Calculate starting reference energy for Molecule
+            auto referenceEnergy = kernel->totalEnergy(*mol);
 
             // Loop over defined bonds
             if (adjustBonds_)
                 for (const auto &bond : mol->species()->bonds())
                 {
                     // Get Atom pointers
-                    i = mol->atom(bond.indexI());
-                    j = mol->atom(bond.indexJ());
-
-                    // Store current energy of this intramolecular term, or the whole Molecule if it
-                    // is present in a cycle
-                    intraEnergy = bond.inCycle() ? kernel->totalGeometryEnergy(*mol) : kernel->bondEnergy(bond, *i, *j);
+                    auto i = mol->atom(bond.indexI());
+                    auto j = mol->atom(bond.indexJ());
 
                     // Select random terminus
-                    terminus = randomBuffer.random() > 0.5 ? 1 : 0;
+                    auto terminus = randomBuffer.random() > 0.5 ? 1 : 0;
 
                     // Loop over number of shakes per term
                     for (shake = 0; shake < nShakesPerTerm_; ++shake)
                     {
                         // Get translation vector, normalise, and apply random delta
-                        vji = box->minimumVector(i->r(), j->r());
+                        auto vji = box->minimumVector(i->r(), j->r());
                         vji.normalise();
                         vji *= randomBuffer.randomPlusMinusOne() * bondStepSize_;
 
@@ -165,20 +147,15 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                         // Update Cell positions of the adjusted Atoms
                         targetConfiguration_->updateAtomLocations(bond.attachedAtoms(terminus), indexOffset);
 
-                        // Calculate new energy
-                        newPPEnergy = termEnergyOnly_ ? 0.0 : kernel->totalEnergy(*mol, EnergyKernel::ExcludeGeometry).total();
-                        newIntraEnergy = bond.inCycle() ? kernel->totalGeometryEnergy(*mol) : kernel->bondEnergy(bond, *i, *j);
-
-                        // Trial the transformed Molecule
-                        delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-                        accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
+                        // Calculate new energy and delta
+                        auto newEnergy = kernel->totalEnergy(*mol);
+                        auto delta = newEnergy.total() - referenceEnergy.total();
 
                         // Accept new (current) positions of the Molecule's Atoms?
-                        if (accept)
+                        if (delta < 0 || (randomBuffer.random() < exp(-delta * rRT)))
                         {
                             changeStore.updateAll();
-                            ppEnergy = newPPEnergy;
-                            intraEnergy = newIntraEnergy;
+                            referenceEnergy = newEnergy;
                             distributor.increase(totalDelta, delta);
                             distributor.increment(nBondAccepted);
                         }
@@ -194,23 +171,20 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                 for (const auto &angle : mol->species()->angles())
                 {
                     // Get Atom pointers
-                    i = mol->atom(angle.indexI());
-                    j = mol->atom(angle.indexJ());
-                    k = mol->atom(angle.indexK());
-
-                    // Store current energy of this intramolecular term
-                    intraEnergy = angle.inCycle() ? kernel->totalGeometryEnergy(*mol) : kernel->angleEnergy(angle, *i, *j, *k);
+                    auto i = mol->atom(angle.indexI());
+                    auto j = mol->atom(angle.indexJ());
+                    auto k = mol->atom(angle.indexK());
 
                     // Select random terminus
-                    terminus = randomBuffer.random() > 0.5 ? 1 : 0;
+                    auto terminus = randomBuffer.random() > 0.5 ? 1 : 0;
 
                     // Loop over number of shakes per term
                     for (shake = 0; shake < nShakesPerTerm_; ++shake)
                     {
                         // Get bond vectors and calculate cross product to get rotation axis
-                        vji = box->minimumVector(j->r(), i->r());
-                        vjk = box->minimumVector(j->r(), k->r());
-                        v = vji * vjk;
+                        auto vji = box->minimumVector(j->r(), i->r());
+                        auto vjk = box->minimumVector(j->r(), k->r());
+                        auto v = vji * vjk;
 
                         // Create suitable transformation matrix
                         transform.createRotationAxis(v, randomBuffer.randomPlusMinusOne() * angleStepSize_, true);
@@ -221,21 +195,15 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                         // Update Cell positions of the adjusted Atoms
                         targetConfiguration_->updateAtomLocations(angle.attachedAtoms(terminus), indexOffset);
 
-                        // Calculate new energy
-                        newPPEnergy = termEnergyOnly_ ? 0.0 : kernel->totalEnergy(*mol, EnergyKernel::ExcludeGeometry).total();
-                        newIntraEnergy =
-                            angle.inCycle() ? kernel->totalGeometryEnergy(*mol) : kernel->angleEnergy(angle, *i, *j, *k);
-
-                        // Trial the transformed Molecule
-                        delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-                        accept = delta < 0 || (randomBuffer.random() < exp(-delta * rRT));
+                        // Calculate new energy and delta
+                        auto newEnergy = kernel->totalEnergy(*mol);
+                        auto delta = newEnergy.total() - referenceEnergy.total();
 
                         // Accept new (current) positions of the Molecule's Atoms?
-                        if (accept)
+                        if (delta < 0 || (randomBuffer.random() < exp(-delta * rRT)))
                         {
                             changeStore.updateAll();
-                            ppEnergy = newPPEnergy;
-                            intraEnergy = newIntraEnergy;
+                            referenceEnergy = newEnergy;
                             distributor.increase(totalDelta, delta);
                             distributor.increment(nAngleAccepted);
                         }
@@ -255,22 +223,17 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                         continue;
 
                     // Get Atom pointers
-                    i = mol->atom(torsion.indexI());
-                    j = mol->atom(torsion.indexJ());
-                    k = mol->atom(torsion.indexK());
-                    l = mol->atom(torsion.indexL());
-
-                    // Store current energy of this intramolecular term
-                    intraEnergy = kernel->torsionEnergy(torsion, *i, *j, *k, *l);
+                    auto j = mol->atom(torsion.indexJ());
+                    auto k = mol->atom(torsion.indexK());
 
                     // Select random terminus
-                    terminus = randomBuffer.random() > 0.5 ? 1 : 0;
+                    auto terminus = randomBuffer.random() > 0.5 ? 1 : 0;
 
                     // Loop over number of shakes per term
                     for (shake = 0; shake < nShakesPerTerm_; ++shake)
                     {
                         // Get bond vectors j-k to get rotation axis
-                        vjk = box->minimumVector(j->r(), k->r());
+                        auto vjk = box->minimumVector(j->r(), k->r());
 
                         // Create suitable transformation matrix
                         transform.createRotationAxis(vjk, randomBuffer.randomPlusMinusOne() * torsionStepSize_, true);
@@ -281,20 +244,15 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                         // Update Cell positions of the adjusted Atoms
                         targetConfiguration_->updateAtomLocations(torsion.attachedAtoms(terminus), indexOffset);
 
-                        // Calculate new energy
-                        newPPEnergy = termEnergyOnly_ ? 0.0 : kernel->totalEnergy(*mol, EnergyKernel::ExcludeGeometry).total();
-                        newIntraEnergy = kernel->torsionEnergy(torsion, *i, *j, *k, *l);
-
-                        // Trial the transformed Molecule
-                        delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-                        accept = delta < 0 || (randomBuffer.random() < exp(-delta * rRT));
+                        // Calculate new energy and delta
+                        auto newEnergy = kernel->totalEnergy(*mol);
+                        auto delta = newEnergy.total() - referenceEnergy.total();
 
                         // Accept new (current) positions of the Molecule's Atoms?
-                        if (accept)
+                        if (delta < 0 || (randomBuffer.random() < exp(-delta * rRT)))
                         {
                             changeStore.updateAll();
-                            ppEnergy = newPPEnergy;
-                            intraEnergy = newIntraEnergy;
+                            referenceEnergy = newEnergy;
                             distributor.increase(totalDelta, delta);
                             distributor.increment(nTorsionAccepted);
                         }

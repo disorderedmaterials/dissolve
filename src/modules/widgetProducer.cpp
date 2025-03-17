@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "modules/widgetProducer.h"
 #include "modules/accumulate/accumulate.h"
 #include "modules/accumulate/gui/accumulateWidget.h"
-#include "modules/analyse/analyse.h"
-#include "modules/analyse/gui/analyseWidget.h"
 #include "modules/angle/angle.h"
 #include "modules/angle/gui/angleWidget.h"
 #include "modules/atomShake/atomShake.h"
@@ -40,6 +38,8 @@
 #include "modules/intraDistance/intraDistance.h"
 #include "modules/modifierOSites/gui/modifierOSitesWidget.h"
 #include "modules/modifierOSites/modifierOSites.h"
+#include "modules/moleculeTorsion/gui/moleculeTorsionWidget.h"
+#include "modules/moleculeTorsion/moleculeTorsion.h"
 #include "modules/neutronSQ/gui/neutronSQWidget.h"
 #include "modules/neutronSQ/neutronSQ.h"
 #include "modules/orientedSDF/gui/orientedSDFWidget.h"
@@ -56,6 +56,10 @@
 #include "modules/sq/sq.h"
 #include "modules/test/gui/testWidget.h"
 #include "modules/test/test.h"
+#include "modules/tr/gui/trWidget.h"
+#include "modules/tr/tr.h"
+#include "modules/voxelDensity/gui/voxelDensityWidget.h"
+#include "modules/voxelDensity/voxelDensity.h"
 #include "modules/xRaySQ/gui/xRaySQWidget.h"
 #include "modules/xRaySQ/xRaySQ.h"
 #include <ios>
@@ -63,7 +67,6 @@
 ModuleWidgetProducer::ModuleWidgetProducer()
 {
     registerProducer<AccumulateModule, AccumulateModuleWidget>();
-    registerProducer<AnalyseModule, AnalyseModuleWidget>();
     registerProducer<AngleModule, AngleModuleWidget>();
     registerProducer<AtomShakeModule, AtomShakeModuleWidget>();
     registerProducer<AvgMolModule, AvgMolModuleWidget>();
@@ -81,6 +84,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<IntraAngleModule, IntraAngleModuleWidget>();
     registerProducer<IntraDistanceModule, IntraDistanceModuleWidget>();
     registerProducer<ModifierOSitesModule, ModifierOSitesModuleWidget>();
+    registerProducer<MoleculeTorsionModule, MoleculeTorsionModuleWidget>();
     registerProducer<NeutronSQModule, NeutronSQModuleWidget>();
     registerProducer<OrientedSDFModule, OrientedSDFModuleWidget>();
     registerProducer<QSpeciesModule, QSpeciesModuleWidget>();
@@ -89,6 +93,8 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<SiteRDFModule, SiteRDFModuleWidget>();
     registerProducer<SQModule, SQModuleWidget>();
     registerProducer<TestModule, TestModuleWidget>();
+    registerProducer<TRModule, TRModuleWidget>();
+    registerProducer<VoxelDensityModule, VoxelDensityModuleWidget>();
     registerProducer<XRaySQModule, XRaySQModuleWidget>();
 }
 

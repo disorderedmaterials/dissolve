@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "gui/configurationViewer.h"
@@ -53,7 +53,9 @@ void ConfigurationViewer::startInteraction()
             case (ConfigurationViewer::InteractionMode::Default):
                 break;
             default:
-                fmt::print("Unhandled primary mode {} in ConfigurationViewer::startInteraction().\n", (int)interactionMode_);
+                std::cout << std::format("Unhandled primary mode {} in ConfigurationViewer::startInteraction().",
+                                         (int)interactionMode_)
+                          << std::endl;
                 break;
         }
     }
@@ -76,7 +78,9 @@ void ConfigurationViewer::endInteraction()
                 case (ConfigurationViewer::InteractionMode::Default):
                     break;
                 default:
-                    fmt::print("Unhandled primary mode {} in ConfigurationViewer::endInteraction().\n", (int)interactionMode_);
+                    std::cout << std::format("Unhandled primary mode {} in ConfigurationViewer::endInteraction().",
+                                             (int)interactionMode_)
+                              << std::endl;
                     break;
             }
             break;
@@ -85,8 +89,9 @@ void ConfigurationViewer::endInteraction()
             // Rotation / translation has already been modified, so nothing more to do
             break;
         default:
-            fmt::print("Unhandled secondary mode {} in ConfigurationViewer::endInteraction().\n",
-                       (int)transientInteractionMode_);
+            std::cout << std::format("Unhandled secondary mode {} in ConfigurationViewer::endInteraction().",
+                                     (int)transientInteractionMode_)
+                      << std::endl;
             break;
     }
 

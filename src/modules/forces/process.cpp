@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -32,13 +32,6 @@ bool ForcesModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
 // Run main processing
 Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Retrieve control parameters
     const auto saveData = exportedForces_.hasFilename();
 
@@ -46,7 +39,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
 
     // Realise the force vector
     auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vec3<double>>>(
-        fmt::format("{}//Forces", targetConfiguration_->niceName()), name());
+        std::format("{}//Forces", targetConfiguration_->niceName()), name());
     f.resize(targetConfiguration_->nAtoms());
 
     // Calculate forces
@@ -111,9 +104,9 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                     vecij /= r;
 
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                        vecij *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r);
+                        vecij *= potentialMap.analyticForce(*molN->atom(ii), *molN->atom(jj), r);
                     else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                        vecij *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r, elec14, vdw14);
+                        vecij *= potentialMap.analyticForce(*molN->atom(ii), *molN->atom(jj), r, elec14, vdw14);
 
                     fInter[offsetN + ii] -= vecij;
                     fInter[offsetN + jj] += vecij;
@@ -143,7 +136,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                         auto r = sqrt(magjisq);
                         vecij /= r;
 
-                        vecij *= potentialMap.analyticForce(i, j, r);
+                        vecij *= potentialMap.analyticForce(*i, *j, r);
 
                         fInter[offsetN + ii] -= vecij;
                         fInter[offsetM + jj] += vecij;

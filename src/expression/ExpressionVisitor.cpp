@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "expression/ExpressionVisitor.h"
 #include "data/ff/ff.h"
@@ -127,7 +127,7 @@ antlrcpp::Any ExpressionVisitor::visitFunction(ExpressionParser::FunctionContext
     // Check that the function name is valid
     if (!ExpressionFunctionNode::internalFunctions().isValid(ctx->Name()->getText()))
         throw(ExpressionExceptions::ExpressionSyntaxException(
-            fmt::format("'{}' is not a valid internal function.", ctx->Name()->getText())));
+            std::format("'{}' is not a valid internal function.", ctx->Name()->getText())));
     ExpressionFunctionNode::InternalFunction func =
         ExpressionFunctionNode::internalFunctions().enumeration(ctx->Name()->getText());
 
@@ -144,7 +144,7 @@ antlrcpp::Any ExpressionVisitor::visitFunction(ExpressionParser::FunctionContext
     // Check number of args that were given...
     if (!ExpressionFunctionNode::internalFunctions().validNArgs(func, node->nChildren()))
         throw(ExpressionExceptions::ExpressionSyntaxException(
-            fmt::format("Internal function '{}' was given the wrong number of arguments.", ctx->Name()->getText())));
+            std::format("Internal function '{}' was given the wrong number of arguments.", ctx->Name()->getText())));
 
     return result;
 }
@@ -159,7 +159,7 @@ antlrcpp::Any ExpressionVisitor::visitVariable(ExpressionParser::VariableContext
     {
         // Do we have any external variables available?
         if (!externalVariables_)
-            throw(ExpressionExceptions::ExpressionSemanticException(fmt::format(
+            throw(ExpressionExceptions::ExpressionSemanticException(std::format(
                 "Variable '{}' does not exist in this context (there are no variables defined).\n", ctx->Name()->getText())));
 
         // Does the named variable exist?
@@ -168,7 +168,7 @@ antlrcpp::Any ExpressionVisitor::visitVariable(ExpressionParser::VariableContext
                           [ctx](auto var) { return DissolveSys::sameString(var->name(), ctx->Name()->getText()); });
         if (it == extVars.end())
             throw(ExpressionExceptions::ExpressionSemanticException(
-                fmt::format("Variable '{}' does not exist in this context.\n", ctx->Name()->getText())));
+                std::format("Variable '{}' does not exist in this context.\n", ctx->Name()->getText())));
     }
 
     // Create the new node pointing to the variable

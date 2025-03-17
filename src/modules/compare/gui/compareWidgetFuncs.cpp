@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
@@ -67,14 +67,14 @@ void CompareModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
             for (auto &[dataSourceA, dataSourceB] : module_->data1dSources())
             {
                 // Render the difference (delta) between the datasets
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_Delta", module_->name(), dSourceCount),
+                graph_->createRenderable<RenderableData1D>(std::format("{}//Pair{}_Delta", module_->name(), dSourceCount),
                                                            "Delta", "Delta");
                 // Render DataA in the pair
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_DataA", module_->name(), dSourceCount),
-                                                           fmt::format("{}", dataSourceA->dataName()), "DataA");
+                graph_->createRenderable<RenderableData1D>(std::format("{}//Pair{}_DataA", module_->name(), dSourceCount),
+                                                           std::format("{}", dataSourceA->dataName()), "DataA");
                 // Render DataB in the pair
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//Pair{}_DataB", module_->name(), dSourceCount),
-                                                           fmt::format("{}", dataSourceB->dataName()), "DataB");
+                graph_->createRenderable<RenderableData1D>(std::format("{}//Pair{}_DataB", module_->name(), dSourceCount),
+                                                           std::format("{}", dataSourceB->dataName()), "DataB");
 
                 // Validate renderables if they need it
                 graph_->validateRenderables(dissolve_.processingModuleData());

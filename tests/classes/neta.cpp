@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "neta/neta.h"
 #include "classes/species.h"
 #include "data/elements.h"
 #include "data/ff/ff.h"
+#include "templates/algorithms.h"
 #include "tests/testData.h"
-#include <fmt/format.h>
-#include <fmt/ranges.h>
+#include <format>
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -19,14 +19,15 @@ class NETATest : public ::testing::Test
     void testNETA(std::string_view title, const Species &sp, const NETADefinition &neta,
                   const std::vector<int> &matchingIndices)
     {
-        fmt::print("Testing: {}...\n", title);
-        fmt::print("-- Species '{}', expected matching atoms: {}\n", sp.name(), matchingIndices);
+        std::cout << std::format("Testing: {}...", title) << std::endl;
+        auto indexString = joinStrings(matchingIndices, ", ");
+        std::cout << std::format("-- Species '{}', expected matching atoms: ({})", sp.name(), indexString) << std::endl;
 
         for (const auto &i : sp.atoms())
         {
             auto score = neta.score(&i);
             if (score != -1)
-                fmt::print("-- NETA score for atom {} is {}.\n", i.index(), score);
+                std::cout << std::format("-- NETA score for atom {} is {}.", i.index(), score) << std::endl;
             if (std::find(matchingIndices.begin(), matchingIndices.end(), i.index()) != matchingIndices.end())
                 EXPECT_NE(score, NETANode::NoMatch);
             else
@@ -37,12 +38,14 @@ class NETATest : public ::testing::Test
     NETAMatchedGroup testNETAMatchPath(std::string_view title, const Species &sp, const NETADefinition &neta,
                                        int targetAtomIndex, const std::vector<int> &matchingIndices)
     {
-        fmt::print("Path Test: {}, atom {}...\n", title, targetAtomIndex);
-        fmt::print("-- Species '{}', expected matched atom set : {}\n", sp.name(), matchingIndices);
+        std::cout << std::format("Path Test: {}, atom {}...", title, targetAtomIndex) << std::endl;
+        auto indexString = joinStrings(matchingIndices, ", ");
+        std::cout << std::format("-- Species '{}', expected matched atom set : {}", sp.name(), indexString) << std::endl;
 
         auto matchedPath = neta.matchedPath(&sp.atom(targetAtomIndex));
-        fmt::print("-- Actual matched atom set : {}\n",
-                   joinStrings(matchedPath.set(), " ", [](const auto *i) { return i->index(); }));
+        std::cout << std::format("-- Actual matched atom set : {}",
+                                 joinStrings(matchedPath.set(), " ", [](const auto *i) { return i->index(); }))
+                  << std::endl;
         EXPECT_EQ(matchedPath.set().size(), matchingIndices.size());
 
         for (auto *i : matchedPath.set())
@@ -53,20 +56,24 @@ class NETATest : public ::testing::Test
     // Test identifier group specified
     void testIdentifiers(const NETAMatchedGroup &matchedPath, std::string idName, const std::vector<int> &matchingIndices)
     {
-        fmt::print("Identifier Test: {}\n", idName);
-        fmt::print("-- Expected identified atoms : {}\n", matchingIndices);
+        std::cout << std::format("Identifier Test: {}", idName) << std::endl;
+        auto indexString = joinStrings(matchingIndices, ", ");
+
+        std::cout << std::format("-- Expected identified atoms : {}", indexString) << std::endl;
         auto &ids = matchedPath.identifiers();
         auto it = ids.find(idName);
         EXPECT_TRUE(it != ids.end());
         if (it == ids.end())
         {
-            fmt::print("Identifier group '{}' not present in matched data.\n", idName);
+            std::cout << std::format("Identifier group '{}' not present in matched data.", idName) << std::endl;
             return;
         }
 
         auto &group = it->second;
 
-        fmt::print("-- Actual identified atoms : {}\n", joinStrings(group, " ", [](const auto *i) { return i->index(); }));
+        std::cout << std::format("-- Actual identified atoms : {}",
+                                 joinStrings(group, " ", [](const auto *i) { return i->index(); }))
+                  << std::endl;
 
         EXPECT_EQ(group.size(), matchingIndices.size());
 
@@ -232,10 +239,10 @@ TEST_F(NETATest, Forcefield)
     EXPECT_TRUE(neta.create("-&1,nbonds=1", &testFF));
     testNETA("Reference to type by ID", UnitTest::ringsSpecies(), neta, {6, 7, 8, 9});
 
-    fmt::print("Testing: Non-existent type name...\n");
+    std::cout << std::format("Testing: Non-existent type name...") << std::endl;
     EXPECT_FALSE(neta.create("-&C5", &testFF));
 
-    fmt::print("Testing: Non-existent type ID...\n");
+    std::cout << std::format("Testing: Non-existent type ID...") << std::endl;
     EXPECT_FALSE(neta.create("-&8", &testFF));
 }
 
@@ -322,7 +329,8 @@ TEST_F(NETATest, IdentifierMatching)
     EXPECT_TRUE(neta.create("?O,#cog,-C(#x),-H(-O(root),#y)"));
     auto matchedPath = testNETAMatchPath("Carbon and hydroxyl", UnitTest::methanolSpecies(), neta, 4, {0, 4, 5});
     for (auto &&[key, ids] : matchedPath.identifiers())
-        fmt::print("ID '{}' : {}\n", key, joinStrings(ids, " ", [](const auto *i) { return i->index(); }));
+        std::cout << std::format("ID '{}' : {}", key, joinStrings(ids, " ", [](const auto *i) { return i->index(); }))
+                  << std::endl;
     testIdentifiers(matchedPath, "cog", {4});
     testIdentifiers(matchedPath, "x", {0});
     testIdentifiers(matchedPath, "y", {5});

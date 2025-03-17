@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/import/values.h"
 #include "base/lineParser.h"
@@ -62,8 +62,8 @@ bool ValueImportFileFormat::importData(std::vector<double> &data, LineParser &cu
             result = importSimple(parser, data);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Value format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Value format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     if (!readFromCurrent)

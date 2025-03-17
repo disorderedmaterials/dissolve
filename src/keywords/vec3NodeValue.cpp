@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "keywords/vec3NodeValue.h"
 #include "base/lineParser.h"
-#include "procedure/nodes/node.h"
+#include "generator/node.h"
 
-Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vec3<NodeValue> &data, ProcedureNode *parentNode, Vec3Labels::LabelType labelType)
+Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vec3<NodeValue> &data, GeneratorNode *parentNode, Vec3Labels::LabelType labelType)
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), labelType_(labelType)
 {
 }
@@ -30,7 +30,7 @@ bool Vec3NodeValueKeyword::setData(int index, std::string_view expressionText)
     assert(index >= 0 && index < 3);
     assert(parentNode_);
 
-    return data_[index].set(expressionText, parentNode_->getParameters());
+    return data_[index].set(expressionText, parentNode_->getParametersInScope());
 }
 
 // Return label type to display in GUI
@@ -50,12 +50,12 @@ std::optional<int> Vec3NodeValueKeyword::maxArguments() const { return 3; }
 bool Vec3NodeValueKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!parentNode_)
-        return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n", name());
+        return Messenger::error("Can't read keyword {} since the parent GeneratorNode has not been set.\n", name());
 
     if (parser.hasArg(startArg + 2))
     {
         // Get any variables currently in scope
-        auto vars = parentNode_->getParameters();
+        auto vars = parentNode_->getParametersInScope();
 
         if (!data_.x.set(parser.argsv(startArg), vars))
             return false;
@@ -83,7 +83,7 @@ SerialisedValue Vec3NodeValueKeyword::serialise() const { return data_; }
 // Read values from a serialisable value
 void Vec3NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    data_.deserialise(node, parentNode_->getParameters());
+    data_.deserialise(node, parentNode_->getParametersInScope());
 }
 
 // Has not changed from initial value

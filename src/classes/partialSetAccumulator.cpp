@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/partialSetAccumulator.h"
 #include "base/lineParser.h"
@@ -36,30 +36,28 @@ void PartialSetAccumulator::operator+=(const PartialSet &source)
     assert(n == partials_.nRows());
 
     // Accumulate the data, ensuring tags are identical - if not, we really don't want to be blindly accumulating
-    dissolve::for_each_pair(ParallelPolicies::par, 0, n,
-                            [&](auto i, auto j)
-                            {
-                                // Full partials
-                                if (partials_[{i, j}].tag() != source.partial(i, j).tag())
-                                    throw(std::runtime_error(fmt::format(
-                                        "Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
-                                        partials_[{i, j}].tag(), source.partial(i, j).tag())));
-                                partials_[{i, j}] += source.partial(i, j);
+    dissolve::for_each_pair(
+        ParallelPolicies::par, 0, n,
+        [&](auto i, auto j)
+        {
+            // Full partials
+            if (partials_[{i, j}].tag() != source.partial(i, j).tag())
+                Messenger::exception("Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
+                                     partials_[{i, j}].tag(), source.partial(i, j).tag());
+            partials_[{i, j}] += source.partial(i, j);
 
-                                // Bound partials
-                                if (boundPartials_[{i, j}].tag() != source.boundPartial(i, j).tag())
-                                    throw(std::runtime_error(fmt::format(
-                                        "Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
-                                        boundPartials_[{i, j}].tag(), source.boundPartial(i, j).tag())));
-                                boundPartials_[{i, j}] += source.boundPartial(i, j);
+            // Bound partials
+            if (boundPartials_[{i, j}].tag() != source.boundPartial(i, j).tag())
+                Messenger::exception("Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
+                                     boundPartials_[{i, j}].tag(), source.boundPartial(i, j).tag());
+            boundPartials_[{i, j}] += source.boundPartial(i, j);
 
-                                // Unbound partials
-                                if (unboundPartials_[{i, j}].tag() != source.unboundPartial(i, j).tag())
-                                    throw(std::runtime_error(fmt::format(
-                                        "Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
-                                        unboundPartials_[{i, j}].tag(), source.unboundPartial(i, j).tag())));
-                                unboundPartials_[{i, j}] += source.unboundPartial(i, j);
-                            });
+            // Unbound partials
+            if (unboundPartials_[{i, j}].tag() != source.unboundPartial(i, j).tag())
+                Messenger::exception("Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
+                                     unboundPartials_[{i, j}].tag(), source.unboundPartial(i, j).tag());
+            unboundPartials_[{i, j}] += source.unboundPartial(i, j);
+        });
 
     total_ += source.total();
 
@@ -97,7 +95,7 @@ bool PartialSetAccumulator::save(std::string_view prefix, std::string_view tag, 
     for (auto &&[full, bound, unbound] : zip(partials_, boundPartials_, unboundPartials_))
     {
         // Open file and check that we're OK to proceed writing to it
-        std::string filename{fmt::format("{}-{}-{}.{}", prefix, tag, DissolveSys::niceName(full.tag()), suffix)};
+        std::string filename{std::format("{}-{}-{}.{}", prefix, tag, DissolveSys::niceName(full.tag()), suffix)};
         Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
         parser.openOutput(filename, true);
@@ -112,7 +110,7 @@ bool PartialSetAccumulator::save(std::string_view prefix, std::string_view tag, 
         parser.closeFiles();
     }
 
-    Data1DExportFileFormat exportFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
+    Data1DExportFileFormat exportFormat(std::format("{}-{}-total.{}", prefix, tag, suffix));
     Messenger::printVerbose("Writing total file '{}'...\n", exportFormat.filename());
     return exportFormat.exportData(total_);
 }

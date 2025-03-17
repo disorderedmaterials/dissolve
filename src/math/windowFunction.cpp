@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "math/windowFunction.h"
 #include "base/lineParser.h"
@@ -84,7 +84,7 @@ double WindowFunction::y(double x, double omega) const
              */
             return sin(x * (PI / xMax_)) / (x * (PI / xMax_));
         default:
-            throw(std::runtime_error(fmt::format("Window function enumeration {} not implemented.\n", (int)form_)));
+            Messenger::exception("Window function enumeration {} not implemented.\n", (int)form_);
     }
 
     return 0.0;

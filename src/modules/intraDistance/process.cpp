@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
@@ -13,13 +13,6 @@
 // Run main processing
 Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     auto &processingData = moduleContext.dissolve().processingModuleData();
 
     // Select site A

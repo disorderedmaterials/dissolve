@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "modules/axisAngle/axisAngle.h"
 #include "keywords/bool.h"
@@ -14,17 +14,16 @@ AxisAngleModule::AxisAngleModule() : Module(ModuleTypes::AxisAngle)
      * Keywords
      */
 
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Sites", "Specify sites defining the axis angle interaction A-B...C.");
     keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Specify site(s) which represent 'A' in the interaction A-B...C", a_,
                                             true);
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisA", "Axis to use from site A", axisA_,
-                                                              OrientedSite::siteAxis());
+    keywords_.add<EnumOptionsKeyword<Site::SiteAxis>>("AxisA", "Axis to use from site A", axisA_, Site::siteAxis());
     keywords_.add<SpeciesSiteVectorKeyword>("SiteB", "Specify site(s) which represent 'B' in the interaction A-B...C", b_,
                                             true);
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisB", "Axis to use from site B", axisB_,
-                                                              OrientedSite::siteAxis());
+    keywords_.add<EnumOptionsKeyword<Site::SiteAxis>>("AxisB", "Axis to use from site B", axisB_, Site::siteAxis());
 
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<Vec3DoubleKeyword>("DistanceRange", "Range (min, max, binwidth) of distance binning", distanceRange_,

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/ff/uff/uff.h"
 #include "classes/atomType.h"
@@ -565,7 +565,7 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
                     typeK.name(),
                     typeL.name(),
                     TorsionFunctions::Form::FourierN,
-                    fmt::format("k={} C1={} C2={} C3={}",
+                    std::format("k={} C1={} C2={} C3={}",
                                 4.184 * (typeJ.name() == "O_2" || typeK.name() == "O_2" || typeL.name() == "O_2" ? 50.0 : 6.0),
                                 1.0, -1.0, 0.0)};
     }
@@ -575,7 +575,7 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
                     typeK.name(),
                     typeL.name(),
                     TorsionFunctions::Form::FourierN,
-                    fmt::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, 1.0, -1.0, 0.0)};
+                    std::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, 1.0, -1.0, 0.0)};
     else if (groupI == 15)
     {
         // Determine equilibrium angle
@@ -593,7 +593,7 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
             typeK.name(),
             typeL.name(),
             TorsionFunctions::Form::FourierN,
-            fmt::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, -(-4.0 * cos(phi) + cos(2 * phi)), -4.0 * cos(phi), 2.0)};
+            std::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, -(-4.0 * cos(phi) + cos(2 * phi)), -4.0 * cos(phi), 2.0)};
     }
     else
         improper = {typeI.name(), typeJ.name(), typeK.name(), typeL.name(), TorsionFunctions::Form::None};

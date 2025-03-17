@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "main/dissolve.h"
 #include <filesystem>
@@ -16,7 +16,7 @@ void compare_toml(std::string location, SerialisedValue toml, SerialisedValue to
         for (auto &[k, v] : toml.as_table())
         {
             ASSERT_TRUE(toml2.contains(k)) << location << "." << k << std::endl << "Expected:" << std::endl << toml[k];
-            compare_toml(fmt::format("{}.{}", location, k), v, toml2.at(k));
+            compare_toml(std::format("{}.{}", location, k), v, toml2.at(k));
         }
     }
     else if (toml.is_array())
@@ -25,7 +25,7 @@ void compare_toml(std::string location, SerialisedValue toml, SerialisedValue to
         auto arr2 = toml2.as_array();
         ASSERT_EQ(arr.size(), arr2.size()) << location << std::endl << "Expected" << std::endl << toml;
         for (int i = 0; i < arr.size(); ++i)
-            compare_toml(fmt::format("{}[{}]", location, i), arr[i], arr2[i]);
+            compare_toml(std::format("{}[{}]", location, i), arr[i], arr2[i]);
     }
     else
     {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 // This include must come before the others
 #include "TextPrimitiveLexer.h"
@@ -60,7 +60,7 @@ bool TextPrimitive::set(FontInstance *fontInstance, QString text, Vec3<double> a
     }
     catch (TextPrimitiveExceptions::TextPrimitiveSyntaxException &ex)
     {
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     };
 
     // Visit the nodes in the AST
@@ -71,7 +71,7 @@ bool TextPrimitive::set(FontInstance *fontInstance, QString text, Vec3<double> a
     }
     catch (TextPrimitiveExceptions::TextPrimitiveSyntaxException &ex)
     {
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     }
 
     anchorPoint_ = anchorPoint;

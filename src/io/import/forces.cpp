@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/import/forces.h"
 #include "base/lineParser.h"
@@ -69,8 +69,8 @@ bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vec3<doub
             result = importSimple(parser, f);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Force format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Force format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     // Apply factor to data

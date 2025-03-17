@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/processPool.h"
 #include "base/messenger.h"
@@ -244,7 +244,7 @@ bool ProcessPool::assignProcessesToGroups()
         {
             auto wr = worldRanks_[localRank];
             group.addProcess(localRank, wr);
-            rankString += fmt::format(" {}", wr);
+            rankString += std::format(" {}", wr);
 
             // If this process is the current worldRank_ we are considering, set its group membership
             if (wr == worldRank_)

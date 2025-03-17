@@ -1,5 +1,6 @@
 # Git ignore file for dissolve-web/
 public/*
+public-docs/*
 resources/*
 static/img/*.svg
 static/img/*.png

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/render/renderable.h"
 #include "base/lineParser.h"
@@ -322,7 +322,7 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
     if (forceUpdate || lastAxesVersion_ != axes.version() || lastDataVersion_ != dataVersion() ||
         valuesTransformDataVersion_ != dataVersion() || lastStyleVersion_ != styleVersion() ||
         !DissolveSys::sameString(lastColourDefinitionFingerprint_,
-                                 fmt::format("{}@{}", group_ ? group_->get().name() : "NoGroup", colourDefinition.version()),
+                                 std::format("{}@{}", group_ ? group_->get().name() : "NoGroup", colourDefinition.version()),
                                  true))
     {
         // Recreate Primitives for the underlying data
@@ -347,7 +347,7 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
     // Store version points for the up-to-date primitive
     lastAxesVersion_ = axes.version();
     lastColourDefinitionFingerprint_ =
-        fmt::format("{}@{}", group_ ? group_->get().name() : "NoGroup", colourDefinition.version());
+        std::format("{}@{}", group_ ? group_->get().name() : "NoGroup", colourDefinition.version());
     lastDataVersion_ = dataVersion();
     lastStyleVersion_ = styleVersion();
 }

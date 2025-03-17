@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/speciesSite.h"
 #include "classes/coreData.h"
@@ -136,7 +136,7 @@ void SpeciesSiteKeywordWidget::updateSummaryText()
 {
     if (keyword_->data())
         setSummaryText(
-            QString::fromStdString(fmt::format("{} ({})", keyword_->data()->name(), keyword_->data()->parent()->name())));
+            QString::fromStdString(std::format("{} ({})", keyword_->data()->name(), keyword_->data()->parent()->name())));
     else
         setSummaryText("<None>");
 }

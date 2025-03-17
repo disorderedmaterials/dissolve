@@ -1,0 +1,229 @@
+name: Create Release
+
+inputs:
+  releaseTag:
+    type: string
+    required: true
+    description: "Existing tag which the release will be associated to on GitHub"
+  releaseName:
+    type: string
+    required: true
+    default: 'UnnamedRelease'
+    description: "Name of the release as it will appear on GitHub"
+  releaseBody:
+    type: string
+    default: '' 
+    description: "Body text of the release as it will appear on GitHub"
+  releaseBodyFile:
+    type: string
+    default: ''
+    description: "Body file to use for body text, used in preference to releaseBody if provided"
+  releaseAssetsDirectory:
+    type: string
+    default: ''
+    description: 'Directory containing assets to upload to release'
+  curlOptions:
+    type: string
+    default: "-H 'Accept:application/vnd.github.v3+json' --silent --show-error"
+    description: 'Options to pass to curl'
+  isPreRelease:
+    type: boolean
+    default: false
+    description: 'Whether this irelease should be marked as a pre-release'
+  updateRelease:
+    type: boolean
+    default: false
+    description: 'Whether to update the tag SHA to reflect current HEAD and replace assets for the release'
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Go
+    shell: bash
+    run: |
+      set -e
+
+      # Old options not exposed (yet)
+      DELETE_EXISTING="false"
+      DELETE_EXISTING_ALWAYS="false"
+
+      # Set up vars
+      echo "Repository is ${{ github.repository }}"
+      REPO_URL="https://api.github.com/repos/${{ github.repository }}"
+      echo "API URL is $REPO_URL"
+
+      # Set body text from relevant source
+      RELEASE_BODY=""
+      if [ "x${{ inputs.releaseBodyFile }}" != "x" ]
+      then
+        echo "Body file provided: ${{ inputs.releaseBodyFile }}"
+        if [ -e ${{ inputs.releaseBodyFile }} ]
+        then
+          # Read in the file, preserving line-feeds
+          echo " -- Reading file...."
+          # Need to copy the var for use in the redirection below, otherwise it will cause a parse error on GH as the
+          # inputs.bodyFile is replaced with nothing.
+          BODYFILE=${{ inputs.releaseBodyFile }}
+          RELEASE_BODY=$(<${BODYFILE})
+        else
+          echo "::error::Release body file ${{ inputs.releaseBodyFile }} does not exist."
+          exit 1
+        fi
+      else
+        RELEASE_BODY="${{ inputs.releaseBody }}"
+      fi
+      echo "Body text is [${RELEASE_BODY}]."
+
+      # Check tag
+      if [ "x${{ inputs.releaseTag }}" = "x" ]
+      then
+        echo "::error::No tag provided."
+        exit 1
+      fi
+      echo "Tag for release is: ${{ inputs.releaseTag }}"
+
+      # Check assets
+      HAS_ASSETS="false"
+      if [ "x${{ inputs.releaseAssetsDirectory }}" != "x" ]
+      then
+        # Check that this is a directory
+        if [ ! -d ${{ inputs.releaseAssetsDirectory }} ]
+        then
+          echo "::error::Directory ${{ inputs.releaseAssetsDirectory }} either doesn't exist or is not a directory."
+          exit 1
+        fi
+
+        # Check there is at least one file in the directory
+        if [ -z "$( ls -A ${{ inputs.releaseAssetsDirectory }})" ]
+        then
+          echo "::error::Provided assets directory is empty."
+          exit 1
+        fi
+
+        HAS_ASSETS="true"
+        echo "$(ls -A -1 ${{ inputs.releaseAssetsDirectory }} | wc -l) release assets found to upload."
+      fi
+
+      # Get available releases information
+      RELEASES=$(curl ${{ inputs.curlOptions }} -XGET --header "Authorization: token ${{ github.token }}" ${REPO_URL}/releases)
+
+      # Check for error or no data
+      if [[ ${RELEASES} =~ "documentation_url" ]]
+      then
+        MESSAGE=$(echo ${RELEASES} | jq ". | .message")
+        echo "::error::Error while getting available release information: ${MESSAGE}"
+        exit 1
+      fi
+
+      # Does our tag already exist (i.e. the release already exists)?
+      echo "Checking for presence of current release..."
+      FILTER=".[] | select(.tag_name | match(\"${{ inputs.releaseTag }}\"))"
+      CURRENT_RELEASE_INFO=$(echo $RELEASES | jq "$FILTER")
+      CURRENT_URL=$(echo ${CURRENT_RELEASE_INFO} | jq -r '. | .url')
+
+      if [ "x$CURRENT_URL" != "x" ]
+      then
+        echo " -- Found existing release with tag ${{ inputs.releaseTag }}"
+        echo "    url: $CURRENT_URL"
+
+        if [ "${{ inputs.updateRelease }}" != "true" ]
+        then
+          echo "::error::Existing release found, but updateRelease = ${{ inputs.updateRelease }} so no further action will be taken."
+          exit 1
+        fi
+
+        # Update the current release
+        RELEASE_DATA=$(jq --null-input --arg tag "${{ inputs.releaseTag }}" --arg commitish "${TAG_HASH}" --arg name "${{ inputs.releaseName }}" --arg body "${RELEASE_BODY}" --argjson pre ${{ inputs.isPreRelease }} '{"tag_name": $tag, "target_commitish": $commitish, "name": $name, "body": $body, "draft": false, "prerelease": $pre}')
+        echo "Release data is:"
+        echo ${RELEASE_DATA}
+
+        # Patch release
+        echo " -- Patching existing release info..."
+        RESULT=$(curl ${{ inputs.curlOptions }} -XPATCH --header "Authorization: token ${{ github.token }}" --data "${RELEASE_DATA}" ${CURRENT_URL})
+        echo ${RESULT}
+
+        # Delete existing assets
+        ASSETS=$(curl ${{ inputs.curlOptions }} -XGET --header "Authorization: token ${{ github.token }}" ${CURRENT_URL}/assets)
+        ASSET_IDS=$(echo $ASSETS | jq ".[] | .id")
+        for id in $ASSET_IDS
+        do
+          echo "  -- Removing release asset id ${id}..."
+          RESULT=$(curl ${{ inputs.curlOptions }} -XDELETE --header "Authorization: token ${{ github.token }}" ${REPO_URL}/releases/assets/${id})
+        done
+      else
+        echo " -- No release with tag ${{ inputs.releaseTag }} currently exists."
+        echo "    A new one will be created."
+
+        # Get the hash of the current revision
+        TAG_HASH=$(git rev-parse HEAD)
+
+        # Construct release information
+        RELEASE_DATA=$(jq --null-input --arg tag "${{ inputs.releaseTag }}" --arg commitish "$TAG_HASH" --arg name "${{ inputs.releaseName }}" --arg body "${RELEASE_BODY}" --argjson pre $RELEASE_PRE '{"tag_name": $tag, "target_commitish": $commitish, "name": $name, "body": $body, "draft": false, "prerelease": $pre}')
+        echo "Release data is:"
+        echo ${RELEASE_DATA}
+
+        # Create release
+        CURRENT_RELEASE_INFO=$(curl ${{ inputs.curlOptions }} --header "Authorization: token ${{ github.token }}" --data "${RELEASE_DATA}" ${REPO_URL}/releases)
+        echo "Release creation returned:"
+        echo ${CURRENT_RELEASE_INFO}
+
+        # Check for messages
+        MSG=$(echo ${CURRENT_RELEASE_INFO} | jq -r '. | .message')
+        if [ "x$MSG" = "x" ]
+        then
+          echo "Received message:"
+          echo $MSG
+        fi
+
+        # Check errors
+        ERRORS=$(echo ${CURRENT_RELEASE_INFO} | jq -r '. | .errors')
+        if [ "x$ERRORS" = "x" ]
+        then
+          echo "Error: Failed to create release."
+          echo "Reported error(s) are:"
+          echo $ERRORS
+          exit 1
+        fi
+
+        # Extract url
+        CURRENT_URL=$(echo ${CURRENT_RELEASE_INFO} | jq -r '. | .url')
+      fi
+
+      # Upload assets if provided
+      if [ "${HAS_ASSETS}" == "true" ]
+      then
+        # Upload specified assets
+        echo "Uploading assets to release..."
+
+        # Extract upload path for assets
+        # -- Need to strip trailing {?name,label} part from the returned url
+        UPLOAD_URL=$(echo ${CURRENT_RELEASE_INFO} | jq -r '. | .upload_url' | cut -d '{' -f 1)
+        if [ "x$UPLOAD_URL" = "x" ]
+        then
+          echo "Error: Failed to determine upload url for release."
+          exit 1
+        fi
+        echo " -- Upload url is: $UPLOAD_URL"
+
+        for file in $(ls -1 ${{ inputs.releaseAssetsDirectory }})
+        do
+          echo "... ${file}"
+
+          ARTIFACT_DATA=$(curl ${{ inputs.curlOptions }} --header "Authorization: token ${{ github.token }}" \
+               --header "Accept: application/vnd.github.manifold-preview" \
+               --header "Content-Type: application/octet-stream" \
+               -T ${{ inputs.releaseAssetsDirectory }}/${file} \
+               "$UPLOAD_URL?name=${file}")
+
+          ARTIFACT_ID=$(echo $ARTIFACT_DATA | jq -r '. | .id')
+          ARTIFACT_URL=$(echo $ARTIFACT_DATA | jq -r '. | .browser_download_url')
+          if [ "x$ARTIFACT_ID" = "x" ] || [ "$ARTIFACT_ID" = "null" ]
+          then
+            echo "Error: Failed to upload artifact."
+            echo "Returned data was: $ARTIFACT_DATA"
+            exit 1
+          fi
+          echo "   -- Success (id: $ARTIFACT_ID, url: $ARTIFACT_URL)"
+        done
+      fi

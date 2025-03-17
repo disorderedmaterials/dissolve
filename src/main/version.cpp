@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "main/version.h"
-#include <fmt/format.h>
+#include <format>
 #include <iostream>
+#include <string>
 
 #define DISSOLVEVERSION "1.6.0"
 #define DISSOLVESHORTHASH ""
@@ -14,7 +15,7 @@ namespace Version
 // Return semantic version number
 std::string_view semantic()
 {
-    static std::string versionString = fmt::format("{}", DISSOLVEVERSION);
+    static std::string versionString = std::format("{}", DISSOLVEVERSION);
     return versionString;
 }
 
@@ -28,7 +29,7 @@ std::string_view info()
         if (std::string_view(DISSOLVESHORTHASH).empty())
             versionString = DISSOLVEVERSION;
         else
-            versionString = fmt::format("{} @ {}", DISSOLVEVERSION, DISSOLVESHORTHASH);
+            versionString = std::format("{} @ {}", DISSOLVEVERSION, DISSOLVESHORTHASH);
     }
 
     return versionString;
@@ -77,7 +78,7 @@ bool DissolveVersion::operator==(const DissolveVersion &other) const
 
 std::ostream &operator<<(std::ostream &os, const DissolveVersion &version)
 {
-    os << fmt::format("{}.{}.{}", version.major_, version.minor_, version.patch_);
+    os << std::format("{}.{}.{}", version.major_, version.minor_, version.patch_);
     return os;
 }
 }; // namespace Version

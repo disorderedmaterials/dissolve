@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/messenger.h"
 #include "base/processPool.h"
 #include "templates/vector3.h"
-#include <fmt/format.h>
+#include <format>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -142,7 +142,7 @@ class LineParser
     // Write line to file
     bool writeLine(std::string_view s) const;
     // Write formatted line to file
-    template <typename... Args> bool writeLineF(std::string_view format, Args... args) const
+    template <typename... Args> bool writeLineF(std::format_string<Args...> format, Args... args) const
     {
         auto result = true;
 
@@ -171,9 +171,9 @@ class LineParser
 
             // Format the line and store it
             if (directOutput_)
-                (*outputFile_) << fmt::format(format, args...);
+                (*outputFile_) << std::format(format, std::forward<Args>(args)...);
             else
-                (*cachedFile_) << fmt::format(format, args...);
+                (*cachedFile_) << std::format(format, std::forward<Args>(args)...);
         }
 
         // Broadcast result of write
@@ -183,15 +183,15 @@ class LineParser
         return result;
     }
     // Print banner comment of fixed width
-    template <typename... Args> bool writeBannerComment(std::string_view format, Args... args)
+    template <typename... Args> bool writeBannerComment(std::format_string<Args...> format, Args... args)
     {
         const auto bannerWidth = 80;
-        static std::string bannerBorder = fmt::format("#{0:=^{1}}#", "", bannerWidth - 2);
+        static std::string bannerBorder = std::format("#{0:=^{1}}#", "", bannerWidth - 2);
 
         // Finally, print the banner
         if (!writeLineF("\n{}\n", bannerBorder))
             return false;
-        if (!writeLineF("#{:^{}}#", fmt::format(format, args...), bannerWidth - 2))
+        if (!writeLineF("#{:^{}}#", std::format(format, std::forward<Args>(args)...), bannerWidth - 2))
             return false;
         if (!writeLineF("\n{}\n", bannerBorder))
             return false;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/partialSetAccumulator.h"
 #include "gui/dataViewer.h"
@@ -71,16 +71,16 @@ void AccumulateModuleWidget::createPartialSetRenderables(std::string_view target
             continue;
 
         // Full partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}", module_->name(), targetPrefix, full.tag()),
-                                                   fmt::format("{} (Full)", id), "Full");
+        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}", module_->name(), targetPrefix, full.tag()),
+                                                   std::format("{} (Full)", id), "Full");
 
         // Bound partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}", module_->name(), targetPrefix, bound.tag()),
-                                                   fmt::format("{} (Bound)", id), "Bound");
+        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}", module_->name(), targetPrefix, bound.tag()),
+                                                   std::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}", module_->name(), targetPrefix, unbound.tag()),
-                                                   fmt::format("{} (Unbound)", id), "Unbound");
+        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}", module_->name(), targetPrefix, unbound.tag()),
+                                                   std::format("{} (Unbound)", id), "Unbound");
     }
 }
 
@@ -126,7 +126,7 @@ void AccumulateModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
             }
             else
                 graph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//{}//Total", module_->name(), currentTargetModule_->name()), "Total", "Calc");
+                    std::format("{}//{}//Total", module_->name(), currentTargetModule_->name()), "Total", "Calc");
         }
     }
 

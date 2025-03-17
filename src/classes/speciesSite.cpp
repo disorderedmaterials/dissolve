@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/speciesSite.h"
 #include "base/lineParser.h"
@@ -492,7 +492,7 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
             y.orthogonalise(x);
             y.normalise();
 
-            sites.push_back(std::make_shared<OrientedSite>(this, index, nullptr, origin, x, y, x * y));
+            sites.push_back(std::make_shared<Site>(this, index, nullptr, Matrix3(x, y, x * y), origin));
         }
         else
             sites.push_back(std::make_shared<Site>(this, index, nullptr, origin));

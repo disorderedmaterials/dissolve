@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -44,7 +44,7 @@ bool average(GenericList &processingData, std::string_view name, std::string_vie
     auto nData = pruneOldData(processingData, name, prefix, nSetsInAverage);
 
     // Store the current T as the earliest data (index == 1)
-    T &recentData = processingData.realise<T>(fmt::format("{}//1", name), prefix, GenericItem::InRestartFileFlag);
+    T &recentData = processingData.realise<T>(std::format("{}//1", name), prefix, GenericItem::InRestartFileFlag);
     recentData = currentData;
     ++nData;
 
@@ -57,7 +57,7 @@ bool average(GenericList &processingData, std::string_view name, std::string_vie
     for (auto n = 0; n < nData; ++n)
     {
         // Get a copy of the (n+1)'th dataset
-        T data = processingData.value<T>(fmt::format("{}//{}", name, n + 1), prefix);
+        T data = processingData.value<T>(std::format("{}//{}", name, n + 1), prefix);
 
         // Determine the weighting factor
         if (averagingScheme == Averaging::LinearAveraging)
@@ -92,7 +92,7 @@ static bool vectorAverage(GenericList &processingData, std::string_view name, st
     auto nData = pruneOldData(processingData, name, prefix, nSetsInAverage);
 
     // Store the current T as the earliest data (index == 1)
-    T &recentData = processingData.realise<T>(fmt::format("{}//1", name), prefix, GenericItem::InRestartFileFlag);
+    T &recentData = processingData.realise<T>(std::format("{}//1", name), prefix, GenericItem::InRestartFileFlag);
     recentData = currentData;
     ++nData;
 
@@ -108,7 +108,7 @@ static bool vectorAverage(GenericList &processingData, std::string_view name, st
     for (auto n = 0; n < nData; ++n)
     {
         // Get a copy of the (n+1)'th dataset
-        const T &data = processingData.value<T>(fmt::format("{}//{}", name, n + 1), prefix);
+        const T &data = processingData.value<T>(std::format("{}//{}", name, n + 1), prefix);
 
         // Determine the weighting factor
         if (averagingScheme == Averaging::LinearAveraging)

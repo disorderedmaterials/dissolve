@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
 #include "classes/species.h"
@@ -20,7 +20,7 @@ void Species::removeSite(SpeciesSite *site)
     assert(site);
     auto it = std::find_if(sites_.begin(), sites_.end(), [&](const auto &p) { return p.get() == site; });
     if (it == sites_.end())
-        throw(std::runtime_error(fmt::format("Site '{}' doesn't exist in Species '{}'.\n", site->name(), name_)));
+        Messenger::exception("Site '{}' doesn't exist in Species '{}'.\n", site->name(), name_);
 
     Messenger::print("Removing site '{}' from species '{}'...\n", site->name(), name_);
     sites_.erase(it);
@@ -42,7 +42,7 @@ std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *ex
     // Find all existing names which are the same as 'existingName' up to the first '_', and get the highest appended number
     auto highest = 0;
     while (findSite(uniqueName, exclude))
-        uniqueName = fmt::format("{}_{}", baseName, ++highest);
+        uniqueName = std::format("{}_{}", baseName, ++highest);
 
     return uniqueName;
 }

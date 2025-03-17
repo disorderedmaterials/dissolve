@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -151,6 +151,6 @@ template <class Functions> class InteractionPotential
     {
         auto id = 0;
         return joinStrings(parameters(), " ",
-                           [&](const auto &value) { return fmt::format("{}={}", Functions::parameter(form(), id++), value); });
+                           [&](const auto &value) { return std::format("{}={}", Functions::parameter(form(), id++), value); });
     }
 };

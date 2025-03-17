@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/render/renderableGroupManager.h"
 #include "base/sysFunc.h"
@@ -62,7 +62,8 @@ RenderableGroup &RenderableGroupManager::addToGroup(const std::shared_ptr<Render
         auto &group = renderable->group()->get();
         if (group.name() == groupName)
         {
-            fmt::print("Renderable '{}' already associated to group '{}'...\n", renderable->name(), group.name());
+            std::cout << std::format("Renderable '{}' already associated to group '{}'...", renderable->name(), group.name())
+                      << std::endl;
             return group;
         }
 

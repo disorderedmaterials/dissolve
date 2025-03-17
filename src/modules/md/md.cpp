@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "modules/md/md.h"
 #include "keywords/bool.h"
@@ -12,7 +12,8 @@
 
 MDModule::MDModule() : Module(ModuleTypes::MD)
 {
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Simulation", "Length of simulation to run and the timestep to employ.");
     keywords_.add<IntegerKeyword>("NSteps", "Number of MD steps to perform", nSteps_, 1);
@@ -54,6 +55,8 @@ MDModule::MDModule() : Module(ModuleTypes::MD)
     keywords_.addDeprecated<BoolKeyword>("VariableTimestep",
                                          "Whether a variable timestep should be used, determined from the maximal force vector",
                                          deprecatedBool_);
+
+    executeIfTargetsUnchanged_ = true;
 }
 
 // Return enum options for TimestepType

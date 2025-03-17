@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/dataSource.h"
 #include "math/interpolator.h"
@@ -47,9 +47,9 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
          */
 
         auto &dataAStorage = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("Pair{}_DataA", index), name_, GenericItem::InRestartFileFlag);
+            std::format("Pair{}_DataA", index), name_, GenericItem::InRestartFileFlag);
         auto &dataBStorage = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("Pair{}_DataB", index), name_, GenericItem::InRestartFileFlag);
+            std::format("Pair{}_DataB", index), name_, GenericItem::InRestartFileFlag);
 
         dataAStorage = dataA;
         dataBStorage = dataB;
@@ -81,7 +81,7 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
          * Calculating the difference (delta) between datasets
          */
 
-        auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(fmt::format("Pair{}_Delta", index), name_,
+        auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(std::format("Pair{}_Delta", index), name_,
                                                                                       GenericItem::InRestartFileFlag);
 
         delta.clear();

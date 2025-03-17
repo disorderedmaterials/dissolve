@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/import/CIFImportErrorListeners.h"
 #include "base/messenger.h"
@@ -19,7 +19,7 @@ void CIFImportLexerErrorListener::syntaxError(antlr4::Recognizer *recognizer, an
     // The actual error message can contain braces, so escape those to avoid breaking fmt
     auto escaped = DissolveSys::replace(DissolveSys::replace(message, "{", "{{"), "}", "}}");
 
-    throw CIFImportExceptions::CIFImportSyntaxException(fmt::format("Syntax Error: {}", escaped));
+    throw CIFImportExceptions::CIFImportSyntaxException(std::format("Syntax Error: {}", escaped));
 }
 
 /*
@@ -36,5 +36,5 @@ void CIFImportParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, a
     // The actual error message can contain braces, so escape those to avoid breaking fmt
     auto escaped = DissolveSys::replace(DissolveSys::replace(message, "{", "{{"), "}", "}}");
 
-    throw CIFImportExceptions::CIFImportSyntaxException(fmt::format("Syntax Error: {}", escaped));
+    throw CIFImportExceptions::CIFImportSyntaxException(std::format("Syntax Error: {}", escaped));
 }

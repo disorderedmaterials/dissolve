@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "expression/value.h"
-#include <fmt/format.h>
+#include <format>
 
 ExpressionValue::ExpressionValue()
 {
@@ -102,7 +102,7 @@ double ExpressionValue::asDouble() const { return (type_ == ValueType::Integer ?
 // Return result as a string
 std::string ExpressionValue::asString() const
 {
-    return (type_ == ValueType::Integer ? fmt::format("{}", valueI_) : fmt::format("{}", valueD_));
+    return (type_ == ValueType::Integer ? std::format("{}", valueI_) : std::format("{}", valueD_));
 }
 
 // Return pointer to integer value

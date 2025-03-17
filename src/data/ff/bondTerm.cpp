@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/ff/bondTerm.h"
 #include "data/ff/atomType.h"
@@ -11,8 +11,8 @@ ForcefieldBondTerm::ForcefieldBondTerm(std::string_view typeI, std::string_view 
 {
     InteractionPotential<BondFunctions> potential(form);
     if (!potential.parseParameters(parameterString))
-        throw(std::runtime_error(fmt::format("Failed to parse parameter string '{}' when constructing bond term '{}-{}'.\n",
-                                             parameterString, typeI_, typeJ_)));
+        Messenger::exception("Failed to parse parameter string '{}' when constructing bond term '{}-{}'.\n", parameterString,
+                             typeI_, typeJ_);
     parameters_ = potential.parameters();
 }
 

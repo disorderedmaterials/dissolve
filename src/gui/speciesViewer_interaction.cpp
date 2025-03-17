@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/species.h"
 #include "classes/speciesAtom.h"
@@ -93,7 +93,9 @@ void SpeciesViewer::startInteraction()
                     speciesRenderable_->clearInteractionPrimitive();
                 break;
             default:
-                fmt::print("Unhandled primary mode {} in SpeciesViewer::startInteraction().\n", (int)interactionMode_);
+                std::cout << std::format("Unhandled primary mode {} in SpeciesViewer::startInteraction().",
+                                         (int)interactionMode_)
+                          << std::endl;
                 break;
         }
     }
@@ -243,7 +245,9 @@ void SpeciesViewer::endInteraction()
                     postRedisplay();
                     break;
                 default:
-                    fmt::print("Unhandled primary mode {} in SpeciesViewer::endInteraction().\n", (int)interactionMode_);
+                    std::cout << std::format("Unhandled primary mode {} in SpeciesViewer::endInteraction().",
+                                             (int)interactionMode_)
+                              << std::endl;
                     break;
             }
             break;
@@ -252,7 +256,9 @@ void SpeciesViewer::endInteraction()
             // Rotation / translation has already been modified, so nothing more to do
             break;
         default:
-            fmt::print("Unhandled secondary mode {} in SpeciesViewer::endInteraction().\n", (int)transientInteractionMode_);
+            std::cout << std::format("Unhandled secondary mode {} in SpeciesViewer::endInteraction().",
+                                     (int)transientInteractionMode_)
+                      << std::endl;
             break;
     }
 

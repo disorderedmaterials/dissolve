@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "math/error.h"
 #include "base/enumOptions.h"
@@ -25,7 +25,7 @@ EnumOptions<ErrorType> errorTypes()
 
 std::string errorReportString(const ErrorReport &errorReport)
 {
-    return fmt::format("{} error between datasets is {:e} over {:e} < x < {:e} ({} points).\n",
+    return std::format("{} error between datasets is {:e} over {:e} < x < {:e} ({} points).\n",
                        errorTypes().keyword(errorReport.errorType), errorReport.error, errorReport.firstX, errorReport.lastX,
                        errorReport.nPointsConsidered);
 }
@@ -48,9 +48,8 @@ ErrorReport error(ErrorType errorType, const Data1D &A, const Data1D &B, Optiona
     else if (errorType == EuclideanError)
         return euclidean(A, B, range);
 
-    throw(
-        std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
-                                       errorTypes().keyword(errorType))));
+    Messenger::exception("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
+                         errorTypes().keyword(errorType));
 }
 
 // Return error of specified type between supplied double vectors
@@ -84,9 +83,8 @@ ErrorReport error(ErrorType errorType, const std::vector<double> &vecA, const st
     else if (errorType == EuclideanError)
         return euclidean(A, B);
 
-    throw(
-        std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
-                                       errorTypes().keyword(errorType))));
+    Messenger::exception("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
+                         errorTypes().keyword(errorType));
 }
 
 /*

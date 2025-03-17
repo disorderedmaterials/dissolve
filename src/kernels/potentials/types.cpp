@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "kernels/potentials/types.h"
 
@@ -7,8 +7,8 @@
 namespace ExternalPotentialTypes
 {
 // External Potential Types
-EnumOptions<ExternalPotentialType> types_("ExternalPotential", {{ExternalPotentialType::Simple, "Simple"},
-                                                                {ExternalPotentialType::Directional, "Directional"},
+EnumOptions<ExternalPotentialType> types_("ExternalPotential", {{ExternalPotentialType::Spherical, "Spherical"},
+                                                                {ExternalPotentialType::Cylindrical, "Cylindrical"},
                                                                 {ExternalPotentialType::Regional, "Regional"}});
 
 // Return whether the supplied external potential type is valid

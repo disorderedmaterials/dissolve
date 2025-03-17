@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/spaceGroups.h"
 #include "base/messenger.h"
@@ -696,10 +696,10 @@ std::string formattedInformation(SpaceGroupId sgid)
         return {};
 
     if (symbols_[sgid].code().empty())
-        return fmt::format("{}  {}  ({})", symbols_[sgid].internationalTableIndex(), symbols_[sgid].hermannMauginnSymbol(),
+        return std::format("{}  {}  ({})", symbols_[sgid].internationalTableIndex(), symbols_[sgid].hermannMauginnSymbol(),
                            symbols_[sgid].hallSymbol());
     else
-        return fmt::format("{}  {} [{}]  ({})", symbols_[sgid].internationalTableIndex(), symbols_[sgid].hermannMauginnSymbol(),
+        return std::format("{}  {} [{}]  ({})", symbols_[sgid].internationalTableIndex(), symbols_[sgid].hermannMauginnSymbol(),
                            symbols_[sgid].code(), symbols_[sgid].hallSymbol());
 }
 

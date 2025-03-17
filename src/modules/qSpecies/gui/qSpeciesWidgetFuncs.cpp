@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "gui/render/renderableData1D.h"
@@ -37,7 +37,7 @@ void QSpeciesModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags>
         qSpeciesGraph_->clearRenderables();
 
     if (qSpeciesGraph_->renderables().empty())
-        qSpeciesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//QSpecies", module_->name()), "Q-Species");
+        qSpeciesGraph_->createRenderable<RenderableData1D>(std::format("{}//QSpecies", module_->name()), "Q-Species");
 
     // Update Oxygen Sites Labels
     auto oSitesHistogram = dissolve_.processingModuleData().valueOr("OSitesHistogram", module_->name(), IntegerHistogram1D());

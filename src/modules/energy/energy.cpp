@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "modules/energy/energy.h"
 #include "keywords/bool.h"
@@ -10,7 +10,8 @@
 
 EnergyModule::EnergyModule() : Module(ModuleTypes::Energy)
 {
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation(
         "Control", "Stability Detection",
@@ -28,4 +29,6 @@ EnergyModule::EnergyModule() : Module(ModuleTypes::Energy)
 
     keywords_.setOrganisation("Export");
     keywords_.add<BoolKeyword>("Save", "Save calculated energies to disk, one file per targeted configuration", save_);
+
+    executeIfTargetsUnchanged_ = true;
 }

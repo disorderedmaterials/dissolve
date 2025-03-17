@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/import/data3D.h"
 #include "base/lineParser.h"
@@ -56,8 +56,8 @@ bool Data3DImportFileFormat::importData(LineParser &parser, Data3D &data)
             result = importPDens(parser, data);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Data3D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data3D format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

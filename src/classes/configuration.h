@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -11,6 +11,7 @@
 #include "classes/cellArray.h"
 #include "classes/molecule.h"
 #include "classes/siteStack.h"
+#include "generator/generator.h"
 #include "io/import/coordinates.h"
 #include "items/list.h"
 #include "kernels/potentials/base.h"
@@ -18,7 +19,6 @@
 #include "math/histogram1D.h"
 #include "math/interpolator.h"
 #include "module/layer.h"
-#include "procedure/procedure.h"
 #include "templates/vector3.h"
 #include <deque>
 #include <map>
@@ -51,10 +51,10 @@ class Configuration : public Serialisable<const CoreData &>
     std::string name_;
     // Nice name (generated from name_) used for output files
     std::string niceName_;
-    // Procedure to generate the Configuration
-    Procedure generator_;
-    static constexpr double defaultTemperature_ = 300.0;
+    // Generator for the Configuration
+    Generator generator_;
     // Temperature of this configuration (K)
+    static constexpr double defaultTemperature_ = 300.0;
     double temperature_{defaultTemperature_};
 
     public:
@@ -64,12 +64,12 @@ class Configuration : public Serialisable<const CoreData &>
     std::string_view name() const;
     // Return nice name of the Configuration
     std::string_view niceName() const;
-    // Return the current generator
-    Procedure &generator();
-    // Create the Configuration according to its generator Procedure
-    bool generate(const ProcedureContext &procedureContext);
+    // Return the generator for the Configuration
+    Generator &generator();
+    // Create the Configuration according to its generator
+    bool generate(const GeneratorContext &generatorContext);
     // Initialise (generate or load) the basic contents of the Configuration
-    bool initialiseContent(const ProcedureContext &procedureContext);
+    bool initialiseContent(const GeneratorContext &generatorContext);
     // Set configuration temperature
     void setTemperature(double t);
     // Return configuration temperature
@@ -81,8 +81,8 @@ class Configuration : public Serialisable<const CoreData &>
     private:
     // Species populations present in the Configuration
     std::vector<std::pair<const Species *, int>> speciesPopulations_;
-    // AtomType mix, containing unique (non-isotopic) atom types over all Species used in this configuration
-    AtomTypeMix atomTypes_;
+    // AtomType populations in the configuration
+    AtomTypeMix atomTypePopulations_;
     // Contents version, incremented whenever Configuration content or Atom positions change
     VersionCounter contentsVersion_;
     // Molecule vector
@@ -95,10 +95,8 @@ class Configuration : public Serialisable<const CoreData &>
     void empty();
     // Return specified used type
     std::shared_ptr<AtomType> atomTypes(int index);
-    // Return AtomTypeMix for this Configuration
-    const AtomTypeMix &atomTypes() const;
-    // Return number of atom types used in this Configuration
-    int nAtomTypes() const;
+    // Return atom type populations for this Configuration
+    const AtomTypeMix &atomTypePopulations() const;
     // Adjust population of specified Species in the Configuration
     void adjustSpeciesPopulation(const Species *sp, int delta);
     // Return Species populations within the Configuration
@@ -137,8 +135,8 @@ class Configuration : public Serialisable<const CoreData &>
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
     Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r = Vec3<double>());
-    // Return number of Atoms in Configuration
-    int nAtoms() const;
+    // Return the number of atoms in the configuration (or only those with the specified presence)
+    int nAtoms(SpeciesAtom::Presence withPresence = SpeciesAtom::Presence::Any) const;
     // Return Atom array
     std::vector<Atom> &atoms();
     const std::vector<Atom> &atoms() const;

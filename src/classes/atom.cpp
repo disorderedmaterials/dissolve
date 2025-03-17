@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/atom.h"
 #include "classes/atomType.h"
@@ -53,6 +53,9 @@ void Atom::setSpeciesAtom(const SpeciesAtom *spAtom) { speciesAtom_ = spAtom; }
 
 // Return SpeciesAtom that this Atom represents
 const SpeciesAtom *Atom::speciesAtom() const { return speciesAtom_; }
+
+// Return whether the atom's presence is that specified
+bool Atom::isPresence(SpeciesAtom::Presence presence) const { return speciesAtom_->isPresence(presence); }
 
 // Set Molecule in which this Atom exists
 void Atom::setMolecule(std::shared_ptr<Molecule> mol) { molecule_ = std::move(mol); }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "gui/render/renderableData1D.h"
@@ -68,18 +68,18 @@ void AxisAngleModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags
     {
         // Calculated A...B RDF
         if (rdfGraph_->renderables().empty())
-            rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//RDF(AB)", module_->name()), "A...B g(r)")
+            rdfGraph_->createRenderable<RenderableData1D>(std::format("{}//RDF(AB)", module_->name()), "A...B g(r)")
                 ->setColour(StockColours::BlueStockColour);
 
         // Calculated angle histogram
         if (angleGraph_->renderables().empty())
-            angleGraph_->createRenderable<RenderableData1D>(fmt::format("{}//AxisAngle(AB)", module_->name()), "Axis Angle")
+            angleGraph_->createRenderable<RenderableData1D>(std::format("{}//AxisAngle(AB)", module_->name()), "Axis Angle")
                 ->setColour(StockColours::RedStockColour);
 
         // Calculated distance-angle map
         if (dAngleGraph_->renderables().empty())
         {
-            auto x = dAngleGraph_->createRenderable<RenderableData2D>(fmt::format("{}//DAxisAngle", module_->name()),
+            auto x = dAngleGraph_->createRenderable<RenderableData2D>(std::format("{}//DAxisAngle", module_->name()),
                                                                       "A...B vs Axis Angle");
             x->colour().setStyle(ColourDefinition::HSVGradientStyle);
         }

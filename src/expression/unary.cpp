@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "expression/unary.h"
 
@@ -48,7 +48,7 @@ std::optional<ExpressionValue> ExpressionUnaryOperatorNode::evaluate() const
                 result = -rhs.asDouble();
             break;
         default:
-            throw(std::runtime_error(fmt::format("ExpressionUnaryOperatorNode - unhandled operator {}.\n", operator_)));
+            Messenger::exception("ExpressionUnaryOperatorNode - unhandled operator {}.\n", asString());
     }
 
     return result;
@@ -67,9 +67,9 @@ std::string ExpressionUnaryOperatorNode::asString() const
     switch (operator_)
     {
         case (OperatorNegate):
-            return fmt::format("-{}", rhs);
+            return std::format("-{}", rhs);
         default:
-            throw(std::runtime_error(fmt::format("ExpressionUnaryOperatorNode - unhandled operator {}.\n", operator_)));
+            Messenger::exception("ExpressionUnaryOperatorNode - unhandled operator {}.\n", (int)operator_);
     }
 
     return "";

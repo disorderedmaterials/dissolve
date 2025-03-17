@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/producers.h"
 #include "gui/keywordWidgets/atomTypeVector.h"
@@ -20,7 +20,6 @@
 #include "gui/keywordWidgets/module.h"
 #include "gui/keywordWidgets/moduleVector.h"
 #include "gui/keywordWidgets/node.h"
-#include "gui/keywordWidgets/nodeAndInteger.h"
 #include "gui/keywordWidgets/nodeValue.h"
 #include "gui/keywordWidgets/nodeValueEnumOptions.h"
 #include "gui/keywordWidgets/nodeVector.h"
@@ -43,8 +42,8 @@
 #include "keywords/dataSource.h"
 #include "keywords/elementVector.h"
 #include "keywords/expression.h"
+#include "keywords/generator.h"
 #include "keywords/nodeBranch.h"
-#include "keywords/procedure.h"
 #include <ios>
 
 KeywordWidgetProducer::KeywordWidgetProducer()
@@ -66,7 +65,6 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<ModuleKeywordBase, ModuleKeywordWidget>();
     registerProducer<ModuleVectorKeyword, ModuleVectorKeywordWidget>();
     registerProducer<NodeKeywordBase, NodeKeywordWidget>();
-    registerProducer<NodeAndIntegerKeywordBase, NodeAndIntegerKeywordWidget>();
     registerProducer<NodeValueEnumOptionsBaseKeyword, NodeValueEnumOptionsKeywordWidget>();
     registerProducer<NodeValueKeyword, NodeValueKeywordWidget>();
     registerProducer<NodeVectorKeywordBase, NodeVectorKeywordWidget>();
@@ -89,7 +87,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerNullProducer<ElementVectorKeyword>();
     registerNullProducer<ExpressionKeyword>();
     registerNullProducer<NodeBranchKeyword>();
-    registerNullProducer<ProcedureKeyword>();
+    registerNullProducer<GeneratorKeyword>();
 }
 
 /*
@@ -101,9 +99,9 @@ std::pair<QWidget *, KeywordWidgetBase *> KeywordWidgetProducer::produce(Keyword
 {
     auto it = producers_.find(keyword->typeIndex());
     if (it == producers_.end())
-        throw(std::runtime_error(fmt::format("A producer has not been registered for type '{}' (keyword name is '{}'), so a "
-                                             "new widget for this keyword cannot be created.\n",
-                                             keyword->typeIndex().name(), keyword->name())));
+        Messenger::exception("A producer has not been registered for type '{}' (keyword name is '{}'), so a "
+                             "new widget for this keyword cannot be created.\n",
+                             keyword->typeIndex().name(), keyword->name());
 
     return (it->second)(keyword, coreData);
 }

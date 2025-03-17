@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/spaceGroups.h"
 #include <gtest/gtest.h>
@@ -43,7 +43,7 @@ TEST(SpaceGroupsTest, HermannMauginnSymbols)
          {"F d -3 c", "2", SpaceGroups::SpaceGroup_228_2}}};
     for (const auto &[name, code, symbol] : validSymbols)
     {
-        fmt::print("We are testing {} {}\n", name, code);
+        std::cout << std::format("We are testing {} {}", name, code) << std::endl;
         EXPECT_EQ(SpaceGroups::findByHermannMauginnSymbol(name, code), symbol);
     }
 

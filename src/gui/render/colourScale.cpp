@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/render/colourScale.h"
+#include "base/messenger.h"
 #include <algorithm>
 
 ColourScale::ColourScale()
@@ -133,7 +134,7 @@ QColor ColourScale::colour(double value) const
     if (it != deltas_.end())
         return interpolated_ ? it->colour(value) : it->startColour();
 
-    throw(std::runtime_error(fmt::format("Failed to find a colour to return from the ColourScale.\n")));
+    Messenger::exception("Failed to find a colour to return from the ColourScale.\n");
 }
 
 // Get colour associated with value supplied, setting as GLfloat[4]

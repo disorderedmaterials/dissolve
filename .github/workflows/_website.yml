@@ -1,0 +1,187 @@
+name: Website
+description: Build and publish website
+
+on:
+  workflow_call:
+    inputs:
+      displayMajorVersion:
+        type: string
+        required: true
+      displayMinorVersion:
+        type: string
+        required: true
+      publishType:
+        type: string
+        default: 'none'
+      pdfExamples:
+        type: boolean
+        default: false
+      hugoVersion:
+        type: string
+        required: true
+    secrets:
+      SERVER_ID:
+        description: "ID for website access"
+      SERVER_KEY:
+        description: "Key for server access"
+      SERVER_USER:
+        description: "Username for server access"
+      SERVER_IP:
+        description: "Server IP address"
+      SERVER_DOCS_DIR:
+        description: "Directory on server for documentation data"
+      SERVER_MAIN_DIR:
+        description: "Directory on server for root website data"
+
+jobs:
+
+  Website:
+    runs-on: ubuntu-latest
+    steps:
+  
+    - name: 'Download Source Tarfiles'
+      uses: actions/download-artifact@v4
+      with:
+        name: source
+  
+    - name: 'Unpack Source'
+      shell: bash
+      run: tar -xvf dissolve-versioned-source.tar
+
+    - name: 'Apply Main Release Styling'
+      if: ${{ inputs.publishType == 'release' }}
+      shell: bash
+      run: |
+        # Set version and tip visibility in docs index
+        sed -i 's/RELEASETYPE version MAJOR.MINOR/Release v${{ inputs.displayMajorVersion }}.${{ inputs.displayMinorVersion }}/g' web/docs/_index.md
+        sed -i "/RELEASE TIP/d" web/docs/_index.md
+        head -n 10 web/docs/_index.md
+  
+    - name: 'Apply Development Release Styling'
+      if: ${{ inputs.publishType == 'continuous' }}
+      shell: bash
+      run: |
+        # Set version and tip visibility in docs index
+        sed -i 's/RELEASETYPE version MAJOR.MINOR/Development version ${{ inputs.displayMajorVersion }}.${{ inputs.displayMinorVersion }}/g' web/docs/_index.md
+        sed -i "/DEVELOPMENT TIP/d" web/docs/_index.md
+        head -n 10 web/docs/_index.md
+  
+        # Change base url
+        sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/dev/"|g' web/docs.toml
+        grep baseURL web/docs.toml
+  
+        # Style navbar
+        sed -i "s/navbar-background-color/navbar-background-color-dev/g" web/assets/scss/_content.scss
+        grep navbar-background-color web/assets/scss/_content.scss
+  
+    - name: 'Apply Legacy Release Styling'
+      if: ${{ inputs.publishType == 'legacy' }}
+      shell: bash
+      run: |
+        # Set version and tip visibility in docs index
+        sed -i 's/RELEASETYPE version MAJOR.MINOR/Legacy version ${{ inputs.displayMajorVersion }}.${{ inputs.displayMinorVersion }}/g' web/docs/_index.md
+        sed -i "/LEGACY TIP/d" web/docs/_index.md
+        head -n 10 web/docs/_index.md
+  
+        # Change base url
+        sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/legacy/"|g' web/docs.toml
+        grep baseURL web/docs.toml
+  
+        # Style navbar
+        sed -i "s/navbar-background-color/navbar-background-color-legacy/g" web/assets/scss/_content.scss
+        grep navbar-background-color web/assets/scss/_content.scss
+  
+    - name: 'Download & Install Hugo (Extended Version)'
+      shell: bash
+      run: |
+        set -ex
+        wget https://github.com/gohugoio/hugo/releases/download/v${{ inputs.hugoVersion }}/hugo_extended_${{ inputs.hugoVersion }}_linux-amd64.deb -O '${{ github.workspace }}/hugo.deb'
+        sudo dpkg -i ${{ github.workspace }}/hugo*.deb
+  
+    - name: 'Install pandoc / xetex'
+      if: ${{ inputs.pdfExamples == 'true' }}
+      shell: bash
+      run: |
+        set -ex
+        sudo apt install pandoc
+        sudo apt install texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-xetex
+  
+    - name: 'Copy Icons'
+      shell: bash
+      run: |
+        set -ex
+        cp -rv src/gui/icons/* web/static/img
+  
+    - name: 'Meld Examples'
+      shell: bash
+      run: |
+        set -ex
+        for example in $(find ./web/docs/examples/ -mindepth 1 -maxdepth 1 -type d -not -iname previous)
+        do
+          ci/scripts/meld-example -d ${example}
+        done
+  
+    - name: 'Build Site'
+      shell: bash
+      run: |
+        set -ex
+        cd web
+        npm install
+        hugo --contentDir main/ --config main.toml --destination public
+        hugo --contentDir docs/ --config docs.toml --destination public-docs
+  
+    - name: 'Create PDFs'
+      if: ${{ inputs.pdfExamples == 'true' }}
+      shell: bash
+      run: |
+        set -ex
+        cd web/public-docs/examples/
+        for example in $(find . -mindepth 1 -maxdepth 1 -type d -not -iname previous)
+        do
+          echo "Creating pdf for example \"${example}\"..."
+          cd ${example}/single/
+  
+          # "Fix" image links
+          sed "s:/img:../../../static/img:g" index.html > index_pdf.html
+  
+          pandoc --pdf-engine=xelatex -V 'mainfont:DejaVuSerif.ttf' -V 'sansfont:DejaVuSans.ttf' -V 'monofont:DejaVuSansMono.ttf' index_pdf.html -o ../${example}.pdf
+  
+          # Tidy up
+          rm index_pdf.html
+  
+          cd ../../
+        done
+  
+    - name: 'SSH Deploy to Server (Release) (Full)'
+      if: ${{ inputs.publishType == 'release' }}
+      shell: bash
+      run: |
+        echo "${{ secrets.SERVER_ID }}" > ./serverId
+        echo "${{ secrets.SERVER_KEY }}" > ./serverKey
+        chmod 0600 ./serverKey ./serverId
+        rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${{ secrets.SERVER_PORT }} -l ${{ secrets.SERVER_USER }}" web/public/ ${{ secrets.SERVER_IP }}:${{ secrets.SERVER_MAIN_DIR }}
+        rsync -avz --delete --exclude=dev --exclude=legacy -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${{ secrets.SERVER_PORT }} -l ${{ secrets.SERVER_USER }}" web/public-docs/ ${{ secrets.SERVER_IP }}:${{ secrets.SERVER_DOCS_DIR }}
+  
+    - name: 'SSH Deploy to Server (Legacy) (Docs only)'
+      if: ${{ inputs.publishType == 'legacy' }}
+      shell: bash
+      run: |
+        echo "${{ secrets.SERVER_ID }}" > ./serverId
+        echo "${{ secrets.SERVER_KEY }}" > ./serverKey
+        chmod 0600 ./serverKey ./serverId
+        rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${{ secrets.SERVER_PORT }} -l ${{ secrets.SERVER_USER }}" web/public-docs/ ${{ secrets.SERVER_IP }}:${{ secrets.SERVER_DOCS_DIR }}/legacy
+  
+    - name: 'SSH Deploy to Server (Continuous) (Docs only)'
+      if: ${{ inputs.publishType == 'continuous' }}
+      shell: bash
+      run: |
+        echo "${{ secrets.SERVER_ID }}" > ./serverId
+        echo "${{ secrets.SERVER_KEY }}" > ./serverKey
+        chmod 0600 ./serverKey ./serverId
+        rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${{ secrets.SERVER_PORT }} -l ${{ secrets.SERVER_USER }}" web/public-docs/ ${{ secrets.SERVER_IP }}:${{ secrets.SERVER_DOCS_DIR }}/dev
+  
+    - name: Upload Web Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: web-artifacts
+        path: ${{ github.workspace }}/web/public*

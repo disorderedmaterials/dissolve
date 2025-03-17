@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -9,7 +9,6 @@ namespace ModuleTypes
 enum ModuleType
 {
     Accumulate,
-    Analyse,
     Angle,
     AtomShake,
     AvgMol,
@@ -37,6 +36,7 @@ enum ModuleType
     IntraShake,
     MD,
     ModifierOSites,
+    MoleculeTorsion,
     MolShake,
     NeutronSQ,
     OrientedSDF,
@@ -47,6 +47,8 @@ enum ModuleType
     SQ,
     TemperatureSchedule,
     Test,
+    TR,
+    VoxelDensity,
     XRaySQ
 };
 

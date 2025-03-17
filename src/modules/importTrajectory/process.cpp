@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -11,13 +11,6 @@
 // Run main processing
 Module::ExecutionResult ImportTrajectoryModule::process(ModuleContext &moduleContext)
 {
-    // Check for Configuration target
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     Messenger::print("Import: Reading trajectory file frame from '{}' into Configuration '{}'...\n",
                      trajectoryFormat_.filename(), targetConfiguration_->name());
 
@@ -30,7 +23,7 @@ Module::ExecutionResult ImportTrajectoryModule::process(ModuleContext &moduleCon
     }
 
     // Does a seek position exist in the processing module info?
-    std::string streamPosName = fmt::format("TrajectoryPosition_{}", targetConfiguration_->niceName());
+    std::string streamPosName = std::format("TrajectoryPosition_{}", targetConfiguration_->niceName());
     if (moduleContext.dissolve().processingModuleData().contains(streamPosName, name()))
     {
         // Retrieve the streampos and go to it in the file

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
@@ -17,13 +17,6 @@
 // Run main processing
 Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     auto &processingData = moduleContext.dissolve().processingModuleData();
 
     // Select site A
@@ -76,8 +69,8 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
 
     auto nAAvailable = a.sites().size(), nACumulative = a.sites().size();
     auto nASelections = 1;
-    auto nBAvailable = 0, nBCumulative = 0, nBSelections = 0;
-    auto nCAvailable = 0, nCCumulative = 0, nCSelections = 0;
+    auto nBAvailable = 0l, nBCumulative = 0l, nBSelections = 0l;
+    auto nCAvailable = 0l, nCCumulative = 0l, nCSelections = 0l;
 
     for (const auto &[siteA, indexA] : a.sites())
     {

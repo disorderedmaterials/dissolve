@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/export/forces.h"
 #include "base/lineParser.h"
@@ -57,8 +57,8 @@ bool ForceExportFileFormat::exportData(const std::vector<Vec3<double>> &f)
             result = exportSimple(parser, f);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Forces format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Forces format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -565,7 +565,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
         return false;
 
     // Create new prefix
-    std::string newPrefix = fmt::format("{}  ", prefix);
+    std::string newPrefix = std::format("{}  ", prefix);
 
     // Atoms
     if (!parser.writeLineF("{}# Atoms\n", newPrefix))
@@ -681,16 +681,15 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             {
                 // Write new 1-4 scale factor line if this torsion has different values
                 if ((torsion.electrostatic14Scaling() != elec14Scaling || torsion.vanDerWaals14Scaling() != vdw14Scaling) &&
-                    !parser.writeLineF(fmt::format("{}{}  {}  {}\n", newPrefix,
-                                                   keywords().keyword(Species::SpeciesKeyword::Scaling14),
-                                                   torsion.electrostatic14Scaling(), torsion.vanDerWaals14Scaling())))
+                    !parser.writeLineF("{}{}  {}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::Scaling14),
+                                       torsion.electrostatic14Scaling(), torsion.vanDerWaals14Scaling()))
                     return false;
 
-                if (!parser.writeLineF(fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
-                                                   keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
-                                                   torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
-                                                   TorsionFunctions::forms().keyword(torsion.interactionForm()),
-                                                   torsion.interactionPotential().parametersAsString())))
+                if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
+                                       keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
+                                       torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
+                                       TorsionFunctions::forms().keyword(torsion.interactionForm()),
+                                       torsion.interactionPotential().parametersAsString()))
                     return false;
 
                 elec14Scaling = torsion.electrostatic14Scaling();

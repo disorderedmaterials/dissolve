@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "module/module.h"
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "classes/coreData.h"
 #include "keywords/configuration.h"
+#include "main/dissolve.h"
+#include "module/context.h"
 
 // Module Types
 
@@ -13,7 +15,6 @@ namespace ModuleTypes
 {
 // ENumerated Options for ModuleTypes
 EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::Accumulate, "Accumulate"},
-                                                                 {ModuleTypes::Analyse, "Analyse"},
                                                                  {ModuleTypes::Angle, "Angle"},
                                                                  {ModuleTypes::AtomShake, "AtomShake"},
                                                                  {ModuleTypes::AvgMol, "AvgMol"},
@@ -41,6 +42,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::IntraShake, "IntraShake"},
                                                                  {ModuleTypes::MD, "MD"},
                                                                  {ModuleTypes::ModifierOSites, "ModifierOSites"},
+                                                                 {ModuleTypes::MoleculeTorsion, "MoleculeTorsion"},
                                                                  {ModuleTypes::MolShake, "MolShake"},
                                                                  {ModuleTypes::NeutronSQ, "NeutronSQ"},
                                                                  {ModuleTypes::OrientedSDF, "OrientedSDF"},
@@ -50,6 +52,8 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::SQ, "SQ"},
                                                                  {ModuleTypes::TemperatureSchedule, "TemperatureSchedule"},
                                                                  {ModuleTypes::Test, "Test"},
+                                                                 {ModuleTypes::VoxelDensity, "VoxelDensity"},
+                                                                 {ModuleTypes::TR, "TR"},
                                                                  {ModuleTypes::XRaySQ, "XRaySQ"}});
 
 // Return module type string for specified type enumeration
@@ -140,7 +144,7 @@ std::string Module::frequencyDetails(int iteration) const
     if (nToGo == 1)
         return "next iteration";
 
-    return fmt::format("in {} steps time", nToGo);
+    return std::format("in {} steps time", nToGo);
 }
 
 // Set whether the Module is enabled
@@ -155,6 +159,93 @@ bool Module::isDisabled() const { return !enabled_; }
 /*
  * Processing
  */
+
+// Get current target configurations
+std::pair<std::vector<const Configuration *>, int> Module::getCurrentTargetConfigurations()
+{
+    auto expectedTargetCount = 0;
+    std::vector<const Configuration *> currentTargets;
+    for (auto *keyword : keywords_.targetKeywords())
+    {
+        if (keyword->typeIndex() == typeid(ConfigurationKeyword *))
+        {
+            ++expectedTargetCount;
+            auto optCfg = keywords_.get<Configuration *, ConfigurationKeyword>(keyword->name());
+            if (optCfg)
+            {
+                if (*optCfg != nullptr)
+                    currentTargets.push_back(*optCfg);
+            }
+            else
+                throw(std::runtime_error("Failed to get data from ConfigurationKeyword when checking targets.\n"));
+        }
+        else if (keyword->typeIndex() == typeid(ConfigurationVectorKeyword *))
+        {
+            ++expectedTargetCount;
+            auto optCfgs = keywords_.get<std::vector<Configuration *>, ConfigurationVectorKeyword>(keyword->name());
+            if (optCfgs)
+                currentTargets.insert(currentTargets.end(), optCfgs->begin(), optCfgs->end());
+            else
+                throw(std::runtime_error("Failed to get data from ConfigurationVectorKeyword when checking targets.\n"));
+        }
+    }
+
+    return {currentTargets, expectedTargetCount};
+}
+
+// Check the current configurations targeted by the module
+Module::ExecutionResult Module::checkConfigurationTargets(GenericList &processingModuleData)
+{
+    // Assemble target configurations
+    auto &&[currentTargets, expectedTargetCount] = getCurrentTargetConfigurations();
+
+    // If we are expecting targets, make sure we actually have them
+    if (expectedTargetCount <= 0)
+        return ExecutionResult::Success;
+
+    // Check basic target count
+    if (currentTargets.size() < expectedTargetCount)
+    {
+        Messenger::error("Not enough configuration targets set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
+
+    // Check that the current targets are consistent with the ones we last used
+    if (lastProcessedConfigurations_.empty())
+        return ExecutionResult::Success;
+
+    // If the vector of previous targets isn't the same size as the current targets then we must clear our data
+    if (currentTargets.size() != lastProcessedConfigurations_.size() ||
+        !std::all_of(currentTargets.begin(), currentTargets.end(),
+                     [&](const auto *currentTarget)
+                     {
+                         return std::find_if(lastProcessedConfigurations_.begin(), lastProcessedConfigurations_.end(),
+                                             [currentTarget](const auto &pair)
+                                             { return pair.first == currentTarget; }) != lastProcessedConfigurations_.end();
+                     }))
+    {
+        Messenger::warn("Target configuration(s) have changed for module '{}' so processing data for that module will "
+                        "be cleared...\n",
+                        name());
+        processingModuleData.removeWithPrefix(name());
+        lastProcessedConfigurations_.clear();
+    }
+    else if (!executeIfTargetsUnchanged_)
+    {
+        // Targets are the same - are _all_ versions different?
+        if (std::any_of(currentTargets.begin(), currentTargets.end(),
+                        [&](const auto *currentTarget)
+                        { return lastProcessedConfigurations_[currentTarget] == currentTarget->contentsVersion(); }))
+        {
+            Messenger::warn("One or more target configurations have not changed since module '{}' was last run, so it "
+                            "will not run in the current iteration.\n",
+                            name());
+            return ExecutionResult::NotExecuted;
+        }
+    }
+
+    return ExecutionResult::Success;
+}
 
 // Run main processing
 Module::ExecutionResult Module::process(ModuleContext &moduleContext) { return ExecutionResult::Failed; }
@@ -185,6 +276,11 @@ bool Module::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSigna
 // Run main processing stage
 Module::ExecutionResult Module::executeProcessing(ModuleContext &moduleContext)
 {
+    // Check target configurations
+    auto targetCheckResult = checkConfigurationTargets(moduleContext.dissolve().processingModuleData());
+    if (targetCheckResult != ExecutionResult::Success)
+        return targetCheckResult;
+
     // Begin timer
     Timer timer;
     timer.start();
@@ -197,6 +293,11 @@ Module::ExecutionResult Module::executeProcessing(ModuleContext &moduleContext)
 
     if (result == ExecutionResult::Success)
         processTimes_ += timer.secondsElapsed();
+
+    // Update last processed configuration data
+    auto &&[currentTargets, expectedTargetCount] = getCurrentTargetConfigurations();
+    for (auto *currentTarget : currentTargets)
+        lastProcessedConfigurations_[currentTarget] = currentTarget->contentsVersion();
 
     return result;
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -35,7 +35,7 @@ class AxisAngleModule : public Module
     // Target SpeciesSite definitions
     std::vector<const SpeciesSite *> a_, b_;
     // Axes to use for sites
-    OrientedSite::SiteAxis axisA_{OrientedSite::SiteAxis::XAxis}, axisB_{OrientedSite::SiteAxis::XAxis};
+    Site::SiteAxis axisA_{Site::SiteAxis::XAxis}, axisB_{Site::SiteAxis::XAxis};
     // Export file and format for RDF
     Data1DExportFileFormat exportFileAndFormatRDF_;
     // Export file and format for AxisAngle

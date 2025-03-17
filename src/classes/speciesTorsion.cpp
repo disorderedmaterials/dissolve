@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/speciesTorsion.h"
 #include "classes/coreData.h"
@@ -170,7 +170,7 @@ int SpeciesTorsion::index(int n) const
     else if (n == 3)
         return indexL();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesTorsion::index(int). Returning 0...\n");
+    Messenger::error("SpeciesAtom index {} is out of range in SpeciesTorsion::index(int). Returning 0...\n", n);
     return 0;
 }
 
@@ -192,12 +192,12 @@ bool SpeciesTorsion::isSelected() const
  */
 
 // Set 1-4 scaling factors
-bool SpeciesTorsion::set14ScalingFactors(double elecScale, double vdwScale)
+bool SpeciesTorsion::set14ScalingFactors(double elecScale, double srScale)
 {
     if (masterTerm_)
         return Messenger::error("Refused to set 1-4 scaling factors since master parameters are referenced.\n");
     electrostatic14Scaling_ = elecScale;
-    vdw14Scaling_ = vdwScale;
+    vdw14Scaling_ = srScale;
     return true;
 }
 
@@ -352,8 +352,8 @@ double SpeciesTorsion::energy(double angleInDegrees, TorsionFunctions::Form form
         return U;
     }
 
-    throw(std::runtime_error(fmt::format("Torsion functional form '{}' not accounted for, so can't calculate energy.\n",
-                                         TorsionFunctions::forms().keyword(form))));
+    Messenger::exception("Torsion functional form '{}' not accounted for, so can't calculate energy.\n",
+                         TorsionFunctions::forms().keyword(form));
 }
 
 // Return energy for specified angle
@@ -515,8 +515,8 @@ double SpeciesTorsion::force(double angleInDegrees, TorsionFunctions::Form form,
         return -dU_dphi * dphi_dcosphi;
     }
 
-    throw(std::runtime_error(fmt::format("Torsion functional form '{}' not accounted for, so can't calculate force.\n",
-                                         TorsionFunctions::forms().keyword(form))));
+    Messenger::exception("Torsion functional form '{}' not accounted for, so can't calculate force.\n",
+                         TorsionFunctions::forms().keyword(form));
 }
 
 // Return force multiplier for specified angle

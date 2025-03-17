@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/export/trajectory.h"
 #include "base/lineParser.h"
@@ -31,10 +31,12 @@ bool TrajectoryExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
 
     // Write Atoms
     for (const auto &i : cfg->atoms())
+    {
         if (extended)
         {
             if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}  {:<6d}  {}\n", Elements::symbol(i.speciesAtom()->Z()),
-                                   i.r().x, i.r().y, i.r().z, i.localTypeIndex(), i.speciesAtom()->atomType()->name()))
+                                   i.r().x, i.r().y, i.r().z, i.speciesAtom()->index() + 1,
+                                   i.speciesAtom()->atomType()->name()))
                 return false;
         }
         else
@@ -43,6 +45,7 @@ bool TrajectoryExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
                                    i.r().y, i.r().z))
                 return false;
         }
+    }
 
     return true;
 }
@@ -91,8 +94,8 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
             frameResult = exportXYZ(parser, cfg, true);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Trajectory format '{}' export has not been implemented.\n",
-                                                 formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Trajectory format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     parser.closeFiles();

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/render/axes.h"
 #include "base/sysFunc.h"
@@ -461,7 +461,7 @@ void Axes::transformX(std::vector<double> &xArray) const
         for (auto n = 0; n < xArray.size(); ++n)
             xArray[n] = log10(xArray[n]) * stretch_.x;
     else
-        std::transform(xArray.begin(), xArray.end(), xArray.begin(), [=](auto value) { return value * stretch_.x; });
+        std::transform(xArray.begin(), xArray.end(), xArray.begin(), [this](auto value) { return value * stretch_.x; });
 }
 
 // Return supplied data y value in local axes coordinates
@@ -494,7 +494,7 @@ void Axes::transformY(std::vector<double> &yArray) const
             yArray[n] = log10(yArray[n]) * stretch_.y;
         }
     else
-        std::transform(yArray.begin(), yArray.end(), yArray.begin(), [=](auto value) { return value * stretch_.y; });
+        std::transform(yArray.begin(), yArray.end(), yArray.begin(), [this](auto value) { return value * stretch_.y; });
 }
 
 // Return supplied data z value in local axes coordinates
@@ -527,7 +527,7 @@ void Axes::transformZ(std::vector<double> &zArray) const
             zArray[n] = log10(zArray[n]) * stretch_.z;
         }
     else
-        std::transform(zArray.begin(), zArray.end(), zArray.begin(), [=](auto value) { return value * stretch_.z; });
+        std::transform(zArray.begin(), zArray.end(), zArray.begin(), [this](auto value) { return value * stretch_.z; });
 }
 
 // Transform a 2D array of values into local axes coordinates

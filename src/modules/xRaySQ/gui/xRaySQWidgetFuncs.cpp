@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "classes/isotopeData.h"
@@ -61,23 +61,23 @@ void XRaySQModuleWidget::createPartialSetRenderables(std::string_view targetPref
     {
         auto &at1 = ps.atomTypeMix()[first];
         auto &at2 = ps.atomTypeMix()[second];
-        const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+        const std::string id = std::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
         // Filtering - does this 'id' match our filter?
         if (filterText && id.find(filterText.value()) == std::string::npos)
             continue;
 
         // Full partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
-                                                   fmt::format("{} (Full)", id), "Full");
+        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
+                                                   std::format("{} (Full)", id), "Full");
 
         // Bound partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
-                                                   fmt::format("{} (Bound)", id), "Bound");
+        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
+                                                   std::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
-                                                   fmt::format("{} (Unbound)", id), "Unbound");
+        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
+                                                   std::format("{} (Unbound)", id), "Unbound");
     }
 }
 
@@ -98,21 +98,21 @@ void XRaySQModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
 
         if (ui_.TotalFQButton->isChecked())
         {
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//Total", module_->name()), "Calculated",
+            graph_->createRenderable<RenderableData1D>(std::format("{}//WeightedSQ//Total", module_->name()), "Calculated",
                                                        "Calculated");
             auto boundTotal = graph_->createRenderable<RenderableData1D>(
-                fmt::format("{}//WeightedSQ//BoundTotal", module_->name()), "Bound F(Q)", "Calculated");
+                std::format("{}//WeightedSQ//BoundTotal", module_->name()), "Bound F(Q)", "Calculated");
             boundTotal->setColour(StockColours::GreenStockColour);
             boundTotal->lineStyle().setStipple(LineStipple::DotStipple);
             auto unboundTotal = graph_->createRenderable<RenderableData1D>(
-                fmt::format("{}//WeightedSQ//UnboundTotal", module_->name()), "Unbound F(Q)", "Calculated");
+                std::format("{}//WeightedSQ//UnboundTotal", module_->name()), "Unbound F(Q)", "Calculated");
             unboundTotal->setColour(StockColours::GreenStockColour);
             unboundTotal->lineStyle().setStipple(LineStipple::HalfDashStipple);
 
             // Add on reference F(Q) data if present
             if (referenceFileAndFormat.hasFilename())
                 graph_
-                    ->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceData", module_->name()), "Reference F(Q)",
+                    ->createRenderable<RenderableData1D>(std::format("{}//ReferenceData", module_->name()), "Reference F(Q)",
                                                          "Reference")
                     ->setColour(StockColours::RedStockColour);
         }
@@ -123,9 +123,9 @@ void XRaySQModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
         }
         else if (ui_.TotalGRButton->isChecked())
         {
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedGR//Total", module_->name()), "Calculated",
+            graph_->createRenderable<RenderableData1D>(std::format("{}//WeightedGR//Total", module_->name()), "Calculated",
                                                        "Calculated");
-            auto repGR = graph_->createRenderable<RenderableData1D>(fmt::format("{}//RepresentativeTotalGR", module_->name()),
+            auto repGR = graph_->createRenderable<RenderableData1D>(std::format("{}//RepresentativeTotalGR", module_->name()),
                                                                     "Via FT", "Calculated");
             repGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
             repGR->setColour(StockColours::GreenStockColour);
@@ -133,7 +133,7 @@ void XRaySQModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
             // Add on reference G(r) (from FT of F(Q)) if present
             if (referenceFileAndFormat.hasFilename())
                 graph_
-                    ->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceDataFT", module_->name()),
+                    ->createRenderable<RenderableData1D>(std::format("{}//ReferenceDataFT", module_->name()),
                                                          "Reference G(r) (via FT)", "Reference")
                     ->setColour(StockColours::RedStockColour);
         }

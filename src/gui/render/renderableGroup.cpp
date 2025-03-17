@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/render/renderableGroup.h"
 #include "gui/render/renderable.h"
@@ -241,9 +241,9 @@ void RenderableGroup::setRenderableVerticalShift(Renderable *renderable, int ren
     renderable->setValuesTransformEnabled(verticalShiftStyle_ != PreventVerticalShifting);
 
     if (verticalShiftStyle_ == GroupVerticalShifting)
-        renderable->setValuesTransformEquation(fmt::format("value+{}", verticalShift_ * verticalShiftMultiplier_));
+        renderable->setValuesTransformEquation(std::format("value+{}", verticalShift_ * verticalShiftMultiplier_));
     else if (verticalShiftStyle_ == IndividualVerticalShifting)
-        renderable->setValuesTransformEquation(fmt::format("value+{}", verticalShift_ * rendIndex));
+        renderable->setValuesTransformEquation(std::format("value+{}", verticalShift_ * rendIndex));
     else
         renderable->setValuesTransformEquation("value");
 }

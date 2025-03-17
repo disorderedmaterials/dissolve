@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/import/cif.h"
 #include "CIFImportLexer.h"
@@ -8,13 +8,13 @@
 #include "classes/coreData.h"
 #include "classes/empiricalFormula.h"
 #include "classes/species.h"
+#include "generator/add.h"
+#include "generator/box.h"
+#include "generator/coordinateSets.h"
 #include "io/import/CIFImportErrorListeners.h"
 #include "io/import/CIFImportVisitor.h"
 #include "io/import/cif.h"
 #include "neta/neta.h"
-#include "procedure/nodes/add.h"
-#include "procedure/nodes/box.h"
-#include "procedure/nodes/coordinateSets.h"
 #include "templates/algorithms.h"
 
 CIFHandler::CIFHandler()
@@ -66,7 +66,7 @@ bool CIFHandler::parse(std::string_view filename, CIFHandler::CIFTags &tags) con
     }
     catch (CIFImportExceptions::CIFImportSyntaxException &ex)
     {
-        Messenger::error(ex.what());
+        Messenger::error("{}", ex.what());
         return false;
     }
 
@@ -78,7 +78,7 @@ bool CIFHandler::parse(std::string_view filename, CIFHandler::CIFTags &tags) con
     }
     catch (CIFImportExceptions::CIFImportSyntaxException &ex)
     {
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     }
 
     return true;
@@ -166,7 +166,7 @@ bool CIFHandler::read(std::string_view filename)
     for (auto n = 0; n < atomSiteFractX.size(); ++n)
     {
         // Get standard information
-        auto label = n < atomSiteLabel.size() ? atomSiteLabel[n] : fmt::format("{}{}", atomSiteTypeSymbol[n], n);
+        auto label = n < atomSiteLabel.size() ? atomSiteLabel[n] : std::format("{}{}", atomSiteTypeSymbol[n], n);
         auto Z = n < atomSiteTypeSymbol.size()
                      ? Elements::element(atomSiteTypeSymbol[n])
                      : (n < atomSiteLabel.size() ? Elements::element(atomSiteLabel[n]) : Elements::Unknown);
@@ -920,7 +920,7 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
             auto &generator = configuration->generator();
 
             // Add Box
-            auto boxNode = generator.createRootNode<BoxProcedureNode>({});
+            auto boxNode = generator.createRootNode<BoxGeneratorNode>({});
             auto cellLengths = supercellConfiguration_.box()->axisLengths();
             auto cellAngles = supercellConfiguration_.box()->axisAngles();
             boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
@@ -940,25 +940,25 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
                     auto root = generator.nodes().back();
                     auto suffix = 0;
 
-                    while (generator.rootSequence().nodeInScope(root, fmt::format("SymmetryCopies_{}", uniqueSuffix)) !=
+                    while (generator.rootSequence().nodeInScope(root, std::format("SymmetryCopies_{}", uniqueSuffix)) !=
                            nullptr)
-                        uniqueSuffix = fmt::format("{}_{:02d}", base, ++suffix);
+                        uniqueSuffix = std::format("{}_{:02d}", base, ++suffix);
                 }
 
                 // We use 'CoordinateSets' here, because in this instance we are working with (CoordinateSet, Add) pairs
 
                 // CoordinateSets
                 auto coordsNode =
-                    generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
-                coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
+                    generator.createRootNode<CoordinateSetsGeneratorNode>(std::format("SymmetryCopies_{}", uniqueSuffix), sp);
+                coordsNode->keywords().setEnumeration("Source", CoordinateSetsGeneratorNode::CoordinateSetSource::File);
                 coordsNode->setSets(cifMolecularSp.allInstanceCoordinates());
 
                 // Add
-                auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
+                auto addNode = generator.createRootNode<AddGeneratorNode>(std::format("Add_{}", uniqueSuffix), coordsNode);
                 addNode->keywords().set("Population", NodeValueProxy(int(cifMolecularSp.instances().size())));
-                addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+                addNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Current);
                 addNode->keywords().set("Rotate", false);
-                addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
+                addNode->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::None);
             }
         }
         else
@@ -976,11 +976,12 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
         if (flags.isSet(OutputFlags::OutputSupermolecule))
         {
             sp->removePeriodicBonds();
-            sp->updateIntramolecularTerms();
             sp->removeBox();
         }
         else
             sp->createBox(supercellSpecies_.box()->axisLengths(), supercellSpecies_.box()->axisAngles());
+
+        sp->updateIntramolecularTerms();
 
         if (flags.isSet(OutputFlags::OutputConfiguration))
         {
@@ -991,18 +992,18 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
             auto &generator = configuration->generator();
 
             // Add Box
-            auto boxNode = generator.createRootNode<BoxProcedureNode>({});
+            auto boxNode = generator.createRootNode<BoxGeneratorNode>({});
             auto cellLengths = supercellConfiguration_.box()->axisLengths();
             auto cellAngles = supercellConfiguration_.box()->axisAngles();
             boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
             boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
 
             // Add
-            auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", sp->name()), sp);
+            auto addNode = generator.createRootNode<AddGeneratorNode>(std::format("Add_{}", sp->name()), sp);
             addNode->keywords().set("Population", NodeValueProxy(1));
-            addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+            addNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Current);
             addNode->keywords().set("Rotate", false);
-            addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
+            addNode->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::None);
         }
     }
 }
@@ -1312,7 +1313,7 @@ std::pair<double, std::vector<int>> CIFHandler::differenceMetric(const Species *
         const auto &closestMolSpAtom = molecule.species()->atom(atomIndexMap[spI]);
         difference += distanceSq;
         if (spAtom.Z() != closestMolSpAtom.Z())
-            difference += std::max(spAtom.Z(), closestMolSpAtom.Z()) * 10.0;
+            difference += std::max(int(spAtom.Z()), int(closestMolSpAtom.Z())) * 10.0;
     }
 
     return {difference, atomIndexMap};

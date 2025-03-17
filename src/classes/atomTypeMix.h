@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -36,12 +36,10 @@ class AtomTypeMix
     void clear();
     // Zero populations of all types
     void zero();
-    // Add the specified AtomType, returning the AtomTypeData
-    AtomTypeData &add(std::shared_ptr<AtomType> atomType, double popAdd = 0);
+    // Add the specified AtomType to the list, returning data object and its index in the vector
+    std::pair<AtomTypeData &, int> add(std::shared_ptr<AtomType> atomType, double popAdd = 0);
     // Add the AtomTypes in the supplied object into this one, increasing populations etc.
     void add(const AtomTypeMix &source);
-    // Remove specified AtomType
-    void remove(std::shared_ptr<AtomType> atomType);
     // Add/increase this AtomType/Isotope pair, returning the index of the AtomType
     void addIsotope(std::shared_ptr<AtomType> atomType, Sears91::Isotope tope, double popAdd = 0);
     // Finalise, calculating fractional populations etc.
@@ -63,11 +61,12 @@ class AtomTypeMix
     // Return ending iterator
     std::vector<AtomTypeData>::const_iterator end() const;
     // Return index of AtomType
-    int indexOf(const std::shared_ptr<AtomType> &atomtype) const;
+    std::optional<int> indexOf(const std::shared_ptr<AtomType> &atomType) const;
     // Return indices of AtomType pair
-    std::pair<int, int> indexOf(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const;
+    std::optional<std::pair<int, int>> indexOf(const std::shared_ptr<AtomType> &at1,
+                                               const std::shared_ptr<AtomType> &at2) const;
     // Return index of named AtomType
-    int indexOf(std::string_view name) const;
+    std::optional<int> indexOf(std::string_view name) const;
     // Return total population of all types
     double totalPopulation() const;
     // Return nth referenced AtomType

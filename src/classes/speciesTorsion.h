@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -83,7 +83,7 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
 
     public:
     // Set 1-4 scaling factors
-    bool set14ScalingFactors(double elecScale, double vdwScale);
+    bool set14ScalingFactors(double elecScale, double srScale);
     // Set electrostatic 1-4 scaling factor for the interaction
     bool setElectrostatic14Scaling(double scaling);
     // Return electrostatic 1-4 scaling factor for the interaction

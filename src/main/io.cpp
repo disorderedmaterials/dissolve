@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/messenger.h"
@@ -143,6 +143,19 @@ SerialisedValue Dissolve::serialisePairPotentials() const
     if (atomTypeChargeSource_)
         pairPotentials["includeCoulomb"] = true;
     Serialisable::fromVectorToTable(coreData_.atomTypes(), "atomTypes", pairPotentials);
+    if (!useCombinationRules_)
+    {
+        pairPotentials["useCombinationRules"] = false;
+        Serialisable::fromVector(pairPotentials_, "potentials", pairPotentials,
+                                 [](const auto &term)
+                                 {
+                                     const auto &[at1, at2, pot] = term;
+                                     auto value = pot->serialise();
+                                     value["atomTypeI"] = at1->name();
+                                     value["atomTypeJ"] = at2->name();
+                                     return value;
+                                 });
+    }
     return pairPotentials;
 }
 
@@ -187,6 +200,23 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
     toMap(node, "atomTypes",
           [this](const std::string &name, const auto &data)
           { coreData().atomTypes().emplace_back(std::make_unique<AtomType>(name))->deserialise(data); });
+
+    useCombinationRules_ = toml::find_or<bool>(node, "useCombinationRules", true);
+    if (!useCombinationRules_)
+    {
+        Serialisable::toVector(
+            node, "potentials",
+            [&](const SerialisedValue &potData)
+            {
+                // Get atom types
+                auto at1 = coreData_.findAtomType(toml::find<std::string>(potData, "atomTypeI"));
+                auto at2 = coreData_.findAtomType(toml::find<std::string>(potData, "atomTypeJ"));
+                if (!at1 || !at2)
+                    throw(toml::type_error("Non-existent atom type(s) used in pair potential.", potData.location()));
+                auto *pot = addPairPotential(at1, at2);
+                pot->deserialise(potData);
+            });
+    }
 }
 
 // Read values from a serialisable value
@@ -333,8 +363,8 @@ bool Dissolve::saveInput(std::string_view filename)
         {
             // Write new 1-4 scale factor line if this torsion has different values
             if ((t->electrostatic14Scaling() != elec14Scaling || t->vanDerWaals14Scaling() != vdw14Scaling) &&
-                !parser.writeLineF(fmt::format("  {}  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::Scaling14Keyword),
-                                               t->electrostatic14Scaling(), t->vanDerWaals14Scaling())))
+                !parser.writeLineF("  {}  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::Scaling14Keyword),
+                                   t->electrostatic14Scaling(), t->vanDerWaals14Scaling()))
                 return false;
 
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
@@ -383,6 +413,22 @@ bool Dissolve::saveInput(std::string_view filename)
                                ShortRangeFunctions::forms().keyword(atomType->interactionPotential().form()),
                                atomType->interactionPotential().parametersAsString()))
             return false;
+
+    // Pair potentials (if we are not using combination rules)
+    if (!useCombinationRules_)
+    {
+        if (!parser.writeLineF("  # Pair Potentials\n"))
+            return false;
+        if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::UseCombinationRules),
+                               DissolveSys::btoa(false)))
+            return false;
+        for (const auto &[at1, at2, pot] : pairPotentials_)
+            if (!parser.writeLineF("  {}  '{}'  '{}'  {}  {}\n",
+                                   PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::PairPotentialKeyword),
+                                   at1->name(), at2->name(), Functions1D::forms().keyword(pot->interactionPotential().form()),
+                                   pot->interactionPotential().parametersAsString()))
+                return false;
+    }
 
     // Pair potential overrides
     for (const auto &ppOverride : coreData_.pairPotentialOverrides())
@@ -550,7 +596,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             auto result = module->keywords().deserialise(parser, coreData_, 2);
             if (result == KeywordBase::ParseResult::Unrecognised)
             {
-                Messenger::error("Module '{}' has no keyword '{}'.\n", parser.argsv(2));
+                Messenger::error("Module '{}' has no keyword '{}'.\n", module->name(), parser.argsv(2));
                 error = true;
                 break;
             }
@@ -656,7 +702,7 @@ bool Dissolve::saveRestart(std::string_view filename)
             for (const auto &group : section.groups())
                 for (const auto &[keyword, keywordType] : group.keywords())
                     if (keywordType == KeywordBase::KeywordType::Restartable &&
-                        !keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->name(), keyword->name())))
+                        !keyword->serialise(parser, std::format("Keyword  {}  {}  ", module->name(), keyword->name())))
                         return false;
     }
 
@@ -700,7 +746,7 @@ void Dissolve::setInputFilename(std::string_view filename)
     inputFilename_ = filename;
     coreData_.setInputFilename(filename);
 
-    restartFilename_ = fmt::format("{}.restart", inputFilename_);
+    restartFilename_ = std::format("{}.restart", inputFilename_);
 }
 
 // Return current input filename

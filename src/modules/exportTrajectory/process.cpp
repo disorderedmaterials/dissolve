@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -16,13 +16,6 @@ Module::ExecutionResult ExportTrajectoryModule::process(ModuleContext &moduleCon
     if (!trajectoryFormat_.hasFilename())
     {
         Messenger::error("No valid file/format set for trajectory export.\n");
-        return ExecutionResult::Failed;
-    }
-
-    // Check for Configuration target
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
         return ExecutionResult::Failed;
     }
 

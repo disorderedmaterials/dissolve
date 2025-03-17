@@ -758,13 +758,6 @@
                <number>4</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="SiteOriginMassWeightedCheck">
-                <property name="text">
-                 <string>Weight origin by mass</string>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QStackedWidget" name="SiteDefinitionStack">
                 <property name="currentIndex">
                  <number>0</number>
@@ -1050,6 +1043,21 @@
                 </widget>
                 <widget class="QWidget" name="FragmentSiteDefinitionPage">
                  <layout class="QVBoxLayout" name="verticalLayout_18">
+                  <property name="spacing">
+                   <number>4</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>4</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>4</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>4</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>4</number>
+                  </property>
                   <item>
                    <widget class="QGroupBox" name="FragmentNETAGroup">
                     <property name="sizePolicy">
@@ -1103,6 +1111,13 @@
                   </item>
                  </layout>
                 </widget>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="SiteOriginMassWeightedCheck">
+                <property name="text">
+                 <string>Weight origin by mass</string>
+                </property>
                </widget>
               </item>
              </layout>

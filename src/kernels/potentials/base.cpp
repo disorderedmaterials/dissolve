@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "kernels/potentials/base.h"
 #include "classes/atomType.h"
@@ -12,7 +12,7 @@ ExternalPotential::ExternalPotential(ExternalPotentialTypes::ExternalPotentialTy
 // Create and return a copy of this potential
 std::unique_ptr<ExternalPotential> ExternalPotential::duplicate() const
 {
-    throw(std::runtime_error(fmt::format("Can't duplicate() an ExternalPotential of this type.\n")));
+    Messenger::exception("Can't duplicate() an ExternalPotential of this type.\n");
 }
 
 /*
@@ -87,7 +87,7 @@ bool ExternalPotential::deserialise(LineParser &parser, const CoreData &coreData
             return false;
 
         // Is this the end of the block?
-        if (DissolveSys::sameString(parser.argsv(0), fmt::format("End{}", ExternalPotentialTypes::keyword(type_))))
+        if (DissolveSys::sameString(parser.argsv(0), std::format("End{}", ExternalPotentialTypes::keyword(type_))))
             return true;
 
         // Try to parse this line as a keyword
@@ -110,18 +110,18 @@ bool ExternalPotential::serialise(LineParser &parser, std::string_view prefix) c
     // Assemble target strings
     std::string targets;
     if (!targetAtomIndices_.empty())
-        targets += fmt::format("  {}", joinStrings(targetAtomIndices_, " "));
+        targets += std::format("  {}", joinStrings(targetAtomIndices_, " "));
     if (!targetAtomTypes_.empty())
-        targets += fmt::format("  {}", joinStrings(targetAtomTypes_, " ", [](const auto &at) { return at->name(); }));
+        targets += std::format("  {}", joinStrings(targetAtomTypes_, " ", [](const auto &at) { return at->name(); }));
     if (!targetSpecies_.empty())
-        targets += fmt::format("  {}", joinStrings(targetSpecies_, " ", [](const auto &sp) { return sp->name(); }));
+        targets += std::format("  {}", joinStrings(targetSpecies_, " ", [](const auto &sp) { return sp->name(); }));
 
     // Block Start
     if (!parser.writeLineF("{}{}{}\n", prefix, ExternalPotentialTypes::keyword(type_), targets))
         return false;
 
     // Create new prefix
-    std::string newPrefix = fmt::format("  {}", prefix);
+    std::string newPrefix = std::format("  {}", prefix);
 
     // Write keywords
     if (!keywords_.serialise(parser, newPrefix, true))

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/fileAndFormat.h"
 #include "base/lineParser.h"
@@ -146,7 +146,7 @@ bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, std::string_view 
 // Write options and end block
 bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) const
 {
-    return keywords_.serialise(parser, fmt::format("{}  ", prefix));
+    return keywords_.serialise(parser, std::format("{}  ", prefix));
 }
 
 // Express as a serialisable value

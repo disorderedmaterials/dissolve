@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/models/xmlAtomModel.h"
 #include "classes/atomType.h"
@@ -17,7 +17,7 @@ void XmlAtomModel::readFile(const pugi::xml_node &root)
     for (auto &b : root.select_nodes("/ForceField/AtomTypes/Type"))
     {
         auto nonbonded = root.select_node(
-            fmt::format("/ForceField/NonbondedForce/Atom[@type = '{}']", b.node().attribute("name").as_string()).c_str());
+            std::format("/ForceField/NonbondedForce/Atom[@type = '{}']", b.node().attribute("name").as_string()).c_str());
 
         atoms_.emplace_back(b.node().attribute("name").as_string(), b.node().attribute("class").as_string(),
                             b.node().attribute("element").as_string(), b.node().attribute("mass").as_double(),

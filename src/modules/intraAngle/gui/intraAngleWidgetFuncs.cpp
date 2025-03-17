@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "gui/render/renderableData1D.h"
@@ -39,7 +39,7 @@ void IntraAngleModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
 
     // Calculated angle histogram
     if (angleGraph_->renderables().empty())
-        angleGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Angle(ABC)", module_->name()), "A-B...C Angle")
+        angleGraph_->createRenderable<RenderableData1D>(std::format("{}//Angle(ABC)", module_->name()), "A-B...C Angle")
             ->setColour(StockColours::RedStockColour);
 
     ui_.AnglePlotWidget->updateToolbar();

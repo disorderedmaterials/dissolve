@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "keywords/optionalInt.h"
 #include "base/lineParser.h"
@@ -8,8 +8,8 @@
 
 OptionalIntegerKeyword::OptionalIntegerKeyword(std::optional<int> &data, int minValue, std::optional<int> maxValue,
                                                int valueDelta, std::string_view textWhenNull)
-    : KeywordBase(typeid(this)), data_(data), minimumLimit_{minValue}, maximumLimit_{maxValue},
-      valueDelta_(valueDelta), textWhenNull_{textWhenNull}
+    : KeywordBase(typeid(this)), data_(data), minimumLimit_{minValue}, maximumLimit_{maxValue}, valueDelta_(valueDelta),
+      textWhenNull_{textWhenNull}
 {
 }
 

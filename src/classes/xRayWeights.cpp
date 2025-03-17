@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/xRayWeights.h"
 #include "base/lineParser.h"
@@ -80,7 +80,8 @@ bool XRayWeights::setUp(std::vector<std::pair<const Species *, int>> &speciesPop
 void XRayWeights::addSpecies(const Species *sp, int population)
 {
     for (const auto &i : sp->atoms())
-        atomTypeMix_.add(i.atomType(), population);
+        if (i.isPresence(SpeciesAtom::Presence::Physical))
+            atomTypeMix_.add(i.atomType(), population);
 
     valid_ = false;
 }

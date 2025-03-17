@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -26,13 +26,6 @@ bool EnergyModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
 // Run main processing
 Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Print parameter summary
     if (test_)
         Messenger::print("Energy: Production energies will be tested against analytical equivalents.\n");
@@ -72,33 +65,33 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 
     // Store current energies in the Configuration in case somebody else needs them
     auto &interData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//PairPotential", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//PairPotential", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     interData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.total());
     auto &intraData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Bound", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Bound", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     intraData.addPoint(moduleContext.dissolve().iteration(), boundEnergy);
     auto &bondData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Bond", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Bond", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     bondData.addPoint(moduleContext.dissolve().iteration(), bondEnergy);
     auto &angleData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Angle", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Angle", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     angleData.addPoint(moduleContext.dissolve().iteration(), angleEnergy);
     auto &torsionData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Torsion", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Torsion", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     torsionData.addPoint(moduleContext.dissolve().iteration(), torsionEnergy);
     auto &improperData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Improper", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Improper", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     improperData.addPoint(moduleContext.dissolve().iteration(), improperEnergy);
     auto &cohesiveData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Cohesive", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Cohesive", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     cohesiveData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.interMolecular());
     auto &intraPPData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//IntraPP", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//IntraPP", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     intraPPData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.intraMolecular());
 
     // Append to arrays of total energies
     auto &totalEnergyArray = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        fmt::format("{}//Total", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Total", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     totalEnergyArray.addPoint(moduleContext.dissolve().iteration(), ppEnergy.total() + boundEnergy);
 
     // Determine stability of energy
@@ -129,7 +122,7 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
     if (save_)
     {
         LineParser parser;
-        std::string filename = fmt::format("{}.energy.txt", targetConfiguration_->niceName());
+        std::string filename = std::format("{}.energy.txt", targetConfiguration_->niceName());
 
         if (!DissolveSys::fileExists(filename))
         {
@@ -189,9 +182,9 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
                     // Get intramolecular scaling of atom pair
                     auto &&[scalingType, elec14, vdw14] = i->scaling(j);
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                        correctSelfEnergy += potentialMap.analyticEnergy(i, j, r);
+                        correctSelfEnergy += potentialMap.analyticEnergy(*i, *j, r);
                     else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                        correctSelfEnergy += potentialMap.analyticEnergy(i, j, r, elec14, vdw14);
+                        correctSelfEnergy += potentialMap.analyticEnergy(*i, *j, r, elec14, vdw14);
                 }
             }
 
@@ -214,7 +207,7 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
                         if (r > cutoff)
                             continue;
 
-                        correctInterEnergy += potentialMap.analyticEnergy(i, j, r);
+                        correctInterEnergy += potentialMap.analyticEnergy(*i, *j, r);
                     }
                 }
             }
@@ -292,14 +285,16 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         Timer moleculeTimer;
         auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
                                                    moduleContext.dissolve().potentialMap(), cutoff);
-        auto molecularPPEnergy = kernel->totalMoleculePairPotentialEnergy(false).total();
-        molecularPPEnergy += correctSelfEnergy;
+        auto molecularPPEnergyInter = kernel->totalMoleculePairPotentialEnergy(false).total();
+        auto molecularPPEnergyFull = kernel->totalMoleculePairPotentialEnergy(true).total();
         moleculeTimer.stop();
 
         Messenger::print("Production interatomic pairpotential energy is {:15.9e} kJ/mol\n", ppEnergy.total());
         Messenger::print("Production intramolecular energy is {:15.9e} kJ/mol\n", boundEnergy);
         Messenger::print("Total production energy is {:15.9e} kJ/mol\n", ppEnergy.total() + boundEnergy);
-        Messenger::print("Molecular energy (excluding bound terms) is {:15.9e} kJ/mol\n", molecularPPEnergy);
+        Messenger::print("Molecular pairpotential energy (excluding intramolecular terms) is {:15.9e} kJ/mol\n",
+                         molecularPPEnergyInter);
+        Messenger::print("Molecular pairpotential energy (full) is {:15.9e} kJ/mol\n", molecularPPEnergyFull);
         Messenger::print("Time to do interatomic energy was {}.\n", interTimer.totalTimeString());
         Messenger::print("Time to do intramolecular energy was {}.\n", intraTimer.totalTimeString());
         Messenger::print("Time to do intermolecular energy was {}.\n", moleculeTimer.totalTimeString());
@@ -307,18 +302,22 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         // Compare production vs 'correct' values
         auto interDelta = correctInterEnergy - ppEnergy.total();
         auto intraDelta = correctIntraEnergy - boundEnergy;
-        auto moleculeDelta = correctInterEnergy - molecularPPEnergy;
+        auto moleculeDeltaA = correctInterEnergy - molecularPPEnergyFull;
+        auto moleculeDeltaB = correctInterEnergy - (molecularPPEnergyInter + correctSelfEnergy);
         Messenger::print("Comparing 'correct' with production values...\n");
         Messenger::print("Interatomic energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n", interDelta,
                          fabs(interDelta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
         Messenger::print("Intramolecular energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
                          intraDelta, fabs(intraDelta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-        Messenger::print("Intermolecular energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
-                         moleculeDelta, fabs(moleculeDelta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+        Messenger::print("Molecular pairpotential energy A delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
+                         moleculeDeltaA, fabs(moleculeDeltaA) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+        Messenger::print("Molecular pairpotential energy B delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
+                         moleculeDeltaB, fabs(moleculeDeltaB) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
 
         // All OK?
         if (!moduleContext.processPool().allTrue((fabs(interDelta) < testThreshold_) && (fabs(intraDelta) < testThreshold_) &&
-                                                 (fabs(moleculeDelta) < testThreshold_)))
+                                                 (fabs(moleculeDeltaA) < testThreshold_) &&
+                                                 (fabs(moleculeDeltaB) < testThreshold_)))
             return ExecutionResult::Failed;
     }
 

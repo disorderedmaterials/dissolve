@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "neta/NETAErrorListeners.h"
 #include "base/messenger.h"
@@ -19,7 +19,7 @@ void NETALexerErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4:
     marker += '^';
     Messenger::print("{}\n", marker);
 
-    throw NETAExceptions::NETASyntaxException(fmt::format("Bad syntax: {}", DissolveSys::doubleChars(message, "{}")));
+    throw NETAExceptions::NETASyntaxException(std::format("Bad syntax: {}", DissolveSys::doubleChars(message, "{}")));
 }
 
 /*
@@ -36,5 +36,5 @@ void NETAParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4
     marker += '^';
     Messenger::print("{}\n", marker);
 
-    throw NETAExceptions::NETASyntaxException(fmt::format("Parse error: {}", DissolveSys::doubleChars(message, "{}")));
+    throw NETAExceptions::NETASyntaxException(std::format("Parse error: {}", DissolveSys::doubleChars(message, "{}")));
 }

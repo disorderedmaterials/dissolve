@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 #pragma once
 
 #include "classes/array3DIterator.h"
+#include "classes/fullPairIterator.h"
 #include "classes/pairIterator.h"
 #include "templates/parallelDefs.h"
-#include <fmt/format.h>
+#include <format>
 #include <functional>
 #include <optional>
 #include <sstream>
@@ -43,15 +44,19 @@ template <typename T> class EarlyReturn
     std::optional<T> value() const { return value_; }
 };
 
-// Perform an operation on every pair of elements in a container
+// Perform an operation on every pair of elements in a container,
+// or the half-matrix only ([i,j] == [j,i])
+// Please note that this can *not* be transformed to use the
+// FullPairIterator, since it would prevent using `Break` to move to
+// the next loop iteration
 template <class Iter, class Lam>
-auto for_each_pair_early(Iter begin, Iter end, Lam lambda) -> decltype(lambda(0, *begin, 0, *end).value())
+auto for_each_pair_early(Iter begin, Iter end, Lam lambda, bool half = true) -> decltype(lambda(0, *begin, 0, *end).value())
 {
     int i = 0;
     for (auto elem1 = begin; elem1 != end; ++elem1, ++i)
     {
-        int j = i;
-        for (auto elem2 = elem1; elem2 != end; ++elem2, ++j)
+        int j = half ? i : 0;
+        for (auto elem2 = half ? elem1 : begin; elem2 != end; ++elem2, ++j)
         {
             auto result = lambda(i, *elem1, j, *elem2);
             switch (result.type())
@@ -68,11 +73,15 @@ auto for_each_pair_early(Iter begin, Iter end, Lam lambda) -> decltype(lambda(0,
     return std::nullopt;
 }
 
-// Perform an operation on every pair of elements in a range
-template <class Lam> auto for_each_pair_early(int begin, int end, Lam lambda) -> decltype(lambda(0, 0).value())
+// Perform an operation on every pair of elements in a range, or the half-matrix only ([i,j] == [j,i])
+// Please note that this can *not* be transformed to use the
+// FullPairIterator, since it would prevent using `Break` to move to
+// the next loop iteration
+template <class Lam>
+auto for_each_pair_early(int begin, int end, Lam lambda, bool half = true) -> decltype(lambda(0, 0).value())
 {
     for (auto i = begin; i < end; ++i)
-        for (auto j = i; j < end; ++j)
+        for (auto j = half ? i : begin; j < end; ++j)
         {
             auto result = lambda(i, j);
             switch (result.type())
@@ -216,21 +225,29 @@ void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
     dissolve::for_each(begin, end, unaryOp);
 }
 
-// Perform an operation on every pair of elements in a container
+// Perform an operation on every pair of elements in a contained, or the half-matrix only ([i,j] == [j,i])
 template <typename ParallelPolicy, class Iter, class Lam>
-void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
+void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda, bool half = true)
 {
-    PairIterator start(end - begin), stop(end - begin, ((end - begin) * (end - begin + 1)) / 2);
-    for_each(policy, start, stop,
-             [&lambda, &begin](const auto pair)
-             {
-                 auto &[i, j] = pair;
-                 lambda(i, begin[i], j, begin[j]);
-             });
+    auto actions = [&lambda, &begin](const auto pair)
+    {
+        auto &[i, j] = pair;
+        lambda(i, begin[i], j, begin[j]);
+    };
+    if (half)
+    {
+        PairIterator start(end - begin), stop(end - begin, ((end - begin) * (end - begin + 1)) / 2);
+        for_each(policy, start, stop, actions);
+    }
+    else
+    {
+        FullPairIterator start(end - begin), stop(end - begin, (end - begin) * (end - begin));
+        for_each(policy, start, stop, actions);
+    }
 }
 
-template <typename ParalellPolicy, class Iter, class Lam>
-void for_each_triplet(ParalellPolicy policy, Iter begin, Iter end, Lam lambda)
+template <typename ParallelPolicy, class Iter, class Lam>
+void for_each_triplet(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
 {
     for_each(policy, begin, end,
              [&lambda](const auto triplet)
@@ -240,16 +257,25 @@ void for_each_triplet(ParalellPolicy policy, Iter begin, Iter end, Lam lambda)
              });
 }
 
-// Perform an operation on every pair of elements in a range (begin <= i < end)
-template <typename ParallelPolicy, class Lam> void for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda)
+// Perform an operation on every pair of elements in a range, or the half-matrix only ([i,j] == [j,i])
+template <typename ParallelPolicy, class Lam>
+void for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda, bool half = true)
 {
-    PairIterator start(end), stop(end, end * (end + 1) / 2);
-    for_each(policy, start, stop,
-             [&lambda](const auto pair)
-             {
-                 auto [i, j] = pair;
-                 lambda(i, j);
-             });
+    auto actions = [&lambda](const auto pair)
+    {
+        auto [i, j] = pair;
+        lambda(i, j);
+    };
+    if (half)
+    {
+        PairIterator start(end), stop(end, end * (end + 1) / 2);
+        for_each(policy, start, stop, actions);
+    }
+    else
+    {
+        FullPairIterator start(end - begin), stop(end - begin, (end - begin) * (end - begin));
+        for_each(policy, start, stop, actions);
+    }
 }
 } // namespace dissolve
 
@@ -259,8 +285,8 @@ template <typename Iterator> std::string joinStrings(Iterator begin, Iterator en
     if (begin == end)
         return std::string();
     std::stringstream stream;
-    stream << fmt::format("{}", *begin);
-    std::for_each(std::next(begin), end, [&stream, &delim](const auto value) { stream << delim << fmt::format("{}", value); });
+    stream << std::format("{}", *begin);
+    std::for_each(std::next(begin), end, [&stream, &delim](const auto value) { stream << delim << std::format("{}", value); });
     return stream.str();
 }
 template <typename Iterator, class Lam> std::string joinStrings(Iterator begin, Iterator end, std::string delim, Lam lambda)
@@ -268,9 +294,9 @@ template <typename Iterator, class Lam> std::string joinStrings(Iterator begin, 
     if (begin == end)
         return std::string();
     std::stringstream stream;
-    stream << fmt::format("{}", lambda(*begin));
+    stream << std::format("{}", lambda(*begin));
     std::for_each(std::next(begin), end,
-                  [&stream, &lambda, &delim](const auto &value) { stream << delim << fmt::format("{}", lambda(value)); });
+                  [&stream, &lambda, &delim](const auto &value) { stream << delim << std::format("{}", lambda(value)); });
     return stream.str();
 }
 template <class Class> std::string joinStrings(Class range, std::string delim = ", ")

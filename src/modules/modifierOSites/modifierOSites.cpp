@@ -1,20 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "modules/modifierOSites/modifierOSites.h"
+#include "generator/select.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/fileAndFormat.h"
 #include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
-#include "procedure/nodes/calculateExpression.h"
-#include "procedure/nodes/ifValueInRange.h"
-#include "procedure/nodes/integerCollect1D.h"
-#include "procedure/nodes/iterateData1D.h"
-#include "procedure/nodes/operateNormalise.h"
-#include "procedure/nodes/process1D.h"
-#include "procedure/nodes/select.h"
 
 ModifierOSitesModule::ModifierOSitesModule() : Module(ModuleTypes::ModifierOSites)
 {
@@ -22,7 +16,8 @@ ModifierOSitesModule::ModifierOSitesModule() : Module(ModuleTypes::ModifierOSite
      * Keywords
      */
 
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Sites",
                               "Specify sites representing the bonding oxygen (BO) and network forming (NF) sites.");

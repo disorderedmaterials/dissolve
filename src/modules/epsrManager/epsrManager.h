@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
+#include "classes/potentialSet.h"
 #include "classes/scatteringMatrix.h"
+#include "generator/generator.h"
+#include "math/averaging.h"
 #include "module/groups.h"
 #include "module/module.h"
-#include "procedure/procedure.h"
 #include <tuple>
 
 // EPSR Manager Module
@@ -27,14 +29,12 @@ class EPSRManagerModule : public Module
     std::optional<int> modifyPotential_{1};
     // Vector storing atom pairs and associated potentials
     std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> potentials_;
-    struct EPData
-    {
-        Data1D ep;
-        double count{0};
-        std::shared_ptr<AtomType> at1, at2;
-    };
     // Potential scalings
     std::string potentialScalings_;
+    // Number of historical potentials sets to combine into final potentials
+    std::optional<int> averagingLength_{};
+    // Weighting scheme to use when averaging potentials
+    Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
 
     /*
      * Functions

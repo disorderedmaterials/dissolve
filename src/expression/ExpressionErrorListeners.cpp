@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "expression/ExpressionErrorListeners.h"
 #include "base/messenger.h"
@@ -22,7 +22,7 @@ void ExpressionLexerErrorListener::syntaxError(antlr4::Recognizer *recognizer, a
     // The actual error message can contain braces, so escape those to avoid breaking fmt
     auto escaped = DissolveSys::replace(DissolveSys::replace(message, "{", "{{"), "}", "}}");
 
-    throw ExpressionExceptions::ExpressionSyntaxException(fmt::format("Syntax Error: {}", escaped));
+    throw ExpressionExceptions::ExpressionSyntaxException(std::format("Syntax Error: {}", escaped));
 }
 
 /*
@@ -42,5 +42,5 @@ void ExpressionParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, 
     // The actual error message can contain braces, so escape those to avoid breaking fmt
     auto escaped = DissolveSys::replace(DissolveSys::replace(message, "{", "{{"), "}", "}}");
 
-    throw ExpressionExceptions::ExpressionSyntaxException(fmt::format("Syntax Error: {}", escaped));
+    throw ExpressionExceptions::ExpressionSyntaxException(std::format("Syntax Error: {}", escaped));
 }

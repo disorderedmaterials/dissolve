@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "classes/potentialMap.h"
@@ -17,7 +17,6 @@ namespace
 // Structure to store energy values
 struct Energies
 {
-    Energies() = default;
     double bondEnergy;
     double angleEnergy;
     double torsionEnergy;
@@ -25,8 +24,10 @@ struct Energies
 
     Energies operator+(const Energies &other) const
     {
-        return {this->bondEnergy + other.bondEnergy, this->angleEnergy + other.angleEnergy,
-                this->torsionEnergy + other.torsionEnergy, this->improperEnergy + other.improperEnergy};
+        return {.bondEnergy = this->bondEnergy + other.bondEnergy,
+                .angleEnergy = this->angleEnergy + other.angleEnergy,
+                .torsionEnergy = this->torsionEnergy + other.torsionEnergy,
+                .improperEnergy = this->improperEnergy + other.improperEnergy};
     }
 };
 } // namespace
@@ -174,7 +175,7 @@ double EnergyModule::intraMolecularEnergy(const ProcessPool &procPool, const Con
 
     auto unaryOp = [&](const auto &mol) -> Energies
     {
-        Energies localEnergies{0.0, 0.0, 0.0, 0.0};
+        Energies localEnergies{.bondEnergy = 0.0, .angleEnergy = 0.0, .torsionEnergy = 0.0, .improperEnergy = 0.0};
 
         // Loop over Bond
         localEnergies.bondEnergy +=

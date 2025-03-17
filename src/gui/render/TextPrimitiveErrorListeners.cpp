@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/render/TextPrimitiveErrorListeners.h"
 #include "base/messenger.h"
@@ -22,7 +22,7 @@ void TextPrimitiveLexerErrorListener::syntaxError(antlr4::Recognizer *recognizer
     // The actual error message can contain braces, so escape those to avoid breaking fmt
     auto escaped = DissolveSys::replace(DissolveSys::replace(message, "{", "{{"), "}", "}}");
 
-    throw TextPrimitiveExceptions::TextPrimitiveSyntaxException(fmt::format("Syntax Error: {}", escaped));
+    throw TextPrimitiveExceptions::TextPrimitiveSyntaxException(std::format("Syntax Error: {}", escaped));
 }
 
 /*
@@ -42,5 +42,5 @@ void TextPrimitiveParserErrorListener::syntaxError(antlr4::Recognizer *recognize
     // The actual error message can contain braces, so escape those to avoid breaking fmt
     auto escaped = DissolveSys::replace(DissolveSys::replace(message, "{", "{{"), "}", "}}");
 
-    throw TextPrimitiveExceptions::TextPrimitiveSyntaxException(fmt::format("Syntax Error: {}", escaped));
+    throw TextPrimitiveExceptions::TextPrimitiveSyntaxException(std::format("Syntax Error: {}", escaped));
 }

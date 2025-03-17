@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/isotopologues.h"
 #include "base/lineParser.h"
@@ -50,9 +50,9 @@ void Isotopologues::set(const Isotopologue *iso, double relativeWeight)
     auto it = std::find_if(mix_.begin(), mix_.end(), [iso](auto &isoWeight) { return isoWeight.isotopologue() == iso; });
 
     if (it == mix_.end())
-        throw(std::runtime_error(
-            fmt::format("Warning: Isotopologues does not contain the Isotopologue '{}', so its relative weight can't be set.\n",
-                        iso->name())));
+        Messenger::exception(
+            "Warning: Isotopologues does not contain the Isotopologue '{}', so its relative weight can't be set.\n",
+            iso->name());
 
     it->setWeight(relativeWeight);
 }
@@ -182,7 +182,7 @@ void Isotopologues::deserialise(const SerialisedValue &node, const CoreData &cor
                         {
                             auto iso = species_->findIsotopologue(name);
                             if (!iso)
-                                throw toml::type_error(fmt::format("Cannot find iso {}", name), location);
+                                throw toml::type_error(std::format("Cannot find iso {}", name), location);
                             add(iso, item.as_floating());
                         });
 }

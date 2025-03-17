@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "math/sampledVector.h"
 #include "base/lineParser.h"
@@ -92,9 +92,8 @@ SampledVector &SampledVector::operator+=(const std::vector<double> &source)
 
     // Check vector size consistency
     if (mean_.size() != source.size())
-        throw(std::runtime_error(
-            fmt::format("Vector passed to SampledVector::operator+= has a different size ({}) to the current data ({}).\n",
-                        source.size(), mean_.size())));
+        Messenger::exception("Vector passed to SampledVector::operator+= has a different size ({}) to the current data ({}).\n",
+                             source.size(), mean_.size());
 
     // Increase sample size counter
     ++count_;
@@ -126,9 +125,9 @@ SampledVector &SampledVector::operator+=(const SampledVector &source)
 
     // Check vector size consistency
     if (mean_.size() != source.values().size())
-        throw(std::runtime_error(fmt::format(
+        Messenger::exception(
             "SampledVector passed to SampledVector::operator+= has a different size ({}) to the current data ({}).\n",
-            source.values().size(), mean_.size())));
+            source.values().size(), mean_.size());
 
     const auto newCount = count_ + source.count_;
     const auto rCountNew = 1.0 / newCount;

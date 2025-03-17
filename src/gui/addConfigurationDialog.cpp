@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/addConfigurationDialog.h"
 #include "base/units.h"
 #include "classes/configuration.h"
+#include "generator/add.h"
+#include "generator/box.h"
+#include "generator/coordinateSets.h"
+#include "generator/generalRegion.h"
+#include "generator/parameters.h"
+#include "generator/temperature.h"
 #include "gui/helpers/comboPopulator.h"
-#include "procedure/nodes/add.h"
-#include "procedure/nodes/box.h"
-#include "procedure/nodes/coordinateSets.h"
-#include "procedure/nodes/generalRegion.h"
-#include "procedure/nodes/parameters.h"
-#include "procedure/nodes/temperature.h"
 #include <QInputDialog>
 #include <QMessageBox>
 
@@ -174,26 +174,28 @@ void AddConfigurationDialog::finalise()
     auto &generator = newConfiguration->generator();
 
     // Add Temperature node, by default
-    generator.createRootNode<TemperatureProcedureNode>({});
+    generator.createRootNode<TemperatureGeneratorNode>({});
 
-    std::shared_ptr<GeneralRegionProcedureNode> regionNode;
+    std::shared_ptr<GeneralRegionGeneratorNode> regionNode;
 
     // Add the framework species if present
     if (frameworkSpecies_)
     {
-        auto frameworkNode = generator.createRootNode<AddProcedureNode>("Framework", frameworkSpecies_, 1);
-        frameworkNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::Set);
-        frameworkNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+        auto frameworkNode = generator.createRootNode<AddGeneratorNode>("Framework", frameworkSpecies_, 1);
+        frameworkNode->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::Set);
+        frameworkNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Current);
         frameworkNode->keywords().set("Rotate", false);
 
         // Add a GeneralRegion node
-        regionNode = generator.createRootNode<GeneralRegionProcedureNode>({});
+        regionNode = generator.createRootNode<GeneralRegionGeneratorNode>({});
+        if (!regionNode)
+            Messenger::exception("Failed to create root node");
         regionNode->keywords().set("Tolerance", 5.0);
     }
     else
     {
         // No framework - add on a Box spec
-        auto boxNode = generator.createRootNode<BoxProcedureNode>({});
+        auto boxNode = generator.createRootNode<BoxGeneratorNode>({});
         boxNode->keywords().set("Lengths",
                                 Vec3<NodeValue>(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()));
         boxNode->keywords().set(
@@ -201,7 +203,7 @@ void AddConfigurationDialog::finalise()
     }
 
     // Create parameters node
-    auto paramsNode = generator.createRootNode<ParametersProcedureNode>({});
+    auto paramsNode = generator.createRootNode<ParametersGeneratorNode>({});
     if (ui_.BoxGeometryUndefinedSizeRadio->isChecked())
         paramsNode->addParameter("rho", ui_.SpeciesDensitySpin->value());
     paramsNode->addParameter("multiplier", ui_.SpeciesMultiplierSpin->value());
@@ -213,20 +215,20 @@ void AddConfigurationDialog::finalise()
     for (const auto &spInfo : mixSpecies_)
     {
         // Set the population equation
-        auto popString = fmt::format("{}*multiplier", spInfo.requestedPopulation());
+        auto popString = std::format("{}*multiplier", spInfo.requestedPopulation());
 
         // Add coordinate sets only for suitable species - atomics, those with lone molecule population, or "large" molecules
         // don't get a coordinate sets node
         const auto *sp = spInfo.species();
-        std::shared_ptr<AddProcedureNode> addNode;
+        std::shared_ptr<AddGeneratorNode> addNode;
         if (!spInfo.useCoordinateSets())
-            addNode = generator.createRootNode<AddProcedureNode>(sp->name(), sp, NodeValue(popString, paramsNode->parameters()),
+            addNode = generator.createRootNode<AddGeneratorNode>(sp->name(), sp, NodeValue(popString, paramsNode->parameters()),
                                                                  NodeValue(rhoString, paramsNode->parameters()), rhoUnits);
         else
         {
-            auto coordSets = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("{}_Sets", sp->name()), sp);
+            auto coordSets = generator.createRootNode<CoordinateSetsGeneratorNode>(std::format("{}_Sets", sp->name()), sp);
 
-            addNode = generator.createRootNode<AddProcedureNode>(sp->name(), coordSets,
+            addNode = generator.createRootNode<AddGeneratorNode>(sp->name(), coordSets,
                                                                  NodeValue(popString, paramsNode->parameters()),
                                                                  NodeValue(rhoString, paramsNode->parameters()), rhoUnits);
         }
@@ -235,12 +237,12 @@ void AddConfigurationDialog::finalise()
         addNode->keywords().set("Rotate", spInfo.rotate());
         if (frameworkSpecies_)
         {
-            addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
-            addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Region);
+            addNode->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::None);
+            addNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Region);
             addNode->keywords().set("Region", regionNode);
         }
         else if (ui_.BoxGeometryFixedSizeRadio->isChecked())
-            addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
+            addNode->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::None);
     }
 }
 

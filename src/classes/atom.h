@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -67,6 +67,8 @@ class Atom
     void setSpeciesAtom(const SpeciesAtom *spAtom);
     // Return SpeciesAtom that this Atom represents
     const SpeciesAtom *speciesAtom() const;
+    // Return whether the atom's presence is that specified
+    bool isPresence(SpeciesAtom::Presence presence) const;
     // Set Molecule in which this Atom exists
     void setMolecule(std::shared_ptr<Molecule> mol);
     // Return Molecule in which this Atom exists

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/ff/angleTerm.h"
 #include "data/ff/atomType.h"
@@ -11,8 +11,8 @@ ForcefieldAngleTerm::ForcefieldAngleTerm(std::string_view typeI, std::string_vie
 {
     InteractionPotential<AngleFunctions> potential(form);
     if (!potential.parseParameters(parameterString))
-        throw(std::runtime_error(fmt::format("Failed to parse parameter string '{}' when constructing angle term '{}-{}-{}'.\n",
-                                             parameterString, typeI_, typeJ_, typeK_)));
+        Messenger::exception("Failed to parse parameter string '{}' when constructing angle term '{}-{}-{}'.\n",
+                             parameterString, typeI_, typeJ_, typeK_);
     parameters_ = potential.parameters();
 }
 

@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "expression/binary.h"
 #include "math/mathFunc.h"
+#include <cmath>
 
 ExpressionBinaryOperatorNode::ExpressionBinaryOperatorNode(BinaryOperator op) : ExpressionNode(), operator_(op) {}
 
@@ -76,7 +77,7 @@ std::optional<ExpressionValue> ExpressionBinaryOperatorNode::evaluate() const
                 result = lhs.asDouble() * rhs.asDouble();
             break;
         default:
-            throw(std::runtime_error(fmt::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", operator_)));
+            Messenger::exception("ExpressionBinaryOperatorNode - unhandled operator {}.\n", (int)operator_);
     }
 
     return result;
@@ -96,17 +97,17 @@ std::string ExpressionBinaryOperatorNode::asString() const
     switch (operator_)
     {
         case (OperatorAdd):
-            return fmt::format("{}+{}", lhs, rhs);
+            return std::format("{}+{}", lhs, rhs);
         case (OperatorDivide):
-            return fmt::format("{}/{}", lhs, rhs);
+            return std::format("{}/{}", lhs, rhs);
         case (OperatorSubtract):
-            return fmt::format("{}-{}", lhs, rhs);
+            return std::format("{}-{}", lhs, rhs);
         case (OperatorPow):
-            return fmt::format("{}^{}", lhs, rhs);
+            return std::format("{}^{}", lhs, rhs);
         case (OperatorMultiply):
-            return fmt::format("{}*{}", lhs, rhs);
+            return std::format("{}*{}", lhs, rhs);
         default:
-            throw(std::runtime_error(fmt::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", operator_)));
+            Messenger::exception("ExpressionBinaryOperatorNode - unhandled operator {}.\n", (int)operator_);
     }
 
     return "";

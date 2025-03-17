@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/atom.h"
 #include "classes/configuration.h"
@@ -39,7 +39,7 @@ template <> void GeometryOptimisationModule::revertToReferenceCoordinates(Specie
 double GeometryOptimisationModule::rmsForce() const
 {
     auto msf = std::accumulate(f_.begin(), f_.end(), 0.0,
-                               [](auto &acc, const auto &f) { return acc + f.x * f.x + f.y * f.y + f.z * f.z; }) /
+                               [](auto acc, const auto &f) { return acc + f.x * f.x + f.y * f.y + f.z * f.z; }) /
                f_.size();
 
     return sqrt(msf);

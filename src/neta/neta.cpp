@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "neta/neta.h"
 #include "NETALexer.h"
@@ -71,7 +71,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
     }
     catch (NETAExceptions::NETASyntaxException &ex)
     {
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     };
 
     // Visit the nodes in the AST
@@ -82,7 +82,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
     }
     catch (NETAExceptions::NETASyntaxException &ex)
     {
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     }
 
     valid_ = true;
@@ -106,8 +106,8 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const std::option
     path.push_back(i);
 
     auto neta = flags.isSet(NETADefinition::NETACreationFlags::IncludeRootElement) && currentDepth == 0
-                    ? fmt::format("?{}, nbonds={}", Elements::symbol(i->Z()), i->nBonds())
-                    : fmt::format("nbonds={}", i->nBonds());
+                    ? std::format("?{}, nbonds={}", Elements::symbol(i->Z()), i->nBonds())
+                    : std::format("nbonds={}", i->nBonds());
 
     // Add on each connected atom, provided it is not already in the path
     auto nH = 0;
@@ -127,13 +127,13 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const std::option
             continue;
 
         if (!maxDepth || currentDepth < *maxDepth)
-            neta += fmt::format(",-{}({})", Elements::symbol(j->Z()), netaString(j, currentDepth + 1, maxDepth, path, flags));
+            neta += std::format(",-{}({})", Elements::symbol(j->Z()), netaString(j, currentDepth + 1, maxDepth, path, flags));
         else
-            neta += fmt::format(",-{}", Elements::symbol(j->Z()));
+            neta += std::format(",-{}", Elements::symbol(j->Z()));
     }
 
     if (!flags.isSet(NETADefinition::NETACreationFlags::ExplicitHydrogens) && i->Z() != Elements::H)
-        neta += fmt::format(",nh={}", nH);
+        neta += std::format(",nh={}", nH);
     return neta;
 }
 

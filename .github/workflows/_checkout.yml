@@ -1,0 +1,237 @@
+name: Checkout
+description: Checks out the source and packages the source as an artifact for use by other workflow steps. Reversioning of the source to a git-cliff bumped version is performed if the "bump" flag is set. Tags are created / moved according to the value of 'publishType'.
+
+on:
+  workflow_call:
+    inputs:
+      qtVersion:
+        type: string
+        default: 6.4.2
+      hugoVersion:
+        type: string
+        default: "0.135.0"
+      apptainerVersion:
+        type: string
+        default: "1.2.5"
+      conanfile:
+        type: string
+        default: cmake/Modules/conan-dissolve.cmake
+      publishType:
+        default: 'none'
+        type: string
+      checkoutRef:
+        default: ''
+        type: string
+      bump:
+        default: false
+        type: boolean
+    outputs:
+      currentVersion:
+        description: "Full version (MAJOR.MINOR.PATCH) determined from source, and after any reversioning"
+        value: ${{ jobs.Checkout.outputs.currentVersion }}
+      currentVersionMajor:
+        description: "MAJOR version determined from source, and after any reversioning"
+        value: ${{ jobs.Checkout.outputs.currentVersionMajor }}
+      currentVersionMinor:
+        description: "MINOR version determined from source, and after any reversioning"
+        value: ${{ jobs.Checkout.outputs.currentVersionMinor }}
+      currentVersionPatch:
+        description: "PATCH version determined from source, and after any reversioning"
+        value: ${{ jobs.Checkout.outputs.currentVersionPatch }}
+      currentShortHash:
+        description: "Short hash of the current HEAD commit"
+        value: ${{ jobs.Checkout.outputs.currentShortHash }}
+      qtVersion:
+        description: "Version of Qt required by the project"
+        value: ${{ jobs.Checkout.outputs.qtVersion }}
+      antlrVersion:
+        description: "Version of ANTLR required by the project (determined from conanfile)"
+        value: ${{ jobs.Checkout.outputs.antlrVersion }}
+      hugoVersion:
+        description: "Version of Hugo required for building website"
+        value: ${{ jobs.Checkout.outputs.hugoVersion }}
+      apptainerVersion:
+        description: "Version of Apptainer required for uploading to Harbor"
+        value: ${{ jobs.Checkout.outputs.apptainerVersion }}
+      nixHash:
+        description: "Hash of the current nix files (flake.lock and flake.nix)"
+        value: ${{ jobs.Checkout.outputs.nixHash }}
+      conanHash:
+        description: "Hash of the current conanfile"
+        value: ${{ jobs.Checkout.outputs.conanHash }}
+
+jobs:
+
+  Checkout:
+    runs-on: ubuntu-latest
+    outputs:
+      currentVersion: ${{ steps.authVersion.outputs.currentVersion }}
+      currentVersionMajor: ${{ steps.authVersion.outputs.currentVersionMajor }}
+      currentVersionMinor: ${{ steps.authVersion.outputs.currentVersionMinor }}
+      currentVersionPatch: ${{ steps.authVersion.outputs.currentVersionPatch }}
+      currentShortHash: ${{ steps.authVersion.outputs.currentShortHash }}
+      qtVersion: ${{ steps.versions.outputs.qtVersion }}
+      antlrVersion: ${{ steps.versions.outputs.antlrVersion }}
+      hugoVersion: ${{ steps.versions.outputs.hugoVersion }}
+      apptainerVersion: ${{ steps.versions.outputs.apptainerVersion }}
+      nixHash: ${{ steps.hashes.outputs.nixHash }}
+      conanHash: ${{ steps.hashes.outputs.conanHash }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.checkoutRef }}
+          fetch-depth: 0
+
+      - name: Create Original Source Artifact
+        shell: bash
+        run: |
+          set -ex
+          tar -cvf ${{ runner.temp }}/dissolve-original-source.tar ./
+
+      - name: Set Required Versions
+        id: versions
+        shell: bash
+        run: |
+          set -ex
+          echo "qtVersion=${{ inputs.qtVersion }}" >> $GITHUB_OUTPUT
+          echo "hugoVersion=${{ inputs.hugoVersion }}" >> $GITHUB_OUTPUT
+          echo "apptainerVersion=${{ inputs.apptainerVersion }}" >> $GITHUB_OUTPUT
+
+          ANTLR_VERSION=$(cat ${{ inputs.conanfile }}  | sed -n -e 's%^.*antlr4-cppruntime/%%p')
+          echo "antlrVersion=${ANTLR_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Get Hashes
+        id: hashes
+        shell: bash
+        run: |
+          set -ex
+          NIX_HASH=`sha256sum flake.lock | gawk '{print $1}'`
+          echo "Hash of nix files (flake.lock and flake.nix) is ${NIX_HASH}"
+          echo "nixHash=${NIX_HASH}" >> $GITHUB_OUTPUT
+
+          CONAN_HASH=`sha256sum ${{ inputs.conanfile }} | gawk '{print $1}'`
+          echo "Hash of conanfile.txt is ${CONAN_HASH}"
+          echo "conanHash=${CONAN_HASH}" >> $GITHUB_OUTPUT
+
+      - name: Set Short Hash
+        shell: bash
+        run: |
+          set -ex
+          SHORT_HASH=$(git rev-parse --short HEAD)
+          echo "Current short hash is ${SHORT_HASH}"
+          sed -i -e "s/DISSOLVESHORTHASH \".*\"/DISSOLVESHORTHASH \"${SHORT_HASH}\"/g" src/main/version.cpp
+          cat src/main/version.cpp
+
+      - name: Get Cliff
+        uses: "./.github/workflows/get-cliff"
+
+      - name: Generate ChangeLog.md
+        if: inputs.publishType != 'none'
+        shell: bash
+        run: |
+          set -ex
+          ./changeversion -l > ChangeLog.md
+
+      - name: Bump Version
+        if: inputs.bump == true
+        shell: bash
+        run: |
+          set -ex
+          ./changeversion -b
+          ./changeversion -k
+
+      - name: Tag Continuous
+        if: inputs.publishType == 'continuous'
+        shell: bash
+        run: |
+           set -ex
+
+           # Move 'continuous' tag to the current HEAD
+           if [ $(git tag -l continuous) ]
+           then
+             echo "Tag 'continuous' exists and will be moved."
+             git tag --delete continuous
+           else
+             echo "Tag 'continuous' doesn't yet exist - it will be created."
+           fi
+           git tag continuous ${{ github.event.pull_request.merge_commit_sha }}
+           git show continuous
+           git push origin -f continuous
+
+      - name: Tag Release
+        if: inputs.publishType == 'release'
+        shell: bash
+        run: |
+           set -ex
+
+           # Get authoritative version at this point
+           CURRENT=$(./changeversion -v)
+           echo "Current version determined to be ${CURRENT}"
+
+           BUMPED=$(./changeversion -q)
+           echo "Bumped version determined to be ${BUMPED}"
+
+           # If the current and bumped versions differ then there is an issue...
+           if [ ${BUMPED} != ${CURRENT} ]
+           then
+             echo "Error: Current and bumped versions are different. Is this a valid release branch / point? Stopping here."
+             exit 1
+           fi
+
+           # Create the new version tag
+           if [ $(git tag -l ${BUMPED}) ]
+           then
+             echo "Error: Version tag ${BUMPED} alread exists."
+             exit 1
+           fi
+           git tag ${BUMPED} ${{ github.event.pull_request.merge_commit_sha }}
+           git show ${BUMPED}
+           git push origin ${BUMPED}
+
+      - name: Create / Check Release Root Branch
+        if: inputs.publishType == 'release'
+        shell: bash
+        run: |
+           set -ex
+
+           # Get the root release branch name - version as MAJOR.MINOR.X
+           BRANCH="release/$(./changeversion -x)"
+
+           # Create root release branch if it doesn't already exist
+           if git rev-parse --verify ${BRANCH} 2>/dev/null
+           then
+             echo "Release branch ${BRANCH} already exists."
+           else
+             git config user.name "${{ env.USER }}"
+             git config user.email "${{ env.EMAIL }}"
+             git checkout -b ${BRANCH}
+
+             git push --set-upstream origin ${BRANCH}
+           fi
+
+      - name: Get Authoritative Version Information
+        id: authVersion
+        shell: bash
+        run: |
+           set -ex
+           CURRENT=$(./changeversion -v)
+           echo "currentVersion=${CURRENT}" >> $GITHUB_OUTPUT
+           PARTS=($(echo ${CURRENT} | tr "." " "))
+           echo "currentVersionMajor=${PARTS[0]}" >> $GITHUB_OUTPUT
+           echo "currentVersionMinor=${PARTS[1]}" >> $GITHUB_OUTPUT
+           echo "currentVersionPatch=${PARTS[2]}" >> $GITHUB_OUTPUT
+           echo "currentShortHash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Create Versioned Source Artifact
+        shell: bash
+        run: |
+          set -ex
+          tar -cvf ${{ runner.temp }}/dissolve-versioned-source.tar ./
+
+      - name: Upload Versioned Source Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: source
+          path: ${{ runner.temp }}/dissolve-*-source.tar
+          retention-days: 1

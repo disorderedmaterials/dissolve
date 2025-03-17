@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "main/dissolve.h"
 #include "module/context.h"
@@ -14,13 +14,6 @@ Module::ExecutionResult GeometryOptimisationModule::process(ModuleContext &modul
     Messenger::print("Optimise: Base convergence tolerance is {:e}.\n", tolerance_);
     Messenger::print("Optimise: Initial step size to be used is {:e}.\n", initialStepSize_);
     Messenger::print("\n");
-
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
 
     // Initialise working arrays for coordinates and forces
     rRef_.resize(targetConfiguration_->nAtoms(), Vec3<double>());

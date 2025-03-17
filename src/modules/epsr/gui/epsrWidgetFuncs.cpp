@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "gui/dataViewer.h"
@@ -77,17 +77,17 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
             for (auto *targetModule : module_->targets())
             {
                 // Reference data
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceData", targetModule->name()),
-                                                           fmt::format("{} (Exp)", targetModule->name()), "Exp");
+                graph_->createRenderable<RenderableData1D>(std::format("{}//ReferenceData", targetModule->name()),
+                                                           std::format("{} (Exp)", targetModule->name()), "Exp");
 
                 // Calculated F(Q)
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//Total", targetModule->name()),
-                                                           fmt::format("{} (Calc)", targetModule->name()), "Calc");
+                graph_->createRenderable<RenderableData1D>(std::format("{}//WeightedSQ//Total", targetModule->name()),
+                                                           std::format("{} (Calc)", targetModule->name()), "Calc");
 
                 // F(Q) diff w.r.t. reference
                 graph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//Difference//{}", module_->name(), targetModule->name()),
-                    fmt::format("{} (Delta)", targetModule->name()), "Delta");
+                    std::format("{}//Difference//{}", module_->name(), targetModule->name()),
+                    std::format("{} (Delta)", targetModule->name()), "Delta");
             }
         }
         else if (ui_.DeltaFQButton->isChecked())
@@ -96,12 +96,12 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
             for (auto *targetModule : module_->targets())
             {
                 graph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//DeltaFQ//{}", module_->name(), targetModule->name()),
-                    fmt::format("{} (Delta)", targetModule->name()), "Delta");
+                    std::format("{}//DeltaFQ//{}", module_->name(), targetModule->name()),
+                    std::format("{} (Delta)", targetModule->name()), "Delta");
 
                 graph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//DeltaFQFit//{}", module_->name(), targetModule->name()),
-                    fmt::format("{} (Fit)", targetModule->name()), "Fit");
+                    std::format("{}//DeltaFQFit//{}", module_->name(), targetModule->name()),
+                    std::format("{} (Fit)", targetModule->name()), "Fit");
             }
         }
         else if (ui_.EstimatedSQButton->isChecked())
@@ -111,19 +111,19 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
                 ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
                 [&](int typeI, const auto &at1, int typeJ, const auto &at2)
                 {
-                    const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
+                    const std::string id = std::format("{}-{}", at1->name(), at2->name());
 
                     // Unweighted estimated partial
-                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedSQ//{}", module_->name(), id),
-                                                               fmt::format("{} (Estimated)", id), "Estimated");
+                    graph_->createRenderable<RenderableData1D>(std::format("{}//EstimatedSQ//{}", module_->name(), id),
+                                                               std::format("{} (Estimated)", id), "Estimated");
 
                     // Calculated / summed partial
-                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//{}", module_->name(), id),
-                                                               fmt::format("{} (Calc)", id), "Calc");
+                    graph_->createRenderable<RenderableData1D>(std::format("{}//UnweightedSQ//{}", module_->name(), id),
+                                                               std::format("{} (Calc)", id), "Calc");
 
                     // Deltas
-                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//DeltaSQ//{}", module_->name(), id),
-                                                               fmt::format("{} (Delta)", id), "Delta");
+                    graph_->createRenderable<RenderableData1D>(std::format("{}//DeltaSQ//{}", module_->name(), id),
+                                                               std::format("{} (Delta)", id), "Delta");
                 });
         }
         else if (ui_.EstimatedGRButton->isChecked())
@@ -154,15 +154,15 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
                 ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
                 [&](int typeI, const auto &at1, int typeJ, const auto &at2)
                 {
-                    const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
+                    const std::string id = std::format("{}-{}", at1->name(), at2->name());
 
                     // Experimentally-determined unweighted partial
-                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedGR//{}", module_->name(), id),
-                                                               fmt::format("{} (Estimated)", id), "Estimated");
+                    graph_->createRenderable<RenderableData1D>(std::format("{}//EstimatedGR//{}", module_->name(), id),
+                                                               std::format("{} (Estimated)", id), "Estimated");
 
                     // Calculated / summed partials, taken from the RDF module referenced by the first module target
-                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedGR//{}//Full", rdfModuleName, id),
-                                                               fmt::format("{} (Calc)", id), "Calc");
+                    graph_->createRenderable<RenderableData1D>(std::format("{}//UnweightedGR//{}//Full", rdfModuleName, id),
+                                                               std::format("{} (Calc)", id), "Calc");
                 });
         }
         else if (ui_.TotalGRButton->isChecked())
@@ -170,13 +170,13 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
             for (auto *targetModule : module_->targets())
             {
                 // Reference F(r) (from direct FT of input data)
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceDataFT", targetModule->name()),
-                                                           fmt::format("{} (Exp)", targetModule->name()), "Exp");
+                graph_->createRenderable<RenderableData1D>(std::format("{}//ReferenceDataFT", targetModule->name()),
+                                                           std::format("{} (Exp)", targetModule->name()), "Exp");
 
                 // Simulated F(r) (from FT of the calculated F(Q))
                 graph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//SimulatedFR//{}", module_->name(), targetModule->name()),
-                    fmt::format("{} (Calc)", targetModule->name()), "Calc");
+                    std::format("{}//SimulatedFR//{}", module_->name(), targetModule->name()),
+                    std::format("{} (Calc)", targetModule->name()), "Calc");
             }
         }
         else if (ui_.PotentialsButton->isChecked())
@@ -185,12 +185,12 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
             dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
                                     [&](int typeI, const auto &at1, int typeJ, const auto &at2)
                                     {
-                                        const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
+                                        const std::string id = std::format("{}-{}", at1->name(), at2->name());
 
                                         auto pp = dissolve_.pairPotential(at1, at2);
                                         if (pp)
                                             graph_->createRenderable<RenderableData1D>(
-                                                fmt::format("Dissolve//Potential_{}_Additional", id), id, "Phi");
+                                                std::format("Dissolve//Potential_{}_Additional", id), id, "Phi");
                                     });
         }
         else if (ui_.RFactorButton->isChecked())
@@ -198,18 +198,18 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
             graph_->groupManager().removeVerticalShifts();
 
             // Add total R-factor followed by those for each target
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//RFactor", module_->name()), "Total", "Total")
+            graph_->createRenderable<RenderableData1D>(std::format("{}//RFactor", module_->name()), "Total", "Total")
                 ->lineStyle()
                 .setStipple(LineStipple::HalfDashStipple);
 
             for (auto *targetModule : module_->targets())
                 graph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//RFactor//{}", module_->name(), targetModule->name()), targetModule->name(), "RFactor");
+                    std::format("{}//RFactor//{}", module_->name(), targetModule->name()), targetModule->name(), "RFactor");
         }
         else if (ui_.EReqButton->isChecked())
         {
             // Add phi magnitude data
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//EPMag", module_->name()), "EReq", "EReq");
+            graph_->createRenderable<RenderableData1D>(std::format("{}//EPMag", module_->name()), "EReq", "EReq");
         }
     }
 

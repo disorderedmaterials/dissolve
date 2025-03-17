@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/import/data2D.h"
 #include "base/lineParser.h"
@@ -64,8 +64,8 @@ bool Data2DImportFileFormat::importData(LineParser &parser, Data2D &data)
             result = importCartesian(parser, data);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Data2D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data2D format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/importLigParGenDialog.h"
 #include "data/ff/library.h"
@@ -287,7 +287,7 @@ bool ImportLigParGenDialog::applyForcefield(CoreData &coreData, Species *sp) con
     // Assign atomic charges from the original forcefield, based on the element/class atom types
     for (auto &&[i, classID] : zip(sp->atoms(), xyzClassIDs_))
     {
-        auto optType = importedForcefield_->atomTypeByName(fmt::format("{}{}", Elements::symbol(i.Z()), classID), i.Z());
+        auto optType = importedForcefield_->atomTypeByName(std::format("{}{}", Elements::symbol(i.Z()), classID), i.Z());
         if (!optType)
             return Messenger::error("No associated type {}{} is present in the forcefield.\n", Elements::symbol(i.Z()),
                                     classID);

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/weightedModuleVector.h"
 #include "classes/coreData.h"
@@ -80,5 +80,5 @@ void WeightedModuleVectorKeywordWidget::updateSummaryText()
         setSummaryText("<None>");
     else
         setSummaryText(QString::fromStdString(joinStrings(
-            keyword_->data(), ", ", [](const auto &item) { return fmt::format("{} ({})", item.first->name(), item.second); })));
+            keyword_->data(), ", ", [](const auto &item) { return std::format("{} ({})", item.first->name(), item.second); })));
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/messenger.h"
 #include "base/sysFunc.h"
@@ -146,10 +146,10 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
                 {
                     view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse,
                                                                 view_.textZScale());
-                    updateQuery(BaseViewer::AxisTickLabelObject, fmt::format("{}", axis), fmt::format("{}", char(88 + axis)));
+                    updateQuery(BaseViewer::AxisTickLabelObject, std::format("{}", axis), std::format("{}", char(88 + axis)));
                     view_.axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse,
                                                                 view_.textZScale());
-                    updateQuery(BaseViewer::AxisTitleLabelObject, fmt::format("{}", axis), fmt::format("{}", char(88 + axis)));
+                    updateQuery(BaseViewer::AxisTitleLabelObject, std::format("{}", axis), std::format("{}", char(88 + axis)));
                 }
         }
 
@@ -162,14 +162,14 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
             {
                 view_.axes().gridLineMinorStyle(axis).sendToGL(pixelScaling_);
                 view_.axes().gridLineMinorPrimitive(axis).sendToGL();
-                updateQuery(BaseViewer::GridLineMinorObject, fmt::format("{}", axis), fmt::format("{}", char(88 + axis)));
+                updateQuery(BaseViewer::GridLineMinorObject, std::format("{}", axis), std::format("{}", char(88 + axis)));
             }
         for (auto axis = 0; axis < 3; ++axis)
             if (view_.axes().visible(axis) && (axis != skipAxis))
             {
                 view_.axes().gridLineMajorStyle(axis).sendToGL(pixelScaling_);
                 view_.axes().gridLineMajorPrimitive(axis).sendToGL();
-                updateQuery(BaseViewer::GridLineMajorObject, fmt::format("{}", axis), fmt::format("{}", char(88 + axis)));
+                updateQuery(BaseViewer::GridLineMajorObject, std::format("{}", axis), std::format("{}", char(88 + axis)));
             }
 
         // -- Reset line style, ensure polygons are now filled, and render the axis lines
@@ -178,7 +178,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
             if (view_.axes().visible(axis) && (axis != skipAxis))
             {
                 view_.axes().axisPrimitive(axis).sendToGL();
-                updateQuery(BaseViewer::AxisLineObject, fmt::format("{}", axis), fmt::format("{}", char(88 + axis)));
+                updateQuery(BaseViewer::AxisLineObject, std::format("{}", axis), std::format("{}", char(88 + axis)));
             }
         glEnable(GL_LIGHTING);
         glDisable(GL_LINE_SMOOTH);

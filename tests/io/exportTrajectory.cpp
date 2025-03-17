@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -27,7 +27,7 @@ std::string exportFile(DissolveSystemTest &systemTest, std::string outfile,
 
     auto *cfg = systemTest.coreData().configuration(0);
 
-    auto output_path = fmt::format("{}/{}", DissolveSys::beforeLastChar(inputFile, '/'), outfile);
+    auto output_path = std::format("{}/{}", DissolveSys::beforeLastChar(inputFile, '/'), outfile);
     TrajectoryExportFileFormat exporter(output_path, format);
     EXPECT_TRUE(exporter.exportData(cfg));
 
@@ -57,16 +57,15 @@ TEST_F(ExportTrajectoryTest, XYZ)
     EXPECT_EQ(version, cfg->contentsVersion());
 
     // Line by line analysis
+    std::string elem;
+    double x, y, z;
     for (auto atom : cfg->atoms())
     {
-        std::string elem;
-        double x, y, z;
         result >> elem >> x >> y >> z;
         EXPECT_EQ(elem, Elements::symbol(atom.speciesAtom()->Z()));
         EXPECT_NEAR(atom.x(), x, 1e-9);
         EXPECT_NEAR(atom.y(), y, 1e-9);
         EXPECT_NEAR(atom.z(), z, 1e-9);
-        break;
     }
 }
 
@@ -93,19 +92,20 @@ TEST_F(ExportTrajectoryTest, XYZExport)
     EXPECT_EQ(version, cfg->contentsVersion());
 
     // Line by line analysis
+    auto humanIndex = 0;
+    std::string elem, atomType;
+    double x, y, z;
+    int index;
     for (auto atom : cfg->atoms())
     {
-        std::string elem, atomType;
-        double x, y, z;
-        int index;
         result >> elem >> x >> y >> z >> index >> atomType;
         EXPECT_EQ(elem, Elements::symbol(atom.speciesAtom()->Z()));
         EXPECT_NEAR(atom.x(), x, 1e-9);
         EXPECT_NEAR(atom.y(), y, 1e-9);
         EXPECT_NEAR(atom.z(), z, 1e-9);
         EXPECT_EQ(atomType, atom.speciesAtom()->atomType()->name());
-        EXPECT_EQ(index, atom.localTypeIndex());
-        break;
+        EXPECT_EQ(index, humanIndex % 3 + 1);
+        ++humanIndex;
     }
 }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -305,7 +305,7 @@ template <class A> class Array2D
         {
             std::string line;
             for (auto column = 0; column < nColumns_; ++column)
-                line += fmt::format(" {:e}", (*this)[{row, column}]);
+                line += std::format(" {:e}", (*this)[{row, column}]);
             Messenger::print("R{:2d} :{}\n", row, line);
         }
     }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/ff/oplsaa2005/aromatics.h"
 
@@ -51,7 +51,7 @@ std::string_view Forcefield_OPLSAA2005_Aromatics::name() const { return "OPLSAA2
 // Return description for Forcefield
 std::string_view Forcefield_OPLSAA2005_Aromatics::description() const
 {
-    static std::string desc = fmt::format(
+    static std::string desc = std::format(
         "Aromatics from OPLS-AA (2005), covering benzene, toluene, napthalene, ethylbenzene.<br/><br/>References: {}",
         publicationReferences());
 

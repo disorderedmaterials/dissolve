@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/render/renderableData1D.h"
 #include "gui/render/renderableData2D.h"
@@ -95,26 +95,26 @@ void AngleModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
 
     // Calculated A...B RDF
     if (rdfABGraph_->renderables().empty())
-        rdfABGraph_->createRenderable<RenderableData1D>(fmt::format("{}//RDF(AB)", module_->name()), "A...B g(r)")
+        rdfABGraph_->createRenderable<RenderableData1D>(std::format("{}//RDF(AB)", module_->name()), "A...B g(r)")
             ->setColour(StockColours::BlueStockColour);
 
     // Calculated B...C RDF
     if (rdfBCGraph_->renderables().empty())
-        rdfBCGraph_->createRenderable<RenderableData1D>(fmt::format("{}//RDF(BC)", module_->name()), "B...C g(r)")
+        rdfBCGraph_->createRenderable<RenderableData1D>(std::format("{}//RDF(BC)", module_->name()), "B...C g(r)")
             ->setColour(StockColours::BlueStockColour);
 
     // Calculated angle histogram
     if (angleGraph_->renderables().empty())
-        angleGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Angle(ABC)", module_->name()), "A-B...C Angle")
+        angleGraph_->createRenderable<RenderableData1D>(std::format("{}//Angle(ABC)", module_->name()), "A-B...C Angle")
             ->setColour(StockColours::RedStockColour);
 
     // Calculated (A-B)-C distance-angle map
     if (dAngleABGraph_->renderables().empty())
-        dAngleABGraph_->createRenderable<RenderableData2D>(fmt::format("{}//DAngle((A-B)-C)", module_->name()), "A-B vs A-B-C");
+        dAngleABGraph_->createRenderable<RenderableData2D>(std::format("{}//DAngle((A-B)-C)", module_->name()), "A-B vs A-B-C");
 
     // Calculated A-(B-C) distance-angle map
     if (dAngleBCGraph_->renderables().empty())
-        dAngleBCGraph_->createRenderable<RenderableData2D>(fmt::format("{}//DAngle(A-(B-C))", module_->name()), "B-C vs A-B-C");
+        dAngleBCGraph_->createRenderable<RenderableData2D>(std::format("{}//DAngle(A-(B-C))", module_->name()), "B-C vs A-B-C");
 
     rdfABGraph_->validateRenderables(dissolve_.processingModuleData());
     rdfBCGraph_->validateRenderables(dissolve_.processingModuleData());

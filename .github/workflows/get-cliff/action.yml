@@ -1,0 +1,20 @@
+name: Get Git Cliff
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Cache Rust
+    uses: actions/cache@v4
+    id: rust-cache
+    with:
+      path: ~/.cargo
+      key: ${{ runner.os }}-rust-cache
+
+  - name: Install Prerequisites
+    shell: bash
+    run: |
+      set -ex
+      rustup default
+      cargo install git-cliff
+

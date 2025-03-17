@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/messenger.h"
 #include "base/processPool.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
+#include "math/mathFunc.h"
+#include <format>
 
 int main(int args, char **argv)
 {
-    // Initialise random seed before we do anything else - it might get re-initialised if a specific seed is provided
-    srand((unsigned)time(nullptr));
-
 #ifdef PARALLEL
     // Initialise parallel communication
     ProcessPool::initialiseMPI(&args, &argv);
@@ -30,15 +29,15 @@ int main(int args, char **argv)
         return 1;
 #endif
 
-    // Re-initialise random seed
+    // Initialise random seed
     if (options.randomSeed())
-        srand(*options.randomSeed());
+        DissolveMath::setRandomSeed(*options.randomSeed());
 
     // Enable redirect if requested
     if (options.redirectionBasename())
-        Messenger::enableRedirect(fmt::format("{}.{}", options.redirectionBasename().value(), ProcessPool::worldRank()));
+        Messenger::enableRedirect(std::format("{}.{}", options.redirectionBasename().value(), ProcessPool::worldRank()));
 
-    Messenger::print("Dissolve-{} version {}, Copyright (C) 2024 Team Dissolve and contributors.\n", Version::appType(),
+    Messenger::print("Dissolve-{} version {}, Copyright (C) 2025 Team Dissolve and contributors.\n", Version::appType(),
                      Version::info());
     Messenger::print("Source repository: {}.\n", Version::repoUrl());
     Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");

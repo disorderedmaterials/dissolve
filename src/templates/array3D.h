@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -85,6 +85,10 @@ template <class A> class Array3D
         if ((nX > 0) && (nY > 0) && (nZ > 0))
             resize(nX, nY, nZ);
     }
+
+    // Return reference to values
+    const std::vector<A> &values() const { return array_; }
+    std::vector<A> &values() { return array_; }
 
     // Return specified element as modifiable reference
     A &operator[](std::tuple<int, int, int> index)

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -18,10 +18,14 @@ double erf(double);
 /*
  * Random Number Generation
  */
+// Set random number generator seed
+void setRandomSeed(int seed);
+// Return a random number between 0.0 and 1.0 inclusive
 double random();
+// Return a random number between -1.0 and 1.0 inclusive
 double randomPlusMinusOne();
-int randomimax();
-int randomi(int range);
+// Return a random integer between 0 and N-1 inclusive
+int randomi(int N);
 
 /*
  * Integer Functions
@@ -36,4 +40,5 @@ int sgn(double x);
 double sgn(double a, double signOf);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i);
+
 }; // namespace DissolveMath

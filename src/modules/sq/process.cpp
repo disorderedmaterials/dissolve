@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "main/dissolve.h"
@@ -92,7 +92,7 @@ Module::ExecutionResult SQModule::process(ModuleContext &moduleContext)
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(
             unweightedsq.fingerprint(),
-            fmt::format("{}/{}", moduleContext.dissolve().processingModuleData().version("UnweightedGR", sourceGR_->name()),
+            std::format("{}/{}", moduleContext.dissolve().processingModuleData().version("UnweightedGR", sourceGR_->name()),
                         sourceBragg_
                             ? moduleContext.dissolve().processingModuleData().version("Reflections", sourceBragg_->name())
                             : -1)))
@@ -141,8 +141,8 @@ Module::ExecutionResult SQModule::process(ModuleContext &moduleContext)
             [&](auto i, auto &at1, auto j, auto &at2) -> EarlyReturn<bool>
             {
                 // Locate the corresponding Bragg intensities for this atom type pair
-                auto pairIndex = braggAtomTypes.indexOf(at1.atomType(), at2.atomType());
-                if (pairIndex.first == -1 || pairIndex.second == -1)
+                auto optPairIndex = braggAtomTypes.indexOf(at1.atomType(), at2.atomType());
+                if (!optPairIndex)
                 {
                     Messenger::error(
                         "SQ data has a partial between {} and {}, but no such intensities exist in the reflection data.\n",
@@ -151,10 +151,11 @@ Module::ExecutionResult SQModule::process(ModuleContext &moduleContext)
                 }
 
                 // Grab relevant partial and oop over reflections
-                auto &partial = braggPartials[pairIndex];
+                auto &partial = braggPartials[*optPairIndex];
+                auto &[typeI, typeJ] = *optPairIndex;
                 for (const auto &reflxn : braggReflections)
                 {
-                    const auto intensity = reflxn.intensity(pairIndex.first, pairIndex.second);
+                    const auto intensity = reflxn.intensity(typeI, typeJ);
                     for (auto &&[q, by] : zip(partial.xAxis(), partial.values()))
                         by += braggQBroadening_.y(q - reflxn.q(), q) * intensity * braggQBroadening_.normalisation(q) /
                               (reflxn.q() * q);
@@ -223,7 +224,7 @@ Module::ExecutionResult SQModule::process(ModuleContext &moduleContext)
     }
 
     // Set fingerprint
-    unweightedsq.setFingerprint(fmt::format(
+    unweightedsq.setFingerprint(std::format(
         "{}/{}", moduleContext.dissolve().processingModuleData().version("UnweightedGR", sourceGR_->name()),
         sourceBragg_ ? moduleContext.dissolve().processingModuleData().version("Reflections", sourceBragg_->name()) : -1));
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "modules/benchmark/benchmark.h"
 #include "keywords/bool.h"
@@ -8,7 +8,8 @@
 
 BenchmarkModule::BenchmarkModule() : Module(ModuleTypes::Benchmark)
 {
-    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Control");
     keywords_.add<IntegerKeyword>("N", "Number of times to run each benchmark in order to form average", nRepeats_, 1);

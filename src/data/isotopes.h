@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -376,7 +376,8 @@ enum Isotope
     Am_Natural,
     Am_244,
     Am_246,
-    Am_248
+    Am_248,
+    Phantom_Natural
 };
 
 // Isotopic Neutron Scattering Data

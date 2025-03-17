@@ -1,23 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/lineParser.h"
+#include "generator/node.h"
 #include "keywords/base.h"
 #include "keywords/nodeUnderlay.h"
-#include "procedure/nodes/node.h"
 
 // Base class for NodeKeyword
 class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
-    NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, nodeType, onlyInScope), KeywordBase(typeid(this))
-    {
-    }
-    NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
-        : NodeKeywordUnderlay(parentNode, nodeClass, onlyInScope), KeywordBase(typeid(this))
+    NodeKeywordBase(GeneratorNode *parentNode, const GeneratorNode::NodeTypeVector &allowedNodeTypes)
+        : NodeKeywordUnderlay(parentNode, allowedNodeTypes), KeywordBase(typeid(this))
     {
     }
     ~NodeKeywordBase() override = default;
@@ -42,16 +38,13 @@ class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     }
 };
 
-// Keyword managing ProcedureNode
+// Keyword managing GeneratorNode
 template <class N> class NodeKeyword : public NodeKeywordBase
 {
     public:
-    NodeKeyword(std::shared_ptr<const N> &data, ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
-        : NodeKeywordBase(parentNode, nodeType, onlyInScope), data_(data)
-    {
-    }
-    NodeKeyword(std::shared_ptr<const N> &data, ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
-        : NodeKeywordBase(parentNode, nodeClass, onlyInScope), data_(data)
+    NodeKeyword(std::shared_ptr<const N> &data, GeneratorNode *parentNode,
+                const GeneratorNode::NodeTypeVector &allowedNodeTypes)
+        : NodeKeywordBase(parentNode, allowedNodeTypes), data_(data)
     {
     }
     ~NodeKeyword() override = default;
@@ -113,15 +106,12 @@ template <class N> class NodeKeyword : public NodeKeywordBase
 
         return true;
     }
-
     // Has not changed from initial value
     bool isDefault() const override { return data_ == nullptr; }
-
     // Express as a serialisable value
     SerialisedValue serialise() const override { return data_->name(); }
-
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &coreData)
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
         auto child = findNode(std::string_view(std::string(node.as_string())));
         setData(child);
@@ -131,7 +121,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase
      * Object Management
      */
     protected:
-    // Prune any references to the supplied ProcedureNode in the contained data
+    // Prune any references to the supplied GeneratorNode in the contained data
     void removeReferencesTo(NodeRef node) override
     {
         if (data_ == node)

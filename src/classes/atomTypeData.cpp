@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include <utility>
 
@@ -11,32 +11,11 @@
 #include "classes/isotopeData.h"
 #include "data/isotopes.h"
 
-AtomTypeData::AtomTypeData(std::shared_ptr<AtomType> type, double population, double fraction, double boundCoherent, int nIso)
-    : atomType_(std::move(type)), exchangeable_(false), population_(population), fraction_(fraction),
-      boundCoherent_(boundCoherent)
+AtomTypeData::AtomTypeData(const std::shared_ptr<AtomType> &type, double population, double fraction, double boundCoherent,
+                           int nIso)
+    : atomType_(type), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
 {
     isotopes_.resize(nIso, IsotopeData());
-}
-
-AtomTypeData::AtomTypeData(const AtomTypeData &source) : listIndex_(source.listIndex()), atomType_(source.atomType_)
-{
-    (*this) = source;
-}
-
-AtomTypeData::AtomTypeData(int listIndex, std::shared_ptr<AtomType> type, double population)
-    : listIndex_(listIndex), atomType_(std::move(type)), exchangeable_(false), population_(population), fraction_(0.0),
-      boundCoherent_(0.0)
-{
-}
-
-void AtomTypeData::operator=(const AtomTypeData &source)
-{
-    atomType_ = source.atomType_;
-    exchangeable_ = source.exchangeable_;
-    isotopes_ = source.isotopes_;
-    population_ = source.population_;
-    fraction_ = source.fraction_;
-    boundCoherent_ = source.boundCoherent_;
 }
 
 /*
@@ -66,9 +45,9 @@ void AtomTypeData::setIsotope(Sears91::Isotope tope, double pop, double fraction
 {
     if (std::find_if(isotopes_.begin(), isotopes_.end(), [tope](const auto &topeData) { return topeData.isotope() == tope; }) !=
         isotopes_.end())
-        throw(std::runtime_error(fmt::format(
+        Messenger::exception(
             "Tried to set IsotopeData for isotope A = {} in AtomTypeData for AtomType '{}', but existing data is present.\n",
-            tope, Sears91::A(tope), atomTypeName())));
+            Sears91::A(tope), atomTypeName());
 
     isotopes_.emplace_back(tope, pop, fraction);
 
@@ -86,9 +65,6 @@ void AtomTypeData::zeroPopulations()
     population_ = 0.0;
     fraction_ = 0.0;
 }
-
-// Return list index of AtomTypeData in AtomTypeList
-int AtomTypeData::listIndex() const { return listIndex_; }
 
 // Return reference AtomType
 std::shared_ptr<AtomType> AtomTypeData::atomType() const { return atomType_; }

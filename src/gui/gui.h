@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -254,4 +254,11 @@ class DissolveWindow : public QMainWindow
     Q_SIGNALS:
     void iterate(int);
     void stopIterating();
+
+    /*
+     * Checks
+     */
+    public:
+    // Checks pair potential range against all present box geometries
+    void checkPairPotentialRange(QWidget *parent = nullptr);
 };

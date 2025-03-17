@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
-#include <fmt/format.h>
+#include <format>
 #include <map>
 #include <toml11/toml.hpp>
 
@@ -57,7 +57,7 @@ template <> struct from<Geometry::GeometryType>
             return Geometry::GeometryType::TorsionType;
         else
             throw toml::type_error(
-                fmt::format("Unhandled geometry type '{}' - can't convert from TOML value.\n", std::string(typeString)),
+                std::format("Unhandled geometry type '{}' - can't convert from TOML value.\n", std::string(typeString)),
                 node.location());
     }
 };

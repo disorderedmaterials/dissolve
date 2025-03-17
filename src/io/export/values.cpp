@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/export/values.h"
 #include "base/lineParser.h"
@@ -55,8 +55,8 @@ bool ValueExportFileFormat::exportData(const std::vector<double> &data, LinePars
             result = exportSimple(parser, data);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Value format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Value format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

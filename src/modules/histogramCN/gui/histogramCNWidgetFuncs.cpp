@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "gui/render/renderableData1D.h"
@@ -36,7 +36,7 @@ void HistogramCNModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFla
         cnGraph_->clearRenderables();
 
     if (cnGraph_->renderables().empty())
-        cnGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Histogram", module_->name()), "CN");
+        cnGraph_->createRenderable<RenderableData1D>(std::format("{}//Histogram", module_->name()), "CN");
 
     // Validate renderables if they need it
     cnGraph_->validateRenderables(dissolve_.processingModuleData());

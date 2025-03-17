@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "math/doubleExp.h"
 #include "base/sysFunc.h"
 #include <cmath>
-#include <fmt/format.h>
+#include <format>
 #include <limits>
 
 DoubleExp::DoubleExp()
@@ -110,7 +110,7 @@ std::string DoubleExp::asString(const int exponentThreshold, const int maxDecima
     auto scientificNotation = abs(exponent_) > exponentThreshold;
 
     // Print the mantissa or full value to a formatted string, and strip any trailing zeroes
-    std::string mantissaString = fmt::format("{:.{}f}", scientificNotation ? mantissa_ : value_, maxDecimals);
+    std::string mantissaString = std::format("{:.{}f}", scientificNotation ? mantissa_ : value_, maxDecimals);
     auto dot = mantissaString.find('.');
     if (dot != std::string::npos)
     {
@@ -141,5 +141,5 @@ std::string DoubleExp::asString(const int exponentThreshold, const int maxDecima
     if ((!scientificNotation) || (exponent_ == 0))
         return mantissaString;
     else
-        return fmt::format("{}E{}", mantissaString, exponent_);
+        return std::format("{}E{}", mantissaString, exponent_);
 }

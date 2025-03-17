@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "data/ff/oplsaa2005/alcohols.h"
 
@@ -43,7 +43,7 @@ std::string_view Forcefield_OPLSAA2005_Alcohols::name() const { return "OPLSAA20
 // Return description for Forcefield
 std::string_view Forcefield_OPLSAA2005_Alcohols::description() const
 {
-    static std::string desc = fmt::format("Alcohols from OPLS-AA (2005), covering mono-alcohols only.<br/><br/>References: {}",
+    static std::string desc = std::format("Alcohols from OPLS-AA (2005), covering mono-alcohols only.<br/><br/>References: {}",
                                           publicationReferences());
 
     return desc;

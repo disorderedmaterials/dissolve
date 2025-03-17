@@ -1,0 +1,40 @@
+name: Quality Control
+
+on:
+  workflow_call:
+    inputs:
+      nixHash:
+        type: string
+        required: true
+
+jobs:
+
+  Formatting:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Download Source Tarfiles'
+      uses: actions/download-artifact@v4
+      with:
+        name: source
+
+    - name: 'Unpack Source'
+      shell: bash
+      run: tar -xvf dissolve-original-source.tar
+
+    - name: Code Formatting
+      uses: "./.github/workflows/qc"
+      with:
+        nixHash: ${{ inputs.nixHash }}
+
+  ConventionalCommits:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Conventional Commits
+      shell: bash
+      env:
+        TITLE: ${{ github.event.pull_request.title }}
+      run: |
+        set -ex
+        echo "${TITLE}" | awk "/(^feat:)|(^fix:)|(^doc:)|(^perf:)|(^refactor:)|(^style:)|(^test:)|(^chore:)|(^revert:)|(^build:)/" | grep .
+

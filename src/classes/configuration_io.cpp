@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -157,7 +157,7 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
     }
 
     // Finalise used AtomType list
-    atomTypes_.finalise();
+    atomTypePopulations_.finalise();
 
     // Scale box and cells according to the applied size factor
     auto appliedSF = appliedSizeFactor_.value_or(defaultSizeFactor_);
@@ -218,7 +218,7 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
             {
                 auto i = parser.argi(n);
                 if (i < 0 || i >= atoms_.size())
-                    throw(std::runtime_error(fmt::format("Atom index {} for targeted potential is out of range.\n", i)));
+                    Messenger::exception("Atom index {} for targeted potential is out of range.\n", i);
                 pot->addTargetAtomIndex(i);
             }
             else if (coreData.findAtomType(parser.args(n)))
@@ -226,7 +226,7 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
             else if (coreData.findSpecies(parser.args(n)))
                 pot->addTargetSpecies(coreData.findSpecies(parser.args(n)));
             else
-                throw(std::runtime_error(fmt::format("Unrecognised target '{}' for potential.\n", parser.args(n))));
+                Messenger::exception("Unrecognised target '{}' for potential.\n", parser.args(n));
         }
 
         // Read in the rest of the potential

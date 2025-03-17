@@ -173,46 +173,4 @@ Module  SDF  'SDF(R-R)
   RangeZ  -10.25  10.25  0.5
 EndModule
 
-# Spatial distribution of ring centres, with analyser
-Module  Analyse  'SDF(R-R)_Analyser'
-  Configuration  'Bulk'
-  Analyser
-    Select  'A'
-      Site  Benzene  'Ring'
-      ForEach
-        Select  'B'
-          Site  Benzene  'Ring'
-          ExcludeSameMolecule  'A'
-          ExcludeSameSite  'A'
-          ForEach
-            CalculateVector  'vRR'
-              I  'A'
-              J  'B'
-              RotateIntoFrame  True
-            EndCalculateVector
-            Collect3D  'OSDF'
-              QuantityX  'vRR' 0
-              QuantityY  'vRR' 1
-              QuantityZ  'vRR' 2
-              RangeX  -10.25  10.25  0.5
-              RangeY  -10.25  10.25  0.5
-              RangeZ  -10.25  10.25  0.5
-            EndCollect3D
-          EndForEach
-        EndSelect
-      EndForEach
-    EndSelect
-    Process3D  'SDF'
-      SourceData  'OSDF'
-      Normalisation
-        OperateSitePopulationNormalise
-          Site  'A'
-        EndOperateSitePopulationNormalise
-        OperateGridNormalise
-        EndOperateGridNormalise
-      EndNormalisation
-    EndProcess3D
-  EndAnalyser
-EndModule
-
 EndLayer

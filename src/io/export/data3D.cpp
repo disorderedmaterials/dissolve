@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/export/data3D.h"
 #include "base/lineParser.h"
@@ -141,8 +141,8 @@ bool Data3DExportFileFormat::exportData(const Data3DBase &data)
             result = exportPDens(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Data3D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data3D format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

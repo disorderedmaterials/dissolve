@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/speciesImproper.h"
 #include "classes/coreData.h"
@@ -176,7 +176,7 @@ int SpeciesImproper::index(int n) const
     else if (n == 3)
         return indexL();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesImproper::index(int). Returning 0...\n");
+    Messenger::error("SpeciesAtom index {} is out of range in SpeciesImproper::index(int). Returning 0...\n", n);
     return 0;
 }
 

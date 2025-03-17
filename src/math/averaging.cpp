@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "math/averaging.h"
 
@@ -19,7 +19,7 @@ int pruneOldData(GenericList &processingData, std::string_view name, std::string
     // Establish how many stored datasets we have
     int nStored = 0;
     for (nStored = 0; nStored < nSetsInAverage; ++nStored)
-        if (!processingData.contains(fmt::format("{}//{}", name, nStored + 1), prefix))
+        if (!processingData.contains(std::format("{}//{}", name, nStored + 1), prefix))
             break;
     Messenger::print("Average requested over {} data points - {} available in module data ({} max).\n", nSetsInAverage, nStored,
                      nSetsInAverage - 1);
@@ -27,11 +27,11 @@ int pruneOldData(GenericList &processingData, std::string_view name, std::string
     // Remove the oldest dataset if it exists, and shuffle the others down
     if (nStored == nSetsInAverage)
     {
-        processingData.remove(fmt::format("{}//{}", name, nStored), prefix);
+        processingData.remove(std::format("{}//{}", name, nStored), prefix);
         --nStored;
     }
     for (auto n = nStored; n > 0; --n)
-        processingData.rename(fmt::format("{}//{}", name, n), prefix, fmt::format("{}//{}", name, n + 1), prefix);
+        processingData.rename(std::format("{}//{}", name, n), prefix, std::format("{}//{}", name, n + 1), prefix);
 
     return nStored;
 }

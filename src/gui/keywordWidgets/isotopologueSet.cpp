@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/isotopologueSet.h"
 #include "classes/coreData.h"
@@ -131,19 +131,19 @@ void IsotopologueSetKeywordWidget::updateSummaryText()
                           [&topes](const auto &part)
                           { return part.isotopologue() == topes.species()->naturalIsotopologue(); }) == topes.nIsotopologues())
         {
-            text += fmt::format("{}{}[Natural]", text.empty() ? "" : ", ", topes.species()->name());
+            text += std::format("{}{}[Natural]", text.empty() ? "" : ", ", topes.species()->name());
             ++nNatural;
         }
         else
         {
             if (topes.nIsotopologues() == 1)
-                text += fmt::format("{}{}[{}]", text.empty() ? "" : ", ", topes.species()->name(),
+                text += std::format("{}{}[{}]", text.empty() ? "" : ", ", topes.species()->name(),
                                     topes.mix().front().isotopologue()->name());
             else
-                text += fmt::format("{}{}[{}]", text.empty() ? "" : ", ", topes.species()->name(),
+                text += std::format("{}{}[{}]", text.empty() ? "" : ", ", topes.species()->name(),
                                     joinStrings(topes.mix(), ", ",
                                                 [](const auto &part)
-                                                { return fmt::format("{}={}", part.isotopologue()->name(), part.weight()); }));
+                                                { return std::format("{}={}", part.isotopologue()->name(), part.weight()); }));
         }
 
     setSummaryText(nNatural == keyword_->data().nSpecies() ? QString("<Default to Natural>") : QString::fromStdString(text));

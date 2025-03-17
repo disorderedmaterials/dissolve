@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "modules/registry.h"
 #include "modules/accumulate/accumulate.h"
-#include "modules/analyse/analyse.h"
 #include "modules/angle/angle.h"
 #include "modules/atomShake/atomShake.h"
 #include "modules/avgMol/avgMol.h"
@@ -29,6 +28,7 @@
 #include "modules/md/md.h"
 #include "modules/modifierOSites/modifierOSites.h"
 #include "modules/molShake/molShake.h"
+#include "modules/moleculeTorsion/moleculeTorsion.h"
 #include "modules/neutronSQ/neutronSQ.h"
 #include "modules/orientedSDF/orientedSDF.h"
 #include "modules/qSpecies/qSpecies.h"
@@ -37,13 +37,14 @@
 #include "modules/sq/sq.h"
 #include "modules/temperatureSchedule/temperatureSchedule.h"
 #include "modules/test/test.h"
+#include "modules/tr/tr.h"
+#include "modules/voxelDensity/voxelDensity.h"
 #include "modules/xRaySQ/xRaySQ.h"
 
 ModuleRegistry::ModuleRegistry()
 {
     registerProducer<AccumulateModule>(ModuleTypes::Accumulate, "Accumulate partials data to form an average",
                                        "Correlation Functions");
-    registerProducer<AnalyseModule>(ModuleTypes::Analyse, "Perform custom analysis of one or more Configurations", "Analysis");
     registerProducer<AngleModule>(ModuleTypes::Angle, "Calculate distance/angle maps", "Analysis");
     registerProducer<AtomShakeModule>(ModuleTypes::AtomShake, "Perform atomic Monte Carlo on all atoms", "Evolution");
     registerProducer<AvgMolModule>(ModuleTypes::AvgMol,
@@ -78,6 +79,8 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<IntraShakeModule>(ModuleTypes::IntraShake,
                                        "Perform Monte Carlo shakes on intramolecular terms within molecules", "Evolution");
     registerProducer<MDModule>(ModuleTypes::MD, "Evolve a Configuration using molecular dynamics", "Evolution");
+    registerProducer<MoleculeTorsionModule>(ModuleTypes::MoleculeTorsion,
+                                            "Calculate a specific torsion distribution in a molecule type", "Analysis");
     registerProducer<MolShakeModule>(ModuleTypes::MolShake, "Perform molecular Monte Carlo moves", "Evolution");
     registerProducer<NeutronSQModule>(ModuleTypes::NeutronSQ, "Calculate neutron-weighted S(Q)", "Correlation Functions");
     registerProducer<OrientedSDFModule>(
@@ -92,6 +95,10 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<TemperatureScheduleModule>(ModuleTypes::TemperatureSchedule,
                                                 "Adjust the temperature of a configuration during a simulation", "Evolution");
     registerProducer<TestModule>(ModuleTypes::Test, "Development Module");
+    registerProducer<TRModule>(ModuleTypes::TR, "Calculate the partial and total t(r)", "Correlation Functions");
+    registerProducer<VoxelDensityModule>(
+        ModuleTypes::VoxelDensity,
+        "Describe distribution of atomic number, mass, and scattering length density across unit cell voxels", "Analysis");
     registerProducer<XRaySQModule>(ModuleTypes::XRaySQ, "Calculate x-ray-weighted S(Q)", "Correlation Functions");
 }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "main/dissolve.h"
@@ -38,7 +38,7 @@ bool AvgMolModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
 
     // Set name and object tag for average species
     averageSpecies_.setName(
-        fmt::format("{}@{}", targetSite_ ? targetSite_->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
+        std::format("{}@{}", targetSite_ ? targetSite_->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
 
     // Realise arrays
     updateArrays(moduleContext.dissolve().processingModuleData());
@@ -52,13 +52,6 @@ bool AvgMolModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
 // Run main processing
 Module::ExecutionResult AvgMolModule::process(ModuleContext &moduleContext)
 {
-    // Check for zero Configuration targets
-    if (!targetConfiguration_)
-    {
-        Messenger::error("No configuration target set for module '{}'.\n", name());
-        return ExecutionResult::Failed;
-    }
-
     // Grab Box pointer
     const auto *box = targetConfiguration_->box();
 

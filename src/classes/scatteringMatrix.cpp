@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/scatteringMatrix.h"
 #include "classes/atomType.h"
@@ -69,7 +69,7 @@ void ScatteringMatrix::generateMatrices()
     qZeroMatrix_ = matrix(0.0);
     qZeroInverse_ = qZeroMatrix_;
     if (!SVD::pseudoinverse(qZeroInverse_))
-        throw(std::runtime_error("Failed to invert the scattering matrix at Q = 0.0.\n"));
+        Messenger::exception("Failed to invert the scattering matrix at Q = 0.0.");
 
     // Generate Q-dependent matrices if we need them
     qMatrices_.clear();
@@ -88,7 +88,7 @@ void ScatteringMatrix::generateMatrices()
             mat = matrix(q);
             inv = mat;
             if (!SVD::pseudoinverse(inv))
-                throw(std::runtime_error(fmt::format("Failed to invert the scattering matrix at Q = {}.\n", q)));
+                Messenger::exception("Failed to invert the scattering matrix at Q = {}.\n", q);
         }
     }
 }
@@ -125,14 +125,12 @@ Array2D<double> ScatteringMatrix::matrix(double q) const
         {
             auto ffi = XRayFormFactors::formFactorData(weights.formFactors(), i->Z());
             if (!ffi)
-                throw(std::runtime_error(fmt::format("No form factor data available for element {} in dataset {}.",
-                                                     Elements::name(i->Z()),
-                                                     XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()))));
+                Messenger::exception("No form factor data available for element {} in dataset {}.", Elements::name(i->Z()),
+                                     XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()));
             auto ffj = XRayFormFactors::formFactorData(weights.formFactors(), j->Z());
             if (!ffj)
-                throw(std::runtime_error(fmt::format("No form factor data available for element {} in dataset {}.",
-                                                     Elements::name(j->Z()),
-                                                     XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()))));
+                Messenger::exception("No form factor data available for element {} in dataset {}.", Elements::name(j->Z()),
+                                     XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()));
 
             m[{row, col}] *= ffi->get().magnitude(q) * ffj->get().magnitude(q) / normFactor;
 
@@ -166,8 +164,8 @@ void ScatteringMatrix::print(double q) const
     auto nColsWritten = 0;
     for (auto [i, j] : typePairs_)
     {
-        text = fmt::format("{}-{}", i->name(), j->name());
-        line += fmt::format("{:^10} ", text);
+        text = std::format("{}-{}", i->name(), j->name());
+        line += std::format("{:^10} ", text);
 
         // Limit output to sensible length
         if (line.length() >= 80)
@@ -186,7 +184,7 @@ void ScatteringMatrix::print(double q) const
         line.clear();
         for (auto n = 0; n < m.nColumns(); ++n)
         {
-            line += fmt::format("{:10f} ", m[{row, n}]);
+            line += std::format("{:10f} ", m[{row, n}]);
 
             // Limit output to sensible length
             if (line.length() >= 80)
@@ -219,7 +217,7 @@ void ScatteringMatrix::printInverse(double q) const
     auto nColsWritten = 0;
     for (auto [i, j] : typePairs_)
     {
-        line += fmt::format("{:10} ", fmt::format("{}-{}", i->name(), j->name()));
+        line += std::format("{:10} ", std::format("{}-{}", i->name(), j->name()));
 
         // Limit output to sensible length
         if (line.length() >= 80)
@@ -238,7 +236,7 @@ void ScatteringMatrix::printInverse(double q) const
         line.clear();
         for (auto row = 0; row < inverseA.nRows(); ++row)
         {
-            line += fmt::format("{:10f} ", inverseA[{row, col}]);
+            line += std::format("{:10f} ", inverseA[{row, col}]);
 
             // Limit output to sensible length
             if (line.length() >= 80)
@@ -364,7 +362,7 @@ void ScatteringMatrix::initialise(const AtomTypeMix &typeMix, Array2D<Data1D> &e
     estimatedSQ.initialise(atomTypes_.size(), atomTypes_.size(), true);
     auto index = 0;
     for (auto [i, j] : typePairs_)
-        estimatedSQ[index++].setTag(fmt::format("{}-{}", i->name(), j->name()));
+        estimatedSQ[index++].setTag(std::format("{}-{}", i->name(), j->name()));
 }
 
 // Add reference data with its associated NeutronWeights, applying optional factor to those weights and the data itself

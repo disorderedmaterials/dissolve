@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include <utility>
 
 #include "classes/atomType.h"
 #include "main/dissolve.h"
+
+// Set whether pair potentials are updated automatically through combination rules
+void Dissolve::setUseCombinationRules(bool b) { useCombinationRules_ = b; }
+
+// Return whether pair potentials are updated automatically through combination rules
+bool Dissolve::useCombinationRules() const { return useCombinationRules_; }
 
 // Set maximum distance for tabulated PairPotentials
 void Dissolve::setPairPotentialRange(double range) { pairPotentialRange_ = range; }
@@ -98,6 +104,9 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
 
     auto useCombinationRules = useCombinationRulesHint.value_or(useCombinationRules_);
 
+    // Set the charge handling for all pair potentials
+    PairPotential::setIncludeCoulombPotential(atomTypeChargeSource_);
+
     // First step - remove any pair potentials which reference non-existent atom types
     pairPotentials_.erase(std::remove_if(pairPotentials_.begin(), pairPotentials_.end(),
                                          [&](const auto &pot)
@@ -124,12 +133,8 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
                                      pot = addPairPotential(at1, at2);
                                  }
 
-                                 // Set / update basic parameters
+                                 // Update basic parameters
                                  pot->setNames(at1->name(), at2->name());
-                                 if (atomTypeChargeSource_)
-                                     pot->setIncludedCharges(at1->charge(), at2->charge());
-                                 else
-                                     pot->setNoIncludedCharges();
 
                                  // Auto-update parameters using combination rules?
                                  if (useCombinationRules)
@@ -149,14 +154,10 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
         return false;
 
     // Re-tabulate the potentials to account for changes in charge inclusion/exclusion, range etc. as well as parameters
-    auto tabulationSucceeded = true;
     for (auto &&[at1, at2, pot] : pairPotentials_)
     {
-        if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_))
-            tabulationSucceeded = false;
+        pot->tabulate(pairPotentialRange_, pairPotentialDelta_, at1->charge() * at2->charge());
     }
-    if (!tabulationSucceeded)
-        return false;
 
     // Third step - apply any overrides
     Messenger::print("Applying pair potential overrides...\n");
@@ -174,10 +175,9 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
             continue;
         }
 
-        // Generate the potential
-        PairPotential overridePotential(override->matchI(), override->matchJ(), override->interactionPotential());
-        if (!overridePotential.tabulate(pairPotentialRange_, pairPotentialDelta_))
-            return false;
+        // Create a function wrapper for the potential
+        Function1DWrapper overridePotential(override->interactionPotential().form(),
+                                            override->interactionPotential().parameters());
 
         auto count = 0;
         for (auto &&[at1, at2, pp] : pairPotentials_)
@@ -196,15 +196,12 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
                     case (PairPotentialOverride::PairPotentialOverrideType::Off):
                         break;
                     case (PairPotentialOverride::PairPotentialOverrideType::Add):
-                        pp->uOriginal() += overridePotential.uOriginal();
+                        pp->addToReferenceShortRangePotential(overridePotential);
                         break;
                     case (PairPotentialOverride::PairPotentialOverrideType::Replace):
-                        pp->uOriginal() = overridePotential.uOriginal();
+                        pp->addToReferenceShortRangePotential(overridePotential, true);
                         break;
                 }
-
-                pp->calculateUFull();
-                pp->calculateDUFull();
 
                 ++count;
             }
@@ -216,24 +213,24 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     for (auto &&[at1, at2, pp] : pairPotentials_)
     {
         // Check processing module data for a named additional potential
-        auto addPotName = fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name());
+        auto addPotName = std::format("Potential_{}-{}_Additional", at1->name(), at2->name());
         if (processingModuleData_.contains(addPotName, "Dissolve"))
-            pp->setUAdditional(processingModuleData_.retrieve<Data1D>(addPotName, "Dissolve"));
+            pp->setAdditionalPotential(processingModuleData_.retrieve<Data1D>(addPotName, "Dissolve"));
     }
 
     // Reinitialise the potential map
     return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
 }
 
-// Revert potentials to reference state, clearing additional potentials
-void Dissolve::revertPairPotentials()
+// Clear additional potentials
+void Dissolve::clearAdditionalPotentials()
 {
     for (auto &&[at1, at2, pp] : pairPotentials_)
     {
-        pp->resetUAdditional();
+        pp->resetAdditionalPotential();
 
         // Clear entry in processing module data if it exists
-        auto itemName = fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name());
+        auto itemName = std::format("Potential_{}-{}_Additional", at1->name(), at2->name());
         if (processingModuleData_.contains(itemName, "Dissolve"))
             processingModuleData_.remove(itemName, "Dissolve");
     }

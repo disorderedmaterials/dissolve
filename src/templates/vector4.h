@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -11,7 +11,7 @@
 template <class T> class Vec4
 {
     public:
-    Vec4<T>(T xx = 0, T yy = 0, T zz = 0, T ww = 0)
+    Vec4(T xx = 0, T yy = 0, T zz = 0, T ww = 0)
     {
         x = xx;
         y = yy;
@@ -81,7 +81,7 @@ template <class T> class Vec4
         else if (index == 3)
             return w;
 
-        throw std::runtime_error(fmt::format("Vec4 - array access failed - index {} is out of bounds.", index));
+        Messenger::exception("Vec4 - array access failed - index {} is out of bounds.", index);
 
         return T();
     }
@@ -146,7 +146,7 @@ template <class T> class Vec4
         else if (index == 3)
             return w;
 
-        throw std::runtime_error(fmt::format("Vec4 - array access failed - index {} is out of bounds.", index));
+        Messenger::exception("Vec4 - array access failed - index {} is out of bounds.", index);
         return 0;
     }
 
@@ -170,5 +170,5 @@ template <class T> class Vec4
     }
 
     // Print
-    void print() const { fmt::print("vec(xyzw) = {} {} {} {}\n", x, y, z, w); }
+    void print() const { std::cout << std::format("vec(xyzw) = {} {} {} {}", x, y, z, w) << std::endl; }
 };

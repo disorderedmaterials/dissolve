@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "base/lineParser.h"
@@ -12,10 +12,7 @@
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 
-Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "Generator")
-{
-    createBox({1.0, 1.0, 1.0}, {90, 90, 90}, false);
-}
+Configuration::Configuration() : generator_("Generator") { createBox({1.0, 1.0, 1.0}, {90, 90, 90}, false); }
 
 Configuration::~Configuration() { clear(); }
 
@@ -58,29 +55,29 @@ std::string_view Configuration::name() const { return name_; }
 std::string_view Configuration::niceName() const { return niceName_; }
 
 // Return the current generator
-Procedure &Configuration::generator() { return generator_; }
+Generator &Configuration::generator() { return generator_; }
 
-// Create the Configuration according to its generator Procedure
-bool Configuration::generate(const ProcedureContext &procedureContext)
+// Create the Configuration according to its generator
+bool Configuration::generate(const GeneratorContext &generatorContext)
 {
     // Empty the current contents
     empty();
 
     // Generate the contents
     Messenger::print("\nExecuting generator procedure for Configuration '{}'...\n\n", niceName());
-    auto result = generator_.execute({procedureContext, this});
+    auto result = generator_.execute({generatorContext, this});
     if (!result)
         return Messenger::error("Failed to generate Configuration '{}'.\n", niceName());
     Messenger::print("\n");
 
     // Set-up Cells for the Box
-    cells_.generate(box_.get(), requestedCellDivisionLength_, procedureContext.potentialMap().range());
+    cells_.generate(box_.get(), requestedCellDivisionLength_, generatorContext.potentialMap().range());
 
     // Make sure all objects know about each other
     updateObjectRelationships();
 
-    // Finalise used AtomType list
-    atomTypes_.finalise();
+    // Finalise atom type populations
+    atomTypePopulations_.finalise();
 
     // Link targeted potentials to atoms
     linkTargetedPotentials();
@@ -95,15 +92,16 @@ bool Configuration::generate(const ProcedureContext &procedureContext)
 }
 
 // Initialise (generate or load) the basic contents of the Configuration
-bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
+bool Configuration::initialiseContent(const GeneratorContext &generatorContext)
 {
     // Clear existing content
     empty();
 
     appliedSizeFactor_ = std::nullopt;
+    requestedSizeFactor_ = defaultSizeFactor_;
 
-    // Run the generator Procedure
-    if (!generate(procedureContext))
+    // Run the generator Generator
+    if (!generate(generatorContext))
         return false;
 
     updateAtomLocations(true);
@@ -113,10 +111,10 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
         return false;
 
     // Create cell array
-    updateCells(procedureContext.potentialMap().range());
+    updateCells(generatorContext.potentialMap().range());
 
     // Apply size factor scaling if required
-    applySizeFactor(procedureContext.processPool(), procedureContext.potentialMap());
+    applySizeFactor(generatorContext.processPool(), generatorContext.potentialMap());
 
     return true;
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -216,7 +216,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         SerialisedValue result;
 
         if (masterTerm_ != nullptr)
-            result["form"] = fmt::format("@{}", masterTerm_->name());
+            result["form"] = std::format("@{}", masterTerm_->name());
         else
             result["form"] = Functions::forms().keyword(interactionForm());
 

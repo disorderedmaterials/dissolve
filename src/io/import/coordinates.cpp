@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "io/import/coordinates.h"
 #include "base/lineParser.h"
@@ -88,8 +88,8 @@ bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3
             result = importXYZ(parser, r);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Coordinate format '{}' import has not been implemented.\n",
-                                                 formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Coordinate format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/speciesBond.h"
 #include "base/sysFunc.h"
@@ -126,7 +126,7 @@ int SpeciesBond::index(int n) const
     else if (n == 1)
         return indexJ();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesBond::index(int). Returning 0...\n");
+    Messenger::error("SpeciesAtom index {} is out of range in SpeciesBond::index(int). Returning 0...\n", n);
     return 0;
 }
 
@@ -239,8 +239,8 @@ double SpeciesBond::energy(double distance) const
         return params[0] * oneMinusE * oneMinusE;
     }
 
-    throw(std::runtime_error(fmt::format("Bond functional form '{}' not accounted for, so can't calculate energy.\n",
-                                         BondFunctions::forms().keyword(bondForm))));
+    Messenger::exception("Bond functional form '{}' not accounted for, so can't calculate energy.\n",
+                         BondFunctions::forms().keyword(bondForm));
 }
 
 // Return force multiplier for specified distance
@@ -288,8 +288,8 @@ double SpeciesBond::force(double distance) const
         return -2.0 * params[0] * params[1] * (1.0 - e) * e;
     }
 
-    throw(std::runtime_error(fmt::format("Bond functional form '{}' not accounted for, so can't calculate force.\n",
-                                         BondFunctions::forms().keyword(bondForm))));
+    Messenger::exception("Bond functional form '{}' not accounted for, so can't calculate force.\n",
+                         BondFunctions::forms().keyword(bondForm));
 }
 
 // Express as a serialisable value

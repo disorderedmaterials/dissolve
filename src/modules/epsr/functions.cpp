@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "main/dissolve.h"
 #include "math/gaussFit.h"
@@ -111,13 +111,13 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averaged
             {
                 // Set the additional potential in the main processing data
                 dissolve.processingModuleData().realise<Data1D>(
-                    fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
+                    std::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
                     GenericItem::InRestartFileFlag) = ep;
 
                 // Grab pointer to the relevant pair potential (if it exists)
                 auto *pp = dissolve.pairPotential(at1, at2);
                 if (pp)
-                    pp->setUAdditional(ep);
+                    pp->setAdditionalPotential(ep);
             }
 
             return EarlyReturn<bool>::Continue;

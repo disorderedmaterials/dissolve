@@ -32,6 +32,7 @@ build-*/
 changes
 *.tokens
 .gdb_history
+*.DS_Store
 
 # Example files
 *.beat

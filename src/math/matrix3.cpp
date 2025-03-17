@@ -1,11 +1,24 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "math/matrix3.h"
 #include "base/messenger.h"
 #include <array>
 
 Matrix3::Matrix3() { setIdentity(); }
+
+Matrix3::Matrix3(const Vec3<double> &x, const Vec3<double> &y, const Vec3<double> &z)
+{
+    matrix_[0] = x.x;
+    matrix_[1] = x.y;
+    matrix_[2] = x.z;
+    matrix_[3] = y.x;
+    matrix_[4] = y.y;
+    matrix_[5] = y.z;
+    matrix_[6] = z.x;
+    matrix_[7] = z.y;
+    matrix_[8] = z.z;
+}
 
 /*
  * Operators
@@ -113,6 +126,30 @@ void Matrix3::print() const
 
 // Set zero matrix
 void Matrix3::zero() { std::fill(matrix_.begin(), matrix_.end(), 0.0); }
+
+// Create orthogonal matrix around supplied single column vector
+void Matrix3::createFromVector(const Vec3<double> &v, int columnIndex)
+{
+    setColumn(columnIndex, v);
+    const auto v2 = v.orthogonal();
+    switch (columnIndex)
+    {
+        case 0:
+            setColumn(1, v2);
+            setColumn(2, v * v2);
+            break;
+        case 1:
+            setColumn(0, v2);
+            setColumn(2, v * v2);
+            break;
+        case 2:
+            setColumn(0, v2);
+            setColumn(1, v * v2);
+            break;
+        default:
+            throw(std::runtime_error("Invalid column index.\n"));
+    }
+}
 
 // Return transpose of current matrix
 Matrix3 &Matrix3::transpose() const

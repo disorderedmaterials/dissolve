@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 #include <vector>
@@ -56,8 +56,6 @@ class Interpolator
     double y(double x);
     // Return interpolated y value for supplied x, specifying containing interval
     double y(double x, int interval);
-    // Return interpolated y values for all supplied x values
-    std::vector<double> y(const std::vector<double> &xs);
 
     /*
      * Static Functions

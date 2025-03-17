@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/models/expressionVariableVectorModel.h"
-#include "procedure/nodes/node.h"
+#include "generator/node.h"
 
 // Set source variable data
 void ExpressionVariableVectorModel::setData(std::vector<std::shared_ptr<ExpressionVariable>> &variables,
-                                            const ProcedureNode *parentNode)
+                                            const GeneratorNode *parentNode)
 {
     beginResetModel();
     variables_ = variables;
@@ -98,7 +98,7 @@ bool ExpressionVariableVectorModel::setData(const QModelIndex &index, const QVar
     if (index.column() == 0)
     {
         // Name - must check for existing var in scope with the same name
-        auto p = parentNode_->getParameter(value.toString().toStdString(), true);
+        auto p = parentNode_->getParameterInScope(value.toString().toStdString());
         if (p && p != var)
             return false;
         var->setBaseName(value.toString().toStdString());

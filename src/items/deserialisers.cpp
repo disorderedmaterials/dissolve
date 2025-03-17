@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "items/deserialisers.h"
 #include "base/lineParser.h"
@@ -8,6 +8,7 @@
 #include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/partialSetAccumulator.h"
+#include "classes/potentialSet.h"
 #include "classes/xRayWeights.h"
 #include "items/legacy.h"
 #include "math/data1D.h"
@@ -157,6 +158,22 @@ GenericItemDeserialiser::GenericItemDeserialiser()
                     return false;
             return true;
         });
+    registerDeserialiser<Array3D<double>>(
+        [](std::any &a, LineParser &parser, const CoreData &coreData)
+        {
+            auto &v = std::any_cast<Array3D<double> &>(a);
+            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+                return false;
+            auto nX = parser.argi(0), nY = parser.argi(1), nZ = parser.argi(2);
+            v.initialise(nX, nY, nZ);
+            for (auto &n : v)
+            {
+                if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+                    return false;
+                n = parser.argd(0);
+            }
+            return true;
+        });
     registerDeserialiser<AtomTypeMix>(simpleDeserialiseCore<AtomTypeMix>);
     registerDeserialiser<Data1D>(simpleDeserialise<Data1D>);
     registerDeserialiser<Data2D>(simpleDeserialise<Data2D>);
@@ -168,6 +185,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     registerDeserialiser<NeutronWeights>(simpleDeserialiseCore<NeutronWeights>);
     registerDeserialiser<PartialSet>(simpleDeserialiseCore<PartialSet>);
     registerDeserialiser<PartialSetAccumulator>(simpleDeserialise<PartialSetAccumulator>);
+    registerDeserialiser<PotentialSet>(simpleDeserialiseCore<PotentialSet>);
     registerDeserialiser<SampledData1D>(simpleDeserialise<SampledData1D>);
     registerDeserialiser<SampledDouble>(simpleDeserialise<SampledDouble>);
     registerDeserialiser<SampledVector>(simpleDeserialise<SampledVector>);
@@ -210,8 +228,8 @@ bool GenericItemDeserialiser::deserialiseObject(std::any &a, LineParser &parser,
     if (it == deserialisers_.end())
         it = legacyDeserialisers_.find(a.type());
     if (it == legacyDeserialisers_.end())
-        throw(std::runtime_error(fmt::format(
-            "Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n", a.type().name())));
+        Messenger::exception("Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n",
+                             a.type().name());
 
     return (it->second)(a, parser, coreData);
 }
