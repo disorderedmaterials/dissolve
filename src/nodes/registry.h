@@ -30,8 +30,7 @@ template <typename T> NodeProducer makeDerivedNode()
 
 // Node registry
 const std::map<std::string_view, NodeProducer> registry{
-    {"AddDouble", makeDerivedNode<AddDouble>()},
-    {"AddInt", makeDerivedNode<AddInt>()},
+    {"Add", makeDerivedNode<AddNode>()},
     {"AtomShake", makeDerivedNode<AtomShakeNode>()},
     {"Derivative", makeDerivedNode<DerivativeNode>()},
     {"Dissolve", makeDerivedNode<DissolveNode>()},
