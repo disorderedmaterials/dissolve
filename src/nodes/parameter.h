@@ -22,6 +22,7 @@ class ParameterBase : public Serialisable<>
     enum ParameterFlags
     {
         Invalidates, /* Indicates that the node's data is invalidated if the parameter is changed */
+        Input,       /* Indicates that the parameter is meant to be a sink for data and not a source */
         Output,      /* Indicates that the parameter is meant to be a source of data and not a sink */
     };
 

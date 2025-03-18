@@ -4,9 +4,9 @@
 #include "module/module.h"
 #include "nodes/graph.h"
 #include "nodes/node.h"
-#include "nodes/registry.h"
 #include "nodes/parameter.h"
 #include "nodes/parameterLink.h"
+#include "nodes/registry.h"
 
 #include <gtest/gtest.h>
 
@@ -88,12 +88,12 @@ TEST(NodeEdgeTest, SimpleTest)
     EXPECT_TRUE(z.isSatisfied());
 
     // Declare that parameters invalidate
-    x.findParameter("A")->setFlags(ParameterBase::Invalidates);
-    x.findParameter("B")->setFlags(ParameterBase::Invalidates);
-    y.findParameter("A")->setFlags(ParameterBase::Invalidates);
-    y.findParameter("B")->setFlags(ParameterBase::Invalidates);
-    z.findParameter("A")->setFlags(ParameterBase::Invalidates);
-    z.findParameter("B")->setFlags(ParameterBase::Invalidates);
+    x.findInput("A")->setFlags(ParameterBase::Invalidates);
+    x.findInput("B")->setFlags(ParameterBase::Invalidates);
+    y.findInput("A")->setFlags(ParameterBase::Invalidates);
+    y.findInput("B")->setFlags(ParameterBase::Invalidates);
+    z.findInput("A")->setFlags(ParameterBase::Invalidates);
+    z.findInput("B")->setFlags(ParameterBase::Invalidates);
 
     // All should update
     z.process();
@@ -122,8 +122,8 @@ TEST(NodeEdgeTest, SimpleTest)
 
     // Set the parameters with setters.  This should automatically
     // invalidate Y
-    y.findParameter("A")->upcast<double>()->set(2);
-    y.findParameter("B")->upcast<double>()->set(7);
+    y.findInput("A")->upcast<double>()->set(2);
+    y.findInput("B")->upcast<double>()->set(7);
 
     // Confirm that only Y is rerun in the recalculation of Z
     z.process();
