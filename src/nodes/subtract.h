@@ -14,8 +14,10 @@ class SubtractNode : public Node
     ~SubtractNode() override = default;
 
     public:
-    std::string_view name() const override { return "Subtract"; }
-    std::string_view summary() const override { return "Performs the subtraction A - B"; }
+    // Return short name of the node
+    std::string_view name() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
 
     /*
      * Definition
