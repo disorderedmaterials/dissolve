@@ -36,10 +36,8 @@ const std::map<std::string_view, NodeProducer> registry{
     {"Dissolve", makeDerivedNode<DissolveNode>()},
     {"DotProduct", makeDerivedNode<DotProductNode>()},
     {"Integrator", makeDerivedNode<Integrator1DNode>()},
-    {"MultiplyDouble", makeDerivedNode<MultiplyDouble>()},
-    {"MultiplyInt", makeDerivedNode<MultiplyInt>()},
-    {"SubtractDouble", makeDerivedNode<SubtractDouble>()},
-    {"SubtractInt", makeDerivedNode<SubtractInt>()},
+    {"Multiply", makeDerivedNode<MultiplyNode>()},
+    {"Subtract", makeDerivedNode<SubtractNode>()},
     {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
     {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()},
     // etc...
