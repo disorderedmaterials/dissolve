@@ -4,6 +4,7 @@
 #include "module/module.h"
 #include "nodes/graph.h"
 #include "nodes/node.h"
+#include "nodes/registry.h"
 #include "nodes/parameter.h"
 #include "nodes/parameterLink.h"
 
@@ -12,38 +13,13 @@
 namespace UnitTest
 {
 
-class AddNode : public Node
-{
-    public:
-    AddNode()
-    {
-        addInput<double>("A", "First Value", a);
-        addInput<double>("B", "Second Value", b);
-        addOutput<double>("Total", "Combined Value", sum);
-    }
-
-    std::string_view name() const override { return "Add"; }
-    std::string_view summary() const override { return "Add two doubles together"; };
-
-    Module::ExecutionResult process() override
-    {
-        EXPECT_EQ(preprocess(), Node::Readiness::Ready);
-        run_count++;
-        sum = a + b;
-        validate();
-        return Module::ExecutionResult::Success;
-    }
-
-    double a{0}, b{0}, sum{0}, run_count{0};
-};
-
 TEST(NodeEdgeTest, SimpleTest)
 {
     Graph graph(nullptr);
 
-    graph.addNode(std::make_unique<AddNode>(), "x");
-    graph.addNode(std::make_unique<AddNode>(), "y");
-    graph.addNode(std::make_unique<AddNode>(), "z");
+    graph.addNode(NodeRegistry::produce("AddInt"), "x");
+    graph.addNode(NodeRegistry::produce("AddInt"), "y");
+    graph.addNode(NodeRegistry::produce("AddInt"), "z");
 
     Graph::Edges declaredEdges = {{"y", "Total", "z", "B"}, {"x", "Total", "z", "B"}, {"x", "Total", "z", "A"}};
 
@@ -55,9 +31,9 @@ TEST(NodeEdgeTest, SimpleTest)
     EXPECT_TRUE(graph.addEdge(declaredEdges[2]));
 
     // Create simple references to the various nodes we've created
-    auto &x = *static_cast<AddNode *>(graph.nodes()["x"].get());
-    auto &y = *static_cast<AddNode *>(graph.nodes()["y"].get());
-    auto &z = *static_cast<AddNode *>(graph.nodes()["z"].get());
+    auto &x = *dynamic_cast<AddInt *>(graph.nodes()["x"].get());
+    auto &y = *dynamic_cast<AddInt *>(graph.nodes()["y"].get());
+    auto &z = *dynamic_cast<AddInt *>(graph.nodes()["z"].get());
 
     // Confirm that X and Y are zero *before running*
     EXPECT_EQ(x.sum, 0);

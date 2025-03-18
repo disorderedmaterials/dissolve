@@ -45,3 +45,14 @@ const std::map<std::string_view, NodeProducer> registry{
     {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()},
     // etc...
 };
+
+class NodeRegistry
+{
+    static std::unique_ptr<Node> produce(std::string_view nodeName)
+    {
+        if (registry.contains(nodeName))
+            return registry.at(nodeName)();
+        else
+            return {};
+    }
+};
