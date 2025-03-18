@@ -24,10 +24,18 @@ class Node : public Serialisable<>
 
     using LinkMap = std::map<std::string_view, ParameterLink>;
 
+    // Readiness
     enum class Readiness
     {
         Ready,
         MissingComponent,
+    };
+    // Node processing result
+    enum class ProcessResult
+    {
+        Failed,
+        Success,
+        NotExecuted
     };
 
     private:
@@ -43,7 +51,7 @@ class Node : public Serialisable<>
     // Return short summary of the node's purpose
     virtual std::string_view summary() const = 0;
     // Perform processing
-    virtual Module::ExecutionResult process() { return Module::ExecutionResult::Failed; }
+    virtual ProcessResult process() { return ProcessResult::Failed; }
     // Confirm that node data is up to date
     bool isSatisfied();
     // Tell node to recalculate results
