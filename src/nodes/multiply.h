@@ -14,7 +14,9 @@ class MultiplyNode : public Node
     ~MultiplyNode() override = default;
 
     public:
+    // Return short name of the node
     std::string_view name() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
