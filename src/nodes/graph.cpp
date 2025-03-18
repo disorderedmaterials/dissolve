@@ -26,7 +26,7 @@ Graph::Edges Graph::edges()
     {
         for (auto &[unused, link] : node->links())
         {
-            auto source = link.source().parent();
+            auto source = link.sourceOutput().parent();
             auto entry = std::find_if(nodes_.begin(), nodes_.end(),
                                       [source](const auto &it)
                                       {
@@ -37,7 +37,7 @@ Graph::Edges Graph::edges()
             // For some reason, clang can't deduce the correct
             // constructor if I pass everything into emplace_back, so
             // I have to make this wrapper.
-            Graph::Edge newedge = {entry->first, link.source().name(), sink, link.sink().name()};
+            Graph::Edge newedge = {entry->first, link.sourceOutput().name(), sink, link.targetInput().name()};
             edges.emplace_back(newedge);
         }
     }

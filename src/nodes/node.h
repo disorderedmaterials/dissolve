@@ -77,31 +77,37 @@ class Node : public Serialisable<>
     bool satisfied_{false};
 
     public:
-    // Link an input
-    bool link(std::string_view name, ParameterBase &source)
+    // Link an input to a source output
+    bool link(std::string_view inputName, ParameterBase &sourceOutput)
     {
+        // Find the named input parameter
+        auto input = findInput(inputName);
+        if (!input)
+            return Messenger::error("Target input '{}' does not exist.\n", inputName);
 
         // Confirm that this node hasn't already been linked
         if (std::find_if(inputLinks_.begin(), inputLinks_.end(),
-                         [name](const auto &it) { return name == it.second.sink().name(); }) != inputLinks_.end())
+                         [inputName](const auto &it)
+                         { return inputName == it.second.targetInput().name(); }) != inputLinks_.end())
             return false;
 
-        // Confirm that the source is actually a source
-        if (!source.flags().isSet(ParameterBase::ParameterFlags::Output))
-            return Messenger::error("{} does not output data", source.name());
+        // Confirm that the source is actually an output
+        if (!sourceOutput.flags().isSet(ParameterBase::ParameterFlags::Output))
+            return Messenger::error("{} does not output data", sourceOutput.name());
 
-        // Confirm that the destination is actually a sink
-        if (!inputs_[name]->flags().isSet(ParameterBase::ParameterFlags::Input))
-            return Messenger::error("{} does not accept data", source.name());
+        // Confirm that the destination input is actually a sink
+        if (!input->flags().isSet(ParameterBase::ParameterFlags::Input))
+            return Messenger::error("{} does not accept data", sourceOutput.name());
 
         // Create link
-        auto link = ParameterLink::link(source, *inputs_[name]);
+        auto link = ParameterLink::link(sourceOutput, *input);
 
         // Ensure link is value
         if (!link)
             return false;
 
-        inputLinks_.emplace(std::make_pair(name, *link));
+        inputLinks_.emplace(std::make_pair(inputName, *link));
+
         return true;
     }
     // Add input parameter
