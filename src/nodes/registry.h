@@ -45,6 +45,7 @@ const std::map<std::string_view, NodeProducer> registry{
 
 class NodeRegistry
 {
+    public:
     static std::unique_ptr<Node> produce(std::string_view nodeName)
     {
         if (registry.contains(nodeName))
