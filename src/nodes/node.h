@@ -24,6 +24,23 @@ class Node : public Serialisable<>
 
     using LinkMap = std::map<std::string_view, ParameterLink>;
 
+    private:
+    // Node parent graph
+    Graph *parentGraph_;
+
+    /*
+     * Definition
+     */
+    public:
+    // Return short name of the node
+    virtual std::string_view name() const = 0;
+    // Return short summary of the node's purpose
+    virtual std::string_view summary() const = 0;
+
+    /*
+     * Processing & Validity
+     */
+    public:
     // Readiness
     enum class Readiness
     {
@@ -35,25 +52,12 @@ class Node : public Serialisable<>
     {
         Failed,
         Success,
-        NotExecuted
+        InputsNotSatisfied
     };
-
-    private:
-    // Node parent graph
-    Graph *parentGraph_;
-
-    /*
-     * Definition (Virtuals)
-     */
-    public:
-    // Return short name of the node
-    virtual std::string_view name() const = 0;
-    // Return short summary of the node's purpose
-    virtual std::string_view summary() const = 0;
-    // Perform processing
-    virtual ProcessResult process() { return ProcessResult::Failed; }
     // Confirm that node data is up to date
     bool isSatisfied();
+    // Perform processing
+    virtual ProcessResult process() { return ProcessResult::Failed; }
     // Tell node to recalculate results
     void invalidate();
 

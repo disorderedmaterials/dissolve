@@ -1,5 +1,6 @@
 add_library(
   nodes
+  add.cpp
   add.h
   atomShake.cpp
   atomShake.h
