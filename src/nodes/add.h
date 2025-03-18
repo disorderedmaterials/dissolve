@@ -44,11 +44,11 @@ template <typename T> class AddNode : public Node
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext)
+    ProcessResult process() override
     {
         sum_ = std::plus<T>(a_, b_);
         validate();
-        return Module::ExecutionResult::Success;
+        return ProcessResult::Success;
     }
 };
 
