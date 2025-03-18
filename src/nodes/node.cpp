@@ -5,16 +5,30 @@
 #include "base/sysFunc.h"
 
 /*
- * Inputs
+ * Inputs, Outputs, and Options
  */
 
 // Return named input parameter if it exists
-std::shared_ptr<ParameterBase> Node::findParameter(std::string_view name) const
+std::shared_ptr<ParameterBase> Node::findInput(std::string_view name) const
 {
     if (!inputs_.contains(name))
         return {};
     return inputs_.at(name);
 }
+
+// Return input parameters
+std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::inputs() { return inputs_; };
+
+// Return named output parameter if it exists
+std::shared_ptr<ParameterBase> Node::findOutput(std::string_view name) const
+{
+    if (!outputs_.contains(name))
+        return {};
+    return outputs_.at(name);
+}
+
+// Return output parameters
+std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::outputs() { return outputs_; };
 
 // Return named input parameter if it exists
 std::shared_ptr<ParameterBase> Node::findOption(std::string_view name) const
@@ -23,13 +37,6 @@ std::shared_ptr<ParameterBase> Node::findOption(std::string_view name) const
         return {};
     return options_.at(name);
 }
-
-/*
- * Inputs
- */
-
-// Return input parameters
-std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::parameters() { return inputs_; };
 
 // Return Options
 std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::options() { return options_; };
