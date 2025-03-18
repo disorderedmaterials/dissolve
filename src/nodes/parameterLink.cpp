@@ -3,22 +3,28 @@
 
 #include "nodes/parameterLink.h"
 
-ParameterLink::ParameterLink(ParameterBase &source, ParameterBase &sink) : source_(source), sink_(sink) {}
-
-std::optional<ParameterLink> ParameterLink::link(ParameterBase &source, ParameterBase &sink)
+ParameterLink::ParameterLink(ParameterBase &sourceOutput, ParameterBase &targetInput)
+    : sourceOutput_(sourceOutput), targetInput_(targetInput)
 {
-    if (source.type() != sink.type())
+}
+
+std::optional<ParameterLink> ParameterLink::link(ParameterBase &sourceOutput, ParameterBase &targetInput)
+{
+    // Check that types are compatible
+    if (sourceOutput.type() != targetInput.type())
         return {};
-    return ParameterLink(source, sink);
+
+    return ParameterLink(sourceOutput, targetInput);
 }
 
 bool ParameterLink::updateSource()
 {
-    auto update = source_.runUpdate();
+    auto update = sourceOutput_.runUpdate();
     if (!update)
         return false;
-    return sink_.assign(&source_);
+    return targetInput_.assign(&sourceOutput_);
 }
 
-const ParameterBase &ParameterLink::sink() const { return sink_; }
-const ParameterBase &ParameterLink::source() const { return source_; }
+const ParameterBase &ParameterLink::targetInput() const { return targetInput_; }
+
+const ParameterBase &ParameterLink::sourceOutput() const { return sourceOutput_; }

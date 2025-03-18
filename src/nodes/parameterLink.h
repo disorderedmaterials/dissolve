@@ -24,15 +24,15 @@ class ParameterLink
     private:
     // The constructor is private because it can only be constructed
     // by the factory method
-    ParameterLink(ParameterBase &source, ParameterBase &sink);
-    ParameterBase &source_;
-    ParameterBase &sink_;
+    ParameterLink(ParameterBase &sourceOutput, ParameterBase &targetInput);
+    ParameterBase &sourceOutput_;
+    ParameterBase &targetInput_;
 
     public:
     // A factory method to create a link between two parameters.
     // Returns the null option if the link cannot be created.
-    static std::optional<ParameterLink> link(ParameterBase &source, ParameterBase &sink);
-    const ParameterBase &sink() const;
-    const ParameterBase &source() const;
+    static std::optional<ParameterLink> link(ParameterBase &sourceOutput, ParameterBase &targetInput);
+    const ParameterBase &targetInput() const;
+    const ParameterBase &sourceOutput() const;
     bool updateSource();
 };
