@@ -13,11 +13,13 @@ add_library(
   integrator.h
   graph.cpp
   graph.h
+  multiply.cpp
   multiply.h
   node.cpp
   node.h
   nodeNumber.cpp
   nodeNumber.h
+  subtract.cpp
   subtract.h
   vec3Assembly.cpp
   vec3Assembly.h
