@@ -29,7 +29,7 @@ Node::ProcessResult SubtractNode::process()
     if (!isSatisfied())
         return ProcessResult::InputsNotSatisfied;
 
-    result_ = std::minus<T>(a_, b_);
+    result_ = a_ - b_;
 
     return ProcessResult::Success;
 }

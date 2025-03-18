@@ -26,7 +26,7 @@ class MultiplyNode : public Node
     // Factor B
     T b_;
     // Product of A and B
-    T product_;
+    T result_;
 
     /*
      * Processing
