@@ -15,6 +15,8 @@ add_library(
   multiply.h
   node.cpp
   node.h
+  nodeNumber.cpp
+  nodeNumber.h
   subtract.h
   vec3Assembly.cpp
   vec3Assembly.h
