@@ -50,6 +50,5 @@ Module::ExecutionResult Integrator1DNode::process(ModuleContext &moduleContext)
             return Module::ExecutionResult::Failed;
     }
 
-    validate();
     return Module::ExecutionResult::Success;
 }

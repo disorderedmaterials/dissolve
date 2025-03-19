@@ -3,7 +3,7 @@
 
 #include "nodes/graph.h"
 #include "nodes/registry.h"
-#include "nodes/nodeNumber.h"
+#include "nodes/number.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -32,25 +32,25 @@ TEST(GraphFlowTest, Basic) {
         graph.addNode(NodeRegistry::produce("Add"), "y");
         graph.addNode(NodeRegistry::produce("Add"), "z");
         auto &x = *dynamic_cast<AddNode *>(graph.nodes()["x"].get());
-        auto xA = x.findInput("A")->upcast<NodeNumber>();
-        auto xB = x.findInput("B")->upcast<NodeNumber>();
-        auto xResult = x.findOutput("Result")->upcast<NodeNumber>();
+        auto xA = x.findInput("A")->upcast<Number>();
+        auto xB = x.findInput("B")->upcast<Number>();
+        auto xResult = x.findOutput("Result")->upcast<Number>();
         ASSERT_TRUE(xA);
         ASSERT_TRUE(xB);
         ASSERT_TRUE(xResult);
         xA->set(1);
         xB->set(2);
         auto &y = *dynamic_cast<AddNode *>(graph.nodes()["y"].get());
-        auto yA = y.findInput("A")->upcast<NodeNumber>();
-        auto yB = y.findInput("B")->upcast<NodeNumber>();
-        auto yResult = y.findOutput("Result")->upcast<NodeNumber>();
+        auto yA = y.findInput("A")->upcast<Number>();
+        auto yB = y.findInput("B")->upcast<Number>();
+        auto yResult = y.findOutput("Result")->upcast<Number>();
         ASSERT_TRUE(yA);
         ASSERT_TRUE(yB);
         ASSERT_TRUE(yResult);
         yA->set(3);
         yB->set(4);
         auto &z = *dynamic_cast<AddNode *>(graph.nodes()["z"].get());
-        auto zResult = z.findOutput("Result")->upcast<NodeNumber>();
+        auto zResult = z.findOutput("Result")->upcast<Number>();
         ASSERT_TRUE(zResult);
 
         // Check nodes in isolation first - all should be able to run and give meaningful results
