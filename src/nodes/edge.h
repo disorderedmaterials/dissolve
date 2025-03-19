@@ -27,6 +27,8 @@ class Edge
     protected:
     // The constructor is private because it can only be constructed by the factory method
     Edge(Node *sourceNode, ParameterBase &sourceOutput, Node *targetNode, ParameterBase &targetInput);
+
+    private:
     // Pointers to source and target nodes
     Node *sourceNode_{nullptr};
     Node *targetNode_{nullptr};
@@ -44,7 +46,7 @@ class Edge
     ParameterBase &targetInput_;
 
     public:
-    // A factory method to create an Edge from the supplied definition, or nullopt if it cannot
+    // A factory method to create an Edge from the supplied definition, or nullptr if it cannot
     static std::unique_ptr<Edge> create(Graph *parent, const EdgeDefinition &definition);
     // Return source node
     Node *sourceNode() const;
