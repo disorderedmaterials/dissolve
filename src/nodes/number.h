@@ -6,27 +6,27 @@
 #include "base/serialiser.h"
 
 // Node Number
-class NodeNumber : public Serialisable<>
+class Number : public Serialisable<>
 {
     public:
     using NumberVariant = std::variant<int, double>;
-    NodeNumber(const NumberVariant &value = {0});
-    NodeNumber(int value);
-    NodeNumber(double value);
-    ~NodeNumber() = default;
-    NodeNumber &operator=(const NodeNumber &other);
-    NodeNumber operator+(const NodeNumber &other) const;
-    NodeNumber &operator+=(const NodeNumber &other);
-    NodeNumber operator-(const NodeNumber &other) const;
-    NodeNumber &operator-=(const NodeNumber &other);
-    NodeNumber operator*(const NodeNumber &other) const;
-    NodeNumber &operator*=(const NodeNumber &other);
-    NodeNumber operator/(const NodeNumber &other) const;
-    NodeNumber &operator/=(const NodeNumber &other);
-    NodeNumber &operator++();
-    NodeNumber &operator--();
-    bool operator==(const NodeNumber &value) const;
-    bool operator!=(const NodeNumber &value) const;
+    Number(const NumberVariant &value = {0});
+    Number(int value);
+    Number(double value);
+    ~Number() = default;
+    Number &operator=(const Number &other);
+    Number operator+(const Number &other) const;
+    Number &operator+=(const Number &other);
+    Number operator-(const Number &other) const;
+    Number &operator-=(const Number &other);
+    Number operator*(const Number &other) const;
+    Number &operator*=(const Number &other);
+    Number operator/(const Number &other) const;
+    Number &operator/=(const Number &other);
+    Number &operator++();
+    Number &operator--();
+    bool operator==(const Number &value) const;
+    bool operator!=(const Number &value) const;
 
     /*
      * Data
@@ -36,8 +36,8 @@ class NodeNumber : public Serialisable<>
     NumberVariant value_;
 
     public:
-    // Set from other NodeNumber
-    void set(const NodeNumber &other);
+    // Set from other Number
+    void set(const Number &other);
     // Return whether the contained value is an integer
     bool isInteger() const;
     // Return whether the contained value is a double

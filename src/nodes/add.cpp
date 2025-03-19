@@ -5,9 +5,9 @@
 
 AddNode::AddNode()
 {
-    addInput<NodeNumber>("A", "First operand to the addition", a_);
-    addInput<NodeNumber>("B", "Second operand to the addition", b_);
-    addOutput<NodeNumber>("Result", "The sum of the operands", result_);
+    addInput<Number>("A", "First operand to the addition", a_);
+    addInput<Number>("B", "Second operand to the addition", b_);
+    addOutput<Number>("Result", "The sum of the operands", result_);
 }
 
 /*
