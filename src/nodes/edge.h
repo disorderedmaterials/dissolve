@@ -44,6 +44,8 @@ class Edge
     // processing a chain of links.
     ParameterBase &sourceOutput_;
     ParameterBase &targetInput_;
+    // Version of the source node when this edge was last pulled by the target node.
+    int sourceNodeVersionIndex_{NodeConstants::InvalidVersion};
 
     public:
     // A factory method to create an Edge from the supplied definition, or nullptr if it cannot
@@ -56,7 +58,8 @@ class Edge
     Node *targetNode() const;
     // Return target input parameter
     const ParameterBase &targetInput() const;
-    bool updateSource();
     // Return definition for the edge
     EdgeDefinition definition() const;
+    // Pull the data from the source node to the target, returning a ProcessResult
+    NodeConstants::ProcessResult pull();
 };

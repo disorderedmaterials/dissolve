@@ -9,6 +9,7 @@ namespace NodeConstants
 enum class ProcessResult
 {
     Failed,
+    Unchanged,
     Success,
     InputsNotSatisfied
 };

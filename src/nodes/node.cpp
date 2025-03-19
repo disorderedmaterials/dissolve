@@ -72,26 +72,38 @@ bool Node::inputsAreValid() const
 // Run the node, retrieving dependent inputs as necessary
 NodeConstants::ProcessResult Node::run()
 {
-    auto result = NodeConstants::ProcessResult::Success;
-
     // Check our input links - if any are out-of-date we must retrieve new values
     auto nInputLinksChanged = 0;
     for (auto &[inputName, edge] : inputEdges_)
     {
-        //        // Ignore parameters that don't invalidate
-        //        if (!link.sink().flags().isSet(ParameterBase::Invalidates))
-        //            continue;
-        //        // Update unsatisfied sources
-        //        if (!(link.source().parent()->isSatisfied() || link.updateSource()))
-        //            return Node::Readiness::MissingComponent;
+        auto edgeResult =edge->pull();
+        switch (edgeResult)
+        {
+            case (NodeConstants::ProcessResult::Failed):
+            case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                return NodeConstants::ProcessResult::Failed;
+            case (NodeConstants::ProcessResult::Success):
+                ++nInputLinksChanged;
+            case (NodeConstants::ProcessResult::Unchanged):
+                break;
+            }
     }
 
     // If input links have updated or we are currently flagged as invalid we must reprocess
+    auto result = NodeConstants::ProcessResult::Unchanged;
     if (nInputLinksChanged > 0 || versionIndex_ == NodeConstants::InvalidVersion)
     {
         result = process();
-        if (result == NodeConstants::ProcessResult::Success)
-            ++versionIndex_;
+        switch (result)
+        {
+            case (NodeConstants::ProcessResult::Failed):
+            case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                break;
+            case (NodeConstants::ProcessResult::Success):
+                ++versionIndex_;
+            case (NodeConstants::ProcessResult::Unchanged):
+                break;
+        }
     }
 
     return result;
