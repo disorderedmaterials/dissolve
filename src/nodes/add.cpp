@@ -23,9 +23,6 @@ std::string_view AddNode::summary() const { return "Performs addition of operand
 // Perform processing
 Node::ProcessResult AddNode::process()
 {
-    if (!isSatisfied())
-        return ProcessResult::InputsNotSatisfied;
-
     result_ = a_ + b_;
 
     return ProcessResult::Success;

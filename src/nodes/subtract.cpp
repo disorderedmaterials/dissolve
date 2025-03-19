@@ -12,23 +12,14 @@ SubtractNode::SubtractNode()
  */
 
 // Return short name of the node
-std::string_view SubtractNode::name() const
-{ 
-    return "Subtract";
-}
+std::string_view SubtractNode::name() const { return "Subtract"; }
 
 // Return short summary of the node's purpose
-std::string_view SubtractNode::summary() const
-{ 
-    return "Performs the subtraction A - B";
-}
+std::string_view SubtractNode::summary() const { return "Performs the subtraction A - B"; }
 
 // Perform processing
 Node::ProcessResult SubtractNode::process()
 {
-    if (!isSatisfied())
-        return ProcessResult::InputsNotSatisfied;
-
     result_ = a_ - b_;
 
     return ProcessResult::Success;

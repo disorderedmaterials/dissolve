@@ -15,6 +15,6 @@ std::string_view DotProductNode::summary() const { return "Computes the dot prod
 Module::ExecutionResult DotProductNode::process(ModuleContext &moduleContext)
 {
     dotProduct_ = u_.dp(v_);
-    validate();
+
     return Module::ExecutionResult::Success;
 }
