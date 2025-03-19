@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include <variant>
 
 // Node Number
 class Number : public Serialisable<>

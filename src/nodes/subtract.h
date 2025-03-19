@@ -33,7 +33,7 @@ class SubtractNode : public Node
     /*
      * Processing
      */
-    private:
+    public:
     // Run main processing
-    Node::ProcessResult process(ModuleContext &moduleContext);
+    ProcessResult process() override;
 };
