@@ -22,9 +22,9 @@ class DotProductNode : public Node
      */
     private:
     // Input vector 1
-    Vec3<double> v1_;
+    Vec3<double> u_;
     // Input vector 2
-    Vec3<double> v2_;
+    Vec3<double> v_;
     // Dot product value
     double dotProduct_;
 
