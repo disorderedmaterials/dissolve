@@ -41,25 +41,33 @@ class Node : public Serialisable<>
      * Processing & Validity
      */
     public:
-    // Readiness
-    enum class Readiness
-    {
-        Ready,
-        MissingComponent,
-    };
-    // Node processing result
+    // Processing result
     enum class ProcessResult
     {
         Failed,
         Success,
         InputsNotSatisfied
     };
-    // Confirm that node data is up to date
-    bool isSatisfied();
+
+    private:
+    // Version index for the node, bumped whenever result outputs change
+    int versionIndex_{InvalidVersion};
+
+    protected:
     // Perform processing
-    virtual ProcessResult process() { return ProcessResult::Failed; }
-    // Tell node to recalculate results
+    virtual ProcessResult process();
+
+    public:
+    // Invalid version index
+    static constexpr int InvalidVersion = -1;
+    // Return version index for the node, bumped whenever result outputs change
+    int versionIndex() const;
+    // Invalidate the current node, resetting versionIndex_
     void invalidate();
+    // Check that all required inputs are present, and that all inputs are valid
+    bool inputsAreValid() const;
+    // Run the node, retrieving linked inputs
+    ProcessResult run();
 
     /*
      * Inputs, Outputs, and Options
@@ -73,8 +81,6 @@ class Node : public Serialisable<>
     std::map<std::string_view, std::shared_ptr<ParameterBase>> options_;
     // Inbound Links
     LinkMap inputLinks_;
-    // Whether node needs to run to account for updated data
-    bool satisfied_{false};
 
     public:
     // Link an input to a source output
@@ -193,13 +199,4 @@ class Node : public Serialisable<>
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
-
-    /*
-     * Processing
-     */
-    protected:
-    // Tell node that results are up to date
-    void validate();
-    // Prepare for processing
-    Readiness preprocess();
 };
