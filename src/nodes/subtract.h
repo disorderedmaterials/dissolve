@@ -24,11 +24,11 @@ class SubtractNode : public Node
      */
     private:
     // Factor A
-    T a_;
+    Number a_;
     // Factor B
-    T b_;
+    Number b_;
     // Product of A and B
-    T result_;
+    Number result_;
 
     /*
      * Processing
