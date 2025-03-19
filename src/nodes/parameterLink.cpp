@@ -19,9 +19,10 @@ std::optional<ParameterLink> ParameterLink::link(ParameterBase &sourceOutput, Pa
 
 bool ParameterLink::updateSource()
 {
-    auto update = sourceOutput_.runUpdate();
-    if (!update)
-        return false;
+    // TODO
+    //    auto update = sourceOutput_.runUpdate();
+    //    if (!update)
+    //        return false;
     return targetInput_.assign(&sourceOutput_);
 }
 

@@ -5,6 +5,64 @@
 #include "base/sysFunc.h"
 
 /*
+ * Processing & Validity
+ */
+
+// Return version index for the node, bumped whenever result outputs change
+int Node::versionIndex() const { return versionIndex_; }
+
+// Invalidate the current node, resetting the version index
+void Node::invalidate() { versionIndex_ = Node::InvalidVersion; }
+
+// Check that all required inputs are present, and that all inputs are valid
+bool Node::inputsAreValid() const
+{
+    for (auto &[inputName, parameter] : inputs_)
+    {
+        // Does this input have a link or links?
+        if (inputLinks_.contains(inputName))
+        {
+            if (!inputLinks_.at(inputName).sourceOutput().parent()->inputsAreValid())
+                return false;
+        }
+        else if (parameter->flags().isSet(ParameterBase::ParameterFlags::Required))
+            return false;
+    }
+
+    return true;
+}
+
+// Run the node, retrieving linked inputs
+Node::ProcessResult Node::run()
+{
+    auto result = ProcessResult::Success;
+    // TODO Check our input links - if any are out-of-date we must retrieve new values
+    auto nInputLinksChanged = 0;
+    for (auto &[key, link] : inputLinks_)
+    {
+        //        // Ignore parameters that don't invalidate
+        //        if (!link.sink().flags().isSet(ParameterBase::Invalidates))
+        //            continue;
+        //        // Update unsatisfied sources
+        //        if (!(link.source().parent()->isSatisfied() || link.updateSource()))
+        //            return Node::Readiness::MissingComponent;
+    }
+
+    // If input links have updated or we are currently flagged as invalid we must reprocess
+    if (nInputLinksChanged > 0 || versionIndex_ == InvalidVersion)
+    {
+        result = process();
+        if (result == ProcessResult::Success)
+            ++versionIndex_;
+    }
+
+    return result;
+}
+
+// Perform processing
+Node::ProcessResult Node::process() { return ProcessResult::Failed; }
+
+/*
  * Inputs, Outputs, and Options
  */
 
@@ -41,45 +99,17 @@ std::shared_ptr<ParameterBase> Node::findOption(std::string_view name) const
 // Return Options
 std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::options() { return options_; };
 
-// Prepare for processing
-Node::Readiness Node::preprocess()
-{
-    for (auto &[key, link] : inputLinks_)
-    {
-        // Ignore parameters that don't invalidate
-        if (!link.sink().flags().isSet(ParameterBase::Invalidates))
-            continue;
-        // Update unsatisfied sources
-        if (!(link.source().parent()->isSatisfied() || link.updateSource()))
-            return Node::Readiness::MissingComponent;
-    }
-    return Node::Readiness::Ready;
-}
-
-// Confirm that node data is up to date
-bool Node::isSatisfied()
-{
-    if (satisfied_)
-        return true;
-    for (auto &[name, link] : inputLinks_)
-        if (!link.source().parent()->isSatisfied())
-            satisfied_ = false;
-    return satisfied_;
-}
-
 // Set the node parent graph
 void Node::setParentGraph(Graph *parentGraph) { parentGraph_ = parentGraph; }
 
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }
 
-// Tell node to recalculate results
-void Node::invalidate() { satisfied_ = false; }
-
-// Tell node that results are up to date
-void Node::validate() { satisfied_ = true; }
-
 Node::LinkMap &Node::links() { return inputLinks_; }
+
+/*
+ * I/O
+ */
 
 // Express as a serialisable value
 SerialisedValue Node::serialise() const
