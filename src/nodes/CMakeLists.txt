@@ -4,6 +4,7 @@ add_library(
   add.h
   atomShake.cpp
   atomShake.h
+  constants.h
   derivative.cpp
   derivative.h
   dissolve.h

@@ -55,29 +55,29 @@ TEST(GraphFlowTest, Basic) {
 
         // Check nodes in isolation first - all should be able to run and give meaningful results
         EXPECT_TRUE(x.inputsAreValid());
-        EXPECT_EQ(x.versionIndex(), Node::InvalidVersion);
-        EXPECT_EQ(x.run(), Node::ProcessResult::Success);
+        EXPECT_EQ(x.versionIndex(), NodeConstants::InvalidVersion);
+        EXPECT_EQ(x.run(), NodeConstants::ProcessResult::Success);
         EXPECT_EQ(x.versionIndex(), 0);
         EXPECT_EQ(xResult->get().asInteger(), 3);
 
         EXPECT_TRUE(y.inputsAreValid());
-        EXPECT_EQ(y.versionIndex(), Node::InvalidVersion);
-        EXPECT_EQ(y.run(), Node::ProcessResult::Success);
+        EXPECT_EQ(y.versionIndex(), NodeConstants::InvalidVersion);
+        EXPECT_EQ(y.run(), NodeConstants::ProcessResult::Success);
         EXPECT_EQ(y.versionIndex(), 0);
         EXPECT_EQ(yResult->get().asInteger(), 7);
 
         EXPECT_TRUE(z.inputsAreValid());
-        EXPECT_EQ(z.versionIndex(), Node::InvalidVersion);
-        EXPECT_EQ(z.run(), Node::ProcessResult::Success);
+        EXPECT_EQ(z.versionIndex(), NodeConstants::InvalidVersion);
+        EXPECT_EQ(z.run(), NodeConstants::ProcessResult::Success);
         EXPECT_EQ(z.versionIndex(), 0);
         EXPECT_EQ(zResult->get().asInteger(), 0);
 
         // Running nodes again should not increase version index since the inputs have no dependencies
-        EXPECT_EQ(x.run(), Node::ProcessResult::Success);
+        EXPECT_EQ(x.run(), NodeConstants::ProcessResult::Success);
         EXPECT_EQ(x.versionIndex(), 0);
-        EXPECT_EQ(y.run(), Node::ProcessResult::Success);
+        EXPECT_EQ(y.run(), NodeConstants::ProcessResult::Success);
         EXPECT_EQ(y.versionIndex(), 0);
-        EXPECT_EQ(z.run(), Node::ProcessResult::Success);
+        EXPECT_EQ(z.run(), NodeConstants::ProcessResult::Success);
         EXPECT_EQ(z.versionIndex(), 0);
 
         /*
@@ -100,7 +100,7 @@ TEST(GraphFlowTest, Basic) {
         EXPECT_TRUE(graph.addEdge({"x", "Result", "z", "A"}));
 
         // If we now run z we should use x's output without changing x itself
-        EXPECT_EQ(z.run(), Node::ProcessResult::Success);
+        EXPECT_EQ(z.run(), NodeConstants::ProcessResult::Success);
         EXPECT_EQ(z.versionIndex(), 1);
         EXPECT_EQ(zResult->get().asInteger(), 3);
         EXPECT_EQ(x.versionIndex(), 0);

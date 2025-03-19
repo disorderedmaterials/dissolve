@@ -18,9 +18,9 @@ std::string_view MultiplyNode::name() const { return "Multiply"; }
 std::string_view MultiplyNode::summary() const { return "Performs multiplication of factors A and B"; }
 
 // Perform processing
-Node::ProcessResult MultiplyNode::process()
+NodeConstants::ProcessResult MultiplyNode::process()
 {
     result_ = a_ * b_;
 
-    return ProcessResult::Success;
+    return NodeConstants::ProcessResult::Success;
 }

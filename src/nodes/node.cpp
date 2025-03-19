@@ -49,7 +49,7 @@ void Node::removeEdge(Edge *edge)
 int Node::versionIndex() const { return versionIndex_; }
 
 // Invalidate the current node, resetting the version index
-void Node::invalidate() { versionIndex_ = Node::InvalidVersion; }
+void Node::invalidate() { versionIndex_ = NodeConstants::InvalidVersion; }
 
 // Check that all required inputs are present, and that all inputs are valid
 bool Node::inputsAreValid() const
@@ -70,10 +70,11 @@ bool Node::inputsAreValid() const
 }
 
 // Run the node, retrieving dependent inputs as necessary
-Node::ProcessResult Node::run()
+NodeConstants::ProcessResult Node::run()
 {
-    auto result = ProcessResult::Success;
-    // TODO Check our input links - if any are out-of-date we must retrieve new values
+    auto result = NodeConstants::ProcessResult::Success;
+
+    // Check our input links - if any are out-of-date we must retrieve new values
     auto nInputLinksChanged = 0;
     for (auto &[key, link] : inputLinks_)
     {
@@ -86,10 +87,10 @@ Node::ProcessResult Node::run()
     }
 
     // If input links have updated or we are currently flagged as invalid we must reprocess
-    if (nInputLinksChanged > 0 || versionIndex_ == InvalidVersion)
+    if (nInputLinksChanged > 0 || versionIndex_ == NodeConstants::InvalidVersion)
     {
         result = process();
-        if (result == ProcessResult::Success)
+        if (result == NodeConstants::ProcessResult::Success)
             ++versionIndex_;
     }
 
@@ -97,7 +98,7 @@ Node::ProcessResult Node::run()
 }
 
 // Perform processing
-Node::ProcessResult Node::process() { return ProcessResult::Failed; }
+NodeConstants::ProcessResult Node::process() { return NodeConstants::ProcessResult::Failed; }
 
 /*
  * Inputs, Outputs, and Options

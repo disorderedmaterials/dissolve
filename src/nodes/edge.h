@@ -3,10 +3,11 @@
 
 #pragma once
 
+#include "nodes/constants.h"
 #include "nodes/parameter.h"
 #include <string>
 
-// Forward Declaraitons
+// Forward Declarations
 class Graph;
 
 // Edge Definition

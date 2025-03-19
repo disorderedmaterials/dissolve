@@ -35,5 +35,5 @@ class AddNode : public Node
 
     public:
     // Perform processing
-    ProcessResult process() override;
+    NodeConstants::ProcessResult process() override;
 };
