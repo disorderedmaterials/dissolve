@@ -23,7 +23,7 @@ class Node : public Serialisable<>
     explicit Node(Graph *parentGraph) : parentGraph_(parentGraph) {}
     virtual ~Node() = default;
 
-    using LinkMap = std::map<std::string_view, Edge *>;
+    using EdgeMap = std::map<std::string_view, Edge *>;
 
     private:
     // Node parent graph
@@ -69,8 +69,8 @@ class Node : public Serialisable<>
     std::map<std::string_view, std::shared_ptr<ParameterBase>> outputs_;
     // Keyword options
     std::map<std::string_view, std::shared_ptr<ParameterBase>> options_;
-    // Inbound Links
-    LinkMap inputLinks_;
+    // Inbound edges
+    EdgeMap inputEdges_;
 
     public:
     // Add edge, returning whether we accept it
@@ -150,7 +150,7 @@ class Node : public Serialisable<>
     // Return options
     std::map<std::string_view, std::shared_ptr<ParameterBase>> &options();
     // Get the links owned by this node
-    LinkMap &links();
+    EdgeMap &links();
     // Set the node parent graph
     void setParentGraph(Graph *parentGraph);
     // Returns the node parent graph

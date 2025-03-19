@@ -16,12 +16,12 @@ bool Node::addEdge(Edge *edge)
     {
         // We are the target node, so we will double-check the specified input to see if it can accept the connection
         // Simple check at present, we accept at most one connection per input, so if one already exists we complain
-        if (inputLinks_.contains(edge->targetInput().name()))
+        if (inputEdges_.contains(edge->targetInput().name()))
             return Messenger::error("Node '{}' refusing to accept Edge connecting to input '{}' as one already exists.\n",
                                     name(), edge->targetInput().name());
 
         // All good, so add the input to our list
-        inputLinks_[edge->targetInput().name()] = edge;
+        inputEdges_[edge->targetInput().name()] = edge;
     }
     else if (edge->sourceNode() == this)
     {
@@ -37,8 +37,8 @@ bool Node::addEdge(Edge *edge)
 void Node::removeEdge(Edge *edge)
 {
     // TODO
-    // inputLinks_.erase(std::remove_if(inputLinks_.begin(), inputLinks_.end(), [edge](const auto &it) { return edge ==
-    // it.second; } ), inputLinks_.end());
+    // inputEdges_.erase(std::remove_if(inputEdges_.begin(), inputEdges_.end(), [edge](const auto &it) { return edge ==
+    // it.second; } ), inputEdges_.end());
 }
 
 /*
@@ -57,9 +57,9 @@ bool Node::inputsAreValid() const
     for (auto &[inputName, parameter] : inputs_)
     {
         // Does this input have a link or links?
-        if (inputLinks_.contains(inputName))
+        if (inputEdges_.contains(inputName))
         {
-            if (!inputLinks_.at(inputName)->sourceOutput().parent()->inputsAreValid())
+            if (!inputEdges_.at(inputName)->sourceOutput().parent()->inputsAreValid())
                 return false;
         }
         else if (parameter->flags().isSet(ParameterBase::ParameterFlags::Required))
@@ -76,7 +76,7 @@ NodeConstants::ProcessResult Node::run()
 
     // Check our input links - if any are out-of-date we must retrieve new values
     auto nInputLinksChanged = 0;
-    for (auto &[key, link] : inputLinks_)
+    for (auto &[inputName, edge] : inputEdges_)
     {
         //        // Ignore parameters that don't invalidate
         //        if (!link.sink().flags().isSet(ParameterBase::Invalidates))
@@ -143,7 +143,7 @@ void Node::setParentGraph(Graph *parentGraph) { parentGraph_ = parentGraph; }
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }
 
-Node::LinkMap &Node::links() { return inputLinks_; }
+Node::EdgeMap &Node::links() { return inputEdges_; }
 
 /*
  * I/O
