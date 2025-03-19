@@ -6,8 +6,8 @@
 #include "base/messenger.h"
 #include "base/serialiser.h"
 #include "module/module.h"
+#include "nodes/edge.h"
 #include "nodes/parameter.h"
-#include "nodes/parameterLink.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -22,7 +22,7 @@ class Node : public Serialisable<>
     explicit Node(Graph *parentGraph) : parentGraph_(parentGraph) {}
     virtual ~Node() = default;
 
-    using LinkMap = std::map<std::string_view, ParameterLink>;
+    using LinkMap = std::map<std::string_view, Edge *>;
 
     private:
     // Node parent graph
@@ -66,7 +66,7 @@ class Node : public Serialisable<>
     void invalidate();
     // Check that all required inputs are present, and that all inputs are valid
     bool inputsAreValid() const;
-    // Run the node, retrieving linked inputs
+    // Run the node, retrieving dependent inputs as necessary
     ProcessResult run();
 
     /*
@@ -83,39 +83,10 @@ class Node : public Serialisable<>
     LinkMap inputLinks_;
 
     public:
-    // Link an input to a source output
-    bool link(std::string_view inputName, ParameterBase &sourceOutput)
-    {
-        // Find the named input parameter
-        auto input = findInput(inputName);
-        if (!input)
-            return Messenger::error("Target input '{}' does not exist.\n", inputName);
-
-        // Confirm that this node hasn't already been linked
-        if (std::find_if(inputLinks_.begin(), inputLinks_.end(),
-                         [inputName](const auto &it)
-                         { return inputName == it.second.targetInput().name(); }) != inputLinks_.end())
-            return false;
-
-        // Confirm that the source is actually an output
-        if (!sourceOutput.flags().isSet(ParameterBase::ParameterFlags::Output))
-            return Messenger::error("{} does not output data", sourceOutput.name());
-
-        // Confirm that the destination input is actually a sink
-        if (!input->flags().isSet(ParameterBase::ParameterFlags::Input))
-            return Messenger::error("{} does not accept data", sourceOutput.name());
-
-        // Create link
-        auto link = ParameterLink::link(sourceOutput, *input);
-
-        // Ensure link is value
-        if (!link)
-            return false;
-
-        inputLinks_.emplace(std::make_pair(inputName, *link));
-
-        return true;
-    }
+    // Add edge, returning whether we accept it
+    bool addEdge(Edge *edge);
+    // Remove edge
+    void removeEdge(Edge *edge);
     // Add input parameter
     template <class T> std::shared_ptr<ParameterBase> addOption(std::string_view name, std::string_view description, T &data)
     {
