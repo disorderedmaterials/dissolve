@@ -4,7 +4,7 @@
 #pragma once
 
 #include "nodes/node.h"
-#include "nodes/nodeNumber.h"
+#include "nodes/number.h"
 
 // MultiplyNode Node
 class MultiplyNode : public Node

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "nodes/node.h"
-#include "nodes/nodeNumber.h"
+#include "nodes/number.h"
 
 // Add Node
 class AddNode : public Node
@@ -27,11 +27,11 @@ class AddNode : public Node
      */
     private:
     // Operand A
-    NodeNumber a_;
+    Number a_;
     // Operand B
-    NodeNumber b_;
+    Number b_;
     // Result (sum of A and B)
-    NodeNumber result_;
+    Number result_;
 
     public:
     // Perform processing

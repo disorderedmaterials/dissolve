@@ -2,9 +2,9 @@
 
 SubtractNode::SubtractNode()
 {
-    addInput<NodeNumber>("A", "First operand to the subtraction", a_);
-    addInput<NodeNumber>("B", "Second operand to the subtraction, subtracted from A", b_);
-    addOutput<NodeNumber>("Difference", "The difference of the operands", result_);
+    addInput<Number>("A", "First operand to the subtraction", a_);
+    addInput<Number>("B", "Second operand to the subtraction, subtracted from A", b_);
+    addOutput<Number>("Difference", "The difference of the operands", result_);
 }
 
 /*

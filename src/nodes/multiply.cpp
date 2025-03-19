@@ -2,9 +2,9 @@
 
 MultiplyNode::MultiplyNode()
 {
-    addInput<NodeNumber>("A", "First factor to the multiplication", a_);
-    addInput<NodeNumber>("B", "Second factor to the multiplication", b_);
-    addOutput<NodeNumber>("Product", "The product of the two factors", result_);
+    addInput<Number>("A", "First factor to the multiplication", a_);
+    addInput<Number>("B", "Second factor to the multiplication", b_);
+    addOutput<Number>("Product", "The product of the two factors", result_);
 }
 
  /*
