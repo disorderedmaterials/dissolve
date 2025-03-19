@@ -9,6 +9,8 @@ add_library(
   dissolve.h
   dotProduct.cpp
   dotProduct.h
+  edge.cpp
+  edge.h
   integrator.cpp
   integrator.h
   graph.cpp
@@ -27,8 +29,6 @@ add_library(
   vec3Decomposition.h
   parameter.cpp
   parameter.h
-  parameterLink.cpp
-  parameterLink.h
   registry.h
 )
 

@@ -5,6 +5,43 @@
 #include "base/sysFunc.h"
 
 /*
+ * Inputs, Outputs & Options
+ */
+
+// Add edge
+bool Node::addEdge(Edge *edge)
+{
+    // The supplied Edge was created via our parent Graph, but we will still check to see whether we accept it
+    if (edge->targetNode() == this)
+    {
+        // We are the target node, so we will double-check the specified input to see if it can accept the connection
+        // Simple check at present, we accept at most one connection per input, so if one already exists we complain
+        if (inputLinks_.contains(edge->targetInput().name()))
+            return Messenger::error("Node '{}' refusing to accept Edge connecting to input '{}' as one already exists.\n",
+                                    name(), edge->targetInput().name());
+
+        // All good, so add the input to our list
+        inputLinks_[edge->targetInput().name()] = edge;
+    }
+    else if (edge->sourceNode() == this)
+    {
+        // We are the source node - nothing for us to do at present, but we may choose to store such Edges in future.
+    }
+    else
+        return Messenger::error("Node '{}' is neither the source nor the target for the supplied Edge.\n", name());
+
+    return true;
+}
+
+// Remove edge
+void Node::removeEdge(Edge *edge)
+{
+    // TODO
+    // inputLinks_.erase(std::remove_if(inputLinks_.begin(), inputLinks_.end(), [edge](const auto &it) { return edge ==
+    // it.second; } ), inputLinks_.end());
+}
+
+/*
  * Processing & Validity
  */
 
@@ -22,7 +59,7 @@ bool Node::inputsAreValid() const
         // Does this input have a link or links?
         if (inputLinks_.contains(inputName))
         {
-            if (!inputLinks_.at(inputName).sourceOutput().parent()->inputsAreValid())
+            if (!inputLinks_.at(inputName)->sourceOutput().parent()->inputsAreValid())
                 return false;
         }
         else if (parameter->flags().isSet(ParameterBase::ParameterFlags::Required))
@@ -32,7 +69,7 @@ bool Node::inputsAreValid() const
     return true;
 }
 
-// Run the node, retrieving linked inputs
+// Run the node, retrieving dependent inputs as necessary
 Node::ProcessResult Node::run()
 {
     auto result = ProcessResult::Success;
