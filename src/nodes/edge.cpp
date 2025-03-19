@@ -9,6 +9,7 @@ Edge::Edge(Node *sourceNode, ParameterBase &sourceOutput, Node *targetNode, Para
 {
 }
 
+// Local EdgeConstructor class to allow creation of memory-managed Edge instances
 class EdgeConstructor : public Edge
 {
     public:
