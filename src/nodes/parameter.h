@@ -135,18 +135,26 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     // Express as a serialised value
     SerialisedValue serialise() const override
     {
+        // Don't try to serialise pointer types
+        if constexpr (std::is_pointer<T>::value)
+            return {};
+
         SerialisedValue result = {};
 
-        // Serialise non-pointer values
-        if constexpr (std::is_convertible<T, double>::value)
-            result["data"] = data_;
-        else if constexpr (std::is_convertible<T, std::string>::value)
-            result["data"] = data_;
-        else if constexpr (std::is_convertible<T, std::optional<double>>::value)
+        // Optionals are a special case - everything else should be directly Serialisable<> - but need to catch
+        if constexpr (std::is_convertible<T, std::optional<double>>::value)
         {
             if (data_)
                 result["data"] = *data_;
         }
+        else if constexpr (std::is_convertible<T, std::optional<int>>::value)
+        {
+            if (data_)
+                result["data"] = *data_;
+        }
+        else
+            result["data"] = data_;
+
         return result;
     };
     // Read from a serialised value
@@ -157,6 +165,13 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
             data_ = nullptr;
         }
         else if constexpr (std::is_convertible<T, std::optional<double>>::value)
+        {
+            if (node.contains("data"))
+                data_ = toml::find<double>(node, "data");
+            else
+                data_ = {};
+        }
+        else if constexpr (std::is_convertible<T, std::optional<int>>::value)
         {
             if (node.contains("data"))
                 data_ = toml::find<double>(node, "data");
