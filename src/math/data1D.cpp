@@ -267,6 +267,12 @@ const std::vector<double> &Data1D::errors() const
  * Operators
  */
 
+bool Data1D::operator==(const Data1D &other) const
+{
+    return tag_ == other.tag_ && x_ == other.x_ && values_ == other.values_ && hasError_ == other.hasError_ &&
+           (!hasError_ || errors_ == other.errors_);
+}
+
 void Data1D::operator=(const Data1D &source)
 {
     tag_ = source.tag_;
