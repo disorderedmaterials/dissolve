@@ -42,5 +42,5 @@ class AtomShakeNode : public Node
      */
     private:
     // Run main processing
-    ProcessResult process();
+    NodeConstants::ProcessResult process();
 };
