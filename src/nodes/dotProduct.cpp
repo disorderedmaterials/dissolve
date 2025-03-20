@@ -4,7 +4,7 @@ DotProductNode::DotProductNode()
 {
     addInput<Vec3<double>>("U", "Vector dot product factor", u_);
     addInput<Vec3<double>>("V", "Vector dot product factor", v_);
-    addOutput<double>("Result", "The inner product of the vectors", dotProduct_);
+    addOutput<Number>("Result", "The inner product of the vectors", dotProduct_);
 }
 
 std::string_view DotProductNode::name() const { return "Dot Product"; }

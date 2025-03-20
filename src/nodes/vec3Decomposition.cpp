@@ -3,9 +3,9 @@
 Vec3DecompositionNode::Vec3DecompositionNode()
 {
     addInput<Vec3<double>>("V", "The 3-dimensional vector to be decomposed", inputVector_);
-    addOutput<double>("X", "The x component of the vector", x_);
-    addOutput<double>("Y", "The y component of the vector", y_);
-    addOutput<double>("Z", "The z component of the vector", z_);
+    addOutput<Number>("X", "The x component of the vector", x_);
+    addOutput<Number>("Y", "The y component of the vector", y_);
+    addOutput<Number>("Z", "The z component of the vector", z_);
 }
 
 std::string_view Vec3DecompositionNode::name() const { return "Vector3 Decomposition"; }
