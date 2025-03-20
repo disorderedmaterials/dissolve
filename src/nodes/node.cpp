@@ -108,12 +108,13 @@ NodeConstants::ProcessResult Node::run()
                 break;
             case (NodeConstants::ProcessResult::Success):
                 ++versionIndex_;
+                upToDate_ = true;
+                break;
             case (NodeConstants::ProcessResult::Unchanged):
+                upToDate_ = true;
                 break;
         }
     }
-
-    upToDate_ = true;
 
     return result;
 }

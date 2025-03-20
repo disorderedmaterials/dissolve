@@ -107,10 +107,9 @@ NodeConstants::ProcessResult Edge::pull()
      * itself we need to pull from or run the source node to get the updated output. We can then store the source node's
      * current versionIndex ready for next time.
      */
-    auto result = NodeConstants::ProcessResult::Failed;
     if (!sourceNode_->isUpToDate() || (sourceNodeVersionIndex_ != sourceNode_->versionIndex()))
     {
-        result = sourceNode_->run();
+        auto result = sourceNode_->run();
         if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
         {
             Messenger::error("Failed to pull updated value from node '{}'\n", sourceNode_->name());
@@ -120,13 +119,10 @@ NodeConstants::ProcessResult Edge::pull()
         // Update version index
         sourceNodeVersionIndex_ = sourceNode_->versionIndex();
 
-        // If the source node's run() result was Unchanged, return success anyway as we need to flag to our target node
-        // that its data has changed and needs to run again.
-        result = NodeConstants::ProcessResult::Success;
+        // Copy the parameter data over
+        return targetInput_.assign(&sourceOutput_) ? NodeConstants::ProcessResult::Success
+                                                   : NodeConstants::ProcessResult::Failed;
     }
-    else
-        result = NodeConstants::ProcessResult::Unchanged;
 
-    // Copy the parameter data over
-    return targetInput_.assign(&sourceOutput_) ? result : NodeConstants::ProcessResult::Failed;
+    return NodeConstants::ProcessResult::Unchanged;
 }
