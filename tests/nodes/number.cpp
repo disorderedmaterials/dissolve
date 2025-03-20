@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/nodeNumber.h"
+#include "nodes/number.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
 {
-
-TEST(NodeNumberTest, Construction)
+TEST(NumberTest, Construction)
 {
-    NodeNumber a;
+    Number a;
 
     // Type should default to integer, value to zero
     EXPECT_TRUE(a.isInteger());
@@ -17,19 +16,19 @@ TEST(NodeNumberTest, Construction)
     EXPECT_EQ(a.asInteger(), 0);
 
     // Construct from integer
-    NodeNumber b(10);
+    Number b(10);
     EXPECT_TRUE(b.isInteger());
     EXPECT_EQ(b.asInteger(), 10);
 
     // Construct from double
-    NodeNumber c(1.234);
+    Number c(1.234);
     EXPECT_TRUE(c.isDouble());
     EXPECT_DOUBLE_EQ(c.asDouble(), 1.234);
 }
 
-TEST(NodeNumberTest, Assignment)
+TEST(NumberTest, Assignment)
 {
-    NodeNumber a;
+    Number a;
 
     // Assignment from integer
     a = 9;
@@ -41,16 +40,16 @@ TEST(NodeNumberTest, Assignment)
     EXPECT_TRUE(a.isDouble());
     EXPECT_DOUBLE_EQ(a.asDouble(), 5.0);
 
-    // Assignment from other NodeNumber
+    // Assignment from other Number
     auto b = a;
     EXPECT_TRUE(b.isDouble());
     EXPECT_DOUBLE_EQ(b.asDouble(), 5.0);
 }
 
-TEST(NodeNumberTest, Addition)
+TEST(NumberTest, Addition)
 {
     // Addition of two integers must result in an integer
-    NodeNumber a(5), b(10);
+    Number a(5), b(10);
     EXPECT_TRUE((a + b).isInteger());
     EXPECT_EQ((a + b).asInteger(), a.asInteger() + b.asInteger());
 
@@ -66,10 +65,10 @@ TEST(NodeNumberTest, Addition)
     EXPECT_DOUBLE_EQ((a + b).asDouble(), a.asDouble() + b.asDouble());
 }
 
-TEST(NodeNumberTest, AdditionAssignment)
+TEST(NumberTest, AdditionAssignment)
 {
     // Addition of anything to an integer maintains the integer type
-    NodeNumber a(1);
+    Number a(1);
     EXPECT_TRUE((a += 2).isInteger());
     EXPECT_EQ(a.asInteger(), 3);
     EXPECT_TRUE((a += 2.0).isInteger());
@@ -83,10 +82,10 @@ TEST(NodeNumberTest, AdditionAssignment)
     EXPECT_DOUBLE_EQ(a.asDouble(), 5.0);
 }
 
-TEST(NodeNumberTest, Subtraction)
+TEST(NumberTest, Subtraction)
 {
     // Subtraction of two integers must result in an integer
-    NodeNumber a(5), b(10);
+    Number a(5), b(10);
     EXPECT_TRUE((a - b).isInteger());
     EXPECT_EQ((a - b).asInteger(), a.asInteger() - b.asInteger());
 
@@ -102,10 +101,10 @@ TEST(NodeNumberTest, Subtraction)
     EXPECT_DOUBLE_EQ((a - b).asDouble(), a.asDouble() - b.asDouble());
 }
 
-TEST(NodeNumberTest, SubtractionAssignment)
+TEST(NumberTest, SubtractionAssignment)
 {
     // Subtraction of anything from an integer maintains the integer type
-    NodeNumber a(1);
+    Number a(1);
     EXPECT_TRUE((a -= 2).isInteger());
     EXPECT_EQ(a.asInteger(), -1);
     EXPECT_TRUE((a -= 2.0).isInteger());
@@ -119,10 +118,10 @@ TEST(NodeNumberTest, SubtractionAssignment)
     EXPECT_DOUBLE_EQ(a.asDouble(), -3.0);
 }
 
-TEST(NodeNumberTest, Multiply)
+TEST(NumberTest, Multiply)
 {
     // Multiplication of two integers must result in an integer
-    NodeNumber a(5), b(10);
+    Number a(5), b(10);
     EXPECT_TRUE((a * b).isInteger());
     EXPECT_EQ((a * b).asInteger(), a.asInteger() * b.asInteger());
 
@@ -141,10 +140,10 @@ TEST(NodeNumberTest, Multiply)
     EXPECT_DOUBLE_EQ((a * b).asDouble(), a.asDouble() * b.asDouble());
 }
 
-TEST(NodeNumberTest, MultiplyAssignment)
+TEST(NumberTest, MultiplyAssignment)
 {
     // Multiplication of anything with an integer maintains the integer type
-    NodeNumber a(1);
+    Number a(1);
     EXPECT_TRUE((a *= 2).isInteger());
     EXPECT_EQ(a.asInteger(), 2);
     EXPECT_TRUE((a *= 2.0).isInteger());
@@ -158,10 +157,10 @@ TEST(NodeNumberTest, MultiplyAssignment)
     EXPECT_DOUBLE_EQ(a.asDouble(), 4.0);
 }
 
-TEST(NodeNumberTest, Division)
+TEST(NumberTest, Division)
 {
     // Division of two integers must result in an integer
-    NodeNumber a(5), b(10);
+    Number a(5), b(10);
     EXPECT_TRUE((a / b).isInteger());
     EXPECT_EQ((a / b).asInteger(), a.asInteger() / b.asInteger());
 
@@ -177,10 +176,10 @@ TEST(NodeNumberTest, Division)
     EXPECT_DOUBLE_EQ((a / b).asDouble(), a.asDouble() / b.asDouble());
 }
 
-TEST(NodeNumberTest, DivisionAssignment)
+TEST(NumberTest, DivisionAssignment)
 {
     // Division of an integer by anything maintains the integer type
-    NodeNumber a(2);
+    Number a(2);
     EXPECT_TRUE((a /= 2).isInteger());
     EXPECT_EQ(a.asInteger(), 1);
     EXPECT_TRUE((a /= 2.0).isInteger());
