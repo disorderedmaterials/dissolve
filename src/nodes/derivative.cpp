@@ -11,9 +11,9 @@ std::string_view DerivativeNode::name() const { return "Derivative"; }
 
 std::string_view DerivativeNode::summary() const { return "Computes the derivative of a 1D data series"; }
 
-Module::ExecutionResult DerivativeNode::process(ModuleContext &moduleContext)
+NodeConstants::ProcessResult DerivativeNode::process()
 {
     derivative_ = Derivative::derivative(inputData_);
 
-    return Module::ExecutionResult::Success;
+    return NodeConstants::ProcessResult::Success;
 }

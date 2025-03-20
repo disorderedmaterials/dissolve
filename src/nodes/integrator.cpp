@@ -25,7 +25,7 @@ std::string_view Integrator1DNode::name() const { return "Integrator"; }
 std::string_view Integrator1DNode::summary() const { return "Computes the integral for a 1D data series"; }
 
 // Run main processing
-Module::ExecutionResult Integrator1DNode::process(ModuleContext &moduleContext)
+NodeConstants::ProcessResult Integrator1DNode::process()
 {
     auto typeEnum = types().enumeration(type_);
 
@@ -47,8 +47,8 @@ Module::ExecutionResult Integrator1DNode::process(ModuleContext &moduleContext)
             integral_ = Integrator::sumOfSquares(inputData_);
 
         default:
-            return Module::ExecutionResult::Failed;
+            return NodeConstants::ProcessResult::Failed;
     }
 
-    return Module::ExecutionResult::Success;
+    return NodeConstants::ProcessResult::Success;
 }

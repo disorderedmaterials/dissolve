@@ -13,11 +13,11 @@ std::string_view Vec3DecompositionNode::name() const { return "Vector3 Decomposi
 std::string_view Vec3DecompositionNode::summary() const { return "Decompose a 3-vector into x, y, and z components."; }
 
 // Run main processing
-Module::ExecutionResult Vec3DecompositionNode::process(ModuleContext &moduleContext)
+NodeConstants::ProcessResult Vec3DecompositionNode::process()
 {
     x_ = inputVector_.x;
     y_ = inputVector_.y;
     z_ = inputVector_.z;
 
-    return Module::ExecutionResult::Success;
+    return NodeConstants::ProcessResult::Success;
 }

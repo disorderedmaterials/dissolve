@@ -48,5 +48,5 @@ class Integrator1DNode : public Node
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext);
+    NodeConstants::ProcessResult process() override;
 };

@@ -12,9 +12,9 @@ std::string_view DotProductNode::name() const { return "Dot Product"; }
 std::string_view DotProductNode::summary() const { return "Computes the dot product of a pair of vectors u and v"; }
 
 // Run main processing
-Module::ExecutionResult DotProductNode::process(ModuleContext &moduleContext)
+NodeConstants::ProcessResult DotProductNode::process()
 {
     dotProduct_ = u_.dp(v_);
 
-    return Module::ExecutionResult::Success;
+    return NodeConstants::ProcessResult::Success;
 }

@@ -13,9 +13,9 @@ std::string_view Vec3AssemblyNode::name() const { return "Vector3 Assembly"; }
 std::string_view Vec3AssemblyNode::summary() const { return "Assemble a 3-vector from x, y, and z values."; }
 
 // Run main processing
-Module::ExecutionResult Vec3AssemblyNode::process(ModuleContext &moduleContext)
+NodeConstants::ProcessResult Vec3AssemblyNode::process()
 {
     outputVector_.set(x_, y_, z_);
 
-    return Module::ExecutionResult::Success;
+    return NodeConstants::ProcessResult::Success;
 }
