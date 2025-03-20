@@ -35,7 +35,7 @@ class GraphFlowTest : public ::testing::Test
         graph_.addNode(NodeRegistry::produce("Add"), "y");
         graph_.addNode(NodeRegistry::produce("Add"), "z");
 
-        x_ = dynamic_cast<AddNode *>(graph_.nodes()["x"].get());
+        x_ = dynamic_cast<AddNode *>(graph_.node("x"));
         ASSERT_TRUE(x_);
         xA_ = x_->findInput("A")->upcast<Number>();
         xB_ = x_->findInput("B")->upcast<Number>();
@@ -45,7 +45,7 @@ class GraphFlowTest : public ::testing::Test
         ASSERT_TRUE(xResult_);
         xA_->set(1);
         xB_->set(2);
-        y_ = dynamic_cast<AddNode *>(graph_.nodes()["y"].get());
+        y_ = dynamic_cast<AddNode *>(graph_.node("y"));
         ASSERT_TRUE(y_);
         yA_ = y_->findInput("A")->upcast<Number>();
         yB_ = y_->findInput("B")->upcast<Number>();
@@ -55,7 +55,7 @@ class GraphFlowTest : public ::testing::Test
         ASSERT_TRUE(yResult_);
         yA_->set(3);
         yB_->set(4);
-        z_ = dynamic_cast<AddNode *>(graph_.nodes()["z"].get());
+        z_ = dynamic_cast<AddNode *>(graph_.node("z"));
         ASSERT_TRUE(z_);
         zA_ = z_->findInput("A")->upcast<Number>();
         zB_ = z_->findInput("B")->upcast<Number>();

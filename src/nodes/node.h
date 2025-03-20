@@ -25,16 +25,22 @@ class Node : public Serialisable<>
 
     using EdgeMap = std::map<std::string_view, Edge *>;
 
-    private:
-    // Node parent graph
-    Graph *parentGraph_;
-
     /*
      * Definition
      */
+    private:
+    // Name of the node (unique within it's parent Graph)
+    std::string name_;
+    // Node parent graph
+    Graph *parentGraph_;
+
     public:
-    // Return short name of the node
-    virtual std::string_view name() const = 0;
+    // Set node name
+    void setName(std::string_view newName);
+    // Return node name
+    std::string_view name() const;
+    // Return node type
+    virtual std::string_view type() const = 0;
     // Return short summary of the node's purpose
     virtual std::string_view summary() const = 0;
 

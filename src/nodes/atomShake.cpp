@@ -30,7 +30,7 @@ AtomShakeNode::AtomShakeNode()
     // executeIfTargetsUnchanged_ = true;
 }
 
-std::string_view AtomShakeNode::name() const { return "Atom Shake"; }
+std::string_view AtomShakeNode::type() const { return "Atom Shake"; }
 
 std::string_view AtomShakeNode::summary() const
 {

@@ -14,7 +14,7 @@ class DissolveNode : public Node
     ~DissolveNode() override = default;
 
     public:
-    std::string_view name() const override { return "Dissolve"; }
+    std::string_view type() const override { return "Dissolve"; }
     std::string_view summary() const override { return "Parent node of all simulations"; }
 
     /*
