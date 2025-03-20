@@ -44,6 +44,11 @@ class Graph : public Node
     void addNode(std::unique_ptr<Node> &&node, std::string_view name);
     // Add edge between nodes
     bool addEdge(const EdgeDefinition &definition);
+    // Remove edge between nodes
+    bool removeEdge(const EdgeDefinition &definition);
+    bool removeEdge(Edge *edgeToRemove);
+    // Find edge between nodes
+    Edge *findEdge(const EdgeDefinition &definition) const;
     // Return named node, if it exists
     Node *node(std::string_view name);
     // Return container of nodes
