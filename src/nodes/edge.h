@@ -20,15 +20,16 @@ struct EdgeDefinition
 // Edge
 class Edge
 {
-    private:
-    // Edge definition
-    EdgeDefinition definition_;
+    public:
+    ~Edge();
 
     protected:
     // The constructor is private because it can only be constructed by the factory method
     Edge(Node *sourceNode, ParameterBase &sourceOutput, Node *targetNode, ParameterBase &targetInput);
 
     private:
+    // Edge definition
+    EdgeDefinition definition_;
     // Pointers to source and target nodes
     Node *sourceNode_{nullptr};
     Node *targetNode_{nullptr};

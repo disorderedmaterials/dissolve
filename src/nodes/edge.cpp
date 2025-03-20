@@ -9,6 +9,15 @@ Edge::Edge(Node *sourceNode, ParameterBase &sourceOutput, Node *targetNode, Para
 {
 }
 
+Edge::~Edge()
+{
+    // Detach from the source and target nodes
+    if (sourceNode_)
+        sourceNode_->removeEdge(this);
+    if (targetNode_)
+        targetNode_->removeEdge(this);
+}
+
 // Local EdgeConstructor class to allow creation of memory-managed Edge instances
 class EdgeConstructor : public Edge
 {

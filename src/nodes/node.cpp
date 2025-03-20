@@ -39,9 +39,25 @@ bool Node::addEdge(Edge *edge)
 // Remove edge
 void Node::removeEdge(Edge *edge)
 {
-    // TODO
-    // inputEdges_.erase(std::remove_if(inputEdges_.begin(), inputEdges_.end(), [edge](const auto &it) { return edge ==
-    // it.second; } ), inputEdges_.end());
+    // If we are the Edge's targetNode_ then we should have its pointer in inputEdges_
+    if (edge->targetNode() == this)
+    {
+        auto it = std::find_if(inputEdges_.begin(), inputEdges_.end(),
+                               [edge](const auto &inputEdge) { return edge == inputEdge.second; });
+        if (it == inputEdges_.end())
+            Messenger::error("Tried to remove an Edge from a target node ('{}') which knew nothing about it.\n", name());
+        else
+        {
+            inputEdges_.erase(it);
+            invalidate();
+        }
+    }
+    else if (edge->sourceNode() == this)
+    {
+        // We are the source node for the edge - nothing for us to do at present
+    }
+    else
+        Messenger::error("Node '{}' is neither the source nor the target for the Edge being removed.\n", name());
 }
 
 /*
