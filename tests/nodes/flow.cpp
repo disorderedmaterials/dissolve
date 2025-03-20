@@ -86,49 +86,107 @@ TEST_F(GraphFlowTest, Basic)
 
     // Check nodes in isolation first - all should be able to run and give meaningful results
     EXPECT_TRUE(x_->inputsAreValid());
+    EXPECT_FALSE(x_->isUpToDate());
     EXPECT_EQ(x_->versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(x_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(xResult_->get().asInteger(), 3);
+    EXPECT_TRUE(x_->isUpToDate());
 
     EXPECT_TRUE(y_->inputsAreValid());
+    EXPECT_FALSE(y_->isUpToDate());
     EXPECT_EQ(y_->versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(yResult_->get().asInteger(), 7);
+    EXPECT_TRUE(y_->isUpToDate());
 
     EXPECT_TRUE(z_->inputsAreValid());
+    EXPECT_FALSE(z_->isUpToDate());
     EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->versionIndex(), 0);
     EXPECT_EQ(zResult_->get().asInteger(), 0);
+    EXPECT_TRUE(z_->isUpToDate());
 
     // Running nodes again should not increase version index since the inputs have no dependencies
     EXPECT_EQ(x_->run(), NodeConstants::ProcessResult::Unchanged);
     EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_TRUE(x_->isUpToDate());
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Unchanged);
     EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_TRUE(y_->isUpToDate());
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Unchanged);
     EXPECT_EQ(z_->versionIndex(), 0);
+    EXPECT_TRUE(z_->isUpToDate());
 
     // Add the edge between x's "Result" and z's "A" input
     EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "A"}));
+    EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
 
     // If we now run z we should use x's output without changing x itself
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(z_->versionIndex(), 1);
+    EXPECT_EQ(z_->versionIndex(), 0);
     EXPECT_EQ(zResult_->get().asInteger(), 3);
     EXPECT_EQ(x_->versionIndex(), 0);
 
     // Complete the graph and link y's "Result" output to z's "B" input
     EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "B"}));
+    EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
 
     // As before, if we now run z we should use x's and y's output without changing x or y
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(z_->versionIndex(), 2);
+    EXPECT_EQ(z_->versionIndex(), 0);
     EXPECT_EQ(zResult_->get().asInteger(), 10);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
 };
+
+TEST_F(GraphFlowTest, SetInput)
+{
+    // Get the basic graph
+    createGraph(true);
+
+    // Run z - all nodes should update
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(z_->versionIndex(), 0);
+    EXPECT_EQ(zResult_->get().asInteger(), 10);
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+
+    // Set the input A of 'x' manually. This should invalidate 'x' alone.
+    xA_->set(0);
+    EXPECT_FALSE(x_->isUpToDate());
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(z_->versionIndex(), 0);
+
+    // Run z again - it should be forced to reprocess and update itself, along with 'x' - 'y' remains unchanged
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 1);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(z_->versionIndex(), 1);
+    EXPECT_EQ(zResult_->get().asInteger(), 9);
+
+    // One more time
+    xB_->set(10);
+    EXPECT_FALSE(x_->isUpToDate());
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 2);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(z_->versionIndex(), 2);
+    EXPECT_EQ(zResult_->get().asInteger(), 17);
+
+    // And now for y
+    yB_->set(5);
+    EXPECT_TRUE(x_->isUpToDate());
+    EXPECT_FALSE(y_->isUpToDate());
+    EXPECT_TRUE(z_->isUpToDate());
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 2);
+    EXPECT_EQ(y_->versionIndex(), 1);
+    EXPECT_EQ(z_->versionIndex(), 3);
+    EXPECT_EQ(zResult_->get().asInteger(), 18);
+}
 
 } // namespace UnitTest
