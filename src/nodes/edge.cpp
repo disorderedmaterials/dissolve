@@ -95,7 +95,8 @@ const ParameterBase &Edge::targetInput() const { return targetInput_; }
 // Return definition for the edge
 EdgeDefinition Edge::definition() const
 {
-    return {std::string(sourceNode_->name()), std::string(sourceOutput_.name()), std::string(targetNode_->name()), std::string(targetInput_.name()) };
+    return {std::string(sourceNode_->name()), std::string(sourceOutput_.name()), std::string(targetNode_->name()),
+            std::string(targetInput_.name())};
 }
 
 // Pull the data from the source node to the target, returning a ProcessResult
@@ -107,7 +108,9 @@ NodeConstants::ProcessResult Edge::pull()
      * current versionIndex ready for next time.
      */
     auto result = NodeConstants::ProcessResult::Failed;
-    if (sourceNodeVersionIndex_ == NodeConstants::InvalidVersion || sourceNode_->versionIndex() == NodeConstants::InvalidVersion || (sourceNodeVersionIndex_ != sourceNode_->versionIndex()))
+    if (sourceNodeVersionIndex_ == NodeConstants::InvalidVersion ||
+        sourceNode_->versionIndex() == NodeConstants::InvalidVersion ||
+        (sourceNodeVersionIndex_ != sourceNode_->versionIndex()))
     {
         result = sourceNode_->run();
         if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
@@ -123,8 +126,9 @@ NodeConstants::ProcessResult Edge::pull()
         // that its data has changed and needs to run again.
         result = NodeConstants::ProcessResult::Success;
     }
-    else result = NodeConstants::ProcessResult::Unchanged;
+    else
+        result = NodeConstants::ProcessResult::Unchanged;
 
     // Copy the parameter data over
-    return targetInput_.assign(&sourceOutput_) ? result: NodeConstants::ProcessResult::Failed;
+    return targetInput_.assign(&sourceOutput_) ? result : NodeConstants::ProcessResult::Failed;
 }

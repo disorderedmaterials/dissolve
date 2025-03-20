@@ -76,7 +76,7 @@ NodeConstants::ProcessResult Node::run()
     auto nInputLinksChanged = 0;
     for (auto &[inputName, edge] : inputEdges_)
     {
-        auto edgeResult =edge->pull();
+        auto edgeResult = edge->pull();
         switch (edgeResult)
         {
             case (NodeConstants::ProcessResult::Failed):
@@ -86,7 +86,7 @@ NodeConstants::ProcessResult Node::run()
                 ++nInputLinksChanged;
             case (NodeConstants::ProcessResult::Unchanged):
                 break;
-            }
+        }
     }
 
     // If input links have updated or we are currently flagged as invalid we must reprocess
