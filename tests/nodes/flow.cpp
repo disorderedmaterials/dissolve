@@ -189,4 +189,32 @@ TEST_F(GraphFlowTest, SetInput)
     EXPECT_EQ(zResult_->get().asInteger(), 18);
 }
 
+TEST_F(GraphFlowTest, RemoveEdges)
+{
+    // Get the basic graph
+    createGraph(true);
+
+    // Run z - all nodes should update
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(z_->versionIndex(), 0);
+    EXPECT_EQ(zResult_->get().asInteger(), 10);
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+
+    // Remove edge between x and z - this will invalidate z but not x
+    EXPECT_TRUE(graph_.removeEdge({"x", "Result", "z", "A"}));
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
+
+    // Now remove edge between y and z - this will invalidate z but not y
+    EXPECT_TRUE(graph_.removeEdge({"y", "Result", "z", "B"}));
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
+
+    // Try to remove a non-existent edge
+    EXPECT_FALSE(graph_.removeEdge({"Q", "Result", "z", "C"}));
+}
+
 } // namespace UnitTest
