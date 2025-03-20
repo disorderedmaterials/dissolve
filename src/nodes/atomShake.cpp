@@ -35,7 +35,7 @@ std::string_view AtomShakeNode::summary() const
 }
 
 // Run main processing
-Node::ProcessResult AtomShakeNode::process()
+NodeConstants::ProcessResult AtomShakeNode::process()
 {
     // Get numeric input data
     auto nShakesPerAtom = nShakesPerAtom_.asInteger();
@@ -218,7 +218,7 @@ Node::ProcessResult AtomShakeNode::process()
     if (nAccepted > 0)
         targetConfiguration_->incrementContentsVersion();
 
-    return ProcessResult::Success;
+    return NodeConstants::ProcessResult::Success;
 }
 
 std::string_view AtomShakeNode::name() const { return "Atom Shake"; }
