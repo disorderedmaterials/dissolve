@@ -45,7 +45,16 @@ Node::ProcessResult AtomShakeNode::process()
     auto targetAcceptanceRate = targetAcceptanceRate_.asDouble();
 
     // Retrieve control parameters from Configuration
-    auto rCut = cutoffDistance_.value_or(moduleContext.dissolve().pairPotentialRange()).asDouble();
+    double rCut;
+    if (cutoffDistance_.has_value())
+    {
+        rCut = cutoffDistance_.value().asDouble();
+    }
+    else
+    {
+        rCut = moduleContext.dissolve().pairPotentialRange();
+    }
+
     const auto termScale = 1.0;
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
 
