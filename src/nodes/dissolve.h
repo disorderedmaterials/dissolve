@@ -10,7 +10,7 @@
 class DissolveNode : public Node
 {
     public:
-    DissolveNode(){};
+    DissolveNode() {};
     ~DissolveNode() override = default;
 
     public:
@@ -21,6 +21,15 @@ class DissolveNode : public Node
      * Definition
      */
     private:
+    //
+    NodeContext ctx_;
+
+    public:
+    // Set node context
+    void setContext(Dissolve &dissolve);
+    // Return node context
+    NodeContext &context() const;
+
     /*
      * Processing
      */

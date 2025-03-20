@@ -5,6 +5,7 @@
 
 #include "base/messenger.h"
 #include "base/serialiser.h"
+#include "module/context.h"
 #include "module/module.h"
 #include "nodes/constants.h"
 #include "nodes/edge.h"
@@ -24,6 +25,13 @@ class Node : public Serialisable<>
     virtual ~Node() = default;
 
     using EdgeMap = std::map<std::string_view, Edge *>;
+
+    // Node context
+    struct NodeContext
+    {
+        ProcessPool &processPool;
+        OptionalReferenceWrapper<Dissolve> &dissolve;
+    };
 
     private:
     // Node parent graph
