@@ -22,7 +22,7 @@ class Graph : public Node
     /*
      * Nodes and edges
      */
-    using Nodes = std::map<std::string_view, std::unique_ptr<Node>>;
+    using Nodes = std::vector<std::unique_ptr<Node>>;
     using Edges = std::vector<std::unique_ptr<Edge>>;
 
     private:
@@ -34,8 +34,8 @@ class Graph : public Node
     Edges edges_;
 
     public:
-    // Return short name of the node
-    std::string_view name() const override;
+    // Return type of the node
+    std::string_view type() const override;
     // Return short summary of the node's purpose
     std::string_view summary() const override;
     // Produce a registered node by type

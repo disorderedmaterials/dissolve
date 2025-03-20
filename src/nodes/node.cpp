@@ -5,6 +5,16 @@
 #include "base/sysFunc.h"
 
 /*
+ * Definition
+ */
+
+// Set node name
+void Node::setName(std::string_view newName) { name_ = newName; }
+
+// Return node name
+std::string_view Node::name() const { return name_; }
+
+/*
  * Inputs, Outputs & Options
  */
 
@@ -203,6 +213,7 @@ SerialisedValue Node::serialise() const
 {
     SerialisedValue result, inputs, options;
     result["name"] = name();
+    result["type"] = type();
 
     if (!inputs_.empty())
     {

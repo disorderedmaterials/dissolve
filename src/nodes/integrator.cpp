@@ -20,7 +20,7 @@ EnumOptions<Integrator1DNode::Method> Integrator1DNode::types()
                                                  });
 }
 
-std::string_view Integrator1DNode::name() const { return "Integrator"; }
+std::string_view Integrator1DNode::type() const { return "Integrator"; }
 
 std::string_view Integrator1DNode::summary() const { return "Computes the integral for a 1D data series"; }
 
