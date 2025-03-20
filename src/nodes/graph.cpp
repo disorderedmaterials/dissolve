@@ -19,6 +19,37 @@ bool Graph::addEdge(const EdgeDefinition &definition)
     return true;
 }
 
+// Remove edge between nodes
+bool Graph::removeEdge(const EdgeDefinition &definition)
+{
+    auto edge = findEdge(definition);
+    if (!edge)
+        return Messenger::error("Edge doesn't exist, so can't remove it.\n");
+    else
+        return removeEdge(edge);
+}
+bool Graph::removeEdge(Edge *edgeToRemove)
+{
+    auto it =
+        std::find_if(edges_.begin(), edges_.end(), [edgeToRemove](const auto &edge) { return edge.get() == edgeToRemove; });
+    if (it == edges_.end())
+        return Messenger::error("Edge pointer doesn't exist, so can't remove it.\n");
+    edges_.erase(it);
+    return true;
+}
+
+// Find edge between nodes
+Edge *Graph::findEdge(const EdgeDefinition &definition) const
+{
+    auto it =
+        std::find_if(edges_.begin(), edges_.end(), [definition](const auto &edge) { return edge->definition() == definition; });
+
+    if (it != edges_.end())
+        return it->get();
+
+    return {};
+}
+
 // Return named node, if it exists
 Node *Graph::node(std::string_view name)
 {
