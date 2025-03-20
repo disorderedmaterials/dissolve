@@ -95,6 +95,7 @@ class Data1D : public Data1DBase, public Serialisable<>
      * Operators
      */
     public:
+    bool operator==(const Data1D &other) const;
     void operator=(const Data1D &source);
     void operator+=(const Data1D &source);
     void operator+=(const double delta);

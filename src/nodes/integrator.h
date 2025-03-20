@@ -1,0 +1,52 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
+#pragma once
+
+#include "base/enumOptions.h"
+#include "math/data1D.h"
+#include "math/integrator.h"
+#include "nodes/node.h"
+
+// Integrator1DNode Node
+class Integrator1DNode : public Node
+{
+    public:
+    Integrator1DNode();
+    ~Integrator1DNode() override = default;
+
+    public:
+    std::string_view name() const override;
+    std::string_view summary() const override;
+
+    // Integrator type
+    enum class Method
+    {
+        Trapezoidal,
+        AbsoluteTrapezoidal,
+        Sum,
+        AbsoluteSum,
+        SumOfSquares
+    };
+
+    // Return enum options for form
+    static EnumOptions<Method> types();
+
+    /*
+     * Definition
+     */
+    private:
+    //
+    std::string_view type_;
+    // Input vector
+    Data1D inputData_;
+    // Integral
+    double integral_;
+
+    /*
+     * Processing
+     */
+    private:
+    // Run main processing
+    Module::ExecutionResult process(ModuleContext &moduleContext);
+};
