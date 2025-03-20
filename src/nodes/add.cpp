@@ -21,9 +21,9 @@ std::string_view AddNode::name() const { return "Add"; }
 std::string_view AddNode::summary() const { return "Performs addition of operands A and B"; }
 
 // Perform processing
-Node::ProcessResult AddNode::process()
+NodeConstants::ProcessResult AddNode::process()
 {
     result_ = a_ + b_;
 
-    return ProcessResult::Success;
+    return NodeConstants::ProcessResult::Success;
 }

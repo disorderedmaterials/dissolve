@@ -16,12 +16,12 @@ bool Node::addEdge(Edge *edge)
     {
         // We are the target node, so we will double-check the specified input to see if it can accept the connection
         // Simple check at present, we accept at most one connection per input, so if one already exists we complain
-        if (inputLinks_.contains(edge->targetInput().name()))
+        if (inputEdges_.contains(edge->targetInput().name()))
             return Messenger::error("Node '{}' refusing to accept Edge connecting to input '{}' as one already exists.\n",
                                     name(), edge->targetInput().name());
 
         // All good, so add the input to our list
-        inputLinks_[edge->targetInput().name()] = edge;
+        inputEdges_[edge->targetInput().name()] = edge;
     }
     else if (edge->sourceNode() == this)
     {
@@ -37,8 +37,8 @@ bool Node::addEdge(Edge *edge)
 void Node::removeEdge(Edge *edge)
 {
     // TODO
-    // inputLinks_.erase(std::remove_if(inputLinks_.begin(), inputLinks_.end(), [edge](const auto &it) { return edge ==
-    // it.second; } ), inputLinks_.end());
+    // inputEdges_.erase(std::remove_if(inputEdges_.begin(), inputEdges_.end(), [edge](const auto &it) { return edge ==
+    // it.second; } ), inputEdges_.end());
 }
 
 /*
@@ -49,7 +49,7 @@ void Node::removeEdge(Edge *edge)
 int Node::versionIndex() const { return versionIndex_; }
 
 // Invalidate the current node, resetting the version index
-void Node::invalidate() { versionIndex_ = Node::InvalidVersion; }
+void Node::invalidate() { versionIndex_ = NodeConstants::InvalidVersion; }
 
 // Check that all required inputs are present, and that all inputs are valid
 bool Node::inputsAreValid() const
@@ -57,9 +57,9 @@ bool Node::inputsAreValid() const
     for (auto &[inputName, parameter] : inputs_)
     {
         // Does this input have a link or links?
-        if (inputLinks_.contains(inputName))
+        if (inputEdges_.contains(inputName))
         {
-            if (!inputLinks_.at(inputName)->sourceOutput().parent()->inputsAreValid())
+            if (!inputEdges_.at(inputName)->sourceOutput().parent()->inputsAreValid())
                 return false;
         }
         else if (parameter->flags().isSet(ParameterBase::ParameterFlags::Required))
@@ -70,34 +70,47 @@ bool Node::inputsAreValid() const
 }
 
 // Run the node, retrieving dependent inputs as necessary
-Node::ProcessResult Node::run()
+NodeConstants::ProcessResult Node::run()
 {
-    auto result = ProcessResult::Success;
-    // TODO Check our input links - if any are out-of-date we must retrieve new values
+    // Check our input links - if any are out-of-date we must retrieve new values
     auto nInputLinksChanged = 0;
-    for (auto &[key, link] : inputLinks_)
+    for (auto &[inputName, edge] : inputEdges_)
     {
-        //        // Ignore parameters that don't invalidate
-        //        if (!link.sink().flags().isSet(ParameterBase::Invalidates))
-        //            continue;
-        //        // Update unsatisfied sources
-        //        if (!(link.source().parent()->isSatisfied() || link.updateSource()))
-        //            return Node::Readiness::MissingComponent;
+        auto edgeResult = edge->pull();
+        switch (edgeResult)
+        {
+            case (NodeConstants::ProcessResult::Failed):
+            case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                return NodeConstants::ProcessResult::Failed;
+            case (NodeConstants::ProcessResult::Success):
+                ++nInputLinksChanged;
+            case (NodeConstants::ProcessResult::Unchanged):
+                break;
+        }
     }
 
     // If input links have updated or we are currently flagged as invalid we must reprocess
-    if (nInputLinksChanged > 0 || versionIndex_ == InvalidVersion)
+    auto result = NodeConstants::ProcessResult::Unchanged;
+    if (nInputLinksChanged > 0 || versionIndex_ == NodeConstants::InvalidVersion)
     {
         result = process();
-        if (result == ProcessResult::Success)
-            ++versionIndex_;
+        switch (result)
+        {
+            case (NodeConstants::ProcessResult::Failed):
+            case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                break;
+            case (NodeConstants::ProcessResult::Success):
+                ++versionIndex_;
+            case (NodeConstants::ProcessResult::Unchanged):
+                break;
+        }
     }
 
     return result;
 }
 
 // Perform processing
-Node::ProcessResult Node::process() { return ProcessResult::Failed; }
+NodeConstants::ProcessResult Node::process() { return NodeConstants::ProcessResult::Failed; }
 
 /*
  * Inputs, Outputs, and Options
@@ -142,7 +155,7 @@ void Node::setParentGraph(Graph *parentGraph) { parentGraph_ = parentGraph; }
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }
 
-Node::LinkMap &Node::links() { return inputLinks_; }
+Node::EdgeMap &Node::links() { return inputEdges_; }
 
 /*
  * I/O

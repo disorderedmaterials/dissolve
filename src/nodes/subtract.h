@@ -35,5 +35,5 @@ class SubtractNode : public Node
      */
     public:
     // Run main processing
-    ProcessResult process() override;
+    NodeConstants::ProcessResult process() override;
 };

@@ -18,9 +18,9 @@ std::string_view SubtractNode::name() const { return "Subtract"; }
 std::string_view SubtractNode::summary() const { return "Performs the subtraction A - B"; }
 
 // Perform processing
-Node::ProcessResult SubtractNode::process()
+NodeConstants::ProcessResult SubtractNode::process()
 {
     result_ = a_ - b_;
 
-    return ProcessResult::Success;
+    return NodeConstants::ProcessResult::Success;
 }

@@ -6,6 +6,7 @@
 #include "base/messenger.h"
 #include "base/serialiser.h"
 #include "module/module.h"
+#include "nodes/constants.h"
 #include "nodes/edge.h"
 #include "nodes/parameter.h"
 #include <map>
@@ -22,7 +23,7 @@ class Node : public Serialisable<>
     explicit Node(Graph *parentGraph) : parentGraph_(parentGraph) {}
     virtual ~Node() = default;
 
-    using LinkMap = std::map<std::string_view, Edge *>;
+    using EdgeMap = std::map<std::string_view, Edge *>;
 
     private:
     // Node parent graph
@@ -40,26 +41,15 @@ class Node : public Serialisable<>
     /*
      * Processing & Validity
      */
-    public:
-    // Processing result
-    enum class ProcessResult
-    {
-        Failed,
-        Success,
-        InputsNotSatisfied
-    };
-
     private:
     // Version index for the node, bumped whenever result outputs change
-    int versionIndex_{InvalidVersion};
+    int versionIndex_{NodeConstants::InvalidVersion};
 
     protected:
     // Perform processing
-    virtual ProcessResult process();
+    virtual NodeConstants::ProcessResult process();
 
     public:
-    // Invalid version index
-    static constexpr int InvalidVersion = -1;
     // Return version index for the node, bumped whenever result outputs change
     int versionIndex() const;
     // Invalidate the current node, resetting versionIndex_
@@ -67,7 +57,7 @@ class Node : public Serialisable<>
     // Check that all required inputs are present, and that all inputs are valid
     bool inputsAreValid() const;
     // Run the node, retrieving dependent inputs as necessary
-    ProcessResult run();
+    NodeConstants::ProcessResult run();
 
     /*
      * Inputs, Outputs, and Options
@@ -79,8 +69,8 @@ class Node : public Serialisable<>
     std::map<std::string_view, std::shared_ptr<ParameterBase>> outputs_;
     // Keyword options
     std::map<std::string_view, std::shared_ptr<ParameterBase>> options_;
-    // Inbound Links
-    LinkMap inputLinks_;
+    // Inbound edges
+    EdgeMap inputEdges_;
 
     public:
     // Add edge, returning whether we accept it
@@ -160,7 +150,7 @@ class Node : public Serialisable<>
     // Return options
     std::map<std::string_view, std::shared_ptr<ParameterBase>> &options();
     // Get the links owned by this node
-    LinkMap &links();
+    EdgeMap &links();
     // Set the node parent graph
     void setParentGraph(Graph *parentGraph);
     // Returns the node parent graph

@@ -9,6 +9,7 @@ Edge::Edge(Node *sourceNode, ParameterBase &sourceOutput, Node *targetNode, Para
 {
 }
 
+// Local EdgeConstructor class to allow creation of memory-managed Edge instances
 class EdgeConstructor : public Edge
 {
     public:
@@ -79,15 +80,6 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     return edge;
 }
 
-bool Edge::updateSource()
-{
-    // TODO
-    //    auto update = sourceOutput_.runUpdate();
-    //    if (!update)
-    //        return false;
-    return targetInput_.assign(&sourceOutput_);
-}
-
 // Return source node
 Node *Edge::sourceNode() const { return sourceNode_; }
 
@@ -99,3 +91,45 @@ Node *Edge::targetNode() const { return targetNode_; }
 
 // Return target input parameter
 const ParameterBase &Edge::targetInput() const { return targetInput_; }
+
+// Return definition for the edge
+EdgeDefinition Edge::definition() const
+{
+    return {std::string(sourceNode_->name()), std::string(sourceOutput_.name()), std::string(targetNode_->name()),
+            std::string(targetInput_.name())};
+}
+
+// Pull the data from the source node to the target, returning a ProcessResult
+NodeConstants::ProcessResult Edge::pull()
+{
+    /*
+     * If the versionIndex for the source node stored in the Edge is Invalid or different to that on the source node
+     * itself we need to pull from or run the source node to get the updated output. We can then store the source node's
+     * current versionIndex ready for next time.
+     */
+    auto result = NodeConstants::ProcessResult::Failed;
+    if (sourceNodeVersionIndex_ == NodeConstants::InvalidVersion ||
+        sourceNode_->versionIndex() == NodeConstants::InvalidVersion ||
+        (sourceNodeVersionIndex_ != sourceNode_->versionIndex()))
+    {
+        result = sourceNode_->run();
+        if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
+        {
+            Messenger::error("Failed to pull updated value from node '{}'\n", sourceNode_->name());
+            return result;
+        }
+
+        // Update version index
+        sourceNodeVersionIndex_ = sourceNode_->versionIndex();
+
+        // If the source node's run() result was Unchanged, return success anyway as we need to flag to our target node
+        // that its data has changed and needs to run again.
+        result = NodeConstants::ProcessResult::Success;
+    }
+    else
+        result = NodeConstants::ProcessResult::Unchanged;
+
+    // Copy the parameter data over
+    return targetInput_.assign(&sourceOutput_) ? result : NodeConstants::ProcessResult::Failed;
+}
+

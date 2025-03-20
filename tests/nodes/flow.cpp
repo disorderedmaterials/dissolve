@@ -2,19 +2,21 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/graph.h"
-#include "nodes/registry.h"
 #include "nodes/number.h"
+#include "nodes/registry.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
 {
+class GraphFlowTest : public ::testing::Test
+{
+    public:
+    GraphFlowTest() : graph_(nullptr) {}
 
-TEST(GraphFlowTest, Basic) {
-        Graph graph(nullptr);
-
+    // Create a graph for testing
+    void createGraph(bool includeEdges)
+    {
         /*
-         * First, construct and test the following unconnected nodes:
-         *
          *    Add (x)
          *    ------------------
          *   o-A = 1     result-o ---+
@@ -27,96 +29,106 @@ TEST(GraphFlowTest, Basic) {
          *   o-B = 4           |
          *    -----------------/
          */
+
         // Create nodes and get references to them
-        graph.addNode(NodeRegistry::produce("Add"), "x");
-        graph.addNode(NodeRegistry::produce("Add"), "y");
-        graph.addNode(NodeRegistry::produce("Add"), "z");
-        auto &x = *dynamic_cast<AddNode *>(graph.nodes()["x"].get());
-        auto xA = x.findInput("A")->upcast<Number>();
-        auto xB = x.findInput("B")->upcast<Number>();
-        auto xResult = x.findOutput("Result")->upcast<Number>();
-        ASSERT_TRUE(xA);
-        ASSERT_TRUE(xB);
-        ASSERT_TRUE(xResult);
-        xA->set(1);
-        xB->set(2);
-        auto &y = *dynamic_cast<AddNode *>(graph.nodes()["y"].get());
-        auto yA = y.findInput("A")->upcast<Number>();
-        auto yB = y.findInput("B")->upcast<Number>();
-        auto yResult = y.findOutput("Result")->upcast<Number>();
-        ASSERT_TRUE(yA);
-        ASSERT_TRUE(yB);
-        ASSERT_TRUE(yResult);
-        yA->set(3);
-        yB->set(4);
-        auto &z = *dynamic_cast<AddNode *>(graph.nodes()["z"].get());
-        auto zResult = z.findOutput("Result")->upcast<Number>();
-        ASSERT_TRUE(zResult);
+        graph_.addNode(NodeRegistry::produce("Add"), "x");
+        graph_.addNode(NodeRegistry::produce("Add"), "y");
+        graph_.addNode(NodeRegistry::produce("Add"), "z");
 
-        // Check nodes in isolation first - all should be able to run and give meaningful results
-        EXPECT_TRUE(x.inputsAreValid());
-        EXPECT_EQ(x.versionIndex(), Node::InvalidVersion);
-        EXPECT_EQ(x.run(), Node::ProcessResult::Success);
-        EXPECT_EQ(x.versionIndex(), 0);
-        EXPECT_EQ(xResult->get().asInteger(), 3);
+        x_ = dynamic_cast<AddNode *>(graph_.nodes()["x"].get());
+        ASSERT_TRUE(x_);
+        xA_ = x_->findInput("A")->upcast<Number>();
+        xB_ = x_->findInput("B")->upcast<Number>();
+        xResult_ = x_->findOutput("Result")->upcast<Number>();
+        ASSERT_TRUE(xA_);
+        ASSERT_TRUE(xB_);
+        ASSERT_TRUE(xResult_);
+        xA_->set(1);
+        xB_->set(2);
+        y_ = dynamic_cast<AddNode *>(graph_.nodes()["y"].get());
+        ASSERT_TRUE(y_);
+        yA_ = y_->findInput("A")->upcast<Number>();
+        yB_ = y_->findInput("B")->upcast<Number>();
+        yResult_ = y_->findOutput("Result")->upcast<Number>();
+        ASSERT_TRUE(yA_);
+        ASSERT_TRUE(yB_);
+        ASSERT_TRUE(yResult_);
+        yA_->set(3);
+        yB_->set(4);
+        z_ = dynamic_cast<AddNode *>(graph_.nodes()["z"].get());
+        ASSERT_TRUE(z_);
+        zA_ = z_->findInput("A")->upcast<Number>();
+        zB_ = z_->findInput("B")->upcast<Number>();
+        zResult_ = z_->findOutput("Result")->upcast<Number>();
+        ASSERT_TRUE(zA_);
+        ASSERT_TRUE(zB_);
+        ASSERT_TRUE(zResult_);
 
-        EXPECT_TRUE(y.inputsAreValid());
-        EXPECT_EQ(y.versionIndex(), Node::InvalidVersion);
-        EXPECT_EQ(y.run(), Node::ProcessResult::Success);
-        EXPECT_EQ(y.versionIndex(), 0);
-        EXPECT_EQ(yResult->get().asInteger(), 7);
+        if (includeEdges)
+        {
+            EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "A"}));
+            EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "B"}));
+        }
+    }
 
-        EXPECT_TRUE(z.inputsAreValid());
-        EXPECT_EQ(z.versionIndex(), Node::InvalidVersion);
-        EXPECT_EQ(z.run(), Node::ProcessResult::Success);
-        EXPECT_EQ(z.versionIndex(), 0);
-        EXPECT_EQ(zResult->get().asInteger(), 0);
+    protected:
+    Graph graph_;
+    AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr};
+    std::shared_ptr<Parameter<Number>> xA_{nullptr}, xB_{nullptr}, xResult_{nullptr};
+    std::shared_ptr<Parameter<Number>> yA_{nullptr}, yB_{nullptr}, yResult_{nullptr};
+    std::shared_ptr<Parameter<Number>> zA_{nullptr}, zB_{nullptr}, zResult_{nullptr};
+};
 
-        // Running nodes again should not increase version index since the inputs have no dependencies
-        EXPECT_EQ(x.run(), Node::ProcessResult::Success);
-        EXPECT_EQ(x.versionIndex(), 0);
-        EXPECT_EQ(y.run(), Node::ProcessResult::Success);
-        EXPECT_EQ(y.versionIndex(), 0);
-        EXPECT_EQ(z.run(), Node::ProcessResult::Success);
-        EXPECT_EQ(z.versionIndex(), 0);
+TEST_F(GraphFlowTest, Basic)
+{
+    // Get the basic graph, no edges
+    createGraph(false);
 
-        /*
-         * Now we'll link x's "Result" output to z's "A" input:
-         *
-         *    Add (x)
-         *    ------------------
-         *   o-A = 1     result-o ---+
-         *   o-B = 2           |      \        Add (z)
-         *    -----------------/       \       ------------------
-         *                              +---- o-A         result-o
-         *    Add (y)                         o-B               |
-         *    ------------------               -----------------/
-         *   o-A = 3     result-o
-         *   o-B = 4           |
-         *    -----------------/
-         */
+    // Check nodes in isolation first - all should be able to run and give meaningful results
+    EXPECT_TRUE(x_->inputsAreValid());
+    EXPECT_EQ(x_->versionIndex(), NodeConstants::InvalidVersion);
+    EXPECT_EQ(x_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(xResult_->get().asInteger(), 3);
 
-        // Add the edge
-        EXPECT_TRUE(graph.addEdge({"x", "Result", "z", "A"}));
+    EXPECT_TRUE(y_->inputsAreValid());
+    EXPECT_EQ(y_->versionIndex(), NodeConstants::InvalidVersion);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(yResult_->get().asInteger(), 7);
 
-        // If we now run z we should use x's output without changing x itself
-        EXPECT_EQ(z.run(), Node::ProcessResult::Success);
-        EXPECT_EQ(z.versionIndex(), 1);
-        EXPECT_EQ(zResult->get().asInteger(), 3);
-        EXPECT_EQ(x.versionIndex(), 0);
+    EXPECT_TRUE(z_->inputsAreValid());
+    EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(z_->versionIndex(), 0);
+    EXPECT_EQ(zResult_->get().asInteger(), 0);
 
-        return;
-        std::vector<EdgeDefinition> declaredEdges = {{"y", "Result", "",  "B"},
-                                      {"x", "Result", "z", "B"},
-                                      {"x", "Result", "z", "A"}};
+    // Running nodes again should not increase version index since the inputs have no dependencies
+    EXPECT_EQ(x_->run(), NodeConstants::ProcessResult::Unchanged);
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Unchanged);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Unchanged);
+    EXPECT_EQ(z_->versionIndex(), 0);
 
-        // Link the inputs of Z to X and Y
-        EXPECT_TRUE(graph.addEdge(declaredEdges[0]));
+    // Add the edge between x's "Result" and z's "A" input
+    EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "A"}));
 
-        // System should prevent double linking a sink
-        EXPECT_FALSE(graph.addEdge(declaredEdges[1]));
-        EXPECT_TRUE(graph.addEdge(declaredEdges[2]));
+    // If we now run z we should use x's output without changing x itself
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(z_->versionIndex(), 1);
+    EXPECT_EQ(zResult_->get().asInteger(), 3);
+    EXPECT_EQ(x_->versionIndex(), 0);
 
-    };
+    // Complete the graph and link y's "Result" output to z's "B" input
+    EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "B"}));
+
+    // As before, if we now run z we should use x's and y's output without changing x or y
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(z_->versionIndex(), 2);
+    EXPECT_EQ(zResult_->get().asInteger(), 10);
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+};
 
 } // namespace UnitTest

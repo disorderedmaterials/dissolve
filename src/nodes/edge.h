@@ -3,10 +3,12 @@
 
 #pragma once
 
+
+#include "nodes/constants.h"
 #include "nodes/parameter.h"
 #include <string>
 
-// Forward Declaraitons
+// Forward Declarations
 class Graph;
 
 // Edge Definition
@@ -26,6 +28,8 @@ class Edge
     protected:
     // The constructor is private because it can only be constructed by the factory method
     Edge(Node *sourceNode, ParameterBase &sourceOutput, Node *targetNode, ParameterBase &targetInput);
+
+    private:
     // Pointers to source and target nodes
     Node *sourceNode_{nullptr};
     Node *targetNode_{nullptr};
@@ -41,9 +45,11 @@ class Edge
     // processing a chain of links.
     ParameterBase &sourceOutput_;
     ParameterBase &targetInput_;
+    // Version of the source node when this edge was last pulled by the target node.
+    int sourceNodeVersionIndex_{NodeConstants::InvalidVersion};
 
     public:
-    // A factory method to create an Edge from the supplied definition, or nullopt if it cannot
+    // A factory method to create an Edge from the supplied definition, or nullptr if it cannot
     static std::unique_ptr<Edge> create(Graph *parent, const EdgeDefinition &definition);
     // Return source node
     Node *sourceNode() const;
@@ -53,7 +59,8 @@ class Edge
     Node *targetNode() const;
     // Return target input parameter
     const ParameterBase &targetInput() const;
-    bool updateSource();
     // Return definition for the edge
     EdgeDefinition definition() const;
+    // Pull the data from the source node to the target, returning a ProcessResult
+    NodeConstants::ProcessResult pull();
 };
