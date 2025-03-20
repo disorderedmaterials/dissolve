@@ -18,8 +18,8 @@ std::string_view Node::name() const { return name_; }
  * Inputs, Outputs & Options
  */
 
-// Add edge
-bool Node::addEdge(Edge *edge)
+// Link edge, returning whether we accept it
+bool Node::linkEdge(Edge *edge)
 {
     // The supplied Edge was created via our parent Graph, but we will still check to see whether we accept it
     if (&edge->targetNode() == this)
@@ -46,8 +46,8 @@ bool Node::addEdge(Edge *edge)
     return true;
 }
 
-// Remove edge
-void Node::removeEdge(Edge *edge)
+// Unlink edge
+void Node::unlinkEdge(Edge *edge)
 {
     // If we are the Edge's targetNode_ then we should have its pointer in inputEdges_
     if (edge->targetNode() == this)
@@ -55,7 +55,7 @@ void Node::removeEdge(Edge *edge)
         auto it = std::find_if(inputEdges_.begin(), inputEdges_.end(),
                                [edge](const auto &inputEdge) { return edge == inputEdge.second; });
         if (it == inputEdges_.end())
-            Messenger::error("Tried to remove an Edge from a target node ('{}') which knew nothing about it.\n", name());
+            Messenger::error("Tried to unlink an Edge from a target node ('{}') which knew nothing about it.\n", name());
         else
         {
             inputEdges_.erase(it);
@@ -67,7 +67,7 @@ void Node::removeEdge(Edge *edge)
         // We are the source node for the edge - nothing for us to do at present
     }
     else
-        Messenger::error("Node '{}' is neither the source nor the target for the Edge being removed.\n", name());
+        Messenger::error("Node '{}' is neither the source nor the target for the Edge being unlinked.\n", name());
 }
 
 /*
