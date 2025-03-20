@@ -2,10 +2,10 @@
 
 Vec3AssemblyNode::Vec3AssemblyNode()
 {
-    addInput<double>("x", "The x value of the assembled vector", x_);
-    addInput<double>("y", "The y value of the assembled vector", y_);
-    addInput<double>("z", "The z value of the assembled vector", z_);
-    addOutput<Vec3<double>>("outputVector_", "The assembed vector", outputVector_);
+    addInput<double>("X", "The x value of the assembled vector", x_);
+    addInput<double>("Y", "The y value of the assembled vector", y_);
+    addInput<double>("Z", "The z value of the assembled vector", z_);
+    addOutput<Vec3<double>>("V", "The assembled vector", outputVector_);
 }
 
 std::string_view Vec3AssemblyNode::name() const { return "Vector3 Assembly"; }

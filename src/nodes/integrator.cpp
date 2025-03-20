@@ -2,9 +2,9 @@
 
 Integrator1DNode::Integrator1DNode()
 {
-    addInput<Data1D>("InputData", "Input 1D data series", inputData_);
-    addInput<std::string_view>("IntegrationMethod", "Method to use for integration", type_);
-    addOutput<double>("Integral", "The integration of the input data series", integral_);
+    addInput<Data1D>("Data1D", "Input 1D data series", inputData_);
+    addInput<std::string_view>("Method", "Method to use for integration", type_);
+    addOutput<double>("Result", "The integration of the input data series", integral_);
 }
 
 // Return enum options for form
