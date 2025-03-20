@@ -42,13 +42,13 @@ class Graph : public Node
     static std::unique_ptr<Node> produceNode(const std::string_view &nodeType) { return registry.find(nodeType)->second(); }
     // Add node
     void addNode(std::unique_ptr<Node> &&node, std::string_view name);
-    // Add parameter link between nodes
+    // Add edge between nodes
     bool addEdge(const EdgeDefinition &definition);
     // Return named node, if it exists
     Node *node(std::string_view name);
     // Return container of nodes
     Nodes &nodes();
-    // Return container of parameter links between nodes
+    // Return container of edges between nodes
     Edges &edges();
 
     // Express as a serialisable value
