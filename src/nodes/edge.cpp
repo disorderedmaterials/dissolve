@@ -108,8 +108,7 @@ NodeConstants::ProcessResult Edge::pull()
      * current versionIndex ready for next time.
      */
     auto result = NodeConstants::ProcessResult::Failed;
-    if (sourceNodeVersionIndex_ == NodeConstants::InvalidVersion ||
-        sourceNode_.versionIndex() == NodeConstants::InvalidVersion || (sourceNodeVersionIndex_ != sourceNode_.versionIndex()))
+    if (!sourceNode_.isUpToDate() || (sourceNodeVersionIndex_ != sourceNode_.versionIndex()))
     {
         result = sourceNode_.run();
         if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
