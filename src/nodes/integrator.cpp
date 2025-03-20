@@ -27,25 +27,23 @@ std::string_view Integrator1DNode::summary() const { return "Computes the integr
 // Run main processing
 NodeConstants::ProcessResult Integrator1DNode::process()
 {
-    auto typeEnum = types().enumeration(type_);
-
-    switch (typeEnum)
+    switch (types().enumeration(type_))
     {
         case Method::Trapezoidal:
             integral_ = Integrator::trapezoid(inputData_);
-
+            break;
         case Method::AbsoluteTrapezoidal:
             integral_ = Integrator::absTrapezoid(inputData_);
-
+            break;
         case Method::Sum:
             integral_ = Integrator::sum(inputData_);
-
+            break;
         case Method::AbsoluteSum:
             integral_ = Integrator::absSum(inputData_);
-
+            break;
         case Method::SumOfSquares:
             integral_ = Integrator::sumOfSquares(inputData_);
-
+            break;
         default:
             return NodeConstants::ProcessResult::Failed;
     }
