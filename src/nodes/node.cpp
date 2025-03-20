@@ -52,7 +52,11 @@ void Node::removeEdge(Edge *edge)
 int Node::versionIndex() const { return versionIndex_; }
 
 // Invalidate the current node, resetting the version index
-void Node::invalidate() { versionIndex_ = NodeConstants::InvalidVersion; }
+void Node::invalidate()
+{
+    versionIndex_ = NodeConstants::InvalidVersion;
+    clearData();
+}
 
 // Flag that the node data needs to be updated
 void Node::setUpdateRequired() { upToDate_ = false; }
