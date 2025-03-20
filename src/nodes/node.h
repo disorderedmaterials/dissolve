@@ -85,10 +85,10 @@ class Node : public Serialisable<>
     EdgeMap inputEdges_;
 
     public:
-    // Add edge, returning whether we accept it
-    bool addEdge(Edge *edge);
-    // Remove edge
-    void removeEdge(Edge *edge);
+    // Link edge, returning whether we accept it
+    bool linkEdge(Edge *edge);
+    // Unlink edge
+    void unlinkEdge(Edge *edge);
     // Add input parameter
     template <class T> std::shared_ptr<ParameterBase> addOption(std::string_view name, std::string_view description, T &data)
     {
