@@ -44,6 +44,8 @@ class Node : public Serialisable<>
     private:
     // Version index for the node, bumped whenever result outputs change
     int versionIndex_{NodeConstants::InvalidVersion};
+    // Whether the node's data is up-to-date
+    bool upToDate_{false};
 
     protected:
     // Perform processing
@@ -54,6 +56,10 @@ class Node : public Serialisable<>
     int versionIndex() const;
     // Invalidate the current node, resetting versionIndex_
     void invalidate();
+    // Flag that the node data needs to be updated
+    void setUpdateRequired();
+    // Return whether the node's data is up-to-date
+    bool isUpToDate() const;
     // Check that all required inputs are present, and that all inputs are valid
     bool inputsAreValid() const;
     // Run the node, retrieving dependent inputs as necessary

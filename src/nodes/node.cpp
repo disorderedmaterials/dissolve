@@ -22,6 +22,9 @@ bool Node::addEdge(Edge *edge)
 
         // All good, so add the input to our list
         inputEdges_[edge->targetInput().name()] = edge;
+
+        // Adding an Edge to an input always invalidates the target
+        invalidate();
     }
     else if (edge->sourceNode() == this)
     {
@@ -51,6 +54,12 @@ int Node::versionIndex() const { return versionIndex_; }
 // Invalidate the current node, resetting the version index
 void Node::invalidate() { versionIndex_ = NodeConstants::InvalidVersion; }
 
+// Flag that the node data needs to be updated
+void Node::setUpdateRequired() { upToDate_ = false; }
+
+// Return whether the node's data is up-to-date
+bool Node::isUpToDate() const { return upToDate_; }
+
 // Check that all required inputs are present, and that all inputs are valid
 bool Node::inputsAreValid() const
 {
@@ -72,8 +81,7 @@ bool Node::inputsAreValid() const
 // Run the node, retrieving dependent inputs as necessary
 NodeConstants::ProcessResult Node::run()
 {
-    // Check our input links - if any are out-of-date we must retrieve new values
-    auto nInputLinksChanged = 0;
+    // Check our input links - if any are out-of-date we must retrieve new values. This will automatically unset upToDate_
     for (auto &[inputName, edge] : inputEdges_)
     {
         auto edgeResult = edge->pull();
@@ -83,7 +91,6 @@ NodeConstants::ProcessResult Node::run()
             case (NodeConstants::ProcessResult::InputsNotSatisfied):
                 return NodeConstants::ProcessResult::Failed;
             case (NodeConstants::ProcessResult::Success):
-                ++nInputLinksChanged;
             case (NodeConstants::ProcessResult::Unchanged):
                 break;
         }
@@ -91,7 +98,7 @@ NodeConstants::ProcessResult Node::run()
 
     // If input links have updated or we are currently flagged as invalid we must reprocess
     auto result = NodeConstants::ProcessResult::Unchanged;
-    if (nInputLinksChanged > 0 || versionIndex_ == NodeConstants::InvalidVersion)
+    if (!upToDate_ || versionIndex_ == NodeConstants::InvalidVersion)
     {
         result = process();
         switch (result)
@@ -105,6 +112,8 @@ NodeConstants::ProcessResult Node::run()
                 break;
         }
     }
+
+    upToDate_ = true;
 
     return result;
 }
