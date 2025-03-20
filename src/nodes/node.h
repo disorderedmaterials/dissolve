@@ -156,6 +156,17 @@ class Node : public Serialisable<>
     // Returns the node parent graph
     Graph *parentGraph() const;
 
+    /*
+     * Data
+     */
+    public:
+    // Clear any local data
+    virtual void clearData();
+
+    /*
+     * I/O
+     */
+    public:
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value

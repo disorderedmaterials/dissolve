@@ -158,6 +158,13 @@ Graph *Node::parentGraph() const { return parentGraph_; }
 Node::EdgeMap &Node::links() { return inputEdges_; }
 
 /*
+ * Data
+ */
+
+// Clear any local data
+void Node::clearData() {}
+
+/*
  * I/O
  */
 
