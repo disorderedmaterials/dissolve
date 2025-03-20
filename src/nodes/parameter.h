@@ -9,17 +9,20 @@
 #include <typeindex>
 #include <vector>
 
+class Node;
+
 template <typename T> class Parameter;
 
 // Base type for all parameter templates to inherit from
-class ParameterBase
+class ParameterBase : public Serialisable<>
 {
     public:
-    ParameterBase(std::string_view name, std::string_view description, std::type_index type);
+    ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index type);
     // Parameter Flags
     enum ParameterFlags
     {
-        Invalidates /* Indicates that the node's data is invalidated if the parameter is changed */
+        Invalidates, /* Indicates that the node's data is invalidated if the parameter is changed */
+        Output,      /* Indicates that the parameter is meant to be a source of data and not a sink */
     };
 
     /*
@@ -34,6 +37,10 @@ class ParameterBase
     std::type_index type_;
     // Flags for the parameter
     Flags<ParameterBase::ParameterFlags> flags_;
+    // The owner the parameter
+    Node *parent_;
+    // Tell the owner to invalidate
+    void invalidate() const;
 
     public:
     // Return the parameter name
@@ -42,6 +49,8 @@ class ParameterBase
     std::string_view description() const;
     // Return the parameter type
     std::type_index type() const;
+    // Return the owner of the parameter
+    Node *parent() const;
     // Set flag(s) for the parameter
     void setFlags(const Flags<ParameterBase::ParameterFlags> &flags);
     // Return current flags
@@ -53,6 +62,11 @@ class ParameterBase
     public:
     // Return whether the contained data represents the default value
     virtual bool isDefault() const = 0;
+    // Ensure that parameters are using the latest values
+    bool runUpdate() const;
+
+    // Assign the value of another parameter to this one.
+    virtual bool assign(ParameterBase *other) = 0;
 
     // Access the full parameter from the base
     template <typename T> std::shared_ptr<Parameter<T>> upcast()
@@ -62,23 +76,14 @@ class ParameterBase
         auto casted = static_cast<Parameter<T> *>(this);
         return casted->shared_from_this();
     }
-
-    /*
-     * I/O
-     */
-    public:
-    // Express as a serialised value
-    virtual SerialisedValue serialise() const = 0;
-    // Read from a serialised value
-    virtual void deserialise(const SerialisedValue &node) = 0;
 };
 
 // Primary type for a Parameter to a value of type T
 template <typename T> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<T>>
 {
     public:
-    Parameter(std::string_view name, std::string_view description, T &value)
-        : ParameterBase(name, description, std::type_index(typeid(T))), data_(value), default_(value)
+    Parameter(Node *parent, std::string_view name, std::string_view description, T &value)
+        : ParameterBase(parent, name, description, std::type_index(typeid(T))), data_(value), default_(value)
     {
     }
 
@@ -93,13 +98,29 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
 
     public:
     // Set the parameter value
-    virtual void set(const T &value) { data_ = value; }
+    virtual void set(const T &value)
+    {
+        if (data_ != value)
+        {
+            data_ = value;
+            if (flags_.isSet(Invalidates))
+                invalidate();
+        }
+    }
     // Return the parameter value
     T &get() { return data_; }
     const T &get() const { return data_; }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return data_ == default_; }
-
+    // Assign the value of another parameter to this one.
+    bool assign(ParameterBase *other) override
+    {
+        auto upcasted = other->upcast<T>();
+        if (!upcasted)
+            return false;
+        set(upcasted->get());
+        return true;
+    }
     /*
      * I/O
      */
@@ -108,8 +129,6 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     SerialisedValue serialise() const override
     {
         SerialisedValue result = {};
-        result["name"] = name_;
-        result["description"] = description_;
 
         // Serialise non-pointer values
         if constexpr (std::is_convertible<T, double>::value)
@@ -126,8 +145,6 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     // Read from a serialised value
     void deserialise(const SerialisedValue &node) override
     {
-        name_ = toml::find<std::string>(node, "name");
-        description_ = toml::find<std::string>(node, "description");
         if constexpr (std::is_pointer<T>::value)
         {
             data_ = nullptr;
@@ -150,9 +167,9 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
 template <typename T> class BoundedParameter : public Parameter<T>
 {
     public:
-    BoundedParameter(std::string_view name, std::string_view description, T &value, std::optional<T> lower = {},
+    BoundedParameter(Node *parent, std::string_view name, std::string_view description, T &value, std::optional<T> lower = {},
                      std::optional<T> upper = {}, std::optional<T> step = {})
-        : Parameter<T>(name, description, value), lower_(lower), upper_(upper), step_(step)
+        : Parameter<T>(parent, name, description, value), lower_(lower), upper_(upper), step_(step)
     {
     }
 
@@ -186,9 +203,9 @@ template <typename T> class BoundedParameter : public Parameter<T>
 template <typename T> class BoundedOptionalParameter : public BoundedParameter<T>
 {
     public:
-    BoundedOptionalParameter(std::string_view name, std::string_view description, T &value, T lower,
+    BoundedOptionalParameter(Node *parent, std::string_view name, std::string_view description, T &value, T lower,
                              std::string_view textWhenNull, T upper = {}, T step = {})
-        : BoundedParameter<T>(name, description, value, lower, upper, step), textWhenNull_{textWhenNull}
+        : BoundedParameter<T>(parent, name, description, value, lower, upper, step), textWhenNull_{textWhenNull}
     {
     }
 
