@@ -261,7 +261,7 @@ NodeConstants::ProcessResult MDNode::process()
     double rCut;
     if (cutoffDistance_.has_value())
     {
-        rCut = cutoffDistance_.value();
+        rCut = cutoffDistance_.value().asDouble();
     }
     else
     {
