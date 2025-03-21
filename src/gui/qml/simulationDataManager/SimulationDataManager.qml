@@ -12,6 +12,8 @@ Page {
     }
     function getHeaderStringArray(model) {
         var headerArray = [];
+        if (!model)
+            return headerArray;
         for (var i = 0; i < model.columnCount(); ++i) {
             headerArray.push(qsTr(model.headerData(i, Qt.Horizontal)));
         }
@@ -51,7 +53,7 @@ Page {
                 Layout.preferredHeight: contentHeight
                 Layout.preferredWidth: contentWidth
                 clip: true
-                enabled: simModel.rowCount() == 0 ? false : true
+                enabled: !simModel || simModel.rowCount() == 0 ? false : true
                 model: getHeaderStringArray(simModel)
                 syncView: table
             }
