@@ -9,10 +9,24 @@
  */
 
 // Set node context
-void Node::setContext(Dissolve &dissolve) { ctx_.dissolve = dissolve, ctx_.processPool = dissolve.worldPool(); }
+void Node::setContext(Dissolve &dissolve) { ctx_.initialise(dissolve); }
 
 // Return node context
 Node::NodeContext &Node::context() const { return ctx_; }
+
+// Initialise node context
+void Node::NodeContext::initialise(Dissolve &dissolve) { dissolve_ = dissolve, processPool_ = dissolve.worldPool(); }
+
+// Return world process pool
+ProcessPool &Node::NodeContext::processPool() { return processPool_; }
+
+// Return dissolve
+Dissolve &Node::NodeContext::dissolve()
+{
+    if (!dissolve_)
+        throw(std::runtime_error("Dissolve is not set in this module's context.\n"));
+    return dissolve_->get();
+}
 
 /*
  * Inputs, Outputs & Options

@@ -31,21 +31,31 @@ class Node : public Serialisable<>
      */
     struct NodeContext
     {
-        ProcessPool &processPool;
-        OptionalReferenceWrapper<Dissolve> &dissolve;
+        private:
+        // World process pool
+        ProcessPool &processPool_;
+        // Dissolve optional reference wrapper
+        OptionalReferenceWrapper<Dissolve> &dissolve_;
+
+        public:
+        // Initialise node context
+        void initialise(Dissolve &dissolve);
+        // Return world process pool
+        ProcessPool &processPool();
+        // Return dissolve
+        Dissolve &dissolve();
     };
+
+    // Set node context
+    void setContext(Dissolve &dissolve);
+    // Return node context
+    NodeContext &context() const;
 
     private:
     // Node parent graph
     Graph *parentGraph_;
     // Node context
     NodeContext ctx_;
-
-    public:
-    // Set node context
-    void setContext(Dissolve &dissolve);
-    // Return node context
-    NodeContext &context() const;
 
     /*
      * Definition
