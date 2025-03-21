@@ -24,5 +24,11 @@ DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, Generi
     topLeftLayout->addWidget(view_);
     setLayout(topLeftLayout);
 
-    QObject::connect(&simModel_, SIGNAL(closeClicked()), this, SLOT(accept()));
+    QObject::connect(&simModel_, SIGNAL(closeClicked()), this, SLOT(closeClicked()));
+}
+
+void DataManagerDialog::closeClicked()
+{
+    view_->rootContext()->setContextProperty("simModel", nullptr);
+    accept();
 }

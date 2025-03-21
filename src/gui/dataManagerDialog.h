@@ -32,4 +32,7 @@ class DataManagerDialog : public QDialog
      */
     private:
     QQuickWidget *view_{nullptr};
+
+    private Q_SLOTS:
+    void closeClicked();
 };
