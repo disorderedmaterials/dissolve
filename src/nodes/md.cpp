@@ -1,0 +1,645 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
+#include "base/lineParser.h"
+#include "base/randomBuffer.h"
+#include "base/timer.h"
+#include "classes/configuration.h"
+#include "classes/species.h"
+#include "data/atomicMasses.h"
+#include "keywords/bool.h"
+#include "keywords/configuration.h"
+#include "keywords/double.h"
+#include "keywords/integer.h"
+#include "keywords/optionalDouble.h"
+#include "keywords/optionalInt.h"
+#include "keywords/speciesVector.h"
+#include "main/dissolve.h"
+#include "module/context.h"
+#include "modules/energy/energy.h"
+#include "modules/forces/forces.h"
+#include "nodes/md.h"
+
+
+MDNode::MDNode()
+{
+    addInput<Configuration*>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setFlags(ParameterBase::Invalidates);
+
+    addInput<Number>("NSteps", "Number of MD steps to perform", nSteps, 1);
+    addInput<EnumOptions<MDNode::TimestepType>>("Timestep", "Timestep type to use in calculation", timestepType_,
+                                                              MDNode::timestepType());
+    addInput<Number>("DeltaT", "Fixed timestep (ps) to use in MD simulation", fixedTimestep_, 0.0);
+    addInput<bool>("RandomVelocities",
+                               "Whether random velocities should always be assigned before beginning MD simulation",
+                               randomVelocities_);
+
+    addInput<std::vector<const Species *>>("RestrictToSpecies", "Restrict the calculation to the specified Species",
+                                           restrictToSpecies_);
+    addInput<bool>("OnlyWhenEnergyStable", "Only run MD when target Configuration energies are stable",
+                               onlyWhenEnergyStable_);
+
+    addInput<std::optional<Number>>("EnergyFrequency", "Frequency at which to calculate total system energy",
+                                          energyFrequency_, 0, std::nullopt, 5, "Off");
+    addInput<std::optional<Number>>("OutputFrequency", "Frequency at which to output step information", outputFrequency_,
+                                          0, std::nullopt, 5, "Off");
+    addInput<std::optional<NUmber>>("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_, 0,
+                                          std::nullopt, 5, "Off");
+
+    addInput<bool>("CapForces", "Control whether atomic forces are capped every step", capForces_);
+    addInput<Number>("CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt, 0.0);
+    addInput<std::optional<double>>(
+        "CutoffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
+        cutoffDistance_, 0.0, std::nullopt, 0.1, "Use PairPotential Range");
+    addInput<bool>(
+        "IntraOnly",
+        "Only forces arising from intramolecular terms (including pair potential contributions) will be calculated",
+        intramolecularForcesOnly_);
+}
+
+std::string_view MDNode::name() const { return "MD"; }
+
+std::string_view MDNode::summary() const
+{
+    return "Run a short molecular dynamics simulation.";
+}
+
+// Return enum options for TimestepType
+EnumOptions<MDNode::TimestepType> MDNode::timestepType()
+{
+    return EnumOptions<MDNode::TimestepType>(
+        "TimestepType",
+        {{TimestepType::Fixed, "Fixed"}, {TimestepType::Variable, "Variable"}, {TimestepType::Automatic, "Auto"}});
+}
+
+// Cap forces in Configuration
+int MDNode::capForces(double maxForce, std::vector<Vec3<double>> &fInter, std::vector<Vec3<double>> &fIntra)
+{
+    double fMag;
+    const auto maxForceSq = maxForce * maxForce;
+    auto nCapped = 0;
+    for (auto &&[inter, intra] : zip(fInter, fIntra))
+    {
+        fMag = (inter + intra).magnitudeSq();
+        if (fMag < maxForceSq)
+            continue;
+
+        fMag = maxForce / sqrt(fMag);
+        inter *= fMag;
+        intra *= fMag;
+
+        ++nCapped;
+    }
+
+    return nCapped;
+}
+
+// Determine timestep to use
+std::optional<double> MDNode::determineTimeStep(TimestepType timestepType, double requestedTimeStep,
+                                                  const std::vector<Vec3<double>> &fInter,
+                                                  const std::vector<Vec3<double>> &fIntra)
+{
+    if (timestepType == TimestepType::Fixed)
+        return requestedTimeStep;
+
+    // Simple variable timestep
+    if (timestepType == TimestepType::Variable)
+    {
+        auto absFMax = 0.0;
+        for (auto &&[inter, intra] : zip(fInter, fIntra))
+            absFMax = std::max(absFMax, (inter + intra).absMax());
+
+        return 1.0 / absFMax;
+    }
+
+    // Automatic timestep determination, using maximal interatomic force to guide the timestep up to the current fixed timestep
+    // value
+    auto absFMaxInter =
+        std::max_element(fInter.begin(), fInter.end(), [](auto &left, auto &right) { return left.absMax() < right.absMax(); })
+            ->absMax();
+
+    auto deltaT = 100.0 / absFMaxInter;
+    if (deltaT < (requestedTimeStep / 100.0))
+        return {};
+    return deltaT > requestedTimeStep ? requestedTimeStep : deltaT;
+}
+
+// Evolve Species coordinates, returning new coordinates
+std::vector<Vec3<double>> MDNode::evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
+                                           double temperature, int nSteps, double maxDeltaT,
+                                           const std::vector<Vec3<double>> &rInit, std::vector<Vec3<double>> &velocities)
+{
+    assert(sp);
+    assert(sp->nAtoms() == velocities.size());
+
+    // Create arrays
+    std::vector<double> mass(sp->nAtoms(), 0.0);
+    std::vector<Vec3<double>> fInter(sp->nAtoms()), fIntra(sp->nAtoms()), accelerations(sp->nAtoms());
+
+    // Variables
+    auto &atoms = sp->atoms();
+    double tInstant, ke, tScale;
+
+    // Units
+    // J = kg m2 s-2  -->   10 J = g Ang2 ps-2
+    // If ke is in units of [g mol-1 Angstroms2 ps-2] then must use kb in units of 10 J mol-1 K-1 (= 0.8314462)
+    const auto kb = 0.8314462;
+
+    // Store atomic masses for future use
+    std::transform(atoms.begin(), atoms.end(), mass.begin(), [](const auto &atom) { return AtomicMass::mass(atom.Z()); });
+
+    // Calculate total velocity and mass over all atoms
+    auto massSum = std::accumulate(mass.begin(), mass.end(), 0.0);
+    auto vCom = std::transform_reduce(velocities.begin(), velocities.end(), mass.begin(), Vec3<double>());
+
+    // Remove any velocity shift
+    vCom /= massSum;
+    std::transform(velocities.begin(), velocities.end(), velocities.begin(), [vCom](auto vel) { return vel - vCom; });
+
+    // Calculate instantaneous temperature
+    ke = std::transform_reduce(mass.begin(), mass.end(), velocities.begin(), 0.0, std::plus<>(),
+                               [](const auto m, const auto &v) { return 0.5 * m * v.dp(v); });
+    tInstant = ke * 2.0 / (3.0 * atoms.size() * kb);
+
+    // Rescale velocities for desired temperature
+    tScale = sqrt(temperature / tInstant);
+    std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto v) { return v * tScale; });
+
+    // Zero force arrays
+    std::fill(fInter.begin(), fInter.end(), Vec3<double>());
+    std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
+
+    ForcesModule::totalForces(procPool, sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rInit);
+
+    // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
+    std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
+    std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
+
+    // Check for suitable timestep
+    if (!determineTimeStep(TimestepType::Automatic, maxDeltaT, fInter, fIntra))
+    {
+        Messenger::print("Forces are currently too high for species MD to proceed. Try decreasing the maximum timestep.\n");
+        return rInit;
+    }
+
+    // Copy coordinates ready for propagation
+    auto rNew = rInit;
+
+    // Ready to do MD propagation of the species
+    for (auto step = 1; step <= nSteps; ++step)
+    {
+        // Get timestep
+        auto optDT = determineTimeStep(TimestepType::Automatic, maxDeltaT, fInter, fIntra);
+        if (!optDT)
+        {
+            Messenger::warn("A reasonable timestep could not be determined. Stopping evolution.\n");
+            break;
+        }
+        auto dT = *optDT;
+        auto deltaTSq = dT * dT;
+
+        // Velocity Verlet first stage (A)
+        // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
+        // A:  v(t+dt/2) = v(t) + 0.5*a(t)*dt
+        // B:  a(t+dt) = F(t+dt)/m
+        // B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
+        for (auto &&[r, v, a] : zip(rNew, velocities, accelerations))
+        {
+            // Propagate positions (by whole step)...
+            r += v * dT + a * 0.5 * deltaTSq;
+
+            // ...velocities (by half step)...
+            v += a * 0.5 * dT;
+        }
+
+        // Zero force arrays
+        std::fill(fInter.begin(), fInter.end(), Vec3<double>());
+        std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
+
+        // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
+        ForcesModule::totalForces(procPool, sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rNew);
+        std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
+        std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
+
+        // Velocity Verlet second stage (B) and velocity scaling
+        // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
+        // A:  v(t+dt/2) = v(t) + 0.5*a(t)*dt
+        // B:  a(t+dt) = F(t+dt)/m
+        // B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
+        ke = 0.0;
+        for (auto &&[f1, f2, v, a, m] : zip(fInter, fIntra, velocities, accelerations, mass))
+        {
+            // Determine new accelerations
+            a = (f1 + f2) / m;
+
+            // ..and finally velocities again (by second half-step)
+            v += a * 0.5 * dT;
+
+            ke += 0.5 * m * v.dp(v);
+        }
+
+        // Rescale velocities for desired temperature
+        tInstant = ke * 2.0 / (3.0 * sp->nAtoms() * kb);
+        tScale = sqrt(temperature / tInstant);
+        std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto &v) { return v * tScale; });
+    }
+
+    return rNew;
+}
+
+// Run main processing
+NodeConstants::ProcessResult MDNode::process()
+{
+    // Get numeric input data
+    auto nSteps = nSteps.asInteger();
+    auto fixedTimeStep = fixedTimeStep_.asDouble();
+    auto capForcesAt = capForcesAt_.asDouble();
+
+    // Get control parameters
+    const auto maxForce = capForcesAt * 100.0; // To convert from kJ/mol to 10 J/mol
+
+    double rCut;
+    if (cutoffDistance_.has_value())
+    {
+        rCut = cutoffDistance_.value();
+    }
+    else
+    {
+        rCut = context().dissolve().pairPotentialRange();
+    }
+
+    // Units
+    // J = kg m2 s-2  -->   10 J = g Ang2 ps-2
+    // If ke is in units of [g mol-1 Angstroms2 ps-2] then must use kb in units of 10 J mol-1 K-1 (= 0.8314462)
+    const auto kb = 0.8314462;
+
+    // Print argument/parameter summary
+    Messenger::print("MD: Cutoff distance is {}\n", rCut);
+    Messenger::print("MD: Number of steps = {}\n", nSteps);
+    Messenger::print("MD: Timestep type is '{}'\n", timestepType().keyword(timestepType_));
+    if (onlyWhenEnergyStable_)
+        Messenger::print("MD: Only perform MD if target Configuration energies are stable.\n");
+    if (trajectoryFrequency_.value_or(0).asInteger() > 0)
+        Messenger::print("MD: Trajectory file will be appended every {} step(s).\n", trajectoryFrequency_.value());
+    else
+        Messenger::print("MD: Trajectory file off.\n");
+    if (capForces_)
+        Messenger::print("MD: Forces will be capped to {:10.3e} kJ/mol per atom per axis.\n", maxForce / 100.0);
+    if (energyFrequency_.value_or(0).asInteger() > 0)
+        Messenger::print("MD: Energy will be calculated every {} step(s).\n", energyFrequency_.value());
+    else
+        Messenger::print("MD: Energy will be not be calculated.\n");
+    if (outputFrequency_.value_or(0).asInteger() > 0)
+        Messenger::print("MD: Summary will be written every {} step(s).\n", outputFrequency_.value());
+    else
+        Messenger::print("MD: Summary will not be written.\n");
+    if (!restrictToSpecies_.empty())
+        Messenger::print("MD: Calculation will be restricted to species: {}\n",
+                         joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
+    Messenger::print("\n");
+
+    if (onlyWhenEnergyStable_)
+    {
+        auto stabilityResult = EnergyModule::checkStability(context().dissolve().processingModuleData(), targetConfiguration_);
+        if (stabilityResult == EnergyModule::NotAssessable)
+        {
+            return ProcessResult::Failed;
+        }
+        else if (stabilityResult == EnergyModule::EnergyUnstable)
+        {
+            Messenger::print("Skipping MD for Configuration '{}'.\n", targetConfiguration_->niceName());
+            return ProcessResult::NotExecuted;
+        }
+    }
+
+    // Get temperature from Configuration
+    const auto temperature = targetConfiguration_->temperature();
+
+    // Create arrays
+    std::vector<double> mass(targetConfiguration_->nAtoms(), 0.0);
+    std::vector<Vec3<double>> fBound(targetConfiguration_->nAtoms()), fUnbound(targetConfiguration_->nAtoms()),
+        accelerations(targetConfiguration_->nAtoms());
+
+    // Variables
+    auto nCapped = 0;
+    auto &atoms = targetConfiguration_->atoms();
+    double tInstant, ke, tScale, peBound;
+    PairPotentialEnergyValue pePP;
+
+    // Determine target molecules from the restrictedSpecies vector (if any)
+    std::vector<const Molecule *> targetMolecules;
+    std::vector<int> free(targetConfiguration_->nAtoms(), 0);
+    if (restrictToSpecies_.empty())
+    {
+        std::fill(free.begin(), free.end(), 1);
+    }
+    else
+        for (const auto &mol : targetConfiguration_->molecules())
+            if (std::find(restrictToSpecies_.begin(), restrictToSpecies_.end(), mol->species()) != restrictToSpecies_.end())
+            {
+                targetMolecules.push_back(mol.get());
+                auto offset = mol->globalAtomOffset();
+                std::fill(free.begin() + offset, free.begin() + offset + mol->atoms().size(), 1);
+            }
+
+    /*
+     * Calculation Begins
+     */
+
+    // Initialise the random number buffer for all processes
+    RandomBuffer randomBuffer(context().processPool(), ProcessPool::PoolProcessesCommunicator);
+
+    // Read in or assign random velocities
+    auto [velocities, status] = context().dissolve().processingModuleData().realiseIf<std::vector<Vec3<double>>>(
+        std::format("{}//Velocities", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+    if ((status == GenericItem::ItemStatus::Created || randomVelocities_ ||
+         velocities.size() != targetConfiguration_->nAtoms()) &&
+        !intramolecularForcesOnly_)
+    {
+        // Show warning message on array size mismatch
+        if (status != GenericItem::ItemStatus::Created && velocities.size() != targetConfiguration_->nAtoms())
+            Messenger::warn(
+                "Size of existing velocities array doesn't match the current configuration size - they will be ignored.");
+
+        Messenger::print("Random initial velocities will be assigned.\n");
+        velocities.resize(targetConfiguration_->nAtoms(), Vec3<double>());
+        for (auto &&[v, iFree] : zip(velocities, free))
+        {
+            if (iFree)
+                v.set(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5));
+            else
+                v.zero();
+            v /= sqrt(TWOPI);
+        }
+    }
+    else if (intramolecularForcesOnly_)
+    {
+        Messenger::print("Only intramolecular forces will be calculated, so velocities will be zeroes.\n");
+        velocities.resize(targetConfiguration_->nAtoms(), Vec3<double>());
+        std::fill(velocities.begin(), velocities.end(), Vec3<double>());
+    }
+    else
+    {
+        Messenger::print("Existing velocities will be used.\n");
+    }
+
+    Messenger::print("\n");
+
+    // Store atomic masses for future use
+    for (auto &&[i, m] : zip(atoms, mass))
+        m = AtomicMass::mass(i.speciesAtom()->Z());
+
+    // Calculate total velocity and mass over all atoms
+    Vec3<double> vCom;
+    auto massSum = 0.0;
+    for (auto &&[v, m, iFree] : zip(velocities, mass, free))
+    {
+        if (!iFree)
+            continue;
+        vCom += v * m;
+        massSum += m;
+    }
+
+    // Finalise initial velocities (unless considering intramolecular forces only)
+    if (!intramolecularForcesOnly_)
+    {
+        // Remove any velocity shift, and re-zero velocities on fixed atoms
+        vCom /= massSum;
+        std::transform(velocities.begin(), velocities.end(), velocities.begin(), [vCom](auto vel) { return vel - vCom; });
+        for (auto &&[v, iFree] : zip(velocities, free))
+            if (!iFree)
+                v.zero();
+
+        // Calculate instantaneous temperature
+        ke = 0.0;
+        for (auto &&[m, v] : zip(mass, velocities))
+            ke += 0.5 * m * v.dp(v);
+        tInstant = ke * 2.0 / (3.0 * atoms.size() * kb);
+
+        // Rescale velocities for desired temperature
+        tScale = sqrt(temperature / tInstant);
+        std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto v) { return v * tScale; });
+    }
+
+    // Open trajectory file (if requested)
+    LineParser trajParser;
+    if (trajectoryFrequency_.value_or(0) > 0)
+    {
+        std::string trajectoryFile = std::format("{}.md.xyz", targetConfiguration_->name());
+        if (context().processPool().isMaster())
+        {
+            if ((!trajParser.appendOutput(trajectoryFile)) || (!trajParser.isFileGoodForWriting()))
+            {
+                Messenger::error("Failed to open MD trajectory output file '{}'.\n", trajectoryFile);
+                context().processPool().decideFalse();
+                return ProcessResult::Failed;
+            }
+            context().processPool().decideTrue();
+        }
+        else if (!context().processPool().decision())
+        {
+            return ProcessResult::Failed;
+        }
+    }
+
+    // Write header
+    if (outputFrequency_.value_or(0) > 0)
+    {
+        Messenger::print("                                             Energies (kJ/mol)\n");
+        Messenger::print("  Step             T(K)         Kinetic      Inter        Intra        Total      "
+                         "deltaT(ps)\n");
+    }
+
+    // Start a timer
+    Timer timer, commsTimer(false);
+
+    // If we're not using a fixed timestep the forces need to be available immediately
+    if (timestepType_ != TimestepType::Fixed)
+    {
+        // Zero force arrays
+        std::fill(fUnbound.begin(), fUnbound.end(), Vec3<double>());
+        std::fill(fBound.begin(), fBound.end(), Vec3<double>());
+
+        if (targetMolecules.empty())
+            ForcesModule::totalForces(context().processPool(), targetConfiguration_,
+                                      context().dissolve().potentialMap(),
+                                      intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
+                                                                : ForcesModule::ForceCalculationType::Full,
+                                      fUnbound, fBound, commsTimer);
+        else
+            ForcesModule::totalForces(context().processPool(), targetConfiguration_, targetMolecules,
+                                      context().dissolve().potentialMap(),
+                                      intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
+                                                                : ForcesModule::ForceCalculationType::Full,
+                                      fUnbound, fBound, commsTimer);
+
+        // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
+        std::transform(fUnbound.begin(), fUnbound.end(), fUnbound.begin(), [](auto f) { return f * 100.0; });
+        std::transform(fBound.begin(), fBound.end(), fBound.begin(), [](auto f) { return f * 100.0; });
+
+        // Check for suitable timestep
+        if (!determineTimeStep(timestepType_, fixedTimestep_, fUnbound, fBound))
+        {
+            Messenger::print("Forces are currently too high for MD to proceed. Skipping this run.\n");
+            return ProcessResult::NotExecuted;
+        }
+    }
+
+    // Ready to do MD propagation of system
+    auto step = 1;
+    for (step = 1; step <= nSteps; ++step)
+    {
+        // Get timestep
+        auto optDT = determineTimeStep(timestepType_, fixedTimestep_, fUnbound, fBound);
+        if (!optDT)
+        {
+            Messenger::warn("A reasonable timestep could not be determined. Stopping evolution.\n");
+            break;
+        }
+        auto dT = *optDT;
+        auto deltaTSq = dT * dT;
+
+        // Velocity Verlet first stage (A)
+        // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
+        // A:  v(t+dt/2) = v(t) + 0.5*a(t)*dt
+        // B:  a(t+dt) = F(t+dt)/m
+        // B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
+        for (auto &&[i, v, a] : zip(atoms, velocities, accelerations))
+        {
+            // Propagate positions (by whole step)...
+            i.translateCoordinates(v * dT + a * 0.5 * deltaTSq);
+
+            // ...velocities (by half step)...
+            v += a * 0.5 * dT;
+        }
+
+        // Update Atom locations
+        targetConfiguration_->updateAtomLocations();
+
+        // Zero force arrays
+        std::fill(fUnbound.begin(), fUnbound.end(), Vec3<double>());
+        std::fill(fBound.begin(), fBound.end(), Vec3<double>());
+
+        // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
+        if (targetMolecules.empty())
+            ForcesModule::totalForces(context().processPool(), targetConfiguration_,
+                                      context().dissolve().potentialMap(),
+                                      intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
+                                                                : ForcesModule::ForceCalculationType::Full,
+                                      fUnbound, fBound, commsTimer);
+        else
+            ForcesModule::totalForces(context().processPool(), targetConfiguration_, targetMolecules,
+                                      context().dissolve().potentialMap(),
+                                      intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
+                                                                : ForcesModule::ForceCalculationType::Full,
+                                      fUnbound, fBound, commsTimer);
+        std::transform(fUnbound.begin(), fUnbound.end(), fUnbound.begin(), [](auto f) { return f * 100.0; });
+        std::transform(fBound.begin(), fBound.end(), fBound.begin(), [](auto f) { return f * 100.0; });
+
+        // Cap forces
+        if (capForces_)
+            nCapped = capForces(maxForce, fUnbound, fBound);
+
+        // Velocity Verlet second stage (B) and velocity scaling
+        // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
+        // A:  v(t+dt/2) = v(t) + 0.5*a(t)*dt
+        // B:  a(t+dt) = F(t+dt)/m
+        // B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
+        ke = 0.0;
+        for (auto &&[f1, f2, v, a, m] : zip(fUnbound, fBound, velocities, accelerations, mass))
+        {
+            // Determine new accelerations
+            a = (f1 + f2) / m;
+
+            // ..and finally velocities again (by second half-step)
+            v += a * 0.5 * dT;
+
+            ke += 0.5 * m * v.dp(v);
+        }
+
+        // Rescale velocities for desired temperature
+        tInstant = ke * 2.0 / (3.0 * targetConfiguration_->nAtoms() * kb);
+        tScale = sqrt(temperature / tInstant);
+        std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto &v) { return v * tScale; });
+
+        // Convert ke from 10J/mol to kJ/mol
+        ke *= 0.01;
+
+        // Write step summary?
+        if (outputFrequency_ && (step == 1 || (step % outputFrequency_.value() == 0)))
+        {
+            // Include total energy term?
+            if (energyFrequency_ && (step % energyFrequency_.value() == 0))
+            {
+                pePP = EnergyModule::pairPotentialEnergy(context().processPool(), targetConfiguration_,
+                                                         context().dissolve().potentialMap());
+                peBound = EnergyModule::intraMolecularEnergy(context().processPool(), targetConfiguration_,
+                                                             context().dissolve().potentialMap());
+                Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}\n", step,
+                                 tInstant, ke, pePP.total(), peBound, ke + peBound + pePP.total(), dT);
+            }
+            else
+                Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}                                          {:10.3e}\n", step,
+                                 tInstant, ke, dT);
+        }
+
+        // Save trajectory frame
+        if (trajectoryFrequency_ && (step % trajectoryFrequency_.value() == 0))
+        {
+            if (context().processPool().isMaster())
+            {
+                // Write number of atoms
+                trajParser.writeLineF("{}\n", targetConfiguration_->nAtoms());
+
+                // Construct and write header
+                std::string header = std::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps, tInstant, ke);
+                if (energyFrequency_ && (step % energyFrequency_.value() == 0))
+                    header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound,
+                                          ke + pePP.total() + peBound);
+                if (!trajParser.writeLine(header))
+                {
+                    context().processPool().decideFalse();
+                    return ProcessResult::Failed;
+                }
+
+                // Write Atoms
+                for (const auto &i : atoms)
+                {
+                    if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n", Elements::symbol(i.speciesAtom()->Z()),
+                                               i.r().x, i.r().y, i.r().z))
+                    {
+                        context().processPool().decideFalse();
+                        return ProcessResult::Failed;
+                    }
+                }
+
+                context().processPool().decideTrue();
+            }
+            else if (!context().processPool().decision())
+            {
+                return ProcessResult::Failed;
+            }
+        }
+    }
+    timer.stop();
+
+    // Close trajectory file
+    if (trajectoryFrequency_.value_or(0) > 0 && context().processPool().isMaster())
+        trajParser.closeFiles();
+
+    if (capForces_)
+        Messenger::print("A total of {} forces were capped over the course of the dynamics ({:9.3e} per step).\n", nCapped,
+                         double(nCapped) / nSteps);
+    Messenger::print("{} steps performed ({} work, {} comms)\n", step - 1, timer.totalTimeString(),
+                     commsTimer.totalTimeString());
+
+    // Increment configuration changeCount
+    if (step > 1)
+        targetConfiguration_->incrementContentsVersion();
+
+    /*
+     * Calculation End
+     */
+
+    return NodeConstants::ProcessResult::Success;
+}
