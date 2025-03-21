@@ -29,6 +29,10 @@ runs:
   # Setup / Install Dependencies
   #
 
+  - uses: actions/setup-python@v5
+    with:
+      python-version: '3.11'
+
   - name: Install Chocolatey Dependencies
     shell: bash
     run: choco install -y ninja wget
