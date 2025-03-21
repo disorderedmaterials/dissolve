@@ -18,19 +18,6 @@ class DissolveNode : public Node
     std::string_view summary() const override { return "Parent node of all simulations"; }
 
     /*
-     * Definition
-     */
-    private:
-    //
-    NodeContext ctx_;
-
-    public:
-    // Set node context
-    void setContext(Dissolve &dissolve);
-    // Return node context
-    NodeContext &context() const;
-
-    /*
      * Processing
      */
     private:

@@ -5,6 +5,16 @@
 #include "base/sysFunc.h"
 
 /*
+ * Context
+ */
+
+// Set node context
+void Node::setContext(Dissolve &dissolve) { ctx_.dissolve = dissolve, ctx_.processPool = dissolve.worldPool(); }
+
+// Return node context
+Node::NodeContext &Node::context() const { return ctx_; }
+
+/*
  * Inputs, Outputs & Options
  */
 

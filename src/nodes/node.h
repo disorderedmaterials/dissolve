@@ -26,7 +26,9 @@ class Node : public Serialisable<>
 
     using EdgeMap = std::map<std::string_view, Edge *>;
 
-    // Node context
+    /*
+     * Context
+     */
     struct NodeContext
     {
         ProcessPool &processPool;
@@ -36,6 +38,14 @@ class Node : public Serialisable<>
     private:
     // Node parent graph
     Graph *parentGraph_;
+    // Node context
+    NodeContext ctx_;
+
+    public:
+    // Set node context
+    void setContext(Dissolve &dissolve);
+    // Return node context
+    NodeContext &context() const;
 
     /*
      * Definition
