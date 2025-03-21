@@ -73,8 +73,8 @@ runs:
     with:
       key: windows-freetype
       path: |
-        ${{ runner.temp }}\freetype-latest
-        ${{ runner.temp }}\freetype-install
+        ${{ runner.temp }}/freetype-latest
+        ${{ runner.temp }}/freetype-install
 
   - name: Download FreeType
     if: ${{ steps.cache-freetype.outputs.cache-hit != 'true' }}
@@ -107,8 +107,8 @@ runs:
     with:
       key: windows-ftgl
       path: |
-        ${{ runner.temp }}\ftgl-latest
-        ${{ runner.temp }}\ftgl-install
+        ${{ runner.temp }}/ftgl-latest
+        ${{ runner.temp }}/ftgl-install
 
   - name: Download FTGL
     if: ${{ steps.cache-ftgl.outputs.cache-hit != 'true' }}
@@ -125,8 +125,8 @@ runs:
     run: |
       set -ex
       mkdir ftgl-build && cd ftgl-build
-      INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
-      LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"
+      INCLUDE="${RUNNER_TEMP}/freetype-latest;$INCLUDE"
+      LIB="${RUNNER_TEMP}/freetype-install/lib;${RUNNER_TEMP}/freetype-install/bin;$LIB"
       cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_INSTALL_PREFIX:path=../ftgl-install
       cmake --build . --target install --config Release
 
@@ -154,10 +154,10 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
       Qt6_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos
-      INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
-      LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"
-      INCLUDE="${RUNNER_TEMP}\ftgl-latest\src;$INCLUDE"
-      LIB="${RUNNER_TEMP}\ftgl-install\lib;$LIB"
+      INCLUDE="${RUNNER_TEMP}/freetype-latest;$INCLUDE"
+      LIB="${RUNNER_TEMP}/freetype-install/lib;${RUNNER_TEMP}/freetype-install/bin;$LIB"
+      INCLUDE="${RUNNER_TEMP}/ftgl-latest/src;$INCLUDE"
+      LIB="${RUNNER_TEMP}/ftgl-install/lib;$LIB"
 
       # Find ANTLR4
       ANTLR_EXE="${{ runner.temp }}/antlr-${{ inputs.antlrVersion }}-complete.jar"
