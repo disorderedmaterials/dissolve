@@ -42,6 +42,10 @@ bool AddPairGeneratorNode::prepare(const GeneratorContext &generatorContext)
     if (!speciesA_ || !speciesB_)
         return Messenger::error("One or both target species not specified in Add node.\n");
 
+    // Check if the Species itself is valid
+    if (!speciesA_->checkSetUp() || !speciesB_->checkSetUp())
+        return false;
+
     // Can't set box
     if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::Set)
         return Messenger::error("Can't set periodic box when using AddPair.\n");

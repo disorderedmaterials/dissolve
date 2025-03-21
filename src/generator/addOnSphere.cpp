@@ -58,6 +58,10 @@ bool AddOnSphereGeneratorNode::prepare(const GeneratorContext &generatorContext)
     if (!speciesSite_)
         return Messenger::error("No target species site specified in AddOnSphere node.\n");
 
+    // Check if the Species itself is valid
+    if (!speciesSite_->parent()->checkSetUp())
+        return false;
+
     // Check site multiplicity
     if (speciesSite_->instances().size() > 1)
         return Messenger::error("Site must have a single instance - i.e. be unique in the parent species.\n");
