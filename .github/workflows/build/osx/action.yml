@@ -71,7 +71,7 @@ runs:
     id: cache-freetype
     uses: actions/cache@v4
     with:
-      key: windows-freetype
+      key: osx-freetype
       path: |
         ${{ runner.temp }}/freetype-latest
         ${{ runner.temp }}/freetype-install
@@ -94,7 +94,7 @@ runs:
     run: |
       set -ex
       mkdir freetype-build && cd freetype-build
-      cmake ../freetype-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install
+      cmake ../freetype-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install -DBUILD_SHARED_LIBS:bool=OFF
       cmake --build . --target install --config Release
 
   #
@@ -105,7 +105,7 @@ runs:
     id: cache-ftgl
     uses: actions/cache@v4
     with:
-      key: windows-ftgl
+      key: osx-ftgl
       path: |
         ${{ runner.temp }}/ftgl-latest
         ${{ runner.temp }}/ftgl-install
@@ -154,9 +154,7 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
       Qt6_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos
-      INCLUDE="${RUNNER_TEMP}/freetype-latest;$INCLUDE"
-      LIB="${RUNNER_TEMP}/freetype-install/lib;${RUNNER_TEMP}/freetype-install/bin;$LIB"
-      export FTGL_DIR="/Users/runner/work/_temp/ftgl-build/../ftgl-install"
+      export FTGL_DIR="${RUNNER_TEMP}/ftgl-install"
 
       # Find ANTLR4
       ANTLR_EXE="${{ runner.temp }}/antlr-${{ inputs.antlrVersion }}-complete.jar"
