@@ -156,7 +156,7 @@ runs:
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos
       INCLUDE="${RUNNER_TEMP}/freetype-latest;$INCLUDE"
       LIB="${RUNNER_TEMP}/freetype-install/lib;${RUNNER_TEMP}/freetype-install/bin;$LIB"
-      FTGL_DIR="${RUNNER_TEMP}/ftgl-install"
+      export FTGL_DIR="/Users/runner/work/_temp/ftgl-build/../ftgl-install"
 
       # Find ANTLR4
       ANTLR_EXE="${{ runner.temp }}/antlr-${{ inputs.antlrVersion }}-complete.jar"
