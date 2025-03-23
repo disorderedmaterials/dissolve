@@ -156,8 +156,7 @@ runs:
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos
       INCLUDE="${RUNNER_TEMP}/freetype-latest;$INCLUDE"
       LIB="${RUNNER_TEMP}/freetype-install/lib;${RUNNER_TEMP}/freetype-install/bin;$LIB"
-      INCLUDE="${RUNNER_TEMP}/ftgl-latest/src;$INCLUDE"
-      LIB="${RUNNER_TEMP}/ftgl-install/lib;$LIB"
+      FTGL_DIR="${RUNNER_TEMP}/ftgl-install"
 
       # Find ANTLR4
       ANTLR_EXE="${{ runner.temp }}/antlr-${{ inputs.antlrVersion }}-complete.jar"
@@ -180,7 +179,7 @@ runs:
 
       # Build
       mkdir build && cd build
-      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DCONAN_GSL="OFF" -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR -DFTGL_DIR=${RUNNER_TEMP}/ftgl-install ../
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DCONAN_GSL="OFF" -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../
       cmake --build . --config Release
 
       # Copy over ftgl libs so we can ship them with the bundle
