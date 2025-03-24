@@ -12,7 +12,7 @@
 bool Node::addEdge(Edge *edge)
 {
     // The supplied Edge was created via our parent Graph, but we will still check to see whether we accept it
-    if (edge->targetNode() == this)
+    if (&edge->targetNode() == this)
     {
         // We are the target node, so we will double-check the specified input to see if it can accept the connection
         // Simple check at present, we accept at most one connection per input, so if one already exists we complain
@@ -23,7 +23,7 @@ bool Node::addEdge(Edge *edge)
         // All good, so add the input to our list
         inputEdges_[edge->targetInput().name()] = edge;
     }
-    else if (edge->sourceNode() == this)
+    else if (&edge->sourceNode() == this)
     {
         // We are the source node - nothing for us to do at present, but we may choose to store such Edges in future.
     }

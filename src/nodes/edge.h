@@ -26,13 +26,10 @@ class Edge
 
     protected:
     // The constructor is private because it can only be constructed by the factory method
-    Edge(Node *sourceNode, ParameterBase &sourceOutput, Node *targetNode, ParameterBase &targetInput);
+    Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput);
 
     private:
-    // Pointers to source and target nodes
-    Node *sourceNode_{nullptr};
-    Node *targetNode_{nullptr};
-    // Store references instead of pointers to the linked parameters for two reasons:
+    // Store references instead of pointers to the linked nodes and parameters for two reasons:
     // 1) Neither end of the link should EVER be null
     // 2) The link itself is immutable.  You can create links and
     // destroy links, but *never mutate links*.
@@ -42,6 +39,8 @@ class Edge
     // immutable, that means that all links are valid at all times.
     // This enables us to skip a great deal of error checking when
     // processing a chain of links.
+    Node &sourceNode_;
+    Node &targetNode_;
     ParameterBase &sourceOutput_;
     ParameterBase &targetInput_;
     // Version of the source node when this edge was last pulled by the target node.
@@ -51,11 +50,11 @@ class Edge
     // A factory method to create an Edge from the supplied definition, or nullptr if it cannot
     static std::unique_ptr<Edge> create(Graph *parent, const EdgeDefinition &definition);
     // Return source node
-    Node *sourceNode() const;
+    Node &sourceNode() const;
     // Return source output parameter
     const ParameterBase &sourceOutput() const;
     // Return target node
-    Node *targetNode() const;
+    Node &targetNode() const;
     // Return target input parameter
     const ParameterBase &targetInput() const;
     // Return definition for the edge

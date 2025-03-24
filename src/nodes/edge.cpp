@@ -4,7 +4,7 @@
 #include "nodes/edge.h"
 #include "nodes/graph.h"
 
-Edge::Edge(Node *sourceNode, ParameterBase &sourceOutput, Node *targetNode, ParameterBase &targetInput)
+Edge::Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput)
     : sourceNode_(sourceNode), sourceOutput_(sourceOutput), targetNode_(targetNode), targetInput_(targetInput)
 {
 }
@@ -13,7 +13,7 @@ Edge::Edge(Node *sourceNode, ParameterBase &sourceOutput, Node *targetNode, Para
 class EdgeConstructor : public Edge
 {
     public:
-    EdgeConstructor(Node *sourceNode, ParameterBase &sourceOutput, Node *targetNode, ParameterBase &targetInput)
+    EdgeConstructor(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput)
         : Edge(sourceNode, sourceOutput, targetNode, targetInput)
     {
     }
@@ -71,7 +71,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
         return {};
 
     // Create the edge
-    auto edge = std::make_unique<EdgeConstructor>(sourceNode, *sourceOutput, targetNode, *targetInput);
+    auto edge = std::make_unique<EdgeConstructor>(*sourceNode, *sourceOutput, *targetNode, *targetInput);
 
     // Notify nodes about the new edge
     if (!sourceNode->addEdge(edge.get()) || !targetNode->addEdge(edge.get()))
@@ -81,13 +81,13 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
 }
 
 // Return source node
-Node *Edge::sourceNode() const { return sourceNode_; }
+Node &Edge::sourceNode() const { return sourceNode_; }
 
 // Return source output parameter
 const ParameterBase &Edge::sourceOutput() const { return sourceOutput_; }
 
 // Return target node
-Node *Edge::targetNode() const { return targetNode_; }
+Node &Edge::targetNode() const { return targetNode_; }
 
 // Return target input parameter
 const ParameterBase &Edge::targetInput() const { return targetInput_; }
@@ -95,7 +95,7 @@ const ParameterBase &Edge::targetInput() const { return targetInput_; }
 // Return definition for the edge
 EdgeDefinition Edge::definition() const
 {
-    return {std::string(sourceNode_->name()), std::string(sourceOutput_.name()), std::string(targetNode_->name()),
+    return {std::string(sourceNode_.name()), std::string(sourceOutput_.name()), std::string(targetNode_.name()),
             std::string(targetInput_.name())};
 }
 
@@ -109,18 +109,17 @@ NodeConstants::ProcessResult Edge::pull()
      */
     auto result = NodeConstants::ProcessResult::Failed;
     if (sourceNodeVersionIndex_ == NodeConstants::InvalidVersion ||
-        sourceNode_->versionIndex() == NodeConstants::InvalidVersion ||
-        (sourceNodeVersionIndex_ != sourceNode_->versionIndex()))
+        sourceNode_.versionIndex() == NodeConstants::InvalidVersion || (sourceNodeVersionIndex_ != sourceNode_.versionIndex()))
     {
-        result = sourceNode_->run();
+        result = sourceNode_.run();
         if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
         {
-            Messenger::error("Failed to pull updated value from node '{}'\n", sourceNode_->name());
+            Messenger::error("Failed to pull updated value from node '{}'\n", sourceNode_.name());
             return result;
         }
 
         // Update version index
-        sourceNodeVersionIndex_ = sourceNode_->versionIndex();
+        sourceNodeVersionIndex_ = sourceNode_.versionIndex();
 
         // If the source node's run() result was Unchanged, return success anyway as we need to flag to our target node
         // that its data has changed and needs to run again.
