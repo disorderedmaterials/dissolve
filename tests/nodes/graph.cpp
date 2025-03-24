@@ -58,7 +58,7 @@ TEST_F(GraphCoreTest, Serialisation)
     Graph copy(nullptr);
     auto serialised = graph_.serialise();
     std::cout << serialised << std::endl;
-    
+
     EXPECT_EQ(graph_.nodes(), copy.nodes());
 };
 
