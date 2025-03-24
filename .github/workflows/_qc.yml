@@ -36,5 +36,4 @@ jobs:
         TITLE: ${{ github.event.pull_request.title }}
       run: |
         set -ex
-        echo "${TITLE}" | awk "/(^feat:)|(^fix:)|(^doc:)|(^perf:)|(^refactor:)|(^style:)|(^test:)|(^chore:)|(^revert:)|(^build:)/" | grep .
-
+        echo "${TITLE}" | awk '/((^feat)|(^fix)|(^doc)|(^perf)|(^refactor)|(^style)|(^test)|(^chore)|(^revert)|(^build))!?:/' | grep .

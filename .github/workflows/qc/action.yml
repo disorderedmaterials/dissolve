@@ -29,16 +29,6 @@ runs:
       nix-store --import < /tmp/nixcache
       sudo rm -rf /tmp/nixcache
 
-  - name: Check Conventional Commits
-    # Ensure that the PR title fits the conventional commits framework
-    if: github.event_name == 'pull_request'
-    shell: bash
-    env:
-      TITLE: ${{ github.event.pull_request.title }}
-    run: |
-      set -ex
-      echo "${TITLE}" | awk '/((^feat)|(^fix)|(^doc)|(^perf)|(^refactor)|(^style)|(^test)|(^chore)|(^revert)|(^build))!?:/' | grep .
-
   - name: C++ Formatting
     shell: bash
     run: |
