@@ -12,10 +12,8 @@ Edge::Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, Para
 Edge::~Edge()
 {
     // Detach from the source and target nodes
-    if (sourceNode_)
-        sourceNode_->removeEdge(this);
-    if (targetNode_)
-        targetNode_->removeEdge(this);
+    sourceNode_.unlinkEdge(this);
+    targetNode_.unlinkEdge(this);
 }
 
 // Local EdgeConstructor class to allow creation of memory-managed Edge instances
@@ -83,7 +81,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     auto edge = std::make_unique<EdgeConstructor>(*sourceNode, *sourceOutput, *targetNode, *targetInput);
 
     // Notify nodes about the new edge
-    if (!sourceNode->addEdge(edge.get()) || !targetNode->addEdge(edge.get()))
+    if (!sourceNode->linkEdge(edge.get()) || !targetNode->linkEdge(edge.get()))
         return {};
 
     return edge;

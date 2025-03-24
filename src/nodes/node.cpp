@@ -50,7 +50,7 @@ bool Node::linkEdge(Edge *edge)
 void Node::unlinkEdge(Edge *edge)
 {
     // If we are the Edge's targetNode_ then we should have its pointer in inputEdges_
-    if (edge->targetNode() == this)
+    if (&edge->targetNode() == this)
     {
         auto it = std::find_if(inputEdges_.begin(), inputEdges_.end(),
                                [edge](const auto &inputEdge) { return edge == inputEdge.second; });
@@ -62,7 +62,7 @@ void Node::unlinkEdge(Edge *edge)
             invalidate();
         }
     }
-    else if (edge->sourceNode() == this)
+    else if (&edge->sourceNode() == this)
     {
         // We are the source node for the edge - nothing for us to do at present
     }
