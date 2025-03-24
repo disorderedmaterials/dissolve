@@ -35,7 +35,7 @@ runs:
     run: |
       set -ex
       brew update-reset
-      brew install ninja gsl
+      brew install gsl
 
   - name: Get ANTLR
     working-directory: ${{ runner.temp }}
