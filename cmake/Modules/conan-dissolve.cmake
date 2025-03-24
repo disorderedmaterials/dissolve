@@ -22,11 +22,6 @@ set(_conan_options
     ${EXTRA_CONAN_OPTIONS}
 )
 
-# Handle platform-specific requirements
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    list(APPEND _conan_requires freetype/2.13.2)
-endif()
-
 # Add in testing dependencies?
 if(BUILD_TESTS)
     list(APPEND _conan_requires gtest/1.10.0)
