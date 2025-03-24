@@ -16,73 +16,49 @@ Number &Number::operator=(const Number &other)
     return *this;
 }
 
-struct AddNumberVisitor
+Number Number::operator+(const Number &other) const
 {
-    template <class T1, class T2> auto operator()(T1 a, T2 b) const -> Number { return {a + b}; }
-};
-Number Number::operator+(const Number &other) const { return std::visit(AddNumberVisitor{}, value_, other.value_); }
+    return std::visit([](auto a, auto b) -> Number { return {a + b}; }, value_, other.value_);
+}
 
-struct AddAssignmentNumberVisitor
-{
-    template <class T1, class T2> auto operator()(T1 a, T2 b) const -> Number { return {a += b}; }
-};
 Number &Number::operator+=(const Number &other)
 {
-    set(std::visit(AddAssignmentNumberVisitor{}, value_, other.value_));
+    std::visit([](auto &a, auto b) { a += b; }, value_, other.value_);
     return *this;
 }
 
-struct SubtractNumberVisitor
+Number Number::operator-(const Number &other) const
 {
-    template <class T1, class T2> auto operator()(T1 a, T2 b) const -> Number { return {a - b}; }
-};
-Number Number::operator-(const Number &other) const { return std::visit(SubtractNumberVisitor{}, value_, other.value_); }
+    return std::visit([](auto a, auto b) -> Number { return {a - b}; }, value_, other.value_);
+}
 
-struct SubtractAssignmentNumberVisitor
-{
-    template <class T1, class T2> auto operator()(T1 a, T2 b) const -> Number { return {a -= b}; }
-};
 Number &Number::operator-=(const Number &other)
 {
-    set(std::visit(SubtractAssignmentNumberVisitor{}, value_, other.value_));
+    std::visit([](auto &a, auto b) { a -= b; }, value_, other.value_);
     return *this;
 }
 
-struct MultiplyNumberVisitor
+Number Number::operator*(const Number &other) const
 {
-    template <class T1, class T2> auto operator()(T1 a, T2 b) const -> Number { return {a * b}; }
-};
-Number Number::operator*(const Number &other) const { return std::visit(MultiplyNumberVisitor{}, value_, other.value_); }
+    return std::visit([](auto a, auto b) -> Number { return {a * b}; }, value_, other.value_);
+}
 
-struct MultiplyAssignmentNumberVisitor
-{
-    template <class T1, class T2> auto operator()(T1 a, T2 b) const -> Number { return {a *= b}; }
-};
 Number &Number::operator*=(const Number &other)
 {
-    set(std::visit(MultiplyAssignmentNumberVisitor{}, value_, other.value_));
+    std::visit([](auto &a, auto b) { a *= b; }, value_, other.value_);
     return *this;
 }
 
-struct DivisionNumberVisitor
+Number Number::operator/(const Number &other) const
 {
-    template <class T1, class T2> auto operator()(T1 a, T2 b) const -> Number { return {a / b}; }
-};
-Number Number::operator/(const Number &other) const { return std::visit(DivisionNumberVisitor{}, value_, other.value_); }
+    return std::visit([](auto a, auto b) -> Number { return {a / b}; }, value_, other.value_);
+}
 
-struct DivisionAssignmentNumberVisitor
-{
-    template <class T1, class T2> auto operator()(T1 a, T2 b) const -> Number { return {a /= b}; }
-};
 Number &Number::operator/=(const Number &other)
 {
-    set(std::visit(DivisionAssignmentNumberVisitor{}, value_, other.value_));
+    std::visit([](auto &a, auto b) { a /= b; }, value_, other.value_);
     return *this;
 }
-
-// Number &Number::operator++();
-//
-// Number &Number::operator--();
 
 bool Number::operator==(const Number &other) const { return value_ == other.value_; }
 
