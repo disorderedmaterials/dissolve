@@ -14,7 +14,7 @@
 AtomShakeNode::AtomShakeNode()
 {
     addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
-        ->setFlags(ParameterBase::Invalidates);
+        ->setFlags({ParameterBase::Required, ParameterBase::Invalidates});
 
     addInput<Number>("ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_);
     addBoundedInput<Number>("TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", targetAcceptanceRate_, 0,
