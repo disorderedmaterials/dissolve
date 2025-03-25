@@ -38,6 +38,13 @@ jobs:
       conanHash: ${{ needs.Checkout.outputs.conanHash }}
       nixHash: ${{ needs.Checkout.outputs.nixHash }}
 
+  CleanCache:
+    if: always()
+    needs: [BuildAndPackage]
+    uses: "./.github/workflows/_clean_cache.yml"
+    with:
+      branch: 'refs/pull/${{ github.event.pull_request.number }}/merge'
+
   Web:
     needs: [Checkout]
     uses: "./.github/workflows/_website.yml"
