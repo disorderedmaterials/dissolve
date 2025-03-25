@@ -29,13 +29,13 @@ runs:
   # Setup / Install Dependencies
   #
 
-  - name: Install Homebrew Dependencies
-    if: ${{ inputs.cacheOnly == 'false' }}
+  - name: Manage Homebrew Dependencies
     shell: bash
     run: |
       set -ex
       brew update-reset
       brew install gsl
+      brew uninstall freetype
 
   - name: Get ANTLR
     working-directory: ${{ runner.temp }}
