@@ -21,10 +21,6 @@ AtomShakeNode::AtomShakeNode()
                             1);
     addInput<Number>("StepSizeMax", "Maximum allowed value for step size, in Angstroms", stepSizeMax_);
     addInput<Number>("StepSizeMin", "Minimum allowed value for step size, in Angstroms", stepSizeMin_);
-
-    addBoundedOptionalInput<std::optional<Number>>(
-        "CuttOffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
-        cutoffDistance_, 0.0, "Use PairPotential Range", {}, 0.1);
 }
 
 std::string_view AtomShakeNode::name() const { return "Atom Shake"; }
@@ -45,15 +41,7 @@ NodeConstants::ProcessResult AtomShakeNode::process()
     auto targetAcceptanceRate = targetAcceptanceRate_.asDouble();
 
     // Retrieve control parameters from Configuration
-    double rCut;
-    if (cutoffDistance_.has_value())
-    {
-        rCut = cutoffDistance_.value().asDouble();
-    }
-    else
-    {
-        rCut = dissolve().pairPotentialRange();
-    }
+    auto rCut = dissolve().pairPotentialRange();
 
     const auto termScale = 1.0;
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());

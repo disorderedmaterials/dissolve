@@ -24,8 +24,6 @@ class AtomShakeNode : public Node
     private:
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
-    // Interatomic cutoff distance to use for energy calculation
-    std::optional<Number> cutoffDistance_;
     // Number of shakes to attempt per atom
     Number nShakesPerAtom_{1};
     // Step size in Angstroms to use in Monte Carlo moves
