@@ -34,21 +34,32 @@ class Graph : public Node
     public:
     // Typedefs for Node and Edge storage
     using Nodes = std::map<std::string, std::unique_ptr<Node>>;
+    using ReverseNodes = std::map<const Node *, std::string>;
     using Edges = std::vector<std::unique_ptr<Edge>>;
 
     private:
     // Parent node
     Node *parent_;
-    // Container of nodes
+    // Map of node names to nodes
     Nodes nodes_;
+    // Map of nodes to node names
+    ReverseNodes reverseNodes_;
     // Container of edges
     Edges edges_;
+
+    private:
+    // Get unique node name
+    std::string uniqueNodeName(const Node *node, std::string_view baseName) const;
 
     public:
     // Produce a registered node by type
     static std::unique_ptr<Node> produceNode(const std::string_view &nodeType) { return registry.find(nodeType)->second(); }
     // Add node
     void addNode(std::unique_ptr<Node> &&node, std::string_view name);
+    // Get name of specified child node
+    std::string_view nodeName(const Node *node) const;
+    // Set name of specified child node
+    void setNodeName(const Node *node, std::string_view name);
     // Add edge between nodes
     bool addEdge(const EdgeDefinition &definition);
     // Remove edge between nodes
