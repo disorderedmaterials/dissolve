@@ -40,6 +40,7 @@ NodeConstants::ProcessResult AtomShakeNode::process()
     auto stepSizeMin = stepSizeMin_.asDouble();
     auto targetAcceptanceRate = targetAcceptanceRate_.asDouble();
 
+    // Retrieve control parameters from Configuration
     const auto termScale = 1.0;
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
 

@@ -43,8 +43,6 @@ class MDNode : public Node
     bool capForces_{false};
     // Set cap on allowable force (kJ/mol) per atom
     Number capForcesAt_{1.0e7};
-    // Interatomic cutoff distance to employ
-    std::optional<Number> cutoffDistance_;
     // Timestep type to employ
     TimestepType timestepType_{TimestepType::Automatic};
     // Fixed timestep (ps) to use in MD simulation

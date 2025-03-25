@@ -48,9 +48,6 @@ MDNode::MDNode()
 
     addInput<bool>("CapForces", "Control whether atomic forces are capped every step", capForces_);
     addInput<Number>("CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt_, 0.0);
-    addInput<std::optional<Number>>(
-        "CutoffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
-        cutoffDistance_, 0.0, std::nullopt, 0.1, "Use PairPotential Range");
     addInput<bool>(
         "IntraOnly",
         "Only forces arising from intramolecular terms (including pair potential contributions) will be calculated",
@@ -258,23 +255,12 @@ NodeConstants::ProcessResult MDNode::process()
     // Get control parameters
     const auto maxForce = capForcesAt * 100.0; // To convert from kJ/mol to 10 J/mol
 
-    double rCut;
-    if (cutoffDistance_.has_value())
-    {
-        rCut = cutoffDistance_.value().asDouble();
-    }
-    else
-    {
-        rCut = dissolve().pairPotentialRange();
-    }
-
     // Units
     // J = kg m2 s-2  -->   10 J = g Ang2 ps-2
     // If ke is in units of [g mol-1 Angstroms2 ps-2] then must use kb in units of 10 J mol-1 K-1 (= 0.8314462)
     const auto kb = 0.8314462;
 
     // Print argument/parameter summary
-    Messenger::print("MD: Cutoff distance is {}\n", rCut);
     Messenger::print("MD: Number of steps = {}\n", nSteps);
     Messenger::print("MD: Timestep type is '{}'\n", timestepType().keyword(timestepType_));
     if (onlyWhenEnergyStable_)
