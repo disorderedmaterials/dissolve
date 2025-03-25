@@ -24,7 +24,7 @@
 MDNode::MDNode()
 {
     addInput<Configuration*>("Configuration", "Set target configuration for the module", targetConfiguration_)
-        ->setFlags(ParameterBase::Invalidates);
+        ->setFlags({ParameterBase::Required, ParameterBase::Invalidates});
 
     addInput<Number>("NSteps", "Number of MD steps to perform", nSteps, 1);
     addInput<EnumOptions<MDNode::TimestepType>>("Timestep", "Timestep type to use in calculation", timestepType_,
