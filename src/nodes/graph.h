@@ -20,8 +20,19 @@ class Graph : public Node
     ~Graph() = default;
 
     /*
-     * Nodes and edges
+     * Definition
      */
+    public:
+    // Return type of the node
+    std::string_view type() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
+
+    /*
+     * Nodes and Edges
+     */
+    public:
+    // Typedefs for Node and Edge storage
     using Nodes = std::map<std::string, std::unique_ptr<Node>>;
     using Edges = std::vector<std::unique_ptr<Edge>>;
 
@@ -34,10 +45,6 @@ class Graph : public Node
     Edges edges_;
 
     public:
-    // Return type of the node
-    std::string_view type() const override;
-    // Return short summary of the node's purpose
-    std::string_view summary() const override;
     // Produce a registered node by type
     static std::unique_ptr<Node> produceNode(const std::string_view &nodeType) { return registry.find(nodeType)->second(); }
     // Add node

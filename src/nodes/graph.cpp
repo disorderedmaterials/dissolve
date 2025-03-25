@@ -1,5 +1,19 @@
 #include "nodes/graph.h"
 
+/*
+ * Definition
+ */
+
+// Return type of the node
+std::string_view Graph::type() const { return "Graph"; }
+
+// Return short summary of the node's purpose
+std::string_view Graph::summary() const { return "A node which contains its own inner graph"; }
+
+/*
+ * Nodes and Edges
+ */
+
 // Add nodes
 void Graph::addNode(std::unique_ptr<Node> &&node, std::string_view name)
 {
@@ -66,11 +80,9 @@ Graph::Nodes &Graph::nodes() { return nodes_; }
 // Return edges on the graph
 Graph::Edges &Graph::edges() { return edges_; }
 
-// Return type of the node
-std::string_view Graph::type() const { return "Graph"; }
-
-// Return short summary of the node's purpose
-std::string_view Graph::summary() const { return "A node which contains its own inner graph"; }
+/*
+ * I/O
+ */
 
 // Express as a serialisable value
 SerialisedValue Graph::serialise() const
