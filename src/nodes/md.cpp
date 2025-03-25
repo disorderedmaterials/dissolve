@@ -27,28 +27,28 @@ MDNode::MDNode()
         ->setFlags({ParameterBase::Required, ParameterBase::Invalidates});
 
     addInput<Number>("NSteps", "Number of MD steps to perform", nSteps, 1);
-    addInput<EnumOptions<MDNode::TimestepType>>("Timestep", "Timestep type to use in calculation", timestepType_,
+    addOption<EnumOptions<MDNode::TimestepType>>("Timestep", "Timestep type to use in calculation", timestepType_,
                                                               MDNode::timestepType());
-    addInput<Number>("DeltaT", "Fixed timestep (ps) to use in MD simulation", fixedTimestep_, 0.0);
-    addInput<bool>("RandomVelocities",
+    addOption<Number>("DeltaT", "Fixed timestep (ps) to use in MD simulation", fixedTimestep_, 0.0);
+    addOption<bool>("RandomVelocities",
                                "Whether random velocities should always be assigned before beginning MD simulation",
                                randomVelocities_);
 
-    addInput<std::vector<const Species *>>("RestrictToSpecies", "Restrict the calculation to the specified Species",
+    addOption<std::vector<const Species *>>("RestrictToSpecies", "Restrict the calculation to the specified Species",
                                            restrictToSpecies_);
-    addInput<bool>("OnlyWhenEnergyStable", "Only run MD when target Configuration energies are stable",
+    addOption<bool>("OnlyWhenEnergyStable", "Only run MD when target Configuration energies are stable",
                                onlyWhenEnergyStable_);
 
-    addInput<std::optional<Number>>("EnergyFrequency", "Frequency at which to calculate total system energy",
+    addOption<std::optional<Number>>("EnergyFrequency", "Frequency at which to calculate total system energy",
                                           energyFrequency_, 0, std::nullopt, 5, "Off");
-    addInput<std::optional<Number>>("OutputFrequency", "Frequency at which to output step information", outputFrequency_,
+    addOption<std::optional<Number>>("OutputFrequency", "Frequency at which to output step information", outputFrequency_,
                                           0, std::nullopt, 5, "Off");
-    addInput<std::optional<Number>>("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_, 0,
+    addOption<std::optional<Number>>("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_, 0,
                                           std::nullopt, 5, "Off");
 
-    addInput<bool>("CapForces", "Control whether atomic forces are capped every step", capForces_);
-    addInput<Number>("CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt_, 0.0);
-    addInput<bool>(
+    addOption<bool>("CapForces", "Control whether atomic forces are capped every step", capForces_);
+    addOption<Number>("CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt_, 0.0);
+    addOption<bool>(
         "IntraOnly",
         "Only forces arising from intramolecular terms (including pair potential contributions) will be calculated",
         intramolecularForcesOnly_);
