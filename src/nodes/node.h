@@ -26,36 +26,9 @@ class Node : public Serialisable<>
 
     using EdgeMap = std::map<std::string_view, Edge *>;
 
-    /*
-     * Context
-     */
-    struct NodeContext
-    {
-        private:
-        // World process pool
-        ProcessPool &processPool_;
-        // Dissolve optional reference wrapper
-        OptionalReferenceWrapper<Dissolve> &dissolve_;
-
-        public:
-        // Initialise node context
-        void initialise(Dissolve &dissolve);
-        // Return world process pool
-        ProcessPool &processPool();
-        // Return dissolve
-        Dissolve &dissolve();
-    };
-
-    // Set node context
-    void setContext(Dissolve &dissolve);
-    // Return node context
-    NodeContext &context() const;
-
     private:
     // Node parent graph
     Graph *parentGraph_;
-    // Node context
-    NodeContext ctx_;
 
     /*
      * Definition
@@ -65,6 +38,10 @@ class Node : public Serialisable<>
     virtual std::string_view name() const = 0;
     // Return short summary of the node's purpose
     virtual std::string_view summary() const = 0;
+    // Return dissolve
+    virtual Dissolve &dissolve() const;
+    // Return world pool
+    virtual ProcessPool &processPool() const;
 
     /*
      * Processing & Validity

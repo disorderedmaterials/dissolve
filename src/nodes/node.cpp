@@ -4,29 +4,11 @@
 #include "nodes/node.h"
 #include "base/sysFunc.h"
 
-/*
- * Context
- */
-
-// Set node context
-void Node::setContext(Dissolve &dissolve) { ctx_.initialise(dissolve); }
-
-// Return node context
-Node::NodeContext &Node::context() const { return ctx_; }
-
-// Initialise node context
-void Node::NodeContext::initialise(Dissolve &dissolve) { dissolve_ = dissolve, processPool_ = dissolve.worldPool(); }
-
-// Return world process pool
-ProcessPool &Node::NodeContext::processPool() { return processPool_; }
-
 // Return dissolve
-Dissolve &Node::NodeContext::dissolve()
-{
-    if (!dissolve_)
-        throw(std::runtime_error("Dissolve is not set in this module's context.\n"));
-    return dissolve_->get();
-}
+Dissolve &Node::dissolve() const { return parentGraph_->dissolve(); }
+
+// Return world pool
+ProcessPool &Node::processPool() const { return parentGraph_->processPool(); }
 
 /*
  * Inputs, Outputs & Options

@@ -17,6 +17,18 @@ class DissolveNode : public Node
     std::string_view name() const override { return "Dissolve"; }
     std::string_view summary() const override { return "Parent node of all simulations"; }
 
+    private:
+    // Dissolve reference
+    Dissolve &dissolve_;
+
+    public:
+    // Set dissolve
+    void setDissolve(Dissolve &dissolve);
+    // Return dissolve
+    Dissolve &dissolve() const override;
+    // Return world pool
+    ProcessPool &processPool() const override;
+
     /*
      * Processing
      */

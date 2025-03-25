@@ -32,8 +32,6 @@ class Graph : public Node
     Nodes nodes_;
     // Container of edges
     Edges edges_;
-    // Context
-    NodeContext *nodeContext_;
 
     public:
     // Return short name of the node
