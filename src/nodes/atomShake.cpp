@@ -52,7 +52,7 @@ NodeConstants::ProcessResult AtomShakeNode::process()
     }
     else
     {
-        rCut = context().dissolve().pairPotentialRange();
+        rCut = dissolve().pairPotentialRange();
     }
 
     const auto termScale = 1.0;
@@ -66,20 +66,20 @@ NodeConstants::ProcessResult AtomShakeNode::process()
     Messenger::print("AtomShake: Target acceptance rate is {}.\n", targetAcceptanceRate);
     Messenger::print("\n");
 
-    ProcessPool::DivisionStrategy strategy = context().processPool().bestStrategy();
+    ProcessPool::DivisionStrategy strategy = processPool().bestStrategy();
     Timer commsTimer(false);
 
     // Create a Molecule distributor
     RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
-                                    context().processPool(), strategy);
+                                    processPool(), strategy);
 
     // Create a local ChangeStore and EnergyKernel
-    ChangeStore changeStore(context().processPool(), commsTimer);
-    auto kernel = KernelProducer::energyKernel(targetConfiguration_, context().processPool(),
-                                               context().dissolve().potentialMap(), rCut);
+    ChangeStore changeStore(processPool(), commsTimer);
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, processPool(),
+                                               dissolve().potentialMap(), rCut);
 
     // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
-    RandomBuffer randomBuffer(context().processPool(), ProcessPool::subDivisionStrategy(strategy), commsTimer);
+    RandomBuffer randomBuffer(processPool(), ProcessPool::subDivisionStrategy(strategy), commsTimer);
 
     auto nAttempts = 0, nAccepted = 0;
     bool accept;
@@ -188,11 +188,11 @@ NodeConstants::ProcessResult AtomShakeNode::process()
     timer.stop();
 
     // Collect statistics across all processes
-    if (!context().processPool().allSum(&nAccepted, 1, strategy, commsTimer))
+    if (!processPool().allSum(&nAccepted, 1, strategy, commsTimer))
         return ProcessResult::Failed;
-    if (!context().processPool().allSum(&nAttempts, 1, strategy, commsTimer))
+    if (!processPool().allSum(&nAttempts, 1, strategy, commsTimer))
         return ProcessResult::Failed;
-    if (!context().processPool().allSum(&totalDelta, 1, strategy, commsTimer))
+    if (!processPool().allSum(&totalDelta, 1, strategy, commsTimer))
         return ProcessResult::Failed;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);

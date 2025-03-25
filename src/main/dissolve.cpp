@@ -75,6 +75,6 @@ GenericList &Dissolve::processingModuleData() { return processingModuleData_; }
 void Dissolve::setGraph()
 {
     auto dissolveNode = Graph::produceNode("Dissolve");
-    dissolveNode->setContext(*this);
+    dissolveNode->setDissolve(*this);
     graphNode_ = std::move(dissolveNode);
 }

@@ -2,7 +2,7 @@
 
 // Set dissolve
 void DissolveNode::setDissolve(Dissolve& dissolve)
-{ 
+{
     dissolve_ = dissolve;
 }
 
