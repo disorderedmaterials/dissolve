@@ -16,7 +16,7 @@
 class Graph : public Node
 {
     public:
-    explicit Graph(Node *parent) : Node(this), parent_(parent), nodeContext_(parent->context()) {}
+    explicit Graph(Node *parent) : Node(this), parent_(parent) {}
     ~Graph() = default;
 
     /*
