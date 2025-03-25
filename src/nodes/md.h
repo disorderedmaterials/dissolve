@@ -42,29 +42,29 @@ class MDNode : public Node
     // Control whether atomic forces are capped every step
     bool capForces_{false};
     // Set cap on allowable force (kJ/mol) per atom
-    double capForcesAt_{1.0e7};
+    Number capForcesAt_{1.0e7};
     // Interatomic cutoff distance to employ
-    std::optional<double> cutoffDistance_;
+    std::optional<Number> cutoffDistance_;
     // Timestep type to employ
     TimestepType timestepType_{TimestepType::Automatic};
     // Fixed timestep (ps) to use in MD simulation
-    double fixedTimestep_{5.0e-4};
+    Number fixedTimestep_{5.0e-4};
     // Frequency at which to calculate total system energy
-    std::optional<int> energyFrequency_{10};
+    std::optional<Number> energyFrequency_{10};
     // Whether to restrict force calculation to intramolecular contributions only
     bool intramolecularForcesOnly_{false};
     // Number of steps to perform
-    int nSteps_{50};
+    Number nSteps_{50};
     // Only run MD when target Configuration energies are stable
     bool onlyWhenEnergyStable_{true};
     // Frequency at which to output step information
-    std::optional<int> outputFrequency_{5};
+    std::optional<Number> outputFrequency_{5};
     // Whether random velocities should always be assigned before beginning MD simulation
     bool randomVelocities_{false};
     // Species to restrict calculation to
     std::vector<const Species *> restrictToSpecies_;
     // Write frequency for trajectory file
-    std::optional<int> trajectoryFrequency_;
+    std::optional<Number> trajectoryFrequency_;
 
     /*
      * Functions

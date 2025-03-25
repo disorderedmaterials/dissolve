@@ -43,12 +43,12 @@ MDNode::MDNode()
                                           energyFrequency_, 0, std::nullopt, 5, "Off");
     addInput<std::optional<Number>>("OutputFrequency", "Frequency at which to output step information", outputFrequency_,
                                           0, std::nullopt, 5, "Off");
-    addInput<std::optional<NUmber>>("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_, 0,
+    addInput<std::optional<Number>>("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_, 0,
                                           std::nullopt, 5, "Off");
 
     addInput<bool>("CapForces", "Control whether atomic forces are capped every step", capForces_);
-    addInput<Number>("CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt, 0.0);
-    addInput<std::optional<double>>(
+    addInput<Number>("CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt_, 0.0);
+    addInput<std::optional<Number>>(
         "CutoffDistance", "Interatomic cutoff distance to use for energy calculation (0.0 to use pair potential range)",
         cutoffDistance_, 0.0, std::nullopt, 0.1, "Use PairPotential Range");
     addInput<bool>(
