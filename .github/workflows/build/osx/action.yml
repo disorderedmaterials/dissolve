@@ -35,7 +35,6 @@ runs:
       set -ex
       brew update-reset
       brew install gsl
-      brew uninstall freetype
 
   - name: Get ANTLR
     working-directory: ${{ runner.temp }}
@@ -127,6 +126,7 @@ runs:
       mkdir ftgl-build && cd ftgl-build
       INCLUDE="${RUNNER_TEMP}/freetype-latest;$INCLUDE"
       LIB="${RUNNER_TEMP}/freetype-install/lib;${RUNNER_TEMP}/freetype-install/bin;$LIB"
+      export FREETYPE_DIR="${RUNNER_TEMP}/freetype-install"
       cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_INSTALL_PREFIX:path=../ftgl-install -DBUILD_SHARED_LIBS:bool=OFF
       cmake --build . --target install --config Release
 
