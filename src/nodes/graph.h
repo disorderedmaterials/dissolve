@@ -22,7 +22,7 @@ class Graph : public Node
     /*
      * Nodes and edges
      */
-    using Nodes = std::vector<std::unique_ptr<Node>>;
+    using Nodes = std::map<std::string, std::unique_ptr<Node>>;
     using Edges = std::vector<std::unique_ptr<Edge>>;
 
     private:

@@ -5,7 +5,7 @@ void Graph::addNode(std::unique_ptr<Node> &&node, std::string_view name)
 {
     node->setParentGraph(this);
     node->setName(name);
-    nodes_.emplace_back(std::move(node));
+    nodes_.insert(std::make_pair<std::string, std::unique_ptr<Node>>(std::string(name), std::move(node)));
 }
 
 // Add parameter link between nodes
@@ -54,10 +54,8 @@ Edge *Graph::findEdge(const EdgeDefinition &definition) const
 // Return named node, if it exists
 Node *Graph::node(std::string_view name)
 {
-    auto it = std::find_if(nodes_.begin(), nodes_.end(),
-                           [name](const auto &node) { return DissolveSys::sameString(node->name(), name); });
-    if (it != nodes_.end())
-        return it->get();
+    if (nodes_.contains(std::string(name)))
+        return nodes_[std::string(name)].get();
 
     return nullptr;
 }
@@ -78,7 +76,7 @@ std::string_view Graph::summary() const { return "A node which contains its own 
 SerialisedValue Graph::serialise() const
 {
     SerialisedValue graph, result = Node::serialise();
-    for (auto &node : nodes_)
+    for (auto &[name, node] : nodes_)
         graph[std::string(node->name())] = *node;
     result["graph"] = graph;
     return result;
