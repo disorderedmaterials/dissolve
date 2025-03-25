@@ -40,14 +40,10 @@ NodeConstants::ProcessResult AtomShakeNode::process()
     auto stepSizeMin = stepSizeMin_.asDouble();
     auto targetAcceptanceRate = targetAcceptanceRate_.asDouble();
 
-    // Retrieve control parameters from Configuration
-    auto rCut = dissolve().pairPotentialRange();
-
     const auto termScale = 1.0;
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
 
     // Print argument/parameter summary
-    Messenger::print("AtomShake: Cutoff distance is {}\n", rCut);
     Messenger::print("AtomShake: Performing {} shake(s) per Atom\n", nShakesPerAtom);
     Messenger::print("AtomShake: Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n",
                      stepSize, stepSizeMin, stepSizeMax);
@@ -64,7 +60,7 @@ NodeConstants::ProcessResult AtomShakeNode::process()
     // Create a local ChangeStore and EnergyKernel
     ChangeStore changeStore(processPool(), commsTimer);
     auto kernel = KernelProducer::energyKernel(targetConfiguration_, processPool(),
-                                               dissolve().potentialMap(), rCut);
+                                               dissolve().potentialMap(), dissolve().pairPotentialRange());
 
     // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
     RandomBuffer randomBuffer(processPool(), ProcessPool::subDivisionStrategy(strategy), commsTimer);
