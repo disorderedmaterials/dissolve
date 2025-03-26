@@ -9,8 +9,8 @@
 #include <typeindex>
 #include <vector>
 
+// Forward Declarations
 class Node;
-
 template <typename T> class Parameter;
 
 // Base type for all parameter templates to inherit from
@@ -21,7 +21,9 @@ class ParameterBase : public Serialisable<>
     // Parameter Flags
     enum ParameterFlags
     {
+        Required,    /* Indicates that this (input) has no default value and must have a link */
         Invalidates, /* Indicates that the node's data is invalidated if the parameter is changed */
+        Input,       /* Indicates that the parameter is meant to be a sink for data and not a source */
         Output,      /* Indicates that the parameter is meant to be a source of data and not a sink */
     };
 
@@ -37,10 +39,8 @@ class ParameterBase : public Serialisable<>
     std::type_index type_;
     // Flags for the parameter
     Flags<ParameterBase::ParameterFlags> flags_;
-    // The owner the parameter
+    // The owner of the parameter
     Node *parent_;
-    // Tell the owner to invalidate
-    void invalidate() const;
 
     public:
     // Return the parameter name
@@ -62,12 +62,10 @@ class ParameterBase : public Serialisable<>
     public:
     // Return whether the contained data represents the default value
     virtual bool isDefault() const = 0;
-    // Ensure that parameters are using the latest values
-    bool runUpdate() const;
-
+    // Invalidate the parent node (e.g. because our value has changed and we are an Invalidating parameter)
+    void invalidateParent() const;
     // Assign the value of another parameter to this one.
     virtual bool assign(ParameterBase *other) = 0;
-
     // Access the full parameter from the base
     template <typename T> std::shared_ptr<Parameter<T>> upcast()
     {
@@ -104,7 +102,7 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         {
             data_ = value;
             if (flags_.isSet(Invalidates))
-                invalidate();
+                invalidateParent();
         }
     }
     // Return the parameter value

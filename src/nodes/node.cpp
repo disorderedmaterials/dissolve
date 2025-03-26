@@ -5,16 +5,138 @@
 #include "base/sysFunc.h"
 
 /*
- * Inputs
+ * Inputs, Outputs & Options
+ */
+
+// Add edge
+bool Node::addEdge(Edge *edge)
+{
+    // The supplied Edge was created via our parent Graph, but we will still check to see whether we accept it
+    if (&edge->targetNode() == this)
+    {
+        // We are the target node, so we will double-check the specified input to see if it can accept the connection
+        // Simple check at present, we accept at most one connection per input, so if one already exists we complain
+        if (inputEdges_.contains(edge->targetInput().name()))
+            return Messenger::error("Node '{}' refusing to accept Edge connecting to input '{}' as one already exists.\n",
+                                    name(), edge->targetInput().name());
+
+        // All good, so add the input to our list
+        inputEdges_[edge->targetInput().name()] = edge;
+    }
+    else if (&edge->sourceNode() == this)
+    {
+        // We are the source node - nothing for us to do at present, but we may choose to store such Edges in future.
+    }
+    else
+        return Messenger::error("Node '{}' is neither the source nor the target for the supplied Edge.\n", name());
+
+    return true;
+}
+
+// Remove edge
+void Node::removeEdge(Edge *edge)
+{
+    // TODO
+    // inputEdges_.erase(std::remove_if(inputEdges_.begin(), inputEdges_.end(), [edge](const auto &it) { return edge ==
+    // it.second; } ), inputEdges_.end());
+}
+
+/*
+ * Processing & Validity
+ */
+
+// Return version index for the node, bumped whenever result outputs change
+int Node::versionIndex() const { return versionIndex_; }
+
+// Invalidate the current node, resetting the version index
+void Node::invalidate() { versionIndex_ = NodeConstants::InvalidVersion; }
+
+// Check that all required inputs are present, and that all inputs are valid
+bool Node::inputsAreValid() const
+{
+    for (auto &[inputName, parameter] : inputs_)
+    {
+        // Does this input have a link or links?
+        if (inputEdges_.contains(inputName))
+        {
+            if (!inputEdges_.at(inputName)->sourceOutput().parent()->inputsAreValid())
+                return false;
+        }
+        else if (parameter->flags().isSet(ParameterBase::ParameterFlags::Required))
+            return false;
+    }
+
+    return true;
+}
+
+// Run the node, retrieving dependent inputs as necessary
+NodeConstants::ProcessResult Node::run()
+{
+    // Check our input links - if any are out-of-date we must retrieve new values
+    auto nInputLinksChanged = 0;
+    for (auto &[inputName, edge] : inputEdges_)
+    {
+        auto edgeResult = edge->pull();
+        switch (edgeResult)
+        {
+            case (NodeConstants::ProcessResult::Failed):
+            case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                return NodeConstants::ProcessResult::Failed;
+            case (NodeConstants::ProcessResult::Success):
+                ++nInputLinksChanged;
+            case (NodeConstants::ProcessResult::Unchanged):
+                break;
+        }
+    }
+
+    // If input links have updated or we are currently flagged as invalid we must reprocess
+    auto result = NodeConstants::ProcessResult::Unchanged;
+    if (nInputLinksChanged > 0 || versionIndex_ == NodeConstants::InvalidVersion)
+    {
+        result = process();
+        switch (result)
+        {
+            case (NodeConstants::ProcessResult::Failed):
+            case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                break;
+            case (NodeConstants::ProcessResult::Success):
+                ++versionIndex_;
+            case (NodeConstants::ProcessResult::Unchanged):
+                break;
+        }
+    }
+
+    return result;
+}
+
+// Perform processing
+NodeConstants::ProcessResult Node::process() { return NodeConstants::ProcessResult::Failed; }
+
+/*
+ * Inputs, Outputs, and Options
  */
 
 // Return named input parameter if it exists
-std::shared_ptr<ParameterBase> Node::findParameter(std::string_view name) const
+std::shared_ptr<ParameterBase> Node::findInput(std::string_view name) const
 {
     if (!inputs_.contains(name))
         return {};
     return inputs_.at(name);
 }
+
+// Return input parameters
+std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::inputs() { return inputs_; };
+
+// Return named output parameter if it exists
+std::shared_ptr<ParameterBase> Node::findOutput(std::string_view name) const
+{
+    if (!outputs_.contains(name))
+        return {};
+    return outputs_.at(name);
+}
+
+// Return output parameters
+std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::outputs() { return outputs_; };
 
 // Return named input parameter if it exists
 std::shared_ptr<ParameterBase> Node::findOption(std::string_view name) const
@@ -24,41 +146,8 @@ std::shared_ptr<ParameterBase> Node::findOption(std::string_view name) const
     return options_.at(name);
 }
 
-/*
- * Inputs
- */
-
-// Return input parameters
-std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::parameters() { return inputs_; };
-
 // Return Options
 std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::options() { return options_; };
-
-// Prepare for processing
-Node::Readiness Node::preprocess()
-{
-    for (auto &[key, link] : inputLinks_)
-    {
-        // Ignore parameters that don't invalidate
-        if (!link.sink().flags().isSet(ParameterBase::Invalidates))
-            continue;
-        // Update unsatisfied sources
-        if (!(link.source().parent()->isSatisfied() || link.updateSource()))
-            return Node::Readiness::MissingComponent;
-    }
-    return Node::Readiness::Ready;
-}
-
-// Confirm that node data is up to date
-bool Node::isSatisfied()
-{
-    if (satisfied_)
-        return true;
-    for (auto &[name, link] : inputLinks_)
-        if (!link.source().parent()->isSatisfied())
-            satisfied_ = false;
-    return satisfied_;
-}
 
 // Set the node parent graph
 void Node::setParentGraph(Graph *parentGraph) { parentGraph_ = parentGraph; }
@@ -66,13 +155,11 @@ void Node::setParentGraph(Graph *parentGraph) { parentGraph_ = parentGraph; }
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }
 
-// Tell node to recalculate results
-void Node::invalidate() { satisfied_ = false; }
+Node::EdgeMap &Node::links() { return inputEdges_; }
 
-// Tell node that results are up to date
-void Node::validate() { satisfied_ = true; }
-
-Node::LinkMap &Node::links() { return inputLinks_; }
+/*
+ * I/O
+ */
 
 // Express as a serialisable value
 SerialisedValue Node::serialise() const
