@@ -4,52 +4,36 @@
 #pragma once
 
 #include "nodes/node.h"
-
-namespace NodeNames
-{
-const std::map<std::type_index, std::string_view> Multiply = {{std::type_index(typeid(double)), "MultiplyDouble"},
-                                                              {std::type_index(typeid(int)), "MultiplyIn t"}};
-};
+#include "nodes/number.h"
 
 // MultiplyNode Node
-template <typename T> class MultiplyNode : public Node
+class MultiplyNode : public Node
 {
     public:
-    MultiplyNode()
-    {
-        addInput<T>("A", "First factor to the multiplication", a_);
-        addInput<T>("B", "Second factor to the multiplication", b_);
-        addOutput<T>("Product", "The product of the two factors", product_);
-    }
+    MultiplyNode();
     ~MultiplyNode() override = default;
 
     public:
-    std::string_view name() const override { return NodeNames::Multiply.at(std::type_index(typeid(T))); }
-    std::string_view summary() const override { return "Performs multiplication of factors A and B"; }
+    // Return short name of the node
+    std::string_view name() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
 
     /*
      * Definition
      */
     private:
     // Factor A
-    T a_;
+    Number a_;
     // Factor B
-    T b_;
+    Number b_;
     // Product of A and B
-    T product_;
+    Number result_;
 
     /*
      * Processing
      */
-    private:
+    public:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext)
-    {
-        product_ = std::multiplies<T>(a_, b_);
-        validate();
-        return Module::ExecutionResult::Success;
-    }
+    NodeConstants::ProcessResult process() override;
 };
-
-using MultiplyDouble = MultiplyNode<double>;
-using MultiplyInt = MultiplyNode<int>;

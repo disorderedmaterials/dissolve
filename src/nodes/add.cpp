@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
+#include "nodes/add.h"
+
+AddNode::AddNode()
+{
+    addInput<Number>("A", "First operand to the addition", a_);
+    addInput<Number>("B", "Second operand to the addition", b_);
+    addOutput<Number>("Result", "The sum of the operands", result_);
+}
+
+/*
+ * Definition (Virtuals)
+ */
+
+// Return short name of the node
+std::string_view AddNode::name() const { return "Add"; }
+
+// Return short summary of the node's purpose
+std::string_view AddNode::summary() const { return "Performs addition of operands A and B"; }
+
+// Perform processing
+NodeConstants::ProcessResult AddNode::process()
+{
+    result_ = a_ + b_;
+
+    return NodeConstants::ProcessResult::Success;
+}

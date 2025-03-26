@@ -16,6 +16,6 @@ std::string_view Vec3AssemblyNode::summary() const { return "Assemble a 3-vector
 Module::ExecutionResult Vec3AssemblyNode::process(ModuleContext &moduleContext)
 {
     outputVector_.set(x_, y_, z_);
-    validate();
+
     return Module::ExecutionResult::Success;
 }

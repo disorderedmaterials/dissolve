@@ -18,6 +18,6 @@ Module::ExecutionResult Vec3DecompositionNode::process(ModuleContext &moduleCont
     x_ = inputVector_.x;
     y_ = inputVector_.y;
     z_ = inputVector_.z;
-    validate();
+
     return Module::ExecutionResult::Success;
 }
