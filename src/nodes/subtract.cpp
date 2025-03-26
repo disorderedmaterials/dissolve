@@ -11,8 +11,8 @@ SubtractNode::SubtractNode()
  * Definition (Virtuals)
  */
 
-// Return short name of the node
-std::string_view SubtractNode::name() const { return "Subtract"; }
+// Return type of the node
+std::string_view SubtractNode::type() const { return "Subtract"; }
 
 // Return short summary of the node's purpose
 std::string_view SubtractNode::summary() const { return "Performs the subtraction A - B"; }

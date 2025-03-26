@@ -7,7 +7,7 @@ DerivativeNode::DerivativeNode()
     addOutput<Data1D>("Derivative", "The elementwise derivative of the input", derivative_);
 }
 
-std::string_view DerivativeNode::name() const { return "Derivative"; }
+std::string_view DerivativeNode::type() const { return "Derivative"; }
 
 std::string_view DerivativeNode::summary() const { return "Computes the derivate of a 1D data series"; }
 

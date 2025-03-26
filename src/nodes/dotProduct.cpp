@@ -7,7 +7,7 @@ DotProductNode::DotProductNode()
     addOutput<double>("Product", "The inner product of the vectors", dotProduct_);
 }
 
-std::string_view DotProductNode::name() const { return "Dot Product"; }
+std::string_view DotProductNode::type() const { return "Dot Product"; }
 
 std::string_view DotProductNode::summary() const { return "Computes the dot product of a pair of vectors u and v"; }
 

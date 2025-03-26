@@ -9,6 +9,13 @@ Edge::Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, Para
 {
 }
 
+Edge::~Edge()
+{
+    // Detach from the source and target nodes
+    sourceNode_.unlinkEdge(this);
+    targetNode_.unlinkEdge(this);
+}
+
 // Local EdgeConstructor class to allow creation of memory-managed Edge instances
 class EdgeConstructor : public Edge
 {
@@ -74,7 +81,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     auto edge = std::make_unique<EdgeConstructor>(*sourceNode, *sourceOutput, *targetNode, *targetInput);
 
     // Notify nodes about the new edge
-    if (!sourceNode->addEdge(edge.get()) || !targetNode->addEdge(edge.get()))
+    if (!sourceNode->linkEdge(edge.get()) || !targetNode->linkEdge(edge.get()))
         return {};
 
     return edge;
@@ -107,11 +114,9 @@ NodeConstants::ProcessResult Edge::pull()
      * itself we need to pull from or run the source node to get the updated output. We can then store the source node's
      * current versionIndex ready for next time.
      */
-    auto result = NodeConstants::ProcessResult::Failed;
-    if (sourceNodeVersionIndex_ == NodeConstants::InvalidVersion ||
-        sourceNode_.versionIndex() == NodeConstants::InvalidVersion || (sourceNodeVersionIndex_ != sourceNode_.versionIndex()))
+    if (!sourceNode_.isUpToDate() || (sourceNodeVersionIndex_ != sourceNode_.versionIndex()))
     {
-        result = sourceNode_.run();
+        auto result = sourceNode_.run();
         if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
         {
             Messenger::error("Failed to pull updated value from node '{}'\n", sourceNode_.name());
@@ -121,13 +126,10 @@ NodeConstants::ProcessResult Edge::pull()
         // Update version index
         sourceNodeVersionIndex_ = sourceNode_.versionIndex();
 
-        // If the source node's run() result was Unchanged, return success anyway as we need to flag to our target node
-        // that its data has changed and needs to run again.
-        result = NodeConstants::ProcessResult::Success;
+        // Copy the parameter data over
+        return targetInput_.assign(&sourceOutput_) ? NodeConstants::ProcessResult::Success
+                                                   : NodeConstants::ProcessResult::Failed;
     }
-    else
-        result = NodeConstants::ProcessResult::Unchanged;
 
-    // Copy the parameter data over
-    return targetInput_.assign(&sourceOutput_) ? result : NodeConstants::ProcessResult::Failed;
+    return NodeConstants::ProcessResult::Unchanged;
 }

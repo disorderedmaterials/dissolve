@@ -20,15 +20,16 @@ struct EdgeDefinition
 // Edge
 class Edge
 {
-    private:
-    // Edge definition
-    EdgeDefinition definition_;
+    public:
+    ~Edge();
 
     protected:
     // The constructor is private because it can only be constructed by the factory method
     Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput);
 
     private:
+    // Edge definition
+    EdgeDefinition definition_;
     // Store references instead of pointers to the linked nodes and parameters for two reasons:
     // 1) Neither end of the link should EVER be null
     // 2) The link itself is immutable.  You can create links and
