@@ -14,6 +14,6 @@ std::string_view DerivativeNode::summary() const { return "Computes the derivate
 Module::ExecutionResult DerivativeNode::process(ModuleContext &moduleContext)
 {
     derivative_ = Derivative::derivative(inputData_);
-    validate();
+
     return Module::ExecutionResult::Success;
 }
