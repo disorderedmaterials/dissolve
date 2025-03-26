@@ -25,16 +25,22 @@ class Node : public Serialisable<>
 
     using EdgeMap = std::map<std::string_view, Edge *>;
 
-    private:
-    // Node parent graph
-    Graph *parentGraph_;
-
     /*
      * Definition
      */
+    private:
+    // Name of the node (unique within it's parent Graph)
+    std::string name_;
+    // Node parent graph
+    Graph *parentGraph_;
+
     public:
-    // Return short name of the node
-    virtual std::string_view name() const = 0;
+    // Set node name
+    void setName(std::string_view newName);
+    // Return node name
+    std::string_view name() const;
+    // Return node type
+    virtual std::string_view type() const = 0;
     // Return short summary of the node's purpose
     virtual std::string_view summary() const = 0;
 
@@ -44,6 +50,8 @@ class Node : public Serialisable<>
     private:
     // Version index for the node, bumped whenever result outputs change
     int versionIndex_{NodeConstants::InvalidVersion};
+    // Whether the node's data is up-to-date
+    bool upToDate_{false};
 
     protected:
     // Perform processing
@@ -54,6 +62,10 @@ class Node : public Serialisable<>
     int versionIndex() const;
     // Invalidate the current node, resetting versionIndex_
     void invalidate();
+    // Flag that the node data needs to be updated
+    void setUpdateRequired();
+    // Return whether the node's data is up-to-date
+    bool isUpToDate() const;
     // Check that all required inputs are present, and that all inputs are valid
     bool inputsAreValid() const;
     // Run the node, retrieving dependent inputs as necessary
@@ -73,10 +85,10 @@ class Node : public Serialisable<>
     EdgeMap inputEdges_;
 
     public:
-    // Add edge, returning whether we accept it
-    bool addEdge(Edge *edge);
-    // Remove edge
-    void removeEdge(Edge *edge);
+    // Link edge, returning whether we accept it
+    bool linkEdge(Edge *edge);
+    // Unlink edge
+    void unlinkEdge(Edge *edge);
     // Add input parameter
     template <class T> std::shared_ptr<ParameterBase> addOption(std::string_view name, std::string_view description, T &data)
     {
@@ -156,6 +168,17 @@ class Node : public Serialisable<>
     // Returns the node parent graph
     Graph *parentGraph() const;
 
+    /*
+     * Data
+     */
+    public:
+    // Clear any local data
+    virtual void clearData();
+
+    /*
+     * I/O
+     */
+    public:
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value

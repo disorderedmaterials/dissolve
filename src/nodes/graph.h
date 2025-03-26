@@ -22,7 +22,7 @@ class Graph : public Node
     /*
      * Nodes and edges
      */
-    using Nodes = std::map<std::string_view, std::unique_ptr<Node>>;
+    using Nodes = std::map<std::string, std::unique_ptr<Node>>;
     using Edges = std::vector<std::unique_ptr<Edge>>;
 
     private:
@@ -34,21 +34,26 @@ class Graph : public Node
     Edges edges_;
 
     public:
-    // Return short name of the node
-    std::string_view name() const override;
+    // Return type of the node
+    std::string_view type() const override;
     // Return short summary of the node's purpose
     std::string_view summary() const override;
     // Produce a registered node by type
     static std::unique_ptr<Node> produceNode(const std::string_view &nodeType) { return registry.find(nodeType)->second(); }
     // Add node
     void addNode(std::unique_ptr<Node> &&node, std::string_view name);
-    // Add parameter link between nodes
+    // Add edge between nodes
     bool addEdge(const EdgeDefinition &definition);
+    // Remove edge between nodes
+    bool removeEdge(const EdgeDefinition &definition);
+    bool removeEdge(Edge *edgeToRemove);
+    // Find edge between nodes
+    Edge *findEdge(const EdgeDefinition &definition) const;
     // Return named node, if it exists
     Node *node(std::string_view name);
     // Return container of nodes
     Nodes &nodes();
-    // Return container of parameter links between nodes
+    // Return container of edges between nodes
     Edges &edges();
 
     // Express as a serialisable value

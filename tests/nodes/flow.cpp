@@ -35,7 +35,7 @@ class GraphFlowTest : public ::testing::Test
         graph_.addNode(NodeRegistry::produce("Add"), "y");
         graph_.addNode(NodeRegistry::produce("Add"), "z");
 
-        x_ = dynamic_cast<AddNode *>(graph_.nodes()["x"].get());
+        x_ = dynamic_cast<AddNode *>(graph_.node("x"));
         ASSERT_TRUE(x_);
         xA_ = x_->findInput("A")->upcast<Number>();
         xB_ = x_->findInput("B")->upcast<Number>();
@@ -45,7 +45,7 @@ class GraphFlowTest : public ::testing::Test
         ASSERT_TRUE(xResult_);
         xA_->set(1);
         xB_->set(2);
-        y_ = dynamic_cast<AddNode *>(graph_.nodes()["y"].get());
+        y_ = dynamic_cast<AddNode *>(graph_.node("y"));
         ASSERT_TRUE(y_);
         yA_ = y_->findInput("A")->upcast<Number>();
         yB_ = y_->findInput("B")->upcast<Number>();
@@ -55,7 +55,7 @@ class GraphFlowTest : public ::testing::Test
         ASSERT_TRUE(yResult_);
         yA_->set(3);
         yB_->set(4);
-        z_ = dynamic_cast<AddNode *>(graph_.nodes()["z"].get());
+        z_ = dynamic_cast<AddNode *>(graph_.node("z"));
         ASSERT_TRUE(z_);
         zA_ = z_->findInput("A")->upcast<Number>();
         zB_ = z_->findInput("B")->upcast<Number>();
@@ -86,49 +86,135 @@ TEST_F(GraphFlowTest, Basic)
 
     // Check nodes in isolation first - all should be able to run and give meaningful results
     EXPECT_TRUE(x_->inputsAreValid());
+    EXPECT_FALSE(x_->isUpToDate());
     EXPECT_EQ(x_->versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(x_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(xResult_->get().asInteger(), 3);
+    EXPECT_TRUE(x_->isUpToDate());
 
     EXPECT_TRUE(y_->inputsAreValid());
+    EXPECT_FALSE(y_->isUpToDate());
     EXPECT_EQ(y_->versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(yResult_->get().asInteger(), 7);
+    EXPECT_TRUE(y_->isUpToDate());
 
     EXPECT_TRUE(z_->inputsAreValid());
+    EXPECT_FALSE(z_->isUpToDate());
     EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->versionIndex(), 0);
     EXPECT_EQ(zResult_->get().asInteger(), 0);
+    EXPECT_TRUE(z_->isUpToDate());
 
     // Running nodes again should not increase version index since the inputs have no dependencies
     EXPECT_EQ(x_->run(), NodeConstants::ProcessResult::Unchanged);
     EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_TRUE(x_->isUpToDate());
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Unchanged);
     EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_TRUE(y_->isUpToDate());
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Unchanged);
     EXPECT_EQ(z_->versionIndex(), 0);
+    EXPECT_TRUE(z_->isUpToDate());
 
     // Add the edge between x's "Result" and z's "A" input
     EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "A"}));
+    EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
 
     // If we now run z we should use x's output without changing x itself
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(z_->versionIndex(), 1);
+    EXPECT_EQ(z_->versionIndex(), 0);
     EXPECT_EQ(zResult_->get().asInteger(), 3);
     EXPECT_EQ(x_->versionIndex(), 0);
 
     // Complete the graph and link y's "Result" output to z's "B" input
     EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "B"}));
+    EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
 
     // As before, if we now run z we should use x's and y's output without changing x or y
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(z_->versionIndex(), 2);
+    EXPECT_EQ(z_->versionIndex(), 0);
     EXPECT_EQ(zResult_->get().asInteger(), 10);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
 };
+
+TEST_F(GraphFlowTest, SetInput)
+{
+    // Get the basic graph
+    createGraph(true);
+
+    // Run z - all nodes should update
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(z_->versionIndex(), 0);
+    EXPECT_EQ(zResult_->get().asInteger(), 10);
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+
+    // Set the input A of 'x' manually. This should invalidate 'x' alone.
+    xA_->set(0);
+    EXPECT_FALSE(x_->isUpToDate());
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(z_->versionIndex(), 0);
+
+    // Run z again - it should be forced to reprocess and update itself, along with 'x' - 'y' remains unchanged
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 1);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(z_->versionIndex(), 1);
+    EXPECT_EQ(zResult_->get().asInteger(), 9);
+
+    // One more time
+    xB_->set(10);
+    EXPECT_FALSE(x_->isUpToDate());
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 2);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(z_->versionIndex(), 2);
+    EXPECT_EQ(zResult_->get().asInteger(), 17);
+
+    // And now for y
+    yB_->set(5);
+    EXPECT_TRUE(x_->isUpToDate());
+    EXPECT_FALSE(y_->isUpToDate());
+    EXPECT_TRUE(z_->isUpToDate());
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 2);
+    EXPECT_EQ(y_->versionIndex(), 1);
+    EXPECT_EQ(z_->versionIndex(), 3);
+    EXPECT_EQ(zResult_->get().asInteger(), 18);
+}
+
+TEST_F(GraphFlowTest, RemoveEdges)
+{
+    // Get the basic graph
+    createGraph(true);
+
+    // Run z - all nodes should update
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(z_->versionIndex(), 0);
+    EXPECT_EQ(zResult_->get().asInteger(), 10);
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+
+    // Remove edge between x and z - this will invalidate z but not x
+    EXPECT_TRUE(graph_.removeEdge({"x", "Result", "z", "A"}));
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
+
+    // Now remove edge between y and z - this will invalidate z but not y
+    EXPECT_TRUE(graph_.removeEdge({"y", "Result", "z", "B"}));
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
+
+    // Try to remove a non-existent edge
+    EXPECT_FALSE(graph_.removeEdge({"Q", "Result", "z", "C"}));
+}
 
 } // namespace UnitTest
