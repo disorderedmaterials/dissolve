@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/messenger.h"
+#include "nodes/edge.h"
 #include "nodes/node.h"
 #include "nodes/registry.h"
 #include <map>
@@ -22,18 +23,15 @@ class Graph : public Node
      * Nodes and edges
      */
     using Nodes = std::map<std::string_view, std::unique_ptr<Node>>;
-    struct Edge
-    {
-        std::string_view source, sourceParam, edge, edgeParam;
-        bool operator==(const Edge &other) const = default;
-    };
-    using Edges = std::vector<Edge>;
+    using Edges = std::vector<std::unique_ptr<Edge>>;
 
     private:
     // Parent node
     Node *parent_;
     // Container of nodes
-    Nodes nodes_{};
+    Nodes nodes_;
+    // Container of edges
+    Edges edges_;
 
     public:
     // Return short name of the node
@@ -45,11 +43,13 @@ class Graph : public Node
     // Add node
     void addNode(std::unique_ptr<Node> &&node, std::string_view name);
     // Add parameter link between nodes
-    bool addEdge(Edge edge);
+    bool addEdge(const EdgeDefinition &definition);
+    // Return named node, if it exists
+    Node *node(std::string_view name);
     // Return container of nodes
     Nodes &nodes();
     // Return container of parameter links between nodes
-    Edges edges();
+    Edges &edges();
 
     // Express as a serialisable value
     SerialisedValue serialise() const override;
