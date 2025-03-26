@@ -16,11 +16,10 @@ AtomShakeNode::AtomShakeNode()
     addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::Invalidates});
 
-    addInput<Number>("ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_);
-    addBoundedInput<Number>("TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", targetAcceptanceRate_, 0,
-                            1);
-    addInput<Number>("StepSizeMax", "Maximum allowed value for step size, in Angstroms", stepSizeMax_);
-    addInput<Number>("StepSizeMin", "Minimum allowed value for step size, in Angstroms", stepSizeMin_);
+    addOption<Number>("ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_);
+    addOption<Number>("TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", targetAcceptanceRate_);
+    addOption<Number>("StepSizeMax", "Maximum allowed value for step size, in Angstroms", stepSizeMax_);
+    addOption<Number>("StepSizeMin", "Minimum allowed value for step size, in Angstroms", stepSizeMin_);
 }
 
 std::string_view AtomShakeNode::name() const { return "Atom Shake"; }
