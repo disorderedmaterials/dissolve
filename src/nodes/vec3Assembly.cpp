@@ -8,7 +8,7 @@ Vec3AssemblyNode::Vec3AssemblyNode()
     addOutput<Vec3<double>>("outputVector_", "The assembed vector", outputVector_);
 }
 
-std::string_view Vec3AssemblyNode::name() const { return "Vector3 Assembly"; }
+std::string_view Vec3AssemblyNode::type() const { return "Vector3 Assembly"; }
 
 std::string_view Vec3AssemblyNode::summary() const { return "Assemble a 3-vector from x, y, and z values."; }
 

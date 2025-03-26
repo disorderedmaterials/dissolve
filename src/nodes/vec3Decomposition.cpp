@@ -8,7 +8,7 @@ Vec3DecompositionNode::Vec3DecompositionNode()
     addOutput<double>("Z", "The first component of the vector", z_);
 }
 
-std::string_view Vec3DecompositionNode::name() const { return "Vector3 Decomposition"; }
+std::string_view Vec3DecompositionNode::type() const { return "Vector3 Decomposition"; }
 
 std::string_view Vec3DecompositionNode::summary() const { return "Decompose a 3-vector into x, y, and z components."; }
 
