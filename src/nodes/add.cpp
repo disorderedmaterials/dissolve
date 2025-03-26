@@ -14,8 +14,8 @@ AddNode::AddNode()
  * Definition (Virtuals)
  */
 
-// Return short name of the node
-std::string_view AddNode::name() const { return "Add"; }
+// Return type of the node
+std::string_view AddNode::type() const { return "Add"; }
 
 // Return short summary of the node's purpose
 std::string_view AddNode::summary() const { return "Performs addition of operands A and B"; }

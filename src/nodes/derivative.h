@@ -14,7 +14,7 @@ class DerivativeNode : public Node
     ~DerivativeNode() override = default;
 
     public:
-    std::string_view name() const override;
+    std::string_view type() const override;
     std::string_view summary() const override;
 
     /*

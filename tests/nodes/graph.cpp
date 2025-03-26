@@ -35,11 +35,11 @@ class GraphCoreTest : public ::testing::Test
         graph_.addNode(NodeRegistry::produce("Add"), "y");
         graph_.addNode(NodeRegistry::produce("Add"), "z");
 
-        x_ = dynamic_cast<AddNode *>(graph_.nodes()["x"].get());
+        x_ = dynamic_cast<AddNode *>(graph_.node("x"));
         ASSERT_TRUE(x_);
-        y_ = dynamic_cast<AddNode *>(graph_.nodes()["y"].get());
+        y_ = dynamic_cast<AddNode *>(graph_.node("y"));
         ASSERT_TRUE(y_);
-        z_ = dynamic_cast<AddNode *>(graph_.nodes()["z"].get());
+        z_ = dynamic_cast<AddNode *>(graph_.node("z"));
         ASSERT_TRUE(z_);
 
         EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "A"}));

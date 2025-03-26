@@ -21,10 +21,11 @@ class ParameterBase : public Serialisable<>
     // Parameter Flags
     enum ParameterFlags
     {
-        Required,    /* Indicates that this (input) has no default value and must have a link */
-        Invalidates, /* Indicates that the node's data is invalidated if the parameter is changed */
-        Input,       /* Indicates that the parameter is meant to be a sink for data and not a source */
-        Output,      /* Indicates that the parameter is meant to be a source of data and not a sink */
+        Required,  /* Indicates that this (input) has no default value and must have a link */
+        NoUpdate,  /* Indicates that changing the parameters value does not warrant a node update */
+        ClearData, /* Indicates that any local data should be cleared if the parameter is changed */
+        Input,     /* Indicates that the parameter is meant to be a sink for data and not a source */
+        Output,    /* Indicates that the parameter is meant to be a source of data and not a sink */
     };
 
     /*
@@ -62,8 +63,10 @@ class ParameterBase : public Serialisable<>
     public:
     // Return whether the contained data represents the default value
     virtual bool isDefault() const = 0;
-    // Invalidate the parent node (e.g. because our value has changed and we are an Invalidating parameter)
-    void invalidateParent() const;
+    // Flag that an update is required in the parent node
+    void setParentUpdateRequired() const;
+    // Clear data in the parent node
+    void clearDataInParent() const;
     // Assign the value of another parameter to this one.
     virtual bool assign(ParameterBase *other) = 0;
     // Access the full parameter from the base
@@ -101,8 +104,14 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         if (data_ != value)
         {
             data_ = value;
-            if (flags_.isSet(Invalidates))
-                invalidateParent();
+
+            // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
+            if (!flags_.isSet(NoUpdate))
+                setParentUpdateRequired();
+
+            // Setting some parameters forces any local data to be cleared
+            if (flags_.isSet(ClearData))
+                clearDataInParent();
         }
     }
     // Return the parameter value

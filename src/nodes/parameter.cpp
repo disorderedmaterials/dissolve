@@ -35,5 +35,8 @@ const Flags<ParameterBase::ParameterFlags> &ParameterBase::flags() const { retur
  * Data
  */
 
-// Invalidate the parent node (e.g. because our value has changed and we are an Invalidating parameter)
-void ParameterBase::invalidateParent() const { return parent_->invalidate(); }
+// Flag that an update is required in the parent node
+void ParameterBase::setParentUpdateRequired() const { parent_->setUpdateRequired(); }
+
+// Clear data in the parent node
+void ParameterBase::clearDataInParent() const { parent_->clearData(); }
