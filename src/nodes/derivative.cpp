@@ -3,17 +3,17 @@
 
 DerivativeNode::DerivativeNode()
 {
-    addInput<Data1D>("InputData", "Input 1D data series", inputData_);
-    addOutput<Data1D>("Derivative", "The elementwise derivative of the input", derivative_);
+    addInput<Data1D>("Data1D", "Input 1D data series", inputData_);
+    addOutput<Data1D>("Result", "The elementwise derivative of the input", derivative_);
 }
 
 std::string_view DerivativeNode::type() const { return "Derivative"; }
 
-std::string_view DerivativeNode::summary() const { return "Computes the derivate of a 1D data series"; }
+std::string_view DerivativeNode::summary() const { return "Computes the derivative of a 1D data series"; }
 
-Module::ExecutionResult DerivativeNode::process(ModuleContext &moduleContext)
+NodeConstants::ProcessResult DerivativeNode::process()
 {
     derivative_ = Derivative::derivative(inputData_);
 
-    return Module::ExecutionResult::Success;
+    return NodeConstants::ProcessResult::Success;
 }

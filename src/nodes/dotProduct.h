@@ -4,6 +4,7 @@
 #pragma once
 
 #include "nodes/node.h"
+#include "nodes/number.h"
 #include "templates/vector3.h"
 
 // DotProductNode Node
@@ -26,12 +27,12 @@ class DotProductNode : public Node
     // Input vector 2
     Vec3<double> v_;
     // Dot product value
-    double dotProduct_;
+    Number dotProduct_;
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext);
+    NodeConstants::ProcessResult process() override;
 };
