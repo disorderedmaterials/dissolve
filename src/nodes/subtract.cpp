@@ -4,7 +4,7 @@ SubtractNode::SubtractNode()
 {
     addInput<Number>("A", "First operand to the subtraction", a_);
     addInput<Number>("B", "Second operand to the subtraction, subtracted from A", b_);
-    addOutput<Number>("Difference", "The difference of the operands", result_);
+    addOutput<Number>("Result", "The difference of the operands", result_);
 }
 
 /*
