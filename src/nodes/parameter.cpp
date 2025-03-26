@@ -22,15 +22,18 @@ std::string_view ParameterBase::description() const { return description_; }
 // Return the parameter type
 std::type_index ParameterBase::type() const { return type_; }
 
+// Return the owner of the parameter
+Node *ParameterBase::parent() const { return parent_; }
+
 // Set flag(s) for the parameter
 void ParameterBase::setFlags(const Flags<ParameterBase::ParameterFlags> &flags) { flags_ += flags; }
 
 // Return current flags
 const Flags<ParameterBase::ParameterFlags> &ParameterBase::flags() const { return flags_; }
 
-// Ensure that parameters are using the latest values
-bool ParameterBase::runUpdate() const { return parent_->process() == Module::ExecutionResult::Success; }
+/*
+ * Data
+ */
 
-Node *ParameterBase::parent() const { return parent_; }
-
-void ParameterBase::invalidate() const { parent_->invalidate(); }
+// Invalidate the parent node (e.g. because our value has changed and we are an Invalidating parameter)
+void ParameterBase::invalidateParent() const { return parent_->invalidate(); }
