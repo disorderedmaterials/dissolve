@@ -20,7 +20,6 @@
 #include "modules/forces/forces.h"
 #include "nodes/md.h"
 
-
 MDNode::MDNode()
 {
     addInput<Configuration*>("Configuration", "Set target configuration for the module", targetConfiguration_)
