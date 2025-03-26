@@ -4,6 +4,7 @@
 #pragma once
 
 #include "nodes/node.h"
+#include "nodes/number.h"
 #include "templates/vector3.h"
 
 // Vec3DecompositionNode Node
@@ -24,16 +25,16 @@ class Vec3DecompositionNode : public Node
     // Input vector
     Vec3<double> inputVector_;
     // Output x
-    double x_;
+    Number x_;
     // Output y
-    double y_;
+    Number y_;
     // Output z
-    double z_;
+    Number z_;
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext);
+    NodeConstants::ProcessResult process() override;
 };
