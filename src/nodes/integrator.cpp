@@ -2,9 +2,9 @@
 
 Integrator1DNode::Integrator1DNode()
 {
-    addInput<Data1D>("InputData", "Input 1D data series", inputData_);
-    addInput<std::string_view>("IntegrationMethod", "Method to use for integration", type_);
-    addOutput<double>("Integral", "The integration of the input data series", integral_);
+    addInput<Data1D>("Data1D", "Input 1D data series", inputData_);
+    addInput<std::string_view>("Method", "Method to use for integration", type_);
+    addOutput<Number>("Result", "The integration of the input data series", integral_);
 }
 
 // Return enum options for form
@@ -25,30 +25,28 @@ std::string_view Integrator1DNode::type() const { return "Integrator"; }
 std::string_view Integrator1DNode::summary() const { return "Computes the integral for a 1D data series"; }
 
 // Run main processing
-Module::ExecutionResult Integrator1DNode::process(ModuleContext &moduleContext)
+NodeConstants::ProcessResult Integrator1DNode::process()
 {
-    auto typeEnum = types().enumeration(type_);
-
-    switch (typeEnum)
+    switch (types().enumeration(type_))
     {
         case Method::Trapezoidal:
             integral_ = Integrator::trapezoid(inputData_);
-
+            break;
         case Method::AbsoluteTrapezoidal:
             integral_ = Integrator::absTrapezoid(inputData_);
-
+            break;
         case Method::Sum:
             integral_ = Integrator::sum(inputData_);
-
+            break;
         case Method::AbsoluteSum:
             integral_ = Integrator::absSum(inputData_);
-
+            break;
         case Method::SumOfSquares:
             integral_ = Integrator::sumOfSquares(inputData_);
-
+            break;
         default:
-            return Module::ExecutionResult::Failed;
+            return NodeConstants::ProcessResult::Failed;
     }
 
-    return Module::ExecutionResult::Success;
+    return NodeConstants::ProcessResult::Success;
 }

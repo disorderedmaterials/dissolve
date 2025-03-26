@@ -7,6 +7,7 @@
 #include "math/data1D.h"
 #include "math/integrator.h"
 #include "nodes/node.h"
+#include "nodes/number.h"
 
 // Integrator1DNode Node
 class Integrator1DNode : public Node
@@ -41,12 +42,12 @@ class Integrator1DNode : public Node
     // Input vector
     Data1D inputData_;
     // Integral
-    double integral_;
+    Number integral_;
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext);
+    NodeConstants::ProcessResult process() override;
 };

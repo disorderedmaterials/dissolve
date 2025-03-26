@@ -35,5 +35,5 @@ class Vec3AssemblyNode : public Node
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext);
+    NodeConstants::ProcessResult process() override;
 };
