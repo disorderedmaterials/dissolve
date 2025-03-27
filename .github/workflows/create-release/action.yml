@@ -180,7 +180,7 @@ runs:
         ERRORS=$(echo ${CURRENT_RELEASE_INFO} | jq -r '. | .errors')
         if [ "x$ERRORS" = "x" ]
         then
-          echo "Error: Failed to create release."
+          echo "::error::Failed to create release."
           echo "Reported error(s) are:"
           echo $ERRORS
           exit 1
@@ -201,7 +201,7 @@ runs:
         UPLOAD_URL=$(echo ${CURRENT_RELEASE_INFO} | jq -r '. | .upload_url' | cut -d '{' -f 1)
         if [ "x$UPLOAD_URL" = "x" ]
         then
-          echo "Error: Failed to determine upload url for release."
+          echo "::error::Failed to determine upload url for release."
           exit 1
         fi
         echo " -- Upload url is: $UPLOAD_URL"
@@ -220,7 +220,7 @@ runs:
           ARTIFACT_URL=$(echo $ARTIFACT_DATA | jq -r '. | .browser_download_url')
           if [ "x$ARTIFACT_ID" = "x" ] || [ "$ARTIFACT_ID" = "null" ]
           then
-            echo "Error: Failed to upload artifact."
+            echo "::error::Failed to upload artifact."
             echo "Returned data was: $ARTIFACT_DATA"
             exit 1
           fi
