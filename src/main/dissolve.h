@@ -26,7 +26,7 @@ class Molecule;
 class Dissolve : public Serialisable<>
 {
     public:
-    Dissolve(CoreData &coreData) : graphNode_(this);
+    Dissolve(CoreData &coreData) : graphNode_(*this);
     ~Dissolve();
 
     /*
