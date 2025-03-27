@@ -91,7 +91,7 @@ jobs:
             exit 1
           fi
 
-          # Before we change the version we generate the ChangeLog.md inathe  temp dir so we don't commit it
+          # Before we change the version we generate the ChangeLog.md in the temp dir so we don't commit it
           ./changeversion -l > ${{ runner.temp }}/ChangeLog.md
 
           # Set new version, check authoritative, and check consistency
