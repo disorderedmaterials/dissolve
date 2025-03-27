@@ -14,6 +14,8 @@ void Node::setName(std::string_view newName)
 {
     if (parentGraph_)
         parentGraph_->setNodeName(this, newName);
+    else
+        name_ = newName;
 }
 
 // Return node name
