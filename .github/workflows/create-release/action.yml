@@ -159,7 +159,7 @@ runs:
         TAG_HASH=$(git rev-parse HEAD)
 
         # Construct release information
-        RELEASE_DATA=$(jq --null-input --arg tag "${{ inputs.releaseTag }}" --arg commitish "$TAG_HASH" --arg name "${{ inputs.releaseName }}" --arg body "${RELEASE_BODY}" --argjson pre $RELEASE_PRE '{"tag_name": $tag, "target_commitish": $commitish, "name": $name, "body": $body, "draft": false, "prerelease": $pre}')
+        RELEASE_DATA=$(jq --null-input --arg tag "${{ inputs.releaseTag }}" --arg commitish "$TAG_HASH" --arg name "${{ inputs.releaseName }}" --arg body "${RELEASE_BODY}" --argjson pre ${{ inputs.isPreRelease }} '{"tag_name": $tag, "target_commitish": $commitish, "name": $name, "body": $body, "draft": false, "prerelease": $pre}')
         echo "Release data is:"
         echo ${RELEASE_DATA}
 
