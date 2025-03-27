@@ -106,6 +106,35 @@ EdgeDefinition Edge::definition() const
             std::string(targetInput_.name())};
 }
 
+EdgeDefinition::EdgeDefinition(std::string srcNode, std::string srcOutput, std::string tgtNode, std::string tgtInput)
+    : sourceNode(srcNode), sourceOutput(srcOutput), targetNode(tgtNode), targetInput(tgtInput)
+{
+}
+
+bool EdgeDefinition::operator==(const EdgeDefinition &other) const
+{
+    return sourceNode == other.sourceNode && sourceOutput == other.sourceOutput && targetNode == other.targetNode &&
+           targetInput == other.targetInput;
+}
+
+SerialisedValue EdgeDefinition::serialise() const
+{
+    SerialisedValue result;
+    result["sourceNode"] = sourceNode;
+    result["sourceOutput"] = sourceOutput;
+    result["targetNode"] = targetNode;
+    result["targetInput"] = targetInput;
+    return result;
+}
+
+void EdgeDefinition::deserialise(const SerialisedValue &node)
+{
+    sourceNode = toml::find<std::string>(node, "sourceNode");
+    sourceOutput = toml::find<std::string>(node, "sourceOutput");
+    targetNode = toml::find<std::string>(node, "targetNode");
+    targetInput = toml::find<std::string>(node, "targetInput");
+}
+
 // Pull the data from the source node to the target, returning a ProcessResult
 NodeConstants::ProcessResult Edge::pull()
 {
@@ -132,4 +161,12 @@ NodeConstants::ProcessResult Edge::pull()
     }
 
     return NodeConstants::ProcessResult::Unchanged;
+}
+
+SerialisedValue Edge::serialise() const { return definition().serialise(); }
+
+void Edge::deserialise(const SerialisedValue &node)
+{
+    throw std::runtime_error("Cannot directly deserialise edges.  Please contact the Dissolve development team if you are "
+                             "seeing this error - this is a bug and NOT your fault.");
 }

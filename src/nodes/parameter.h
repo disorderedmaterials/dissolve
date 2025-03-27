@@ -5,6 +5,7 @@
 
 #include "base/serialiser.h"
 #include "templates/flags.h"
+#include "nodes/number.h"
 #include <string>
 #include <typeindex>
 #include <vector>
@@ -138,15 +139,17 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         SerialisedValue result = {};
 
         // Serialise non-pointer values
-        if constexpr (std::is_convertible<T, double>::value)
+        if constexpr (std::is_convertible<T, Number>::value)
             result["data"] = data_;
         else if constexpr (std::is_convertible<T, std::string>::value)
             result["data"] = data_;
-        else if constexpr (std::is_convertible<T, std::optional<double>>::value)
+        else if constexpr (std::is_convertible<T, std::optional<Number>>::value)
         {
             if (data_)
                 result["data"] = *data_;
         }
+        else
+          result["error"] = "Empty data";
         return result;
     };
     // Read from a serialised value

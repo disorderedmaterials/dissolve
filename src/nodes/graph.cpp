@@ -78,7 +78,9 @@ SerialisedValue Graph::serialise() const
     SerialisedValue graph, result = Node::serialise();
     for (auto &[name, node] : nodes_)
         graph[std::string(node->name())] = *node;
-    result["graph"] = graph;
+    if (!nodes_.empty())
+        result["nodes"] = graph;
+    fromVector(edges_, "edges", result);
     return result;
 }
 
@@ -86,14 +88,17 @@ SerialisedValue Graph::serialise() const
 void Graph::deserialise(const SerialisedValue &node)
 {
     Node::deserialise(node);
-    toMap(node, "graph",
+    toMap(node, "nodes",
           [this](const auto name, const auto &value)
           {
-              std::string kind = toml::find<std::string>(value, "name");
+              std::string kind = toml::find<std::string>(value, "type");
               if (!registry.contains(kind))
                   Messenger::exception("Attempted to create node of unknown kind: {}", kind);
               auto child = registry.at(kind)();
               child->deserialise(value);
               addNode(std::move(child), name);
           });
+    toVector(node, "edges", [this](const auto &value) {
+      addEdge(toml::get<EdgeDefinition>(value));
+    });
 }

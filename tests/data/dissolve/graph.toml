@@ -1,0 +1,53 @@
+name = ""
+type = "Graph"
+
+[nodes]
+
+[nodes.x]
+type = "Add"
+name = "x"
+
+[nodes.x.inputs]
+
+[nodes.x.inputs.B]
+data = 0
+
+[nodes.x.inputs.A]
+data = 0
+
+[nodes.y]
+type = "Add"
+name = "y"
+
+[nodes.y.inputs]
+
+[nodes.y.inputs.B]
+data = 0
+
+[nodes.y.inputs.A]
+data = 0
+
+
+[nodes.z]
+type = "Add"
+name = "z"
+
+[nodes.z.inputs]
+
+[nodes.z.inputs.B]
+data = 0
+
+[nodes.z.inputs.A]
+data = 0
+
+
+[[edges]]
+sourceNode = "x"
+sourceOutput = "Result"
+targetNode = "z"
+targetInput = "A"
+[[edges]]
+sourceNode = "y"
+sourceOutput = "Result"
+targetNode = "z"
+targetInput = "B"

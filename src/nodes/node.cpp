@@ -211,7 +211,7 @@ void Node::clearData() {}
 // Express as a serialisable value
 SerialisedValue Node::serialise() const
 {
-    SerialisedValue result, inputs, options;
+    SerialisedValue result, inputs, outputs, options;
     result["name"] = name();
     result["type"] = type();
 
