@@ -4,9 +4,6 @@ description: A purely workflow dispatch action that re-releases a version based 
 on:
   workflow_dispatch:
     inputs:
-      cacheOnly:
-        type: boolean
-        default: false
       releaseBranch:
         description: The target release branch suffix, e.g. 1.7.X, to build
         type: string
