@@ -7,6 +7,7 @@ add_library(
   constants.h
   derivative.cpp
   derivative.h
+  dissolve.cpp
   dissolve.h
   dotProduct.cpp
   dotProduct.h
