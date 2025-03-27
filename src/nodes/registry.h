@@ -22,24 +22,23 @@
 using NodeProducer = std::function<std::unique_ptr<Node>(void)>;
 
 // Makes unique pointer to derived node instance
-template <typename T> NodeProducer makeDerivedNode()
+template <typename T> NodeProducer makeDerivedNode(Graph* graph)
 {
-    auto nodeLambda = []() -> std::unique_ptr<Node> { return std::make_unique<T>(); };
+    auto nodeLambda = [=]() -> std::unique_ptr<Node> { return std::make_unique<T>(graph); };
     return nodeLambda;
 }
 
 // Node registry
 const std::map<std::string_view, NodeProducer> registry{
-    {"Add", makeDerivedNode<AddNode>()},
-    {"AtomShake", makeDerivedNode<AtomShakeNode>()},
-    {"Derivative", makeDerivedNode<DerivativeNode>()},
-    {"Dissolve", makeDerivedNode<DissolveNode>()},
-    {"DotProduct", makeDerivedNode<DotProductNode>()},
-    {"Integrator", makeDerivedNode<Integrator1DNode>()},
-    {"Multiply", makeDerivedNode<MultiplyNode>()},
-    {"Subtract", makeDerivedNode<SubtractNode>()},
-    {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
-    {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()},
+    {"Add", makeDerivedNode<AddNode>},
+    {"AtomShake", makeDerivedNode<AtomShakeNode>},
+    {"Derivative", makeDerivedNode<DerivativeNode>},
+    {"DotProduct", makeDerivedNode<DotProductNode>},
+    {"Integrator", makeDerivedNode<Integrator1DNode>},
+    {"Multiply", makeDerivedNode<MultiplyNode>},
+    {"Subtract", makeDerivedNode<SubtractNode>},
+    {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>},
+    {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>},
     // etc...
 };
 

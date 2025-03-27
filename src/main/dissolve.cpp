@@ -67,9 +67,3 @@ void Dissolve::clear()
 // Return data associated with processing Modules
 GenericList &Dissolve::processingModuleData() { return processingModuleData_; }
 
-/*
- * Graph node
- */
-
-// Set the Dissolve graph node
-void Dissolve::setGraph() { graphNode_ = std::move(Graph::produceNode("Dissolve")); }

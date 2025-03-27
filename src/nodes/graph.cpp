@@ -3,7 +3,6 @@
 // Add nodes
 void Graph::addNode(std::unique_ptr<Node> &&node, std::string_view name)
 {
-    node->setParentGraph(this);
     node->setName(name);
     nodes_.insert(std::make_pair<std::string, std::unique_ptr<Node>>(std::string(name), std::move(node)));
 }
