@@ -75,11 +75,8 @@ std::string_view Graph::summary() const { return "A node which contains its own 
 // Express as a serialisable value
 SerialisedValue Graph::serialise() const
 {
-    SerialisedValue graph, result = Node::serialise();
-    for (auto &[name, node] : nodes_)
-        graph[name] = *node;
-    if (!nodes_.empty())
-        result["nodes"] = graph;
+    SerialisedValue result = Node::serialise();
+    fromMap(nodes_, "nodes", result);
     fromVector(edges_, "edges", result);
     return result;
 }

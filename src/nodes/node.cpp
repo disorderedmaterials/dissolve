@@ -215,18 +215,8 @@ SerialisedValue Node::serialise() const
     result["name"] = name();
     result["type"] = type();
 
-    if (!inputs_.empty())
-    {
-        for (auto &[k, v] : inputs_)
-            inputs[std::string(k)] = *v;
-        result["inputs"] = inputs;
-    }
-    if (!options_.empty())
-    {
-        for (auto &[k, v] : options_)
-            options[std::string(k)] = *v;
-        result["options"] = options;
-    }
+    fromMap(inputs_, "inputs", result);
+    fromMap(options_, "options", result);
     return result;
 }
 

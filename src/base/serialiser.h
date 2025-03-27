@@ -9,6 +9,11 @@
 #include <map>
 #include <vector>
 
+// We need a way at compile time to detect all the types of smart
+// pointers for things that can be serialised
+template <typename T>
+concept serialisablePointer = requires(T a) { a->serialise(); };
+
 // The type we use for the nodes of our serialisation tree
 using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::OrderedMap, std::vector>;
 
@@ -143,6 +148,18 @@ template <typename... Contexts> class Serialisable
         SerialisedValue result = SerialisedValue::array_type{};
         std::transform(vector.begin(), vector.end(), std::back_inserter(result), toSerial);
         return result;
+    }
+
+    template <typename K, typename V> static void fromMap(const std::map<K, V> &map, std::string name, SerialisedValue &node)
+    {
+        SerialisedValue result;
+        for (auto &[key, value] : map)
+            if constexpr (serialisablePointer<V>)
+                result[std::string(key)] = value->serialise();
+            else
+                result[std::string(key)] = value;
+        if (!map.empty())
+            node[name] = result;
     }
 
     // Act over each value in a node table, if the key exists
