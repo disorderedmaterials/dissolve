@@ -77,7 +77,7 @@ SerialisedValue Graph::serialise() const
 {
     SerialisedValue graph, result = Node::serialise();
     for (auto &[name, node] : nodes_)
-        graph[std::string(node->name())] = *node;
+        graph[name] = *node;
     if (!nodes_.empty())
         result["nodes"] = graph;
     fromVector(edges_, "edges", result);
