@@ -4,13 +4,14 @@
 #pragma once
 
 #include "classes/configuration.h"
-#include "nodes/node.h"
+#include "main/dissolve.h"
+#include "nodes/graph.h"
 
 // AtomShake Node
-class DissolveNode : public Node
+class DissolveGraph : public Graph
 {
     public:
-    DissolveNode(){};
+    explicit DissolveNode(Dissolve& dissolve) : Node(this), dissolve_(dissolve) {};
     ~DissolveNode() override = default;
 
     public:
@@ -21,10 +22,12 @@ class DissolveNode : public Node
      * Definition
      */
     private:
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext);
+    // Dissolve reference
+    Dissolve& dissolve_;
+
+    public:
+    // Return dissolve
+    Dissolve &dissolve() const override;
+    // Return world pool
+    ProcessPool &processPool() const override;
 };

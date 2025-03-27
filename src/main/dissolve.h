@@ -18,6 +18,7 @@
 class Atom;
 class Box;
 class Cell;
+class DissolveGraph;
 class Isotopologue;
 class Molecule;
 
@@ -130,7 +131,7 @@ class Dissolve : public Serialisable<>
 
     private:
     // Dissolve graph node
-    std::unique_ptr<Node> graphNode_;
+    DissolveGraph graphNode_;
 
     /*
      * Simulation

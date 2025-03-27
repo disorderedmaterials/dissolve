@@ -189,9 +189,6 @@ std::shared_ptr<ParameterBase> Node::findOption(std::string_view name) const
 // Return Options
 std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::options() { return options_; };
 
-// Set the node parent graph
-void Node::setParentGraph(Graph *parentGraph) { parentGraph_ = parentGraph; }
-
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }
 
