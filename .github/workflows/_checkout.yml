@@ -203,8 +203,8 @@ jobs:
            then
              echo "Release branch ${BRANCH} already exists."
            else
-             git config user.name "${{ env.USER }}"
-             git config user.email "${{ env.EMAIL }}"
+             git config user.name "${{ github.actor }}"
+             git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
              git checkout -b ${BRANCH}
 
              git push --set-upstream origin ${BRANCH}
