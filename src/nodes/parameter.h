@@ -148,8 +148,11 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
             if (data_)
                 result["data"] = *data_;
         }
+        else if constexpr (serialisablePointer<T>)
+            result["data"] = data_->serialise();
         else
-          result["error"] = "Empty data";
+            result["data"] = data_;
+
         return result;
     };
     // Read from a serialised value
