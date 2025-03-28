@@ -35,29 +35,34 @@ std::vector<char> toCBOR(const SerialisedValue &node)
 }
 
 // Parse a CBOR representation of a serialised value
-SerialisedValue fromCBOR(std::vector<char> bytes)
+std::tuple<SerialisedValue, std::ranges::subrange<std::vector<char>::iterator>>
+fromCBOR(std::ranges::subrange<std::vector<char>::iterator> bytes)
 {
     SerialisedValue result;
-    if (bytes.empty())
-        return result;
-    switch ((int8_t)bytes.front())
+    if (bytes.begin() == bytes.end())
+        return {result, bytes};
+    switch ((int8_t)*bytes.begin())
     {
         case 0x1b:
         {
-            int output;
-            std::copy(bytes.begin() + 1, bytes.begin() + 1 + sizeof(output), reinterpret_cast<char *>(&output));
+            int64_t output;
+            bytes.advance(1);
+            std::copy(bytes.begin(), bytes.begin() + sizeof(output), reinterpret_cast<char *>(&output));
             result = output;
+            bytes.advance(sizeof(output));
             break;
         }
         case 0x3b:
         {
-            int output;
-            std::copy(bytes.begin() + 1, bytes.begin() + 1 + sizeof(output), reinterpret_cast<char *>(&output));
+            int64_t output;
+            bytes.advance(1);
+            std::copy(bytes.begin(), bytes.begin() + sizeof(output), reinterpret_cast<char *>(&output));
             result = -1 * output;
+            bytes.advance(sizeof(output));
             break;
         }
         default:
-            Messenger::exception("Unknown type code {:x}", (int8_t)bytes.front());
+            Messenger::exception("Unknown type code {:x}", (int8_t)*bytes.begin());
     }
-    return result;
+    return {result, bytes};
 }

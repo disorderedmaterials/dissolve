@@ -32,20 +32,22 @@ void compare_toml(std::string location, SerialisedValue toml, SerialisedValue to
     }
 }
 
+void basic_test(SerialisedValue node)
+{
+    auto cbor = toCBOR(node);
+    std::ranges::subrange sub{cbor.begin(), cbor.end()};
+    auto [copy, remainder] = fromCBOR(sub);
+
+    EXPECT_EQ(remainder.begin(), remainder.end());
+    UnitTest::compare_toml("", node, copy);
+}
+
 } // namespace UnitTest
 
 TEST(CBORTest, BasicInt)
 {
-    int baseline = 37;
-    SerialisedValue node = baseline;
-
-    auto cbor = toCBOR(node);
-    auto copy = fromCBOR(cbor);
-
-    UnitTest::compare_toml("", node, copy);
-
-    // Check negative numbers
-    node = -917;
-    copy = fromCBOR(toCBOR(node));
-    UnitTest::compare_toml("", node, copy);
+    // Check Positive Int
+    UnitTest::basic_test(37);
+    // Check Negative Int
+    UnitTest::basic_test(-917);
 }
