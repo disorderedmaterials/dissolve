@@ -59,6 +59,14 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
             break;
         }
         case toml::value_t::string:
+        {
+            std::string str = node.as_string();
+            result.push_back(0x7b);
+            uint64_t len = str.size();
+            ontoBuffer(len, result);
+            std::copy(str.begin(), str.end(), std::back_inserter(result));
+            break;
+        }
         case toml::value_t::array:
         case toml::value_t::table:
         case toml::value_t::empty:
@@ -90,6 +98,17 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
         {
             bytes.advance(1);
             result = -1 * fromBuffer<int64_t>(bytes);
+            break;
+        }
+        case 0x7b: // String
+        {
+            bytes.advance(1);
+            auto len = fromBuffer<uint64_t>(bytes);
+            std::string str;
+            str.reserve(len);
+            std::copy(bytes.begin(), bytes.begin() + len, std::back_inserter(str));
+            result = str;
+            bytes.advance(len);
             break;
         }
         case 0xF4: // Boolean False

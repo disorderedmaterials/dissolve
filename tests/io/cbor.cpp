@@ -56,4 +56,6 @@ TEST(CBORTest, BasicInt)
     UnitTest::basic_test(false);
     // Check Float
     UnitTest::basic_test(3.14159);
+    // Check String
+    UnitTest::basic_test("test string");
 }
