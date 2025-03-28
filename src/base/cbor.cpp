@@ -4,6 +4,21 @@
 #include "base/cbor.h"
 #include "base/messenger.h"
 
+// Push a value onto a buffer
+template <typename T> void ontoBuffer(T value, std::vector<uint8_t> &buf)
+{
+    uint8_t *ptr = reinterpret_cast<uint8_t *>(&value);
+    std::copy(ptr, ptr + sizeof(value), std::back_inserter(buf));
+}
+
+// Pull a value from a buffer
+template <typename T> T fromBuffer(std::ranges::subrange<std::vector<uint8_t>::iterator> &buf)
+{
+    T output;
+    std::copy(buf.begin(), buf.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
+    return output;
+}
+
 // Convert a serialed Value to its CBOR representation
 std::vector<uint8_t> toCBOR(const SerialisedValue &node)
 {
@@ -23,8 +38,7 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
                 result.push_back(0x3b);
                 number *= -1;
             }
-            char *ptr = reinterpret_cast<char *>(&number);
-            std::copy(ptr, ptr + sizeof(number), std::back_inserter(result));
+            ontoBuffer(number, result);
             break;
         }
         case toml::value_t::boolean:
@@ -40,8 +54,7 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
             double number = node.as_floating();
             result.push_back(0xFB);
 
-            char *ptr = reinterpret_cast<char *>(&number);
-            std::copy(ptr, ptr + sizeof(number), std::back_inserter(result));
+            ontoBuffer(number, result);
             break;
         }
         case toml::value_t::string:
@@ -68,20 +81,16 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
     {
         case 0x1b: // Positive Int
         {
-            int64_t output;
             bytes.advance(1);
-            std::copy(bytes.begin(), bytes.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
-            result = output;
-            bytes.advance(sizeof(output));
+            result = fromBuffer<int64_t>(bytes);
+            bytes.advance(sizeof(int64_t));
             break;
         }
         case 0x3b: // Negative Int
         {
-            int64_t output;
             bytes.advance(1);
-            std::copy(bytes.begin(), bytes.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
-            result = -1 * output;
-            bytes.advance(sizeof(output));
+            result = -1 * fromBuffer<int64_t>(bytes);
+            bytes.advance(sizeof(int64_t));
             break;
         }
         case 0xF4: // Boolean False
@@ -94,11 +103,9 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
             break;
         case 0xFB: // Float
         {
-            double output;
             bytes.advance(1);
-            std::copy(bytes.begin(), bytes.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
-            result = output;
-            bytes.advance(sizeof(output));
+            result = fromBuffer<double>(bytes);
+            bytes.advance(sizeof(double));
             break;
         }
         default:
