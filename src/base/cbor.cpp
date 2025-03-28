@@ -16,6 +16,7 @@ template <typename T> T fromBuffer(std::ranges::subrange<std::vector<uint8_t>::i
 {
     T output;
     std::copy(buf.begin(), buf.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
+    buf.advance(sizeof(output));
     return output;
 }
 
@@ -83,14 +84,12 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
         {
             bytes.advance(1);
             result = fromBuffer<int64_t>(bytes);
-            bytes.advance(sizeof(int64_t));
             break;
         }
         case 0x3b: // Negative Int
         {
             bytes.advance(1);
             result = -1 * fromBuffer<int64_t>(bytes);
-            bytes.advance(sizeof(int64_t));
             break;
         }
         case 0xF4: // Boolean False
@@ -105,7 +104,6 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
         {
             bytes.advance(1);
             result = fromBuffer<double>(bytes);
-            bytes.advance(sizeof(double));
             break;
         }
         default:
