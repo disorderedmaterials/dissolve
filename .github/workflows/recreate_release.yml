@@ -1,0 +1,52 @@
+name: Recreate Release
+description: A purely workflow dispatch action that re-releases a version based on a specific commit SHA pointing to a "[Release]"-prefixed merge commit.
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseBranch:
+        description: The target release branch suffix, e.g. 1.7.X, to build
+        type: string
+        required: true
+        default: ""
+
+jobs:
+
+  Checkout:
+    uses: "./.github/workflows/_checkout.yml"
+    secrets: inherit
+    with:
+      checkoutRef: "release/${{ inputs.releaseBranch }}"
+      publishType: 'release'
+
+  BuildAndPackage:
+    needs: [Checkout]
+    uses: "./.github/workflows/_build_and_package.yml"
+    with:
+      currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+      qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
+      antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
+      conanHash: ${{ needs.Checkout.outputs.conanHash }}
+      nixHash: ${{ needs.Checkout.outputs.nixHash }}
+
+  Web:
+    needs: [Checkout]
+    uses: "./.github/workflows/_website.yml"
+    with:
+      publishType: 'release'
+      displayMajorVersion: ${{ needs.Checkout.outputs.currentVersionMajor }}
+      displayMinorVersion: ${{ needs.Checkout.outputs.currentVersionMinor }}
+      hugoVersion: ${{ needs.Checkout.outputs.hugoVersion }}
+    secrets: inherit
+
+  Publish:
+    needs: [Checkout,BuildAndPackage,Web]
+    uses: "./.github/workflows/_publish.yml"
+    with:
+      publishType: 'release'
+      currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+      releaseTag: ${{ needs.Checkout.outputs.currentVersion }}
+      releaseName: "Release ${{ needs.Checkout.outputs.currentVersion }}"
+      releaseBody: ${{ github.event.pull_request.body }}
+      apptainerVersion: ${{ needs.Checkout.outputs.apptainerVersion }}
+    secrets: inherit
