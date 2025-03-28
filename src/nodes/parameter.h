@@ -4,8 +4,8 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "templates/flags.h"
 #include "nodes/number.h"
+#include "templates/flags.h"
 #include <string>
 #include <typeindex>
 #include <vector>

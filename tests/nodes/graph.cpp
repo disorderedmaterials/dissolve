@@ -51,7 +51,6 @@ class GraphCoreTest : public ::testing::Test
     AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr};
 };
 
-
 // Helper function for comparing TOML values with context, but without
 // insisting on a specific ordering of fields.
 void compare_toml(std::string location, SerialisedValue toml, SerialisedValue toml2)
@@ -95,7 +94,5 @@ TEST_F(GraphCoreTest, Serialisation)
 
     compare_toml("", repeat, contents);
 };
-
-
 
 } // namespace UnitTest

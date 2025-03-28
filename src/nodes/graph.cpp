@@ -95,7 +95,5 @@ void Graph::deserialise(const SerialisedValue &node)
               child->deserialise(value);
               addNode(std::move(child), name);
           });
-    toVector(node, "edges", [this](const auto &value) {
-      addEdge(toml::get<EdgeDefinition>(value));
-    });
+    toVector(node, "edges", [this](const auto &value) { addEdge(toml::get<EdgeDefinition>(value)); });
 }
