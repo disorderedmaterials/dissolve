@@ -9,8 +9,8 @@
 #include <vector>
 
 // Convert a serialed Value to its CBOR representation
-std::vector<char> toCBOR(const SerialisedValue &node);
+std::vector<uint8_t> toCBOR(const SerialisedValue &node);
 
 // Parse a CBOR representation of a serialised value
-std::tuple<SerialisedValue, std::ranges::subrange<std::vector<char>::iterator>>
-fromCBOR(std::ranges::subrange<std::vector<char>::iterator> bytes);
+std::tuple<SerialisedValue, std::ranges::subrange<std::vector<uint8_t>::iterator>>
+fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes);

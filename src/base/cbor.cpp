@@ -5,9 +5,9 @@
 #include "base/messenger.h"
 
 // Convert a serialed Value to its CBOR representation
-std::vector<char> toCBOR(const SerialisedValue &node)
+std::vector<uint8_t> toCBOR(const SerialisedValue &node)
 {
-    std::vector<char> result;
+    std::vector<uint8_t> result;
 
     switch (node.type())
     {
@@ -43,13 +43,13 @@ std::vector<char> toCBOR(const SerialisedValue &node)
 }
 
 // Parse a CBOR representation of a serialised value
-std::tuple<SerialisedValue, std::ranges::subrange<std::vector<char>::iterator>>
-fromCBOR(std::ranges::subrange<std::vector<char>::iterator> bytes)
+std::tuple<SerialisedValue, std::ranges::subrange<std::vector<uint8_t>::iterator>>
+fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
 {
     SerialisedValue result;
     if (bytes.begin() == bytes.end())
         return {result, bytes};
-    switch ((int8_t)*bytes.begin())
+    switch ((uint8_t)*bytes.begin())
     {
         case 0x1b:
         {
