@@ -150,6 +150,7 @@ template <typename... Contexts> class Serialisable
         return result;
     }
 
+    // A helper function to add the lements of a map to a node under a name
     template <typename K, typename V> static void fromMap(const std::map<K, V> &map, std::string name, SerialisedValue &node)
     {
         SerialisedValue result;
@@ -157,6 +158,9 @@ template <typename... Contexts> class Serialisable
             if constexpr (serialisablePointer<V>)
                 result[std::string(key)] = value->serialise();
             else
+                // We use the direct value (with casting) instead of
+                // value.serialise() to handle the case where the value
+                // is a raw type (e.g. int)
                 result[std::string(key)] = value;
         if (!map.empty())
             node[name] = result;

@@ -117,6 +117,7 @@ bool EdgeDefinition::operator==(const EdgeDefinition &other) const
            targetInput == other.targetInput;
 }
 
+// Express as a serialisable value
 SerialisedValue EdgeDefinition::serialise() const
 {
     SerialisedValue result;
@@ -127,6 +128,7 @@ SerialisedValue EdgeDefinition::serialise() const
     return result;
 }
 
+// Read values from a serialisable value
 void EdgeDefinition::deserialise(const SerialisedValue &node)
 {
     sourceNode = toml::find<std::string>(node, "sourceNode");
@@ -163,8 +165,13 @@ NodeConstants::ProcessResult Edge::pull()
     return NodeConstants::ProcessResult::Unchanged;
 }
 
+// Express as a serialisable value
 SerialisedValue Edge::serialise() const { return definition().serialise(); }
 
+// Read values from a serialisable value This is required for the
+// SerialableValue type implementation, but we actually deserialise
+// Edges through an EdgeConnection.  I've added this error to
+// immediately alert us in case this function is ever called.
 void Edge::deserialise(const SerialisedValue &node)
 {
     throw std::runtime_error("Cannot directly deserialise edges.  Please contact the Dissolve development team if you are "

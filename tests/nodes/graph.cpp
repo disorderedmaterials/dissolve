@@ -52,6 +52,8 @@ class GraphCoreTest : public ::testing::Test
 };
 
 
+// Helper function for comparing TOML values with context, but without
+// insisting on a specific ordering of fields.
 void compare_toml(std::string location, SerialisedValue toml, SerialisedValue toml2)
 {
     if (toml.is_table())
