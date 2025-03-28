@@ -50,4 +50,8 @@ TEST(CBORTest, BasicInt)
     UnitTest::basic_test(37);
     // Check Negative Int
     UnitTest::basic_test(-917);
+    // Check Boolean True
+    UnitTest::basic_test(true);
+    // Check Boolean False
+    UnitTest::basic_test(false);
 }

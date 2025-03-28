@@ -28,6 +28,13 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
             break;
         }
         case toml::value_t::boolean:
+        {
+            if (node.as_boolean())
+                result.push_back(0xE0 + 21);
+            else
+                result.push_back(0xE0 + 20);
+            break;
+        }
         case toml::value_t::array:
         case toml::value_t::empty:
         case toml::value_t::floating:
@@ -69,6 +76,14 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
             bytes.advance(sizeof(output));
             break;
         }
+        case 0xE0 + 20:
+            bytes.advance(1);
+            result = false;
+            break;
+        case 0xE0 + 21:
+            bytes.advance(1);
+            result = true;
+            break;
         default:
             Messenger::exception("Unknown type code {:x}", (int8_t)*bytes.begin());
     }
