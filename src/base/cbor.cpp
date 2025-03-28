@@ -30,15 +30,15 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
         case toml::value_t::boolean:
         {
             if (node.as_boolean())
-                result.push_back(0xE0 + 21);
+                result.push_back(0xF5);
             else
-                result.push_back(0xE0 + 20);
+                result.push_back(0xF4);
             break;
         }
         case toml::value_t::floating:
         {
             double number = node.as_floating();
-            result.push_back(0xE0 + 27);
+            result.push_back(0xFB);
 
             char *ptr = reinterpret_cast<char *>(&number);
             std::copy(ptr, ptr + sizeof(number), std::back_inserter(result));
@@ -84,15 +84,15 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
             bytes.advance(sizeof(output));
             break;
         }
-        case 0xE0 + 20: // Boolean False
+        case 0xF4: // Boolean False
             bytes.advance(1);
             result = false;
             break;
-        case 0xE0 + 21: // Boolean True
+        case 0xF5: // Boolean True
             bytes.advance(1);
             result = true;
             break;
-        case 0xE0 + 27: // Float
+        case 0xFB: // Float
         {
             double output;
             bytes.advance(1);
