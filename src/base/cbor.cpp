@@ -27,9 +27,17 @@ std::vector<char> toCBOR(const SerialisedValue &node)
             std::copy(ptr, ptr + sizeof(number), std::back_inserter(result));
             break;
         }
-
-        default:
-            Messenger::exception("Unknown TOMl type {}", (int)node.type());
+        case toml::value_t::boolean:
+        case toml::value_t::array:
+        case toml::value_t::empty:
+        case toml::value_t::floating:
+        case toml::value_t::string:
+        case toml::value_t::table:
+        case toml::value_t::local_date:
+        case toml::value_t::local_time:
+        case toml::value_t::local_datetime:
+        case toml::value_t::offset_datetime:
+            Messenger::exception("TODO: TOML type {}", (int)node.type());
     }
     return result;
 }
