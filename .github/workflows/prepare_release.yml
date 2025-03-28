@@ -91,8 +91,8 @@ jobs:
             exit 1
           fi
 
-          # Before we change the version we generate the ChangeLog.md in the temp dir so we don't commit it
-          ./changeversion -l > ${{ runner.temp }}/ChangeLog.md
+          # Before we change the version we generate the ChangeLog.md, overwriting any previous version
+          ./changeversion -l > ChangeLog.md
 
           # Set new version, check authoritative, and check consistency
           ./changeversion -b
@@ -105,6 +105,6 @@ jobs:
         with:
           branch: ${{ steps.prep.outputs.branch }}
           title: "[Release] ${{ steps.prep.outputs.version }}"
-          body-path: ${{ runner.temp }}/ChangeLog.md
+          body-path: ChangeLog.md
           reviewers: trisyoungs
           sign-commits: true
