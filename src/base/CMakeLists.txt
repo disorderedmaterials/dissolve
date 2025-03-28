@@ -1,5 +1,6 @@
 add_library(
   base
+  cbor.cpp
   enumOptionsBase.cpp
   geometry.cpp
   lineParser.cpp
