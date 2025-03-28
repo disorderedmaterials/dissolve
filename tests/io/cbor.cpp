@@ -54,4 +54,6 @@ TEST(CBORTest, BasicInt)
     UnitTest::basic_test(true);
     // Check Boolean False
     UnitTest::basic_test(false);
+    // Check Float
+    UnitTest::basic_test(3.14159);
 }

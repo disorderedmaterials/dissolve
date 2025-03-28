@@ -35,11 +35,19 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
                 result.push_back(0xE0 + 20);
             break;
         }
-        case toml::value_t::array:
-        case toml::value_t::empty:
         case toml::value_t::floating:
+        {
+            double number = node.as_floating();
+            result.push_back(0xE0 + 27);
+
+            char *ptr = reinterpret_cast<char *>(&number);
+            std::copy(ptr, ptr + sizeof(number), std::back_inserter(result));
+            break;
+        }
         case toml::value_t::string:
+        case toml::value_t::array:
         case toml::value_t::table:
+        case toml::value_t::empty:
         case toml::value_t::local_date:
         case toml::value_t::local_time:
         case toml::value_t::local_datetime:
@@ -58,32 +66,41 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
         return {result, bytes};
     switch ((uint8_t)*bytes.begin())
     {
-        case 0x1b:
+        case 0x1b: // Positive Int
         {
             int64_t output;
             bytes.advance(1);
-            std::copy(bytes.begin(), bytes.begin() + sizeof(output), reinterpret_cast<char *>(&output));
+            std::copy(bytes.begin(), bytes.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
             result = output;
             bytes.advance(sizeof(output));
             break;
         }
-        case 0x3b:
+        case 0x3b: // Negative Int
         {
             int64_t output;
             bytes.advance(1);
-            std::copy(bytes.begin(), bytes.begin() + sizeof(output), reinterpret_cast<char *>(&output));
+            std::copy(bytes.begin(), bytes.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
             result = -1 * output;
             bytes.advance(sizeof(output));
             break;
         }
-        case 0xE0 + 20:
+        case 0xE0 + 20: // Boolean False
             bytes.advance(1);
             result = false;
             break;
-        case 0xE0 + 21:
+        case 0xE0 + 21: // Boolean True
             bytes.advance(1);
             result = true;
             break;
+        case 0xE0 + 27: // Float
+        {
+            double output;
+            bytes.advance(1);
+            std::copy(bytes.begin(), bytes.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
+            result = output;
+            bytes.advance(sizeof(output));
+            break;
+        }
         default:
             Messenger::exception("Unknown type code {:x}", (int8_t)*bytes.begin());
     }
