@@ -1,0 +1,23 @@
+name = ""
+type = "Graph"
+edges = [
+  {sourceNode = "x", sourceOutput = "Result", targetNode = "z", targetInput = "A"},
+  {sourceNode = "y", sourceOutput = "Result", targetNode = "z" ,targetInput = "B"}
+]
+
+[nodes]
+
+[nodes.x]
+type = "Add"
+name = "x"
+inputs = {B = {data = 1}, A = {data = 0}}
+
+[nodes.y]
+type = "Add"
+name = "y"
+inputs = {B = {data = 0}, A = {data = 2}}
+
+[nodes.z]
+type = "Add"
+name = "z"
+inputs = {B = {data = 0}, A = {data = 0}}
