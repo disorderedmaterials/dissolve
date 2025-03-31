@@ -73,9 +73,14 @@ TEST(CBORTest, BasicArray)
 TEST(CBORTest, BasicTable)
 {
     // Check Array
-    SerialisedValue value;
+    SerialisedValue value, inner;
+    inner["foo"] = "bar";
+    inner["baz"] = "quux";
+
     value["first"] = 12;
     value["second"] = 4.56;
     value["third"] = "in a map";
+    value["last"] = inner;
+
     UnitTest::basic_test(value);
 }
