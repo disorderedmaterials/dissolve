@@ -3,19 +3,26 @@
 
 #include "base/cbor.h"
 #include "base/messenger.h"
+#include <bit>
 
 // Push a value onto a buffer
 template <typename T> void ontoBuffer(T value, std::vector<uint8_t> &buf)
 {
-    uint8_t *ptr = reinterpret_cast<uint8_t *>(&value);
-    std::copy(ptr, ptr + sizeof(value), std::back_inserter(buf));
+    auto value_representation = std::bit_cast<std::array<uint8_t, sizeof(T)>>(value);
+    if constexpr (std::endian::native == std::endian::big)
+        std::copy(value_representation.begin(), value_representation.end(), std::back_inserter(buf));
+    else
+        std::copy(value_representation.rbegin(), value_representation.rend(), std::back_inserter(buf));
 }
 
 // Pull a value from a buffer
 template <typename T> T fromBuffer(std::ranges::subrange<std::vector<uint8_t>::iterator> &buf)
 {
     T output;
-    std::copy(buf.begin(), buf.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
+    if constexpr (std::endian::native == std::endian::big)
+        std::copy(buf.begin(), buf.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
+    else
+        std::reverse_copy(buf.begin(), buf.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
     buf.advance(sizeof(output));
     return output;
 }
