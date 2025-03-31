@@ -44,7 +44,7 @@ void basic_test(SerialisedValue node)
 
 } // namespace UnitTest
 
-TEST(CBORTest, BasicInt)
+TEST(CBORTest, BasicTypes)
 {
     // Check Positive Int
     UnitTest::basic_test(37);
@@ -58,4 +58,14 @@ TEST(CBORTest, BasicInt)
     UnitTest::basic_test(3.14159);
     // Check String
     UnitTest::basic_test("test string");
+}
+
+TEST(CBORTest, BasicArray)
+{
+    // Check Array
+    toml::array array{12, 4.56, "in an array"};
+    SerialisedValue value = array;
+    ASSERT_EQ(value.type(), toml::value_t::array);
+    ASSERT_EQ(value.as_array().size(), 3);
+    UnitTest::basic_test(value);
 }
