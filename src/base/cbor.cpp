@@ -87,6 +87,19 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
             break;
         }
         case toml::value_t::table:
+        {
+            result.push_back(0xbb);
+            uint64_t len = node.as_table().end() - node.as_table().begin();
+            ontoBuffer(len, result);
+            for (auto [k, v] : node.as_table())
+            {
+                auto key = toCBOR(k);
+                auto value = toCBOR(v);
+                std::copy(key.begin(), key.end(), std::back_inserter(result));
+                std::copy(value.begin(), value.end(), std::back_inserter(result));
+            }
+            break;
+        }
         case toml::value_t::empty:
         case toml::value_t::local_date:
         case toml::value_t::local_time:
@@ -141,6 +154,21 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
                 buf.push_back(elem);
             }
             result = buf;
+            break;
+        }
+        case 0xbb: // Map
+        {
+            SerialisedValue map;
+            bytes.advance(1);
+            auto len = fromBuffer<uint64_t>(bytes);
+            for (int i = 0; i < len; ++i)
+            {
+                auto [key, rest] = fromCBOR(bytes);
+                auto [value, remainder] = fromCBOR(rest);
+                bytes = remainder;
+                map[key.as_string()] = value;
+            }
+            result = map;
             break;
         }
         case 0xF4: // Boolean False

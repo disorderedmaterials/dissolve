@@ -69,3 +69,13 @@ TEST(CBORTest, BasicArray)
     ASSERT_EQ(value.as_array().size(), 3);
     UnitTest::basic_test(value);
 }
+
+TEST(CBORTest, BasicTable)
+{
+    // Check Array
+    SerialisedValue value;
+    value["first"] = 12;
+    value["second"] = 4.56;
+    value["third"] = "in a map";
+    UnitTest::basic_test(value);
+}
