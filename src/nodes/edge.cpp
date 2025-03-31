@@ -175,5 +175,5 @@ SerialisedValue Edge::serialise() const { return definition().serialise(); }
 void Edge::deserialise(const SerialisedValue &node)
 {
     throw std::runtime_error("Cannot directly deserialise edges.  Please contact the Dissolve development team if you are "
-                             "seeing this error - this is a bug and NOT your fault.");
+                             "seeing this error - this is a bug and NOT your fault.\n");
 }
