@@ -150,7 +150,7 @@ template <typename... Contexts> class Serialisable
         return result;
     }
 
-    // A helper function to add the lements of a map to a node under a name
+    // A helper function to add the elements of a map to a node under a name
     template <typename K, typename V> static void fromMap(const std::map<K, V> &map, std::string name, SerialisedValue &node)
     {
         SerialisedValue result;
