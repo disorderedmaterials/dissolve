@@ -215,8 +215,8 @@ SerialisedValue Node::serialise() const
     result["name"] = name();
     result["type"] = type();
 
-    fromMap(inputs_, "inputs", result);
-    fromMap(options_, "options", result);
+    fromMap(inputs_, "inputs", result, [](const auto k, const auto v) { return !v->isDefault(); });
+    fromMap(options_, "options", result, [](const auto k, const auto v) { return !v->isDefault(); });
     return result;
 }
 

@@ -166,6 +166,30 @@ template <typename... Contexts> class Serialisable
             node[name] = result;
     }
 
+    // A helper function to add the elements of a map to a node under a name
+    // Only add values that pass the test lambda
+    template <typename K, typename V, typename Lambda>
+    static void fromMap(const std::map<K, V> &map, std::string name, SerialisedValue &node, Lambda filter)
+    {
+        SerialisedValue result;
+        bool changed = false;
+        for (auto &[key, value] : map)
+        {
+            if (!filter(key, value))
+                continue;
+            changed = true;
+            if constexpr (serialisablePointer<V>)
+                result[std::string(key)] = value->serialise();
+            else
+                // We use the direct value (with casting) instead of
+                // value.serialise() to handle the case where the value
+                // is a raw type (e.g. int)
+                result[std::string(key)] = value;
+        }
+        if (changed)
+            node[name] = result;
+    }
+
     // Act over each value in a node table, if the key exists
     template <typename Lambda> static void toMap(const SerialisedValue &node, Lambda action)
     {
