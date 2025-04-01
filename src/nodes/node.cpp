@@ -211,22 +211,12 @@ void Node::clearData() {}
 // Express as a serialisable value
 SerialisedValue Node::serialise() const
 {
-    SerialisedValue result, inputs, options;
+    SerialisedValue result, inputs, outputs, options;
     result["name"] = name();
     result["type"] = type();
 
-    if (!inputs_.empty())
-    {
-        for (auto &[k, v] : inputs_)
-            inputs[std::string(k)] = *v;
-        result["inputs"] = inputs;
-    }
-    if (!options_.empty())
-    {
-        for (auto &[k, v] : options_)
-            options[std::string(k)] = *v;
-        result["options"] = options;
-    }
+    fromMap(inputs_, "inputs", result, [](const auto k, const auto v) { return !v->isDefault(); });
+    fromMap(options_, "options", result, [](const auto k, const auto v) { return !v->isDefault(); });
     return result;
 }
 
