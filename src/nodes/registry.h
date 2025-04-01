@@ -22,7 +22,7 @@
 using NodeProducer = std::function<std::unique_ptr<Node>(void)>;
 
 // Makes unique pointer to derived node instance
-template <typename T> NodeProducer makeDerivedNode(Graph* graph)
+template <typename T> NodeProducer makeDerivedNode(Graph* graph = nullptr)
 {
     auto nodeLambda = [=]() -> std::unique_ptr<Node> { return std::make_unique<T>(graph); };
     return nodeLambda;
