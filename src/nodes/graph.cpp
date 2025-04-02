@@ -1,11 +1,67 @@
 #include "nodes/graph.h"
 
+/*
+ * Definition
+ */
+
+// Return type of the node
+std::string_view Graph::type() const { return "Graph"; }
+
+// Return short summary of the node's purpose
+std::string_view Graph::summary() const { return "A node which contains its own inner graph"; }
+
+/*
+ * Nodes and Edges
+ */
+
+// Get unique node name
+std::string Graph::uniqueNodeName(const Node *node, std::string_view baseName) const
+{
+    auto newName = std::string(baseName);
+
+    // Check for existing node with this name and suffix until we get a unique key
+    auto count = 1;
+    while (nodes_.contains(newName) && nodes_.at(newName).get() != node)
+        newName = std::format("{}%02d", baseName, count++);
+
+    return newName;
+}
+
 // Add nodes
 void Graph::addNode(std::unique_ptr<Node> &&node, std::string_view name)
 {
     node->setParentGraph(this);
-    node->setName(name);
-    nodes_.insert(std::make_pair<std::string, std::unique_ptr<Node>>(std::string(name), std::move(node)));
+
+    // Ensure we have a unique name
+    auto uniqueName = uniqueNodeName(node.get(), name);
+
+    reverseNodes_.insert(std::make_pair<Node *, std::string>(node.get(), std::string(uniqueName)));
+    nodes_.insert(std::make_pair<std::string, std::unique_ptr<Node>>(std::string(uniqueName), std::move(node)));
+}
+
+// Get name of specified child node
+std::string_view Graph::nodeName(const Node *node) const
+{
+    if (reverseNodes_.contains(node))
+        return reverseNodes_.at(node);
+
+    return "UNKNOWN_NODE";
+}
+
+// Set name of specified child node
+void Graph::setNodeName(const Node *node, std::string_view name)
+{
+    auto uniqueName = uniqueNodeName(node, name);
+
+    // Extract the forward node mapping (name -> node) using its current name in reverseNodes_
+    auto nodeHandle = nodes_.extract(reverseNodes_.at(node));
+
+    // Set the new name and reinsert
+    nodeHandle.key() = uniqueName;
+    nodes_.insert(std::move(nodeHandle));
+
+    // Update reverseNodes_
+    reverseNodes_[node] = uniqueName;
 }
 
 // Add parameter link between nodes
@@ -66,11 +122,9 @@ Graph::Nodes &Graph::nodes() { return nodes_; }
 // Return edges on the graph
 Graph::Edges &Graph::edges() { return edges_; }
 
-// Return type of the node
-std::string_view Graph::type() const { return "Graph"; }
-
-// Return short summary of the node's purpose
-std::string_view Graph::summary() const { return "A node which contains its own inner graph"; }
+/*
+ * I/O
+ */
 
 // Express as a serialisable value
 SerialisedValue Graph::serialise() const
