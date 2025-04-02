@@ -38,8 +38,6 @@ class Graph : public Node
     std::string_view type() const override;
     // Return short summary of the node's purpose
     std::string_view summary() const override;
-    // Produce a registered node by type
-    static std::unique_ptr<Node> produceNode(const std::string_view &nodeType) { return registry.find(nodeType)->second()(this); }
     // Add node
     void addNode(std::unique_ptr<Node> &&node, std::string_view name);
     // Add edge between nodes
