@@ -3,16 +3,23 @@
 
 #include "nodes/node.h"
 #include "base/sysFunc.h"
+#include "nodes/graph.h"
 
 /*
  * Definition
  */
 
 // Set node name
-void Node::setName(std::string_view newName) { name_ = newName; }
+void Node::setName(std::string_view newName)
+{
+    if (parentGraph_)
+        parentGraph_->setNodeName(this, newName);
+    else
+        name_ = newName;
+}
 
 // Return node name
-std::string_view Node::name() const { return name_; }
+std::string_view Node::name() const { return parentGraph_ ? "UnparentedNode" : parentGraph_->nodeName(this); }
 
 /*
  * Inputs, Outputs & Options
