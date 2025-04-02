@@ -1,4 +1,4 @@
-#include "md.h"
+#include "nodes/md/md.h"
 
 // Return enum options for TimestepType
 EnumOptions<MDNode::TimestepType> MDNode::timestepType()

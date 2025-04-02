@@ -1,4 +1,4 @@
-#include "atomShake.h"
+#include "nodes/atomShake/atomShake.h"
 
 // Run main processing
 NodeConstants::ProcessResult AtomShakeNode::process()

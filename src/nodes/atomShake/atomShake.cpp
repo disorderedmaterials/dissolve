@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "atomShake.h"
+#include "nodes/atomShake/atomShake.h"
 #include "base/randomBuffer.h"
 #include "base/timer.h"
 #include "classes/box.h"

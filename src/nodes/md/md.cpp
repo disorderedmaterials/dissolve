@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/md.h"
+#include "nodes/md/md.h"
 #include "base/lineParser.h"
 #include "base/randomBuffer.h"
 #include "base/timer.h"
