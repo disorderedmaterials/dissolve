@@ -47,6 +47,6 @@ jobs:
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
       releaseTag: ${{ needs.Checkout.outputs.currentVersion }}
       releaseName: "Release ${{ needs.Checkout.outputs.currentVersion }}"
-      releaseBody: ${{ github.event.pull_request.body }}
+      releaseBodyFile: ChangeLog.md
       apptainerVersion: ${{ needs.Checkout.outputs.apptainerVersion }}
     secrets: inherit
