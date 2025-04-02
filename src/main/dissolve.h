@@ -26,7 +26,7 @@ class Molecule;
 class Dissolve : public Serialisable<>
 {
     public:
-    Dissolve(CoreData &coreData) : graphNode_(*this);
+    Dissolve(CoreData &coreData) : graphNode_(std::make_unique<DissolveGraph>(*this));
     ~Dissolve();
 
     /*
@@ -131,7 +131,7 @@ class Dissolve : public Serialisable<>
 
     private:
     // Dissolve graph node
-    DissolveGraph graphNode_;
+    std::unique_ptr<DissolveGraph> graphNode_;
 
     /*
      * Simulation
