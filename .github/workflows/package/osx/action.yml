@@ -55,6 +55,7 @@ runs:
       # Copy dependencies into Frameworks folder in app bundle
       cp -v ./build/antlr4-cppruntime/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
       cp -v ./build/onetbb/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
+      cp -v ./build/gsl/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
 
   - name: Create Disk Image
     shell: bash
