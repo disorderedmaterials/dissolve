@@ -22,7 +22,7 @@ AtomShakeNode::AtomShakeNode()
     addOption<Number>("StepSizeMin", "Minimum allowed value for step size, in Angstroms", stepSizeMin_);
 }
 
-std::string_view AtomShakeNode::type() const { return "Atom Shake"; }
+std::string_view AtomShakeNode::type() const { return "AtomShake"; }
 
 std::string_view AtomShakeNode::summary() const
 {
