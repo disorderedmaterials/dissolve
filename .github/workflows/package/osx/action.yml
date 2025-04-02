@@ -44,9 +44,6 @@ runs:
       Qt6_ROOT=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos/
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
-      # Add rpath to packaged Frameworks
-      install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
-
       # Set variables
       appName=Dissolve-GUI-${{ runner.arch }}
       appDirName=${appName}.app
