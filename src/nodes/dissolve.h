@@ -7,7 +7,7 @@
 #include "main/dissolve.h"
 #include "nodes/graph.h"
 
-// AtomShake Node
+// Dissolve graph
 class DissolveGraph : public Graph
 {
     public:
