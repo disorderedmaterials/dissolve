@@ -7,7 +7,7 @@
 #include "main/dissolve.h"
 #include "nodes/graph.h"
 
-// Dissolve graph
+// Main Dissolve node
 class DissolveGraph : public Graph
 {
     public:
