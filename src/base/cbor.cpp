@@ -4,7 +4,6 @@
 #include "base/cbor.h"
 #include "base/messenger.h"
 #include <bit>
-#include <iostream>
 
 // Push a value onto a buffer
 template <typename T> void ontoBuffer(T value, std::vector<uint8_t> &buf)
@@ -88,7 +87,6 @@ Header getHeader(std::ranges::subrange<std::vector<uint8_t>::iterator> &buf)
             size = fromBuffer<uint64_t>(buf);
     }
 
-    std::cout << (int)key << ", " << (int)minor << ", " << size << std::endl;
     return {(MajorKey)key, minor, size};
 }
 
