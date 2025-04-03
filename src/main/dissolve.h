@@ -26,7 +26,7 @@ class Molecule;
 class Dissolve : public Serialisable<>
 {
     public:
-    Dissolve(CoreData &coreData) : graphNode_(std::make_unique<DissolveGraph>(*this)) {}
+    Dissolve(CoreData &coreData);
     ~Dissolve();
 
     /*

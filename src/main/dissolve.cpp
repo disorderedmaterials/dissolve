@@ -54,6 +54,9 @@ void Dissolve::clear()
     iteration_ = 0;
     nIterationsPerformed_ = 0;
 
+    // Graph
+    graphNode_ = std::make_unique<DissolveGraph>(*this);
+
     // I/O
     setInputFilename("");
     restartFilename_.clear();
