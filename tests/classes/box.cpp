@@ -101,7 +101,7 @@ void testBox(Box &box)
     auto factor = 1.8371286;
     // -- Uniform scaling
     scaleBox(box, box.volume() * factor, {true, true, true}, true);
-    // -- Non-uniform, single axes
+    // -- Non-uniform, single axis
     scaleBox(box, box.volume() * factor, {true, false, false});
     scaleBox(box, box.volume() * factor, {false, true, false});
     scaleBox(box, box.volume() * factor, {false, false, true});
