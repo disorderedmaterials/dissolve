@@ -87,4 +87,9 @@ TEST_F(CBORTest, BasicTable)
     basic_test(value);
 }
 
+TEST_F(CBORTest, ComplexFile)
+{
+    SerialisedValue value = toml::parse("dissolve/input/simple_addition_graph.toml");
+    basic_test(value);
+}
 } // namespace UnitTest
