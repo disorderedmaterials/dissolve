@@ -49,38 +49,80 @@ enum class MiscMinor
     DOUBLE = 27,
 };
 
+enum class BitCount
+{
+    Bit8 = 24,
+    Bit16 = 25,
+    Bit32 = 26,
+    Bit64 = 27,
+};
+
 struct Header
 {
     MajorKey major;
-    uint8_t minor;
+    BitCount minor;
     uint64_t size;
 };
 
+// Parse a header file and size information from a file
 Header getHeader(std::ranges::subrange<std::vector<uint8_t>::iterator> &buf)
 {
     uint64_t size = 0;
 
     uint8_t head = *buf.begin();
     uint8_t key = (head & 0xE0) >> 5;
-    uint8_t minor = head & 0x1F;
+    BitCount minor = (BitCount)(head & 0x1F);
     buf.advance(1);
 
     if (key != 7)
     {
-        if (minor < 24)
-            size = minor;
-        else if (minor == 24)
+        if (minor < BitCount::Bit8)
+            size = (uint8_t)minor;
+        else if (minor == BitCount::Bit8)
             size = fromBuffer<uint8_t>(buf);
-        else if (minor == 25)
+        else if (minor == BitCount::Bit16)
             size = fromBuffer<uint16_t>(buf);
-        else if (minor == 26)
+        else if (minor == BitCount::Bit32)
             size = fromBuffer<uint32_t>(buf);
-        else if (minor == 27)
+        else if (minor == BitCount::Bit64)
             size = fromBuffer<uint64_t>(buf);
     }
 
     std::cout << (int)key << ", " << (int)minor << ", " << size << std::endl;
     return {(MajorKey)key, minor, size};
+}
+
+void writeHeader(MajorKey key, uint64_t size, std::vector<uint8_t> &buf)
+{
+    uint8_t header = (uint8_t)key << 5;
+    if (size < 24)
+    {
+        buf.push_back(header + size);
+    }
+    else if (size < 0x100)
+    {
+        buf.push_back(header + (uint8_t)BitCount::Bit8);
+        uint8_t s = size;
+        ontoBuffer(s, buf);
+    }
+    else if (size < 0x10000)
+    {
+        buf.push_back(header + (uint8_t)BitCount::Bit16);
+        uint16_t s = size;
+        ontoBuffer(s, buf);
+    }
+    else if (size < 0x100000000)
+    {
+        buf.push_back(header + (uint8_t)BitCount::Bit32);
+        uint32_t s = size;
+        ontoBuffer(s, buf);
+    }
+    else
+    {
+        buf.push_back(header + (uint8_t)BitCount::Bit64);
+        uint64_t s = size;
+        ontoBuffer(s, buf);
+    }
 }
 
 // Convert a serialed Value to its CBOR representation
@@ -94,15 +136,9 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
         {
             int64_t number = node.as_integer();
             if (number >= 0)
-            {
-                result.push_back(0x1b);
-            }
+                writeHeader(MajorKey::POS_INT, number, result);
             else
-            {
-                result.push_back(0x3b);
-                number *= -1;
-            }
-            ontoBuffer(number, result);
+                writeHeader(MajorKey::NEG_INT, -1 * number, result);
             break;
         }
         case toml::value_t::boolean:
@@ -124,17 +160,15 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
         case toml::value_t::string:
         {
             std::string str = node.as_string();
-            result.push_back(0x7b);
             uint64_t len = str.size();
-            ontoBuffer(len, result);
+            writeHeader(MajorKey::UTF8, len, result);
             std::copy(str.begin(), str.end(), std::back_inserter(result));
             break;
         }
         case toml::value_t::array:
         {
-            result.push_back(0x9b);
             uint64_t len = node.as_array().size();
-            ontoBuffer(len, result);
+            writeHeader(MajorKey::ARRAY, len, result);
             for (auto n : node.as_array())
             {
                 auto element = toCBOR(n);
@@ -144,9 +178,8 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
         }
         case toml::value_t::table:
         {
-            result.push_back(0xbb);
             uint64_t len = node.as_table().end() - node.as_table().begin();
-            ontoBuffer(len, result);
+            writeHeader(MajorKey::TABLE, len, result);
             for (auto [k, v] : node.as_table())
             {
                 auto key = toCBOR(k);
@@ -221,6 +254,9 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
             result = map;
             break;
         }
+        case MajorKey::TAG:
+            Messenger::exception("Cannot parse CBOR Tag values");
+            break;
         case MajorKey::MISC:
         {
             switch ((MiscMinor)minor)
@@ -238,7 +274,7 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
                     result = fromBuffer<double>(bytes);
                     break;
                 default:
-                    Messenger::exception("Unknown type code {:x}, {:x}", (int)header, minor);
+                    Messenger::exception("Unknown type code {:x}, {:x}", (int)header, (int)minor);
             }
         }
     }
