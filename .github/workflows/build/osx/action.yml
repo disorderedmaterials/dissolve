@@ -180,6 +180,10 @@ runs:
       cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DCONAN_GSL="OFF" -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../
       cmake --build . --config Release
 
+      # Copy over gsl libs so we can ship them with the bundle. Our exe is only linked to two of the four libs present, and this breaks the binary if we don't include them all in the package.
+      mkdir gsl
+      cp -v $(brew --prefix gsl)/lib/*.dylib ./gsl
+
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v4
