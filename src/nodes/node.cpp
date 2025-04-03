@@ -3,16 +3,23 @@
 
 #include "nodes/node.h"
 #include "base/sysFunc.h"
+#include "nodes/graph.h"
 
 /*
  * Definition
  */
 
 // Set node name
-void Node::setName(std::string_view newName) { name_ = newName; }
+void Node::setName(std::string_view newName)
+{
+    if (parentGraph_)
+        parentGraph_->setNodeName(this, newName);
+    else
+        name_ = newName;
+}
 
 // Return node name
-std::string_view Node::name() const { return name_; }
+std::string_view Node::name() const { return parentGraph_ ? "UnparentedNode" : parentGraph_->nodeName(this); }
 
 /*
  * Inputs, Outputs & Options
@@ -208,22 +215,12 @@ void Node::clearData() {}
 // Express as a serialisable value
 SerialisedValue Node::serialise() const
 {
-    SerialisedValue result, inputs, options;
+    SerialisedValue result, inputs, outputs, options;
     result["name"] = name();
     result["type"] = type();
 
-    if (!inputs_.empty())
-    {
-        for (auto &[k, v] : inputs_)
-            inputs[std::string(k)] = *v;
-        result["inputs"] = inputs;
-    }
-    if (!options_.empty())
-    {
-        for (auto &[k, v] : options_)
-            options[std::string(k)] = *v;
-        result["options"] = options;
-    }
+    fromMap(inputs_, "inputs", result, [](const auto k, const auto v) { return !v->isDefault(); });
+    fromMap(options_, "options", result, [](const auto k, const auto v) { return !v->isDefault(); });
     return result;
 }
 

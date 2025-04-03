@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "nodes/constants.h"
 #include "nodes/parameter.h"
 #include <string>
@@ -11,14 +12,20 @@
 class Graph;
 
 // Edge Definition
-struct EdgeDefinition
+struct EdgeDefinition : public Serialisable<>
 {
+    EdgeDefinition(std::string srcNode = "", std::string srcOutput = "", std::string tgtNode = "", std::string tgtInput = "");
     std::string sourceNode, sourceOutput, targetNode, targetInput;
-    bool operator==(const EdgeDefinition &other) const = default;
+    bool operator==(const EdgeDefinition &other) const;
+
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };
 
 // Edge
-class Edge
+class Edge : public Serialisable<>
 {
     public:
     ~Edge();
@@ -28,8 +35,6 @@ class Edge
     Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput);
 
     private:
-    // Edge definition
-    EdgeDefinition definition_;
     // Store references instead of pointers to the linked nodes and parameters for two reasons:
     // 1) Neither end of the link should EVER be null
     // 2) The link itself is immutable.  You can create links and
@@ -62,4 +67,9 @@ class Edge
     EdgeDefinition definition() const;
     // Pull the data from the source node to the target, returning a ProcessResult
     NodeConstants::ProcessResult pull();
+
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };

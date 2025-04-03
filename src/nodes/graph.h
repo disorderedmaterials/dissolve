@@ -20,18 +20,36 @@ class Graph : public Node
     ~Graph() = default;
 
     /*
-     * Nodes and edges
+     * Definition
      */
+    public:
+    // Return type of the node
+    std::string_view type() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
+
+    /*
+     * Nodes and Edges
+     */
+    public:
+    // Typedefs for Node and Edge storage
     using Nodes = std::map<std::string, std::unique_ptr<Node>>;
+    using ReverseNodes = std::map<const Node *, std::string>;
     using Edges = std::vector<std::unique_ptr<Edge>>;
 
     private:
     // Parent node
     Node *parent_;
-    // Container of nodes
+    // Map of node names to nodes
     Nodes nodes_;
+    // Map of nodes to node names
+    ReverseNodes reverseNodes_;
     // Container of edges
     Edges edges_;
+
+    private:
+    // Get unique node name
+    std::string uniqueNodeName(const Node *node, std::string_view baseName) const;
 
     public:
     // Return type of the node
@@ -40,6 +58,10 @@ class Graph : public Node
     std::string_view summary() const override;
     // Add node
     void addNode(std::unique_ptr<Node> &&node, std::string_view name);
+    // Get name of specified child node
+    std::string_view nodeName(const Node *node) const;
+    // Set name of specified child node
+    void setNodeName(const Node *node, std::string_view name);
     // Add edge between nodes
     bool addEdge(const EdgeDefinition &definition);
     // Remove edge between nodes
