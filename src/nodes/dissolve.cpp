@@ -4,4 +4,4 @@
 Dissolve& DissolveGraph::dissolve() const { return dissolve_; }
 
 // Return world pool
-ProcessPool& DissolveGraph::processPool() const { return dissolve_.worldPool(); }
+const ProcessPool& DissolveGraph::processPool() const { return dissolve_.worldPool(); }

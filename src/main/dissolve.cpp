@@ -6,7 +6,7 @@
 #include "classes/kVector.h"
 #include "classes/neutronWeights.h"
 #include "classes/species.h"
-#include "nodes/graph.h"
+#include "nodes/dissolve.h"
 
 Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {

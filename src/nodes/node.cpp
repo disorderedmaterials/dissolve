@@ -201,6 +201,12 @@ Graph *Node::parentGraph() const { return parentGraph_; }
 
 Node::EdgeMap &Node::links() { return inputEdges_; }
 
+// Return the Dissolve reference
+Dissolve &Node::dissolve() const { return parentGraph_->dissolve(); }
+
+// Return the world pool
+const ProcessPool &Node::processPool() const { return parentGraph_->dissolve().worldPool(); }
+
 /*
  * Data
  */

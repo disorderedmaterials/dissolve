@@ -11,8 +11,8 @@
 class DissolveGraph : public Graph
 {
     public:
-    explicit DissolveNode(Dissolve& dissolve) : Node(this), dissolve_(dissolve) {};
-    ~DissolveNode() override = default;
+    explicit DissolveGraph(Dissolve& dissolve) : dissolve_(dissolve) {}
+    ~DissolveGraph() = default;
 
     public:
     std::string_view type() const override { return "Dissolve"; }
@@ -29,5 +29,5 @@ class DissolveGraph : public Graph
     // Return dissolve
     Dissolve &dissolve() const override;
     // Return world pool
-    ProcessPool &processPool() const override;
+    const ProcessPool &processPool() const override;
 };

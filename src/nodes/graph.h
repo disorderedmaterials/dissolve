@@ -16,6 +16,7 @@
 class Graph : public Node
 {
     public:
+    Graph() = default;
     explicit Graph(Node *parent) : Node(this), parent_(parent) {}
     ~Graph() = default;
 
@@ -52,10 +53,6 @@ class Graph : public Node
     std::string uniqueNodeName(const Node *node, std::string_view baseName) const;
 
     public:
-    // Return type of the node
-    std::string_view type() const override;
-    // Return short summary of the node's purpose
-    std::string_view summary() const override;
     // Add node
     void addNode(std::unique_ptr<Node> &&node, std::string_view name);
     // Get name of specified child node

@@ -165,6 +165,10 @@ class Node : public Serialisable<>
     EdgeMap &links();
     // Returns the node parent graph
     Graph *parentGraph() const;
+    // Return the Dissolve reference
+    virtual Dissolve &dissolve() const;
+    // Return the world pool
+    virtual const ProcessPool &processPool() const;
 
     /*
      * Data
