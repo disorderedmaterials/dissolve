@@ -4,6 +4,7 @@
 #include "base/cbor.h"
 #include "base/messenger.h"
 #include <bit>
+#include <iostream>
 
 // Push a value onto a buffer
 template <typename T> void ontoBuffer(T value, std::vector<uint8_t> &buf)
@@ -25,6 +26,61 @@ template <typename T> T fromBuffer(std::ranges::subrange<std::vector<uint8_t>::i
         std::reverse_copy(buf.begin(), buf.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
     buf.advance(sizeof(output));
     return output;
+}
+
+enum class MajorKey
+{
+    POS_INT = 0,
+    NEG_INT,
+    STRING,
+    UTF8,
+    ARRAY,
+    TABLE,
+    TAG,
+    MISC,
+};
+
+enum class MiscMinor
+{
+    FALSE = 20,
+    TRUE = 21,
+    // NAN = 23,
+    FLOAT = 26,
+    DOUBLE = 27,
+};
+
+struct Header
+{
+    MajorKey major;
+    uint8_t minor;
+    uint64_t size;
+};
+
+Header getHeader(std::ranges::subrange<std::vector<uint8_t>::iterator> &buf)
+{
+    uint64_t size = 0;
+
+    uint8_t head = *buf.begin();
+    uint8_t key = (head & 0xE0) >> 5;
+    uint8_t minor = head & 0x1F;
+    buf.advance(1);
+
+    if (key != 7)
+    {
+        if (minor < 24)
+            size = minor;
+        else if (minor == 24)
+            size = fromBuffer<uint8_t>(buf);
+        else if (minor == 25)
+            size = fromBuffer<uint16_t>(buf);
+        else if (minor == 26)
+            size = fromBuffer<uint32_t>(buf);
+        else if (minor == 27)
+            size = fromBuffer<uint64_t>(buf);
+    }
+
+    std::cout << (int)key << ", " << (int)minor << ", " << size << std::endl;
+    return {(MajorKey)key, minor, size};
 }
 
 // Convert a serialed Value to its CBOR representation
@@ -117,37 +173,33 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
     SerialisedValue result;
     if (bytes.begin() == bytes.end())
         return {result, bytes};
-    switch ((uint8_t)*bytes.begin())
+    auto [header, minor, size] = getHeader(bytes);
+    switch (header)
     {
-        case 0x1b: // Positive Int
+        case MajorKey::POS_INT: // Positive Int
         {
-            bytes.advance(1);
-            result = fromBuffer<int64_t>(bytes);
+            result = size;
             break;
         }
-        case 0x3b: // Negative Int
+        case MajorKey::NEG_INT: // Negative Int
         {
-            bytes.advance(1);
-            result = -1 * fromBuffer<int64_t>(bytes);
+            result = -1 * size;
             break;
         }
-        case 0x7b: // String
+        case MajorKey::STRING: // String
+        case MajorKey::UTF8:   // String
         {
-            bytes.advance(1);
-            auto len = fromBuffer<uint64_t>(bytes);
             std::string str;
-            str.reserve(len);
-            std::copy(bytes.begin(), bytes.begin() + len, std::back_inserter(str));
+            str.reserve(size);
+            std::copy(bytes.begin(), bytes.begin() + size, std::back_inserter(str));
+            bytes.advance(size);
             result = str;
-            bytes.advance(len);
             break;
         }
-        case 0x9b: // Array
+        case MajorKey::ARRAY: // Array
         {
             std::vector<SerialisedValue> buf;
-            bytes.advance(1);
-            auto len = fromBuffer<uint64_t>(bytes);
-            for (int i = 0; i < len; ++i)
+            for (int i = 0; i < size; ++i)
             {
                 auto [elem, rest] = fromCBOR(bytes);
                 bytes = rest;
@@ -156,12 +208,10 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
             result = buf;
             break;
         }
-        case 0xbb: // Map
+        case MajorKey::TABLE: // Map
         {
             SerialisedValue map;
-            bytes.advance(1);
-            auto len = fromBuffer<uint64_t>(bytes);
-            for (int i = 0; i < len; ++i)
+            for (int i = 0; i < size; ++i)
             {
                 auto [key, rest] = fromCBOR(bytes);
                 auto [value, remainder] = fromCBOR(rest);
@@ -171,22 +221,26 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
             result = map;
             break;
         }
-        case 0xF4: // Boolean False
-            bytes.advance(1);
-            result = false;
-            break;
-        case 0xF5: // Boolean True
-            bytes.advance(1);
-            result = true;
-            break;
-        case 0xFB: // Float
+        case MajorKey::MISC:
         {
-            bytes.advance(1);
-            result = fromBuffer<double>(bytes);
-            break;
+            switch ((MiscMinor)minor)
+            {
+                case MiscMinor::FALSE:
+                    result = false;
+                    break;
+                case MiscMinor::TRUE: // Boolean True
+                    result = true;
+                    break;
+                case MiscMinor::FLOAT: // Float
+                    result = fromBuffer<float>(bytes);
+                    break;
+                case MiscMinor::DOUBLE: // Float
+                    result = fromBuffer<double>(bytes);
+                    break;
+                default:
+                    Messenger::exception("Unknown type code {:x}, {:x}", (int)header, minor);
+            }
         }
-        default:
-            Messenger::exception("Unknown type code {:x}", (int8_t)*bytes.begin());
     }
     return {result, bytes};
 }
