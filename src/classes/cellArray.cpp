@@ -85,8 +85,13 @@ bool CellArray::withinRange(const Cell *a, const Cell *b, double distance)
     assert(a != nullptr);
     assert(b != nullptr);
 
+    std::cout << std::format("...  A = {},{},{}\n", a->gridReference().x, a->gridReference().y, a->gridReference().z);
+    std::cout << std::format("...  B = {},{},{}\n", b->gridReference().x, b->gridReference().y, b->gridReference().z);
+    std::cout << std::format("...  rAB = {}\n", ((axes_* Vec3<double>(a->gridReference().x, a->gridReference().y, a->gridReference().z) - axes_ * Vec3<double>(b->gridReference().x, b->gridReference().y, b->gridReference().z)).magnitude()));
     // We need both the minimum image centroid-centroid distance, as well as the integer mim grid-reference delta
     Vec3<int> u = mimGridDelta(a, b);
+    std::cout << std::format("... wr u = {},{},{}\n", u.x, u.y, u.z);
+    std::cout << std::format("...  mag = {}\n", (axes_ * Vec3<double>(u.x, u.y, u.z)).magnitude());
 
     /*
      * We now have the minimum image integer grid vector from Cell a to Cell b.
@@ -96,10 +101,11 @@ bool CellArray::withinRange(const Cell *a, const Cell *b, double distance)
     u.x -= DissolveMath::sgn(u.x);
     u.y -= DissolveMath::sgn(u.y);
     u.z -= DissolveMath::sgn(u.z);
-
-    // Turn this grid reference delta into a real distamce by multiplying by the Cell axes_ matrix
+    std::cout << std::format("...  ->u = {},{},{}\n", u.x, u.y, u.z);
+    // Turn this grid reference delta into a real distance by multiplying by the Cell axes_ matrix
     auto v = axes_ * Vec3<double>(u.x, u.y, u.z);
 
+    std::cout << std::format("...  v = {}\n", v.magnitude());
     // Check ths vector magnitude against the supplied distance
     return (v.magnitude() <= distance);
 }
