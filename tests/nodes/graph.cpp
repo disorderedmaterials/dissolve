@@ -2,8 +2,9 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/graph.h"
+#include "nodes/edge.h"
 #include "nodes/number.h"
-#include "nodes/registry.h"
+#include "nodes/add.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -30,16 +31,13 @@ class GraphCoreTest : public ::testing::Test
          *    -----------------/
          */
 
-        // Create nodes and get references to them
-        graph_.addNode(NodeRegistry::produce("Add"), "x");
-        graph_.addNode(NodeRegistry::produce("Add"), "y");
-        graph_.addNode(NodeRegistry::produce("Add"), "z");
+        // Create nodes
+        x_ = dynamic_cast<AddNode *>(graph_.addNode("Add", "x"));
+        y_ = dynamic_cast<AddNode *>(graph_.addNode("Add", "y"));
+        z_ = dynamic_cast<AddNode *>(graph_.addNode("Add", "z"));
 
-        x_ = dynamic_cast<AddNode *>(graph_.node("x"));
         ASSERT_TRUE(x_);
-        y_ = dynamic_cast<AddNode *>(graph_.node("y"));
         ASSERT_TRUE(y_);
-        z_ = dynamic_cast<AddNode *>(graph_.node("z"));
         ASSERT_TRUE(z_);
 
         EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "A"}));
