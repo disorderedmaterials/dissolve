@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "classes/configuration.h"
 #include "main/dissolve.h"
+#include "nodes/edge.h"
 #include "nodes/graph.h"
 
 // Main Dissolve Node

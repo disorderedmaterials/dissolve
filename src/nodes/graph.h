@@ -4,13 +4,15 @@
 #pragma once
 
 #include "base/messenger.h"
-#include "nodes/edge.h"
 #include "nodes/node.h"
-#include "nodes/registry.h"
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
+
+// Forward Declarations
+class Edge;
+class EdgeDefinition;
 
 // Graph
 class Graph : public Node

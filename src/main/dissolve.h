@@ -12,7 +12,6 @@
 #include "data/elements.h"
 #include "module/layer.h"
 #include "module/module.h"
-#include "nodes/node.h"
 
 // Forward Declarations
 class Atom;

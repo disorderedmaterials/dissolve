@@ -3,6 +3,7 @@
 
 #include "nodes/node.h"
 #include "base/sysFunc.h"
+#include "nodes/edge.h"
 #include "nodes/graph.h"
 
 /*

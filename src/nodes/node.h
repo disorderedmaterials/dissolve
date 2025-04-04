@@ -7,13 +7,14 @@
 #include "base/serialiser.h"
 #include "module/module.h"
 #include "nodes/constants.h"
-#include "nodes/edge.h"
 #include "nodes/parameter.h"
 #include <map>
 #include <string>
 #include <vector>
 
+// Forward Declarations
 class Graph;
+class Edge;
 
 // Node Base
 class Node : public Serialisable<>
