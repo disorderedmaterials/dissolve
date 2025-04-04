@@ -40,8 +40,6 @@ class Graph : public Node
     using Edges = std::vector<std::unique_ptr<Edge>>;
 
     private:
-    // Parent node
-    Node *parent_;
     // Map of node names to nodes
     Nodes nodes_;
     // Map of nodes to node names
