@@ -39,12 +39,15 @@ Node *Graph::addNode(std::string_view type, std::string_view name)
 {
     // Produce the node
     auto node = NodeRegistry::produce(this, type);
+    auto nodePtr = node.get();
 
     // Ensure we have a unique name
     auto uniqueName = uniqueNodeName(node.get(), name);
 
     reverseNodes_.insert(std::make_pair<Node *, std::string>(node.get(), std::string(uniqueName)));
     nodes_.insert(std::make_pair<std::string, std::unique_ptr<Node>>(std::string(uniqueName), std::move(node)));
+
+    return nodePtr;
 }
 
 // Get name of specified child node

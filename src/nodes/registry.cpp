@@ -37,7 +37,11 @@ void NodeRegistry::instantiateNodeProducers()
 }
 
 // Check whether the supplied node type is known
-bool NodeRegistry::hasNodeType(std::string_view nodeType) { return producers_.contains(nodeType); }
+bool NodeRegistry::hasNodeType(std::string_view nodeType)
+{
+    instantiateNodeProducers();
+    return producers_.contains(nodeType);
+}
 
 // Produce a node of the given type with the specified Graph parent
 std::unique_ptr<Node> NodeRegistry::produce(Graph *parent, std::string_view nodeType)
