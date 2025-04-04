@@ -69,4 +69,3 @@ void Dissolve::clear()
 
 // Return data associated with processing Modules
 GenericList &Dissolve::processingModuleData() { return processingModuleData_; }
-

@@ -2,10 +2,10 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/graph.h"
-#include "nodes/edge.h"
-#include "nodes/number.h"
 #include "nodes/add.h"
 #include "nodes/dissolve.h"
+#include "nodes/edge.h"
+#include "nodes/number.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
