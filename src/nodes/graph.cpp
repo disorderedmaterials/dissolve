@@ -37,8 +37,6 @@ std::string Graph::uniqueNodeName(const Node *node, std::string_view baseName) c
 // Add nodes
 void Graph::addNode(std::unique_ptr<Node> &&node, std::string_view name)
 {
-    node->setParentGraph(this);
-
     // Ensure we have a unique name
     auto uniqueName = uniqueNodeName(node.get(), name);
 
