@@ -20,7 +20,7 @@ void Node::setName(std::string_view newName)
 }
 
 // Return node name
-std::string_view Node::name() const { return parentGraph_ ? "UnparentedNode" : parentGraph_->nodeName(this); }
+std::string_view Node::name() const { return parentGraph_ ? parentGraph_->nodeName(this) : "UnparentedNode"; }
 
 /*
  * Inputs, Outputs & Options
