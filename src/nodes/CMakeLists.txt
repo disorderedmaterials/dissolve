@@ -13,25 +13,26 @@ add_library(
   dotProduct.h
   edge.cpp
   edge.h
-  integrator.cpp
-  integrator.h
   graph.cpp
   graph.h
+  integrator.cpp
+  integrator.h
   multiply.cpp
   multiply.h
   node.cpp
   node.h
   number.cpp
   number.h
+  parameter.cpp
+  parameter.h
+  registry.cpp
+  registry.h
   subtract.cpp
   subtract.h
   vec3Assembly.cpp
   vec3Assembly.h
   vec3Decomposition.cpp
   vec3Decomposition.h
-  parameter.cpp
-  parameter.h
-  registry.h
 )
 
 target_include_directories(nodes PRIVATE ${PROJECT_SOURCE_DIR}/src)

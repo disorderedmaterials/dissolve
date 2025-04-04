@@ -53,7 +53,7 @@ class Graph : public Node
 
     public:
     // Add node
-    void addNode(std::unique_ptr<Node> &&node, std::string_view name);
+    Node *addNode(std::string_view type, std::string_view name);
     // Get name of specified child node
     std::string_view nodeName(const Node *node) const;
     // Set name of specified child node

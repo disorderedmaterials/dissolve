@@ -35,8 +35,11 @@ std::string Graph::uniqueNodeName(const Node *node, std::string_view baseName) c
 }
 
 // Add nodes
-void Graph::addNode(std::unique_ptr<Node> &&node, std::string_view name)
+Node *Graph::addNode(std::string_view type, std::string_view name)
 {
+    // Produce the node
+    auto node = NodeRegistry::produce(this, type);
+
     // Ensure we have a unique name
     auto uniqueName = uniqueNodeName(node.get(), name);
 
@@ -147,12 +150,10 @@ void Graph::deserialise(const SerialisedValue &node)
     toMap(node, "nodes",
           [this](const auto name, const auto &value)
           {
-              std::string kind = toml::find<std::string>(value, "type");
-              if (!registry.contains(kind))
-                  Messenger::exception("Attempted to create node of unknown kind: {}", kind);
-              auto child = registry.at(kind)();
+              std::string nodeType = toml::find<std::string>(value, "type");
+              auto child = addNode(nodeType, name);
+
               child->deserialise(value);
-              addNode(std::move(child), name);
           });
     toVector(node, "edges", [this](const auto &value) { addEdge(toml::get<EdgeDefinition>(value)); });
 }
