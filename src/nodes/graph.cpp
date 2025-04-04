@@ -1,5 +1,7 @@
 #include "nodes/graph.h"
 
+Graph::Graph(Graph *parentGraph) : Node(parentGraph) {}
+
 /*
  * Definition
  */

@@ -3,7 +3,7 @@
 
 #include "nodes/add.h"
 
-AddNode::AddNode()
+AddNode::AddNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<Number>("A", "First operand to the addition", a_);
     addInput<Number>("B", "Second operand to the addition", b_);

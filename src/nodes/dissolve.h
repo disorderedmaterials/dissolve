@@ -7,11 +7,11 @@
 #include "main/dissolve.h"
 #include "nodes/graph.h"
 
-// Main Dissolve node
+// Main Dissolve Node
 class DissolveGraph : public Graph
 {
     public:
-    explicit DissolveGraph(Dissolve& dissolve) : dissolve_(dissolve) {}
+    DissolveGraph(Dissolve &dissolve);
     ~DissolveGraph() = default;
 
     public:
@@ -23,7 +23,7 @@ class DissolveGraph : public Graph
      */
     private:
     // Dissolve reference
-    Dissolve& dissolve_;
+    Dissolve &dissolve_;
 
     public:
     // Return dissolve

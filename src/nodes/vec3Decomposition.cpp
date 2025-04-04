@@ -1,6 +1,6 @@
 #include "vec3Decomposition.h"
 
-Vec3DecompositionNode::Vec3DecompositionNode()
+Vec3DecompositionNode::Vec3DecompositionNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<Vec3<double>>("V", "The 3-dimensional vector to be decomposed", inputVector_);
     addOutput<Number>("X", "The x component of the vector", x_);
