@@ -39,7 +39,7 @@ class Node : public Serialisable<>
     // Set node name
     void setName(std::string_view newName);
     // Return node name
-    std::string_view name() const;
+    virtual std::string_view name() const;
     // Return node type
     virtual std::string_view type() const = 0;
     // Return short summary of the node's purpose

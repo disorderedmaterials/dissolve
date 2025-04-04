@@ -14,12 +14,19 @@ class DissolveGraph : public Graph
     DissolveGraph(Dissolve &dissolve);
     ~DissolveGraph() = default;
 
+    /*
+     * Definition (Virtuals)
+     */
     public:
-    std::string_view type() const override { return "Dissolve"; }
-    std::string_view summary() const override { return "Parent node of all simulations"; }
+    // Return node name
+    std::string_view name() const override;
+    // Return type of the node
+    std::string_view type() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Dissolve reference
