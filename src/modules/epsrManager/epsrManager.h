@@ -50,4 +50,6 @@ class EPSRManagerModule : public Module
     public:
     // Run set-up stage
     bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
+    // Return list of target Modules / data for refinement
+    const std::vector<Module *> &targets() const;
 };

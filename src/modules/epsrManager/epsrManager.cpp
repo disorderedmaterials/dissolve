@@ -27,3 +27,5 @@ EPSRManagerModule::EPSRManagerModule() : Module(ModuleTypes::EPSRManager)
                                                                   "Weighting scheme to use when averaging potentials",
                                                                   averagingScheme_, Averaging::averagingSchemes());
 }
+// Return list of target Modules / data for refinement
+const std::vector<Module *> &EPSRManagerModule::targets() const { return target_; }
