@@ -206,7 +206,7 @@ Node::EdgeMap &Node::links() { return inputEdges_; }
 Dissolve &Node::dissolve() const { return parentGraph_->dissolve(); }
 
 // Return the world pool
-const ProcessPool &Node::processPool() const { return parentGraph_->dissolve().worldPool(); }
+const ProcessPool &Node::processPool() const { return parentGraph_->processPool(); }
 
 /*
  * Data
