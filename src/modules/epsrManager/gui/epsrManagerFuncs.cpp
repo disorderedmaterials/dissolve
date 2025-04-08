@@ -3,7 +3,9 @@
 
 #include "gui/dataViewer.h"
 #include "gui/render/renderableData1D.h"
+#include "keywords/module.h"
 #include "main/dissolve.h"
+#include "modules/epsr/epsr.h"
 #include "modules/epsrManager/epsrManager.h"
 #include "modules/epsrManager/gui/epsrManagerWidget.h"
 
@@ -65,8 +67,8 @@ void EPSRManagerModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFla
         if (ui_.RFactorButton->isChecked())
         {
             graph_->groupManager().removeVerticalShifts();
-
-            for (auto *targetModule : module_->targets())
+            auto optEPSRModule = module_->keywords().getVectorModule("Target");
+            for (auto *targetModule : optEPSRModule)
                 graph_->createRenderable<RenderableData1D>(std::format("{}//RFactor", targetModule->name()),
                                                            targetModule->name(), "RFactor");
         }
