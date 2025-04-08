@@ -6,11 +6,11 @@
 #include "math/data1D.h"
 #include "nodes/node.h"
 
-// DerivativeNode Node
+// Derivative1D Node
 class DerivativeNode : public Node
 {
     public:
-    DerivativeNode();
+    DerivativeNode(Graph *parentGraph);
     ~DerivativeNode() override = default;
 
     public:

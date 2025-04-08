@@ -6,11 +6,11 @@
 #include "nodes/node.h"
 #include "templates/vector3.h"
 
-// Vec3AssemblyNode Node
+// Vec3Assembly Node
 class Vec3AssemblyNode : public Node
 {
     public:
-    Vec3AssemblyNode();
+    Vec3AssemblyNode(Graph *parentGraph);
     ~Vec3AssemblyNode() override = default;
 
     public:

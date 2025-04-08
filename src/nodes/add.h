@@ -10,7 +10,7 @@
 class AddNode : public Node
 {
     public:
-    AddNode();
+    AddNode(Graph *parentGraph);
     ~AddNode() override = default;
 
     /*

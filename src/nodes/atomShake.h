@@ -10,7 +10,7 @@
 class AtomShakeNode : public Node
 {
     public:
-    AtomShakeNode();
+    AtomShakeNode(Graph *parentGraph);
     ~AtomShakeNode() override = default;
 
     public:

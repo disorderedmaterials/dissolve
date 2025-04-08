@@ -2,8 +2,10 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/graph.h"
+#include "nodes/add.h"
+#include "nodes/dissolve.h"
+#include "nodes/edge.h"
 #include "nodes/number.h"
-#include "nodes/registry.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -11,7 +13,7 @@ namespace UnitTest
 class GraphCoreTest : public ::testing::Test
 {
     public:
-    GraphCoreTest() : graph_(nullptr) {}
+    GraphCoreTest() : dissolve_(coreData_), root_(dissolve_) {}
 
     // Create a graph for testing
     void createGraph()
@@ -30,24 +32,24 @@ class GraphCoreTest : public ::testing::Test
          *    -----------------/
          */
 
-        // Create nodes and get references to them
-        graph_.addNode(NodeRegistry::produce("Add"), "x");
-        graph_.addNode(NodeRegistry::produce("Add"), "y");
-        graph_.addNode(NodeRegistry::produce("Add"), "z");
+        // Create nodes
+        x_ = dynamic_cast<AddNode *>(root_.addNode("Add", "x"));
+        y_ = dynamic_cast<AddNode *>(root_.addNode("Add", "y"));
+        z_ = dynamic_cast<AddNode *>(root_.addNode("Add", "z"));
 
-        x_ = dynamic_cast<AddNode *>(graph_.node("x"));
         ASSERT_TRUE(x_);
-        y_ = dynamic_cast<AddNode *>(graph_.node("y"));
         ASSERT_TRUE(y_);
-        z_ = dynamic_cast<AddNode *>(graph_.node("z"));
         ASSERT_TRUE(z_);
 
-        EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "A"}));
-        EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "B"}));
+        EXPECT_TRUE(root_.addEdge({"x", "Result", "z", "A"}));
+        EXPECT_TRUE(root_.addEdge({"y", "Result", "z", "B"}));
     }
 
     protected:
-    Graph graph_;
+    // We need a CoreData and Dissolve definition to properly instantiate DissolveGraph at present.
+    CoreData coreData_;
+    Dissolve dissolve_;
+    DissolveGraph root_;
     AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr};
 };
 
@@ -82,8 +84,10 @@ TEST_F(GraphCoreTest, Serialisation)
 {
     createGraph();
 
-    Graph copy(nullptr);
-    auto serialised = graph_.serialise();
+    CoreData cd;
+    Dissolve d(cd);
+    DissolveGraph copy(d);
+    auto serialised = root_.serialise();
 
     SerialisedValue contents = toml::parse("dissolve/input/simple_addition_graph.toml");
     compare_toml("", serialised, contents);

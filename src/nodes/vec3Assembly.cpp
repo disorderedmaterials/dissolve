@@ -1,6 +1,6 @@
 #include "vec3Assembly.h"
 
-Vec3AssemblyNode::Vec3AssemblyNode()
+Vec3AssemblyNode::Vec3AssemblyNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<double>("X", "The x value of the assembled vector", x_);
     addInput<double>("Y", "The y value of the assembled vector", y_);

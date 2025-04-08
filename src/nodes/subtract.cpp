@@ -1,6 +1,6 @@
 #include "nodes/subtract.h"
 
-SubtractNode::SubtractNode()
+SubtractNode::SubtractNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<Number>("A", "First operand to the subtraction", a_);
     addInput<Number>("B", "Second operand to the subtraction, subtracted from A", b_);

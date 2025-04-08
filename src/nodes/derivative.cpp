@@ -1,7 +1,7 @@
 #include "derivative.h"
 #include "math/derivative.h"
 
-DerivativeNode::DerivativeNode()
+DerivativeNode::DerivativeNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<Data1D>("Data1D", "Input 1D data series", inputData_);
     addOutput<Data1D>("Result", "The elementwise derivative of the input", derivative_);
