@@ -242,7 +242,7 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
         case MajorKey::TABLE: // Map
         {
             SerialisedValue map;
-            for (int i = 0; i < size; ++i)
+            for (auto i = 0; i < size; ++i)
             {
                 auto [key, rest] = fromCBOR(bytes);
                 auto [value, remainder] = fromCBOR(rest);
