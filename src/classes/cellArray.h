@@ -5,6 +5,7 @@
 
 #include "classes/cellNeighbour.h"
 #include "math/matrix3.h"
+#include "templates/array3D.h"
 
 // Forward Declarations
 class Box;
@@ -57,7 +58,9 @@ class CellArray
     // Return the minimum image grid delta between the two specified Cells
     Vec3<int> mimGridDelta(const Cell *a, const Cell *b) const;
     // Return the minimum image equivalent of the supplied grid delta
-    Vec3<int> mimGridDelta(Vec3<int> delta) const;
+    Vec3<int> mimGridDelta(const Vec3<int> &delta) const;
+    // Return wrapped cell grid reference
+    Vec3<int> wrappedGridRef(const Vec3<int> &gridRef) const;
 
     /*
      * Cell Neighbours
@@ -67,6 +70,8 @@ class CellArray
     std::vector<CellNeighbourPair> neighbourPairs_;
     // Neighbour array per Cell
     std::vector<std::vector<CellNeighbour>> neighbours_;
+    // Corner distances between cells
+    Array3D<std::pair<double, double>> cornerDistances_;
 
     private:
     // Add neighbour to cell vector

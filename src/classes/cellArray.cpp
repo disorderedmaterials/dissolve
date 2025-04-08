@@ -85,29 +85,16 @@ bool CellArray::withinRange(const Cell *a, const Cell *b, double distance)
     assert(a != nullptr);
     assert(b != nullptr);
 
-    std::cout << std::format("...  A = {},{},{}\n", a->gridReference().x, a->gridReference().y, a->gridReference().z);
-    std::cout << std::format("...  B = {},{},{}\n", b->gridReference().x, b->gridReference().y, b->gridReference().z);
-    std::cout << std::format("...  rAB = {}\n", ((axes_* Vec3<double>(a->gridReference().x, a->gridReference().y, a->gridReference().z) - axes_ * Vec3<double>(b->gridReference().x, b->gridReference().y, b->gridReference().z)).magnitude()));
-    // We need both the minimum image centroid-centroid distance, as well as the integer mim grid-reference delta
-    Vec3<int> u = mimGridDelta(a, b);
-    std::cout << std::format("... wr u = {},{},{}\n", u.x, u.y, u.z);
-    std::cout << std::format("...  mag = {}\n", (axes_ * Vec3<double>(u.x, u.y, u.z)).magnitude());
+    // Get relevant index in the lookup array
+    auto v = mimGridDelta(a, b) + divisions_;
+    printf("A @ ");
+    a->gridReference().print();
+    printf("B @ ");
+    b->gridReference().print();
 
-    /*
-     * We now have the minimum image integer grid vector from Cell a to Cell b.
-     * Subtract 1 from any vector that is not zero (adding 1 to negative indices and -1 to positive indices.
-     * This has the effect of shortening the vector to account for atoms being at the near edges / corners of the two cells.
-     */
-    u.x -= DissolveMath::sgn(u.x);
-    u.y -= DissolveMath::sgn(u.y);
-    u.z -= DissolveMath::sgn(u.z);
-    std::cout << std::format("...  ->u = {},{},{}\n", u.x, u.y, u.z);
-    // Turn this grid reference delta into a real distance by multiplying by the Cell axes_ matrix
-    auto v = axes_ * Vec3<double>(u.x, u.y, u.z);
-
-    std::cout << std::format("...  v = {}\n", v.magnitude());
-    // Check ths vector magnitude against the supplied distance
-    return (v.magnitude() <= distance);
+    // If the minimum corner distance is less than the specified distance, the cells are within range
+    printf("  minCD = %f (grid = %d,%d,%d)\n", cornerDistances_[{v.x, v.y, v.z}].first, v.x, v.y, v.z);
+    return cornerDistances_[{v.x, v.y, v.z}].first <= distance;
 }
 
 // Check if minimum image calculation is necessary for any potential pair of atoms in the supplied cells
@@ -116,66 +103,57 @@ bool CellArray::minimumImageRequired(const Cell *a, const Cell *b, double distan
     assert(a != nullptr);
     assert(b != nullptr);
 
-    // Check every pair of corners between the Cell two grid references, and determine if minimum image calculation would be
-    // required
-    Vec3<int> i, j;
-    Vec3<double> r;
-    for (auto iCorner = 0; iCorner < 8; ++iCorner)
-    {
-        // Set integer vertex of corner on 'central' box
-        i.set(a->gridReference().x + (iCorner & 1 ? 1 : 0), a->gridReference().y + (iCorner & 2 ? 1 : 0),
-              a->gridReference().z + (iCorner & 4 ? 1 : 0));
+    // Get relevant index in the lookup array
+    auto v = mimGridDelta(a, b) + divisions_;
 
-        for (auto jCorner = 0; jCorner < 8; ++jCorner)
-        {
-            // Set integer vertex of corner on 'other' box
-            j.set(b->gridReference().x + (jCorner & 1 ? 1 : 0), b->gridReference().y + (jCorner & 2 ? 1 : 0),
-                  b->gridReference().z + (jCorner & 4 ? 1 : 0));
-
-            // Check literal distance between points - if it's less than the distance specified we can continue (no
-            // mim required)
-            j -= i;
-            r.set(j.x, j.y, j.z);
-            r = axes_ * r;
-            if (r.magnitude() < distance)
-                continue;
-
-            // Check minimum image distance between points - if it's less than the distance specified we require mim
-            // for this cell pair
-            j = mimGridDelta(j);
-            r.set(j.x, j.y, j.z);
-            r = axes_ * r;
-            if (r.magnitude() < distance)
-                return true;
-        }
-    }
-
-    return false;
+    // If either the minimum or maximum corner distance is greater than the specified distance, mim is required
+    return cornerDistances_[{v.x, v.y, v.z}].first > distance || cornerDistances_[{v.x, v.y, v.z}].second > distance;
 }
 
 // Return the minimum image grid delta between the two specified Cells
 Vec3<int> CellArray::mimGridDelta(const Cell *a, const Cell *b) const
 {
-    Vec3<int> u = b->gridReference() - a->gridReference();
-    return mimGridDelta(u);
+    return mimGridDelta(b->gridReference() - a->gridReference());
 }
 
 // Return the minimum image equivalent of the supplied grid delta
-Vec3<int> CellArray::mimGridDelta(Vec3<int> delta) const
+Vec3<int> CellArray::mimGridDelta(const Vec3<int> &delta) const
 {
-    if (delta.x > divisions_.x * 0.5)
-        delta.x -= divisions_.x;
-    else if (delta.x < -divisions_.x * 0.5)
-        delta.x += divisions_.x;
-    if (delta.y > divisions_.y * 0.5)
-        delta.y -= divisions_.y;
-    else if (delta.y < -divisions_.y * 0.5)
-        delta.y += divisions_.y;
-    if (delta.z > divisions_.z * 0.5)
-        delta.z -= divisions_.z;
-    else if (delta.z < -divisions_.z * 0.5)
-        delta.z += divisions_.z;
-    return delta;
+    auto result = delta;
+    if (result.x > divisions_.x * 0.5)
+        result.x -= divisions_.x;
+    else if (result.x < -divisions_.x * 0.5)
+        result.x += divisions_.x;
+    if (result.y > divisions_.y * 0.5)
+        result.y -= divisions_.y;
+    else if (result.y < -divisions_.y * 0.5)
+        result.y += divisions_.y;
+    if (result.z > divisions_.z * 0.5)
+        result.z -= divisions_.z;
+    else if (result.z < -divisions_.z * 0.5)
+        result.z += divisions_.z;
+    return result;
+}
+
+// Return wrapped cell grid reference
+Vec3<int> CellArray::wrappedGridRef(const Vec3<int> &gridRef) const
+{
+    auto result = gridRef;
+
+    if (result.x < 0)
+        result.x += divisions_.x;
+    else if (result.x >= divisions_.x)
+        result.x -= divisions_.x;
+    if (result.y < 0)
+        result.y += divisions_.y;
+    else if (result.y >= divisions_.y)
+        result.y -= divisions_.y;
+    if (result.z < 0)
+        result.x += divisions_.z;
+    else if (result.z >= divisions_.z)
+        result.z -= divisions_.z;
+
+    return result;
 }
 
 /*
@@ -366,6 +344,45 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     axes_ = box_->axes();
     axes_.columnMultiply(fractionalCellSize_);
 
+    // Create cell distance matrix giving us the minimum "corner distances" between a cell at 0,0,0 and the max cell divisions.
+    // These represent the minimum and maximum possible contact distances between any atoms located in each cell.
+    cornerDistances_.initialise(divisions_.x * 2 - 1, divisions_.y * 2 - 1, divisions_.z * 2 - 1);
+    for (auto x = 0; x < divisions_.x * 2 - 1; ++x)
+    {
+        for (auto y = 0; y < divisions_.y * 2 - 1; ++y)
+        {
+            for (auto z = 0; z < divisions_.z * 2 - 1; ++z)
+            {
+                auto gridDelta = Vec3<int>(x, y, z);
+
+                // Determine corner distance min/max
+                auto minCornerDist = 1.0e6, maxCornerDist = 0.0;
+                for (auto iCorner = 0; iCorner < 8; ++iCorner)
+                {
+                    // Set integer vertex of corner on 'central' box
+                    const Vec3<int> i = Vec3<int>(iCorner & 1 ? 1 : 0, iCorner & 2 ? 1 : 0, iCorner & 4 ? 1 : 0) + divisions_;
+
+                    for (auto jCorner = 0; jCorner < 8; ++jCorner)
+                    {
+                        // Set integer vertex of corner on 'other' box
+                        Vec3<int> j(gridDelta.x + (jCorner & 1 ? 1 : 0), gridDelta.y + (jCorner & 2 ? 1 : 0),
+                                    gridDelta.z + (jCorner & 4 ? 1 : 0));
+
+                        // Calculate corner distance and update extrema
+                        auto r = (axes_ * Vec3<double>(j.x - i.x, j.y - i.y, j.z - i.z)).magnitude();
+                        if (r < minCornerDist)
+                            minCornerDist = r;
+                        else if (r > maxCornerDist)
+                            maxCornerDist = r;
+                    }
+                }
+
+                cornerDistances_[{x, y, z}] = std::pair<double, double>(minCornerDist, maxCornerDist);
+            }
+        }
+        printf("Xs(%d) = %f -> %f\n", x, cornerDistances_[{x, 14, 14}].first, cornerDistances_[{x, 14, 14}].second);
+    }
+
     // Construct Cell neighbour lists
     Messenger::print("Creating cell neighbour lists...\n");
 
@@ -458,12 +475,14 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     {
         addNeighbour(cell, cell, false);
 
-        for (auto &indices : neighbourIndices)
+        for (auto &index : neighbourIndices)
         {
             // Find neighbour with the relative indices provided
-            auto *nbr = this->cell(cell.gridReference().x + indices.x, cell.gridReference().y + indices.y,
-                                   cell.gridReference().z + indices.z);
-            addNeighbour(cell, *nbr, minimumImageRequired(&cell, nbr, pairPotentialRange));
+            auto relIndex = cell.gridReference() + index;
+            auto *nbr = this->cell(relIndex.x, relIndex.y, relIndex.z);
+
+            // Add neighbour, flagging closer minimum image cell if present
+            addNeighbour(cell, *nbr, wrappedGridRef(relIndex) != index);
         }
     }
 
