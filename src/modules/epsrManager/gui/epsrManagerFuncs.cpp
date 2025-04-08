@@ -67,8 +67,8 @@ void EPSRManagerModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFla
         if (ui_.RFactorButton->isChecked())
         {
             graph_->groupManager().removeVerticalShifts();
-            auto optEPSRModule = module_->keywords().getVectorModule("Target");
-            for (auto *targetModule : optEPSRModule)
+            auto epsrModuleTargets = module_->keywords().getVectorModule("Target");
+            for (auto *targetModule : epsrModuleTargets)
                 graph_->createRenderable<RenderableData1D>(std::format("{}//RFactor", targetModule->name()),
                                                            targetModule->name(), "RFactor");
         }
