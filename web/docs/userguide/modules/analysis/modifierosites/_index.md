@@ -6,7 +6,9 @@ description: Calculate the bonding type and total bonding to oxygen in reference
 
 ## Overview
 
-The `ModifierOSites` module calculates how a modifier is bonding into a network. The frequency of bonding to bridging, non-bridging and free oxygen sites, in reference to a network former, is calculated. The total bonds to oygen as well as the bond lengths to oxygen are also calculated.
+The `ModifierOSites` module calculates how a modifier is bonding into a network. The frequency of bonding to bridging, non-bridging and free oxygen sites, in reference to a network former, is calculated. The total bonds to oxygen as well as the bond lengths to oxygen are also calculated.
+
+{{< cimage src="../modifierosites.png" caption="Representation of the information the ModifierOSites module gives." >}}
 
 ## Options
 
@@ -20,17 +22,17 @@ The `ModifierOSites` module calculates how a modifier is bonding into a network.
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`BondingOxygen`|`Site ...`|--|Set the site(s) 'BO' which are to represent the bonding oxygen.|
-|`NetworkFormer`|`Site ...`|--|Set the site(s) 'NF' for which the distribution around the origin sites 'A' should be calculated.|
-|`SiteA`|`Site ...`|--|Set the modifier site(s) for which the distribution of oxygens should be calculated.|
+|`BondingOxygen`|`BondingOxygen ...`|--|Set the site(s) 'BO' which are to represent the bonding oxygen.|
+|`NetworkFormer`|`NetworkFormer ...`|--|Set the site(s) 'NF' for which the distribution around the origin sites 'SiteA' should be calculated.|
+|`SiteA`|`SiteA ...`|--|Set the modifier site(s) for which the distribution of oxygens should be calculated.|
 
 
 ### Ranges
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`DistanceRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`2.5`<br/>`0.05`|Distance range (min, max) over which to calculate Q-Species from central site.|
-|`ModifierDistanceRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`2.0`<br/>`0.05`|Distance range (min, max) over which to calculate Modifier from central site.|
+|`DistanceRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`2.5`<br/>`0.05`|Range (min, max) of network former - oxygen distance binning.|
+|`ModifierDistanceRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`2.0`<br/>`0.05`|Range (min, max) of modifier - oxygen distance binning.|
 
 ## Export
 
