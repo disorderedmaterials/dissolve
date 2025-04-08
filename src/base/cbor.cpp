@@ -136,7 +136,7 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
             if (number >= 0)
                 writeHeader(MajorKey::POS_INT, number, result);
             else
-                writeHeader(MajorKey::NEG_INT, -1 * number, result);
+                writeHeader(MajorKey::NEG_INT, std::abs(number), result);
             break;
         }
         case toml::value_t::boolean:
