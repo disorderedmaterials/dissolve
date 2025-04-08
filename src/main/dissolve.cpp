@@ -6,7 +6,7 @@
 #include "classes/kVector.h"
 #include "classes/neutronWeights.h"
 #include "classes/species.h"
-#include "nodes/graph.h"
+#include "nodes/dissolve.h"
 
 Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {
@@ -54,6 +54,9 @@ void Dissolve::clear()
     iteration_ = 0;
     nIterationsPerformed_ = 0;
 
+    // Graph
+    graphNode_ = std::make_unique<DissolveGraph>(*this);
+
     // I/O
     setInputFilename("");
     restartFilename_.clear();
@@ -66,10 +69,3 @@ void Dissolve::clear()
 
 // Return data associated with processing Modules
 GenericList &Dissolve::processingModuleData() { return processingModuleData_; }
-
-/*
- * Graph node
- */
-
-// Set the Dissolve graph node
-void Dissolve::setGraph() { graphNode_ = std::move(Graph::produceNode("Dissolve")); }

@@ -7,13 +7,14 @@
 #include "base/serialiser.h"
 #include "module/module.h"
 #include "nodes/constants.h"
-#include "nodes/edge.h"
 #include "nodes/parameter.h"
 #include <map>
 #include <string>
 #include <vector>
 
+// Forward Declarations
 class Graph;
+class Edge;
 
 // Node Base
 class Node : public Serialisable<>
@@ -38,7 +39,7 @@ class Node : public Serialisable<>
     // Set node name
     void setName(std::string_view newName);
     // Return node name
-    std::string_view name() const;
+    virtual std::string_view name() const;
     // Return node type
     virtual std::string_view type() const = 0;
     // Return short summary of the node's purpose
@@ -163,10 +164,12 @@ class Node : public Serialisable<>
     std::map<std::string_view, std::shared_ptr<ParameterBase>> &options();
     // Get the links owned by this node
     EdgeMap &links();
-    // Set the node parent graph
-    void setParentGraph(Graph *parentGraph);
     // Returns the node parent graph
     Graph *parentGraph() const;
+    // Return the Dissolve reference
+    virtual Dissolve &dissolve() const;
+    // Return the world pool
+    virtual const ProcessPool &processPool() const;
 
     /*
      * Data

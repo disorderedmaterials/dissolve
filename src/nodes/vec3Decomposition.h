@@ -7,11 +7,11 @@
 #include "nodes/number.h"
 #include "templates/vector3.h"
 
-// Vec3DecompositionNode Node
+// Vec3Decomposition Node
 class Vec3DecompositionNode : public Node
 {
     public:
-    Vec3DecompositionNode();
+    Vec3DecompositionNode(Graph *parentGraph);
     ~Vec3DecompositionNode() override = default;
 
     public:
