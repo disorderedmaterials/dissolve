@@ -7,11 +7,11 @@
 #include "nodes/number.h"
 #include "templates/vector3.h"
 
-// DotProductNode Node
+// DotProduct Node
 class DotProductNode : public Node
 {
     public:
-    DotProductNode();
+    DotProductNode(Graph *parentGraph);
     ~DotProductNode() override = default;
 
     public:
