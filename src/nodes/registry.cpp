@@ -18,6 +18,12 @@
 // Static Singletons
 std::map<std::string_view, NodeProducer> NodeRegistry::producers_;
 
+// Makes unique pointer to derived node instance
+template <typename T> NodeProducer makeDerivedNode()
+{
+    return [=](Graph *parent) -> std::unique_ptr<Node> { return std::make_unique<T>(parent); };
+}
+
 // Instantiate Node Producers
 void NodeRegistry::instantiateNodeProducers()
 {

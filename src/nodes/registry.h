@@ -8,12 +8,6 @@
 
 using NodeProducer = std::function<std::unique_ptr<Node>(Graph *parent)>;
 
-// Makes unique pointer to derived node instance
-template <typename T> NodeProducer makeDerivedNode()
-{
-    return [=](Graph *parent) -> std::unique_ptr<Node> { return std::make_unique<T>(parent); };
-}
-
 // Registry of all Producible Node Types
 class NodeRegistry
 {
