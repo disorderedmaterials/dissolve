@@ -4,19 +4,21 @@
 #pragma once
 
 #include "base/messenger.h"
-#include "nodes/edge.h"
 #include "nodes/node.h"
-#include "nodes/registry.h"
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
+// Forward Declarations
+class Edge;
+class EdgeDefinition;
+
 // Graph
 class Graph : public Node
 {
     public:
-    explicit Graph(Node *parent) : Node(this), parent_(parent) {}
+    Graph(Graph *parentGraph);
     ~Graph() = default;
 
     /*
@@ -38,8 +40,6 @@ class Graph : public Node
     using Edges = std::vector<std::unique_ptr<Edge>>;
 
     private:
-    // Parent node
-    Node *parent_;
     // Map of node names to nodes
     Nodes nodes_;
     // Map of nodes to node names
@@ -52,10 +52,8 @@ class Graph : public Node
     std::string uniqueNodeName(const Node *node, std::string_view baseName) const;
 
     public:
-    // Produce a registered node by type
-    static std::unique_ptr<Node> produceNode(const std::string_view &nodeType) { return registry.find(nodeType)->second(); }
     // Add node
-    void addNode(std::unique_ptr<Node> &&node, std::string_view name);
+    Node *addNode(std::string_view type, std::string_view name);
     // Get name of specified child node
     std::string_view nodeName(const Node *node) const;
     // Set name of specified child node

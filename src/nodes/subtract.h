@@ -6,11 +6,11 @@
 #include "nodes/node.h"
 #include "nodes/number.h"
 
-// SubractNode Node
+// Subtract Node
 class SubtractNode : public Node
 {
     public:
-    SubtractNode();
+    explicit SubtractNode(Graph *parentGraph);
     ~SubtractNode() override = default;
 
     public:

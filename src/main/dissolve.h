@@ -12,12 +12,12 @@
 #include "data/elements.h"
 #include "module/layer.h"
 #include "module/module.h"
-#include "nodes/node.h"
 
 // Forward Declarations
 class Atom;
 class Box;
 class Cell;
+class DissolveGraph;
 class Isotopologue;
 class Molecule;
 
@@ -130,7 +130,7 @@ class Dissolve : public Serialisable<>
 
     private:
     // Dissolve graph node
-    std::unique_ptr<Node> graphNode_;
+    std::unique_ptr<DissolveGraph> graphNode_;
 
     /*
      * Simulation

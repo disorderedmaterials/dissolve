@@ -1,6 +1,6 @@
 #include "nodes/multiply.h"
 
-MultiplyNode::MultiplyNode()
+MultiplyNode::MultiplyNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<Number>("A", "First factor to the multiplication", a_);
     addInput<Number>("B", "Second factor to the multiplication", b_);
