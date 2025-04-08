@@ -3,28 +3,38 @@
 
 #pragma once
 
-#include "classes/configuration.h"
-#include "nodes/node.h"
+#include "main/dissolve.h"
+#include "nodes/edge.h"
+#include "nodes/graph.h"
 
-// AtomShake Node
-class DissolveNode : public Node
+// Main Dissolve Node
+class DissolveGraph : public Graph
 {
     public:
-    DissolveNode(){};
-    ~DissolveNode() override = default;
+    DissolveGraph(Dissolve &dissolve);
+    ~DissolveGraph() = default;
+
+    /*
+     * Definition (Virtuals)
+     */
+    public:
+    // Return node name
+    std::string_view name() const override;
+    // Return type of the node
+    std::string_view type() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
+
+    /*
+     * Data
+     */
+    private:
+    // Dissolve reference
+    Dissolve &dissolve_;
 
     public:
-    std::string_view type() const override { return "Dissolve"; }
-    std::string_view summary() const override { return "Parent node of all simulations"; }
-
-    /*
-     * Definition
-     */
-    private:
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext);
+    // Return dissolve
+    Dissolve &dissolve() const override;
+    // Return world pool
+    const ProcessPool &processPool() const override;
 };

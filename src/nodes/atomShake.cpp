@@ -3,7 +3,7 @@
 
 #include "nodes/atomShake.h"
 
-AtomShakeNode::AtomShakeNode()
+AtomShakeNode::AtomShakeNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
         ->setFlags(ParameterBase::ClearData);

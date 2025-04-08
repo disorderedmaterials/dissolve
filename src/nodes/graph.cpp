@@ -1,4 +1,11 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
 #include "nodes/graph.h"
+#include "nodes/edge.h"
+#include "nodes/registry.h"
+
+Graph::Graph(Graph *parentGraph) : Node(parentGraph) {}
 
 /*
  * Definition
@@ -28,15 +35,19 @@ std::string Graph::uniqueNodeName(const Node *node, std::string_view baseName) c
 }
 
 // Add nodes
-void Graph::addNode(std::unique_ptr<Node> &&node, std::string_view name)
+Node *Graph::addNode(std::string_view type, std::string_view name)
 {
-    node->setParentGraph(this);
+    // Produce the node
+    auto node = NodeRegistry::produce(this, type);
+    auto nodePtr = node.get();
 
     // Ensure we have a unique name
     auto uniqueName = uniqueNodeName(node.get(), name);
 
     reverseNodes_.insert(std::make_pair<Node *, std::string>(node.get(), std::string(uniqueName)));
     nodes_.insert(std::make_pair<std::string, std::unique_ptr<Node>>(std::string(uniqueName), std::move(node)));
+
+    return nodePtr;
 }
 
 // Get name of specified child node
@@ -142,12 +153,10 @@ void Graph::deserialise(const SerialisedValue &node)
     toMap(node, "nodes",
           [this](const auto name, const auto &value)
           {
-              std::string kind = toml::find<std::string>(value, "type");
-              if (!registry.contains(kind))
-                  Messenger::exception("Attempted to create node of unknown kind: {}", kind);
-              auto child = registry.at(kind)();
+              std::string nodeType = toml::find<std::string>(value, "type");
+              auto child = addNode(nodeType, name);
+
               child->deserialise(value);
-              addNode(std::move(child), name);
           });
     toVector(node, "edges", [this](const auto &value) { addEdge(toml::get<EdgeDefinition>(value)); });
 }

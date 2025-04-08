@@ -1,6 +1,6 @@
 #include "integrator.h"
 
-Integrator1DNode::Integrator1DNode()
+Integrator1DNode::Integrator1DNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<Data1D>("Data1D", "Input 1D data series", inputData_);
     addInput<std::string_view>("Method", "Method to use for integration", type_);

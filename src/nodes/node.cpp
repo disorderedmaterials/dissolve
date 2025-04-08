@@ -3,6 +3,7 @@
 
 #include "nodes/node.h"
 #include "base/sysFunc.h"
+#include "nodes/edge.h"
 #include "nodes/graph.h"
 
 /*
@@ -19,7 +20,7 @@ void Node::setName(std::string_view newName)
 }
 
 // Return node name
-std::string_view Node::name() const { return parentGraph_ ? "UnparentedNode" : parentGraph_->nodeName(this); }
+std::string_view Node::name() const { return parentGraph_ ? parentGraph_->nodeName(this) : "UnparentedNode"; }
 
 /*
  * Inputs, Outputs & Options
@@ -196,13 +197,16 @@ std::shared_ptr<ParameterBase> Node::findOption(std::string_view name) const
 // Return Options
 std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::options() { return options_; };
 
-// Set the node parent graph
-void Node::setParentGraph(Graph *parentGraph) { parentGraph_ = parentGraph; }
-
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }
 
 Node::EdgeMap &Node::links() { return inputEdges_; }
+
+// Return the Dissolve reference
+Dissolve &Node::dissolve() const { return parentGraph_->dissolve(); }
+
+// Return the world pool
+const ProcessPool &Node::processPool() const { return parentGraph_->processPool(); }
 
 /*
  * Data

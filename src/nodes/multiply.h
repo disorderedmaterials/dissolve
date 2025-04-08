@@ -6,11 +6,11 @@
 #include "nodes/node.h"
 #include "nodes/number.h"
 
-// MultiplyNode Node
+// Multiply Node
 class MultiplyNode : public Node
 {
     public:
-    MultiplyNode();
+    MultiplyNode(Graph *parentGraph);
     ~MultiplyNode() override = default;
 
     public:

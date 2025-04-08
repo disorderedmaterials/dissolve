@@ -9,11 +9,11 @@
 #include "nodes/node.h"
 #include "nodes/number.h"
 
-// Integrator1DNode Node
+// Integrator1D Node
 class Integrator1DNode : public Node
 {
     public:
-    Integrator1DNode();
+    Integrator1DNode(Graph *parentGraph);
     ~Integrator1DNode() override = default;
 
     public:
