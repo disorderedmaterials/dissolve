@@ -37,9 +37,9 @@ class CBORTest : public ::testing::Test
 
     void basic_test(SerialisedValue node)
     {
-        auto cbor = toCBOR(node);
+        auto cbor = CBOR::to(node);
         std::ranges::subrange sub{cbor.begin(), cbor.end()};
-        auto copy = fromCBOR(sub);
+        auto copy = CBOR::from(sub);
 
         compare_toml("", node, copy);
     }

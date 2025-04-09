@@ -5,6 +5,9 @@
 #include "base/messenger.h"
 #include <bit>
 
+namespace CBOR
+{
+
 // Push a value onto a buffer
 template <typename T> void ontoBuffer(T value, std::vector<uint8_t> &buf)
 {
@@ -187,7 +190,7 @@ void writeHeader(MajorKey key, uint64_t size, std::vector<uint8_t> &buf)
 }
 
 // Convert a serialed Value to its CBOR representation
-std::vector<uint8_t> toCBOR(const SerialisedValue &node)
+std::vector<uint8_t> to(const SerialisedValue &node)
 {
     std::vector<uint8_t> result;
 
@@ -232,7 +235,7 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
             writeHeader(MajorKey::ARRAY, len, result);
             for (auto n : node.as_array())
             {
-                auto element = toCBOR(n);
+                auto element = to(n);
                 std::copy(element.begin(), element.end(), std::back_inserter(result));
             }
             break;
@@ -243,8 +246,8 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
             writeHeader(MajorKey::TABLE, len, result);
             for (auto [k, v] : node.as_table())
             {
-                auto key = toCBOR(k);
-                auto value = toCBOR(v);
+                auto key = to(k);
+                auto value = to(v);
                 std::copy(key.begin(), key.end(), std::back_inserter(result));
                 std::copy(value.begin(), value.end(), std::back_inserter(result));
             }
@@ -261,7 +264,7 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
 }
 
 // Parse a CBOR representation of a serialised value
-std::tuple<SerialisedValue, ByteSource> fromCBORinner(ByteSource &bytes)
+std::tuple<SerialisedValue, ByteSource> fromInner(ByteSource &bytes)
 {
     SerialisedValue result;
     auto [header, minor, size] = getHeader(bytes);
@@ -292,7 +295,7 @@ std::tuple<SerialisedValue, ByteSource> fromCBORinner(ByteSource &bytes)
             std::vector<SerialisedValue> buf;
             for (auto i = 0; i < size; ++i)
             {
-                auto [elem, rest] = fromCBORinner(bytes);
+                auto [elem, rest] = fromInner(bytes);
                 bytes = std::move(rest);
                 buf.push_back(elem);
             }
@@ -304,8 +307,8 @@ std::tuple<SerialisedValue, ByteSource> fromCBORinner(ByteSource &bytes)
             SerialisedValue map;
             for (auto i = 0; i < size; ++i)
             {
-                auto [key, rest] = fromCBORinner(bytes);
-                auto [value, remainder] = fromCBORinner(rest);
+                auto [key, rest] = fromInner(bytes);
+                auto [value, remainder] = fromInner(rest);
                 bytes = std::move(remainder);
                 map[key.as_string()] = value;
             }
@@ -340,15 +343,17 @@ std::tuple<SerialisedValue, ByteSource> fromCBORinner(ByteSource &bytes)
 }
 
 // Parse a CBOR representation of a serialised value
-SerialisedValue fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
+SerialisedValue from(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
 {
     ByteSource source{bytes};
-    return std::get<0>(fromCBORinner(source));
+    return std::get<0>(fromInner(source));
 }
 
 // Parse a CBOR representation of a serialised value
-SerialisedValue fromCBOR(std::ifstream &&infile)
+SerialisedValue from(std::ifstream &&infile)
 {
     ByteSource source{std::move(infile)};
-    return std::get<0>(fromCBORinner(source));
+    return std::get<0>(fromInner(source));
 }
+
+} // namespace CBOR

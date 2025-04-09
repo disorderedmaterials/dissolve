@@ -9,10 +9,14 @@
 #include <tuple>
 #include <vector>
 
+namespace CBOR
+{
 // Convert a serialed Value to its CBOR representation
-std::vector<uint8_t> toCBOR(const SerialisedValue &node);
+std::vector<uint8_t> to(const SerialisedValue &node);
 
 // // Parse a CBOR representation of a serialised value
-SerialisedValue fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes);
+SerialisedValue from(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes);
 
-SerialisedValue fromCBOR(std::ifstream infile);
+SerialisedValue from(std::ifstream infile);
+
+} // namespace CBOR
