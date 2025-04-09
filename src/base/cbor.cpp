@@ -356,4 +356,106 @@ SerialisedValue from(std::ifstream &&infile)
     return std::get<0>(fromInner(source));
 }
 
+void skipElement(ByteSource &source)
+{
+    auto [header, minor, size] = getHeader(source);
+    switch (header)
+    {
+        case MajorKey::STRING: // String
+        case MajorKey::UTF8:   // String
+            bs_advance(source, size);
+            break;
+        case MajorKey::ARRAY: // Array
+        {
+            for (auto i = 0; i < size; ++i)
+                skipElement(source);
+            break;
+        }
+        case MajorKey::TABLE: // Map
+        {
+            for (auto i = 0; i < size; ++i)
+            {
+                skipElement(source); // Skip key
+                skipElement(source); // Skip value
+            }
+            break;
+        }
+        case MajorKey::MISC:
+        {
+            switch ((MiscMinor)minor)
+            {
+                case MiscMinor::FLOAT: // Float
+                    bs_advance(source, sizeof(float));
+                    break;
+                case MiscMinor::DOUBLE: // Float
+                    bs_advance(source, sizeof(double));
+                    break;
+                default:
+                    break;
+            }
+        }
+        default:
+            break;
+    }
+};
+
+void skipTo(ByteSource &source, Path path)
+{
+    while (!path.empty())
+    {
+        auto loc = path.back();
+        path.pop_back();
+        std::visit(
+            [&source](const auto step)
+            {
+                auto header = getHeader(source);
+                switch (header.major)
+                {
+                    case MajorKey::ARRAY:
+                        if constexpr (std::is_same<typeof(step), int>::value)
+                        {
+                            if (header.size >= step)
+                                Messenger::exception("Array index {} exceeds size {}", step, header.size);
+                            for (auto i = 0; i < step; ++i)
+                                skipElement(source);
+                        }
+                        else
+                            Messenger::exception("Cannot descend into array with index: {}", step);
+                        break;
+                    case MajorKey::TABLE:
+                        if constexpr (std::is_same<typeof(step), std::string>::value)
+                        {
+                            for (auto i = 0; i < step; ++i)
+                            {
+                                auto [name, rest] = fromInner(source);
+                                source = std::move(rest);
+                                if (name.is_string())
+                                {
+                                    if (name.as_string() == step)
+                                        break;
+                                }
+                                else
+                                    Messenger::exception("Found non-string Table key of type {}", (int)name.type());
+                            }
+                        }
+                        else
+                            Messenger::exception("Cannot descend into array with index: {}", step);
+                        break;
+                    default:
+                        Messenger::exception("Cannot descend into Major Key {}, especially with instruction step {}.",
+                                             (int)header.major, step);
+                }
+            },
+            loc);
+    }
+}
+
+// Pull a piece of a TOML value from a large CBOR file
+SerialisedValue extract(std::ifstream &&infile, Path path)
+{
+    ByteSource source{std::move(infile)};
+    skipTo(source, path);
+    return std::get<0>(fromInner(source));
+}
+
 } // namespace CBOR

@@ -11,12 +11,19 @@
 
 namespace CBOR
 {
+
 // Convert a serialed Value to its CBOR representation
 std::vector<uint8_t> to(const SerialisedValue &node);
 
-// // Parse a CBOR representation of a serialised value
+// Parse a CBOR representation of a serialised value
 SerialisedValue from(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes);
 
-SerialisedValue from(std::ifstream infile);
+SerialisedValue from(std::ifstream &&infile);
+
+using PathStep = std::variant<std::string, size_t>;
+using Path = std::vector<PathStep>;
+
+// Pull a piece of a TOML value from a large CBOR file
+SerialisedValue extract(std::ifstream &&infile, Path path);
 
 } // namespace CBOR
