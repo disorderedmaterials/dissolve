@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include <iostream>
 #include <ranges>
 #include <tuple>
 #include <vector>
@@ -11,6 +12,7 @@
 // Convert a serialed Value to its CBOR representation
 std::vector<uint8_t> toCBOR(const SerialisedValue &node);
 
-// Parse a CBOR representation of a serialised value
-std::tuple<SerialisedValue, std::ranges::subrange<std::vector<uint8_t>::iterator>>
-fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes);
+// // Parse a CBOR representation of a serialised value
+SerialisedValue fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes);
+
+SerialisedValue fromCBOR(std::ifstream infile);

@@ -39,9 +39,8 @@ class CBORTest : public ::testing::Test
     {
         auto cbor = toCBOR(node);
         std::ranges::subrange sub{cbor.begin(), cbor.end()};
-        auto [copy, remainder] = fromCBOR(sub);
+        auto copy = fromCBOR(sub);
 
-        EXPECT_EQ(remainder.begin(), remainder.end());
         compare_toml("", node, copy);
     }
 };

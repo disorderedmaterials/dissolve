@@ -15,15 +15,78 @@ template <typename T> void ontoBuffer(T value, std::vector<uint8_t> &buf)
         std::copy(value_representation.rbegin(), value_representation.rend(), std::back_inserter(buf));
 }
 
+using ByteSource = std::variant<std::ranges::subrange<std::vector<uint8_t>::iterator>, std::ifstream>;
+
+// Move forward in the byte stream
+void bs_advance(ByteSource &bs, size_t step)
+{
+    std::visit(
+        [step](auto &source)
+        {
+            if constexpr (std::is_same<typeof(source), std::ifstream>::value)
+                source.ignore(step);
+            else
+                source.advance(step);
+        },
+        bs);
+};
+
+// Access the head of the byte structure
+uint8_t bs_peek(ByteSource &bs)
+{
+    return std::visit(
+        [](auto &source) -> uint8_t
+        {
+            if constexpr (std::is_same<typeof(source), std::ifstream>::value)
+                return source.peek();
+            else
+                return *source.begin();
+        },
+        bs);
+};
+
+// Copy from the stream onto a buffer
+// The output type has to be a char* to allow ifstream::get to work
+void bs_copy(ByteSource &bs, size_t size, char *output)
+{
+    std::visit(
+        [size, output](auto &source)
+        {
+            if constexpr (std::is_same<typeof(source), std::ifstream>::value)
+                source.get(output, size);
+            else
+                std::copy(source.begin(), source.begin() + size, output);
+        },
+        bs);
+}
+
+// Copy from the stream onto a buffer with opposite endianness
+// The output type has to be a char* to allow ifstream::get to work
+void bs_reverse_copy(ByteSource &bs, size_t size, char *output)
+{
+    std::visit(
+        [size, output](auto &source)
+        {
+            if constexpr (std::is_same<typeof(source), std::ifstream>::value)
+            {
+                source.get(output, size);
+                std::reverse(output, output + size);
+            }
+            else
+                std::reverse_copy(source.begin(), source.begin() + size, output);
+        },
+        bs);
+}
+
 // Pull a value from a buffer
-template <typename T> T fromBuffer(std::ranges::subrange<std::vector<uint8_t>::iterator> &buf)
+template <typename T> T fromBuffer(ByteSource &buf)
 {
     T output;
     if constexpr (std::endian::native == std::endian::big)
-        std::copy(buf.begin(), buf.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
+        bs_copy(buf, sizeof(output), reinterpret_cast<char *>(&output));
     else
-        std::reverse_copy(buf.begin(), buf.begin() + sizeof(output), reinterpret_cast<uint8_t *>(&output));
-    buf.advance(sizeof(output));
+        bs_reverse_copy(buf, sizeof(output), reinterpret_cast<char *>(&output));
+    bs_advance(buf, sizeof(output));
     return output;
 }
 
@@ -64,27 +127,27 @@ struct Header
 };
 
 // Parse a header file and size information from a file
-Header getHeader(std::ranges::subrange<std::vector<uint8_t>::iterator> &buf)
+Header getHeader(ByteSource &buffer)
 {
     uint64_t size = 0;
 
-    uint8_t head = *buf.begin();
+    uint8_t head = bs_peek(buffer);
     uint8_t key = (head & 0xE0) >> 5;
     BitCount minor = (BitCount)(head & 0x1F);
-    buf.advance(1);
+    bs_advance(buffer, 1);
 
     if (key != 7)
     {
         if (minor < BitCount::Bit8)
             size = (uint8_t)minor;
         else if (minor == BitCount::Bit8)
-            size = fromBuffer<uint8_t>(buf);
+            size = fromBuffer<uint8_t>(buffer);
         else if (minor == BitCount::Bit16)
-            size = fromBuffer<uint16_t>(buf);
+            size = fromBuffer<uint16_t>(buffer);
         else if (minor == BitCount::Bit32)
-            size = fromBuffer<uint32_t>(buf);
+            size = fromBuffer<uint32_t>(buffer);
         else if (minor == BitCount::Bit64)
-            size = fromBuffer<uint64_t>(buf);
+            size = fromBuffer<uint64_t>(buffer);
     }
 
     return {(MajorKey)key, minor, size};
@@ -198,12 +261,9 @@ std::vector<uint8_t> toCBOR(const SerialisedValue &node)
 }
 
 // Parse a CBOR representation of a serialised value
-std::tuple<SerialisedValue, std::ranges::subrange<std::vector<uint8_t>::iterator>>
-fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
+std::tuple<SerialisedValue, ByteSource> fromCBORinner(ByteSource &bytes)
 {
     SerialisedValue result;
-    if (bytes.begin() == bytes.end())
-        return {result, bytes};
     auto [header, minor, size] = getHeader(bytes);
     switch (header)
     {
@@ -221,9 +281,9 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
         case MajorKey::UTF8:   // String
         {
             std::string str;
-            str.reserve(size);
-            std::copy(bytes.begin(), bytes.begin() + size, std::back_inserter(str));
-            bytes.advance(size);
+            str.resize(size);
+            bs_copy(bytes, size, str.data());
+            bs_advance(bytes, size);
             result = str;
             break;
         }
@@ -232,8 +292,8 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
             std::vector<SerialisedValue> buf;
             for (auto i = 0; i < size; ++i)
             {
-                auto [elem, rest] = fromCBOR(bytes);
-                bytes = rest;
+                auto [elem, rest] = fromCBORinner(bytes);
+                bytes = std::move(rest);
                 buf.push_back(elem);
             }
             result = buf;
@@ -244,9 +304,9 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
             SerialisedValue map;
             for (auto i = 0; i < size; ++i)
             {
-                auto [key, rest] = fromCBOR(bytes);
-                auto [value, remainder] = fromCBOR(rest);
-                bytes = remainder;
+                auto [key, rest] = fromCBORinner(bytes);
+                auto [value, remainder] = fromCBORinner(rest);
+                bytes = std::move(remainder);
                 map[key.as_string()] = value;
             }
             result = map;
@@ -276,5 +336,19 @@ fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
             }
         }
     }
-    return {result, bytes};
+    return {result, std::move(bytes)};
+}
+
+// Parse a CBOR representation of a serialised value
+SerialisedValue fromCBOR(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes)
+{
+    ByteSource source{bytes};
+    return std::get<0>(fromCBORinner(source));
+}
+
+// Parse a CBOR representation of a serialised value
+SerialisedValue fromCBOR(std::ifstream &&infile)
+{
+    ByteSource source{std::move(infile)};
+    return std::get<0>(fromCBORinner(source));
 }
