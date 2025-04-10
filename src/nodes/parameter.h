@@ -169,6 +169,13 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
             else
                 data_ = {};
         }
+        else if constexpr (std::is_convertible<T, std::optional<Number>>::value)
+        {
+            if (node.contains("data"))
+                data_ = toml::find<Number>(node, "data");
+            else
+                data_ = {};
+        }
         else
         {
             data_ = toml::find<T>(node, "data");
