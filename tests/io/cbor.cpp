@@ -91,4 +91,12 @@ TEST_F(CBORTest, ComplexFile)
     SerialisedValue value = toml::parse("dissolve/input/simple_addition_graph.toml");
     basic_test(value);
 }
+
+TEST_F(CBORTest, CBORCompare)
+{
+    SerialisedValue tomlFile = toml::parse("dissolve/input/simple_addition_graph.toml");
+    std::ifstream infile("dissolve/input/simple_addition_graph.cbor");
+    SerialisedValue cborFile = CBOR::from(std::move(infile));
+    compare_toml("", tomlFile, cborFile);
+}
 } // namespace UnitTest
