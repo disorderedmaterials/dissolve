@@ -56,9 +56,12 @@ void bs_copy(ByteSource &bs, size_t size, char *output)
         [size, output](auto &source)
         {
             if constexpr (std::is_same<typeof(source), std::ifstream>::value)
-                source.get(output, size);
+                source.read(output, size);
             else
+            {
                 std::copy(source.begin(), source.begin() + size, output);
+                source.advance(size);
+            }
         },
         bs);
 }
@@ -76,7 +79,10 @@ void bs_reverse_copy(ByteSource &bs, size_t size, char *output)
                 std::reverse(output, output + size);
             }
             else
+            {
                 std::reverse_copy(source.begin(), source.begin() + size, output);
+                source.advance(size);
+            }
         },
         bs);
 }
@@ -89,7 +95,6 @@ template <typename T> T fromBuffer(ByteSource &buf)
         bs_copy(buf, sizeof(output), reinterpret_cast<char *>(&output));
     else
         bs_reverse_copy(buf, sizeof(output), reinterpret_cast<char *>(&output));
-    bs_advance(buf, sizeof(output));
     return output;
 }
 
@@ -286,7 +291,6 @@ std::tuple<SerialisedValue, ByteSource> fromInner(ByteSource &bytes)
             std::string str;
             str.resize(size);
             bs_copy(bytes, size, str.data());
-            bs_advance(bytes, size);
             result = str;
             break;
         }
