@@ -99,4 +99,22 @@ TEST_F(CBORTest, CBORCompare)
     SerialisedValue cborFile = CBOR::from(std::move(infile));
     compare_toml("", tomlFile, cborFile);
 }
+
+TEST_F(CBORTest, CBORExtractSimple)
+{
+    std::ifstream infile("dissolve/input/simple_addition_graph.cbor", std::ios::binary | std::ios::in);
+    auto type = CBOR::extract(std::move(infile), {"type"});
+    EXPECT_TRUE(type.is_string());
+    EXPECT_EQ(type.as_string(), "Dissolve");
+    infile.close();
+}
+
+TEST_F(CBORTest, CBORExtractComplex)
+{
+    std::ifstream infile("dissolve/input/simple_addition_graph.cbor", std::ios::binary | std::ios::in);
+    auto type = CBOR::extract(std::move(infile), {"edges", 1, "sourceNode"});
+    EXPECT_TRUE(type.is_string());
+    EXPECT_EQ(type.as_string(), "y");
+    infile.close();
+}
 } // namespace UnitTest

@@ -20,7 +20,7 @@ SerialisedValue from(std::ranges::subrange<std::vector<uint8_t>::iterator> bytes
 
 SerialisedValue from(std::ifstream &&infile);
 
-using PathStep = std::variant<std::string, size_t>;
+using PathStep = std::variant<std::string, int>;
 using Path = std::vector<PathStep>;
 
 // Pull a piece of a TOML value from a large CBOR file

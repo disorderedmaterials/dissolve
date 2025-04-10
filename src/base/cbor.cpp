@@ -405,31 +405,32 @@ void skipElement(ByteSource &source)
 
 void skipTo(ByteSource &source, Path path)
 {
+
     while (!path.empty())
     {
         auto loc = path.back();
         path.pop_back();
         std::visit(
-            [&source](const auto step)
+            [&source](const auto &step)
             {
                 auto header = getHeader(source);
                 switch (header.major)
                 {
                     case MajorKey::ARRAY:
-                        if constexpr (std::is_same<typeof(step), int>::value)
+                        if constexpr (std::is_same<typeof(step), const int>::value)
                         {
-                            if (header.size >= step)
+                            if (step >= header.size)
                                 Messenger::exception("Array index {} exceeds size {}", step, header.size);
                             for (auto i = 0; i < step; ++i)
                                 skipElement(source);
                         }
                         else
-                            Messenger::exception("Cannot descend into array with index: {}", step);
+                            Messenger::exception("Cannot descend into array with index: {}: {}", step, typeid(step).name());
                         break;
                     case MajorKey::TABLE:
-                        if constexpr (std::is_same<typeof(step), std::string>::value)
+                        if constexpr (std::is_same<typeof(step), const std::string>::value)
                         {
-                            for (auto i = 0; i < step; ++i)
+                            for (auto i = 0; i < header.size; ++i)
                             {
                                 auto [name, rest] = fromInner(source);
                                 source = std::move(rest);
@@ -437,13 +438,15 @@ void skipTo(ByteSource &source, Path path)
                                 {
                                     if (name.as_string() == step)
                                         break;
+                                    else
+                                        skipElement(source);
                                 }
                                 else
                                     Messenger::exception("Found non-string Table key of type {}", (int)name.type());
                             }
                         }
                         else
-                            Messenger::exception("Cannot descend into array with index: {}", step);
+                            Messenger::exception("Cannot descend into table with index: {}", step);
                         break;
                     default:
                         Messenger::exception("Cannot descend into Major Key {}, especially with instruction step {}.",
@@ -458,6 +461,7 @@ void skipTo(ByteSource &source, Path path)
 SerialisedValue extract(std::ifstream &&infile, Path path)
 {
     ByteSource source{std::move(infile)};
+    std::reverse(path.begin(), path.end());
     skipTo(source, path);
     return std::get<0>(fromInner(source));
 }
