@@ -60,7 +60,7 @@ class MDNode : public Node
     // Fixed timestep (ps) to use in MD simulation
     Number fixedTimestep_{5.0e-4};
     // Frequency at which to calculate total system energy
-    std::optional<Number> energyFrequency_{Number(10)};
+    std::optional<Number> energyFrequency_{10};
     // Whether to restrict force calculation to intramolecular contributions only
     bool intramolecularForcesOnly_{false};
     // Number of steps to perform
@@ -68,7 +68,7 @@ class MDNode : public Node
     // Only run MD when target Configuration energies are stable
     bool onlyWhenEnergyStable_{true};
     // Frequency at which to output step information
-    std::optional<Number> outputFrequency_{Number(5)};
+    std::optional<Number> outputFrequency_{5};
     // Whether random velocities should always be assigned before beginning MD simulation
     bool randomVelocities_{false};
     // Species to restrict calculation to
