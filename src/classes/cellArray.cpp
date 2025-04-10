@@ -79,14 +79,14 @@ Cell *CellArray::cell(const Vec3<double> r)
     return &cells_[indices.x * divisions_.y * divisions_.z + indices.y * divisions_.z + indices.z];
 }
 
-// Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
+// Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified distance
 bool CellArray::withinRange(const Cell *a, const Cell *b, double distance)
 {
     assert(a != nullptr);
     assert(b != nullptr);
 
     // Get relevant index in the lookup array
-    auto v = mimGridDelta(a, b) + divisions_;
+    auto v = mimGridDelta(a, b) + cornerDistancesOrigin_;
     printf("A @ ");
     a->gridReference().print();
     printf("B @ ");
@@ -347,29 +347,28 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     // Create cell distance matrix giving us the minimum "corner distances" between a cell at 0,0,0 and the max cell divisions.
     // These represent the minimum and maximum possible contact distances between any atoms located in each cell.
     cornerDistances_.initialise(divisions_.x * 2 - 1, divisions_.y * 2 - 1, divisions_.z * 2 - 1);
-    for (auto x = 0; x < divisions_.x * 2 - 1; ++x)
+    cornerDistancesOrigin_ = divisions_ - Vec3<int>(1,1,1);
+    for (auto x = -divisions_.x+1; x < divisions_.x; ++x)
     {
-        for (auto y = 0; y < divisions_.y * 2 - 1; ++y)
+        for (auto y = -divisions_.y+1; y < divisions_.y; ++y)
         {
-            for (auto z = 0; z < divisions_.z * 2 - 1; ++z)
+            for (auto z = -divisions_.z + 1; z < divisions_.z; ++z)
             {
-                auto gridDelta = Vec3<int>(x, y, z);
-
                 // Determine corner distance min/max
                 auto minCornerDist = 1.0e6, maxCornerDist = 0.0;
                 for (auto iCorner = 0; iCorner < 8; ++iCorner)
                 {
                     // Set integer vertex of corner on 'central' box
-                    const Vec3<int> i = Vec3<int>(iCorner & 1 ? 1 : 0, iCorner & 2 ? 1 : 0, iCorner & 4 ? 1 : 0) + divisions_;
+                    const auto i = Vec3<int>(iCorner & 1 ? 1 : 0, iCorner & 2 ? 1 : 0, iCorner & 4 ? 1 : 0);
 
                     for (auto jCorner = 0; jCorner < 8; ++jCorner)
                     {
                         // Set integer vertex of corner on 'other' box
-                        Vec3<int> j(gridDelta.x + (jCorner & 1 ? 1 : 0), gridDelta.y + (jCorner & 2 ? 1 : 0),
-                                    gridDelta.z + (jCorner & 4 ? 1 : 0));
+                        Vec3<int> j(x + (jCorner & 1 ? 1 : 0), y + (jCorner & 2 ? 1 : 0),
+                                    z + (jCorner & 4 ? 1 : 0));
 
                         // Calculate corner distance and update extrema
-                        auto r = (axes_ * Vec3<double>(j.x - i.x, j.y - i.y, j.z - i.z)).magnitude();
+                        auto r = (axes_ * Vec3<double>(i.x - j.x, i.y - j.y, i.z - j.z)).magnitude();
                         if (r < minCornerDist)
                             minCornerDist = r;
                         else if (r > maxCornerDist)
@@ -377,11 +376,14 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
                     }
                 }
 
-                cornerDistances_[{x, y, z}] = std::pair<double, double>(minCornerDist, maxCornerDist);
+                cornerDistances_[{x + cornerDistancesOrigin_.x, y + cornerDistancesOrigin_.y, z + cornerDistancesOrigin_.z}] = std::pair<double, double>(minCornerDist, maxCornerDist);
             }
         }
-        printf("Xs(%d) = %f -> %f\n", x, cornerDistances_[{x, 14, 14}].first, cornerDistances_[{x, 14, 14}].second);
+        printf("Xs(%d) = %f -> %f\n", x, cornerDistances_[{x+13, 13, 13}].first, cornerDistances_[{x+13, 13, 13}].second);
     }
+
+    printf("CENTRE = %f -> %f\n", cornerDistances_[{13, 13, 13}].first, cornerDistances_[{13, 13, 13}].second);
+
 
     // Construct Cell neighbour lists
     Messenger::print("Creating cell neighbour lists...\n");

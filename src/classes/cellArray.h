@@ -51,7 +51,7 @@ class CellArray
     // Return Cell which contains specified coordinate
     Cell *cell(const Vec3<double> r);
     const Cell *cell(const Vec3<double> r) const;
-    // Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
+    // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified distance
     bool withinRange(const Cell *a, const Cell *b, double distance);
     // Check if minimum image calculation is necessary for any potential pair of atoms in the supplied cells
     bool minimumImageRequired(const Cell *a, const Cell *b, double distance);
@@ -72,6 +72,8 @@ class CellArray
     std::vector<std::vector<CellNeighbour>> neighbours_;
     // Corner distances between cells
     Array3D<std::pair<double, double>> cornerDistances_;
+    // Grid reference for central cell (0,0,0) in cornerDistances_
+    Vec3<int> cornerDistancesOrigin_;
 
     private:
     // Add neighbour to cell vector
