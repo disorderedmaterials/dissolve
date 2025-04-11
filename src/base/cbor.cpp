@@ -8,6 +8,12 @@
 namespace CBOR
 {
 
+// helper type for the visitor
+template <class... Ts> struct overloads : Ts...
+{
+    using Ts::operator()...;
+};
+
 // Push a value onto a buffer
 template <typename T> void ontoBuffer(T value, std::vector<uint8_t> &buf)
 {
@@ -23,68 +29,49 @@ using ByteSource = std::variant<std::ranges::subrange<std::vector<uint8_t>::iter
 // Move forward in the byte stream
 void bs_advance(ByteSource &bs, size_t step)
 {
-    std::visit(
-        [step](auto &source)
-        {
-            if constexpr (std::is_same<typeof(source), std::ifstream>::value)
-                source.ignore(step);
-            else
-                source.advance(step);
-        },
-        bs);
+    const auto visitor =
+        overloads{[step](std::ranges::subrange<std::vector<uint8_t>::iterator> &source) { source.advance(step); },
+                  [step](std::ifstream &source) { source.ignore(step); }};
+    std::visit(visitor, bs);
 };
 
 // Access the head of the byte structure
 uint8_t bs_peek(ByteSource &bs)
 {
-    return std::visit(
-        [](auto &source) -> uint8_t
-        {
-            if constexpr (std::is_same<typeof(source), std::ifstream>::value)
-                return source.peek();
-            else
-                return *source.begin();
-        },
-        bs);
+    const auto visitor =
+        overloads{[](std::ranges::subrange<std::vector<uint8_t>::iterator> &source) -> uint8_t { return *source.begin(); },
+                  [](std::ifstream &source) -> uint8_t { return source.peek(); }};
+    return std::visit(visitor, bs);
 };
 
 // Copy from the stream onto a buffer
 // The output type has to be a char* to allow ifstream::get to work
 void bs_copy(ByteSource &bs, size_t size, char *output)
 {
-    std::visit(
-        [size, output](auto &source)
-        {
-            if constexpr (std::is_same<typeof(source), std::ifstream>::value)
-                source.read(output, size);
-            else
-            {
-                std::copy(source.begin(), source.begin() + size, output);
-                source.advance(size);
-            }
-        },
-        bs);
+    const auto visitor = overloads{[size, output](std::ranges::subrange<std::vector<uint8_t>::iterator> &source)
+                                   {
+                                       std::copy(source.begin(), source.begin() + size, output);
+                                       source.advance(size);
+                                   },
+                                   [size, output](std::ifstream &source) { source.read(output, size); }};
+    std::visit(visitor, bs);
 }
 
 // Copy from the stream onto a buffer with opposite endianness
 // The output type has to be a char* to allow ifstream::get to work
 void bs_reverse_copy(ByteSource &bs, size_t size, char *output)
 {
-    std::visit(
-        [size, output](auto &source)
-        {
-            if constexpr (std::is_same<typeof(source), std::ifstream>::value)
-            {
-                source.get(output, size);
-                std::reverse(output, output + size);
-            }
-            else
-            {
-                std::reverse_copy(source.begin(), source.begin() + size, output);
-                source.advance(size);
-            }
-        },
-        bs);
+    const auto visitor = overloads{[size, output](std::ranges::subrange<std::vector<uint8_t>::iterator> &source)
+                                   {
+                                       std::reverse_copy(source.begin(), source.begin() + size, output);
+                                       source.advance(size);
+                                   },
+                                   [size, output](std::ifstream &source)
+                                   {
+                                       source.read(output, size);
+                                       std::reverse(output, output + size);
+                                   }};
+    std::visit(visitor, bs);
 }
 
 // Pull a value from a buffer
@@ -417,7 +404,7 @@ void skipTo(ByteSource &source, Path path)
                 switch (header.major)
                 {
                     case MajorKey::ARRAY:
-                        if constexpr (std::is_same<typeof(step), const int>::value)
+                        if constexpr (std::is_same<decltype(step), const int>::value)
                         {
                             if (step >= header.size)
                                 Messenger::exception("Array index {} exceeds size {}", step, header.size);
@@ -428,7 +415,7 @@ void skipTo(ByteSource &source, Path path)
                             Messenger::exception("Cannot descend into array with index: {}: {}", step, typeid(step).name());
                         break;
                     case MajorKey::TABLE:
-                        if constexpr (std::is_same<typeof(step), const std::string>::value)
+                        if constexpr (std::is_same<decltype(step), const std::string>::value)
                         {
                             for (auto i = 0; i < header.size; ++i)
                             {
