@@ -11,6 +11,16 @@
 class Box;
 class Cell;
 
+// Corner Distances Structure
+struct CornerDistances
+{
+    // Used to store the minimum and maximum corner distances, literal and mim'd, between cells
+    double minimumLiteral{0.0};
+    double maximumLiteral{0.0};
+    double minimumMim{0.0};
+    double maximumMim{0.0};
+};
+
 // Cell Array
 class CellArray
 {
@@ -51,10 +61,10 @@ class CellArray
     // Return Cell which contains specified coordinate
     Cell *cell(const Vec3<double> r);
     const Cell *cell(const Vec3<double> r) const;
-    // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified distance
-    bool withinRange(const Cell *a, const Cell *b, double distance);
-    // Check if minimum image calculation is necessary for any potential pair of atoms in the supplied cells
-    bool minimumImageRequired(const Cell *a, const Cell *b, double distance);
+    // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified literal distance
+    bool withinLiteralRange(const Cell *a, const Cell *b, double literalDistance);
+    // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified mim distance
+    bool withinMinimumImageRange(const Cell *a, const Cell *b, double mimDistance);
     // Return the minimum image grid delta between the two specified Cells
     Vec3<int> mimGridDelta(const Cell *a, const Cell *b) const;
     // Return the minimum image equivalent of the supplied grid delta
@@ -71,7 +81,7 @@ class CellArray
     // Neighbour array per Cell
     std::vector<std::vector<CellNeighbour>> neighbours_;
     // Corner distances between cells
-    Array3D<std::pair<double, double>> cornerDistances_;
+    Array3D<CornerDistances> cornerDistances_;
     // Grid reference for central cell (0,0,0) in cornerDistances_
     Vec3<int> cornerDistancesOrigin_;
 

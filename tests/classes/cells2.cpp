@@ -3,9 +3,7 @@
 
 #include "classes/atomType.h"
 #include "classes/species.h"
-#include "kernels/producer.h"
 #include "main/dissolve.h"
-#include "templates/algorithms.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -39,7 +37,7 @@ class CellsPBCTest : public ::testing::Test
 
     protected:
     Configuration *createConfiguration(const Vec3<double> &lengths, const Vec3<double> &angles, const Vec3<double> &origin,
-                                       int nMolecules = 100)
+                                       int nMolecules = 1000)
     {
         // Setup Configuration
         auto *cfg = coreData_.addConfiguration();
@@ -82,8 +80,7 @@ class CellsPBCTest : public ::testing::Test
             EXPECT_NEAR(box->minimumDistance(ii->r(), jj->r()), r, 1.0e-6);
 
             // Range check between the central and surrounding atom should always succeed
-            std::cout << std::format("r = {}\n", box->minimumDistance(ii->r(), jj->r()));
-            EXPECT_TRUE(cfg->cells().withinRange(ii->cell(), jj->cell(), r));
+            EXPECT_TRUE(cfg->cells().withinMinimumImageRange(ii->cell(), jj->cell(), r));
         }
     }
 };
