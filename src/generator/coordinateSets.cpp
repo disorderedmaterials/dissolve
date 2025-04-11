@@ -76,6 +76,10 @@ bool CoordinateSetsGeneratorNode::prepare(const GeneratorContext &generatorConte
     if (!species_)
         return Messenger::error("No Species set in CoordinateSets node.\n");
 
+    // Check if the Species itself is valid
+    if (!species_->checkSetUp())
+        return false;
+
     // Clear existing sets?
     if (force_)
         sets_.clear();
