@@ -130,6 +130,17 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         set(upcasted->get());
         return true;
     }
+
+    // Helper templates for handling serialisation
+
+    template <typename V> struct is_ptr_vector : std::false_type
+    {
+    };
+
+    template <serialisablePointer E> struct is_ptr_vector<std::vector<E>> : std::true_type
+    {
+    };
+
     /*
      * I/O
      */
@@ -165,6 +176,8 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         {
             data_ = nullptr;
         }
+        else if constexpr (is_ptr_vector<T>::value)
+            data_.clear();
         else if constexpr (HasEnumOptions<T>)
         {
             T proxy; // Fake T value to get the corret overload
