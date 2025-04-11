@@ -8,7 +8,7 @@ description: Calculate the number of bridging oxygen sites bonded to a network f
 
 The `QSpecies` module calculates the Qn distribution of a site, where n is the number of bridging oxygen sites within the distance range specified. It also calculates the frequency of bridging, non-bridging and free oxygen sites.
 
-{{< cimage src="../qspecies.png" caption="Representation of Qn species." >}}
+{{< cimage src="qspecies.png" caption="Representation of Qn species." >}}
 
 ## Options
 
