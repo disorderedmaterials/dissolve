@@ -8,6 +8,7 @@
 namespace CBOR
 {
 
+// overloaded structure taken from c++ reference examples for std::visitor
 // helper type for the visitor #4
 template <class... Ts> struct overloaded : Ts...
 {
@@ -398,49 +399,35 @@ void skipTo(ByteSource &source, Path path)
     {
         auto loc = path.back();
         path.pop_back();
+
         std::visit(
-            [&source](const auto &step)
-            {
-                auto header = getHeader(source);
-                switch (header.major)
-                {
-                    case MajorKey::ARRAY:
-                        if constexpr (std::is_same<decltype(step), const int>::value)
-                        {
-                            if (step >= header.size)
-                                Messenger::exception("Array index {} exceeds size {}", step, header.size);
-                            for (auto i = 0; i < step; ++i)
-                                skipElement(source);
-                        }
-                        else
-                            Messenger::exception("Cannot descend into array with index: {}: {}", step, typeid(step).name());
-                        break;
-                    case MajorKey::TABLE:
-                        if constexpr (std::is_same<decltype(step), const std::string>::value)
-                        {
-                            for (auto i = 0; i < header.size; ++i)
-                            {
-                                auto [name, rest] = fromInner(source);
-                                source = std::move(rest);
-                                if (name.is_string())
-                                {
-                                    if (name.as_string() == step)
-                                        break;
-                                    else
-                                        skipElement(source);
-                                }
-                                else
-                                    Messenger::exception("Found non-string Table key of type {}", (int)name.type());
-                            }
-                        }
-                        else
-                            Messenger::exception("Cannot descend into table with index: {}", step);
-                        break;
-                    default:
-                        Messenger::exception("Cannot descend into Major Key {}, especially with instruction step {}.",
-                                             (int)header.major, step);
-                }
-            },
+            overloaded{[&source](const int step)
+                       {
+                           auto header = getHeader(source);
+                           if (header.major != MajorKey::ARRAY)
+                               Messenger::exception("Cannot descend into Major Key {}, especially with instruction step {}.",
+                                                    (int)header.major, step);
+                           if (step >= header.size)
+                               Messenger::exception("Array index {} exceeds size {}", step, header.size);
+                           for (auto i = 0; i < step; ++i)
+                               skipElement(source);
+                       },
+                       [&source](const std::string &step)
+                       {
+                           auto header = getHeader(source);
+                           if (header.major != MajorKey::TABLE)
+                               Messenger::exception("Cannot descend into Major Key {}, especially with instruction step {}.",
+                                                    (int)header.major, step);
+                           for (auto i = 0; i < header.size; ++i)
+                           {
+                               auto [name, rest] = fromInner(source);
+                               source = std::move(rest);
+                               if (name.as_string() == step)
+                                   break;
+                               else
+                                   skipElement(source);
+                           }
+                       }},
             loc);
     }
 }
