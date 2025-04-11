@@ -13,7 +13,7 @@
 namespace CBOR
 {
 
-// Convert a serialed Value to its CBOR representation
+// Convert a serialised value to its CBOR representation
 std::vector<uint8_t> to(const SerialisedValue &node);
 
 // Parse a CBOR representation of a serialised value
