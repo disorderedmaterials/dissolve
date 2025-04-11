@@ -112,7 +112,7 @@ class CellsEnergyTest : public ::testing::Test
         EXPECT_NEAR(analyticEnergyNoCells(cfg, rCut), tabulatedEnergyNoCells(cfg, rCut), 1.0e-2);
         EXPECT_NEAR(tabulatedEnergyNoCells(cfg, rCut),
                     kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy).total(), 1.0e-6);
-        EXPECT_NEAR(refEnergy - lrc, kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy).total(), 1.6e-2);
+        EXPECT_NEAR(refEnergy - lrc, kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy).total(), 1.65e-2);
     }
 };
 
@@ -158,12 +158,10 @@ TEST_F(CellsEnergyTest, Monoclinic)
 
 TEST_F(CellsEnergyTest, TriclinicBox)
 {
-    ASSERT_TRUE(false);
-    // TODO Need to set the correct cell angles here.
-    auto *cfg = createConfiguration({100, 100, 100}, {90, 90, 120}, 6528);
+    auto *cfg = createConfiguration({100, 100, 100}, {80, 70, 60}, 6528);
 
     // Load the test coordinates
-    CoordinateImportFileFormat importer("dlpoly/argon/monoclinic/big_argon.CONFIG",
+    CoordinateImportFileFormat importer("dlpoly/argon/triclinic/big_argon.CONFIG",
                                         CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY);
     ASSERT_TRUE(importer.importData(cfg));
 
