@@ -8,7 +8,7 @@ description: Calculate the bonding type and total bonding to oxygen in reference
 
 The `ModifierOSites` module calculates how a modifier is bonding into a network. The frequency of bonding to bridging, non-bridging and free oxygen sites, in reference to a network former, is calculated. The total bonds to oxygen as well as the bond lengths to oxygen are also calculated.
 
-{{< cimage src="../modifierosites.png" caption="Representation of the information the ModifierOSites module gives." >}}
+{{< cimage src="modifierosites.png" caption="Representation of the information the ModifierOSites module gives." >}}
 
 ## Options
 
