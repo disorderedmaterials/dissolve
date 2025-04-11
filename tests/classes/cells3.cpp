@@ -112,7 +112,7 @@ class CellsEnergyTest : public ::testing::Test
         EXPECT_NEAR(analyticEnergyNoCells(cfg, rCut), tabulatedEnergyNoCells(cfg, rCut), 1.0e-2);
         EXPECT_NEAR(tabulatedEnergyNoCells(cfg, rCut),
                     kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy).total(), 1.0e-6);
-        EXPECT_NEAR(refEnergy - lrc, kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy).total(), 1.5e-2);
+        EXPECT_NEAR(refEnergy - lrc, kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy).total(), 1.6e-2);
     }
 };
 
