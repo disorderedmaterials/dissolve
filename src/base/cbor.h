@@ -7,6 +7,7 @@
 #include <iostream>
 #include <ranges>
 #include <tuple>
+#include <variant>
 #include <vector>
 
 namespace CBOR
