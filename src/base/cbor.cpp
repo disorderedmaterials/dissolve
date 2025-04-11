@@ -182,7 +182,7 @@ void writeHeader(MajorKey key, uint64_t size, std::vector<uint8_t> &buf)
     }
 }
 
-// Convert a serialed Value to its CBOR representation
+// Convert a serialised value to its CBOR representation
 std::vector<uint8_t> to(const SerialisedValue &node)
 {
     std::vector<uint8_t> result;
