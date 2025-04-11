@@ -3,6 +3,10 @@
         Script to install dependencies for Dissolve development environment in Visual Studio.
     .DESCRIPTION
         Installs the following dependencies for Dissolve (separate and prior to Conan-managed packages):
+            - Python 3.12
+            - CMake 3.3
+            - ninja
+            - pkgconfiglite
             - Qt6 <VERSION>
             - Freetype
             - FTGL
@@ -56,7 +60,8 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
 Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
 
 Write-Host "Installing key dependencies with Chocolatey... " @info_colors
-choco install -y ninja pkgconfiglite cmake
+choco install -y ninja pkgconfiglite
+choco install -y cmake --version=3.30.1 --force
 
 # Find git, install if not found
 try {
@@ -174,7 +179,7 @@ Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeV
 Write-Host "Building freetype (from location: $freetypeBuildDir)... " @info_colors
 Set-Location -Path $freetypeBuildDir
 
-cmake ../$freetypeRepo -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE:STRING=$build -DCMAKE_C_COMPILER=cl -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../$freetypeInstall -DCMAKE_POLICY_VERSION_MINIMUM="3.5"
+cmake ../$freetypeRepo -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE:STRING=$build -DCMAKE_C_COMPILER=cl -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../$freetypeInstall
 cmake --build . --target install --config $build
 
 $freetypeLib = "$freetypeInstall\lib"
@@ -234,7 +239,7 @@ if (-not $release) {
     
 Set-Location -Path $ftglBuildDir
 
-cmake ../$ftglRepo -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE:STRING=$build -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../$ftglInstall -DFREETYPE_LIBRARY="$(Join-Path -Path $freetypeLibPath -ChildPath "freetype.lib")" -DFREETYPE_INCLUDE_DIRS="$(Join-Path -Path $projectDir -ChildPath $freetypeInstallDir)\include\freetype2" -DCMAKE_POLICY_VERSION_MINIMUM="3.5"
+cmake ../$ftglRepo -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE:STRING=$build -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../$ftglInstall -DFREETYPE_LIBRARY="$(Join-Path -Path $freetypeLibPath -ChildPath "freetype.lib")" -DFREETYPE_INCLUDE_DIRS="$(Join-Path -Path $projectDir -ChildPath $freetypeInstallDir)\include\freetype2"
 cmake --build . --target install --config $build
 
 $ftglLib = "$ftglInstall\lib"
