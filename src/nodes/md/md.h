@@ -3,10 +3,6 @@
 
 #pragma once
 
-#include "nodes/graph.h"
-#include "nodes/node.h"
-#include "nodes/number.h"
-#include "nodes/parameter.h"
 #include "base/enumOptions.h"
 #include "base/lineParser.h"
 #include "base/randomBuffer.h"
@@ -18,6 +14,10 @@
 #include "module/context.h"
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"
+#include "nodes/graph.h"
+#include "nodes/node.h"
+#include "nodes/number.h"
+#include "nodes/parameter.h"
 
 // Forward Declarations
 class PotentialMap;

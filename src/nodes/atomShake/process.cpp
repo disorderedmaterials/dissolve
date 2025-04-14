@@ -1,4 +1,3 @@
-#include "nodes/atomShake/atomShake.h"
 #include "base/randomBuffer.h"
 #include "base/timer.h"
 #include "classes/box.h"
@@ -7,6 +6,7 @@
 #include "classes/regionalDistributor.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
+#include "nodes/atomShake/atomShake.h"
 
 // Run main processing
 NodeConstants::ProcessResult AtomShakeNode::process()

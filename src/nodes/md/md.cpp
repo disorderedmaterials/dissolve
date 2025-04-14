@@ -18,7 +18,8 @@ MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
                                             restrictToSpecies_);
     addOption<bool>("OnlyWhenEnergyStable", "Only run MD when target Configuration energies are stable", onlyWhenEnergyStable_);
 
-    addOption<std::optional<Number>>("EnergyFrequency", "Frequency at which to calculate total system energy", energyFrequency_);
+    addOption<std::optional<Number>>("EnergyFrequency", "Frequency at which to calculate total system energy",
+                                     energyFrequency_);
     addOption<std::optional<Number>>("OutputFrequency", "Frequency at which to output step information", outputFrequency_);
     addOption<std::optional<Number>>("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_);
 
