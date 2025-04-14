@@ -219,3 +219,9 @@ template <class E> class EnumOptions : public EnumOptionsBase
 
     E deserialise(const SerialisedValue &node) { return enumeration(std::string(node.as_string())); }
 };
+
+template <typename T>
+concept HasEnumOptions = requires(T a)
+{
+    getEnumOptions(a);
+};

@@ -100,3 +100,5 @@ class MDNode : public Node
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };
+
+EnumOptions<MDNode::TimestepType> getEnumOptions(MDNode::TimestepType);

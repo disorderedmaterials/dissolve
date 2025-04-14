@@ -32,3 +32,5 @@ MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
 std::string_view MDNode::type() const { return "MD"; }
 
 std::string_view MDNode::summary() const { return "Run a short molecular dynamics simulation."; }
+
+EnumOptions<MDNode::TimestepType> getEnumOptions(MDNode::TimestepType) { return MDNode::timestepType(); }
