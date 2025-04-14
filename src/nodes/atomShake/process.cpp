@@ -172,7 +172,6 @@ NodeConstants::ProcessResult AtomShakeNode::process()
         stepSize = stepSizeMin;
     else if (stepSize > stepSizeMax)
         stepSize = stepSizeMax;
-    //keywords_.set("StepSize", stepSize);
 
     Messenger::print("Updated step size is {} Angstroms.\n", stepSize);
 

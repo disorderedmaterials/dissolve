@@ -18,5 +18,5 @@ std::string_view AtomShakeNode::type() const { return "AtomShake"; }
 
 std::string_view AtomShakeNode::summary() const
 {
-    return "Perform an atomic Monte Carlo \"shake\" of every atom in each target configuration.";
+    return "Perform a Monte Carlo trial move on every atom in the target configuration.";
 }
