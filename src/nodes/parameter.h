@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "nodes/number.h"
 #include "templates/flags.h"
@@ -129,6 +130,17 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         set(upcasted->get());
         return true;
     }
+
+    // Helper templates for handling serialisation
+
+    template <typename V> struct is_ptr_vector : std::false_type
+    {
+    };
+
+    template <serialisablePointer E> struct is_ptr_vector<std::vector<E>> : std::true_type
+    {
+    };
+
     /*
      * I/O
      */
@@ -139,7 +151,9 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         SerialisedValue result = {};
 
         // Serialise non-pointer values
-        if constexpr (std::is_convertible<T, Number>::value)
+        if constexpr (HasEnumOptions<T>)
+            result["data"] = getEnumOptions(data_).serialise(data_);
+        else if constexpr (std::is_convertible<T, Number>::value)
             result["data"] = data_;
         else if constexpr (std::is_convertible<T, std::string>::value)
             result["data"] = data_;
@@ -162,10 +176,24 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         {
             data_ = nullptr;
         }
+        else if constexpr (is_ptr_vector<T>::value)
+            data_.clear();
+        else if constexpr (HasEnumOptions<T>)
+        {
+            T proxy; // Fake T value to get the corret overload
+            data_ = getEnumOptions(proxy).deserialise(node);
+        }
         else if constexpr (std::is_convertible<T, std::optional<double>>::value)
         {
             if (node.contains("data"))
                 data_ = toml::find<double>(node, "data");
+            else
+                data_ = {};
+        }
+        else if constexpr (std::is_convertible<T, std::optional<Number>>::value)
+        {
+            if (node.contains("data"))
+                data_ = toml::find<Number>(node, "data");
             else
                 data_ = {};
         }

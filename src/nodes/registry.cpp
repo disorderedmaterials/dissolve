@@ -3,11 +3,12 @@
 
 #include "registry.h"
 #include "add.h"
-#include "atomShake.h"
+#include "atomShake/atomShake.h"
 #include "derivative.h"
 #include "dissolve.h"
 #include "dotProduct.h"
 #include "integrator.h"
+#include "md/md.h"
 #include "multiply.h"
 #include "subtract.h"
 #include "vec3Assembly.h"
@@ -36,6 +37,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
+                  {"MD", makeDerivedNode<MDNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
                   {"Subtract", makeDerivedNode<SubtractNode>()},
                   {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
