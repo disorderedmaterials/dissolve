@@ -14,6 +14,12 @@ class Cell;
 // Corner Distances Structure
 struct CornerDistances
 {
+    CornerDistances() {}
+    CornerDistances(double minLiteral, double maxLiteral, double minMim, double maxMim)
+        : minimumLiteral(minLiteral), maximumLiteral(maxLiteral), minimumMim(minMim), maximumMim(maxMim)
+    {
+    }
+
     // Used to store the minimum and maximum corner distances, literal and mim'd, between cells
     double minimumLiteral{0.0};
     double maximumLiteral{0.0};
