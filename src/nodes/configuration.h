@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include <memory>
 #include "classes/configuration.h"
 #include "nodes/node.h"
+#include <memory>
 
 class ConfigurationNode : public Node
 {

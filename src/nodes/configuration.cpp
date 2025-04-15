@@ -4,18 +4,12 @@
 #include "configuration.h"
 
 ConfigurationNode::ConfigurationNode(Graph *parentGraph) : Node(parentGraph)
-{ 
-    addOutput<Configuration*>("Configuration", "Empty atomic configuration", rawConfiguration_);
+{
+    addOutput<Configuration *>("Configuration", "Empty atomic configuration", rawConfiguration_);
 }
 
 std::string_view ConfigurationNode::type() const { return "Configuration"; }
 
-std::string_view ConfigurationNode::summary() const
-{
-    return "Produce an empty atomic configuration.";
-}
+std::string_view ConfigurationNode::summary() const { return "Produce an empty atomic configuration."; }
 
-NodeConstants::ProcessResult ConfigurationNode::process()
-{
-    return NodeConstants::ProcessResult::Unchanged;
-}
+NodeConstants::ProcessResult ConfigurationNode::process() { return NodeConstants::ProcessResult::Unchanged; }
