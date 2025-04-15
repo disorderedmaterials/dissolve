@@ -4,7 +4,10 @@
 #pragma once
 
 #include "classes/configuration.h"
+#include "nodes/graph.h"
 #include "nodes/node.h"
+#include "nodes/number.h"
+#include "nodes/parameter.h"
 
 // AtomShake Node
 class AtomShakeNode : public Node
@@ -26,20 +29,20 @@ class AtomShakeNode : public Node
     // Interatomic cutoff distance to use for energy calculation
     std::optional<double> cutoffDistance_;
     // Number of shakes to attempt per atom
-    int nShakesPerAtom_{1};
+    Number nShakesPerAtom_{1};
     // Step size in Angstroms to use in Monte Carlo moves
-    double stepSize_{0.05};
+    Number stepSize_{0.05};
     // Maximum allowed value for step size, in Angstroms
-    double stepSizeMax_{1.0};
+    Number stepSizeMax_{1.0};
     // Minimum allowed value for step size, in Angstroms
-    double stepSizeMin_{0.001};
+    Number stepSizeMin_{0.001};
     // Target acceptance rate for Monte Carlo moves
-    double targetAcceptanceRate_{0.33};
+    Number targetAcceptanceRate_{0.33};
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext);
+    NodeConstants::ProcessResult process() override;
 };
