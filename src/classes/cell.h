@@ -4,7 +4,7 @@
 #pragma once
 
 #include "classes/atom.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <set>
 #include <vector>
 
@@ -17,7 +17,7 @@ class Box;
 class Cell
 {
     public:
-    Cell(int index = 0, Vec3<int> gridReference = Vec3<int>(), Vec3<double> centre = Vec3<double>());
+    Cell(int index = 0, Vector3i gridReference = Vector3i(), Vector3 centre = Vector3());
     ~Cell() = default;
 
     /*
@@ -25,21 +25,21 @@ class Cell
      */
     private:
     // Grid reference
-    Vec3<int> gridReference_;
+    Vector3i gridReference_;
     // Unique index
     int index_;
     // Real-space coordinates at the centre of this cell
-    Vec3<double> centre_;
+    Vector3 centre_;
 
     public:
     // Return grid reference
-    const Vec3<int> &gridReference() const;
+    const Vector3i &gridReference() const;
     // Set unique index
     void setIndex(int id);
     // Return unique index
     int index() const;
     // Return real-space Cell centre
-    const Vec3<double> &centre() const;
+    const Vector3 &centre() const;
 
     /*
      * Contents

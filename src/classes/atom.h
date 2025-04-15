@@ -5,7 +5,7 @@
 
 #include "classes/speciesAtom.h"
 #include "kernels/potentials/base.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <memory>
 #include <vector>
 
@@ -21,7 +21,7 @@ class Atom
      */
     private:
     // Coordinates
-    Vec3<double> r_;
+    Vector3 r_;
     // Assigned AtomType index, local to Configuration (for partial indexing etc.)
     int localTypeIndex_{-1};
     // Assigned master AtomType index (for pair potential indexing)
@@ -29,11 +29,11 @@ class Atom
 
     public:
     // Set coordinates
-    void set(const Vec3<double> r);
+    void set(const Vector3 r);
     // Set coordinates
     void set(double rx, double ry, double rz);
     // Return coordinates
-    const Vec3<double> &r() const;
+    const Vector3 &r() const;
     // Return x-coordinate
     double x() const;
     // Return y-coordinate
@@ -83,11 +83,11 @@ class Atom
      */
     public:
     // Set coordinates
-    void setCoordinates(const Vec3<double> &newr);
+    void setCoordinates(const Vector3 &newr);
     // Set coordinates
     void setCoordinates(double dx, double dy, double dz);
     // Translate coordinates
-    void translateCoordinates(const Vec3<double> &delta);
+    void translateCoordinates(const Vector3 &delta);
     // Translate coordinates
     void translateCoordinates(double dx, double dy, double dz);
 

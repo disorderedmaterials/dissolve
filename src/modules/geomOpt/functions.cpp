@@ -78,7 +78,7 @@ double GeometryOptimisationModule::energyAtGradientPoint(const ProcessPool &proc
                                                          const PotentialMap &potentialMap, double delta)
 {
     for (auto &&[i, r, f] : zip(sp->atoms(), rRef_, f_))
-        sp->setAtomCoordinates(&i, Vec3<double>(r.x + f.x * delta, r.y + f.y * delta, r.z + f.z * delta));
+        sp->setAtomCoordinates(&i, Vector3(r.x + f.x * delta, r.y + f.y * delta, r.z + f.z * delta));
 
     return EnergyModule::totalEnergy(procPool, sp, potentialMap);
 }

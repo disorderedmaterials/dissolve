@@ -15,10 +15,10 @@ class DerivativesTest : public ::testing::Test
     public:
     DerivativesTest() : bond_(&i_, &j_), angle_(&i_, &j_, &k_), torsion_(&i_, &j_, &k_, &l_)
     {
-        i_.set(Elements::H, Vec3<double>(-1.0, 1.0, 0.0));
-        j_.set(Elements::C, Vec3<double>(-1.0, 0.0, 0.0));
-        k_.set(Elements::C, Vec3<double>(1.0, 0.0, 0.0));
-        l_.set(Elements::O, Vec3<double>(1.0, 1.0, 0.0));
+        i_.set(Elements::H, Vector3(-1.0, 1.0, 0.0));
+        j_.set(Elements::C, Vector3(-1.0, 0.0, 0.0));
+        k_.set(Elements::C, Vector3(1.0, 0.0, 0.0));
+        l_.set(Elements::O, Vector3(1.0, 1.0, 0.0));
     }
 
     protected:

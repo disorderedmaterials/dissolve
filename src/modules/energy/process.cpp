@@ -153,7 +153,7 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 
         double r, angle;
         Atom *i, *j;
-        Vec3<double> vecji, vecjk, veckl;
+        Vector3 vecji, vecjk, veckl;
         std::shared_ptr<Molecule> molN, molM;
         const auto *box = targetConfiguration_->box();
         const auto cutoff = moduleContext.dissolve().potentialMap().range();

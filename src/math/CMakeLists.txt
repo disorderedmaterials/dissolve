@@ -77,6 +77,12 @@ add_library(
   svd.h
   transformer.cpp
   transformer.h
+  vector3.cpp
+  vector3.h
+  vector3i.cpp
+  vector3i.h
+  vector4.cpp
+  vector4.h
   windowFunction.cpp
   windowFunction.h
 )

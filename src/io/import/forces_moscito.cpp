@@ -5,7 +5,7 @@
 #include "io/import/forces.h"
 
 // Import Moscito forces through specified parser
-bool ForceImportFileFormat::importMoscito(LineParser &parser, std::vector<Vec3<double>> &f)
+bool ForceImportFileFormat::importMoscito(LineParser &parser, std::vector<Vector3> &f)
 {
     /*
      * Import Moscito coordinate information through the specified line parser.

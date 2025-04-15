@@ -14,14 +14,13 @@ class SpeciesSiteTest : public ::testing::Test
     public:
     SpeciesSiteTest(){};
 
-    void testVector(const Vec3<double> &u, const Vec3<double> &v)
+    void testVector(const Vector3 &u, const Vector3 &v)
     {
         EXPECT_NEAR(u.x, v.x, 1.0e-6);
         EXPECT_NEAR(u.y, v.y, 1.0e-6);
         EXPECT_NEAR(u.z, v.z, 1.0e-6);
     }
-    void testAxes(const Matrix3 &axes, const Vec3<double> &expectedX, const Vec3<double> &expectedY,
-                  const Vec3<double> &expectedZ)
+    void testAxes(const Matrix3 &axes, const Vector3 &expectedX, const Vector3 &expectedY, const Vector3 &expectedZ)
     {
         testVector(axes.columnAsVec3(0), expectedX);
         testVector(axes.columnAsVec3(1), expectedY);

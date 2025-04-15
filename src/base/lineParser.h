@@ -5,7 +5,8 @@
 
 #include "base/messenger.h"
 #include "base/processPool.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
+#include "math/vector3i.h"
 #include <format>
 #include <fstream>
 #include <iostream>
@@ -231,10 +232,10 @@ class LineParser
     double argd(int i) const;
     // Returns the specified argument as a bool
     bool argb(int i) const;
-    // Return the specified and next two arguments as a Vec3<int>
-    Vec3<int> arg3i(int i) const;
-    // Return the specified and next two arguments as a Vec3<double>
-    Vec3<double> arg3d(int i) const;
+    // Return the specified and next two arguments as a Vector3i
+    Vector3i arg3i(int i) const;
+    // Return the specified and next two arguments as a Vector3
+    Vector3 arg3d(int i) const;
     // Return a vector of double parameters, starting from the specified argument
     std::vector<double> argvd(int i) const;
     // Returns whether the specified argument exists

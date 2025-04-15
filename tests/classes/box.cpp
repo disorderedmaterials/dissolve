@@ -7,7 +7,7 @@
 namespace UnitTest
 {
 
-Vec3<double> manualMim(Box &box, const Vec3<double> r1, const Vec3<double> r2)
+Vector3 manualMim(Box &box, const Vector3 r1, const Vector3 r2)
 {
     auto mim = box.inverseAxes() * (r1 - r2);
     if (mim.x < -0.5)
@@ -62,12 +62,12 @@ void scaleBox(Box &box, double requestedVolume, Vec3<bool> scalableAxes, bool un
 void testBox(Box &box)
 {
     // Determine central coordinate from full axes matrix
-    auto centroid = box.axes() * Vec3<double>(0.5, 0.5, 0.5);
+    auto centroid = box.axes() * Vector3(0.5, 0.5, 0.5);
 
     // For each corner, determine correct coordinates from full axes matrix, then test optimised imaging / vector functions
     for (auto n = 0; n < 8; ++n)
     {
-        auto corner = box.axes() * Vec3<double>((n & 1) ? 1.0 : 0.0, (n & 2) ? 1.0 : 0.0, (n & 4) ? 1.0 : 0.0);
+        auto corner = box.axes() * Vector3((n & 1) ? 1.0 : 0.0, (n & 2) ? 1.0 : 0.0, (n & 4) ? 1.0 : 0.0);
 
         // Calculate manual minimum image vector
         auto mimCorner = manualMim(box, corner, centroid);
@@ -85,7 +85,7 @@ void testBox(Box &box)
         EXPECT_NEAR(mimCorner.z, mim.z, 1.0e-8);
 
         // Fold
-        auto scaledCorner = box.axes() * Vec3<double>((n & 1) ? -2.0 : 0.0, (n & 2) ? 5.0 : 0.0, (n & 4) ? -97.0 : 0.0);
+        auto scaledCorner = box.axes() * Vector3((n & 1) ? -2.0 : 0.0, (n & 2) ? 5.0 : 0.0, (n & 4) ? -97.0 : 0.0);
         scaledCorner += centroid;
         auto p = box.fold(scaledCorner);
         EXPECT_NEAR(p.x, centroid.x, 1.0e-8);

@@ -63,7 +63,7 @@ void SpeciesAtom::move(SpeciesAtom &source)
 
 // Set basic properties
 void SpeciesAtom::set(Elements::Element Z, double rx, double ry, double rz, double q) { set(Z, {rx, ry, rz}, q); }
-void SpeciesAtom::set(Elements::Element Z, const Vec3<double> &r, double q)
+void SpeciesAtom::set(Elements::Element Z, const Vector3 &r, double q)
 {
     Z_ = Z;
     r_ = r;
@@ -85,7 +85,7 @@ bool SpeciesAtom::isPresence(SpeciesAtom::Presence presence) const
 }
 
 // Return coordinates
-const Vec3<double> &SpeciesAtom::r() const { return r_; }
+const Vector3 &SpeciesAtom::r() const { return r_; }
 
 // Set charge of SpeciesAtom
 void SpeciesAtom::setCharge(double charge) { charge_ = charge; }
@@ -310,10 +310,10 @@ void SpeciesAtom::setCoordinates(double x, double y, double z)
 }
 
 // Set coordinates (from Vec3)
-void SpeciesAtom::setCoordinates(const Vec3<double> &newr) { r_ = newr; }
+void SpeciesAtom::setCoordinates(const Vector3 &newr) { r_ = newr; }
 
 // Translate coordinates of atom
-void SpeciesAtom::translateCoordinates(const Vec3<double> &delta) { r_ += delta; }
+void SpeciesAtom::translateCoordinates(const Vector3 &delta) { r_ += delta; }
 
 /*
  * Atom Environment Helpers
@@ -492,8 +492,7 @@ void SpeciesAtom::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     index_ = toml::find<int>(node, "index") - 1;
 
-    set(toml::find<Elements::Element>(node, "z"), toml::find<Vec3<double>>(node, "r"),
-        toml::find_or<double>(node, "charge", 0));
+    set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "charge", 0));
 
     Serialisable::optionalOn(node, "type",
                              [this, &coreData](const auto node)

@@ -44,10 +44,10 @@ GenericItemSerialiser::GenericItemSerialiser()
                     return false;
             return true;
         });
-    registerSerialiser<std::vector<Vec3<double>>>(
+    registerSerialiser<std::vector<Vector3>>(
         [](const std::any &a, LineParser &parser)
         {
-            const auto &v = std::any_cast<const std::vector<Vec3<double>> &>(a);
+            const auto &v = std::any_cast<const std::vector<Vector3> &>(a);
             if (!parser.writeLineF("{}\n", v.size()))
                 return false;
             for (auto &n : v)
@@ -127,10 +127,10 @@ GenericItemSerialiser::GenericItemSerialiser()
     registerSerialiser<SampledData1D>(simpleSerialise<SampledData1D>);
     registerSerialiser<SampledDouble>(simpleSerialise<SampledDouble>);
     registerSerialiser<SampledVector>(simpleSerialise<SampledVector>);
-    registerSerialiser<Vec3<int>>(
+    registerSerialiser<Vector3i>(
         [](const std::any &a, LineParser &parser)
         {
-            const auto &v = std::any_cast<const Vec3<int> &>(a);
+            const auto &v = std::any_cast<const Vector3i &>(a);
             return parser.writeLineF("{}  {}  {}\n", v.x, v.y, v.z);
         });
     registerSerialiser<XRayWeights>(simpleSerialise<XRayWeights>);

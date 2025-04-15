@@ -6,8 +6,8 @@
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "data/elements.h"
+#include "math/vector3.h"
 #include "templates/optionalRef.h"
-#include "templates/vector3.h"
 #include <map>
 #include <memory>
 #include <vector>
@@ -51,7 +51,7 @@ class SpeciesAtom : public Serialisable<CoreData &>
     // Atomic element
     Elements::Element Z_{Elements::Unknown};
     // Coordinates
-    Vec3<double> r_{0.0, 0.0, 0.0};
+    Vector3 r_{0.0, 0.0, 0.0};
     // Charge (if contained in file)
     double charge_{0.0};
     // Assigned AtomType
@@ -66,7 +66,7 @@ class SpeciesAtom : public Serialisable<CoreData &>
     public:
     // Set basic properties
     void set(Elements::Element Z, double rx, double ry, double rz, double q = 0.0);
-    void set(Elements::Element Z, const Vec3<double> &r, double q = 0.0);
+    void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
     // Set atomic element
     void setZ(Elements::Element Z);
     // Return atomic element
@@ -74,7 +74,7 @@ class SpeciesAtom : public Serialisable<CoreData &>
     // Return whether the atom is of the presence specified
     bool isPresence(SpeciesAtom::Presence presence) const;
     // Return coordinates (read-only)
-    const Vec3<double> &r() const;
+    const Vector3 &r() const;
     // Set charge of Atom
     void setCharge(double charge);
     // Return charge of Atom
@@ -178,9 +178,9 @@ class SpeciesAtom : public Serialisable<CoreData &>
     // Set coordinates
     void setCoordinates(double x, double y, double z);
     // Set coordinates (from Vec3)
-    void setCoordinates(const Vec3<double> &newr);
+    void setCoordinates(const Vector3 &newr);
     // Translate coordinates
-    void translateCoordinates(const Vec3<double> &delta);
+    void translateCoordinates(const Vector3 &delta);
 
     /*
      * Atom Environment Helpers

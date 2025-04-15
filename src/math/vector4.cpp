@@ -53,7 +53,7 @@ void Vector4::add(double a, double b, double c, double d)
     w += d;
 }
 // Set all four components simultaneously
-void Vector4::set(Vec3<double> v, double newW)
+void Vector4::set(Vector3 v, double newW)
 {
     x = v.x;
     y = v.y;
@@ -88,7 +88,7 @@ Vector4 &Vector4::operator+=(Vector4 &v)
     w += v.w;
     return *this;
 }
-Vector4 &Vector4::operator+=(Vec3<double> &v)
+Vector4 &Vector4::operator+=(Vector3 &v)
 {
     x += v.x;
     y += v.y;
@@ -96,7 +96,7 @@ Vector4 &Vector4::operator+=(Vec3<double> &v)
     return *this;
 }
 Vector4 Vector4::operator+(Vector4 &v) { return Vector4(x + v.x, y + v.y, z + v.z, w + v.w); }
-Vector4 Vector4::operator+(Vec3<double> &v) { return Vector4(x + v.x, y + v.y, z + v.z, w); }
+Vector4 Vector4::operator+(Vector3 &v) { return Vector4(x + v.x, y + v.y, z + v.z, w); }
 // Operators - and -=
 Vector4 &Vector4::operator-=(Vector4 &v)
 {
@@ -106,7 +106,7 @@ Vector4 &Vector4::operator-=(Vector4 &v)
     w -= v.w;
     return *this;
 }
-Vector4 &Vector4::operator-=(Vec3<double> &v)
+Vector4 &Vector4::operator-=(Vector3 &v)
 {
     x -= v.x;
     y -= v.y;
@@ -114,7 +114,7 @@ Vector4 &Vector4::operator-=(Vec3<double> &v)
     return *this;
 }
 Vector4 Vector4::operator-(Vector4 &v) { return Vector4(x - v.x, y - v.y, z - v.z, w - v.w); }
-Vector4 Vector4::operator-(Vec3<double> &v) { return Vector4(x - v.x, y - v.y, z - v.z, w); }
+Vector4 Vector4::operator-(Vector3 &v) { return Vector4(x - v.x, y - v.y, z - v.z, w); }
 // Operators * and *=
 Vector4 Vector4::operator*(double value) const { return Vector4(x * value, y * value, z * value, w * value); }
 void Vector4::operator*=(double value)

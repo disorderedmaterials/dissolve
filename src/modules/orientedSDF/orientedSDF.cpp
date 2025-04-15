@@ -29,12 +29,12 @@ OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF)
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<RangeKeyword>("AngleRange", "Axis angle range required to permit a site to be binned in the SDF",
                                 axisAngleRange_, Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<Vec3DoubleKeyword>("RangeX", "Range along X axis", rangeX_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
-                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<Vec3DoubleKeyword>("RangeY", "Range along Y axis", rangeY_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
-                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<Vec3DoubleKeyword>("RangeZ", "Range along Z axis", rangeZ_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
-                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<Vec3DoubleKeyword>("RangeX", "Range along X axis", rangeX_, Vector3(-1.0e6, -1.0e6, 0.05),
+                                     Vector3(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<Vec3DoubleKeyword>("RangeY", "Range along Y axis", rangeY_, Vector3(-1.0e6, -1.0e6, 0.05),
+                                     Vector3(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<Vec3DoubleKeyword>("RangeZ", "Range along Z axis", rangeZ_, Vector3(-1.0e6, -1.0e6, 0.05),
+                                     Vector3(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
 
     keywords_.setOrganisation(
         "Options", "Exclusions & Restrictions",

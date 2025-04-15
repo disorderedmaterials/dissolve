@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "math/vector3.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
-#include "templates/vector3.h"
 
 // Vec3Decomposition Node
 class Vec3DecompositionNode : public Node
@@ -23,7 +23,7 @@ class Vec3DecompositionNode : public Node
      */
     private:
     // Input vector
-    Vec3<double> inputVector_;
+    Vector3 inputVector_;
     // Output x
     Number x_;
     // Output y

@@ -112,7 +112,7 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
     RandomBuffer randomBuffer(generatorContext.processPool(), ProcessPool::PoolProcessesCommunicator);
 
     // Set / generate position of sphere centre
-    Vec3<double> sphereCentre, fr;
+    Vector3 sphereCentre, fr;
     switch (positioningType_)
     {
         case (AddGeneratorNode::PositioningType::Random):
@@ -137,7 +137,7 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
     auto siteInstance = speciesSite_->instances().front();
 
     // Now we add the molecules at points on the sphere
-    Vec3<double> rLocal;
+    Vector3 rLocal;
     const auto psi = 0.5 * (1.0 + sqrt(5.0));
     const auto r = radius_.asDouble();
     const auto variance = variance_.asDouble();

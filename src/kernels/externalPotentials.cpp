@@ -44,7 +44,7 @@ ExternalPotentialsForceKernel::ExternalPotentialsForceKernel(const Configuration
 }
 
 // Calculate extended forces on supplied atom
-void ExternalPotentialsForceKernel::extendedForces(const Atom &i, Vec3<double> &fVec) const
+void ExternalPotentialsForceKernel::extendedForces(const Atom &i, Vector3 &fVec) const
 {
     for (const auto &pot : globalPotentials_)
         pot->force(i, box_, fVec);

@@ -169,7 +169,7 @@ bool Histogram3D::bin(double x, double y, double z)
 }
 
 // Bin specified value (as Vec3), returning success
-bool Histogram3D::bin(Vec3<double> v) { return bin(v.x, v.y, v.z); }
+bool Histogram3D::bin(Vector3 v) { return bin(v.x, v.y, v.z); }
 
 // Return number of values binned over all bins
 long int Histogram3D::nBinned() const { return nBinned_; }

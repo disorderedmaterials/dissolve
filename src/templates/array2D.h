@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/messenger.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <cassert>
 #include <optional>
 #include <vector>

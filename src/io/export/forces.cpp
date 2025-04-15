@@ -22,7 +22,7 @@ ForceExportFileFormat::ForceExportFileFormat(std::string_view filename, ForceExp
  */
 
 // Export simple forces
-bool ForceExportFileFormat::exportSimple(LineParser &parser, const std::vector<Vec3<double>> &f)
+bool ForceExportFileFormat::exportSimple(LineParser &parser, const std::vector<Vector3> &f)
 {
     if (!parser.writeLine("# Atom        FX            FY            FZ"))
         return false;
@@ -39,7 +39,7 @@ bool ForceExportFileFormat::exportSimple(LineParser &parser, const std::vector<V
 }
 
 // Export forces using current filename and format
-bool ForceExportFileFormat::exportData(const std::vector<Vec3<double>> &f)
+bool ForceExportFileFormat::exportData(const std::vector<Vector3> &f)
 {
     // Open the file
     LineParser parser;
