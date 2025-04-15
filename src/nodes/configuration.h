@@ -13,15 +13,18 @@ class ConfigurationNode : public Node
     ConfigurationNode(Graph *parentGraph);
     ~ConfigurationNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
-    // Empty atomic configuration
+    // Configuration object
     std::unique_ptr<Configuration> configuration_{std::make_unique<Configuration>()};
     // Local raw pointer to configuration
     Configuration *rawConfiguration_{configuration_.get()};

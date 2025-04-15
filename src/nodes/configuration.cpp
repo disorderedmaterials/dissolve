@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "configuration.h"
+#include "nodes/configuration.h"
 
 ConfigurationNode::ConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addOutput<Configuration *>("Configuration", "Empty atomic configuration", rawConfiguration_);
+    addOutput<Configuration *>("Configuration", "Configuration object", rawConfiguration_);
 }
 
 std::string_view ConfigurationNode::type() const { return "Configuration"; }
