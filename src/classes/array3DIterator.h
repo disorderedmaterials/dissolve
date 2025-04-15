@@ -8,12 +8,12 @@
 class Array3DIterator
 {
     private:
-    int sizeX_;
-    int sizeY_;
-    int sizeZ_;
-    int x_;
-    int y_;
-    int z_;
+    int sizeX_{0};
+    int sizeY_{0};
+    int sizeZ_{0};
+    int x_{0};
+    int y_{0};
+    int z_{0};
     int toIndex() const;
     void fromIndex(int);
 
@@ -25,6 +25,7 @@ class Array3DIterator
     using pointer = std::tuple<int, int, int> *;
     using iterator_category = std::random_access_iterator_tag;
 
+    Array3DIterator();
     Array3DIterator(int sizeX, int sizeY, int sizeZ, int index);
 
     Array3DIterator begin() const;

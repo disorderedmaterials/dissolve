@@ -5,6 +5,8 @@
 #include <cmath>
 #include <iostream>
 
+Array3DIterator::Array3DIterator() {}
+
 Array3DIterator::Array3DIterator(int sizeX, int sizeY, int sizeZ, int index) : sizeX_(sizeX), sizeY_(sizeY), sizeZ_(sizeZ)
 {
     if (index == 0)
