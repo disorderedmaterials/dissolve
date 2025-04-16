@@ -1,0 +1,15 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
+#include "nodes/configuration.h"
+
+ConfigurationNode::ConfigurationNode(Graph *parentGraph) : Node(parentGraph)
+{
+    addOutput<Configuration *>("Configuration", "Configuration object", rawConfiguration_);
+}
+
+std::string_view ConfigurationNode::type() const { return "Configuration"; }
+
+std::string_view ConfigurationNode::summary() const { return "Produce an empty atomic configuration."; }
+
+NodeConstants::ProcessResult ConfigurationNode::process() { return NodeConstants::ProcessResult::Unchanged; }
