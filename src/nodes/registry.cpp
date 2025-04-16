@@ -4,6 +4,7 @@
 #include "registry.h"
 #include "add.h"
 #include "atomShake/atomShake.h"
+#include "configuration.h"
 #include "derivative.h"
 #include "dissolve.h"
 #include "dotProduct.h"
@@ -34,6 +35,7 @@ void NodeRegistry::instantiateNodeProducers()
 
     producers_ = {{"Add", makeDerivedNode<AddNode>()},
                   {"AtomShake", makeDerivedNode<AtomShakeNode>()},
+                  {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
