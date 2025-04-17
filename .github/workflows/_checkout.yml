@@ -134,7 +134,7 @@ jobs:
           ./changeversion -l
 
       - name: Bump Version
-        if: inputs.bump == true
+        if: inputs.bump == 'true'
         shell: bash
         run: |
           set -ex
