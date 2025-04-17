@@ -154,7 +154,7 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
     }
 } 
 
-Write-Host "$(where.exe qmlformat)"
+Write-Host "LOOKING FOR QMLFORMAT $(where.exe qmlformat)"
 
 # Build/retrieve Freetype
 $freetypeVersion = "2.12.1"
