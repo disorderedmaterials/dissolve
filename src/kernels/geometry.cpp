@@ -81,11 +81,11 @@ GeometryKernel::AngleParameters GeometryKernel::calculateAngleForceParameters(Ve
     const auto magji = vecji.magAndNormalise();
     const auto magjk = vecjk.magAndNormalise();
     auto dp = vecji.dp(vecjk);
-    angleParameters.theta_ = vecji.angleInRadians(vecjk);
+    angleParameters.theta = vecji.angleInRadians(vecjk);
 
     // Determine force vectors for atoms
-    angleParameters.dfi_dtheta_ = (vecjk - vecji * dp) / magji;
-    angleParameters.dfk_dtheta_ = (vecji - vecjk * dp) / magjk;
+    angleParameters.dfi_dtheta = (vecjk - vecji * dp) / magji;
+    angleParameters.dfk_dtheta = (vecji - vecjk * dp) / magjk;
 
     return angleParameters;
 }
@@ -98,14 +98,14 @@ void GeometryKernel::angleForces(const SpeciesAngle &angle, const Atom &i, int i
     auto vecjk = box_->minimumVector(j.r(), k.r());
 
     auto angleParameters = calculateAngleForceParameters(vecji, vecjk);
-    const auto force = angle.force(angleParameters.theta_);
-    angleParameters.dfi_dtheta_ *= force;
-    angleParameters.dfk_dtheta_ *= force;
+    const auto force = angle.force(angleParameters.theta);
+    angleParameters.dfi_dtheta *= force;
+    angleParameters.dfk_dtheta *= force;
 
     // Store forces
-    f[indexI] += angleParameters.dfi_dtheta_;
-    f[indexJ] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
-    f[indexK] += angleParameters.dfk_dtheta_;
+    f[indexI] += angleParameters.dfi_dtheta;
+    f[indexJ] -= angleParameters.dfi_dtheta + angleParameters.dfk_dtheta;
+    f[indexK] += angleParameters.dfk_dtheta;
 }
 
 // Calculate SpeciesAngle forces
@@ -113,14 +113,14 @@ void GeometryKernel::angleForces(const SpeciesAngle &angle, const Vector3 &ri, c
                                  ForceVector &f) const
 {
     auto angleParameters = calculateAngleForceParameters(ri - rj, rk - rj);
-    const auto force = angle.force(angleParameters.theta_);
-    angleParameters.dfi_dtheta_ *= force;
-    angleParameters.dfk_dtheta_ *= force;
+    const auto force = angle.force(angleParameters.theta);
+    angleParameters.dfi_dtheta *= force;
+    angleParameters.dfk_dtheta *= force;
 
     // Store forces
-    f[angle.i()->index()] += angleParameters.dfi_dtheta_;
-    f[angle.j()->index()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
-    f[angle.k()->index()] += angleParameters.dfk_dtheta_;
+    f[angle.i()->index()] += angleParameters.dfi_dtheta;
+    f[angle.j()->index()] -= angleParameters.dfi_dtheta + angleParameters.dfk_dtheta;
+    f[angle.k()->index()] += angleParameters.dfk_dtheta;
 }
 
 /*
@@ -131,50 +131,50 @@ void GeometryKernel::angleForces(const SpeciesAngle &angle, const Vector3 &ri, c
 void GeometryKernel::addTorsionForceI(double du_dphi, int index, GeometryKernel::TorsionParameters &torsionParameters,
                                       ForceVector &f) const
 {
-    auto &dcos_dxpj = torsionParameters.dcos_dxpj_;
+    auto &dcos_dxpj = torsionParameters.dcos_dxpj;
 
-    f[index].add(du_dphi * torsionParameters.dcos_dxpj_.dp(torsionParameters.dxpj_dij_.columnAsVec3(0)),
-                 du_dphi * torsionParameters.dcos_dxpj_.dp(torsionParameters.dxpj_dij_.columnAsVec3(1)),
-                 du_dphi * dcos_dxpj.dp(torsionParameters.dxpj_dij_.columnAsVec3(2)));
+    f[index].add(du_dphi * torsionParameters.dcos_dxpj.dp(torsionParameters.dxpj_dij.columnAsVec3(0)),
+                 du_dphi * torsionParameters.dcos_dxpj.dp(torsionParameters.dxpj_dij.columnAsVec3(1)),
+                 du_dphi * dcos_dxpj.dp(torsionParameters.dxpj_dij.columnAsVec3(2)));
 }
 
 // Add torsion forces for atom 'j' in 'i-j-k-l' into the specified vector index and input vector
 void GeometryKernel::addTorsionForceJ(double du_dphi, int index, GeometryKernel::TorsionParameters &torsionParameters,
                                       ForceVector &f) const
 {
-    f[index].add(du_dphi * (torsionParameters.dcos_dxpj_.dp(-torsionParameters.dxpj_dij_.columnAsVec3(0) -
-                                                            torsionParameters.dxpj_dkj_.columnAsVec3(0)) -
-                            torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dkj_.columnAsVec3(0))),
-                 du_dphi * (torsionParameters.dcos_dxpj_.dp(-torsionParameters.dxpj_dij_.columnAsVec3(1) -
-                                                            torsionParameters.dxpj_dkj_.columnAsVec3(1)) -
-                            torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dkj_.columnAsVec3(1))),
-                 du_dphi * (torsionParameters.dcos_dxpj_.dp(-torsionParameters.dxpj_dij_.columnAsVec3(2) -
-                                                            torsionParameters.dxpj_dkj_.columnAsVec3(2)) -
-                            torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dkj_.columnAsVec3(2))));
+    f[index].add(du_dphi * (torsionParameters.dcos_dxpj.dp(-torsionParameters.dxpj_dij.columnAsVec3(0) -
+                                                           torsionParameters.dxpj_dkj.columnAsVec3(0)) -
+                            torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dkj.columnAsVec3(0))),
+                 du_dphi * (torsionParameters.dcos_dxpj.dp(-torsionParameters.dxpj_dij.columnAsVec3(1) -
+                                                           torsionParameters.dxpj_dkj.columnAsVec3(1)) -
+                            torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dkj.columnAsVec3(1))),
+                 du_dphi * (torsionParameters.dcos_dxpj.dp(-torsionParameters.dxpj_dij.columnAsVec3(2) -
+                                                           torsionParameters.dxpj_dkj.columnAsVec3(2)) -
+                            torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dkj.columnAsVec3(2))));
 }
 
 // Add torsion forces for atom 'k' in 'i-j-k-l' into the specified vector index and input vector
 void GeometryKernel::addTorsionForceK(double du_dphi, int index, GeometryKernel::TorsionParameters &torsionParameters,
                                       ForceVector &f) const
 {
-    f[index].add(du_dphi * (torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dkj_.columnAsVec3(0) -
-                                                            torsionParameters.dxpk_dlk_.columnAsVec3(0)) +
-                            torsionParameters.dcos_dxpj_.dp(torsionParameters.dxpj_dkj_.columnAsVec3(0))),
-                 du_dphi * (torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dkj_.columnAsVec3(1) -
-                                                            torsionParameters.dxpk_dlk_.columnAsVec3(1)) +
-                            torsionParameters.dcos_dxpj_.dp(torsionParameters.dxpj_dkj_.columnAsVec3(1))),
-                 du_dphi * (torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dkj_.columnAsVec3(2) -
-                                                            torsionParameters.dxpk_dlk_.columnAsVec3(2)) +
-                            torsionParameters.dcos_dxpj_.dp(torsionParameters.dxpj_dkj_.columnAsVec3(2))));
+    f[index].add(du_dphi * (torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dkj.columnAsVec3(0) -
+                                                           torsionParameters.dxpk_dlk.columnAsVec3(0)) +
+                            torsionParameters.dcos_dxpj.dp(torsionParameters.dxpj_dkj.columnAsVec3(0))),
+                 du_dphi * (torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dkj.columnAsVec3(1) -
+                                                           torsionParameters.dxpk_dlk.columnAsVec3(1)) +
+                            torsionParameters.dcos_dxpj.dp(torsionParameters.dxpj_dkj.columnAsVec3(1))),
+                 du_dphi * (torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dkj.columnAsVec3(2) -
+                                                           torsionParameters.dxpk_dlk.columnAsVec3(2)) +
+                            torsionParameters.dcos_dxpj.dp(torsionParameters.dxpj_dkj.columnAsVec3(2))));
 }
 
 // Add torsion forces for atom 'l' in 'i-j-k-l' into the specified vector index and input vector
 void GeometryKernel::addTorsionForceL(double du_dphi, int index, GeometryKernel::TorsionParameters &torsionParameters,
                                       ForceVector &f) const
 {
-    f[index].add(du_dphi * torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dlk_.columnAsVec3(0)),
-                 du_dphi * torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dlk_.columnAsVec3(1)),
-                 du_dphi * torsionParameters.dcos_dxpk_.dp(torsionParameters.dxpk_dlk_.columnAsVec3(2)));
+    f[index].add(du_dphi * torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dlk.columnAsVec3(0)),
+                 du_dphi * torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dlk.columnAsVec3(1)),
+                 du_dphi * torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dlk.columnAsVec3(2)));
 }
 
 // Return SpeciesTorsion energy at Atoms specified
@@ -214,13 +214,13 @@ GeometryKernel::TorsionParameters GeometryKernel::calculateTorsionForceParameter
      */
 
     TorsionParameters torsionParameters;
-    torsionParameters.phi_ = atan2(vecjk.dp(xpj * xpk) / vecjk.magnitude(), dp);
-    torsionParameters.dxpj_dij_.makeCrossProductMatrix(vecjk);
-    torsionParameters.dxpj_dkj_.makeCrossProductMatrix(-vecji);
-    torsionParameters.dxpk_dkj_.makeCrossProductMatrix(-veckl);
-    torsionParameters.dxpk_dlk_.makeCrossProductMatrix(vecjk);
-    torsionParameters.dcos_dxpj_ = (xpk - xpj * dp) / magxpj;
-    torsionParameters.dcos_dxpk_ = (xpj - xpk * dp) / magxpk;
+    torsionParameters.phi = atan2(vecjk.dp(xpj * xpk) / vecjk.magnitude(), dp);
+    torsionParameters.dxpj_dij.makeCrossProductMatrix(vecjk);
+    torsionParameters.dxpj_dkj.makeCrossProductMatrix(-vecji);
+    torsionParameters.dxpk_dkj.makeCrossProductMatrix(-veckl);
+    torsionParameters.dxpk_dlk.makeCrossProductMatrix(vecjk);
+    torsionParameters.dcos_dxpj = (xpk - xpj * dp) / magxpj;
+    torsionParameters.dcos_dxpk = (xpj - xpk * dp) / magxpk;
 
     return torsionParameters;
 }
@@ -235,7 +235,7 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Atom &i,
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
 
-    const auto du_dphi = torsion.force(torsionParameters.phi_);
+    const auto du_dphi = torsion.force(torsionParameters.phi);
 
     // Sum forces on atoms
     addTorsionForceI(du_dphi, indexI, torsionParameters, f);
@@ -253,7 +253,7 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Vector3 
     auto veckl = box_->minimumVector(rl, rk);
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
-    const auto du_dphi = torsion.force(torsionParameters.phi_);
+    const auto du_dphi = torsion.force(torsionParameters.phi);
 
     // Sum forces on atoms
     addTorsionForceI(du_dphi, torsion.i()->index(), torsionParameters, f);
@@ -282,7 +282,7 @@ void GeometryKernel::improperForces(const SpeciesImproper &improper, const Atom 
     auto veckl = box_->minimumVector(l.r(), k.r());
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
-    const auto du_dphi = improper.force(torsionParameters.phi_);
+    const auto du_dphi = improper.force(torsionParameters.phi);
 
     // Sum forces on atoms
     addTorsionForceI(du_dphi, indexI, torsionParameters, f);
@@ -300,7 +300,7 @@ void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vector3 &r
     auto veckl = box_->minimumVector(rl, rk);
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
-    const auto du_dphi = imp.force(torsionParameters.phi_);
+    const auto du_dphi = imp.force(torsionParameters.phi);
 
     // Sum forces on atoms
     addTorsionForceI(du_dphi, imp.i()->index(), torsionParameters, f);
