@@ -39,4 +39,40 @@ int sgn(double x);
 double sgn(double a, double signOf);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i);
+
+/*
+ * Constants
+ */
+
+// Avogadro's Number
+constexpr double Avogadro = 6.0221415E23;
+
+// Pi
+constexpr double TwoPI = 2.0 * M_PI;
+
+// Degrees per Radian
+constexpr double DegreesPerRadian = 180.0 / M_PI;
+
+// Boltzmann's constant (m2 kg s-2 K-1)
+constexpr double Boltzmann = 1.3806503E-23;
+
+// 2 * sqrt(2 log 2)
+#define TWOSQRT2LN2 2.354820045
+
+/*
+ * Conversion from atomic units to kJ/mol for Electrostatic Energy / Forces
+ *
+ * COULCONVERT =      q * q
+ *		 ----------------
+ *		 4 * pi * e0 * r2
+ */
+constexpr double CoulConvert = 1389.35444426359172669289;
+
+/*
+ * Conversion
+ */
+
+// Convert degrees to radians
+double toRadians(double degrees) { return degrees / DegreesPerRadian; }
+
 }; // namespace DissolveMath

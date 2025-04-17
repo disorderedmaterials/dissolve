@@ -61,7 +61,7 @@ void DataOperator2D::normaliseBySphericalShell()
             auto r2Cubed = pow(rightBin, 3);
 
             // Calculate divisor for normalisation
-            auto divisor = (4.0 / 3.0) * PI * (r2Cubed - r1Cubed);
+            auto divisor = (4.0 / 3.0) * M_PI * (r2Cubed - r1Cubed);
 
             // Peform normalisation step
             values[{n, m}] /= divisor;

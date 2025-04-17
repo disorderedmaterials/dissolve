@@ -2,12 +2,9 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/pairPotential.h"
-#include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
-#include "math/constants.h"
 #include "math/derivative.h"
-#include <cmath>
 
 // Static members
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;
