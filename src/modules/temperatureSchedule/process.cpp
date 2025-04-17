@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "math/mathFunc.h"
 #include "modules/temperatureSchedule/temperatureSchedule.h"
 
 // Run main processing

@@ -124,6 +124,10 @@ class Vector3 : public Serialisable<>
     static Vector3 unit(int index);
     // Swap the two specified elements
     void swap(int a, int b);
+    // Convert from (assumed) degrees to radians
+    void toRadians();
+    // Convert from (assumed) radians to degrees
+    void toDegrees();
 
     /*
      * I/O

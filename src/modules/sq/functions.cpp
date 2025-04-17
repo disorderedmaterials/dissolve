@@ -31,16 +31,17 @@ bool SQModule::calculateUnweightedSQ(const ProcessPool &procPool, const PartialS
             // Total partial
             unweightedsq.partial(n, m).copyArrays(unweightedgr.partial(n, m));
             unweightedsq.partial(n, m) -= 1.0;
-            Fourier::sineFT(unweightedsq.partial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
+            Fourier::sineFT(unweightedsq.partial(n, m), 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
 
             // Bound partial
             unweightedsq.boundPartial(n, m).copyArrays(unweightedgr.boundPartial(n, m));
-            Fourier::sineFT(unweightedsq.boundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
+            Fourier::sineFT(unweightedsq.boundPartial(n, m), 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
 
             // Unbound partial
             unweightedsq.unboundPartial(n, m).copyArrays(unweightedgr.unboundPartial(n, m));
             unweightedsq.unboundPartial(n, m) -= 1.0;
-            Fourier::sineFT(unweightedsq.unboundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
+            Fourier::sineFT(unweightedsq.unboundPartial(n, m), 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction,
+                            broadening);
         });
 
     // Sum into total

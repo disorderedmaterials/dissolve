@@ -248,7 +248,7 @@ void PoissonFit::preCalculateTerms()
         r += rStep_;
         n += deltaN;
     }
-    fourPiSigmaRCubed_ = 4.0 * PI * sigmaR_ * sigmaR_ * sigmaR_;
+    fourPiSigmaRCubed_ = 4.0 * M_PI * sigmaR_ * sigmaR_ * sigmaR_;
 }
 
 // Update precalculated function data using specified C

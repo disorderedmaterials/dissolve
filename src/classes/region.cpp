@@ -4,6 +4,7 @@
 #include "classes/region.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "math/mathFunc.h"
 
 Region::Region() : box_(nullptr) {}
 

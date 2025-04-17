@@ -120,7 +120,7 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
                 v.set(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5));
             else
                 v.zero();
-            v /= sqrt(TWOPI);
+            v /= sqrt(2.0 * M_PI);
         }
     }
     else if (intramolecularForcesOnly_)

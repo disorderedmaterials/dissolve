@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "math/vector3i.h"
+#include "base/messenger.h"
 #include "math/mathFunc.h"
 #include <cmath>
 #include <format>
