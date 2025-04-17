@@ -3,7 +3,6 @@
 
 #define _USE_MATH_DEFINES
 #include "math/function1D.h"
-#include "math/constants.h"
 #include "templates/algorithms.h"
 #include <math.h>
 

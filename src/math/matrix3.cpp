@@ -3,7 +3,6 @@
 
 #include "math/matrix3.h"
 #include "base/messenger.h"
-#include "math/constants.h"
 #include "math/mathFunc.h"
 #include <array>
 

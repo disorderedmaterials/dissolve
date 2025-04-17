@@ -2,10 +2,8 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "math/mathFunc.h"
-#include "math/constants.h"
 #include "math/pcg.h"
 #include <cmath>
-#include <cstdlib>
 #include <random>
 
 namespace DissolveMath

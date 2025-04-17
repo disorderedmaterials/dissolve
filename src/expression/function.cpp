@@ -2,7 +2,6 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "expression/function.h"
-#include "math/constants.h"
 #include "math/mathFunc.h"
 
 // Return enum options for NodeTypes
