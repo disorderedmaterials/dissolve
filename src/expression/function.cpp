@@ -112,10 +112,10 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
             result = tan(args[0].asDouble());
             break;
         case (ToDegreesFunction):
-            result = args[0].asDouble() * DEGRAD;
+            result = DissolveMath::toDegrees(args[0].asDouble());
             break;
         case (ToRadiansFunction):
-            result = args[0].asDouble() / DEGRAD;
+            result = DissolveMath::toRadians(args[0].asDouble());
             break;
         case (TwoPiFunction):
             result = 2.0 * M_PI;

@@ -41,6 +41,14 @@ double sgn(double a, double signOf);
 int cp3(int i);
 
 /*
+ * Conversion
+ */
+
+// Convert degrees <--> radians
+double toRadians(double degrees);
+double toDegrees(double radians);
+
+/*
  * Constants
  */
 
@@ -67,12 +75,5 @@ constexpr double Boltzmann = 1.3806503E-23;
  *		 4 * pi * e0 * r2
  */
 constexpr double CoulConvert = 1389.35444426359172669289;
-
-/*
- * Conversion
- */
-
-// Convert degrees to radians
-double toRadians(double degrees) { return degrees / DegreesPerRadian; }
 
 }; // namespace DissolveMath

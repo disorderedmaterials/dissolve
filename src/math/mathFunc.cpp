@@ -78,4 +78,12 @@ double sgn(double a, double signOf) { return signOf >= 0.0 ? fabs(a) : -fabs(a);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i) { return (i % 3); }
 
+/*
+ * Conversion
+ */
+
+// Convert degrees <--> radians
+double toRadians(double degrees) { return degrees / DegreesPerRadian; }
+double toDegrees(double radians) { return radians * DegreesPerRadian; }
+
 } // namespace DissolveMath

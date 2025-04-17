@@ -115,7 +115,7 @@ void SpeciesTab::updateDensityLabel()
     else
         ui_.DensityUnitsLabel->setText(QString::number(
             ui_.DensityUnitsCombo->currentIndex() == 0 ? species_->nAtoms() / species_->box()->volume()
-                                                       : (species_->mass() / AVOGADRO) / (species_->box()->volume() / 1.0E24)));
+                                                       : (species_->mass() / DissolveMath::Avogadro) / (species_->box()->volume() / 1.0E24)));
 }
 
 // Update controls in tab
