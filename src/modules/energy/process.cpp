@@ -223,50 +223,24 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
             // Angle energy
             for (const auto &angle : molN->species()->angles())
             {
-                // Get vectors 'j-i' and 'j-k'
-                vecji = targetConfiguration_->box()->minimumVector(molN->atom(angle.indexJ())->r(),
-                                                                   molN->atom(angle.indexI())->r());
-                vecjk = targetConfiguration_->box()->minimumVector(molN->atom(angle.indexJ())->r(),
-                                                                   molN->atom(angle.indexK())->r());
-
-                // Calculate angle and determine angle energy
-                vecji.normalise();
-                vecjk.normalise();
-                correctIntraEnergy += angle.energy(Box::angleInDegrees(vecji, vecjk));
+                correctIntraEnergy += angle.energy(targetConfiguration_->box()->angleInRadians(
+                    molN->atom(angle.indexI())->r(), molN->atom(angle.indexJ())->r(), molN->atom(angle.indexK())->r()));
             }
 
             // Torsion energy
             for (const auto &torsion : molN->species()->torsions())
             {
-                // Get vectors 'j-i', 'j-k' and 'k-l'
-                vecji = targetConfiguration_->box()->minimumVector(molN->atom(torsion.indexJ())->r(),
-                                                                   molN->atom(torsion.indexI())->r());
-                vecjk = targetConfiguration_->box()->minimumVector(molN->atom(torsion.indexJ())->r(),
-                                                                   molN->atom(torsion.indexK())->r());
-                veckl = targetConfiguration_->box()->minimumVector(molN->atom(torsion.indexK())->r(),
-                                                                   molN->atom(torsion.indexL())->r());
-
-                angle = Box::torsionInDegrees(vecji, vecjk, veckl);
-
-                // Determine Torsion energy
-                correctIntraEnergy += torsion.energy(angle);
+                correctIntraEnergy += torsion.energy(targetConfiguration_->box()->torsionInRadians(
+                    molN->atom(torsion.indexI())->r(), molN->atom(torsion.indexJ())->r(), molN->atom(torsion.indexK())->r(),
+                    molN->atom(torsion.indexL())->r()));
             }
 
             // Improper energy
             for (const auto &imp : molN->species()->impropers())
             {
-                // Get vectors 'j-i', 'j-k' and 'k-l'
-                vecji =
-                    targetConfiguration_->box()->minimumVector(molN->atom(imp.indexJ())->r(), molN->atom(imp.indexI())->r());
-                vecjk =
-                    targetConfiguration_->box()->minimumVector(molN->atom(imp.indexJ())->r(), molN->atom(imp.indexK())->r());
-                veckl =
-                    targetConfiguration_->box()->minimumVector(molN->atom(imp.indexK())->r(), molN->atom(imp.indexL())->r());
-
-                angle = Box::torsionInDegrees(vecji, vecjk, veckl);
-
-                // Determine improper energy
-                correctIntraEnergy += imp.energy(angle);
+                correctIntraEnergy += imp.energy(targetConfiguration_->box()->torsionInRadians(
+                    molN->atom(imp.indexI())->r(), molN->atom(imp.indexJ())->r(), molN->atom(imp.indexK())->r(),
+                    molN->atom(imp.indexL())->r()));
             }
         }
 

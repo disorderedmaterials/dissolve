@@ -128,6 +128,10 @@ class Vector3 : public Serialisable<>
     void toRadians();
     // Convert from (assumed) radians to degrees
     void toDegrees();
+    // Return angle between this and supplied vector, in radians, ensuring normalisation
+    double angleInRadians(const Vector3 &to) const;
+    // Return angle between this and supplied vector, in degrees, ensuring normalisation
+    double angleInDegrees(const Vector3 &to) const;
 
     /*
      * I/O

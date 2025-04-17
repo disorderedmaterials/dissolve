@@ -484,6 +484,12 @@ void Vector3::toDegrees()
     z = DissolveMath::toDegrees(z);
 }
 
+// Return angle between this and supplied vector, in radians, ensuring normalisation
+double Vector3::angleInRadians(const Vector3 &to) const { return acos(normalised().dp(to.normalised())); }
+
+// Return angle between this and supplied vector, in degrees, ensuring normalisation
+double Vector3::angleInDegrees(const Vector3 &to) const { return DissolveMath::toDegrees(angleInRadians(to)); }
+
 /*
  * I/O
  */

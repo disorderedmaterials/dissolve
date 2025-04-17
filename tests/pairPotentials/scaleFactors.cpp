@@ -78,12 +78,12 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
     // Return reference energy at distance r given specified charge product and scalings
     double referenceEnergy(double r, double chargeProduct, double elecScale = 1.0, double srScale = 1.0)
     {
-        return srScale * potentialWrapper_.y(r) + elecScale * COULCONVERT * chargeProduct / r;
+        return srScale * potentialWrapper_.y(r) + elecScale * PairPotential::CoulConvert * chargeProduct / r;
     }
     // Return reference force at distance r given specified charge product and scalings
     double referenceForce(double r, double chargeProduct, double elecScale = 1.0, double srScale = 1.0)
     {
-        return -srScale * potentialWrapper_.dYdX(r) + elecScale * COULCONVERT * chargeProduct / (r * r);
+        return -srScale * potentialWrapper_.dYdX(r) + elecScale * PairPotential::CoulConvert * chargeProduct / (r * r);
     }
     // Perform scaling tests on production routines
     template <class Particle> void testScalings(const Particle &i, const Particle &j, double r, double refChargeProduct)
