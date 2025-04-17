@@ -204,11 +204,6 @@ bool CellArray::minimumImageRequired(const Cell &a, const Cell &b) const
 // Generate Cells for Box
 bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRange)
 {
-    // There are some conditions to the partitioning:
-    // 1) We require a minimum number of cells (minCellsPerSide) per box side
-    // 2) TODO Need to check distances properly for monoclinic and triclinic cells
-    // 3) Require Cells to be roughly 'cubic' as far as is possible.
-
     clear();
 
     const auto minCellsPerSide = 3;
