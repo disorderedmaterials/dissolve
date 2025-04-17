@@ -70,7 +70,7 @@ void GeometryKernel::bondForces(const SpeciesBond &bond, const Vector3 &ri, cons
 // Return SpeciesAngle energy at Atoms specified
 double GeometryKernel::angleEnergy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k) const
 {
-    return a.energy(Box::angleInDegrees(box_->minimumVectorN(j.r(), i.r()), box_->minimumVectorN(j.r(), k.r())));
+    return a.energy(box_->angleInRadians(i.r(), j.r(), k.r()));
 }
 
 // Calculate angle force parameters from supplied vectors, storing results in supplied variables
@@ -80,8 +80,8 @@ GeometryKernel::AngleParameters GeometryKernel::calculateAngleForceParameters(Ve
     AngleParameters angleParameters;
     const auto magji = vecji.magAndNormalise();
     const auto magjk = vecjk.magAndNormalise();
-    double dp;
-    angleParameters.theta_ = Box::angleInDegrees(vecji, vecjk, dp);
+    auto dp = vecji.dp(vecjk);
+    angleParameters.theta_ = vecji.angleInRadians(vecjk);
 
     // Determine force vectors for atoms
     angleParameters.dfi_dtheta_ = (vecjk - vecji * dp) / magji;
@@ -180,8 +180,7 @@ void GeometryKernel::addTorsionForceL(double du_dphi, int index, GeometryKernel:
 // Return SpeciesTorsion energy at Atoms specified
 double GeometryKernel::torsionEnergy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const
 {
-    return t.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
-                                          box_->minimumVector(k.r(), l.r())));
+    return t.energy(box_->torsionInRadians(i.r(), j.r(), k.r(), l.r()));
 }
 
 // Calculate torsion force parameters from supplied vectors, storing results in supplied variables
@@ -230,16 +229,13 @@ GeometryKernel::TorsionParameters GeometryKernel::calculateTorsionForceParameter
 void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Atom &i, int indexI, const Atom &j, int indexJ,
                                    const Atom &k, int indexK, const Atom &l, int indexL, ForceVector &f) const
 {
-    // Calculate vectors, ensuring we account for minimum image
-    Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
-
     auto vecji = box_->minimumVector(i.r(), j.r());
     auto vecjk = box_->minimumVector(k.r(), j.r());
     auto veckl = box_->minimumVector(l.r(), k.r());
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
 
-    const auto du_dphi = torsion.force(DissolveMath::toDegrees(torsionParameters.phi_));
+    const auto du_dphi = torsion.force(torsionParameters.phi_);
 
     // Sum forces on atoms
     addTorsionForceI(du_dphi, indexI, torsionParameters, f);
@@ -257,7 +253,7 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Vector3 
     auto veckl = box_->minimumVector(rl, rk);
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
-    const auto du_dphi = torsion.force(torsionParameters.phi_ * DEGRAD);
+    const auto du_dphi = torsion.force(torsionParameters.phi_);
 
     // Sum forces on atoms
     addTorsionForceI(du_dphi, torsion.i()->index(), torsionParameters, f);
@@ -274,8 +270,7 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Vector3 
 double GeometryKernel::improperEnergy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k,
                                       const Atom &l) const
 {
-    return imp.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
-                                            box_->minimumVector(k.r(), l.r())));
+    return imp.energy(box_->torsionInRadians(i.r(), j.r(), k.r(), l.r()));
 }
 
 // Calculate SpeciesImproper forces
@@ -287,7 +282,7 @@ void GeometryKernel::improperForces(const SpeciesImproper &improper, const Atom 
     auto veckl = box_->minimumVector(l.r(), k.r());
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
-    const auto du_dphi = improper.force(torsionParameters.phi_ * DEGRAD);
+    const auto du_dphi = improper.force(torsionParameters.phi_);
 
     // Sum forces on atoms
     addTorsionForceI(du_dphi, indexI, torsionParameters, f);
@@ -305,7 +300,7 @@ void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vector3 &r
     auto veckl = box_->minimumVector(rl, rk);
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
-    const auto du_dphi = imp.force(torsionParameters.phi_ * DEGRAD);
+    const auto du_dphi = imp.force(torsionParameters.phi_);
 
     // Sum forces on atoms
     addTorsionForceI(du_dphi, imp.i()->index(), torsionParameters, f);

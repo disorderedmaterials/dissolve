@@ -144,22 +144,16 @@ class Box : public Serialisable<>
      * Geometry
      */
     public:
-    // Return angle (in degrees) between coordinates
+    // Return angle (in degrees) between coordinates, accounting for minimum image
     double angleInDegrees(const Vector3 &i, const Vector3 &j, const Vector3 &k) const;
-    // Return angle (in degrees) between supplied normalised vectors
-    static double angleInDegrees(const Vector3 &normji, const Vector3 &normjk);
-    // Return angle (in degrees) between supplied normalised vectors (storing dot product)
-    static double angleInDegrees(const Vector3 &normji, const Vector3 &normjk, double &dotProduct);
+    // Return angle (in radians) between coordinates, accounting for minimum image
+    double angleInRadians(const Vector3 &i, const Vector3 &j, const Vector3 &k) const;
     // Return literal angle (in degrees) between coordinates, without applying minimum image convention
     static double literalAngleInDegrees(const Vector3 &i, const Vector3 &j, const Vector3 &k);
+    // Return torsion (in radians) between supplied coordinates, accounting for minimum image
+    double torsionInRadians(const Vector3 &i, const Vector3 &j, const Vector3 &k, const Vector3 &l) const;
     // Return torsion (in degrees) between supplied unnormalised vectors
     static double torsionInDegrees(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl);
-    // Return torsion (in degrees) between supplied unnormalised vectors, storing cross products and magnitude in supplied
-    // variables
-    static double torsionInDegrees(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl, Vector3 &xpj,
-                                   double &magxpj, Vector3 &xpk, double &magxpk);
-    // Return torsion (in radians) between supplied unnormalised vectors
-    static double torsionInRadians(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl);
     // Return torsion (in radians) between supplied unnormalised vectors, storing cross products and magnitude in supplied
     // variables
     static double torsionInRadians(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl, Vector3 &xpj,

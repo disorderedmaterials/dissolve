@@ -175,8 +175,8 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
                 auto magjk = vecjk.magAndNormalise();
 
                 // Determine Angle force vectors for atoms
-                double dp;
-                auto force = angle.force(Box::angleInDegrees(vecji, vecjk, dp));
+                auto dp = vecji.dp(vecjk);
+                auto force = angle.force(vecji.angleInRadians(vecjk));
                 auto forcei = vecjk - vecji * dp;
                 forcei *= force / magji;
                 auto forcek = vecji - vecjk * dp;
@@ -204,7 +204,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
 
                 // Calculate torsion force parameters
                 auto tp = GeometryKernel::calculateTorsionForceParameters(vecji, vecjk, veckl);
-                auto du_dphi = torsion.force(tp.phi_ * DEGRAD);
+                auto du_dphi = torsion.force(tp.phi_);
 
                 // Sum forces on Atoms
                 fIntra[offsetN + torsion.indexI()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
@@ -248,7 +248,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
 
                 // Calculate improper force parameters
                 auto tp = GeometryKernel::calculateTorsionForceParameters(vecji, vecjk, veckl);
-                auto du_dphi = imp.force(tp.phi_ * DEGRAD);
+                auto du_dphi = imp.force(tp.phi_);
 
                 // Sum forces on Atoms
                 fIntra[offsetN + imp.indexI()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),

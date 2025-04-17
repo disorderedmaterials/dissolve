@@ -206,16 +206,16 @@ bool SpeciesImproper::isSelected() const
  * Interaction Parameters
  */
 
-// Return energy for specified angle
-double SpeciesImproper::energy(double angleInDegrees) const
+// Return energy for specified angle phi (in radians)
+double SpeciesImproper::energy(double phi) const
 {
-    return SpeciesTorsion::energy(angleInDegrees, interactionForm(), interactionParameters());
+    return SpeciesTorsion::energy(phi, interactionForm(), interactionParameters());
 }
 
-// Return force multiplier for specified angle
-double SpeciesImproper::force(double angleInDegrees) const
+// Return force multiplier for specified angle phi (in radians)
+double SpeciesImproper::force(double phi) const
 {
-    return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
+    return SpeciesTorsion::force(phi, interactionForm(), interactionParameters());
 }
 
 // Express as a serialisable value

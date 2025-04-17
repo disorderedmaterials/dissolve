@@ -53,7 +53,7 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
                 continue;
 
             auto distanceAB = targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin());
-            auto axisAngle = Box::angleInDegrees(siteA->axes().columnAsVec3(axisA_), siteB->axes().columnAsVec3(axisB_));
+            auto axisAngle = siteA->axes().columnAsVec3(axisA_).angleInDegrees(siteB->axes().columnAsVec3(axisB_));
             if (symmetric_ && axisAngle > 90.0)
                 axisAngle = 180.0 - axisAngle;
 

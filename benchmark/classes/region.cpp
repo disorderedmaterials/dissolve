@@ -4,6 +4,7 @@
 #include "classes/region.h"
 #include "classes/box.h"
 #include "common/problems.h"
+#include "math/mathFunc.h"
 #include <benchmark/benchmark.h>
 #include <cmath>
 

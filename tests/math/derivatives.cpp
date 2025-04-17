@@ -6,6 +6,7 @@
 #include "classes/speciesBond.h"
 #include "classes/speciesImproper.h"
 #include "classes/speciesTorsion.h"
+#include "math/mathFunc.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -44,16 +45,26 @@ class DerivativesTest : public ::testing::Test
         const auto dx = xDelta / 100.0;
         while (x <= xMax)
         {
-            // Calculate derivative
-            auto E0 = intraTerm.energy(x - dx);
-            auto E1 = intraTerm.energy(x + dx);
-            auto grad = (E1 - E0) / (2.0 * dx);
-
-            // Compare analytic value - for angle terms, convert gradient to radians and remove factor of -1.0/sin(x) from force
+            // For angle terms, convert gradient to radians and remove factor of -1.0/sin(x) from force
             if (angular)
-                ASSERT_NEAR(-grad * DEGRAD, intraTerm.force(x) * -sin(x / DEGRAD), tolerance_);
+            {
+                // Calculate derivative
+                auto E0 = intraTerm.energy(DissolveMath::toRadians(x - dx));
+                auto E1 = intraTerm.energy(DissolveMath::toRadians(x + dx));
+                auto grad = DissolveMath::toDegrees((E1 - E0) / (2.0 * dx));
+
+                auto theta = DissolveMath::toRadians(x);
+                ASSERT_NEAR(-grad, intraTerm.force(theta) * -sin(theta), tolerance_);
+            }
             else
+            {
+                // Calculate derivative
+                auto E0 = intraTerm.energy(x - dx);
+                auto E1 = intraTerm.energy(x + dx);
+                auto grad = (E1 - E0) / (2.0 * dx);
+
                 ASSERT_NEAR(-grad, intraTerm.force(x), tolerance_);
+            }
 
             x += xDelta;
         }

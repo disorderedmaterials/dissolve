@@ -6,6 +6,7 @@
 #include "math/data1D.h"
 #include "math/derivative.h"
 #include "math/interpolator.h"
+#include "math/mathFunc.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -35,7 +36,8 @@ class AngleFunctionsAnalyticTest : public ::testing::Test
         auto x = rangeMin_;
         while (x <= rangeMax_)
         {
-            energy.addPoint(x / DEGRAD, ijk_.energy(x));
+            auto theta = DissolveMath::toRadians(x);
+            energy.addPoint(theta, ijk_.energy(theta));
             x += delta_;
         }
         auto de_dx = Derivative::derivative(energy);
@@ -45,15 +47,16 @@ class AngleFunctionsAnalyticTest : public ::testing::Test
 
         // Test analytic vs tabulated values - do this by absolute value if less than 1.0, or by ratio if greater than 1.0.
         // We do this since we span many orders of magnitude in value over the potential range, and can also have zeroes.
-        auto theta = rangeMin_ + testDelta_;
-        while (theta < rangeMax_)
+        x = rangeMin_ + testDelta_;
+        while (x < rangeMax_)
         {
+            auto theta = DissolveMath::toRadians(x);
             auto f = ijk_.force(theta);
             if (fabs(f) < 1.0)
-                EXPECT_NEAR(f, force.y(theta / DEGRAD) / -sin(theta / DEGRAD), 1.0e-5);
+                EXPECT_NEAR(f, force.y(theta) / -sin(theta), 1.0e-5);
             else
-                EXPECT_NEAR(f / (force.y(theta / DEGRAD) / -sin(theta / DEGRAD)), 1.0, 1.0e-3);
-            theta += testDelta_;
+                EXPECT_NEAR(f / (force.y(theta) / -sin(theta)), 1.0, 1.0e-3);
+            x += testDelta_;
         }
     }
 };
