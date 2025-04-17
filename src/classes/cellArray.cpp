@@ -163,8 +163,8 @@ void CellArray::createCellNeighbourPairs()
     neighbourPairs_.reserve(nPairs);
     for (auto &cell : cells_)
         for (auto &nbr : neighbours(cell))
-            if (cell.index() <= nbr.neighbour_.index())
-                neighbourPairs_.emplace_back(cell, nbr.neighbour_, nbr.requiresMIM_);
+            if (cell.index() <= nbr.cell.index())
+                neighbourPairs_.emplace_back(cell, nbr.cell, nbr.requiresMIM);
 }
 
 // Return neighbour vector for specified cell, including self as first item
@@ -179,7 +179,7 @@ bool CellArray::minimumImageRequired(const Cell &a, const Cell &b) const
     auto it = std::find(neighbours_[a.index()].begin(), neighbours_[a.index()].end(), b);
     if (it == neighbours_[a.index()].end())
         return false;
-    return it->requiresMIM_;
+    return it->requiresMIM;
 }
 
 /*

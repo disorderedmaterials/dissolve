@@ -3,13 +3,12 @@
 
 #pragma once
 
-#include "classes/cellNeighbour.h"
+#include "classes/cell.h"
 #include "math/matrix3.h"
 #include "templates/array3D.h"
 
 // Forward Declarations
 class Box;
-class Cell;
 
 // Corner Distances Structure
 struct CornerDistances
@@ -25,6 +24,31 @@ struct CornerDistances
     double maximumLiteral{0.0};
     double minimumMim{0.0};
     double maximumMim{0.0};
+};
+
+// Cell Neighbour
+struct CellNeighbour
+{
+    CellNeighbour(const Cell &n, bool mim) : cell(n), requiresMIM(mim) {}
+    const Cell &cell;
+    bool requiresMIM{false};
+
+    bool operator==(const Cell &other) const { return this->cell.index() == other.index(); }
+};
+
+// Cell Neighbour Pair
+struct CellNeighbourPair
+{
+    CellNeighbourPair(const Cell &c, const Cell &n, bool mim) : cell(c), neighbour(n), requiresMIM(mim) {}
+    const Cell &cell;
+    const Cell &neighbour;
+    bool requiresMIM = false;
+
+    bool operator==(const CellNeighbourPair &other) const
+    {
+        return (&this->cell == &other.cell && &this->neighbour == &other.neighbour) ||
+               (&this->neighbour == &other.cell && &this->cell == &other.neighbour);
+    }
 };
 
 // Cell Array

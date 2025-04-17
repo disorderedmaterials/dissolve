@@ -317,10 +317,10 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
         // Loop over all neighbours for this primary Cell, taking care to ignore the entry corresponding to this cell itself
         for (auto &nbr : cellArray_.neighbours(*cell))
         {
-            if (&nbr.neighbour_ == cell)
+            if (&nbr.cell == cell)
                 continue;
 
-            auto nbrIndex = nbr.neighbour_.index();
+            auto nbrIndex = nbr.cell.index();
 
             // If we have locked this Cell already, continue
             if (cellStatusFlags_[nbrIndex] == CellStatusFlag::LockedForEditing)
@@ -338,7 +338,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
             }
 
             // All good - add to our list
-            readOnlyCells.insert(&nbr.neighbour_);
+            readOnlyCells.insert(&nbr.cell);
         }
     }
 

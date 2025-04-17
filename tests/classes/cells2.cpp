@@ -97,7 +97,7 @@ class CellsPBCTest : public ::testing::Test
                                     [&](auto i, auto &nbri, auto j, auto &nbrj)
                                     {
                                         if (i != j)
-                                            EXPECT_TRUE(nbri.neighbour_.index() != nbrj.neighbour_.index());
+                                            EXPECT_TRUE(nbri.cell.index() != nbrj.cell.index());
                                     });
         }
     }

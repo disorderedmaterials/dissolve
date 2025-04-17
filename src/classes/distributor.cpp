@@ -179,7 +179,7 @@ bool Distributor::canHardLock(int cellIndex) const
     // For the specified Cell to be hard lockable its neighbours must not be HardLocked
     if (std::find_if(cellArray_.neighbours(*cell).begin(), cellArray_.neighbours(*cell).end(),
                      [&](const auto &nbr)
-                     { return cellLocks_[nbr.neighbour_.index()] == HardLocked; }) != cellArray_.neighbours(*cell).end())
+                     { return cellLocks_[nbr.cell.index()] == HardLocked; }) != cellArray_.neighbours(*cell).end())
         return false;
 
     return true;
@@ -200,35 +200,35 @@ std::vector<const Cell *> Distributor::surroundingCells(std::vector<const Cell *
         // Local Cell neighbours
         for (auto &nbr : cellArray_.neighbours(*centralCells[n]))
         {
-            if (nbr.requiresMIM_)
+            if (nbr.requiresMIM)
                 continue;
 
             // Check presence in central cells list
-            if (std::find(centralCells.begin(), centralCells.end(), &nbr.neighbour_) != centralCells.end())
+            if (std::find(centralCells.begin(), centralCells.end(), &nbr.cell) != centralCells.end())
                 continue;
 
             // Check presence in surrounding cells list
-            if (std::find(surroundingCells.begin(), surroundingCells.end(), &nbr.neighbour_) != surroundingCells.end())
+            if (std::find(surroundingCells.begin(), surroundingCells.end(), &nbr.cell) != surroundingCells.end())
                 continue;
 
-            surroundingCells.push_back(&nbr.neighbour_);
+            surroundingCells.push_back(&nbr.cell);
         }
 
         // MIM Cell neighbours
         for (auto &nbr : cellArray_.neighbours(*centralCells[n]))
         {
-            if (!nbr.requiresMIM_)
+            if (!nbr.requiresMIM)
                 continue;
 
             // Check presence in central cells list
-            if (std::find(centralCells.begin(), centralCells.end(), &nbr.neighbour_) != centralCells.end())
+            if (std::find(centralCells.begin(), centralCells.end(), &nbr.cell) != centralCells.end())
                 continue;
 
             // Check presence in surrounding cells list
-            if (std::find(surroundingCells.begin(), surroundingCells.end(), &nbr.neighbour_) != surroundingCells.end())
+            if (std::find(surroundingCells.begin(), surroundingCells.end(), &nbr.cell) != surroundingCells.end())
                 continue;
 
-            surroundingCells.push_back(&nbr.neighbour_);
+            surroundingCells.push_back(&nbr.cell);
         }
     }
 
