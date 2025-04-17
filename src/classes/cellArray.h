@@ -92,8 +92,6 @@ class CellArray
     Vec3<int> cornerDistancesOrigin_;
 
     private:
-    // Add neighbour to cell vector
-    void addNeighbour(const Cell &cell, const Cell &nbr, bool useMim);
     // Construct cell neighbour pairs
     void createCellNeighbourPairs();
 

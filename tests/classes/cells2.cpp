@@ -83,6 +83,24 @@ class CellsPBCTest : public ::testing::Test
             EXPECT_TRUE(cfg->cells().withinMinimumImageRange(ii->cell(), jj->cell(), r));
         }
     }
+
+    void testNeighbours(Configuration *cfg)
+    {
+        auto &cellArray = cfg->cells();
+
+        // Every cell must have a set of neighbours containing no duplicate indices
+        for (auto n = 0; n < cellArray.nCells(); ++n)
+        {
+            const auto &nbrs = cellArray.neighbours(*cellArray.cell(n));
+
+            dissolve::for_each_pair(ParallelPolicies::seq, nbrs.begin(), nbrs.end(),
+                                    [&](auto i, auto &nbri, auto j, auto &nbrj)
+                                    {
+                                        if (i != j)
+                                            EXPECT_TRUE(nbri.neighbour_.index() != nbrj.neighbour_.index());
+                                    });
+        }
+    }
 };
 
 TEST_F(CellsPBCTest, Cubic)
@@ -90,6 +108,7 @@ TEST_F(CellsPBCTest, Cubic)
     auto *cfg = createConfiguration({100, 100, 100}, {90, 90, 90}, {0, 0, 0});
     ASSERT_TRUE(cfg->box()->type() == Box::BoxType::Cubic);
     testCells(cfg);
+    testNeighbours(cfg);
 };
 
 TEST_F(CellsPBCTest, MonoclinicAlpha)
@@ -97,6 +116,7 @@ TEST_F(CellsPBCTest, MonoclinicAlpha)
     auto *cfg = createConfiguration({100, 100, 100}, {100, 90, 90}, {0, 0, 0});
     ASSERT_TRUE(cfg->box()->type() == Box::BoxType::MonoclinicAlpha);
     testCells(cfg);
+    testNeighbours(cfg);
 };
 
 TEST_F(CellsPBCTest, MonoclinicBeta)
@@ -104,6 +124,7 @@ TEST_F(CellsPBCTest, MonoclinicBeta)
     auto *cfg = createConfiguration({100, 100, 100}, {90, 110, 90}, {0, 0, 0});
     ASSERT_TRUE(cfg->box()->type() == Box::BoxType::MonoclinicBeta);
     testCells(cfg);
+    testNeighbours(cfg);
 };
 
 TEST_F(CellsPBCTest, MonoclinicGamma)
@@ -111,6 +132,7 @@ TEST_F(CellsPBCTest, MonoclinicGamma)
     auto *cfg = createConfiguration({100, 100, 100}, {90, 90, 120}, {0, 0, 0});
     ASSERT_TRUE(cfg->box()->type() == Box::BoxType::MonoclinicGamma);
     testCells(cfg);
+    testNeighbours(cfg);
 };
 
 } // namespace UnitTest

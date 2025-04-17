@@ -155,21 +155,6 @@ Vec3<int> CellArray::wrappedGridRef(const Vec3<int> &gridRef) const
  * Cell Neighbour
  */
 
-// Add neighbour to cell vector
-void CellArray::addNeighbour(const Cell &cell, const Cell &nbr, bool useMim)
-{
-    auto &cellVector = neighbours_[cell.index()];
-    auto it = std::find(cellVector.begin(), cellVector.end(), nbr);
-    if (it != cellVector.end())
-    {
-        // Neighbour already exists - make sure it is consistent
-        assert(it->neighbour_.index() == nbr.index());
-        assert(it->requiresMIM_ == useMim);
-    }
-    else
-        cellVector.emplace_back(nbr, useMim);
-}
-
 // Construct cell neighbour pairs
 void CellArray::createCellNeighbourPairs()
 {
@@ -471,18 +456,18 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     for (auto &nbrVector : neighbours_)
         nbrVector.reserve(neighbourIndices.size() + 1);
 
-    for (auto &cell : cells_)
+    for (auto &centralCell : cells_)
     {
-        addNeighbour(cell, cell, false);
+        auto &nbrs = neighbours_[centralCell.index()];
+        nbrs.emplace_back(centralCell, false);
 
         for (auto &index : neighbourIndices)
         {
             // Find neighbour with the relative indices provided
-            auto relIndex = cell.gridReference() + index;
-            auto *nbr = this->cell(relIndex.x, relIndex.y, relIndex.z);
+            auto relIndex = centralCell.gridReference() + index;
 
             // Add neighbour, flagging closer minimum image cell if present
-            addNeighbour(cell, *nbr, wrappedGridRef(relIndex) != index);
+            nbrs.emplace_back(*cell(relIndex.x, relIndex.y, relIndex.z), wrappedGridRef(relIndex) != index);
         }
     }
 
