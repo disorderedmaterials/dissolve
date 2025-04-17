@@ -57,8 +57,4 @@ constexpr double Avogadro = 6.0221415E23;
 
 // Degrees per Radian
 constexpr double DegreesPerRadian = 180.0 / M_PI;
-
-// Boltzmann's constant (m2 kg s-2 K-1)
-constexpr double Boltzmann = 1.3806503E-23;
-
 }; // namespace DissolveMath
