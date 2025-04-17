@@ -13,7 +13,7 @@ class Box;
 // Corner Distances Structure
 struct CornerDistances
 {
-    CornerDistances() {}
+    CornerDistances() = default;
     CornerDistances(double minLiteral, double maxLiteral, double minMim, double maxMim)
         : minimumLiteral(minLiteral), maximumLiteral(maxLiteral), minimumMim(minMim), maximumMim(maxMim)
     {
