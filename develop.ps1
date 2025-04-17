@@ -154,6 +154,8 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
     }
 } 
 
+Write-Host "$(where.exe qmlformat)"
+
 # Build/retrieve Freetype
 $freetypeVersion = "2.12.1"
 $freetypeArchive = "https://download.savannah.gnu.org/releases/freetype/freetype-$freetypeVersion.tar.gz"
