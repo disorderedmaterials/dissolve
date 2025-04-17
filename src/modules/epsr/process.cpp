@@ -417,7 +417,8 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         // Copy the total calculated F(Q) and trim to the same range as the experimental data before FT
         simulatedFR = weightedSQ.total();
         Filters::trim(simulatedFR, originalReferenceData);
-        Fourier::sineFT(simulatedFR, 1.0 / (2 * PI * PI * rho), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Form::Lorch0));
+        Fourier::sineFT(simulatedFR, 1.0 / (2 * M_PI * M_PI * rho), 0.0, 0.03, 30.0,
+                        WindowFunction(WindowFunction::Form::Lorch0));
 
         /*
          * Add the Data to the Scattering Matrix
@@ -643,7 +644,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
                                 // Copy experimental S(Q) and FT it
                                 expGR = estimatedSQ[{i, j}];
-                                Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * rho), 0.0, 0.05, 30.0,
+                                Fourier::sineFT(expGR, 1.0 / (2 * M_PI * M_PI * rho), 0.0, 0.05, 30.0,
                                                 WindowFunction(WindowFunction::Form::Lorch0));
                                 expGR += 1.0;
                             });

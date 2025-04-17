@@ -116,8 +116,8 @@ bool XRaySQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
             Messenger::warn("[SETUP {}] Effective atomic density used in Fourier transform of reference data not yet "
                             "available, so a default of 0.1 atoms/Angstrom3 used.\n",
                             name_);
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho.value_or(0.1)), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
-                        WindowFunction(referenceWindowFunction_));
+        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * M_PI * M_PI * rho.value_or(0.1)), referenceFTDeltaR_, referenceFTDeltaR_,
+                        30.0, WindowFunction(referenceWindowFunction_));
 
         // Save data?
         if (saveReference_)
@@ -309,7 +309,7 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext &moduleContext)
         Messenger::error("No effective density available from RDF module '{}'\n", grModule->name());
         return ExecutionResult::Failed;
     }
-    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * *rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
+    Fourier::sineFT(repGR, 1.0 / (2.0 * M_PI * M_PI * *rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
 
     // Save data if requested
     if (saveRepresentativeGR_)

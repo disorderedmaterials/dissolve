@@ -5,6 +5,7 @@
 #include "classes/box.h"
 #include "classes/molecule.h"
 #include "classes/species.h"
+#include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
 GeometryKernel::GeometryKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
@@ -238,7 +239,7 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Atom &i,
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
 
-    const auto du_dphi = torsion.force(torsionParameters.phi_ * DEGRAD);
+    const auto du_dphi = torsion.force(DissolveMath::toDegrees(torsionParameters.phi_));
 
     // Sum forces on atoms
     addTorsionForceI(du_dphi, indexI, torsionParameters, f);

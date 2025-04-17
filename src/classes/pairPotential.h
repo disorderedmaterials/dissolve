@@ -179,6 +179,14 @@ class PairPotential : Serialisable<>
     void resetAdditionalPotential();
     // Set additional potential
     void setAdditionalPotential(Data1D &newUAdditional);
+    /*
+     * Conversion from atomic units to kJ/mol for Electrostatic Energy / Forces
+     *
+     * COULCONVERT =      q * q
+     *		         ----------------
+     *	         	 4 * pi * e0 * r2
+     */
+    static constexpr double CoulConvert = 1389.35444426359172669289;
 
     /*
      * I/O

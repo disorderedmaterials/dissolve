@@ -4,6 +4,7 @@
 #include "classes/speciesTorsion.h"
 #include "classes/coreData.h"
 #include "classes/speciesAtom.h"
+#include "math/mathFunc.h"
 #include <map>
 
 SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(TorsionFunctions::Form::None) {}

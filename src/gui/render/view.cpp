@@ -5,6 +5,7 @@
 #include "gui/render/fontInstance.h"
 #include "gui/render/renderable.h"
 #include "math/cuboid.h"
+#include "math/mathFunc.h"
 #include <algorithm>
 #include <cmath>
 
@@ -139,7 +140,7 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
     if (hasPerspective)
     {
         // Use reversed top and bottom values so we get y-axis (0,1,0) pointing up
-        top = tan(perspectiveFieldOfView_ / DEGRAD) * 0.5;
+        top = tan(DissolveMath::toRadians(perspectiveFieldOfView_)) * 0.5;
         bottom = -top;
         left = -aspectRatio_ * top;
         right = aspectRatio_ * top;
@@ -151,7 +152,7 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
     }
     else
     {
-        top = -tan(perspectiveFieldOfView_ / DEGRAD) * orthoZoom;
+        top = -tan(DissolveMath::toRadians(perspectiveFieldOfView_)) * orthoZoom;
         bottom = -top;
         left = -aspectRatio_ * top;
         right = aspectRatio_ * top;

@@ -56,8 +56,8 @@ double GaussFit::gaussian(double x, double xCentre, double A, double FWHM) const
      * preFactor argument of approximation().
      */
 
-    auto c = FWHM / TWOSQRT2LN2;
-    auto gfac = (sqrt(0.5 * PI) / (4.0 * PI * PI)) / c;
+    auto c = FWHM / TwoSqrt2Ln2;
+    auto gfac = (sqrt(0.5 * M_PI) / (4.0 * M_PI * M_PI)) / c;
     if ((x > 0.0) && (xCentre > 0.0))
         gfac /= x * xCentre;
     else
@@ -68,7 +68,7 @@ double GaussFit::gaussian(double x, double xCentre, double A, double FWHM) const
 // Return Fourier transform of Gaussian at specified x value
 double GaussFit::gaussianFT(double x, double xCentre, double A, double FWHM) const
 {
-    auto c = FWHM / TWOSQRT2LN2;
+    auto c = FWHM / TwoSqrt2Ln2;
     const auto xCx = xCentre * x;
     return xCx > 0.0 ? A * exp(-(x * x * c * c) / 2.0) * sin(xCx) / (xCx) : A * exp(-(x * x * c * c) / 2.0);
 }

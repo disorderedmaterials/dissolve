@@ -6,8 +6,8 @@
 #include "classes/cell.h"
 #include "math/data1D.h"
 #include "math/interpolator.h"
-#include <algorithm>
 #include "math/mathFunc.h"
+#include <algorithm>
 
 Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
     : type_(boxType), a_(lengths.x), b_(lengths.y), c_(lengths.z), ra_(1.0 / lengths.x), rb_(1.0 / lengths.y),
@@ -216,7 +216,7 @@ void Box::scale(Vector3 scaleFactors)
     reciprocalAxes_.setColumn(1, axes_.columnAsVec3(2) * axes_.columnAsVec3(0));
     reciprocalAxes_.setColumn(2, axes_.columnAsVec3(0) * axes_.columnAsVec3(1));
     reciprocalAxes_.columnMultiply(0, 2.0 * M_PI / volume_);
-    reciprocalAxes_.columnMultiply(1, 2.0 * M_PI/ volume_);
+    reciprocalAxes_.columnMultiply(1, 2.0 * M_PI / volume_);
     reciprocalAxes_.columnMultiply(2, 2.0 * M_PI / volume_);
     reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 }
@@ -259,7 +259,10 @@ double Box::angleInDegrees(const Vector3 &i, const Vector3 &j, const Vector3 &k)
 }
 
 // Return angle (in degrees) between supplied normalised vectors
-double Box::angleInDegrees(const Vector3 &normji, const Vector3 &normjk) { return DissolveMath::toDegrees(acos(normji.dp(normjk))); }
+double Box::angleInDegrees(const Vector3 &normji, const Vector3 &normjk)
+{
+    return DissolveMath::toDegrees(acos(normji.dp(normjk)));
+}
 
 // Return angle (in degrees) between supplied normalised vectors
 double Box::angleInDegrees(const Vector3 &normji, const Vector3 &normjk, double &dotProduct)

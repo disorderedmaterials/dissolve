@@ -224,7 +224,7 @@ void EPSRModule::truncate(Data1D &data, double rMin, double rMax)
         if (x >= rMax)
             y[n] = 0.0;
         else if (x > rMin)
-            y[n] *= 0.5 * (1.0 + cos(((x - rMin) * PI) / decay));
+            y[n] *= 0.5 * (1.0 + cos(((x - rMin) * M_PI) / decay));
     }
 }
 
