@@ -261,6 +261,12 @@ double Box::literalAngleInDegrees(const Vector3 &i, const Vector3 &j, const Vect
     return (i - j).angleInDegrees(k - j);
 }
 
+// Return torsion (in degrees) between supplied coordinates, accounting for minimum image
+double Box::torsionInDegrees(const Vector3 &i, const Vector3 &j, const Vector3 &k, const Vector3 &l) const
+{
+    return DissolveMath::toDegrees(torsionInRadians(i, j, k, l));
+}
+
 // Return torsion (in radians) between supplied coordinates, accounting for minimum image
 double Box::torsionInRadians(const Vector3 &i, const Vector3 &j, const Vector3 &k, const Vector3 &l) const
 {
@@ -270,27 +276,6 @@ double Box::torsionInRadians(const Vector3 &i, const Vector3 &j, const Vector3 &
     xpj.magAndNormalise();
     xpk.magAndNormalise();
     return atan2(jk.dp(xpj * xpk) / jk.magnitude(), xpj.dp(xpk));
-}
-
-// Return torsion (in degrees) between supplied unnormalised vectors
-double Box::torsionInDegrees(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl)
-{
-    // Calculate cross products and torsion angle formed (in radians)
-    Vector3 xpj, xpk;
-    double magxpj, magxpk;
-
-    return DissolveMath::toDegrees(torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk));
-}
-
-// Return torsion (in radians) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
-double Box::torsionInRadians(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl, Vector3 &xpj, double &magxpj,
-                             Vector3 &xpk, double &magxpk)
-{
-    xpj = vecjk * vecji;
-    xpk = vecjk * veckl;
-    magxpj = xpj.magAndNormalise();
-    magxpk = xpk.magAndNormalise();
-    return atan2(vecjk.dp(xpj * xpk) / vecjk.magnitude(), xpj.dp(xpk));
 }
 
 /*
