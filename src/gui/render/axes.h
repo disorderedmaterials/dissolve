@@ -11,6 +11,7 @@
 #include "gui/render/textPrimitiveList.h"
 #include "math/vector3.h"
 #include "math/vector3i.h"
+#include "templates/array2D.h"
 #include <vector>
 
 // Forward Declarations

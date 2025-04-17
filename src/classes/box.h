@@ -49,7 +49,7 @@ class Box : public Serialisable<>
     // Box angles
     double alpha_, beta_, gamma_;
     // Flags stating periodicity along x, y, and z
-    std::tuple<bool, bool, bool> periodic_;
+    std::array<bool, 3> periodic_;
     // Axes
     Matrix3 axes_;
     // Axes as simple array
@@ -180,7 +180,7 @@ class Box : public Serialisable<>
     // Return folded fractional coordinate (i.e. inside current Box)
     Vector3 foldFrac(const Vector3 &r) const;
     // Determine axis scale factors to give requested volume, with scaling ratios provided
-    Vector3 scaleFactors(double requestedVolume, std::tuple<bool, bool, bool> scalableAxes = {true, true, true}) const;
+    Vector3 scaleFactors(double requestedVolume, const std::array<bool, 3> &scalableAxes = {true, true, true}) const;
 
     // Express as a serialisable value
     SerialisedValue serialise() const override;

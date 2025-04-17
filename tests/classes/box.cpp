@@ -25,7 +25,7 @@ Vector3 manualMim(Box &box, const Vector3 r1, const Vector3 r2)
     return box.axes() * mim + r2;
 }
 
-void scaleBox(Box &box, double requestedVolume, Vec3<bool> scalableAxes, bool uniform = false)
+void scaleBox(Box &box, double requestedVolume, const std::array<bool, 3> &scalableAxes, bool uniform = false)
 {
     // Get original lengths, angles, and volume for comparison
     auto lengths = box.axisLengths();

@@ -409,7 +409,7 @@ Vector3 Box::foldFrac(const Vector3 &r) const
 }
 
 // Determine axis scale factors to give requested volume, with scaling ratios provided
-Vector3 Box::scaleFactors(double requestedVolume, std::tuple<bool, bool, bool> scalableAxes) const
+Vector3 Box::scaleFactors(double requestedVolume, const std::array<bool, 3> &scalableAxes) const
 {
     auto &[scaleX, scaleY, scaleZ] = scalableAxes;
 

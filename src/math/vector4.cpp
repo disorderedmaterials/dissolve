@@ -2,7 +2,9 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "math/vector4.h"
+#include "base/messenger.h"
 #include <cmath>
+#include <iostream>
 
 Vector4::Vector4(const double xx, const double yy, const double zz, const double ww)
 {

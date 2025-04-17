@@ -2,7 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/array3DIterator.h"
-#include "math/vector3.h"
+#include "math/vector3i.h"
 #include "templates/algorithms.h"
 #include "templates/array3D.h"
 #include <gtest/gtest.h>

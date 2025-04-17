@@ -3,22 +3,10 @@
 
 #pragma once
 
-#include "base/messenger.h"
 #include "base/serialiser.h"
-#include "math/constants.h"
-#include "math/mathFunc.h"
 #include <cmath>
 #include <format>
-#include <iostream>
 #include <stdexcept>
-
-class NodeValue;
-class ExpressionVariable;
-
-template <> struct SerialisableContext<NodeValue>
-{
-    using type = std::vector<std::shared_ptr<ExpressionVariable>>;
-};
 
 // 3D Real Vector
 class Vector3 : public Serialisable<>
