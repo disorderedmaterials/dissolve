@@ -7,6 +7,7 @@
 #include "math/data1D.h"
 #include "math/interpolator.h"
 #include <algorithm>
+#include "math/mathFunc.h"
 
 Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
     : type_(boxType), a_(lengths.x), b_(lengths.y), c_(lengths.z), ra_(1.0 / lengths.x), rb_(1.0 / lengths.y),
@@ -19,13 +20,13 @@ Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
     axes_.setIdentity();
 
     // Determine cosines of box angles, zeroing if below some tolerance to clean up matrices
-    auto cosAlpha = cos(alpha_ / DEGRAD);
+    auto cosAlpha = cos(DissolveMath::toRadians(alpha_));
     if (fabs(cosAlpha) < 1.0e-10)
         cosAlpha = 0;
-    auto cosBeta = cos(beta_ / DEGRAD);
+    auto cosBeta = cos(DissolveMath::toRadians(beta_));
     if (fabs(cosBeta) < 1.0e-10)
         cosBeta = 0;
-    auto cosGamma = cos(gamma_ / DEGRAD);
+    auto cosGamma = cos(DissolveMath::toRadians(gamma_));
     if (fabs(cosGamma) < 1.0e-10)
         cosGamma = 0;
 
@@ -63,9 +64,9 @@ Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
     reciprocalAxes_.setColumn(0, axes_.columnAsVec3(1) * axes_.columnAsVec3(2));
     reciprocalAxes_.setColumn(1, axes_.columnAsVec3(2) * axes_.columnAsVec3(0));
     reciprocalAxes_.setColumn(2, axes_.columnAsVec3(0) * axes_.columnAsVec3(1));
-    reciprocalAxes_.columnMultiply(0, TWOPI / volume_);
-    reciprocalAxes_.columnMultiply(1, TWOPI / volume_);
-    reciprocalAxes_.columnMultiply(2, TWOPI / volume_);
+    reciprocalAxes_.columnMultiply(0, 2.0 * M_PI / volume_);
+    reciprocalAxes_.columnMultiply(1, 2.0 * M_PI / volume_);
+    reciprocalAxes_.columnMultiply(2, 2.0 * M_PI / volume_);
     reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 }
 
@@ -154,7 +155,7 @@ double Box::axisAngle(int n) const
     u.normalise();
     v.normalise();
     double dp = u.dp(v);
-    return acos(dp) * DEGRAD;
+    return DissolveMath::toDegrees(acos(dp));
 }
 
 // Return axes matrix
@@ -214,9 +215,9 @@ void Box::scale(Vector3 scaleFactors)
     reciprocalAxes_.setColumn(0, axes_.columnAsVec3(1) * axes_.columnAsVec3(2));
     reciprocalAxes_.setColumn(1, axes_.columnAsVec3(2) * axes_.columnAsVec3(0));
     reciprocalAxes_.setColumn(2, axes_.columnAsVec3(0) * axes_.columnAsVec3(1));
-    reciprocalAxes_.columnMultiply(0, TWOPI / volume_);
-    reciprocalAxes_.columnMultiply(1, TWOPI / volume_);
-    reciprocalAxes_.columnMultiply(2, TWOPI / volume_);
+    reciprocalAxes_.columnMultiply(0, 2.0 * M_PI / volume_);
+    reciprocalAxes_.columnMultiply(1, 2.0 * M_PI/ volume_);
+    reciprocalAxes_.columnMultiply(2, 2.0 * M_PI / volume_);
     reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 }
 
@@ -258,13 +259,13 @@ double Box::angleInDegrees(const Vector3 &i, const Vector3 &j, const Vector3 &k)
 }
 
 // Return angle (in degrees) between supplied normalised vectors
-double Box::angleInDegrees(const Vector3 &normji, const Vector3 &normjk) { return acos(normji.dp(normjk)) * DEGRAD; }
+double Box::angleInDegrees(const Vector3 &normji, const Vector3 &normjk) { return DissolveMath::toDegrees(acos(normji.dp(normjk))); }
 
 // Return angle (in degrees) between supplied normalised vectors
 double Box::angleInDegrees(const Vector3 &normji, const Vector3 &normjk, double &dotProduct)
 {
     dotProduct = normji.dp(normjk);
-    return acos(dotProduct) * DEGRAD;
+    return DissolveMath::toDegrees(acos(dotProduct));
 }
 
 // Return literal angle (in degrees) between coordinates, without applying minimum image convention
@@ -275,7 +276,7 @@ double Box::literalAngleInDegrees(const Vector3 &i, const Vector3 &j, const Vect
     vecji.normalise();
     vecjk = k - j;
     vecjk.normalise();
-    return acos(vecji.dp(vecjk)) * DEGRAD;
+    return DissolveMath::toDegrees(acos(vecji.dp(vecjk)));
 }
 
 // Return torsion (in degrees) between supplied unnormalised vectors
@@ -285,14 +286,14 @@ double Box::torsionInDegrees(const Vector3 &vecji, const Vector3 &vecjk, const V
     Vector3 xpj, xpk;
     double magxpj, magxpk;
 
-    return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk) * DEGRAD;
+    return DissolveMath::toDegrees(torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk));
 }
 
 // Return torsion (in degrees) between supplied unnormalised vectors
 double Box::torsionInDegrees(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl, Vector3 &xpj, double &magxpj,
                              Vector3 &xpk, double &magxpk)
 {
-    return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk) * DEGRAD;
+    return DissolveMath::toDegrees(torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk));
 }
 
 // Return torsion (in radians) between supplied unnormalised vectors
