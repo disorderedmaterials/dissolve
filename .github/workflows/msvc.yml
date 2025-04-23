@@ -21,7 +21,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Install Downgraded MSVC
+    - name: 'Set up Python'
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: 'Install Downgraded MSVC'
       shell: powershell
       env:
         msvcVersion: '14.41.17.11'
