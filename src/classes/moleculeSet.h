@@ -21,6 +21,6 @@ class MoleculeSet
     LocalMolecule &localMolecule(int n);
     const LocalMolecule &localMolecule(int n) const;
     // Return local molecules
-    std::vector<Atom> &localMolecules();
-    const std::vector<Atom> &localMolecules() const;
+    std::vector<localMolecule> &localMolecules();
+    const std::vector<localMolecule> &localMolecules() const;
 };
