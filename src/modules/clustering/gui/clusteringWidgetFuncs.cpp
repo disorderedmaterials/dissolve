@@ -4,6 +4,7 @@
 #include "gui/render/renderableData1D.h"
 #include "modules/clustering/clustering.h"
 #include "modules/clustering/gui/clusteringWidget.h"
+#include "io/export/coordinates.h"
 
 ClusteringModuleWidget::ClusteringModuleWidget(QWidget *parent, ClusteringModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)
@@ -141,4 +142,18 @@ void ClusteringModuleWidget::on_clusterIDList_itemClicked(QListWidgetItem *item)
     getNewConfig_ = true;
     fromBuilder_ = true;
     updateControls();
+}
+
+void ClusteringModuleWidget::on_exportButton_clicked()
+{
+    CoordinateExportFileFormat fileAndFormat(
+        std::format("clusterSelectionSize{}ID{}Iteration{}.xyz", displaySize_, displayID_, dissolve_.iteration()),
+        CoordinateExportFileFormat::CoordinateExportFormat::XYZ);
+    if (!fileAndFormat.exportData(clusterConfiguration_))
+        Messenger::error("Failed to export current visualisation");
+    else
+        QMessageBox::information(this, "Export Successful",
+                                 QString::fromStdString(std::format("Successfully exported current visualisation to '{}'.",
+                                                                    fileAndFormat.filename())),
+                                 QMessageBox::Ok);
 }

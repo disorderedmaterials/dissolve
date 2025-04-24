@@ -8,6 +8,7 @@
 #include "modules/clustering/gui/ui_clusteringWidget.h"
 #include "modules/widget.h"
 #include <QListWidget>
+#include <QMessageBox>
 
 // Forward Declarations
 class ClusteringModule;
@@ -51,4 +52,5 @@ class ClusteringModuleWidget : public ModuleWidget
     private Q_SLOTS:
     void on_clusterSizeList_itemClicked(QListWidgetItem *item);
     void on_clusterIDList_itemClicked(QListWidgetItem *item);
+    void on_exportButton_clicked();
 };
