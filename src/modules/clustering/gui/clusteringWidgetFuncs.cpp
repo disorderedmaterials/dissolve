@@ -5,7 +5,6 @@
 #include "io/export/coordinates.h"
 #include "modules/clustering/clustering.h"
 #include "modules/clustering/gui/clusteringWidget.h"
-#include "io/export/coordinates.h"
 
 ClusteringModuleWidget::ClusteringModuleWidget(QWidget *parent, ClusteringModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)
