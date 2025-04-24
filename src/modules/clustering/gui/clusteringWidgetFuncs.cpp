@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/render/renderableData1D.h"
+#include "io/export/coordinates.h"
 #include "modules/clustering/clustering.h"
 #include "modules/clustering/gui/clusteringWidget.h"
 #include "io/export/coordinates.h"
