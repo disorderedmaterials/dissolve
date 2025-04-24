@@ -38,6 +38,7 @@ class ClusteringModuleWidget : public ModuleWidget
     private:
     void buildSizeList();
     void buildIDList(QListWidgetItem *item);
+    void buildCNList();
 
     /*
      * UI

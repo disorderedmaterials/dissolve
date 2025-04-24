@@ -3,7 +3,6 @@
 
 #include "analyser/typeDefs.h"
 #include "base/sysFunc.h"
-#include "classes/localMolecule.h"
 #include "data/elements.h"
 #include "generator/box.h"
 #include "generator/copy.h"
@@ -14,7 +13,51 @@ bool ClusteringModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Ke
 {
     // Check user definitions
     if (!(a_ && b_ && (cutoff_ > 0)))
-        Messenger::error("Cluster definition invalid!");
+        Messenger::error("Cluster definition invalid! Set both sites and a positive cutoff.");
+
+    // If we have strict bonding, we need to check and determine index map for hydroxyl group
+    if (strict_)
+    {
+        hydroxylIndexes_.clear();
+        for (const auto &s : {a_, b_})
+        {
+            // Do some checks. For now, requiring the site to be static.
+            if (s->type() != SpeciesSite::SiteType::Static || s->staticOriginAtoms().size() != 1)
+            {
+                Messenger::error("For directional hydrogen bonding, site must be a static type based on a single origin atom.");
+                return false;
+            }
+            auto o = s->staticOriginAtoms()[0];
+            if (!o)
+            {
+                Messenger::error("The origin atom for site is inaccessible.");
+                return false;
+            }
+            if (o->Z() != Elements::O)
+            {
+                Messenger::error("For directional hydrogen bonding, the static origin atom for site must be an Oxygen.");
+                return false;
+            }
+            // Find the hydroxyl hydrogens and add index to the map
+            for (const auto &bond : o->bonds())
+                for (const auto &atom : bond.get().atoms())
+                {
+                    if (!atom)
+                    {
+                        Messenger::error("Inaccessible bond partner found, skipping...");
+                        continue;
+                    }
+                    if (atom->Z() == Elements::H)
+                        hydroxylIndexes_[s].emplace(atom->index());
+                }
+        }
+        // Complain if we don't find any valid hydrogens
+        if (hydroxylIndexes_.empty())
+        {
+            Messenger::error("Failed to find hydroxyl hydrogens - check site set-up!");
+            return false;
+        }
+    }
 
     return true;
 }
@@ -55,6 +98,49 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
             else
                 neighbourMap_.insert({site, neighbours});
         }
+
+    // Now if we're looking at directionality, we check each site and it's neighbours
+    if (strict_)
+    {
+        Analyser::SiteMap tempMap;
+        const auto box = targetConfiguration_->box();
+        for (auto &[site, neighbours] : neighbourMap_)
+        {
+            const auto &hIdx = hydroxylIndexes_[site->parent()];
+            // Check the site is hydroxyl
+            if (hIdx.empty())
+                continue;
+
+            // Iterate neighbours
+            for (auto it = neighbours.begin(); it != neighbours.end();)
+            {
+                auto oOVec = box->minimumVector(site->origin(), std::get<0>(*it)->origin());
+                bool keep = false;
+                for (const auto &h : hIdx)
+                {
+                    // Get the relevant vectors
+                    auto oHVec = box->minimumVector(site->origin(), site->molecule()->atom(h)->r());
+                    auto angle = box->angleInDegrees(oOVec / oOVec.magnitude(), oHVec / oHVec.magnitude());
+
+                    // Make sure we have the smallest angle possible
+                    if (360.0 - angle < angle)
+                        angle = 360.0 - angle;
+
+                    if (angle <= angleDev_)
+                        keep = true;
+                }
+                // Add to the temp map symmetrically. Not paying attention to site indexes but I suppose this method tags donors
+                // with index = 0 (bar actual 0 index site)
+                if (keep)
+                {
+                    tempMap[site].emplace_back(*it);
+                    tempMap[std::get<0>(*it)].emplace_back(Analyser::SiteData(site, 0));
+                }
+                it++;
+            }
+        }
+        neighbourMap_ = tempMap;
+    }
 
     if (neighbourMap_.empty())
         Messenger::error("No neighbours found!");
@@ -169,6 +255,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
         LineParser parser;
         parser.openOutput(std::format("{}.massRg.txt", targetConfiguration_->niceName()));
         parser.writeLineF("# Analysis for sites: {} - {}\n", a_->parent()->name(), b_->parent()->name());
+        parser.writeLineF("# Fractal dimension: {}", fractalDimension_);
         parser.writeLineF("\n=== Mass - Radius of gyration ===\nCluster Mass : Radii\n");
         for (const auto &[clusterID, radius] : radiusOfGyration_)
             parser.writeLineF("{} : {}\n", clusterMasses_[clusterID], radius);
@@ -189,7 +276,6 @@ void ClusteringModule::buildCluster(const Site *startSite, std::unordered_set<co
     }
 }
 
-// This ends up running (at least) four times after each iteration?
 void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySize, int displayID)
 {
     if (clusterConfig_.generator().node("clusters"))
@@ -197,7 +283,7 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
     else
         clusterConfig_.setName("clusters");
 
-    // Molecule transfer only works with a generator
+    // Molecule transfer only works with a generator?
     clusterConfig_.generator().createRootNode<CopyGeneratorNode>("clusters", targetConfiguration_);
     clusterConfig_.generate({dissolve.worldPool(), dissolve});
     clusterConfig_.removeMolecules(clusterConfig_.molecules());
@@ -250,9 +336,57 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
     clusterConfig_.updateObjectRelationships();
 
     if (clusterConfig_.nAtoms() == 0)
-    {
         Messenger::error("No clusters!");
-    }
     else
         Messenger::print("Cluster visualisation generated");
+}
+
+void ClusteringModule::calculateCN(int displaySize, int displayID)
+{
+    std::map<const SpeciesSite *, int> instances;
+    clusterSpeciesCoordNo_.clear();
+
+    if (displaySize == 0)
+    {
+        // Start iterating through the cluster map.
+        for (auto const &[_, mems] : clusterMap_)
+        {
+            // Iterate through each member of the cluster
+            for (auto const &mem : mems)
+            {
+                // For each species found, increment the total number of that species by one.
+                instances[mem->parent()]++;
+
+                // Find the member in the neighbour map,
+                for (auto const &[memNbr, index] : neighbourMap_[mem])
+                    clusterSpeciesCoordNo_[mem->parent()][memNbr->parent()]++;
+            }
+        }
+    }
+    if (displaySize != 0 && displayID == 0)
+    {
+        // Same as above but only for given size
+        for (const auto &[clusterID, mems] : clusterMap_)
+            if (mems.size() == displaySize)
+                for (auto const &mem : mems)
+                {
+                    instances[mem->parent()]++;
+                    for (auto const &[memNbr, index] : neighbourMap_[mem])
+                        clusterSpeciesCoordNo_[mem->parent()][memNbr->parent()]++;
+                }
+    }
+    else if (displaySize != 0 && displayID != 0)
+    {
+        // Just the given clusterID
+        for (auto const &mem : clusterMap_[displayID])
+        {
+            instances[mem->parent()]++;
+            for (auto const &[memNbr, index] : neighbourMap_[mem])
+                clusterSpeciesCoordNo_[mem->parent()][memNbr->parent()]++;
+        }
+    }
+    // Average the coordination numbers
+    for (const auto &[siteA, num] : instances)
+        for (const auto &[siteB, coordNo] : clusterSpeciesCoordNo_[siteA])
+            clusterSpeciesCoordNo_[siteA][siteB] /= num;
 }

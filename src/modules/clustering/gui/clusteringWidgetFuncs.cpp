@@ -48,6 +48,9 @@ void ClusteringModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
         ui_.ViewerWidget->dataModified();
         ui_.ViewerWidget->postRedisplay();
         getNewConfig_ = false;
+        // Calculate the coordination numbers
+        module_->calculateCN(displaySize_, displayID_);
+        buildCNList();
     }
 
     // Configure the size/mass histograms
@@ -119,6 +122,15 @@ void ClusteringModuleWidget::buildIDList(QListWidgetItem *item)
         cell->setFlags(cell->flags() | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         ui_.clusterIDList->addItem(cell);
     }
+}
+
+void ClusteringModuleWidget::buildCNList()
+{
+    auto cns = module_->getCNs();
+    ui_.cnList->clear();
+    for (const auto &[site, map] : cns)
+        for (const auto &[otherSite, cn] : map)
+            ui_.cnList->addItem(QString::fromStdString(std::format("{} - {}: {:.3f}", site->name(), otherSite->name(), cn)));
 }
 
 void ClusteringModuleWidget::on_clusterSizeList_itemClicked(QListWidgetItem *item) { buildIDList(item); }

@@ -22,8 +22,14 @@ ClusteringModule::ClusteringModule() : Module(ModuleTypes::Clustering)
     keywords_.add<DoubleKeyword>(
         "Cut-off", "The maximum distance between sites for them to be considered part of the same cluster", cutoff_);
 
+    keywords_.setOrganisation("Options", "Hydrogen Bonding");
+    keywords_.add<BoolKeyword>("Directional Hydrogen Bonding?",
+                               "Static sites based on (at least one) single hydroxyl oxygen atoms must be used", strict_);
+    keywords_.add<DoubleKeyword>("Maximum bond angle deviation", "+- from 180 degrees", angleDev_);
+
     keywords_.setOrganisation("Export", "Options");
     keywords_.add<BoolKeyword>("Export Size Distribution", "SizeDist.txt", saveSizeDist_);
     keywords_.add<BoolKeyword>("Export Mass Distribution", "MassDist.txt", saveMassDist_);
-    keywords_.add<BoolKeyword>("Export Radius of Gyration - Cluster Mass", "RgMass.txt", saveRgMass_);
+    keywords_.add<BoolKeyword>("Export Fractal Dimension and Radius of Gyration - Cluster Mass", "RgMass.txt", saveRgMass_);
+    keywords_.add<IntegerKeyword>("Minimum cluster size for Radius of Gyration and Fractal dimension", "", gyrationMinSize_);
 }

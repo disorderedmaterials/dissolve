@@ -27,6 +27,13 @@ class ClusteringModule : public Module
      * Definition
      */
     private:
+    // WIP
+    std::unordered_map<const SpeciesSite *, std::unordered_set<int>> hydroxylIndexes_;
+    bool strict_{false};
+    double angleDev_{20};
+    // Check angles
+    std::map<const Site *, std::pair<const Site *, double>> angleMap;
+
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
     // Sites involved in the cluster
@@ -42,9 +49,9 @@ class ClusteringModule : public Module
     // Map of cluster ID to mass of cluster
     std::map<int, double> clusterMasses_{};
     // Map of mass to vector of cluster IDs (useful for processing)
-    std::map<float, std::vector<int>> massDistribution_{};
+    std::map<double, std::vector<int>> massDistribution_{};
     // {Site A : {Site B, C ... : Coordination Number for each pair}} where Site A - B, C ... are all the combinations defined
-    std::map<const SpeciesSite *, std::map<const SpeciesSite *, float>> clusterSpeciesCoordNo_;
+    std::map<const SpeciesSite *, std::map<const SpeciesSite *, double>> clusterSpeciesCoordNo_;
     // Minimum cluster size to count in coordination number calc
     int minCNSize_{0};
     // Maximum cluster size to count in coordination number calc
@@ -58,10 +65,8 @@ class ClusteringModule : public Module
     std::map<int, Vec3<double>> clusterCoM_;
     // Fractal dimension from linear regression of LogLog Radius of gyration - cluster mass
     double fractalDimension_{-1};
-    // Pointer to the cluster display configuration
+    // Cluster display configuration
     Configuration clusterConfig_;
-    // Tracker to ensure we don't unnecessarily recreate the visualisation config
-    bool configMade{false};
     // Export keywords
     bool saveSizeDist_{false};
     bool saveMassDist_{false};
@@ -81,6 +86,10 @@ class ClusteringModule : public Module
     bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
     // Generation of the cluster visualisation configuration
     void generateClustersConfig(Dissolve &dissolve, int displaySize, int displayID);
+    // Calculate the coordination numbers for pairs in the current cluster config
+    void calculateCN(int displaySize, int displayID);
+    // Get the CNs
+    std::map<const SpeciesSite *, std::map<const SpeciesSite *, double>> &getCNs() { return clusterSpeciesCoordNo_; }
     // Get the size distribution
     std::map<int, std::vector<int>> &getSizeDistribution() { return sizeDistribution_; }
     // Get the local configuration for viewing
