@@ -9,6 +9,7 @@
 #include "io/export/data1D.h"
 #include "items/deserialisers.h"
 #include "items/serialisers.h"
+#include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
 PartialSet::PartialSet() { fingerprint_ = "NO_FINGERPRINT"; }

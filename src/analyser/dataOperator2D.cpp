@@ -4,6 +4,7 @@
 #include "analyser/dataOperator2D.h"
 #include "math/data2D.h"
 #include "math/integrator.h"
+#include "math/mathFunc.h"
 
 DataOperator2D::DataOperator2D(Data2D &targetData) : DataOperatorBase<Data2D, OperateFunction2D>(targetData) {}
 

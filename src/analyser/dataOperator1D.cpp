@@ -4,6 +4,7 @@
 #include "analyser/dataOperator1D.h"
 #include "math/data1D.h"
 #include "math/integrator.h"
+#include "math/mathFunc.h"
 
 DataOperator1D::DataOperator1D(Data1D &targetData) : DataOperatorBase<Data1D, OperateFunction1D>(targetData) {}
 
