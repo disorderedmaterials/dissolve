@@ -39,7 +39,7 @@ class ForceKernel : public GeometryKernel
     // Create combinable forces storage container
     static dissolve::CombinableContainer<ForceVector> createCombinableForces(ForceVector &parentForces)
     {
-        return {parentForces, [&]() { return std::vector<Vec3<double>>(parentForces.size()); }};
+        return {parentForces, [&]() { return std::vector<Vector3>(parentForces.size()); }};
     }
 
     /*
@@ -64,7 +64,7 @@ class ForceKernel : public GeometryKernel
      */
     private:
     // Calculate extended forces on supplied atom
-    virtual void extendedForces(const Atom &i, Vec3<double> &fVec) const;
+    virtual void extendedForces(const Atom &i, Vector3 &fVec) const;
     // Calculate extended forces on supplied molecule
     virtual void extendedForces(const Molecule &mol, ForceVector &f) const;
 

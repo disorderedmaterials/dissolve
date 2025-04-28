@@ -52,15 +52,15 @@ class ForceImportFileFormat : public FileAndFormat
      */
     private:
     // Import DL_POLY forces through specified parser
-    bool importDLPOLY(LineParser &parser, std::vector<Vec3<double>> &f);
+    bool importDLPOLY(LineParser &parser, std::vector<Vector3> &f);
     // Import Moscito forces through specified parser
-    bool importMoscito(LineParser &parser, std::vector<Vec3<double>> &f);
+    bool importMoscito(LineParser &parser, std::vector<Vector3> &f);
     // Import simple formatted forces through specified parser
-    bool importSimple(LineParser &parser, std::vector<Vec3<double>> &f);
+    bool importSimple(LineParser &parser, std::vector<Vector3> &f);
 
     public:
     // Import forces using current filename and format
-    bool importData(std::vector<Vec3<double>> &f, const ProcessPool *procPool = nullptr);
+    bool importData(std::vector<Vector3> &f, const ProcessPool *procPool = nullptr);
     // Import forces using supplied parser and current format
-    bool importData(LineParser &parser, std::vector<Vec3<double>> &f);
+    bool importData(LineParser &parser, std::vector<Vector3> &f);
 };

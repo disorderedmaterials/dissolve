@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include "math/vector3.h"
 #include "templates/optionalRef.h"
-#include "templates/vector3.h"
 #include <memory>
 #include <vector>
 
@@ -27,7 +27,7 @@ class KernelBase
     ~KernelBase() = default;
 
     // Alias for force storage vector
-    using ForceVector = std::vector<Vec3<double>>;
+    using ForceVector = std::vector<Vector3>;
 
     protected:
     // Process pool over which this kernel operates

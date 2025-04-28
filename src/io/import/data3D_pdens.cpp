@@ -26,7 +26,7 @@ bool Data3DImportFileFormat::importPDens(LineParser &parser, Data3D &data)
     // Get voxel sizes, assuming cubic grid
     if (parser.getArgsDelim() != LineParser::Success)
         return false;
-    auto delta = Vec3<double>(parser.argd(0), parser.argd(4), parser.argd(8));
+    auto delta = Vector3(parser.argd(0), parser.argd(4), parser.argd(8));
 
     // Get grid origin coordinates
     if (parser.getArgsDelim() != LineParser::Success)

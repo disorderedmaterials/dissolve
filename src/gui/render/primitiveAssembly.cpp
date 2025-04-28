@@ -60,7 +60,7 @@ void PrimitiveAssembly::add(LineStyle lineStyle)
  */
 
 // Create cylinder bond between supplied atoms in specified assembly
-void PrimitiveAssembly::createCylinderBond(Primitive *bondPrimitive, Vec3<double> rI, Vec3<double> rJ, Vec3<double> vij,
+void PrimitiveAssembly::createCylinderBond(Primitive *bondPrimitive, Vector3 rI, Vector3 rJ, Vector3 vij,
                                            const std::array<float, 4> &colI, const std::array<float, 4> &colJ,
                                            bool drawFromAtoms, double radialScaling)
 {

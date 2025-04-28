@@ -81,17 +81,16 @@ class MDNode : public Node
      */
     private:
     // Cap forces in Configuration
-    static int capForces(double maxForceSq, std::vector<Vec3<double>> &fInter, std::vector<Vec3<double>> &fIntra);
+    static int capForces(double maxForceSq, std::vector<Vector3> &fInter, std::vector<Vector3> &fIntra);
     // Determine timestep to use
     static std::optional<double> determineTimeStep(TimestepType timestepType, double requestedTimeStep,
-                                                   const std::vector<Vec3<double>> &fInter,
-                                                   const std::vector<Vec3<double>> &fIntra);
+                                                   const std::vector<Vector3> &fInter, const std::vector<Vector3> &fIntra);
 
     public:
     // Evolve Species coordinates, returning new coordinates
-    static std::vector<Vec3<double>> evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
-                                            double temperature, int nSteps, double maxDeltaT,
-                                            const std::vector<Vec3<double>> &rInit, std::vector<Vec3<double>> &velocities);
+    static std::vector<Vector3> evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
+                                       double temperature, int nSteps, double maxDeltaT, const std::vector<Vector3> &rInit,
+                                       std::vector<Vector3> &velocities);
 
     /*
      * Processing

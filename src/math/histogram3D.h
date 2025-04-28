@@ -99,7 +99,7 @@ class Histogram3D
     // Bin specified value, returning success
     bool bin(double x, double y, double z);
     // Bin specified value (as Vec3), returning success
-    bool bin(Vec3<double> v);
+    bool bin(Vector3 v);
     // Return number of values binned over all bins
     long int nBinned() const;
     // Accumulate current histogram bins into averages

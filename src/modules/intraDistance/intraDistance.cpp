@@ -24,7 +24,7 @@ IntraDistanceModule::IntraDistanceModule() : Module(ModuleTypes::IntraDistance)
 
     keywords_.setOrganisation("Options", "Ranges", "Range over which to bin quantities from the calculation.");
     keywords_.add<Vec3DoubleKeyword>("DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);
+                                     Vector3(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);
 
     keywords_.setOrganisation("Export");
     keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated RDF data",

@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "templates/vector3.h"
-#include "templates/vector4.h"
+#include "math/vector3.h"
+#include "math/vector4.h"
 
 // Forward Declarations
 class Matrix3;
@@ -27,8 +27,8 @@ class Matrix4
     Matrix4 operator*(const double a) const;
     Matrix4 operator+(const Matrix4 &B) const;
     Matrix4 operator-(const Matrix4 &B) const;
-    Vec3<double> operator*(const Vec3<double> &v) const;
-    Vec4<double> operator*(const Vec4<double> &v) const;
+    Vector3 operator*(const Vector3 &v) const;
+    Vector4 operator*(const Vector4 &v) const;
     Matrix4 &operator*=(const Matrix4 &B);
     double &operator[](int);
     void operator=(const Matrix3 &B);
@@ -59,9 +59,9 @@ class Matrix4
      */
     public:
     // Copy column contents to supplied Vec3
-    Vec3<double> columnAsVec3(int col) const;
+    Vector3 columnAsVec3(int col) const;
     // Copy column contents to supplied Vec4
-    Vec4<double> columnAsVec4(int col) const;
+    Vector4 columnAsVec4(int col) const;
     // Set specified row from supplied triplet of values
     void setRow(int row, double x, double y, double z);
     // Set specified row from supplied values
@@ -69,26 +69,26 @@ class Matrix4
     // Set specified column from supplied values
     void setColumn(int col, double a, double b, double c, double d);
     // Set specified column from supplied Vec3
-    void setColumn(int col, Vec3<double> vec, double w);
+    void setColumn(int col, Vector3 vec, double w);
     // Set specified column from supplied Vec4
-    void setColumn(int col, Vec4<double> vec);
+    void setColumn(int col, Vector4 vec);
     // Set specified column from supplied Vec3
-    void setColumn(int col, Vec3<double> vec);
+    void setColumn(int col, Vector3 vec);
     // Adjust specified column from supplied values
     void adjustColumn(int col, double a, double b, double c, double d);
     // Adjust specified column from supplied Vec3
-    void adjustColumn(int col, Vec3<double> vec, double w);
+    void adjustColumn(int col, Vector3 vec, double w);
     // Adjust specified column from supplied Vec4
-    void adjustColumn(int col, Vec4<double> vec);
+    void adjustColumn(int col, Vector4 vec);
     // Calculate column magnitude
     double columnMagnitude(int column) const;
     // Multiply single column by single value
     void columnMultiply(int col, double d);
     // Multiply first three columns by values in supplied vector
-    void columnMultiply(Vec3<double> vec);
+    void columnMultiply(Vector3 vec);
     // Normalise specified column to 1
     void columnNormalise(int column);
-    // Orthogonalise rotation matrix column w.r.t. one (or two) other columns)
+    // Orthogonalise rotation matrix column w.r.t. one (or two) other columns
     void orthogonaliseColumn(int targetcol, int orthcol1, int orthocol2 = -1);
 
     /*
@@ -133,15 +133,15 @@ class Matrix4
     // Create a translation matrix (as glTranslated would do)
     void createTranslation(double dx, double dy, double dz);
     // Create a translation matrix (as glTranslated would do)
-    void createTranslation(Vec3<double> delta);
+    void createTranslation(Vector3 delta);
     // Apply a translation to the matrix
     void applyTranslation(double dx, double dy, double dz);
     // Apply a translation to the matrix
-    void applyTranslation(Vec3<double> vec);
+    void applyTranslation(Vector3 vec);
     // Apply a translation, premultiplying with current matrix
     void applyPreTranslation(double dx, double dy, double dz);
     // Apply a translation, premultiplying with current matrix
-    void applyPreTranslation(Vec3<double> vec);
+    void applyPreTranslation(Vector3 vec);
     // Apply an X-translation to the matrix
     void applyTranslationX(double dx);
     // Apply an Y-translation to the matrix
@@ -149,11 +149,11 @@ class Matrix4
     // Apply an Z-translation to the matrix
     void applyTranslationZ(double dz);
     // Add a translation to the matrix
-    void addTranslation(Vec3<double> v);
+    void addTranslation(Vector3 v);
     // Add a translation to the matrix
     void addTranslation(double dx, double dy, double dz);
     // Set translation in the matrix
-    void setTranslation(Vec3<double> v);
+    void setTranslation(Vector3 v);
     // Set translation in the matrix
     void setTranslation(double x, double y, double z);
 
@@ -164,7 +164,7 @@ class Matrix4
     // Apply a general scaling to the matrix
     void applyScaling(double scalex, double scaley, double scalez);
     // Apply a general scaling to the matrix
-    void applyScaling(Vec3<double> scaling);
+    void applyScaling(Vector3 scaling);
     // Apply a general scaling to the matrix
     void applyScaling(double scale);
     // Apply an xy-scaling to the matrix
@@ -180,16 +180,16 @@ class Matrix4
      * Transforms
      */
     public:
-    // Transform coordinates supplied and return as Vec3<double>
-    Vec3<double> transform(double x, double y, double z) const;
-    // Transform coordinates supplied and return as Vec3<double>
-    Vec4<double> transform(double x, double y, double z, double w) const;
-    // Transform coordinates supplied and return as Vec3<double>
-    Vec3<double> transform(Vec3<double> vec) const;
+    // Transform coordinates supplied and return as Vector3
+    Vector3 transform(double x, double y, double z) const;
+    // Transform coordinates supplied and return as Vector3
+    Vector4 transform(double x, double y, double z, double w) const;
+    // Transform coordinates supplied and return as Vector3
+    Vector3 transform(Vector3 vec) const;
     // Apply rotational part of matrix to supplied Vec3
-    Vec3<double> rotateVector(Vec3<double> &v) const;
+    Vector3 rotateVector(Vector3 &v) const;
     // Apply rotational part of matrix to supplied vector coordinates
-    Vec3<double> rotateVector(double x, double y, double z) const;
+    Vector3 rotateVector(double x, double y, double z) const;
     // Multiply against other matrix, but only rotational part, keeping translation/scaling intact
     void multiplyRotation(Matrix4 B);
     // Remove translation and scaling parts, leaving rotation only

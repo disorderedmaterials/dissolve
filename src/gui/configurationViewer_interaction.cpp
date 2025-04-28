@@ -16,7 +16,7 @@ const Atom *ConfigurationViewer::atomAt(int x, int y)
         return nullptr;
 
     double lengthScale;
-    Vec3<double> rScreen;
+    Vector3 rScreen;
 
     // Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point
     // provided

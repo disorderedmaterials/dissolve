@@ -47,7 +47,7 @@ void GeometryKernel::bondForces(const SpeciesBond &bond, const Atom &i, int inde
 }
 
 // Calculate SpeciesBond forces
-void GeometryKernel::bondForces(const SpeciesBond &bond, const Vec3<double> &ri, const Vec3<double> &rj, ForceVector &f) const
+void GeometryKernel::bondForces(const SpeciesBond &bond, const Vector3 &ri, const Vector3 &rj, ForceVector &f) const
 {
     auto vecji = box_->minimumVector(ri, rj);
 
@@ -73,7 +73,7 @@ double GeometryKernel::angleEnergy(const SpeciesAngle &a, const Atom &i, const A
 }
 
 // Calculate angle force parameters from supplied vectors, storing results in supplied variables
-GeometryKernel::AngleParameters GeometryKernel::calculateAngleForceParameters(Vec3<double> vecji, Vec3<double> vecjk)
+GeometryKernel::AngleParameters GeometryKernel::calculateAngleForceParameters(Vector3 vecji, Vector3 vecjk)
 {
     // Calculate angle
     AngleParameters angleParameters;
@@ -108,8 +108,8 @@ void GeometryKernel::angleForces(const SpeciesAngle &angle, const Atom &i, int i
 }
 
 // Calculate SpeciesAngle forces
-void GeometryKernel::angleForces(const SpeciesAngle &angle, const Vec3<double> &ri, const Vec3<double> &rj,
-                                 const Vec3<double> &rk, ForceVector &f) const
+void GeometryKernel::angleForces(const SpeciesAngle &angle, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
+                                 ForceVector &f) const
 {
     auto angleParameters = calculateAngleForceParameters(ri - rj, rk - rj);
     const auto force = angle.force(angleParameters.theta_);
@@ -184,8 +184,8 @@ double GeometryKernel::torsionEnergy(const SpeciesTorsion &t, const Atom &i, con
 }
 
 // Calculate torsion force parameters from supplied vectors, storing results in supplied variables
-GeometryKernel::TorsionParameters
-GeometryKernel::calculateTorsionForceParameters(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl)
+GeometryKernel::TorsionParameters GeometryKernel::calculateTorsionForceParameters(const Vector3 &vecji, const Vector3 &vecjk,
+                                                                                  const Vector3 &veckl)
 {
     // Calculate cross products and torsion angle formed (in radians)
     auto xpj = vecji * vecjk;
@@ -248,8 +248,8 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Atom &i,
 }
 
 // Calculate SpeciesTorsion forces
-void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Vec3<double> &ri, const Vec3<double> &rj,
-                                   const Vec3<double> &rk, const Vec3<double> &rl, ForceVector &f) const
+void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
+                                   const Vector3 &rl, ForceVector &f) const
 {
     auto vecji = box_->minimumVector(ri, rj);
     auto vecjk = box_->minimumVector(rk, rj);
@@ -296,8 +296,8 @@ void GeometryKernel::improperForces(const SpeciesImproper &improper, const Atom 
 }
 
 // Calculate SpeciesImproper forces
-void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vec3<double> &ri, const Vec3<double> &rj,
-                                    const Vec3<double> &rk, const Vec3<double> &rl, ForceVector &f) const
+void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
+                                    const Vector3 &rl, ForceVector &f) const
 {
     auto vecji = box_->minimumVector(ri, rj);
     auto vecjk = box_->minimumVector(rk, rj);

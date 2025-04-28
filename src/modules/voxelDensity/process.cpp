@@ -5,14 +5,14 @@
 #include "module/context.h"
 #include "voxelDensity.h"
 
-void VoxelDensityModule::addValue(Vec3<double> coords, double value)
+void VoxelDensityModule::addValue(Vector3 coords, double value)
 {
     auto t = std::make_tuple((int)std::floor(coords.x * nAxisVoxels_.x), (int)std::floor(coords.y * nAxisVoxels_.y),
                              (int)std::floor(coords.z * nAxisVoxels_.z));
     array3D_[t] += value;
 }
 
-Vec3<double> VoxelDensityModule::foldedCoordinates(const Vec3<double> &r, const Box *unitCell) { return unitCell->foldFrac(r); }
+Vector3 VoxelDensityModule::foldedCoordinates(const Vector3 &r, const Box *unitCell) { return unitCell->foldFrac(r); }
 
 Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
 {

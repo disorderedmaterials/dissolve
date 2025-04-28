@@ -100,7 +100,7 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
 
     // Now we add the molecules
     RandomBuffer randomBuffer(generatorContext.processPool(), ProcessPool::PoolProcessesCommunicator);
-    Vec3<double> newCentre;
+    Vector3 newCentre;
     Matrix3 transform;
     const auto *box = cfg->box();
     cfg->atoms().reserve(cfg->atoms().size() + ipop * (speciesA_->nAtoms() + speciesB_->nAtoms()));

@@ -39,9 +39,9 @@ class ForceExportFileFormat : public FileAndFormat
      */
     private:
     // Export supplied forces in simple format
-    bool exportSimple(LineParser &parser, const std::vector<Vec3<double>> &f);
+    bool exportSimple(LineParser &parser, const std::vector<Vector3> &f);
 
     public:
     // Export supplied forces using current filename and format
-    bool exportData(const std::vector<Vec3<double>> &f);
+    bool exportData(const std::vector<Vector3> &f);
 };

@@ -5,7 +5,7 @@
 #include "base/lineParser.h"
 #include "generator/node.h"
 
-Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vec3<NodeValue> &data, GeneratorNode *parentNode, Vec3Labels::LabelType labelType)
+Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vector3NodeValue &data, GeneratorNode *parentNode, Vec3Labels::LabelType labelType)
     : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), labelType_(labelType)
 {
 }
@@ -15,10 +15,10 @@ Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vec3<NodeValue> &data, GeneratorNode 
  */
 
 // Return reference to data
-const Vec3<NodeValue> &Vec3NodeValueKeyword::data() const { return data_; }
+const Vector3NodeValue &Vec3NodeValueKeyword::data() const { return data_; }
 
 // Set data
-bool Vec3NodeValueKeyword::setData(const Vec3<NodeValue> &v)
+bool Vec3NodeValueKeyword::setData(const Vector3NodeValue &v)
 {
     data_ = v;
     return true;
@@ -30,7 +30,17 @@ bool Vec3NodeValueKeyword::setData(int index, std::string_view expressionText)
     assert(index >= 0 && index < 3);
     assert(parentNode_);
 
-    return data_[index].set(expressionText, parentNode_->getParametersInScope());
+    switch (index)
+    {
+        case (0):
+            return data_.x.set(expressionText, parentNode_->getParametersInScope());
+        case (1):
+            return data_.y.set(expressionText, parentNode_->getParametersInScope());
+        case (2):
+            return data_.z.set(expressionText, parentNode_->getParametersInScope());
+        default:
+            Messenger::exception("Tried to retrieve a bad index in Vec3NodeValueKeyword.\n");
+    }
 }
 
 // Return label type to display in GUI
@@ -87,4 +97,4 @@ void Vec3NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreDa
 }
 
 // Has not changed from initial value
-bool Vec3NodeValueKeyword::isDefault() const { return data_ == default_; }
+bool Vec3NodeValueKeyword::isDefault() const { return data_.x == default_.x && data_.y == default_.y && data_.z == default_.z; }

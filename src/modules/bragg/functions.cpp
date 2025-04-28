@@ -18,7 +18,7 @@
 
 // Calculate unweighted Bragg scattering for specified Configuration
 bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool &procPool, Configuration *cfg,
-                                      const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity,
+                                      const double qMin, const double qDelta, const double qMax, Vector3i multiplicity,
                                       bool &alreadyUpToDate)
 {
     // Check to see if the arrays are up-to-date
@@ -37,7 +37,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
     auto &braggAtomVectorXSin = moduleData.realise<Array2D<double>>("AtomVectorXSin", name());
     auto &braggAtomVectorYSin = moduleData.realise<Array2D<double>>("AtomVectorYSin", name());
     auto &braggAtomVectorZSin = moduleData.realise<Array2D<double>>("AtomVectorZSin", name());
-    auto &braggMaximumHKL = moduleData.realise<Vec3<int>>("MaximumHKL", name());
+    auto &braggMaximumHKL = moduleData.realise<Vector3i>("MaximumHKL", name());
 
     // Grab some useful values
     const auto *box = cfg->box();
@@ -103,7 +103,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
             reflxn.initialise(q, -1, nTypes);
             q += qDelta;
         }
-        Vec3<double> kVec, v;
+        Vector3 kVec, v;
         for (h = 0; h <= braggMaximumHKL.x; ++h)
         {
             kVec.x = h;
@@ -176,7 +176,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
     timer.stop();
     timer.zero();
     timer.start();
-    Vec3<double> v, rI;
+    Vector3 v, rI;
     for (n = 0; n < nAtoms; ++n)
     {
         // Skip unphysical atoms

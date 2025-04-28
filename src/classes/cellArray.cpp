@@ -13,13 +13,13 @@
 int CellArray::nCells() const { return static_cast<int>(cells_.size()); }
 
 // Return cell divisions along each axis
-Vec3<int> CellArray::divisions() const { return divisions_; }
+Vector3i CellArray::divisions() const { return divisions_; }
 
 // Return real Cell dimensions
-Vec3<double> CellArray::realCellSize() const { return realCellSize_; }
+Vector3 CellArray::realCellSize() const { return realCellSize_; }
 
 // Return cell extents out from given central cell
-Vec3<int> CellArray::extents() const { return extents_; }
+Vector3i CellArray::extents() const { return extents_; }
 
 // Clear all atom pointers from cells
 void CellArray::clearAtoms()
@@ -52,10 +52,10 @@ const Cell *CellArray::cell(int id) const
 }
 
 // Return Cell which contains specified coordinate
-const Cell *CellArray::cell(const Vec3<double> r) const
+const Cell *CellArray::cell(const Vector3 r) const
 {
     auto foldFracR = box_->foldFrac(r);
-    Vec3<int> indices;
+    Vector3i indices;
     indices.x = foldFracR.x / fractionalCellSize_.x;
     indices.y = foldFracR.y / fractionalCellSize_.y;
     indices.z = foldFracR.z / fractionalCellSize_.z;
@@ -65,10 +65,10 @@ const Cell *CellArray::cell(const Vec3<double> r) const
 
     return &cells_[indices.x * divisions_.y * divisions_.z + indices.y * divisions_.z + indices.z];
 }
-Cell *CellArray::cell(const Vec3<double> r)
+Cell *CellArray::cell(const Vector3 r)
 {
     auto foldFracR = box_->foldFrac(r);
-    Vec3<int> indices;
+    Vector3i indices;
     indices.x = foldFracR.x / fractionalCellSize_.x;
     indices.y = foldFracR.y / fractionalCellSize_.y;
     indices.z = foldFracR.z / fractionalCellSize_.z;
@@ -86,7 +86,7 @@ bool CellArray::withinRange(const Cell *a, const Cell *b, double distance)
     assert(b != nullptr);
 
     // We need both the minimum image centroid-centroid distance, as well as the integer mim grid-reference delta
-    Vec3<int> u = mimGridDelta(a, b);
+    Vector3i u = mimGridDelta(a, b);
 
     /*
      * We now have the minimum image integer grid vector from Cell a to Cell b.
@@ -98,7 +98,7 @@ bool CellArray::withinRange(const Cell *a, const Cell *b, double distance)
     u.z -= DissolveMath::sgn(u.z);
 
     // Turn this grid reference delta into a real distamce by multiplying by the Cell axes_ matrix
-    auto v = axes_ * Vec3<double>(u.x, u.y, u.z);
+    auto v = axes_ * Vector3(u.x, u.y, u.z);
 
     // Check ths vector magnitude against the supplied distance
     return (v.magnitude() <= distance);
@@ -112,8 +112,8 @@ bool CellArray::minimumImageRequired(const Cell *a, const Cell *b, double distan
 
     // Check every pair of corners between the Cell two grid references, and determine if minimum image calculation would be
     // required
-    Vec3<int> i, j;
-    Vec3<double> r;
+    Vector3i i, j;
+    Vector3 r;
     for (auto iCorner = 0; iCorner < 8; ++iCorner)
     {
         // Set integer vertex of corner on 'central' box
@@ -148,14 +148,14 @@ bool CellArray::minimumImageRequired(const Cell *a, const Cell *b, double distan
 }
 
 // Return the minimum image grid delta between the two specified Cells
-Vec3<int> CellArray::mimGridDelta(const Cell *a, const Cell *b) const
+Vector3i CellArray::mimGridDelta(const Cell *a, const Cell *b) const
 {
-    Vec3<int> u = b->gridReference() - a->gridReference();
+    Vector3i u = b->gridReference() - a->gridReference();
     return mimGridDelta(u);
 }
 
 // Return the minimum image equivalent of the supplied grid delta
-Vec3<int> CellArray::mimGridDelta(Vec3<int> delta) const
+Vector3i CellArray::mimGridDelta(Vector3i delta) const
 {
     if (delta.x > divisions_.x * 0.5)
         delta.x -= divisions_.x;
@@ -241,8 +241,8 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
                      cellSize);
 
     // Get Box axis lengths and divide through by cellSize
-    Vec3<double> boxLengths(box_->axisLength(0), box_->axisLength(1), box_->axisLength(2));
-    Vec3<int> divisions(boxLengths.x / cellSize, boxLengths.y / cellSize, boxLengths.z / cellSize);
+    Vector3 boxLengths(box_->axisLength(0), box_->axisLength(1), box_->axisLength(2));
+    Vector3i divisions(boxLengths.x / cellSize, boxLengths.y / cellSize, boxLengths.z / cellSize);
     int minEl;
     divisions_.zero();
     realCellSize_.zero();
@@ -337,7 +337,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     auto nCells = divisions_.x * divisions_.y * divisions_.z;
     Messenger::print("Constructing array of {} cells...\n", nCells);
     cells_.resize(nCells);
-    Vec3<double> fracCentre(fractionalCellSize_.x * 0.5, 0.0, 0.0);
+    Vector3 fracCentre(fractionalCellSize_.x * 0.5, 0.0, 0.0);
     auto count = 0;
     for (auto x = 0; x < divisions_.x; ++x)
     {
@@ -347,7 +347,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
             fracCentre.z = fractionalCellSize_.z * 0.5;
             for (auto z = 0; z < divisions_.z; ++z)
             {
-                cells_[count] = Cell(count, Vec3<int>(x, y, z), box_->getReal(fracCentre));
+                cells_[count] = Cell(count, Vector3i(x, y, z), box_->getReal(fracCentre));
                 fracCentre.z += fractionalCellSize_.z;
                 ++count;
             }
@@ -364,7 +364,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     Messenger::print("Creating cell neighbour lists...\n");
 
     // Make a list of integer vectors which we'll then use to pick Cells for the neighbour lists
-    Vec3<double> r;
+    Vector3 r;
     Matrix3 cellAxes = box_->axes();
     cellAxes.applyScaling(fractionalCellSize_.x, fractionalCellSize_.y, fractionalCellSize_.z);
     extents_.zero();
@@ -388,9 +388,9 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
                      extents_.z);
 
     // Now, loop over extent integers and construct list of gridReferences within range
-    std::vector<Vec3<int>> neighbourIndices;
+    std::vector<Vector3i> neighbourIndices;
     std::vector<const Cell *> cellNbrs;
-    Vec3<int> i, j;
+    Vector3i i, j;
     const Cell *nbr;
     for (auto x = -extents_.x; x <= extents_.x; ++x)
     {
@@ -475,7 +475,7 @@ void CellArray::clear() { cells_.clear(); }
  */
 
 // Scale Cells by supplied factors along each axis
-void CellArray::scale(Vec3<double> scaleFactors)
+void CellArray::scale(Vector3 scaleFactors)
 {
     realCellSize_.multiply(scaleFactors);
     axes_.columnMultiply(scaleFactors);

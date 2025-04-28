@@ -33,7 +33,7 @@ void CoordinateImportFileFormat::setUpKeywords() {}
  */
 
 // Import coordinates using current filename and format
-bool CoordinateImportFileFormat::importData(std::vector<Vec3<double>> &r, const ProcessPool *procPool)
+bool CoordinateImportFileFormat::importData(std::vector<Vector3> &r, const ProcessPool *procPool)
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);
@@ -57,7 +57,7 @@ bool CoordinateImportFileFormat::importData(Configuration *cfg, const ProcessPoo
         return Messenger::error("Couldn't open file '{}' for loading coordinates data.\n", filename_);
 
     // Import the data
-    std::vector<Vec3<double>> r;
+    std::vector<Vector3> r;
     auto result = importData(parser, cfg);
     parser.closeFiles();
 
@@ -65,7 +65,7 @@ bool CoordinateImportFileFormat::importData(Configuration *cfg, const ProcessPoo
 }
 
 // Import coordinates using supplied parser and current format
-bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3<double>> &r)
+bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vector3> &r)
 {
     // Check the format
     if (!formatIndex_)
@@ -99,7 +99,7 @@ bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3
 bool CoordinateImportFileFormat::importData(LineParser &parser, Configuration *cfg)
 {
     // Import the data
-    std::vector<Vec3<double>> r;
+    std::vector<Vector3> r;
     auto result = importData(parser, r);
     if (!result)
         return Messenger::error("Couldn't import configuration coordinates from file.\n");

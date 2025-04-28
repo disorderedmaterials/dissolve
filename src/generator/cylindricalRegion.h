@@ -9,20 +9,20 @@
 class CylindricalRegionVoxelKernel : public VoxelKernel
 {
     public:
-    explicit CylindricalRegionVoxelKernel(Vec3<double> originFrac = {0.0, 0.0, 0.0}, double radius = 5.0,
-                                          Vec3<double> vector = {0.0, 0.0, 1.0});
+    explicit CylindricalRegionVoxelKernel(Vector3 originFrac = {0.0, 0.0, 0.0}, double radius = 5.0,
+                                          Vector3 vector = {0.0, 0.0, 1.0});
 
     protected:
     // Origin of vector in fractional coordinates
-    Vec3<double> originFrac_{0.0, 0.0, 0.0};
+    Vector3 originFrac_{0.0, 0.0, 0.0};
     // Radius of cylindrical region
     double radius_{5.0};
     // Cylinder vector
-    Vec3<double> vector_{0.0, 0.0, 1.0};
+    Vector3 vector_{0.0, 0.0, 1.0};
 
     public:
     // Return whether voxel centred at supplied real coordinates is valid
-    bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override;
+    bool isVoxelValid(const Configuration *cfg, const Vector3 &r) const override;
 };
 
 // Cylindrical Region

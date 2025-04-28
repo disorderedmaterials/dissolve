@@ -32,7 +32,7 @@ CustomRegionVoxelKernel::CustomRegionVoxelKernel(std::string_view expressionStri
 }
 
 // Return whether voxel centred at supplied real coordinates is valid
-bool CustomRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
+bool CustomRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vector3 &r) const
 {
     // Poke values into our variables
     x_->setValue(r.x);

@@ -62,7 +62,7 @@ NodeConstants::ProcessResult MDNode::process()
 
     // Create arrays
     std::vector<double> mass(targetConfiguration_->nAtoms(), 0.0);
-    std::vector<Vec3<double>> fBound(targetConfiguration_->nAtoms()), fUnbound(targetConfiguration_->nAtoms()),
+    std::vector<Vector3> fBound(targetConfiguration_->nAtoms()), fUnbound(targetConfiguration_->nAtoms()),
         accelerations(targetConfiguration_->nAtoms());
 
     // Variables
@@ -95,7 +95,7 @@ NodeConstants::ProcessResult MDNode::process()
     RandomBuffer randomBuffer(processPool(), ProcessPool::PoolProcessesCommunicator);
 
     // Read in or assign random velocities
-    auto [velocities, status] = dissolve().processingModuleData().realiseIf<std::vector<Vec3<double>>>(
+    auto [velocities, status] = dissolve().processingModuleData().realiseIf<std::vector<Vector3>>(
         std::format("{}//Velocities", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     if ((status == GenericItem::ItemStatus::Created || randomVelocities_ ||
          velocities.size() != targetConfiguration_->nAtoms()) &&
@@ -107,7 +107,7 @@ NodeConstants::ProcessResult MDNode::process()
                 "Size of existing velocities array doesn't match the current configuration size - they will be ignored.");
 
         Messenger::print("Random initial velocities will be assigned.\n");
-        velocities.resize(targetConfiguration_->nAtoms(), Vec3<double>());
+        velocities.resize(targetConfiguration_->nAtoms(), Vector3());
         for (auto &&[v, iFree] : zip(velocities, free))
         {
             if (iFree)
@@ -120,8 +120,8 @@ NodeConstants::ProcessResult MDNode::process()
     else if (intramolecularForcesOnly_)
     {
         Messenger::print("Only intramolecular forces will be calculated, so velocities will be zeroes.\n");
-        velocities.resize(targetConfiguration_->nAtoms(), Vec3<double>());
-        std::fill(velocities.begin(), velocities.end(), Vec3<double>());
+        velocities.resize(targetConfiguration_->nAtoms(), Vector3());
+        std::fill(velocities.begin(), velocities.end(), Vector3());
     }
     else
     {
@@ -135,7 +135,7 @@ NodeConstants::ProcessResult MDNode::process()
         m = AtomicMass::mass(i.speciesAtom()->Z());
 
     // Calculate total velocity and mass over all atoms
-    Vec3<double> vCom;
+    Vector3 vCom;
     auto massSum = 0.0;
     for (auto &&[v, m, iFree] : zip(velocities, mass, free))
     {
@@ -202,8 +202,8 @@ NodeConstants::ProcessResult MDNode::process()
     if (timestepType_ != TimestepType::Fixed)
     {
         // Zero force arrays
-        std::fill(fUnbound.begin(), fUnbound.end(), Vec3<double>());
-        std::fill(fBound.begin(), fBound.end(), Vec3<double>());
+        std::fill(fUnbound.begin(), fUnbound.end(), Vector3());
+        std::fill(fBound.begin(), fBound.end(), Vector3());
 
         if (targetMolecules.empty())
             ForcesModule::totalForces(processPool(), targetConfiguration_, dissolve().potentialMap(),
@@ -260,8 +260,8 @@ NodeConstants::ProcessResult MDNode::process()
         targetConfiguration_->updateAtomLocations();
 
         // Zero force arrays
-        std::fill(fUnbound.begin(), fUnbound.end(), Vec3<double>());
-        std::fill(fBound.begin(), fBound.end(), Vec3<double>());
+        std::fill(fUnbound.begin(), fUnbound.end(), Vector3());
+        std::fill(fBound.begin(), fBound.end(), Vector3());
 
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         if (targetMolecules.empty())

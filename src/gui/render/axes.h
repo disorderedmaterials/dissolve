@@ -9,8 +9,9 @@
 #include "gui/render/numberFormat.h"
 #include "gui/render/primitive.h"
 #include "gui/render/textPrimitiveList.h"
-#include "templates/vector3.h"
-#include "templates/vector4.h"
+#include "math/vector3.h"
+#include "math/vector3i.h"
+#include "templates/array2D.h"
 #include <vector>
 
 // Forward Declarations
@@ -46,27 +47,27 @@ class Axes
 
     private:
     // Data limits for surface generation
-    Vec3<double> min_, max_;
+    Vector3 min_, max_;
     // Limiting values for axis limits (accounting for data, log scales etc.)
-    Vec3<double> limitMin_, limitMax_;
+    Vector3 limitMin_, limitMax_;
     // Axis extreme coordinates
-    Vec3<double> coordMin_[3], coordMax_[3];
+    Vector3 coordMin_[3], coordMax_[3];
     // Central coordinate of current axes
-    Vec3<double> coordCentre_;
+    Vector3 coordCentre_;
     // Whether to invert axes
-    Vec3<bool> inverted_;
+    std::array<bool, 3> inverted_;
     // Whether axes should be plotted as logarithms
-    Vec3<bool> logarithmic_;
+    std::array<bool, 3> logarithmic_;
     // Axis visibility
-    Vec3<bool> visible_;
+    std::array<bool, 3> visible_;
     // Stretch factors to apply to axes
-    Vec3<double> stretch_;
+    Vector3 stretch_;
     // Whether axis position is fractional or absolute
-    Vec3<bool> positionIsFractional_;
+    std::array<bool, 3> positionIsFractional_;
     // Axis position in real or surface-space coordinates
-    Vec3<double> positionReal_[3];
+    Vector3 positionReal_[3];
     // Axis position in fractional axis coordinates
-    Vec3<double> positionFractional_[3];
+    Vector3 positionFractional_[3];
     // Autoscaling method employed for each axis
     Axes::AutoScaleMethod autoScale_[3];
 
@@ -93,7 +94,7 @@ class Axes
     static void ensureSensibleRange(double &minValue, double &maxValue, bool alwaysExpand = false,
                                     double expansionFactor = -1.0);
     // Return central value of axes
-    Vec3<double> centre() const;
+    Vector3 centre() const;
     // Return real axis minimum (accounting for log axes)
     double realMin(int axis) const;
     // Return real axis maximum (accounting for log axes)
@@ -111,11 +112,11 @@ class Axes
     // Set all axis limits at once
     void expandLimits(bool noShrink);
     // Return coordinate at centre of axes
-    Vec3<double> coordCentre() const;
+    Vector3 coordCentre() const;
     // Return coordinate at minimum of specified axis
-    Vec3<double> coordMin(int axis) const;
+    Vector3 coordMin(int axis) const;
     // Return coordinate at maximum of specified axis
-    Vec3<double> coordMax(int axis) const;
+    Vector3 coordMax(int axis) const;
     // Set whether axis is inverted
     void setInverted(int axis, bool b);
     // Return whether axis is inverted
@@ -143,11 +144,11 @@ class Axes
     // Set axis position to axis limit (in real surface-space coordinates)
     void setPositionRealToLimit(int axis, int dir, bool minLim);
     // Return axis position (in real surface-space coordinates)
-    Vec3<double> positionReal(int axis) const;
+    Vector3 positionReal(int axis) const;
     // Set axis position (in fractional axis coordinates)
     void setPositionFractional(int axis, int dir, double value);
     // Return axis position (in fractional axis coordinates)
-    Vec3<double> positionFractional(int axis) const;
+    Vector3 positionFractional(int axis) const;
     // Set autoscaling method employed for specified axis
     void setAutoScale(int axis, Axes::AutoScaleMethod method);
     // Return autoscaling method employed for specified axis
@@ -181,17 +182,17 @@ class Axes
      */
     private:
     // Axis tick direction
-    Vec3<double> tickDirection_[3];
+    Vector3 tickDirection_[3];
     // Axis tick size (relative to font size)
-    Vec3<double> tickSize_;
+    Vector3 tickSize_;
     // Position of first tick delta on axes
-    Vec3<double> tickFirst_;
+    Vector3 tickFirst_;
     // Tick delta for axes
-    Vec3<double> tickDelta_;
+    Vector3 tickDelta_;
     // Whether to calculate ticks automatically
-    Vec3<bool> autoTicks_;
+    std::array<bool, 3> autoTicks_;
     // Number of minor ticks in major tick intervals
-    Vec3<int> minorTicks_;
+    Vector3i minorTicks_;
 
     private:
     // Recalculate tick deltas for specified axis
@@ -201,7 +202,7 @@ class Axes
     // Set axis tick direction
     void setTickDirection(int axis, int dir, double value);
     // Return axis tick direction for specified axis
-    Vec3<double> tickDirection(int axis) const;
+    Vector3 tickDirection(int axis) const;
     // Set axis tick size (relative to font size)
     void setTickSize(int axis, double size);
     // Return axis tick size (relative to font size)
@@ -230,19 +231,19 @@ class Axes
     // Number formats for labels
     NumberFormat numberFormat_[3];
     // Whether to determine number formats automatically
-    Vec3<bool> autoNumberFormat_;
+    std::array<bool, 3> autoNumberFormat_;
     // Orientation of axis labels (axial rot, in-plane rot, distance)
-    Vec3<double> labelOrientation_[3];
+    Vector3 labelOrientation_[3];
     // Axis label text anchor positions
     TextPrimitive::TextAnchor labelAnchor_[3];
     // Axis titles
     std::string title_[3];
     // Orientation of axis titles (rotations around x, y, and z axes)
-    Vec3<double> titleOrientation_[3];
+    Vector3 titleOrientation_[3];
     // Title distances from axes
-    Vec3<double> titleDistances_;
+    Vector3 titleDistances_;
     // Title horizontal offsets
-    Vec3<double> titleHorizontalOffsets_;
+    Vector3 titleHorizontalOffsets_;
     // Axis title text anchor positions
     TextPrimitive::TextAnchor titleAnchor_[3];
 
@@ -262,7 +263,7 @@ class Axes
     // Set orientation of labels for specified axis
     void setLabelOrientation(int axis, int component, double value);
     // Return orientation of labels for specified axis
-    Vec3<double> labelOrientation(int axis) const;
+    Vector3 labelOrientation(int axis) const;
     // Set axis label text anchor position for specified axis
     void setLabelAnchor(int axis, TextPrimitive::TextAnchor anchor);
     // Return axis label text anchor position for specified axis
@@ -274,7 +275,7 @@ class Axes
     // Set orientation of titles for specified axis
     void setTitleOrientationNEW(int axis, int component, double value);
     // Return orientation of titles for specified axis
-    Vec3<double> titleOrientation(int axis) const;
+    Vector3 titleOrientation(int axis) const;
     // Set title distance from axis
     void setTitleDistance(int axis, double distance);
     // Return title distance from axis
@@ -312,11 +313,11 @@ class Axes
      */
     private:
     // Whether gridlines cover entire volume or just at axis lines
-    Vec3<bool> gridLinesFull_;
+    std::array<bool, 3> gridLinesFull_;
     // Whether gridLines at major tick intervals are active
-    Vec3<bool> gridLinesMajor_;
+    std::array<bool, 3> gridLinesMajor_;
     // Whether gridLines at minor tick intervals are active
-    Vec3<bool> gridLinesMinor_;
+    std::array<bool, 3> gridLinesMinor_;
 
     public:
     // Set whether gridlines cover entire volume or just at axis lines
@@ -348,7 +349,7 @@ class Axes
      */
     private:
     // Clip plane coordinates
-    Vec3<double> clipMin_, clipMax_;
+    Vector3 clipMin_, clipMax_;
     // Display primitives
     Primitive axisPrimitives_[3];
     // Axis text primitives
@@ -368,9 +369,9 @@ class Axes
 
     public:
     // Return clip plane lower Y value
-    Vec3<double> clipMin() const;
+    Vector3 clipMin() const;
     // Return clip plane upper Y value
-    Vec3<double> clipMax() const;
+    Vector3 clipMax() const;
     // Flag primitives as invalid
     void setPrimitivesInvalid();
     // Return axis primitive for axis specified
