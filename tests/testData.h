@@ -370,15 +370,14 @@ class DissolveSystemTest
         return !notOK;
     }
     // Test Vec3 data
-    static void checkVec3(const Vec3<double> &A, const Vec3<double> &B, double tolerance = 1.0e-6)
+    static void checkVec3(const Vector3 &A, const Vector3 &B, double tolerance = 1.0e-6)
     {
         EXPECT_NEAR(A.x, B.x, tolerance);
         EXPECT_NEAR(A.y, B.y, tolerance);
         EXPECT_NEAR(A.z, B.z, tolerance);
     }
     // Test Vec3 vector data
-    static void checkVec3Vector(const std::vector<Vec3<double>> &A, const std::vector<Vec3<double>> &B,
-                                double tolerance = 1.0e-6)
+    static void checkVec3Vector(const std::vector<Vector3> &A, const std::vector<Vector3> &B, double tolerance = 1.0e-6)
     {
         ASSERT_EQ(A.size(), B.size());
         for (auto n = 0; n < A.size(); ++n)
@@ -387,8 +386,8 @@ class DissolveSystemTest
     // Test Vec3 vector data (by tag and external data)
     void checkVec3Vector(std::string_view tag, ForceImportFileFormat externalForces, double tolerance)
     {
-        auto &vec = dissolve_.processingModuleData().value<std::vector<Vec3<double>>>(tag);
-        std::vector<Vec3<double>> B(vec.size());
+        auto &vec = dissolve_.processingModuleData().value<std::vector<Vector3>>(tag);
+        std::vector<Vector3> B(vec.size());
         ASSERT_TRUE(externalForces.importData(B));
         checkVec3Vector(vec, B, tolerance);
     }

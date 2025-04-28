@@ -46,7 +46,7 @@ Module::ExecutionResult AtomShakeModule::process(ModuleContext &moduleContext)
     auto nAttempts = 0, nAccepted = 0;
     bool accept;
     double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
-    Vec3<double> rDelta;
+    Vector3 rDelta;
     EnergyResult er;
 
     Timer timer;

@@ -27,11 +27,11 @@ class OrientedSDFModule : public Module
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{true};
     // Range along X axis
-    Vec3<double> rangeX_{-10.0, 10.0, 0.5};
+    Vector3 rangeX_{-10.0, 10.0, 0.5};
     // Range along Y axis
-    Vec3<double> rangeY_{-10.0, 10.0, 0.5};
+    Vector3 rangeY_{-10.0, 10.0, 0.5};
     // Range along Z axis
-    Vec3<double> rangeZ_{-10.0, 10.0, 0.5};
+    Vector3 rangeZ_{-10.0, 10.0, 0.5};
     // Axis angle range requirement to permit binning into SDF
     Range axisAngleRange_{-15.0, 15.0};
     // Whether the angular range should be considered symmetric about 90

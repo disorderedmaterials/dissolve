@@ -65,7 +65,7 @@ bool GRModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg
     nTypes = partialSet.nAtomTypes();
     Messenger::printVerbose("Constructing local partial working arrays for {} types.\n", nTypes);
     const auto *box = cfg->box();
-    std::vector<Vec3<double> *> r(nTypes);
+    std::vector<Vector3 *> r(nTypes);
     std::vector<int> maxr(nTypes), nr(nTypes);
     std::vector<int *> binss(nTypes);
     int *bins;
@@ -75,7 +75,7 @@ bool GRModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg
     {
         maxr[n] = atd.population();
         nr[n] = 0;
-        r[n] = new Vec3<double>[maxr[n]];
+        r[n] = new Vector3[maxr[n]];
         binss[n] = new int[maxr[n]];
         ++n;
     }
@@ -92,7 +92,7 @@ bool GRModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg
     Messenger::printVerbose("Ready..\n");
 
     // Loop over assigned Atoms
-    Vec3<double> centre, *ri, *rj, mim;
+    Vector3 centre, *ri, *rj, mim;
     double rbin = 1.0 / binWidth;
 
     // Loop context is to use all processes in Pool as one group

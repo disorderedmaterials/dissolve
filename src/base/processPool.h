@@ -8,8 +8,8 @@
 
 #include "base/processGroup.h"
 #include "base/timer.h"
+#include "math/vector3.h"
 #include "templates/optionalRef.h"
-#include "templates/vector3.h"
 // Include <mpi.h> only if we are compiling in parallel
 #ifdef PARALLEL
 #include <mpi.h>
@@ -308,9 +308,8 @@ class ProcessPool
     // Reduce (sum) double data to all processes
     bool allSum(double *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
                 OptionalReferenceWrapper<Timer> timer = std::nullopt) const;
-    // Reduce (sum) vector of Vec3<double> data to all processes
-    bool allSum(std::vector<Vec3<double>> &source,
-                ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+    // Reduce (sum) vector of Vector3 data to all processes
+    bool allSum(std::vector<Vector3> &source, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
                 OptionalReferenceWrapper<Timer> timer = std::nullopt) const;
     // Reduce (sum) int data to all processes
     bool allSum(int *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,

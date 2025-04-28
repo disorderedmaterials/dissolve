@@ -9,7 +9,7 @@ EnumOptions<MDNode::TimestepType> MDNode::timestepType()
 }
 
 // Cap forces in Configuration
-int MDNode::capForces(double maxForce, std::vector<Vec3<double>> &fInter, std::vector<Vec3<double>> &fIntra)
+int MDNode::capForces(double maxForce, std::vector<Vector3> &fInter, std::vector<Vector3> &fIntra)
 {
     double fMag;
     const auto maxForceSq = maxForce * maxForce;
@@ -32,8 +32,7 @@ int MDNode::capForces(double maxForce, std::vector<Vec3<double>> &fInter, std::v
 
 // Determine timestep to use
 std::optional<double> MDNode::determineTimeStep(TimestepType timestepType, double requestedTimeStep,
-                                                const std::vector<Vec3<double>> &fInter,
-                                                const std::vector<Vec3<double>> &fIntra)
+                                                const std::vector<Vector3> &fInter, const std::vector<Vector3> &fIntra)
 {
     if (timestepType == TimestepType::Fixed)
         return requestedTimeStep;
@@ -61,16 +60,16 @@ std::optional<double> MDNode::determineTimeStep(TimestepType timestepType, doubl
 }
 
 // Evolve Species coordinates, returning new coordinates
-std::vector<Vec3<double>> MDNode::evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
-                                         double temperature, int nSteps, double maxDeltaT,
-                                         const std::vector<Vec3<double>> &rInit, std::vector<Vec3<double>> &velocities)
+std::vector<Vector3> MDNode::evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
+                                    double temperature, int nSteps, double maxDeltaT, const std::vector<Vector3> &rInit,
+                                    std::vector<Vector3> &velocities)
 {
     assert(sp);
     assert(sp->nAtoms() == velocities.size());
 
     // Create arrays
     std::vector<double> mass(sp->nAtoms(), 0.0);
-    std::vector<Vec3<double>> fInter(sp->nAtoms()), fIntra(sp->nAtoms()), accelerations(sp->nAtoms());
+    std::vector<Vector3> fInter(sp->nAtoms()), fIntra(sp->nAtoms()), accelerations(sp->nAtoms());
 
     // Variables
     auto &atoms = sp->atoms();
@@ -86,7 +85,7 @@ std::vector<Vec3<double>> MDNode::evolve(const ProcessPool &procPool, const Pote
 
     // Calculate total velocity and mass over all atoms
     auto massSum = std::accumulate(mass.begin(), mass.end(), 0.0);
-    auto vCom = std::transform_reduce(velocities.begin(), velocities.end(), mass.begin(), Vec3<double>());
+    auto vCom = std::transform_reduce(velocities.begin(), velocities.end(), mass.begin(), Vector3());
 
     // Remove any velocity shift
     vCom /= massSum;
@@ -102,8 +101,8 @@ std::vector<Vec3<double>> MDNode::evolve(const ProcessPool &procPool, const Pote
     std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto v) { return v * tScale; });
 
     // Zero force arrays
-    std::fill(fInter.begin(), fInter.end(), Vec3<double>());
-    std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
+    std::fill(fInter.begin(), fInter.end(), Vector3());
+    std::fill(fIntra.begin(), fIntra.end(), Vector3());
 
     ForcesModule::totalForces(procPool, sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rInit);
 
@@ -149,8 +148,8 @@ std::vector<Vec3<double>> MDNode::evolve(const ProcessPool &procPool, const Pote
         }
 
         // Zero force arrays
-        std::fill(fInter.begin(), fInter.end(), Vec3<double>());
-        std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
+        std::fill(fInter.begin(), fInter.end(), Vector3());
+        std::fill(fIntra.begin(), fIntra.end(), Vector3());
 
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         ForcesModule::totalForces(procPool, sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rNew);

@@ -59,13 +59,13 @@ class CellArray
      */
     private:
     // Cell divisions along each axis
-    Vec3<int> divisions_;
+    Vector3i divisions_;
     // Fractional Cell size
-    Vec3<double> fractionalCellSize_;
+    Vector3 fractionalCellSize_;
     // Real Cell size
-    Vec3<double> realCellSize_;
+    Vector3 realCellSize_;
     // Cell extents out from given central cell
-    Vec3<int> extents_;
+    Vector3i extents_;
     // Cell axes
     Matrix3 axes_;
     // Cell array (one-dimensional)
@@ -77,11 +77,11 @@ class CellArray
     // Return number of Cells for box
     int nCells() const;
     // Return cell divisions along each axis
-    Vec3<int> divisions() const;
+    Vector3i divisions() const;
     // Return real Cell dimensions
-    Vec3<double> realCellSize() const;
+    Vector3 realCellSize() const;
     // Return cell extents out from given central cell
-    Vec3<int> extents() const;
+    Vector3i extents() const;
     // Clear all atom pointers from cells
     void clearAtoms();
     // Retrieve Cell with (wrapped) grid reference specified
@@ -89,18 +89,18 @@ class CellArray
     // Retrieve Cell with id specified
     const Cell *cell(int id) const;
     // Return Cell which contains specified coordinate
-    Cell *cell(const Vec3<double> r);
-    const Cell *cell(const Vec3<double> r) const;
+    Cell *cell(const Vector3 r);
+    const Cell *cell(const Vector3 r) const;
     // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified literal distance
     bool withinLiteralRange(const Cell *a, const Cell *b, double literalDistance);
     // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified mim distance
     bool withinMinimumImageRange(const Cell *a, const Cell *b, double mimDistance);
     // Return the minimum image grid delta between the two specified Cells
-    Vec3<int> mimGridDelta(const Cell *a, const Cell *b) const;
+    Vector3i mimGridDelta(const Cell *a, const Cell *b) const;
     // Return the minimum image equivalent of the supplied grid delta
-    Vec3<int> mimGridDelta(const Vec3<int> &delta) const;
+    Vector3i mimGridDelta(Vector3i delta) const;
     // Return wrapped cell grid reference
-    Vec3<int> wrappedGridRef(const Vec3<int> &gridRef) const;
+    Vector3i wrappedGridRef(const Vector3i &gridRef) const;
 
     /*
      * Cell Neighbours
@@ -113,7 +113,7 @@ class CellArray
     // Corner distances between cells
     Array3D<CornerDistances> cornerDistances_;
     // Grid reference for central cell (0,0,0) in cornerDistances_
-    Vec3<int> cornerDistancesOrigin_;
+    Vector3i cornerDistancesOrigin_;
 
     private:
     // Construct cell neighbour pairs
@@ -141,5 +141,5 @@ class CellArray
      */
     public:
     // Scale Cells by supplied factors along each axis
-    void scale(Vec3<double> scaleFactors);
+    void scale(Vector3 scaleFactors);
 };

@@ -6,8 +6,8 @@
 #include "base/enumOptions.h"
 #include "gui/render/textFragment.h"
 #include "math/matrix4.h"
+#include "math/vector3.h"
 #include "templates/optionalRef.h"
-#include "templates/vector3.h"
 #include <QString>
 
 // Forward Declarations
@@ -41,11 +41,11 @@ class TextPrimitive
      */
     private:
     // Coordinates of anchorpoint of text
-    Vec3<double> anchorPoint_;
+    Vector3 anchorPoint_;
     // Location of anchorpoint on text bounding box
     TextAnchor anchorPosition_;
     // Vector by which to adjust position of text
-    Vec3<double> adjustmentVector_;
+    Vector3 adjustmentVector_;
     // Local transform matrix for the text
     Matrix4 localRotation_;
     // Whether text should be rendered flat (w.r.t viewer's screen plane)
@@ -57,13 +57,13 @@ class TextPrimitive
 
     public:
     // Set data
-    bool set(FontInstance *fontInstance, QString text, Vec3<double> anchorPoint, TextAnchor anchorPosition,
-             Vec3<double> adjustmentVector, Matrix4 localRotation, double textSize, bool flat);
+    bool set(FontInstance *fontInstance, QString text, Vector3 anchorPoint, TextAnchor anchorPosition, Vector3 adjustmentVector,
+             Matrix4 localRotation, double textSize, bool flat);
     // Return transformation matrix to use when rendering (including fragment scale/translation if one is specified)
     Matrix4 transformationMatrix(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize,
                                  OptionalReferenceWrapper<const TextFragment> optFragment = std::nullopt) const;
     // Calculate bounding box of primitive
-    void boundingBox(FontInstance &fontInstance, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const;
+    void boundingBox(FontInstance &fontInstance, Vector3 &lowerLeft, Vector3 &upperRight) const;
     // Render primitive
     void render(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse,
                 double baseFontSize) const;

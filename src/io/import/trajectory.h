@@ -44,7 +44,7 @@ class TrajectoryImportFileFormat : public FileAndFormat
      */
     private:
     // Import DL_POLY coordinates through specified parser
-    bool importDLPOLY(LineParser &parser, std::vector<Vec3<double>> &r, std::optional<Matrix3> &unitCell);
+    bool importDLPOLY(LineParser &parser, std::vector<Vector3> &r, std::optional<Matrix3> &unitCell);
 
     public:
     // Import trajectory using supplied parser and current format

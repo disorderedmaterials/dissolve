@@ -220,3 +220,27 @@ std::string NodeValueProxy::asString(bool addQuotesIfRequired) const
             return std::format("{}", expressionString_);
     }
 }
+
+/*
+ * Node Value Vector
+ */
+
+Vector3NodeValue::Vector3NodeValue(const NodeValue &xx, const NodeValue &yy, const NodeValue &zz) : x(xx), y(yy), z(zz) {}
+
+// Express as a serialisable value
+SerialisedValue Vector3NodeValue::serialise() const
+{
+    SerialisedValue::array_type result;
+    result.push_back(x);
+    result.push_back(y);
+    result.push_back(z);
+    return result;
+}
+
+// Read values from a serialisable value
+void Vector3NodeValue::deserialise(const SerialisedValue &node, std::vector<std::shared_ptr<ExpressionVariable>> context)
+{
+    x.deserialise(node[0], context);
+    y.deserialise(node[1], context);
+    z.deserialise(node[2], context);
+}

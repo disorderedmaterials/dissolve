@@ -11,7 +11,7 @@
 namespace UnitTest
 {
 
-extern const std::vector<Vec3<double>> refCoords;
+extern const std::vector<Vector3> refCoords;
 
 TEST(CellsTest, Basic)
 {
@@ -100,7 +100,7 @@ TEST(CellsTest, Basic)
 }
 
 // Reference coordinates
-const std::vector<Vec3<double>> refCoords = {
+const std::vector<Vector3> refCoords = {
     {3.410362086, -0.6795759945, -3.512256186},       {2.848009649, 9.823521866, -1.533116425},
     {3.884490056, 9.726910976, -1.443887914},         {4.263427168, -9.801610288, -0.5713325777},
     {4.828507906, 9.261297613, 8.954301318},          {4.897990273, 9.368770975, 9.953987482},

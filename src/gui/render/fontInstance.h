@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <FTGL/ftgl.h>
 #include <QColor>
 #include <QResource>
@@ -70,7 +70,7 @@ class FontInstance
 
     public:
     // Calculate bounding box for specified string
-    void boundingBox(std::string_view text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const;
+    void boundingBox(std::string_view text, Vector3 &lowerLeft, Vector3 &upperRight) const;
     // Calculate bounding box width for specified string
     double boundingBoxWidth(std::string_view text) const;
     // Calculate bounding box height for specified string

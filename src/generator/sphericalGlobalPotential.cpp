@@ -31,7 +31,7 @@ bool SphericalGlobalPotentialGeneratorNode::execute(const GeneratorContext &gene
     pot->setPotential(potential_);
 
     // Set origin
-    Vec3<double> origin{origin_.x.asDouble(), origin_.y.asDouble(), origin_.z.asDouble()};
+    Vector3 origin{origin_.x.asDouble(), origin_.y.asDouble(), origin_.z.asDouble()};
     if (originIsFractional_)
         cfg->box()->toReal(origin);
     pot->setOrigin(origin);

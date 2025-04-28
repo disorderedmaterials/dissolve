@@ -1,83 +1,89 @@
 add_library(
   math
   averaging.cpp
-  combinations.cpp
-  cuboid.cpp
-  data1D.cpp
-  data2D.cpp
-  data3D.cpp
-  derivative.cpp
-  doubleExp.cpp
-  error.cpp
-  filters.cpp
-  ft.cpp
-  function1D.cpp
-  gaussFit.cpp
-  gj.cpp
-  histogram1D.cpp
-  histogram2D.cpp
-  histogram3D.cpp
-  integerHistogram1D.cpp
-  integrator.cpp
-  interpolator.cpp
-  mathFunc.cpp
-  matrix3.cpp
-  matrix4.cpp
-  mc.cpp
-  peaks.cpp
-  poissonFit.cpp
-  polynomial.cpp
-  praxis.cpp
-  range.cpp
-  regression.cpp
-  sampledData1D.cpp
-  sampledDouble.cpp
-  sampledVector.cpp
-  svd.cpp
-  transformer.cpp
-  windowFunction.cpp
   averaging.h
+  combinations.cpp
   combinations.h
   constants.h
+  cuboid.cpp
   cuboid.h
-  data1D.h
   data1DBase.h
-  data2D.h
+  data1D.cpp
+  data1D.h
   data2DBase.h
-  data3D.h
+  data2D.cpp
+  data2D.h
   data3DBase.h
+  data3D.cpp
+  data3D.h
   dataBase.h
+  derivative.cpp
   derivative.h
+  doubleExp.cpp
   doubleExp.h
+  error.cpp
   error.h
+  filters.cpp
   filters.h
+  ft.cpp
   ft.h
+  function1D.cpp
   function1D.h
   functionSpace.h
+  gaussFit.cpp
   gaussFit.h
+  gj.cpp
   gj.h
+  histogram1D.cpp
   histogram1D.h
+  histogram2D.cpp
   histogram2D.h
+  histogram3D.cpp
   histogram3D.h
+  integerHistogram1D.cpp
   integerHistogram1D.h
+  integrator.cpp
   integrator.h
+  interpolator.cpp
   interpolator.h
   limitsFunc.h
+  mathFunc.cpp
   mathFunc.h
+  matrix3.cpp
   matrix3.h
+  matrix4.cpp
   matrix4.h
+  mc.cpp
   mc.h
+  peaks.cpp
   peaks.h
-  polynomial.h
+  poissonFit.cpp
   poissonFit.h
+  polynomial.cpp
+  polynomial.h
+  praxis.cpp
   praxis.h
+  range.cpp
   range.h
+  regression.cpp
   regression.h
+  sampledData1D.cpp
   sampledData1D.h
+  sampledDouble.cpp
   sampledDouble.h
+  sampledVector.cpp
   sampledVector.h
+  svd.cpp
   svd.h
+  transformer.cpp
   transformer.h
+  vector3.cpp
+  vector3.h
+  vector3i.cpp
+  vector3i.h
+  vector4.cpp
+  vector4.h
+  windowFunction.cpp
   windowFunction.h
 )
 

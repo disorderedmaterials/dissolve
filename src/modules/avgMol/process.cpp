@@ -90,7 +90,7 @@ Module::ExecutionResult AvgMolModule::process(ModuleContext &moduleContext)
 
     // Loop over sites
     std::vector<double> rx(targetSpecies_->nAtoms()), ry(targetSpecies_->nAtoms()), rz(targetSpecies_->nAtoms());
-    Vec3<double> r;
+    Vector3 r;
     for (auto n = 0; n < stack->nSites(); ++n)
     {
         const auto &s = stack->site(n);

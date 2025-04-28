@@ -56,4 +56,4 @@ void ChangeData::revertPosition()
 bool ChangeData::hasMoved() { return moved_; }
 
 // Return position vector
-Vec3<double> ChangeData::r() const { return r_; }
+Vector3 ChangeData::r() const { return r_; }

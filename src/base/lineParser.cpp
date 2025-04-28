@@ -917,26 +917,26 @@ bool LineParser::argb(int i) const
     return DissolveSys::stob(arguments_[i]);
 }
 
-// Return the specified and next two arguments as a Vec3<int>
-Vec3<int> LineParser::arg3i(int i) const
+// Return the specified and next two arguments as a Vector3i
+Vector3i LineParser::arg3i(int i) const
 {
     if ((i < 0) || (i >= (nArgs() - 2)))
     {
-        Messenger::warn("LineParser::arg3i() - Argument {} is out of range - returning Vec3<int>()...\n", i);
-        return Vec3<int>();
+        Messenger::warn("LineParser::arg3i() - Argument {} is out of range - returning Vector3i()...\n", i);
+        return Vector3i();
     }
-    return Vec3<int>(argi(i), argi(i + 1), argi(i + 2));
+    return Vector3i(argi(i), argi(i + 1), argi(i + 2));
 }
 
-// Return the specified and next two arguments as a Vec3<double>
-Vec3<double> LineParser::arg3d(int i) const
+// Return the specified and next two arguments as a Vector3
+Vector3 LineParser::arg3d(int i) const
 {
     if ((i < 0) || (i >= (nArgs() - 2)))
     {
-        Messenger::warn("LineParser::arg3d() - Argument {} is out of range - returning Vec3<double>()...\n", i);
-        return Vec3<double>();
+        Messenger::warn("LineParser::arg3d() - Argument {} is out of range - returning Vector3()...\n", i);
+        return Vector3();
     }
-    return Vec3<double>(argd(i), argd(i + 1), argd(i + 2));
+    return Vector3(argd(i), argd(i + 1), argd(i + 2));
 }
 
 // Return a vector of double parameters, starting from the specified argument

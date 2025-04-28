@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "math/vector3.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
-#include "templates/vector3.h"
 
 // DotProduct Node
 class DotProductNode : public Node
@@ -23,9 +23,9 @@ class DotProductNode : public Node
      */
     private:
     // Input vector 1
-    Vec3<double> u_;
+    Vector3 u_;
     // Input vector 2
-    Vec3<double> v_;
+    Vector3 v_;
     // Dot product value
     Number dotProduct_;
 

@@ -10,16 +10,16 @@
 
 // Calculate total forces within the supplied Configuration
 void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                               ForceCalculationType calculationType, std::vector<Vec3<double>> &fUnbound,
-                               std::vector<Vec3<double>> &fBound, OptionalReferenceWrapper<Timer> commsTimer)
+                               ForceCalculationType calculationType, std::vector<Vector3> &fUnbound,
+                               std::vector<Vector3> &fBound, OptionalReferenceWrapper<Timer> commsTimer)
 {
     // Create a Timer
     Timer timer;
 
     // Zero force arrays
-    std::fill(fUnbound.begin(), fUnbound.end(), Vec3<double>());
+    std::fill(fUnbound.begin(), fUnbound.end(), Vector3());
     if (&fUnbound != &fBound)
-        std::fill(fBound.begin(), fBound.end(), Vec3<double>());
+        std::fill(fBound.begin(), fBound.end(), Vector3());
 
     // Create a ForceKernel
     auto kernel = KernelProducer::forceKernel(cfg, procPool, potentialMap);
@@ -50,10 +50,10 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, 
 // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
 void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg,
                                const std::vector<const Molecule *> &targetMolecules, const PotentialMap &potentialMap,
-                               ForceCalculationType calculationType, std::vector<Vec3<double>> &fUnbound,
-                               std::vector<Vec3<double>> &fBound, OptionalReferenceWrapper<Timer> commsTimer)
+                               ForceCalculationType calculationType, std::vector<Vector3> &fUnbound,
+                               std::vector<Vector3> &fBound, OptionalReferenceWrapper<Timer> commsTimer)
 {
-    std::vector<Vec3<double>> tempFUnbound(fUnbound.size(), Vec3<double>()), tempFBound(fBound.size(), Vec3<double>());
+    std::vector<Vector3> tempFUnbound(fUnbound.size(), Vector3()), tempFBound(fBound.size(), Vector3());
     totalForces(procPool, cfg, potentialMap, calculationType, tempFUnbound, tempFBound, commsTimer);
 
     // TODO Calculating forces for whole molecule at once may be more efficient
@@ -69,22 +69,22 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg,
 
 // Calculate total forces within the specified Species
 void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap,
-                               ForceCalculationType calculationType, std::vector<Vec3<double>> &fUnbound,
-                               std::vector<Vec3<double>> &fBound, OptionalReferenceWrapper<const std::vector<Vec3<double>>> r)
+                               ForceCalculationType calculationType, std::vector<Vector3> &fUnbound,
+                               std::vector<Vector3> &fBound, OptionalReferenceWrapper<const std::vector<Vector3>> r)
 {
     if (r)
         assert(sp->nAtoms() == r->get().size());
 
     // Set position retrieval function
-    std::function<Vec3<double>(int, const SpeciesAtom *)> rFunction;
+    std::function<Vector3(int, const SpeciesAtom *)> rFunction;
     if (r)
         rFunction = [&r, sp](int id, const SpeciesAtom *i) { return r->get()[id]; };
     else
         rFunction = [sp](int id, const SpeciesAtom *i) { return i->r(); };
 
     // Zero force arrays
-    std::fill(fUnbound.begin(), fUnbound.end(), Vec3<double>());
-    std::fill(fBound.begin(), fBound.end(), Vec3<double>());
+    std::fill(fUnbound.begin(), fUnbound.end(), Vector3());
+    std::fill(fBound.begin(), fBound.end(), Vector3());
 
     auto *box = sp->box();
     const auto cutoffSq = potentialMap.range() * potentialMap.range();

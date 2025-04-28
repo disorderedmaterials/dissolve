@@ -4,7 +4,7 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 
-MonoclinicBetaBox::MonoclinicBetaBox(const Vec3<double> lengths, double beta)
+MonoclinicBetaBox::MonoclinicBetaBox(const Vector3 lengths, double beta)
     : Box(Box::BoxType::MonoclinicBeta, lengths, {90.0, beta, 90.0})
 {
 }
@@ -14,7 +14,7 @@ MonoclinicBetaBox::MonoclinicBetaBox(const Vec3<double> lengths, double beta)
  */
 
 // Convert specified fractional coordinates to real-space coordinates
-void MonoclinicBetaBox::toReal(Vec3<double> &r) const
+void MonoclinicBetaBox::toReal(Vector3 &r) const
 {
     r.x *= axesArray_[0];
     r.x += r.z * axesArray_[6];
@@ -23,7 +23,7 @@ void MonoclinicBetaBox::toReal(Vec3<double> &r) const
 }
 
 // Convert specified real-space coordinates to fractional coordinates
-void MonoclinicBetaBox::toFractional(Vec3<double> &r) const
+void MonoclinicBetaBox::toFractional(Vector3 &r) const
 {
     r.x *= inverseAxesArray_[0];
     r.x += r.z * inverseAxesArray_[6];
@@ -36,9 +36,9 @@ void MonoclinicBetaBox::toFractional(Vec3<double> &r) const
  */
 
 // Return minimum image coordinates of r1 with respect to r2
-Vec3<double> MonoclinicBetaBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vector3 MonoclinicBetaBox::minimumImage(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v21 = r1 - r2;
+    Vector3 v21 = r1 - r2;
 
     toFractional(v21);
     wrap(v21);
@@ -49,9 +49,9 @@ Vec3<double> MonoclinicBetaBox::minimumImage(const Vec3<double> &r1, const Vec3<
 }
 
 // Return minimum image vector from r1 to r2
-Vec3<double> MonoclinicBetaBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vector3 MonoclinicBetaBox::minimumVector(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v12 = r2 - r1;
+    Vector3 v12 = r2 - r1;
 
     toFractional(v12);
     wrap(v12);
@@ -61,9 +61,9 @@ Vec3<double> MonoclinicBetaBox::minimumVector(const Vec3<double> &r1, const Vec3
 }
 
 // Return normalised minimum image vector from r1 to r2
-Vec3<double> MonoclinicBetaBox::minimumVectorN(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vector3 MonoclinicBetaBox::minimumVectorN(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v12 = r2 - r1;
+    Vector3 v12 = r2 - r1;
     toFractional(v12);
     wrap(v12);
     toReal(v12);
@@ -72,9 +72,9 @@ Vec3<double> MonoclinicBetaBox::minimumVectorN(const Vec3<double> &r1, const Vec
 }
 
 // Return minimum image distance from r1 to r2
-double MonoclinicBetaBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
+double MonoclinicBetaBox::minimumDistance(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v12 = r2 - r1;
+    Vector3 v12 = r2 - r1;
 
     toFractional(v12);
     wrap(v12);
@@ -84,9 +84,9 @@ double MonoclinicBetaBox::minimumDistance(const Vec3<double> &r1, const Vec3<dou
 }
 
 // Return minimum image squared distance from r1 to r2
-double MonoclinicBetaBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
+double MonoclinicBetaBox::minimumDistanceSquared(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v12 = r2 - r1;
+    Vector3 v12 = r2 - r1;
 
     toFractional(v12);
     wrap(v12);

@@ -13,7 +13,7 @@ class RandomVoxelKernel : public VoxelKernel
 {
     public:
     // Return whether voxel centred at supplied real coordinates is valid
-    bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override { return DissolveMath::random() > 0.5; }
+    bool isVoxelValid(const Configuration *cfg, const Vector3 &r) const override { return DissolveMath::random() > 0.5; }
 };
 
 template <SpeciesType speciesType, SpeciesPopulation population> static void BM_Region_Generate(benchmark::State &state)

@@ -42,7 +42,7 @@ class CoordinateSetsGeneratorNode : public GeneratorNode
     // Target Species
     const Species *species_{nullptr};
     // Available coordinate sets
-    std::vector<std::vector<Vec3<double>>> sets_;
+    std::vector<std::vector<Vector3>> sets_;
     // Set Source
     CoordinateSetSource source_{CoordinateSetSource::MD};
     // Whether to force recreation of the coordinate sets
@@ -60,15 +60,15 @@ class CoordinateSetsGeneratorNode : public GeneratorNode
 
     private:
     // Add new coordinate set
-    std::vector<Vec3<double>> &addSet();
+    std::vector<Vector3> &addSet();
 
     public:
     // Set coordinate sets
-    void setSets(std::vector<std::vector<Vec3<double>>> sets);
+    void setSets(std::vector<std::vector<Vector3>> sets);
     // Return number of available coordinates sets
     int nSets() const;
     // Return nth coordinate set
-    const std::vector<Vec3<double>> &set(int n) const;
+    const std::vector<Vector3> &set(int n) const;
 
     /*
      * Execute

@@ -2,7 +2,7 @@
 
 Vec3DecompositionNode::Vec3DecompositionNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput<Vec3<double>>("V", "The 3-dimensional vector to be decomposed", inputVector_);
+    addInput<Vector3>("V", "The 3-dimensional vector to be decomposed", inputVector_);
     addOutput<Number>("X", "The x component of the vector", x_);
     addOutput<Number>("Y", "The y component of the vector", y_);
     addOutput<Number>("Z", "The z component of the vector", z_);

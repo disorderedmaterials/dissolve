@@ -29,7 +29,7 @@ bool TrajectoryImportFileFormat::importData(LineParser &parser, Configuration *c
         return Messenger::error("No format set for TrajectoryImportFileFormat so can't import.\n");
 
     // Import the data
-    std::vector<Vec3<double>> r;
+    std::vector<Vector3> r;
     auto result = false;
     switch (formats_.enumerationByIndex(*formatIndex_))
     {

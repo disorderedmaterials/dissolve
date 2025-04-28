@@ -134,7 +134,7 @@ bool FontInstance::renderText(std::string text) const
  */
 
 // Calculate bounding box for specified string
-void FontInstance::boundingBox(std::string_view text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const
+void FontInstance::boundingBox(std::string_view text, Vector3 &lowerLeft, Vector3 &upperRight) const
 {
     FTBBox box = boundingBox(text);
     lowerLeft.set(box.Lower().X(), box.Lower().Y(), box.Lower().Z());

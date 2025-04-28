@@ -5,7 +5,7 @@
 
 #include "gui/render/colourScaleDelta.h"
 #include "gui/render/colourScalePoint.h"
-#include "templates/vector4.h"
+#include "math/vector4.h"
 #include <QColor>
 #include <QOpenGLFunctions>
 #include <vector>
