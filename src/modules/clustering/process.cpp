@@ -8,6 +8,7 @@
 #include "generator/box.h"
 #include "generator/copy.h"
 #include "math/regression.h"
+#include "math/vector3.h"
 #include "modules/clustering/clustering.h"
 
 bool ClusteringModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
@@ -321,7 +322,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
             continue;
 
         // CoM mass weighted calc from reference site (first member of cluster in clusterMap)
-        Vec3<double> massWeightedTotalVec{0, 0, 0};
+        Vector3 massWeightedTotalVec{0, 0, 0};
         const auto refMol{clusterVec[0]};
         std::vector<int> refIdxs(refMol->nAtoms());
         std::iota(refIdxs.begin(), refIdxs.end(), 0);

@@ -5,8 +5,7 @@
 #include "io/import/trajectory.h"
 
 // Import DL_POLY coordinates through specified parser
-bool TrajectoryImportFileFormat::importDLPOLY(LineParser &parser, std::vector<Vec3<double>> &r,
-                                              std::optional<Matrix3> &unitCell)
+bool TrajectoryImportFileFormat::importDLPOLY(LineParser &parser, std::vector<Vector3> &r, std::optional<Matrix3> &unitCell)
 {
     /*
      * Import DL_POLY coordinates information through the specified line parser.

@@ -59,7 +59,7 @@ void RenderableConfiguration::transformValues()
     limitsMin_.zero();
 
     // Transform extreme upper right corner from unit to real space to get maxima
-    limitsMax_ = source_->box()->getReal(Vec3<double>(1.0, 1.0, 1.0));
+    limitsMax_ = source_->box()->getReal(Vector3(1.0, 1.0, 1.0));
 
     positiveLimitsMin_ = limitsMin_;
     positiveLimitsMax_ = limitsMax_;
@@ -77,7 +77,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 {
     Matrix4 A;
     const std::array<float, 4> colourBlack = {0.0, 0.0, 0.0, 1.0};
-    Vec3<double> ri, rj;
+    Vector3 ri, rj;
 
     // Check data source
     if (!source_)

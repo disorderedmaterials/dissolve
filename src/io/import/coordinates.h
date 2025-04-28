@@ -50,21 +50,21 @@ class CoordinateImportFileFormat : public FileAndFormat
      */
     private:
     // Import DL_POLY coordinates through specified parser
-    bool importDLPOLY(LineParser &parser, std::vector<Vec3<double>> &r);
+    bool importDLPOLY(LineParser &parser, std::vector<Vector3> &r);
     // Import EPSR ATO coordinates through specified parser
-    bool importEPSR(LineParser &parser, std::vector<Vec3<double>> &r);
+    bool importEPSR(LineParser &parser, std::vector<Vector3> &r);
     // Import Moscito coordinates through specified parser
-    bool importMoscito(LineParser &parser, std::vector<Vec3<double>> &r);
+    bool importMoscito(LineParser &parser, std::vector<Vector3> &r);
     // Import xyz coordinates through specified parser
-    bool importXYZ(LineParser &parser, std::vector<Vec3<double>> &r);
+    bool importXYZ(LineParser &parser, std::vector<Vector3> &r);
 
     public:
     // Import coordinates using current filename and format
-    bool importData(std::vector<Vec3<double>> &r, const ProcessPool *procPool = nullptr);
+    bool importData(std::vector<Vector3> &r, const ProcessPool *procPool = nullptr);
     // Import coordinates direct to configuration using current filename and format
     bool importData(Configuration *cfg, const ProcessPool *procPool = nullptr);
     // Import coordinates using supplied parser and current format
-    bool importData(LineParser &parser, std::vector<Vec3<double>> &r);
+    bool importData(LineParser &parser, std::vector<Vector3> &r);
     // Import coordinates direct to configuration using supplied parser and current format
     bool importData(LineParser &parser, Configuration *cfg);
 };

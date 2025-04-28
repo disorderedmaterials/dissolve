@@ -19,7 +19,7 @@ bool ForcesModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
         Messenger::print("[SETUP {}] Reading test reference forces.\n", name_);
 
         // Realise and read the force array
-        auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vec3<double>>>("ReferenceForces", name());
+        auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vector3>>("ReferenceForces", name());
 
         // Read in the forces
         if (!referenceForces_.importData(f, &moduleContext.processPool()))
@@ -38,7 +38,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
     Messenger::print("Calculating total forces for Configuration '{}'...\n", targetConfiguration_->name());
 
     // Realise the force vector
-    auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vec3<double>>>(
+    auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vector3>>(
         std::format("{}//Forces", targetConfiguration_->name()), name());
     f.resize(targetConfiguration_->nAtoms());
 
@@ -69,9 +69,9 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
         const auto *box = targetConfiguration_->box();
 
         // Allocate the force vectors
-        std::vector<Vec3<double>> fInter, fIntra;
-        fInter.resize(targetConfiguration_->nAtoms(), Vec3<double>());
-        fIntra.resize(targetConfiguration_->nAtoms(), Vec3<double>());
+        std::vector<Vector3> fInter, fIntra;
+        fInter.resize(targetConfiguration_->nAtoms(), Vector3());
+        fIntra.resize(targetConfiguration_->nAtoms(), Vector3());
 
         // Calculate interatomic and intramlecular energy in a loop over defined Molecules
         Timer timer;
@@ -286,7 +286,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
 
         // Test 'correct' forces against production forces
         auto nFailed = 0;
-        Vec3<double> fRatio;
+        Vector3 fRatio;
         auto sumError = 0.0;
 
         Messenger::print("Testing calculated 'correct' forces against calculated production forces - "

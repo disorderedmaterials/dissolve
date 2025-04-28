@@ -4,7 +4,7 @@
 #include "keywords/vec3Integer.h"
 #include "base/lineParser.h"
 
-Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> &data, std::optional<Vec3<int>> minValue, std::optional<Vec3<int>> maxValue,
+Vec3IntegerKeyword::Vec3IntegerKeyword(Vector3i &data, std::optional<Vector3i> minValue, std::optional<Vector3i> maxValue,
                                        Vec3Labels::LabelType labelType)
     : KeywordBase(typeid(this)), data_(data), default_(data), minimumLimit_(minValue), maximumLimit_(maxValue),
       labelType_(labelType)
@@ -16,7 +16,7 @@ Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> &data, std::optional<Vec3<int>>
  */
 
 // Set data
-bool Vec3IntegerKeyword::setData(Vec3<int> value)
+bool Vec3IntegerKeyword::setData(Vector3i value)
 {
     if (minimumLimit_ &&
         (value.x < minimumLimit_.value().x || value.y < minimumLimit_.value().y || value.z < minimumLimit_.value().z))
@@ -31,13 +31,13 @@ bool Vec3IntegerKeyword::setData(Vec3<int> value)
 }
 
 // Return data
-const Vec3<int> &Vec3IntegerKeyword::data() const { return data_; }
+const Vector3i &Vec3IntegerKeyword::data() const { return data_; }
 
 // Return minimum limit
-std::optional<Vec3<int>> Vec3IntegerKeyword::minimumLimit() const { return minimumLimit_; }
+std::optional<Vector3i> Vec3IntegerKeyword::minimumLimit() const { return minimumLimit_; }
 
 // Return maximum limit
-std::optional<Vec3<int>> Vec3IntegerKeyword::maximumLimit() const { return maximumLimit_; }
+std::optional<Vector3i> Vec3IntegerKeyword::maximumLimit() const { return maximumLimit_; }
 
 /*
  * Label Type

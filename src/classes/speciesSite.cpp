@@ -444,7 +444,7 @@ const std::vector<SpeciesSiteInstance> &SpeciesSite::instances() const { return 
  */
 
 // Calculate geometric centre of atoms in the given molecule
-Vec3<double> SpeciesSite::centreOfGeometry(const std::vector<int> &indices) const
+Vector3 SpeciesSite::centreOfGeometry(const std::vector<int> &indices) const
 {
     const auto ref = parent_->atom(indices.front()).r();
     return std::accumulate(std::next(indices.begin()), indices.end(), ref, [&ref, this](const auto &acc, const auto idx)
@@ -453,15 +453,15 @@ Vec3<double> SpeciesSite::centreOfGeometry(const std::vector<int> &indices) cons
 }
 
 // Calculate (mass-weighted) coordinate centre of atoms in the given molecule
-Vec3<double> SpeciesSite::centreOfMass(const std::vector<int> &indices) const
+Vector3 SpeciesSite::centreOfMass(const std::vector<int> &indices) const
 {
     auto mass = AtomicMass::mass(parent_->atom(indices.front()).Z());
     const auto ref = parent_->atom(indices.front()).r();
-    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
+    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vector3, double>(ref * mass, mass),
                                 [&ref, this](const auto &acc, const auto idx)
                                 {
                                     auto mass = AtomicMass::mass(parent_->atom(idx).Z());
-                                    return std::pair<Vec3<double>, double>(
+                                    return std::pair<Vector3, double>(
                                         acc.first + parent_->box()->minimumImage(parent_->atom(idx).r(), ref) * mass,
                                         acc.second + mass);
                                 });

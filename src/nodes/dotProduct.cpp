@@ -2,8 +2,8 @@
 
 DotProductNode::DotProductNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput<Vec3<double>>("U", "Vector dot product factor", u_);
-    addInput<Vec3<double>>("V", "Vector dot product factor", v_);
+    addInput<Vector3>("U", "Vector dot product factor", u_);
+    addInput<Vector3>("V", "Vector dot product factor", v_);
     addOutput<Number>("Result", "The inner product of the vectors", dotProduct_);
 }
 

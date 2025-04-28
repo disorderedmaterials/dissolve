@@ -199,9 +199,9 @@ void AddConfigurationDialog::finalise()
         // No framework - add on a Box spec
         auto boxNode = generator.createRootNode<BoxGeneratorNode>({});
         boxNode->keywords().set("Lengths",
-                                Vec3<NodeValue>(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()));
+                                Vector3NodeValue(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()));
         boxNode->keywords().set(
-            "Angles", Vec3<NodeValue>(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
+            "Angles", Vector3NodeValue(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
     }
 
     // Create parameters node
@@ -261,8 +261,8 @@ void AddConfigurationDialog::on_TargetSpeciesWidget_speciesSelectionChanged(bool
 // Update detected box type from current values
 void AddConfigurationDialog::updateBoxType()
 {
-    auto boxType = Box::type(Vec3<double>(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()),
-                             Vec3<double>(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
+    auto boxType = Box::type(Vector3(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()),
+                             Vector3(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
 
     if (boxType)
         ui_.DetectedBoxTypeLabel->setText(QString::fromStdString(Box::boxTypes().keyword(*boxType)));
@@ -286,7 +286,6 @@ void AddConfigurationDialog::updateResultingBoxInfo()
     auto nAtoms = frameworkSpecies_ ? frameworkSpecies_->nAtoms() : 0;
     auto nMolecules = frameworkSpecies_ ? 1 : 0;
     auto mass = frameworkSpecies_ ? frameworkSpecies_->mass() : 0.0;
-    Vec3<bool> scalableAxes(true, true, true);
     auto rho = ui_.SpeciesDensitySpin->value();
     auto mult = ui_.SpeciesMultiplierSpin->value();
     auto rhoUnits = ui_.SpeciesDensityUnitsCombo->currentIndex() == Units::DensityUnits::AtomsPerAngstromUnits
@@ -294,8 +293,8 @@ void AddConfigurationDialog::updateResultingBoxInfo()
                         : Units::DensityUnits::GramsPerCentimetreCubedUnits;
 
     // Create a temporary box
-    auto box = Box::generate(Vec3<double>(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()),
-                             Vec3<double>(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
+    auto box = Box::generate(Vector3(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()),
+                             Vector3(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
 
     for (auto &spInfo : mixSpecies_)
     {
@@ -321,7 +320,7 @@ void AddConfigurationDialog::updateResultingBoxInfo()
             if (nAtoms > 0)
                 requiredVolume += currentVolume;
 
-            box->scale(box->scaleFactors(requiredVolume, scalableAxes));
+            box->scale(box->scaleFactors(requiredVolume, {true, true, true}));
         }
 
         // Increase counters

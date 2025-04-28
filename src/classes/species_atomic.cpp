@@ -29,7 +29,7 @@ void Species::getIndicesRecursive(std::vector<int> &indices, int index, Optional
 }
 
 // Add a new atom to the Species, returning its index
-int Species::addAtom(Elements::Element Z, Vec3<double> r, double q, std::shared_ptr<AtomType> atomType)
+int Species::addAtom(Elements::Element Z, Vector3 r, double q, std::shared_ptr<AtomType> atomType)
 {
     auto &i = atoms_.emplace_back();
     i.set(Z, r.x, r.y, r.z, q);
@@ -148,7 +148,7 @@ const std::vector<SpeciesAtom> &Species::atoms() const { return atoms_; }
 std::vector<SpeciesAtom> &Species::atoms() { return atoms_; }
 
 // Set coordinates of specified atom
-void Species::setAtomCoordinates(SpeciesAtom *i, Vec3<double> r)
+void Species::setAtomCoordinates(SpeciesAtom *i, Vector3 r)
 {
     assert(i);
 
@@ -331,7 +331,7 @@ double Species::totalCharge(bool useAtomTypes) const
 // Apply random noise to atoms
 void Species::randomiseCoordinates(double maxDisplacement)
 {
-    Vec3<double> deltaR;
+    Vector3 deltaR;
 
     for (auto &i : atoms_)
     {

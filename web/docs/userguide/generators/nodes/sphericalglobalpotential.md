@@ -15,5 +15,5 @@ The `SphericalGlobalPotential` node allows an additional, global potential to be
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`Potential`|[`Function1D`]({{< ref function1d >}})|--|Functional form and associated parameters for the potential.|
-|`Origin`|`Vec3<double>`|`0.0 0.0 0.0`|Coordinate origin of the potential.|
+|`Origin`|`Vector3`|`0.0 0.0 0.0`|Coordinate origin of the potential.|
 |`Fractional`|`bool`|`false`|Whether the coordinate origin is specified in fractional cell coordinates.|

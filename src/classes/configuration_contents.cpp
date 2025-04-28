@@ -105,8 +105,8 @@ int Configuration::contentsVersion() const { return contentsVersion_; }
 void Configuration::incrementContentsVersion() { ++contentsVersion_; }
 
 // Add Molecule to Configuration based on the supplied Species
-std::shared_ptr<Molecule>
-Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates)
+std::shared_ptr<Molecule> Configuration::addMolecule(const Species *sp,
+                                                     OptionalReferenceWrapper<const std::vector<Vector3>> sourceCoordinates)
 {
     // Create the new Molecule object and set its Species pointer
     auto newMolecule = std::make_shared<Molecule>();
@@ -216,7 +216,7 @@ const std::vector<std::shared_ptr<Molecule>> &Configuration::molecules() const {
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
 // Add new Atom to Configuration, with Molecule parent specified
-Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r)
+Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r)
 {
     // Create new Atom object and set its source pointer
     auto &newAtom = atoms_.emplace_back();
@@ -273,13 +273,13 @@ void Configuration::unFoldMolecules()
 }
 
 // Scale contents of the box by the specified factors along each axis
-void Configuration::scaleContents(Vec3<double> scaleFactors)
+void Configuration::scaleContents(Vector3 scaleFactors)
 {
     // Un-fold all molecules so we can determine true centres of geometry
     unFoldMolecules();
 
     // For each molecule, set its new centre of geometry
-    Vec3<double> oldCog, newCog, r;
+    Vector3 oldCog, newCog, r;
     for (auto &mol : molecules_)
     {
         // If the related species has a periodic box, scale atom positions rather than COG position

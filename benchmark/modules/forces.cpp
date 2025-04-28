@@ -24,7 +24,7 @@ static void BM_CalculateForces_SpeciesBond(benchmark::State &state)
 {
     Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
-    std::vector<Vec3<double>> forces(cfg->nAtoms());
+    std::vector<Vector3> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     const auto &mol = problemDef.configuration()->molecules().front();
     const auto &bond = mol->species()->bonds().back();
@@ -38,7 +38,7 @@ static void BM_CalculateForces_SpeciesAngle(benchmark::State &state)
 {
     Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
-    std::vector<Vec3<double>> forces(cfg->nAtoms());
+    std::vector<Vector3> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     const auto &mol = problemDef.configuration()->molecules().front();
     const auto &angle = mol->species()->angles().back();
@@ -50,7 +50,7 @@ static void BM_CalculateForces_SpeciesTorsion(benchmark::State &state)
 {
     Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
-    std::vector<Vec3<double>> forces(cfg->nAtoms());
+    std::vector<Vector3> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     const auto &mol = problemDef.configuration()->molecules().front();
     const auto &torsion = mol->species()->torsions().back();
@@ -63,7 +63,7 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
 {
     Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
-    std::vector<Vec3<double>> forces(cfg->nAtoms());
+    std::vector<Vector3> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
         forceKernel->totalForces(
@@ -76,7 +76,7 @@ static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
 {
     Problem<speciesType, population> problemDef;
     auto &sp = problemDef.coreData().species().front();
-    std::vector<Vec3<double>> forces(sp->nAtoms());
+    std::vector<Vector3> forces(sp->nAtoms());
     auto &procPool = problemDef.dissolve().worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     for (auto _ : state)
@@ -88,7 +88,7 @@ static void BM_CalculateForces_TotalInterAtomic(benchmark::State &state)
 {
     Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
-    std::vector<Vec3<double>> forces(cfg->nAtoms());
+    std::vector<Vector3> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
         forceKernel->totalForces(forces, forces, ProcessPool::PoolStrategy, ForceKernel::ExcludeGeometry);
@@ -99,7 +99,7 @@ static void BM_CalculateForces_TotalForces(benchmark::State &state)
 {
     Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
-    std::vector<Vec3<double>> forces(cfg->nAtoms());
+    std::vector<Vector3> forces(cfg->nAtoms());
     auto &procPool = problemDef.dissolve().worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     for (auto _ : state)

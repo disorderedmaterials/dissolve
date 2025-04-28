@@ -70,7 +70,7 @@ const KeywordStore &ExternalPotential::keywords() const { return keywords_; }
 double ExternalPotential::energy(const Atom &i, const Box *box) const { return 0.0; }
 
 // Calculate force on specified atom, summing in to supplied vector
-void ExternalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) const {}
+void ExternalPotential::force(const Atom &i, const Box *box, Vector3 &f) const {}
 
 /*
  * Read / Write

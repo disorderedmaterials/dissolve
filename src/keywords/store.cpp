@@ -240,15 +240,15 @@ bool KeywordStore::set(std::string_view name, const NodeValueProxy value)
 {
     return getKeyword<NodeValueKeyword>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const Vec3<int> value)
+bool KeywordStore::set(std::string_view name, const Vector3i value)
 {
     return getKeyword<Vec3IntegerKeyword>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const Vec3<double> value)
+bool KeywordStore::set(std::string_view name, const Vector3 value)
 {
     return getKeyword<Vec3DoubleKeyword>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const Vec3<NodeValue> value)
+bool KeywordStore::set(std::string_view name, const Vector3NodeValue value)
 {
     return getKeyword<Vec3NodeValueKeyword>(name, find(name))->setData(value);
 }

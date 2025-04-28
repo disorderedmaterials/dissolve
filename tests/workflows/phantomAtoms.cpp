@@ -33,8 +33,8 @@ TEST_F(PhantomAtomsTest, Basic)
     auto *cfg = coreData.addConfiguration();
     auto &procedure = cfg->generator();
     auto boxLength = 20.0;
-    auto box = procedure.createRootNode<BoxGeneratorNode>("Box", Vec3<NodeValue>(boxLength, boxLength, boxLength),
-                                                          Vec3<NodeValue>(90, 90, 90));
+    auto box = procedure.createRootNode<BoxGeneratorNode>("Box", Vector3NodeValue(boxLength, boxLength, boxLength),
+                                                          Vector3NodeValue(90, 90, 90));
 
     // Add in some artificial argon atoms
     const auto nMolecules = 100;

@@ -40,7 +40,7 @@ class CellsEnergyTest : public ::testing::Test
 
     protected:
     // Create skeletal target Configuration
-    Configuration *createConfiguration(const Vec3<double> &lengths, const Vec3<double> &angles, int nMolecules)
+    Configuration *createConfiguration(const Vector3 &lengths, const Vector3 &angles, int nMolecules)
     {
         // Setup Configuration
         auto *cfg = coreData_.addConfiguration();

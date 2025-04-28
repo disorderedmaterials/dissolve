@@ -4,6 +4,7 @@
 #pragma once
 
 #include "io/fileAndFormat.h"
+#include "templates/array2D.h"
 #include "templates/optionalRef.h"
 
 // Forward Declarations

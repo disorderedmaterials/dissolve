@@ -82,10 +82,10 @@ GenericItemDeserialiser::GenericItemDeserialiser()
             }
             return true;
         });
-    registerDeserialiser<std::vector<Vec3<double>>>(
+    registerDeserialiser<std::vector<Vector3>>(
         [](std::any &a, LineParser &parser, const CoreData &coreData)
         {
-            auto &v = std::any_cast<std::vector<Vec3<double>> &>(a);
+            auto &v = std::any_cast<std::vector<Vector3> &>(a);
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
             v.clear();
@@ -189,19 +189,19 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     registerDeserialiser<SampledData1D>(simpleDeserialise<SampledData1D>);
     registerDeserialiser<SampledDouble>(simpleDeserialise<SampledDouble>);
     registerDeserialiser<SampledVector>(simpleDeserialise<SampledVector>);
-    registerDeserialiser<Vec3<int>>(
+    registerDeserialiser<Vector3i>(
         [](std::any &a, LineParser &parser, const CoreData &coreData)
         {
-            auto &v = std::any_cast<Vec3<int> &>(a);
+            auto &v = std::any_cast<Vector3i &>(a);
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
             v = parser.arg3i(0);
             return true;
         });
-    registerDeserialiser<Vec3<double>>(
+    registerDeserialiser<Vector3>(
         [](std::any &a, LineParser &parser, const CoreData &coreData)
         {
-            auto &v = std::any_cast<Vec3<double> &>(a);
+            auto &v = std::any_cast<Vector3 &>(a);
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
             v = parser.arg3d(0);

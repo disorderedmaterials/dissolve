@@ -26,9 +26,8 @@ EnumOptions<TextPrimitive::TextAnchor> TextPrimitive::textAnchors()
 }
 
 // Set data
-bool TextPrimitive::set(FontInstance *fontInstance, QString text, Vec3<double> anchorPoint,
-                        TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 localRotation,
-                        double textSize, bool flat)
+bool TextPrimitive::set(FontInstance *fontInstance, QString text, Vector3 anchorPoint, TextPrimitive::TextAnchor anchorPosition,
+                        Vector3 adjustmentVector, Matrix4 localRotation, double textSize, bool flat)
 {
     // Create string stream and set up ANTLR input strem
     std::stringstream stream;
@@ -89,7 +88,7 @@ Matrix4 TextPrimitive::transformationMatrix(FontInstance &fontInstance, const Ma
                                             OptionalReferenceWrapper<const TextFragment> optFragment) const
 {
     Matrix4 textMatrix, A;
-    Vec3<double> lowerLeft, upperRight, anchorPos, anchorPosRotated, textCentre;
+    Vector3 lowerLeft, upperRight, anchorPos, anchorPosRotated, textCentre;
 
     // Calculate scaling factor for font
     double scale = fontInstance.fontBaseHeight() * textSize_ / baseFontSize;
@@ -165,7 +164,7 @@ Matrix4 TextPrimitive::transformationMatrix(FontInstance &fontInstance, const Ma
 }
 
 // Calculate bounding box of primitive
-void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const
+void TextPrimitive::boundingBox(FontInstance &fontInstance, Vector3 &lowerLeft, Vector3 &upperRight) const
 {
     // Check for zero fragments
     if (fragments_.empty())
@@ -176,7 +175,7 @@ void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerL
     }
 
     // Loop over remaining fragments, keeping track of the total width of the primitive and the max/min y values
-    Vec3<double> ll, ur;
+    Vector3 ll, ur;
     auto firstFragment = true;
     for (const auto &fragment : fragments_)
     {
@@ -227,7 +226,7 @@ void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix
         {
             glDisable(GL_LINE_STIPPLE);
             glLineWidth(1.0);
-            Vec3<double> ll, ur;
+            Vector3 ll, ur;
             fontInstance.boundingBox(fragment.text(), ll, ur);
             glBegin(GL_LINE_LOOP);
             glVertex3d(ll.x, ll.y, 0.0);

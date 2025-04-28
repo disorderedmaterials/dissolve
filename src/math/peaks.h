@@ -4,7 +4,7 @@
 #pragma once
 
 #include "math/data1D.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <array>
 #include <variant>
 

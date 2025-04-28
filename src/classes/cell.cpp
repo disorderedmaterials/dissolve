@@ -7,17 +7,14 @@
 #include "templates/algorithms.h"
 #include <algorithm>
 
-Cell::Cell(int index, Vec3<int> gridReference, Vec3<double> centre)
-    : gridReference_(gridReference), index_(index), centre_(centre)
-{
-}
+Cell::Cell(int index, Vector3i gridReference, Vector3 centre) : gridReference_(gridReference), index_(index), centre_(centre) {}
 
 /*
  * Identity
  */
 
 // Return grid reference
-const Vec3<int> &Cell::gridReference() const { return gridReference_; }
+const Vector3i &Cell::gridReference() const { return gridReference_; }
 
 // Set unique index
 void Cell::setIndex(int id)
@@ -31,7 +28,7 @@ void Cell::setIndex(int id)
 int Cell::index() const { return index_; }
 
 // Return real-space Cell centre
-const Vec3<double> &Cell::centre() const { return centre_; }
+const Vector3 &Cell::centre() const { return centre_; }
 
 /*
  * Contents

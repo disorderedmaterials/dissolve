@@ -58,7 +58,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
 
     sites_.reserve(instances.size() * sPop);
 
-    Vec3<double> origin, x, y;
+    Vector3 origin, x, y;
     const auto *box = configuration_->box();
 
     for (const auto &molecule : configuration_->molecules())

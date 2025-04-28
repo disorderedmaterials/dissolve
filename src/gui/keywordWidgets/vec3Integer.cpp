@@ -91,7 +91,7 @@ void Vec3IntegerKeywordWidget::updateValue(const Flags<DissolveSignals::DataMuta
 {
     refreshing_ = true;
 
-    Vec3<int> v = keyword_->data();
+    Vector3i v = keyword_->data();
 
     ui_.Spin1->setValue(v.x);
     ui_.Spin2->setValue(v.y);

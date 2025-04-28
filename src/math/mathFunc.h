@@ -3,10 +3,9 @@
 
 #pragma once
 
-// Forward Declarations
-template <class A> class Array2D;
+#define _USE_MATH_DEFINES
+#include <math.h>
 
-// Mathematical functions
 namespace DissolveMath
 {
 /*
@@ -40,5 +39,4 @@ int sgn(double x);
 double sgn(double a, double signOf);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i);
-
 }; // namespace DissolveMath

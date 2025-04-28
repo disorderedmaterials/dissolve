@@ -25,7 +25,7 @@ bool Region::generate(const Configuration *cfg, double voxelSize, bool invert,
     auto voxelCombinable = Region::createCombinableVoxelKernel(kernelGenerator);
     auto voxelCheckFunction = [&](auto triplet, auto x, auto y, auto z)
     {
-        voxelMap_[triplet] = {Vec3<int>(x, y, z),
+        voxelMap_[triplet] = {Vector3i(x, y, z),
                               invert != voxelCombinable.local()->isVoxelValid(
                                             cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
                                                                 (z + 0.5) * voxelSizeFrac_.z}))};
@@ -50,21 +50,21 @@ bool Region::isValid() const { return !voxelMap_.empty() && !freeVoxels_.empty()
 double Region::freeVoxelFraction() const { return double(freeVoxels_.size()) / double(voxelMap_.linearArraySize()); }
 
 // Return random coordinate inside region
-Vec3<double> Region::randomCoordinate() const
+Vector3 Region::randomCoordinate() const
 {
     // Select a random voxel
     auto &voxel = freeVoxels_[DissolveMath::randomi(freeVoxels_.size())];
 
     // Generate random point in fractional coordinates within the voxel
-    Vec3<double> r = {(voxel.first.x + DissolveMath::random()) * voxelSizeFrac_.x,
-                      (voxel.first.y + DissolveMath::random()) * voxelSizeFrac_.y,
-                      (voxel.first.z + DissolveMath::random()) * voxelSizeFrac_.z};
+    Vector3 r = {(voxel.first.x + DissolveMath::random()) * voxelSizeFrac_.x,
+                 (voxel.first.y + DissolveMath::random()) * voxelSizeFrac_.y,
+                 (voxel.first.z + DissolveMath::random()) * voxelSizeFrac_.z};
     box_->toReal(r);
     return r;
 }
 
 // Return whether specified coordinate is inside the region
-bool Region::validCoordinate(Vec3<double> r) const
+bool Region::validCoordinate(Vector3 r) const
 {
     box_->toFractional(r);
     return voxelMap_[std::tuple{r.x / voxelSizeFrac_.x, r.y / voxelSizeFrac_.y, r.z / voxelSizeFrac_.z}].second;

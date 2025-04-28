@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include "math/vector3.h"
 #include "nodes/node.h"
-#include "templates/vector3.h"
 
 // Vec3Assembly Node
 class Vec3AssemblyNode : public Node
@@ -28,7 +28,7 @@ class Vec3AssemblyNode : public Node
     // Input z
     double z_;
     // Output vector
-    Vec3<double> outputVector_;
+    Vector3 outputVector_;
 
     /*
      * Processing

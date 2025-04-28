@@ -18,8 +18,8 @@
 #include "math/data1D.h"
 #include "math/histogram1D.h"
 #include "math/interpolator.h"
+#include "math/vector3.h"
 #include "module/layer.h"
-#include "templates/vector3.h"
 #include <deque>
 #include <map>
 #include <memory>
@@ -115,7 +115,7 @@ class Configuration : public Serialisable<const CoreData &>
     void incrementContentsVersion();
     // Add Molecule to Configuration based on the supplied Species
     std::shared_ptr<Molecule>
-    addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
+    addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vector3>> sourceCoordinates = std::nullopt);
     // Copy molecule
     std::shared_ptr<Molecule> copyMolecule(const std::shared_ptr<Molecule> &sourceMolecule);
     // Remove all Molecules of the target Species from the Configuration
@@ -130,7 +130,7 @@ class Configuration : public Serialisable<const CoreData &>
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
-    Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r = Vec3<double>());
+    Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r = Vector3());
     // Return the number of atoms in the configuration (or only those with the specified presence)
     int nAtoms(SpeciesAtom::Presence withPresence = SpeciesAtom::Presence::Any) const;
     // Return Atom array
@@ -142,7 +142,7 @@ class Configuration : public Serialisable<const CoreData &>
     void unFoldMolecules();
     // Scale contents of the box by the specified factors along each axis
     void funky(std::vector<bool> &flags, std::vector<std::shared_ptr<Atom>> &atoms, int i);
-    void scaleContents(Vec3<double> scaleFactors);
+    void scaleContents(Vector3 scaleFactors);
 
     /*
      * Periodic Box and Cells
@@ -164,11 +164,11 @@ class Configuration : public Serialisable<const CoreData &>
 
     public:
     // Create Box definition with specified lengths and angles
-    void createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
+    void createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic = false);
     // Create Box definition from axes matrix
     void createBox(const Matrix3 axes);
     // Create Box definition with specified lengths and angles, and initialise cell array
-    void createBoxAndCells(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic, double pairPotentialRange);
+    void createBoxAndCells(const Vector3 lengths, const Vector3 angles, bool nonPeriodic, double pairPotentialRange);
     // Create Box definition from axes matrix, and initialise cell array
     void createBoxAndCells(const Matrix3 axes, double pairPotentialRange);
     // Update cell array, and reassign atoms to cells
@@ -176,7 +176,7 @@ class Configuration : public Serialisable<const CoreData &>
     // Return Box
     const Box *box() const;
     // Scale Box lengths (and associated Cells) by specified factors
-    void scaleBox(Vec3<double> scaleFactors);
+    void scaleBox(Vector3 scaleFactors);
     // Set requested size factor for Box
     void setRequestedSizeFactor(double factor);
     // Return requested size factor for Box

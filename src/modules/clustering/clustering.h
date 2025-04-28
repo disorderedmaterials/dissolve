@@ -10,6 +10,7 @@
 #include "classes/coreData.h"
 #include "generator/context.h"
 #include "main/dissolve.h"
+#include "math/vector3.h"
 #include "module/context.h"
 #include "module/module.h"
 #include <unordered_set>
@@ -70,7 +71,7 @@ class ClusteringModule : public Module
     int gyrationMinSize_{5};
     // Map of cluster ID to CoM vector from reference site (first member in cluster map) - Required in Rg calc. Might be useful
     // down the road
-    std::map<int, Vec3<double>> clusterCoM_;
+    std::map<int, Vector3> clusterCoM_;
     // Fractal dimension from linear regression of LogLog Radius of gyration - cluster mass
     double fractalDimension_{-1};
     // Cluster display configuration

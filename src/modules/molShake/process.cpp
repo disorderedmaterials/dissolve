@@ -66,7 +66,7 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
     bool accept;
     double currentEnergy, newEnergy, delta, totalDelta = 0.0;
     Matrix3 transform;
-    Vec3<double> rDelta;
+    Vector3 rDelta;
     const auto *box = targetConfiguration_->box();
 
     /*

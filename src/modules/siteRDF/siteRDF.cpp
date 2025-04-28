@@ -28,7 +28,7 @@ SiteRDFModule::SiteRDFModule() : Module(ModuleTypes::SiteRDF)
 
     keywords_.setOrganisation("Options", "Ranges");
     keywords_.add<Vec3DoubleKeyword>("DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);
+                                     Vector3(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);
 
     keywords_.setOrganisation("Options", "Control");
     keywords_.add<BoolKeyword>("ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule",

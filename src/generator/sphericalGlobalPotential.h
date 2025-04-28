@@ -20,7 +20,7 @@ class SphericalGlobalPotentialGeneratorNode : public GeneratorNode
     // Potential form
     InteractionPotential<Functions1D> potential_;
     // Origin coordinates
-    Vec3<NodeValue> origin_;
+    Vector3NodeValue origin_;
     bool originIsFractional_{false};
 
     /*

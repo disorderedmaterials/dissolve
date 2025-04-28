@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "templates/vector4.h"
+#include "math/vector4.h"
 #include <QColor>
 #include <QOpenGLFunctions>
 

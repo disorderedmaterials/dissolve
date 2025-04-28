@@ -7,7 +7,7 @@
 #include "modules/energy/energy.h"
 
 // Create Box definition with specified lengths and angles
-void Configuration::createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic)
+void Configuration::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
     box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
 }
@@ -16,10 +16,10 @@ void Configuration::createBox(const Vec3<double> lengths, const Vec3<double> ang
 void Configuration::createBox(const Matrix3 axes)
 {
     // Calculate cell lengths
-    Vec3<double> lengths(axes.columnMagnitude(0), axes.columnMagnitude(1), axes.columnMagnitude(2));
+    Vector3 lengths(axes.columnMagnitude(0), axes.columnMagnitude(1), axes.columnMagnitude(2));
 
     // Calculate cell angles
-    Vec3<double> vecx, vecy, vecz;
+    Vector3 vecx, vecy, vecz;
     vecx = axes.columnAsVec3(0);
     vecy = axes.columnAsVec3(1);
     vecz = axes.columnAsVec3(2);
@@ -27,15 +27,14 @@ void Configuration::createBox(const Matrix3 axes)
     vecy.normalise();
     vecz.normalise();
 
-    Vec3<double> angles(acos(vecy.dp(vecz)), acos(vecx.dp(vecz)), acos(vecx.dp(vecy)));
+    Vector3 angles(acos(vecy.dp(vecz)), acos(vecx.dp(vecz)), acos(vecx.dp(vecy)));
     angles *= DEGRAD;
 
     box_ = Box::generate(lengths, angles);
 }
 
 // Create Box definition with specified lengths and angles, and initialise cell array
-void Configuration::createBoxAndCells(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic,
-                                      double pairPotentialRange)
+void Configuration::createBoxAndCells(const Vector3 lengths, const Vector3 angles, bool nonPeriodic, double pairPotentialRange)
 {
     createBox(lengths, angles, nonPeriodic);
     cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
@@ -59,7 +58,7 @@ void Configuration::updateCells(double pairPotentialRange)
 const Box *Configuration::box() const { return box_.get(); }
 
 // Scale Box lengths (and associated Cells) by specified factors
-void Configuration::scaleBox(Vec3<double> scaleFactors)
+void Configuration::scaleBox(Vector3 scaleFactors)
 {
     box_->scale(scaleFactors);
     cells_.scale(scaleFactors);

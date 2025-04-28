@@ -14,10 +14,10 @@ Axes::Axes(View &parent, FontInstance &fontInstance) : parentView_(parent), font
     limitMax_.set(10.0, 10.0, 10.0);
     min_.zero();
     max_.set(10.0, 10.0, 10.0);
-    inverted_.set(false, false, false);
-    logarithmic_.set(false, false, false);
-    visible_.set(true, true, true);
-    positionIsFractional_.set(true, true, true);
+    inverted_ = {false, false, false};
+    logarithmic_ = {false, false, false};
+    visible_ = {true, true, true};
+    positionIsFractional_ = {true, true, true};
     positionReal_[0].zero();
     positionReal_[1].zero();
     positionReal_[2].zero();
@@ -43,11 +43,11 @@ Axes::Axes(View &parent, FontInstance &fontInstance) : parentView_(parent), font
     tickSize_.set(0.2, 0.2, 0.2);
     tickFirst_.zero();
     tickDelta_.set(1.0, 1.0, 1.0);
-    autoTicks_.set(true, true, true);
+    autoTicks_ = {true, true, true};
     minorTicks_.set(1, 1, 1);
 
     // Labels
-    autoNumberFormat_.set(true, true, true);
+    autoNumberFormat_ = {true, true, true};
     labelAnchor_[0] = TextPrimitive::TopMiddleAnchor;
     labelAnchor_[1] = TextPrimitive::MiddleRightAnchor;
     labelAnchor_[2] = TextPrimitive::MiddleRightAnchor;
@@ -67,8 +67,8 @@ Axes::Axes(View &parent, FontInstance &fontInstance) : parentView_(parent), font
     titleAnchor_[2] = TextPrimitive::BottomMiddleAnchor;
 
     // GridLines
-    gridLinesMajor_.set(false, false, false);
-    gridLinesMinor_.set(false, false, false);
+    gridLinesMajor_ = {true, true, true};
+    gridLinesMinor_ = {true, true, true};
 
     // Style override
     useBestFlatView_ = false;
@@ -201,7 +201,7 @@ void Axes::setRange(int axis, double minValue, double maxValue)
 // Return real axis range (accounting for log axes)
 double Axes::realRange(int axis) const
 {
-    if (logarithmic_.get(axis))
+    if (logarithmic_[axis])
         return log10(max_.get(axis)) - log10(min_.get(axis));
     else
         return max_.get(axis) - min_.get(axis);
@@ -235,13 +235,13 @@ void Axes::ensureSensibleRange(double &minValue, double &maxValue, bool alwaysEx
 }
 
 // Return central value of axes
-Vec3<double> Axes::centre() const { return min_ + (max_ - min_) * 0.5; }
+Vector3 Axes::centre() const { return min_ + (max_ - min_) * 0.5; }
 
 // Return real axis minimum (accounting for log axes)
-double Axes::realMin(int axis) const { return (logarithmic_.get(axis) ? log10(min_.get(axis)) : min_.get(axis)); }
+double Axes::realMin(int axis) const { return (logarithmic_[axis] ? log10(min_.get(axis)) : min_.get(axis)); }
 
 // Return real axis maximum (accounting for log axes)
-double Axes::realMax(int axis) const { return (logarithmic_.get(axis) ? log10(max_.get(axis)) : max_.get(axis)); }
+double Axes::realMax(int axis) const { return (logarithmic_[axis] ? log10(max_.get(axis)) : max_.get(axis)); }
 
 // Set axis to extreme limit
 void Axes::setToLimit(int axis, bool minLim)
@@ -309,13 +309,13 @@ void Axes::expandLimits(bool noShrink)
 }
 
 // Return coordinate at centre of current axes
-Vec3<double> Axes::coordCentre() const { return coordCentre_; }
+Vector3 Axes::coordCentre() const { return coordCentre_; }
 
 // Return coordinate at minimum of specified axis
-Vec3<double> Axes::coordMin(int axis) const { return coordMin_[axis]; }
+Vector3 Axes::coordMin(int axis) const { return coordMin_[axis]; }
 
 // Return coordinate at maximum of specified axis
-Vec3<double> Axes::coordMax(int axis) const { return coordMax_[axis]; }
+Vector3 Axes::coordMax(int axis) const { return coordMax_[axis]; }
 
 // Set whether axis is inverted
 void Axes::setInverted(int axis, bool b)
@@ -328,7 +328,7 @@ void Axes::setInverted(int axis, bool b)
 }
 
 // Return whether axis is inverted
-bool Axes::inverted(int axis) const { return inverted_.get(axis); }
+bool Axes::inverted(int axis) const { return inverted_[axis]; }
 
 // Set whether axis is logarithmic
 void Axes::setLogarithmic(int axis, bool b)
@@ -352,13 +352,13 @@ void Axes::setLogarithmic(int axis, bool b)
 void Axes::toggleLogarithmic(int axis) { setLogarithmic(axis, !logarithmic_[axis]); }
 
 // Return whether axis is logarithmic
-bool Axes::logarithmic(int axis) const { return logarithmic_.get(axis); }
+bool Axes::logarithmic(int axis) const { return logarithmic_[axis]; }
 
 // Set whether axis is visible
 void Axes::setVisible(int axis, bool b) { visible_[axis] = b; }
 
 // Return whether specified axis is visible
-bool Axes::visible(int axis) const { return visible_.get(axis); }
+bool Axes::visible(int axis) const { return visible_[axis]; }
 
 // Set stretch factor for axis
 void Axes::setStretch(int axis, double value)
@@ -382,7 +382,7 @@ void Axes::setPositionIsFractional(int axis, bool b)
 }
 
 // Return fractional position flag for axis
-bool Axes::positionIsFractional(int axis) const { return positionIsFractional_.get(axis); }
+bool Axes::positionIsFractional(int axis) const { return positionIsFractional_[axis]; }
 
 // Set axis position (in real surface-space coordinates)
 void Axes::setPositionReal(int axis, int dir, double value)
@@ -404,7 +404,7 @@ void Axes::setPositionRealToLimit(int axis, int dir, bool minLim)
 }
 
 // Return axis position (in real surface-space coordinates)
-Vec3<double> Axes::positionReal(int axis) const { return positionReal_[axis]; }
+Vector3 Axes::positionReal(int axis) const { return positionReal_[axis]; }
 
 // Set axis position (in fractional axis coordinates)
 void Axes::setPositionFractional(int axis, int dir, double value)
@@ -423,7 +423,7 @@ void Axes::setPositionFractional(int axis, int dir, double value)
 }
 
 // Return axis position (in fractional axis coordinates)
-Vec3<double> Axes::positionFractional(int axis) const { return positionFractional_[axis]; }
+Vector3 Axes::positionFractional(int axis) const { return positionFractional_[axis]; }
 
 // Set autoscaling method employed
 void Axes::setAutoScale(int axis, Axes::AutoScaleMethod method) { autoScale_[axis] = method; }
@@ -438,11 +438,11 @@ Axes::AutoScaleMethod Axes::autoScale(int axis) const { return autoScale_[axis];
 // Return supplied data x value in local axes coordinates
 double Axes::transformX(double x) const
 {
-    if (inverted_.x && logarithmic_.x)
+    if (inverted_[0] && logarithmic_[0])
         return log10(max_.x / x) * stretch_.x;
-    else if (inverted_.x)
+    else if (inverted_[0])
         return ((max_.x - x) + min_.x) * stretch_.x;
-    else if (logarithmic_.x)
+    else if (logarithmic_[0])
         return log10(x) * stretch_.x;
     else
         return x * stretch_.x;
@@ -451,13 +451,13 @@ double Axes::transformX(double x) const
 // Transform entire array of values into local axes coordinates
 void Axes::transformX(std::vector<double> &xArray) const
 {
-    if (inverted_.x && logarithmic_.x)
+    if (inverted_[0] && logarithmic_[0])
         for (auto n = 0; n < xArray.size(); ++n)
             xArray[n] = log10(max_.x / xArray[n]) * stretch_.x;
-    else if (inverted_.x)
+    else if (inverted_[0])
         for (auto n = 0; n < xArray.size(); ++n)
             xArray[n] = ((max_.x - xArray[n]) + min_.x) * stretch_.x;
-    else if (logarithmic_.x)
+    else if (logarithmic_[0])
         for (auto n = 0; n < xArray.size(); ++n)
             xArray[n] = log10(xArray[n]) * stretch_.x;
     else
@@ -467,11 +467,11 @@ void Axes::transformX(std::vector<double> &xArray) const
 // Return supplied data y value in local axes coordinates
 double Axes::transformY(double y) const
 {
-    if (inverted_.y && logarithmic_.y)
+    if (inverted_[1] && logarithmic_[1])
         return (max_.y / y <= 0.0 ? log10(max_.y / y) * stretch_.y : 0.0);
-    else if (inverted_.y)
+    else if (inverted_[1])
         return ((max_.y - y) + min_.y) * stretch_.y;
-    else if (logarithmic_.y)
+    else if (logarithmic_[1])
         return (y <= 0.0 ? log10(y) * stretch_.y : 0.0);
     else
         return y * stretch_.y;
@@ -480,15 +480,15 @@ double Axes::transformY(double y) const
 // Transform entire array of values into local axes coordinates
 void Axes::transformY(std::vector<double> &yArray) const
 {
-    if (inverted_.y && logarithmic_.y)
+    if (inverted_[1] && logarithmic_[1])
         for (auto n = 0; n < yArray.size(); ++n)
         {
             yArray[n] = log10(max_.y / yArray[n]) * stretch_.y;
         }
-    else if (inverted_.y)
+    else if (inverted_[1])
         for (auto n = 0; n < yArray.size(); ++n)
             yArray[n] = ((max_.y - yArray[n]) + min_.y) * stretch_.y;
-    else if (logarithmic_.y)
+    else if (logarithmic_[1])
         for (auto n = 0; n < yArray.size(); ++n)
         {
             yArray[n] = log10(yArray[n]) * stretch_.y;
@@ -500,11 +500,11 @@ void Axes::transformY(std::vector<double> &yArray) const
 // Return supplied data z value in local axes coordinates
 double Axes::transformZ(double z) const
 {
-    if (inverted_.z && logarithmic_.z)
+    if (inverted_[2] && logarithmic_[2])
         return log10(max_.z / z) * stretch_.z;
-    else if (inverted_.z)
+    else if (inverted_[2])
         return ((max_.z - z) + min_.z) * stretch_.z;
-    else if (logarithmic_.z)
+    else if (logarithmic_[2])
         return log10(z) * stretch_.z;
     else
         return z * stretch_.z;
@@ -513,15 +513,15 @@ double Axes::transformZ(double z) const
 // Transform entire array of values into local axes coordinates
 void Axes::transformZ(std::vector<double> &zArray) const
 {
-    if (inverted_.z && logarithmic_.z)
+    if (inverted_[1] && logarithmic_[1])
         for (auto n = 0; n < zArray.size(); ++n)
         {
             zArray[n] = log10(max_.z / zArray[n]) * stretch_.z;
         }
-    else if (inverted_.z)
+    else if (inverted_[1])
         for (auto n = 0; n < zArray.size(); ++n)
             zArray[n] = ((max_.z - zArray[n]) + min_.z) * stretch_.z;
-    else if (logarithmic_.z)
+    else if (logarithmic_[1])
         for (auto n = 0; n < zArray.size(); ++n)
         {
             zArray[n] = log10(zArray[n]) * stretch_.z;
@@ -619,20 +619,20 @@ void Axes::setTickDirection(int axis, int dir, double value)
 }
 
 // Return axis tick direction
-Vec3<double> Axes::tickDirection(int axis) const
+Vector3 Axes::tickDirection(int axis) const
 {
     if (useBestFlatView_ && parentView_.isFlatView())
         switch (parentView_.viewType())
         {
             case (View::FlatXYView):
-                return (axis == 0 ? Vec3<double>(0.0, inverted_.y ? 1.0 : -1.0, 0.0)
-                                  : Vec3<double>(inverted_.x ? 1.0 : -1.0, 0.0, 0.0));
+                return (axis == 0 ? Vector3(0.0, inverted_[1] ? 1.0 : -1.0, 0.0)
+                                  : Vector3(inverted_[0] ? 1.0 : -1.0, 0.0, 0.0));
             case (View::FlatXZView):
-                return (axis == 0 ? Vec3<double>(0.0, 0.0, inverted_.z ? 1.0 : -1.0)
-                                  : Vec3<double>(inverted_.x ? 1.0 : -1.0, 0.0, 0.0));
+                return (axis == 0 ? Vector3(0.0, 0.0, inverted_[2] ? 1.0 : -1.0)
+                                  : Vector3(inverted_[0] ? 1.0 : -1.0, 0.0, 0.0));
             case (View::FlatZYView):
-                return (axis == 1 ? Vec3<double>(0.0, 0.0, inverted_.z ? 1.0 : -1.0)
-                                  : Vec3<double>(0.0, inverted_.y ? 1.0 : -1.0, 0.0));
+                return (axis == 1 ? Vector3(0.0, 0.0, inverted_[2] ? 1.0 : -1.0)
+                                  : Vector3(0.0, inverted_[1] ? 1.0 : -1.0, 0.0));
             default:
                 break;
         }
@@ -683,7 +683,7 @@ void Axes::setAutoTicks(int axis, bool b)
 }
 
 // Return whether to calculate ticks automatically
-bool Axes::autoTicks(int axis) const { return autoTicks_.get(axis); }
+bool Axes::autoTicks(int axis) const { return autoTicks_[axis]; }
 
 // Set number of minor ticks in major tick intervals
 void Axes::setMinorTicks(int axis, int value)
@@ -775,7 +775,7 @@ const NumberFormat &Axes::numberFormat(int axis) const { return numberFormat_[ax
 void Axes::setNumberFormat(int axis, const NumberFormat &numberFormat) { numberFormat_[axis] = numberFormat; }
 
 // Return whether to determine number format automatically for the specified axis
-bool Axes::autoNumberFormat(int axis) const { return autoNumberFormat_.get(axis); }
+bool Axes::autoNumberFormat(int axis) const { return autoNumberFormat_[axis]; }
 
 // Set whether to determine number format automatically for the specified axis
 void Axes::setAutoNumberFormat(int axis, bool b) { autoNumberFormat_[axis] = b; }
@@ -789,17 +789,17 @@ void Axes::setLabelOrientation(int axis, int component, double value)
 }
 
 // Return orientation of labels for specified axis
-Vec3<double> Axes::labelOrientation(int axis) const
+Vector3 Axes::labelOrientation(int axis) const
 {
     if (useBestFlatView_ && parentView_.isFlatView())
         switch (parentView_.viewType())
         {
             case (View::FlatXYView):
-                return (axis == 0 ? Vec3<double>(0.0, 0.0, 0.2) : Vec3<double>(0.0, 0.0, 0.2));
+                return (axis == 0 ? Vector3(0.0, 0.0, 0.2) : Vector3(0.0, 0.0, 0.2));
             case (View::FlatXZView):
-                return (axis == 0 ? Vec3<double>(270.0, 0.0, 0.2) : Vec3<double>(270.0, 0.0, 0.2));
+                return (axis == 0 ? Vector3(270.0, 0.0, 0.2) : Vector3(270.0, 0.0, 0.2));
             case (View::FlatZYView):
-                return (axis == 1 ? Vec3<double>(90.0, 0.0, 0.2) : Vec3<double>(90.0, 0.0, 0.2));
+                return (axis == 1 ? Vector3(90.0, 0.0, 0.2) : Vector3(90.0, 0.0, 0.2));
             default:
                 break;
         }
@@ -823,14 +823,14 @@ TextPrimitive::TextAnchor Axes::labelAnchor(int axis) const
         switch (parentView_.viewType())
         {
             case (View::FlatXYView):
-                return (axis == 0 ? (inverted_.y ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor)
-                                  : (inverted_.x ? TextPrimitive::MiddleLeftAnchor : TextPrimitive::MiddleRightAnchor));
+                return (axis == 0 ? (inverted_[1] ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor)
+                                  : (inverted_[0] ? TextPrimitive::MiddleLeftAnchor : TextPrimitive::MiddleRightAnchor));
             case (View::FlatXZView):
-                return (axis == 0 ? (inverted_.z ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor)
-                                  : (inverted_.x ? TextPrimitive::MiddleLeftAnchor : TextPrimitive::MiddleRightAnchor));
+                return (axis == 0 ? (inverted_[2] ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor)
+                                  : (inverted_[0] ? TextPrimitive::MiddleLeftAnchor : TextPrimitive::MiddleRightAnchor));
             case (View::FlatZYView):
-                return (axis == 1 ? (inverted_.z ? TextPrimitive::MiddleLeftAnchor : TextPrimitive::MiddleRightAnchor)
-                                  : (inverted_.y ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor));
+                return (axis == 1 ? (inverted_[2] ? TextPrimitive::MiddleLeftAnchor : TextPrimitive::MiddleRightAnchor)
+                                  : (inverted_[1] ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor));
             default:
                 break;
         }
@@ -859,17 +859,17 @@ void Axes::setTitleOrientationNEW(int axis, int component, double value)
 }
 
 // Return orientation of titles for specified axis
-Vec3<double> Axes::titleOrientation(int axis) const
+Vector3 Axes::titleOrientation(int axis) const
 {
     if (useBestFlatView_ && parentView_.isFlatView())
         switch (parentView_.viewType())
         {
             case (View::FlatXYView):
-                return (axis == 0 ? Vec3<double>(0.0, 0.0, 0.0) : Vec3<double>(0.0, 270.0, 0.0));
+                return (axis == 0 ? Vector3(0.0, 0.0, 0.0) : Vector3(0.0, 270.0, 0.0));
             case (View::FlatXZView):
-                return (axis == 0 ? Vec3<double>(270.0, 0.0, 0.0) : Vec3<double>(270.0, 0.0, 90.0));
+                return (axis == 0 ? Vector3(270.0, 0.0, 0.0) : Vector3(270.0, 0.0, 90.0));
             case (View::FlatZYView):
-                return (axis == 1 ? Vec3<double>(0.0, 90.0, 90.0) : Vec3<double>(0.0, 90.0, 0.0));
+                return (axis == 1 ? Vector3(0.0, 90.0, 90.0) : Vector3(0.0, 90.0, 0.0));
             default:
                 break;
         }
@@ -905,14 +905,14 @@ TextPrimitive::TextAnchor Axes::titleAnchor(int axis) const
         switch (parentView_.viewType())
         {
             case (View::FlatXYView):
-                return (axis == 0 ? (inverted_.y ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor)
-                                  : (inverted_.x ? TextPrimitive::TopMiddleAnchor : TextPrimitive::BottomMiddleAnchor));
+                return (axis == 0 ? (inverted_[1] ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor)
+                                  : (inverted_[0] ? TextPrimitive::TopMiddleAnchor : TextPrimitive::BottomMiddleAnchor));
             case (View::FlatXZView):
-                return (axis == 0 ? (inverted_.z ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor)
-                                  : (inverted_.x ? TextPrimitive::TopMiddleAnchor : TextPrimitive::BottomMiddleAnchor));
+                return (axis == 0 ? (inverted_[2] ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor)
+                                  : (inverted_[0] ? TextPrimitive::TopMiddleAnchor : TextPrimitive::BottomMiddleAnchor));
             case (View::FlatZYView):
-                return (axis == 1 ? (inverted_.z ? TextPrimitive::TopMiddleAnchor : TextPrimitive::BottomMiddleAnchor)
-                                  : (inverted_.y ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor));
+                return (axis == 1 ? (inverted_[2] ? TextPrimitive::TopMiddleAnchor : TextPrimitive::BottomMiddleAnchor)
+                                  : (inverted_[1] ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor));
             default:
                 break;
         }
@@ -960,7 +960,7 @@ void Axes::setGridLinesFull(int axis, bool b)
 }
 
 // Return whether gridlines cover entire volume or just at axis lines
-bool Axes::gridLinesFull(int axis) const { return gridLinesFull_.get(axis); }
+bool Axes::gridLinesFull(int axis) const { return gridLinesFull_[axis]; }
 
 // Set whether gridLines at major tick intervals are active for specified axis
 void Axes::setGridLinesMajor(int axis, bool on)
@@ -971,7 +971,7 @@ void Axes::setGridLinesMajor(int axis, bool on)
 }
 
 // Return whether gridLines at major tick intervals are active for specified axis
-bool Axes::gridLinesMajor(int axis) const { return gridLinesMajor_.get(axis); }
+bool Axes::gridLinesMajor(int axis) const { return gridLinesMajor_[axis]; }
 
 // Set whether gridLines at minor tick intervals are active for specified axis
 void Axes::setGridLinesMinor(int axis, bool on)
@@ -982,7 +982,7 @@ void Axes::setGridLinesMinor(int axis, bool on)
 }
 
 // Return whether gridLines at minor tick intervals are active for specified axis
-bool Axes::gridLinesMinor(int axis) const { return gridLinesMinor_.get(axis); }
+bool Axes::gridLinesMinor(int axis) const { return gridLinesMinor_[axis]; }
 
 /*
  * Version
@@ -1004,9 +1004,9 @@ void Axes::updateAxisPrimitives()
 
     QString s;
     FTBBox boundingBox;
-    Vec3<double> centre;
+    Vector3 centre;
     double delta, value, clipPlaneDelta = 0.0001;
-    Vec3<double> u, v1, v2, tickDir, adjustment;
+    Vector3 u, v1, v2, tickDir, adjustment;
     Matrix4 labelTransform, titleTransform;
     std::vector<double> tickPositions[3];
     std::vector<bool> tickIsMajor[3];
@@ -1207,7 +1207,7 @@ void Axes::updateAxisPrimitives()
             // Project tick direction onto cuboid width/height
             // TODO This does not account for the fact that the bounding cuboid may only partly extend over the end
             // of ths axis tick mark (e.g. as with in-plane rotations/TopMiddle anchors)...
-            Vec3<double> extent = cuboid.maxima() - cuboid.minima();
+            Vector3 extent = cuboid.maxima() - cuboid.minima();
             extent.multiply(tickDir.x, tickDir.y, tickDir.z);
             // -- Add on extra distance from tick mark
             u += tickDir * (tickSize_[axis]);
@@ -1303,10 +1303,10 @@ void Axes::updateAxisPrimitives()
 }
 
 // Return clip plane lower Y value
-Vec3<double> Axes::clipMin() const { return clipMin_; }
+Vector3 Axes::clipMin() const { return clipMin_; }
 
 // Return clip plane upper Y value
-Vec3<double> Axes::clipMax() const { return clipMax_; }
+Vector3 Axes::clipMax() const { return clipMax_; }
 
 // Flag primitives as invalid
 void Axes::setPrimitivesInvalid() { primitiveVersion_ = -1; }

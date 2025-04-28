@@ -17,7 +17,7 @@ std::optional<int> SpeciesViewer::atomIndexAt(int x, int y)
         return {};
 
     double lengthScale;
-    Vec3<double> rScreen;
+    Vector3 rScreen;
 
     // Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point
     // provided
@@ -153,7 +153,7 @@ void SpeciesViewer::endInteraction()
                         // If Shift was not pressed, clear the current selection first
                         if (!mouseDownModifiers_.testFlag(Qt::ShiftModifier))
                             species_->clearAtomSelection();
-                        Vec3<double> rScreen;
+                        Vector3 rScreen;
                         QRect selectionRect(QPoint(rMouseDown_.x, rMouseDown_.y), QPoint(rMouseLast_.x, rMouseLast_.y));
                         for (auto &i : species_->atoms())
                         {

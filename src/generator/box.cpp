@@ -9,7 +9,7 @@
 #include "keywords/bool.h"
 #include "keywords/vec3NodeValue.h"
 
-BoxGeneratorNode::BoxGeneratorNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angles, bool nonPeriodic)
+BoxGeneratorNode::BoxGeneratorNode(Vector3NodeValue lengths, Vector3NodeValue angles, bool nonPeriodic)
     : GeneratorNode(NodeType::Box), angles_(std::move(angles)), lengths_(std::move(lengths)), nonPeriodic_(nonPeriodic)
 {
     keywords_.setOrganisation("Options", "Definition");

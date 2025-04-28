@@ -13,7 +13,7 @@ class BraggModuleTest : public ::testing::Test
     protected:
     DissolveSystemTest systemTest;
 
-    using ReflectionData = std::tuple<int, double, Vec3<int>, int, std::vector<double>>;
+    using ReflectionData = std::tuple<int, double, Vector3i, int, std::vector<double>>;
 
     bool testReflections(std::string_view reflectionsTag, const std::vector<ReflectionData> &referenceData)
     {
@@ -257,7 +257,7 @@ TEST_F(BraggModuleTest, MgO_Intensities111)
     // Set multiplicities to (1,1,1)
     auto *braggModule = systemTest.coreData().findModule("Bragg01");
     ASSERT_TRUE(braggModule);
-    ASSERT_NO_THROW_VERBOSE(braggModule->keywords().set("Multiplicity", Vec3<int>(1, 1, 1)));
+    ASSERT_NO_THROW_VERBOSE(braggModule->keywords().set("Multiplicity", Vector3i(1, 1, 1)));
 
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 

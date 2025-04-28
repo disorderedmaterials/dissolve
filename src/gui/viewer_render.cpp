@@ -382,7 +382,7 @@ void BaseViewer::enableClipping()
     static GLenum planes[6] = {GL_CLIP_PLANE0, GL_CLIP_PLANE1, GL_CLIP_PLANE2, GL_CLIP_PLANE3, GL_CLIP_PLANE4, GL_CLIP_PLANE5};
 
     // Loop over axes
-    Vec3<double> translation;
+    Vector3 translation;
     for (auto axis = 0; axis < 3; ++axis)
     {
         translation.zero();

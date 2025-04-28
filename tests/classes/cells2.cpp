@@ -36,7 +36,7 @@ class CellsPBCTest : public ::testing::Test
     Species *argon_;
 
     protected:
-    Configuration *createConfiguration(const Vec3<double> &lengths, const Vec3<double> &angles, const Vec3<double> &origin,
+    Configuration *createConfiguration(const Vector3 &lengths, const Vector3 &angles, const Vector3 &origin,
                                        int nMolecules = 1000)
     {
         // Setup Configuration
@@ -54,7 +54,7 @@ class CellsPBCTest : public ::testing::Test
             auto theta = DissolveMath::random() * M_PI;
             auto phi = DissolveMath::random() * 2.0 * M_PI;
             auto mol = cfg->addMolecule(argon_);
-            mol->atom(0)->setCoordinates(Vec3<double>(r * sin(theta) * cos(phi), r * sin(theta) * sin(phi), r * cos(theta)) +
+            mol->atom(0)->setCoordinates(Vector3(r * sin(theta) * cos(phi), r * sin(theta) * sin(phi), r * cos(theta)) +
                                          origin);
         }
 
