@@ -52,7 +52,7 @@ class SpeciesImportFileFormat : public FileAndFormat
     // Import coordinates direct to configuration using current filename and format
     bool importData(Species *sp, const ProcessPool *procPool = nullptr);
     // Import coordinates using supplied parser and current format
-    bool importData(LineParser &parser, std::vector<Vec3<double>> &r);
+    bool importData(LineParser &parser, std::vector<Vector3> &r);
     // Import coordinates direct to configuration using supplied parser and current format
     bool importData(LineParser &parser, Species *sp);
 };

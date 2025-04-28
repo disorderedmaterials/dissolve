@@ -16,9 +16,9 @@ Module::ExecutionResult GeometryOptimisationModule::process(ModuleContext &modul
     Messenger::print("\n");
 
     // Initialise working arrays for coordinates and forces
-    rRef_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
-    rTemp_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
-    f_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
+    rRef_.resize(targetConfiguration_->nAtoms(), Vector3());
+    rTemp_.resize(targetConfiguration_->nAtoms(), Vector3());
+    f_.resize(targetConfiguration_->nAtoms(), Vector3());
 
     optimise<Configuration>(moduleContext.dissolve().potentialMap(), moduleContext.processPool(), targetConfiguration_);
 

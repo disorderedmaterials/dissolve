@@ -8,13 +8,13 @@
 #include <utility>
 
 // Set coordinates
-void Atom::set(const Vec3<double> r) { r_ = r; }
+void Atom::set(const Vector3 r) { r_ = r; }
 
 // Set coordinates
 void Atom::set(double rx, double ry, double rz) { r_.set(rx, ry, rz); }
 
 // Return coordinates
-const Vec3<double> &Atom::r() const { return r_; }
+const Vector3 &Atom::r() const { return r_; }
 
 // Return x-coordinate
 double Atom::x() const { return r_.x; }
@@ -74,16 +74,16 @@ Cell *Atom::cell() const { return cell_; }
  */
 
 // Set coordinates
-void Atom::setCoordinates(const Vec3<double> &newr) { r_ = newr; }
+void Atom::setCoordinates(const Vector3 &newr) { r_ = newr; }
 
 // Set coordinates
-void Atom::setCoordinates(double dx, double dy, double dz) { setCoordinates(Vec3<double>(dx, dy, dz)); }
+void Atom::setCoordinates(double dx, double dy, double dz) { setCoordinates(Vector3(dx, dy, dz)); }
 
 // Translate coordinates
-void Atom::translateCoordinates(const Vec3<double> &delta) { setCoordinates(r_ + delta); }
+void Atom::translateCoordinates(const Vector3 &delta) { setCoordinates(r_ + delta); }
 
 // Translate coordinates
-void Atom::translateCoordinates(double dx, double dy, double dz) { setCoordinates(r_ + Vec3<double>(dx, dy, dz)); }
+void Atom::translateCoordinates(double dx, double dy, double dz) { setCoordinates(r_ + Vector3(dx, dy, dz)); }
 
 /*
  * Intramolecular Information

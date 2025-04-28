@@ -10,13 +10,13 @@
  * Cylindrical Region Voxel Kernel
  */
 
-CylindricalRegionVoxelKernel::CylindricalRegionVoxelKernel(Vec3<double> originFrac, double radius, Vec3<double> vector)
+CylindricalRegionVoxelKernel::CylindricalRegionVoxelKernel(Vector3 originFrac, double radius, Vector3 vector)
     : originFrac_(std::move(originFrac)), radius_(radius), vector_(std::move(vector))
 {
 }
 
 // Return whether voxel centred at supplied real coordinates is valid
-bool CylindricalRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
+bool CylindricalRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vector3 &r) const
 {
     auto l0 = originFrac_;
     cfg->box()->toReal(l0);

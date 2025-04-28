@@ -39,7 +39,7 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 
     // Create the new Species, and add a single atom at {0,0,0}
     auto *newSpecies = dissolve_.coreData().addSpecies();
-    newSpecies->addAtom(Z, Vec3<double>());
+    newSpecies->addAtom(Z, Vector3());
     newSpecies->setName(DissolveSys::uniqueName(Elements::symbol(Z), dissolve().coreData().species(),
                                                 [&](const auto &sp) { return newSpecies == sp.get() ? "" : sp->name(); }));
 

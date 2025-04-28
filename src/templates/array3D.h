@@ -5,7 +5,7 @@
 
 #include "base/messenger.h"
 #include "classes/array3DIterator.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <cassert>
 #include <numeric>
 #include <vector>

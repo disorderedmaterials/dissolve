@@ -27,9 +27,9 @@ AxisAngleModule::AxisAngleModule() : Module(ModuleTypes::AxisAngle)
 
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<Vec3DoubleKeyword>("DistanceRange", "Range (min, max, binwidth) of distance binning", distanceRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+                                     Vector3(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<Vec3DoubleKeyword>("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+                                     Vector3(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
 
     keywords_.setOrganisation(
         "Options", "Exclusions & Restrictions",

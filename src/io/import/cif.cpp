@@ -171,7 +171,7 @@ bool CIFHandler::read(std::string_view filename)
                      ? Elements::element(atomSiteTypeSymbol[n])
                      : (n < atomSiteLabel.size() ? Elements::element(atomSiteLabel[n]) : Elements::Unknown);
         auto occ = n < atomSiteOccupancy.size() ? atomSiteOccupancy[n] : 1.0;
-        Vec3<double> rFrac(atomSiteFractX[n], atomSiteFractY[n], atomSiteFractZ[n]);
+        Vector3 rFrac(atomSiteFractX[n], atomSiteFractY[n], atomSiteFractZ[n]);
 
         // Add the atom to an assembly - there are three possibilities regarding (disorder) grouping:
         //   1) A group is defined, but no assembly - add the atom to the 'Disorder' assembly
@@ -331,7 +331,7 @@ void CIFHandler::setSpaceGroup(SpaceGroups::SpaceGroupId sgid)
 SpaceGroups::SpaceGroupId CIFHandler::spaceGroup() const { return spaceGroup_; }
 
 // Return cell lengths
-std::optional<Vec3<double>> CIFHandler::getCellLengths() const
+std::optional<Vector3> CIFHandler::getCellLengths() const
 {
     auto a = getTagDouble("_cell_length_a");
     if (!a)
@@ -344,13 +344,13 @@ std::optional<Vec3<double>> CIFHandler::getCellLengths() const
         Messenger::error("Cell length C not defined in CIF.\n");
 
     if (a && b && c)
-        return Vec3<double>(a.value(), b.value(), c.value());
+        return Vector3(a.value(), b.value(), c.value());
     else
         return std::nullopt;
 }
 
 // Return cell angles
-std::optional<Vec3<double>> CIFHandler::getCellAngles() const
+std::optional<Vector3> CIFHandler::getCellAngles() const
 {
     auto alpha = getTagDouble("_cell_angle_alpha");
     if (!alpha)
@@ -363,7 +363,7 @@ std::optional<Vec3<double>> CIFHandler::getCellAngles() const
         Messenger::error("Cell angle gamma not defined in CIF.\n");
 
     if (alpha && beta && gamma)
-        return Vec3<double>(alpha.value(), beta.value(), gamma.value());
+        return Vector3(alpha.value(), beta.value(), gamma.value());
     else
         return std::nullopt;
 }
@@ -707,7 +707,7 @@ bool CIFHandler::createSupercell()
             for (auto iy = 0; iy < supercellRepeat_.y; ++iy)
                 for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
                 {
-                    Vec3<double> deltaR = cleanedUnitCellSpecies_.box()->axes() * Vec3<double>(ix, iy, iz);
+                    Vector3 deltaR = cleanedUnitCellSpecies_.box()->axes() * Vector3(ix, iy, iz);
                     for (const auto &i : cleanedUnitCellSpecies_.atoms())
                         supercellSpecies_.addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
                 }
@@ -745,7 +745,7 @@ bool CIFHandler::createSupercell()
                             continue;
 
                         // Set translation vector
-                        auto tVec = cleanedUnitCellSpecies_.box()->axes() * Vec3<double>(ix, iy, iz);
+                        auto tVec = cleanedUnitCellSpecies_.box()->axes() * Vector3(ix, iy, iz);
 
                         // Create images of core molecule instances
                         for (auto &instance : coreInstances)
@@ -859,7 +859,7 @@ void CIFHandler::setRemoveNETA(bool b, bool byFragment)
 bool CIFHandler::setMoietyRemovalNETA(std::string_view netaDefinition) { return moietyRemovalNETA_.create(netaDefinition); }
 
 // Set supercell repeat
-void CIFHandler::setSupercellRepeat(const Vec3<int> &repeat)
+void CIFHandler::setSupercellRepeat(const Vector3i &repeat)
 {
     supercellRepeat_ = repeat;
 
@@ -923,8 +923,8 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
             auto boxNode = generator.createRootNode<BoxGeneratorNode>({});
             auto cellLengths = supercellConfiguration_.box()->axisLengths();
             auto cellAngles = supercellConfiguration_.box()->axisAngles();
-            boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
-            boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
+            boxNode->keywords().set("Lengths", Vector3NodeValue(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
+            boxNode->keywords().set("Angles", Vector3NodeValue(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
 
             for (auto &cifMolecularSp : molecularSpecies_)
             {
@@ -995,8 +995,8 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
             auto boxNode = generator.createRootNode<BoxGeneratorNode>({});
             auto cellLengths = supercellConfiguration_.box()->axisLengths();
             auto cellAngles = supercellConfiguration_.box()->axisAngles();
-            boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
-            boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
+            boxNode->keywords().set("Lengths", Vector3NodeValue(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
+            boxNode->keywords().set("Angles", Vector3NodeValue(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
 
             // Add
             auto addNode = generator.createRootNode<AddGeneratorNode>(std::format("Add_{}", sp->name()), sp);

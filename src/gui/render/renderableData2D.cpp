@@ -213,7 +213,7 @@ void RenderableData2D::constructLine(const std::vector<double> &displayXAbscissa
 
     // Temporary variables
     GLfloat colour[4];
-    Vec3<double> nrm(0.0, 1.0, 0.0);
+    Vector3 nrm(0.0, 1.0, 0.0);
 
     // Create lines for slices
     int vertexA, vertexB;

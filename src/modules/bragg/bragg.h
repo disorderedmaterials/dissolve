@@ -25,7 +25,7 @@ class BraggModule : public Module
     // Weighting scheme to use when averaging reflection data
     Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Bragg intensity scaling factor accounting for number of repeat units in Configuration
-    Vec3<int> multiplicity_{1, 1, 1};
+    Vector3i multiplicity_{1, 1, 1};
     // Resolution (bin width) in Q space to use when calculating Bragg reflections
     double qDelta_{0.001};
     // Maximum Q value for Bragg calculation
@@ -41,7 +41,7 @@ class BraggModule : public Module
     public:
     // Calculate Bragg terms for specified Configuration
     bool calculateBraggTerms(GenericList &moduleData, const ProcessPool &procPool, Configuration *cfg, const double qMin,
-                             const double qDelta, const double qMax, Vec3<int> multiplicity, bool &alreadyUpToDate);
+                             const double qDelta, const double qMax, Vector3i multiplicity, bool &alreadyUpToDate);
     // Form partial and total reflection functions from calculated reflection data
     bool formReflectionFunctions(GenericList &moduleData, const ProcessPool &procPool, Configuration *cfg, const double qMin,
                                  const double qDelta, const double qMax);

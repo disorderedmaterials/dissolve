@@ -27,11 +27,11 @@ class AngleModule : public Module
     // Whether to exclude correlations between A and C sites on the same molecule
     bool excludeSameSiteAC_{false};
     // Range (min, max, binwidth) of A-B distance axis
-    Vec3<double> rangeAB_{0.0, 10.0, 0.05};
+    Vector3 rangeAB_{0.0, 10.0, 0.05};
     // Range (min, max, binwidth) of B-C distance axis
-    Vec3<double> rangeBC_{0.0, 10.0, 0.05};
+    Vector3 rangeBC_{0.0, 10.0, 0.05};
     // Range (min, max, binwidth) of angle axis
-    Vec3<double> angleRange_{0.0, 180.0, 1.0};
+    Vector3 angleRange_{0.0, 180.0, 1.0};
     // Whether the angular range should be considered symmetric about 90
     bool symmetric_{false};
     // Target SpeciesSite definitions

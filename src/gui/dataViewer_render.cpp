@@ -36,8 +36,8 @@ void DataViewer::render2DOverlay()
         indicatorText += QString("S\\sub{%1}").arg(groupManager_.verticalShiftAmount());
     TextPrimitive indicatorPrimitive;
     indicatorPrimitive.set(&fontInstance_, indicatorText,
-                           Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing, 0.0),
-                           TextPrimitive::TopLeftAnchor, Vec3<double>(), Matrix4(), overlayTextSize, false);
+                           Vector3(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing, 0.0),
+                           TextPrimitive::TopLeftAnchor, Vector3(), Matrix4(), overlayTextSize, false);
     glColor3d(0.0, 0.0, 0.0);
     Matrix4 identity;
     if (fontInstance_.fontOK())

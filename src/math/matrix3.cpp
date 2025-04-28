@@ -3,11 +3,13 @@
 
 #include "math/matrix3.h"
 #include "base/messenger.h"
+#include "math/constants.h"
+#include "math/mathFunc.h"
 #include <array>
 
 Matrix3::Matrix3() { setIdentity(); }
 
-Matrix3::Matrix3(const Vec3<double> &x, const Vec3<double> &y, const Vec3<double> &z)
+Matrix3::Matrix3(const Vector3 &x, const Vector3 &y, const Vector3 &z)
 {
     matrix_[0] = x.x;
     matrix_[1] = x.y;
@@ -68,7 +70,7 @@ Matrix3 Matrix3::operator-(const Matrix3 &B) const
     return A;
 }
 
-Vec3<double> Matrix3::operator*(const Vec3<double> &v) const
+Vector3 Matrix3::operator*(const Vector3 &v) const
 {
     return {v.x * matrix_[0] + v.y * matrix_[3] + v.z * matrix_[6], v.x * matrix_[1] + v.y * matrix_[4] + v.z * matrix_[7],
             v.x * matrix_[2] + v.y * matrix_[5] + v.z * matrix_[8]};
@@ -128,7 +130,7 @@ void Matrix3::print() const
 void Matrix3::zero() { std::fill(matrix_.begin(), matrix_.end(), 0.0); }
 
 // Create orthogonal matrix around supplied single column vector
-void Matrix3::createFromVector(const Vec3<double> &v, int columnIndex)
+void Matrix3::createFromVector(const Vector3 &v, int columnIndex)
 {
     setColumn(columnIndex, v);
     const auto v2 = v.orthogonal();
@@ -168,7 +170,7 @@ Matrix3 &Matrix3::transpose() const
 }
 
 // Transform the supplied vector by the transpose of the current matrix
-Vec3<double> Matrix3::transposeMultiply(const Vec3<double> &v) const
+Vector3 Matrix3::transposeMultiply(const Vector3 &v) const
 {
     return {v.x * matrix_[0] + v.y * matrix_[1] + v.z * matrix_[2], v.x * matrix_[3] + v.y * matrix_[4] + v.z * matrix_[5],
             v.x * matrix_[6] + v.y * matrix_[7] + v.z * matrix_[8]};
@@ -284,9 +286,9 @@ double Matrix3::maxAbs() const
  */
 
 // Copy column contents to supplied Vec3
-Vec3<double> Matrix3::columnAsVec3(int col) const
+Vector3 Matrix3::columnAsVec3(int col) const
 {
-    Vec3<double> vec(matrix_[col * 3], matrix_[col * 3 + 1], matrix_[col * 3 + 2]);
+    Vector3 vec(matrix_[col * 3], matrix_[col * 3 + 1], matrix_[col * 3 + 2]);
     return vec;
 }
 
@@ -307,7 +309,7 @@ void Matrix3::setColumn(int col, double a, double b, double c)
 }
 
 // Set specified column from supplied Vec3
-void Matrix3::setColumn(int col, const Vec3<double> vec)
+void Matrix3::setColumn(int col, const Vector3 vec)
 {
     matrix_[col * 3] = vec.x;
     matrix_[col * 3 + 1] = vec.y;
@@ -323,7 +325,7 @@ void Matrix3::adjustColumn(int col, double a, double b, double c)
 }
 
 // Adjust specified column from supplied Vec3
-void Matrix3::adjustColumn(int col, const Vec3<double> vec)
+void Matrix3::adjustColumn(int col, const Vector3 vec)
 {
     matrix_[col * 3] += vec.x;
     matrix_[col * 3 + 1] += vec.y;
@@ -348,7 +350,7 @@ void Matrix3::columnMultiply(int col, double d)
 }
 
 // Multiply first three columns by values in supplied vector
-void Matrix3::columnMultiply(Vec3<double> vec)
+void Matrix3::columnMultiply(Vector3 vec)
 {
     columnMultiply(0, vec.x);
     columnMultiply(1, vec.y);
@@ -478,7 +480,7 @@ void Matrix3::createRotationZ(double angle)
 }
 
 // Create axis rotation quaternion
-void Matrix3::createRotationAxis(Vec3<double> axis, double angle, bool normalise)
+void Matrix3::createRotationAxis(Vector3 axis, double angle, bool normalise)
 {
     double cosx, sinx, theta = angle / DEGRAD, oneMcosx;
     if (normalise)
@@ -581,7 +583,7 @@ void Matrix3::applyScaling(double scalex, double scaley, double scalez)
 }
 
 // Apply a general scaling to the matrix (as glScaled would to)
-void Matrix3::applyScaling(Vec3<double> scaling)
+void Matrix3::applyScaling(Vector3 scaling)
 {
     applyScalingX(scaling.x);
     applyScalingY(scaling.y);
@@ -623,20 +625,20 @@ void Matrix3::applyScalingZ(double scale)
  * Transforms
  */
 
-// Transform coordinates supplied and return as Vec3<double>
-Vec3<double> Matrix3::transform(double x, double y, double z) const
+// Transform coordinates supplied and return as Vector3
+Vector3 Matrix3::transform(double x, double y, double z) const
 {
-    Vec3<double> result;
+    Vector3 result;
     result.x = x * matrix_[0] + y * matrix_[3] + z * matrix_[6];
     result.y = x * matrix_[1] + y * matrix_[4] + z * matrix_[7];
     result.z = x * matrix_[2] + y * matrix_[5] + z * matrix_[8];
     return result;
 }
 
-// Transform coordinates supplied and return as Vec3<double>
-Vec3<double> Matrix3::transform(Vec3<double> r) const
+// Transform coordinates supplied and return as Vector3
+Vector3 Matrix3::transform(Vector3 r) const
 {
-    Vec3<double> result;
+    Vector3 result;
     result.x = r.x * matrix_[0] + r.y * matrix_[3] + r.z * matrix_[6];
     result.y = r.x * matrix_[1] + r.y * matrix_[4] + r.z * matrix_[7];
     result.z = r.x * matrix_[2] + r.y * matrix_[5] + r.z * matrix_[8];
@@ -648,9 +650,9 @@ Vec3<double> Matrix3::transform(Vec3<double> r) const
  */
 
 // Construct 'cross-product' matrix of the supplied vector using cyclic permutations
-void Matrix3::makeCrossProductMatrix(const Vec3<double> &v)
+void Matrix3::makeCrossProductMatrix(const Vector3 &v)
 {
     for (auto n = 0; n < 3; ++n)
-        setColumn(n, Vec3<double>::unit(DissolveMath::cp3(n + 1)) * v.get(DissolveMath::cp3(n + 2)) -
-                         Vec3<double>::unit(DissolveMath::cp3(n + 2)) * v.get(DissolveMath::cp3(n + 1)));
+        setColumn(n, Vector3::unit(DissolveMath::cp3(n + 1)) * v.get(DissolveMath::cp3(n + 2)) -
+                         Vector3::unit(DissolveMath::cp3(n + 2)) * v.get(DissolveMath::cp3(n + 1)));
 }

@@ -33,7 +33,7 @@ void ForceImportFileFormat::setUpKeywords()
  */
 
 // Read forces using current filename and format
-bool ForceImportFileFormat::importData(std::vector<Vec3<double>> &f, const ProcessPool *procPool)
+bool ForceImportFileFormat::importData(std::vector<Vector3> &f, const ProcessPool *procPool)
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);
@@ -49,7 +49,7 @@ bool ForceImportFileFormat::importData(std::vector<Vec3<double>> &f, const Proce
 }
 
 // Import forces using supplied parser and current format
-bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vec3<double>> &f)
+bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vector3> &f)
 {
     // Check the format
     if (!formatIndex_)

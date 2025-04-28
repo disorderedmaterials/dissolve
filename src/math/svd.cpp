@@ -3,6 +3,7 @@
 
 #include "math/svd.h"
 #include "base/messenger.h"
+#include "math/mathFunc.h"
 #include "templates/array2D.h"
 
 namespace SVD

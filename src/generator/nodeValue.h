@@ -95,3 +95,22 @@ class NodeValueProxy : public NodeValue
     // Return value represented as a string
     std::string asString(bool addQuotesIfRequired = false) const override;
 };
+
+// Node Value Vector
+class Vector3NodeValue : public Serialisable<std::vector<std::shared_ptr<ExpressionVariable>>>
+{
+    public:
+    Vector3NodeValue() = default;
+    Vector3NodeValue(const NodeValue &xx, const NodeValue &yy, const NodeValue &zz);
+    // Components
+    NodeValue x, y, z;
+
+    /*
+     * I/O
+     */
+    public:
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, std::vector<std::shared_ptr<ExpressionVariable>> params) override;
+};

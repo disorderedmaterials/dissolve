@@ -4,14 +4,14 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 
-OrthorhombicBox::OrthorhombicBox(const Vec3<double> lengths) : Box(Box::BoxType::Orthorhombic, lengths, {90.0, 90.0, 90.0}) {}
+OrthorhombicBox::OrthorhombicBox(const Vector3 lengths) : Box(Box::BoxType::Orthorhombic, lengths, {90.0, 90.0, 90.0}) {}
 
 /*
  * Coordinate Conversion
  */
 
 // Convert specified fractional coordinates to real-space coordinates
-void OrthorhombicBox::toReal(Vec3<double> &r) const
+void OrthorhombicBox::toReal(Vector3 &r) const
 {
     r.x *= a_;
     r.y *= b_;
@@ -19,7 +19,7 @@ void OrthorhombicBox::toReal(Vec3<double> &r) const
 }
 
 // Convert specified real-space coordinates to fractional coordinates
-void OrthorhombicBox::toFractional(Vec3<double> &r) const
+void OrthorhombicBox::toFractional(Vector3 &r) const
 {
     r.x *= ra_;
     r.y *= rb_;
@@ -31,9 +31,9 @@ void OrthorhombicBox::toFractional(Vec3<double> &r) const
  */
 
 // Return minimum image coordinates of r1 with respect to r2
-Vec3<double> OrthorhombicBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vector3 OrthorhombicBox::minimumImage(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v21 = r1 - r2;
+    Vector3 v21 = r1 - r2;
     toFractional(v21);
     wrap(v21);
     toReal(v21);
@@ -42,9 +42,9 @@ Vec3<double> OrthorhombicBox::minimumImage(const Vec3<double> &r1, const Vec3<do
 }
 
 // Return minimum image vector from r1 to r2
-Vec3<double> OrthorhombicBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vector3 OrthorhombicBox::minimumVector(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v12 = r2 - r1;
+    Vector3 v12 = r2 - r1;
     toFractional(v12);
     wrap(v12);
     toReal(v12);
@@ -52,9 +52,9 @@ Vec3<double> OrthorhombicBox::minimumVector(const Vec3<double> &r1, const Vec3<d
 }
 
 // Return normalised minimum image vector from r1 to r2
-Vec3<double> OrthorhombicBox::minimumVectorN(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vector3 OrthorhombicBox::minimumVectorN(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v12 = r2 - r1;
+    Vector3 v12 = r2 - r1;
     toFractional(v12);
     wrap(v12);
     toReal(v12);
@@ -63,9 +63,9 @@ Vec3<double> OrthorhombicBox::minimumVectorN(const Vec3<double> &r1, const Vec3<
 }
 
 // Return minimum image distance from r1 to r2
-double OrthorhombicBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
+double OrthorhombicBox::minimumDistance(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v12 = r2 - r1;
+    Vector3 v12 = r2 - r1;
     toFractional(v12);
     wrap(v12);
     toReal(v12);
@@ -73,9 +73,9 @@ double OrthorhombicBox::minimumDistance(const Vec3<double> &r1, const Vec3<doubl
 }
 
 // Return minimum image squared distance from r1 to r2
-double OrthorhombicBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
+double OrthorhombicBox::minimumDistanceSquared(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v12 = r2 - r1;
+    Vector3 v12 = r2 - r1;
     toFractional(v12);
     wrap(v12);
     toReal(v12);

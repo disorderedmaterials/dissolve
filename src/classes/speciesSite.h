@@ -9,8 +9,8 @@
 #include "classes/atomType.h"
 #include "classes/speciesSiteInstance.h"
 #include "data/elements.h"
+#include "math/vector3.h"
 #include "neta/neta.h"
-#include "templates/vector3.h"
 #include <map>
 #include <vector>
 
@@ -167,9 +167,9 @@ class SpeciesSite : public Serialisable<CoreData &>
 
     private:
     // Calculate geometric centre of atoms in the parent Species
-    Vec3<double> centreOfGeometry(const std::vector<int> &indices) const;
+    Vector3 centreOfGeometry(const std::vector<int> &indices) const;
     // Calculate (mass-weighted) coordinate centre of atoms in the parent Species
-    Vec3<double> centreOfMass(const std::vector<int> &indices) const;
+    Vector3 centreOfMass(const std::vector<int> &indices) const;
 
     public:
     // Create and return Site description from parent Species

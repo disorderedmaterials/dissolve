@@ -4,7 +4,7 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 
-MonoclinicGammaBox::MonoclinicGammaBox(const Vec3<double> lengths, double gamma)
+MonoclinicGammaBox::MonoclinicGammaBox(const Vector3 lengths, double gamma)
     : Box(Box::BoxType::MonoclinicGamma, lengths, {90.0, 90.0, gamma})
 {
 }
@@ -14,7 +14,7 @@ MonoclinicGammaBox::MonoclinicGammaBox(const Vec3<double> lengths, double gamma)
  */
 
 // Convert specified fractional coordinates to real-space coordinates
-void MonoclinicGammaBox::toReal(Vec3<double> &r) const
+void MonoclinicGammaBox::toReal(Vector3 &r) const
 {
     r.x *= axesArray_[0];
     r.x += r.y * axesArray_[3];
@@ -23,7 +23,7 @@ void MonoclinicGammaBox::toReal(Vec3<double> &r) const
 }
 
 // Convert specified real-space coordinates to fractional coordinates
-void MonoclinicGammaBox::toFractional(Vec3<double> &r) const
+void MonoclinicGammaBox::toFractional(Vector3 &r) const
 {
     r.x *= inverseAxesArray_[0];
     r.x += r.y * inverseAxesArray_[3];
@@ -36,9 +36,9 @@ void MonoclinicGammaBox::toFractional(Vec3<double> &r) const
  */
 
 // Return minimum image coordinates of r1 with respect to r2
-Vec3<double> MonoclinicGammaBox::minimumImage(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vector3 MonoclinicGammaBox::minimumImage(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v21 = r1 - r2;
+    Vector3 v21 = r1 - r2;
 
     toFractional(v21);
     wrap(v21);
@@ -49,9 +49,9 @@ Vec3<double> MonoclinicGammaBox::minimumImage(const Vec3<double> &r1, const Vec3
 }
 
 // Return minimum image vector from r1 to r2
-Vec3<double> MonoclinicGammaBox::minimumVector(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vector3 MonoclinicGammaBox::minimumVector(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v12 = r2 - r1;
+    Vector3 v12 = r2 - r1;
 
     toFractional(v12);
     wrap(v12);
@@ -61,9 +61,9 @@ Vec3<double> MonoclinicGammaBox::minimumVector(const Vec3<double> &r1, const Vec
 }
 
 // Return normalised minimum image vector from r1 to r2
-Vec3<double> MonoclinicGammaBox::minimumVectorN(const Vec3<double> &r1, const Vec3<double> &r2) const
+Vector3 MonoclinicGammaBox::minimumVectorN(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v12 = r2 - r1;
+    Vector3 v12 = r2 - r1;
     toFractional(v12);
     wrap(v12);
     toReal(v12);
@@ -72,9 +72,9 @@ Vec3<double> MonoclinicGammaBox::minimumVectorN(const Vec3<double> &r1, const Ve
 }
 
 // Return minimum image distance from r1 to r2
-double MonoclinicGammaBox::minimumDistance(const Vec3<double> &r1, const Vec3<double> &r2) const
+double MonoclinicGammaBox::minimumDistance(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v12 = r2 - r1;
+    Vector3 v12 = r2 - r1;
 
     toFractional(v12);
     wrap(v12);
@@ -84,9 +84,9 @@ double MonoclinicGammaBox::minimumDistance(const Vec3<double> &r1, const Vec3<do
 }
 
 // Return minimum image squared distance from r1 to r2
-double MonoclinicGammaBox::minimumDistanceSquared(const Vec3<double> &r1, const Vec3<double> &r2) const
+double MonoclinicGammaBox::minimumDistanceSquared(const Vector3 &r1, const Vector3 &r2) const
 {
-    Vec3<double> v12 = r2 - r1;
+    Vector3 v12 = r2 - r1;
 
     toFractional(v12);
     wrap(v12);

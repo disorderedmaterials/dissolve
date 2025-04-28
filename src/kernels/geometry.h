@@ -33,7 +33,7 @@ class GeometryKernel : public KernelBase
     double bondEnergy(const SpeciesBond &b, const Atom &i, const Atom &j) const;
     // Calculate SpeciesBond forces
     void bondForces(const SpeciesBond &bond, const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const;
-    void bondForces(const SpeciesBond &bond, const Vec3<double> &ri, const Vec3<double> &rj, ForceVector &f) const;
+    void bondForces(const SpeciesBond &bond, const Vector3 &ri, const Vector3 &rj, ForceVector &f) const;
 
     /*
      * Angle Terms
@@ -43,20 +43,19 @@ class GeometryKernel : public KernelBase
     {
         AngleParameters() = default;
         double theta_;
-        Vec3<double> dfi_dtheta_;
-        Vec3<double> dfk_dtheta_;
+        Vector3 dfi_dtheta_;
+        Vector3 dfk_dtheta_;
     };
 
     public:
     // Return SpeciesAngle energy at Atoms specified
     double angleEnergy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k) const;
     // Calculate angle force parameters from supplied vectors
-    static AngleParameters calculateAngleForceParameters(Vec3<double> vecji, Vec3<double> vecjk);
+    static AngleParameters calculateAngleForceParameters(Vector3 vecji, Vector3 vecjk);
     // Calculate SpeciesAngle forces
     void angleForces(const SpeciesAngle &angle, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k, int indexK,
                      ForceVector &f) const;
-    void angleForces(const SpeciesAngle &angle, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
-                     ForceVector &f) const;
+    void angleForces(const SpeciesAngle &angle, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk, ForceVector &f) const;
 
     /*
      * Torsion Terms
@@ -70,8 +69,8 @@ class GeometryKernel : public KernelBase
         Matrix3 dxpj_dkj_;
         Matrix3 dxpk_dkj_;
         Matrix3 dxpk_dlk_;
-        Vec3<double> dcos_dxpj_;
-        Vec3<double> dcos_dxpk_;
+        Vector3 dcos_dxpj_;
+        Vector3 dcos_dxpk_;
     };
     // Add torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index
     void addTorsionForceI(double du_dphi, int index, TorsionParameters &torsionParameters, ForceVector &f) const;
@@ -86,13 +85,12 @@ class GeometryKernel : public KernelBase
     // Return SpeciesTorsion energy at Atoms specified
     double torsionEnergy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const;
     // Calculate torsion force parameters from supplied vectors
-    static TorsionParameters calculateTorsionForceParameters(const Vec3<double> &vecji, const Vec3<double> &vecjk,
-                                                             const Vec3<double> &veckl);
+    static TorsionParameters calculateTorsionForceParameters(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl);
     // Calculate SpeciesTorsion forces
     void torsionForces(const SpeciesTorsion &torsion, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
                        int indexK, const Atom &l, int indexL, ForceVector &f) const;
-    void torsionForces(const SpeciesTorsion &torsion, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
-                       const Vec3<double> &rl, ForceVector &f) const;
+    void torsionForces(const SpeciesTorsion &torsion, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
+                       const Vector3 &rl, ForceVector &f) const;
 
     /*
      * Improper Terms
@@ -103,8 +101,8 @@ class GeometryKernel : public KernelBase
     // Calculate SpeciesImproper forces
     void improperForces(const SpeciesImproper &improper, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
                         int indexK, const Atom &l, int indexL, ForceVector &f) const;
-    void improperForces(const SpeciesImproper &improper, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
-                        const Vec3<double> &rl, ForceVector &f) const;
+    void improperForces(const SpeciesImproper &improper, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
+                        const Vector3 &rl, ForceVector &f) const;
 
     /*
      * Total Energy

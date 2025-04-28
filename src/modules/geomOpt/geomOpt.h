@@ -32,11 +32,11 @@ class GeometryOptimisationModule : public Module
     // Tolerance controlling convergence of algorithm
     double tolerance_{1.0e-4};
     // Current (reference) coordinates
-    std::vector<Vec3<double>> rRef_;
+    std::vector<Vector3> rRef_;
     // Temporary test coordinates
-    std::vector<Vec3<double>> rTemp_;
+    std::vector<Vector3> rTemp_;
     // Current forces
-    std::vector<Vec3<double>> f_;
+    std::vector<Vector3> f_;
 
     /*
      * Functions
@@ -80,7 +80,7 @@ class GeometryOptimisationModule : public Module
         Messenger::printVerbose("--> GOLD point is {:12.5e} [{:12.5e}] ", eNew, newMinimum);
 
         // Set order for checking of energy points
-        Vec3<int> order(1, xyLargest ? 0 : 2, xyLargest ? 2 : 0);
+        Vector3i order(1, xyLargest ? 0 : 2, xyLargest ? 2 : 0);
 
         // Check each energy to see if our new energy is lower. If it is, overwrite it and recurse
         for (auto n = 0; n < 3; ++n)

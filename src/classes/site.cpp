@@ -10,13 +10,13 @@
 #include <utility>
 
 Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
-           const Vec3<double> &origin)
+           const Vector3 &origin)
     : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule)), origin_(origin)
 {
 }
 
 Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
-           const Matrix3 &axes, const Vec3<double> &origin)
+           const Matrix3 &axes, const Vector3 &origin)
     : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule)), origin_(origin), axes_(axes),
       hasAxes_(true)
 {
@@ -63,7 +63,7 @@ const SpeciesSite *Site::parent() const { return parent_; }
 std::optional<int> Site::uniqueSiteIndex() const { return uniqueSiteIndex_; }
 
 // Return site origin
-const Vec3<double> &Site::origin() const { return origin_; }
+const Vector3 &Site::origin() const { return origin_; }
 
 // Return Molecule to which site is related (if relevant)
 std::shared_ptr<const Molecule> Site::molecule() const { return molecule_; }

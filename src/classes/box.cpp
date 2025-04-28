@@ -8,12 +8,12 @@
 #include "math/interpolator.h"
 #include <algorithm>
 
-Box::Box(Box::BoxType boxType, const Vec3<double> lengths, const Vec3<double> angles)
+Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
     : type_(boxType), a_(lengths.x), b_(lengths.y), c_(lengths.z), ra_(1.0 / lengths.x), rb_(1.0 / lengths.y),
       rc_(1.0 / lengths.z), alpha_(angles.x), beta_(angles.y), gamma_(angles.z)
 {
     // Set periodicity flags
-    periodic_.set(type_ != BoxType::NonPeriodic, type_ != BoxType::NonPeriodic, type_ != BoxType::NonPeriodic);
+    periodic_ = {type_ != BoxType::NonPeriodic, type_ != BoxType::NonPeriodic, type_ != BoxType::NonPeriodic};
 
     // Construct axes matrix
     axes_.setIdentity();
@@ -89,7 +89,7 @@ EnumOptions<Box::BoxType> Box::boxTypes()
 Box::BoxType Box::type() const { return type_; }
 
 // Determine Box type
-std::optional<Box::BoxType> Box::type(Vec3<double> lengths, Vec3<double> angles)
+std::optional<Box::BoxType> Box::type(Vector3 lengths, Vector3 angles)
 {
     // Check lengths
     if (lengths.min() < 1.0e-5 || angles.min() < 1.0)
@@ -127,9 +127,9 @@ std::optional<Box::BoxType> Box::type(Vec3<double> lengths, Vec3<double> angles)
 double Box::volume() const { return volume_; }
 
 // Return axis lengths
-Vec3<double> Box::axisLengths() const
+Vector3 Box::axisLengths() const
 {
-    return Vec3<double>(axes_.columnMagnitude(0), axes_.columnMagnitude(1), axes_.columnMagnitude(2));
+    return Vector3(axes_.columnMagnitude(0), axes_.columnMagnitude(1), axes_.columnMagnitude(2));
 }
 
 // Return axis length specified
@@ -141,14 +141,14 @@ double Box::axisLength(int n) const
 }
 
 // Return axis angles
-Vec3<double> Box::axisAngles() const { return Vec3<double>(axisAngle(0), axisAngle(1), axisAngle(2)); }
+Vector3 Box::axisAngles() const { return Vector3(axisAngle(0), axisAngle(1), axisAngle(2)); }
 
 // Return axis angle specified
 double Box::axisAngle(int n) const
 {
     assert(n >= 0 && n < 3);
 
-    Vec3<double> u, v;
+    Vector3 u, v;
     u = axes_.columnAsVec3((n + 1) % 3);
     v = axes_.columnAsVec3((n + 2) % 3);
     u.normalise();
@@ -167,17 +167,16 @@ const Matrix3 &Box::inverseAxes() const { return inverseAxes_; }
 double Box::reciprocalVolume() const { return reciprocalVolume_; }
 
 // Return reciprocal axis lengths
-Vec3<double> Box::reciprocalAxisLengths() const
+Vector3 Box::reciprocalAxisLengths() const
 {
-    return Vec3<double>(reciprocalAxes_.columnMagnitude(0), reciprocalAxes_.columnMagnitude(1),
-                        reciprocalAxes_.columnMagnitude(2));
+    return Vector3(reciprocalAxes_.columnMagnitude(0), reciprocalAxes_.columnMagnitude(1), reciprocalAxes_.columnMagnitude(2));
 }
 
 // Return reciprocal axes matrix
 const Matrix3 &Box::reciprocalAxes() const { return reciprocalAxes_; }
 
 // Scale Box lengths by specified factors
-void Box::scale(Vec3<double> scaleFactors)
+void Box::scale(Vector3 scaleFactors)
 {
     // Make a check here for cubic boxes, in which case all elements in scaleFactors must be equal
     if (type_ == BoxType::Cubic)
@@ -226,14 +225,14 @@ void Box::scale(Vec3<double> scaleFactors)
  */
 
 // Return specified fractional coordinates converted to real-space coordinates
-Vec3<double> Box::getReal(Vec3<double> r) const
+Vector3 Box::getReal(Vector3 r) const
 {
     toReal(r);
     return r;
 }
 
 // Return specified real coordinates converted to fractional coordinates
-Vec3<double> Box::getFractional(Vec3<double> r) const
+Vector3 Box::getFractional(Vector3 r) const
 {
     toFractional(r);
     return r;
@@ -244,9 +243,9 @@ Vec3<double> Box::getFractional(Vec3<double> r) const
  */
 
 // Return angle (in degrees) between coordinates
-double Box::angleInDegrees(const Vec3<double> &i, const Vec3<double> &j, const Vec3<double> &k) const
+double Box::angleInDegrees(const Vector3 &i, const Vector3 &j, const Vector3 &k) const
 {
-    static Vec3<double> vecji, vecjk;
+    static Vector3 vecji, vecjk;
     vecji = minimumVector(j, i);
     vecjk = minimumVector(j, k);
 
@@ -259,19 +258,19 @@ double Box::angleInDegrees(const Vec3<double> &i, const Vec3<double> &j, const V
 }
 
 // Return angle (in degrees) between supplied normalised vectors
-double Box::angleInDegrees(const Vec3<double> &normji, const Vec3<double> &normjk) { return acos(normji.dp(normjk)) * DEGRAD; }
+double Box::angleInDegrees(const Vector3 &normji, const Vector3 &normjk) { return acos(normji.dp(normjk)) * DEGRAD; }
 
 // Return angle (in degrees) between supplied normalised vectors
-double Box::angleInDegrees(const Vec3<double> &normji, const Vec3<double> &normjk, double &dotProduct)
+double Box::angleInDegrees(const Vector3 &normji, const Vector3 &normjk, double &dotProduct)
 {
     dotProduct = normji.dp(normjk);
     return acos(dotProduct) * DEGRAD;
 }
 
 // Return literal angle (in degrees) between coordinates, without applying minimum image convention
-double Box::literalAngleInDegrees(const Vec3<double> &i, const Vec3<double> &j, const Vec3<double> &k)
+double Box::literalAngleInDegrees(const Vector3 &i, const Vector3 &j, const Vector3 &k)
 {
-    static Vec3<double> vecji, vecjk;
+    static Vector3 vecji, vecjk;
     vecji = i - j;
     vecji.normalise();
     vecjk = k - j;
@@ -280,35 +279,35 @@ double Box::literalAngleInDegrees(const Vec3<double> &i, const Vec3<double> &j, 
 }
 
 // Return torsion (in degrees) between supplied unnormalised vectors
-double Box::torsionInDegrees(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl)
+double Box::torsionInDegrees(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl)
 {
     // Calculate cross products and torsion angle formed (in radians)
-    Vec3<double> xpj, xpk;
+    Vector3 xpj, xpk;
     double magxpj, magxpk;
 
     return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk) * DEGRAD;
 }
 
 // Return torsion (in degrees) between supplied unnormalised vectors
-double Box::torsionInDegrees(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl, Vec3<double> &xpj,
-                             double &magxpj, Vec3<double> &xpk, double &magxpk)
+double Box::torsionInDegrees(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl, Vector3 &xpj, double &magxpj,
+                             Vector3 &xpk, double &magxpk)
 {
     return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk) * DEGRAD;
 }
 
 // Return torsion (in radians) between supplied unnormalised vectors
-double Box::torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl)
+double Box::torsionInRadians(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl)
 {
     // Calculate cross products and torsion angle formed (in radians)
-    Vec3<double> xpj, xpk;
+    Vector3 xpj, xpk;
     double magxpj, magxpk;
 
     return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk);
 }
 
 // Return torsion (in radians) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
-double Box::torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl, Vec3<double> &xpj,
-                             double &magxpj, Vec3<double> &xpk, double &magxpk)
+double Box::torsionInRadians(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl, Vector3 &xpj, double &magxpj,
+                             Vector3 &xpk, double &magxpk)
 {
     xpj = vecjk * vecji;
     xpk = vecjk * veckl;
@@ -322,7 +321,7 @@ double Box::torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecj
  */
 
 // Generate a suitable Box given the supplied relative lengths, angles
-std::unique_ptr<Box> Box::generate(Vec3<double> lengths, Vec3<double> angles)
+std::unique_ptr<Box> Box::generate(Vector3 lengths, Vector3 angles)
 {
     auto boxType = type(lengths, angles);
     if (!boxType)
@@ -352,7 +351,7 @@ double Box::inscribedSphereRadius() const
 {
     // Radius of largest inscribed sphere is the smallest of the three calculated values....
     double mag, diameter, result = 0.0;
-    Vec3<double> cross;
+    Vector3 cross;
     int n, i, j;
     for (n = 0; n < 3; ++n)
     {
@@ -370,15 +369,15 @@ double Box::inscribedSphereRadius() const
 }
 
 // Return random coordinate inside Box
-Vec3<double> Box::randomCoordinate() const
+Vector3 Box::randomCoordinate() const
 {
-    Vec3<double> r(DissolveMath::random(), DissolveMath::random(), DissolveMath::random());
+    Vector3 r(DissolveMath::random(), DissolveMath::random(), DissolveMath::random());
     toReal(r);
     return r;
 }
 
 // Return folded coordinate (i.e. inside current Box)
-Vec3<double> Box::fold(const Vec3<double> &r) const
+Vector3 Box::fold(const Vector3 &r) const
 {
     // Convert coordinate to fractional coords
     auto frac = r;
@@ -395,7 +394,7 @@ Vec3<double> Box::fold(const Vec3<double> &r) const
 }
 
 // Return folded fractional coordinate (i.e. inside current Box)
-Vec3<double> Box::foldFrac(const Vec3<double> &r) const
+Vector3 Box::foldFrac(const Vector3 &r) const
 {
     // Convert coordinate to fractional coords
     auto frac = r;
@@ -410,18 +409,20 @@ Vec3<double> Box::foldFrac(const Vec3<double> &r) const
 }
 
 // Determine axis scale factors to give requested volume, with scaling ratios provided
-Vec3<double> Box::scaleFactors(double requestedVolume, Vec3<bool> scalableAxes) const
+Vector3 Box::scaleFactors(double requestedVolume, const std::array<bool, 3> &scalableAxes) const
 {
+    auto &[scaleX, scaleY, scaleZ] = scalableAxes;
+
     // Sanity check
-    if (!scalableAxes.x && !scalableAxes.y && !scalableAxes.z)
+    if (!scaleX && !scaleY && !scaleZ)
         throw(std::runtime_error("No axes specified as scalable, so no scaling factor can be calculated.\n"));
 
     // Determine root power
-    auto rootPower = 1.0 / (scalableAxes.x + scalableAxes.y + scalableAxes.z);
+    auto rootPower = 1.0 / (scaleX + scaleY + scaleZ);
 
     auto ratio = pow(requestedVolume, rootPower) / pow(volume_, rootPower);
 
-    return {scalableAxes.x ? ratio : 1.0, scalableAxes.y ? ratio : 1.0, scalableAxes.z ? ratio : 1.0};
+    return {scaleX ? ratio : 1.0, scaleY ? ratio : 1.0, scaleZ ? ratio : 1.0};
 }
 
 // Express as a serialisable value
@@ -430,6 +431,6 @@ SerialisedValue Box::serialise() const
     SerialisedValue box;
     box["lengths"] = {a_, b_, c_};
     box["angles"] = {alpha_, beta_, gamma_};
-    box["nonPeriodic"] = {!periodic_.x, !periodic_.y, !periodic_.z};
+    box["nonPeriodic"] = {!std::get<0>(periodic_), !std::get<1>(periodic_), !std::get<2>(periodic_)};
     return box;
 }

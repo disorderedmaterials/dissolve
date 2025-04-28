@@ -4,6 +4,7 @@
 #include "gui/render/renderableGroupManager.h"
 #include "base/sysFunc.h"
 #include "gui/render/renderable.h"
+#include <iostream>
 
 RenderableGroupManager::RenderableGroupManager()
 {

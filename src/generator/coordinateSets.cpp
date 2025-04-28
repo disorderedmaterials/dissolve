@@ -52,19 +52,19 @@ EnumOptions<CoordinateSetsGeneratorNode::CoordinateSetSource> CoordinateSetsGene
 }
 
 // Add new coordinate set
-std::vector<Vec3<double>> &CoordinateSetsGeneratorNode::addSet()
+std::vector<Vector3> &CoordinateSetsGeneratorNode::addSet()
 {
     assert(species_);
-    return sets_.emplace_back(species_->nAtoms(), Vec3<double>());
+    return sets_.emplace_back(species_->nAtoms(), Vector3());
 }
 
-void CoordinateSetsGeneratorNode::setSets(std::vector<std::vector<Vec3<double>>> sets) { sets_ = std::move(sets); }
+void CoordinateSetsGeneratorNode::setSets(std::vector<std::vector<Vector3>> sets) { sets_ = std::move(sets); }
 
 // Return number of available coordinates sets
 int CoordinateSetsGeneratorNode::nSets() const { return sets_.size(); }
 
 // Return nth coordinate set
-const std::vector<Vec3<double>> &CoordinateSetsGeneratorNode::set(int n) const { return sets_[n]; }
+const std::vector<Vector3> &CoordinateSetsGeneratorNode::set(int n) const { return sets_[n]; }
 
 /*
  * Execute
@@ -147,17 +147,17 @@ bool CoordinateSetsGeneratorNode::execute(const GeneratorContext &generatorConte
                               ProcessPool::subDivisionStrategy(generatorContext.processPool().bestStrategy()));
 
     // Initialise random velocities
-    std::vector<Vec3<double>> velocities(species_->nAtoms());
+    std::vector<Vector3> velocities(species_->nAtoms());
     std::generate(velocities.begin(), velocities.end(),
                   [&]()
                   {
-                      return Vec3<double>(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5),
-                                          exp(randomBuffer.random() - 0.5)) /
+                      return Vector3(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5),
+                                     exp(randomBuffer.random() - 0.5)) /
                              sqrt(TWOPI);
                   });
 
     // Grab current Species coordinates
-    std::vector<Vec3<double>> r(species_->nAtoms());
+    std::vector<Vector3> r(species_->nAtoms());
     std::transform(species_->atoms().begin(), species_->atoms().end(), r.begin(), [](const auto &i) { return i.r(); });
 
     Messenger::print("[CoordinateSets] Generating {} sets...\n", nSets_.asInteger());

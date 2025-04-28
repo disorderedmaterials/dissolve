@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/randomBuffer.h"
+#include "math/mathFunc.h"
 
 RandomBuffer::RandomBuffer(const ProcessPool &procPool, ProcessPool::CommunicatorType commType,
                            OptionalReferenceWrapper<Timer> commsTimer)

@@ -72,7 +72,7 @@ class Species : public Serialisable<const CoreData &>
 
     public:
     // Add a new atom to the Species, returning its index
-    int addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0, std::shared_ptr<AtomType> atomType = nullptr);
+    int addAtom(Elements::Element Z, Vector3 r, double q = 0.0, std::shared_ptr<AtomType> atomType = nullptr);
     // Remove the specified atom from the species
     void removeAtom(int index);
     // Remove set of atom indices
@@ -88,7 +88,7 @@ class Species : public Serialisable<const CoreData &>
     const std::vector<SpeciesAtom> &atoms() const;
     std::vector<SpeciesAtom> &atoms();
     // Set coordinates of specified atom
-    void setAtomCoordinates(SpeciesAtom *i, Vec3<double> r);
+    void setAtomCoordinates(SpeciesAtom *i, Vector3 r);
     // Set coordinates of specified atom (by index and individual coordinates)
     void setAtomCoordinates(int id, double x, double y, double z);
     // Transmute specified atom
@@ -254,7 +254,7 @@ class Species : public Serialisable<const CoreData &>
     // Remove Box definition and revert to single image
     void removeBox();
     // Create Box definition with specified lengths and angles
-    void createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
+    void createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic = false);
 
     /*
      * Source Forcefield (if any)
@@ -332,9 +332,9 @@ class Species : public Serialisable<const CoreData &>
      */
     public:
     // Calculate and return centre of geometry
-    Vec3<double> centreOfGeometry(const Box *box) const;
+    Vector3 centreOfGeometry(const Box *box) const;
     // Set centre of geometry
-    void setCentre(const Box *box, const Vec3<double> newCentre);
+    void setCentre(const Box *box, const Vector3 newCentre);
     // Centre coordinates at origin
     void centreAtOrigin();
 

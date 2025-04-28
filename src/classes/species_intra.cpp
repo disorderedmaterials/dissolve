@@ -747,7 +747,7 @@ const Box *Species::box() const { return box_.get(); }
 void Species::removeBox() { box_ = std::make_unique<SingleImageBox>(); }
 
 // Create Box definition with specified lengths and angles
-void Species::createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic)
+void Species::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
     box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
 }

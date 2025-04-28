@@ -22,7 +22,7 @@ class IntraDistanceModule : public Module
     // Target SpeciesSite definitions
     std::vector<const SpeciesSite *> a_, b_;
     // Range (min, max, delta) of distance axis
-    Vec3<double> distanceRange_{0.0, 10.0, 0.05};
+    Vector3 distanceRange_{0.0, 10.0, 0.05};
     // Export target
     Data1DExportFileFormat exportFileAndFormat_;
 

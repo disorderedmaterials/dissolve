@@ -28,7 +28,7 @@ BraggModule::BraggModule() : Module(ModuleTypes::Bragg)
     keywords_
         .add<Vec3IntegerKeyword>("Multiplicity",
                                  "Bragg intensity scaling factor accounting for number of repeat units in Configuration",
-                                 multiplicity_, Vec3<int>(1, 1, 1), std::nullopt, Vec3Labels::HKLLabels)
+                                 multiplicity_, Vector3i(1, 1, 1), std::nullopt, Vec3Labels::HKLLabels)
         ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Averaging");

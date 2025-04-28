@@ -130,7 +130,7 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
  */
 
 // Calculate extended forces on supplied atom
-void ForceKernel::extendedForces(const Atom &i, Vec3<double> &fVec) const { return; }
+void ForceKernel::extendedForces(const Atom &i, Vector3 &fVec) const { return; }
 
 // Calculate extended forces on supplied molecule
 void ForceKernel::extendedForces(const Molecule &mol, ForceVector &f) const { return; }

@@ -10,7 +10,7 @@
 class BoxGeneratorNode : public GeneratorNode
 {
     public:
-    BoxGeneratorNode(Vec3<NodeValue> lengths = {1.0, 1.0, 1.0}, Vec3<NodeValue> angles = {90, 90, 90},
+    BoxGeneratorNode(Vector3NodeValue lengths = {1.0, 1.0, 1.0}, Vector3NodeValue angles = {90, 90, 90},
                      bool nonPeriodic = false);
     ~BoxGeneratorNode() override = default;
 
@@ -26,9 +26,9 @@ class BoxGeneratorNode : public GeneratorNode
      */
     private:
     // Box angles
-    Vec3<NodeValue> angles_;
+    Vector3NodeValue angles_;
     // Box lengths
-    Vec3<NodeValue> lengths_;
+    Vector3NodeValue lengths_;
     // Whether the box is non-periodic
     bool nonPeriodic_{false};
 

@@ -31,7 +31,7 @@ void KVector::initialise(int h, int k, int l, int reflectionIndex, int nAtomType
 }
 
 // Return integer hkl indices
-const Vec3<int> &KVector::hkl() const { return hkl_; }
+const Vector3i &KVector::hkl() const { return hkl_; }
 
 // Return h index
 int KVector::h() const { return hkl_.x; }

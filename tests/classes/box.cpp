@@ -2,11 +2,12 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/box.h"
+#include "math/mathFunc.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
 {
-Vec3<double> manualMim(Box &box, const Vec3<double> r1, const Vec3<double> r2)
+Vector3 manualMim(Box &box, const Vector3 r1, const Vector3 r2)
 {
     auto mim = box.inverseAxes() * (r1 - r2);
     if (mim.x < -0.5)
@@ -24,7 +25,7 @@ Vec3<double> manualMim(Box &box, const Vec3<double> r1, const Vec3<double> r2)
     return box.axes() * mim + r2;
 }
 
-void scaleBox(Box &box, double requestedVolume, Vec3<bool> scalableAxes, bool uniform = false)
+void scaleBox(Box &box, double requestedVolume, const std::array<bool, 3> &scalableAxes, bool uniform = false)
 {
     // Get original lengths, angles, and volume for comparison
     auto lengths = box.axisLengths();
@@ -61,12 +62,12 @@ void scaleBox(Box &box, double requestedVolume, Vec3<bool> scalableAxes, bool un
 void testBasicOperations(Box &box)
 {
     // Determine central coordinate from full axes matrix
-    auto centroid = box.axes() * Vec3<double>(0.5, 0.5, 0.5);
+    auto centroid = box.axes() * Vector3(0.5, 0.5, 0.5);
 
     // For each corner, determine correct coordinates from full axes matrix, then test optimised imaging / vector functions
     for (auto n = 0; n < 8; ++n)
     {
-        auto corner = box.axes() * Vec3<double>((n & 1) ? 1.0 : 0.0, (n & 2) ? 1.0 : 0.0, (n & 4) ? 1.0 : 0.0);
+        auto corner = box.axes() * Vector3((n & 1) ? 1.0 : 0.0, (n & 2) ? 1.0 : 0.0, (n & 4) ? 1.0 : 0.0);
 
         // Calculate manual minimum image vector
         auto mimCorner = manualMim(box, corner, centroid);
@@ -84,7 +85,7 @@ void testBasicOperations(Box &box)
         EXPECT_NEAR(mimCorner.z, mim.z, 1.0e-8);
 
         // Fold
-        auto scaledCorner = box.axes() * Vec3<double>((n & 1) ? -2.0 : 0.0, (n & 2) ? 5.0 : 0.0, (n & 4) ? -97.0 : 0.0);
+        auto scaledCorner = box.axes() * Vector3((n & 1) ? -2.0 : 0.0, (n & 2) ? 5.0 : 0.0, (n & 4) ? -97.0 : 0.0);
         scaledCorner += centroid;
         auto p = box.fold(scaledCorner);
         EXPECT_NEAR(p.x, centroid.x, 1.0e-8);
@@ -113,17 +114,17 @@ void testScaling(Box &box)
     scaleBox(box, box.volume() * factor, {true, false, true});
 }
 
-void testPBC(const Box &box, const Vec3<double> origin, int nPoints = 100)
+void testPBC(const Box &box, const Vector3 origin, int nPoints = 100)
 {
     // Create a number of points on a sphere about the specified origin, on a radius corresponding to the max mim
-    std::vector<Vec3<double>> points;
+    std::vector<Vector3> points;
     points.reserve(nPoints);
     const auto r = box.inscribedSphereRadius();
     for (auto n = 0; n < nPoints; ++n)
     {
         auto theta = DissolveMath::random() * M_PI;
         auto phi = DissolveMath::random() * 2.0 * M_PI;
-        points.emplace_back(Vec3<double>(r * sin(theta) * cos(phi), r * sin(theta) * sin(phi), r * cos(theta)) + origin);
+        points.emplace_back(Vector3(r * sin(theta) * cos(phi), r * sin(theta) * sin(phi), r * cos(theta)) + origin);
     }
 
     // Test point distances from origin

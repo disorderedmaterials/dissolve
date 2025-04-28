@@ -106,7 +106,7 @@ TEST_F(VoxelDensityModuleTest, Mass)
                                  .search<const Data1D>(std::format("Mass({}-bin)//Data1D", nAxisVoxels))
                                  ->get();
         auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1D)->values());
-        auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
+        auto binRange = module->keywords().get<Vector3, Vec3DoubleKeyword>("BinRange");
         auto binWidth = (*binRange).z;
         ASSERT_NEAR(maxBin.first * binWidth, consts.mass, 10e-2);
         ASSERT_EQ(maxBin.second, DissolveMath::power(nAxisVoxels, 3));
@@ -141,7 +141,7 @@ TEST_F(VoxelDensityModuleTest, AtomicNumber)
                                  .search<const Data1D>(std::format("Z({}-bin)//Data1D", nAxisVoxels))
                                  ->get();
         auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1D)->values());
-        auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
+        auto binRange = module->keywords().get<Vector3, Vec3DoubleKeyword>("BinRange");
         auto binWidth = (*binRange).z;
         ASSERT_EQ(maxBin.first * binWidth, consts.Z);
         ASSERT_EQ(maxBin.second, DissolveMath::power(nAxisVoxels, 3));
@@ -176,7 +176,7 @@ TEST_F(VoxelDensityModuleTest, ScatteringLengthDensity)
                                  .search<const Data1D>(std::format("ScatteringLengthDensity({}-bin)//Data1D", nAxisVoxels))
                                  ->get();
         auto maxBin = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1D)->values());
-        auto binRange = module->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange");
+        auto binRange = module->keywords().get<Vector3, Vec3DoubleKeyword>("BinRange");
         auto binWidth = (*binRange).z;
         ASSERT_NEAR(maxBin.first * binWidth, consts.scatteringLengthDensity, 10e-3);
         ASSERT_EQ(maxBin.second, DissolveMath::power(nAxisVoxels, 3));
@@ -199,7 +199,7 @@ TEST_F(VoxelDensityModuleTest, Water)
     const auto &data1DMass =
         systemTest.dissolve().processingModuleData().search<const Data1D>(std::format("VoxelDensity(Mass)//Data1D"))->get();
     auto maxBinMass = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1DMass)->values());
-    auto binWidthMass = (*moduleMass->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange")).z;
+    auto binWidthMass = (*moduleMass->keywords().get<Vector3, Vec3DoubleKeyword>("BinRange")).z;
     EXPECT_EQ(maxBinMass.second, 1.0);
     ASSERT_NEAR(maxBinMass.first * binWidthMass, consts.mass * cfg->nMolecules() / (moduleMass->voxelVolume()), 10e-2);
 
@@ -208,7 +208,7 @@ TEST_F(VoxelDensityModuleTest, Water)
                               .search<const Data1D>(std::format("VoxelDensity(AtomicNumber)//Data1D"))
                               ->get();
     auto maxBinZ = DissolveLimits::maxValueAt<double>(const_cast<Data1D *>(&data1DZ)->values());
-    auto binWidthZ = (*moduleZ->keywords().get<Vec3<double>, Vec3DoubleKeyword>("BinRange")).z;
+    auto binWidthZ = (*moduleZ->keywords().get<Vector3, Vec3DoubleKeyword>("BinRange")).z;
     EXPECT_EQ(maxBinZ.second, 1.0);
     ASSERT_NEAR(maxBinZ.first * binWidthZ, consts.Z * cfg->nMolecules() / (moduleZ->voxelVolume()), 10e-2);
 }

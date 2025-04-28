@@ -35,9 +35,9 @@ TEST(RotateFragmentGeneratorNodeTest, Benzene)
     auto *cfg = coreData.addConfiguration();
     auto &procedure = cfg->generator();
     auto boxLength = 20.0;
-    const Vec3<double> cellCentre(boxLength / 2, boxLength / 2, boxLength / 2);
-    auto box = procedure.createRootNode<BoxGeneratorNode>("Box", Vec3<NodeValue>(boxLength, boxLength, boxLength),
-                                                          Vec3<NodeValue>(90, 90, 90));
+    const Vector3 cellCentre(boxLength / 2, boxLength / 2, boxLength / 2);
+    auto box = procedure.createRootNode<BoxGeneratorNode>("Box", Vector3NodeValue(boxLength, boxLength, boxLength),
+                                                          Vector3NodeValue(90, 90, 90));
 
     // Add a single Benzene molecule at the centre of the cell - this way, rotations will not break it across box boundaries
     auto add = procedure.createRootNode<AddGeneratorNode>("Benzene", benzene, 1);
@@ -52,7 +52,7 @@ TEST(RotateFragmentGeneratorNodeTest, Benzene)
     auto mol = cfg->molecule(0);
 
     // Atom coordinates prior and posterior to rotations, with cell centre removed so as to give "local" coordinates
-    std::vector<Vec3<double>> coordinatesBefore(mol->nAtoms()), coordinatesAfter(mol->nAtoms());
+    std::vector<Vector3> coordinatesBefore(mol->nAtoms()), coordinatesAfter(mol->nAtoms());
     std::transform(mol->atoms().begin(), mol->atoms().end(), coordinatesBefore.begin(),
                    [&cellCentre](const auto &at) { return at->r() - cellCentre; });
 

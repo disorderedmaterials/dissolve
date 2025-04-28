@@ -18,9 +18,9 @@ The `GeneralRegion` node assesses the current contents of a configuration and lo
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`OriginFrac`|`Vec3<double>`|`0.0 0.0 0.0`|Origin of vector in fractional coordinates|
+|`OriginFrac`|`Vector3`|`0.0 0.0 0.0`|Origin of vector in fractional coordinates|
 |`Radius`|`double`|`2.0`|Cylinder radius|
-|`Vector`|`Vec3<double>`|`0.0 0.0 1.0`|Vector of cylinder|
+|`Vector`|`Vector3`|`0.0 0.0 1.0`|Vector of cylinder|
 
 ### Grid
 

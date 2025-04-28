@@ -57,8 +57,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     AngleFunctions::Form af;
     TorsionFunctions::Form tf;
     SpeciesBond::BondType bt;
-    Vec3<double> boxAngles(90.0, 90.0, 90.0);
-    std::optional<Vec3<double>> boxLengths;
+    Vector3 boxAngles(90.0, 90.0, 90.0);
+    std::optional<Vector3> boxLengths;
     auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
     auto blockDone = false, errorsEncountered = false;
     auto atomVectorFixed = false, bondVectorFixed = false, angleVectorFixed = false, torsionVectorFixed = false,

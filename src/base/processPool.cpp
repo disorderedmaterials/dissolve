@@ -1113,8 +1113,8 @@ bool ProcessPool::allSum(double *source, int count, ProcessPool::CommunicatorTyp
     return true;
 }
 
-// Reduce (sum) vector of Vec3<double> data to all processes
-bool ProcessPool::allSum(std::vector<Vec3<double>> &source, ProcessPool::CommunicatorType commType,
+// Reduce (sum) vector of Vector3 data to all processes
+bool ProcessPool::allSum(std::vector<Vector3> &source, ProcessPool::CommunicatorType commType,
                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL

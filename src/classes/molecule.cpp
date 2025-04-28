@@ -131,11 +131,11 @@ void Molecule::traverseLocal(const Box *box, ConstManipulationFunction action) c
 }
 
 // Un-fold molecule so it is not cut by box boundaries
-Vec3<double> Molecule::unFold(const Box *box)
+Vector3 Molecule::unFold(const Box *box)
 {
-    Vec3<double> cog{0.0, 0.0, 0.0};
+    Vector3 cog{0.0, 0.0, 0.0};
     traverseLocal(box,
-                  [&cog](Atom *j, Vec3<double> rJ)
+                  [&cog](Atom *j, Vector3 rJ)
                   {
                       j->setCoordinates(rJ);
                       cog += rJ;
@@ -144,10 +144,10 @@ Vec3<double> Molecule::unFold(const Box *box)
 }
 
 // Set centre of geometry of molecule
-void Molecule::setCentreOfGeometry(const Box *box, const Vec3<double> &newCentre)
+void Molecule::setCentreOfGeometry(const Box *box, const Vector3 &newCentre)
 {
     // Calculate Molecule centre of geometry
-    Vec3<double> newR;
+    Vector3 newR;
     const auto cog = centreOfGeometry(box);
 
     // Apply transform
@@ -159,19 +159,19 @@ void Molecule::setCentreOfGeometry(const Box *box, const Vec3<double> &newCentre
 }
 
 // Calculate and return centre of geometry
-Vec3<double> Molecule::centreOfGeometry(const Box *box) const
+Vector3 Molecule::centreOfGeometry(const Box *box) const
 {
     if (nAtoms() == 0)
         return {};
 
-    Vec3<double> cog{0.0, 0.0, 0.0};
+    Vector3 cog{0.0, 0.0, 0.0};
     traverseLocal(box, [&cog](auto *j, auto rJ) { cog += rJ; });
 
     return cog / nAtoms();
 }
 
 // Calculate and return centre of geometry over supplied atom indices
-Vec3<double> Molecule::centreOfGeometry(const Box *box, const std::vector<int> &indices) const
+Vector3 Molecule::centreOfGeometry(const Box *box, const std::vector<int> &indices) const
 {
     const auto ref = atoms_[indices.front()]->r();
     return std::accumulate(std::next(indices.begin()), indices.end(), ref,
@@ -180,15 +180,15 @@ Vec3<double> Molecule::centreOfGeometry(const Box *box, const std::vector<int> &
 }
 
 // Calculate and return centre of mass over supplied atom indices
-Vec3<double> Molecule::centreOfMass(const Box *box, const std::vector<int> &indices) const
+Vector3 Molecule::centreOfMass(const Box *box, const std::vector<int> &indices) const
 {
     auto mass = AtomicMass::mass(atoms_[indices.front()]->speciesAtom()->Z());
     const auto ref = atoms_[indices.front()]->r();
-    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
+    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vector3, double>(ref * mass, mass),
                                 [&](const auto &acc, const auto idx)
                                 {
                                     auto mass = AtomicMass::mass(atoms_[idx]->speciesAtom()->Z());
-                                    return std::pair<Vec3<double>, double>(
+                                    return std::pair<Vector3, double>(
                                         acc.first + box->minimumImage(atoms_[idx]->r(), ref) * mass, acc.second + mass);
                                 });
     return sums.first / sums.second;
@@ -206,7 +206,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix)
 }
 
 // Transform molecule with supplied matrix about specified origin
-void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin)
+void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, const Vector3 &origin)
 {
     // Unfold
     unFold(box);
@@ -217,11 +217,11 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 }
 
 // Transform selected atoms with supplied matrix, around specified origin
-void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin,
+void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, const Vector3 &origin,
                          const std::vector<int> &targetAtoms)
 {
     // Loop over supplied Atoms
-    Vec3<double> newR;
+    Vector3 newR;
     Atom *i;
     for (const auto index : targetAtoms)
     {
@@ -232,14 +232,14 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 }
 
 // Translate whole molecule by the delta specified
-void Molecule::translate(const Vec3<double> &delta)
+void Molecule::translate(const Vector3 &delta)
 {
     for (auto n = 0; n < nAtoms(); ++n)
         atom(n)->translateCoordinates(delta);
 }
 
 // Translate specified atoms by the delta specified
-void Molecule::translate(const Vec3<double> &delta, const std::vector<int> &targetAtoms)
+void Molecule::translate(const Vector3 &delta, const std::vector<int> &targetAtoms)
 {
     for (const auto i : targetAtoms)
         atom(i)->translateCoordinates(delta);

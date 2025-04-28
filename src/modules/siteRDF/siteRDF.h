@@ -27,7 +27,7 @@ class SiteRDFModule : public Module
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{true};
     // Range (min, max, delta) of distance axis
-    Vec3<double> distanceRange_{0.0, 10.0, 0.05};
+    Vector3 distanceRange_{0.0, 10.0, 0.05};
     // Ranges for sums
     Range range_[3] = {{0.0, 3.0}, {3.0, 6.0}, {6.0, 9.0}};
     // Flags for ranges

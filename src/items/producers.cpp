@@ -30,7 +30,7 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<std::string>("std::string");
     registerProducer<std::streampos>("streampos");
     registerProducer<std::vector<double>>("std::vector<double>");
-    registerProducer<std::vector<Vec3<double>>>("std::vector<Vec3<double>>");
+    registerProducer<std::vector<Vector3>>("std::vector<Vector3>");
 
     // Custom Classes / Containers
     registerProducer<Array2D<double>>("Array2D<double>");
@@ -52,8 +52,8 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<SampledData1D>("SampledData1D");
     registerProducer<SampledDouble>("SampledDouble");
     registerProducer<SampledVector>("SampledVector");
-    registerProducer<Vec3<int>>("Vec3<int>");
-    registerProducer<Vec3<double>>("Vec3<double>");
+    registerProducer<Vector3i>("Vector3i");
+    registerProducer<Vector3>("Vector3");
     registerProducer<XRayWeights>("XRayWeights");
 
     // Containers of Custom Classes
