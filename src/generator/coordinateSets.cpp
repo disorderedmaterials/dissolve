@@ -12,6 +12,7 @@
 #include "keywords/node.h"
 #include "keywords/nodeValue.h"
 #include "keywords/species.h"
+#include "math/mathFunc.h"
 #include "modules/md/md.h"
 
 CoordinateSetsGeneratorNode::CoordinateSetsGeneratorNode(const Species *sp)
