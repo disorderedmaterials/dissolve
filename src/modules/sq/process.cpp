@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include "math/mathFunc.h"
+
 #include "classes/configuration.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
