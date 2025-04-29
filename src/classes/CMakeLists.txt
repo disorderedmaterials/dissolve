@@ -42,6 +42,7 @@ add_library(
   localMolecule.cpp
   molecule.cpp
   moleculeDistributor.cpp
+  moleculeSet.cpp
   neutronWeights.cpp
   pairPotential.cpp
   pairPotentialOverride.cpp
@@ -105,6 +106,7 @@ add_library(
   localMolecule.h
   molecule.h
   moleculeDistributor.h
+  moleculeSet.h
   neutronWeights.h
   pairPotential.h
   pairPotentialOverride.h
