@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#define _USE_MATH_DEFINES
 #include "math/function1D.h"
-#include "templates/algorithms.h"
-#include <math.h>
-
 #include "classes/pairPotential.h"
+#include "math/mathFunc.h"
+#include "templates/algorithms.h"
 #include <map>
 
 /*

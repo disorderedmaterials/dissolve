@@ -4,6 +4,7 @@
 #include "math/windowFunction.h"
 #include "base/lineParser.h"
 #include "math/data1D.h"
+#include "math/mathFunc.h"
 
 WindowFunction::WindowFunction(WindowFunction::Form function) : form_(function) {}
 
