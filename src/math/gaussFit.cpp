@@ -6,6 +6,7 @@
 #include "math/data1D.h"
 #include "math/error.h"
 #include "math/filters.h"
+#include "math/mathFunc.h"
 #include "math/mc.h"
 #include "math/praxis.h"
 #include "templates/algorithms.h"
