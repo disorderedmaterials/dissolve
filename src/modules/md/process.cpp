@@ -6,6 +6,7 @@
 #include "base/timer.h"
 #include "data/atomicMasses.h"
 #include "main/dissolve.h"
+#include "math/mathFunc.h"
 #include "module/context.h"
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"
