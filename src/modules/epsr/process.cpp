@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include "math/mathFunc.h"
+
 #include "base/sysFunc.h"
 #include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
