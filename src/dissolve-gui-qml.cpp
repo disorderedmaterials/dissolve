@@ -11,6 +11,7 @@
 #include "math/mathFunc.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <QSurfaceFormat>
 #include <clocale>
 
@@ -19,6 +20,9 @@ int main(int args, char **argv)
     // Instantiate main classes
     CoreData coreData;
     Dissolve dissolve(coreData);
+
+    DissolveModel dissolveModel;
+    dissolveModel.setDissolve(dissolve);
 
     // Parse CLI options
     CLIOptions options;
@@ -32,14 +36,15 @@ int main(int args, char **argv)
     QGuiApplication app(args, argv);
 
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("dissolve", &dissolveModel);
     const QUrl url(u"qrc:/Dissolve/qml/DissolveMain.qml"_qs);
+    Types::registerDissolveQmlTypes();
 
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app, []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     engine.load(url);
 
-    Types::registerDissolveQmlTypes();
     QCoreApplication::setOrganizationName("Team Dissolve");
     QCoreApplication::setOrganizationDomain("www.projectdissolve.com");
     QCoreApplication::setApplicationName("Dissolve-GUI-QML");

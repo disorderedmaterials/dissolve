@@ -293,6 +293,8 @@ if(GUI)
     Dissolve
     QML_FILES
     ${SRCS}/gui-qml/qml/DissolveMain.qml
+    ${SRCS}/gui/qml/nodeGraph/GraphView.qml
+    ${SRCS}/gui/qml/nodeGraph/NodeBox.qml
   )
 
   # Set project-local include directories for target (we expect to need less of these dependencies over time)

@@ -14,7 +14,12 @@ GraphNodeModel &GraphNodeModel::operator=(const GraphNodeModel &other)
 bool GraphNodeModel::operator!=(const GraphNodeModel &other) { return &parent_ != &other.parent_; }
 
 // Number of nodes (required by QAbstractListModel)
-int GraphNodeModel::rowCount(const QModelIndex &parent) const { return parent_->graph().nodes().size(); }
+int GraphNodeModel::rowCount(const QModelIndex &parent) const
+{
+    if (!parent_->graph())
+        return 0;
+    return parent_->graph()->nodes().size();
+}
 
 // Labels for QML roles (required by QAbstractListModel)
 QHash<int, QByteArray> GraphNodeModel::roleNames() const
@@ -74,7 +79,7 @@ bool GraphNodeModel::setData(const QModelIndex &index, const QVariant &value, in
 // Must call *before* inserting new elements.  The count is the number of elements that will be inserted
 void GraphNodeModel::beginInsert(int count)
 {
-    beginInsertRows({}, parent_->graph().nodes().size(), parent_->graph().nodes().size() + count);
+    beginInsertRows({}, parent_->graph()->nodes().size(), parent_->graph()->nodes().size() + count);
 }
 
 // Must call *after* inserting new elements

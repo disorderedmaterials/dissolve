@@ -4,13 +4,13 @@ qt6_wrap_cpp(nodeGraphModel_MOC_SRCS ${nodeGraphModel_MOC_HDRS})
 
 set(nodeGraphModel_SRCS
     graphEdgeModel.cpp
-    graphModelBase.cpp
+    graphModel.cpp
     graphNodeModel.cpp
 )
 
 qt6_wrap_cpp(
   nodeGraphModel_SRCS
-  graphModelBase.h
+  graphModel.h
   graphEdgeModel.h
   graphNodeModel.h
   nodeWrapper.h
