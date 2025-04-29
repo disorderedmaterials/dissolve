@@ -6,6 +6,7 @@
 #include <QAbstractListModel>
 #include <algorithm>
 #include <qnamespace.h>
+#include <variant>
 
 /** A structure that represents the connection between two nodes **/
 struct GraphRawEdge
