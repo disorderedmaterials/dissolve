@@ -12,7 +12,6 @@
 #include "gui/models/nodeGraph/graphModel.h"
 #include "gui/models/sortFilterProxy.h"
 #include "gui/models/speciesModel.h"
-#include "nodeGraph/graphModel.h"
 #include <QQmlEngine>
 #include <QSortFilterProxyModel>
 
