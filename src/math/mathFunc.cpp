@@ -2,10 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/mathFunc.h"
-#include "math/constants.h"
 #include "math/pcg.h"
 #include <cmath>
-#include <cstdlib>
 #include <random>
 
 namespace DissolveMath
@@ -79,5 +77,13 @@ double sgn(double a, double signOf) { return signOf >= 0.0 ? fabs(a) : -fabs(a);
 
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i) { return (i % 3); }
+
+/*
+ * Conversion
+ */
+
+// Convert degrees <--> radians
+double toRadians(double degrees) { return degrees / DegreesPerRadian; }
+double toDegrees(double radians) { return radians * DegreesPerRadian; }
 
 } // namespace DissolveMath

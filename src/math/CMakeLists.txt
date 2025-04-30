@@ -4,7 +4,6 @@ add_library(
   averaging.h
   combinations.cpp
   combinations.h
-  constants.h
   cuboid.cpp
   cuboid.h
   data1DBase.h

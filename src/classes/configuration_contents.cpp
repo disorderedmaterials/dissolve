@@ -6,6 +6,7 @@
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
+#include "math/mathFunc.h"
 #include <memory>
 #include <numeric>
 
@@ -77,7 +78,7 @@ double Configuration::atomicMass() const
         mass += spPop.first->mass() * spPop.second;
 
     // Convert to absolute mass
-    return mass / AVOGADRO;
+    return mass / DissolveMath::Avogadro;
 }
 
 // Return the atomic density of the Configuration

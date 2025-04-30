@@ -10,6 +10,7 @@
 #include "main/dissolve.h"
 #include "math/data3D.h"
 #include "math/error.h"
+#include "math/mathFunc.h"
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "math/sampledVector.h"
@@ -277,7 +278,7 @@ class DissolveSystemTest
     {
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, dataA, dataB).error;
-        auto notOK = isnan(error) || error > tolerance;
+        auto notOK = std::isnan(error) || error > tolerance;
         Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", nameA,
                          error, nameB, notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
@@ -317,7 +318,7 @@ class DissolveSystemTest
     {
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, dataA.values().linearArray(), dataB.values().linearArray()).error;
-        auto notOK = isnan(error) || error > tolerance;
+        auto notOK = std::isnan(error) || error > tolerance;
         Messenger::print("Internal data '{}' has error of {:7.3f} with external data '{}' and is {} (threshold is {:6.3e})\n\n",
                          nameA, error, nameB, notOK ? "NOT OK" : "OK", tolerance);
 
@@ -364,7 +365,7 @@ class DissolveSystemTest
 
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, data.values(), referenceData).error;
-        auto notOK = isnan(error) || error > tolerance;
+        auto notOK = std::isnan(error) || error > tolerance;
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n", tag,
                          error, notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
@@ -696,7 +697,7 @@ class SmallMolecules
         // Set up H2O species
         h2o_.addAtom(Elements::H, {1.0, 0.0, 0.0});
         h2o_.addAtom(Elements::O, {});
-        h2o_.addAtom(Elements::H, {cos(107.4 / DEGRAD), sin(107.4 / DEGRAD), 0.0});
+        h2o_.addAtom(Elements::H, {cos(DissolveMath::toRadians(107.4)), sin(DissolveMath::toRadians(107.4)), 0.0});
         h2o_.atom(0).setAtomType(atHW_);
         h2o_.atom(1).setAtomType(atOW_);
         h2o_.atom(2).setAtomType(atHW_);

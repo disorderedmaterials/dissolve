@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "math/mathFunc.h"
+
 #include "keywords/module.h"
 #include "main/dissolve.h"
 #include "math/ft.h"
@@ -72,7 +74,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
                          WindowFunction::forms().keyword(refWindowFunction_));
 
     // FT Reference data to ReresentativeTotalGR
-    Fourier::sineFT(referenceSQ, 1.0 / (2 * PI * PI * rho.value()), refftQMin, qDelta_, refftQMax, refWindowFunction_,
+    Fourier::sineFT(referenceSQ, 1.0 / (2 * M_PI * M_PI * rho.value()), refftQMin, qDelta_, refftQMax, refWindowFunction_,
                     refQBroadening_);
 
     // Get Q-range and window function to use for transformation of total F(Q) to G(r)
@@ -90,18 +92,18 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         {
             // Total partial
             representativeGR.partial(n, m).copyArrays(unweightedSQ.partial(n, m));
-            Fourier::sineFT(representativeGR.partial(n, m), 1.0 / (2 * PI * PI * rho.value()), repftQMin, qDelta_, repftQMax,
-                            WindowFunction::Form::None, repQBroadening_);
+            Fourier::sineFT(representativeGR.partial(n, m), 1.0 / (2 * M_PI * M_PI * rho.value()), repftQMin, qDelta_,
+                            repftQMax, WindowFunction::Form::None, repQBroadening_);
             representativeGR.partial(n, m) += 1.0;
 
             // Bound partial
             representativeGR.boundPartial(n, m).copyArrays(unweightedSQ.boundPartial(n, m));
-            Fourier::sineFT(representativeGR.boundPartial(n, m), 1.0 / (2 * PI * PI * rho.value()), repftQMin, qDelta_,
+            Fourier::sineFT(representativeGR.boundPartial(n, m), 1.0 / (2 * M_PI * M_PI * rho.value()), repftQMin, qDelta_,
                             repftQMax, WindowFunction::Form::None, repQBroadening_);
 
             // Unbound partial
             representativeGR.unboundPartial(n, m).copyArrays(unweightedSQ.unboundPartial(n, m));
-            Fourier::sineFT(representativeGR.unboundPartial(n, m), 1.0 / (2 * PI * PI * rho.value()), repftQMin, qDelta_,
+            Fourier::sineFT(representativeGR.unboundPartial(n, m), 1.0 / (2 * M_PI * M_PI * rho.value()), repftQMin, qDelta_,
                             repftQMax, WindowFunction::Form::None, repQBroadening_);
             representativeGR.unboundPartial(n, m) += 1.0;
         },
@@ -116,7 +118,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     // 1) (G(r) + BCAS)
     referenceCalcTR += weights.boundCoherentAverageOfSquares();
     // 2) 4 * PI * x * rho
-    referenceCalcTR *= 4 * PI * rho.value();
+    referenceCalcTR *= 4 * M_PI * rho.value();
     referenceCalcTR *= referenceCalcTR.xAxis();
 
     // Calculate RepresentativeTR
@@ -131,7 +133,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         {
             double intraWeight = weights.intramolecularWeight(typeI, typeJ);
             auto cj = weights.atomTypes()[typeJ].fraction();
-            auto factor = 4.0 * PI * rho.value() * cj;
+            auto factor = 4.0 * M_PI * rho.value() * cj;
             representativeTR.boundPartial(typeI, typeJ).copyArrays(representativeGR.boundPartial(typeI, typeJ));
             representativeTR.unboundPartial(typeI, typeJ).copyArrays(representativeGR.unboundPartial(typeI, typeJ));
             representativeTR.partial(typeI, typeJ).copyArrays(representativeGR.partial(typeI, typeJ));
@@ -165,7 +167,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
         {
             double intraWeight = weights.intramolecularWeight(typeI, typeJ);
             auto cj = weights.atomTypes()[typeJ].fraction();
-            auto factor = 4.0 * PI * rho.value() * cj;
+            auto factor = 4.0 * M_PI * rho.value() * cj;
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             weightedTR.boundPartial(typeI, typeJ).copyArrays(unweightedGR.boundPartial(typeI, typeJ));

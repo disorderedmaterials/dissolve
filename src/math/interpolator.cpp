@@ -3,6 +3,7 @@
 
 #include "math/interpolator.h"
 #include "math/data1D.h"
+#include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
 Interpolator::Interpolator(const std::vector<double> &x, const std::vector<double> &y, InterpolationScheme scheme)

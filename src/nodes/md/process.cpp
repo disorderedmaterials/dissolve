@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
+#include "math/mathFunc.h"
 #include "nodes/md/md.h"
 
 // Run main processing
@@ -114,7 +118,7 @@ NodeConstants::ProcessResult MDNode::process()
                 v.set(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5));
             else
                 v.zero();
-            v /= sqrt(TWOPI);
+            v /= sqrt(2.0 * M_PI);
         }
     }
     else if (intramolecularForcesOnly_)

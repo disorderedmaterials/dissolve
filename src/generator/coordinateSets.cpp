@@ -12,6 +12,7 @@
 #include "keywords/node.h"
 #include "keywords/nodeValue.h"
 #include "keywords/species.h"
+#include "math/mathFunc.h"
 #include "modules/md/md.h"
 
 CoordinateSetsGeneratorNode::CoordinateSetsGeneratorNode(const Species *sp)
@@ -148,12 +149,13 @@ bool CoordinateSetsGeneratorNode::execute(const GeneratorContext &generatorConte
 
     // Initialise random velocities
     std::vector<Vector3> velocities(species_->nAtoms());
+    const auto sqrt2Pi = sqrt(2.0 * M_PI);
     std::generate(velocities.begin(), velocities.end(),
                   [&]()
                   {
                       return Vector3(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5),
                                      exp(randomBuffer.random() - 0.5)) /
-                             sqrt(TWOPI);
+                             sqrt2Pi;
                   });
 
     // Grab current Species coordinates

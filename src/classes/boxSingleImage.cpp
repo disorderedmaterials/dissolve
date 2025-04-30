@@ -32,14 +32,6 @@ Vector3 SingleImageBox::minimumImage(const Vector3 &r1, const Vector3 &r2) const
 // Return minimum image vector from r1 to r2
 Vector3 SingleImageBox::minimumVector(const Vector3 &r1, const Vector3 &r2) const { return r2 - r1; }
 
-// Return normalised minimum image vector from r1 to r2
-Vector3 SingleImageBox::minimumVectorN(const Vector3 &r1, const Vector3 &r2) const
-{
-    auto v12 = r2 - r1;
-    v12.normalise();
-    return v12;
-}
-
 // Return minimum image distance from r1 to r2
 double SingleImageBox::minimumDistance(const Vector3 &r1, const Vector3 &r2) const { return (r2 - r1).magnitude(); }
 

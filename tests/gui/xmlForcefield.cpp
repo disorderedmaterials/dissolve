@@ -1,11 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/atomType.h"
-#include "data/elements.h"
-#include "data/ff/atomType.h"
 #include "data/ff/library.h"
-#include "data/ff/xml/base.h"
 #include "gui/models/xmlAngleModel.h"
 #include "gui/models/xmlAtomModel.h"
 #include "gui/models/xmlBondModel.h"
@@ -13,8 +9,8 @@
 #include "gui/models/xmlTorsionModel.h"
 #include "gui/models/xmlTreeModel.h"
 #include "main/dissolve.h"
+#include "math/mathFunc.h"
 #include <gtest/gtest.h>
-#include <memory>
 #include <tuple>
 #include <vector>
 
@@ -79,7 +75,7 @@ TEST_F(XmlFFTest, XmlAngle)
         EXPECT_EQ(angles.data(angles.index(row, 0)).toString().toStdString(), std::get<0>(b));
         EXPECT_EQ(angles.data(angles.index(row, 1)).toString().toStdString(), std::get<1>(b));
         EXPECT_EQ(angles.data(angles.index(row, 2)).toString().toStdString(), std::get<2>(b));
-        EXPECT_DOUBLE_EQ(angles.data(angles.index(row, 3)).toDouble(), std::get<3>(b) * 180 / PI);
+        EXPECT_DOUBLE_EQ(angles.data(angles.index(row, 3)).toDouble(), DissolveMath::toDegrees(std::get<3>(b)));
         EXPECT_DOUBLE_EQ(angles.data(angles.index(row, 4)).toDouble(), std::get<4>(b));
         ++row;
     }
@@ -217,7 +213,7 @@ TEST_F(XmlFFTest, XmlTree)
     EXPECT_EQ(treeModel.data(treeModel.index(0, 0, angleIndex)).toString().toStdString(), "O801");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 1, angleIndex)).toString().toStdString(), "C800");
     EXPECT_EQ(treeModel.data(treeModel.index(0, 2, angleIndex)).toString().toStdString(), "H802");
-    EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 3, angleIndex)).toDouble(), 1.911136 * 180 / PI);
+    EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 3, angleIndex)).toDouble(), DissolveMath::toDegrees(1.911136));
     EXPECT_DOUBLE_EQ(treeModel.data(treeModel.index(0, 4, angleIndex)).toDouble(), 292.88);
 
     // Test the torsions
@@ -267,7 +263,7 @@ TEST_F(XmlFFTest, XmlTree)
     auto angle = xmlFF->getAngleTerm((*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
     ASSERT_TRUE(angle);
     EXPECT_EQ((*angle).get().parameters()[0], 292.88000);
-    EXPECT_EQ((*angle).get().parameters()[1], 1.911136 * 180 / PI);
+    EXPECT_EQ((*angle).get().parameters()[1], DissolveMath::toDegrees(1.911136));
 
     // Test the torsions
     auto torsion = xmlFF->getTorsionTerm((*hydrogen5).get(), (*oxygen).get(), (*carbon).get(), (*hydrogen2).get());

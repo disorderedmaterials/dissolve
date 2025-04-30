@@ -13,6 +13,7 @@
 #include "gui/getSpeciesNameDialog.h"
 #include "gui/gui.h"
 #include "main/dissolve.h"
+#include "math/mathFunc.h"
 #include <QMessageBox>
 
 SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
@@ -113,9 +114,10 @@ void SpeciesTab::updateDensityLabel()
     if (!species_ || species_->box()->type() == Box::BoxType::NonPeriodic)
         ui_.DensityUnitsLabel->setText("N/A");
     else
-        ui_.DensityUnitsLabel->setText(QString::number(
-            ui_.DensityUnitsCombo->currentIndex() == 0 ? species_->nAtoms() / species_->box()->volume()
-                                                       : (species_->mass() / AVOGADRO) / (species_->box()->volume() / 1.0E24)));
+        ui_.DensityUnitsLabel->setText(
+            QString::number(ui_.DensityUnitsCombo->currentIndex() == 0
+                                ? species_->nAtoms() / species_->box()->volume()
+                                : (species_->mass() / DissolveMath::Avogadro) / (species_->box()->volume() / 1.0E24)));
 }
 
 // Update controls in tab

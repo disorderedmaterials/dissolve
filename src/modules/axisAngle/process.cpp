@@ -9,6 +9,7 @@
 #include "main/dissolve.h"
 #include "math/histogram1D.h"
 #include "math/histogram2D.h"
+#include "math/mathFunc.h"
 #include "module/context.h"
 #include "modules/axisAngle/axisAngle.h"
 
@@ -52,7 +53,7 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
                 continue;
 
             auto distanceAB = targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin());
-            auto axisAngle = Box::angleInDegrees(siteA->axes().columnAsVec3(axisA_), siteB->axes().columnAsVec3(axisB_));
+            auto axisAngle = siteA->axes().columnAsVec3(axisA_).angleInDegrees(siteB->axes().columnAsVec3(axisB_));
             if (symmetric_ && axisAngle > 90.0)
                 axisAngle = 180.0 - axisAngle;
 
@@ -86,7 +87,8 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     aABNormalised = aAB.accumulatedData();
     DataOperator1D aABNormaliser(aABNormalised);
     // Normalise by value / sin(x)
-    aABNormaliser.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
+    aABNormaliser.operate([](const auto &x, const auto &xDelta, const auto &value)
+                          { return value / sin(DissolveMath::toRadians(x)); });
     // Normalise to 1.0
     aABNormaliser.normaliseSumTo();
 
@@ -95,8 +97,10 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     dAxisAngleNormalised = dAxisAngle.accumulatedData();
     DataOperator2D dAxisAngleNormaliser(dAxisAngleNormalised);
     // Normalise by value / sin(y) / sin(yDelta)
-    dAxisAngleNormaliser.operate([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
-                                 { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
+    dAxisAngleNormaliser.operate(
+        [&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value) {
+            return (symmetric_ ? value : value * 2.0) / sin(DissolveMath::toRadians(y)) / sin(DissolveMath::toRadians(yDelta));
+        });
     // Normalise by A site population
     dAxisAngleNormaliser.divide(double(a.sites().size()));
     // Normalise by B site population density

@@ -10,6 +10,7 @@
 #include "math/histogram1D.h"
 #include "math/histogram2D.h"
 #include "math/histogram3D.h"
+#include "math/mathFunc.h"
 #include "math/range.h"
 #include "module/context.h"
 #include "modules/angle/angle.h"
@@ -161,7 +162,8 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     normalisedAngle = aABC.accumulatedData();
     DataOperator1D normaliserAngle(normalisedAngle);
     // Normalise by value / sin(x)
-    normaliserAngle.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
+    normaliserAngle.operate([](const auto &x, const auto &xDelta, const auto &value)
+                            { return value / sin(DissolveMath::toRadians(x)); });
     // Normalise to 1.0
     normaliserAngle.normaliseSumTo();
 
@@ -170,8 +172,10 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     normalisedDAngleAB = dAngleAB.accumulatedData();
     DataOperator2D normaliserDAngleAB(normalisedDAngleAB);
     // Normalise by value / sin(y) / sin(yDelta)
-    normaliserDAngleAB.operate([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
-                               { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
+    normaliserDAngleAB.operate(
+        [&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value) {
+            return (symmetric_ ? value : value * 2.0) / sin(DissolveMath::toRadians(y)) / sin(DissolveMath::toRadians(yDelta));
+        });
     // Normalise by A site population
     normaliserDAngleAB.divide(double(nACumulative) / nASelections);
     // Normalise by C site population
@@ -186,8 +190,10 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     normalisedDAngleBC = dAngleBC.accumulatedData();
     DataOperator2D normaliserDAngleBC(normalisedDAngleBC);
     // Normalise by value / sin(y) / sin(yDelta)
-    normaliserDAngleBC.operate([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
-                               { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
+    normaliserDAngleBC.operate(
+        [&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value) {
+            return (symmetric_ ? value : value * 2.0) / sin(DissolveMath::toRadians(y)) / sin(DissolveMath::toRadians(yDelta));
+        });
     // Normalise by A site population
     normaliserDAngleBC.divide(double(nACumulative) / nASelections);
     // Normalise by B site population
