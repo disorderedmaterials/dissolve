@@ -8,6 +8,7 @@
 #include "keywords/node.h"
 #include "keywords/nodeValue.h"
 #include "keywords/nodeValueEnumOptions.h"
+#include "math/mathFunc.h"
 
 AddGeneratorNodeBase::AddGeneratorNodeBase(GeneratorNode::NodeType nodeType, const NodeValue &population,
                                            const NodeValue &density, Units::DensityUnits densityUnits)
@@ -82,7 +83,7 @@ void AddGeneratorNodeBase::adjustBoxVolume(Configuration *cfg, int nCopies, int 
     if (rhoUnits == Units::AtomsPerAngstromUnits)
         requiredVolume = (nCopies * nAtomsPerCopy) / rho;
     else
-        requiredVolume = ((nCopies * massPerCopy) / AVOGADRO) / (rho / 1.0E24);
+        requiredVolume = ((nCopies * massPerCopy) / DissolveMath::Avogadro) / (rho / 1.0E24);
 
     // If a density was not given, just add new molecules to the current box without adjusting its size
     if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::None)

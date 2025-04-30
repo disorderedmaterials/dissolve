@@ -72,10 +72,10 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
      * Interaction Parameters
      */
     public:
-    // Return energy for specified angle
-    double energy(double angleInDegrees) const;
-    // Return force multiplier for specified angle
-    double force(double angleInDegrees) const;
+    // Return energy for specified angle theta (in radians)
+    double energy(double theta) const;
+    // Return force multiplier for specified angle theta (in radians)
+    double force(double theta) const;
 
     // Express as a serialisable value
     SerialisedValue serialise() const override;

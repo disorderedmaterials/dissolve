@@ -1,11 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#define _USE_MATH_DEFINES
-#include <cmath>
-
 #include "expression/expression.h"
-#include "expression/reference.h"
 #include "expression/variable.h"
 #include "math/mathFunc.h"
 #include <gtest/gtest.h>

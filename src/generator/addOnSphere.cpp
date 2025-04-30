@@ -11,6 +11,7 @@
 #include "keywords/node.h"
 #include "keywords/nodeValue.h"
 #include "keywords/speciesSite.h"
+#include "math/mathFunc.h"
 
 AddOnSphereGeneratorNode::AddOnSphereGeneratorNode(const SpeciesSite *site, const NodeValue &population,
                                                    const NodeValue &density, Units::DensityUnits densityUnits)

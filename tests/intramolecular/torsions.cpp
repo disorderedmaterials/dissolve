@@ -7,6 +7,7 @@
 #include "math/data1D.h"
 #include "math/derivative.h"
 #include "math/interpolator.h"
+#include "math/mathFunc.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -36,7 +37,8 @@ class TorsionFunctionsAnalyticTest : public ::testing::Test
         auto x = rangeMin_;
         while (x <= rangeMax_)
         {
-            energy.addPoint(x / DEGRAD, ijkl_.energy(x));
+            auto phi = DissolveMath::toRadians(x);
+            energy.addPoint(phi, ijkl_.energy(phi));
             x += delta_;
         }
         auto de_dx = Derivative::derivative(energy);
@@ -46,15 +48,16 @@ class TorsionFunctionsAnalyticTest : public ::testing::Test
 
         // Test analytic vs tabulated values - do this by absolute value if less than 1.0, or by ratio if greater than 1.0.
         // We do this since we span many orders of magnitude in value over the potential range, and can also have zeroes.
-        auto theta = rangeMin_ + testDelta_;
-        while (theta < rangeMax_)
+        x = rangeMin_ + testDelta_;
+        while (x < rangeMax_)
         {
-            auto f = ijkl_.force(theta);
+            auto phi = DissolveMath::toRadians(x);
+            auto f = ijkl_.force(phi);
             if (fabs(f) < 1.0)
-                EXPECT_NEAR(f, force.y(theta / DEGRAD) / -sin(theta / DEGRAD), 1.0e-5);
+                EXPECT_NEAR(f, force.y(phi) / -sin(phi), 1.0e-5);
             else
-                EXPECT_NEAR(f / (force.y(theta / DEGRAD) / -sin(theta / DEGRAD)), 1.0, 1.0e-3);
-            theta += testDelta_;
+                EXPECT_NEAR(f / (force.y(phi) / -sin(phi)), 1.0, 1.0e-3);
+            x += testDelta_;
         }
     }
 };

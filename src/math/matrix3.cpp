@@ -3,7 +3,6 @@
 
 #include "math/matrix3.h"
 #include "base/messenger.h"
-#include "math/constants.h"
 #include "math/mathFunc.h"
 #include <array>
 
@@ -404,7 +403,7 @@ void Matrix3::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
 // Create rotation matrix about X
 void Matrix3::createRotationX(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     cosx = cos(theta);
     sinx = sin(theta);
     matrix_[0] = 1.0;
@@ -423,7 +422,7 @@ void Matrix3::createRotationX(double angle)
 // Create XY rotation matrix
 void Matrix3::createRotationXY(double anglex, double angley)
 {
-    double cosx, sinx, cosy, siny, thetax = anglex / DEGRAD, thetay = angley / DEGRAD;
+    double cosx, sinx, cosy, siny, thetax = DissolveMath::toRadians(anglex), thetay = DissolveMath::toRadians(angley);
     cosx = cos(thetax);
     cosy = cos(thetay);
     sinx = sin(thetax);
@@ -444,7 +443,7 @@ void Matrix3::createRotationXY(double anglex, double angley)
 // Create rotation matrix about Y
 void Matrix3::createRotationY(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     cosx = cos(theta);
     sinx = sin(theta);
     matrix_[0] = cosx;
@@ -463,7 +462,7 @@ void Matrix3::createRotationY(double angle)
 // Create rotation matrix about Z
 void Matrix3::createRotationZ(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     cosx = cos(theta);
     sinx = sin(theta);
     matrix_[0] = cosx;
@@ -482,7 +481,7 @@ void Matrix3::createRotationZ(double angle)
 // Create axis rotation quaternion
 void Matrix3::createRotationAxis(Vector3 axis, double angle, bool normalise)
 {
-    double cosx, sinx, theta = angle / DEGRAD, oneMcosx;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), oneMcosx;
     if (normalise)
     {
         double mag = sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
@@ -509,7 +508,7 @@ void Matrix3::createRotationAxis(Vector3 axis, double angle, bool normalise)
 // Apply rotation about X axis
 void Matrix3::applyRotationX(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[3];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[3];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -530,7 +529,7 @@ void Matrix3::applyRotationX(double angle)
 // Apply axis rotation quaternion
 void Matrix3::applyRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[6], multipliers[9];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[6], multipliers[9];
     if (normalise)
     {
         double mag = sqrt(ax * ax + ay * ay + az * az);

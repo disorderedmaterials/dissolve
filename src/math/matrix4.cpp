@@ -3,7 +3,7 @@
 
 #include "math/matrix4.h"
 #include "base/messenger.h"
-#include "math/constants.h"
+#include "math/mathFunc.h"
 #include "math/matrix3.h"
 #include <array>
 
@@ -551,7 +551,7 @@ void Matrix4::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
 // Create rotation matrix about X
 void Matrix4::createRotationX(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     cosx = cos(theta);
     sinx = sin(theta);
     matrix_[0] = 1.0;
@@ -575,7 +575,7 @@ void Matrix4::createRotationX(double angle)
 // Create XY rotation matrix
 void Matrix4::createRotationXY(double anglex, double angley)
 {
-    double cosx, sinx, cosy, siny, thetax = anglex / DEGRAD, thetay = angley / DEGRAD;
+    double cosx, sinx, cosy, siny, thetax = DissolveMath::toRadians(anglex), thetay = DissolveMath::toRadians(angley);
     cosx = cos(thetax);
     cosy = cos(thetay);
     sinx = sin(thetax);
@@ -601,7 +601,7 @@ void Matrix4::createRotationXY(double anglex, double angley)
 // Create rotation matrix about Y
 void Matrix4::createRotationY(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     cosx = cos(theta);
     sinx = sin(theta);
     matrix_[0] = cosx;
@@ -625,7 +625,7 @@ void Matrix4::createRotationY(double angle)
 // Create rotation matrix about Z
 void Matrix4::createRotationZ(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     cosx = cos(theta);
     sinx = sin(theta);
     matrix_[0] = cosx;
@@ -649,7 +649,7 @@ void Matrix4::createRotationZ(double angle)
 // Create axis rotation quaternion
 void Matrix4::createRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     if (normalise)
     {
         double mag = sqrt(ax * ax + ay * ay + az * az);
@@ -680,7 +680,7 @@ void Matrix4::createRotationAxis(double ax, double ay, double az, double angle, 
 // Apply rotation about X axis
 void Matrix4::applyRotationX(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[4];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[4];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -704,7 +704,7 @@ void Matrix4::applyRotationX(double angle)
 // Apply rotation about Y axis
 void Matrix4::applyRotationY(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[4];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[4];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -727,7 +727,7 @@ void Matrix4::applyRotationY(double angle)
 // Apply rotation about Z axis
 void Matrix4::applyRotationZ(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[4];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[4];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -750,7 +750,7 @@ void Matrix4::applyRotationZ(double angle)
 // Apply axis rotation quaternion
 void Matrix4::applyRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[8], multipliers[16];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[8], multipliers[16];
     if (normalise)
     {
         double mag = sqrt(ax * ax + ay * ay + az * az);
@@ -798,7 +798,7 @@ void Matrix4::applyRotationAxis(double ax, double ay, double az, double angle, b
 // Apply rotation about X axis, premultiplying with current matrix
 void Matrix4::applyPreRotationX(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[4];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[4];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -824,7 +824,7 @@ void Matrix4::applyPreRotationX(double angle)
 // Apply rotation about Y axis, premultiplying with current matrix
 void Matrix4::applyPreRotationY(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[4];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[4];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -847,7 +847,7 @@ void Matrix4::applyPreRotationY(double angle)
 // Apply rotation about Z axis, premultiplying with current matrix
 void Matrix4::applyPreRotationZ(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[4];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[4];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -870,7 +870,7 @@ void Matrix4::applyPreRotationZ(double angle)
 // Apply axis rotation quaternion, premultiplying with current matrix
 void Matrix4::applyPreRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[8], multipliers[16];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[8], multipliers[16];
     if (normalise)
     {
         double mag = sqrt(ax * ax + ay * ay + az * az);

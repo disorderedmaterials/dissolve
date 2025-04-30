@@ -29,6 +29,8 @@ class GaussFit
     std::vector<double> A_;
     // FWHM values
     std::vector<double> fwhm_;
+    // 2 * sqrt(2 log 2)
+    static constexpr double TwoSqrt2Ln2 = 2.354820045;
 
     private:
     // Generate full approximation from current parameters

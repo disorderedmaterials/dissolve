@@ -256,29 +256,19 @@ double EnergyModule::intraMolecularEnergy(const Species *sp)
     // Loop over angles
     energy += std::accumulate(sp->angles().begin(), sp->angles().end(), 0.0,
                               [box](const auto acc, const auto &a)
-                              {
-                                  return acc + a.energy(Box::angleInDegrees(box->minimumVectorN(a.j()->r(), a.i()->r()),
-                                                                            box->minimumVectorN(a.j()->r(), a.k()->r())));
-                              });
+                              { return acc + a.energy(box->angleInRadians(a.i()->r(), a.j()->r(), a.k()->r())); });
 
     // Loop over torsions
     energy += std::accumulate(sp->torsions().begin(), sp->torsions().end(), 0.0,
-                              [box](const auto acc, const auto &t)
-                              {
-                                  return acc + t.energy(Box::torsionInDegrees(box->minimumVector(t.j()->r(), t.i()->r()),
-                                                                              box->minimumVector(t.j()->r(), t.k()->r()),
-                                                                              box->minimumVector(t.k()->r(), t.l()->r())));
+                              [box](const auto acc, const auto &t) {
+                                  return acc + t.energy(box->torsionInRadians(t.i()->r(), t.j()->r(), t.k()->r(), t.l()->r()));
                               });
 
     // Loop over impropers
-    energy +=
-        std::accumulate(sp->impropers().begin(), sp->impropers().end(), 0.0,
-                        [box](const auto acc, const auto &imp)
-                        {
-                            return acc + imp.energy(Box::torsionInDegrees(box->minimumVector(imp.j()->r(), imp.i()->r()),
-                                                                          box->minimumVector(imp.j()->r(), imp.k()->r()),
-                                                                          box->minimumVector(imp.k()->r(), imp.l()->r())));
-                        });
+    energy += std::accumulate(
+        sp->impropers().begin(), sp->impropers().end(), 0.0,
+        [box](const auto acc, const auto &imp)
+        { return acc + imp.energy(box->torsionInRadians(imp.i()->r(), imp.j()->r(), imp.k()->r(), imp.l()->r())); });
 
     return energy;
 }
