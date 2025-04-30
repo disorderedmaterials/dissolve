@@ -6,6 +6,7 @@
 #include "base/timer.h"
 #include "data/atomicMasses.h"
 #include "main/dissolve.h"
+#include "math/mathFunc.h"
 #include "module/context.h"
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"
@@ -120,7 +121,7 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
                 v.set(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5));
             else
                 v.zero();
-            v /= sqrt(TWOPI);
+            v /= sqrt(2.0 * M_PI);
         }
     }
     else if (intramolecularForcesOnly_)

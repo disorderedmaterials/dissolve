@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#define _USE_MATH_DEFINES
 #include "data/formFactors_WK1995.h"
 #include "data/formFactors.h"
+#include "math/mathFunc.h"
 #include <algorithm>
-#include <functional>
-#include <math.h>
 #include <utility>
 #include <vector>
 

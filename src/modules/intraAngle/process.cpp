@@ -7,6 +7,7 @@
 #include "expression/variable.h"
 #include "main/dissolve.h"
 #include "math/histogram1D.h"
+#include "math/mathFunc.h"
 #include "module/context.h"
 #include "modules/intraAngle/intraAngle.h"
 
@@ -77,7 +78,8 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     // Normalise
     DataOperator1D normaliser(dataNormalisedHisto);
     // Normalise by sin(x)
-    normaliser.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
+    normaliser.operate([](const auto &x, const auto &xDelta, const auto &value)
+                       { return value / sin(DissolveMath::toRadians(x)); });
     // Normalise by value
     normaliser.normaliseSumTo();
 

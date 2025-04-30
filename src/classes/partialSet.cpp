@@ -9,6 +9,7 @@
 #include "io/export/data1D.h"
 #include "items/deserialisers.h"
 #include "items/serialisers.h"
+#include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
 PartialSet::PartialSet() { fingerprint_ = "NO_FINGERPRINT"; }
@@ -418,7 +419,7 @@ void PartialSet::calculateRDF(Data1D &destination, const Histogram1D &histogram,
     double shellVolume, factor, r = 0.5 * delta, lowerShellLimit = 0.0, numberDensity = nSurrounding / boxVolume;
     for (auto n = 0; n < nBins; ++n)
     {
-        shellVolume = (4.0 / 3.0) * PI * (pow(lowerShellLimit + delta, 3.0) - pow(lowerShellLimit, 3.0));
+        shellVolume = (4.0 / 3.0) * M_PI * (pow(lowerShellLimit + delta, 3.0) - pow(lowerShellLimit, 3.0));
         factor = nCentres * (shellVolume * numberDensity);
 
         destination.addPoint(r, bins[n] * (multiplier / factor));

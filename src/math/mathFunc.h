@@ -39,4 +39,22 @@ int sgn(double x);
 double sgn(double a, double signOf);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i);
+
+/*
+ * Conversion
+ */
+
+// Convert degrees <--> radians
+double toRadians(double degrees);
+double toDegrees(double radians);
+
+/*
+ * Constants
+ */
+
+// Avogadro's Number
+constexpr double Avogadro = 6.0221415E23;
+
+// Degrees per Radian
+constexpr double DegreesPerRadian = 180.0 / M_PI;
 }; // namespace DissolveMath

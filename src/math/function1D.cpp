@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#define _USE_MATH_DEFINES
 #include "math/function1D.h"
-#include "math/constants.h"
+#include "classes/pairPotential.h"
+#include "math/mathFunc.h"
 #include "templates/algorithms.h"
-#include <math.h>
-
 #include <map>
 
 /*
@@ -390,13 +388,13 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
          */
         functions[Functions1D::Form::Coulombic] =
             Function1DDefinition({"q1", "q2"}, [](double x, double omega, const std::vector<double> &params)
-                                 { return (COULCONVERT * params[0] * params[1]) / x; });
+                                 { return (PairPotential::CoulConvert * params[0] * params[1]) / x; });
         /*
          * dYdX(x) = - COULCONVERT * q1 * q2 * r**-2
          */
         functions[Functions1D::Form::Coulombic].setDerivativeFunction(
             [](double x, double omega, const std::vector<double> &params)
-            { return (-COULCONVERT * params[0] * params[1]) / (x * x); });
+            { return (-PairPotential::CoulConvert * params[0] * params[1]) / (x * x); });
 
         /*
          * Shifted Coulomb Potential
@@ -410,15 +408,18 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
          * F(x)= COULCONVERT * -------
          *                        x
          */
-        functions[Functions1D::Form::ShiftedCoulomb] = Function1DDefinition(
-            {"q1", "q2", "range"}, [](double x, double omega, const std::vector<double> &params)
-            { return COULCONVERT * params[0] * params[1] * (1.0 / x + x / (params[2] * params[2]) - 2.0 / params[2]); });
+        functions[Functions1D::Form::ShiftedCoulomb] =
+            Function1DDefinition({"q1", "q2", "range"},
+                                 [](double x, double omega, const std::vector<double> &params) {
+                                     return PairPotential::CoulConvert * params[0] * params[1] *
+                                            (1.0 / x + x / (params[2] * params[2]) - 2.0 / params[2]);
+                                 });
         /*
          * dYdX(x) = - COULCONVERT * q1 * q2 * r**-2
          */
         functions[Functions1D::Form::ShiftedCoulomb].setDerivativeFunction(
             [](double x, double omega, const std::vector<double> &params)
-            { return COULCONVERT * params[0] * params[1] * (1.0 / (x * x) - 1.0 / (params[2] * params[2])); });
+            { return PairPotential::CoulConvert * params[0] * params[1] * (1.0 / (x * x) - 1.0 / (params[2] * params[2])); });
     }
 
     return functions;

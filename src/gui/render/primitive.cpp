@@ -3,7 +3,6 @@
 
 #include "gui/render/primitive.h"
 #include "base/messenger.h"
-#include "math/constants.h"
 
 Primitive::Primitive()
 {
@@ -371,21 +370,21 @@ void Primitive::sphere(double radius, int nStacks, int nSlices)
 
     for (i = 1; i <= nStacks; ++i)
     {
-        stack0 = PI * (-0.5 + (double)(i - 1) / nStacks);
+        stack0 = M_PI * (-0.5 + (double)(i - 1) / nStacks);
         z0 = sin(stack0);
         zr0 = cos(stack0);
 
-        stack1 = PI * (-0.5 + (double)i / nStacks);
+        stack1 = M_PI * (-0.5 + (double)i / nStacks);
         z1 = sin(stack1);
         zr1 = cos(stack1);
 
         for (j = 1; j <= nSlices; ++j)
         {
-            slice0 = 2 * PI * (double)(j - 1) / nSlices;
+            slice0 = 2 * M_PI * (double)(j - 1) / nSlices;
             x0 = cos(slice0);
             y0 = sin(slice0);
 
-            slice1 = 2 * PI * (double)j / nSlices;
+            slice1 = 2 * M_PI * (double)j / nSlices;
             x1 = cos(slice1);
             y1 = sin(slice1);
 
@@ -420,7 +419,7 @@ void Primitive::cylinder(GLfloat ox, GLfloat oy, GLfloat oz, GLfloat vx, GLfloat
 
     // Setup some variables
     rj.set(vx, vy, vz);
-    dtheta = TWOPI / nSlices;
+    dtheta = 2.0 * M_PI / nSlices;
     dradius = (startRadius - endRadius) / nStacks;
     deltarj = rj / nStacks;
 
@@ -488,9 +487,9 @@ void Primitive::ring(double radius, double width, int nStacks, int nSlices, int 
     double d1, d2, dtheta, dphi, dpsi, cosphi1, sinphi1, cosphi2, sinphi2;
 
     // Setup some variables
-    dphi = TWOPI / nStacks;
+    dphi = 2.0 * M_PI / nStacks;
     dpsi = dphi / nSegments;
-    dtheta = TWOPI / nSlices;
+    dtheta = 2.0 * M_PI / nSlices;
 
     for (n = 0; n < nStacks; ++n)
     {
@@ -550,7 +549,7 @@ void Primitive::circle(double radius, int nStacks, int nSegments, bool segmented
     type_ = GL_LINES;
 
     // Setup some variables
-    dphi = TWOPI / nStacks;
+    dphi = 2.0 * M_PI / nStacks;
     dpsi = dphi / nSegments;
 
     for (n = 0; n < nStacks; ++n)

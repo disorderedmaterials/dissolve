@@ -4,6 +4,7 @@
 #include "analyser/dataOperator1D.h"
 #include "math/data1D.h"
 #include "math/integrator.h"
+#include "math/mathFunc.h"
 
 DataOperator1D::DataOperator1D(Data1D &targetData) : DataOperatorBase<Data1D, OperateFunction1D>(targetData) {}
 
@@ -49,7 +50,7 @@ void DataOperator1D::normaliseBySphericalShell()
         auto r2Cubed = pow(rightBin, 3);
 
         // Calculate divisor for normalisation
-        auto divisor = (4.0 / 3.0) * PI * (r2Cubed - r1Cubed);
+        auto divisor = (4.0 / 3.0) * M_PI * (r2Cubed - r1Cubed);
 
         // Peform normalisation step
         values[n] /= divisor;

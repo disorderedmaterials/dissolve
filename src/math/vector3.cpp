@@ -3,7 +3,6 @@
 
 #include "math/vector3.h"
 #include "base/messenger.h"
-#include "math/constants.h"
 #include "math/mathFunc.h"
 #include <cmath>
 #include <format>
@@ -421,8 +420,8 @@ void Vector3::toCartesian()
 {
     // x = rho, y = theta (inclination), z = phi (azimuthal angle), assuming that phi and theta are in degrees
     double newx, newy, newz;
-    y /= DEGRAD;
-    z /= DEGRAD;
+    y = DissolveMath::toRadians(y);
+    z = DissolveMath::toRadians(z);
     newx = x * sin(y) * cos(z);
     newy = x * sin(y) * sin(z);
     newz = x * cos(y);
@@ -436,7 +435,7 @@ void Vector3::toSpherical()
     rho = magnitude();
     theta = acos(z / rho);
     phi = atan2(y, x);
-    set(rho, phi * DEGRAD, theta * DEGRAD);
+    set(rho, DissolveMath::toDegrees(phi), DissolveMath::toDegrees(theta));
 }
 
 // Set all three values simultaneously, converting supplied spherical coordinates to cartesian
@@ -468,6 +467,28 @@ void Vector3::swap(int a, int b)
     set(a, get(b));
     set(b, temp);
 }
+
+// Convert from (assumed) degrees to radians
+void Vector3::toRadians()
+{
+    x = DissolveMath::toRadians(x);
+    y = DissolveMath::toRadians(y);
+    z = DissolveMath::toRadians(z);
+}
+
+// Convert from (assumed) radians to degrees
+void Vector3::toDegrees()
+{
+    x = DissolveMath::toDegrees(x);
+    y = DissolveMath::toDegrees(y);
+    z = DissolveMath::toDegrees(z);
+}
+
+// Return angle between this and supplied vector, in radians, ensuring normalisation
+double Vector3::angleInRadians(const Vector3 &to) const { return acos(normalised().dp(to.normalised())); }
+
+// Return angle between this and supplied vector, in degrees, ensuring normalisation
+double Vector3::angleInDegrees(const Vector3 &to) const { return DissolveMath::toDegrees(angleInRadians(to)); }
 
 /*
  * I/O

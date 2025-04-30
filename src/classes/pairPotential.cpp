@@ -2,12 +2,9 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/pairPotential.h"
-#include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
-#include "math/constants.h"
 #include "math/derivative.h"
-#include <cmath>
 
 // Static members
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;
@@ -297,9 +294,9 @@ double PairPotential::analyticCoulombEnergy(double qiqj, double r, PairPotential
 {
     // Calculate based on truncation scheme
     if (truncation == PairPotential::NoCoulombTruncation)
-        return COULCONVERT * qiqj / r;
+        return CoulConvert * qiqj / r;
     else if (truncation == PairPotential::ShiftedCoulombTruncation)
-        return COULCONVERT * qiqj * (1.0 / r + r / (range_ * range_) - 2.0 / range_);
+        return CoulConvert * qiqj * (1.0 / r + r / (range_ * range_) - 2.0 / range_);
 
     return 0.0;
 }
@@ -356,9 +353,9 @@ double PairPotential::analyticCoulombForce(double qiqj, double r, PairPotential:
 
     // Calculate based on truncation scheme
     if (truncation == PairPotential::NoCoulombTruncation)
-        return COULCONVERT * qiqj / (r * r);
+        return CoulConvert * qiqj / (r * r);
     else if (truncation == PairPotential::ShiftedCoulombTruncation)
-        return COULCONVERT * qiqj * (1.0 / (r * r) - 1.0 / (range_ * range_));
+        return CoulConvert * qiqj * (1.0 / (r * r) - 1.0 / (range_ * range_));
 
     return 0.0;
 }

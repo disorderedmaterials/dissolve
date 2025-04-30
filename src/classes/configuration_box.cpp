@@ -28,7 +28,7 @@ void Configuration::createBox(const Matrix3 axes)
     vecz.normalise();
 
     Vector3 angles(acos(vecy.dp(vecz)), acos(vecx.dp(vecz)), acos(vecx.dp(vecy)));
-    angles *= DEGRAD;
+    angles.toDegrees();
 
     box_ = Box::generate(lengths, angles);
 }

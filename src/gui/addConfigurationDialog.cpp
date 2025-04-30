@@ -11,6 +11,7 @@
 #include "generator/parameters.h"
 #include "generator/temperature.h"
 #include "gui/helpers/comboPopulator.h"
+#include "math/mathFunc.h"
 #include <QInputDialog>
 #include <QMessageBox>
 
@@ -312,7 +313,7 @@ void AddConfigurationDialog::updateResultingBoxInfo()
             if (rhoUnits == Units::AtomsPerAngstromUnits)
                 requiredVolume = nAtomsToAdd / rho;
             else
-                requiredVolume = ((spInfo.species()->mass() * population) / AVOGADRO) / (rho / 1.0E24);
+                requiredVolume = ((spInfo.species()->mass() * population) / DissolveMath::Avogadro) / (rho / 1.0E24);
 
             // If the current box has no atoms in it, absorb the current volume rather than adding to it
             if (nAtoms > 0)
@@ -341,7 +342,7 @@ void AddConfigurationDialog::updateResultingBoxInfo()
     if (ui_.BoxGeometryFixedSizeRadio->isChecked())
         ui_.SpeciesDensitySpin->setValue(ui_.SpeciesDensityUnitsCombo->currentIndex() == Units::AtomsPerAngstromUnits
                                              ? nAtoms / box->volume()
-                                             : (mass / AVOGADRO) / (box->volume() / 1.0E24));
+                                             : (mass / DissolveMath::Avogadro) / (box->volume() / 1.0E24));
 
     addSpeciesInfoModel_.reset();
 }

@@ -92,14 +92,14 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     bool setVanDerWaals14Scaling(double scaling);
     // Return van der Waals 1-4 scaling factor for the interaction
     double vanDerWaals14Scaling() const;
-    // Return energy for specified angle and functional form, given supplied parameters
-    static double energy(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params);
-    // Return energy for specified angle
-    double energy(double angleInDegrees) const;
-    // Return force multiplier for specified angle and functional form, given supplied parameters
-    static double force(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params);
-    // Return force multiplier for specified angle
-    double force(double angleInDegrees) const;
+    // Return energy for specified angle phi (in radians) and functional form, given supplied parameters
+    static double energy(double phi, TorsionFunctions::Form form, const std::vector<double> &params);
+    // Return energy for specified angle phi (in radians)
+    double energy(double phi) const;
+    // Return force multiplier for  specified angle phi (in radians) and functional form, given supplied parameters
+    static double force(double phi, TorsionFunctions::Form form, const std::vector<double> &params);
+    // Return force multiplier for specified angle phi (in radians)
+    double force(double phi) const;
 
     // Express as a serialisable value
     SerialisedValue serialise() const override;

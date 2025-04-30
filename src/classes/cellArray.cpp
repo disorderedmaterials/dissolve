@@ -4,6 +4,7 @@
 #include "classes/cellArray.h"
 #include "classes/box.h"
 #include "classes/cell.h"
+#include "math/mathFunc.h"
 
 /*
  * Cell Data

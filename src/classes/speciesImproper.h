@@ -80,10 +80,10 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
      * Interaction Parameters
      */
     public:
-    // Return energy for specified angle
-    double energy(double angleInDegrees) const;
-    // Return force multiplier for specified angle
-    double force(double angleInDegrees) const;
+    // Return energy for specified angle phi (in radians)
+    double energy(double phi) const;
+    // Return force multiplier for specified angle phi (in radians)
+    double force(double phi) const;
 
     // Express as a serialisable value
     SerialisedValue serialise() const override;
