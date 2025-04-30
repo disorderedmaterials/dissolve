@@ -8,7 +8,7 @@
 #include "nodes/node.h"
 #include <string>
 
-// Derivative1D Node
+// AtomicSpecies Node
 class AtomicSpeciesNode : public Node
 {
     public:
