@@ -75,10 +75,8 @@ Module::ExecutionResult MoleculeTorsionModule::process(ModuleContext &moduleCont
         if (mol->species() != species_)
             continue;
 
-        auto rj = mol->atom(j_ - 1)->r();
-        auto rk = mol->atom(k_ - 1)->r();
-        histIJKL.bin(Box::torsionInDegrees(box->minimumVector(rj, mol->atom(i_ - 1)->r()), box->minimumVector(rj, rk),
-                                           box->minimumVector(rk, mol->atom(l_ - 1)->r())));
+        histIJKL.bin(box->torsionInDegrees(mol->atom(i_ - 1)->r(), mol->atom(j_ - 1)->r(), mol->atom(k_ - 1)->r(),
+                                           mol->atom(l_ - 1)->r()));
     }
 
     // Accumulate histogram

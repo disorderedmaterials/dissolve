@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "math/constants.h"
 #include <QtGui/qopengl.h>
 
 #define VERTEXCHUNKSIZE 1020

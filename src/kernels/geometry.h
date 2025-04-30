@@ -42,9 +42,9 @@ class GeometryKernel : public KernelBase
     struct AngleParameters
     {
         AngleParameters() = default;
-        double theta_;
-        Vector3 dfi_dtheta_;
-        Vector3 dfk_dtheta_;
+        double theta;
+        Vector3 dfi_dtheta;
+        Vector3 dfk_dtheta;
     };
 
     public:
@@ -64,13 +64,13 @@ class GeometryKernel : public KernelBase
     struct TorsionParameters
     {
         TorsionParameters() = default;
-        double phi_;
-        Matrix3 dxpj_dij_;
-        Matrix3 dxpj_dkj_;
-        Matrix3 dxpk_dkj_;
-        Matrix3 dxpk_dlk_;
-        Vector3 dcos_dxpj_;
-        Vector3 dcos_dxpk_;
+        double phi;
+        Matrix3 dxpj_dij;
+        Matrix3 dxpj_dkj;
+        Matrix3 dxpk_dkj;
+        Matrix3 dxpk_dlk;
+        Vector3 dcos_dxpj;
+        Vector3 dcos_dxpk;
     };
     // Add torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index
     void addTorsionForceI(double du_dphi, int index, TorsionParameters &torsionParameters, ForceVector &f) const;

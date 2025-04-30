@@ -59,17 +59,6 @@ Vector3 TriclinicBox::minimumVector(const Vector3 &r1, const Vector3 &r2) const
     return v12;
 }
 
-// Return normalised minimum image vector from r1 to r2
-Vector3 TriclinicBox::minimumVectorN(const Vector3 &r1, const Vector3 &r2) const
-{
-    Vector3 v12 = r2 - r1;
-    toFractional(v12);
-    wrap(v12);
-    toReal(v12);
-    v12.normalise();
-    return v12;
-}
-
 // Return minimum image distance from r1 to r2
 double TriclinicBox::minimumDistance(const Vector3 &r1, const Vector3 &r2) const
 {

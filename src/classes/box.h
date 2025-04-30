@@ -133,8 +133,6 @@ class Box : public Serialisable<>
     virtual Vector3 minimumImage(const Vector3 &r1, const Vector3 &r2) const = 0;
     // Return minimum image vector from r1 to r2
     virtual Vector3 minimumVector(const Vector3 &r1, const Vector3 &r2) const = 0;
-    // Return normalised minimum image vector from r1 to r2
-    virtual Vector3 minimumVectorN(const Vector3 &r1, const Vector3 &r2) const = 0;
     // Return minimum image distance from r1 to r2
     virtual double minimumDistance(const Vector3 &r1, const Vector3 &r2) const = 0;
     // Return minimum image squared distance from r1 to r2
@@ -144,26 +142,16 @@ class Box : public Serialisable<>
      * Geometry
      */
     public:
-    // Return angle (in degrees) between coordinates
+    // Return angle (in degrees) between coordinates, accounting for minimum image
     double angleInDegrees(const Vector3 &i, const Vector3 &j, const Vector3 &k) const;
-    // Return angle (in degrees) between supplied normalised vectors
-    static double angleInDegrees(const Vector3 &normji, const Vector3 &normjk);
-    // Return angle (in degrees) between supplied normalised vectors (storing dot product)
-    static double angleInDegrees(const Vector3 &normji, const Vector3 &normjk, double &dotProduct);
+    // Return angle (in radians) between coordinates, accounting for minimum image
+    double angleInRadians(const Vector3 &i, const Vector3 &j, const Vector3 &k) const;
     // Return literal angle (in degrees) between coordinates, without applying minimum image convention
     static double literalAngleInDegrees(const Vector3 &i, const Vector3 &j, const Vector3 &k);
-    // Return torsion (in degrees) between supplied unnormalised vectors
-    static double torsionInDegrees(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl);
-    // Return torsion (in degrees) between supplied unnormalised vectors, storing cross products and magnitude in supplied
-    // variables
-    static double torsionInDegrees(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl, Vector3 &xpj,
-                                   double &magxpj, Vector3 &xpk, double &magxpk);
-    // Return torsion (in radians) between supplied unnormalised vectors
-    static double torsionInRadians(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl);
-    // Return torsion (in radians) between supplied unnormalised vectors, storing cross products and magnitude in supplied
-    // variables
-    static double torsionInRadians(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl, Vector3 &xpj,
-                                   double &magxpj, Vector3 &xpk, double &magxpk);
+    // Return torsion (in degrees) between supplied coordinates, accounting for minimum image
+    double torsionInDegrees(const Vector3 &i, const Vector3 &j, const Vector3 &k, const Vector3 &l) const;
+    // Return torsion (in radians) between supplied coordinates, accounting for minimum image
+    double torsionInRadians(const Vector3 &i, const Vector3 &j, const Vector3 &k, const Vector3 &l) const;
 
     /*
      * Utility Routines
@@ -182,6 +170,10 @@ class Box : public Serialisable<>
     // Determine axis scale factors to give requested volume, with scaling ratios provided
     Vector3 scaleFactors(double requestedVolume, const std::array<bool, 3> &scalableAxes = {true, true, true}) const;
 
+    /*
+     * I/O
+     */
+    public:
     // Express as a serialisable value
     SerialisedValue serialise() const override;
 };
@@ -210,8 +202,6 @@ class SingleImageBox : public Box
     Vector3 minimumImage(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image vector from r1 to r2
     Vector3 minimumVector(const Vector3 &r1, const Vector3 &r2) const override;
-    // Return normalised minimum image vector from r1 to r2
-    Vector3 minimumVectorN(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image distance from r1 to r2
     double minimumDistance(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image squared distance from r1 to r2
@@ -242,8 +232,6 @@ class NonPeriodicBox : public Box
     Vector3 minimumImage(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image vector from r1 to r2
     Vector3 minimumVector(const Vector3 &r1, const Vector3 &r2) const override;
-    // Return normalised minimum image vector from r1 to r2
-    Vector3 minimumVectorN(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image distance from r1 to r2
     double minimumDistance(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image squared distance from r1 to r2
@@ -274,8 +262,6 @@ class CubicBox : public Box
     Vector3 minimumImage(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image vector from r1 to r2
     Vector3 minimumVector(const Vector3 &r1, const Vector3 &r2) const override;
-    // Return normalised minimum image vector from r1 to r2
-    Vector3 minimumVectorN(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image distance from r1 to r2
     double minimumDistance(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image squared distance from r1 to r2
@@ -313,8 +299,6 @@ class OrthorhombicBox : public Box
     Vector3 minimumImage(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image vector from r1 to r2
     Vector3 minimumVector(const Vector3 &r1, const Vector3 &r2) const override;
-    // Return normalised minimum image vector from r1 to r2
-    Vector3 minimumVectorN(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image distance from r1 to r2
     double minimumDistance(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image squared distance from r1 to r2
@@ -345,8 +329,6 @@ class MonoclinicAlphaBox : public Box
     Vector3 minimumImage(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image vector from r1 to r2
     Vector3 minimumVector(const Vector3 &r1, const Vector3 &r2) const override;
-    // Return normalised minimum image vector from r1 to r2
-    Vector3 minimumVectorN(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image distance from r1 to r2
     double minimumDistance(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image squared distance from r1 to r2
@@ -377,8 +359,6 @@ class MonoclinicBetaBox : public Box
     Vector3 minimumImage(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image vector from r1 to r2
     Vector3 minimumVector(const Vector3 &r1, const Vector3 &r2) const override;
-    // Return normalised minimum image vector from r1 to r2
-    Vector3 minimumVectorN(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image distance from r1 to r2
     double minimumDistance(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image squared distance from r1 to r2
@@ -409,8 +389,6 @@ class MonoclinicGammaBox : public Box
     Vector3 minimumImage(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image vector from r1 to r2
     Vector3 minimumVector(const Vector3 &r1, const Vector3 &r2) const override;
-    // Return normalised minimum image vector from r1 to r2
-    Vector3 minimumVectorN(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image distance from r1 to r2
     double minimumDistance(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image squared distance from r1 to r2
@@ -441,8 +419,6 @@ class TriclinicBox : public Box
     Vector3 minimumImage(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image vector from r1 to r2
     Vector3 minimumVector(const Vector3 &r1, const Vector3 &r2) const override;
-    // Return normalised minimum image vector from r1 to r2
-    Vector3 minimumVectorN(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image distance from r1 to r2
     double minimumDistance(const Vector3 &r1, const Vector3 &r2) const override;
     // Return minimum image squared distance from r1 to r2
