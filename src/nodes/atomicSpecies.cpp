@@ -3,7 +3,7 @@
 
 AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addOption<std::string_view>("Element symbol", "Atomic species element symbol", Z_);
+    addOption<std::string_view>("Element", "Atomic species element symbol", Z_);
     addOption<std::string_view>("Name", "Atomic species name", name_);
     addOutput<Species *>("Species", "Atomic species", rawSpecies_);
 }
