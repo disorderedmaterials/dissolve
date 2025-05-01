@@ -25,10 +25,10 @@
 
 param (
     [string]$qtVersion,
-    [string]$antlrVersion = "4.13.1",
+    [string]$pythonPath,
     [string]$forcePythonVersion,
-    [switch]$release = $false,
-    [switch]$noPython = $false
+    [string]$antlrVersion = "4.13.1",
+    [switch]$release = $false
 )
 
 $build = "Debug"
@@ -75,11 +75,16 @@ try {
 }
 
 # Find python, install if not found
-if (-not $noPython)
+if (-not [string]::IsNullOrEmpty($pythonPath))
+{
+    Write-Output "Using Python with path $pythonPath..." @info_colors
+    $python = $pythonPath
+}
+else
 {
     if (-not [string]::IsNullOrEmpty($forcePythonVersion))
     {
-        Write-Output "Installing requested Python version $forcePythonVersion..."
+        Write-Output "Installing requested Python version $forcePythonVersion..." @info_colors
         choco install -y python --version=$forcePythonVersion --force
     }
     else
@@ -98,16 +103,18 @@ if (-not $noPython)
             choco install -y python --version=3.12.0
         }
     }
+
+    $python = "python"
 }
 
 refreshenv
 
 # Setup Python packages
-Write-Host "Creating a local Python virtual environment... " @info_colors
-python -m venv msvc-env
+Write-Host "Creating a local Python virtual environment with $(& $python --version)... " @info_colors
+& $python -m venv msvc-env
 
 Write-Host "Checking Python compiler type... " @info_colors
-if ($(python -c "import sys; print(sys.version)") -match "MSC v\.\d+") 
+if ($(& $python -c "import sys; print(sys.version)") -match "MSC v\.\d+")
 { 
     Write-Host " ...Python compiler type evaluated to MSC" @info_colors
     $pythonEnvSourceDir = "Scripts"
@@ -124,11 +131,8 @@ Write-Host "Activating Python virtual environment... " @info_colors
 & $activate
 
 Write-Host "Installing Python packages... " @info_colors
-python -m pip install --upgrade pip
-python -m pip install aqtinstall conan==1.*
-
-$pythonVersion = python --version
-Write-Host "Python Version output:`n$pythonVersion"
+& $python -m pip install --upgrade pip
+& $python -m pip install aqtinstall conan==1.*
 
 $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
@@ -143,8 +147,8 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
     $qtInstallationDir = Join-Path -Path $dependencies -ChildPath "qt"
     New-Item -ItemType Directory -Path $qtInstallationDir -ErrorAction SilentlyContinue
 
-    Write-Host "Installing Qt6... " @info_colors
-    aqt install-qt --outputdir $qtInstallationDir windows desktop $qtVersion win64_msvc2019_64 -m all
+    Write-Host "Installing Qt6 using aqt with $(& $python --version)... " @info_colors
+    & $python -m aqt install-qt --outputdir $qtInstallationDir windows desktop $qtVersion win64_msvc2019_64 -m all
 
     # Export Qt6_DIR to system environment variables
     $qt6Dir = Join-Path -Path "$projectDir\$dependencies" -ChildPath "qt\$qtVersion\msvc2019_64"
