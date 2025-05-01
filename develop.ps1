@@ -95,7 +95,7 @@ else
             $pythonVersion = $(python -c "import sys; v = sys.version_info; print(v.major == 3, v.minor == 12)")
             $versionParts = $pythonVersion -split " "
             if (-not ($versionParts[0] -eq "True" -and $versionParts[1] -eq "True")) {
-                Write-Output "System Python is version $(python --version) and it is recommended to be == 3.12 - installing with Chocolatey..." @info_colors
+                Write-Output "System Python is version $(python --version) and it is recommended to be version == 3.12 - installing with Chocolatey..." @info_colors
                 choco install -y python --version=3.12.0
             }
         } catch {
