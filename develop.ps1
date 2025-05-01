@@ -127,8 +127,8 @@ Write-Host "Installing Python packages... " @info_colors
 python -m pip install --upgrade pip
 python -m pip install aqtinstall conan==1.*
 
-$aqtVersion = aqt version 2>&1
-Write-Host "AQT Version output:`n$aqtVersion"
+$pythonVersion = python --version
+Write-Host "Python Version output:`n$pythonVersion"
 
 $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
