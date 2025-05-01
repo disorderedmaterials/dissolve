@@ -21,11 +21,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: 'Set up Python'
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
     - name: 'Install Downgraded MSVC'
       shell: powershell
       env:
@@ -56,7 +51,7 @@ jobs:
         qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
         antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
       run: | 
-        ./develop.ps1 -release -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion
+        ./develop.ps1 -release -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion -forcePythonVersion "3.11"
         
     - name: 'Configure and build with CMake'
       shell: bash
