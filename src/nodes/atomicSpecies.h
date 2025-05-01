@@ -5,6 +5,7 @@
 
 #include "classes/moleculeSet.h"
 #include "classes/species.h"
+#include "math/vector3.h"
 #include "nodes/node.h"
 #include <string>
 
@@ -13,6 +14,8 @@ class AtomicSpeciesNode : public Node
 {
     public:
     AtomicSpeciesNode(Graph *parentGraph);
+    AtomicSpeciesNode(Graph *parentGraph, std::string_view name, Elements::Element Z = Elements::Element::Unknown,
+                      Vector3 r = Vector3());
     ~AtomicSpeciesNode() override = default;
 
     /*
@@ -27,18 +30,16 @@ class AtomicSpeciesNode : public Node
      */
     private:
     // Species object
-    std::unique_ptr<Species> species_{std::make_unique<Species>()};
+    Species species_;
     // Local raw pointer to species
-    Species *rawSpecies_{species_.get()};
-    // Element symbol
-    std::string_view Z_{"Unknown"};
-    // Species name
-    std::string_view name_;
+    const Species* rawSpecies_{nullptr};
 
     /*
      * Processing
      */
     private:
+    // Reset species
+    void reset(std::string_view name, Elements::Element Z, Vector3 r);
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

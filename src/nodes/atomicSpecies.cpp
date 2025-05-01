@@ -1,21 +1,21 @@
 #include "atomicSpecies.h"
-#include "math/vector3.h"
 
-AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph) : Node(parentGraph)
+AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph, std::string_view name, Elements::Element Z, Vector3 r)
+    : Node(parentGraph)
 {
-    addOption<std::string_view>("Element", "Atomic species element symbol", Z_);
-    addOption<std::string_view>("Name", "Atomic species name", name_);
-    addOutput<Species *>("Species", "Atomic species", rawSpecies_);
+    reset(name, Z, r);
+    addOutput<const Species *>("Species", "Atomic species", rawSpecies_);
 }
 
 std::string_view AtomicSpeciesNode::type() const { return "Atomic Species"; }
 
 std::string_view AtomicSpeciesNode::summary() const { return "Produce an atomic species"; }
 
-NodeConstants::ProcessResult AtomicSpeciesNode::process()
+void AtomicSpeciesNode::reset(std::string_view name, Elements::Element Z, Vector3 r)
 {
-    rawSpecies_->addAtom(Elements::element(Z_), Vector3());
-    rawSpecies_->setName(name_);
-
-    return NodeConstants::ProcessResult::Success;
+    species_.addAtom(Z, r);
+    species_.setName(name);
+    rawSpecies_ = &species_;
 }
+
+NodeConstants::ProcessResult AtomicSpeciesNode::process() { return NodeConstants::ProcessResult::Unchanged; }
