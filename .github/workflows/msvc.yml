@@ -45,6 +45,7 @@ jobs:
         arch: x64
 
     - name: 'Set up Python 3.11'
+      id: setup-python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
@@ -55,6 +56,7 @@ jobs:
       env:
         qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
         antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
+        PythonPath: ${{ steps.setup-python.outputs.python-path }}
       run: | 
         ./develop.ps1 -release -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion -noPython
         
