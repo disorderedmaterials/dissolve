@@ -323,20 +323,21 @@ Write-Host "Setting up Conan profile... " @info_colors
 try {
     $conanVersion = conan --version
     Write-Output "Found conan version $conanVersion..."
+
+    $conan = "conan"
 } catch {
     Write-Output "Could not find conan, adding Python scripts to path..." @info_colors
     $scripts = & $python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
     $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
     [Environment]::SetEnvironmentVariable("PATH", "$scripts;$systemPath", [EnvironmentVariableTarget]::Machine)
-    Write-Host "Python scripts path added to system PATH." @info_colors
+    Write-Host "Python scripts path at location $scripts added to system PATH." @info_colors
 
-    $findConan = where.exe conan
-    Write-Output "Looking for conan - $findConan" @info_colors
+    $conan = "$scripts/conan.exe"
 }
 
-conan profile new default --detect
-conan profile update settings.compiler="Visual Studio" default
-conan profile update settings.compiler.version=17 default
+& $conan profile new default --detect
+& $conan profile update settings.compiler="Visual Studio" default
+& $conan profile update settings.compiler.version=17 default
 
 # Generate Cmake user presets JSON for MSVC Cmake configurations
 $out = Join-Path -Path $projectDir -ChildPath "build"
