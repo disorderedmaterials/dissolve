@@ -21,6 +21,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: 'Set up Python 3.11'
+      id: setup-python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
     - name: 'Install Downgraded MSVC'
       shell: powershell
       env:
@@ -44,12 +50,6 @@ jobs:
       with:
         arch: x64
 
-    - name: 'Set up Python 3.11'
-      id: setup-python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
     - name: 'Install dependencies'
       shell: pwsh
       working-directory: ${{ github.workspace }}
@@ -58,6 +58,7 @@ jobs:
         antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
         PythonPath: ${{ steps.setup-python.outputs.python-path }}
       run: | 
+        Write-Output $env:PythonPath
         ./develop.ps1 -release -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion -noPython
         
     - name: 'Configure and build with CMake'
