@@ -127,6 +127,9 @@ Write-Host "Installing Python packages... " @info_colors
 python -m pip install --upgrade pip
 python -m pip install aqtinstall conan==1.*
 
+$aqtVersion = aqt version 2>&1
+Write-Host "AQT Version output:`n$aqtVersion"
+
 $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
 [Environment]::SetEnvironmentVariable("PATH", "$(Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir");$systemPath", [EnvironmentVariableTarget]::Machine)
@@ -140,7 +143,7 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
     $qtInstallationDir = Join-Path -Path $dependencies -ChildPath "qt"
     New-Item -ItemType Directory -Path $qtInstallationDir -ErrorAction SilentlyContinue
 
-    Write-Host "Installing Qt6, using aqt ($(aqt version))... " @info_colors
+    Write-Host "Installing Qt6... " @info_colors
     aqt install-qt --outputdir $qtInstallationDir windows desktop $qtVersion win64_msvc2019_64 -m all
 
     # Export Qt6_DIR to system environment variables
