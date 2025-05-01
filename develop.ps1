@@ -3,6 +3,10 @@
         Script to install dependencies for Dissolve development environment in Visual Studio.
     .DESCRIPTION
         Installs the following dependencies for Dissolve (separate and prior to Conan-managed packages):
+            - Python 3.12
+            - CMake 3.3
+            - ninja
+            - pkgconfiglite
             - Qt6 <VERSION>
             - Freetype
             - FTGL
@@ -21,7 +25,8 @@
 
 param (
     [string]$qtVersion,
-    [string]$antlrVersion = "4.13.1", 
+    [string]$antlrVersion = "4.13.1",
+    [string]$forcePythonVersion,
     [switch]$release = $false
 )
 
@@ -56,7 +61,8 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
 Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
 
 Write-Host "Installing key dependencies with Chocolatey... " @info_colors
-choco install -y ninja pkgconfiglite cmake
+choco install -y ninja pkgconfiglite
+choco install -y cmake --version=3.30.1 --force
 
 # Find git, install if not found
 try {
@@ -68,18 +74,26 @@ try {
 }
 
 # Find python, install if not found
-try {
-    & "python" --version
-    Write-Output "Found system Python..." @info_colors
-    $pythonVersion = $(python -c "import sys; v = sys.version_info; print(v.major == 3, v.minor == 12)")
-    $versionParts = $pythonVersion -split " "
-    if (-not ($versionParts[0] -eq "True" -and $versionParts[1] -eq "True")) {
-        Write-Output "System Python is version $(python --version) and it is recommended to be == 3.12 - installing with Chocolatey..." @info_colors
+if (-not [string]::IsNullOrEmpty($forcePythonVersion))
+{
+    Write-Output "Installing requested Python version $forcePythonVersion..."
+    choco install -y python --version=$forcePythonVersion --force
+}
+else
+{
+    try {
+        & "python" --version
+        Write-Output "Found system Python..." @info_colors
+        $pythonVersion = $(python -c "import sys; v = sys.version_info; print(v.major == 3, v.minor == 12)")
+        $versionParts = $pythonVersion -split " "
+        if (-not ($versionParts[0] -eq "True" -and $versionParts[1] -eq "True")) {
+            Write-Output "System Python is version $(python --version) and it is recommended to be == 3.12 - installing with Chocolatey..." @info_colors
+            choco install -y python --version=3.12.0
+        }
+    } catch {
+        Write-Output "Could not find system Python - installing with Chocolatey..." @info_colors
         choco install -y python --version=3.12.0
     }
-} catch {
-    Write-Output "Could not find system Python - installing with Chocolatey..." @info_colors
-    choco install -y python --version=3.12.0
 }
 
 refreshenv
