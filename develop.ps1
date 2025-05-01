@@ -324,11 +324,14 @@ try {
     $conanVersion = conan --version
     Write-Output "Found conan version $conanVersion..."
 } catch {
-    Write-Output "Could not find conan, adding Python scripts to path..."
+    Write-Output "Could not find conan, adding Python scripts to path..." @info_colors
     $scripts = & $python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
     $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
     [Environment]::SetEnvironmentVariable("PATH", "$scripts;$systemPath", [EnvironmentVariableTarget]::Machine)
     Write-Host "Python scripts path added to system PATH." @info_colors
+
+    $findConan = where.exe conan
+    Write-Output "Looking for conan - $findConan" @info_colors
 }
 
 conan profile new default --detect
