@@ -15,7 +15,6 @@ void AtomicSpeciesNode::reset(std::string_view name, Elements::Element Z, Vector
 {
     species_.addAtom(Z, r);
     species_.setName(name);
-    rawSpecies_ = &species_;
 }
 
 NodeConstants::ProcessResult AtomicSpeciesNode::process() { return NodeConstants::ProcessResult::Unchanged; }
