@@ -319,6 +319,18 @@ Move-Item -Path $antlrOutput -Destination $antlrExePath
 Set-Location -Path $projectDir
 
 Write-Host "Setting up Conan profile... " @info_colors
+
+try {
+    $conanVersion = conan --version
+    Write-Output "Found conan version $conanVersion..."
+} catch {
+    Write-Output "Could not find conan, adding Python scripts to path..."
+    $scripts = & $python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
+    $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
+    [Environment]::SetEnvironmentVariable("PATH", "$scripts;$systemPath", [EnvironmentVariableTarget]::Machine)
+    Write-Host "Python scripts path added to system PATH." @info_colors
+}
+
 conan profile new default --detect
 conan profile update settings.compiler="Visual Studio" default
 conan profile update settings.compiler.version=17 default
