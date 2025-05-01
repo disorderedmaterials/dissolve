@@ -27,7 +27,7 @@ param (
     [string]$qtVersion,
     [string]$antlrVersion = "4.13.1",
     [string]$forcePythonVersion,
-    [switch]$release = $false
+    [switch]$release = $false,
     [switch]$noPython = $false
 )
 
