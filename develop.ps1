@@ -28,6 +28,7 @@ param (
     [string]$antlrVersion = "4.13.1",
     [string]$forcePythonVersion,
     [switch]$release = $false
+    [switch]$noPython = $false
 )
 
 $build = "Debug"
@@ -74,25 +75,28 @@ try {
 }
 
 # Find python, install if not found
-if (-not [string]::IsNullOrEmpty($forcePythonVersion))
+if (-not $noPython)
 {
-    Write-Output "Installing requested Python version $forcePythonVersion..."
-    choco install -y python --version=$forcePythonVersion --force
-}
-else
-{
-    try {
-        & "python" --version
-        Write-Output "Found system Python..." @info_colors
-        $pythonVersion = $(python -c "import sys; v = sys.version_info; print(v.major == 3, v.minor == 12)")
-        $versionParts = $pythonVersion -split " "
-        if (-not ($versionParts[0] -eq "True" -and $versionParts[1] -eq "True")) {
-            Write-Output "System Python is version $(python --version) and it is recommended to be == 3.12 - installing with Chocolatey..." @info_colors
+    if (-not [string]::IsNullOrEmpty($forcePythonVersion))
+    {
+        Write-Output "Installing requested Python version $forcePythonVersion..."
+        choco install -y python --version=$forcePythonVersion --force
+    }
+    else
+    {
+        try {
+            & "python" --version
+            Write-Output "Found system Python..." @info_colors
+            $pythonVersion = $(python -c "import sys; v = sys.version_info; print(v.major == 3, v.minor == 12)")
+            $versionParts = $pythonVersion -split " "
+            if (-not ($versionParts[0] -eq "True" -and $versionParts[1] -eq "True")) {
+                Write-Output "System Python is version $(python --version) and it is recommended to be == 3.12 - installing with Chocolatey..." @info_colors
+                choco install -y python --version=3.12.0
+            }
+        } catch {
+            Write-Output "Could not find system Python - installing with Chocolatey..." @info_colors
             choco install -y python --version=3.12.0
         }
-    } catch {
-        Write-Output "Could not find system Python - installing with Chocolatey..." @info_colors
-        choco install -y python --version=3.12.0
     }
 }
 

@@ -56,7 +56,7 @@ jobs:
         qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
         antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
       run: | 
-        ./develop.ps1 -release -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion
+        ./develop.ps1 -release -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion -noPython
         
     - name: 'Configure and build with CMake'
       shell: bash
