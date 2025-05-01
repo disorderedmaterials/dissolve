@@ -52,9 +52,14 @@ runs:
       $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
       $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
 
+  - name: Setup cmake
+    uses: jwlawson/actions-setup-cmake@v2
+    with:
+      cmake-version: '3.x'
+
   - name: Install Chocolatey Dependencies
     shell: bash
-    run: choco install -y ninja wget
+    run: choco install -y wget
 
   - name: Install Python Dependencies
     shell: bash

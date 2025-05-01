@@ -198,8 +198,8 @@ double EnergyKernel::pairPotentialEnergy(const Atom &i) const
     return dissolve::transform_reduce(ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<>(),
                                       [&i, this](const auto &neighbour)
                                       {
-                                          auto mimRequired = neighbour.requiresMIM_;
-                                          auto &nbrCellAtoms = neighbour.neighbour_.atoms();
+                                          auto mimRequired = neighbour.requiresMIM;
+                                          auto &nbrCellAtoms = neighbour.cell.atoms();
                                           return std::accumulate(
                                               nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
                                               [&i, mimRequired, this](const auto innerAcc, const auto *j)
@@ -251,8 +251,8 @@ PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, 
                         [&neighbour, includeIntraMolecular, this](const auto acc, const auto &i)
                         {
                             auto &ii = *i;
-                            auto mimRequired = neighbour.requiresMIM_;
-                            auto &nbrCellAtoms = neighbour.neighbour_.atoms();
+                            auto mimRequired = neighbour.requiresMIM;
+                            auto &nbrCellAtoms = neighbour.cell.atoms();
                             return acc + std::accumulate(
                                              nbrCellAtoms.begin(), nbrCellAtoms.end(), PairPotentialEnergyValue(),
                                              [&ii, mimRequired, includeIntraMolecular, this](const auto innerAcc, const auto *j)
@@ -341,13 +341,11 @@ PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool includeIntr
     ppEnergy += dissolve::transform_reduce(ParallelPolicies::par, begin, end, PairPotentialEnergyValue(), std::plus<>(),
                                            [&](const auto &pair)
                                            {
-                                               auto &cellI = pair.master_;
-                                               auto &cellJ = pair.neighbour_;
-                                               auto mimRequired = pair.requiresMIM_;
-                                               if (&cellI == &cellJ)
-                                                   return cellEnergy(cellI, includeIntraMolecular);
+                                               if (&pair.cell == &pair.neighbour)
+                                                   return cellEnergy(pair.cell, includeIntraMolecular);
                                                else
-                                                   return cellToCellEnergy(cellI, cellJ, mimRequired, includeIntraMolecular);
+                                                   return cellToCellEnergy(pair.cell, pair.neighbour, pair.requiresMIM,
+                                                                           includeIntraMolecular);
                                            });
 
     return ppEnergy;

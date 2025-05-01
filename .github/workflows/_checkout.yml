@@ -131,10 +131,10 @@ jobs:
         shell: bash
         run: |
           set -ex
-          ./changeversion -l > ChangeLog.md
+          ./changeversion -l
 
       - name: Bump Version
-        if: inputs.bump == true
+        if: inputs.bump == 'true'
         shell: bash
         run: |
           set -ex
@@ -203,8 +203,8 @@ jobs:
            then
              echo "Release branch ${BRANCH} already exists."
            else
-             git config user.name "${{ env.USER }}"
-             git config user.email "${{ env.EMAIL }}"
+             git config user.name "${{ github.actor }}"
+             git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
              git checkout -b ${BRANCH}
 
              git push --set-upstream origin ${BRANCH}

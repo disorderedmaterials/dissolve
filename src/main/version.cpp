@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-#define DISSOLVEVERSION "1.6.0"
+#define DISSOLVEVERSION "1.7.0"
 #define DISSOLVESHORTHASH ""
 #define DISSOLVEREPO "https://github.com/disorderedmaterials/dissolve.git"
 

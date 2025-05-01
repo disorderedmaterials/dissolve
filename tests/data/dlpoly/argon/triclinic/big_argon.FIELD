@@ -1,0 +1,14 @@
+Unnamed003
+units kj
+molecules 1
+Unnamed002
+nummols 6528
+atoms 1
+Ar           39.94800   0.000000   1   0   1
+bonds 0
+angles 0
+dihedrals 0
+finish
+vdw 1
+Ar       Ar        lj      0.774040      3.445996
+close

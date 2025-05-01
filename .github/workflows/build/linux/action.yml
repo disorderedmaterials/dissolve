@@ -45,7 +45,7 @@ runs:
       key: ${{ runner.os }}-${{ inputs.nixHash }}-nix-cache
 
   - name: Import Nix Store Cache
-    if: "steps.nix-cache.outputs.cache-hit == 'true'"
+    if: steps.nix-cache.outputs.cache-hit == 'true'
     shell: bash
     run: |
       nix-store --import < /tmp/nixcache
@@ -140,7 +140,7 @@ runs:
       alert-comment-cc-users: '@disorderedmaterials/dissolve-devs'
 
   - name: Tidy nix Store
-    if: ${{ inputs.cacheOnly == 'true' }}
+    if: inputs.cacheOnly == 'true'
     shell: bash
     run: |
       set -ex
@@ -151,7 +151,7 @@ runs:
       echo "for a in \"$targets\"; do $nixStoreCmd -q --referrers-closure \$a | xargs $nixStoreCmd --delete --ignore-liveness $b; done" | sudo bash
 
   - name: Export Nix Store Cache
-    if: ${{ inputs.cacheOnly == 'true' }}
+    if: inputs.cacheOnly == 'true'
     shell: bash
     run: nix-store --export $(find /nix/store -maxdepth 1 -name '*-*') > /tmp/nixcache
 

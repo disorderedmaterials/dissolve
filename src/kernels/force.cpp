@@ -182,8 +182,8 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
             auto &neighbours = cellArray_->get().neighbours(*cellI);
             for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
             {
-                if (it->neighbour_.index() < cellI->index())
-                    cellToCellPairPotentialForces(cellI, &it->neighbour_, it->requiresMIM_, fLocal);
+                if (it->cell.index() < cellI->index())
+                    cellToCellPairPotentialForces(cellI, &it->cell, it->requiresMIM, fLocal);
             }
         };
 

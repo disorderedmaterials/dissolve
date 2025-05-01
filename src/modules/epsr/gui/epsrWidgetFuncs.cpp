@@ -69,12 +69,13 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
 
         const auto &atomTypes = module_->scatteringMatrix().atomTypes();
         const auto nAtomTypes = atomTypes.size();
+        auto epsrModuleTargets = module_->keywords().getVectorModule("Target");
 
         // Set the relevant graph targets
         if (ui_.TotalFQButton->isChecked())
         {
             // Add calculated and reference F(Q) for all targets
-            for (auto *targetModule : module_->targets())
+            for (auto *targetModule : epsrModuleTargets)
             {
                 // Reference data
                 graph_->createRenderable<RenderableData1D>(std::format("{}//ReferenceData", targetModule->name()),
@@ -93,7 +94,7 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
         else if (ui_.DeltaFQButton->isChecked())
         {
             // Add delta F(Q) and fit
-            for (auto *targetModule : module_->targets())
+            for (auto *targetModule : epsrModuleTargets)
             {
                 graph_->createRenderable<RenderableData1D>(
                     std::format("{}//DeltaFQ//{}", module_->name(), targetModule->name()),
@@ -167,7 +168,7 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
         }
         else if (ui_.TotalGRButton->isChecked())
         {
-            for (auto *targetModule : module_->targets())
+            for (auto *targetModule : epsrModuleTargets)
             {
                 // Reference F(r) (from direct FT of input data)
                 graph_->createRenderable<RenderableData1D>(std::format("{}//ReferenceDataFT", targetModule->name()),
@@ -202,7 +203,7 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
                 ->lineStyle()
                 .setStipple(LineStipple::HalfDashStipple);
 
-            for (auto *targetModule : module_->targets())
+            for (auto *targetModule : epsrModuleTargets)
                 graph_->createRenderable<RenderableData1D>(
                     std::format("{}//RFactor//{}", module_->name(), targetModule->name()), targetModule->name(), "RFactor");
         }
