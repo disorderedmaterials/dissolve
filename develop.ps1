@@ -4,7 +4,7 @@
     .DESCRIPTION
         Installs the following dependencies for Dissolve (separate and prior to Conan-managed packages):
             - Python 3.12 (unless stated otherwise)
-            - CMake 3.3
+            - CMake 3.x
             - ninja
             - pkgconfiglite
             - Qt6 <VERSION>
