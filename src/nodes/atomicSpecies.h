@@ -14,7 +14,7 @@ class AtomicSpeciesNode : public Node
 {
     public:
     AtomicSpeciesNode(Graph *parentGraph);
-    AtomicSpeciesNode(Graph *parentGraph, std::string_view name, Elements::Element Z = Elements::Element::Unknown,
+    AtomicSpeciesNode(Graph *parentGraph, std::string_view name = "Argon", Elements::Element Z = Elements::Element::Ar,
                       Vector3 r = Vector3());
     ~AtomicSpeciesNode() override = default;
 
