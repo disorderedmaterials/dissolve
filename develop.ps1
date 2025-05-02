@@ -3,7 +3,7 @@
         Script to install dependencies for Dissolve development environment in Visual Studio.
     .DESCRIPTION
         Installs the following dependencies for Dissolve (separate and prior to Conan-managed packages):
-            - Python 3.12
+            - Python 3.12 (unless stated otherwise)
             - CMake 3.3
             - ninja
             - pkgconfiglite
@@ -11,11 +11,15 @@
             - Freetype
             - FTGL
             - Antlr4 (Java backend)
-            - Java JDK
+            - Java JDK (latest)
         
         These packages are installed into a folder called 'dependencies'.
     .PARAMETER qtVersion
         Qt version to install. Defaults to existing system Qt6 installation if none specified.
+    .PARAMETER pythonPath
+        Path to a Python executable.
+    .PARAMETER forcePythonVersion
+        Force installation of a given Python version.
     .PARAMETER antlrVersion
         ANTLR version to install. Defaults to ANTLR 4.13.1.
     .PARAMETER release
