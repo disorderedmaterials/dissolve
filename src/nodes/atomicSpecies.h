@@ -38,8 +38,6 @@ class AtomicSpeciesNode : public Node
      * Processing
      */
     private:
-    // Reset species
-    void reset(std::string_view name, Elements::Element Z, Vector3 r);
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };
