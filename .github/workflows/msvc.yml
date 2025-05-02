@@ -6,6 +6,7 @@ on:
     - '*'
     paths:
     - 'develop.ps1'
+    - './.github/workflows/build/windows/action.yml'
 
 jobs:
 
