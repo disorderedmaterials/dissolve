@@ -4,6 +4,7 @@
 #include "classes/atomType.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
+#include "math/mathFunc.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
