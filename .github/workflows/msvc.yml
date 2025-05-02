@@ -31,7 +31,7 @@ jobs:
     - name: 'Install Downgraded MSVC'
       shell: powershell
       env:
-        msvcVersion: '14.41.17.11'
+        msvcVersion: ${{ needs.Checkout.outputs.msvcVersion }}
       run: |
         # For versions update see here: https://learn.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-build-tools?view=vs-2022
         Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
