@@ -43,6 +43,8 @@ class GraphNodeModel : QAbstractListModel
     void beginInsert(int count = 1);
     // Must call *after* inserting new elements
     void endInsert();
+    // Alert that the parent graph has updated
+    void updateGraph();
 
     private:
     // The GraphModel that this is part of (which will hold the actual vector of nodes

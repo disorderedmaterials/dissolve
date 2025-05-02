@@ -303,7 +303,14 @@ ApplicationWindow {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: toolBar.bottom
-                delegate: exampleDelegate.delegate
+                delegate: NodeBox {
+                    image: icon
+                    nodeType: name
+                    px: posX
+                    py: posY
+                    x: posX
+                    y: posY
+                }
                 edgeModel: graphModel.edges
                 nodeModel: graphModel.nodes
                 rootModel: graphModel

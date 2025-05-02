@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "graphNodeModel.h"
 #include "graphModel.h"
+#include "graphNodeModel.h"
 #include <qvariant.h>
 
 GraphNodeModel &GraphNodeModel::operator=(const GraphNodeModel &other)
@@ -12,6 +12,12 @@ GraphNodeModel &GraphNodeModel::operator=(const GraphNodeModel &other)
 }
 
 bool GraphNodeModel::operator!=(const GraphNodeModel &other) { return &parent_ != &other.parent_; }
+
+void GraphNodeModel::updateGraph()
+{
+    beginResetModel();
+    endResetModel();
+}
 
 // Number of nodes (required by QAbstractListModel)
 int GraphNodeModel::rowCount(const QModelIndex &parent) const
@@ -40,16 +46,16 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
     switch (role - Qt::UserRole)
     {
         case 0:
-            return QVariant::fromValue(item.rawValue().name());
+            return QString::fromStdString(std::string(item.rawValue().name()));
         case 1:
             return item.posx;
         case 2:
             return item.posy;
         case 3:
-            return QVariant::fromValue(item.rawValue().type());
+            return QString::fromStdString(std::string(item.rawValue().type()));
         case 4:
             // FIXME: Actually have an icon translation
-            return QVariant::fromValue(item.rawValue().type());
+            return QString::fromStdString(std::string(item.rawValue().type()));
             // default:
             //     return nodeData(item.rawValue(), role - Qt::UserRole - ownedRoles);
     }

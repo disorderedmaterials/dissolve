@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/node.h"
 #include "base/sysFunc.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include "nodes/node.h"
 #include <algorithm>
 
 /*
@@ -49,6 +49,7 @@ void Node::echo() { std::cout << messages_.back().second << std::endl; }
 // Link edge, returning whether we accept it
 bool Node::linkEdge(Edge *edge)
 {
+
     // The supplied Edge was created via our parent Graph, but we will still check to see whether we accept it
     if (&edge->targetNode() == this)
     {

@@ -9,6 +9,7 @@
 #include "main/dissolve.h"
 #include "main/version.h"
 #include "math/mathFunc.h"
+#include "nodes/dissolve.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -20,6 +21,7 @@ int main(int args, char **argv)
     // Instantiate main classes
     CoreData coreData;
     Dissolve dissolve(coreData);
+    dissolve.graph()->addNode("Add", "Number Sum");
 
     DissolveModel dissolveModel;
     dissolveModel.setDissolve(dissolve);
