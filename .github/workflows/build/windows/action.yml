@@ -22,7 +22,7 @@ inputs:
     required: true
   msvcVersion:
     type: string
-    default: '14.41.17.11'
+    required: true
 
 runs:
   using: "composite"

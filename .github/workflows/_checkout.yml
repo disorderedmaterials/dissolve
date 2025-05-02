@@ -4,6 +4,9 @@ description: Checks out the source and packages the source as an artifact for us
 on:
   workflow_call:
     inputs:
+      msvcVersion:
+        type: string
+        default: '14.41.17.11'
       qtVersion:
         type: string
         default: 6.4.2
