@@ -25,9 +25,9 @@ class ConfigurationNode : public Node
      */
     private:
     // Configuration object
-    std::unique_ptr<Configuration> configuration_{std::make_unique<Configuration>()};
+    Configuration configuration_;
     // Local raw pointer to configuration
-    Configuration *rawConfiguration_{configuration_.get()};
+    Configuration *rawConfiguration_{&configuration_};
 
     /*
      * Processing
