@@ -19,8 +19,6 @@ ApplicationWindow {
     visible: true
     width: 819
 
-    DissolveModel { id: dissolve }
-
     menuBar: MenuBar {
         id: mainMenu
 
@@ -296,21 +294,18 @@ ApplicationWindow {
                     }
                 }
             }
+            GraphDelegate {
+                id: graphDelegate
+                rootModel: graphModel
+            }
             GraphView {
                 id: graph
 
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors.bottom: exampleGraphTab.bottom
+                anchors.left: exampleGraphTab.left
+                anchors.right: exampleGraphTab.right
                 anchors.top: toolBar.bottom
-                delegate: NodeBox {
-                    image: icon
-                    nodeType: name
-                    px: posX
-                    py: posY
-                    x: posX
-                    y: posY
-                }
+                delegate: graphDelegate.delegate
                 edgeModel: graphModel.edges
                 nodeModel: graphModel.nodes
                 rootModel: graphModel

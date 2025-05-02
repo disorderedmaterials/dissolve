@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "graphModel.h"
 #include "graphNodeModel.h"
+#include "graphModel.h"
 #include <qvariant.h>
+
+GraphNodeModel::GraphNodeModel(GraphModel *parent) : parent_(parent) {}
+GraphNodeModel::GraphNodeModel(const GraphNodeModel &other) : parent_(other.parent_) {}
 
 GraphNodeModel &GraphNodeModel::operator=(const GraphNodeModel &other)
 {

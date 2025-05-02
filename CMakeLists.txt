@@ -294,6 +294,7 @@ if(GUI)
     QML_FILES
     ${SRCS}/gui-qml/qml/DissolveMain.qml
     ${SRCS}/gui/qml/nodeGraph/GraphView.qml
+    ${SRCS}/gui/qml/nodeGraph/GraphDelegate.qml
     ${SRCS}/gui/qml/nodeGraph/NodeBox.qml
   )
 

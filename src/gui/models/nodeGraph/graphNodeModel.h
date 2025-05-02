@@ -15,8 +15,8 @@ class GraphNodeModel : QAbstractListModel
     friend GraphModel;
 
     public:
-    GraphNodeModel(GraphModel *parent = nullptr) : parent_(parent) {}
-    GraphNodeModel(const GraphNodeModel &other) : parent_(other.parent_) {}
+    GraphNodeModel(GraphModel *parent = nullptr);
+    GraphNodeModel(const GraphNodeModel &other);
 
     GraphNodeModel &operator=(const GraphNodeModel &other);
 
