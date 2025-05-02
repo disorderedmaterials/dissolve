@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "graphNodeModel.h"
 #include "graphModel.h"
+#include "graphNodeModel.h"
 #include <qvariant.h>
 
 GraphNodeModel::GraphNodeModel(GraphModel *parent) : parent_(parent) {}
@@ -58,7 +58,7 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
             return QString::fromStdString(std::string(item.rawValue().type()));
         case 4:
             // FIXME: Actually have an icon translation
-            return QString::fromStdString(std::string(item.rawValue().type()));
+            return QString::fromStdString("qrc:/Dissolve/icons/nodes/Add.svg");
             // default:
             //     return nodeData(item.rawValue(), role - Qt::UserRole - ownedRoles);
     }
