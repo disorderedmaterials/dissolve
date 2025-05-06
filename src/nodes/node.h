@@ -163,7 +163,7 @@ class Node : public Serialisable<>
     // Add pointer output parameter
     template <class T> std::shared_ptr<ParameterBase> addPointerOutput(std::string_view name, std::string_view description, T* data)
     {
-        if (findInput(name))
+        if (findOutput(name))
             Messenger::exception("Output parameter '{}' already exists, and can't be added again.", name);
 
         auto param = outputs_.emplace(std::make_pair(name, new PointerParameter<T>(this, name, description, data))).first->second;
