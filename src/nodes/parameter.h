@@ -64,7 +64,7 @@ class ParameterBase : public Serialisable<>
      */
     public:
     // Return whether the contained data represents the default value
-    virtual bool isDefault() const = 0;
+    virtual bool isDefault() const { return true; };
     // Flag that an update is required in the parent node
     void setParentUpdateRequired() const;
     // Clear data in the parent node
@@ -79,6 +79,15 @@ class ParameterBase : public Serialisable<>
         auto casted = static_cast<Parameter<T> *>(this);
         return casted->shared_from_this();
     }
+
+    /*
+     * I/O
+     */
+    public:
+    // Express as a serialised value
+    virtual SerialisedValue serialise() const override { return {}; }
+    // Read from a serialised value
+    virtual void deserialise(const SerialisedValue &node) override { return; }
 };
 
 // Primary type for a Parameter to a value of type T
@@ -272,23 +281,26 @@ template <typename T> class BoundedOptionalParameter : public BoundedParameter<T
     std::string_view textWhenNull() const { return textWhenNull_; }
 };
 
-// Parameters which are pointers
-template <typename T> class PointerParameter : public Parameter<T>
+// PointerParameter, returning a pointer from a target object rather than the object itself
+template <typename T> class PointerParameter : public ParameterBase, public std::enable_shared_from_this<PointerParameter<T>>
 {
     public:
-    PointerParameter(Node *parent, std::string_view name, std::string_view description, T *value)
-        : Parameter<T>(parent, name, description, PointerParameter::dereference(value))
+    PointerParameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer<T>::type &object)
+        : ParameterBase(parent, name, description, std::type_index(typeid(T))), object_(object)
     {
     }
 
-    private:
-    // Deference the parameter value and return reference
-    static T &dereference(T *value)
-    {
-        if (!value)
-            throw std::invalid_argument("Value is a null pointer.");
+    /*
+     * Data
+     */
+    protected:
+    // Reference to target data
+    std::remove_pointer<T>::type &object_;
 
-        T &param = *value;
-        return param;
-    };
+    public:
+    // Return the object pointer
+    T get() { return &object_; }
+    const T get() const { return &object_; }
+    // Assign the value of another parameter to this one.
+    bool assign(ParameterBase *other) override { return false; }
 };
