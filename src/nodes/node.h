@@ -141,12 +141,14 @@ class Node : public Serialisable<>
         return param;
     }
     // Add pointer input parameter
-    template <class T> std::shared_ptr<ParameterBase> addPointerInput(std::string_view name, std::string_view description, T* data)
+    template <class T>
+    std::shared_ptr<ParameterBase> addPointerInput(std::string_view name, std::string_view description, T *data)
     {
         if (findInput(name))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
 
-        auto param = inputs_.emplace(std::make_pair(name, new PointerParameter<T>(this, name, description, data))).first->second;
+        auto param =
+            inputs_.emplace(std::make_pair(name, new PointerParameter<T>(this, name, description, data))).first->second;
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
@@ -161,12 +163,14 @@ class Node : public Serialisable<>
         return param;
     }
     // Add pointer output parameter
-    template <class T> std::shared_ptr<ParameterBase> addPointerOutput(std::string_view name, std::string_view description, T* data)
+    template <class T>
+    std::shared_ptr<ParameterBase> addPointerOutput(std::string_view name, std::string_view description, T *data)
     {
         if (findOutput(name))
             Messenger::exception("Output parameter '{}' already exists, and can't be added again.", name);
 
-        auto param = outputs_.emplace(std::make_pair(name, new PointerParameter<T>(this, name, description, data))).first->second;
+        auto param =
+            outputs_.emplace(std::make_pair(name, new PointerParameter<T>(this, name, description, data))).first->second;
         param->setFlags(ParameterBase::ParameterFlags::Output);
         return param;
     }
