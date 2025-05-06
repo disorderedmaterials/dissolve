@@ -199,7 +199,7 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
         auto *cellI = cellArray.cell(n);
         auto *cellJ = cellArray.cell(m);
 
-        if (!cellArray.withinRange(cellI, cellJ, rdfRange))
+        if (!cellArray.withinMinimumImageRange(cellI, cellJ, rdfRange))
             return;
 
         // Add contributions between atoms in cellI and cellJ

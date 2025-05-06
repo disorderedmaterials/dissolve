@@ -215,10 +215,10 @@ do
        SetReadMeInfo $OPTARG
        GetReadMeInfo
        ;;
-    q) git cliff --bumped-version
+    q) git cliff --bumped-version -u
        ;;
     b) CURRENT=$(GetAuthoritativeVersion)
-       BUMPED=$(git cliff --bumped-version)
+       BUMPED=$(git cliff --bumped-version -u)
        if [ "${BUMPED}x" == "x" ]
        then
          echo "Error: Failed to auto-bump version."
@@ -246,7 +246,7 @@ do
        ;;
     t) CURRENT=$(GetAuthoritativeVersion)
        CURRENT_PARTS=($(echo $CURRENT | tr "." " "))
-       BUMPED=$(git cliff --bumped-version)
+       BUMPED=$(git cliff --bumped-version -u)
        BUMPED_PARTS=($(echo $BUMPED | tr "." " "))
        if [ "${CURRENT_PARTS[0]}" != "${BUMPED_PARTS[0]}" ]
        then

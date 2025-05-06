@@ -131,10 +131,10 @@ jobs:
         shell: bash
         run: |
           set -ex
-          ./changeversion -l > ChangeLog.md
+          ./changeversion -l | tee ChangeLog.md
 
       - name: Bump Version
-        if: inputs.bump == true
+        if: inputs.bump == 'true'
         shell: bash
         run: |
           set -ex
