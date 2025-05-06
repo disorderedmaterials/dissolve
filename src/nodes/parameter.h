@@ -271,3 +271,21 @@ template <typename T> class BoundedOptionalParameter : public BoundedParameter<T
     // Return text to display when null
     std::string_view textWhenNull() const { return textWhenNull_; }
 };
+
+// Parameters which are pointers
+template <typename T> class PointerParameter : public Parameter<T>
+{
+public:
+    PointerParameter(Node* parent, std::string_view name, std::string_view description, T* value) : Parameter<T>(parent, name, description, PointerParameter::dereference(value)) {}
+
+private:
+    // Deference the parameter value and return reference
+    static T &dereference(T *value)
+    {
+        if (!value)
+            throw std::invalid_argument("Value is a null pointer.");
+    
+        T& param = *value;
+        return param;
+    };
+};
