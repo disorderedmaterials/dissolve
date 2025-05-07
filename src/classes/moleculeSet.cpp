@@ -3,6 +3,9 @@
 
 #include "classes/moleculeSet.h"
 
+// Add a new molecule from the specified Species
+LocalMolecule &MoleculeSet::addMolecule(const Species *species) { return localMolecules_.emplace_back(species); }
+
 // Return nth local molecule
 LocalMolecule &MoleculeSet::localMolecule(int n) { return localMolecules_[n]; }
 const LocalMolecule &MoleculeSet::localMolecule(int n) const { return localMolecules_[n]; }

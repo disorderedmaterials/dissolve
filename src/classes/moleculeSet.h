@@ -5,6 +5,9 @@
 
 #include "classes/localMolecule.h"
 
+// Forward Declarations
+class Species;
+
 // Molecule Set Definition
 class MoleculeSet
 {
@@ -17,6 +20,8 @@ class MoleculeSet
     std::vector<LocalMolecule> localMolecules_;
 
     public:
+    // Add a new molecule from the specified Species
+    LocalMolecule &addMolecule(const Species *species);
     // Return nth local molecule
     LocalMolecule &localMolecule(int n);
     const LocalMolecule &localMolecule(int n) const;
