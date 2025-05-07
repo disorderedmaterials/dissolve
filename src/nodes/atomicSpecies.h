@@ -31,8 +31,6 @@ class AtomicSpeciesNode : public Node
     private:
     // Species object
     Species species_;
-    // Local raw pointer to species
-    const Species *rawSpecies_{&species_};
 
     /*
      * Processing
