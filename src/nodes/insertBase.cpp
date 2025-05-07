@@ -4,6 +4,7 @@
 #include "nodes/insertBase.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "classes/moleculeSet.h"
 #include "math/mathFunc.h"
 
 InsertNodeBase::InsertNodeBase(Graph *parentGraph) : Node(parentGraph)
@@ -31,8 +32,7 @@ EnumOptions<InsertNodeBase::BoxActionStyle> InsertNodeBase::boxActionStyles()
     return EnumOptions<InsertNodeBase::BoxActionStyle>("BoxAction",
                                                        {{InsertNodeBase::BoxActionStyle::None, "None"},
                                                         {InsertNodeBase::BoxActionStyle::AddVolume, "AddVolume"},
-                                                        {InsertNodeBase::BoxActionStyle::ScaleVolume, "ScaleVolume"},
-                                                        {InsertNodeBase::BoxActionStyle::Set, "Set"}});
+                                                        {InsertNodeBase::BoxActionStyle::ScaleVolume, "ScaleVolume"}});
 }
 EnumOptions<InsertNodeBase::BoxActionStyle> getEnumOptions(InsertNodeBase::BoxActionStyle)
 {
@@ -40,18 +40,34 @@ EnumOptions<InsertNodeBase::BoxActionStyle> getEnumOptions(InsertNodeBase::BoxAc
 }
 
 /*
- * InsertNodeBase
+ * Common Functions
  */
 
+// Get population totals to be added from specified MoleculeSet
+std::tuple<int, int, double> InsertNodeBase::getPopulationTotals(int population, const MoleculeSet &molecules) const
+{
+    auto massToBeAdded = 0.0;
+    auto nPhysicalToBeAdded = 0, nTotalAtomsToBeAdded = 0;
+    for (auto n = 0; n < population; ++n)
+    {
+        const auto *molSp = molecules.localMolecule(n).species();
+        nPhysicalToBeAdded += molSp->nAtoms(SpeciesAtom::Presence::Physical);
+        nTotalAtomsToBeAdded += molSp->nAtoms();
+        massToBeAdded += molSp->mass();
+    }
+
+    return {nPhysicalToBeAdded, nTotalAtomsToBeAdded, massToBeAdded};
+}
+
 // Adjust or set box volume ready for addition
-void InsertNodeBase::adjustBoxVolume(Configuration *cfg, int nCopies, int nAtomsPerCopy, double massPerCopy) const
+void InsertNodeBase::adjustBoxVolume(Configuration *cfg, int nAtomsToAdd, double massToAdd) const
 {
     // Determine volume required to contain the population of the specified Species at the requested density
     auto requiredVolume = 0.0;
     if (densityUnits_ == Units::AtomsPerAngstromUnits)
-        requiredVolume = (nCopies * nAtomsPerCopy) / density_;
+        requiredVolume = nAtomsToAdd / density_.asDouble();
     else
-        requiredVolume = ((nCopies * massPerCopy) / DissolveMath::Avogadro) / (density_ / 1.0E24);
+        requiredVolume = (nAtomsToAdd / DissolveMath::Avogadro) / (density_.asDouble() / 1.0E24);
 
     // If a density was not given, just add new molecules to the current box without adjusting its size
     if (boxAction_ == InsertNodeBase::BoxActionStyle::None)
@@ -92,9 +108,9 @@ void InsertNodeBase::adjustBoxVolume(Configuration *cfg, int nCopies, int nAtoms
         // Get volume required to hold current cell contents at the requested density
         auto existingRequiredVolume = 0.0;
         if (densityUnits_ == Units::AtomsPerAngstromUnits)
-            existingRequiredVolume = configuration_->nAtoms() / density_;
+            existingRequiredVolume = configuration_->nAtoms() / density_.asDouble();
         else
-            existingRequiredVolume = configuration_->atomicMass() / (density_ / 1.0E24);
+            existingRequiredVolume = configuration_->atomicMass() / (density_.asDouble() / 1.0E24);
         Messenger::print(" ... Existing contents requires volume of {} cubic Angstroms at specified density.\n",
                          existingRequiredVolume);
 
@@ -114,9 +130,5 @@ void InsertNodeBase::adjustBoxVolume(Configuration *cfg, int nCopies, int nAtoms
 
         Messenger::print(" ... Current box scaled by ({},{},{}) - new volume is {:e} cubic Angstroms.\n", scaleFactors.x,
                          scaleFactors.y, scaleFactors.z, configuration_->box()->volume());
-    }
-    else if (boxAction_ == InsertNodeBase::BoxActionStyle::Set)
-    {
-        throw(std::runtime_error("A box action of 'Set' must be handled outside of InsertNodeBase::adjustBoxVolume().\n"));
     }
 }

@@ -23,86 +23,36 @@ NodeConstants::ProcessResult InsertRandomNode::process()
     // Get target MoleculeSet
     MoleculeSet speciesMoleculeSet;
     if (species_)
-        speciesMoleculeSet = species_->getMoleculeSet();
+        speciesMoleculeSet.addMolecule(species_);
     const MoleculeSet &targetMoleculeSet = species_ ? speciesMoleculeSet : *moleculeSet_;
 
     auto ipop = population_.asInteger();
-    if (ipop > 0)
-        Messenger::print("[InsertRandom] Adding species '{}' - population is {}.\n", sp->name(), ipop);
-    else
+    if (ipop <= 0)
     {
-        Messenger::warn("[InsertRandom] Population is zero so nothing will be added.\n", sp->name());
+        Messenger::warn("[InsertRandom] Population is zero so nothing will be added.\n");
         return NodeConstants::ProcessResult::Unchanged;
     }
 
+    // Determine total number of atoms and mass to be added
+    auto [nPhysicalAtoms, nAnyAtoms, massToBeAdded] = getPopulationTotals(ipop, targetMoleculeSet);
+
     // Set / adjust target box volume
-    if (boxAction_ == InsertRandomNodeBase::BoxActionStyle::Set)
-    {
-        Messenger::print("[InsertRandom] Box geometry will be set from the species box definition.\n");
-
-        configuration_->createBox(sp->box()->axisLengths(), sp->box()->axisAngles());
-        auto *box = configuration_->box();
-
-        Messenger::print("[InsertRandom] Box type is now {}: A = {:10.4e} B = {:10.4e} C = {:10.4e}, alpha = {:10.4e} beta = "
-                         "{:10.4e} gamma = {:10.4e}\n",
-                         Box::boxTypes().keyword(box->type()), box->axisLengths().x, box->axisLengths().y, box->axisLengths().z,
-                         box->axisAngles().x, box->axisAngles().y, box->axisAngles().z);
-    }
-    else
-        adjustBoxVolume(cfg, ipop, sp->nAtoms(SpeciesAtom::Presence::Physical), sp->mass());
+    adjustBoxVolume(configuration_, nPhysicalAtoms, massToBeAdded);
 
     // Now we add the molecules
-    RandomBuffer randomBuffer(generatorContext.processPool(), ProcessPool::PoolProcessesCommunicator);
-    Vector3 newCentre, fr;
-    auto coordinateSetIndex = 0;
-    auto hasCoordinateSets = false;
-    if (coordinateSets_)
-    {
-        if (coordinateSets_->nSets() == 0)
-            return Messenger::error("Coordinate set source appears to be empty.");
+    RandomBuffer randomBuffer(processPool(), ProcessPool::PoolProcessesCommunicator);
 
-        hasCoordinateSets = true;
-    }
     Matrix3 transform;
     const auto *box = configuration_->box();
-    configuration_->atoms().reserve(configuration_->atoms().size() + ipop * sp->nAtoms());
+    configuration_->atoms().reserve(configuration_->atoms().size() + nAnyAtoms);
     for (auto n = 0; n < ipop; ++n)
     {
-        // Add the Molecule - use coordinate set if one is available
-        std::shared_ptr<Molecule> mol;
-        if (hasCoordinateSets)
-        {
-            mol = configuration_->addMolecule(sp, coordinateSets_->set(coordinateSetIndex));
+        // Add the Molecule
+        auto mol = configuration_->copyMolecule(targetMoleculeSet.localMolecule(n));
 
-            // Move to next coordinate set
-            ++coordinateSetIndex;
-            if (coordinateSetIndex == coordinateSets_->nSets())
-                coordinateSetIndex = 0;
-        }
-        else
-            mol = configuration_->addMolecule(sp);
-
-        // Set / generate position of Molecule
-        switch (positioningType_)
-        {
-            case (InsertRandomNodeBase::PositioningType::Random):
-                fr.set(randomBuffer.random(), randomBuffer.random(), randomBuffer.random());
-                newCentre = box->getReal(fr);
-                mol->setCentreOfGeometry(box, newCentre);
-                break;
-            case (InsertRandomNodeBase::PositioningType::Region):
-                mol->setCentreOfGeometry(box, region_->region().randomCoordinate());
-                break;
-            case (InsertRandomNodeBase::PositioningType::Central):
-                fr.set(0.5, 0.5, 0.5);
-                newCentre = box->getReal(fr);
-                mol->setCentreOfGeometry(box, newCentre);
-                break;
-            case (InsertRandomNodeBase::PositioningType::Current):
-                break;
-            default:
-                Messenger::exception("Positioning type {} not handled.\n", positioningTypes().keyword(positioningType_));
-        }
+        // Randomise position of Molecule over the whole box
+        auto newCentre = box->getReal({randomBuffer.random(), randomBuffer.random(), randomBuffer.random()});
+        mol->setCentreOfGeometry(box, newCentre);
 
         // Generate and apply a random rotation matrix
         if (rotate_)
@@ -118,5 +68,5 @@ NodeConstants::ProcessResult InsertRandomNode::process()
     // We've added new content to the box, so Need to update our object relationships
     configuration_->updateObjectRelationships();
 
-    return true;
+    return NodeConstants::ProcessResult::Success;
 }

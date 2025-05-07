@@ -6,6 +6,9 @@
 #include "base/units.h"
 #include "nodes/node.h"
 
+// Forward Declarations
+class MoleculeSet;
+
 // Base class for all Insert-type nodes
 class InsertNodeBase : public Node
 {
@@ -23,7 +26,6 @@ class InsertNodeBase : public Node
         None,        /* Box geometry / volume will remain unchanged */
         AddVolume,   /* Increase Box volume to accommodate new species, according to supplied density */
         ScaleVolume, /* Scale current Box volume to give, after addition of the current species, the supplied density */
-        Set          /* Set the Box geometry to that specified in the Species */
     };
     // Return enum option info for BoxActionStyle
     static EnumOptions<BoxActionStyle> boxActionStyles();
@@ -47,7 +49,12 @@ class InsertNodeBase : public Node
     // Whether to rotate molecules on insertion
     bool rotate_{true};
 
+    /*
+     * Common Functions
+     */
     protected:
+    // Get population totals to be added from specified MoleculeSet
+    std::tuple<int, int, double> getPopulationTotals(int population, const MoleculeSet &molecules) const;
     // Adjust or set box volume ready for addition
-    void adjustBoxVolume(Configuration *cfg, int nCopies, int nAtomsPerCopy, double massPerCopy) const;
+    void adjustBoxVolume(Configuration *cfg, int nAtomsToAdd, double massToAdd) const;
 };
