@@ -68,7 +68,7 @@ void InsertNodeBase::adjustBoxVolume(Configuration *cfg, int nAtomsToAdd, double
     if (densityUnits_ == Units::AtomsPerAngstromUnits)
         requiredVolume = nAtomsToAdd / density_.asDouble();
     else
-        requiredVolume = (nAtomsToAdd / DissolveMath::Avogadro) / (density_.asDouble() / 1.0E24);
+        requiredVolume = (massToAdd / DissolveMath::Avogadro) / (density_.asDouble() / 1.0E24);
 
     // If a density was not given, just add new molecules to the current box without adjusting its size
     if (boxAction_ == InsertNodeBase::BoxActionStyle::None)
