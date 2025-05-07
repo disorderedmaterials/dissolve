@@ -22,7 +22,7 @@ class MoleculeSet
     public:
     // Add a new molecule from the specified Species
     LocalMolecule &addMolecule(const Species *species);
-    // Return nth local molecule
+    // Return nth local molecule, wrapping index if necessary
     LocalMolecule &localMolecule(int n);
     const LocalMolecule &localMolecule(int n) const;
     // Return local molecules
