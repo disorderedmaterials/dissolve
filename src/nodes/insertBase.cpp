@@ -21,6 +21,7 @@ InsertNodeBase::InsertNodeBase(Graph *parentGraph) : Node(parentGraph)
     addOption("ScaleC", "Scale box length C when modifying volume", scaleC_);
     addOption("Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
 }
+EnumOptions<Units::DensityUnits> getEnumOptions(Units::DensityUnits) { return Units::densityUnits(); }
 
 /*
  * Data
