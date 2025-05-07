@@ -5,7 +5,7 @@ AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph, std::string_view name, 
 {
     species_.addAtom(Z, r);
     species_.setName(name);
-    addOutput<const Species *>("Species", "Atomic species", rawSpecies_);
+    addPointerOutput<const Species *>("Species", "Atomic species", species_);
 }
 
 std::string_view AtomicSpeciesNode::type() const { return "Atomic Species"; }

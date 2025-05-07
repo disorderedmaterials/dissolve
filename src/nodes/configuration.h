@@ -26,8 +26,6 @@ class ConfigurationNode : public Node
     private:
     // Configuration object
     Configuration configuration_;
-    // Local raw pointer to configuration
-    Configuration *rawConfiguration_{&configuration_};
 
     /*
      * Processing
