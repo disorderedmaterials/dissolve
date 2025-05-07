@@ -46,6 +46,28 @@ class Node : public Serialisable<>
     virtual std::string_view summary() const = 0;
 
     /*
+     * Node message
+     */
+    enum class MessageStatus
+    {
+        Info,
+        Warn,
+        Error,
+        Exception
+    };
+    using MessageStore = std::vector<std::pair<Node::MessageStatus, std::string_view>>;
+
+    private:
+    // Message store vector
+    MessageStore messages_;
+    // Post message to store
+    void postMessage(std::string_view message, MessageStatus status = MessageStatus::Info);
+
+    public:
+    // Message store vector
+    const MessageStore& messages() const;
+
+    /*
      * Processing & Validity
      */
     private:
