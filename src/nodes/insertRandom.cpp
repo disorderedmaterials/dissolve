@@ -14,6 +14,14 @@ InsertRandomNode::InsertRandomNode(Graph *parentGraph) : InsertNodeBase(parentGr
 }
 
 /*
+ * Definition
+ */
+
+std::string_view InsertRandomNode::type() const { return "InsertRandom"; };
+
+std::string_view InsertRandomNode::summary() const { return "Insert molecules randomly into a configuration"; };
+
+/*
  * Processing
  */
 
