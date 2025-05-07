@@ -139,19 +139,19 @@ std::shared_ptr<Molecule> Configuration::addMolecule(const Species *sp,
 }
 
 // Copy molecule
-std::shared_ptr<Molecule> Configuration::copyMolecule(const std::shared_ptr<Molecule> &sourceMolecule)
+std::shared_ptr<Molecule> Configuration::copyMolecule(const Molecule &sourceMolecule)
 {
     std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
     newMolecule->setArrayIndex(molecules_.size());
     molecules_.push_back(newMolecule);
-    auto *sp = sourceMolecule->species();
+    auto *sp = sourceMolecule.species();
     newMolecule->setSpecies(sp);
 
     // Update the relevant Species population
     adjustSpeciesPopulation(sp, 1);
 
     // Copy the source molecule's coordinates
-    for (const auto *atom : sourceMolecule->atoms())
+    for (const auto *atom : sourceMolecule.atoms())
         addAtom(atom->speciesAtom(), newMolecule, atom->r());
 
     return newMolecule;
