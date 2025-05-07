@@ -189,7 +189,7 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
             data_.clear();
         else if constexpr (HasEnumOptions<T>)
         {
-            T proxy; // Fake T value to get the corret overload
+            T proxy; // Fake T value to get the correct overload
             data_ = getEnumOptions(proxy).deserialise(node);
         }
         else if constexpr (std::is_convertible<T, std::optional<double>>::value)
