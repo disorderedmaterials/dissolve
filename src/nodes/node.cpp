@@ -32,7 +32,7 @@ void Node::postMessage(std::string_view message, MessageStatus status)
 }
 
 // Message store vector
-const Node::MessageStore& Node::messages() const { return messages_; }
+const Node::MessageStore &Node::messages() const { return messages_; }
 
 /*
  * Inputs, Outputs & Options
