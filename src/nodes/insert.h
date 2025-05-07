@@ -4,17 +4,22 @@
 #pragma once
 
 #include "base/units.h"
+#include "classes/moleculeSet.h"
 #include "nodes/node.h"
 
-// Forward Declarations
-class MoleculeSet;
-
-// Base class for all Insert-type nodes
-class InsertNodeBase : public Node
+// Insert Node
+class InsertNode : public Node
 {
     public:
-    InsertNodeBase(Graph *parentGraph);
-    ~InsertNodeBase() override = default;
+    InsertNode(Graph *parentGraph);
+    ~InsertNode() override = default;
+
+    /*
+     * Definition
+     */
+    public:
+    std::string_view type() const override;
+    std::string_view summary() const override;
 
     /*
      * Data
@@ -30,15 +35,20 @@ class InsertNodeBase : public Node
     // Return enum option info for BoxActionStyle
     static EnumOptions<BoxActionStyle> boxActionStyles();
 
-    protected:
+    private:
     // Target configuration to insert into
     Configuration *configuration_;
+    // Species to be added (if no MoleculeSet is given)
+    const Species *species_{nullptr};
+    // MoleculeSet to be added (if no Species is given)
+    const MoleculeSet *moleculeSet_{nullptr};
     // The default box action if none is specified
     static constexpr BoxActionStyle defaultBoxAction_ = BoxActionStyle::AddVolume;
     // Action to take on the Box geometry / volume on addition of the species
     BoxActionStyle boxAction_{defaultBoxAction_};
     // Target density when adding molecules (if adjusting box size)
     Number density_{1.0};
+    // Units for the specified density value
     Units::DensityUnits densityUnits_{Units::GramsPerCentimetreCubedUnits};
     // Population of molecules to add
     Number population_{1.0};
@@ -50,11 +60,20 @@ class InsertNodeBase : public Node
     bool rotate_{true};
 
     /*
-     * Common Functions
+     * Functions
      */
-    protected:
+    private:
+    // Add volume the configuration's box to accommodate specified atoms / mass
+    void addVolume(int nAtomsToAdd, double massToAdd) const;
+    // Scale the configuration's box volume to accommodate specified atoms / mass
+    void scaleVolume(int nAtomsToAdd, double massToAdd) const;
     // Get population totals to be added from specified MoleculeSet
     std::tuple<int, int, double> getPopulationTotals(int population, const MoleculeSet &molecules) const;
-    // Adjust or set box volume ready for addition
-    void adjustBoxVolume(Configuration *cfg, int nAtomsToAdd, double massToAdd) const;
+
+    /*
+     * Processing
+     */
+    public:
+    // Run main processing
+    NodeConstants::ProcessResult process() override;
 };
