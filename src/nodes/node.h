@@ -60,8 +60,21 @@ class Node : public Serialisable<>
     private:
     // Message store vector
     MessageStore messages_;
-    // Post message to store
-    void postMessage(std::string message, MessageStatus status = MessageStatus::Info);
+    // Node message format
+    template <typename... Args> static void message(std::format_string<Args...> format, Args... args)
+    {
+        messages_.emplace_back(std::make_pair(MessageStatus::Info, std::format(format, std::forward<Args>(args))));
+    }
+    // Node warn format
+    template <typename... Args> static void warn(std::format_string<Args...> format, Args... args)
+    {
+        messages_.emplace_back(std::make_pair(MessageStatus::Warn, std::format(format, std::forward<Args>(args))));
+    }
+    // Node error format
+    template <typename... Args> static void error(std::format_string<Args...> format, Args... args)
+    {
+        messages_.emplace_back(std::make_pair(MessageStatus::Error, std::format(format, std::forward<Args>(args))));
+    }
 
     public:
     // Message store vector
