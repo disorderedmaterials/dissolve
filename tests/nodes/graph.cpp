@@ -6,6 +6,7 @@
 #include "nodes/dissolve.h"
 #include "nodes/edge.h"
 #include "nodes/number.h"
+#include "tests/testData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -53,33 +54,6 @@ class GraphCoreTest : public ::testing::Test
     AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr};
 };
 
-// Helper function for comparing TOML values with context, but without
-// insisting on a specific ordering of fields.
-void compare_toml(std::string location, SerialisedValue toml, SerialisedValue toml2)
-{
-    if (toml.is_table())
-    {
-        ASSERT_TRUE(toml2.is_table()) << location;
-        for (auto &[k, v] : toml.as_table())
-        {
-            ASSERT_TRUE(toml2.contains(k)) << location << "." << k << std::endl << "Expected:" << std::endl << toml[k];
-            compare_toml(std::format("{}.{}", location, k), v, toml2.at(k));
-        }
-    }
-    else if (toml.is_array())
-    {
-        auto arr = toml.as_array();
-        auto arr2 = toml2.as_array();
-        ASSERT_EQ(arr.size(), arr2.size()) << location << std::endl << "Expected" << std::endl << toml;
-        for (int i = 0; i < arr.size(); ++i)
-            compare_toml(std::format("{}[{}]", location, i), arr[i], arr2[i]);
-    }
-    else
-    {
-        EXPECT_EQ(toml, toml2) << location;
-    }
-}
-
 TEST_F(GraphCoreTest, Serialisation)
 {
     createGraph();
@@ -90,13 +64,13 @@ TEST_F(GraphCoreTest, Serialisation)
     auto serialised = root_.serialise();
 
     SerialisedValue contents = toml::parse("dissolve/input/simple_addition_graph.toml");
-    compare_toml("", serialised, contents);
+    UnitTest::compareToml("", serialised, contents);
 
     std::cout << serialised << std::endl;
     copy.deserialise(serialised);
     auto repeat = copy.serialise();
 
-    compare_toml("", repeat, contents);
+    UnitTest::compareToml("", repeat, contents);
 };
 
 } // namespace UnitTest

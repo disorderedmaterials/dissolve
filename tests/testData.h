@@ -44,6 +44,11 @@ enum TestFlags
 #define EXPECT_NO_THROW_VERBOSE(CODE_BLOCK) EXPECT_NO_THROW(PRINT_STDERR_AND_RETHROW(CODE_BLOCK))
 #define ASSERT_NO_THROW_VERBOSE(CODE_BLOCK) ASSERT_NO_THROW(PRINT_STDERR_AND_RETHROW(CODE_BLOCK))
 
+/*
+ * Helper Functions
+ */
+
+// Helper function for comparing TOML values with context, but without insisting on a specific ordering of fields.
 void compareToml(std::string location, SerialisedValue toml, SerialisedValue toml2)
 {
     if (toml.is_table())
@@ -68,6 +73,10 @@ void compareToml(std::string location, SerialisedValue toml, SerialisedValue tom
         EXPECT_EQ(toml, toml2) << location;
     }
 }
+
+/*
+ * System Test Class
+ */
 
 class DissolveSystemTest
 {
