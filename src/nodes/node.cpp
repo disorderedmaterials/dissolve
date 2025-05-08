@@ -27,7 +27,7 @@ std::string_view Node::name() const { return parentGraph_ ? parentGraph_->nodeNa
  */
 
 // Add message to store
-void Node::postMessage(std::string_view message, MessageStatus status) { messages_[status].emplace_back(message); }
+void Node::postMessage(std::string message, MessageStatus status) { messages_[status].emplace_back(message); }
 
 // Message store vector
 const Node::MessageStore &Node::messages() const { return messages_; }
