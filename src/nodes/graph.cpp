@@ -34,8 +34,8 @@ std::string Graph::uniqueNodeName(const Node *node, std::string_view baseName) c
     return newName;
 }
 
-// Add nodes
-Node *Graph::addNode(std::string_view type, std::string_view name)
+// Create node of specified type with the name provided
+Node *Graph::createNode(std::string_view type, std::string_view name)
 {
     // Produce the node
     auto node = NodeRegistry::produce(this, type);
@@ -154,7 +154,7 @@ void Graph::deserialise(const SerialisedValue &node)
           [this](const auto name, const auto &value)
           {
               std::string nodeType = toml::find<std::string>(value, "type");
-              auto child = addNode(nodeType, name);
+              auto child = createNode(nodeType, name);
 
               child->deserialise(value);
           });

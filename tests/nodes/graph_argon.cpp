@@ -3,8 +3,8 @@
 
 #include "nodes/atomicSpecies.h"
 #include "nodes/configuration.h"
-#include "nodes/insert.h"
 #include "nodes/dissolve.h"
+#include "nodes/insert.h"
 #include "nodes/number.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -34,15 +34,15 @@ class GraphArgonTest : public ::testing::Test
          */
 
         // Create nodes
-        arNode_ = dynamic_cast<AtomicSpeciesNode *>(root_.addNode("AtomicSpecies", "Ar"));
-        configurationNode_ = dynamic_cast<ConfigurationNode *>(root_.addNode("Configuration", "Bulk"));
-        insertNode_ = dynamic_cast<InsertNode *>(root_.addNode("Insert", "Insert"));
+        arNode_ = dynamic_cast<AtomicSpeciesNode *>(root_.createNode("AtomicSpecies", "Ar"));
+        configurationNode_ = dynamic_cast<ConfigurationNode *>(root_.createNode("Configuration", "Bulk"));
+        insertNode_ = dynamic_cast<InsertNode *>(root_.createNode("Insert", "Insert"));
 
         ASSERT_TRUE(arNode_);
         ASSERT_TRUE(configurationNode_);
         ASSERT_TRUE(insertNode_);
 
-        EXPECT_TRUE(root_.addEdge({"Ar", "Species", "Insert", "Species"}));
+        ASSERT_TRUE(root_.addEdge({"Ar", "Species", "Insert", "Species"}));
         EXPECT_TRUE(root_.addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
     }
 
@@ -56,10 +56,6 @@ class GraphArgonTest : public ::testing::Test
     InsertNode *insertNode_{nullptr};
 };
 
-TEST_F(GraphArgonTest, Serialisation)
-{
-    createGraph();
-
-};
+TEST_F(GraphArgonTest, Serialisation) { createGraph(); };
 
 } // namespace UnitTest

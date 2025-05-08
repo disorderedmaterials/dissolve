@@ -32,10 +32,10 @@ class GraphFlowTest : public ::testing::Test
          */
 
         // Create nodes
-        auto *x = graph_.addNode("Add", "x");
+        auto *x = graph_.createNode("Add", "x");
         x_ = dynamic_cast<AddNode *>(x);
-        y_ = dynamic_cast<AddNode *>(graph_.addNode("Add", "y"));
-        z_ = dynamic_cast<AddNode *>(graph_.addNode("Add", "z"));
+        y_ = dynamic_cast<AddNode *>(graph_.createNode("Add", "y"));
+        z_ = dynamic_cast<AddNode *>(graph_.createNode("Add", "z"));
 
         ASSERT_TRUE(x_);
         xA_ = x_->findInput("A")->upcast<Number>();

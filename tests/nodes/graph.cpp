@@ -34,9 +34,9 @@ class GraphCoreTest : public ::testing::Test
          */
 
         // Create nodes
-        x_ = dynamic_cast<AddNode *>(root_.addNode("Add", "x"));
-        y_ = dynamic_cast<AddNode *>(root_.addNode("Add", "y"));
-        z_ = dynamic_cast<AddNode *>(root_.addNode("Add", "z"));
+        x_ = dynamic_cast<AddNode *>(root_.createNode("Add", "x"));
+        y_ = dynamic_cast<AddNode *>(root_.createNode("Add", "y"));
+        z_ = dynamic_cast<AddNode *>(root_.createNode("Add", "z"));
 
         ASSERT_TRUE(x_);
         ASSERT_TRUE(y_);
