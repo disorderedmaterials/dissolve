@@ -192,18 +192,6 @@ class Node : public Serialisable<>
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
-    // Add pointer input parameter
-    template <class T>
-    std::shared_ptr<ParameterBase> addPointerInput(std::string_view name, std::string_view description, T *data)
-    {
-        if (findInput(name))
-            Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
-
-        auto param =
-            inputs_.emplace(std::make_pair(name, new PointerParameter<T>(this, name, description, data))).first->second;
-        param->setFlags(ParameterBase::ParameterFlags::Input);
-        return param;
-    }
     // Add output parameter
     template <class T> std::shared_ptr<ParameterBase> addOutput(std::string_view name, std::string_view description, T &data)
     {
