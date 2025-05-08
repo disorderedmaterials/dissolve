@@ -44,6 +44,9 @@ const Node::MessageStore &Node::messages(MessageStatus status) const
     return messages_;
 }
 
+// Print latest message
+void Node::echo() { std::cout << messages_.back().second << std::endl; }
+
 /*
  * Inputs, Outputs & Options
  */

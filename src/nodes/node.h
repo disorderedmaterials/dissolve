@@ -72,7 +72,7 @@ class Node : public Serialisable<>
         messages_.emplace_back(std::make_pair(MessageStatus::Info, std::format(format, std::forward<Args>(args)...)));
 
         if (echo_)
-            std::cout << messages_.back().second << std::endl;
+            echo();
     }
     // Node warn format
     template <typename... Args> void warn(std::format_string<Args...> format, Args... args)
@@ -80,7 +80,7 @@ class Node : public Serialisable<>
         messages_.emplace_back(std::make_pair(MessageStatus::Warn, std::format(format, std::forward<Args>(args)...)));
 
         if (echo_)
-            std::cout << messages_.back().second << std::endl;
+            echo();
     }
     // Node error format
     template <typename... Args> void error(std::format_string<Args...> format, Args... args)
@@ -88,8 +88,10 @@ class Node : public Serialisable<>
         messages_.emplace_back(std::make_pair(MessageStatus::Error, std::format(format, std::forward<Args>(args)...)));
 
         if (echo_)
-            std::cout << messages_.back().second << std::endl;
+            echo();
     }
+    // Print latest message
+    void echo();
 
     public:
     // Message store vector
