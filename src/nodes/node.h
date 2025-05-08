@@ -55,8 +55,7 @@ class Node : public Serialisable<>
         Any,
         Info,
         Warn,
-        Error,
-        Exception
+        Error
     };
 
     using MessageStore = std::vector<std::pair<MessageStatus, std::string>>;
