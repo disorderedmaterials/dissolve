@@ -5,6 +5,7 @@
 #include "base/sysFunc.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include <algorithm>
 
 /*
  * Definition
@@ -27,7 +28,18 @@ std::string_view Node::name() const { return parentGraph_ ? parentGraph_->nodeNa
  */
 
 // Message store vector
-const Node::MessageStore &Node::messages() const { return messages_; }
+const Node::MessageStore &Node::messages(MessageStatus status) const
+{
+    if (status != MessageStatus::Any)
+    {
+        MessageStore filtered;
+        std::copy_if(messages_.cbegin(), messages_.cend(), std::back_inserter(filtered),
+                     [status](const auto &entry) { return entry.first == status; });
+        return filtered;
+    }
+
+    return messages_;
+}
 
 /*
  * Inputs, Outputs & Options

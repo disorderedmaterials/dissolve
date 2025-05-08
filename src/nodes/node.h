@@ -50,6 +50,7 @@ class Node : public Serialisable<>
      */
     enum class MessageStatus
     {
+        Any,
         Info,
         Warn,
         Error,
@@ -78,7 +79,7 @@ class Node : public Serialisable<>
 
     public:
     // Message store vector
-    const MessageStore &messages() const;
+    const MessageStore &messages(MessageStatus status = MessageStatus::Any) const;
 
     /*
      * Processing & Validity
