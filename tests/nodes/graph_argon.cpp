@@ -1,0 +1,65 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
+#include "nodes/atomicSpecies.h"
+#include "nodes/configuration.h"
+#include "nodes/insert.h"
+#include "nodes/dissolve.h"
+#include "nodes/number.h"
+#include "tests/testData.h"
+#include <gtest/gtest.h>
+
+namespace UnitTest
+{
+class GraphArgonTest : public ::testing::Test
+{
+    public:
+    GraphArgonTest() : dissolve_(coreData_), root_(dissolve_) {}
+
+    // Create a graph for testing
+    void createGraph()
+    {
+        /*
+         *    Configuration (Bulk)
+         *    ------------------
+         *    -   Configuration-o ---+
+         *    -                |      \        Insert (Insert)
+         *    -----------------/       \       ------------------
+         *                              +---- o-Configuration   |
+         *    AtomicSpecies (Ar)      +------ o-Species         |
+         *    ------------------     /         -----------------/
+         *    -         Species-o --+
+         *    -                |
+         *    -----------------/
+         */
+
+        // Create nodes
+        arNode_ = dynamic_cast<AtomicSpeciesNode *>(root_.addNode("AtomicSpecies", "Ar"));
+        configurationNode_ = dynamic_cast<ConfigurationNode *>(root_.addNode("Configuration", "Bulk"));
+        insertNode_ = dynamic_cast<InsertNode *>(root_.addNode("Insert", "Insert"));
+
+        ASSERT_TRUE(arNode_);
+        ASSERT_TRUE(configurationNode_);
+        ASSERT_TRUE(insertNode_);
+
+        EXPECT_TRUE(root_.addEdge({"Ar", "Species", "Insert", "Species"}));
+        EXPECT_TRUE(root_.addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
+    }
+
+    protected:
+    // We need a CoreData and Dissolve definition to properly instantiate DissolveGraph at present.
+    CoreData coreData_;
+    Dissolve dissolve_;
+    DissolveGraph root_;
+    AtomicSpeciesNode *arNode_{nullptr};
+    ConfigurationNode *configurationNode_{nullptr};
+    InsertNode *insertNode_{nullptr};
+};
+
+TEST_F(GraphArgonTest, Serialisation)
+{
+    createGraph();
+
+};
+
+} // namespace UnitTest
