@@ -52,7 +52,6 @@ class Node : public Serialisable<>
     // Enumeration for message status
     enum class MessageStatus
     {
-        Any,
         Info,
         Warn,
         Error
@@ -94,7 +93,9 @@ class Node : public Serialisable<>
 
     public:
     // Message store vector
-    const MessageStore &messages(MessageStatus status = MessageStatus::Any) const;
+    const MessageStore &messages() const;
+    // Returns true if message with given status exists
+    bool hasMessages(MessageStatus status) const;
 
     /*
      * Processing & Validity

@@ -31,17 +31,12 @@ std::string_view Node::name() const { return parentGraph_ ? parentGraph_->nodeNa
 bool Node::echo_ = false;
 
 // Message store vector
-const Node::MessageStore &Node::messages(MessageStatus status) const
-{
-    if (status != MessageStatus::Any)
-    {
-        MessageStore filtered;
-        std::copy_if(messages_.cbegin(), messages_.cend(), std::back_inserter(filtered),
-                     [status](const auto &entry) { return entry.first == status; });
-        return filtered;
-    }
+const Node::MessageStore &Node::messages() const { return messages_; }
 
-    return messages_;
+// Returns true if message with given status exists
+bool Node::hasMessages(MessageStatus status) const
+{
+    return std::any_of(messages_.cbegin(), messages_.cend(), [status](const auto &msg) { return msg.first == status; });
 }
 
 // Print latest message
