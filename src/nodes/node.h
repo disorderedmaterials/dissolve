@@ -55,7 +55,7 @@ class Node : public Serialisable<>
         Error,
         Exception
     };
-    using MessageStore = std::vector<std::pair<Node::MessageStatus, std::string_view>>;
+    using MessageStore = std::map<Node::MessageStatus, std::vector<std::string_view>>;
 
     private:
     // Message store vector
