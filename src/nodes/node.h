@@ -48,6 +48,8 @@ class Node : public Serialisable<>
     /*
      * Node message
      */
+
+    // Enumeration for message status
     enum class MessageStatus
     {
         Any,
@@ -56,7 +58,10 @@ class Node : public Serialisable<>
         Error,
         Exception
     };
+
     using MessageStore = std::vector<std::pair<MessageStatus, std::string>>;
+    // Print latest message
+    static bool echo_;
 
     private:
     // Message store vector
@@ -65,16 +70,25 @@ class Node : public Serialisable<>
     template <typename... Args> void message(std::format_string<Args...> format, Args... args)
     {
         messages_.emplace_back(std::make_pair(MessageStatus::Info, std::format(format, std::forward<Args>(args)...)));
+
+        if (echo_)
+            std::cout << messages_.back().second << std::endl;
     }
     // Node warn format
     template <typename... Args> void warn(std::format_string<Args...> format, Args... args)
     {
         messages_.emplace_back(std::make_pair(MessageStatus::Warn, std::format(format, std::forward<Args>(args)...)));
+
+        if (echo_)
+            std::cout << messages_.back().second << std::endl;
     }
     // Node error format
     template <typename... Args> void error(std::format_string<Args...> format, Args... args)
     {
         messages_.emplace_back(std::make_pair(MessageStatus::Error, std::format(format, std::forward<Args>(args)...)));
+
+        if (echo_)
+            std::cout << messages_.back().second << std::endl;
     }
 
     public:

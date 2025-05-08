@@ -27,6 +27,9 @@ std::string_view Node::name() const { return parentGraph_ ? parentGraph_->nodeNa
  * Node message
  */
 
+// Print latest message
+bool Node::echo_ = false;
+
 // Message store vector
 const Node::MessageStore &Node::messages(MessageStatus status) const
 {
