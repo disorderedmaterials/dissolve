@@ -98,6 +98,7 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         : ParameterBase(parent, name, description, std::type_index(typeid(T))), data_(value), default_(value)
     {
     }
+    virtual ~Parameter() = default;
 
     /*
      * Data
