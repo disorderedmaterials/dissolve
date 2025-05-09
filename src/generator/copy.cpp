@@ -71,7 +71,7 @@ bool CopyGeneratorNode::execute(const GeneratorContext &generatorContext)
             continue;
 
         // Copy the molecule
-        cfg->copyMolecule(mol);
+        cfg->copyMolecule(*mol);
     }
 
     // Copy global potentials

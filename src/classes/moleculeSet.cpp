@@ -3,9 +3,12 @@
 
 #include "classes/moleculeSet.h"
 
-// Return nth local molecule
-LocalMolecule &MoleculeSet::localMolecule(int n) { return localMolecules_[n]; }
-const LocalMolecule &MoleculeSet::localMolecule(int n) const { return localMolecules_[n]; }
+// Add a new molecule from the specified Species
+LocalMolecule &MoleculeSet::addMolecule(const Species *species) { return localMolecules_.emplace_back(species); }
+
+// Return nth local molecule, wrapping index if necessary
+LocalMolecule &MoleculeSet::localMolecule(int n) { return localMolecules_[n % localMolecules_.size()]; }
+const LocalMolecule &MoleculeSet::localMolecule(int n) const { return localMolecules_[n % localMolecules_.size()]; }
 
 // Return local molecules
 std::vector<LocalMolecule> &MoleculeSet::localMolecules() { return localMolecules_; }

@@ -305,7 +305,7 @@ class Species : public Serialisable<const CoreData &>
     int indexOfIsotopologue(const Isotopologue *iso) const;
 
     /*
-     * Site
+     * Sites
      */
     private:
     // Defined sites

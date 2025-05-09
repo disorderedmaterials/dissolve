@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/atom.h"
 #include "classes/molecule.h"
 #include <vector>
 
@@ -15,6 +16,7 @@ class LocalMolecule : public Molecule
     public:
     LocalMolecule() = default;
     ~LocalMolecule() = default;
+    LocalMolecule(const Species *copyFrom);
     LocalMolecule(const LocalMolecule &copyFrom);
     LocalMolecule(LocalMolecule &&moveFrom);
     LocalMolecule &operator=(const LocalMolecule &copyFrom);
