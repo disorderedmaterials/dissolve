@@ -61,6 +61,7 @@ TEST_F(GraphArgonTest, Simulation)
 {
     createGraph();
 
+    ASSERT_EQ(insertNode_->run(), NodeConstants::ProcessResult::Success);
     auto *cfg = insertNode_->getOutput<Configuration *>("Configuration");
     ASSERT_TRUE(cfg);
 };
