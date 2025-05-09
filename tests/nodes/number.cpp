@@ -24,6 +24,22 @@ TEST(NumberTest, Construction)
     Number c(1.234);
     EXPECT_TRUE(c.isDouble());
     EXPECT_DOUBLE_EQ(c.asDouble(), 1.234);
+
+    // Construct bounded number from integer
+    Number b(10, 5, 20);
+    EXPECT_TRUE(c.hasBounds());
+    EXPECT_TRUE(c.isInteger());
+    EXPECT_EQ(c.asInteger(), 10);
+    EXPECT_EQ(c.integerMin().value(), 5);
+    EXPECT_EQ(c.integerMax().value(), 20);
+
+    // Construct bounded number from double
+    Number c(1.234, 1.0, 2.0);
+    EXPECT_TRUE(c.hasBounds());
+    EXPECT_TRUE(c.isDouble());
+    EXPECT_DOUBLE_EQ(c.asDouble(), 1.234);
+    EXPECT_DOUBLE_EQ(c.doubleMin().value(), 1.0);
+    EXPECT_DOUBLE_EQ(c.doubleMax().value(), 2.0);
 }
 
 TEST(NumberTest, Assignment)
