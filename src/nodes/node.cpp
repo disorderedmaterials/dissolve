@@ -5,6 +5,7 @@
 #include "base/sysFunc.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include <algorithm>
 
 /*
  * Definition
@@ -21,6 +22,25 @@ void Node::setName(std::string_view newName)
 
 // Return node name
 std::string_view Node::name() const { return parentGraph_ ? parentGraph_->nodeName(this) : "UnparentedNode"; }
+
+/*
+ * Node message
+ */
+
+// Print latest message
+bool Node::echo_ = false;
+
+// Message store vector
+const Node::MessageStore &Node::messages() const { return messages_; }
+
+// Returns true if message with given status exists
+bool Node::hasMessages(MessageStatus status) const
+{
+    return std::any_of(messages_.cbegin(), messages_.cend(), [status](const auto &msg) { return msg.first == status; });
+}
+
+// Print latest message
+void Node::echo() { std::cout << messages_.back().second << std::endl; }
 
 /*
  * Inputs, Outputs & Options
