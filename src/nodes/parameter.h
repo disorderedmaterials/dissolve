@@ -14,6 +14,7 @@
 // Forward Declarations
 class Node;
 template <typename T> class Parameter;
+template <typename T> class PointerParameter;
 
 // Base type for all parameter templates to inherit from
 class ParameterBase : public Serialisable<>
@@ -76,8 +77,11 @@ class ParameterBase : public Serialisable<>
     {
         if (std::type_index(typeid(T)) != type_)
             return nullptr;
-        auto casted = static_cast<Parameter<T> *>(this);
-        return casted->shared_from_this();
+        auto cast1 = dynamic_cast<PointerParameter<T> *>(this);
+        if (cast1)
+            return cast1->shared_from_this();
+        auto cast2 = static_cast<Parameter<T> *>(this);
+        return cast2->shared_from_this();
     }
 
     /*
@@ -283,12 +287,13 @@ template <typename T> class BoundedOptionalParameter : public BoundedParameter<T
 };
 
 // PointerParameter, returning a pointer from a target object rather than the object itself
-template <typename T> class PointerParameter : public ParameterBase, public std::enable_shared_from_this<PointerParameter<T>>
+template <typename T> class PointerParameter : public Parameter<T>
 {
     public:
     PointerParameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer<T>::type &object)
-        : ParameterBase(parent, name, description, std::type_index(typeid(T))), object_(object)
+        : Parameter<T>(parent, name, description, pointer_)
     {
+        pointer_ = &object;
     }
     virtual ~PointerParameter() = default;
 
@@ -296,13 +301,12 @@ template <typename T> class PointerParameter : public ParameterBase, public std:
      * Data
      */
     protected:
-    // Reference to target data
-    std::remove_pointer<T>::type &object_;
+    // Pointer to target object
+    T pointer_{nullptr};
 
     public:
-    // Return the object pointer
-    T get() { return &object_; }
-    const T get() const { return &object_; }
+    // Set the object
+    void set(const T &value) override{};
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override { return false; }
 };
