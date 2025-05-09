@@ -43,7 +43,7 @@ class GraphArgonTest : public ::testing::Test
         ASSERT_TRUE(insertNode_);
 
         ASSERT_TRUE(root_.addEdge({"Ar", "Species", "Insert", "Species"}));
-        EXPECT_TRUE(root_.addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
+        ASSERT_TRUE(root_.addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
     }
 
     protected:
