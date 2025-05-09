@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/moleculeSet.h"
 #include "classes/species.h"
 #include "math/vector3.h"
 #include "nodes/node.h"
@@ -14,8 +13,7 @@ class AtomicSpeciesNode : public Node
 {
     public:
     AtomicSpeciesNode(Graph *parentGraph) : Node(parentGraph) {}
-    AtomicSpeciesNode(Graph *parentGraph, std::string_view name, Elements::Element Z = Elements::Element::Ar,
-                      Vector3 r = Vector3());
+    AtomicSpeciesNode(Graph *parentGraph, std::string_view name, Elements::Element Z = Elements::Element::Ar);
     ~AtomicSpeciesNode() override = default;
 
     /*

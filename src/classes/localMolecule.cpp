@@ -5,6 +5,15 @@
 #include "classes/empiricalFormula.h"
 #include "classes/species.h"
 
+LocalMolecule::LocalMolecule(const Species *copyFrom)
+{
+    setSpecies(copyFrom);
+    for (auto &&[local, i] : zip(localAtoms_, copyFrom->atoms()))
+    {
+        local.setCoordinates(i.r());
+    }
+}
+
 LocalMolecule::LocalMolecule(const LocalMolecule &copyFrom) { copyData(copyFrom); }
 
 LocalMolecule::LocalMolecule(LocalMolecule &&moveFrom) { copyData(moveFrom); }

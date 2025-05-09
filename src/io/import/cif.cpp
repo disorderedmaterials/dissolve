@@ -618,10 +618,7 @@ bool CIFHandler::detectMolecules()
         sp->removeBox();
 
         // Set up a temporary molecule to unfold the species
-        LocalMolecule tempMol;
-        tempMol.setSpecies(sp);
-        for (auto i = 0; i < sp->nAtoms(); ++i)
-            tempMol.localAtom(i).setCoordinates(sp->atom(i).r());
+        LocalMolecule tempMol(sp);
         tempMol.unFold(cleanedUnitCellSpecies_.box());
         for (auto &&[molAtom, spAtom] : zip(tempMol.localAtoms(), sp->atoms()))
             spAtom.setCoordinates(molAtom.r());
@@ -635,13 +632,9 @@ bool CIFHandler::detectMolecules()
         if (fragmentIndices.size() * 2 > cleanedUnitCellSpecies_.nAtoms())
         {
             // Create an instance of the current fragment
-            auto &mol = instances.emplace_back();
-            mol.setSpecies(sp);
+            auto &mol = instances.emplace_back(sp);
             for (auto i = 0; i < sp->nAtoms(); ++i)
-            {
-                mol.localAtom(i).setCoordinates(sp->atom(i).r());
                 atomMask[fragmentIndices[i]] = true;
-            }
         }
         else
         {
