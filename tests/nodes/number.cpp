@@ -40,6 +40,10 @@ TEST(NumberTest, Construction)
     EXPECT_DOUBLE_EQ(c.asDouble(), 1.234);
     EXPECT_DOUBLE_EQ(c.doubleMin().value(), 1.0);
     EXPECT_DOUBLE_EQ(c.doubleMax().value(), 2.0);
+
+    // Construct bounded number with invalid bounds
+    Number c(10);
+    EXPECT_FALSE(c.hasBounds());
 }
 
 TEST(NumberTest, Assignment)
