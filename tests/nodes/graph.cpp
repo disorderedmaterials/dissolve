@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/graph.h"
 #include "nodes/add.h"
 #include "nodes/dissolve.h"
-#include "nodes/edge.h"
 #include "nodes/number.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -42,6 +40,10 @@ class GraphCoreTest : public ::testing::Test
         ASSERT_TRUE(y_);
         ASSERT_TRUE(z_);
 
+        ASSERT_EQ(x_->name(), "x");
+        ASSERT_EQ(y_->name(), "y");
+        ASSERT_EQ(z_->name(), "z");
+
         EXPECT_TRUE(root_.addEdge({"x", "Result", "z", "A"}));
         EXPECT_TRUE(root_.addEdge({"y", "Result", "z", "B"}));
     }
@@ -72,5 +74,24 @@ TEST_F(GraphCoreTest, Serialisation)
 
     UnitTest::compareToml("", repeat, contents);
 };
+
+TEST_F(GraphCoreTest, UniqueNaming)
+{
+    createGraph();
+
+    // Add nodes with duplicate name
+    EXPECT_EQ(root_.createNode("Add", "x")->name(), "x1");
+    EXPECT_EQ(root_.createNode("Add", "x")->name(), "x2");
+
+    // Rename existing node
+    y_->setName("x");
+    EXPECT_EQ(y_->name(), "x3");
+    y_->setName("y");
+    EXPECT_EQ(y_->name(), "y");
+
+    // Rename existing node to same name
+    z_->setName("z");
+    EXPECT_EQ(z_->name(), "z");
+}
 
 } // namespace UnitTest
