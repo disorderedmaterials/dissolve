@@ -290,6 +290,7 @@ template <typename T> class PointerParameter : public ParameterBase, public std:
         : ParameterBase(parent, name, description, std::type_index(typeid(T))), object_(object)
     {
     }
+    virtual ~PointerParameter() = default;
 
     /*
      * Data
