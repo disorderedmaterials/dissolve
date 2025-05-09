@@ -62,8 +62,11 @@ TEST_F(GraphArgonTest, Simulation)
     createGraph();
 
     ASSERT_EQ(insertNode_->run(), NodeConstants::ProcessResult::Success);
-    auto *cfg = insertNode_->getOutput<Configuration *>("Configuration");
+    auto *cfg = insertNode_->getOutputValue<Configuration *>("Configuration");
+
+    // Check Configuration contents
     ASSERT_TRUE(cfg);
+    EXPECT_EQ(cfg->nMolecules(), insertNode_->getInputValue<Number>("Population").asInteger());
 };
 
 } // namespace UnitTest
