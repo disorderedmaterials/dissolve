@@ -37,7 +37,7 @@ class InsertNode : public Node
 
     private:
     // Target configuration to insert into
-    Configuration *configuration_;
+    Configuration *configuration_{nullptr};
     // Species to be added (if no MoleculeSet is given)
     const Species *species_{nullptr};
     // MoleculeSet to be added (if no Species is given)
