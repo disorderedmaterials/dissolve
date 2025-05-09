@@ -34,7 +34,8 @@ class GraphArgonTest : public ::testing::Test
          */
 
         // Create nodes
-        arNode_ = dynamic_cast<AtomicSpeciesNode *>(root_.createNode("AtomicSpecies", "Ar"));
+        arNode_ =
+            dynamic_cast<AtomicSpeciesNode *>(root_.addNode(std::make_unique<AtomicSpeciesNode>(&root_, Elements::Ar), "Ar"));
         configurationNode_ = dynamic_cast<ConfigurationNode *>(root_.createNode("Configuration", "Bulk"));
         insertNode_ = dynamic_cast<InsertNode *>(root_.createNode("Insert", "Insert"));
 
@@ -56,6 +57,12 @@ class GraphArgonTest : public ::testing::Test
     InsertNode *insertNode_{nullptr};
 };
 
-TEST_F(GraphArgonTest, Serialisation) { createGraph(); };
+TEST_F(GraphArgonTest, Simulation)
+{
+    createGraph();
+
+    auto *cfg = insertNode_->getOutput<Configuration *>("Configuration");
+    ASSERT_TRUE(cfg);
+};
 
 } // namespace UnitTest

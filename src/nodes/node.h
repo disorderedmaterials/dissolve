@@ -223,6 +223,21 @@ class Node : public Serialisable<>
     std::shared_ptr<ParameterBase> findOutput(std::string_view name) const;
     // Return output parameters
     std::map<std::string_view, std::shared_ptr<ParameterBase>> &outputs();
+    // Get output parameter value
+    template <class T> T getOutput(std::string_view outputName)
+    {
+        auto output = findOutput(outputName);
+        if (!output)
+            Messenger::exception("Output '{}' does not exist.\n", outputName);
+
+        // Get the upcast parameter
+        auto upcast = output->upcast<T>();
+        if (!upcast)
+            Messenger::exception("Attempted to cast output '{}' to wrong type: is {}, requested {}.\n", outputName, output->type().name(), std::type_index(typeid(T)).name());
+
+        // Return the parameter value
+        return upcast->get();
+    }
     // Return named option if it exists
     std::shared_ptr<ParameterBase> findOption(std::string_view name) const;
     // Return options
