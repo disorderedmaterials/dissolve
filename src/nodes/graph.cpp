@@ -46,8 +46,7 @@ Node *Graph::addNode(std::unique_ptr<Node> node, std::string_view newName)
     auto nodePtr = node.get();
 
     auto uniqueName = uniqueNodeName(node.get(), newName.empty() ? node->type() : newName);
-
-    reverseNodes_.insert(std::make_pair<Node *, std::string>(node.get(), std::string(node->name())));
+    reverseNodes_.insert(std::make_pair<Node *, std::string>(node.get(), std::string(uniqueName)));
     nodes_.insert(std::make_pair<std::string, std::unique_ptr<Node>>(std::string(uniqueName), std::move(node)));
 
     return nodePtr;
