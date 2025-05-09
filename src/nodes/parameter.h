@@ -34,6 +34,8 @@ class ParameterBase : public Serialisable<>
      * Definition
      */
     protected:
+    // The owner of the parameter
+    Node *parent_;
     // Name of the parameter
     std::string_view name_;
     // Description of parameter (used as tooltip in the GUI)
@@ -42,8 +44,6 @@ class ParameterBase : public Serialisable<>
     std::type_index type_;
     // Flags for the parameter
     Flags<ParameterBase::ParameterFlags> flags_;
-    // The owner of the parameter
-    Node *parent_;
 
     public:
     // Return the parameter name
