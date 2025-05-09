@@ -10,6 +10,10 @@ Number::Number(int value) : value_(value) {}
 
 Number::Number(double value) : value_(value) {}
 
+//Number::Number(int value, std::optional<int> min, std::optional<int> max) : value_(value), min_(min), max_(max) {}
+
+//Number::Number(double value, std::optional<double> min, std::optional<double> max) : value_(value), min_(min), max_(max) {}
+
 Number &Number::operator=(const Number &other)
 {
     value_ = other.value_;
@@ -68,32 +72,90 @@ bool Number::operator!=(const Number &other) const { return value_ != other.valu
  * Data
  */
 
-// Set from other Number
-void Number::set(const Number &other) { value_ = other.value_; }
-
 // Return whether the contained value is an integer
-bool Number::isInteger() const { return std::holds_alternative<int>(value_); }
+bool Number::isInteger(NumberVariant n) const { return std::holds_alternative<int>(n); }
 
 // Return whether the contained value is a double
-bool Number::isDouble() const { return std::holds_alternative<double>(value_); }
+bool Number::isDouble(NumberVariant n) const { return std::holds_alternative<double>(n); }
 
 // Return contained value as integer
-int Number::asInteger() const
+int Number::asInteger(NumberVariant n) const
 {
-    if (std::holds_alternative<int>(value_))
-        return std::get<int>(value_);
+    if (isInteger(n))
+        return std::get<int>(n);
     else
-        return int(std::get<double>(value_));
+        return int(std::get<double>(n));
 }
 
 // Return contained value as double
-double Number::asDouble() const
+double Number::asDouble(NumberVariant n) const
 {
-    if (std::holds_alternative<int>(value_))
-        return double(std::get<int>(value_));
+    if (isInteger(n))
+        return double(std::get<int>(n));
     else
-        return std::get<double>(value_);
+        return std::get<double>(n);
 }
+
+// Set from other Number
+void Number::set(const Number &other)
+{
+    if (other.hasBounds())
+        min_ = other.min_, max_ = other.max_;
+
+    value_ = other.value_;
+}
+
+// Return whether the number has bounds
+bool Number::hasBounds() const { return min_.has_value() && max_.has_value(); }
+
+// Return optional double upper bound
+std::optional<double> Number::doubleMax()
+{
+    if (!hasBounds())
+        return {};
+
+    return asDouble(max_.value());
+}
+
+// Return optional integer upper bound
+std::optional<int> Number::integerMax()
+{
+    if (!hasBounds())
+        return {};
+
+    return asInteger(max_.value());
+}
+
+// Return optional double lower bound
+std::optional<double> Number::doubleMin()
+{
+    if (!hasBounds())
+        return {};
+
+    auto min = asDouble(min_.value());
+    return min;
+}
+
+// Return optional integer lowe bound
+std::optional<int> Number::integerMin()
+{
+    if (!hasBounds())
+        return {};
+
+    return asInteger(min_.value());
+}
+
+// Return whether the contained value is an integer
+bool Number::isInteger() const { return isInteger(value_); }
+
+// Return whether the contained value is a double
+bool Number::isDouble() const { return isDouble(value_); }
+
+// Return contained value as integer
+int Number::asInteger() const { return asInteger(value_); }
+
+// Return contained value as double
+double Number::asDouble() const { return asDouble(value_); }
 
 // Return value represented as a string
 std::string Number::asString(bool addQuotesIfRequired) const

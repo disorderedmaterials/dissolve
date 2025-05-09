@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include <optional>
 #include <variant>
 
 // Node Number
@@ -14,6 +15,8 @@ class Number : public Serialisable<>
     Number(const NumberVariant &value = {0});
     Number(int value);
     Number(double value);
+    //Number(int value, std::optional<int> min = {}, std::optional<int> max = {});
+    //Number(double value, std::optional<double> min = {}, std::optional<double> max = {});
     ~Number() = default;
     Number &operator=(const Number &other);
     Number operator+(const Number &other) const;
@@ -35,10 +38,34 @@ class Number : public Serialisable<>
     protected:
     // Value
     NumberVariant value_;
+    // Lower bound
+    std::optional<NumberVariant> min_;
+    // Upper bound
+    std::optional<NumberVariant> max_;
+
+    private:
+    // Return whether the contained value is an integer
+    bool isInteger(NumberVariant n) const;
+    // Return whether the contained value is a double
+    bool isDouble(NumberVariant n) const;
+    // Return contained value as integer
+    int asInteger(NumberVariant n) const;
+    // Return contained value as double
+    double asDouble(NumberVariant n) const;
 
     public:
     // Set from other Number
     void set(const Number &other);
+    // Return whether the number has bounds
+    bool hasBounds() const;
+    // Return optional double upper bound
+    std::optional<double> doubleMax();
+    // Return optional integer lower bound
+    std::optional<int> integerMax();
+    // Return optional double lower bound
+    std::optional<double> doubleMin();
+    // Return optional integer upper bound
+    std::optional<int> integerMin();
     // Return whether the contained value is an integer
     bool isInteger() const;
     // Return whether the contained value is a double
