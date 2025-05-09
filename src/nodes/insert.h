@@ -51,7 +51,7 @@ class InsertNode : public Node
     // Units for the specified density value
     Units::DensityUnits densityUnits_{Units::GramsPerCentimetreCubedUnits};
     // Population of molecules to add
-    Number population_{1.0};
+    Number population_{100};
     // The default scaling settings
     static constexpr bool defaultScale_{true};
     // Flags controlling box axis scaling
