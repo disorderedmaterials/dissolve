@@ -16,49 +16,77 @@ bool ClusteringModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Ke
         Messenger::error("Cluster definition invalid! Set both sites and a positive cutoff.");
 
     // If we have strict bonding, we need to check and determine index map for hydroxyl group
-    if (strict_)
+    if (directional_)
     {
-        hydroxylIndexes_.clear();
+        directionIndexes_.clear();
         for (const auto &s : {a_, b_})
         {
-            // Do some checks. For now, requiring the site to be static.
-            if (s->type() != SpeciesSite::SiteType::Static || s->staticOriginAtoms().size() != 1)
+            if (s->type() != SpeciesSite::SiteType::Fragment)
             {
-                Messenger::error("For directional hydrogen bonding, site must be a static type based on a single origin atom.");
-                return false;
-            }
-            auto o = s->staticOriginAtoms()[0];
-            if (!o)
-            {
-                Messenger::error("The origin atom for site is inaccessible.");
-                return false;
-            }
-            if (o->Z() != Elements::O)
-            {
-                Messenger::error("For directional hydrogen bonding, the static origin atom for site must be an Oxygen.");
-                return false;
-            }
-            // Find the hydroxyl hydrogens and add index to the map
-            for (const auto &bond : o->bonds())
-                for (const auto &atom : bond.get().atoms())
+                auto instances = s->instances();
+                for (const auto &instance : instances)
                 {
-                    if (!atom)
+                    if (instance.originIndices().size() != 1)
                     {
-                        Messenger::error("Inaccessible bond partner found, skipping...");
-                        continue;
+                        Messenger::error("Static and dynamic sites for directional bonding must be based on a single origin "
+                                         "atom (bonded to at least one hydrogen)!");
+                        return false;
                     }
-                    if (atom->Z() == Elements::H)
-                        hydroxylIndexes_[s].emplace(atom->index());
+
+                    // Find the hydroxyl hydrogens and add index to the map
+                    auto &origin = s->parent()->atom(instance.originIndices()[0]);
+                    for (const auto &bond : origin.bonds())
+                        for (const auto &atom : bond.get().atoms())
+                        {
+                            if (!atom)
+                            {
+                                Messenger::error("Inaccessible bond partner found, skipping...");
+                                continue;
+                            }
+                            if (atom->Z() == Elements::H)
+                                directionIndexes_[s].emplace(atom->index());
+                        }
                 }
+            }
+            else if (s->type() == SpeciesSite::SiteType::Fragment)
+            {
+                // For a fragment site, we're relying on "#origin, -H(#h)" or similar, with hydrogens (or whatever desired in
+                // theory should work) tagged as h If the number of hydrogens exceeds one, the definition should reflect that
+                // else only one will be calculated i.e. -H(n=2,#h)
+                auto instances = s->instances();
+                for (const auto &instance : instances)
+                {
+                    if (instance.originIndices().size() != 1)
+                    {
+                        Messenger::error("NETA defined sites for directional clustering must have a single origin atom!");
+                        return false;
+                    }
+                    // For each instance find the tagged group
+                    auto &origin = s->parent()->atom(instance.originIndices()[0]);
+                    auto identifiers = s->fragment().matchedPath(&origin).identifiers();
+                    auto it = identifiers.find("h");
+                    if (it == identifiers.end())
+                    {
+                        Messenger::error("NETA defined sites for directional clustering must include a specified group tagged "
+                                         "with #h e.g. '#origin, -H(#h)' - see NETA documentation for more detail");
+                        return false;
+                    }
+                    // Make note of the tagged group's members' indexes
+                    auto taggedGroup = it->second;
+                    for (const auto &atom : taggedGroup)
+                    {
+                        directionIndexes_[s].emplace(atom->index());
+                    }
+                }
+            }
         }
         // Complain if we don't find any valid hydrogens
-        if (hydroxylIndexes_.empty())
+        if (directionIndexes_.empty())
         {
             Messenger::error("Failed to find hydroxyl hydrogens - check site set-up!");
             return false;
         }
     }
-
     return true;
 }
 
@@ -69,12 +97,28 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     // Produce NeighbourMap
     neighbourMap_.clear();
     Analyser::SiteMap neighbourMapA, neighbourMapB;
+    std::vector<const SpeciesSite *> aVec, bVec;
 
-    // Transform SiteObjects to instances ready for the filter function
-    SiteSelector selectionA(targetConfiguration_, std::vector<const SpeciesSite *>{a_});
+    // Decide if we're filtering everything by everything or one by the other
+    if (a_ == b_ && selfClustering_)
+    {
+        Messenger::error("Sites are the same! Disabling self-clustering...");
+        selfClustering_ = false;
+    }
+    else if (selfClustering_)
+    {
+        aVec.insert(aVec.end(), {a_, b_});
+        bVec = aVec;
+    }
+    else
+    {
+        aVec.emplace_back(a_);
+        bVec.emplace_back(b_);
+    }
+
+    SiteSelector selectionA(targetConfiguration_, std::vector<const SpeciesSite *>{aVec});
+    SiteSelector selectionB(targetConfiguration_, std::vector<const SpeciesSite *>{bVec});
     const auto &siteVectorA = selectionA.sites();
-
-    SiteSelector selectionB(targetConfiguration_, std::vector<const SpeciesSite *>{b_});
     const auto &siteVectorB = selectionB.sites();
 
     SiteFilter filterA(targetConfiguration_, siteVectorA);
@@ -100,13 +144,13 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
         }
 
     // Now if we're looking at directionality, we check each site and it's neighbours
-    if (strict_)
+    if (directional_)
     {
         Analyser::SiteMap tempMap;
         const auto box = targetConfiguration_->box();
         for (auto &[site, neighbours] : neighbourMap_)
         {
-            const auto &hIdx = hydroxylIndexes_[site->parent()];
+            const auto &hIdx = directionIndexes_[site->parent()];
             // Check the site is hydroxyl
             if (hIdx.empty())
                 continue;
@@ -115,7 +159,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
             for (auto it = neighbours.begin(); it != neighbours.end();)
             {
                 auto oOVec = box->minimumVector(site->origin(), std::get<0>(*it)->origin());
-                bool keep = false;
+                auto keep = false;
                 for (const auto &h : hIdx)
                 {
                     // Get the relevant vectors
@@ -127,7 +171,10 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
                         angle = 360.0 - angle;
 
                     if (angle <= angleDev_)
+                    {
                         keep = true;
+                        break;
+                    }
                 }
                 // Add to the temp map symmetrically. Not paying attention to site indexes but I suppose this method tags donors
                 // with index = 0 (bar actual 0 index site)
@@ -143,7 +190,10 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     }
 
     if (neighbourMap_.empty())
+    {
         Messenger::error("No neighbours found!");
+        return ExecutionResult::Failed;
+    }
 
     // ClusterMap generation 2.0
     clusterMap_.clear();
@@ -161,23 +211,34 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
         }
     }
 
+    // Molecule cluster map - ensures metrics calculated correctly when a molecule has multiple sites
+    molClusterMap_.clear();
+    for (const auto &[id, mems] : clusterMap_)
+    {
+        std::unordered_set<std::shared_ptr<const Molecule>> mols;
+        for (const auto &mem : mems)
+            mols.emplace(mem->molecule());
+
+        molClusterMap_[id].insert(molClusterMap_[id].end(), mols.begin(), mols.end());
+    }
+
     // Cluster size distribution
     sizeDistribution_.clear();
-    for (const auto &[clusterID, members] : clusterMap_)
+    for (const auto &[clusterID, members] : molClusterMap_)
         sizeDistribution_[members.size()].emplace_back(clusterID);
 
     auto &sizeData = moduleData.realise<Data1D>("SizeDist", name());
     sizeData.clear();
-    for (const auto &[size, mems] : sizeDistribution_)
-        sizeData.addPoint(std::log(size), std::log(mems.size()));
+    for (int i = sizeDistribution_.begin()->first; i <= sizeDistribution_.rbegin()->first; i++)
+        sizeDistribution_.contains(i) ? sizeData.addPoint(i, sizeDistribution_[i].size()) : sizeData.addPoint(i, 0.1);
 
     // Cluster mass calculation
     clusterMasses_.clear();
-    for (const auto &[clusterID, memberVec] : clusterMap_)
+    for (const auto &[clusterID, memberVec] : molClusterMap_)
     {
-        float clusterMass{0};
+        auto clusterMass{0.0};
         for (const auto &member : memberVec)
-            clusterMass += member->parent()->parent()->mass();
+            clusterMass += member->species()->mass();
 
         clusterMasses_[clusterID] = clusterMass;
     }
@@ -187,25 +248,27 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     for (const auto &[clusterID, clusterMass] : clusterMasses_)
         massDistribution_[clusterMass].emplace_back(clusterID);
 
-    auto &massData = moduleData.realise<Data1D>("MassDist", name());
-    massData.clear();
-    for (const auto &[mass, mems] : massDistribution_)
-        massData.addPoint(std::log(mass), std::log(mems.size()));
-
     // Generation of radius of gyration
     radiusOfGyration_.clear();
     const auto *box = targetConfiguration_->box();
-    for (const auto &[clusterID, clusterVec] : clusterMap_)
+    for (const auto &[clusterID, clusterVec] : molClusterMap_)
     {
         if (clusterVec.size() < gyrationMinSize_)
             continue;
 
         // CoM mass weighted calc from reference site
         Vec3<double> massWeightedTotalVec{0, 0, 0};
-        const auto *refSite{clusterVec[0]}; // Reference as first member in cluster
+        const auto refMol{clusterVec[0]}; // Reference as first member in cluster
+        std::vector<int> refIdxs(refMol->nAtoms());
+        std::iota(refIdxs.begin(), refIdxs.end(), 0);
         for (const auto &clusterMem : clusterVec)
+        {
+            std::vector<int> idxs(clusterMem->nAtoms());
+            std::iota(idxs.begin(), idxs.end(), 0);
             massWeightedTotalVec +=
-                (box->minimumVector(refSite->origin(), clusterMem->origin())) * clusterMem->parent()->parent()->mass();
+                box->minimumVector(refMol->centreOfMass(box, refIdxs), clusterMem->centreOfMass(box, idxs)) *
+                clusterMem->species()->mass();
+        }
 
         massWeightedTotalVec /= clusterMasses_[clusterID];
         clusterCoM_[clusterID] = massWeightedTotalVec;
@@ -213,11 +276,14 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
 
         // Run through again for mass weighted distance squared
         for (const auto &clusterMem : clusterVec)
-            massWeightedDistanceSqrd +=
-                (box->minimumDistanceSquared(box->minimumVector(clusterMem->origin(), refSite->origin()),
-                                             clusterCoM_[clusterID])) *
-                clusterMem->parent()->parent()->mass();
-
+        {
+            std::vector<int> idxs(clusterMem->nAtoms());
+            std::iota(idxs.begin(), idxs.end(), 0);
+            massWeightedDistanceSqrd += (box->minimumDistanceSquared(box->minimumVector(refMol->centreOfMass(box, refIdxs),
+                                                                                        clusterMem->centreOfMass(box, idxs)),
+                                                                     clusterCoM_[clusterID])) *
+                                        clusterMem->species()->mass();
+        }
         radiusOfGyration_[clusterID] = std::sqrt(massWeightedDistanceSqrd / clusterMasses_[clusterID]);
     }
 
@@ -264,6 +330,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     return ExecutionResult::Success;
 }
 
+// Recursion for cluster building
 void ClusteringModule::buildCluster(const Site *startSite, std::unordered_set<const Site *> &visited)
 {
     for (const auto &[neighbour, _] : neighbourMap_[startSite])
@@ -276,6 +343,7 @@ void ClusteringModule::buildCluster(const Site *startSite, std::unordered_set<co
     }
 }
 
+// Generation of the viewing configuration for given clusters
 void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySize, int displayID)
 {
     if (clusterConfig_.generator().node("clusters"))
@@ -341,6 +409,7 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
         Messenger::print("Cluster visualisation generated");
 }
 
+// Calculates the coordination numbers for the clusters being viewed
 void ClusteringModule::calculateCN(int displaySize, int displayID)
 {
     std::map<const SpeciesSite *, int> instances;
@@ -354,25 +423,41 @@ void ClusteringModule::calculateCN(int displaySize, int displayID)
             // Iterate through each member of the cluster
             for (auto const &mem : mems)
             {
-                // For each species found, increment the total number of that species by one.
-                instances[mem->parent()]++;
+                // With multiple sites per mol, we need to see if our current site has contact with sites from other mols in
+                // order to count
+                auto foreignNbr = false;
 
                 // Find the member in the neighbour map,
                 for (auto const &[memNbr, index] : neighbourMap_[mem])
-                    clusterSpeciesCoordNo_[mem->parent()][memNbr->parent()]++;
+                {
+                    // Ensure this isnt a site from the same molecule
+                    if (!(mem->molecule() == memNbr->molecule()))
+                    {
+                        clusterSpeciesCoordNo_[mem->parent()][memNbr->parent()]++;
+                        foreignNbr = true;
+                    }
+                }
+                if (foreignNbr)
+                    instances[mem->parent()]++;
             }
         }
     }
-    if (displaySize != 0 && displayID == 0)
+    else if (displaySize != 0 && displayID == 0)
     {
         // Same as above but only for given size
         for (const auto &[clusterID, mems] : clusterMap_)
             if (mems.size() == displaySize)
                 for (auto const &mem : mems)
                 {
-                    instances[mem->parent()]++;
+                    auto foreignNbr = false;
                     for (auto const &[memNbr, index] : neighbourMap_[mem])
-                        clusterSpeciesCoordNo_[mem->parent()][memNbr->parent()]++;
+                        if (!(mem->molecule() == memNbr->molecule()))
+                        {
+                            clusterSpeciesCoordNo_[mem->parent()][memNbr->parent()]++;
+                            foreignNbr = true;
+                        }
+                    if (foreignNbr)
+                        instances[mem->parent()]++;
                 }
     }
     else if (displaySize != 0 && displayID != 0)
@@ -380,9 +465,17 @@ void ClusteringModule::calculateCN(int displaySize, int displayID)
         // Just the given clusterID
         for (auto const &mem : clusterMap_[displayID])
         {
-            instances[mem->parent()]++;
+            auto foreignNbr = false;
             for (auto const &[memNbr, index] : neighbourMap_[mem])
-                clusterSpeciesCoordNo_[mem->parent()][memNbr->parent()]++;
+            {
+                if (!(mem->molecule() == memNbr->molecule()))
+                {
+                    clusterSpeciesCoordNo_[mem->parent()][memNbr->parent()]++;
+                    foreignNbr = true;
+                }
+            }
+            if (foreignNbr)
+                instances[mem->parent()]++;
         }
     }
     // Average the coordination numbers

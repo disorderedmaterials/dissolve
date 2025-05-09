@@ -37,8 +37,11 @@ class ClusteringModuleWidget : public ModuleWidget
     void updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags = {}) override;
 
     private:
+    // Builds the selectable size distribution list for viewer
     void buildSizeList();
+    // Builds the ID list of clusters with the selected size
     void buildIDList(QListWidgetItem *item);
+    // Builds list of avaliable coordination numbers for cluster(s) being viewed
     void buildCNList();
 
     /*

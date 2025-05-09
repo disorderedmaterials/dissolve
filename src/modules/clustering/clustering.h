@@ -14,6 +14,7 @@
 #include "module/module.h"
 #include <unordered_set>
 
+// Forward Declarations
 class Atom;
 
 // Clustering Module
@@ -27,14 +28,15 @@ class ClusteringModule : public Module
      * Definition
      */
     private:
-    // WIP
-    std::unordered_map<const SpeciesSite *, std::unordered_set<int>> hydroxylIndexes_;
-    bool strict_{false};
+    // Map of site origin to usually hydrogen indicies though does not strictly need to be to hydrogen if using NETA
+    std::unordered_map<const SpeciesSite *, std::unordered_set<int>> directionIndexes_;
+    // Whether we're using angle constraints for hydrogen bonding
+    bool directional_{false};
+    // Maximum acceptable angle when selecting directional bonds
     double angleDev_{20};
-    // Check angles
-    std::map<const Site *, std::pair<const Site *, double>> angleMap;
-
-    // Target configurations
+    // Specifies for two different selected sites (A, B) if A-A and B-B contribute as well
+    bool selfClustering_{false};
+    // Target configuration
     Configuration *targetConfiguration_{nullptr};
     // Sites involved in the cluster
     const SpeciesSite *a_{nullptr}, *b_{nullptr};
@@ -44,6 +46,8 @@ class ClusteringModule : public Module
     Analyser::SiteMap neighbourMap_{};
     // Map of every member in every cluster
     std::map<int, std::vector<const Site *>> clusterMap_{};
+    // Map of every molecule member in every cluster
+    std::map<int, std::vector<std::shared_ptr<const Molecule>>> molClusterMap_{};
     // Map of size to no. of clusters of that size
     std::map<int, std::vector<int>> sizeDistribution_{};
     // Map of cluster ID to mass of cluster

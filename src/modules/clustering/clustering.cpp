@@ -21,15 +21,23 @@ ClusteringModule::ClusteringModule() : Module(ModuleTypes::Clustering)
     keywords_.add<SpeciesSiteKeyword>("SiteB", "Choose the second site for cluster definition", b_);
     keywords_.add<DoubleKeyword>(
         "Cut-off", "The maximum distance between sites for them to be considered part of the same cluster", cutoff_);
+    keywords_.add<BoolKeyword>("Self-clustering", "If SiteA and SiteB are different, A-A and B-B will contribute to clusters",
+                               selfClustering_);
 
-    keywords_.setOrganisation("Options", "Hydrogen Bonding");
-    keywords_.add<BoolKeyword>("Directional Hydrogen Bonding?",
-                               "Static sites based on (at least one) single hydroxyl oxygen atoms must be used", strict_);
-    keywords_.add<DoubleKeyword>("Maximum bond angle deviation", "+- from 180 degrees", angleDev_);
+    keywords_.setOrganisation("Options", "Directional Hydrogen Bonding");
+    keywords_.add<BoolKeyword>(
+        "DirectionalHBonding",
+        "Static and Dynamics sites should be based on a single atom/element/atom type, with hydrogens bonded to it. Fragment "
+        "sites can be defined for more flexibility, requiring a #origin and #h tag for the origin atom and hydrogen (or other) "
+        "group",
+        directional_);
+    keywords_.add<DoubleKeyword>("AngleDeviation", "Maximum angle deviation from 180 to be considered a valid interaction",
+                                 angleDev_);
 
     keywords_.setOrganisation("Export", "Options");
-    keywords_.add<BoolKeyword>("Export Size Distribution", "SizeDist.txt", saveSizeDist_);
-    keywords_.add<BoolKeyword>("Export Mass Distribution", "MassDist.txt", saveMassDist_);
-    keywords_.add<BoolKeyword>("Export Fractal Dimension and Radius of Gyration - Cluster Mass", "RgMass.txt", saveRgMass_);
-    keywords_.add<IntegerKeyword>("Minimum cluster size for Radius of Gyration and Fractal dimension", "", gyrationMinSize_);
+    keywords_.add<BoolKeyword>("ExportSize", "Export size distribution to SizeDist.txt", saveSizeDist_);
+    keywords_.add<BoolKeyword>("ExportMass", "Export mass distribution to MassDist.txt", saveMassDist_);
+    keywords_.add<BoolKeyword>("ExportAnalysis", "Export fractal dimension and radius of gyration to RgMass.txt", saveRgMass_);
+    keywords_.add<IntegerKeyword>(
+        "MinGyrationSize", "Minimum cluster size to calculate radius of gyration and fractal dimension for", gyrationMinSize_);
 }

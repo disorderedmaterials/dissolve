@@ -43,6 +43,7 @@
     <file>icons/modules/QSpecies.svg</file>
     <file>icons/modules/SQ.svg</file>
     <file>icons/modules/Bragg.svg</file>
+    <file>icons/modules/Clustering.svg</file>
     <file>icons/modules/AvgMol.svg</file>
     <file>icons/modules/Accumulate.svg</file>
     <file>icons/modules/OrientedSDF.svg</file>

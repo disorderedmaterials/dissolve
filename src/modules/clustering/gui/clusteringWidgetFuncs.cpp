@@ -12,26 +12,14 @@ ClusteringModuleWidget::ClusteringModuleWidget(QWidget *parent, ClusteringModule
     ui_.setupUi(this);
     ui_.ViewerWidget->setConfiguration(clusterConfiguration_);
 
-    // Set up the distribution plots
+    // Set up the size distribution plot
     sizeDist_ = ui_.SizePlot->dataViewer();
     auto &viewS = sizeDist_->view();
     viewS.setViewType(View::FlatXYView);
-    viewS.axes().setTitle(0, "Log(Cluster Size)");
-    viewS.axes().setMax(0, 10.0);
-    viewS.axes().setTitle(1, "Log(No. of Clusters)");
-    viewS.axes().setMin(1, 0.0);
-    viewS.axes().setMax(1, 1.0);
-    viewS.setAutoFollowType(View::AllAutoFollow);
-
-    massDist_ = ui_.MassPlot->dataViewer();
-    auto &viewM = massDist_->view();
-    viewM.setViewType(View::FlatXYView);
-    viewM.axes().setTitle(0, "Log(Cluster Mass)");
-    viewM.axes().setMax(0, 10.0);
-    viewM.axes().setTitle(1, "Log(No. of Clusters)");
-    viewM.axes().setMin(1, 0.0);
-    viewM.axes().setMax(1, 1.0);
-    viewM.setAutoFollowType(View::AllAutoFollow);
+    viewS.axes().setLogarithmic(0, true);
+    viewS.axes().setLogarithmic(1, true);
+    viewS.axes().setTitle(0, "Cluster Size");
+    viewS.axes().setTitle(1, "No. of Clusters");
 }
 
 void ClusteringModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
@@ -55,22 +43,14 @@ void ClusteringModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
     }
 
     // Configure the size/mass histograms
-    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || sizeDist_->renderables().empty() ||
-        massDist_->renderables().empty())
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || sizeDist_->renderables().empty())
     {
         sizeDist_->clearRenderables();
-        massDist_->clearRenderables();
 
         if (sizeDist_->renderables().empty())
             sizeDist_->createRenderable<RenderableData1D>(
                 std::format("{}//SizeDist", module_->name()),
                 std::format("SizeDist//{}", module_->keywords().getConfiguration("Configuration")->niceName()),
-                module_->keywords().getConfiguration("Configuration")->niceName());
-
-        if (massDist_->renderables().empty())
-            massDist_->createRenderable<RenderableData1D>(
-                std::format("{}//MassDist", module_->name()),
-                std::format("MassDist//{}", module_->keywords().getConfiguration("Configuration")->niceName()),
                 module_->keywords().getConfiguration("Configuration")->niceName());
     }
 
@@ -78,19 +58,16 @@ void ClusteringModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
         buildSizeList();
 
     sizeDist_->validateRenderables(dissolve_.processingModuleData());
-    massDist_->validateRenderables(dissolve_.processingModuleData());
     ui_.SizePlot->updateToolbar();
-    ui_.MassPlot->updateToolbar();
     sizeDist_->postRedisplay();
-    massDist_->postRedisplay();
 
     fromBuilder_ = false;
     refreshing_ = false;
 }
 
+// Produce a list of all the different cluster sizes
 void ClusteringModuleWidget::buildSizeList()
 {
-    // Produce a list of all the different cluster sizes
     auto &sizeDistribution = module_->getSizeDistribution();
     ui_.clusterSizeList->clear();
     ui_.clusterSizeList->addItem("View All");
@@ -102,9 +79,9 @@ void ClusteringModuleWidget::buildSizeList()
     }
 }
 
+// Produce a list of all the cluster IDs of the selected cluster size
 void ClusteringModuleWidget::buildIDList(QListWidgetItem *item)
 {
-    // Produce a list of all the cluster IDs of the selected cluster size
     auto sizeDistribution = module_->getSizeDistribution();
     ui_.clusterIDList->clear();
     if (item->text() == "View All")
@@ -125,6 +102,7 @@ void ClusteringModuleWidget::buildIDList(QListWidgetItem *item)
     }
 }
 
+// Display all coordination numbers for the currrent view
 void ClusteringModuleWidget::buildCNList()
 {
     auto cns = module_->getCNs();
