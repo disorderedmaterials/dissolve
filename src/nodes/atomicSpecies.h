@@ -28,6 +28,8 @@ class AtomicSpeciesNode : public Node
     private:
     // Species object
     Species species_;
+    // AtomTypes owned by the node
+    std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
     /*
      * Processing
