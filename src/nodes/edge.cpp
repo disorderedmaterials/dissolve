@@ -117,6 +117,12 @@ bool EdgeDefinition::operator==(const EdgeDefinition &other) const
            targetInput == other.targetInput;
 }
 
+// Return as a string
+std::string EdgeDefinition::asString() const
+{
+    return std::format("Edge( [O] {}@{} -> {}@{} [I] )", sourceOutput, sourceNode, targetInput, targetNode);
+}
+
 // Express as a serialisable value
 SerialisedValue EdgeDefinition::serialise() const
 {
