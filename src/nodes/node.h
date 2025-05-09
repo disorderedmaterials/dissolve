@@ -46,6 +46,58 @@ class Node : public Serialisable<>
     virtual std::string_view summary() const = 0;
 
     /*
+     * Node message
+     */
+
+    // Enumeration for message status
+    enum class MessageStatus
+    {
+        Info,
+        Warn,
+        Error
+    };
+
+    using MessageStore = std::vector<std::pair<MessageStatus, std::string>>;
+    // Print latest message
+    static bool echo_;
+
+    private:
+    // Message store vector
+    MessageStore messages_;
+    // Node message format
+    template <typename... Args> void message(std::format_string<Args...> format, Args... args)
+    {
+        messages_.emplace_back(std::make_pair(MessageStatus::Info, std::format(format, std::forward<Args>(args)...)));
+
+        if (echo_)
+            echo();
+    }
+    // Node warn format
+    template <typename... Args> void warn(std::format_string<Args...> format, Args... args)
+    {
+        messages_.emplace_back(std::make_pair(MessageStatus::Warn, std::format(format, std::forward<Args>(args)...)));
+
+        if (echo_)
+            echo();
+    }
+    // Node error format
+    template <typename... Args> void error(std::format_string<Args...> format, Args... args)
+    {
+        messages_.emplace_back(std::make_pair(MessageStatus::Error, std::format(format, std::forward<Args>(args)...)));
+
+        if (echo_)
+            echo();
+    }
+    // Print latest message
+    void echo();
+
+    public:
+    // Message store vector
+    const MessageStore &messages() const;
+    // Returns true if message with given status exists
+    bool hasMessages(MessageStatus status) const;
+
+    /*
      * Processing & Validity
      */
     private:
