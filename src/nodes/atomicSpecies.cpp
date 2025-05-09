@@ -1,9 +1,8 @@
 #include "atomicSpecies.h"
 
-AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph, std::string_view name, Elements::Element Z, Vector3 r)
-    : Node(parentGraph)
+AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph, std::string_view name, Elements::Element Z) : Node(parentGraph)
 {
-    species_.addAtom(Z, r);
+    species_.addAtom(Z, {});
     species_.setName(name);
     addPointerOutput<const Species *>("Species", "Atomic species", species_);
 }

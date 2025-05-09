@@ -121,7 +121,7 @@ class Configuration : public Serialisable<const CoreData &>
     std::shared_ptr<Molecule>
     addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vector3>> sourceCoordinates = std::nullopt);
     // Copy molecule
-    std::shared_ptr<Molecule> copyMolecule(const std::shared_ptr<Molecule> &sourceMolecule);
+    std::shared_ptr<Molecule> copyMolecule(const Molecule &sourceMolecule);
     // Remove all Molecules of the target Species from the Configuration
     void removeMolecules(const Species *sp);
     // Remove specified Molecules from the Configuration

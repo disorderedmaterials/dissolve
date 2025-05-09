@@ -9,6 +9,7 @@
 #include "derivative.h"
 #include "dissolve.h"
 #include "dotProduct.h"
+#include "insert.h"
 #include "integrator.h"
 #include "md/md.h"
 #include "multiply.h"
@@ -40,6 +41,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
+                  {"Insert", makeDerivedNode<InsertNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"MD", makeDerivedNode<MDNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
