@@ -37,14 +37,17 @@ std::string Graph::uniqueNodeName(const Node *node, std::string_view baseName) c
 // Create node of specified type with the name provided
 Node *Graph::createNode(std::string_view type, std::string_view name)
 {
-    // Produce the node
-    auto node = NodeRegistry::produce(this, type);
+    return addNode(NodeRegistry::produce(this, type), name.empty() ? type : name);
+}
+
+// Add node to graph
+Node *Graph::addNode(std::unique_ptr<Node> node, std::string_view newName)
+{
     auto nodePtr = node.get();
 
-    // Ensure we have a unique name
-    auto uniqueName = uniqueNodeName(node.get(), name);
+    auto uniqueName = uniqueNodeName(node.get(), newName.empty() ? node->type() : newName);
 
-    reverseNodes_.insert(std::make_pair<Node *, std::string>(node.get(), std::string(uniqueName)));
+    reverseNodes_.insert(std::make_pair<Node *, std::string>(node.get(), std::string(node->name())));
     nodes_.insert(std::make_pair<std::string, std::unique_ptr<Node>>(std::string(uniqueName), std::move(node)));
 
     return nodePtr;
