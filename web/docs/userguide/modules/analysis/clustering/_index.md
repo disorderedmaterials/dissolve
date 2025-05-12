@@ -32,16 +32,16 @@ There are no restrictions on how sites need to be defined.
 Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`DirectionalHBonding`|`boolean`|`false`|Toggles directional bonding based on the specified angle tolerance.|
-|`AngleTolerance`|`double`|`20.0`|Specify the maximum angle for which the determined vectors may oppose for the interaction to be valid|
+|`AngleTolerance`|`double`|`20.0`|Specify the maximum angle for which the determined vectors may oppose for the interaction to be valid (degrees).|
 
 Directional hydrogen bonding may be set up easily when using Static or Dynamic site types. Each site must be created from only one atom/element/atom type. This is the origin atom. The module will detect all hydrogens bonded to this origin atom and perform the angle checks. Specifically, the angle check is performed between the SiteA(origin) -> SiteB(origin) vector and the SiteA(origin) -> SiteA(hydrogen) vector. All hydrogens connected to the origin (referred to as intermediaries on this page) will be checked against all SiteB origins within the cut-off. This is performed symmetrically for SiteA and SiteB, though it is not necessary for both sites to have hydrogens bonded to their origins, so long as one does. 
 
 Should a use case extend the capabilities of static/dyanmic sites, fragment sites may be used. These allow more specific site definitions and more general directionality checks due to shedding the requirement for hydrogen to be the intermediary. What this means in principle is any atom in a molecule can be set to the origin, and directionality to another origin can be checked using any other set of atoms on the molecule. Another potential use is if instead of both sites acting as both donors and acceptors, it is of interest for only one site to be a donor despite the acceptor's origin's bonds to hydrogen (which would normally automatically cause it to act as a donor as well). In this case, the acceptor site should be defined as a fragment without a #other group (see below).
 
-Fragment sites require a NETA defintion, for which there is a separate docs page. Beyond that, there are some specific requirements for using Fragment sites with `Clustering`. A typical clustering compatible NETA defintion for a -X-H group (for some origin element X) is `-X(#origin, -H(n=2, #other))` meaning: we're looking for a bond to an X (which is tagged as the origin) where this X has bonded to it two (n=2) hydrogens which will both be tagged as #other. There are a few things to note here: 
-    1. The origin atom must be tagged using #origin.
-    2. The intermediary atoms (if any, but two hydrogens in this case) should be tagged with #other.
-    3. The number of these intermediary atoms must be specified using n= (else only one of the branching atoms will be tagged as #other)
+Fragment sites require a NETA defintion, for which there is a separate docs page. Beyond that, there are some specific requirements for using Fragment sites with `Clustering`. A typical clustering compatible NETA defintion for a -X-H group (for some origin element X) is `-X(#origin, -H(n=2, #other))` meaning: we're looking for a bond to an X (which is tagged as the origin) where this X has bonded to it two (n=2) hydrogens which will both be tagged as #other. There are a few things to note here:  
+    1. The origin atom must be tagged using #origin.  
+    2. The intermediary atoms (if any, but two hydrogens in this case) should be tagged with #other.  
+    3. The number of these intermediary atoms must be specified using n= (else only one of the branching atoms will be tagged as #other)  
     4. To avoid issues, specify as little as possible to get the correct site(s). For example with water `-O(#origin, -H(#other))` will not include both hydrogens, but `#origin, -H(n=2, #other)` will.
 
 ### Export
