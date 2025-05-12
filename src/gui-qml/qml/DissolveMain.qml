@@ -294,10 +294,6 @@ ApplicationWindow {
                     }
                 }
             }
-            GraphDelegate {
-                id: graphDelegate
-                rootModel: graphModel
-            }
             GraphView {
                 id: graph
 
@@ -305,7 +301,10 @@ ApplicationWindow {
                 anchors.left: exampleGraphTab.left
                 anchors.right: exampleGraphTab.right
                 anchors.top: toolBar.bottom
-                delegate: graphDelegate.delegate
+                delegate:  GraphDelegate {
+                    id: graphDelegate
+                    rootModel: graphModel
+                }
                 edgeModel: graphModel.edges
                 nodeModel: graphModel.nodes
                 rootModel: graphModel
