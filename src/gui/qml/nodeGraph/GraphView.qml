@@ -15,6 +15,7 @@ Pane {
     property variant rootModel
 
     MouseArea {
+        id: ctxMenuCatcher
         anchors.fill: parent
         acceptedButtons: Qt.RightButton
         onClicked: contextMenu.popup()
@@ -24,26 +25,50 @@ Pane {
                 title: "Math"
                 MenuItem {
                     text: "Add"
-                    onClicked: rootModel.emplace_back(100, 200, "Add", "New Node")
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Add", "New Node")
                 }
-                MenuItem { text: "Derivative" }
-                MenuItem { text: "Dot Product" }
-                MenuItem { text: "Integrator" }
-                MenuItem { text: "Multiply" }
-                MenuItem { text: "Subtract" }
-                MenuItem { text: "Vec3Assembly" }
-                MenuItem { text: "Vec3Decompostion" }
+                MenuItem {
+                    text: "Derivative"
+                }
+                MenuItem {
+                    text: "Dot Product"
+                }
+                MenuItem {
+                    text: "Integrator"
+                }
+                MenuItem {
+                    text: "Multiply"
+                }
+                MenuItem {
+                    text: "Subtract"
+                }
+                MenuItem {
+                    text: "Vec3Assembly"
+                }
+                MenuItem {
+                    text: "Vec3Decompostion"
+                }
             }
             Menu {
                 title: "Action"
-                MenuItem { text: "Atom Shake" }
-                MenuItem { text: "Insert" }
-                MenuItem { text: "Molecular Dynamics" }
+                MenuItem {
+                    text: "Atom Shake"
+                }
+                MenuItem {
+                    text: "Insert"
+                }
+                MenuItem {
+                    text: "Molecular Dynamics"
+                }
             }
             Menu {
                 title: "Data"
-                MenuItem { text: "Atomic Species" }
-                MenuItem { text: "Configuration" }
+                MenuItem {
+                    text: "Atomic Species"
+                }
+                MenuItem {
+                    text: "Configuration"
+                }
             }
         }
     }
