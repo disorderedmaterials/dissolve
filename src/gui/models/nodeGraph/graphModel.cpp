@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "graphModel.h"
 #include "graphEdgeModel.h"
+#include "graphModel.h"
 #include <iostream>
 #include <qvariant.h>
 
@@ -42,7 +42,7 @@ void GraphModel::emplace_back(int x, int y, QVariant type, QVariant name)
         std::cout << "Cannot emplace node: No graph" << std::endl;
         return;
     }
-    std::cout << "Emplace bacak node of type: " << type.toString().toStdString() << std::endl;
+    std::cout << "Emplace back node of type: " << type.toString().toStdString() << std::endl;
     nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
     auto node = graph_->addNode(type.toString().toStdString(), type.toString().toStdString());
     NodeWrapper item(*node);

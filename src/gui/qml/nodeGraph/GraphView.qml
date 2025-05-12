@@ -14,6 +14,40 @@ Pane {
     property variant nodeModel
     property variant rootModel
 
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.RightButton
+        onClicked: contextMenu.popup()
+        Menu {
+            id: contextMenu
+            Menu {
+                title: "Math"
+                MenuItem {
+                    text: "Add"
+                    onClicked: rootModel.emplace_back(100, 200, "Add", "New Node")
+                }
+                MenuItem { text: "Derivative" }
+                MenuItem { text: "Dot Product" }
+                MenuItem { text: "Integrator" }
+                MenuItem { text: "Multiply" }
+                MenuItem { text: "Subtract" }
+                MenuItem { text: "Vec3Assembly" }
+                MenuItem { text: "Vec3Decompostion" }
+            }
+            Menu {
+                title: "Action"
+                MenuItem { text: "Atom Shake" }
+                MenuItem { text: "Insert" }
+                MenuItem { text: "Molecular Dynamics" }
+            }
+            Menu {
+                title: "Data"
+                MenuItem { text: "Atomic Species" }
+                MenuItem { text: "Configuration" }
+            }
+        }
+    }
+
     // Edge connections
     Repeater {
         model: edgeModel

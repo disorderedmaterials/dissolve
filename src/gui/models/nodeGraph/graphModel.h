@@ -43,9 +43,6 @@ class GraphModel : public QObject
     // The total number of edges in the graph
     int nEdges();
 
-    // Add a new node at a specific position
-    void emplace_back(int x, int y, QVariant type, QVariant name);
-
     protected:
     // The abstract data model for the nodes
     GraphNodeModel nodes_;
@@ -76,4 +73,7 @@ class GraphModel : public QObject
     bool connect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
     // Public wrapper of disconnect_
     bool disconnect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
+
+    // Add a new node at a specific position
+    void emplace_back(int x, int y, QVariant type, QVariant name);
 };
