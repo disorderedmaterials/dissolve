@@ -15,23 +15,50 @@ bool ClusteringModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Ke
     if (!(a_ && b_ && (cutoff_ > 0)))
         Messenger::error("Cluster definition invalid! Set both sites and a positive cutoff.");
 
-    // If we have strict bonding, we need to check and determine index map for hydroxyl group
+    // If we have directional bonding, we need to check and determine index map for hydroxyl group
     if (directional_)
     {
         directionIndexes_.clear();
         for (const auto &s : {a_, b_})
         {
-            if (s->type() != SpeciesSite::SiteType::Fragment)
+            if (s->type() == SpeciesSite::SiteType::Fragment)
             {
+                // For a fragment site, we're relying on "#origin, -H(#other)" or similar, with hydrogens (or whatever desired
+                // in theory should work) tagged as #other. If the number of hydrogens exceeds one, the definition should
+                // reflect that else only one will be calculated i.e. -H(n=2,#other)
                 auto instances = s->instances();
                 for (const auto &instance : instances)
                 {
                     if (instance.originIndices().size() != 1)
+                        return Messenger::error(
+                            "NETA defined sites for directional clustering must have a single origin atom!");
+
+                    // For each instance find the tagged group
+                    auto &origin = s->parent()->atom(instance.originIndices()[0]);
+                    auto identifiers = s->fragment().matchedPath(&origin).identifiers();
+                    auto it = identifiers.find("other");
+                    if (it == identifiers.end())
+                        Messenger::print("Can not find #other tagged group for fragment site {}. Skipping...", s->name());
+                    else
                     {
-                        Messenger::error("Static and dynamic sites for directional bonding must be based on a single origin "
-                                         "atom (bonded to at least one hydrogen)!");
-                        return false;
+                        // Make note of the tagged group's members' indexes
+                        auto taggedGroup = it->second;
+                        for (const auto &atom : taggedGroup)
+                            directionIndexes_[s].emplace(atom->index());
                     }
+                }
+            }
+            else
+            {
+                // We can handle non-fragment sites the same way: for these, just auto detect any hydrogens attached to the
+                // origin
+                auto instances = s->instances();
+                for (const auto &instance : instances)
+                {
+                    if (instance.originIndices().size() != 1)
+                        return Messenger::error(
+                            "Static and dynamic sites for directional bonding must be created from a single origin "
+                            "atom (bonded to at least one hydrogen)!");
 
                     // Find the hydroxyl hydrogens and add index to the map
                     auto &origin = s->parent()->atom(instance.originIndices()[0]);
@@ -48,44 +75,10 @@ bool ClusteringModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Ke
                         }
                 }
             }
-            else if (s->type() == SpeciesSite::SiteType::Fragment)
-            {
-                // For a fragment site, we're relying on "#origin, -H(#h)" or similar, with hydrogens (or whatever desired in
-                // theory should work) tagged as h If the number of hydrogens exceeds one, the definition should reflect that
-                // else only one will be calculated i.e. -H(n=2,#h)
-                auto instances = s->instances();
-                for (const auto &instance : instances)
-                {
-                    if (instance.originIndices().size() != 1)
-                    {
-                        Messenger::error("NETA defined sites for directional clustering must have a single origin atom!");
-                        return false;
-                    }
-                    // For each instance find the tagged group
-                    auto &origin = s->parent()->atom(instance.originIndices()[0]);
-                    auto identifiers = s->fragment().matchedPath(&origin).identifiers();
-                    auto it = identifiers.find("h");
-                    if (it == identifiers.end())
-                    {
-                        Messenger::error("NETA defined sites for directional clustering must include a specified group tagged "
-                                         "with #h e.g. '#origin, -H(#h)' - see NETA documentation for more detail");
-                        return false;
-                    }
-                    // Make note of the tagged group's members' indexes
-                    auto taggedGroup = it->second;
-                    for (const auto &atom : taggedGroup)
-                    {
-                        directionIndexes_[s].emplace(atom->index());
-                    }
-                }
-            }
         }
-        // Complain if we don't find any valid hydrogens
+        // Complain if we don't find any valid hydrogens or atoms in the other group
         if (directionIndexes_.empty())
-        {
-            Messenger::error("Failed to find hydroxyl hydrogens - check site set-up!");
-            return false;
-        }
+            return Messenger::error("Failed to find hydroxyl hydrogens or atoms in the tagged #other group - check site set-up!");
     }
     return true;
 }
@@ -351,7 +344,7 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
     else
         clusterConfig_.setName("clusters");
 
-    // Molecule transfer only works with a generator?
+    // Can only get molecule transfer working with a generator...
     clusterConfig_.generator().createRootNode<CopyGeneratorNode>("clusters", targetConfiguration_);
     clusterConfig_.generate({dissolve.worldPool(), dissolve});
     clusterConfig_.removeMolecules(clusterConfig_.molecules());
@@ -404,12 +397,13 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
     clusterConfig_.updateObjectRelationships();
 
     if (clusterConfig_.nAtoms() == 0)
-        Messenger::error("No clusters!");
+        Messenger::error("No clusters! (Ignore at start-up)");
     else
         Messenger::print("Cluster visualisation generated");
 }
 
-// Calculates the coordination numbers for the clusters being viewed
+// Calculates the coordination numbers for the clusters being viewed. Considers only the sites on a molecule that are involved
+// in the cluster
 void ClusteringModule::calculateCN(int displaySize, int displayID)
 {
     std::map<const SpeciesSite *, int> instances;

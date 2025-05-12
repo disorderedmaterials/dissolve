@@ -31,7 +31,7 @@ ClusteringModule::ClusteringModule() : Module(ModuleTypes::Clustering)
         "sites can be defined for more flexibility, requiring a #origin and #h tag for the origin atom and hydrogen (or other) "
         "group",
         directional_);
-    keywords_.add<DoubleKeyword>("AngleDeviation", "Maximum angle deviation from 180 to be considered a valid interaction",
+    keywords_.add<DoubleKeyword>("AngleTolerance", "Maximum angle deviation from 180 to be considered a valid interaction",
                                  angleDev_);
 
     keywords_.setOrganisation("Export", "Options");
