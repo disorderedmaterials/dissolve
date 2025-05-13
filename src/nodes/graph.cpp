@@ -29,21 +29,23 @@ std::string Graph::uniqueNodeName(const Node *node, std::string_view baseName) c
     // Check for existing node with this name and suffix until we get a unique key
     auto count = 1;
     while (nodes_.contains(newName) && nodes_.at(newName).get() != node)
-        newName = std::format("{}%02d", baseName, count++);
+        newName = std::format("{}{}", baseName, count++);
 
     return newName;
 }
 
-// Add nodes
-Node *Graph::addNode(std::string_view type, std::string_view name)
+// Create node of specified type with the name provided
+Node *Graph::createNode(std::string_view type, std::string_view name)
 {
-    // Produce the node
-    auto node = NodeRegistry::produce(this, type);
+    return addNode(NodeRegistry::produce(this, type), name.empty() ? type : name);
+}
+
+// Add node to graph
+Node *Graph::addNode(std::unique_ptr<Node> node, std::string_view newName)
+{
     auto nodePtr = node.get();
 
-    // Ensure we have a unique name
-    auto uniqueName = uniqueNodeName(node.get(), name);
-
+    auto uniqueName = uniqueNodeName(node.get(), newName.empty() ? node->type() : newName);
     reverseNodes_.insert(std::make_pair<Node *, std::string>(node.get(), std::string(uniqueName)));
     nodes_.insert(std::make_pair<std::string, std::unique_ptr<Node>>(std::string(uniqueName), std::move(node)));
 
@@ -154,7 +156,7 @@ void Graph::deserialise(const SerialisedValue &node)
           [this](const auto name, const auto &value)
           {
               std::string nodeType = toml::find<std::string>(value, "type");
-              auto child = addNode(nodeType, name);
+              auto child = createNode(nodeType, name);
 
               child->deserialise(value);
           });

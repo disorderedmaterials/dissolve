@@ -15,7 +15,7 @@ class LocalMolecule : public Molecule
 {
     public:
     LocalMolecule() = default;
-    ~LocalMolecule() = default;
+    virtual ~LocalMolecule() = default;
     LocalMolecule(const Species *copyFrom);
     LocalMolecule(const LocalMolecule &copyFrom);
     LocalMolecule(LocalMolecule &&moveFrom);
