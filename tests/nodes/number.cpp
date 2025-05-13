@@ -308,11 +308,11 @@ TEST(NumberTest, BoundedMultiplyAssignment)
     EXPECT_DOUBLE_EQ(a.asInteger(), 2);
 
     // Multiplication of a double always results in a double
-    Number a(1.0, {}, 2.0);
-    EXPECT_TRUE((a *= 2).isDouble());
-    EXPECT_DOUBLE_EQ(a.asDouble(), 2.0);
-    EXPECT_TRUE((a *= 2.0).isDouble());
-    EXPECT_DOUBLE_EQ(a.asDouble(), 2.0);
+    Number b(1.0, {}, 2.0);
+    EXPECT_TRUE((b *= 2).isDouble());
+    EXPECT_DOUBLE_EQ(b.asDouble(), 2.0);
+    EXPECT_TRUE((b *= 2.0).isDouble());
+    EXPECT_DOUBLE_EQ(b.asDouble(), 2.0);
 }
 
 TEST(NumberTest, Division)
@@ -380,10 +380,10 @@ TEST(NumberTest, BoundedDivisionAssignment)
     EXPECT_DOUBLE_EQ(a.asInteger(), 2);
 
     // Division of a double always results in a double
-    Number a(2.0, 2.0);
-    EXPECT_TRUE((a /= 2).isDouble());
-    EXPECT_DOUBLE_EQ(a.asDouble(), 2.0);
-    EXPECT_TRUE((a /= 2.0).isDouble());
-    EXPECT_DOUBLE_EQ(a.asDouble(), 2.0);
+    Number b(2.0, 2.0);
+    EXPECT_TRUE((b /= 2).isDouble());
+    EXPECT_DOUBLE_EQ(b.asDouble(), 2.0);
+    EXPECT_TRUE((b /= 2.0).isDouble());
+    EXPECT_DOUBLE_EQ(b.asDouble(), 2.0);
 }
 } // namespace UnitTest
