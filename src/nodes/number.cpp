@@ -138,8 +138,7 @@ std::optional<double> Number::doubleMin()
     if (!hasBounds())
         return {};
 
-    auto min = asDouble(min_.value());
-    return min;
+    return asDouble(min_.value());
 }
 
 // Return optional integer lower bound
