@@ -81,7 +81,7 @@ TEST(NumberTest, BoundedAssignment)
 {
     // Assignment from other Number with upper bound
     Number a(5, {}, 7);
-    Number b(3);
+    Number b(30);
     a = b;
     EXPECT_TRUE(a.isInteger());
     EXPECT_TRUE(a.hasUpperBound());
