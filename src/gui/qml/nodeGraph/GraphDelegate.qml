@@ -17,59 +17,62 @@ NodeBox {
 
     onDeleted: rootModel.deleteNode(index)
 
-    ListView {
-        id: inputList
-        anchors.left: parent.left
-        anchors.top: parent.top
-        width: 100
-        model: inputs
-        delegate: RowLayout {
-            Text {
-                text: name
-                font.pointSize: 10
-                anchors.margins: 4
-                wrapMode: Text.Wrap
-                ToolTip.visible: hovered
-                ToolTip.text: description
+    Column {
+        Row {
+            Column {
+                Repeater {
+                    model: inputs
+                    delegate: Text {
+                        text: name
+                        font.pointSize: 10
+                        anchors.margins: 4
+                        wrapMode: Text.Wrap
+                        ToolTip.visible: hovered
+                        ToolTip.text: description
+                    }
+                }
+            }
+
+            Rectangle {
+                height: parent.height
+                width: (inputs.rowCount() > 0 && outputs.rowCount() > 0) ? 2 : 0
+                color: palette.active.mid
+            }
+
+            Column {
+                Repeater {
+                    model: outputs
+                    delegate: Text {
+                        text: name
+                        font.pointSize: 10
+                        anchors.margins: 4
+                        wrapMode: Text.Wrap
+                        ToolTip.visible: hovered
+                        ToolTip.text: description
+                    }
+                }
             }
         }
-    }
 
-    ListView {
-        id: outputList
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.left: inputList.right
-        height: 20 * outputs.rowCount()
-        model: outputs
-        delegate: RowLayout {
-            Text {
-                text: name
-                font.pointSize: 10
-                anchors.margins: 4
-                wrapMode: Text.Wrap
-                ToolTip.visible: hovered
-                ToolTip.text: description
-            }
+        Rectangle {
+            width: parent.width
+            height: options.rowCount() > 0 ? 2 : 0
+            color: palette.active.mid
         }
-    }
 
-    ListView {
-        id: optionList
-        anchors.right: parent.right
-        // anchors.bottom: parent.bottom
-        anchors.top: outputList.bottom
-        anchors.left: parent.left
-        height: 200
-        model: options
-        delegate: RowLayout {
-            Text {
-                text: name
-                font.pointSize: 10
-                anchors.margins: 4
-                wrapMode: Text.Wrap
-                ToolTip.visible: hovered
-                ToolTip.text: description
+        Column {
+            Repeater {
+                model: options
+                delegate: RowLayout {
+                    Text {
+                        text: name
+                        font.pointSize: 10
+                        anchors.margins: 4
+                        wrapMode: Text.Wrap
+                        ToolTip.visible: hovered
+                        ToolTip.text: description
+                    }
+                }
             }
         }
     }
