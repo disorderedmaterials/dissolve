@@ -60,7 +60,7 @@ bool ClusteringModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Ke
                             "Static and dynamic sites for directional bonding must be created from a single origin "
                             "atom (bonded to at least one hydrogen)!");
 
-                    // Find the hydroxyl hydrogens and add index to the map
+                    // Find the hydrogens and add indexes to the map
                     auto &origin = s->parent()->atom(instance.originIndices()[0]);
                     for (const auto &bond : origin.bonds())
                         for (const auto &atom : bond.get().atoms())
@@ -78,7 +78,8 @@ bool ClusteringModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Ke
         }
         // Complain if we don't find any valid hydrogens or atoms in the other group
         if (directionIndexes_.empty())
-            return Messenger::error("Failed to find hydroxyl hydrogens or atoms in the tagged #other group - check site set-up!");
+            return Messenger::error(
+                "Failed to find hydroxyl hydrogens or atoms in the tagged #other group - check site set-up!");
     }
     return true;
 }
