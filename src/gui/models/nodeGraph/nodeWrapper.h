@@ -3,6 +3,8 @@
 
 #pragma once
 
+// #include "gui/models/nodeGraph/parameterModel.h"
+#include "gui/models/nodeGraph/parameterModel.h"
 #include "nodes/node.h"
 #include <QAbstractListModel>
 
@@ -10,10 +12,16 @@
 class NodeWrapper
 {
     public:
-    NodeWrapper(Node &value) : value_(&value) {}
+    // NodeWrapper(Node &value) : value_(&value) {}
+    NodeWrapper(Node &value)
+        : value_(&value), inputs(std::make_unique<ParameterModel>(value.inputs())),
+          outputs(std::make_unique<ParameterModel>(value.outputs())), options(std::make_unique<ParameterModel>(value.options()))
+    {
+    }
 
     // The X and Y coordinates of the node on the screen.
     int posx, posy;
+    std::shared_ptr<ParameterModel> inputs, outputs, options;
 
     // Get the actual value of the node
     Node &rawValue() { return *value_; }

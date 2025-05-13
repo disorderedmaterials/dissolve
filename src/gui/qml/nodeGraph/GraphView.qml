@@ -29,45 +29,57 @@ Pane {
                 }
                 MenuItem {
                     text: "Derivative"
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Derivative", "New Node")
                 }
                 MenuItem {
                     text: "Dot Product"
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "DotProduct", "New Node")
                 }
                 MenuItem {
                     text: "Integrator"
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Integrator", "New Node")
                 }
                 MenuItem {
                     text: "Multiply"
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Multiply", "New Node")
                 }
                 MenuItem {
                     text: "Subtract"
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Subtract", "New Node")
                 }
                 MenuItem {
                     text: "Vec3Assembly"
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Vec3Assembly", "New Node")
                 }
                 MenuItem {
                     text: "Vec3Decompostion"
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Vec3Decomposition", "New Node")
                 }
             }
             Menu {
                 title: "Action"
                 MenuItem {
                     text: "Atom Shake"
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AtomShake", "New Node")
                 }
                 MenuItem {
                     text: "Insert"
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Insert", "New Node")
                 }
                 MenuItem {
                     text: "Molecular Dynamics"
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "MD", "New Node")
                 }
             }
             Menu {
                 title: "Data"
                 MenuItem {
                     text: "Atomic Species"
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AtomicSpecies", "New Node")
                 }
                 MenuItem {
                     text: "Configuration"
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Configuration", "New Node")
                 }
             }
         }

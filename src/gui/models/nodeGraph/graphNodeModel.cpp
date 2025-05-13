@@ -39,6 +39,9 @@ QHash<int, QByteArray> GraphNodeModel::roleNames() const
     roles[Qt::UserRole + 2] = "posY";
     roles[Qt::UserRole + 3] = "type";
     roles[Qt::UserRole + 4] = "icon";
+    roles[Qt::UserRole + 5] = "inputs";
+    roles[Qt::UserRole + 6] = "outputs";
+    roles[Qt::UserRole + 7] = "options";
     return roles;
 }
 
@@ -58,6 +61,12 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
             return QString::fromStdString(std::string(item.rawValue().type()));
         case 4:
             return QString::fromStdString(std::format("qrc:/Dissolve/icons/nodes/{}.svg", item.rawValue().type()));
+        case 5:
+            return QVariant::fromValue(item.inputs.get());
+        case 6:
+            return QVariant::fromValue(item.outputs.get());
+        case 7:
+            return QVariant::fromValue(item.options.get());
     }
     return {};
 }

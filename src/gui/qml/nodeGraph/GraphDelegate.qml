@@ -6,7 +6,6 @@ import Qt.labs.qmlmodels
 NodeBox {
     property variant rootModel
     property double endX: x
-    property double midY: y + basey + root.y + root.height / 2 + 10
     property double startX: x + width
 
     image: icon
@@ -18,25 +17,60 @@ NodeBox {
 
     onDeleted: rootModel.deleteNode(index)
 
-    Grid {
-        columns: 2
-        spacing: 2
-
-        Text {
-            id: root
-            text: "Species"
+    ListView {
+        id: inputList
+        anchors.left: parent.left
+        anchors.top: parent.top
+        width: 100
+        model: inputs
+        delegate: RowLayout {
+            Text {
+                text: name
+                font.pointSize: 10
+                anchors.margins: 4
+                wrapMode: Text.Wrap
+                ToolTip.visible: hovered
+                ToolTip.text: description
+            }
         }
+    }
 
-        Text {
-            text: species
+    ListView {
+        id: outputList
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.left: inputList.right
+        height: 20 * outputs.rowCount()
+        model: outputs
+        delegate: RowLayout {
+            Text {
+                text: name
+                font.pointSize: 10
+                anchors.margins: 4
+                wrapMode: Text.Wrap
+                ToolTip.visible: hovered
+                ToolTip.text: description
+            }
         }
+    }
 
-        Text {
-            text: "Population"
-        }
-
-        Text {
-            text: population
+    ListView {
+        id: optionList
+        anchors.right: parent.right
+        // anchors.bottom: parent.bottom
+        anchors.top: outputList.bottom
+        anchors.left: parent.left
+        height: 200
+        model: options
+        delegate: RowLayout {
+            Text {
+                text: name
+                font.pointSize: 10
+                anchors.margins: 4
+                wrapMode: Text.Wrap
+                ToolTip.visible: hovered
+                ToolTip.text: description
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ set(nodeGraphModel_SRCS
     graphEdgeModel.cpp
     graphModel.cpp
     graphNodeModel.cpp
+    parameterModel.cpp
 )
 
 qt6_wrap_cpp(
@@ -14,6 +15,7 @@ qt6_wrap_cpp(
   graphEdgeModel.h
   graphNodeModel.h
   nodeWrapper.h
+  parameterModel.h
 )
 
 find_package(Qt6 REQUIRED COMPONENTS Core Qml)
