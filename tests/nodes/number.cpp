@@ -35,15 +35,23 @@ TEST(NumberTest, Construction)
 
     // Construct bounded number from double
     Number e(1.234, 1.0, 2.0);
-    EXPECT_TRUE(e.hasBounds());
+    EXPECT_TRUE(e.isBounded());
     EXPECT_TRUE(e.isDouble());
     EXPECT_DOUBLE_EQ(e.asDouble(), 1.234);
     EXPECT_DOUBLE_EQ(e.doubleMin().value(), 1.0);
     EXPECT_DOUBLE_EQ(e.doubleMax().value(), 2.0);
 
-    // Construct bounded number with invalid bounds
+    // Construct bounded number with undefined bounds
     Number f(10);
-    EXPECT_FALSE(f.hasBounds());
+    EXPECT_FALSE(f.isBounded());
+
+    // Construct bounded number with undefined lower bound
+    Number g(10, {}, 20);
+    EXPECT_FALSE(f.hasLowerBound());
+
+    // Construct bounded number with undefined upper bounds
+    Number h(10, 5, {});
+    EXPECT_FALSE(f.hasUpperBound());
 }
 
 TEST(NumberTest, Assignment)

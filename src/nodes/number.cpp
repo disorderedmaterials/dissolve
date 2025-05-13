@@ -117,44 +117,50 @@ double Number::asDouble(NumberVariant n) const
 // Set from other Number
 void Number::set(const Number &other) { value_ = other.value_; }
 
-// Return whether the number has bounds
-bool Number::hasBounds() const { return min_.has_value() && max_.has_value(); }
+// Return whether the number has lower bound
+bool Number::hasLowerBound() const { return min_.has_value(); }
+
+// Return whether the number has upper bound
+bool Number::hasUpperBound() const { return min_.has_value(); }
 
 // Return optional double upper bound
 std::optional<double> Number::doubleMax()
 {
-    if (!hasBounds())
-        return {};
+    if (hasUpperBound())
+        return asDouble(max_.value());
 
-    return asDouble(max_.value());
+    return {};
 }
 
 // Return optional integer upper bound
 std::optional<int> Number::integerMax()
 {
-    if (!hasBounds())
-        return {};
+    if (hasUpperBound())
+        return asInteger(max_.value());
 
-    return asInteger(max_.value());
+    return {};
 }
 
 // Return optional double lower bound
 std::optional<double> Number::doubleMin()
 {
-    if (!hasBounds())
-        return {};
+    if (hasLowerBound())
+        return asDouble(min_.value());
 
-    return asDouble(min_.value());
+    return {};
 }
 
 // Return optional integer lower bound
 std::optional<int> Number::integerMin()
 {
-    if (!hasBounds())
-        return {};
+    if (hasLowerBound())
+        return asInteger(min_.value());
 
-    return asInteger(min_.value());
+    return {};
 }
+
+// Return whether the number has bounds
+bool Number::isBounded() const { return hasLowerBound() && hasUpperBound(); }
 
 // Return whether the contained value is an integer
 bool Number::isInteger() const { return isInteger(value_); }

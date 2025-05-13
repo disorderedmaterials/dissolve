@@ -54,8 +54,12 @@ class Number : public Serialisable<>
     public:
     // Set from other Number
     void set(const Number &other);
+    // Return whether the number has lower bound
+    bool hasLowerBound() const;
+    // Return whether the number has upper bound
+    bool hasUpperBound() const;
     // Return whether the number has bounds
-    bool hasBounds() const;
+    bool isBounded() const;
     // Return optional double upper bound
     std::optional<double> doubleMax();
     // Return optional integer lower bound
