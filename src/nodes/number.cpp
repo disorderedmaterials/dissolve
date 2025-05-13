@@ -137,7 +137,7 @@ void Number::set(const Number &other) { value_ = limit(other.value_); }
 bool Number::hasLowerBound() const { return min_.has_value(); }
 
 // Return whether the number has upper bound
-bool Number::hasUpperBound() const { return min_.has_value(); }
+bool Number::hasUpperBound() const { return max_.has_value(); }
 
 // Return optional double upper bound
 std::optional<double> Number::doubleMax()
