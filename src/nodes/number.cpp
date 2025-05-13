@@ -6,20 +6,30 @@
 
 Number::Number(const std::variant<int, double> &value) : value_(value) {}
 
-Number::Number(int value) : value_(value) {}
-
-Number::Number(double value) : value_(value) {}
-
-Number::Number(int value, int min, int max) : value_(value)
+Number::Number(int value, std::optional<int> min, std::optional<int> max) : value_(value)
 {
-    min_ = std::optional<Number::NumberVariant>(min);
-    max_ = std::optional<Number::NumberVariant>(max);
+    if (min && min.has_value())
+    {
+        min_ = min;
+    }
+
+    if (max && max.has_value())
+    {
+        max_ = max;
+    }
 }
 
-Number::Number(double value, double min, double max) : value_(value)
+Number::Number(double value, std::optional<double> min, std::optional<double> max) : value_(value)
 {
-    min_ = std::optional<Number::NumberVariant>(min);
-    max_ = std::optional<Number::NumberVariant>(max);
+    if (min && min.has_value())
+    {
+        min_ = min;
+    }
+
+    if (max && max.has_value())
+    {
+        max_ = max;
+    }
 }
 
 Number &Number::operator=(const Number &other)
@@ -105,13 +115,7 @@ double Number::asDouble(NumberVariant n) const
 }
 
 // Set from other Number
-void Number::set(const Number &other)
-{
-    if (other.hasBounds())
-        min_ = other.min_, max_ = other.max_;
-
-    value_ = other.value_;
-}
+void Number::set(const Number &other) { value_ = other.value_; }
 
 // Return whether the number has bounds
 bool Number::hasBounds() const { return min_.has_value() && max_.has_value(); }
