@@ -52,8 +52,10 @@ class Graph : public Node
     std::string uniqueNodeName(const Node *node, std::string_view baseName) const;
 
     public:
-    // Add node
-    Node *addNode(std::string_view type, std::string_view name);
+    // Create node of specified type with the name provided
+    Node *createNode(std::string_view type, std::string_view name = {});
+    // Add node to graph
+    Node *addNode(std::unique_ptr<Node> node, std::string_view name = {});
     // Get name of specified child node
     std::string_view nodeName(const Node *node) const;
     // Set name of specified child node

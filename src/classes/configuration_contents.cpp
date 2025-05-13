@@ -141,7 +141,7 @@ std::shared_ptr<Molecule> Configuration::addMolecule(const Species *sp,
 // Copy molecule
 std::shared_ptr<Molecule> Configuration::copyMolecule(const Molecule &sourceMolecule)
 {
-    std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
+    auto newMolecule = std::make_shared<Molecule>();
     newMolecule->setArrayIndex(molecules_.size());
     molecules_.push_back(newMolecule);
     auto *sp = sourceMolecule.species();

@@ -192,18 +192,6 @@ class Node : public Serialisable<>
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
-    // Add pointer input parameter
-    template <class T>
-    std::shared_ptr<ParameterBase> addPointerInput(std::string_view name, std::string_view description, T *data)
-    {
-        if (findInput(name))
-            Messenger::exception("Input parameter '{}' already exists, and can't be added again.", name);
-
-        auto param =
-            inputs_.emplace(std::make_pair(name, new PointerParameter<T>(this, name, description, data))).first->second;
-        param->setFlags(ParameterBase::ParameterFlags::Input);
-        return param;
-    }
     // Add output parameter
     template <class T> std::shared_ptr<ParameterBase> addOutput(std::string_view name, std::string_view description, T &data)
     {
@@ -231,10 +219,42 @@ class Node : public Serialisable<>
     std::shared_ptr<ParameterBase> findInput(std::string_view name) const;
     // Return input parameters
     std::map<std::string_view, std::shared_ptr<ParameterBase>> &inputs();
+    // Get input parameter value
+    template <class T> T getInputValue(std::string_view inputName)
+    {
+        auto output = findInput(inputName);
+        if (!output)
+            Messenger::exception("Input '{}' does not exist.\n", inputName);
+
+        // Get the upcast parameter
+        auto upcast = output->upcast<T>();
+        if (!upcast)
+            Messenger::exception("Attempted to cast input '{}' to wrong type: is {}, requested {}.\n", inputName,
+                                 output->type().name(), std::type_index(typeid(T)).name());
+
+        // Return the parameter value
+        return upcast->get();
+    }
     // Return named output parameter if it exists
     std::shared_ptr<ParameterBase> findOutput(std::string_view name) const;
     // Return output parameters
     std::map<std::string_view, std::shared_ptr<ParameterBase>> &outputs();
+    // Get output parameter value
+    template <class T> T getOutputValue(std::string_view outputName)
+    {
+        auto output = findOutput(outputName);
+        if (!output)
+            Messenger::exception("Output '{}' does not exist.\n", outputName);
+
+        // Get the upcast parameter
+        auto upcast = output->upcast<T>();
+        if (!upcast)
+            Messenger::exception("Attempted to cast output '{}' to wrong type: is {}, requested {}.\n", outputName,
+                                 output->type().name(), std::type_index(typeid(T)).name());
+
+        // Return the parameter value
+        return upcast->get();
+    }
     // Return named option if it exists
     std::shared_ptr<ParameterBase> findOption(std::string_view name) const;
     // Return options

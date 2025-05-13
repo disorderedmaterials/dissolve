@@ -17,7 +17,8 @@ struct EdgeDefinition : public Serialisable<>
     EdgeDefinition(std::string srcNode = "", std::string srcOutput = "", std::string tgtNode = "", std::string tgtInput = "");
     std::string sourceNode, sourceOutput, targetNode, targetInput;
     bool operator==(const EdgeDefinition &other) const;
-
+    // Return as a string
+    std::string asString() const;
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
