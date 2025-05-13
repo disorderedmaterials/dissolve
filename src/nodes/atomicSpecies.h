@@ -12,8 +12,7 @@
 class AtomicSpeciesNode : public Node
 {
     public:
-    AtomicSpeciesNode(Graph *parentGraph) : Node(parentGraph) {}
-    AtomicSpeciesNode(Graph *parentGraph, std::string_view name, Elements::Element Z = Elements::Element::Ar);
+    AtomicSpeciesNode(Graph *parentGraph, Elements::Element Z);
     ~AtomicSpeciesNode() override = default;
 
     /*
@@ -29,6 +28,8 @@ class AtomicSpeciesNode : public Node
     private:
     // Species object
     Species species_;
+    // AtomTypes owned by the node
+    std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
     /*
      * Processing

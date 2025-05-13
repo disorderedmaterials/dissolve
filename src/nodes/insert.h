@@ -37,7 +37,7 @@ class InsertNode : public Node
 
     private:
     // Target configuration to insert into
-    Configuration *configuration_;
+    Configuration *configuration_{nullptr};
     // Species to be added (if no MoleculeSet is given)
     const Species *species_{nullptr};
     // MoleculeSet to be added (if no Species is given)
@@ -51,7 +51,7 @@ class InsertNode : public Node
     // Units for the specified density value
     Units::DensityUnits densityUnits_{Units::GramsPerCentimetreCubedUnits};
     // Population of molecules to add
-    Number population_{1.0};
+    Number population_{100};
     // The default scaling settings
     static constexpr bool defaultScale_{true};
     // Flags controlling box axis scaling
