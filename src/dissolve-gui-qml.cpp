@@ -21,7 +21,6 @@ int main(int args, char **argv)
     // Instantiate main classes
     CoreData coreData;
     Dissolve dissolve(coreData);
-    dissolve.graph()->addNode("Add", "Number Sum");
 
     DissolveModel dissolveModel;
     dissolveModel.setDissolve(dissolve);
