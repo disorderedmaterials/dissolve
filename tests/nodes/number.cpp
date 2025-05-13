@@ -49,11 +49,11 @@ TEST(NumberTest, BoundedConstruction)
     EXPECT_FALSE(c.isBounded());
 
     // Construct bounded number with undefined lower bound
-    Number c(10, {}, 20);
+    Number d(10, {}, 20);
     EXPECT_FALSE(c.hasLowerBound());
 
     // Construct bounded number with undefined upper bound
-    Number c(10, 5);
+    Number e(10, 5);
     EXPECT_FALSE(c.hasUpperBound());
 }
 
