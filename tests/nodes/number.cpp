@@ -49,7 +49,7 @@ TEST(NumberTest, Construction)
     Number g(10, {}, 20);
     EXPECT_FALSE(f.hasLowerBound());
 
-    // Construct bounded number with undefined upper bounds
+    // Construct bounded number with undefined upper bound
     Number h(10, 5, {});
     EXPECT_FALSE(f.hasUpperBound());
 }
