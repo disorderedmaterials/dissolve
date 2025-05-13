@@ -127,13 +127,16 @@ class Node : public Serialisable<>
     /*
      * Inputs, Outputs, and Options
      */
-    private:
+    public:
+    using NodeParameterMap = std::map<std::string_view, std::shared_ptr<ParameterBase>>;
+
+    protected:
     // Input parameters
-    std::map<std::string_view, std::shared_ptr<ParameterBase>> inputs_;
+    NodeParameterMap inputs_;
     // Output parameters
-    std::map<std::string_view, std::shared_ptr<ParameterBase>> outputs_;
+    NodeParameterMap outputs_;
     // Keyword options
-    std::map<std::string_view, std::shared_ptr<ParameterBase>> options_;
+    NodeParameterMap options_;
     // Inbound edges
     EdgeMap inputEdges_;
 
