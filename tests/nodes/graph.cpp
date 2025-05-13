@@ -94,4 +94,16 @@ TEST_F(GraphCoreTest, UniqueNaming)
     EXPECT_EQ(z_->name(), "z");
 }
 
+TEST_F(GraphCoreTest, NodeCreation)
+{
+    // Attempt to create a node type that doesn't exist
+    EXPECT_EQ(root_.createNode("NonexistentNodeType", "Bob"), nullptr);
+
+    // Wrong case in existing node type (should fail as createNode() defaults to requiring the strict node type)
+    EXPECT_EQ(root_.createNode("add", "Bob"), nullptr);
+
+    // Wrong case in existing node type (succeeds with non-strict type name checking)
+    EXPECT_NE(root_.createNode("add", "Bob", false), nullptr);
+}
+
 } // namespace UnitTest

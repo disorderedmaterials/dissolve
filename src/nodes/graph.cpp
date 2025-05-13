@@ -35,9 +35,28 @@ std::string Graph::uniqueNodeName(const Node *node, std::string_view baseName) c
 }
 
 // Create node of specified type with the name provided
-Node *Graph::createNode(std::string_view type, std::string_view name)
+Node *Graph::createNode(std::string_view nodeType, std::string_view nodeName, bool strictTypeName)
 {
-    return addNode(NodeRegistry::produce(this, type), name.empty() ? type : name);
+    std::string newNodeType{nodeType};
+    if (strictTypeName)
+    {
+        if (!NodeRegistry::hasNodeType(nodeType))
+        {
+            Messenger::warn("Can't create a node of type '{}' as this type does not exist.\n", nodeType);
+            return nullptr;
+        }
+    }
+    else
+    {
+        newNodeType = NodeRegistry::getNodeTypeFuzzy(nodeType);
+        if (newNodeType.empty())
+        {
+            Messenger::warn("Can't create a node of type '{}' as neither this type nor a close match exists.\n", nodeType);
+            return nullptr;
+        }
+    }
+
+    return addNode(NodeRegistry::produce(this, newNodeType), nodeName.empty() ? newNodeType : nodeName);
 }
 
 // Add node to graph
