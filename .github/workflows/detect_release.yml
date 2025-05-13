@@ -21,6 +21,7 @@ jobs:
     uses: "./.github/workflows/_build_and_package.yml"
     with:
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+      msvcVersion: ${{ needs.Checkout.outputs.msvcVersion }}
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
       conanHash: ${{ needs.Checkout.outputs.conanHash }}

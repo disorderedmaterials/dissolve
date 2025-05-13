@@ -35,6 +35,7 @@ jobs:
       benchmark: true
       publishBenchmarks: true
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+      msvcVersion: ${{ needs.Checkout.outputs.msvcVersion }}
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
       conanHash: ${{ needs.Checkout.outputs.conanHash }}

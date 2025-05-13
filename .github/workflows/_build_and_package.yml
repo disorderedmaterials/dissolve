@@ -50,6 +50,7 @@ jobs:
         qtVersion: ${{ inputs.qtVersion }}
         antlrVersion: ${{ inputs.antlrVersion }}
         conanHash: ${{ inputs.conanHash }}
+        msvcVersion: ${{ inputs.msvcVersion }}
 
   BuildLinux:
     strategy:
