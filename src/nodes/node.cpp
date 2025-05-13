@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include "nodes/node.h"
 #include "base/sysFunc.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
-#include "nodes/node.h"
 #include <algorithm>
 
 /*

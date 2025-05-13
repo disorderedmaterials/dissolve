@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "graphEdgeModel.h"
 #include "graphModel.h"
+#include "graphEdgeModel.h"
 #include <iostream>
 #include <qvariant.h>
 
