@@ -34,7 +34,7 @@ Number::Number(double value, std::optional<double> min, std::optional<double> ma
 
 Number &Number::operator=(const Number &other)
 {
-    value_ = other.value_;
+    set(other);
     return *this;
 }
 
@@ -46,6 +46,7 @@ Number Number::operator+(const Number &other) const
 Number &Number::operator+=(const Number &other)
 {
     std::visit([](auto &a, auto b) { a += b; }, value_, other.value_);
+    set(value_);
     return *this;
 }
 
@@ -57,6 +58,7 @@ Number Number::operator-(const Number &other) const
 Number &Number::operator-=(const Number &other)
 {
     std::visit([](auto &a, auto b) { a -= b; }, value_, other.value_);
+    set(value_);
     return *this;
 }
 
@@ -68,6 +70,7 @@ Number Number::operator*(const Number &other) const
 Number &Number::operator*=(const Number &other)
 {
     std::visit([](auto &a, auto b) { a *= b; }, value_, other.value_);
+    set(value_);
     return *this;
 }
 
@@ -79,6 +82,7 @@ Number Number::operator/(const Number &other) const
 Number &Number::operator/=(const Number &other)
 {
     std::visit([](auto &a, auto b) { a /= b; }, value_, other.value_);
+    set(value_);
     return *this;
 }
 
@@ -89,6 +93,18 @@ bool Number::operator!=(const Number &other) const { return value_ != other.valu
 /*
  * Data
  */
+
+// Impose limit on Number
+Number::NumberVariant Number::limit(Number n) const
+{
+    if (hasLowerBound() && n.value_ < min_)
+        return min_.value();
+
+    if (hasUpperBound() && n.value_ > max_)
+        return max_.value();
+
+    return n.value_;
+}
 
 // Return whether the contained value is an integer
 bool Number::isInteger(NumberVariant n) const { return std::holds_alternative<int>(n); }
@@ -115,7 +131,7 @@ double Number::asDouble(NumberVariant n) const
 }
 
 // Set from other Number
-void Number::set(const Number &other) { value_ = other.value_; }
+void Number::set(const Number &other) { value_ = limit(other.value_); }
 
 // Return whether the number has lower bound
 bool Number::hasLowerBound() const { return min_.has_value(); }

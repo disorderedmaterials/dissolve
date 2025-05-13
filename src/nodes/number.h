@@ -42,6 +42,8 @@ class Number : public Serialisable<>
     std::optional<NumberVariant> max_;
 
     private:
+    // Impose limit on Number
+    Number::NumberVariant limit(Number n) const;
     // Return whether the contained value is an integer
     bool isInteger(NumberVariant n) const;
     // Return whether the contained value is a double
