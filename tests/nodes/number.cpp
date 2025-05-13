@@ -27,7 +27,7 @@ TEST(NumberTest, Construction)
 
     // Construct bounded number from integer
     Number d(10, 5, 20);
-    EXPECT_TRUE(d.hasBounds());
+    EXPECT_TRUE(d.isBounded());
     EXPECT_TRUE(d.isInteger());
     EXPECT_EQ(d.asInteger(), 10);
     EXPECT_EQ(d.integerMin().value(), 5);
