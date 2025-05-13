@@ -2,7 +2,16 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "parameterModel.h"
+#include "nodes/number.h"
 #include <qvariant.h>
+
+enum Roles
+{
+    NAME = 0,
+    DESCRIPTION,
+    TYPE,
+    DATA,
+};
 
 ParameterModel::ParameterModel(std::map<std::string_view, std::shared_ptr<ParameterBase>> &values) : values_(values) {}
 
@@ -13,10 +22,23 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
     auto it = std::next(values_.begin(), index.row());
     switch (role - Qt::UserRole)
     {
-        case 0:
+        case NAME:
             return QString::fromStdString(std::string(it->first));
-        case 1:
+        case DESCRIPTION:
             return QString::fromStdString(std::string(it->second->description()));
+        case DATA:
+            if (it->second->type() == typeid(Number))
+                return QVariant::fromValue(it->second->upcast<Number>()->get().asInteger());
+            if (it->second->type() == typeid(bool))
+                return QVariant::fromValue(it->second->upcast<bool>()->get());
+            return QString::fromStdString("Unrepresentable");
+        case TYPE:
+            if (it->second->type() == typeid(Number))
+                return "number";
+            if (it->second->type() == typeid(bool))
+                return "bool";
+            return "unknown";
+
         default:
             return {};
     }
@@ -25,7 +47,9 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> ParameterModel::roleNames() const
 {
     QHash<int, QByteArray> result;
-    result[Qt::UserRole] = "name";
-    result[Qt::UserRole + 1] = "description";
+    result[Qt::UserRole + (int)NAME] = "name";
+    result[Qt::UserRole + (int)DESCRIPTION] = "description";
+    result[Qt::UserRole + (int)DATA] = "param";
+    result[Qt::UserRole + (int)TYPE] = "type";
     return result;
 }

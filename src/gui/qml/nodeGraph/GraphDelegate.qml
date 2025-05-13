@@ -63,15 +63,7 @@ NodeBox {
         Column {
             Repeater {
                 model: options
-                delegate: RowLayout {
-                    Text {
-                        text: name
-                        font.pointSize: 10
-                        anchors.margins: 4
-                        wrapMode: Text.Wrap
-                        ToolTip.visible: hovered
-                        ToolTip.text: description
-                    }
+                delegate: ParameterDelegate {
                 }
             }
         }

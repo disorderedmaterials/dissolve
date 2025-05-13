@@ -312,6 +312,7 @@ if(GUI)
     ${SRCS}/gui-qml/qml/DissolveMain.qml
     ${SRCS}/gui/qml/nodeGraph/GraphView.qml
     ${SRCS}/gui/qml/nodeGraph/GraphDelegate.qml
+    ${SRCS}/gui/qml/nodeGraph/ParameterDelegate.qml
     ${SRCS}/gui/qml/nodeGraph/NodeBox.qml
     RESOURCES
     ${REAL_ICONS}
