@@ -44,6 +44,9 @@ on:
       currentShortHash:
         description: "Short hash of the current HEAD commit"
         value: ${{ jobs.Checkout.outputs.currentShortHash }}
+      msvcVersion:
+        description: "Version of MSVC required by the project"
+        value: ${{ jobs.Checkout.outputs.msvcVersion }}
       qtVersion:
         description: "Version of Qt required by the project"
         value: ${{ jobs.Checkout.outputs.qtVersion }}
@@ -103,6 +106,8 @@ jobs:
 
           ANTLR_VERSION=$(cat ${{ inputs.conanfile }}  | sed -n -e 's%^.*antlr4-cppruntime/%%p')
           echo "antlrVersion=${ANTLR_VERSION}" >> $GITHUB_OUTPUT
+
+          echo "msvcVersion=${inputs.msvcVersion}" >> $GITHUB_OUTPUT
 
       - name: Get Hashes
         id: hashes
