@@ -76,6 +76,7 @@ jobs:
       currentVersionMinor: ${{ steps.authVersion.outputs.currentVersionMinor }}
       currentVersionPatch: ${{ steps.authVersion.outputs.currentVersionPatch }}
       currentShortHash: ${{ steps.authVersion.outputs.currentShortHash }}
+      msvcVersion: ${{ steps.versions.outputs.msvcVersion }}
       qtVersion: ${{ steps.versions.outputs.qtVersion }}
       antlrVersion: ${{ steps.versions.outputs.antlrVersion }}
       hugoVersion: ${{ steps.versions.outputs.hugoVersion }}
