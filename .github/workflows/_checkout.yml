@@ -107,7 +107,7 @@ jobs:
           ANTLR_VERSION=$(cat ${{ inputs.conanfile }}  | sed -n -e 's%^.*antlr4-cppruntime/%%p')
           echo "antlrVersion=${ANTLR_VERSION}" >> $GITHUB_OUTPUT
 
-          echo "msvcVersion=${inputs.msvcVersion}" >> $GITHUB_OUTPUT
+          echo "msvcVersion=${{ inputs.msvcVersion }}" >> $GITHUB_OUTPUT
 
       - name: Get Hashes
         id: hashes
