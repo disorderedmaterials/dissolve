@@ -15,8 +15,8 @@ class Number : public Serialisable<>
     Number(const NumberVariant &value = {0});
     Number(int value);
     Number(double value);
-    Number(int value, std::optional<int> min, std::optional<int> max);
-    Number(double value, std::optional<double> min, std::optional<double> max);
+    Number(int value, int min, int max);
+    Number(double value, double min, double max);
     ~Number() = default;
     Number &operator=(const Number &other);
     Number operator+(const Number &other) const;

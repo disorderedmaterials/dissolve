@@ -10,14 +10,16 @@ Number::Number(int value) : value_(value) {}
 
 Number::Number(double value) : value_(value) {}
 
-Number::Number(int value, std::optional<int> min, std::optional<int> max)
-    : value_(value), min_(std::optional<NumberVariant>(min.value())), max_(std::optional<NumberVariant>(max.value()))
+Number::Number(int value, int min, int max) : value_(value)
 {
+    min_ = std::optional<Number::NumberVariant>(min);
+    max_ = std::optional<Number::NumberVariant>(max);
 }
 
-Number::Number(double value, std::optional<double> min, std::optional<double> max)
-    : value_(value), min_(std::optional<NumberVariant>(min.value())), max_(std::optional<NumberVariant>(max.value()))
+Number::Number(double value, double min, double max) : value_(value)
 {
+    min_ = std::optional<Number::NumberVariant>(min);
+    max_ = std::optional<Number::NumberVariant>(max);
 }
 
 Number &Number::operator=(const Number &other)
