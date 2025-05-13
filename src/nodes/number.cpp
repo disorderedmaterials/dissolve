@@ -142,7 +142,7 @@ std::optional<double> Number::doubleMin()
     return min;
 }
 
-// Return optional integer lowe bound
+// Return optional integer lower bound
 std::optional<int> Number::integerMin()
 {
     if (!hasBounds())
