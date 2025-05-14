@@ -6,31 +6,9 @@
 
 Number::Number(const std::variant<int, double> &value) : value_(value) {}
 
-Number::Number(int value, std::optional<int> min, std::optional<int> max) : value_(value)
-{
-    if (min && min.has_value())
-    {
-        min_ = min;
-    }
+Number::Number(int value, std::optional<int> min, std::optional<int> max) : value_(value), min_(min), max_(max) {}
 
-    if (max && max.has_value())
-    {
-        max_ = max;
-    }
-}
-
-Number::Number(double value, std::optional<double> min, std::optional<double> max) : value_(value)
-{
-    if (min && min.has_value())
-    {
-        min_ = min;
-    }
-
-    if (max && max.has_value())
-    {
-        max_ = max;
-    }
-}
+Number::Number(double value, std::optional<double> min, std::optional<double> max) : value_(value), min_(min), max_(max) {}
 
 Number &Number::operator=(const Number &other)
 {
