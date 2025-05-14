@@ -20,7 +20,8 @@ class NodeWrapper
 
     // The X and Y coordinates of the node on the screen.
     int posx, posy;
-    std::shared_ptr<ParameterModel> inputs, outputs, options;
+    // Parameter models for parameters of the node
+    std::unique_ptr<ParameterModel> inputs, outputs, options;
 
     // Get the actual value of the node
     Node &rawValue() { return *value_; }
