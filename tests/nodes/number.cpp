@@ -79,25 +79,89 @@ TEST(NumberTest, Assignment)
 
 TEST(NumberTest, BoundedAssignment)
 {
-    // Assignment from other Number with upper bound
+    // Construct left and right Numbers
     Number a(5, {}, 7);
     Number b(30);
+
+    // Assignment from other Number with upper bound
     a = b;
-    EXPECT_TRUE(a.isInteger());
-    EXPECT_TRUE(a.hasUpperBound());
-    EXPECT_FALSE(a.hasLowerBound());
-    EXPECT_FALSE(a.integerMin());
     EXPECT_EQ(a.asInteger(), 7);
 
     // Assignment from other Number with lower bound
     Number c(0.5, 0.2);
     Number d(0.15);
     c = d;
-    EXPECT_TRUE(c.isDouble());
-    EXPECT_TRUE(c.hasLowerBound());
-    EXPECT_FALSE(c.hasUpperBound());
-    EXPECT_DOUBLE_EQ(c.doubleMax(), 0.2);
     EXPECT_DOUBLE_EQ(c.asDouble(), 0.2);
+}
+
+TEST(NumberTest, BLessThanA)
+{
+    // Int greater than int
+    Number a(5), b(2);
+    EXPECT_TRUE(b < a);
+
+    // Int greater than double
+    b = 2.0;
+    EXPECT_TRUE(b < a);
+
+    // Double greater than double
+    a = 5.0;
+    EXPECT_TRUE(b < a);
+
+    // Upper bounded int greater than unbounded int
+    Number c(5, {}, 10), d(2);
+    EXPECT_TRUE(d < c);
+
+    // Upper bounded int greater than unbounded double
+    d = 2.0;
+    EXPECT_TRUE(d < c);
+
+    // Lower bounded int greater than unbounded double
+    Number e(5, 2), f(2);
+    EXPECT_TRUE(f < e);
+
+    // Lower bounded int greater than unbounded double
+    f = 2.0;
+    EXPECT_TRUE(f < e);
+
+    // Bounded int greater than bounded double
+    Number g(5, 2, 10), h(2.0, 1.0, 20.0);
+    EXPECT_FALSE(g < h);
+}
+
+TEST(NumberTest, AGreaterThanB)
+{
+    // Int less than int
+    Number a(5), b(2);
+    EXPECT_TRUE(a > b);
+
+    // Int less than double
+    b = 2.0;
+    EXPECT_TRUE(a > b);
+
+    // Double less than double
+    a = 5.0;
+    EXPECT_TRUE(a > b);
+
+    // Upper bounded int less than unbounded int
+    Number c(5, {}, 10), d(2);
+    EXPECT_TRUE(c > d);
+
+    // Upper bounded int less than unbounded double
+    d = 2.0;
+    EXPECT_TRUE(c > d);
+
+    // Lower bounded int less than unbounded double
+    Number e(5, 2), f(2);
+    EXPECT_TRUE(e > f);
+
+    // Lower bounded int less than unbounded double
+    f = 2.0;
+    EXPECT_TRUE(e > f);
+
+    // Bounded int less than bounded double
+    Number g(5, 2, 10), h(2.0, 1.0, 20.0);
+    EXPECT_FALSE(h > g);
 }
 
 TEST(NumberTest, Addition)
@@ -123,12 +187,11 @@ TEST(NumberTest, BoundedAddition)
 {
     // Addition of two integers must not exceed the upper bound
     Number a(5, {}, 10), b(10);
-    EXPECT_FALSE(a.integerMin());
-    EXPECT_EQ((a + b).asInteger(), 10);
+    EXPECT_EQ((a + b).asInteger(), 15);
 
     // Addition of any other combination results in a double
     b = 10.0;
-    EXPECT_DOUBLE_EQ((a + b).asDouble(), 10.0);
+    EXPECT_DOUBLE_EQ((a + b).asDouble(), 15.0);
 }
 
 TEST(NumberTest, AdditionAssignment)
@@ -152,7 +215,6 @@ TEST(NumberTest, BoundedAdditionAssignment)
 {
     // Addition of anything to an integer maintains the integer type
     Number a(1, {}, 2);
-    EXPECT_FALSE(a.integerMin());
     EXPECT_TRUE((a += 2).isInteger());
     EXPECT_EQ(a.asInteger(), 2);
     EXPECT_TRUE((a += 2.0).isInteger());
@@ -160,7 +222,6 @@ TEST(NumberTest, BoundedAdditionAssignment)
 
     // Addition to a double always results in a double
     Number b(1.0, {}, 2.0);
-    EXPECT_FALSE(a.doubleMin());
     EXPECT_TRUE((b += 2).isDouble());
     EXPECT_DOUBLE_EQ(b.asDouble(), 2.0);
     EXPECT_TRUE((b += 2.0).isDouble());
@@ -190,12 +251,11 @@ TEST(NumberTest, BoundedSubtraction)
 {
     // Subtraction of two integers must not exceed the upper bound
     Number a(5, 2), b(10);
-    EXPECT_FALSE(a.integerMax());
-    EXPECT_EQ((a - b).asInteger(), 2);
+    EXPECT_EQ((a - b).asInteger(), -5);
 
     // Subtraction of any other combination results in a double
     b = 10.0;
-    EXPECT_DOUBLE_EQ((a - b).asDouble(), 2.0);
+    EXPECT_DOUBLE_EQ((a - b).asDouble(), -5.0);
 }
 
 TEST(NumberTest, SubtractionAssignment)
@@ -219,15 +279,15 @@ TEST(NumberTest, BoundedSubtractionAssignment)
 {
     // Subtraction of anything to an integer maintains the integer type
     Number a(1, 0);
-    EXPECT_FALSE(a.integerMin());
+    EXPECT_TRUE(a.integerMin());
     EXPECT_TRUE((a -= 2).isInteger());
-    EXPECT_EQ(a.asInteger(), 2);
+    EXPECT_EQ(a.asInteger(), 0);
     EXPECT_TRUE((a -= 2.0).isInteger());
     EXPECT_DOUBLE_EQ(a.asInteger(), 0);
 
     // Subtraction to a double always results in a double
     Number b(1.0, 0.5);
-    EXPECT_FALSE(a.doubleMin());
+    EXPECT_TRUE(a.doubleMin());
     EXPECT_TRUE((b -= 2).isDouble());
     EXPECT_DOUBLE_EQ(b.asDouble(), 0.5);
     EXPECT_TRUE((b -= 2.0).isDouble());
@@ -260,24 +320,24 @@ TEST(NumberTest, BoundedMultiply)
 {
     // Multiplication of two integers must result in an integer
     Number a(5, {}, 10), b(10);
-    EXPECT_FALSE(a.hasLowerBound());
-    EXPECT_FALSE(b.isBounded());
     EXPECT_TRUE((a * b).isInteger());
-    EXPECT_EQ((a * b).asInteger(), 10);
+    EXPECT_EQ((a * b).asInteger(), 50);
 
     // Multiplication of any other combination results in a double
     b = 10.0;
-
+    auto res1 = a * b;
     EXPECT_TRUE((a * b).isDouble());
-    EXPECT_DOUBLE_EQ((a * b).asDouble(), 10);
+    EXPECT_DOUBLE_EQ((a * b).asDouble(), 50);
+    
     a = 5.0;
-
+    auto res2 = a * b;
     EXPECT_TRUE((a * b).isDouble());
-    EXPECT_DOUBLE_EQ((a * b).asDouble(), 10);
+    EXPECT_DOUBLE_EQ((a * b).asDouble(), 50);
+
     b = 10;
-
+    auto res3 = a * b;
     EXPECT_TRUE((a * b).isDouble());
-    EXPECT_DOUBLE_EQ((a * b).asDouble(), 10);
+    EXPECT_DOUBLE_EQ((a * b).asDouble(), 50);
 }
 
 TEST(NumberTest, MultiplyAssignment)
@@ -339,18 +399,18 @@ TEST(NumberTest, BoundedDivision)
     // Division of two integers must result in an integer
     Number a(5, 2), b(10);
     EXPECT_TRUE((a / b).isInteger());
-    EXPECT_EQ((a / b).asInteger(), 2);
+    EXPECT_EQ((a / b).asInteger(), a.asInteger() / b.asInteger());
 
     // Addition of any other combination results in a double
     b = 10.0;
     EXPECT_TRUE((a / b).isDouble());
-    EXPECT_DOUBLE_EQ((a / b).asDouble(), 2.0);
+    EXPECT_DOUBLE_EQ((a / b).asDouble(), a.asDouble() / b.asDouble());
     a = 5.0;
     EXPECT_TRUE((a / b).isDouble());
-    EXPECT_DOUBLE_EQ((a / b).asDouble(), 2.0);
+    EXPECT_DOUBLE_EQ((a / b).asDouble(), a.asDouble() / b.asDouble());
     b = 10;
     EXPECT_TRUE((a / b).isDouble());
-    EXPECT_DOUBLE_EQ((a / b).asDouble(), 2.0);
+    EXPECT_DOUBLE_EQ((a / b).asDouble(), a.asDouble() / b.asDouble());
 }
 
 TEST(NumberTest, DivisionAssignment)

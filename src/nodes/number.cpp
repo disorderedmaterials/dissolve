@@ -90,6 +90,26 @@ bool Number::operator==(const Number &other) const { return value_ == other.valu
 
 bool Number::operator!=(const Number &other) const { return value_ != other.value_; }
 
+bool Number::operator<(const Number& other) const
+{
+    return std::visit([](auto a, auto b) -> bool { return { a < b }; }, value_, other.value_);
+}
+
+bool Number::operator<=(const Number& other) const
+{
+    return std::visit([](auto a, auto b) -> bool { return { a <= b }; }, value_, other.value_);
+}
+
+bool Number::operator>(const Number& other) const
+{
+    return std::visit([](auto a, auto b) -> bool { return { b < a }; }, value_, other.value_);
+}
+
+bool Number::operator>=(const Number& other) const
+{
+    return std::visit([](auto a, auto b) -> bool { return { b <= a }; }, value_, other.value_);
+}
+
 /*
  * Data
  */
@@ -97,10 +117,10 @@ bool Number::operator!=(const Number &other) const { return value_ != other.valu
 // Impose limit on Number
 Number::NumberVariant Number::limit(Number n) const
 {
-    if (hasLowerBound() && n.value_ < min_)
+    if (hasLowerBound() && n < Number(min_.value()))
         return min_.value();
 
-    if (hasUpperBound() && n.value_ > max_)
+    if (hasUpperBound() && n > Number(max_.value()))
         return max_.value();
 
     return n.value_;

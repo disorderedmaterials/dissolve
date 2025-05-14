@@ -29,6 +29,10 @@ class Number : public Serialisable<>
     Number &operator--();
     bool operator==(const Number &value) const;
     bool operator!=(const Number &value) const;
+    bool operator<(const Number& other) const;
+    bool operator<=(const Number& other) const;
+    bool operator>(const Number& other) const;
+    bool operator>=(const Number& other) const;
 
     /*
      * Data
