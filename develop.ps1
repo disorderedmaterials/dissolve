@@ -24,7 +24,6 @@
         ANTLR version to install. Defaults to ANTLR 4.13.1.
     .PARAMETER release
         Flag - install packages for release, otherwise debug.
-
 #>
 
 param (
