@@ -44,9 +44,6 @@ on:
       currentShortHash:
         description: "Short hash of the current HEAD commit"
         value: ${{ jobs.Checkout.outputs.currentShortHash }}
-      msvcVersion:
-        description: "Version of MSVC required by the project"
-        value: ${{ jobs.Checkout.outputs.msvcVersion }}
       qtVersion:
         description: "Version of Qt required by the project"
         value: ${{ jobs.Checkout.outputs.qtVersion }}
@@ -65,6 +62,9 @@ on:
       conanHash:
         description: "Hash of the current conanfile"
         value: ${{ jobs.Checkout.outputs.conanHash }}
+      msvcVersion:
+        description: "Version of MSVC required by the project"
+        value: ${{ jobs.Checkout.outputs.msvcVersion }}
 
 jobs:
 
