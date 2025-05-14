@@ -90,14 +90,14 @@ TEST(NumberTest, BoundedAssignment)
     EXPECT_EQ(a.asInteger(), 7);
 
     // Assignment from other Number with lower bound
-    Number c(0.5, 1.5);
-    Number d(2);
+    Number c(0.5, 0.2);
+    Number d(0.15);
     c = d;
     EXPECT_TRUE(c.isDouble());
     EXPECT_TRUE(c.hasLowerBound());
     EXPECT_FALSE(c.hasUpperBound());
-    EXPECT_FALSE(a.doubleMax());
-    EXPECT_EQ(c.asDouble(), 1.5);
+    EXPECT_DOUBLE_EQ(c.doubleMax(), 0.2);
+    EXPECT_DOUBLE_EQ(c.asDouble(), 0.2);
 }
 
 TEST(NumberTest, Addition)
