@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "parameterModel.h"
 #include "nodes/number.h"
+#include "parameterModel.h"
 #include <qvariant.h>
 
 enum Roles
@@ -15,8 +15,10 @@ enum Roles
 
 ParameterModel::ParameterModel(std::map<std::string_view, std::shared_ptr<ParameterBase>> &values) : values_(values) {}
 
+// Return number of parameters (required by QAbstractListModel)
 int ParameterModel::rowCount(const QModelIndex &parent) const { return values_.size(); }
 
+// Access edge by QModelIndex.  The correct role can be found in the roleNames function.
 QVariant ParameterModel::data(const QModelIndex &index, int role) const
 {
     auto it = std::next(values_.begin(), index.row());
@@ -44,6 +46,7 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
     }
 }
 
+// Return the mapping between role index and QML value name.  This is required by QAbstractListModel
 QHash<int, QByteArray> ParameterModel::roleNames() const
 {
     QHash<int, QByteArray> result;

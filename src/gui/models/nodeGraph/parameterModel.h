@@ -8,6 +8,7 @@
 #include <QAbstractListModel>
 #include <qabstractitemmodel.h>
 
+// GUI Model for the parameters of a Node
 class ParameterModel : public QAbstractListModel
 {
     public:
@@ -23,5 +24,6 @@ class ParameterModel : public QAbstractListModel
     QHash<int, QByteArray> roleNames() const override;
 
     private:
+    // A reference to the parameters from the model
     std::map<std::string_view, std::shared_ptr<ParameterBase>> &values_;
 };
