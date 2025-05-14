@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "graphModel.h"
 #include "graphEdgeModel.h"
+#include "graphModel.h"
 #include <iostream>
 #include <qvariant.h>
 
@@ -38,17 +38,13 @@ int GraphModel::count() { return nodes_.rowCount(); }
 void GraphModel::emplace_back(int x, int y, QVariant type, QVariant name)
 {
     if (!graph_)
-    {
-        std::cout << "Cannot emplace node: No graph" << std::endl;
-        return;
-    }
-    std::cout << "Emplace back node of type: " << type.toString().toStdString() << std::endl;
+        Messenger::exception(
+            "GraphModel has no graph.  This should have been impossible.  Please let the Dissolve developers know about this.");
     nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
     auto node = graph_->createNode(type.toString().toStdString(), type.toString().toStdString());
     NodeWrapper item(*node);
     item.posx = x;
     item.posy = y;
-    std::cout << "Setting name: " << name.toString().toStdString() << std::endl;
     item.rawValue().setName(name.toString().toStdString());
     wrapped_.push_back(item);
     nodes_.endInsertRows();
