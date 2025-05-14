@@ -22,11 +22,6 @@ class GraphNodeModel : QAbstractListModel
 
     bool operator!=(const GraphNodeModel &other);
 
-    // This is the number of roles that GraphNodeModel will use.  This
-    // ensures that we can add more roles (to ALL node types) in the
-    // future without needing to have each class reassign its own roles.
-    static const int ownedRoles = 5;
-
     // Number of nodes (required by QAbstractListModel)
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
