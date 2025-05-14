@@ -39,17 +39,20 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
     {
         auto *epsrModule = dynamic_cast<EPSRModule *>(module);
         auto eps = epsrModule->empiricalPotentials();
+        auto targetConfiguration = epsrModule->targetConfiguration();
+        auto atomTypeMix = targetConfiguration->atomTypePopulations();
 
         for (auto &&[at1, at2, potential] : eps)
         {
+            auto cicj = atomTypeMix.atomTypeData(at1)->get().fraction() * atomTypeMix.atomTypeData(at2)->get().fraction();
             auto key = EPSRManagerModule::pairKey(at1, at2);
             auto keyIt = newPotentials.potentialMap().find(key);
             if (keyIt == newPotentials.potentialMap().end())
-                newPotentials.potentialMap()[key] = {potential, 1, at1, at2};
+                newPotentials.potentialMap()[key] = {potential, cicj, at1, at2};
             else
             {
-                Interpolator::addInterpolated(potential, newPotentials.potentialMap()[key].potential, 1.0);
-                ++newPotentials.potentialMap()[key].count;
+                Interpolator::addInterpolated(potential, newPotentials.potentialMap()[key].potential, cicj);
+                newPotentials.potentialMap()[key].count += cicj;
             }
         }
     }

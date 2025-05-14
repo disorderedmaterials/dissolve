@@ -109,7 +109,7 @@ class EPSRModule : public Module
      * Functions
      */
     private:
-    // Target Configuration (determined from target modules)
+    // Target Configuration (determined from target modules) and a function to return this for EPSRManager
     Configuration *targetConfiguration_{nullptr};
 
     private:
@@ -133,6 +133,8 @@ class EPSRModule : public Module
     void truncate(Data1D &data, double rMin, double rMax);
     // return vector of emirical potentials
     std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> empiricalPotentials();
+    // Return pointer to target configuration for EPSRManager
+    Configuration *targetConfiguration();
 
     /*
      * EPSR File I/O

@@ -8,6 +8,8 @@
 #include "modules/epsr/epsr.h"
 #include "templates/algorithms.h"
 
+Configuration *EPSRModule::targetConfiguration() { return targetConfiguration_; };
+
 // Create / update delta S(Q) information
 void EPSRModule::updateDeltaSQ(GenericList &processingData, OptionalReferenceWrapper<const Array2D<Data1D>> optCalculatedSQ,
                                OptionalReferenceWrapper<const Array2D<Data1D>> optEstimatedSQ)
