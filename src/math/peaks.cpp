@@ -123,6 +123,7 @@ std::vector<Peaks::Peak1D> Peaks::find(bool heightOrder)
 
 /*
  * Calculate the prominence of peaks.
+ * 
  * Prominence is defined by the height of the peak relative to a reference height.
  * This reference is determined by the heighest minimum of two intervals (bound by either the end of the data
  * or a higher data point), either side of the peak itself.
