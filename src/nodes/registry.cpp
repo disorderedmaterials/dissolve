@@ -3,7 +3,7 @@
 
 #include "registry.h"
 #include "add.h"
-#include "atomShake/atomShake.h"
+#include "atomicMC/atomicMC.h"
 #include "configuration.h"
 #include "derivative.h"
 #include "dissolve.h"
@@ -35,7 +35,7 @@ void NodeRegistry::instantiateNodeProducers()
         return;
 
     producers_ = {{"Add", makeDerivedNode<AddNode>()},
-                  {"AtomShake", makeDerivedNode<AtomShakeNode>()},
+                  {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},

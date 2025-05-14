@@ -6,10 +6,10 @@
 #include "classes/regionalDistributor.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
-#include "nodes/atomShake/atomShake.h"
+#include "nodes/atomicMC/atomicMC.h"
 
 // Run main processing
-NodeConstants::ProcessResult AtomShakeNode::process()
+NodeConstants::ProcessResult AtomicMCNode::process()
 {
     // Get numeric input data
     auto nShakesPerAtom = nShakesPerAtom_.asInteger();
@@ -23,10 +23,10 @@ NodeConstants::ProcessResult AtomShakeNode::process()
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
 
     // Print argument/parameter summary
-    Messenger::print("AtomShake: Performing {} shake(s) per Atom\n", nShakesPerAtom);
-    Messenger::print("AtomShake: Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n",
+    Messenger::print("AtomicMC: Performing {} shake(s) per Atom\n", nShakesPerAtom);
+    Messenger::print("AtomicMC: Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n",
                      stepSize, stepSizeMin, stepSizeMax);
-    Messenger::print("AtomShake: Target acceptance rate is {}.\n", targetAcceptanceRate);
+    Messenger::print("AtomicMC: Target acceptance rate is {}.\n", targetAcceptanceRate);
     Messenger::print("\n");
 
     ProcessPool::DivisionStrategy strategy = processPool().bestStrategy();
