@@ -66,14 +66,10 @@ class Number : public Serialisable<>
     bool hasUpperBound() const;
     // Return whether the number has bounds
     bool isBounded() const;
-    // Return optional double upper bound
-    std::optional<double> doubleMax();
-    // Return optional integer lower bound
-    std::optional<int> integerMax();
-    // Return optional double lower bound
-    std::optional<double> doubleMin();
-    // Return optional integer upper bound
-    std::optional<int> integerMin();
+    // Return optional min
+    std::optional<Number::NumberVariant> min() const;
+    // Return optional max
+    std::optional<Number::NumberVariant> max() const;
     // Return whether the contained value is an integer
     bool isInteger() const;
     // Return whether the contained value is a double

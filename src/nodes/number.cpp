@@ -137,41 +137,11 @@ bool Number::hasLowerBound() const { return min_.has_value(); }
 // Return whether the number has upper bound
 bool Number::hasUpperBound() const { return max_.has_value(); }
 
-// Return optional double upper bound
-std::optional<double> Number::doubleMax()
-{
-    if (hasUpperBound())
-        return asDouble(max_.value());
+// Return optional lower bound
+std::optional<Number::NumberVariant> Number::min() const { return min_; }
 
-    return {};
-}
-
-// Return optional integer upper bound
-std::optional<int> Number::integerMax()
-{
-    if (hasUpperBound())
-        return asInteger(max_.value());
-
-    return {};
-}
-
-// Return optional double lower bound
-std::optional<double> Number::doubleMin()
-{
-    if (hasLowerBound())
-        return asDouble(min_.value());
-
-    return {};
-}
-
-// Return optional integer lower bound
-std::optional<int> Number::integerMin()
-{
-    if (hasLowerBound())
-        return asInteger(min_.value());
-
-    return {};
-}
+// Return optional upper bound
+std::optional<Number::NumberVariant> Number::max() const { return max_; }
 
 // Return whether the number has bounds
 bool Number::isBounded() const { return hasLowerBound() && hasUpperBound(); }
