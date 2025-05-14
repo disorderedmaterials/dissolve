@@ -327,7 +327,7 @@ TEST(NumberTest, BoundedMultiply)
     b = 10.0;
     EXPECT_TRUE((a * b).isDouble());
     EXPECT_DOUBLE_EQ((a * b).asDouble(), 50);
-    
+
     a = 5.0;
     EXPECT_TRUE((a * b).isDouble());
     EXPECT_DOUBLE_EQ((a * b).asDouble(), 50);
