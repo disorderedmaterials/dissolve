@@ -96,70 +96,70 @@ TEST(NumberTest, BoundedAssignment)
 
 TEST(NumberTest, BLessThanA)
 {
-    // Int greater than int
+    // Int less than int
     Number a(5), b(2);
     EXPECT_TRUE(b < a);
 
-    // Int greater than double
+    // Double less than int
     b = 2.0;
     EXPECT_TRUE(b < a);
 
-    // Double greater than double
+    // Double less than double
     a = 5.0;
     EXPECT_TRUE(b < a);
 
-    // Upper bounded int greater than unbounded int
+    // Unbounded int less than upper bounded int
     Number c(5, {}, 10), d(2);
     EXPECT_TRUE(d < c);
 
-    // Upper bounded int greater than unbounded double
+    // Unbounded double less than upper bounded int
     d = 2.0;
     EXPECT_TRUE(d < c);
 
-    // Lower bounded int greater than unbounded double
+    // Unbounded double less than lower bounded int
     Number e(5, 2), f(2);
     EXPECT_TRUE(f < e);
 
-    // Lower bounded int greater than unbounded double
+    // Unbounded double less than lower bounded int
     f = 2.0;
     EXPECT_TRUE(f < e);
 
-    // Bounded int greater than bounded double
+    // Bounded double less than bounded int
     Number g(5, 2, 10), h(2.0, 1.0, 20.0);
     EXPECT_FALSE(g < h);
 }
 
 TEST(NumberTest, AGreaterThanB)
 {
-    // Int less than int
+    // Int greater than int
     Number a(5), b(2);
     EXPECT_TRUE(a > b);
 
-    // Int less than double
+    // Int greater than double
     b = 2.0;
     EXPECT_TRUE(a > b);
 
-    // Double less than double
+    // Double greater than double
     a = 5.0;
     EXPECT_TRUE(a > b);
 
-    // Upper bounded int less than unbounded int
+    // Upper bounded int greater than unbounded int
     Number c(5, {}, 10), d(2);
     EXPECT_TRUE(c > d);
 
-    // Upper bounded int less than unbounded double
+    // Upper bounded int greater than unbounded double
     d = 2.0;
     EXPECT_TRUE(c > d);
 
-    // Lower bounded int less than unbounded double
+    // Lower bounded int greater than unbounded double
     Number e(5, 2), f(2);
     EXPECT_TRUE(e > f);
 
-    // Lower bounded int less than unbounded double
+    // Lower bounded int greater than unbounded double
     f = 2.0;
     EXPECT_TRUE(e > f);
 
-    // Bounded int less than bounded double
+    // Bounded int greater than bounded double
     Number g(5, 2, 10), h(2.0, 1.0, 20.0);
     EXPECT_FALSE(h > g);
 }
