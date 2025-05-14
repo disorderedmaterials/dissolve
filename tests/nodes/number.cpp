@@ -325,17 +325,14 @@ TEST(NumberTest, BoundedMultiply)
 
     // Multiplication of any other combination results in a double
     b = 10.0;
-    auto res1 = a * b;
     EXPECT_TRUE((a * b).isDouble());
     EXPECT_DOUBLE_EQ((a * b).asDouble(), 50);
     
     a = 5.0;
-    auto res2 = a * b;
     EXPECT_TRUE((a * b).isDouble());
     EXPECT_DOUBLE_EQ((a * b).asDouble(), 50);
 
     b = 10;
-    auto res3 = a * b;
     EXPECT_TRUE((a * b).isDouble());
     EXPECT_DOUBLE_EQ((a * b).asDouble(), 50);
 }
