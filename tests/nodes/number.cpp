@@ -359,9 +359,9 @@ TEST(NumberTest, BoundedMultiplyAssignment)
     // Multiplication of anything with an integer maintains the integer type
     Number a(1, {}, 2);
     EXPECT_FALSE(a.hasLowerBound());
-    EXPECT_TRUE((a *= 2).isInteger());
+    EXPECT_TRUE((a *= 4).isInteger());
     EXPECT_EQ(a.asInteger(), 2);
-    EXPECT_TRUE((a *= 2.0).isInteger());
+    EXPECT_TRUE((a *= 4.0).isInteger());
     EXPECT_DOUBLE_EQ(a.asInteger(), 2);
 
     // Multiplication of a double always results in a double
