@@ -80,12 +80,12 @@ bool Number::operator<=(const Number &other) const
 
 bool Number::operator>(const Number &other) const
 {
-    return std::visit([](auto a, auto b) -> bool { return b < a; }, value_, other.value_);
+    return std::visit([](auto a, auto b) -> bool { return a > b; }, value_, other.value_);
 }
 
 bool Number::operator>=(const Number &other) const
 {
-    return std::visit([](auto a, auto b) -> bool { return b <= a; }, value_, other.value_);
+    return std::visit([](auto a, auto b) -> bool { return a >= b; }, value_, other.value_);
 }
 
 /*
