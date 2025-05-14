@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/number.h"
 #include "parameterModel.h"
+#include "nodes/number.h"
 #include <qvariant.h>
 
 enum Roles
