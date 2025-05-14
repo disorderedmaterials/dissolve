@@ -4,8 +4,8 @@ import QtQuick.Layouts
 import Qt.labs.qmlmodels
 
 NodeBox {
-    property variant rootModel
     property double endX: x
+    property variant rootModel
     property double startX: x + width
 
     image: icon
@@ -22,47 +22,46 @@ NodeBox {
             Column {
                 Repeater {
                     model: inputs
+
                     delegate: Text {
-                        text: name
-                        font.pointSize: 10
-                        anchors.margins: 4
-                        wrapMode: Text.Wrap
-                        ToolTip.visible: hovered
                         ToolTip.text: description
+                        ToolTip.visible: hovered
+                        anchors.margins: 4
+                        font.pointSize: 10
+                        text: name
+                        wrapMode: Text.Wrap
                     }
                 }
             }
-
             Rectangle {
+                color: palette.active.mid
                 height: parent.height
                 width: (inputs.rowCount() > 0 && outputs.rowCount() > 0) ? 2 : 0
-                color: palette.active.mid
             }
-
             Column {
                 Repeater {
                     model: outputs
+
                     delegate: Text {
-                        text: name
-                        font.pointSize: 10
-                        anchors.margins: 4
-                        wrapMode: Text.Wrap
-                        ToolTip.visible: hovered
                         ToolTip.text: description
+                        ToolTip.visible: hovered
+                        anchors.margins: 4
+                        font.pointSize: 10
+                        text: name
+                        wrapMode: Text.Wrap
                     }
                 }
             }
         }
-
         Rectangle {
-            width: parent.width
-            height: options.rowCount() > 0 ? 2 : 0
             color: palette.active.mid
+            height: options.rowCount() > 0 ? 2 : 0
+            width: parent.width
         }
-
         Column {
             Repeater {
                 model: options
+
                 delegate: ParameterDelegate {
                 }
             }

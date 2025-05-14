@@ -5,10 +5,12 @@ import Qt.labs.qmlmodels
 
 DelegateChooser {
     id: root
+
     role: "type"
 
     DelegateChoice {
         roleValue: "bool"
+
         RowLayout {
             Text {
                 text: name
@@ -20,6 +22,7 @@ DelegateChooser {
     }
     DelegateChoice {
         roleValue: "number"
+
         RowLayout {
             Text {
                 text: name

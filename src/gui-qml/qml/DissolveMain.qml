@@ -301,14 +301,15 @@ ApplicationWindow {
                 anchors.left: exampleGraphTab.left
                 anchors.right: exampleGraphTab.right
                 anchors.top: toolBar.bottom
+                edgeModel: graphModel.edges
+                nodeModel: graphModel.nodes
+                rootModel: graphModel
+
                 delegate: Component {
                     GraphDelegate {
                         rootModel: graphModel
                     }
                 }
-                edgeModel: graphModel.edges
-                nodeModel: graphModel.nodes
-                rootModel: graphModel
             }
         }
     }
