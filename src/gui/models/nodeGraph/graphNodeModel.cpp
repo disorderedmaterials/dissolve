@@ -1,12 +1,24 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "graphNodeModel.h"
 #include "graphModel.h"
+#include "graphNodeModel.h"
 #include <qvariant.h>
 
 GraphNodeModel::GraphNodeModel(GraphModel *parent) : parent_(parent) {}
 GraphNodeModel::GraphNodeModel(const GraphNodeModel &other) : parent_(other.parent_) {}
+
+enum Role
+{
+    NAME = 0,
+    POSX,
+    POSY,
+    TYPE,
+    ICON,
+    INPUTS,
+    OUTPUTS,
+    OPTIONS,
+};
 
 GraphNodeModel &GraphNodeModel::operator=(const GraphNodeModel &other)
 {
@@ -34,14 +46,14 @@ int GraphNodeModel::rowCount(const QModelIndex &parent) const
 QHash<int, QByteArray> GraphNodeModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[Qt::UserRole] = "name";
-    roles[Qt::UserRole + 1] = "posX";
-    roles[Qt::UserRole + 2] = "posY";
-    roles[Qt::UserRole + 3] = "type";
-    roles[Qt::UserRole + 4] = "icon";
-    roles[Qt::UserRole + 5] = "inputs";
-    roles[Qt::UserRole + 6] = "outputs";
-    roles[Qt::UserRole + 7] = "options";
+    roles[Qt::UserRole + (int)NAME] = "name";
+    roles[Qt::UserRole + (int)POSX] = "posX";
+    roles[Qt::UserRole + (int)POSY] = "posY";
+    roles[Qt::UserRole + (int)TYPE] = "type";
+    roles[Qt::UserRole + (int)ICON] = "icon";
+    roles[Qt::UserRole + (int)INPUTS] = "inputs";
+    roles[Qt::UserRole + (int)OUTPUTS] = "outputs";
+    roles[Qt::UserRole + (int)OPTIONS] = "options";
     return roles;
 }
 
@@ -51,21 +63,21 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
     auto &item = parent_->wrapped_[index.row()];
     switch (role - Qt::UserRole)
     {
-        case 0:
+        case NAME:
             return QString::fromStdString(std::string(item.rawValue().name()));
-        case 1:
+        case POSX:
             return item.posx;
-        case 2:
+        case POSY:
             return item.posy;
-        case 3:
+        case TYPE:
             return QString::fromStdString(std::string(item.rawValue().type()));
-        case 4:
+        case ICON:
             return QString::fromStdString(std::format("qrc:/Dissolve/icons/nodes/{}.svg", item.rawValue().type()));
-        case 5:
+        case INPUTS:
             return QVariant::fromValue(item.inputs.get());
-        case 6:
+        case OUTPUTS:
             return QVariant::fromValue(item.outputs.get());
-        case 7:
+        case OPTIONS:
             return QVariant::fromValue(item.options.get());
     }
     return {};
@@ -76,17 +88,15 @@ bool GraphNodeModel::setData(const QModelIndex &index, const QVariant &value, in
     auto &item = parent_->wrapped_[index.row()];
     switch (role - Qt::UserRole)
     {
-        case 0:
+        case NAME:
             item.rawValue().setName(value.toString().toStdString());
             return true;
-        case 1:
+        case POSX:
             item.posx = value.toInt();
             return true;
-        case 2:
+        case POSY:
             item.posy = value.toInt();
             return true;
-            // default:
-            //     return nodeSetData(item.rawValue(), value, role - Qt::UserRole - ownedRoles);
     }
     return false;
 }
