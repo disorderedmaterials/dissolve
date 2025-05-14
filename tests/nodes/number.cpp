@@ -33,17 +33,16 @@ TEST(NumberTest, BoundedConstruction)
     EXPECT_TRUE(a.isBounded());
     EXPECT_TRUE(a.isInteger());
     EXPECT_EQ(a.asInteger(), 10);
-    EXPECT_EQ(a.integerMin().value(), 5);
-    EXPECT_EQ(a.integerMax().value(), 20);
+    EXPECT_EQ(std::get<int>(a.min().value()), 5);
+    EXPECT_EQ(std::get<int>(a.max().value()), 20);
 
     // Construct bounded number from double
     Number b(1.234, 1.0, 2.0);
     EXPECT_TRUE(b.isBounded());
     EXPECT_TRUE(b.isDouble());
     EXPECT_DOUBLE_EQ(b.asDouble(), 1.234);
-    EXPECT_DOUBLE_EQ(b.doubleMin().value(), 1.0);
-    EXPECT_DOUBLE_EQ(b.doubleMax().value(), 2.0);
-
+    EXPECT_DOUBLE_EQ(std::get<double>(b.min().value()), 1.0);
+    EXPECT_DOUBLE_EQ(std::get<double>(b.max().value()), 2.0);
     // Construct bounded number with undefined bounds
     Number c(10);
     EXPECT_FALSE(c.isBounded());
@@ -279,7 +278,7 @@ TEST(NumberTest, BoundedSubtractionAssignment)
 {
     // Subtraction of anything to an integer maintains the integer type
     Number a(1, 0);
-    EXPECT_TRUE(a.integerMin());
+    EXPECT_TRUE(a.min());
     EXPECT_TRUE((a -= 2).isInteger());
     EXPECT_EQ(a.asInteger(), 0);
     EXPECT_TRUE((a -= 2.0).isInteger());
@@ -287,7 +286,6 @@ TEST(NumberTest, BoundedSubtractionAssignment)
 
     // Subtraction to a double always results in a double
     Number b(1.0, 0.5);
-    EXPECT_TRUE(a.doubleMin());
     EXPECT_TRUE((b -= 2).isDouble());
     EXPECT_DOUBLE_EQ(b.asDouble(), 0.5);
     EXPECT_TRUE((b -= 2.0).isDouble());
