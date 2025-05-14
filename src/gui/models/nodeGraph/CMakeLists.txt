@@ -2,21 +2,9 @@ set(nodeGraphModels_MOC_HDRS exampleGraphModel.h graphModelBase.h graphEdgeModel
 
 qt6_wrap_cpp(nodeGraphModel_MOC_SRCS ${nodeGraphModel_MOC_HDRS})
 
-set(nodeGraphModel_SRCS
-    graphEdgeModel.cpp
-    graphModel.cpp
-    graphNodeModel.cpp
-    parameterModel.cpp
-)
+set(nodeGraphModel_SRCS graphEdgeModel.cpp graphModel.cpp graphNodeModel.cpp parameterModel.cpp)
 
-qt6_wrap_cpp(
-  nodeGraphModel_SRCS
-  graphModel.h
-  graphEdgeModel.h
-  graphNodeModel.h
-  nodeWrapper.h
-  parameterModel.h
-)
+qt6_wrap_cpp(nodeGraphModel_SRCS graphModel.h graphEdgeModel.h graphNodeModel.h nodeWrapper.h parameterModel.h)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Qml)
 
