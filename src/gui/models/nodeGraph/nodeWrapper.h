@@ -12,7 +12,6 @@
 class NodeWrapper
 {
     public:
-    // NodeWrapper(Node &value) : value_(&value) {}
     NodeWrapper(Node &value)
         : value_(&value), inputs(std::make_unique<ParameterModel>(value.inputs())),
           outputs(std::make_unique<ParameterModel>(value.outputs())), options(std::make_unique<ParameterModel>(value.options()))
