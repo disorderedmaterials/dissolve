@@ -7,6 +7,7 @@ NodeBox {
     property double endX: x
     property variant rootModel
     property double startX: x + width
+    property double midY: y + height/2
 
     image: icon
     nodeType: name

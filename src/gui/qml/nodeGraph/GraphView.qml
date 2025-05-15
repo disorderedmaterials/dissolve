@@ -127,7 +127,7 @@ Pane {
                     control2X: x - curveOffset
                     control2Y: y
                     x: nodeRepeater.itemAt(nameLookup[destination]).endX
-                    y: destIndex == 0 ? nodeRepeater.itemAt(nameLookup[destination]).midY : nodeRepeater.itemAt(nameLookup[destination]).midY2
+                    y: nodeRepeater.itemAt(nameLookup[destination]).midY
                 }
             }
         }
