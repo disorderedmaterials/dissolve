@@ -61,7 +61,7 @@ class Node : public Serialisable<>
     // Print latest message
     static bool echo_;
 
-    private:
+    protected:
     // Message store vector
     MessageStore messages_;
     // Node message format
