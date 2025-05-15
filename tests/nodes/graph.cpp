@@ -80,12 +80,12 @@ TEST_F(GraphCoreTest, UniqueNaming)
     createGraph();
 
     // Add nodes with duplicate name
-    EXPECT_EQ(root_.createNode("Add", "x")->name(), "x1");
-    EXPECT_EQ(root_.createNode("Add", "x")->name(), "x2");
+    EXPECT_EQ(root_.createNode("Add", "x")->name(), "x01");
+    EXPECT_EQ(root_.createNode("Add", "x")->name(), "x02");
 
     // Rename existing node
     y_->setName("x");
-    EXPECT_EQ(y_->name(), "x3");
+    EXPECT_EQ(y_->name(), "x03");
     y_->setName("y");
     EXPECT_EQ(y_->name(), "y");
 

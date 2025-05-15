@@ -125,6 +125,8 @@ class Dissolve : public Serialisable<>
      * Graph node
      */
     public:
+    // Get graph
+    DissolveGraph *graph();
     // Set the Dissolve graph node
     void setGraph();
 

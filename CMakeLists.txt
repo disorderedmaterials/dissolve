@@ -283,6 +283,7 @@ if(GUI)
   # Dissolve QML GUI
   qt_add_executable(${qmlgui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui-qml.cpp)
   set_source_files_properties(${SRCS}/gui-qml/qml/DissolveMain.qml PROPERTIES QT_RESOURCE_ALIAS qml/DissolveMain.qml)
+
   qt_add_qml_module(
     ${qmlgui_target_name}
     VERSION
@@ -291,6 +292,11 @@ if(GUI)
     Dissolve
     QML_FILES
     ${SRCS}/gui-qml/qml/DissolveMain.qml
+    ${SRCS}/gui/qml/nodeGraph/GraphView.qml
+    ${SRCS}/gui/qml/nodeGraph/GraphDelegate.qml
+    ${SRCS}/gui/qml/nodeGraph/ParameterDelegate.qml
+    ${SRCS}/gui/qml/nodeGraph/NodeBox.qml
+    RESOURCES
   )
 
   # Set project-local include directories for target (we expect to need less of these dependencies over time)

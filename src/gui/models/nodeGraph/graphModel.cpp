@@ -1,0 +1,93 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
+#include "graphModel.h"
+#include "graphEdgeModel.h"
+#include <QVariant>
+#include <iostream>
+
+GraphModel::GraphModel() : nodes_(this), graph_(nullptr) {}
+
+Graph *GraphModel::graph() { return graph_; }
+
+void GraphModel::setGraph(Graph *graph)
+{
+    graph_ = graph;
+
+    nodes_.beginResetModel();
+    wrapped_.clear();
+    int idx = 0;
+    for (auto &[name, node] : graph->nodes())
+    {
+        auto &item = wrapped_.emplace_back(*node);
+        item.posx = (idx++) * 20 + 10;
+        item.posy = (idx++) * 20 + 10;
+    }
+    nodes_.endResetModel();
+
+    nodes_.updateGraph();
+    graphChanged();
+}
+
+// Access the GraphNodeModel
+QAbstractListModel *GraphModel::nodes() { return &nodes_; }
+
+int GraphModel::count() { return nodes_.rowCount(); }
+
+void GraphModel::emplace_back(int x, int y, QVariant type, QVariant name)
+{
+    if (!graph_)
+        Messenger::exception(
+            "GraphModel has no graph.  This should have been impossible.  Please let the Dissolve developers know about this.");
+    nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
+    auto node = graph_->createNode(type.toString().toStdString(), type.toString().toStdString());
+    auto &item = wrapped_.emplace_back(*node);
+    item.posx = x;
+    item.posy = y;
+    item.rawValue().setName(name.toString().toStdString());
+    nodes_.endInsertRows();
+    graphChanged();
+}
+
+void GraphModel::deleteNode(int idx)
+{
+    nodes_.beginRemoveRows({}, idx, idx);
+    std::string index{wrapped_[idx].rawValue().name()};
+    wrapped_.erase(wrapped_.begin() + idx);
+
+    // List of edges to remove
+    auto deadEdges = edges_.deleteNode(index);
+
+    for (auto &edge : deadEdges)
+        if (edge.source == index)
+            Q_EMIT(
+                nodes_.dataChanged(nodes_.index(indexByName(edge.destination)), nodes_.index(indexByName(edge.destination))));
+
+    graph_->nodes().erase(index);
+    nodes_.endRemoveRows();
+
+    graphChanged();
+}
+
+GraphEdgeModel *GraphModel::edges() { return &edges_; }
+
+int GraphModel::nEdges() { return edges_.rowCount(); }
+
+// public wrapper of connect_
+bool GraphModel::connect(std::string source, int sourceIndex, std::string destination, int destinationIndex)
+{
+    // FIXME
+    return false;
+}
+// Public wrapper of disconnect_
+bool GraphModel::disconnect(std::string source, int sourceIndex, std::string destination, int destinationIndex)
+{
+    // FIXME
+    return false;
+}
+
+int GraphModel::indexByName(std::string name)
+{
+    // FIXME
+    return 0;
+}
