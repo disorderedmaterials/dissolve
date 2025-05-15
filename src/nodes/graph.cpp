@@ -29,7 +29,7 @@ std::string Graph::uniqueNodeName(const Node *node, std::string_view baseName) c
     // Check for existing node with this name and suffix until we get a unique key
     auto count = 1;
     while (nodes_.contains(newName) && nodes_.at(newName).get() != node)
-        newName = std::format("{}{}", baseName, count++);
+        newName = std::format("{}{:02d}", baseName, count++);
 
     return newName;
 }

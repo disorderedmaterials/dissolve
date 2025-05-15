@@ -2,10 +2,19 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/models/dissolveModel.h"
+#include "nodes/dissolve.h"
 
 /*
  * Data
  */
+
+Dissolve &DissolveModel::dissolve()
+{
+    if (!dissolve_)
+        Messenger::exception("DissolveModel is lacking a backend.  This should *never* happen, so please contact the "
+                             "Dissolve developers to inform them of the issue.");
+    return *dissolve_;
+}
 
 // Set reference to Dissolve
 void DissolveModel::setDissolve(Dissolve &dissolve)
@@ -114,3 +123,19 @@ ConfigurationModel *DissolveModel::configurationsModel() { return &configuration
 
 // The ModuleLayers Model
 ModuleLayersModel *DissolveModel::moduleLayersModel() { return &moduleLayersModel_; }
+
+// Getter for filename
+QUrl DissolveModel::fileName() { return QUrl(dissolve_->inputFilename().data()); }
+
+void DissolveModel::loadInput(QUrl filename)
+{
+    dissolve_->loadInput(filename.toLocalFile().toStdString());
+    configurationModel_.reset();
+}
+
+Graph *DissolveModel::graph()
+{
+    if (!dissolve_)
+        return nullptr;
+    return dissolve_->graph();
+}

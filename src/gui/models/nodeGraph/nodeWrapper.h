@@ -1,0 +1,33 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
+#pragma once
+
+// #include "gui/models/nodeGraph/parameterModel.h"
+#include "gui/models/nodeGraph/parameterModel.h"
+#include "nodes/node.h"
+#include <QAbstractListModel>
+
+// A wrapper with supplemental information for a node
+class NodeWrapper
+{
+    public:
+    NodeWrapper(Node &value)
+        : value_(&value), inputs(std::make_unique<ParameterModel>(value.inputs())),
+          outputs(std::make_unique<ParameterModel>(value.outputs())), options(std::make_unique<ParameterModel>(value.options()))
+    {
+    }
+
+    // The X and Y coordinates of the node on the screen.
+    int posx, posy;
+    // Parameter models for parameters of the node
+    std::unique_ptr<ParameterModel> inputs, outputs, options;
+
+    // Get the actual value of the node
+    Node &rawValue() { return *value_; }
+    const Node &rawValue() const { return *value_; }
+
+    private:
+    // The actual value of the node
+    Node *value_;
+};

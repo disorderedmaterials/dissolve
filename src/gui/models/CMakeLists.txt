@@ -1,3 +1,5 @@
+add_subdirectory(nodeGraph)
+
 set(models_MOC_HDRS
     addForcefieldDialogModel.h
     addSpeciesInfoModel.h
@@ -160,7 +162,7 @@ target_include_directories(
                  ${FREETYPE_INCLUDE_DIRS} ${Qt6Quick_INCLUDE_DIRS}
 )
 
-target_link_libraries(models PRIVATE Qt6::Core Qt6::Qml)
+target_link_libraries(models PRIVATE Qt6::Core Qt6::Qml nodeGraphModel)
 
 # Because Qt has its own way of checking for C++17
 if(MSVC)
