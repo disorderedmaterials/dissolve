@@ -24,8 +24,8 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
     // Print argument/parameter summary
     message("Performing {} shake(s) per Atom\n", nShakesPerAtom);
-    message("Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n",
-                     stepSize, stepSizeMin, stepSizeMax);
+    message("Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n", stepSize, stepSizeMin,
+            stepSizeMax);
     message("Target acceptance rate is {}.\n", targetAcceptanceRate);
     message("\n");
 
@@ -162,7 +162,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     // Calculate and print acceptance rate
     double rate = double(nAccepted) / nAttempts;
     message("Total number of attempted moves was {} ({} work, {} comms)\n", nAttempts, timer.totalTimeString(),
-                     commsTimer.totalTimeString());
+            commsTimer.totalTimeString());
 
     message("Overall acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rate, nAccepted, nAttempts);
 
