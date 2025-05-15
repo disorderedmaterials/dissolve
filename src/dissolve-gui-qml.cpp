@@ -24,7 +24,7 @@ int main(int args, char **argv)
     Dissolve dissolve(coreData);
 
     dissolve.graph()->createNode("Configuration", "Bulk");
-    dissolve.graph()->createNode("AtomShake", "Shake");
+    dissolve.graph()->createNode("AtomicMC", "Shake");
     EdgeDefinition edge("Bulk", "Configuration", "Shake", "Configuration");
     dissolve.graph()->addEdge(edge);
 
