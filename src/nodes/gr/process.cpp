@@ -21,25 +21,25 @@ NodeConstants::ProcessResult GRNode::process()
 
     // Print argument/parameter summary
     if (!requestedRange_)
-        message("RDF: Partials will be calculated up to the half-cell range limit.\n");
+        message("Partials will be calculated up to the half-cell range limit.\n");
     else
-        message("RDF: Partials will be calculated out to {} Angstroms.\n", requestedRange_.value().asDouble());
-    message("RDF: Bin-width to use is {} Angstroms.\n", binWidth_.asDouble());
+        message("Partials will be calculated out to {} Angstroms.\n", requestedRange_.value().asDouble());
+    message("Bin-width to use is {} Angstroms.\n", binWidth_.asDouble());
     if (averagingLength_)
-        message("RDF: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value().asDouble(),
+        message("Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value().asDouble(),
                 Averaging::averagingSchemes().keyword(averagingScheme_));
     else
-        message("RDF: No averaging of partials will be performed.\n");
+        message("No averaging of partials will be performed.\n");
     if (intraBroadening_.form() == Functions1D::Form::None)
-        message("RDF: No broadening will be applied to intramolecular g(r).");
+        message("No broadening will be applied to intramolecular g(r).");
     else
-        message("RDF: Broadening to be applied to intramolecular g(r) is {} ({}).",
+        message("Broadening to be applied to intramolecular g(r) is {} ({}).",
                 Functions1D::forms().keyword(intraBroadening_.form()), intraBroadening_.parameterSummary());
-    message("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(partialsMethod_));
-    message("RDF: Save data is {}.\n", DissolveSys::onOff(save_));
-    message("RDF: Save original (unbroadened) g(r) is {}.\n", DissolveSys::onOff(saveOriginal_));
+    message("Calculation method is '{}'.\n", partialsMethods().keyword(partialsMethod_));
+    message("Save data is {}.\n", DissolveSys::onOff(save_));
+    message("Save original (unbroadened) g(r) is {}.\n", DissolveSys::onOff(saveOriginal_));
     if (nSmooths_)
-        message("RDF: Degree of smoothing to apply to calculated partial g(r) is {}.\n", nSmooths_.value().asInteger());
+        message("Degree of smoothing to apply to calculated partial g(r) is {}.\n", nSmooths_.value().asInteger());
     message("\n");
 
     /*
