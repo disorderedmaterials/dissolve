@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "graphModel.h"
 #include "graphEdgeModel.h"
+#include "graphModel.h"
 #include <QVariant>
 #include <iostream>
 
@@ -24,6 +24,17 @@ void GraphModel::setGraph(Graph *graph)
         item.posy = (idx++) * 20 + 10;
     }
     nodes_.endResetModel();
+
+    for (auto &edge : graph->edges())
+    {
+        GraphRawEdge e;
+        e.source = edge->sourceNode().name();
+        e.sourceIndex = 0;
+        e.destination = edge->targetNode().name();
+        e.destinationIndex = 0;
+
+        edges_.addEdge(e);
+    }
 
     nodes_.updateGraph();
     graphChanged();

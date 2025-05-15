@@ -10,6 +10,7 @@
 #include "main/version.h"
 #include "math/mathFunc.h"
 #include "nodes/dissolve.h"
+#include "nodes/edge.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -21,6 +22,11 @@ int main(int args, char **argv)
     // Instantiate main classes
     CoreData coreData;
     Dissolve dissolve(coreData);
+
+    dissolve.graph()->createNode("Configuration", "Bulk");
+    dissolve.graph()->createNode("AtomShake", "Shake");
+    EdgeDefinition edge("Bulk", "Configuration", "Shake", "Configuration");
+    dissolve.graph()->addEdge(edge);
 
     DissolveModel dissolveModel;
     dissolveModel.setDissolve(dissolve);
