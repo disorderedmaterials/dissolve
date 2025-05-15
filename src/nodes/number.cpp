@@ -6,13 +6,13 @@
 
 Number::Number(const std::variant<int, double> &value) : value_(value) {}
 
-Number::Number(int value) : value_(value) {}
+Number::Number(int value, std::optional<int> min, std::optional<int> max) : value_(value), min_(min), max_(max) {}
 
-Number::Number(double value) : value_(value) {}
+Number::Number(double value, std::optional<double> min, std::optional<double> max) : value_(value), min_(min), max_(max) {}
 
 Number &Number::operator=(const Number &other)
 {
-    value_ = other.value_;
+    set(other);
     return *this;
 }
 
@@ -24,6 +24,7 @@ Number Number::operator+(const Number &other) const
 Number &Number::operator+=(const Number &other)
 {
     std::visit([](auto &a, auto b) { a += b; }, value_, other.value_);
+    set(value_);
     return *this;
 }
 
@@ -35,6 +36,7 @@ Number Number::operator-(const Number &other) const
 Number &Number::operator-=(const Number &other)
 {
     std::visit([](auto &a, auto b) { a -= b; }, value_, other.value_);
+    set(value_);
     return *this;
 }
 
@@ -46,6 +48,7 @@ Number Number::operator*(const Number &other) const
 Number &Number::operator*=(const Number &other)
 {
     std::visit([](auto &a, auto b) { a *= b; }, value_, other.value_);
+    set(value_);
     return *this;
 }
 
@@ -57,6 +60,7 @@ Number Number::operator/(const Number &other) const
 Number &Number::operator/=(const Number &other)
 {
     std::visit([](auto &a, auto b) { a /= b; }, value_, other.value_);
+    set(value_);
     return *this;
 }
 
@@ -64,36 +68,95 @@ bool Number::operator==(const Number &other) const { return value_ == other.valu
 
 bool Number::operator!=(const Number &other) const { return value_ != other.value_; }
 
+bool Number::operator<(const Number &other) const
+{
+    return std::visit([](auto a, auto b) -> bool { return a < b; }, value_, other.value_);
+}
+
+bool Number::operator<=(const Number &other) const
+{
+    return std::visit([](auto a, auto b) -> bool { return a <= b; }, value_, other.value_);
+}
+
+bool Number::operator>(const Number &other) const
+{
+    return std::visit([](auto a, auto b) -> bool { return a > b; }, value_, other.value_);
+}
+
+bool Number::operator>=(const Number &other) const
+{
+    return std::visit([](auto a, auto b) -> bool { return a >= b; }, value_, other.value_);
+}
+
 /*
  * Data
  */
 
-// Set from other Number
-void Number::set(const Number &other) { value_ = other.value_; }
+// Impose limit on Number
+Number::NumberVariant Number::limit(Number n) const
+{
+    if (hasLowerBound() && n < Number(min_.value()))
+        return min_.value();
+
+    if (hasUpperBound() && n > Number(max_.value()))
+        return max_.value();
+
+    return n.value_;
+}
 
 // Return whether the contained value is an integer
-bool Number::isInteger() const { return std::holds_alternative<int>(value_); }
+bool Number::isInteger(NumberVariant n) const { return std::holds_alternative<int>(n); }
 
 // Return whether the contained value is a double
-bool Number::isDouble() const { return std::holds_alternative<double>(value_); }
+bool Number::isDouble(NumberVariant n) const { return std::holds_alternative<double>(n); }
 
 // Return contained value as integer
-int Number::asInteger() const
+int Number::asInteger(NumberVariant n) const
 {
-    if (std::holds_alternative<int>(value_))
-        return std::get<int>(value_);
+    if (isInteger(n))
+        return std::get<int>(n);
     else
-        return int(std::get<double>(value_));
+        return int(std::get<double>(n));
 }
 
 // Return contained value as double
-double Number::asDouble() const
+double Number::asDouble(NumberVariant n) const
 {
-    if (std::holds_alternative<int>(value_))
-        return double(std::get<int>(value_));
+    if (isInteger(n))
+        return double(std::get<int>(n));
     else
-        return std::get<double>(value_);
+        return std::get<double>(n);
 }
+
+// Set from other Number
+void Number::set(const Number &other) { value_ = limit(other.value_); }
+
+// Return whether the number has lower bound
+bool Number::hasLowerBound() const { return min_.has_value(); }
+
+// Return whether the number has upper bound
+bool Number::hasUpperBound() const { return max_.has_value(); }
+
+// Return optional lower bound
+std::optional<Number::NumberVariant> Number::min() const { return min_; }
+
+// Return optional upper bound
+std::optional<Number::NumberVariant> Number::max() const { return max_; }
+
+// Return whether the number has bounds
+bool Number::isBounded() const { return hasLowerBound() && hasUpperBound(); }
+
+// Return whether the contained value is an integer
+bool Number::isInteger() const { return isInteger(value_); }
+
+// Return whether the contained value is a double
+bool Number::isDouble() const { return isDouble(value_); }
+
+// Return contained value as integer
+int Number::asInteger() const { return asInteger(value_); }
+
+// Return contained value as double
+double Number::asDouble() const { return asDouble(value_); }
 
 // Return value represented as a string
 std::string Number::asString(bool addQuotesIfRequired) const
