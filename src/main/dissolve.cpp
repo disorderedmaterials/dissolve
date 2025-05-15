@@ -13,6 +13,8 @@ Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
     // Set core simulation variables
     restartFileFrequency_ = 10;
 
+    graphNode_ = std::make_unique<DissolveGraph>(*this);
+
     setUpWorldPool();
 
     // Clear everything
@@ -24,6 +26,8 @@ Dissolve::~Dissolve() { clear(); }
 /*
  * Core
  */
+
+DissolveGraph *Dissolve::graph() { return graphNode_.get(); }
 
 // Return reference to CoreData
 CoreData &Dissolve::coreData() { return coreData_; }

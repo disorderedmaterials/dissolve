@@ -9,7 +9,9 @@
 #include "gui/models/moduleLayersModel.h"
 #include "gui/models/speciesModel.h"
 #include "main/dissolve.h"
+#include "nodes/graph.h"
 #include "templates/optionalRef.h"
+#include <QUrl>
 #include <memory>
 
 class DissolveModel : public QObject
@@ -31,6 +33,10 @@ class DissolveModel : public QObject
     Q_PROPERTY(const ConfigurationModel *configurationsModel READ configurationsModel NOTIFY configurationsChanged)
     // The ModuleLayers Model
     Q_PROPERTY(const ModuleLayersModel *moduleLayersModel READ moduleLayersModel NOTIFY moduleLayersChanged)
+    // File to load
+    Q_PROPERTY(QUrl file READ fileName WRITE loadInput)
+    // The main graph
+    Q_PROPERTY(Graph *graph READ graph NOTIFY modelsUpdated)
 
     private:
     // The Atom Type Model
@@ -40,6 +46,14 @@ class DissolveModel : public QObject
     SpeciesModel speciesModel_;
     ConfigurationModel configurationModel_;
     ModuleLayersModel moduleLayersModel_;
+
+    public:
+    // Getter for filename
+    QUrl fileName();
+    // Setter for filename
+    void loadInput(QUrl filename);
+    // Getter for graph
+    Graph *graph();
 
     Q_SIGNALS:
     // The models might've been updated
@@ -95,6 +109,8 @@ class DissolveModel : public QObject
     Dissolve *dissolve_ = nullptr;
 
     public:
+    // Access dissolve reference
+    Dissolve &dissolve();
     // Set reference to Dissolve
     void setDissolve(Dissolve &dissolve);
     // Update models
