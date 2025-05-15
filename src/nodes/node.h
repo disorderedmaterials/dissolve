@@ -29,7 +29,7 @@ class Node : public Serialisable<>
     /*
      * Definition
      */
-    private:
+    protected:
     // Name of the node (unique within it's parent Graph)
     std::string name_;
     // Node parent graph

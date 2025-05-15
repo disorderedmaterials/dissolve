@@ -5,7 +5,10 @@
 #include "nodes/edge.h"
 #include "nodes/registry.h"
 
-Graph::Graph(Graph *parentGraph) : Node(parentGraph) {}
+Graph::Graph(Graph *parentGraph) : Node(parentGraph)
+{
+    mappedInputs_ = dynamic_cast<InputsNode *>(createNode("Inputs", "Inputs"));
+}
 
 /*
  * Definition
@@ -16,6 +19,16 @@ std::string_view Graph::type() const { return "Graph"; }
 
 // Return short summary of the node's purpose
 std::string_view Graph::summary() const { return "A node which contains its own inner graph"; }
+
+/*
+ * Inputs, Outputs, and Options
+ */
+
+// Create mapped input
+std::shared_ptr<ParameterBase> Graph::mapInput(std::string_view name, std::type_index typeIndex)
+{
+    return mappedInputs_->createMappedInput(name, typeIndex);
+}
 
 /*
  * Nodes and Edges
@@ -142,6 +155,11 @@ Edge *Graph::findEdge(const EdgeDefinition &definition) const
 // Return named node, if it exists
 Node *Graph::node(std::string_view name)
 {
+    // Return ourself if this is our name
+    if (name_ == name)
+        return this;
+
+    // Search through child nodes
     if (nodes_.contains(std::string(name)))
         return nodes_[std::string(name)].get();
 

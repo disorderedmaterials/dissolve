@@ -12,7 +12,6 @@
 #include "nodes/integrator.h"
 #include "nodes/md/md.h"
 #include "nodes/multiply.h"
-#include "nodes/subGraph.h"
 #include "nodes/subtract.h"
 #include "nodes/vec3Assembly.h"
 #include "nodes/vec3Decomposition.h"
@@ -40,11 +39,11 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
+                  {"Graph", makeDerivedNode<Graph>()},
                   {"Insert", makeDerivedNode<InsertNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"MD", makeDerivedNode<MDNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
-                  {"SubGraph", makeDerivedNode<SubGraph>()},
                   {"Subtract", makeDerivedNode<SubtractNode>()},
                   {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
                   {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()}};

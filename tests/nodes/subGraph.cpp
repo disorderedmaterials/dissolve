@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/subGraph.h"
 #include "nodes/add.h"
 #include "nodes/dissolve.h"
 #include "nodes/number.h"
@@ -23,7 +22,7 @@ class SubGraphTest : public ::testing::Test
          *                             ------------------------------------------------------------------\
          *    Add (x)                  | Inputs                                                          |
          *    ------------------       |--------|                                                        |
-         *   o-A = 1     result-o ---- o >> A > o -----------+                                           |
+         *   o-A = 1     result-o ---- o >> C > o -----------+                                           |
          *   o-B = 2           |       |                      \      Add (z)                  Outputs    |
          *    -----------------/       |                       \     ----------------     |--------------|
          *                             |                        +--- o-A       result-o - o >> result >> o
@@ -42,7 +41,7 @@ class SubGraphTest : public ::testing::Test
         ASSERT_EQ(x_->name(), "x");
 
         // Create subgraph GraphA
-        graphA_ = dynamic_cast<SubGraph *>(root_.createNode("SubGraph", "GraphA"));
+        graphA_ = dynamic_cast<Graph *>(root_.createNode("Graph", "GraphA"));
         ASSERT_TRUE(graphA_);
         ASSERT_EQ(graphA_->name(), "GraphA");
 
@@ -60,7 +59,7 @@ class SubGraphTest : public ::testing::Test
     CoreData coreData_;
     Dissolve dissolve_;
     DissolveGraph root_;
-    SubGraph *graphA_{nullptr};
+    Graph *graphA_{nullptr};
     AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr};
 };
 
@@ -86,8 +85,12 @@ TEST_F(SubGraphTest, Connections)
 {
     createGraph();
 
-    EXPECT_TRUE(root_.addEdge({"x", "Result", "z", "A"}));
-    EXPECT_TRUE(root_.addEdge({"y", "Result", "z", "B"}));
+    // Create a dynamic input on GraphA by creating an edge to it
+    EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
+
+    // Connect the dynamic input on GraphA internally to it's "z" node
+    // BUT C IS NOT AN OUTPUT!!!!!
+    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "Y", "A"}));
 }
 
 } // namespace UnitTest

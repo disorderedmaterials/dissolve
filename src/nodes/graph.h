@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/messenger.h"
+#include "nodes/inputs.h"
 #include "nodes/node.h"
 #include <map>
 #include <memory>
@@ -29,6 +30,16 @@ class Graph : public Node
     std::string_view type() const override;
     // Return short summary of the node's purpose
     std::string_view summary() const override;
+
+    /*
+     * Inputs, Outputs, and Options
+     */
+    private:
+    InputsNode *mappedInputs_{nullptr};
+
+    public:
+    // Create mapped input
+    std::shared_ptr<ParameterBase> mapInput(std::string_view name, std::type_index typeIndex);
 
     /*
      * Nodes and Edges

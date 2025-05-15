@@ -4,13 +4,24 @@
 #pragma once
 
 #include "nodes/node.h"
-#include "nodes/number.h"
+
+// Parameter Holder Base
+class ParameterHolderBase
+{
+};
+
+// Parameter Holder
+template <class T> class ParameterHolder : public ParameterHolderBase
+{
+    public:
+    T data;
+};
 
 // Inputs Node
 class InputsNode : public Node
 {
     public:
-    InputsNode(Graph *parentGraph, NodeParameterMap &inputs);
+    InputsNode(Graph *parentGraph);
     ~InputsNode() override = default;
 
     /*
@@ -23,12 +34,22 @@ class InputsNode : public Node
     std::string_view summary() const override;
 
     /*
-     * Inputs
+     * Parameter Maps
      */
     private:
-    // Inputs to manage
-    NodeParameterMap &inputs_;
+    // Parameter holders
+    std::vector<std::shared_ptr<ParameterHolderBase>> parameterHolders_;
 
     public:
-    // Add input
+    // Create input and map to output
+    std::shared_ptr<ParameterBase> createMappedInput(std::string_view name, std::type_index typeIndex);
+
+    /*
+     * I/O
+     */
+    public:
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };
