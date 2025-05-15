@@ -5,6 +5,7 @@ configure
 aclocal.m4
 /autom4te.cache/
 Makefile
+.cache
 .deps/
 .direnv
 config.h
