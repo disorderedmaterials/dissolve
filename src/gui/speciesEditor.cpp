@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "gui/speciesEditor.h"
 #include "classes/empiricalFormula.h"
 #include "classes/species.h"
 #include "data/ff/library.h"
+#include "gui/speciesCellDialog.h"
+#include "gui/speciesEditor.h"
 #include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
 #include "modules/geomOpt/geomOpt.h"
-#include "gui/speciesCellDialog.h"
 #include <QButtonGroup>
 #include <QMessageBox>
 
@@ -195,8 +195,8 @@ void SpeciesEditor::on_ToolsCalculateBondingButton_clicked(bool checked)
     if (bonds.size())
         for (const auto &bond : bonds)
             idxs.push_back({bond.indexI(), bond.indexJ()});
-        for (const auto &[i, j] : idxs)
-            sp->removeBond(i, j);
+    for (const auto &[i, j] : idxs)
+        sp->removeBond(i, j);
 
     // (Re)Calculate missing bonds
     sp->addMissingBonds(tolerance_);
@@ -288,7 +288,4 @@ void SpeciesEditor::on_ToolsRemoveCellButton_clicked(bool checked)
     speciesViewer()->notifyDataModified();
 }
 
-void SpeciesEditor::on_ToolsBondToleranceSpin_valueChanged(double value)
-{
-    tolerance_ = value;
-}
+void SpeciesEditor::on_ToolsBondToleranceSpin_valueChanged(double value) { tolerance_ = value; }

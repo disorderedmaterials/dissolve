@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "gui/widgets/exponentialSpin.h"
 #include "classes/species.h"
 #include "gui/ui_speciesCellDialog.h"
+#include "gui/widgets/exponentialSpin.h"
 #include <QDialog>
 
 // Species Widget
@@ -28,5 +28,4 @@ class SpeciesCellDialog : public QDialog
     private Q_SLOTS:
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
-
 };

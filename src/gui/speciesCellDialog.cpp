@@ -20,7 +20,4 @@ void SpeciesCellDialog::on_buttonBox_accepted()
     accept();
 }
 
-void SpeciesCellDialog::on_buttonBox_rejected()
-{
-    reject();
-}
+void SpeciesCellDialog::on_buttonBox_rejected() { reject(); }
