@@ -6,7 +6,7 @@
 #include <QVariant>
 #include <iostream>
 
-GraphModel::GraphModel() : nodes_(this), graph_(nullptr) {}
+GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(graph_) {}
 
 Graph *GraphModel::graph() { return graph_; }
 
@@ -26,15 +26,7 @@ void GraphModel::setGraph(Graph *graph)
     nodes_.endResetModel();
 
     for (auto &edge : graph->edges())
-    {
-        GraphRawEdge e;
-        e.source = edge->sourceNode().name();
-        e.sourceIndex = 0;
-        e.destination = edge->targetNode().name();
-        e.destinationIndex = 0;
-
-        edges_.addEdge(e);
-    }
+        edges_.addEdge(*edge);
 
     nodes_.updateGraph();
     graphChanged();
@@ -66,13 +58,7 @@ void GraphModel::deleteNode(int idx)
     std::string index{wrapped_[idx].rawValue().name()};
     wrapped_.erase(wrapped_.begin() + idx);
 
-    // List of edges to remove
-    auto deadEdges = edges_.deleteNode(index);
-
-    for (auto &edge : deadEdges)
-        if (edge.source == index)
-            Q_EMIT(
-                nodes_.dataChanged(nodes_.index(indexByName(edge.destination)), nodes_.index(indexByName(edge.destination))));
+    edges_.deleteNode(index);
 
     graph_->nodes().erase(index);
     nodes_.endRemoveRows();
@@ -82,7 +68,12 @@ void GraphModel::deleteNode(int idx)
 
 GraphEdgeModel *GraphModel::edges() { return &edges_; }
 
-int GraphModel::nEdges() { return edges_.rowCount(); }
+int GraphModel::nEdges()
+{
+    if (graph_ == nullptr)
+        return 0;
+    return edges_.rowCount();
+}
 
 // public wrapper of connect_
 bool GraphModel::connect(std::string source, int sourceIndex, std::string destination, int destinationIndex)
@@ -97,7 +88,7 @@ bool GraphModel::disconnect(std::string source, int sourceIndex, std::string des
     return false;
 }
 
-int GraphModel::indexByName(std::string name)
+int GraphModel::indexByName(std::string_view name)
 {
     // FIXME
     return 0;

@@ -3,24 +3,12 @@
 
 #pragma once
 
+#include "nodes/edge.h"
+#include "nodes/graph.h"
+#include "nodes/node.h"
 #include <QAbstractListModel>
 #include <algorithm>
 #include <qnamespace.h>
-
-/** A structure that represents the connection between two nodes **/
-struct GraphRawEdge
-{
-    // The node index of the source node
-    std::string source;
-    // The index of the specific data *within* the source node
-    int sourceIndex;
-    // The node index of the destination node
-    std::string destination;
-    // The index of the specific data *within* the destination node
-    int destinationIndex;
-    // Equality comparison (we get these for free in C++20
-    bool operator==(const GraphRawEdge &other) const;
-};
 
 /** A model to keep track of the edges between the nodes in the graph.
  * Note that the model only maintains a record of the *existing* edges
@@ -29,41 +17,26 @@ struct GraphRawEdge
 class GraphEdgeModel : public QAbstractListModel
 {
     public:
-    GraphEdgeModel();
+    GraphEdgeModel(Graph *&graph);
     GraphEdgeModel(const GraphEdgeModel &other);
 
     // Remove an edge from the model (by index). Returns false if edge does not exist
     bool dropEdge(std::size_t edge);
 
     // Remove an edge by value
-    bool dropEdge(GraphRawEdge &edge);
+    bool dropEdge(Edge &edge);
 
-    // Create a new edge
-    void addEdge(std::string source, int sourceIndex, std::string destination, int destinationIndex);
-
-    // Get all edges connected to a node
-    std::vector<GraphRawEdge> connectedTo(std::string index)
+    void deleteNode(std::string index)
     {
-        std::vector<GraphRawEdge> result;
-        std::copy_if(edgeCache_.begin(), edgeCache_.end(), std::back_inserter(result),
-                     [index](auto edge) { return index == edge.source || index == edge.destination; });
-        return result;
-    }
-
-    std::vector<GraphRawEdge> deleteNode(std::string index)
-    {
-        auto result = connectedTo(index);
-        for (auto &edge : result)
-            dropEdge(edge);
-        return result;
+        for (auto &edge : edges_())
+            if (index == edge->sourceNode().name() || index == edge->targetNode().name())
+                dropEdge(*edge);
     }
 
     // Create a new edge
-    void addEdge(GraphRawEdge newEdge);
+    void addEdge(Edge &newEdge);
 
-    GraphEdgeModel &operator=(const GraphEdgeModel &other);
-
-    bool operator!=(const GraphEdgeModel &other);
+    // bool operator!=(const GraphEdgeModel &other);
 
     // Return number of edges (required by QAbstractListModel)
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -75,5 +48,10 @@ class GraphEdgeModel : public QAbstractListModel
     QHash<int, QByteArray> roleNames() const override;
 
     private:
-    std::vector<GraphRawEdge> edgeCache_;
+    // The graph whose edges we model
+    Graph *&graph_;
+
+    // The edges of the graph
+    Graph::Edges &edges_();
+    const Graph::Edges &edges_() const;
 };

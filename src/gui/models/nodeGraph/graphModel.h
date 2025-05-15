@@ -53,15 +53,15 @@ class GraphModel : public QObject
     // Graph nodes wrapped in the wrappers
     std::vector<NodeWrapper> wrapped_;
     // Get index of name
-    int indexByName(std::string name);
+    int indexByName(std::string_view name);
 
     private:
     // Check whether a given source and destination can be connected
-    bool isValidEdgeSource_(GraphRawEdge &edge);
+    bool isValidEdgeSource_(Edge &edge);
     // Connect two nodes
-    bool connect_(GraphRawEdge &edge);
+    bool connect_(Edge &edge);
     // Remove a connection
-    bool disconnect_(GraphRawEdge &edge);
+    bool disconnect_(Edge &edge);
 
     Q_SIGNALS:
     void graphChanged();
