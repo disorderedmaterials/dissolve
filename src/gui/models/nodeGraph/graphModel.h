@@ -12,6 +12,7 @@
 #include <qtmetamacros.h>
 
 class GraphNodeModel;
+class GraphEdgeModel;
 
 // This is the base class for any node graph type
 class GraphModel : public QObject
@@ -24,6 +25,7 @@ class GraphModel : public QObject
     Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
 
     friend GraphNodeModel;
+    friend GraphEdgeModel;
 
     public:
     GraphModel();

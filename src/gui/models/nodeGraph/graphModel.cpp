@@ -5,8 +5,12 @@
 #include "graphModel.h"
 #include <QVariant>
 #include <iostream>
+#include <qabstractitemmodel.h>
 
-GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(graph_) {}
+GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
+{
+    QObject::connect(&nodes_, &QAbstractItemModel::dataChanged, &edges_, &GraphEdgeModel::updateValue);
+}
 
 Graph *GraphModel::graph() { return graph_; }
 

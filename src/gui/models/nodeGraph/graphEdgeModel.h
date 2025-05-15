@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <qnamespace.h>
 
+class GraphModel;
+
 /** A model to keep track of the edges between the nodes in the graph.
  * Note that the model only maintains a record of the *existing* edges
  * between nodes in the model.  The GraphModel is the source of truth
@@ -17,7 +19,7 @@
 class GraphEdgeModel : public QAbstractListModel
 {
     public:
-    GraphEdgeModel(Graph *&graph);
+    GraphEdgeModel(GraphModel *parent, Graph *&graph);
     GraphEdgeModel(const GraphEdgeModel &other);
 
     // Remove an edge from the model (by index). Returns false if edge does not exist
@@ -47,9 +49,14 @@ class GraphEdgeModel : public QAbstractListModel
     // Return the mapping between role index and QML value name.  This is required by QAbstractListModel
     QHash<int, QByteArray> roleNames() const override;
 
+    public Q_SLOTS:
+    void updateValue(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> roles);
+
     private:
     // The graph whose edges we model
     Graph *&graph_;
+    // The owner of this edge model
+    GraphModel *parent_;
 
     // The edges of the graph
     Graph::Edges &edges_();

@@ -2,8 +2,9 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/models/nodeGraph/graphEdgeModel.h"
+#include "gui/models/nodeGraph/graphModel.h"
 
-GraphEdgeModel::GraphEdgeModel(Graph *&graph) : graph_(graph) {}
+GraphEdgeModel::GraphEdgeModel(GraphModel *parent, Graph *&graph) : parent_(parent), graph_(graph) {}
 
 GraphEdgeModel::GraphEdgeModel(const GraphEdgeModel &other) : graph_(other.graph_) {}
 
@@ -52,16 +53,22 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
         return {};
     auto &edge = edges_()[row];
 
+    auto source = std::find_if(parent_->wrapped_.begin(), parent_->wrapped_.end(),
+                               [&edge](const auto &x) { return &x.rawValue() == &edge->sourceNode(); });
+
+    auto target = std::find_if(parent_->wrapped_.begin(), parent_->wrapped_.end(),
+                               [&edge](const auto &x) { return &x.rawValue() == &edge->targetNode(); });
+
     switch (role - Qt::UserRole)
     {
         case 0:
-            return QString::fromStdString(std::string(edge->sourceNode().name()));
+            return source != parent_->wrapped_.end() ? source->posx : 0;
         case 1:
-            return QString::fromStdString(std::string(edge->sourceOutput().name()));
+            return source != parent_->wrapped_.end() ? source->posy : 0;
         case 2:
-            return QString::fromStdString(std::string(edge->targetNode().name()));
+            return target != parent_->wrapped_.end() ? target->posx : 0;
         case 3:
-            return QString::fromStdString(std::string(edge->targetInput().name()));
+            return target != parent_->wrapped_.end() ? target->posy : 0;
         default:
             return {};
     }
@@ -70,11 +77,27 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> GraphEdgeModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[Qt::UserRole] = "source";
-    roles[Qt::UserRole + 1] = "sourceIndex";
-    roles[Qt::UserRole + 2] = "destination";
-    roles[Qt::UserRole + 3] = "destIndex";
+    roles[Qt::UserRole] = "sourceX";
+    roles[Qt::UserRole + 1] = "sourceY";
+    roles[Qt::UserRole + 2] = "targetX";
+    roles[Qt::UserRole + 3] = "targetY";
     return roles;
+}
+
+void GraphEdgeModel::updateValue(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> roles)
+{
+    for (auto i = topLeft.row(); i < bottomRight.row(); ++i)
+    {
+        const auto &node = parent_->wrapped_[i].rawValue();
+        for (auto j = 0; j < graph_->edges().size(); ++j)
+        {
+            const auto &edge = graph_->edges()[j];
+            if (&edge->sourceNode() == &node)
+                Q_EMIT dataChanged(index(j), index(j + 0), {Qt::UserRole + 1, Qt::UserRole + 1});
+            if (&edge->targetNode() == &node)
+                Q_EMIT dataChanged(index(j), index(j + 1), {Qt::UserRole + 2, Qt::UserRole + 3});
+        }
+    }
 }
 
 // The edges of the graph
