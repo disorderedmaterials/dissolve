@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "graphNodeModel.h"
 #include "graphModel.h"
+#include "graphNodeModel.h"
 #include <qvariant.h>
 
 GraphNodeModel::GraphNodeModel(GraphModel *parent) : parent_(parent) {}
@@ -72,7 +72,7 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
         case TYPE:
             return QString::fromStdString(std::string(item.rawValue().type()));
         case ICON:
-            return QString::fromStdString(std::format("qrc:/Dissolve/icons/nodes/{}.svg", item.rawValue().type()));
+            return QString::fromStdString(std::format("qrc:/IconsModule/nodes/{}.svg", item.rawValue().type()));
         case INPUTS:
             return QVariant::fromValue(item.inputs.get());
         case OUTPUTS:

@@ -213,7 +213,7 @@ ApplicationWindow {
                         }
                     }
                     Button {
-                        icon.source: "qrc:/Dissolve/icons/open.svg"
+                        icon.source: "qrc:/IconsModule/open.svg"
 
                         onClicked: openDialog.open()
                     }

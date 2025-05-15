@@ -286,22 +286,6 @@ if(GUI)
   qt_add_executable(${qmlgui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui-qml.cpp)
   set_source_files_properties(${SRCS}/gui-qml/qml/DissolveMain.qml PROPERTIES QT_RESOURCE_ALIAS qml/DissolveMain.qml)
 
-  # Programatically add icon resources
-  set(REAL_ICONS "")
-  file(
-    GLOB_RECURSE icons
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/src/gui/icons/
-    "*.svg"
-  )
-  foreach(icon ${icons})
-    if(${icon} MATCHES "\\.\\..*")
-
-    else()
-      set_source_files_properties(${SRCS}/gui/icons/${icon} PROPERTIES QT_RESOURCE_ALIAS icons/${icon})
-      list(APPEND REAL_ICONS "${SRCS}/gui/icons/${icon}")
-    endif()
-  endforeach()
-
   qt_add_qml_module(
     ${qmlgui_target_name}
     VERSION
@@ -315,7 +299,6 @@ if(GUI)
     ${SRCS}/gui/qml/nodeGraph/ParameterDelegate.qml
     ${SRCS}/gui/qml/nodeGraph/NodeBox.qml
     RESOURCES
-    ${REAL_ICONS}
   )
 
   # Set project-local include directories for target (we expect to need less of these dependencies over time)

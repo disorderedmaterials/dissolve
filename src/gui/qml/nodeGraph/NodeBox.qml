@@ -33,7 +33,7 @@ GroupBox {
         Button {
             contentItem: Image {
                 fillMode: Image.PreserveAspectFit
-                source: "qrc:/Dissolve/icons/cross.svg"
+                source: "qrc:/IconsModule/cross.svg"
                 sourceSize.height: titleLabel.height
                 sourceSize.width: titleLabel.height
             }
