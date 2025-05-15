@@ -8,6 +8,9 @@ NodeBox {
     property variant rootModel
     property double startX: x + width
 
+    // Ensure that we only display this box for valid node items
+    visible: icon != null
+
     image: icon
     nodeType: name
     px: posX
