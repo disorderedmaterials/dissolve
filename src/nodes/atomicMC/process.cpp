@@ -6,10 +6,10 @@
 #include "classes/regionalDistributor.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
-#include "nodes/atomShake/atomShake.h"
+#include "nodes/atomicMC/atomicMC.h"
 
 // Run main processing
-NodeConstants::ProcessResult AtomShakeNode::process()
+NodeConstants::ProcessResult AtomicMCNode::process()
 {
     // Get numeric input data
     auto nShakesPerAtom = nShakesPerAtom_.asInteger();
@@ -23,11 +23,11 @@ NodeConstants::ProcessResult AtomShakeNode::process()
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
 
     // Print argument/parameter summary
-    Messenger::print("AtomShake: Performing {} shake(s) per Atom\n", nShakesPerAtom);
-    Messenger::print("AtomShake: Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n",
-                     stepSize, stepSizeMin, stepSizeMax);
-    Messenger::print("AtomShake: Target acceptance rate is {}.\n", targetAcceptanceRate);
-    Messenger::print("\n");
+    message("Performing {} shake(s) per Atom\n", nShakesPerAtom);
+    message("Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n", stepSize, stepSizeMin,
+            stepSizeMax);
+    message("Target acceptance rate is {}.\n", targetAcceptanceRate);
+    message("\n");
 
     ProcessPool::DivisionStrategy strategy = processPool().bestStrategy();
     Timer commsTimer(false);
@@ -157,14 +157,14 @@ NodeConstants::ProcessResult AtomShakeNode::process()
     if (!processPool().allSum(&totalDelta, 1, strategy, commsTimer))
         return NodeConstants::ProcessResult::Failed;
 
-    Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
+    message("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
     // Calculate and print acceptance rate
     double rate = double(nAccepted) / nAttempts;
-    Messenger::print("Total number of attempted moves was {} ({} work, {} comms)\n", nAttempts, timer.totalTimeString(),
-                     commsTimer.totalTimeString());
+    message("Total number of attempted moves was {} ({} work, {} comms)\n", nAttempts, timer.totalTimeString(),
+            commsTimer.totalTimeString());
 
-    Messenger::print("Overall acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rate, nAccepted, nAttempts);
+    message("Overall acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rate, nAccepted, nAttempts);
 
     // Update and set translation step size
     stepSize *= (nAccepted == 0) ? 0.8 : rate / targetAcceptanceRate;
@@ -173,7 +173,7 @@ NodeConstants::ProcessResult AtomShakeNode::process()
     else if (stepSize > stepSizeMax)
         stepSize = stepSizeMax;
 
-    Messenger::print("Updated step size is {} Angstroms.\n", stepSize);
+    message("Updated step size is {} Angstroms.\n", stepSize);
 
     // Increase contents version in Configuration
     if (nAccepted > 0)

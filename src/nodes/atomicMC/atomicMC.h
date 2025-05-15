@@ -9,12 +9,12 @@
 #include "nodes/number.h"
 #include "nodes/parameter.h"
 
-// AtomShake Node
-class AtomShakeNode : public Node
+// AtomicMC Node
+class AtomicMCNode : public Node
 {
     public:
-    AtomShakeNode(Graph *parentGraph);
-    ~AtomShakeNode() override = default;
+    AtomicMCNode(Graph *parentGraph);
+    ~AtomicMCNode() override = default;
 
     public:
     std::string_view type() const override;
