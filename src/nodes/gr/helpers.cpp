@@ -325,7 +325,7 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
                          GRNode::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate)
 {
     // Does a PartialSet already exist for this Configuration?
-    auto originalGRObject = processingData.realiseIf<PartialSet>(std::format("{}//OriginalGR", cfg->niceName()), name_,
+    auto originalGRObject = processingData.realiseIf<PartialSet>(std::format("{}//OriginalGR", cfg->niceName()), name(),
                                                                  GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)
@@ -335,7 +335,7 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
     alreadyUpToDate = false;
     if (DissolveSys::sameString(originalgr.fingerprint(), std::format("{}", cfg->contentsVersion())) &&
-        (method != GRNode::TestMethod))
+        (method != PartialsMethod::TestMethod))
     {
         message("Partial g(r) are up-to-date for Configuration '{}'.\n", cfg->name());
         alreadyUpToDate = true;
@@ -356,13 +356,13 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
      */
 
     Timer timer;
-    if (method == GRNode::TestMethod)
+    if (method == PartialsMethod::TestMethod)
         calculateGRTestSerial(cfg, originalgr);
-    else if (method == GRNode::SimpleMethod)
+    else if (method == PartialsMethod::SimpleMethod)
         calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
-    else if (method == GRNode::CellsMethod)
+    else if (method == PartialsMethod::CellsMethod)
         calculateGRCells(procPool, cfg, originalgr, rdfRange);
-    else if (method == GRNode::AutoMethod)
+    else if (method == PartialsMethod::AutoMethod)
     {
         cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, originalgr, rdfRange)
                               : calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
@@ -378,8 +378,8 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
     const auto &cells = cfg->cells();
 
     // Set start/stride for parallel loop (pool solo)
-    auto offset = (method == GRNode::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
-    auto nChunks = (method == GRNode::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
+    auto offset = (method == PartialsMethod::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
+    auto nChunks = (method == PartialsMethod::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
 
     timer.start();
 
@@ -425,9 +425,9 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
         for_each_pair_early(0, originalgr.nAtomTypes(),
                             [&originalgr, &procPool, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
                             {
-                                // Sum histogram data from all processes (except if using GRNode::TestMethod, where all
+                                // Sum histogram data from all processes (except if using PartialsMethod::TestMethod, where all
                                 // processes have all data already)
-                                if (method != GRNode::TestMethod)
+                                if (method != PartialsMethod::TestMethod)
                                 {
                                     if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool, commsTimer))
                                         return false;
@@ -450,8 +450,8 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
     // Sum total functions
     originalgr.formTotals(true);
     timer.stop();
-    message("Finished summation and normalisation of partial g(r) data ({} elapsed, {} comms).\n",
-                     timer.totalTimeString(), commsTimer.totalTimeString());
+    message("Finished summation and normalisation of partial g(r) data ({} elapsed, {} comms).\n", timer.totalTimeString(),
+            commsTimer.totalTimeString());
 
     /*
      * Partials are now up-to-date
@@ -546,7 +546,10 @@ bool GRNode::sumUnweightedGR(GenericList &processingData, const ProcessPool &pro
     {
         // Confirm atomic density is available (for the subsequent accumulator)
         if (!cfg->atomicDensity())
-            return error("No density available for target configuration '{}'\n", cfg->name());
+        {
+            error("No density available for target configuration '{}'\n", cfg->name());
+            return false;
+        }
 
         // TODO Assume weight of 1.0
         auto weight = 1.0;
@@ -566,7 +569,10 @@ bool GRNode::sumUnweightedGR(GenericList &processingData, const ProcessPool &pro
     for (auto [cfg, cfgWeight] : configWeights)
     {
         if (!cfg->atomicDensity())
-            return error("No density available for target configuration '{}'\n", cfg->name());
+        {
+            error("No density available for target configuration '{}'\n", cfg->name());
+            return false;
+        }
 
         // Update fingerprint
         fingerprint +=
@@ -577,7 +583,11 @@ bool GRNode::sumUnweightedGR(GenericList &processingData, const ProcessPool &pro
 
         // Grab partials for Configuration and add into our set
         if (!processingData.contains(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix))
-            return error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
+        {
+            error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
+            return false;
+        }
+
         auto cfgPartialGR = processingData.value<PartialSet>(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix);
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
@@ -599,34 +609,34 @@ bool GRNode::testReferencePartials(PartialSet &setA, PartialSet &setB, double te
         {
             // Full partial
             auto errorReport = Error::percent(setA.partial(n, m), setB.partial(n, m));
-            message(Error::errorReportString(errorReport));
+            message("{}", Error::errorReportString(errorReport));
             message("Test reference full partial '{}-{}' has {} error of {:7.3f}{} with calculated data and is "
-                             "{} (threshold is {:6.3f}%)\n\n",
-                             typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
-                             errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                             errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+                    "{} (threshold is {:6.3f}%)\n\n",
+                    typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
+                    errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                    errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
             if (errorReport.error > testThreshold)
                 return false;
 
             // Bound partial
             errorReport = Error::percent(setA.boundPartial(n, m), setB.boundPartial(n, m));
-            message(Error::errorReportString(errorReport));
+            message("{}", Error::errorReportString(errorReport));
             message("Test reference bound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
-                             "is {} (threshold is {:6.3f}%)\n\n",
-                             typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
-                             errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                             errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+                    "is {} (threshold is {:6.3f}%)\n\n",
+                    typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
+                    errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                    errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
             if (errorReport.error > testThreshold)
                 return false;
 
             // Unbound reference
             errorReport = Error::percent(setA.unboundPartial(n, m), setB.unboundPartial(n, m));
-            message(Error::errorReportString(errorReport));
+            message("{}", Error::errorReportString(errorReport));
             message("Test reference unbound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
-                             "is {} (threshold is {:6.3f}%)\n\n",
-                             typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
-                             errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                             errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+                    "is {} (threshold is {:6.3f}%)\n\n",
+                    typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
+                    errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                    errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
             if (errorReport.error > testThreshold)
                 return false;
 
@@ -635,12 +645,11 @@ bool GRNode::testReferencePartials(PartialSet &setA, PartialSet &setB, double te
 
     // Total reference data supplied?
     auto errorReport = Error::percent(setA.total(), setB.total());
-    message(Error::errorReportString(errorReport));
-    message(
-        "Test reference total has {} error of {:7.3f}{} with calculated data and is {} (threshold is {:6.3f}%)\n\n",
-        Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
-        errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-        errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+    message("{}", Error::errorReportString(errorReport));
+    message("Test reference total has {} error of {:7.3f}{} with calculated data and is {} (threshold is {:6.3f}%)\n\n",
+            Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+            errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+            errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
     if (errorReport.error > testThreshold)
         return false;
 
@@ -656,13 +665,13 @@ bool GRNode::testReferencePartial(const PartialSet &partials, double testThresho
     if (DissolveSys::sameString(typeIorTotal, "total") && typeJ.empty() && target.empty())
     {
         auto errorReport = Error::percent(partials.total(), testData);
-        message(Error::errorReportString(errorReport));
+        message("{}", Error::errorReportString(errorReport));
         testResult = (errorReport.error <= testThreshold);
         message("Test reference data '{}' has {} error of {:7.3f}{} with calculated data and is {} (threshold is "
-                         "{:6.3f}%)\n\n",
-                         testData.tag(), Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
-                         errorReport.errorType == Error::ErrorType::PercentError ? "%" : "", testResult ? "OK" : "NOT OK",
-                         testThreshold);
+                "{:6.3f}%)\n\n",
+                testData.tag(), Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+                errorReport.errorType == Error::ErrorType::PercentError ? "%" : "", testResult ? "OK" : "NOT OK",
+                testThreshold);
     }
     else
     {
@@ -670,36 +679,42 @@ bool GRNode::testReferencePartial(const PartialSet &partials, double testThresho
         auto indexI = partials.atomTypeMix().indexOf(typeIorTotal);
         auto indexJ = partials.atomTypeMix().indexOf(typeJ);
         if (!indexI || !indexJ)
-            return error("Unrecognised test data name '{}'.\n", testData.tag());
+        {
+            error("Unrecognised test data name '{}'.\n", testData.tag());
+            return false;
+        }
 
         // AtomTypes are valid, so check the 'target'
         Error::ErrorReport errorReport;
         if (DissolveSys::sameString(target, "bound"))
         {
             errorReport = Error::percent(partials.boundPartial(*indexI, *indexJ), testData);
-            message(Error::errorReportString(errorReport));
+            message("{}", Error::errorReportString(errorReport));
         }
 
         else if (DissolveSys::sameString(target, "unbound"))
         {
             errorReport = Error::percent(partials.unboundPartial(*indexI, *indexJ), testData);
-            message(Error::errorReportString(errorReport));
+            message("{}", Error::errorReportString(errorReport));
         }
         else if (DissolveSys::sameString(target, "full"))
         {
             errorReport = Error::percent(partials.partial(*indexI, *indexJ), testData);
-            message(Error::errorReportString(errorReport));
+            message("{}", Error::errorReportString(errorReport));
         }
 
         else
-            return error("Unrecognised test data name '{}'.\n", testData.tag());
+        {
+            error("Unrecognised test data name '{}'.\n", testData.tag());
+            return false;
+        }
 
         testResult = (errorReport.error <= testThreshold);
         message("Test reference data '{}' has {} error of {:7.3f}{} with calculated data and is {} (threshold is "
-                         "{:6.3f}%)\n\n",
-                         testData.tag(), Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
-                         errorReport.errorType == Error::ErrorType::PercentError ? "%" : "", testResult ? "OK" : "NOT OK",
-                         testThreshold);
+                "{:6.3f}%)\n\n",
+                testData.tag(), Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+                errorReport.errorType == Error::ErrorType::PercentError ? "%" : "", testResult ? "OK" : "NOT OK",
+                testThreshold);
     }
 
     return testResult;

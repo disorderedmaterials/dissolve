@@ -23,22 +23,22 @@ NodeConstants::ProcessResult GRNode::process()
     if (!requestedRange_)
         message("RDF: Partials will be calculated up to the half-cell range limit.\n");
     else
-        message("RDF: Partials will be calculated out to {} Angstroms.\n", requestedRange_.value());
+        message("RDF: Partials will be calculated out to {} Angstroms.\n", requestedRange_.value().asDouble());
     message("RDF: Bin-width to use is {} Angstroms.\n", binWidth_.asDouble());
     if (averagingLength_)
-        message("RDF: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value(),
-                         Averaging::averagingSchemes().keyword(averagingScheme_));
+        message("RDF: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value().asDouble(),
+                Averaging::averagingSchemes().keyword(averagingScheme_));
     else
         message("RDF: No averaging of partials will be performed.\n");
     if (intraBroadening_.form() == Functions1D::Form::None)
         message("RDF: No broadening will be applied to intramolecular g(r).");
     else
         message("RDF: Broadening to be applied to intramolecular g(r) is {} ({}).",
-                         Functions1D::forms().keyword(intraBroadening_.form()), intraBroadening_.parameterSummary());
+                Functions1D::forms().keyword(intraBroadening_.form()), intraBroadening_.parameterSummary());
     message("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(partialsMethod_));
     message("RDF: Save data is {}.\n", DissolveSys::onOff(save_));
     message("RDF: Save original (unbroadened) g(r) is {}.\n", DissolveSys::onOff(saveOriginal_));
-    if (nSmooths_.has_value())
+    if (nSmooths_)
         message("RDF: Degree of smoothing to apply to calculated partial g(r) is {}.\n", nSmooths_.value().asInteger());
     message("\n");
 
@@ -59,8 +59,8 @@ NodeConstants::ProcessResult GRNode::process()
             if (requestedRange_.value_or(Number(0.0)) > rdfRange)
             {
                 error("Specified RDF range of {} Angstroms is out of range for Configuration "
-                                 "'{}' (max = {} Angstroms).\n",
-                                 requestedRange_.value().asDouble(), cfg->niceName(), rdfRange);
+                      "'{}' (max = {} Angstroms).\n",
+                      requestedRange_.value().asDouble(), cfg->niceName(), rdfRange);
                 return NodeConstants::ProcessResult::Failed;
             }
 
@@ -74,10 +74,10 @@ NodeConstants::ProcessResult GRNode::process()
 
         // Calculate unweighted partials for this Configuration
         bool alreadyUpToDate;
-        calculateGR(dissolve().processingModuleData(), processPool(), cfg, partialsMethod_,
-                    rdfRange, binWidth_.asDouble(), alreadyUpToDate);
-        auto &originalgr = dissolve().processingModuleData().retrieve<PartialSet>(
-            std::format("{}//OriginalGR", cfg->niceName()), name());
+        calculateGR(dissolve().processingModuleData(), processPool(), cfg, partialsMethod_, rdfRange, binWidth_.asDouble(),
+                    alreadyUpToDate);
+        auto &originalgr =
+            dissolve().processingModuleData().retrieve<PartialSet>(std::format("{}//OriginalGR", cfg->niceName()), name());
 
         // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
         if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
@@ -85,9 +85,8 @@ NodeConstants::ProcessResult GRNode::process()
             // Store the current fingerprint, since we must ensure we retain it in the averaged T.
             std::string currentFingerprint{originalgr.fingerprint()};
 
-            Averaging::average<PartialSet>(dissolve().processingModuleData(),
-                                           std::format("{}//OriginalGR", cfg->niceName()), name(), averagingLength_.value().asDouble(),
-                                           averagingScheme_);
+            Averaging::average<PartialSet>(dissolve().processingModuleData(), std::format("{}//OriginalGR", cfg->niceName()),
+                                           name(), averagingLength_.value().asDouble(), averagingScheme_);
 
             // Re-set the object names and fingerprints of the partials
             originalgr.setFingerprint(currentFingerprint);
@@ -98,8 +97,8 @@ NodeConstants::ProcessResult GRNode::process()
         {
             // Copy the already-calculated g(r), then calculate a new set using the Test method
             PartialSet referencePartials = originalgr;
-            calculateGR(dissolve().processingModuleData(), processPool(), cfg, PartialsMethod::TestMethod,
-                        rdfRange, binWidth_.asDouble(), alreadyUpToDate);
+            calculateGR(dissolve().processingModuleData(), processPool(), cfg, PartialsMethod::TestMethod, rdfRange,
+                        binWidth_.asDouble(), alreadyUpToDate);
             if (!testReferencePartials(referencePartials, originalgr, 1.0e-6))
                 return NodeConstants::ProcessResult::Failed;
         }
@@ -111,21 +110,19 @@ NodeConstants::ProcessResult GRNode::process()
                               nSmooths_.value_or(0).asInteger());
 
         // Save data if requested
-        if (save_ &&
-            (!MPIRunMaster(processPool(), unweightedgr.save(name(), "UnweightedGR", "gr", "r, Angstroms"))))
+        if (save_ && (!MPIRunMaster(processPool(), unweightedgr.save(name(), "UnweightedGR", "gr", "r, Angstroms"))))
             return NodeConstants::ProcessResult::Failed;
-        if (saveOriginal_ &&
-            (!MPIRunMaster(processPool(), originalgr.save(name(), "OriginalGR", "gr", "r, Angstroms"))))
+        if (saveOriginal_ && (!MPIRunMaster(processPool(), originalgr.save(name(), "OriginalGR", "gr", "r, Angstroms"))))
             return NodeConstants::ProcessResult::Failed;
     }
 
     // Create/retrieve PartialSet for summed unweighted g(r)
-    auto &summedUnweightedGR = dissolve().processingModuleData().realise<PartialSet>(
-        "UnweightedGR", name(), GenericItem::InRestartFileFlag);
+    auto &summedUnweightedGR =
+        dissolve().processingModuleData().realise<PartialSet>("UnweightedGR", name(), GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
-    if (!GRNode::sumUnweightedGR(dissolve().processingModuleData(), processPool(), name(), name(),
-                                   targetConfigurations_, summedUnweightedGR))
+    if (!sumUnweightedGR(dissolve().processingModuleData(), processPool(), name(), name(), targetConfigurations_,
+                         summedUnweightedGR))
         return NodeConstants::ProcessResult::Failed;
 
     return NodeConstants::ProcessResult::Success;

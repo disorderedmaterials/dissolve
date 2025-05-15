@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/enumOptions.h"
 #include "base/processPool.h"
 #include "classes/configuration.h"
 #include "classes/partialSet.h"
@@ -87,17 +88,17 @@ class GRNode : public Node
     bool calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg,
                      GRNode::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
-    static bool calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
-                                      PartialSet &weightedgr, const Function1DWrapper intraBroadening, int smoothing);
+    bool calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
+                               PartialSet &weightedgr, const Function1DWrapper intraBroadening, int smoothing);
     // Sum unweighted g(r) over the supplied Module's target Configurations
-    static bool sumUnweightedGR(GenericList &processingData, const ProcessPool &procPool, std::string_view targetPrefix,
-                                std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,
-                                PartialSet &summedUnweightedGR);
+    bool sumUnweightedGR(GenericList &processingData, const ProcessPool &procPool, std::string_view targetPrefix,
+                         std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,
+                         PartialSet &summedUnweightedGR);
     // Test supplied PartialSets against each other
-    static bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
+    bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
     // Test calculated partial against supplied reference data
-    static bool testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
-                                     std::string_view typeIorTotal, std::string_view typeJ = "", std::string_view target = "");
+    bool testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
+                              std::string_view typeIorTotal, std::string_view typeJ = "", std::string_view target = "");
 
     /*
      * Processing
