@@ -73,9 +73,9 @@ Pane {
                 title: "Action"
 
                 MenuItem {
-                    text: "Atom Shake"
+                    text: "Atomic MC"
 
-                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AtomShake", "New Node")
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AtomicMC", "New Node")
                 }
                 MenuItem {
                     text: "Insert"
