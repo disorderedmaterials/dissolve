@@ -4,7 +4,7 @@
 #include "graphModel.h"
 #include "graphEdgeModel.h"
 #include <iostream>
-#include <qvariant.h>
+#include <QVariant>
 
 GraphModel::GraphModel() : nodes_(this), graph_(nullptr) {}
 

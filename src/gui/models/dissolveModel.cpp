@@ -11,7 +11,7 @@
 Dissolve &DissolveModel::dissolve()
 {
     if (!dissolve_)
-        Messenger::exception("DissolveModel is laching a backend.  This should *never* happen, so please contact the "
+        Messenger::exception("DissolveModel is lacking a backend.  This should *never* happen, so please contact the "
                              "Dissolve developers to inform them of the issue.");
     return *dissolve_;
 }
