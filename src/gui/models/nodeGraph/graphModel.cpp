@@ -3,8 +3,8 @@
 
 #include "graphModel.h"
 #include "graphEdgeModel.h"
-#include <iostream>
 #include <QVariant>
+#include <iostream>
 
 GraphModel::GraphModel() : nodes_(this), graph_(nullptr) {}
 
