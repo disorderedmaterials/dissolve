@@ -8,6 +8,7 @@
 #include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
 #include "modules/geomOpt/geomOpt.h"
+#include "gui/speciesCellDialog.h"
 #include <QButtonGroup>
 #include <QMessageBox>
 
@@ -17,6 +18,7 @@ SpeciesEditor::SpeciesEditor(QWidget *parent) : QWidget(parent)
 
     // Set up our UI
     ui_.setupUi(this);
+    ui_.ToolsBondToleranceSpin->setValue(tolerance_);
 
     // Create a button group for the interaction modes
     auto *group = new QButtonGroup;
@@ -187,8 +189,17 @@ void SpeciesEditor::on_ToolsCalculateBondingButton_clicked(bool checked)
     if (!sp)
         return;
 
-    // Calculate missing bonds
-    sp->addMissingBonds();
+    // Now tolerance can be changed, clear bonds before updating (can't iterate directly over bonds...)
+    auto &bonds = sp->bonds();
+    std::vector<std::pair<int, int>> idxs;
+    if (bonds.size())
+        for (const auto &bond : bonds)
+            idxs.push_back({bond.indexI(), bond.indexJ()});
+        for (const auto &[i, j] : idxs)
+            sp->removeBond(i, j);
+
+    // (Re)Calculate missing bonds
+    sp->addMissingBonds(tolerance_);
 
     // Signal that the data shown has been modified
     speciesViewer()->postRedisplay();
@@ -258,4 +269,26 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
     speciesViewer()->view().showAllData();
     speciesViewer()->postRedisplay();
     speciesViewer()->notifyDataModified();
+}
+
+void SpeciesEditor::on_ToolsAddCellButton_clicked(bool checked)
+{
+    SpeciesCellDialog dialog(this, speciesViewer()->species());
+    dialog.exec();
+    speciesViewer()->view().showAllData();
+    speciesViewer()->postRedisplay();
+    speciesViewer()->notifyDataModified();
+}
+
+void SpeciesEditor::on_ToolsRemoveCellButton_clicked(bool checked)
+{
+    speciesViewer()->species()->removeBox();
+    speciesViewer()->view().showAllData();
+    speciesViewer()->postRedisplay();
+    speciesViewer()->notifyDataModified();
+}
+
+void SpeciesEditor::on_ToolsBondToleranceSpin_valueChanged(double value)
+{
+    tolerance_ = value;
 }

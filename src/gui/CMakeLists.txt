@@ -125,6 +125,9 @@ add_library(
   selectSpeciesDialog.cpp
   selectSpeciesDialog.h
   selectSpeciesDialog.ui
+  speciesCellDialog.cpp
+  speciesCellDialog.h
+  speciesCellDialog.ui
   # Main Tabs
   configurationTab.cpp
   configurationTab.h

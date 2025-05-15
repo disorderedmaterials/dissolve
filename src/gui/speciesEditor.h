@@ -21,6 +21,8 @@ class SpeciesEditor : public QWidget
     private:
     // Main Dissolve pointer
     Dissolve *dissolve_;
+    // Bond tolerance
+    double tolerance_{1.1};
 
     public:
     // Set main Dissolve pointer
@@ -79,4 +81,7 @@ class SpeciesEditor : public QWidget
     // Tools
     void on_ToolsCalculateBondingButton_clicked(bool checked);
     void on_ToolsMinimiseButton_clicked(bool checked);
+    void on_ToolsAddCellButton_clicked(bool checked);
+    void on_ToolsRemoveCellButton_clicked(bool checked);
+    void on_ToolsBondToleranceSpin_valueChanged(double value);
 };
