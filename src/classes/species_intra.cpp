@@ -114,7 +114,7 @@ void Species::addMissingBonds(double tolerance, bool preventMetallic)
                 continue;
 
             // If the two atoms are already bound, continue
-            if (i.getBond(&j))
+            if (getBond(indexI, indexJ))
                 continue;
 
             // Calculate distance between atoms
@@ -152,6 +152,17 @@ void Species::removeHigherOrderIntramolecularTerms()
     impropers_.clear();
 
     ++version_;
+}
+
+// Clear and recalculate all bonds on the species
+void Species::recalculateIntermolecularTerms(double tolerance)
+{
+    // Need to detach()
+    for (auto &bond : bonds_)
+        removeBond(bond.i(), bond.j());
+    
+    addMissingBonds(tolerance);
+    updateIntramolecularTerms();
 }
 
 // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid

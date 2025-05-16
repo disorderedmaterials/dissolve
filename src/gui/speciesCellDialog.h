@@ -17,10 +17,12 @@ class SpeciesCellDialog : public QDialog
     SpeciesCellDialog(QWidget *parent, Species *sp);
     ~SpeciesCellDialog() = default;
 
+    // Call the dialog
+    bool createUnitCell();
+
     private:
     // Main Dissolve pointer
     Ui::SpeciesCellDialog ui_;
-    QDialog *view_{nullptr};
 
     // Species
     Species *sp_;

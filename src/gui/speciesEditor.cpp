@@ -189,17 +189,7 @@ void SpeciesEditor::on_ToolsCalculateBondingButton_clicked(bool checked)
     if (!sp)
         return;
 
-    // Now tolerance can be changed, clear bonds before updating (can't iterate directly over bonds...)
-    auto &bonds = sp->bonds();
-    std::vector<std::pair<int, int>> idxs;
-    if (bonds.size())
-        for (const auto &bond : bonds)
-            idxs.push_back({bond.indexI(), bond.indexJ()});
-    for (const auto &[i, j] : idxs)
-        sp->removeBond(i, j);
-
-    // (Re)Calculate missing bonds
-    sp->addMissingBonds(tolerance_);
+    sp->recalculateIntermolecularTerms(tolerance_);
 
     // Signal that the data shown has been modified
     speciesViewer()->postRedisplay();
@@ -274,18 +264,30 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
 void SpeciesEditor::on_ToolsAddCellButton_clicked(bool checked)
 {
     SpeciesCellDialog dialog(this, speciesViewer()->species());
-    dialog.exec();
-    speciesViewer()->view().showAllData();
-    speciesViewer()->postRedisplay();
-    speciesViewer()->notifyDataModified();
+
+    if (dialog.createUnitCell())
+    {
+        speciesViewer()->species()->recalculateIntermolecularTerms(tolerance_);
+        speciesViewer()->view().showAllData();
+        speciesViewer()->postRedisplay();
+        speciesViewer()->notifyDataModified();
+    }
 }
 
 void SpeciesEditor::on_ToolsRemoveCellButton_clicked(bool checked)
 {
+    speciesViewer()->species()->recalculateIntermolecularTerms(tolerance_);
     speciesViewer()->species()->removeBox();
     speciesViewer()->view().showAllData();
     speciesViewer()->postRedisplay();
     speciesViewer()->notifyDataModified();
 }
 
-void SpeciesEditor::on_ToolsBondToleranceSpin_valueChanged(double value) { tolerance_ = value; }
+void SpeciesEditor::on_ToolsBondToleranceSpin_valueChanged(double value)
+{
+    if (tolerance_ != value) // Segfault without
+    {
+        tolerance_ = value;
+        speciesViewer()->species()->recalculateIntermolecularTerms(tolerance_);
+    }
+}

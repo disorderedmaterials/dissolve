@@ -14,6 +14,12 @@ EditSpeciesDialog::EditSpeciesDialog(QWidget *parent, Species *sp)
     ui_.EditSpeciesWidget->setSpecies(species_);
 
     ui_.OKButton->setEnabled(species_ && species_->nAtoms() > 0);
+
+    // Prevent enter/return key from closing dialog
+    ui_.OKButton->setAutoDefault(false);
+    ui_.CancelButton->setAutoDefault(false);
+    ui_.OKButton->setDefault(false);
+    ui_.CancelButton->setDefault(false);
 }
 
 EditSpeciesDialog::~EditSpeciesDialog() {}

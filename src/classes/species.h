@@ -170,6 +170,8 @@ class Species : public Serialisable<const CoreData &>
     void removePeriodicBonds();
     // Remove all higher order intramolecular terms
     void removeHigherOrderIntramolecularTerms();
+    // Clear and regenerate bonds based on tolerance
+    void recalculateIntermolecularTerms(double tolerance);
     // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
     void updateIntramolecularTerms();
     // Add new SpeciesAngle definition
