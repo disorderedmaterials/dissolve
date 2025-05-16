@@ -114,7 +114,8 @@ void Species::addMissingBonds(double tolerance, bool preventMetallic)
                 continue;
 
             // If the two atoms are already bound, continue
-            if (i.getBond(&j))
+            //if (i.getBond(&j))
+            if (getBond(i.index(), j.index()))
                 continue;
 
             // Calculate distance between atoms
@@ -157,9 +158,9 @@ void Species::removeHigherOrderIntramolecularTerms()
 // Clear and recalculate all bonds on the species
 void Species::recalculateIntermolecularTerms(double tolerance)
 {
-    // Need to detach()
-    for (auto &bond : bonds_)
-        removeBond(bond.i(), bond.j());
+    // Need to detach().
+    while (bonds_.size())
+        removeBond(bonds_[0].i(), bonds_[0].j());
     
     addMissingBonds(tolerance);
     updateIntramolecularTerms();
