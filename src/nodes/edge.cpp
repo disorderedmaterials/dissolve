@@ -58,20 +58,34 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
         Messenger::error("Target node '{}' does not exist in the graph.\n", definition.targetNode);
         return {};
     }
-    auto targetInput = targetNode->findInput(definition.targetInput);
+
+    // Disallow circular edges (mostly a check for Graph -> Graph connections)
+    if (targetNode == parent)
+    {
+        Messenger::error("Target node is graph '{}' and cannot be the owner of the edge.", definition.targetNode);
+        return {};
+    }
+
+    // We need to check carefully the target node, since we need to permit certain connections to the Graph object itself as
+    // well as its Outputs node explicitly.
+    std::shared_ptr<ParameterBase> targetInput{nullptr};
+    if (dynamic_cast<Graph *>(targetNode))
+    {
+        // The target node is a Graph: check for (and disallow) self-to-self edge connections, and dynamically create others
+        auto graphNode = dynamic_cast<Graph *>(targetNode);
+        targetInput = graphNode->createDynamicInput(definition.targetInput, sourceOutput->type());
+    }
+    else if (dynamic_cast<Graph *>(targetNode))
+    {
+        // If the target node is the parent Graph's own Outputs node, create a dynamic output
+    }
+    else
+        targetInput = targetNode->findInput(definition.targetInput);
+
     if (!targetInput)
     {
-        // If the targetNode is a Graph we may need to dynamically create an input for the edge
-        auto graphNode = dynamic_cast<Graph *>(targetNode);
-        if (graphNode)
-        {
-            targetInput = graphNode->mapInput(definition.targetInput, sourceOutput->type());
-        }
-        else
-        {
-            Messenger::error("Target node '{}' has no input parameter '{}'.\n", definition.targetNode, definition.targetInput);
-            return {};
-        }
+        Messenger::error("Target node '{}' has no input parameter '{}'.\n", definition.targetNode, definition.targetInput);
+        return {};
     }
 
     // Confirm that the destination input is actually an input

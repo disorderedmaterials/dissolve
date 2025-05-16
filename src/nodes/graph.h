@@ -15,6 +15,18 @@
 class Edge;
 class EdgeDefinition;
 
+// Parameter Holder Base
+class ParameterHolderBase
+{
+};
+
+// Parameter Holder
+template <class T> class ParameterHolder : public ParameterHolderBase
+{
+    public:
+    T data;
+};
+
 // Graph
 class Graph : public Node
 {
@@ -35,11 +47,16 @@ class Graph : public Node
      * Inputs, Outputs, and Options
      */
     private:
-    InputsNode *mappedInputs_{nullptr};
+    // Parameter holders for dynamic input / output variables
+    std::vector<std::shared_ptr<ParameterHolderBase>> parameterHolders_;
+    // Dynamic input and output nodes
+    InputsNode *dynamicInputs_{nullptr}, *dynamicOutputs_{nullptr};
 
     public:
-    // Create mapped input
-    std::shared_ptr<ParameterBase> mapInput(std::string_view inputName, std::type_index typeIndex);
+    // Create dynamic input
+    std::shared_ptr<ParameterBase> createDynamicInput(std::string_view inputName, std::type_index typeIndex);
+    // Create dynamic output
+    std::shared_ptr<ParameterBase> createDynamicOutput(std::string_view outputName, std::type_index typeIndex);
 
     /*
      * Nodes and Edges

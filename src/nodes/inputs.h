@@ -5,18 +5,6 @@
 
 #include "nodes/node.h"
 
-// Parameter Holder Base
-class ParameterHolderBase
-{
-};
-
-// Parameter Holder
-template <class T> class ParameterHolder : public ParameterHolderBase
-{
-    public:
-    T data;
-};
-
 // Inputs Node
 class InputsNode : public Node
 {
@@ -32,17 +20,6 @@ class InputsNode : public Node
     std::string_view type() const override;
     // Return short summary of the node's purpose
     std::string_view summary() const override;
-
-    /*
-     * Parameter Maps
-     */
-    private:
-    // Parameter holders
-    std::vector<std::shared_ptr<ParameterHolderBase>> parameterHolders_;
-
-    public:
-    // Create input and map to output
-    std::shared_ptr<ParameterBase> createMappedInput(std::string_view name, std::type_index typeIndex);
 
     /*
      * I/O
