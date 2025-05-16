@@ -52,7 +52,7 @@ class GRNode : public Node
     // Weighting scheme to use when averaging partials
     Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Bin width (spacing in r) to use
-    Number binWidth_{0.025};
+    Number binWidth_{0.001};
     // Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop
     bool internalTest_{false};
     // Type of broadening to apply to intramolecular g(r)
