@@ -114,7 +114,7 @@ void Species::addMissingBonds(double tolerance, bool preventMetallic)
                 continue;
 
             // If the two atoms are already bound, continue
-            if (getBond(indexI, indexJ))
+            if (i.getBond(&j))
                 continue;
 
             // Calculate distance between atoms
