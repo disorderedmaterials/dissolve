@@ -39,3 +39,5 @@ EnumOptions<GRNode::PartialsMethod> GRNode::partialsMethods()
 std::string_view GRNode::type() const { return "GR"; }
 
 std::string_view GRNode::summary() const { return "Calculate radial distribution functions between all atom types."; }
+
+EnumOptions<GRNode::PartialsMethod> getEnumOptions(GRNode::PartialsMethod) { return GRNode::partialsMethods(); }

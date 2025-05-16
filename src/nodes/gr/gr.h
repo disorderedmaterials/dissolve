@@ -42,7 +42,7 @@ class GRNode : public Node
         nPartialsMethods
     };
     // Return enum option info for PartialsMethod
-    EnumOptions<GRNode::PartialsMethod> partialsMethods();
+    static EnumOptions<PartialsMethod> partialsMethods();
 
     private:
     // Target configurations
@@ -60,7 +60,7 @@ class GRNode : public Node
     // Degree of smoothing to apply
     std::optional<Number> nSmooths_;
     // Calculation method for partials
-    GRNode::PartialsMethod partialsMethod_{GRNode::PartialsMethod::AutoMethod};
+    PartialsMethod partialsMethod_{PartialsMethod::AutoMethod};
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
     std::optional<Number> requestedRange_;
     // Whether to save partials and total functions to disk
@@ -85,8 +85,8 @@ class GRNode : public Node
     // Calculate and return used species populations based on target Configurations
     std::vector<std::pair<const Species *, double>> speciesPopulations() const;
     // (Re)calculate partial g(r) for the specified Configuration
-    bool calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg,
-                     GRNode::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
+    bool calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg, PartialsMethod method,
+                     const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
     bool calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
                                PartialSet &weightedgr, const Function1DWrapper intraBroadening, int smoothing);
@@ -107,3 +107,5 @@ class GRNode : public Node
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };
+
+EnumOptions<GRNode::PartialsMethod> getEnumOptions(GRNode::PartialsMethod);
