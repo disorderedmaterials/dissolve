@@ -7,7 +7,7 @@
 
 Graph::Graph(Graph *parentGraph) : Node(parentGraph)
 {
-    mappedInputs_ = dynamic_cast<InputsNode *>(createNode("Inputs", "Inputs"));
+    mappedInputs_ = dynamic_cast<InputsNode *>(addNode(std::make_unique<InputsNode>(this), "Inputs"));
 }
 
 /*
@@ -25,9 +25,23 @@ std::string_view Graph::summary() const { return "A node which contains its own 
  */
 
 // Create mapped input
-std::shared_ptr<ParameterBase> Graph::mapInput(std::string_view name, std::type_index typeIndex)
+std::shared_ptr<ParameterBase> Graph::mapInput(std::string_view inputName, std::type_index typeIndex)
 {
-    return mappedInputs_->createMappedInput(name, typeIndex);
+    // Create an intermediate object with the correct type and add an input referencing it
+    std::shared_ptr<ParameterBase> inputParameter;
+    // TODO Convert to Factory
+    if (typeIndex == std::type_index(typeid(Number)))
+    {
+        auto proxy = std::make_shared<ParameterHolder<Number>>();
+        parameterHolders_.emplace_back(proxy);
+        inputParameter = addInput(name, "", proxy->data);
+
+        // Create a companion output
+        addOutput(name, "", proxy->data);
+    }
+
+    return inputParameter;
+// return mappedInputs_->createMappedInput(inputName, typeIndex);
 }
 
 /*
@@ -94,9 +108,9 @@ std::string_view Graph::nodeName(const Node *node) const
 }
 
 // Set name of specified child node
-void Graph::setNodeName(const Node *node, std::string_view name)
+void Graph::setNodeName(const Node *node, std::string_view nodeName)
 {
-    auto uniqueName = uniqueNodeName(node, name);
+    auto uniqueName = uniqueNodeName(node, nodeName);
 
     // Extract the forward node mapping (name -> node) using its current name in reverseNodes_
     auto nodeHandle = nodes_.extract(reverseNodes_.at(node));
@@ -153,15 +167,15 @@ Edge *Graph::findEdge(const EdgeDefinition &definition) const
 }
 
 // Return named node, if it exists
-Node *Graph::node(std::string_view name)
+Node *Graph::node(std::string_view nodeName)
 {
     // Return ourself if this is our name
-    if (name_ == name)
+    if (name() == nodeName)
         return this;
 
     // Search through child nodes
-    if (nodes_.contains(std::string(name)))
-        return nodes_[std::string(name)].get();
+    if (nodes_.contains(std::string(nodeName)))
+        return nodes_[std::string(nodeName)].get();
 
     return nullptr;
 }

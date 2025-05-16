@@ -22,19 +22,20 @@ std::string_view InputsNode::summary() const { return "Maps graph inputs to loca
 // Create input and map to output
 std::shared_ptr<ParameterBase> InputsNode::createMappedInput(std::string_view name, std::type_index typeIndex)
 {
-    // Create an intermediate object with the correct type
-    std::shared_ptr<ParameterBase> parameterBase;
-    std::shared_ptr<ParameterHolderBase> proxyBase;
+    // Create an intermediate object with the correct type and add an input referencing it
+    std::shared_ptr<ParameterBase> inputParameter;
     // TODO Convert to Factory
     if (typeIndex == std::type_index(typeid(Number)))
     {
         auto proxy = std::make_shared<ParameterHolder<Number>>();
-        parameterBase = addInput(name, "", proxy->data);
-        proxyBase = proxy;
+        parameterHolders_.emplace_back(proxy);
+        inputParameter = addInput(name, "", proxy->data);
+
+        // Create a companion output
+        addOutput(name, "", proxy->data);
     }
 
-    parameterHolders_.emplace_back(proxyBase);
-    return parameterBase;
+    return inputParameter;
 }
 
 /*

@@ -39,7 +39,7 @@ class Graph : public Node
 
     public:
     // Create mapped input
-    std::shared_ptr<ParameterBase> mapInput(std::string_view name, std::type_index typeIndex);
+    std::shared_ptr<ParameterBase> mapInput(std::string_view inputName, std::type_index typeIndex);
 
     /*
      * Nodes and Edges
@@ -70,7 +70,7 @@ class Graph : public Node
     // Get name of specified child node
     std::string_view nodeName(const Node *node) const;
     // Set name of specified child node
-    void setNodeName(const Node *node, std::string_view name);
+    void setNodeName(const Node *node, std::string_view nodeName);
     // Add edge between nodes
     bool addEdge(const EdgeDefinition &definition);
     // Remove edge between nodes
@@ -79,7 +79,7 @@ class Graph : public Node
     // Find edge between nodes
     Edge *findEdge(const EdgeDefinition &definition) const;
     // Return named node, if it exists
-    Node *node(std::string_view name);
+    Node *node(std::string_view nodeName);
     // Return container of nodes
     Nodes &nodes();
     // Return container of edges between nodes

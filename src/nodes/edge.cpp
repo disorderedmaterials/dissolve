@@ -39,7 +39,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     auto sourceOutput = sourceNode->findOutput(definition.sourceOutput);
     if (!sourceOutput)
     {
-        Messenger::error("Source node '{}' has no parameter '{}'.\n", definition.sourceNode, definition.sourceOutput);
+        Messenger::error("Source node '{}' has no output parameter '{}'.\n", definition.sourceNode, definition.sourceOutput);
         return {};
     }
 
@@ -61,14 +61,15 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     auto targetInput = targetNode->findInput(definition.targetInput);
     if (!targetInput)
     {
+        // If the targetNode is a Graph we may need to dynamically create an input for the edge
         auto graphNode = dynamic_cast<Graph *>(targetNode);
         if (graphNode)
         {
-            targetInput = graphNode->mapInput(sourceOutput->name(), sourceOutput->type());
+            targetInput = graphNode->mapInput(definition.targetInput, sourceOutput->type());
         }
         else
         {
-            Messenger::error("Target node '{}' has no parameter '{}'.\n", definition.targetNode, definition.targetInput);
+            Messenger::error("Target node '{}' has no input parameter '{}'.\n", definition.targetNode, definition.targetInput);
             return {};
         }
     }

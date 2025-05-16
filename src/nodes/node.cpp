@@ -17,7 +17,7 @@ void Node::setName(std::string_view newName)
     if (parentGraph_)
         parentGraph_->setNodeName(this, newName);
     else
-        name_ = newName;
+        error("Can't set node name to '{}' as it is not part of a Graph.", newName);
 }
 
 // Return node name
@@ -188,35 +188,35 @@ NodeConstants::ProcessResult Node::process() { return NodeConstants::ProcessResu
 // Return named input parameter if it exists
 std::shared_ptr<ParameterBase> Node::findInput(std::string_view name) const
 {
-    if (!inputs_.contains(name))
+    if (!inputs_.contains(std::string{name}))
         return {};
-    return inputs_.at(name);
+    return inputs_.at(std::string{name});
 }
 
 // Return input parameters
-std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::inputs() { return inputs_; };
+Node::NodeParameterMap &Node::inputs() { return inputs_; };
 
 // Return named output parameter if it exists
-std::shared_ptr<ParameterBase> Node::findOutput(std::string_view name) const
+std::shared_ptr<ParameterBase> Node::findOutput(std::string_view outputName) const
 {
-    if (!outputs_.contains(name))
+    if (!outputs_.contains(std::string{outputName}))
         return {};
-    return outputs_.at(name);
+    return outputs_.at(std::string{outputName});
 }
 
 // Return output parameters
-std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::outputs() { return outputs_; };
+Node::NodeParameterMap &Node::outputs() { return outputs_; };
 
 // Return named input parameter if it exists
-std::shared_ptr<ParameterBase> Node::findOption(std::string_view name) const
+std::shared_ptr<ParameterBase> Node::findOption(std::string_view optionName) const
 {
-    if (!options_.contains(name))
+    if (!options_.contains(std::string{optionName}))
         return {};
-    return options_.at(name);
+    return options_.at(std::string{optionName});
 }
 
 // Return Options
-std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::options() { return options_; };
+Node::NodeParameterMap &Node::options() { return options_; };
 
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }

@@ -18,21 +18,21 @@ class SubGraphTest : public ::testing::Test
     void createGraph()
     {
         /*
-         *                             GraphA (SubGraph)
-         *                             ------------------------------------------------------------------\
-         *    Add (x)                  | Inputs                                                          |
-         *    ------------------       |--------|                                                        |
-         *   o-A = 1     result-o ---- o >> C > o -----------+                                           |
-         *   o-B = 2           |       |                      \      Add (z)                  Outputs    |
-         *    -----------------/       |                       \     ----------------     |--------------|
-         *                             |                        +--- o-A       result-o - o >> result >> o
-         *                             |  Add (y)                 +--o-B             |                   |
-         *                             |  ------------------     /   ----------------/                   |
-         *                             | o-A = 3     result-o --+                                        |
-         *                             | o-B = 4           |                                             |
-         *                             |  -----------------/                                             |
-         *                             |                                                                 |
-         *                             \-----------------------------------------------------------------/
+         *                          GraphA (SubGraph)
+         *                          ------------------------------------------------------------------\
+         *   Add (x)                | Inputs                                                          |
+         *   ------------------     |--------|                                                        |
+         *  o-A = 1     result-o -- o >> C > o -----------+                                           |
+         *  o-B = 2           |     |                      \      Add (z)                  Outputs    |    Add (w)
+         *   -----------------/     |                       \     ----------------     |--------------|    ------------------
+         *                          |                        +--- o-A       result-o - o >> result >> o -- o-A        result-o
+         *                          |  Add (y)                 +--o-B             |                   |    o-B = 5          |
+         *                          |  ------------------     /   ----------------/                   |    -----------------/
+         *                          | o-A = 3     result-o --+                                        |
+         *                          | o-B = 4           |                                             |
+         *                          |  -----------------/                                             |
+         *                          |                                                                 |
+         *                          \-----------------------------------------------------------------/
          */
 
         // Create node X in root graph
@@ -89,8 +89,13 @@ TEST_F(SubGraphTest, Connections)
     EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
 
     // Connect the dynamic input on GraphA internally to it's "z" node
-    // BUT C IS NOT AN OUTPUT!!!!!
-    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "Y", "A"}));
+    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "A"}));
+
+    // Connect y result to z
+    EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "B"}));
+
+    // Connect z result to graphA output, creating a dynamic output
+    EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
 }
 
 } // namespace UnitTest
