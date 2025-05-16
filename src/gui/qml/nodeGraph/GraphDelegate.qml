@@ -12,6 +12,9 @@ NodeBox {
     nodeType: name
     px: posX
     py: posY
+
+    // Ensure that we only display this box for valid node items
+    visible: icon != null
     x: posX
     y: posY
 
