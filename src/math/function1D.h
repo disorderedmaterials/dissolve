@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/enumOptions.h"
+#include "base/serialiser.h"
 #include "templates/flags.h"
 #include <functional>
 #include <string_view>
@@ -34,6 +35,7 @@ class Function1DDefinition
     public:
     Function1DDefinition() = default;
     Function1DDefinition(const std::vector<std::string> &parameterNames, Function1DXOmega valueFunction);
+    bool operator==(Function1DDefinition &other);
 
     private:
     // Names of parameters defining the function
@@ -108,10 +110,11 @@ class Functions1D
 };
 
 // Function 1D Wrapper
-class Function1DWrapper
+class Function1DWrapper : public Serialisable<>
 {
     public:
     Function1DWrapper(Functions1D::Form form = Functions1D::Form::None, const std::vector<double> &params = {});
+    bool operator==(Function1DWrapper &other);
 
     /*
      * Function
@@ -155,4 +158,13 @@ class Function1DWrapper
     double yFT(double x, double omega = 0.0) const;
     // Return normalisation factor at specified omega
     double normalisation(double omega = 0.0) const;
+
+    /*
+     * Serialisable
+     */
+    public:
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };

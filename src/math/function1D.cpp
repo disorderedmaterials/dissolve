@@ -6,6 +6,7 @@
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 #include <map>
+#include <variant>
 
 /*
  * One-Dimensional Function Definition
@@ -14,6 +15,12 @@
 Function1DDefinition::Function1DDefinition(const std::vector<std::string> &parameterNames, Function1DXOmega valueFunction)
     : parameterNames_(parameterNames), y_(std::move(valueFunction))
 {
+}
+
+bool Function1DDefinition::operator==(Function1DDefinition &other)
+{
+    return parameterNames_ == other.parameterNames_ && properties_ == other.properties_ && &setup_ == &other.setup_ &&
+           &y_ == &other.y_ && &dYdX_ == &other.dYdX_ && &yFT_ == &other.yFT_ && &normaliser_ == &other.normaliser_;
 }
 
 // Return number of parameters the function requires
@@ -372,7 +379,8 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
          */
         functions[Functions1D::Form::ShiftedCoulomb] =
             Function1DDefinition({"q1", "q2", "range"},
-                                 [](double x, double omega, const std::vector<double> &params) {
+                                 [](double x, double omega, const std::vector<double> &params)
+                                 {
                                      return PairPotential::CoulConvert * params[0] * params[1] *
                                             (1.0 / x + x / (params[2] * params[2]) - 2.0 / params[2]);
                                  });
@@ -447,6 +455,12 @@ Function1DWrapper::Function1DWrapper(Functions1D::Form form, const std::vector<d
     : form_(form), function_(functions1D().at(form)), parameters_(params)
 {
     calculateInternalParameters();
+}
+
+bool Function1DWrapper::operator==(Function1DWrapper &other)
+{
+    return form_ == other.form_ && function_ == other.function_ && parameters_ == other.parameters_ &&
+           internalParameters_ == other.internalParameters_;
 }
 
 // Initialise internal function parameters from current base parameters
@@ -532,4 +546,35 @@ double Function1DWrapper::yFT(double x, double omega) const
 double Function1DWrapper::normalisation(double omega) const
 {
     return function_.normalisation() ? function_.normalisation()(omega, internalParameters_) : 1.0;
+}
+
+// Express as a serialisable value
+SerialisedValue Function1DWrapper::serialise() const
+{
+    SerialisedValue result;
+
+    result["form"] = Functions1D::forms().keywordByIndex(static_cast<int>(form_));
+
+    Serialisable::fromVector(parameters_, "parameters", result);
+
+    return result;
+}
+
+// Read values from a serialisable value
+void Function1DWrapper::deserialise(const SerialisedValue &node)
+{
+    toml::visit(
+        [this](auto &arg)
+        {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (HasEnumOptions<Functions1D::Form>)
+            {
+                setForm(arg);
+            }
+            else if constexpr (std::is_same_v<T, toml::array>)
+            {
+                setParameters(std::get<std::vector<double>>(arg));
+            }
+        },
+        node);
 }
