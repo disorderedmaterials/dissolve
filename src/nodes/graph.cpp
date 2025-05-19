@@ -36,7 +36,31 @@ NodeConstants::ProcessResult Graph::process()
      * latter case is important if a Graph has no defined Outputs, and so no external dependence on running the child nodes.
      */
 
-    //
+    // Pull outputs first
+    auto outputsResult = mappedOutputs_->run();
+    if (outputsResult == NodeConstants::ProcessResult::Failed)
+        return outputsResult;
+
+    // Check each node for output edges - any that have zero output edges need to be run()
+    auto terminalNodeResult = NodeConstants::ProcessResult::Unchanged;
+    for (auto &&[nodeName, node] : nodes_)
+        if (!node->outputEdges().empty())
+        {
+            switch (node->run())
+            {
+                case (NodeConstants::ProcessResult::Failed):
+                    return NodeConstants::ProcessResult::Failed;
+                case (NodeConstants::ProcessResult::Success):
+                    terminalNodeResult = NodeConstants::ProcessResult::Success;
+                case (NodeConstants::ProcessResult::Unchanged):
+                    break;
+                case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                    /* This should never happen? */
+                    break;
+            }
+        }
+
+    return outputsResult == terminalNodeResult ? outputsResult : NodeConstants::ProcessResult::Success;
 }
 
 /*

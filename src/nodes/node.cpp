@@ -67,7 +67,8 @@ bool Node::linkEdge(Edge *edge)
     }
     else if (&edge->sourceNode() == this)
     {
-        // We are the source node - nothing for us to do at present, but we may choose to store such Edges in future.
+        // We are the source node - add the outgoing edge to our list
+        outputEdges_[edge->sourceOutput().name()] = edge;
     }
     else
         return Messenger::error("Node '{}' is neither the source nor the target for the supplied Edge.\n", name());
@@ -84,7 +85,7 @@ void Node::unlinkEdge(Edge *edge)
         auto it = std::find_if(inputEdges_.begin(), inputEdges_.end(),
                                [edge](const auto &inputEdge) { return edge == inputEdge.second; });
         if (it == inputEdges_.end())
-            Messenger::error("Tried to unlink an Edge from a target node ('{}') which knew nothing about it.\n", name());
+            Messenger::error("Tried to unlink an incoming edge to target node '{}' which knew nothing about it.\n", name());
         else
         {
             inputEdges_.erase(it);
@@ -93,7 +94,13 @@ void Node::unlinkEdge(Edge *edge)
     }
     else if (&edge->sourceNode() == this)
     {
-        // We are the source node for the edge - nothing for us to do at present
+        // We are the source node for the edge...
+        auto it = std::find_if(outputEdges_.begin(), outputEdges_.end(),
+                               [edge](const auto &outputEdge) { return edge == outputEdge.second; });
+        if (it == outputEdges_.end())
+            Messenger::error("Tried to unlink an outgoing edge from source node '{}' which knew nothing about it.\n", name());
+        else
+            outputEdges_.erase(it);
     }
     else
         Messenger::error("Node '{}' is neither the source nor the target for the Edge being unlinked.\n", name());
@@ -218,10 +225,14 @@ std::shared_ptr<ParameterBase> Node::findOption(std::string_view optionName) con
 // Return Options
 Node::NodeParameterMap &Node::options() { return options_; };
 
+// Get the incoming edges to this node
+Node::EdgeMap &Node::inputEdges() { return inputEdges_; }
+
+// Get the outgoing edges from this node
+Node::EdgeMap &Node::outputEdges() { return outputEdges_; }
+
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }
-
-Node::EdgeMap &Node::links() { return inputEdges_; }
 
 // Return the Dissolve reference
 Dissolve &Node::dissolve() const { return parentGraph_->dissolve(); }

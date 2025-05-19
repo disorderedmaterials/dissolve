@@ -137,6 +137,8 @@ class Node : public Serialisable<>
     NodeParameterMap options_;
     // Inbound edges
     EdgeMap inputEdges_;
+    // Outgoing edges
+    EdgeMap outputEdges_;
 
     public:
     // Link edge, returning whether we accept it
@@ -268,8 +270,10 @@ class Node : public Serialisable<>
     std::shared_ptr<ParameterBase> findOption(std::string_view name) const;
     // Return options
     NodeParameterMap &options();
-    // Get the links owned by this node
-    EdgeMap &links();
+    // Get the incoming edges to this node
+    EdgeMap &inputEdges();
+    // Get the outgoing edges from this node
+    EdgeMap &outputEdges();
     // Returns the node parent graph
     Graph *parentGraph() const;
     // Return the Dissolve reference

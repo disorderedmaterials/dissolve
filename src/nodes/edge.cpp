@@ -149,6 +149,10 @@ std::string EdgeDefinition::asString() const
     return std::format("Edge( [O] {}@{} -> {}@{} [I] )", sourceOutput, sourceNode, targetInput, targetNode);
 }
 
+/*
+ * I/O
+ */
+
 // Express as a serialisable value
 SerialisedValue EdgeDefinition::serialise() const
 {
