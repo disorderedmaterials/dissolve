@@ -18,7 +18,6 @@ SpeciesEditor::SpeciesEditor(QWidget *parent) : QWidget(parent)
 
     // Set up our UI
     ui_.setupUi(this);
-    ui_.ToolsBondToleranceSpin->setValue(tolerance_);
 
     // Create a button group for the interaction modes
     auto *group = new QButtonGroup;
@@ -189,7 +188,7 @@ void SpeciesEditor::on_ToolsCalculateBondingButton_clicked(bool checked)
     if (!sp)
         return;
 
-    sp->recalculateIntermolecularTerms(tolerance_);
+    sp->recalculateIntermolecularTerms(ui_.ToolsBondToleranceSpin->value());
 
     // Signal that the data shown has been modified
     speciesViewer()->postRedisplay();
@@ -267,7 +266,7 @@ void SpeciesEditor::on_ToolsAddCellButton_clicked(bool checked)
 
     if (dialog.createUnitCell())
     {
-        speciesViewer()->species()->recalculateIntermolecularTerms(tolerance_);
+        speciesViewer()->species()->recalculateIntermolecularTerms(ui_.ToolsBondToleranceSpin->value());
         speciesViewer()->view().showAllData();
         speciesViewer()->postRedisplay();
         speciesViewer()->notifyDataModified();
@@ -276,7 +275,7 @@ void SpeciesEditor::on_ToolsAddCellButton_clicked(bool checked)
 
 void SpeciesEditor::on_ToolsRemoveCellButton_clicked(bool checked)
 {
-    speciesViewer()->species()->recalculateIntermolecularTerms(tolerance_);
+    speciesViewer()->species()->recalculateIntermolecularTerms(ui_.ToolsBondToleranceSpin->value());
     speciesViewer()->species()->removeBox();
     speciesViewer()->view().showAllData();
     speciesViewer()->postRedisplay();
@@ -285,9 +284,10 @@ void SpeciesEditor::on_ToolsRemoveCellButton_clicked(bool checked)
 
 void SpeciesEditor::on_ToolsBondToleranceSpin_valueChanged(double value)
 {
-    if (tolerance_ != value) // Segfault without
-    {
-        tolerance_ = value;
-        speciesViewer()->species()->recalculateIntermolecularTerms(tolerance_);
-    }
+    auto *sp = speciesViewer()->species();
+    if (!sp)
+        return;
+
+    speciesViewer()->species()->recalculateIntermolecularTerms(value);
+    speciesViewer()->postRedisplay();
 }

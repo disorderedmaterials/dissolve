@@ -21,8 +21,6 @@ class SpeciesEditor : public QWidget
     private:
     // Main Dissolve pointer
     Dissolve *dissolve_;
-    // Bond tolerance
-    double tolerance_{1.1};
 
     public:
     // Set main Dissolve pointer
