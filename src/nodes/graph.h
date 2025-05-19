@@ -4,8 +4,8 @@
 #pragma once
 
 #include "base/messenger.h"
-#include "nodes/inputs.h"
 #include "nodes/node.h"
+#include "nodes/parameterMapping.h"
 #include <map>
 #include <memory>
 #include <string>
@@ -50,13 +50,13 @@ class Graph : public Node
     // Parameter holders for dynamic input / output variables
     std::vector<std::shared_ptr<ParameterHolderBase>> parameterHolders_;
     // Dynamic input and output nodes
-    InputsNode *dynamicInputs_{nullptr}, *dynamicOutputs_{nullptr};
+    ParameterMappingNode *dynamicInputs_{nullptr}, *dynamicOutputs_{nullptr};
 
     public:
-    // Create dynamic input
-    std::shared_ptr<ParameterBase> createDynamicInput(std::string_view inputName, std::type_index typeIndex);
-    // Create dynamic output
-    std::shared_ptr<ParameterBase> createDynamicOutput(std::string_view outputName, std::type_index typeIndex);
+    // Create and return mapped input
+    std::shared_ptr<ParameterBase> createMappedInput(std::string_view inputName, std::type_index typeIndex);
+    // Create mapped output, returning the relevant input (rather than the output)
+    std::shared_ptr<ParameterBase> createMappedOutput(std::string_view outputName, std::type_index typeIndex);
 
     /*
      * Nodes and Edges

@@ -5,12 +5,12 @@
 
 #include "nodes/node.h"
 
-// Inputs Node
-class InputsNode : public Node
+// Parameter Mapping Node
+class ParameterMappingNode : public Node
 {
     public:
-    InputsNode(Graph *parentGraph);
-    ~InputsNode() override = default;
+    ParameterMappingNode(Graph *parentGraph, bool outputMapper = false);
+    ~ParameterMappingNode() override = default;
 
     /*
      * Definition
@@ -20,6 +20,17 @@ class InputsNode : public Node
     std::string_view type() const override;
     // Return short summary of the node's purpose
     std::string_view summary() const override;
+
+    /*
+     * Data
+     */
+    private:
+    // Whether the node maps its inputs to Graph outputs
+    bool mapsOutputs_{false};
+
+    public:
+    // Return whether the node maps its inputs to Graph outputs
+    bool mapsOutputs() const;
 
     /*
      * I/O

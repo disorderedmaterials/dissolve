@@ -46,7 +46,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     // Confirm that the source is actually an output
     if (!sourceOutput->flags().isSet(ParameterBase::ParameterFlags::Output))
     {
-        Messenger::error("Source node '{}' has parameter '{}' but it is not an Output.\n", definition.sourceNode,
+        Messenger::error("Source node '{}' has parameter '{}' but it is not an output.\n", definition.sourceNode,
                          definition.sourceOutput);
         return {};
     }
@@ -66,18 +66,21 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
         return {};
     }
 
-    // We need to check carefully the target node, since we need to permit certain connections to the Graph object itself as
+    // We need to check carefully the target node, since we need to permit outside connections to the Graph object itself as
     // well as its Outputs node explicitly.
     std::shared_ptr<ParameterBase> targetInput{nullptr};
     if (dynamic_cast<Graph *>(targetNode))
     {
-        // The target node is a Graph: check for (and disallow) self-to-self edge connections, and dynamically create others
+        // The target node is a Graph: create a mapped input
         auto graphNode = dynamic_cast<Graph *>(targetNode);
-        targetInput = graphNode->createDynamicInput(definition.targetInput, sourceOutput->type());
+        targetInput = graphNode->createMappedInput(definition.targetInput, sourceOutput->type());
     }
-    else if (dynamic_cast<Graph *>(targetNode))
+    else if (dynamic_cast<ParameterMappingNode *>(targetNode))
     {
         // If the target node is the parent Graph's own Outputs node, create a dynamic output
+        auto *mappingNode = dynamic_cast<ParameterMappingNode *>(targetNode);
+        if (mappingNode->mapsOutputs())
+            targetInput = parent->createMappedOutput(definition.targetInput, sourceOutput->type());
     }
     else
         targetInput = targetNode->findInput(definition.targetInput);
@@ -91,8 +94,8 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     // Confirm that the destination input is actually an input
     if (!targetInput->flags().isSet(ParameterBase::ParameterFlags::Input))
     {
-        Messenger::error("Target node '{}' has parameter '{}' but it is not an Input.\n", definition.sourceNode,
-                         definition.sourceOutput);
+        Messenger::error("Target node '{}' has parameter '{}' but it is not an input.\n", definition.targetNode,
+                         definition.targetInput);
         return {};
     }
 

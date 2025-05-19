@@ -25,7 +25,7 @@ class SubGraphTest : public ::testing::Test
          *  o-A = 1     result-o -- o >> C > o -----------+                                           |
          *  o-B = 2           |     |                      \      Add (z)                  Outputs    |    Add (w)
          *   -----------------/     |                       \     ----------------     |--------------|    ------------------
-         *                          |                        +--- o-A       result-o - o >> result >> o -- o-A        result-o
+         *                          |                        +--- o-A       result-o - o >>    D   >> o -- o-A        result-o
          *                          |  Add (y)                 +--o-B             |                   |    o-B = 5          |
          *                          |  ------------------     /   ----------------/                   |    -----------------/
          *                          | o-A = 3     result-o --+                                        |
@@ -47,11 +47,16 @@ class SubGraphTest : public ::testing::Test
 
         // Create y and z in GraphA
         y_ = dynamic_cast<AddNode *>(graphA_->createNode("Add", "y"));
-        z_ = dynamic_cast<AddNode *>(graphA_->createNode("Add", "z"));
         ASSERT_TRUE(y_);
         ASSERT_EQ(y_->name(), "y");
+        z_ = dynamic_cast<AddNode *>(graphA_->createNode("Add", "z"));
         ASSERT_TRUE(z_);
         ASSERT_EQ(z_->name(), "z");
+
+        // Create q in root graph
+        w_ = dynamic_cast<AddNode *>(root_.createNode("Add", "w"));
+        ASSERT_TRUE(w_);
+        ASSERT_EQ(w_->name(), "w");
     }
 
     protected:
@@ -60,7 +65,7 @@ class SubGraphTest : public ::testing::Test
     Dissolve dissolve_;
     DissolveGraph root_;
     Graph *graphA_{nullptr};
-    AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr};
+    AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr}, *w_{nullptr};
 };
 
 TEST_F(SubGraphTest, Serialisation){
@@ -85,17 +90,20 @@ TEST_F(SubGraphTest, Connections)
 {
     createGraph();
 
-    // Create a dynamic input on GraphA by creating an edge to it
+    // Create a mapped input on GraphA by creating an edge to it
     EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
 
-    // Connect the dynamic input on GraphA internally to it's "z" node
+    // Connect the mapped input on GraphA internally to it's "z" node
     EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "A"}));
 
     // Connect y result to z
     EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "B"}));
 
-    // Connect z result to graphA output, creating a dynamic output
+    // Connect z result to graphA output, creating a mapped output
     EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
+
+    // Connect GraphA mapped output "D" to node "w"
+    EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "A"}));
 }
 
 } // namespace UnitTest

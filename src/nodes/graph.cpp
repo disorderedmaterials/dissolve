@@ -7,8 +7,9 @@
 
 Graph::Graph(Graph *parentGraph) : Node(parentGraph)
 {
-    dynamicInputs_ = dynamic_cast<InputsNode *>(addNode(std::make_unique<InputsNode>(this), "Inputs"));
-    dynamicOutputs_ = dynamic_cast<InputsNode *>(addNode(std::make_unique<InputsNode>(this), "Outputs"));
+    dynamicInputs_ = dynamic_cast<ParameterMappingNode *>(addNode(std::make_unique<ParameterMappingNode>(this), "Inputs"));
+    dynamicOutputs_ =
+        dynamic_cast<ParameterMappingNode *>(addNode(std::make_unique<ParameterMappingNode>(this, true), "Outputs"));
 }
 
 /*
@@ -25,8 +26,8 @@ std::string_view Graph::summary() const { return "A node which contains its own 
  * Inputs, Outputs, and Options
  */
 
-// Create mapped input
-std::shared_ptr<ParameterBase> Graph::createDynamicInput(std::string_view inputName, std::type_index typeIndex)
+// Create and return mapped input
+std::shared_ptr<ParameterBase> Graph::createMappedInput(std::string_view inputName, std::type_index typeIndex)
 {
     std::shared_ptr<ParameterBase> inputParameter;
     // TODO Convert to Factory
@@ -46,8 +47,8 @@ std::shared_ptr<ParameterBase> Graph::createDynamicInput(std::string_view inputN
     return inputParameter;
 }
 
-// Create dynamic output
-std::shared_ptr<ParameterBase> Graph::createDynamicOutput(std::string_view outputName, std::type_index typeIndex)
+// Create mapped output, returning the relevant input (rather than the output)
+std::shared_ptr<ParameterBase> Graph::createMappedOutput(std::string_view outputName, std::type_index typeIndex)
 {
     std::shared_ptr<ParameterBase> outputParameter;
     // TODO Convert to Factory
@@ -58,10 +59,10 @@ std::shared_ptr<ParameterBase> Graph::createDynamicOutput(std::string_view outpu
         parameterHolders_.emplace_back(proxy);
 
         // Create an input on ourself, linked to the proxy data
-        outputParameter = addOutput(outputName, "", proxy->data);
+        addOutput(outputName, "", proxy->data);
 
         // Create a companion output on our Inputs node, again linked to the proxy data
-        dynamicOutputs_->addInput(outputName, "", proxy->data);
+        outputParameter = dynamicOutputs_->addInput(outputName, "", proxy->data);
     }
 
     return outputParameter;
