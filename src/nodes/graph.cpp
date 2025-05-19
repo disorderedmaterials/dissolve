@@ -7,8 +7,8 @@
 
 Graph::Graph(Graph *parentGraph) : Node(parentGraph)
 {
-    dynamicInputs_ = dynamic_cast<ParameterMappingNode *>(addNode(std::make_unique<ParameterMappingNode>(this), "Inputs"));
-    dynamicOutputs_ =
+    mappedInputs_ = dynamic_cast<ParameterMappingNode *>(addNode(std::make_unique<ParameterMappingNode>(this), "Inputs"));
+    mappedOutputs_ =
         dynamic_cast<ParameterMappingNode *>(addNode(std::make_unique<ParameterMappingNode>(this, true), "Outputs"));
 }
 
@@ -21,6 +21,23 @@ std::string_view Graph::type() const { return "Graph"; }
 
 // Return short summary of the node's purpose
 std::string_view Graph::summary() const { return "A node which contains its own inner graph"; }
+
+/*
+ * Processing & Validity
+ */
+
+// Perform processing
+NodeConstants::ProcessResult Graph::process()
+{
+    /*
+     * Processing a Graph involves running any child nodes we have, but we can only detect the nodes that need to be run in
+     * one of two ways. Either 1) We cycle over Edge connections to inputs on our Outputs node and pull() those in, or 2) we
+     * look for any nodes that don't have any edge connections to their Outputs and try to run() them one at a time. The
+     * latter case is important if a Graph has no defined Outputs, and so no external dependence on running the child nodes.
+     */
+
+    //
+}
 
 /*
  * Inputs, Outputs, and Options
@@ -41,7 +58,7 @@ std::shared_ptr<ParameterBase> Graph::createMappedInput(std::string_view inputNa
         inputParameter = addInput(inputName, "", proxy->data);
 
         // Create a companion output on our Inputs node, again linked to the proxy data
-        dynamicInputs_->addOutput(inputName, "", proxy->data);
+        mappedInputs_->addOutput(inputName, "", proxy->data);
     }
 
     return inputParameter;
@@ -62,7 +79,7 @@ std::shared_ptr<ParameterBase> Graph::createMappedOutput(std::string_view output
         addOutput(outputName, "", proxy->data);
 
         // Create a companion output on our Inputs node, again linked to the proxy data
-        outputParameter = dynamicOutputs_->addInput(outputName, "", proxy->data);
+        outputParameter = mappedOutputs_->addInput(outputName, "", proxy->data);
     }
 
     return outputParameter;

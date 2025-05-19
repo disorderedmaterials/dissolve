@@ -19,26 +19,32 @@ class SubGraphTest : public ::testing::Test
     {
         /*
          *                          GraphA (SubGraph)
-         *                          ------------------------------------------------------------------\
-         *   Add (x)                | Inputs                                                          |
-         *   ------------------     |--------|                                                        |
-         *  o-A = 1     result-o -- o >> C > o -----------+                                           |
-         *  o-B = 2           |     |                      \      Add (z)                  Outputs    |    Add (w)
-         *   -----------------/     |                       \     ----------------     |--------------|    ------------------
-         *                          |                        +--- o-A       result-o - o >>    D   >> o -- o-A        result-o
-         *                          |  Add (y)                 +--o-B             |                   |    o-B = 5          |
-         *                          |  ------------------     /   ----------------/                   |    -----------------/
-         *                          | o-A = 3     result-o --+                                        |
-         *                          | o-B = 4           |                                             |
-         *                          |  -----------------/                                             |
-         *                          |                                                                 |
-         *                          \-----------------------------------------------------------------/
+         *                          --------------------------------------------------------------\
+         *   Add (x)                | Inputs                                                      |
+         *   ------------------     |--------|                                                    |
+         *  o-A = 1     result-o -- o--> C >--o ----------+                                       |
+         *  o-B = 2           |     |--------/             \       Add (z)                Outputs |      Add (w)
+         *   -----------------/     |                       \      ----------------     |---------|      -----------------
+         *                          |                        +--- o-A       result-o - o---> D >---o -- o-A        result-o
+         *                          |  Add (y)                 +--o-B             |     ----------|     o-B = 5          |
+         *                          |  ------------------     /    ---------------/               |      ----------------/
+         *                          | o-A = 3     result-o --+                                    |
+         *                          | o-B = 4           |                                         |
+         *                          |  -----------------/                                         |
+         *                          |                                                             |
+         *                          \-------------------------------------------------------------/
          */
 
         // Create node X in root graph
         x_ = dynamic_cast<AddNode *>(root_.createNode("Add", "x"));
         ASSERT_TRUE(x_);
         ASSERT_EQ(x_->name(), "x");
+        xA_ = x_->findInput("A")->upcast<Number>();
+        xB_ = x_->findInput("B")->upcast<Number>();
+        ASSERT_TRUE(xA_);
+        ASSERT_TRUE(xB_);
+        xA_->set(1);
+        xB_->set(2);
 
         // Create subgraph GraphA
         graphA_ = dynamic_cast<Graph *>(root_.createNode("Graph", "GraphA"));
@@ -49,14 +55,23 @@ class SubGraphTest : public ::testing::Test
         y_ = dynamic_cast<AddNode *>(graphA_->createNode("Add", "y"));
         ASSERT_TRUE(y_);
         ASSERT_EQ(y_->name(), "y");
+        yA_ = y_->findInput("A")->upcast<Number>();
+        yB_ = y_->findInput("B")->upcast<Number>();
+        ASSERT_TRUE(yA_);
+        ASSERT_TRUE(yB_);
+        yA_->set(3);
+        yB_->set(4);
         z_ = dynamic_cast<AddNode *>(graphA_->createNode("Add", "z"));
         ASSERT_TRUE(z_);
         ASSERT_EQ(z_->name(), "z");
 
-        // Create q in root graph
+        // Create w in root graph
         w_ = dynamic_cast<AddNode *>(root_.createNode("Add", "w"));
         ASSERT_TRUE(w_);
         ASSERT_EQ(w_->name(), "w");
+        wB_ = z_->findInput("B")->upcast<Number>();
+        ASSERT_TRUE(wB_);
+        wB_->set(5);
     }
 
     protected:
@@ -66,6 +81,9 @@ class SubGraphTest : public ::testing::Test
     DissolveGraph root_;
     Graph *graphA_{nullptr};
     AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr}, *w_{nullptr};
+    std::shared_ptr<Parameter<Number>> xA_{nullptr}, xB_{nullptr};
+    std::shared_ptr<Parameter<Number>> yA_{nullptr}, yB_{nullptr};
+    std::shared_ptr<Parameter<Number>> wB_{nullptr};
 };
 
 TEST_F(SubGraphTest, Serialisation){
@@ -104,6 +122,35 @@ TEST_F(SubGraphTest, Connections)
 
     // Connect GraphA mapped output "D" to node "w"
     EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "A"}));
+}
+
+TEST_F(SubGraphTest, Flow)
+{
+    createGraph();
+
+    // Create a mapped input on GraphA by creating an edge to it
+    EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
+
+    // Connect the mapped input on GraphA internally to it's "z" node
+    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "A"}));
+
+    // Connect y result to z
+    EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "B"}));
+
+    // Connect z result to graphA output, creating a mapped output
+    EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
+
+    // Connect GraphA mapped output "D" to node "w"
+    EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "A"}));
+
+    // Run w - all nodes should update
+    printf("OUTPUT STARTS HERE\n");
+    EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(w_->versionIndex(), 0);
+    EXPECT_EQ(w_->getOutputValue<Number>("Result").asInteger(), 15);
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(z_->versionIndex(), 0);
 }
 
 } // namespace UnitTest

@@ -44,13 +44,20 @@ class Graph : public Node
     std::string_view summary() const override;
 
     /*
+     * Processing & Validity
+     */
+    protected:
+    // Perform processing
+    NodeConstants::ProcessResult process() override;
+
+    /*
      * Inputs, Outputs, and Options
      */
     private:
     // Parameter holders for dynamic input / output variables
     std::vector<std::shared_ptr<ParameterHolderBase>> parameterHolders_;
-    // Dynamic input and output nodes
-    ParameterMappingNode *dynamicInputs_{nullptr}, *dynamicOutputs_{nullptr};
+    // Mapped input and output nodes
+    ParameterMappingNode *mappedInputs_{nullptr}, *mappedOutputs_{nullptr};
 
     public:
     // Create and return mapped input
@@ -102,6 +109,10 @@ class Graph : public Node
     // Return container of edges between nodes
     Edges &edges();
 
+    /*
+     * I/O
+     */
+    public:
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
