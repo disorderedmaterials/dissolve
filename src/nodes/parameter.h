@@ -38,9 +38,9 @@ class ParameterBase : public Serialisable<>
     // The owner of the parameter
     Node *parent_;
     // Name of the parameter
-    std::string_view name_;
+    std::string name_;
     // Description of parameter (used as tooltip in the GUI)
-    std::string_view description_;
+    std::string description_;
     // Type of the parameter
     std::type_index type_;
     // Flags for the parameter

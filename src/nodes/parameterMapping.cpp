@@ -25,6 +25,17 @@ std::string_view ParameterMappingNode::summary() const { return "Maps graph inpu
 bool ParameterMappingNode::mapsOutputs() const { return mapsOutputs_; }
 
 /*
+ * Processing & Validity
+ */
+
+// Perform processing
+NodeConstants::ProcessResult ParameterMappingNode::process()
+{
+    // If this is an input mapper
+    return NodeConstants::ProcessResult::Success;
+}
+
+/*
  * I/O
  */
 

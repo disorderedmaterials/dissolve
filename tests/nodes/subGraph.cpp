@@ -69,7 +69,7 @@ class SubGraphTest : public ::testing::Test
         w_ = dynamic_cast<AddNode *>(root_.createNode("Add", "w"));
         ASSERT_TRUE(w_);
         ASSERT_EQ(w_->name(), "w");
-        wB_ = z_->findInput("B")->upcast<Number>();
+        wB_ = w_->findInput("B")->upcast<Number>();
         ASSERT_TRUE(wB_);
         wB_->set(5);
     }
@@ -144,13 +144,28 @@ TEST_F(SubGraphTest, Flow)
     EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "A"}));
 
     // Run w - all nodes should update
-    printf("OUTPUT STARTS HERE\n");
     EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(w_->versionIndex(), 0);
-    EXPECT_EQ(w_->getOutputValue<Number>("Result").asInteger(), 15);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(z_->versionIndex(), 0);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 3);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 7);
+    EXPECT_EQ(z_->getOutputValue<Number>("Result").asInteger(), 10);
+    EXPECT_EQ(w_->getOutputValue<Number>("Result").asInteger(), 15);
+
+    // Change value in 'x' and run w again - all nodes should update
+    printf("OUTPUT STARTS HERE\n");
+    xA_->set(3);
+    EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(w_->versionIndex(), 1);
+    EXPECT_EQ(x_->versionIndex(), 1);
+    EXPECT_EQ(y_->versionIndex(), 1);
+    EXPECT_EQ(z_->versionIndex(), 1);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 5);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 9);
+    EXPECT_EQ(z_->getOutputValue<Number>("Result").asInteger(), 12);
+    EXPECT_EQ(w_->getOutputValue<Number>("Result").asInteger(), 17);
 }
 
 } // namespace UnitTest

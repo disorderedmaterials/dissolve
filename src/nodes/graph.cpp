@@ -52,6 +52,7 @@ NodeConstants::ProcessResult Graph::process()
                     return NodeConstants::ProcessResult::Failed;
                 case (NodeConstants::ProcessResult::Success):
                     terminalNodeResult = NodeConstants::ProcessResult::Success;
+                    break;
                 case (NodeConstants::ProcessResult::Unchanged):
                     break;
                 case (NodeConstants::ProcessResult::InputsNotSatisfied):
@@ -99,10 +100,10 @@ std::shared_ptr<ParameterBase> Graph::createMappedOutput(std::string_view output
         auto proxy = std::make_shared<ParameterHolder<Number>>();
         parameterHolders_.emplace_back(proxy);
 
-        // Create an input on ourself, linked to the proxy data
+        // Create an output on ourself, linked to the proxy data
         addOutput(outputName, "", proxy->data);
 
-        // Create a companion output on our Inputs node, again linked to the proxy data
+        // Create a companion input on our Outputs node, again linked to the proxy data
         outputParameter = mappedOutputs_->addInput(outputName, "", proxy->data);
     }
 

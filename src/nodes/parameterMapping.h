@@ -33,6 +33,13 @@ class ParameterMappingNode : public Node
     bool mapsOutputs() const;
 
     /*
+     * Processing & Validity
+     */
+    protected:
+    // Perform processing
+    NodeConstants::ProcessResult process() override;
+
+    /*
      * I/O
      */
     public:
