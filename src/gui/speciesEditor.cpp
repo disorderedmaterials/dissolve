@@ -284,10 +284,11 @@ void SpeciesEditor::on_ToolsRemoveCellButton_clicked(bool checked)
 
 void SpeciesEditor::on_ToolsBondToleranceSpin_valueChanged(double value)
 {
+    // Get displayed Species
     auto *sp = speciesViewer()->species();
     if (!sp)
         return;
 
-    speciesViewer()->species()->recalculateIntermolecularTerms(value);
+    sp->recalculateIntermolecularTerms(value);
     speciesViewer()->postRedisplay();
 }
