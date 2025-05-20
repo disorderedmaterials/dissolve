@@ -17,12 +17,6 @@ Function1DDefinition::Function1DDefinition(const std::vector<std::string> &param
 {
 }
 
-bool Function1DDefinition::operator==(Function1DDefinition &other)
-{
-    return parameterNames_ == other.parameterNames_ && properties_ == other.properties_ && &setup_ == &other.setup_ &&
-           &y_ == &other.y_ && &dYdX_ == &other.dYdX_ && &yFT_ == &other.yFT_ && &normaliser_ == &other.normaliser_;
-}
-
 // Return number of parameters the function requires
 int Function1DDefinition::nParameters() const { return parameterNames_.size(); }
 
@@ -412,6 +406,8 @@ EnumOptions<Functions1D::Form> Functions1D::forms()
                                            {Functions1D::Form::ShiftedCoulomb, "ShiftedCoulomb", 3}});
 }
 
+EnumOptions<Functions1D::Form> getEnumOptions(Functions1D::Form) { return Functions1D::forms(); }
+
 // Return parameters for specified form
 const std::vector<std::string> &Functions1D::parameters(Form form) { return functions1D().at(form).parameterNames(); }
 
@@ -455,12 +451,6 @@ Function1DWrapper::Function1DWrapper(Functions1D::Form form, const std::vector<d
     : form_(form), function_(functions1D().at(form)), parameters_(params)
 {
     calculateInternalParameters();
-}
-
-bool Function1DWrapper::operator==(Function1DWrapper &other)
-{
-    return form_ == other.form_ && function_ == other.function_ && parameters_ == other.parameters_ &&
-           internalParameters_ == other.internalParameters_;
 }
 
 // Initialise internal function parameters from current base parameters
@@ -555,7 +545,7 @@ SerialisedValue Function1DWrapper::serialise() const
 
     result["form"] = Functions1D::forms().keywordByIndex(static_cast<int>(form_));
 
-    Serialisable::fromVector(parameters_, "parameters", result);
+    Serialisable::fromVector(parameters_, "parameters", result, [](const auto &x) { return x; });
 
     return result;
 }
@@ -563,18 +553,8 @@ SerialisedValue Function1DWrapper::serialise() const
 // Read values from a serialisable value
 void Function1DWrapper::deserialise(const SerialisedValue &node)
 {
-    toml::visit(
-        [this](auto &arg)
-        {
-            using T = std::decay_t<decltype(arg)>;
-            if constexpr (HasEnumOptions<Functions1D::Form>)
-            {
-                setForm(arg);
-            }
-            else if constexpr (std::is_same_v<T, toml::array>)
-            {
-                setParameters(std::get<std::vector<double>>(arg));
-            }
-        },
-        node);
+    Functions1D::Form proxy;
+    form_ = getEnumOptions(proxy).deserialise(node);
+
+    Serialisable::toVector(node, "parameters", [this](const auto &x) { parameters_.emplace_back(toml::get<double>(x)); });
 }

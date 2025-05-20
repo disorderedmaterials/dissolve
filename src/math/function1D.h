@@ -35,7 +35,6 @@ class Function1DDefinition
     public:
     Function1DDefinition() = default;
     Function1DDefinition(const std::vector<std::string> &parameterNames, Function1DXOmega valueFunction);
-    bool operator==(Function1DDefinition &other);
 
     private:
     // Names of parameters defining the function
@@ -95,6 +94,7 @@ class Functions1D
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
+    static EnumOptions<Form> getEnumOptions(Form);
     // Return parameters for specified form
     static const std::vector<std::string> &parameters(Form form);
     // Return nth parameter for the given form
@@ -114,7 +114,6 @@ class Function1DWrapper : public Serialisable<>
 {
     public:
     Function1DWrapper(Functions1D::Form form = Functions1D::Form::None, const std::vector<double> &params = {});
-    bool operator==(Function1DWrapper &other);
 
     /*
      * Function
