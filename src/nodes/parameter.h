@@ -5,8 +5,8 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
-#include "nodes/number.h"
 #include "math/function1D.h "
+#include "nodes/number.h"
 #include "templates/flags.h"
 #include <string>
 #include <typeindex>
@@ -307,13 +307,14 @@ template <typename T> class PointerParameter : public Parameter<T>
 
     public:
     // Set the object
-    void set(const T &value) override{};
+    void set(const T &value) override {};
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override { return false; }
 };
 
 // Template specialisation for non-dedfaulted type Function1DWrapper
-template <> class Parameter<Function1DWrapper> : public ParameterBase, public std::enable_shared_from_this<Parameter<Function1DWrapper>>
+template <>
+class Parameter<Function1DWrapper> : public ParameterBase, public std::enable_shared_from_this<Parameter<Function1DWrapper>>
 {
     public:
     Parameter(Node *parent, std::string_view name, std::string_view description, Function1DWrapper &value)
