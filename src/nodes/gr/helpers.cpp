@@ -547,8 +547,7 @@ bool GRNode::sumUnweightedGR(GenericList &processingData, const ProcessPool &pro
         // Confirm atomic density is available (for the subsequent accumulator)
         if (!cfg->atomicDensity())
         {
-            error("No density available for target configuration '{}'\n", cfg->name());
-            return false;
+            return error("No density available for target configuration '{}'\n", cfg->name());
         }
 
         // TODO Assume weight of 1.0
@@ -560,8 +559,7 @@ bool GRNode::sumUnweightedGR(GenericList &processingData, const ProcessPool &pro
     }
 
     // Calculate overall density of combined system
-    double rho0 = std::accumulate(configWeights.begin(), configWeights.end(), 0.0,
-                                  [totalWeight](double acc, auto pair)
+    double rho0 = std::accumulate(configWeights.begin(), configWeights.end(), 0.0, [totalWeight](double acc, auto pair)
                                   { return acc + pair.second / totalWeight / pair.first->atomicDensity().value(); });
     rho0 = 1.0 / rho0;
 
@@ -571,8 +569,7 @@ bool GRNode::sumUnweightedGR(GenericList &processingData, const ProcessPool &pro
     {
         if (!cfg->atomicDensity())
         {
-            error("No density available for target configuration '{}'\n", cfg->name());
-            return false;
+            return error("No density available for target configuration '{}'\n", cfg->name());
         }
 
         // Update fingerprint
@@ -585,8 +582,7 @@ bool GRNode::sumUnweightedGR(GenericList &processingData, const ProcessPool &pro
         // Grab partials for Configuration and add into our set
         if (!processingData.contains(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix))
         {
-            error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-            return false;
+            return error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
         }
 
         auto cfgPartialGR = processingData.value<PartialSet>(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix);
@@ -681,8 +677,7 @@ bool GRNode::testReferencePartial(const PartialSet &partials, double testThresho
         auto indexJ = partials.atomTypeMix().indexOf(typeJ);
         if (!indexI || !indexJ)
         {
-            error("Unrecognised test data name '{}'.\n", testData.tag());
-            return false;
+            return error("Unrecognised test data name '{}'.\n", testData.tag());
         }
 
         // AtomTypes are valid, so check the 'target'
@@ -706,8 +701,7 @@ bool GRNode::testReferencePartial(const PartialSet &partials, double testThresho
 
         else
         {
-            error("Unrecognised test data name '{}'.\n", testData.tag());
-            return false;
+            return error("Unrecognised test data name '{}'.\n", testData.tag());
         }
 
         testResult = (errorReport.error <= testThreshold);
