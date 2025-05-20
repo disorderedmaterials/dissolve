@@ -81,7 +81,7 @@ class Node : public Serialisable<>
             echo();
     }
     // Node error format
-    template <typename... Args> bool error(std::format_string<Args...> format, Args... args)
+    template <typename... Args> NodeConstants::ProcessResult error(std::format_string<Args...> format, Args... args)
     {
         messages_.emplace_back(std::make_pair(MessageStatus::Error, std::format(format, std::forward<Args>(args)...)));
 
