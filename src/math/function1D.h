@@ -94,7 +94,6 @@ class Functions1D
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
-    static EnumOptions<Form> getEnumOptions(Form);
     // Return parameters for specified form
     static const std::vector<std::string> &parameters(Form form);
     // Return nth parameter for the given form

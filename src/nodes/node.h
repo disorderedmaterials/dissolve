@@ -88,7 +88,7 @@ class Node : public Serialisable<>
         if (echo_)
             echo();
 
-        return false;
+        return NodeConstants::ProcessResult::Failed;
     }
     // Print latest message
     void echo();

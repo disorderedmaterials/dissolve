@@ -5,7 +5,7 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
-#include "math/function1D.h "
+#include "math/function1D.h"
 #include "nodes/number.h"
 #include "templates/flags.h"
 #include <string>
@@ -312,7 +312,7 @@ template <typename T> class PointerParameter : public Parameter<T>
     bool assign(ParameterBase *other) override { return false; }
 };
 
-// Template specialisation for non-dedfaulted type Function1DWrapper
+// Template specialisation for non-defaulted type Function1DWrapper
 template <>
 class Parameter<Function1DWrapper> : public ParameterBase, public std::enable_shared_from_this<Parameter<Function1DWrapper>>
 {

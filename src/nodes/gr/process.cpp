@@ -58,10 +58,10 @@ NodeConstants::ProcessResult GRNode::process()
         {
             if (requestedRange_.value_or(Number(0.0)) > rdfRange)
             {
-                if (!error("Specified RDF range of {} Angstroms is out of range for Configuration "
-                           "'{}' (max = {} Angstroms).\n",
-                           requestedRange_.value().asDouble(), cfg->niceName(), rdfRange))
-                    return NodeConstants::ProcessResult::Failed;
+                error("Specified RDF range of {} Angstroms is out of range for Configuration "
+                      "'{}' (max = {} Angstroms).\n",
+                      requestedRange_.value().asDouble(), cfg->niceName(), rdfRange);
+                return false;
             }
 
             rdfRange = requestedRange_.value().asDouble();
