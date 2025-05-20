@@ -23,7 +23,6 @@ EnumOptions<Averaging::AveragingScheme> averagingSchemes();
 
 EnumOptions<Averaging::AveragingScheme> getEnumOptions(Averaging::AveragingScheme);
 
-
 // Establish the number of stored datasets, shift indices down, and lose oldest dataset if necessary
 int pruneOldData(GenericList &processingData, std::string_view name, std::string_view prefix, int nSetsInAverage);
 

@@ -307,7 +307,7 @@ template <typename T> class PointerParameter : public Parameter<T>
 
     public:
     // Set the object
-    void set(const T &value) override {};
+    void set(const T &value) override{};
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override { return false; }
 };
