@@ -145,27 +145,50 @@ TEST_F(SubGraphTest, Flow)
 
     // Run w - all nodes should update
     EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(w_->versionIndex(), 0);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(z_->versionIndex(), 0);
+    EXPECT_EQ(w_->versionIndex(), 0);
     EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 3);
     EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 7);
     EXPECT_EQ(z_->getOutputValue<Number>("Result").asInteger(), 10);
     EXPECT_EQ(w_->getOutputValue<Number>("Result").asInteger(), 15);
 
     // Change value in 'x' and run w again - all nodes should update
-    printf("OUTPUT STARTS HERE\n");
     xA_->set(3);
     EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(w_->versionIndex(), 1);
     EXPECT_EQ(x_->versionIndex(), 1);
-    EXPECT_EQ(y_->versionIndex(), 1);
+    EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(z_->versionIndex(), 1);
+    EXPECT_EQ(w_->versionIndex(), 1);
     EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 5);
-    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 9);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 7);
     EXPECT_EQ(z_->getOutputValue<Number>("Result").asInteger(), 12);
     EXPECT_EQ(w_->getOutputValue<Number>("Result").asInteger(), 17);
+
+    // Change value in 'y' and run w again - y, z, and w should update
+    yA_->set(5);
+    EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 1);
+    EXPECT_EQ(y_->versionIndex(), 1);
+    EXPECT_EQ(z_->versionIndex(), 2);
+    EXPECT_EQ(w_->versionIndex(), 2);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 5);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 9);
+    EXPECT_EQ(z_->getOutputValue<Number>("Result").asInteger(), 14);
+    EXPECT_EQ(w_->getOutputValue<Number>("Result").asInteger(), 19);
+
+    // Change value in 'w' and run w again - only w should update
+    wB_->set(7);
+    EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 1);
+    EXPECT_EQ(y_->versionIndex(), 1);
+    EXPECT_EQ(z_->versionIndex(), 2);
+    EXPECT_EQ(w_->versionIndex(), 3);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 5);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 9);
+    EXPECT_EQ(z_->getOutputValue<Number>("Result").asInteger(), 14);
+    EXPECT_EQ(w_->getOutputValue<Number>("Result").asInteger(), 21);
 }
 
 } // namespace UnitTest

@@ -5,7 +5,6 @@
 
 #include "base/messenger.h"
 #include "nodes/node.h"
-#include "nodes/parameterMapping.h"
 #include <map>
 #include <memory>
 #include <string>
@@ -14,6 +13,8 @@
 // Forward Declarations
 class Edge;
 class EdgeDefinition;
+class InputsNode;
+class OutputsNode;
 
 // Parameter Holder Base
 class ParameterHolderBase
@@ -50,6 +51,10 @@ class Graph : public Node
     // Perform processing
     NodeConstants::ProcessResult process() override;
 
+    public:
+    // Flag that the node data needs to be updated
+    void setUpdateRequired() override;
+
     /*
      * Inputs, Outputs, and Options
      */
@@ -57,7 +62,8 @@ class Graph : public Node
     // Parameter holders for dynamic input / output variables
     std::vector<std::shared_ptr<ParameterHolderBase>> parameterHolders_;
     // Mapped input and output nodes
-    ParameterMappingNode *mappedInputs_{nullptr}, *mappedOutputs_{nullptr};
+    InputsNode *mappedInputs_{nullptr};
+    OutputsNode *mappedOutputs_{nullptr};
 
     public:
     // Create and return mapped input

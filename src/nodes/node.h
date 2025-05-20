@@ -114,7 +114,7 @@ class Node : public Serialisable<>
     // Invalidate the current node, resetting versionIndex_
     void invalidate();
     // Flag that the node data needs to be updated
-    void setUpdateRequired();
+    virtual void setUpdateRequired();
     // Return whether the node's data is up-to-date
     bool isUpToDate() const;
     // Check that all required inputs are present, and that all inputs are valid

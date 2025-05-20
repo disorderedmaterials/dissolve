@@ -3,13 +3,14 @@
 
 #include "nodes/graph.h"
 #include "nodes/edge.h"
+#include "nodes/inputs.h"
+#include "nodes/outputs.h"
 #include "nodes/registry.h"
 
 Graph::Graph(Graph *parentGraph) : Node(parentGraph)
 {
-    mappedInputs_ = dynamic_cast<ParameterMappingNode *>(addNode(std::make_unique<ParameterMappingNode>(this), "Inputs"));
-    mappedOutputs_ =
-        dynamic_cast<ParameterMappingNode *>(addNode(std::make_unique<ParameterMappingNode>(this, true), "Outputs"));
+    mappedInputs_ = dynamic_cast<InputsNode *>(addNode(std::make_unique<InputsNode>(this), "Inputs"));
+    mappedOutputs_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "Outputs"));
 }
 
 /*
@@ -64,6 +65,20 @@ NodeConstants::ProcessResult Graph::process()
     return outputsResult == terminalNodeResult ? outputsResult : NodeConstants::ProcessResult::Success;
 }
 
+// Flag that the node data needs to be updated
+void Graph::setUpdateRequired()
+{
+    // If already flagged then do nothing
+    if (!isUpToDate())
+        return;
+
+    // Propagate changes through mappedInputs_
+    mappedInputs_->setUpdateRequired();
+
+    // Call base class function to set flag and propagate through outputs
+    Node::setUpdateRequired();
+}
+
 /*
  * Inputs, Outputs, and Options
  */
@@ -72,6 +87,14 @@ NodeConstants::ProcessResult Graph::process()
 std::shared_ptr<ParameterBase> Graph::createMappedInput(std::string_view inputName, std::type_index typeIndex)
 {
     std::shared_ptr<ParameterBase> inputParameter;
+
+    // Check first that the inputName doesn't exist in our inputs_ (implicitly this carries for InputNode's outputs_)
+    if (findInput(inputName))
+    {
+        Messenger::error("Can't create mapped input as one named '{}' already exists in the Graph.", inputName);
+        return {};
+    }
+
     // TODO Convert to Factory
     if (typeIndex == std::type_index(typeid(Number)))
     {
@@ -92,6 +115,13 @@ std::shared_ptr<ParameterBase> Graph::createMappedInput(std::string_view inputNa
 // Create mapped output, returning the relevant input (rather than the output)
 std::shared_ptr<ParameterBase> Graph::createMappedOutput(std::string_view outputName, std::type_index typeIndex)
 {
+    // Check first that the inputName doesn't exist in our outputs_ (implicitly this carries for OutputNode's inputs_)
+    if (findOutput(outputName))
+    {
+        Messenger::error("Can't create mapped output as one named '{}' already exists in the Graph.", outputName);
+        return {};
+    }
+
     std::shared_ptr<ParameterBase> outputParameter;
     // TODO Convert to Factory
     if (typeIndex == std::type_index(typeid(Number)))

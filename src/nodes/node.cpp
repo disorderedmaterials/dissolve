@@ -121,7 +121,19 @@ void Node::invalidate()
 }
 
 // Flag that the node data needs to be updated
-void Node::setUpdateRequired() { upToDate_ = false; }
+void Node::setUpdateRequired()
+{
+    // If already flagged then do nothing
+    if (!isUpToDate())
+        return;
+
+    upToDate_ = false;
+
+    // Make sure all output edges propagate this information down
+    for (auto &&[outputName, edge] : outputEdges())
+        if (!edge->targetInput().flags().isSet(ParameterBase::ParameterFlags::NoUpdate))
+            edge->targetInput().setParentUpdateRequired();
+}
 
 // Return whether the node's data is up-to-date
 bool Node::isUpToDate() const { return upToDate_; }

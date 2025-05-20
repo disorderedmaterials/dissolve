@@ -3,6 +3,7 @@
 
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include "nodes/outputs.h"
 
 Edge::Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput)
     : sourceNode_(sourceNode), sourceOutput_(sourceOutput), targetNode_(targetNode), targetInput_(targetInput)
@@ -75,12 +76,10 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
         auto graphNode = dynamic_cast<Graph *>(targetNode);
         targetInput = graphNode->createMappedInput(definition.targetInput, sourceOutput->type());
     }
-    else if (dynamic_cast<ParameterMappingNode *>(targetNode))
+    else if (dynamic_cast<OutputsNode *>(targetNode))
     {
-        // If the target node is the parent Graph's own Outputs node, create a dynamic output
-        auto *mappingNode = dynamic_cast<ParameterMappingNode *>(targetNode);
-        if (mappingNode->mapsOutputs())
-            targetInput = parent->createMappedOutput(definition.targetInput, sourceOutput->type());
+        // The target node is the parent Graph's own Outputs node, so create a mapped output
+        targetInput = parent->createMappedOutput(definition.targetInput, sourceOutput->type());
     }
     else
         targetInput = targetNode->findInput(definition.targetInput);
