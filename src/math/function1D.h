@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/enumOptions.h"
+#include "base/serialiser.h"
 #include "templates/flags.h"
 #include <functional>
 #include <string_view>
@@ -94,6 +95,7 @@ class Functions1D
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
+    EnumOptions<Functions1D::Form> getEnumOptions(Functions1D::Form);
     // Return parameters for specified form
     static const std::vector<std::string> &parameters(Form form);
     // Return nth parameter for the given form
@@ -109,7 +111,7 @@ class Functions1D
 };
 
 // Function 1D Wrapper
-class Function1DWrapper
+class Function1DWrapper : public Serialisable<>
 {
     public:
     Function1DWrapper(Functions1D::Form form = Functions1D::Form::None, const std::vector<double> &params = {});
@@ -156,4 +158,13 @@ class Function1DWrapper
     double yFT(double x, double omega = 0.0) const;
     // Return normalisation factor at specified omega
     double normalisation(double omega = 0.0) const;
+
+    /*
+     * Serialisable
+     */
+    public:
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };

@@ -5,6 +5,7 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "math/function1D.h"
 #include "nodes/number.h"
 #include "templates/flags.h"
 #include <string>
@@ -309,4 +310,30 @@ template <typename T> class PointerParameter : public Parameter<T>
     void set(const T &value) override{};
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override { return false; }
+};
+
+// Template specialisation for non-defaulted type Function1DWrapper
+template <>
+class Parameter<Function1DWrapper> : public ParameterBase, public std::enable_shared_from_this<Parameter<Function1DWrapper>>
+{
+    public:
+    Parameter(Node *parent, std::string_view name, std::string_view description, Function1DWrapper &value)
+        : ParameterBase(parent, name, description, std::type_index(typeid(Function1DWrapper))), data_(value), default_(value)
+    {
+    }
+
+    /*
+     * Data
+     */
+    protected:
+    // Reference to target data
+    Function1DWrapper &data_;
+    // Initial value
+    const Function1DWrapper default_;
+
+    public:
+    // Assign the value of another parameter to this one.
+    bool assign(ParameterBase *other) override { return false; }
+    // Return whether the contained data represents the default value
+    bool isDefault() const override { return false; }
 };
