@@ -10,6 +10,9 @@ on:
       qtVersion:
         type: string
         required: true
+      msvcVersion:
+        type: string
+        required: true
       antlrVersion:
         type: string
         required: true
