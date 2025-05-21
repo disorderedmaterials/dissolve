@@ -11,13 +11,6 @@
 // Run main processing
 Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
 {
-    /*
-     * Calculate standard partial g(r)
-     *
-     * This is a serial routine, with each process constructing its own copy of the data.
-     * Partial calculation routines called by this routine are parallel.
-     */
-
     // Print argument/parameter summary
     if (!requestedRange_)
         Messenger::print("RDF: Partials will be calculated up to the half-cell range limit.\n");
