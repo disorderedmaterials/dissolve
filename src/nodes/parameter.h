@@ -13,8 +13,32 @@
 
 // Forward Declarations
 class Node;
+class ParameterBase;
 template <typename T> class Parameter;
 template <typename T> class PointerParameter;
+
+// Parameter Proxy Base
+class ParameterProxyBase
+{
+};
+
+// Parameter Proxy
+template <class T> class ParameterProxy : public ParameterProxyBase
+{
+    public:
+    T data;
+};
+
+// Parameter Link Data
+struct ParameterLink
+{
+    // Parameter proxy
+    std::shared_ptr<ParameterProxyBase> proxy;
+    // Input parameter side
+    std::shared_ptr<ParameterBase> inputParameter;
+    // Output parameter side
+    std::shared_ptr<ParameterBase> outputParameter;
+};
 
 // Base type for all parameter templates to inherit from
 class ParameterBase : public Serialisable<>
@@ -47,6 +71,8 @@ class ParameterBase : public Serialisable<>
     Flags<ParameterBase::ParameterFlags> flags_;
 
     public:
+    // Set node parent
+    void setParent(Node *parent);
     // Return the parameter name
     std::string_view name() const;
     // Return the parameter description
@@ -63,6 +89,10 @@ class ParameterBase : public Serialisable<>
     /*
      * Data
      */
+    protected:
+    // Parameter link data proxies
+    std::vector<std::shared_ptr<ParameterProxyBase>> proxies_;
+
     public:
     // Return whether the contained data represents the default value
     virtual bool isDefault() const { return true; };
@@ -83,6 +113,8 @@ class ParameterBase : public Serialisable<>
         auto cast2 = static_cast<Parameter<T> *>(this);
         return cast2->shared_from_this();
     }
+    // Create a parameter link (input - data proxy - output) for the derived class type
+    virtual ParameterLink createParameterLink(std::string_view parameterName, std::string_view parameterDescription = "") = 0;
 
     /*
      * I/O
@@ -143,6 +175,23 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
             return false;
         set(upcasted->get());
         return true;
+    }
+    // Create a parameter link (input - data proxy - output) for this parameter type
+    ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription) override
+    {
+        // Create a parameter holder object with the same type as ours and add it to the proxies_ storage
+        auto proxy = std::make_shared<ParameterProxy<T>>();
+        proxies_.emplace_back(proxy);
+
+        // Create an input and an output Parameter linked to the proxy data
+        auto inputParameter = std::make_shared<Parameter<T>>(nullptr, newName, newDescription, proxy->data);
+        inputParameter->setFlags(ParameterBase::ParameterFlags::Input);
+
+        // Create a companion input on our Outputs node, again linked to the proxy data
+        auto outputParameter = std::make_shared<Parameter<T>>(nullptr, newName, newDescription, proxy->data);
+        outputParameter->setFlags(ParameterBase::ParameterFlags::Output);
+
+        return {proxy, inputParameter, outputParameter};
     }
 
     // Helper templates for handling serialisation

@@ -83,61 +83,18 @@ void Graph::setUpdateRequired()
  * Inputs, Outputs, and Options
  */
 
-// Create and return mapped input
-std::shared_ptr<ParameterBase> Graph::createMappedInput(std::string_view inputName, std::type_index typeIndex)
+// Add supplied mapped input, setting ownership of the nodes appropriately
+bool Graph::addMappedInput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)
 {
-    std::shared_ptr<ParameterBase> inputParameter;
-
-    // Check first that the inputName doesn't exist in our inputs_ (implicitly this carries for InputNode's outputs_)
-    if (findInput(inputName))
-    {
-        Messenger::error("Can't create mapped input as one named '{}' already exists in the Graph.", inputName);
-        return {};
-    }
-
-    // TODO Convert to Factory
-    if (typeIndex == std::type_index(typeid(Number)))
-    {
-        // Create a parameter holder object with the correct type
-        auto proxy = std::make_shared<ParameterHolder<Number>>();
-        parameterHolders_.emplace_back(proxy);
-
-        // Create an input on ourself, linked to the proxy data
-        inputParameter = addInput(inputName, "", proxy->data);
-
-        // Create a companion output on our Inputs node, again linked to the proxy data
-        mappedInputs_->addOutput(inputName, "", proxy->data);
-    }
-
-    return inputParameter;
+    // We (the Graph) own the input and the mappedInputs_ owns the output
+    return ownParameter(input) && mappedInputs_->ownParameter(output, true);
 }
 
-// Create mapped output, returning the relevant input (rather than the output)
-std::shared_ptr<ParameterBase> Graph::createMappedOutput(std::string_view outputName, std::type_index typeIndex)
+// Add supplied mapped output, setting ownership of the nodes appropriately
+bool Graph::addMappedOutput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)
 {
-    // Check first that the inputName doesn't exist in our outputs_ (implicitly this carries for OutputNode's inputs_)
-    if (findOutput(outputName))
-    {
-        Messenger::error("Can't create mapped output as one named '{}' already exists in the Graph.", outputName);
-        return {};
-    }
-
-    std::shared_ptr<ParameterBase> outputParameter;
-    // TODO Convert to Factory
-    if (typeIndex == std::type_index(typeid(Number)))
-    {
-        // Create n parameter holder object with the correct type
-        auto proxy = std::make_shared<ParameterHolder<Number>>();
-        parameterHolders_.emplace_back(proxy);
-
-        // Create an output on ourself, linked to the proxy data
-        addOutput(outputName, "", proxy->data);
-
-        // Create a companion input on our Outputs node, again linked to the proxy data
-        outputParameter = mappedOutputs_->addInput(outputName, "", proxy->data);
-    }
-
-    return outputParameter;
+    // We (the Graph) own the output and the mappedOutputs_ owns the input
+    return mappedOutputs_->ownParameter(input) && ownParameter(output, true);
 }
 
 /*

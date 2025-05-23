@@ -153,7 +153,8 @@ class Node : public Serialisable<>
             Messenger::exception("Option '{}' already exists, and can't be added again.", optionName);
 
         auto param =
-            options_.emplace(std::make_pair(optionName, new Parameter<T>(this, optionName, description, data))).first->second;
+            options_.emplace(std::make_pair(optionName, std::make_shared<Parameter<T>>(this, optionName, description, data)))
+                .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
@@ -165,7 +166,8 @@ class Node : public Serialisable<>
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", inputName);
 
         auto param =
-            inputs_.emplace(std::make_pair(inputName, new Parameter<T>(this, inputName, description, data))).first->second;
+            inputs_.emplace(std::make_pair(inputName, std::make_shared<Parameter<T>>(this, inputName, description, data)))
+                .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
@@ -179,8 +181,8 @@ class Node : public Serialisable<>
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", inputName);
 
         auto param = inputs_
-                         .emplace(std::make_pair(
-                             inputName, new BoundedParameter<T>(this, inputName, description, data, lower, upper, step)))
+                         .emplace(std::make_pair(inputName, std::make_shared<BoundedParameter<T>>(this, inputName, description,
+                                                                                                  data, lower, upper, step)))
                          .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
@@ -193,10 +195,11 @@ class Node : public Serialisable<>
         if (findInput(inputName))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", inputName);
 
-        auto param = inputs_
-                         .emplace(std::make_pair(inputName, new BoundedOptionalParameter<T>(this, inputName, description, data,
-                                                                                            lower, textWhenNull, upper, step)))
-                         .first->second;
+        auto param =
+            inputs_
+                .emplace(std::make_pair(inputName, std::make_shared<BoundedOptionalParameter<T>>(
+                                                       this, inputName, description, data, lower, textWhenNull, upper, step)))
+                .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
@@ -208,7 +211,8 @@ class Node : public Serialisable<>
             Messenger::exception("Output parameter '{}' already exists, and can't be added again.", outputName);
 
         auto param =
-            outputs_.emplace(std::make_pair(outputName, new Parameter<T>(this, outputName, description, data))).first->second;
+            outputs_.emplace(std::make_pair(outputName, std::make_shared<Parameter<T>>(this, outputName, description, data)))
+                .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Output);
         return param;
     }
@@ -220,12 +224,15 @@ class Node : public Serialisable<>
         if (findOutput(outputName))
             Messenger::exception("Output parameter '{}' already exists, and can't be added again.", outputName);
 
-        auto param =
-            outputs_.emplace(std::make_pair(outputName, new PointerParameter<T>(this, outputName, description, object)))
-                .first->second;
+        auto param = outputs_
+                         .emplace(std::make_pair(outputName,
+                                                 std::make_shared<PointerParameter<T>>(this, outputName, description, object)))
+                         .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Output);
         return param;
     }
+    // Own supplied parameter
+    bool ownParameter(std::shared_ptr<ParameterBase> &parameter, bool isOutput = false);
     // Return named input parameter if it exists
     std::shared_ptr<ParameterBase> findInput(std::string_view inputName) const;
     // Return input parameters
