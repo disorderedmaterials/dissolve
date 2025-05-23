@@ -26,6 +26,7 @@ class WindowFunction
     };
     // Return EnumOptions for FunctionType
     static EnumOptions<WindowFunction::Form> forms();
+    EnumOptions<Form> getEnumOptions(Form);
     WindowFunction(WindowFunction::Form function = Form::None);
     ~WindowFunction() = default;
 
