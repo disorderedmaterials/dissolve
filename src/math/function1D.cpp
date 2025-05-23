@@ -285,7 +285,7 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
                 auto C = 6 * params[2] * pow(x, -7.0);
                 return -params[1] * params[0] * expo + C;
             });
-        
+
         /*
          * Modified (Camellone) BKS Potential
          *
@@ -295,23 +295,23 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
          * INPUT  2 = C
          * INPUT  3 = D
          * INPUT  4 = E
-         * 
+         *
          *                         C       D      E
          * F(x) = A exp(-B * x) - ---- + ----- - ----
          *                        x**6   x**12   x**8
-         * 
+         *
          */
         functions[Functions1D::Form::CamelloneBKS] =
             Function1DDefinition({"A", "B", "C", "D", "E"},
-                                [](double x, double omega, const std::vector<double> &params)
-                                {
-                                    auto B = exp(-params[1] * x);
-                                    auto C = params[2] / pow(x, 6.0);
-                                    auto D = params[3] / pow(x, 12.0);
-                                    auto E = params[4] / pow(x, 8.0);
-                                    return (params[0] * B - C + D - E) * 96.48533; // Paper gives in eV
-                                });
-        /* 
+                                 [](double x, double omega, const std::vector<double> &params)
+                                 {
+                                     auto B = exp(-params[1] * x);
+                                     auto C = params[2] / pow(x, 6.0);
+                                     auto D = params[3] / pow(x, 12.0);
+                                     auto E = params[4] / pow(x, 8.0);
+                                     return (params[0] * B - C + D - E) * 96.48533; // Paper gives in eV
+                                 });
+        /*
          * dYdX = -B * A exp(-B * x) + 6 * C * x**-7 - 12 * D * x**-13 + 8 * E * x**-9
          */
         functions[Functions1D::Form::CamelloneBKS].setDerivativeFunction(
@@ -322,8 +322,7 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
                 auto D = 12 * params[3] * pow(x, -13.0);
                 auto E = 8 * params[4] * pow(x, -9.0);
                 return (-params[1] * params[0] * expo + C - D + E) * 96.48533;
-            }
-        );
+            });
 
         /*
          * GaussianPotential with prefactor, located at specific x.
