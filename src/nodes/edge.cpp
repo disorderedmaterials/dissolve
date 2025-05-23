@@ -75,7 +75,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
         // The target node is a Graph: create a parameter link from the sourceOutput and from it a mapped input
         auto graphNode = dynamic_cast<Graph *>(targetNode);
         auto link = sourceOutput->createParameterLink(definition.targetInput);
-        if (!graphNode->addMappedInput(link.inputParameter, link.outputParameter))
+        if (!graphNode->addProxyInput(link.inputParameter, link.outputParameter))
         {
             Messenger::error("Failed to add mapped input '{}'.\n", definition.targetInput);
             return {};
@@ -87,7 +87,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
         // The target node is the parent Graph's own Outputs node, so create a parameter link from the sourceOutput and from it
         // a mapped output
         auto link = sourceOutput->createParameterLink(definition.targetInput);
-        if (!parent->addMappedOutput(link.inputParameter, link.outputParameter))
+        if (!parent->addProxyOutput(link.inputParameter, link.outputParameter))
         {
             Messenger::error("Failed to add mapped output '{}'.\n", definition.targetInput);
             return {};

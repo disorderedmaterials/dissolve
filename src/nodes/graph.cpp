@@ -9,8 +9,8 @@
 
 Graph::Graph(Graph *parentGraph) : Node(parentGraph)
 {
-    mappedInputs_ = dynamic_cast<InputsNode *>(addNode(std::make_unique<InputsNode>(this), "Inputs"));
-    mappedOutputs_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "Outputs"));
+    proxyInputs_ = dynamic_cast<InputsNode *>(addNode(std::make_unique<InputsNode>(this), "Inputs"));
+    proxyOutputs_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "Outputs"));
 }
 
 /*
@@ -38,7 +38,7 @@ NodeConstants::ProcessResult Graph::process()
      */
 
     // Pull outputs first
-    auto outputsResult = mappedOutputs_->run();
+    auto outputsResult = proxyOutputs_->run();
     if (outputsResult == NodeConstants::ProcessResult::Failed)
         return outputsResult;
 
@@ -72,8 +72,8 @@ void Graph::setUpdateRequired()
     if (!isUpToDate())
         return;
 
-    // Propagate changes through mappedInputs_
-    mappedInputs_->setUpdateRequired();
+    // Propagate changes through proxyInputs_
+    proxyInputs_->setUpdateRequired();
 
     // Call base class function to set flag and propagate through outputs
     Node::setUpdateRequired();
@@ -83,18 +83,18 @@ void Graph::setUpdateRequired()
  * Inputs, Outputs, and Options
  */
 
-// Add supplied mapped input, setting ownership of the nodes appropriately
-bool Graph::addMappedInput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)
+// Add supplied proxy input, setting ownership of the parameters appropriately
+bool Graph::addProxyInput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)
 {
-    // We (the Graph) own the input and the mappedInputs_ owns the output
-    return ownParameter(input) && mappedInputs_->ownParameter(output, true);
+    // We (the Graph) own the input and the proxyInputs_ owns the output
+    return ownParameter(input) && proxyInputs_->ownParameter(output, true);
 }
 
-// Add supplied mapped output, setting ownership of the nodes appropriately
-bool Graph::addMappedOutput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)
+// Add supplied proxy output, setting ownership of the parameters appropriately
+bool Graph::addProxyOutput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)
 {
-    // We (the Graph) own the output and the mappedOutputs_ owns the input
-    return mappedOutputs_->ownParameter(input) && ownParameter(output, true);
+    // We (the Graph) own the output and the proxyOutputs_ owns the input
+    return proxyOutputs_->ownParameter(input) && ownParameter(output, true);
 }
 
 /*

@@ -47,15 +47,15 @@ class Graph : public Node
      * Inputs, Outputs, and Options
      */
     private:
-    // Mapped input and output nodes
-    InputsNode *mappedInputs_{nullptr};
-    OutputsNode *mappedOutputs_{nullptr};
+    // Proxy input and output nodes
+    InputsNode *proxyInputs_{nullptr};
+    OutputsNode *proxyOutputs_{nullptr};
 
     public:
-    // Add supplied mapped input, setting ownership of the nodes appropriately
-    bool addMappedInput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output);
-    // Add supplied mapped output, setting ownership of the nodes appropriately
-    bool addMappedOutput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output);
+    // Add supplied proxy input, setting ownership of the parameters appropriately
+    bool addProxyInput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output);
+    // Add supplied proxy output, setting ownership of the parameters appropriately
+    bool addProxyOutput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output);
 
     /*
      * Nodes and Edges

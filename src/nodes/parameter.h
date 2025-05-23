@@ -32,7 +32,7 @@ template <class T> class ParameterProxy : public ParameterProxyBase
 // Parameter Link Data
 struct ParameterLink
 {
-    // Parameter proxy
+    // Parameter data proxy
     std::shared_ptr<ParameterProxyBase> proxy;
     // Input parameter side
     std::shared_ptr<ParameterBase> inputParameter;
