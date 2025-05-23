@@ -90,8 +90,8 @@ class ParameterBase : public Serialisable<>
      * Data
      */
     protected:
-    // Parameter link data proxies
-    std::vector<std::shared_ptr<ParameterProxyBase>> proxies_;
+    // Parameter proxy data (if a ParameterLink)
+    std::shared_ptr<ParameterProxyBase> proxyData_;
 
     public:
     // Return whether the contained data represents the default value
@@ -114,7 +114,7 @@ class ParameterBase : public Serialisable<>
         return cast2->shared_from_this();
     }
     // Create a parameter link (input - data proxy - output) for the derived class type
-    virtual ParameterLink createParameterLink(std::string_view parameterName, std::string_view parameterDescription = "") = 0;
+    virtual ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription = "") const = 0;
 
     /*
      * I/O
@@ -133,6 +133,12 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     Parameter(Node *parent, std::string_view name, std::string_view description, T &value)
         : ParameterBase(parent, name, description, std::type_index(typeid(T))), data_(value), default_(value)
     {
+    }
+    Parameter(Node *parent, std::string_view name, std::string_view description, std::shared_ptr<ParameterProxy<T>> &proxy)
+        : ParameterBase(parent, name, description, std::type_index(typeid(T))), data_(proxy->data), default_(proxy->data)
+    {
+        // Store the proxy data smart pointer to preserve the lifetime of the data
+        proxyData_ = proxy;
     }
     virtual ~Parameter() = default;
 
@@ -177,18 +183,17 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         return true;
     }
     // Create a parameter link (input - data proxy - output) for this parameter type
-    ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription) override
+    ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription) const override
     {
         // Create a parameter holder object with the same type as ours and add it to the proxies_ storage
         auto proxy = std::make_shared<ParameterProxy<T>>();
-        proxies_.emplace_back(proxy);
 
         // Create an input and an output Parameter linked to the proxy data
-        auto inputParameter = std::make_shared<Parameter<T>>(nullptr, newName, newDescription, proxy->data);
+        auto inputParameter = std::make_shared<Parameter<T>>(nullptr, newName, newDescription, proxy);
         inputParameter->setFlags(ParameterBase::ParameterFlags::Input);
 
         // Create a companion input on our Outputs node, again linked to the proxy data
-        auto outputParameter = std::make_shared<Parameter<T>>(nullptr, newName, newDescription, proxy->data);
+        auto outputParameter = std::make_shared<Parameter<T>>(nullptr, newName, newDescription, proxy);
         outputParameter->setFlags(ParameterBase::ParameterFlags::Output);
 
         return {proxy, inputParameter, outputParameter};
