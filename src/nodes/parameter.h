@@ -17,13 +17,8 @@ class ParameterBase;
 template <typename T> class Parameter;
 template <typename T> class PointerParameter;
 
-// Parameter Proxy Base
-class ParameterProxyBase
-{
-};
-
 // Parameter Proxy
-template <class T> class ParameterProxy : public ParameterProxyBase
+template <class T> class ParameterProxy
 {
     public:
     T data;
@@ -32,8 +27,6 @@ template <class T> class ParameterProxy : public ParameterProxyBase
 // Parameter Link Data
 struct ParameterLink
 {
-    // Parameter data proxy
-    std::shared_ptr<ParameterProxyBase> proxy;
     // Input parameter side
     std::shared_ptr<ParameterBase> inputParameter;
     // Output parameter side
@@ -89,10 +82,6 @@ class ParameterBase : public Serialisable<>
     /*
      * Data
      */
-    protected:
-    // Parameter proxy data (if a ParameterLink)
-    std::shared_ptr<ParameterProxyBase> proxyData_;
-
     public:
     // Return whether the contained data represents the default value
     virtual bool isDefault() const { return true; };
@@ -150,6 +139,8 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     T &data_;
     // Initial value
     const T default_;
+    // Parameter proxy data (if a ParameterLink)
+    std::shared_ptr<ParameterProxy<T>> proxyData_;
 
     public:
     // Set the parameter value
@@ -196,7 +187,7 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         auto outputParameter = std::make_shared<Parameter<T>>(nullptr, newName, newDescription, proxy);
         outputParameter->setFlags(ParameterBase::ParameterFlags::Output);
 
-        return {proxy, inputParameter, outputParameter};
+        return {inputParameter, outputParameter};
     }
 
     // Helper templates for handling serialisation
