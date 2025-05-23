@@ -109,19 +109,19 @@ TEST_F(SubGraphTest, Connections)
     createGraph();
 
     // Create a mapped input on GraphA by creating an edge to it
-    EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
+    EXPECT_TRUE(root_.addEdge("x", "Result", "GraphA", "C"));
 
     // Connect the mapped input on GraphA internally to it's "z" node
-    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "A"}));
+    EXPECT_TRUE(graphA_->addEdge("Inputs", "C", "z", "A"));
 
     // Connect y result to z
-    EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "B"}));
+    EXPECT_TRUE(graphA_->addEdge("y", "Result", "z", "B"));
 
     // Connect z result to graphA output, creating a mapped output
-    EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
+    EXPECT_TRUE(graphA_->addEdge("z", "Result", "Outputs", "D"));
 
     // Connect GraphA mapped output "D" to node "w"
-    EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "A"}));
+    EXPECT_TRUE(root_.addEdge("GraphA", "D", "w", "A"));
 }
 
 TEST_F(SubGraphTest, Flow)
@@ -129,19 +129,19 @@ TEST_F(SubGraphTest, Flow)
     createGraph();
 
     // Create a mapped input on GraphA by creating an edge to it
-    EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
+    EXPECT_TRUE(root_.addEdge("x", "Result", "GraphA", "C"));
 
     // Connect the mapped input on GraphA internally to it's "z" node
-    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "A"}));
+    EXPECT_TRUE(graphA_->addEdge("Inputs", "C", "z", "A"));
 
     // Connect y result to z
-    EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "B"}));
+    EXPECT_TRUE(graphA_->addEdge("y", "Result", "z", "B"));
 
     // Connect z result to graphA output, creating a mapped output
-    EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
+    EXPECT_TRUE(graphA_->addEdge("z", "Result", "Outputs", "D"));
 
     // Connect GraphA mapped output "D" to node "w"
-    EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "A"}));
+    EXPECT_TRUE(root_.addEdge("GraphA", "D", "w", "A"));
 
     // Run w - all nodes should update
     EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);

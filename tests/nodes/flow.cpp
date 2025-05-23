@@ -67,8 +67,8 @@ class GraphFlowTest : public ::testing::Test
 
         if (includeEdges)
         {
-            EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "A"}));
-            EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "B"}));
+            EXPECT_TRUE(graph_.addEdge("x", "Result", "z", "A"));
+            EXPECT_TRUE(graph_.addEdge("y", "Result", "z", "B"));
         }
     }
 
@@ -122,7 +122,7 @@ TEST_F(GraphFlowTest, Basic)
     EXPECT_TRUE(z_->isUpToDate());
 
     // Add the edge between x's "Result" and z's "A" input
-    EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "A"}));
+    EXPECT_TRUE(graph_.addEdge("x", "Result", "z", "A"));
     EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
 
     // If we now run z we should use x's output without changing x itself
@@ -132,7 +132,7 @@ TEST_F(GraphFlowTest, Basic)
     EXPECT_EQ(x_->versionIndex(), 0);
 
     // Complete the graph and link y's "Result" output to z's "B" input
-    EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "B"}));
+    EXPECT_TRUE(graph_.addEdge("y", "Result", "z", "B"));
     EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
 
     // As before, if we now run z we should use x's and y's output without changing x or y
@@ -203,19 +203,19 @@ TEST_F(GraphFlowTest, RemoveEdges)
     EXPECT_EQ(y_->versionIndex(), 0);
 
     // Remove edge between x and z - this will invalidate z but not x
-    EXPECT_TRUE(graph_.removeEdge({"x", "Result", "z", "A"}));
+    EXPECT_TRUE(graph_.removeEdge("x", "Result", "z", "A"));
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
 
     // Now remove edge between y and z - this will invalidate z but not y
-    EXPECT_TRUE(graph_.removeEdge({"y", "Result", "z", "B"}));
+    EXPECT_TRUE(graph_.removeEdge("y", "Result", "z", "B"));
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
 
     // Try to remove a non-existent edge
-    EXPECT_FALSE(graph_.removeEdge({"Q", "Result", "z", "C"}));
+    EXPECT_FALSE(graph_.removeEdge("Q", "Result", "z", "C"));
 }
 
 } // namespace UnitTest

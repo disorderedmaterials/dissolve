@@ -231,6 +231,13 @@ bool Graph::addEdge(const EdgeDefinition &definition)
     return true;
 }
 
+// Add edge between nodes
+bool Graph::addEdge(std::string srcNode, std::string srcOutput, std::string tgtNode, std::string tgtInput)
+{
+    EdgeDefinition edge(srcNode, srcOutput, tgtNode, tgtInput);
+    return addEdge(edge);
+}
+
 // Remove edge between nodes
 bool Graph::removeEdge(const EdgeDefinition &definition)
 {
@@ -239,6 +246,11 @@ bool Graph::removeEdge(const EdgeDefinition &definition)
         return Messenger::error("Edge doesn't exist, so can't remove it.\n");
     else
         return removeEdge(edge);
+}
+bool Graph::removeEdge(std::string srcNode, std::string srcOutput, std::string tgtNode, std::string tgtInput)
+{
+    EdgeDefinition edge(srcNode, srcOutput, tgtNode, tgtInput);
+    return removeEdge(edge);
 }
 bool Graph::removeEdge(Edge *edgeToRemove)
 {

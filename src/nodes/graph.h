@@ -103,8 +103,10 @@ class Graph : public Node
     void setNodeName(const Node *node, std::string_view nodeName);
     // Add edge between nodes
     bool addEdge(const EdgeDefinition &definition);
+    bool addEdge(std::string srcNode, std::string srcOutput, std::string tgtNode, std::string tgtInput);
     // Remove edge between nodes
     bool removeEdge(const EdgeDefinition &definition);
+    bool removeEdge(std::string srcNode, std::string srcOutput, std::string tgtNode, std::string tgtInput);
     bool removeEdge(Edge *edgeToRemove);
     // Find edge between nodes
     Edge *findEdge(const EdgeDefinition &definition) const;
