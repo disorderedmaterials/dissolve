@@ -304,6 +304,11 @@ void AddForcefieldDialogModel::finalise()
             }
         }
     }
+
+    // Associate the forcefield to the species
+    if (ff_)
+        species_->setForcefield(ForcefieldLibrary::forcefield(ff_->name()));
+
     accept();
 }
 

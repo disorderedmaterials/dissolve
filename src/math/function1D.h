@@ -86,7 +86,7 @@ class Functions1D
         GaussianC2,
         LennardJones126,
         Buckingham,
-        CamelloneBKS,
+        Buckingham128,
         GaussianPotential,
         Harmonic,
         Coulombic,

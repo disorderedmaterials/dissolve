@@ -55,6 +55,8 @@ class ForcefieldTab : public QWidget, public MainTab
     private:
     // Update all pair potentials
     void updatePairPotentials();
+    // Check for forcefield defined overrides
+    void checkOverrides();
 
     public:
     // Update controls in tab

@@ -539,3 +539,70 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
 
     return true;
 }
+
+// Add an override from a forcefield object
+void Forcefield::addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
+                                          PairPotentialOverride::PairPotentialOverrideType overrideType,
+                                          const InteractionPotential<Functions1D> potential)
+{
+    ppOverrides_.emplace_back(std::make_unique<PairPotentialOverride>(matchI, matchJ, overrideType, potential));
+}
+
+// Return overrides
+const std::vector<std::unique_ptr<PairPotentialOverride>> &Forcefield::pairPotentialOverrides() const { return ppOverrides_; }
+
+// Apply overrides into coreData
+bool Forcefield::applyPairPotentialOverrides(CoreData &coreData) const
+{
+    auto newAdditions = false;
+
+    if (ppOverrides_.empty())
+        return false;
+
+    Messenger::print("Looking for forcefield defined overrides...");
+    for (const auto &override : ppOverrides_)
+    {
+        // First check if the species for the override exist
+        Messenger::print("Attempting to find species to apply override to...");
+        auto I = false;
+        auto J = false;
+
+        for (const auto &specie : coreData.species())
+        {
+            if (!specie->forcefield())
+                continue;
+
+            for (const auto &atom : specie->atoms())
+            {
+                if (atom.atomType()->name() == override.get()->matchI())
+                {
+                    Messenger::print("Found I");
+                    I = true;
+                }
+                if (atom.atomType()->name() == override.get()->matchI())
+                {
+                    Messenger::print("Found J");
+                    J = true;
+                }
+            }
+        }
+        // If they do, check if they exist in coredata, add them if not
+        if (I && J)
+        {
+            auto exists = false;
+            for (const auto &orr : coreData.pairPotentialOverrides())
+                if (orr.get()->matchI() == override.get()->matchI() && orr.get()->matchJ() == override.get()->matchJ())
+                    exists = true;
+
+            if (!exists)
+            {
+                coreData.addPairPotentialOverride(override->matchI(), override->matchJ(), override->type(),
+                                                  override->interactionPotential());
+                Messenger::print("Override applied");
+                newAdditions = true;
+            }
+        }
+    }
+
+    return newAdditions;
+}

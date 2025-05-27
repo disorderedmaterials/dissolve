@@ -176,6 +176,20 @@ void ForcefieldTab::resetPairPotentialModel()
         ui_.PairPotentialsTable->selectionModel()->select(index, QItemSelectionModel::Select);
 }
 
+// Check if species' forcefields' overrides are known to coreData
+void ForcefieldTab::checkOverrides()
+{
+    auto &sps = dissolve_.coreData().species();
+
+    if (sps.empty())
+        return;
+
+    for (const auto &sp : sps)
+        if (sp->forcefield())
+            if (sp->forcefield()->applyPairPotentialOverrides(dissolve_.coreData()))
+                updatePairPotentials();
+}
+
 // Update controls in tab
 void ForcefieldTab::updateControls()
 {
@@ -195,6 +209,7 @@ void ForcefieldTab::updateControls()
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // PairPotentials
+    checkOverrides();
     resetPairPotentialModel();
     ui_.UseCombinationRulesCheck->setChecked(dissolve_.useCombinationRules());
     ui_.PairPotentialRangeButton->setText(QString::number(dissolve_.pairPotentialRange()) + " Å");

@@ -5,7 +5,7 @@
 
 #include "data/ff/ff.h"
 
-// SPC/Fw Forcefield
+// CamelloneBKS Forcefield
 class Forcefield_CamelloneBKS : public Forcefield
 {
     public:
