@@ -292,6 +292,8 @@ class Node : public Serialisable<>
      * I/O
      */
     public:
+    // Is it appropriate to bother serialising this node?
+    virtual bool shouldSerialise() const { return true; }
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value

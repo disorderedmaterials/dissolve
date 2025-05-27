@@ -26,8 +26,11 @@ NodeConstants::ProcessResult InputsNode::process() { return NodeConstants::Proce
  * I/O
  */
 
+// Is it appropriate to bother serialising this node?
+bool InputsNode::shouldSerialise() const { return false; }
+
 // Express as a serialisable value
 SerialisedValue InputsNode::serialise() const { return {}; }
 
 // Read values from a serialisable value
-void InputsNode::deserialise(const SerialisedValue &node){};
+void InputsNode::deserialise(const SerialisedValue &node) {};

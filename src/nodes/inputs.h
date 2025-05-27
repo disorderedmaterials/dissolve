@@ -32,6 +32,8 @@ class InputsNode : public Node
      * I/O
      */
     public:
+    // Is it appropriate to bother serialising this node?
+    bool shouldSerialise() const override;
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value

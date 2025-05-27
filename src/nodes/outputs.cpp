@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/outputs.h"
 #include "nodes/graph.h"
+#include "nodes/outputs.h"
 
 OutputsNode::OutputsNode(Graph *parentGraph) : Node(parentGraph) {}
 
@@ -41,8 +41,11 @@ void OutputsNode::setUpdateRequired()
  * I/O
  */
 
+// Is it appropriate to bother serialising this node?
+bool OutputsNode::shouldSerialise() const { return false; }
+
 // Express as a serialisable value
 SerialisedValue OutputsNode::serialise() const { return {}; }
 
 // Read values from a serialisable value
-void OutputsNode::deserialise(const SerialisedValue &node){};
+void OutputsNode::deserialise(const SerialisedValue &node) {};

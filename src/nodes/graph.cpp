@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/graph.h"
 #include "nodes/edge.h"
+#include "nodes/graph.h"
 #include "nodes/inputs.h"
 #include "nodes/outputs.h"
 #include "nodes/registry.h"
@@ -290,7 +290,7 @@ Graph::Edges &Graph::edges() { return edges_; }
 SerialisedValue Graph::serialise() const
 {
     SerialisedValue result = Node::serialise();
-    fromMap(nodes_, "nodes", result);
+    fromMap(nodes_, "nodes", result, [](const auto key, const auto &value) { return value->shouldSerialise(); });
     fromVector(edges_, "edges", result);
     return result;
 }
