@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/graph.h"
 #include "nodes/outputs.h"
+#include "nodes/graph.h"
 
 OutputsNode::OutputsNode(Graph *parentGraph) : Node(parentGraph) {}
 
@@ -48,4 +48,4 @@ bool OutputsNode::shouldSerialise() const { return false; }
 SerialisedValue OutputsNode::serialise() const { return {}; }
 
 // Read values from a serialisable value
-void OutputsNode::deserialise(const SerialisedValue &node) {};
+void OutputsNode::deserialise(const SerialisedValue &node){};
