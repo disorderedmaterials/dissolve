@@ -268,9 +268,9 @@ bool GRNode::calculateGRCells(const ProcessPool &procPool, Configuration *cfg, P
  */
 
 // Calculate and return effective density based on target Configurations
-std::optional<double> GRNode::effectiveDensity() const
+std::optional<Number> GRNode::effectiveDensity() const
 {
-    std::optional<double> rho0;
+    std::optional<Number> rho0;
     auto totalWeight = 0.0;
     for (auto *cfg : targetConfigurations_)
     {
@@ -321,15 +321,19 @@ std::vector<std::pair<const Species *, double>> GRNode::speciesPopulations() con
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg,
+bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg, PartialSet &gr,
                          GRNode::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate)
 {
     // Does a PartialSet already exist for this Configuration?
+    // UNUSED
     auto originalGRObject = processingData.realiseIf<PartialSet>(std::format("{}//OriginalGR", cfg->niceName()), name(),
                                                                  GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)
         originalgr.setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
+    // UNUSED
+
+    gr.setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
 
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
@@ -348,8 +352,8 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
      * Make sure histograms are set up, and reset any existing data
      */
 
-    originalgr.setUpHistograms(rdfRange, rdfBinWidth);
-    originalgr.reset();
+    gr.setUpHistograms(rdfRange, rdfBinWidth);
+    gr.reset();
 
     /*
      * Calculate full (intra+inter) partials
@@ -357,15 +361,15 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
 
     Timer timer;
     if (method == PartialsMethod::TestMethod)
-        calculateGRTestSerial(cfg, originalgr);
+        calculateGRTestSerial(cfg, gr);
     else if (method == PartialsMethod::SimpleMethod)
-        calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
+        calculateGRSimple(procPool, cfg, gr, rdfBinWidth);
     else if (method == PartialsMethod::CellsMethod)
-        calculateGRCells(procPool, cfg, originalgr, rdfRange);
+        calculateGRCells(procPool, cfg, gr, rdfRange);
     else if (method == PartialsMethod::AutoMethod)
     {
-        cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, originalgr, rdfRange)
-                              : calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
+        cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, gr, rdfRange)
+                              : calculateGRSimple(procPool, cfg, gr, rdfBinWidth);
     }
     timer.stop();
     message("Finished calculation of partials ({} elapsed).\n", timer.totalTimeString());
@@ -392,7 +396,7 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
         const auto &atoms = (*it)->atoms();
 
         dissolve::for_each_pair(ParallelPolicies::seq, atoms.begin(), atoms.end(),
-                                [box, &originalgr](int index, auto &i, int jndex, auto &j)
+                                [box, &gr](int index, auto &i, int jndex, auto &j)
                                 {
                                     // Ignore atom on itself
                                     if (index == jndex)
@@ -406,7 +410,7 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
                                     if (typeJ == AtomType::Ignore)
                                         return;
 
-                                    originalgr.boundHistogram(typeI, typeJ).bin(box->minimumDistance(i->r(), j->r()));
+                                    gr.boundHistogram(typeI, typeJ).bin(box->minimumDistance(i->r(), j->r()));
                                 });
     }
 
@@ -421,34 +425,33 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
 
     timer.start();
     Timer commsTimer(false);
-    auto success =
-        for_each_pair_early(0, originalgr.nAtomTypes(),
-                            [&originalgr, &procPool, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
-                            {
-                                // Sum histogram data from all processes (except if using PartialsMethod::TestMethod, where all
-                                // processes have all data already)
-                                if (method != PartialsMethod::TestMethod)
-                                {
-                                    if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool, commsTimer))
-                                        return false;
-                                    if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool, commsTimer))
-                                        return false;
-                                }
+    auto success = for_each_pair_early(0, gr.nAtomTypes(),
+                                       [&gr, &procPool, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
+                                       {
+                                           // Sum histogram data from all processes (except if using PartialsMethod::TestMethod,
+                                           // where all processes have all data already)
+                                           if (method != PartialsMethod::TestMethod)
+                                           {
+                                               if (!gr.fullHistogram(typeI, typeJ).allSum(procPool, commsTimer))
+                                                   return false;
+                                               if (!gr.boundHistogram(typeI, typeJ).allSum(procPool, commsTimer))
+                                                   return false;
+                                           }
 
-                                // Create unbound histogram from total and bound data
-                                originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
-                                originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
+                                           // Create unbound histogram from total and bound data
+                                           gr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
+                                           gr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
 
-                                return EarlyReturn<bool>::Continue;
-                            });
+                                           return EarlyReturn<bool>::Continue;
+                                       });
     if (success.has_value() && !success.value())
         return false;
 
     // Transform histogram data into radial distribution functions
-    originalgr.formPartials(box->volume());
+    gr.formPartials(box->volume());
 
     // Sum total functions
-    originalgr.formTotals(true);
+    gr.formTotals(true);
     timer.stop();
     message("Finished summation and normalisation of partial g(r) data ({} elapsed, {} comms).\n", timer.totalTimeString(),
             commsTimer.totalTimeString());
@@ -457,7 +460,7 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
      * Partials are now up-to-date
      */
 
-    originalgr.setFingerprint(std::format("{}", cfg->contentsVersion()));
+    gr.setFingerprint(std::format("{}", cfg->contentsVersion()));
 
     return true;
 }
@@ -560,8 +563,7 @@ bool GRNode::sumUnweightedGR(GenericList &processingData, const ProcessPool &pro
     }
 
     // Calculate overall density of combined system
-    double rho0 = std::accumulate(configWeights.begin(), configWeights.end(), 0.0,
-                                  [totalWeight](double acc, auto pair)
+    double rho0 = std::accumulate(configWeights.begin(), configWeights.end(), 0.0, [totalWeight](double acc, auto pair)
                                   { return acc + pair.second / totalWeight / pair.first->atomicDensity().value(); });
     rho0 = 1.0 / rho0;
 

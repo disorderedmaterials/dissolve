@@ -47,6 +47,8 @@ class GRNode : public Node
     private:
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
+    // Original g(r)
+    PartialSet originalgr_;
     // Number of historical partial sets to combine into final partials
     std::optional<Number> averagingLength_{5};
     // Weighting scheme to use when averaging partials
@@ -61,6 +63,8 @@ class GRNode : public Node
     std::optional<Number> nSmooths_;
     // Calculation method for partials
     PartialsMethod partialsMethod_{PartialsMethod::AutoMethod};
+    // Unweighted g(r)
+    PartialSet unweightedgr_;
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
     std::optional<Number> requestedRange_;
     // Whether to save partials and total functions to disk
@@ -81,12 +85,12 @@ class GRNode : public Node
 
     public:
     // Calculate and return effective density based on target Configurations
-    std::optional<double> effectiveDensity() const;
+    std::optional<Number> effectiveDensity() const;
     // Calculate and return used species populations based on target Configurations
     std::vector<std::pair<const Species *, double>> speciesPopulations() const;
     // (Re)calculate partial g(r) for the specified Configuration
-    bool calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg, PartialsMethod method,
-                     const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
+    bool calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg, PartialSet &originalgr,
+                     PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
     bool calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
                                PartialSet &weightedgr, const Function1DWrapper intraBroadening, int smoothing);

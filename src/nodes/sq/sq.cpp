@@ -5,21 +5,23 @@
 
 SQNode::SQNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addOption<Number>("QMin", "Minimum Q for calculated S(Q)", qMin_, 0.0);
-    addOption<Number>("QMax", "Maximum Q for calculated S(Q)", qMax_, 0.0);
-    addOption<Number>("QDelta", "Step size in Q for S(Q) calculation", qDelta_, 1.0e-5);
-    addOption<Function1DWrapper>("QBroadening", "Instrument broadening function to apply when calculating S(Q)",
-                                     qBroadening_);
+    addInput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedgr_)
+        ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+    addInput<std::optional<Number>>("Rho", "Effective density", rho_);
+    addOption<Number>("QMin", "Minimum Q for calculated S(Q)", qMin_);
+    addOption<Number>("QMax", "Maximum Q for calculated S(Q)", qMax_);
+    addOption<Number>("QDelta", "Step size in Q for S(Q) calculation", qDelta_);
+    addOption<Function1DWrapper>("QBroadening", "Instrument broadening function to apply when calculating S(Q)", qBroadening_);
     addOption<WindowFunction::Form>(
-        "WindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)", windowFunction_,
-        WindowFunction::forms());
-    addOption<Function1DWrapper>(
-        "BraggQBroadening", "Broadening function to apply to Bragg reflections when generating S(Q)", braggQBroadening_);
+        "WindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)", windowFunction_);
+    addOption<Function1DWrapper>("BraggQBroadening", "Broadening function to apply to Bragg reflections when generating S(Q)",
+                                 braggQBroadening_);
 
     addOption<std::optional<Number>>("Averaging", "Number of historical partial sets to combine into final partials",
-                                          averagingLength_, 1, std::nullopt, 1, "Off");
-    addOption<Averaging::AveragingScheme>(
-        "AveragingScheme", "Weighting scheme to use when averaging partials", averagingScheme_);
+                                     averagingLength_);
+    addOption<Averaging::AveragingScheme>("AveragingScheme", "Weighting scheme to use when averaging partials",
+                                          averagingScheme_);
+    addPointerOutput<PartialSet *>("UnweightedSQ", "Unweighted partials for target configuration", unweightedsq_);
 
     addOption<bool>("Save", "Whether to save partials to disk after calculation", save_);
 }

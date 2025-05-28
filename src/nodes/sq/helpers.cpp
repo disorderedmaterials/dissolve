@@ -7,8 +7,8 @@
 #include "classes/configuration.h"
 #include "math/ft.h"
 #include "modules/sq/sq.h"
-#include "templates/algorithms.h"
 #include "nodes/sq/sq.h"
+#include "templates/algorithms.h"
 
 /*
  * Public Functions
@@ -16,12 +16,13 @@
 
 // Generate S(Q) from supplied g(r)
 bool SQNode::calculateUnweightedSQ(const ProcessPool &procPool, const PartialSet &unweightedgr, PartialSet &unweightedsq,
-                                     double qMin, double qDelta, double qMax, double rho, const WindowFunction &windowFunction,
-                                     Function1DWrapper broadening)
+                                   double qMin, double qDelta, double qMax, double rho, const WindowFunction &windowFunction,
+                                   Function1DWrapper broadening)
 {
     // Copy partial g(r) into our new S(Q) object - it should have been initialised already, so we will just check its size
     if (unweightedgr.nAtomTypes() != unweightedsq.nAtomTypes())
-        return error("SQNode::calculateUnweightedSQ - sizes of supplied partial sets are different.\n");
+        error("SQNode::calculateUnweightedSQ - sizes of supplied partial sets are different.\n");
+    return false;
 
     // Subtract 1.0 from the full and unbound partials so as to give (g(r)-1) and FT into S(Q)
     // Don't subtract 1.0 from the bound partials
@@ -52,7 +53,7 @@ bool SQNode::calculateUnweightedSQ(const ProcessPool &procPool, const PartialSet
 
     timer.stop();
     message("Finished Fourier transform and summation of partial g(r) into partial S(Q) ({} elapsed).\n",
-                     timer.totalTimeString());
+            timer.totalTimeString());
 
     return true;
 }
