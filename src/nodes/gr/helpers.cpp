@@ -321,24 +321,15 @@ std::vector<std::pair<const Species *, double>> GRNode::speciesPopulations() con
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg, PartialSet &gr,
-                         GRNode::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate)
+bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, PartialSet &gr, GRNode::PartialsMethod method,
+                         const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate)
 {
-    // Does a PartialSet already exist for this Configuration?
-    // UNUSED
-    auto originalGRObject = processingData.realiseIf<PartialSet>(std::format("{}//OriginalGR", cfg->niceName()), name(),
-                                                                 GenericItem::InRestartFileFlag);
-    auto &originalgr = originalGRObject.first;
-    if (originalGRObject.second == GenericItem::ItemStatus::Created)
-        originalgr.setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
-    // UNUSED
-
     gr.setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
 
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
     alreadyUpToDate = false;
-    if (DissolveSys::sameString(originalgr.fingerprint(), std::format("{}", cfg->contentsVersion())) &&
+    if (DissolveSys::sameString(gr.fingerprint(), std::format("{}", cfg->contentsVersion())) &&
         (method != PartialsMethod::TestMethod))
     {
         message("Partial g(r) are up-to-date for Configuration '{}'.\n", cfg->name());
@@ -524,22 +515,18 @@ bool GRNode::calculateUnweightedGR(const ProcessPool &procPool, Configuration *c
 }
 
 // Sum unweighted g(r) over the supplied Module's target Configurations
-bool GRNode::sumUnweightedGR(GenericList &processingData, const ProcessPool &procPool, std::string_view targetPrefix,
-                             std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,
-                             PartialSet &summedUnweightedGR)
+bool GRNode::sumUnweightedGR(const ProcessPool &procPool, std::string_view targetPrefix, std::string_view parentPrefix,
+                             const std::vector<Configuration *> &parentCfgs, PartialSet &summedUnweightedGR)
 {
-    // Realise an AtomTypeList containing the sum of atom types over all target configurations
-    auto &combinedAtomTypes =
-        processingData.realise<AtomTypeMix>("SummedAtomTypes", parentPrefix, GenericItem::InRestartFileFlag);
-    combinedAtomTypes.clear();
+    combinedAtomTypes_.clear();
     for (Configuration *cfg : parentCfgs)
-        combinedAtomTypes.add(cfg->atomTypePopulations());
+        combinedAtomTypes_.add(cfg->atomTypePopulations());
 
     // Finalise and save the combined AtomTypes matrix
-    combinedAtomTypes.finalise();
+    combinedAtomTypes_.finalise();
 
     // Set up PartialSet container
-    summedUnweightedGR.setUpPartials(combinedAtomTypes);
+    summedUnweightedGR.setUpPartials(combinedAtomTypes_);
 
     // Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight
     // Vector for simplicity
@@ -584,15 +571,7 @@ bool GRNode::sumUnweightedGR(GenericList &processingData, const ProcessPool &pro
         // Calculate weighting factor
         double weight = ((cfgWeight / totalWeight) * *cfg->atomicDensity()) / rho0;
 
-        // Grab partials for Configuration and add into our set
-        if (!processingData.contains(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix))
-        {
-            error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-            return false;
-        }
-
-        auto cfgPartialGR = processingData.value<PartialSet>(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix);
-        summedUnweightedGR.addPartials(cfgPartialGR, weight);
+        summedUnweightedGR.addPartials(unweightedgr_, weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);
 

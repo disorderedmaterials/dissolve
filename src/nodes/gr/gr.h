@@ -65,6 +65,10 @@ class GRNode : public Node
     PartialsMethod partialsMethod_{PartialsMethod::AutoMethod};
     // Unweighted g(r)
     PartialSet unweightedgr_;
+    // Summed unweighted g(r)
+    PartialSet summedUnweightedGR_;
+    // Summed atom types
+    AtomTypeMix combinedAtomTypes_;
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
     std::optional<Number> requestedRange_;
     // Effective density
@@ -91,15 +95,14 @@ class GRNode : public Node
     // Calculate and return used species populations based on target Configurations
     std::vector<std::pair<const Species *, double>> speciesPopulations() const;
     // (Re)calculate partial g(r) for the specified Configuration
-    bool calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg, PartialSet &originalgr,
-                     PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
+    bool calculateGR(const ProcessPool &procPool, Configuration *cfg, PartialSet &originalgr, PartialsMethod method,
+                     const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
     bool calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
                                PartialSet &weightedgr, const Function1DWrapper intraBroadening, int smoothing);
     // Sum unweighted g(r) over the supplied Module's target Configurations
-    bool sumUnweightedGR(GenericList &processingData, const ProcessPool &procPool, std::string_view targetPrefix,
-                         std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,
-                         PartialSet &summedUnweightedGR);
+    bool sumUnweightedGR(const ProcessPool &procPool, std::string_view targetPrefix, std::string_view parentPrefix,
+                         const std::vector<Configuration *> &parentCfgs, PartialSet &summedUnweightedGR);
     // Test supplied PartialSets against each other
     bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
     // Test calculated partial against supplied reference data

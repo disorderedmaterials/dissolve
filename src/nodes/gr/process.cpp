@@ -74,12 +74,10 @@ NodeConstants::ProcessResult GRNode::process()
 
         // Calculate unweighted partials for this Configuration
         bool alreadyUpToDate;
-        calculateGR(dissolve().processingModuleData(), processPool(), cfg, originalgr_, partialsMethod_, rdfRange,
-                    binWidth_.asDouble(), alreadyUpToDate);
-        auto &originalgr =
-            dissolve().processingModuleData().retrieve<PartialSet>(std::format("{}//OriginalGR", cfg->niceName()), name());
+        calculateGR(processPool(), cfg, originalgr_, partialsMethod_, rdfRange, binWidth_.asDouble(), alreadyUpToDate);
 
         // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
+        /*
         if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
         {
             // Store the current fingerprint, since we must ensure we retain it in the averaged T.
@@ -91,14 +89,15 @@ NodeConstants::ProcessResult GRNode::process()
             // Re-set the object names and fingerprints of the partials
             originalgr_.setFingerprint(currentFingerprint);
         }
+        */
 
         // Perform internal test of original g(r)?
         if (internalTest_)
         {
             // Copy the already-calculated g(r), then calculate a new set using the Test method
             PartialSet referencePartials = originalgr_;
-            calculateGR(dissolve().processingModuleData(), processPool(), cfg, originalgr_, PartialsMethod::TestMethod,
-                        rdfRange, binWidth_.asDouble(), alreadyUpToDate);
+            calculateGR(processPool(), cfg, originalgr_, PartialsMethod::TestMethod, rdfRange, binWidth_.asDouble(),
+                        alreadyUpToDate);
             if (!testReferencePartials(referencePartials, originalgr_, 1.0e-6))
                 return NodeConstants::ProcessResult::Failed;
         }
@@ -106,28 +105,10 @@ NodeConstants::ProcessResult GRNode::process()
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_.asInteger() / intramolecular broadening
         calculateUnweightedGR(processPool(), cfg, originalgr_, unweightedgr_, intraBroadening_,
                               nSmooths_.value_or(0).asInteger());
-
-        // UNUSED
-        auto &unweightedgr = dissolve().processingModuleData().realise<PartialSet>(
-            std::format("{}//UnweightedGR", cfg->niceName()), name(), GenericItem::InRestartFileFlag);
-        calculateUnweightedGR(processPool(), cfg, originalgr, unweightedgr, intraBroadening_,
-                              nSmooths_.value_or(0).asInteger());
-
-        // Save data if requested
-        if (save_ && (!MPIRunMaster(processPool(), unweightedgr.save(name(), "UnweightedGR", "gr", "r, Angstroms"))))
-            return NodeConstants::ProcessResult::Failed;
-        if (saveOriginal_ && (!MPIRunMaster(processPool(), originalgr.save(name(), "OriginalGR", "gr", "r, Angstroms"))))
-            return NodeConstants::ProcessResult::Failed;
-        // UNUSED
     }
 
-    // Create/retrieve PartialSet for summed unweighted g(r)
-    auto &summedUnweightedGR =
-        dissolve().processingModuleData().realise<PartialSet>("UnweightedGR", name(), GenericItem::InRestartFileFlag);
-
     // Sum the partials from the associated Configurations
-    if (!sumUnweightedGR(dissolve().processingModuleData(), processPool(), name(), name(), targetConfigurations_,
-                         summedUnweightedGR))
+    if (!sumUnweightedGR(processPool(), name(), name(), targetConfigurations_, summedUnweightedGR_))
         return NodeConstants::ProcessResult::Failed;
 
     rho_ = effectiveDensity();
