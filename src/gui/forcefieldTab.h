@@ -55,7 +55,7 @@ class ForcefieldTab : public QWidget, public MainTab
     private:
     // Update all pair potentials
     void updatePairPotentials();
-    
+
     public:
     // Update controls in tab
     void updateControls() override;

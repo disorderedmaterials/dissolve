@@ -123,10 +123,6 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     connect(ui_.PairPotentialsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(pairPotentialSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
-    /*
-     * Pair Potential Overrides
-     */
-
     // Set delegates for table columns
     ui_.OverridesTable->setItemDelegateForColumn(
         PairPotentialOverrideModel::ColumnData::OverrideType,
