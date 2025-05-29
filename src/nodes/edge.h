@@ -12,9 +12,12 @@
 class Graph;
 
 // Edge Definition
-struct EdgeDefinition : public Serialisable<>
+class EdgeDefinition : public Serialisable<>
 {
-    EdgeDefinition(std::string srcNode = "", std::string srcOutput = "", std::string tgtNode = "", std::string tgtInput = "");
+    public:
+    EdgeDefinition() = default;
+    EdgeDefinition(std::string srcNode, std::string srcOutput, std::string tgtNode, std::string tgtInput);
+    EdgeDefinition(const EdgeDefinition &other);
     std::string sourceNode, sourceOutput, targetNode, targetInput;
     bool operator==(const EdgeDefinition &other) const;
     // Return as a string
