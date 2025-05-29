@@ -162,11 +162,6 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     // Third step - apply any overrides
     Messenger::print("Applying pair potential overrides...\n");
 
-    // Check for forcefield specified overrides
-    for (const auto &sp : coreData_.species())
-        if (sp->forcefield())
-            sp->forcefield()->applyPairPotentialOverrides(coreData_);
-
     for (const auto &override : coreData_.pairPotentialOverrides())
     {
         Messenger::print("Pair potential override between '{}' and '{}' ({}, {}, '{}') ...\n", override->matchI(),

@@ -540,17 +540,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     return true;
 }
 
-// Add an override from a forcefield object
-void Forcefield::addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
-                                          PairPotentialOverride::PairPotentialOverrideType overrideType,
-                                          const InteractionPotential<Functions1D> potential)
-{
-    ppOverrides_.emplace_back(std::make_unique<PairPotentialOverride>(matchI, matchJ, overrideType, potential));
-}
-
-// Return overrides
-const std::vector<std::unique_ptr<PairPotentialOverride>> &Forcefield::pairPotentialOverrides() const { return ppOverrides_; }
-
+/*
 // Apply overrides into coreData
 bool Forcefield::applyPairPotentialOverrides(CoreData &coreData) const
 {
@@ -606,3 +596,4 @@ bool Forcefield::applyPairPotentialOverrides(CoreData &coreData) const
 
     return newAdditions;
 }
+*/

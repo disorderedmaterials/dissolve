@@ -23,7 +23,6 @@
 
 // Forward Declarations
 class CoreData;
-class PairPotentialOverride;
 class Species;
 class SpeciesAtom;
 
@@ -198,18 +197,8 @@ class Forcefield
      * Pair Potential Overrides
      */
     public:
-    // Associate an override with a forcefield
-    void addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
-                                  PairPotentialOverride::PairPotentialOverrideType overrideType,
-                                  const InteractionPotential<Functions1D> potential);
-    // Return overrides for current forcefield
-    const std::vector<std::unique_ptr<PairPotentialOverride>> &pairPotentialOverrides() const;
-    // Apply overrides to coreData
-    bool applyPairPotentialOverrides(CoreData &coreData) const;
-
-    private:
-    // Overrides associated with this forcefield
-    std::vector<std::unique_ptr<PairPotentialOverride>> ppOverrides_;
+    // Add or Return overrides for current forcefield
+    virtual std::vector<PairPotentialOverride> pairPotentialOverrides() { return {}; };
 };
 
 template <class T, typename... Args>

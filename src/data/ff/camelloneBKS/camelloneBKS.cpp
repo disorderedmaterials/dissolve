@@ -32,15 +32,6 @@ bool Forcefield_CamelloneBKS::setUp()
     addAtomType(Elements::O, 1, "O", "", "Silica oxygen", -1.2, "");
     addAtomType(Elements::Si, 2, "Si", "", "Silica silicon", 2.4, "");
 
-    // Overrides
-    InteractionPotential<Functions1D> oOPotential(Functions1D::Form::Buckingham128,
-                                                  {133996.2240, 2.76, 16884.9331, 17367.3598, 2315.6480});
-    addPairPotentialOverride("O", "O", PairPotentialOverride::PairPotentialOverrideType::Add, oOPotential);
-
-    InteractionPotential<Functions1D> siOPotential(Functions1D::Form::Buckingham128,
-                                                   {1737098.491, 4.8732, 12884.4679, 1929.7066, 578.912});
-    addPairPotentialOverride("Si", "O", PairPotentialOverride::PairPotentialOverrideType::Add, siOPotential);
-
     return true;
 }
 
