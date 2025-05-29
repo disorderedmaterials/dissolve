@@ -24,7 +24,7 @@ set(_conan_options
 
 # Add in testing dependencies?
 if(BUILD_TESTS)
-    list(APPEND _conan_requires gtest/1.10.0)
+    list(APPEND _conan_requires gtest/1.11.0)
 endif(BUILD_TESTS)
 
 conan_cmake_configure(
