@@ -3,9 +3,15 @@
 
 #include "nodes/graph.h"
 #include "nodes/edge.h"
+#include "nodes/inputs.h"
+#include "nodes/outputs.h"
 #include "nodes/registry.h"
 
-Graph::Graph(Graph *parentGraph) : Node(parentGraph) {}
+Graph::Graph(Graph *parentGraph) : Node(parentGraph)
+{
+    proxyInputs_ = dynamic_cast<InputsNode *>(addNode(std::make_unique<InputsNode>(this), "Inputs"));
+    proxyOutputs_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "Outputs"));
+}
 
 /*
  * Definition
@@ -16,6 +22,80 @@ std::string_view Graph::type() const { return "Graph"; }
 
 // Return short summary of the node's purpose
 std::string_view Graph::summary() const { return "A node which contains its own inner graph"; }
+
+/*
+ * Processing & Validity
+ */
+
+// Perform processing
+NodeConstants::ProcessResult Graph::process()
+{
+    /*
+     * Processing a Graph involves running any child nodes we have, but we can only detect the nodes that need to be run in
+     * one of two ways. Either 1) We cycle over Edge connections to inputs on our Outputs node and pull() those in, or 2) we
+     * look for any nodes that don't have any edge connections to their Outputs and try to run() them one at a time. The
+     * latter case is important if a Graph has no defined Outputs, and so no external dependence on running the child nodes.
+     */
+
+    // Pull outputs first
+    auto outputsResult = proxyOutputs_->run();
+    if (outputsResult == NodeConstants::ProcessResult::Failed)
+        return outputsResult;
+
+    // Check each node for output edges - any that have zero output edges need to be run()
+    auto terminalNodeResult = NodeConstants::ProcessResult::Unchanged;
+    for (auto &&[nodeName, node] : nodes_)
+        if (!node->outputEdges().empty())
+        {
+            switch (node->run())
+            {
+                case (NodeConstants::ProcessResult::Failed):
+                    return NodeConstants::ProcessResult::Failed;
+                case (NodeConstants::ProcessResult::Success):
+                    terminalNodeResult = NodeConstants::ProcessResult::Success;
+                    break;
+                case (NodeConstants::ProcessResult::Unchanged):
+                    break;
+                case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                    /* This should never happen? */
+                    break;
+            }
+        }
+
+    return outputsResult == terminalNodeResult ? outputsResult : NodeConstants::ProcessResult::Success;
+}
+
+// Flag that the node data needs to be updated
+void Graph::setUpdateRequired()
+{
+    // If already flagged then do nothing
+    if (!isUpToDate())
+        return;
+
+    // Propagate changes through proxyInputs_
+    proxyInputs_->setUpdateRequired();
+
+    // Call base class function to set flag and propagate through outputs
+    Node::setUpdateRequired();
+}
+
+/*
+ * Inputs, Outputs, and Options
+ */
+
+// Add supplied proxy input, setting ownership of the parameters appropriately
+bool Graph::addProxyInput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)
+{
+    // We (the Graph) own the input and the proxyInputs_ owns the output
+    return ownParameter(input) && proxyInputs_->ownParameter(output, true);
+}
+
+// Add supplied proxy output, setting ownership of the parameters appropriately
+bool Graph::addProxyOutput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)
+{
+    // We (the Graph) own the output and the proxyOutputs_ owns the input
+    return proxyOutputs_->ownParameter(input) && ownParameter(output, true);
+}
 
 /*
  * Nodes and Edges
@@ -81,9 +161,9 @@ std::string_view Graph::nodeName(const Node *node) const
 }
 
 // Set name of specified child node
-void Graph::setNodeName(const Node *node, std::string_view name)
+void Graph::setNodeName(const Node *node, std::string_view nodeName)
 {
-    auto uniqueName = uniqueNodeName(node, name);
+    auto uniqueName = uniqueNodeName(node, nodeName);
 
     // Extract the forward node mapping (name -> node) using its current name in reverseNodes_
     auto nodeHandle = nodes_.extract(reverseNodes_.at(node));
@@ -140,10 +220,15 @@ Edge *Graph::findEdge(const EdgeDefinition &definition) const
 }
 
 // Return named node, if it exists
-Node *Graph::node(std::string_view name)
+Node *Graph::node(std::string_view nodeName)
 {
-    if (nodes_.contains(std::string(name)))
-        return nodes_[std::string(name)].get();
+    // Return ourself if this is our name
+    if (name() == nodeName)
+        return this;
+
+    // Search through child nodes
+    if (nodes_.contains(std::string(nodeName)))
+        return nodes_[std::string(nodeName)].get();
 
     return nullptr;
 }
@@ -162,7 +247,7 @@ Graph::Edges &Graph::edges() { return edges_; }
 SerialisedValue Graph::serialise() const
 {
     SerialisedValue result = Node::serialise();
-    fromMap(nodes_, "nodes", result);
+    fromMap(nodes_, "nodes", result, [](const auto key, const auto &value) { return value->shouldSerialise(); });
     fromVector(edges_, "edges", result);
     return result;
 }

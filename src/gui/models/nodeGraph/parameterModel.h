@@ -4,6 +4,7 @@
 #pragma once
 
 // #include "gui/models/nodeGraph/parameterModel.h"
+#include "nodes/node.h"
 #include "nodes/parameter.h"
 #include <QAbstractListModel>
 #include <qabstractitemmodel.h>
@@ -12,7 +13,7 @@
 class ParameterModel : public QAbstractListModel
 {
     public:
-    ParameterModel(std::map<std::string_view, std::shared_ptr<ParameterBase>> &values);
+    ParameterModel(Node::NodeParameterMap &values);
 
     // Return number of parameters (required by QAbstractListModel)
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -25,5 +26,5 @@ class ParameterModel : public QAbstractListModel
 
     private:
     // A reference to the parameters from the model
-    std::map<std::string_view, std::shared_ptr<ParameterBase>> &values_;
+    Node::NodeParameterMap &values_;
 };

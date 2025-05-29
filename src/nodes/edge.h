@@ -69,6 +69,10 @@ class Edge : public Serialisable<>
     // Pull the data from the source node to the target, returning a ProcessResult
     NodeConstants::ProcessResult pull();
 
+    /*
+     * I/O
+     */
+    public:
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
