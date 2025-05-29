@@ -3,6 +3,7 @@
 
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include "nodes/outputs.h"
 
 Edge::Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput)
     : sourceNode_(sourceNode), sourceOutput_(sourceOutput), targetNode_(targetNode), targetInput_(targetInput)
@@ -39,14 +40,14 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     auto sourceOutput = sourceNode->findOutput(definition.sourceOutput);
     if (!sourceOutput)
     {
-        Messenger::error("Source node '{}' has no parameter '{}'.\n", definition.sourceNode, definition.sourceOutput);
+        Messenger::error("Source node '{}' has no output parameter '{}'.\n", definition.sourceNode, definition.sourceOutput);
         return {};
     }
 
     // Confirm that the source is actually an output
     if (!sourceOutput->flags().isSet(ParameterBase::ParameterFlags::Output))
     {
-        Messenger::error("Source node '{}' has parameter '{}' but it is not an Output.\n", definition.sourceNode,
+        Messenger::error("Source node '{}' has parameter '{}' but it is not an output.\n", definition.sourceNode,
                          definition.sourceOutput);
         return {};
     }
@@ -58,18 +59,55 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
         Messenger::error("Target node '{}' does not exist in the graph.\n", definition.targetNode);
         return {};
     }
-    auto targetInput = targetNode->findInput(definition.targetInput);
+
+    // Disallow circular edges (mostly a check for Graph -> Graph connections)
+    if (targetNode == parent)
+    {
+        Messenger::error("Target node is graph '{}' and cannot be the owner of the edge.", definition.targetNode);
+        return {};
+    }
+
+    // We need to check carefully the target node, since we need to permit outside connections to the Graph object itself as
+    // well as its Outputs node explicitly.
+    std::shared_ptr<ParameterBase> targetInput{nullptr};
+    if (dynamic_cast<Graph *>(targetNode))
+    {
+        // The target node is a Graph: create a parameter link from the sourceOutput and from it a mapped input
+        auto graphNode = dynamic_cast<Graph *>(targetNode);
+        auto link = sourceOutput->createParameterLink(definition.targetInput);
+        if (!graphNode->addProxyInput(link.inputParameter, link.outputParameter))
+        {
+            Messenger::error("Failed to add mapped input '{}'.\n", definition.targetInput);
+            return {};
+        }
+        targetInput = link.inputParameter;
+    }
+    else if (dynamic_cast<OutputsNode *>(targetNode))
+    {
+        // The target node is the parent Graph's own Outputs node, so create a parameter link from the sourceOutput and from it
+        // a mapped output
+        auto link = sourceOutput->createParameterLink(definition.targetInput);
+        if (!parent->addProxyOutput(link.inputParameter, link.outputParameter))
+        {
+            Messenger::error("Failed to add mapped output '{}'.\n", definition.targetInput);
+            return {};
+        }
+        targetInput = link.inputParameter;
+    }
+    else
+        targetInput = targetNode->findInput(definition.targetInput);
+
     if (!targetInput)
     {
-        Messenger::error("Target node '{}' has no parameter '{}'.\n", definition.targetNode, definition.targetInput);
+        Messenger::error("Target node '{}' has no input parameter '{}'.\n", definition.targetNode, definition.targetInput);
         return {};
     }
 
     // Confirm that the destination input is actually an input
     if (!targetInput->flags().isSet(ParameterBase::ParameterFlags::Input))
     {
-        Messenger::error("Target node '{}' has parameter '{}' but it is not an Input.\n", definition.sourceNode,
-                         definition.sourceOutput);
+        Messenger::error("Target node '{}' has parameter '{}' but it is not an input.\n", definition.targetNode,
+                         definition.targetInput);
         return {};
     }
 
@@ -122,6 +160,10 @@ std::string EdgeDefinition::asString() const
 {
     return std::format("Edge( [O] {}@{} -> {}@{} [I] )", sourceOutput, sourceNode, targetInput, targetNode);
 }
+
+/*
+ * I/O
+ */
 
 // Express as a serialisable value
 SerialisedValue EdgeDefinition::serialise() const

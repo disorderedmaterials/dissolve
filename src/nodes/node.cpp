@@ -17,7 +17,7 @@ void Node::setName(std::string_view newName)
     if (parentGraph_)
         parentGraph_->setNodeName(this, newName);
     else
-        name_ = newName;
+        error("Can't set node name to '{}' as it is not part of a Graph.", newName);
 }
 
 // Return node name
@@ -43,63 +43,6 @@ bool Node::hasMessages(MessageStatus status) const
 void Node::echo() { std::cout << messages_.back().second << std::endl; }
 
 /*
- * Inputs, Outputs & Options
- */
-
-// Link edge, returning whether we accept it
-bool Node::linkEdge(Edge *edge)
-{
-
-    // The supplied Edge was created via our parent Graph, but we will still check to see whether we accept it
-    if (&edge->targetNode() == this)
-    {
-        // We are the target node, so we will double-check the specified input to see if it can accept the connection
-        // Simple check at present, we accept at most one connection per input, so if one already exists we complain
-        if (inputEdges_.contains(edge->targetInput().name()))
-            return Messenger::error("Node '{}' refusing to accept Edge connecting to input '{}' as one already exists.\n",
-                                    name(), edge->targetInput().name());
-
-        // All good, so add the input to our list
-        inputEdges_[edge->targetInput().name()] = edge;
-
-        // Adding an Edge to an input always invalidates the target
-        invalidate();
-    }
-    else if (&edge->sourceNode() == this)
-    {
-        // We are the source node - nothing for us to do at present, but we may choose to store such Edges in future.
-    }
-    else
-        return Messenger::error("Node '{}' is neither the source nor the target for the supplied Edge.\n", name());
-
-    return true;
-}
-
-// Unlink edge
-void Node::unlinkEdge(Edge *edge)
-{
-    // If we are the Edge's targetNode_ then we should have its pointer in inputEdges_
-    if (&edge->targetNode() == this)
-    {
-        auto it = std::find_if(inputEdges_.begin(), inputEdges_.end(),
-                               [edge](const auto &inputEdge) { return edge == inputEdge.second; });
-        if (it == inputEdges_.end())
-            Messenger::error("Tried to unlink an Edge from a target node ('{}') which knew nothing about it.\n", name());
-        else
-        {
-            inputEdges_.erase(it);
-            invalidate();
-        }
-    }
-    else if (&edge->sourceNode() == this)
-    {
-        // We are the source node for the edge - nothing for us to do at present
-    }
-    else
-        Messenger::error("Node '{}' is neither the source nor the target for the Edge being unlinked.\n", name());
-}
-
-/*
  * Processing & Validity
  */
 
@@ -114,7 +57,19 @@ void Node::invalidate()
 }
 
 // Flag that the node data needs to be updated
-void Node::setUpdateRequired() { upToDate_ = false; }
+void Node::setUpdateRequired()
+{
+    // If already flagged then do nothing
+    if (!isUpToDate())
+        return;
+
+    upToDate_ = false;
+
+    // Make sure all output edges propagate this information down
+    for (auto &&[outputName, edge] : outputEdges())
+        if (!edge->targetInput().flags().isSet(ParameterBase::ParameterFlags::NoUpdate))
+            edge->targetInput().setParentUpdateRequired();
+}
 
 // Return whether the node's data is up-to-date
 bool Node::isUpToDate() const { return upToDate_; }
@@ -182,46 +137,127 @@ NodeConstants::ProcessResult Node::run()
 NodeConstants::ProcessResult Node::process() { return NodeConstants::ProcessResult::Failed; }
 
 /*
- * Inputs, Outputs, and Options
+ * Inputs, Outputs & Options
  */
+
+// Link edge, returning whether we accept it
+bool Node::linkEdge(Edge *edge)
+{
+
+    // The supplied Edge was created via our parent Graph, but we will still check to see whether we accept it
+    if (&edge->targetNode() == this)
+    {
+        // We are the target node, so we will double-check the specified input to see if it can accept the connection
+        // Simple check at present, we accept at most one connection per input, so if one already exists we complain
+        if (inputEdges_.contains(edge->targetInput().name()))
+            return Messenger::error("Node '{}' refusing to accept Edge connecting to input '{}' as one already exists.\n",
+                                    name(), edge->targetInput().name());
+
+        // All good, so add the input to our list
+        inputEdges_[edge->targetInput().name()] = edge;
+
+        // Adding an Edge to an input always invalidates the target
+        invalidate();
+    }
+    else if (&edge->sourceNode() == this)
+    {
+        // We are the source node - add the outgoing edge to our list
+        outputEdges_[edge->sourceOutput().name()] = edge;
+    }
+    else
+        return Messenger::error("Node '{}' is neither the source nor the target for the supplied Edge.\n", name());
+
+    return true;
+}
+
+// Unlink edge
+void Node::unlinkEdge(Edge *edge)
+{
+    // If we are the Edge's targetNode_ then we should have its pointer in inputEdges_
+    if (&edge->targetNode() == this)
+    {
+        auto it = std::find_if(inputEdges_.begin(), inputEdges_.end(),
+                               [edge](const auto &inputEdge) { return edge == inputEdge.second; });
+        if (it == inputEdges_.end())
+            Messenger::error("Tried to unlink an incoming edge to target node '{}' which knew nothing about it.\n", name());
+        else
+        {
+            inputEdges_.erase(it);
+            invalidate();
+        }
+    }
+    else if (&edge->sourceNode() == this)
+    {
+        // We are the source node for the edge...
+        auto it = std::find_if(outputEdges_.begin(), outputEdges_.end(),
+                               [edge](const auto &outputEdge) { return edge == outputEdge.second; });
+        if (it == outputEdges_.end())
+            Messenger::error("Tried to unlink an outgoing edge from source node '{}' which knew nothing about it.\n", name());
+        else
+            outputEdges_.erase(it);
+    }
+    else
+        Messenger::error("Node '{}' is neither the source nor the target for the Edge being unlinked.\n", name());
+}
+
+// Own supplied parameter
+bool Node::ownParameter(std::shared_ptr<ParameterBase> &parameter, bool isOutput)
+{
+    if ((!isOutput && findInput(parameter->name())) || (isOutput && findOutput(parameter->name())))
+        return Messenger::error("Parameter '{}' cannot be owned as it conflicts with an existing input or output.\n",
+                                parameter->name());
+
+    parameter->setParent(this);
+
+    if (isOutput)
+        outputs_.emplace(parameter->name(), parameter);
+    else
+        inputs_.emplace(parameter->name(), parameter);
+
+    return true;
+}
 
 // Return named input parameter if it exists
 std::shared_ptr<ParameterBase> Node::findInput(std::string_view name) const
 {
-    if (!inputs_.contains(name))
+    if (!inputs_.contains(std::string{name}))
         return {};
-    return inputs_.at(name);
+    return inputs_.at(std::string{name});
 }
 
 // Return input parameters
-std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::inputs() { return inputs_; };
+Node::NodeParameterMap &Node::inputs() { return inputs_; };
 
 // Return named output parameter if it exists
-std::shared_ptr<ParameterBase> Node::findOutput(std::string_view name) const
+std::shared_ptr<ParameterBase> Node::findOutput(std::string_view outputName) const
 {
-    if (!outputs_.contains(name))
+    if (!outputs_.contains(std::string{outputName}))
         return {};
-    return outputs_.at(name);
+    return outputs_.at(std::string{outputName});
 }
 
 // Return output parameters
-std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::outputs() { return outputs_; };
+Node::NodeParameterMap &Node::outputs() { return outputs_; };
 
 // Return named input parameter if it exists
-std::shared_ptr<ParameterBase> Node::findOption(std::string_view name) const
+std::shared_ptr<ParameterBase> Node::findOption(std::string_view optionName) const
 {
-    if (!options_.contains(name))
+    if (!options_.contains(std::string{optionName}))
         return {};
-    return options_.at(name);
+    return options_.at(std::string{optionName});
 }
 
 // Return Options
-std::map<std::string_view, std::shared_ptr<ParameterBase>> &Node::options() { return options_; };
+Node::NodeParameterMap &Node::options() { return options_; };
+
+// Get the incoming edges to this node
+Node::EdgeMap &Node::inputEdges() { return inputEdges_; }
+
+// Get the outgoing edges from this node
+Node::EdgeMap &Node::outputEdges() { return outputEdges_; }
 
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }
-
-Node::EdgeMap &Node::links() { return inputEdges_; }
 
 // Return the Dissolve reference
 Dissolve &Node::dissolve() const { return parentGraph_->dissolve(); }

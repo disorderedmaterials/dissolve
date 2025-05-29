@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "registry.h"
-#include "add.h"
-#include "atomicMC/atomicMC.h"
-#include "configuration.h"
-#include "derivative.h"
-#include "dissolve.h"
-#include "dotProduct.h"
-#include "insert.h"
-#include "integrator.h"
-#include "md/md.h"
-#include "multiply.h"
-#include "subtract.h"
-#include "vec3Assembly.h"
-#include "vec3Decomposition.h"
+#include "nodes/registry.h"
+#include "nodes/add.h"
+#include "nodes/atomicMC/atomicMC.h"
+#include "nodes/configuration.h"
+#include "nodes/derivative.h"
+#include "nodes/dissolve.h"
+#include "nodes/dotProduct.h"
+#include "nodes/insert.h"
+#include "nodes/integrator.h"
+#include "nodes/md/md.h"
+#include "nodes/multiply.h"
+#include "nodes/subtract.h"
+#include "nodes/vec3Assembly.h"
+#include "nodes/vec3Decomposition.h"
 #include <memory>
 #include <string>
 
@@ -39,6 +39,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
+                  {"Graph", makeDerivedNode<Graph>()},
                   {"Insert", makeDerivedNode<InsertNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"MD", makeDerivedNode<MDNode>()},

@@ -13,7 +13,7 @@ enum Roles
     DATA,
 };
 
-ParameterModel::ParameterModel(std::map<std::string_view, std::shared_ptr<ParameterBase>> &values) : values_(values) {}
+ParameterModel::ParameterModel(Node::NodeParameterMap &values) : values_(values) {}
 
 // Return number of parameters (required by QAbstractListModel)
 int ParameterModel::rowCount(const QModelIndex &parent) const { return values_.size(); }
@@ -25,7 +25,7 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
     switch (role - Qt::UserRole)
     {
         case NAME:
-            return QString::fromStdString(std::string(it->first));
+            return QString::fromStdString(it->first);
         case DESCRIPTION:
             return QString::fromStdString(std::string(it->second->description()));
         case DATA:
