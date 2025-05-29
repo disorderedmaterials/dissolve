@@ -59,7 +59,7 @@ NodeConstants::ProcessResult SQNode::process()
     unweightedsq_.setUpPartials(unweightedgr_->atomTypeMix());
 
     // Is the PartialSet already up-to-date?
-    if (DissolveSys::sameString(unweightedsq.fingerprint(), std::format("{}/{}", -1), -1))
+    if (DissolveSys::sameString(unweightedsq_.fingerprint(), std::format("{}/{}", -1), -1))
     {
         message("SQ: Unweighted partial S(Q) are up-to-date.\n");
         return ProcessResult::NotExecuted;
