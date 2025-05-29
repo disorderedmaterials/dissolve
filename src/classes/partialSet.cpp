@@ -265,6 +265,10 @@ const Data1D &PartialSet::total() const { return total_; }
 Data1D &PartialSet::boundTotal() { return boundTotal_; }
 const Data1D &PartialSet::boundTotal() const { return boundTotal_; }
 
+// Effective density
+void PartialSet::setEffectiveDensity(std::optional<double> rho) { rho_ = rho; }
+std::optional<double> PartialSet::effectiveDensity() const { return rho_; }
+
 // Return total unbound function
 Data1D &PartialSet::unboundTotal() { return unboundTotal_; }
 const Data1D &PartialSet::unboundTotal() const { return unboundTotal_; }

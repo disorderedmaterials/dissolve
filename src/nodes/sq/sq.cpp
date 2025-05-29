@@ -7,7 +7,6 @@ SQNode::SQNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedgr_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
-    addInput<std::optional<Number>>("Rho", "Effective density", rho_);
     addOption<Number>("QMin", "Minimum Q for calculated S(Q)", qMin_);
     addOption<Number>("QMax", "Maximum Q for calculated S(Q)", qMax_);
     addOption<Number>("QDelta", "Step size in Q for S(Q) calculation", qDelta_);

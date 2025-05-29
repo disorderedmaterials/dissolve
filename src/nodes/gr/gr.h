@@ -72,7 +72,7 @@ class GRNode : public Node
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
     std::optional<Number> requestedRange_;
     // Effective density
-    std::optional<Number> rho_;
+    std::optional<double> rho_;
     // Whether to save partials and total functions to disk
     bool save_{false};
     // Whether to save original (unbroadened) partials and total functions to disk
@@ -91,7 +91,7 @@ class GRNode : public Node
 
     public:
     // Calculate and return effective density based on target Configurations
-    std::optional<Number> effectiveDensity() const;
+    std::optional<double> effectiveDensity() const;
     // Calculate and return used species populations based on target Configurations
     std::vector<std::pair<const Species *, double>> speciesPopulations() const;
     // (Re)calculate partial g(r) for the specified Configuration

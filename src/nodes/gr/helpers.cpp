@@ -268,9 +268,9 @@ bool GRNode::calculateGRCells(const ProcessPool &procPool, Configuration *cfg, P
  */
 
 // Calculate and return effective density based on target Configurations
-std::optional<Number> GRNode::effectiveDensity() const
+std::optional<double> GRNode::effectiveDensity() const
 {
-    std::optional<Number> rho0;
+    std::optional<double> rho0;
     auto totalWeight = 0.0;
     for (auto *cfg : targetConfigurations_)
     {
@@ -293,7 +293,7 @@ std::optional<Number> GRNode::effectiveDensity() const
     if (!rho0)
         return {};
 
-    return Number(1.0) / (rho0.value() / totalWeight);
+    return 1.0 / (rho0.value() / totalWeight);
 }
 
 // Calculate and return used species populations based on target Configurations
@@ -321,15 +321,15 @@ std::vector<std::pair<const Species *, double>> GRNode::speciesPopulations() con
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, PartialSet &gr, GRNode::PartialsMethod method,
+bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, PartialSet &originalgr, GRNode::PartialsMethod method,
                          const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate)
 {
-    gr.setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
+    originalgr.setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
 
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
     alreadyUpToDate = false;
-    if (DissolveSys::sameString(gr.fingerprint(), std::format("{}", cfg->contentsVersion())) &&
+    if (DissolveSys::sameString(originalgr.fingerprint(), std::format("{}", cfg->contentsVersion())) &&
         (method != PartialsMethod::TestMethod))
     {
         message("Partial g(r) are up-to-date for Configuration '{}'.\n", cfg->name());
@@ -343,8 +343,8 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
      * Make sure histograms are set up, and reset any existing data
      */
 
-    gr.setUpHistograms(rdfRange, rdfBinWidth);
-    gr.reset();
+    originalgr.setUpHistograms(rdfRange, rdfBinWidth);
+    originalgr.reset();
 
     /*
      * Calculate full (intra+inter) partials
@@ -352,15 +352,15 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
 
     Timer timer;
     if (method == PartialsMethod::TestMethod)
-        calculateGRTestSerial(cfg, gr);
+        calculateGRTestSerial(cfg, originalgr);
     else if (method == PartialsMethod::SimpleMethod)
-        calculateGRSimple(procPool, cfg, gr, rdfBinWidth);
+        calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
     else if (method == PartialsMethod::CellsMethod)
-        calculateGRCells(procPool, cfg, gr, rdfRange);
+        calculateGRCells(procPool, cfg, originalgr, rdfRange);
     else if (method == PartialsMethod::AutoMethod)
     {
-        cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, gr, rdfRange)
-                              : calculateGRSimple(procPool, cfg, gr, rdfBinWidth);
+        cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, originalgr, rdfRange)
+                              : calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
     }
     timer.stop();
     message("Finished calculation of partials ({} elapsed).\n", timer.totalTimeString());
@@ -387,7 +387,7 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
         const auto &atoms = (*it)->atoms();
 
         dissolve::for_each_pair(ParallelPolicies::seq, atoms.begin(), atoms.end(),
-                                [box, &gr](int index, auto &i, int jndex, auto &j)
+                                [box, &originalgr](int index, auto &i, int jndex, auto &j)
                                 {
                                     // Ignore atom on itself
                                     if (index == jndex)
@@ -401,7 +401,7 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
                                     if (typeJ == AtomType::Ignore)
                                         return;
 
-                                    gr.boundHistogram(typeI, typeJ).bin(box->minimumDistance(i->r(), j->r()));
+                                    originalgr.boundHistogram(typeI, typeJ).bin(box->minimumDistance(i->r(), j->r()));
                                 });
     }
 
@@ -416,33 +416,34 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
 
     timer.start();
     Timer commsTimer(false);
-    auto success = for_each_pair_early(0, gr.nAtomTypes(),
-                                       [&gr, &procPool, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
-                                       {
-                                           // Sum histogram data from all processes (except if using PartialsMethod::TestMethod,
-                                           // where all processes have all data already)
-                                           if (method != PartialsMethod::TestMethod)
-                                           {
-                                               if (!gr.fullHistogram(typeI, typeJ).allSum(procPool, commsTimer))
-                                                   return false;
-                                               if (!gr.boundHistogram(typeI, typeJ).allSum(procPool, commsTimer))
-                                                   return false;
-                                           }
+    auto success =
+        for_each_pair_early(0, originalgr.nAtomTypes(),
+                            [&originalgr, &procPool, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
+                            {
+                                // Sum histogram data from all processes (except if using PartialsMethod::TestMethod,
+                                // where all processes have all data already)
+                                if (method != PartialsMethod::TestMethod)
+                                {
+                                    if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool, commsTimer))
+                                        return false;
+                                    if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool, commsTimer))
+                                        return false;
+                                }
 
-                                           // Create unbound histogram from total and bound data
-                                           gr.unboundHistogram(typeI, typeJ) = gr.fullHistogram(typeI, typeJ);
-                                           gr.unboundHistogram(typeI, typeJ).add(gr.boundHistogram(typeI, typeJ), -1.0);
+                                // Create unbound histogram from total and bound data
+                                originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
+                                originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
 
-                                           return EarlyReturn<bool>::Continue;
-                                       });
+                                return EarlyReturn<bool>::Continue;
+                            });
     if (success.has_value() && !success.value())
         return false;
 
     // Transform histogram data into radial distribution functions
-    gr.formPartials(box->volume());
+    originalgr.formPartials(box->volume());
 
     // Sum total functions
-    gr.formTotals(true);
+    originalgr.formTotals(true);
     timer.stop();
     message("Finished summation and normalisation of partial g(r) data ({} elapsed, {} comms).\n", timer.totalTimeString(),
             commsTimer.totalTimeString());
@@ -451,7 +452,7 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
      * Partials are now up-to-date
      */
 
-    gr.setFingerprint(std::format("{}", cfg->contentsVersion()));
+    originalgr.setFingerprint(std::format("{}", cfg->contentsVersion()));
 
     return true;
 }

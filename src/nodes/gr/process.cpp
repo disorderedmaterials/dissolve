@@ -111,7 +111,7 @@ NodeConstants::ProcessResult GRNode::process()
     if (!sumUnweightedGR(processPool(), name(), name(), targetConfigurations_, summedUnweightedGR_))
         return NodeConstants::ProcessResult::Failed;
 
-    rho_ = effectiveDensity();
+    unweightedgr_.setEffectiveDensity(effectiveDensity());
 
     return NodeConstants::ProcessResult::Success;
 }
