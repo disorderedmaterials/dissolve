@@ -67,6 +67,8 @@ class GRNode : public Node
     PartialSet unweightedgr_;
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
     std::optional<Number> requestedRange_;
+    // Effective density
+    std::optional<Number> rho_;
     // Whether to save partials and total functions to disk
     bool save_{false};
     // Whether to save original (unbroadened) partials and total functions to disk

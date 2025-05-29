@@ -293,7 +293,7 @@ std::optional<Number> GRNode::effectiveDensity() const
     if (!rho0)
         return {};
 
-    return 1.0 / (rho0.value() / totalWeight);
+    return Number(1.0) / (rho0.value() / totalWeight);
 }
 
 // Calculate and return used species populations based on target Configurations
@@ -439,8 +439,8 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
                                            }
 
                                            // Create unbound histogram from total and bound data
-                                           gr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
-                                           gr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
+                                           gr.unboundHistogram(typeI, typeJ) = gr.fullHistogram(typeI, typeJ);
+                                           gr.unboundHistogram(typeI, typeJ).add(gr.boundHistogram(typeI, typeJ), -1.0);
 
                                            return EarlyReturn<bool>::Continue;
                                        });

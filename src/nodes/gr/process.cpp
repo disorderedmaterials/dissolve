@@ -130,5 +130,7 @@ NodeConstants::ProcessResult GRNode::process()
                          summedUnweightedGR))
         return NodeConstants::ProcessResult::Failed;
 
+    rho_ = effectiveDensity();
+
     return NodeConstants::ProcessResult::Success;
 }

@@ -26,7 +26,7 @@ GRNode::GRNode(Graph *parentGraph) : Node(parentGraph)
     addOption<GRNode::PartialsMethod>("Method", "Calculation method for partial radial distribution functions",
                                       partialsMethod_);
     addPointerOutput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedgr_);
-    addOutput<Number>("Rho", "Effective density", effectiveDensity());
+    addOutput<std::optional<Number>>("Rho", "Effective density", rho_);
 }
 
 // Return enum option info for NormalisationType
