@@ -182,7 +182,7 @@ TEST_F(GraphFlowTest, SetInput)
     yB_->set(5);
     EXPECT_TRUE(x_->isUpToDate());
     EXPECT_FALSE(y_->isUpToDate());
-    EXPECT_TRUE(z_->isUpToDate());
+    EXPECT_FALSE(z_->isUpToDate());
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(x_->versionIndex(), 2);
     EXPECT_EQ(y_->versionIndex(), 1);

@@ -13,6 +13,9 @@ ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_vi
  * Definition
  */
 
+// Set node parent
+void ParameterBase::setParent(Node *parent) { parent_ = parent; }
+
 // Return the parameter name
 std::string_view ParameterBase::name() const { return name_; }
 
