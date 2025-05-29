@@ -72,14 +72,27 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     std::shared_ptr<ParameterBase> targetInput{nullptr};
     if (dynamic_cast<Graph *>(targetNode))
     {
-        // The target node is a Graph: create a mapped input
+        // The target node is a Graph: create a parameter link from the sourceOutput and from it a mapped input
         auto graphNode = dynamic_cast<Graph *>(targetNode);
-        targetInput = graphNode->createMappedInput(definition.targetInput, sourceOutput->type());
+        auto link = sourceOutput->createParameterLink(definition.targetInput);
+        if (!graphNode->addProxyInput(link.inputParameter, link.outputParameter))
+        {
+            Messenger::error("Failed to add mapped input '{}'.\n", definition.targetInput);
+            return {};
+        }
+        targetInput = link.inputParameter;
     }
     else if (dynamic_cast<OutputsNode *>(targetNode))
     {
-        // The target node is the parent Graph's own Outputs node, so create a mapped output
-        targetInput = parent->createMappedOutput(definition.targetInput, sourceOutput->type());
+        // The target node is the parent Graph's own Outputs node, so create a parameter link from the sourceOutput and from it
+        // a mapped output
+        auto link = sourceOutput->createParameterLink(definition.targetInput);
+        if (!parent->addProxyOutput(link.inputParameter, link.outputParameter))
+        {
+            Messenger::error("Failed to add mapped output '{}'.\n", definition.targetInput);
+            return {};
+        }
+        targetInput = link.inputParameter;
     }
     else
         targetInput = targetNode->findInput(definition.targetInput);

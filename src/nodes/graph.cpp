@@ -9,8 +9,8 @@
 
 Graph::Graph(Graph *parentGraph) : Node(parentGraph)
 {
-    mappedInputs_ = dynamic_cast<InputsNode *>(addNode(std::make_unique<InputsNode>(this), "Inputs"));
-    mappedOutputs_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "Outputs"));
+    proxyInputs_ = dynamic_cast<InputsNode *>(addNode(std::make_unique<InputsNode>(this), "Inputs"));
+    proxyOutputs_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "Outputs"));
 }
 
 /*
@@ -38,7 +38,7 @@ NodeConstants::ProcessResult Graph::process()
      */
 
     // Pull outputs first
-    auto outputsResult = mappedOutputs_->run();
+    auto outputsResult = proxyOutputs_->run();
     if (outputsResult == NodeConstants::ProcessResult::Failed)
         return outputsResult;
 
@@ -72,8 +72,8 @@ void Graph::setUpdateRequired()
     if (!isUpToDate())
         return;
 
-    // Propagate changes through mappedInputs_
-    mappedInputs_->setUpdateRequired();
+    // Propagate changes through proxyInputs_
+    proxyInputs_->setUpdateRequired();
 
     // Call base class function to set flag and propagate through outputs
     Node::setUpdateRequired();
@@ -83,61 +83,18 @@ void Graph::setUpdateRequired()
  * Inputs, Outputs, and Options
  */
 
-// Create and return mapped input
-std::shared_ptr<ParameterBase> Graph::createMappedInput(std::string_view inputName, std::type_index typeIndex)
+// Add supplied proxy input, setting ownership of the parameters appropriately
+bool Graph::addProxyInput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)
 {
-    std::shared_ptr<ParameterBase> inputParameter;
-
-    // Check first that the inputName doesn't exist in our inputs_ (implicitly this carries for InputNode's outputs_)
-    if (findInput(inputName))
-    {
-        Messenger::error("Can't create mapped input as one named '{}' already exists in the Graph.", inputName);
-        return {};
-    }
-
-    // TODO Convert to Factory
-    if (typeIndex == std::type_index(typeid(Number)))
-    {
-        // Create a parameter holder object with the correct type
-        auto proxy = std::make_shared<ParameterHolder<Number>>();
-        parameterHolders_.emplace_back(proxy);
-
-        // Create an input on ourself, linked to the proxy data
-        inputParameter = addInput(inputName, "", proxy->data);
-
-        // Create a companion output on our Inputs node, again linked to the proxy data
-        mappedInputs_->addOutput(inputName, "", proxy->data);
-    }
-
-    return inputParameter;
+    // We (the Graph) own the input and the proxyInputs_ owns the output
+    return ownParameter(input) && proxyInputs_->ownParameter(output, true);
 }
 
-// Create mapped output, returning the relevant input (rather than the output)
-std::shared_ptr<ParameterBase> Graph::createMappedOutput(std::string_view outputName, std::type_index typeIndex)
+// Add supplied proxy output, setting ownership of the parameters appropriately
+bool Graph::addProxyOutput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)
 {
-    // Check first that the inputName doesn't exist in our outputs_ (implicitly this carries for OutputNode's inputs_)
-    if (findOutput(outputName))
-    {
-        Messenger::error("Can't create mapped output as one named '{}' already exists in the Graph.", outputName);
-        return {};
-    }
-
-    std::shared_ptr<ParameterBase> outputParameter;
-    // TODO Convert to Factory
-    if (typeIndex == std::type_index(typeid(Number)))
-    {
-        // Create n parameter holder object with the correct type
-        auto proxy = std::make_shared<ParameterHolder<Number>>();
-        parameterHolders_.emplace_back(proxy);
-
-        // Create an output on ourself, linked to the proxy data
-        addOutput(outputName, "", proxy->data);
-
-        // Create a companion input on our Outputs node, again linked to the proxy data
-        outputParameter = mappedOutputs_->addInput(outputName, "", proxy->data);
-    }
-
-    return outputParameter;
+    // We (the Graph) own the output and the proxyOutputs_ owns the input
+    return proxyOutputs_->ownParameter(input) && ownParameter(output, true);
 }
 
 /*
