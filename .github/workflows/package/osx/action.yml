@@ -32,11 +32,6 @@ runs:
       brew update-reset
       brew install gsl
       pip3 install dmgbuild biplist --break-system-packages
-
-  - name: Install Custom Dependencies
-    shell: bash
-    run: |
-      set -ex
       wget https://raw.githubusercontent.com/disorderedmaterials/scripts/master/prep-dmg
       chmod u+x ./prep-dmg
 
