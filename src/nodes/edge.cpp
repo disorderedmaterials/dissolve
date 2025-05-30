@@ -149,7 +149,7 @@ EdgeDefinition::EdgeDefinition(std::string srcNode, std::string srcOutput, std::
 {
 }
 
-EdgeDefinition::EdgeDefinition(const EdgeDefinition& other)
+EdgeDefinition::EdgeDefinition(const EdgeDefinition &other)
 {
     sourceNode = other.sourceNode;
     sourceOutput = other.sourceOutput;
