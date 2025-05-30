@@ -149,6 +149,14 @@ EdgeDefinition::EdgeDefinition(std::string srcNode, std::string srcOutput, std::
 {
 }
 
+EdgeDefinition::EdgeDefinition(const EdgeDefinition &other)
+{
+    sourceNode = other.sourceNode;
+    sourceOutput = other.sourceOutput;
+    targetNode = other.targetNode;
+    targetInput = other.targetInput;
+}
+
 bool EdgeDefinition::operator==(const EdgeDefinition &other) const
 {
     return sourceNode == other.sourceNode && sourceOutput == other.sourceOutput && targetNode == other.targetNode &&

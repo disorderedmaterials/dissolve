@@ -381,4 +381,9 @@ class Parameter<Function1DWrapper> : public ParameterBase, public std::enable_sh
     bool assign(ParameterBase *other) override { return false; }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return false; }
+    // Create a parameter link (input - data proxy - output) for the derived class type
+    ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription = "") const override
+    {
+        throw(std::runtime_error("Can't create a ParameterLink for a Function1DWrapper.\n"));
+    }
 };
