@@ -35,6 +35,7 @@ runs:
       set -ex
       brew update-reset
       brew install gsl
+      brew uninstall --ignore-dependencies freetype
 
   - name: Get ANTLR
     working-directory: ${{ runner.temp }}
