@@ -25,9 +25,12 @@ runs:
       name: osx-${{ runner.arch }}-build-artifacts
       path: ${{ github.workspace }}/build
 
-  - name: Install Python Dependencies
+  - name: Install Dependencies
     shell: bash
     run: |
+      set -ex
+      brew update-reset
+      brew install gsl
       pip3 install dmgbuild biplist --break-system-packages
 
   - name: Install Custom Dependencies
