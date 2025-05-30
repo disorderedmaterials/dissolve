@@ -53,19 +53,19 @@ NodeConstants::ProcessResult GRNode::process()
         // Check RDF range
         double rdfRange = cfg->box()->inscribedSphereRadius();
         if (!requestedRange_)
-            message("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", cfg->niceName(), rdfRange);
+            message("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", cfg->name(), rdfRange);
         else
         {
             if (requestedRange_.value_or(Number(0.0)) > rdfRange)
             {
                 error("Specified RDF range of {} Angstroms is out of range for Configuration "
                       "'{}' (max = {} Angstroms).\n",
-                      requestedRange_.value().asDouble(), cfg->niceName(), rdfRange);
+                      requestedRange_.value().asDouble(), cfg->name(), rdfRange);
                 return NodeConstants::ProcessResult::Failed;
             }
 
             rdfRange = requestedRange_.value().asDouble();
-            message("Cutoff for Configuration '{}' is {} Angstroms.\n", cfg->niceName(), rdfRange);
+            message("Cutoff for Configuration '{}' is {} Angstroms.\n", cfg->name(), rdfRange);
         }
 
         // 'Snap' rdfRange_ to nearest bin width...
@@ -77,7 +77,7 @@ NodeConstants::ProcessResult GRNode::process()
         calculateGR(dissolve().processingModuleData(), processPool(), cfg, partialsMethod_, rdfRange, binWidth_.asDouble(),
                     alreadyUpToDate);
         auto &originalgr =
-            dissolve().processingModuleData().retrieve<PartialSet>(std::format("{}//OriginalGR", cfg->niceName()), name());
+            dissolve().processingModuleData().retrieve<PartialSet>(std::format("{}//OriginalGR", cfg->name()), name());
 
         // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
         if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
@@ -85,7 +85,7 @@ NodeConstants::ProcessResult GRNode::process()
             // Store the current fingerprint, since we must ensure we retain it in the averaged T.
             std::string currentFingerprint{originalgr.fingerprint()};
 
-            Averaging::average<PartialSet>(dissolve().processingModuleData(), std::format("{}//OriginalGR", cfg->niceName()),
+            Averaging::average<PartialSet>(dissolve().processingModuleData(), std::format("{}//OriginalGR", cfg->name()),
                                            name(), averagingLength_.value().asDouble(), averagingScheme_);
 
             // Re-set the object names and fingerprints of the partials
@@ -105,7 +105,7 @@ NodeConstants::ProcessResult GRNode::process()
 
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_.asInteger() / intramolecular broadening
         auto &unweightedgr = dissolve().processingModuleData().realise<PartialSet>(
-            std::format("{}//UnweightedGR", cfg->niceName()), name(), GenericItem::InRestartFileFlag);
+            std::format("{}//UnweightedGR", cfg->name()), name(), GenericItem::InRestartFileFlag);
         calculateUnweightedGR(processPool(), cfg, originalgr, unweightedgr, intraBroadening_,
                               nSmooths_.value_or(0).asInteger());
 

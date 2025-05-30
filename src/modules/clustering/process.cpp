@@ -7,6 +7,7 @@
 #include "data/elements.h"
 #include "generator/box.h"
 #include "generator/copy.h"
+#include "math/mathFunc.h"
 #include "math/regression.h"
 #include "math/vector3.h"
 #include "modules/clustering/clustering.h"
@@ -196,7 +197,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
                 {
                     // Get the relevant vectors
                     auto oHVec = box->minimumVector(site->origin(), site->molecule()->atom(h)->r());
-                    auto angle = box->angleInDegrees(oOVec / oOVec.magnitude(), oHVec / oHVec.magnitude());
+                    auto angle = DissolveMath::toDegrees(acos((oOVec / oOVec.magnitude()).dp(oHVec / oHVec.magnitude())));
 
                     // Make sure we have the smallest angle possible
                     if (360.0 - angle < angle)

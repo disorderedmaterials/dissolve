@@ -355,7 +355,7 @@ set(BASIC_LINK_LIBS
 # Set linker options for complete/no archive
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(WHOLE_ARCHIVE_FLAG "-Wl,-all_load")
-else()
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   set(WHOLE_ARCHIVE_FLAG "-Wl,-whole-archive")
   set(NO_WHOLE_ARCHIVE_FLAG "-Wl,-no-whole-archive")
 endif()

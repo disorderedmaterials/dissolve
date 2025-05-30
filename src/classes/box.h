@@ -6,6 +6,7 @@
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "math/matrix3.h"
+#include "math/vector3.h"
 
 #include <map>
 #include <vector>

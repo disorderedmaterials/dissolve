@@ -4,6 +4,7 @@
 #include "gui/createGrapheneSpeciesDialog.h"
 #include "classes/empiricalFormula.h"
 #include "gui/helpers/comboPopulator.h"
+#include "math/mathFunc.h"
 #include <numeric>
 
 // Useful constants
@@ -345,7 +346,7 @@ void CreateGrapheneSpeciesDialog::updateWidgets()
     // Sheet properties
     ui_.ALabel->setText(QString("%1 \u212B").arg(A_, 0, 'f', 3));
     ui_.CLabel->setText(QString("%1 (%2) \u212B").arg(c_, 0, 'f', 3).arg(c_ * ui_.CFactorSpin->value(), 0, 'f', 3));
-    ui_.AlphaLabel->setText(QString("%1\u00B0").arg(alpha_ * DEGRAD, 0, 'f', 3));
+    ui_.AlphaLabel->setText(QString("%1\u00B0").arg(DissolveMath::toDegrees(alpha_), 0, 'f', 3));
     ui_.HLabel->setText(QString("%1 (%2)").arg(H_).arg(H_ * ui_.CFactorSpin->value()));
     ui_.RadiusLabel->setText(QString("%1 \u212B").arg(radius_, 0, 'f', 3));
 
