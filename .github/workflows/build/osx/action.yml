@@ -156,6 +156,7 @@ runs:
       Qt6_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos
       export FTGL_DIR="${RUNNER_TEMP}/ftgl-install"
+      export FREETYPE_DIR="${RUNNER_TEMP}/freetype-install"
 
       # Find ANTLR4
       ANTLR_EXE="${{ runner.temp }}/antlr-${{ inputs.antlrVersion }}-complete.jar"
