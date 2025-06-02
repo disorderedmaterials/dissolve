@@ -35,6 +35,7 @@ runs:
       set -ex
       brew update-reset
       brew install gsl
+      brew uninstall --ignore-dependencies freetype
 
   - name: Get ANTLR
     working-directory: ${{ runner.temp }}
@@ -93,7 +94,7 @@ runs:
     run: |
       set -ex
       mkdir freetype-build && cd freetype-build
-      cmake ../freetype-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install -DBUILD_SHARED_LIBS:bool=OFF
+      cmake ../freetype-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install -DBUILD_SHARED_LIBS:bool=OFF
       cmake --build . --target install --config Release
 
   #
@@ -155,6 +156,7 @@ runs:
       Qt6_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos
       export FTGL_DIR="${RUNNER_TEMP}/ftgl-install"
+      export FREETYPE_DIR="${RUNNER_TEMP}/freetype-install"
 
       # Find ANTLR4
       ANTLR_EXE="${{ runner.temp }}/antlr-${{ inputs.antlrVersion }}-complete.jar"
