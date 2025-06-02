@@ -52,3 +52,16 @@ std::string_view Forcefield_CamelloneBKS::description() const
 
 // Return short-range interaction style for AtomTypes
 ShortRangeFunctions::Form Forcefield_CamelloneBKS::shortRangeForm() const { return ShortRangeFunctions::Form::Undefined; }
+
+// Return avaliable pair potential overrides
+std::vector<PairPotentialOverride> Forcefield_CamelloneBKS::pairPotentialOverrides()
+{
+    return {{"O",
+             "O",
+             PairPotentialOverride::PairPotentialOverrideType::Add,
+             {Functions1D::Form::Buckingham128, {133996.2240, 2.76, 16884.9331, 17367.3598, 2315.6480}}},
+            {"Si",
+             "O",
+             PairPotentialOverride::PairPotentialOverrideType::Add,
+             {Functions1D::Form::Buckingham128, {1737098.491, 4.8732, 12884.4679, 1929.7066, 578.912}}}};
+}

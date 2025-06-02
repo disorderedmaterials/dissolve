@@ -305,22 +305,22 @@ void AddForcefieldDialogModel::finalise()
         }
     }
 
-    // Add the pair potential overrides (if they don't exist already)
-    for (const auto &override : ff_->pairPotentialOverrides())
-        if (dissolve_->coreData().pairPotentialOverrides().empty())
-            dissolve_->coreData().addPairPotentialOverride(override.matchI(), override.matchJ(), override.type(),
-                                                           override.interactionPotential());
-        else
+    auto &currentOverrides = dissolve_->coreData().pairPotentialOverrides();
+    for (const auto &ffOverride : ff_->pairPotentialOverrides())
+    {
+        auto it = std::find_if(
+            currentOverrides.begin(), currentOverrides.end(),
+            [&](const auto &ppOverride)
+            {
+                return (ppOverride->matchI() == ffOverride.matchI() && ppOverride.get()->matchJ() == ffOverride.matchJ()) ||
+                       (ppOverride->matchI() == ffOverride.matchJ() && ppOverride.get()->matchJ() == ffOverride.matchI());
+            });
+        if (it == currentOverrides.end())
         {
-            auto present = false;
-            for (const auto &orr : dissolve_->coreData().pairPotentialOverrides())
-                if (orr.get()->matchI() == override.matchI() && orr.get()->matchJ() == override.matchJ())
-                    present = true;
-
-            if (!present)
-                dissolve_->coreData().addPairPotentialOverride(override.matchI(), override.matchJ(), override.type(),
-                                                               override.interactionPotential());
+            dissolve_->coreData().addPairPotentialOverride(ffOverride.matchI(), ffOverride.matchJ(), ffOverride.type(),
+                                                           ffOverride.interactionPotential());
         }
+    }
 
     accept();
 }

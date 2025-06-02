@@ -197,8 +197,8 @@ class Forcefield
      * Pair Potential Overrides
      */
     public:
-    // Add or Return overrides for current forcefield
-    virtual std::vector<PairPotentialOverride> pairPotentialOverrides() { return {}; };
+    // Return avaliable pair potential overrides
+    virtual std::vector<PairPotentialOverride> pairPotentialOverrides();
 };
 
 template <class T, typename... Args>

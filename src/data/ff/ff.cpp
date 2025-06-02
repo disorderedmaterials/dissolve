@@ -539,3 +539,6 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
 
     return true;
 }
+
+// Return avaliable pair potential overrides
+std::vector<PairPotentialOverride> Forcefield::pairPotentialOverrides() { return {}; }
