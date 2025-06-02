@@ -1,5 +1,5 @@
 name: Checkout
-description: Checks out the source and packages the source as an artifact for use by other workflow steps. Reversioning of the source to a git-cliff bumped version is performed if the "bump" flag is set. Tags are created / moved according to the value of 'publishType'.
+description: Checks out the source and packages the source as an artifact for use by other workflow steps. Reversioning of the source to a git-cliff bumped version is performed if the publishing type is "continuous". Tags are created / moved according to the value of 'publishType'.
 
 on:
   workflow_call:
@@ -25,9 +25,6 @@ on:
       checkoutRef:
         default: ''
         type: string
-      bump:
-        default: false
-        type: boolean
     outputs:
       currentVersion:
         description: "Full version (MAJOR.MINOR.PATCH) determined from source, and after any reversioning"
@@ -143,7 +140,7 @@ jobs:
           ./changeversion -l | tee ChangeLog.md
 
       - name: Bump Version
-        if: inputs.bump == 'true'
+        if: inputs.publishType == 'continuous'
         shell: bash
         run: |
           set -ex
