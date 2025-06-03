@@ -19,7 +19,6 @@ jobs:
     if: github.event.repository.fork == false
     uses: "./.github/workflows/_checkout.yml"
     with:
-      bump: true
       publishType: 'continuous'
 
   QC:
