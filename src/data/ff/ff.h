@@ -197,7 +197,7 @@ class Forcefield
      * Pair Potential Overrides
      */
     public:
-    // Return avaliable pair potential overrides
+    // Return available pair potential overrides
     virtual std::vector<PairPotentialOverride> pairPotentialOverrides();
 };
 
