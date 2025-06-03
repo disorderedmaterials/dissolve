@@ -29,7 +29,7 @@ xattr -rd com.apple.quarantine  Dissolve-GUI-<Processor>.app/Contents/MacOS/diss
 chmod +x  Dissolve-GUI-<Processor>.app/Contents/MacOS/dissolve-gui
 ```
 
-As of version 1.7.0 there is no need to have [FTGL](https://formulae.brew.sh/formula/ftgleforge.net/projects/ftgl/) installed on your system via Homebrew.
+As of version 1.7.0 there is no longer any need to install FTGL or Freetype via Homebrew.
 
 ### Linux
 
