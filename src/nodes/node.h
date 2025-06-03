@@ -233,7 +233,7 @@ class Node : public Serialisable<>
         param->setFlags(ParameterBase::ParameterFlags::Output);
         return param;
     }
-    // Add pointer output parameter
+    // Add optional pointer input parameter
     template <typename T>
     std::shared_ptr<ParameterBase> addOptionalPointerInput(std::string_view inputName, std::string_view description,
                                                            std::optional<T *> &object)
