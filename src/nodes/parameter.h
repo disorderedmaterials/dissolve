@@ -357,37 +357,37 @@ template <typename T> class PointerParameter : public Parameter<T>
     bool assign(ParameterBase *other) override { return false; }
 };
 
-// PointerParameter, returning a pointer from a target object rather than the object itself
+// OptionalPointerParameter, returning a pointer from a target object rather than the object itself
 template <typename T> class OptionalPointerParameter : public Parameter<T>
 {
     public:
-    PointerParameter(Node *parent, std::string_view name, std::string_view description, std::optional<T *> &optional)
-        : Parameter<T>(parent, name, description, optional_)
+    OptionalPointerParameter(Node *parent, std::string_view name, std::string_view description, std::optional<T *> &object)
+        : Parameter<T>(parent, name, description, object_)
     {
-        optional_ = &object;
+        object_ = object;
     }
-    virtual ~PointerParameter() = default;
+    virtual ~OptionalPointerParameter() = default;
 
     /*
      * Data
      */
     protected:
     // Optional object
-    std::optional<T *> &optional_;
+    std::optional<T *> &object_;
 
     public:
     // Return the parameter value
     T &get()
     {
-        if (optional_.has_value())
-            return optional_.value();
+        if (object_.has_value())
+            return object_.value();
 
         return {};
     }
     const T &get() const
     {
-        if (optional_.has_value())
-            return optional_.value();
+        if (object_.has_value())
+            return object_.value();
 
         return {};
     }

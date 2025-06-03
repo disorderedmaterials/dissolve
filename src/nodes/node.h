@@ -233,6 +233,21 @@ class Node : public Serialisable<>
         param->setFlags(ParameterBase::ParameterFlags::Output);
         return param;
     }
+    // Add pointer output parameter
+    template <typename T>
+    std::shared_ptr<ParameterBase> addOptionalPointerInput(std::string_view inputName, std::string_view description,
+                                                           std::optional<T *> &object)
+    {
+        if (findOutput(inputName))
+            Messenger::exception("Output parameter '{}' already exists, and can't be added again.", inputName);
+
+        auto param = inputs_
+                         .emplace(std::make_pair(
+                             inputName, std::make_shared<OptionalPointerParameter<T>>(this, inputName, description, object)))
+                         .first->second;
+        param->setFlags(ParameterBase::ParameterFlags::Output);
+        return param;
+    }
     // Own supplied parameter
     bool ownParameter(std::shared_ptr<ParameterBase> &parameter, bool isOutput = false);
     // Return named input parameter if it exists
