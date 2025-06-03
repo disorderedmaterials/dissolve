@@ -161,8 +161,8 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         }
     }
     // Return the parameter value
-    T &get() { return data_; }
-    const T &get() const { return data_; }
+    virtual T &get() { return data_; }
+    virtual const T &get() const { return data_; }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return data_ == default_; }
     // Assign the value of another parameter to this one.
@@ -352,9 +352,45 @@ template <typename T> class PointerParameter : public Parameter<T>
 
     public:
     // Set the object
-    void set(const T &value) override{};
+    void set(const T &value) override {};
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override { return false; }
+};
+
+// PointerParameter, returning a pointer from a target object rather than the object itself
+template <typename T> class OptionalPointerParameter : public Parameter<T>
+{
+    public:
+    PointerParameter(Node *parent, std::string_view name, std::string_view description, std::optional<T *> &optional)
+        : Parameter<T>(parent, name, description, optional_)
+    {
+        optional_ = &object;
+    }
+    virtual ~PointerParameter() = default;
+
+    /*
+     * Data
+     */
+    protected:
+    // Optional object
+    std::optional<T *> &optional_;
+
+    public:
+    // Return the parameter value
+    T &get()
+    {
+        if (optional_.has_value())
+            return optional_.value();
+
+        return {};
+    }
+    const T &get() const
+    {
+        if (optional_.has_value())
+            return optional_.value();
+
+        return {};
+    }
 };
 
 // Template specialisation for non-defaulted type Function1DWrapper
