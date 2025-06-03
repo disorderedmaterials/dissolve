@@ -93,6 +93,16 @@ TEST_F(PairPotentialsAnalyticTest, Buckingham)
     testForce(Functions1D::Form::Buckingham, "A=8005439.257  B=6.211565  C=3025.962812", testRDelta_ * 5);
 }
 
+TEST_F(PairPotentialsAnalyticTest, Buckingham128)
+{
+    // Values here are kJ/mol converted from eV those provided in
+    // https://www.sciencedirect.com/science/article/pii/S1387181116300609
+    testEnergy(Functions1D::Form::Buckingham128, "A=133996.2240  B=2.76  C=16884.9331  D=17367.3598  E=2315.6480",
+               testRDelta_ * 5);
+    testForce(Functions1D::Form::Buckingham128, "A=133996.2240  B=2.76  C=16884.9331  D=17367.3598  E=2315.6480",
+              testRDelta_ * 5);
+}
+
 TEST_F(PairPotentialsAnalyticTest, Gaussian)
 {
     testEnergy(Functions1D::Form::GaussianPotential, "A=1.0  fwhm=2.4  x0=0", testRDelta_ * 5);

@@ -4,6 +4,7 @@
 #include "data/ff/library.h"
 
 #include "base/sysFunc.h"
+#include "data/ff/camelloneBKS/camelloneBKS.h"
 #include "data/ff/kulmala2010/kulmala2010.h"
 #include "data/ff/ludwig/ntf2.h"
 #include "data/ff/ludwig/py4oh.h"
@@ -60,6 +61,7 @@ bool ForcefieldLibrary::registerForcefield_(const std::shared_ptr<Forcefield> &f
 // Register Forcefields for use
 void ForcefieldLibrary::registerForcefields()
 {
+    registerForcefield_(std::make_shared<Forcefield_CamelloneBKS>());
     registerForcefield_(std::make_shared<Forcefield_Kulmala2010>());
     registerForcefield_(std::make_shared<Forcefield_Ludwig_NTf2>());
     registerForcefield_(std::make_shared<Forcefield_Ludwig_Py5>());

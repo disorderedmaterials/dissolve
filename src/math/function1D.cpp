@@ -287,6 +287,44 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
             });
 
         /*
+         * Modified (Camellone) BKS Potential
+         *
+         * Parameters:
+         * INPUT  0 = A
+         * INPUT  1 = B
+         * INPUT  2 = C
+         * INPUT  3 = D
+         * INPUT  4 = E
+         *
+         *                         C       D      E
+         * F(x) = A exp(-B * x) - ---- + ----- - ----
+         *                        x**6   x**12   x**8
+         *
+         */
+        functions[Functions1D::Form::Buckingham128] =
+            Function1DDefinition({"A", "B", "C", "D", "E"},
+                                 [](double x, double omega, const std::vector<double> &params)
+                                 {
+                                     auto B = exp(-params[1] * x);
+                                     auto C = params[2] / pow(x, 6.0);
+                                     auto D = params[3] / pow(x, 12.0);
+                                     auto E = params[4] / pow(x, 8.0);
+                                     return (params[0] * B - C + D - E);
+                                 });
+        /*
+         * dYdX = -B * A exp(-B * x) + 6 * C * x**-7 - 12 * D * x**-13 + 8 * E * x**-9
+         */
+        functions[Functions1D::Form::Buckingham128].setDerivativeFunction(
+            [](double x, double omega, const std::vector<double> &params)
+            {
+                auto expo = exp(-params[1] * x);
+                auto C = 6 * params[2] * pow(x, -7.0);
+                auto D = 12 * params[3] * pow(x, -13.0);
+                auto E = 8 * params[4] * pow(x, -9.0);
+                return (-params[1] * params[0] * expo + C - D + E);
+            });
+
+        /*
          * GaussianPotential with prefactor, located at specific x.
          * Intended for use as a potential override.
          *
@@ -397,6 +435,7 @@ EnumOptions<Functions1D::Form> Functions1D::forms()
                                            {Functions1D::Form::GaussianC2, "GaussianC2", 2},
                                            {Functions1D::Form::LennardJones126, "LennardJones126", 2},
                                            {Functions1D::Form::Buckingham, "Buckingham", 3},
+                                           {Functions1D::Form::Buckingham128, "Buckingham128", 5},
                                            {Functions1D::Form::GaussianPotential, "GaussianPotential", 3},
                                            {Functions1D::Form::Harmonic, "Harmonic", 1},
                                            {Functions1D::Form::Coulombic, "Coulombic", 2},

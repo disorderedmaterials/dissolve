@@ -304,6 +304,24 @@ void AddForcefieldDialogModel::finalise()
             }
         }
     }
+
+    auto &currentOverrides = dissolve_->coreData().pairPotentialOverrides();
+    for (const auto &ffOverride : ff_->pairPotentialOverrides())
+    {
+        auto it = std::find_if(
+            currentOverrides.begin(), currentOverrides.end(),
+            [&](const auto &ppOverride)
+            {
+                return (ppOverride->matchI() == ffOverride.matchI() && ppOverride.get()->matchJ() == ffOverride.matchJ()) ||
+                       (ppOverride->matchI() == ffOverride.matchJ() && ppOverride.get()->matchJ() == ffOverride.matchI());
+            });
+        if (it == currentOverrides.end())
+        {
+            dissolve_->coreData().addPairPotentialOverride(ffOverride.matchI(), ffOverride.matchJ(), ffOverride.type(),
+                                                           ffOverride.interactionPotential());
+        }
+    }
+
     accept();
 }
 
