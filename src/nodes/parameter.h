@@ -161,8 +161,7 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         }
     }
     // Return the parameter value
-    virtual T &get() { return data_; }
-    virtual const T &get() const { return data_; }
+    virtual T get() { return data_; }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return data_ == default_; }
     // Assign the value of another parameter to this one.
@@ -336,8 +335,7 @@ template <typename T> class BoundedOptionalParameter : public BoundedParameter<T
 template <typename T> class PointerParameter : public Parameter<T>
 {
     public:
-    PointerParameter(Node *parent, std::string_view name, std::string_view description,
-                     std::remove_pointer_t<T> &object)
+    PointerParameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<T> &object)
         : Parameter<T>(parent, name, description, pointer_)
     {
         pointer_ = &object;
@@ -359,41 +357,28 @@ template <typename T> class PointerParameter : public Parameter<T>
 };
 
 // OptionalPointerParameter, returning a pointer from a target object rather than the object itself
-template <typename T> class OptionalPointerParameter : public Parameter<T>
+template <typename PtrType> class OptionalPointerParameter : public Parameter<PtrType>
 {
     public:
-    OptionalPointerParameter(Node *parent, std::string_view name, std::string_view description, std::optional<std::remove_pointer_t<T>> &object)
-        : Parameter<T>(parent, name, description, pointer_)
+    OptionalPointerParameter(Node *parent, std::string_view name, std::string_view description,
+                             std::optional<std::remove_pointer_t<PtrType>> &object)
+        : Parameter<PtrType>(parent, name, description, pointer_), object_(object), pointer_{nullptr}
     {
-        object_ = object;
-        proxy_ = std::make_shared<ParameterProxy<T>>();
-        getPointer();
     }
     ~OptionalPointerParameter() override = default;
 
     /*
      * Data
      */
-    private:
-    // Retrieve pointer to object in optional, or set to nullptr
-    const T &getPointer() const
-    {
-        proxy_->data = object_.has_value() ? &object_.value() : nullptr;
-        return proxy_->data;
-    }
-
     protected:
     // Optional object
-    std::optional<std::remove_pointer_t<T>> object_;
+    std::optional<std::remove_pointer_t<PtrType>> object_;
     // Pointer object
-    T pointer_;
-    // Proxy object to contain pointer data and allow const get()
-    std::shared_ptr<ParameterProxy<T>> proxy_;
+    PtrType pointer_;
 
     public:
     // Return the parameter value
-    T &get() override { pointer_ = object_.has_value() ? &object_.value() : nullptr; return pointer_;}
-    const T &get() const override { return getPointer(); }
+    PtrType get() override { return object_.has_value() ? &object_.value() : nullptr; }
 };
 
 // Template specialisation for non-defaulted type Function1DWrapper

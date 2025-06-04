@@ -19,7 +19,4 @@ std::string_view TestNode::type() const { return "TestNode"; }
 std::string_view TestNode::summary() const { return "A node to allow unit testing of various graph features"; }
 
 // Perform processing
-NodeConstants::ProcessResult TestNode::process()
-{
-    return NodeConstants::ProcessResult::Success;
-}
+NodeConstants::ProcessResult TestNode::process() { return NodeConstants::ProcessResult::Success; }
