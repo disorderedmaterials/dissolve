@@ -3,76 +3,36 @@
 
 #include "nodes/add.h"
 #include "nodes/dissolve.h"
-#include "nodes/number.h"
-#include "tests/testData.h"
+#include "nodes/test.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
 {
-class ParametersTest : public ::testing::Test
+TEST(ParametersTest, OptionalPointerOutput)
 {
-    public:
-    ParametersTest() : dissolve_(coreData_), root_(dissolve_) {}
-
-    // Create a graph for testing
-    void createGraph()
-    {
-        /*
-         *    Add (x)
-         *    ------------------
-         *   o-A = 1     result-o ---+
-         *   o-B = 2           |      \        Add (z)
-         *    -----------------/       \       ------------------
-         *                              +---- o-A         result-o
-         *    Add (y)                 +------ o-B               |
-         *    ------------------     /         -----------------/
-         *   o-A = 3     result-o --+
-         *   o-B = 4           |
-         *    -----------------/
-         */
-
-        // Create nodes
-        x_ = dynamic_cast<AddNode *>(root_.createNode("Add", "x"));
-        y_ = dynamic_cast<AddNode *>(root_.createNode("Add", "y"));
-        z_ = dynamic_cast<AddNode *>(root_.createNode("Add", "z"));
-
-        ASSERT_TRUE(x_);
-        ASSERT_TRUE(y_);
-        ASSERT_TRUE(z_);
-
-        ASSERT_EQ(x_->name(), "x");
-        ASSERT_EQ(y_->name(), "y");
-        ASSERT_EQ(z_->name(), "z");
-
-        EXPECT_TRUE(root_.addEdge({"x", "Result", "z", "A"}));
-        EXPECT_TRUE(root_.addEdge({"y", "Result", "z", "B"}));
-    }
-
-    protected:
-    // We need a CoreData and Dissolve definition to properly instantiate DissolveGraph at present.
     CoreData coreData_;
-    Dissolve dissolve_;
-    DissolveGraph root_;
-    AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr};
-};
+    Dissolve dissolve_(coreData_);
+    DissolveGraph root_(dissolve_);
 
-TEST_F(ParametersTest, UniqueNaming)
-{
-    createGraph();
+    // Create a couple of TestNodes
+    auto *a = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestA"));
+    ASSERT_TRUE(a);
+    auto *b = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestB"));
+    ASSERT_TRUE(b);
 
-    // Add nodes with duplicate name
-    EXPECT_EQ(root_.createNode("Add", "x")->name(), "x01");
-    EXPECT_EQ(root_.createNode("Add", "x")->name(), "x02");
+    // Create an edge between nodes
+    ASSERT_TRUE(root_.addEdge({"TestA", "OptionalConfiguration", "TestB", "ConfigurationInput"}));
 
-    // Rename existing node
-    y_->setName("x");
-    EXPECT_EQ(y_->name(), "x03");
-    y_->setName("y");
-    EXPECT_EQ(y_->name(), "y");
+    // Inputs to TestB should be valid (there is no optional data yet, but the Edge definitions are correct)
+    EXPECT_TRUE(b->inputsAreValid());
+    EXPECT_FALSE(b->isUpToDate());
+    EXPECT_EQ(b->versionIndex(), NodeConstants::InvalidVersion);
 
-    // Rename existing node to same name
-    z_->setName("z");
-    EXPECT_EQ(z_->name(), "z");
+    // Running TestB should fail since there is no optional data to retrieve via the Edge
+    EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Failed);
+    // We have a choice of where this detection could be done.  Either Node::run() could check outputs for validity, or we
+    // could have a default flag on a PointerParameter to disallow nullptr, or we could somehow modify Parameter<T>::assign()
+    // to disallow pointer parameters if the underlying type is a pointer??
 }
 
 } // namespace UnitTest

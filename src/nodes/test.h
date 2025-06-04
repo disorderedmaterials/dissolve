@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include "classes/configuration.h"
 #include "nodes/node.h"
-#include "nodes/number.h"
 
 // Test Node
 class TestNode : public Node
@@ -23,12 +23,17 @@ class TestNode : public Node
     std::string_view summary() const override;
 
     /*
-     * Processing & Validity
+     * Data
      */
     private:
-    // Optional number A
-    std::optional<Number> a_;
+    // Configuration pointer input
+    Configuration *configurationInput_{nullptr};
+    // Optional configuration output
+    std::optional<Configuration> optionalConfiguration_;
 
+    /*
+     * Processing & Validity
+     */
     public:
     // Perform processing
     NodeConstants::ProcessResult process() override;

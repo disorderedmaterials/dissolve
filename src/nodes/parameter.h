@@ -371,8 +371,8 @@ template <typename ClassPtr> class OptionalPointerParameter : public Parameter<C
      * Data
      */
     protected:
-    // Optional object
-    std::optional<std::remove_pointer_t<ClassPtr>> object_;
+    // Reference to optional object
+    std::optional<std::remove_pointer_t<ClassPtr>> &object_;
     // Pointer object
     ClassPtr pointer_;
 
