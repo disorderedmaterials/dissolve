@@ -362,9 +362,10 @@ template <typename T> class OptionalPointerParameter : public Parameter<T>
 {
     public:
     OptionalPointerParameter(Node *parent, std::string_view name, std::string_view description, std::optional<T> &object)
-        : Parameter<T>(parent, name, description, object_)
+        : Parameter<T>(parent, name, description, pointer_)
     {
         object_ = object;
+        pointer_ = object.value_or(nullptr);
     }
     virtual ~OptionalPointerParameter() = default;
 
@@ -373,12 +374,14 @@ template <typename T> class OptionalPointerParameter : public Parameter<T>
      */
     protected:
     // Optional object
-    std::optional<T> &object_;
+    std::optional<T> object_;
+    // Pointer object
+    T *pointer_;
 
     public:
     // Return the parameter value
-    T* &get() { return object_.value_or(nullptr); }
-    const T* &get() const { return object_.value_or(nullptr); }
+    T *&get() { return object_.value_or(nullptr); }
+    const T *&get() const { return object_.value_or(nullptr); }
 };
 
 // Template specialisation for non-defaulted type Function1DWrapper
