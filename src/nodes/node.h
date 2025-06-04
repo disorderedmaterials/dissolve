@@ -236,7 +236,7 @@ class Node : public Serialisable<>
     // Add optional pointer output parameter
     template <typename T>
     std::shared_ptr<ParameterBase> addOptionalPointerOutput(std::string_view outputName, std::string_view description,
-                                                            std::optional<T> &object)
+                                                            std::optional<std::remove_pointer_t<T>> &object)
     {
         if (findOutput(outputName))
             Messenger::exception("Output parameter '{}' already exists, and can't be added again.", outputName);

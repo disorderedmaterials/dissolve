@@ -26,12 +26,8 @@ class TestNode : public Node
      * Processing & Validity
      */
     private:
-    // Operand A
-    Number a_;
-    // Operand B
-    Number b_;
-    // Result (sum of A and B)
-    Number result_;
+    // Optional number A
+    std::optional<Number> a_;
 
     public:
     // Perform processing

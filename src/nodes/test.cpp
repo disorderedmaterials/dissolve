@@ -5,9 +5,7 @@
 
 TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addOptionalPointerOutput<Number>("A", "First operand to the addition", a_);
-    addInput<Number>("B", "Second operand to the addition", b_);
-    addOutput<Number>("Result", "The sum of the operands", result_);
+    addOptionalPointerOutput<Number *>("OptA", "An optional Number", a_);
 }
 
 /*
@@ -23,7 +21,5 @@ std::string_view TestNode::summary() const { return "A node to allow unit testin
 // Perform processing
 NodeConstants::ProcessResult TestNode::process()
 {
-    result_ = a_ + b_;
-
     return NodeConstants::ProcessResult::Success;
 }

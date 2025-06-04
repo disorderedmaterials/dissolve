@@ -336,12 +336,13 @@ template <typename T> class BoundedOptionalParameter : public BoundedParameter<T
 template <typename T> class PointerParameter : public Parameter<T>
 {
     public:
-    PointerParameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer<T>::type &object)
+    PointerParameter(Node *parent, std::string_view name, std::string_view description,
+                     std::remove_pointer_t<T> &object)
         : Parameter<T>(parent, name, description, pointer_)
     {
         pointer_ = &object;
     }
-    virtual ~PointerParameter() = default;
+    ~PointerParameter() override = default;
 
     /*
      * Data
@@ -361,27 +362,38 @@ template <typename T> class PointerParameter : public Parameter<T>
 template <typename T> class OptionalPointerParameter : public Parameter<T>
 {
     public:
-    OptionalPointerParameter(Node *parent, std::string_view name, std::string_view description, std::optional<T> &object)
+    OptionalPointerParameter(Node *parent, std::string_view name, std::string_view description, std::optional<std::remove_pointer_t<T>> &object)
         : Parameter<T>(parent, name, description, pointer_)
     {
         object_ = object;
-        pointer_ = object.value_or(nullptr);
+        proxy_ = std::make_shared<ParameterProxy<T>>();
+        getPointer();
     }
-    virtual ~OptionalPointerParameter() = default;
+    ~OptionalPointerParameter() override = default;
 
     /*
      * Data
      */
+    private:
+    // Retrieve pointer to object in optional, or set to nullptr
+    const T &getPointer() const
+    {
+        proxy_->data = object_.has_value() ? &object_.value() : nullptr;
+        return proxy_->data;
+    }
+
     protected:
     // Optional object
-    std::optional<T> object_;
+    std::optional<std::remove_pointer_t<T>> object_;
     // Pointer object
-    T *pointer_;
+    T pointer_;
+    // Proxy object to contain pointer data and allow const get()
+    std::shared_ptr<ParameterProxy<T>> proxy_;
 
     public:
     // Return the parameter value
-    T *&get() { return object_.value_or(nullptr); }
-    const T *&get() const { return object_.value_or(nullptr); }
+    T &get() override { pointer_ = object_.has_value() ? &object_.value() : nullptr; return pointer_;}
+    const T &get() const override { return getPointer(); }
 };
 
 // Template specialisation for non-defaulted type Function1DWrapper
