@@ -332,11 +332,11 @@ template <typename T> class BoundedOptionalParameter : public BoundedParameter<T
 };
 
 // PointerParameter, returning a pointer from a target object rather than the object itself
-template <typename T> class PointerParameter : public Parameter<T>
+template <typename ClassPtr> class PointerParameter : public Parameter<ClassPtr>
 {
     public:
-    PointerParameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<T> &object)
-        : Parameter<T>(parent, name, description, pointer_)
+    PointerParameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<ClassPtr> &object)
+        : Parameter<ClassPtr>(parent, name, description, pointer_)
     {
         pointer_ = &object;
     }
@@ -347,22 +347,22 @@ template <typename T> class PointerParameter : public Parameter<T>
      */
     protected:
     // Pointer to target object
-    T pointer_{nullptr};
+    ClassPtr pointer_{nullptr};
 
     public:
     // Set the object
-    void set(const T &value) override{};
+    void set(const ClassPtr &value) override{};
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override { return false; }
 };
 
 // OptionalPointerParameter, returning a pointer from a target object rather than the object itself
-template <typename PtrType> class OptionalPointerParameter : public Parameter<PtrType>
+template <typename ClassPtr> class OptionalPointerParameter : public Parameter<ClassPtr>
 {
     public:
     OptionalPointerParameter(Node *parent, std::string_view name, std::string_view description,
-                             std::optional<std::remove_pointer_t<PtrType>> &object)
-        : Parameter<PtrType>(parent, name, description, pointer_), object_(object), pointer_{nullptr}
+                             std::optional<std::remove_pointer_t<ClassPtr>> &object)
+        : Parameter<ClassPtr>(parent, name, description, pointer_), object_(object), pointer_{nullptr}
     {
     }
     ~OptionalPointerParameter() override = default;
@@ -372,13 +372,13 @@ template <typename PtrType> class OptionalPointerParameter : public Parameter<Pt
      */
     protected:
     // Optional object
-    std::optional<std::remove_pointer_t<PtrType>> object_;
+    std::optional<std::remove_pointer_t<ClassPtr>> object_;
     // Pointer object
-    PtrType pointer_;
+    ClassPtr pointer_;
 
     public:
     // Return the parameter value
-    PtrType get() override { return object_.has_value() ? &object_.value() : nullptr; }
+    ClassPtr get() override { return object_.has_value() ? &object_.value() : nullptr; }
 };
 
 // Template specialisation for non-defaulted type Function1DWrapper
