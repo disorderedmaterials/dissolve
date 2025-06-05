@@ -23,16 +23,19 @@ NodeConstants::ProcessResult SQNode::process()
      *
      * This is a serial routine, with each process constructing its own copy of the data.
      */
+
+    auto qMin = qMin_.asDouble(), qDelta = qDelta_.asDouble(), qMax = qMax_.asDouble();
+
     // Print argument/parameter summary
-    message("SQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n", qMin_, qMax_,
-            qDelta_);
+    message("SQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n", qMin, qMax,
+            qDelta);
     if (windowFunction_ == WindowFunction::Form::None)
         message("SQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
     else
         message("SQ: Window function to be applied in Fourier transforms is {}.",
                 WindowFunction::forms().keyword(windowFunction_));
     if (averagingLength_)
-        message("SQ: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value(),
+        message("SQ: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value().asDouble(),
                 Averaging::averagingSchemes().keyword(averagingScheme_));
     else
         message("SQ: No averaging of partials will be performed.\n");
@@ -58,15 +61,17 @@ NodeConstants::ProcessResult SQNode::process()
 
     unweightedsq_.setUpPartials(unweightedgr_->atomTypeMix());
 
+    /*
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(unweightedsq_.fingerprint(), std::format("{}/{}", -1), -1))
     {
         message("SQ: Unweighted partial S(Q) are up-to-date.\n");
-        return ProcessResult::NotExecuted;
+        return NodeConstants::ProcessResult::Failed;
     }
+    */
 
     // Transform g(r) into S(Q)
-    if (!calculateUnweightedSQ(processPool(), &unweightedgr_, unweightedsq_, qMin_, qDelta_, qMax_, *rho,
+    if (!calculateUnweightedSQ(processPool(), *unweightedgr_, unweightedsq_, qMin, qDelta, qMax, *rho_,
                                WindowFunction(windowFunction_), qBroadening_))
         return NodeConstants::ProcessResult::Failed;
 
@@ -86,7 +91,7 @@ NodeConstants::ProcessResult SQNode::process()
     */
 
     // Set fingerprint
-    unweightedsq_.setFingerprint(std::format("{}/{}", -1, -1));
+    // unweightedsq_.setFingerprint(std::format("{}/{}", -1, -1));
 
     return NodeConstants::ProcessResult::Success;
 }

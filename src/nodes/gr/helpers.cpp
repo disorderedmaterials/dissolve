@@ -267,6 +267,34 @@ bool GRNode::calculateGRCells(const ProcessPool &procPool, Configuration *cfg, P
  * Public Functions
  */
 
+// Get original g(r), constructing if empty
+PartialSet &GRNode::originalGR(Configuration *cfg, const double rdfRange, const double rdfBinWidth)
+{
+    if (!originalgr_)
+        originalgr_.emplace();
+    originalgr_.value().setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
+
+    return originalgr_.value();
+}
+
+// Get original g(r), constructing if empty
+PartialSet &GRNode::unweightedGR()
+{
+    if (!unweightedgr_)
+        unweightedgr_.emplace();
+
+    return unweightedgr_.value();
+}
+
+// Get summed unweighted g(r), constructing if empty
+PartialSet &GRNode::summedUnweightedGR()
+{
+    if (!summedunweightedgr_)
+        summedunweightedgr_.emplace();
+
+    return summedunweightedgr_.value();
+}
+
 // Calculate and return effective density based on target Configurations
 std::optional<double> GRNode::effectiveDensity() const
 {
@@ -324,12 +352,10 @@ std::vector<std::pair<const Species *, double>> GRNode::speciesPopulations() con
 bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, PartialSet &originalgr, GRNode::PartialsMethod method,
                          const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate)
 {
-    originalgr.setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
-
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
     alreadyUpToDate = false;
-    if (DissolveSys::sameString(originalgr.fingerprint(), std::format("{}", cfg->contentsVersion())) &&
+    if (DissolveSys::sameString(originalgr_.value().fingerprint(), std::format("{}", cfg->contentsVersion())) &&
         (method != PartialsMethod::TestMethod))
     {
         message("Partial g(r) are up-to-date for Configuration '{}'.\n", cfg->name());
@@ -352,7 +378,7 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
 
     Timer timer;
     if (method == PartialsMethod::TestMethod)
-        calculateGRTestSerial(cfg, originalgr);
+        calculateGRTestSerial(cfg, originalgr_.value());
     else if (method == PartialsMethod::SimpleMethod)
         calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
     else if (method == PartialsMethod::CellsMethod)
@@ -572,7 +598,7 @@ bool GRNode::sumUnweightedGR(const ProcessPool &procPool, std::string_view targe
         // Calculate weighting factor
         double weight = ((cfgWeight / totalWeight) * *cfg->atomicDensity()) / rho0;
 
-        summedUnweightedGR.addPartials(unweightedgr_, weight);
+        summedUnweightedGR.addPartials(unweightedGR(), weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);
 

@@ -56,6 +56,7 @@ NodeConstants::ProcessResult GRNode::process()
             message("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", cfg->niceName(), rdfRange);
         else
         {
+
             if (requestedRange_.value_or(Number(0.0)) > rdfRange)
             {
                 error("Specified RDF range of {} Angstroms is out of range for Configuration "
@@ -74,7 +75,8 @@ NodeConstants::ProcessResult GRNode::process()
 
         // Calculate unweighted partials for this Configuration
         bool alreadyUpToDate;
-        calculateGR(processPool(), cfg, originalgr_, partialsMethod_, rdfRange, binWidth_.asDouble(), alreadyUpToDate);
+        calculateGR(processPool(), cfg, originalGR(cfg, rdfRange, binWidth_.asDouble()), partialsMethod_, rdfRange,
+                    binWidth_.asDouble(), alreadyUpToDate);
 
         // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
         /*
@@ -91,27 +93,29 @@ NodeConstants::ProcessResult GRNode::process()
         }
         */
 
+        /*
         // Perform internal test of original g(r)?
         if (internalTest_)
         {
             // Copy the already-calculated g(r), then calculate a new set using the Test method
-            PartialSet referencePartials = originalgr_;
-            calculateGR(processPool(), cfg, originalgr_, PartialsMethod::TestMethod, rdfRange, binWidth_.asDouble(),
-                        alreadyUpToDate);
-            if (!testReferencePartials(referencePartials, originalgr_, 1.0e-6))
-                return NodeConstants::ProcessResult::Failed;
+            PartialSet referencePartials = originalgr;
+            calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), cfg, GRModule::TestMethod,
+                rdfRange, binWidth_, alreadyUpToDate);
+            if (!testReferencePartials(referencePartials, originalgr, 1.0e-6))
+                return ExecutionResult::Failed;
         }
+        */
 
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_.asInteger() / intramolecular broadening
-        calculateUnweightedGR(processPool(), cfg, originalgr_, unweightedgr_, intraBroadening_,
-                              nSmooths_.value_or(0).asInteger());
+        calculateUnweightedGR(processPool(), cfg, originalGR(cfg, rdfRange, binWidth_.asDouble()), unweightedGR(),
+                              intraBroadening_, nSmooths_.value_or(0).asInteger());
     }
 
     // Sum the partials from the associated Configurations
-    if (!sumUnweightedGR(processPool(), name(), name(), targetConfigurations_, summedUnweightedGR_))
+    if (!sumUnweightedGR(processPool(), name(), name(), targetConfigurations_, summedUnweightedGR()))
         return NodeConstants::ProcessResult::Failed;
 
-    unweightedgr_.setEffectiveDensity(effectiveDensity());
+    unweightedGR().setEffectiveDensity(effectiveDensity());
 
     return NodeConstants::ProcessResult::Success;
 }

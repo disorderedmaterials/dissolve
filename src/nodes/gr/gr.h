@@ -48,7 +48,11 @@ class GRNode : public Node
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
     // Original g(r)
-    PartialSet originalgr_;
+    std::optional<PartialSet> originalgr_;
+    // Unweighted g(r)
+    std::optional<PartialSet> unweightedgr_;
+    // Summed unweighted g(r)
+    std::optional<PartialSet> summedunweightedgr_;
     // Number of historical partial sets to combine into final partials
     std::optional<Number> averagingLength_{5};
     // Weighting scheme to use when averaging partials
@@ -63,10 +67,6 @@ class GRNode : public Node
     std::optional<Number> nSmooths_;
     // Calculation method for partials
     PartialsMethod partialsMethod_{PartialsMethod::AutoMethod};
-    // Unweighted g(r)
-    PartialSet unweightedgr_;
-    // Summed unweighted g(r)
-    PartialSet summedUnweightedGR_;
     // Summed atom types
     AtomTypeMix combinedAtomTypes_;
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
@@ -90,6 +90,12 @@ class GRNode : public Node
     bool calculateGRCells(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double binWidth);
 
     public:
+    // Get original g(r), constructing if empty
+    PartialSet &originalGR(Configuration *cfg, const double rdfRange, const double rdfBinWidth);
+    // Get unweighted g(r), constructing if empty
+    PartialSet &unweightedGR();
+    // Get summed unweighted g(r), constructing if empty
+    PartialSet &summedUnweightedGR();
     // Calculate and return effective density based on target Configurations
     std::optional<double> effectiveDensity() const;
     // Calculate and return used species populations based on target Configurations
