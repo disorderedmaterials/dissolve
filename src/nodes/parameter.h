@@ -170,7 +170,16 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         auto upcasted = other->upcast<T>();
         if (!upcasted)
             return false;
+
         set(upcasted->get());
+
+        // If we are a pointer type, getting a nullptr is disallowed
+        if constexpr (std::is_pointer<T>())
+        {
+            if (data_ == nullptr)
+                return false;
+        }
+
         return true;
     }
     // Create a parameter link (input - data proxy - output) for this parameter type

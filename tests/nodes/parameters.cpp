@@ -30,9 +30,6 @@ TEST(ParametersTest, OptionalPointerOutput)
 
     // Running TestB should fail since there is no optional data to retrieve via the Edge
     EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Failed);
-    // We have a choice of where this detection could be done.  Either Node::run() could check outputs for validity, or we
-    // could have a default flag on a PointerParameter to disallow nullptr, or we could somehow modify Parameter<T>::assign()
-    // to disallow pointer parameters if the underlying type is a pointer??
 }
 
 } // namespace UnitTest
