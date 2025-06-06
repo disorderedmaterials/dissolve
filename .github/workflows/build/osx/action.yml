@@ -4,7 +4,7 @@ description: Build on OSX
 inputs:
   threading:
     default: true
-  targetDeploymentVersion:
+  osxTargetDeploymentVersion:
     default: 13.3
   freeTypeArchive:
     default: https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.gz

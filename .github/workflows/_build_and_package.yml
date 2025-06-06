@@ -13,6 +13,9 @@ on:
       msvcVersion:
         type: string
         required: true
+      osxRunner:
+        type: string
+        default: 'UNKNOWN'
       osxTargetDeploymentVersion:
         type: string
         default: 'UNKNOWN'
@@ -38,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-15, windows-latest ]
+        os: [ ${{ inputs.osxRunner }}, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
     - name: 'Download Source Tarfiles'
@@ -89,7 +92,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-15, windows-latest ]
+        os: [ ${{ inputs.osxRunner }}, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
     - name: 'Download Source Tarfiles'
