@@ -100,7 +100,8 @@ NodeConstants::ProcessResult MDNode::process()
     // Initialise the random number buffer for all processes
     RandomBuffer randomBuffer(processPool(), ProcessPool::PoolProcessesCommunicator);
 
-    std::vector<Vector3> velocities;
+    velocities_.emplace();
+    auto &velocities = velocities_.value();
     auto status = GenericItem::ItemStatus::Created;
     if ((status == GenericItem::ItemStatus::Created || randomVelocities_ ||
          velocities.size() != targetConfiguration_->nAtoms()) &&

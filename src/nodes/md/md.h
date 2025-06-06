@@ -75,6 +75,8 @@ class MDNode : public Node
     std::vector<const Species *> restrictToSpecies_;
     // Write frequency for trajectory file
     std::optional<Number> trajectoryFrequency_;
+    // Velocities
+    std::optional<std::vector<Vector3>> velocities_;
 
     /*
      * Functions
