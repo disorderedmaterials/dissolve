@@ -30,6 +30,12 @@ class TestNode : public Node
     Configuration *configurationInput_{nullptr};
     // Optional configuration output
     std::optional<Configuration> optionalConfiguration_;
+    // Whether our processing loop creates a valid optional Configuration data
+    bool createConfiguration_{false};
+
+    public:
+    // Return the optional Configuration
+    const std::optional<Configuration> &optionalConfiguration() const;
 
     /*
      * Processing & Validity
