@@ -59,11 +59,11 @@ NodeConstants::ProcessResult SQNode::process()
      * Transform target UnweightedGR into the UnweightedSQ.
      */
 
-    unweightedsq_.setUpPartials(unweightedgr_->atomTypeMix());
+    unweightedSQ_.setUpPartials(unweightedGR_->atomTypeMix());
 
     /*
     // Is the PartialSet already up-to-date?
-    if (DissolveSys::sameString(unweightedsq_.fingerprint(), std::format("{}/{}", -1), -1))
+    if (DissolveSys::sameString(unweightedSQ_.fingerprint(), std::format("{}/{}", -1), -1))
     {
         message("SQ: Unweighted partial S(Q) are up-to-date.\n");
         return NodeConstants::ProcessResult::Failed;
@@ -71,7 +71,7 @@ NodeConstants::ProcessResult SQNode::process()
     */
 
     // Transform g(r) into S(Q)
-    if (!calculateUnweightedSQ(processPool(), *unweightedgr_, unweightedsq_, qMin, qDelta, qMax, *rho_,
+    if (!calculateUnweightedSQ(processPool(), *unweightedGR_, unweightedSQ_, qMin, qDelta, qMax, *rho_,
                                WindowFunction(windowFunction_), qBroadening_))
         return NodeConstants::ProcessResult::Failed;
 
@@ -80,18 +80,18 @@ NodeConstants::ProcessResult SQNode::process()
     if (averagingLength_)
     {
         // Store the current fingerprint, since we must ensure we retain it in the averaged data.
-        std::string currentFingerprint{unweightedsq_.fingerprint()};
+        std::string currentFingerprint{unweightedSQ_.fingerprint()};
 
         Averaging::average<PartialSet>(dissolve().processingModuleData(), "UnweightedSQ", name_, averagingLength_.value(),
                                        averagingScheme_);
 
         // Re-set the object names and fingerprints of the partials
-        unweightedsq_.setFingerprint(currentFingerprint);
+        unweightedSQ_.setFingerprint(currentFingerprint);
     }
     */
 
     // Set fingerprint
-    // unweightedsq_.setFingerprint(std::format("{}/{}", -1, -1));
+    // unweightedSQ_.setFingerprint(std::format("{}/{}", -1, -1));
 
     return NodeConstants::ProcessResult::Success;
 }

@@ -280,19 +280,19 @@ PartialSet &GRNode::originalGR(Configuration *cfg, const double rdfRange, const 
 // Get original g(r), constructing if empty
 PartialSet &GRNode::unweightedGR()
 {
-    if (!unweightedgr_)
-        unweightedgr_.emplace();
+    if (!unweightedGR_)
+        unweightedGR_.emplace();
 
-    return unweightedgr_.value();
+    return unweightedGR_.value();
 }
 
 // Get summed unweighted g(r), constructing if empty
 PartialSet &GRNode::summedUnweightedGR()
 {
-    if (!summedunweightedgr_)
-        summedunweightedgr_.emplace();
+    if (!summedUnweightedGR_)
+        summedUnweightedGR_.emplace();
 
-    return summedunweightedgr_.value();
+    return summedUnweightedGR_.value();
 }
 
 // Calculate and return effective density based on target Configurations

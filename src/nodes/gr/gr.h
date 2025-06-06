@@ -50,9 +50,9 @@ class GRNode : public Node
     // Original g(r)
     std::optional<PartialSet> originalgr_;
     // Unweighted g(r)
-    std::optional<PartialSet> unweightedgr_;
+    std::optional<PartialSet> unweightedGR_;
     // Summed unweighted g(r)
-    std::optional<PartialSet> summedunweightedgr_;
+    std::optional<PartialSet> summedUnweightedGR_;
     // Number of historical partial sets to combine into final partials
     std::optional<Number> averagingLength_{5};
     // Weighting scheme to use when averaging partials

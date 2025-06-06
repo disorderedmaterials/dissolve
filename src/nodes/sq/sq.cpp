@@ -5,7 +5,7 @@
 
 SQNode::SQNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedgr_)
+    addInput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
     addOption<Number>("QMin", "Minimum Q for calculated S(Q)", qMin_);
     addOption<Number>("QMax", "Maximum Q for calculated S(Q)", qMax_);
@@ -20,7 +20,7 @@ SQNode::SQNode(Graph *parentGraph) : Node(parentGraph)
                                      averagingLength_);
     addOption<Averaging::AveragingScheme>("AveragingScheme", "Weighting scheme to use when averaging partials",
                                           averagingScheme_);
-    addPointerOutput<PartialSet *>("UnweightedSQ", "Unweighted partials for target configuration", unweightedsq_);
+    addPointerOutput<PartialSet *>("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
 
     addOption<bool>("Save", "Whether to save partials to disk after calculation", save_);
 }

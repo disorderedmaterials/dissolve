@@ -31,9 +31,9 @@ class SQNode : public Node
      */
     private:
     // Unweighted g(r)
-    PartialSet *unweightedgr_{nullptr};
+    PartialSet *unweightedGR_{nullptr};
     // Unweighted S(Q)
-    PartialSet unweightedsq_;
+    PartialSet unweightedSQ_;
     // Number of historical partial sets to combine into final partials
     std::optional<Number> averagingLength_;
     // Weighting scheme to use when averaging partials
