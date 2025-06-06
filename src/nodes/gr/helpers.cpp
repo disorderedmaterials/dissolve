@@ -296,9 +296,9 @@ PartialSet &GRNode::summedUnweightedGR()
 }
 
 // Calculate and return effective density based on target Configurations
-std::optional<double> GRNode::effectiveDensity() const
+double GRNode::effectiveDensity() const
 {
-    std::optional<double> rho0;
+    double rho0 = 0;
     auto totalWeight = 0.0;
     for (auto *cfg : targetConfigurations_)
     {
@@ -313,15 +313,12 @@ std::optional<double> GRNode::effectiveDensity() const
 
         // Add to sum
         if (rho0)
-            *rho0 += weight / *cfg->atomicDensity();
+            rho0 += weight / *cfg->atomicDensity();
         else
             rho0 = weight / *cfg->atomicDensity();
     }
 
-    if (!rho0)
-        return {};
-
-    return 1.0 / (rho0.value() / totalWeight);
+    return 1.0 / (rho0 / totalWeight);
 }
 
 // Calculate and return used species populations based on target Configurations

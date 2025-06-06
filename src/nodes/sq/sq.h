@@ -49,7 +49,7 @@ class SQNode : public Node
     // Minimum Q for calculated S(Q)
     Number qMin_{0.01};
     // Effective density
-    std::optional<double> rho_;
+    double rho_;
     // Whether to save partials to disk after calculation
     bool save_{false};
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
