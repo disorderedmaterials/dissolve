@@ -13,6 +13,9 @@ on:
       msvcVersion:
         type: string
         required: true
+      osxTargetDeploymentVersion:
+        type: string
+        default: 'UNKNOWN'
       antlrVersion:
         type: string
         required: true
@@ -54,6 +57,7 @@ jobs:
         antlrVersion: ${{ inputs.antlrVersion }}
         conanHash: ${{ inputs.conanHash }}
         msvcVersion: ${{ inputs.msvcVersion }}
+        osxTargetDeploymentVersion: ${{ inputs.osxTargetDeploymentVersion }}
 
   BuildLinux:
     strategy:
