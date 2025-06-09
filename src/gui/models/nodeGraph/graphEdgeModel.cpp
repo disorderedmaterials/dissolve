@@ -68,16 +68,32 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
     auto target = std::find_if(parent_->wrapped_.begin(), parent_->wrapped_.end(),
                                [&edge](const auto &x) { return &x.rawValue() == &edge->targetNode(); });
 
+    std::optional<QPointF> sourceOffset, targetOffset;
+
+    if (source != parent_->wrapped_.end())
+    {
+        auto it = source->outputPos.find(std::string(edge->sourceOutput().name()));
+        if (it != source->outputPos.end())
+            sourceOffset = it->second;
+    }
+
+    if (target != parent_->wrapped_.end())
+    {
+        auto it = target->outputPos.find(std::string(edge->targetInput().name()));
+        if (it != target->outputPos.end())
+            targetOffset = it->second;
+    }
+
     switch (role)
     {
         case Role::SOURCE_X:
-            return source != parent_->wrapped_.end() ? source->posx : 0;
+            return source->posx + (sourceOffset ? sourceOffset->x() : 0);
         case Role::SOURCE_Y:
-            return source != parent_->wrapped_.end() ? source->posy : 0;
+            return source->posy + (sourceOffset ? sourceOffset->y() : 0);
         case Role::TARGET_X:
-            return target != parent_->wrapped_.end() ? target->posx : 100;
+            return target->posx + (targetOffset ? targetOffset->y() : 0);
         case Role::TARGET_Y:
-            return target != parent_->wrapped_.end() ? target->posy : 0;
+            return target->posy + (targetOffset ? targetOffset->y() : 0);
         default:
             return {};
     }

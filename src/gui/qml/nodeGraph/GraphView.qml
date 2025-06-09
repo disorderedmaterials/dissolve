@@ -9,7 +9,6 @@ Pane {
     property double curveOffset: 125
     property variant delegate
     property variant edgeModel
-    property var nameLookup: ({})
     property variant nodeModel
     property variant rootModel
 
@@ -144,9 +143,5 @@ Pane {
 
         delegate: graphRoot.delegate
         model: graphRoot.nodeModel
-
-        onItemAdded: function (index, item) {
-            graphRoot.nameLookup[item.nodeType] = index;
-        }
     }
 }

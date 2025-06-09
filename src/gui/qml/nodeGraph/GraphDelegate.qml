@@ -9,6 +9,7 @@ NodeBox {
     property double startX: x + width
     property double midY: y + height/2
 
+    id: root
     image: icon
     nodeType: name
     px: posX
@@ -45,6 +46,16 @@ NodeBox {
             Column {
                 Repeater {
                     model: outputs
+
+                    onItemAdded: function (idx, item) { 
+                        let pos = item.mapToItem(root, item.x, item.y);
+                        pos.x += root.width;
+                        pos.y += item.height/2;
+                        console.log(item.text);
+                        console.log(idx);
+                        console.log(pos); 
+                        rootModel.addOutput(index, item.text, pos.x, pos.y);
+                    }
 
                     delegate: Text {
                         ToolTip.text: description
