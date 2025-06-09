@@ -46,6 +46,8 @@ class PartialSet
     Data1D boundTotal_, unboundTotal_, total_;
     // Check for full or half matrix
     bool half_{true};
+    // Effective density
+    double rho_;
 
     public:
     // Set up PartialSet, including initialising histograms for g(r) use
@@ -91,6 +93,9 @@ class PartialSet
     // Return total bound function
     Data1D &boundTotal();
     const Data1D &boundTotal() const;
+    // Effective density
+    void setEffectiveDensity(double rho);
+    double effectiveDensity() const;
     // Return total unbound function
     Data1D &unboundTotal();
     const Data1D &unboundTotal() const;

@@ -20,6 +20,8 @@ EnumOptions<WindowFunction::Form> WindowFunction::forms()
                                                                 {Form::Lorch0, "Lorch0"}});
 }
 
+EnumOptions<WindowFunction::Form> getEnumOptions(WindowFunction::Form) { return WindowFunction::forms(); }
+
 /*
  * Function Data
  */

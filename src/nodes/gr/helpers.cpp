@@ -267,10 +267,38 @@ bool GRNode::calculateGRCells(const ProcessPool &procPool, Configuration *cfg, P
  * Public Functions
  */
 
-// Calculate and return effective density based on target Configurations
-std::optional<double> GRNode::effectiveDensity() const
+// Get original g(r), constructing if empty
+PartialSet &GRNode::originalGR(Configuration *cfg, const double rdfRange, const double rdfBinWidth)
 {
-    std::optional<double> rho0;
+    if (!originalgr_)
+        originalgr_.emplace();
+    originalgr_.value().setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
+
+    return originalgr_.value();
+}
+
+// Get original g(r), constructing if empty
+PartialSet &GRNode::unweightedGR()
+{
+    if (!unweightedGR_)
+        unweightedGR_.emplace();
+
+    return unweightedGR_.value();
+}
+
+// Get summed unweighted g(r), constructing if empty
+PartialSet &GRNode::summedUnweightedGR()
+{
+    if (!summedUnweightedGR_)
+        summedUnweightedGR_.emplace();
+
+    return summedUnweightedGR_.value();
+}
+
+// Calculate and return effective density based on target Configurations
+double GRNode::effectiveDensity() const
+{
+    double rho0 = 0;
     auto totalWeight = 0.0;
     for (auto *cfg : targetConfigurations_)
     {
@@ -285,15 +313,12 @@ std::optional<double> GRNode::effectiveDensity() const
 
         // Add to sum
         if (rho0)
-            *rho0 += weight / *cfg->atomicDensity();
+            rho0 += weight / *cfg->atomicDensity();
         else
             rho0 = weight / *cfg->atomicDensity();
     }
 
-    if (!rho0)
-        return {};
-
-    return 1.0 / (rho0.value() / totalWeight);
+    return 1.0 / (rho0 / totalWeight);
 }
 
 // Calculate and return used species populations based on target Configurations
@@ -321,20 +346,13 @@ std::vector<std::pair<const Species *, double>> GRNode::speciesPopulations() con
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg,
-                         GRNode::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate)
+bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, PartialSet &originalgr, GRNode::PartialsMethod method,
+                         const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate)
 {
-    // Does a PartialSet already exist for this Configuration?
-    auto originalGRObject = processingData.realiseIf<PartialSet>(std::format("{}//OriginalGR", cfg->niceName()), name(),
-                                                                 GenericItem::InRestartFileFlag);
-    auto &originalgr = originalGRObject.first;
-    if (originalGRObject.second == GenericItem::ItemStatus::Created)
-        originalgr.setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
-
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
     alreadyUpToDate = false;
-    if (DissolveSys::sameString(originalgr.fingerprint(), std::format("{}", cfg->contentsVersion())) &&
+    if (DissolveSys::sameString(originalgr_.value().fingerprint(), std::format("{}", cfg->contentsVersion())) &&
         (method != PartialsMethod::TestMethod))
     {
         message("Partial g(r) are up-to-date for Configuration '{}'.\n", cfg->name());
@@ -357,7 +375,7 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
 
     Timer timer;
     if (method == PartialsMethod::TestMethod)
-        calculateGRTestSerial(cfg, originalgr);
+        calculateGRTestSerial(cfg, originalgr_.value());
     else if (method == PartialsMethod::SimpleMethod)
         calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
     else if (method == PartialsMethod::CellsMethod)
@@ -425,8 +443,8 @@ bool GRNode::calculateGR(GenericList &processingData, const ProcessPool &procPoo
         for_each_pair_early(0, originalgr.nAtomTypes(),
                             [&originalgr, &procPool, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
                             {
-                                // Sum histogram data from all processes (except if using PartialsMethod::TestMethod, where all
-                                // processes have all data already)
+                                // Sum histogram data from all processes (except if using PartialsMethod::TestMethod,
+                                // where all processes have all data already)
                                 if (method != PartialsMethod::TestMethod)
                                 {
                                     if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool, commsTimer))
@@ -521,22 +539,18 @@ bool GRNode::calculateUnweightedGR(const ProcessPool &procPool, Configuration *c
 }
 
 // Sum unweighted g(r) over the supplied Module's target Configurations
-bool GRNode::sumUnweightedGR(GenericList &processingData, const ProcessPool &procPool, std::string_view targetPrefix,
-                             std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,
-                             PartialSet &summedUnweightedGR)
+bool GRNode::sumUnweightedGR(const ProcessPool &procPool, std::string_view targetPrefix, std::string_view parentPrefix,
+                             const std::vector<Configuration *> &parentCfgs, PartialSet &summedUnweightedGR)
 {
-    // Realise an AtomTypeList containing the sum of atom types over all target configurations
-    auto &combinedAtomTypes =
-        processingData.realise<AtomTypeMix>("SummedAtomTypes", parentPrefix, GenericItem::InRestartFileFlag);
-    combinedAtomTypes.clear();
+    combinedAtomTypes_.clear();
     for (Configuration *cfg : parentCfgs)
-        combinedAtomTypes.add(cfg->atomTypePopulations());
+        combinedAtomTypes_.add(cfg->atomTypePopulations());
 
     // Finalise and save the combined AtomTypes matrix
-    combinedAtomTypes.finalise();
+    combinedAtomTypes_.finalise();
 
     // Set up PartialSet container
-    summedUnweightedGR.setUpPartials(combinedAtomTypes);
+    summedUnweightedGR.setUpPartials(combinedAtomTypes_);
 
     // Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight
     // Vector for simplicity
@@ -582,15 +596,7 @@ bool GRNode::sumUnweightedGR(GenericList &processingData, const ProcessPool &pro
         // Calculate weighting factor
         double weight = ((cfgWeight / totalWeight) * *cfg->atomicDensity()) / rho0;
 
-        // Grab partials for Configuration and add into our set
-        if (!processingData.contains(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix))
-        {
-            error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-            return false;
-        }
-
-        auto cfgPartialGR = processingData.value<PartialSet>(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix);
-        summedUnweightedGR.addPartials(cfgPartialGR, weight);
+        summedUnweightedGR.addPartials(unweightedGR(), weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);
 

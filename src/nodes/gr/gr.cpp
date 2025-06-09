@@ -25,6 +25,7 @@ GRNode::GRNode(Graph *parentGraph) : Node(parentGraph)
         internalTest_);
     addOption<GRNode::PartialsMethod>("Method", "Calculation method for partial radial distribution functions",
                                       partialsMethod_);
+    addOptionalPointerOutput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
 }
 
 // Return enum option info for NormalisationType
