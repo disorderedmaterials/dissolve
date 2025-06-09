@@ -17,8 +17,12 @@ TEST(ParametersTest, OptionalPointerOutput)
     // Create a couple of TestNodes
     auto *a = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestA"));
     ASSERT_TRUE(a);
+    auto createOptA = a->findInput("CreateConfiguration")->upcast<bool>();
+    ASSERT_TRUE(createOptA);
     auto *b = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestB"));
     ASSERT_TRUE(b);
+    auto configInputB = b->findInput("ConfigurationInput")->upcast<Configuration *>();
+    ASSERT_TRUE(configInputB);
 
     // Create an edge between nodes
     ASSERT_TRUE(root_.addEdge({"TestA", "OptionalConfiguration", "TestB", "ConfigurationInput"}));
@@ -30,9 +34,13 @@ TEST(ParametersTest, OptionalPointerOutput)
 
     // Running TestB should fail since there is no optional data to retrieve via the Edge
     EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Failed);
-    // We have a choice of where this detection could be done.  Either Node::run() could check outputs for validity, or we
-    // could have a default flag on a PointerParameter to disallow nullptr, or we could somehow modify Parameter<T>::assign()
-    // to disallow pointer parameters if the underlying type is a pointer??
+
+    // Flag TestA to create the optional data if it doesn't exist, and rerun TestB
+    createOptA->set(true);
+    EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Success);
+
+    // Double-check the value of the pointer for sanity's sake
+    EXPECT_EQ(a->optionalConfiguration().operator->(), configInputB->get());
 }
 
 } // namespace UnitTest
