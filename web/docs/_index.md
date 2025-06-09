@@ -16,7 +16,7 @@ Here you can find the user guide and examples for the RELEASETYPE version MAJOR.
 &copy; 2025 Team Dissolve and contributors
 - Dr T. Youngs
 - Dr A. Washington (January 2020 - present)
-- Dr R. Buchanan (September 2023 - present)
+- R. Buchanan (September 2023 - present)
 - D. Nixon (January 2020 - present)
 - D. Bradley (January 2023 - present)
 - J. Swift (June 2023 - September 2024)
