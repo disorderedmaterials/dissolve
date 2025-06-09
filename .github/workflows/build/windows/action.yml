@@ -219,7 +219,7 @@ runs:
     if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v4
     with:
-      name: windows-build-artifacts
+      name: windows-qt
       path: |
         ${{ runner.temp }}\qt
       retention-days: 1

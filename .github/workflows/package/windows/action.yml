@@ -36,7 +36,7 @@ runs:
   - name: Retrieve Qt Artifacts
     uses: actions/download-artifact@v4
     with:
-      name: windows-${{ inputs.qtVersion }}-qt
+      name: windows-qt
       path: ${{ runner.temp }}\qt
 
   - name: Download Raw Build Artifacts
