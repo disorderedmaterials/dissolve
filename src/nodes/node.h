@@ -219,16 +219,31 @@ class Node : public Serialisable<>
         return param;
     }
     // Add pointer output parameter
-    template <typename T>
+    template <typename ClassPtr>
     std::shared_ptr<ParameterBase> addPointerOutput(std::string_view outputName, std::string_view description,
-                                                    std::remove_pointer<T>::type &object)
+                                                    std::remove_pointer<ClassPtr>::type &object)
     {
         if (findOutput(outputName))
             Messenger::exception("Output parameter '{}' already exists, and can't be added again.", outputName);
 
         auto param = outputs_
-                         .emplace(std::make_pair(outputName,
-                                                 std::make_shared<PointerParameter<T>>(this, outputName, description, object)))
+                         .emplace(std::make_pair(
+                             outputName, std::make_shared<PointerParameter<ClassPtr>>(this, outputName, description, object)))
+                         .first->second;
+        param->setFlags(ParameterBase::ParameterFlags::Output);
+        return param;
+    }
+    // Add optional pointer output parameter
+    template <typename ClassPtr>
+    std::shared_ptr<ParameterBase> addOptionalPointerOutput(std::string_view outputName, std::string_view description,
+                                                            std::optional<std::remove_pointer_t<ClassPtr>> &object)
+    {
+        if (findOutput(outputName))
+            Messenger::exception("Output parameter '{}' already exists, and can't be added again.", outputName);
+
+        auto param = outputs_
+                         .emplace(std::make_pair(outputName, std::make_shared<OptionalPointerParameter<ClassPtr>>(
+                                                                 this, outputName, description, object)))
                          .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Output);
         return param;

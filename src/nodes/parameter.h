@@ -161,8 +161,7 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         }
     }
     // Return the parameter value
-    T &get() { return data_; }
-    const T &get() const { return data_; }
+    virtual T get() { return data_; }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return data_ == default_; }
     // Assign the value of another parameter to this one.
@@ -171,7 +170,16 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         auto upcasted = other->upcast<T>();
         if (!upcasted)
             return false;
+
         set(upcasted->get());
+
+        // If we are a pointer type, getting a nullptr is disallowed
+        if constexpr (std::is_pointer<T>())
+        {
+            if (data_ == nullptr)
+                return false;
+        }
+
         return true;
     }
     // Create a parameter link (input - data proxy - output) for this parameter type
@@ -333,28 +341,53 @@ template <typename T> class BoundedOptionalParameter : public BoundedParameter<T
 };
 
 // PointerParameter, returning a pointer from a target object rather than the object itself
-template <typename T> class PointerParameter : public Parameter<T>
+template <typename ClassPtr> class PointerParameter : public Parameter<ClassPtr>
 {
     public:
-    PointerParameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer<T>::type &object)
-        : Parameter<T>(parent, name, description, pointer_)
+    PointerParameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<ClassPtr> &object)
+        : Parameter<ClassPtr>(parent, name, description, pointer_)
     {
         pointer_ = &object;
     }
-    virtual ~PointerParameter() = default;
+    ~PointerParameter() override = default;
 
     /*
      * Data
      */
     protected:
     // Pointer to target object
-    T pointer_{nullptr};
+    ClassPtr pointer_{nullptr};
 
     public:
     // Set the object
-    void set(const T &value) override{};
+    void set(const ClassPtr &value) override{};
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override { return false; }
+};
+
+// OptionalPointerParameter, returning a pointer from a target object rather than the object itself
+template <typename ClassPtr> class OptionalPointerParameter : public Parameter<ClassPtr>
+{
+    public:
+    OptionalPointerParameter(Node *parent, std::string_view name, std::string_view description,
+                             std::optional<std::remove_pointer_t<ClassPtr>> &object)
+        : Parameter<ClassPtr>(parent, name, description, pointer_), object_(object), pointer_{nullptr}
+    {
+    }
+    ~OptionalPointerParameter() override = default;
+
+    /*
+     * Data
+     */
+    protected:
+    // Reference to optional object
+    std::optional<std::remove_pointer_t<ClassPtr>> &object_;
+    // Pointer object
+    ClassPtr pointer_;
+
+    public:
+    // Return the parameter value
+    ClassPtr get() override { return object_.has_value() ? &object_.value() : nullptr; }
 };
 
 // Template specialisation for non-defaulted type Function1DWrapper
