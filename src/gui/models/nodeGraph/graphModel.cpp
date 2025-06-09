@@ -3,13 +3,14 @@
 
 #include "graphEdgeModel.h"
 #include "graphModel.h"
+#include "graphNodeModel.h"
 #include <QVariant>
 #include <iostream>
 #include <qabstractitemmodel.h>
 
 GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
 {
-    QObject::connect(&nodes_, &QAbstractItemModel::dataChanged, &edges_, &GraphEdgeModel::updateValue);
+    QObject::connect(&nodes_, &GraphNodeModel::updatePosition, &edges_, &GraphEdgeModel::updatePosition);
 }
 
 Graph *GraphModel::graph() { return graph_; }

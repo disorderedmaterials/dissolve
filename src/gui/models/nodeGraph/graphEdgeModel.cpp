@@ -3,6 +3,15 @@
 
 #include "gui/models/nodeGraph/graphEdgeModel.h"
 #include "gui/models/nodeGraph/graphModel.h"
+#include <qnamespace.h>
+
+enum Role
+{
+    SOURCE_X = Qt::UserRole,
+    SOURCE_Y,
+    TARGET_X,
+    TARGET_Y,
+};
 
 GraphEdgeModel::GraphEdgeModel(GraphModel *parent, Graph *&graph) : parent_(parent), graph_(graph) {}
 
@@ -59,15 +68,15 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
     auto target = std::find_if(parent_->wrapped_.begin(), parent_->wrapped_.end(),
                                [&edge](const auto &x) { return &x.rawValue() == &edge->targetNode(); });
 
-    switch (role - Qt::UserRole)
+    switch (role)
     {
-        case 0:
+        case Role::SOURCE_X:
             return source != parent_->wrapped_.end() ? source->posx : 0;
-        case 1:
+        case Role::SOURCE_Y:
             return source != parent_->wrapped_.end() ? source->posy : 0;
-        case 2:
-            return target != parent_->wrapped_.end() ? target->posx : 0;
-        case 3:
+        case Role::TARGET_X:
+            return target != parent_->wrapped_.end() ? target->posx : 100;
+        case Role::TARGET_Y:
             return target != parent_->wrapped_.end() ? target->posy : 0;
         default:
             return {};
@@ -77,26 +86,23 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> GraphEdgeModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[Qt::UserRole] = "sourceX";
-    roles[Qt::UserRole + 1] = "sourceY";
-    roles[Qt::UserRole + 2] = "targetX";
-    roles[Qt::UserRole + 3] = "targetY";
+    roles[Role::SOURCE_X] = "sourceX";
+    roles[Role::SOURCE_Y] = "sourceY";
+    roles[Role::TARGET_X] = "targetX";
+    roles[Role::TARGET_Y] = "targetY";
     return roles;
 }
 
-void GraphEdgeModel::updateValue(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> roles)
+void GraphEdgeModel::updatePosition(const int idx)
 {
-    for (auto i = topLeft.row(); i < bottomRight.row(); ++i)
+    const auto &node = parent_->wrapped_[idx].rawValue();
+    for (auto j = 0; j < graph_->edges().size(); ++j)
     {
-        const auto &node = parent_->wrapped_[i].rawValue();
-        for (auto j = 0; j < graph_->edges().size(); ++j)
-        {
-            const auto &edge = graph_->edges()[j];
-            if (&edge->sourceNode() == &node)
-                Q_EMIT dataChanged(index(j), index(j + 0), {Qt::UserRole + 1, Qt::UserRole + 1});
-            if (&edge->targetNode() == &node)
-                Q_EMIT dataChanged(index(j), index(j + 1), {Qt::UserRole + 2, Qt::UserRole + 3});
-        }
+        const auto &edge = graph_->edges()[j];
+        if (&edge->sourceNode() == &node)
+            Q_EMIT dataChanged(index(j), index(j + 1), {Role::SOURCE_X, Role::SOURCE_Y});
+        if (&edge->targetNode() == &node)
+            Q_EMIT dataChanged(index(j), index(j + 1), {Role::TARGET_X, Role::TARGET_Y});
     }
 }
 

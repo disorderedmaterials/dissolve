@@ -18,6 +18,8 @@ class GraphModel;
  * and this class just caches all of the edges.**/
 class GraphEdgeModel : public QAbstractListModel
 {
+    Q_OBJECT;
+
     public:
     GraphEdgeModel(GraphModel *parent, Graph *&graph);
     GraphEdgeModel(const GraphEdgeModel &other);
@@ -50,7 +52,7 @@ class GraphEdgeModel : public QAbstractListModel
     QHash<int, QByteArray> roleNames() const override;
 
     public Q_SLOTS:
-    void updateValue(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> roles);
+    void updatePosition(const int idx);
 
     private:
     // The graph whose edges we model

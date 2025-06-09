@@ -10,8 +10,9 @@
 class GraphModel;
 
 // GraphModel class)
-class GraphNodeModel : QAbstractListModel
+class GraphNodeModel : public QAbstractListModel
 {
+    Q_OBJECT;
     friend GraphModel;
 
     public:
@@ -40,6 +41,9 @@ class GraphNodeModel : QAbstractListModel
     void endInsert();
     // Alert that the parent graph has updated
     void updateGraph();
+
+    Q_SIGNALS:
+    void updatePosition(int index);
 
     private:
     // The GraphModel that this is part of (which will hold the actual vector of nodes
