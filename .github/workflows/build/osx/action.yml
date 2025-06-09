@@ -4,6 +4,8 @@ description: Build on OSX
 inputs:
   threading:
     default: true
+  osxTargetDeploymentVersion:
+    default: 13.3
   freeTypeArchive:
     default: https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.gz
   ftglRepo:
@@ -94,7 +96,7 @@ runs:
     run: |
       set -ex
       mkdir freetype-build && cd freetype-build
-      cmake ../freetype-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install -DBUILD_SHARED_LIBS:bool=OFF
+      cmake ../freetype-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install -DBUILD_SHARED_LIBS:bool=OFF  -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.targetDeploymentVersion }}
       cmake --build . --target install --config Release
 
   #
@@ -128,7 +130,7 @@ runs:
       INCLUDE="${RUNNER_TEMP}/freetype-latest;$INCLUDE"
       LIB="${RUNNER_TEMP}/freetype-install/lib;${RUNNER_TEMP}/freetype-install/bin;$LIB"
       export FREETYPE_DIR="${RUNNER_TEMP}/freetype-install"
-      cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_INSTALL_PREFIX:path=../ftgl-install -DBUILD_SHARED_LIBS:bool=OFF
+      cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_INSTALL_PREFIX:path=../ftgl-install -DBUILD_SHARED_LIBS:bool=OFF -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.targetDeploymentVersion }}
       cmake --build . --target install --config Release
 
   #
@@ -175,11 +177,11 @@ runs:
       conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
 
       # Set minimum deployment target version
-      export MACOSX_DEPLOYMENT_TARGET=13.3
+      export MACOSX_DEPLOYMENT_TARGET=${{ inputs.targetDeploymentVersion }}
 
       # Build
       mkdir build && cd build
-      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DCONAN_GSL="OFF" -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DCONAN_GSL="OFF" -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../ -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.targetDeploymentVersion }}
       cmake --build . --config Release
 
       # Copy over gsl libs so we can ship them with the bundle. Our exe is only linked to two of the four libs present, and this breaks the binary if we don't include them all in the package.

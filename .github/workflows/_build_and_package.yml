@@ -13,6 +13,12 @@ on:
       msvcVersion:
         type: string
         required: true
+      osxRunner:
+        type: string
+        default: 'UNKNOWN'
+      osxTargetDeploymentVersion:
+        type: string
+        default: 'UNKNOWN'
       antlrVersion:
         type: string
         required: true
@@ -35,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, windows-latest ]
+        os: [ "${{ inputs.osxRunner }}", windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
     - name: 'Download Source Tarfiles'
@@ -54,6 +60,7 @@ jobs:
         antlrVersion: ${{ inputs.antlrVersion }}
         conanHash: ${{ inputs.conanHash }}
         msvcVersion: ${{ inputs.msvcVersion }}
+        osxTargetDeploymentVersion: ${{ inputs.osxTargetDeploymentVersion }}
 
   BuildLinux:
     strategy:
@@ -85,7 +92,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, windows-latest ]
+        os: [ "${{ inputs.osxRunner }}", windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
     - name: 'Download Source Tarfiles'

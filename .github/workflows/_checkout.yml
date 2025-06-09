@@ -7,6 +7,12 @@ on:
       msvcVersion:
         type: string
         default: 14.41.17.11
+      osxRunner:
+        type: string
+        default: macos-15
+      osxTargetDeploymentVersion:
+        type: string
+        default: 13.3
       qtVersion:
         type: string
         default: 6.4.2
@@ -62,6 +68,12 @@ on:
       msvcVersion:
         description: "Version of MSVC required by the project"
         value: ${{ jobs.Checkout.outputs.msvcVersion }}
+      osxRunner:
+        description: "Runner target for OSX"
+        value: ${{ jobs.Checkout.outputs.osxRunner }}
+      osxTargetDeploymentVersion:
+        description: "Minimum version of OSX to target for deployment"
+        value: ${{ jobs.Checkout.outputs.osxTargetDeploymentVersion }}
 
 jobs:
 
@@ -74,6 +86,8 @@ jobs:
       currentVersionPatch: ${{ steps.authVersion.outputs.currentVersionPatch }}
       currentShortHash: ${{ steps.authVersion.outputs.currentShortHash }}
       msvcVersion: ${{ steps.versions.outputs.msvcVersion }}
+      osxRunner: ${{ steps.versions.outputs.osxRunner }}
+      osxTargetDeploymentVersion: ${{ steps.versions.outputs.osxTargetDeploymentVersion }}
       qtVersion: ${{ steps.versions.outputs.qtVersion }}
       antlrVersion: ${{ steps.versions.outputs.antlrVersion }}
       hugoVersion: ${{ steps.versions.outputs.hugoVersion }}
@@ -106,6 +120,8 @@ jobs:
           echo "antlrVersion=${ANTLR_VERSION}" >> $GITHUB_OUTPUT
 
           echo "msvcVersion=${{ inputs.msvcVersion }}" >> $GITHUB_OUTPUT
+          echo "osxRunner=${{ inputs.osxRunner }}" >> $GITHUB_OUTPUT
+          echo "osxTargetDeploymentVersion=${{ inputs.osxTargetDeploymentVersion }}" >> $GITHUB_OUTPUT
 
       - name: Get Hashes
         id: hashes

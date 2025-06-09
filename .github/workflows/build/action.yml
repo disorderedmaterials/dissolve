@@ -28,6 +28,9 @@ inputs:
   benchmark:
     type: boolean
     default: false
+  osxTargetDeploymentVersion:
+    type: string
+    default: 'UNKNOWN'
   publishBenchmarks:
     type: boolean
     default: false
@@ -55,6 +58,7 @@ runs:
       conanHash: ${{ inputs.conanHash }}
       qtVersion: ${{ inputs.qtVersion }}
       antlrVersion: ${{ inputs.antlrVersion }}
+      osxTargetDeploymentVersion: ${{ inputs.osxTargetDeploymentVersion }}
 
   - name: Build (Windows)
     if: runner.os == 'Windows'
