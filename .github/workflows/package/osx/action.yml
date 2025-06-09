@@ -13,10 +13,10 @@ runs:
   using: "composite"
   steps:
 
-  - name: Retrieve Qt Cache
-    uses: actions/cache@v4
+  - name: Download Qt Artifact
+    uses: actions/download-artifact@v4
     with:
-      key: osx-qt-${{ inputs.qtVersion }}
+      name: osx-${{ inputs.qtVersion }}-qt
       path: ${{ runner.temp }}/qt
 
   - name: Download Raw Build Artifacts
