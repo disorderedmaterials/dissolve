@@ -210,12 +210,14 @@ NodeConstants::ProcessResult Edge::pull()
             return result;
         }
 
-        // Update version index
+        // Copy the parameter data over
+        if (!targetInput_.assign(&sourceOutput_))
+            return NodeConstants::ProcessResult::Failed;
+
+        // All succeeded, so update version index
         sourceNodeVersionIndex_ = sourceNode_.versionIndex();
 
-        // Copy the parameter data over
-        return targetInput_.assign(&sourceOutput_) ? NodeConstants::ProcessResult::Success
-                                                   : NodeConstants::ProcessResult::Failed;
+        return NodeConstants::ProcessResult::Success;
     }
 
     return NodeConstants::ProcessResult::Unchanged;
