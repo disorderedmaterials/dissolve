@@ -195,5 +195,5 @@ runs:
     with:
       name: osx-${{ runner.arch }}-qt
       path: |
-        ${{ runner.temp }}/build
+        ${{ runner.temp }}/qt
       retention-days: 1

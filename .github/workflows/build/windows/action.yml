@@ -221,5 +221,5 @@ runs:
     with:
       name: windows-build-artifacts
       path: |
-        ${{ runner.temp }}\build
+        ${{ runner.temp }}\qt
       retention-days: 1
