@@ -47,9 +47,10 @@ NodeConstants::ProcessResult MDNode::process()
                          joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
     Messenger::print("\n");
 
+    /*
     if (onlyWhenEnergyStable_)
     {
-        auto stabilityResult = EnergyModule::checkStability(dissolve().processingModuleData(), targetConfiguration_);
+        auto stabilityResult = EnergyModule::checkStability(targetConfiguration_);
         if (stabilityResult == EnergyModule::NotAssessable)
         {
             return NodeConstants::ProcessResult::Failed;
@@ -60,6 +61,7 @@ NodeConstants::ProcessResult MDNode::process()
             return NodeConstants::ProcessResult::Unchanged;
         }
     }
+    */
 
     // Get temperature from Configuration
     const auto temperature = targetConfiguration_->temperature();
@@ -98,9 +100,10 @@ NodeConstants::ProcessResult MDNode::process()
     // Initialise the random number buffer for all processes
     RandomBuffer randomBuffer(processPool(), ProcessPool::PoolProcessesCommunicator);
 
-    // Read in or assign random velocities
-    auto [velocities, status] = dissolve().processingModuleData().realiseIf<std::vector<Vector3>>(
-        std::format("{}//Velocities", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+    if (!velocities_)
+        velocities_.emplace();
+    auto &velocities = velocities_.value();
+    auto status = GenericItem::ItemStatus::Created;
     if ((status == GenericItem::ItemStatus::Created || randomVelocities_ ||
          velocities.size() != targetConfiguration_->nAtoms()) &&
         !intramolecularForcesOnly_)
