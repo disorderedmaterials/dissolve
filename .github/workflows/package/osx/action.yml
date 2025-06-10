@@ -13,11 +13,19 @@ runs:
   using: "composite"
   steps:
 
-  - name: Retrieve Qt Cache
-    uses: actions/cache@v4
+  - name: Download Qt Artifact
+    uses: actions/download-artifact@v4
     with:
-      key: osx-qt-${{ inputs.qtVersion }}
+      name: osx-${{ runner.arch }}-qt
       path: ${{ runner.temp }}/qt
+
+  - name: Prepare Qt
+    shell: bash
+    run: |
+      set -ex
+      ls -R  ${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos
+      chmod -R u+x ${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos/bin/*
+      chmod -R u+x ${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos/libexec/*
 
   - name: Download Raw Build Artifacts
     uses: actions/download-artifact@v4
