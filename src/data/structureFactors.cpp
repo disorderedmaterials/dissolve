@@ -14,4 +14,6 @@ EnumOptions<NormalisationType> normalisationTypes()
                                                                 {SquareOfAverageNormalisation, "SquareOfAverage"}});
 }
 
+EnumOptions<NormalisationType> normalisationTypes(NormalisationType) { return normalisationTypes(); }
+
 } // namespace StructureFactors

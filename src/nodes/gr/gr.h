@@ -32,6 +32,8 @@ class GRNode : public Node
      * Definition
      */
 
+    using SpeciesPopulations = std::vector<std::pair<const Species *, double>>;
+
     // Partial Calculation Method enum
     enum class PartialsMethod
     {
@@ -47,6 +49,8 @@ class GRNode : public Node
     private:
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
+    // Species populations
+    SpeciesPopulations speciesPopulations_;
     // Original g(r)
     std::optional<PartialSet> originalgr_;
     // Unweighted g(r)
