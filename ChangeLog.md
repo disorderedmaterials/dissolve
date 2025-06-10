@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.8.0] - 2025-06-09
+## [1.8.0] - 2025-06-10
 
 ### 🚀 Features
 
@@ -24,6 +24,7 @@
 
 - Fix image links for ModifierOSites and QSpecies ([#2131](https://github.com/disorderedmaterials/dissolve/issues/2131))
 - Fix some code formatting issues. ([#2166](https://github.com/disorderedmaterials/dissolve/issues/2166))
+- Revert unwanted version change in code. ([#2183](https://github.com/disorderedmaterials/dissolve/issues/2183))
 
 ### 🔨️ Build Tools
 
@@ -39,6 +40,8 @@
 - Fix version bumping of continuous build ([#2173](https://github.com/disorderedmaterials/dissolve/issues/2173))
 - Add missing example data archives to published assets ([#2178](https://github.com/disorderedmaterials/dissolve/issues/2178))
 - Fix target OS version for OSX dependent libs ([#2176](https://github.com/disorderedmaterials/dissolve/issues/2176))
+- Fix bad syntax in release pipeline. ([#2181](https://github.com/disorderedmaterials/dissolve/issues/2181))
+- Use artifacts for Windows and OSX Qt ([#2180](https://github.com/disorderedmaterials/dissolve/issues/2180))
 
 ### Doc
 
