@@ -28,6 +28,16 @@ NodeBox {
                 Repeater {
                     model: inputs
 
+                    onItemAdded: function (idx, item) { 
+                        let pos = item.mapToItem(null, item.x, item.y);
+                        pos.y += item.height/2;
+                        pos.y += 30; // Adjust for title
+                        console.log("Input!", item.text)
+                        console.log(idx);
+                        console.log(pos); 
+                        rootModel.addInput(index, item.text, pos.x, pos.y);
+                    }
+
                     delegate: Text {
                         ToolTip.text: description
                         ToolTip.visible: hovered
@@ -48,9 +58,11 @@ NodeBox {
                     model: outputs
 
                     onItemAdded: function (idx, item) { 
-                        let pos = item.mapToItem(root, item.x, item.y);
-                        pos.x += root.width;
-                        pos.y += item.height/2;
+                        // let pos = Qt.point(item.x, item.y)
+                        let pos = item.mapToGlobal(item.x, item.y);
+                        pos.x += item.width;
+                        pos.y += item.height;
+                        pos.y += 30; // Adjust for title
                         console.log(item.text);
                         console.log(idx);
                         console.log(pos); 

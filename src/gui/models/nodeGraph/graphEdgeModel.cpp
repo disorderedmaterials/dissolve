@@ -79,10 +79,17 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
 
     if (target != parent_->wrapped_.end())
     {
-        auto it = target->outputPos.find(std::string(edge->targetInput().name()));
-        if (it != target->outputPos.end())
+        auto it = target->inputsPos.find(std::string(edge->targetInput().name()));
+        if (it != target->inputsPos.end())
             targetOffset = it->second;
     }
+
+    if (sourceOffset)
+        std::cout << "Source Offset " << edge->sourceOutput().name() << ": " << sourceOffset->x() << ", " << sourceOffset->y()
+                  << std::endl;
+    if (targetOffset)
+        std::cout << "Target Offset " << edge->targetInput().name() << ": " << targetOffset->x() << ", " << targetOffset->y()
+                  << std::endl;
 
     switch (role)
     {

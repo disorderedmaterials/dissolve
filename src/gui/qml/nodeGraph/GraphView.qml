@@ -114,14 +114,14 @@ Pane {
             required property double targetX;
             required property double targetY;
 
-            z: -1
+            z: -10
 
             ShapePath {
                 /* strokeStyle: ShapePath.DashLine */
                 dashPattern: [1, 4]
                 fillColor: "transparent"
-                startX: edgeShape.sourceX;
-                startY: edgeShape.sourceY;
+                startX: sourceX;
+                startY: sourceY;
                 strokeColor: "black"
                 strokeWidth: 4
 
