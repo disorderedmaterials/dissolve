@@ -4,7 +4,7 @@
 #pragma once
 
 #include "classes/isotopologueSet.h"
-#include "classes/isotopologues.h"
+#include "classes/isotopologue.h"
 #include "nodes/node.h"
 
 class IsotopologueNode : public Node
