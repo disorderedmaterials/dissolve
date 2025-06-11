@@ -29,7 +29,7 @@ class IsotopologueNode : public Node
     //
     Isotopologue iso_{"Ar"};
     //
-    double relativeWeight_ = 36;
+    double relativeWeight_{ 36 };
 
     /*
      * Processing
