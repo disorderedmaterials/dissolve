@@ -112,7 +112,7 @@ bool NeutronSQNode::setUp(Flags<KeywordBase::KeywordSignal> actionSignals)
                 "available, so a default of 0.1 atoms/Angstrom3 used.\n",
                 name());
         */
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * M_PI * M_PI * rho_.value_or(0.1)), referenceFTDeltaR_, referenceFTDeltaR_,
+        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * M_PI * M_PI * rho_), referenceFTDeltaR_, referenceFTDeltaR_,
                         30.0, WindowFunction(referenceWindowFunction_));
 
         // Save data?
@@ -302,7 +302,8 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         return NodeConstants::ProcessResult::Failed;
     }
     */
-    Fourier::sineFT(repGR, 1.0 / (2.0 * M_PI * M_PI * rho_), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
+    WindowFunction window(referenceWindowFunction_);
+    Fourier::sineFT(repGR, 1.0 / (2.0 * M_PI * M_PI * rho_), rMin, 0.05, rMax, window);
 
     // Save data if requested
     if (saveRepresentativeGR_)
