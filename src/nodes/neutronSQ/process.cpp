@@ -112,8 +112,8 @@ bool NeutronSQNode::setUp(Flags<KeywordBase::KeywordSignal> actionSignals)
                 "available, so a default of 0.1 atoms/Angstrom3 used.\n",
                 name());
         */
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * M_PI * M_PI * rho_), referenceFTDeltaR_, referenceFTDeltaR_,
-                        30.0, WindowFunction(referenceWindowFunction_));
+        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * M_PI * M_PI * rho_), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
+                        WindowFunction(referenceWindowFunction_));
 
         // Save data?
         if (saveReference_)
