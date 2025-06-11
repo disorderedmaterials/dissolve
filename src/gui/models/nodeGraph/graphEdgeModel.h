@@ -52,6 +52,7 @@ class GraphEdgeModel : public QAbstractListModel
     QHash<int, QByteArray> roleNames() const override;
 
     public Q_SLOTS:
+    // Update all edges connected to the node at idx
     void updatePosition(const int idx);
 
     private:

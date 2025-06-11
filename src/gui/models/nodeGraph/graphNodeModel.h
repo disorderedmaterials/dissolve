@@ -43,6 +43,7 @@ class GraphNodeModel : public QAbstractListModel
     void updateGraph();
 
     Q_SIGNALS:
+    // The node at position index has moved, but is otherwise unchanged
     void updatePosition(int index);
 
     private:

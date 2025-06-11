@@ -75,22 +75,11 @@ class GraphModel : public QObject
     bool connect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
     // Public wrapper of disconnect_
     bool disconnect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
+
+    // Provide relative coordinates for an input on a node
+    void addInput(int nodeIndex, QString paramName, double x, double y);
     // Provide relative coordinates for an output on a node
-    void addInput(int nodeIndex, QString paramName, double x, double y)
-    {
-        auto &node = wrapped_[nodeIndex];
-        x -= node.posx;
-        y -= node.posy;
-        node.inputsPos.insert({paramName.toStdString(), {x, y}});
-    }
-    // Provide relative coordinates for an output on a node
-    void addOutput(int nodeIndex, QString paramName, double x, double y)
-    {
-        auto &node = wrapped_[nodeIndex];
-        x -= node.posx;
-        y -= node.posy;
-        node.outputPos.insert({paramName.toStdString(), {x, y}});
-    }
+    void addOutput(int nodeIndex, QString paramName, double x, double y);
 
     // Add a new node at a specific position
     void emplace_back(int x, int y, QVariant type, QVariant name);

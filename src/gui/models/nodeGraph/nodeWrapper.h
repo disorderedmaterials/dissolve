@@ -24,7 +24,7 @@ class NodeWrapper
     int posx, posy;
     // Parameter models for parameters of the node
     std::unique_ptr<ParameterModel> inputs, outputs, options;
-    // Positions
+    // Relative positions of parameters with respect to the node
     std::map<std::string, QPointF> inputsPos, outputPos;
 
     // Get the actual value of the node

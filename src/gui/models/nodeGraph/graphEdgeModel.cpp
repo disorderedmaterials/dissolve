@@ -48,6 +48,7 @@ void GraphEdgeModel::addEdge(Edge &newEdge)
     endInsertRows();
 }
 
+// Return number of edges (required by QAbstractListModel)
 int GraphEdgeModel::rowCount(const QModelIndex &parent) const
 {
     if (!graph_)
@@ -99,6 +100,7 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
     }
 }
 
+// Return the mapping between role index and QML value name.  This is required by QAbstractListModel
 QHash<int, QByteArray> GraphEdgeModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
@@ -109,6 +111,7 @@ QHash<int, QByteArray> GraphEdgeModel::roleNames() const
     return roles;
 }
 
+// Update all edges connected to the node at idx
 void GraphEdgeModel::updatePosition(const int idx)
 {
     const auto &node = parent_->wrapped_[idx].rawValue();
