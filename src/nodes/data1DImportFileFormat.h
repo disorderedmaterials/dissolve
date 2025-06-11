@@ -23,6 +23,10 @@ class Data1DImportFileFormatNode : public Node
      * Data
      */
     private:
+    // Filename
+    std::string filename_;
+    // Format
+    Data1DImportFileFormat::Data1DImportFormat format_;
     // X value from which to calculate average Y and remove
     std::optional<double> removeAverageFromX_;
     // Minimum x value to permit when reading data
@@ -38,7 +42,7 @@ class Data1DImportFileFormatNode : public Node
     // Remove a number of points from the start of the data
     int nPointsToRemove_{0};
     // Data1D import file format
-    Data1DImportFileFormat data1DImportFileFormat_;
+    std::optional<Data1DImportFileFormat> data1DImportFileFormat_;
 
     /*
      * Processing
