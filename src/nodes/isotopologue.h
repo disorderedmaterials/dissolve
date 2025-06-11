@@ -25,7 +25,7 @@ class IsotopologueNode : public Node
      */
     private:
     // Isotopologues to use in weighting
-    IsotpologueSet isotopologueSet_;
+    IsotopologueSet isotopologueSet_;
     //
     Isotopologue iso_{"Ar"};
     //
