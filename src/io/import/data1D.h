@@ -20,9 +20,19 @@ class Data1DImportFileFormat : public FileAndFormat
         Histogram,
         GudrunMint
     };
+    // Return enum option info for Data1DImportFormat
+    EnumOptions<Data1DImportFormat> data1DImportFormat();
+    EnumOptions<Data1DImportFormat> getEnumOptions(Data1DImportFormat);
+
     Data1DImportFileFormat(std::string_view filename = "", Data1DImportFormat format = Data1DImportFormat::XY, int xColumn = 1,
                            int yColumn = 2, int errorColumn = 0);
     ~Data1DImportFileFormat() override = default;
+    bool operator==(const Data1DImportFileFormat &other) const
+    {
+        return xColumn_ == other.xColumn_ && yColumn_ == other.yColumn_ && errorColumn_ == other.errorColumn_ &&
+               nPointsToRemove_ == other.nPointsToRemove_ && removeAverageFromX_ == other.removeAverageFromX_ &&
+               xMin_ == other.xMin_ && xMax_ == other.xMax_;
+    }
 
     /*
      * Keyword Options

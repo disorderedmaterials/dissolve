@@ -19,6 +19,8 @@ class IsotopologueSet : public Serialisable<const CoreData &>
     public:
     IsotopologueSet() = default;
     ~IsotopologueSet() = default;
+    // TODO: Improve equality operator
+    bool operator==(const IsotopologueSet &other) { return this == &other; }
 
     /*
      * Data

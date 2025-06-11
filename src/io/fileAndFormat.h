@@ -23,13 +23,13 @@ class FileAndFormat : public Serialisable<const CoreData &>
      */
     protected:
     // Formats enum as the base object
-    EnumOptionsBase &formats_;
+    EnumOptionsBase *formats_;
     // Index of current format
     std::optional<int> formatIndex_;
 
     public:
     // Return formats enum as the base object
-    const EnumOptionsBase &formats() const;
+    const EnumOptionsBase *formats() const;
     // Set current format by index
     void setFormatByIndex(int index);
     // Return current format index
