@@ -21,8 +21,8 @@ class Data1DImportFileFormat : public FileAndFormat
         GudrunMint
     };
     // Return enum option info for Data1DImportFormat
-    EnumOptions<Data1DImportFormat> data1DImportFormat();
-    EnumOptions<Data1DImportFormat> getEnumOptions(Data1DImportFormat);
+    EnumOptions<Data1DImportFileFormat::Data1DImportFormat> data1DImportFormat();
+    EnumOptions<Data1DImportFileFormat::Data1DImportFormat> getEnumOptions(Data1DImportFileFormat::Data1DImportFormat);
 
     Data1DImportFileFormat(std::string_view filename = "", Data1DImportFormat format = Data1DImportFormat::XY, int xColumn = 1,
                            int yColumn = 2, int errorColumn = 0);
