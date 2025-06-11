@@ -109,10 +109,11 @@ Pane {
 
         delegate: Shape {
             id: edgeShape
-            required property double sourceX;
-            required property double sourceY;
-            required property double targetX;
-            required property double targetY;
+
+            required property double sourceX
+            required property double sourceY
+            required property double targetX
+            required property double targetY
 
             z: -10
 
@@ -120,14 +121,14 @@ Pane {
                 /* strokeStyle: ShapePath.DashLine */
                 dashPattern: [1, 4]
                 fillColor: "transparent"
-                startX: sourceX;
-                startY: sourceY;
+                startX: sourceX
+                startY: sourceY
                 strokeColor: "black"
                 strokeWidth: 4
 
                 PathCubic {
                     control1X: sourceX + curveOffset
-                    control1Y: sourceY 
+                    control1Y: sourceY
                     control2X: x - graphRoot.curveOffset
                     control2Y: y
                     x: targetX
