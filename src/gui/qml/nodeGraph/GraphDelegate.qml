@@ -29,10 +29,11 @@ NodeBox {
                     model: inputs
 
                     onItemAdded: function (idx, item) { 
-                        let pos = item.mapToItem(null, item.x, item.y);
+                        let pos = item.mapToGlobal(item.x, item.y);
+                        pos.x -= 2 * item.anchors.margins;
                         pos.y += item.height/2;
-                        pos.y += 30; // Adjust for title
-                        console.log("Input!", item.text)
+                        pos.y += 35; // Adjust for title
+                        console.log("Input!", item.text, item.width, item.height)
                         console.log(idx);
                         console.log(pos); 
                         rootModel.addInput(index, item.text, pos.x, pos.y);
@@ -60,10 +61,11 @@ NodeBox {
                     onItemAdded: function (idx, item) { 
                         // let pos = Qt.point(item.x, item.y)
                         let pos = item.mapToGlobal(item.x, item.y);
+                        pos.x += 2 * item.anchors.margins;
                         pos.x += item.width;
                         pos.y += item.height;
-                        pos.y += 30; // Adjust for title
-                        console.log(item.text);
+                        pos.y += 35; // Adjust for title
+                        console.log("Output!", item.text, item.width, item.height)
                         console.log(idx);
                         console.log(pos); 
                         rootModel.addOutput(index, item.text, pos.x, pos.y);

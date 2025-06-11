@@ -84,13 +84,6 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
             targetOffset = it->second;
     }
 
-    if (sourceOffset)
-        std::cout << "Source Offset " << edge->sourceOutput().name() << ": " << sourceOffset->x() << ", " << sourceOffset->y()
-                  << std::endl;
-    if (targetOffset)
-        std::cout << "Target Offset " << edge->targetInput().name() << ": " << targetOffset->x() << ", " << targetOffset->y()
-                  << std::endl;
-
     switch (role)
     {
         case Role::SOURCE_X:
@@ -98,7 +91,7 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
         case Role::SOURCE_Y:
             return source->posy + (sourceOffset ? sourceOffset->y() : 0);
         case Role::TARGET_X:
-            return target->posx + (targetOffset ? targetOffset->y() : 0);
+            return target->posx + (targetOffset ? targetOffset->x() : 0);
         case Role::TARGET_Y:
             return target->posy + (targetOffset ? targetOffset->y() : 0);
         default:
