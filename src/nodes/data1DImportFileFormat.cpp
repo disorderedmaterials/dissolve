@@ -15,7 +15,7 @@ Data1DImportFileFormatNode::Data1DImportFileFormatNode(Graph *parentGraph) : Nod
     addOption<int>("YColumn", "Column index to use for y values", yColumn_);
     addOption<int>("ErrorColumn", "Column index to use for error values", errorColumn_);
     addOption<int>("NPointsToRemove", "Remove a number of points from the start of the data", nPointsToRemove_);
-    addOutput<Data1DImportFileFormat>("Data1DImportFileFormat", "Data1D import file format", data1DImportFileFormat_.value());
+    addOptionalPointerOutput<Data1DImportFileFormat*>("Data1DImportFileFormat", "Data1D import file format", data1DImportFileFormat_);
 }
 
 std::string_view Data1DImportFileFormatNode::type() const { return "Data1DImportFileFormat"; }
