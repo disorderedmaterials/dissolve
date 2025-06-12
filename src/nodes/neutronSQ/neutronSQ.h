@@ -29,8 +29,6 @@ class NeutronSQNode : public Node
      * Definition
      */
     private:
-    // Species populations
-    GRNode::SpeciesPopulations *speciesPopulations_;
     // Unweighted S(Q)
     PartialSet *unweightedSQ_{nullptr};
     // Unweighted g(r)

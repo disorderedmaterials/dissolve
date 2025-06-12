@@ -8,6 +8,7 @@
 #include "classes/box.h"
 #include "classes/cellArray.h"
 #include "classes/isotopologue.h"
+#include "classes/isotopologueWeight.h"
 #include "classes/speciesAngle.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
@@ -279,10 +280,15 @@ class Species : public Serialisable<const CoreData &>
     Isotopologue naturalIsotopologue_;
     // List of isotopic variants defined for this species
     std::vector<std::unique_ptr<Isotopologue>> isotopologues_;
+    std::vector<std::unique_ptr<IsotopologueWeight>> isotopologueWeights_;
 
     public:
     // Update current Isotopologues
     void updateIsotopologues(OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes = std::nullopt);
+    // Set Isotopologue weights
+    void setIsotopologueWeights(const std::map<std::string_view, double> &namedWeights);
+    // Get Isotopologue weights
+    IsotopologueWeight *isotopologueWeight(int n);
     // Return natural (empty) Isotopologue
     const Isotopologue *naturalIsotopologue() const;
     // Add a new Isotopologue to this Species

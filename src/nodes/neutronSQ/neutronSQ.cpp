@@ -13,7 +13,6 @@
 
 NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput<GRNode::SpeciesPopulations *>("SpeciesPopulations", "Species populations", speciesPopulations_);
     addInput<PartialSet *>("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
     addInput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
     addInput<IsotopologueSet>("Isotopologue", "Set/add an isotopologue and its population for a particular species",

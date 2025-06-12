@@ -3,19 +3,16 @@
 
 #include "nodes/energy/energy.h"
 
-EnergyNode::EnergyNode(Graph* parentGraph) : Node(parentGraph)
+EnergyNode::EnergyNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
-        ->setEditSignals({ KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables });
+        ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     addOption<double>("StabilityThreshold",
-        "Threshold value at which energy is deemed stable over the defined windowing period",
-        stabilityThreshold_);
-    addOption<int>("StabilityWindow",
-        "Number of points over which to assess the stability of the energy (per Configuration)",
-        stabilityWindow_);
+                      "Threshold value at which energy is deemed stable over the defined windowing period",
+                      stabilityThreshold_);
+    addOption<int>("StabilityWindow", "Number of points over which to assess the stability of the energy (per Configuration)",
+                   stabilityWindow_);
 
     addOption<bool>("Save", "Save calculated energies to disk, one file per targeted configuration", save_);
-
-    executeIfTargetsUnchanged_ = true;
 }

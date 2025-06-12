@@ -9,8 +9,8 @@
 class IsotopologueSetNode : public Node
 {
     public:
-    IsotopologueNode(Graph *parentGraph);
-    ~IsotopologueNode() override = default;
+    IsotopologueSetNode(Graph *parentGraph);
+    ~IsotopologueSetNode() override = default;
 
     /*
      * Definition
@@ -23,6 +23,8 @@ class IsotopologueSetNode : public Node
      * Data
      */
     private:
+    // Atomic species
+    const Species *species_;
     // Isotopologues to use in weighting
     IsotopologueSet isotopologueSet_;
 

@@ -64,8 +64,7 @@ bool Configuration::containsSpecies(const Species *sp)
 // Return the total charge of the Configuration
 double Configuration::totalCharge(bool ppIncludeCoulomb) const
 {
-    return std::accumulate(speciesPopulations_.begin(), speciesPopulations_.end(), 0.0,
-                           [&](const auto &acc, auto &spPop)
+    return std::accumulate(speciesPopulations_.begin(), speciesPopulations_.end(), 0.0, [&](const auto &acc, auto &spPop)
                            { return acc + spPop.first->totalCharge(ppIncludeCoulomb) * spPop.second; });
 }
 
@@ -315,3 +314,13 @@ void Configuration::scaleContents(Vector3 scaleFactors)
 
     ++contentsVersion_;
 }
+
+// Energy stable flag
+void Configuration::setEnergyStable(bool stable) { energyIsStable_ = stable; }
+
+bool Configuration::energyIsStable() const { return energyIsStable_; }
+
+// Energy gradient
+void Configuration::setEnergyGradient(double grad) { energyGradient_ = grad; }
+
+double Configuration::getEnergyGradient() const { return energyGradient_; }
