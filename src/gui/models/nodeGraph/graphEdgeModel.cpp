@@ -21,10 +21,10 @@ GraphEdgeModel::GraphEdgeModel(const GraphEdgeModel &other) : graph_(other.graph
 bool GraphEdgeModel::dropEdge(std::size_t edge)
 {
     // Check if edge is in range
-    if (edge >= edges_().size())
+    if (edge >= edges().size())
         return false;
     beginRemoveRows({}, edge, edge);
-    edges_().erase(edges_().begin() + edge);
+    edges().erase(edges().begin() + edge);
     endRemoveRows();
     return true;
 }
@@ -32,19 +32,19 @@ bool GraphEdgeModel::dropEdge(std::size_t edge)
 // Remove an edge by value.  Returns false if the edge does not exist
 bool GraphEdgeModel::dropEdge(Edge &edge)
 {
-    auto index = std::find_if(edges_().begin(), edges_().end(), [&edge](auto &item) { return &edge == item.get(); });
+    auto index = std::find_if(edges().begin(), edges().end(), [&edge](auto &item) { return &edge == item.get(); });
     // Check if edge is found
-    if (index == edges_().end())
+    if (index == edges().end())
         return false;
     else
-        return dropEdge(index - edges_().begin());
+        return dropEdge(index - edges().begin());
 }
 
 // Create a new edge
 void GraphEdgeModel::addEdge(Edge &newEdge)
 {
-    beginInsertRows({}, edges_().size(), edges_().size());
-    edges_().emplace_back(std::make_unique<Edge>(newEdge));
+    beginInsertRows({}, edges().size(), edges().size());
+    edges().emplace_back(std::make_unique<Edge>(newEdge));
     endInsertRows();
 }
 
@@ -53,15 +53,15 @@ int GraphEdgeModel::rowCount(const QModelIndex &parent) const
 {
     if (!graph_)
         return 0;
-    return edges_().size();
+    return edges().size();
 }
 
 QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
 {
     auto row = index.row();
-    if (row >= edges_().size())
+    if (row >= edges().size())
         return {};
-    auto &edge = edges_()[row];
+    auto &edge = edges()[row];
 
     auto source = std::find_if(parent_->wrapped_.begin(), parent_->wrapped_.end(),
                                [&edge](const auto &x) { return &x.rawValue() == &edge->sourceNode(); });
@@ -126,5 +126,5 @@ void GraphEdgeModel::updatePosition(const int idx)
 }
 
 // The edges of the graph
-Graph::Edges &GraphEdgeModel::edges_() { return graph_->edges(); }
-const Graph::Edges &GraphEdgeModel::edges_() const { return graph_->edges(); }
+Graph::Edges &GraphEdgeModel::edges() { return graph_->edges(); }
+const Graph::Edges &GraphEdgeModel::edges() const { return graph_->edges(); }

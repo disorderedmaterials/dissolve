@@ -4,9 +4,9 @@
 #include "graphModel.h"
 #include "graphEdgeModel.h"
 #include "graphNodeModel.h"
+#include <QAbstractItemModel>
 #include <QVariant>
 #include <iostream>
-#include <qabstractitemmodel.h>
 
 GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
 {

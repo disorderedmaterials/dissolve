@@ -32,15 +32,13 @@ class GraphEdgeModel : public QAbstractListModel
 
     void deleteNode(std::string index)
     {
-        for (auto &edge : edges_())
+        for (auto &edge : edges())
             if (index == edge->sourceNode().name() || index == edge->targetNode().name())
                 dropEdge(*edge);
     }
 
     // Create a new edge
     void addEdge(Edge &newEdge);
-
-    // bool operator!=(const GraphEdgeModel &other);
 
     // Return number of edges (required by QAbstractListModel)
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -62,6 +60,6 @@ class GraphEdgeModel : public QAbstractListModel
     GraphModel *parent_;
 
     // The edges of the graph
-    Graph::Edges &edges_();
-    const Graph::Edges &edges_() const;
+    Graph::Edges &edges();
+    const Graph::Edges &edges() const;
 };
