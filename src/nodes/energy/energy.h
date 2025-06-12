@@ -28,10 +28,6 @@ private:
     double stabilityThreshold_{ 0.001 };
     // Number of points over which to assess the stability of the energy (per Configuration)
     int stabilityWindow_{ 10 };
-    // Test production energy against analytic "correct" values
-    bool test_{ false };
-    // Threshold of energy at which test comparison will fail
-    double testThreshold_{ 1.0e-6 };
 
     /*
      * Functions

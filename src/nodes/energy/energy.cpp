@@ -15,9 +15,6 @@ EnergyNode::EnergyNode(Graph* parentGraph) : Node(parentGraph)
         "Number of points over which to assess the stability of the energy (per Configuration)",
         stabilityWindow_);
 
-    addOption<bool>("Test", "Test production energy against analytic 'correct' values", test_);
-    addOption<double>("TestThreshold", "Threshold of energy at which test comparison will fail", testThreshold_);
-
     addOption<bool>("Save", "Save calculated energies to disk, one file per targeted configuration", save_);
 
     executeIfTargetsUnchanged_ = true;
