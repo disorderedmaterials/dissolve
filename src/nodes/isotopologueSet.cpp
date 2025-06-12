@@ -15,5 +15,5 @@ std::string_view IsotopologueSetNode::summary() const { return "IsotopologueSet 
 
 NodeConstants::ProcessResult IsotopologueSetNode::process()
 {
-    return NodeConstants::ProcessResult::Success;
+    return NodeConstants::ProcessResult::Unchanged;
 }
