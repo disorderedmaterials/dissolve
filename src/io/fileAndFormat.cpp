@@ -6,7 +6,7 @@
 #include "base/sysFunc.h"
 
 FileAndFormat::FileAndFormat(EnumOptionsBase &formats, std::string_view filename, std::optional<int> formatIndex)
-    : formats_(&formats), formatIndex_(formatIndex), filename_{filename}
+    : formats_(formats), formatIndex_(formatIndex), filename_{filename}
 {
 }
 
@@ -15,12 +15,12 @@ FileAndFormat::FileAndFormat(EnumOptionsBase &formats, std::string_view filename
  */
 
 // Return formats enum as the base object
-const EnumOptionsBase *FileAndFormat::formats() const { return formats_; }
+const EnumOptionsBase &FileAndFormat::formats() const { return formats_; }
 
 // Set current format by index
 void FileAndFormat::setFormatByIndex(int index)
 {
-    assert(index >= 0 && index < formats_->nOptions());
+    assert(index >= 0 && index < formats_.nOptions());
 
     formatIndex_ = index;
 }
@@ -33,19 +33,19 @@ int FileAndFormat::formatIndex() const
 }
 
 // Return current format keyword
-std::string FileAndFormat::formatKeyword() const { return formatIndex_ ? formats_->keywordByIndex(*formatIndex_) : "???"; }
+std::string FileAndFormat::formatKeyword() const { return formatIndex_ ? formats_.keywordByIndex(*formatIndex_) : "???"; }
 
 // Return current format description
 std::string FileAndFormat::formatDescription() const
 {
-    return formatIndex_ ? formats_->descriptionByIndex(*formatIndex_) : "???";
+    return formatIndex_ ? formats_.descriptionByIndex(*formatIndex_) : "???";
 }
 
 // Print available formats
 void FileAndFormat::printAvailableFormats() const
 {
-    for (auto n = 0; n < formats_->nOptions(); ++n)
-        Messenger::print("  {:12}  {}\n", formats_->keywordByIndex(n), formats_->descriptionByIndex(n));
+    for (auto n = 0; n < formats_.nOptions(); ++n)
+        Messenger::print("  {:12}  {}\n", formats_.keywordByIndex(n), formats_.descriptionByIndex(n));
 }
 
 /*
@@ -88,7 +88,7 @@ FileAndFormat::ReadResult FileAndFormat::read(LineParser &parser, int startArg, 
                                               const CoreData &coreData)
 {
     // Convert first argument to format index
-    auto formatId = formats_->keywordIndex(parser.argsv(startArg));
+    auto formatId = formats_.keywordIndex(parser.argsv(startArg));
     if (!formatId)
     {
         Messenger::error("Unrecognised format '{}' given for file. Recognised formats are:\n\n", parser.argsv(startArg));
@@ -140,7 +140,7 @@ FileAndFormat::ReadResult FileAndFormat::read(LineParser &parser, int startArg, 
 // Write format / filename to specified parser
 bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, std::string_view prefix) const
 {
-    return parser.writeLineF("{}{}  '{}'\n", prefix, formatIndex_ ? formats_->keywordByIndex(*formatIndex_) : "???", filename_);
+    return parser.writeLineF("{}{}  '{}'\n", prefix, formatIndex_ ? formats_.keywordByIndex(*formatIndex_) : "???", filename_);
 }
 
 // Write options and end block
@@ -153,7 +153,7 @@ bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) cons
 SerialisedValue FileAndFormat::serialise() const
 {
     SerialisedValue result = {{"filename", filename_},
-                              {"format", formatIndex_ ? formats_->keywordByIndex(*formatIndex_) : "???"}};
+                              {"format", formatIndex_ ? formats_.keywordByIndex(*formatIndex_) : "???"}};
     SerialisedValue keywords;
     keywords = keywords_.serialiseOnto(keywords);
     if (!keywords.is_uninitialized())
@@ -165,7 +165,7 @@ SerialisedValue FileAndFormat::serialise() const
 void FileAndFormat::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     filename_ = toml::find<std::string>(node, "filename");
-    formatIndex_ = formats_->keywordIndex(toml::find<std::string>(node, "format"));
+    formatIndex_ = formats_.keywordIndex(toml::find<std::string>(node, "format"));
     Serialisable::optionalOn(node, "keywords",
                              [this, &coreData](const auto node) { keywords_.deserialiseFrom(node, coreData); });
 }

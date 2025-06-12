@@ -117,8 +117,5 @@ NodeConstants::ProcessResult GRNode::process()
 
     unweightedGR().setEffectiveDensity(effectiveDensity());
 
-    // Set species populations
-    speciesPopulations_ = speciesPopulations();
-
     return NodeConstants::ProcessResult::Success;
 }
