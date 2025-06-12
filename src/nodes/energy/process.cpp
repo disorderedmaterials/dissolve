@@ -9,7 +9,7 @@
 #include "main/dissolve.h"
 #include "math/regression.h"
 #include "module/context.h"
-#include "modules/energy/energy.h"
+#include "nodes/energy/energy.h"
 
 // Run set-up stage
 bool EnergyModule::setUp(Flags<KeywordBase::KeywordSignal> actionSignals)
