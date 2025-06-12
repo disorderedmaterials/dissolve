@@ -76,6 +76,11 @@ Pane {
                     onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AtomicMC", "New Node")
                 }
                 MenuItem {
+                    text: "G(r)"
+
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "GR", "New Node")
+                }
+                MenuItem {
                     text: "Insert"
 
                     onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Insert", "New Node")
@@ -84,6 +89,11 @@ Pane {
                     text: "Molecular Dynamics"
 
                     onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "MD", "New Node")
+                }
+                MenuItem {
+                    text: "S(q)"
+
+                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "SQ", "New Node")
                 }
             }
             Menu {
