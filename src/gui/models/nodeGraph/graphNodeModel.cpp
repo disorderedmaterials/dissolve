@@ -93,9 +93,11 @@ bool GraphNodeModel::setData(const QModelIndex &index, const QVariant &value, in
             return true;
         case POSX:
             item.posx = value.toInt();
+            Q_EMIT updatePosition(index.row());
             return true;
         case POSY:
             item.posy = value.toInt();
+            Q_EMIT updatePosition(index.row());
             return true;
     }
     return false;

@@ -12,6 +12,7 @@
 #include <qtmetamacros.h>
 
 class GraphNodeModel;
+class GraphEdgeModel;
 
 // This is the base class for any node graph type
 class GraphModel : public QObject
@@ -24,6 +25,7 @@ class GraphModel : public QObject
     Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
 
     friend GraphNodeModel;
+    friend GraphEdgeModel;
 
     public:
     GraphModel();
@@ -53,15 +55,15 @@ class GraphModel : public QObject
     // Graph nodes wrapped in the wrappers
     std::vector<NodeWrapper> wrapped_;
     // Get index of name
-    int indexByName(std::string name);
+    int indexByName(std::string_view name);
 
     private:
     // Check whether a given source and destination can be connected
-    bool isValidEdgeSource_(GraphRawEdge &edge);
+    bool isValidEdgeSource_(Edge &edge);
     // Connect two nodes
-    bool connect_(GraphRawEdge &edge);
+    bool connect_(Edge &edge);
     // Remove a connection
-    bool disconnect_(GraphRawEdge &edge);
+    bool disconnect_(Edge &edge);
 
     Q_SIGNALS:
     void graphChanged();
@@ -73,6 +75,11 @@ class GraphModel : public QObject
     bool connect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
     // Public wrapper of disconnect_
     bool disconnect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
+
+    // Provide relative coordinates for an input on a node
+    void addInput(int nodeIndex, QString paramName, double x, double y);
+    // Provide relative coordinates for an output on a node
+    void addOutput(int nodeIndex, QString paramName, double x, double y);
 
     // Add a new node at a specific position
     void emplace_back(int x, int y, QVariant type, QVariant name);
