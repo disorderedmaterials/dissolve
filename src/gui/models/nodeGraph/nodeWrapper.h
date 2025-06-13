@@ -7,6 +7,8 @@
 #include "gui/models/nodeGraph/parameterModel.h"
 #include "nodes/node.h"
 #include <QAbstractListModel>
+#include <QPointF>
+#include <map>
 
 // A wrapper with supplemental information for a node
 class NodeWrapper
@@ -22,6 +24,8 @@ class NodeWrapper
     int posx, posy;
     // Parameter models for parameters of the node
     std::unique_ptr<ParameterModel> inputs, outputs, options;
+    // Relative positions of parameters with respect to the node
+    std::map<std::string, QPointF> inputsPos, outputPos;
 
     // Get the actual value of the node
     Node &rawValue() { return *value_; }

@@ -3,10 +3,15 @@
 
 #include "graphModel.h"
 #include "graphEdgeModel.h"
+#include "graphNodeModel.h"
+#include <QAbstractItemModel>
 #include <QVariant>
 #include <iostream>
 
-GraphModel::GraphModel() : nodes_(this), graph_(nullptr) {}
+GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
+{
+    QObject::connect(&nodes_, &GraphNodeModel::updatePosition, &edges_, &GraphEdgeModel::updatePosition);
+}
 
 Graph *GraphModel::graph() { return graph_; }
 
@@ -25,6 +30,9 @@ void GraphModel::setGraph(Graph *graph)
     }
     nodes_.endResetModel();
 
+    for (auto &edge : graph->edges())
+        edges_.addEdge(*edge);
+
     nodes_.updateGraph();
     graphChanged();
 }
@@ -33,6 +41,24 @@ void GraphModel::setGraph(Graph *graph)
 QAbstractListModel *GraphModel::nodes() { return &nodes_; }
 
 int GraphModel::count() { return nodes_.rowCount(); }
+
+// Provide relative coordinates for an input on a node
+void GraphModel::addInput(int nodeIndex, QString paramName, double x, double y)
+{
+    auto &node = wrapped_[nodeIndex];
+    x -= node.posx;
+    y -= node.posy;
+    node.inputsPos.insert({paramName.toStdString(), {x, y}});
+}
+
+// Provide relative coordinates for an output on a node
+void GraphModel::addOutput(int nodeIndex, QString paramName, double x, double y)
+{
+    auto &node = wrapped_[nodeIndex];
+    x -= node.posx;
+    y -= node.posy;
+    node.outputPos.insert({paramName.toStdString(), {x, y}});
+}
 
 void GraphModel::emplace_back(int x, int y, QVariant type, QVariant name)
 {
@@ -55,13 +81,7 @@ void GraphModel::deleteNode(int idx)
     std::string index{wrapped_[idx].rawValue().name()};
     wrapped_.erase(wrapped_.begin() + idx);
 
-    // List of edges to remove
-    auto deadEdges = edges_.deleteNode(index);
-
-    for (auto &edge : deadEdges)
-        if (edge.source == index)
-            Q_EMIT(
-                nodes_.dataChanged(nodes_.index(indexByName(edge.destination)), nodes_.index(indexByName(edge.destination))));
+    edges_.deleteNode(index);
 
     graph_->nodes().erase(index);
     nodes_.endRemoveRows();
@@ -71,7 +91,12 @@ void GraphModel::deleteNode(int idx)
 
 GraphEdgeModel *GraphModel::edges() { return &edges_; }
 
-int GraphModel::nEdges() { return edges_.rowCount(); }
+int GraphModel::nEdges()
+{
+    if (graph_ == nullptr)
+        return 0;
+    return edges_.rowCount();
+}
 
 // public wrapper of connect_
 bool GraphModel::connect(std::string source, int sourceIndex, std::string destination, int destinationIndex)
@@ -86,7 +111,7 @@ bool GraphModel::disconnect(std::string source, int sourceIndex, std::string des
     return false;
 }
 
-int GraphModel::indexByName(std::string name)
+int GraphModel::indexByName(std::string_view name)
 {
     // FIXME
     return 0;
