@@ -17,15 +17,6 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
     addInput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
     addInput<IsotopologueSet>("Isotopologue", "Set/add an isotopologue and its population for a particular species",
                               isotopologueSet_);
-    addInput<Data1DImportFileFormat>("Reference", "F(Q) reference data", referenceFQ_);
-    /*
-    addOption<std::vector<std::shared_ptr<AtomType>>>(
-        "Exchangeable", "A set of atom types in the system that are exchangeable with each other", exchangeable_);
-
-    addOption<IsotopologueSet>("Isotopologue", "Set/add an isotopologue and its population for a particular species",
-                               isotopologueSet_);
-    addOption<Data1DImportFileFormat>("Reference", "F(Q) reference data", referenceFQ_);
-    */
     addOption<StructureFactors::NormalisationType>("NormaliseTo", "Normalisation to apply to total weighted F(Q)",
                                                    normaliseTo_);
     addOption<StructureFactors::NormalisationType>(

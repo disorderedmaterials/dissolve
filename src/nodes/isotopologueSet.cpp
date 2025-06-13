@@ -6,10 +6,8 @@
 IsotopologueSetNode::IsotopologueSetNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<const Species *>("Species", "Atomic species", species_);
-    /*
     addOutput<IsotopologueSet>("IsotopologueSet", "Set/add an isotopologue and its population for a particular species",
                                isotopologueSet_);
-    */
 }
 
 std::string_view IsotopologueSetNode::type() const { return "IsotopologueSet"; }
