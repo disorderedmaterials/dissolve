@@ -70,8 +70,6 @@ class GRNode : public Node
     AtomTypeMix combinedAtomTypes_;
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
     std::optional<Number> requestedRange_;
-    // Effective density
-    double rho_;
     // Whether to save partials and total functions to disk
     bool save_{false};
     // Whether to save original (unbroadened) partials and total functions to disk

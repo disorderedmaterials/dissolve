@@ -39,8 +39,6 @@ class NeutronSQNode : public Node
     std::optional<PartialSet> weightedGR_;
     // Full weights
     NeutronWeights weights_;
-    // Effective density
-    double rho_;
     // Exchangeable atom types
     std::vector<std::shared_ptr<AtomType>> exchangeable_;
     // Isotopologues to use in weighting
