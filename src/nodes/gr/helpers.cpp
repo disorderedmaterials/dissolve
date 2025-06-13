@@ -322,7 +322,7 @@ double GRNode::effectiveDensity() const
 }
 
 // Calculate and return used species populations based on target Configurations
-std::vector<std::pair<const Species *, double>> GRNode::speciesPopulations() const
+SpeciesPopulations GRNode::speciesPopulations() const
 {
     std::vector<std::pair<const Species *, double>> populations;
 

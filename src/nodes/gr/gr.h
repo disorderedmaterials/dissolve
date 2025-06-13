@@ -98,7 +98,7 @@ class GRNode : public Node
     // Calculate and return effective density based on target Configurations
     double effectiveDensity() const;
     // Calculate and return used species populations based on target Configurations
-    std::vector<std::pair<const Species *, double>> speciesPopulations() const;
+    SpeciesPopulations speciesPopulations() const;
     // (Re)calculate partial g(r) for the specified Configuration
     bool calculateGR(const ProcessPool &procPool, Configuration *cfg, PartialSet &originalgr, PartialsMethod method,
                      const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);

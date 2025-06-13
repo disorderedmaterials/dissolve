@@ -116,6 +116,7 @@ NodeConstants::ProcessResult GRNode::process()
         return NodeConstants::ProcessResult::Failed;
 
     unweightedGR().setEffectiveDensity(effectiveDensity());
+    unweightedGR().speciesPopulations() = speciesPopulations();
 
     return NodeConstants::ProcessResult::Success;
 }

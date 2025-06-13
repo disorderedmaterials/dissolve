@@ -104,8 +104,7 @@ class PartialSet
     Data1D &unboundTotal();
     const Data1D &unboundTotal() const;
     // Species populations
-    void setSpeciesPopulations(SpeciesPopulations speciesPopulations);
-    SpeciesPopulations &speciesPopulations() const;
+    SpeciesPopulations &speciesPopulations();
     // Save all partials and total
     bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits) const;
     // Name all object based on the supplied prefix
