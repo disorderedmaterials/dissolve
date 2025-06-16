@@ -16,6 +16,10 @@ class EnergyNode : public Node
     EnergyNode(Graph *parentGraph);
     ~EnergyNode() override = default;
 
+    public:
+    std::string_view type() const override;
+    std::string_view summary() const override;
+
     /*
      * Definition
      */

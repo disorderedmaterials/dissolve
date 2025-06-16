@@ -25,6 +25,10 @@ class NeutronSQNode : public Node
     NeutronSQNode(Graph *parentGraph);
     ~NeutronSQNode() override = default;
 
+    public:
+    std::string_view type() const override;
+    std::string_view summary() const override;
+
     /*
      * Definition
      */
