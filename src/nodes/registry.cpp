@@ -43,17 +43,17 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
+                  {"Energy", makeDerivedNode<EnergyNode>()},
+                  {"GR", makeDerivedNode<GRNode>()},
                   {"Graph", makeDerivedNode<Graph>()},
                   {"Insert", makeDerivedNode<InsertNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"MD", makeDerivedNode<MDNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
+                  {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
+                  {"SQ", makeDerivedNode<SQNode>()},
                   {"Subtract", makeDerivedNode<SubtractNode>()},
                   {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
-                  {"SQ", makeDerivedNode<SQNode>()},
-                  {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
-                  {"Energy", makeDerivedNode<EnergyNode>()},
-                  {"GR", makeDerivedNode<GRNode>()},
                   {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()}};
 }
 
