@@ -8,10 +8,14 @@
 #include "nodes/derivative.h"
 #include "nodes/dissolve.h"
 #include "nodes/dotProduct.h"
+#include "nodes/energy/energy.h"
+#include "nodes/gr/gr.h"
 #include "nodes/insert.h"
 #include "nodes/integrator.h"
 #include "nodes/md/md.h"
 #include "nodes/multiply.h"
+#include "nodes/neutronSQ/neutronSQ.h"
+#include "nodes/sq/sq.h"
 #include "nodes/subtract.h"
 #include "nodes/vec3Assembly.h"
 #include "nodes/vec3Decomposition.h"
@@ -46,6 +50,10 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
                   {"Subtract", makeDerivedNode<SubtractNode>()},
                   {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
+                  {"SQ", makeDerivedNode<SQNode>()},
+                  {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
+                  {"Energy", makeDerivedNode<EnergyNode>()},
+                  {"GR", makeDerivedNode<GRNode>()},
                   {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()}};
 }
 
