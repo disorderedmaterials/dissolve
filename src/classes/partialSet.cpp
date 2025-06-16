@@ -274,7 +274,7 @@ Data1D &PartialSet::unboundTotal() { return unboundTotal_; }
 const Data1D &PartialSet::unboundTotal() const { return unboundTotal_; }
 
 // Species populations
-SpeciesPopulations& PartialSet::speciesPopulations() { return speciesPopulations_; }
+SpeciesPopulations &PartialSet::speciesPopulations() { return speciesPopulations_; }
 
 // Save all partials and total
 bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix,

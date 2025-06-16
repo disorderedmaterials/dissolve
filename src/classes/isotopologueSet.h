@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "classes/coreData.h"
 #include "base/serialiser.h"
+#include "classes/coreData.h"
 #include "classes/isotopologues.h"
 #include "templates/optionalRef.h"
 #include <vector>
