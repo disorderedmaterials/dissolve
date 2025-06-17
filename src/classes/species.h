@@ -288,7 +288,7 @@ class Species : public Serialisable<const CoreData &>
     // Set Isotopologue weights
     void setIsotopologueWeights(const std::map<std::string_view, double> &namedWeights);
     // Get Isotopologue weights
-    IsotopologueWeight *isotopologueWeight(int n);
+    IsotopologueWeight *isotopologueWeight(int n) const;
     // Return natural (empty) Isotopologue
     const Isotopologue *naturalIsotopologue() const;
     // Add a new Isotopologue to this Species

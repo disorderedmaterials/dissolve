@@ -29,7 +29,7 @@ void Species::setIsotopologueWeights(const std::map<std::string_view, double> &n
 }
 
 // Get Isotopologue weights
-IsotopologueWeight *Species::isotopologueWeight(int n) { return isotopologueWeights_[n].get(); }
+IsotopologueWeight *Species::isotopologueWeight(int n) const { return isotopologueWeights_[n].get(); }
 
 // Update and return natural isotopologue
 const Isotopologue *Species::naturalIsotopologue() const { return &naturalIsotopologue_; }
