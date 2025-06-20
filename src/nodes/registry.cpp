@@ -6,17 +6,18 @@
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/configuration.h"
 #include "nodes/derivative.h"
-#include "nodes/dissolve.h"
 #include "nodes/dotProduct.h"
+#include "nodes/edge.h"
+#include "nodes/gr/gr.h"
 #include "nodes/insert.h"
 #include "nodes/integrator.h"
 #include "nodes/md/md.h"
 #include "nodes/multiply.h"
+#include "nodes/sq/sq.h"
 #include "nodes/subtract.h"
 #include "nodes/vec3Assembly.h"
 #include "nodes/vec3Decomposition.h"
 #include <memory>
-#include <string>
 
 // Static Singletons
 std::map<std::string_view, NodeProducer> NodeRegistry::producers_;
@@ -40,10 +41,12 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
                   {"Graph", makeDerivedNode<Graph>()},
+                  {"GR", makeDerivedNode<GRNode>()},
                   {"Insert", makeDerivedNode<InsertNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"MD", makeDerivedNode<MDNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
+                  {"SQ", makeDerivedNode<SQNode>()},
                   {"Subtract", makeDerivedNode<SubtractNode>()},
                   {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
                   {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()}};
