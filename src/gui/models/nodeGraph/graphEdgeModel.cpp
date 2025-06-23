@@ -2,93 +2,129 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/models/nodeGraph/graphEdgeModel.h"
+#include "gui/models/nodeGraph/graphModel.h"
+#include <qnamespace.h>
 
-bool GraphRawEdge::operator==(const GraphRawEdge &other) const
+enum Role
 {
-    return source == other.source && sourceIndex == other.sourceIndex && destination == other.destination &&
-           destinationIndex == other.destinationIndex;
-}
+    SOURCE_X = Qt::UserRole,
+    SOURCE_Y,
+    TARGET_X,
+    TARGET_Y,
+};
 
-GraphEdgeModel::GraphEdgeModel() {}
+GraphEdgeModel::GraphEdgeModel(GraphModel *parent, Graph *&graph) : parent_(parent), graph_(graph) {}
 
-GraphEdgeModel::GraphEdgeModel(const GraphEdgeModel &other) : edgeCache_(other.edgeCache_) {}
+GraphEdgeModel::GraphEdgeModel(const GraphEdgeModel &other) : graph_(other.graph_) {}
 
 // Remove an edge from the model (by index). Returns false if edge does not exist
 bool GraphEdgeModel::dropEdge(std::size_t edge)
 {
     // Check if edge is in range
-    if (edge >= edgeCache_.size())
+    if (edge >= edges().size())
         return false;
     beginRemoveRows({}, edge, edge);
-    edgeCache_.erase(edgeCache_.begin() + edge);
+    edges().erase(edges().begin() + edge);
     endRemoveRows();
     return true;
 }
 
 // Remove an edge by value.  Returns false if the edge does not exist
-bool GraphEdgeModel::dropEdge(GraphRawEdge &edge)
+bool GraphEdgeModel::dropEdge(Edge &edge)
 {
-    auto index = std::find(edgeCache_.begin(), edgeCache_.end(), edge);
+    auto index = std::find_if(edges().begin(), edges().end(), [&edge](auto &item) { return &edge == item.get(); });
     // Check if edge is found
-    if (index == edgeCache_.end())
+    if (index == edges().end())
         return false;
     else
-        return dropEdge(index - edgeCache_.begin());
+        return dropEdge(index - edges().begin());
 }
 
 // Create a new edge
-void GraphEdgeModel::addEdge(std::string source, int sourceIndex, std::string destination, int destinationIndex)
+void GraphEdgeModel::addEdge(Edge &newEdge)
 {
-    GraphRawEdge edge{source, sourceIndex, destination, destinationIndex};
-    addEdge(edge);
-}
-
-// Create a new edge
-void GraphEdgeModel::addEdge(GraphRawEdge newEdge)
-{
-    beginInsertRows({}, edgeCache_.size(), edgeCache_.size());
-    edgeCache_.emplace_back(newEdge);
+    beginInsertRows({}, edges().size(), edges().size());
+    edges().emplace_back(std::make_unique<Edge>(newEdge));
     endInsertRows();
 }
 
-GraphEdgeModel &GraphEdgeModel::operator=(const GraphEdgeModel &other)
+// Return number of edges (required by QAbstractListModel)
+int GraphEdgeModel::rowCount(const QModelIndex &parent) const
 {
-    edgeCache_ = other.edgeCache_;
-    return *this;
+    if (!graph_)
+        return 0;
+    return edges().size();
 }
-
-bool GraphEdgeModel::operator!=(const GraphEdgeModel &other) { return edgeCache_ != other.edgeCache_; }
-
-int GraphEdgeModel::rowCount(const QModelIndex &parent) const { return edgeCache_.size(); }
 
 QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
 {
     auto row = index.row();
-    if (row >= edgeCache_.size())
+    if (row >= edges().size())
         return {};
-    auto &edge = edgeCache_[row];
+    auto &edge = edges()[row];
 
-    switch (role - Qt::UserRole)
+    auto source = std::find_if(parent_->wrapped_.begin(), parent_->wrapped_.end(),
+                               [&edge](const auto &x) { return &x.rawValue() == &edge->sourceNode(); });
+
+    auto target = std::find_if(parent_->wrapped_.begin(), parent_->wrapped_.end(),
+                               [&edge](const auto &x) { return &x.rawValue() == &edge->targetNode(); });
+
+    std::optional<QPointF> sourceOffset, targetOffset;
+
+    if (source != parent_->wrapped_.end())
     {
-        case 0:
-            return QString(edge.source.c_str());
-        case 1:
-            return edge.sourceIndex;
-        case 2:
-            return QString(edge.destination.c_str());
-        case 3:
-            return edge.destinationIndex;
+        auto it = source->outputPos.find(std::string(edge->sourceOutput().name()));
+        if (it != source->outputPos.end())
+            sourceOffset = it->second;
+    }
+
+    if (target != parent_->wrapped_.end())
+    {
+        auto it = target->inputsPos.find(std::string(edge->targetInput().name()));
+        if (it != target->inputsPos.end())
+            targetOffset = it->second;
+    }
+
+    switch (role)
+    {
+        case Role::SOURCE_X:
+            return source->posx + (sourceOffset ? sourceOffset->x() : 0);
+        case Role::SOURCE_Y:
+            return source->posy + (sourceOffset ? sourceOffset->y() : 0);
+        case Role::TARGET_X:
+            return target->posx + (targetOffset ? targetOffset->x() : 0);
+        case Role::TARGET_Y:
+            return target->posy + (targetOffset ? targetOffset->y() : 0);
         default:
             return {};
     }
 }
 
+// Return the mapping between role index and QML value name.  This is required by QAbstractListModel
 QHash<int, QByteArray> GraphEdgeModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[Qt::UserRole] = "source";
-    roles[Qt::UserRole + 1] = "sourceIndex";
-    roles[Qt::UserRole + 2] = "destination";
-    roles[Qt::UserRole + 3] = "destIndex";
+    roles[Role::SOURCE_X] = "sourceX";
+    roles[Role::SOURCE_Y] = "sourceY";
+    roles[Role::TARGET_X] = "targetX";
+    roles[Role::TARGET_Y] = "targetY";
     return roles;
 }
+
+// Update all edges connected to the node at idx
+void GraphEdgeModel::updatePosition(const int idx)
+{
+    const auto &node = parent_->wrapped_[idx].rawValue();
+    for (auto j = 0; j < graph_->edges().size(); ++j)
+    {
+        const auto &edge = graph_->edges()[j];
+        if (&edge->sourceNode() == &node)
+            Q_EMIT dataChanged(index(j), index(j + 1), {Role::SOURCE_X, Role::SOURCE_Y});
+        if (&edge->targetNode() == &node)
+            Q_EMIT dataChanged(index(j), index(j + 1), {Role::TARGET_X, Role::TARGET_Y});
+    }
+}
+
+// The edges of the graph
+Graph::Edges &GraphEdgeModel::edges() { return graph_->edges(); }
+const Graph::Edges &GraphEdgeModel::edges() const { return graph_->edges(); }

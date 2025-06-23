@@ -6,9 +6,9 @@
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/configuration.h"
 #include "nodes/derivative.h"
-#include "nodes/dissolve.h"
 #include "nodes/dotProduct.h"
 #include "nodes/energy/energy.h"
+#include "nodes/edge.h"
 #include "nodes/gr/gr.h"
 #include "nodes/insert.h"
 #include "nodes/integrator.h"
@@ -21,7 +21,6 @@
 #include "nodes/vec3Assembly.h"
 #include "nodes/vec3Decomposition.h"
 #include <memory>
-#include <string>
 
 // Static Singletons
 std::map<std::string_view, NodeProducer> NodeRegistry::producers_;
@@ -47,6 +46,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Energy", makeDerivedNode<EnergyNode>()},
                   {"GR", makeDerivedNode<GRNode>()},
                   {"Graph", makeDerivedNode<Graph>()},
+                  {"GR", makeDerivedNode<GRNode>()},
                   {"Insert", makeDerivedNode<InsertNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"IsotopologueSetNode", makeDerivedNode<IsotopologueSetNode>()},
