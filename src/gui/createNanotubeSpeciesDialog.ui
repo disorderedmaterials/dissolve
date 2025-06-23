@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1016</width>
-    <height>1068</height>
+    <width>1227</width>
+    <height>790</height>
    </rect>
   </property>
   <property name="font">
@@ -19,7 +19,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Import From CIF File</string>
+   <string>Create Nanotube Species</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <property name="spacing">
@@ -152,6 +152,27 @@
              <property name="maximum">
               <number>1000</number>
              </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>Type</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QComboBox" name="TypeCombo">
+             <item>
+              <property name="text">
+               <string>Terminated</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Periodic</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>
@@ -396,51 +417,6 @@
                </widget>
               </item>
              </layout>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="OutputGroup">
-          <property name="title">
-           <string>Output</string>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QRadioButton" name="OutputSupermoleculeRadio">
-             <property name="toolTip">
-              <string>Create a single non-periodic species. Useful for generating &quot;chunks&quot; of crystal material.</string>
-             </property>
-             <property name="text">
-              <string>Supermolecule</string>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="OutputFrameworkRadio">
-             <property name="toolTip">
-              <string>Create a single species with a periodic box and all atoms in the unit cell. Suitable for framework-style models.</string>
-             </property>
-             <property name="text">
-              <string>Periodic Framework</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="OutputMolecularRadio">
-             <property name="toolTip">
-              <string>Output a configuration containing individual molecules based on detected species</string>
-             </property>
-             <property name="text">
-              <string>Molecular Species</string>
-             </property>
             </widget>
            </item>
           </layout>

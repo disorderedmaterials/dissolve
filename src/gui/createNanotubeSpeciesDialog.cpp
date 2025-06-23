@@ -28,15 +28,21 @@ CreateNanotubeSpeciesDialog::CreateNanotubeSpeciesDialog(QWidget *parent, Dissol
  */
 
 // Plot an AB atom layer
-void CreateNanotubeSpeciesDialog::plotLayer(double z, double tubeRadius, double radialStep, double radialOffset)
+void CreateNanotubeSpeciesDialog::plotLayer(double z, double tubeRadius, double radialStep, double radialOffset,
+                                            Elements::Element zA, Elements::Element zB)
 {
     for (auto radial = 0; radial < ui_.RadialRingSizeSpin->value(); ++radial)
     {
         auto angle = radial * radialStep + radialOffset;
-        species_.addAtom(zA_, {tubeRadius * cos(angle), tubeRadius * sin(angle), z});
+
+        if (zA != Elements::Unknown)
+            species_.addAtom(zA, {tubeRadius * cos(angle), tubeRadius * sin(angle), z});
+
         angle += radialStep * 0.5;
-        species_.addAtom(
-            zB_, {tubeRadius * cos(angle), tubeRadius * sin(angle), z + ui_.BondLengthSpin->value() * cos(60.0 / DEGRAD)});
+
+        if (zB != Elements::Unknown)
+            species_.addAtom(
+                zB, {tubeRadius * cos(angle), tubeRadius * sin(angle), z + ui_.BondLengthSpin->value() * cos(60.0 / DEGRAD)});
     }
 }
 
@@ -51,31 +57,46 @@ void CreateNanotubeSpeciesDialog::regenerate()
     const auto radialStep = (M_PI * 2.0) / ui_.RadialRingSizeSpin->value();
     const auto radialHalfStep = radialStep * 0.5;
     const auto ringRadialWidth = r * cos(30.0 / DEGRAD) * 2.0;
-    const auto ringAxialLength = r * (cos(60.0 / DEGRAD) * 2.0 + 1.0);
     const auto ringAxialLayerStep = r * (cos(60.0 / DEGRAD) + 1.0);
     const auto tubeRadius = ringRadialWidth / (2.0 * sin(M_PI / ui_.RadialRingSizeSpin->value()));
-    std::cout << std::format("Ring dimensions: width = {} length = {}\n", ringRadialWidth, ringAxialLength);
 
     /*
-     *      B--A
-     *     /    \
-     *    A      B
-     *     \    /
-     *      B--A
+     *      B1--A2
+     *     /      \
+     *    A1       B2...
+     *     \      /
+     *      B1--A2
      *
-     *
+     * Build up the nanotube in layers
      */
     auto radialOffset = 0.0;
     for (auto axial = 0; axial < axialN; ++axial)
     {
         auto z = axial * ringAxialLayerStep;
         // Create an AB layer
-        plotLayer(z, tubeRadius, radialStep, radialOffset);
+        plotLayer(z, tubeRadius, radialStep, radialOffset, zA_, zB_);
         radialOffset += radialHalfStep;
     }
 
-    // Add terminating layer
-    plotLayer(axialN * ringAxialLayerStep, tubeRadius, radialStep, axialN * radialHalfStep);
+    // Terminate / make periodic
+    if (ui_.TypeCombo->currentIndex() == 0)
+    {
+        // Remove any existing unit cell
+        species_.removeBox();
+
+        // Add final terminating layer
+        plotLayer(axialN * ringAxialLayerStep, tubeRadius, radialStep, axialN * radialHalfStep, zA_, zB_);
+
+        // Add hydrogen termination layers
+        plotLayer(-1.0, tubeRadius, radialStep, 0.0, Elements::H, Elements::Unknown);
+        plotLayer(axialN * ringAxialLayerStep + 1.0, tubeRadius, radialStep, axialN * radialHalfStep, Elements::Unknown,
+                  Elements::H);
+    }
+    else
+    {
+        // Add on a suitable periodic box
+        species_.createBox({tubeRadius * 2.0 + 2.0, tubeRadius * 2.0 + 2.0, axialN * ringAxialLayerStep}, {90, 90, 90});
+    }
 
     // Finalise the species
     species_.recalculateIntermolecularTerms(1.1);
@@ -109,7 +130,20 @@ void CreateNanotubeSpeciesDialog::updateWidgets()
     ui_.StructureViewer->postRedisplay();
 }
 
-void CreateNanotubeSpeciesDialog::on_AxialRingLengthSpin_valueChanged(int value) { regenerate(); }
+void CreateNanotubeSpeciesDialog::on_AxialRingLengthSpin_valueChanged(int value)
+{
+    if (widgetsUpdating_.isLocked())
+        return;
+
+    // Clamp to even numbers if type == Periodic
+    if (ui_.TypeCombo->currentIndex() == 1)
+    {
+        Locker refreshLock(widgetsUpdating_);
+        ui_.AxialRingLengthSpin->setValue(2 * (ui_.AxialRingLengthSpin->value() / 2));
+    }
+
+    regenerate();
+}
 
 void CreateNanotubeSpeciesDialog::on_RadialRingSizeSpin_valueChanged(int value) { regenerate(); }
 
@@ -135,9 +169,32 @@ void CreateNanotubeSpeciesDialog::on_ElementBButton_clicked(bool checked)
 
 void CreateNanotubeSpeciesDialog::on_OKButton_clicked(bool checked)
 {
-    //    cifHandler_.finalise(dissolve_.coreData(), outputFlags);
+    // Copy the species to the main Dissolve instance and set its new name
+    auto *sp = dissolve_.coreData().copySpecies(&species_);
+    sp->setName(std::format("Nanotube-{}x{}", ui_.AxialRingLengthSpin->value(), ui_.RadialRingSizeSpin->value()));
 
     accept();
 }
 
 void CreateNanotubeSpeciesDialog::on_CancelButton_clicked(bool checked) { reject(); }
+
+void CreateNanotubeSpeciesDialog::on_TypeCombo_currentIndexChanged(int index)
+{
+    Locker refreshLock(widgetsUpdating_);
+
+    // Limit tube axial length depending on mode requested
+    if (index == 0)
+    {
+        ui_.AxialRingLengthSpin->setSingleStep(1);
+        ui_.AxialRingLengthSpin->setMinimum(1);
+    }
+    else
+    {
+        ui_.AxialRingLengthSpin->setSingleStep(2);
+        ui_.AxialRingLengthSpin->setMinimum(2);
+    }
+
+    refreshLock.unlock();
+
+    regenerate();
+}

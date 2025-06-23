@@ -44,7 +44,8 @@ class CreateNanotubeSpeciesDialog : public QDialog
 
     private:
     // Plot an AB atom layer
-    void plotLayer(double z, double tubeRadius, double radialStep, double radialOffset);
+    void plotLayer(double z, double tubeRadius, double radialStep, double radialOffset, Elements::Element zA,
+                   Elements::Element zB);
     // Regenerate species
     void regenerate();
 
@@ -66,6 +67,7 @@ class CreateNanotubeSpeciesDialog : public QDialog
     void on_RadialRingSizeSpin_valueChanged(int value);
     void on_ElementAButton_clicked(bool checked);
     void on_ElementBButton_clicked(bool checked);
+    void on_TypeCombo_currentIndexChanged(int index);
     // Dialog
     void on_OKButton_clicked(bool checked);
     void on_CancelButton_clicked(bool checked);
