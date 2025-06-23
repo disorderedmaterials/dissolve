@@ -103,7 +103,7 @@ TEST_F(GraphCoreTest, NodeCreation)
     EXPECT_EQ(root_.createNode("add", "Bob"), nullptr);
 
     // Wrong case in existing node type (succeeds with non-strict type name checking)
-    EXPECT_EQ(NodeRegistry::getNodeTypeFuzzy("prod")[0], "DotProduct");
+    EXPECT_EQ(NodeRegistry::getNodeTypesFuzzy("prod")[0], "DotProduct");
 }
 
 } // namespace UnitTest

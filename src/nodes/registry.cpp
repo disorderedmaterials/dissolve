@@ -61,7 +61,7 @@ bool NodeRegistry::hasNodeType(std::string_view nodeType)
 }
 
 // Search for the supplied node type, returning strict node type if found
-std::vector<std::string_view> NodeRegistry::getNodeTypeFuzzy(std::string_view weakNodeType)
+std::vector<std::string_view> NodeRegistry::getNodeTypesFuzzy(std::string_view weakNodeType)
 {
     instantiateNodeProducers();
 
@@ -72,8 +72,7 @@ std::vector<std::string_view> NodeRegistry::getNodeTypeFuzzy(std::string_view we
 
     // Iterate over the keys of the map and include only the names
     // which match our fuzzy match
-    using namespace std::views;
-    auto range = producers_ | keys | filter(predicate);
+    auto range = producers_ | std::views::keys | std::views::filter(predicate);
 
     // Create a vector from the range
     return {range.begin(), range.end()};
