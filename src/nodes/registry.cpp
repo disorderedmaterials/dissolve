@@ -60,18 +60,20 @@ bool NodeRegistry::hasNodeType(std::string_view nodeType)
 }
 
 // Search for the supplied node type, returning strict node type if found
-std::string_view NodeRegistry::getNodeTypeFuzzy(std::string_view weakNodeType)
+std::vector<std::string_view> NodeRegistry::getNodeTypeFuzzy(std::string_view weakNodeType)
 {
     instantiateNodeProducers();
+
+    std::vector<std::string_view> result;
 
     // Case insensitive search for now - fuzzy search to be implemented at a later date
     for (auto &&[nodeType, _] : producers_)
     {
         if (DissolveSys::sameString(weakNodeType, nodeType))
-            return nodeType;
+            result.emplace_back(nodeType);
     }
 
-    return {};
+    return result;
 }
 
 // Produce a node of the given type with the specified Graph parent
