@@ -5,6 +5,7 @@
 #include "classes/species.h"
 #include "gui/addForcefieldTermsDialog.h"
 #include "gui/copySpeciesTermsDialog.h"
+#include "gui/createNanotubeSpeciesDialog.h"
 #include "gui/editSpeciesDialog.h"
 #include "gui/gui.h"
 #include "gui/importCIFDialog.h"
@@ -91,6 +92,20 @@ void DissolveWindow::on_SpeciesCreateFromExistingAction_triggered(bool checked)
     }
     else
         dissolve_.coreData().removeSpecies(newSpecies);
+}
+
+void DissolveWindow::on_SpeciesCreateNanotubeAction_triggered(bool checked)
+{
+    CreateNanotubeSpeciesDialog createNanotubeSpeciesDialog(this, dissolve_);
+
+    if (createNanotubeSpeciesDialog.exec() == QDialog::Accepted)
+    {
+        // Fully update GUI
+        setModified();
+        fullUpdate();
+
+        ui_.MainTabs->setCurrentTab(dissolve_.coreData().species().back().get());
+    }
 }
 
 void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
