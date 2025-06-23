@@ -19,6 +19,8 @@
 #include "nodes/vec3Decomposition.h"
 #include <memory>
 
+using namespace std::string_literals;
+
 // Static Singletons
 std::map<std::string_view, NodeProducer> NodeRegistry::producers_;
 
@@ -66,7 +68,7 @@ std::vector<std::string_view> NodeRegistry::getNodeTypeFuzzy(std::string_view we
 
     std::vector<std::string_view> result;
 
-    auto fuzzy = std::string("*") + std::string(weakNodeType) + std::string("*");
+    auto fuzzy = "*"s + std::string(weakNodeType) + "*"s;
 
     // Case insensitive search for now - fuzzy search to be implemented at a later date
     for (auto &&[nodeType, _] : producers_)
