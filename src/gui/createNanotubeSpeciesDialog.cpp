@@ -50,7 +50,6 @@ void CreateNanotubeSpeciesDialog::regenerate()
 
     const auto radialStep = (M_PI * 2.0) / ui_.RadialRingSizeSpin->value();
     const auto radialHalfStep = radialStep * 0.5;
-    const auto delta60 = r * cos(60.0 / DEGRAD);
     const auto ringRadialWidth = r * cos(30.0 / DEGRAD) * 2.0;
     const auto ringAxialLength = r * (cos(60.0 / DEGRAD) * 2.0 + 1.0);
     const auto ringAxialLayerStep = r * (cos(60.0 / DEGRAD) + 1.0);
@@ -66,18 +65,22 @@ void CreateNanotubeSpeciesDialog::regenerate()
      *
      *
      */
+    auto radialOffset = 0.0;
     for (auto axial = 0; axial < axialN; ++axial)
     {
         auto z = axial * ringAxialLayerStep;
         // Create an AB layer
-        plotLayer(z, tubeRadius, radialStep, 0.0);
-        plotLayer(z + ringAxialLayerStep, tubeRadius, radialStep, radialHalfStep);
+        plotLayer(z, tubeRadius, radialStep, radialOffset);
+        radialOffset += radialHalfStep;
     }
+
+    // Add terminating layer
+    plotLayer(axialN * ringAxialLayerStep, tubeRadius, radialStep, axialN * radialHalfStep);
 
     // Finalise the species
     species_.recalculateIntermolecularTerms(1.1);
 
-    ui_.StructureViewer->postRedisplay();
+    updateWidgets();
 }
 
 /*
@@ -107,6 +110,8 @@ void CreateNanotubeSpeciesDialog::updateWidgets()
 }
 
 void CreateNanotubeSpeciesDialog::on_AxialRingLengthSpin_valueChanged(int value) { regenerate(); }
+
+void CreateNanotubeSpeciesDialog::on_RadialRingSizeSpin_valueChanged(int value) { regenerate(); }
 
 void CreateNanotubeSpeciesDialog::on_ElementAButton_clicked(bool checked)
 {

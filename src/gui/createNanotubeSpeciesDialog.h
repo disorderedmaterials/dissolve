@@ -63,6 +63,7 @@ class CreateNanotubeSpeciesDialog : public QDialog
 
     private Q_SLOTS:
     void on_AxialRingLengthSpin_valueChanged(int value);
+    void on_RadialRingSizeSpin_valueChanged(int value);
     void on_ElementAButton_clicked(bool checked);
     void on_ElementBButton_clicked(bool checked);
     // Dialog
