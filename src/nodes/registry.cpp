@@ -66,10 +66,12 @@ std::vector<std::string_view> NodeRegistry::getNodeTypeFuzzy(std::string_view we
 
     std::vector<std::string_view> result;
 
+    auto fuzzy = std::string("*") + std::string(weakNodeType) + std::string("*");
+
     // Case insensitive search for now - fuzzy search to be implemented at a later date
     for (auto &&[nodeType, _] : producers_)
     {
-        if (DissolveSys::sameString(weakNodeType, nodeType))
+        if (DissolveSys::sameWildString(fuzzy, nodeType))
             result.emplace_back(nodeType);
     }
 
