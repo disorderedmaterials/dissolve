@@ -18,6 +18,7 @@
 #include "nodes/vec3Assembly.h"
 #include "nodes/vec3Decomposition.h"
 #include <memory>
+#include <ranges>
 
 // Static Singletons
 std::map<std::string_view, NodeProducer> NodeRegistry::producers_;
@@ -60,18 +61,21 @@ bool NodeRegistry::hasNodeType(std::string_view nodeType)
 }
 
 // Search for the supplied node type, returning strict node type if found
-std::string_view NodeRegistry::getNodeTypeFuzzy(std::string_view weakNodeType)
+std::vector<std::string_view> NodeRegistry::getNodeTypesFuzzy(std::string_view weakNodeType)
 {
     instantiateNodeProducers();
 
-    // Case insensitive search for now - fuzzy search to be implemented at a later date
-    for (auto &&[nodeType, _] : producers_)
-    {
-        if (DissolveSys::sameString(weakNodeType, nodeType))
-            return nodeType;
-    }
+    using namespace std::string_literals;
 
-    return {};
+    auto predicate = [weakNodeType](const auto nodeType)
+    { return DissolveSys::sameWildString("*"s + std::string(weakNodeType) + "*"s, nodeType); };
+
+    // Iterate over the keys of the map and include only the names
+    // which match our fuzzy match
+    auto range = producers_ | std::views::keys | std::views::filter(predicate);
+
+    // Create a vector from the range
+    return {range.begin(), range.end()};
 }
 
 // Produce a node of the given type with the specified Graph parent

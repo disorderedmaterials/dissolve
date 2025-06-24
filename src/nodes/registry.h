@@ -5,6 +5,7 @@
 
 #include "node.h"
 #include <string>
+#include <vector>
 
 using NodeProducer = std::function<std::unique_ptr<Node>(Graph *parent)>;
 
@@ -22,8 +23,9 @@ class NodeRegistry
     public:
     // Check whether the supplied node type is known
     static bool hasNodeType(std::string_view nodeType);
-    // Search for the supplied node type, returning strict node type if found
-    static std::string_view getNodeTypeFuzzy(std::string_view weakNodeType);
+    // Search for the supplied node type, returning all node types
+    // which match the selection
+    static std::vector<std::string_view> getNodeTypesFuzzy(std::string_view weakNodeType);
     // Produce a node of the given type with the specified Graph parent
     static std::unique_ptr<Node> produce(Graph *parent, std::string_view nodeType);
 };
