@@ -5,7 +5,7 @@
 
 IsotopologueSetNode::IsotopologueSetNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput<const Species *>("Species", "Atomic species", species_);
+    addInput<const Species *>("Species", "Species containing the source isotopologues", species_);
     addOutput<IsotopologueSet>("IsotopologueSet", "Set/add an isotopologue and its population for a particular species",
                                isotopologueSet_);
 }
