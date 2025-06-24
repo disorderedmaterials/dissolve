@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 100 100"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="modules_molshake.svg"
+   width="100"
+   height="100"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="983"
+     id="namedview6"
+     showgrid="false"
+     inkscape:zoom="3.6875001"
+     inkscape:cx="-8.4797446"
+     inkscape:cy="96.333336"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <path
+     d="M 84,50.000001 H 69.1575 c 1.58625,3.69875 0.89,8.15 -2.125,11.165 L 50,78.197501 v 5.8025 c 0,3.31375 2.68625,6 6,6 h 28 c 3.31375,0 6,-2.68625 6,-6 v -28 c 0,-3.31375 -2.68625,-6 -6,-6 z m -14,23 c -1.65625,0 -3,-1.34375 -3,-3 0,-1.6575 1.34375,-3 3,-3 1.65625,0 3,1.3425 3,3 0,1.65625 -1.34375,3 -3,3 z M 64.20375,49.662501 42.3375,27.796251 c -2.395,-2.395 -6.27875,-2.395 -8.67375,0 l -21.8675,21.86625 c -2.3950001,2.395 -2.3950001,6.27875 0,8.67375 l 21.86625,21.8675 c 2.395,2.395 6.27875,2.395 8.67375,0 l 21.8675,-21.86625 c 2.395,-2.39625 2.395,-6.28 0,-8.675 z M 22,57.000001 c -1.65625,0 -3,-1.34375 -3,-3 0,-1.6575 1.34375,-3 3,-3 1.65625,0 3,1.3425 3,3 0,1.65625 -1.34375,3 -3,3 z m 16,16 c -1.65625,0 -3,-1.34375 -3,-3 0,-1.6575 1.34375,-3 3,-3 1.65625,0 3,1.3425 3,3 0,1.65625 -1.34375,3 -3,3 z m 0,-16 c -1.65625,0 -3,-1.34375 -3,-3 0,-1.6575 1.34375,-3 3,-3 1.65625,0 3,1.3425 3,3 0,1.65625 -1.34375,3 -3,3 z m 0,-16 c -1.65625,0 -3,-1.34375 -3,-3 0,-1.6575 1.34375,-3 3,-3 1.65625,0 3,1.3425 3,3 0,1.65625 -1.34375,3 -3,3 z m 16,16 c -1.65625,0 -3,-1.34375 -3,-3 0,-1.6575 1.34375,-3 3,-3 1.65625,0 3,1.3425 3,3 0,1.65625 -1.34375,3 -3,3 z"
+     id="path2"
+     inkscape:connector-curvature="0"
+     style="stroke-width:1;fill:#0000bb;fill-opacity:1" />
+  <g
+     style="stroke-width:1.76245201"
+     transform="matrix(0.56758739,0,0,0.56719533,37.824701,6.1491249)"
+     id="g851">
+    <circle
+       style="opacity:1;fill:#005100;fill-opacity:1;stroke:#ffffff;stroke-width:5.2873559;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path4256-6"
+       cx="21.5"
+       cy="67.25"
+       r="16.625" />
+    <circle
+       style="opacity:1;fill:#005100;fill-opacity:1;stroke:#ffffff;stroke-width:5.2873559;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path4260"
+       cx="46.875"
+       cy="49.75"
+       r="31.625" />
+    <circle
+       style="opacity:1;fill:#005100;fill-opacity:1;stroke:#ffffff;stroke-width:5.2873559;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path4256"
+       cx="45.125"
+       cy="14.25"
+       r="16.625" />
+    <circle
+       style="opacity:1;fill:#005100;fill-opacity:1;stroke:#ffffff;stroke-width:5.2873559;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path4256-3"
+       cx="79"
+       cy="69.25"
+       r="16.625" />
+  </g>
+</svg>
