@@ -217,12 +217,13 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     */
 
     if (!weightedGR_)
+    {
         weightedSQ_.emplace();
-    auto weightedSQ = weightedSQ_.value();
-    weightedSQ.setUpPartials(unweightedSQ_->atomTypeMix());
+        weightedSQ_->setUpPartials(unweightedSQ_->atomTypeMix());
+    }
 
     // Calculate weighted S(Q)
-    calculateWeightedSQ(*unweightedSQ_, weightedSQ, weights_, normaliseTo_);
+    calculateWeightedSQ(*unweightedSQ_, *weightedSQ_, weights_, normaliseTo_);
 
     // Save data if requested
     /*
@@ -257,12 +258,13 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     */
 
     if (!weightedGR_)
+    {
         weightedGR_.emplace();
-    auto weightedGR = weightedGR_.value();
-    weightedGR.setUpPartials(unweightedGR_->atomTypeMix());
+        weightedGR_->setUpPartials(unweightedGR_->atomTypeMix());
+    }
 
     // Calculate weighted g(r)
-    calculateWeightedGR(*unweightedGR_, weightedGR, weights_, normaliseTo_);
+    calculateWeightedGR(*unweightedGR_, *weightedGR_, weights_, normaliseTo_);
 
     // Save data if requested
     /*
@@ -275,7 +277,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         GenericItem::InRestartFileFlag);
     */
     Data1D repGR;
-    repGR = weightedSQ.total();
+    repGR = weightedSQ_->total();
     auto ftQMax = 0.0;
     if (referenceFTQMax_)
         ftQMax = referenceFTQMax_.value();
@@ -290,10 +292,10 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         ftQMax = referenceData.xAxis().back();
     }
     else
-        ftQMax = weightedSQ.total().xAxis().back();
+        ftQMax = weightedSQ_->total().xAxis().back();
     Filters::trim(repGR, referenceFTQMin_.value_or(0.0), ftQMax);
-    auto rMin = weightedGR.total().xAxis().front();
-    auto rMax = weightedGR.total().xAxis().back();
+    auto rMin = weightedGR_->total().xAxis().front();
+    auto rMax = weightedGR_->total().xAxis().back();
     // auto rho_ = rdfModule->effectiveDensity();
     /*
     if (!rho_)

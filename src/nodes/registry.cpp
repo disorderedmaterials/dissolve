@@ -49,7 +49,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"GR", makeDerivedNode<GRNode>()},
                   {"Insert", makeDerivedNode<InsertNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
-                  {"IsotopologueSetNode", makeDerivedNode<IsotopologueSetNode>()},
+                  {"IsotopologueSet", makeDerivedNode<IsotopologueSetNode>()},
                   {"MD", makeDerivedNode<MDNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
                   {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},

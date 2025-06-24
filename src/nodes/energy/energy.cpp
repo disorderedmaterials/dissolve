@@ -17,6 +17,6 @@ EnergyNode::EnergyNode(Graph *parentGraph) : Node(parentGraph)
     addOption<bool>("Save", "Save calculated energies to disk, one file per targeted configuration", save_);
 }
 
-std::string_view EnergyNode::type() const { return "EnergyNode"; }
+std::string_view EnergyNode::type() const { return "Energy"; }
 
 std::string_view EnergyNode::summary() const { return "Calculate total system energy and its contributions"; }
