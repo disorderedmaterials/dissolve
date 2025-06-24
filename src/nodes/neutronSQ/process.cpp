@@ -32,14 +32,6 @@ bool NeutronSQNode::setUp(Flags<KeywordBase::KeywordSignal> actionSignals)
             return false;
         }
 
-        // Get dependent modules
-        /*
-        if (!sourceSQ_)
-            return error("[SETUP {}] A source SQ module must be provided.\n", name());
-        auto* rdfModule = sourceSQ_->sourceGR();
-        if (!rdfModule)
-            return error("[SETUP {}] A source GR module (in the SQ module) must be provided.\n", name());
-        */
         // Normalise reference data to be consistent with the calculated data
         if (referenceNormalisedTo_ != normaliseTo_)
         {
@@ -130,32 +122,7 @@ bool NeutronSQNode::setUp(Flags<KeywordBase::KeywordSignal> actionSignals)
 // Run main processing
 NodeConstants::ProcessResult NeutronSQNode::process()
 {
-    /*
-     * Calculate neutron structure factors from existing S(Q) data
-     *
-     * This is a serial routine, with each process constructing its own copy of the data.
-     * Partial calculation routines called by this routine are parallel.
-     */
-
-    /*
-    if (!sourceSQ_)
-    {
-        error("A source SQ module must be provided.\n");
-        return NodeConstants::ProcessResult::Failed;
-    }
-    */
-
-    /*
-    const auto* rdfModule = sourceSQ_->sourceGR();
-    if (!rdfModule)
-    {
-        error("A source GR module (in the SQ module) must be provided.\n");
-        return NodeConstants::ProcessResult::Failed;
-    }
-    */
-
     // Print argument/parameter summary
-    // message("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->name());
     if (referenceWindowFunction_ == WindowFunction::Form::None)
         message("No window function will be applied when calculating representative g(r) from S(Q).");
     else
@@ -178,18 +145,6 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     /*
      * Transform UnweightedSQ from provided SQ data into WeightedSQ.
      */
-
-    // Get unweighted S(Q) from the specified SQMOdule
-    /*
-    if (!moduleContext.dissolve().processingModuleData().contains("UnweightedSQ", sourceSQ_->name()))
-    {
-        error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->name());
-        return NodeConstants::ProcessResult::Failed;
-    }
-    const auto& unweightedSQ =
-        moduleContext.dissolve().processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
-    */
-
     // Calculate and store weights_
     /*
     auto& weights_ = moduleContext.dissolve().processingModuleData().realise<NeutronWeights>("FullWeights", name(),
@@ -287,14 +242,6 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     Filters::trim(repGR, referenceFTQMin_.value_or(0.0), ftQMax);
     auto rMin = weightedGR_->total().xAxis().front();
     auto rMax = weightedGR_->total().xAxis().back();
-    // auto rho_ = rdfModule->effectiveDensity();
-    /*
-    if (!rho_)
-    {
-        error("No effective density available from RDF module '{}'\n", rdfModule->name());
-        return NodeConstants::ProcessResult::Failed;
-    }
-    */
     WindowFunction window(referenceWindowFunction_);
     Fourier::sineFT(repGR, 1.0 / (2.0 * M_PI * M_PI * unweightedGR_->effectiveDensity()), rMin, 0.05, rMax, window);
 
