@@ -32,6 +32,7 @@ NodeBox {
             columns: 5
 
             Repeater {
+                id: inputRepeater
                 model: inputs
                 Shape {
                     property string title
@@ -55,12 +56,16 @@ NodeBox {
                         }
                     }
                 }
+                Component.onCompleted: {
 
-                onItemAdded: function (idx, item) {
-                    let pos = item.mapToGlobal(item.x, item.y);
-                    rootModel.addInput(index, item.title, pos.x, pos.y);
+                    for(var i = 0;i < inputRepeater.count; i++)
+                    {
+                        let item = inputRepeater.itemAt(i);
+                        let pos = item.mapToItem(root, item.x, item.y);
+                        rootModel.addInput(index, item.title, pos.x, pos.y);
+
+                    }
                 }
-
             }
             Repeater {
                 model: inputs
@@ -89,6 +94,7 @@ NodeBox {
 
 
             Repeater {
+                id: outputRepeater
                 model: outputs
                 Shape {
                     property string title
@@ -113,13 +119,17 @@ NodeBox {
                     }
                 }
 
-                onItemAdded: function (idx, item) {
-                    // let pos = Qt.point(item.x, item.y)
-                    let pos = item.mapToGlobal(item.x, item.y);
-                    pos.x += item.width;
-                    rootModel.addOutput(index, item.title, pos.x, pos.y);
-                }
+                Component.onCompleted: {
 
+                    for(var i = 0;i < outputRepeater.count; i++)
+                    {
+                        let item = outputRepeater.itemAt(i);
+                        let pos = item.mapToItem(root, item.x, item.y);
+                        pos.x += item.width
+                        rootModel.addOutput(index, item.title, pos.x, pos.y);
+
+                    }
+                }
             }
 
             Repeater {
