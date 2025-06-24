@@ -11,35 +11,29 @@ DelegateChooser {
     DelegateChoice {
         roleValue: "bool"
 
-        RowLayout {
-            Text {
-                text: name
-            }
-            CheckBox {
-                checked: param
-            }
+        CheckBox {
+            Layout.column: 2
+            Layout.row: index
+            Layout.alignment: Qt.AlignRight
+            checked: param
         }
     }
     DelegateChoice {
         roleValue: "number"
 
-        RowLayout {
-            Text {
-                text: name
-            }
-            SpinBox {
-                value: param
-            }
+        SpinBox {
+            Layout.column: 2
+            Layout.row: index
+            Layout.alignment: Qt.AlignRight
+            value: param
         }
     }
     DelegateChoice {
-        RowLayout {
-            Text {
-                text: name
-            }
-            Text {
-                text: param
-            }
+        Text {
+            Layout.column: 2
+            Layout.row: index
+            Layout.alignment: Qt.AlignRight
+            text: param
         }
     }
 }

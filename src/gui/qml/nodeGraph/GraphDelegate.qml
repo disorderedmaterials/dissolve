@@ -142,7 +142,30 @@ NodeBox {
             height: options.rowCount() > 0 ? 2 : 0
             width: parent.width
         }
-        Column {
+        GridLayout {
+            columns: 3
+            width: parent.width
+
+            Repeater {
+                model: options
+                Text {
+                    text: name
+                    Layout.column: 0
+                    Layout.row: index
+                    Layout.alignment: Qt.AlignLeft
+                }
+            }
+
+            Repeater {
+                model: Options
+                Item {
+                    Layout.column: 1
+                    Layout.row: index
+                    Layout.fillWidth: true
+                }
+            }
+
+
             Repeater {
                 model: options
 
