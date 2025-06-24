@@ -11,6 +11,8 @@ NodeBox {
     property double midY: y + height / 2
     property variant rootModel
     property double startX: x + width
+    signal outputSelected(label: string)
+    signal inputSelected(label: string)
 
     image: icon
     nodeType: name
@@ -46,6 +48,12 @@ NodeBox {
                         PathLine { x: 20; y: 20 }
                         PathLine { x: 0; y: 10 }
                         PathLine { x: 20; y: 0 }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            inputSelected(title);
+                        }
                     }
                 }
 
@@ -103,6 +111,12 @@ NodeBox {
                         PathLine { x: 0; y: 20 }
                         PathLine { x: 20; y: 10 }
                         PathLine { x: 0; y: 0 }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            outputSelected(title);
+                        }
                     }
                 }
 

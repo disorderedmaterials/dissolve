@@ -239,6 +239,13 @@ ApplicationWindow {
                 delegate: Component {
                     GraphDelegate {
                         rootModel: graphModel
+
+                        onOutputSelected: function(label) {
+                            console.log("Selected output: ", label)
+                        }
+                        onInputSelected: function(label) {
+                            console.log("Selected input: ", label)
+                        }
                     }
                 }
             }
