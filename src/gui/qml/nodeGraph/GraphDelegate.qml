@@ -29,7 +29,6 @@ NodeBox {
     ColumnLayout {
         anchors.fill: parent
         GridLayout {
-            anchors.fill: parent
             columns: 5
 
             Repeater {
@@ -59,10 +58,7 @@ NodeBox {
 
                 onItemAdded: function (idx, item) {
                     let pos = item.mapToGlobal(item.x, item.y);
-                    pos.x -= 2 * item.anchors.margins;
-                    pos.y += item.height / 2;
-                    pos.y += 35; // Adjust for title
-                    rootModel.addInput(index, item.text, pos.x, pos.y);
+                    rootModel.addInput(index, item.title, pos.x, pos.y);
                 }
 
             }
@@ -120,11 +116,8 @@ NodeBox {
                 onItemAdded: function (idx, item) {
                     // let pos = Qt.point(item.x, item.y)
                     let pos = item.mapToGlobal(item.x, item.y);
-                    pos.x += 2 * item.anchors.margins;
                     pos.x += item.width;
-                    pos.y += item.height;
-                    pos.y += 35; // Adjust for title
-                    rootModel.addOutput(index, item.text, pos.x, pos.y);
+                    rootModel.addOutput(index, item.title, pos.x, pos.y);
                 }
 
             }
@@ -165,7 +158,7 @@ NodeBox {
             }
 
             Repeater {
-                model: Options
+                model: options
                 Item {
                     Layout.column: 1
                     Layout.row: index

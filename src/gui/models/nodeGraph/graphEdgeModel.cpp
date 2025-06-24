@@ -127,9 +127,9 @@ void GraphEdgeModel::updatePosition(const int idx)
     {
         const auto &edge = graph_->edges()[j];
         if (&edge->sourceNode() == &node)
-            Q_EMIT dataChanged(index(j), index(j + 1), {Role::SOURCE_X, Role::SOURCE_Y});
-        if (&edge->targetNode() == &node)
-            Q_EMIT dataChanged(index(j), index(j + 1), {Role::TARGET_X, Role::TARGET_Y});
+            Q_EMIT dataChanged(index(j), index(j), {Role::SOURCE_X, Role::SOURCE_Y});
+        else if (&edge->targetNode() == &node)
+            Q_EMIT dataChanged(index(j), index(j), {Role::TARGET_X, Role::TARGET_Y});
     }
 }
 
