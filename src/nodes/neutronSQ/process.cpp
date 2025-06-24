@@ -101,18 +101,9 @@ bool NeutronSQNode::setUp(Flags<KeywordBase::KeywordSignal> actionSignals)
         Data1D storedDataFT;
         storedDataFT = referenceData;
         Filters::trim(storedDataFT, ftQMin, ftQMax);
-        /*
-        auto rho_ = rdfModule->effectiveDensity();
-        if (rho_)
-            message(
-                "[SETUP {}] Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n",
-                name(), rho_.value());
-        else
-            Messenger::warn("[SETUP {}] Effective atomic density used in Fourier transform of reference data not yet "
-                "available, so a default of 0.1 atoms/Angstrom3 used.\n",
-                name());
-        */
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * M_PI * M_PI * unweightedGR_->effectiveDensity()), referenceFTDeltaR_,
+
+        auto rho = unweightedGR_->effectiveDensity();
+        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * M_PI * M_PI * rho), referenceFTDeltaR_,
                         referenceFTDeltaR_, 30.0, WindowFunction(referenceWindowFunction_));
 
         // Save data?
