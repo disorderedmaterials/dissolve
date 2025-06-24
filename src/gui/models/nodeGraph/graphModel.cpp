@@ -4,6 +4,7 @@
 #include "graphModel.h"
 #include "graphEdgeModel.h"
 #include "graphNodeModel.h"
+#include "nodes/edge.h"
 #include <QAbstractItemModel>
 #include <QVariant>
 #include <iostream>
@@ -96,6 +97,28 @@ int GraphModel::nEdges()
     if (graph_ == nullptr)
         return 0;
     return edges_.rowCount();
+}
+
+void GraphModel::selectInput(QString source, QString sourceInput)
+{
+    selectedInput_ = {source.toStdString(), sourceInput.toStdString()};
+    connectSelected();
+}
+
+void GraphModel::selectOutput(QString target, QString targetOutput)
+{
+    selectedOutput_ = {target.toStdString(), targetOutput.toStdString()};
+    connectSelected();
+}
+
+void GraphModel::connectSelected()
+{
+    if (!selectedInput_ || !selectedOutput_)
+        return;
+    EdgeDefinition edge(std::get<0>(*(selectedOutput_)), std::get<1>(*(selectedOutput_)), std::get<0>(*(selectedInput_)),
+                        std::get<1>(*(selectedInput_)));
+    edges_.addEdge(edge);
+    selectedInput_ = selectedOutput_ = {};
 }
 
 // public wrapper of connect_

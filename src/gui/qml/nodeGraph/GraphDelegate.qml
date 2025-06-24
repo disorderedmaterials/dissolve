@@ -11,8 +11,8 @@ NodeBox {
     property double midY: y + height / 2
     property variant rootModel
     property double startX: x + width
-    signal outputSelected(label: string)
-    signal inputSelected(label: string)
+    signal outputSelected(name: string, label: string)
+    signal inputSelected(name: string, label: string)
 
     image: icon
     nodeType: name
@@ -52,7 +52,7 @@ NodeBox {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            inputSelected(title);
+                            inputSelected(root.nodeType, title);
                         }
                     }
                 }
@@ -62,9 +62,6 @@ NodeBox {
                     pos.x -= 2 * item.anchors.margins;
                     pos.y += item.height / 2;
                     pos.y += 35; // Adjust for title
-                    console.log("Input!", item.title, item.width, item.height);
-                    console.log(idx);
-                    console.log(pos);
                     rootModel.addInput(index, item.text, pos.x, pos.y);
                 }
 
@@ -115,7 +112,7 @@ NodeBox {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            outputSelected(title);
+                            outputSelected(root.nodeType, title);
                         }
                     }
                 }
@@ -127,9 +124,6 @@ NodeBox {
                     pos.x += item.width;
                     pos.y += item.height;
                     pos.y += 35; // Adjust for title
-                    console.log("Output!", item.title, item.width, item.height);
-                    console.log(idx);
-                    console.log(pos);
                     rootModel.addOutput(index, item.text, pos.x, pos.y);
                 }
 

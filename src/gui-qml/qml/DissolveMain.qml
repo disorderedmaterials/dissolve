@@ -240,11 +240,11 @@ ApplicationWindow {
                     GraphDelegate {
                         rootModel: graphModel
 
-                        onOutputSelected: function(label) {
-                            console.log("Selected output: ", label)
+                        onOutputSelected: function(name, label) {
+                            graphModel.selectOutput(name, label)
                         }
-                        onInputSelected: function(label) {
-                            console.log("Selected input: ", label)
+                        onInputSelected: function(name, label) {
+                            graphModel.selectInput(name, label)
                         }
                     }
                 }
