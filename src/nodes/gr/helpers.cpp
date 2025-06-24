@@ -271,7 +271,7 @@ bool GRNode::calculateGRCells(const ProcessPool &procPool, Configuration *cfg, P
 PartialSet &GRNode::originalGR(Configuration *cfg, const double rdfRange, const double rdfBinWidth)
 {
     if (!originalgr_)
-        originalgr_.emplace();
+        originalgr_.emplace(speciesPopulations());
     originalgr_.value().setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
 
     return originalgr_.value();
@@ -281,7 +281,7 @@ PartialSet &GRNode::originalGR(Configuration *cfg, const double rdfRange, const 
 PartialSet &GRNode::unweightedGR()
 {
     if (!unweightedGR_)
-        unweightedGR_.emplace();
+        unweightedGR_.emplace(speciesPopulations());
 
     return unweightedGR_.value();
 }
@@ -290,7 +290,7 @@ PartialSet &GRNode::unweightedGR()
 PartialSet &GRNode::summedUnweightedGR()
 {
     if (!summedUnweightedGR_)
-        summedUnweightedGR_.emplace();
+        summedUnweightedGR_.emplace(speciesPopulations());
 
     return summedUnweightedGR_.value();
 }
@@ -574,8 +574,7 @@ bool GRNode::sumUnweightedGR(const ProcessPool &procPool, std::string_view targe
     }
 
     // Calculate overall density of combined system
-    double rho0 = std::accumulate(configWeights.begin(), configWeights.end(), 0.0,
-                                  [totalWeight](double acc, auto pair)
+    double rho0 = std::accumulate(configWeights.begin(), configWeights.end(), 0.0, [totalWeight](double acc, auto pair)
                                   { return acc + pair.second / totalWeight / pair.first->atomicDensity().value(); });
     rho0 = 1.0 / rho0;
 

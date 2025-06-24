@@ -103,8 +103,8 @@ bool NeutronSQNode::setUp(Flags<KeywordBase::KeywordSignal> actionSignals)
         Filters::trim(storedDataFT, ftQMin, ftQMax);
 
         auto rho = unweightedGR_->effectiveDensity();
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * M_PI * M_PI * rho), referenceFTDeltaR_,
-                        referenceFTDeltaR_, 30.0, WindowFunction(referenceWindowFunction_));
+        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * M_PI * M_PI * rho), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
+                        WindowFunction(referenceWindowFunction_));
 
         // Save data?
         if (saveReference_)
@@ -209,7 +209,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
 
     if (!weightedGR_)
     {
-        weightedSQ_.emplace();
+        weightedSQ_.emplace(unweightedSQ_->speciesPopulations());
         weightedSQ_->setUpPartials(unweightedSQ_->atomTypeMix());
     }
 
@@ -250,7 +250,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
 
     if (!weightedGR_)
     {
-        weightedGR_.emplace();
+        weightedGR_.emplace(unweightedGR_->speciesPopulations());
         weightedGR_->setUpPartials(unweightedGR_->atomTypeMix());
     }
 

@@ -59,7 +59,11 @@ NodeConstants::ProcessResult SQNode::process()
      * Transform target UnweightedGR into the UnweightedSQ.
      */
 
-    unweightedSQ_.setUpPartials(unweightedGR_->atomTypeMix());
+    if (!unweightedSQ_)
+    {
+        unweightedSQ_.emplace(unweightedGR_->speciesPopulations());
+        unweightedSQ_->setUpPartials(unweightedGR_->atomTypeMix());
+    }
 
     /*
     // Is the PartialSet already up-to-date?
@@ -71,7 +75,7 @@ NodeConstants::ProcessResult SQNode::process()
     */
 
     // Transform g(r) into S(Q)
-    if (!calculateUnweightedSQ(processPool(), *unweightedGR_, unweightedSQ_, qMin, qDelta, qMax,
+    if (!calculateUnweightedSQ(processPool(), *unweightedGR_, *unweightedSQ_, qMin, qDelta, qMax,
                                unweightedGR_->effectiveDensity(), WindowFunction(windowFunction_), qBroadening_))
         return NodeConstants::ProcessResult::Failed;
 

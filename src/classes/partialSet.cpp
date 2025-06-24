@@ -14,6 +14,11 @@
 
 PartialSet::PartialSet() { fingerprint_ = "NO_FINGERPRINT"; }
 
+PartialSet::PartialSet(const SpeciesPopulations &speciesPopulations) : speciesPopulations_(speciesPopulations)
+{
+    fingerprint_ = "NO_FINGERPRINT";
+}
+
 PartialSet::~PartialSet()
 {
     fullHistograms_.clear();

@@ -20,6 +20,7 @@ class PartialSet
 {
     public:
     PartialSet();
+    PartialSet(const SpeciesPopulations &speciesPopulations);
     ~PartialSet();
 
     /*
