@@ -77,19 +77,13 @@ bool NeutronSQNode::setUp(Flags<KeywordBase::KeywordSignal> actionSignals)
 
         // Store the reference data in processing
         referenceData.setTag(name());
-        /*
-        auto& storedData = dissolve().processingModuleData().realise<Data1D>("ReferenceData", name(),
-            GenericItem::ProtectedFlag);
-        */
+
         Data1D storedData;
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
         referenceData.setTag(name());
-        /*
-        auto& storedDataFT = moduleContext.dissolve().processingModuleData().realise<Data1D>("ReferenceDataFT", name(),
-            GenericItem::ProtectedFlag);
-        */
+
         Data1D storedDataFT;
         storedDataFT = referenceData;
         Filters::trim(storedDataFT, ftQMin, ftQMax);
