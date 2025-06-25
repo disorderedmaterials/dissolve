@@ -163,17 +163,14 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     }
 
     auto &population = weightedGR_->speciesPopulations();
-    if (isotopologueWeights_.empty())
+    for (const auto &[species, _] : population)
     {
-        for (const auto &[species, _] : population)
+        for (const auto &isotopologue : species->isotopologues())
         {
-            for (const auto &isotopologue : species->isotopologues())
-            {
-                auto iso = isotopologue.get();
-                auto it = namedWeights_.find(iso->name());
-                if (it != namedWeights_.end())
-                    isotopologueSet_.add(iso, it->second);
-            }
+            auto iso = isotopologue.get();
+            auto it = namedWeights_.find(iso->name());
+            if (it != namedWeights_.end())
+                isotopologueSet_.add(iso, it->second);
         }
     }
 
