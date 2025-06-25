@@ -101,8 +101,6 @@ void NeutronSQNode::calculateWeights(NeutronWeights &weights) const
     // Clear weights and get species speciesPopulations_ from GRModule
     weights.clear();
 
-    // auto speciesPopulations_ = rdfModule->speciesPopulations();
-
     for (auto &[sp, pop] : unweightedGR_->speciesPopulations())
     {
         // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one

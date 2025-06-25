@@ -280,15 +280,10 @@ class Species : public Serialisable<const CoreData &>
     Isotopologue naturalIsotopologue_;
     // List of isotopic variants defined for this species
     std::vector<std::unique_ptr<Isotopologue>> isotopologues_;
-    std::vector<std::unique_ptr<IsotopologueWeight>> isotopologueWeights_;
 
     public:
     // Update current Isotopologues
     void updateIsotopologues(OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes = std::nullopt);
-    // Set Isotopologue weights
-    void setIsotopologueWeights(const std::map<std::string_view, double> &namedWeights);
-    // Get Isotopologue weights
-    IsotopologueWeight *isotopologueWeight(int n) const;
     // Return natural (empty) Isotopologue
     const Isotopologue *naturalIsotopologue() const;
     // Add a new Isotopologue to this Species

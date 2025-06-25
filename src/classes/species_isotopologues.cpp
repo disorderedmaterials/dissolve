@@ -16,21 +16,6 @@ void Species::updateIsotopologues(OptionalReferenceWrapper<const std::vector<std
     }
 }
 
-// Set Isotopologue weights
-void Species::setIsotopologueWeights(const std::map<std::string_view, double> &namedWeights)
-{
-    for (auto &isotopologue : isotopologues_)
-    {
-        auto iso = isotopologue.get();
-        auto it = namedWeights.find(iso->name());
-        if (it != namedWeights.end())
-            isotopologueWeights_.emplace_back(std::make_unique<IsotopologueWeight>(iso, it->second));
-    }
-}
-
-// Get Isotopologue weights
-IsotopologueWeight *Species::isotopologueWeight(int n) const { return isotopologueWeights_[n].get(); }
-
 // Update and return natural isotopologue
 const Isotopologue *Species::naturalIsotopologue() const { return &naturalIsotopologue_; }
 
