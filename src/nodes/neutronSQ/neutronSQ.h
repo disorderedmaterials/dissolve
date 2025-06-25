@@ -44,7 +44,7 @@ class NeutronSQNode : public Node
     // Full weights
     NeutronWeights weights_;
     // Map of named isotopologue weights
-    std::map<std::string_view, double> namedWeights_;
+    std::map<std::string_view, double> namedWeights_{"Ar36", 36};
     // Exchangeable atom types
     std::vector<std::shared_ptr<AtomType>> exchangeable_;
     // Isotopologues to use in weighting
