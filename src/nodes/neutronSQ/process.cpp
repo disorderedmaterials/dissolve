@@ -172,15 +172,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
                 auto iso = isotopologue.get();
                 auto it = namedWeights_.find(iso->name());
                 if (it != namedWeights_.end())
-                    isotopologueWeights_.emplace_back(std::make_unique<IsotopologueWeight>(iso, it->second));
-            }
-
-            for (const auto& isotopologue : species->isotopologues())
-            {
-                auto index = species->indexOfIsotopologue(isotopologue.get());
-                auto weight = isotopologueWeights_[index].get();
-                if (weight)
-                    isotopologueSet_.add(weight->isotopologue(), weight->weight());
+                    isotopologueSet_.add(iso, it->second);
             }
         }
     }
