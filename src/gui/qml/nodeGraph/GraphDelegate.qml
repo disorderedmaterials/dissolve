@@ -61,8 +61,7 @@ NodeBox {
                     for(var i = 0;i < inputRepeater.count; i++)
                     {
                         let item = inputRepeater.itemAt(i);
-                        let pos = item.mapToItem(root, item.x, item.y);
-                        rootModel.addInput(index, item.title, pos.x, pos.y);
+                        rootModel.addInput(index, item.title, item.x, item.y);
 
                     }
                 }
@@ -124,9 +123,7 @@ NodeBox {
                     for(var i = 0;i < outputRepeater.count; i++)
                     {
                         let item = outputRepeater.itemAt(i);
-                        let pos = item.mapToItem(root, item.x, item.y);
-                        pos.x += item.width
-                        rootModel.addOutput(index, item.title, pos.x, pos.y);
+                        rootModel.addOutput(index, item.title, item.x + item.width/2, item.y);
 
                     }
                 }

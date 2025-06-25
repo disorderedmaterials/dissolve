@@ -47,18 +47,18 @@ int GraphModel::count() { return nodes_.rowCount(); }
 void GraphModel::addInput(int nodeIndex, QString paramName, double x, double y)
 {
     auto &node = wrapped_[nodeIndex];
-    x += 10;
-    y += 70;
-    node.inputsPos.insert({paramName.toStdString(), {x/2, y/2}});
+    x += 16;
+    y += 64;
+    node.inputsPos.insert({paramName.toStdString(), {x, y}});
 }
 
 // Provide relative coordinates for an output on a node
 void GraphModel::addOutput(int nodeIndex, QString paramName, double x, double y)
 {
     auto &node = wrapped_[nodeIndex];
-    x += 10;
-    y += 70;
-    node.outputPos.insert({paramName.toStdString(), {x/2, y/2}});
+    x += 16;
+    y += 64;
+    node.outputPos.insert({paramName.toStdString(), {x, y}});
 }
 
 void GraphModel::emplace_back(int x, int y, QVariant type, QVariant name)
