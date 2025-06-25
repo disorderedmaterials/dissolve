@@ -43,6 +43,10 @@ class NeutronSQNode : public Node
     std::optional<PartialSet> weightedGR_;
     // Full weights
     NeutronWeights weights_;
+    // Map of named isotopologue weights
+    std::map<std::string_view, double> namedWeights_;
+    // Isotopologue weights
+    std::vector<std::unique_ptr<IsotopologueWeight>> isotopologueWeights_;
     // Exchangeable atom types
     std::vector<std::shared_ptr<AtomType>> exchangeable_;
     // Isotopologues to use in weighting

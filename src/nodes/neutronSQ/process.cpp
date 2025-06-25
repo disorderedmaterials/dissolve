@@ -162,6 +162,29 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         weightedSQ_->setUpPartials(unweightedSQ_->atomTypeMix());
     }
 
+    auto &population = weightedGR_->speciesPopulations();
+    if (isotopologueWeights_.empty())
+    {
+        for (const auto& [species, _] : population)
+        {
+            for (const auto& isotopologue : species->isotopologues())
+            {
+                auto iso = isotopologue.get();
+                auto it = namedWeights_.find(iso->name());
+                if (it != namedWeights_.end())
+                    isotopologueWeights_.emplace_back(std::make_unique<IsotopologueWeight>(iso, it->second));
+            }
+
+            for (const auto& isotopologue : species->isotopologues())
+            {
+                auto index = species->indexOfIsotopologue(isotopologue.get());
+                auto weight = isotopologueWeights_[index].get();
+                if (weight)
+                    isotopologueSet_.add(weight->isotopologue(), weight->weight());
+            }
+        }
+    }
+
     // Calculate weighted S(Q)
     calculateWeightedSQ(*unweightedSQ_, *weightedSQ_, weights_, normaliseTo_);
 
