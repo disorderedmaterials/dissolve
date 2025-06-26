@@ -245,6 +245,23 @@ class Configuration : public Serialisable<const CoreData &>
     const SiteStack *siteStack(const SpeciesSite *site);
 
     /*
+     * Energy
+     */
+    private:
+    // Energy stable flag
+    bool energyIsStable_{false};
+    // Energy gradient
+    double energyGradient_;
+
+    public:
+    // Energy stable flag
+    void setEnergyStable(bool stable);
+    bool energyIsStable() const;
+    // Energy gradient
+    void setEnergyGradient(double grad);
+    double getEnergyGradient() const;
+
+    /*
      * I/O
      */
     public:

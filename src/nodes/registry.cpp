@@ -8,11 +8,13 @@
 #include "nodes/derivative.h"
 #include "nodes/dotProduct.h"
 #include "nodes/edge.h"
+#include "nodes/energy/energy.h"
 #include "nodes/gr/gr.h"
 #include "nodes/insert.h"
 #include "nodes/integrator.h"
 #include "nodes/md/md.h"
 #include "nodes/multiply.h"
+#include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/sq/sq.h"
 #include "nodes/subtract.h"
 #include "nodes/vec3Assembly.h"
@@ -41,12 +43,15 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
+                  {"Energy", makeDerivedNode<EnergyNode>()},
+                  {"GR", makeDerivedNode<GRNode>()},
                   {"Graph", makeDerivedNode<Graph>()},
                   {"GR", makeDerivedNode<GRNode>()},
                   {"Insert", makeDerivedNode<InsertNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"MD", makeDerivedNode<MDNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
+                  {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
                   {"SQ", makeDerivedNode<SQNode>()},
                   {"Subtract", makeDerivedNode<SubtractNode>()},
                   {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},

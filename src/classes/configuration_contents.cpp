@@ -315,3 +315,13 @@ void Configuration::scaleContents(Vector3 scaleFactors)
 
     ++contentsVersion_;
 }
+
+// Energy stable flag
+void Configuration::setEnergyStable(bool stable) { energyIsStable_ = stable; }
+
+bool Configuration::energyIsStable() const { return energyIsStable_; }
+
+// Energy gradient
+void Configuration::setEnergyGradient(double grad) { energyGradient_ = grad; }
+
+double Configuration::getEnergyGradient() const { return energyGradient_; }
