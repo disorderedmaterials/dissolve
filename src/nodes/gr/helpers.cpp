@@ -475,8 +475,6 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
      * Partials are now up-to-date
      */
 
-    originalgr.setFingerprint(std::format("{}", cfg->contentsVersion()));
-
     return true;
 }
 
@@ -598,7 +596,6 @@ bool GRNode::sumUnweightedGR(const ProcessPool &procPool, std::string_view targe
 
         summedUnweightedGR.addPartials(unweightedGR(), weight);
     }
-    summedUnweightedGR.setFingerprint(fingerprint);
 
     return true;
 }

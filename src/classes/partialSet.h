@@ -19,7 +19,7 @@ using SpeciesPopulations = std::vector<std::pair<const Species *, double>>;
 class PartialSet
 {
     public:
-    PartialSet();
+    PartialSet() = default;
     PartialSet(const SpeciesPopulations &speciesPopulations);
     ~PartialSet();
 

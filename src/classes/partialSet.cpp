@@ -12,12 +12,8 @@
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
-PartialSet::PartialSet() { fingerprint_ = "NO_FINGERPRINT"; }
 
 PartialSet::PartialSet(const SpeciesPopulations &speciesPopulations) : speciesPopulations_(speciesPopulations)
-{
-    fingerprint_ = "NO_FINGERPRINT";
-}
 
 PartialSet::~PartialSet()
 {
@@ -44,8 +40,6 @@ bool PartialSet::setUp(const AtomTypeMix &atomTypeMix, double rdfRange, double b
 
     // Initialise histograms for g(r) calculation
     setUpHistograms(rdfRange, binWidth);
-
-    fingerprint_ = "NO_FINGERPRINT";
 
     return true;
 }
@@ -82,8 +76,6 @@ bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix, bool half)
     total_.clear();
     boundTotal_.clear();
     unboundTotal_.clear();
-
-    fingerprint_ = "NO_FINGERPRINT";
 
     return true;
 }
@@ -136,8 +128,6 @@ void PartialSet::reset()
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
     std::fill(boundTotal_.values().begin(), boundTotal_.values().end(), 0.0);
     std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
-
-    fingerprint_ = "NO_FINGERPRINT";
 }
 
 // Return number of AtomTypes used to generate matrices

@@ -87,9 +87,6 @@ NodeConstants::ProcessResult GRNode::process()
 
             Averaging::average<PartialSet>(dissolve().processingModuleData(), std::format("{}//OriginalGR", cfg->niceName()),
                                            name(), averagingLength_.value().asDouble(), averagingScheme_);
-
-            // Re-set the object names and fingerprints of the partials
-            originalgr_.setFingerprint(currentFingerprint);
         }
         */
 

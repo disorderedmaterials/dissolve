@@ -88,14 +88,8 @@ NodeConstants::ProcessResult SQNode::process()
 
         Averaging::average<PartialSet>(dissolve().processingModuleData(), "UnweightedSQ", name_, averagingLength_.value(),
                                        averagingScheme_);
-
-        // Re-set the object names and fingerprints of the partials
-        unweightedSQ_.setFingerprint(currentFingerprint);
     }
     */
-
-    // Set fingerprint
-    // unweightedSQ_.setFingerprint(std::format("{}/{}", -1, -1));
 
     return NodeConstants::ProcessResult::Success;
 }
