@@ -38,7 +38,7 @@ struct ParameterLink
 class ParameterBase : public Serialisable<>
 {
     public:
-    ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index type);
+    ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType);
     // Parameter Flags
     enum ParameterFlags
     {
@@ -59,8 +59,8 @@ class ParameterBase : public Serialisable<>
     std::string name_;
     // Description of parameter (used as tooltip in the GUI)
     std::string description_;
-    // Type of the parameter
-    std::type_index type_;
+    // Stored data type in the parameter
+    std::type_index storedDataType_;
     // Flags for the parameter
     Flags<ParameterBase::ParameterFlags> flags_;
 
@@ -71,8 +71,8 @@ class ParameterBase : public Serialisable<>
     std::string_view name() const;
     // Return the parameter description
     std::string_view description() const;
-    // Return the parameter type
-    std::type_index type() const;
+    // Return the stored data type
+    std::type_index storedDataType() const;
     // Return the owner of the parameter
     Node *parent() const;
     // Set flag(s) for the parameter
@@ -95,7 +95,7 @@ class ParameterBase : public Serialisable<>
     // Access the full parameter from the base
     template <typename DataClass> std::shared_ptr<Parameter<DataClass>> upcast()
     {
-        if (std::type_index(typeid(DataClass)) != type_)
+        if (std::type_index(typeid(DataClass)) != storedDataType_)
             return nullptr;
         auto cast1 = dynamic_cast<PointerParameter<DataClass> *>(this);
         if (cast1)

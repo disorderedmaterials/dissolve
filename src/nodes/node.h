@@ -247,7 +247,7 @@ class Node : public Serialisable<>
         auto upcast = output->upcast<T>();
         if (!upcast)
             Messenger::exception("Attempted to cast input '{}' to wrong type: is {}, requested {}.\n", inputName,
-                                 output->type().name(), std::type_index(typeid(T)).name());
+                                 output->storedDataType().name(), std::type_index(typeid(T)).name());
 
         // Return the parameter value
         return upcast->get();
@@ -267,7 +267,7 @@ class Node : public Serialisable<>
         auto upcast = output->upcast<T>();
         if (!upcast)
             Messenger::exception("Attempted to cast output '{}' to wrong type: is {}, requested {}.\n", outputName,
-                                 output->type().name(), std::type_index(typeid(T)).name());
+                                 output->storedDataType().name(), std::type_index(typeid(T)).name());
 
         // Return the parameter value
         return upcast->get();
