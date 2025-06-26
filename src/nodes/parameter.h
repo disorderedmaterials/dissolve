@@ -324,6 +324,55 @@ template <typename ClassPtr> class OptionalPointerParameter : public Parameter<C
     ClassPtr get() override { return object_.has_value() ? &object_.value() : nullptr; }
 };
 
+// VectorParameter, assembling a vector of a data type
+template <typename DataClass> class VectorParameter : public Parameter<std::vector<DataClass>>
+{
+    public:
+    VectorParameter(Node *parent, std::string_view name, std::string_view description, std::vector<DataClass> &dataVector)
+        : Parameter<std::vector<DataClass>>(parent, name, description, dataVector), dataVector_(dataVector)
+    {
+    }
+    ~VectorParameter() override = default;
+
+    /*
+     * Data
+     */
+    protected:
+    // Reference to vector object
+    std::vector<DataClass> &dataVector_;
+
+    public:
+    // Set the parameter value
+    void set(const DataClass &value)
+    {
+        if (!dataVector_.find(value))
+        {
+            dataVector_.push_back(value);
+
+            // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
+            if (!ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::NoUpdate))
+                ParameterBase::setParentUpdateRequired();
+
+            // Setting some parameters forces any local data to be cleared
+            if (ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::ClearData))
+                ParameterBase::clearDataInParent();
+        }
+    }
+    // Set the parameter value
+    void set(const std::vector<DataClass> &value) override
+    {
+        dataVector_ = value;
+
+        // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
+        if (!ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::NoUpdate))
+            ParameterBase::setParentUpdateRequired();
+
+        // Setting some parameters forces any local data to be cleared
+        if (ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::ClearData))
+            ParameterBase::clearDataInParent();
+    }
+};
+
 // Template specialisation for non-defaulted type Function1DWrapper
 template <>
 class Parameter<Function1DWrapper> : public ParameterBase, public std::enable_shared_from_this<Parameter<Function1DWrapper>>

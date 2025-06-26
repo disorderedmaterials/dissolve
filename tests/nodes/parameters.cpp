@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/add.h"
 #include "nodes/dissolve.h"
+#include "nodes/numberNode.h"
 #include "nodes/test.h"
 #include <gtest/gtest.h>
 
@@ -43,4 +43,42 @@ TEST(ParametersTest, OptionalPointerOutput)
     EXPECT_EQ(a->optionalConfiguration().operator->(), configInputB->get());
 }
 
+TEST(ParametersTest, VectorInputOutput)
+{
+    CoreData coreData_;
+    Dissolve dissolve_(coreData_);
+    DissolveGraph root_(dissolve_);
+
+    // Create a couple of TestNodes
+    auto *a = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestA"));
+    ASSERT_TRUE(a);
+    auto createOptA = a->findInput("CreateConfiguration")->upcast<bool>();
+    ASSERT_TRUE(createOptA);
+    auto *b = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestB"));
+    ASSERT_TRUE(b);
+    auto configInputB = b->findInput("ConfigurationInput")->upcast<Configuration *>();
+    ASSERT_TRUE(configInputB);
+
+    // Create an edge linking the vector output from A to the vector input of B
+    ASSERT_TRUE(root_.addEdge({"TestA", "NumberVector", "TestB", "NumberVector"}));
+
+    // Create three Number nodes as inputs for TestA's number vector
+    auto *n1 = dynamic_cast<NumberNode *>(root_.addNode(std::make_unique<NumberNode>(&root_), "Number1"));
+    ASSERT_TRUE(n1);
+    auto number1 = n1->findOption("A")->upcast<Number>();
+    ASSERT_TRUE(number1);
+    auto *n2 = dynamic_cast<NumberNode *>(root_.addNode(std::make_unique<NumberNode>(&root_), "Number2"));
+    ASSERT_TRUE(n2);
+    auto number2 = n2->findOption("A")->upcast<Number>();
+    ASSERT_TRUE(number2);
+    auto *n3 = dynamic_cast<NumberNode *>(root_.addNode(std::make_unique<NumberNode>(&root_), "Number3"));
+    ASSERT_TRUE(n3);
+    auto number3 = n3->findOption("A")->upcast<Number>();
+    ASSERT_TRUE(number3);
+
+    // Link all three numbers in to TestA
+    ASSERT_TRUE(root_.addEdge({"Number1", "A", "TestA", "NumberVector"}));
+    ASSERT_TRUE(root_.addEdge({"Number2", "A", "TestA", "NumberVector"}));
+    ASSERT_TRUE(root_.addEdge({"Number3", "A", "TestA", "NumberVector"}));
+}
 } // namespace UnitTest

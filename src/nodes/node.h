@@ -173,6 +173,20 @@ class Node : public Serialisable<>
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
+    // Add vector input parameter
+    template <class T>
+    std::shared_ptr<ParameterBase> addVectorInput(std::string_view inputName, std::string_view description,
+                                                  std::vector<T> &data)
+    {
+        if (findInput(inputName))
+            Messenger::exception("Input (vector) parameter '{}' already exists, and can't be added again.", inputName);
+
+        auto param =
+            inputs_.emplace(std::make_pair(inputName, std::make_shared<VectorParameter<T>>(this, inputName, description, data)))
+                .first->second;
+        param->setFlags(ParameterBase::ParameterFlags::Input);
+        return param;
+    }
     // Add output parameter
     template <class T>
     std::shared_ptr<ParameterBase> addOutput(std::string_view outputName, std::string_view description, T &data)
