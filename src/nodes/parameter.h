@@ -93,14 +93,14 @@ class ParameterBase : public Serialisable<>
     // Assign the value of another parameter to this one.
     virtual bool assign(ParameterBase *other) = 0;
     // Access the full parameter from the base
-    template <typename T> std::shared_ptr<Parameter<T>> upcast()
+    template <typename DataClass> std::shared_ptr<Parameter<DataClass>> upcast()
     {
-        if (std::type_index(typeid(T)) != type_)
+        if (std::type_index(typeid(DataClass)) != type_)
             return nullptr;
-        auto cast1 = dynamic_cast<PointerParameter<T> *>(this);
+        auto cast1 = dynamic_cast<PointerParameter<DataClass> *>(this);
         if (cast1)
             return cast1->shared_from_this();
-        auto cast2 = static_cast<Parameter<T> *>(this);
+        auto cast2 = static_cast<Parameter<DataClass> *>(this);
         return cast2->shared_from_this();
     }
     // Create a parameter link (input - data proxy - output) for the derived class type
@@ -116,16 +116,18 @@ class ParameterBase : public Serialisable<>
     virtual void deserialise(const SerialisedValue &node) override { return; }
 };
 
-// Primary type for a Parameter to a value of type T
-template <typename T> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<T>>
+// Primary type for a Parameter to a specific DataClass
+template <typename DataClass> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<DataClass>>
 {
     public:
-    Parameter(Node *parent, std::string_view name, std::string_view description, T &value)
-        : ParameterBase(parent, name, description, std::type_index(typeid(T))), data_(value), default_(value)
+    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
     {
     }
-    Parameter(Node *parent, std::string_view name, std::string_view description, std::shared_ptr<ParameterProxy<T>> &proxy)
-        : ParameterBase(parent, name, description, std::type_index(typeid(T))), data_(proxy->data), default_(proxy->data)
+    Parameter(Node *parent, std::string_view name, std::string_view description,
+              std::shared_ptr<ParameterProxy<DataClass>> &proxy)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(proxy->data),
+          default_(proxy->data)
     {
         // Store the proxy data smart pointer to preserve the lifetime of the data
         proxyData_ = proxy;
@@ -137,15 +139,15 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
      */
     protected:
     // Reference to target data
-    T &data_;
+    DataClass &data_;
     // Initial value
-    const T default_;
+    const DataClass default_;
     // Parameter proxy data (if a ParameterLink)
-    std::shared_ptr<ParameterProxy<T>> proxyData_;
+    std::shared_ptr<ParameterProxy<DataClass>> proxyData_;
 
     public:
     // Set the parameter value
-    virtual void set(const T &value)
+    virtual void set(const DataClass &value)
     {
         if (data_ != value)
         {
@@ -161,20 +163,20 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         }
     }
     // Return the parameter value
-    virtual T get() { return data_; }
+    virtual DataClass get() { return data_; }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return data_ == default_; }
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override
     {
-        auto upcasted = other->upcast<T>();
+        auto upcasted = other->upcast<DataClass>();
         if (!upcasted)
             return false;
 
         set(upcasted->get());
 
         // If we are a pointer type, getting a nullptr is disallowed
-        if constexpr (std::is_pointer<T>())
+        if constexpr (std::is_pointer<DataClass>())
         {
             if (data_ == nullptr)
                 return false;
@@ -186,14 +188,14 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription) const override
     {
         // Create a parameter holder object with the same type as ours and add it to the proxies_ storage
-        auto proxy = std::make_shared<ParameterProxy<T>>();
+        auto proxy = std::make_shared<ParameterProxy<DataClass>>();
 
         // Create an input and an output Parameter linked to the proxy data
-        auto inputParameter = std::make_shared<Parameter<T>>(nullptr, newName, newDescription, proxy);
+        auto inputParameter = std::make_shared<Parameter<DataClass>>(nullptr, newName, newDescription, proxy);
         inputParameter->setFlags(ParameterBase::ParameterFlags::Input);
 
         // Create a companion input on our Outputs node, again linked to the proxy data
-        auto outputParameter = std::make_shared<Parameter<T>>(nullptr, newName, newDescription, proxy);
+        auto outputParameter = std::make_shared<Parameter<DataClass>>(nullptr, newName, newDescription, proxy);
         outputParameter->setFlags(ParameterBase::ParameterFlags::Output);
 
         return {inputParameter, outputParameter};
@@ -219,18 +221,18 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         SerialisedValue result = {};
 
         // Serialise non-pointer values
-        if constexpr (HasEnumOptions<T>)
+        if constexpr (HasEnumOptions<DataClass>)
             result["data"] = getEnumOptions(data_).serialise(data_);
-        else if constexpr (std::is_convertible<T, Number>::value)
+        else if constexpr (std::is_convertible<DataClass, Number>::value)
             result["data"] = data_;
-        else if constexpr (std::is_convertible<T, std::string>::value)
+        else if constexpr (std::is_convertible<DataClass, std::string>::value)
             result["data"] = data_;
-        else if constexpr (std::is_convertible<T, std::optional<Number>>::value)
+        else if constexpr (std::is_convertible<DataClass, std::optional<Number>>::value)
         {
             if (data_)
                 result["data"] = *data_;
         }
-        else if constexpr (serialisablePointer<T>)
+        else if constexpr (serialisablePointer<DataClass>)
             result["data"] = data_->serialise();
         else
             result["data"] = data_;
@@ -240,25 +242,25 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
     // Read from a serialised value
     void deserialise(const SerialisedValue &node) override
     {
-        if constexpr (std::is_pointer<T>::value)
+        if constexpr (std::is_pointer<DataClass>::value)
         {
             data_ = nullptr;
         }
-        else if constexpr (is_ptr_vector<T>::value)
+        else if constexpr (is_ptr_vector<DataClass>::value)
             data_.clear();
-        else if constexpr (HasEnumOptions<T>)
+        else if constexpr (HasEnumOptions<DataClass>)
         {
-            T proxy; // Fake T value to get the correct overload
+            DataClass proxy; // Fake T value to get the correct overload
             data_ = getEnumOptions(proxy).deserialise(node);
         }
-        else if constexpr (std::is_convertible<T, std::optional<double>>::value)
+        else if constexpr (std::is_convertible<DataClass, std::optional<double>>::value)
         {
             if (node.contains("data"))
                 data_ = toml::find<double>(node, "data");
             else
                 data_ = {};
         }
-        else if constexpr (std::is_convertible<T, std::optional<Number>>::value)
+        else if constexpr (std::is_convertible<DataClass, std::optional<Number>>::value)
         {
             if (node.contains("data"))
                 data_ = toml::find<Number>(node, "data");
@@ -267,7 +269,7 @@ template <typename T> class Parameter : public ParameterBase, public std::enable
         }
         else
         {
-            data_ = toml::find<T>(node, "data");
+            data_ = toml::find<DataClass>(node, "data");
         }
     }
 };
