@@ -87,9 +87,6 @@ NodeConstants::ProcessResult GRNode::process()
 
             Averaging::average<PartialSet>(dissolve().processingModuleData(), std::format("{}//OriginalGR", cfg->name()),
                                            name(), averagingLength_.value().asDouble(), averagingScheme_);
-
-            // Re-set the object names and fingerprints of the partials
-            originalgr_.setFingerprint(currentFingerprint);
         }
         */
 
@@ -116,6 +113,7 @@ NodeConstants::ProcessResult GRNode::process()
         return NodeConstants::ProcessResult::Failed;
 
     unweightedGR().setEffectiveDensity(effectiveDensity());
+    unweightedGR().speciesPopulations() = speciesPopulations();
 
     return NodeConstants::ProcessResult::Success;
 }

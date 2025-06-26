@@ -17,4 +17,5 @@ enum NormalisationType
 };
 // Return enum option info for NormalisationType
 EnumOptions<NormalisationType> normalisationTypes();
+EnumOptions<NormalisationType> getEnumOptions(NormalisationType);
 } // namespace StructureFactors
