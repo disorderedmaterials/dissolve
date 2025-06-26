@@ -12,10 +12,10 @@
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
-PartialSet::PartialSet(const SpeciesPopulations &speciesPopulations)
-    : speciesPopulations_(speciesPopulations)
+PartialSet::PartialSet(const SpeciesPopulations& speciesPopulations)
+    : speciesPopulations_(speciesPopulations) {}
 
-          PartialSet::~PartialSet()
+PartialSet::~PartialSet()
 {
     fullHistograms_.clear();
     boundHistograms_.clear();
