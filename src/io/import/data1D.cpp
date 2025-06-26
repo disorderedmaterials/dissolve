@@ -21,6 +21,18 @@ Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1D
     setUpKeywords();
 }
 
+// Return enum option info for Data1DImportFormat
+EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::data1DImportFormat()
+{
+    return EnumOptions<Data1DImportFormat>("Data1DImportFormat", {{Data1DImportFormat::XY, "XY"},
+                                                                  {Data1DImportFormat::Histogram, "Histogram"},
+                                                                  {Data1DImportFormat::GudrunMint, "GudrunMint"}});
+}
+EnumOptions<Data1DImportFileFormat::Data1DImportFormat> getEnumOptions(Data1DImportFileFormat::Data1DImportFormat)
+{
+    return Data1DImportFileFormat::data1DImportFormat();
+}
+
 /*
  * Keyword Options
  */

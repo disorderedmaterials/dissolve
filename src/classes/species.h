@@ -8,6 +8,7 @@
 #include "classes/box.h"
 #include "classes/cellArray.h"
 #include "classes/isotopologue.h"
+#include "classes/isotopologueWeight.h"
 #include "classes/speciesAngle.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"

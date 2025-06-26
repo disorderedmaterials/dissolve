@@ -271,7 +271,7 @@ bool GRNode::calculateGRCells(const ProcessPool &procPool, Configuration *cfg, P
 PartialSet &GRNode::originalGR(Configuration *cfg, const double rdfRange, const double rdfBinWidth)
 {
     if (!originalgr_)
-        originalgr_.emplace();
+        originalgr_.emplace(speciesPopulations());
     originalgr_.value().setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
 
     return originalgr_.value();
@@ -281,7 +281,7 @@ PartialSet &GRNode::originalGR(Configuration *cfg, const double rdfRange, const 
 PartialSet &GRNode::unweightedGR()
 {
     if (!unweightedGR_)
-        unweightedGR_.emplace();
+        unweightedGR_.emplace(speciesPopulations());
 
     return unweightedGR_.value();
 }
@@ -290,7 +290,7 @@ PartialSet &GRNode::unweightedGR()
 PartialSet &GRNode::summedUnweightedGR()
 {
     if (!summedUnweightedGR_)
-        summedUnweightedGR_.emplace();
+        summedUnweightedGR_.emplace(speciesPopulations());
 
     return summedUnweightedGR_.value();
 }
@@ -322,7 +322,7 @@ double GRNode::effectiveDensity() const
 }
 
 // Calculate and return used species populations based on target Configurations
-std::vector<std::pair<const Species *, double>> GRNode::speciesPopulations() const
+SpeciesPopulations GRNode::speciesPopulations() const
 {
     std::vector<std::pair<const Species *, double>> populations;
 
@@ -475,8 +475,6 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
      * Partials are now up-to-date
      */
 
-    originalgr.setFingerprint(std::format("{}", cfg->contentsVersion()));
-
     return true;
 }
 
@@ -598,7 +596,6 @@ bool GRNode::sumUnweightedGR(const ProcessPool &procPool, std::string_view targe
 
         summedUnweightedGR.addPartials(unweightedGR(), weight);
     }
-    summedUnweightedGR.setFingerprint(fingerprint);
 
     return true;
 }

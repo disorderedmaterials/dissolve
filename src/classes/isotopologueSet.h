@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include "classes/coreData.h"
 #include "classes/isotopologues.h"
 #include "templates/optionalRef.h"
 #include <vector>
@@ -19,6 +20,8 @@ class IsotopologueSet : public Serialisable<const CoreData &>
     public:
     IsotopologueSet() = default;
     ~IsotopologueSet() = default;
+    // TODO: Improve equality operator
+    bool operator==(const IsotopologueSet &other) { return this == &other; }
 
     /*
      * Data

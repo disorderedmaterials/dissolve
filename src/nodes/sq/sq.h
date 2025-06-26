@@ -33,7 +33,7 @@ class SQNode : public Node
     // Unweighted g(r)
     PartialSet *unweightedGR_{nullptr};
     // Unweighted S(Q)
-    PartialSet unweightedSQ_;
+    std::optional<PartialSet> unweightedSQ_;
     // Number of historical partial sets to combine into final partials
     std::optional<Number> averagingLength_;
     // Weighting scheme to use when averaging partials
@@ -48,8 +48,6 @@ class SQNode : public Node
     Number qMax_{30.0};
     // Minimum Q for calculated S(Q)
     Number qMin_{0.01};
-    // Effective density
-    double rho_;
     // Whether to save partials to disk after calculation
     bool save_{false};
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
