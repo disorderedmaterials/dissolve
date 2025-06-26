@@ -173,38 +173,6 @@ class Node : public Serialisable<>
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
-    // Add bounded input parameter
-    template <class T>
-    std::shared_ptr<ParameterBase> addBoundedInput(std::string_view inputName, std::string_view description, T &data,
-                                                   std::optional<T> lower = {}, std::optional<T> upper = {},
-                                                   std::optional<T> step = {})
-    {
-        if (findInput(inputName))
-            Messenger::exception("Input parameter '{}' already exists, and can't be added again.", inputName);
-
-        auto param = inputs_
-                         .emplace(std::make_pair(inputName, std::make_shared<BoundedParameter<T>>(this, inputName, description,
-                                                                                                  data, lower, upper, step)))
-                         .first->second;
-        param->setFlags(ParameterBase::ParameterFlags::Input);
-        return param;
-    }
-    // Add bounded optional input parameter
-    template <class T>
-    std::shared_ptr<ParameterBase> addBoundedOptionalInput(std::string_view inputName, std::string_view description, T &data,
-                                                           T lower, std::string_view textWhenNull, T upper = {}, T step = {})
-    {
-        if (findInput(inputName))
-            Messenger::exception("Input parameter '{}' already exists, and can't be added again.", inputName);
-
-        auto param =
-            inputs_
-                .emplace(std::make_pair(inputName, std::make_shared<BoundedOptionalParameter<T>>(
-                                                       this, inputName, description, data, lower, textWhenNull, upper, step)))
-                .first->second;
-        param->setFlags(ParameterBase::ParameterFlags::Input);
-        return param;
-    }
     // Add output parameter
     template <class T>
     std::shared_ptr<ParameterBase> addOutput(std::string_view outputName, std::string_view description, T &data)
