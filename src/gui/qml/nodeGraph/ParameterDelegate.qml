@@ -12,9 +12,9 @@ DelegateChooser {
         roleValue: "bool"
 
         CheckBox {
+            Layout.alignment: Qt.AlignRight
             Layout.column: 2
             Layout.row: index
-            Layout.alignment: Qt.AlignRight
             checked: param
         }
     }
@@ -22,17 +22,17 @@ DelegateChooser {
         roleValue: "number"
 
         SpinBox {
+            Layout.alignment: Qt.AlignRight
             Layout.column: 2
             Layout.row: index
-            Layout.alignment: Qt.AlignRight
             value: param
         }
     }
     DelegateChoice {
         Text {
+            Layout.alignment: Qt.AlignRight
             Layout.column: 2
             Layout.row: index
-            Layout.alignment: Qt.AlignRight
             text: param
         }
     }

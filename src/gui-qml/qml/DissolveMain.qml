@@ -240,8 +240,8 @@ ApplicationWindow {
                     GraphDelegate {
                         rootModel: graphModel
 
-                        onEdgeCreated: function(srcNode, srcOutput, tgtNode, tgtInput) {
-                            graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput)
+                        onEdgeCreated: function (srcNode, srcOutput, tgtNode, tgtInput) {
+                            graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput);
                         }
                     }
                 }
