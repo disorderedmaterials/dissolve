@@ -115,7 +115,7 @@ TEST(ParametersTest, VectorInputOutput)
     auto number3 = n3->findOption("A")->upcast<Number>();
     ASSERT_TRUE(number3);
 
-    // Link all three numbers in to TestA
+    // Link all three numbers in to the TestA vector
     ASSERT_TRUE(root_.addEdge({"Number1", "A", "TestA", "NumberVector"}));
     ASSERT_TRUE(root_.addEdge({"Number2", "A", "TestA", "NumberVector"}));
     ASSERT_TRUE(root_.addEdge({"Number3", "A", "TestA", "NumberVector"}));

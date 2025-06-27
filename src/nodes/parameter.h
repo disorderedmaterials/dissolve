@@ -96,8 +96,10 @@ class ParameterBase : public Serialisable<>
     void setParentUpdateRequired() const;
     // Clear data in the parent node
     void clearDataInParent() const;
-    // Assign the value of another parameter to this one.
+    // Assign the value of another parameter to this one
     virtual bool assign(ParameterBase *other) = 0;
+    // Return whether this parameter accepts the output type of the other
+    virtual bool acceptsOutput(ParameterBase *other) = 0;
     // Access the full parameter from the base
     template <typename DataClass> std::shared_ptr<Parameter<DataClass>> upcast()
     {
@@ -232,6 +234,20 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         }
 
         return true;
+    }
+    // Return whether this parameter accepts the output type of the other
+    bool acceptsOutput(ParameterBase *other) override
+    {
+        if (storedDataType_ == other->storedDataType())
+            return true;
+        else if constexpr (is_instance_of_v<DataClass, std::vector>)
+        {
+            // If we represent a std::vector container we can accept a single data item
+            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
+                return true;
+        }
+
+        return false;
     }
     // Create a parameter link (input - data proxy - output) for this parameter type
     ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription) const override
@@ -393,8 +409,10 @@ class Parameter<Function1DWrapper> : public ParameterBase, public std::enable_sh
     const Function1DWrapper default_;
 
     public:
-    // Assign the value of another parameter to this one.
+    // Assign the value of another parameter to this one
     bool assign(ParameterBase *other) override { return false; }
+    // Return whether this parameter accepts the output type of the other
+    bool acceptsOutput(ParameterBase *other) override { return false; }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return false; }
     // Create a parameter link (input - data proxy - output) for the derived class type

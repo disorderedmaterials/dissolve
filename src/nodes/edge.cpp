@@ -112,7 +112,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     }
 
     // Check that types are compatible
-    if (sourceOutput->storedDataType() != targetInput->storedDataType())
+    if (!targetInput->acceptsOutput(sourceOutput.get()))
         return {};
 
     // Create the edge
