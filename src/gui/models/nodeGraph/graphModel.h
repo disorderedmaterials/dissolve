@@ -64,12 +64,6 @@ class GraphModel : public QObject
     bool connect_(Edge &edge);
     // Remove a connection
     bool disconnect_(Edge &edge);
-    // The currently selected input
-    std::optional<std::tuple<std::string, std::string>> selectedInput_;
-    // The currently selected input
-    std::optional<std::tuple<std::string, std::string>> selectedOutput_;
-    // Connect selected nodes
-    void connectSelected();
 
     Q_SIGNALS:
     void graphChanged();
@@ -78,9 +72,7 @@ class GraphModel : public QObject
     // Remove a node
     void deleteNode(int index);
     // Select a specific output for connection
-    void selectOutput(QString target, QString targetOutput);
-    // Select a specific output for connection
-    void selectInput(QString source, QString sourceInput);
+    void addEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput);
     // public wrapper of connect_
     bool connect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
     // Public wrapper of disconnect_

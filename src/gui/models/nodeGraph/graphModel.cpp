@@ -99,26 +99,10 @@ int GraphModel::nEdges()
     return edges_.rowCount();
 }
 
-void GraphModel::selectInput(QString source, QString sourceInput)
+void GraphModel::addEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput)
 {
-    selectedInput_ = {source.toStdString(), sourceInput.toStdString()};
-    connectSelected();
-}
-
-void GraphModel::selectOutput(QString target, QString targetOutput)
-{
-    selectedOutput_ = {target.toStdString(), targetOutput.toStdString()};
-    connectSelected();
-}
-
-void GraphModel::connectSelected()
-{
-    if (!selectedInput_ || !selectedOutput_)
-        return;
-    EdgeDefinition edge(std::get<0>(*(selectedOutput_)), std::get<1>(*(selectedOutput_)), std::get<0>(*(selectedInput_)),
-                        std::get<1>(*(selectedInput_)));
+    EdgeDefinition edge(srcNode.toStdString(), srcOutput.toStdString(), tgtNode.toStdString(), tgtInput.toStdString());
     edges_.addEdge(edge);
-    selectedInput_ = selectedOutput_ = {};
 }
 
 // public wrapper of connect_

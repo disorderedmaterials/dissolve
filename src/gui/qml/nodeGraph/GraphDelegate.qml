@@ -11,8 +11,7 @@ NodeBox {
     property double midY: y + height / 2
     property variant rootModel
     property double startX: x + width
-    signal outputSelected(name: string, label: string)
-    signal inputSelected(name: string, label: string)
+    signal edgeCreated(srcNode: string, srcOutput: string, tgtNode: string, tgtInput: string)
 
     image: icon
     nodeType: name
@@ -54,9 +53,7 @@ NodeBox {
                     DropArea {
                         anchors.fill: parent
                         onDropped: function(event) {
-                            inputSelected(parent.nodeName, parent.title)
-                            outputSelected(event.source.parent.nodeName, event.source.parent.title)
-
+                            edgeCreated(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, parent.title)
                         }
                     }
                     MouseArea {
@@ -126,9 +123,7 @@ NodeBox {
                     DropArea {
                         anchors.fill: parent
                         onDropped: function(event) {
-                            outputSelected(parent.nodeName, parent.title)
-                            inputSelected(event.source.parent.nodeName, event.source.parent.title)
-
+                            edgeCreated(parent.nodeName, parent.title, event.source.parent.nodeName, event.source.parent.title)
                         }
                     }
                     MouseArea {
