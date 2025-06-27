@@ -36,6 +36,8 @@ NodeBox {
                 model: inputs
                 Shape {
                     property string title
+                    property string nodeName
+                    nodeName: root.nodeType
                     title: name
                     width: 20
                     height: 20
@@ -49,11 +51,20 @@ NodeBox {
                         PathLine { x: 0; y: 10 }
                         PathLine { x: 20; y: 0 }
                     }
+                    DropArea {
+                        anchors.fill: parent
+                        onDropped: function(event) {
+                            inputSelected(parent.nodeName, parent.title)
+                            outputSelected(event.source.parent.nodeName, event.source.parent.title)
+
+                        }
+                    }
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: {
-                            inputSelected(root.nodeType, title);
-                        }
+                        drag.target: this
+                        Drag.active: drag.active
+                        Drag.proposedAction: Qt.LinkAction
+                        Drag.dragType: Drag.Automatic
                     }
                 }
                 Component.onCompleted: {
@@ -97,6 +108,8 @@ NodeBox {
                 model: outputs
                 Shape {
                     property string title
+                    property string nodeName
+                    nodeName: root.nodeType
                     title: name
                     width: 20
                     height: 20
@@ -110,11 +123,20 @@ NodeBox {
                         PathLine { x: 20; y: 10 }
                         PathLine { x: 0; y: 0 }
                     }
+                    DropArea {
+                        anchors.fill: parent
+                        onDropped: function(event) {
+                            outputSelected(parent.nodeName, parent.title)
+                            inputSelected(event.source.parent.nodeName, event.source.parent.title)
+
+                        }
+                    }
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: {
-                            outputSelected(root.nodeType, title);
-                        }
+                        drag.target: this
+                        Drag.active: drag.active
+                        Drag.proposedAction: Qt.LinkAction
+                        Drag.dragType: Drag.Automatic
                     }
                 }
 
