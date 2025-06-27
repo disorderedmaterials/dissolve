@@ -40,7 +40,46 @@ TEST(ParametersTest, OptionalPointerOutput)
     EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Success);
 
     // Double-check the value of the pointer for sanity's sake
-    EXPECT_EQ(a->optionalConfiguration().operator->(), configInputB->get<Configuration*>());
+    EXPECT_EQ(a->optionalConfiguration().operator->(), configInputB->get<Configuration *>());
+}
+
+TEST(ParametersTest, VectorParameter)
+{
+    CoreData coreData_;
+    Dissolve dissolve_(coreData_);
+    DissolveGraph root_(dissolve_);
+
+    // Create a couple of TestNodes
+    auto *a = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestA"));
+    ASSERT_TRUE(a);
+    auto numbersABase = a->findInput("NumberVector");
+    ASSERT_TRUE(numbersABase);
+    auto numbersA = a->findInput("NumberVector")->upcast<std::vector<Number>>();
+    ASSERT_TRUE(numbersA);
+
+    // Try to set the base class with a vector
+    EXPECT_NO_THROW(numbersABase->set(std::vector<Number>{{1.0}, {2.0}, {3.0}}));
+
+    // We cannot set a vector from a single correctly-typed element, but this is probably only useful in unit tests anyway
+    EXPECT_ANY_THROW(numbersABase->set(Number{1.0}));
+
+    // Create a Number node
+    auto n1 = dynamic_cast<NumberNode *>(root_.addNode(std::make_unique<NumberNode>(&root_), "Number1"));
+    ASSERT_TRUE(n1);
+    auto number1 = n1->findOption("A")->upcast<Number>();
+    number1->set(Number{1.0});
+
+    // Assign the number node to the vector
+    EXPECT_TRUE(numbersA->assign(number1.get()));
+
+    // Assign another number
+    number1->set(Number{4.0});
+    EXPECT_TRUE(numbersA->assign(number1.get()));
+
+    // Check vector contents
+    ASSERT_EQ(numbersA->getData().size(), 5);
+    EXPECT_DOUBLE_EQ(numbersA->getData()[3].asDouble(), 1.0);
+    EXPECT_DOUBLE_EQ(numbersA->getData()[4].asDouble(), 4.0);
 }
 
 TEST(ParametersTest, VectorInputOutput)

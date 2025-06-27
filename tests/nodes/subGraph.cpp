@@ -43,8 +43,8 @@ class SubGraphTest : public ::testing::Test
         xB_ = x_->findInput("B")->upcast<Number>();
         ASSERT_TRUE(xA_);
         ASSERT_TRUE(xB_);
-        xA_->set(1);
-        xB_->set(2);
+        xA_->set(Number{1});
+        xB_->set(Number{2});
 
         // Create subgraph GraphA
         graphA_ = dynamic_cast<Graph *>(root_.createNode("Graph", "GraphA"));
@@ -59,8 +59,8 @@ class SubGraphTest : public ::testing::Test
         yB_ = y_->findInput("B")->upcast<Number>();
         ASSERT_TRUE(yA_);
         ASSERT_TRUE(yB_);
-        yA_->set(3);
-        yB_->set(4);
+        yA_->set(Number{3});
+        yB_->set(Number{4});
         z_ = dynamic_cast<AddNode *>(graphA_->createNode("Add", "z"));
         ASSERT_TRUE(z_);
         ASSERT_EQ(z_->name(), "z");
@@ -71,7 +71,7 @@ class SubGraphTest : public ::testing::Test
         ASSERT_EQ(w_->name(), "w");
         wB_ = w_->findInput("B")->upcast<Number>();
         ASSERT_TRUE(wB_);
-        wB_->set(5);
+        wB_->set(Number{5});
     }
 
     protected:
@@ -155,7 +155,7 @@ TEST_F(SubGraphTest, Flow)
     EXPECT_EQ(w_->getOutputValue<Number>("Result").asInteger(), 15);
 
     // Change value in 'x' and run w again - all nodes should update
-    xA_->set(3);
+    xA_->set(Number{3});
     EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(x_->versionIndex(), 1);
     EXPECT_EQ(y_->versionIndex(), 0);
@@ -167,7 +167,7 @@ TEST_F(SubGraphTest, Flow)
     EXPECT_EQ(w_->getOutputValue<Number>("Result").asInteger(), 17);
 
     // Change value in 'y' and run w again - y, z, and w should update
-    yA_->set(5);
+    yA_->set(Number{5});
     EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(x_->versionIndex(), 1);
     EXPECT_EQ(y_->versionIndex(), 1);
@@ -179,7 +179,7 @@ TEST_F(SubGraphTest, Flow)
     EXPECT_EQ(w_->getOutputValue<Number>("Result").asInteger(), 19);
 
     // Change value in 'w' and run w again - only w should update
-    wB_->set(7);
+    wB_->set(Number{7});
     EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(x_->versionIndex(), 1);
     EXPECT_EQ(y_->versionIndex(), 1);

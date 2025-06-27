@@ -18,7 +18,10 @@ class ParameterBase;
 template <typename T> class Parameter;
 template <typename T> class PointerParameter;
 template <typename T> class OptionalPointerParameter;
-template <typename T> class VectorParameter;
+
+// Template functions to determine if a given derives from a specific base
+template <class T, template <class...> class U> inline constexpr bool is_instance_of_v = std::false_type{};
+template <template <class...> class U, class... Vs> inline constexpr bool is_instance_of_v<U<Vs...>, U> = std::true_type{};
 
 // Parameter Proxy
 template <class T> class ParameterProxy
@@ -111,14 +114,28 @@ class ParameterBase : public Serialisable<>
     {
         // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type
         if (std::type_index(typeid(DataClass)) != storedDataType_)
-            throw(std::runtime_error(std::format("ParameterBase::get() called with wrong type ({} vs {})\n",
-                                                 std::type_index(typeid(DataClass)).name(), storedDataType_.name())));
+            throw(std::runtime_error(std::format("ParameterBase::get() called with wrong type ({} vs {}), name = {}\n",
+                                                 std::type_index(typeid(DataClass)).name(), storedDataType_.name(), name_)));
 
         // Upcast to Parameter<T> (common base of all parameter types)
         auto cast = dynamic_cast<Parameter<DataClass> *>(this);
         if (!cast)
-            throw(std::runtime_error(std::format("ParameterBase::get() failed to cast.\n")));
+            throw(std::runtime_error(std::format("ParameterBase::get() failed to cast, name = {}.\n", name_)));
         return cast->getData();
+    }
+    // Set the parameter's value
+    template <typename DataClass> void set(const DataClass &data)
+    {
+        // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type
+        if (std::type_index(typeid(DataClass)) != storedDataType_)
+            throw(std::runtime_error(std::format("ParameterBase::set() called with wrong type ({} vs {}), name = {}\n",
+                                                 std::type_index(typeid(DataClass)).name(), storedDataType_.name(), name_)));
+
+        // Upcast to Parameter<T> (common base of all parameter types)
+        auto cast = dynamic_cast<Parameter<DataClass> *>(this);
+        if (!cast)
+            throw(std::runtime_error(std::format("ParameterBase::set() failed to cast, name = {}.\n", name_)));
+        cast->setData(data);
     }
     // Create a parameter link (input - data proxy - output) for the derived class type
     virtual ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription = "") const = 0;
@@ -162,21 +179,26 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     // Parameter proxy data (if a ParameterLink)
     std::shared_ptr<ParameterProxy<DataClass>> proxyData_;
 
+    private:
+    // Perform any updates after a successful setData()
+    void updateAfterSet()
+    { // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
+        if (!flags_.isSet(NoUpdate))
+            setParentUpdateRequired();
+
+        // Setting some parameters forces any local data to be cleared
+        if (flags_.isSet(ClearData))
+            clearDataInParent();
+    }
+
     public:
     // Set the parameter value
-    virtual void set(const DataClass &value)
+    virtual void setData(const DataClass &value)
     {
         if (data_ != value)
         {
             data_ = value;
-
-            // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
-            if (!flags_.isSet(NoUpdate))
-                setParentUpdateRequired();
-
-            // Setting some parameters forces any local data to be cleared
-            if (flags_.isSet(ClearData))
-                clearDataInParent();
+            updateAfterSet();
         }
     }
     // Return the parameter value
@@ -186,7 +208,21 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override
     {
-        set(other->get<DataClass>());
+        // If the stored data types are the same then we can just do a straight assignment
+        if (storedDataType_ == other->storedDataType())
+            setData(other->get<DataClass>());
+        else if constexpr (is_instance_of_v<DataClass, std::vector>)
+        {
+            // If we represent a std::vector container we can conditionally check for a single data item being passed
+            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
+            {
+                data_.push_back(other->get<typename DataClass::value_type>());
+
+                updateAfterSet();
+            }
+            else
+                return false;
+        }
 
         // If we are a pointer type, getting a nullptr is disallowed
         if constexpr (std::is_pointer<DataClass>())
@@ -307,7 +343,7 @@ template <typename ClassPtr> class PointerParameter : public Parameter<ClassPtr>
 
     public:
     // Set the object
-    void set(const ClassPtr &value) override{};
+    void setData(const ClassPtr &value) override{};
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override { return false; }
 };
@@ -336,65 +372,6 @@ template <typename ClassPtr> class OptionalPointerParameter : public Parameter<C
     // Return the parameter value
     ClassPtr getData() override { return object_.has_value() ? &object_.value() : nullptr; }
 };
-
-//// VectorParameter, assembling a vector of a data type
-// template <typename VectorDataClass> class VectorParameter : public Parameter<VectorDataClass>
-//{
-//     public:
-//     VectorParameter(Node *parent, std::string_view name, std::string_view description, VectorDataClass &dataVector)
-//         : Parameter<VectorDataClass>(parent, name, description, dataVector), dataVector_(dataVector)
-//     {
-//     }
-//     ~VectorParameter() override = default;
-//
-//     /*
-//      * Definition
-//      */
-//     public:
-//     // Fundamental type of the parameter
-//     constexpr bool isType(ParameterBase::ParameterType type) const override { return type ==
-//     ParameterBase::ParameterType::Vector; }
-//
-//     /*
-//      * Data
-//      */
-//     protected:
-//     // Reference to vector object
-//     VectorDataClass &dataVector_;
-//
-//     public:
-//     // Set the parameter value
-//     void set(const DataClass &value)
-//     {
-//         if (!dataVector_.find(value))
-//         {
-//             dataVector_.push_back(value);
-//
-//             // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
-//             if (!ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::NoUpdate))
-//                 ParameterBase::setParentUpdateRequired();
-//
-//             // Setting some parameters forces any local data to be cleared
-//             if (ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::ClearData))
-//                 ParameterBase::clearDataInParent();
-//         }
-//     }
-//     // Set the parameter value
-//     void set(const VectorDataClass &value) override
-//     {
-//         dataVector_ = value;
-//
-//         // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
-//         if (!ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::NoUpdate))
-//             ParameterBase::setParentUpdateRequired();
-//
-//         // Setting some parameters forces any local data to be cleared
-//         if (ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::ClearData))
-//             ParameterBase::clearDataInParent();
-//     }
-//     // Return the data
-//     VectorDataClass &getData() override { return dataVector_; }
-// };
 
 // Template specialisation for non-defaulted type Function1DWrapper
 template <>

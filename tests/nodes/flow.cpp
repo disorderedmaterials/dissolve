@@ -44,8 +44,8 @@ class GraphFlowTest : public ::testing::Test
         ASSERT_TRUE(xA_);
         ASSERT_TRUE(xB_);
         ASSERT_TRUE(xResult_);
-        xA_->set(1);
-        xB_->set(2);
+        xA_->set(Number{1});
+        xB_->set(Number{2});
 
         ASSERT_TRUE(y_);
         yA_ = y_->findInput("A")->upcast<Number>();
@@ -54,8 +54,8 @@ class GraphFlowTest : public ::testing::Test
         ASSERT_TRUE(yA_);
         ASSERT_TRUE(yB_);
         ASSERT_TRUE(yResult_);
-        yA_->set(3);
-        yB_->set(4);
+        yA_->set(Number{3});
+        yB_->set(Number{4});
 
         ASSERT_TRUE(z_);
         zA_ = z_->findInput("A")->upcast<Number>();
@@ -156,7 +156,7 @@ TEST_F(GraphFlowTest, SetInput)
     EXPECT_EQ(y_->versionIndex(), 0);
 
     // Set the input A of 'x' manually. This should invalidate 'x' alone.
-    xA_->set(0);
+    xA_->set(Number{0});
     EXPECT_FALSE(x_->isUpToDate());
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
@@ -170,7 +170,7 @@ TEST_F(GraphFlowTest, SetInput)
     EXPECT_EQ(zResult_->getData().asInteger(), 9);
 
     // One more time
-    xB_->set(10);
+    xB_->set(Number{10});
     EXPECT_FALSE(x_->isUpToDate());
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(x_->versionIndex(), 2);
@@ -179,7 +179,7 @@ TEST_F(GraphFlowTest, SetInput)
     EXPECT_EQ(zResult_->getData().asInteger(), 17);
 
     // And now for y
-    yB_->set(5);
+    yB_->set(Number{5});
     EXPECT_TRUE(x_->isUpToDate());
     EXPECT_FALSE(y_->isUpToDate());
     EXPECT_FALSE(z_->isUpToDate());
