@@ -40,7 +40,7 @@ TEST(ParametersTest, OptionalPointerOutput)
     EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Success);
 
     // Double-check the value of the pointer for sanity's sake
-    EXPECT_EQ(a->optionalConfiguration().operator->(), configInputB->get());
+    EXPECT_EQ(a->optionalConfiguration().operator->(), configInputB->get<Configuration*>());
 }
 
 TEST(ParametersTest, VectorInputOutput)
@@ -52,12 +52,12 @@ TEST(ParametersTest, VectorInputOutput)
     // Create a couple of TestNodes
     auto *a = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestA"));
     ASSERT_TRUE(a);
-    auto createOptA = a->findInput("CreateConfiguration")->upcast<bool>();
-    ASSERT_TRUE(createOptA);
+    auto numbersA = a->findInput("NumberVector")->upcast<std::vector<Number>>();
+    ASSERT_TRUE(numbersA);
     auto *b = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestB"));
     ASSERT_TRUE(b);
-    auto configInputB = b->findInput("ConfigurationInput")->upcast<Configuration *>();
-    ASSERT_TRUE(configInputB);
+    auto numbersB = b->findInput("NumberVector")->upcast<std::vector<Number>>();
+    ASSERT_TRUE(numbersB);
 
     // Create an edge linking the vector output from A to the vector input of B
     ASSERT_TRUE(root_.addEdge({"TestA", "NumberVector", "TestB", "NumberVector"}));

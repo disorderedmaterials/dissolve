@@ -40,15 +40,6 @@ struct ParameterLink
 class ParameterBase : public Serialisable<>
 {
     public:
-    // Parameter Types
-    enum class ParameterType
-    {
-        Standard, /* A standard parameter with one-to-one mapping between set(), get(), and data_ */
-        Vector, /* A parameter managing a std::vector of the data class T */
-        PointerFromObject,  /* A parameter which returns a pointer from a referenced object */
-        OptionalPointerFromObject /* A parameter which returns a pointer from a reference optional */
-
-    };
     ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType);
 
     // Parameter Flags
@@ -65,7 +56,6 @@ class ParameterBase : public Serialisable<>
      * Definition
      */
     protected:
-    const ParameterBase::ParameterType type_{ParameterBase::ParameterType::Standard};
     // The owner of the parameter
     Node *parent_;
     // Name of the parameter
@@ -78,8 +68,6 @@ class ParameterBase : public Serialisable<>
     Flags<ParameterBase::ParameterFlags> flags_;
 
     public:
-    // Fundamental type of the parameter
-    virtual constexpr bool isType(ParameterBase::ParameterType type) const = 0;
     // Set node parent
     void setParent(Node *parent);
     // Return the parameter name
@@ -127,7 +115,7 @@ class ParameterBase : public Serialisable<>
                                                  std::type_index(typeid(DataClass)).name(), storedDataType_.name())));
 
         // Upcast to Parameter<T> (common base of all parameter types)
-        auto cast = static_cast<Parameter<DataClass> *>(this);
+        auto cast = dynamic_cast<Parameter<DataClass> *>(this);
         if (!cast)
             throw(std::runtime_error(std::format("ParameterBase::get() failed to cast.\n")));
         return cast->getData();
@@ -162,13 +150,6 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         proxyData_ = proxy;
     }
     virtual ~Parameter() = default;
-
-    /*
-     * Definition
-     */
-    public:
-    // Fundamental type of the parameter
-    constexpr bool isType(ParameterBase::ParameterType type) const override { return type == ParameterBase::ParameterType::Standard; }
 
     /*
      * Data
@@ -318,13 +299,6 @@ template <typename ClassPtr> class PointerParameter : public Parameter<ClassPtr>
     ~PointerParameter() override = default;
 
     /*
-     * Definition
-     */
-    public:
-    // Fundamental type of the parameter
-    constexpr bool isType(ParameterBase::ParameterType type) const override { return type == ParameterBase::ParameterType::PointerFromObject; }
-
-    /*
      * Data
      */
     protected:
@@ -350,13 +324,6 @@ template <typename ClassPtr> class OptionalPointerParameter : public Parameter<C
     ~OptionalPointerParameter() override = default;
 
     /*
-     * Definition
-     */
-    public:
-    // Fundamental type of the parameter
-    constexpr bool isType(ParameterBase::ParameterType type) const override { return type == ParameterBase::ParameterType::OptionalPointerFromObject; }
-
-    /*
      * Data
      */
     protected:
@@ -370,63 +337,64 @@ template <typename ClassPtr> class OptionalPointerParameter : public Parameter<C
     ClassPtr getData() override { return object_.has_value() ? &object_.value() : nullptr; }
 };
 
-// VectorParameter, assembling a vector of a data type
-template <typename VectorDataClass> class VectorParameter : public Parameter<VectorDataClass>
-{
-    public:
-    VectorParameter(Node *parent, std::string_view name, std::string_view description, VectorDataClass &dataVector)
-        : Parameter<VectorDataClass>(parent, name, description, dataVector), dataVector_(dataVector)
-    {
-    }
-    ~VectorParameter() override = default;
-
-    /*
-     * Definition
-     */
-    public:
-    // Fundamental type of the parameter
-    constexpr bool isType(ParameterBase::ParameterType type) const override { return type == ParameterBase::ParameterType::Vector; }
-
-    /*
-     * Data
-     */
-    protected:
-    // Reference to vector object
-    VectorDataClass &dataVector_;
-
-    public:
-    // Set the parameter value
-    void set(const DataClass &value)
-    {
-        if (!dataVector_.find(value))
-        {
-            dataVector_.push_back(value);
-
-            // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
-            if (!ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::NoUpdate))
-                ParameterBase::setParentUpdateRequired();
-
-            // Setting some parameters forces any local data to be cleared
-            if (ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::ClearData))
-                ParameterBase::clearDataInParent();
-        }
-    }
-    // Set the parameter value
-    void set(const VectorDataClass &value) override
-    {
-        dataVector_ = value;
-
-        // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
-        if (!ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::NoUpdate))
-            ParameterBase::setParentUpdateRequired();
-
-        // Setting some parameters forces any local data to be cleared
-        if (ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::ClearData))
-            ParameterBase::clearDataInParent();
-    }
-    // Return the data
-    VectorDataClass &getData() override { return dataVector_; }
-};
+//// VectorParameter, assembling a vector of a data type
+// template <typename VectorDataClass> class VectorParameter : public Parameter<VectorDataClass>
+//{
+//     public:
+//     VectorParameter(Node *parent, std::string_view name, std::string_view description, VectorDataClass &dataVector)
+//         : Parameter<VectorDataClass>(parent, name, description, dataVector), dataVector_(dataVector)
+//     {
+//     }
+//     ~VectorParameter() override = default;
+//
+//     /*
+//      * Definition
+//      */
+//     public:
+//     // Fundamental type of the parameter
+//     constexpr bool isType(ParameterBase::ParameterType type) const override { return type ==
+//     ParameterBase::ParameterType::Vector; }
+//
+//     /*
+//      * Data
+//      */
+//     protected:
+//     // Reference to vector object
+//     VectorDataClass &dataVector_;
+//
+//     public:
+//     // Set the parameter value
+//     void set(const DataClass &value)
+//     {
+//         if (!dataVector_.find(value))
+//         {
+//             dataVector_.push_back(value);
+//
+//             // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
+//             if (!ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::NoUpdate))
+//                 ParameterBase::setParentUpdateRequired();
+//
+//             // Setting some parameters forces any local data to be cleared
+//             if (ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::ClearData))
+//                 ParameterBase::clearDataInParent();
+//         }
+//     }
+//     // Set the parameter value
+//     void set(const VectorDataClass &value) override
+//     {
+//         dataVector_ = value;
+//
+//         // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
+//         if (!ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::NoUpdate))
+//             ParameterBase::setParentUpdateRequired();
+//
+//         // Setting some parameters forces any local data to be cleared
+//         if (ParameterBase::flags_.isSet(ParameterBase::ParameterFlags::ClearData))
+//             ParameterBase::clearDataInParent();
+//     }
+//     // Return the data
+//     VectorDataClass &getData() override { return dataVector_; }
+// };
 
 // Template specialisation for non-defaulted type Function1DWrapper
 template <>
@@ -437,13 +405,6 @@ class Parameter<Function1DWrapper> : public ParameterBase, public std::enable_sh
         : ParameterBase(parent, name, description, std::type_index(typeid(Function1DWrapper))), data_(value), default_(value)
     {
     }
-
-    /*
-     * Definition
-     */
-    public:
-    // Fundamental type of the parameter
-    constexpr bool isType(ParameterBase::ParameterType type) const override { return type == ParameterBase::ParameterType::Standard; }
 
     /*
      * Data

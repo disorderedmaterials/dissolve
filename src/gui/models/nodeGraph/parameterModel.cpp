@@ -29,15 +29,15 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
         case DESCRIPTION:
             return QString::fromStdString(std::string(it->second->description()));
         case DATA:
-            if (it->second->type() == typeid(Number))
-                return QVariant::fromValue(it->second->upcast<Number>()->get().asInteger());
-            if (it->second->type() == typeid(bool))
-                return QVariant::fromValue(it->second->upcast<bool>()->get());
+            if (it->second->storedDataType() == typeid(Number))
+                return QVariant::fromValue(it->second->get<Number>().asInteger());
+            if (it->second->storedDataType() == typeid(bool))
+                return QVariant::fromValue(it->second->get<bool>());
             return QString::fromStdString("Unrepresentable");
         case TYPE:
-            if (it->second->type() == typeid(Number))
+            if (it->second->storedDataType() == typeid(Number))
                 return "number";
-            if (it->second->type() == typeid(bool))
+            if (it->second->storedDataType() == typeid(bool))
                 return "bool";
             return "unknown";
 

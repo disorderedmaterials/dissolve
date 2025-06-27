@@ -173,20 +173,6 @@ class Node : public Serialisable<>
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
-    // Add vector input parameter
-    template <class T>
-    std::shared_ptr<ParameterBase> addVectorInput(std::string_view inputName, std::string_view description,
-                                                  std::vector<T> &data)
-    {
-        if (findInput(inputName))
-            Messenger::exception("Input (vector) parameter '{}' already exists, and can't be added again.", inputName);
-
-        auto param =
-            inputs_.emplace(std::make_pair(inputName, std::make_shared<VectorParameter<T>>(this, inputName, description, data)))
-                .first->second;
-        param->setFlags(ParameterBase::ParameterFlags::Input);
-        return param;
-    }
     // Add output parameter
     template <class T>
     std::shared_ptr<ParameterBase> addOutput(std::string_view outputName, std::string_view description, T &data)
@@ -243,14 +229,8 @@ class Node : public Serialisable<>
         if (!output)
             Messenger::exception("Input '{}' does not exist.\n", inputName);
 
-        // Get the upcast parameter
-        auto upcast = output->upcast<T>();
-        if (!upcast)
-            Messenger::exception("Attempted to cast input '{}' to wrong type: is {}, requested {}.\n", inputName,
-                                 output->storedDataType().name(), std::type_index(typeid(T)).name());
-
         // Return the parameter value
-        return upcast->get();
+        return output->get<T>();
     }
     // Return named output parameter if it exists
     std::shared_ptr<ParameterBase> findOutput(std::string_view outputName) const;
@@ -263,14 +243,7 @@ class Node : public Serialisable<>
         if (!output)
             Messenger::exception("Output '{}' does not exist.\n", outputName);
 
-        // Get the upcast parameter
-        auto upcast = output->upcast<T>();
-        if (!upcast)
-            Messenger::exception("Attempted to cast output '{}' to wrong type: is {}, requested {}.\n", outputName,
-                                 output->storedDataType().name(), std::type_index(typeid(T)).name());
-
-        // Return the parameter value
-        return upcast->get();
+        return output->get<T>();
     }
     // Return named option if it exists
     std::shared_ptr<ParameterBase> findOption(std::string_view name) const;

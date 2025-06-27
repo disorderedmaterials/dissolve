@@ -91,7 +91,7 @@ TEST_F(GraphFlowTest, Basic)
     EXPECT_EQ(x_->versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(x_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(x_->versionIndex(), 0);
-    EXPECT_EQ(xResult_->get().asInteger(), 3);
+    EXPECT_EQ(xResult_->getData().asInteger(), 3);
     EXPECT_TRUE(x_->isUpToDate());
 
     EXPECT_TRUE(y_->inputsAreValid());
@@ -99,7 +99,7 @@ TEST_F(GraphFlowTest, Basic)
     EXPECT_EQ(y_->versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(y_->versionIndex(), 0);
-    EXPECT_EQ(yResult_->get().asInteger(), 7);
+    EXPECT_EQ(yResult_->getData().asInteger(), 7);
     EXPECT_TRUE(y_->isUpToDate());
 
     EXPECT_TRUE(z_->inputsAreValid());
@@ -107,7 +107,7 @@ TEST_F(GraphFlowTest, Basic)
     EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->versionIndex(), 0);
-    EXPECT_EQ(zResult_->get().asInteger(), 0);
+    EXPECT_EQ(zResult_->getData().asInteger(), 0);
     EXPECT_TRUE(z_->isUpToDate());
 
     // Running nodes again should not increase version index since the inputs have no dependencies
@@ -128,7 +128,7 @@ TEST_F(GraphFlowTest, Basic)
     // If we now run z we should use x's output without changing x itself
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->versionIndex(), 0);
-    EXPECT_EQ(zResult_->get().asInteger(), 3);
+    EXPECT_EQ(zResult_->getData().asInteger(), 3);
     EXPECT_EQ(x_->versionIndex(), 0);
 
     // Complete the graph and link y's "Result" output to z's "B" input
@@ -138,7 +138,7 @@ TEST_F(GraphFlowTest, Basic)
     // As before, if we now run z we should use x's and y's output without changing x or y
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->versionIndex(), 0);
-    EXPECT_EQ(zResult_->get().asInteger(), 10);
+    EXPECT_EQ(zResult_->getData().asInteger(), 10);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
 };
@@ -151,7 +151,7 @@ TEST_F(GraphFlowTest, SetInput)
     // Run z - all nodes should update
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->versionIndex(), 0);
-    EXPECT_EQ(zResult_->get().asInteger(), 10);
+    EXPECT_EQ(zResult_->getData().asInteger(), 10);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
 
@@ -167,7 +167,7 @@ TEST_F(GraphFlowTest, SetInput)
     EXPECT_EQ(x_->versionIndex(), 1);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(z_->versionIndex(), 1);
-    EXPECT_EQ(zResult_->get().asInteger(), 9);
+    EXPECT_EQ(zResult_->getData().asInteger(), 9);
 
     // One more time
     xB_->set(10);
@@ -176,7 +176,7 @@ TEST_F(GraphFlowTest, SetInput)
     EXPECT_EQ(x_->versionIndex(), 2);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(z_->versionIndex(), 2);
-    EXPECT_EQ(zResult_->get().asInteger(), 17);
+    EXPECT_EQ(zResult_->getData().asInteger(), 17);
 
     // And now for y
     yB_->set(5);
@@ -187,7 +187,7 @@ TEST_F(GraphFlowTest, SetInput)
     EXPECT_EQ(x_->versionIndex(), 2);
     EXPECT_EQ(y_->versionIndex(), 1);
     EXPECT_EQ(z_->versionIndex(), 3);
-    EXPECT_EQ(zResult_->get().asInteger(), 18);
+    EXPECT_EQ(zResult_->getData().asInteger(), 18);
 }
 
 TEST_F(GraphFlowTest, RemoveEdges)
@@ -198,7 +198,7 @@ TEST_F(GraphFlowTest, RemoveEdges)
     // Run z - all nodes should update
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->versionIndex(), 0);
-    EXPECT_EQ(zResult_->get().asInteger(), 10);
+    EXPECT_EQ(zResult_->getData().asInteger(), 10);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
 
