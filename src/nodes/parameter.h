@@ -152,17 +152,39 @@ class ParameterBase : public Serialisable<>
     virtual void deserialise(const SerialisedValue &node) override { return; }
 };
 
-template <typename StorageClass, > struct ParameterStorage;
+namespace ParameterFactory
+{
+template <typename DataClass>
+std::shared_ptr<ParameterBase> create(Node *parent, std::string_view name, std::string_view description, DataClass &value)
+{
+    return std::make_shared<Parameter<DataClass>>(parent, name, description, value);
+}
+}; // namespace ParameterFactory
 
 // Primary type for a Parameter to a specific DataClass
 template <typename DataClass> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<DataClass>>
 {
     public:
-    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value) requires (!std::is_pointer<DataClass>())
+    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
+        requires(is_instance_of_v<DataClass, std::vector>)
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
     {
     }
-    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value) requires (is_instance_of_v<DataClass,std::vector>)
+    Parameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer<DataClass> &value)
+        requires(std::is_pointer_v<DataClass>())
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(value)
+    {
+        data_ = &value;
+    }
+    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value,
+              std::optional<std::remove_pointer<DataClass>> targetData)
+        requires(std::is_pointer_v<DataClass>())
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(value),
+          optionalSourceReference_(targetData)
+    {
+        data_ = &value;
+    }
+    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
     {
     }
@@ -181,9 +203,11 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
      */
     protected:
     // Reference to target data
-    std::conditional_t<std::is_pointer_v<DataClass>, DataClass*,
-        std::conditional_t<std::is_reference_v<DataClass>, DataClass&, void>> data_;
-    HOW WILL THIS WORK!!!! We are not give the object, and we must retain the type (DataClass*).....
+    DataClass &data_;
+    // Specialised containers, if relevant
+    std::conditional_t<std::is_pointer_v<DataClass>, DataClass *, bool> localPointer_;
+    std::conditional_t<std::is_pointer_v<DataClass>, std::optional<std::remove_pointer<DataClass>>, bool>
+        optionalSourceReference_;
     // Initial value
     const DataClass default_;
     // Parameter proxy data (if a ParameterLink)
@@ -203,8 +227,12 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 
     public:
     // Set the parameter value
-    void setData(const DataClass &value) requires (std::is_pointer<DataClass>()) {}
-    void setData(const DataClass &value) requires (!is_instance_of_v<DataClass, std::vector>)
+    void setData(const DataClass &value)
+        requires(std::is_pointer_v<DataClass>())
+    {
+    }
+    void setData(const DataClass &value)
+        requires(!is_instance_of_v<DataClass, std::vector>)
     {
         if (data_ != value)
         {
@@ -212,7 +240,8 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             updateAfterSet();
         }
     }
-    void setData(const DataClass &value) requires (is_instance_of_v<DataClass, std::vector>)
+    void setData(const DataClass &value)
+        requires(is_instance_of_v<DataClass, std::vector>)
     {
         if (data_ != value)
         {

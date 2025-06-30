@@ -154,9 +154,8 @@ class Node : public Serialisable<>
         if (findInput(optionName))
             Messenger::exception("Option '{}' already exists, and can't be added again.", optionName);
 
-        auto param =
-            options_.emplace(std::make_pair(optionName, std::make_shared<Parameter<T>>(this, optionName, description, data)))
-                .first->second;
+        auto param = options_.emplace(std::make_pair(optionName, ParameterFactory::create(this, optionName, description, data)))
+                         .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
@@ -167,9 +166,8 @@ class Node : public Serialisable<>
         if (findInput(inputName))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", inputName);
 
-        auto param =
-            inputs_.emplace(std::make_pair(inputName, std::make_shared<Parameter<T>>(this, inputName, description, data)))
-                .first->second;
+        auto param = inputs_.emplace(std::make_pair(inputName, ParameterFactory::create(this, inputName, description, data)))
+                         .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
@@ -180,9 +178,8 @@ class Node : public Serialisable<>
         if (findOutput(outputName))
             Messenger::exception("Output parameter '{}' already exists, and can't be added again.", outputName);
 
-        auto param =
-            outputs_.emplace(std::make_pair(outputName, std::make_shared<Parameter<T>>(this, outputName, description, data)))
-                .first->second;
+        auto param = outputs_.emplace(std::make_pair(outputName, ParameterFactory::create(this, outputName, description, data)))
+                         .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Output);
         return param;
     }
