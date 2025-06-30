@@ -79,6 +79,9 @@ add_library(
   copySpeciesTermsDialog.cpp
   copySpeciesTermsDialog.h
   copySpeciesTermsDialog.ui
+  createNanotubeSpeciesDialog.cpp
+  createNanotubeSpeciesDialog.h
+  createNanotubeSpeciesDialog.ui
   dataManagerDialog.cpp
   dataManagerDialog.h
   editSpeciesDialog.cpp
