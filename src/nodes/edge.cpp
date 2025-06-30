@@ -226,8 +226,8 @@ NodeConstants::ProcessResult Edge::pull()
 // Express as a serialisable value
 SerialisedValue Edge::serialise() const { return definition().serialise(); }
 
-// Read values from a serialisable value This is required for the
-// SerialableValue type implementation, but we actually deserialise
+// Read values from a serialisable value. This is required for the
+// SerialisableValue type implementation, but we actually deserialise
 // Edges through an EdgeConnection.  I've added this error to
 // immediately alert us in case this function is ever called.
 void Edge::deserialise(const SerialisedValue &node)
