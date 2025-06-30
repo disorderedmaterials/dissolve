@@ -40,7 +40,7 @@ TEST(ParametersTest, OptionalPointerOutput)
     EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Success);
 
     // Double-check the value of the pointer for sanity's sake
-    EXPECT_EQ(a->optionalConfiguration().operator->(), configInputB->get<Configuration *>());
+    EXPECT_EQ(&a->optionalConfiguration().value(), configInputB->get<Configuration *>());
 }
 
 TEST(ParametersTest, VectorParameter)
@@ -120,4 +120,15 @@ TEST(ParametersTest, VectorInputOutput)
     ASSERT_TRUE(root_.addEdge({"Number2", "A", "TestA", "NumberVector"}));
     ASSERT_TRUE(root_.addEdge({"Number3", "A", "TestA", "NumberVector"}));
 }
+TEST(ParametersTest, BLAH)
+{
+    CoreData coreData_;
+    Dissolve dissolve_(coreData_);
+    DissolveGraph root_(dissolve_);
+
+    // Create a couple of TestNodes
+    auto *a = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestA"));
+    ASSERT_TRUE(a);
+}
+
 } // namespace UnitTest

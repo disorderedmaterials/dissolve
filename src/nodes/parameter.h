@@ -105,11 +105,8 @@ class ParameterBase : public Serialisable<>
     {
         if (std::type_index(typeid(DataClass)) != storedDataType_)
             return nullptr;
-        auto cast1 = dynamic_cast<PointerParameter<DataClass> *>(this);
-        if (cast1)
-            return cast1->shared_from_this();
-        auto cast2 = static_cast<Parameter<DataClass> *>(this);
-        return cast2->shared_from_this();
+        auto cast1 = static_cast<Parameter<DataClass> *>(this);
+        return cast1->shared_from_this();
     }
     // Get the parameter's value
     template <typename DataClass> DataClass get()
@@ -159,6 +156,12 @@ std::shared_ptr<ParameterBase> create(Node *parent, std::string_view name, std::
 {
     return std::make_shared<Parameter<DataClass>>(parent, name, description, value);
 }
+template <typename DataClass>
+std::shared_ptr<ParameterBase> createPointer(Node *parent, std::string_view name, std::string_view description,
+                                             DataClass &fromObject)
+{
+    return std::make_shared<Parameter<DataClass *>>(parent, name, description, fromObject);
+}
 }; // namespace ParameterFactory
 
 // Primary type for a Parameter to a specific DataClass
@@ -167,31 +170,33 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     public:
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
         requires(is_instance_of_v<DataClass, std::vector>)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value),
+          dataRetriever_([&]() { return data_; })
     {
     }
-    Parameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer<DataClass> &value)
-        requires(std::is_pointer_v<DataClass>())
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(value)
+    Parameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<DataClass> &value)
+        requires(std::is_pointer_v<DataClass>)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(nullptr),
+          dataRetriever_([&]() { return &value; })
     {
-        data_ = &value;
     }
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value,
-              std::optional<std::remove_pointer<DataClass>> targetData)
-        requires(std::is_pointer_v<DataClass>())
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(value),
-          optionalSourceReference_(targetData)
+              std::optional<std::remove_pointer_t<DataClass>> &targetData)
+        requires(std::is_pointer_v<DataClass>)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(nullptr),
+          dataRetriever_([&]() { return targetData.has_value() ? &targetData.value() : nullptr; })
     {
         data_ = &value;
     }
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value),
+          dataRetriever_([&]() { return data_; })
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description,
               std::shared_ptr<ParameterProxy<DataClass>> &proxy)
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(proxy->data),
-          default_(proxy->data)
+          default_(proxy->data), dataRetriever_([&]() { return data_; })
     {
         // Store the proxy data smart pointer to preserve the lifetime of the data
         proxyData_ = proxy;
@@ -204,10 +209,11 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     protected:
     // Reference to target data
     DataClass &data_;
-    // Specialised containers, if relevant
-    std::conditional_t<std::is_pointer_v<DataClass>, DataClass *, bool> localPointer_;
-    std::conditional_t<std::is_pointer_v<DataClass>, std::optional<std::remove_pointer<DataClass>>, bool>
-        optionalSourceReference_;
+    // Specialised container for local pointer referencing, if relevant
+    std::conditional_t<std::is_pointer_v<DataClass>, DataClass, bool> localPointer_;
+    // Returner for target data
+    using DataRetriever = std::function<DataClass()>;
+    DataRetriever dataRetriever_;
     // Initial value
     const DataClass default_;
     // Parameter proxy data (if a ParameterLink)
@@ -250,7 +256,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         }
     }
     // Return the parameter value
-    virtual DataClass getData() { return data_; }
+    virtual DataClass getData() { return dataRetriever_(); }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return data_ == default_; }
     // Assign the value of another parameter to this one.
@@ -383,29 +389,6 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             data_ = toml::find<DataClass>(node, "data");
         }
     }
-};
-
-// PointerParameter, returning a pointer from a target object rather than the object itself
-template <typename ClassPtr> class PointerParameter : public Parameter<ClassPtr>
-{
-    public:
-    PointerParameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<ClassPtr> &object)
-        : Parameter<ClassPtr>(parent, name, description, pointer_)
-    {
-        pointer_ = &object;
-    }
-    ~PointerParameter() override = default;
-
-    /*
-     * Data
-     */
-    protected:
-    // Pointer to target object
-    ClassPtr pointer_{nullptr};
-
-    public:
-    // Assign the value of another parameter to this one.
-    bool assign(ParameterBase *other) override { return false; }
 };
 
 // OptionalPointerParameter, returning a pointer from a target object rather than the object itself
