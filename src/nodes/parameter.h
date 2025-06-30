@@ -170,33 +170,32 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     public:
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
         requires(is_instance_of_v<DataClass, std::vector>)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value),
-          dataRetriever_([&]() { return data_; })
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<DataClass> &value)
         requires(std::is_pointer_v<DataClass>)
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(nullptr),
-          dataRetriever_([&]() { return &value; })
+          dataGetter_([&]() { return &value; }), dataSetter_([](const DataClass &value) { return false; })
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value,
               std::optional<std::remove_pointer_t<DataClass>> &targetData)
         requires(std::is_pointer_v<DataClass>)
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(nullptr),
-          dataRetriever_([&]() { return targetData.has_value() ? &targetData.value() : nullptr; })
+          dataGetter_([&]() { return targetData.has_value() ? &targetData.value() : nullptr; }),
+          dataSetter_([](const DataClass &value) { return false; })
     {
         data_ = &value;
     }
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value),
-          dataRetriever_([&]() { return data_; })
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description,
               std::shared_ptr<ParameterProxy<DataClass>> &proxy)
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(proxy->data),
-          default_(proxy->data), dataRetriever_([&]() { return data_; })
+          default_(proxy->data)
     {
         // Store the proxy data smart pointer to preserve the lifetime of the data
         proxyData_ = proxy;
@@ -211,9 +210,21 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     DataClass &data_;
     // Specialised container for local pointer referencing, if relevant
     std::conditional_t<std::is_pointer_v<DataClass>, DataClass, bool> localPointer_;
-    // Returner for target data
-    using DataRetriever = std::function<DataClass()>;
-    DataRetriever dataRetriever_;
+    // Getter for target data, defaulting so simple return of data_ reference member
+    using DataGetter = std::function<DataClass()>;
+    DataGetter dataGetter_{[&]() { return data_; }};
+    // Setter for target data, defaulting to simple 1-to-1 copy as long as equality fails
+    using DataSetter = std::function<bool(const DataClass &value)>;
+    DataSetter dataSetter_{[&](const DataClass &value)
+                           {
+                               if (data_ != value)
+                               {
+                                   data_ = value;
+                                   return true;
+                               }
+                               else
+                                   return false;
+                           }};
     // Initial value
     const DataClass default_;
     // Parameter proxy data (if a ParameterLink)
@@ -233,30 +244,18 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 
     public:
     // Set the parameter value
-    void setData(const DataClass &value)
-        requires(std::is_pointer_v<DataClass>())
+    bool setData(const DataClass &value)
     {
-    }
-    void setData(const DataClass &value)
-        requires(!is_instance_of_v<DataClass, std::vector>)
-    {
-        if (data_ != value)
+        if (dataSetter_(value))
         {
-            data_ = value;
             updateAfterSet();
+            return true;
         }
-    }
-    void setData(const DataClass &value)
-        requires(is_instance_of_v<DataClass, std::vector>)
-    {
-        if (data_ != value)
-        {
-            data_ = value;
-            updateAfterSet();
-        }
+        else
+            return false;
     }
     // Return the parameter value
-    virtual DataClass getData() { return dataRetriever_(); }
+    virtual DataClass getData() { return dataGetter_(); }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return data_ == default_; }
     // Assign the value of another parameter to this one.
@@ -264,7 +263,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     {
         // If the stored data types are the same then we can just do a straight assignment
         if (storedDataType_ == other->storedDataType())
-            setData(other->get<DataClass>());
+            return setData(other->get<DataClass>());
         else if constexpr (is_instance_of_v<DataClass, std::vector>)
         {
             // If we represent a std::vector container we can conditionally check for a single data item being passed
