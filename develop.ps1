@@ -22,6 +22,8 @@
         Force installation of a given Python version.
     .PARAMETER antlrVersion
         ANTLR version to install. Defaults to ANTLR 4.13.1.
+    .PARAMETER setSystemEnvVars
+        Flag - set environment variables and PATH for dependencies at the system level, otherwise set in CMake presets "environment" property.
     .PARAMETER release
         Flag - install packages for release, otherwise debug.
 #>
@@ -31,6 +33,7 @@ param (
     [string]$pythonPath,
     [string]$forcePythonVersion,
     [string]$antlrVersion = "4.13.1",
+    [switch]$setSystemEnvVars = $false,
     [switch]$release = $false
 )
 
@@ -137,10 +140,15 @@ Write-Host "Installing Python packages... " @info_colors
 & $python -m pip install --upgrade pip
 & $python -m pip install aqtinstall conan==1.*
 
-$systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
+$dissolvePythonPath = Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir"
 
-[Environment]::SetEnvironmentVariable("PATH", "$(Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir");$systemPath", [EnvironmentVariableTarget]::Machine)
-Write-Host "Python packages directory path added to system PATH." @info_colors
+if ($setSystemEnvVars)
+{
+    $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
+
+    [Environment]::SetEnvironmentVariable("PATH", "$dissolvePythonPath;$systemPath", [EnvironmentVariableTarget]::Machine)
+    Write-Host "Python packages directory path added to system PATH." @info_colors
+}
 
 $qt6CMakeDir = ""
 
@@ -158,15 +166,18 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
     $qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
     $qt6CMakeDir = Join-Path -Path $qt6Dir -ChildPath "lib\cmake"
     
-    Write-Host "Locating system PATH... " @info_colors
-    $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
+    if ($setSystemEnvVars)
+    {
+        Write-Host "Locating system PATH... " @info_colors
+        $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
-    Write-Host "Adding Qt6 directory to system PATH... " @info_colors
-    if ($systemPath -notmatch [regex]::Escape($qt6BinDir)) {
-        [Environment]::SetEnvironmentVariable("PATH", "$qt6BinDir;$systemPath", [EnvironmentVariableTarget]::Machine)
-        Write-Host "Qt6 binary directory path added to system PATH." @info_colors
-    } else {
-        Write-Host "Did not write to PATH: Qt6 binary directory path already exists in system PATH." @info_colors
+        Write-Host "Adding Qt6 directory to system PATH... " @info_colors
+        if ($systemPath -notmatch [regex]::Escape($qt6BinDir)) {
+            [Environment]::SetEnvironmentVariable("PATH", "$qt6BinDir;$systemPath", [EnvironmentVariableTarget]::Machine)
+            Write-Host "Qt6 binary directory path added to system PATH." @info_colors
+        } else {
+            Write-Host "Did not write to PATH: Qt6 binary directory path already exists in system PATH." @info_colors
+        }
     }
 } else {
     Write-Host "Attempting to use existing system installation of Qt6... " @info_colors
@@ -213,7 +224,7 @@ $freetypeBinPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freet
 
 $lib = [System.Environment]::GetEnvironmentVariable("LIB", [System.EnvironmentVariableTarget]::Machine)
 
-if ($lib -notlike "*$freetypeInstall*") {
+if (($setSystemEnvVars) -and ($lib -notlike "*$freetypeInstall*")) {
     Write-Host "Setting LIB environment variable with Freetype library... " @info_colors
     [System.Environment]::SetEnvironmentVariable("LIB", "$freetypeLibPath;$freetypeBinPath;$lib", [System.EnvironmentVariableTarget]::Machine)
 }
@@ -223,7 +234,7 @@ $freetype2IncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$
 
 $include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
 
-if ($include -notlike "*$freetypeRepo*") {
+if (($setSystemEnvVars) -and ($include -notlike "*$freetypeRepo*")) {
     Write-Host "Setting INCLUDE environment variable with Freetype includes... " @info_colors
     [System.Environment]::SetEnvironmentVariable("INCLUDE", "$freetypeIncludePath;$freetype2IncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
 }
@@ -324,6 +335,7 @@ Set-Location -Path $projectDir
 Write-Host "Setting up Conan profile... " @info_colors
 
 try {
+    # TODO: Find Conan v1, not just any old Conan
     $conanVersion = conan --version
     Write-Output "Found conan version $conanVersion..."
 
@@ -331,9 +343,13 @@ try {
 } catch {
     Write-Output "Could not find conan, adding Python scripts to path..." @info_colors
     $scripts = & $python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
-    $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
-    [Environment]::SetEnvironmentVariable("PATH", "$scripts;$systemPath", [EnvironmentVariableTarget]::Machine)
-    Write-Host "Python scripts path at location $scripts added to system PATH." @info_colors
+
+    if ($setSystemEnvVars)
+    {
+        $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
+        [Environment]::SetEnvironmentVariable("PATH", "$scripts;$systemPath", [EnvironmentVariableTarget]::Machine)
+        Write-Host "Python scripts path at location $scripts added to system PATH." @info_colors
+    }
 
     $conan = "$scripts/conan.exe"
 }
@@ -383,9 +399,34 @@ $presets = @(
 )
 
 foreach ($preset in $presets) {
+    # Set CMake cache variables
     $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value ($cacheVariables + @{
         CONFIG = "$($preset.name)-x64"
     })
+
+    # Set environment variables
+    if (-not $setSystemEnvVars)
+    {
+        $path = $env:PATH
+
+        if ([string]::IsNullOrEmpty($scripts))
+        {
+            $scripts = ''
+        }
+        else
+        {
+            $scripts = "$scripts;"
+        }
+
+        $environment = @{
+            PATH = "$scripts$qt6BinDir;$dissolvePythonPath;$path"
+            LIB = "$freetypeLibPath;$freetypeBinPath;$lib"
+            INCLUDE = "$freetypeIncludePath;$freetype2IncludePath;$include"
+        }
+
+        $preset | Add-Member -MemberType NoteProperty -Name environment -Value ($environment)
+    }
+
     $cmakeUserPresets.configurePresets += $preset
 }
 
