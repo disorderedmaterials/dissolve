@@ -162,6 +162,12 @@ std::shared_ptr<ParameterBase> createPointer(Node *parent, std::string_view name
 {
     return std::make_shared<Parameter<DataClass *>>(parent, name, description, fromObject);
 }
+template <typename DataClass>
+std::shared_ptr<ParameterBase> createPointer(Node *parent, std::string_view name, std::string_view description,
+                                             std::optional<DataClass> &fromOptional)
+{
+    return std::make_shared<Parameter<DataClass *>>(parent, name, description, fromOptional);
+}
 }; // namespace ParameterFactory
 
 // Primary type for a Parameter to a specific DataClass
@@ -179,14 +185,13 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
           dataGetter_([&]() { return &value; }), dataSetter_([](const DataClass &value) { return false; })
     {
     }
-    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value,
+    Parameter(Node *parent, std::string_view name, std::string_view description,
               std::optional<std::remove_pointer_t<DataClass>> &targetData)
         requires(std::is_pointer_v<DataClass>)
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(nullptr),
           dataGetter_([&]() { return targetData.has_value() ? &targetData.value() : nullptr; }),
           dataSetter_([](const DataClass &value) { return false; })
     {
-        data_ = &value;
     }
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
@@ -384,31 +389,6 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             data_ = toml::find<DataClass>(node, "data");
         }
     }
-};
-
-// OptionalPointerParameter, returning a pointer from a target object rather than the object itself
-template <typename ClassPtr> class OptionalPointerParameter : public Parameter<ClassPtr>
-{
-    public:
-    OptionalPointerParameter(Node *parent, std::string_view name, std::string_view description,
-                             std::optional<std::remove_pointer_t<ClassPtr>> &object)
-        : Parameter<ClassPtr>(parent, name, description, pointer_), object_(object), pointer_{nullptr}
-    {
-    }
-    ~OptionalPointerParameter() override = default;
-
-    /*
-     * Data
-     */
-    protected:
-    // Reference to optional object
-    std::optional<std::remove_pointer_t<ClassPtr>> &object_;
-    // Pointer object
-    ClassPtr pointer_;
-
-    public:
-    // Return the parameter value
-    ClassPtr getData() override { return object_.has_value() ? &object_.value() : nullptr; }
 };
 
 // Template specialisation for non-defaulted type Function1DWrapper

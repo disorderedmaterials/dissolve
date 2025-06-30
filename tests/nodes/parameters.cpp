@@ -120,15 +120,5 @@ TEST(ParametersTest, VectorInputOutput)
     ASSERT_TRUE(root_.addEdge({"Number2", "A", "TestA", "NumberVector"}));
     ASSERT_TRUE(root_.addEdge({"Number3", "A", "TestA", "NumberVector"}));
 }
-TEST(ParametersTest, BLAH)
-{
-    CoreData coreData_;
-    Dissolve dissolve_(coreData_);
-    DissolveGraph root_(dissolve_);
-
-    // Create a couple of TestNodes
-    auto *a = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestA"));
-    ASSERT_TRUE(a);
-}
 
 } // namespace UnitTest

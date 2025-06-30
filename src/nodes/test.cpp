@@ -11,7 +11,7 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
     addInput("NumberVector", "A vector of numbers", numberVector_);
 
     // Outputs
-    addOptionalPointerOutput<Configuration *>("OptionalConfiguration", "An optional Configuration", optionalConfiguration_);
+    addOptionalPointerOutput<Configuration>("OptionalConfiguration", "An optional Configuration", optionalConfiguration_);
     addOutput("NumberVector", "A vector of numbers", numberVector_);
 }
 
