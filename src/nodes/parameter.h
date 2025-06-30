@@ -245,15 +245,10 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 
     public:
     // Set the parameter value
-    bool setData(const DataClass &value)
+    void setData(const DataClass &value)
     {
         if (dataSetter_(value))
-        {
             updateAfterSet();
-            return true;
-        }
-        else
-            return false;
     }
     // Return the parameter value
     virtual DataClass getData() { return dataGetter_(); }
@@ -264,7 +259,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     {
         // If the stored data types are the same then we can just do a straight assignment
         if (storedDataType_ == other->storedDataType())
-            return setData(other->get<DataClass>());
+            setData(other->get<DataClass>());
         else if constexpr (is_instance_of_v<DataClass, std::vector>)
         {
             // If we represent a std::vector container we can conditionally check for a single data item being passed
