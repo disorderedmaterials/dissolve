@@ -152,11 +152,17 @@ class ParameterBase : public Serialisable<>
     virtual void deserialise(const SerialisedValue &node) override { return; }
 };
 
+template <typename StorageClass, > struct ParameterStorage;
+
 // Primary type for a Parameter to a specific DataClass
 template <typename DataClass> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<DataClass>>
 {
     public:
-    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
+    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value) requires (!std::is_pointer<DataClass>())
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
+    {
+    }
+    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value) requires (is_instance_of_v<DataClass,std::vector>)
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
     {
     }
@@ -175,7 +181,9 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
      */
     protected:
     // Reference to target data
-    DataClass &data_;
+    std::conditional_t<std::is_pointer_v<DataClass>, DataClass*,
+        std::conditional_t<std::is_reference_v<DataClass>, DataClass&, void>> data_;
+    HOW WILL THIS WORK!!!! We are not give the object, and we must retain the type (DataClass*).....
     // Initial value
     const DataClass default_;
     // Parameter proxy data (if a ParameterLink)
@@ -195,7 +203,16 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 
     public:
     // Set the parameter value
-    virtual void setData(const DataClass &value)
+    void setData(const DataClass &value) requires (std::is_pointer<DataClass>()) {}
+    void setData(const DataClass &value) requires (!is_instance_of_v<DataClass, std::vector>)
+    {
+        if (data_ != value)
+        {
+            data_ = value;
+            updateAfterSet();
+        }
+    }
+    void setData(const DataClass &value) requires (is_instance_of_v<DataClass, std::vector>)
     {
         if (data_ != value)
         {
@@ -358,8 +375,6 @@ template <typename ClassPtr> class PointerParameter : public Parameter<ClassPtr>
     ClassPtr pointer_{nullptr};
 
     public:
-    // Set the object
-    void setData(const ClassPtr &value) override{};
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override { return false; }
 };
