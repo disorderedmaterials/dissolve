@@ -233,7 +233,8 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     private:
     // Perform any updates after a successful setData()
     void updateAfterSet()
-    { // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
+    {
+        // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
         if (!flags_.isSet(NoUpdate))
             setParentUpdateRequired();
 
