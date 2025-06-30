@@ -99,7 +99,7 @@ class ParameterBase : public Serialisable<>
     // Assign the value of another parameter to this one
     virtual bool assign(ParameterBase *other) = 0;
     // Return whether this parameter accepts the output type of the other
-    virtual bool acceptsOutput(ParameterBase *other) = 0;
+    virtual bool acceptsOutput(ParameterBase *other) const = 0;
     // Access the full parameter from the base
     template <typename DataClass> std::shared_ptr<Parameter<DataClass>> upcast()
     {
@@ -288,7 +288,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         return true;
     }
     // Return whether this parameter accepts the output type of the other
-    bool acceptsOutput(ParameterBase *other) override
+    bool acceptsOutput(ParameterBase *other) const override
     {
         if (storedDataType_ == other->storedDataType())
             return true;
@@ -439,7 +439,7 @@ class Parameter<Function1DWrapper> : public ParameterBase, public std::enable_sh
     // Assign the value of another parameter to this one
     bool assign(ParameterBase *other) override { return false; }
     // Return whether this parameter accepts the output type of the other
-    bool acceptsOutput(ParameterBase *other) override { return false; }
+    bool acceptsOutput(ParameterBase *other) const override { return false; }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return false; }
     // Create a parameter link (input - data proxy - output) for the derived class type
