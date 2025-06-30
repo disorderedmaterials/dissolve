@@ -52,7 +52,7 @@ void CreateNanotubeSpeciesDialog::regenerate()
     species_.clear();
 
     const auto r = ui_.BondLengthSpin->value();
-    const auto axialN = ui_.AxialRingLengthSpin->value();
+    const auto nAxialRings = ui_.AxialRingLengthSpin->value();
 
     const auto radialStep = (M_PI * 2.0) / ui_.RadialRingSizeSpin->value();
     const auto radialHalfStep = radialStep * 0.5;
@@ -70,7 +70,7 @@ void CreateNanotubeSpeciesDialog::regenerate()
      * Build up the nanotube in layers
      */
     auto radialOffset = 0.0;
-    for (auto axial = 0; axial < axialN; ++axial)
+    for (auto axial = 0; axial < nAxialRings; ++axial)
     {
         auto z = axial * ringAxialLayerStep;
         // Create an AB layer
@@ -85,17 +85,17 @@ void CreateNanotubeSpeciesDialog::regenerate()
         species_.removeBox();
 
         // Add final terminating layer
-        plotLayer(axialN * ringAxialLayerStep, tubeRadius, radialStep, axialN * radialHalfStep, zA_, zB_);
+        plotLayer(nAxialRings * ringAxialLayerStep, tubeRadius, radialStep, nAxialRings * radialHalfStep, zA_, zB_);
 
         // Add hydrogen termination layers
         plotLayer(-1.0, tubeRadius, radialStep, 0.0, Elements::H, Elements::Unknown);
-        plotLayer(axialN * ringAxialLayerStep + 1.0, tubeRadius, radialStep, axialN * radialHalfStep, Elements::Unknown,
-                  Elements::H);
+        plotLayer(nAxialRings * ringAxialLayerStep + 1.0, tubeRadius, radialStep, nAxialRings * radialHalfStep,
+                  Elements::Unknown, Elements::H);
     }
     else
     {
         // Add on a suitable periodic box
-        species_.createBox({tubeRadius * 2.0 + 2.0, tubeRadius * 2.0 + 2.0, axialN * ringAxialLayerStep}, {90, 90, 90});
+        species_.createBox({tubeRadius * 2.0 + 2.0, tubeRadius * 2.0 + 2.0, nAxialRings * ringAxialLayerStep}, {90, 90, 90});
     }
 
     // Finalise the species
