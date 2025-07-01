@@ -4,6 +4,7 @@
 #include "graphModel.h"
 #include "graphEdgeModel.h"
 #include "graphNodeModel.h"
+#include "nodes/edge.h"
 #include <QAbstractItemModel>
 #include <QVariant>
 #include <iostream>
@@ -46,8 +47,8 @@ int GraphModel::count() { return nodes_.rowCount(); }
 void GraphModel::addInput(int nodeIndex, QString paramName, double x, double y)
 {
     auto &node = wrapped_[nodeIndex];
-    x -= node.posx;
-    y -= node.posy;
+    x += 16;
+    y += 64;
     node.inputsPos.insert({paramName.toStdString(), {x, y}});
 }
 
@@ -55,8 +56,8 @@ void GraphModel::addInput(int nodeIndex, QString paramName, double x, double y)
 void GraphModel::addOutput(int nodeIndex, QString paramName, double x, double y)
 {
     auto &node = wrapped_[nodeIndex];
-    x -= node.posx;
-    y -= node.posy;
+    x += 16;
+    y += 64;
     node.outputPos.insert({paramName.toStdString(), {x, y}});
 }
 
@@ -96,6 +97,12 @@ int GraphModel::nEdges()
     if (graph_ == nullptr)
         return 0;
     return edges_.rowCount();
+}
+
+void GraphModel::addEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput)
+{
+    EdgeDefinition edge(srcNode.toStdString(), srcOutput.toStdString(), tgtNode.toStdString(), tgtInput.toStdString());
+    edges_.addEdge(edge);
 }
 
 // public wrapper of connect_

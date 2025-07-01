@@ -71,6 +71,8 @@ class GraphModel : public QObject
     public Q_SLOTS:
     // Remove a node
     void deleteNode(int index);
+    // Select a specific output for connection
+    void addEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput);
     // public wrapper of connect_
     bool connect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
     // Public wrapper of disconnect_

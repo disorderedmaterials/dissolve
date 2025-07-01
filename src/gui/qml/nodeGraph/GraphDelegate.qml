@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Shapes
 import Qt.labs.qmlmodels
 
 NodeBox {
@@ -10,6 +11,7 @@ NodeBox {
     property double midY: y + height / 2
     property variant rootModel
     property double startX: x + width
+    signal edgeCreated(srcNode: string, srcOutput: string, tgtNode: string, tgtInput: string)
 
     image: icon
     nodeType: name
@@ -23,63 +25,140 @@ NodeBox {
 
     onDeleted: rootModel.deleteNode(index)
 
-    Column {
-        Row {
-            Column {
-                Repeater {
-                    model: inputs
+    ColumnLayout {
+        anchors.fill: parent
+        GridLayout {
+            columns: 5
 
-                    delegate: Text {
-                        ToolTip.text: description
-                        ToolTip.visible: hovered
-                        anchors.margins: 4
-                        font.pointSize: 10
-                        text: name
-                        wrapMode: Text.Wrap
+            Repeater {
+                id: inputRepeater
+                model: inputs
+                Shape {
+                    property string title
+                    property string nodeName
+                    nodeName: root.nodeType
+                    title: name
+                    width: 20
+                    height: 20
+                    Layout.column: 0
+                    Layout.row: index
+                    Layout.alignment: Qt.AlignLeft
+                    ShapePath {
+                        fillColor: "black"
+                        startX: 20; startY: 0
+                        PathLine { x: 20; y: 20 }
+                        PathLine { x: 0; y: 10 }
+                        PathLine { x: 20; y: 0 }
                     }
+                    DropArea {
+                        anchors.fill: parent
+                        onDropped: function(event) {
+                            edgeCreated(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, parent.title)
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        drag.target: this
+                        Drag.active: drag.active
+                        Drag.proposedAction: Qt.LinkAction
+                        Drag.dragType: Drag.Automatic
+                    }
+                }
+                Component.onCompleted: {
 
-                    onItemAdded: function (idx, item) {
-                        let pos = item.mapToGlobal(item.x, item.y);
-                        pos.x -= 2 * item.anchors.margins;
-                        pos.y += item.height / 2;
-                        pos.y += 35; // Adjust for title
-                        console.log("Input!", item.text, item.width, item.height);
-                        console.log(idx);
-                        console.log(pos);
-                        rootModel.addInput(index, item.text, pos.x, pos.y);
+                    for(var i = 0;i < inputRepeater.count; i++)
+                    {
+                        let item = inputRepeater.itemAt(i);
+                        rootModel.addInput(index, item.title, item.x, item.y);
+
                     }
                 }
             }
-            Rectangle {
-                color: palette.active.mid
-                height: parent.height
-                width: (inputs.rowCount() > 0 && outputs.rowCount() > 0) ? 2 : 0
+            Repeater {
+                model: inputs
+
+                Text {
+                    height: 10
+                    Layout.column: 1
+                    Layout.row: index
+                    Layout.alignment: Qt.AlignLeft
+                    ToolTip.text: description
+                    ToolTip.visible: hovered
+                    font.pointSize: 10
+                    text: name
+                    wrapMode: Text.Wrap
+                }
             }
-            Column {
-                Repeater {
-                    model: outputs
 
-                    delegate: Text {
-                        ToolTip.text: description
-                        ToolTip.visible: hovered
-                        anchors.margins: 4
-                        font.pointSize: 10
-                        text: name
-                        wrapMode: Text.Wrap
-                    }
+            Repeater {
+                model: outputs
+                Item {
+                    Layout.column: 2
+                    Layout.row: index
+                    Layout.fillWidth: true
+                }
+            }
 
-                    onItemAdded: function (idx, item) {
-                        // let pos = Qt.point(item.x, item.y)
-                        let pos = item.mapToGlobal(item.x, item.y);
-                        pos.x += 2 * item.anchors.margins;
-                        pos.x += item.width;
-                        pos.y += item.height;
-                        pos.y += 35; // Adjust for title
-                        console.log("Output!", item.text, item.width, item.height);
-                        console.log(idx);
-                        console.log(pos);
-                        rootModel.addOutput(index, item.text, pos.x, pos.y);
+
+            Repeater {
+                id: outputRepeater
+                model: outputs
+                Shape {
+                    property string title
+                    property string nodeName
+                    nodeName: root.nodeType
+                    title: name
+                    width: 20
+                    height: 20
+                    Layout.column: 4
+                    Layout.row: index
+                    Layout.alignment: Qt.AlignRight
+                    ShapePath {
+                        fillColor: "black"
+                        startX: 0; startY: 0
+                        PathLine { x: 0; y: 20 }
+                        PathLine { x: 20; y: 10 }
+                        PathLine { x: 0; y: 0 }
                     }
+                    DropArea {
+                        anchors.fill: parent
+                        onDropped: function(event) {
+                            edgeCreated(parent.nodeName, parent.title, event.source.parent.nodeName, event.source.parent.title)
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        drag.target: this
+                        Drag.active: drag.active
+                        Drag.proposedAction: Qt.LinkAction
+                        Drag.dragType: Drag.Automatic
+                    }
+                }
+
+                Component.onCompleted: {
+
+                    for(var i = 0;i < outputRepeater.count; i++)
+                    {
+                        let item = outputRepeater.itemAt(i);
+                        rootModel.addOutput(index, item.title, item.x + item.width/2, item.y);
+
+                    }
+                }
+            }
+
+            Repeater {
+                model: outputs
+
+                Text {
+                    Layout.column: 3
+                    Layout.row: index
+                    Layout.alignment: Qt.AlignRight
+                    ToolTip.text: description
+                    ToolTip.visible: hovered
+                    anchors.margins: 4
+                    font.pointSize: 10
+                    text: name
+                    wrapMode: Text.Wrap
                 }
             }
         }
@@ -88,7 +167,30 @@ NodeBox {
             height: options.rowCount() > 0 ? 2 : 0
             width: parent.width
         }
-        Column {
+        GridLayout {
+            columns: 3
+            width: parent.width
+
+            Repeater {
+                model: options
+                Text {
+                    text: name
+                    Layout.column: 0
+                    Layout.row: index
+                    Layout.alignment: Qt.AlignLeft
+                }
+            }
+
+            Repeater {
+                model: options
+                Item {
+                    Layout.column: 1
+                    Layout.row: index
+                    Layout.fillWidth: true
+                }
+            }
+
+
             Repeater {
                 model: options
 

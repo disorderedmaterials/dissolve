@@ -39,6 +39,7 @@ class GraphEdgeModel : public QAbstractListModel
 
     // Create a new edge
     void addEdge(Edge &newEdge);
+    void addEdge(EdgeDefinition &newEdge);
 
     // Return number of edges (required by QAbstractListModel)
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

@@ -3,6 +3,7 @@
 
 #include "gui/models/nodeGraph/graphEdgeModel.h"
 #include "gui/models/nodeGraph/graphModel.h"
+#include "nodes/edge.h"
 #include <qnamespace.h>
 
 enum Role
@@ -46,6 +47,13 @@ void GraphEdgeModel::addEdge(Edge &newEdge)
     beginInsertRows({}, edges().size(), edges().size());
     edges().emplace_back(std::make_unique<Edge>(newEdge));
     endInsertRows();
+}
+
+void GraphEdgeModel::addEdge(EdgeDefinition &newEdge)
+{
+    auto edge = Edge::create(parent_->graph(), newEdge);
+    if (edge)
+        addEdge(*edge);
 }
 
 // Return number of edges (required by QAbstractListModel)
@@ -119,9 +127,9 @@ void GraphEdgeModel::updatePosition(const int idx)
     {
         const auto &edge = graph_->edges()[j];
         if (&edge->sourceNode() == &node)
-            Q_EMIT dataChanged(index(j), index(j + 1), {Role::SOURCE_X, Role::SOURCE_Y});
-        if (&edge->targetNode() == &node)
-            Q_EMIT dataChanged(index(j), index(j + 1), {Role::TARGET_X, Role::TARGET_Y});
+            Q_EMIT dataChanged(index(j), index(j), {Role::SOURCE_X, Role::SOURCE_Y});
+        else if (&edge->targetNode() == &node)
+            Q_EMIT dataChanged(index(j), index(j), {Role::TARGET_X, Role::TARGET_Y});
     }
 }
 
