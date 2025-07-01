@@ -39,8 +39,8 @@ class SubGraphTest : public ::testing::Test
         x_ = dynamic_cast<AddNode *>(root_.createNode("Add", "x"));
         ASSERT_TRUE(x_);
         ASSERT_EQ(x_->name(), "x");
-        xA_ = x_->findInput("A")->upcast<Number>();
-        xB_ = x_->findInput("B")->upcast<Number>();
+        xA_ = x_->findInput("A");
+        xB_ = x_->findInput("B");
         ASSERT_TRUE(xA_);
         ASSERT_TRUE(xB_);
         xA_->set(Number{1});
@@ -55,8 +55,8 @@ class SubGraphTest : public ::testing::Test
         y_ = dynamic_cast<AddNode *>(graphA_->createNode("Add", "y"));
         ASSERT_TRUE(y_);
         ASSERT_EQ(y_->name(), "y");
-        yA_ = y_->findInput("A")->upcast<Number>();
-        yB_ = y_->findInput("B")->upcast<Number>();
+        yA_ = y_->findInput("A");
+        yB_ = y_->findInput("B");
         ASSERT_TRUE(yA_);
         ASSERT_TRUE(yB_);
         yA_->set(Number{3});
@@ -69,7 +69,7 @@ class SubGraphTest : public ::testing::Test
         w_ = dynamic_cast<AddNode *>(root_.createNode("Add", "w"));
         ASSERT_TRUE(w_);
         ASSERT_EQ(w_->name(), "w");
-        wB_ = w_->findInput("B")->upcast<Number>();
+        wB_ = w_->findInput("B");
         ASSERT_TRUE(wB_);
         wB_->set(Number{5});
     }
@@ -81,9 +81,9 @@ class SubGraphTest : public ::testing::Test
     DissolveGraph root_;
     Graph *graphA_{nullptr};
     AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr}, *w_{nullptr};
-    std::shared_ptr<Parameter<Number>> xA_{nullptr}, xB_{nullptr};
-    std::shared_ptr<Parameter<Number>> yA_{nullptr}, yB_{nullptr};
-    std::shared_ptr<Parameter<Number>> wB_{nullptr};
+    std::shared_ptr<ParameterBase> xA_{nullptr}, xB_{nullptr};
+    std::shared_ptr<ParameterBase> yA_{nullptr}, yB_{nullptr};
+    std::shared_ptr<ParameterBase> wB_{nullptr};
 };
 
 TEST_F(SubGraphTest, Serialisation){

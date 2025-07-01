@@ -114,14 +114,6 @@ class ParameterBase : public Serialisable<>
     virtual bool assign(ParameterBase *other) = 0;
     // Return whether this parameter accepts the output type of the other
     virtual bool acceptsOutput(ParameterBase *other) const = 0;
-    // Access the full parameter from the base
-    template <typename DataClass> std::shared_ptr<Parameter<DataClass>> upcast()
-    {
-        if (std::type_index(typeid(DataClass)) != storedDataType_)
-            return nullptr;
-        auto cast1 = static_cast<Parameter<DataClass> *>(this);
-        return cast1->shared_from_this();
-    }
     // Get the parameter's value
     template <typename DataClass> DataClass get()
     {

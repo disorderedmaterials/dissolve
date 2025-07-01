@@ -17,11 +17,11 @@ TEST(ParametersTest, OptionalPointerOutput)
     // Create a couple of TestNodes
     auto *a = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestA"));
     ASSERT_TRUE(a);
-    auto createOptA = a->findInput("CreateConfiguration")->upcast<bool>();
+    auto createOptA = a->findInput("CreateConfiguration");
     ASSERT_TRUE(createOptA);
     auto *b = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestB"));
     ASSERT_TRUE(b);
-    auto configInputB = b->findInput("ConfigurationInput")->upcast<Configuration *>();
+    auto configInputB = b->findInput("ConfigurationInput");
     ASSERT_TRUE(configInputB);
 
     // Create an edge between nodes
@@ -54,7 +54,7 @@ TEST(ParametersTest, VectorParameter)
     ASSERT_TRUE(a);
     auto numbersABase = a->findInput("NumberVector");
     ASSERT_TRUE(numbersABase);
-    auto numbersA = a->findInput("NumberVector")->upcast<std::vector<Number>>();
+    auto numbersA = a->findInput("NumberVector");
     ASSERT_TRUE(numbersA);
 
     // Try to set the base class with a vector
@@ -66,7 +66,7 @@ TEST(ParametersTest, VectorParameter)
     // Create a Number node
     auto n1 = dynamic_cast<NumberNode *>(root_.addNode(std::make_unique<NumberNode>(&root_), "Number1"));
     ASSERT_TRUE(n1);
-    auto number1 = n1->findOption("A")->upcast<Number>();
+    auto number1 = n1->findOption("A");
     number1->set(Number{1.0});
 
     // Assign the number node to the vector
@@ -77,9 +77,9 @@ TEST(ParametersTest, VectorParameter)
     EXPECT_TRUE(numbersA->assign(number1.get()));
 
     // Check vector contents
-    ASSERT_EQ(numbersA->getData().size(), 5);
-    EXPECT_DOUBLE_EQ(numbersA->getData()[3].asDouble(), 1.0);
-    EXPECT_DOUBLE_EQ(numbersA->getData()[4].asDouble(), 4.0);
+    ASSERT_EQ(numbersA->get<std::vector<Number>>().size(), 5);
+    EXPECT_DOUBLE_EQ(numbersA->get<std::vector<Number>>()[3].asDouble(), 1.0);
+    EXPECT_DOUBLE_EQ(numbersA->get<std::vector<Number>>()[4].asDouble(), 4.0);
 }
 
 TEST(ParametersTest, VectorInputOutput)
@@ -91,11 +91,11 @@ TEST(ParametersTest, VectorInputOutput)
     // Create a couple of TestNodes
     auto *a = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestA"));
     ASSERT_TRUE(a);
-    auto numbersA = a->findInput("NumberVector")->upcast<std::vector<Number>>();
+    auto numbersA = a->findInput("NumberVector");
     ASSERT_TRUE(numbersA);
     auto *b = dynamic_cast<TestNode *>(root_.addNode(std::make_unique<TestNode>(&root_), "TestB"));
     ASSERT_TRUE(b);
-    auto numbersB = b->findInput("NumberVector")->upcast<std::vector<Number>>();
+    auto numbersB = b->findInput("NumberVector");
     ASSERT_TRUE(numbersB);
 
     // Create an edge linking the vector output from A to the vector input of B
@@ -104,15 +104,15 @@ TEST(ParametersTest, VectorInputOutput)
     // Create three Number nodes as inputs for TestA's number vector
     auto *n1 = dynamic_cast<NumberNode *>(root_.addNode(std::make_unique<NumberNode>(&root_), "Number1"));
     ASSERT_TRUE(n1);
-    auto number1 = n1->findOption("A")->upcast<Number>();
+    auto number1 = n1->findOption("A");
     ASSERT_TRUE(number1);
     auto *n2 = dynamic_cast<NumberNode *>(root_.addNode(std::make_unique<NumberNode>(&root_), "Number2"));
     ASSERT_TRUE(n2);
-    auto number2 = n2->findOption("A")->upcast<Number>();
+    auto number2 = n2->findOption("A");
     ASSERT_TRUE(number2);
     auto *n3 = dynamic_cast<NumberNode *>(root_.addNode(std::make_unique<NumberNode>(&root_), "Number3"));
     ASSERT_TRUE(n3);
-    auto number3 = n3->findOption("A")->upcast<Number>();
+    auto number3 = n3->findOption("A");
     ASSERT_TRUE(number3);
 
     // Set some numbers
@@ -135,10 +135,10 @@ TEST(ParametersTest, VectorInputOutput)
     EXPECT_EQ(b->versionIndex(), 0);
 
     // Check the number vectors on TestA and TestB
-    EXPECT_EQ(numbersA->getData().size(), 3);
-    EXPECT_EQ(numbersA->getData(), (std::vector<Number>{{5.0}, {6.0}, {8.0}}));
-    EXPECT_EQ(numbersB->getData().size(), 3);
-    EXPECT_EQ(numbersA->getData(), numbersB->getData());
+    EXPECT_EQ(numbersA->get<std::vector<Number>>().size(), 3);
+    EXPECT_EQ(numbersA->get<std::vector<Number>>(), (std::vector<Number>{{5.0}, {6.0}, {8.0}}));
+    EXPECT_EQ(numbersB->get<std::vector<Number>>().size(), 3);
+    EXPECT_EQ(numbersA->get<std::vector<Number>>(), numbersB->get<std::vector<Number>>());
 
     // Adjust the numbers - this should invalidate both TestA and TestB
     number1->set(Number{1.0});
@@ -151,10 +151,10 @@ TEST(ParametersTest, VectorInputOutput)
     // Run again and check the result
     EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(b->versionIndex(), 1);
-    EXPECT_EQ(numbersA->getData().size(), 3);
-    EXPECT_EQ(numbersA->getData(), (std::vector<Number>{{1.0}, {6.0}, {2.0}}));
-    EXPECT_EQ(numbersB->getData().size(), 3);
-    EXPECT_EQ(numbersA->getData(), numbersB->getData());
+    EXPECT_EQ(numbersA->get<std::vector<Number>>().size(), 3);
+    EXPECT_EQ(numbersA->get<std::vector<Number>>(), (std::vector<Number>{{1.0}, {6.0}, {2.0}}));
+    EXPECT_EQ(numbersB->get<std::vector<Number>>().size(), 3);
+    EXPECT_EQ(numbersA->get<std::vector<Number>>(), numbersB->get<std::vector<Number>>());
 }
 
 } // namespace UnitTest
