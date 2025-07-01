@@ -401,8 +401,6 @@ $presets = @(
 # Set environment variables
 if (-not $setSystemEnvVars)
 {
-    $path = $env:PATH
-
     if ([string]::IsNullOrEmpty($scripts))
     {
         $scripts = ''
@@ -413,9 +411,7 @@ if (-not $setSystemEnvVars)
     }
 
     $environment = @{
-        PATH = "$scripts$qt6BinDir;$pythonEnvPath;$path"
-        LIB = "$freetypeLibPath;$freetypeBinPath;$lib"
-        INCLUDE = "$freetypeIncludePath;$freetype2IncludePath;$include"
+        PATH = "$scripts$qt6BinDir;$pythonEnvPath;`$penv{PATH}"
     }
 }
 
