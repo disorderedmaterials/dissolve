@@ -17,8 +17,6 @@
 class Node;
 class ParameterBase;
 template <typename T> class Parameter;
-template <typename T> class PointerParameter;
-template <typename T> class OptionalPointerParameter;
 
 // Parameter Proxy
 template <class T> class ParameterProxy
