@@ -67,9 +67,19 @@ void Node::setUpdateRequired()
 
     // Make sure all output edges propagate this information down
     for (auto &&[outputName, edges] : outputEdges())
-        for (const auto edge : edges)
-            if (!edge->targetInput().flags().isSet(ParameterBase::ParameterFlags::NoUpdate))
-                edge->targetInput().setParentUpdateRequired();
+        for (auto edge : edges)
+        {
+            auto &input = edge->targetInput();
+
+            if (input.flags().isSet(ParameterBase::ParameterFlags::NoUpdate))
+                continue;
+
+            input.setParentUpdateRequired();
+
+            // If the target input is a vector, all edges to it must be marked for re-pull and its data cleared
+            if (input.isVector())
+                input.invalidateVector();
+        }
 }
 
 // Return whether the node's data is up-to-date
@@ -275,6 +285,16 @@ Node::EdgeMap &Node::inputEdges() { return inputEdges_; }
 
 // Get the outgoing edges from this node
 Node::EdgeMap &Node::outputEdges() { return outputEdges_; }
+
+// Mark incoming edges to the specified parameter as needing a re-pull
+void Node::markIncomingEdgesForPull(const ParameterBase *toParameter) const
+{
+    if (!inputEdges_.contains(toParameter->name()))
+        return;
+
+    for (const auto edge : inputEdges_.at(toParameter->name()))
+        edge->forceNextPull();
+}
 
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }

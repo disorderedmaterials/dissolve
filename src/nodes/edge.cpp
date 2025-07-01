@@ -135,7 +135,7 @@ const ParameterBase &Edge::sourceOutput() const { return sourceOutput_; }
 Node &Edge::targetNode() const { return targetNode_; }
 
 // Return target input parameter
-const ParameterBase &Edge::targetInput() const { return targetInput_; }
+ParameterBase &Edge::targetInput() const { return targetInput_; }
 
 // Return definition for the edge
 EdgeDefinition Edge::definition() const
@@ -222,6 +222,13 @@ NodeConstants::ProcessResult Edge::pull()
 
     return NodeConstants::ProcessResult::Unchanged;
 }
+
+// Ensure next call to pull() will retrieve the data from the source node
+void Edge::forceNextPull() { sourceNodeVersionIndex_ = NodeConstants::InvalidVersion; }
+
+/*
+ * I/O
+ */
 
 // Express as a serialisable value
 SerialisedValue Edge::serialise() const { return definition().serialise(); }

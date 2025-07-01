@@ -43,3 +43,6 @@ void ParameterBase::setParentUpdateRequired() const { parent_->setUpdateRequired
 
 // Clear data in the parent node
 void ParameterBase::clearDataInParent() const { parent_->clearData(); }
+
+// Mark edges for re-pull in parent node
+void ParameterBase::markIncomingEdgesForPull() const { parent_->markIncomingEdgesForPull(this); }

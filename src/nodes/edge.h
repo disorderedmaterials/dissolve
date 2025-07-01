@@ -66,11 +66,13 @@ class Edge : public Serialisable<>
     // Return target node
     Node &targetNode() const;
     // Return target input parameter
-    const ParameterBase &targetInput() const;
+    ParameterBase &targetInput() const;
     // Return definition for the edge
     EdgeDefinition definition() const;
     // Pull the data from the source node to the target, returning a ProcessResult
     NodeConstants::ProcessResult pull();
+    // Ensure next call to pull() will retrieve the data from the source node
+    void forceNextPull();
 
     /*
      * I/O

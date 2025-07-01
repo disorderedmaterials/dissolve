@@ -253,6 +253,8 @@ class Node : public Serialisable<>
     EdgeMap &inputEdges();
     // Get the outgoing edges from this node
     EdgeMap &outputEdges();
+    // Mark incoming edges to the specified parameter as needing a re-pull
+    void markIncomingEdgesForPull(const ParameterBase *toParameter) const;
     // Returns the node parent graph
     Graph *parentGraph() const;
     // Return the Dissolve reference

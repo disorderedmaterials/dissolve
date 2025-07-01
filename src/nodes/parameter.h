@@ -102,10 +102,14 @@ class ParameterBase : public Serialisable<>
     public:
     // Return whether the contained data represents the default value
     virtual bool isDefault() const { return true; };
+    // Return whether the contained data is an instance of std::vector
+    virtual bool isVector() const { return false; }
     // Flag that an update is required in the parent node
     void setParentUpdateRequired() const;
     // Clear data in the parent node
     void clearDataInParent() const;
+    // Mark edges for re-pull in parent node
+    void markIncomingEdgesForPull() const;
     // Assign the value of another parameter to this one
     virtual bool assign(ParameterBase *other) = 0;
     // Return whether this parameter accepts the output type of the other
@@ -146,6 +150,8 @@ class ParameterBase : public Serialisable<>
             throw(std::runtime_error(std::format("ParameterBase::set() failed to cast, name = {}.\n", name_)));
         cast->setData(data);
     }
+    // Invalidate the vector data (instances of std::vector only)
+    virtual void invalidateVector() {}
     // Create a parameter link (input - data proxy - output) for the derived class type
     virtual ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription = "") const = 0;
 
@@ -262,7 +268,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 
     private:
     // Perform any updates after a successful setData()
-    void updateAfterSet()
+    void updateAfterSet() const
     {
         // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
         if (!flags_.isSet(NoUpdate))
@@ -274,14 +280,13 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     }
 
     public:
-    // Set the parameter value
-    void setData(const DataClass &value)
+    // Return whether the contained data is an instance of std::vector
+    bool isVector() const override
     {
-        if (dataSetter_(value))
-            updateAfterSet();
+        if constexpr (is_instance_of_v<DataClass, std::vector>)
+            return true;
+        return false;
     }
-    // Return the parameter value
-    virtual DataClass getData() { return dataGetter_(); }
     // Return whether the contained data represents the default value
     bool isDefault() const override { return data_ == default_; }
     // Assign the value of another parameter to this one.
@@ -326,6 +331,29 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 
         return false;
     }
+    // Invalidate the vector data (instances of std::vector only)
+    void invalidateVector() override
+    {
+        if constexpr (is_instance_of_v<DataClass, std::vector>)
+        {
+            // Mark all incoming edges to us as needing a re-pull
+            markIncomingEdgesForPull();
+
+            // Empty the vector
+            data_.clear();
+        }
+        else
+            throw(std::runtime_error(std::format("Parameter<{}>::invalidateVector() - Tried to invalidate a non-vector type.",
+                                                 storedDataType_.name())));
+    }
+    // Set the parameter value
+    void setData(const DataClass &value)
+    {
+        if (dataSetter_(value))
+            updateAfterSet();
+    }
+    // Return the parameter value
+    virtual DataClass getData() { return dataGetter_(); }
     // Create a parameter link (input - data proxy - output) for this parameter type
     ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription) const override
     {
