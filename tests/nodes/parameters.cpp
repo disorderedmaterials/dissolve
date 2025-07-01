@@ -155,6 +155,37 @@ TEST(ParametersTest, VectorInputOutput)
     EXPECT_EQ(numbersA->get<std::vector<Number>>(), (std::vector<Number>{{1.0}, {6.0}, {2.0}}));
     EXPECT_EQ(numbersB->get<std::vector<Number>>().size(), 3);
     EXPECT_EQ(numbersA->get<std::vector<Number>>(), numbersB->get<std::vector<Number>>());
+
+    // Remove a single edge - this should flag TestA and TestB as being out of date
+    EXPECT_TRUE(root_.removeEdge({"Number1", "A", "TestA", "NumberVector"}));
+    EXPECT_TRUE(a->inputsAreValid());
+    EXPECT_TRUE(b->inputsAreValid());
+    EXPECT_FALSE(a->isUpToDate());
+    EXPECT_FALSE(b->isUpToDate());
+
+    // Run again and check the result
+    EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(b->versionIndex(), 2);
+    EXPECT_EQ(numbersA->get<std::vector<Number>>().size(), 2);
+    EXPECT_EQ(numbersA->get<std::vector<Number>>(), (std::vector<Number>{{6.0}, {2.0}}));
+    EXPECT_EQ(numbersB->get<std::vector<Number>>().size(), 2);
+    EXPECT_EQ(numbersA->get<std::vector<Number>>(), numbersB->get<std::vector<Number>>());
+
+    // Remove both of the other edges
+    EXPECT_TRUE(root_.removeEdge({"Number3", "A", "TestA", "NumberVector"}));
+    EXPECT_TRUE(root_.removeEdge({"Number2", "A", "TestA", "NumberVector"}));
+    EXPECT_TRUE(a->inputsAreValid());
+    EXPECT_TRUE(b->inputsAreValid());
+    EXPECT_FALSE(a->isUpToDate());
+    EXPECT_FALSE(b->isUpToDate());
+
+    // Run again and check the result
+    EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(b->versionIndex(), 3);
+    EXPECT_EQ(numbersA->get<std::vector<Number>>().size(), 0);
+    EXPECT_EQ(numbersA->get<std::vector<Number>>(), std::vector<Number>());
+    EXPECT_EQ(numbersB->get<std::vector<Number>>().size(), 0);
+    EXPECT_EQ(numbersA->get<std::vector<Number>>(), numbersB->get<std::vector<Number>>());
 }
 
 } // namespace UnitTest
