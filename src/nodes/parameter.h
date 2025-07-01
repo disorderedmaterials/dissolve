@@ -44,7 +44,7 @@ class ParameterBase : public Serialisable<>
 {
     public:
     ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType);
-    virtual ~ParameterBase();
+    virtual ~ParameterBase() = default;
 
     // Parameter Flags
     enum ParameterFlags
