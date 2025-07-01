@@ -115,10 +115,46 @@ TEST(ParametersTest, VectorInputOutput)
     auto number3 = n3->findOption("A")->upcast<Number>();
     ASSERT_TRUE(number3);
 
+    // Set some numbers
+    number1->set(Number{5.0});
+    number2->set(Number{6.0});
+    number3->set(Number{8.0});
+
     // Link all three numbers in to the TestA vector
     ASSERT_TRUE(root_.addEdge({"Number1", "A", "TestA", "NumberVector"}));
     ASSERT_TRUE(root_.addEdge({"Number2", "A", "TestA", "NumberVector"}));
     ASSERT_TRUE(root_.addEdge({"Number3", "A", "TestA", "NumberVector"}));
+
+    // Run the TestB node to pull the number edge vector from TestA, using the numbers from the three number nodes
+    EXPECT_TRUE(a->inputsAreValid());
+    EXPECT_TRUE(b->inputsAreValid());
+    EXPECT_FALSE(a->isUpToDate());
+    EXPECT_FALSE(b->isUpToDate());
+    EXPECT_EQ(b->versionIndex(), NodeConstants::InvalidVersion);
+    EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(b->versionIndex(), 0);
+
+    // Check the number vectors on TestA and TestB
+    EXPECT_EQ(numbersA->getData().size(), 3);
+    EXPECT_EQ(numbersA->getData(), (std::vector<Number>{{5.0}, {6.0}, {8.0}}));
+    EXPECT_EQ(numbersB->getData().size(), 3);
+    EXPECT_EQ(numbersA->getData(), numbersB->getData());
+
+    // Adjust the numbers - this should invalidate both TestA and TestB
+    number1->set(Number{1.0});
+    number3->set(Number{2.0});
+    EXPECT_TRUE(a->inputsAreValid());
+    EXPECT_TRUE(b->inputsAreValid());
+    EXPECT_FALSE(a->isUpToDate());
+    EXPECT_FALSE(b->isUpToDate());
+
+    // Run again and check the result
+    EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(b->versionIndex(), 1);
+    EXPECT_EQ(numbersA->getData().size(), 3);
+    EXPECT_EQ(numbersA->getData(), (std::vector<Number>{{1.0}, {6.0}, {2.0}}));
+    EXPECT_EQ(numbersB->getData().size(), 3);
+    EXPECT_EQ(numbersA->getData(), numbersB->getData());
 }
 
 } // namespace UnitTest
