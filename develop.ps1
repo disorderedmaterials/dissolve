@@ -140,13 +140,13 @@ Write-Host "Installing Python packages... " @info_colors
 & $python -m pip install --upgrade pip
 & $python -m pip install aqtinstall conan==1.*
 
-$dissolvePythonPath = Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir"
+$pythonEnvPath = Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir"
 
 if ($setSystemEnvVars)
 {
     $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
-    [Environment]::SetEnvironmentVariable("PATH", "$dissolvePythonPath;$systemPath", [EnvironmentVariableTarget]::Machine)
+    [Environment]::SetEnvironmentVariable("PATH", "$pythonEnvPath;$systemPath", [EnvironmentVariableTarget]::Machine)
     Write-Host "Python packages directory path added to system PATH." @info_colors
 }
 
@@ -398,6 +398,27 @@ $presets = @(
     }
 )
 
+# Set environment variables
+if (-not $setSystemEnvVars)
+{
+    $path = $env:PATH
+
+    if ([string]::IsNullOrEmpty($scripts))
+    {
+        $scripts = ''
+    }
+    else
+    {
+        $scripts = "$scripts;"
+    }
+
+    $environment = @{
+        PATH = "$scripts$qt6BinDir;$pythonEnvPath;$path"
+        LIB = "$freetypeLibPath;$freetypeBinPath;$lib"
+        INCLUDE = "$freetypeIncludePath;$freetype2IncludePath;$include"
+    }
+}
+
 foreach ($preset in $presets) {
     # Set CMake cache variables
     $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value ($cacheVariables + @{
@@ -407,23 +428,6 @@ foreach ($preset in $presets) {
     # Set environment variables
     if (-not $setSystemEnvVars)
     {
-        $path = $env:PATH
-
-        if ([string]::IsNullOrEmpty($scripts))
-        {
-            $scripts = ''
-        }
-        else
-        {
-            $scripts = "$scripts;"
-        }
-
-        $environment = @{
-            PATH = "$scripts$qt6BinDir;$dissolvePythonPath;$path"
-            LIB = "$freetypeLibPath;$freetypeBinPath;$lib"
-            INCLUDE = "$freetypeIncludePath;$freetype2IncludePath;$include"
-        }
-
         $preset | Add-Member -MemberType NoteProperty -Name environment -Value ($environment)
     }
 

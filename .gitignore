@@ -33,6 +33,9 @@ changes
 *.tokens
 .gdb_history
 *.DS_Store
+dependencies
+msvc-env
+aqtinstall.log
 
 # Example files
 *.beat
@@ -60,3 +63,6 @@ tests/data/dissolve/input/TestOutput_*
 # Visual Studio
 .vscode/
 .vs/
+
+# CMake
+CMakeUserPresets.json
