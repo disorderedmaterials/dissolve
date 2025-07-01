@@ -97,7 +97,7 @@ bool Node::inputsAreValid() const
 // Run the node, retrieving dependent inputs as necessary
 NodeConstants::ProcessResult Node::run()
 {
-    // Check our input links - if any are out-of-date we must retrieve new values. This will automatically unset upToDate_
+    // Pull all input edges. If any are out-of-date and get re-set this will automatically unset upToDate_
     for (auto &[inputName, edges] : inputEdges_)
     {
         for (const auto edge : edges)
