@@ -239,6 +239,10 @@ ApplicationWindow {
                 delegate: Component {
                     GraphDelegate {
                         rootModel: graphModel
+
+                        onEdgeCreated: function (srcNode, srcOutput, tgtNode, tgtInput) {
+                            graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput);
+                        }
                     }
                 }
             }

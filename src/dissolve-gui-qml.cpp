@@ -2,14 +2,12 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "base/processPool.h"
 #include "gui/models/dissolveModel.h"
 #include "gui/models/types.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
 #include "math/mathFunc.h"
-#include "nodes/dissolve.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
