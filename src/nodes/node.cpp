@@ -147,7 +147,6 @@ NodeConstants::ProcessResult Node::process() { return NodeConstants::ProcessResu
 // Link edge, returning whether we accept it
 bool Node::linkEdge(Edge *edge)
 {
-
     // The supplied Edge was created via our parent Graph, but we will still check to see whether we accept it
     if (&edge->targetNode() == this)
     {
