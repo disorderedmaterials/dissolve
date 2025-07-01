@@ -24,8 +24,6 @@ class Node : public Serialisable<>
     explicit Node(Graph *parentGraph) : parentGraph_(parentGraph) {}
     virtual ~Node() = default;
 
-    using EdgeMap = std::map<std::string_view, Edge *>;
-
     /*
      * Definition
      */
@@ -129,6 +127,7 @@ class Node : public Serialisable<>
      */
     public:
     using NodeParameterMap = std::map<std::string, std::shared_ptr<ParameterBase>>;
+    using EdgeMap = std::map<std::string_view, std::vector<Edge *>>;
 
     protected:
     // Input parameters
@@ -141,6 +140,10 @@ class Node : public Serialisable<>
     EdgeMap inputEdges_;
     // Outgoing edges
     EdgeMap outputEdges_;
+
+    private:
+    // Erase the specified edge from the given map, returning if it was found and erased
+    bool eraseEdge(EdgeMap &map, Edge *edge);
 
     public:
     // Link edge, returning whether we accept it

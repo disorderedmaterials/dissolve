@@ -66,9 +66,10 @@ void Node::setUpdateRequired()
     upToDate_ = false;
 
     // Make sure all output edges propagate this information down
-    for (auto &&[outputName, edge] : outputEdges())
-        if (!edge->targetInput().flags().isSet(ParameterBase::ParameterFlags::NoUpdate))
-            edge->targetInput().setParentUpdateRequired();
+    for (auto &&[outputName, edges] : outputEdges())
+        for (const auto edge : edges)
+            if (!edge->targetInput().flags().isSet(ParameterBase::ParameterFlags::NoUpdate))
+                edge->targetInput().setParentUpdateRequired();
 }
 
 // Return whether the node's data is up-to-date
@@ -82,8 +83,9 @@ bool Node::inputsAreValid() const
         // Does this input have a link or links?
         if (inputEdges_.contains(inputName))
         {
-            if (!inputEdges_.at(inputName)->sourceOutput().parent()->inputsAreValid())
-                return false;
+            for (const auto edge : inputEdges_.at(inputName))
+                if (!edge->sourceOutput().parent()->inputsAreValid())
+                    return false;
         }
         else if (parameter->flags().isSet(ParameterBase::ParameterFlags::Required))
             return false;
@@ -96,17 +98,19 @@ bool Node::inputsAreValid() const
 NodeConstants::ProcessResult Node::run()
 {
     // Check our input links - if any are out-of-date we must retrieve new values. This will automatically unset upToDate_
-    for (auto &[inputName, edge] : inputEdges_)
+    for (auto &[inputName, edges] : inputEdges_)
     {
-        auto edgeResult = edge->pull();
-        switch (edgeResult)
+        for (const auto edge : edges)
         {
-            case (NodeConstants::ProcessResult::Failed):
-            case (NodeConstants::ProcessResult::InputsNotSatisfied):
-                return NodeConstants::ProcessResult::Failed;
-            case (NodeConstants::ProcessResult::Success):
-            case (NodeConstants::ProcessResult::Unchanged):
-                break;
+            switch (edge->pull())
+            {
+                case (NodeConstants::ProcessResult::Failed):
+                case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                    return NodeConstants::ProcessResult::Failed;
+                case (NodeConstants::ProcessResult::Success):
+                case (NodeConstants::ProcessResult::Unchanged):
+                    break;
+            }
         }
     }
 
@@ -148,13 +152,22 @@ bool Node::linkEdge(Edge *edge)
     if (&edge->targetNode() == this)
     {
         // We are the target node, so we will double-check the specified input to see if it can accept the connection
-        // Simple check at present, we accept at most one connection per input, so if one already exists we complain
+        // We accept one connection per input in the case of non-vector parameters, so if one already exists we complain.
+        // Vector inputs are currently unbounded.
         if (inputEdges_.contains(edge->targetInput().name()))
-            return Messenger::error("Node '{}' refusing to accept Edge connecting to input '{}' as one already exists.\n",
-                                    name(), edge->targetInput().name());
+        {
+            // Already have input edges to this parameter, so check current size and type
+            if (!inputEdges_.at(edge->targetInput().name()).empty())
+            {
+                if (edge->targetInput().nAllowedInputEdges() != ParameterBase::EdgeLimit::Many)
+                    return Messenger::error("Node '{}' refusing to accept Edge connecting to input '{}' as it already has the "
+                                            "maximum permissible.\n",
+                                            name(), edge->targetInput().name());
+            }
+        }
 
         // All good, so add the input to our list
-        inputEdges_[edge->targetInput().name()] = edge;
+        inputEdges_[edge->targetInput().name()].push_back(edge);
 
         // Adding an Edge to an input always invalidates the target
         invalidate();
@@ -162,12 +175,29 @@ bool Node::linkEdge(Edge *edge)
     else if (&edge->sourceNode() == this)
     {
         // We are the source node - add the outgoing edge to our list
-        outputEdges_[edge->sourceOutput().name()] = edge;
+        outputEdges_[edge->sourceOutput().name()].push_back(edge);
     }
     else
         return Messenger::error("Node '{}' is neither the source nor the target for the supplied Edge.\n", name());
 
     return true;
+}
+
+// Erase the specified edge from the given map, returning if it was found and erased
+bool Node::eraseEdge(EdgeMap &map, Edge *edge)
+{
+    auto mapIt = std::find_if(map.begin(), map.end(),
+                              [&](auto &edges)
+                              {
+                                  auto edgeIt = std::find(edges.second.begin(), edges.second.end(), edge);
+                                  if (edgeIt != edges.second.end())
+                                  {
+                                      edges.second.erase(edgeIt);
+                                      return true;
+                                  }
+                                  return edgeIt != edges.second.end();
+                              });
+    return mapIt != map.end();
 }
 
 // Unlink edge
@@ -176,25 +206,16 @@ void Node::unlinkEdge(Edge *edge)
     // If we are the Edge's targetNode_ then we should have its pointer in inputEdges_
     if (&edge->targetNode() == this)
     {
-        auto it = std::find_if(inputEdges_.begin(), inputEdges_.end(),
-                               [edge](const auto &inputEdge) { return edge == inputEdge.second; });
-        if (it == inputEdges_.end())
-            Messenger::error("Tried to unlink an incoming edge to target node '{}' which knew nothing about it.\n", name());
-        else
-        {
-            inputEdges_.erase(it);
+        if (eraseEdge(inputEdges_, edge))
             invalidate();
-        }
+        else
+            Messenger::error("Tried to unlink an incoming edge to target node '{}' which knew nothing about it.\n", name());
     }
     else if (&edge->sourceNode() == this)
     {
         // We are the source node for the edge...
-        auto it = std::find_if(outputEdges_.begin(), outputEdges_.end(),
-                               [edge](const auto &outputEdge) { return edge == outputEdge.second; });
-        if (it == outputEdges_.end())
+        if (!eraseEdge(outputEdges_, edge))
             Messenger::error("Tried to unlink an outgoing edge from source node '{}' which knew nothing about it.\n", name());
-        else
-            outputEdges_.erase(it);
     }
     else
         Messenger::error("Node '{}' is neither the source nor the target for the Edge being unlinked.\n", name());

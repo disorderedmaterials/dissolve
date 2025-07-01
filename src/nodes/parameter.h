@@ -55,6 +55,13 @@ class ParameterBase : public Serialisable<>
         Input,     /* Indicates that the parameter is meant to be a sink for data and not a source */
         Output,    /* Indicates that the parameter is meant to be a source of data and not a sink */
     };
+    // Allowed Edge Connections
+    enum EdgeLimit
+    {
+        None, /* No edges are allowed */
+        One,  /* Exactly one edge is allowed */
+        Many  /* Many edges are allowed */
+    };
 
     /*
      * Definition
@@ -86,6 +93,8 @@ class ParameterBase : public Serialisable<>
     void setFlags(const Flags<ParameterBase::ParameterFlags> &flags);
     // Return current flags
     const Flags<ParameterBase::ParameterFlags> &flags() const;
+    // Return the number of allowed input edges
+    virtual EdgeLimit nAllowedInputEdges() const = 0;
 
     /*
      * Data
@@ -207,6 +216,21 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         proxyData_ = proxy;
     }
     virtual ~Parameter() = default;
+
+    /*
+     * Definition
+     */
+    public:
+    // Return the number of allowed input edges
+    EdgeLimit nAllowedInputEdges() const override
+    {
+        if (flags_.isSet(ParameterFlags::Output))
+            return EdgeLimit::None;
+        else if constexpr (is_instance_of_v<DataClass, std::vector>)
+            return EdgeLimit::Many;
+        else
+            return EdgeLimit::One;
+    }
 
     /*
      * Data
@@ -401,6 +425,13 @@ class Parameter<Function1DWrapper> : public ParameterBase, public std::enable_sh
         : ParameterBase(parent, name, description, std::type_index(typeid(Function1DWrapper))), data_(value), default_(value)
     {
     }
+
+    /*
+     * Definition
+     */
+    public:
+    // Return the number of allowed input edges
+    EdgeLimit nAllowedInputEdges() const override { return EdgeLimit::None; }
 
     /*
      * Data
