@@ -36,7 +36,7 @@ bool XRaySQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
     {
         // Load the data
         Data1D referenceData;
-        if (!referenceFQ_.importData(referenceData, &moduleContext.processPool()))
+        if (!referenceFQ_.importData(referenceData))
             return Messenger::error("[SETUP {}] Failed to load reference data '{}'.\n", name_, referenceFQ_.filename());
 
         // Get dependent modules

@@ -6,7 +6,6 @@
 #include "io/fileAndFormat.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // Forces Import Formats
 class ForceImportFileFormat : public FileAndFormat
@@ -60,7 +59,7 @@ class ForceImportFileFormat : public FileAndFormat
 
     public:
     // Import forces using current filename and format
-    bool importData(std::vector<Vector3> &f, const ProcessPool *procPool = nullptr);
+    bool importData(std::vector<Vector3> &f);
     // Import forces using supplied parser and current format
     bool importData(LineParser &parser, std::vector<Vector3> &f);
 };

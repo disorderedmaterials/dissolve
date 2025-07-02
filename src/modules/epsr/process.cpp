@@ -87,7 +87,7 @@ bool EPSRModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordS
         Messenger::print("[SETUP {}] Reading potential coefficients from '{}'...\n", name_, pCofFilename_);
 
         // Read in the coefficients / setup from the supplied file
-        if (!readPCof(moduleContext.dissolve(), moduleContext.processPool(), pCofFilename_))
+        if (!readPCof(moduleContext.dissolve(), pCofFilename_))
             return Messenger::error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n", name_);
 
         // Set up the additional potentials - reconstruct them from the current coefficients
@@ -117,7 +117,7 @@ bool EPSRModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordS
         Messenger::print("[SETUP {}] Reading fit coefficients from '{}'...\n", name_, inpaFilename_);
 
         // Read in the coefficients / setup from the supplied file
-        if (!readFitCoefficients(moduleContext.dissolve(), moduleContext.processPool(), inpaFilename_))
+        if (!readFitCoefficients(moduleContext.dissolve(), inpaFilename_))
             return Messenger::error("[SETUP {}] Failed to read in fit coefficients from EPSR inpa file.\n", name_);
     }
 

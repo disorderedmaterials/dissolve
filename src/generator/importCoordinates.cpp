@@ -35,5 +35,5 @@ bool ImportCoordinatesGeneratorNode::prepare(const GeneratorContext &generatorCo
 // Execute node
 bool ImportCoordinatesGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
-    return fileSource_.importData(generatorContext.configuration(), &generatorContext.processPool());
+    return fileSource_.importData(generatorContext.configuration());
 }

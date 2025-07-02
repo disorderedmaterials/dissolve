@@ -33,10 +33,10 @@ void ForceImportFileFormat::setUpKeywords()
  */
 
 // Read forces using current filename and format
-bool ForceImportFileFormat::importData(std::vector<Vector3> &f, const ProcessPool *procPool)
+bool ForceImportFileFormat::importData(std::vector<Vector3> &f)
 {
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
+    LineParser parser;
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
         return Messenger::error("Couldn't open file '{}' for loading forces data.\n", filename_);
 

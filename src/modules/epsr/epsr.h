@@ -167,9 +167,9 @@ class EPSRModule : public Module
 
     public:
     // Read data from supplied pcof file
-    bool readPCof(Dissolve &dissolve, const ProcessPool &procPool, std::string_view filename);
+    bool readPCof(Dissolve &dissolve, std::string_view filename);
     // Read Poisson coefficients from 'inpa' file
-    bool readFitCoefficients(Dissolve &dissolve, const ProcessPool &procPool, std::string_view inpaFilename);
+    bool readFitCoefficients(Dissolve &dissolve, std::string_view inpaFilename);
 
     /*
      * Processing

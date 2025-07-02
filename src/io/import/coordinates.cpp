@@ -33,10 +33,10 @@ void CoordinateImportFileFormat::setUpKeywords() {}
  */
 
 // Import coordinates using current filename and format
-bool CoordinateImportFileFormat::importData(std::vector<Vector3> &r, const ProcessPool *procPool)
+bool CoordinateImportFileFormat::importData(std::vector<Vector3> &r)
 {
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
+    LineParser parser;
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
         return Messenger::error("Couldn't open file '{}' for loading coordinates data.\n", filename_);
 
@@ -49,10 +49,10 @@ bool CoordinateImportFileFormat::importData(std::vector<Vector3> &r, const Proce
 }
 
 // Import coordinates direct to configuration using current filename and format
-bool CoordinateImportFileFormat::importData(Configuration *cfg, const ProcessPool *procPool)
+bool CoordinateImportFileFormat::importData(Configuration *cfg)
 {
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
+    LineParser parser;
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
         return Messenger::error("Couldn't open file '{}' for loading coordinates data.\n", filename_);
 

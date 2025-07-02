@@ -26,13 +26,13 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         ranges = ranges_;
 
         // Source the data
-        if (!dataPair.first->sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.first->sourceData(moduleContext.dissolve().processingModuleData()))
         {
             Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first->dataName(),
                              dataPair.second->dataName(), dataPair.first->dataName());
             continue;
         }
-        if (!dataPair.second->sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.second->sourceData(moduleContext.dissolve().processingModuleData()))
         {
             Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first->dataName(),
                              dataPair.second->dataName(), dataPair.second->dataName());

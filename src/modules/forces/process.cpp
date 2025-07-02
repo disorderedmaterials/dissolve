@@ -22,7 +22,7 @@ bool ForcesModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
         auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vector3>>("ReferenceForces", name());
 
         // Read in the forces
-        if (!referenceForces_.importData(f, &moduleContext.processPool()))
+        if (!referenceForces_.importData(f))
             return false;
     }
 

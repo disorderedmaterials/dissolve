@@ -7,7 +7,6 @@
 
 // Forward Declarations
 class Data1D;
-class ProcessPool;
 
 // Data1D Import Formats
 class Data1DImportFileFormat : public FileAndFormat
@@ -83,7 +82,7 @@ class Data1DImportFileFormat : public FileAndFormat
 
     public:
     // Import Data1D using current filename and format
-    bool importData(Data1D &data, const ProcessPool *procPool = nullptr);
+    bool importData(Data1D &data);
     // Import Data1D using supplied parser and current format
     bool importData(LineParser &parser, Data1D &data);
 };

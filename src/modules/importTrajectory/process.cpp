@@ -15,7 +15,7 @@ Module::ExecutionResult ImportTrajectoryModule::process(ModuleContext &moduleCon
                      trajectoryFormat_.filename(), targetConfiguration_->name());
 
     // Open the file
-    LineParser parser(&moduleContext.processPool());
+    LineParser parser;
     if ((!parser.openInput(trajectoryFormat_.filename())) || (!parser.isFileGoodForReading()))
     {
         Messenger::error("Couldn't open trajectory file '{}'.\n", trajectoryFormat_.filename());

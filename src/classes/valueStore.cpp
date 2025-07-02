@@ -22,7 +22,7 @@ bool ValueStore::addData(std::string_view dataName, LineParser &parser, int star
         return false;
 
     // Load the data
-    return format.importData(data, parser, parser.processPool());
+    return format.importData(data, parser);
 }
 
 // Check to see if the named data is present in the store

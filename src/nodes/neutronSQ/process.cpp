@@ -26,7 +26,7 @@ bool NeutronSQNode::setUp(Flags<KeywordBase::KeywordSignal> actionSignals)
     {
         // Load the data
         Data1D referenceData;
-        if (!referenceFQ_.importData(referenceData, &processPool()))
+        if (!referenceFQ_.importData(referenceData))
         {
             error("[SETUP {}] Failed to load reference data '{}'.\n", name(), referenceFQ_.filename());
             return false;

@@ -9,7 +9,6 @@
 
 // Forward Declarations
 class Data2D;
-class ProcessPool;
 class Vec3DoubleKeyword;
 
 // Data2D Import Formats
@@ -60,7 +59,7 @@ class Data2DImportFileFormat : public FileAndFormat
 
     public:
     // Import Data2D using current filename and format
-    bool importData(Data2D &data, const ProcessPool *procPool = nullptr);
+    bool importData(Data2D &data);
     // Import Data2D using supplied parser and current format
     bool importData(LineParser &parser, Data2D &data);
 };

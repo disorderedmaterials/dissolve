@@ -29,10 +29,10 @@ void SpeciesImportFileFormat::setUpKeywords() {}
  */
 
 // Import coordinates direct to configuration using current filename and format
-bool SpeciesImportFileFormat::importData(Species *sp, const ProcessPool *procPool)
+bool SpeciesImportFileFormat::importData(Species *sp)
 {
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
+    LineParser parser;
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
         return Messenger::error("Couldn't open file '{}' for loading coordinates data.\n", filename_);
 

@@ -76,7 +76,7 @@ Module::ExecutionResult BraggModule::process(ModuleContext &moduleContext)
             moduleContext.dissolve().processingModuleData().value<const std::vector<BraggReflection>>("Reflections", name());
 
         // Open a file and save the basic reflection data
-        LineParser braggParser(&moduleContext.processPool());
+        LineParser braggParser;
         if (!braggParser.openOutput(std::format("{}-Reflections.txt", name_)))
             return ExecutionResult::Failed;
         braggParser.writeLineF("#   ID      Q     h k l     mult    Intensity(0,0)\n");
@@ -95,7 +95,7 @@ Module::ExecutionResult BraggModule::process(ModuleContext &moduleContext)
             types.begin(), types.end(),
             [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) -> EarlyReturn<bool>
             {
-                LineParser intensityParser(&moduleContext.processPool());
+                LineParser intensityParser;
                 if (!intensityParser.openOutput(std::format("{}-{}-{}.txt", name_, atd1.atomTypeName(), atd2.atomTypeName())))
                     return false;
                 intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());

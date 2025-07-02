@@ -93,7 +93,7 @@ bool CoordinateSetsGeneratorNode::prepare(const GeneratorContext &generatorConte
             return Messenger::error("A suitable coordinate file and format must be supplied.\n");
 
         // Open the specified file
-        LineParser parser(&generatorContext.processPool());
+        LineParser parser;
         if ((!parser.openInput(fileSource_.filename())) || (!parser.isFileGoodForReading()))
             return Messenger::error("Couldn't open coordinate sets file '{}'.\n", fileSource_.filename());
 
