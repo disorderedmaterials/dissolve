@@ -71,6 +71,13 @@ Write-Host "Installing key dependencies with Chocolatey... " @info_colors
 choco install -y ninja pkgconfiglite
 choco install -y cmake --version=3.30.1 --force
 
+# Ensure CMake version is 3.30.1
+$cmakeVersion = "$(cmake --version)"
+if (-not ($cmakeVersion -like "*3.30.1*"))
+{
+    choco install -y cmake.install --version=3.30.1 --force --installargs "ADD_CMAKE_TO_PATH=User"
+}
+
 # Find git, install if not found
 try {
     & "git" --version
