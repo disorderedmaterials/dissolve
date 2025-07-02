@@ -387,6 +387,14 @@ $cacheVariables = @{
     CMAKE_PREFIX_PATH = "$qt6CMakeDir"
 }
 
+if (-not [string]::IsNullOrEmpty($msvcVersion))
+{
+    $cacheVariables + @{
+        CMAKE_GENERATOR_TOOLSET = "version=$msvcVersion"
+    }
+}
+
+
 $cmakeUserPresets = [PSCustomObject]@{
     version = 3
     cmakeMinimumRequired = @{
@@ -433,10 +441,6 @@ if (-not $setSystemEnvVars)
 foreach ($preset in $presets) {
     # Set CMake cache variables
     $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value ($cacheVariables + @{
-        if (-not [string]::IsNullOrEmpty($msvcVersion))
-        {
-            CMAKE_GENERATOR_TOOLSET = "version=$msvcVersion"
-        }
         CONFIG = "$($preset.name)-x64"
     })
 
