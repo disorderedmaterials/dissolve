@@ -48,8 +48,7 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
     Timer commsTimer(false);
 
     // Create a Molecule distributor
-    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
-                                    moduleContext.processPool(), strategy);
+    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells());
 
     // Create a local ChangeStore and EnergyKernel
     ChangeStore changeStore(moduleContext.processPool(), commsTimer);
@@ -93,16 +92,6 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
     {
         // Get next set of Molecule targets from the distributor
         std::vector<int> targetMolecules = distributor.assignedMolecules();
-
-        // Switch parallel strategy if necessary
-        if (distributor.currentStrategy() != strategy)
-        {
-            // Set the new strategy
-            strategy = distributor.currentStrategy();
-
-            // Re-initialise the random buffer
-            randomBuffer.reset(ProcessPool::subDivisionStrategy(strategy));
-        }
 
         // Loop over target Molecule
         for (auto molId : targetMolecules)
@@ -155,13 +144,13 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                         {
                             changeStore.updateAll();
                             referenceEnergy = newEnergy;
-                            distributor.increase(totalDelta, delta);
-                            distributor.increment(nBondAccepted);
+                            totalDelta += delta;
+                            ++nBondAccepted;
                         }
                         else
                             changeStore.revertAll();
 
-                        distributor.increment(nBondAttempts);
+                        ++nBondAttempts;
                     }
                 }
 
@@ -203,13 +192,13 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                         {
                             changeStore.updateAll();
                             referenceEnergy = newEnergy;
-                            distributor.increase(totalDelta, delta);
-                            distributor.increment(nAngleAccepted);
+                            totalDelta += delta;
+                            ++nAngleAccepted;
                         }
                         else
                             changeStore.revertAll();
 
-                        distributor.increment(nAngleAttempts);
+                        ++nAngleAttempts;
                     }
                 }
 
@@ -252,13 +241,13 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
                         {
                             changeStore.updateAll();
                             referenceEnergy = newEnergy;
-                            distributor.increase(totalDelta, delta);
-                            distributor.increment(nTorsionAccepted);
+                            totalDelta += delta;
+                            ++nTorsionAccepted;
                         }
                         else
                             changeStore.revertAll();
 
-                        distributor.increment(nTorsionAttempts);
+                        ++nTorsionAttempts;
                     }
                 }
 

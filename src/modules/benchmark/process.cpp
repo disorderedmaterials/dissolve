@@ -137,8 +137,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         for (auto n = 0; n < nRepeats_; ++n)
         {
             // Create a Molecule distributor
-            RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
-                                            moduleContext.processPool(), strategy);
+            RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells());
 
             Timer timer;
             Messenger::mute();
@@ -146,13 +145,6 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             {
                 // Get next set of Molecule targets from the distributor
                 auto targetMolecules = distributor.assignedMolecules();
-
-                // Switch parallel strategy if necessary
-                if (distributor.currentStrategy() != strategy)
-                {
-                    // Set the new strategy
-                    strategy = distributor.currentStrategy();
-                }
 
                 // Loop over target Molecules
                 for (auto &molId : targetMolecules)

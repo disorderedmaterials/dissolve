@@ -67,8 +67,7 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
         forceKernel->totalForces(
-            forces, forces,
-            {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
+            forces, forces, {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
 }
 
 template <SpeciesType speciesType, SpeciesPopulation population>

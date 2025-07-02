@@ -36,8 +36,7 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
     Timer commsTimer(false);
 
     // Create a Molecule distributor
-    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
-                                    moduleContext.processPool(), strategy);
+    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells());
 
     // Determine target molecules from the restrictedSpecies vector (if any) and give to the distributor
     if (!restrictToSpecies_.empty())
@@ -82,16 +81,6 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
     {
         // Get next set of Molecule targets from the distributor
         auto &targetIndices = distributor.assignedMolecules();
-
-        // Switch parallel strategy if necessary
-        if (distributor.currentStrategy() != strategy)
-        {
-            // Set the new strategy
-            strategy = distributor.currentStrategy();
-
-            // Re-initialise the random buffer
-            randomBuffer.reset(ProcessPool::subDivisionStrategy(strategy));
-        }
 
         // Loop over target Molecules
         for (auto molId : targetIndices)
@@ -170,26 +159,21 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
                     changeStore.revertAll();
 
                 // Increase attempt counters
-                // The strategy in force at any one time may vary, so use the distributor's helper
-                // functions.
-                if (distributor.collectStatistics())
+                if (accept)
+                    totalDelta += delta;
+                if (rotate)
                 {
                     if (accept)
-                        totalDelta += delta;
-                    if (rotate)
-                    {
-                        if (accept)
-                            ++nRotationsAccepted;
-                        ++nRotationAttempts;
-                    }
-                    if (translate)
-                    {
-                        if (accept)
-                            ++nTranslationsAccepted;
-                        ++nTranslationAttempts;
-                    }
-                    ++nGeneralAttempts;
+                        ++nRotationsAccepted;
+                    ++nRotationAttempts;
                 }
+                if (translate)
+                {
+                    if (accept)
+                        ++nTranslationsAccepted;
+                    ++nTranslationAttempts;
+                }
+                ++nGeneralAttempts;
 
                 // Increase and fold move type counter
                 ++count;

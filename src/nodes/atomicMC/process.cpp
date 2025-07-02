@@ -33,7 +33,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     Timer commsTimer(false);
 
     // Create a Molecule distributor
-    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(), processPool(), strategy);
+    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells());
 
     // Create a local ChangeStore and EnergyKernel
     ChangeStore changeStore(processPool(), commsTimer);
@@ -54,16 +54,6 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     {
         // Get next set of Molecule targets from the distributor
         auto &targetMolecules = distributor.assignedMolecules();
-
-        // Switch parallel strategy if necessary
-        if (distributor.currentStrategy() != strategy)
-        {
-            // Set the new strategy
-            strategy = distributor.currentStrategy();
-
-            // Re-initialise the random buffer
-            randomBuffer.reset(ProcessPool::subDivisionStrategy(strategy));
-        }
 
         // Loop over target Molecules
         for (auto molId : targetMolecules)
@@ -117,17 +107,12 @@ NodeConstants::ProcessResult AtomicMCNode::process()
                         changeStore.revert(storeIndex);
 
                     // Increase attempt counters
-                    // The strategy in force at any one time may vary, so use the distributor's
-                    // helper functions.
-                    if (distributor.collectStatistics())
+                    if (accept)
                     {
-                        if (accept)
-                        {
-                            totalDelta += delta;
-                            ++nAccepted;
-                        }
-                        ++nAttempts;
+                        totalDelta += delta;
+                        ++nAccepted;
                     }
+                    ++nAttempts;
                 }
 
                 // Increment index of target atom in ChangeStore
