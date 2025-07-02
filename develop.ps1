@@ -22,6 +22,10 @@
         Force installation of a given Python version.
     .PARAMETER antlrVersion
         ANTLR version to install. Defaults to ANTLR 4.13.1.
+    .PARAMETER msvcVersion
+        Version of MSVC to use.
+    .PARAMETER generator
+        Generator to use (options are "Visual Studio 17 2022", "Ninja").
     .PARAMETER setSystemEnvVars
         Flag - set environment variables and PATH for dependencies at the system level, otherwise set in CMake presets "environment" property.
     .PARAMETER release
@@ -32,8 +36,9 @@ param (
     [string]$qtVersion,
     [string]$pythonPath,
     [string]$forcePythonVersion,
+    [string]$msvcVersion,
+    [string]$generator = "Visual Studio 17 2022",
     [string]$antlrVersion = "4.13.1",
-    [switch]$msvcLatest = $false,
     [switch]$setSystemEnvVars = $false,
     [switch]$release = $false
 )
@@ -58,15 +63,6 @@ Write-Host "Building dependencies in $build configuration... " @info_colors
 $projectDir = Get-Location
 
 $threading = [bool]::Parse('True')
-
-$generator = "Ninja"
-
-# For most users, it will be essential to use MSVC version 14.41-17, due to ANTLR4 cpp runtime compatibility issues
-if (-not $msvcLatest)
-{
-    $msvcVersion = "14.41.34120"
-    $generator = "Visual Studio 17 2022"
-}
 
 $dependencies = "dependencies"
 New-Item -ItemType Directory -Path $dependencies -ErrorAction SilentlyContinue
@@ -437,7 +433,7 @@ if (-not $setSystemEnvVars)
 foreach ($preset in $presets) {
     # Set CMake cache variables
     $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value ($cacheVariables + @{
-        if (-not $msvcLatest)
+        if (-not [string]::IsNullOrEmpty($msvcVersion))
         {
             CMAKE_GENERATOR_TOOLSET = "version=$msvcVersion"
         }
