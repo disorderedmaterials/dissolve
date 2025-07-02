@@ -203,7 +203,7 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
     }
 
     // Start a timer
-    Timer timer, commsTimer(false);
+    Timer timer;
 
     // If we're not using a fixed timestep the forces need to be available immediately
     if (timestepType_ != TimestepType::Fixed)
@@ -213,17 +213,15 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
         std::fill(fBound.begin(), fBound.end(), Vector3());
 
         if (targetMolecules.empty())
-            ForcesModule::totalForces(moduleContext.processPool(), targetConfiguration_,
-                                      moduleContext.dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, moduleContext.dissolve().potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound, commsTimer);
+                                      fUnbound, fBound);
         else
-            ForcesModule::totalForces(moduleContext.processPool(), targetConfiguration_, targetMolecules,
-                                      moduleContext.dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, targetMolecules, moduleContext.dissolve().potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound, commsTimer);
+                                      fUnbound, fBound);
 
         // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         std::transform(fUnbound.begin(), fUnbound.end(), fUnbound.begin(), [](auto f) { return f * 100.0; });
@@ -274,17 +272,15 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
 
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         if (targetMolecules.empty())
-            ForcesModule::totalForces(moduleContext.processPool(), targetConfiguration_,
-                                      moduleContext.dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, moduleContext.dissolve().potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound, commsTimer);
+                                      fUnbound, fBound);
         else
-            ForcesModule::totalForces(moduleContext.processPool(), targetConfiguration_, targetMolecules,
-                                      moduleContext.dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, targetMolecules, moduleContext.dissolve().potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound, commsTimer);
+                                      fUnbound, fBound);
         std::transform(fUnbound.begin(), fUnbound.end(), fUnbound.begin(), [](auto f) { return f * 100.0; });
         std::transform(fBound.begin(), fBound.end(), fBound.begin(), [](auto f) { return f * 100.0; });
 
@@ -323,10 +319,8 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
             // Include total energy term?
             if (energyFrequency_ && (step % energyFrequency_.value() == 0))
             {
-                pePP = EnergyModule::pairPotentialEnergy(moduleContext.processPool(), targetConfiguration_,
-                                                         moduleContext.dissolve().potentialMap());
-                peBound = EnergyModule::intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_,
-                                                             moduleContext.dissolve().potentialMap());
+                pePP = EnergyModule::pairPotentialEnergy(targetConfiguration_, moduleContext.dissolve().potentialMap());
+                peBound = EnergyModule::intraMolecularEnergy(targetConfiguration_, moduleContext.dissolve().potentialMap());
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}\n", step,
                                  tInstant, ke, pePP.total(), peBound, ke + peBound + pePP.total(), dT);
             }
@@ -382,8 +376,7 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
     if (capForces_)
         Messenger::print("A total of {} forces were capped over the course of the dynamics ({:9.3e} per step).\n", nCapped,
                          double(nCapped) / nSteps_);
-    Messenger::print("{} steps performed ({} work, {} comms)\n", step - 1, timer.totalTimeString(),
-                     commsTimer.totalTimeString());
+    Messenger::print("{} steps performed ({})\n", step - 1, timer.totalTimeString());
 
     // Increment configuration changeCount
     if (step > 1)

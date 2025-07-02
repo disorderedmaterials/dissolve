@@ -203,7 +203,7 @@ NodeConstants::ProcessResult MDNode::process()
     }
 
     // Start a timer
-    Timer timer, commsTimer(false);
+    Timer timer;
 
     // If we're not using a fixed timestep the forces need to be available immediately
     if (timestepType_ != TimestepType::Fixed)
@@ -213,15 +213,15 @@ NodeConstants::ProcessResult MDNode::process()
         std::fill(fBound.begin(), fBound.end(), Vector3());
 
         if (targetMolecules.empty())
-            ForcesModule::totalForces(processPool(), targetConfiguration_, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, dissolve().potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound, commsTimer);
+                                      fUnbound, fBound);
         else
-            ForcesModule::totalForces(processPool(), targetConfiguration_, targetMolecules, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, targetMolecules, dissolve().potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound, commsTimer);
+                                      fUnbound, fBound);
 
         // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         std::transform(fUnbound.begin(), fUnbound.end(), fUnbound.begin(), [](auto f) { return f * 100.0; });
@@ -272,15 +272,15 @@ NodeConstants::ProcessResult MDNode::process()
 
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         if (targetMolecules.empty())
-            ForcesModule::totalForces(processPool(), targetConfiguration_, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, dissolve().potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound, commsTimer);
+                                      fUnbound, fBound);
         else
-            ForcesModule::totalForces(processPool(), targetConfiguration_, targetMolecules, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, targetMolecules, dissolve().potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound, commsTimer);
+                                      fUnbound, fBound);
         std::transform(fUnbound.begin(), fUnbound.end(), fUnbound.begin(), [](auto f) { return f * 100.0; });
         std::transform(fBound.begin(), fBound.end(), fBound.begin(), [](auto f) { return f * 100.0; });
 
@@ -319,8 +319,8 @@ NodeConstants::ProcessResult MDNode::process()
             // Include total energy term?
             if (energyFrequency > 0 && (step % energyFrequency == 0))
             {
-                pePP = EnergyModule::pairPotentialEnergy(processPool(), targetConfiguration_, dissolve().potentialMap());
-                peBound = EnergyModule::intraMolecularEnergy(processPool(), targetConfiguration_, dissolve().potentialMap());
+                pePP = EnergyModule::pairPotentialEnergy(targetConfiguration_, dissolve().potentialMap());
+                peBound = EnergyModule::intraMolecularEnergy(targetConfiguration_, dissolve().potentialMap());
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}\n", step,
                                  tInstant, ke, pePP.total(), peBound, ke + peBound + pePP.total(), dT);
             }
@@ -376,8 +376,7 @@ NodeConstants::ProcessResult MDNode::process()
     if (capForces_)
         Messenger::print("A total of {} forces were capped over the course of the dynamics ({:9.3e} per step).\n", nCapped,
                          double(nCapped) / nSteps);
-    Messenger::print("{} steps performed ({} work, {} comms)\n", step - 1, timer.totalTimeString(),
-                     commsTimer.totalTimeString());
+    Messenger::print("{} steps performed ({})\n", step - 1, timer.totalTimeString());
 
     // Increment configuration changeCount
     if (step > 1)

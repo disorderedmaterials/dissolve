@@ -55,8 +55,7 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
 
     // Create a local ChangeStore and a suitable EnergyKernel
     ChangeStore changeStore(moduleContext.processPool(), commsTimer);
-    auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
-                                               moduleContext.dissolve().potentialMap(), rCut);
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.dissolve().potentialMap(), rCut);
 
     // Initialise the random number buffer
     RandomBuffer randomBuffer(moduleContext.processPool(), ProcessPool::subDivisionStrategy(strategy), commsTimer);

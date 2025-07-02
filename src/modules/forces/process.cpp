@@ -43,8 +43,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
     f.resize(targetConfiguration_->nAtoms());
 
     // Calculate forces
-    totalForces(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap(),
-                ForcesModule::ForceCalculationType::Full, f, f);
+    totalForces(targetConfiguration_, moduleContext.dissolve().potentialMap(), ForcesModule::ForceCalculationType::Full, f, f);
 
     // Convert forces to 10J/mol
     std::transform(f.begin(), f.end(), f.begin(), [](auto val) { return val * 100.0; });

@@ -102,8 +102,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            EnergyModule::intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_,
-                                               moduleContext.dissolve().potentialMap());
+            EnergyModule::intraMolecularEnergy(targetConfiguration_, moduleContext.dissolve().potentialMap());
             Messenger::unMute();
             timing += timer.split();
         }
@@ -121,8 +120,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            EnergyModule::pairPotentialEnergy(moduleContext.processPool(), targetConfiguration_,
-                                              moduleContext.dissolve().potentialMap());
+            EnergyModule::pairPotentialEnergy(targetConfiguration_, moduleContext.dissolve().potentialMap());
             Messenger::unMute();
             timing += timer.split();
         }

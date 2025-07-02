@@ -16,7 +16,7 @@ std::unique_ptr<ForceKernel> createForceKernel(Problem<speciesType, population> 
     auto &procPool = problemDef.dissolve().worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     auto *cfg = problemDef.configuration();
-    return KernelProducer::forceKernel(cfg, procPool, potentialMap);
+    return KernelProducer::forceKernel(cfg, potentialMap);
 }
 
 template <SpeciesType speciesType, SpeciesPopulation population>
@@ -67,7 +67,7 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
         forceKernel->totalForces(
-            forces, forces, ProcessPool::PoolStrategy,
+            forces, forces,
             {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
 }
 
@@ -80,7 +80,7 @@ static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
     auto &procPool = problemDef.dissolve().worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     for (auto _ : state)
-        ForcesModule::totalForces(procPool, sp.get(), potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
+        ForcesModule::totalForces(sp.get(), potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
 }
 
 template <SpeciesType speciesType, SpeciesPopulation population>
@@ -91,7 +91,7 @@ static void BM_CalculateForces_TotalInterAtomic(benchmark::State &state)
     std::vector<Vector3> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
-        forceKernel->totalForces(forces, forces, ProcessPool::PoolStrategy, ForceKernel::ExcludeGeometry);
+        forceKernel->totalForces(forces, forces, ForceKernel::ExcludeGeometry);
 }
 
 template <SpeciesType speciesType, SpeciesPopulation population>
@@ -103,7 +103,7 @@ static void BM_CalculateForces_TotalForces(benchmark::State &state)
     auto &procPool = problemDef.dissolve().worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     for (auto _ : state)
-        ForcesModule::totalForces(procPool, cfg, potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
+        ForcesModule::totalForces(cfg, potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
 }
 // small molecule benchmarks
 BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesBond, SpeciesType::SmallMolecule, SpeciesPopulation::Small);

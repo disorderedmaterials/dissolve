@@ -42,16 +42,14 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 
     // Calculate pair potential energy
     Timer interTimer;
-    auto ppEnergy =
-        pairPotentialEnergy(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap());
+    auto ppEnergy = pairPotentialEnergy(targetConfiguration_, moduleContext.dissolve().potentialMap());
     interTimer.stop();
 
     // Calculate intra-molecular (bound) energy
     Timer intraTimer;
     double bondEnergy, angleEnergy, torsionEnergy, improperEnergy;
-    auto boundEnergy =
-        intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap(),
-                             bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
+    auto boundEnergy = intraMolecularEnergy(targetConfiguration_, moduleContext.dissolve().potentialMap(), bondEnergy,
+                                            angleEnergy, torsionEnergy, improperEnergy);
     intraTimer.stop();
 
     Messenger::print("Time to do interatomic energy was {}, intramolecular energy was {}.\n", interTimer.totalTimeString(),
@@ -257,8 +255,7 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 
         // Calculate total interatomic energy from molecules
         Timer moleculeTimer;
-        auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
-                                                   moduleContext.dissolve().potentialMap(), cutoff);
+        auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.dissolve().potentialMap(), cutoff);
         auto molecularPPEnergyInter = kernel->totalMoleculePairPotentialEnergy(false).total();
         auto molecularPPEnergyFull = kernel->totalMoleculePairPotentialEnergy(true).total();
         moleculeTimer.stop();

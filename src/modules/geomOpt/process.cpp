@@ -20,7 +20,7 @@ Module::ExecutionResult GeometryOptimisationModule::process(ModuleContext &modul
     rTemp_.resize(targetConfiguration_->nAtoms(), Vector3());
     f_.resize(targetConfiguration_->nAtoms(), Vector3());
 
-    optimise<Configuration>(moduleContext.dissolve().potentialMap(), moduleContext.processPool(), targetConfiguration_);
+    optimise<Configuration>(moduleContext.dissolve().potentialMap(), targetConfiguration_);
 
     return ExecutionResult::Success;
 }

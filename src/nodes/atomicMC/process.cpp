@@ -37,8 +37,8 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
     // Create a local ChangeStore and EnergyKernel
     ChangeStore changeStore(processPool(), commsTimer);
-    auto kernel = KernelProducer::energyKernel(targetConfiguration_, processPool(), dissolve().potentialMap(),
-                                               dissolve().pairPotentialRange());
+    auto kernel =
+        KernelProducer::energyKernel(targetConfiguration_, dissolve().potentialMap(), dissolve().pairPotentialRange());
 
     // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
     RandomBuffer randomBuffer(processPool(), ProcessPool::subDivisionStrategy(strategy), commsTimer);

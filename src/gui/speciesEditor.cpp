@@ -246,7 +246,7 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
 
     // Do the optimisation
     GeometryOptimisationModule optimiser;
-    optimiser.optimiseSpecies(dissolve.potentialMap(), dissolve.worldPool(), sp);
+    optimiser.optimiseSpecies(dissolve.potentialMap(), sp);
 
     // Centre the Species back at the origin
     sp->centreAtOrigin();
