@@ -57,6 +57,7 @@ Keyword|Arguments|Default|Description|
 |`ExportSnapshotSize`|`boolean`|`false`|Exports the calculated size distribution to SizeDist.txt.|
 |`ExportSnapshotMass`|`boolean`|`false`|Exports the calculated mass distribution to MassDist.txt.|
 |`ExportSnapshotAnalysis`|`boolean`|`false`|Calculates and exports the radius of gyration - cluster mass and the fractal dimension.|
+|`ExportSnapshotContacts`|`boolean`|`false`|Generates files for each combination of sites, printing the contact number per iteration.|
 |`MinGyrationSize`|`integer`|`5`|Sets the lower size limit for radius of gyration calculation and fractal dimension. Ensure you have enough data points over a large enough mass range when examining fractal dimensions.|
 
 Each iteration the data for just that pass is calculated and printed to the relevant file.
