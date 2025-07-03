@@ -3,6 +3,7 @@
 
 #include "math/mathFunc.h"
 
+#include "base/timer.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "math/ft.h"

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include "base/timer.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/potentialMap.h"

@@ -208,7 +208,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
 
     // Save data if requested
-    if (saveSQ_ && (!MPIRunMaster(moduleContext.processPool(), weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
+    if (saveSQ_ && !weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))
         return ExecutionResult::Failed;
     if (saveFormFactors_)
     {

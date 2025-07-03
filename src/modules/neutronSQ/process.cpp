@@ -200,7 +200,7 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
 
     // Save data if requested
-    if (saveSQ_ && (!MPIRunMaster(moduleContext.processPool(), weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
+    if (saveSQ_ && !weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))
         return ExecutionResult::Failed;
 
     /*
@@ -226,7 +226,7 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);
 
     // Save data if requested
-    if (saveGR_ && (!MPIRunMaster(moduleContext.processPool(), weightedGR.save(name_, "WeightedGR", "gr", "r, Angstroms"))))
+    if (saveGR_ && !weightedGR.save(name_, "WeightedGR", "gr", "r, Angstroms"))
         return ExecutionResult::Failed;
 
     // Calculate representative total g(r) from FT of calculated F(Q)

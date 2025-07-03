@@ -91,9 +91,6 @@ double EnergyModule::interMolecularEnergy(const Configuration *cfg, const Potent
     // Create an EnergyKernel
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
 
-    // Set the strategy
-    ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
-
     // Grab the Cell array and calculate total energy
     auto ppEnergy = kernel->totalPairPotentialEnergy(false).total();
 

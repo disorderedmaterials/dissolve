@@ -198,11 +198,9 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
     representativeTR.formTRTotals(weights);
 
     // Save data if requested
-    if (saveTR_ && (!MPIRunMaster(moduleContext.processPool(), weightedTR.save(name_, "WeightedTR", "tr", "Q, 1/Angstroms"))))
+    if (saveTR_ && (!weightedTR.save(name_, "WeightedTR", "tr", "Q, 1/Angstroms")))
         return ExecutionResult::Failed;
-    // Save data if requested
-    if (saveRepTR_ &&
-        (!MPIRunMaster(moduleContext.processPool(), representativeTR.save(name_, "RepresentativeTR", "tr", "Q, 1/Angstroms"))))
+    if (saveRepTR_ && (!representativeTR.save(name_, "RepresentativeTR", "tr", "Q, 1/Angstroms")))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

@@ -227,7 +227,7 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve)
                     sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->name()) : -1));
 
     // Save data if requested
-    if (save_ && !MPIRunMaster(moduleContext.processPool(), unweightedsq.save(name_, "UnweightedSQ", "sq", "Q, 1/Angstroms")))
+    if (save_ && !unweightedsq.save(name_, "UnweightedSQ", "sq", "Q, 1/Angstroms"))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

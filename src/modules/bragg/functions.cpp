@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include "base/timer.h"
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/braggReflection.h"

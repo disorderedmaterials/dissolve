@@ -98,11 +98,9 @@ Module::ExecutionResult GRModule::process(Dissolve &dissolve)
         calculateUnweightedGR(cfg, originalgr, unweightedgr, intraBroadening_, nSmooths_.value_or(0));
 
         // Save data if requested
-        if (save_ &&
-            (!MPIRunMaster(moduleContext.processPool(), unweightedgr.save(name_, "UnweightedGR", "gr", "r, Angstroms"))))
+        if (save_ && (!unweightedgr.save(name_, "UnweightedGR", "gr", "r, Angstroms")))
             return ExecutionResult::Failed;
-        if (saveOriginal_ &&
-            (!MPIRunMaster(moduleContext.processPool(), originalgr.save(name_, "OriginalGR", "gr", "r, Angstroms"))))
+        if (saveOriginal_ && (!originalgr.save(name_, "OriginalGR", "gr", "r, Angstroms")))
             return ExecutionResult::Failed;
     }
 
