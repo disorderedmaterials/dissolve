@@ -2,7 +2,6 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "base/processPool.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
@@ -155,11 +154,6 @@ int main(int args, char **argv)
         Messenger::print("Restart file will be written after every iteration.\n", dissolve.restartFileFrequency());
     else
         Messenger::print("Restart file will be written after every {} iterations.\n", dissolve.restartFileFrequency());
-
-#ifdef PARALLEL
-    Messenger::print("This is process rank {} of {} processes total.\n", ProcessPool::worldRank(),
-                     ProcessPool::nWorldProcesses());
-#endif
 
     // Run main simulation
     auto result = true;

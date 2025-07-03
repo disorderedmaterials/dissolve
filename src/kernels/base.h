@@ -14,7 +14,6 @@ class CellArray;
 class Configuration;
 class Molecule;
 class PotentialMap;
-class ProcessPool;
 
 // Kernel Base
 class KernelBase

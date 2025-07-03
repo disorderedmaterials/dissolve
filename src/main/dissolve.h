@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "base/processPool.h"
 #include "base/serialiser.h"
+#include "base/timer.h"
 #include "classes/configuration.h"
 #include "classes/coreData.h"
 #include "classes/pairPotential.h"
@@ -212,17 +212,4 @@ class Dissolve : public Serialisable<>
     std::string_view restartFilename() const;
     // Return whether a restart filename has been set
     bool hasRestartFilename() const;
-
-    /*
-     * Parallel Comms
-     */
-    private:
-    // World process pool
-    ProcessPool worldPool_;
-
-    public:
-    // Set up the world pool
-    void setUpWorldPool();
-    // Return the world process pool
-    const ProcessPool &worldPool() const;
 };
