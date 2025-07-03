@@ -57,7 +57,7 @@ bool Dissolve::prepare()
         // If the configuration is empty, initialise it now
         if (cfg->nMolecules() == 0)
         {
-            if (!cfg->initialiseContent({worldPool_, *this}))
+            if (!cfg->initialiseContent({*this}))
                 return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
         }
         else if (newPairPotentialRange)

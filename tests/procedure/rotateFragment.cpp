@@ -46,7 +46,7 @@ TEST(RotateFragmentGeneratorNodeTest, Benzene)
     add->keywords().set("Rotate", false);
 
     // Set up the prior configuration
-    cfg->generate({ProcessPool(), dissolve});
+    cfg->generate({dissolve});
 
     // Grab the first (and only) molecule
     auto mol = cfg->molecule(0);
@@ -69,7 +69,7 @@ TEST(RotateFragmentGeneratorNodeTest, Benzene)
         rotate->keywords().set("Rotation", NodeValueProxy(x));
 
         // Re-generate the configuration
-        cfg->generate({ProcessPool(), dissolve});
+        cfg->generate({dissolve});
 
         // Grab the first (and only) molecule
         mol = cfg->molecule(0);
