@@ -81,20 +81,10 @@ double EnergyNode::pairPotentialEnergy(const Species *sp, const PotentialMap &po
 // Return total intermolecular energy of Configuration
 double EnergyNode::interMolecularEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
 {
-    /*
-     * Calculates the total intermolecular energy of the system, i.e. the energy contributions from PairPotential
-     * interactions between individual Atoms of different Molecules, thus neglecting intramolecular terms
-     *
-     * This is a parallel routine, with processes operating as process groups.
-     */
-
     // Create an EnergyKernel
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
 
-    // Set the strategy
-    ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
-
-    // Grab the Cell array and calculate total energy
+    // Calculate total energy
     auto ppEnergy = kernel->totalPairPotentialEnergy(false).total();
 
     message("Intermolecular energy is {:15.9e}\n", ppEnergy);
@@ -114,13 +104,6 @@ double EnergyNode::intraMolecularEnergy(const Configuration *cfg, const Potentia
 double EnergyNode::intraMolecularEnergy(const Configuration *cfg, const PotentialMap &potentialMap, double &bondEnergy,
                                         double &angleEnergy, double &torsionEnergy, double &improperEnergy)
 {
-    /*
-     * Calculate the total intramolecular energy of the system, arising from Bond, Angle, and Torsion
-     * terms in all Molecules.
-     *
-     * This is a parallel routine, with processes operating as a standard world group.
-     */
-
     // Create an EnergyKernel
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
 

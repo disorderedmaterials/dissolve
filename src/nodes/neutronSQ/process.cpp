@@ -94,17 +94,11 @@ bool NeutronSQNode::setUp(Flags<KeywordBase::KeywordSignal> actionSignals)
         // Save data?
         if (saveReference_)
         {
-            if (processPool().isMaster())
-            {
-                Data1DExportFileFormat exportFormat(std::format("{}-ReferenceData.q", name()));
-                if (!exportFormat.exportData(storedData))
-                    return processPool().decideFalse();
-                Data1DExportFileFormat exportFormatFT(std::format("{}-ReferenceData.r", name()));
-                if (!exportFormatFT.exportData(storedDataFT))
-                    return processPool().decideFalse();
-                processPool().decideTrue();
-            }
-            else if (!processPool().decision())
+            Data1DExportFileFormat exportFormat(std::format("{}-ReferenceData.q", name()));
+            if (!exportFormat.exportData(storedData))
+                return false;
+            Data1DExportFileFormat exportFormatFT(std::format("{}-ReferenceData.r", name()));
+            if (!exportFormatFT.exportData(storedDataFT))
                 return false;
         }
     }
@@ -253,15 +247,8 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     // Save data if requested
     if (saveRepresentativeGR_)
     {
-        if (processPool().isMaster())
-        {
-            Data1DExportFileFormat exportFormat(std::format("{}-weighted-total.gr.broad", name()));
-            if (exportFormat.exportData(repGR))
-                processPool().decideTrue();
-            else
-                processPool().decideFalse();
-        }
-        else if (!processPool().decision())
+        Data1DExportFileFormat exportFormat(std::format("{}-weighted-total.gr.broad", name()));
+        if (!exportFormat.exportData(repGR))
             return NodeConstants::ProcessResult::Failed;
     }
 

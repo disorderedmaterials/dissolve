@@ -175,18 +175,9 @@ NodeConstants::ProcessResult MDNode::process()
     if (trajectoryFrequency && trajectoryFrequency > 0)
     {
         std::string trajectoryFile = std::format("{}.md.xyz", targetConfiguration_->name());
-        if (processPool().isMaster())
+        if ((!trajParser.appendOutput(trajectoryFile)) || (!trajParser.isFileGoodForWriting()))
         {
-            if ((!trajParser.appendOutput(trajectoryFile)) || (!trajParser.isFileGoodForWriting()))
-            {
-                Messenger::error("Failed to open MD trajectory output file '{}'.\n", trajectoryFile);
-                processPool().decideFalse();
-                return NodeConstants::ProcessResult::Failed;
-            }
-            processPool().decideTrue();
-        }
-        else if (!processPool().decision())
-        {
+            Messenger::error("Failed to open MD trajectory output file '{}'.\n", trajectoryFile);
             return NodeConstants::ProcessResult::Failed;
         }
     }
@@ -329,45 +320,30 @@ NodeConstants::ProcessResult MDNode::process()
         // Save trajectory frame
         if (trajectoryFrequency > 0 && (step % trajectoryFrequency == 0))
         {
-            if (processPool().isMaster())
-            {
-                // Write number of atoms
-                trajParser.writeLineF("{}\n", targetConfiguration_->nAtoms());
+            // Write number of atoms
+            trajParser.writeLineF("{}\n", targetConfiguration_->nAtoms());
 
-                // Construct and write header
-                std::string header = std::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps, tInstant, ke);
-                if (energyFrequency && (step % energyFrequency == 0))
-                    header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound,
-                                          ke + pePP.total() + peBound);
-                if (!trajParser.writeLine(header))
-                {
-                    processPool().decideFalse();
-                    return NodeConstants::ProcessResult::Failed;
-                }
-
-                // Write Atoms
-                for (const auto &i : atoms)
-                {
-                    if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n", Elements::symbol(i.speciesAtom()->Z()),
-                                               i.r().x, i.r().y, i.r().z))
-                    {
-                        processPool().decideFalse();
-                        return NodeConstants::ProcessResult::Failed;
-                    }
-                }
-
-                processPool().decideTrue();
-            }
-            else if (!processPool().decision())
-            {
+            // Construct and write header
+            std::string header = std::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps, tInstant, ke);
+            if (energyFrequency && (step % energyFrequency == 0))
+                header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound,
+                                      ke + pePP.total() + peBound);
+            if (!trajParser.writeLine(header))
                 return NodeConstants::ProcessResult::Failed;
+
+            // Write Atoms
+            for (const auto &i : atoms)
+            {
+                if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n", Elements::symbol(i.speciesAtom()->Z()),
+                                           i.r().x, i.r().y, i.r().z))
+                    return NodeConstants::ProcessResult::Failed;
             }
         }
     }
     timer.stop();
 
     // Close trajectory file
-    if (trajectoryFrequency > 0 && processPool().isMaster())
+    if (trajectoryFrequency > 0)
         trajParser.closeFiles();
 
     if (capForces_)

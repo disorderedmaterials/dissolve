@@ -302,8 +302,6 @@ class Node : public Serialisable<>
     Graph *parentGraph() const;
     // Return the Dissolve reference
     virtual Dissolve &dissolve() const;
-    // Return the world pool
-    virtual const ProcessPool &processPool() const;
 
     /*
      * Data

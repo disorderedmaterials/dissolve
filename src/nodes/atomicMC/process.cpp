@@ -30,9 +30,6 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     message("Target acceptance rate is {}.\n", targetAcceptanceRate);
     message("\n");
 
-    ProcessPool::DivisionStrategy strategy = processPool().bestStrategy();
-    Timer commsTimer(false);
-
     // Create a Molecule distributor
     RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells());
 
@@ -132,20 +129,11 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
     timer.stop();
 
-    // Collect statistics across all processes
-    if (!processPool().allSum(&nAccepted, 1, strategy, commsTimer))
-        return NodeConstants::ProcessResult::Failed;
-    if (!processPool().allSum(&nAttempts, 1, strategy, commsTimer))
-        return NodeConstants::ProcessResult::Failed;
-    if (!processPool().allSum(&totalDelta, 1, strategy, commsTimer))
-        return NodeConstants::ProcessResult::Failed;
-
     message("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
     // Calculate and print acceptance rate
     double rate = double(nAccepted) / nAttempts;
-    message("Total number of attempted moves was {} ({} work, {} comms)\n", nAttempts, timer.totalTimeString(),
-            commsTimer.totalTimeString());
+    message("Total number of attempted moves was {} ({})\n", nAttempts, timer.totalTimeString());
 
     message("Overall acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rate, nAccepted, nAttempts);
 
