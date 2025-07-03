@@ -462,7 +462,7 @@ foreach ($preset in $presets) {
     # Set toolset
     if ($toolset)
     {
-        $preset | Add-Member -MemberType NoteProperty -Name environment -Value ($toolset)
+        $preset | Add-Member -MemberType NoteProperty -Name toolset -Value ($toolset)
     }
 
     $cmakeUserPresets.configurePresets += $preset
