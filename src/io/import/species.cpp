@@ -3,7 +3,6 @@
 
 #include "io/import/species.h"
 #include "base/lineParser.h"
-#include "base/processPool.h"
 #include "base/sysFunc.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"

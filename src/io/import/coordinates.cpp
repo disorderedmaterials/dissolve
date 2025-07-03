@@ -3,7 +3,6 @@
 
 #include "io/import/coordinates.h"
 #include "base/lineParser.h"
-#include "base/processPool.h"
 #include "base/sysFunc.h"
 #include "classes/configuration.h"
 #include "templates/algorithms.h"

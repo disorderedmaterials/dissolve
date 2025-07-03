@@ -272,18 +272,3 @@ bool Histogram3D::serialise(LineParser &parser) const
 
     return true;
 }
-
-/*
- * Parallel Comms
- */
-
-// Sum histogram data onto all processes
-bool Histogram3D::allSum(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.allSum(bins_.linearArray().data(), bins_.linearArray().size()))
-        return false;
-#endif
-
-    return true;
-}

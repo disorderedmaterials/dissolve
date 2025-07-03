@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/processPool.h"
 #include "base/serialiser.h"
 #include "classes/configuration.h"
 #include "classes/coreData.h"
