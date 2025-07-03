@@ -3,13 +3,10 @@
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
-#include "classes/atomType.h"
-#include "classes/box.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
 #include "modules/intraShake/intraShake.h"
 #include <cstdio>
-#include <numeric>
 
 // Set frequency with which to write various iteration data
 void Dissolve::setRestartFileFrequency(int n) { restartFileFrequency_ = n; }
@@ -258,7 +255,6 @@ bool Dissolve::iterate(int nIterations)
 
         // Sync up all processes
         Messenger::printVerbose("Waiting for other processes at end of Configuration upkeep...\n");
-        worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
         /*
          *  2)	Run processing Modules
@@ -290,12 +286,11 @@ bool Dissolve::iterate(int nIterations)
 
         // Sync up all processes
         Messenger::printVerbose("Waiting for other processes at end of main processing...\n");
-        worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
         /*
          *  3)	Write restart file.
          */
-        if (worldPool().isMaster() && (restartFileFrequency_ > 0) && (iteration_ % restartFileFrequency_ == 0))
+        if ((restartFileFrequency_ > 0) && (iteration_ % restartFileFrequency_ == 0))
         {
             Messenger::banner("Write Restart File");
 
@@ -314,7 +309,6 @@ bool Dissolve::iterate(int nIterations)
             if (DissolveSys::fileExists(restartFileBackup) && (std::remove(restartFileBackup.c_str()) != 0))
             {
                 Messenger::error("Could not remove old restart file backup.\n");
-                worldPool().decideFalse();
                 return false;
             }
 
@@ -323,7 +317,6 @@ bool Dissolve::iterate(int nIterations)
                 (std::rename(restartFilename_.c_str(), restartFileBackup.c_str()) != 0))
             {
                 Messenger::error("Could not rename current restart file.\n");
-                worldPool().decideFalse();
                 return false;
             }
 
@@ -334,23 +327,12 @@ bool Dissolve::iterate(int nIterations)
             if (!saveRestart(restartFilename_))
             {
                 Messenger::error("Failed to write restart file.\n");
-                worldPool().decideFalse();
                 return false;
             }
 
             saveRestartTimer.stop();
             saveRestartTimes_ += saveRestartTimer.secondsElapsed();
-
-            // All good. Carry on!
-            worldPool().decideTrue();
         }
-        else if (worldPool().isSlave() && (restartFileFrequency_ > 0) && (iteration_ % restartFileFrequency_ == 0) &&
-                 (!worldPool().decision()))
-            return false;
-
-        // Sync up all processes
-        Messenger::printVerbose("Waiting for other processes at end of data write section...\n");
-        worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
         iterationTime_ += iterationTimer_.split();
 
