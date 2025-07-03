@@ -672,8 +672,7 @@ bool Dissolve::loadRestart(std::string_view filename)
         Messenger::error("Errors encountered while loading restart file.\n");
 
     // Done
-    if (worldPool().isWorldMaster())
-        parser.closeFiles();
+    parser.closeFiles();
 
     return (!error);
 }
