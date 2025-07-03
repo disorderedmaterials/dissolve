@@ -62,27 +62,18 @@ int main(int args, char **argv)
             options.writeInputFilename() ? options.writeInputFilename().value() : options.toTomlFile().value();
         Messenger::print("Saving input file to '{}'...\n", filename);
         bool result;
-        if (dissolve.worldPool().isMaster())
-        {
-            if (options.writeInputFilename())
-            {
-                result = dissolve.saveInput(options.writeInputFilename().value());
-                if (result)
-                    dissolve.worldPool().decideTrue();
-                else
-                    dissolve.worldPool().decideFalse();
-            }
-            else
-            {
-                auto toml = dissolve.serialise();
-                std::ofstream outfile(options.toTomlFile().value());
-                outfile << toml;
-                outfile.close();
-                result = true;
-            }
-        }
+
+        if (options.writeInputFilename())
+            result = dissolve.saveInput(options.writeInputFilename().value());
         else
-            result = dissolve.worldPool().decision();
+        {
+            auto toml = dissolve.serialise();
+            std::ofstream outfile(options.toTomlFile().value());
+            outfile << toml;
+            outfile.close();
+            result = true;
+        }
+
         if (!result)
             Messenger::error("Failed to save input file to '{}'.\n", filename);
 
