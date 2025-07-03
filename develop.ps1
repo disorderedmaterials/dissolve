@@ -387,13 +387,22 @@ $cacheVariables = @{
     CMAKE_PREFIX_PATH = "$qt6CMakeDir"
 }
 
-if (-not [string]::IsNullOrEmpty($msvcVersion))
+# For MSVC version != v143 latest, and Visual Studio generator specified, set toolset with cache variable
+if ((-not [string]::IsNullOrEmpty($msvcVersion)) -and ($generator -eq "Visual Studio 17 2022"))
 {
     $cacheVariables = $cacheVariables + @{
         CMAKE_GENERATOR_TOOLSET = "version=$msvcVersion"
     }
 }
 
+# For MSVC version != v143 latest, and Ninja generator specified, set toolset at preset level
+if ((-not [string]::IsNullOrEmpty($msvcVersion)) -and ($generator -eq "Ninja"))
+{
+    $toolset = @{
+        value = "version=$msvcVersion"
+        strategy = "external"
+    }
+}
 
 $cmakeUserPresets = [PSCustomObject]@{
     version = 3
@@ -448,6 +457,12 @@ foreach ($preset in $presets) {
     if (-not $setSystemEnvVars)
     {
         $preset | Add-Member -MemberType NoteProperty -Name environment -Value ($environment)
+    }
+
+    # Set toolset
+    if ($toolset)
+    {
+        $preset | Add-Member -MemberType NoteProperty -Name environment -Value ($toolset)
     }
 
     $cmakeUserPresets.configurePresets += $preset
