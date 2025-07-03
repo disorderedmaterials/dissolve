@@ -389,7 +389,7 @@ $cacheVariables = @{
 
 if (-not [string]::IsNullOrEmpty($msvcVersion))
 {
-    $cacheVariables + @{
+    $cacheVariables = $cacheVariables + @{
         CMAKE_GENERATOR_TOOLSET = "version=$msvcVersion"
     }
 }
