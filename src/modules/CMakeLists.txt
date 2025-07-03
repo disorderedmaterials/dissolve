@@ -81,6 +81,8 @@ macro(dissolve_add_module_gui modulename)
             ${PROJECT_BINARY_DIR}/src
             ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
             ${CMAKE_BINARY_DIR}/src/gui/widgets/widgets_autogen/include
+            ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include_${CMAKE_BUILD_TYPE}
+            ${CMAKE_BINARY_DIR}/src/gui/widgets/widgets_autogen/include_${CMAKE_BUILD_TYPE}
             ${Qt6Core_INCLUDE_DIRS}
             ${Qt6Gui_INCLUDE_DIRS}
             ${Qt6Widgets_INCLUDE_DIRS}
