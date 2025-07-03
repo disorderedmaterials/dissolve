@@ -5,7 +5,6 @@
 #include "classes/species.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
-#include "module/context.h"
 #include "modules/gr/gr.h"
 #include "nodes/gr/gr.h"
 
@@ -96,7 +95,7 @@ NodeConstants::ProcessResult GRNode::process()
         {
             // Copy the already-calculated g(r), then calculate a new set using the Test method
             PartialSet referencePartials = originalgr;
-            calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), cfg, GRModule::TestMethod,
+            calculateGR(dissolve.processingModuleData(), moduleContext.processPool(), cfg, GRModule::TestMethod,
                 rdfRange, binWidth_, alreadyUpToDate);
             if (!testReferencePartials(referencePartials, originalgr, 1.0e-6))
                 return ExecutionResult::Failed;

@@ -12,13 +12,12 @@
 #include "math/histogram3D.h"
 #include "math/mathFunc.h"
 #include "math/range.h"
-#include "module/context.h"
 #include "modules/angle/angle.h"
 
 // Run main processing
-Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult AngleModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
@@ -204,28 +203,23 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
     normaliserDAngleBC.normaliseBySphericalShell();
 
     // Save RDF(A-B) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(normalisedAB, exportFileAndFormatAB_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(normalisedAB, exportFileAndFormatAB_))
         return ExecutionResult::Failed;
 
     // Save RDF(B-C) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(normalisedBC, exportFileAndFormatBC_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(normalisedBC, exportFileAndFormatBC_))
         return ExecutionResult::Failed;
 
     // Save Angle(A-B-C) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(normalisedAngle, exportFileAndFormatAngle_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(normalisedAngle, exportFileAndFormatAngle_))
         return ExecutionResult::Failed;
 
     // Save DAngle((A-B)-C) data?
-    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(normalisedDAngleAB, exportFileAndFormatDAngleAB_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(normalisedDAngleAB, exportFileAndFormatDAngleAB_))
         return ExecutionResult::Failed;
 
     // Save DAngle(A-(B-C)) data?
-    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(normalisedDAngleBC, exportFileAndFormatDAngleBC_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(normalisedDAngleBC, exportFileAndFormatDAngleBC_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

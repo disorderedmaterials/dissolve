@@ -11,7 +11,6 @@
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
-#include "module/context.h"
 #include "nodes/gr/gr.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/sq/sq.h"
@@ -141,7 +140,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
      */
     // Calculate and store weights_
     /*
-    auto& weights_ = moduleContext.dissolve().processingModuleData().realise<NeutronWeights>("FullWeights", name(),
+    auto& weights_ = dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", name(),
         GenericItem::InRestartFileFlag);
     */
     calculateWeights(weights_);
@@ -150,7 +149,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
 
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
     /*
-    auto [weightedSQ, wSQstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
+    auto [weightedSQ, wSQstatus] = dissolve.processingModuleData().realiseIf<PartialSet>(
         "WeightedSQ", name(), GenericItem::InRestartFileFlag);
     if (wSQstatus == GenericItem::ItemStatus::Created)
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
@@ -189,7 +188,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
 
     // Get summed unweighted g(r) from the RDFMOdule
     /*
-    if (!moduleContext.dissolve().processingModuleData().contains("UnweightedGR", rdfModule->name()))
+    if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->name()))
     {
         error("Couldn't locate summed unweighted g(r) data.\n");
         return NodeConstants::ProcessResult::Failed;
@@ -198,12 +197,12 @@ NodeConstants::ProcessResult NeutronSQNode::process()
 
     /*
     const auto& unweightedGR =
-        moduleContext.dissolve().processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->name());
+        dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->name());
     */
 
     // Create/retrieve PartialSet for summed weighted g(r)
     /*
-    auto [weightedGR, wGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
+    auto [weightedGR, wGRstatus] = dissolve.processingModuleData().realiseIf<PartialSet>(
         "WeightedGR", name(), GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedGR.setUpPartials(unweightedGR.atomTypeMix());
@@ -225,7 +224,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     */
     // Calculate representative total g(r) from FT of calculated F(Q)
     /*
-    auto& repGR = moduleContext.dissolve().processingModuleData().realise<Data1D>("RepresentativeTotalGR", name(),
+    auto& repGR = dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", name(),
         GenericItem::InRestartFileFlag);
     */
     Data1D repGR;
@@ -237,7 +236,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     {
         // Take FT max Q limit from reference data
         /*
-        auto& referenceData = moduleContext.dissolve().processingModuleData().realise<Data1D>("ReferenceData", name(),
+        auto& referenceData = dissolve.processingModuleData().realise<Data1D>("ReferenceData", name(),
             GenericItem::ProtectedFlag);
         */
         Data1D referenceData;

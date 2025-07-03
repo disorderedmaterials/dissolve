@@ -1,4 +1,4 @@
-#include "base/randomBuffer.h"
+
 #include "base/timer.h"
 #include "classes/box.h"
 #include "classes/changeStore.h"
@@ -6,6 +6,7 @@
 #include "classes/regionalDistributor.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
+#include "math/mathFunc.h"
 #include "nodes/atomicMC/atomicMC.h"
 
 // Run main processing
@@ -36,12 +37,9 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells());
 
     // Create a local ChangeStore and EnergyKernel
-    ChangeStore changeStore(processPool(), commsTimer);
+    ChangeStore changeStore;
     auto kernel =
         KernelProducer::energyKernel(targetConfiguration_, dissolve().potentialMap(), dissolve().pairPotentialRange());
-
-    // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
-    RandomBuffer randomBuffer(processPool(), ProcessPool::subDivisionStrategy(strategy), commsTimer);
 
     auto nAttempts = 0, nAccepted = 0;
     bool accept;
@@ -81,8 +79,8 @@ NodeConstants::ProcessResult AtomicMCNode::process()
                 for (auto n = 0; n < nShakesPerAtom; ++n)
                 {
                     // Create a random translation vector
-                    rDelta.set(randomBuffer.randomPlusMinusOne() * stepSize, randomBuffer.randomPlusMinusOne() * stepSize,
-                               randomBuffer.randomPlusMinusOne() * stepSize);
+                    rDelta.set(DissolveMath::randomPlusMinusOne() * stepSize, DissolveMath::randomPlusMinusOne() * stepSize,
+                               DissolveMath::randomPlusMinusOne() * stepSize);
 
                     // Translate Atom and update its Cell position
                     i->translateCoordinates(rDelta);
@@ -95,7 +93,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
                     // Trial the transformed Atom position
                     delta = (newEnergy + newIntraEnergy) - (currentEnergy + currentIntraEnergy);
-                    accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
+                    accept = delta < 0 ? true : (DissolveMath::random() < exp(-delta * rRT));
 
                     if (accept)
                     {
@@ -128,7 +126,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
         }
 
         // Now all target Molecules have been processes, broadcast the changes made
-        changeStore.distributeAndApply(targetConfiguration_);
+        changeStore.apply(targetConfiguration_);
         changeStore.reset();
     }
 

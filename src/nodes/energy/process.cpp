@@ -8,7 +8,6 @@
 #include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "math/regression.h"
-#include "module/context.h"
 #include "nodes/energy/energy.h"
 
 // Run main processing

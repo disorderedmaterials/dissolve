@@ -3,7 +3,6 @@
 
 #include "modules/siteRDF/siteRDF.h"
 #include "common/problems.h"
-#include "module/context.h"
 #include <benchmark/benchmark.h>
 
 namespace Benchmarks
@@ -17,11 +16,10 @@ template <SpeciesType speciesType, SpeciesPopulation population> static void BM_
     module.keywords().set("Configuration", problemDef.configuration());
     module.keywords().set("SiteA", sites);
     module.keywords().set("SiteB", sites);
-    ModuleContext context(problemDef.dissolve().worldPool(), problemDef.dissolve());
     for (auto _ : state)
     {
         problemDef.configuration()->incrementContentsVersion();
-        module.executeProcessing(context);
+        module.executeProcessing(problemDef.dissolve());
     }
 }
 

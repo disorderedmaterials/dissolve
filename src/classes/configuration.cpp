@@ -114,7 +114,7 @@ bool Configuration::initialiseContent(const GeneratorContext &generatorContext)
     updateCells(generatorContext.potentialMap().range());
 
     // Apply size factor scaling if required
-    applySizeFactor(generatorContext.processPool(), generatorContext.potentialMap());
+    applySizeFactor(generatorContext.potentialMap());
 
     return true;
 }

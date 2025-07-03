@@ -72,5 +72,5 @@ class VoxelDensityModule : public Module
     // Actual side length of a single analysis voxel (angstroms), calculated to suit the given unit cell axis
     double voxelSideLength(const double axisLength) const;
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

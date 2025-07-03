@@ -7,7 +7,6 @@
 #include "classes/box.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 #include "modules/intraShake/intraShake.h"
 #include <cstdio>
 #include <numeric>
@@ -254,7 +253,7 @@ bool Dissolve::iterate(int nIterations)
             Messenger::heading("'{}'", cfg->name());
 
             // Apply the current size factor
-            cfg->applySizeFactor(worldPool(), potentialMap_);
+            cfg->applySizeFactor(potentialMap_);
         }
 
         // Sync up all processes
@@ -262,9 +261,8 @@ bool Dissolve::iterate(int nIterations)
         worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
         /*
-         *  2)	Run processing Modules (using the world pool).
+         *  2)	Run processing Modules
          */
-        ModuleContext context(worldPool(), *this);
         for (auto &layer : coreData_.processingLayers())
         {
             // Check if this layer is due to run this iteration
@@ -285,7 +283,7 @@ bool Dissolve::iterate(int nIterations)
 
                 Messenger::heading("{} ({})", ModuleTypes::moduleType(module->type()), module->name());
 
-                if (module->executeProcessing(context) == Module::ExecutionResult::Failed)
+                if (module->executeProcessing(*this) == Module::ExecutionResult::Failed)
                     return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
             }
         }

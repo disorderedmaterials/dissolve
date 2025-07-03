@@ -97,9 +97,6 @@ NodeConstants::ProcessResult MDNode::process()
      * Calculation Begins
      */
 
-    // Initialise the random number buffer for all processes
-    RandomBuffer randomBuffer(processPool(), ProcessPool::PoolProcessesCommunicator);
-
     if (!velocities_)
         velocities_.emplace();
     auto &velocities = velocities_.value();
@@ -118,7 +115,7 @@ NodeConstants::ProcessResult MDNode::process()
         for (auto &&[v, iFree] : zip(velocities, free))
         {
             if (iFree)
-                v.set(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5));
+                v.set(exp(DissolveMath::random() - 0.5), exp(DissolveMath::random() - 0.5), exp(DissolveMath::random() - 0.5));
             else
                 v.zero();
             v /= sqrt(2.0 * M_PI);

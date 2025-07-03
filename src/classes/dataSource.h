@@ -13,7 +13,6 @@
 #include "math/data2D.h"
 #include "math/data3D.h"
 #include "math/sampledData1D.h"
-#include "module/context.h"
 
 // Template arguments: data class (Data1D, Data2D ...)
 template <typename DataType> class DataSource : public Serialisable<const CoreData &>

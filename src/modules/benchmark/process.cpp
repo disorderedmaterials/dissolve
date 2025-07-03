@@ -7,20 +7,17 @@
 #include "io/export/data1D.h"
 #include "io/import/data1D.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 #include "modules/benchmark/benchmark.h"
 #include "modules/energy/energy.h"
 #include "modules/gr/gr.h"
 
 // Run main processing
-Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve)
 {
     // Get options
     Messenger::print("Benchmark: Test timings will be averaged over {} {}.\n", nRepeats_, nRepeats_ == 1 ? "run" : "runs");
     Messenger::print("Benchmark: Test timings {} be saved to disk.\n", save_ ? "will" : "will not");
     Messenger::print("\n");
-
-    ProcessPool::DivisionStrategy strategy = moduleContext.processPool().bestStrategy();
 
     /*
      * Configuration Generation
@@ -32,7 +29,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            targetConfiguration_->generate({moduleContext.processPool(), moduleContext.dissolve()});
+            targetConfiguration_->generate({dissolve});
             Messenger::unMute();
             timing += timer.split();
         }
@@ -56,8 +53,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             bool upToDate;
             Timer timer;
             Messenger::mute();
-            rdfModule.calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(),
-                                  targetConfiguration_, GRModule::CellsMethod,
+            rdfModule.calculateGR(dissolve.processingModuleData(), targetConfiguration_, GRModule::CellsMethod,
                                   targetConfiguration_->box()->inscribedSphereRadius(), 0.05, upToDate);
             Messenger::unMute();
             timing += timer.split();
@@ -82,8 +78,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             bool upToDate;
             Timer timer;
             Messenger::mute();
-            rdfModule.calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(),
-                                  targetConfiguration_, GRModule::SimpleMethod,
+            rdfModule.calculateGR(dissolve.processingModuleData(), targetConfiguration_, GRModule::SimpleMethod,
                                   targetConfiguration_->box()->inscribedSphereRadius(), 0.05, upToDate);
             Messenger::unMute();
             timing += timer.split();
@@ -102,7 +97,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            EnergyModule::intraMolecularEnergy(targetConfiguration_, moduleContext.dissolve().potentialMap());
+            EnergyModule::intraMolecularEnergy(targetConfiguration_, dissolve.potentialMap());
             Messenger::unMute();
             timing += timer.split();
         }
@@ -120,7 +115,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            EnergyModule::pairPotentialEnergy(targetConfiguration_, moduleContext.dissolve().potentialMap());
+            EnergyModule::pairPotentialEnergy(targetConfiguration_, dissolve.potentialMap());
             Messenger::unMute();
             timing += timer.split();
         }

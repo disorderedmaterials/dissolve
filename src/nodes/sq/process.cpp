@@ -7,7 +7,6 @@
 #include "main/dissolve.h"
 #include "math/averaging.h"
 #include "math/filters.h"
-#include "module/context.h"
 #include "modules/bragg/bragg.h"
 #include "modules/gr/gr.h"
 #include "modules/sq/sq.h"

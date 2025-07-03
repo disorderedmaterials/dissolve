@@ -59,9 +59,8 @@ std::optional<double> MDModule::determineTimeStep(TimestepType timestepType, dou
 }
 
 // Evolve Species coordinates, returning new coordinates
-std::vector<Vector3> MDModule::evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
-                                      double temperature, int nSteps, double maxDeltaT, const std::vector<Vector3> &rInit,
-                                      std::vector<Vector3> &velocities)
+std::vector<Vector3> MDModule::evolve(const PotentialMap &potentialMap, const Species *sp, double temperature, int nSteps,
+                                      double maxDeltaT, const std::vector<Vector3> &rInit, std::vector<Vector3> &velocities)
 {
     assert(sp);
     assert(sp->nAtoms() == velocities.size());

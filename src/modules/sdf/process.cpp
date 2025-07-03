@@ -7,13 +7,12 @@
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
 #include "math/histogram3D.h"
-#include "module/context.h"
 #include "modules/sdf/sdf.h"
 
 // Run main processing
-Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult SDFModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
@@ -56,7 +55,7 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
     normaliserSDF.normaliseByGrid();
 
     // Save SDF data?
-    if (!DataExporter<Data3D, Data3DExportFileFormat>::exportData(dataSDF, sdfFileAndFormat_, moduleContext.processPool()))
+    if (!DataExporter::exportData(dataSDF, sdfFileAndFormat_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
