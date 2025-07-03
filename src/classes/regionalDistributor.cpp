@@ -3,7 +3,6 @@
 
 #include "classes/regionalDistributor.h"
 #include "base/lineParser.h"
-#include "base/processPool.h"
 #include "classes/atom.h"
 #include "classes/cell.h"
 #include "classes/molecule.h"

@@ -3,7 +3,6 @@
 
 #include "classes/configuration.h"
 #include "base/lineParser.h"
-#include "base/processPool.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "classes/cell.h"

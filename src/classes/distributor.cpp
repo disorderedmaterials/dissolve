@@ -3,7 +3,6 @@
 
 #include "classes/distributor.h"
 #include "base/messenger.h"
-#include "base/processPool.h"
 #include "classes/cell.h"
 
 Distributor::Distributor(int nObjects, const CellArray &cellArray, bool allowRepeats) : cellArray_(cellArray)

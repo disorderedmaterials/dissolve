@@ -2,7 +2,6 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/changeStore.h"
-#include "base/processPool.h"
 #include "classes/atom.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
