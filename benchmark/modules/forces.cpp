@@ -12,8 +12,6 @@ namespace Benchmarks
 template <SpeciesType speciesType, SpeciesPopulation population>
 std::unique_ptr<ForceKernel> createForceKernel(Problem<speciesType, population> &problemDef)
 {
-
-    auto &procPool = problemDef.dissolve().worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     auto *cfg = problemDef.configuration();
     return KernelProducer::forceKernel(cfg, potentialMap);
@@ -76,7 +74,6 @@ static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
     Problem<speciesType, population> problemDef;
     auto &sp = problemDef.coreData().species().front();
     std::vector<Vector3> forces(sp->nAtoms());
-    auto &procPool = problemDef.dissolve().worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     for (auto _ : state)
         ForcesModule::totalForces(sp.get(), potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
@@ -99,7 +96,6 @@ static void BM_CalculateForces_TotalForces(benchmark::State &state)
     Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
     std::vector<Vector3> forces(cfg->nAtoms());
-    auto &procPool = problemDef.dissolve().worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
     for (auto _ : state)
         ForcesModule::totalForces(cfg, potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
