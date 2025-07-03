@@ -38,8 +38,6 @@ TEST(GeometryMinimisationTest, Water)
     // Run the geometry optimisation
     GeometryOptimisationModule geomOpt;
     geomOpt.keywords().set("Tolerance", 1.0e-6);
-    ProcessPool processPool;
-    processPool.setUp("Dummy", {0});
     geomOpt.optimiseSpecies(potMap, &water);
 
     // Check final geometry
