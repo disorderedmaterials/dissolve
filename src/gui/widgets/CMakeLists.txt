@@ -22,14 +22,7 @@ add_library(
   superStackedWidget.cpp
   superStackedWidget.h
 )
-target_include_directories(
-	widgets
-	PRIVATE ${PROJECT_SOURCE_DIR}/src
-			${PROJECT_BINARY_DIR}/src
-			${CMAKE_BINARY_DIR}/src/gui/widgets/widgets_autogen/include_${CMAKE_BUILD_TYPE}
-			${Qt6Widgets_INCLUDE_DIRS}
-)
-
+target_include_directories(widgets PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS})
 target_link_libraries(widgets PRIVATE base)
 
 # Because Qt has its own way of checking for C++17

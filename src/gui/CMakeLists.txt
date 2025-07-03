@@ -181,7 +181,6 @@ target_include_directories(
   gui
   PRIVATE ${PROJECT_SOURCE_DIR}/src
           ${PROJECT_BINARY_DIR}/src
-          ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include_${CMAKE_BUILD_TYPE}
           ${FREETYPE_INCLUDE_DIRS}
           ${Qt6Core_INCLUDE_DIRS}
           ${Qt6OpenGL_INCLUDE_DIRS}
