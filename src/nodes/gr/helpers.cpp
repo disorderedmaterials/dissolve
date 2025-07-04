@@ -423,7 +423,6 @@ bool GRNode::calculateGR(Configuration *cfg, PartialSet &originalgr, GRNode::Par
      */
 
     timer.start();
-    Timer commsTimer(false);
     auto success =
         for_each_pair_early(0, originalgr.nAtomTypes(),
                             [&originalgr](auto typeI, auto typeJ) -> EarlyReturn<bool>
@@ -443,8 +442,7 @@ bool GRNode::calculateGR(Configuration *cfg, PartialSet &originalgr, GRNode::Par
     // Sum total functions
     originalgr.formTotals(true);
     timer.stop();
-    message("Finished summation and normalisation of partial g(r) data ({} elapsed, {} comms).\n", timer.totalTimeString(),
-            commsTimer.totalTimeString());
+    message("Finished summation and normalisation of partial g(r) data ({}).\n", timer.totalTimeString());
 
     /*
      * Partials are now up-to-date

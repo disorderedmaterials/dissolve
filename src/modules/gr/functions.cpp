@@ -409,10 +409,9 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
      */
 
     timer.start();
-    Timer commsTimer(false);
     auto success =
         for_each_pair_early(0, originalgr.nAtomTypes(),
-                            [&originalgr, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
+                            [&originalgr](auto typeI, auto typeJ) -> EarlyReturn<bool>
                             {
                                 // Create unbound histogram from total and bound data
                                 originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
@@ -429,8 +428,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
     // Sum total functions
     originalgr.formTotals(true);
     timer.stop();
-    Messenger::print("Finished summation and normalisation of partial g(r) data ({} elapsed, {} comms).\n",
-                     timer.totalTimeString(), commsTimer.totalTimeString());
+    Messenger::print("Finished summation and normalisation of partial g(r) data ({}).\n", timer.totalTimeString());
 
     /*
      * Partials are now up-to-date
