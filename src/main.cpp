@@ -34,7 +34,7 @@ int main(int args, char **argv)
 
     // Enable redirect if requested
     if (options.redirectionBasename())
-        Messenger::enableRedirect(std::format("{}.{}", options.redirectionBasename().value(), ProcessPool::worldRank()));
+        Messenger::enableRedirect(options.redirectionBasename().value());
 
     Messenger::print("Dissolve-{} version {}, Copyright (C) 2025 Team Dissolve and contributors.\n", Version::appType(),
                      Version::info());
@@ -47,7 +47,6 @@ int main(int args, char **argv)
     Messenger::banner("Parse Input File");
     if (!dissolve.loadInput(options.inputFile().value()))
     {
-        ProcessPool::finalise();
         Messenger::ceaseRedirect();
         return 1;
     }
@@ -83,14 +82,12 @@ int main(int args, char **argv)
             Messenger::banner("Reload Input File");
             if (!dissolve.loadInput(options.writeInputFilename().value()))
             {
-                ProcessPool::finalise();
                 Messenger::ceaseRedirect();
                 return 1;
             }
         }
         else
         {
-            ProcessPool::finalise();
             Messenger::ceaseRedirect();
             return result ? 0 : 1;
         }
@@ -111,7 +108,6 @@ int main(int args, char **argv)
             if (!dissolve.loadRestart(restartFile))
             {
                 Messenger::error("Restart file contained errors.\n");
-                ProcessPool::finalise();
                 Messenger::ceaseRedirect();
                 return 1;
             }
@@ -132,7 +128,6 @@ int main(int args, char **argv)
     // If we're just checking the input and restart files, exit now
     if (!options.nIterations())
     {
-        ProcessPool::finalise();
         Messenger::ceaseRedirect();
         return 0;
     }
@@ -140,7 +135,6 @@ int main(int args, char **argv)
     // Prepare for run
     if (!dissolve.prepare())
     {
-        ProcessPool::finalise();
         Messenger::ceaseRedirect();
         return 1;
     }
@@ -174,9 +168,6 @@ int main(int args, char **argv)
 
     // Stop redirecting
     Messenger::ceaseRedirect();
-
-    // End parallel communication
-    ProcessPool::finalise();
 
     // Done.
     return (result ? 0 : 1);
