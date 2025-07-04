@@ -3,12 +3,11 @@
 
 #include "generator/rotateFragment.h"
 #include "classes/configuration.h"
+#include "data/ff/library.h"
 #include "generator/add.h"
 #include "generator/box.h"
 #include "generator/generator.h"
 #include "generator/select.h"
-#include "keywords/enumOptions.h"
-#include "keywords/nodeValue.h"
 #include "main/dissolve.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -24,6 +23,8 @@ TEST(RotateFragmentGeneratorNodeTest, Benzene)
 
     // Set up species
     auto *benzene = coreData.copySpecies(&benzeneSpecies());
+    benzene->setForcefield(ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics"));
+    benzene->applyForcefieldTerms(coreData);
 
     // Set up site
     auto site = SpeciesSite(benzene, "COG", SpeciesSite::SiteType::Fragment);
