@@ -50,12 +50,12 @@ class ParameterBase : public Serialisable<>
         Input,     /* Indicates that the parameter is meant to be a sink for data and not a source */
         Output,    /* Indicates that the parameter is meant to be a source of data and not a sink */
     };
-    // Allowed Edge Connections
-    enum EdgeLimit
+    // Allowed Edge Count
+    enum AllowedEdgeCount
     {
-        None, /* No edges are allowed */
-        One,  /* Exactly one edge is allowed */
-        Many  /* Many edges are allowed */
+        Zero,     /* No edges are allowed */
+        One,      /* Exactly one edge is allowed */
+        AnyNumber /* Any number of edges is allowed */
     };
 
     /*
@@ -89,7 +89,7 @@ class ParameterBase : public Serialisable<>
     // Return current flags
     const Flags<ParameterBase::ParameterFlags> &flags() const;
     // Return the number of allowed input edges
-    virtual EdgeLimit nAllowedInputEdges() const = 0;
+    virtual AllowedEdgeCount nAllowedInputEdges() const = 0;
 
     /*
      * Data
@@ -215,14 +215,14 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
      */
     public:
     // Return the number of allowed input edges
-    EdgeLimit nAllowedInputEdges() const override
+    AllowedEdgeCount nAllowedInputEdges() const override
     {
         if (flags_.isSet(ParameterFlags::Output))
-            return EdgeLimit::None;
+            return AllowedEdgeCount::Zero;
         else if constexpr (is_instance_of_v<DataClass, std::vector>)
-            return EdgeLimit::Many;
+            return AllowedEdgeCount::AnyNumber;
         else
-            return EdgeLimit::One;
+            return AllowedEdgeCount::One;
     }
 
     /*
@@ -446,7 +446,7 @@ class Parameter<Function1DWrapper> : public ParameterBase, public std::enable_sh
      */
     public:
     // Return the number of allowed input edges
-    EdgeLimit nAllowedInputEdges() const override { return EdgeLimit::None; }
+    AllowedEdgeCount nAllowedInputEdges() const override { return AllowedEdgeCount::Zero; }
 
     /*
      * Data

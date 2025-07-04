@@ -168,7 +168,7 @@ bool Node::linkEdge(Edge *edge)
             // Already have input edges to this parameter, so check current size and type
             if (!inputEdges_.at(edge->targetInput().name()).empty())
             {
-                if (edge->targetInput().nAllowedInputEdges() != ParameterBase::EdgeLimit::Many)
+                if (edge->targetInput().nAllowedInputEdges() != ParameterBase::AllowedEdgeCount::AnyNumber)
                     return Messenger::error("Node '{}' refusing to accept Edge connecting to input '{}' as it already has the "
                                             "maximum permissible.\n",
                                             name(), edge->targetInput().name());
