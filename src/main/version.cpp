@@ -42,11 +42,7 @@ std::string_view repoUrl() { return DISSOLVEREPO; }
 std::string_view appType()
 {
 #ifdef MULTITHREADING
-#ifdef PARALLEL
-    return "MPI/Threads";
-#else
     return "Multithreaded";
-#endif
 #else
     return "Serial";
 #endif
