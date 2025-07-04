@@ -23,8 +23,6 @@ class Messenger
     static bool muted_;
     // Verbose mode
     static bool verbose_;
-    // Master-only mode
-    static bool masterOnly_;
     // Number of errors and warnings accrued in output
     static int nErrors_, nWarnings_;
 
@@ -45,8 +43,6 @@ class Messenger
     static void setVerbose(bool b);
     // Return status of verbose mode
     static bool isVerbose();
-    // Set status of master-only mode
-    static void setMasterOnly(bool b);
     // Clear error and warning counts
     static void clearErrorCounts();
     // Return number of warnings
@@ -172,19 +168,4 @@ class Messenger
     public:
     // Set output handler
     static void setOutputHandler(OutputHandler *outputHandler);
-
-    /*
-     * File Redirection
-     */
-    private:
-    // Whether file redirection is enabled
-    static bool redirect_;
-    // Local LineParser for file redirection
-    static LineParser parser_;
-
-    public:
-    // Enable redirection of all messaging to specified file
-    static bool enableRedirect(std::string_view filename);
-    // Cease redirection of messaging to file
-    static void ceaseRedirect();
 };

@@ -24,10 +24,6 @@ int main(int args, char **argv)
     if (options.randomSeed())
         DissolveMath::setRandomSeed(*options.randomSeed());
 
-    // Enable redirect if requested
-    if (options.redirectionBasename())
-        Messenger::enableRedirect(options.redirectionBasename().value());
-
     Messenger::print("Dissolve-{} version {}, Copyright (C) 2025 Team Dissolve and contributors.\n", Version::appType(),
                      Version::info());
     Messenger::print("Source repository: {}.\n", Version::repoUrl());
@@ -38,10 +34,7 @@ int main(int args, char **argv)
     // Load input file
     Messenger::banner("Parse Input File");
     if (!dissolve.loadInput(options.inputFile().value()))
-    {
-        Messenger::ceaseRedirect();
         return 1;
-    }
 
     // Save input file to new output filename and quit?
     if (options.writeInputFilename() || options.toTomlFile())
@@ -73,16 +66,10 @@ int main(int args, char **argv)
             dissolve.clear();
             Messenger::banner("Reload Input File");
             if (!dissolve.loadInput(options.writeInputFilename().value()))
-            {
-                Messenger::ceaseRedirect();
                 return 1;
-            }
         }
         else
-        {
-            Messenger::ceaseRedirect();
             return result ? 0 : 1;
-        }
     }
 
     // Load restart file if it exists
@@ -100,7 +87,6 @@ int main(int args, char **argv)
             if (!dissolve.loadRestart(restartFile))
             {
                 Messenger::error("Restart file contained errors.\n");
-                Messenger::ceaseRedirect();
                 return 1;
             }
         }
@@ -119,17 +105,11 @@ int main(int args, char **argv)
 
     // If we're just checking the input and restart files, exit now
     if (!options.nIterations())
-    {
-        Messenger::ceaseRedirect();
         return 0;
-    }
 
     // Prepare for run
     if (!dissolve.prepare())
-    {
-        Messenger::ceaseRedirect();
         return 1;
-    }
 
     // Set restart file frequency
     dissolve.setRestartFileFrequency(options.noRestartFile() ? 0 : options.restartFileFrequency());
@@ -157,9 +137,6 @@ int main(int args, char **argv)
         Messenger::print("Dissolve is done.\n");
     else
         Messenger::print("Dissolve is done, but with errors.\n");
-
-    // Stop redirecting
-    Messenger::ceaseRedirect();
 
     // Done.
     return (result ? 0 : 1);
