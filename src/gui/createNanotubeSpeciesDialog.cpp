@@ -54,49 +54,48 @@ void CreateNanotubeSpeciesDialog::regenerate()
     const auto r = ui_.BondLengthSpin->value();
     const auto nAxialRings = ui_.AxialRingLengthSpin->value();
 
-    const auto radialStep = (M_PI * 2.0) / ui_.RadialRingSizeSpin->value();
-    const auto radialHalfStep = radialStep * 0.5;
-    const auto ringRadialWidth = r * cos(30.0 / DEGRAD) * 2.0;
-    const auto ringAxialLayerStep = r * (cos(60.0 / DEGRAD) + 1.0);
-    const auto tubeRadius = ringRadialWidth / (2.0 * sin(M_PI / ui_.RadialRingSizeSpin->value()));
+    const auto a0 = 2.46;
+    const auto a1 = Vec3<double>(a0, 0.0, 0.0);
+    const auto a2 = Vec3<double>(a0*sin(M_PI/6.0), a0*cos(M_PI/6.0), 0.0);
+    const auto a3 = a2 - a1;
+    const auto n = 5;
+    const auto m = 2;
 
-    /*
-     *      B1--A2
-     *     /      \
-     *    A1       B2...
-     *     \      /
-     *      B1--A2
-     *
-     * Build up the nanotube in layers
-     */
-    auto radialOffset = 0.0;
-    for (auto axial = 0; axial < nAxialRings; ++axial)
+    auto vecA = a1 * n + a2 * m;
+    auto A = a0 * sqrt(n*n + m*m + n*m);
+    auto alpha = atan((sqrt(3.0) * m) / (2 * n + m));
+    const auto radius = A / (2.0 * M_PI);
+    std::cout << std::format("Helicity (alpha) = {}\n", alpha);
+
+    // TEST
+    auto M = 10;
+    auto nc = -((n + 2*m) / M);
+    auto mc = ((2*n + m) / M);
+
+    auto c = sqrt(3.0) * A / M;
+
+    std::cout << std::format("Rectangle dims are A = {} c = {}\n", A, c);
+
+    for (auto j = 0; j <= n + m -1; ++j)
     {
-        auto z = axial * ringAxialLayerStep;
-        // Create an AB layer
-        plotLayer(z, tubeRadius, radialStep, radialOffset, zA_, zB_);
-        radialOffset += radialHalfStep;
+        // Primary helix atoms
+        auto x1j = j * a0 * cos(alpha);
+        auto y1j = -j * a0 * sin(alpha);
+
+        // Secondary helix atoms
+        auto x2j = x1j - (a0 / sqrt(3.0)) * cos(M_PI/6.0 - alpha);
+        auto y2j = y1j - (a0 / sqrt(3.0)) * sin(M_PI/6.0-alpha);
+
+        for (auto i = 0; i < m; ++i)
+        {
+            auto delta = Vec3<double>(-i * a0 * sin(M_PI/6.0 - alpha), i * a0 * cos(M_PI/6.0 - alpha), 0.0);
+            auto r1 = delta + Vec3<double>(x1j, y1j, 0.0);
+            auto r2 = delta + Vec3<double>(x2j, y2j, 0.0);
+            species_.addAtom(Elements::C, {radius*sin(2.0 * M_PI * r1.x / A) , r1.y, radius* cos(2.0 * M_PI * r1.x / A)});
+            species_.addAtom(Elements::N, {radius*sin(2.0 * M_PI * r2.x / A) , r2.y, radius * cos(2.0 * M_PI * r2.x / A)});
+        }
     }
 
-    // Terminate / make periodic
-    if (ui_.TypeCombo->currentIndex() == 0)
-    {
-        // Remove any existing unit cell
-        species_.removeBox();
-
-        // Add final terminating layer
-        plotLayer(nAxialRings * ringAxialLayerStep, tubeRadius, radialStep, nAxialRings * radialHalfStep, zA_, zB_);
-
-        // Add hydrogen termination layers
-        plotLayer(-1.0, tubeRadius, radialStep, 0.0, Elements::H, Elements::Unknown);
-        plotLayer(nAxialRings * ringAxialLayerStep + 1.0, tubeRadius, radialStep, nAxialRings * radialHalfStep,
-                  Elements::Unknown, Elements::H);
-    }
-    else
-    {
-        // Add on a suitable periodic box
-        species_.createBox({tubeRadius * 2.0 + 2.0, tubeRadius * 2.0 + 2.0, nAxialRings * ringAxialLayerStep}, {90, 90, 90});
-    }
 
     // Finalise the species
     species_.recalculateIntermolecularTerms(1.1);
