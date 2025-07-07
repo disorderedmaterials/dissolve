@@ -43,9 +43,6 @@ class CreateNanotubeSpeciesDialog : public QDialog
     Species species_;
 
     private:
-    // Plot an AB atom layer
-    void plotLayer(double z, double tubeRadius, double radialStep, double radialOffset, Elements::Element zA,
-                   Elements::Element zB);
     // Regenerate species
     void regenerate();
 
@@ -63,8 +60,8 @@ class CreateNanotubeSpeciesDialog : public QDialog
     void updateWidgets();
 
     private Q_SLOTS:
-    void on_AxialRingLengthSpin_valueChanged(int value);
-    void on_RadialRingSizeSpin_valueChanged(int value);
+    void on_NSpin_valueChanged(int value);
+    void on_MSpin_valueChanged(int value);
     void on_ElementAButton_clicked(bool checked);
     void on_ElementBButton_clicked(bool checked);
     void on_TypeCombo_currentIndexChanged(int index);

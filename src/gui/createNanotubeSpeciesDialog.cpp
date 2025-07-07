@@ -27,39 +27,19 @@ CreateNanotubeSpeciesDialog::CreateNanotubeSpeciesDialog(QWidget *parent, Dissol
  * Data
  */
 
-// Plot an AB atom layer
-void CreateNanotubeSpeciesDialog::plotLayer(double z, double tubeRadius, double radialStep, double radialOffset,
-                                            Elements::Element zA, Elements::Element zB)
-{
-    for (auto radial = 0; radial < ui_.RadialRingSizeSpin->value(); ++radial)
-    {
-        auto angle = radial * radialStep + radialOffset;
-
-        if (zA != Elements::Unknown)
-            species_.addAtom(zA, {tubeRadius * cos(angle), tubeRadius * sin(angle), z});
-
-        angle += radialStep * 0.5;
-
-        if (zB != Elements::Unknown)
-            species_.addAtom(
-                zB, {tubeRadius * cos(angle), tubeRadius * sin(angle), z + ui_.BondLengthSpin->value() * cos(60.0 / DEGRAD)});
-    }
-}
-
 // Regenerate species
 void CreateNanotubeSpeciesDialog::regenerate()
 {
     species_.clear();
 
     const auto r = ui_.BondLengthSpin->value();
-    const auto nAxialRings = ui_.AxialRingLengthSpin->value();
 
     const auto a0 = 2.46;
     const auto a1 = Vec3<double>(a0, 0.0, 0.0);
     const auto a2 = Vec3<double>(a0*sin(M_PI/6.0), a0*cos(M_PI/6.0), 0.0);
     const auto a3 = a2 - a1;
-    const auto n = 5;
-    const auto m = 2;
+    const auto n = ui_.NSpin->value();
+    const auto m = ui_.MSpin->value();
 
     auto vecA = a1 * n + a2 * m;
     auto A = a0 * sqrt(n*n + m*m + n*m);
@@ -129,22 +109,18 @@ void CreateNanotubeSpeciesDialog::updateWidgets()
     ui_.StructureViewer->postRedisplay();
 }
 
-void CreateNanotubeSpeciesDialog::on_AxialRingLengthSpin_valueChanged(int value)
+void CreateNanotubeSpeciesDialog::on_NSpin_valueChanged(int value)
 {
     if (widgetsUpdating_.isLocked())
         return;
 
-    // Clamp to even numbers if type == Periodic
-    if (ui_.TypeCombo->currentIndex() == 1)
-    {
-        Locker refreshLock(widgetsUpdating_);
-        ui_.AxialRingLengthSpin->setValue(2 * (ui_.AxialRingLengthSpin->value() / 2));
-    }
+    // MSpin's upper value is our current value
+    ui_.MSpin->setMaximum(value);
 
     regenerate();
 }
 
-void CreateNanotubeSpeciesDialog::on_RadialRingSizeSpin_valueChanged(int value) { regenerate(); }
+void CreateNanotubeSpeciesDialog::on_MSpin_valueChanged(int value) { regenerate(); }
 
 void CreateNanotubeSpeciesDialog::on_ElementAButton_clicked(bool checked)
 {
@@ -170,7 +146,7 @@ void CreateNanotubeSpeciesDialog::on_OKButton_clicked(bool checked)
 {
     // Copy the species to the main Dissolve instance and set its new name
     auto *sp = dissolve_.coreData().copySpecies(&species_);
-    sp->setName(std::format("Nanotube-{}x{}", ui_.AxialRingLengthSpin->value(), ui_.RadialRingSizeSpin->value()));
+    sp->setName(std::format("Nanotube-({},{})", ui_.NSpin->value(), ui_.MSpin->value()));
 
     accept();
 }
@@ -181,17 +157,17 @@ void CreateNanotubeSpeciesDialog::on_TypeCombo_currentIndexChanged(int index)
 {
     Locker refreshLock(widgetsUpdating_);
 
-    // Limit tube axial length depending on mode requested
-    if (index == 0)
-    {
-        ui_.AxialRingLengthSpin->setSingleStep(1);
-        ui_.AxialRingLengthSpin->setMinimum(1);
-    }
-    else
-    {
-        ui_.AxialRingLengthSpin->setSingleStep(2);
-        ui_.AxialRingLengthSpin->setMinimum(2);
-    }
+//    // Limit tube axial length depending on mode requested
+//    if (index == 0)
+//    {
+//        ui_.AxialRingLengthSpin->setSingleStep(1);
+//        ui_.AxialRingLengthSpin->setMinimum(1);
+//    }
+//    else
+//    {
+//        ui_.AxialRingLengthSpin->setSingleStep(2);
+//        ui_.AxialRingLengthSpin->setMinimum(2);
+//    }
 
     refreshLock.unlock();
 
