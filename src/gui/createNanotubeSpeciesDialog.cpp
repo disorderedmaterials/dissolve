@@ -70,17 +70,6 @@ void CreateNanotubeSpeciesDialog::regenerate()
     const auto radius = A / (2.0 * M_PI);
     std::cout << std::format("Helicity (alpha) = {} rad, {} degrees\n", alpha, alpha * DEGRAD);
 
-    // TEST
-
-    //    std::cout << std::format("Rectangle dims are A = {} c = {}\n", A, c);
-    //    auto d = std::gcd(n,m);
-    //    auto acc = a0 / sqrt(3.0);
-    //    auto T = 3.0 * acc * sqrt(n*n + n*m + m*m);
-    //    T /= (n-m)%(3*d) == 0 ? 3 * d : d;
-    //    std::cout << std::format("T = {}, acc = {}, d = {}\n", T, acc, d);
-
-    species_.createBox({A, c, 3.0}, {90, 90, 90});
-
     /*
      * Generate the full coordinates of the sheet. This process is based on equations 7 - 9, but does not follow it precisely.
      * Specifically, the innermost loop to translate the primary helix pair is originally stated to run over j (here 'i') from
@@ -100,15 +89,23 @@ void CreateNanotubeSpeciesDialog::regenerate()
         auto x2j = x1j - (a0 / sqrt(3.0)) * cos(oneSixthPi - alpha);
         auto y2j = y1j - (a0 / sqrt(3.0)) * sin(oneSixthPi - alpha);
 
-        // Create H copies of the helix pairs (equation 9)
+        // Always create a unit cell for the system
+        species_.createBox({A, c, 3.0}, {90, 90, 90});
+
+        // Create H copies of the helix pairs
         for (auto i = 0; i < H; ++i)
         {
+            // Generate translation vector for this copy (equation 9)
             auto delta = Vec3<double>(-i * a0 * sin(oneSixthPi - alpha), i * a0 * cos(oneSixthPi - alpha), 0.0);
             auto r1 = delta + Vec3<double>(x1j, y1j, 0.0);
             auto r2 = delta + Vec3<double>(x2j, y2j, 0.0);
 
-            species_.addAtom(Elements::C, species_.box()->fold(r1));
-            species_.addAtom(Elements::N, species_.box()->fold(r2));
+            // Fold into repeat rectangle A.c
+            r1 = fold(A, c, r1);
+            r2 = fold(A, c, r2);
+
+            species_.addAtom(zA_, species_.box()->fold(r1));
+            species_.addAtom(zB_, species_.box()->fold(r2));
 
             //            species_.addAtom(Elements::C, {radius*sin(2.0 * M_PI * r1.x / A) , r1.y, radius* cos(2.0 * M_PI * r1.x
             //            / A)}); species_.addAtom(Elements::N, {radius*sin(2.0 * M_PI * r2.x / A) , r2.y, radius * cos(2.0 *
