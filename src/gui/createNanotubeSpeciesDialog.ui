@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1227</width>
-    <height>790</height>
+    <height>769</height>
    </rect>
   </property>
   <property name="font">
@@ -110,57 +110,6 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Element A</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Element B</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>Bond Length</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QPushButton" name="ElementAButton">
-             <property name="text">
-              <string>ElementA</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QPushButton" name="ElementBButton">
-             <property name="text">
-              <string>ElementB</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QDoubleSpinBox" name="BondLengthSpin">
-             <property name="decimals">
-              <number>3</number>
-             </property>
-             <property name="minimum">
-              <double>0.100000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>0.010000000000000</double>
-             </property>
-             <property name="value">
-              <double>1.420000000000000</double>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_5">
              <property name="text">
@@ -178,6 +127,57 @@
              </property>
              <property name="value">
               <number>0</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Element A</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QPushButton" name="ElementAButton">
+             <property name="text">
+              <string>ElementA</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Element B</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QPushButton" name="ElementBButton">
+             <property name="text">
+              <string>ElementB</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Bond Length</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QDoubleSpinBox" name="BondLengthSpin">
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="minimum">
+              <double>0.100000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.010000000000000</double>
+             </property>
+             <property name="value">
+              <double>1.420000000000000</double>
              </property>
             </widget>
            </item>
@@ -202,6 +202,117 @@
              </item>
             </widget>
            </item>
+           <item row="6" column="0" colspan="2">
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>Sheet repeat dimension along x, or circumference if rolled into a tube</string>
+             </property>
+             <property name="text">
+              <string>A</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QLabel" name="ALabel">
+             <property name="toolTip">
+              <string>Sheet repeat dimension along x, or circumference if rolled into a tube</string>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QLabel" name="label_8">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>Axial length of sheet along the y direction</string>
+             </property>
+             <property name="text">
+              <string>c</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QLabel" name="label_9">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>Angle alpha between principal vector a1 and the x axis of the repeat unit cell</string>
+             </property>
+             <property name="text">
+              <string>ɑ</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="0">
+            <widget class="QLabel" name="label_10">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>Number of repeated translations of the primary helix required</string>
+             </property>
+             <property name="text">
+              <string>H</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QLabel" name="CLabel">
+             <property name="toolTip">
+              <string>Axial length of sheet along the y direction</string>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="1">
+            <widget class="QLabel" name="AlphaLabel">
+             <property name="toolTip">
+              <string>Angle alpha between principal vector a1 and the x axis of the repeat unit cell</string>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="1">
+            <widget class="QLabel" name="HLabel">
+             <property name="toolTip">
+              <string>Number of repeated translations of the primary helix required</string>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -210,10 +321,7 @@
           <property name="title">
            <string>Sheet Transforms</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <property name="spacing">
-            <number>4</number>
-           </property>
+          <layout class="QFormLayout" name="formLayout_3">
            <property name="leftMargin">
             <number>4</number>
            </property>
@@ -226,7 +334,17 @@
            <property name="bottomMargin">
             <number>4</number>
            </property>
-           <item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_16">
+             <property name="toolTip">
+              <string>Factor by which to scale c, resulting in longer sheets / tubes along y. Note that setting this to a non-integer number prevents creation of a periodic species.</string>
+             </property>
+             <property name="text">
+              <string>c Factor</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
             <widget class="QCheckBox" name="RollUpCheck">
              <property name="toolTip">
               <string>Whether to roll up the sheet about the y axis to form a nanotube</string>
@@ -236,13 +354,61 @@
              </property>
             </widget>
            </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_11">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>Radius, if rolled into a nanotube</string>
+             </property>
+             <property name="text">
+              <string>Radius</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="RadiusLabel">
+             <property name="toolTip">
+              <string>Radius, if rolled into a nanotube</string>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QDoubleSpinBox" name="CFactorSpin">
+             <property name="toolTip">
+              <string>Factor by which to scale c, resulting in longer sheets / tubes along y. Note that setting this to a non-integer number prevents creation of a periodic species.</string>
+             </property>
+             <property name="minimum">
+              <double>0.500000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>1.000000000000000</double>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="SheetPropertiesGroup">
+         <widget class="QGroupBox" name="CellPropertiesGroup">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="title">
-           <string>Sheet Properties</string>
+           <string>Cell Properties</string>
           </property>
           <layout class="QFormLayout" name="formLayout">
            <property name="horizontalSpacing">
@@ -264,102 +430,140 @@
             <number>4</number>
            </property>
            <item row="0" column="0">
-            <widget class="QLabel" name="label_7">
-             <property name="toolTip">
-              <string>Sheet repeat dimension along x, or circumference if rolled into a tube</string>
+            <widget class="QLabel" name="label_13">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <bold>true</bold>
+              </font>
              </property>
              <property name="text">
               <string>A</string>
              </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="ALabel">
-             <property name="toolTip">
-              <string>Sheet repeat dimension along x, or circumference if rolled into a tube</string>
-             </property>
-             <property name="text">
-              <string>0</string>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QLabel" name="label_8">
-             <property name="toolTip">
-              <string>Axial length of sheet along the y direction</string>
+            <widget class="QLabel" name="label_12">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <bold>true</bold>
+              </font>
              </property>
              <property name="text">
-              <string>c</string>
+              <string>B</string>
              </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="CLabel">
-             <property name="toolTip">
-              <string>Axial length of sheet along the y direction</string>
-             </property>
-             <property name="text">
-              <string>0</string>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
            <item row="2" column="0">
-            <widget class="QLabel" name="label_9">
-             <property name="toolTip">
-              <string>Angle alpha between principal vector a1 and the x axis of the repeat unit cell</string>
+            <widget class="QLabel" name="label_14">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <bold>true</bold>
+              </font>
              </property>
              <property name="text">
-              <string>ɑ</string>
+              <string>C</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="CellALabel">
+             <property name="text">
+              <string>0.0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="CellBLabel">
+             <property name="text">
+              <string>0.0</string>
              </property>
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QLabel" name="AlphaLabel">
-             <property name="toolTip">
-              <string>Angle alpha between principal vector a1 and the x axis of the repeat unit cell</string>
-             </property>
+            <widget class="QLabel" name="CellCLabel">
              <property name="text">
-              <string>0</string>
+              <string>0.0</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_10">
-             <property name="toolTip">
-              <string>Number of repeated translations of the primary helix required</string>
-             </property>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="OutputOptionsGroup">
+          <property name="title">
+           <string>Output Options</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="spacing">
+            <number>4</number>
+           </property>
+           <property name="leftMargin">
+            <number>4</number>
+           </property>
+           <property name="topMargin">
+            <number>4</number>
+           </property>
+           <property name="rightMargin">
+            <number>4</number>
+           </property>
+           <property name="bottomMargin">
+            <number>4</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="PeriodicRadio">
              <property name="text">
-              <string>H</string>
+              <string>Periodic</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QLabel" name="HLabel">
-             <property name="toolTip">
-              <string>Number of repeated translations of the primary helix required</string>
-             </property>
+           <item>
+            <widget class="QRadioButton" name="NonPeriodicRadio">
              <property name="text">
-              <string>0</string>
+              <string>Non-periodic</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_11">
-             <property name="toolTip">
-              <string>Radius, if rolled into a nanotube</string>
-             </property>
+           <item>
+            <widget class="QRadioButton" name="PseudoPeriodicRadio">
              <property name="text">
-              <string>Radius</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLabel" name="RadiusLabel">
-             <property name="toolTip">
-              <string>Radius, if rolled into a nanotube</string>
-             </property>
-             <property name="text">
-              <string>0</string>
+              <string>Pseudo-periodic</string>
              </property>
             </widget>
            </item>

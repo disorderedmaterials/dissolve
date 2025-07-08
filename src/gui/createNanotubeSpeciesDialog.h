@@ -68,7 +68,12 @@ class CreateNanotubeSpeciesDialog : public QDialog
     void on_BondLengthSpin_valueChanged(double value);
     void on_TypeCombo_currentIndexChanged(int index);
     // Sheet Transforms
-    void on_RollCheck_clicked(bool checked);
+    void on_CFactorSpin_valueChanged(double value);
+    void on_RollUpCheck_clicked(bool checked);
+    // Output Options
+    void on_PeriodicRadio_clicked(bool checked);
+    void on_NonPeriodicRadio_clicked(bool checked);
+    void on_PseudoPeriodicRadio_clicked(bool checked);
     // Dialog
     void on_OKButton_clicked(bool checked);
     void on_CancelButton_clicked(bool checked);

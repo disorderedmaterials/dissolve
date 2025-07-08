@@ -43,6 +43,7 @@ void CreateNanotubeSpeciesDialog::regenerate()
     const auto root3 = sqrt(3.0);
     const auto oneSixthPi = M_PI / 6.0; // == 30 degrees
     const auto roll = ui_.RollUpCheck->isChecked();
+    const auto sheetZ = 10.0; // Default size of unit cell for sheet
 
     // Get n,m values for tube
     const auto n = ui_.NSpin->value();
@@ -70,16 +71,22 @@ void CreateNanotubeSpeciesDialog::regenerate()
     // The radius of the tube is then the circumference (== A) divided by 2PI
     const auto radius = A / (2.0 * M_PI);
 
+    // Scale the Y dimension of the system
+    auto cFactor = ui_.CFactorSpin->value();
+
     // Determine a suitable periodic box for the species - we will always create one so that we get proper folding.
     auto offset = Vec3<double>();
     if (roll)
     {
         // Create some extra space and set an offset so the tube is central in XZ
-        species_.createBox({radius * 3, c, radius * 3}, {90, 90, 90});
+        species_.createBox({radius * 3, c * cFactor, radius * 3}, {90, 90, 90});
         offset = Vec3<double>(radius * 1.5, 0.0, radius * 1.5);
     }
     else
-        species_.createBox({A, c, 3.0}, {90, 90, 90});
+    {
+        species_.createBox({A, c * cFactor, sheetZ}, {90, 90, 90});
+        offset = Vec3<double>(0.0, 0.0, sheetZ * 0.5);
+    }
 
     /*
      * Generate the full coordinates of the sheet. This process is based on equations 7 - 9, but does not follow it precisely.
@@ -88,7 +95,7 @@ void CreateNanotubeSpeciesDialog::regenerate()
      * required helix copies 'H' is calculated from c and the rotated y component of va2.
      */
     auto dy = va2.y / cos(alpha);
-    auto H = round(c / dy);
+    auto H = round(c * cFactor / dy);
     for (auto j = 0; j <= n + m - 1; ++j)
     {
         // Primary helix atoms (equation 7)
@@ -125,7 +132,20 @@ void CreateNanotubeSpeciesDialog::regenerate()
     }
 
     // Finalise the species
-    species_.recalculateIntermolecularTerms(1.1);
+    if (ui_.PeriodicRadio->isChecked())
+    {
+        species_.recalculateIntermolecularTerms(1.1);
+    }
+    else if (ui_.NonPeriodicRadio->isChecked())
+    {
+        species_.removeBox();
+        species_.recalculateIntermolecularTerms(1.1);
+    }
+    else
+    {
+        species_.recalculateIntermolecularTerms(1.1);
+        species_.removeBox();
+    }
 
     // Update the sheet properties
     ui_.ALabel->setText(QString("%1 \u212B").arg(A, 0, 'f', 3));
@@ -133,6 +153,10 @@ void CreateNanotubeSpeciesDialog::regenerate()
     ui_.AlphaLabel->setText(QString("%1\u00B0").arg(alpha * DEGRAD, 0, 'f', 3));
     ui_.HLabel->setText(QString("%1\u00B0").arg(H));
     ui_.RadiusLabel->setText(QString("%1 \u212B").arg(radius, 0, 'f', 3));
+
+    ui_.CellALabel->setText(QString("%1 \u212B").arg(species_.box()->axisLengths().x, 0, 'f', 3));
+    ui_.CellBLabel->setText(QString("%1 \u212B").arg(species_.box()->axisLengths().y, 0, 'f', 3));
+    ui_.CellCLabel->setText(QString("%1 \u212B").arg(species_.box()->axisLengths().z, 0, 'f', 3));
 
     updateWidgets();
 }
@@ -198,7 +222,45 @@ void CreateNanotubeSpeciesDialog::on_ElementBButton_clicked(bool checked)
 
 void CreateNanotubeSpeciesDialog::on_BondLengthSpin_valueChanged(double value) { regenerate(); }
 
-void CreateNanotubeSpeciesDialog::on_RollCheck_clicked(bool checked) { regenerate(); }
+void CreateNanotubeSpeciesDialog::on_CFactorSpin_valueChanged(double value)
+{
+    // Determine whether the cFactor is whole
+    double cInt;
+    double cFrac = std::modf(value, &cInt);
+    auto canBePeriodic = cFrac < 0.001 || cFrac > 0.999;
+
+    // Update the output controls to reflect the choice of cFactor
+    Locker refreshLock(widgetsUpdating_);
+    ui_.PeriodicRadio->setEnabled(canBePeriodic);
+    if (!canBePeriodic && ui_.PeriodicRadio->isChecked())
+        ui_.NonPeriodicRadio->setChecked(true);
+    refreshLock.unlock();
+
+    regenerate();
+};
+
+void CreateNanotubeSpeciesDialog::on_RollUpCheck_clicked(bool checked) { regenerate(); }
+
+void CreateNanotubeSpeciesDialog::on_PeriodicRadio_clicked(bool checked)
+{
+    if (widgetsUpdating_)
+        return;
+    regenerate();
+}
+
+void CreateNanotubeSpeciesDialog::on_NonPeriodicRadio_clicked(bool checked)
+{
+    if (widgetsUpdating_)
+        return;
+    regenerate();
+}
+
+void CreateNanotubeSpeciesDialog::on_PseudoPeriodicRadio_clicked(bool checked)
+{
+    if (widgetsUpdating_)
+        return;
+    regenerate();
+}
 
 void CreateNanotubeSpeciesDialog::on_OKButton_clicked(bool checked)
 {
