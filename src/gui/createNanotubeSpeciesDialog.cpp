@@ -4,6 +4,7 @@
 #include "gui/createNanotubeSpeciesDialog.h"
 #include "classes/empiricalFormula.h"
 #include "gui/helpers/comboPopulator.h"
+#include <numeric>
 
 CreateNanotubeSpeciesDialog::CreateNanotubeSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     : QDialog(parent), selectElementDialog_(this), dissolve_(dissolve)
@@ -37,25 +38,37 @@ void CreateNanotubeSpeciesDialog::regenerate()
     const auto a0 = 2.46;
     const auto a1 = Vec3<double>(a0, 0.0, 0.0);
     const auto a2 = Vec3<double>(a0*sin(M_PI/6.0), a0*cos(M_PI/6.0), 0.0);
-    const auto a3 = a2 - a1;
     const auto n = ui_.NSpin->value();
+    a2.print();
     const auto m = ui_.MSpin->value();
 
-    auto vecA = a1 * n + a2 * m;
     auto A = a0 * sqrt(n*n + m*m + n*m);
     auto alpha = atan((sqrt(3.0) * m) / (2 * n + m));
     const auto radius = A / (2.0 * M_PI);
-    std::cout << std::format("Helicity (alpha) = {}\n", alpha);
+    std::cout << std::format("Helicity (alpha) = {} rad, {} degrees\n", alpha, alpha*DEGRAD);
 
     // TEST
-    auto M = 10;
-    auto nc = -((n + 2*m) / M);
-    auto mc = ((2*n + m) / M);
-
+    auto M = std::gcd(2 * n + m, n + 2 * m);
+//    auto nc = -((n + 2*m) / M);
+//    auto mc = ((2*n + m) / M);
+//    auto vecAPerp = a1 * nc + a2 * mc;
+//    auto Aperp = a0 * sqrt(nc*nc + mc*mc + nc*mc);
+//
     auto c = sqrt(3.0) * A / M;
 
     std::cout << std::format("Rectangle dims are A = {} c = {}\n", A, c);
+    auto d = std::gcd(n,m);
+    auto acc = a0 / sqrt(3.0);
+    auto T = 3.0 * acc * sqrt(n*n + n*m + m*m);
+    T /= (n-m)%(3*d) == 0 ? 3 * d : d;
+    std::cout << std::format("T = {}, acc = {}, d = {}\n", T, acc, d);
 
+    species_.createBox({A, T, 3.0}, {90,90,90});
+
+    // Generate the full coordinates
+    auto dy = a2.y/cos(alpha);
+    auto H = round(T / dy);
+    std::cout << std::format("Repeats H = {}, T/a0CosAlpha = {}, dy = {}\n", H, T / dy, dy);
     for (auto j = 0; j <= n + m -1; ++j)
     {
         // Primary helix atoms
@@ -66,16 +79,25 @@ void CreateNanotubeSpeciesDialog::regenerate()
         auto x2j = x1j - (a0 / sqrt(3.0)) * cos(M_PI/6.0 - alpha);
         auto y2j = y1j - (a0 / sqrt(3.0)) * sin(M_PI/6.0-alpha);
 
-        for (auto i = 0; i < m; ++i)
+        for (auto i = 0; i < H; ++i)
         {
             auto delta = Vec3<double>(-i * a0 * sin(M_PI/6.0 - alpha), i * a0 * cos(M_PI/6.0 - alpha), 0.0);
             auto r1 = delta + Vec3<double>(x1j, y1j, 0.0);
             auto r2 = delta + Vec3<double>(x2j, y2j, 0.0);
-            species_.addAtom(Elements::C, {radius*sin(2.0 * M_PI * r1.x / A) , r1.y, radius* cos(2.0 * M_PI * r1.x / A)});
-            species_.addAtom(Elements::N, {radius*sin(2.0 * M_PI * r2.x / A) , r2.y, radius * cos(2.0 * M_PI * r2.x / A)});
+
+            // Map negative y values back into their positive periodic image
+//            if (r1.y < 0.0)
+//                r1.y += T * d;
+//            if (r2.y < 0.0)
+//                r2.y += T * d;
+
+                species_.addAtom(Elements::C,     species_.box()->fold(r1));
+                species_.addAtom(Elements::N,     species_.box()->fold(r2));
+
+//            species_.addAtom(Elements::C, {radius*sin(2.0 * M_PI * r1.x / A) , r1.y, radius* cos(2.0 * M_PI * r1.x / A)});
+//            species_.addAtom(Elements::N, {radius*sin(2.0 * M_PI * r2.x / A) , r2.y, radius * cos(2.0 * M_PI * r2.x / A)});
         }
     }
-
 
     // Finalise the species
     species_.recalculateIntermolecularTerms(1.1);

@@ -87,6 +87,9 @@
              <property name="maximum">
               <number>1000</number>
              </property>
+             <property name="value">
+              <number>5</number>
+             </property>
             </widget>
            </item>
            <item row="2" column="0">
@@ -493,6 +496,18 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>NSpin</tabstop>
+  <tabstop>MSpin</tabstop>
+  <tabstop>ElementAButton</tabstop>
+  <tabstop>ElementBButton</tabstop>
+  <tabstop>BondLengthSpin</tabstop>
+  <tabstop>TypeCombo</tabstop>
+  <tabstop>CancelButton</tabstop>
+  <tabstop>OKButton</tabstop>
+  <tabstop>CurrentBoxToolButton</tabstop>
+  <tabstop>AtomPopulationToolButton</tabstop>
+ </tabstops>
  <resources>
   <include location="main.qrc"/>
  </resources>
