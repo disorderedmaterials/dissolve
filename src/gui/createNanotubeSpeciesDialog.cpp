@@ -42,6 +42,7 @@ void CreateNanotubeSpeciesDialog::regenerate()
 
     const auto root3 = sqrt(3.0);
     const auto oneSixthPi = M_PI / 6.0; // == 30 degrees
+    const auto roll = ui_.RollUpCheck->isChecked();
 
     // Get n,m values for tube
     const auto n = ui_.NSpin->value();
@@ -68,7 +69,17 @@ void CreateNanotubeSpeciesDialog::regenerate()
 
     // The radius of the tube is then the circumference (== A) divided by 2PI
     const auto radius = A / (2.0 * M_PI);
-    std::cout << std::format("Helicity (alpha) = {} rad, {} degrees\n", alpha, alpha * DEGRAD);
+
+    // Determine a suitable periodic box for the species - we will always create one so that we get proper folding.
+    auto offset = Vec3<double>();
+    if (roll)
+    {
+        // Create some extra space and set an offset so the tube is central in XZ
+        species_.createBox({radius * 3, c, radius * 3}, {90, 90, 90});
+        offset = Vec3<double>(radius * 1.5, 0.0, radius * 1.5);
+    }
+    else
+        species_.createBox({A, c, 3.0}, {90, 90, 90});
 
     /*
      * Generate the full coordinates of the sheet. This process is based on equations 7 - 9, but does not follow it precisely.
@@ -78,7 +89,6 @@ void CreateNanotubeSpeciesDialog::regenerate()
      */
     auto dy = va2.y / cos(alpha);
     auto H = round(c / dy);
-    std::cout << std::format("Repeats H = {}, T/a0CosAlpha = {}, dy = {}\n", H, c / dy, dy);
     for (auto j = 0; j <= n + m - 1; ++j)
     {
         // Primary helix atoms (equation 7)
@@ -89,9 +99,6 @@ void CreateNanotubeSpeciesDialog::regenerate()
         auto x2j = x1j - (a0 / sqrt(3.0)) * cos(oneSixthPi - alpha);
         auto y2j = y1j - (a0 / sqrt(3.0)) * sin(oneSixthPi - alpha);
 
-        // Always create a unit cell for the system
-        species_.createBox({A, c, 3.0}, {90, 90, 90});
-
         // Create H copies of the helix pairs
         for (auto i = 0; i < H; ++i)
         {
@@ -100,21 +107,32 @@ void CreateNanotubeSpeciesDialog::regenerate()
             auto r1 = delta + Vec3<double>(x1j, y1j, 0.0);
             auto r2 = delta + Vec3<double>(x2j, y2j, 0.0);
 
-            // Fold into repeat rectangle A.c
-            r1 = fold(A, c, r1);
-            r2 = fold(A, c, r2);
-
-            species_.addAtom(zA_, species_.box()->fold(r1));
-            species_.addAtom(zB_, species_.box()->fold(r2));
-
-            //            species_.addAtom(Elements::C, {radius*sin(2.0 * M_PI * r1.x / A) , r1.y, radius* cos(2.0 * M_PI * r1.x
-            //            / A)}); species_.addAtom(Elements::N, {radius*sin(2.0 * M_PI * r2.x / A) , r2.y, radius * cos(2.0 *
-            //            M_PI * r2.x / A)});
+            if (roll)
+            {
+                // Wrap the X coordinate (== real position on circumference) onto a tube of radius 'radius', applying the
+                // offset we set earlier when creating the periodic box so as to put it in the centre of XZ.
+                species_.addAtom(zA_, species_.box()->fold(offset + Vec3<double>(radius * sin(2.0 * M_PI * r1.x / A), r1.y,
+                                                                                 radius * cos(2.0 * M_PI * r1.x / A))));
+                species_.addAtom(zB_, species_.box()->fold(offset + Vec3<double>(radius * sin(2.0 * M_PI * r2.x / A), r2.y,
+                                                                                 radius * cos(2.0 * M_PI * r2.x / A))));
+            }
+            else
+            {
+                species_.addAtom(zA_, species_.box()->fold(r1));
+                species_.addAtom(zB_, species_.box()->fold(r2));
+            }
         }
     }
 
     // Finalise the species
     species_.recalculateIntermolecularTerms(1.1);
+
+    // Update the sheet properties
+    ui_.ALabel->setText(QString("%1 \u212B").arg(A, 0, 'f', 3));
+    ui_.CLabel->setText(QString("%1 \u212B").arg(c, 0, 'f', 3));
+    ui_.AlphaLabel->setText(QString("%1\u00B0").arg(alpha * DEGRAD, 0, 'f', 3));
+    ui_.HLabel->setText(QString("%1\u00B0").arg(H));
+    ui_.RadiusLabel->setText(QString("%1 \u212B").arg(radius, 0, 'f', 3));
 
     updateWidgets();
 }
@@ -177,6 +195,10 @@ void CreateNanotubeSpeciesDialog::on_ElementBButton_clicked(bool checked)
 
     regenerate();
 }
+
+void CreateNanotubeSpeciesDialog::on_BondLengthSpin_valueChanged(double value) { regenerate(); }
+
+void CreateNanotubeSpeciesDialog::on_RollCheck_clicked(bool checked) { regenerate(); }
 
 void CreateNanotubeSpeciesDialog::on_OKButton_clicked(bool checked)
 {

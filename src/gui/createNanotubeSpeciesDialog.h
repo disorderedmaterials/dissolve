@@ -60,11 +60,15 @@ class CreateNanotubeSpeciesDialog : public QDialog
     void updateWidgets();
 
     private Q_SLOTS:
+    // Sheet Definition
     void on_NSpin_valueChanged(int value);
     void on_MSpin_valueChanged(int value);
     void on_ElementAButton_clicked(bool checked);
     void on_ElementBButton_clicked(bool checked);
+    void on_BondLengthSpin_valueChanged(double value);
     void on_TypeCombo_currentIndexChanged(int index);
+    // Sheet Transforms
+    void on_RollCheck_clicked(bool checked);
     // Dialog
     void on_OKButton_clicked(bool checked);
     void on_CancelButton_clicked(bool checked);

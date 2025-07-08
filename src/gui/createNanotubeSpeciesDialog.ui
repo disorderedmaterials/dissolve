@@ -67,11 +67,29 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QGroupBox" name="InputFileGroup">
+         <widget class="QGroupBox" name="SheetDefinitionGroup">
           <property name="title">
-           <string>Nanotube Properties</string>
+           <string>Sheet Definition</string>
           </property>
           <layout class="QFormLayout" name="formLayout_2">
+           <property name="horizontalSpacing">
+            <number>4</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>4</number>
+           </property>
+           <property name="leftMargin">
+            <number>4</number>
+           </property>
+           <property name="topMargin">
+            <number>4</number>
+           </property>
+           <property name="rightMargin">
+            <number>4</number>
+           </property>
+           <property name="bottomMargin">
+            <number>4</number>
+           </property>
            <item row="0" column="0">
             <widget class="QLabel" name="label">
              <property name="text">
@@ -135,8 +153,11 @@
              <property name="minimum">
               <double>0.100000000000000</double>
              </property>
+             <property name="singleStep">
+              <double>0.010000000000000</double>
+             </property>
              <property name="value">
-              <double>1.390000000000000</double>
+              <double>1.420000000000000</double>
              </property>
             </widget>
            </item>
@@ -179,6 +200,167 @@
                <string>Periodic</string>
               </property>
              </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="SheetTransformsGroup">
+          <property name="title">
+           <string>Sheet Transforms</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="spacing">
+            <number>4</number>
+           </property>
+           <property name="leftMargin">
+            <number>4</number>
+           </property>
+           <property name="topMargin">
+            <number>4</number>
+           </property>
+           <property name="rightMargin">
+            <number>4</number>
+           </property>
+           <property name="bottomMargin">
+            <number>4</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="RollUpCheck">
+             <property name="toolTip">
+              <string>Whether to roll up the sheet about the y axis to form a nanotube</string>
+             </property>
+             <property name="text">
+              <string>Roll</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="SheetPropertiesGroup">
+          <property name="title">
+           <string>Sheet Properties</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <property name="horizontalSpacing">
+            <number>4</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>4</number>
+           </property>
+           <property name="leftMargin">
+            <number>4</number>
+           </property>
+           <property name="topMargin">
+            <number>4</number>
+           </property>
+           <property name="rightMargin">
+            <number>4</number>
+           </property>
+           <property name="bottomMargin">
+            <number>4</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="toolTip">
+              <string>Sheet repeat dimension along x, or circumference if rolled into a tube</string>
+             </property>
+             <property name="text">
+              <string>A</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="ALabel">
+             <property name="toolTip">
+              <string>Sheet repeat dimension along x, or circumference if rolled into a tube</string>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_8">
+             <property name="toolTip">
+              <string>Axial length of sheet along the y direction</string>
+             </property>
+             <property name="text">
+              <string>c</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="CLabel">
+             <property name="toolTip">
+              <string>Axial length of sheet along the y direction</string>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_9">
+             <property name="toolTip">
+              <string>Angle alpha between principal vector a1 and the x axis of the repeat unit cell</string>
+             </property>
+             <property name="text">
+              <string>ɑ</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="AlphaLabel">
+             <property name="toolTip">
+              <string>Angle alpha between principal vector a1 and the x axis of the repeat unit cell</string>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_10">
+             <property name="toolTip">
+              <string>Number of repeated translations of the primary helix required</string>
+             </property>
+             <property name="text">
+              <string>H</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLabel" name="HLabel">
+             <property name="toolTip">
+              <string>Number of repeated translations of the primary helix required</string>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_11">
+             <property name="toolTip">
+              <string>Radius, if rolled into a nanotube</string>
+             </property>
+             <property name="text">
+              <string>Radius</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLabel" name="RadiusLabel">
+             <property name="toolTip">
+              <string>Radius, if rolled into a nanotube</string>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
             </widget>
            </item>
           </layout>
