@@ -41,8 +41,28 @@ class CreateNanotubeSpeciesDialog : public QDialog
     Elements::Element zA_{Elements::Element::C}, zB_{Elements::Element::N};
     // Generated nanotube species
     Species species_;
+    // Chirality parameters
+    int n_{0}, m_{0};
+    // Sheet width (A) and height (c)
+    double A_{0.0}, c_{0.0};
+    // Representative unit length
+    double a0_{0.0};
+    // Principal vectors
+    Vec3<double> va1_, va2_;
+    // Angle between principal vector va1 and the sheet vector
+    double alpha_{0.0};
+    // Radius of resulting tube
+    double radius_{0.0};
+    // Delta along y between helices
+    double dy_{0.0};
+    // Number of helices required
+    int H_{0};
+    // Default size of unit cell for sheet
+    const double sheetZ_{10.0};
 
     private:
+    // Calculate parameters
+    void calculateParameters();
     // Regenerate species
     void regenerate();
 
@@ -66,9 +86,7 @@ class CreateNanotubeSpeciesDialog : public QDialog
     void on_ElementAButton_clicked(bool checked);
     void on_ElementBButton_clicked(bool checked);
     void on_BondLengthSpin_valueChanged(double value);
-    void on_TypeCombo_currentIndexChanged(int index);
     // Sheet Transforms
-    void on_CFactorSpin_valueChanged(double value);
     void on_RollUpCheck_clicked(bool checked);
     // Output Options
     void on_PeriodicRadio_clicked(bool checked);

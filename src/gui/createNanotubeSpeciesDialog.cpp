@@ -6,6 +6,10 @@
 #include "gui/helpers/comboPopulator.h"
 #include <numeric>
 
+// Useful constants
+const auto root3 = sqrt(3.0);
+const auto oneSixthPi = M_PI / 6.0; // == 30 degrees
+
 CreateNanotubeSpeciesDialog::CreateNanotubeSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     : QDialog(parent), selectElementDialog_(this), dissolve_(dissolve)
 {
@@ -23,6 +27,8 @@ CreateNanotubeSpeciesDialog::CreateNanotubeSpeciesDialog(QWidget *parent, Dissol
 
     refreshLock.unlock();
 
+    calculateParameters();
+
     regenerate();
 }
 
@@ -30,87 +36,86 @@ CreateNanotubeSpeciesDialog::CreateNanotubeSpeciesDialog(QWidget *parent, Dissol
  * Data
  */
 
-// Regenerate species
-void CreateNanotubeSpeciesDialog::regenerate()
+// Calculate parameters
+void CreateNanotubeSpeciesDialog::calculateParameters()
 {
-    species_.clear();
-
     /*
      * Procedure based on "Determination of the chiral indices (n,m) of carbon nanotubes by electron diffraction",
      * Lu-Chan Qin, Phys. Chem. Chem. Phys. 2007, *9*, 31-48. https://doi.org/10.1039/B614121H
      */
 
-    const auto root3 = sqrt(3.0);
-    const auto oneSixthPi = M_PI / 6.0; // == 30 degrees
-    const auto roll = ui_.RollUpCheck->isChecked();
-    const auto sheetZ = 10.0; // Default size of unit cell for sheet
-
     // Get n,m values for tube
-    const auto n = ui_.NSpin->value();
-    const auto m = ui_.MSpin->value();
+    n_ = ui_.NSpin->value();
+    m_ = ui_.MSpin->value();
 
     // Determine a0, the principal unit length of the structure, from the specified bond distance. See Figure 1a, noting that
     // a1 == a2 == a0.
     const auto r = ui_.BondLengthSpin->value();
-    const auto a0 = r * root3;
+    a0_ = r * root3;
 
     // Set principal vectors for reference
-    const auto va1 = Vec3<double>(a0, 0.0, 0.0);
-    const auto va2 = Vec3<double>(a0 * sin(oneSixthPi), a0 * cos(oneSixthPi), 0.0);
+    va1_ = Vec3<double>(a0_, 0.0, 0.0);
+    va2_ = Vec3<double>(a0_ * sin(oneSixthPi), a0_ * cos(oneSixthPi), 0.0);
 
     // Calculate repeat dimensions of the (n,m) sheet
     // -- A is magnitude of vecA (equation 1) and represents our X dimension
-    auto A = a0 * sqrt(n * n + m * m + n * m);
+    A_ = a0_ * sqrt(n_ * n_ + m_ * m_ + n_ * m_);
     // -- c is the magnitude of the vector perpendicular to vecA, along the tube axis, and represents our Y dimension
-    auto M = std::gcd(2 * n + m, n + 2 * m);
-    auto c = sqrt(3.0) * A / M;
+    const auto M = std::gcd(2 * n_ + m_, n_ + 2 * m_);
+    c_ = sqrt(3.0) * A_ / M;
 
     // Determine angle alpha, describing the tilt of the sheet away from va1 (equation 3)
-    auto alpha = atan((sqrt(3.0) * m) / (2 * n + m));
+    alpha_ = atan((sqrt(3.0) * m_) / (2 * n_ + m_));
 
     // The radius of the tube is then the circumference (== A) divided by 2PI
-    const auto radius = A / (2.0 * M_PI);
+    radius_ = A_ / (2.0 * M_PI);
 
-    // Scale the Y dimension of the system
-    auto cFactor = ui_.CFactorSpin->value();
+    dy_ = va2_.y / cos(alpha_);
+    H_ = round(c_ / dy_);
+}
+
+// Regenerate species
+void CreateNanotubeSpeciesDialog::regenerate()
+{
+    species_.clear();
+
+    const auto roll = ui_.RollUpCheck->isChecked();
 
     // Determine a suitable periodic box for the species - we will always create one so that we get proper folding.
     auto offset = Vec3<double>();
     if (roll)
     {
         // Create some extra space and set an offset so the tube is central in XZ
-        species_.createBox({radius * 3, c * cFactor, radius * 3}, {90, 90, 90});
-        offset = Vec3<double>(radius * 1.5, 0.0, radius * 1.5);
+        species_.createBox({radius_ * 3, c_, radius_ * 3}, {90, 90, 90});
+        offset = Vec3<double>(radius_ * 1.5, 0.0, radius_ * 1.5);
     }
     else
     {
-        species_.createBox({A, c * cFactor, sheetZ}, {90, 90, 90});
-        offset = Vec3<double>(0.0, 0.0, sheetZ * 0.5);
+        species_.createBox({A_, c_, sheetZ_}, {90, 90, 90});
+        offset = Vec3<double>(0.0, 0.0, sheetZ_ * 0.5);
     }
 
     /*
      * Generate the full coordinates of the sheet. This process is based on equations 7 - 9, but does not follow it precisely.
      * Specifically, the innermost loop to translate the primary helix pair is originally stated to run over j (here 'i') from
      * 0 - (m-1) inclusive, but this does not generate the correct number of copies for most cases. Instead, the number of
-     * required helix copies 'H' is calculated from c and the rotated y component of va2.
+     * required helix copies 'H' is calculated from c and the rotated y component of va2 (see earlier).
      */
-    auto dy = va2.y / cos(alpha);
-    auto H = round(c * cFactor / dy);
-    for (auto j = 0; j <= n + m - 1; ++j)
+    for (auto j = 0; j <= n_ + m_ - 1; ++j)
     {
         // Primary helix atoms (equation 7)
-        auto x1j = j * a0 * cos(alpha);
-        auto y1j = -j * a0 * sin(alpha);
+        auto x1j = j * a0_ * cos(alpha_);
+        auto y1j = -j * a0_ * sin(alpha_);
 
         // Secondary helix atoms (equation 8)
-        auto x2j = x1j - (a0 / sqrt(3.0)) * cos(oneSixthPi - alpha);
-        auto y2j = y1j - (a0 / sqrt(3.0)) * sin(oneSixthPi - alpha);
+        auto x2j = x1j - (a0_ / sqrt(3.0)) * cos(oneSixthPi - alpha_);
+        auto y2j = y1j - (a0_ / sqrt(3.0)) * sin(oneSixthPi - alpha_);
 
         // Create H copies of the helix pairs
-        for (auto i = 0; i < H; ++i)
+        for (auto i = 0; i < H_; ++i)
         {
             // Generate translation vector for this copy (equation 9)
-            auto delta = Vec3<double>(-i * a0 * sin(oneSixthPi - alpha), i * a0 * cos(oneSixthPi - alpha), 0.0);
+            auto delta = Vec3<double>(-i * a0_ * sin(oneSixthPi - alpha_), i * a0_ * cos(oneSixthPi - alpha_), 0.0);
             auto r1 = delta + Vec3<double>(x1j, y1j, 0.0);
             auto r2 = delta + Vec3<double>(x2j, y2j, 0.0);
 
@@ -118,10 +123,10 @@ void CreateNanotubeSpeciesDialog::regenerate()
             {
                 // Wrap the X coordinate (== real position on circumference) onto a tube of radius 'radius', applying the
                 // offset we set earlier when creating the periodic box so as to put it in the centre of XZ.
-                species_.addAtom(zA_, species_.box()->fold(offset + Vec3<double>(radius * sin(2.0 * M_PI * r1.x / A), r1.y,
-                                                                                 radius * cos(2.0 * M_PI * r1.x / A))));
-                species_.addAtom(zB_, species_.box()->fold(offset + Vec3<double>(radius * sin(2.0 * M_PI * r2.x / A), r2.y,
-                                                                                 radius * cos(2.0 * M_PI * r2.x / A))));
+                species_.addAtom(zA_, species_.box()->fold(offset + Vec3<double>(radius_ * sin(2.0 * M_PI * r1.x / A_), r1.y,
+                                                                                 radius_ * cos(2.0 * M_PI * r1.x / A_))));
+                species_.addAtom(zB_, species_.box()->fold(offset + Vec3<double>(radius_ * sin(2.0 * M_PI * r2.x / A_), r2.y,
+                                                                                 radius_ * cos(2.0 * M_PI * r2.x / A_))));
             }
             else
             {
@@ -146,19 +151,6 @@ void CreateNanotubeSpeciesDialog::regenerate()
         species_.recalculateIntermolecularTerms(1.1);
         species_.removeBox();
     }
-
-    // Update the sheet properties
-    ui_.ALabel->setText(QString("%1 \u212B").arg(A, 0, 'f', 3));
-    ui_.CLabel->setText(QString("%1 \u212B").arg(c, 0, 'f', 3));
-    ui_.AlphaLabel->setText(QString("%1\u00B0").arg(alpha * DEGRAD, 0, 'f', 3));
-    ui_.HLabel->setText(QString("%1\u00B0").arg(H));
-    ui_.RadiusLabel->setText(QString("%1 \u212B").arg(radius, 0, 'f', 3));
-
-    ui_.CellALabel->setText(QString("%1 \u212B").arg(species_.box()->axisLengths().x, 0, 'f', 3));
-    ui_.CellBLabel->setText(QString("%1 \u212B").arg(species_.box()->axisLengths().y, 0, 'f', 3));
-    ui_.CellCLabel->setText(QString("%1 \u212B").arg(species_.box()->axisLengths().z, 0, 'f', 3));
-
-    updateWidgets();
 }
 
 /*
@@ -169,6 +161,18 @@ void CreateNanotubeSpeciesDialog::regenerate()
 void CreateNanotubeSpeciesDialog::updateWidgets()
 {
     Locker updateLock(widgetsUpdating_);
+
+    // Sheet properties
+    ui_.ALabel->setText(QString("%1 \u212B").arg(A_, 0, 'f', 3));
+    ui_.CLabel->setText(QString("%1 \u212B").arg(c_, 0, 'f', 3));
+    ui_.AlphaLabel->setText(QString("%1\u00B0").arg(alpha_ * DEGRAD, 0, 'f', 3));
+    ui_.HLabel->setText(QString("%1\u00B0").arg(H_));
+    ui_.RadiusLabel->setText(QString("%1 \u212B").arg(radius_, 0, 'f', 3));
+
+    // Final cell properties
+    ui_.CellALabel->setText(QString("%1 \u212B").arg(species_.box()->axisLengths().x, 0, 'f', 3));
+    ui_.CellBLabel->setText(QString("%1 \u212B").arg(species_.box()->axisLengths().y, 0, 'f', 3));
+    ui_.CellCLabel->setText(QString("%1 \u212B").arg(species_.box()->axisLengths().z, 0, 'f', 3));
 
     // Configuration information
     const auto *box = species_.box();
@@ -195,10 +199,17 @@ void CreateNanotubeSpeciesDialog::on_NSpin_valueChanged(int value)
     // MSpin's upper value is our current value
     ui_.MSpin->setMaximum(value);
 
+    calculateParameters();
     regenerate();
+    updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_MSpin_valueChanged(int value) { regenerate(); }
+void CreateNanotubeSpeciesDialog::on_MSpin_valueChanged(int value)
+{
+    calculateParameters();
+    regenerate();
+    updateWidgets();
+}
 
 void CreateNanotubeSpeciesDialog::on_ElementAButton_clicked(bool checked)
 {
@@ -208,6 +219,7 @@ void CreateNanotubeSpeciesDialog::on_ElementAButton_clicked(bool checked)
     zA_ = Z;
 
     regenerate();
+    updateWidgets();
 }
 
 void CreateNanotubeSpeciesDialog::on_ElementBButton_clicked(bool checked)
@@ -218,34 +230,29 @@ void CreateNanotubeSpeciesDialog::on_ElementBButton_clicked(bool checked)
     zB_ = Z;
 
     regenerate();
+    updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_BondLengthSpin_valueChanged(double value) { regenerate(); }
-
-void CreateNanotubeSpeciesDialog::on_CFactorSpin_valueChanged(double value)
+void CreateNanotubeSpeciesDialog::on_BondLengthSpin_valueChanged(double value)
 {
-    // Determine whether the cFactor is whole
-    double cInt;
-    double cFrac = std::modf(value, &cInt);
-    auto canBePeriodic = cFrac < 0.001 || cFrac > 0.999;
-
-    // Update the output controls to reflect the choice of cFactor
-    Locker refreshLock(widgetsUpdating_);
-    ui_.PeriodicRadio->setEnabled(canBePeriodic);
-    if (!canBePeriodic && ui_.PeriodicRadio->isChecked())
-        ui_.NonPeriodicRadio->setChecked(true);
-    refreshLock.unlock();
-
+    calculateParameters();
     regenerate();
-};
+    updateWidgets();
+}
 
-void CreateNanotubeSpeciesDialog::on_RollUpCheck_clicked(bool checked) { regenerate(); }
+void CreateNanotubeSpeciesDialog::on_RollUpCheck_clicked(bool checked)
+{
+    regenerate();
+    updateWidgets();
+}
 
 void CreateNanotubeSpeciesDialog::on_PeriodicRadio_clicked(bool checked)
 {
     if (widgetsUpdating_)
         return;
+
     regenerate();
+    updateWidgets();
 }
 
 void CreateNanotubeSpeciesDialog::on_NonPeriodicRadio_clicked(bool checked)
@@ -253,6 +260,7 @@ void CreateNanotubeSpeciesDialog::on_NonPeriodicRadio_clicked(bool checked)
     if (widgetsUpdating_)
         return;
     regenerate();
+    updateWidgets();
 }
 
 void CreateNanotubeSpeciesDialog::on_PseudoPeriodicRadio_clicked(bool checked)
@@ -260,6 +268,7 @@ void CreateNanotubeSpeciesDialog::on_PseudoPeriodicRadio_clicked(bool checked)
     if (widgetsUpdating_)
         return;
     regenerate();
+    updateWidgets();
 }
 
 void CreateNanotubeSpeciesDialog::on_OKButton_clicked(bool checked)
