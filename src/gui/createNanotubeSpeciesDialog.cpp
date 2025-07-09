@@ -95,7 +95,7 @@ void CreateNanotubeSpeciesDialog::regenerate()
         cellLengths = {A_, c_ * cFactor, sheetZ_};
         offset = Vec3<double>(0.0, 0.0, sheetZ_ * 0.5);
     }
-
+    cellLengths.print();
     species_.createBox(cellLengths, {90, 90, 90});
 
     /*
@@ -104,7 +104,7 @@ void CreateNanotubeSpeciesDialog::regenerate()
      * 0 - (m-1) inclusive, but this does not generate the correct number of copies for most cases. Instead, the number of
      * required helix copies 'H' is calculated from c and the rotated y component of va2 (see earlier).
      */
-    for (auto j = 0; j <= n_ + m_ - 1; ++j)
+    for (auto j = 0; j < n_ + m_; ++j)
     {
         // Primary helix atoms (equation 7)
         auto x1j = j * a0_ * cos(alpha_);
@@ -122,20 +122,37 @@ void CreateNanotubeSpeciesDialog::regenerate()
             auto r1 = delta + Vec3<double>(x1j, y1j, 0.0);
             auto r2 = delta + Vec3<double>(x2j, y2j, 0.0);
 
+            // Get new helix pair coordinates
+            Vec3<double> p1, p2;
             if (roll)
             {
                 // Wrap the X coordinate (== real position on circumference) onto a tube of radius 'radius', applying the
                 // offset we set earlier when creating the periodic box so as to put it in the centre of XZ.
-                species_.addAtom(zA_, species_.box()->fold(offset + Vec3<double>(radius_ * sin(2.0 * M_PI * r1.x / A_), r1.y,
-                                                                                 radius_ * cos(2.0 * M_PI * r1.x / A_))));
-                species_.addAtom(zB_, species_.box()->fold(offset + Vec3<double>(radius_ * sin(2.0 * M_PI * r2.x / A_), r2.y,
-                                                                                 radius_ * cos(2.0 * M_PI * r2.x / A_))));
+                p1 = species_.box()->fold(offset + Vec3<double>(radius_ * sin(2.0 * M_PI * r1.x / A_), r1.y,
+                                                                                 radius_ * cos(2.0 * M_PI * r1.x / A_)));
+                p2 = species_.box()->fold(offset + Vec3<double>(radius_ * sin(2.0 * M_PI * r2.x / A_), r2.y,
+                                                                                 radius_ * cos(2.0 * M_PI * r2.x / A_)));
             }
             else
             {
-                species_.addAtom(zA_, species_.box()->fold(r1));
-                species_.addAtom(zB_, species_.box()->fold(r2));
+                p1 = species_.box()->fold(r1);
+                p2 = species_.box()->fold(r2);
             }
+
+            // Check for overlaps with existing atoms - easier and more efficient to do this now as we go.
+            auto add1 = true, add2 = true;
+            for (auto &existing : species_.atoms())
+            {
+                if (add1)
+                    add1 = (p1 - existing.r()).magnitude() > 0.1;
+                if (add2)
+                    add2 = (p2 - existing.r()).magnitude() > 0.1;
+                if (!add1 && !add2) break;
+            }
+            if (add1)
+                species_.addAtom(zA_, p1);
+            if (add2)
+                species_.addAtom(zB_, p2);
         }
     }
 
@@ -183,8 +200,13 @@ void CreateNanotubeSpeciesDialog::regenerate()
                 // Find all bound partners which are across the unit cell
                 std::vector<SpeciesAtom *> pbcJ;
                 for (auto &b : i.bonds())
-                    if ((i.r() - b.get().partner(&i)->r()).magnitude() > 1.44)
-                        pbcJ.push_back(b.get().partner(&i));
+                {
+                    auto *j = b.get().partner(&i);
+                    if ((i.r() - j->r()).magnitude() < 1.0)
+                        std::cout << std::format("!!! Atoms {} ({}) and {} ({}) overlap\n", i.index(), Elements::name(i.Z()), j->index(), Elements::name(j->Z()));
+                    if ((i.r() - j->r()).magnitude() > 1.44)
+                        pbcJ.push_back(j);
+                }
 
                 if (pbcJ.size() == 2)
                     atoms[&i] = pbcJ;
@@ -199,18 +221,15 @@ void CreateNanotubeSpeciesDialog::regenerate()
                 // Determine the fractional average vector to the pbc atoms
                 Vec3<double> vFrac;
                 for (auto j : pbcJ)
-                {
                     vFrac += species_.box()->getFractional(j->r()) -  species_.box()->getFractional(i->r());
-                    std::cout << std::format("-> partner {} is at {},{},{}\n", j->index(), j->r().x, j->r().y, j->r().z);
-                }
                 vFrac.print();
 
                 // Make this a sensible translation vector - divide elements by their abs value to make unitary and round
                 for (auto n = 0; n < 3; ++n)
                     vFrac[n] = fabs(vFrac[n]) < 0.5 ? 0.0 : round(vFrac[n] / fabs(vFrac[n]));
-                vFrac.print();
+                // vFrac.print();
                 vFrac.multiply(cellLengths);
-                vFrac.print();
+                // vFrac.print();
 
                 // Translate the atom
                 i->setCoordinates(i->r() + vFrac);
