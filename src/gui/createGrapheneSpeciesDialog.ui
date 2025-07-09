@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CreateNanotubeSpeciesDialog</class>
- <widget class="QDialog" name="CreateNanotubeSpeciesDialog">
+ <class>CreateGrapheneSpeciesDialog</class>
+ <widget class="QDialog" name="CreateGrapheneSpeciesDialog">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -19,7 +19,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Create Nanotube Species</string>
+   <string>Create Graphene Species</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <property name="spacing">
@@ -126,7 +126,7 @@
               <number>1000</number>
              </property>
              <property name="value">
-              <number>1</number>
+              <number>0</number>
              </property>
             </widget>
            </item>
@@ -522,7 +522,7 @@
               <string>Periodic</string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -539,7 +539,7 @@
               <string>Non-periodic</string>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>

@@ -5,7 +5,7 @@
 #include "classes/species.h"
 #include "gui/addForcefieldTermsDialog.h"
 #include "gui/copySpeciesTermsDialog.h"
-#include "gui/createNanotubeSpeciesDialog.h"
+#include "gui/createGrapheneSpeciesDialog.h"
 #include "gui/editSpeciesDialog.h"
 #include "gui/gui.h"
 #include "gui/importCIFDialog.h"
@@ -94,11 +94,11 @@ void DissolveWindow::on_SpeciesCreateFromExistingAction_triggered(bool checked)
         dissolve_.coreData().removeSpecies(newSpecies);
 }
 
-void DissolveWindow::on_SpeciesCreateNanotubeAction_triggered(bool checked)
+void DissolveWindow::on_SpeciesCreateGrapheneAction_triggered(bool checked)
 {
-    CreateNanotubeSpeciesDialog createNanotubeSpeciesDialog(this, dissolve_);
+    CreateGrapheneSpeciesDialog createGrapheneSpeciesDialog(this, dissolve_);
 
-    if (createNanotubeSpeciesDialog.exec() == QDialog::Accepted)
+    if (createGrapheneSpeciesDialog.exec() == QDialog::Accepted)
     {
         // Fully update GUI
         setModified();

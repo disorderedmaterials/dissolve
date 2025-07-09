@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "gui/createNanotubeSpeciesDialog.h"
+#include "gui/createGrapheneSpeciesDialog.h"
 #include "classes/empiricalFormula.h"
 #include "gui/helpers/comboPopulator.h"
 #include <numeric>
@@ -10,7 +10,7 @@
 const auto root3 = sqrt(3.0);
 const auto oneSixthPi = M_PI / 6.0; // == 30 degrees
 
-CreateNanotubeSpeciesDialog::CreateNanotubeSpeciesDialog(QWidget *parent, Dissolve &dissolve)
+CreateGrapheneSpeciesDialog::CreateGrapheneSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     : QDialog(parent), selectElementDialog_(this), dissolve_(dissolve)
 {
     ui_.setupUi(this);
@@ -38,7 +38,7 @@ CreateNanotubeSpeciesDialog::CreateNanotubeSpeciesDialog(QWidget *parent, Dissol
  */
 
 // Calculate parameters
-void CreateNanotubeSpeciesDialog::calculateParameters()
+void CreateGrapheneSpeciesDialog::calculateParameters()
 {
     /*
      * Procedure based on "Determination of the chiral indices (n,m) of carbon nanotubes by electron diffraction",
@@ -76,7 +76,7 @@ void CreateNanotubeSpeciesDialog::calculateParameters()
 }
 
 // Find dangling atoms, defined as those which have two bonds spanning PBC of the box
-std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> CreateNanotubeSpeciesDialog::findDanglingAtoms(double localCutoff)
+std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> CreateGrapheneSpeciesDialog::findDanglingAtoms(double localCutoff)
 {
     std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> atoms;
     for (auto &i : species_.atoms())
@@ -99,7 +99,7 @@ std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> CreateNanotubeSpeciesDialog:
 
 // Get vector of atom keys from atom/neighbour map, sorted by position along indicated direction
 std::vector<SpeciesAtom *>
-CreateNanotubeSpeciesDialog::getSorted(const std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> &atoms, int dir) const
+CreateGrapheneSpeciesDialog::getSorted(const std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> &atoms, int dir) const
 {
     std::vector<SpeciesAtom *> sorted;
     for (auto &&[i, _] : atoms)
@@ -112,7 +112,7 @@ CreateNanotubeSpeciesDialog::getSorted(const std::map<SpeciesAtom *, std::vector
 }
 
 // Recursive branch function
-void CreateNanotubeSpeciesDialog::extendBranch(SpeciesAtom *i, const Box *box, Vec3<double> &vFrac,
+void CreateGrapheneSpeciesDialog::extendBranch(SpeciesAtom *i, const Box *box, Vec3<double> &vFrac,
                                                std::vector<SpeciesAtom *> &branch, double localCutoff) const
 {
     // Get PBC and non-PBC (local) bond partners for this atom and see what type of atom we have...
@@ -143,7 +143,7 @@ void CreateNanotubeSpeciesDialog::extendBranch(SpeciesAtom *i, const Box *box, V
 }
 
 // Regenerate species
-void CreateNanotubeSpeciesDialog::regenerate()
+void CreateGrapheneSpeciesDialog::regenerate()
 {
     species_.clear();
 
@@ -339,7 +339,7 @@ void CreateNanotubeSpeciesDialog::regenerate()
  */
 
 // Update all controls
-void CreateNanotubeSpeciesDialog::updateWidgets()
+void CreateGrapheneSpeciesDialog::updateWidgets()
 {
     Locker updateLock(widgetsUpdating_);
 
@@ -372,7 +372,7 @@ void CreateNanotubeSpeciesDialog::updateWidgets()
     ui_.StructureViewer->postRedisplay();
 }
 
-void CreateNanotubeSpeciesDialog::on_NSpin_valueChanged(int value)
+void CreateGrapheneSpeciesDialog::on_NSpin_valueChanged(int value)
 {
     if (widgetsUpdating_.isLocked())
         return;
@@ -385,14 +385,14 @@ void CreateNanotubeSpeciesDialog::on_NSpin_valueChanged(int value)
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_MSpin_valueChanged(int value)
+void CreateGrapheneSpeciesDialog::on_MSpin_valueChanged(int value)
 {
     calculateParameters();
     regenerate();
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_ElementAButton_clicked(bool checked)
+void CreateGrapheneSpeciesDialog::on_ElementAButton_clicked(bool checked)
 {
     auto Z = selectElementDialog_.selectElement(zA_);
     if (Z == Elements::Unknown)
@@ -404,7 +404,7 @@ void CreateNanotubeSpeciesDialog::on_ElementAButton_clicked(bool checked)
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_ElementBButton_clicked(bool checked)
+void CreateGrapheneSpeciesDialog::on_ElementBButton_clicked(bool checked)
 {
     auto Z = selectElementDialog_.selectElement(zB_);
     if (Z == Elements::Unknown)
@@ -416,44 +416,36 @@ void CreateNanotubeSpeciesDialog::on_ElementBButton_clicked(bool checked)
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_BondLengthSpin_valueChanged(double value)
+void CreateGrapheneSpeciesDialog::on_BondLengthSpin_valueChanged(double value)
 {
     calculateParameters();
     regenerate();
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_CFactorSpin_valueChanged(int value)
+void CreateGrapheneSpeciesDialog::on_CFactorSpin_valueChanged(int value)
 {
     calculateParameters();
     regenerate();
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_RollUpCheck_clicked(bool checked)
+void CreateGrapheneSpeciesDialog::on_RollUpCheck_clicked(bool checked)
 {
     regenerate();
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_PeriodicRadio_clicked(bool checked)
-{
-    if (widgetsUpdating_)
-        return;
-
-    regenerate();
-    updateWidgets();
-}
-
-void CreateNanotubeSpeciesDialog::on_PseudoPeriodicRadio_clicked(bool checked)
+void CreateGrapheneSpeciesDialog::on_PeriodicRadio_clicked(bool checked)
 {
     if (widgetsUpdating_)
         return;
+
     regenerate();
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_NonPeriodicRadio_clicked(bool checked)
+void CreateGrapheneSpeciesDialog::on_PseudoPeriodicRadio_clicked(bool checked)
 {
     if (widgetsUpdating_)
         return;
@@ -461,25 +453,33 @@ void CreateNanotubeSpeciesDialog::on_NonPeriodicRadio_clicked(bool checked)
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_TidyEndsCheck_clicked(bool checked)
+void CreateGrapheneSpeciesDialog::on_NonPeriodicRadio_clicked(bool checked)
+{
+    if (widgetsUpdating_)
+        return;
+    regenerate();
+    updateWidgets();
+}
+
+void CreateGrapheneSpeciesDialog::on_TidyEndsCheck_clicked(bool checked)
 {
     regenerate();
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_RemoveBranchesCheck_clicked(bool checked)
+void CreateGrapheneSpeciesDialog::on_RemoveBranchesCheck_clicked(bool checked)
 {
     regenerate();
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_TerminateCheck_clicked(bool checked)
+void CreateGrapheneSpeciesDialog::on_TerminateCheck_clicked(bool checked)
 {
     regenerate();
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_TerminateElementButton_clicked(bool checked)
+void CreateGrapheneSpeciesDialog::on_TerminateElementButton_clicked(bool checked)
 {
     auto Z = selectElementDialog_.selectElement(zB_);
     if (Z == Elements::Unknown)
@@ -491,25 +491,25 @@ void CreateNanotubeSpeciesDialog::on_TerminateElementButton_clicked(bool checked
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_TerminateBondLengthSpin_valueChanged(double value)
+void CreateGrapheneSpeciesDialog::on_TerminateBondLengthSpin_valueChanged(double value)
 {
     regenerate();
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_TerminateACheck_clicked(bool checked)
+void CreateGrapheneSpeciesDialog::on_TerminateACheck_clicked(bool checked)
 {
     regenerate();
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_TerminateBCheck_clicked(bool checked)
+void CreateGrapheneSpeciesDialog::on_TerminateBCheck_clicked(bool checked)
 {
     regenerate();
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_OKButton_clicked(bool checked)
+void CreateGrapheneSpeciesDialog::on_OKButton_clicked(bool checked)
 {
     // Copy the species to the main Dissolve instance and set its new name
     auto *sp = dissolve_.coreData().copySpecies(&species_);
@@ -518,4 +518,4 @@ void CreateNanotubeSpeciesDialog::on_OKButton_clicked(bool checked)
     accept();
 }
 
-void CreateNanotubeSpeciesDialog::on_CancelButton_clicked(bool checked) { reject(); }
+void CreateGrapheneSpeciesDialog::on_CancelButton_clicked(bool checked) { reject(); }

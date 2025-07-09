@@ -6,7 +6,7 @@
 #include "base/lock.h"
 #include "gui/models/cifAssemblyModel.h"
 #include "gui/selectElementDialog.h"
-#include "gui/ui_createNanotubeSpeciesDialog.h"
+#include "gui/ui_createGrapheneSpeciesDialog.h"
 #include "gui/wizard.h"
 #include "io/import/cif.h"
 #include "main/dissolve.h"
@@ -16,18 +16,18 @@
 class Dissolve;
 class Species;
 
-// Create Nanotube Species Dialog
-class CreateNanotubeSpeciesDialog : public QDialog
+// Create Graphene Species Dialog
+class CreateGrapheneSpeciesDialog : public QDialog
 {
     Q_OBJECT
 
     public:
-    CreateNanotubeSpeciesDialog(QWidget *parent, Dissolve &dissolve);
-    ~CreateNanotubeSpeciesDialog() = default;
+    CreateGrapheneSpeciesDialog(QWidget *parent, Dissolve &dissolve);
+    ~CreateGrapheneSpeciesDialog() = default;
 
     private:
     // Main form declaration
-    Ui::CreateNanotubeSpeciesDialog ui_;
+    Ui::CreateGrapheneSpeciesDialog ui_;
     // Temporary core data
     CoreData temporaryCoreData_;
 
