@@ -19,6 +19,7 @@ CreateNanotubeSpeciesDialog::CreateNanotubeSpeciesDialog(QWidget *parent, Dissol
 
     ui_.ElementAButton->setText(QString::fromStdString(std::string(Elements::symbol(zA_))));
     ui_.ElementBButton->setText(QString::fromStdString(std::string(Elements::symbol(zB_))));
+    ui_.TerminateElementButton->setText(QString::fromStdString(std::string(Elements::symbol(zTerminate_))));
 
     ui_.MSpin->setMaximum(ui_.NSpin->value());
 
@@ -302,6 +303,29 @@ void CreateNanotubeSpeciesDialog::regenerate()
 
         species_.removeBox();
         species_.recalculateIntermolecularTerms(1.1);
+
+        // Terminate?
+        if (ui_.TerminateCheck->isChecked())
+        {
+            auto rT = ui_.TerminateBondLengthSpin->value();
+            auto excludeA = !ui_.TerminateACheck->isChecked();
+            auto excludeB = !ui_.TerminateBCheck->isChecked();
+
+            // Any atom with just two bonds can be terminated
+            for (auto &i : species_.atoms())
+            {
+                if ((i.nBonds() != 2) || (excludeA && i.Z() == zA_) || (excludeB && i.Z() == zB_))
+                    continue;
+
+                // Get average bond vector
+                auto v = (i.r() - i.bond(0).partner(&i)->r()) + (i.r() - i.bond(1).partner(&i)->r());
+                v.normalise();
+
+                species_.addAtom(zTerminate_, i.r() + v * rT);
+            }
+
+            species_.recalculateIntermolecularTerms(1.1);
+        }
     }
     else
     {
@@ -374,6 +398,7 @@ void CreateNanotubeSpeciesDialog::on_ElementAButton_clicked(bool checked)
     if (Z == Elements::Unknown)
         return;
     zA_ = Z;
+    ui_.ElementAButton->setText(QString::fromStdString(std::string(Elements::symbol(zA_))));
 
     regenerate();
     updateWidgets();
@@ -385,6 +410,7 @@ void CreateNanotubeSpeciesDialog::on_ElementBButton_clicked(bool checked)
     if (Z == Elements::Unknown)
         return;
     zB_ = Z;
+    ui_.ElementBButton->setText(QString::fromStdString(std::string(Elements::symbol(zB_))));
 
     regenerate();
     updateWidgets();
@@ -442,6 +468,42 @@ void CreateNanotubeSpeciesDialog::on_TidyEndsCheck_clicked(bool checked)
 }
 
 void CreateNanotubeSpeciesDialog::on_RemoveBranchesCheck_clicked(bool checked)
+{
+    regenerate();
+    updateWidgets();
+}
+
+void CreateNanotubeSpeciesDialog::on_TerminateCheck_clicked(bool checked)
+{
+    regenerate();
+    updateWidgets();
+}
+
+void CreateNanotubeSpeciesDialog::on_TerminateElementButton_clicked(bool checked)
+{
+    auto Z = selectElementDialog_.selectElement(zB_);
+    if (Z == Elements::Unknown)
+        return;
+    zTerminate_ = Z;
+    ui_.TerminateElementButton->setText(QString::fromStdString(std::string(Elements::symbol(zTerminate_))));
+
+    regenerate();
+    updateWidgets();
+}
+
+void CreateNanotubeSpeciesDialog::on_TerminateBondLengthSpin_valueChanged(double value)
+{
+    regenerate();
+    updateWidgets();
+}
+
+void CreateNanotubeSpeciesDialog::on_TerminateACheck_clicked(bool checked)
+{
+    regenerate();
+    updateWidgets();
+}
+
+void CreateNanotubeSpeciesDialog::on_TerminateBCheck_clicked(bool checked)
 {
     regenerate();
     updateWidgets();

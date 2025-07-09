@@ -38,7 +38,7 @@ class CreateNanotubeSpeciesDialog : public QDialog
     // Main Dissolve object
     Dissolve &dissolve_;
     // Elements in nanotube
-    Elements::Element zA_{Elements::Element::C}, zB_{Elements::Element::N};
+    Elements::Element zA_{Elements::Element::C}, zB_{Elements::Element::N}, zTerminate_{Elements::H};
     // Generated nanotube species
     Species species_;
     // Chirality parameters
@@ -102,6 +102,11 @@ class CreateNanotubeSpeciesDialog : public QDialog
     void on_NonPeriodicRadio_clicked(bool checked);
     void on_TidyEndsCheck_clicked(bool checked);
     void on_RemoveBranchesCheck_clicked(bool checked);
+    void on_TerminateCheck_clicked(bool checked);
+    void on_TerminateElementButton_clicked(bool checked);
+    void on_TerminateBondLengthSpin_valueChanged(double value);
+    void on_TerminateACheck_clicked(bool checked);
+    void on_TerminateBCheck_clicked(bool checked);
     // Dialog
     void on_OKButton_clicked(bool checked);
     void on_CancelButton_clicked(bool checked);
