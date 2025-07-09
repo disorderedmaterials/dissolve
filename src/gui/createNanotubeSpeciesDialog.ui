@@ -126,7 +126,7 @@
               <number>1000</number>
              </property>
              <property name="value">
-              <number>0</number>
+              <number>1</number>
              </property>
             </widget>
            </item>
@@ -522,7 +522,7 @@
               <string>Periodic</string>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -532,9 +532,42 @@
               <string>Non-periodic</string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="TidyEndsCheck">
+               <property name="toolTip">
+                <string>Tidy the ends of non-periodic sheets, moving dangling atoms to leave complete rings</string>
+               </property>
+               <property name="text">
+                <string>Tidy Ends</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
             <widget class="QRadioButton" name="PseudoPeriodicRadio">

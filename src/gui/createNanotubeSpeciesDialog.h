@@ -92,6 +92,7 @@ class CreateNanotubeSpeciesDialog : public QDialog
     // Output Options
     void on_PeriodicRadio_clicked(bool checked);
     void on_NonPeriodicRadio_clicked(bool checked);
+    void on_TidyEndsCheck_clicked(bool checked);
     void on_PseudoPeriodicRadio_clicked(bool checked);
     // Dialog
     void on_OKButton_clicked(bool checked);
