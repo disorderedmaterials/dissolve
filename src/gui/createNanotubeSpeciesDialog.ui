@@ -313,7 +313,7 @@
            <property name="bottomMargin">
             <number>4</number>
            </property>
-           <item row="0" column="0" colspan="2">
+           <item row="1" column="0" colspan="2">
             <widget class="QCheckBox" name="RollUpCheck">
              <property name="toolTip">
               <string>Whether to roll up the sheet about the y axis to form a nanotube</string>
@@ -323,7 +323,7 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="2" column="0">
             <widget class="QLabel" name="label_11">
              <property name="font">
               <font>
@@ -339,13 +339,36 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="2" column="1">
             <widget class="QLabel" name="RadiusLabel">
              <property name="toolTip">
               <string>Radius, if rolled into a nanotube</string>
              </property>
              <property name="text">
               <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="toolTip">
+              <string>Multiplier for the sheet along the c axis</string>
+             </property>
+             <property name="text">
+              <string>c Factor</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="CFactorSpin">
+             <property name="toolTip">
+              <string>Multiplier for the sheet along the c axis</string>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>100</number>
              </property>
             </widget>
            </item>

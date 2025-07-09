@@ -80,18 +80,19 @@ void CreateNanotubeSpeciesDialog::regenerate()
     species_.clear();
 
     const auto roll = ui_.RollUpCheck->isChecked();
+    const auto cFactor = ui_.CFactorSpin->value();
 
     // Determine a suitable periodic box for the species - we will always create one so that we get proper folding.
     auto offset = Vec3<double>();
     if (roll)
     {
         // Create some extra space and set an offset so the tube is central in XZ
-        species_.createBox({radius_ * 3, c_, radius_ * 3}, {90, 90, 90});
+        species_.createBox({radius_ * 3, c_ * cFactor, radius_ * 3}, {90, 90, 90});
         offset = Vec3<double>(radius_ * 1.5, 0.0, radius_ * 1.5);
     }
     else
     {
-        species_.createBox({A_, c_, sheetZ_}, {90, 90, 90});
+        species_.createBox({A_, c_ * cFactor, sheetZ_}, {90, 90, 90});
         offset = Vec3<double>(0.0, 0.0, sheetZ_ * 0.5);
     }
 
@@ -111,8 +112,8 @@ void CreateNanotubeSpeciesDialog::regenerate()
         auto x2j = x1j - (a0_ / sqrt(3.0)) * cos(oneSixthPi - alpha_);
         auto y2j = y1j - (a0_ / sqrt(3.0)) * sin(oneSixthPi - alpha_);
 
-        // Create H copies of the helix pairs
-        for (auto i = 0; i < H_; ++i)
+        // Create H copies of the helix pairs, multiplied by the extension factor along C
+        for (auto i = 0; i < H_ * cFactor; ++i)
         {
             // Generate translation vector for this copy (equation 9)
             auto delta = Vec3<double>(-i * a0_ * sin(oneSixthPi - alpha_), i * a0_ * cos(oneSixthPi - alpha_), 0.0);
@@ -164,9 +165,9 @@ void CreateNanotubeSpeciesDialog::updateWidgets()
 
     // Sheet properties
     ui_.ALabel->setText(QString("%1 \u212B").arg(A_, 0, 'f', 3));
-    ui_.CLabel->setText(QString("%1 \u212B").arg(c_, 0, 'f', 3));
+    ui_.CLabel->setText(QString("%1 (%2) \u212B").arg(c_, 0, 'f', 3).arg(c_ * ui_.CFactorSpin->value(), 0, 'f', 3));
     ui_.AlphaLabel->setText(QString("%1\u00B0").arg(alpha_ * DEGRAD, 0, 'f', 3));
-    ui_.HLabel->setText(QString("%1\u00B0").arg(H_));
+    ui_.HLabel->setText(QString("%1 (%2)").arg(H_).arg(H_ * ui_.CFactorSpin->value()));
     ui_.RadiusLabel->setText(QString("%1 \u212B").arg(radius_, 0, 'f', 3));
 
     // Final cell properties
@@ -240,6 +241,13 @@ void CreateNanotubeSpeciesDialog::on_BondLengthSpin_valueChanged(double value)
     updateWidgets();
 }
 
+void CreateNanotubeSpeciesDialog::on_CFactorSpin_valueChanged(int value)
+{
+    calculateParameters();
+    regenerate();
+    updateWidgets();
+}
+
 void CreateNanotubeSpeciesDialog::on_RollUpCheck_clicked(bool checked)
 {
     regenerate();
@@ -281,24 +289,3 @@ void CreateNanotubeSpeciesDialog::on_OKButton_clicked(bool checked)
 }
 
 void CreateNanotubeSpeciesDialog::on_CancelButton_clicked(bool checked) { reject(); }
-
-void CreateNanotubeSpeciesDialog::on_TypeCombo_currentIndexChanged(int index)
-{
-    Locker refreshLock(widgetsUpdating_);
-
-    //    // Limit tube axial length depending on mode requested
-    //    if (index == 0)
-    //    {
-    //        ui_.AxialRingLengthSpin->setSingleStep(1);
-    //        ui_.AxialRingLengthSpin->setMinimum(1);
-    //    }
-    //    else
-    //    {
-    //        ui_.AxialRingLengthSpin->setSingleStep(2);
-    //        ui_.AxialRingLengthSpin->setMinimum(2);
-    //    }
-
-    refreshLock.unlock();
-
-    regenerate();
-}
