@@ -500,7 +500,7 @@
           <property name="title">
            <string>Output Options</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout">
+          <layout class="QVBoxLayout" name="verticalLayout_2">
            <property name="spacing">
             <number>4</number>
            </property>
@@ -523,6 +523,13 @@
              </property>
              <property name="checked">
               <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="PseudoPeriodicRadio">
+             <property name="text">
+              <string>Pseudo-periodic</string>
              </property>
             </widget>
            </item>
@@ -555,26 +562,36 @@
               </spacer>
              </item>
              <item>
-              <widget class="QCheckBox" name="TidyEndsCheck">
-               <property name="toolTip">
-                <string>Tidy the ends of non-periodic sheets, moving dangling atoms to leave complete rings</string>
+              <layout class="QVBoxLayout" name="verticalLayout">
+               <property name="spacing">
+                <number>4</number>
                </property>
-               <property name="text">
-                <string>Tidy Ends</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
+               <item>
+                <widget class="QCheckBox" name="TidyEndsCheck">
+                 <property name="toolTip">
+                  <string>Tidy the ends of non-periodic sheets, moving dangling atoms to leave complete rings</string>
+                 </property>
+                 <property name="text">
+                  <string>Tidy Ends</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="RemoveBranchesCheck">
+                 <property name="toolTip">
+                  <string>Whether to remove any remaining branches rather than try to translate them into a meaningful position (requires Tidy Ends)</string>
+                 </property>
+                 <property name="text">
+                  <string>Remove branches</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="PseudoPeriodicRadio">
-             <property name="text">
-              <string>Pseudo-periodic</string>
-             </property>
-            </widget>
            </item>
           </layout>
          </widget>

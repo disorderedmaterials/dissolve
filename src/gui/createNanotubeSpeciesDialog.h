@@ -63,6 +63,13 @@ class CreateNanotubeSpeciesDialog : public QDialog
     private:
     // Calculate parameters
     void calculateParameters();
+    // Find dangling atoms, defined as those which have two bonds spanning PBC of the box
+    std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> findDanglingAtoms(double localCutoff);
+    // Get vector of atom keys from atom/neighbour map, sorted by position along indicated direction
+    std::vector<SpeciesAtom *> getSorted(const std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> &atoms, int dir) const;
+    // Recursive branch function
+    void extendBranch(SpeciesAtom *i, const Box *box, Vec3<double> &vFrac, std::vector<SpeciesAtom *> &branch,
+                      double localCutoff) const;
     // Regenerate species
     void regenerate();
 
@@ -91,9 +98,10 @@ class CreateNanotubeSpeciesDialog : public QDialog
     void on_RollUpCheck_clicked(bool checked);
     // Output Options
     void on_PeriodicRadio_clicked(bool checked);
+    void on_PseudoPeriodicRadio_clicked(bool checked);
     void on_NonPeriodicRadio_clicked(bool checked);
     void on_TidyEndsCheck_clicked(bool checked);
-    void on_PseudoPeriodicRadio_clicked(bool checked);
+    void on_RemoveBranchesCheck_clicked(bool checked);
     // Dialog
     void on_OKButton_clicked(bool checked);
     void on_CancelButton_clicked(bool checked);

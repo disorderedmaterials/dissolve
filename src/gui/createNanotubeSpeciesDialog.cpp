@@ -74,6 +74,73 @@ void CreateNanotubeSpeciesDialog::calculateParameters()
     H_ = round(c_ / dy_);
 }
 
+// Find dangling atoms, defined as those which have two bonds spanning PBC of the box
+std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> CreateNanotubeSpeciesDialog::findDanglingAtoms(double localCutoff)
+{
+    std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> atoms;
+    for (auto &i : species_.atoms())
+    {
+        // Find all bound partners which are across the unit cell
+        std::vector<SpeciesAtom *> pbcJ;
+        for (auto &b : i.bonds())
+        {
+            auto *j = b.get().partner(&i);
+            if ((i.r() - j->r()).magnitude() > localCutoff)
+                pbcJ.push_back(j);
+        }
+
+        if (pbcJ.size() == 2)
+            atoms[&i] = pbcJ;
+    }
+
+    return atoms;
+}
+
+// Get vector of atom keys from atom/neighbour map, sorted by position along indicated direction
+std::vector<SpeciesAtom *>
+CreateNanotubeSpeciesDialog::getSorted(const std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> &atoms, int dir) const
+{
+    std::vector<SpeciesAtom *> sorted;
+    for (auto &&[i, _] : atoms)
+        sorted.push_back(i);
+
+    std::sort(sorted.begin(), sorted.end(),
+              [dir](const SpeciesAtom *a, const SpeciesAtom *b) { return a->r().get(dir) < b->r().get(dir); });
+
+    return sorted;
+}
+
+// Recursive branch function
+void CreateNanotubeSpeciesDialog::extendBranch(SpeciesAtom *i, const Box *box, Vec3<double> &vFrac,
+                                               std::vector<SpeciesAtom *> &branch, double localCutoff) const
+{
+    // Get PBC and non-PBC (local) bond partners for this atom and see what type of atom we have...
+    std::vector<SpeciesAtom *> pbcJ, localJ;
+    for (auto &b : i->bonds())
+    {
+        auto j = b.get().partner(i);
+        if ((i->r() - j->r()).magnitude() > localCutoff)
+            pbcJ.push_back(j);
+        else if (std::find(branch.begin(), branch.end(), j) == branch.end())
+            localJ.push_back(j);
+    }
+
+    // If all atoms are local this is a completely internally-bound atom, and we are done here.
+    if (pbcJ.size() == 0)
+        return;
+
+    // Add ourselves to the branch
+    branch.push_back(i);
+
+    // For all pbc atoms, increment the fractional direction
+    for (auto j : pbcJ)
+        vFrac += (box->getFractional(j->r()) - box->getFractional(i->r()));
+
+    // For local atoms, recurse into them if we haven't visited them already
+    for (auto j : localJ)
+        extendBranch(j, box, vFrac, branch, localCutoff);
+}
+
 // Regenerate species
 void CreateNanotubeSpeciesDialog::regenerate()
 {
@@ -95,7 +162,6 @@ void CreateNanotubeSpeciesDialog::regenerate()
         cellLengths = {A_, c_ * cFactor, sheetZ_};
         offset = Vec3<double>(0.0, 0.0, sheetZ_ * 0.5);
     }
-    cellLengths.print();
     species_.createBox(cellLengths, {90, 90, 90});
 
     /*
@@ -128,10 +194,10 @@ void CreateNanotubeSpeciesDialog::regenerate()
             {
                 // Wrap the X coordinate (== real position on circumference) onto a tube of radius 'radius', applying the
                 // offset we set earlier when creating the periodic box so as to put it in the centre of XZ.
-                p1 = species_.box()->fold(offset + Vec3<double>(radius_ * sin(2.0 * M_PI * r1.x / A_), r1.y,
-                                                                                 radius_ * cos(2.0 * M_PI * r1.x / A_)));
-                p2 = species_.box()->fold(offset + Vec3<double>(radius_ * sin(2.0 * M_PI * r2.x / A_), r2.y,
-                                                                                 radius_ * cos(2.0 * M_PI * r2.x / A_)));
+                p1 = species_.box()->fold(
+                    offset + Vec3<double>(radius_ * sin(2.0 * M_PI * r1.x / A_), r1.y, radius_ * cos(2.0 * M_PI * r1.x / A_)));
+                p2 = species_.box()->fold(
+                    offset + Vec3<double>(radius_ * sin(2.0 * M_PI * r2.x / A_), r2.y, radius_ * cos(2.0 * M_PI * r2.x / A_)));
             }
             else
             {
@@ -147,7 +213,8 @@ void CreateNanotubeSpeciesDialog::regenerate()
                     add1 = (p1 - existing.r()).magnitude() > 0.1;
                 if (add2)
                     add2 = (p2 - existing.r()).magnitude() > 0.1;
-                if (!add1 && !add2) break;
+                if (!add1 && !add2)
+                    break;
             }
             if (add1)
                 species_.addAtom(zA_, p1);
@@ -167,110 +234,74 @@ void CreateNanotubeSpeciesDialog::regenerate()
 
         if (ui_.TidyEndsCheck->isChecked())
         {
-            // For any atom whose y coordinate is less than half the box B, or any x coordinate less than half the box A,
-            // translate it to the opposite side.
-
-            // // Pass over X
-            // for (auto &i : species_.atoms())
-            //     if (i.nBonds() == 1 && i.r().x < cellLengths.x*0.5)
-            //     {
-            //         i.setCoordinates(i.r() + Vec3<double>(cellLengths.x, 0.0, 0.0));
-            //         // Check bound neighbour - if it has exactly two bonds then we need to move it as well
-            //         auto j =i.bonds().front().get().partner(&i);
-            //         if (j->nBonds() == 2)
-            //             j->setCoordinates(j->r() + Vec3<double>(cellLengths.x, 0.0, 0.0));
-            //     }
-            // species_.recalculateIntermolecularTerms(1.1);
-            //
-            // // Pass over Y
-            // for (auto &i : species_.atoms())
-            //     if (i.nBonds() == 1 && i.r().y < cellLengths.y*0.5)
-            //     {
-            //         i.setCoordinates(i.r() + Vec3<double>(0.0, cellLengths.y, 0.0));
-            //         // Check bound neighbour - if it has exactly two bonds then we need to move it as well
-            //         auto j =i.bonds().front().get().partner(&i);
-            //         if (j->nBonds() == 2)
-            //             j->setCoordinates(j->r() + Vec3<double>(0.0, cellLengths.y, 0.0));
-            //     }
-
             // Find all atoms which have two bonds spanning PBC of the box
-            std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> atoms;
-            for (auto &i : species_.atoms())
+            auto localCutoff = ui_.BondLengthSpin->value() * 1.01;
+            const auto atoms = findDanglingAtoms(localCutoff);
+            auto sorted = getSorted(atoms, 1);
+
+            // Pass 1 - Move all atoms along the PBC bond vectors
+            while (!sorted.empty())
             {
-                // Find all bound partners which are across the unit cell
-                std::vector<SpeciesAtom *> pbcJ;
-                for (auto &b : i.bonds())
-                {
-                    auto *j = b.get().partner(&i);
-                    if ((i.r() - j->r()).magnitude() < 1.0)
-                        std::cout << std::format("!!! Atoms {} ({}) and {} ({}) overlap\n", i.index(), Elements::name(i.Z()), j->index(), Elements::name(j->Z()));
-                    if ((i.r() - j->r()).magnitude() > 1.44)
-                        pbcJ.push_back(j);
-                }
+                auto i = sorted.back();
+                auto &pbcJ = atoms.at(i);
 
-                if (pbcJ.size() == 2)
-                    atoms[&i] = pbcJ;
-            }
-            std::cout << std::format("There are {} atoms which have two periodic bonds.\n", atoms.size());
-
-            while (atoms.size() > 0)
-            {
-                auto &&[i, pbcJ] = *atoms.begin();
-
-                std::cout << std::format("-> Atom {} is at {},{},{}\n", i->index(), i->r().x, i->r().y, i->r().z);
                 // Determine the fractional average vector to the pbc atoms
                 Vec3<double> vFrac;
                 for (auto j : pbcJ)
-                    vFrac += species_.box()->getFractional(j->r()) -  species_.box()->getFractional(i->r());
-                vFrac.print();
+                    vFrac += species_.box()->getFractional(j->r()) - species_.box()->getFractional(i->r());
 
                 // Make this a sensible translation vector - divide elements by their abs value to make unitary and round
                 for (auto n = 0; n < 3; ++n)
                     vFrac[n] = fabs(vFrac[n]) < 0.5 ? 0.0 : round(vFrac[n] / fabs(vFrac[n]));
-                // vFrac.print();
                 vFrac.multiply(cellLengths);
-                // vFrac.print();
 
                 // Translate the atom
                 i->setCoordinates(i->r() + vFrac);
-                std::cout << std::format("-> new i.r() =  {},{},{}\n", i->r().x, i->r().y, i->r().z);
 
                 // Remove this atom from the vector, along with any that were in its pbc neighbour lists
                 for (auto j : pbcJ)
-                    if (atoms.contains(j))
-                        atoms.erase(j);
+                {
+                    auto it = std::ranges::find(sorted, j);
+                    if (it != sorted.end())
+                        sorted.erase(it);
+                }
 
-                atoms.erase(i);
-                //
-                // // Skip this atom
-                // if (!roll && i->r().x < cellLengths.x * 0.5)
-                // {
-                //     i->setCoordinates(i->r() + Vec3<double>(cellLengths.x, 0.0, 0.0));
-                //     // Check bound neighbour - if it has exactly two bonds then we need to move it as well
-                //     auto j = i->bonds().front().get().partner(i);
-                //     if (j->nBonds() == 2)
-                //         j->setCoordinates(j->r() + Vec3<double>(cellLengths.x, 0.0, 0.0));
-                // }
-                // else if (i->r().y < cellLengths.y * 0.5)
-                // {
-                //     i->setCoordinates(i->r() + Vec3<double>(0.0, cellLengths.y, 0.0));
-                //     // Check bound neighbour - if it has exactly two bonds then we need to move it as well
-                //     auto j = i->bonds().front().get().partner(i);
-                //     if (j->nBonds() == 2)
-                //         j->setCoordinates(j->r() + Vec3<double>(0.0, cellLengths.y, 0.0));
-                // }
-                //
-                // // Recalculate bonding
-                // species_.recalculateIntermolecularTerms(1.1);
-                //
-                // // Remove any atoms in the vector which now have more than one bond
-                // atoms.erase(std::remove_if(atoms.begin(), atoms.end(), [](const auto *j) { return j->nBonds() > 1; }),
-                //             atoms.end());
-                std::cout << std::format("There are now {} atoms to process.\n", atoms.size());
+                sorted.pop_back();
             }
+
+            // Pass 2 - We may have generated some "branches" inadvertently, so rebond, find any singly-bound atoms and check
+            auto branchEnd = findDanglingAtoms(localCutoff);
+            std::vector<int> indicesToRemove;
+            for (auto &&[i, _] : branchEnd)
+            {
+                // For this atom we will step along bonds until we find an atom with three non-PBC bonds - this marks a fully
+                // "internal" atom which does not need (and should not be) translated, and the end of the linear branch we're
+                // interested in. Along the way we maintain a fractional translation vector based on all PBC bonds we encounter
+                // which will inform the direction we might want to move the branch. Or we could just remove it.
+
+                Vec3<double> vFrac;
+                std::vector<SpeciesAtom *> branch;
+                extendBranch(i, species_.box(), vFrac, branch, localCutoff);
+                auto maxEl = vFrac.absMaxElement();
+                Vec3<double> tVec;
+                tVec.set(maxEl, round(vFrac.get(maxEl) / fabs(vFrac.get(maxEl))));
+                tVec.multiply(cellLengths);
+                ;
+
+                // Translate or remove the branch?
+                for (auto j : branch)
+                    if (ui_.RemoveBranchesCheck->isChecked())
+                        indicesToRemove.push_back(j->index());
+                    else
+                        j->setCoordinates(j->r() + tVec);
+            }
+
+            // Final tidy-up - remove any branch atoms if required
+            species_.removeAtoms(indicesToRemove);
         }
 
         species_.removeBox();
+        species_.recalculateIntermolecularTerms(1.1);
     }
     else
     {
@@ -388,6 +419,14 @@ void CreateNanotubeSpeciesDialog::on_PeriodicRadio_clicked(bool checked)
     updateWidgets();
 }
 
+void CreateNanotubeSpeciesDialog::on_PseudoPeriodicRadio_clicked(bool checked)
+{
+    if (widgetsUpdating_)
+        return;
+    regenerate();
+    updateWidgets();
+}
+
 void CreateNanotubeSpeciesDialog::on_NonPeriodicRadio_clicked(bool checked)
 {
     if (widgetsUpdating_)
@@ -402,10 +441,8 @@ void CreateNanotubeSpeciesDialog::on_TidyEndsCheck_clicked(bool checked)
     updateWidgets();
 }
 
-void CreateNanotubeSpeciesDialog::on_PseudoPeriodicRadio_clicked(bool checked)
+void CreateNanotubeSpeciesDialog::on_RemoveBranchesCheck_clicked(bool checked)
 {
-    if (widgetsUpdating_)
-        return;
     regenerate();
     updateWidgets();
 }
