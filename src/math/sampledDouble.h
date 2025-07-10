@@ -3,13 +3,15 @@
 
 #pragma once
 
+#include "base/serialiser.h"
+
 // Forward Declarations
 class CoreData;
 class LineParser;
 class ProcessPool;
 
 // Double value with sampling
-class SampledDouble
+class SampledDouble : public Serialisable<>
 {
     public:
     SampledDouble();
@@ -56,11 +58,15 @@ class SampledDouble
     void operator/=(double factor);
 
     /*
-     * Serialisation
+     * I/O
      */
     public:
     // Read data through specified LineParser
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };
