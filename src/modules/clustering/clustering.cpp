@@ -20,11 +20,11 @@ ClusteringModule::ClusteringModule() : Module(ModuleTypes::Clustering)
     keywords_.add<SpeciesSiteKeyword>("SiteA", "Choose the first site for cluster definition", a_);
     keywords_.add<SpeciesSiteKeyword>("SiteB", "Choose the second site for cluster definition", b_);
     keywords_.add<DoubleKeyword>(
-        "Cut-off", "The maximum distance between sites for them to be considered part of the same cluster", cutoff_);
+        "Cutoff", "The maximum distance between sites for them to be considered part of the same cluster", cutoff_);
     keywords_.add<BoolKeyword>(
-        "Self-clusteringA", "If SiteA and SiteB are different, A-A interactions will contribute to clusters", selfClusteringA_);
+        "IncludeAA", "If SiteA and SiteB are different, A-A interactions will contribute to clusters", selfClusteringA_);
     keywords_.add<BoolKeyword>(
-        "Self-clusteringB", "If SiteA and SiteB are different, B-B interactions will contribute to clusters", selfClusteringB_);
+        "IncludeBB", "If SiteA and SiteB are different, B-B interactions will contribute to clusters", selfClusteringB_);
     keywords_.add<DoubleKeyword>("FisherExponent",
                                  "Exponent determining slope of percolation line in the distribution plot (default = -2.189)",
                                  fisher_);
