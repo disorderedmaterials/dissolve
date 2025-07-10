@@ -263,10 +263,9 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     histSizeData.zeroBins();
 
     // Figure out how many molecules of interest are in the configuration
-    auto interestingMols =
-    a_->parent() == b_->parent() ? targetConfiguration_->speciesPopulation(a_->parent())
-                                 : targetConfiguration_->speciesPopulation(a_->parent()) +
-                                                     targetConfiguration_->speciesPopulation(b_->parent());
+    auto interestingMols = a_->parent() == b_->parent() ? targetConfiguration_->speciesPopulation(a_->parent())
+                                                        : targetConfiguration_->speciesPopulation(a_->parent()) +
+                                                              targetConfiguration_->speciesPopulation(b_->parent());
 
     // Find the number of molecules not in clusters
     auto totalMolsClustered = 0;
