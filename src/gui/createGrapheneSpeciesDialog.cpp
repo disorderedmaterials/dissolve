@@ -105,8 +105,7 @@ CreateGrapheneSpeciesDialog::getSortedByY(const std::map<SpeciesAtom *, std::vec
     for (auto &&[i, _] : atoms)
         sorted.push_back(i);
 
-    std::sort(sorted.begin(), sorted.end(),
-              [dir](const SpeciesAtom *a, const SpeciesAtom *b) { return a->r().y < b->r().y; });
+    std::sort(sorted.begin(), sorted.end(), [dir](const SpeciesAtom *a, const SpeciesAtom *b) { return a->r().y < b->r().y; });
 
     return sorted;
 }
