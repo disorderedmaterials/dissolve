@@ -119,39 +119,35 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
                           pairPotentials_.end());
 
     // Second step - add or update tabulated pair potentials defined by the parameters and form of the associated atom types
-    if (!for_each_pair_early(coreData_.atomTypes(),
-                             [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool>
-                             {
-                                 // Try to locate existing pair potential between these atom types
-                                 auto *pot = pairPotential(at1, at2);
+    dissolve::for_each_pair(ParallelPolicies::seq, coreData_.atomTypes(),
+                            [&](int typeI, const auto &at1, int typeJ, const auto &at2)
+                            {
+                                // Try to locate existing pair potential between these atom types
+                                auto *pot = pairPotential(at1, at2);
 
-                                 // If it doesn't exist we create it
-                                 if (!pot)
-                                 {
-                                     Messenger::print("Creating new PairPotential for interaction between '{}' and '{}'...\n",
-                                                      at1->name(), at2->name());
-                                     pot = addPairPotential(at1, at2);
-                                 }
+                                // If it doesn't exist we create it
+                                if (!pot)
+                                {
+                                    Messenger::print("Creating new PairPotential for interaction between '{}' and '{}'...\n",
+                                                     at1->name(), at2->name());
+                                    pot = addPairPotential(at1, at2);
+                                }
 
-                                 // Update basic parameters
-                                 pot->setNames(at1->name(), at2->name());
+                                // Update basic parameters
+                                pot->setNames(at1->name(), at2->name());
 
-                                 // Auto-update parameters using combination rules?
-                                 if (useCombinationRules)
-                                 {
-                                     // Combine the atom type parameters into potential function parameters
-                                     auto optPotential =
-                                         ShortRangeFunctions::combine(at1->interactionPotential(), at2->interactionPotential());
-                                     if (optPotential)
-                                         pot->setInteractionPotential(*optPotential);
-                                     else
-                                         pot->setInteractionPotential(Functions1D::Form::None, "");
-                                 }
-
-                                 return EarlyReturn<bool>::Continue;
-                             })
-             .value_or(true))
-        return false;
+                                // Auto-update parameters using combination rules?
+                                if (useCombinationRules)
+                                {
+                                    // Combine the atom type parameters into potential function parameters
+                                    auto optPotential =
+                                        ShortRangeFunctions::combine(at1->interactionPotential(), at2->interactionPotential());
+                                    if (optPotential)
+                                        pot->setInteractionPotential(*optPotential);
+                                    else
+                                        pot->setInteractionPotential(Functions1D::Form::None, "");
+                                }
+                            });
 
     // Re-tabulate the potentials to account for changes in charge inclusion/exclusion, range etc. as well as parameters
     for (auto &&[at1, at2, pot] : pairPotentials_)
