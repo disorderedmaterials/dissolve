@@ -263,20 +263,20 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     histSizeData.zeroBins();
 
     // Figure out how many molecules of interest are in the configuration
-    int interestingMols;
-    a_->parent() == b_->parent() ? interestingMols = targetConfiguration_->speciesPopulation(a_->parent())
-                                 : interestingMols = targetConfiguration_->speciesPopulation(a_->parent()) +
+    auto interestingMols =
+    a_->parent() == b_->parent() ? targetConfiguration_->speciesPopulation(a_->parent())
+                                 : targetConfiguration_->speciesPopulation(a_->parent()) +
                                                      targetConfiguration_->speciesPopulation(b_->parent());
 
     // Find the number of molecules not in clusters
-    int totalMolsClustered = 0;
-    for (const auto &[cluster, memVec] : molClusterMap_)
+    auto totalMolsClustered = 0;
+    for (const auto &[_, memVec] : molClusterMap_)
         totalMolsClustered += memVec.size();
 
     molsNotClustered_ = interestingMols - totalMolsClustered;
 
     // Fill histogram with number of mols per cluster size
-    for (int i = 0; i < molsNotClustered_; i++)
+    for (auto i = 0; i < molsNotClustered_; i++)
         histSizeData.bin(1);
 
     for (const auto &[size, clusterMems] : sizeDistribution_)
