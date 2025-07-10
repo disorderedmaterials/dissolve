@@ -155,3 +155,9 @@ bool SampledDouble::deserialise(LineParser &parser)
 
 // Write data through specified LineParser
 bool SampledDouble::serialise(LineParser &parser) const { return parser.writeLineF("{}  {}  {}\n", mean_, count_, m2_); }
+
+// Express as a serialisable value
+SerialisedValue SampledDouble::serialise() const { return {}; }
+
+// Read values from a serialisable value
+void SampledDouble::deserialise(const SerialisedValue &node){};
