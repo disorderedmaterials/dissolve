@@ -97,9 +97,8 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     // Decide how to filter the site maps
     if (a_ == b_ && (selfClusteringA_ || selfClusteringB_))
     {
-        Messenger::error("Sites are the same! Disabling self-clustering...");
-        selfClusteringA_ = false;
-        selfClusteringB_ = false;
+        Messenger::error("Sites are the same! Disable IncludeAA, IncludeBB...");
+        return ExecutionResult::Failed;
     }
     // If both self clustering, base and filter vectors are the same ({a_, b_})
     if (selfClusteringA_ && selfClusteringB_)
@@ -136,7 +135,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
 
     // NeighbourMap needs to by symmetric (Every site has a key)
     // Need to be careful about duplicated entries when we come to combine the maps later
-    // If the inital Vecs are the same, the map is already symmetric
+    // If the initial Vecs are the same, the map is already symmetric
     if (baseVec != filterVec)
     {
         // In this case, the A sites are symmetric but the Bs only exist as values - need to filter B by A
@@ -242,7 +241,6 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
 
     // Molecule cluster map - ensures metrics calculated correctly when a molecule has multiple sites
     molClusterMap_.clear();
-    Messenger::print("Mol Map sizes");
     for (const auto &[id, mems] : clusterMap_)
     {
         std::unordered_set<std::shared_ptr<const Molecule>> mols;
