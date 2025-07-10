@@ -67,7 +67,6 @@
         nixGL = import nixGL-src { inherit pkgs; };
         dissolve = { gui ? false, threading ? true, checks ? true
           , benchmarks ? false }:
-          assert (!(gui));
           pkgs.stdenv.mkDerivation ({
             inherit version;
             pname = exe-name gui;
@@ -75,7 +74,7 @@
               path = ./.;
               name = "dissolve-src";
             };
-            buildInputs = base_libs pkgs ++ pkgs.lib.optional
+            buildInputs = base_libs pkgs
               ++ pkgs.lib.optionals gui (gui_libs system pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optionals threading [
