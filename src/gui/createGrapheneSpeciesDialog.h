@@ -65,8 +65,8 @@ class CreateGrapheneSpeciesDialog : public QDialog
     void calculateParameters();
     // Find dangling atoms, defined as those which have two bonds spanning PBC of the box
     std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> findDanglingAtoms(double localCutoff);
-    // Get vector of atom keys from atom/neighbour map, sorted by position along indicated direction
-    std::vector<SpeciesAtom *> getSorted(const std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> &atoms, int dir) const;
+    // Get vector of atom keys from atom/neighbour map, sorted by position along y
+    std::vector<SpeciesAtom *> getSortedByY(const std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> &atoms) const;
     // Recursive branch function
     void extendBranch(SpeciesAtom *i, const Box *box, Vec3<double> &vFrac, std::vector<SpeciesAtom *> &branch,
                       double localCutoff) const;

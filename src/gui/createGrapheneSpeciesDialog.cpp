@@ -105,7 +105,7 @@ CreateGrapheneSpeciesDialog::getSortedByY(const std::map<SpeciesAtom *, std::vec
     for (auto &&[i, _] : atoms)
         sorted.push_back(i);
 
-    std::sort(sorted.begin(), sorted.end(), [dir](const SpeciesAtom *a, const SpeciesAtom *b) { return a->r().y < b->r().y; });
+    std::sort(sorted.begin(), sorted.end(), [](const SpeciesAtom *a, const SpeciesAtom *b) { return a->r().y < b->r().y; });
 
     return sorted;
 }
@@ -237,7 +237,7 @@ void CreateGrapheneSpeciesDialog::regenerate()
             // Find all atoms which have two bonds spanning PBC of the box
             auto localCutoff = ui_.BondLengthSpin->value() * 1.01;
             const auto atoms = findDanglingAtoms(localCutoff);
-            auto sorted = getSorted(atoms, 1);
+            auto sorted = getSortedByY(atoms);
 
             // Pass 1 - Move all atoms along the PBC bond vectors
             while (!sorted.empty())
