@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include <ranges>
+
 #include "classes/partialSet.h"
+
 #include "base/lineParser.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
@@ -280,7 +283,7 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
 
     // Write partials
     for_each_pair_early(
-        atomTypeMix_.begin(), atomTypeMix_.end(),
+        atomTypeMix_,
         [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool>
         {
             // Open file and check that we're OK to proceed writing to it

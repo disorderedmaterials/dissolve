@@ -568,7 +568,7 @@ bool GRModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double 
 
     for_each_pair_early(
 
-        atomTypes.begin(), atomTypes.end(),
+        atomTypes,
         [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool>
         {
             // Full partial

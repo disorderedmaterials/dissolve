@@ -135,7 +135,7 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve)
 
         // For each partial in our S(Q) array, calculate the broadened Bragg function and blend it
         auto success = for_each_pair_early(
-            unweightedsq.atomTypeMix().begin(), unweightedsq.atomTypeMix().end(),
+            unweightedsq.atomTypeMix(),
             [&](auto i, auto &at1, auto j, auto &at2) -> EarlyReturn<bool>
             {
                 // Locate the corresponding Bragg intensities for this atom type pair

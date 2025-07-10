@@ -40,14 +40,14 @@ template <typename T> class EarlyReturn
 // Please note that this can *not* be transformed to use the
 // FullPairIterator, since it would prevent using `Break` to move to
 // the next loop iteration
-template <class Iter, class Lam>
-auto for_each_pair_early(Iter begin, Iter end, Lam lambda, bool half = true) -> decltype(lambda(0, *begin, 0, *end).value())
+template <std::ranges::range Range, class Lam>
+auto for_each_pair_early(Range range, Lam lambda, bool half = true) -> decltype(lambda(0, *range.begin(), 0, *range.end()).value())
 {
     int i = 0;
-    for (auto elem1 = begin; elem1 != end; ++elem1, ++i)
+    for (auto elem1 = range.begin(); elem1 != range.end(); ++elem1, ++i)
     {
         int j = half ? i : 0;
-        for (auto elem2 = half ? elem1 : begin; elem2 != end; ++elem2, ++j)
+        for (auto elem2 = half ? elem1 : range.begin(); elem2 != range.end(); ++elem2, ++j)
         {
             auto result = lambda(i, *elem1, j, *elem2);
             switch (result.type())

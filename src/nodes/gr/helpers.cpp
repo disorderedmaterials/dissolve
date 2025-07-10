@@ -577,8 +577,7 @@ bool GRNode::testReferencePartials(PartialSet &setA, PartialSet &setB, double te
     auto atomTypes = setA.atomTypeMix();
 
     for_each_pair_early(
-
-        atomTypes.begin(), atomTypes.end(),
+        atomTypes,
         [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool>
         {
             // Full partial

@@ -549,7 +549,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
 
     // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
     auto success = for_each_pair_early(
-        atomTypes.begin(), atomTypes.end(),
+        atomTypes,
         [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
         {
             // Copy and rename the data for clarity
@@ -741,7 +741,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     // Save data?
     if (saveEmpiricalPotentials_)
     {
-        if (!for_each_pair_early(atomTypes.begin(), atomTypes.end(),
+        if (!for_each_pair_early(atomTypes,
                                  [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
                                  {
                                      // Grab pointer to the relevant pair potential
@@ -760,7 +760,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     {
         auto &coefficients = potentialCoefficients(moduleData, nAtomTypes, ncoeffp);
 
-        if (!for_each_pair_early(atomTypes.begin(), atomTypes.end(),
+        if (!for_each_pair_early(atomTypes,
                                  [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
                                  {
                                      // Grab reference to coefficients
