@@ -19,6 +19,7 @@ Here you can find the user guide and examples for the RELEASETYPE version MAJOR.
 - R. Buchanan (September 2023 - present)
 - D. Nixon (January 2020 - present)
 - D. Bradley (January 2023 - present)
+- A. Boswell (January 2025 - July 2025)
 - J. Swift (June 2023 - September 2024)
 - N. Spitz (July 2023 - July 2024)
 - V. Ionica (February 2022 - May 2022)
