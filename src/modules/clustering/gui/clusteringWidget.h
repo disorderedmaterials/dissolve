@@ -41,7 +41,7 @@ class ClusteringModuleWidget : public ModuleWidget
     void buildSizeList();
     // Builds the ID list of clusters with the selected size
     void buildIDList(QListWidgetItem *item);
-    // Builds list of avaliable coordination numbers for cluster(s) being viewed
+    // Builds list of avaliable contact numbers for cluster(s) being viewed
     void buildCNList();
 
     /*
@@ -50,7 +50,7 @@ class ClusteringModuleWidget : public ModuleWidget
     private:
     // Main form declaration
     Ui::ClusteringModuleWidget ui_;
-    DataViewer *sizeDist_{nullptr}, *massDist_{nullptr};
+    DataViewer *sizeDist_{nullptr};
 
     private Q_SLOTS:
     void on_clusterSizeList_itemClicked(QListWidgetItem *item);

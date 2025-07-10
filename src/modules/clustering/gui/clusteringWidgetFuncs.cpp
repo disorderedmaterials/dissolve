@@ -18,8 +18,12 @@ ClusteringModuleWidget::ClusteringModuleWidget(QWidget *parent, ClusteringModule
     viewS.setViewType(View::FlatXYView);
     viewS.axes().setLogarithmic(0, true);
     viewS.axes().setLogarithmic(1, true);
+    viewS.axes().setMax(0, 1);
+    viewS.axes().setMin(1, 1);
     viewS.axes().setTitle(0, "Cluster Size");
-    viewS.axes().setTitle(1, "No. of Clusters");
+    viewS.axes().setTitle(1, "Proportion of molecules in cluster");
+    sizeDist_->groupManager().setGroupStipple("Perc", LineStipple::QuarterDashStipple);
+    sizeDist_->groupManager().setGroupColouring("Perc", RenderableGroup::AutomaticIndividualColouring);
 }
 
 void ClusteringModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
@@ -31,27 +35,33 @@ void ClusteringModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
 
     if (getNewConfig_ || updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
     {
+        // Generate the viewing configuration
         module_->generateClustersConfig(dissolve_, displaySize_, displayID_);
         clusterConfiguration_ = module_->getClusterConfig();
         ui_.ViewerWidget->setConfiguration(clusterConfiguration_);
         ui_.ViewerWidget->dataModified();
         ui_.ViewerWidget->postRedisplay();
         getNewConfig_ = false;
+
         // Calculate the coordination numbers
         module_->calculateCN(displaySize_, displayID_);
         buildCNList();
+
+        // Clear distribution
+        sizeDist_->clearRenderables();
     }
 
-    // Configure the size/mass histograms
-    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || sizeDist_->renderables().empty())
+    // Regenerate sizeDist
+    if (sizeDist_->renderables().empty())
     {
-        sizeDist_->clearRenderables();
+        sizeDist_->createRenderable<RenderableData1D>(std::format("{}//PercLine", module_->name()), "Percolation line", "Perc");
 
-        if (sizeDist_->renderables().empty())
-            sizeDist_->createRenderable<RenderableData1D>(
-                std::format("{}//SizeDist", module_->name()),
-                std::format("SizeDist//{}", module_->keywords().getConfiguration("Configuration")->niceName()),
-                module_->keywords().getConfiguration("Configuration")->niceName());
+        sizeDist_->createRenderable<RenderableData1D>(
+            std::format("{}//SizeData", module_->name()),
+            std::format("SizeData//{}", module_->keywords().getConfiguration("Configuration")->niceName()),
+            module_->keywords().getConfiguration("Configuration")->niceName());
+
+        sizeDist_->view().showAllData();
     }
 
     if (!fromBuilder_)
@@ -60,6 +70,7 @@ void ClusteringModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
     sizeDist_->validateRenderables(dissolve_.processingModuleData());
     ui_.SizePlot->updateToolbar();
     sizeDist_->postRedisplay();
+    sizeDist_->view().showAllData();
 
     fromBuilder_ = false;
     refreshing_ = false;
@@ -109,7 +120,9 @@ void ClusteringModuleWidget::buildCNList()
     ui_.cnList->clear();
     for (const auto &[site, map] : cns)
         for (const auto &[otherSite, cn] : map)
-            ui_.cnList->addItem(QString::fromStdString(std::format("{} - {}: {:.3f}", site->name(), otherSite->name(), cn)));
+            ui_.cnList->addItem(QString::fromStdString(
+                std::format("{} - {}: {:.3f}", site->name() == otherSite->name() ? site->parent()->name() : site->name(),
+                            site->name() == otherSite->name() ? otherSite->parent()->name() : otherSite->name(), cn)));
 }
 
 void ClusteringModuleWidget::on_clusterSizeList_itemClicked(QListWidgetItem *item) { buildIDList(item); }

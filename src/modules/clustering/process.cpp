@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include "analyser/dataOperator1D.h"
 #include "analyser/typeDefs.h"
 #include "base/sysFunc.h"
 #include "data/elements.h"
@@ -23,8 +24,8 @@ bool ClusteringModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Ke
         {
             if (s->type() == SpeciesSite::SiteType::Fragment)
             {
-                // For a fragment site, we're relying on "#origin, -H(#other)" or similar, with hydrogens (or whatever desired
-                // in theory should work) tagged as #other. If the number of hydrogens exceeds one, the definition should
+                // For a fragment site, we're relying on "#origin, -H(#other)" or similar, with hydrogens (or whatever desired)
+                // tagged as #other. If the number of hydrogens exceeds one, the definition should
                 // reflect that else only one will be calculated i.e. -H(n=2,#other)
                 auto instances = s->instances();
                 for (const auto &instance : instances)
@@ -88,42 +89,77 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
 {
     auto &moduleData = moduleContext.dissolve().processingModuleData();
 
-    // Produce NeighbourMap
+    // Produce NeighbourMap - combining map A and B from two filters. base/filter vecs required for site selector
     neighbourMap_.clear();
     Analyser::SiteMap neighbourMapA, neighbourMapB;
-    std::vector<const SpeciesSite *> aVec, bVec;
+    std::vector<const SpeciesSite *> baseSpeciesSites, filterSpeciesSites;
 
-    // Decide if we're filtering everything by everything or one by the other
-    if (a_ == b_ && selfClustering_)
+    // Decide how to filter the site maps
+    if (a_ == b_ && (selfClusteringA_ || selfClusteringB_))
     {
-        Messenger::error("Sites are the same! Disabling self-clustering...");
-        selfClustering_ = false;
+        Messenger::error("Sites are the same! Disable IncludeAA, IncludeBB...");
+        return ExecutionResult::Failed;
     }
-    else if (selfClustering_)
+    // If both self clustering, base and filter vectors are the same ({a_, b_})
+    if (selfClusteringA_ && selfClusteringB_)
     {
-        aVec.insert(aVec.end(), {a_, b_});
-        bVec = aVec;
+        baseSpeciesSites.insert(baseSpeciesSites.end(), {a_, b_});
+        filterSpeciesSites = baseSpeciesSites;
+    }
+    // If just A, we need to filter A sites by A and B
+    else if (selfClusteringA_)
+    {
+        baseSpeciesSites.emplace_back(a_);
+        filterSpeciesSites.insert(filterSpeciesSites.end(), {a_, b_});
+    }
+    // If B, filter Bs by A and B
+    else if (selfClusteringB_)
+    {
+        baseSpeciesSites.emplace_back(b_);
+        filterSpeciesSites.insert(filterSpeciesSites.end(), {a_, b_});
     }
     else
     {
-        aVec.emplace_back(a_);
-        bVec.emplace_back(b_);
+        baseSpeciesSites.emplace_back(a_);
+        filterSpeciesSites.emplace_back(b_);
     }
 
-    SiteSelector selectionA(targetConfiguration_, std::vector<const SpeciesSite *>{aVec});
-    SiteSelector selectionB(targetConfiguration_, std::vector<const SpeciesSite *>{bVec});
-    const auto &siteVectorA = selectionA.sites();
-    const auto &siteVectorB = selectionB.sites();
+    SiteSelector baseSelection(targetConfiguration_, baseSpeciesSites);
+    SiteSelector filterSelection(targetConfiguration_, filterSpeciesSites);
+    const auto &baseSiteVector = baseSelection.sites();
+    const auto &filterSiteVector = filterSelection.sites();
 
-    SiteFilter filterA(targetConfiguration_, siteVectorA);
-    std::tie(std::ignore, neighbourMapA) = filterA.filterBySiteProximity(siteVectorB, Range(0.001, cutoff_), 1,
-                                                                         100); // min of 0.01 to avoid self-selection
+    // min of 0.01 to avoid self-selection, max neighbours 100 (should be enough!)
+    SiteFilter base(targetConfiguration_, baseSiteVector);
+    std::tie(std::ignore, neighbourMapA) = base.filterBySiteProximity(filterSiteVector, Range(0.001, cutoff_), 1, 100);
 
-    // If we're dealing with a definition between the same site, it's already symmetric. Running twice will add dupes
-    if (a_ != b_)
+    // NeighbourMap needs to by symmetric (Every site has a key)
+    // Need to be careful about duplicated entries when we come to combine the maps later
+    // If the initial species sites vecs are the same, the map is already symmetric
+    if (baseSpeciesSites != filterSpeciesSites)
     {
-        SiteFilter filterB(targetConfiguration_, siteVectorB);
-        std::tie(std::ignore, neighbourMapB) = filterB.filterBySiteProximity(siteVectorA, Range(0.001, cutoff_), 1, 100);
+        // In this case, the A sites are symmetric but the Bs only exist as values - need to filter B by A
+        if (selfClusteringA_)
+        {
+            SiteSelector bSelection(targetConfiguration_, std::vector<const SpeciesSite *>{b_});
+            const auto &bSiteVector = bSelection.sites();
+            SiteFilter bFilter(targetConfiguration_, bSiteVector);
+            std::tie(std::ignore, neighbourMapB) = bFilter.filterBySiteProximity(baseSiteVector, Range(0.001, cutoff_), 1, 100);
+        }
+        // Same as above but swapping letters around
+        else if (selfClusteringB_)
+        {
+            SiteSelector aSelection(targetConfiguration_, std::vector<const SpeciesSite *>{a_});
+            const auto &aSiteVector = aSelection.sites();
+            SiteFilter aFilter(targetConfiguration_, aSiteVector);
+            std::tie(std::ignore, neighbourMapB) = aFilter.filterBySiteProximity(baseSiteVector, Range(0.001, cutoff_), 1, 100);
+        }
+        // No self clustering, just different sites, add B by A
+        else
+        {
+            SiteFilter filter(targetConfiguration_, filterSiteVector);
+            std::tie(std::ignore, neighbourMapB) = filter.filterBySiteProximity(baseSiteVector, Range(0.001, cutoff_), 1, 100);
+        }
     }
 
     // Combining the neighbour maps into a single map. Because keys may already exist, need to check for them and add
@@ -145,6 +181,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
         for (auto &[site, neighbours] : neighbourMap_)
         {
             const auto &hIdx = directionIndexes_[site->parent()];
+
             // Check the site is hydroxyl
             if (hIdx.empty())
                 continue;
@@ -164,11 +201,8 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
                     if (360.0 - angle < angle)
                         angle = 360.0 - angle;
 
-                    if (angle <= angleDev_)
-                    {
+                    if (minAngleDev_ <= angle <= maxAngleDev_)
                         keep = true;
-                        break;
-                    }
                 }
                 // Add to the temp map symmetrically. Not paying attention to site indexes but I suppose this method tags donors
                 // with index = 0 (bar actual 0 index site)
@@ -221,10 +255,46 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     for (const auto &[clusterID, members] : molClusterMap_)
         sizeDistribution_[members.size()].emplace_back(clusterID);
 
-    auto &sizeData = moduleData.realise<Data1D>("SizeDist", name());
-    sizeData.clear();
-    for (int i = sizeDistribution_.begin()->first; i <= sizeDistribution_.rbegin()->first; i++)
-        sizeDistribution_.contains(i) ? sizeData.addPoint(i, sizeDistribution_[i].size()) : sizeData.addPoint(i, 0.1);
+    // Size distribution histogram
+    auto [histSizeData, status] = moduleData.realiseIf<Histogram1D>("SizeDist", name());
+    if (status == GenericItem::ItemStatus::Created)
+        histSizeData.initialise(0.5, targetConfiguration_->nMolecules() + 0.5, 1.0);
+
+    histSizeData.zeroBins();
+
+    // Figure out how many molecules of interest are in the configuration
+    auto interestingMols = a_->parent() == b_->parent() ? targetConfiguration_->speciesPopulation(a_->parent())
+                                                        : targetConfiguration_->speciesPopulation(a_->parent()) +
+                                                              targetConfiguration_->speciesPopulation(b_->parent());
+
+    // Find the number of molecules not in clusters
+    auto totalMolsClustered = 0;
+    for (const auto &[_, memVec] : molClusterMap_)
+        totalMolsClustered += memVec.size();
+
+    molsNotClustered_ = interestingMols - totalMolsClustered;
+
+    // Fill histogram with number of mols per cluster size
+    for (auto i = 0; i < molsNotClustered_; i++)
+        histSizeData.bin(1);
+
+    for (const auto &[size, clusterMems] : sizeDistribution_)
+        for (const auto &Cmem : clusterMems)
+            for (const auto &Mmem : clusterMap_[Cmem])
+                histSizeData.bin(size);
+
+    // Make the 1D and normalise the data to the number of molecules of interest in the system
+    auto &sizeData = moduleData.realise<Data1D>("SizeData", name(), GenericItem::InRestartFileFlag);
+    histSizeData.accumulate();
+    sizeData = histSizeData.accumulatedData();
+    sizeData /= interestingMols;
+
+    // Create a percolation threshold line across data range to display P(nc) = nc^-2.189
+    // (https://www.sciencedirect.com/science/article/abs/pii/S0378437198005779)
+    auto &percLine = moduleData.realise<Data1D>("PercLine", name(), GenericItem::InRestartFileFlag);
+    percLine.clear();
+    percLine.addPoint(1.0, pow(1, fisher_));
+    percLine.addPoint(*sizeData.xAxis().rbegin(), pow(*sizeData.xAxis().rbegin(), fisher_));
 
     // Cluster mass calculation
     clusterMasses_.clear();
@@ -250,9 +320,9 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
         if (clusterVec.size() < gyrationMinSize_)
             continue;
 
-        // CoM mass weighted calc from reference site
+        // CoM mass weighted calc from reference site (first member of cluster in clusterMap)
         Vec3<double> massWeightedTotalVec{0, 0, 0};
-        const auto refMol{clusterVec[0]}; // Reference as first member in cluster
+        const auto refMol{clusterVec[0]};
         std::vector<int> refIdxs(refMol->nAtoms());
         std::iota(refIdxs.begin(), refIdxs.end(), 0);
         for (const auto &clusterMem : clusterVec)
@@ -283,7 +353,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
 
     // Fractal Dimension: Create a Data1D object of the log log plot, perform linear regression, return gradient
     Data1D loglog;
-    loglog.initialise(radiusOfGyration_.size(), false); // Add errors to this at some point?
+    loglog.initialise(radiusOfGyration_.size(), false);
 
     // Generate Data1D
     for (const auto &[clusterID, rg] : radiusOfGyration_)
@@ -295,30 +365,45 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     if (saveSizeDist_)
     {
         LineParser parser;
-        parser.openOutput(std::format("{}.sizedist.txt", targetConfiguration_->niceName()));
-        parser.writeLineF("# Analysis for sites: {} - {}\n", a_->parent()->name(), b_->parent()->name());
-        parser.writeLineF("\n=== Cluster Size Distribution ===\nCluster Size : no. of clusters\n");
+        parser.appendOutput(std::format("{}.{}.sizedist.txt", targetConfiguration_->niceName(), name()));
+        parser.writeLineF("\n# Iteration: {}\n", moduleContext.dissolve().iteration());
+        parser.writeLineF("# Cluster size : number of clusters\n");
         for (const auto &[clusterSize, mems] : sizeDistribution_)
-            parser.writeLineF("{} : {}\n", clusterSize, mems.size());
+            parser.writeLineF("{} {}\n", clusterSize, mems.size());
     }
     if (saveMassDist_)
     {
         LineParser parser;
-        parser.openOutput(std::format("{}.massdist.txt", targetConfiguration_->niceName()));
-        parser.writeLineF("# Analysis for sites: {} - {}\n", a_->parent()->name(), b_->parent()->name());
-        parser.writeLineF("\n=== Cluster Mass Distribution ===\nCluster Mass : no. of clusters\n");
+        parser.appendOutput(std::format("{}.{}.massdist.txt", targetConfiguration_->niceName(), name()));
+        parser.writeLineF("\n# Iteration: {}\n", moduleContext.dissolve().iteration());
+        parser.writeLineF("# Cluster mass : number of clusters\n");
         for (const auto &[clusterMass, mems] : massDistribution_)
-            parser.writeLineF("{:.3f} : {}\n", clusterMass, mems.size());
+            parser.writeLineF("{:.3f} {}\n", clusterMass, mems.size());
     }
     if (saveRgMass_)
     {
         LineParser parser;
-        parser.openOutput(std::format("{}.massRg.txt", targetConfiguration_->niceName()));
-        parser.writeLineF("# Analysis for sites: {} - {}\n", a_->parent()->name(), b_->parent()->name());
-        parser.writeLineF("# Fractal dimension: {}", fractalDimension_);
-        parser.writeLineF("\n=== Mass - Radius of gyration ===\nCluster Mass : Radii\n");
+        parser.appendOutput(std::format("{}.{}.massRg.txt", targetConfiguration_->niceName(), name()));
+        parser.writeLineF("\n# Iteration: {}\n", moduleContext.dissolve().iteration());
+        parser.writeLineF("# Fractal dimension:\n{}\n", fractalDimension_);
+        parser.writeLineF("# Cluster mass : radius of gyration\n");
         for (const auto &[clusterID, radius] : radiusOfGyration_)
-            parser.writeLineF("{} : {}\n", clusterMasses_[clusterID], radius);
+            parser.writeLineF("{:.3f} {:.3f}\n", clusterMasses_[clusterID], radius);
+    }
+    if (saveCN_)
+    {
+        LineParser parser;
+        calculateCN(0, 0);
+        for (const auto &[base, map] : clusterSpeciesCoordNo_)
+            for (const auto &[partner, cn] : map)
+            {
+                parser.appendOutput(std::format("{}.{}.{}{}.CN.txt", targetConfiguration_->niceName(), name(),
+                                                base->name() == partner->name() ? base->parent()->name() : base->name(),
+                                                base->name() == partner->name() ? partner->parent()->name() : partner->name()));
+
+                parser.writeLineF("\n# Iteration: {}\n", moduleContext.dissolve().iteration());
+                parser.writeLineF("{:.3f}\n", cn);
+            }
     }
 
     return ExecutionResult::Success;
@@ -380,6 +465,7 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
                     }
                 }
     }
+
     // Display cluster with ID displayID
     else if (displaySize != 0 && displayID != 0)
     {
@@ -396,14 +482,9 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
 
     clusterConfig_.incrementContentsVersion();
     clusterConfig_.updateObjectRelationships();
-
-    if (clusterConfig_.nAtoms() == 0)
-        Messenger::error("No clusters! (Ignore at start-up)");
-    else
-        Messenger::print("Cluster visualisation generated");
 }
 
-// Calculates the coordination numbers for the clusters being viewed. Considers only the sites on a molecule that are involved
+// Calculates the contact numbers for the clusters being viewed. Considers only the sites on a molecule that are involved
 // in the cluster
 void ClusteringModule::calculateCN(int displaySize, int displayID)
 {
@@ -414,8 +495,6 @@ void ClusteringModule::calculateCN(int displaySize, int displayID)
     {
         // Start iterating through the cluster map.
         for (auto const &[_, mems] : clusterMap_)
-        {
-            // Iterate through each member of the cluster
             for (auto const &mem : mems)
             {
                 // With multiple sites per mol, we need to see if our current site has contact with sites from other mols in
@@ -435,7 +514,6 @@ void ClusteringModule::calculateCN(int displaySize, int displayID)
                 if (foreignNbr)
                     instances[mem->parent()]++;
             }
-        }
     }
     else if (displaySize != 0 && displayID == 0)
     {
@@ -473,7 +551,7 @@ void ClusteringModule::calculateCN(int displaySize, int displayID)
                 instances[mem->parent()]++;
         }
     }
-    // Average the coordination numbers
+    // Average the contact numbers
     for (const auto &[siteA, num] : instances)
         for (const auto &[siteB, coordNo] : clusterSpeciesCoordNo_[siteA])
             clusterSpeciesCoordNo_[siteA][siteB] /= num;
