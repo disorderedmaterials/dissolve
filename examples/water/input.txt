@@ -1,4 +1,4 @@
-# Input file written by Dissolve v1.5.1 at 16:04:58 on 21-05-2024.
+# Input file written by Dissolve v1.8.0 at 10:05:11 on 10-07-2025.
 
 #==============================================================================#
 #                                 Master Terms                                 #
@@ -91,14 +91,14 @@ Configuration  'Bulk'
       Source  MD
       NSets  '100'
       NSteps  '2000'
-      DeltaT  '0.0005'
+      DeltaT  '5e-04'
     EndCoordinateSets
     Add  'Add01'
       CoordinateSets  'Water_Sets'
+      Rotate  True
       Population  '1000'
       Density  'rho'  atoms/A3
       Positioning  Random
-      Rotate  True
       BoxAction  AddVolume
     EndAdd
   EndGenerator
@@ -117,8 +117,8 @@ Layer  'Evolve (Standard)'
   Module  MolShake  'MolShake01'
     Frequency  1
     Configuration  'Bulk'
-    RotationStepSize  37.30483575426232
-    TranslationStepSize  0.4103953050595744
+    RotationStepSize  31.14161620204451
+    TranslationStepSize  0.21413226790219492
   EndModule
 
   Module  MD  'MD01'
@@ -135,7 +135,6 @@ EndLayer
 
 Layer  'GR / Neutron S(Q)'
   Frequency  5
-  Disabled
 
   Module  GR  'GR01'
     Frequency  1
@@ -210,7 +209,6 @@ EndLayer
 
 Layer  'Analyse RDF/CN'
   Frequency  1
-  Disabled
 
   Module  SiteRDF  'SiteRDF01'
     Frequency  1
@@ -228,7 +226,6 @@ EndLayer
 
 Layer  'Analyse HBond'
   Frequency  1
-  Disabled
 
   Module  DAngle  'DAngle01'
     Frequency  1
