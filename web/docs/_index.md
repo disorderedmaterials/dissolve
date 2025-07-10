@@ -1,11 +1,11 @@
 ---
-title: "Documentation for RELEASETYPE version MAJOR.MINOR"
-linkTitle: "Documentation (RELEASETYPE version MAJOR.MINOR)"
+title: "Documentation for DISSOLVERELEASETYPE version DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION"
+linkTitle: "Documentation (DISSOLVERELEASETYPE version DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION)"
 cascade:
   - type: "docs"
 ---
 
-Here you can find the user guide and examples for the RELEASETYPE version MAJOR.MINOR of Dissolve.
+Here you can find the user guide and examples for the DISSOLVERELEASETYPE version DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION of Dissolve.
 
 {{< tip text="Documentation for the current release version is [available here](/)" />}} <!-- RELEASE TIP -->
 {{< tip text="Updated documentation for the current development version is [available here](/dev)" />}} <!-- DEVELOPMENT TIP -->
