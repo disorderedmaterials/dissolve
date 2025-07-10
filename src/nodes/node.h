@@ -283,9 +283,9 @@ class Node : public Serialisable<>
      */
     protected:
     // Express persistent data within the supplied serialisable value
-    virtual void putPersistentData(SerialisedValue &value);
+    virtual void serialisePersistentData(SerialisedValue &value) const;
     // Retrieve persistent data from the supplied serialisable value
-    virtual void getPersistentData(const SerialisedValue &value);
+    virtual void deserialisePersistentData(const SerialisedValue &value);
 
     public:
     // Is it appropriate to bother serialising this node?

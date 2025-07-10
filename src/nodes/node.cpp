@@ -320,10 +320,10 @@ SampledDouble Node::timing() const { return timing_; }
  */
 
 // Express persistent data within the supplied serialisable value
-void Node::putPersistentData(SerialisedValue &value) {}
+void Node::serialisePersistentData(SerialisedValue &value) const {}
 
 // Retrieve persistent data from the supplied serialisable value
-void Node::getPersistentData(const SerialisedValue &value) {}
+void Node::deserialisePersistentData(const SerialisedValue &value) {}
 
 // Express as a serialisable value
 SerialisedValue Node::serialise() const
@@ -366,8 +366,15 @@ SerialisedValue Node::serialiseData() const
     SerialisedValue result;
     result["timing"] = timing_.serialise();
 
+    serialisePersistentData(result);
+
     return result;
 }
 
 // Read persistent data from a serialisable value
-void Node::deserialiseData(const SerialisedValue &node) {}
+void Node::deserialiseData(const SerialisedValue &node)
+{
+    timing_.deserialise(node.at("timing"));
+
+    deserialisePersistentData(node);
+}
