@@ -189,7 +189,7 @@ class PairPotential : Serialisable<>
     static constexpr double CoulConvert = 1389.35444426359172669289;
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialisable value

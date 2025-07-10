@@ -260,7 +260,7 @@ class Configuration : public Serialisable<const CoreData &>
     double getEnergyGradient() const;
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Write through specified LineParser

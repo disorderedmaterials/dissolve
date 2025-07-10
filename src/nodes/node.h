@@ -279,7 +279,7 @@ class Node : public Serialisable<>
     SampledDouble timing() const;
 
     /*
-     * I/O
+     * Serialisation
      */
     protected:
     // Express persistent data within the supplied serialisable value

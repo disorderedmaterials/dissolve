@@ -52,7 +52,7 @@ class PairPotentialOverride : public Serialisable<>
     const InteractionPotential<Functions1D> &interactionPotential() const;
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialisable value

@@ -170,7 +170,7 @@ std::string EdgeDefinition::asString() const
 }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Express as a serialisable value

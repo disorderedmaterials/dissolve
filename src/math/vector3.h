@@ -134,7 +134,7 @@ class Vector3 : public Serialisable<>
     double angleInDegrees(const Vector3 &to) const;
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialisable value
