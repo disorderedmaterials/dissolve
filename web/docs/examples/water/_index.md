@@ -13,7 +13,7 @@ It should be no surprise that water is present in a significant fraction of diso
 
 ## Preparation
 
-Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} and unpack it if you haven't done so already. Alternatively, download the data files listed below and save them to a location of your choice.
+Download the example data archive from the [GitHub releases page](https://github.com/disorderedmaterials/dissolve/releases) and unpack it if you haven't done so already. Alternatively, download the data files listed below and save them to a location of your choice.
 
 - H<sub>2</sub>O: [SLS18498-H2O.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/water/data/SLS18498-H2O.mint01)
 - HDO: [SLS18500-HDO5050.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/water/data/SLS18500-HDO5050.mint01)

@@ -15,7 +15,7 @@ You will set up and equilibrate a small liquid benzene simulation before calcula
 
 ## Preparation
 
-Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} and unpack it if you haven't done so already. Alternatively, download the data files listed below and save them to a location of your choice.
+Download the example data archive from the [GitHub releases page](https://github.com/disorderedmaterials/dissolve/releases) and unpack it if you haven't done so already. Alternatively, download the data files listed below and save them to a location of your choice.
 
 - C<sub>6</sub>H<sub>6</sub>: [C6H6.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/benzene/data/C6H6.mint01)
 - C<sub>6</sub>H<sub>6</sub>:C<sub>6</sub>D<sub>6</sub> (50:50): [5050.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/benzene/data/5050.mint01)

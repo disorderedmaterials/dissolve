@@ -13,7 +13,7 @@ Liquid argon isn't a particularly exciting system, but it has been measured expe
 
 ## Preparation
 
-Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} and unpack it if you haven't done so already.  Alternatively, download the data files listed below and save them to a location of your choice.
+Download the example data archive from the [GitHub releases page](https://github.com/disorderedmaterials/dissolve/releases) and unpack it if you haven't done so already.  Alternatively, download the data files listed below and save them to a location of your choice.
 
 - Neutron data file: [yarnell.sq](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/argon/data/yarnell.sq)
 

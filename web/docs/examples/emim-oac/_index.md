@@ -13,7 +13,7 @@ This example focuses on setting up an ionic liquid (1-ethyl-3-imidazolium acetat
 
 ## Preparation
 
-Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} and unpack it if you haven't done so already. Alternatively, download the data files listed below and save them to a location of your choice.
+Download the example data archive from the [GitHub releases page](https://github.com/disorderedmaterials/dissolve/releases) and unpack it if you haven't done so already. Alternatively, download the data files listed below and save them to a location of your choice.
 
 - Cation Coordinates: [emim.xyz](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/species/emim.xyz)
 - Anion Coordinates: [oac.xyz](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/species/oac.xyz)
