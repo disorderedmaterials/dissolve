@@ -99,14 +99,14 @@ std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> CreateGrapheneSpeciesDialog:
 
 // Get vector of atom keys from atom/neighbour map, sorted by position along indicated direction
 std::vector<SpeciesAtom *>
-CreateGrapheneSpeciesDialog::getSorted(const std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> &atoms, int dir) const
+CreateGrapheneSpeciesDialog::getSortedByY(const std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> &atoms) const
 {
     std::vector<SpeciesAtom *> sorted;
     for (auto &&[i, _] : atoms)
         sorted.push_back(i);
 
     std::sort(sorted.begin(), sorted.end(),
-              [dir](const SpeciesAtom *a, const SpeciesAtom *b) { return a->r().get(dir) < b->r().get(dir); });
+              [dir](const SpeciesAtom *a, const SpeciesAtom *b) { return a->r().y < b->r().y; });
 
     return sorted;
 }
