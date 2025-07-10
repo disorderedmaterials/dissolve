@@ -560,7 +560,7 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     emptyBoundPartials_ = false;
 
     for_each_pair_early(
-        0, nTypes,
+        std::views::iota(0, nTypes),
         [&](int typeI, int typeJ) -> EarlyReturn<bool>
         {
             auto &part = partials_[{typeI, typeJ}];
@@ -660,7 +660,7 @@ bool PartialSet::serialise(LineParser &parser) const
 
     // Write individual Data1D
     auto success = for_each_pair_early(
-        0, nTypes,
+        std::views::iota(0, nTypes),
         [&](int typeI, int typeJ) -> EarlyReturn<bool>
         {
             const auto &part = partials_[{typeI, typeJ}];

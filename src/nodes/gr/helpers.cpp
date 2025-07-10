@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include <ranges>
+
 #include "classes/atom.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
@@ -421,8 +423,8 @@ bool GRNode::calculateGR(Configuration *cfg, PartialSet &originalgr, GRNode::Par
 
     timer.start();
     auto success =
-        for_each_pair_early(0, originalgr.nAtomTypes(),
-                            [&originalgr](auto typeI, auto typeJ) -> EarlyReturn<bool>
+        for_each_pair_early(std::ranges::iota_view(0, originalgr.nAtomTypes()),
+                            [&originalgr, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
                             {
                                 // Create unbound histogram from total and bound data
                                 originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);

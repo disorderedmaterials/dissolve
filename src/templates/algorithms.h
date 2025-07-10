@@ -35,13 +35,17 @@ template <typename T> class EarlyReturn
     std::optional<T> value() const { return value_; }
 };
 
+// A way to check if a lambda *only* takes two int parameters
+template <typename T>
+concept PairIndexLambda = requires(T lam, int x, int y) { lam(x, y); };
+
 // Perform an operation on every pair of elements in a container,
 // or the half-matrix only ([i,j] == [j,i])
 // Please note that this can *not* be transformed to use the
 // FullPairIterator, since it would prevent using `Break` to move to
 // the next loop iteration
 template <std::ranges::range Range, class Lam>
-auto for_each_pair_early(Range range, Lam lambda, bool half = true) -> decltype(lambda(0, *range.begin(), 0, *range.end()).value())
+auto for_each_pair_early(Range range, Lam lambda, bool half = true) -> std::optional<bool>
 {
     int i = 0;
     for (auto elem1 = range.begin(); elem1 != range.end(); ++elem1, ++i)
@@ -49,7 +53,11 @@ auto for_each_pair_early(Range range, Lam lambda, bool half = true) -> decltype(
         int j = half ? i : 0;
         for (auto elem2 = half ? elem1 : range.begin(); elem2 != range.end(); ++elem2, ++j)
         {
-            auto result = lambda(i, *elem1, j, *elem2);
+            EarlyReturn<bool> result;
+            if constexpr (PairIndexLambda<Lam>)
+                result = lambda(i, j);
+            else
+                result = lambda(i, *elem1, j, *elem2);
             switch (result.type())
             {
                 case EarlyReturn<typename decltype(result)::inner>::Return:
@@ -61,31 +69,6 @@ auto for_each_pair_early(Range range, Lam lambda, bool half = true) -> decltype(
             }
         }
     }
-    return std::nullopt;
-}
-
-// Perform an operation on every pair of elements in a range, or the half-matrix only ([i,j] == [j,i])
-// Please note that this can *not* be transformed to use the
-// FullPairIterator, since it would prevent using `Break` to move to
-// the next loop iteration
-template <class Lam>
-auto for_each_pair_early(int begin, int end, Lam lambda, bool half = true) -> decltype(lambda(0, 0).value())
-{
-    for (auto i = begin; i < end; ++i)
-        for (auto j = half ? i : begin; j < end; ++j)
-        {
-            auto result = lambda(i, j);
-            switch (result.type())
-            {
-                case EarlyReturn<typename decltype(result)::inner>::Return:
-                    return result.value();
-                case EarlyReturn<typename decltype(result)::inner>::Break:
-                    break;
-                case EarlyReturn<typename decltype(result)::inner>::Continue:
-                    continue;
-            }
-        }
-
     return std::nullopt;
 }
 
@@ -183,8 +166,8 @@ T transform_reduce(ParallelPolicy policy, Iter begin, Iter end, T initialVal, Bi
     return std::transform_reduce(policy, begin, end, initialVal, binaryOp, unaryOp);
 }
 
-// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to set a
-// parallel policy
+// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to
+// set a parallel policy
 template <typename ParallelPolicy, class Iter, typename T, class UnaryOp, class BinaryOp,
           std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
 T transform_reduce(ParallelPolicy, Iter begin, Iter end, T initialVal, BinaryOp binaryOp, UnaryOp unaryOp)
@@ -207,8 +190,8 @@ void for_each(ParallelPolicy policy, Iter begin, Iter end, UnaryOp unaryOp)
     std::for_each(policy, begin, end, unaryOp);
 }
 
-// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to set a
-// parallel policy
+// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to
+// set a parallel policy
 template <typename ParallelPolicy, class Iter, class UnaryOp,
           std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
 void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
