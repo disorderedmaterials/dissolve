@@ -312,9 +312,18 @@ DissolveGraph *Node::dissolveGraph() { return parentGraph_->dissolveGraph(); }
 // Clear any local data
 void Node::clearData() {}
 
+// Return timing information (in seconds) for this Module
+SampledDouble Node::timing() const { return timing_; }
+
 /*
  * I/O
  */
+
+// Express persistent data within the supplied serialisable value
+void Node::putPersistentData(SerialisedValue &value) { }
+
+// Retrieve persistent data from the supplied serialisable value
+void getPersistentData(const SerialisedValue &value) { }
 
 // Express as a serialisable value
 SerialisedValue Node::serialise() const
@@ -349,4 +358,17 @@ void Node::deserialise(const SerialisedValue &node)
               else
                   Messenger::exception("Node {} does not contain an option {}", name(), k);
           });
+}
+
+// Express persistent data as a serialisable value
+SerialisedValue Node::serialiseData() const
+{
+    SerialisedValue result;
+    result["timing"] = timing_.serialise();
+}
+
+// Read persistent data from a serialisable value
+void Node::deserialiseData(const SerialisedValue &node)
+{
+
 }

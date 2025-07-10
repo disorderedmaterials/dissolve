@@ -268,13 +268,25 @@ class Node : public Serialisable<>
     /*
      * Data
      */
+    private:
+    // Accumulated timing information (in seconds) for this Module
+    SampledDouble timing_;
+
     public:
     // Clear any local data
     virtual void clearData();
+    // Return timing information (in seconds) for this Module
+    SampledDouble timing() const;
 
     /*
      * I/O
      */
+    protected:
+    // Express persistent data within the supplied serialisable value
+    virtual void putPersistentData(SerialisedValue &value);
+    // Retrieve persistent data from the supplied serialisable value
+    virtual void getPersistentData(const SerialisedValue &value);
+
     public:
     // Is it appropriate to bother serialising this node?
     virtual bool shouldSerialise() const { return true; }
@@ -282,4 +294,8 @@ class Node : public Serialisable<>
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
+    // Express persistent data as a serialisable value
+    SerialisedValue serialiseData() const;
+    // Read persistent data from a serialisable value
+    void deserialiseData(const SerialisedValue &node);
 };
