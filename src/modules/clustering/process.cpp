@@ -89,7 +89,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
 {
     auto &moduleData = moduleContext.dissolve().processingModuleData();
 
-    // Produce NeighbourMap
+    // Produce NeighbourMap - combining map A and B from two filters. base/filter vecs required for site selector
     neighbourMap_.clear();
     Analyser::SiteMap neighbourMapA, neighbourMapB;
     std::vector<const SpeciesSite *> baseSpeciesSites, filterSpeciesSites;
@@ -135,7 +135,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
 
     // NeighbourMap needs to by symmetric (Every site has a key)
     // Need to be careful about duplicated entries when we come to combine the maps later
-    // If the initial Vecs are the same, the map is already symmetric
+    // If the initial species sites vecs are the same, the map is already symmetric
     if (baseSpeciesSites != filterSpeciesSites)
     {
         // In this case, the A sites are symmetric but the Bs only exist as values - need to filter B by A
