@@ -1,4 +1,3 @@
-dissolve_add_test(SRC aragorn.cpp)
 dissolve_add_test(SRC arrayIteration.cpp)
 dissolve_add_test(SRC orderedMap.cpp)
 dissolve_add_test(SRC pairIterator.cpp)

@@ -386,10 +386,7 @@ bool GRNode::calculateGR(Configuration *cfg, PartialSet &originalgr, GRNode::Par
 
     timer.start();
 
-    // Loop over molecules...
-    // NOTE: If you attempt to use chop_range for this loop, instead of stride, it will fail.
-    // The problem does not seem to be in chop_range, but rather in how the loops are merged.
-    // This is GitHub issue #562
+    // Loop over molecules
     for (auto &mol : cfg->molecules())
     {
         const auto &atoms = mol->atoms();
