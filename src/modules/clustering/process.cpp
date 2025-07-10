@@ -92,7 +92,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     // Produce NeighbourMap
     neighbourMap_.clear();
     Analyser::SiteMap neighbourMapA, neighbourMapB;
-    std::vector<const SpeciesSite *> baseVec, filterVec;
+    std::vector<const SpeciesSite *> baseSpeciesSites, filterSpeciesSites;
 
     // Decide how to filter the site maps
     if (a_ == b_ && (selfClusteringA_ || selfClusteringB_))
@@ -103,29 +103,29 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     // If both self clustering, base and filter vectors are the same ({a_, b_})
     if (selfClusteringA_ && selfClusteringB_)
     {
-        baseVec.insert(baseVec.end(), {a_, b_});
-        filterVec = baseVec;
+        baseSpeciesSites.insert(baseSpeciesSites.end(), {a_, b_});
+        filterSpeciesSites = baseSpeciesSites;
     }
     // If just A, we need to filter A sites by A and B
     else if (selfClusteringA_)
     {
-        baseVec.emplace_back(a_);
-        filterVec.insert(filterVec.end(), {a_, b_});
+        baseSpeciesSites.emplace_back(a_);
+        filterSpeciesSites.insert(filterSpeciesSites.end(), {a_, b_});
     }
     // If B, filter Bs by A and B
     else if (selfClusteringB_)
     {
-        baseVec.emplace_back(b_);
-        filterVec.insert(filterVec.end(), {a_, b_});
+        baseSpeciesSites.emplace_back(b_);
+        filterSpeciesSites.insert(filterSpeciesSites.end(), {a_, b_});
     }
     else
     {
-        baseVec.emplace_back(a_);
-        filterVec.emplace_back(b_);
+        baseSpeciesSites.emplace_back(a_);
+        filterSpeciesSites.emplace_back(b_);
     }
 
-    SiteSelector baseSelection(targetConfiguration_, baseVec);
-    SiteSelector filterSelection(targetConfiguration_, filterVec);
+    SiteSelector baseSelection(targetConfiguration_, baseSpeciesSites);
+    SiteSelector filterSelection(targetConfiguration_, filterSpeciesSites);
     const auto &baseSiteVector = baseSelection.sites();
     const auto &filterSiteVector = filterSelection.sites();
 
@@ -136,7 +136,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     // NeighbourMap needs to by symmetric (Every site has a key)
     // Need to be careful about duplicated entries when we come to combine the maps later
     // If the initial Vecs are the same, the map is already symmetric
-    if (baseVec != filterVec)
+    if (baseSpeciesSites != filterSpeciesSites)
     {
         // In this case, the A sites are symmetric but the Bs only exist as values - need to filter B by A
         if (selfClusteringA_)
