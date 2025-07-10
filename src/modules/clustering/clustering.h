@@ -37,9 +37,9 @@ class ClusteringModule : public Module
     // Minimum acceptable angle when selecting directional bonds
     double minAngleDev_{0};
     // Specifies for two different selected sites (A, B) if A-A will contribute to clusters
-    bool selfClusteringA_{true};
+    bool selfClusteringA_{false};
     // Specifies for two different selected sites (A, B) if B-B will contribute to clusters
-    bool selfClusteringB_{true};
+    bool selfClusteringB_{false};
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
     // Sites involved in the cluster
