@@ -18,7 +18,7 @@ The restart file should be considered quite precious as it is used by Dissolve t
 
 ## Associated Data Files
 
-Relevant data as well as fully-constructed input files (for reference) can be downloaded as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} from the [releases page](https://github.com/disorderedmaterials/dissolve/releases). Alternatively, you can download individual files from the main [GitHub repo](https://github.com/disorderedmaterials/dissolve/tree/develop/examples).
+Relevant data as well as fully-constructed input files (for reference) can be downloaded as a [zip archive](https://github.com/disorderedmaterials/dissolve/releases/download/DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION.0/Dissolve-DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION.0-ExampleData.zip) or [gzipped tarfile](https://github.com/disorderedmaterials/dissolve/releases/download/DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION.0/Dissolve-DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION.0-ExampleData.tar.gz) from the [releases page](https://github.com/disorderedmaterials/dissolve/releases). Alternatively, you can download individual files from the main [GitHub repo](https://github.com/disorderedmaterials/dissolve/tree/develop/examples).
 
 ## Starting Out
 
