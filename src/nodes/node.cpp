@@ -316,7 +316,7 @@ void Node::clearData() {}
 SampledDouble Node::timing() const { return timing_; }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Express persistent data within the supplied serialisable value

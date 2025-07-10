@@ -29,7 +29,7 @@ bool ParametersGeneratorNode::prepare(const GeneratorContext &generatorContext) 
 bool ParametersGeneratorNode::execute(const GeneratorContext &generatorContext) { return true; }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Express as a serialisable value

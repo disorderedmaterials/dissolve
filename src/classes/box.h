@@ -169,7 +169,7 @@ class Box : public Serialisable<>
     Vector3 scaleFactors(double requestedVolume, const std::array<bool, 3> &scalableAxes = {true, true, true}) const;
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialisable value

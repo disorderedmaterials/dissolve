@@ -33,7 +33,7 @@ class ParametersGeneratorNode : public GeneratorNode
     bool execute(const GeneratorContext &generatorContext) override;
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialisable value

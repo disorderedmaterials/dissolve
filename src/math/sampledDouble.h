@@ -58,7 +58,7 @@ class SampledDouble : public Serialisable<>
     void operator/=(double factor);
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Read data through specified LineParser

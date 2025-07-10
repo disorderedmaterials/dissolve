@@ -109,7 +109,7 @@ class Vector3i : public Serialisable<>
     void swap(int a, int b);
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialisable value
