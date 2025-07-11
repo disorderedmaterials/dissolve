@@ -11,6 +11,8 @@
 #include "nodes/sq/sq.h"
 #include "templates/algorithms.h"
 
+#include <ranges>
+
 /*
  * Public Functions
  */
@@ -29,7 +31,7 @@ bool SQNode::calculateUnweightedSQ(const PartialSet &unweightedgr, PartialSet &u
     Timer timer;
     timer.start();
     dissolve::for_each_pair(
-        ParallelPolicies::par, 0, unweightedgr.nAtomTypes(),
+        ParallelPolicies::par, std::views::iota(0, unweightedgr.nAtomTypes()),
         [&](int n, int m)
         {
             // Total partial

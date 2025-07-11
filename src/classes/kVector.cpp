@@ -5,6 +5,8 @@
 #include "classes/braggReflection.h"
 #include "templates/algorithms.h"
 
+#include <ranges>
+
 KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes) { initialise(h, k, l, reflectionIndex, nAtomTypes); }
 
 KVector::KVector(const KVector &source) { (*this) = source; }
@@ -72,7 +74,7 @@ void KVector::calculateIntensities(std::vector<BraggReflection> &reflections)
     auto &braggReflection = reflections[braggReflectionIndex_];
     braggReflection.addKVectors(halfSphereNorm);
     dissolve::for_each_pair(
-        ParallelPolicies::par, 0, cosTerms_.size(),
+        ParallelPolicies::par, std::views::iota(0, (int)cosTerms_.size()),
         [&](auto i, auto j)
         { braggReflection.addIntensity(i, j, (cosTerms_[i] * cosTerms_[j] + sinTerms_[i] * sinTerms_[j]) * halfSphereNorm); });
 }

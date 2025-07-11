@@ -9,6 +9,7 @@
 #include <gtest/gtest.h>
 #include <numeric>
 #include <random>
+#include <ranges>
 
 namespace UnitTest
 {
@@ -32,7 +33,7 @@ void for_each_test(bool unordered)
 
     int sum = 0;
     dissolve::for_each_pair(
-        ParallelPolicies::seq, 0, size,
+        ParallelPolicies::seq, std::views::iota(0, size),
         [&sum, &store](const auto i, const auto j) {
             sum += store[{i, j}];
         },

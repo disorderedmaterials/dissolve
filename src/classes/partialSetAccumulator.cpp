@@ -7,6 +7,8 @@
 #include "io/export/data1D.h"
 #include "templates/algorithms.h"
 
+#include <ranges>
+
 PartialSetAccumulator::PartialSetAccumulator() {}
 
 void PartialSetAccumulator::operator+=(const PartialSet &source)
@@ -23,7 +25,7 @@ void PartialSetAccumulator::operator+=(const PartialSet &source)
         total_.clear();
 
         // Copy tags (for retrieval and sanity checking purposes)
-        dissolve::for_each_pair(ParallelPolicies::par, 0, n,
+        dissolve::for_each_pair(ParallelPolicies::par, std::views::iota(0, n),
                                 [&](auto i, auto j)
                                 {
                                     partials_[{i, j}].setTag(source.partial(i, j).tag());
@@ -37,7 +39,7 @@ void PartialSetAccumulator::operator+=(const PartialSet &source)
 
     // Accumulate the data, ensuring tags are identical - if not, we really don't want to be blindly accumulating
     dissolve::for_each_pair(
-        ParallelPolicies::par, 0, n,
+        ParallelPolicies::par, std::views::iota(0, n),
         [&](auto i, auto j)
         {
             // Full partials

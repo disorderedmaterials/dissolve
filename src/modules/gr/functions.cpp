@@ -47,7 +47,7 @@ bool GRModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet)
     const auto *box = cfg->box();
 
     dissolve::for_each_pair(
-        ParallelPolicies::seq, cfg->atoms().begin(), cfg->atoms().end(),
+        ParallelPolicies::seq, cfg->atoms(),
         [box, &partialSet](auto i, auto &ii, auto j, auto &jj)
         {
             if (&ii != &jj)
@@ -379,7 +379,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
     {
         const auto &atoms = mol->atoms();
 
-        dissolve::for_each_pair(ParallelPolicies::seq, atoms.begin(), atoms.end(),
+        dissolve::for_each_pair(ParallelPolicies::seq, atoms,
                                 [box, &originalgr](int index, auto &i, int jndex, auto &j)
                                 {
                                     // Ignore atom on itself
@@ -469,19 +469,19 @@ bool GRModule::calculateUnweightedGR(Configuration *cfg, const PartialSet &origi
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
     auto &types = unweightedgr.atomTypeMix();
-    dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+    dissolve::for_each_pair(ParallelPolicies::seq, types,
                             [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
                             { Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, true, true); });
 
     // Add broadened bound partials back in to full partials
-    dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+    dissolve::for_each_pair(ParallelPolicies::seq, types,
                             [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
                             { unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j); });
 
     // Apply smoothing if requested
     if (smoothing > 0)
     {
-        dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+        dissolve::for_each_pair(ParallelPolicies::seq, types,
                                 [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
                                 {
                                     Filters::movingAverage(unweightedgr.partial(i, j), smoothing);

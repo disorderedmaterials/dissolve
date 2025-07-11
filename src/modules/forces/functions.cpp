@@ -115,9 +115,9 @@ void ForcesModule::totalForces(const Species *sp, const PotentialMap &potentialM
     if (calculationType == ForceCalculationType::Full || calculationType == ForceCalculationType::PairPotentialOnly)
     {
         if (sp->nAtoms() < 100)
-            dissolve::for_each_pair(ParallelPolicies::seq, sp->atoms().begin(), sp->atoms().end(), pairwiseForceOperator);
+            dissolve::for_each_pair(ParallelPolicies::seq, std::span(sp->atoms().begin(), sp->nAtoms()), pairwiseForceOperator);
         else
-            dissolve::for_each_pair(ParallelPolicies::par, sp->atoms().begin(), sp->atoms().end(), pairwiseForceOperator);
+            dissolve::for_each_pair(ParallelPolicies::par, std::span(sp->atoms().begin(), sp->nAtoms()), pairwiseForceOperator);
         combinableUnbound.finalize();
     }
 

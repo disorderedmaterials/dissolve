@@ -200,22 +200,27 @@ void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
 }
 
 // Perform an operation on every pair of elements in a contained, or the half-matrix only ([i,j] == [j,i])
-template <typename ParallelPolicy, class Iter, class Lam>
-void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda, bool half = true)
+template <typename ParallelPolicy, std::ranges::range Range, class Lam>
+void for_each_pair(ParallelPolicy policy, Range range, Lam lambda, bool half = true)
 {
-    auto actions = [&lambda, &begin](const auto pair)
+    auto actions = [&lambda, &range](const auto pair)
     {
         auto &[i, j] = pair;
-        lambda(i, begin[i], j, begin[j]);
+        if constexpr (PairIndexLambda<Lam>)
+            lambda(i, j);
+        else
+            lambda(i, range.begin()[i], j, range.begin()[j]);
     };
     if (half)
     {
-        PairIterator start(end - begin), stop(end - begin, ((end - begin) * (end - begin + 1)) / 2);
+        PairIterator start(range.end() - range.begin()),
+            stop(range.end() - range.begin(), ((range.end() - range.begin()) * (range.end() - range.begin() + 1)) / 2);
         for_each(policy, start, stop, actions);
     }
     else
     {
-        FullPairIterator start(end - begin), stop(end - begin, (end - begin) * (end - begin));
+        FullPairIterator start(range.end() - range.begin()),
+            stop(range.end() - range.begin(), (range.end() - range.begin()) * (range.end() - range.begin()));
         for_each(policy, start, stop, actions);
     }
 }
@@ -229,27 +234,6 @@ void for_each_triplet(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
                  auto [x, y, z] = triplet;
                  lambda(triplet, x, y, z);
              });
-}
-
-// Perform an operation on every pair of elements in a range, or the half-matrix only ([i,j] == [j,i])
-template <typename ParallelPolicy, class Lam>
-void for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda, bool half = true)
-{
-    auto actions = [&lambda](const auto pair)
-    {
-        auto [i, j] = pair;
-        lambda(i, j);
-    };
-    if (half)
-    {
-        PairIterator start(end), stop(end, end * (end + 1) / 2);
-        for_each(policy, start, stop, actions);
-    }
-    else
-    {
-        FullPairIterator start(end - begin), stop(end - begin, (end - begin) * (end - begin));
-        for_each(policy, start, stop, actions);
-    }
 }
 } // namespace dissolve
 
