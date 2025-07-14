@@ -35,9 +35,9 @@ class ExpressionValue : public Serialisable<>
     ValueType type_;
     // Whether current result type is fixed
     bool typeFixed_;
-    // Integer value (if type_ == IntegerType)
+    // Integer value (if storedDataType_ == IntegerType)
     int valueI_;
-    // Double value (if type_ == DoubleType)
+    // Double value (if storedDataType_ == DoubleType)
     double valueD_;
 
     public:

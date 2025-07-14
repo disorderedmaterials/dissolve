@@ -5,7 +5,7 @@
 
 ConfigurationNode::ConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addPointerOutput<Configuration *>("Configuration", "Configuration object", configuration_);
+    addPointerOutput<Configuration>("Configuration", "Configuration object", configuration_);
 }
 
 std::string_view ConfigurationNode::type() const { return "Configuration"; }
