@@ -200,7 +200,7 @@ runs:
       JAVA_EXE="${JAVA_HOME_21_X64}\bin\java.exe"
 
       # Set conan cache location
-      conan config --cc core.download:download_cache="${GITHUB_WORKSPACE}/.conancache"
+      conan config -cc core.download:download_cache="${GITHUB_WORKSPACE}/.conancache"
 
       # Build
       mkdir build && cd build
