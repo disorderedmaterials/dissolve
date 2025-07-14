@@ -153,12 +153,12 @@ std::map<ModuleTypes::ModuleType, std::vector<const Module *>> ModuleLayer::modu
  */
 
 // Run set-up stages for all modules
-bool ModuleLayer::setUpAll(ModuleContext &moduleContext)
+bool ModuleLayer::setUpAll(Dissolve &dissolve)
 {
     auto result = true;
 
     for (auto &module : modules_)
-        if (!module->setUp(moduleContext))
+        if (!module->setUp(dissolve))
             result = false;
 
     return result;

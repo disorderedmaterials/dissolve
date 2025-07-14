@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2026 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "generator/rotateFragment.h"
 #include "classes/configuration.h"
+#include "data/ff/library.h"
 #include "generator/add.h"
 #include "generator/box.h"
 #include "generator/generator.h"
 #include "generator/select.h"
-#include "keywords/enumOptions.h"
-#include "keywords/nodeValue.h"
 #include "main/dissolve.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -24,6 +23,8 @@ TEST(RotateFragmentGeneratorNodeTest, Benzene)
 
     // Set up species
     auto *benzene = coreData.copySpecies(&benzeneSpecies());
+    benzene->setForcefield(ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics"));
+    benzene->applyForcefieldTerms(coreData);
 
     // Set up site
     auto site = SpeciesSite(benzene, "COG", SpeciesSite::SiteType::Fragment);
@@ -46,7 +47,7 @@ TEST(RotateFragmentGeneratorNodeTest, Benzene)
     add->keywords().set("Rotate", false);
 
     // Set up the prior configuration
-    cfg->generate({ProcessPool(), dissolve});
+    cfg->generate({dissolve});
 
     // Grab the first (and only) molecule
     auto mol = cfg->molecule(0);
@@ -69,7 +70,7 @@ TEST(RotateFragmentGeneratorNodeTest, Benzene)
         rotate->keywords().set("Rotation", NodeValueProxy(x));
 
         // Re-generate the configuration
-        cfg->generate({ProcessPool(), dissolve});
+        cfg->generate({dissolve});
 
         // Grab the first (and only) molecule
         mol = cfg->molecule(0);

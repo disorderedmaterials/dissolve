@@ -30,7 +30,7 @@ EnumOptions<EPSRModule::EPSRPCofKeyword> EPSRModule::epsrPCofKeywords()
 }
 
 // Read data from supplied pcof file
-bool EPSRModule::readPCof(Dissolve &dissolve, const ProcessPool &procPool, std::string_view filename)
+bool EPSRModule::readPCof(Dissolve &dissolve, std::string_view filename)
 {
     /*
      * Read EPSR potential coefficients from supplied file.
@@ -38,7 +38,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, const ProcessPool &procPool, std::
      * All others will be set to zero.
      */
 
-    LineParser parser(&procPool);
+    LineParser parser;
     if (!parser.openInput(filename))
         return Messenger::error("Couldn't open pcof file for reading.\n");
 
@@ -174,7 +174,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, const ProcessPool &procPool, std::
 }
 
 // Read fit coefficients from 'inpa' file
-bool EPSRModule::readFitCoefficients(Dissolve &dissolve, const ProcessPool &procPool, std::string_view inpaFilename)
+bool EPSRModule::readFitCoefficients(Dissolve &dissolve, std::string_view inpaFilename)
 {
     /*
      * Read EPSR fit coefficients from supplied file.
@@ -182,7 +182,7 @@ bool EPSRModule::readFitCoefficients(Dissolve &dissolve, const ProcessPool &proc
      * All others will be set to zero.
      */
 
-    LineParser parser(&procPool);
+    LineParser parser;
     if (!parser.openInput(inpaFilename))
         return Messenger::error("Couldn't open inpa file for reading.\n");
 

@@ -16,7 +16,6 @@
 #include "math/ft.h"
 #include "math/gaussFit.h"
 #include "math/poissonFit.h"
-#include "module/context.h"
 #include "module/group.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
@@ -28,7 +27,7 @@
 #include <functional>
 
 // Run set-up stage
-bool EPSRModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool EPSRModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Default to applying generated potentials - an associated EPSRManager may turn this off in its own setup stage
     applyPotentials_ = true;
@@ -76,8 +75,8 @@ bool EPSRModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordS
     // Realise storage for generated S(Q), and initialise a scattering matrix, but only if we have a valid configuration
     if (targetConfiguration_)
     {
-        auto &estimatedSQ = moduleContext.dissolve().processingModuleData().realise<Array2D<Data1D>>(
-            "EstimatedSQ", name_, GenericItem::InRestartFileFlag);
+        auto &estimatedSQ =
+            dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", name_, GenericItem::InRestartFileFlag);
         scatteringMatrix_.initialise(targetConfiguration_->atomTypePopulations(), estimatedSQ);
     }
 
@@ -87,24 +86,22 @@ bool EPSRModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordS
         Messenger::print("[SETUP {}] Reading potential coefficients from '{}'...\n", name_, pCofFilename_);
 
         // Read in the coefficients / setup from the supplied file
-        if (!readPCof(moduleContext.dissolve(), moduleContext.processPool(), pCofFilename_))
+        if (!readPCof(dissolve, pCofFilename_))
             return Messenger::error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n", name_);
 
         // Set up the additional potentials - reconstruct them from the current coefficients
-        auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : moduleContext.dissolve().pairPotentialRange();
+        auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : dissolve.pairPotentialRange();
         auto rminpt = rMinPT_ ? rMinPT_.value() : rmaxpt - 2.0;
         if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
         {
-            if (!generateEmpiricalPotentials(moduleContext.dissolve(), rho.value_or(0.1), nCoeffP_, rminpt, rmaxpt, gSigma1_,
-                                             gSigma2_))
+            if (!generateEmpiricalPotentials(dissolve, rho.value_or(0.1), nCoeffP_, rminpt, rmaxpt, gSigma1_, gSigma2_))
             {
                 return false;
             }
         }
         else
         {
-            if (!generateEmpiricalPotentials(moduleContext.dissolve(), rho.value_or(0.1), nCoeffP_, rminpt, rmaxpt, pSigma1_,
-                                             pSigma2_))
+            if (!generateEmpiricalPotentials(dissolve, rho.value_or(0.1), nCoeffP_, rminpt, rmaxpt, pSigma1_, pSigma2_))
             {
                 return false;
             }
@@ -117,18 +114,18 @@ bool EPSRModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordS
         Messenger::print("[SETUP {}] Reading fit coefficients from '{}'...\n", name_, inpaFilename_);
 
         // Read in the coefficients / setup from the supplied file
-        if (!readFitCoefficients(moduleContext.dissolve(), moduleContext.processPool(), inpaFilename_))
+        if (!readFitCoefficients(dissolve, inpaFilename_))
             return Messenger::error("[SETUP {}] Failed to read in fit coefficients from EPSR inpa file.\n", name_);
     }
 
     // Try to calculate the deltaSQ array
-    updateDeltaSQ(moduleContext.dissolve().processingModuleData());
+    updateDeltaSQ(dissolve.processingModuleData());
 
     return true;
 }
 
 // Run main processing
-Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
 {
     std::string testDataName;
 
@@ -136,7 +133,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     const auto mcoeff = 200;
 
     // Calculate some values if they were not provided
-    auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : moduleContext.dissolve().pairPotentialRange();
+    auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : dissolve.pairPotentialRange();
     auto rminpt = rMinPT_ ? rMinPT_.value() : rmaxpt - 2.0;
     auto ncoeffp = nCoeffP_ ? nCoeffP_.value() : std::min(int(10.0 * rmaxpt + 0.0001), mcoeff);
 
@@ -200,7 +197,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     /*
      * Realise and increase run counter
      */
-    auto &moduleData = moduleContext.dissolve().processingModuleData();
+    auto &moduleData = dissolve.processingModuleData();
     auto [runCount, runCountStatus] = moduleData.realiseIf<int>("RunCount", name(), GenericItem::InRestartFileFlag);
     if (runCountStatus == GenericItem::ItemStatus::Created)
         runCount = 0;
@@ -307,7 +304,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         Filters::trim(tempRefData, qMin_, qMax_);
         const auto rFactorReport = Error::rFactor(tempRefData, weightedSQ.total());
         rFacTot += rFactorReport.error;
-        errors.addPoint(moduleContext.dissolve().iteration(), rFactorReport.error);
+        errors.addPoint(dissolve.iteration(), rFactorReport.error);
         Messenger::print("Current R-Factor for reference data '{}' is {:.5f}.\n", module->name(), rFactorReport.error);
         // Calculate r-factor over specified ranges_
         for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
@@ -527,47 +524,26 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
         if (saveDifferenceFunctions_)
         {
-            if (moduleContext.processPool().isMaster())
-            {
-                Data1DExportFileFormat exportFormat(std::format("{}-Diff.q", module->name()));
-                if (exportFormat.exportData(differenceData))
-                    moduleContext.processPool().decideTrue();
-                else
-                    return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
-            }
-            else if (!moduleContext.processPool().decision())
-                return ExecutionResult::NotExecuted;
+            Data1DExportFileFormat exportDiffFormat(std::format("{}-Diff.q", module->name()));
+            if (!exportDiffFormat.exportData(differenceData))
+                return ExecutionResult::Failed;
 
-            if (moduleContext.processPool().isMaster())
-            {
-                Data1DExportFileFormat exportFormat(std::format("{}-DiffFit.q", module->name()));
-                if (exportFormat.exportData(deltaFQFit))
-                    moduleContext.processPool().decideTrue();
-                else
-                    return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
-            }
-            else if (!moduleContext.processPool().decision())
-                return ExecutionResult::NotExecuted;
+            Data1DExportFileFormat exportDeltaSQFormat(std::format("{}-DiffFit.q", module->name()));
+            if (!exportDeltaSQFormat.exportData(deltaFQFit))
+                return ExecutionResult::Failed;
         }
         if (saveSimulatedFR_)
         {
-            if (moduleContext.processPool().isMaster())
-            {
-                Data1DExportFileFormat exportFormat(std::format("{}-SimulatedFR.r", module->name()));
-                if (exportFormat.exportData(simulatedFR))
-                    moduleContext.processPool().decideTrue();
-                else
-                    return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
-            }
-            else if (!moduleContext.processPool().decision())
-                return ExecutionResult::NotExecuted;
+            Data1DExportFileFormat exportFormat(std::format("{}-SimulatedFR.r", module->name()));
+            if (!exportFormat.exportData(simulatedFR))
+                return ExecutionResult::Failed;
         }
     }
 
     // Finalise and store the total r-factor
     rFacTot /= targets_.size();
     auto &totalRFactor = moduleData.realise<Data1D>("RFactor", name_, GenericItem::InRestartFileFlag);
-    totalRFactor.addPoint(moduleContext.dissolve().iteration(), rFacTot);
+    totalRFactor.addPoint(dissolve.iteration(), rFacTot);
     Messenger::print("Current total R-Factor is {:.5f}.\n", rFacTot);
     for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
     {
@@ -629,18 +605,12 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     // Save data?
     if (saveEstimatedPartials_)
     {
-        if (moduleContext.processPool().isMaster())
+        for (auto &sq : estimatedSQ)
         {
-            for (auto &sq : estimatedSQ)
-            {
-                Data1DExportFileFormat exportFormat(std::format("{}-EstSQ-{}.txt", name_, sq.tag()));
-                if (!exportFormat.exportData(sq))
-                    return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
-            }
-            moduleContext.processPool().decideTrue();
+            Data1DExportFileFormat exportFormat(std::format("{}-EstSQ-{}.txt", name_, sq.tag()));
+            if (!exportFormat.exportData(sq))
+                return ExecutionResult::Failed;
         }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::NotExecuted;
     }
 
     /*
@@ -772,7 +742,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         auto sigma1 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma1_ : gSigma1_;
         auto sigma2 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma2_ : gSigma2_;
 
-        if (!generateEmpiricalPotentials(moduleContext.dissolve(), rho, ncoeffp, rminpt, rmaxpt, sigma1, sigma2))
+        if (!generateEmpiricalPotentials(dissolve, rho, ncoeffp, rminpt, rmaxpt, sigma1, sigma2))
             return ExecutionResult::Failed;
     }
     else
@@ -781,57 +751,48 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     // Save data?
     if (saveEmpiricalPotentials_)
     {
-        if (moduleContext.processPool().isMaster())
-        {
-            dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
-                                    [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
-                                    {
-                                        // Grab pointer to the relevant pair potential
-                                        PairPotential *pp = moduleContext.dissolve().pairPotential(at1, at2);
+        if (!for_each_pair_early(atomTypes.begin(), atomTypes.end(),
+                                 [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
+                                 {
+                                     // Grab pointer to the relevant pair potential
+                                     PairPotential *pp = dissolve.pairPotential(at1, at2);
 
-                                        Data1DExportFileFormat exportFormat(
-                                            std::format("{}-EP-{}-{}.txt", name_, at1->name(), at2->name()));
-                                        if (!exportFormat.exportData(pp->additionalPotential()))
-                                            return moduleContext.processPool().decideFalse();
-                                        return std::nullopt;
-                                    });
-            moduleContext.processPool().decideTrue();
-        }
-        else if (!moduleContext.processPool().decision())
+                                     Data1DExportFileFormat exportFormat(
+                                         std::format("{}-EP-{}-{}.txt", name_, at1->name(), at2->name()));
+                                     if (!exportFormat.exportData(pp->additionalPotential()))
+                                         return false;
+                                     return EarlyReturn<bool>::Continue;
+                                 })
+                 .value_or(true))
             return ExecutionResult::Failed;
     }
     if (savePotentialCoefficients_)
     {
-        if (moduleContext.processPool().isMaster())
-        {
-            auto &coefficients = potentialCoefficients(moduleData, nAtomTypes, ncoeffp);
+        auto &coefficients = potentialCoefficients(moduleData, nAtomTypes, ncoeffp);
 
-            dissolve::for_each_pair(
-                ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
-                [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
-                {
-                    // Grab reference to coefficients
-                    auto &potCoeff = coefficients[{i, j}];
+        if (!for_each_pair_early(atomTypes.begin(), atomTypes.end(),
+                                 [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
+                                 {
+                                     // Grab reference to coefficients
+                                     auto &potCoeff = coefficients[{i, j}];
 
-                    LineParser fileParser;
-                    if (!fileParser.openOutput(std::format("{}-PCof-{}-{}.txt", name_, at1->name(), at2->name())))
-                        return moduleContext.processPool().decideFalse();
-                    for (auto n : potCoeff)
-                        if (!fileParser.writeLineF("{}\n", n))
-                            return moduleContext.processPool().decideFalse();
-                    fileParser.closeFiles();
-                    return std::nullopt;
-                });
-
-            moduleContext.processPool().decideTrue();
-        }
-        else if (!moduleContext.processPool().decision())
+                                     LineParser fileParser;
+                                     if (!fileParser.openOutput(
+                                             std::format("{}-PCof-{}-{}.txt", name_, at1->name(), at2->name())))
+                                         return false;
+                                     for (auto n : potCoeff)
+                                         if (!fileParser.writeLineF("{}\n", n))
+                                             return false;
+                                     fileParser.closeFiles();
+                                     return EarlyReturn<bool>::Continue;
+                                 })
+                 .value_or(true))
             return ExecutionResult::Failed;
     }
 
     // Realise the phiMag array and make sure its object name is set
     auto &phiArray = moduleData.realise<Data1D>("EPMag", name_, GenericItem::InRestartFileFlag);
-    phiArray.addPoint(moduleContext.dissolve().iteration(), energabs);
+    phiArray.addPoint(dissolve.iteration(), energabs);
 
     return ExecutionResult::Success;
 }

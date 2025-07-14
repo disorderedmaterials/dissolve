@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "base/processPool.h"
 #include "gui/gui.h"
 #include "gui/models/types.h"
 #include "main/cli.h"

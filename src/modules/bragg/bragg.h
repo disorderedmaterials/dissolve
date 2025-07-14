@@ -40,19 +40,18 @@ class BraggModule : public Module
      */
     public:
     // Calculate Bragg terms for specified Configuration
-    bool calculateBraggTerms(GenericList &moduleData, const ProcessPool &procPool, Configuration *cfg, const double qMin,
-                             const double qDelta, const double qMax, Vector3i multiplicity, bool &alreadyUpToDate);
+    bool calculateBraggTerms(GenericList &moduleData, Configuration *cfg, const double qMin, const double qDelta,
+                             const double qMax, Vector3i multiplicity, bool &alreadyUpToDate);
     // Form partial and total reflection functions from calculated reflection data
-    bool formReflectionFunctions(GenericList &moduleData, const ProcessPool &procPool, Configuration *cfg, const double qMin,
-                                 const double qDelta, const double qMax);
+    bool formReflectionFunctions(GenericList &moduleData, Configuration *cfg, const double qMin, const double qDelta,
+                                 const double qMax);
     // Re-bin reflection data into supplied arrays
-    bool reBinReflections(GenericList &moduleData, const ProcessPool &procPool, Configuration *cfg,
-                          Array2D<Data1D> &braggPartials);
+    bool reBinReflections(GenericList &moduleData, Configuration *cfg, Array2D<Data1D> &braggPartials);
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

@@ -15,8 +15,6 @@ Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 
     graphNode_ = std::make_unique<DissolveGraph>(*this);
 
-    setUpWorldPool();
-
     // Clear everything
     clear();
 }

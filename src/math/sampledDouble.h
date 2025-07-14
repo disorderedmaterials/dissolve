@@ -63,11 +63,4 @@ class SampledDouble
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Sum data over all processes within the pool
-    bool allSum(ProcessPool &procPool);
 };

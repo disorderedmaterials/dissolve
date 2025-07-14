@@ -62,25 +62,23 @@ void GeometryOptimisationModule::sortBoundsAndEnergies(std::array<double, 3> &bo
 
 // Return energy of adjusted coordinates, following the force vectors by the supplied amount
 template <>
-double GeometryOptimisationModule::energyAtGradientPoint(const ProcessPool &procPool, Configuration *cfg,
-                                                         const PotentialMap &potentialMap, double delta)
+double GeometryOptimisationModule::energyAtGradientPoint(Configuration *cfg, const PotentialMap &potentialMap, double delta)
 {
     for (auto &&[i, r, f] : zip(cfg->atoms(), rRef_, f_))
         i.setCoordinates(r.x + f.x * delta, r.y + f.y * delta, r.z + f.z * delta);
     cfg->updateAtomLocations();
 
-    return EnergyModule::totalEnergy(procPool, cfg, potentialMap);
+    return EnergyModule::totalEnergy(cfg, potentialMap);
 }
 
 // Return energy of adjusted coordinates, following the force vectors by the supplied amount
 template <>
-double GeometryOptimisationModule::energyAtGradientPoint(const ProcessPool &procPool, Species *sp,
-                                                         const PotentialMap &potentialMap, double delta)
+double GeometryOptimisationModule::energyAtGradientPoint(Species *sp, const PotentialMap &potentialMap, double delta)
 {
     for (auto &&[i, r, f] : zip(sp->atoms(), rRef_, f_))
         sp->setAtomCoordinates(&i, Vector3(r.x + f.x * delta, r.y + f.y * delta, r.z + f.z * delta));
 
-    return EnergyModule::totalEnergy(procPool, sp, potentialMap);
+    return EnergyModule::totalEnergy(sp, potentialMap);
 }
 
 /*
@@ -88,7 +86,7 @@ double GeometryOptimisationModule::energyAtGradientPoint(const ProcessPool &proc
  */
 
 // Geometry optimise supplied Species
-bool GeometryOptimisationModule::optimiseSpecies(const PotentialMap &potentialMap, const ProcessPool &procPool, Species *sp)
+bool GeometryOptimisationModule::optimiseSpecies(const PotentialMap &potentialMap, Species *sp)
 {
     // Print argument/parameter summary
     Messenger::print("Optimise: Maximum number of cycles is {}.\n", maxCycles_);
@@ -104,7 +102,7 @@ bool GeometryOptimisationModule::optimiseSpecies(const PotentialMap &potentialMa
     // Make sure the species' is ready for optimisation
     sp->setUpScaledInteractions();
 
-    optimise<Species>(potentialMap, procPool, sp);
+    optimise<Species>(potentialMap, sp);
 
     return true;
 }

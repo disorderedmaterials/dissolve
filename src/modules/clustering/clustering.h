@@ -5,13 +5,11 @@
 
 #include "analyser/siteFilter.h"
 #include "analyser/siteSelector.h"
-#include "base/processPool.h"
 #include "classes/configuration.h"
 #include "classes/coreData.h"
 #include "generator/context.h"
 #include "main/dissolve.h"
 #include "math/vector3.h"
-#include "module/context.h"
 #include "module/module.h"
 #include <unordered_set>
 
@@ -87,13 +85,13 @@ class ClusteringModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
     // Recursion for cluster generation
     void buildCluster(const Site *startSite, std::unordered_set<const Site *> &visited);
 
     public:
     // Set up module for processings
-    bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
+    bool setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals) override;
     // Generation of the cluster visualisation configuration
     void generateClustersConfig(Dissolve &dissolve, int displaySize, int displayID);
     // Calculate the coordination numbers for pairs in the current cluster config

@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/box.h"
-#include "base/processPool.h"
 #include "classes/cell.h"
 #include "math/data1D.h"
 #include "math/interpolator.h"

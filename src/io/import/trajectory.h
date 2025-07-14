@@ -8,7 +8,6 @@
 
 // Forward Declarations
 class Configuration;
-class ProcessPool;
 
 // Trajectory Import Formats
 class TrajectoryImportFileFormat : public FileAndFormat

@@ -34,10 +34,10 @@ void Data2DImportFileFormat::setUpKeywords()
  */
 
 // Import Data2D using current filename and format
-bool Data2DImportFileFormat::importData(Data2D &data, const ProcessPool *procPool)
+bool Data2DImportFileFormat::importData(Data2D &data)
 {
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
+    LineParser parser;
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
         return Messenger::error("Couldn't open file '{}' for loading Data2D data.\n", filename_);
 

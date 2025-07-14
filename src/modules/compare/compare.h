@@ -15,7 +15,6 @@
 #include "math/error.h"
 #include "math/range.h"
 #include "math/sampledData1D.h"
-#include "module/context.h"
 #include "module/module.h"
 
 using RangeErrorPair = std::pair<std::vector<Range>, std::vector<double>>;
@@ -51,5 +50,5 @@ class CompareModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

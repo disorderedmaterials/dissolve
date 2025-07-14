@@ -40,7 +40,7 @@ bool ValueImportFileFormat::importSimple(LineParser &parser, std::vector<double>
 }
 
 // Import values using current filename and format
-bool ValueImportFileFormat::importData(std::vector<double> &data, LineParser &currentParser, const ProcessPool *procPool)
+bool ValueImportFileFormat::importData(std::vector<double> &data, LineParser &currentParser)
 {
     // Check the format
     if (!formatIndex_)
@@ -48,7 +48,7 @@ bool ValueImportFileFormat::importData(std::vector<double> &data, LineParser &cu
 
     // If the filename is simply '@' then we read from the current parser - otherwise open a new file / parser
     auto readFromCurrent = filename_ == "@";
-    LineParser fileParser(procPool);
+    LineParser fileParser;
     LineParser &parser = readFromCurrent ? currentParser : fileParser;
 
     if (!readFromCurrent && ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading())))

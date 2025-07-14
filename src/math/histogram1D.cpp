@@ -244,17 +244,3 @@ bool Histogram1D::serialise(LineParser &parser) const
 
     return true;
 }
-
-/*
- * Parallel Comms
- */
-
-// Sum histogram data onto all processes
-bool Histogram1D::allSum(const ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer)
-{
-#ifdef PARALLEL
-    if (!procPool.allSum(bins_.data(), nBins_, ProcessPool::PoolProcessesCommunicator, commsTimer))
-        return false;
-#endif
-    return true;
-}

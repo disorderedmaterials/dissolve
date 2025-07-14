@@ -97,9 +97,6 @@ NodeConstants::ProcessResult MDNode::process()
      * Calculation Begins
      */
 
-    // Initialise the random number buffer for all processes
-    RandomBuffer randomBuffer(processPool(), ProcessPool::PoolProcessesCommunicator);
-
     if (!velocities_)
         velocities_.emplace();
     auto &velocities = velocities_.value();
@@ -118,7 +115,7 @@ NodeConstants::ProcessResult MDNode::process()
         for (auto &&[v, iFree] : zip(velocities, free))
         {
             if (iFree)
-                v.set(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5));
+                v.set(exp(DissolveMath::random() - 0.5), exp(DissolveMath::random() - 0.5), exp(DissolveMath::random() - 0.5));
             else
                 v.zero();
             v /= sqrt(2.0 * M_PI);
@@ -178,18 +175,9 @@ NodeConstants::ProcessResult MDNode::process()
     if (trajectoryFrequency && trajectoryFrequency > 0)
     {
         std::string trajectoryFile = std::format("{}.md.xyz", targetConfiguration_->name());
-        if (processPool().isMaster())
+        if ((!trajParser.appendOutput(trajectoryFile)) || (!trajParser.isFileGoodForWriting()))
         {
-            if ((!trajParser.appendOutput(trajectoryFile)) || (!trajParser.isFileGoodForWriting()))
-            {
-                Messenger::error("Failed to open MD trajectory output file '{}'.\n", trajectoryFile);
-                processPool().decideFalse();
-                return NodeConstants::ProcessResult::Failed;
-            }
-            processPool().decideTrue();
-        }
-        else if (!processPool().decision())
-        {
+            Messenger::error("Failed to open MD trajectory output file '{}'.\n", trajectoryFile);
             return NodeConstants::ProcessResult::Failed;
         }
     }
@@ -203,7 +191,7 @@ NodeConstants::ProcessResult MDNode::process()
     }
 
     // Start a timer
-    Timer timer, commsTimer(false);
+    Timer timer;
 
     // If we're not using a fixed timestep the forces need to be available immediately
     if (timestepType_ != TimestepType::Fixed)
@@ -213,15 +201,15 @@ NodeConstants::ProcessResult MDNode::process()
         std::fill(fBound.begin(), fBound.end(), Vector3());
 
         if (targetMolecules.empty())
-            ForcesModule::totalForces(processPool(), targetConfiguration_, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, dissolve().potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound, commsTimer);
+                                      fUnbound, fBound);
         else
-            ForcesModule::totalForces(processPool(), targetConfiguration_, targetMolecules, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, targetMolecules, dissolve().potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound, commsTimer);
+                                      fUnbound, fBound);
 
         // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         std::transform(fUnbound.begin(), fUnbound.end(), fUnbound.begin(), [](auto f) { return f * 100.0; });
@@ -272,15 +260,15 @@ NodeConstants::ProcessResult MDNode::process()
 
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         if (targetMolecules.empty())
-            ForcesModule::totalForces(processPool(), targetConfiguration_, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, dissolve().potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound, commsTimer);
+                                      fUnbound, fBound);
         else
-            ForcesModule::totalForces(processPool(), targetConfiguration_, targetMolecules, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, targetMolecules, dissolve().potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound, commsTimer);
+                                      fUnbound, fBound);
         std::transform(fUnbound.begin(), fUnbound.end(), fUnbound.begin(), [](auto f) { return f * 100.0; });
         std::transform(fBound.begin(), fBound.end(), fBound.begin(), [](auto f) { return f * 100.0; });
 
@@ -319,8 +307,8 @@ NodeConstants::ProcessResult MDNode::process()
             // Include total energy term?
             if (energyFrequency > 0 && (step % energyFrequency == 0))
             {
-                pePP = EnergyModule::pairPotentialEnergy(processPool(), targetConfiguration_, dissolve().potentialMap());
-                peBound = EnergyModule::intraMolecularEnergy(processPool(), targetConfiguration_, dissolve().potentialMap());
+                pePP = EnergyModule::pairPotentialEnergy(targetConfiguration_, dissolve().potentialMap());
+                peBound = EnergyModule::intraMolecularEnergy(targetConfiguration_, dissolve().potentialMap());
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}\n", step,
                                  tInstant, ke, pePP.total(), peBound, ke + peBound + pePP.total(), dT);
             }
@@ -332,52 +320,36 @@ NodeConstants::ProcessResult MDNode::process()
         // Save trajectory frame
         if (trajectoryFrequency > 0 && (step % trajectoryFrequency == 0))
         {
-            if (processPool().isMaster())
-            {
-                // Write number of atoms
-                trajParser.writeLineF("{}\n", targetConfiguration_->nAtoms());
+            // Write number of atoms
+            trajParser.writeLineF("{}\n", targetConfiguration_->nAtoms());
 
-                // Construct and write header
-                std::string header = std::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps, tInstant, ke);
-                if (energyFrequency && (step % energyFrequency == 0))
-                    header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound,
-                                          ke + pePP.total() + peBound);
-                if (!trajParser.writeLine(header))
-                {
-                    processPool().decideFalse();
-                    return NodeConstants::ProcessResult::Failed;
-                }
-
-                // Write Atoms
-                for (const auto &i : atoms)
-                {
-                    if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n", Elements::symbol(i.speciesAtom()->Z()),
-                                               i.r().x, i.r().y, i.r().z))
-                    {
-                        processPool().decideFalse();
-                        return NodeConstants::ProcessResult::Failed;
-                    }
-                }
-
-                processPool().decideTrue();
-            }
-            else if (!processPool().decision())
-            {
+            // Construct and write header
+            std::string header = std::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps, tInstant, ke);
+            if (energyFrequency && (step % energyFrequency == 0))
+                header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound,
+                                      ke + pePP.total() + peBound);
+            if (!trajParser.writeLine(header))
                 return NodeConstants::ProcessResult::Failed;
+
+            // Write Atoms
+            for (const auto &i : atoms)
+            {
+                if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n", Elements::symbol(i.speciesAtom()->Z()),
+                                           i.r().x, i.r().y, i.r().z))
+                    return NodeConstants::ProcessResult::Failed;
             }
         }
     }
     timer.stop();
 
     // Close trajectory file
-    if (trajectoryFrequency > 0 && processPool().isMaster())
+    if (trajectoryFrequency > 0)
         trajParser.closeFiles();
 
     if (capForces_)
         Messenger::print("A total of {} forces were capped over the course of the dynamics ({:9.3e} per step).\n", nCapped,
                          double(nCapped) / nSteps);
-    Messenger::print("{} steps performed ({} work, {} comms)\n", step - 1, timer.totalTimeString(),
-                     commsTimer.totalTimeString());
+    Messenger::print("{} steps performed ({})\n", step - 1, timer.totalTimeString());
 
     // Increment configuration changeCount
     if (step > 1)

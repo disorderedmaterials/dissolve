@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "base/processPool.h"
 #include "kernels/base.h"
 #include "math/matrix3.h"
 
@@ -19,10 +18,8 @@ class SpeciesTorsion;
 class GeometryKernel : public KernelBase
 {
     public:
-    GeometryKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                   std::optional<double> energyCutoff = {});
-    GeometryKernel(const Box *box, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                   std::optional<double> energyCutoff = {});
+    GeometryKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
+    GeometryKernel(const Box *box, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
     ~GeometryKernel() = default;
 
     /*

@@ -3,12 +3,11 @@
 
 #include "classes/box.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 #include "modules/avgMol/avgMol.h"
 #include "templates/algorithms.h"
 
 // Run set-up stage
-bool AvgMolModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool AvgMolModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Clear species
     averageSpecies_.clear();
@@ -41,16 +40,16 @@ bool AvgMolModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
         std::format("{}@{}", targetSite_ ? targetSite_->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
 
     // Realise arrays
-    updateArrays(moduleContext.dissolve().processingModuleData());
+    updateArrays(dissolve.processingModuleData());
 
     // Update the species coordinates
-    updateSpecies(moduleContext.dissolve().processingModuleData());
+    updateSpecies(dissolve.processingModuleData());
 
     return true;
 }
 
 // Run main processing
-Module::ExecutionResult AvgMolModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult AvgMolModule::process(Dissolve &dissolve)
 {
     // Grab Box pointer
     const auto *box = targetConfiguration_->box();
@@ -78,15 +77,15 @@ Module::ExecutionResult AvgMolModule::process(ModuleContext &moduleContext)
     Messenger::print("\n");
 
     // Update arrays
-    updateArrays(moduleContext.dissolve().processingModuleData());
+    updateArrays(dissolve.processingModuleData());
 
     // Get the site stack
     const auto *stack = targetConfiguration_->siteStack(targetSite_);
 
     // Retrieve data arrays
-    auto &sampledX = moduleContext.dissolve().processingModuleData().retrieve<SampledVector>("X", name());
-    auto &sampledY = moduleContext.dissolve().processingModuleData().retrieve<SampledVector>("Y", name());
-    auto &sampledZ = moduleContext.dissolve().processingModuleData().retrieve<SampledVector>("Z", name());
+    auto &sampledX = dissolve.processingModuleData().retrieve<SampledVector>("X", name());
+    auto &sampledY = dissolve.processingModuleData().retrieve<SampledVector>("Y", name());
+    auto &sampledZ = dissolve.processingModuleData().retrieve<SampledVector>("Z", name());
 
     // Loop over sites
     std::vector<double> rx(targetSpecies_->nAtoms()), ry(targetSpecies_->nAtoms()), rz(targetSpecies_->nAtoms());

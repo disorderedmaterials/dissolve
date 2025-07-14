@@ -7,22 +7,21 @@
 #include "classes/species.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 #include "modules/forces/forces.h"
 #include "modules/importTrajectory/importTrajectory.h"
 
 // Run set-up stage
-bool ForcesModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool ForcesModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     if (referenceForces_.hasFilename())
     {
         Messenger::print("[SETUP {}] Reading test reference forces.\n", name_);
 
         // Realise and read the force array
-        auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vector3>>("ReferenceForces", name());
+        auto &f = dissolve.processingModuleData().realise<std::vector<Vector3>>("ReferenceForces", name());
 
         // Read in the forces
-        if (!referenceForces_.importData(f, &moduleContext.processPool()))
+        if (!referenceForces_.importData(f))
             return false;
     }
 
@@ -30,7 +29,7 @@ bool ForcesModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
 }
 
 // Run main processing
-Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
 {
     // Retrieve control parameters
     const auto saveData = exportedForces_.hasFilename();
@@ -38,13 +37,12 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
     Messenger::print("Calculating total forces for Configuration '{}'...\n", targetConfiguration_->name());
 
     // Realise the force vector
-    auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vector3>>(
+    auto &f = dissolve.processingModuleData().realise<std::vector<Vector3>>(
         std::format("{}//Forces", targetConfiguration_->name()), name());
     f.resize(targetConfiguration_->nAtoms());
 
     // Calculate forces
-    totalForces(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap(),
-                ForcesModule::ForceCalculationType::Full, f, f);
+    totalForces(targetConfiguration_, dissolve.potentialMap(), ForcesModule::ForceCalculationType::Full, f, f);
 
     // Convert forces to 10J/mol
     std::transform(f.begin(), f.end(), f.begin(), [](auto val) { return val * 100.0; });
@@ -62,7 +60,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
         Messenger::print("Calculating forces for Configuration '{}' in serial test mode...\n", targetConfiguration_->name());
         Messenger::print("Test threshold for failure is {}%.\n", testThreshold_);
 
-        const auto &potentialMap = moduleContext.dissolve().potentialMap();
+        const auto &potentialMap = dissolve.potentialMap();
         const auto cutoffSq = potentialMap.range() * potentialMap.range();
 
         std::shared_ptr<Molecule> molN, molM;
@@ -320,7 +318,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
         Messenger::print("Number of atoms with failed force components = {} = {}\n", nFailed, nFailed == 0 ? "OK" : "NOT OK");
         Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 6));
 
-        if (!moduleContext.processPool().allTrue((nFailed) == 0))
+        if (nFailed != 0)
             return ExecutionResult::Failed;
     }
 

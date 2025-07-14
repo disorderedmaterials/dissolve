@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2026 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "generator/select.h"
 #include "classes/configuration.h"
+#include "data/ff/library.h"
 #include "generator/generator.h"
 #include "main/dissolve.h"
 #include "tests/testData.h"
@@ -18,6 +19,8 @@ class SelectGeneratorNodeTest : public ::testing::Test
     {
         // Set up species
         alphaSpecies_ = coreData_.copySpecies(&diatomicSpecies());
+        alphaSpecies_->setForcefield(ForcefieldLibrary::forcefield("UFF"));
+        alphaSpecies_->applyForcefieldTerms(coreData_);
         alphaSite_ = alphaSpecies_->addSite("NO");
         alphaSite_->setType(SpeciesSite::SiteType::Dynamic);
         alphaSite_->setDynamicElements({Elements::N, Elements::O});
@@ -29,11 +32,15 @@ class SelectGeneratorNodeTest : public ::testing::Test
         alphaSiteO_->setDynamicElements({Elements::N});
 
         betaSpecies_ = coreData_.copySpecies(&diatomicSpecies());
+        betaSpecies_->setForcefield(ForcefieldLibrary::forcefield("UFF"));
+        betaSpecies_->applyForcefieldTerms(coreData_);
         betaSite_ = betaSpecies_->addSite("N");
         betaSite_->setType(SpeciesSite::SiteType::Dynamic);
         betaSite_->setDynamicElements({Elements::N, Elements::O});
 
         argonSpecies_ = coreData_.copySpecies(&argonSpecies());
+        argonSpecies_->setForcefield(ForcefieldLibrary::forcefield("UFF"));
+        argonSpecies_->applyForcefieldTerms(coreData_);
         argonSite_ = argonSpecies_->addSite("Ar");
         argonSite_->setType(SpeciesSite::SiteType::Static);
         argonSite_->setStaticOriginAtoms({&argonSpecies_->atom(0)});
@@ -86,7 +93,7 @@ TEST_F(SelectGeneratorNodeTest, Simple)
     auto selectN =
         testGenerator.createRootNode<SelectGeneratorNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
 
-    testGenerator.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({configuration_});
 
     auto N = nType_ * 2;
     EXPECT_EQ(selectN->nSitesInStack(), N * 2);
@@ -110,7 +117,7 @@ TEST_F(SelectGeneratorNodeTest, All)
     auto &forEachAr = selectAr->branch()->get();
     auto selectN = forEachAr.create<SelectGeneratorNode>("SelectN", std::vector<const SpeciesSite *>{alphaSite_, betaSite_});
 
-    testGenerator.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({configuration_});
 
     EXPECT_EQ(selectAr->nSitesInStack(), 1);
     EXPECT_EQ(selectN->nSitesInStack(), nType_ * 2 * 2);
@@ -128,7 +135,7 @@ TEST_F(SelectGeneratorNodeTest, Ranges)
     {
         selectN->setInclusiveDistanceRange({0.0, rangeInt * 1.0});
 
-        testGenerator.execute({dissolve_.worldPool(), configuration_});
+        testGenerator.execute({configuration_});
 
         EXPECT_EQ(selectAr->nSitesInStack(), 1);
         EXPECT_EQ(selectN->nSitesInStack(), rangeInt * 2 * 2);
@@ -151,7 +158,7 @@ TEST_F(SelectGeneratorNodeTest, Indices)
     {
         selectN->setInclusiveDistanceRange({0.0, rangeInt * 1.0});
 
-        testGenerator.execute({dissolve_.worldPool(), configuration_});
+        testGenerator.execute({configuration_});
 
         EXPECT_EQ(selectAr->nSitesInStack(), 1);
         EXPECT_EQ(selectN->nSitesInStack(), rangeInt * 2 * 2);
@@ -181,7 +188,7 @@ TEST_F(SelectGeneratorNodeTest, Exclusions1)
     auto selectN2 = forEachN1.create<SelectGeneratorNode>("SelectN2", std::vector<const SpeciesSite *>{alphaSiteN_});
 
     // No exclusions
-    testGenerator.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({configuration_});
     EXPECT_EQ(selectN1->nSitesInStack(), nType_);
     EXPECT_EQ(selectN2->nSitesInStack(), nType_);
     EXPECT_DOUBLE_EQ(selectN1->nAvailableSitesAverage(), double(nType_));
@@ -190,7 +197,7 @@ TEST_F(SelectGeneratorNodeTest, Exclusions1)
 
     // Exclude same site
     selectN2->keywords().set("ExcludeSameSite", ConstNodeVector<SelectGeneratorNode>{selectN1});
-    testGenerator.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({configuration_});
     EXPECT_EQ(selectN1->nSitesInStack(), nType_);
     EXPECT_EQ(selectN2->nSitesInStack(), nType_ - 1);
     EXPECT_DOUBLE_EQ(selectN1->nAvailableSitesAverage(), double(nType_));
@@ -199,7 +206,7 @@ TEST_F(SelectGeneratorNodeTest, Exclusions1)
 
     // Exclude same molecule as well (no effect)
     selectN2->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectGeneratorNode>{selectN1});
-    testGenerator.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({configuration_});
     EXPECT_EQ(selectN1->nSitesInStack(), nType_);
     EXPECT_EQ(selectN2->nSitesInStack(), nType_ - 1);
     EXPECT_DOUBLE_EQ(selectN1->nAvailableSitesAverage(), double(nType_));
@@ -214,7 +221,7 @@ TEST_F(SelectGeneratorNodeTest, Exclusions2)
     auto selectO = forEachN.create<SelectGeneratorNode>("SelectO", std::vector<const SpeciesSite *>{alphaSiteO_});
 
     // No exclusions
-    testGenerator.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({configuration_});
     EXPECT_EQ(selectN->nSitesInStack(), nType_);
     EXPECT_EQ(selectO->nSitesInStack(), nType_);
     EXPECT_DOUBLE_EQ(selectN->nAvailableSitesAverage(), double(nType_));
@@ -223,7 +230,7 @@ TEST_F(SelectGeneratorNodeTest, Exclusions2)
 
     // Exclude same molecule
     selectO->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectGeneratorNode>{selectN});
-    testGenerator.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({configuration_});
     EXPECT_EQ(selectN->nSitesInStack(), nType_);
     EXPECT_EQ(selectO->nSitesInStack(), nType_ - 1);
     EXPECT_DOUBLE_EQ(selectN->nAvailableSitesAverage(), double(nType_));
@@ -239,7 +246,7 @@ TEST_F(SelectGeneratorNodeTest, Inclusions)
 
     // Require same molecule as first site
     selectO->keywords().set("SameMoleculeAsSite", selectN);
-    testGenerator.execute({dissolve_.worldPool(), configuration_});
+    testGenerator.execute({configuration_});
     EXPECT_EQ(selectN->nSitesInStack(), nType_);
     EXPECT_EQ(selectO->nSitesInStack(), 1);
     EXPECT_DOUBLE_EQ(selectN->nAvailableSitesAverage(), double(nType_));

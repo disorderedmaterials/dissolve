@@ -20,8 +20,8 @@ static void BM_CalculateGR(benchmark::State &state)
     bool upToDate = false;
     for (auto _ : state)
     {
-        grModule->calculateGR(problemDef.dissolve().processingModuleData(), problemDef.dissolve().worldPool(),
-                              problemDef.configuration(), method, rdfRange, 0.05, upToDate);
+        grModule->calculateGR(problemDef.dissolve().processingModuleData(), problemDef.configuration(), method, rdfRange, 0.05,
+                              upToDate);
         problemDef.dissolve().processingModuleData().clearAll();
     }
 }

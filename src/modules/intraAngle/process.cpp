@@ -8,13 +8,12 @@
 #include "main/dissolve.h"
 #include "math/histogram1D.h"
 #include "math/mathFunc.h"
-#include "module/context.h"
 #include "modules/intraAngle/intraAngle.h"
 
 // Run main processing
-Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult IntraAngleModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
@@ -84,8 +83,7 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     normaliser.normaliseSumTo();
 
     // Save Angle(A-B-C) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataNormalisedHisto, exportFileAndFormat_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(dataNormalisedHisto, exportFileAndFormat_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

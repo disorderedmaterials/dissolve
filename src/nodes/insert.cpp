@@ -2,7 +2,6 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/insert.h"
-#include "base/randomBuffer.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -178,9 +177,6 @@ NodeConstants::ProcessResult InsertNode::process()
             break;
     }
 
-    // Now we add the molecules
-    RandomBuffer randomBuffer(processPool(), ProcessPool::PoolProcessesCommunicator);
-
     Matrix3 transform;
     const auto *box = configuration_->box();
     configuration_->atoms().reserve(configuration_->atoms().size() + nAnyAtoms);
@@ -190,13 +186,13 @@ NodeConstants::ProcessResult InsertNode::process()
         auto mol = configuration_->copyMolecule(targetMoleculeSet.localMolecule(n));
 
         // Randomise position of Molecule over the whole box
-        auto newCentre = box->getReal({randomBuffer.random(), randomBuffer.random(), randomBuffer.random()});
+        auto newCentre = box->getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});
         mol->setCentreOfGeometry(box, newCentre);
 
         // Generate and apply a random rotation matrix
         if (rotate_)
         {
-            transform.createRotationXY(randomBuffer.randomPlusMinusOne() * 180.0, randomBuffer.randomPlusMinusOne() * 180.0);
+            transform.createRotationXY(DissolveMath::randomPlusMinusOne() * 180.0, DissolveMath::randomPlusMinusOne() * 180.0);
             mol->transform(box, transform);
         }
     }

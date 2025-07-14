@@ -6,7 +6,6 @@
 #include "io/fileAndFormat.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // Species Import Formats
 class SpeciesImportFileFormat : public FileAndFormat
@@ -50,7 +49,7 @@ class SpeciesImportFileFormat : public FileAndFormat
 
     public:
     // Import coordinates direct to configuration using current filename and format
-    bool importData(Species *sp, const ProcessPool *procPool = nullptr);
+    bool importData(Species *sp);
     // Import coordinates using supplied parser and current format
     bool importData(LineParser &parser, std::vector<Vector3> &r);
     // Import coordinates direct to configuration using supplied parser and current format

@@ -3,7 +3,6 @@
 
 #include "modules/voxelDensity/voxelDensity.h"
 #include "common/problems.h"
-#include "module/context.h"
 #include <benchmark/benchmark.h>
 
 namespace Benchmarks
@@ -17,11 +16,10 @@ static void BM_Module_VoxelDensity(benchmark::State &state)
     module.keywords().set("BinRange", Vector3(0.0, 10.0, 0.05));
     module.keywords().set("VoxelSideLength", 1.0);
     module.keywords().setEnumeration("TargetProperty", property);
-    ModuleContext context(problemDef.dissolve().worldPool(), problemDef.dissolve());
     for (auto _ : state)
     {
         problemDef.configuration()->incrementContentsVersion();
-        module.executeProcessing(context);
+        module.executeProcessing(problemDef.dissolve());
     }
 }
 

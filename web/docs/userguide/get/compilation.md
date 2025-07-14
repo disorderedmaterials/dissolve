@@ -160,17 +160,9 @@ Default: `false`
 
 #### `GUI`
 
-Requests that the GUI version of Dissolve be built. This option is mutually exclusive with `-DPARALLEL:bool=true`. Qt5 libraries and development tools must be present in the path, as well as [`FTGL`](http://ftgl.sourceforge.net/docs/html/).
+Requests that the GUI version of Dissolve be built. Qt5 libraries and development tools must be present in the path, as well as [`FTGL`](http://ftgl.sourceforge.net/docs/html/).
 
 Usage: `-DGUI:bool=true`
-
-Default: `false`
-
-#### `PARALLEL`
-
-Requests that the parallel version of Dissolve be built. This option is mutually exclusive with `-DGUI:bool=true`.  A suitable OpenMPI-compatible MPI compiler must be present in the path.
-
-Usage: `-DPARALLEL:bool=true`
 
 Default: `false`
 

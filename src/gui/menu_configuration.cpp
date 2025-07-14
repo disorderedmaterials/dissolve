@@ -73,7 +73,7 @@ void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
         auto newConfig = dissolve_.coreData().configurations().back().get();
 
         // Initialise the content
-        newConfig->initialiseContent({dissolve_.worldPool(), dissolve_});
+        newConfig->initialiseContent({dissolve_});
 
         // Fully update GUI
         setModified();

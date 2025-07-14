@@ -13,7 +13,7 @@ class MoleculeDistributor : public Distributor
 {
     public:
     MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray,
-                        ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed);
+                        bool repeatsAllowed);
     ~MoleculeDistributor() override;
 
     /*

@@ -7,7 +7,6 @@
 #include "classes/coreData.h"
 #include "keywords/configuration.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 
 // Module Types
 
@@ -248,7 +247,7 @@ Module::ExecutionResult Module::checkConfigurationTargets(GenericList &processin
 }
 
 // Run main processing
-Module::ExecutionResult Module::process(ModuleContext &moduleContext) { return ExecutionResult::Failed; }
+Module::ExecutionResult Module::process(Dissolve &dissolve) { return ExecutionResult::Failed; }
 
 // Set target data
 void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
@@ -271,13 +270,13 @@ void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &confi
 }
 
 // Run set-up stage
-bool Module::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) { return true; }
+bool Module::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals) { return true; }
 
 // Run main processing stage
-Module::ExecutionResult Module::executeProcessing(ModuleContext &moduleContext)
+Module::ExecutionResult Module::executeProcessing(Dissolve &dissolve)
 {
     // Check target configurations
-    auto targetCheckResult = checkConfigurationTargets(moduleContext.dissolve().processingModuleData());
+    auto targetCheckResult = checkConfigurationTargets(dissolve.processingModuleData());
     if (targetCheckResult != ExecutionResult::Success)
         return targetCheckResult;
 
@@ -286,7 +285,7 @@ Module::ExecutionResult Module::executeProcessing(ModuleContext &moduleContext)
     timer.start();
 
     // Run main processing routine
-    auto result = process(moduleContext);
+    auto result = process(dissolve);
 
     // Accumulate timing information
     timer.stop();

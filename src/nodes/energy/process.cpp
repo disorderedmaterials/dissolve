@@ -8,7 +8,6 @@
 #include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "math/regression.h"
-#include "module/context.h"
 #include "nodes/energy/energy.h"
 
 // Run main processing
@@ -26,14 +25,14 @@ NodeConstants::ProcessResult EnergyNode::process()
 
     // Calculate pair potential energy
     Timer interTimer;
-    auto ppEnergy = pairPotentialEnergy(processPool(), targetConfiguration_, dissolve().potentialMap());
+    auto ppEnergy = pairPotentialEnergy(targetConfiguration_, dissolve().potentialMap());
     interTimer.stop();
 
     // Calculate intra-molecular (bound) energy
     Timer intraTimer;
     double bondEnergy, angleEnergy, torsionEnergy, improperEnergy;
-    auto boundEnergy = intraMolecularEnergy(processPool(), targetConfiguration_, dissolve().potentialMap(), bondEnergy,
-                                            angleEnergy, torsionEnergy, improperEnergy);
+    auto boundEnergy = intraMolecularEnergy(targetConfiguration_, dissolve().potentialMap(), bondEnergy, angleEnergy,
+                                            torsionEnergy, improperEnergy);
     intraTimer.stop();
 
     message("Time to do interatomic energy was {}, intramolecular energy was {}.\n", interTimer.totalTimeString(),
@@ -73,7 +72,7 @@ NodeConstants::ProcessResult EnergyNode::process()
     if (save_)
     {
         LineParser parser;
-        std::string filename = std::format("{}.energy.txt", targetConfiguration_->niceName());
+        std::string filename = std::format("{}.energy.txt", targetConfiguration_->name());
 
         if (!DissolveSys::fileExists(filename))
         {

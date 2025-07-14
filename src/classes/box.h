@@ -14,7 +14,6 @@
 // Forward Declarations
 class Cell;
 class Data1D;
-class ProcessPool;
 
 // Basic Box Definition
 class Box : public Serialisable<>
