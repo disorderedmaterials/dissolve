@@ -9,15 +9,14 @@
 #include "math/integrator.h"
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
-#include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
 
 // Run main processing
-Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult SiteRDFModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
@@ -87,12 +86,11 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
             {
                 auto &sumNInst = processingData.realise<Data1D>(std::format("CN//{}Inst", rangeNames[i]), name(),
                                                                 GenericItem::InRestartFileFlag);
-                sumNInst.addPoint(moduleContext.dissolve().iteration(), sumN.value());
+                sumNInst.addPoint(dissolve.iteration(), sumN.value());
                 if (exportInstantaneous_)
                 {
                     Data1DExportFileFormat exportFormat(std::format("{}_Sum{}.txt", name(), rangeNames[i]));
-                    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(sumNInst, exportFormat,
-                                                                                  moduleContext.processPool()))
+                    if (!DataExporter::exportData(sumNInst, exportFormat))
                     {
                         Messenger::error("Failed to write instantaneous coordination number data for range {}.\n",
                                          rangeNames[i]);
@@ -129,7 +127,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     processingData.realise<SampledData1D>("RunningCN", name(), GenericItem::InRestartFileFlag) = dataRunningCN;
 
     // Save RDF data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataRDF, exportFileAndFormat_, moduleContext.processPool()))
+    if (!DataExporter::exportData(dataRDF, exportFileAndFormat_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

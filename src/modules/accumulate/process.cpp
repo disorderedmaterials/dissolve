@@ -4,7 +4,6 @@
 #include "base/sysFunc.h"
 #include "classes/partialSetAccumulator.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 #include "modules/accumulate/accumulate.h"
 
 // Valid Target Modules / Data
@@ -23,7 +22,7 @@ EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialS
 }
 
 // Run main processing
-Module::ExecutionResult AccumulateModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult AccumulateModule::process(Dissolve &dissolve)
 {
     Messenger::print("Accumulate: Target data to accumulate is '{}'.\n", targetPartialSet().keyword(targetPartialSet_));
     Messenger::print("Accumulate: Save data is {}.\n", DissolveSys::onOff(save_));
@@ -52,7 +51,7 @@ Module::ExecutionResult AccumulateModule::process(ModuleContext &moduleContext)
         }
 
         // Find the target data
-        auto targetSet = moduleContext.dissolve().processingModuleData().valueIf<PartialSet>(dataName, targetModule->name());
+        auto targetSet = dissolve.processingModuleData().valueIf<PartialSet>(dataName, targetModule->name());
         if (!targetSet)
         {
             Messenger::print("Target PartialSet data '{}' in module '{}' does not yet exist.\n",
@@ -61,7 +60,7 @@ Module::ExecutionResult AccumulateModule::process(ModuleContext &moduleContext)
         }
 
         // Realise the accumulated partial set
-        auto &accumulated = moduleContext.dissolve().processingModuleData().realise<PartialSetAccumulator>(
+        auto &accumulated = dissolve.processingModuleData().realise<PartialSetAccumulator>(
             targetModule->name(), name(), GenericItem::ItemFlag::InRestartFileFlag);
 
         accumulated += *targetSet;
@@ -71,8 +70,8 @@ Module::ExecutionResult AccumulateModule::process(ModuleContext &moduleContext)
         // Save data if requested
         std::vector<std::string> suffixes = {"gr", "sq", "gr"};
         std::vector<std::string> units = {"r, Angstroms", "Q, Angstroms**-1", "r, Angstroms"};
-        if (save_ && !(MPIRunMaster(procPool, accumulated.save(std::format("{}-{}", name(), targetModule->name()), dataName,
-                                                               suffixes[targetPartialSet_], units[targetPartialSet_]))))
+        if (save_ && !accumulated.save(std::format("{}-{}", name(), targetModule->name()), dataName,
+                                       suffixes[targetPartialSet_], units[targetPartialSet_]))
             return ExecutionResult::Failed;
     }
 

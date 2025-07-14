@@ -8,23 +8,22 @@
 #include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "math/regression.h"
-#include "module/context.h"
 #include "modules/energy/energy.h"
 
 // Run set-up stage
-bool EnergyModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool EnergyModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // For the Configuration target add a flag to its moduleData (which is *not* stored in the restart file) to specify that we
     // are targeting it
     if (targetConfiguration_)
-        moduleContext.dissolve().processingModuleData().realise<bool>("IsEnergyModuleTarget", targetConfiguration_->niceName(),
-                                                                      GenericItem::ProtectedFlag) = true;
+        dissolve.processingModuleData().realise<bool>("IsEnergyModuleTarget", targetConfiguration_->niceName(),
+                                                      GenericItem::ProtectedFlag) = true;
 
     return true;
 }
 
 // Run main processing
-Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult EnergyModule::process(Dissolve &dissolve)
 {
     // Print parameter summary
     if (test_)
@@ -42,16 +41,14 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 
     // Calculate pair potential energy
     Timer interTimer;
-    auto ppEnergy =
-        pairPotentialEnergy(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap());
+    auto ppEnergy = pairPotentialEnergy(targetConfiguration_, dissolve.potentialMap());
     interTimer.stop();
 
     // Calculate intra-molecular (bound) energy
     Timer intraTimer;
     double bondEnergy, angleEnergy, torsionEnergy, improperEnergy;
-    auto boundEnergy =
-        intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap(),
-                             bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
+    auto boundEnergy = intraMolecularEnergy(targetConfiguration_, dissolve.potentialMap(), bondEnergy, angleEnergy,
+                                            torsionEnergy, improperEnergy);
     intraTimer.stop();
 
     Messenger::print("Time to do interatomic energy was {}, intramolecular energy was {}.\n", interTimer.totalTimeString(),
@@ -64,35 +61,35 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
                      bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
 
     // Store current energies in the Configuration in case somebody else needs them
-    auto &interData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+    auto &interData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//PairPotential", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-    interData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.total());
-    auto &intraData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+    interData.addPoint(dissolve.iteration(), ppEnergy.total());
+    auto &intraData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//Bound", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-    intraData.addPoint(moduleContext.dissolve().iteration(), boundEnergy);
-    auto &bondData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        std::format("{}//Bond", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-    bondData.addPoint(moduleContext.dissolve().iteration(), bondEnergy);
-    auto &angleData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+    intraData.addPoint(dissolve.iteration(), boundEnergy);
+    auto &bondData = dissolve.processingModuleData().realise<Data1D>(std::format("{}//Bond", targetConfiguration_->niceName()),
+                                                                     name(), GenericItem::InRestartFileFlag);
+    bondData.addPoint(dissolve.iteration(), bondEnergy);
+    auto &angleData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//Angle", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-    angleData.addPoint(moduleContext.dissolve().iteration(), angleEnergy);
-    auto &torsionData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+    angleData.addPoint(dissolve.iteration(), angleEnergy);
+    auto &torsionData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//Torsion", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-    torsionData.addPoint(moduleContext.dissolve().iteration(), torsionEnergy);
-    auto &improperData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+    torsionData.addPoint(dissolve.iteration(), torsionEnergy);
+    auto &improperData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//Improper", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-    improperData.addPoint(moduleContext.dissolve().iteration(), improperEnergy);
-    auto &cohesiveData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+    improperData.addPoint(dissolve.iteration(), improperEnergy);
+    auto &cohesiveData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//Cohesive", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-    cohesiveData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.interMolecular());
-    auto &intraPPData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+    cohesiveData.addPoint(dissolve.iteration(), ppEnergy.interMolecular());
+    auto &intraPPData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//IntraPP", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-    intraPPData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.intraMolecular());
+    intraPPData.addPoint(dissolve.iteration(), ppEnergy.intraMolecular());
 
     // Append to arrays of total energies
-    auto &totalEnergyArray = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+    auto &totalEnergyArray = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//Total", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-    totalEnergyArray.addPoint(moduleContext.dissolve().iteration(), ppEnergy.total() + boundEnergy);
+    totalEnergyArray.addPoint(dissolve.iteration(), ppEnergy.total() + boundEnergy);
 
     // Determine stability of energy
     // Check number of points already stored for the Configuration
@@ -113,10 +110,10 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
     }
 
     // Set energy data under the configuration's prefix
-    moduleContext.dissolve().processingModuleData().realise<double>("EnergyGradient", targetConfiguration_->niceName(),
-                                                                    GenericItem::InRestartFileFlag) = grad;
-    moduleContext.dissolve().processingModuleData().realise<bool>("EnergyStable", targetConfiguration_->niceName(),
-                                                                  GenericItem::InRestartFileFlag) = stable;
+    dissolve.processingModuleData().realise<double>("EnergyGradient", targetConfiguration_->niceName(),
+                                                    GenericItem::InRestartFileFlag) = grad;
+    dissolve.processingModuleData().realise<bool>("EnergyStable", targetConfiguration_->niceName(),
+                                                  GenericItem::InRestartFileFlag) = stable;
 
     // If writing to a file, append it here
     if (save_)
@@ -135,8 +132,8 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         else
             parser.appendOutput(filename);
         parser.writeLineF("  {:10d}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {}\n",
-                          moduleContext.dissolve().iteration(), ppEnergy.total() + boundEnergy, ppEnergy.total(),
-                          ppEnergy.interMolecular(), bondEnergy, angleEnergy, torsionEnergy, improperEnergy, grad, stable);
+                          dissolve.iteration(), ppEnergy.total() + boundEnergy, ppEnergy.total(), ppEnergy.interMolecular(),
+                          bondEnergy, angleEnergy, torsionEnergy, improperEnergy, grad, stable);
         parser.closeFiles();
     }
 
@@ -148,7 +145,7 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
          * production routines.
          */
 
-        const PotentialMap &potentialMap = moduleContext.dissolve().potentialMap();
+        const PotentialMap &potentialMap = dissolve.potentialMap();
         auto correctInterEnergy = 0.0, correctIntraEnergy = 0.0, correctSelfEnergy = 0.0;
 
         double r, angle;
@@ -156,7 +153,7 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         Vector3 vecji, vecjk, veckl;
         std::shared_ptr<Molecule> molN, molM;
         const auto *box = targetConfiguration_->box();
-        const auto cutoff = moduleContext.dissolve().potentialMap().range();
+        const auto cutoff = dissolve.potentialMap().range();
 
         Timer testTimer;
 
@@ -257,8 +254,7 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 
         // Calculate total interatomic energy from molecules
         Timer moleculeTimer;
-        auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
-                                                   moduleContext.dissolve().potentialMap(), cutoff);
+        auto kernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap(), cutoff);
         auto molecularPPEnergyInter = kernel->totalMoleculePairPotentialEnergy(false).total();
         auto molecularPPEnergyFull = kernel->totalMoleculePairPotentialEnergy(true).total();
         moleculeTimer.stop();
@@ -289,9 +285,8 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
                          moleculeDeltaB, fabs(moleculeDeltaB) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
 
         // All OK?
-        if (!moduleContext.processPool().allTrue((fabs(interDelta) < testThreshold_) && (fabs(intraDelta) < testThreshold_) &&
-                                                 (fabs(moleculeDeltaA) < testThreshold_) &&
-                                                 (fabs(moleculeDeltaB) < testThreshold_)))
+        if (!((fabs(interDelta) < testThreshold_) && (fabs(intraDelta) < testThreshold_) &&
+              (fabs(moleculeDeltaA) < testThreshold_) && (fabs(moleculeDeltaB) < testThreshold_)))
             return ExecutionResult::Failed;
     }
 

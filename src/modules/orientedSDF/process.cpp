@@ -6,13 +6,12 @@
 #include "analyser/siteSelector.h"
 #include "main/dissolve.h"
 #include "math/histogram3D.h"
-#include "module/context.h"
 #include "modules/orientedSDF/orientedSDF.h"
 
 // Run main processing
-Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult OrientedSDFModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
@@ -64,8 +63,7 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
     normaliserOrientedSDF.normaliseByGrid();
 
     // Save SDF data?
-    if (!DataExporter<Data3D, Data3DExportFileFormat>::exportData(dataOrientedSDF, sdfFileAndFormat_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(dataOrientedSDF, sdfFileAndFormat_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

@@ -8,13 +8,12 @@
 #include "main/dissolve.h"
 #include "math/integerHistogram1D.h"
 #include "math/integrator.h"
-#include "module/context.h"
 #include "modules/qSpecies/qSpecies.h"
 
 // Run main processing
-Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult QSpeciesModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select all potential bridging oxygen sites - we will determine which actually are
     // involved in NF-BO-NF interactions once we have the available NF sites
@@ -86,8 +85,7 @@ Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
     processingData.realise<Data1D>("QSpecies", name(), GenericItem::InRestartFileFlag) = accumulatedQData;
 
     // Save data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(accumulatedQData, exportFileAndFormat_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(accumulatedQData, exportFileAndFormat_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

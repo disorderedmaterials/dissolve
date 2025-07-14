@@ -11,15 +11,13 @@
 #include "templates/algorithms.h"
 #include <iterator>
 
-ForceKernel::ForceKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                         std::optional<double> energyCutoff)
-    : GeometryKernel(cfg, procPool, potentialMap, energyCutoff)
+ForceKernel::ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
+    : GeometryKernel(cfg, potentialMap, energyCutoff)
 {
 }
 
-ForceKernel::ForceKernel(const Box *box, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                         std::optional<double> energyCutoff)
-    : GeometryKernel(box, procPool, potentialMap, energyCutoff)
+ForceKernel::ForceKernel(const Box *box, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
+    : GeometryKernel(box, potentialMap, energyCutoff)
 {
 }
 
@@ -140,8 +138,7 @@ void ForceKernel::extendedForces(const Molecule &mol, ForceVector &f) const { re
  */
 
 // Calculate total forces in the world
-void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, ProcessPool::DivisionStrategy strategy,
-                              Flags<ForceCalculationFlags> flags) const
+void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<ForceCalculationFlags> flags) const
 {
     assert(molecules_);
     assert(cellArray_);
@@ -149,18 +146,12 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
     auto &molecules = molecules_->get();
     auto &cellArray = cellArray_->get();
 
-    // Set start/stride for parallel loop
-    auto start = processPool_.interleavedLoopStart(strategy);
-    auto stride = processPool_.interleavedLoopStride(strategy);
-
     auto combinableUnbound = createCombinableForces(fUnbound);
     auto combinableBound = createCombinableForces(fBound);
 
     // Pair potential forces between different molecules
     if (!flags.isSet(ExcludeInterMolecularPairPotential))
     {
-        auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
-
         // Force operator
         auto unaryOp = [&](const int id)
         {
@@ -188,8 +179,8 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
         };
 
         // Execute lambda operator for each cell
-        dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(begin),
-                           dissolve::counting_iterator<int>(end), unaryOp);
+        dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(0),
+                           dissolve::counting_iterator<int>(cellArray.nCells()), unaryOp);
     }
 
     // Other molecule forces
@@ -226,8 +217,7 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
                 extendedForces(*mol.get(), fLocalUnbound);
         };
 
-        auto [begin, end] = chop_range(molecules.begin(), molecules.end(), stride, start);
-        dissolve::for_each(ParallelPolicies::par, begin, end, moleculeForceOperator);
+        dissolve::for_each(ParallelPolicies::par, molecules.begin(), molecules.end(), moleculeForceOperator);
     }
 
     combinableUnbound.finalize();

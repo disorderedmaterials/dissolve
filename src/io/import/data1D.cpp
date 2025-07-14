@@ -60,10 +60,10 @@ void Data1DImportFileFormat::setUpKeywords()
  */
 
 // Import Data1D using current filename and format
-bool Data1DImportFileFormat::importData(Data1D &data, const ProcessPool *procPool)
+bool Data1DImportFileFormat::importData(Data1D &data)
 {
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
+    LineParser parser;
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
         return Messenger::error("Couldn't open file '{}' for loading Data1D data.\n", filename_);
 

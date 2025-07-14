@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "base/randomBuffer.h"
 #include "base/timer.h"
 #include "classes/box.h"
 #include "classes/changeStore.h"
@@ -9,14 +8,14 @@
 #include "classes/species.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
-#include "module/context.h"
+#include "math/mathFunc.h"
 #include "modules/molShake/molShake.h"
 
 // Run main processing
-Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve)
 {
     // Retrieve control parameters from Configuration
-    auto rCut = cutoffDistance_.value_or(moduleContext.dissolve().pairPotentialRange());
+    auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
 
     // Print argument/parameter summary
@@ -32,12 +31,8 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
                          joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
     Messenger::print("\n");
 
-    ProcessPool::DivisionStrategy strategy = moduleContext.processPool().bestStrategy();
-    Timer commsTimer(false);
-
     // Create a Molecule distributor
-    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
-                                    moduleContext.processPool(), strategy);
+    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells());
 
     // Determine target molecules from the restrictedSpecies vector (if any) and give to the distributor
     if (!restrictToSpecies_.empty())
@@ -54,12 +49,8 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
     }
 
     // Create a local ChangeStore and a suitable EnergyKernel
-    ChangeStore changeStore(moduleContext.processPool(), commsTimer);
-    auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
-                                               moduleContext.dissolve().potentialMap(), rCut);
-
-    // Initialise the random number buffer
-    RandomBuffer randomBuffer(moduleContext.processPool(), ProcessPool::subDivisionStrategy(strategy), commsTimer);
+    ChangeStore changeStore;
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap(), rCut);
 
     int shake, nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0,
                nGeneralAttempts = 0;
@@ -75,7 +66,7 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
      */
 
     // Set initial random offset for our counter determining whether to perform R+T, R, or T.
-    auto count = randomBuffer.random() * 10;
+    auto count = DissolveMath::random() * 10;
     bool rotate, translate;
 
     Timer timer;
@@ -83,16 +74,6 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
     {
         // Get next set of Molecule targets from the distributor
         auto &targetIndices = distributor.assignedMolecules();
-
-        // Switch parallel strategy if necessary
-        if (distributor.currentStrategy() != strategy)
-        {
-            // Set the new strategy
-            strategy = distributor.currentStrategy();
-
-            // Re-initialise the random buffer
-            randomBuffer.reset(ProcessPool::subDivisionStrategy(strategy));
-        }
 
         // Loop over target Molecules
         for (auto molId : targetIndices)
@@ -135,17 +116,17 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
                 // Create a random translation vector and apply it to the Molecule's centre
                 if (translate)
                 {
-                    rDelta.set(randomBuffer.randomPlusMinusOne() * translationStepSize_,
-                               randomBuffer.randomPlusMinusOne() * translationStepSize_,
-                               randomBuffer.randomPlusMinusOne() * translationStepSize_);
+                    rDelta.set(DissolveMath::randomPlusMinusOne() * translationStepSize_,
+                               DissolveMath::randomPlusMinusOne() * translationStepSize_,
+                               DissolveMath::randomPlusMinusOne() * translationStepSize_);
                     mol->translate(rDelta);
                 }
 
                 // Create a random rotation matrix and apply it to the Molecule
                 if (rotate)
                 {
-                    transform.createRotationXY(randomBuffer.randomPlusMinusOne() * rotationStepSize_,
-                                               randomBuffer.randomPlusMinusOne() * rotationStepSize_);
+                    transform.createRotationXY(DissolveMath::randomPlusMinusOne() * rotationStepSize_,
+                                               DissolveMath::randomPlusMinusOne() * rotationStepSize_);
                     mol->transform(box, transform);
                 }
 
@@ -159,7 +140,7 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
 
                 // Trial the transformed atom position
                 delta = newEnergy - currentEnergy;
-                accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
+                accept = delta < 0 ? true : (DissolveMath::random() < exp(-delta * rRT));
 
                 if (accept)
                 {
@@ -171,26 +152,21 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
                     changeStore.revertAll();
 
                 // Increase attempt counters
-                // The strategy in force at any one time may vary, so use the distributor's helper
-                // functions.
-                if (distributor.collectStatistics())
+                if (accept)
+                    totalDelta += delta;
+                if (rotate)
                 {
                     if (accept)
-                        totalDelta += delta;
-                    if (rotate)
-                    {
-                        if (accept)
-                            ++nRotationsAccepted;
-                        ++nRotationAttempts;
-                    }
-                    if (translate)
-                    {
-                        if (accept)
-                            ++nTranslationsAccepted;
-                        ++nTranslationAttempts;
-                    }
-                    ++nGeneralAttempts;
+                        ++nRotationsAccepted;
+                    ++nRotationAttempts;
                 }
+                if (translate)
+                {
+                    if (accept)
+                        ++nTranslationsAccepted;
+                    ++nTranslationAttempts;
+                }
+                ++nGeneralAttempts;
 
                 // Increase and fold move type counter
                 ++count;
@@ -207,33 +183,18 @@ Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
         }
 
         // Now all target Molecules have been processes, broadcast the changes made
-        changeStore.distributeAndApply(targetConfiguration_);
+        changeStore.apply(targetConfiguration_);
         changeStore.reset();
     }
 
     timer.stop();
-
-    // Collect statistics across all processes
-    if (!moduleContext.processPool().allSum(&totalDelta, 1, strategy, commsTimer))
-        return ExecutionResult::Failed;
-    if (!moduleContext.processPool().allSum(&nGeneralAttempts, 1, strategy, commsTimer))
-        return ExecutionResult::Failed;
-    if (!moduleContext.processPool().allSum(&nTranslationAttempts, 1, strategy, commsTimer))
-        return ExecutionResult::Failed;
-    if (!moduleContext.processPool().allSum(&nTranslationsAccepted, 1, strategy, commsTimer))
-        return ExecutionResult::Failed;
-    if (!moduleContext.processPool().allSum(&nRotationAttempts, 1, strategy, commsTimer))
-        return ExecutionResult::Failed;
-    if (!moduleContext.processPool().allSum(&nRotationsAccepted, 1, strategy, commsTimer))
-        return ExecutionResult::Failed;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
     // Calculate and print acceptance rates
     double transRate = double(nTranslationsAccepted) / nTranslationAttempts;
     double rotRate = double(nRotationsAccepted) / nRotationAttempts;
-    Messenger::print("Total number of attempted moves was {} ({} work, {} comms)\n", nGeneralAttempts, timer.totalTimeString(),
-                     commsTimer.totalTimeString());
+    Messenger::print("Total number of attempted moves was {} ({})\n", nGeneralAttempts, timer.totalTimeString());
     Messenger::print("Overall translation acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * transRate,
                      nTranslationsAccepted, nTranslationAttempts);
     Messenger::print("Overall rotation acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rotRate,

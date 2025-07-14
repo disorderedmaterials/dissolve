@@ -6,7 +6,7 @@
 #include "modules/skeleton/skeleton.h"
 
 // Run main processing
-Module::ExecutionResult SkeletonModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult SkeletonModule::process(Dissolve &dissolve)
 {
     // MODULE CODE
 

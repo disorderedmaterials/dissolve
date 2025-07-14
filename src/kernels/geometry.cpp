@@ -8,15 +8,13 @@
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
-GeometryKernel::GeometryKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                               std::optional<double> energyCutoff)
-    : KernelBase(cfg, procPool, potentialMap, energyCutoff)
+GeometryKernel::GeometryKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
+    : KernelBase(cfg, potentialMap, energyCutoff)
 {
 }
 
-GeometryKernel::GeometryKernel(const Box *box, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                               std::optional<double> energyCutoff)
-    : KernelBase(box, procPool, potentialMap, energyCutoff)
+GeometryKernel::GeometryKernel(const Box *box, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
+    : KernelBase(box, potentialMap, energyCutoff)
 {
 }
 

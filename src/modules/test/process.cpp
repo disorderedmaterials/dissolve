@@ -5,7 +5,7 @@
 #include "modules/test/test.h"
 
 // Run main processing
-Module::ExecutionResult TestModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult TestModule::process(Dissolve &dissolve)
 {
     // MODULE CODE
 

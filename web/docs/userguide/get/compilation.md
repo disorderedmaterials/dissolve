@@ -29,10 +29,6 @@ Satisfying these dependencies is enough to build the serial version. For the par
 
 Dissolve uses the [`Conan`](https://conan.io/) package manager to satisfy external dependencies as far as possible. `ANTLR4` is not available via Conan (yet) and so must either be installed from platform-specific repositories or built alongside Dissolve using the relevant configuration options. See the [compilation instructions]({{< ref "compilation#install-antlr4" >}}) for more information.
 
-### MPI (for versions 0.5.X, 0.6.X, and 0.7.X)
-
-Version 0.7.X of Dissolve uses MPI for parallelism, so a suitable MPI implementation providing `mpic++` is required - MPI-based parallelism is enabled by passing `-DPARALLEL:bool=true` to `cmake`. It is *not* recommended to build version 0.8 with MPI enabled, since MPI+threading is only experimental in this version.
-
 ### Multithreading (for version 0.8.X onwards)
 
 As of version 0.8 the default is for Dissolve to be built with multithreading enabled - this applies to both the command-line and GUI versions. If you really want a truly serial code, pass `-DMULTI_THREADING:bool=false` to `cmake`.
@@ -159,17 +155,9 @@ Default: `false`
 
 #### `GUI`
 
-Requests that the GUI version of Dissolve be built. This option is mutually exclusive with `-DPARALLEL:bool=true`. Qt5 libraries and development tools must be present in the path, as well as [`FTGL`](http://ftgl.sourceforge.net/docs/html/).
+Requests that the GUI version of Dissolve be built. Qt5 libraries and development tools must be present in the path, as well as [`FTGL`](http://ftgl.sourceforge.net/docs/html/).
 
 Usage: `-DGUI:bool=true`
-
-Default: `false`
-
-#### `PARALLEL`
-
-Requests that the parallel version of Dissolve be built. This option is mutually exclusive with `-DGUI:bool=true`.  A suitable OpenMPI-compatible MPI compiler must be present in the path.
-
-Usage: `-DPARALLEL:bool=true`
 
 Default: `false`
 

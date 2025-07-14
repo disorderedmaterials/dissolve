@@ -116,7 +116,7 @@ bool Dissolve::loadInput(LineParser &parser)
 bool Dissolve::loadInputFromString(std::string_view inputString)
 {
     // Set strings and check that we're OK to proceed reading from them
-    LineParser parser(&worldPool());
+    LineParser parser;
     if (!parser.openInputString(inputString))
         return false;
 
@@ -301,7 +301,7 @@ bool Dissolve::loadInput(std::string_view filename)
     {
         // The file didn't have TOML syntax, so try the original parser
         // Open file and check that we're OK to proceed reading from it
-        LineParser parser(&worldPool());
+        LineParser parser;
         if (!parser.openInput(filename))
             return false;
 
@@ -557,7 +557,7 @@ bool Dissolve::saveInput(std::string_view filename)
 bool Dissolve::loadRestart(std::string_view filename)
 {
     // Open file and check that we're OK to proceed reading from it
-    LineParser parser(&worldPool());
+    LineParser parser;
     if (!parser.openInput(filename))
         return false;
 
@@ -672,8 +672,7 @@ bool Dissolve::loadRestart(std::string_view filename)
         Messenger::error("Errors encountered while loading restart file.\n");
 
     // Done
-    if (worldPool().isWorldMaster())
-        parser.closeFiles();
+    parser.closeFiles();
 
     return (!error);
 }

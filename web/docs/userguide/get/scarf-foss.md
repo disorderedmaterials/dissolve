@@ -70,13 +70,7 @@ First we install prerequisites via `conan`. In your Dissolve `build` directory, 
 conan install ..
 ```
 
-For Dissolve version 0.7.X or below, configure the build with the following `cmake` command:
-
-```
-cmake .. -DCMAKE_CXX_FLAGS:string="-std=c++17" -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=`pwd`/antlr-4.8-complete.jar -DBUILD_ANTLR_ZIPFILE:path=`pwd`/antlr4-cpp-runtime-4.8-source.zip
-```
-
-For version 0.8.X, run this command instead:
+Now, configure the build with the following `cmake` command:
 
 ```
 cmake .. -DCMAKE_CXX_FLAGS:string="-std=c++17" -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=`pwd`/antlr-4.8-complete.jar -DBUILD_ANTLR_ZIPFILE:path=`pwd`/antlr4-cpp-runtime-4.8-source.zip

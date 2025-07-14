@@ -9,11 +9,8 @@
 bool Messenger::quiet_ = false;
 bool Messenger::muted_ = false;
 bool Messenger::verbose_ = false;
-bool Messenger::redirect_ = false;
-bool Messenger::masterOnly_ = true;
 int Messenger::nErrors_ = 0;
 int Messenger::nWarnings_ = 0;
-LineParser Messenger::parser_;
 OutputHandler *Messenger::outputHandler_ = nullptr;
 std::string Messenger::outputPrefix_;
 
@@ -51,9 +48,6 @@ void Messenger::setVerbose(bool b) { verbose_ = b; }
 // Return status of verbose mode
 bool Messenger::isVerbose() { return verbose_; }
 
-// Set status of master-only mode
-void Messenger::setMasterOnly(bool b) { masterOnly_ = b; }
-
 // Clear error and warning counts
 void Messenger::clearErrorCounts()
 {
@@ -89,103 +83,41 @@ void Messenger::clearOutputPrefix() { outputPrefix_.clear(); }
 // Output text to relevant handler
 void Messenger::outputText(std::string_view s)
 {
-#ifdef PARALLEL
-    // Only print on master thread
-    if (masterOnly_ && !ProcessPool::isWorldMaster())
-        return;
-#endif
+
     if (outputPrefix_.empty())
     {
-        // If we are redirecting to files, use the parser_
-        if (redirect_)
-            parser_.writeLineF("{}\n", std::string(s));
+        if (outputHandler_)
+            outputHandler_->outputText(std::string(s));
         else
-        {
-            // Not redirecting - has an OutputHandler been defined?
-            if (outputHandler_)
-                outputHandler_->outputText(std::string(s));
-            else
-                std::cout << s << std::endl;
-        }
+            std::cout << s << std::endl;
     }
     else
     {
-        // If we are redirecting to files, use the parser_
-        if (redirect_)
-            parser_.writeLineF("{} {}\n", outputPrefix_, s);
+        if (outputHandler_)
+            outputHandler_->outputText(std::format("{} {}", outputPrefix_, s));
         else
-        {
-            // Not redirecting - has an OutputHandler been defined?
-            if (outputHandler_)
-                outputHandler_->outputText(std::format("{} {}", outputPrefix_, s));
-            else
-                std::cout << outputPrefix_ << " " << s << std::endl;
-        }
+            std::cout << outputPrefix_ << " " << s << std::endl;
     }
 }
 
 // Output blank line (with prefix if set) to relevant handler
 void Messenger::outputBlank()
 {
-#ifdef PARALLEL
-    // Only print on master thread
-    if (masterOnly_ && !ProcessPool::isWorldMaster())
-        return;
-#endif
     if (outputPrefix_.empty())
     {
-        // If we are redirecting to files, use the parser_
-        if (redirect_)
-            parser_.writeLine("");
+        if (outputHandler_)
+            outputHandler_->outputText("");
         else
-        {
-            // Not redirecting - has an OutputHandler been defined?
-            if (outputHandler_)
-                outputHandler_->outputText("");
-            else
-                std::cout << std::endl;
-        }
+            std::cout << std::endl;
     }
     else
     {
-        // If we are redirecting to files, use the parser_
-        if (redirect_)
-            parser_.writeLineF("{}\n", outputPrefix_);
+        if (outputHandler_)
+            outputHandler_->outputText(outputPrefix_);
         else
-        {
-            // Not redirecting - has an OutputHandler been defined?
-            if (outputHandler_)
-                outputHandler_->outputText(outputPrefix_);
-            else
-                std::cout << outputPrefix_ << std::endl;
-        }
+            std::cout << outputPrefix_ << std::endl;
     }
 }
 
 // Set output handler
 void Messenger::setOutputHandler(OutputHandler *outputHandler) { outputHandler_ = outputHandler; }
-
-/*
- * File Redirection
- */
-
-// Enable redirection of all messaging to specified file
-bool Messenger::enableRedirect(std::string_view filename)
-{
-    parser_.openOutput(filename, true);
-    if (!parser_.isFileGoodForWriting())
-    {
-        Messenger::print("Couldn't open output file '{}' for writing.\n", filename);
-        return false;
-    }
-
-    redirect_ = true;
-    return true;
-}
-
-// Cease redirection of messaging to file
-void Messenger::ceaseRedirect()
-{
-    parser_.closeFiles();
-    redirect_ = false;
-}

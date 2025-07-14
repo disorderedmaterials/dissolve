@@ -167,18 +167,18 @@ class EPSRModule : public Module
 
     public:
     // Read data from supplied pcof file
-    bool readPCof(Dissolve &dissolve, const ProcessPool &procPool, std::string_view filename);
+    bool readPCof(Dissolve &dissolve, std::string_view filename);
     // Read Poisson coefficients from 'inpa' file
-    bool readFitCoefficients(Dissolve &dissolve, const ProcessPool &procPool, std::string_view inpaFilename);
+    bool readFitCoefficients(Dissolve &dissolve, std::string_view inpaFilename);
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 
     public:
     // Run set-up stage
-    bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
+    bool setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals) override;
 };

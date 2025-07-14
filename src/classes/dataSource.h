@@ -13,7 +13,6 @@
 #include "math/data2D.h"
 #include "math/data3D.h"
 #include "math/sampledData1D.h"
-#include "module/context.h"
 
 // Template arguments: data class (Data1D, Data2D ...)
 template <typename DataType> class DataSource : public Serialisable<const CoreData &>
@@ -78,7 +77,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
     std::string_view getFilepath() { return dataSourceType_ == External ? externalDataSource_.filename() : ""; }
 
     // Obtain data from the relevant source
-    bool sourceData(const ProcessPool &procPool, GenericList &processingModuleData)
+    bool sourceData(GenericList &processingModuleData)
     {
         if (!dataExists())
         {
@@ -100,7 +99,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
         else if (dataSourceType_ == External)
         {
             // For external datatypes, import the data
-            if (!externalDataSource_.importData(data_, &procPool))
+            if (!externalDataSource_.importData(data_))
             {
                 return Messenger::error("Error importing data from '{}'", externalDataSource_.filename());
             }

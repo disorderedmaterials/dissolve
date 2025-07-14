@@ -24,7 +24,7 @@ Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::s
 
 Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
            const SpeciesSiteInstance &instance, const Box *box)
-    : parent_(parent), molecule_(std::move(molecule))
+    : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule))
 {
     origin_ = parent_->originMassWeighted() ? molecule_->centreOfMass(box, instance.originIndices())
                                             : molecule_->centreOfGeometry(box, instance.originIndices());

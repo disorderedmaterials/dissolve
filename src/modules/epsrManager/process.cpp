@@ -4,12 +4,11 @@
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
 #include "math/data1D.h"
-#include "module/context.h"
 #include "modules/epsr/epsr.h"
 #include "modules/epsrManager/epsrManager.h"
 
 // Run set-up stage
-bool EPSRManagerModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool EPSRManagerModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Notify targeted EPSR modules that they should not apply potentials
     for (auto *module : target_)
@@ -23,7 +22,7 @@ bool EPSRManagerModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::K
 }
 
 // Run main processing
-Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult EPSRManagerModule::process(Dissolve &dissolve)
 {
     if (averagingLength_)
         Messenger::print("Potentials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value(),
@@ -31,7 +30,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
     else
         Messenger::print("Potentials: No averaging of potentials will be performed.\n");
 
-    auto &moduleData = moduleContext.dissolve().processingModuleData();
+    auto &moduleData = dissolve.processingModuleData();
 
     // Loop over target data and form summed / averaged potentials
     PotentialSet newPotentials;
@@ -64,8 +63,8 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
     auto &currentPotentials = moduleData.realise<PotentialSet>("PotentialSet", name_, GenericItem::InRestartFileFlag);
     // Average the Potentials
     if (averagingLength_)
-        Averaging::average<PotentialSet>(moduleContext.dissolve().processingModuleData(), "PotentialSet", name(),
-                                         averagingLength_.value(), averagingScheme_);
+        Averaging::average<PotentialSet>(dissolve.processingModuleData(), "PotentialSet", name(), averagingLength_.value(),
+                                         averagingScheme_);
 
     // Apply potential scalings
     auto scalings = DissolveSys::splitString(potentialScalings_, ",");
@@ -105,7 +104,7 @@ Module::ExecutionResult EPSRManagerModule::process(ModuleContext &moduleContext)
     for (auto &&[key, epData] : currentPotentials.potentialMap())
     {
         // Grab pointer to the relevant pair potential (if it exists)
-        auto *pp = moduleContext.dissolve().pairPotential(epData.at1, epData.at2);
+        auto *pp = dissolve.pairPotential(epData.at1, epData.at2);
         if (pp)
             pp->setAdditionalPotential(epData.potential);
     }

@@ -186,11 +186,12 @@ TEST_F(VoxelDensityModuleTest, ScatteringLengthDensity)
 TEST_F(VoxelDensityModuleTest, Water)
 {
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/voxelDensity-water.txt"));
-    auto *cfg = systemTest.coreData().configurations().front().get();
-    EXPECT_EQ(cfg->nMolecules(), 267);
 
     // Iterate for 95 frames
     ASSERT_TRUE(systemTest.iterateRestart(95));
+
+    auto *cfg = systemTest.coreData().configurations().front().get();
+    EXPECT_EQ(cfg->nMolecules(), 267);
 
     auto consts = constants<VoxelDensityModuleTest::Water>();
     auto moduleMass = consts.modules[0];

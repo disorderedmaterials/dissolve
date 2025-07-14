@@ -51,12 +51,11 @@ class GeometryOptimisationModule : public Module
     // Sort bounds / energies so that minimum energy is in the central position
     void sortBoundsAndEnergies(std::array<double, 3> &bounds, std::array<double, 3> &energies);
     // Return energy of adjusted coordinates, following the force vectors by the supplied amount
-    template <class T>
-    double energyAtGradientPoint(const ProcessPool &procPool, T *target, const PotentialMap &potentialMap, double delta);
+    template <class T> double energyAtGradientPoint(T *target, const PotentialMap &potentialMap, double delta);
     // Perform Golden Search within specified bounds
     template <class T>
-    double goldenSearch(const ProcessPool &procPool, T *target, const PotentialMap &potentialMap, const double tolerance,
-                        std::array<double, 3> &bounds, std::array<double, 3> &energies, int &nPointsAccepted)
+    double goldenSearch(T *target, const PotentialMap &potentialMap, const double tolerance, std::array<double, 3> &bounds,
+                        std::array<double, 3> &energies, int &nPointsAccepted)
     {
         // Ensure that the energy minimum is the midpoint
         sortBoundsAndEnergies(bounds, energies);
@@ -76,7 +75,7 @@ class GeometryOptimisationModule : public Module
         auto newMinimum = bounds[1] + 0.3819660 * (xyLargest ? dxy : dyz);
 
         // Test energy at new trial minimum
-        auto eNew = energyAtGradientPoint(procPool, target, potentialMap, newMinimum);
+        auto eNew = energyAtGradientPoint(target, potentialMap, newMinimum);
         Messenger::printVerbose("--> GOLD point is {:12.5e} [{:12.5e}] ", eNew, newMinimum);
 
         // Set order for checking of energy points
@@ -96,7 +95,7 @@ class GeometryOptimisationModule : public Module
                 ++nPointsAccepted;
 
                 // Recurse into the new region
-                return goldenSearch(procPool, target, potentialMap, tolerance, bounds, energies, nPointsAccepted);
+                return goldenSearch(target, potentialMap, tolerance, bounds, energies, nPointsAccepted);
             }
         }
 
@@ -107,16 +106,15 @@ class GeometryOptimisationModule : public Module
     }
     // Line minimise supplied target from the reference coordinates along the stored force vectors
     template <class T>
-    double lineMinimise(const ProcessPool &procPool, T *target, const PotentialMap &potentialMap, const double tolerance,
-                        double &stepSize)
+    double lineMinimise(T *target, const PotentialMap &potentialMap, const double tolerance, double &stepSize)
     {
         // Brent-style line minimiser with parabolic interpolation and Golden Search backup
 
         // Set initial bounding values
         std::array<double, 3> bounds{0.0, stepSize, 2.0 * stepSize};
-        std::array<double, 3> energies{EnergyModule::totalEnergy(procPool, target, potentialMap),
-                                       energyAtGradientPoint(procPool, target, potentialMap, bounds[1]),
-                                       energyAtGradientPoint(procPool, target, potentialMap, bounds[2])};
+        std::array<double, 3> energies{EnergyModule::totalEnergy(target, potentialMap),
+                                       energyAtGradientPoint(target, potentialMap, bounds[1]),
+                                       energyAtGradientPoint(target, potentialMap, bounds[2])};
 
         Messenger::printVerbose(
             "Initial bounding values/energies = {:12.5e} ({:12.5e}) {:12.5e} ({:12.5e}) {:12.5e} ({:12.5e})", bounds[0],
@@ -143,7 +141,7 @@ class GeometryOptimisationModule : public Module
             auto newBound = bounds[1] - 0.5 * (a / b);
 
             // Compute energy of new point and check that it went down...
-            auto eNew = energyAtGradientPoint(procPool, target, potentialMap, newBound);
+            auto eNew = energyAtGradientPoint(target, potentialMap, newBound);
 
             Messenger::printVerbose("PARABOLIC point gives energy {:12.5e} @ {:12.5e}", eNew, newBound);
             if (eNew < energies[1])
@@ -181,7 +179,7 @@ class GeometryOptimisationModule : public Module
 
                 // Try recursive Golden Search instead, into the largest of the two sections
                 auto nPointsAccepted = 0;
-                goldenSearch(procPool, target, potentialMap, tolerance, bounds, energies, nPointsAccepted);
+                goldenSearch(target, potentialMap, tolerance, bounds, energies, nPointsAccepted);
                 if (nPointsAccepted == 0)
                     break;
             }
@@ -193,18 +191,18 @@ class GeometryOptimisationModule : public Module
         // Set an updated step size based on the current bounds
         stepSize = bounds[0] + bounds[1] + bounds[2];
 
-        energyAtGradientPoint(procPool, target, potentialMap, bounds[1]);
+        energyAtGradientPoint(target, potentialMap, bounds[1]);
 
         return energies[1];
     }
     // Geometry optimise the target object
-    template <class T> void optimise(const PotentialMap &potentialMap, const ProcessPool &procPool, T *target)
+    template <class T> void optimise(const PotentialMap &potentialMap, T *target)
     {
         const auto nStepSizeResetsAllowed = 0;
 
         // Get the initial energy and forces of the Configuration
-        auto oldEnergy = EnergyModule::totalEnergy(procPool, target, potentialMap);
-        ForcesModule::totalForces(procPool, target, potentialMap, ForcesModule::ForceCalculationType::Full, f_, f_);
+        auto oldEnergy = EnergyModule::totalEnergy(target, potentialMap);
+        ForcesModule::totalForces(target, potentialMap, ForcesModule::ForceCalculationType::Full, f_, f_);
         auto oldRMSForce = rmsForce();
 
         // Set initial step size - the line minimiser will modify this as we proceed
@@ -222,11 +220,11 @@ class GeometryOptimisationModule : public Module
             setReferenceCoordinates(target);
 
             // Line minimise along the force gradient
-            auto newEnergy = lineMinimise(procPool, target, potentialMap, tolerance_ * 0.01, stepSize);
+            auto newEnergy = lineMinimise(target, potentialMap, tolerance_ * 0.01, stepSize);
 
             // Get new forces and RMS for the adjusted coordinates (now stored in the Configuration) and determine
             // new step size
-            ForcesModule::totalForces(procPool, target, potentialMap, ForcesModule::ForceCalculationType::Full, f_, f_);
+            ForcesModule::totalForces(target, potentialMap, ForcesModule::ForceCalculationType::Full, f_, f_);
             auto newRMSForce = rmsForce();
 
             // Calculate deltas
@@ -261,12 +259,12 @@ class GeometryOptimisationModule : public Module
 
     public:
     // Geometry optimise supplied Species
-    bool optimiseSpecies(const PotentialMap &potentialMap, const ProcessPool &procPool, Species *sp);
+    bool optimiseSpecies(const PotentialMap &potentialMap, Species *sp);
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

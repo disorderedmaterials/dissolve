@@ -59,9 +59,8 @@ std::optional<double> MDModule::determineTimeStep(TimestepType timestepType, dou
 }
 
 // Evolve Species coordinates, returning new coordinates
-std::vector<Vector3> MDModule::evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
-                                      double temperature, int nSteps, double maxDeltaT, const std::vector<Vector3> &rInit,
-                                      std::vector<Vector3> &velocities)
+std::vector<Vector3> MDModule::evolve(const PotentialMap &potentialMap, const Species *sp, double temperature, int nSteps,
+                                      double maxDeltaT, const std::vector<Vector3> &rInit, std::vector<Vector3> &velocities)
 {
     assert(sp);
     assert(sp->nAtoms() == velocities.size());
@@ -103,7 +102,7 @@ std::vector<Vector3> MDModule::evolve(const ProcessPool &procPool, const Potenti
     std::fill(fInter.begin(), fInter.end(), Vector3());
     std::fill(fIntra.begin(), fIntra.end(), Vector3());
 
-    ForcesModule::totalForces(procPool, sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rInit);
+    ForcesModule::totalForces(sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rInit);
 
     // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
     std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
@@ -151,7 +150,7 @@ std::vector<Vector3> MDModule::evolve(const ProcessPool &procPool, const Potenti
         std::fill(fIntra.begin(), fIntra.end(), Vector3());
 
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-        ForcesModule::totalForces(procPool, sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rNew);
+        ForcesModule::totalForces(sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rNew);
         std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
         std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
 

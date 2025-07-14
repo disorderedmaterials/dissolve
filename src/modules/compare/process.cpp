@@ -5,7 +5,7 @@
 #include "math/interpolator.h"
 #include "modules/compare/compare.h"
 
-Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult CompareModule::process(Dissolve &dissolve)
 {
     auto index = 1;
     for (auto &dataPair : data1dSources_)
@@ -26,13 +26,13 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         ranges = ranges_;
 
         // Source the data
-        if (!dataPair.first->sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.first->sourceData(dissolve.processingModuleData()))
         {
             Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first->dataName(),
                              dataPair.second->dataName(), dataPair.first->dataName());
             continue;
         }
-        if (!dataPair.second->sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.second->sourceData(dissolve.processingModuleData()))
         {
             Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first->dataName(),
                              dataPair.second->dataName(), dataPair.second->dataName());
@@ -46,10 +46,10 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
          * Save Data
          */
 
-        auto &dataAStorage = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            std::format("Pair{}_DataA", index), name_, GenericItem::InRestartFileFlag);
-        auto &dataBStorage = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            std::format("Pair{}_DataB", index), name_, GenericItem::InRestartFileFlag);
+        auto &dataAStorage = dissolve.processingModuleData().realise<Data1D>(std::format("Pair{}_DataA", index), name_,
+                                                                             GenericItem::InRestartFileFlag);
+        auto &dataBStorage = dissolve.processingModuleData().realise<Data1D>(std::format("Pair{}_DataB", index), name_,
+                                                                             GenericItem::InRestartFileFlag);
 
         dataAStorage = dataA;
         dataBStorage = dataB;
@@ -81,8 +81,8 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
          * Calculating the difference (delta) between datasets
          */
 
-        auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(std::format("Pair{}_Delta", index), name_,
-                                                                                      GenericItem::InRestartFileFlag);
+        auto &delta = dissolve.processingModuleData().realise<Data1D>(std::format("Pair{}_Delta", index), name_,
+                                                                      GenericItem::InRestartFileFlag);
 
         delta.clear();
 

@@ -104,11 +104,4 @@ class Histogram2D
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Sum histogram data onto all processes
-    bool allSum(ProcessPool &procPool);
 };

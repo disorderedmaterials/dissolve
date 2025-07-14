@@ -65,16 +65,6 @@
                 "GUI": "ON"
 	    }
 	},
-	{
-	    "name": "MPI-base",
-	    "displayName": "MPI build settings",
-	    "description": "Common settings for all GUI builds",
-	    "hidden": true,
-            "cacheVariables": {
-                "PARALLEL": "ON"
-	    }
-	},
-
 
 	{
 	    "name": "GUI",
@@ -105,37 +95,6 @@
 	    "displayName": "GUI Debug Nix Build",
 	    "description": "The preset for a GUI debug build on a Nix system with tests",
 	    "inherits": ["base", "Debug", "GUI-base", "nix", "tests"]
-	},
-
-	{
-	    "name": "MPI",
-	    "displayName": "MPI Build",
-	    "description": "The preset for a MPI developer build, with tests",
-	    "inherits": ["base", "Release", "MPI-base", "tests"]
-	},
-	{
-	    "name": "MPI-Release",
-	    "displayName": "MPI Release Build",
-	    "description": "The preset for a MPI production build, with without tests",
-	    "inherits": ["base", "Release", "MPI-base"]
-	},
-	{
-	    "name": "MPI-Debug",
-	    "displayName": "MPI Debug Build",
-	    "description": "The preset for a MPI debug build, with tests and debugging enabled",
-	    "inherits": ["base", "Debug", "MPI-base", "tests"]
-	},
-	{
-	    "name": "MPI-nix",
-	    "displayName": "MPI Nix Build",
-	    "description": "The preset for a MPI developer build on a Nix system, with tests",
-	    "inherits": ["base", "Release", "MPI-base", "nix"]
-	},
-	{
-	    "name": "MPI-Debug-nix",
-	    "displayName": "MPI Debug Nix Build",
-	    "description": "The preset for a MPI debug build on a Nix system, with tests",
-	    "inherits": ["base", "Debug", "MPI-base", "nix"]
 	},
 
 	{

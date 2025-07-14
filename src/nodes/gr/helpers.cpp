@@ -54,7 +54,7 @@ bool GRNode::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet)
 }
 
 // Calculate partial g(r) with optimised double-loop
-bool GRNode::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double binWidth)
+bool GRNode::calculateGRSimple(Configuration *cfg, PartialSet &partialSet, const double binWidth)
 {
     // Variables
     int n, m, nTypes, typeI, typeJ, i, j, nPoints;
@@ -93,10 +93,6 @@ bool GRNode::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg, 
     Vector3 centre, *ri, *rj, mim;
     double rbin = 1.0 / binWidth;
 
-    // Loop context is to use all processes in Pool as one group
-    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
-
     message("Self terms..\n");
 
     // Self terms
@@ -107,8 +103,7 @@ bool GRNode::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg, 
         bins = binss[typeI];
         nPoints = partialSet.fullHistogram(typeI, typeI).nBins();
         PairIterator pairs(maxr[typeI]);
-        auto [start, stop] = chop_range(pairs, pairs.end(), nChunks, offset);
-        std::for_each(start, stop,
+        std::for_each(pairs.begin(), pairs.end(),
                       [box, bins, rbin, ri, nPoints, &histogram](auto it)
                       {
                           auto [i, j] = it;
@@ -143,8 +138,7 @@ bool GRNode::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg, 
             auto &histogram = partialSet.fullHistogram(typeI, typeJ).bins();
             bins = binss[typeJ];
             nPoints = partialSet.fullHistogram(typeI, typeJ).nBins();
-            auto [begin, end] = chop_range(0, maxr[typeI], nChunks, offset);
-            for (i = begin; i < end; ++i)
+            for (i = 0; i < maxr[typeI]; ++i)
             {
                 centre = ri[i];
                 for (j = 0; j < maxr[typeJ]; ++j)
@@ -166,15 +160,12 @@ bool GRNode::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg, 
     return true;
 }
 
-bool GRNode::calculateGRCells(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
+bool GRNode::calculateGRCells(Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
     auto &cellArray = cfg->cells();
 
     // Loop context is to use all processes in Pool as one group
     Combinations comb(cellArray.nCells());
-    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
-    auto [cStart, cEnd] = chop_range(0, comb.getNumCombinations(), nChunks, offset);
 
     auto combinableHistograms = dissolve::CombinableValue<Array2D<Histogram1D>>(
         [&partialSet]()
@@ -228,14 +219,13 @@ bool GRNode::calculateGRCells(const ProcessPool &procPool, Configuration *cfg, P
     };
 
     // Execute lambda operator for each cell
-    dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(cStart), dissolve::counting_iterator<int>(cEnd),
-                       unaryOp);
+    dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(0),
+                       dissolve::counting_iterator<int>(comb.getNumCombinations()), unaryOp);
     auto histograms = combinableHistograms.finalize();
     addHistogramsToPartialSet(histograms, partialSet);
 
     // Atoms within the same cell
-    auto [start, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
-    for (int n = start; n < end; ++n)
+    for (int n = 0; n < cellArray.nCells(); ++n)
     {
         auto *cellI = cellArray.cell(n);
         auto &atomsI = cellI->atoms();
@@ -346,8 +336,8 @@ SpeciesPopulations GRNode::speciesPopulations() const
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, PartialSet &originalgr, GRNode::PartialsMethod method,
-                         const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate)
+bool GRNode::calculateGR(Configuration *cfg, PartialSet &originalgr, GRNode::PartialsMethod method, const double rdfRange,
+                         const double rdfBinWidth, bool &alreadyUpToDate)
 {
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
@@ -377,13 +367,12 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
     if (method == PartialsMethod::TestMethod)
         calculateGRTestSerial(cfg, originalgr_.value());
     else if (method == PartialsMethod::SimpleMethod)
-        calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
+        calculateGRSimple(cfg, originalgr, rdfBinWidth);
     else if (method == PartialsMethod::CellsMethod)
-        calculateGRCells(procPool, cfg, originalgr, rdfRange);
+        calculateGRCells(cfg, originalgr, rdfRange);
     else if (method == PartialsMethod::AutoMethod)
     {
-        cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, originalgr, rdfRange)
-                              : calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
+        cfg->nAtoms() > 10000 ? calculateGRCells(cfg, originalgr, rdfRange) : calculateGRSimple(cfg, originalgr, rdfBinWidth);
     }
     timer.stop();
     message("Finished calculation of partials ({} elapsed).\n", timer.totalTimeString());
@@ -395,19 +384,12 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
     const auto *box = cfg->box();
     const auto &cells = cfg->cells();
 
-    // Set start/stride for parallel loop (pool solo)
-    auto offset = (method == PartialsMethod::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
-    auto nChunks = (method == PartialsMethod::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
-
     timer.start();
 
-    // Loop over molecules...
-    // NOTE: If you attempt to use chop_range for this loop, instead of stride, it will fail.
-    // The problem does not seem to be in chop_range, but rather in how the loops are merged.
-    // This is GitHub issue #562
-    for (auto it = cfg->molecules().begin() + offset; it < cfg->molecules().end(); it += nChunks)
+    // Loop over molecules
+    for (auto &mol : cfg->molecules())
     {
-        const auto &atoms = (*it)->atoms();
+        const auto &atoms = mol->atoms();
 
         dissolve::for_each_pair(ParallelPolicies::seq, atoms.begin(), atoms.end(),
                                 [box, &originalgr](int index, auto &i, int jndex, auto &j)
@@ -438,21 +420,10 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
      */
 
     timer.start();
-    Timer commsTimer(false);
     auto success =
         for_each_pair_early(0, originalgr.nAtomTypes(),
-                            [&originalgr, &procPool, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
+                            [&originalgr](auto typeI, auto typeJ) -> EarlyReturn<bool>
                             {
-                                // Sum histogram data from all processes (except if using PartialsMethod::TestMethod,
-                                // where all processes have all data already)
-                                if (method != PartialsMethod::TestMethod)
-                                {
-                                    if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool, commsTimer))
-                                        return false;
-                                    if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool, commsTimer))
-                                        return false;
-                                }
-
                                 // Create unbound histogram from total and bound data
                                 originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
                                 originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
@@ -468,8 +439,7 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
     // Sum total functions
     originalgr.formTotals(true);
     timer.stop();
-    message("Finished summation and normalisation of partial g(r) data ({} elapsed, {} comms).\n", timer.totalTimeString(),
-            commsTimer.totalTimeString());
+    message("Finished summation and normalisation of partial g(r) data ({}).\n", timer.totalTimeString());
 
     /*
      * Partials are now up-to-date
@@ -479,8 +449,8 @@ bool GRNode::calculateGR(const ProcessPool &procPool, Configuration *cfg, Partia
 }
 
 // Calculate smoothed/broadened partial g(r) from supplied partials
-bool GRNode::calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
-                                   PartialSet &unweightedgr, const Function1DWrapper intraBroadening, int smoothing)
+bool GRNode::calculateUnweightedGR(Configuration *cfg, const PartialSet &originalgr, PartialSet &unweightedgr,
+                                   const Function1DWrapper intraBroadening, int smoothing)
 {
     // If the unweightedgr is not yet initialised, copy the originalgr. Otherwise, just copy the values (in order to
     // maintain the incremental versioning of the data)
@@ -537,7 +507,7 @@ bool GRNode::calculateUnweightedGR(const ProcessPool &procPool, Configuration *c
 }
 
 // Sum unweighted g(r) over the supplied Module's target Configurations
-bool GRNode::sumUnweightedGR(const ProcessPool &procPool, std::string_view targetPrefix, std::string_view parentPrefix,
+bool GRNode::sumUnweightedGR(std::string_view targetPrefix, std::string_view parentPrefix,
                              const std::vector<Configuration *> &parentCfgs, PartialSet &summedUnweightedGR)
 {
     combinedAtomTypes_.clear();

@@ -102,7 +102,7 @@ class CellsEnergyTest : public ::testing::Test
         ASSERT_TRUE(dissolve_.prepare());
 
         // Initialise an EnergyKernel with the specified cutoff
-        auto kernel = KernelProducer::energyKernel(cfg, dissolve_.worldPool(), dissolve_.potentialMap(), rCut);
+        auto kernel = KernelProducer::energyKernel(cfg, dissolve_.potentialMap(), rCut);
 
         // Regenerate cells to new size spec and re-assign atoms
         cfg->cells().generate(cfg->box(), cellSize, dissolve_.pairPotentialRange());
@@ -110,9 +110,8 @@ class CellsEnergyTest : public ::testing::Test
 
         // Calculate total Cell-based energy
         EXPECT_NEAR(analyticEnergyNoCells(cfg, rCut), tabulatedEnergyNoCells(cfg, rCut), 1.0e-2);
-        EXPECT_NEAR(tabulatedEnergyNoCells(cfg, rCut),
-                    kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy).total(), 1.0e-6);
-        EXPECT_NEAR(refEnergy - lrc, kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy).total(), 1.65e-2);
+        EXPECT_NEAR(tabulatedEnergyNoCells(cfg, rCut), kernel->totalPairPotentialEnergy(false).total(), 1.0e-6);
+        EXPECT_NEAR(refEnergy - lrc, kernel->totalPairPotentialEnergy(false).total(), 1.65e-2);
     }
 };
 

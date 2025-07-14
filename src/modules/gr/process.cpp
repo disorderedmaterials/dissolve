@@ -5,11 +5,10 @@
 #include "classes/species.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
-#include "module/context.h"
 #include "modules/gr/gr.h"
 
 // Run main processing
-Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult GRModule::process(Dissolve &dissolve)
 {
     // Print argument/parameter summary
     if (!requestedRange_)
@@ -66,10 +65,9 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
 
         // Calculate unweighted partials for this Configuration
         bool alreadyUpToDate;
-        calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), cfg, partialsMethod_,
-                    rdfRange, binWidth_, alreadyUpToDate);
-        auto &originalgr = moduleContext.dissolve().processingModuleData().retrieve<PartialSet>(
-            std::format("{}//OriginalGR", cfg->niceName()), name_);
+        calculateGR(dissolve.processingModuleData(), cfg, partialsMethod_, rdfRange, binWidth_, alreadyUpToDate);
+        auto &originalgr =
+            dissolve.processingModuleData().retrieve<PartialSet>(std::format("{}//OriginalGR", cfg->niceName()), name_);
 
         // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
         if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
@@ -77,9 +75,8 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
             // Store the current fingerprint, since we must ensure we retain it in the averaged T.
             std::string currentFingerprint{originalgr.fingerprint()};
 
-            Averaging::average<PartialSet>(moduleContext.dissolve().processingModuleData(),
-                                           std::format("{}//OriginalGR", cfg->niceName()), name_, averagingLength_.value(),
-                                           averagingScheme_);
+            Averaging::average<PartialSet>(dissolve.processingModuleData(), std::format("{}//OriginalGR", cfg->niceName()),
+                                           name_, averagingLength_.value(), averagingScheme_);
 
             // Re-set the object names and fingerprints of the partials
             originalgr.setFingerprint(currentFingerprint);
@@ -90,34 +87,29 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
         {
             // Copy the already-calculated g(r), then calculate a new set using the Test method
             PartialSet referencePartials = originalgr;
-            calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), cfg, GRModule::TestMethod,
-                        rdfRange, binWidth_, alreadyUpToDate);
+            calculateGR(dissolve.processingModuleData(), cfg, GRModule::TestMethod, rdfRange, binWidth_, alreadyUpToDate);
             if (!testReferencePartials(referencePartials, originalgr, 1.0e-6))
                 return ExecutionResult::Failed;
         }
 
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_ / intramolecular broadening
-        auto &unweightedgr = moduleContext.dissolve().processingModuleData().realise<PartialSet>(
+        auto &unweightedgr = dissolve.processingModuleData().realise<PartialSet>(
             std::format("{}//UnweightedGR", cfg->niceName()), name_, GenericItem::InRestartFileFlag);
-        calculateUnweightedGR(moduleContext.processPool(), cfg, originalgr, unweightedgr, intraBroadening_,
-                              nSmooths_.value_or(0));
+        calculateUnweightedGR(cfg, originalgr, unweightedgr, intraBroadening_, nSmooths_.value_or(0));
 
         // Save data if requested
-        if (save_ &&
-            (!MPIRunMaster(moduleContext.processPool(), unweightedgr.save(name_, "UnweightedGR", "gr", "r, Angstroms"))))
+        if (save_ && (!unweightedgr.save(name_, "UnweightedGR", "gr", "r, Angstroms")))
             return ExecutionResult::Failed;
-        if (saveOriginal_ &&
-            (!MPIRunMaster(moduleContext.processPool(), originalgr.save(name_, "OriginalGR", "gr", "r, Angstroms"))))
+        if (saveOriginal_ && (!originalgr.save(name_, "OriginalGR", "gr", "r, Angstroms")))
             return ExecutionResult::Failed;
     }
 
     // Create/retrieve PartialSet for summed unweighted g(r)
-    auto &summedUnweightedGR = moduleContext.dissolve().processingModuleData().realise<PartialSet>(
-        "UnweightedGR", name_, GenericItem::InRestartFileFlag);
+    auto &summedUnweightedGR =
+        dissolve.processingModuleData().realise<PartialSet>("UnweightedGR", name_, GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
-    if (!GRModule::sumUnweightedGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), name(), name(),
-                                   targetConfigurations_, summedUnweightedGR))
+    if (!GRModule::sumUnweightedGR(dissolve.processingModuleData(), name(), name(), targetConfigurations_, summedUnweightedGR))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

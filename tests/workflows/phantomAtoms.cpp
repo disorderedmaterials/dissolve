@@ -41,7 +41,7 @@ TEST_F(PhantomAtomsTest, Basic)
     procedure.createRootNode<AddGeneratorNode>("ArtAr", artAr, nMolecules);
 
     // Set up the prior configuration
-    cfg->generate({ProcessPool(), dissolve});
+    cfg->generate({dissolve});
 
     // Basic species checks
     EXPECT_EQ(artAr->nAtoms(), 5);

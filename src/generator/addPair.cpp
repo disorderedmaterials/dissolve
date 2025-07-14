@@ -2,7 +2,6 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "generator/addPair.h"
-#include "base/randomBuffer.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coreData.h"
@@ -13,6 +12,7 @@
 #include "keywords/nodeValue.h"
 #include "keywords/nodeValueEnumOptions.h"
 #include "keywords/species.h"
+#include "math/mathFunc.h"
 
 AddPairGeneratorNode::AddPairGeneratorNode(const Species *spA, const Species *spB, const NodeValue &population,
                                            const NodeValue &density, Units::DensityUnits densityUnits)
@@ -99,7 +99,6 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
     }
 
     // Now we add the molecules
-    RandomBuffer randomBuffer(generatorContext.processPool(), ProcessPool::PoolProcessesCommunicator);
     Vector3 newCentre;
     Matrix3 transform;
     const auto *box = cfg->box();
@@ -123,7 +122,7 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
         switch (positioningType_)
         {
             case (AddGeneratorNodeBase::PositioningType::Random):
-                newCentre = box->getReal({randomBuffer.random(), randomBuffer.random(), randomBuffer.random()});
+                newCentre = box->getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});
                 break;
             case (AddGeneratorNodeBase::PositioningType::Region):
                 newCentre = region_->region().randomCoordinate();
@@ -146,7 +145,7 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
         // Generate and apply a random rotation matrix
         if (rotate_)
         {
-            transform.createRotationXY(randomBuffer.randomPlusMinusOne() * 180.0, randomBuffer.randomPlusMinusOne() * 180.0);
+            transform.createRotationXY(DissolveMath::randomPlusMinusOne() * 180.0, DissolveMath::randomPlusMinusOne() * 180.0);
             molA->transform(box, transform, newCentre);
             molB->transform(box, transform, newCentre);
         }

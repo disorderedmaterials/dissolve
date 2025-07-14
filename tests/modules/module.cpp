@@ -4,7 +4,6 @@
 #include "classes/configuration.h"
 #include "generator/copy.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -33,8 +32,7 @@ TEST_F(ModuleTest, ConfigurationTargets)
     auto *siteRDF = systemTest.getModule<SiteRDFModule>("RDF(COM-COM)");
 
     // Try to run the siteRDF module again
-    ModuleContext context(systemTest.dissolve().worldPool(), systemTest.dissolve());
-    EXPECT_EQ(siteRDF->executeProcessing(context), Module::ExecutionResult::NotExecuted);
+    EXPECT_EQ(siteRDF->executeProcessing(systemTest.dissolve()), Module::ExecutionResult::NotExecuted);
 
     // Double-check the processing module data
     EXPECT_EQ(systemTest.dissolve().processingModuleData().version("Histo-AB", "RDF(COM-COM)"), nIterations - 1);
@@ -46,12 +44,12 @@ TEST_F(ModuleTest, ConfigurationTargets)
     siteRDF->keywords().set("Configuration", &cfg);
 
     // Try to run the module again - it should, but all processing module data for it should be cleared
-    EXPECT_EQ(siteRDF->executeProcessing(context), Module::ExecutionResult::Success);
+    EXPECT_EQ(siteRDF->executeProcessing(systemTest.dissolve()), Module::ExecutionResult::Success);
     EXPECT_EQ(systemTest.dissolve().processingModuleData().version("Histo-AB", "RDF(COM-COM)"), 0);
 
     // Now remove the configuration target completely - module shouldn't run, but data should remain
     siteRDF->keywords().objectNoLongerValid(&cfg);
-    EXPECT_EQ(siteRDF->executeProcessing(context), Module::ExecutionResult::Failed);
+    EXPECT_EQ(siteRDF->executeProcessing(systemTest.dissolve()), Module::ExecutionResult::Failed);
     EXPECT_TRUE(systemTest.dissolve().processingModuleData().contains("Histo-AB", "RDF(COM-COM)"));
 }
 

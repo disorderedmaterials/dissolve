@@ -3,6 +3,7 @@
 
 #include "math/mathFunc.h"
 
+#include "base/timer.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "math/ft.h"
@@ -15,9 +16,8 @@
  */
 
 // Generate S(Q) from supplied g(r)
-bool SQNode::calculateUnweightedSQ(const ProcessPool &procPool, const PartialSet &unweightedgr, PartialSet &unweightedsq,
-                                   double qMin, double qDelta, double qMax, double rho, const WindowFunction &windowFunction,
-                                   Function1DWrapper broadening)
+bool SQNode::calculateUnweightedSQ(const PartialSet &unweightedgr, PartialSet &unweightedsq, double qMin, double qDelta,
+                                   double qMax, double rho, const WindowFunction &windowFunction, Function1DWrapper broadening)
 {
     // Copy partial g(r) into our new S(Q) object - it should have been initialised already, so we will just check its size
     if (unweightedgr.nAtomTypes() != unweightedsq.nAtomTypes())

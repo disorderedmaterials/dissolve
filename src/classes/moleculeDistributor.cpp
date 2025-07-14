@@ -5,8 +5,8 @@
 #include "classes/atom.h"
 
 MoleculeDistributor::MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray,
-                                         ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed)
-    : Distributor(moleculeArray.size(), cellArray, procPool, strategy, repeatsAllowed), moleculeArray_(moleculeArray)
+                                         bool repeatsAllowed)
+    : Distributor(moleculeArray.size(), cellArray, repeatsAllowed), moleculeArray_(moleculeArray)
 {
 }
 

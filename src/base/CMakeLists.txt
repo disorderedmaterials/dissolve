@@ -7,9 +7,6 @@ add_library(
   lock.cpp
   messenger.cpp
   outputHandler.cpp
-  processGroup.cpp
-  processPool.cpp
-  randomBuffer.cpp
   sysFunc.cpp
   timer.cpp
   units.cpp
@@ -22,9 +19,6 @@ add_library(
   lock.h
   messenger.h
   outputHandler.h
-  processGroup.h
-  processPool.h
-  randomBuffer.h
   sysFunc.h
   timer.h
   units.h

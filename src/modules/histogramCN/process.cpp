@@ -8,13 +8,12 @@
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "math/integerHistogram1D.h"
-#include "module/context.h"
 #include "modules/histogramCN/histogramCN.h"
 
 // Run main processing
-Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult HistogramCNModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
@@ -57,7 +56,7 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
     normaliserCN.normaliseSumTo();
 
     // Save CN data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataCN, exportFileAndFormat_, moduleContext.processPool()))
+    if (!DataExporter::exportData(dataCN, exportFileAndFormat_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

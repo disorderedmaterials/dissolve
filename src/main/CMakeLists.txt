@@ -1,6 +1,5 @@
 add_library(
   main
-  comms.cpp
   compatibility.cpp
   cli.cpp
   dissolve.cpp

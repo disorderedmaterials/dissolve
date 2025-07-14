@@ -6,16 +6,15 @@
 #include "keywords/module.h"
 #include "main/dissolve.h"
 #include "math/ft.h"
-#include "module/context.h"
 #include "modules/gr/gr.h"
 #include "modules/neutronSQ/neutronSQ.h"
 #include "modules/sq/sq.h"
 #include "modules/tr/tr.h"
 
 // Run main processing
-Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult TRModule::process(Dissolve &dissolve)
 {
-    auto &moduleData = moduleContext.dissolve().processingModuleData();
+    auto &moduleData = dissolve.processingModuleData();
 
     // Get dependent modules
     if (!sourceNeutronSQ_)
@@ -59,8 +58,8 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     const auto rho = grModule->effectiveDensity();
 
     // Create weightedTR PartialSet in rtstart file
-    auto [weightedTR, wGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
-        "WeightedTR", name_, GenericItem::InRestartFileFlag);
+    auto [weightedTR, wGRstatus] =
+        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedTR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedTR.setUpPartials(unweightedGR.atomTypeMix(), false);
 
@@ -111,7 +110,7 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
 
     // Calculate TR from GR
     auto [referenceCalcTR, bGRstatus] =
-        moduleContext.dissolve().processingModuleData().realiseIf<Data1D>("ReferenceTR", name_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realiseIf<Data1D>("ReferenceTR", name_, GenericItem::InRestartFileFlag);
 
     referenceCalcTR.copyArrays(referenceSQ);
     // T(r)=4 * PI * x * rho * (G(r) + BCAS)
@@ -122,8 +121,8 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     referenceCalcTR *= referenceCalcTR.xAxis();
 
     // Calculate RepresentativeTR
-    auto [representativeTR, rTRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
-        "RepresentativeTR", name_, GenericItem::InRestartFileFlag);
+    auto [representativeTR, rTRstatus] =
+        dissolve.processingModuleData().realiseIf<PartialSet>("RepresentativeTR", name_, GenericItem::InRestartFileFlag);
     if (rTRstatus == GenericItem::ItemStatus::Created)
         representativeTR.setUpPartials(representativeGR.atomTypeMix(), false);
 
@@ -199,11 +198,9 @@ Module::ExecutionResult TRModule::process(ModuleContext &moduleContext)
     representativeTR.formTRTotals(weights);
 
     // Save data if requested
-    if (saveTR_ && (!MPIRunMaster(moduleContext.processPool(), weightedTR.save(name_, "WeightedTR", "tr", "Q, 1/Angstroms"))))
+    if (saveTR_ && (!weightedTR.save(name_, "WeightedTR", "tr", "Q, 1/Angstroms")))
         return ExecutionResult::Failed;
-    // Save data if requested
-    if (saveRepTR_ &&
-        (!MPIRunMaster(moduleContext.processPool(), representativeTR.save(name_, "RepresentativeTR", "tr", "Q, 1/Angstroms"))))
+    if (saveRepTR_ && (!representativeTR.save(name_, "RepresentativeTR", "tr", "Q, 1/Angstroms")))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
