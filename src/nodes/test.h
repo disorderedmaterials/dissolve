@@ -32,6 +32,8 @@ class TestNode : public Node
     std::optional<Configuration> optionalConfiguration_;
     // Whether our processing loop creates a valid optional Configuration data
     bool createConfiguration_{false};
+    // Number vector
+    std::vector<Number> numberVector_;
 
     public:
     // Return the optional Configuration

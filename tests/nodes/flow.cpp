@@ -38,29 +38,29 @@ class GraphFlowTest : public ::testing::Test
         z_ = dynamic_cast<AddNode *>(graph_.createNode("Add", "z"));
 
         ASSERT_TRUE(x_);
-        xA_ = x_->findInput("A")->upcast<Number>();
-        xB_ = x_->findInput("B")->upcast<Number>();
-        xResult_ = x_->findOutput("Result")->upcast<Number>();
+        xA_ = x_->findInput("A");
+        xB_ = x_->findInput("B");
+        xResult_ = x_->findOutput("Result");
         ASSERT_TRUE(xA_);
         ASSERT_TRUE(xB_);
         ASSERT_TRUE(xResult_);
-        xA_->set(1);
-        xB_->set(2);
+        xA_->set(Number{1});
+        xB_->set(Number{2});
 
         ASSERT_TRUE(y_);
-        yA_ = y_->findInput("A")->upcast<Number>();
-        yB_ = y_->findInput("B")->upcast<Number>();
-        yResult_ = y_->findOutput("Result")->upcast<Number>();
+        yA_ = y_->findInput("A");
+        yB_ = y_->findInput("B");
+        yResult_ = y_->findOutput("Result");
         ASSERT_TRUE(yA_);
         ASSERT_TRUE(yB_);
         ASSERT_TRUE(yResult_);
-        yA_->set(3);
-        yB_->set(4);
+        yA_->set(Number{3});
+        yB_->set(Number{4});
 
         ASSERT_TRUE(z_);
-        zA_ = z_->findInput("A")->upcast<Number>();
-        zB_ = z_->findInput("B")->upcast<Number>();
-        zResult_ = z_->findOutput("Result")->upcast<Number>();
+        zA_ = z_->findInput("A");
+        zB_ = z_->findInput("B");
+        zResult_ = z_->findOutput("Result");
         ASSERT_TRUE(zA_);
         ASSERT_TRUE(zB_);
         ASSERT_TRUE(zResult_);
@@ -75,9 +75,9 @@ class GraphFlowTest : public ::testing::Test
     protected:
     Graph graph_;
     AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr};
-    std::shared_ptr<Parameter<Number>> xA_{nullptr}, xB_{nullptr}, xResult_{nullptr};
-    std::shared_ptr<Parameter<Number>> yA_{nullptr}, yB_{nullptr}, yResult_{nullptr};
-    std::shared_ptr<Parameter<Number>> zA_{nullptr}, zB_{nullptr}, zResult_{nullptr};
+    std::shared_ptr<ParameterBase> xA_{nullptr}, xB_{nullptr}, xResult_{nullptr};
+    std::shared_ptr<ParameterBase> yA_{nullptr}, yB_{nullptr}, yResult_{nullptr};
+    std::shared_ptr<ParameterBase> zA_{nullptr}, zB_{nullptr}, zResult_{nullptr};
 };
 
 TEST_F(GraphFlowTest, Basic)
@@ -91,7 +91,7 @@ TEST_F(GraphFlowTest, Basic)
     EXPECT_EQ(x_->versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(x_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(x_->versionIndex(), 0);
-    EXPECT_EQ(xResult_->get().asInteger(), 3);
+    EXPECT_EQ(xResult_->get<Number>().asInteger(), 3);
     EXPECT_TRUE(x_->isUpToDate());
 
     EXPECT_TRUE(y_->inputsAreValid());
@@ -99,7 +99,7 @@ TEST_F(GraphFlowTest, Basic)
     EXPECT_EQ(y_->versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(y_->versionIndex(), 0);
-    EXPECT_EQ(yResult_->get().asInteger(), 7);
+    EXPECT_EQ(yResult_->get<Number>().asInteger(), 7);
     EXPECT_TRUE(y_->isUpToDate());
 
     EXPECT_TRUE(z_->inputsAreValid());
@@ -107,7 +107,7 @@ TEST_F(GraphFlowTest, Basic)
     EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->versionIndex(), 0);
-    EXPECT_EQ(zResult_->get().asInteger(), 0);
+    EXPECT_EQ(zResult_->get<Number>().asInteger(), 0);
     EXPECT_TRUE(z_->isUpToDate());
 
     // Running nodes again should not increase version index since the inputs have no dependencies
@@ -128,7 +128,7 @@ TEST_F(GraphFlowTest, Basic)
     // If we now run z we should use x's output without changing x itself
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->versionIndex(), 0);
-    EXPECT_EQ(zResult_->get().asInteger(), 3);
+    EXPECT_EQ(zResult_->get<Number>().asInteger(), 3);
     EXPECT_EQ(x_->versionIndex(), 0);
 
     // Complete the graph and link y's "Result" output to z's "B" input
@@ -138,7 +138,7 @@ TEST_F(GraphFlowTest, Basic)
     // As before, if we now run z we should use x's and y's output without changing x or y
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->versionIndex(), 0);
-    EXPECT_EQ(zResult_->get().asInteger(), 10);
+    EXPECT_EQ(zResult_->get<Number>().asInteger(), 10);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
 };
@@ -151,12 +151,12 @@ TEST_F(GraphFlowTest, SetInput)
     // Run z - all nodes should update
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->versionIndex(), 0);
-    EXPECT_EQ(zResult_->get().asInteger(), 10);
+    EXPECT_EQ(zResult_->get<Number>().asInteger(), 10);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
 
     // Set the input A of 'x' manually. This should invalidate 'x' alone.
-    xA_->set(0);
+    xA_->set(Number{0});
     EXPECT_FALSE(x_->isUpToDate());
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
@@ -167,19 +167,19 @@ TEST_F(GraphFlowTest, SetInput)
     EXPECT_EQ(x_->versionIndex(), 1);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(z_->versionIndex(), 1);
-    EXPECT_EQ(zResult_->get().asInteger(), 9);
+    EXPECT_EQ(zResult_->get<Number>().asInteger(), 9);
 
     // One more time
-    xB_->set(10);
+    xB_->set(Number{10});
     EXPECT_FALSE(x_->isUpToDate());
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(x_->versionIndex(), 2);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(z_->versionIndex(), 2);
-    EXPECT_EQ(zResult_->get().asInteger(), 17);
+    EXPECT_EQ(zResult_->get<Number>().asInteger(), 17);
 
     // And now for y
-    yB_->set(5);
+    yB_->set(Number{5});
     EXPECT_TRUE(x_->isUpToDate());
     EXPECT_FALSE(y_->isUpToDate());
     EXPECT_FALSE(z_->isUpToDate());
@@ -187,7 +187,7 @@ TEST_F(GraphFlowTest, SetInput)
     EXPECT_EQ(x_->versionIndex(), 2);
     EXPECT_EQ(y_->versionIndex(), 1);
     EXPECT_EQ(z_->versionIndex(), 3);
-    EXPECT_EQ(zResult_->get().asInteger(), 18);
+    EXPECT_EQ(zResult_->get<Number>().asInteger(), 18);
 }
 
 TEST_F(GraphFlowTest, RemoveEdges)
@@ -198,7 +198,7 @@ TEST_F(GraphFlowTest, RemoveEdges)
     // Run z - all nodes should update
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->versionIndex(), 0);
-    EXPECT_EQ(zResult_->get().asInteger(), 10);
+    EXPECT_EQ(zResult_->get<Number>().asInteger(), 10);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
 

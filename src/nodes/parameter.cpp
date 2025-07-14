@@ -4,8 +4,8 @@
 #include "nodes/parameter.h"
 #include "nodes/node.h"
 
-ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index type)
-    : parent_(parent), name_(name), description_(description), type_(type)
+ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType)
+    : parent_(parent), name_(name), description_(description), storedDataType_(storedDataType)
 {
 }
 
@@ -22,8 +22,8 @@ std::string_view ParameterBase::name() const { return name_; }
 // Return the parameter description
 std::string_view ParameterBase::description() const { return description_; }
 
-// Return the parameter type
-std::type_index ParameterBase::type() const { return type_; }
+// Return the stored data type
+std::type_index ParameterBase::storedDataType() const { return storedDataType_; }
 
 // Return the owner of the parameter
 Node *ParameterBase::parent() const { return parent_; }
@@ -43,3 +43,6 @@ void ParameterBase::setParentUpdateRequired() const { parent_->setUpdateRequired
 
 // Clear data in the parent node
 void ParameterBase::clearDataInParent() const { parent_->clearData(); }
+
+// Mark edges for re-pull in parent node
+void ParameterBase::markIncomingEdgesForPull() const { parent_->markIncomingEdgesForPull(this); }

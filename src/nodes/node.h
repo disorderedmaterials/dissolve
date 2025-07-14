@@ -24,8 +24,6 @@ class Node : public Serialisable<>
     explicit Node(Graph *parentGraph) : parentGraph_(parentGraph) {}
     virtual ~Node() = default;
 
-    using EdgeMap = std::map<std::string_view, Edge *>;
-
     /*
      * Definition
      */
@@ -129,6 +127,7 @@ class Node : public Serialisable<>
      */
     public:
     using NodeParameterMap = std::map<std::string, std::shared_ptr<ParameterBase>>;
+    using EdgeMap = std::map<std::string_view, std::vector<Edge *>>;
 
     protected:
     // Input parameters
@@ -142,6 +141,10 @@ class Node : public Serialisable<>
     // Outgoing edges
     EdgeMap outputEdges_;
 
+    private:
+    // Erase the specified edge from the given map, returning if it was found and erased
+    bool eraseEdge(EdgeMap &map, Edge *edge);
+
     public:
     // Link edge, returning whether we accept it
     bool linkEdge(Edge *edge);
@@ -154,9 +157,8 @@ class Node : public Serialisable<>
         if (findInput(optionName))
             Messenger::exception("Option '{}' already exists, and can't be added again.", optionName);
 
-        auto param =
-            options_.emplace(std::make_pair(optionName, std::make_shared<Parameter<T>>(this, optionName, description, data)))
-                .first->second;
+        auto param = options_.emplace(std::make_pair(optionName, ParameterFactory::create(this, optionName, description, data)))
+                         .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
@@ -167,41 +169,8 @@ class Node : public Serialisable<>
         if (findInput(inputName))
             Messenger::exception("Input parameter '{}' already exists, and can't be added again.", inputName);
 
-        auto param =
-            inputs_.emplace(std::make_pair(inputName, std::make_shared<Parameter<T>>(this, inputName, description, data)))
-                .first->second;
-        param->setFlags(ParameterBase::ParameterFlags::Input);
-        return param;
-    }
-    // Add bounded input parameter
-    template <class T>
-    std::shared_ptr<ParameterBase> addBoundedInput(std::string_view inputName, std::string_view description, T &data,
-                                                   std::optional<T> lower = {}, std::optional<T> upper = {},
-                                                   std::optional<T> step = {})
-    {
-        if (findInput(inputName))
-            Messenger::exception("Input parameter '{}' already exists, and can't be added again.", inputName);
-
-        auto param = inputs_
-                         .emplace(std::make_pair(inputName, std::make_shared<BoundedParameter<T>>(this, inputName, description,
-                                                                                                  data, lower, upper, step)))
+        auto param = inputs_.emplace(std::make_pair(inputName, ParameterFactory::create(this, inputName, description, data)))
                          .first->second;
-        param->setFlags(ParameterBase::ParameterFlags::Input);
-        return param;
-    }
-    // Add bounded optional input parameter
-    template <class T>
-    std::shared_ptr<ParameterBase> addBoundedOptionalInput(std::string_view inputName, std::string_view description, T &data,
-                                                           T lower, std::string_view textWhenNull, T upper = {}, T step = {})
-    {
-        if (findInput(inputName))
-            Messenger::exception("Input parameter '{}' already exists, and can't be added again.", inputName);
-
-        auto param =
-            inputs_
-                .emplace(std::make_pair(inputName, std::make_shared<BoundedOptionalParameter<T>>(
-                                                       this, inputName, description, data, lower, textWhenNull, upper, step)))
-                .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
@@ -212,38 +181,37 @@ class Node : public Serialisable<>
         if (findOutput(outputName))
             Messenger::exception("Output parameter '{}' already exists, and can't be added again.", outputName);
 
-        auto param =
-            outputs_.emplace(std::make_pair(outputName, std::make_shared<Parameter<T>>(this, outputName, description, data)))
-                .first->second;
+        auto param = outputs_.emplace(std::make_pair(outputName, ParameterFactory::create(this, outputName, description, data)))
+                         .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Output);
         return param;
     }
     // Add pointer output parameter
-    template <typename ClassPtr>
+    template <typename ClassObject>
     std::shared_ptr<ParameterBase> addPointerOutput(std::string_view outputName, std::string_view description,
-                                                    std::remove_pointer<ClassPtr>::type &object)
+                                                    ClassObject &object)
     {
         if (findOutput(outputName))
             Messenger::exception("Output parameter '{}' already exists, and can't be added again.", outputName);
 
         auto param = outputs_
                          .emplace(std::make_pair(
-                             outputName, std::make_shared<PointerParameter<ClassPtr>>(this, outputName, description, object)))
+                             outputName, ParameterFactory::createPointer<ClassObject>(this, outputName, description, object)))
                          .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Output);
         return param;
     }
     // Add optional pointer output parameter
-    template <typename ClassPtr>
+    template <typename ClassObject>
     std::shared_ptr<ParameterBase> addOptionalPointerOutput(std::string_view outputName, std::string_view description,
-                                                            std::optional<std::remove_pointer_t<ClassPtr>> &object)
+                                                            std::optional<ClassObject> &optional)
     {
         if (findOutput(outputName))
             Messenger::exception("Output parameter '{}' already exists, and can't be added again.", outputName);
 
         auto param = outputs_
-                         .emplace(std::make_pair(outputName, std::make_shared<OptionalPointerParameter<ClassPtr>>(
-                                                                 this, outputName, description, object)))
+                         .emplace(std::make_pair(
+                             outputName, ParameterFactory::createPointer<ClassObject>(this, outputName, description, optional)))
                          .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Output);
         return param;
@@ -261,14 +229,8 @@ class Node : public Serialisable<>
         if (!output)
             Messenger::exception("Input '{}' does not exist.\n", inputName);
 
-        // Get the upcast parameter
-        auto upcast = output->upcast<T>();
-        if (!upcast)
-            Messenger::exception("Attempted to cast input '{}' to wrong type: is {}, requested {}.\n", inputName,
-                                 output->type().name(), std::type_index(typeid(T)).name());
-
         // Return the parameter value
-        return upcast->get();
+        return output->get<T>();
     }
     // Return named output parameter if it exists
     std::shared_ptr<ParameterBase> findOutput(std::string_view outputName) const;
@@ -281,14 +243,7 @@ class Node : public Serialisable<>
         if (!output)
             Messenger::exception("Output '{}' does not exist.\n", outputName);
 
-        // Get the upcast parameter
-        auto upcast = output->upcast<T>();
-        if (!upcast)
-            Messenger::exception("Attempted to cast output '{}' to wrong type: is {}, requested {}.\n", outputName,
-                                 output->type().name(), std::type_index(typeid(T)).name());
-
-        // Return the parameter value
-        return upcast->get();
+        return output->get<T>();
     }
     // Return named option if it exists
     std::shared_ptr<ParameterBase> findOption(std::string_view name) const;
@@ -298,6 +253,8 @@ class Node : public Serialisable<>
     EdgeMap &inputEdges();
     // Get the outgoing edges from this node
     EdgeMap &outputEdges();
+    // Mark incoming edges to the specified parameter as needing a re-pull
+    void markIncomingEdgesForPull(const ParameterBase *toParameter) const;
     // Returns the node parent graph
     Graph *parentGraph() const;
     // Return the Dissolve reference
