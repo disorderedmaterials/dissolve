@@ -112,7 +112,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     }
 
     // Check that types are compatible
-    if (sourceOutput->type() != targetInput->type())
+    if (!targetInput->acceptsOutput(sourceOutput.get()))
         return {};
 
     // Create the edge
@@ -135,7 +135,7 @@ const ParameterBase &Edge::sourceOutput() const { return sourceOutput_; }
 Node &Edge::targetNode() const { return targetNode_; }
 
 // Return target input parameter
-const ParameterBase &Edge::targetInput() const { return targetInput_; }
+ParameterBase &Edge::targetInput() const { return targetInput_; }
 
 // Return definition for the edge
 EdgeDefinition Edge::definition() const
@@ -223,11 +223,18 @@ NodeConstants::ProcessResult Edge::pull()
     return NodeConstants::ProcessResult::Unchanged;
 }
 
+// Ensure next call to pull() will retrieve the data from the source node
+void Edge::forceNextPull() { sourceNodeVersionIndex_ = NodeConstants::InvalidVersion; }
+
+/*
+ * I/O
+ */
+
 // Express as a serialisable value
 SerialisedValue Edge::serialise() const { return definition().serialise(); }
 
-// Read values from a serialisable value This is required for the
-// SerialableValue type implementation, but we actually deserialise
+// Read values from a serialisable value. This is required for the
+// SerialisableValue type implementation, but we actually deserialise
 // Edges through an EdgeConnection.  I've added this error to
 // immediately alert us in case this function is ever called.
 void Edge::deserialise(const SerialisedValue &node)

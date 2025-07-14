@@ -192,7 +192,16 @@ bool Graph::removeEdge(Edge *edgeToRemove)
         std::find_if(edges_.begin(), edges_.end(), [edgeToRemove](const auto &edge) { return edge.get() == edgeToRemove; });
     if (it == edges_.end())
         return Messenger::error("Edge pointer doesn't exist, so can't remove it.\n");
+
+    // Need to flag the node containing the connected input that it is now out-of-date
+    auto &input = it->get()->targetInput();
+    input.setParentUpdateRequired();
+    if (input.isVector())
+        input.invalidateVector();
+
+    // Can now erase it
     edges_.erase(it);
+
     return true;
 }
 
