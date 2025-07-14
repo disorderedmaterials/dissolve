@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
 #include "analyser/siteFilter.h"
 #include "analyser/siteSelector.h"
@@ -8,13 +9,12 @@
 #include "math/histogram1D.h"
 #include "math/integerHistogram1D.h"
 #include "math/integrator.h"
-#include "module/context.h"
 #include "modules/modifierOSites/modifierOSites.h"
 
 // Run main processing
-Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult ModifierOSitesModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select all potential bridging oxygen sites - we will determine which actually are
     // involved in NF-BO-NF interactions once we have the available NF sites
@@ -145,55 +145,23 @@ Module::ExecutionResult ModifierOSitesModule::process(ModuleContext &moduleConte
     processingData.realise<Data1D>("MOtherOBondLength", name(), GenericItem::InRestartFileFlag) = dataNormalisedHistMOtherO;
 
     // Save data?
-    if (exportFileAndFormatOType_.hasFilename())
-        if (moduleContext.processPool().isMaster())
-            if (exportFileAndFormatOType_.exportData(accumulatedData))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-            }
+    if (!DataExporter::exportData(accumulatedData, exportFileAndFormatOType_))
+        return ExecutionResult::Failed;
 
-    if (exportFileAndFormatTotalOSites_.hasFilename())
-        if (moduleContext.processPool().isMaster())
-            if (exportFileAndFormatTotalOSites_.exportData(accumulatedModifierData))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-            }
-    if (exportFileAndFormatFOLength_.hasFilename())
-        if (moduleContext.processPool().isMaster())
-            if (exportFileAndFormatFOLength_.exportData(dataNormalisedHistMFO))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-            }
-    if (exportFileAndFormatNBOLength_.hasFilename())
-        if (moduleContext.processPool().isMaster())
-            if (exportFileAndFormatNBOLength_.exportData(dataNormalisedHistMNBO))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-            }
-    if (exportFileAndFormatBOLength_.hasFilename())
-        if (moduleContext.processPool().isMaster())
-            if (exportFileAndFormatBOLength_.exportData(dataNormalisedHistMBO))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-            }
-    if (exportFileAndFormatOtherOLength_.hasFilename())
-        if (moduleContext.processPool().isMaster())
-            if (exportFileAndFormatOtherOLength_.exportData(dataNormalisedHistMOtherO))
-                moduleContext.processPool().decideTrue();
-            else
-            {
-                moduleContext.processPool().decideFalse();
-            }
+    if (!DataExporter::exportData(accumulatedModifierData, exportFileAndFormatTotalOSites_))
+        return ExecutionResult::Failed;
+
+    if (!DataExporter::exportData(dataNormalisedHistMFO, exportFileAndFormatFOLength_))
+        return ExecutionResult::Failed;
+
+    if (!DataExporter::exportData(dataNormalisedHistMNBO, exportFileAndFormatNBOLength_))
+        return ExecutionResult::Failed;
+
+    if (!DataExporter::exportData(dataNormalisedHistMBO, exportFileAndFormatBOLength_))
+        return ExecutionResult::Failed;
+
+    if (!DataExporter::exportData(dataNormalisedHistMOtherO, exportFileAndFormatOtherOLength_))
+        return ExecutionResult::Failed;
 
     return ExecutionResult::Success;
 }

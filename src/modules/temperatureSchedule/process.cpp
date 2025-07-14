@@ -6,7 +6,7 @@
 #include "modules/temperatureSchedule/temperatureSchedule.h"
 
 // Run main processing
-Module::ExecutionResult TemperatureScheduleModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult TemperatureScheduleModule::process(Dissolve &dissolve)
 {
     // Get the current configuration temperature
     auto currentT = targetConfiguration_->temperature();

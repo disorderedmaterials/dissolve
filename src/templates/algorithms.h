@@ -13,15 +13,6 @@
 #include <tuple>
 #include <utility>
 
-// Cut a range into a smaller segment for MPI
-template <typename T> auto chop_range(const T begin, const T end, const int nChunks, const int index)
-{
-    auto diff = end - begin;
-    T start = begin + std::ldiv((const long int)index * diff, (const long int)nChunks).quot;
-    T stop = begin + std::ldiv((const long int)(index + 1) * diff, (const long int)nChunks).quot;
-    return std::make_tuple(start, stop);
-}
-
 template <typename T> class EarlyReturn
 {
     public:

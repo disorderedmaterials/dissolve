@@ -73,14 +73,13 @@ class MDModule : public Module
 
     public:
     // Evolve Species coordinates, returning new coordinates
-    static std::vector<Vector3> evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
-                                       double temperature, int nSteps, double maxDeltaT, const std::vector<Vector3> &rInit,
-                                       std::vector<Vector3> &velocities);
+    static std::vector<Vector3> evolve(const PotentialMap &potentialMap, const Species *sp, double temperature, int nSteps,
+                                       double maxDeltaT, const std::vector<Vector3> &rInit, std::vector<Vector3> &velocities);
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

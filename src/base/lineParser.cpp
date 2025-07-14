@@ -6,7 +6,7 @@
 #include "base/sysFunc.h"
 #include <limits>
 
-LineParser::LineParser(const ProcessPool *procPool) : processPool_(procPool)
+LineParser::LineParser()
 {
     arguments_.clear();
     reset();
@@ -56,9 +56,6 @@ std::istream *LineParser::inputStream() const
     return inputStrings_;
 }
 
-// Return associated process pool (if any)
-const ProcessPool *LineParser::processPool() const { return processPool_; }
-
 // Return filename of current input file (if any)
 std::string_view LineParser::inputFilename() const { return inputFilename_; }
 
@@ -74,36 +71,24 @@ int LineParser::lastLineNo() const { return lastLineNo_; }
 // Open new file for reading
 bool LineParser::openInput(std::string_view filename)
 {
-    // Master needs to check for an existing input file
-    if ((!processPool_) || processPool_->isMaster())
+    if (inputFile_ != nullptr)
     {
-        if (inputFile_ != nullptr)
-        {
-            Messenger::warn("LineParser already appears to have an open file...\n");
-            inputFile_->close();
-            delete inputFile_;
-            inputFile_ = nullptr;
-        }
+        Messenger::warn("LineParser already appears to have an open file...\n");
+        inputFile_->close();
+        delete inputFile_;
+        inputFile_ = nullptr;
     }
 
     fileInput_ = true;
 
-    // Master will open the file
     auto result = true;
-    if ((!processPool_) || processPool_->isMaster())
+    inputFile_ = new std::ifstream(std::string(filename), std::ios::in | std::ios::binary);
+    if (!inputFile_->is_open())
     {
-        inputFile_ = new std::ifstream(std::string(filename), std::ios::in | std::ios::binary);
-        if (!inputFile_->is_open())
-        {
-            closeFiles();
-            Messenger::warn("Failed to open file '{}' for reading.\n", filename);
-            result = false;
-        }
+        closeFiles();
+        Messenger::warn("Failed to open file '{}' for reading.\n", filename);
+        result = false;
     }
-
-    // Broadcast result of open
-    if (processPool_ && (!processPool_->broadcast(result)))
-        return false;
 
     lastLineNo_ = 0;
     inputFilename_ = filename;
@@ -147,45 +132,37 @@ bool LineParser::openOutput(std::string_view filename, bool directOutput)
 
     outputFilename_ = filename;
 
-    // Master handles the opening of the output file
-    if ((!processPool_) || processPool_->isMaster())
+    // Check for existing output file
+    if ((outputFile_ != nullptr) || (cachedFile_ != nullptr))
     {
-        // Check for existing output file
-        if ((outputFile_ != nullptr) || (cachedFile_ != nullptr))
+        Messenger::warn("LineParser already appears to have an open file/cache...\n");
+        if (outputFile_ != nullptr)
         {
-            Messenger::warn("LineParser already appears to have an open file/cache...\n");
-            if (outputFile_ != nullptr)
-            {
-                outputFile_->close();
-                delete outputFile_;
-                outputFile_ = nullptr;
-            }
-            if (cachedFile_ != nullptr)
-            {
-                delete cachedFile_;
-                cachedFile_ = nullptr;
-            }
+            outputFile_->close();
+            delete outputFile_;
+            outputFile_ = nullptr;
         }
-
-        // Open new file
-        directOutput_ = directOutput;
-        if (directOutput_)
+        if (cachedFile_ != nullptr)
         {
-            outputFile_ = new std::ofstream(outputFilename_, std::ios::out);
-            if (!outputFile_->is_open())
-            {
-                closeFiles();
-                Messenger::error("Failed to open file '{}' for writing.\n", outputFilename_);
-                result = false;
-            }
+            delete cachedFile_;
+            cachedFile_ = nullptr;
         }
-        else
-            cachedFile_ = new std::stringstream;
     }
 
-    // Broadcast result of open
-    if (processPool_ && (!processPool_->broadcast(result)))
-        return false;
+    // Open new file
+    directOutput_ = directOutput;
+    if (directOutput_)
+    {
+        outputFile_ = new std::ofstream(outputFilename_, std::ios::out);
+        if (!outputFile_->is_open())
+        {
+            closeFiles();
+            Messenger::error("Failed to open file '{}' for writing.\n", outputFilename_);
+            result = false;
+        }
+    }
+    else
+        cachedFile_ = new std::stringstream;
 
     return result;
 }
@@ -197,40 +174,32 @@ bool LineParser::appendOutput(std::string_view filename)
 
     outputFilename_ = filename;
 
-    // Master handles the opening of the output file
-    if ((!processPool_) || processPool_->isMaster())
+    // Check for existing output file
+    if ((outputFile_ != nullptr) || (cachedFile_ != nullptr))
     {
-        // Check for existing output file
-        if ((outputFile_ != nullptr) || (cachedFile_ != nullptr))
+        Messenger::warn("LineParser already appears to have an open file/cache...\n");
+        if (outputFile_ != nullptr)
         {
-            Messenger::warn("LineParser already appears to have an open file/cache...\n");
-            if (outputFile_ != nullptr)
-            {
-                outputFile_->close();
-                delete outputFile_;
-                outputFile_ = nullptr;
-            }
-            if (cachedFile_ != nullptr)
-            {
-                delete cachedFile_;
-                cachedFile_ = nullptr;
-            }
+            outputFile_->close();
+            delete outputFile_;
+            outputFile_ = nullptr;
         }
-
-        // Open file for appending
-        directOutput_ = true;
-        outputFile_ = new std::ofstream(outputFilename_, std::ios::app);
-        if (!outputFile_->is_open())
+        if (cachedFile_ != nullptr)
         {
-            closeFiles();
-            Messenger::error("Failed to open file '{}' for writing.\n", outputFilename_);
-            result = false;
+            delete cachedFile_;
+            cachedFile_ = nullptr;
         }
     }
 
-    // Broadcast result of open
-    if (processPool_ && (!processPool_->broadcast(result)))
-        return false;
+    // Open file for appending
+    directOutput_ = true;
+    outputFile_ = new std::ofstream(outputFilename_, std::ios::app);
+    if (!outputFile_->is_open())
+    {
+        closeFiles();
+        Messenger::error("Failed to open file '{}' for writing.\n", outputFilename_);
+        result = false;
+    }
 
     return result;
 }
@@ -238,18 +207,15 @@ bool LineParser::appendOutput(std::string_view filename)
 // Close file
 void LineParser::closeFiles()
 {
-    if ((!processPool_) || processPool_->isMaster())
+    if (inputFile_ != nullptr)
     {
-        if (inputFile_ != nullptr)
-        {
-            inputFile_->close();
-            delete inputFile_;
-        }
-        if (outputFile_ != nullptr)
-        {
-            outputFile_->close();
-            delete outputFile_;
-        }
+        inputFile_->close();
+        delete inputFile_;
+    }
+    if (outputFile_ != nullptr)
+    {
+        outputFile_->close();
+        delete outputFile_;
     }
 
     if (inputStrings_ != nullptr)
@@ -261,21 +227,14 @@ void LineParser::closeFiles()
 // Return whether current file source is good for reading
 bool LineParser::isFileGoodForReading() const
 {
-    // Master performs the checks
     auto result = true;
-    if ((!processPool_) || processPool_->isMaster())
-    {
-        if (fileInput_ && (inputFile_ == nullptr))
-            result = false;
-        else if (fileInput_ && (!inputFile_->is_open()))
-            result = false;
-        else if ((!fileInput_) && (!inputStrings_))
-            result = false;
-    }
 
-    // Broadcast result of open
-    if (processPool_ && (!processPool_->broadcast(result)))
-        return false;
+    if (fileInput_ && (inputFile_ == nullptr))
+        result = false;
+    else if (fileInput_ && (!inputFile_->is_open()))
+        result = false;
+    else if ((!fileInput_) && (!inputStrings_))
+        result = false;
 
     return result;
 }
@@ -283,22 +242,14 @@ bool LineParser::isFileGoodForReading() const
 // Return whether current file source is good for writing
 bool LineParser::isFileGoodForWriting() const
 {
-    // Master performs the checks
     auto result = true;
-    if ((!processPool_) || processPool_->isMaster())
+    if (directOutput_)
     {
-        if (directOutput_)
-        {
-            if (outputFile_ == nullptr)
-                result = false;
-            else if (!outputFile_->is_open())
-                result = false;
-        }
+        if (outputFile_ == nullptr)
+            result = false;
+        else if (!outputFile_->is_open())
+            result = false;
     }
-
-    // Broadcast result of open
-    if (processPool_ && (!processPool_->broadcast(result)))
-        return false;
 
     return result;
 }
@@ -356,56 +307,43 @@ void LineParser::rewind()
 // Return whether the end of the input stream has been reached (or only whitespace remains)
 bool LineParser::eofOrBlank() const
 {
-    // If no process pool is defined, or we are the master, do the check
     auto result = false;
-    if ((!processPool_) || processPool_->isMaster())
+
+    // Do we have a valid input stream?
+    if (inputStream() == nullptr)
     {
-        // Do we have a valid input stream?
-        if (inputStream() == nullptr)
-        {
-            result = true;
-            if (processPool_ && (!processPool_->broadcast(result)))
-                return false;
-            return true;
-        }
-
-        // Simple check first - is this the end of the file?
-        if (inputStream()->eof())
-        {
-            result = true;
-            if (processPool_ && (!processPool_->broadcast(result)))
-                return false;
-            return true;
-        }
-
-        // Otherwise, store the current file position and search for a non-whitespace character (or end of file)
-        std::streampos pos = inputStream()->tellg();
-
-        // Skip through whitespace, searching for 'hard' character
-        char c;
-        result = true;
-        do
-        {
-            inputStream()->get(c);
-            if (inputStream()->eof())
-                break;
-            // If a whitespace character then skip it....
-            if ((c == ' ') || (c == '\r') || (c == '\n') || (c == '\t') || (c == '\0'))
-            {
-                if (inputStream()->eof())
-                    break;
-                else
-                    continue;
-            }
-            result = false;
-            break;
-        } while (true);
-        inputStream()->seekg(pos);
+        return true;
     }
 
-    // Broadcast result to pool if it is defined
-    if (processPool_ && (!processPool_->broadcast(result)))
-        return false;
+    // Simple check first - is this the end of the file?
+    if (inputStream()->eof())
+    {
+        return true;
+    }
+
+    // Otherwise, store the current file position and search for a non-whitespace character (or end of file)
+    std::streampos pos = inputStream()->tellg();
+
+    // Skip through whitespace, searching for 'hard' character
+    char c;
+    result = true;
+    do
+    {
+        inputStream()->get(c);
+        if (inputStream()->eof())
+            break;
+        // If a whitespace character then skip it....
+        if ((c == ' ') || (c == '\r') || (c == '\n') || (c == '\t') || (c == '\0'))
+        {
+            if (inputStream()->eof())
+                break;
+            else
+                continue;
+        }
+        result = false;
+        break;
+    } while (true);
+    inputStream()->seekg(pos);
 
     return result;
 }
@@ -574,129 +512,86 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 {
     line_.clear();
 
-    // Master will check the file and broadcast the result
-    LineParser::ParseReturnValue result = LineParser::Success;
-    if ((!processPool_) || processPool_->isMaster())
+    // Returns : 0=ok, 1=error, -1=eof
+    if (fileInput_ && (inputFile_ == nullptr))
     {
-        // Returns : 0=ok, 1=error, -1=eof
-        if (fileInput_ && (inputFile_ == nullptr))
-        {
-            Messenger::error("No input file open for LineParser::readNextLine.\n");
-            result = LineParser::Fail;
-        }
-        else if (inputStream()->eof())
-            result = LineParser::EndOfFile;
+        Messenger::error("No input file open for LineParser::readNextLine.\n");
+        return LineParser::Fail;
     }
+    else if (inputStream()->eof())
+        return LineParser::EndOfFile;
 
-    // Broadcast result of file check
-    if (processPool_)
+    // Loop until we get 'suitable' line from file
+    int nchars, nspaces;
+    auto result = LineParser::Fail;
+    while (result != LineParser::Success)
     {
-        int enumValue = getIntFromParseReturnValue(result);
-        if (!processPool_->broadcast(enumValue))
-            return LineParser::Fail;
-
-        result = getParseReturnValueFromInt(enumValue);
-        if (result != LineParser::Success)
-            return result;
-    }
-
-    // Master (if appropriate) will read the line and broadcast the result of the read
-    if ((!processPool_) || processPool_->isMaster())
-    {
-        // Loop until we get 'suitable' line from file
-        int nchars, nspaces;
+        char c;
         result = LineParser::Fail;
-        while (result != LineParser::Success)
+        while (inputStream()->get(c).good())
         {
-            char c;
-            result = LineParser::Fail;
-            while (inputStream()->get(c).good())
+            if (c == '\r')
             {
-                if (c == '\r')
-                {
-                    if (inputStream()->peek() == '\n')
-                        inputStream()->ignore();
-                    break;
-                }
-                else if (c == '\n')
-                    break;
-                else if ((c == ';') && (optionMask & LineParser::SemiColonLineBreaks))
-                    break;
-
-                line_ += c;
-
-                // Check here for overfilling the line_ buffer - perhaps it's a binary file?
-                if (line_.length() >= 8096)
-                    result = LineParser::Fail;
+                if (inputStream()->peek() == '\n')
+                    inputStream()->ignore();
+                break;
             }
-            ++lastLineNo_;
-            Messenger::printVerbose("Line from file is: [{}]\n", line_);
+            else if (c == '\n')
+                break;
+            else if ((c == ';') && (optionMask & LineParser::SemiColonLineBreaks))
+                break;
 
-            // Remove comments from line
-            if (!(optionMask & LineParser::KeepComments))
-                DissolveSys::removeComments(line_);
+            line_ += c;
 
-            // If we are skipping blank lines, check for a blank line here
-            if (!(optionMask & LineParser::KeepBlanks))
+            // Check here for overfilling the line_ buffer - perhaps it's a binary file?
+            if (line_.length() >= 8096)
+                result = LineParser::Fail;
+        }
+        ++lastLineNo_;
+        Messenger::printVerbose("Line from file is: [{}]\n", line_);
+
+        // Remove comments from line
+        if (!(optionMask & LineParser::KeepComments))
+            DissolveSys::removeComments(line_);
+
+        // If we are skipping blank lines, check for a blank line here
+        if (!(optionMask & LineParser::KeepBlanks))
+        {
+            // Now, see if our line contains only blanks
+            nchars = 0;
+            nspaces = 0;
+            for (auto &c : line_)
             {
-                // Now, see if our line contains only blanks
-                nchars = 0;
-                nspaces = 0;
-                for (auto &c : line_)
-                {
-                    nchars++;
-                    if (std::isspace(c))
-                        ++nspaces;
-                }
+                nchars++;
+                if (std::isspace(c))
+                    ++nspaces;
+            }
 
-                if (nchars == nspaces)
-                {
-                    // Blank line - if we're at the end of the file, return EOF.
-                    // Otherwise, read in another line.
-                    if (inputStream()->eof())
-                        result = LineParser::EndOfFile;
-                    else if (inputStream()->fail())
-                        result = LineParser::Fail;
-                    else
-                        continue;
-                }
+            if (nchars == nspaces)
+            {
+                // Blank line - if we're at the end of the file, return EOF.
+                // Otherwise, read in another line.
+                if (inputStream()->eof())
+                    result = LineParser::EndOfFile;
+                else if (inputStream()->fail())
+                    result = LineParser::Fail;
                 else
-                    result = LineParser::Success;
+                    continue;
             }
             else
                 result = LineParser::Success;
+        }
+        else
+            result = LineParser::Success;
 
-            linePos_ = 0;
+        linePos_ = 0;
 
-            // Exit on EOF or error
-            if (result != LineParser::Success)
-                break;
-        };
-    }
-
-    // Broadcast result
-    if (processPool_)
-    {
-        int enumValue = getIntFromParseReturnValue(result);
-        if (!processPool_->broadcast(enumValue))
-            return LineParser::Fail;
-
-        result = getParseReturnValueFromInt(enumValue);
+        // Exit on EOF or error
         if (result != LineParser::Success)
-            return result;
-    }
+            break;
+    };
 
-    // Broadcast line
-    if (processPool_)
-    {
-        if (!processPool_->broadcast(line_))
-            return LineParser::Fail;
-
-        if (processPool_->isSlave())
-            linePos_ = 0;
-    }
-
-    return LineParser::Success;
+    return result;
 }
 
 // Read next line from internal source file, setting as parsing source and copying to specified string
@@ -728,31 +623,23 @@ bool LineParser::writeLine(std::string_view s) const
 {
     auto result = true;
 
-    // Master handles the writing
-    if ((!processPool_) || processPool_->isMaster())
+    if (!directOutput_)
     {
-        if (!directOutput_)
+        if (cachedFile_ == nullptr)
         {
-            if (cachedFile_ == nullptr)
-            {
-                Messenger::print("Unable to delayed-writeLine - destination cache is not open.\n");
-                return false;
-            }
-            else
-                (*cachedFile_) << s << std::endl;
-        }
-        else if (outputFile_ == nullptr)
-        {
-            Messenger::print("Unable to direct-writeLine - destination file is not open.\n");
+            Messenger::print("Unable to delayed-writeLine - destination cache is not open.\n");
             return false;
         }
         else
-            (*outputFile_) << s << std::endl;
+            (*cachedFile_) << s << std::endl;
     }
-
-    // Broadcast result of write
-    if (processPool_ && (!processPool_->broadcast(result)))
+    else if (outputFile_ == nullptr)
+    {
+        Messenger::print("Unable to direct-writeLine - destination file is not open.\n");
         return false;
+    }
+    else
+        (*outputFile_) << s << std::endl;
 
     return result;
 }
@@ -790,35 +677,24 @@ bool LineParser::commitCache()
 {
     auto result = true;
 
-    // Master handles the writing
-    if ((!processPool_) || processPool_->isMaster())
+    // Were we using cached writing?
+    if (directOutput_)
     {
-        // Were we using cached writing?
-        if (directOutput_)
-        {
-            Messenger::error("Tried to commit cached writes when direct output was enabled.\n");
-            result = false;
-            if (processPool_ && (!processPool_->broadcast(result)))
-                return false;
-            return false;
-        }
-
-        std::ofstream outputFile(outputFilename_);
-        if (outputFile.is_open())
-        {
-            outputFile << cachedFile_->str();
-            outputFile.close();
-        }
-        else
-        {
-            Messenger::error("Couldn't open output file '{}' for writing.\n", outputFilename_);
-            result = false;
-        }
+        Messenger::error("Tried to commit cached writes when direct output was enabled.\n");
+        return false;
     }
 
-    // Broadcast result of write
-    if (processPool_ && (!processPool_->broadcast(result)))
-        return false;
+    std::ofstream outputFile(outputFilename_);
+    if (outputFile.is_open())
+    {
+        outputFile << cachedFile_->str();
+        outputFile.close();
+    }
+    else
+    {
+        Messenger::error("Couldn't open output file '{}' for writing.\n", outputFilename_);
+        result = false;
+    }
 
     return result;
 }

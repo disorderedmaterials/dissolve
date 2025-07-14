@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "base/processPool.h"
 #include "kernels/geometry.h"
 #include "templates/flags.h"
 #include <memory>
@@ -72,8 +71,7 @@ class EnergyKernel : public GeometryKernel
     private:
     friend class KernelProducer;
     friend class ExternalPotentialsEnergyKernel;
-    EnergyKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                 std::optional<double> energyCutoff = {});
+    EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
 
     public:
     ~EnergyKernel() = default;
@@ -125,7 +123,7 @@ class EnergyKernel : public GeometryKernel
 
     public:
     // Return total interatomic PairPotential energy of the world
-    PairPotentialEnergyValue totalPairPotentialEnergy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
+    PairPotentialEnergyValue totalPairPotentialEnergy(bool includeIntraMolecular) const;
     // Return total interatomic PairPotential energy from summation of molecules
     PairPotentialEnergyValue totalMoleculePairPotentialEnergy(bool includeIntraMolecular) const;
     // Return total energy of supplied atom with the world

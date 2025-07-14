@@ -33,7 +33,7 @@ bool ValueExportFileFormat::exportSimple(LineParser &parser, const std::vector<d
 }
 
 // Export values using current filename and format
-bool ValueExportFileFormat::exportData(const std::vector<double> &data, LineParser &currentParser, ProcessPool *procPool)
+bool ValueExportFileFormat::exportData(const std::vector<double> &data, LineParser &currentParser)
 {
     // Check the format
     if (!formatIndex_)
@@ -41,7 +41,7 @@ bool ValueExportFileFormat::exportData(const std::vector<double> &data, LinePars
 
     // If the filename is simply '@' then we write to the current parser - otherwise open a new file / parser
     auto writeToCurrent = filename_ == "@";
-    LineParser fileParser(procPool);
+    LineParser fileParser;
     LineParser &parser = writeToCurrent ? currentParser : fileParser;
 
     if (!writeToCurrent && ((!parser.openOutput(filename_)) || (!parser.isFileGoodForWriting())))

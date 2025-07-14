@@ -5,7 +5,6 @@
 #include "classes/species.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
-#include "module/context.h"
 #include "modules/gr/gr.h"
 #include "nodes/gr/gr.h"
 
@@ -75,8 +74,8 @@ NodeConstants::ProcessResult GRNode::process()
 
         // Calculate unweighted partials for this Configuration
         bool alreadyUpToDate;
-        calculateGR(processPool(), cfg, originalGR(cfg, rdfRange, binWidth_.asDouble()), partialsMethod_, rdfRange,
-                    binWidth_.asDouble(), alreadyUpToDate);
+        calculateGR(cfg, originalGR(cfg, rdfRange, binWidth_.asDouble()), partialsMethod_, rdfRange, binWidth_.asDouble(),
+                    alreadyUpToDate);
 
         // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
         /*
@@ -96,7 +95,7 @@ NodeConstants::ProcessResult GRNode::process()
         {
             // Copy the already-calculated g(r), then calculate a new set using the Test method
             PartialSet referencePartials = originalgr;
-            calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), cfg, GRModule::TestMethod,
+            calculateGR(dissolve.processingModuleData(), moduleContext.processPool(), cfg, GRModule::TestMethod,
                 rdfRange, binWidth_, alreadyUpToDate);
             if (!testReferencePartials(referencePartials, originalgr, 1.0e-6))
                 return ExecutionResult::Failed;
@@ -104,12 +103,12 @@ NodeConstants::ProcessResult GRNode::process()
         */
 
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_.asInteger() / intramolecular broadening
-        calculateUnweightedGR(processPool(), cfg, originalGR(cfg, rdfRange, binWidth_.asDouble()), unweightedGR(),
-                              intraBroadening_, nSmooths_.value_or(0).asInteger());
+        calculateUnweightedGR(cfg, originalGR(cfg, rdfRange, binWidth_.asDouble()), unweightedGR(), intraBroadening_,
+                              nSmooths_.value_or(0).asInteger());
     }
 
     // Sum the partials from the associated Configurations
-    if (!sumUnweightedGR(processPool(), name(), name(), targetConfigurations_, summedUnweightedGR()))
+    if (!sumUnweightedGR(name(), name(), targetConfigurations_, summedUnweightedGR()))
         return NodeConstants::ProcessResult::Failed;
 
     unweightedGR().setEffectiveDensity(effectiveDensity());

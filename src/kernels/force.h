@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "base/processPool.h"
 #include "classes/cellArray.h"
 #include "kernels/geometry.h"
 #include "templates/combinable.h"
@@ -28,10 +27,8 @@ class ForceKernel : public GeometryKernel
     private:
     friend class KernelProducer;
     friend class ExternalPotentialsForceKernel;
-    ForceKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                std::optional<double> energyCutoff = {});
-    ForceKernel(const Box *box, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                std::optional<double> energyCutoff = {});
+    ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
+    ForceKernel(const Box *box, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
 
     public:
     ~ForceKernel() = default;
@@ -83,6 +80,5 @@ class ForceKernel : public GeometryKernel
 
     public:
     // Calculate total forces in the world
-    void totalForces(ForceVector &fUnbound, ForceVector &fBound, ProcessPool::DivisionStrategy strategy,
-                     Flags<ForceCalculationFlags> flags = {}) const;
+    void totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<ForceCalculationFlags> flags = {}) const;
 };

@@ -67,9 +67,9 @@ class GRModule : public Module
     // Calculate partial g(r) in serial with simple double-loop
     bool calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet);
     // Calculate partial g(r) with optimised double-loop
-    bool calculateGRSimple(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange);
+    bool calculateGRSimple(Configuration *cfg, PartialSet &partialSet, const double rdfRange);
     // Calculate partial g(r) utilising Cell neighbour lists
-    bool calculateGRCells(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double binWidth);
+    bool calculateGRCells(Configuration *cfg, PartialSet &partialSet, const double binWidth);
 
     public:
     // Calculate and return effective density based on target Configurations
@@ -77,15 +77,14 @@ class GRModule : public Module
     // Calculate and return used species populations based on target Configurations
     std::vector<std::pair<const Species *, double>> speciesPopulations() const;
     // (Re)calculate partial g(r) for the specified Configuration
-    bool calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg,
-                     GRModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
+    bool calculateGR(GenericList &processingData, Configuration *cfg, GRModule::PartialsMethod method, const double rdfRange,
+                     const double rdfBinWidth, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
-    static bool calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
-                                      PartialSet &weightedgr, const Function1DWrapper intraBroadening, int smoothing);
+    static bool calculateUnweightedGR(Configuration *cfg, const PartialSet &originalgr, PartialSet &weightedgr,
+                                      const Function1DWrapper intraBroadening, int smoothing);
     // Sum unweighted g(r) over the supplied Module's target Configurations
-    static bool sumUnweightedGR(GenericList &processingData, const ProcessPool &procPool, std::string_view targetPrefix,
-                                std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,
-                                PartialSet &summedUnweightedGR);
+    static bool sumUnweightedGR(GenericList &processingData, std::string_view targetPrefix, std::string_view parentPrefix,
+                                const std::vector<Configuration *> &parentCfgs, PartialSet &summedUnweightedGR);
     // Test supplied PartialSets against each other
     static bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
     // Test calculated partial against supplied reference data
@@ -97,5 +96,5 @@ class GRModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

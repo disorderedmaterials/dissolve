@@ -9,8 +9,7 @@
 class CellDistributor : public Distributor
 {
     public:
-    CellDistributor(const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
-                    bool repeatsAllowed);
+    CellDistributor(const CellArray &cellArray, bool repeatsAllowed);
     ~CellDistributor() override;
 
     /*

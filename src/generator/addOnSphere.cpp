@@ -2,7 +2,6 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "generator/addOnSphere.h"
-#include "base/randomBuffer.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -110,14 +109,12 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
                          region_->region().freeVoxelFraction() * 100.0);
     }
 
-    RandomBuffer randomBuffer(generatorContext.processPool(), ProcessPool::PoolProcessesCommunicator);
-
     // Set / generate position of sphere centre
     Vector3 sphereCentre, fr;
     switch (positioningType_)
     {
         case (AddGeneratorNode::PositioningType::Random):
-            sphereCentre = box->getReal({randomBuffer.random(), randomBuffer.random(), randomBuffer.random()});
+            sphereCentre = box->getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});
             break;
         case (AddGeneratorNode::PositioningType::Region):
             sphereCentre = region_->region().randomCoordinate();
@@ -152,8 +149,8 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
         switch (pointDistributionStyle_)
         {
             case (PointDistributionStyle::Random):
-                theta = randomBuffer.random() * M_PI;
-                phi = randomBuffer.random() * 2.0 * M_PI;
+                theta = DissolveMath::random() * M_PI;
+                phi = DissolveMath::random() * 2.0 * M_PI;
                 break;
             case (PointDistributionStyle::Fibonacci):
                 // Map theta as (i+1)/(N+1) to avoid point at pole and give better distribution
@@ -167,8 +164,8 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
         // Apply variance
         if (variance > 0.0)
         {
-            theta += randomBuffer.randomPlusMinusOne() * variance;
-            phi += randomBuffer.randomPlusMinusOne() * 2.0 * variance;
+            theta += DissolveMath::randomPlusMinusOne() * variance;
+            phi += DissolveMath::randomPlusMinusOne() * 2.0 * variance;
         }
 
         // Calculate cartesian coordinates

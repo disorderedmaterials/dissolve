@@ -20,6 +20,3 @@ std::string_view DissolveGraph::summary() const { return "Parent node of all sim
 
 // Return dissolve
 Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
-
-// Return world pool
-const ProcessPool &DissolveGraph::processPool() const { return dissolve_.worldPool(); }

@@ -10,13 +10,12 @@
 #include "math/histogram1D.h"
 #include "math/histogram2D.h"
 #include "math/mathFunc.h"
-#include "module/context.h"
 #include "modules/dAngle/dAngle.h"
 
 // Run main processing
-Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult DAngleModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
@@ -132,18 +131,15 @@ Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
     dAngleNormaliser.normaliseBySphericalShell();
 
     // Save RDF(A-B) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(rBCNormalised, exportFileAndFormatRDF_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(rBCNormalised, exportFileAndFormatRDF_))
         return ExecutionResult::Failed;
 
     // Save Angle(A-B-C) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(aABCNormalised, exportFileAndFormatAngle_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(aABCNormalised, exportFileAndFormatAngle_))
         return ExecutionResult::Failed;
 
     // Save DAngle(A-(B-C)) data?
-    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(dAngleNormalised, exportFileAndFormatDAngle_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(dAngleNormalised, exportFileAndFormatDAngle_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

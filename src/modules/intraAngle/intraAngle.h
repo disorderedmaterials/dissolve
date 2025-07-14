@@ -38,5 +38,5 @@ class IntraAngleModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

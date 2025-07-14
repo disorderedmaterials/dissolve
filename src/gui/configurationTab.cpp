@@ -224,7 +224,7 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     dissolve_.updatePairPotentials();
 
     // Initialise the content
-    configuration_->initialiseContent({dissolve_.worldPool(), dissolve_});
+    configuration_->initialiseContent({dissolve_});
 
     // Check pair potential range against box geometries
     dissolveWindow_->checkPairPotentialRange();

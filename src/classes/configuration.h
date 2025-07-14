@@ -195,7 +195,7 @@ class Configuration : public Serialisable<const CoreData &>
     CellArray &cells();
     const CellArray &cells() const;
     // Scale Box, Cells, and Molecule geometric centres according to current size factor
-    void applySizeFactor(const ProcessPool &procPool, const PotentialMap &potentialMap);
+    void applySizeFactor(const PotentialMap &potentialMap);
 
     /*
      * External Potentials

@@ -3,7 +3,6 @@
 
 #include "generator/coordinateSets.h"
 #include "base/lineParser.h"
-#include "base/randomBuffer.h"
 #include "base/sysFunc.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -93,7 +92,7 @@ bool CoordinateSetsGeneratorNode::prepare(const GeneratorContext &generatorConte
             return Messenger::error("A suitable coordinate file and format must be supplied.\n");
 
         // Open the specified file
-        LineParser parser(&generatorContext.processPool());
+        LineParser parser;
         if ((!parser.openInput(fileSource_.filename())) || (!parser.isFileGoodForReading()))
             return Messenger::error("Couldn't open coordinate sets file '{}'.\n", fileSource_.filename());
 
@@ -143,18 +142,14 @@ bool CoordinateSetsGeneratorNode::execute(const GeneratorContext &generatorConte
         return true;
     }
 
-    // Initialise the random number buffer for all processes
-    RandomBuffer randomBuffer(generatorContext.processPool(),
-                              ProcessPool::subDivisionStrategy(generatorContext.processPool().bestStrategy()));
-
     // Initialise random velocities
     std::vector<Vector3> velocities(species_->nAtoms());
     const auto sqrt2Pi = sqrt(2.0 * M_PI);
     std::generate(velocities.begin(), velocities.end(),
                   [&]()
                   {
-                      return Vector3(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5),
-                                     exp(randomBuffer.random() - 0.5)) /
+                      return Vector3(exp(DissolveMath::random() - 0.5), exp(DissolveMath::random() - 0.5),
+                                     exp(DissolveMath::random() - 0.5)) /
                              sqrt2Pi;
                   });
 
@@ -167,8 +162,8 @@ bool CoordinateSetsGeneratorNode::execute(const GeneratorContext &generatorConte
     for (auto n = 0; n < nSets_.asInteger(); ++n)
     {
         // Evolve our coordinates
-        r = MDModule::evolve(generatorContext.processPool(), generatorContext.potentialMap(), species_, temperature_.asDouble(),
-                             nSteps_.asInteger(), deltaT_.asDouble(), r, velocities);
+        r = MDModule::evolve(generatorContext.potentialMap(), species_, temperature_.asDouble(), nSteps_.asInteger(),
+                             deltaT_.asDouble(), r, velocities);
 
         // Store a new set
         addSet() = r;

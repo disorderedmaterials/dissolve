@@ -104,7 +104,7 @@ std::vector<Vector3> MDNode::evolve(const ProcessPool &procPool, const Potential
     std::fill(fInter.begin(), fInter.end(), Vector3());
     std::fill(fIntra.begin(), fIntra.end(), Vector3());
 
-    ForcesModule::totalForces(procPool, sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rInit);
+    ForcesModule::totalForces(sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rInit);
 
     // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
     std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
@@ -152,7 +152,7 @@ std::vector<Vector3> MDNode::evolve(const ProcessPool &procPool, const Potential
         std::fill(fIntra.begin(), fIntra.end(), Vector3());
 
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-        ForcesModule::totalForces(procPool, sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rNew);
+        ForcesModule::totalForces(sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rNew);
         std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
         std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
 

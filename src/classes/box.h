@@ -6,14 +6,12 @@
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "math/matrix3.h"
-
 #include <map>
 #include <vector>
 
 // Forward Declarations
 class Cell;
 class Data1D;
-class ProcessPool;
 
 // Basic Box Definition
 class Box : public Serialisable<>

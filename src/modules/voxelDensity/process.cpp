@@ -2,7 +2,6 @@
 #include "analyser/dataOperator1D.h"
 #include "main/dissolve.h"
 #include "math/gaussFit.h"
-#include "module/context.h"
 #include "voxelDensity.h"
 
 void VoxelDensityModule::addValue(Vector3 coords, double value)
@@ -14,9 +13,9 @@ void VoxelDensityModule::addValue(Vector3 coords, double value)
 
 Vector3 VoxelDensityModule::foldedCoordinates(const Vector3 &r, const Box *unitCell) { return unitCell->foldFrac(r); }
 
-Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
+Module::ExecutionResult VoxelDensityModule::process(Dissolve &dissolve)
 {
-    auto &processingData = context.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Define voxels
     auto unitCell = targetConfiguration_->box();
@@ -74,7 +73,7 @@ Module::ExecutionResult VoxelDensityModule::process(ModuleContext &context)
     hist.accumulate();
     data1D = hist.accumulatedData();
 
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(data1D, exportFileAndFormat_, context.processPool()))
+    if (!DataExporter::exportData(data1D, exportFileAndFormat_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

@@ -15,11 +15,11 @@
           inherit (pkgs) lib stdenv fetchFromGitHub fetchpatch cmake;
           tbb = pkgs.tbb_2021_11;
         });
-      exe-name = mpi: gui:
-        if mpi then
-          "dissolve-mpi"
+      exe-name = gui:
+        if gui then
+          "dissolve-gui"
         else
-          (if gui then "dissolve-gui" else "dissolve");
+          "dissolve";
       cmake-bool = x: if x then "ON" else "OFF";
       version = "1.8.0";
       base_libs = pkgs:
@@ -65,17 +65,16 @@
       let
         pkgs = import nixpkgs { inherit system; };
         nixGL = import nixGL-src { inherit pkgs; };
-        dissolve = { mpi ? false, gui ? false, threading ? true, checks ? true
+        dissolve = { gui ? false, threading ? true, checks ? true
           , benchmarks ? false }:
-          assert (!(gui && mpi));
           pkgs.stdenv.mkDerivation ({
             inherit version;
-            pname = exe-name mpi gui;
+            pname = exe-name gui;
             src = builtins.path {
               path = ./.;
               name = "dissolve-src";
             };
-            buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
+            buildInputs = base_libs pkgs
               ++ pkgs.lib.optionals gui (gui_libs system pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optionals threading [
@@ -91,7 +90,6 @@
               "-DCONAN=OFF"
               "-G Ninja"
               ("-DMULTI_THREADING=" + (cmake-bool threading))
-              ("-DPARALLEL=" + (cmake-bool mpi))
               ("-DGUI=" + (cmake-bool gui))
               "-DBUILD_TESTS:bool=${cmake-bool checks}"
               "-DBUILD_BENCHMARKS:bool=${cmake-bool benchmarks}"
@@ -111,29 +109,24 @@
               maintainers = [ maintainers.rprospero ];
             };
           }) // (if checks then { QT_QPA_PLATFORM = "offscreen"; } else { });
-        mkSingularity = { mpi ? false, gui ? false, threading ? true }:
+        mkSingularity = { gui ? false, threading ? true }:
           outdated.legacyPackages.${system}.singularity-tools.buildImage {
-            name = "${exe-name mpi gui}-${version}";
+            name = "${exe-name gui}-${version}";
             diskSize = 1024 * 50;
-            contents = [ (dissolve { inherit mpi gui threading; }) ];
+            contents = [ (dissolve { inherit gui threading; }) ];
             runScript = if gui then
               "${nixGL.nixGLIntel}/bin/nixGLIntel ${
-                dissolve { inherit mpi gui threading; }
-              }/bin/${exe-name mpi gui} $@"
+                dissolve { inherit gui threading; }
+              }/bin/${exe-name gui} $@"
             else
-              "${dissolve { inherit mpi gui threading; }}/bin/${
-                exe-name mpi gui
+              "${dissolve { inherit gui threading; }}/bin/${
+                exe-name gui
               } $@";
           };
       in {
         checks.dissolve = dissolve { checks = true; };
         checks.dissolve-gui = dissolve {
           gui = true;
-          checks = true;
-        };
-        checks.dissolve-mpi = dissolve {
-          mpi = true;
-          gui = false;
           checks = true;
         };
         checks.dissolve-threadless = dissolve {
@@ -163,7 +156,6 @@
               gdb
               gtk3
               nixGL.nixGLIntel
-              openmpi
               qt6.qttools
               tbb_2021_11
               valgrind
@@ -221,9 +213,6 @@
           };
           dissolve-app =
             flake-utils.lib.mkApp { drv = self.packages.${system}.dissolve; };
-          dissolve-mpi-app = flake-utils.lib.mkApp {
-            drv = self.packages.${system}.dissolve-mpi;
-          };
           dissolve-gui-app = flake-utils.lib.mkApp {
             drv = self.packages.${system}.dissolve-gui;
           };
@@ -259,14 +248,9 @@
             gui = false;
             threading = false;
           };
-          dissolve-mpi = dissolve {
-            mpi = true;
-            gui = false;
-          };
           dissolve-gui = dissolve { gui = true; };
 
           singularity = mkSingularity { };
-          singularity-mpi = mkSingularity { mpi = true; };
           singularity-gui = mkSingularity { gui = true; };
           singularity-threadless = mkSingularity {
             gui = false;
@@ -286,13 +270,6 @@
               "${nixGL.nixGLIntel}/bin/nixGLIntel"
               "${self.packages.${system}.dissolve-gui}/bin/dissolve-gui"
             ];
-          };
-
-          docker-mpi = pkgs.dockerTools.buildImage {
-            name = "dissolve-mpi";
-            tag = "latest";
-            config.ENTRYPOINT =
-              [ "${self.packages.${system}.dissolve-mpi}/bin/dissolve-mpi" ];
           };
         };
 

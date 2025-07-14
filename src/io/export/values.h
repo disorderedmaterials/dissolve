@@ -6,7 +6,6 @@
 #include "io/fileAndFormat.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // Value Export Formats
 class ValueExportFileFormat : public FileAndFormat
@@ -43,5 +42,5 @@ class ValueExportFileFormat : public FileAndFormat
 
     public:
     // Export value data using current filename and format
-    bool exportData(const std::vector<double> &data, LineParser &currentParser, ProcessPool *procPool = nullptr);
+    bool exportData(const std::vector<double> &data, LineParser &currentParser);
 };

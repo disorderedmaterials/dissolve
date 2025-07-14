@@ -101,16 +101,16 @@ class Module : public Serialisable<const CoreData &>
     // Check the current configurations targeted by the module
     ExecutionResult checkConfigurationTargets(GenericList &processingModuleData);
     // Run main processing
-    virtual ExecutionResult process(ModuleContext &moduleContext) = 0;
+    virtual ExecutionResult process(Dissolve &dissolve) = 0;
 
     public:
     // Set target data
     virtual void setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                             const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap);
     // Run set-up stage
-    virtual bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals = {});
+    virtual bool setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals = {});
     // Run main processing stage
-    ExecutionResult executeProcessing(ModuleContext &moduleContext);
+    ExecutionResult executeProcessing(Dissolve &dissolve);
 
     /*
      * Timing

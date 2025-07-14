@@ -10,13 +10,12 @@
 #include "math/histogram1D.h"
 #include "math/histogram2D.h"
 #include "math/mathFunc.h"
-#include "module/context.h"
 #include "modules/axisAngle/axisAngle.h"
 
 // Run main processing
-Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult AxisAngleModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
@@ -109,18 +108,15 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     dAxisAngleNormaliser.normaliseBySphericalShell();
 
     // Save RDF(A-B) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(rABNormalised, exportFileAndFormatRDF_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(rABNormalised, exportFileAndFormatRDF_))
         return ExecutionResult::Failed;
 
     // Save AxisAngle(A-B) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(aABNormalised, exportFileAndFormatAxisAngle_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(aABNormalised, exportFileAndFormatAxisAngle_))
         return ExecutionResult::Failed;
 
     // Save DAxisAngle(A-B) data?
-    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(dAxisAngleNormalised, exportFileAndFormatDAxisAngle_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(dAxisAngleNormalised, exportFileAndFormatDAxisAngle_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

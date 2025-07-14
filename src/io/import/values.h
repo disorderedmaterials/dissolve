@@ -6,7 +6,6 @@
 #include "io/fileAndFormat.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // Value Import Formats
 class ValueImportFileFormat : public FileAndFormat
@@ -43,5 +42,5 @@ class ValueImportFileFormat : public FileAndFormat
 
     public:
     // Import value data using current filename and format
-    bool importData(std::vector<double> &data, LineParser &currentParser, const ProcessPool *procPool = nullptr);
+    bool importData(std::vector<double> &data, LineParser &currentParser);
 };

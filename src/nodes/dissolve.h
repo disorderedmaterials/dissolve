@@ -35,6 +35,4 @@ class DissolveGraph : public Graph
     public:
     // Return dissolve
     Dissolve &dissolve() const override;
-    // Return world pool
-    const ProcessPool &processPool() const override;
 };

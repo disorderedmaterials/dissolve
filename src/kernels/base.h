@@ -14,24 +14,19 @@ class CellArray;
 class Configuration;
 class Molecule;
 class PotentialMap;
-class ProcessPool;
 
 // Kernel Base
 class KernelBase
 {
     public:
-    KernelBase(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
-               std::optional<double> energyCutoff = {});
-    KernelBase(const Box *box, const ProcessPool &procPool, const PotentialMap &potentialMap,
-               std::optional<double> energyCutoff = {});
+    KernelBase(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
+    KernelBase(const Box *box, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
     ~KernelBase() = default;
 
     // Alias for force storage vector
     using ForceVector = std::vector<Vector3>;
 
     protected:
-    // Process pool over which this kernel operates
-    const ProcessPool &processPool_;
     // Potential map to use
     const PotentialMap &potentialMap_;
     // Squared cutoff distance to use in calculation

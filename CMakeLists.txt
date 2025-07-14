@@ -82,14 +82,6 @@ list(APPEND CORE_LINK_LIBS ${antlr4-cppruntime_LIBS})
 # Find Antlr4 Java Binary
 find_package(ANTLR REQUIRED)
 
-# Catch defines
-if(PARALLEL)
-  add_definitions("-DPARALLEL")
-  find_package(MPI REQUIRED)
-  include_directories(${MPI_INCLUDE_PATH})
-  list(APPEND CORE_LINK_LIBS ${MPI_LIBRARIES})
-endif(PARALLEL)
-
 # Build with threads
 option(MULTI_THREADING "Enable threading using tbb" ON)
 set(THREADING_LINK_LIBS "")
@@ -148,13 +140,9 @@ endif(GUI)
 
 # Perform system-specific setup -- Windows
 if(WIN32)
-  if(PARALLEL)
-    set(target_name Dissolve-MPI)
-  else(PARALLEL)
-    set(target_name Dissolve)
-    set(gui_target_name Dissolve-GUI)
-    set(qmlgui_target_name Dissolve-GUI-QML)
-  endif(PARALLEL)
+  set(target_name Dissolve)
+  set(gui_target_name Dissolve-GUI)
+  set(qmlgui_target_name Dissolve-GUI-QML)
 
   # Adjust external include directories for GUI
   if(GUI)
@@ -177,13 +165,10 @@ endif(WIN32)
 
 # -- Unix
 if(UNIX)
-  if(PARALLEL)
-    set(target_name dissolve-mpi)
-  else(PARALLEL)
-    set(target_name dissolve)
-    set(gui_target_name dissolve-gui)
-    set(qmlgui_target_name dissolve-gui-qml)
-  endif(PARALLEL)
+  set(target_name dissolve)
+  set(gui_target_name dissolve-gui)
+  set(qmlgui_target_name dissolve-gui-qml)
+
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(UNIX)
 
@@ -196,13 +181,9 @@ if(APPLE)
   # Suppress warnings for undefined template vars
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undefined-var-template")
 
-  if(PARALLEL)
-    set(target_name dissolve-mpi)
-  else(PARALLEL)
-    set(target_name dissolve)
-    set(gui_target_name dissolve-gui)
-    set(qmlgui_target_name dissolve-gui-qml)
-  endif(PARALLEL)
+  set(target_name dissolve)
+  set(gui_target_name dissolve-gui)
+  set(qmlgui_target_name dissolve-gui-qml)
 
   add_definitions(-D_MAC)
 

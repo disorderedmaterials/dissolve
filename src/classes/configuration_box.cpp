@@ -87,7 +87,7 @@ CellArray &Configuration::cells() { return cells_; }
 const CellArray &Configuration::cells() const { return cells_; }
 
 // Scale Box, Cells, and Molecule geometric centres according to current size factor
-void Configuration::applySizeFactor(const ProcessPool &procPool, const PotentialMap &potentialMap)
+void Configuration::applySizeFactor(const PotentialMap &potentialMap)
 {
     const auto reductionFactor = 0.95;
 
@@ -134,7 +134,7 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
             appliedSizeFactor_ = std::nullopt;
             break;
         }
-        else if (EnergyModule::interMolecularEnergy(procPool, this, potentialMap) <= 0.0)
+        else if (EnergyModule::interMolecularEnergy(this, potentialMap) <= 0.0)
         {
             requestedSF *= reductionFactor;
             if (requestedSF < 1.0)

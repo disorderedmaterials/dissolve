@@ -14,7 +14,6 @@ class Configuration;
 class Dissolve;
 class GenericList;
 class PotentialMap;
-class ProcessPool;
 
 // Generator Operating Context
 class GeneratorContext
@@ -33,16 +32,12 @@ class GeneratorContext
     private:
     // Reference to Dissolve
     OptionalReferenceWrapper<Dissolve> dissolve_;
-    // Available process pool
-    OptionalReferenceWrapper<const ProcessPool> processPool_;
     // Target Configuration
     Configuration *configuration_{nullptr};
 
     private:
     // Set reference to Dissolve
     void set(Dissolve &dissolve);
-    // Set available ProcessPool
-    void set(const ProcessPool &procPool);
     // Set target Configuration
     void set(Configuration *cfg);
     // Catch any unrecognised object type
@@ -52,8 +47,6 @@ class GeneratorContext
     }
 
     public:
-    // Return available process pool
-    const ProcessPool &processPool() const;
     // Return target Configuration
     Configuration *configuration() const;
     // Return potential map

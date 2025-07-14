@@ -7,7 +7,6 @@
 #include "keywords/fileAndFormat.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
-#include "module/context.h"
 
 AngleModule::AngleModule() : Module(ModuleTypes::Angle)
 {
