@@ -175,7 +175,7 @@ runs:
       echo "Java Runtime Executable: ${JAVA_RUNTIME}"
 
       # Set conan cache location
-      conan config install -cc core.download:download_cache="${GITHUB_WORKSPACE}/.conancache"
+      conan config home -cc core.download:download_cache="${GITHUB_WORKSPACE}/.conancache"
 
       # Set minimum deployment target version
       export MACOSX_DEPLOYMENT_TARGET=13.3
