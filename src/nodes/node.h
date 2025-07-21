@@ -8,6 +8,7 @@
 #include "module/module.h"
 #include "nodes/constants.h"
 #include "nodes/parameter.h"
+#include "nodes/serialisableData.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -281,6 +282,12 @@ class Node : public Serialisable<>
     /*
      * Serialisation
      */
+    protected:
+    // Persistent data Serialisables
+    std::map<std::string, std::reference_wrapper<Serialisable>> serialisables_;
+    // Optional persistent data Serialisables
+    std::map<std::string, std::reference_wrapper<std::optional<Serialisable>>> optionalSerialisables_;
+
     protected:
     // Express persistent data within the supplied serialisable value
     virtual void serialisePersistentData(SerialisedValue &value) const;
