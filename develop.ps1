@@ -76,15 +76,15 @@ $threading = [bool]::Parse('True')
 $dependencies = "dependencies"
 New-Item -ItemType Directory -Path $dependencies -ErrorAction SilentlyContinue
 
-<#
-    .SYNOPSIS
-        Remove Dissolve environment object, and recursively remove contents, if found in Dissolve project directory.
-    .DESCRIPTION
-        Deletes  specified folder and contents, or file, if it exists. Path is relative to the Dissolve project directory.
-    .PARAMETER relativePath
-        Relative path to object for deletion.
-#>
 function Find-And-Remove {
+    <#
+        .SYNOPSIS
+            Remove Dissolve environment object, and recursively remove contents, if found in Dissolve project directory.
+        .DESCRIPTION
+            Deletes  specified folder and contents, or file, if it exists. Path is relative to the Dissolve project directory.
+        .PARAMETER relativePath
+            Relative path to object for deletion.
+    #>
     param (
         [string]$relativePath = ""
     )
