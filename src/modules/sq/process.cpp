@@ -184,7 +184,7 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve)
                                 });
 
         // Blend the bound/unbound and Bragg partials at the higher Q limit
-        dissolve::for_each_pair(ParallelPolicies::par, std::views::iota(0, unweightedsq.nAtomTypes()),
+        dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.nAtomTypes(),
                                 [&](const int i, const int j)
                                 {
                                     // Note: Intramolecular broadening will not be applied to bound terms within the

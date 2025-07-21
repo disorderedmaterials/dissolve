@@ -92,7 +92,7 @@ void PartialSet::setUpHistograms(double rdfRange, double binWidth)
     unboundHistograms_.initialise(nTypes, nTypes, half_);
 
     dissolve::for_each_pair(
-        ParallelPolicies::par, std::views::iota(0, nTypes),
+        ParallelPolicies::par, nTypes,
         [&](int i, int j)
         {
             fullHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
@@ -116,7 +116,7 @@ void PartialSet::reset()
 
     // Zero partials
     dissolve::for_each_pair(
-        ParallelPolicies::par, std::views::iota(0, atomTypeMix_.nItems()),
+        ParallelPolicies::par, atomTypeMix_.nItems(),
         [&](int i, int j)
         {
             std::ranges::fill(partials_[{i, j}].values(), 0.0);
@@ -485,7 +485,7 @@ void PartialSet::operator-=(const double delta) { adjust(-delta); }
 void PartialSet::operator*=(const double factor)
 {
     dissolve::for_each_pair(
-        ParallelPolicies::par, std::views::iota(0, atomTypeMix_.nItems()),
+        ParallelPolicies::par, atomTypeMix_.nItems(),
         [&](auto n, auto m)
         {
             partials_[{n, m}] *= factor;
@@ -560,7 +560,7 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     emptyBoundPartials_ = false;
 
     for_each_pair_early(
-        std::views::iota(0, nTypes),
+        nTypes,
         [&](int typeI, int typeJ) -> EarlyReturn<bool>
         {
             auto &part = partials_[{typeI, typeJ}];
@@ -660,7 +660,7 @@ bool PartialSet::serialise(LineParser &parser) const
 
     // Write individual Data1D
     auto success = for_each_pair_early(
-        std::views::iota(0, nTypes),
+        nTypes,
         [&](int typeI, int typeJ) -> EarlyReturn<bool>
         {
             const auto &part = partials_[{typeI, typeJ}];

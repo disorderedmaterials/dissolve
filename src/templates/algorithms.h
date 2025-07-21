@@ -9,6 +9,7 @@
 #include <format>
 #include <functional>
 #include <optional>
+#include <ranges>
 #include <sstream>
 #include <tuple>
 #include <utility>
@@ -70,6 +71,12 @@ auto for_each_pair_early(Range range, Lam lambda, bool half = true) -> std::opti
         }
     }
     return std::nullopt;
+}
+
+// Overload to avoid using iota everywhere
+template <class Lam> auto for_each_pair_early(int count, Lam lambda, bool half = true) -> std::optional<bool>
+{
+    return for_each_pair_early(std::views::iota(0, count), lambda, half);
 }
 
 template <typename... Args> class ZipIterator
@@ -223,6 +230,12 @@ void for_each_pair(ParallelPolicy policy, Range range, Lam lambda, bool half = t
             stop(range.end() - range.begin(), (range.end() - range.begin()) * (range.end() - range.begin()));
         for_each(policy, start, stop, actions);
     }
+}
+
+// Overload to avoid using iota everywhere
+template <typename ParallelPolicy, class Lam> void for_each_pair(ParallelPolicy policy, int count, Lam lambda, bool half = true)
+{
+    for_each_pair(policy, std::views::iota(0, count), lambda, half);
 }
 
 template <typename ParallelPolicy, class Iter, class Lam>

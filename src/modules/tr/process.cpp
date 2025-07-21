@@ -88,7 +88,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
                          WindowFunction::forms().keyword(repWindowFunction_));
     // FT unweightedSQ to unweightedGR to get better representation of calculations
     dissolve::for_each_pair(
-        ParallelPolicies::par, std::views::iota(0, unweightedSQ.nAtomTypes()),
+        ParallelPolicies::par, unweightedSQ.nAtomTypes(),
         [&](int n, int m)
         {
             // Total partial
@@ -129,7 +129,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
         representativeTR.setUpPartials(representativeGR.atomTypeMix(), false);
 
     dissolve::for_each_pair(
-        ParallelPolicies::par, std::views::iota(0, representativeGR.nAtomTypes()),
+        ParallelPolicies::par, representativeGR.nAtomTypes(),
         [&weights, &rho, &representativeGR, &representativeTR](const auto typeI, const auto typeJ)
         {
             double intraWeight = weights.intramolecularWeight(typeI, typeJ);
@@ -163,7 +163,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
 
     // Calculate weightedTR
     dissolve::for_each_pair(
-        ParallelPolicies::seq, std::views::iota(0, unweightedGR.nAtomTypes()),
+        ParallelPolicies::seq, unweightedGR.nAtomTypes(),
         [&weights, &rho, &unweightedGR, &weightedTR](const auto typeI, const auto typeJ)
         {
             double intraWeight = weights.intramolecularWeight(typeI, typeJ);

@@ -409,7 +409,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
 
     timer.start();
     auto success =
-        for_each_pair_early(std::ranges::iota_view(0, originalgr.nAtomTypes()),
+        for_each_pair_early(originalgr.nAtomTypes(),
                             [&originalgr, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
                             {
                                 // Create unbound histogram from total and bound data

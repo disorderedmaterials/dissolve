@@ -74,7 +74,7 @@ void KVector::calculateIntensities(std::vector<BraggReflection> &reflections)
     auto &braggReflection = reflections[braggReflectionIndex_];
     braggReflection.addKVectors(halfSphereNorm);
     dissolve::for_each_pair(
-        ParallelPolicies::par, std::views::iota(0, (int)cosTerms_.size()),
+        ParallelPolicies::par, (int)cosTerms_.size(),
         [&](auto i, auto j)
         { braggReflection.addIntensity(i, j, (cosTerms_[i] * cosTerms_[j] + sinTerms_[i] * sinTerms_[j]) * halfSphereNorm); });
 }
