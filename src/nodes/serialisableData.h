@@ -49,7 +49,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     {
     }
     SerialisableClass(std::string_view key, DataClass &value)
-        requires(std::is_pod_v<DataClass>)
+        requires(std::is_trivial_v<DataClass>)
         : SerialisableData(key), data_(value), dataSerialiser_(
                                                    [&]()
                                                    {
