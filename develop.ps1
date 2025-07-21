@@ -16,6 +16,8 @@
         These packages are installed into a folder called 'dependencies'.
     .PARAMETER qtVersion
         Qt version to install. Defaults to existing system Qt6 installation if none specified.
+    .PARAMETER systemQt
+        Path to existing installation of Qt6.
     .PARAMETER pythonPath
         Path to a Python executable.
     .PARAMETER forcePythonVersion
@@ -39,6 +41,7 @@
 
 param (
     [string]$qtVersion,
+    [string]$systemQt,
     [string]$pythonPath,
     [string]$forcePythonVersion,
     [string]$msvcVersion,
@@ -93,7 +96,7 @@ function Find-And-Remove {
     }
     else
     {
-        Write-Host "Existing instance of object $relativePath NOT found, could not clean up... " @warn_colors
+        Write-Host "Existing instance of object $relativePath NOT found, could not clean up." @warn_colors
     }
 }
 
@@ -200,11 +203,11 @@ if ($setSystemEnvVars)
     Write-Host "Python packages directory path added to system PATH." @info_colors
 }
 
+# Install Qt6, or find existing system Qt6 installation
 $qt6CMakeDir = ""
 
 if (-not [string]::IsNullOrEmpty($qtVersion))
 {
-    # Install Qt6
     $qtInstallationDir = Join-Path -Path $dependencies -ChildPath "qt"
     New-Item -ItemType Directory -Path $qtInstallationDir -ErrorAction SilentlyContinue
 
@@ -230,13 +233,26 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
         }
     }
 } else {
+    # We attempt to use an existing installation of Qt
     Write-Host "Attempting to use existing system installation of Qt6... " @info_colors
-    $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
-    if ($systemPath -notmatch [regex]::Escape($qtVersion)) {
-        Write-Host "Found Qt6 version that is NOT ${qtVersion} in system PATH. It is strongly recommended to use Qt ${qtVersion}" @info_colors
+    if (-not [string]::IsNullOrEmpty($systemQt))
+    {
+        $qt6Version = Get-ChildItem -Path $systemQt -Directory | Where-Object { $_.Name -match '^\d+\.\d+\.\d+$'} | Select-Object -First 1
+        $qt6ToolChain = Get-ChildItem -Path (Join-Path -Path $systemQt -ChildPath $qt6Version) -Directory | Where-Object { $_.Name -match '^msvc\d{4}_x64$'} | Select-Object -ExpandProperty Name
+        $qt6BinDir = "$systemQt\$($qt6Version.Name)\$qt6ToolChain\bin"
+        $qt6CMakeDir = "$systemQt\$($qt6Version.Name)\$qt6ToolChain\lib\cmake"
+
+        if (-not (Test-Path -Path $qt6CMakeDir -PathType Container))
+        {
+            Write-Host "Attempted to find the directory $qt6CMakeDir. Could NOT find a valid Qt6 installation." @warn_colors
+        }
     }
-} 
+    else
+    {
+        Write-Host "Could NOT find a Qt6 installation. No path to Qt6 was supplied." @warn_colors
+    }
+}
 
 # Build/retrieve Freetype
 $freetypeVersion = "2.12.1"
