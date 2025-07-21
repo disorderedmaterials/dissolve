@@ -30,6 +30,11 @@
         Flag - set environment variables and PATH for dependencies at the system level, otherwise set in CMake presets "environment" property.
     .PARAMETER release
         Flag - install packages for release, otherwise debug.
+    .PARAMETER clean
+        Flag - remove existing setup folders and files before running script. Invoking this flag deletes the following:
+            - Dissolve installation folders ("/out", "/build")
+            - dependencies folder
+            - CMakeUserPresets.json
 #>
 
 param (
@@ -40,7 +45,8 @@ param (
     [string]$generator = "Visual Studio 17 2022",
     [string]$antlrVersion = "4.13.1",
     [switch]$setSystemEnvVars = $false,
-    [switch]$release = $false
+    [switch]$release = $false,
+    [switch]$clean = $false
 )
 
 $build = "Debug"
@@ -66,6 +72,37 @@ $threading = [bool]::Parse('True')
 
 $dependencies = "dependencies"
 New-Item -ItemType Directory -Path $dependencies -ErrorAction SilentlyContinue
+
+<#
+    .SYNOPSIS
+        Remove Dissolve environment object, and recursively remove contents, if found in Dissolve project directory.
+    .DESCRIPTION
+        Deletes  specified folder and contents, or file, if it exists. Path is relative to the Dissolve project directory.
+    .PARAMETER relativePath
+        Relative path to object for deletion.
+#>
+function Find-And-Remove {
+    param (
+        [string]$relativePath = ""
+    )
+
+    if (Test-Path -Path $relativePath)
+    {
+        Write-Host "Existing instance of object $relativePath found, cleaning up... " @info_colors
+        Remove-Item $relativePath -Recurse -Force
+    }
+    else
+    {
+        Write-Host "Existing instance of object $relativePath NOT found, could not clean up... " @warn_colors
+    }
+}
+
+# Clean existing environment
+Find-And-Remove -relativePath "out"
+Find-And-Remove -relativePath "build"
+Find-And-Remove -relativePath "dependencies"
+Find-And-Remove -relativePath "CMakeUserPresets.json"
+Find-And-Remove -relativePath "msvc-env"
 
 #Install key dependencies with Chocolatey
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
