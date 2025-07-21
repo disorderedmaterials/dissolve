@@ -302,3 +302,5 @@ template <class Class, class Lam> std::string joinStrings(Class range, std::stri
 // Template functions to determine if a given class derives from a specific base
 template <class T, template <class...> class U> inline constexpr bool is_instance_of_v = std::false_type{};
 template <template <class...> class U, class... Vs> inline constexpr bool is_instance_of_v<U<Vs...>, U> = std::true_type{};
+template<typename>   constexpr bool is_optional = false;
+template<typename T> constexpr bool is_optional<std::optional<T>> = true;

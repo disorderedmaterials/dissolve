@@ -283,20 +283,17 @@ class Node : public Serialisable<>
      * Serialisation
      */
     protected:
-    // Persistent data Serialisables
-    std::map<std::string, std::reference_wrapper<Serialisable>> serialisables_;
-    // Optional persistent data Serialisables
-    std::map<std::string, std::reference_wrapper<std::optional<Serialisable>>> optionalSerialisables_;
-
-    protected:
-    // Express persistent data within the supplied serialisable value
-    virtual void serialisePersistentData(SerialisedValue &value) const;
-    // Retrieve persistent data from the supplied serialisable value
-    virtual void deserialisePersistentData(const SerialisedValue &value);
+    // Persistent data serialisables
+    std::map<std::string, std::shared_ptr<SerialisableData>> serialisables_;
 
     public:
     // Is it appropriate to bother serialising this node?
     virtual bool shouldSerialise() const { return true; }
+    // Flag a persistent serialisable quantity
+    template <typename DataClass> void addSerialisable(std::string_view key, DataClass &data)
+    {
+        serialisables_[std::string(key)] = std::make_shared<SerialisableClass>(key, data);
+    }
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
