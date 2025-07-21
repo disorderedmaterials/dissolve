@@ -45,4 +45,13 @@ class AtomicMCNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    /*
+     * Serialisation
+     */
+    protected:
+    // Express persistent data within the supplied serialisable value
+    virtual void serialisePersistentData(SerialisedValue &value) const;
+    // Retrieve persistent data from the supplied serialisable value
+    virtual void deserialisePersistentData(const SerialisedValue &value);
 };
