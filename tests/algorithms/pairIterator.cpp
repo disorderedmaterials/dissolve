@@ -9,7 +9,6 @@
 #include <gtest/gtest.h>
 #include <numeric>
 #include <random>
-#include <ranges>
 
 namespace UnitTest
 {

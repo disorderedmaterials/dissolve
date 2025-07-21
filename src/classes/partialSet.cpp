@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include <ranges>
-
 #include "classes/partialSet.h"
-
 #include "base/lineParser.h"
 #include "classes/atomType.h"
 #include "classes/box.h"

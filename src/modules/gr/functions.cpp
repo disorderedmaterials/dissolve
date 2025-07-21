@@ -410,7 +410,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
     timer.start();
     auto success =
         for_each_pair_early(originalgr.nAtomTypes(),
-                            [&originalgr, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
+                            [&originalgr](auto typeI, auto typeJ) -> EarlyReturn<bool>
                             {
                                 // Create unbound histogram from total and bound data
                                 originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);

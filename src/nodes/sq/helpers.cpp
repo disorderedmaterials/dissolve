@@ -11,8 +11,6 @@
 #include "nodes/sq/sq.h"
 #include "templates/algorithms.h"
 
-#include <ranges>
-
 /*
  * Public Functions
  */

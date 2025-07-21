@@ -11,7 +11,6 @@
 #include "templates/algorithms.h"
 #include <iterator>
 #include <numeric>
-#include <ranges>
 
 /*
  * PairPotentialEnergyValue

@@ -7,8 +7,6 @@
 #include "io/export/data1D.h"
 #include "templates/algorithms.h"
 
-#include <ranges>
-
 PartialSetAccumulator::PartialSetAccumulator() {}
 
 void PartialSetAccumulator::operator+=(const PartialSet &source)
