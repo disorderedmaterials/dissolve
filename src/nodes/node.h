@@ -292,7 +292,7 @@ class Node : public Serialisable<>
     // Flag a persistent serialisable quantity
     template <typename DataClass> void addSerialisable(std::string_view key, DataClass &data)
     {
-        serialisables_[std::string(key)] = std::make_shared<SerialisableClass>(key, data);
+        serialisables_[std::string(key)] = std::make_shared<SerialisableClass<DataClass>>(key, data);
     }
     // Express as a serialisable value
     SerialisedValue serialise() const override;

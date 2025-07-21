@@ -27,10 +27,10 @@ GRNode::GRNode(Graph *parentGraph) : Node(parentGraph)
     SampledDouble x;
     std::optional<SampledDouble> y;
     double z;
-    std::make_shared<SerialisableClass>("dasds", x);
-//    addSerialisable("testShit", x);
-//    addSerialisable("testShit2", y);
-//    addSerialisable("testShit3", z);
+    std::make_shared<SerialisableClass<SampledDouble>>("dasds", x);
+    addSerialisable("testShit", x);
+    addSerialisable("testShit2", y);
+    addSerialisable("testShit3", z);
 }
 
 // Return enum option info for NormalisationType
