@@ -130,10 +130,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
  */
 
 // Express persistent data within the supplied serialisable value
-void AtomicMCNode::serialisePersistentData(SerialisedValue &value) const
-{
-    value["stepSize"] = stepSize_;
-}
+void AtomicMCNode::serialisePersistentData(SerialisedValue &value) const { value["stepSize"] = stepSize_; }
 
 // Retrieve persistent data from the supplied serialisable value
 void AtomicMCNode::deserialisePersistentData(const SerialisedValue &value)

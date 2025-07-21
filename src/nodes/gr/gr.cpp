@@ -24,11 +24,14 @@ GRNode::GRNode(Graph *parentGraph) : Node(parentGraph)
     addOptionalPointerOutput<PartialSet>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
 
     // Flag serialisable data
-//    addOptionalSerialisable("stepSize", unweightedGR_);
-    optionalSerialisables_["unweightedGR"] = unweightedGR_;
-
+    SampledDouble x;
+    std::optional<SampledDouble> y;
+    double z;
+    std::make_shared<SerialisableClass>("dasds", x);
+//    addSerialisable("testShit", x);
+//    addSerialisable("testShit2", y);
+//    addSerialisable("testShit3", z);
 }
-
 
 // Return enum option info for NormalisationType
 EnumOptions<GRNode::PartialsMethod> GRNode::partialsMethods()
