@@ -22,7 +22,13 @@ GRNode::GRNode(Graph *parentGraph) : Node(parentGraph)
     addOption<GRNode::PartialsMethod>("Method", "Calculation method for partial radial distribution functions",
                                       partialsMethod_);
     addOptionalPointerOutput<PartialSet>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
+
+    // Flag serialisable data
+//    addOptionalSerialisable("stepSize", unweightedGR_);
+    optionalSerialisables_["unweightedGR"] = unweightedGR_;
+
 }
+
 
 // Return enum option info for NormalisationType
 EnumOptions<GRNode::PartialsMethod> GRNode::partialsMethods()
